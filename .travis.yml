@@ -1,0 +1,8 @@
+language: node_js
+node_js:
+  - "node"
+branches:
+  only:
+    - master
+script:
+  - node_modules/.bin/rollup -c ./config/rollup.config.js
