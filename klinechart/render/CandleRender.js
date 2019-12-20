@@ -8,8 +8,9 @@ class CandleRender extends IndicatorRender {
    * 渲染蜡烛图
    * @param ctx
    * @param candle
+   * @param lastPriceMark
    */
-  renderCandle (ctx, candle) {
+  renderCandle (ctx, candle, lastPriceMark) {
     ctx.lineWidth = 1
     let rect = []
     let markHighestPrice = Number.MIN_SAFE_INTEGER
@@ -34,14 +35,14 @@ class CandleRender extends IndicatorRender {
         markLowestPriceX = x
       }
       if (close > refClose) {
-        ctx.strokeStyle = candle.candleChart.increasingColor
-        ctx.fillStyle = candle.candleChart.increasingColor
+        ctx.strokeStyle = candle.increasingColor
+        ctx.fillStyle = candle.increasingColor
       } else {
-        ctx.strokeStyle = candle.candleChart.decreasingColor
-        ctx.fillStyle = candle.candleChart.decreasingColor
+        ctx.strokeStyle = candle.decreasingColor
+        ctx.fillStyle = candle.decreasingColor
       }
 
-      if (candle.candleChart.candleStyle !== CandleStyle.OHLC) {
+      if (candle.style !== CandleStyle.OHLC) {
         const openY = this.yAxisRender.getY(open)
         const closeY = this.yAxisRender.getY(close)
         const highY = this.yAxisRender.getY(high)
@@ -77,7 +78,7 @@ class CandleRender extends IndicatorRender {
         if (rect[3] < 1) {
           rect[3] = 1
         }
-        switch (candle.candleChart.candleStyle) {
+        switch (candle.style) {
           case CandleStyle.SOLID: {
             ctx.fillRect(rect[0], rect[1], rect[2], rect[3])
             break
@@ -106,7 +107,7 @@ class CandleRender extends IndicatorRender {
       } else {
         this.renderOhlc(
           ctx, halfBarSpace, x, kLineData,
-          refKLineData, candle.candleChart.increasingColor, candle.candleChart.decreasingColor
+          refKLineData, candle.increasingColor, candle.decreasingColor
         )
       }
     }
@@ -118,10 +119,9 @@ class CandleRender extends IndicatorRender {
   /**
    * 渲染最高价标记
    * @param ctx
-   * @param candle
+   * @param highestPriceMark
    */
-  renderHighestPriceMark (ctx, candle) {
-    const highestPriceMark = candle.candleChart.highestPriceMark
+  renderHighestPriceMark (ctx, highestPriceMark) {
     const price = this.highestMarkData.price
     if (price === Number.MIN_SAFE_INTEGER || !highestPriceMark.display) {
       return
@@ -134,10 +134,9 @@ class CandleRender extends IndicatorRender {
   /**
    * 绘制最低价标记
    * @param ctx
-   * @param candle
+   * @param lowestPriceMark
    */
-  renderLowestPriceMark (ctx, candle) {
-    const lowestPriceMark = candle.candleChart.lowestPriceMark
+  renderLowestPriceMark (ctx, lowestPriceMark) {
     const price = this.lowestMarkData.price
     if (price === Number.MAX_SAFE_INTEGER || !lowestPriceMark.display) {
       return
@@ -212,12 +211,11 @@ class CandleRender extends IndicatorRender {
   /**
    * 绘制最新价标记
    * @param ctx
-   * @param candle
+   * @param lastPriceMark
    * @param isRenderTextLeft
    * @param isRenderTextOutside
    */
-  renderLastPriceMark (ctx, candle, isRenderTextLeft, isRenderTextOutside) {
-    const lastPriceMark = candle.lastPriceMark
+  renderLastPriceMark (ctx, lastPriceMark, isRenderTextLeft, isRenderTextOutside) {
     const dataSize = this.dataProvider.dataList.length
     if (!lastPriceMark.display || dataSize === 0) {
       return
@@ -284,9 +282,9 @@ class CandleRender extends IndicatorRender {
   /**
    * 绘制分时线
    * @param ctx
-   * @param candle
+   * @param realTime
    */
-  renderTimeLine (ctx, candle) {
+  renderTimeLine (ctx, realTime) {
     const timeLinePoints = []
     const timeLineAreaPoints = [{ x: this.viewPortHandler.contentLeft(), y: this.viewPortHandler.contentBottom() }]
     const averageLinePoints = []
@@ -317,7 +315,7 @@ class CandleRender extends IndicatorRender {
       }
     }
     const onRenderEnd = () => {
-      const timeLine = candle.timeChart.timeLine
+      const timeLine = realTime.timeLine
       if (timeLinePoints.length > 0) {
         // 绘制分时线
         ctx.lineWidth = timeLine.size
@@ -342,7 +340,7 @@ class CandleRender extends IndicatorRender {
         ctx.closePath()
         ctx.fill()
       }
-      const averageLine = candle.timeChart.averageLine
+      const averageLine = realTime.averageLine
       if (averageLine.display && averageLinePoints.length > 0) {
         // 绘制均线
         ctx.lineWidth = averageLine.size

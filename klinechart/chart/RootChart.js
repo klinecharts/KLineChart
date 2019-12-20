@@ -15,7 +15,7 @@ import TouchEvent from '../internal/event/TouchEvent'
 import MouseEvent from '../internal/event/MouseEvent'
 import MarkerEvent from '../internal/event/MarkerEvent'
 
-import { IndicatorType, YAxisPosition, YAxisTextPosition, MarkerType } from '../internal/constants'
+import { IndicatorType, YAxisPosition, YAxisTextPosition, MarkerType, ChartType } from '../internal/constants'
 
 class RootChart {
   constructor (dom, c = {}) {
@@ -253,6 +253,20 @@ class RootChart {
     this.dataProvider.addData(data, pos)
     this.calcChartIndicator()
     this.xAxisChart.flush()
+  }
+
+  /**
+   * 设置主图类型
+   * @param chartType
+   */
+  setMainChartType (chartType) {
+    if (this.candleChart.chartType !== chartType) {
+      this.candleChart.chartType = chartType
+      this.flushCharts([this.candleChart, this.tooltipChart])
+      if (chartType === ChartType.REAL_TIME) {
+        this.clearAllMarker()
+      }
+    }
   }
 
   /**

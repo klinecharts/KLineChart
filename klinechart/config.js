@@ -1,101 +1,88 @@
 export function get () {
   return {
     grid: false,
+    realTime: {
+      /**
+       * 分时线
+       */
+      timeLine: {
+        color: '#D4D4D4',
+        size: 1,
+        areaFillColor: '#FAFAFA'
+      },
+      /**
+       * 均线
+       */
+      averageLine: {
+        display: true,
+        color: '#F5A623',
+        size: 1
+      }
+    },
+
     candle: {
       /**
-       * 图类型
+       * 蜡烛样式
        */
-      chartType: 'candle',
-
+      style: 'solid',
       /**
-       * 分时图配置
+       * 上涨颜色
        */
-      timeChart: {
-        /**
-         * 分时
-         */
-        timeLine: {
-          color: '#D4D4D4',
-          size: 1,
-          areaFillColor: '#FAFAFA'
-        },
-        /**
-         * 均线
-         */
-        averageLine: {
-          display: true,
-          color: '#F5A623',
-          size: 1
-        }
-      },
-
+      increasingColor: '#5DB300',
       /**
-       * 蜡烛图配置
+       * 下跌颜色
        */
-      candleChart: {
-        /**
-         * 蜡烛图样式
-         */
-        candleStyle: 'solid',
-        /**
-         * 上涨颜色
-         */
-        increasingColor: '#5DB300',
-        /**
-         * 下跌颜色
-         */
-        decreasingColor: '#FF4A4A',
+      decreasingColor: '#FF4A4A'
+    },
 
-        /**
-         * 最大价格标记参数
-         */
-        highestPriceMark: {
-          display: true,
-          color: '#898989',
-          text: {
-            margin: 5,
-            size: 10,
-            valueFormatter: null
-          }
-        },
+    /**
+     * 最大价格标记参数
+     */
+    highestPriceMark: {
+      display: true,
+      color: '#898989',
+      text: {
+        margin: 5,
+        size: 10,
+        valueFormatter: null
+      }
+    },
 
-        /**
-         * 最小价格标记参数
-         */
-        lowestPriceMark: {
-          display: true,
-          color: '#898989',
-          text: {
-            margin: 5,
-            size: 10,
-            valueFormatter: null
-          }
-        }
-      },
+    /**
+     * 最小价格标记参数
+     */
+    lowestPriceMark: {
+      display: true,
+      color: '#898989',
+      text: {
+        margin: 5,
+        size: 10,
+        valueFormatter: null
+      }
+    },
 
-      /**
-       * 最新价标记参数
-       */
-      lastPriceMark: {
+    /**
+     * 最新价标记参数
+     */
+    lastPriceMark: {
+      display: true,
+      increasingColor: '#5DB300',
+      decreasingColor: '#FF4A4A',
+      line: {
         display: true,
-        increasingColor: '#5DB300',
-        decreasingColor: '#FF4A4A',
-        line: {
-          display: true,
-          style: 'dash',
-          dashValue: [4, 4],
-          size: 1
-        },
-        text: {
-          display: true,
-          size: 12,
-          paddingLeft: 2,
-          paddingTop: 2,
-          paddingRight: 2,
-          paddingBottom: 2,
-          color: '#FFFFFF',
-          valueFormatter: null
-        }
+        style: 'dash',
+        dashValue: [4, 4],
+        size: 1
+      },
+      text: {
+        display: true,
+        size: 12,
+        paddingLeft: 2,
+        paddingTop: 2,
+        paddingRight: 2,
+        paddingBottom: 2,
+        color: '#FFFFFF',
+        valueFormatter: null
       }
     },
     indicator: {

@@ -1,6 +1,6 @@
 import Chart from './Chart'
 import TooltipRender from '../render/TooltipRender'
-import { IndicatorType, YAxisPosition, YAxisTextPosition, MainChartType, TooltipTextDisplayRule, MarkerType } from '../internal/constants'
+import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType, TooltipTextDisplayRule, MarkerType } from '../internal/constants'
 
 class TooltipChart extends Chart {
   constructor (dom, config, candleChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
@@ -39,7 +39,7 @@ class TooltipChart extends Chart {
       this.tooltipRender.renderMainChartTooltip(
         this.ctx, kLineData,
         this.candleChart.indicatorType,
-        this.config.candle.chartType === MainChartType.CANDLE,
+        this.candleChart.chartType === ChartType.CANDLE,
         tooltip, indicator
       )
       if (this.volChart.indicatorType !== IndicatorType.NO) {

@@ -1,5 +1,6 @@
 type IndicatorType = 'NO' | 'MA' | 'VOL' | 'MACD' | 'BOLL' | 'KDJ' | 'KD' | 'RSI' | 'BIAS' | 'BRAR' | 'CCI' | 'DMI' | 'CR' | 'PSY' | 'DMA' | 'TRIX' | 'OBV' | 'VR' | 'WR' | 'MTM' | 'EMV' | 'SAR'
 type MarkerType = 'none' | 'horizontalStraightLine' | 'verticalStraightLine' | 'straightLine' | 'horizontalRayLine' | 'verticalRayLine' | 'rayLine' | 'horizontalSegmentLine' | 'verticalSegmentLine' | 'segmentLine' | 'priceLine' | 'priceChannelLine' | 'parallelStraightLine' | 'fibonacciLine'
+type ChartType = 'candle' | 'real_time'
 
 export interface KLineData {
   open: number
@@ -25,6 +26,7 @@ export interface Chart {
   setMinRange(range: number): void
   setMaxRange(range: number): void
   getDataList(): KLineData[]
+  setMainChartType(chartType: ChartType): void
   getMainIndicatorType(): IndicatorType
   getSubIndicatorType(): IndicatorType
   getConfig(): any

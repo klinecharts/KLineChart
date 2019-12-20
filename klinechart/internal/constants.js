@@ -57,8 +57,8 @@ const YAxisTextPosition = {
  * 主图类型
  * @type {{TIME_LINE: string, CANDLE: string}}
  */
-const MainChartType = {
-  TIME_LINE: 'time_line',
+const ChartType = {
+  REAL_TIME: 'real_time',
   CANDLE: 'candle'
 }
 
@@ -126,7 +126,7 @@ const MarkerDrawStep = {
 }
 
 export {
-  IndicatorType, LineStyle, YAxisPosition, YAxisTextPosition, MainChartType,
+  IndicatorType, LineStyle, YAxisPosition, YAxisTextPosition, ChartType,
   CandleStyle, TooltipTextDisplayRule, TooltipMainChartTextDisplayType,
   MarkerType, MarkerDrawStep
 }

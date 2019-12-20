@@ -864,8 +864,8 @@ var YAxisTextPosition = {
  * @type {{TIME_LINE: string, CANDLE: string}}
  */
 
-var MainChartType = {
-  TIME_LINE: 'time_line',
+var ChartType = {
+  REAL_TIME: 'real_time',
   CANDLE: 'candle'
 };
 /**
@@ -2105,8 +2105,9 @@ function (_IndicatorRender) {
      * 渲染蜡烛图
      * @param ctx
      * @param candle
+     * @param lastPriceMark
      */
-    value: function renderCandle(ctx, candle) {
+    value: function renderCandle(ctx, candle, lastPriceMark) {
       var _this = this;
 
       ctx.lineWidth = 1;
@@ -2136,14 +2137,14 @@ function (_IndicatorRender) {
         }
 
         if (close > refClose) {
-          ctx.strokeStyle = candle.candleChart.increasingColor;
-          ctx.fillStyle = candle.candleChart.increasingColor;
+          ctx.strokeStyle = candle.increasingColor;
+          ctx.fillStyle = candle.increasingColor;
         } else {
-          ctx.strokeStyle = candle.candleChart.decreasingColor;
-          ctx.fillStyle = candle.candleChart.decreasingColor;
+          ctx.strokeStyle = candle.decreasingColor;
+          ctx.fillStyle = candle.decreasingColor;
         }
 
-        if (candle.candleChart.candleStyle !== CandleStyle.OHLC) {
+        if (candle.style !== CandleStyle.OHLC) {
           var openY = _this.yAxisRender.getY(open);
 
           var closeY = _this.yAxisRender.getY(close);
@@ -2186,7 +2187,7 @@ function (_IndicatorRender) {
             rect[3] = 1;
           }
 
-          switch (candle.candleChart.candleStyle) {
+          switch (candle.style) {
             case CandleStyle.SOLID:
               {
                 ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
@@ -2222,7 +2223,7 @@ function (_IndicatorRender) {
               }
           }
         } else {
-          _this.renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, candle.candleChart.increasingColor, candle.candleChart.decreasingColor);
+          _this.renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, candle.increasingColor, candle.decreasingColor);
         }
       };
 
@@ -2239,13 +2240,12 @@ function (_IndicatorRender) {
     /**
      * 渲染最高价标记
      * @param ctx
-     * @param candle
+     * @param highestPriceMark
      */
 
   }, {
     key: "renderHighestPriceMark",
-    value: function renderHighestPriceMark(ctx, candle) {
-      var highestPriceMark = candle.candleChart.highestPriceMark;
+    value: function renderHighestPriceMark(ctx, highestPriceMark) {
       var price = this.highestMarkData.price;
 
       if (price === Number.MIN_SAFE_INTEGER || !highestPriceMark.display) {
@@ -2257,13 +2257,12 @@ function (_IndicatorRender) {
     /**
      * 绘制最低价标记
      * @param ctx
-     * @param candle
+     * @param lowestPriceMark
      */
 
   }, {
     key: "renderLowestPriceMark",
-    value: function renderLowestPriceMark(ctx, candle) {
-      var lowestPriceMark = candle.candleChart.lowestPriceMark;
+    value: function renderLowestPriceMark(ctx, lowestPriceMark) {
       var price = this.lowestMarkData.price;
 
       if (price === Number.MAX_SAFE_INTEGER || !lowestPriceMark.display) {
@@ -2335,15 +2334,14 @@ function (_IndicatorRender) {
     /**
      * 绘制最新价标记
      * @param ctx
-     * @param candle
+     * @param lastPriceMark
      * @param isRenderTextLeft
      * @param isRenderTextOutside
      */
 
   }, {
     key: "renderLastPriceMark",
-    value: function renderLastPriceMark(ctx, candle, isRenderTextLeft, isRenderTextOutside) {
-      var lastPriceMark = candle.lastPriceMark;
+    value: function renderLastPriceMark(ctx, lastPriceMark, isRenderTextLeft, isRenderTextOutside) {
       var dataSize = this.dataProvider.dataList.length;
 
       if (!lastPriceMark.display || dataSize === 0) {
@@ -2420,12 +2418,12 @@ function (_IndicatorRender) {
     /**
      * 绘制分时线
      * @param ctx
-     * @param candle
+     * @param realTime
      */
 
   }, {
     key: "renderTimeLine",
-    value: function renderTimeLine(ctx, candle) {
+    value: function renderTimeLine(ctx, realTime) {
       var _this2 = this;
 
       var timeLinePoints = [];
@@ -2497,7 +2495,7 @@ function (_IndicatorRender) {
       };
 
       var onRenderEnd = function onRenderEnd() {
-        var timeLine = candle.timeChart.timeLine;
+        var timeLine = realTime.timeLine;
 
         if (timeLinePoints.length > 0) {
           // 绘制分时线
@@ -2528,7 +2526,7 @@ function (_IndicatorRender) {
           ctx.fill();
         }
 
-        var averageLine = candle.timeChart.averageLine;
+        var averageLine = realTime.averageLine;
 
         if (averageLine.display && averageLinePoints.length > 0) {
           // 绘制均线
@@ -2565,6 +2563,7 @@ function (_IndicatorChart) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(CandleChart).call(this, dom, config, dataProvider, IndicatorType.MA));
     _this.chartRender = new CandleRender(_this.viewPortHandler, dataProvider, _this.yAxisRender);
+    _this.chartType = ChartType.CANDLE;
     return _this;
   }
 
@@ -2573,26 +2572,24 @@ function (_IndicatorChart) {
     value: function draw() {
       _get(_getPrototypeOf(CandleChart.prototype), "draw", this).call(this);
 
-      this.chartRender.renderLastPriceMark(this.ctx, this.config.candle, this.config.yAxis.position === YAxisPosition.LEFT, this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE);
+      this.chartRender.renderLastPriceMark(this.ctx, this.config.lastPriceMark, this.config.yAxis.position === YAxisPosition.LEFT, this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE);
     }
   }, {
     key: "drawChart",
     value: function drawChart() {
-      var candle = this.config.candle;
-
-      if (candle.chartType !== MainChartType.TIME_LINE) {
-        this.chartRender.renderCandle(this.ctx, candle);
+      if (this.chartType !== ChartType.REAL_TIME) {
+        this.chartRender.renderCandle(this.ctx, this.config.candle);
         this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.config.indicator, true);
-        this.chartRender.renderHighestPriceMark(this.ctx, candle);
-        this.chartRender.renderLowestPriceMark(this.ctx, candle);
+        this.chartRender.renderHighestPriceMark(this.ctx, this.config.highestPriceMark);
+        this.chartRender.renderLowestPriceMark(this.ctx, this.config.lowestPriceMark);
       } else {
-        this.chartRender.renderTimeLine(this.ctx, candle);
+        this.chartRender.renderTimeLine(this.ctx, this.config.realTime);
       }
     }
   }, {
     key: "isTimeLineChart",
     value: function isTimeLineChart() {
-      return this.config.candle.chartType === MainChartType.TIME_LINE;
+      return this.chartType === ChartType.REAL_TIME;
     }
   }, {
     key: "isDraw",
@@ -3883,7 +3880,7 @@ function (_Chart) {
 
       if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS || tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.dataProvider.crossPoint) {
         var indicator = this.config.indicator;
-        this.tooltipRender.renderMainChartTooltip(this.ctx, kLineData, this.candleChart.indicatorType, this.config.candle.chartType === MainChartType.CANDLE, tooltip, indicator);
+        this.tooltipRender.renderMainChartTooltip(this.ctx, kLineData, this.candleChart.indicatorType, this.candleChart.chartType === ChartType.CANDLE, tooltip, indicator);
 
         if (this.volChart.indicatorType !== IndicatorType.NO) {
           this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.candleChart.viewPortHandler.height, kLineData, IndicatorType.VOL, tooltip, indicator, true);
@@ -5561,104 +5558,90 @@ function getHighLow(list) {
 function get() {
   return {
     grid: false,
+    realTime: {
+      /**
+       * 分时线
+       */
+      timeLine: {
+        color: '#D4D4D4',
+        size: 1,
+        areaFillColor: '#FAFAFA'
+      },
+
+      /**
+       * 均线
+       */
+      averageLine: {
+        display: true,
+        color: '#F5A623',
+        size: 1
+      }
+    },
     candle: {
       /**
-       * 图类型
+       * 蜡烛样式
        */
-      chartType: 'candle',
+      style: 'solid',
 
       /**
-       * 分时图配置
+       * 上涨颜色
        */
-      timeChart: {
-        /**
-         * 分时
-         */
-        timeLine: {
-          color: '#D4D4D4',
-          size: 1,
-          areaFillColor: '#FAFAFA'
-        },
-
-        /**
-         * 均线
-         */
-        averageLine: {
-          display: true,
-          color: '#F5A623',
-          size: 1
-        }
-      },
+      increasingColor: '#5DB300',
 
       /**
-       * 蜡烛图配置
+       * 下跌颜色
        */
-      candleChart: {
-        /**
-         * 蜡烛图样式
-         */
-        candleStyle: 'solid',
+      decreasingColor: '#FF4A4A'
+    },
 
-        /**
-         * 上涨颜色
-         */
-        increasingColor: '#5DB300',
+    /**
+     * 最大价格标记参数
+     */
+    highestPriceMark: {
+      display: true,
+      color: '#898989',
+      text: {
+        margin: 5,
+        size: 10,
+        valueFormatter: null
+      }
+    },
 
-        /**
-         * 下跌颜色
-         */
-        decreasingColor: '#FF4A4A',
+    /**
+     * 最小价格标记参数
+     */
+    lowestPriceMark: {
+      display: true,
+      color: '#898989',
+      text: {
+        margin: 5,
+        size: 10,
+        valueFormatter: null
+      }
+    },
 
-        /**
-         * 最大价格标记参数
-         */
-        highestPriceMark: {
-          display: true,
-          color: '#898989',
-          text: {
-            margin: 5,
-            size: 10,
-            valueFormatter: null
-          }
-        },
-
-        /**
-         * 最小价格标记参数
-         */
-        lowestPriceMark: {
-          display: true,
-          color: '#898989',
-          text: {
-            margin: 5,
-            size: 10,
-            valueFormatter: null
-          }
-        }
-      },
-
-      /**
-       * 最新价标记参数
-       */
-      lastPriceMark: {
+    /**
+     * 最新价标记参数
+     */
+    lastPriceMark: {
+      display: true,
+      increasingColor: '#5DB300',
+      decreasingColor: '#FF4A4A',
+      line: {
         display: true,
-        increasingColor: '#5DB300',
-        decreasingColor: '#FF4A4A',
-        line: {
-          display: true,
-          style: 'dash',
-          dashValue: [4, 4],
-          size: 1
-        },
-        text: {
-          display: true,
-          size: 12,
-          paddingLeft: 2,
-          paddingTop: 2,
-          paddingRight: 2,
-          paddingBottom: 2,
-          color: '#FFFFFF',
-          valueFormatter: null
-        }
+        style: 'dash',
+        dashValue: [4, 4],
+        size: 1
+      },
+      text: {
+        display: true,
+        size: 12,
+        paddingLeft: 2,
+        paddingTop: 2,
+        paddingRight: 2,
+        paddingBottom: 2,
+        color: '#FFFFFF',
+        valueFormatter: null
       }
     },
     indicator: {
@@ -7709,6 +7692,23 @@ function () {
       this.dataProvider.addData(data, pos);
       this.calcChartIndicator();
       this.xAxisChart.flush();
+    }
+    /**
+     * 设置主图类型
+     * @param chartType
+     */
+
+  }, {
+    key: "setMainChartType",
+    value: function setMainChartType(chartType) {
+      if (this.candleChart.chartType !== chartType) {
+        this.candleChart.chartType = chartType;
+        this.flushCharts([this.candleChart, this.tooltipChart]);
+
+        if (chartType === ChartType.REAL_TIME) {
+          this.clearAllMarker();
+        }
+      }
     }
     /**
      * 设置主图指标

@@ -1,37 +1,37 @@
 import IndicatorChart from './IndicatorChart'
 import CandleRender from '../render/CandleRender'
 
-import { IndicatorType, YAxisPosition, YAxisTextPosition, MainChartType } from '../internal/constants'
+import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType } from '../internal/constants'
 
 class CandleChart extends IndicatorChart {
   constructor (dom, config, dataProvider) {
     super(dom, config, dataProvider, IndicatorType.MA)
     this.chartRender = new CandleRender(this.viewPortHandler, dataProvider, this.yAxisRender)
+    this.chartType = ChartType.CANDLE
   }
 
   draw () {
     super.draw()
     this.chartRender.renderLastPriceMark(
-      this.ctx, this.config.candle,
+      this.ctx, this.config.lastPriceMark,
       this.config.yAxis.position === YAxisPosition.LEFT,
       this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE
     )
   }
 
   drawChart () {
-    const candle = this.config.candle
-    if (candle.chartType !== MainChartType.TIME_LINE) {
-      this.chartRender.renderCandle(this.ctx, candle)
+    if (this.chartType !== ChartType.REAL_TIME) {
+      this.chartRender.renderCandle(this.ctx, this.config.candle)
       this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.config.indicator, true)
-      this.chartRender.renderHighestPriceMark(this.ctx, candle)
-      this.chartRender.renderLowestPriceMark(this.ctx, candle)
+      this.chartRender.renderHighestPriceMark(this.ctx, this.config.highestPriceMark)
+      this.chartRender.renderLowestPriceMark(this.ctx, this.config.lowestPriceMark)
     } else {
-      this.chartRender.renderTimeLine(this.ctx, candle)
+      this.chartRender.renderTimeLine(this.ctx, this.config.realTime)
     }
   }
 
   isTimeLineChart () {
-    return this.config.candle.chartType === MainChartType.TIME_LINE
+    return this.chartType === ChartType.REAL_TIME
   }
 
   isDraw () {
