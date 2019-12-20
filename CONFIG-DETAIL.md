@@ -2,63 +2,60 @@
 ```js
 config = {
   grid: false,
-  candle: {
-    // 'candle'|'time_line'
-    chartType: 'candle',
-    timeChart: {
-      timeLine: {
-        color: '#D4D4D4',
-        size: 1,
-        areaFillColor: '#FAFAFA'
-      },
-      averageLine: {
-        display: true,
-        color: '#F5A623',
-        size: 1
-      }
+  realTime: {
+    timeLine: {
+      color: '#D4D4D4',
+      size: 1,
+      areaFillColor: '#FAFAFA'
     },
-    candleChart: {
-      // 'solid'|'stroke'|'increasing_stroke'|'decreasing_stroke'|'ohlc'
-      candleStyle: 'solid',
-      increasingColor: '#5DB300',
-      decreasingColor: '#FF4A4A',
-      highestPriceMark: {
-        display: true,
-        color: '#898989',
-        textSize: 10,
-        valueFormatter: null
-      },
-      lowestPriceMark: {
-        display: true,
-        color: '#898989',
-        textSize: 10,
-        valueFormatter: null
-      },
-    },
-
-    lastPriceMark: {
+    averageLine: {
       display: true,
-      increasingColor: '#5DB300',
-      decreasingColor: '#FF4A4A',
-      line: {
-        display: true,
-        // 'solid'|'dash'
-        style: 'dash',
-        dashValue: [4, 4],
-        size: 1
-      },
-      text: {
-        display: true,
-        size: 12,
-        paddingLeft: 2,
-        paddingTop: 2,
-        paddingRight: 2,
-        paddingBottom: 2,
-        color: '#FFFFFF',
-        valueFormatter: null
-      }
+      color: '#F5A623',
+      size: 1
     }
   },
+  candle: {
+    // 'solid'|'stroke'|'increasing_stroke'|'decreasing_stroke'|'ohlc'
+    style: 'solid',
+    increasingColor: '#5DB300',
+    decreasingColor: '#FF4A4A',
+  },
+  highestPriceMark: {
+    display: true,
+    color: '#898989',
+    textSize: 10,
+    valueFormatter: null
+  },
+  lowestPriceMark: {
+    display: true,
+    color: '#898989',
+    textSize: 10,
+    valueFormatter: null
+  },
+
+  lastPriceMark: {
+    display: true,
+    increasingColor: '#5DB300',
+    decreasingColor: '#FF4A4A',
+    line: {
+      display: true,
+      // 'solid'|'dash'
+      style: 'dash',
+      dashValue: [4, 4],
+      size: 1
+    },
+    text: {
+      display: true,
+      size: 12,
+      paddingLeft: 2,
+      paddingTop: 2,
+      paddingRight: 2,
+      paddingBottom: 2,
+      color: '#FFFFFF',
+      valueFormatter: null
+    }
+  },
+
   indicator: {
     lineSize: 1,
     increasingColor: '#5DB300',

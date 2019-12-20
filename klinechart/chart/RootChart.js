@@ -1,4 +1,4 @@
-import CandleChart from './CandleChart'
+import MainChart from './MainChart'
 import MarkerChart from './MarkerChart'
 import IndicatorChart from './IndicatorChart'
 import TooltipChart from './TooltipChart'
@@ -38,13 +38,13 @@ class RootChart {
     this.dom = dom
     this.dataProvider = new DataProvider()
     this.xAxisChart = new XAxisChart(dom, this.config, this.dataProvider)
-    this.candleChart = new CandleChart(dom, this.config, this.dataProvider)
-    this.markerChart = new MarkerChart(dom, this.config, this.dataProvider, this.candleChart.yAxisRender)
+    this.mainChart = new MainChart(dom, this.config, this.dataProvider)
+    this.markerChart = new MarkerChart(dom, this.config, this.dataProvider, this.mainChart.yAxisRender)
     this.volIndicatorChart = new IndicatorChart(dom, this.config, this.dataProvider, IndicatorType.VOL)
     this.subIndicatorChart = new IndicatorChart(dom, this.config, this.dataProvider)
     this.tooltipChart = new TooltipChart(
       dom, this.config,
-      this.candleChart,
+      this.mainChart,
       this.volIndicatorChart,
       this.subIndicatorChart,
       this.xAxisChart, this.dataProvider
@@ -68,7 +68,7 @@ class RootChart {
     this.dom.addEventListener('contextmenu', (e) => { e.preventDefault() }, false)
     if (mobile) {
       const motionEvent = new TouchEvent(
-        this.tooltipChart, this.candleChart,
+        this.tooltipChart, this.mainChart,
         this.volIndicatorChart, this.subIndicatorChart,
         this.xAxisChart, this.dataProvider
       )
@@ -77,7 +77,7 @@ class RootChart {
       this.dom.addEventListener('touchend', (e) => { motionEvent.touchEnd(e) }, false)
     } else {
       const motionEvent = new MouseEvent(
-        this.tooltipChart, this.candleChart,
+        this.tooltipChart, this.mainChart,
         this.volIndicatorChart, this.subIndicatorChart,
         this.xAxisChart, this.markerChart, this.dataProvider
       )
@@ -146,10 +146,10 @@ class RootChart {
     }
     this.dataProvider.space(domWidth - offsetRight - offsetLeft)
     this.xAxisChart.setChartDimensions(0, domWidth, domHeight, offsetLeft, offsetRight, 0, xAxisHeight)
-    const candleChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight
-    this.candleChart.setChartDimensions(chartTop, domWidth, candleChartHeight, offsetLeft, offsetRight)
-    this.markerChart.setChartDimensions(chartTop, domWidth, candleChartHeight, offsetLeft, offsetRight)
-    chartTop += candleChartHeight
+    const mainChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight
+    this.mainChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight)
+    this.markerChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight)
+    chartTop += mainChartHeight
     this.volIndicatorChart.setChartDimensions(chartTop, domWidth, volChartHeight, offsetLeft, offsetRight)
     chartTop += volChartHeight
     this.subIndicatorChart.setChartDimensions(chartTop, domWidth, subIndicatorChartHeight, offsetLeft, offsetRight)
@@ -206,8 +206,8 @@ class RootChart {
    * 计算图表指标
    */
   calcChartIndicator () {
-    if (this.candleChart.indicatorType !== IndicatorType.NO) {
-      this.calcIndicator(this.candleChart.indicatorType, this.candleChart)
+    if (this.mainChart.indicatorType !== IndicatorType.NO) {
+      this.calcIndicator(this.mainChart.indicatorType, this.mainChart)
     }
     if (this.volIndicatorChart.indicatorType !== IndicatorType.NO) {
       this.calcIndicator(IndicatorType.VOL, this.volIndicatorChart)
@@ -260,9 +260,9 @@ class RootChart {
    * @param chartType
    */
   setMainChartType (chartType) {
-    if (this.candleChart.chartType !== chartType) {
-      this.candleChart.chartType = chartType
-      this.flushCharts([this.candleChart, this.tooltipChart])
+    if (this.mainChart.chartType !== chartType) {
+      this.mainChart.chartType = chartType
+      this.flushCharts([this.mainChart, this.tooltipChart])
       if (chartType === ChartType.REAL_TIME) {
         this.clearAllMarker()
       }
@@ -274,9 +274,9 @@ class RootChart {
    * @param indicatorType
    */
   setMainIndicatorType (indicatorType) {
-    if (this.candleChart.indicatorType !== indicatorType) {
-      this.candleChart.indicatorType = indicatorType
-      this.calcIndicator(indicatorType, this.candleChart)
+    if (this.mainChart.indicatorType !== indicatorType) {
+      this.mainChart.indicatorType = indicatorType
+      this.calcIndicator(indicatorType, this.mainChart)
     }
   }
 
@@ -326,7 +326,7 @@ class RootChart {
           this.dataProvider.minPos = 0
         }
       }
-      this.flushCharts([this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart])
+      this.flushCharts([this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart])
     }
   }
 
@@ -355,7 +355,7 @@ class RootChart {
    * @returns {string}
    */
   getMainIndicatorType () {
-    return this.candleChart.indicatorType
+    return this.mainChart.indicatorType
   }
 
   /**
@@ -438,7 +438,7 @@ class RootChart {
     }
     const c = document.createElement('canvas')
     const xAxisCanvas = this.xAxisChart.canvasDom
-    const candleCanvas = this.candleChart.canvasDom
+    const mainCanvas = this.mainChart.canvasDom
     const volCanvas = this.volIndicatorChart.canvasDom
     const indicatorCanvas = this.subIndicatorChart.canvasDom
     const tooltipCanvas = this.tooltipChart.canvasDom
@@ -449,13 +449,13 @@ class RootChart {
     const ctx = c.getContext('2d')
     ctx.drawImage(xAxisCanvas, 0, 0, xAxisCanvas.width, xAxisCanvas.height)
     if (!excludes || excludes.indexOf('candle') < 0) {
-      ctx.drawImage(candleCanvas, 0, 0, candleCanvas.width, candleCanvas.height)
+      ctx.drawImage(mainCanvas, 0, 0, mainCanvas.width, mainCanvas.height)
     }
     if (!excludes || excludes.indexOf('vol') < 0) {
-      ctx.drawImage(volCanvas, 0, candleCanvas.height, volCanvas.width, volCanvas.height)
+      ctx.drawImage(volCanvas, 0, mainCanvas.height, volCanvas.width, volCanvas.height)
     }
     if (!excludes || excludes.indexOf('subIndicator') < 0) {
-      ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height)
+      ctx.drawImage(indicatorCanvas, 0, mainCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height)
     }
     if (!excludes || excludes.indexOf('marker') < 0) {
       const markerCanvas = this.markerChart.canvasDom

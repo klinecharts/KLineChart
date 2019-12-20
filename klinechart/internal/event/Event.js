@@ -1,10 +1,10 @@
 class Event {
   constructor (
-    tooltipChart, candleChart, volChart,
+    tooltipChart, mainChart, volChart,
     subIndicatorChart, xAxisChart, dataProvider
   ) {
     this.tooltipChart = tooltipChart
-    this.candleChart = candleChart
+    this.mainChart = mainChart
     this.volChart = volChart
     this.subIndicatorChart = subIndicatorChart
     this.xAxisChart = xAxisChart
@@ -41,7 +41,7 @@ class Event {
         minPos = 0
       }
       this.dataProvider.minPos = minPos
-      this.candleChart.flush()
+      this.mainChart.flush()
       this.volChart.flush()
       this.subIndicatorChart.flush()
       this.xAxisChart.flush()
@@ -63,7 +63,7 @@ class Event {
         minPos = dataSize - range
       }
       this.dataProvider.minPos = minPos
-      this.candleChart.flush()
+      this.mainChart.flush()
       this.volChart.flush()
       this.subIndicatorChart.flush()
       this.xAxisChart.flush()
@@ -108,7 +108,7 @@ class Event {
     this.dataProvider.range = range
     this.dataProvider.minPos = minPos
     this.dataProvider.space(this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft())
-    this.candleChart.flush()
+    this.mainChart.flush()
     this.volChart.flush()
     this.subIndicatorChart.flush()
     this.xAxisChart.flush()

@@ -3,16 +3,16 @@ import TooltipRender from '../render/TooltipRender'
 import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType, TooltipTextDisplayRule, MarkerType } from '../internal/constants'
 
 class TooltipChart extends Chart {
-  constructor (dom, config, candleChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
+  constructor (dom, config, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
     super(dom, config)
-    this.candleChart = candleChart
+    this.mainChart = mainChart
     this.volChart = volChart
     this.subIndicatorChart = subIndicatorChart
     this.dataProvider = dataProvider
     this.tooltipRender = new TooltipRender(
       this.viewPortHandler, dataProvider,
-      candleChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler,
-      candleChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender
+      mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler,
+      mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender
     )
   }
 
@@ -23,7 +23,7 @@ class TooltipChart extends Chart {
     if (this.dataProvider.currentMarkerType === MarkerType.NONE && !this.dataProvider.isDragMarker) {
       this.tooltipRender.renderCrossHorizontalLine(
         this.ctx,
-        this.candleChart.indicatorType,
+        this.mainChart.indicatorType,
         this.subIndicatorChart.indicatorType,
         this.config.yAxis.position === YAxisPosition.LEFT,
         this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE,
@@ -38,19 +38,19 @@ class TooltipChart extends Chart {
 
       this.tooltipRender.renderMainChartTooltip(
         this.ctx, kLineData,
-        this.candleChart.indicatorType,
-        this.candleChart.chartType === ChartType.CANDLE,
+        this.mainChart.indicatorType,
+        this.mainChart.chartType === ChartType.CANDLE,
         tooltip, indicator
       )
       if (this.volChart.indicatorType !== IndicatorType.NO) {
         this.tooltipRender.renderIndicatorChartTooltip(
-          this.ctx, this.candleChart.viewPortHandler.height,
+          this.ctx, this.mainChart.viewPortHandler.height,
           kLineData, IndicatorType.VOL, tooltip, indicator, true
         )
       }
       if (this.subIndicatorChart.indicatorType !== IndicatorType.NO) {
         this.tooltipRender.renderIndicatorChartTooltip(
-          this.ctx, this.candleChart.viewPortHandler.height + this.volChart.viewPortHandler.height,
+          this.ctx, this.mainChart.viewPortHandler.height + this.volChart.viewPortHandler.height,
           kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator
         )
       }

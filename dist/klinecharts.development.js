@@ -2087,18 +2087,18 @@ function (_Chart) {
   return IndicatorChart;
 }(Chart);
 
-var CandleRender =
+var MainRender =
 /*#__PURE__*/
 function (_IndicatorRender) {
-  _inherits(CandleRender, _IndicatorRender);
+  _inherits(MainRender, _IndicatorRender);
 
-  function CandleRender() {
-    _classCallCheck(this, CandleRender);
+  function MainRender() {
+    _classCallCheck(this, MainRender);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(CandleRender).apply(this, arguments));
+    return _possibleConstructorReturn(this, _getPrototypeOf(MainRender).apply(this, arguments));
   }
 
-  _createClass(CandleRender, [{
+  _createClass(MainRender, [{
     key: "renderCandle",
 
     /**
@@ -2548,29 +2548,29 @@ function (_IndicatorRender) {
     }
   }]);
 
-  return CandleRender;
+  return MainRender;
 }(IndicatorRender);
 
-var CandleChart =
+var MainChart =
 /*#__PURE__*/
 function (_IndicatorChart) {
-  _inherits(CandleChart, _IndicatorChart);
+  _inherits(MainChart, _IndicatorChart);
 
-  function CandleChart(dom, config, dataProvider) {
+  function MainChart(dom, config, dataProvider) {
     var _this;
 
-    _classCallCheck(this, CandleChart);
+    _classCallCheck(this, MainChart);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(CandleChart).call(this, dom, config, dataProvider, IndicatorType.MA));
-    _this.chartRender = new CandleRender(_this.viewPortHandler, dataProvider, _this.yAxisRender);
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MainChart).call(this, dom, config, dataProvider, IndicatorType.MA));
+    _this.chartRender = new MainRender(_this.viewPortHandler, dataProvider, _this.yAxisRender);
     _this.chartType = ChartType.CANDLE;
     return _this;
   }
 
-  _createClass(CandleChart, [{
+  _createClass(MainChart, [{
     key: "draw",
     value: function draw() {
-      _get(_getPrototypeOf(CandleChart.prototype), "draw", this).call(this);
+      _get(_getPrototypeOf(MainChart.prototype), "draw", this).call(this);
 
       this.chartRender.renderLastPriceMark(this.ctx, this.config.lastPriceMark, this.config.yAxis.position === YAxisPosition.LEFT, this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE);
     }
@@ -2603,7 +2603,7 @@ function (_IndicatorChart) {
     }
   }]);
 
-  return CandleChart;
+  return MainChart;
 }(IndicatorChart);
 
 var MarkerRender =
@@ -3851,17 +3851,17 @@ var TooltipChart =
 function (_Chart) {
   _inherits(TooltipChart, _Chart);
 
-  function TooltipChart(dom, config, candleChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
+  function TooltipChart(dom, config, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
     var _this;
 
     _classCallCheck(this, TooltipChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(TooltipChart).call(this, dom, config));
-    _this.candleChart = candleChart;
+    _this.mainChart = mainChart;
     _this.volChart = volChart;
     _this.subIndicatorChart = subIndicatorChart;
     _this.dataProvider = dataProvider;
-    _this.tooltipRender = new TooltipRender(_this.viewPortHandler, dataProvider, candleChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler, candleChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender);
+    _this.tooltipRender = new TooltipRender(_this.viewPortHandler, dataProvider, mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler, mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender);
     return _this;
   }
 
@@ -3872,7 +3872,7 @@ function (_Chart) {
       var tooltip = this.config.tooltip; // 如果不是绘图才显示十字线
 
       if (this.dataProvider.currentMarkerType === MarkerType.NONE && !this.dataProvider.isDragMarker) {
-        this.tooltipRender.renderCrossHorizontalLine(this.ctx, this.candleChart.indicatorType, this.subIndicatorChart.indicatorType, this.config.yAxis.position === YAxisPosition.LEFT, this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, tooltip);
+        this.tooltipRender.renderCrossHorizontalLine(this.ctx, this.mainChart.indicatorType, this.subIndicatorChart.indicatorType, this.config.yAxis.position === YAxisPosition.LEFT, this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, tooltip);
         this.tooltipRender.renderCrossVerticalLine(this.ctx, kLineData, tooltip);
       }
 
@@ -3880,14 +3880,14 @@ function (_Chart) {
 
       if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS || tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.dataProvider.crossPoint) {
         var indicator = this.config.indicator;
-        this.tooltipRender.renderMainChartTooltip(this.ctx, kLineData, this.candleChart.indicatorType, this.candleChart.chartType === ChartType.CANDLE, tooltip, indicator);
+        this.tooltipRender.renderMainChartTooltip(this.ctx, kLineData, this.mainChart.indicatorType, this.mainChart.chartType === ChartType.CANDLE, tooltip, indicator);
 
         if (this.volChart.indicatorType !== IndicatorType.NO) {
-          this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.candleChart.viewPortHandler.height, kLineData, IndicatorType.VOL, tooltip, indicator, true);
+          this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.mainChart.viewPortHandler.height, kLineData, IndicatorType.VOL, tooltip, indicator, true);
         }
 
         if (this.subIndicatorChart.indicatorType !== IndicatorType.NO) {
-          this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.candleChart.viewPortHandler.height + this.volChart.viewPortHandler.height, kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator);
+          this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.mainChart.viewPortHandler.height + this.volChart.viewPortHandler.height, kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator);
         }
       }
     }
@@ -5903,11 +5903,11 @@ function isMobile(ua) {
 var Event =
 /*#__PURE__*/
 function () {
-  function Event(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
+  function Event(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
     _classCallCheck(this, Event);
 
     this.tooltipChart = tooltipChart;
-    this.candleChart = candleChart;
+    this.mainChart = mainChart;
     this.volChart = volChart;
     this.subIndicatorChart = subIndicatorChart;
     this.xAxisChart = xAxisChart;
@@ -5950,7 +5950,7 @@ function () {
         }
 
         this.dataProvider.minPos = minPos;
-        this.candleChart.flush();
+        this.mainChart.flush();
         this.volChart.flush();
         this.subIndicatorChart.flush();
         this.xAxisChart.flush();
@@ -5975,7 +5975,7 @@ function () {
         }
 
         this.dataProvider.minPos = minPos;
-        this.candleChart.flush();
+        this.mainChart.flush();
         this.volChart.flush();
         this.subIndicatorChart.flush();
         this.xAxisChart.flush();
@@ -6024,7 +6024,7 @@ function () {
       this.dataProvider.range = range;
       this.dataProvider.minPos = minPos;
       this.dataProvider.space(this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft());
-      this.candleChart.flush();
+      this.mainChart.flush();
       this.volChart.flush();
       this.subIndicatorChart.flush();
       this.xAxisChart.flush();
@@ -6174,12 +6174,12 @@ var TouchEvent =
 function (_Event) {
   _inherits(TouchEvent, _Event);
 
-  function TouchEvent(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
+  function TouchEvent(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
     var _this;
 
     _classCallCheck(this, TouchEvent);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TouchEvent).call(this, tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, dataProvider)); // 事件模型
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TouchEvent).call(this, tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider)); // 事件模型
 
     _this.touchMode = TOUCH_NO;
     _this.touchStartPoint = {
@@ -6460,12 +6460,12 @@ var MouseEvent =
 function (_Event) {
   _inherits(MouseEvent, _Event);
 
-  function MouseEvent(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, markerChart, dataProvider) {
+  function MouseEvent(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, markerChart, dataProvider) {
     var _this;
 
     _classCallCheck(this, MouseEvent);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MouseEvent).call(this, tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, dataProvider));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MouseEvent).call(this, tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider));
     _this.markerChart = markerChart; // 事件模型
 
     _this.mouseMode = CROSS;
@@ -7409,11 +7409,11 @@ function () {
     this.dom = dom;
     this.dataProvider = new DataProvider();
     this.xAxisChart = new XAxisChart(dom, this.config, this.dataProvider);
-    this.candleChart = new CandleChart(dom, this.config, this.dataProvider);
-    this.markerChart = new MarkerChart(dom, this.config, this.dataProvider, this.candleChart.yAxisRender);
+    this.mainChart = new MainChart(dom, this.config, this.dataProvider);
+    this.markerChart = new MarkerChart(dom, this.config, this.dataProvider, this.mainChart.yAxisRender);
     this.volIndicatorChart = new IndicatorChart(dom, this.config, this.dataProvider, IndicatorType.VOL);
     this.subIndicatorChart = new IndicatorChart(dom, this.config, this.dataProvider);
-    this.tooltipChart = new TooltipChart(dom, this.config, this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider);
+    this.tooltipChart = new TooltipChart(dom, this.config, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider);
     this.calcChartDimensions();
     this.initEvent();
   }
@@ -7440,7 +7440,7 @@ function () {
       }, false);
 
       if (mobile) {
-        var motionEvent = new TouchEvent(this.tooltipChart, this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider);
+        var motionEvent = new TouchEvent(this.tooltipChart, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider);
         this.dom.addEventListener('touchstart', function (e) {
           motionEvent.touchStart(e);
         }, false);
@@ -7451,7 +7451,7 @@ function () {
           motionEvent.touchEnd(e);
         }, false);
       } else {
-        var _motionEvent = new MouseEvent(this.tooltipChart, this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.markerChart, this.dataProvider);
+        var _motionEvent = new MouseEvent(this.tooltipChart, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.markerChart, this.dataProvider);
 
         var markerEvent = new MarkerEvent(this.dataProvider, this.markerChart, this.config);
         this.dom.addEventListener('mousedown', function (e) {
@@ -7555,10 +7555,10 @@ function () {
 
       this.dataProvider.space(domWidth - offsetRight - offsetLeft);
       this.xAxisChart.setChartDimensions(0, domWidth, domHeight, offsetLeft, offsetRight, 0, xAxisHeight);
-      var candleChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight;
-      this.candleChart.setChartDimensions(chartTop, domWidth, candleChartHeight, offsetLeft, offsetRight);
-      this.markerChart.setChartDimensions(chartTop, domWidth, candleChartHeight, offsetLeft, offsetRight);
-      chartTop += candleChartHeight;
+      var mainChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight;
+      this.mainChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight);
+      this.markerChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight);
+      chartTop += mainChartHeight;
       this.volIndicatorChart.setChartDimensions(chartTop, domWidth, volChartHeight, offsetLeft, offsetRight);
       chartTop += volChartHeight;
       this.subIndicatorChart.setChartDimensions(chartTop, domWidth, subIndicatorChartHeight, offsetLeft, offsetRight);
@@ -7632,8 +7632,8 @@ function () {
   }, {
     key: "calcChartIndicator",
     value: function calcChartIndicator() {
-      if (this.candleChart.indicatorType !== IndicatorType.NO) {
-        this.calcIndicator(this.candleChart.indicatorType, this.candleChart);
+      if (this.mainChart.indicatorType !== IndicatorType.NO) {
+        this.calcIndicator(this.mainChart.indicatorType, this.mainChart);
       }
 
       if (this.volIndicatorChart.indicatorType !== IndicatorType.NO) {
@@ -7701,9 +7701,9 @@ function () {
   }, {
     key: "setMainChartType",
     value: function setMainChartType(chartType) {
-      if (this.candleChart.chartType !== chartType) {
-        this.candleChart.chartType = chartType;
-        this.flushCharts([this.candleChart, this.tooltipChart]);
+      if (this.mainChart.chartType !== chartType) {
+        this.mainChart.chartType = chartType;
+        this.flushCharts([this.mainChart, this.tooltipChart]);
 
         if (chartType === ChartType.REAL_TIME) {
           this.clearAllMarker();
@@ -7718,9 +7718,9 @@ function () {
   }, {
     key: "setMainIndicatorType",
     value: function setMainIndicatorType(indicatorType) {
-      if (this.candleChart.indicatorType !== indicatorType) {
-        this.candleChart.indicatorType = indicatorType;
-        this.calcIndicator(indicatorType, this.candleChart);
+      if (this.mainChart.indicatorType !== indicatorType) {
+        this.mainChart.indicatorType = indicatorType;
+        this.calcIndicator(indicatorType, this.mainChart);
       }
     }
     /**
@@ -7783,7 +7783,7 @@ function () {
           }
         }
 
-        this.flushCharts([this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart]);
+        this.flushCharts([this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart]);
       }
     }
     /**
@@ -7818,7 +7818,7 @@ function () {
   }, {
     key: "getMainIndicatorType",
     value: function getMainIndicatorType() {
-      return this.candleChart.indicatorType;
+      return this.mainChart.indicatorType;
     }
     /**
      * 获取附图指标类型
@@ -7926,7 +7926,7 @@ function () {
 
       var c = document.createElement('canvas');
       var xAxisCanvas = this.xAxisChart.canvasDom;
-      var candleCanvas = this.candleChart.canvasDom;
+      var mainCanvas = this.mainChart.canvasDom;
       var volCanvas = this.volIndicatorChart.canvasDom;
       var indicatorCanvas = this.subIndicatorChart.canvasDom;
       var tooltipCanvas = this.tooltipChart.canvasDom;
@@ -7938,15 +7938,15 @@ function () {
       ctx.drawImage(xAxisCanvas, 0, 0, xAxisCanvas.width, xAxisCanvas.height);
 
       if (!excludes || excludes.indexOf('candle') < 0) {
-        ctx.drawImage(candleCanvas, 0, 0, candleCanvas.width, candleCanvas.height);
+        ctx.drawImage(mainCanvas, 0, 0, mainCanvas.width, mainCanvas.height);
       }
 
       if (!excludes || excludes.indexOf('vol') < 0) {
-        ctx.drawImage(volCanvas, 0, candleCanvas.height, volCanvas.width, volCanvas.height);
+        ctx.drawImage(volCanvas, 0, mainCanvas.height, volCanvas.width, volCanvas.height);
       }
 
       if (!excludes || excludes.indexOf('subIndicator') < 0) {
-        ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height);
+        ctx.drawImage(indicatorCanvas, 0, mainCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height);
       }
 
       if (!excludes || excludes.indexOf('marker') < 0) {

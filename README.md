@@ -26,6 +26,7 @@ $ yarn add klinecharts
 ```js
 var chart = klinecharts.init(document.getElementById('div'))
 chart.setConfig(config)
+chart.setMainChartType(chartType)
 chart.setMainIndicatorType(indicatorType)
 chart.setSubIndicatorType(indicatorType)
 chart.showVolChart(true)

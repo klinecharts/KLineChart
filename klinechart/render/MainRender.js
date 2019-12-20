@@ -3,7 +3,7 @@ import { calcTextWidth } from '../internal/utils/drawUtils'
 import { formatDecimal, isFunction } from '../internal/utils/dataUtils'
 import { CandleStyle, LineStyle } from '../internal/constants'
 
-class CandleRender extends IndicatorRender {
+class MainRender extends IndicatorRender {
   /**
    * 渲染蜡烛图
    * @param ctx
@@ -358,4 +358,4 @@ class CandleRender extends IndicatorRender {
   }
 }
 
-export default CandleRender
+export default MainRender
