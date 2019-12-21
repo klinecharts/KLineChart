@@ -207,12 +207,12 @@ class YAxisRender extends AxisRender {
     return y > this.viewPortHandler.contentTop() + labelHeight && y < this.viewPortHandler.contentBottom() - labelHeight
   }
 
-  calcAxisMinMax (indicatorType, isMainChart = false, isTimeLine = false) {
+  calcAxisMinMax (indicatorType, isMainChart = false, isRealTimeChart = false) {
     const dataList = this.dataProvider.dataList
     const min = this.dataProvider.minPos
     const max = Math.min(min + this.dataProvider.range, dataList.length)
     const minMaxArray = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER]
-    if (isTimeLine) {
+    if (isRealTimeChart) {
       for (let i = min; i < max; i++) {
         const kLineData = dataList[i]
         minMaxArray[0] = Math.min.apply(null, [kLineData.average, kLineData.close, minMaxArray[0]])

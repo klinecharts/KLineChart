@@ -30,11 +30,11 @@ class MainChart extends IndicatorChart {
     }
   }
 
-  isTimeLineChart () {
+  isRealTimeChart () {
     return this.chartType === ChartType.REAL_TIME
   }
 
-  isDraw () {
+  isDrawChart () {
     return true
   }
 

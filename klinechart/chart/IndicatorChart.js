@@ -13,14 +13,14 @@ class IndicatorChart extends Chart {
   }
 
   draw () {
-    if (this.isDraw()) {
+    if (this.isDrawChart()) {
       const isMainChart = this.isMainChart()
       if (!isMainChart) {
         this.chartRender.renderHorizontalSeparatorLine(this.ctx, this.config.xAxis)
       }
       const yAxis = this.config.yAxis
-      const isTimeLineChart = this.isTimeLineChart()
-      this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isTimeLineChart)
+      const isRealTimeChart = this.isRealTimeChart()
+      this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart)
       this.yAxisRender.computeAxis()
       this.yAxisRender.renderSeparatorLines(this.ctx, yAxis)
       this.drawChart()
@@ -35,7 +35,7 @@ class IndicatorChart extends Chart {
     this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.config.indicator, false)
   }
 
-  isDraw () {
+  isDrawChart () {
     return this.indicatorType !== IndicatorType.NO
   }
 
@@ -43,7 +43,7 @@ class IndicatorChart extends Chart {
     return false
   }
 
-  isTimeLineChart () {
+  isRealTimeChart () {
     return false
   }
 }
