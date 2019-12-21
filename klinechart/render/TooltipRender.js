@@ -594,7 +594,9 @@ class TooltipRender extends Render {
         break
       }
       case IndicatorType.BIAS: {
-        labels = ['bias6', 'bias12', 'bias24']
+        params.forEach(p => {
+          labels.push(`bias${p}`)
+        })
         break
       }
       case IndicatorType.BRAR: {
@@ -623,7 +625,9 @@ class TooltipRender extends Render {
       }
 
       case IndicatorType.RSI: {
-        labels = ['rsi6', 'rsi12', 'rsi24']
+        params.forEach(p => {
+          labels.push(`rsi${p}`)
+        })
         break
       }
       case IndicatorType.PSY: {

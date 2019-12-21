@@ -111,7 +111,11 @@ class IndicatorRender extends Render {
       case IndicatorType.BIAS: {
         onRendering = (x, i, kLineData) => {
           const bias = kLineData.bias || {}
-          this.prepareLinePoints(x, [bias.bias1, bias.bias2, bias.bias3], linePoints)
+          const lineValues = []
+          params.forEach(p => {
+            lineValues.push(bias[`bias${p}`])
+          })
+          this.prepareLinePoints(x, lineValues, linePoints)
         }
         break
       }
@@ -167,7 +171,11 @@ class IndicatorRender extends Render {
       case IndicatorType.RSI: {
         onRendering = (x, i, kLineData) => {
           const rsi = kLineData.rsi || {}
-          this.prepareLinePoints(x, [rsi.rsi1, rsi.rsi2, rsi.rsi3], linePoints)
+          const lineValues = []
+          params.forEach(p => {
+            lineValues.push(rsi[`rsi${p}`])
+          })
+          this.prepareLinePoints(x, lineValues, linePoints)
         }
         break
       }

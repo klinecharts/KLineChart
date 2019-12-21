@@ -886,8 +886,12 @@ function (_Render) {
           {
             onRendering = function onRendering(x, i, kLineData) {
               var bias = kLineData.bias || {};
+              var lineValues = [];
+              params.forEach(function (p) {
+                lineValues.push(bias["bias".concat(p)]);
+              });
 
-              _this2.prepareLinePoints(x, [bias.bias1, bias.bias2, bias.bias3], linePoints);
+              _this2.prepareLinePoints(x, lineValues, linePoints);
             };
 
             break;
@@ -963,8 +967,12 @@ function (_Render) {
           {
             onRendering = function onRendering(x, i, kLineData) {
               var rsi = kLineData.rsi || {};
+              var lineValues = [];
+              params.forEach(function (p) {
+                lineValues.push(rsi["rsi".concat(p)]);
+              });
 
-              _this2.prepareLinePoints(x, [rsi.rsi1, rsi.rsi2, rsi.rsi3], linePoints);
+              _this2.prepareLinePoints(x, lineValues, linePoints);
             };
 
             break;
@@ -3703,7 +3711,9 @@ function (_Render) {
 
         case IndicatorType.BIAS:
           {
-            labels = ['bias6', 'bias12', 'bias24'];
+            params.forEach(function (p) {
+              labels.push("bias".concat(p));
+            });
             break;
           }
 
@@ -3745,7 +3755,9 @@ function (_Render) {
 
         case IndicatorType.RSI:
           {
-            labels = ['rsi6', 'rsi12', 'rsi24'];
+            params.forEach(function (p) {
+              labels.push("rsi".concat(p));
+            });
             break;
           }
 
@@ -4213,22 +4225,27 @@ calcIndicator[IndicatorType.VOL] = function (dataList, params) {
 /**
  * 计算MACD指标
  *
+ * MACD：参数快线移动平均、慢线移动平均、移动平均，
+ * 默认参数值12、26、9。
+ * 公式：⒈首先分别计算出收盘价12日指数平滑移动平均线与26日指数平滑移动平均线，分别记为EMA(12）与EMA(26）。
+ * ⒉求这两条指数平滑移动平均线的差，即：DIFF=EMA（SHORT）－EMA（LONG）。
+ * ⒊再计算DIFF的M日的平均的指数平滑移动平均线，记为DEA。
+ * ⒋最后用DIFF减DEA，得MACD。MACD通常绘制成围绕零轴线波动的柱形图。MACD柱状大于0涨颜色，小于0跌颜色。
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.MACD] = function (dataList) {
-  // MACD：参数快线移动平均、慢线移动平均、移动平均，
-  // 参数值12、26、9。
-  // 公式：⒈首先分别计算出收盘价12日指数平滑移动平均线与26日指数平滑移动平均线，分别记为EMA(12）与EMA(26）。
-  // ⒉求这两条指数平滑移动平均线的差，即：DIFF=EMA（SHORT）－EMA（LONG）。
-  // ⒊再计算DIFF的M日的平均的指数平滑移动平均线，记为DEA。
-  // ⒋最后用DIFF减DEA，得MACD。MACD通常绘制成围绕零轴线波动的柱形图。MACD柱状大于0红色，小于0绿色。
-  var ema12;
-  var ema26;
-  var oldEma12 = 0;
-  var oldEma26 = 0;
+calcIndicator[IndicatorType.MACD] = function (dataList, params) {
+  if (!params || !isArray(params) || params.length !== 3) {
+    return dataList;
+  }
+
+  var emaShort;
+  var emaLong;
+  var oldEmaShort = 0;
+  var oldEmaLong = 0;
   var diff = 0;
   var dea = 0;
   var oldDea = 0;
@@ -4237,18 +4254,18 @@ calcIndicator[IndicatorType.MACD] = function (dataList) {
     var closePrice = dataList[i].close;
 
     if (i === 0) {
-      ema12 = closePrice;
-      ema26 = closePrice;
+      emaShort = closePrice;
+      emaLong = closePrice;
     } else {
-      ema12 = (2 * closePrice + 11 * oldEma12) / 13.0;
-      ema26 = (2 * closePrice + 25 * oldEma26) / 27.0;
+      emaShort = (2 * closePrice + (params[0] - 1) * oldEmaShort) / (params[0] + 1);
+      emaLong = (2 * closePrice + (params[1] - 1) * oldEmaLong) / (params[1] + 1);
     }
 
-    diff = ema12 - ema26;
-    dea = (diff * 2 + oldDea * 8) / 10.0;
+    diff = emaShort - emaLong;
+    dea = (diff * 2 + oldDea * (params[2] - 1)) / (params[2] + 1);
     macd = (diff - dea) * 2;
-    oldEma12 = ema12;
-    oldEma26 = ema26;
+    oldEmaShort = emaShort;
+    oldEmaLong = emaLong;
     oldDea = dea;
     dataList[i].macd = {
       diff: diff,
@@ -4259,14 +4276,19 @@ calcIndicator[IndicatorType.MACD] = function (dataList) {
 };
 /**
  * 计算BOLL指标
- * 参数20
+ * 默认参数20
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.BOLL] = function (dataList) {
-  var close20 = 0;
+calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
+  if (!params || !isArray(params) || params.length !== 1) {
+    return dataList;
+  }
+
+  var closeSum = 0;
   var ma; // 中轨线
 
   var md; // 标准差
@@ -4277,15 +4299,15 @@ calcIndicator[IndicatorType.BOLL] = function (dataList) {
 
   return calc(dataList, function (i) {
     var closePrice = dataList[i].close;
-    close20 += closePrice;
+    closeSum += closePrice;
 
-    if (i < 20) {
-      ma = close20 / (i + 1);
+    if (i < params[0]) {
+      ma = closeSum / (i + 1);
       md = getBollMd(dataList.slice(0, i + 1), ma);
     } else {
-      close20 -= dataList[i - 20].close;
-      ma = close20 / 20;
-      md = getBollMd(dataList.slice(i - 19, i + 1), ma);
+      closeSum -= dataList[i - params[0]].close;
+      ma = closeSum / params[0];
+      md = getBollMd(dataList.slice(i - (params[0] - 1), i + 1), ma);
     }
 
     up = ma + 2 * md;
@@ -4299,13 +4321,18 @@ calcIndicator[IndicatorType.BOLL] = function (dataList) {
 };
 /**
  * 计算KDJ
- * 参数9，3，3
+ * 默认参数9，3，3
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.KDJ] = function (dataList) {
+calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
+  if (!params || !isArray(params) || params.length !== 3) {
+    return dataList;
+  }
+
   var k;
   var d;
   var j; // n日内最低价
@@ -4317,12 +4344,12 @@ calcIndicator[IndicatorType.KDJ] = function (dataList) {
     // n日收盘价
     var cn = dataList[i].close;
 
-    if (i < 8) {
+    if (i < params[0] - 1) {
       ln = getLow(dataList.slice(0, i + 1));
       hn = getHigh(dataList.slice(0, i + 1));
     } else {
-      ln = getLow(dataList.slice(i - 8, i + 1));
-      hn = getHigh(dataList.slice(i - 8, i + 1));
+      ln = getLow(dataList.slice(i - (params[0] - 1), i + 1));
+      hn = getHigh(dataList.slice(i - (params[0] - 1), i + 1));
     }
 
     var rsv = (cn - ln) / (hn - ln === 0 ? 1 : hn - ln) * 100; // 当日K值=2/3×前一日K值+1/3×当日RSV
@@ -4330,8 +4357,8 @@ calcIndicator[IndicatorType.KDJ] = function (dataList) {
     // 若无前一日K 值与D值，则可分别用50来代替。
     // J值=3*当日K值-2*当日D值
 
-    k = 2.0 / 3.0 * (i < 8 ? 50.0 : dataList[i - 1].kdj.k) + 1.0 / 3.0 * rsv;
-    d = 2.0 / 3.0 * (i < 8 ? 50.0 : dataList[i - 1].kdj.d) + 1.0 / 3.0 * k;
+    k = (params[1] - 1) / params[1] * (i < params[0] - 1 ? 50.0 : dataList[i - 1].kdj.k) + 1.0 / params[1] * rsv;
+    d = (params[2] - 1) / params[2] * (i < params[0] - 1 ? 50.0 : dataList[i - 1].kdj.d) + 1.0 / params[2] * k;
     j = 3.0 * k - 2.0 * d;
     dataList[i].kdj = {
       k: k,
@@ -4342,20 +4369,19 @@ calcIndicator[IndicatorType.KDJ] = function (dataList) {
 };
 /**
  * 计算RSI
- * 参数6，12，24
+ * 默认参数6，12，24
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.RSI] = function (dataList) {
-  // N日RSI =
+calcIndicator[IndicatorType.RSI] = function (dataList, params) {
+  if (!params || !isArray(params) || params.length !== 3) {
+    return dataList;
+  } // N日RSI =
   // N日内收盘涨幅的平均值/(N日内收盘涨幅均值+N日内收盘跌幅均值) ×100%
-  var rsi1 = 0; // 参数6
 
-  var rsi2 = 0; // 参数12
-
-  var rsi3 = 0; // 参数24
 
   var sumCloseA1 = 0;
   var sumCloseB1 = 0;
@@ -4370,103 +4396,103 @@ calcIndicator[IndicatorType.RSI] = function (dataList) {
   var a3;
   var b3;
   return calc(dataList, function (i) {
+    var _rsi;
+
+    var rsi = (_rsi = {}, _defineProperty(_rsi, "rsi".concat(params[0]), 0), _defineProperty(_rsi, "rsi".concat(params[1]), 0), _defineProperty(_rsi, "rsi".concat(params[2]), 0), _rsi);
+
     if (i > 0) {
-      if (i > 0) {
-        var tmp = dataList[i].close - dataList[i - 1].close;
+      var tmp = dataList[i].close - dataList[i - 1].close;
 
-        if (tmp > 0) {
-          sumCloseA1 += tmp;
-          sumCloseA2 += tmp;
-          sumCloseA3 += tmp;
-        } else {
-          var absTmp = Math.abs(tmp);
-          sumCloseB1 += absTmp;
-          sumCloseB2 += absTmp;
-          sumCloseB3 += absTmp;
-        }
-
-        if (i < 6) {
-          a1 = sumCloseA1 / (i + 1);
-          b1 = (sumCloseA1 + sumCloseB1) / (i + 1);
-        } else {
-          if (i > 6) {
-            var agoTmp = dataList[i - 6].close - dataList[i - 7].close;
-
-            if (agoTmp > 0) {
-              sumCloseA1 -= agoTmp;
-            } else {
-              sumCloseB1 -= Math.abs(agoTmp);
-            }
-          }
-
-          a1 = sumCloseA1 / 6;
-          b1 = (sumCloseA1 + sumCloseB1) / 6;
-        }
-
-        rsi1 = b1 !== 0.0 ? a1 / b1 * 100 : 0.0;
-
-        if (i < 12) {
-          a2 = sumCloseA2 / (i + 1);
-          b2 = (sumCloseA2 + sumCloseB2) / (i + 1);
-        } else {
-          if (i > 12) {
-            var _agoTmp = dataList[i - 12].close - dataList[i - 13].close;
-
-            if (_agoTmp > 0) {
-              sumCloseA2 -= _agoTmp;
-            } else {
-              sumCloseB2 -= Math.abs(_agoTmp);
-            }
-          }
-
-          a2 = sumCloseA2 / 12;
-          b2 = (sumCloseA2 + sumCloseB2) / 12;
-        }
-
-        rsi2 = b2 !== 0.0 ? a2 / b2 * 100 : 0.0;
-
-        if (i < 24) {
-          a3 = sumCloseA3 / (i + 1);
-          b3 = (sumCloseA3 + sumCloseB3) / (i + 1);
-        } else {
-          if (i > 24) {
-            var _agoTmp2 = dataList[i - 24].close - dataList[i - 25].close;
-
-            if (_agoTmp2 > 0) {
-              sumCloseA3 -= _agoTmp2;
-            } else {
-              sumCloseB3 -= Math.abs(_agoTmp2);
-            }
-          }
-
-          a3 = sumCloseA3 / 24;
-          b3 = (sumCloseA3 + sumCloseB3) / 24;
-        }
-
-        rsi3 = b3 !== 0.0 ? a3 / b3 * 100 : 0.0;
+      if (tmp > 0) {
+        sumCloseA1 += tmp;
+        sumCloseA2 += tmp;
+        sumCloseA3 += tmp;
+      } else {
+        var absTmp = Math.abs(tmp);
+        sumCloseB1 += absTmp;
+        sumCloseB2 += absTmp;
+        sumCloseB3 += absTmp;
       }
+
+      if (i < params[0]) {
+        a1 = sumCloseA1 / (i + 1);
+        b1 = (sumCloseA1 + sumCloseB1) / (i + 1);
+      } else {
+        if (i > params[0]) {
+          var agoTmp = dataList[i - params[0]].close - dataList[i - params[0] - 1].close;
+
+          if (agoTmp > 0) {
+            sumCloseA1 -= agoTmp;
+          } else {
+            sumCloseB1 -= Math.abs(agoTmp);
+          }
+        }
+
+        a1 = sumCloseA1 / params[0];
+        b1 = (sumCloseA1 + sumCloseB1) / params[0];
+      }
+
+      rsi["rsi".concat(params[0])] = b1 !== 0.0 ? a1 / b1 * 100 : 0.0;
+
+      if (i < params[1]) {
+        a2 = sumCloseA2 / (i + 1);
+        b2 = (sumCloseA2 + sumCloseB2) / (i + 1);
+      } else {
+        if (i > params[1]) {
+          var _agoTmp = dataList[i - params[1]].close - dataList[i - params[1] - 1].close;
+
+          if (_agoTmp > 0) {
+            sumCloseA2 -= _agoTmp;
+          } else {
+            sumCloseB2 -= Math.abs(_agoTmp);
+          }
+        }
+
+        a2 = sumCloseA2 / params[1];
+        b2 = (sumCloseA2 + sumCloseB2) / params[1];
+      }
+
+      rsi["rsi".concat(params[1])] = b2 !== 0.0 ? a2 / b2 * 100 : 0.0;
+
+      if (i < params[2]) {
+        a3 = sumCloseA3 / (i + 1);
+        b3 = (sumCloseA3 + sumCloseB3) / (i + 1);
+      } else {
+        if (i > params[2]) {
+          var _agoTmp2 = dataList[i - params[2]].close - dataList[i - params[2] - 1].close;
+
+          if (_agoTmp2 > 0) {
+            sumCloseA3 -= _agoTmp2;
+          } else {
+            sumCloseB3 -= Math.abs(_agoTmp2);
+          }
+        }
+
+        a3 = sumCloseA3 / params[2];
+        b3 = (sumCloseA3 + sumCloseB3) / params[2];
+      }
+
+      rsi["rsi".concat(params[2])] = b3 !== 0.0 ? a3 / b3 * 100 : 0.0;
     }
 
-    dataList[i].rsi = {
-      rsi1: rsi1,
-      rsi2: rsi2,
-      rsi3: rsi3
-    };
+    dataList[i].rsi = rsi;
   });
 };
 /**
  * 计算BIAS指标
  * 乖离率=[(当日收盘价-N日平均价)/N日平均价]*100%
- * 参数：6，12、24
+ * 默认参数：6，12、24
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.BIAS] = function (dataList) {
-  var bias1;
-  var bias2;
-  var bias3;
+calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
+  if (!params || !isArray(params) || params.length !== 3) {
+    return dataList;
+  }
+
   var mean1;
   var mean2;
   var mean3;
@@ -4474,42 +4500,39 @@ calcIndicator[IndicatorType.BIAS] = function (dataList) {
   var closes2 = 0;
   var closes3 = 0;
   return calc(dataList, function (i) {
+    var bias = {};
     var closePrice = dataList[i].close;
     closes1 += closePrice;
     closes2 += closePrice;
     closes3 += closePrice;
 
-    if (i < 6) {
+    if (i < params[0]) {
       mean1 = closes1 / (i + 1);
     } else {
-      closes1 -= dataList[i - 6].close;
-      mean1 = closes1 / 6;
+      closes1 -= dataList[i - params[0]].close;
+      mean1 = closes1 / params[0];
     }
 
-    bias1 = (closePrice - mean1) / mean1 * 100;
+    bias["bias".concat(params[0])] = (closePrice - mean1) / mean1 * 100;
 
-    if (i < 12) {
+    if (i < params[1]) {
       mean2 = closes2 / (i + 1);
     } else {
-      closes2 -= dataList[i - 12].close;
-      mean2 = closes2 / 12;
+      closes2 -= dataList[i - params[1]].close;
+      mean2 = closes2 / params[1];
     }
 
-    bias2 = (closePrice - mean2) / mean2 * 100;
+    bias["bias".concat(params[1])] = (closePrice - mean2) / mean2 * 100;
 
-    if (i < 24) {
+    if (i < params[2]) {
       mean3 = closes3 / (i + 1);
     } else {
-      closes3 -= dataList[i - 24].close;
-      mean3 = closes3 / 24;
+      closes3 -= dataList[i - params[2]].close;
+      mean3 = closes3 / params[2];
     }
 
-    bias3 = (closePrice - mean3) / mean3 * 100;
-    dataList[i].bias = {
-      bias1: bias1,
-      bias2: bias2,
-      bias3: bias3
-    };
+    bias["bias".concat(params[2])] = (closePrice - mean3) / mean3 * 100;
+    dataList[i].bias = bias;
   });
 };
 /**
