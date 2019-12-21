@@ -3,7 +3,7 @@ import {
   checkPointOnCircle, checkPointOnStraightLine,
   checkPointOnRayLine, checkPointOnSegmentLine,
   getParallelLines, getFibonacciLines
-} from '../utils/drawUtils'
+} from '../utils/markerMapUtils'
 import { isFunction } from '../utils/dataUtils'
 import { MarkerDrawStep, MarkerType } from '../constants'
 

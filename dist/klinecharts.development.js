@@ -292,309 +292,6 @@ function calcTextWidth(fontSize, text) {
   ctx.font = "".concat(fontSize, "px Arial");
   return ctx.measureText(text).width;
 }
-/**
- * 获取某点在两点决定的一次函数上的y值
- * @param point1
- * @param point2
- * @param targetPoints
- */
-
-function getLinearY(point1, point2, targetPoints) {
-  var v = [];
-
-  if (point1 && point2 && targetPoints.length > 0) {
-    var subX = point1.x - point2.x;
-
-    if (subX === 0) {
-      targetPoints.forEach(function (point) {
-        v.push(point.y);
-      });
-    } else {
-      var k = (point1.y - point2.y) / subX;
-      var b = point1.y - k * point1.x;
-      targetPoints.forEach(function (point) {
-        v.push(point.x * k + b);
-      });
-    }
-  }
-
-  return v;
-}
-/**
- * 点是否在线上
- * @param point1
- * @param point2
- * @param targetPoint
- */
-
-function checkPointOnStraightLine(point1, point2, targetPoint) {
-  if (!targetPoint || !point1 || !point2) {
-    return false;
-  }
-
-  if (point1.x === point2.x) {
-    return Math.abs(targetPoint.x - point1.x) < 1;
-  }
-
-  if (point1.y === point2.y) {
-    return Math.abs(targetPoint.y - point1.y) < 1;
-  }
-
-  return Math.abs(targetPoint.y - getLinearY(point1, point2, [targetPoint])[0]) < 1;
-}
-/**
- * 点是否在线段上
- * @param point1
- * @param point2
- * @param targetPoint
- * @returns {boolean}
- */
-
-function checkPointOnRayLine(point1, point2, targetPoint) {
-  if (!targetPoint || !point1 || !point2) {
-    return false;
-  }
-
-  if (checkPointOnStraightLine(point1, point2, targetPoint)) {
-    if (point1.x === point2.x) {
-      if (point1.y < point2.y) {
-        return targetPoint.y > point1.y - 2;
-      } else {
-        return targetPoint.y < point1.y + 2;
-      }
-    }
-
-    if (point1.x < point2.x) {
-      return targetPoint.x > point1.x - 2;
-    } else {
-      return targetPoint.x < point1.x + 2;
-    }
-  }
-
-  return false;
-}
-/**
- * 判断点是否在线段上面
- * @param point1
- * @param point2
- * @param targetPoint
- */
-
-function checkPointOnSegmentLine(point1, point2, targetPoint) {
-  if (!targetPoint || !point1 || !point2) {
-    return false;
-  }
-
-  if (checkPointOnStraightLine(point1, point2, targetPoint)) {
-    var a = Math.sqrt(Math.pow(targetPoint.x - point1.x, 2) + Math.pow(targetPoint.y - point1.y, 2));
-    var b = Math.sqrt(Math.pow(targetPoint.x - point2.x, 2) + Math.pow(targetPoint.y - point2.y, 2));
-    var c = Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
-    return Math.abs(a + b - c) < 2;
-  }
-
-  return false;
-}
-/**
- * 点是否在圆上
- * @param circleCenterPoint
- * @param radius
- * @param targetPoint
- * @returns {boolean}
- */
-
-function checkPointOnCircle(circleCenterPoint, radius, targetPoint) {
-  if (!targetPoint) {
-    return false;
-  }
-
-  var subX = targetPoint.x - circleCenterPoint.x;
-  var subY = targetPoint.y - circleCenterPoint.y;
-  return !(subX * subX + subY * subY > radius * radius);
-}
-/**
- * 获取平行线
- * @param points
- * @param viewportHandler
- * @param isPriceChannelLine
- * @returns {Array}
- */
-
-function getParallelLines(points, viewportHandler, isPriceChannelLine) {
-  var lines = [];
-
-  if (points.length > 1) {
-    if (points[0].x === points[1].x) {
-      var startY = viewportHandler.contentTop();
-      var endY = viewportHandler.contentBottom();
-      lines.push([{
-        x: points[0].x,
-        y: startY
-      }, {
-        x: points[0].x,
-        y: endY
-      }]);
-
-      if (points.length > 2) {
-        lines.push([{
-          x: points[2].x,
-          y: startY
-        }, {
-          x: points[2].x,
-          y: endY
-        }]);
-
-        if (isPriceChannelLine) {
-          var distance = points[0].x - points[2].x;
-          lines.push([{
-            x: points[0].x + distance,
-            y: startY
-          }, {
-            x: points[0].x + distance,
-            y: endY
-          }]);
-        }
-      }
-    } else {
-      var startX = viewportHandler.contentLeft();
-      var endX = viewportHandler.contentRight();
-
-      if (points[0].y === points[1].y) {
-        lines.push([{
-          x: startX,
-          y: points[0].y
-        }, {
-          x: endX,
-          y: points[0].y
-        }]);
-
-        if (points.length > 2) {
-          lines.push([{
-            x: startX,
-            y: points[2].y
-          }, {
-            x: endX,
-            y: points[2].y
-          }]);
-
-          if (isPriceChannelLine) {
-            var _distance = points[0].y - points[2].y;
-
-            lines.push([{
-              x: startX,
-              y: points[0].y + _distance
-            }, {
-              x: endX,
-              y: points[0].y + _distance
-            }]);
-          }
-        }
-      } else {
-        var k = (points[0].y - points[1].y) / (points[0].x - points[1].x);
-        var b = points[0].y - k * points[0].x;
-        lines.push([{
-          x: startX,
-          y: startX * k + b
-        }, {
-          x: endX,
-          y: endX * k + b
-        }]);
-
-        if (points.length > 2) {
-          var b1 = points[2].y - k * points[2].x;
-          lines.push([{
-            x: startX,
-            y: startX * k + b1
-          }, {
-            x: endX,
-            y: endX * k + b1
-          }]);
-
-          if (isPriceChannelLine) {
-            var b2 = b + (b - b1);
-            lines.push([{
-              x: startX,
-              y: startX * k + b2
-            }, {
-              x: endX,
-              y: endX * k + b2
-            }]);
-          }
-        }
-      }
-    }
-  }
-
-  return lines;
-}
-/**
- * 获取斐波那契线
- * @param points
- * @param viewportHandler
- */
-
-function getFibonacciLines(points, viewportHandler) {
-  var lines = [];
-
-  if (points.length > 0) {
-    var startX = viewportHandler.contentLeft();
-    var endX = viewportHandler.contentRight();
-    lines.push([{
-      x: startX,
-      y: points[0].y
-    }, {
-      x: endX,
-      y: points[0].y
-    }]);
-
-    if (points.length > 1) {
-      var yDistance = points[0].y - points[1].y;
-      lines.push([{
-        x: startX,
-        y: points[1].y + yDistance * 0.786
-      }, {
-        x: endX,
-        y: points[1].y + yDistance * 0.786
-      }]);
-      lines.push([{
-        x: startX,
-        y: points[1].y + yDistance * 0.618
-      }, {
-        x: endX,
-        y: points[1].y + yDistance * 0.618
-      }]);
-      lines.push([{
-        x: startX,
-        y: points[1].y + yDistance * 0.5
-      }, {
-        x: endX,
-        y: points[1].y + yDistance * 0.5
-      }]);
-      lines.push([{
-        x: startX,
-        y: points[1].y + yDistance * 0.382
-      }, {
-        x: endX,
-        y: points[1].y + yDistance * 0.382
-      }]);
-      lines.push([{
-        x: startX,
-        y: points[1].y + yDistance * 0.236
-      }, {
-        x: endX,
-        y: points[1].y + yDistance * 0.236
-      }]);
-      lines.push([{
-        x: startX,
-        y: points[1].y
-      }, {
-        x: endX,
-        y: points[1].y
-      }]);
-    }
-  }
-
-  return lines;
-}
 
 var Chart =
 /*#__PURE__*/
@@ -1937,13 +1634,13 @@ function (_AxisRender) {
     key: "calcAxisMinMax",
     value: function calcAxisMinMax(indicatorType) {
       var isMainChart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var isTimeLine = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      var isRealTimeChart = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       var dataList = this.dataProvider.dataList;
       var min = this.dataProvider.minPos;
       var max = Math.min(min + this.dataProvider.range, dataList.length);
       var minMaxArray = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER];
 
-      if (isTimeLine) {
+      if (isRealTimeChart) {
         for (var i = min; i < max; i++) {
           var kLineData = dataList[i];
           minMaxArray[0] = Math.min.apply(null, [kLineData.average, kLineData.close, minMaxArray[0]]);
@@ -2043,7 +1740,7 @@ function (_Chart) {
   _createClass(IndicatorChart, [{
     key: "draw",
     value: function draw() {
-      if (this.isDraw()) {
+      if (this.isDrawChart()) {
         var isMainChart = this.isMainChart();
 
         if (!isMainChart) {
@@ -2051,8 +1748,8 @@ function (_Chart) {
         }
 
         var yAxis = this.config.yAxis;
-        var isTimeLineChart = this.isTimeLineChart();
-        this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isTimeLineChart);
+        var isRealTimeChart = this.isRealTimeChart();
+        this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart);
         this.yAxisRender.computeAxis();
         this.yAxisRender.renderSeparatorLines(this.ctx, yAxis);
         this.drawChart();
@@ -2068,8 +1765,8 @@ function (_Chart) {
       this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.config.indicator, false);
     }
   }, {
-    key: "isDraw",
-    value: function isDraw() {
+    key: "isDrawChart",
+    value: function isDrawChart() {
       return this.indicatorType !== IndicatorType.NO;
     }
   }, {
@@ -2078,8 +1775,8 @@ function (_Chart) {
       return false;
     }
   }, {
-    key: "isTimeLineChart",
-    value: function isTimeLineChart() {
+    key: "isRealTimeChart",
+    value: function isRealTimeChart() {
       return false;
     }
   }]);
@@ -2587,13 +2284,13 @@ function (_IndicatorChart) {
       }
     }
   }, {
-    key: "isTimeLineChart",
-    value: function isTimeLineChart() {
+    key: "isRealTimeChart",
+    value: function isRealTimeChart() {
       return this.chartType === ChartType.REAL_TIME;
     }
   }, {
-    key: "isDraw",
-    value: function isDraw() {
+    key: "isDrawChart",
+    value: function isDrawChart() {
       return true;
     }
   }, {
@@ -2605,6 +2302,309 @@ function (_IndicatorChart) {
 
   return MainChart;
 }(IndicatorChart);
+
+/**
+ * 获取某点在两点决定的一次函数上的y值
+ * @param point1
+ * @param point2
+ * @param targetPoints
+ */
+function getLinearY(point1, point2, targetPoints) {
+  var v = [];
+
+  if (point1 && point2 && targetPoints.length > 0) {
+    var subX = point1.x - point2.x;
+
+    if (subX === 0) {
+      targetPoints.forEach(function (point) {
+        v.push(point.y);
+      });
+    } else {
+      var k = (point1.y - point2.y) / subX;
+      var b = point1.y - k * point1.x;
+      targetPoints.forEach(function (point) {
+        v.push(point.x * k + b);
+      });
+    }
+  }
+
+  return v;
+}
+/**
+ * 点是否在线上
+ * @param point1
+ * @param point2
+ * @param targetPoint
+ */
+
+function checkPointOnStraightLine(point1, point2, targetPoint) {
+  if (!targetPoint || !point1 || !point2) {
+    return false;
+  }
+
+  if (point1.x === point2.x) {
+    return Math.abs(targetPoint.x - point1.x) < 1;
+  }
+
+  if (point1.y === point2.y) {
+    return Math.abs(targetPoint.y - point1.y) < 1;
+  }
+
+  return Math.abs(targetPoint.y - getLinearY(point1, point2, [targetPoint])[0]) < 1;
+}
+/**
+ * 点是否在线段上
+ * @param point1
+ * @param point2
+ * @param targetPoint
+ * @returns {boolean}
+ */
+
+function checkPointOnRayLine(point1, point2, targetPoint) {
+  if (!targetPoint || !point1 || !point2) {
+    return false;
+  }
+
+  if (checkPointOnStraightLine(point1, point2, targetPoint)) {
+    if (point1.x === point2.x) {
+      if (point1.y < point2.y) {
+        return targetPoint.y > point1.y - 2;
+      } else {
+        return targetPoint.y < point1.y + 2;
+      }
+    }
+
+    if (point1.x < point2.x) {
+      return targetPoint.x > point1.x - 2;
+    } else {
+      return targetPoint.x < point1.x + 2;
+    }
+  }
+
+  return false;
+}
+/**
+ * 判断点是否在线段上面
+ * @param point1
+ * @param point2
+ * @param targetPoint
+ */
+
+function checkPointOnSegmentLine(point1, point2, targetPoint) {
+  if (!targetPoint || !point1 || !point2) {
+    return false;
+  }
+
+  if (checkPointOnStraightLine(point1, point2, targetPoint)) {
+    var a = Math.sqrt(Math.pow(targetPoint.x - point1.x, 2) + Math.pow(targetPoint.y - point1.y, 2));
+    var b = Math.sqrt(Math.pow(targetPoint.x - point2.x, 2) + Math.pow(targetPoint.y - point2.y, 2));
+    var c = Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
+    return Math.abs(a + b - c) < 2;
+  }
+
+  return false;
+}
+/**
+ * 点是否在圆上
+ * @param circleCenterPoint
+ * @param radius
+ * @param targetPoint
+ * @returns {boolean}
+ */
+
+function checkPointOnCircle(circleCenterPoint, radius, targetPoint) {
+  if (!targetPoint) {
+    return false;
+  }
+
+  var subX = targetPoint.x - circleCenterPoint.x;
+  var subY = targetPoint.y - circleCenterPoint.y;
+  return !(subX * subX + subY * subY > radius * radius);
+}
+/**
+ * 获取平行线
+ * @param points
+ * @param viewportHandler
+ * @param isPriceChannelLine
+ * @returns {Array}
+ */
+
+function getParallelLines(points, viewportHandler, isPriceChannelLine) {
+  var lines = [];
+
+  if (points.length > 1) {
+    if (points[0].x === points[1].x) {
+      var startY = viewportHandler.contentTop();
+      var endY = viewportHandler.contentBottom();
+      lines.push([{
+        x: points[0].x,
+        y: startY
+      }, {
+        x: points[0].x,
+        y: endY
+      }]);
+
+      if (points.length > 2) {
+        lines.push([{
+          x: points[2].x,
+          y: startY
+        }, {
+          x: points[2].x,
+          y: endY
+        }]);
+
+        if (isPriceChannelLine) {
+          var distance = points[0].x - points[2].x;
+          lines.push([{
+            x: points[0].x + distance,
+            y: startY
+          }, {
+            x: points[0].x + distance,
+            y: endY
+          }]);
+        }
+      }
+    } else {
+      var startX = viewportHandler.contentLeft();
+      var endX = viewportHandler.contentRight();
+
+      if (points[0].y === points[1].y) {
+        lines.push([{
+          x: startX,
+          y: points[0].y
+        }, {
+          x: endX,
+          y: points[0].y
+        }]);
+
+        if (points.length > 2) {
+          lines.push([{
+            x: startX,
+            y: points[2].y
+          }, {
+            x: endX,
+            y: points[2].y
+          }]);
+
+          if (isPriceChannelLine) {
+            var _distance = points[0].y - points[2].y;
+
+            lines.push([{
+              x: startX,
+              y: points[0].y + _distance
+            }, {
+              x: endX,
+              y: points[0].y + _distance
+            }]);
+          }
+        }
+      } else {
+        var k = (points[0].y - points[1].y) / (points[0].x - points[1].x);
+        var b = points[0].y - k * points[0].x;
+        lines.push([{
+          x: startX,
+          y: startX * k + b
+        }, {
+          x: endX,
+          y: endX * k + b
+        }]);
+
+        if (points.length > 2) {
+          var b1 = points[2].y - k * points[2].x;
+          lines.push([{
+            x: startX,
+            y: startX * k + b1
+          }, {
+            x: endX,
+            y: endX * k + b1
+          }]);
+
+          if (isPriceChannelLine) {
+            var b2 = b + (b - b1);
+            lines.push([{
+              x: startX,
+              y: startX * k + b2
+            }, {
+              x: endX,
+              y: endX * k + b2
+            }]);
+          }
+        }
+      }
+    }
+  }
+
+  return lines;
+}
+/**
+ * 获取斐波那契线
+ * @param points
+ * @param viewportHandler
+ */
+
+function getFibonacciLines(points, viewportHandler) {
+  var lines = [];
+
+  if (points.length > 0) {
+    var startX = viewportHandler.contentLeft();
+    var endX = viewportHandler.contentRight();
+    lines.push([{
+      x: startX,
+      y: points[0].y
+    }, {
+      x: endX,
+      y: points[0].y
+    }]);
+
+    if (points.length > 1) {
+      var yDistance = points[0].y - points[1].y;
+      lines.push([{
+        x: startX,
+        y: points[1].y + yDistance * 0.786
+      }, {
+        x: endX,
+        y: points[1].y + yDistance * 0.786
+      }]);
+      lines.push([{
+        x: startX,
+        y: points[1].y + yDistance * 0.618
+      }, {
+        x: endX,
+        y: points[1].y + yDistance * 0.618
+      }]);
+      lines.push([{
+        x: startX,
+        y: points[1].y + yDistance * 0.5
+      }, {
+        x: endX,
+        y: points[1].y + yDistance * 0.5
+      }]);
+      lines.push([{
+        x: startX,
+        y: points[1].y + yDistance * 0.382
+      }, {
+        x: endX,
+        y: points[1].y + yDistance * 0.382
+      }]);
+      lines.push([{
+        x: startX,
+        y: points[1].y + yDistance * 0.236
+      }, {
+        x: endX,
+        y: points[1].y + yDistance * 0.236
+      }]);
+      lines.push([{
+        x: startX,
+        y: points[1].y
+      }, {
+        x: endX,
+        y: points[1].y
+      }]);
+    }
+  }
+
+  return lines;
+}
 
 var MarkerRender =
 /*#__PURE__*/

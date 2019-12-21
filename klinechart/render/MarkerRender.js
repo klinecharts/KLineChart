@@ -6,7 +6,7 @@ import {
   checkPointOnRayLine,
   checkPointOnSegmentLine,
   getParallelLines, getFibonacciLines
-} from '../internal/utils/drawUtils'
+} from '../internal/utils/markerMapUtils'
 import { formatDecimal, isFunction } from '../internal/utils/dataUtils'
 import { MarkerType, MarkerDrawStep } from '../internal/constants'
 
