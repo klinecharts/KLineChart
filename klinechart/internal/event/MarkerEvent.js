@@ -8,12 +8,12 @@ import { isFunction } from '../utils/dataUtils'
 import { MarkerDrawStep, MarkerType } from '../constants'
 
 class MarkerEvent {
-  constructor (dataProvider, markerChart, config) {
+  constructor (dataProvider, markerChart, style) {
     this.dataProvider = dataProvider
     this.markerChart = markerChart
     this.viewPortHandler = markerChart.viewPortHandler
     this.yRender = markerChart.markerRender.yRender
-    this.config = config
+    this.style = style
     // 标记当没有画线时鼠标是否按下
     this.noneMarkerMouseDownFlag = false
 
@@ -282,7 +282,7 @@ class MarkerEvent {
         const x = (p.xPos - this.dataProvider.minPos) * this.dataProvider.dataSpace
         const y = this.yRender.getY(p.price)
         xyPoints.push({ x, y })
-        const isOn = checkPointOnCircle({ x, y }, this.config.marker.point.radius, point)
+        const isOn = checkPointOnCircle({ x, y }, this.style.marker.point.radius, point)
         if (isOn) {
           pointIndex = i
         }

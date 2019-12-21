@@ -2,14 +2,14 @@ import Chart from './Chart'
 import MarkerRender from '../render/MarkerRender'
 
 class MarkerChart extends Chart {
-  constructor (dom, config, dataProvider, yAxisRender) {
-    super(dom, config)
+  constructor (dom, style, dataProvider, yAxisRender) {
+    super(dom, style)
     this.markerRender = new MarkerRender(this.viewPortHandler, dataProvider, yAxisRender)
   }
 
   draw () {
     // 画线
-    const marker = this.config.marker
+    const marker = this.style.marker
     this.markerRender.renderHorizontalStraightLine(this.ctx, marker)
     this.markerRender.renderVerticalStraightLine(this.ctx, marker)
     this.markerRender.renderStraightLine(this.ctx, marker)

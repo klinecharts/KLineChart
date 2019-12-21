@@ -24,8 +24,8 @@ $ yarn add klinecharts
 
 ## API
 ```js
-var chart = klinecharts.init(document.getElementById('div'))
-chart.setConfig(config)
+var chart = init(document.getElementById('div'))
+chart.setStyle(style)
 chart.setMainChartType(chartType)
 chart.setMainIndicatorType(indicatorType)
 chart.setSubIndicatorType(indicatorType)
@@ -37,7 +37,7 @@ chart.addData(dataList, pos)
 chart.getDataList()
 chart.getMainIndicatorType()
 chart.getSubIndicatorType()
-chart.getConfig()
+chart.getStyle()
 chart.isShowVolChart()
 chart.clearData()
 chart.getConvertPictureUrl()
@@ -53,8 +53,8 @@ The single data format is as follows:
 { open, close, high, low, volume, turnover, timestamp }
 ```
 
-## Config
-Config is used to configure the style of the chart. [Here is the details.](CONFIG-DETAIL.md)
+## Style Config
+Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DETAIL.md)
 
 ## Technical Indicators
 <table>

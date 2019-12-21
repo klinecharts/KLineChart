@@ -239,8 +239,10 @@ class YAxisRender extends AxisRender {
     const indicatorData = formatValue(kLineData, indicatorType.toLowerCase(), {})
     Object.keys(indicatorData).forEach(key => {
       const value = indicatorData[key]
-      minMaxArray[0] = Math.min(minMaxArray[0], value)
-      minMaxArray[1] = Math.max(minMaxArray[1], value)
+      if (value || value === 0) {
+        minMaxArray[0] = Math.min(minMaxArray[0], value)
+        minMaxArray[1] = Math.max(minMaxArray[1], value)
+      }
     })
     if (indicatorType === IndicatorType.BOLL || indicatorType === IndicatorType.SAR) {
       minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)

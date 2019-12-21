@@ -17,7 +17,7 @@ type PictureType = 'png' | 'jpeg' | 'bmp'
 type ChartComponentType = 'candle' | 'vol' | 'subIndicator' | 'tooltip' | 'marker'
 
 export interface Chart {
-  setConfig(config: any): void
+  setStyle(style: any): void
   addData(data: KLineData[] | KLineData, pos?: number): void
   setMainIndicatorType(indicatorType: IndicatorType): void
   setSubIndicatorType(indicatorType: IndicatorType): void
@@ -29,7 +29,7 @@ export interface Chart {
   setMainChartType(chartType: ChartType): void
   getMainIndicatorType(): IndicatorType
   getSubIndicatorType(): IndicatorType
-  getConfig(): any
+  getStyle(): any
   isShowVolChart(): boolean
   clearData(): void
   getConvertPictureUrl(pictureType?: PictureType, excludes?: ChartComponentType[]): string
@@ -39,4 +39,4 @@ export interface Chart {
 
 export const version: string
 
-export function init(dom: HTMLElement, config?: any): Chart
+export function init(dom: HTMLElement, style?: any): Chart

@@ -5,8 +5,8 @@ import YAxisRender from '../render/YAxisRender'
 import { IndicatorType } from '../internal/constants'
 
 class IndicatorChart extends Chart {
-  constructor (dom, config, dataProvider, defaultIndicatorType = IndicatorType.MACD) {
-    super(dom, config)
+  constructor (dom, style, dataProvider, defaultIndicatorType = IndicatorType.MACD) {
+    super(dom, style)
     this.indicatorType = defaultIndicatorType
     this.yAxisRender = new YAxisRender(this.viewPortHandler, dataProvider)
     this.chartRender = new IndicatorRender(this.viewPortHandler, dataProvider, this.yAxisRender)
@@ -16,15 +16,15 @@ class IndicatorChart extends Chart {
     if (this.isDrawChart()) {
       const isMainChart = this.isMainChart()
       if (!isMainChart) {
-        this.chartRender.renderHorizontalSeparatorLine(this.ctx, this.config.xAxis)
+        this.chartRender.renderHorizontalSeparatorLine(this.ctx, this.style.xAxis)
       }
-      const yAxis = this.config.yAxis
+      const yAxis = this.style.yAxis
       const isRealTimeChart = this.isRealTimeChart()
       this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart)
       this.yAxisRender.computeAxis()
       this.yAxisRender.renderSeparatorLines(this.ctx, yAxis)
       this.drawChart()
-      this.yAxisRender.renderStrokeLine(this.ctx, yAxis, this.config.grid)
+      this.yAxisRender.renderStrokeLine(this.ctx, yAxis, this.style.grid)
       this.yAxisRender.renderAxisLine(this.ctx, yAxis)
       this.yAxisRender.renderTickLines(this.ctx, yAxis)
       this.yAxisRender.renderAxisLabels(this.ctx, yAxis)
@@ -32,7 +32,7 @@ class IndicatorChart extends Chart {
   }
 
   drawChart () {
-    this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.config.indicator, false)
+    this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, false)
   }
 
   isDrawChart () {

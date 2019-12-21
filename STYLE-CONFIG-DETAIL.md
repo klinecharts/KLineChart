@@ -1,4 +1,4 @@
-## Configuration Details
+## Style Configuration Details
 ```js
 config = {
   grid: false,

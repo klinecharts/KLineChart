@@ -3,14 +3,14 @@ import TooltipRender from '../render/TooltipRender'
 import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType, TooltipTextDisplayRule, MarkerType } from '../internal/constants'
 
 class TooltipChart extends Chart {
-  constructor (dom, config, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
-    super(dom, config)
+  constructor (dom, style, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider, indicatorParams) {
+    super(dom, style)
     this.mainChart = mainChart
     this.volChart = volChart
     this.subIndicatorChart = subIndicatorChart
     this.dataProvider = dataProvider
     this.tooltipRender = new TooltipRender(
-      this.viewPortHandler, dataProvider,
+      this.viewPortHandler, dataProvider, indicatorParams,
       mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler,
       mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender
     )
@@ -18,15 +18,15 @@ class TooltipChart extends Chart {
 
   draw () {
     const kLineData = this.dataProvider.dataList[this.dataProvider.currentTooltipDataPos] || {}
-    const tooltip = this.config.tooltip
+    const tooltip = this.style.tooltip
     // 如果不是绘图才显示十字线
     if (this.dataProvider.currentMarkerType === MarkerType.NONE && !this.dataProvider.isDragMarker) {
       this.tooltipRender.renderCrossHorizontalLine(
         this.ctx,
         this.mainChart.indicatorType,
         this.subIndicatorChart.indicatorType,
-        this.config.yAxis.position === YAxisPosition.LEFT,
-        this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE,
+        this.style.yAxis.position === YAxisPosition.LEFT,
+        this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE,
         tooltip
       )
       this.tooltipRender.renderCrossVerticalLine(this.ctx, kLineData, tooltip)
@@ -34,7 +34,7 @@ class TooltipChart extends Chart {
     const tooltipData = tooltip.data
     if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS ||
       (tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.dataProvider.crossPoint)) {
-      const indicator = this.config.indicator
+      const indicator = this.style.indicator
 
       this.tooltipRender.renderMainChartTooltip(
         this.ctx, kLineData,

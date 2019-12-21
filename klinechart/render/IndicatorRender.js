@@ -38,7 +38,11 @@ class IndicatorRender extends Render {
       case IndicatorType.MA: {
         onRendering = (x, i, kLineData, halfBarSpace) => {
           const ma = kLineData.ma || {}
-          this.prepareLinePoints(x, [ma.ma5, ma.ma10, ma.ma20, ma.ma60], linePoints)
+          const lineValues = []
+          Object.keys(ma).forEach(key => {
+            lineValues.push(ma[key])
+          })
+          this.prepareLinePoints(x, lineValues, linePoints)
           if (!isMainIndicator) {
             const refKLineData = this.dataProvider.dataList[i - 1] || {}
             this.renderOhlc(
@@ -296,22 +300,22 @@ class IndicatorRender extends Render {
   /**
    * 绘制线
    * @param ctx
-   * @param lineValues
+   * @param linePoints
    * @param indicator
    */
-  renderLines (ctx, lineValues, indicator) {
+  renderLines (ctx, linePoints, indicator) {
     const colors = indicator.lineColors
-    const valueCount = lineValues.length
+    const pointCount = linePoints.length
     const lineColorSize = (indicator.lineColors || []).length
     ctx.lineWidth = indicator.lineSize
-    for (let i = 0; i < valueCount; i++) {
-      const values = lineValues[i]
-      if (values.length > 0) {
+    for (let i = 0; i < pointCount; i++) {
+      const points = linePoints[i]
+      if (points.length > 0) {
         ctx.strokeStyle = colors[i % lineColorSize]
         ctx.beginPath()
-        ctx.moveTo(values[0].x, values[0].y)
-        for (let j = 1; j < values.length; j++) {
-          ctx.lineTo(values[j].x, values[j].y)
+        ctx.moveTo(points[0].x, points[0].y)
+        for (let j = 1; j < points.length; j++) {
+          ctx.lineTo(points[j].x, points[j].y)
         }
         ctx.stroke()
         ctx.closePath()

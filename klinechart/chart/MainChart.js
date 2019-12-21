@@ -4,8 +4,8 @@ import MainRender from '../render/MainRender'
 import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType } from '../internal/constants'
 
 class MainChart extends IndicatorChart {
-  constructor (dom, config, dataProvider) {
-    super(dom, config, dataProvider, IndicatorType.MA)
+  constructor (dom, style, dataProvider) {
+    super(dom, style, dataProvider, IndicatorType.MA)
     this.chartRender = new MainRender(this.viewPortHandler, dataProvider, this.yAxisRender)
     this.chartType = ChartType.CANDLE
   }
@@ -13,20 +13,20 @@ class MainChart extends IndicatorChart {
   draw () {
     super.draw()
     this.chartRender.renderLastPriceMark(
-      this.ctx, this.config.lastPriceMark,
-      this.config.yAxis.position === YAxisPosition.LEFT,
-      this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE
+      this.ctx, this.style.lastPriceMark,
+      this.style.yAxis.position === YAxisPosition.LEFT,
+      this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE
     )
   }
 
   drawChart () {
     if (this.chartType !== ChartType.REAL_TIME) {
-      this.chartRender.renderCandle(this.ctx, this.config.candle)
-      this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.config.indicator, true)
-      this.chartRender.renderHighestPriceMark(this.ctx, this.config.highestPriceMark)
-      this.chartRender.renderLowestPriceMark(this.ctx, this.config.lowestPriceMark)
+      this.chartRender.renderCandle(this.ctx, this.style.candle)
+      this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, true)
+      this.chartRender.renderHighestPriceMark(this.ctx, this.style.highestPriceMark)
+      this.chartRender.renderLowestPriceMark(this.ctx, this.style.lowestPriceMark)
     } else {
-      this.chartRender.renderTimeLine(this.ctx, this.config.realTime)
+      this.chartRender.renderTimeLine(this.ctx, this.style.realTime)
     }
   }
 

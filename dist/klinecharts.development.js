@@ -296,10 +296,10 @@ function calcTextWidth(fontSize, text) {
 var Chart =
 /*#__PURE__*/
 function () {
-  function Chart(dom, config) {
+  function Chart(dom, style) {
     _classCallCheck(this, Chart);
 
-    this.config = config;
+    this.style = style;
     this.viewPortHandler = new ViewPortHandler();
     this.init(dom);
   }
@@ -803,8 +803,12 @@ function (_Render) {
           {
             onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
               var ma = kLineData.ma || {};
+              var lineValues = [];
+              Object.keys(ma).forEach(function (key) {
+                lineValues.push(ma[key]);
+              });
 
-              _this2.prepareLinePoints(x, [ma.ma5, ma.ma10, ma.ma20, ma.ma60], linePoints);
+              _this2.prepareLinePoints(x, lineValues, linePoints);
 
               if (!isMainIndicator) {
                 var refKLineData = _this2.dataProvider.dataList[i - 1] || {};
@@ -1140,28 +1144,28 @@ function (_Render) {
     /**
      * 绘制线
      * @param ctx
-     * @param lineValues
+     * @param linePoints
      * @param indicator
      */
 
   }, {
     key: "renderLines",
-    value: function renderLines(ctx, lineValues, indicator) {
+    value: function renderLines(ctx, linePoints, indicator) {
       var colors = indicator.lineColors;
-      var valueCount = lineValues.length;
+      var pointCount = linePoints.length;
       var lineColorSize = (indicator.lineColors || []).length;
       ctx.lineWidth = indicator.lineSize;
 
-      for (var i = 0; i < valueCount; i++) {
-        var values = lineValues[i];
+      for (var i = 0; i < pointCount; i++) {
+        var points = linePoints[i];
 
-        if (values.length > 0) {
+        if (points.length > 0) {
           ctx.strokeStyle = colors[i % lineColorSize];
           ctx.beginPath();
-          ctx.moveTo(values[0].x, values[0].y);
+          ctx.moveTo(points[0].x, points[0].y);
 
-          for (var j = 1; j < values.length; j++) {
-            ctx.lineTo(values[j].x, values[j].y);
+          for (var j = 1; j < points.length; j++) {
+            ctx.lineTo(points[j].x, points[j].y);
           }
 
           ctx.stroke();
@@ -1669,8 +1673,11 @@ function (_AxisRender) {
       var indicatorData = formatValue(kLineData, indicatorType.toLowerCase(), {});
       Object.keys(indicatorData).forEach(function (key) {
         var value = indicatorData[key];
-        minMaxArray[0] = Math.min(minMaxArray[0], value);
-        minMaxArray[1] = Math.max(minMaxArray[1], value);
+
+        if (value || value === 0) {
+          minMaxArray[0] = Math.min(minMaxArray[0], value);
+          minMaxArray[1] = Math.max(minMaxArray[1], value);
+        }
       });
 
       if (indicatorType === IndicatorType.BOLL || indicatorType === IndicatorType.SAR) {
@@ -1723,14 +1730,14 @@ var IndicatorChart =
 function (_Chart) {
   _inherits(IndicatorChart, _Chart);
 
-  function IndicatorChart(dom, config, dataProvider) {
+  function IndicatorChart(dom, style, dataProvider) {
     var _this;
 
     var defaultIndicatorType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : IndicatorType.MACD;
 
     _classCallCheck(this, IndicatorChart);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorChart).call(this, dom, config));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorChart).call(this, dom, style));
     _this.indicatorType = defaultIndicatorType;
     _this.yAxisRender = new YAxisRender(_this.viewPortHandler, dataProvider);
     _this.chartRender = new IndicatorRender(_this.viewPortHandler, dataProvider, _this.yAxisRender);
@@ -1744,16 +1751,16 @@ function (_Chart) {
         var isMainChart = this.isMainChart();
 
         if (!isMainChart) {
-          this.chartRender.renderHorizontalSeparatorLine(this.ctx, this.config.xAxis);
+          this.chartRender.renderHorizontalSeparatorLine(this.ctx, this.style.xAxis);
         }
 
-        var yAxis = this.config.yAxis;
+        var yAxis = this.style.yAxis;
         var isRealTimeChart = this.isRealTimeChart();
         this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart);
         this.yAxisRender.computeAxis();
         this.yAxisRender.renderSeparatorLines(this.ctx, yAxis);
         this.drawChart();
-        this.yAxisRender.renderStrokeLine(this.ctx, yAxis, this.config.grid);
+        this.yAxisRender.renderStrokeLine(this.ctx, yAxis, this.style.grid);
         this.yAxisRender.renderAxisLine(this.ctx, yAxis);
         this.yAxisRender.renderTickLines(this.ctx, yAxis);
         this.yAxisRender.renderAxisLabels(this.ctx, yAxis);
@@ -1762,7 +1769,7 @@ function (_Chart) {
   }, {
     key: "drawChart",
     value: function drawChart() {
-      this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.config.indicator, false);
+      this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, false);
     }
   }, {
     key: "isDrawChart",
@@ -2253,12 +2260,12 @@ var MainChart =
 function (_IndicatorChart) {
   _inherits(MainChart, _IndicatorChart);
 
-  function MainChart(dom, config, dataProvider) {
+  function MainChart(dom, style, dataProvider) {
     var _this;
 
     _classCallCheck(this, MainChart);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MainChart).call(this, dom, config, dataProvider, IndicatorType.MA));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MainChart).call(this, dom, style, dataProvider, IndicatorType.MA));
     _this.chartRender = new MainRender(_this.viewPortHandler, dataProvider, _this.yAxisRender);
     _this.chartType = ChartType.CANDLE;
     return _this;
@@ -2269,18 +2276,18 @@ function (_IndicatorChart) {
     value: function draw() {
       _get(_getPrototypeOf(MainChart.prototype), "draw", this).call(this);
 
-      this.chartRender.renderLastPriceMark(this.ctx, this.config.lastPriceMark, this.config.yAxis.position === YAxisPosition.LEFT, this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE);
+      this.chartRender.renderLastPriceMark(this.ctx, this.style.lastPriceMark, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE);
     }
   }, {
     key: "drawChart",
     value: function drawChart() {
       if (this.chartType !== ChartType.REAL_TIME) {
-        this.chartRender.renderCandle(this.ctx, this.config.candle);
-        this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.config.indicator, true);
-        this.chartRender.renderHighestPriceMark(this.ctx, this.config.highestPriceMark);
-        this.chartRender.renderLowestPriceMark(this.ctx, this.config.lowestPriceMark);
+        this.chartRender.renderCandle(this.ctx, this.style.candle);
+        this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, true);
+        this.chartRender.renderHighestPriceMark(this.ctx, this.style.highestPriceMark);
+        this.chartRender.renderLowestPriceMark(this.ctx, this.style.lowestPriceMark);
       } else {
-        this.chartRender.renderTimeLine(this.ctx, this.config.realTime);
+        this.chartRender.renderTimeLine(this.ctx, this.style.realTime);
       }
     }
   }, {
@@ -3008,12 +3015,12 @@ var MarkerChart =
 function (_Chart) {
   _inherits(MarkerChart, _Chart);
 
-  function MarkerChart(dom, config, dataProvider, yAxisRender) {
+  function MarkerChart(dom, style, dataProvider, yAxisRender) {
     var _this;
 
     _classCallCheck(this, MarkerChart);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MarkerChart).call(this, dom, config));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MarkerChart).call(this, dom, style));
     _this.markerRender = new MarkerRender(_this.viewPortHandler, dataProvider, yAxisRender);
     return _this;
   }
@@ -3022,7 +3029,7 @@ function (_Chart) {
     key: "draw",
     value: function draw() {
       // 画线
-      var marker = this.config.marker;
+      var marker = this.style.marker;
       this.markerRender.renderHorizontalStraightLine(this.ctx, marker);
       this.markerRender.renderVerticalStraightLine(this.ctx, marker);
       this.markerRender.renderStraightLine(this.ctx, marker);
@@ -3045,12 +3052,13 @@ var TooltipRender =
 function (_Render) {
   _inherits(TooltipRender, _Render);
 
-  function TooltipRender(viewPortHandler, dataProvider, candleViewPortHandler, volViewPortHandler, subIndicatorViewPortHandler, candleYAxisRender, volYAxisRender, subIndicatorYAxisRender) {
+  function TooltipRender(viewPortHandler, dataProvider, indicatorParams, candleViewPortHandler, volViewPortHandler, subIndicatorViewPortHandler, candleYAxisRender, volYAxisRender, subIndicatorYAxisRender) {
     var _this;
 
     _classCallCheck(this, TooltipRender);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(TooltipRender).call(this, viewPortHandler, dataProvider));
+    _this.indicatorParams = indicatorParams;
     _this.candleViewPortHandler = candleViewPortHandler;
     _this.volViewPortHandler = volViewPortHandler;
     _this.subIndicatorViewPortHandler = subIndicatorViewPortHandler;
@@ -3274,21 +3282,21 @@ function (_Render) {
   }, {
     key: "renderMainChartTooltip",
     value: function renderMainChartTooltip(ctx, kLineData, indicatorType, isCandle, tooltip, indicator) {
-      var baseDataConfig = tooltip.data.base;
-      var indicatorDataConfig = tooltip.data.indicator;
+      var baseDataStyle = tooltip.data.base;
+      var indicatorDataStyle = tooltip.data.indicator;
       var indicatorColors = indicator.lineColors;
-      var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataConfig);
+      var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle);
 
-      if (baseDataConfig.showType === TooltipMainChartTextDisplayType.FIXED) {
-        var startY = baseDataConfig.text.marginTop;
-        this.renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataConfig);
+      if (baseDataStyle.showType === TooltipMainChartTextDisplayType.FIXED) {
+        var startY = baseDataStyle.text.marginTop;
+        this.renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle);
 
         if (isCandle) {
-          startY += baseDataConfig.text.size + baseDataConfig.text.marginBottom + tooltip.data.indicator.text.marginTop;
-          this.renderIndicatorTooltipText(ctx, startY, data, indicatorDataConfig, indicatorColors);
+          startY += baseDataStyle.text.size + baseDataStyle.text.marginBottom + tooltip.data.indicator.text.marginTop;
+          this.renderIndicatorTooltipText(ctx, startY, data, indicatorDataStyle, indicatorColors);
         }
       } else {
-        this.renderMainChartFloatRectText(ctx, kLineData, isCandle ? data : {}, baseDataConfig, indicatorDataConfig, indicatorColors);
+        this.renderMainChartFloatRectText(ctx, kLineData, isCandle ? data : {}, baseDataStyle, indicatorDataStyle, indicatorColors);
       }
 
       if (isCandle) {
@@ -3309,10 +3317,10 @@ function (_Render) {
   }, {
     key: "renderIndicatorChartTooltip",
     value: function renderIndicatorChartTooltip(ctx, offsetTop, kLineData, indicatorType, tooltip, indicator, isVolChart) {
-      var indicatorDataConfig = tooltip.data.indicator;
-      var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataConfig);
+      var indicatorDataStyle = tooltip.data.indicator;
+      var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle);
       var indicatorLineColors = indicator.lineColors;
-      this.renderIndicatorTooltipText(ctx, offsetTop + indicatorDataConfig.text.marginTop, data, indicatorDataConfig, indicatorLineColors);
+      this.renderIndicatorTooltipText(ctx, offsetTop + indicatorDataStyle.text.marginTop, data, indicatorDataStyle, indicatorLineColors);
       var circleOffsetTop = isVolChart ? this.candleViewPortHandler.height + this.volViewPortHandler.contentTop() : this.candleViewPortHandler.height + this.volViewPortHandler.height + this.subIndicatorViewPortHandler.contentTop();
       this.renderIndicatorLineCircle(ctx, indicatorType, circleOffsetTop, data.values, isVolChart ? this.volYAxisRender : this.subIndicatorYAxisRender, indicatorLineColors);
     }
@@ -3321,18 +3329,18 @@ function (_Render) {
      * @param ctx
      * @param startY
      * @param kLineData
-     * @param baseDataConfig
+     * @param baseDataStyle
      */
 
   }, {
     key: "renderMainChartFixedBaseDataTooltipText",
-    value: function renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataConfig) {
-      var values = this.getMainChartBaseValues(kLineData, baseDataConfig);
-      var textMarginLeft = baseDataConfig.text.marginLeft;
-      var textMarginRight = baseDataConfig.text.marginRight;
-      var textSize = baseDataConfig.text.size;
-      var textColor = baseDataConfig.text.color;
-      var labels = baseDataConfig.labels;
+    value: function renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle) {
+      var values = this.getMainChartBaseValues(kLineData, baseDataStyle);
+      var textMarginLeft = baseDataStyle.text.marginLeft;
+      var textMarginRight = baseDataStyle.text.marginRight;
+      var textSize = baseDataStyle.text.size;
+      var textColor = baseDataStyle.text.color;
+      var labels = baseDataStyle.labels;
       ctx.textBaseline = 'top';
       ctx.font = "".concat(textSize, "px Arial");
       var startX = this.viewPortHandler.contentLeft() + textMarginLeft;
@@ -3363,23 +3371,23 @@ function (_Render) {
      * @param ctx
      * @param kLineData
      * @param indicatorData
-     * @param baseDataConfig
-     * @param indicatorDataConfig
+     * @param baseDataStyle
+     * @param indicatorDataStyle
      * @param indicatorColors
      */
 
   }, {
     key: "renderMainChartFloatRectText",
-    value: function renderMainChartFloatRectText(ctx, kLineData, indicatorData, baseDataConfig, indicatorDataConfig) {
+    value: function renderMainChartFloatRectText(ctx, kLineData, indicatorData, baseDataStyle, indicatorDataStyle) {
       var indicatorColors = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
-      var baseLabels = baseDataConfig.labels;
-      var baseValues = this.getMainChartBaseValues(kLineData, baseDataConfig);
-      var baseTextMarginLeft = baseDataConfig.text.marginLeft;
-      var baseTextMarginRight = baseDataConfig.text.marginRight;
-      var baseTextMarginTop = baseDataConfig.text.marginTop;
-      var baseTextMarginBottom = baseDataConfig.text.marginBottom;
-      var baseTextSize = baseDataConfig.text.size;
-      var baseTextColor = baseDataConfig.text.color;
+      var baseLabels = baseDataStyle.labels;
+      var baseValues = this.getMainChartBaseValues(kLineData, baseDataStyle);
+      var baseTextMarginLeft = baseDataStyle.text.marginLeft;
+      var baseTextMarginRight = baseDataStyle.text.marginRight;
+      var baseTextMarginTop = baseDataStyle.text.marginTop;
+      var baseTextMarginBottom = baseDataStyle.text.marginBottom;
+      var baseTextSize = baseDataStyle.text.size;
+      var baseTextColor = baseDataStyle.text.color;
       ctx.textBaseline = 'top';
       var maxLabelWidth = 0;
       baseLabels.forEach(function (label, i) {
@@ -3396,18 +3404,18 @@ function (_Render) {
       });
       var indicatorLabels = indicatorData.labels || [];
       var indicatorValues = indicatorData.values || [];
-      var indicatorTextMarginLeft = indicatorDataConfig.text.marginLeft;
-      var indicatorTextMarginRight = indicatorDataConfig.text.marginRight;
-      var indicatorTextMarginTop = indicatorDataConfig.text.marginTop;
-      var indicatorTextMarginBottom = indicatorDataConfig.text.marginBottom;
-      var indicatorTextSize = indicatorDataConfig.text.size;
+      var indicatorTextMarginLeft = indicatorDataStyle.text.marginLeft;
+      var indicatorTextMarginRight = indicatorDataStyle.text.marginRight;
+      var indicatorTextMarginTop = indicatorDataStyle.text.marginTop;
+      var indicatorTextMarginBottom = indicatorDataStyle.text.marginBottom;
+      var indicatorTextSize = indicatorDataStyle.text.size;
       indicatorLabels.forEach(function (label, i) {
         var v = indicatorValues[i] || '--';
         var text = "".concat(label, ": ").concat(v);
         var labelWidth = calcTextWidth(indicatorTextSize, text) + indicatorTextMarginLeft + indicatorTextMarginRight;
         maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
       });
-      var floatRect = baseDataConfig.floatRect;
+      var floatRect = baseDataStyle.floatRect;
       var floatRectBorderSize = floatRect.borderSize;
       var floatRectPaddingLeft = floatRect.paddingLeft;
       var floatRectPaddingRight = floatRect.paddingRight;
@@ -3466,7 +3474,7 @@ function (_Render) {
       indicatorLabels.forEach(function (label, i) {
         labelY += indicatorTextMarginTop;
         ctx.textAlign = 'left';
-        ctx.fillStyle = indicatorColors[i % colorLength] || indicatorDataConfig.text.color;
+        ctx.fillStyle = indicatorColors[i % colorLength] || indicatorDataStyle.text.color;
         ctx.fillText("".concat(label, ": "), indicatorLabelX, labelY);
         ctx.textAlign = 'right';
         ctx.fillText(indicatorValues[i] || '--', rectX + floatRectWidth - floatRectBorderSize - indicatorTextMarginRight - floatRectPaddingRight, labelY);
@@ -3498,14 +3506,14 @@ function (_Render) {
     /**
      * 获取主信息提示值
      * @param kLineData
-     * @param baseDataConfig
+     * @param baseDataStyle
      * @returns {*}
      */
 
   }, {
     key: "getMainChartBaseValues",
-    value: function getMainChartBaseValues(kLineData, baseDataConfig) {
-      var baseValues = baseDataConfig.values;
+    value: function getMainChartBaseValues(kLineData, baseDataStyle) {
+      var baseValues = baseDataStyle.values;
       var values = [];
 
       if (baseValues) {
@@ -3515,7 +3523,7 @@ function (_Render) {
           values = baseValues;
         }
       } else {
-        var valueFormatter = baseDataConfig.text.valueFormatter;
+        var valueFormatter = baseDataStyle.text.valueFormatter;
         values = [formatValue(kLineData, 'timestamp'), formatValue(kLineData, 'open'), formatValue(kLineData, 'close'), formatValue(kLineData, 'high'), formatValue(kLineData, 'low'), formatValue(kLineData, 'volume')];
 
         if (isFunction(valueFormatter)) {
@@ -3554,23 +3562,23 @@ function (_Render) {
      * @param ctx
      * @param startY
      * @param data
-     * @param indicatorDataConfig
+     * @param indicatorDataStyle
      * @param indicatorColors
      */
 
   }, {
     key: "renderIndicatorTooltipText",
-    value: function renderIndicatorTooltipText(ctx, startY, data, indicatorDataConfig) {
+    value: function renderIndicatorTooltipText(ctx, startY, data, indicatorDataStyle) {
       var indicatorColors = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
       var nameText = data.name;
       var labels = data.labels;
       var values = data.values;
-      var indicatorText = indicatorDataConfig.text;
+      var indicatorText = indicatorDataStyle.text;
       var textMarginLeft = indicatorText.marginLeft;
       var textMarginRight = indicatorText.marginRight;
       var labelX = this.viewPortHandler.contentLeft() + textMarginLeft;
       var textSize = indicatorText.size;
-      var textColor = indicatorDataConfig.text.color;
+      var textColor = indicatorDataStyle.text.color;
       var lineColorSize = indicatorColors.length;
       ctx.textBaseline = 'top';
       ctx.font = "".concat(textSize, "px Arial");
@@ -3629,210 +3637,167 @@ function (_Render) {
      * 获取需要渲染的指标提示数据
      * @param kLineData
      * @param indicatorType
-     * @param indicatorDataConfig
+     * @param indicatorDataStyle
      * @returns {{values: Array, labels: Array}}
      */
 
   }, {
     key: "getRenderIndicatorTooltipData",
-    value: function getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataConfig) {
+    value: function getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle) {
       var values = [];
       var labels = [];
-      var name = '';
+      var params = this.indicatorParams[indicatorType] || [];
 
       switch (indicatorType) {
         case IndicatorType.MA:
           {
-            var ma = formatValue(kLineData, 'ma');
-            values = [formatValue(ma, 'ma5'), formatValue(ma, 'ma10'), formatValue(ma, 'ma20'), formatValue(ma, 'ma60')];
-            labels = ['MA5', 'MA10', 'MA20', 'MA60'];
-            name = 'MA(5,10,20,60)';
-            break;
-          }
-
-        case IndicatorType.MACD:
-          {
-            var macd = formatValue(kLineData, 'macd');
-            values = [formatValue(macd, 'diff'), formatValue(macd, 'dea'), formatValue(macd, 'macd')];
-            labels = ['DIFF', 'DEA', 'MACD'];
-            name = 'MACD(12,26,9)';
+            params.forEach(function (p) {
+              labels.push("MA".concat(p));
+            });
             break;
           }
 
         case IndicatorType.VOL:
           {
-            var vol = formatValue(kLineData, 'vol');
-            values = [formatValue(vol, 'ma5'), formatValue(vol, 'ma10'), formatValue(vol, 'ma20'), formatValue(vol, 'num')];
-            labels = ['MA5', 'MA10', 'MA20', 'NUM'];
-            name = 'VOLUME(5,10,20)';
+            labels.push('NUM');
+            params.forEach(function (p) {
+              labels.push("MA".concat(p));
+            });
+            break;
+          }
+
+        case IndicatorType.MACD:
+          {
+            labels = ['DIFF', 'DEA', 'MACD'];
             break;
           }
 
         case IndicatorType.BOLL:
           {
-            var boll = formatValue(kLineData, 'boll');
-            values = [formatValue(boll, 'up'), formatValue(boll, 'mid'), formatValue(boll, 'dn')];
             labels = ['UP', 'MID', 'DN'];
-            name = 'BOLL(20)';
             break;
           }
 
         case IndicatorType.BIAS:
           {
-            var bias = formatValue(kLineData, 'bias');
-            values = [formatValue(bias, 'bias1'), formatValue(bias, 'bias2'), formatValue(bias, 'bias3')];
             labels = ['BIAS6', 'BIAS12', 'BIAS24'];
-            name = 'BIAS(6,12,24)';
             break;
           }
 
         case IndicatorType.BRAR:
           {
-            var brar = formatValue(kLineData, 'brar');
-            values = [formatValue(brar, 'br'), formatValue(brar, 'ar')];
             labels = ['BR', 'AR'];
-            name = 'BRAR(26)';
             break;
           }
 
         case IndicatorType.CCI:
           {
-            var cci = formatValue(kLineData, 'cci');
-            values = [formatValue(cci, 'cci')];
             labels = ['CCI'];
-            name = 'CCI(13)';
             break;
           }
 
         case IndicatorType.CR:
           {
-            var cr = formatValue(kLineData, 'cr');
-            values = [formatValue(cr, 'cr'), formatValue(cr, 'ma1'), formatValue(cr, 'ma2'), formatValue(cr, 'ma3'), formatValue(cr, 'ma4')];
             labels = ['CR', 'MA1', 'MA2', 'MA3', 'MA4'];
-            name = 'CR(26,10,20,40,60)';
             break;
           }
 
         case IndicatorType.DMA:
           {
-            var dma = formatValue(kLineData, 'dma');
-            values = [formatValue(dma, 'dif'), formatValue(dma, 'difMa')];
             labels = ['DIF', 'DIFMA'];
-            name = 'DMA(10,50,10)';
             break;
           }
 
         case IndicatorType.DMI:
           {
-            var dmi = formatValue(kLineData, 'dmi');
-            values = [formatValue(dmi, 'mdi'), formatValue(dmi, 'pdi'), formatValue(dmi, 'adx'), formatValue(dmi, 'adxr')];
             labels = ['MDI', 'PDI', 'ADX', 'ADXR'];
-            name = 'DMI(14,6)';
             break;
           }
 
         case IndicatorType.KDJ:
           {
-            var kdj = formatValue(kLineData, 'kdj');
-            values = [formatValue(kdj, 'k'), formatValue(kdj, 'd'), formatValue(kdj, 'j')];
             labels = ['K', 'D', 'J'];
-            name = 'KDJ(9,3,3)';
             break;
           }
 
         case IndicatorType.RSI:
           {
-            var rsi = formatValue(kLineData, 'rsi');
-            values = [formatValue(rsi, 'rsi1'), formatValue(rsi, 'rsi2'), formatValue(rsi, 'rsi3')];
             labels = ['RSI6', 'RSI12', 'RSI24'];
-            name = 'RSI(6,12,24)';
             break;
           }
 
         case IndicatorType.PSY:
           {
-            var psy = formatValue(kLineData, 'psy');
-            values = [formatValue(psy, 'psy')];
             labels = ['PSY'];
-            name = 'PSY(12)';
             break;
           }
 
         case IndicatorType.TRIX:
           {
-            var trix = formatValue(kLineData, 'trix');
-            values = [formatValue(trix, 'trix'), formatValue(trix, 'maTrix')];
             labels = ['TRIX', 'MATRIX'];
-            name = 'TRIX(12,20)';
             break;
           }
 
         case IndicatorType.OBV:
           {
-            var obv = formatValue(kLineData, 'obv');
-            values = [formatValue(obv, 'obv'), formatValue(obv, 'maObv')];
             labels = ['OBV', 'MAOBV'];
-            name = 'OBV(30)';
             break;
           }
 
         case IndicatorType.VR:
           {
-            var vr = formatValue(kLineData, 'vr');
-            values = [formatValue(vr, 'vr'), formatValue(vr, 'maVr')];
             labels = ['VR', 'MAVR'];
-            name = 'VR(24,30)';
             break;
           }
 
         case IndicatorType.WR:
           {
-            var wr = formatValue(kLineData, 'wr');
-            values = [formatValue(wr, 'wr1'), formatValue(wr, 'wr2'), formatValue(wr, 'wr3')];
             labels = ['WR1', 'WR2', 'WR3'];
-            name = 'WR(13,34,89)';
             break;
           }
 
         case IndicatorType.MTM:
           {
-            var mtm = formatValue(kLineData, 'mtm');
-            values = [formatValue(mtm, 'mtm'), formatValue(mtm, 'mtmMa')];
             labels = ['MTM', 'MTMMA'];
-            name = 'MTM(6,10)';
             break;
           }
 
         case IndicatorType.EMV:
           {
-            var emv = formatValue(kLineData, 'emv');
-            values = [formatValue(emv, 'emv'), formatValue(emv, 'maEmv')];
             labels = ['EMV', 'MAEMV'];
-            name = 'EMV(14,9)';
             break;
           }
 
         case IndicatorType.SAR:
           {
-            var sar = formatValue(kLineData, 'sar');
-            values = [formatValue(sar, 'sar')];
             labels = ['SAR'];
-            name = 'SAR';
             break;
           }
       }
 
-      var valueFormatter = indicatorDataConfig.text.valueFormatter;
+      var name = '';
 
-      if (isFunction(valueFormatter)) {
-        values.forEach(function (value, index) {
-          values[index] = valueFormatter(indicatorType, value) || '--';
+      if (params && isArray(params) && params.length > 0) {
+        name = "".concat(indicatorType, "(").concat(params.join(','), ")");
+      }
+
+      if (labels.length > 0) {
+        var indicatorData = formatValue(kLineData, indicatorType.toLowerCase());
+        labels.forEach(function (label) {
+          values.push(formatValue(indicatorData, label.toLowerCase()));
         });
-      } else {
-        var decimal = indicatorType === IndicatorType.VOL ? 0 : 2;
-        values.forEach(function (value, index) {
-          values[index] = formatDecimal(value, decimal);
-        });
+        var valueFormatter = indicatorDataStyle.text.valueFormatter;
+
+        if (isFunction(valueFormatter)) {
+          values.forEach(function (value, index) {
+            values[index] = valueFormatter(indicatorType, value) || '--';
+          });
+        } else {
+          var decimal = indicatorType === IndicatorType.VOL ? 0 : 2;
+          values.forEach(function (value, index) {
+            values[index] = formatDecimal(value, decimal);
+          });
+        }
       }
 
       return {
@@ -3851,17 +3816,17 @@ var TooltipChart =
 function (_Chart) {
   _inherits(TooltipChart, _Chart);
 
-  function TooltipChart(dom, config, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
+  function TooltipChart(dom, style, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider, indicatorParams) {
     var _this;
 
     _classCallCheck(this, TooltipChart);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TooltipChart).call(this, dom, config));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TooltipChart).call(this, dom, style));
     _this.mainChart = mainChart;
     _this.volChart = volChart;
     _this.subIndicatorChart = subIndicatorChart;
     _this.dataProvider = dataProvider;
-    _this.tooltipRender = new TooltipRender(_this.viewPortHandler, dataProvider, mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler, mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender);
+    _this.tooltipRender = new TooltipRender(_this.viewPortHandler, dataProvider, indicatorParams, mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler, mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender);
     return _this;
   }
 
@@ -3869,17 +3834,17 @@ function (_Chart) {
     key: "draw",
     value: function draw() {
       var kLineData = this.dataProvider.dataList[this.dataProvider.currentTooltipDataPos] || {};
-      var tooltip = this.config.tooltip; // 如果不是绘图才显示十字线
+      var tooltip = this.style.tooltip; // 如果不是绘图才显示十字线
 
       if (this.dataProvider.currentMarkerType === MarkerType.NONE && !this.dataProvider.isDragMarker) {
-        this.tooltipRender.renderCrossHorizontalLine(this.ctx, this.mainChart.indicatorType, this.subIndicatorChart.indicatorType, this.config.yAxis.position === YAxisPosition.LEFT, this.config.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, tooltip);
+        this.tooltipRender.renderCrossHorizontalLine(this.ctx, this.mainChart.indicatorType, this.subIndicatorChart.indicatorType, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, tooltip);
         this.tooltipRender.renderCrossVerticalLine(this.ctx, kLineData, tooltip);
       }
 
       var tooltipData = tooltip.data;
 
       if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS || tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.dataProvider.crossPoint) {
-        var indicator = this.config.indicator;
+        var indicator = this.style.indicator;
         this.tooltipRender.renderMainChartTooltip(this.ctx, kLineData, this.mainChart.indicatorType, this.mainChart.chartType === ChartType.CANDLE, tooltip, indicator);
 
         if (this.volChart.indicatorType !== IndicatorType.NO) {
@@ -4125,12 +4090,12 @@ var XAxisChart =
 function (_Chart) {
   _inherits(XAxisChart, _Chart);
 
-  function XAxisChart(dom, config, dataProvider) {
+  function XAxisChart(dom, style, dataProvider) {
     var _this;
 
     _classCallCheck(this, XAxisChart);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisChart).call(this, dom, config));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisChart).call(this, dom, style));
     _this.xAxisRender = new XAxisRender(_this.viewPortHandler, dataProvider);
     return _this;
   }
@@ -4138,13 +4103,13 @@ function (_Chart) {
   _createClass(XAxisChart, [{
     key: "draw",
     value: function draw() {
-      var xAxis = this.config.xAxis;
+      var xAxis = this.style.xAxis;
       this.xAxisRender.computeAxis(xAxis);
       this.xAxisRender.renderAxisLine(this.ctx, xAxis);
       this.xAxisRender.renderAxisLabels(this.ctx, xAxis);
       this.xAxisRender.renderSeparatorLines(this.ctx, xAxis);
       this.xAxisRender.renderTickLines(this.ctx, xAxis);
-      this.xAxisRender.renderStrokeLine(this.ctx, xAxis, this.config.grid);
+      this.xAxisRender.renderStrokeLine(this.ctx, xAxis, this.style.grid);
     }
   }]);
 
@@ -4154,111 +4119,70 @@ function (_Chart) {
 var calcIndicator = {};
 /**
  * 计算均线数据
- * 参数5，10，20，60
+ * 默认参数5，10，20，60
  * @param dataList
+ * @param params
  * @returns {*}
  */
 
-calcIndicator[IndicatorType.MA] = function (dataList) {
-  var ma5Num = 0.0;
-  var ma10Num = 0.0;
-  var ma20Num = 0.0;
-  var ma60Num = 0.0;
-  var ma5;
-  var ma10;
-  var ma20;
-  var ma60;
+calcIndicator[IndicatorType.MA] = function (dataList, params) {
+  if (!params || !isArray(params)) {
+    return dataList;
+  }
+
+  var closeSums = [];
   return calc(dataList, function (i) {
+    var ma = {};
     var close = dataList[i].close;
-    ma5Num += close;
-    ma10Num += close;
-    ma20Num += close;
-    ma60Num += close;
 
-    if (i < 5) {
-      ma5 = ma5Num / (i + 1);
-    } else {
-      ma5Num -= dataList[i - 5].close;
-      ma5 = ma5Num / 5;
+    for (var j = 0; j < params.length; j++) {
+      closeSums[j] = (closeSums[j] || 0) + close;
+      var p = params[j];
+
+      if (i < p) {
+        ma["ma".concat(p)] = closeSums[j] / (i + 1);
+      } else {
+        closeSums[j] -= dataList[i - p].close;
+        ma["ma".concat(p)] = closeSums[j] / p;
+      }
     }
 
-    if (i < 10) {
-      ma10 = ma10Num / (i + 1);
-    } else {
-      ma10Num -= dataList[i - 10].close;
-      ma10 = ma10Num / 10;
-    }
-
-    if (i < 20) {
-      ma20 = ma20Num / (i + 1);
-    } else {
-      ma20Num -= dataList[i - 20].close;
-      ma20 = ma20Num / 20;
-    }
-
-    if (i < 60) {
-      ma60 = ma60Num / (i + 1);
-    } else {
-      ma60Num -= dataList[i - 60].close;
-      ma60 = ma60Num / 60;
-    }
-
-    dataList[i].ma = {
-      ma5: ma5,
-      ma10: ma10,
-      ma20: ma20,
-      ma60: ma60
-    };
+    dataList[i].ma = ma;
   });
 };
 /**
  * 计算成交量包含ma5、ma10、ma20
- * 参数5，10，20
+ * 默认参数5，10，20
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.VOL] = function (dataList) {
-  var ma5s = 0;
-  var ma10s = 0;
-  var ma20s = 0;
-  var ma5;
-  var ma10;
-  var ma20;
+calcIndicator[IndicatorType.VOL] = function (dataList, params) {
+  if (!params || !isArray(params)) {
+    return dataList;
+  }
+
+  var volumeSums = [];
   return calc(dataList, function (i) {
     var num = dataList[i].volume;
-    ma5s += num;
-    ma10s += num;
-    ma20s += num;
+    var vol = {};
 
-    if (i < 5) {
-      ma5 = ma5s / (i + 1);
-    } else {
-      ma5s -= dataList[i - 5].volume;
-      ma5 = ma5s / 5;
+    for (var j = 0; j < params.length; j++) {
+      volumeSums[j] = (volumeSums[j] || 0) + num;
+      var p = params[j];
+
+      if (i < p) {
+        vol["ma".concat(p)] = volumeSums[j] / (i + 1);
+      } else {
+        volumeSums[j] -= dataList[i - p].volume;
+        vol["ma".concat(p)] = volumeSums[j] / p;
+      }
     }
 
-    if (i < 10) {
-      ma10 = ma10s / (i + 1);
-    } else {
-      ma10s -= dataList[i - 10].volume;
-      ma10 = ma10s / 10;
-    }
-
-    if (i < 20) {
-      ma20 = ma20s / (i + 1);
-    } else {
-      ma20s -= dataList[i - 20].volume;
-      ma20 = ma20s / 20;
-    }
-
-    dataList[i].vol = {
-      num: num,
-      ma5: ma5,
-      ma10: ma10,
-      ma20: ma20
-    };
+    vol.num = num;
+    dataList[i].vol = vol;
   });
 };
 /**
@@ -5555,7 +5479,11 @@ function getHighLow(list) {
   return [high, low];
 }
 
-function get() {
+/**
+ * 默认的样式配置
+ * @returns {{realTime: {timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}, indicator: {decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}, yAxis: {line: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null, position: string}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}, maxWidth: number}, lowestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}, xAxis: {minHeight: number, maxHeight: number, line: {color: string, size: number, display: boolean}, display: boolean, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}}, lastPriceMark: {decreasingColor: string, line: {dashValue: number[], size: number, display: boolean, style: string}, display: boolean, increasingColor: string, text: {paddingBottom: number, size: number, color: string, display: boolean, paddingRight: number, valueFormatter: null, paddingTop: number, paddingLeft: number}}, grid: boolean, marker: {line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}, candle: {decreasingColor: string, style: string, increasingColor: string}, tooltip: {data: {indicator: {text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}}, displayRule: string, base: {floatRect: {fillColor: string, borderColor: string, paddingBottom: number, top: number, borderRadius: number, left: number, paddingRight: number, borderSize: number, paddingTop: number, right: number, paddingLeft: number}, values: null, showType: string, text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, labels: string[]}}, cross: {line: {dashValue: number[], size: number, color: string, style: string}, display: boolean, text: {horizontal: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}, vertical: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}}}}, highestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}}}
+ */
+function getDefaultStyle() {
   return {
     grid: false,
     realTime: {
@@ -5883,6 +5811,33 @@ function get() {
         valueFormatter: null
       }
     }
+  };
+}
+/**
+ * 默认的指标参数配置
+ */
+
+function getDefaultIndicatorParams() {
+  return {
+    MA: [5, 10, 30, 60],
+    VOL: [5, 10, 20],
+    MACD: [12, 26, 9],
+    BOLL: [20],
+    KDJ: [9, 3, 3],
+    RSI: [6, 12, 24],
+    BIAS: [6, 12, 24],
+    BRAR: [26],
+    CCI: [13],
+    DMI: [14, 6],
+    CR: [26, 10, 20, 40, 60],
+    PSY: [12],
+    DMA: [10, 50, 10],
+    TRIX: [12, 20],
+    OBV: [30],
+    VR: [24, 30],
+    WR: [13, 34, 89],
+    MTM: [6, 10],
+    EMV: [14, 9]
   };
 }
 
@@ -6626,14 +6581,14 @@ function (_Event) {
 var MarkerEvent =
 /*#__PURE__*/
 function () {
-  function MarkerEvent(dataProvider, markerChart, config) {
+  function MarkerEvent(dataProvider, markerChart, style) {
     _classCallCheck(this, MarkerEvent);
 
     this.dataProvider = dataProvider;
     this.markerChart = markerChart;
     this.viewPortHandler = markerChart.viewPortHandler;
     this.yRender = markerChart.markerRender.yRender;
-    this.config = config; // 标记当没有画线时鼠标是否按下
+    this.style = style; // 标记当没有画线时鼠标是否按下
 
     this.noneMarkerMouseDownFlag = false; // 用来记录当没有绘制标记图形时，鼠标操作后落点线上的数据
 
@@ -7002,7 +6957,7 @@ function () {
           var isOn = checkPointOnCircle({
             x: x,
             y: y
-          }, _this4.config.marker.point.radius, point);
+          }, _this4.style.marker.point.radius, point);
 
           if (isOn) {
             pointIndex = i;
@@ -7383,7 +7338,7 @@ var RootChart =
 /*#__PURE__*/
 function () {
   function RootChart(dom) {
-    var c = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var s = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     _classCallCheck(this, RootChart);
 
@@ -7403,17 +7358,18 @@ function () {
       };
     };
 
-    this.config = get();
-    merge(this.config, c);
+    this.style = getDefaultStyle();
+    merge(this.style, s);
+    this.indicatorParams = getDefaultIndicatorParams();
     dom.style.position = 'relative';
     this.dom = dom;
     this.dataProvider = new DataProvider();
-    this.xAxisChart = new XAxisChart(dom, this.config, this.dataProvider);
-    this.mainChart = new MainChart(dom, this.config, this.dataProvider);
-    this.markerChart = new MarkerChart(dom, this.config, this.dataProvider, this.mainChart.yAxisRender);
-    this.volIndicatorChart = new IndicatorChart(dom, this.config, this.dataProvider, IndicatorType.VOL);
-    this.subIndicatorChart = new IndicatorChart(dom, this.config, this.dataProvider);
-    this.tooltipChart = new TooltipChart(dom, this.config, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider);
+    this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider);
+    this.mainChart = new MainChart(dom, this.style, this.dataProvider);
+    this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender);
+    this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, IndicatorType.VOL);
+    this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider);
+    this.tooltipChart = new TooltipChart(dom, this.style, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider, this.indicatorParams);
     this.calcChartDimensions();
     this.initEvent();
   }
@@ -7453,7 +7409,7 @@ function () {
       } else {
         var _motionEvent = new MouseEvent(this.tooltipChart, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.markerChart, this.dataProvider);
 
-        var markerEvent = new MarkerEvent(this.dataProvider, this.markerChart, this.config);
+        var markerEvent = new MarkerEvent(this.dataProvider, this.markerChart, this.style);
         this.dom.addEventListener('mousedown', function (e) {
           _motionEvent.mouseDown(e);
 
@@ -7547,7 +7503,7 @@ function () {
       var offsetLeft = 0;
       var offsetRight = 0;
 
-      if (this.config.yAxis.position === YAxisPosition.LEFT) {
+      if (this.style.yAxis.position === YAxisPosition.LEFT) {
         offsetLeft = yAxisWidth;
       } else {
         offsetRight = yAxisWidth;
@@ -7571,7 +7527,7 @@ function () {
   }, {
     key: "calcXAxisHeight",
     value: function calcXAxisHeight() {
-      var xAxis = this.config.xAxis;
+      var xAxis = this.style.xAxis;
       var tickText = xAxis.tick.text;
       var tickLine = xAxis.tick.line;
       var height = tickText.size + tickText.margin;
@@ -7594,7 +7550,7 @@ function () {
   }, {
     key: "calcYAxisWidth",
     value: function calcYAxisWidth() {
-      var yAxis = this.config.yAxis;
+      var yAxis = this.style.yAxis;
       var tickText = yAxis.tick.text;
       var tickLine = yAxis.tick.line;
       var needsOffset = ((tickText.display || tickLine.display || tickText.margin > 0) && tickText.position === YAxisTextPosition.OUTSIDE || yAxis.line.display) && yAxis.display;
@@ -7660,24 +7616,12 @@ function () {
           var calc = calcIndicator[indicatorType];
 
           if (isFunction(calc)) {
-            _this2.dataProvider.dataList = calc(_this2.dataProvider.dataList);
+            _this2.dataProvider.dataList = calc(_this2.dataProvider.dataList, _this2.indicatorParams[indicatorType]);
           }
 
           _this2.flushCharts([chart, _this2.tooltipChart]);
         } catch (e) {}
       });
-    }
-    /**
-     * 设置参数
-     * @param c
-     */
-
-  }, {
-    key: "setConfig",
-    value: function setConfig() {
-      var c = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      merge(this.config, c);
-      this.calcChartDimensions();
     }
     /**
      * 添加数据集合
@@ -7692,6 +7636,18 @@ function () {
       this.dataProvider.addData(data, pos);
       this.calcChartIndicator();
       this.xAxisChart.flush();
+    }
+    /**
+     * 设置样式
+     * @param s
+     */
+
+  }, {
+    key: "setStyle",
+    value: function setStyle() {
+      var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      merge(this.style, s);
+      this.calcChartDimensions();
     }
     /**
      * 设置主图类型
@@ -7743,6 +7699,38 @@ function () {
           this.calcIndicator(indicatorType, this.subIndicatorChart);
         }
       }
+    }
+    /**
+     * 设置指标参数
+     * @param indicatorType
+     * @param params
+     */
+
+  }, {
+    key: "setIndicatorParams",
+    value: function setIndicatorParams(indicatorType, params) {
+      if (!this.indicatorParams.hasOwnProperty(indicatorType)) {
+        return;
+      }
+
+      this.indicatorParams[indicatorType] = params;
+      var mainIndicatorType = this.getMainIndicatorType();
+      var volIndicatorType = this.isShowVolChart() ? IndicatorType.VOL : IndicatorType.NO;
+      var subIndicatorType = this.getSubIndicatorType();
+
+      if (mainIndicatorType === indicatorType) {
+        this.mainChart.flush();
+      }
+
+      if (volIndicatorType === indicatorType) {
+        this.volIndicatorChart.flush();
+      }
+
+      if (subIndicatorType === indicatorType) {
+        this.subIndicatorChart.flush();
+      }
+
+      this.tooltipChart.flush();
     }
     /**
      * 显示成交量图
@@ -7851,14 +7839,14 @@ function () {
       return this.dataProvider.dataList;
     }
     /**
-     * 获取当前配置
+     * 获取当前样式
      * @returns {{indicator, yAxis, xAxis, grid, candle, tooltip}}
      */
 
   }, {
-    key: "getConfig",
-    value: function getConfig() {
-      return this.config;
+    key: "getStyle",
+    value: function getStyle() {
+      return this.style;
     }
     /**
      * 清空数据
@@ -7968,8 +7956,8 @@ function () {
 var version = "3.0.0";
 
 function init(dom) {
-  var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  return new RootChart(dom, config);
+  var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  return new RootChart(dom, style);
 }
 
 exports.init = init;

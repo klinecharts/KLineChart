@@ -9,7 +9,7 @@ import calcIndicator from '../internal/calcIndicator'
 
 import DataProvider from '../internal/DataProvider'
 
-import { get } from '../config'
+import { getDefaultStyle, getDefaultIndicatorParams } from '../config'
 import { isMobile } from '../internal/utils/platformUtils'
 import TouchEvent from '../internal/event/TouchEvent'
 import MouseEvent from '../internal/event/MouseEvent'
@@ -18,7 +18,7 @@ import MarkerEvent from '../internal/event/MarkerEvent'
 import { IndicatorType, YAxisPosition, YAxisTextPosition, MarkerType, ChartType } from '../internal/constants'
 
 class RootChart {
-  constructor (dom, c = {}) {
+  constructor (dom, s = {}) {
     if (!dom) {
       throw new Error(`Chart version is ${process.env.K_LINE_VERSION}. Root dom is null, can not initialize the chart!!!`)
     }
@@ -32,22 +32,21 @@ class RootChart {
         }
       }
     }
-    this.config = get()
-    merge(this.config, c)
+    this.style = getDefaultStyle()
+    merge(this.style, s)
+    this.indicatorParams = getDefaultIndicatorParams()
     dom.style.position = 'relative'
     this.dom = dom
     this.dataProvider = new DataProvider()
-    this.xAxisChart = new XAxisChart(dom, this.config, this.dataProvider)
-    this.mainChart = new MainChart(dom, this.config, this.dataProvider)
-    this.markerChart = new MarkerChart(dom, this.config, this.dataProvider, this.mainChart.yAxisRender)
-    this.volIndicatorChart = new IndicatorChart(dom, this.config, this.dataProvider, IndicatorType.VOL)
-    this.subIndicatorChart = new IndicatorChart(dom, this.config, this.dataProvider)
+    this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider)
+    this.mainChart = new MainChart(dom, this.style, this.dataProvider)
+    this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender)
+    this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, IndicatorType.VOL)
+    this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider)
     this.tooltipChart = new TooltipChart(
-      dom, this.config,
-      this.mainChart,
-      this.volIndicatorChart,
-      this.subIndicatorChart,
-      this.xAxisChart, this.dataProvider
+      dom, this.style,
+      this.mainChart, this.volIndicatorChart, this.subIndicatorChart,
+      this.xAxisChart, this.dataProvider, this.indicatorParams
     )
     this.calcChartDimensions()
     this.initEvent()
@@ -81,7 +80,7 @@ class RootChart {
         this.volIndicatorChart, this.subIndicatorChart,
         this.xAxisChart, this.markerChart, this.dataProvider
       )
-      const markerEvent = new MarkerEvent(this.dataProvider, this.markerChart, this.config)
+      const markerEvent = new MarkerEvent(this.dataProvider, this.markerChart, this.style)
       this.dom.addEventListener('mousedown', (e) => {
         motionEvent.mouseDown(e)
         markerEvent.mouseDown(e)
@@ -139,7 +138,7 @@ class RootChart {
     }
     let offsetLeft = 0
     let offsetRight = 0
-    if (this.config.yAxis.position === YAxisPosition.LEFT) {
+    if (this.style.yAxis.position === YAxisPosition.LEFT) {
       offsetLeft = yAxisWidth
     } else {
       offsetRight = yAxisWidth
@@ -160,7 +159,7 @@ class RootChart {
    * 计算x轴高度
    */
   calcXAxisHeight () {
-    const xAxis = this.config.xAxis
+    const xAxis = this.style.xAxis
     const tickText = xAxis.tick.text
     const tickLine = xAxis.tick.line
     let height = tickText.size + tickText.margin
@@ -178,7 +177,7 @@ class RootChart {
    * 计算y轴宽度
    */
   calcYAxisWidth () {
-    const yAxis = this.config.yAxis
+    const yAxis = this.style.yAxis
     const tickText = yAxis.tick.text
     const tickLine = yAxis.tick.line
     const needsOffset = (((tickText.display || tickLine.display || tickText.margin > 0) && tickText.position === YAxisTextPosition.OUTSIDE) || yAxis.line.display) && yAxis.display
@@ -227,21 +226,12 @@ class RootChart {
       try {
         const calc = calcIndicator[indicatorType]
         if (isFunction(calc)) {
-          this.dataProvider.dataList = calc(this.dataProvider.dataList)
+          this.dataProvider.dataList = calc(this.dataProvider.dataList, this.indicatorParams[indicatorType])
         }
         this.flushCharts([chart, this.tooltipChart])
       } catch (e) {
       }
     })
-  }
-
-  /**
-   * 设置参数
-   * @param c
-   */
-  setConfig (c = {}) {
-    merge(this.config, c)
-    this.calcChartDimensions()
   }
 
   /**
@@ -253,6 +243,15 @@ class RootChart {
     this.dataProvider.addData(data, pos)
     this.calcChartIndicator()
     this.xAxisChart.flush()
+  }
+
+  /**
+   * 设置样式
+   * @param s
+   */
+  setStyle (s = {}) {
+    merge(this.style, s)
+    this.calcChartDimensions()
   }
 
   /**
@@ -295,6 +294,31 @@ class RootChart {
         this.calcIndicator(indicatorType, this.subIndicatorChart)
       }
     }
+  }
+
+  /**
+   * 设置指标参数
+   * @param indicatorType
+   * @param params
+   */
+  setIndicatorParams (indicatorType, params) {
+    if (!this.indicatorParams.hasOwnProperty(indicatorType)) {
+      return
+    }
+    this.indicatorParams[indicatorType] = params
+    const mainIndicatorType = this.getMainIndicatorType()
+    const volIndicatorType = this.isShowVolChart() ? IndicatorType.VOL : IndicatorType.NO
+    const subIndicatorType = this.getSubIndicatorType()
+    if (mainIndicatorType === indicatorType) {
+      this.mainChart.flush()
+    }
+    if (volIndicatorType === indicatorType) {
+      this.volIndicatorChart.flush()
+    }
+    if (subIndicatorType === indicatorType) {
+      this.subIndicatorChart.flush()
+    }
+    this.tooltipChart.flush()
   }
 
   /**
@@ -383,11 +407,11 @@ class RootChart {
   }
 
   /**
-   * 获取当前配置
+   * 获取当前样式
    * @returns {{indicator, yAxis, xAxis, grid, candle, tooltip}}
    */
-  getConfig () {
-    return this.config
+  getStyle () {
+    return this.style
   }
 
   /**

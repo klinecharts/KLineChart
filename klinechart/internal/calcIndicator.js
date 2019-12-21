@@ -1,4 +1,5 @@
 import { IndicatorType } from '../internal/constants'
+import { isArray } from './utils/dataUtils'
 
 const calcIndicator = {}
 
@@ -6,98 +7,60 @@ export default calcIndicator
 
 /**
  * 计算均线数据
- * 参数5，10，20，60
+ * 默认参数5，10，20，60
  * @param dataList
+ * @param params
  * @returns {*}
  */
-calcIndicator[IndicatorType.MA] = function (dataList) {
-  let ma5Num = 0.0
-  let ma10Num = 0.0
-  let ma20Num = 0.0
-  let ma60Num = 0.0
-
-  let ma5
-  let ma10
-  let ma20
-  let ma60
+calcIndicator[IndicatorType.MA] = function (dataList, params) {
+  if (!params || !isArray(params)) {
+    return dataList
+  }
+  const closeSums = []
   return calc(dataList, (i) => {
+    const ma = {}
     const close = dataList[i].close
-    ma5Num += close
-    ma10Num += close
-    ma20Num += close
-    ma60Num += close
-    if (i < 5) {
-      ma5 = ma5Num / (i + 1)
-    } else {
-      ma5Num -= dataList[i - 5].close
-      ma5 = ma5Num / 5
+    for (let j = 0; j < params.length; j++) {
+      closeSums[j] = (closeSums[j] || 0) + close
+      const p = params[j]
+      if (i < p) {
+        ma[`ma${p}`] = closeSums[j] / (i + 1)
+      } else {
+        closeSums[j] -= dataList[i - p].close
+        ma[`ma${p}`] = closeSums[j] / p
+      }
     }
-
-    if (i < 10) {
-      ma10 = ma10Num / (i + 1)
-    } else {
-      ma10Num -= dataList[i - 10].close
-      ma10 = ma10Num / 10
-    }
-
-    if (i < 20) {
-      ma20 = ma20Num / (i + 1)
-    } else {
-      ma20Num -= dataList[i - 20].close
-      ma20 = ma20Num / 20
-    }
-
-    if (i < 60) {
-      ma60 = ma60Num / (i + 1)
-    } else {
-      ma60Num -= dataList[i - 60].close
-      ma60 = ma60Num / 60
-    }
-    dataList[i].ma = { ma5, ma10, ma20, ma60 }
+    dataList[i].ma = ma
   })
 }
 
 /**
  * 计算成交量包含ma5、ma10、ma20
- * 参数5，10，20
+ * 默认参数5，10，20
  * @param dataList
+ * @param params
  * @return
  */
-calcIndicator[IndicatorType.VOL] = function (dataList) {
-  let ma5s = 0
-  let ma10s = 0
-  let ma20s = 0
-  let ma5
-  let ma10
-  let ma20
-
+calcIndicator[IndicatorType.VOL] = function (dataList, params) {
+  if (!params || !isArray(params)) {
+    return dataList
+  }
+  const volumeSums = []
   return calc(dataList, (i) => {
     const num = dataList[i].volume
-    ma5s += num
-    ma10s += num
-    ma20s += num
-
-    if (i < 5) {
-      ma5 = ma5s / (i + 1)
-    } else {
-      ma5s -= dataList[i - 5].volume
-      ma5 = ma5s / 5
+    const vol = {}
+    for (let j = 0; j < params.length; j++) {
+      volumeSums[j] = (volumeSums[j] || 0) + num
+      const p = params[j]
+      if (i < p) {
+        vol[`ma${p}`] = volumeSums[j] / (i + 1)
+      } else {
+        volumeSums[j] -= dataList[i - p].volume
+        vol[`ma${p}`] = volumeSums[j] / p
+      }
     }
-
-    if (i < 10) {
-      ma10 = ma10s / (i + 1)
-    } else {
-      ma10s -= dataList[i - 10].volume
-      ma10 = ma10s / 10
-    }
-
-    if (i < 20) {
-      ma20 = ma20s / (i + 1)
-    } else {
-      ma20s -= dataList[i - 20].volume
-      ma20 = ma20s / 20
-    }
-    dataList[i].vol = { num, ma5, ma10, ma20 }
+    vol.num = num
+    dataList[i].vol = vol
   })
 }
 
