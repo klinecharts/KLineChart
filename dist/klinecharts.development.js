@@ -786,35 +786,32 @@ function (_Render) {
      * @param ctx
      * @param indicatorType
      * @param indicator
+     * @param indicatorParams
      * @param isMainIndicator
      */
 
   }, {
     key: "renderIndicator",
-    value: function renderIndicator(ctx, indicatorType, indicator) {
+    value: function renderIndicator(ctx, indicatorType, indicator, indicatorParams) {
       var _this2 = this;
 
-      var isMainIndicator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+      var isMainIndicator = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
       var onRendering;
+      var params = indicatorParams[indicatorType] || [];
       var linePoints = [];
 
       switch (indicatorType) {
         case IndicatorType.MA:
           {
+            var dataKeys = [];
+            params.forEach(function (p) {
+              dataKeys.push("ma".concat(p));
+            });
+
             onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
-              var ma = kLineData.ma || {};
-              var lineValues = [];
-              Object.keys(ma).forEach(function (key) {
-                lineValues.push(ma[key]);
+              _this2.ohlcIndicatorRendering(ctx, i, x, halfBarSpace, indicator, kLineData, indicatorType, dataKeys, isMainIndicator, function (values) {
+                _this2.prepareLinePoints(x, values, linePoints);
               });
-
-              _this2.prepareLinePoints(x, lineValues, linePoints);
-
-              if (!isMainIndicator) {
-                var refKLineData = _this2.dataProvider.dataList[i - 1] || {};
-
-                _this2.renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, indicator.increasingColor, indicator.decreasingColor);
-              }
             };
 
             break;
@@ -851,8 +848,12 @@ function (_Render) {
           {
             onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
               var vol = kLineData.vol || {};
+              var lineValues = [];
+              params.forEach(function (p) {
+                lineValues.push(vol["ma".concat(p)]);
+              });
 
-              _this2.prepareLinePoints(x, [vol.ma5, vol.ma10, vol.ma20], linePoints);
+              _this2.prepareLinePoints(x, lineValues, linePoints);
 
               var refKLineData = _this2.dataProvider.dataList[i - 1] || {};
               var close = kLineData.close;
@@ -873,15 +874,9 @@ function (_Render) {
         case IndicatorType.BOLL:
           {
             onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
-              var boll = kLineData.boll || {};
-
-              _this2.prepareLinePoints(x, [boll.up, boll.mid, boll.dn], linePoints);
-
-              if (!isMainIndicator) {
-                var refKLineData = _this2.dataProvider.dataList[i - 1] || {};
-
-                _this2.renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, indicator.increasingColor, indicator.decreasingColor);
-              }
+              _this2.ohlcIndicatorRendering(ctx, i, x, halfBarSpace, indicator, kLineData, indicatorType, ['up', 'mid', 'dn'], isMainIndicator, function (values) {
+                _this2.prepareLinePoints(x, values, linePoints);
+              });
             };
 
             break;
@@ -1055,29 +1050,24 @@ function (_Render) {
         case IndicatorType.SAR:
           {
             onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
-              var data = kLineData.sar || {};
-              var sar = data.sar;
+              _this2.ohlcIndicatorRendering(ctx, i, x, halfBarSpace, indicator, kLineData, indicatorType, ['sar'], isMainIndicator, function (values) {
+                var sar = values[0];
 
-              if (sar || sar === 0) {
-                var dataY = _this2.yAxisRender.getY(sar);
+                if (sar || sar === 0) {
+                  var dataY = _this2.yAxisRender.getY(sar);
 
-                if (sar < (kLineData.high + kLineData.low) / 2) {
-                  ctx.strokeStyle = indicator.increasingColor;
-                } else {
-                  ctx.strokeStyle = indicator.decreasingColor;
+                  if (sar < (kLineData.high + kLineData.low) / 2) {
+                    ctx.strokeStyle = indicator.increasingColor;
+                  } else {
+                    ctx.strokeStyle = indicator.decreasingColor;
+                  }
+
+                  ctx.beginPath();
+                  ctx.arc(x, dataY, halfBarSpace, Math.PI * 2, 0, true);
+                  ctx.stroke();
+                  ctx.closePath();
                 }
-
-                ctx.beginPath();
-                ctx.arc(x, dataY, halfBarSpace, Math.PI * 2, 0, true);
-                ctx.stroke();
-                ctx.closePath();
-              }
-
-              if (!isMainIndicator) {
-                var refKLineData = _this2.dataProvider.dataList[i - 1] || {};
-
-                _this2.renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, indicator.increasingColor, indicator.decreasingColor);
-              }
+              });
             };
           }
       }
@@ -1085,6 +1075,38 @@ function (_Render) {
       this.renderGraphics(ctx, onRendering, function () {
         _this2.renderLines(ctx, linePoints, indicator);
       });
+    }
+    /**
+     * 需要绘制ohlc指标每条数据渲染
+     * @param ctx
+     * @param i
+     * @param x
+     * @param halfBarSpace
+     * @param indicator
+     * @param kLineData
+     * @param indicatorType
+     * @param dataKeys
+     * @param isMainIndicator
+     * @param prepare
+     */
+
+  }, {
+    key: "ohlcIndicatorRendering",
+    value: function ohlcIndicatorRendering(ctx, i, x, halfBarSpace, indicator, kLineData, indicatorType, dataKeys, isMainIndicator, prepare) {
+      var indicatorData = kLineData[indicatorType.toLowerCase()] || {};
+      var values = [];
+      dataKeys.forEach(function (key) {
+        values.push(indicatorData[key]);
+      });
+
+      if (prepare) {
+        prepare(values);
+      }
+
+      if (!isMainIndicator) {
+        var refKLineData = this.dataProvider.dataList[i - 1] || {};
+        this.renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, indicator.increasingColor, indicator.decreasingColor);
+      }
     }
     /**
      * 绘制图形
@@ -1730,14 +1752,15 @@ var IndicatorChart =
 function (_Chart) {
   _inherits(IndicatorChart, _Chart);
 
-  function IndicatorChart(dom, style, dataProvider) {
+  function IndicatorChart(dom, style, dataProvider, indicatorParams) {
     var _this;
 
-    var defaultIndicatorType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : IndicatorType.MACD;
+    var defaultIndicatorType = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : IndicatorType.MACD;
 
     _classCallCheck(this, IndicatorChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorChart).call(this, dom, style));
+    _this.indicatorParams = indicatorParams;
     _this.indicatorType = defaultIndicatorType;
     _this.yAxisRender = new YAxisRender(_this.viewPortHandler, dataProvider);
     _this.chartRender = new IndicatorRender(_this.viewPortHandler, dataProvider, _this.yAxisRender);
@@ -1769,7 +1792,7 @@ function (_Chart) {
   }, {
     key: "drawChart",
     value: function drawChart() {
-      this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, false);
+      this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, this.indicatorParams, false);
     }
   }, {
     key: "isDrawChart",
@@ -2260,12 +2283,12 @@ var MainChart =
 function (_IndicatorChart) {
   _inherits(MainChart, _IndicatorChart);
 
-  function MainChart(dom, style, dataProvider) {
+  function MainChart(dom, style, dataProvider, indicatorParams) {
     var _this;
 
     _classCallCheck(this, MainChart);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MainChart).call(this, dom, style, dataProvider, IndicatorType.MA));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MainChart).call(this, dom, style, dataProvider, indicatorParams, IndicatorType.MA));
     _this.chartRender = new MainRender(_this.viewPortHandler, dataProvider, _this.yAxisRender);
     _this.chartType = ChartType.CANDLE;
     return _this;
@@ -2283,7 +2306,7 @@ function (_IndicatorChart) {
     value: function drawChart() {
       if (this.chartType !== ChartType.REAL_TIME) {
         this.chartRender.renderCandle(this.ctx, this.style.candle);
-        this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, true);
+        this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, this.indicatorParams, true);
         this.chartRender.renderHighestPriceMark(this.ctx, this.style.highestPriceMark);
         this.chartRender.renderLowestPriceMark(this.ctx, this.style.lowestPriceMark);
       } else {
@@ -3588,7 +3611,7 @@ function (_Render) {
       labelX += textMarginLeft + nameTextWidth;
 
       for (var i = 0; i < labels.length; i++) {
-        var text = "".concat(labels[i], ": ").concat(values[i] || '--');
+        var text = "".concat(labels[i].toUpperCase(), ": ").concat(values[i] || '--');
         var textWidth = calcTextWidth(textSize, text);
         ctx.fillStyle = indicatorColors[i % lineColorSize] || textColor;
         ctx.fillText(text, labelX, startY);
@@ -3652,125 +3675,125 @@ function (_Render) {
         case IndicatorType.MA:
           {
             params.forEach(function (p) {
-              labels.push("MA".concat(p));
+              labels.push("ma".concat(p));
             });
             break;
           }
 
         case IndicatorType.VOL:
           {
-            labels.push('NUM');
             params.forEach(function (p) {
-              labels.push("MA".concat(p));
+              labels.push("ma".concat(p));
             });
+            labels.push('num');
             break;
           }
 
         case IndicatorType.MACD:
           {
-            labels = ['DIFF', 'DEA', 'MACD'];
+            labels = ['diff', 'dea', 'macd'];
             break;
           }
 
         case IndicatorType.BOLL:
           {
-            labels = ['UP', 'MID', 'DN'];
+            labels = ['up', 'mid', 'dn'];
             break;
           }
 
         case IndicatorType.BIAS:
           {
-            labels = ['BIAS6', 'BIAS12', 'BIAS24'];
+            labels = ['bias6', 'bias12', 'bias24'];
             break;
           }
 
         case IndicatorType.BRAR:
           {
-            labels = ['BR', 'AR'];
+            labels = ['br', 'ar'];
             break;
           }
 
         case IndicatorType.CCI:
           {
-            labels = ['CCI'];
+            labels = ['cci'];
             break;
           }
 
         case IndicatorType.CR:
           {
-            labels = ['CR', 'MA1', 'MA2', 'MA3', 'MA4'];
+            labels = ['cr', 'ma1', 'ma2', 'ma3', 'ma4'];
             break;
           }
 
         case IndicatorType.DMA:
           {
-            labels = ['DIF', 'DIFMA'];
+            labels = ['dif', 'difMa'];
             break;
           }
 
         case IndicatorType.DMI:
           {
-            labels = ['MDI', 'PDI', 'ADX', 'ADXR'];
+            labels = ['mdi', 'pdi', 'adx', 'adxr'];
             break;
           }
 
         case IndicatorType.KDJ:
           {
-            labels = ['K', 'D', 'J'];
+            labels = ['k', 'd', 'j'];
             break;
           }
 
         case IndicatorType.RSI:
           {
-            labels = ['RSI6', 'RSI12', 'RSI24'];
+            labels = ['rsi6', 'rsi12', 'rsi24'];
             break;
           }
 
         case IndicatorType.PSY:
           {
-            labels = ['PSY'];
+            labels = ['psy'];
             break;
           }
 
         case IndicatorType.TRIX:
           {
-            labels = ['TRIX', 'MATRIX'];
+            labels = ['trix', 'maTrix'];
             break;
           }
 
         case IndicatorType.OBV:
           {
-            labels = ['OBV', 'MAOBV'];
+            labels = ['obv', 'maObv'];
             break;
           }
 
         case IndicatorType.VR:
           {
-            labels = ['VR', 'MAVR'];
+            labels = ['vr', 'maVr'];
             break;
           }
 
         case IndicatorType.WR:
           {
-            labels = ['WR1', 'WR2', 'WR3'];
+            labels = ['wr1', 'wr2', 'wr3'];
             break;
           }
 
         case IndicatorType.MTM:
           {
-            labels = ['MTM', 'MTMMA'];
+            labels = ['mtm', 'mtmMa'];
             break;
           }
 
         case IndicatorType.EMV:
           {
-            labels = ['EMV', 'MAEMV'];
+            labels = ['emv', 'maEmv'];
             break;
           }
 
         case IndicatorType.SAR:
           {
-            labels = ['SAR'];
+            labels = ['sar'];
             break;
           }
       }
@@ -3784,7 +3807,7 @@ function (_Render) {
       if (labels.length > 0) {
         var indicatorData = formatValue(kLineData, indicatorType.toLowerCase());
         labels.forEach(function (label) {
-          values.push(formatValue(indicatorData, label.toLowerCase()));
+          values.push(formatValue(indicatorData, label));
         });
         var valueFormatter = indicatorDataStyle.text.valueFormatter;
 
@@ -4131,11 +4154,12 @@ calcIndicator[IndicatorType.MA] = function (dataList, params) {
   }
 
   var closeSums = [];
+  var paramsLength = params.length;
   return calc(dataList, function (i) {
     var ma = {};
     var close = dataList[i].close;
 
-    for (var j = 0; j < params.length; j++) {
+    for (var j = 0; j < paramsLength; j++) {
       closeSums[j] = (closeSums[j] || 0) + close;
       var p = params[j];
 
@@ -4165,11 +4189,12 @@ calcIndicator[IndicatorType.VOL] = function (dataList, params) {
   }
 
   var volumeSums = [];
+  var paramsLength = params.length;
   return calc(dataList, function (i) {
     var num = dataList[i].volume;
     var vol = {};
 
-    for (var j = 0; j < params.length; j++) {
+    for (var j = 0; j < paramsLength; j++) {
       volumeSums[j] = (volumeSums[j] || 0) + num;
       var p = params[j];
 
@@ -7365,10 +7390,10 @@ function () {
     this.dom = dom;
     this.dataProvider = new DataProvider();
     this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider);
-    this.mainChart = new MainChart(dom, this.style, this.dataProvider);
+    this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams);
     this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender);
-    this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, IndicatorType.VOL);
-    this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider);
+    this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL);
+    this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams);
     this.tooltipChart = new TooltipChart(dom, this.style, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider, this.indicatorParams);
     this.calcChartDimensions();
     this.initEvent();

@@ -17,10 +17,11 @@ calcIndicator[IndicatorType.MA] = function (dataList, params) {
     return dataList
   }
   const closeSums = []
+  const paramsLength = params.length
   return calc(dataList, (i) => {
     const ma = {}
     const close = dataList[i].close
-    for (let j = 0; j < params.length; j++) {
+    for (let j = 0; j < paramsLength; j++) {
       closeSums[j] = (closeSums[j] || 0) + close
       const p = params[j]
       if (i < p) {
@@ -46,10 +47,11 @@ calcIndicator[IndicatorType.VOL] = function (dataList, params) {
     return dataList
   }
   const volumeSums = []
+  const paramsLength = params.length
   return calc(dataList, (i) => {
     const num = dataList[i].volume
     const vol = {}
-    for (let j = 0; j < params.length; j++) {
+    for (let j = 0; j < paramsLength; j++) {
       volumeSums[j] = (volumeSums[j] || 0) + num
       const p = params[j]
       if (i < p) {

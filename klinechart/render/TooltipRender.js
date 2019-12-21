@@ -520,7 +520,7 @@ class TooltipRender extends Render {
     ctx.fillText(nameText, labelX, startY)
     labelX += (textMarginLeft + nameTextWidth)
     for (let i = 0; i < labels.length; i++) {
-      const text = `${labels[i]}: ${values[i] || '--'}`
+      const text = `${labels[i].toUpperCase()}: ${values[i] || '--'}`
       const textWidth = calcTextWidth(textSize, text)
       ctx.fillStyle = indicatorColors[i % lineColorSize] || textColor
       ctx.fillText(text, labelX, startY)
@@ -574,90 +574,90 @@ class TooltipRender extends Render {
     switch (indicatorType) {
       case IndicatorType.MA: {
         params.forEach(p => {
-          labels.push(`MA${p}`)
+          labels.push(`ma${p}`)
         })
         break
       }
       case IndicatorType.VOL: {
-        labels.push('NUM')
         params.forEach(p => {
-          labels.push(`MA${p}`)
+          labels.push(`ma${p}`)
         })
+        labels.push('num')
         break
       }
       case IndicatorType.MACD: {
-        labels = ['DIFF', 'DEA', 'MACD']
+        labels = ['diff', 'dea', 'macd']
         break
       }
       case IndicatorType.BOLL: {
-        labels = ['UP', 'MID', 'DN']
+        labels = ['up', 'mid', 'dn']
         break
       }
       case IndicatorType.BIAS: {
-        labels = ['BIAS6', 'BIAS12', 'BIAS24']
+        labels = ['bias6', 'bias12', 'bias24']
         break
       }
       case IndicatorType.BRAR: {
-        labels = ['BR', 'AR']
+        labels = ['br', 'ar']
         break
       }
       case IndicatorType.CCI: {
-        labels = ['CCI']
+        labels = ['cci']
         break
       }
       case IndicatorType.CR: {
-        labels = ['CR', 'MA1', 'MA2', 'MA3', 'MA4']
+        labels = ['cr', 'ma1', 'ma2', 'ma3', 'ma4']
         break
       }
       case IndicatorType.DMA: {
-        labels = ['DIF', 'DIFMA']
+        labels = ['dif', 'difMa']
         break
       }
       case IndicatorType.DMI: {
-        labels = ['MDI', 'PDI', 'ADX', 'ADXR']
+        labels = ['mdi', 'pdi', 'adx', 'adxr']
         break
       }
       case IndicatorType.KDJ: {
-        labels = ['K', 'D', 'J']
+        labels = ['k', 'd', 'j']
         break
       }
 
       case IndicatorType.RSI: {
-        labels = ['RSI6', 'RSI12', 'RSI24']
+        labels = ['rsi6', 'rsi12', 'rsi24']
         break
       }
       case IndicatorType.PSY: {
-        labels = ['PSY']
+        labels = ['psy']
         break
       }
       case IndicatorType.TRIX: {
-        labels = ['TRIX', 'MATRIX']
+        labels = ['trix', 'maTrix']
         break
       }
       case IndicatorType.OBV: {
-        labels = ['OBV', 'MAOBV']
+        labels = ['obv', 'maObv']
         break
       }
       case IndicatorType.VR: {
-        labels = ['VR', 'MAVR']
+        labels = ['vr', 'maVr']
         break
       }
       case IndicatorType.WR: {
-        labels = ['WR1', 'WR2', 'WR3']
+        labels = ['wr1', 'wr2', 'wr3']
         break
       }
       case IndicatorType.MTM: {
-        labels = ['MTM', 'MTMMA']
+        labels = ['mtm', 'mtmMa']
         break
       }
 
       case IndicatorType.EMV: {
-        labels = ['EMV', 'MAEMV']
+        labels = ['emv', 'maEmv']
         break
       }
 
       case IndicatorType.SAR: {
-        labels = ['SAR']
+        labels = ['sar']
         break
       }
     }
@@ -668,7 +668,7 @@ class TooltipRender extends Render {
     if (labels.length > 0) {
       const indicatorData = formatValue(kLineData, indicatorType.toLowerCase())
       labels.forEach(label => {
-        values.push(formatValue(indicatorData, label.toLowerCase()))
+        values.push(formatValue(indicatorData, label))
       })
 
       const valueFormatter = indicatorDataStyle.text.valueFormatter

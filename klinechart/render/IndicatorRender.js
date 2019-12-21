@@ -29,27 +29,27 @@ class IndicatorRender extends Render {
    * @param ctx
    * @param indicatorType
    * @param indicator
+   * @param indicatorParams
    * @param isMainIndicator
    */
-  renderIndicator (ctx, indicatorType, indicator, isMainIndicator = false) {
+  renderIndicator (ctx, indicatorType, indicator, indicatorParams, isMainIndicator = false) {
     let onRendering
+    const params = indicatorParams[indicatorType] || []
     const linePoints = []
     switch (indicatorType) {
       case IndicatorType.MA: {
+        const dataKeys = []
+        params.forEach(p => {
+          dataKeys.push(`ma${p}`)
+        })
         onRendering = (x, i, kLineData, halfBarSpace) => {
-          const ma = kLineData.ma || {}
-          const lineValues = []
-          Object.keys(ma).forEach(key => {
-            lineValues.push(ma[key])
-          })
-          this.prepareLinePoints(x, lineValues, linePoints)
-          if (!isMainIndicator) {
-            const refKLineData = this.dataProvider.dataList[i - 1] || {}
-            this.renderOhlc(
-              ctx, halfBarSpace, x, kLineData,
-              refKLineData, indicator.increasingColor, indicator.decreasingColor
-            )
-          }
+          this.ohlcIndicatorRendering(
+            ctx, i, x, halfBarSpace, indicator,
+            kLineData, indicatorType, dataKeys,
+            isMainIndicator, (values) => {
+              this.prepareLinePoints(x, values, linePoints)
+            }
+          )
         }
         break
       }
@@ -77,7 +77,11 @@ class IndicatorRender extends Render {
       case IndicatorType.VOL: {
         onRendering = (x, i, kLineData, halfBarSpace) => {
           const vol = kLineData.vol || {}
-          this.prepareLinePoints(x, [vol.ma5, vol.ma10, vol.ma20], linePoints)
+          const lineValues = []
+          params.forEach(p => {
+            lineValues.push(vol[`ma${p}`])
+          })
+          this.prepareLinePoints(x, lineValues, linePoints)
           const refKLineData = this.dataProvider.dataList[i - 1] || {}
           const close = kLineData.close
           const refClose = (refKLineData || {}).close || Number.MIN_SAFE_INTEGER
@@ -93,15 +97,13 @@ class IndicatorRender extends Render {
 
       case IndicatorType.BOLL: {
         onRendering = (x, i, kLineData, halfBarSpace) => {
-          const boll = kLineData.boll || {}
-          this.prepareLinePoints(x, [boll.up, boll.mid, boll.dn], linePoints)
-          if (!isMainIndicator) {
-            const refKLineData = this.dataProvider.dataList[i - 1] || {}
-            this.renderOhlc(
-              ctx, halfBarSpace, x, kLineData,
-              refKLineData, indicator.increasingColor, indicator.decreasingColor
-            )
-          }
+          this.ohlcIndicatorRendering(
+            ctx, i, x, halfBarSpace, indicator,
+            kLineData, indicatorType, ['up', 'mid', 'dn'],
+            isMainIndicator, (values) => {
+              this.prepareLinePoints(x, values, linePoints)
+            }
+          )
         }
         break
       }
@@ -228,24 +230,25 @@ class IndicatorRender extends Render {
 
       case IndicatorType.SAR: {
         onRendering = (x, i, kLineData, halfBarSpace) => {
-          const data = kLineData.sar || {}
-          const sar = data.sar
-          if (sar || sar === 0) {
-            const dataY = this.yAxisRender.getY(sar)
-            if (sar < (kLineData.high + kLineData.low) / 2) {
-              ctx.strokeStyle = indicator.increasingColor
-            } else {
-              ctx.strokeStyle = indicator.decreasingColor
+          this.ohlcIndicatorRendering(
+            ctx, i, x, halfBarSpace, indicator,
+            kLineData, indicatorType, ['sar'],
+            isMainIndicator, (values) => {
+              const sar = values[0]
+              if (sar || sar === 0) {
+                const dataY = this.yAxisRender.getY(sar)
+                if (sar < (kLineData.high + kLineData.low) / 2) {
+                  ctx.strokeStyle = indicator.increasingColor
+                } else {
+                  ctx.strokeStyle = indicator.decreasingColor
+                }
+                ctx.beginPath()
+                ctx.arc(x, dataY, halfBarSpace, Math.PI * 2, 0, true)
+                ctx.stroke()
+                ctx.closePath()
+              }
             }
-            ctx.beginPath()
-            ctx.arc(x, dataY, halfBarSpace, Math.PI * 2, 0, true)
-            ctx.stroke()
-            ctx.closePath()
-          }
-          if (!isMainIndicator) {
-            const refKLineData = this.dataProvider.dataList[i - 1] || {}
-            this.renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, indicator.increasingColor, indicator.decreasingColor)
-          }
+          )
         }
       }
     }
@@ -255,6 +258,41 @@ class IndicatorRender extends Render {
         this.renderLines(ctx, linePoints, indicator)
       }
     )
+  }
+
+  /**
+   * 需要绘制ohlc指标每条数据渲染
+   * @param ctx
+   * @param i
+   * @param x
+   * @param halfBarSpace
+   * @param indicator
+   * @param kLineData
+   * @param indicatorType
+   * @param dataKeys
+   * @param isMainIndicator
+   * @param prepare
+   */
+  ohlcIndicatorRendering (
+    ctx, i, x, halfBarSpace, indicator,
+    kLineData, indicatorType,
+    dataKeys, isMainIndicator, prepare
+  ) {
+    const indicatorData = kLineData[indicatorType.toLowerCase()] || {}
+    const values = []
+    dataKeys.forEach(key => {
+      values.push(indicatorData[key])
+    })
+    if (prepare) {
+      prepare(values)
+    }
+    if (!isMainIndicator) {
+      const refKLineData = this.dataProvider.dataList[i - 1] || {}
+      this.renderOhlc(
+        ctx, halfBarSpace, x, kLineData,
+        refKLineData, indicator.increasingColor, indicator.decreasingColor
+      )
+    }
   }
 
   /**

@@ -4,8 +4,8 @@ import MainRender from '../render/MainRender'
 import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType } from '../internal/constants'
 
 class MainChart extends IndicatorChart {
-  constructor (dom, style, dataProvider) {
-    super(dom, style, dataProvider, IndicatorType.MA)
+  constructor (dom, style, dataProvider, indicatorParams) {
+    super(dom, style, dataProvider, indicatorParams, IndicatorType.MA)
     this.chartRender = new MainRender(this.viewPortHandler, dataProvider, this.yAxisRender)
     this.chartType = ChartType.CANDLE
   }
@@ -22,7 +22,7 @@ class MainChart extends IndicatorChart {
   drawChart () {
     if (this.chartType !== ChartType.REAL_TIME) {
       this.chartRender.renderCandle(this.ctx, this.style.candle)
-      this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, true)
+      this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, this.indicatorParams, true)
       this.chartRender.renderHighestPriceMark(this.ctx, this.style.highestPriceMark)
       this.chartRender.renderLowestPriceMark(this.ctx, this.style.lowestPriceMark)
     } else {

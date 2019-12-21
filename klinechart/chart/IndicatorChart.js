@@ -5,8 +5,11 @@ import YAxisRender from '../render/YAxisRender'
 import { IndicatorType } from '../internal/constants'
 
 class IndicatorChart extends Chart {
-  constructor (dom, style, dataProvider, defaultIndicatorType = IndicatorType.MACD) {
+  constructor (
+    dom, style, dataProvider, indicatorParams,
+    defaultIndicatorType = IndicatorType.MACD) {
     super(dom, style)
+    this.indicatorParams = indicatorParams
     this.indicatorType = defaultIndicatorType
     this.yAxisRender = new YAxisRender(this.viewPortHandler, dataProvider)
     this.chartRender = new IndicatorRender(this.viewPortHandler, dataProvider, this.yAxisRender)
@@ -32,7 +35,8 @@ class IndicatorChart extends Chart {
   }
 
   drawChart () {
-    this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, false)
+    this.chartRender.renderIndicator(
+      this.ctx, this.indicatorType, this.style.indicator, this.indicatorParams, false)
   }
 
   isDrawChart () {
