@@ -666,10 +666,11 @@ class TooltipRender extends Render {
       }
     }
     let name = ''
-    if (params && isArray(params) && params.length > 0) {
-      name = `${indicatorType}(${params.join(',')})`
-    }
     if (labels.length > 0) {
+      name = `${indicatorType}`
+      if (params && isArray(params) && params.length > 0) {
+        name = `${name}(${params.join(',')})`
+      }
       const indicatorData = formatValue(kLineData, indicatorType.toLowerCase())
       labels.forEach(label => {
         values.push(formatValue(indicatorData, label))

@@ -3812,11 +3812,13 @@ function (_Render) {
 
       var name = '';
 
-      if (params && isArray(params) && params.length > 0) {
-        name = "".concat(indicatorType, "(").concat(params.join(','), ")");
-      }
-
       if (labels.length > 0) {
+        name = "".concat(indicatorType);
+
+        if (params && isArray(params) && params.length > 0) {
+          name = "".concat(name, "(").concat(params.join(','), ")");
+        }
+
         var indicatorData = formatValue(kLineData, indicatorType.toLowerCase());
         labels.forEach(function (label) {
           values.push(formatValue(indicatorData, label));
@@ -4161,7 +4163,7 @@ var calcIndicator = {};
  */
 
 calcIndicator[IndicatorType.MA] = function (dataList, params) {
-  if (!params || !isArray(params)) {
+  if (!checkParams(params)) {
     return dataList;
   }
 
@@ -4196,7 +4198,7 @@ calcIndicator[IndicatorType.MA] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.VOL] = function (dataList, params) {
-  if (!params || !isArray(params)) {
+  if (!checkParams(params)) {
     return dataList;
   }
 
@@ -4238,7 +4240,7 @@ calcIndicator[IndicatorType.VOL] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.MACD] = function (dataList, params) {
-  if (!params || !isArray(params) || params.length !== 3) {
+  if (!checParamsWithSize(params, 3)) {
     return dataList;
   }
 
@@ -4284,7 +4286,7 @@ calcIndicator[IndicatorType.MACD] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
-  if (!params || !isArray(params) || params.length !== 1) {
+  if (!checParamsWithSize(params, 1)) {
     return dataList;
   }
 
@@ -4329,7 +4331,7 @@ calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
-  if (!params || !isArray(params) || params.length !== 3) {
+  if (!checParamsWithSize(params, 3)) {
     return dataList;
   }
 
@@ -4377,7 +4379,7 @@ calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.RSI] = function (dataList, params) {
-  if (!params || !isArray(params) || params.length !== 3) {
+  if (!checParamsWithSize(params, 3)) {
     return dataList;
   } // N日RSI =
   // N日内收盘涨幅的平均值/(N日内收盘涨幅均值+N日内收盘跌幅均值) ×100%
@@ -4489,7 +4491,7 @@ calcIndicator[IndicatorType.RSI] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
-  if (!params || !isArray(params) || params.length !== 3) {
+  if (!checParamsWithSize(params, 3)) {
     return dataList;
   }
 
@@ -4537,17 +4539,22 @@ calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
 };
 /**
  * 计算BRAR指标
- * 参数是26。
+ * 默认参数是26。
  * 公式N日BR=N日内（H－CY）之和除以N日内（CY－L）之和*100，
  * 其中，H为当日最高价，L为当日最低价，CY为前一交易日的收盘价，N为设定的时间参数。
  * N日AR=(N日内（H－O）之和除以N日内（O－L）之和)*100，
  * 其中，H为当日最高价，L为当日最低价，O为当日开盘价，N为设定的时间参数
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.BRAR] = function (dataList) {
+calcIndicator[IndicatorType.BRAR] = function (dataList, params) {
+  if (!checParamsWithSize(params, 1)) {
+    return dataList;
+  }
+
   var br = 0;
   var ar = 0;
   var hcy = 0;
@@ -4566,13 +4573,13 @@ calcIndicator[IndicatorType.BRAR] = function (dataList) {
       hcy += high - refClose;
       cyl += refClose - low;
 
-      if (i > 25) {
-        var agoHigh = dataList[i - 26].high;
-        var agoLow = dataList[i - 26].low;
-        var agoOpen = dataList[i - 26].open;
+      if (i > params[0] - 1) {
+        var agoHigh = dataList[i - params[0]].high;
+        var agoLow = dataList[i - params[0]].low;
+        var agoOpen = dataList[i - params[0]].open;
 
-        if (i > 26) {
-          var agoRefClose = dataList[i - 27].close;
+        if (i > params[0]) {
+          var agoRefClose = dataList[i - params[0] - 1].close;
           hcy -= agoHigh - agoRefClose;
           cyl -= agoRefClose - agoLow;
         }
@@ -4606,13 +4613,18 @@ calcIndicator[IndicatorType.BRAR] = function (dataList) {
  * 其中，TP=（最高价+最低价+收盘价）÷3
  * MA=近N日收盘价的累计之和÷N
  * MD=近N日（MA－收盘价）的累计之和÷N
- * 参数13
+ * 默认参数13
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.CCI] = function (dataList) {
+calcIndicator[IndicatorType.CCI] = function (dataList, params) {
+  if (!checParamsWithSize(params, 1)) {
+    return dataList;
+  }
+
   var closes = 0.0;
   var closeMa;
   var closeMaList = [];
@@ -4624,19 +4636,19 @@ calcIndicator[IndicatorType.CCI] = function (dataList) {
     closes += closePrice;
     var tp = (dataList[i].high + dataList[i].low + closePrice) / 3;
 
-    if (i < 13) {
+    if (i < params[0]) {
       closeMa = closes / (i + 1);
       maCloseSum += Math.abs(closeMa - closePrice);
       closeMaList.push(closeMa);
       md = maCloseSum / (i + 1);
     } else {
-      var agoClosePrice = dataList[i - 13].close;
+      var agoClosePrice = dataList[i - params[0]].close;
       closes -= agoClosePrice;
-      closeMa = closes / 13;
+      closeMa = closes / params[0];
       closeMaList.push(closeMa);
       maCloseSum += Math.abs(closeMa - closePrice);
-      maCloseSum -= Math.abs(closeMaList[i - 13] - agoClosePrice);
-      md = maCloseSum / 13;
+      maCloseSum -= Math.abs(closeMaList[i - params[0]] - agoClosePrice);
+      md = maCloseSum / params[0];
     }
 
     cci = md !== 0.0 ? (tp - closeMa) / md / 0.015 : 0.0;
@@ -4649,12 +4661,15 @@ calcIndicator[IndicatorType.CCI] = function (dataList) {
  * 计算DMI
  *
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.DMI] = function (dataList) {
-  // 参数 14，6
+calcIndicator[IndicatorType.DMI] = function (dataList, params) {
+  if (!checParamsWithSize(params, 2)) {
+    return dataList;
+  } // 默认参数 14，6
   // MTR:=EXPMEMA(MAX(MAX(HIGH-LOW,ABS(HIGH-REF(CLOSE,1))),ABS(REF(CLOSE,1)-LOW)),N)
   // HD :=HIGH-REF(HIGH,1);
   // LD :=REF(LOW,1)-LOW;
@@ -4675,6 +4690,8 @@ calcIndicator[IndicatorType.DMI] = function (dataList) {
   // 输出MDI:DMM*100/MTR
   // 输出ADX:MDI-PDI的绝对值/(MDI+PDI)*100的MM日指数平滑移动平均
   // 输出ADXR:ADX的MM日指数平滑移动平均
+
+
   var pdi = 0.0;
   var mdi = 0.0;
   var adx = 0.0;
@@ -4707,10 +4724,10 @@ calcIndicator[IndicatorType.DMI] = function (dataList) {
       dmmSum += l;
       dmmList.push(l);
 
-      if (i > 13) {
-        trSum -= trList[i - 14];
-        dmpSum -= dmpList[i - 14];
-        dmmSum -= dmmList[i - 14];
+      if (i > params[0] - 1) {
+        trSum -= trList[i - params[0]];
+        dmpSum -= dmpList[i - params[0]];
+        dmmSum -= dmmList[i - params[0]];
       }
 
       if (trSum === 0) {
@@ -4725,13 +4742,13 @@ calcIndicator[IndicatorType.DMI] = function (dataList) {
       dxSum += dx;
       dxList.push(dx);
 
-      if (i < 6) {
+      if (i < params[1]) {
         adx = dxSum / (i + 1);
         adxr = adx;
       } else {
-        var agoAdx = dxList[i - 6];
+        var agoAdx = dxList[i - params[1]];
         dxSum -= agoAdx;
-        adx = dxSum / 6;
+        adx = dxSum / params[1];
         adxr = (adx + agoAdx) / 2;
       }
     }
@@ -4748,12 +4765,15 @@ calcIndicator[IndicatorType.DMI] = function (dataList) {
  * 计算CR
  *
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.CR] = function (dataList) {
-  // 参数26、10、20、40、60
+calcIndicator[IndicatorType.CR] = function (dataList, params) {
+  if (!checParamsWithSize(params, 5)) {
+    return dataList;
+  } // 默认参数26、10、20、40、60
   // MID:=REF(HIGH+LOW,1)/2;
   // CR:SUM(MAX(0,HIGH-MID),N)/SUM(MAX(0,MID-LOW),N)*100;
   // MA1:REF(MA(CR,M1),M1/2.5+1);
@@ -4766,6 +4786,8 @@ calcIndicator[IndicatorType.CR] = function (dataList) {
   // 输出MA2:M2(10)/2.5+1日前的CR的M2(10)日简单移动平均
   // 输出MA3:M3(20)/2.5+1日前的CR的M3(20)日简单移动平均
   // 输出MA4:M4/2.5+1日前的CR的M4日简单移动平均
+
+
   var cr = 0;
   var ma1;
   var ma2;
@@ -4773,18 +4795,18 @@ calcIndicator[IndicatorType.CR] = function (dataList) {
   var ma4;
   var p1 = 0;
   var p2 = 0;
-  var ma10Sum = 0;
-  var ma10;
-  var ma10List = [];
-  var ma20Sum = 0;
-  var ma20;
-  var ma20List = [];
-  var ma40Sum = 0;
-  var ma40;
-  var ma40List = [];
-  var ma60Sum = 0;
-  var ma60;
-  var ma60List = [];
+  var ma1Sum = 0;
+  var ma1Mean;
+  var ma1List = [];
+  var ma2Sum = 0;
+  var ma2Mean;
+  var ma2List = [];
+  var ma3Sum = 0;
+  var ma3Mean;
+  var ma3List = [];
+  var ma4Sum = 0;
+  var ma4Mean;
+  var ma4List = [];
   return calc(dataList, function (i) {
     if (i > 0) {
       var preHighestPrice = dataList[i - 1].high;
@@ -4809,14 +4831,14 @@ calcIndicator[IndicatorType.CR] = function (dataList) {
 
       p2 += preMidSubLow;
 
-      if (i > 26) {
-        var firstHighestPrice = dataList[i - 27].high;
-        var firstLowestPrice = dataList[i - 27].low;
-        var firstClosePrice = dataList[i - 27].close;
-        var firstOpenPrice = dataList[i - 27].open;
+      if (i > params[0]) {
+        var firstHighestPrice = dataList[i - params[0] - 1].high;
+        var firstLowestPrice = dataList[i - params[0] - 1].low;
+        var firstClosePrice = dataList[i - params[0] - 1].close;
+        var firstOpenPrice = dataList[i - params[0] - 1].open;
         var firstMidPrice = (firstHighestPrice + firstLowestPrice + firstClosePrice + firstOpenPrice) / 4;
-        var secondHighestPrice = dataList[i - 26].high;
-        var secondLowestPrice = dataList[i - 26].low;
+        var secondHighestPrice = dataList[i - params[0]].high;
+        var secondLowestPrice = dataList[i - params[0]].low;
         var secondHighSubFirstMid = secondHighestPrice - firstMidPrice;
 
         if (secondHighSubFirstMid < 0) {
@@ -4844,69 +4866,69 @@ calcIndicator[IndicatorType.CR] = function (dataList) {
       p2 += LYM <= 0 ? 0 : LYM;
     }
 
-    ma10Sum += cr;
-    ma20Sum += cr;
-    ma40Sum += cr;
-    ma60Sum += cr;
+    ma1Sum += cr;
+    ma2Sum += cr;
+    ma3Sum += cr;
+    ma4Sum += cr;
 
-    if (i < 10) {
-      ma10 = ma10Sum / (i + 1);
+    if (i < params[1]) {
+      ma1Mean = ma1Sum / (i + 1);
     } else {
-      ma10Sum -= dataList[i - 10].cr.cr;
-      ma10 = ma10Sum / 10;
+      ma1Sum -= dataList[i - params[1]].cr.cr;
+      ma1Mean = ma1Sum / params[1];
     }
 
-    ma10List.push(ma10);
+    ma1List.push(ma1Mean);
 
-    if (i < 20) {
-      ma20 = ma20Sum / (i + 1);
+    if (i < params[2]) {
+      ma2Mean = ma2Sum / (i + 1);
     } else {
-      ma20Sum -= dataList[i - 20].cr.cr;
-      ma20 = ma20Sum / 20;
+      ma2Sum -= dataList[i - params[2]].cr.cr;
+      ma2Mean = ma2Sum / params[2];
     }
 
-    ma20List.push(ma20);
+    ma2List.push(ma2Mean);
 
-    if (i < 40) {
-      ma40 = ma40Sum / (i + 1);
+    if (i < params[3]) {
+      ma3Mean = ma3Sum / (i + 1);
     } else {
-      ma40Sum -= dataList[i - 40].cr.cr;
-      ma40 = ma40Sum / 40;
+      ma3Sum -= dataList[i - params[3]].cr.cr;
+      ma3Mean = ma3Sum / params[3];
     }
 
-    ma40List.push(ma40);
+    ma3List.push(ma3Mean);
 
-    if (i < 60) {
-      ma60 = ma60Sum / (i + 1);
+    if (i < params[4]) {
+      ma4Mean = ma4Sum / (i + 1);
     } else {
-      ma60Sum -= dataList[i - 60].cr.cr;
-      ma60 = ma60Sum / 60;
+      ma4Sum -= dataList[i - params[4]].cr.cr;
+      ma4Mean = ma4Sum / params[4];
     }
 
-    ma60List.push(ma60);
+    ma4List.push(ma4Mean);
 
     if (i < 5) {
-      ma1 = ma10List[0];
+      ma1 = ma1List[0];
     } else {
-      ma1 = ma10List[i - 5];
+      ma1 = ma1List[i - 5];
     }
 
     if (i < 9) {
-      ma2 = ma20List[0];
+      ma2 = ma2List[0];
     } else {
-      ma2 = ma20List[i - 9];
+      ma2 = ma2List[i - 9];
     }
 
     if (i < 17) {
-      ma3 = ma40List[0];
+      ma3 = ma3List[0];
     } else {
-      ma3 = ma40List[i - 17];
+      ma3 = ma3List[i - 17];
     }
 
     if (i < 25) {
-      ma4 = ma60List[0];
+      ma4 = ma4List[0];
     } else {
-      ma4 = ma60List[i - 25];
+      ma4 = ma4List[i - 25];
     }
 
     dataList[i].cr = {
@@ -4920,27 +4942,32 @@ calcIndicator[IndicatorType.CR] = function (dataList) {
 };
 /**
  * 计算PSY
- * PSY：参数是12。公式：PSY=N日内的上涨天数/N×100%。
+ * 默认参数是12。公式：PSY=N日内的上涨天数/N×100%。
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.PSY] = function (dataList) {
+calcIndicator[IndicatorType.PSY] = function (dataList, params) {
+  if (!checParamsWithSize(params, 1)) {
+    return dataList;
+  }
+
   var psy = 0;
   var upDay = 0;
   return calc(dataList, function (i) {
     if (i > 0) {
       upDay += dataList[i].close - dataList[i - 1].close > 0 ? 1 : 0;
 
-      if (i < 12) {
+      if (i < params[0]) {
         psy = upDay / (i + 1) * 100;
       } else {
-        if (i > 12) {
-          upDay -= dataList[i - 11].close - dataList[i - 12].close > 0 ? 1.0 : 0.0;
+        if (i > params[0]) {
+          upDay -= dataList[i - params[0] + 1].close - dataList[i - params[0]].close > 0 ? 1.0 : 0.0;
         }
 
-        psy = upDay / 12 * 100;
+        psy = upDay / params[0] * 100;
       }
     }
 
@@ -4951,48 +4978,53 @@ calcIndicator[IndicatorType.PSY] = function (dataList) {
 };
 /**
  * 计算DMA
- * 参数是10、50、10。
+ * 默认参数是10、50、10。
  * 公式：DIF:MA(CLOSE,N1)-MA(CLOSE,N2);DIFMA:MA(DIF,M)
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.DMA] = function (dataList) {
+calcIndicator[IndicatorType.DMA] = function (dataList, params) {
+  if (!checParamsWithSize(params, 3)) {
+    return dataList;
+  }
+
   var dif;
   var difMa;
-  var ma10s = 0;
-  var ma10;
-  var ma50s = 0;
-  var ma50;
-  var dif10s = 0;
+  var ma1Sum = 0;
+  var ma1;
+  var ma2Sum = 0;
+  var ma2;
+  var difSum = 0;
   return calc(dataList, function (i) {
     var closePrice = dataList[i].close;
-    ma10s += closePrice;
-    ma50s += closePrice;
+    ma1Sum += closePrice;
+    ma2Sum += closePrice;
 
-    if (i < 10) {
-      ma10 = ma10s / (i + 1);
+    if (i < params[0]) {
+      ma1 = ma1Sum / (i + 1);
     } else {
-      ma10s -= dataList[i - 10].close;
-      ma10 = ma10s / 10;
+      ma1Sum -= dataList[i - params[0]].close;
+      ma1 = ma1Sum / params[0];
     }
 
-    if (i < 50) {
-      ma50 = ma50s / (i + 1);
+    if (i < params[1]) {
+      ma2 = ma2Sum / (i + 1);
     } else {
-      ma50s -= dataList[i - 50].close;
-      ma50 = ma50s / 50;
+      ma2Sum -= dataList[i - params[1]].close;
+      ma2 = ma2Sum / params[1];
     }
 
-    dif = ma10 - ma50;
-    dif10s += dif;
+    dif = ma1 - ma2;
+    difSum += dif;
 
-    if (i < 10) {
-      difMa = dif10s / (i + 1);
+    if (i < params[2]) {
+      difMa = difSum / (i + 1);
     } else {
-      dif10s -= dataList[i - 10].dma.dif;
-      difMa = dif10s / 10;
+      difSum -= dataList[i - params[2]].dma.dif;
+      difMa = difSum / params[2];
     }
 
     dataList[i].dma = {
@@ -5005,19 +5037,24 @@ calcIndicator[IndicatorType.DMA] = function (dataList) {
  * 计算TRIX
  *
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.TRIX] = function (dataList) {
+calcIndicator[IndicatorType.TRIX] = function (dataList, params) {
   // TR=收盘价的N日指数移动平均的N日指数移动平均的N日指数移动平均；
   // TRIX=(TR-昨日TR)/昨日TR*100；
   // MATRIX=TRIX的M日简单移动平均；
-  // 参数N设为12，参数M设为20；
-  // 参数12、20
+  // 默认参数N设为12，默认参数M设为20；
+  // 默认参数12、20
   // 公式：MTR:=EMA(EMA(EMA(CLOSE,N),N),N)
   // TRIX:(MTR-REF(MTR,1))/REF(MTR,1)*100;
   // TRMA:MA(TRIX,M)
+  if (!checParamsWithSize(params, 2)) {
+    return dataList;
+  }
+
   var trix = 0;
   var maTrix;
   var sumTrix = 0;
@@ -5036,9 +5073,9 @@ calcIndicator[IndicatorType.TRIX] = function (dataList) {
       emaClose2 = emaClose1;
       emaClose3 = emaClose2;
     } else {
-      emaClose1 = (2 * closePrice + 11 * oldEmaClose1) / 13;
-      emaClose2 = (2 * emaClose1 + 11 * oldEmaClose2) / 13;
-      emaClose3 = (2 * emaClose2 + 11 * oldEmaClose3) / 13;
+      emaClose1 = (2 * closePrice + (params[0] - 1) * oldEmaClose1) / (params[0] + 1);
+      emaClose2 = (2 * emaClose1 + (params[0] - 1) * oldEmaClose2) / (params[0] + 1);
+      emaClose3 = (2 * emaClose2 + (params[0] - 1) * oldEmaClose3) / (params[0] + 1);
       var refEmaClose3 = emaClose3List[i - 1];
       trix = refEmaClose3 === 0.0 ? 0.0 : (emaClose3 - refEmaClose3) / refEmaClose3 * 100;
     }
@@ -5049,11 +5086,11 @@ calcIndicator[IndicatorType.TRIX] = function (dataList) {
     emaClose3List.push(emaClose3);
     sumTrix += trix;
 
-    if (i < 20) {
+    if (i < params[1]) {
       maTrix = sumTrix / (i + 1);
     } else {
-      sumTrix -= dataList[i - 20].trix.trix;
-      maTrix = sumTrix / 20;
+      sumTrix -= dataList[i - params[1]].trix.trix;
+      maTrix = sumTrix / params[1];
     }
 
     dataList[i].trix = {
@@ -5070,13 +5107,18 @@ calcIndicator[IndicatorType.TRIX] = function (dataList) {
  * VA赋值:如果收盘价>昨收,返回成交量(手),否则返回-成交量(手)
  * 输出OBV:如果收盘价=昨收,返回0,否则返回VA的历史累和
  * 输出MAOBV:OBV的M日简单移动平均
- * 参数30
+ * 默认参数30
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.OBV] = function (dataList) {
+calcIndicator[IndicatorType.OBV] = function (dataList, params) {
+  if (!checParamsWithSize(params, 1)) {
+    return dataList;
+  }
+
   var obv;
   var sumObv = 0.0;
   var maObv;
@@ -5097,11 +5139,11 @@ calcIndicator[IndicatorType.OBV] = function (dataList) {
 
     sumObv += obv;
 
-    if (i < 30) {
+    if (i < params[0]) {
       maObv = sumObv / (i + 1);
     } else {
-      sumObv -= dataList[i - 30].obv.obv;
-      maObv = sumObv / 30;
+      sumObv -= dataList[i - params[0]].obv.obv;
+      maObv = sumObv / params[0];
     }
 
     dataList[i].obv = {
@@ -5118,11 +5160,16 @@ calcIndicator[IndicatorType.OBV] = function (dataList) {
  * 24天以来凡是股价下跌那一天的成交量都称为BV，将24天内的BV总和相加后称为BVS
  * 24天以来凡是股价不涨不跌，则那一天的成交量都称为CV，将24天内的CV总和相加后称为CVS
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.VR] = function (dataList) {
+calcIndicator[IndicatorType.VR] = function (dataList, params) {
+  if (!checParamsWithSize(params, 2)) {
+    return dataList;
+  }
+
   var avs = 0;
   var bvs = 0;
   var cvs = 0;
@@ -5142,10 +5189,10 @@ calcIndicator[IndicatorType.VR] = function (dataList) {
       cvs += volume;
     }
 
-    if (i > 23) {
-      var agoClosePrice = dataList[i - 24].close;
-      var agoOpenPrice = dataList[i - 24].open;
-      var agoVolume = dataList[i - 24].volume;
+    if (i > params[0] - 1) {
+      var agoClosePrice = dataList[i - params[0]].close;
+      var agoOpenPrice = dataList[i - params[0]].open;
+      var agoVolume = dataList[i - params[0]].volume;
 
       if (agoClosePrice > agoOpenPrice) {
         avs -= agoVolume;
@@ -5164,11 +5211,11 @@ calcIndicator[IndicatorType.VR] = function (dataList) {
 
     sumVr += vr;
 
-    if (i < 30) {
+    if (i < params[1]) {
       maVr = sumVr / (i + 1);
     } else {
-      sumVr -= dataList[i - 30].vr.vr;
-      maVr = sumVr / 30;
+      sumVr -= dataList[i - params[1]].vr.vr;
+      maVr = sumVr / params[1];
     }
 
     dataList[i].vr = {
@@ -5182,11 +5229,16 @@ calcIndicator[IndicatorType.VR] = function (dataList) {
  * 默认参数13 34 89
  * 公式 WR(N) = 100 * [ HIGH(N)-C ] / [ HIGH(N)-LOW(N) ]
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.WR] = function (dataList) {
+calcIndicator[IndicatorType.WR] = function (dataList, params) {
+  if (!checParamsWithSize(params, 3)) {
+    return dataList;
+  }
+
   var wr1;
   var wr2;
   var wr3;
@@ -5204,11 +5256,11 @@ calcIndicator[IndicatorType.WR] = function (dataList) {
     var highPrice = dataList[i].high;
     var lowPrice = dataList[i].low;
 
-    if (i < 13) {
+    if (i < params[0]) {
       h1 = Math.max(highPrice, h1);
       l1 = Math.min(lowPrice, l1);
     } else {
-      var highLowPriceArray = getHighLow(dataList.slice(i - 13, i));
+      var highLowPriceArray = getHighLow(dataList.slice(i - params[0], i));
       h1 = highLowPriceArray[0];
       l1 = highLowPriceArray[1];
     }
@@ -5216,11 +5268,11 @@ calcIndicator[IndicatorType.WR] = function (dataList) {
     hl1 = h1 - l1;
     wr1 = hl1 !== 0 ? (h1 - closePrice) / hl1 * 100 : 0.0;
 
-    if (i < 34) {
+    if (i < params[1]) {
       h2 = Math.max(highPrice, h2);
       l2 = Math.min(lowPrice, l2);
     } else {
-      var _highLowPriceArray = getHighLow(dataList.slice(i - 34, i));
+      var _highLowPriceArray = getHighLow(dataList.slice(i - params[1], i));
 
       h2 = _highLowPriceArray[0];
       l2 = _highLowPriceArray[1];
@@ -5229,11 +5281,11 @@ calcIndicator[IndicatorType.WR] = function (dataList) {
     hl2 = h2 - l2;
     wr2 = hl2 !== 0 ? (h2 - closePrice) / hl2 * 100 : 0.0;
 
-    if (i < 89) {
+    if (i < params[2]) {
       h3 = Math.max(highPrice, h3);
       l3 = Math.min(lowPrice, l3);
     } else {
-      var _highLowPriceArray2 = getHighLow(dataList.slice(i - 89, i));
+      var _highLowPriceArray2 = getHighLow(dataList.slice(i - params[2], i));
 
       h3 = _highLowPriceArray2[0];
       l3 = _highLowPriceArray2[1];
@@ -5253,28 +5305,33 @@ calcIndicator[IndicatorType.WR] = function (dataList) {
  * 默认参数6 10
  * 公式 MTM（N日）=C－CN
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.MTM] = function (dataList) {
+calcIndicator[IndicatorType.MTM] = function (dataList, params) {
+  if (!checParamsWithSize(params, 2)) {
+    return dataList;
+  }
+
   var mtm;
   var mtmSum = 0;
   var mtmMa;
   return calc(dataList, function (i) {
-    if (i < 6) {
+    if (i < params[0]) {
       mtm = 0.0;
       mtmMa = 0.0;
     } else {
       var closePrice = dataList[i].close;
-      mtm = closePrice - dataList[i - 6].close;
+      mtm = closePrice - dataList[i - params[0]].close;
       mtmSum += mtm;
 
-      if (i < 16) {
-        mtmMa = mtmSum / (i - 6 + 1);
+      if (i < params[0] + params[1]) {
+        mtmMa = mtmSum / (i - params[0] + 1);
       } else {
-        mtmMa = mtmSum / 10;
-        mtmSum -= dataList[i - 10].mtm.mtm;
+        mtmMa = mtmSum / params[1];
+        mtmSum -= dataList[i - params[1]].mtm.mtm;
       }
     }
 
@@ -5286,7 +5343,7 @@ calcIndicator[IndicatorType.MTM] = function (dataList) {
 };
 /**
  * 简易波动指标
- * 默认参数N为14，参数M为9
+ * 默认参数N为14，默认参数M为9
  * 公式：
  * A=（今日最高+今日最低）/2
  * B=（前日最高+前日最低）/2
@@ -5295,11 +5352,16 @@ calcIndicator[IndicatorType.MTM] = function (dataList) {
  * EMV=N日内EM的累和
  * MAEMV=EMV的M日的简单移动平均
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.EMV] = function (dataList) {
+calcIndicator[IndicatorType.EMV] = function (dataList, params) {
+  if (!checParamsWithSize(params, 2)) {
+    return dataList;
+  }
+
   var emv = 0;
   var maEmv;
   var sumEmv = 0;
@@ -5320,19 +5382,19 @@ calcIndicator[IndicatorType.EMV] = function (dataList) {
 
     emList.push(em);
 
-    if (i < 14) {
+    if (i < params[0]) {
       emv += em;
     } else {
-      emv -= emList[i - 14];
+      emv -= emList[i - params[0]];
     }
 
     sumEmv += emv;
 
-    if (i < 9) {
+    if (i < params[1]) {
       maEmv = sumEmv / (i + 1);
     } else {
-      sumEmv -= dataList[i - 9].emv.emv;
-      maEmv = sumEmv / 9;
+      sumEmv -= dataList[i - params[1]].emv.emv;
+      maEmv = sumEmv / params[1];
     }
 
     dataList[i].emv = {
@@ -5525,6 +5587,25 @@ function getHighLow(list) {
   }
 
   return [high, low];
+}
+/**
+ * 检查参数
+ * @param params
+ */
+
+
+function checkParams(params) {
+  return params && isArray(params);
+}
+/**
+ * 检查参数, 并检查参数个数
+ * @param params
+ * @param paramsSize
+ */
+
+
+function checParamsWithSize(params, paramsSize) {
+  return checkParams(params) && params.length === paramsSize;
 }
 
 /**
