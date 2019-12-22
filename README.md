@@ -23,26 +23,33 @@ $ yarn add klinecharts
 ```
 
 ## API
+### klinecharts
 ```js
-var chart = init(document.getElementById('div'))
-chart.setStyle(style)
-chart.setMainChartType(chartType)
-chart.setMainIndicatorType(indicatorType)
-chart.setSubIndicatorType(indicatorType)
-chart.showVolChart(true)
-chart.setDefaultRange(range)
-chart.setMinRange(range)
-chart.setMaxRange(range)
-chart.addData(dataList, pos)
-chart.getDataList()
-chart.getMainIndicatorType()
-chart.getSubIndicatorType()
-chart.getStyle()
-chart.isShowVolChart()
-chart.clearData()
-chart.getConvertPictureUrl()
-chart.drawMarker(markerType)
-chart.clearAllMarker()
+klinecharts.init(document.getElementById('div'))
+klinecharts.version
+```
+
+### klinecharts instance
+```js
+setStyle(style)
+setMainChartType(chartType)
+setIndicatorParams(indicatorType, params)
+setMainIndicatorType(indicatorType)
+setSubIndicatorType(indicatorType)
+showVolChart(true)
+setDefaultRange(range)
+setMinRange(range)
+setMaxRange(range)
+addData(dataList, pos)
+getDataList()
+getMainIndicatorType()
+getSubIndicatorType()
+getStyle()
+isShowVolChart()
+clearData()
+getConvertPictureUrl()
+drawMarker(markerType)
+clearAllMarker()
 ```
 
 ## Data Source

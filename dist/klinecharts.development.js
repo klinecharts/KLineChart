@@ -7482,7 +7482,7 @@ function () {
     _classCallCheck(this, RootChart);
 
     if (!dom) {
-      throw new Error("Chart version is ".concat("3.0.0", ". Root dom is null, can not initialize the chart!!!"));
+      throw new Error("Chart version is ".concat("4.0.0-pre", ". Root dom is null, can not initialize the chart!!!"));
     }
 
     this.throttle = function (func, wait) {
@@ -8090,7 +8090,7 @@ function () {
   return RootChart;
 }();
 
-var version = "3.0.0";
+var version = "4.0.0-pre";
 
 function init(dom) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
