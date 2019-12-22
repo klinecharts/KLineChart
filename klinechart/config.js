@@ -350,6 +350,7 @@ export function getDefaultIndicatorParams () {
     VR: [24, 30],
     WR: [13, 34, 89],
     MTM: [6, 10],
-    EMV: [14, 9]
+    EMV: [14, 9],
+    SAR: [2, 2, 20]
   }
 }

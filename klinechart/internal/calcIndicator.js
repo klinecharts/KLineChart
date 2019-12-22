@@ -80,7 +80,7 @@ calcIndicator[IndicatorType.VOL] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.MACD] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
   let emaShort
@@ -121,7 +121,7 @@ calcIndicator[IndicatorType.MACD] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
-  if (!checParamsWithSize(params, 1)) {
+  if (!checkParamsWithSize(params, 1)) {
     return dataList
   }
   let closeSum = 0
@@ -155,7 +155,7 @@ calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
   let k
@@ -198,7 +198,7 @@ calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.RSI] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
   // N日RSI =
@@ -300,7 +300,7 @@ calcIndicator[IndicatorType.RSI] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
   let mean1
@@ -357,7 +357,7 @@ calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.BRAR] = function (dataList, params) {
-  if (!checParamsWithSize(params, 1)) {
+  if (!checkParamsWithSize(params, 1)) {
     return dataList
   }
   let br = 0
@@ -416,7 +416,7 @@ calcIndicator[IndicatorType.BRAR] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.CCI] = function (dataList, params) {
-  if (!checParamsWithSize(params, 1)) {
+  if (!checkParamsWithSize(params, 1)) {
     return dataList
   }
   let closes = 0.0
@@ -458,7 +458,7 @@ calcIndicator[IndicatorType.CCI] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.DMI] = function (dataList, params) {
-  if (!checParamsWithSize(params, 2)) {
+  if (!checkParamsWithSize(params, 2)) {
     return dataList
   }
   // 默认参数 14，6
@@ -557,7 +557,7 @@ calcIndicator[IndicatorType.DMI] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.CR] = function (dataList, params) {
-  if (!checParamsWithSize(params, 5)) {
+  if (!checkParamsWithSize(params, 5)) {
     return dataList
   }
   // 默认参数26、10、20、40、60
@@ -721,7 +721,7 @@ calcIndicator[IndicatorType.CR] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.PSY] = function (dataList, params) {
-  if (!checParamsWithSize(params, 1)) {
+  if (!checkParamsWithSize(params, 1)) {
     return dataList
   }
   let psy = 0
@@ -752,7 +752,7 @@ calcIndicator[IndicatorType.PSY] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.DMA] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
   let dif
@@ -811,7 +811,7 @@ calcIndicator[IndicatorType.TRIX] = function (dataList, params) {
   // 公式：MTR:=EMA(EMA(EMA(CLOSE,N),N),N)
   // TRIX:(MTR-REF(MTR,1))/REF(MTR,1)*100;
   // TRMA:MA(TRIX,M)
-  if (!checParamsWithSize(params, 2)) {
+  if (!checkParamsWithSize(params, 2)) {
     return dataList
   }
   let trix = 0
@@ -870,7 +870,7 @@ calcIndicator[IndicatorType.TRIX] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.OBV] = function (dataList, params) {
-  if (!checParamsWithSize(params, 1)) {
+  if (!checkParamsWithSize(params, 1)) {
     return dataList
   }
   let obv
@@ -914,7 +914,7 @@ calcIndicator[IndicatorType.OBV] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.VR] = function (dataList, params) {
-  if (!checParamsWithSize(params, 2)) {
+  if (!checkParamsWithSize(params, 2)) {
     return dataList
   }
   let avs = 0
@@ -972,7 +972,7 @@ calcIndicator[IndicatorType.VR] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.WR] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
   let wr1
@@ -1040,7 +1040,7 @@ calcIndicator[IndicatorType.WR] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.MTM] = function (dataList, params) {
-  if (!checParamsWithSize(params, 2)) {
+  if (!checkParamsWithSize(params, 2)) {
     return dataList
   }
   let mtm
@@ -1080,7 +1080,7 @@ calcIndicator[IndicatorType.MTM] = function (dataList, params) {
  * @return
  */
 calcIndicator[IndicatorType.EMV] = function (dataList, params) {
-  if (!checParamsWithSize(params, 2)) {
+  if (!checkParamsWithSize(params, 2)) {
     return dataList
   }
 
@@ -1122,12 +1122,20 @@ calcIndicator[IndicatorType.EMV] = function (dataList, params) {
 
 /**
  * 计算sar
+ * 默认参数2， 2， 20（开始值，步长，最大值）
  * @param dataList
+ * @param params
  * @return
  */
-calcIndicator[IndicatorType.SAR] = function (dataList) {
+calcIndicator[IndicatorType.SAR] = function (dataList, params) {
+  if (!checkParamsWithSize(params, 3)) {
+    return dataList
+  }
+  const startAf = params[0] / 100
+  const step = params[1] / 100
+  const maxAf = params[2] / 100
   // 加速因子
-  let af = 0
+  let af = startAf
   // 极值
   let ep = -100
   // 判断是上涨还是下跌  false：下跌
@@ -1144,14 +1152,14 @@ calcIndicator[IndicatorType.SAR] = function (dataList) {
       if (ep === -100 || ep < highestPrice) {
         // 重新初始化值
         ep = highestPrice
-        af = Math.min(af + 0.02, 2)
+        af = Math.min(af + step, maxAf)
       }
       sar = preSar + af * (ep - preSar)
       const lowestPriceMin = Math.min(dataList[Math.max(1, i) - 1].low, lowestPrice)
       if (sar > dataList[i].low) {
         sar = ep
         // 重新初始化值
-        af = 0
+        af = startAf
         ep = -100
         isIncreasing = !isIncreasing
       } else if (sar > lowestPriceMin) {
@@ -1161,7 +1169,7 @@ calcIndicator[IndicatorType.SAR] = function (dataList) {
       if (ep === -100 || ep > lowestPrice) {
         // 重新初始化值
         ep = lowestPrice
-        af = Math.min(af + 0.02, 0.2)
+        af = Math.min(af + step, maxAf)
       }
       sar = preSar + af * (ep - preSar)
       const highestPriceMax = Math.max(dataList[Math.max(1, i) - 1].high, highestPrice)
@@ -1290,6 +1298,6 @@ function checkParams (params) {
  * @param params
  * @param paramsSize
  */
-function checParamsWithSize (params, paramsSize) {
+function checkParamsWithSize (params, paramsSize) {
   return checkParams(params) && params.length === paramsSize
 }

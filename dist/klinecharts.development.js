@@ -4240,7 +4240,7 @@ calcIndicator[IndicatorType.VOL] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.MACD] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
 
@@ -4286,7 +4286,7 @@ calcIndicator[IndicatorType.MACD] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
-  if (!checParamsWithSize(params, 1)) {
+  if (!checkParamsWithSize(params, 1)) {
     return dataList;
   }
 
@@ -4331,7 +4331,7 @@ calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
 
@@ -4379,7 +4379,7 @@ calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.RSI] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList;
   } // N日RSI =
   // N日内收盘涨幅的平均值/(N日内收盘涨幅均值+N日内收盘跌幅均值) ×100%
@@ -4491,7 +4491,7 @@ calcIndicator[IndicatorType.RSI] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
 
@@ -4551,7 +4551,7 @@ calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.BRAR] = function (dataList, params) {
-  if (!checParamsWithSize(params, 1)) {
+  if (!checkParamsWithSize(params, 1)) {
     return dataList;
   }
 
@@ -4621,7 +4621,7 @@ calcIndicator[IndicatorType.BRAR] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.CCI] = function (dataList, params) {
-  if (!checParamsWithSize(params, 1)) {
+  if (!checkParamsWithSize(params, 1)) {
     return dataList;
   }
 
@@ -4667,7 +4667,7 @@ calcIndicator[IndicatorType.CCI] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.DMI] = function (dataList, params) {
-  if (!checParamsWithSize(params, 2)) {
+  if (!checkParamsWithSize(params, 2)) {
     return dataList;
   } // 默认参数 14，6
   // MTR:=EXPMEMA(MAX(MAX(HIGH-LOW,ABS(HIGH-REF(CLOSE,1))),ABS(REF(CLOSE,1)-LOW)),N)
@@ -4771,7 +4771,7 @@ calcIndicator[IndicatorType.DMI] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.CR] = function (dataList, params) {
-  if (!checParamsWithSize(params, 5)) {
+  if (!checkParamsWithSize(params, 5)) {
     return dataList;
   } // 默认参数26、10、20、40、60
   // MID:=REF(HIGH+LOW,1)/2;
@@ -4950,7 +4950,7 @@ calcIndicator[IndicatorType.CR] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.PSY] = function (dataList, params) {
-  if (!checParamsWithSize(params, 1)) {
+  if (!checkParamsWithSize(params, 1)) {
     return dataList;
   }
 
@@ -4987,7 +4987,7 @@ calcIndicator[IndicatorType.PSY] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.DMA] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
 
@@ -5051,7 +5051,7 @@ calcIndicator[IndicatorType.TRIX] = function (dataList, params) {
   // 公式：MTR:=EMA(EMA(EMA(CLOSE,N),N),N)
   // TRIX:(MTR-REF(MTR,1))/REF(MTR,1)*100;
   // TRMA:MA(TRIX,M)
-  if (!checParamsWithSize(params, 2)) {
+  if (!checkParamsWithSize(params, 2)) {
     return dataList;
   }
 
@@ -5115,7 +5115,7 @@ calcIndicator[IndicatorType.TRIX] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.OBV] = function (dataList, params) {
-  if (!checParamsWithSize(params, 1)) {
+  if (!checkParamsWithSize(params, 1)) {
     return dataList;
   }
 
@@ -5166,7 +5166,7 @@ calcIndicator[IndicatorType.OBV] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.VR] = function (dataList, params) {
-  if (!checParamsWithSize(params, 2)) {
+  if (!checkParamsWithSize(params, 2)) {
     return dataList;
   }
 
@@ -5235,7 +5235,7 @@ calcIndicator[IndicatorType.VR] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.WR] = function (dataList, params) {
-  if (!checParamsWithSize(params, 3)) {
+  if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
 
@@ -5311,7 +5311,7 @@ calcIndicator[IndicatorType.WR] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.MTM] = function (dataList, params) {
-  if (!checParamsWithSize(params, 2)) {
+  if (!checkParamsWithSize(params, 2)) {
     return dataList;
   }
 
@@ -5358,7 +5358,7 @@ calcIndicator[IndicatorType.MTM] = function (dataList, params) {
 
 
 calcIndicator[IndicatorType.EMV] = function (dataList, params) {
-  if (!checParamsWithSize(params, 2)) {
+  if (!checkParamsWithSize(params, 2)) {
     return dataList;
   }
 
@@ -5405,14 +5405,23 @@ calcIndicator[IndicatorType.EMV] = function (dataList, params) {
 };
 /**
  * 计算sar
+ * 默认参数2， 2， 20（开始值，步长，最大值）
  * @param dataList
+ * @param params
  * @return
  */
 
 
-calcIndicator[IndicatorType.SAR] = function (dataList) {
-  // 加速因子
-  var af = 0; // 极值
+calcIndicator[IndicatorType.SAR] = function (dataList, params) {
+  if (!checkParamsWithSize(params, 3)) {
+    return dataList;
+  }
+
+  var startAf = params[0] / 100;
+  var step = params[1] / 100;
+  var maxAf = params[2] / 100; // 加速因子
+
+  var af = startAf; // 极值
 
   var ep = -100; // 判断是上涨还是下跌  false：下跌
 
@@ -5429,7 +5438,7 @@ calcIndicator[IndicatorType.SAR] = function (dataList) {
       if (ep === -100 || ep < highestPrice) {
         // 重新初始化值
         ep = highestPrice;
-        af = Math.min(af + 0.02, 2);
+        af = Math.min(af + step, maxAf);
       }
 
       sar = preSar + af * (ep - preSar);
@@ -5438,7 +5447,7 @@ calcIndicator[IndicatorType.SAR] = function (dataList) {
       if (sar > dataList[i].low) {
         sar = ep; // 重新初始化值
 
-        af = 0;
+        af = startAf;
         ep = -100;
         isIncreasing = !isIncreasing;
       } else if (sar > lowestPriceMin) {
@@ -5448,7 +5457,7 @@ calcIndicator[IndicatorType.SAR] = function (dataList) {
       if (ep === -100 || ep > lowestPrice) {
         // 重新初始化值
         ep = lowestPrice;
-        af = Math.min(af + 0.02, 0.2);
+        af = Math.min(af + step, maxAf);
       }
 
       sar = preSar + af * (ep - preSar);
@@ -5604,7 +5613,7 @@ function checkParams(params) {
  */
 
 
-function checParamsWithSize(params, paramsSize) {
+function checkParamsWithSize(params, paramsSize) {
   return checkParams(params) && params.length === paramsSize;
 }
 
@@ -5966,7 +5975,8 @@ function getDefaultIndicatorParams() {
     VR: [24, 30],
     WR: [13, 34, 89],
     MTM: [6, 10],
-    EMV: [14, 9]
+    EMV: [14, 9],
+    SAR: [2, 2, 20]
   };
 }
 
