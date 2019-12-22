@@ -21,6 +21,7 @@ export interface Chart {
   addData(data: KLineData[] | KLineData, pos?: number): void
   setMainIndicatorType(indicatorType: IndicatorType): void
   setSubIndicatorType(indicatorType: IndicatorType): void
+  setIndicatorParams(indicatorType: IndicatorType, params: number[])
   showVolChart(isShow: boolean): void
   setDefaultRange(range: number): void
   setMinRange(range: number): void

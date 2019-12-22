@@ -7858,18 +7858,16 @@ function () {
       var subIndicatorType = this.getSubIndicatorType();
 
       if (mainIndicatorType === indicatorType) {
-        this.mainChart.flush();
+        this.calcIndicator(mainIndicatorType, this.mainChart);
       }
 
       if (volIndicatorType === indicatorType) {
-        this.volIndicatorChart.flush();
+        this.calcIndicator(volIndicatorType, this.volIndicatorChart);
       }
 
       if (subIndicatorType === indicatorType) {
-        this.subIndicatorChart.flush();
+        this.calcIndicator(subIndicatorType, this.subIndicatorChart);
       }
-
-      this.tooltipChart.flush();
     }
     /**
      * 显示成交量图
