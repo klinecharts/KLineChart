@@ -74,11 +74,6 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
             <th>MACD</th>
             <th>BOLL</th>
             <th>KDJ</th>
-            <th>RSI</th>
-            <th>BIAS</th>
-            <th>BRAR</th>
-            <th>CCI</th>
-            <th>DMI</th>
         </tr>
         <tr>
             <th>params</th>
@@ -87,6 +82,17 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
             <th>[12,26,9]</th>
             <th>[20]</th>
             <th>[9,3,3]</th>
+        </tr>
+        <tr>
+           <th>type</th>
+           <th>RSI</th>
+           <th>BIAS</th>
+           <th>BRAR</th>
+           <th>CCI</th>
+           <th>DMI</th>
+        </tr>
+        <tr>
+            <th>params</th>
             <th>[6,12,24]</th>
             <th>[6,12,24]</th>
             <th>[26]</th>
@@ -100,11 +106,6 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
             <th>DMA</th>
             <th>TRIX</th>
             <th>OBV</th>
-            <th>VR</th>
-            <th>WR</th>
-            <th>MTM</th>
-            <th>EMV</th>
-            <th>SAR</th>
         </tr>
         <tr>
             <th>params</th>
@@ -113,6 +114,17 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
             <th>[10,50,10]</th>
             <th>[12,20]</th>
             <th>[30]</th>
+        </tr>
+        <tr>
+            <th>type</th>
+            <th>VR</th>
+            <th>WR</th>
+            <th>MTM</th>
+            <th>EMV</th>
+            <th>SAR</th>
+        </tr>
+        <tr>
+            <th>params</th>
             <th>[24,30]</th>
             <th>[13,34,89]</th>
             <th>[6,10]</th>
