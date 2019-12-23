@@ -3506,7 +3506,7 @@ function (_Render) {
         labelY += indicatorTextMarginTop;
         ctx.textAlign = 'left';
         ctx.fillStyle = indicatorColors[i % colorLength] || indicatorDataStyle.text.color;
-        ctx.fillText("".concat(label, ": "), indicatorLabelX, labelY);
+        ctx.fillText("".concat(label.toUpperCase(), ": "), indicatorLabelX, labelY);
         ctx.textAlign = 'right';
         ctx.fillText(indicatorValues[i] || '--', rectX + floatRectWidth - floatRectBorderSize - indicatorTextMarginRight - floatRectPaddingRight, labelY);
         labelY += indicatorTextSize + indicatorTextMarginBottom;

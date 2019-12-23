@@ -411,7 +411,7 @@ class TooltipRender extends Render {
       labelY += indicatorTextMarginTop
       ctx.textAlign = 'left'
       ctx.fillStyle = indicatorColors[i % colorLength] || indicatorDataStyle.text.color
-      ctx.fillText(`${label}: `, indicatorLabelX, labelY)
+      ctx.fillText(`${label.toUpperCase()}: `, indicatorLabelX, labelY)
 
       ctx.textAlign = 'right'
       ctx.fillText(
