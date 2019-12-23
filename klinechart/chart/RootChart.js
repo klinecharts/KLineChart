@@ -321,6 +321,17 @@ class RootChart {
   }
 
   /**
+   * 获取指标参数
+   * @returns {{DMI: number[], OBV: [number], SAR: number[], BIAS: number[], MTM: number[], CCI: [number], RSI: number[], TRIX: number[], CR: number[], EMV: number[], KDJ: number[], VOL: number[], BOLL: [number], MA: number[], MACD: number[], PSY: [number], DMA: number[], WR: number[], VR: number[], BRAR: [number]}}
+   */
+  getIndicatorParams (indicatorType) {
+    if (indicatorType) {
+      return this.indicatorParams[indicatorType] || []
+    }
+    return this.indicatorParams
+  }
+
+  /**
    * 显示成交量图
    * @param isShow
    */

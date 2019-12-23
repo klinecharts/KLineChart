@@ -6,7 +6,7 @@
 [![types](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-📈A kline library for browser. Support technical indicators, drawing marker maps and custom styles.
+📈A kline library for browser. Support technical indicators and parameter setting, support drawing marker maps, custom styles.
 ## Browser Support
 The chart is based on canvas. In theory, as long as it supports canvas, it is the same on mobile.
 ## Installing
@@ -34,6 +34,7 @@ klinecharts.version
 setStyle(style)
 setMainChartType(chartType)
 setIndicatorParams(indicatorType, params)
+getIndicatorParams(indicatorType)
 setMainIndicatorType(indicatorType)
 setSubIndicatorType(indicatorType)
 showVolChart(true)
@@ -67,6 +68,7 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
 <table>
     <tbody>
         <tr>
+            <th>type</th>
             <th>MA</th>
             <th>VOL</th>
             <th>MACD</th>
@@ -79,18 +81,20 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
             <th>DMI</th>
         </tr>
         <tr>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
+            <th>params</th>
+            <th>[5,10,30,60]</th>
+            <th>[5,10,20]</th>
+            <th>[12,26,9]</th>
+            <th>[20]</th>
+            <th>[9,3,3]</th>
+            <th>[6,12,24]</th>
+            <th>[6,12,24]</th>
+            <th>[26]</th>
+            <th>[13]</th>
+            <th>[14,6]</th>
         </tr>
         <tr>
+            <th>type</th>
             <th>CR</th>
             <th>PSY</th>
             <th>DMA</th>
@@ -99,18 +103,21 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
             <th>VR</th>
             <th>WR</th>
             <th>MTM</th>
+            <th>EMV</th>
             <th>SAR</th>
         </tr>
         <tr>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
-            <th>✅</th>
+            <th>params</th>
+            <th>[26,10,20,40,60]</th>
+            <th>[12]</th>
+            <th>[10,50,10]</th>
+            <th>[12,20]</th>
+            <th>[30]</th>
+            <th>[24,30]</th>
+            <th>[13,34,89]</th>
+            <th>[6,10]</th>
+            <th>[14,9]</th>
+            <th>[2,2,20]</th>
         </tr>
     </tbody>
 </table>
