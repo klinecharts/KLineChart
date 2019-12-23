@@ -302,21 +302,21 @@ class RootChart {
    * @param params
    */
   setIndicatorParams (indicatorType, params) {
-    if (!this.indicatorParams.hasOwnProperty(indicatorType)) {
+    if (!this.indicatorParams.hasOwnProperty(indicatorType) ||
+      (indicatorType !== IndicatorType.MA &&
+      indicatorType !== IndicatorType.VOL &&
+      params.length !== this.indicatorParams[indicatorType].length)) {
       return
     }
     this.indicatorParams[indicatorType] = params
-    const mainIndicatorType = this.getMainIndicatorType()
-    const volIndicatorType = this.isShowVolChart() ? IndicatorType.VOL : IndicatorType.NO
-    const subIndicatorType = this.getSubIndicatorType()
-    if (mainIndicatorType === indicatorType) {
-      this.calcIndicator(mainIndicatorType, this.mainChart)
+    if (this.getMainIndicatorType() === indicatorType) {
+      this.calcIndicator(indicatorType, this.mainChart)
     }
-    if (volIndicatorType === indicatorType) {
-      this.calcIndicator(volIndicatorType, this.volIndicatorChart)
+    if (this.isShowVolChart() && indicatorType === IndicatorType.VOL) {
+      this.calcIndicator(indicatorType, this.volIndicatorChart)
     }
-    if (subIndicatorType === indicatorType) {
-      this.calcIndicator(subIndicatorType, this.subIndicatorChart)
+    if (this.getSubIndicatorType() === indicatorType) {
+      this.calcIndicator(indicatorType, this.subIndicatorChart)
     }
   }
 
