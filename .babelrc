@@ -1,5 +1,11 @@
 {
   "presets": [
-    ["@babel/env", {"modules": false}]
+    [
+      "@babel/preset-env",
+      {
+        "targets": ">0.2%, not dead, not op_mini all",
+        "modules": false
+      }
+    ]
   ]
 }

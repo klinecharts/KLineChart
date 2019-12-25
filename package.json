@@ -32,10 +32,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
+    "@babel/plugin-proposal-private-methods": "^7.7.4",
     "@babel/preset-env": "^7.6.3",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
+    "babel-eslint": "^10.0.3",
     "eslint": "^6.5.1",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
