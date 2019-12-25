@@ -7485,18 +7485,6 @@ function () {
       throw new Error("Chart version is ".concat("4.0.0-pre", ". Root dom is null, can not initialize the chart!!!"));
     }
 
-    this.throttle = function (func, wait) {
-      var previous = 0;
-      return function () {
-        var now = Date.now();
-
-        if (now - previous > wait) {
-          func();
-          previous = now;
-        }
-      };
-    };
-
     this.style = getDefaultStyle();
     merge(this.style, s);
     this.indicatorParams = getDefaultIndicatorParams();
@@ -7520,15 +7508,6 @@ function () {
   _createClass(RootChart, [{
     key: "initEvent",
     value: function initEvent() {
-      var _this = this;
-
-      var onResize = this.throttle(function () {
-        // 判断根元素大小是否发生变化，变化了才需要重新计算各个图表的尺寸
-        if (_this.domWidth !== _this.dom.offsetWidth || _this.domHeight !== _this.dom.offsetHeight) {
-          _this.calcChartDimensions();
-        }
-      }, 1000 / 16);
-      window.addEventListener('resize', onResize, false);
       var mobile = isMobile(window.navigator.userAgent);
       this.dom.addEventListener('contextmenu', function (e) {
         e.preventDefault();
@@ -7748,19 +7727,34 @@ function () {
   }, {
     key: "calcIndicator",
     value: function calcIndicator$1(indicatorType, chart) {
-      var _this2 = this;
+      var _this = this;
 
       Promise.resolve().then(function () {
         try {
           var calc = calcIndicator[indicatorType];
 
           if (isFunction(calc)) {
-            _this2.dataProvider.dataList = calc(_this2.dataProvider.dataList, _this2.indicatorParams[indicatorType]);
+            _this.dataProvider.dataList = calc(_this.dataProvider.dataList, _this.indicatorParams[indicatorType]);
           }
 
-          _this2.flushCharts([chart, _this2.tooltipChart]);
+          _this.flushCharts([chart, _this.tooltipChart]);
         } catch (e) {}
       });
+    }
+    /**
+     * 调整尺寸
+     */
+
+  }, {
+    key: "resize",
+    value: function resize() {
+      var _this2 = this;
+
+      if (this.domWidth !== this.dom.offsetWidth || this.domHeight !== this.dom.offsetHeight) {
+        requestAnimationFrame(function () {
+          _this2.calcChartDimensions();
+        });
+      }
     }
     /**
      * 添加数据集合

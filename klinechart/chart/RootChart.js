@@ -4,7 +4,7 @@ import IndicatorChart from './IndicatorChart'
 import TooltipChart from './TooltipChart'
 import XAxisChart from './XAxisChart'
 import { isArray, isFunction, isNumber, merge } from '../internal/utils/dataUtils'
-import { calcTextWidth } from '../internal/utils/drawUtils'
+import { calcTextWidth, requestAnimationFrame } from '../internal/utils/drawUtils'
 import calcIndicator from '../internal/calcIndicator'
 
 import DataProvider from '../internal/DataProvider'
@@ -21,16 +21,6 @@ class RootChart {
   constructor (dom, s = {}) {
     if (!dom) {
       throw new Error(`Chart version is ${process.env.K_LINE_VERSION}. Root dom is null, can not initialize the chart!!!`)
-    }
-    this.throttle = (func, wait) => {
-      let previous = 0
-      return () => {
-        const now = Date.now()
-        if (now - previous > wait) {
-          func()
-          previous = now
-        }
-      }
     }
     this.style = getDefaultStyle()
     merge(this.style, s)
@@ -56,13 +46,6 @@ class RootChart {
    * 初始化事件
    */
   initEvent () {
-    const onResize = this.throttle(() => {
-      // 判断根元素大小是否发生变化，变化了才需要重新计算各个图表的尺寸
-      if (this.domWidth !== this.dom.offsetWidth || this.domHeight !== this.dom.offsetHeight) {
-        this.calcChartDimensions()
-      }
-    }, 1000 / 16)
-    window.addEventListener('resize', onResize, false)
     const mobile = isMobile(window.navigator.userAgent)
     this.dom.addEventListener('contextmenu', (e) => { e.preventDefault() }, false)
     if (mobile) {
@@ -232,6 +215,17 @@ class RootChart {
       } catch (e) {
       }
     })
+  }
+
+  /**
+   * 调整尺寸
+   */
+  resize () {
+    if (this.domWidth !== this.dom.offsetWidth || this.domHeight !== this.dom.offsetHeight) {
+      requestAnimationFrame(() => {
+        this.calcChartDimensions()
+      })
+    }
   }
 
   /**

@@ -31,6 +31,7 @@ klinecharts.version
 
 ### klinecharts instance
 ```js
+resize()
 setStyle(style)
 setMainChartType(chartType)
 setIndicatorParams(indicatorType, params)

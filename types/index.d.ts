@@ -39,6 +39,7 @@ export type PictureType = 'png' | 'jpeg' | 'bmp'
 export type ChartComponentType = 'candle' | 'vol' | 'subIndicator' | 'tooltip' | 'marker'
 
 export interface Chart {
+  resize(): void
   setStyle(style: any): void
   addData(data: KLineData[] | KLineData, pos?: number): void
   setMainIndicatorType(indicatorType: IndicatorType): void
