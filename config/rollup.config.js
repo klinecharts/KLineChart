@@ -27,27 +27,28 @@ const getPlugins = (env) => {
   ]
 }
 
-const getOutputConfig = (env) => {
+const getOutputConfig = (fileName) => {
   return {
-    file: `dist/klinecharts.${env}.js`,
+    file: `dist/klinecharts.${fileName}.js`,
     format: 'umd',
     name: 'klinecharts',
+    sourcemap: fileName === 'development',
     indent: false
   }
 }
 
 module.exports = [
-  // UMD Development
+  // umd development
   {
     input: inputPath,
     output: getOutputConfig('development'),
     plugins: getPlugins('development')
   },
 
-  // UMD Production
+  // umd production
   {
     input: inputPath,
-    output: getOutputConfig('production'),
+    output: getOutputConfig('production.min'),
     plugins: getPlugins('production')
   }
 ]
