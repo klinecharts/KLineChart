@@ -96,7 +96,7 @@ class RootChart {
       this.dom.addEventListener('mouseleave', (e) => { motionEvent.mouseLeave(e) }, false)
       this.dom.addEventListener('wheel', (e) => { motionEvent.mouseWheel(e) }, false)
       this.dom.addEventListener('keydown', (e) => {
-        keyboardEvent.keyDown(e)
+        keyboardEvent.keyDown(e, loadMore)
       }, false)
     }
   }

@@ -13,8 +13,9 @@ class KeyboardEvent extends Event {
   /**
    * 按键按下事件
    * @param e
+   * @param loadMore
    */
-  keyDown (e) {
+  keyDown (e, loadMore) {
     stopEvent(e)
     if (e.keyCode === 37 || e.keyCode === 39) {
       let shouldFlush = false
@@ -41,6 +42,9 @@ class KeyboardEvent extends Event {
         this.markerChart.flush()
         if (this.dataProvider.crossPoint) {
           this.tooltipChart.flush()
+        }
+        if (this.dataProvider.minPos === 0) {
+          loadMore()
         }
       }
     } else if (e.keyCode === 38 || e.keyCode === 40) {

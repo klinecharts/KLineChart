@@ -7507,12 +7507,13 @@ function (_Event) {
   /**
    * 按键按下事件
    * @param e
+   * @param loadMore
    */
 
 
   _createClass(KeyboardEvent, [{
     key: "keyDown",
-    value: function keyDown(e) {
+    value: function keyDown(e, loadMore) {
       stopEvent(e);
 
       if (e.keyCode === 37 || e.keyCode === 39) {
@@ -7543,6 +7544,10 @@ function (_Event) {
 
           if (this.dataProvider.crossPoint) {
             this.tooltipChart.flush();
+          }
+
+          if (this.dataProvider.minPos === 0) {
+            loadMore();
           }
         }
       } else if (e.keyCode === 38 || e.keyCode === 40) {
@@ -7661,7 +7666,7 @@ function () {
           _motionEvent.mouseWheel(e);
         }, false);
         this.dom.addEventListener('keydown', function (e) {
-          keyboardEvent.keyDown(e);
+          keyboardEvent.keyDown(e, loadMore);
         }, false);
       }
     }
