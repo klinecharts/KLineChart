@@ -25,7 +25,6 @@ class MouseEvent extends Event {
     if (this.dataProvider.dataList.length === 0) {
       return
     }
-    stopEvent(e)
     if (e.button === 0) {
       const point = getCanvasPoint(e, this.tooltipChart.canvasDom)
       if (!isValidEvent(point, this.viewPortHandler)) {

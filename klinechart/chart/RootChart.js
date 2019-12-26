@@ -14,6 +14,7 @@ import { isMobile } from '../internal/utils/platformUtils'
 import TouchEvent from '../internal/event/TouchEvent'
 import MouseEvent from '../internal/event/MouseEvent'
 import MarkerEvent from '../internal/event/MarkerEvent'
+import KeyboardEvent from '../internal/event/KeyboardEvent'
 
 import { IndicatorType, YAxisPosition, YAxisTextPosition, MarkerType, ChartType } from '../internal/constants'
 
@@ -26,6 +27,9 @@ class RootChart {
     merge(this.style, s)
     this.indicatorParams = getDefaultIndicatorParams()
     dom.style.position = 'relative'
+    dom.style.outline = 'none'
+    dom.style.borderStyle = 'none'
+    dom.tabIndex = 1
     this.dom = dom
     this.dataProvider = new DataProvider()
     this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider)
@@ -64,6 +68,10 @@ class RootChart {
         this.xAxisChart, this.markerChart, this.dataProvider
       )
       const markerEvent = new MarkerEvent(this.dataProvider, this.markerChart, this.style)
+      const keyboardEvent = new KeyboardEvent(
+        this.mainChart, this.volIndicatorChart, this.subIndicatorChart,
+        this.tooltipChart, this.markerChart, this.xAxisChart, this.dataProvider
+      )
       this.dom.addEventListener('mousedown', (e) => {
         motionEvent.mouseDown(e)
         markerEvent.mouseDown(e)
@@ -78,6 +86,9 @@ class RootChart {
       }, false)
       this.dom.addEventListener('mouseleave', (e) => { motionEvent.mouseLeave(e) }, false)
       this.dom.addEventListener('wheel', (e) => { motionEvent.mouseWheel(e) }, false)
+      this.dom.addEventListener('keydown', (e) => {
+        keyboardEvent.keyDown(e)
+      }, false)
     }
   }
 

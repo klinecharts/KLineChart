@@ -6582,8 +6582,6 @@ function (_Event) {
         return;
       }
 
-      stopEvent(e);
-
       if (e.button === 0) {
         var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
 
@@ -7473,6 +7471,78 @@ function () {
   return MarkerEvent;
 }();
 
+var KeyboardEvent =
+/*#__PURE__*/
+function (_Event) {
+  _inherits(KeyboardEvent, _Event);
+
+  function KeyboardEvent(mainChart, volChart, subIndicatorChart, tooltipChart, markerChart, xAxisChart, dataProvider) {
+    var _this;
+
+    _classCallCheck(this, KeyboardEvent);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(KeyboardEvent).call(this, tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider));
+    _this.markerChart = markerChart;
+    return _this;
+  }
+
+  _createClass(KeyboardEvent, [{
+    key: "keyDown",
+    value: function keyDown(e) {
+      if (e.keyCode === 37 || e.keyCode === 39) {
+        var shouldFlush = false;
+
+        if (e.keyCode === 37) {
+          // 左移
+          if (this.dataProvider.minPos > 0) {
+            this.dataProvider.minPos--;
+            this.dataProvider.currentTooltipDataPos--;
+            shouldFlush = true;
+          }
+        } else {
+          // 右移
+          if (this.dataProvider.minPos < this.dataProvider.dataList.length - this.dataProvider.range) {
+            this.dataProvider.minPos++;
+            this.dataProvider.currentTooltipDataPos++;
+            shouldFlush = true;
+          }
+        }
+
+        if (shouldFlush) {
+          this.mainChart.flush();
+          this.volChart.flush();
+          this.subIndicatorChart.flush();
+          this.xAxisChart.flush();
+          this.markerChart.flush();
+
+          if (this.dataProvider.crossPoint) {
+            this.tooltipChart.flush();
+          }
+        }
+      } else if (e.keyCode === 38 || e.keyCode === 40) {
+        var isZoomingOut = true;
+        var scaleX = 0.95;
+
+        if (e.keyCode === 38) {
+          // 放大
+          isZoomingOut = false;
+          scaleX = 1.05;
+        }
+
+        if (this.zoom(isZoomingOut, scaleX, this.dataProvider.minPos, this.dataProvider.range)) {
+          if (this.dataProvider.crossPoint) {
+            this.cross(this.dataProvider.crossPoint);
+          }
+
+          this.markerChart.flush();
+        }
+      }
+    }
+  }]);
+
+  return KeyboardEvent;
+}(Event);
+
 var RootChart =
 /*#__PURE__*/
 function () {
@@ -7489,6 +7559,9 @@ function () {
     merge(this.style, s);
     this.indicatorParams = getDefaultIndicatorParams();
     dom.style.position = 'relative';
+    dom.style.outline = 'none';
+    dom.style.borderStyle = 'none';
+    dom.tabIndex = 1;
     this.dom = dom;
     this.dataProvider = new DataProvider();
     this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider);
@@ -7528,6 +7601,7 @@ function () {
         var _motionEvent = new MouseEvent(this.tooltipChart, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.markerChart, this.dataProvider);
 
         var markerEvent = new MarkerEvent(this.dataProvider, this.markerChart, this.style);
+        var keyboardEvent = new KeyboardEvent(this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.tooltipChart, this.markerChart, this.xAxisChart, this.dataProvider);
         this.dom.addEventListener('mousedown', function (e) {
           _motionEvent.mouseDown(e);
 
@@ -7548,6 +7622,9 @@ function () {
         }, false);
         this.dom.addEventListener('wheel', function (e) {
           _motionEvent.mouseWheel(e);
+        }, false);
+        this.dom.addEventListener('keydown', function (e) {
+          keyboardEvent.keyDown(e);
         }, false);
       }
     }
