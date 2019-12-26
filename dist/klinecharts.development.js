@@ -7583,7 +7583,7 @@ function () {
     _classCallCheck(this, RootChart);
 
     if (!dom) {
-      throw new Error("Chart version is ".concat("4.0.0-pre", ". Root dom is null, can not initialize the chart!!!"));
+      throw new Error("Chart version is ".concat("4.0.0", ". Root dom is null, can not initialize the chart!!!"));
     }
 
     this.style = getDefaultStyle();
@@ -7724,11 +7724,11 @@ function () {
       var isShowSubIndicator = this.subIndicatorChart.indicatorType !== IndicatorType.NO;
 
       if (isShowVolIndicator && isShowSubIndicator) {
-        var height = +(contentHeight * 0.2).toFixed(0);
+        var height = +(contentHeight * 0.18).toFixed(0);
         volChartHeight = height;
         subIndicatorChartHeight = height;
       } else if (!isShowVolIndicator && isShowSubIndicator || isShowVolIndicator && !isShowSubIndicator) {
-        var _height = +(contentHeight * 0.3).toFixed(0);
+        var _height = +(contentHeight * 0.26).toFixed(0);
 
         if (isShowVolIndicator) {
           volChartHeight = _height;
@@ -8233,7 +8233,7 @@ function () {
   return RootChart;
 }();
 
-var version = "4.0.0-pre";
+var version = "4.0.0";
 
 function init(dom) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};

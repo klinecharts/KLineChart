@@ -128,11 +128,11 @@ class RootChart {
     const isShowVolIndicator = this.volIndicatorChart.indicatorType !== IndicatorType.NO
     const isShowSubIndicator = this.subIndicatorChart.indicatorType !== IndicatorType.NO
     if (isShowVolIndicator && isShowSubIndicator) {
-      const height = +((contentHeight * 0.2).toFixed(0))
+      const height = +((contentHeight * 0.18).toFixed(0))
       volChartHeight = height
       subIndicatorChartHeight = height
     } else if ((!isShowVolIndicator && isShowSubIndicator) || (isShowVolIndicator && !isShowSubIndicator)) {
-      const height = +((contentHeight * 0.3).toFixed(0))
+      const height = +((contentHeight * 0.26).toFixed(0))
       if (isShowVolIndicator) {
         volChartHeight = height
       } else {
