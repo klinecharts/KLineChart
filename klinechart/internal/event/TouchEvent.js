@@ -108,8 +108,9 @@ class TouchEvent extends Event {
   /**
    * 触摸事件移动
    * @param e
+   * @param loadMore
    */
-  touchMove (e) {
+  touchMove (e, loadMore) {
     if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.dataProvider.dataList.length === 0) {
       return
     }
@@ -124,7 +125,7 @@ class TouchEvent extends Event {
         case TOUCH_DRAG: {
           stopEvent(e)
           const point = getCanvasPoint(e.targetTouches[0], this.tooltipChart.canvasDom)
-          this.drag(this.touchMovePoint, point.x)
+          this.drag(this.touchMovePoint, point.x, loadMore)
           break
         }
         case TOUCH_CROSS: {

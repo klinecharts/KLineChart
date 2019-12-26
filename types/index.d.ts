@@ -41,7 +41,7 @@ export type ChartComponentType = 'candle' | 'vol' | 'subIndicator' | 'tooltip' |
 export interface Chart {
   resize(): void
   setStyle(style: any): void
-  addData(data: KLineData[] | KLineData, pos?: number): void
+  addData(data: KLineData[] | KLineData, pos?: number, noMore?: boolean): void
   setMainIndicatorType(indicatorType: IndicatorType): void
   setSubIndicatorType(indicatorType: IndicatorType): void
   setIndicatorParams(indicatorType: IndicatorType, params: number[])
@@ -59,6 +59,7 @@ export interface Chart {
   clearData(): void
   getConvertPictureUrl(pictureType?: PictureType, excludes?: ChartComponentType[]): string
   drawMarker(markerType: MarkerType): void
+  loadMore(cb: (timestamp: number) => {})
   clearAllMarker(): void
 }
 

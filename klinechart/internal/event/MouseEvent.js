@@ -69,8 +69,9 @@ class MouseEvent extends Event {
   /**
    * 鼠标移动时事件
    * @param e
+   * @param loadMore
    */
-  mouseMove (e) {
+  mouseMove (e, loadMore) {
     if (this.dataProvider.dataList.length === 0) {
       return
     }
@@ -87,7 +88,7 @@ class MouseEvent extends Event {
         if (this.dataProvider.isDragMarker) {
           this.cross(point)
         } else {
-          if (this.drag(this.mouseDownPoint, e.x)) {
+          if (this.drag(this.mouseDownPoint, e.x, loadMore)) {
             this.markerChart.flush()
           }
         }

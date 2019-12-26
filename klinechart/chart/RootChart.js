@@ -52,6 +52,12 @@ class RootChart {
   initEvent () {
     const mobile = isMobile(window.navigator.userAgent)
     this.dom.addEventListener('contextmenu', (e) => { e.preventDefault() }, false)
+    const loadMore = () => {
+      // 有更多并且没有在加载则去加载更多
+      if (!this.noMore && !this.loading && this.loadMoreCallback && isFunction(this.loadMoreCallback)) {
+        this.loadMoreCallback((this.dataProvider.dataList[0] || {}).timestamp)
+      }
+    }
     if (mobile) {
       const motionEvent = new TouchEvent(
         this.tooltipChart, this.mainChart,
@@ -59,7 +65,9 @@ class RootChart {
         this.xAxisChart, this.dataProvider
       )
       this.dom.addEventListener('touchstart', (e) => { motionEvent.touchStart(e) }, false)
-      this.dom.addEventListener('touchmove', (e) => { motionEvent.touchMove(e) }, false)
+      this.dom.addEventListener('touchmove', (e) => {
+        motionEvent.touchMove(e, loadMore)
+      }, false)
       this.dom.addEventListener('touchend', (e) => { motionEvent.touchEnd(e) }, false)
     } else {
       const motionEvent = new MouseEvent(
@@ -81,7 +89,7 @@ class RootChart {
         markerEvent.mouseUp(e)
       }, false)
       this.dom.addEventListener('mousemove', (e) => {
-        motionEvent.mouseMove(e)
+        motionEvent.mouseMove(e, loadMore)
         markerEvent.mouseMove(e)
       }, false)
       this.dom.addEventListener('mouseleave', (e) => { motionEvent.mouseLeave(e) }, false)
@@ -243,8 +251,14 @@ class RootChart {
    * 添加数据集合
    * @param data
    * @param pos
+   * @param noMore
    */
-  addData (data, pos = this.dataProvider.dataList.length) {
+  addData (data, pos = this.dataProvider.dataList.length, noMore = false) {
+    if (pos === 0) {
+      // 当添加的数据是从0的位置开始时，则判断是在加载更多的数据请求来的，将loading重置为未加载状态
+      this.loading = false
+    }
+    this.noMore = noMore
     this.dataProvider.addData(data, pos)
     this.calcChartIndicator()
     this.xAxisChart.flush()
@@ -441,7 +455,7 @@ class RootChart {
    * @param markerType
    */
   drawMarker (markerType) {
-    // 如果当前是正在绘制其它的线模型，则清除掉当前现在绘制的数据
+    // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
     const currentMarkerType = this.dataProvider.currentMarkerType
     if (currentMarkerType !== markerType) {
       const markerData = this.dataProvider.markerDatas[currentMarkerType]
@@ -464,6 +478,14 @@ class RootChart {
     })
     this.dataProvider.currentMarkerType = MarkerType.NONE
     this.markerChart.flush()
+  }
+
+  /**
+   * 加载更多
+   * @param cb
+   */
+  loadMore (cb) {
+    this.loadMoreCallback = cb
   }
 
   /**

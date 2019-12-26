@@ -1,3 +1,5 @@
+import {isFunction} from "../utils/dataUtils"
+
 class Event {
   constructor (
     tooltipChart, mainChart, volChart,
@@ -16,9 +18,10 @@ class Event {
    * 拖拽
    * @param eventPoint
    * @param dragX
+   * @param loadMore
    * @returns {boolean}
    */
-  drag (eventPoint, dragX) {
+  drag (eventPoint, dragX, loadMore) {
     const dataSpace = this.dataProvider.dataSpace
     const dataSize = this.dataProvider.dataList.length
     const range = this.dataProvider.range
@@ -45,6 +48,9 @@ class Event {
       this.volChart.flush()
       this.subIndicatorChart.flush()
       this.xAxisChart.flush()
+      if (minPos === 0) {
+        loadMore()
+      }
       return true
     } else if (moveDist < 0 - dataSpace / 2) {
       if (minPos + range === dataSize || dataSize < range) {

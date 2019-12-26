@@ -1,4 +1,5 @@
 import Event from './Event'
+import { stopEvent } from './eventHelper'
 
 class KeyboardEvent extends Event {
   constructor (
@@ -9,7 +10,12 @@ class KeyboardEvent extends Event {
     this.markerChart = markerChart
   }
 
+  /**
+   * 按键按下事件
+   * @param e
+   */
   keyDown (e) {
+    stopEvent(e)
     if (e.keyCode === 37 || e.keyCode === 39) {
       let shouldFlush = false
       if (e.keyCode === 37) {
