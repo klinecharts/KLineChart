@@ -52,6 +52,7 @@ clearData()
 getConvertPictureUrl()
 drawMarker(markerType)
 clearAllMarker()
+loadMore((timestamp) => {})
 ```
 
 ## Data Source

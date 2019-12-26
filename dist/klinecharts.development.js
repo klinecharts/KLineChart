@@ -6012,13 +6012,14 @@ function () {
    * 拖拽
    * @param eventPoint
    * @param dragX
+   * @param loadMore
    * @returns {boolean}
    */
 
 
   _createClass(Event, [{
     key: "drag",
-    value: function drag(eventPoint, dragX) {
+    value: function drag(eventPoint, dragX, loadMore) {
       var dataSpace = this.dataProvider.dataSpace;
       var dataSize = this.dataProvider.dataList.length;
       var range = this.dataProvider.range;
@@ -6048,6 +6049,11 @@ function () {
         this.volChart.flush();
         this.subIndicatorChart.flush();
         this.xAxisChart.flush();
+
+        if (minPos === 0) {
+          loadMore();
+        }
+
         return true;
       } else if (moveDist < 0 - dataSpace / 2) {
         if (minPos + range === dataSize || dataSize < range) {
@@ -6377,11 +6383,12 @@ function (_Event) {
     /**
      * 触摸事件移动
      * @param e
+     * @param loadMore
      */
 
   }, {
     key: "touchMove",
-    value: function touchMove(e) {
+    value: function touchMove(e, loadMore) {
       if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.dataProvider.dataList.length === 0) {
         return;
       }
@@ -6401,7 +6408,7 @@ function (_Event) {
             {
               stopEvent(e);
               var point = getCanvasPoint(e.targetTouches[0], this.tooltipChart.canvasDom);
-              this.drag(this.touchMovePoint, point.x);
+              this.drag(this.touchMovePoint, point.x, loadMore);
               break;
             }
 
@@ -6567,6 +6574,15 @@ function (_Event) {
       x: 0,
       y: 0
     };
+
+    _this.documentMouseUp = function () {
+      document.removeEventListener('mouseup', _this.documentMouseUp, false);
+      _this.mouseMode = CROSS;
+      _this.dataProvider.isDragMarker = false;
+
+      _this.tooltipChart.flush();
+    };
+
     return _this;
   }
   /**
@@ -6589,9 +6605,10 @@ function (_Event) {
           return;
         }
 
-        this.mouseMode = DRAG;
+        document.addEventListener('mouseup', this.documentMouseUp, false);
         this.mouseDownPoint.x = e.x;
         this.mouseDownPoint.y = e.y;
+        this.mouseMode = DRAG;
         this.dataProvider.crossPoint = null;
         this.tooltipChart.flush();
       }
@@ -6615,6 +6632,7 @@ function (_Event) {
         return;
       }
 
+      document.removeEventListener('mouseup', this.documentMouseUp, false);
       this.mouseMode = CROSS;
       this.dataProvider.crossPoint = {
         x: point.x,
@@ -6637,11 +6655,12 @@ function (_Event) {
     /**
      * 鼠标移动时事件
      * @param e
+     * @param loadMore
      */
 
   }, {
     key: "mouseMove",
-    value: function mouseMove(e) {
+    value: function mouseMove(e, loadMore) {
       if (this.dataProvider.dataList.length === 0) {
         return;
       }
@@ -6662,7 +6681,7 @@ function (_Event) {
           if (this.dataProvider.isDragMarker) {
             this.cross(point);
           } else {
-            if (this.drag(this.mouseDownPoint, e.x)) {
+            if (this.drag(this.mouseDownPoint, e.x, loadMore)) {
               this.markerChart.flush();
             }
           }
@@ -7485,10 +7504,17 @@ function (_Event) {
     _this.markerChart = markerChart;
     return _this;
   }
+  /**
+   * 按键按下事件
+   * @param e
+   */
+
 
   _createClass(KeyboardEvent, [{
     key: "keyDown",
     value: function keyDown(e) {
+      stopEvent(e);
+
       if (e.keyCode === 37 || e.keyCode === 39) {
         var shouldFlush = false;
 
@@ -7581,10 +7607,21 @@ function () {
   _createClass(RootChart, [{
     key: "initEvent",
     value: function initEvent() {
+      var _this = this;
+
       var mobile = isMobile(window.navigator.userAgent);
       this.dom.addEventListener('contextmenu', function (e) {
         e.preventDefault();
       }, false);
+
+      var loadMore = function loadMore() {
+        // 有更多并且没有在加载则去加载更多
+        if (!_this.noMore && !_this.loading && _this.loadMoreCallback && isFunction(_this.loadMoreCallback)) {
+          _this.loading = true;
+
+          _this.loadMoreCallback((_this.dataProvider.dataList[0] || {}).timestamp);
+        }
+      };
 
       if (mobile) {
         var motionEvent = new TouchEvent(this.tooltipChart, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider);
@@ -7592,7 +7629,7 @@ function () {
           motionEvent.touchStart(e);
         }, false);
         this.dom.addEventListener('touchmove', function (e) {
-          motionEvent.touchMove(e);
+          motionEvent.touchMove(e, loadMore);
         }, false);
         this.dom.addEventListener('touchend', function (e) {
           motionEvent.touchEnd(e);
@@ -7613,7 +7650,7 @@ function () {
           markerEvent.mouseUp(e);
         }, false);
         this.dom.addEventListener('mousemove', function (e) {
-          _motionEvent.mouseMove(e);
+          _motionEvent.mouseMove(e, loadMore);
 
           markerEvent.mouseMove(e);
         }, false);
@@ -7804,17 +7841,17 @@ function () {
   }, {
     key: "calcIndicator",
     value: function calcIndicator$1(indicatorType, chart) {
-      var _this = this;
+      var _this2 = this;
 
       Promise.resolve().then(function () {
         try {
           var calc = calcIndicator[indicatorType];
 
           if (isFunction(calc)) {
-            _this.dataProvider.dataList = calc(_this.dataProvider.dataList, _this.indicatorParams[indicatorType]);
+            _this2.dataProvider.dataList = calc(_this2.dataProvider.dataList, _this2.indicatorParams[indicatorType]);
           }
 
-          _this.flushCharts([chart, _this.tooltipChart]);
+          _this2.flushCharts([chart, _this2.tooltipChart]);
         } catch (e) {}
       });
     }
@@ -7825,11 +7862,11 @@ function () {
   }, {
     key: "resize",
     value: function resize() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.domWidth !== this.dom.offsetWidth || this.domHeight !== this.dom.offsetHeight) {
         requestAnimationFrame(function () {
-          _this2.calcChartDimensions();
+          _this3.calcChartDimensions();
         });
       }
     }
@@ -7837,12 +7874,21 @@ function () {
      * 添加数据集合
      * @param data
      * @param pos
+     * @param noMore
      */
 
   }, {
     key: "addData",
     value: function addData(data) {
       var pos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.dataProvider.dataList.length;
+      var noMore = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+      if (pos === 0) {
+        // 当添加的数据是从0的位置开始时，则判断是在加载更多的数据请求来的，将loading重置为未加载状态
+        this.loading = false;
+      }
+
+      this.noMore = noMore;
       this.dataProvider.addData(data, pos);
       this.calcChartIndicator();
       this.xAxisChart.flush();
@@ -8084,7 +8130,7 @@ function () {
   }, {
     key: "drawMarker",
     value: function drawMarker(markerType) {
-      // 如果当前是正在绘制其它的线模型，则清除掉当前现在绘制的数据
+      // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
       var currentMarkerType = this.dataProvider.currentMarkerType;
 
       if (currentMarkerType !== markerType) {
@@ -8106,14 +8152,24 @@ function () {
   }, {
     key: "clearAllMarker",
     value: function clearAllMarker() {
-      var _this3 = this;
+      var _this4 = this;
 
       var markerDatas = this.dataProvider.markerDatas;
       Object.keys(markerDatas).forEach(function (key) {
-        _this3.dataProvider.markerDatas[key] = [];
+        _this4.dataProvider.markerDatas[key] = [];
       });
       this.dataProvider.currentMarkerType = MarkerType.NONE;
       this.markerChart.flush();
+    }
+    /**
+     * 加载更多
+     * @param cb
+     */
+
+  }, {
+    key: "loadMore",
+    value: function loadMore(cb) {
+      this.loadMoreCallback = cb;
     }
     /**
      * 获取图表转换为图片后url

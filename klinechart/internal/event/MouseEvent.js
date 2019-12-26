@@ -15,6 +15,12 @@ class MouseEvent extends Event {
     // 事件模型
     this.mouseMode = CROSS
     this.mouseDownPoint = { x: 0, y: 0 }
+    this.documentMouseUp = () => {
+      document.removeEventListener('mouseup', this.documentMouseUp, false)
+      this.mouseMode = CROSS
+      this.dataProvider.isDragMarker = false
+      this.tooltipChart.flush()
+    }
   }
 
   /**
@@ -30,9 +36,10 @@ class MouseEvent extends Event {
       if (!isValidEvent(point, this.viewPortHandler)) {
         return
       }
-      this.mouseMode = DRAG
+      document.addEventListener('mouseup', this.documentMouseUp, false)
       this.mouseDownPoint.x = e.x
       this.mouseDownPoint.y = e.y
+      this.mouseMode = DRAG
       this.dataProvider.crossPoint = null
       this.tooltipChart.flush()
     }
@@ -51,6 +58,7 @@ class MouseEvent extends Event {
     if (!isValidEvent(point, this.viewPortHandler)) {
       return
     }
+    document.removeEventListener('mouseup', this.documentMouseUp, false)
     this.mouseMode = CROSS
     this.dataProvider.crossPoint = { x: point.x, y: point.y }
     this.dataProvider.isDragMarker = false

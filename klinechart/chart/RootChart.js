@@ -55,6 +55,7 @@ class RootChart {
     const loadMore = () => {
       // 有更多并且没有在加载则去加载更多
       if (!this.noMore && !this.loading && this.loadMoreCallback && isFunction(this.loadMoreCallback)) {
+        this.loading = true
         this.loadMoreCallback((this.dataProvider.dataList[0] || {}).timestamp)
       }
     }
