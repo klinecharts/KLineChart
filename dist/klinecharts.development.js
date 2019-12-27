@@ -457,14 +457,14 @@ function merge(target, source) {
   }
 
   for (var key in source) {
-    if (target[key] || target[key] === 0 || target[key] === false) {
+    if (target.hasOwnProperty(key)) {
       var targetProp = target[key];
       var sourceProp = source[key];
 
       if (isObject(sourceProp) && isObject(targetProp) && !isArray(sourceProp) && !isArray(targetProp)) {
         merge(targetProp, sourceProp);
       } else {
-        if (target[key] || target[key] === 0 || target[key] === false) {
+        if (source[key] || source[key] === 0 || source[key] === false) {
           target[key] = source[key];
         }
       }

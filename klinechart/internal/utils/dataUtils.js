@@ -53,7 +53,7 @@ export function merge (target, source) {
     return
   }
   for (const key in source) {
-    if (target[key] || target[key] === 0 || target[key] === false) {
+    if (target.hasOwnProperty(key)) {
       const targetProp = target[key]
       const sourceProp = source[key]
       if (isObject(sourceProp) &&
@@ -63,7 +63,7 @@ export function merge (target, source) {
       ) {
         merge(targetProp, sourceProp)
       } else {
-        if (target[key] || target[key] === 0 || target[key] === false) {
+        if (source[key] || source[key] === 0 || source[key] === false) {
           target[key] = source[key]
         }
       }
