@@ -75,7 +75,7 @@
 [查看配置详情。](../STYLE-CONFIG-DETAIL.md)
 
 ## API
-### klinecharts
+### klinecharts方法
 ```js
 // 实例化一个图表
 klinecharts.init(document.getElementById('div'))
@@ -83,7 +83,7 @@ klinecharts.init(document.getElementById('div'))
 klinecharts.version()
 ```
 
-### klinecharts实例
+### klinecharts实例方法
 ```js
 // 调整图表大小，总是会填充容器大小
 resize()
