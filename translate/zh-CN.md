@@ -74,6 +74,65 @@
 ## 样式配置
 [查看配置详情。](../STYLE-CONFIG-DETAIL.md)
 
+## API
+### klinecharts
+```js
+// 实例化一个图表
+klinecharts.init(document.getElementById('div'))
+// 当前版本
+klinecharts.version()
+```
+
+### klinecharts实例
+```js
+// 调整图表大小，总是会填充容器大小
+resize()
+// 设置图表样式
+setStyle(style)
+// 设置图表类型，类型为'candle'和'real_time'
+setMainChartType(chartType)
+// 设置指标参数
+setIndicatorParams(indicatorType, params)
+// 获取指标参数
+getIndicatorParams(indicatorType)
+// 设置主图指标类型(具体类型可参考types/index.d.ts文件里面的IndicatorType)
+setMainIndicatorType(indicatorType)
+// 设置副图指标类型(类型参考同主图指标类型)
+setSubIndicatorType(indicatorType)
+// 显示成交图
+showVolChart(true)
+// 设置默认的一屏显示的数据个数
+setDefaultRange(range)
+// 设置一屏显示的最小数据个数
+setMinRange(range)
+// 设置一屏显示的最大数据个数
+setMaxRange(range)
+// 添加数据
+// pos是告诉图表数据添加的位置，默认为添加到现有数据最后
+// noMore是告诉图表没有更多数据，默认是false
+addData(dataList, pos, noMore)
+// 获取图表当前的数据
+getDataList()
+// 获取主图指标类型
+getMainIndicatorType()
+// 获取副图指标类型
+getSubIndicatorType()
+// 获取图表当前样式配置
+getStyle()
+// 获取当前成交图的显示状态
+isShowVolChart()
+// 清空图表当前数据
+clearData()
+// 获取当前图表装换成图片的url
+getConvertPictureUrl()
+// 绘制标记图形(入参类型可参考types/index.d.ts文件里面的MarkerType)
+drawMarker(markerType)
+// 清空所有标记图形
+clearAllMarker()
+// 加载更多
+loadMore((timestamp) => {})
+```
+
 ## 图形标记
 标记图形类型支持：
 水平直线（horizontalStraightLine）、垂直直线（verticalStraightLine）、

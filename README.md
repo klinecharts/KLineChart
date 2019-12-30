@@ -26,7 +26,7 @@ $ yarn add klinecharts
 ### klinecharts
 ```js
 klinecharts.init(document.getElementById('div'))
-klinecharts.version
+klinecharts.version()
 ```
 
 ### klinecharts instance
@@ -42,7 +42,7 @@ showVolChart(true)
 setDefaultRange(range)
 setMinRange(range)
 setMaxRange(range)
-addData(dataList, pos)
+addData(dataList, pos, noMore)
 getDataList()
 getMainIndicatorType()
 getSubIndicatorType()
