@@ -89,6 +89,8 @@ klinecharts.version()
 resize()
 // 设置图表样式
 setStyle(style)
+// 获取图表当前样式配置
+getStyle()
 // 设置图表类型，类型为'candle'和'real_time'
 setMainChartType(chartType)
 // 设置指标参数
@@ -97,10 +99,16 @@ setIndicatorParams(indicatorType, params)
 getIndicatorParams(indicatorType)
 // 设置主图指标类型(具体类型可参考types/index.d.ts文件里面的IndicatorType)
 setMainIndicatorType(indicatorType)
+// 获取主图指标类型
+getMainIndicatorType()
 // 设置副图指标类型(类型参考同主图指标类型)
 setSubIndicatorType(indicatorType)
+// 获取副图指标类型
+getSubIndicatorType()
 // 显示成交图
 showVolChart(true)
+// 获取当前成交图的显示状态
+isShowVolChart()
 // 设置默认的一屏显示的数据个数
 setDefaultRange(range)
 // 设置一屏显示的最小数据个数
@@ -113,22 +121,14 @@ setMaxRange(range)
 addData(dataList, pos, noMore)
 // 获取图表当前的数据
 getDataList()
-// 获取主图指标类型
-getMainIndicatorType()
-// 获取副图指标类型
-getSubIndicatorType()
-// 获取图表当前样式配置
-getStyle()
-// 获取当前成交图的显示状态
-isShowVolChart()
 // 清空图表当前数据
 clearData()
-// 获取当前图表装换成图片的url
-getConvertPictureUrl()
 // 绘制标记图形(入参类型可参考types/index.d.ts文件里面的MarkerType)
 drawMarker(markerType)
 // 清空所有标记图形
 clearAllMarker()
+// 获取当前图表装换成图片的url
+getConvertPictureUrl()
 // 加载更多
 loadMore((timestamp) => {})
 ```
