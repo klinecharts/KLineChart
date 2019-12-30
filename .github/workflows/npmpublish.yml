@@ -27,18 +27,3 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-  publish-gpr:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2.0.0
-      - uses: actions/setup-node@v1.1.0
-        with:
-          node-version: 12
-          registry-url: https://npm.pkg.github.com/
-          scope: 'liihuu'
-      - run: npm install && npm run build
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_SECRET_TOKEN}}
