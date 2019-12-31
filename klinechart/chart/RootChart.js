@@ -226,13 +226,10 @@ class RootChart {
    */
   calcIndicator (indicatorType, chart) {
     Promise.resolve().then(() => {
-      try {
-        const calc = calcIndicator[indicatorType]
-        if (isFunction(calc)) {
-          this.dataProvider.dataList = calc(this.dataProvider.dataList, this.indicatorParams[indicatorType])
-        }
+      const calc = calcIndicator[indicatorType]
+      if (isFunction(calc)) {
+        this.dataProvider.dataList = calc(this.dataProvider.dataList, this.indicatorParams[indicatorType])
         this.flushCharts([chart, this.tooltipChart])
-      } catch (e) {
       }
     })
   }

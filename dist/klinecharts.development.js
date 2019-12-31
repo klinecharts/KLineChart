@@ -7849,15 +7849,13 @@ function () {
       var _this2 = this;
 
       Promise.resolve().then(function () {
-        try {
-          var calc = calcIndicator[indicatorType];
+        var calc = calcIndicator[indicatorType];
 
-          if (isFunction(calc)) {
-            _this2.dataProvider.dataList = calc(_this2.dataProvider.dataList, _this2.indicatorParams[indicatorType]);
-          }
+        if (isFunction(calc)) {
+          _this2.dataProvider.dataList = calc(_this2.dataProvider.dataList, _this2.indicatorParams[indicatorType]);
 
           _this2.flushCharts([chart, _this2.tooltipChart]);
-        } catch (e) {}
+        }
       });
     }
     /**
