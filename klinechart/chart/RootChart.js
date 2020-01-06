@@ -251,7 +251,7 @@ class RootChart {
    * @param pos
    * @param noMore
    */
-  addData (data, pos = this.dataProvider.dataList.length, noMore = false) {
+  addData (data, pos = this.dataProvider.dataList.length, noMore = true) {
     if (pos === 0) {
       // 当添加的数据是从0的位置开始时，则判断是在加载更多的数据请求来的，将loading重置为未加载状态
       this.loading = false

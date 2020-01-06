@@ -7884,7 +7884,7 @@ function () {
     key: "addData",
     value: function addData(data) {
       var pos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.dataProvider.dataList.length;
-      var noMore = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      var noMore = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
       if (pos === 0) {
         // 当添加的数据是从0的位置开始时，则判断是在加载更多的数据请求来的，将loading重置为未加载状态
@@ -8231,7 +8231,9 @@ function () {
   return RootChart;
 }();
 
-var version = "4.0.0";
+function version() {
+  return "4.0.0";
+}
 
 function init(dom) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
