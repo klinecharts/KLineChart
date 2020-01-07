@@ -117,7 +117,7 @@ setMinRange(range)
 setMaxRange(range)
 // 添加数据
 // pos是告诉图表数据添加的位置，默认为添加到现有数据最后
-// noMore是告诉图表没有更多数据，默认是false
+// noMore是告诉图表没有更多数据，默认是true
 addData(dataList, pos, noMore)
 // 获取图表当前的数据
 getDataList()
