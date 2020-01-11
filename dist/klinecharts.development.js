@@ -6704,13 +6704,13 @@ function (_Event) {
         return;
       }
 
+      stopEvent(e);
       var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
 
       if (!isValidEvent(point, this.viewPortHandler)) {
         return;
       }
 
-      stopEvent(e);
       var touchStartPosition = this.dataProvider.minPos;
       var touchRange = this.dataProvider.range;
       var delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.deltaY)); // 是否缩小

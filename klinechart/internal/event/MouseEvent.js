@@ -115,12 +115,11 @@ class MouseEvent extends Event {
     if (this.dataProvider.dataList.length === 0 || this.dataProvider.isDragMarker) {
       return
     }
+    stopEvent(e)
     const point = getCanvasPoint(e, this.tooltipChart.canvasDom)
     if (!isValidEvent(point, this.viewPortHandler)) {
       return
     }
-    stopEvent(e)
-
     const touchStartPosition = this.dataProvider.minPos
     const touchRange = this.dataProvider.range
     const delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.deltaY)))
