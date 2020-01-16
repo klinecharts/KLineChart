@@ -5847,7 +5847,7 @@ function getDefaultStyle() {
         display: true,
         line: {
           style: 'dash',
-          dashValue: [2, 2],
+          dashValue: [4, 2],
           size: 1,
           color: '#888888'
         },
