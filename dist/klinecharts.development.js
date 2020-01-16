@@ -5629,9 +5629,9 @@ function getDefaultStyle() {
        * 分时线
        */
       timeLine: {
-        color: '#D4D4D4',
+        color: '#1e88e5',
         size: 1,
-        areaFillColor: '#FAFAFA'
+        areaFillColor: 'rgba(30, 136, 229, 0.08)'
       },
 
       /**
@@ -5652,12 +5652,12 @@ function getDefaultStyle() {
       /**
        * 上涨颜色
        */
-      increasingColor: '#5DB300',
+      increasingColor: '#26A69A',
 
       /**
        * 下跌颜色
        */
-      decreasingColor: '#FF4A4A'
+      decreasingColor: '#EF5350'
     },
 
     /**
@@ -5665,7 +5665,7 @@ function getDefaultStyle() {
      */
     highestPriceMark: {
       display: true,
-      color: '#898989',
+      color: '#D9D9D9',
       text: {
         margin: 5,
         size: 10,
@@ -5678,7 +5678,7 @@ function getDefaultStyle() {
      */
     lowestPriceMark: {
       display: true,
-      color: '#898989',
+      color: '#D9D9D9',
       text: {
         margin: 5,
         size: 10,
@@ -5691,8 +5691,8 @@ function getDefaultStyle() {
      */
     lastPriceMark: {
       display: true,
-      increasingColor: '#5DB300',
-      decreasingColor: '#FF4A4A',
+      increasingColor: '#26A69A',
+      decreasingColor: '#EF5350',
       line: {
         display: true,
         style: 'dash',
@@ -5715,9 +5715,9 @@ function getDefaultStyle() {
        * 线的尺寸
        */
       lineSize: 1,
-      increasingColor: '#5DB300',
-      decreasingColor: '#FF4A4A',
-      lineColors: ['#898989', '#F5A623', '#F601FF', '#1587DD', '#50A300']
+      increasingColor: '#26A69A',
+      decreasingColor: '#EF5350',
+      lineColors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
     },
     xAxis: {
       /**
@@ -5740,7 +5740,7 @@ function getDefaultStyle() {
        */
       line: {
         display: true,
-        color: '#AFAFAF',
+        color: '#888888',
         size: 1
       },
 
@@ -5751,7 +5751,7 @@ function getDefaultStyle() {
         // 文字
         text: {
           display: true,
-          color: '#AFAFAF',
+          color: '#D9D9D9',
           size: 12,
           margin: 3,
           valueFormatter: null
@@ -5761,7 +5761,7 @@ function getDefaultStyle() {
           display: true,
           size: 1,
           length: 3,
-          color: '#AFAFAF'
+          color: '#888888'
         }
       },
 
@@ -5771,7 +5771,7 @@ function getDefaultStyle() {
       separatorLine: {
         display: false,
         size: 1,
-        color: '#B8B8B8',
+        color: '#393939',
         style: 'dash',
         dashValue: [2, 2]
       }
@@ -5790,19 +5790,19 @@ function getDefaultStyle() {
       /**
        * y轴最大宽度
        */
-      maxWidth: 60,
+      maxWidth: 80,
 
       /**
        * y轴最小宽度
        */
-      minWidth: 40,
+      minWidth: 60,
 
       /**
        * 轴线配置
        */
       line: {
         display: true,
-        color: '#AFAFAF',
+        color: '#888888',
         size: 1
       },
 
@@ -5813,8 +5813,8 @@ function getDefaultStyle() {
         // 文字
         text: {
           display: true,
-          position: 'inside',
-          color: '#AFAFAF',
+          position: 'outside',
+          color: '#D9D9D9',
           size: 12,
           margin: 3,
           valueFormatter: null
@@ -5824,7 +5824,7 @@ function getDefaultStyle() {
           display: true,
           size: 1,
           length: 3,
-          color: '#AFAFAF'
+          color: '#888888'
         }
       },
 
@@ -5832,9 +5832,9 @@ function getDefaultStyle() {
        * 分割线配置
        */
       separatorLine: {
-        display: false,
+        display: true,
         size: 1,
-        color: '#B8B8B8',
+        color: '#393939',
         style: 'dash',
         dashValue: [2, 2]
       }
@@ -5846,33 +5846,33 @@ function getDefaultStyle() {
       cross: {
         display: true,
         line: {
-          style: 'solid',
+          style: 'dash',
           dashValue: [2, 2],
           size: 1,
-          color: '#AAAAAA'
+          color: '#888888'
         },
         text: {
           horizontal: {
-            color: '#EDEDED',
+            color: '#D9D9D9',
             size: 12,
             paddingLeft: 2,
             paddingRight: 2,
             paddingTop: 2,
             paddingBottom: 2,
             borderSize: 1,
-            borderColor: '#EDEDED',
+            borderColor: '#505050',
             backgroundColor: '#505050',
             valueFormatter: null
           },
           vertical: {
-            color: '#EDEDED',
+            color: '#D9D9D9',
             size: 12,
             paddingLeft: 2,
             paddingRight: 2,
             paddingTop: 2,
             paddingBottom: 2,
             borderSize: 1,
-            borderColor: '#EDEDED',
+            borderColor: '#505050',
             backgroundColor: '#505050',
             valueFormatter: null
           }
@@ -5890,7 +5890,7 @@ function getDefaultStyle() {
           values: null,
           text: {
             size: 12,
-            color: '#898989',
+            color: '#D9D9D9',
             marginLeft: 8,
             marginTop: 6,
             marginRight: 8,
@@ -5907,14 +5907,14 @@ function getDefaultStyle() {
             right: 8,
             borderRadius: 4,
             borderSize: 1,
-            borderColor: '#444444',
-            fillColor: '#202020'
+            borderColor: '#3f4254',
+            fillColor: 'rgba(17, 17, 17, .3)'
           }
         },
         indicator: {
           text: {
             size: 12,
-            color: '#898989',
+            color: '#D9D9D9',
             marginTop: 6,
             marginRight: 8,
             marginBottom: 0,
@@ -5926,21 +5926,21 @@ function getDefaultStyle() {
     },
     marker: {
       line: {
-        color: '#1587DD',
+        color: '#1e88e5',
         size: 1
       },
       point: {
-        backgroundColor: '#1587DD',
-        borderColor: '#1587DD',
+        backgroundColor: '#1e88e5',
+        borderColor: '#1e88e5',
         borderSize: 1,
         radius: 4,
-        activeBackgroundColor: '#1587DD',
-        activeBorderColor: '#1587DD',
+        activeBackgroundColor: '#1e88e5',
+        activeBorderColor: '#1e88e5',
         activeBorderSize: 1,
         activeRadius: 6
       },
       text: {
-        color: '#1587DD',
+        color: '#1e88e5',
         size: 12,
         marginLeft: 2,
         marginRight: 2,

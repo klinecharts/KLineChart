@@ -4,9 +4,9 @@ config = {
   grid: false,
   realTime: {
     timeLine: {
-      color: '#D4D4D4',
+      color: '#1e88e5',
       size: 1,
-      areaFillColor: '#FAFAFA'
+      areaFillColor: 'rgba(30, 136, 229, 0.08)'
     },
     averageLine: {
       display: true,
@@ -17,26 +17,32 @@ config = {
   candle: {
     // 'solid'|'stroke'|'increasing_stroke'|'decreasing_stroke'|'ohlc'
     style: 'solid',
-    increasingColor: '#5DB300',
-    decreasingColor: '#FF4A4A',
+    increasingColor: '#26A69A',
+    decreasingColor: '#EF5350',
   },
   highestPriceMark: {
     display: true,
-    color: '#898989',
-    textSize: 10,
-    valueFormatter: null
+    color: '#D9D9D9',
+    text: {
+      margin: 5,
+      size: 10,
+      valueFormatter: null
+    }
   },
   lowestPriceMark: {
     display: true,
-    color: '#898989',
-    textSize: 10,
-    valueFormatter: null
+    color: '#D9D9D9',
+    text: {
+      margin: 5,
+      size: 10,
+      valueFormatter: null
+    }
   },
 
   lastPriceMark: {
     display: true,
-    increasingColor: '#5DB300',
-    decreasingColor: '#FF4A4A',
+    increasingColor: '#26A69A',
+    decreasingColor: '#EF5350',
     line: {
       display: true,
       // 'solid'|'dash'
@@ -58,23 +64,23 @@ config = {
 
   indicator: {
     lineSize: 1,
-    increasingColor: '#5DB300',
-    decreasingColor: '#FF4A4A',
-    lineColors: ['#898989', '#F5A623', '#F601FF', '#1587DD', '#50A300']
+    increasingColor: '#26A69A',
+    decreasingColor: '#EF5350',
+    lineColors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#50A300']
   },
   xAxis: {
     display: true,
-    maxHeight: 20,
-    minHeight: 10,
+    maxHeight: 50,
+    minHeight: 30,
     line: {
       display: true,
-      color: '#707070',
+      color: '#888888',
       size: 1
     },
     tick: {
       text: {
         display: true,
-        color: '#707070',
+        color: '#D9D9D9',
         size: 12,
         margin: 3,
         valueFormatter: null
@@ -83,27 +89,27 @@ config = {
         display: true,
         size: 1,
         length: 3,
-        color: '#707070'
+        color: '#888888'
       }
     },
     separatorLine: {
       display: false,
       size: 1,
-      color: '#B8B8B8',
+      color: '#393939',
       // 'solid'|'dash'
       style: 'dash',
-      dashValue: [8, 8]
+      dashValue: [2, 2]
     }
   },
   yAxis: {
     display: true,
     // 'left' | 'right'
     position: 'right',
-    maxWidth: 20,
-    minWidth: 10,
+    maxWidth: 80,
+    minWidth: 60,
     line: {
       display: true,
-      color: '#707070',
+      color: '#888888',
       size: 1
     },
     tick: {
@@ -111,7 +117,7 @@ config = {
         display: true,
         // 'outside' | 'inside
         position: 'outside',
-        color: '#707070',
+        color: '#D9D9D9',
         size: 12,
         margin: 3,
         valueFormatter: null
@@ -120,16 +126,16 @@ config = {
         display: true,
         size: 1,
         length: 3,
-        color: '#707070'
+        color: '#888888'
       }
     },
     separatorLine: {
-      display: false,
+      display: true,
       size: 1,
-      color: '#B8B8B8',
+      color: '#393939',
       // 'dash' | 'solid'
       style: 'dash',
-      dashValue: [8, 8]
+      dashValue: [2, 2]
     }
   },
   tooltip: {
@@ -138,32 +144,32 @@ config = {
       line: {
         // 'dash' | 'solid'
         style: 'solid',
-        dashValue: [8, 8],
+        dashValue: [2, 2],
         size: 1,
-        color: '#505050'
+        color: '#888888'
       },
       text: {
         horizontal: {
-          color: '#EDEDED',
+          color: '#D9D9D9',
           size: 12,
           paddingLeft: 2,
           paddingRight: 2,
           paddingTop: 2,
           paddingBottom: 2,
           borderSize: 1,
-          borderColor: '#EDEDED',
+          borderColor: '#505050',
           backgroundColor: '#505050',
           valueFormatter: null
         },
         vertical: {
-          color: '#EDEDED',
+          color: '#D9D9D9',
           size: 12,
           paddingLeft: 2,
           paddingRight: 2,
           paddingTop: 2,
           paddingBottom: 2,
           borderSize: 1,
-          borderColor: '#EDEDED',
+          borderColor: '#505050',
           backgroundColor: '#505050',
           valueFormatter: null
         }
@@ -179,7 +185,7 @@ config = {
         values: null,
         text: {
           size: 12,
-          color: '#898989',
+          color: '#D9D9D9',
           marginLeft: 8,
           marginTop: 6,
           marginRight: 8,
@@ -196,14 +202,14 @@ config = {
           right: 8,
           borderRadius: 4,
           borderSize: 1,
-          borderColor: '#444444',
-          fillColor: '#202020'
+          borderColor: '#3f4254',
+          fillColor: 'rgba(17, 17, 17, .3)'
         }
       },
       indicator: {
         text: {
           size: 12,
-          color: '#898989',
+          color: '#D9D9D9',
           marginLeft: 8,
           marginTop: 6,
           marginRight: 8,
@@ -215,21 +221,21 @@ config = {
   },
   marker: {
     line: {
-      color: '#1587DD',
+      color: '#1e88e5',
       size: 1
     },
     point: {
-      backgroundColor: '#1587DD',
-      borderColor: '#1587DD',
+      backgroundColor: '#1e88e5',
+      borderColor: '#1e88e5',
       borderSize: 1,
       radius: 4,
-      activeBackgroundColor: '#1587DD',
-      activeBorderColor: '#1587DD',
+      activeBackgroundColor: '#1e88e5',
+      activeBorderColor: '#1e88e5',
       activeBorderSize: 1,
       activeRadius: 6
     },
     text: {
-      color: '#1587DD',
+      color: '#1e88e5',
       size: 12,
       marginLeft: 2,
       marginRight: 2,
