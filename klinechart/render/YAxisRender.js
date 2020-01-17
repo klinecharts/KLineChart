@@ -254,20 +254,16 @@ class YAxisRender extends AxisRender {
   computeAxis () {
     let min = this.axisMinimum
     let max = this.axisMaximum
-    if (min === Number.MAX_SAFE_INTEGER || max === Number.MIN_SAFE_INTEGER) {
+    if (min === Number.MAX_SAFE_INTEGER || max === Number.MIN_SAFE_INTEGER || (max === 0 && min === 0)) {
       return
     }
 
     let range = Math.abs(max - min)
     if (range === 0) {
-      return
-    }
-    if (range === 0) {
       max += 1
       min -= 1
       range = Math.abs(max - min)
     }
-
     this.axisMinimum = min - (range / 100.0) * 10.0
     this.axisMaximum = max + (range / 100.0) * 20.0
 

@@ -1724,15 +1724,11 @@ function (_AxisRender) {
       var min = this.axisMinimum;
       var max = this.axisMaximum;
 
-      if (min === Number.MAX_SAFE_INTEGER || max === Number.MIN_SAFE_INTEGER) {
+      if (min === Number.MAX_SAFE_INTEGER || max === Number.MIN_SAFE_INTEGER || max === 0 && min === 0) {
         return;
       }
 
       var range = Math.abs(max - min);
-
-      if (range === 0) {
-        return;
-      }
 
       if (range === 0) {
         max += 1;
