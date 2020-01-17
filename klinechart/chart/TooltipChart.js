@@ -31,28 +31,30 @@ class TooltipChart extends Chart {
       )
       this.tooltipRender.renderCrossVerticalLine(this.ctx, kLineData, tooltip)
     }
-    const tooltipData = tooltip.data
-    if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS ||
-      (tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.dataProvider.crossPoint)) {
-      const indicator = this.style.indicator
+    if (this.dataProvider.dataList.length > 0) {
+      const tooltipData = tooltip.data
+      if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS ||
+        (tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.dataProvider.crossPoint)) {
+        const indicator = this.style.indicator
 
-      this.tooltipRender.renderMainChartTooltip(
-        this.ctx, kLineData,
-        this.mainChart.indicatorType,
-        this.mainChart.chartType === ChartType.CANDLE,
-        tooltip, indicator
-      )
-      if (this.volChart.indicatorType !== IndicatorType.NO) {
-        this.tooltipRender.renderIndicatorChartTooltip(
-          this.ctx, this.mainChart.viewPortHandler.height,
-          kLineData, IndicatorType.VOL, tooltip, indicator, true
+        this.tooltipRender.renderMainChartTooltip(
+          this.ctx, kLineData,
+          this.mainChart.indicatorType,
+          this.mainChart.chartType === ChartType.CANDLE,
+          tooltip, indicator
         )
-      }
-      if (this.subIndicatorChart.indicatorType !== IndicatorType.NO) {
-        this.tooltipRender.renderIndicatorChartTooltip(
-          this.ctx, this.mainChart.viewPortHandler.height + this.volChart.viewPortHandler.height,
-          kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator
-        )
+        if (this.volChart.indicatorType !== IndicatorType.NO) {
+          this.tooltipRender.renderIndicatorChartTooltip(
+            this.ctx, this.mainChart.viewPortHandler.height,
+            kLineData, IndicatorType.VOL, tooltip, indicator, true
+          )
+        }
+        if (this.subIndicatorChart.indicatorType !== IndicatorType.NO) {
+          this.tooltipRender.renderIndicatorChartTooltip(
+            this.ctx, this.mainChart.viewPortHandler.height + this.volChart.viewPortHandler.height,
+            kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator
+          )
+        }
       }
     }
   }

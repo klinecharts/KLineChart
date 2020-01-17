@@ -260,6 +260,9 @@ class YAxisRender extends AxisRender {
 
     let range = Math.abs(max - min)
     if (range === 0) {
+      return
+    }
+    if (range === 0) {
       max += 1
       min -= 1
       range = Math.abs(max - min)

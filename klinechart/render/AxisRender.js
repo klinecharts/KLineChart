@@ -7,6 +7,7 @@ class AxisRender extends Render {
     this.axisMaximum = 0
     this.axisMinimum = 0
     this.axisRange = 0
+    this.values = []
   }
 
   /**
