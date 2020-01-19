@@ -7586,7 +7586,7 @@ function () {
     _classCallCheck(this, RootChart);
 
     if (!dom) {
-      throw new Error("Chart version is ".concat("4.0.0", ". Root dom is null, can not initialize the chart!!!"));
+      throw new Error("Chart version is ".concat("4.1.0", ". Root dom is null, can not initialize the chart!!!"));
     }
 
     this.style = getDefaultStyle();
@@ -8235,7 +8235,7 @@ function () {
 }();
 
 function version() {
-  return "4.0.0";
+  return "4.1.0";
 }
 
 function init(dom) {

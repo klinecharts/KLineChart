@@ -1,6 +1,6 @@
 {
   "name": "klinecharts",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "A kline library for browser. Support mobile.",
   "main": "index.js",
   "types": "./types/index.d.ts",
