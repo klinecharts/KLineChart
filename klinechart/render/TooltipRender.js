@@ -238,7 +238,7 @@ class TooltipRender extends Render {
       this.renderMainChartFloatRectText(ctx, kLineData, isCandle ? data : {}, baseDataStyle, indicatorDataStyle, indicatorColors)
     }
     if (isCandle) {
-      this.renderIndicatorLineCircle(ctx, indicatorType, this.candleViewPortHandler.contentTop(), data.values, this.candleYAxisRender, indicatorColors)
+      this.renderIndicatorLineCircle(ctx, indicatorType, this.candleViewPortHandler.contentTop(), data.values, this.candleYAxisRender, indicatorColors, tooltip.cross.display)
     }
   }
 
@@ -263,7 +263,11 @@ class TooltipRender extends Render {
     const circleOffsetTop = isVolChart
       ? this.candleViewPortHandler.height + this.volViewPortHandler.contentTop()
       : this.candleViewPortHandler.height + this.volViewPortHandler.height + this.subIndicatorViewPortHandler.contentTop()
-    this.renderIndicatorLineCircle(ctx, indicatorType, circleOffsetTop, data.values, isVolChart ? this.volYAxisRender : this.subIndicatorYAxisRender, indicatorLineColors)
+    this.renderIndicatorLineCircle(
+      ctx, indicatorType, circleOffsetTop, data.values,
+      isVolChart ? this.volYAxisRender : this.subIndicatorYAxisRender,
+      indicatorLineColors, tooltip.cross.display
+    )
   }
 
   /**
@@ -537,11 +541,12 @@ class TooltipRender extends Render {
    * @param yAxisRender
    * @param indicatorColors
    */
-  renderIndicatorLineCircle (ctx, indicatorType, offsetTop, values = [], yAxisRender, indicatorColors = []) {
+  renderIndicatorLineCircle (ctx, indicatorType, offsetTop, values = [], yAxisRender, indicatorColors = [], isShowCross) {
     const crossPoint = this.dataProvider.crossPoint
     if (!crossPoint ||
       this.dataProvider.currentMarkerType !== MarkerType.NONE ||
       indicatorType === IndicatorType.SAR ||
+      !isShowCross ||
       this.dataProvider.isDragMarker) {
       return
     }

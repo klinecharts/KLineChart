@@ -3332,7 +3332,7 @@ function (_Render) {
       }
 
       if (isCandle) {
-        this.renderIndicatorLineCircle(ctx, indicatorType, this.candleViewPortHandler.contentTop(), data.values, this.candleYAxisRender, indicatorColors);
+        this.renderIndicatorLineCircle(ctx, indicatorType, this.candleViewPortHandler.contentTop(), data.values, this.candleYAxisRender, indicatorColors, tooltip.cross.display);
       }
     }
     /**
@@ -3354,7 +3354,7 @@ function (_Render) {
       var indicatorLineColors = indicator.lineColors;
       this.renderIndicatorTooltipText(ctx, offsetTop + indicatorDataStyle.text.marginTop, data, indicatorDataStyle, indicatorLineColors);
       var circleOffsetTop = isVolChart ? this.candleViewPortHandler.height + this.volViewPortHandler.contentTop() : this.candleViewPortHandler.height + this.volViewPortHandler.height + this.subIndicatorViewPortHandler.contentTop();
-      this.renderIndicatorLineCircle(ctx, indicatorType, circleOffsetTop, data.values, isVolChart ? this.volYAxisRender : this.subIndicatorYAxisRender, indicatorLineColors);
+      this.renderIndicatorLineCircle(ctx, indicatorType, circleOffsetTop, data.values, isVolChart ? this.volYAxisRender : this.subIndicatorYAxisRender, indicatorLineColors, tooltip.cross.display);
     }
     /**
      * 渲染主图固定的基础数据文字
@@ -3643,9 +3643,10 @@ function (_Render) {
       var values = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
       var yAxisRender = arguments.length > 4 ? arguments[4] : undefined;
       var indicatorColors = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
+      var isShowCross = arguments.length > 6 ? arguments[6] : undefined;
       var crossPoint = this.dataProvider.crossPoint;
 
-      if (!crossPoint || this.dataProvider.currentMarkerType !== MarkerType.NONE || indicatorType === IndicatorType.SAR || this.dataProvider.isDragMarker) {
+      if (!crossPoint || this.dataProvider.currentMarkerType !== MarkerType.NONE || indicatorType === IndicatorType.SAR || !isShowCross || this.dataProvider.isDragMarker) {
         return;
       }
 
