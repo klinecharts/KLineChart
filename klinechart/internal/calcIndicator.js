@@ -6,6 +6,26 @@ const calcIndicator = {}
 export default calcIndicator
 
 /**
+ * 计算均价
+ * @param dataList
+ * @returns {*}
+ */
+calcIndicator.average = function (dataList) {
+  let totalTurnover = 0
+  let totalVolume = 0
+  return calc(dataList, (i) => {
+    const turnover = dataList[i].turnover || 0
+    totalVolume += dataList[i].volume || 0
+    totalTurnover += turnover
+    if (totalVolume !== 0) {
+      dataList[i].average = totalTurnover / totalVolume
+    } else {
+      dataList[i].average = 0
+    }
+  })
+}
+
+/**
  * 计算均线数据
  * 默认参数5，10，20，60
  * @param dataList
@@ -1193,18 +1213,8 @@ calcIndicator[IndicatorType.SAR] = function (dataList, params) {
  * @param calcIndicator
  */
 function calc (dataList, calcIndicator) {
-  let totalTurnover = 0
-  let totalVolume = 0
   const dataSize = dataList.length
   for (let i = 0; i < dataSize; i++) {
-    const turnover = dataList[i].turnover || 0
-    totalVolume += dataList[i].volume || 0
-    totalTurnover += turnover
-    if (totalVolume !== 0) {
-      dataList[i].average = totalTurnover / totalVolume
-    } else {
-      dataList[i].average = 0
-    }
     calcIndicator(i)
   }
   return dataList

@@ -208,8 +208,15 @@ class RootChart {
    * 计算图表指标
    */
   calcChartIndicator () {
-    if (this.mainChart.indicatorType !== IndicatorType.NO) {
-      this.calcIndicator(this.mainChart.indicatorType, this.mainChart)
+    if (this.mainChart.chartType === ChartType.REAL_TIME) {
+      if (this.style.realTime.averageLine.display) {
+        this.dataProvider.dataList = calcIndicator.average(this.dataProvider.dataList)
+        this.flushCharts([this.mainChart])
+      }
+    } else {
+      if (this.mainChart.indicatorType !== IndicatorType.NO) {
+        this.calcIndicator(this.mainChart.indicatorType, this.mainChart)
+      }
     }
     if (this.volIndicatorChart.indicatorType !== IndicatorType.NO) {
       this.calcIndicator(IndicatorType.VOL, this.volIndicatorChart)
@@ -278,10 +285,11 @@ class RootChart {
   setMainChartType (chartType) {
     if (this.mainChart.chartType !== chartType) {
       this.mainChart.chartType = chartType
-      this.flushCharts([this.mainChart, this.tooltipChart])
-      if (chartType === ChartType.REAL_TIME) {
-        this.clearAllMarker()
+      if (chartType === ChartType.REAL_TIME && this.style.realTime.averageLine.display) {
+        this.dataProvider.dataList = calcIndicator.average(this.dataProvider.dataList)
       }
+      this.flushCharts([this.mainChart, this.tooltipChart])
+      this.clearAllMarker()
     }
   }
 
@@ -292,7 +300,11 @@ class RootChart {
   setMainIndicatorType (indicatorType) {
     if (this.mainChart.indicatorType !== indicatorType) {
       this.mainChart.indicatorType = indicatorType
-      this.calcIndicator(indicatorType, this.mainChart)
+      if (indicatorType === IndicatorType.NO) {
+        this.flushCharts([this.mainChart])
+      } else {
+        this.calcIndicator(indicatorType, this.mainChart)
+      }
     }
   }
 

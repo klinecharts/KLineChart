@@ -1670,6 +1670,7 @@ function (_AxisRender) {
     value: function calcAxisMinMax(indicatorType) {
       var isMainChart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var isRealTimeChart = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      var isShowAverageLine = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
       var dataList = this.dataProvider.dataList;
       var min = this.dataProvider.minPos;
       var max = Math.min(min + this.dataProvider.range, dataList.length);
@@ -1678,8 +1679,16 @@ function (_AxisRender) {
       if (isRealTimeChart) {
         for (var i = min; i < max; i++) {
           var kLineData = dataList[i];
-          minMaxArray[0] = Math.min.apply(null, [kLineData.average, kLineData.close, minMaxArray[0]]);
-          minMaxArray[1] = Math.max.apply(null, [kLineData.average, kLineData.close, minMaxArray[1]]);
+          var minCompareArray = [kLineData.close, minMaxArray[0]];
+          var maxCompareArray = [kLineData.close, minMaxArray[1]];
+
+          if (isShowAverageLine) {
+            minCompareArray.push(kLineData.average);
+            maxCompareArray.push(kLineData.average);
+          }
+
+          minMaxArray[0] = Math.min.apply(null, minCompareArray);
+          minMaxArray[1] = Math.max.apply(null, maxCompareArray);
         }
       } else {
         for (var _i = min; _i < max; _i++) {
@@ -1788,7 +1797,7 @@ function (_Chart) {
 
         var yAxis = this.style.yAxis;
         var isRealTimeChart = this.isRealTimeChart();
-        this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart);
+        this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart, this.style.realTime.averageLine.display);
         this.yAxisRender.computeAxis();
         this.yAxisRender.renderSeparatorLines(this.ctx, yAxis);
         this.drawChart();
@@ -4159,12 +4168,34 @@ function (_Chart) {
 
 var calcIndicator = {};
 /**
+ * 计算均价
+ * @param dataList
+ * @returns {*}
+ */
+
+calcIndicator.average = function (dataList) {
+  var totalTurnover = 0;
+  var totalVolume = 0;
+  return calc(dataList, function (i) {
+    var turnover = dataList[i].turnover || 0;
+    totalVolume += dataList[i].volume || 0;
+    totalTurnover += turnover;
+
+    if (totalVolume !== 0) {
+      dataList[i].average = totalTurnover / totalVolume;
+    } else {
+      dataList[i].average = 0;
+    }
+  });
+};
+/**
  * 计算均线数据
  * 默认参数5，10，20，60
  * @param dataList
  * @param params
  * @returns {*}
  */
+
 
 calcIndicator[IndicatorType.MA] = function (dataList, params) {
   if (!checkParams(params)) {
@@ -5491,21 +5522,9 @@ calcIndicator[IndicatorType.SAR] = function (dataList, params) {
 
 
 function calc(dataList, calcIndicator) {
-  var totalTurnover = 0;
-  var totalVolume = 0;
   var dataSize = dataList.length;
 
   for (var i = 0; i < dataSize; i++) {
-    var turnover = dataList[i].turnover || 0;
-    totalVolume += dataList[i].volume || 0;
-    totalTurnover += turnover;
-
-    if (totalVolume !== 0) {
-      dataList[i].average = totalTurnover / totalVolume;
-    } else {
-      dataList[i].average = 0;
-    }
-
     calcIndicator(i);
   }
 
@@ -7829,8 +7848,15 @@ function () {
   }, {
     key: "calcChartIndicator",
     value: function calcChartIndicator() {
-      if (this.mainChart.indicatorType !== IndicatorType.NO) {
-        this.calcIndicator(this.mainChart.indicatorType, this.mainChart);
+      if (this.mainChart.chartType === ChartType.REAL_TIME) {
+        if (this.style.realTime.averageLine.display) {
+          this.dataProvider.dataList = calcIndicator.average(this.dataProvider.dataList);
+          this.flushCharts([this.mainChart]);
+        }
+      } else {
+        if (this.mainChart.indicatorType !== IndicatorType.NO) {
+          this.calcIndicator(this.mainChart.indicatorType, this.mainChart);
+        }
       }
 
       if (this.volIndicatorChart.indicatorType !== IndicatorType.NO) {
@@ -7922,11 +7948,13 @@ function () {
     value: function setMainChartType(chartType) {
       if (this.mainChart.chartType !== chartType) {
         this.mainChart.chartType = chartType;
-        this.flushCharts([this.mainChart, this.tooltipChart]);
 
-        if (chartType === ChartType.REAL_TIME) {
-          this.clearAllMarker();
+        if (chartType === ChartType.REAL_TIME && this.style.realTime.averageLine.display) {
+          this.dataProvider.dataList = calcIndicator.average(this.dataProvider.dataList);
         }
+
+        this.flushCharts([this.mainChart, this.tooltipChart]);
+        this.clearAllMarker();
       }
     }
     /**
@@ -7939,7 +7967,12 @@ function () {
     value: function setMainIndicatorType(indicatorType) {
       if (this.mainChart.indicatorType !== indicatorType) {
         this.mainChart.indicatorType = indicatorType;
-        this.calcIndicator(indicatorType, this.mainChart);
+
+        if (indicatorType === IndicatorType.NO) {
+          this.flushCharts([this.mainChart]);
+        } else {
+          this.calcIndicator(indicatorType, this.mainChart);
+        }
       }
     }
     /**

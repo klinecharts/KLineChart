@@ -23,7 +23,7 @@ class IndicatorChart extends Chart {
       }
       const yAxis = this.style.yAxis
       const isRealTimeChart = this.isRealTimeChart()
-      this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart)
+      this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart, this.style.realTime.averageLine.display)
       this.yAxisRender.computeAxis()
       this.yAxisRender.renderSeparatorLines(this.ctx, yAxis)
       this.drawChart()
