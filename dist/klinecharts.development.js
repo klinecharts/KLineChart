@@ -435,22 +435,6 @@ function formatValue(data, key) {
 
   return defaultValue;
 }
-/**
- * 格式化小数
- * @param value
- * @param decimal
- * @returns {*|string|*}
- */
-
-function formatDecimal(value) {
-  var decimal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-
-  if ((value || value === 0) && isNumber(value)) {
-    return value.toFixed(decimal);
-  }
-
-  return value;
-}
 function merge(target, source) {
   if (!isObject(target) || !isObject(source)) {
     return;
@@ -1324,6 +1308,20 @@ function round(x, precision) {
   x = (+x).toFixed(precision);
   return x;
 }
+/**
+ * 格式化精度
+ */
+
+function formatPrecision(value) {
+  var precision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  var v = +value;
+
+  if ((v || v === 0) && isNumber(v)) {
+    return value.toFixed(precision);
+  }
+
+  return "".concat(v);
+}
 
 var AxisRender =
 /*#__PURE__*/
@@ -1537,18 +1535,13 @@ function (_AxisRender) {
       }
 
       var textSize = tickText.size;
-      var valueFormatter = tickText.valueFormatter;
       ctx.textBaseline = 'middle';
       ctx.font = "".concat(textSize, "px Arial");
       ctx.fillStyle = tickText.color;
 
       for (var i = 0; i < this.values.length; i++) {
         var labelY = this.getY(this.values[i]);
-        var label = this.values[i].toString();
-
-        if (isFunction(valueFormatter)) {
-          label = valueFormatter(this.values[i]) || '--';
-        }
+        var text = this.values[i].toString();
 
         if (this.checkShowLabel(labelY, textSize)) {
           if (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE || yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE) {
@@ -1557,7 +1550,7 @@ function (_AxisRender) {
             ctx.textAlign = 'left';
           }
 
-          ctx.fillText(label, initX, labelY);
+          ctx.fillText(text, initX, labelY);
         }
       }
 
@@ -1850,9 +1843,9 @@ function (_IndicatorRender) {
      * 渲染蜡烛图
      * @param ctx
      * @param candle
-     * @param lastPriceMark
+     * @param pricePrecision
      */
-    value: function renderCandle(ctx, candle, lastPriceMark) {
+    value: function renderCandle(ctx, candle, pricePrecision) {
       var _this = this;
 
       ctx.lineWidth = 1;
@@ -1986,35 +1979,37 @@ function (_IndicatorRender) {
      * 渲染最高价标记
      * @param ctx
      * @param highestPriceMark
+     * @param pricePrecision
      */
 
   }, {
     key: "renderHighestPriceMark",
-    value: function renderHighestPriceMark(ctx, highestPriceMark) {
+    value: function renderHighestPriceMark(ctx, highestPriceMark, pricePrecision) {
       var price = this.highestMarkData.price;
 
       if (price === Number.MIN_SAFE_INTEGER || !highestPriceMark.display) {
         return;
       }
 
-      this.renderLowestHighestPriceMark(ctx, highestPriceMark, this.highestMarkData.x, price, true);
+      this.renderLowestHighestPriceMark(ctx, highestPriceMark, this.highestMarkData.x, price, true, pricePrecision);
     }
     /**
      * 绘制最低价标记
      * @param ctx
      * @param lowestPriceMark
+     * @param pricePrecision
      */
 
   }, {
     key: "renderLowestPriceMark",
-    value: function renderLowestPriceMark(ctx, lowestPriceMark) {
+    value: function renderLowestPriceMark(ctx, lowestPriceMark, pricePrecision) {
       var price = this.lowestMarkData.price;
 
       if (price === Number.MAX_SAFE_INTEGER || !lowestPriceMark.display) {
         return;
       }
 
-      this.renderLowestHighestPriceMark(ctx, lowestPriceMark, this.lowestMarkData.x, price);
+      this.renderLowestHighestPriceMark(ctx, lowestPriceMark, this.lowestMarkData.x, price, false, pricePrecision);
     }
     /**
      * 渲染最高最低价格标记
@@ -2023,12 +2018,12 @@ function (_IndicatorRender) {
      * @param x
      * @param price
      * @param isHigh
+     * @param pricePrecision
      */
 
   }, {
     key: "renderLowestHighestPriceMark",
-    value: function renderLowestHighestPriceMark(ctx, priceMark, x, price) {
-      var isHigh = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+    value: function renderLowestHighestPriceMark(ctx, priceMark, x, price, isHigh, pricePrecision) {
       ctx.save();
       ctx.beginPath();
       ctx.rect(0, 0, this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft(), this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop());
@@ -2064,16 +2059,10 @@ function (_IndicatorRender) {
       ctx.stroke();
       ctx.closePath();
       var textSize = priceMark.text.size;
-      var valueFormatter = priceMark.text.valueFormatter;
       ctx.font = "".concat(textSize, "px Arial");
-      var value = price.toFixed(2);
-
-      if (valueFormatter) {
-        value = valueFormatter(price) + '';
-      }
-
+      var text = formatPrecision(price, pricePrecision);
       ctx.textBaseline = 'middle';
-      ctx.fillText(value, startX + 5 + priceMark.text.margin, startY);
+      ctx.fillText(text, startX + 5 + priceMark.text.margin, startY);
       ctx.restore();
     }
     /**
@@ -2082,11 +2071,12 @@ function (_IndicatorRender) {
      * @param lastPriceMark
      * @param isRenderTextLeft
      * @param isRenderTextOutside
+     * @param pricePrecision
      */
 
   }, {
     key: "renderLastPriceMark",
-    value: function renderLastPriceMark(ctx, lastPriceMark, isRenderTextLeft, isRenderTextOutside) {
+    value: function renderLastPriceMark(ctx, lastPriceMark, isRenderTextLeft, isRenderTextOutside, pricePrecision) {
       var dataSize = this.dataProvider.dataList.length;
 
       if (!lastPriceMark.display || dataSize === 0) {
@@ -2106,13 +2096,7 @@ function (_IndicatorRender) {
       var displayText = priceMarkText.display;
 
       if (displayText) {
-        var text = formatDecimal(lastPrice);
-        var valueFormatter = priceMarkText.valueFormatter;
-
-        if (isFunction(valueFormatter)) {
-          text = valueFormatter(lastPrice) || '--';
-        }
-
+        var text = formatPrecision(lastPrice, pricePrecision);
         var textSize = lastPriceMark.text.size;
         var rectWidth = calcTextWidth(textSize, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight;
         var rectHeight = priceMarkText.paddingTop + textSize + priceMarkText.paddingBottom;
@@ -2301,13 +2285,14 @@ var MainChart =
 function (_IndicatorChart) {
   _inherits(MainChart, _IndicatorChart);
 
-  function MainChart(dom, style, dataProvider, indicatorParams) {
+  function MainChart(dom, style, dataProvider, indicatorParams, precision) {
     var _this;
 
     _classCallCheck(this, MainChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MainChart).call(this, dom, style, dataProvider, indicatorParams, IndicatorType.MA));
     _this.chartRender = new MainRender(_this.viewPortHandler, dataProvider, _this.yAxisRender);
+    _this.precision = precision;
     _this.chartType = ChartType.CANDLE;
     return _this;
   }
@@ -2317,16 +2302,16 @@ function (_IndicatorChart) {
     value: function draw() {
       _get(_getPrototypeOf(MainChart.prototype), "draw", this).call(this);
 
-      this.chartRender.renderLastPriceMark(this.ctx, this.style.lastPriceMark, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE);
+      this.chartRender.renderLastPriceMark(this.ctx, this.style.lastPriceMark, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, this.precision.pricePrecision);
     }
   }, {
     key: "drawChart",
     value: function drawChart() {
       if (this.chartType !== ChartType.REAL_TIME) {
-        this.chartRender.renderCandle(this.ctx, this.style.candle);
+        this.chartRender.renderCandle(this.ctx, this.style.candle, this.precision.pricePrecision);
         this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, this.indicatorParams, true);
-        this.chartRender.renderHighestPriceMark(this.ctx, this.style.highestPriceMark);
-        this.chartRender.renderLowestPriceMark(this.ctx, this.style.lowestPriceMark);
+        this.chartRender.renderHighestPriceMark(this.ctx, this.style.highestPriceMark, this.precision.pricePrecision);
+        this.chartRender.renderLowestPriceMark(this.ctx, this.style.lowestPriceMark, this.precision.pricePrecision);
       } else {
         this.chartRender.renderTimeLine(this.ctx, this.style.realTime);
       }
@@ -2999,7 +2984,7 @@ function (_Render) {
             if (isRenderPrice) {
               var price = _this13.yRender.getValue(points[0].y);
 
-              var priceText = formatDecimal(price);
+              var priceText = formatPrecision(price);
 
               if (isFunction(valueFormatter)) {
                 priceText = valueFormatter(price) || '--';
@@ -3088,6 +3073,365 @@ function (_Chart) {
   return MarkerChart;
 }(Chart);
 
+/**
+ * 默认的样式配置
+ * @returns {{realTime: {timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}, indicator: {decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}, yAxis: {line: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null, position: string}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}, maxWidth: number}, lowestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}, xAxis: {minHeight: number, maxHeight: number, line: {color: string, size: number, display: boolean}, display: boolean, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}}, lastPriceMark: {decreasingColor: string, line: {dashValue: number[], size: number, display: boolean, style: string}, display: boolean, increasingColor: string, text: {paddingBottom: number, size: number, color: string, display: boolean, paddingRight: number, valueFormatter: null, paddingTop: number, paddingLeft: number}}, grid: boolean, marker: {line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}, candle: {decreasingColor: string, style: string, increasingColor: string}, tooltip: {data: {indicator: {text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}}, displayRule: string, base: {floatRect: {fillColor: string, borderColor: string, paddingBottom: number, top: number, borderRadius: number, left: number, paddingRight: number, borderSize: number, paddingTop: number, right: number, paddingLeft: number}, values: null, showType: string, text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, labels: string[]}}, cross: {line: {dashValue: number[], size: number, color: string, style: string}, display: boolean, text: {horizontal: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}, vertical: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}}}}, highestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}}}
+ */
+
+function getDefaultStyle() {
+  return {
+    grid: false,
+    realTime: {
+      /**
+       * 分时线
+       */
+      timeLine: {
+        color: '#1e88e5',
+        size: 1,
+        areaFillColor: 'rgba(30, 136, 229, 0.08)'
+      },
+
+      /**
+       * 均线
+       */
+      averageLine: {
+        display: true,
+        color: '#F5A623',
+        size: 1
+      }
+    },
+    candle: {
+      /**
+       * 蜡烛样式
+       */
+      style: CandleStyle.SOLID,
+
+      /**
+       * 上涨颜色
+       */
+      increasingColor: '#26A69A',
+
+      /**
+       * 下跌颜色
+       */
+      decreasingColor: '#EF5350'
+    },
+
+    /**
+     * 最大价格标记参数
+     */
+    highestPriceMark: {
+      display: true,
+      color: '#D9D9D9',
+      text: {
+        margin: 5,
+        size: 10
+      }
+    },
+
+    /**
+     * 最小价格标记参数
+     */
+    lowestPriceMark: {
+      display: true,
+      color: '#D9D9D9',
+      text: {
+        margin: 5,
+        size: 10
+      }
+    },
+
+    /**
+     * 最新价标记参数
+     */
+    lastPriceMark: {
+      display: true,
+      increasingColor: '#26A69A',
+      decreasingColor: '#EF5350',
+      line: {
+        display: true,
+        style: LineStyle.DASH,
+        dashValue: [4, 4],
+        size: 1
+      },
+      text: {
+        display: true,
+        size: 12,
+        paddingLeft: 2,
+        paddingTop: 2,
+        paddingRight: 2,
+        paddingBottom: 2,
+        color: '#FFFFFF'
+      }
+    },
+    indicator: {
+      /**
+       * 线的尺寸
+       */
+      lineSize: 1,
+      increasingColor: '#26A69A',
+      decreasingColor: '#EF5350',
+      lineColors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+    },
+    xAxis: {
+      /**
+       * 是否显示整个轴
+       */
+      display: true,
+
+      /**
+       * x轴最大高度
+       */
+      maxHeight: 50,
+
+      /**
+       * x轴最小高度
+       */
+      minHeight: 30,
+
+      /**
+       * 轴线配置
+       */
+      line: {
+        display: true,
+        color: '#888888',
+        size: 1
+      },
+
+      /**
+       * 分割配置
+       */
+      tick: {
+        // 文字
+        text: {
+          display: true,
+          color: '#D9D9D9',
+          size: 12,
+          margin: 3
+        },
+        // 线
+        line: {
+          display: true,
+          size: 1,
+          length: 3,
+          color: '#888888'
+        }
+      },
+
+      /**
+       * 分割线配置
+       */
+      separatorLine: {
+        display: false,
+        size: 1,
+        color: '#393939',
+        style: LineStyle.DASH,
+        dashValue: [2, 2]
+      }
+    },
+    yAxis: {
+      /**
+       * 是否显示整个轴
+       */
+      display: true,
+
+      /**
+       * y轴位置
+       */
+      position: YAxisPosition.RIGHT,
+
+      /**
+       * y轴最大宽度
+       */
+      maxWidth: 80,
+
+      /**
+       * y轴最小宽度
+       */
+      minWidth: 60,
+
+      /**
+       * 轴线配置
+       */
+      line: {
+        display: true,
+        color: '#888888',
+        size: 1
+      },
+
+      /**
+       * 分割配置
+       */
+      tick: {
+        // 文字
+        text: {
+          display: true,
+          position: YAxisTextPosition.OUTSIDE,
+          color: '#D9D9D9',
+          size: 12,
+          margin: 3
+        },
+        // 线
+        line: {
+          display: true,
+          size: 1,
+          length: 3,
+          color: '#888888'
+        }
+      },
+
+      /**
+       * 分割线配置
+       */
+      separatorLine: {
+        display: true,
+        size: 1,
+        color: '#393939',
+        style: LineStyle.DASH,
+        dashValue: [2, 2]
+      }
+    },
+    tooltip: {
+      /**
+       * 光标线配置
+       */
+      cross: {
+        display: true,
+        line: {
+          style: LineStyle.DASH,
+          dashValue: [4, 2],
+          size: 1,
+          color: '#888888'
+        },
+        text: {
+          horizontal: {
+            color: '#D9D9D9',
+            size: 12,
+            paddingLeft: 2,
+            paddingRight: 2,
+            paddingTop: 2,
+            paddingBottom: 2,
+            borderSize: 1,
+            borderColor: '#505050',
+            backgroundColor: '#505050'
+          },
+          vertical: {
+            color: '#D9D9D9',
+            size: 12,
+            paddingLeft: 2,
+            paddingRight: 2,
+            paddingTop: 2,
+            paddingBottom: 2,
+            borderSize: 1,
+            borderColor: '#505050',
+            backgroundColor: '#505050'
+          }
+        }
+      },
+
+      /**
+       * 数据配置
+       */
+      data: {
+        displayRule: TooltipTextDisplayRule.ALWAYS,
+        base: {
+          showType: TooltipMainChartTextDisplayType.FIXED,
+          labels: ['时间', '开', '收', '高', '低', '成交量'],
+          values: null,
+          text: {
+            size: 12,
+            color: '#D9D9D9',
+            marginLeft: 8,
+            marginTop: 6,
+            marginRight: 8,
+            marginBottom: 0
+          },
+          floatRect: {
+            paddingLeft: 0,
+            paddingRight: 0,
+            paddingTop: 0,
+            paddingBottom: 6,
+            left: 8,
+            top: 8,
+            right: 8,
+            borderRadius: 4,
+            borderSize: 1,
+            borderColor: '#3f4254',
+            fillColor: 'rgba(17, 17, 17, .3)'
+          }
+        },
+        indicator: {
+          text: {
+            size: 12,
+            color: '#D9D9D9',
+            marginTop: 6,
+            marginRight: 8,
+            marginBottom: 0,
+            marginLeft: 8
+          }
+        }
+      }
+    },
+    marker: {
+      line: {
+        color: '#1e88e5',
+        size: 1
+      },
+      point: {
+        backgroundColor: '#1e88e5',
+        borderColor: '#1e88e5',
+        borderSize: 1,
+        radius: 4,
+        activeBackgroundColor: '#1e88e5',
+        activeBorderColor: '#1e88e5',
+        activeBorderSize: 1,
+        activeRadius: 6
+      },
+      text: {
+        color: '#1e88e5',
+        size: 12,
+        marginLeft: 2,
+        marginRight: 2,
+        marginTop: 2,
+        marginBottom: 6,
+        valueFormatter: null
+      }
+    }
+  };
+}
+/**
+ * 默认的指标参数配置
+ */
+
+function getDefaultIndicatorParams() {
+  var _ref;
+
+  return _ref = {}, _defineProperty(_ref, IndicatorType.MA, [5, 10, 30, 60]), _defineProperty(_ref, IndicatorType.VOL, [5, 10, 20]), _defineProperty(_ref, IndicatorType.MACD, [12, 26, 9]), _defineProperty(_ref, IndicatorType.BOLL, [20]), _defineProperty(_ref, IndicatorType.KDJ, [9, 3, 3]), _defineProperty(_ref, IndicatorType.RSI, [6, 12, 24]), _defineProperty(_ref, IndicatorType.BIAS, [6, 12, 24]), _defineProperty(_ref, IndicatorType.BRAR, [26]), _defineProperty(_ref, IndicatorType.CCI, [13]), _defineProperty(_ref, IndicatorType.DMI, [14, 6]), _defineProperty(_ref, IndicatorType.CR, [26, 10, 20, 40, 60]), _defineProperty(_ref, IndicatorType.PSY, [12]), _defineProperty(_ref, IndicatorType.DMA, [10, 50, 10]), _defineProperty(_ref, IndicatorType.TRIX, [12, 20]), _defineProperty(_ref, IndicatorType.OBV, [30]), _defineProperty(_ref, IndicatorType.VR, [24, 30]), _defineProperty(_ref, IndicatorType.WR, [13, 34, 89]), _defineProperty(_ref, IndicatorType.MTM, [6, 10]), _defineProperty(_ref, IndicatorType.EMV, [14, 9]), _defineProperty(_ref, IndicatorType.SAR, [2, 2, 20]), _ref;
+}
+/**
+ * 获取价格精度配置
+ * @returns {{pricePrecision: number, volumePrecision: number}}
+ */
+
+function getDefaultPrecision() {
+  return {
+    pricePrecision: 4,
+    volumePrecision: 2
+  };
+}
+/**
+ * 获取指标精度
+ * @param pricePrecision
+ * @param volumePrecision
+ * @returns {{[p: string]: *|number}}
+ */
+
+function getIndicatorPrecision(pricePrecision, volumePrecision) {
+  var _ref2;
+
+  return _ref2 = {}, _defineProperty(_ref2, IndicatorType.NO, pricePrecision), _defineProperty(_ref2, IndicatorType.MA, pricePrecision), _defineProperty(_ref2, IndicatorType.VOL, volumePrecision), _defineProperty(_ref2, IndicatorType.MACD, 2), _defineProperty(_ref2, IndicatorType.BOLL, pricePrecision), _defineProperty(_ref2, IndicatorType.KDJ, 2), _defineProperty(_ref2, IndicatorType.RSI, 2), _defineProperty(_ref2, IndicatorType.BIAS, 2), _defineProperty(_ref2, IndicatorType.BRAR, 4), _defineProperty(_ref2, IndicatorType.CCI, 4), _defineProperty(_ref2, IndicatorType.DMI, 4), _defineProperty(_ref2, IndicatorType.CR, 4), _defineProperty(_ref2, IndicatorType.PSY, 2), _defineProperty(_ref2, IndicatorType.DMA, 4), _defineProperty(_ref2, IndicatorType.TRIX, 4), _defineProperty(_ref2, IndicatorType.OBV, 4), _defineProperty(_ref2, IndicatorType.VR, 4), _defineProperty(_ref2, IndicatorType.WR, 4), _defineProperty(_ref2, IndicatorType.MTM, 4), _defineProperty(_ref2, IndicatorType.EMV, 4), _defineProperty(_ref2, IndicatorType.SAR, pricePrecision), _ref2;
+}
+
 var TooltipRender =
 /*#__PURE__*/
 function (_Render) {
@@ -3116,13 +3460,14 @@ function (_Render) {
    * @param isRenderYAxisLeft
    * @param isRenderYAxisTextOutside
    * @param tooltip
+   * @param precision
    */
 
 
   _createClass(TooltipRender, [{
     key: "renderCrossHorizontalLine",
-    value: function renderCrossHorizontalLine(ctx, mainIndicatorType, subIndicatorType, isRenderYAxisLeft, isRenderYAxisTextOutside, tooltip) {
-      var yAxisDataLabel = this.getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType);
+    value: function renderCrossHorizontalLine(ctx, mainIndicatorType, subIndicatorType, isRenderYAxisLeft, isRenderYAxisTextOutside, tooltip, precision) {
+      var yAxisDataLabel = this.getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType, precision);
       var crossPoint = this.dataProvider.crossPoint;
 
       if (!yAxisDataLabel || !crossPoint || !tooltip.cross.display) {
@@ -3192,12 +3537,13 @@ function (_Render) {
      * @param tooltip
      * @param mainIndicatorType
      * @param subIndicatorType
+     * @param precision
      * @returns {null|*|string}
      */
 
   }, {
     key: "getCrossYAxisLabel",
-    value: function getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType) {
+    value: function getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType, precision) {
       if (!this.dataProvider.crossPoint) {
         return null;
       }
@@ -3224,19 +3570,8 @@ function (_Render) {
         }
 
         var yData = yAxisRender.getValue(eventY - top);
-        var text = yData.toFixed(2);
-
-        if (indicatorType === IndicatorType.VOL) {
-          text = yData.toFixed(0);
-        }
-
-        var valueFormatter = tooltip.cross.text.horizontal.valueFormatter;
-
-        if (isFunction(valueFormatter)) {
-          text = valueFormatter(indicatorType, yData) || '--';
-        }
-
-        return text;
+        var precisionConfig = getIndicatorPrecision(precision.pricePrecision, precision.volumePrecision);
+        return formatPrecision(yData, precisionConfig[indicatorType]);
       }
 
       return null;
@@ -3272,16 +3607,10 @@ function (_Render) {
       ctx.closePath();
       ctx.setLineDash([]);
       var timestamp = kLineData.timestamp;
-      var label = formatDate(timestamp);
+      var text = formatDate(timestamp);
       var textVertical = tooltip.cross.text.vertical;
-      var valueFormatter = textVertical.valueFormatter;
-
-      if (isFunction(valueFormatter)) {
-        label = valueFormatter(kLineData) || '--';
-      }
-
       var textSize = textVertical.size;
-      var labelWidth = calcTextWidth(textSize, label);
+      var labelWidth = calcTextWidth(textSize, text);
       var xAxisLabelX = crossPoint.x - labelWidth / 2;
       var paddingLeft = textVertical.paddingLeft;
       var paddingRight = textVertical.paddingRight;
@@ -3308,7 +3637,7 @@ function (_Render) {
       ctx.textBaseline = 'top';
       ctx.font = "".concat(textSize, "px Arial");
       ctx.fillStyle = textVertical.color;
-      ctx.fillText(label, xAxisLabelX, this.viewPortHandler.contentBottom() + borderSize + paddingTop);
+      ctx.fillText(text, xAxisLabelX, this.viewPortHandler.contentBottom() + borderSize + paddingTop);
     }
     /**
      * 渲染主图提示文字
@@ -3318,26 +3647,27 @@ function (_Render) {
      * @param isCandle
      * @param tooltip
      * @param indicator
+     * @param precision
      */
 
   }, {
     key: "renderMainChartTooltip",
-    value: function renderMainChartTooltip(ctx, kLineData, indicatorType, isCandle, tooltip, indicator) {
+    value: function renderMainChartTooltip(ctx, kLineData, indicatorType, isCandle, tooltip, indicator, precision) {
       var baseDataStyle = tooltip.data.base;
       var indicatorDataStyle = tooltip.data.indicator;
       var indicatorColors = indicator.lineColors;
-      var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle);
+      var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision);
 
       if (baseDataStyle.showType === TooltipMainChartTextDisplayType.FIXED) {
         var startY = baseDataStyle.text.marginTop;
-        this.renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle);
+        this.renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision);
 
         if (isCandle) {
           startY += baseDataStyle.text.size + baseDataStyle.text.marginBottom + tooltip.data.indicator.text.marginTop;
           this.renderIndicatorTooltipText(ctx, startY, data, indicatorDataStyle, indicatorColors);
         }
       } else {
-        this.renderMainChartFloatRectText(ctx, kLineData, isCandle ? data : {}, baseDataStyle, indicatorDataStyle, indicatorColors);
+        this.renderMainChartFloatRectText(ctx, kLineData, isCandle ? data : {}, baseDataStyle, indicatorDataStyle, indicatorColors, precision);
       }
 
       if (isCandle) {
@@ -3353,13 +3683,14 @@ function (_Render) {
      * @param tooltip
      * @param indicator
      * @param isVolChart
+     * @param precision
      */
 
   }, {
     key: "renderIndicatorChartTooltip",
-    value: function renderIndicatorChartTooltip(ctx, offsetTop, kLineData, indicatorType, tooltip, indicator, isVolChart) {
+    value: function renderIndicatorChartTooltip(ctx, offsetTop, kLineData, indicatorType, tooltip, indicator, isVolChart, precision) {
       var indicatorDataStyle = tooltip.data.indicator;
-      var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle);
+      var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision);
       var indicatorLineColors = indicator.lineColors;
       this.renderIndicatorTooltipText(ctx, offsetTop + indicatorDataStyle.text.marginTop, data, indicatorDataStyle, indicatorLineColors);
       var circleOffsetTop = isVolChart ? this.candleViewPortHandler.height + this.volViewPortHandler.contentTop() : this.candleViewPortHandler.height + this.volViewPortHandler.height + this.subIndicatorViewPortHandler.contentTop();
@@ -3371,12 +3702,13 @@ function (_Render) {
      * @param startY
      * @param kLineData
      * @param baseDataStyle
+     * @param precision
      */
 
   }, {
     key: "renderMainChartFixedBaseDataTooltipText",
-    value: function renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle) {
-      var values = this.getMainChartBaseValues(kLineData, baseDataStyle);
+    value: function renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision) {
+      var values = this.getMainChartBaseValues(kLineData, baseDataStyle, precision);
       var textMarginLeft = baseDataStyle.text.marginLeft;
       var textMarginRight = baseDataStyle.text.marginRight;
       var textSize = baseDataStyle.text.size;
@@ -3415,14 +3747,16 @@ function (_Render) {
      * @param baseDataStyle
      * @param indicatorDataStyle
      * @param indicatorColors
+     * @param precision
      */
 
   }, {
     key: "renderMainChartFloatRectText",
     value: function renderMainChartFloatRectText(ctx, kLineData, indicatorData, baseDataStyle, indicatorDataStyle) {
       var indicatorColors = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
+      var precision = arguments.length > 6 ? arguments[6] : undefined;
       var baseLabels = baseDataStyle.labels;
-      var baseValues = this.getMainChartBaseValues(kLineData, baseDataStyle);
+      var baseValues = this.getMainChartBaseValues(kLineData, baseDataStyle, precision);
       var baseTextMarginLeft = baseDataStyle.text.marginLeft;
       var baseTextMarginRight = baseDataStyle.text.marginRight;
       var baseTextMarginTop = baseDataStyle.text.marginTop;
@@ -3548,12 +3882,13 @@ function (_Render) {
      * 获取主信息提示值
      * @param kLineData
      * @param baseDataStyle
+     * @param precision
      * @returns {*}
      */
 
   }, {
     key: "getMainChartBaseValues",
-    value: function getMainChartBaseValues(kLineData, baseDataStyle) {
+    value: function getMainChartBaseValues(kLineData, baseDataStyle, precision) {
       var baseValues = baseDataStyle.values;
       var values = [];
 
@@ -3564,36 +3899,28 @@ function (_Render) {
           values = baseValues;
         }
       } else {
-        var valueFormatter = baseDataStyle.text.valueFormatter;
         values = [formatValue(kLineData, 'timestamp'), formatValue(kLineData, 'open'), formatValue(kLineData, 'close'), formatValue(kLineData, 'high'), formatValue(kLineData, 'low'), formatValue(kLineData, 'volume')];
+        values.forEach(function (value, index) {
+          switch (index) {
+            case 0:
+              {
+                values[index] = formatDate(value);
+                break;
+              }
 
-        if (isFunction(valueFormatter)) {
-          values.forEach(function (value, index) {
-            values[index] = valueFormatter(index, value) || '--';
-          });
-        } else {
-          values.forEach(function (value, index) {
-            switch (index) {
-              case 0:
-                {
-                  values[index] = formatDate(value);
-                  break;
-                }
+            case values.length - 1:
+              {
+                values[index] = formatPrecision(value, precision.volumePrecision);
+                break;
+              }
 
-              case values.length - 1:
-                {
-                  values[index] = formatDecimal(value, 0);
-                  break;
-                }
-
-              default:
-                {
-                  values[index] = formatDecimal(value);
-                  break;
-                }
-            }
-          });
-        }
+            default:
+              {
+                values[index] = formatPrecision(value, precision.pricePrecision);
+                break;
+              }
+          }
+        });
       }
 
       return values;
@@ -3680,12 +4007,13 @@ function (_Render) {
      * @param kLineData
      * @param indicatorType
      * @param indicatorDataStyle
+     * @param precision
      * @returns {{values: Array, labels: Array}}
      */
 
   }, {
     key: "getRenderIndicatorTooltipData",
-    value: function getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle) {
+    value: function getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision) {
       var values = [];
       var labels = [];
       var params = this.indicatorParams[indicatorType] || [];
@@ -3834,18 +4162,10 @@ function (_Render) {
         labels.forEach(function (label) {
           values.push(formatValue(indicatorData, label));
         });
-        var valueFormatter = indicatorDataStyle.text.valueFormatter;
-
-        if (isFunction(valueFormatter)) {
-          values.forEach(function (value, index) {
-            values[index] = valueFormatter(indicatorType, value) || '--';
-          });
-        } else {
-          var decimal = indicatorType === IndicatorType.VOL ? 0 : 2;
-          values.forEach(function (value, index) {
-            values[index] = formatDecimal(value, decimal);
-          });
-        }
+        var decimal = getIndicatorPrecision(precision.pricePrecision, precision.volumePrecision)[indicatorType];
+        values.forEach(function (value, index) {
+          values[index] = formatPrecision(value, decimal);
+        });
       }
 
       return {
@@ -3864,7 +4184,7 @@ var TooltipChart =
 function (_Chart) {
   _inherits(TooltipChart, _Chart);
 
-  function TooltipChart(dom, style, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider, indicatorParams) {
+  function TooltipChart(dom, style, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider, indicatorParams, precision) {
     var _this;
 
     _classCallCheck(this, TooltipChart);
@@ -3875,6 +4195,7 @@ function (_Chart) {
     _this.subIndicatorChart = subIndicatorChart;
     _this.dataProvider = dataProvider;
     _this.tooltipRender = new TooltipRender(_this.viewPortHandler, dataProvider, indicatorParams, mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler, mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender);
+    _this.precision = precision;
     return _this;
   }
 
@@ -3885,7 +4206,7 @@ function (_Chart) {
       var tooltip = this.style.tooltip; // 如果不是绘图才显示十字线
 
       if (this.dataProvider.currentMarkerType === MarkerType.NONE && !this.dataProvider.isDragMarker) {
-        this.tooltipRender.renderCrossHorizontalLine(this.ctx, this.mainChart.indicatorType, this.subIndicatorChart.indicatorType, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, tooltip);
+        this.tooltipRender.renderCrossHorizontalLine(this.ctx, this.mainChart.indicatorType, this.subIndicatorChart.indicatorType, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, tooltip, this.precision);
         this.tooltipRender.renderCrossVerticalLine(this.ctx, kLineData, tooltip);
       }
 
@@ -3894,14 +4215,14 @@ function (_Chart) {
 
         if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS || tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.dataProvider.crossPoint) {
           var indicator = this.style.indicator;
-          this.tooltipRender.renderMainChartTooltip(this.ctx, kLineData, this.mainChart.indicatorType, this.mainChart.chartType === ChartType.CANDLE, tooltip, indicator);
+          this.tooltipRender.renderMainChartTooltip(this.ctx, kLineData, this.mainChart.indicatorType, this.mainChart.chartType === ChartType.CANDLE, tooltip, indicator, this.precision);
 
           if (this.volChart.indicatorType !== IndicatorType.NO) {
-            this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.mainChart.viewPortHandler.height, kLineData, IndicatorType.VOL, tooltip, indicator, true);
+            this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.mainChart.viewPortHandler.height, kLineData, IndicatorType.VOL, tooltip, indicator, true, this.precision);
           }
 
           if (this.subIndicatorChart.indicatorType !== IndicatorType.NO) {
-            this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.mainChart.viewPortHandler.height + this.volChart.viewPortHandler.height, kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator);
+            this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.mainChart.viewPortHandler.height + this.volChart.viewPortHandler.height, kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator, false, this.precision);
           }
         }
       }
@@ -3991,19 +4312,12 @@ function (_AxisRender) {
         labelY += tickLine.length;
       }
 
-      var formatter = tickText.valueFormatter;
-
       for (var i = 0; i < this.valuePoints.length; i++) {
         var x = this.valuePoints[i];
         var kLineModel = this.dataProvider.dataList[parseInt(this.values[i])];
         var timestamp = kLineModel.timestamp;
-        var label = formatDate(timestamp);
-
-        if (isFunction(formatter)) {
-          label = formatter(kLineModel);
-        }
-
-        ctx.fillText(label, x, labelY);
+        var text = formatDate(timestamp);
+        ctx.fillText(text, x, labelY);
       }
     }
     /**
@@ -5640,369 +5954,6 @@ function checkParamsWithSize(params, paramsSize) {
   return checkParams(params) && params.length === paramsSize;
 }
 
-/**
- * 默认的样式配置
- * @returns {{realTime: {timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}, indicator: {decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}, yAxis: {line: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null, position: string}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}, maxWidth: number}, lowestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}, xAxis: {minHeight: number, maxHeight: number, line: {color: string, size: number, display: boolean}, display: boolean, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}}, lastPriceMark: {decreasingColor: string, line: {dashValue: number[], size: number, display: boolean, style: string}, display: boolean, increasingColor: string, text: {paddingBottom: number, size: number, color: string, display: boolean, paddingRight: number, valueFormatter: null, paddingTop: number, paddingLeft: number}}, grid: boolean, marker: {line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}, candle: {decreasingColor: string, style: string, increasingColor: string}, tooltip: {data: {indicator: {text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}}, displayRule: string, base: {floatRect: {fillColor: string, borderColor: string, paddingBottom: number, top: number, borderRadius: number, left: number, paddingRight: number, borderSize: number, paddingTop: number, right: number, paddingLeft: number}, values: null, showType: string, text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, labels: string[]}}, cross: {line: {dashValue: number[], size: number, color: string, style: string}, display: boolean, text: {horizontal: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}, vertical: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}}}}, highestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}}}
- */
-function getDefaultStyle() {
-  return {
-    grid: false,
-    realTime: {
-      /**
-       * 分时线
-       */
-      timeLine: {
-        color: '#1e88e5',
-        size: 1,
-        areaFillColor: 'rgba(30, 136, 229, 0.08)'
-      },
-
-      /**
-       * 均线
-       */
-      averageLine: {
-        display: true,
-        color: '#F5A623',
-        size: 1
-      }
-    },
-    candle: {
-      /**
-       * 蜡烛样式
-       */
-      style: 'solid',
-
-      /**
-       * 上涨颜色
-       */
-      increasingColor: '#26A69A',
-
-      /**
-       * 下跌颜色
-       */
-      decreasingColor: '#EF5350'
-    },
-
-    /**
-     * 最大价格标记参数
-     */
-    highestPriceMark: {
-      display: true,
-      color: '#D9D9D9',
-      text: {
-        margin: 5,
-        size: 10,
-        valueFormatter: null
-      }
-    },
-
-    /**
-     * 最小价格标记参数
-     */
-    lowestPriceMark: {
-      display: true,
-      color: '#D9D9D9',
-      text: {
-        margin: 5,
-        size: 10,
-        valueFormatter: null
-      }
-    },
-
-    /**
-     * 最新价标记参数
-     */
-    lastPriceMark: {
-      display: true,
-      increasingColor: '#26A69A',
-      decreasingColor: '#EF5350',
-      line: {
-        display: true,
-        style: 'dash',
-        dashValue: [4, 4],
-        size: 1
-      },
-      text: {
-        display: true,
-        size: 12,
-        paddingLeft: 2,
-        paddingTop: 2,
-        paddingRight: 2,
-        paddingBottom: 2,
-        color: '#FFFFFF',
-        valueFormatter: null
-      }
-    },
-    indicator: {
-      /**
-       * 线的尺寸
-       */
-      lineSize: 1,
-      increasingColor: '#26A69A',
-      decreasingColor: '#EF5350',
-      lineColors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
-    },
-    xAxis: {
-      /**
-       * 是否显示整个轴
-       */
-      display: true,
-
-      /**
-       * x轴最大高度
-       */
-      maxHeight: 50,
-
-      /**
-       * x轴最小高度
-       */
-      minHeight: 30,
-
-      /**
-       * 轴线配置
-       */
-      line: {
-        display: true,
-        color: '#888888',
-        size: 1
-      },
-
-      /**
-       * 分割配置
-       */
-      tick: {
-        // 文字
-        text: {
-          display: true,
-          color: '#D9D9D9',
-          size: 12,
-          margin: 3,
-          valueFormatter: null
-        },
-        // 线
-        line: {
-          display: true,
-          size: 1,
-          length: 3,
-          color: '#888888'
-        }
-      },
-
-      /**
-       * 分割线配置
-       */
-      separatorLine: {
-        display: false,
-        size: 1,
-        color: '#393939',
-        style: 'dash',
-        dashValue: [2, 2]
-      }
-    },
-    yAxis: {
-      /**
-       * 是否显示整个轴
-       */
-      display: true,
-
-      /**
-       * y轴位置
-       */
-      position: 'right',
-
-      /**
-       * y轴最大宽度
-       */
-      maxWidth: 80,
-
-      /**
-       * y轴最小宽度
-       */
-      minWidth: 60,
-
-      /**
-       * 轴线配置
-       */
-      line: {
-        display: true,
-        color: '#888888',
-        size: 1
-      },
-
-      /**
-       * 分割配置
-       */
-      tick: {
-        // 文字
-        text: {
-          display: true,
-          position: 'outside',
-          color: '#D9D9D9',
-          size: 12,
-          margin: 3,
-          valueFormatter: null
-        },
-        // 线
-        line: {
-          display: true,
-          size: 1,
-          length: 3,
-          color: '#888888'
-        }
-      },
-
-      /**
-       * 分割线配置
-       */
-      separatorLine: {
-        display: true,
-        size: 1,
-        color: '#393939',
-        style: 'dash',
-        dashValue: [2, 2]
-      }
-    },
-    tooltip: {
-      /**
-       * 光标线配置
-       */
-      cross: {
-        display: true,
-        line: {
-          style: 'dash',
-          dashValue: [4, 2],
-          size: 1,
-          color: '#888888'
-        },
-        text: {
-          horizontal: {
-            color: '#D9D9D9',
-            size: 12,
-            paddingLeft: 2,
-            paddingRight: 2,
-            paddingTop: 2,
-            paddingBottom: 2,
-            borderSize: 1,
-            borderColor: '#505050',
-            backgroundColor: '#505050',
-            valueFormatter: null
-          },
-          vertical: {
-            color: '#D9D9D9',
-            size: 12,
-            paddingLeft: 2,
-            paddingRight: 2,
-            paddingTop: 2,
-            paddingBottom: 2,
-            borderSize: 1,
-            borderColor: '#505050',
-            backgroundColor: '#505050',
-            valueFormatter: null
-          }
-        }
-      },
-
-      /**
-       * 数据配置
-       */
-      data: {
-        displayRule: 'always',
-        base: {
-          showType: 'fixed',
-          labels: ['时间', '开', '收', '高', '低', '成交量'],
-          values: null,
-          text: {
-            size: 12,
-            color: '#D9D9D9',
-            marginLeft: 8,
-            marginTop: 6,
-            marginRight: 8,
-            marginBottom: 0,
-            valueFormatter: null
-          },
-          floatRect: {
-            paddingLeft: 0,
-            paddingRight: 0,
-            paddingTop: 0,
-            paddingBottom: 6,
-            left: 8,
-            top: 8,
-            right: 8,
-            borderRadius: 4,
-            borderSize: 1,
-            borderColor: '#3f4254',
-            fillColor: 'rgba(17, 17, 17, .3)'
-          }
-        },
-        indicator: {
-          text: {
-            size: 12,
-            color: '#D9D9D9',
-            marginTop: 6,
-            marginRight: 8,
-            marginBottom: 0,
-            marginLeft: 8,
-            valueFormatter: null
-          }
-        }
-      }
-    },
-    marker: {
-      line: {
-        color: '#1e88e5',
-        size: 1
-      },
-      point: {
-        backgroundColor: '#1e88e5',
-        borderColor: '#1e88e5',
-        borderSize: 1,
-        radius: 4,
-        activeBackgroundColor: '#1e88e5',
-        activeBorderColor: '#1e88e5',
-        activeBorderSize: 1,
-        activeRadius: 6
-      },
-      text: {
-        color: '#1e88e5',
-        size: 12,
-        marginLeft: 2,
-        marginRight: 2,
-        marginTop: 2,
-        marginBottom: 6,
-        valueFormatter: null
-      }
-    }
-  };
-}
-/**
- * 默认的指标参数配置
- */
-
-function getDefaultIndicatorParams() {
-  return {
-    MA: [5, 10, 30, 60],
-    VOL: [5, 10, 20],
-    MACD: [12, 26, 9],
-    BOLL: [20],
-    KDJ: [9, 3, 3],
-    RSI: [6, 12, 24],
-    BIAS: [6, 12, 24],
-    BRAR: [26],
-    CCI: [13],
-    DMI: [14, 6],
-    CR: [26, 10, 20, 40, 60],
-    PSY: [12],
-    DMA: [10, 50, 10],
-    TRIX: [12, 20],
-    OBV: [30],
-    VR: [24, 30],
-    WR: [13, 34, 89],
-    MTM: [6, 10],
-    EMV: [14, 9],
-    SAR: [2, 2, 20]
-  };
-}
-
 function isIPad(ua) {
   return ua.match(/(iPad).*OS\s([\d_]+)/);
 }
@@ -7606,12 +7557,13 @@ function () {
     _classCallCheck(this, RootChart);
 
     if (!dom) {
-      throw new Error("Chart version is ".concat("4.1.0", ". Root dom is null, can not initialize the chart!!!"));
+      throw new Error("Chart version is ".concat("4.2.0", ". Root dom is null, can not initialize the chart!!!"));
     }
 
     this.style = getDefaultStyle();
     merge(this.style, s);
     this.indicatorParams = getDefaultIndicatorParams();
+    this.precision = getDefaultPrecision();
     dom.style.position = 'relative';
     dom.style.outline = 'none';
     dom.style.borderStyle = 'none';
@@ -7619,11 +7571,11 @@ function () {
     this.dom = dom;
     this.dataProvider = new DataProvider();
     this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider);
-    this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams);
+    this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams, this.precision);
     this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender);
     this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL);
     this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams);
-    this.tooltipChart = new TooltipChart(dom, this.style, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider, this.indicatorParams);
+    this.tooltipChart = new TooltipChart(dom, this.style, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider, this.indicatorParams, this.precision);
     this.calcChartDimensions();
     this.initEvent();
   }
@@ -8269,7 +8221,7 @@ function () {
 }();
 
 function version() {
-  return "4.1.0";
+  return "4.2.0";
 }
 
 function init(dom) {

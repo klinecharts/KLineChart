@@ -3,7 +3,7 @@ import TooltipRender from '../render/TooltipRender'
 import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType, TooltipTextDisplayRule, MarkerType } from '../internal/constants'
 
 class TooltipChart extends Chart {
-  constructor (dom, style, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider, indicatorParams) {
+  constructor (dom, style, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider, indicatorParams, precision) {
     super(dom, style)
     this.mainChart = mainChart
     this.volChart = volChart
@@ -14,6 +14,7 @@ class TooltipChart extends Chart {
       mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler,
       mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender
     )
+    this.precision = precision
   }
 
   draw () {
@@ -27,7 +28,7 @@ class TooltipChart extends Chart {
         this.subIndicatorChart.indicatorType,
         this.style.yAxis.position === YAxisPosition.LEFT,
         this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE,
-        tooltip
+        tooltip, this.precision
       )
       this.tooltipRender.renderCrossVerticalLine(this.ctx, kLineData, tooltip)
     }
@@ -41,18 +42,18 @@ class TooltipChart extends Chart {
           this.ctx, kLineData,
           this.mainChart.indicatorType,
           this.mainChart.chartType === ChartType.CANDLE,
-          tooltip, indicator
+          tooltip, indicator, this.precision
         )
         if (this.volChart.indicatorType !== IndicatorType.NO) {
           this.tooltipRender.renderIndicatorChartTooltip(
             this.ctx, this.mainChart.viewPortHandler.height,
-            kLineData, IndicatorType.VOL, tooltip, indicator, true
+            kLineData, IndicatorType.VOL, tooltip, indicator, true, this.precision
           )
         }
         if (this.subIndicatorChart.indicatorType !== IndicatorType.NO) {
           this.tooltipRender.renderIndicatorChartTooltip(
             this.ctx, this.mainChart.viewPortHandler.height + this.volChart.viewPortHandler.height,
-            kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator
+            kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator, false, this.precision
           )
         }
       }

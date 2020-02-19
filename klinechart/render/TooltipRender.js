@@ -1,9 +1,11 @@
 import Render from './Render'
 
 import { calcTextWidth } from '../internal/utils/drawUtils'
-import { formatDate, isFunction, formatValue, formatDecimal, isArray } from '../internal/utils/dataUtils'
+import { formatDate, isFunction, formatValue, isArray } from '../internal/utils/dataUtils'
+import { formatPrecision } from '../internal/utils/numberUtils'
 
 import { IndicatorType, LineStyle, MarkerType, TooltipMainChartTextDisplayType } from '../internal/constants'
+import { getIndicatorPrecision } from '../internal/config'
 
 class TooltipRender extends Render {
   constructor (
@@ -29,9 +31,10 @@ class TooltipRender extends Render {
    * @param isRenderYAxisLeft
    * @param isRenderYAxisTextOutside
    * @param tooltip
+   * @param precision
    */
-  renderCrossHorizontalLine (ctx, mainIndicatorType, subIndicatorType, isRenderYAxisLeft, isRenderYAxisTextOutside, tooltip) {
-    const yAxisDataLabel = this.getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType)
+  renderCrossHorizontalLine (ctx, mainIndicatorType, subIndicatorType, isRenderYAxisLeft, isRenderYAxisTextOutside, tooltip, precision) {
+    const yAxisDataLabel = this.getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType, precision)
     const crossPoint = this.dataProvider.crossPoint
     if (!yAxisDataLabel || !crossPoint || !tooltip.cross.display) {
       return
@@ -103,9 +106,10 @@ class TooltipRender extends Render {
    * @param tooltip
    * @param mainIndicatorType
    * @param subIndicatorType
+   * @param precision
    * @returns {null|*|string}
    */
-  getCrossYAxisLabel (tooltip, mainIndicatorType, subIndicatorType) {
+  getCrossYAxisLabel (tooltip, mainIndicatorType, subIndicatorType, precision) {
     if (!this.dataProvider.crossPoint) {
       return null
     }
@@ -128,15 +132,8 @@ class TooltipRender extends Render {
         top = this.candleViewPortHandler.height + this.volViewPortHandler.height
       }
       const yData = yAxisRender.getValue(eventY - top)
-      let text = yData.toFixed(2)
-      if (indicatorType === IndicatorType.VOL) {
-        text = yData.toFixed(0)
-      }
-      const valueFormatter = tooltip.cross.text.horizontal.valueFormatter
-      if (isFunction(valueFormatter)) {
-        text = valueFormatter(indicatorType, yData) || '--'
-      }
-      return text
+      const precisionConfig = getIndicatorPrecision(precision.pricePrecision, precision.volumePrecision)
+      return formatPrecision(yData, precisionConfig[indicatorType])
     }
     return null
   }
@@ -167,15 +164,11 @@ class TooltipRender extends Render {
     ctx.setLineDash([])
 
     const timestamp = kLineData.timestamp
-    let label = formatDate(timestamp)
+    const text = formatDate(timestamp)
     const textVertical = tooltip.cross.text.vertical
-    const valueFormatter = textVertical.valueFormatter
-    if (isFunction(valueFormatter)) {
-      label = valueFormatter(kLineData) || '--'
-    }
 
     const textSize = textVertical.size
-    const labelWidth = calcTextWidth(textSize, label)
+    const labelWidth = calcTextWidth(textSize, text)
     let xAxisLabelX = crossPoint.x - labelWidth / 2
 
     const paddingLeft = textVertical.paddingLeft
@@ -207,7 +200,7 @@ class TooltipRender extends Render {
     ctx.font = `${textSize}px Arial`
     ctx.fillStyle = textVertical.color
     ctx.fillText(
-      label,
+      text,
       xAxisLabelX,
       this.viewPortHandler.contentBottom() + borderSize + paddingTop
     )
@@ -221,21 +214,25 @@ class TooltipRender extends Render {
    * @param isCandle
    * @param tooltip
    * @param indicator
+   * @param precision
    */
-  renderMainChartTooltip (ctx, kLineData, indicatorType, isCandle, tooltip, indicator) {
+  renderMainChartTooltip (ctx, kLineData, indicatorType, isCandle, tooltip, indicator, precision) {
     const baseDataStyle = tooltip.data.base
     const indicatorDataStyle = tooltip.data.indicator
     const indicatorColors = indicator.lineColors
-    const data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle)
+    const data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision)
     if (baseDataStyle.showType === TooltipMainChartTextDisplayType.FIXED) {
       let startY = baseDataStyle.text.marginTop
-      this.renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle)
+      this.renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision)
       if (isCandle) {
         startY += (baseDataStyle.text.size + baseDataStyle.text.marginBottom + tooltip.data.indicator.text.marginTop)
         this.renderIndicatorTooltipText(ctx, startY, data, indicatorDataStyle, indicatorColors)
       }
     } else {
-      this.renderMainChartFloatRectText(ctx, kLineData, isCandle ? data : {}, baseDataStyle, indicatorDataStyle, indicatorColors)
+      this.renderMainChartFloatRectText(
+        ctx, kLineData, isCandle ? data : {}, baseDataStyle,
+        indicatorDataStyle, indicatorColors, precision
+      )
     }
     if (isCandle) {
       this.renderIndicatorLineCircle(ctx, indicatorType, this.candleViewPortHandler.contentTop(), data.values, this.candleYAxisRender, indicatorColors, tooltip.cross.display)
@@ -251,10 +248,11 @@ class TooltipRender extends Render {
    * @param tooltip
    * @param indicator
    * @param isVolChart
+   * @param precision
    */
-  renderIndicatorChartTooltip (ctx, offsetTop, kLineData, indicatorType, tooltip, indicator, isVolChart) {
+  renderIndicatorChartTooltip (ctx, offsetTop, kLineData, indicatorType, tooltip, indicator, isVolChart, precision) {
     const indicatorDataStyle = tooltip.data.indicator
-    const data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle)
+    const data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision)
     const indicatorLineColors = indicator.lineColors
     this.renderIndicatorTooltipText(
       ctx, offsetTop + indicatorDataStyle.text.marginTop,
@@ -276,9 +274,10 @@ class TooltipRender extends Render {
    * @param startY
    * @param kLineData
    * @param baseDataStyle
+   * @param precision
    */
-  renderMainChartFixedBaseDataTooltipText (ctx, startY, kLineData, baseDataStyle) {
-    const values = this.getMainChartBaseValues(kLineData, baseDataStyle)
+  renderMainChartFixedBaseDataTooltipText (ctx, startY, kLineData, baseDataStyle, precision) {
+    const values = this.getMainChartBaseValues(kLineData, baseDataStyle, precision)
     const textMarginLeft = baseDataStyle.text.marginLeft
     const textMarginRight = baseDataStyle.text.marginRight
     const textSize = baseDataStyle.text.size
@@ -317,10 +316,14 @@ class TooltipRender extends Render {
    * @param baseDataStyle
    * @param indicatorDataStyle
    * @param indicatorColors
+   * @param precision
    */
-  renderMainChartFloatRectText (ctx, kLineData, indicatorData, baseDataStyle, indicatorDataStyle, indicatorColors = []) {
+  renderMainChartFloatRectText (
+    ctx, kLineData, indicatorData, baseDataStyle, indicatorDataStyle,
+    indicatorColors = [], precision
+  ) {
     const baseLabels = baseDataStyle.labels
-    const baseValues = this.getMainChartBaseValues(kLineData, baseDataStyle)
+    const baseValues = this.getMainChartBaseValues(kLineData, baseDataStyle, precision)
     const baseTextMarginLeft = baseDataStyle.text.marginLeft
     const baseTextMarginRight = baseDataStyle.text.marginRight
     const baseTextMarginTop = baseDataStyle.text.marginTop
@@ -451,9 +454,10 @@ class TooltipRender extends Render {
    * 获取主信息提示值
    * @param kLineData
    * @param baseDataStyle
+   * @param precision
    * @returns {*}
    */
-  getMainChartBaseValues (kLineData, baseDataStyle) {
+  getMainChartBaseValues (kLineData, baseDataStyle, precision) {
     const baseValues = baseDataStyle.values
     let values = []
     if (baseValues) {
@@ -463,7 +467,6 @@ class TooltipRender extends Render {
         values = baseValues
       }
     } else {
-      const valueFormatter = baseDataStyle.text.valueFormatter
       values = [
         formatValue(kLineData, 'timestamp'),
         formatValue(kLineData, 'open'),
@@ -472,28 +475,22 @@ class TooltipRender extends Render {
         formatValue(kLineData, 'low'),
         formatValue(kLineData, 'volume')
       ]
-      if (isFunction(valueFormatter)) {
-        values.forEach((value, index) => {
-          values[index] = valueFormatter(index, value) || '--'
-        })
-      } else {
-        values.forEach((value, index) => {
-          switch (index) {
-            case 0: {
-              values[index] = formatDate(value)
-              break
-            }
-            case values.length - 1: {
-              values[index] = formatDecimal(value, 0)
-              break
-            }
-            default: {
-              values[index] = formatDecimal(value)
-              break
-            }
+      values.forEach((value, index) => {
+        switch (index) {
+          case 0: {
+            values[index] = formatDate(value)
+            break
           }
-        })
-      }
+          case values.length - 1: {
+            values[index] = formatPrecision(value, precision.volumePrecision)
+            break
+          }
+          default: {
+            values[index] = formatPrecision(value, precision.pricePrecision)
+            break
+          }
+        }
+      })
     }
     return values
   }
@@ -570,9 +567,10 @@ class TooltipRender extends Render {
    * @param kLineData
    * @param indicatorType
    * @param indicatorDataStyle
+   * @param precision
    * @returns {{values: Array, labels: Array}}
    */
-  getRenderIndicatorTooltipData (kLineData, indicatorType, indicatorDataStyle) {
+  getRenderIndicatorTooltipData (kLineData, indicatorType, indicatorDataStyle, precision) {
     const values = []
     let labels = []
     const params = this.indicatorParams[indicatorType] || []
@@ -680,18 +678,10 @@ class TooltipRender extends Render {
       labels.forEach(label => {
         values.push(formatValue(indicatorData, label))
       })
-
-      const valueFormatter = indicatorDataStyle.text.valueFormatter
-      if (isFunction(valueFormatter)) {
-        values.forEach((value, index) => {
-          values[index] = valueFormatter(indicatorType, value) || '--'
-        })
-      } else {
-        const decimal = indicatorType === IndicatorType.VOL ? 0 : 2
-        values.forEach((value, index) => {
-          values[index] = formatDecimal(value, decimal)
-        })
-      }
+      const decimal = getIndicatorPrecision(precision.pricePrecision, precision.volumePrecision)[indicatorType]
+      values.forEach((value, index) => {
+        values[index] = formatPrecision(value, decimal)
+      })
     }
     return { labels, values, name }
   }

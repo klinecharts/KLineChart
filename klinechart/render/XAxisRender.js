@@ -64,17 +64,12 @@ class XAxisRender extends AxisRender {
     if (tickLine.display) {
       labelY += (tickLine.length)
     }
-
-    const formatter = tickText.valueFormatter
     for (let i = 0; i < this.valuePoints.length; i++) {
       const x = this.valuePoints[i]
       const kLineModel = this.dataProvider.dataList[parseInt(this.values[i])]
       const timestamp = kLineModel.timestamp
-      let label = formatDate(timestamp)
-      if (isFunction(formatter)) {
-        label = formatter(kLineModel)
-      }
-      ctx.fillText(label, x, labelY)
+      const text = formatDate(timestamp)
+      ctx.fillText(text, x, labelY)
     }
   }
 

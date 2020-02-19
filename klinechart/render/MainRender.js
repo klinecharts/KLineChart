@@ -1,6 +1,6 @@
 import IndicatorRender from './IndicatorRender'
 import { calcTextWidth } from '../internal/utils/drawUtils'
-import { formatDecimal, isFunction } from '../internal/utils/dataUtils'
+import { formatPrecision } from '../internal/utils/numberUtils'
 import { CandleStyle, LineStyle } from '../internal/constants'
 
 class MainRender extends IndicatorRender {
@@ -8,9 +8,9 @@ class MainRender extends IndicatorRender {
    * 渲染蜡烛图
    * @param ctx
    * @param candle
-   * @param lastPriceMark
+   * @param pricePrecision
    */
-  renderCandle (ctx, candle, lastPriceMark) {
+  renderCandle (ctx, candle, pricePrecision) {
     ctx.lineWidth = 1
     let rect = []
     let markHighestPrice = Number.MIN_SAFE_INTEGER
@@ -120,14 +120,15 @@ class MainRender extends IndicatorRender {
    * 渲染最高价标记
    * @param ctx
    * @param highestPriceMark
+   * @param pricePrecision
    */
-  renderHighestPriceMark (ctx, highestPriceMark) {
+  renderHighestPriceMark (ctx, highestPriceMark, pricePrecision) {
     const price = this.highestMarkData.price
     if (price === Number.MIN_SAFE_INTEGER || !highestPriceMark.display) {
       return
     }
     this.renderLowestHighestPriceMark(
-      ctx, highestPriceMark, this.highestMarkData.x, price, true
+      ctx, highestPriceMark, this.highestMarkData.x, price, true, pricePrecision
     )
   }
 
@@ -135,14 +136,15 @@ class MainRender extends IndicatorRender {
    * 绘制最低价标记
    * @param ctx
    * @param lowestPriceMark
+   * @param pricePrecision
    */
-  renderLowestPriceMark (ctx, lowestPriceMark) {
+  renderLowestPriceMark (ctx, lowestPriceMark, pricePrecision) {
     const price = this.lowestMarkData.price
     if (price === Number.MAX_SAFE_INTEGER || !lowestPriceMark.display) {
       return
     }
     this.renderLowestHighestPriceMark(
-      ctx, lowestPriceMark, this.lowestMarkData.x, price
+      ctx, lowestPriceMark, this.lowestMarkData.x, price, false, pricePrecision
     )
   }
 
@@ -153,8 +155,9 @@ class MainRender extends IndicatorRender {
    * @param x
    * @param price
    * @param isHigh
+   * @param pricePrecision
    */
-  renderLowestHighestPriceMark (ctx, priceMark, x, price, isHigh = false) {
+  renderLowestHighestPriceMark (ctx, priceMark, x, price, isHigh, pricePrecision) {
     ctx.save()
     ctx.beginPath()
     ctx.rect(
@@ -197,14 +200,10 @@ class MainRender extends IndicatorRender {
     ctx.closePath()
 
     const textSize = priceMark.text.size
-    const valueFormatter = priceMark.text.valueFormatter
     ctx.font = `${textSize}px Arial`
-    let value = price.toFixed(2)
-    if (valueFormatter) {
-      value = valueFormatter(price) + ''
-    }
+    const text = formatPrecision(price, pricePrecision)
     ctx.textBaseline = 'middle'
-    ctx.fillText(value, startX + 5 + priceMark.text.margin, startY)
+    ctx.fillText(text, startX + 5 + priceMark.text.margin, startY)
     ctx.restore()
   }
 
@@ -214,8 +213,9 @@ class MainRender extends IndicatorRender {
    * @param lastPriceMark
    * @param isRenderTextLeft
    * @param isRenderTextOutside
+   * @param pricePrecision
    */
-  renderLastPriceMark (ctx, lastPriceMark, isRenderTextLeft, isRenderTextOutside) {
+  renderLastPriceMark (ctx, lastPriceMark, isRenderTextLeft, isRenderTextOutside, pricePrecision) {
     const dataSize = this.dataProvider.dataList.length
     if (!lastPriceMark.display || dataSize === 0) {
       return
@@ -232,11 +232,7 @@ class MainRender extends IndicatorRender {
     const priceMarkText = lastPriceMark.text
     const displayText = priceMarkText.display
     if (displayText) {
-      let text = formatDecimal(lastPrice)
-      const valueFormatter = priceMarkText.valueFormatter
-      if (isFunction(valueFormatter)) {
-        text = valueFormatter(lastPrice) || '--'
-      }
+      const text = formatPrecision(lastPrice, pricePrecision)
       const textSize = lastPriceMark.text.size
       const rectWidth = calcTextWidth(textSize, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight
       const rectHeight = priceMarkText.paddingTop + textSize + priceMarkText.paddingBottom

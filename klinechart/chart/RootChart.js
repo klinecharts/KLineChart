@@ -9,7 +9,7 @@ import calcIndicator from '../internal/calcIndicator'
 
 import DataProvider from '../internal/DataProvider'
 
-import { getDefaultStyle, getDefaultIndicatorParams } from '../config'
+import { getDefaultStyle, getDefaultIndicatorParams, getDefaultPrecision } from '../internal/config'
 import { isMobile } from '../internal/utils/platformUtils'
 import TouchEvent from '../internal/event/TouchEvent'
 import MouseEvent from '../internal/event/MouseEvent'
@@ -26,6 +26,7 @@ class RootChart {
     this.style = getDefaultStyle()
     merge(this.style, s)
     this.indicatorParams = getDefaultIndicatorParams()
+    this.precision = getDefaultPrecision()
     dom.style.position = 'relative'
     dom.style.outline = 'none'
     dom.style.borderStyle = 'none'
@@ -33,14 +34,14 @@ class RootChart {
     this.dom = dom
     this.dataProvider = new DataProvider()
     this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider)
-    this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams)
+    this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams, this.precision)
     this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender)
     this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL)
     this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams)
     this.tooltipChart = new TooltipChart(
       dom, this.style,
       this.mainChart, this.volIndicatorChart, this.subIndicatorChart,
-      this.xAxisChart, this.dataProvider, this.indicatorParams
+      this.xAxisChart, this.dataProvider, this.indicatorParams, this.precision
     )
     this.calcChartDimensions()
     this.initEvent()

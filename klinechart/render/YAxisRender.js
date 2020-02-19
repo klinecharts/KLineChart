@@ -95,17 +95,13 @@ class YAxisRender extends AxisRender {
       }
     }
     const textSize = tickText.size
-    const valueFormatter = tickText.valueFormatter
     ctx.textBaseline = 'middle'
     ctx.font = `${textSize}px Arial`
     ctx.fillStyle = tickText.color
 
     for (let i = 0; i < this.values.length; i++) {
       const labelY = this.getY(this.values[i])
-      let label = this.values[i].toString()
-      if (isFunction(valueFormatter)) {
-        label = valueFormatter(this.values[i]) || '--'
-      }
+      const text = this.values[i].toString()
       if (this.checkShowLabel(labelY, textSize)) {
         if ((yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE) ||
           (yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE)) {
@@ -113,7 +109,7 @@ class YAxisRender extends AxisRender {
         } else {
           ctx.textAlign = 'left'
         }
-        ctx.fillText(label, initX, labelY)
+        ctx.fillText(text, initX, labelY)
       }
     }
     ctx.textAlign = 'left'

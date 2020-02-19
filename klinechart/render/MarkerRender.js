@@ -7,7 +7,8 @@ import {
   checkPointOnSegmentLine,
   getParallelLines, getFibonacciLines
 } from '../internal/utils/markerMapUtils'
-import { formatDecimal, isFunction } from '../internal/utils/dataUtils'
+import { isFunction } from '../internal/utils/dataUtils'
+import { formatPrecision } from '../internal/utils/numberUtils'
 import { MarkerType, MarkerDrawStep } from '../internal/constants'
 
 class MarkerRender extends Render {
@@ -309,7 +310,7 @@ class MarkerRender extends Render {
           // 渲染价格
           if (isRenderPrice) {
             const price = this.yRender.getValue(points[0].y)
-            let priceText = formatDecimal(price)
+            let priceText = formatPrecision(price)
             if (isFunction(valueFormatter)) {
               priceText = valueFormatter(price) || '--'
             }

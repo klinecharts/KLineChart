@@ -1,5 +1,6 @@
 import { IndicatorType } from '../internal/constants'
 import { isArray } from './utils/dataUtils'
+import { formatPrecision } from './utils/numberUtils'
 
 const calcIndicator = {}
 

@@ -35,19 +35,6 @@ export function formatValue (data, key, defaultValue = '--') {
   return defaultValue
 }
 
-/**
- * 格式化小数
- * @param value
- * @param decimal
- * @returns {*|string|*}
- */
-export function formatDecimal (value, decimal = 2) {
-  if ((value || value === 0) && isNumber(value)) {
-    return value.toFixed(decimal)
-  }
-  return value
-}
-
 export function merge (target, source) {
   if (!isObject(target) || !isObject(source)) {
     return

@@ -1,3 +1,7 @@
+import {
+  IndicatorType, LineStyle, CandleStyle, YAxisTextPosition, YAxisPosition,
+  TooltipMainChartTextDisplayType, TooltipTextDisplayRule
+} from './constants'
 /**
  * 默认的样式配置
  * @returns {{realTime: {timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}, indicator: {decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}, yAxis: {line: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null, position: string}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}, maxWidth: number}, lowestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}, xAxis: {minHeight: number, maxHeight: number, line: {color: string, size: number, display: boolean}, display: boolean, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}}, lastPriceMark: {decreasingColor: string, line: {dashValue: number[], size: number, display: boolean, style: string}, display: boolean, increasingColor: string, text: {paddingBottom: number, size: number, color: string, display: boolean, paddingRight: number, valueFormatter: null, paddingTop: number, paddingLeft: number}}, grid: boolean, marker: {line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}, candle: {decreasingColor: string, style: string, increasingColor: string}, tooltip: {data: {indicator: {text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}}, displayRule: string, base: {floatRect: {fillColor: string, borderColor: string, paddingBottom: number, top: number, borderRadius: number, left: number, paddingRight: number, borderSize: number, paddingTop: number, right: number, paddingLeft: number}, values: null, showType: string, text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, labels: string[]}}, cross: {line: {dashValue: number[], size: number, color: string, style: string}, display: boolean, text: {horizontal: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}, vertical: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}}}}, highestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}}}
@@ -28,7 +32,7 @@ export function getDefaultStyle () {
       /**
        * 蜡烛样式
        */
-      style: 'solid',
+      style: CandleStyle.SOLID,
       /**
        * 上涨颜色
        */
@@ -47,8 +51,7 @@ export function getDefaultStyle () {
       color: '#D9D9D9',
       text: {
         margin: 5,
-        size: 10,
-        valueFormatter: null
+        size: 10
       }
     },
 
@@ -60,8 +63,7 @@ export function getDefaultStyle () {
       color: '#D9D9D9',
       text: {
         margin: 5,
-        size: 10,
-        valueFormatter: null
+        size: 10
       }
     },
 
@@ -74,7 +76,7 @@ export function getDefaultStyle () {
       decreasingColor: '#EF5350',
       line: {
         display: true,
-        style: 'dash',
+        style: LineStyle.DASH,
         dashValue: [4, 4],
         size: 1
       },
@@ -85,8 +87,7 @@ export function getDefaultStyle () {
         paddingTop: 2,
         paddingRight: 2,
         paddingBottom: 2,
-        color: '#FFFFFF',
-        valueFormatter: null
+        color: '#FFFFFF'
       }
     },
     indicator: {
@@ -129,8 +130,7 @@ export function getDefaultStyle () {
           display: true,
           color: '#D9D9D9',
           size: 12,
-          margin: 3,
-          valueFormatter: null
+          margin: 3
         },
         // 线
         line: {
@@ -148,7 +148,7 @@ export function getDefaultStyle () {
         display: false,
         size: 1,
         color: '#393939',
-        style: 'dash',
+        style: LineStyle.DASH,
         dashValue: [2, 2]
       }
     },
@@ -160,7 +160,7 @@ export function getDefaultStyle () {
       /**
        * y轴位置
        */
-      position: 'right',
+      position: YAxisPosition.RIGHT,
 
       /**
        * y轴最大宽度
@@ -187,11 +187,10 @@ export function getDefaultStyle () {
         // 文字
         text: {
           display: true,
-          position: 'outside',
+          position: YAxisTextPosition.OUTSIDE,
           color: '#D9D9D9',
           size: 12,
-          margin: 3,
-          valueFormatter: null
+          margin: 3
         },
         // 线
         line: {
@@ -209,7 +208,7 @@ export function getDefaultStyle () {
         display: true,
         size: 1,
         color: '#393939',
-        style: 'dash',
+        style: LineStyle.DASH,
         dashValue: [2, 2]
       }
     },
@@ -220,7 +219,7 @@ export function getDefaultStyle () {
       cross: {
         display: true,
         line: {
-          style: 'dash',
+          style: LineStyle.DASH,
           dashValue: [4, 2],
           size: 1,
           color: '#888888'
@@ -235,8 +234,7 @@ export function getDefaultStyle () {
             paddingBottom: 2,
             borderSize: 1,
             borderColor: '#505050',
-            backgroundColor: '#505050',
-            valueFormatter: null
+            backgroundColor: '#505050'
           },
           vertical: {
             color: '#D9D9D9',
@@ -247,8 +245,7 @@ export function getDefaultStyle () {
             paddingBottom: 2,
             borderSize: 1,
             borderColor: '#505050',
-            backgroundColor: '#505050',
-            valueFormatter: null
+            backgroundColor: '#505050'
           }
         }
       },
@@ -257,9 +254,9 @@ export function getDefaultStyle () {
        * 数据配置
        */
       data: {
-        displayRule: 'always',
+        displayRule: TooltipTextDisplayRule.ALWAYS,
         base: {
-          showType: 'fixed',
+          showType: TooltipMainChartTextDisplayType.FIXED,
           labels: ['时间', '开', '收', '高', '低', '成交量'],
           values: null,
           text: {
@@ -268,8 +265,7 @@ export function getDefaultStyle () {
             marginLeft: 8,
             marginTop: 6,
             marginRight: 8,
-            marginBottom: 0,
-            valueFormatter: null
+            marginBottom: 0
           },
           floatRect: {
             paddingLeft: 0,
@@ -292,8 +288,7 @@ export function getDefaultStyle () {
             marginTop: 6,
             marginRight: 8,
             marginBottom: 0,
-            marginLeft: 8,
-            valueFormatter: null
+            marginLeft: 8
           }
         }
       }
@@ -332,25 +327,68 @@ export function getDefaultStyle () {
  */
 export function getDefaultIndicatorParams () {
   return {
-    MA: [5, 10, 30, 60],
-    VOL: [5, 10, 20],
-    MACD: [12, 26, 9],
-    BOLL: [20],
-    KDJ: [9, 3, 3],
-    RSI: [6, 12, 24],
-    BIAS: [6, 12, 24],
-    BRAR: [26],
-    CCI: [13],
-    DMI: [14, 6],
-    CR: [26, 10, 20, 40, 60],
-    PSY: [12],
-    DMA: [10, 50, 10],
-    TRIX: [12, 20],
-    OBV: [30],
-    VR: [24, 30],
-    WR: [13, 34, 89],
-    MTM: [6, 10],
-    EMV: [14, 9],
-    SAR: [2, 2, 20]
+    [IndicatorType.MA]: [5, 10, 30, 60],
+    [IndicatorType.VOL]: [5, 10, 20],
+    [IndicatorType.MACD]: [12, 26, 9],
+    [IndicatorType.BOLL]: [20],
+    [IndicatorType.KDJ]: [9, 3, 3],
+    [IndicatorType.RSI]: [6, 12, 24],
+    [IndicatorType.BIAS]: [6, 12, 24],
+    [IndicatorType.BRAR]: [26],
+    [IndicatorType.CCI]: [13],
+    [IndicatorType.DMI]: [14, 6],
+    [IndicatorType.CR]: [26, 10, 20, 40, 60],
+    [IndicatorType.PSY]: [12],
+    [IndicatorType.DMA]: [10, 50, 10],
+    [IndicatorType.TRIX]: [12, 20],
+    [IndicatorType.OBV]: [30],
+    [IndicatorType.VR]: [24, 30],
+    [IndicatorType.WR]: [13, 34, 89],
+    [IndicatorType.MTM]: [6, 10],
+    [IndicatorType.EMV]: [14, 9],
+    [IndicatorType.SAR]: [2, 2, 20]
+  }
+}
+
+/**
+ * 获取价格精度配置
+ * @returns {{pricePrecision: number, volumePrecision: number}}
+ */
+export function getDefaultPrecision () {
+  return {
+    pricePrecision: 2,
+    volumePrecision: 0
+  }
+}
+
+/**
+ * 获取指标精度
+ * @param pricePrecision
+ * @param volumePrecision
+ * @returns {{[p: string]: *|number}}
+ */
+export function getIndicatorPrecision (pricePrecision, volumePrecision) {
+  return {
+    [IndicatorType.NO]: pricePrecision,
+    [IndicatorType.MA]: pricePrecision,
+    [IndicatorType.VOL]: volumePrecision,
+    [IndicatorType.MACD]: 2,
+    [IndicatorType.BOLL]: pricePrecision,
+    [IndicatorType.KDJ]: 2,
+    [IndicatorType.RSI]: 2,
+    [IndicatorType.BIAS]: 2,
+    [IndicatorType.BRAR]: 4,
+    [IndicatorType.CCI]: 4,
+    [IndicatorType.DMI]: 4,
+    [IndicatorType.CR]: 2,
+    [IndicatorType.PSY]: 2,
+    [IndicatorType.DMA]: 4,
+    [IndicatorType.TRIX]: 4,
+    [IndicatorType.OBV]: 4,
+    [IndicatorType.VR]: 4,
+    [IndicatorType.WR]: 4,
+    [IndicatorType.MTM]: 4,
+    [IndicatorType.EMV]: 4,
+    [IndicatorType.SAR]: pricePrecision
   }
 }

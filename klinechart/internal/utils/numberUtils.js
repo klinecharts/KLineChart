@@ -1,3 +1,5 @@
+import { isNumber } from './dataUtils'
+
 export function nice (value) {
   const exponent = Math.floor(Math.log(value) / Math.log(10.0))
   const exp10 = Math.pow(10.0, exponent)
@@ -40,4 +42,15 @@ export function round (x, precision) {
   precision = Math.min(Math.max(0, precision), 20)
   x = (+x).toFixed(precision)
   return x
+}
+
+/**
+ * 格式化精度
+ */
+export function formatPrecision (value, precision = 2) {
+  const v = +value
+  if ((v || v === 0) && isNumber(v)) {
+    return value.toFixed(precision)
+  }
+  return `${v}`
 }
