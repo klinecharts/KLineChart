@@ -25,8 +25,7 @@ config = {
     color: '#D9D9D9',
     text: {
       margin: 5,
-      size: 10,
-      valueFormatter: null
+      size: 10
     }
   },
   lowestPriceMark: {
@@ -34,8 +33,7 @@ config = {
     color: '#D9D9D9',
     text: {
       margin: 5,
-      size: 10,
-      valueFormatter: null
+      size: 10
     }
   },
 
@@ -57,8 +55,7 @@ config = {
       paddingTop: 2,
       paddingRight: 2,
       paddingBottom: 2,
-      color: '#FFFFFF',
-      valueFormatter: null
+      color: '#FFFFFF'
     }
   },
 
@@ -82,8 +79,7 @@ config = {
         display: true,
         color: '#D9D9D9',
         size: 12,
-        margin: 3,
-        valueFormatter: null
+        margin: 3
       },
       line: {
         display: true,
@@ -119,8 +115,7 @@ config = {
         position: 'outside',
         color: '#D9D9D9',
         size: 12,
-        margin: 3,
-        valueFormatter: null
+        margin: 3
       },
       line: {
         display: true,
@@ -158,8 +153,7 @@ config = {
           paddingBottom: 2,
           borderSize: 1,
           borderColor: '#505050',
-          backgroundColor: '#505050',
-          valueFormatter: null
+          backgroundColor: '#505050'
         },
         vertical: {
           color: '#D9D9D9',
@@ -170,8 +164,7 @@ config = {
           paddingBottom: 2,
           borderSize: 1,
           borderColor: '#505050',
-          backgroundColor: '#505050',
-          valueFormatter: null
+          backgroundColor: '#505050'
         }
       }
     },
@@ -189,8 +182,7 @@ config = {
           marginLeft: 8,
           marginTop: 6,
           marginRight: 8,
-          marginBottom: 0,
-          valueFormatter: null
+          marginBottom: 0
         },
         floatRect: {
           paddingLeft: 0,
@@ -213,8 +205,7 @@ config = {
           marginLeft: 8,
           marginTop: 6,
           marginRight: 8,
-          marginBottom: 0,
-          valueFormatter: null
+          marginBottom: 0
         }
       }
     }
@@ -240,8 +231,7 @@ config = {
       marginLeft: 2,
       marginRight: 2,
       marginTop: 2,
-      marginBottom: 6,
-      valueFormatter: null
+      marginBottom: 6
     }
   }
 }

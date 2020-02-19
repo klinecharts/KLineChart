@@ -400,16 +400,18 @@ var Render = function Render(viewPortHandler, dataProvider) {
 /**
  * 格式化时间
  * @param timestamp
+ * @param isFull
  * @returns {string}
  */
-function formatDate(timestamp) {
+function formatDate(timestamp, isFull) {
   if (timestamp && isNumber(timestamp)) {
     var date = new Date(timestamp);
+    var year = date.getFullYear();
     var month = (date.getMonth() + 1).toString();
     var day = date.getDate().toString();
     var hours = date.getHours().toString();
     var minutes = date.getMinutes().toString();
-    return (month.length === 1 ? '0' + month : month) + '-' + (day.length === 1 ? '0' + day : day) + ' ' + (hours.length === 1 ? '0' + hours : hours) + ':' + (minutes.length === 1 ? '0' + minutes : minutes);
+    return "".concat(isFull ? "".concat(year, "-") : '') + (month.length === 1 ? '0' + month : month) + '-' + (day.length === 1 ? '0' + day : day) + ' ' + (hours.length === 1 ? '0' + hours : hours) + ':' + (minutes.length === 1 ? '0' + minutes : minutes);
   }
 
   return '--';
@@ -3626,7 +3628,7 @@ function (_Render) {
       ctx.closePath();
       ctx.setLineDash([]);
       var timestamp = kLineData.timestamp;
-      var text = formatDate(timestamp);
+      var text = formatDate(timestamp, true);
       var textVertical = tooltip.cross.text.vertical;
       var textSize = textVertical.size;
       var labelWidth = calcTextWidth(textSize, text);
@@ -3923,7 +3925,7 @@ function (_Render) {
           switch (index) {
             case 0:
               {
-                values[index] = formatDate(value);
+                values[index] = formatDate(value, true);
                 break;
               }
 
@@ -8007,6 +8009,20 @@ function () {
       }
 
       return this.indicatorParams;
+    }
+    /**
+     * 设置精度
+     * @param pricePrecision
+     * @param volumePrecision
+     */
+
+  }, {
+    key: "setPrecision",
+    value: function setPrecision() {
+      var pricePrecision = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.precision.pricePrecision;
+      var volumePrecision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.precision.volumePrecision;
+      this.precision.pricePrecision = pricePrecision;
+      this.precision.volumePrecision = volumePrecision;
     }
     /**
      * 显示成交量图

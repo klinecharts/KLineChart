@@ -362,6 +362,16 @@ class RootChart {
   }
 
   /**
+   * 设置精度
+   * @param pricePrecision
+   * @param volumePrecision
+   */
+  setPrecision (pricePrecision = this.precision.pricePrecision, volumePrecision = this.precision.volumePrecision) {
+    this.precision.pricePrecision = pricePrecision
+    this.precision.volumePrecision = volumePrecision
+  }
+
+  /**
    * 显示成交量图
    * @param isShow
    */

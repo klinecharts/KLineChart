@@ -1,16 +1,18 @@
 /**
  * 格式化时间
  * @param timestamp
+ * @param isFull
  * @returns {string}
  */
-export function formatDate (timestamp) {
+export function formatDate (timestamp, isFull) {
   if (timestamp && isNumber(timestamp)) {
     const date = new Date(timestamp)
+    const year = date.getFullYear()
     const month = (date.getMonth() + 1).toString()
     const day = date.getDate().toString()
     const hours = date.getHours().toString()
     const minutes = date.getMinutes().toString()
-    return (month.length === 1 ? '0' + month : month) +
+    return `${isFull ? `${year}-` : ''}` + (month.length === 1 ? '0' + month : month) +
       '-' + (day.length === 1 ? '0' + day : day) +
       ' ' + (hours.length === 1 ? '0' + hours : hours) +
       ':' + (minutes.length === 1 ? '0' + minutes : minutes)

@@ -55,6 +55,7 @@ export interface Chart {
   getMainIndicatorType(): IndicatorType;
   getSubIndicatorType(): IndicatorType;
   getStyle(): any;
+  setPrecision(pricePrecision?: number, volumePrecision?: number): void;
   isShowVolChart(): boolean;
   clearData(): void;
   getConvertPictureUrl(pictureType?: PictureType, excludes?: ChartComponentType[]): string;
