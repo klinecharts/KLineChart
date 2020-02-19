@@ -7,7 +7,6 @@ import {
   checkPointOnSegmentLine,
   getParallelLines, getFibonacciLines
 } from '../internal/utils/markerMapUtils'
-import { isFunction } from '../internal/utils/dataUtils'
 import { formatPrecision } from '../internal/utils/numberUtils'
 import { MarkerType, MarkerDrawStep } from '../internal/constants'
 
@@ -201,14 +200,15 @@ class MarkerRender extends Render {
    * 绘制价格线
    * @param ctx
    * @param marker
+   * @param pricePrecision
    */
-  renderPriceLine (ctx, marker) {
+  renderPriceLine (ctx, marker, pricePrecision) {
     this.renderPointMarker(
       ctx, MarkerType.PRICE_LINE, marker, checkPointOnRayLine,
       (points) => {
         return [[points[0], { x: this.viewPortHandler.contentRight(), y: points[0].y }]]
       },
-      true
+      true, pricePrecision
     )
   }
 
@@ -244,13 +244,14 @@ class MarkerRender extends Render {
    * 渲染斐波那契线
    * @param ctx
    * @param marker
+   * @param pricePrecision
    */
-  renderFibonacciLine (ctx, marker) {
+  renderFibonacciLine (ctx, marker, pricePrecision) {
     this.renderPointMarker(
       ctx, MarkerType.FIBONACCI_LINE, marker, checkPointOnStraightLine,
       (points) => {
         return getFibonacciLines(points, this.viewPortHandler)
-      }, true, ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']
+      }, true, pricePrecision, ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']
     )
   }
 
@@ -262,9 +263,10 @@ class MarkerRender extends Render {
    * @param checkPointOnLine
    * @param generatedLinePoints
    * @param isRenderPrice
+   * @param pricePrecision
    * @param priceExtendsText
    */
-  renderPointMarker (ctx, markerKey, marker, checkPointOnLine, generatedLinePoints, isRenderPrice, priceExtendsText) {
+  renderPointMarker (ctx, markerKey, marker, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
     const markerData = this.dataProvider.markerDatas[markerKey]
     markerData.forEach(({ points, drawStep }) => {
       const circlePoints = []
@@ -274,7 +276,10 @@ class MarkerRender extends Render {
         circlePoints.push({ x, y })
       })
       const linePoints = generatedLinePoints ? generatedLinePoints(circlePoints) : [circlePoints]
-      this.renderMarker(ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine, isRenderPrice, priceExtendsText)
+      this.renderMarker(
+        ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine,
+        isRenderPrice, pricePrecision, priceExtendsText
+      )
     })
   }
 
@@ -287,12 +292,15 @@ class MarkerRender extends Render {
    * @param drawStep
    * @param checkPointOnLine
    * @param isRenderPrice
+   * @param pricePrecision
    * @param priceExtendsText
    */
-  renderMarker (ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine, isRenderPrice, priceExtendsText = []) {
+  renderMarker (
+    ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine,
+    isRenderPrice, pricePrecision, priceExtendsText = []
+  ) {
     const markerPoint = this.dataProvider.markerPoint
     let isOnLine = false
-    const valueFormatter = marker.text.valueFormatter
     linePoints.forEach((points, i) => {
       if (points.length > 1) {
         const isOn = checkPointOnLine(points[0], points[1], markerPoint)
@@ -310,10 +318,7 @@ class MarkerRender extends Render {
           // 渲染价格
           if (isRenderPrice) {
             const price = this.yRender.getValue(points[0].y)
-            let priceText = formatPrecision(price)
-            if (isFunction(valueFormatter)) {
-              priceText = valueFormatter(price) || '--'
-            }
+            const priceText = formatPrecision(price, pricePrecision)
             const textSize = marker.text.size
             ctx.font = `${textSize}px Arial`
             ctx.fillStyle = marker.text.color

@@ -1,6 +1,7 @@
 import AxisRender from './AxisRender'
-import { formatValue, isFunction } from '../internal/utils/dataUtils'
+import { formatValue } from '../internal/utils/dataUtils'
 import { LineStyle, YAxisPosition, YAxisTextPosition, IndicatorType } from '../internal/constants'
+import { formatBigNumber } from '../internal/utils/numberUtils'
 
 class YAxisRender extends AxisRender {
   /**
@@ -101,7 +102,7 @@ class YAxisRender extends AxisRender {
 
     for (let i = 0; i < this.values.length; i++) {
       const labelY = this.getY(this.values[i])
-      const text = this.values[i].toString()
+      const text = formatBigNumber(this.values[i])
       if (this.checkShowLabel(labelY, textSize)) {
         if ((yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE) ||
           (yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE)) {

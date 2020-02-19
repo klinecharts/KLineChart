@@ -54,3 +54,20 @@ export function formatPrecision (value, precision = 2) {
   }
   return `${v}`
 }
+
+/**
+ * 格式化大数据
+ * @param value
+ */
+export function formatBigNumber (value) {
+  if (isNumber(value)) {
+    if (value > 50000) {
+      return `${+((value / 1000).toFixed(1))}K`
+    }
+    if (value > 5000000) {
+      return `${+((value / 1000000).toFixed(3))}M`
+    }
+    return `${value}`
+  }
+  return '--'
+}

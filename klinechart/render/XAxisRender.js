@@ -1,7 +1,7 @@
 import AxisRender from './AxisRender'
 
 import { DATA_MARGIN_SPACE_RATE } from '../internal/DataProvider'
-import { formatDate, isFunction } from '../internal/utils/dataUtils'
+import { formatDate } from '../internal/utils/dataUtils'
 import { calcTextWidth } from '../internal/utils/drawUtils'
 import { LineStyle } from '../internal/constants'
 

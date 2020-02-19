@@ -2,9 +2,10 @@ import Chart from './Chart'
 import MarkerRender from '../render/MarkerRender'
 
 class MarkerChart extends Chart {
-  constructor (dom, style, dataProvider, yAxisRender) {
+  constructor (dom, style, dataProvider, yAxisRender, precision) {
     super(dom, style)
     this.markerRender = new MarkerRender(this.viewPortHandler, dataProvider, yAxisRender)
+    this.precision = precision
   }
 
   draw () {
@@ -17,10 +18,10 @@ class MarkerChart extends Chart {
     this.markerRender.renderVerticalRayLine(this.ctx, marker)
     this.markerRender.renderRayLine(this.ctx, marker)
     this.markerRender.renderSegmentLine(this.ctx, marker)
-    this.markerRender.renderPriceLine(this.ctx, marker)
+    this.markerRender.renderPriceLine(this.ctx, marker, this.precision.pricePrecision)
     this.markerRender.renderPriceChannelLine(this.ctx, marker)
     this.markerRender.renderParallelStraightLine(this.ctx, marker)
-    this.markerRender.renderFibonacciLine(this.ctx, marker)
+    this.markerRender.renderFibonacciLine(this.ctx, marker, this.precision.pricePrecision)
   }
 }
 

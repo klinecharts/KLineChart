@@ -35,7 +35,7 @@ class RootChart {
     this.dataProvider = new DataProvider()
     this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider)
     this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams, this.precision)
-    this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender)
+    this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender, this.precision)
     this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL)
     this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams)
     this.tooltipChart = new TooltipChart(

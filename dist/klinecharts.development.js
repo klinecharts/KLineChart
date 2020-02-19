@@ -1322,6 +1322,26 @@ function formatPrecision(value) {
 
   return "".concat(v);
 }
+/**
+ * 格式化大数据
+ * @param value
+ */
+
+function formatBigNumber(value) {
+  if (isNumber(value)) {
+    if (value > 50000) {
+      return "".concat(+(value / 1000).toFixed(1), "K");
+    }
+
+    if (value > 5000000) {
+      return "".concat(+(value / 1000000).toFixed(3), "M");
+    }
+
+    return "".concat(value);
+  }
+
+  return '--';
+}
 
 var AxisRender =
 /*#__PURE__*/
@@ -1541,7 +1561,7 @@ function (_AxisRender) {
 
       for (var i = 0; i < this.values.length; i++) {
         var labelY = this.getY(this.values[i]);
-        var text = this.values[i].toString();
+        var text = formatBigNumber(this.values[i]);
 
         if (this.checkShowLabel(labelY, textSize)) {
           if (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE || yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE) {
@@ -2846,11 +2866,12 @@ function (_Render) {
      * 绘制价格线
      * @param ctx
      * @param marker
+     * @param pricePrecision
      */
 
   }, {
     key: "renderPriceLine",
-    value: function renderPriceLine(ctx, marker) {
+    value: function renderPriceLine(ctx, marker, pricePrecision) {
       var _this8 = this;
 
       this.renderPointMarker(ctx, MarkerType.PRICE_LINE, marker, checkPointOnRayLine, function (points) {
@@ -2858,7 +2879,7 @@ function (_Render) {
           x: _this8.viewPortHandler.contentRight(),
           y: points[0].y
         }]];
-      }, true);
+      }, true, pricePrecision);
     }
     /**
      * 渲染价格通道线
@@ -2894,16 +2915,17 @@ function (_Render) {
      * 渲染斐波那契线
      * @param ctx
      * @param marker
+     * @param pricePrecision
      */
 
   }, {
     key: "renderFibonacciLine",
-    value: function renderFibonacciLine(ctx, marker) {
+    value: function renderFibonacciLine(ctx, marker, pricePrecision) {
       var _this11 = this;
 
       this.renderPointMarker(ctx, MarkerType.FIBONACCI_LINE, marker, checkPointOnStraightLine, function (points) {
         return getFibonacciLines(points, _this11.viewPortHandler);
-      }, true, ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']);
+      }, true, pricePrecision, ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']);
     }
     /**
      * 渲染点形成的图形
@@ -2913,12 +2935,13 @@ function (_Render) {
      * @param checkPointOnLine
      * @param generatedLinePoints
      * @param isRenderPrice
+     * @param pricePrecision
      * @param priceExtendsText
      */
 
   }, {
     key: "renderPointMarker",
-    value: function renderPointMarker(ctx, markerKey, marker, checkPointOnLine, generatedLinePoints, isRenderPrice, priceExtendsText) {
+    value: function renderPointMarker(ctx, markerKey, marker, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
       var _this12 = this;
 
       var markerData = this.dataProvider.markerDatas[markerKey];
@@ -2940,7 +2963,7 @@ function (_Render) {
         });
         var linePoints = generatedLinePoints ? generatedLinePoints(circlePoints) : [circlePoints];
 
-        _this12.renderMarker(ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine, isRenderPrice, priceExtendsText);
+        _this12.renderMarker(ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine, isRenderPrice, pricePrecision, priceExtendsText);
       });
     }
     /**
@@ -2952,18 +2975,18 @@ function (_Render) {
      * @param drawStep
      * @param checkPointOnLine
      * @param isRenderPrice
+     * @param pricePrecision
      * @param priceExtendsText
      */
 
   }, {
     key: "renderMarker",
-    value: function renderMarker(ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine, isRenderPrice) {
+    value: function renderMarker(ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine, isRenderPrice, pricePrecision) {
       var _this13 = this;
 
-      var priceExtendsText = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [];
+      var priceExtendsText = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : [];
       var markerPoint = this.dataProvider.markerPoint;
       var isOnLine = false;
-      var valueFormatter = marker.text.valueFormatter;
       linePoints.forEach(function (points, i) {
         if (points.length > 1) {
           var isOn = checkPointOnLine(points[0], points[1], markerPoint);
@@ -2984,12 +3007,7 @@ function (_Render) {
             if (isRenderPrice) {
               var price = _this13.yRender.getValue(points[0].y);
 
-              var priceText = formatPrecision(price);
-
-              if (isFunction(valueFormatter)) {
-                priceText = valueFormatter(price) || '--';
-              }
-
+              var priceText = formatPrecision(price, pricePrecision);
               var textSize = marker.text.size;
               ctx.font = "".concat(textSize, "px Arial");
               ctx.fillStyle = marker.text.color;
@@ -3041,13 +3059,14 @@ var MarkerChart =
 function (_Chart) {
   _inherits(MarkerChart, _Chart);
 
-  function MarkerChart(dom, style, dataProvider, yAxisRender) {
+  function MarkerChart(dom, style, dataProvider, yAxisRender, precision) {
     var _this;
 
     _classCallCheck(this, MarkerChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MarkerChart).call(this, dom, style));
     _this.markerRender = new MarkerRender(_this.viewPortHandler, dataProvider, yAxisRender);
+    _this.precision = precision;
     return _this;
   }
 
@@ -3063,10 +3082,10 @@ function (_Chart) {
       this.markerRender.renderVerticalRayLine(this.ctx, marker);
       this.markerRender.renderRayLine(this.ctx, marker);
       this.markerRender.renderSegmentLine(this.ctx, marker);
-      this.markerRender.renderPriceLine(this.ctx, marker);
+      this.markerRender.renderPriceLine(this.ctx, marker, this.precision.pricePrecision);
       this.markerRender.renderPriceChannelLine(this.ctx, marker);
       this.markerRender.renderParallelStraightLine(this.ctx, marker);
-      this.markerRender.renderFibonacciLine(this.ctx, marker);
+      this.markerRender.renderFibonacciLine(this.ctx, marker, this.precision.pricePrecision);
     }
   }]);
 
@@ -3415,8 +3434,8 @@ function getDefaultIndicatorParams() {
 
 function getDefaultPrecision() {
   return {
-    pricePrecision: 4,
-    volumePrecision: 2
+    pricePrecision: 2,
+    volumePrecision: 0
   };
 }
 /**
@@ -3429,7 +3448,7 @@ function getDefaultPrecision() {
 function getIndicatorPrecision(pricePrecision, volumePrecision) {
   var _ref2;
 
-  return _ref2 = {}, _defineProperty(_ref2, IndicatorType.NO, pricePrecision), _defineProperty(_ref2, IndicatorType.MA, pricePrecision), _defineProperty(_ref2, IndicatorType.VOL, volumePrecision), _defineProperty(_ref2, IndicatorType.MACD, 2), _defineProperty(_ref2, IndicatorType.BOLL, pricePrecision), _defineProperty(_ref2, IndicatorType.KDJ, 2), _defineProperty(_ref2, IndicatorType.RSI, 2), _defineProperty(_ref2, IndicatorType.BIAS, 2), _defineProperty(_ref2, IndicatorType.BRAR, 4), _defineProperty(_ref2, IndicatorType.CCI, 4), _defineProperty(_ref2, IndicatorType.DMI, 4), _defineProperty(_ref2, IndicatorType.CR, 4), _defineProperty(_ref2, IndicatorType.PSY, 2), _defineProperty(_ref2, IndicatorType.DMA, 4), _defineProperty(_ref2, IndicatorType.TRIX, 4), _defineProperty(_ref2, IndicatorType.OBV, 4), _defineProperty(_ref2, IndicatorType.VR, 4), _defineProperty(_ref2, IndicatorType.WR, 4), _defineProperty(_ref2, IndicatorType.MTM, 4), _defineProperty(_ref2, IndicatorType.EMV, 4), _defineProperty(_ref2, IndicatorType.SAR, pricePrecision), _ref2;
+  return _ref2 = {}, _defineProperty(_ref2, IndicatorType.NO, pricePrecision), _defineProperty(_ref2, IndicatorType.MA, pricePrecision), _defineProperty(_ref2, IndicatorType.VOL, volumePrecision), _defineProperty(_ref2, IndicatorType.MACD, 2), _defineProperty(_ref2, IndicatorType.BOLL, pricePrecision), _defineProperty(_ref2, IndicatorType.KDJ, 2), _defineProperty(_ref2, IndicatorType.RSI, 2), _defineProperty(_ref2, IndicatorType.BIAS, 2), _defineProperty(_ref2, IndicatorType.BRAR, 4), _defineProperty(_ref2, IndicatorType.CCI, 4), _defineProperty(_ref2, IndicatorType.DMI, 4), _defineProperty(_ref2, IndicatorType.CR, 2), _defineProperty(_ref2, IndicatorType.PSY, 2), _defineProperty(_ref2, IndicatorType.DMA, 4), _defineProperty(_ref2, IndicatorType.TRIX, 4), _defineProperty(_ref2, IndicatorType.OBV, 4), _defineProperty(_ref2, IndicatorType.VR, 4), _defineProperty(_ref2, IndicatorType.WR, 4), _defineProperty(_ref2, IndicatorType.MTM, 4), _defineProperty(_ref2, IndicatorType.EMV, 4), _defineProperty(_ref2, IndicatorType.SAR, pricePrecision), _ref2;
 }
 
 var TooltipRender =
@@ -7572,7 +7591,7 @@ function () {
     this.dataProvider = new DataProvider();
     this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider);
     this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams, this.precision);
-    this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender);
+    this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender, this.precision);
     this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL);
     this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams);
     this.tooltipChart = new TooltipChart(dom, this.style, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider, this.indicatorParams, this.precision);
