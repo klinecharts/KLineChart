@@ -2,6 +2,7 @@ import AxisRender from './AxisRender'
 import { formatValue } from '../internal/utils/dataUtils'
 import { LineStyle, YAxisPosition, YAxisTextPosition, IndicatorType } from '../internal/constants'
 import { formatBigNumber } from '../internal/utils/numberUtils'
+import { getFont } from '../internal/utils/drawUtils'
 
 class YAxisRender extends AxisRender {
   /**
@@ -97,7 +98,7 @@ class YAxisRender extends AxisRender {
     }
     const textSize = tickText.size
     ctx.textBaseline = 'middle'
-    ctx.font = `${textSize}px Arial`
+    ctx.font = getFont(textSize)
     ctx.fillStyle = tickText.color
 
     for (let i = 0; i < this.values.length; i++) {

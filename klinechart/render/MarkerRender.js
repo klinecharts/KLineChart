@@ -8,6 +8,7 @@ import {
   getParallelLines, getFibonacciLines
 } from '../internal/utils/markerMapUtils'
 import { formatPrecision } from '../internal/utils/numberUtils'
+import { getFont } from '../internal/utils/drawUtils'
 import { MarkerType, MarkerDrawStep } from '../internal/constants'
 
 class MarkerRender extends Render {
@@ -320,7 +321,7 @@ class MarkerRender extends Render {
             const price = this.yRender.getValue(points[0].y)
             const priceText = formatPrecision(price, pricePrecision)
             const textSize = marker.text.size
-            ctx.font = `${textSize}px Arial`
+            ctx.font = getFont(textSize)
             ctx.fillStyle = marker.text.color
             ctx.fillText(`${priceText} ${priceExtendsText[i] || ''}`, points[0].x + marker.text.marginLeft, points[0].y - marker.text.marginBottom)
           }

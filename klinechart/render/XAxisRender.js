@@ -2,7 +2,7 @@ import AxisRender from './AxisRender'
 
 import { DATA_MARGIN_SPACE_RATE } from '../internal/DataProvider'
 import { formatDate } from '../internal/utils/dataUtils'
-import { calcTextWidth } from '../internal/utils/drawUtils'
+import { calcTextWidth, getFont } from '../internal/utils/drawUtils'
 import { LineStyle } from '../internal/constants'
 
 class XAxisRender extends AxisRender {
@@ -56,7 +56,7 @@ class XAxisRender extends AxisRender {
     const tickLine = xAxis.tick.line
 
     ctx.textBaseline = 'top'
-    ctx.font = `${tickText.size}px Arial`
+    ctx.font = getFont(tickText.size)
     ctx.textAlign = 'center'
     ctx.fillStyle = tickText.color
 

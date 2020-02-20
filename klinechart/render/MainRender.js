@@ -1,5 +1,5 @@
 import IndicatorRender from './IndicatorRender'
-import { calcTextWidth } from '../internal/utils/drawUtils'
+import { calcTextWidth, getFont } from '../internal/utils/drawUtils'
 import { formatPrecision } from '../internal/utils/numberUtils'
 import { CandleStyle, LineStyle } from '../internal/constants'
 
@@ -199,8 +199,7 @@ class MainRender extends IndicatorRender {
     ctx.stroke()
     ctx.closePath()
 
-    const textSize = priceMark.text.size
-    ctx.font = `${textSize}px Arial`
+    ctx.font = getFont(priceMark.text.size)
     const text = formatPrecision(price, pricePrecision)
     ctx.textBaseline = 'middle'
     ctx.fillText(text, startX + 5 + priceMark.text.margin, startY)
@@ -255,7 +254,7 @@ class MainRender extends IndicatorRender {
       ctx.fillStyle = color
       ctx.fillRect(rectStartX, priceY - priceMarkText.paddingTop - textSize / 2, rectWidth, rectHeight)
       ctx.fillStyle = priceMarkText.color
-      ctx.font = `${textSize}px Arial`
+      ctx.font = getFont(textSize)
       ctx.textBaseline = 'middle'
       ctx.fillText(text, rectStartX + priceMarkText.paddingLeft, priceY)
     }

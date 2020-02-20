@@ -10,9 +10,9 @@ class DataProvider {
     // 数据绘制起始位置
     this.minPos = 0
     // 绘制的数据条数
-    this.range = 120
+    this.range = 180
     // 最大绘制条数
-    this.maxRange = 180
+    this.maxRange = 300
     // 最小绘制条数
     this.minRange = 20
     // 每条数据的所占的空间

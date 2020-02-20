@@ -1,6 +1,6 @@
 import Render from './Render'
 
-import { calcTextWidth } from '../internal/utils/drawUtils'
+import { calcTextWidth, getFont } from '../internal/utils/drawUtils'
 import { formatDate, isFunction, formatValue, isArray } from '../internal/utils/dataUtils'
 import { formatPrecision } from '../internal/utils/numberUtils'
 
@@ -97,7 +97,7 @@ class TooltipRender extends Render {
 
     ctx.textBaseline = 'middle'
     ctx.fillStyle = textHorizontal.color
-    ctx.font = `${textSize}px Arial`
+    ctx.font = getFont(textSize)
     ctx.fillText(yAxisDataLabel, rectStartX + borderSize + paddingLeft, crossPoint.y)
   }
 
@@ -197,7 +197,7 @@ class TooltipRender extends Render {
 
     // 绘制轴上的提示文字
     ctx.textBaseline = 'top'
-    ctx.font = `${textSize}px Arial`
+    ctx.font = getFont(textSize)
     ctx.fillStyle = textVertical.color
     ctx.fillText(
       text,
@@ -284,7 +284,7 @@ class TooltipRender extends Render {
     const textColor = baseDataStyle.text.color
     const labels = baseDataStyle.labels
     ctx.textBaseline = 'top'
-    ctx.font = `${textSize}px Arial`
+    ctx.font = getFont(textSize)
     let startX = this.viewPortHandler.contentLeft() + textMarginLeft
     labels.forEach((label, i) => {
       const labelText = `${label}: `
@@ -391,7 +391,7 @@ class TooltipRender extends Render {
     const baseLabelX = rectX + floatRectBorderSize + floatRectPaddingLeft + baseTextMarginLeft
     let labelY = rectY + floatRectBorderSize + floatRectPaddingTop
     // 开始渲染基础数据文字
-    ctx.font = `${baseTextSize}px Arial`
+    ctx.font = getFont(baseTextSize)
     baseLabels.forEach((label, i) => {
       labelY += baseTextMarginTop
       ctx.textAlign = 'left'
@@ -413,7 +413,7 @@ class TooltipRender extends Render {
     // 开始渲染指标数据文字
     const indicatorLabelX = rectX + floatRectBorderSize + floatRectPaddingLeft + indicatorTextMarginLeft
     const colorLength = indicatorColors.length
-    ctx.font = `${indicatorTextSize}px Arial`
+    ctx.font = getFont(indicatorTextSize)
     indicatorLabels.forEach((label, i) => {
       labelY += indicatorTextMarginTop
       ctx.textAlign = 'left'
@@ -515,7 +515,7 @@ class TooltipRender extends Render {
     const textColor = indicatorDataStyle.text.color
     const lineColorSize = indicatorColors.length
     ctx.textBaseline = 'top'
-    ctx.font = `${textSize}px Arial`
+    ctx.font = getFont(textSize)
     const nameTextWidth = calcTextWidth(textSize, nameText)
     ctx.fillStyle = textColor
     ctx.fillText(nameText, labelX, startY)

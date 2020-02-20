@@ -289,8 +289,17 @@ function cancelAnimationFrame(id) {
  */
 
 function calcTextWidth(fontSize, text) {
-  ctx.font = "".concat(fontSize, "px Arial");
+  ctx.font = getFont(fontSize);
   return ctx.measureText(text).width;
+}
+/**
+ * 获取字体
+ * @param fontSize
+ * @returns {string}
+ */
+
+function getFont(fontSize) {
+  return "".concat(fontSize, "px Arial");
 }
 
 var Chart =
@@ -628,9 +637,9 @@ function () {
 
     this.minPos = 0; // 绘制的数据条数
 
-    this.range = 120; // 最大绘制条数
+    this.range = 180; // 最大绘制条数
 
-    this.maxRange = 180; // 最小绘制条数
+    this.maxRange = 300; // 最小绘制条数
 
     this.minRange = 20; // 每条数据的所占的空间
 
@@ -1558,7 +1567,7 @@ function (_AxisRender) {
 
       var textSize = tickText.size;
       ctx.textBaseline = 'middle';
-      ctx.font = "".concat(textSize, "px Arial");
+      ctx.font = getFont(textSize);
       ctx.fillStyle = tickText.color;
 
       for (var i = 0; i < this.values.length; i++) {
@@ -2080,8 +2089,7 @@ function (_IndicatorRender) {
       ctx.lineTo(startX + 5, startY);
       ctx.stroke();
       ctx.closePath();
-      var textSize = priceMark.text.size;
-      ctx.font = "".concat(textSize, "px Arial");
+      ctx.font = getFont(priceMark.text.size);
       var text = formatPrecision(price, pricePrecision);
       ctx.textBaseline = 'middle';
       ctx.fillText(text, startX + 5 + priceMark.text.margin, startY);
@@ -2143,7 +2151,7 @@ function (_IndicatorRender) {
         ctx.fillStyle = color;
         ctx.fillRect(rectStartX, priceY - priceMarkText.paddingTop - textSize / 2, rectWidth, rectHeight);
         ctx.fillStyle = priceMarkText.color;
-        ctx.font = "".concat(textSize, "px Arial");
+        ctx.font = getFont(textSize);
         ctx.textBaseline = 'middle';
         ctx.fillText(text, rectStartX + priceMarkText.paddingLeft, priceY);
       }
@@ -3011,7 +3019,7 @@ function (_Render) {
 
               var priceText = formatPrecision(price, pricePrecision);
               var textSize = marker.text.size;
-              ctx.font = "".concat(textSize, "px Arial");
+              ctx.font = getFont(textSize);
               ctx.fillStyle = marker.text.color;
               ctx.fillText("".concat(priceText, " ").concat(priceExtendsText[i] || ''), points[0].x + marker.text.marginLeft, points[0].y - marker.text.marginBottom);
             }
@@ -3550,7 +3558,7 @@ function (_Render) {
       ctx.strokeRect(rectStartX, rectY, rectWidth, rectHeight);
       ctx.textBaseline = 'middle';
       ctx.fillStyle = textHorizontal.color;
-      ctx.font = "".concat(textSize, "px Arial");
+      ctx.font = getFont(textSize);
       ctx.fillText(yAxisDataLabel, rectStartX + borderSize + paddingLeft, crossPoint.y);
     }
     /**
@@ -3656,7 +3664,7 @@ function (_Render) {
       ctx.strokeRect(rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop); // 绘制轴上的提示文字
 
       ctx.textBaseline = 'top';
-      ctx.font = "".concat(textSize, "px Arial");
+      ctx.font = getFont(textSize);
       ctx.fillStyle = textVertical.color;
       ctx.fillText(text, xAxisLabelX, this.viewPortHandler.contentBottom() + borderSize + paddingTop);
     }
@@ -3736,7 +3744,7 @@ function (_Render) {
       var textColor = baseDataStyle.text.color;
       var labels = baseDataStyle.labels;
       ctx.textBaseline = 'top';
-      ctx.font = "".concat(textSize, "px Arial");
+      ctx.font = getFont(textSize);
       var startX = this.viewPortHandler.contentLeft() + textMarginLeft;
       labels.forEach(function (label, i) {
         var labelText = "".concat(label, ": ");
@@ -3843,7 +3851,7 @@ function (_Render) {
       var baseLabelX = rectX + floatRectBorderSize + floatRectPaddingLeft + baseTextMarginLeft;
       var labelY = rectY + floatRectBorderSize + floatRectPaddingTop; // 开始渲染基础数据文字
 
-      ctx.font = "".concat(baseTextSize, "px Arial");
+      ctx.font = getFont(baseTextSize);
       baseLabels.forEach(function (label, i) {
         labelY += baseTextMarginTop;
         ctx.textAlign = 'left';
@@ -3866,7 +3874,7 @@ function (_Render) {
 
       var indicatorLabelX = rectX + floatRectBorderSize + floatRectPaddingLeft + indicatorTextMarginLeft;
       var colorLength = indicatorColors.length;
-      ctx.font = "".concat(indicatorTextSize, "px Arial");
+      ctx.font = getFont(indicatorTextSize);
       indicatorLabels.forEach(function (label, i) {
         labelY += indicatorTextMarginTop;
         ctx.textAlign = 'left';
@@ -3970,7 +3978,7 @@ function (_Render) {
       var textColor = indicatorDataStyle.text.color;
       var lineColorSize = indicatorColors.length;
       ctx.textBaseline = 'top';
-      ctx.font = "".concat(textSize, "px Arial");
+      ctx.font = getFont(textSize);
       var nameTextWidth = calcTextWidth(textSize, nameText);
       ctx.fillStyle = textColor;
       ctx.fillText(nameText, labelX, startY);
@@ -3992,6 +4000,7 @@ function (_Render) {
      * @param offsetTop
      * @param yAxisRender
      * @param indicatorColors
+     * @param isShowCross
      */
 
   }, {
@@ -4324,7 +4333,7 @@ function (_AxisRender) {
 
       var tickLine = xAxis.tick.line;
       ctx.textBaseline = 'top';
-      ctx.font = "".concat(tickText.size, "px Arial");
+      ctx.font = getFont(tickText.size);
       ctx.textAlign = 'center';
       ctx.fillStyle = tickText.color;
       var labelY = this.viewPortHandler.contentBottom() + tickText.margin;

@@ -46,6 +46,15 @@ export function cancelAnimationFrame (id) {
  * @returns {number}
  */
 export function calcTextWidth (fontSize, text) {
-  ctx.font = `${fontSize}px Arial`
+  ctx.font = getFont(fontSize)
   return ctx.measureText(text).width
+}
+
+/**
+ * 获取字体
+ * @param fontSize
+ * @returns {string}
+ */
+export function getFont (fontSize) {
+  return `${fontSize}px Arial`
 }
