@@ -537,6 +537,7 @@ class TooltipRender extends Render {
    * @param offsetTop
    * @param yAxisRender
    * @param indicatorColors
+   * @param isShowCross
    */
   renderIndicatorLineCircle (ctx, indicatorType, offsetTop, values = [], yAxisRender, indicatorColors = [], isShowCross) {
     const crossPoint = this.dataProvider.crossPoint
