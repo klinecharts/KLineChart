@@ -121,6 +121,8 @@ setMaxRange(range)
 addData(dataList, pos, noMore)
 // 获取图表当前的数据
 getDataList()
+// 用于设置价格数量精度
+setPrecision(pricePrecision, volumePrecision)
 // 清空图表当前数据
 clearData()
 // 绘制标记图形(入参类型可参考types/index.d.ts文件里面的MarkerType)
