@@ -39,7 +39,7 @@ class AxisRender extends Render {
       this.values = []
       f = first
       for (let i = 0; i < n; i++) {
-        this.values[i] = f
+        this.values[i] = +(f.toFixed(precision))
         f += interval
       }
     } else {

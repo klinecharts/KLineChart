@@ -1409,7 +1409,7 @@ function (_Render) {
         f = first;
 
         for (var i = 0; i < n; i++) {
-          this.values[i] = f;
+          this.values[i] = +f.toFixed(precision);
           f += interval;
         }
       } else {
