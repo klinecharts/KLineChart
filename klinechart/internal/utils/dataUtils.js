@@ -1,21 +1,41 @@
 /**
  * 格式化时间
  * @param timestamp
- * @param isFull
+ * @param format
  * @returns {string}
  */
-export function formatDate (timestamp, isFull) {
+export function formatDate (timestamp, format) {
   if (timestamp && isNumber(timestamp)) {
     const date = new Date(timestamp)
-    const year = date.getFullYear()
+    const year = date.getFullYear().toString()
     const month = (date.getMonth() + 1).toString()
     const day = date.getDate().toString()
     const hours = date.getHours().toString()
     const minutes = date.getMinutes().toString()
-    return `${isFull ? `${year}-` : ''}` + (month.length === 1 ? '0' + month : month) +
-      '-' + (day.length === 1 ? '0' + day : day) +
-      ' ' + (hours.length === 1 ? '0' + hours : hours) +
-      ':' + (minutes.length === 1 ? '0' + minutes : minutes)
+    const monthText = month.length === 1 ? `0${month}` : month
+    const dayText = day.length === 1 ? `0${day}` : day
+    const hourText = hours.length === 1 ? '0' + hours : hours
+    const minuteText = minutes.length === 1 ? '0' + minutes : minutes
+    switch (format) {
+      case 'YYYY': {
+        return year
+      }
+      case 'YYYY-MM': {
+        return `${year}-${monthText}`
+      }
+      case 'YYYY-MM-DD': {
+        return `${year}-${monthText}-${dayText}`
+      }
+      case 'YYYY-MM-DD hh:mm': {
+        return `${year}-${monthText}-${day} ${hourText}:${minuteText}`
+      }
+      case 'hh:mm': {
+        return `${hourText}:${minuteText}`
+      }
+      default: {
+        return `${monthText}-${day} ${hourText}:${minuteText}`
+      }
+    }
   }
   return '--'
 }

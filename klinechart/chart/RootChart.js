@@ -9,7 +9,7 @@ import calcIndicator from '../internal/calcIndicator'
 
 import DataProvider from '../internal/DataProvider'
 
-import { getDefaultStyle, getDefaultIndicatorParams, getDefaultPrecision } from '../internal/config'
+import { getDefaultStyle, getDefaultIndicatorParams, getDefaultPrecision, getDefaultPeriod } from '../internal/config'
 import { isMobile } from '../internal/utils/platformUtils'
 import TouchEvent from '../internal/event/TouchEvent'
 import MouseEvent from '../internal/event/MouseEvent'
@@ -27,13 +27,14 @@ class RootChart {
     merge(this.style, s)
     this.indicatorParams = getDefaultIndicatorParams()
     this.precision = getDefaultPrecision()
+    this.period = getDefaultPeriod()
     dom.style.position = 'relative'
     dom.style.outline = 'none'
     dom.style.borderStyle = 'none'
     dom.tabIndex = 1
     this.dom = dom
     this.dataProvider = new DataProvider()
-    this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider)
+    this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider, this.period)
     this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams, this.precision)
     this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender, this.precision)
     this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL)
@@ -369,6 +370,16 @@ class RootChart {
   setPrecision (pricePrecision = this.precision.pricePrecision, volumePrecision = this.precision.volumePrecision) {
     this.precision.pricePrecision = pricePrecision
     this.precision.volumePrecision = volumePrecision
+  }
+
+  /**
+   * 设置k线周期
+   * @param period
+   */
+  setPeriod (period) {
+    if (period && (/^[1-9]*?[DWMY]?$/i).test(period)) {
+      this.period.period = period
+    }
   }
 
   /**

@@ -362,6 +362,16 @@ export function getDefaultPrecision () {
 }
 
 /**
+ * 获取默认周期
+ * @returns {{period: string}}
+ */
+export function getDefaultPeriod () {
+  return {
+    period: '1'
+  }
+}
+
+/**
  * 获取指标精度
  * @param pricePrecision
  * @param volumePrecision

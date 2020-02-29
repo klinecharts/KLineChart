@@ -47,11 +47,33 @@ class XAxisRender extends AxisRender {
    * 绘制坐标轴上的文字
    * @param ctx
    * @param xAxis
+   * @param period
    */
-  renderAxisLabels (ctx, xAxis) {
+  renderAxisLabels (ctx, xAxis, period) {
     const tickText = xAxis.tick.text
     if (!xAxis.display || !tickText.display) {
       return
+    }
+    const periodType = period.replace(/[1-9]/, '').toUpperCase()
+    let dateFormatType
+    switch (periodType) {
+      case 'D':
+      case 'W': {
+        dateFormatType = 'YYYY-MM-DD'
+        break
+      }
+      case 'M': {
+        dateFormatType = 'YYYY-MM'
+        break
+      }
+      case 'Y': {
+        dateFormatType = 'YYYY'
+        break
+      }
+      default: {
+        dateFormatType = 'MM-DD hh:mm'
+        break
+      }
     }
     const tickLine = xAxis.tick.line
 
@@ -68,7 +90,7 @@ class XAxisRender extends AxisRender {
       const x = this.valuePoints[i]
       const kLineModel = this.dataProvider.dataList[parseInt(this.values[i])]
       const timestamp = kLineModel.timestamp
-      const text = formatDate(timestamp)
+      const text = formatDate(timestamp, dateFormatType)
       ctx.fillText(text, x, labelY)
     }
   }
@@ -128,7 +150,7 @@ class XAxisRender extends AxisRender {
   computeAxis (xAxis) {
     const minPos = this.dataProvider.minPos
     const max = Math.min(minPos + this.dataProvider.range - 1, this.dataProvider.dataList.length - 1)
-    this.computeAxisValues(minPos, max, xAxis)
+    this.computeAxisValues(minPos, max, 8.0, xAxis)
     this.pointValuesToPixel()
   }
 

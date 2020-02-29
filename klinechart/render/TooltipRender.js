@@ -164,7 +164,7 @@ class TooltipRender extends Render {
     ctx.setLineDash([])
 
     const timestamp = kLineData.timestamp
-    const text = formatDate(timestamp, true)
+    const text = formatDate(timestamp, 'YYYY-MM-DD hh:mm')
     const textVertical = tooltip.cross.text.vertical
 
     const textSize = textVertical.size
@@ -478,7 +478,7 @@ class TooltipRender extends Render {
       values.forEach((value, index) => {
         switch (index) {
           case 0: {
-            values[index] = formatDate(value, true)
+            values[index] = formatDate(value, 'YYYY-MM-DD hh:mm')
             break
           }
           case values.length - 1: {

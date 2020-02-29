@@ -14,16 +14,17 @@ class AxisRender extends Render {
    * 计算轴上的值
    * @param min
    * @param max
+   * @param splitNumber
    * @param axis
    */
-  computeAxisValues (min, max, axis = null) {
+  computeAxisValues (min, max, splitNumber = 6.0, axis = null) {
     const span = this.calcRange(max, min)
     if (span < 0) {
       this.values = []
       return
     }
     if (this.isFillChart()) {
-      const interval = +nice(span / 5.0)
+      const interval = +nice(span / splitNumber)
       const precision = getIntervalPrecision(interval)
       const first = +round(Math.ceil(min / interval) * interval, precision)
       const last = +round(Math.floor(max / interval) * interval, precision)

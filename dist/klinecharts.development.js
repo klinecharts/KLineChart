@@ -409,18 +409,53 @@ var Render = function Render(viewPortHandler, dataProvider) {
 /**
  * 格式化时间
  * @param timestamp
- * @param isFull
+ * @param format
  * @returns {string}
  */
-function formatDate(timestamp, isFull) {
+function formatDate(timestamp, format) {
   if (timestamp && isNumber(timestamp)) {
     var date = new Date(timestamp);
-    var year = date.getFullYear();
+    var year = date.getFullYear().toString();
     var month = (date.getMonth() + 1).toString();
     var day = date.getDate().toString();
     var hours = date.getHours().toString();
     var minutes = date.getMinutes().toString();
-    return "".concat(isFull ? "".concat(year, "-") : '') + (month.length === 1 ? '0' + month : month) + '-' + (day.length === 1 ? '0' + day : day) + ' ' + (hours.length === 1 ? '0' + hours : hours) + ':' + (minutes.length === 1 ? '0' + minutes : minutes);
+    var monthText = month.length === 1 ? "0".concat(month) : month;
+    var dayText = day.length === 1 ? "0".concat(day) : day;
+    var hourText = hours.length === 1 ? '0' + hours : hours;
+    var minuteText = minutes.length === 1 ? '0' + minutes : minutes;
+
+    switch (format) {
+      case 'YYYY':
+        {
+          return year;
+        }
+
+      case 'YYYY-MM':
+        {
+          return "".concat(year, "-").concat(monthText);
+        }
+
+      case 'YYYY-MM-DD':
+        {
+          return "".concat(year, "-").concat(monthText, "-").concat(dayText);
+        }
+
+      case 'YYYY-MM-DD hh:mm':
+        {
+          return "".concat(year, "-").concat(monthText, "-").concat(day, " ").concat(hourText, ":").concat(minuteText);
+        }
+
+      case 'hh:mm':
+        {
+          return "".concat(hourText, ":").concat(minuteText);
+        }
+
+      default:
+        {
+          return "".concat(monthText, "-").concat(day, " ").concat(hourText, ":").concat(minuteText);
+        }
+    }
   }
 
   return '--';
@@ -1375,6 +1410,7 @@ function (_Render) {
    * 计算轴上的值
    * @param min
    * @param max
+   * @param splitNumber
    * @param axis
    */
 
@@ -1382,7 +1418,8 @@ function (_Render) {
   _createClass(AxisRender, [{
     key: "computeAxisValues",
     value: function computeAxisValues(min, max) {
-      var axis = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      var splitNumber = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 6.0;
+      var axis = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
       var span = this.calcRange(max, min);
 
       if (span < 0) {
@@ -1391,7 +1428,7 @@ function (_Render) {
       }
 
       if (this.isFillChart()) {
-        var interval = +nice(span / 5.0);
+        var interval = +nice(span / splitNumber);
         var precision = getIntervalPrecision(interval);
         var first = +round(Math.ceil(min / interval) * interval, precision);
         var last = +round(Math.floor(max / interval) * interval, precision);
@@ -3449,6 +3486,16 @@ function getDefaultPrecision() {
   };
 }
 /**
+ * 获取默认周期
+ * @returns {{period: string}}
+ */
+
+function getDefaultPeriod() {
+  return {
+    period: '1'
+  };
+}
+/**
  * 获取指标精度
  * @param pricePrecision
  * @param volumePrecision
@@ -3636,7 +3683,7 @@ function (_Render) {
       ctx.closePath();
       ctx.setLineDash([]);
       var timestamp = kLineData.timestamp;
-      var text = formatDate(timestamp, true);
+      var text = formatDate(timestamp, 'YYYY-MM-DD hh:mm');
       var textVertical = tooltip.cross.text.vertical;
       var textSize = textVertical.size;
       var labelWidth = calcTextWidth(textSize, text);
@@ -3933,7 +3980,7 @@ function (_Render) {
           switch (index) {
             case 0:
               {
-                values[index] = formatDate(value, true);
+                values[index] = formatDate(value, 'YYYY-MM-DD hh:mm');
                 break;
               }
 
@@ -4320,15 +4367,46 @@ function (_AxisRender) {
      * 绘制坐标轴上的文字
      * @param ctx
      * @param xAxis
+     * @param period
      */
 
   }, {
     key: "renderAxisLabels",
-    value: function renderAxisLabels(ctx, xAxis) {
+    value: function renderAxisLabels(ctx, xAxis, period) {
       var tickText = xAxis.tick.text;
 
       if (!xAxis.display || !tickText.display) {
         return;
+      }
+
+      var periodType = period.replace(/[1-9]/, '').toUpperCase();
+      var dateFormatType;
+
+      switch (periodType) {
+        case 'D':
+        case 'W':
+          {
+            dateFormatType = 'YYYY-MM-DD';
+            break;
+          }
+
+        case 'M':
+          {
+            dateFormatType = 'YYYY-MM';
+            break;
+          }
+
+        case 'Y':
+          {
+            dateFormatType = 'YYYY';
+            break;
+          }
+
+        default:
+          {
+            dateFormatType = 'MM-DD hh:mm';
+            break;
+          }
       }
 
       var tickLine = xAxis.tick.line;
@@ -4346,7 +4424,7 @@ function (_AxisRender) {
         var x = this.valuePoints[i];
         var kLineModel = this.dataProvider.dataList[parseInt(this.values[i])];
         var timestamp = kLineModel.timestamp;
-        var text = formatDate(timestamp);
+        var text = formatDate(timestamp, dateFormatType);
         ctx.fillText(text, x, labelY);
       }
     }
@@ -4415,7 +4493,7 @@ function (_AxisRender) {
     value: function computeAxis(xAxis) {
       var minPos = this.dataProvider.minPos;
       var max = Math.min(minPos + this.dataProvider.range - 1, this.dataProvider.dataList.length - 1);
-      this.computeAxisValues(minPos, max, xAxis);
+      this.computeAxisValues(minPos, max, 8.0, xAxis);
       this.pointValuesToPixel();
     }
   }, {
@@ -4484,13 +4562,14 @@ var XAxisChart =
 function (_Chart) {
   _inherits(XAxisChart, _Chart);
 
-  function XAxisChart(dom, style, dataProvider) {
+  function XAxisChart(dom, style, dataProvider, period) {
     var _this;
 
     _classCallCheck(this, XAxisChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisChart).call(this, dom, style));
     _this.xAxisRender = new XAxisRender(_this.viewPortHandler, dataProvider);
+    _this.period = period;
     return _this;
   }
 
@@ -4500,7 +4579,7 @@ function (_Chart) {
       var xAxis = this.style.xAxis;
       this.xAxisRender.computeAxis(xAxis);
       this.xAxisRender.renderAxisLine(this.ctx, xAxis);
-      this.xAxisRender.renderAxisLabels(this.ctx, xAxis);
+      this.xAxisRender.renderAxisLabels(this.ctx, xAxis, this.period.period);
       this.xAxisRender.renderSeparatorLines(this.ctx, xAxis);
       this.xAxisRender.renderTickLines(this.ctx, xAxis);
       this.xAxisRender.renderStrokeLine(this.ctx, xAxis, this.style.grid);
@@ -7591,13 +7670,14 @@ function () {
     merge(this.style, s);
     this.indicatorParams = getDefaultIndicatorParams();
     this.precision = getDefaultPrecision();
+    this.period = getDefaultPeriod();
     dom.style.position = 'relative';
     dom.style.outline = 'none';
     dom.style.borderStyle = 'none';
     dom.tabIndex = 1;
     this.dom = dom;
     this.dataProvider = new DataProvider();
-    this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider);
+    this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider, this.period);
     this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams, this.precision);
     this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender, this.precision);
     this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL);
@@ -8029,6 +8109,18 @@ function () {
       var volumePrecision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.precision.volumePrecision;
       this.precision.pricePrecision = pricePrecision;
       this.precision.volumePrecision = volumePrecision;
+    }
+    /**
+     * 设置k线周期
+     * @param period
+     */
+
+  }, {
+    key: "setPeriod",
+    value: function setPeriod(period) {
+      if (period && /^[1-9]*?[DWMY]?$/i.test(period)) {
+        this.period.period = period;
+      }
     }
     /**
      * 显示成交量图
