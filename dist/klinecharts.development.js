@@ -1773,6 +1773,10 @@ function (_AxisRender) {
             minMaxArray[1] = Math.max(_kLineData.high, minMaxArray[1]);
           }
         }
+
+        if (indicatorType === IndicatorType.VOL) {
+          minMaxArray[0] = 0;
+        }
       }
 
       if (minMaxArray[0] !== Number.MAX_SAFE_INTEGER && minMaxArray[1] !== Number.MIN_SAFE_INTEGER) {
