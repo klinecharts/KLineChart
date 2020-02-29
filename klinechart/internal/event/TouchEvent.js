@@ -174,11 +174,17 @@ class TouchEvent extends Event {
       }
     } else {
       this.removeDelayActiveCross()
+      // 拿起
       if (this.touchMode !== TOUCH_CROSS) {
-        // 拿起
-        this.touchMode = TOUCH_NO
-        this.dataProvider.crossPoint = null
-        this.tooltipChart.flush()
+        if (this.touchMode === TOUCH_NO) {
+          this.touchMode = TOUCH_CROSS
+          this.dataProvider.crossPoint = { ...this.touchStartPoint }
+          this.tooltipChart.flush()
+        } else {
+          this.touchMode = TOUCH_NO
+          this.dataProvider.crossPoint = null
+          this.tooltipChart.flush()
+        }
       }
     }
   }

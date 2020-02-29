@@ -6239,7 +6239,7 @@ function spacing(e, canvasDom) {
 function getXDist(e, canvasDom) {
   var point1 = getCanvasPoint(e.targetTouches[0], canvasDom);
   var point2 = getCanvasPoint(e.targetTouches[1], canvasDom);
-  return Math.abs(point1.x - point2.y);
+  return Math.abs(point1.x - point2.x);
 }
 
 /**
@@ -6475,13 +6475,18 @@ function (_Event) {
           this.touchMode = TOUCH_POST_ZOOM;
         }
       } else {
-        this.removeDelayActiveCross();
+        this.removeDelayActiveCross(); // 拿起
 
         if (this.touchMode !== TOUCH_CROSS) {
-          // 拿起
-          this.touchMode = TOUCH_NO;
-          this.dataProvider.crossPoint = null;
-          this.tooltipChart.flush();
+          if (this.touchMode === TOUCH_NO) {
+            this.touchMode = TOUCH_CROSS;
+            this.dataProvider.crossPoint = _objectSpread2({}, this.touchStartPoint);
+            this.tooltipChart.flush();
+          } else {
+            this.touchMode = TOUCH_NO;
+            this.dataProvider.crossPoint = null;
+            this.tooltipChart.flush();
+          }
         }
       }
     }

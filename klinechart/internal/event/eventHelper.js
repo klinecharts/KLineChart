@@ -81,5 +81,5 @@ export function spacing (e, canvasDom) {
 export function getXDist (e, canvasDom) {
   const point1 = getCanvasPoint(e.targetTouches[0], canvasDom)
   const point2 = getCanvasPoint(e.targetTouches[1], canvasDom)
-  return Math.abs(point1.x - point2.y)
+  return Math.abs(point1.x - point2.x)
 }
