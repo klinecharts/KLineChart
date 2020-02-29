@@ -71,7 +71,7 @@ class XAxisRender extends AxisRender {
         break
       }
       default: {
-        dateFormatType = 'MM-DD hh:mm'
+        dateFormatType = 'hh:mm'
         break
       }
     }
@@ -86,12 +86,33 @@ class XAxisRender extends AxisRender {
     if (tickLine.display) {
       labelY += (tickLine.length)
     }
-    for (let i = 0; i < this.valuePoints.length; i++) {
+    const valuePointLength = this.valuePoints.length
+    for (let i = 0; i < valuePointLength; i++) {
       const x = this.valuePoints[i]
       const kLineModel = this.dataProvider.dataList[parseInt(this.values[i])]
       const timestamp = kLineModel.timestamp
-      const text = formatDate(timestamp, dateFormatType)
-      ctx.fillText(text, x, labelY)
+      let dateText = formatDate(timestamp, dateFormatType)
+      if (i !== valuePointLength - 1) {
+        const nextKLineModel = this.dataProvider.dataList[parseInt(this.values[i + 1])]
+        const nextTimestamp = nextKLineModel.timestamp
+        if (periodType === 'D' || periodType === 'W') {
+          const month = formatDate(timestamp, 'YYYY-MM')
+          if (month !== formatDate(nextTimestamp, 'YYYY-MM')) {
+            dateText = month
+          }
+        } else if (periodType === 'M') {
+          const year = formatDate(timestamp, 'YYYY')
+          if (year !== formatDate(nextTimestamp, 'YYYY')) {
+            dateText = year
+          }
+        } else if (!periodType) {
+          const day = formatDate(timestamp, 'MM-DD')
+          if (day !== formatDate(nextTimestamp, 'MM-DD')) {
+            dateText = day
+          }
+        }
+      }
+      ctx.fillText(dateText, x, labelY)
     }
   }
 

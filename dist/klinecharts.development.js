@@ -443,7 +443,12 @@ function formatDate(timestamp, format) {
 
       case 'YYYY-MM-DD hh:mm':
         {
-          return "".concat(year, "-").concat(monthText, "-").concat(day, " ").concat(hourText, ":").concat(minuteText);
+          return "".concat(year, "-").concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
+        }
+
+      case 'MM-DD':
+        {
+          return "".concat(monthText, "-").concat(dayText);
         }
 
       case 'hh:mm':
@@ -453,7 +458,7 @@ function formatDate(timestamp, format) {
 
       default:
         {
-          return "".concat(monthText, "-").concat(day, " ").concat(hourText, ":").concat(minuteText);
+          return "".concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
         }
     }
   }
@@ -4404,7 +4409,7 @@ function (_AxisRender) {
 
         default:
           {
-            dateFormatType = 'MM-DD hh:mm';
+            dateFormatType = 'hh:mm';
             break;
           }
       }
@@ -4420,12 +4425,40 @@ function (_AxisRender) {
         labelY += tickLine.length;
       }
 
-      for (var i = 0; i < this.valuePoints.length; i++) {
+      var valuePointLength = this.valuePoints.length;
+
+      for (var i = 0; i < valuePointLength; i++) {
         var x = this.valuePoints[i];
         var kLineModel = this.dataProvider.dataList[parseInt(this.values[i])];
         var timestamp = kLineModel.timestamp;
-        var text = formatDate(timestamp, dateFormatType);
-        ctx.fillText(text, x, labelY);
+        var dateText = formatDate(timestamp, dateFormatType);
+
+        if (i !== valuePointLength - 1) {
+          var nextKLineModel = this.dataProvider.dataList[parseInt(this.values[i + 1])];
+          var nextTimestamp = nextKLineModel.timestamp;
+
+          if (periodType === 'D' || periodType === 'W') {
+            var month = formatDate(timestamp, 'YYYY-MM');
+
+            if (month !== formatDate(nextTimestamp, 'YYYY-MM')) {
+              dateText = month;
+            }
+          } else if (periodType === 'M') {
+            var year = formatDate(timestamp, 'YYYY');
+
+            if (year !== formatDate(nextTimestamp, 'YYYY')) {
+              dateText = year;
+            }
+          } else if (!periodType) {
+            var day = formatDate(timestamp, 'MM-DD');
+
+            if (day !== formatDate(nextTimestamp, 'MM-DD')) {
+              dateText = day;
+            }
+          }
+        }
+
+        ctx.fillText(dateText, x, labelY);
       }
     }
     /**

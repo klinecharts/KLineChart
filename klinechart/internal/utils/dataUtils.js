@@ -27,13 +27,16 @@ export function formatDate (timestamp, format) {
         return `${year}-${monthText}-${dayText}`
       }
       case 'YYYY-MM-DD hh:mm': {
-        return `${year}-${monthText}-${day} ${hourText}:${minuteText}`
+        return `${year}-${monthText}-${dayText} ${hourText}:${minuteText}`
+      }
+      case 'MM-DD': {
+        return `${monthText}-${dayText}`
       }
       case 'hh:mm': {
         return `${hourText}:${minuteText}`
       }
       default: {
-        return `${monthText}-${day} ${hourText}:${minuteText}`
+        return `${monthText}-${dayText} ${hourText}:${minuteText}`
       }
     }
   }
