@@ -65,7 +65,9 @@ class DataProvider {
 
   addData (data, pos) {
     if (isObject(data) && !isArray(data)) {
+      let tooltipDataMoveCount = 0
       if (pos >= this.dataList.length) {
+        tooltipDataMoveCount = 1
         this.dataList.push(data)
       } else if (pos <= 0) {
         this.dataList.unshift(data)
@@ -73,12 +75,12 @@ class DataProvider {
         this.dataList[pos] = data
       }
       if (this.minPos + this.range >= this.dataList.length - 1) {
-        this.moveToLast()
+        this.moveToLast(tooltipDataMoveCount)
       }
     } else if (isArray(data)) {
       if (this.dataList.length === 0) {
         this.dataList = data.concat(this.dataList)
-        this.moveToLast()
+        this.moveToLast(data.length)
       } else {
         this.dataList = data.concat(this.dataList)
         this.minPos += data.length
@@ -86,10 +88,13 @@ class DataProvider {
     }
   }
 
-  moveToLast () {
+  moveToLast (tooltipDataMoveCount) {
     if (this.dataList.length > this.range) {
       this.minPos = this.dataList.length - this.range
-      this.currentTooltipDataPos = this.dataList.length - 1
+      this.currentTooltipDataPos += tooltipDataMoveCount
+      if (this.currentTooltipDataPos > this.dataList.length - 1) {
+        this.currentTooltipDataPos = this.dataList.length - 1
+      }
     } else {
       this.minPos = 0
     }
