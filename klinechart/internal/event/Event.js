@@ -1,5 +1,3 @@
-import {isFunction} from "../utils/dataUtils"
-
 class Event {
   constructor (
     tooltipChart, mainChart, volChart,

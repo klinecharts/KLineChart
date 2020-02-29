@@ -178,8 +178,8 @@ class TouchEvent extends Event {
       if (this.touchMode !== TOUCH_CROSS) {
         if (this.touchMode === TOUCH_NO) {
           this.touchMode = TOUCH_CROSS
-          this.dataProvider.crossPoint = { ...this.touchStartPoint }
-          this.tooltipChart.flush()
+          this.touchCrossPoint = { ...this.touchStartPoint }
+          this.cross(this.touchCrossPoint)
         } else {
           this.touchMode = TOUCH_NO
           this.dataProvider.crossPoint = null
@@ -195,9 +195,6 @@ class TouchEvent extends Event {
    * @returns {boolean}
    */
   performZoom (e) {
-    if (this.dataProvider.dataList.length === 0) {
-      return false
-    }
     if (e.targetTouches.length > 1) {
       const totalDist = spacing(e, this.tooltipChart.canvasDom)
       if (totalDist > 10) {
@@ -218,9 +215,6 @@ class TouchEvent extends Event {
    * @returns {boolean}
    */
   performCross (e) {
-    if (this.dataProvider.dataList.length === 0) {
-      return false
-    }
     const point = getCanvasPoint(e.targetTouches[0], this.tooltipChart.canvasDom)
     this.touchCrossPoint = { x: point.x, y: point.y }
     this.cross(this.touchCrossPoint)

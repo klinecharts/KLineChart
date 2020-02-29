@@ -6480,8 +6480,8 @@ function (_Event) {
         if (this.touchMode !== TOUCH_CROSS) {
           if (this.touchMode === TOUCH_NO) {
             this.touchMode = TOUCH_CROSS;
-            this.dataProvider.crossPoint = _objectSpread2({}, this.touchStartPoint);
-            this.tooltipChart.flush();
+            this.touchCrossPoint = _objectSpread2({}, this.touchStartPoint);
+            this.cross(this.touchCrossPoint);
           } else {
             this.touchMode = TOUCH_NO;
             this.dataProvider.crossPoint = null;
@@ -6499,10 +6499,6 @@ function (_Event) {
   }, {
     key: "performZoom",
     value: function performZoom(e) {
-      if (this.dataProvider.dataList.length === 0) {
-        return false;
-      }
-
       if (e.targetTouches.length > 1) {
         var totalDist = spacing(e, this.tooltipChart.canvasDom);
 
@@ -6525,10 +6521,6 @@ function (_Event) {
   }, {
     key: "performCross",
     value: function performCross(e) {
-      if (this.dataProvider.dataList.length === 0) {
-        return false;
-      }
-
       var point = getCanvasPoint(e.targetTouches[0], this.tooltipChart.canvasDom);
       this.touchCrossPoint = {
         x: point.x,
