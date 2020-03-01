@@ -536,6 +536,15 @@ function isObject(value) {
 function isNumber(value) {
   return typeof value === 'number' && !isNaN(value);
 }
+/**
+ * 判断是否是boolean
+ * @param value
+ * @returns {boolean}
+ */
+
+function isBoolean(value) {
+  return typeof value === 'boolean';
+}
 
 /**
  * 指标类型
@@ -7708,8 +7717,10 @@ function () {
 
     if (!dom) {
       throw new Error("Chart version is ".concat("4.2.0", ". Root dom is null, can not initialize the chart!!!"));
-    }
+    } // 是否没有更多
 
+
+    this.noMore = true;
     this.style = getDefaultStyle();
     merge(this.style, s);
     this.indicatorParams = getDefaultIndicatorParams();
@@ -8017,14 +8028,17 @@ function () {
     key: "addData",
     value: function addData(data) {
       var pos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.dataProvider.dataList.length;
-      var noMore = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+      var noMore = arguments.length > 2 ? arguments[2] : undefined;
 
-      if (pos === 0) {
+      if (pos <= 0) {
         // 当添加的数据是从0的位置开始时，则判断是在加载更多的数据请求来的，将loading重置为未加载状态
         this.loading = false;
       }
 
-      this.noMore = noMore;
+      if (isBoolean(noMore)) {
+        this.noMore = noMore;
+      }
+
       this.dataProvider.addData(data, pos);
       this.calcChartIndicator();
       this.xAxisChart.flush();

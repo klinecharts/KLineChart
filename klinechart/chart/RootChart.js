@@ -3,7 +3,7 @@ import MarkerChart from './MarkerChart'
 import IndicatorChart from './IndicatorChart'
 import TooltipChart from './TooltipChart'
 import XAxisChart from './XAxisChart'
-import { isArray, isFunction, isNumber, merge } from '../internal/utils/dataUtils'
+import { isArray, isFunction, isNumber, isBoolean, merge } from '../internal/utils/dataUtils'
 import { calcTextWidth, requestAnimationFrame } from '../internal/utils/drawUtils'
 import calcIndicator from '../internal/calcIndicator'
 
@@ -23,6 +23,8 @@ class RootChart {
     if (!dom) {
       throw new Error(`Chart version is ${process.env.K_LINE_VERSION}. Root dom is null, can not initialize the chart!!!`)
     }
+    // 是否没有更多
+    this.noMore = true
     this.style = getDefaultStyle()
     merge(this.style, s)
     this.indicatorParams = getDefaultIndicatorParams()
@@ -260,12 +262,14 @@ class RootChart {
    * @param pos
    * @param noMore
    */
-  addData (data, pos = this.dataProvider.dataList.length, noMore = true) {
-    if (pos === 0) {
+  addData (data, pos = this.dataProvider.dataList.length, noMore) {
+    if (pos <= 0) {
       // 当添加的数据是从0的位置开始时，则判断是在加载更多的数据请求来的，将loading重置为未加载状态
       this.loading = false
     }
-    this.noMore = noMore
+    if (isBoolean(noMore)) {
+      this.noMore = noMore
+    }
     this.dataProvider.addData(data, pos)
     this.calcChartIndicator()
     this.xAxisChart.flush()

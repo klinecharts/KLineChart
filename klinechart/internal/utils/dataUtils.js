@@ -112,3 +112,12 @@ export function isObject (value) {
 export function isNumber (value) {
   return typeof value === 'number' && !isNaN(value)
 }
+
+/**
+ * 判断是否是boolean
+ * @param value
+ * @returns {boolean}
+ */
+export function isBoolean (value) {
+  return typeof value === 'boolean'
+}
