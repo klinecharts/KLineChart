@@ -8407,22 +8407,22 @@ function () {
   return RootChart;
 }();
 
-var env = process.env;
-var VERSION = env.K_LINE_VERSION;
-var DEV = env.NODE_ENV === 'development';
+var DEV = process.env.NODE_ENV === 'development';
 
 var instances = {};
 var idBase = 1;
 
 function version() {
-  return VERSION;
+  // eslint-disable-next-line
+  return "4.2.0";
 }
 
 function init(dom) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   if (!dom) {
-    throw new Error("Chart version is ".concat(VERSION, ". Root dom is null, can not initialize the chart!!!"));
+    // eslint-disable-next-line
+    throw new Error("Chart version is ".concat("4.2.0", ". Root dom is null, can not initialize the chart!!!"));
   }
 
   var instance = instances[dom.chart_id || ''];

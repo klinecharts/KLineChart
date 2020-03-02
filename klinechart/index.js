@@ -1,16 +1,18 @@
 import RootChart from './chart/RootChart'
-import { VERSION, DEV } from './utils/env'
+import { DEV } from './utils/env'
 
 const instances = {}
 let idBase = 1
 
 function version () {
-  return VERSION
+  // eslint-disable-next-line
+  return K_LINE_VERSION
 }
 
 function init (dom, style = {}) {
   if (!dom) {
-    throw new Error(`Chart version is ${VERSION}. Root dom is null, can not initialize the chart!!!`)
+    // eslint-disable-next-line
+    throw new Error(`Chart version is ${K_LINE_VERSION}. Root dom is null, can not initialize the chart!!!`)
   }
   const instance = instances[dom.chart_id || '']
   if (instance) {
