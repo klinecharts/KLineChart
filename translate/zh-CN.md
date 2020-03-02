@@ -99,7 +99,11 @@ setMainChartType(chartType)
 setIndicatorParams(indicatorType, params)
 // 获取指标参数
 getIndicatorParams(indicatorType)
-// 设置主图指标类型(具体类型可参考types/index.d.ts文件里面的IndicatorType)
+// 设置主图指标类型
+// 入参类型：
+// 'NO'，'MA'，'VOL'，'MACD'，'BOLL'，'KDJ'，'RSI'，'BIAS'
+// 'BRAR'，'CCI'，'DMI'，'CR'，'PSY'，'DMA'，'TRIX'，'OBV'
+// 'VR'，'WR'，'MTM'，'EMV'，'SAR'
 setMainIndicatorType(indicatorType)
 // 获取主图指标类型
 getMainIndicatorType()
@@ -127,7 +131,11 @@ getDataList()
 setPrecision(pricePrecision, volumePrecision)
 // 清空图表当前数据
 clearData()
-// 绘制标记图形(入参类型可参考types/index.d.ts文件里面的MarkerType)
+// 绘制标记图形
+// 入参类型：
+// 'none'，'horizontalStraightLine'，'verticalStraightLine'，'straightLine'，'horizontalRayLine'
+// 'verticalRayLine'，'rayLine'，'horizontalSegmentLine'，'verticalSegmentLine'，'segmentLine'
+// 'priceLine'，'priceChannelLine'，'parallelStraightLine'，'fibonacciLine';
 drawMarker(markerType)
 // 清空所有标记图形
 clearAllMarker()
@@ -136,6 +144,11 @@ getConvertPictureUrl()
 // 加载更多
 loadMore((timestamp) => {})
 ```
+
+## 数据源
+每一条数据是需要包含open, close, high, low, volume, turnover, timestamp的对象，
+分别是开盘价，收盘价，最高价，最低价，成交量，成交额，时间戳，
+如果不需要分时图的成交均价线，可以不需要turnover字段。
 
 ## 图形标记
 标记图形类型支持：
