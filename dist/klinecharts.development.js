@@ -7977,6 +7977,8 @@ function () {
       } else {
         if (this.mainChart.indicatorType !== IndicatorType.NO) {
           this.calcIndicator(this.mainChart.indicatorType, this.mainChart);
+        } else {
+          this.flushCharts([this.mainChart]);
         }
       }
 
@@ -8083,9 +8085,11 @@ function () {
 
             case 'M':
               {
+                var lastDataYear = +formatDate(lastDataTimestamp, 'YYYY');
                 var lastDataMonth = +formatDate(lastDataTimestamp, 'MM');
+                var year = +formatDate(timestamp, 'YYYY');
                 var month = +formatDate(timestamp, 'MM');
-                var monthDiff = Math.abs(month - lastDataMonth);
+                var monthDiff = Math.abs((year - lastDataYear) * 12 + month - lastDataMonth);
 
                 if (month === lastDataMonth) {
                   pos = dataSize - 1;
@@ -8098,11 +8102,13 @@ function () {
 
             case 'Y':
               {
-                var lastDataYear = +formatDate(lastDataTimestamp, 'YYYY');
-                var year = +formatDate(timestamp, 'YYYY');
-                var yearDiff = Math.abs(year - lastDataYear);
+                var _lastDataYear = +formatDate(lastDataTimestamp, 'YYYY');
 
-                if (year === lastDataYear) {
+                var _year = +formatDate(timestamp, 'YYYY');
+
+                var yearDiff = Math.abs(_year - _lastDataYear);
+
+                if (_year === _lastDataYear) {
                   pos = dataSize - 1;
                 } else if (yearDiff === periodNumber) {
                   pos = dataSize;

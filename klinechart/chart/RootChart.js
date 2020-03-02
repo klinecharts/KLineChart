@@ -217,6 +217,8 @@ class RootChart {
     } else {
       if (this.mainChart.indicatorType !== IndicatorType.NO) {
         this.calcIndicator(this.mainChart.indicatorType, this.mainChart)
+      } else {
+        this.flushCharts([this.mainChart])
       }
     }
     if (this.volIndicatorChart.indicatorType !== IndicatorType.NO) {
