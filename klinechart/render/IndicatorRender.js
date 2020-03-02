@@ -386,10 +386,14 @@ class IndicatorRender extends Render {
       if (barData < 0) {
         y = zeroY
       }
+      let barHeight = Math.abs(zeroY - dataY)
+      if (barHeight < 1) {
+        barHeight = 1
+      }
       if (isFill) {
-        ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, Math.abs(zeroY - dataY))
+        ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight)
       } else {
-        ctx.strokeRect(x - halfBarSpace, y, halfBarSpace * 2, Math.abs(zeroY - dataY))
+        ctx.strokeRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight)
       }
     }
   }

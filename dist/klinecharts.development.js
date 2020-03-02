@@ -451,6 +451,11 @@ function formatDate(timestamp, format) {
           return "".concat(monthText, "-").concat(dayText);
         }
 
+      case 'MM':
+        {
+          return monthText;
+        }
+
       case 'hh:mm':
         {
           return "".concat(hourText, ":").concat(minuteText);
@@ -1276,10 +1281,16 @@ function (_Render) {
           y = zeroY;
         }
 
+        var barHeight = Math.abs(zeroY - dataY);
+
+        if (barHeight < 1) {
+          barHeight = 1;
+        }
+
         if (isFill) {
-          ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, Math.abs(zeroY - dataY));
+          ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight);
         } else {
-          ctx.strokeRect(x - halfBarSpace, y, halfBarSpace * 2, Math.abs(zeroY - dataY));
+          ctx.strokeRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight);
         }
       }
     }
@@ -8016,28 +8027,115 @@ function () {
     /**
      * 添加数据集合
      * @param data
-     * @param pos
      * @param noMore
      */
 
   }, {
     key: "addData",
-    value: function addData(data) {
-      var pos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.dataProvider.dataList.length;
-      var noMore = arguments.length > 2 ? arguments[2] : undefined;
-
-      if (pos <= 0) {
-        // 当添加的数据是从0的位置开始时，则判断是在加载更多的数据请求来的，将loading重置为未加载状态
-        this.loading = false;
-      }
-
+    value: function addData(data, noMore) {
       if (isBoolean(noMore)) {
         this.noMore = noMore;
       }
 
-      this.dataProvider.addData(data, pos);
-      this.calcChartIndicator();
-      this.xAxisChart.flush();
+      if (isObject(data)) {
+        var dataList = this.getDataList();
+        var dataSize = dataList.length;
+        var pos = -1;
+
+        if (isArray(data)) {
+          if (dataSize > 0) {
+            // 当数据是数组，且有历史数据时则判断是在加载更多的数据请求来的，将loading重置为未加载状态
+            this.loading = false;
+          }
+
+          pos = 0;
+        } else {
+          // 这里判断单个数据应该添加到哪个位置
+          var timestamp = +formatValue(data, 'timestamp', 0);
+          var lastDataTimestamp = +formatValue(dataList[dataSize - 1], 'timestamp', 0);
+          var periodValue = this.period.period;
+          var periodType = periodValue.replace(/[1-9]/, '').toUpperCase();
+          var periodNumber = +(periodValue.replace(/[DWMY]/i, '') || 1);
+          var timeDiff = Math.abs(timestamp - lastDataTimestamp);
+
+          switch (periodType) {
+            case 'D':
+              {
+                if (timeDiff < periodNumber * 24 * 3600 * 1000) {
+                  pos = dataSize - 1;
+                } else if (timestamp > lastDataTimestamp) {
+                  pos = dataSize;
+                }
+
+                break;
+              }
+
+            case 'W':
+              {
+                if (timeDiff < periodNumber * 7 * 24 * 3600 * 1000) {
+                  pos = dataSize - 1;
+                } else if (timestamp > lastDataTimestamp) {
+                  pos = dataSize;
+                }
+
+                break;
+              }
+
+            case 'M':
+              {
+                var lastDataMonth = +formatDate(lastDataTimestamp, 'MM');
+                var month = +formatDate(timestamp, 'MM');
+                var monthDiff = Math.abs(month - lastDataMonth);
+
+                if (month === lastDataMonth) {
+                  pos = dataSize - 1;
+                } else if (monthDiff === periodNumber) {
+                  pos = dataSize;
+                }
+
+                break;
+              }
+
+            case 'Y':
+              {
+                var lastDataYear = +formatDate(lastDataTimestamp, 'YYYY');
+                var year = +formatDate(timestamp, 'YYYY');
+                var yearDiff = Math.abs(year - lastDataYear);
+
+                if (year === lastDataYear) {
+                  pos = dataSize - 1;
+                } else if (yearDiff === periodNumber) {
+                  pos = dataSize;
+                }
+
+                break;
+              }
+
+            default:
+              {
+                if (timeDiff < periodNumber * 60 * 1000) {
+                  pos = dataSize - 1;
+                } else if (timestamp > lastDataTimestamp) {
+                  pos = dataSize;
+                }
+
+                break;
+              }
+          }
+
+          if (pos === dataSize - 1) {
+            data.timestamp = lastDataTimestamp;
+          } else {
+            data.timestamp = Math.floor(timestamp / 60 / 1000) * 60 * 1000;
+          }
+        }
+
+        if (pos !== -1) {
+          this.dataProvider.addData(data, pos);
+          this.calcChartIndicator();
+          this.xAxisChart.flush();
+        }
+      }
     }
     /**
      * 设置样式
@@ -8068,6 +8166,10 @@ function () {
 
         this.flushCharts([this.mainChart, this.tooltipChart]);
         this.clearAllMarker();
+
+        if (this.period.period !== '1') {
+          this.clearData();
+        }
       }
     }
     /**
@@ -8172,8 +8274,12 @@ function () {
   }, {
     key: "setPeriod",
     value: function setPeriod(period) {
-      if (period && /^[1-9]*?[DWMY]?$/i.test(period)) {
-        this.period.period = period;
+      var periodValue = "".concat(period);
+
+      if (this.period.period !== periodValue && period && /^[1-9]*?[DWMY]?$/i.test(periodValue)) {
+        this.period.period = periodValue; // 设置新周期后清空现有数据
+
+        this.clearData();
       }
     }
     /**

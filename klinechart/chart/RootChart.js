@@ -3,7 +3,7 @@ import MarkerChart from './MarkerChart'
 import IndicatorChart from './IndicatorChart'
 import TooltipChart from './TooltipChart'
 import XAxisChart from './XAxisChart'
-import { isArray, isFunction, isNumber, isBoolean, merge } from '../utils/dataUtils'
+import { isArray, isFunction, isNumber, isBoolean, merge, formatValue, isObject, formatDate } from '../utils/dataUtils'
 import { calcTextWidth, requestAnimationFrame } from '../utils/drawUtils'
 import calcIndicator from '../internal/calcIndicator'
 
@@ -256,20 +256,92 @@ class RootChart {
   /**
    * 添加数据集合
    * @param data
-   * @param pos
    * @param noMore
    */
-  addData (data, pos = this.dataProvider.dataList.length, noMore) {
-    if (pos <= 0) {
-      // 当添加的数据是从0的位置开始时，则判断是在加载更多的数据请求来的，将loading重置为未加载状态
-      this.loading = false
-    }
+  addData (data, noMore) {
     if (isBoolean(noMore)) {
       this.noMore = noMore
     }
-    this.dataProvider.addData(data, pos)
-    this.calcChartIndicator()
-    this.xAxisChart.flush()
+    if (isObject(data)) {
+      const dataList = this.getDataList()
+      const dataSize = dataList.length
+      let pos = -1
+      if (isArray(data)) {
+        if (dataSize > 0) {
+          // 当数据是数组，且有历史数据时则判断是在加载更多的数据请求来的，将loading重置为未加载状态
+          this.loading = false
+        }
+        pos = 0
+      } else {
+        // 这里判断单个数据应该添加到哪个位置
+        const timestamp = +formatValue(data, 'timestamp', 0)
+        const lastDataTimestamp = +formatValue(dataList[dataSize - 1], 'timestamp', 0)
+        const periodValue = this.period.period
+        const periodType = periodValue.replace(/[1-9]/, '').toUpperCase()
+        const periodNumber = +((periodValue.replace(/[DWMY]/i, '')) || 1)
+        const timeDiff = Math.abs(timestamp - lastDataTimestamp)
+        switch (periodType) {
+          case 'D': {
+            if (timeDiff < periodNumber * 24 * 3600 * 1000) {
+              pos = dataSize - 1
+            } else if (timestamp > lastDataTimestamp) {
+              pos = dataSize
+            }
+            break
+          }
+          case 'W': {
+            if (timeDiff < periodNumber * 7 * 24 * 3600 * 1000) {
+              pos = dataSize - 1
+            } else if (timestamp > lastDataTimestamp) {
+              pos = dataSize
+            }
+            break
+          }
+          case 'M': {
+            const lastDataYear = +formatDate(lastDataTimestamp, 'YYYY')
+            const lastDataMonth = +formatDate(lastDataTimestamp, 'MM')
+            const year = +formatDate(timestamp, 'YYYY')
+            const month = +formatDate(timestamp, 'MM')
+            const monthDiff = Math.abs((year - lastDataYear) * 12 + month - lastDataMonth)
+            if (month === lastDataMonth) {
+              pos = dataSize - 1
+            } else if (monthDiff === periodNumber) {
+              pos = dataSize
+            }
+            break
+          }
+          case 'Y': {
+            const lastDataYear = +formatDate(lastDataTimestamp, 'YYYY')
+            const year = +formatDate(timestamp, 'YYYY')
+            const yearDiff = Math.abs(year - lastDataYear)
+            if (year === lastDataYear) {
+              pos = dataSize - 1
+            } else if (yearDiff === periodNumber) {
+              pos = dataSize
+            }
+            break
+          }
+          default: {
+            if (timeDiff < periodNumber * 60 * 1000) {
+              pos = dataSize - 1
+            } else if (timestamp > lastDataTimestamp) {
+              pos = dataSize
+            }
+            break
+          }
+        }
+        if (pos === dataSize - 1) {
+          data.timestamp = lastDataTimestamp
+        } else {
+          data.timestamp = Math.floor(timestamp / 60 / 1000) * 60 * 1000
+        }
+      }
+      if (pos !== -1) {
+        this.dataProvider.addData(data, pos)
+        this.calcChartIndicator()
+        this.xAxisChart.flush()
+      }
+    }
   }
 
   /**
@@ -293,6 +365,9 @@ class RootChart {
       }
       this.flushCharts([this.mainChart, this.tooltipChart])
       this.clearAllMarker()
+      if (this.period.period !== '1') {
+        this.clearData()
+      }
     }
   }
 
@@ -378,8 +453,11 @@ class RootChart {
    * @param period
    */
   setPeriod (period) {
-    if (period && (/^[1-9]*?[DWMY]?$/i).test(period)) {
-      this.period.period = period
+    const periodValue = `${period}`
+    if (this.period.period !== periodValue && period && (/^[1-9]*?[DWMY]?$/i).test(periodValue)) {
+      this.period.period = periodValue
+      // 设置新周期后清空现有数据
+      this.clearData()
     }
   }
 

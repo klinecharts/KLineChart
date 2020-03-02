@@ -32,6 +32,9 @@ export function formatDate (timestamp, format) {
       case 'MM-DD': {
         return `${monthText}-${dayText}`
       }
+      case 'MM': {
+        return monthText
+      }
       case 'hh:mm': {
         return `${hourText}:${minuteText}`
       }
