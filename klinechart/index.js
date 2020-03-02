@@ -4,15 +4,23 @@ import { DEV } from './utils/env'
 const instances = {}
 let idBase = 1
 
+/**
+ * 获取版本号
+ * @returns {string}
+ */
 function version () {
-  // eslint-disable-next-line
-  return K_LINE_VERSION
+  return 'K_LINE_VERSION'
 }
 
+/**
+ * 初始化
+ * @param dom
+ * @param style
+ * @returns {RootChart}
+ */
 function init (dom, style = {}) {
   if (!dom) {
-    // eslint-disable-next-line
-    throw new Error(`Chart version is ${K_LINE_VERSION}. Root dom is null, can not initialize the chart!!!`)
+    throw new Error('Chart version is K_LINE_VERSION. Root dom is null, can not initialize the chart!!!')
   }
   const instance = instances[dom.chart_id || '']
   if (instance) {
@@ -21,11 +29,28 @@ function init (dom, style = {}) {
     }
     return instance
   }
-  const chart = new RootChart(dom, style)
   const id = `k_line_chart_${idBase++}`
+  const chart = new RootChart(dom, style)
+  chart.id = id
   dom.chart_id = id
   instances[id] = chart
   return chart
 }
 
-export { version, init }
+/**
+ * 销毁
+ * @param dc
+ */
+function dispose (dc) {
+  if (dc) {
+    let id = dc.chart_id
+    if (!id && dc instanceof RootChart) {
+      id = dc.id
+    }
+    if (id) {
+      delete instances[id]
+    }
+  }
+}
+
+export { version, init, dispose }

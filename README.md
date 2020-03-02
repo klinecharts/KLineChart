@@ -25,7 +25,8 @@ $ yarn add klinecharts
 ## API
 ### klinecharts
 ```js
-klinecharts.init(document.getElementById('div'))
+klinecharts.init(document.getElementById('divDomId'))
+klinecharts.dispose(document.getElementById('divDomId'))
 klinecharts.version()
 ```
 

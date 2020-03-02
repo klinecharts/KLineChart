@@ -31,7 +31,7 @@ export interface KLineData {
   low: number;
   volume: number;
   timestamp: number;
-  turnover: number;
+  turnover?: number;
 }
 
 export type PictureType = 'png' | 'jpeg' | 'bmp';
@@ -67,3 +67,5 @@ export interface Chart {
 export function version(): string;
 
 export function init(dom: HTMLDivElement, style?: any): Chart;
+
+export function dispose(dc: HTMLDivElement | Chart): void;

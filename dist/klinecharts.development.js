@@ -8411,18 +8411,27 @@ var DEV = process.env.NODE_ENV === 'development';
 
 var instances = {};
 var idBase = 1;
+/**
+ * 获取版本号
+ * @returns {string}
+ */
 
 function version() {
-  // eslint-disable-next-line
-  return "4.2.0";
+  return '4.2.0';
 }
+/**
+ * 初始化
+ * @param dom
+ * @param style
+ * @returns {RootChart}
+ */
+
 
 function init(dom) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   if (!dom) {
-    // eslint-disable-next-line
-    throw new Error("Chart version is ".concat("4.2.0", ". Root dom is null, can not initialize the chart!!!"));
+    throw new Error('Chart version is 4.2.0. Root dom is null, can not initialize the chart!!!');
   }
 
   var instance = instances[dom.chart_id || ''];
@@ -8435,13 +8444,34 @@ function init(dom) {
     return instance;
   }
 
-  var chart = new RootChart(dom, style);
   var id = "k_line_chart_".concat(idBase++);
+  var chart = new RootChart(dom, style);
+  chart.id = id;
   dom.chart_id = id;
   instances[id] = chart;
   return chart;
 }
+/**
+ * 销毁
+ * @param dc
+ */
 
+
+function dispose(dc) {
+  if (dc) {
+    var id = dc.chart_id;
+
+    if (!id && dc instanceof RootChart) {
+      id = dc.id;
+    }
+
+    if (id) {
+      delete instances[id];
+    }
+  }
+}
+
+exports.dispose = dispose;
 exports.init = init;
 exports.version = version;
 

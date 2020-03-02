@@ -78,7 +78,9 @@
 ### klinecharts方法
 ```js
 // 实例化一个图表
-klinecharts.init(document.getElementById('div'))
+klinecharts.init(document.getElementById('divDomId'))
+// 销毁图表
+klinecharts.dispose(document.getElementById('divDomId'))
 // 当前版本
 klinecharts.version()
 ```
