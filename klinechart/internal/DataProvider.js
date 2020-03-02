@@ -1,4 +1,4 @@
-import { isArray, isObject } from './utils/dataUtils'
+import { isArray, isObject } from '../utils/dataUtils'
 import { MarkerType } from '../internal/constants'
 
 export const DATA_MARGIN_SPACE_RATE = 0.26

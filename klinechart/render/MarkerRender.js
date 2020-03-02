@@ -6,9 +6,9 @@ import {
   checkPointOnRayLine,
   checkPointOnSegmentLine,
   getParallelLines, getFibonacciLines
-} from '../internal/utils/markerMapUtils'
-import { formatPrecision } from '../internal/utils/numberUtils'
-import { getFont } from '../internal/utils/drawUtils'
+} from '../utils/markerMapUtils'
+import { formatPrecision } from '../utils/numberUtils'
+import { getFont } from '../utils/drawUtils'
 import { MarkerType, MarkerDrawStep } from '../internal/constants'
 
 class MarkerRender extends Render {

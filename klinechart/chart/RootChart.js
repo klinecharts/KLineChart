@@ -3,26 +3,23 @@ import MarkerChart from './MarkerChart'
 import IndicatorChart from './IndicatorChart'
 import TooltipChart from './TooltipChart'
 import XAxisChart from './XAxisChart'
-import { isArray, isFunction, isNumber, isBoolean, merge } from '../internal/utils/dataUtils'
-import { calcTextWidth, requestAnimationFrame } from '../internal/utils/drawUtils'
+import { isArray, isFunction, isNumber, isBoolean, merge } from '../utils/dataUtils'
+import { calcTextWidth, requestAnimationFrame } from '../utils/drawUtils'
 import calcIndicator from '../internal/calcIndicator'
 
 import DataProvider from '../internal/DataProvider'
 
 import { getDefaultStyle, getDefaultIndicatorParams, getDefaultPrecision, getDefaultPeriod } from '../internal/config'
-import { isMobile } from '../internal/utils/platformUtils'
-import TouchEvent from '../internal/event/TouchEvent'
-import MouseEvent from '../internal/event/MouseEvent'
-import MarkerEvent from '../internal/event/MarkerEvent'
-import KeyboardEvent from '../internal/event/KeyboardEvent'
+import { isMobile } from '../utils/platformUtils'
+import TouchEvent from '../event/TouchEvent'
+import MouseEvent from '../event/MouseEvent'
+import MarkerEvent from '../event/MarkerEvent'
+import KeyboardEvent from '../event/KeyboardEvent'
 
 import { IndicatorType, YAxisPosition, YAxisTextPosition, MarkerType, ChartType } from '../internal/constants'
 
 class RootChart {
   constructor (dom, s = {}) {
-    if (!dom) {
-      throw new Error(`Chart version is ${process.env.K_LINE_VERSION}. Root dom is null, can not initialize the chart!!!`)
-    }
     // 是否没有更多
     this.noMore = true
     this.style = getDefaultStyle()

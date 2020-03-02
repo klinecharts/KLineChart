@@ -5,7 +5,7 @@ import {
   getParallelLines, getFibonacciLines
 } from '../utils/markerMapUtils'
 import { isFunction } from '../utils/dataUtils'
-import { MarkerDrawStep, MarkerType } from '../constants'
+import { MarkerDrawStep, MarkerType } from '../internal/constants'
 
 class MarkerEvent {
   constructor (dataProvider, markerChart, style) {

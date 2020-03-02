@@ -1,8 +1,8 @@
 import Render from './Render'
 
-import { calcTextWidth, getFont } from '../internal/utils/drawUtils'
-import { formatDate, isFunction, formatValue, isArray } from '../internal/utils/dataUtils'
-import { formatPrecision } from '../internal/utils/numberUtils'
+import { calcTextWidth, getFont } from '../utils/drawUtils'
+import { formatDate, isFunction, formatValue, isArray } from '../utils/dataUtils'
+import { formatPrecision } from '../utils/numberUtils'
 
 import { IndicatorType, LineStyle, MarkerType, TooltipMainChartTextDisplayType } from '../internal/constants'
 import { getIndicatorPrecision } from '../internal/config'
