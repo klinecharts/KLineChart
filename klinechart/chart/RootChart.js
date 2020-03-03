@@ -3,7 +3,8 @@ import MarkerChart from './MarkerChart'
 import IndicatorChart from './IndicatorChart'
 import TooltipChart from './TooltipChart'
 import XAxisChart from './XAxisChart'
-import { isArray, isFunction, isNumber, isBoolean, merge, formatValue, isObject, formatDate } from '../utils/dataUtils'
+import { isArray, isFunction, isNumber, isBoolean, merge, formatValue, isObject } from '../utils/dataUtils'
+import { formatDate } from '../utils/dateUtils'
 import { calcTextWidth, requestAnimationFrame } from '../utils/drawUtils'
 import calcIndicator from '../internal/calcIndicator'
 
@@ -17,6 +18,8 @@ import MarkerEvent from '../event/MarkerEvent'
 import KeyboardEvent from '../event/KeyboardEvent'
 
 import { IndicatorType, YAxisPosition, YAxisTextPosition, MarkerType, ChartType } from '../internal/constants'
+
+import { DEV } from '../utils/env'
 
 class RootChart {
   constructor (dom, s = {}) {
@@ -307,7 +310,7 @@ class RootChart {
             const monthDiff = Math.abs((year - lastDataYear) * 12 + month - lastDataMonth)
             if (month === lastDataMonth) {
               pos = dataSize - 1
-            } else if (monthDiff === periodNumber) {
+            } else if (monthDiff >= periodNumber) {
               pos = dataSize
             }
             break
@@ -318,7 +321,7 @@ class RootChart {
             const yearDiff = Math.abs(year - lastDataYear)
             if (year === lastDataYear) {
               pos = dataSize - 1
-            } else if (yearDiff === periodNumber) {
+            } else if (yearDiff >= periodNumber) {
               pos = dataSize
             }
             break
@@ -460,6 +463,42 @@ class RootChart {
       this.period.period = periodValue
       // 设置新周期后清空现有数据
       this.clearData()
+    }
+  }
+
+  /**
+   * 设置交易时段
+   * @param session
+   */
+  setSession (session) {
+    // 0900-1630,1015-1130,2100-0100|0900-1400:234;6
+    const splitArray = session.split(';')
+    switch (splitArray.length) {
+      case 1: {
+        break
+      }
+      case 2: {
+        try {
+          const weekDay = parseInt(splitArray[1])
+          if (weekDay < 0 || weekDay > 6) {
+            if (DEV) {
+              console.warn('The trading day is set incorrectly for the first trading day of the week. The parameters should be 0, 1, 2, 3, 4, 5, 6.')
+            }
+            return
+          }
+        } catch (e) {
+          if (DEV) {
+            console.warn('The trading day is set incorrectly for the first trading day of the week. The parameters should be 0, 1, 2, 3, 4, 5, 6.')
+          }
+        }
+
+        break
+      }
+      default: {
+        if (DEV) {
+          console.warn('The format of the trading session is incorrect.')
+        }
+      }
     }
   }
 

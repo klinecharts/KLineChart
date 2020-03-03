@@ -1,7 +1,8 @@
 import Render from './Render'
 
 import { calcTextWidth, getFont } from '../utils/drawUtils'
-import { formatDate, isFunction, formatValue, isArray } from '../utils/dataUtils'
+import { isFunction, formatValue, isArray } from '../utils/dataUtils'
+import { formatDate } from '../utils/dateUtils'
 import { formatPrecision } from '../utils/numberUtils'
 
 import { IndicatorType, LineStyle, MarkerType, TooltipMainChartTextDisplayType } from '../internal/constants'
