@@ -70,7 +70,7 @@ class TouchEvent extends Event {
       const point = getCanvasPoint(e.targetTouches[0], this.tooltipChart.canvasDom)
       this.touchStartPoint = { x: point.x, y: point.y }
       this.touchMovePoint = { x: point.x, y: point.y }
-      if (!isValidEvent(this.touchStartPoint, this.viewPortHandler)) {
+      if (!isValidEvent(this.touchStartPoint, this.handler)) {
         return
       }
       if (this.touchMode === TOUCH_CROSS) {
@@ -89,7 +89,7 @@ class TouchEvent extends Event {
       this.removeDelayActiveCross()
       this.postDelayDelayActiveCross()
     } else if (e.targetTouches.length > 1) {
-      if (!isValidEvent(this.touchStartPoint, this.viewPortHandler)) {
+      if (!isValidEvent(this.touchStartPoint, this.handler)) {
         return
       }
       if (this.touchMode !== TOUCH_CROSS) {
@@ -111,7 +111,7 @@ class TouchEvent extends Event {
    * @param loadMore
    */
   touchMove (e, loadMore) {
-    if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.storage.dataList.length === 0) {
+    if (!isValidEvent(this.touchStartPoint, this.handler) || this.storage.dataList.length === 0) {
       return
     }
     if (!this.waitingForMouseMoveAnimationFrame) {
@@ -162,7 +162,7 @@ class TouchEvent extends Event {
    * @param e
    */
   touchEnd (e) {
-    if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.storage.dataList.length === 0) {
+    if (!isValidEvent(this.touchStartPoint, this.handler) || this.storage.dataList.length === 0) {
       return
     }
     stopEvent(e)

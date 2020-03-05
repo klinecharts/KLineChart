@@ -33,7 +33,7 @@ class MouseEvent extends Event {
     }
     if (e.button === 0) {
       const point = getCanvasPoint(e, this.tooltipChart.canvasDom)
-      if (!isValidEvent(point, this.viewPortHandler)) {
+      if (!isValidEvent(point, this.handler)) {
         return
       }
       document.addEventListener('mouseup', this.documentMouseUp, false)
@@ -55,7 +55,7 @@ class MouseEvent extends Event {
     }
     stopEvent(e)
     const point = getCanvasPoint(e, this.tooltipChart.canvasDom)
-    if (!isValidEvent(point, this.viewPortHandler)) {
+    if (!isValidEvent(point, this.handler)) {
       return
     }
     document.removeEventListener('mouseup', this.documentMouseUp, false)
@@ -85,7 +85,7 @@ class MouseEvent extends Event {
     }
     stopEvent(e)
     const point = getCanvasPoint(e, this.tooltipChart.canvasDom)
-    if (!isValidEvent(point, this.viewPortHandler)) {
+    if (!isValidEvent(point, this.handler)) {
       this.storage.crossPoint = null
       this.tooltipChart.flush()
       return
@@ -117,7 +117,7 @@ class MouseEvent extends Event {
     }
     stopEvent(e)
     const point = getCanvasPoint(e, this.tooltipChart.canvasDom)
-    if (!isValidEvent(point, this.viewPortHandler)) {
+    if (!isValidEvent(point, this.handler)) {
       return
     }
     const touchStartPosition = this.storage.minPos

@@ -108,16 +108,16 @@ export function checkPointOnCircle (circleCenterPoint, radius, targetPoint) {
 /**
  * 获取平行线
  * @param points
- * @param viewportHandler
+ * @param handler
  * @param isPriceChannelLine
  * @returns {Array}
  */
-export function getParallelLines (points, viewportHandler, isPriceChannelLine) {
+export function getParallelLines (points, handler, isPriceChannelLine) {
   const lines = []
   if (points.length > 1) {
     if (points[0].x === points[1].x) {
-      const startY = viewportHandler.contentTop()
-      const endY = viewportHandler.contentBottom()
+      const startY = handler.contentTop()
+      const endY = handler.contentBottom()
       lines.push([{ x: points[0].x, y: startY }, { x: points[0].x, y: endY }])
       if (points.length > 2) {
         lines.push([{ x: points[2].x, y: startY }, { x: points[2].x, y: endY }])
@@ -127,8 +127,8 @@ export function getParallelLines (points, viewportHandler, isPriceChannelLine) {
         }
       }
     } else {
-      const startX = viewportHandler.contentLeft()
-      const endX = viewportHandler.contentRight()
+      const startX = handler.contentLeft()
+      const endX = handler.contentRight()
       if (points[0].y === points[1].y) {
         lines.push([{ x: startX, y: points[0].y }, { x: endX, y: points[0].y }])
         if (points.length > 2) {
@@ -159,13 +159,13 @@ export function getParallelLines (points, viewportHandler, isPriceChannelLine) {
 /**
  * 获取斐波那契线
  * @param points
- * @param viewportHandler
+ * @param handler
  */
-export function getFibonacciLines (points, viewportHandler) {
+export function getFibonacciLines (points, handler) {
   const lines = []
   if (points.length > 0) {
-    const startX = viewportHandler.contentLeft()
-    const endX = viewportHandler.contentRight()
+    const startX = handler.contentLeft()
+    const endX = handler.contentRight()
     lines.push([{ x: startX, y: points[0].y }, { x: endX, y: points[0].y }])
     if (points.length > 1) {
       const yDistance = points[0].y - points[1].y

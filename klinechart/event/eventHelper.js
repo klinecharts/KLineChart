@@ -1,14 +1,14 @@
 /**
  * 是否是有效事件
  * @param point
- * @param viewPortHandler
+ * @param handler
  * @returns {boolean}
  */
-export function isValidEvent (point, viewPortHandler) {
-  return !(point.x < viewPortHandler.contentLeft() ||
-    point.x > viewPortHandler.contentRight() ||
-    point.y < viewPortHandler.contentTop() ||
-    point.y > viewPortHandler.contentBottom())
+export function isValidEvent (point, handler) {
+  return !(point.x < handler.contentLeft() ||
+    point.x > handler.contentRight() ||
+    point.y < handler.contentTop() ||
+    point.y > handler.contentBottom())
 }
 
 /**

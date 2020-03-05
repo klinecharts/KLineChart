@@ -2,8 +2,8 @@ import Render from './Render'
 import { nice, getIntervalPrecision, round } from '../utils/number'
 
 class AxisRender extends Render {
-  constructor (viewPortHandler, storage) {
-    super(viewPortHandler, storage)
+  constructor (handler, storage) {
+    super(handler, storage)
     this.axisMaximum = 0
     this.axisMinimum = 0
     this.axisRange = 0

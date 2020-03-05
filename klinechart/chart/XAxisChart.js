@@ -4,7 +4,7 @@ import XAxisRender from '../render/XAxisRender'
 class XAxisChart extends Chart {
   constructor (dom, style, storage, period) {
     super(dom, style)
-    this.xAxisRender = new XAxisRender(this.viewPortHandler, storage)
+    this.xAxisRender = new XAxisRender(this.handler, storage)
     this.period = period
   }
 

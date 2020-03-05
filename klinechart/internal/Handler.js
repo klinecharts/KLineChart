@@ -1,4 +1,4 @@
-class ViewPortHandler {
+class Handler {
   constructor () {
     // 绘制区域参数
     this.contentRect = {
@@ -58,4 +58,4 @@ class ViewPortHandler {
   }
 }
 
-export default ViewPortHandler
+export default Handler

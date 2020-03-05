@@ -19,8 +19,8 @@ class XAxisRender extends AxisRender {
     ctx.strokeStyle = xAxis.line.color
     ctx.lineWidth = xAxis.line.size
     ctx.beginPath()
-    ctx.moveTo(this.viewPortHandler.contentLeft(), this.viewPortHandler.contentTop())
-    ctx.lineTo(this.viewPortHandler.contentRight(), this.viewPortHandler.contentTop())
+    ctx.moveTo(this.handler.contentLeft(), this.handler.contentTop())
+    ctx.lineTo(this.handler.contentRight(), this.handler.contentTop())
     ctx.stroke()
     ctx.closePath()
   }
@@ -37,8 +37,8 @@ class XAxisRender extends AxisRender {
     ctx.strokeStyle = xAxis.line.color
     ctx.lineWidth = xAxis.line.size
     ctx.beginPath()
-    ctx.moveTo(this.viewPortHandler.contentLeft(), this.viewPortHandler.contentBottom())
-    ctx.lineTo(this.viewPortHandler.contentRight(), this.viewPortHandler.contentBottom())
+    ctx.moveTo(this.handler.contentLeft(), this.handler.contentBottom())
+    ctx.lineTo(this.handler.contentRight(), this.handler.contentBottom())
     ctx.stroke()
     ctx.closePath()
   }
@@ -82,7 +82,7 @@ class XAxisRender extends AxisRender {
     ctx.textAlign = 'center'
     ctx.fillStyle = tickText.color
 
-    let labelY = this.viewPortHandler.contentBottom() + tickText.margin
+    let labelY = this.handler.contentBottom() + tickText.margin
     if (tickLine.display) {
       labelY += (tickLine.length)
     }
@@ -133,8 +133,8 @@ class XAxisRender extends AxisRender {
     for (let i = 0; i < this.valuePoints.length; i++) {
       const x = this.valuePoints[i]
       ctx.beginPath()
-      ctx.moveTo(x, this.viewPortHandler.contentTop())
-      ctx.lineTo(x, this.viewPortHandler.contentBottom())
+      ctx.moveTo(x, this.handler.contentTop())
+      ctx.lineTo(x, this.handler.contentBottom())
       ctx.stroke()
       ctx.closePath()
     }
@@ -154,7 +154,7 @@ class XAxisRender extends AxisRender {
     ctx.lineWidth = tickLine.size
     ctx.strokeStyle = tickLine.color
 
-    const startY = this.viewPortHandler.contentBottom()
+    const startY = this.handler.contentBottom()
 
     const endY = startY + tickLine.length
 
@@ -200,7 +200,7 @@ class XAxisRender extends AxisRender {
   }
 
   pointValuesToPixel () {
-    const offsetLeft = this.viewPortHandler.contentLeft()
+    const offsetLeft = this.handler.contentLeft()
     this.valuePoints = []
     for (let i = 0; i < this.values.length; i++) {
       const pos = this.values[i]

@@ -6,7 +6,7 @@ import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType } from '../i
 class CandleChart extends IndicatorChart {
   constructor (dom, style, storage, indicatorParams, precision) {
     super(dom, style, storage, indicatorParams, IndicatorType.MA)
-    this.chartRender = new CandleRender(this.viewPortHandler, storage, this.yAxisRender)
+    this.chartRender = new CandleRender(this.handler, storage, this.yAxisRender)
     this.precision = precision
     this.chartType = ChartType.CANDLE
   }

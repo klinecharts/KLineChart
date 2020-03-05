@@ -166,11 +166,11 @@ function _get(target, property, receiver) {
   return _get(target, property, receiver || target);
 }
 
-var ViewPortHandler =
+var Handler =
 /*#__PURE__*/
 function () {
-  function ViewPortHandler() {
-    _classCallCheck(this, ViewPortHandler);
+  function Handler() {
+    _classCallCheck(this, Handler);
 
     // 绘制区域参数
     this.contentRect = {
@@ -195,7 +195,7 @@ function () {
    */
 
 
-  _createClass(ViewPortHandler, [{
+  _createClass(Handler, [{
     key: "setDimensions",
     value: function setDimensions(width, height, offsetLeft, offsetRight, offsetTop, offsetBottom) {
       this.width = width;
@@ -239,7 +239,7 @@ function () {
     }
   }]);
 
-  return ViewPortHandler;
+  return Handler;
 }();
 
 var ctx = document.createElement('canvas').getContext('2d');
@@ -309,7 +309,7 @@ function () {
     _classCallCheck(this, Chart);
 
     this.style = style;
-    this.viewPortHandler = new ViewPortHandler();
+    this.handler = new Handler();
     this.init(dom);
   }
   /**
@@ -354,7 +354,7 @@ function () {
       this.canvasDom.style.height = "".concat(height, "px");
       this.canvasDom.width = canvasWidth;
       this.canvasDom.height = canvasHeight;
-      this.viewPortHandler.setDimensions(width, height, offsetLeft, offsetRight, offsetTop, offsetBottom);
+      this.handler.setDimensions(width, height, offsetLeft, offsetRight, offsetTop, offsetBottom);
       this.ctx.scale(pixelRatio, pixelRatio);
       this.ctx.translate(-0.5, -0.5);
       this.draw();
@@ -366,7 +366,7 @@ function () {
   }, {
     key: "clearCanvas",
     value: function clearCanvas() {
-      this.ctx.clearRect(0, 0, this.viewPortHandler.width, this.viewPortHandler.height);
+      this.ctx.clearRect(0, 0, this.handler.width, this.handler.height);
     }
     /**
      * 刷新
@@ -399,10 +399,10 @@ function () {
   return Chart;
 }();
 
-var Render = function Render(viewPortHandler, storage) {
+var Render = function Render(handler, storage) {
   _classCallCheck(this, Render);
 
-  this.viewPortHandler = viewPortHandler;
+  this.handler = handler;
   this.storage = storage;
 };
 
@@ -744,12 +744,12 @@ var IndicatorRender =
 function (_Render) {
   _inherits(IndicatorRender, _Render);
 
-  function IndicatorRender(viewPortHandler, storage, yAxisRender) {
+  function IndicatorRender(handler, storage, yAxisRender) {
     var _this;
 
     _classCallCheck(this, IndicatorRender);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorRender).call(this, viewPortHandler, storage));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorRender).call(this, handler, storage));
     _this.yAxisRender = yAxisRender;
     return _this;
   }
@@ -767,8 +767,8 @@ function (_Render) {
       ctx.strokeStyle = xAxis.line.color;
       ctx.lineWidth = lineSize;
       ctx.beginPath();
-      ctx.moveTo(this.viewPortHandler.contentLeft(), this.viewPortHandler.contentTop() + lineSize);
-      ctx.lineTo(this.viewPortHandler.contentRight(), this.viewPortHandler.contentTop() + lineSize);
+      ctx.moveTo(this.handler.contentLeft(), this.handler.contentTop() + lineSize);
+      ctx.lineTo(this.handler.contentRight(), this.handler.contentTop() + lineSize);
       ctx.stroke();
       ctx.closePath();
     }
@@ -1114,7 +1114,7 @@ function (_Render) {
   }, {
     key: "renderGraphics",
     value: function renderGraphics(ctx, onRendering, onRenderEnd) {
-      var startX = this.viewPortHandler.contentLeft();
+      var startX = this.handler.contentLeft();
       var dataSpace = this.storage.dataSpace * (1 - DATA_MARGIN_SPACE_RATE);
       var halfBarSpace = dataSpace / 2;
       var lastPos = Math.min(this.storage.dataList.length, this.storage.minPos + this.storage.range);
@@ -1361,12 +1361,12 @@ var AxisRender =
 function (_Render) {
   _inherits(AxisRender, _Render);
 
-  function AxisRender(viewPortHandler, storage) {
+  function AxisRender(handler, storage) {
     var _this;
 
     _classCallCheck(this, AxisRender);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(AxisRender).call(this, viewPortHandler, storage));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(AxisRender).call(this, handler, storage));
     _this.axisMaximum = 0;
     _this.axisMinimum = 0;
     _this.axisRange = 0;
@@ -1477,15 +1477,15 @@ function (_AxisRender) {
 
       ctx.strokeStyle = yAxis.line.color;
       ctx.lineWidth = yAxis.line.size;
-      var x = this.viewPortHandler.contentLeft();
+      var x = this.handler.contentLeft();
 
       if (yAxis.position === YAxisPosition.LEFT) {
-        x = this.viewPortHandler.contentRight();
+        x = this.handler.contentRight();
       }
 
       ctx.beginPath();
-      ctx.moveTo(x, this.viewPortHandler.contentTop());
-      ctx.lineTo(x, this.viewPortHandler.contentBottom());
+      ctx.moveTo(x, this.handler.contentTop());
+      ctx.lineTo(x, this.handler.contentBottom());
       ctx.stroke();
       ctx.closePath();
     }
@@ -1507,11 +1507,11 @@ function (_AxisRender) {
       ctx.beginPath();
 
       if (yAxis.position === YAxisPosition.LEFT) {
-        ctx.moveTo(this.viewPortHandler.contentLeft(), this.viewPortHandler.contentTop());
-        ctx.lineTo(this.viewPortHandler.contentLeft(), this.viewPortHandler.contentBottom());
+        ctx.moveTo(this.handler.contentLeft(), this.handler.contentTop());
+        ctx.lineTo(this.handler.contentLeft(), this.handler.contentBottom());
       } else {
-        ctx.moveTo(this.viewPortHandler.contentRight(), this.viewPortHandler.contentTop());
-        ctx.lineTo(this.viewPortHandler.contentRight(), this.viewPortHandler.contentBottom());
+        ctx.moveTo(this.handler.contentRight(), this.handler.contentTop());
+        ctx.lineTo(this.handler.contentRight(), this.handler.contentBottom());
       }
 
       ctx.stroke();
@@ -1542,29 +1542,29 @@ function (_AxisRender) {
       if (yAxis.position === YAxisPosition.LEFT) {
         if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
           if (tickLineDisplay) {
-            initX = this.viewPortHandler.contentLeft() - tickLineLength - tickTextMargin;
+            initX = this.handler.contentLeft() - tickLineLength - tickTextMargin;
           } else {
-            initX = this.viewPortHandler.contentLeft() - tickTextMargin;
+            initX = this.handler.contentLeft() - tickTextMargin;
           }
         } else {
           if (tickLineDisplay) {
-            initX = this.viewPortHandler.contentLeft() + tickLineLength + tickTextMargin;
+            initX = this.handler.contentLeft() + tickLineLength + tickTextMargin;
           } else {
-            initX = this.viewPortHandler.contentLeft() + tickTextMargin;
+            initX = this.handler.contentLeft() + tickTextMargin;
           }
         }
       } else {
         if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
           if (tickLineDisplay) {
-            initX = this.viewPortHandler.contentRight() + tickLineLength + tickTextMargin;
+            initX = this.handler.contentRight() + tickLineLength + tickTextMargin;
           } else {
-            initX = this.viewPortHandler.contentRight() + tickTextMargin;
+            initX = this.handler.contentRight() + tickTextMargin;
           }
         } else {
           if (tickLineDisplay) {
-            initX = this.viewPortHandler.contentRight() - tickLineLength - tickTextMargin;
+            initX = this.handler.contentRight() - tickLineLength - tickTextMargin;
           } else {
-            initX = this.viewPortHandler.contentRight() - tickTextMargin;
+            initX = this.handler.contentRight() - tickTextMargin;
           }
         }
       }
@@ -1619,8 +1619,8 @@ function (_AxisRender) {
 
         if (this.checkShowLabel(y, labelHeight)) {
           ctx.beginPath();
-          ctx.moveTo(this.viewPortHandler.contentLeft(), y);
-          ctx.lineTo(this.viewPortHandler.contentRight(), y);
+          ctx.moveTo(this.handler.contentLeft(), y);
+          ctx.lineTo(this.handler.contentRight(), y);
           ctx.stroke();
           ctx.closePath();
         }
@@ -1653,7 +1653,7 @@ function (_AxisRender) {
       var tickTextPosition = tickText.position;
 
       if (yAxis.position === YAxisPosition.LEFT) {
-        startX = this.viewPortHandler.contentLeft();
+        startX = this.handler.contentLeft();
 
         if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
           endX = startX - tickLineLength;
@@ -1661,7 +1661,7 @@ function (_AxisRender) {
           endX = startX + tickLineLength;
         }
       } else {
-        startX = this.viewPortHandler.contentRight();
+        startX = this.handler.contentRight();
 
         if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
           endX = startX + tickLineLength;
@@ -1691,7 +1691,7 @@ function (_AxisRender) {
   }, {
     key: "checkShowLabel",
     value: function checkShowLabel(y, labelHeight) {
-      return y > this.viewPortHandler.contentTop() + labelHeight && y < this.viewPortHandler.contentBottom() - labelHeight;
+      return y > this.handler.contentTop() + labelHeight && y < this.handler.contentBottom() - labelHeight;
     }
   }, {
     key: "calcAxisMinMax",
@@ -1785,12 +1785,12 @@ function (_AxisRender) {
   }, {
     key: "getY",
     value: function getY(value) {
-      return (1.0 - (value - this.axisMinimum) / this.axisRange) * (this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop());
+      return (1.0 - (value - this.axisMinimum) / this.axisRange) * (this.handler.contentBottom() - this.handler.contentTop());
     }
   }, {
     key: "getValue",
     value: function getValue(y) {
-      return (1.0 - y / (this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop())) * this.axisRange + this.axisMinimum;
+      return (1.0 - y / (this.handler.contentBottom() - this.handler.contentTop())) * this.axisRange + this.axisMinimum;
     }
   }]);
 
@@ -1812,8 +1812,8 @@ function (_Chart) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorChart).call(this, dom, style));
     _this.indicatorParams = indicatorParams;
     _this.indicatorType = defaultIndicatorType;
-    _this.yAxisRender = new YAxisRender(_this.viewPortHandler, storage);
-    _this.chartRender = new IndicatorRender(_this.viewPortHandler, storage, _this.yAxisRender);
+    _this.yAxisRender = new YAxisRender(_this.handler, storage);
+    _this.chartRender = new IndicatorRender(_this.handler, storage, _this.yAxisRender);
     return _this;
   }
 
@@ -2065,7 +2065,7 @@ function (_IndicatorRender) {
     value: function renderLowestHighestPriceMark(ctx, priceMark, x, price, isHigh, pricePrecision) {
       ctx.save();
       ctx.beginPath();
-      ctx.rect(0, 0, this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft(), this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop());
+      ctx.rect(0, 0, this.handler.contentRight() - this.handler.contentLeft(), this.handler.contentBottom() - this.handler.contentTop());
       ctx.closePath();
       ctx.clip();
       var priceY = this.yAxisRender.getY(price);
@@ -2125,11 +2125,11 @@ function (_IndicatorRender) {
       var preLastPrice = preKLineData.close || Number.MIN_SAFE_INTEGER;
       var lastPrice = this.storage.dataList[dataSize - 1].close;
       var priceY = this.yAxisRender.getY(lastPrice);
-      var height = this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop();
+      var height = this.handler.contentBottom() - this.handler.contentTop();
       priceY = +Math.max(height * 0.05, Math.min(priceY, height * 0.98)).toFixed(0);
       var color = lastPrice > preLastPrice ? lastPriceMark.increasingColor : lastPriceMark.decreasingColor;
-      var lineStartX = this.viewPortHandler.contentLeft();
-      var lineEndX = this.viewPortHandler.contentRight();
+      var lineStartX = this.handler.contentLeft();
+      var lineEndX = this.handler.contentRight();
       var priceMarkText = lastPriceMark.text;
       var displayText = priceMarkText.display;
 
@@ -2195,8 +2195,8 @@ function (_IndicatorRender) {
 
       var timeLinePoints = [];
       var timeLineAreaPoints = [{
-        x: this.viewPortHandler.contentLeft(),
-        y: this.viewPortHandler.contentBottom()
+        x: this.handler.contentLeft(),
+        y: this.handler.contentBottom()
       }];
       var averageLinePoints = [];
       var minPos = this.storage.minPos;
@@ -2224,7 +2224,7 @@ function (_IndicatorRender) {
 
         if (i === minPos) {
           timeLineAreaPoints.push({
-            x: _this2.viewPortHandler.contentLeft(),
+            x: _this2.handler.contentLeft(),
             y: closeY
           });
           timeLineAreaPoints.push({
@@ -2237,12 +2237,12 @@ function (_IndicatorRender) {
             y: closeY
           });
           timeLineAreaPoints.push({
-            x: _this2.viewPortHandler.contentRight(),
+            x: _this2.handler.contentRight(),
             y: closeY
           });
           timeLineAreaPoints.push({
-            x: _this2.viewPortHandler.contentRight(),
-            y: _this2.viewPortHandler.contentBottom()
+            x: _this2.handler.contentRight(),
+            y: _this2.handler.contentBottom()
           });
         } else if (i === dataSize - 1) {
           timeLineAreaPoints.push({
@@ -2251,7 +2251,7 @@ function (_IndicatorRender) {
           });
           timeLineAreaPoints.push({
             x: x,
-            y: _this2.viewPortHandler.contentBottom()
+            y: _this2.handler.contentBottom()
           });
         } else {
           timeLineAreaPoints.push({
@@ -2329,7 +2329,7 @@ function (_IndicatorChart) {
     _classCallCheck(this, CandleChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(CandleChart).call(this, dom, style, storage, indicatorParams, IndicatorType.MA));
-    _this.chartRender = new CandleRender(_this.viewPortHandler, storage, _this.yAxisRender);
+    _this.chartRender = new CandleRender(_this.handler, storage, _this.yAxisRender);
     _this.precision = precision;
     _this.chartType = ChartType.CANDLE;
     return _this;
@@ -2495,18 +2495,18 @@ function checkPointOnCircle(circleCenterPoint, radius, targetPoint) {
 /**
  * 获取平行线
  * @param points
- * @param viewportHandler
+ * @param handler
  * @param isPriceChannelLine
  * @returns {Array}
  */
 
-function getParallelLines(points, viewportHandler, isPriceChannelLine) {
+function getParallelLines(points, handler, isPriceChannelLine) {
   var lines = [];
 
   if (points.length > 1) {
     if (points[0].x === points[1].x) {
-      var startY = viewportHandler.contentTop();
-      var endY = viewportHandler.contentBottom();
+      var startY = handler.contentTop();
+      var endY = handler.contentBottom();
       lines.push([{
         x: points[0].x,
         y: startY
@@ -2536,8 +2536,8 @@ function getParallelLines(points, viewportHandler, isPriceChannelLine) {
         }
       }
     } else {
-      var startX = viewportHandler.contentLeft();
-      var endX = viewportHandler.contentRight();
+      var startX = handler.contentLeft();
+      var endX = handler.contentRight();
 
       if (points[0].y === points[1].y) {
         lines.push([{
@@ -2610,15 +2610,15 @@ function getParallelLines(points, viewportHandler, isPriceChannelLine) {
 /**
  * 获取斐波那契线
  * @param points
- * @param viewportHandler
+ * @param handler
  */
 
-function getFibonacciLines(points, viewportHandler) {
+function getFibonacciLines(points, handler) {
   var lines = [];
 
   if (points.length > 0) {
-    var startX = viewportHandler.contentLeft();
-    var endX = viewportHandler.contentRight();
+    var startX = handler.contentLeft();
+    var endX = handler.contentRight();
     lines.push([{
       x: startX,
       y: points[0].y
@@ -2682,12 +2682,12 @@ var GraphicMarkRender =
 function (_Render) {
   _inherits(GraphicMarkRender, _Render);
 
-  function GraphicMarkRender(viewPortHandler, storage, yRender, graphicMark) {
+  function GraphicMarkRender(handler, storage, yRender, graphicMark) {
     var _this;
 
     _classCallCheck(this, GraphicMarkRender);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkRender).call(this, viewPortHandler, storage));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkRender).call(this, handler, storage));
     _this.yRender = yRender;
     _this.graphicMark = graphicMark;
     return _this;
@@ -2705,10 +2705,10 @@ function (_Render) {
 
       this.renderPointMarker(ctx, GraphicMarkType.HORIZONTAL_STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
         return [[{
-          x: _this2.viewPortHandler.contentLeft(),
+          x: _this2.handler.contentLeft(),
           y: points[0].y
         }, {
-          x: _this2.viewPortHandler.contentRight(),
+          x: _this2.handler.contentRight(),
           y: points[0].y
         }]];
       });
@@ -2726,10 +2726,10 @@ function (_Render) {
       this.renderPointMarker(ctx, GraphicMarkType.VERTICAL_STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
         return [[{
           x: points[0].x,
-          y: _this3.viewPortHandler.contentTop()
+          y: _this3.handler.contentTop()
         }, {
           x: points[0].x,
-          y: _this3.viewPortHandler.contentBottom()
+          y: _this3.handler.contentBottom()
         }]];
       });
     }
@@ -2747,25 +2747,25 @@ function (_Render) {
         if (points[0].x === points[1].x) {
           return [[{
             x: points[0].x,
-            y: _this4.viewPortHandler.contentTop()
+            y: _this4.handler.contentTop()
           }, {
             x: points[0].x,
-            y: _this4.viewPortHandler.bottom
+            y: _this4.handler.bottom
           }]];
         }
 
         var y = getLinearY(points[0], points[1], [{
-          x: _this4.viewPortHandler.contentLeft(),
+          x: _this4.handler.contentLeft(),
           y: points[0].y
         }, {
-          x: _this4.viewPortHandler.contentRight(),
+          x: _this4.handler.contentRight(),
           y: points[0].y
         }]);
         return [[{
-          x: _this4.viewPortHandler.contentLeft(),
+          x: _this4.handler.contentLeft(),
           y: y[0]
         }, {
-          x: _this4.viewPortHandler.contentRight(),
+          x: _this4.handler.contentRight(),
           y: y[1]
         }]];
       });
@@ -2782,12 +2782,12 @@ function (_Render) {
 
       this.renderPointMarker(ctx, GraphicMarkType.HORIZONTAL_RAY_LINE, checkPointOnRayLine, function (points) {
         var point = {
-          x: _this5.viewPortHandler.contentLeft(),
+          x: _this5.handler.contentLeft(),
           y: points[0].y
         };
 
         if (points[0].x < points[1].x) {
-          point.x = _this5.viewPortHandler.contentRight();
+          point.x = _this5.handler.contentRight();
         }
 
         return [[points[0], point]];
@@ -2806,11 +2806,11 @@ function (_Render) {
       this.renderPointMarker(ctx, GraphicMarkType.VERTICAL_RAY_LINE, checkPointOnRayLine, function (points) {
         var point = {
           x: points[0].x,
-          y: _this6.viewPortHandler.contentTop()
+          y: _this6.handler.contentTop()
         };
 
         if (points[0].y < points[1].y) {
-          point.y = _this6.viewPortHandler.contentBottom();
+          point.y = _this6.handler.contentBottom();
         }
 
         return [[points[0], point]];
@@ -2833,27 +2833,27 @@ function (_Render) {
           if (points[0].y < points[1].y) {
             point = {
               x: points[0].x,
-              y: _this7.viewPortHandler.contentBottom()
+              y: _this7.handler.contentBottom()
             };
           } else {
             point = {
               x: points[0].x,
-              y: _this7.viewPortHandler.contentTop()
+              y: _this7.handler.contentTop()
             };
           }
         } else if (points[0].x > points[1].x) {
           point = {
-            x: _this7.viewPortHandler.contentLeft(),
+            x: _this7.handler.contentLeft(),
             y: getLinearY(points[0], points[1], [{
-              x: _this7.viewPortHandler.contentLeft(),
+              x: _this7.handler.contentLeft(),
               y: points[0].y
             }])[0]
           };
         } else {
           point = {
-            x: _this7.viewPortHandler.contentRight(),
+            x: _this7.handler.contentRight(),
             y: getLinearY(points[0], points[1], [{
-              x: _this7.viewPortHandler.contentRight(),
+              x: _this7.handler.contentRight(),
               y: points[0].y
             }])[0]
           };
@@ -2887,7 +2887,7 @@ function (_Render) {
 
       this.renderPointMarker(ctx, GraphicMarkType.PRICE_LINE, checkPointOnRayLine, function (points) {
         return [[points[0], {
-          x: _this8.viewPortHandler.contentRight(),
+          x: _this8.handler.contentRight(),
           y: points[0].y
         }]];
       }, true, pricePrecision);
@@ -2903,7 +2903,7 @@ function (_Render) {
       var _this9 = this;
 
       this.renderPointMarker(ctx, GraphicMarkType.PRICE_CHANNEL_LINE, checkPointOnStraightLine, function (points) {
-        return getParallelLines(points, _this9.viewPortHandler, true);
+        return getParallelLines(points, _this9.handler, true);
       });
     }
     /**
@@ -2917,7 +2917,7 @@ function (_Render) {
       var _this10 = this;
 
       this.renderPointMarker(ctx, GraphicMarkType.PARALLEL_STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
-        return getParallelLines(points, _this10.viewPortHandler);
+        return getParallelLines(points, _this10.handler);
       });
     }
     /**
@@ -2932,7 +2932,7 @@ function (_Render) {
       var _this11 = this;
 
       this.renderPointMarker(ctx, GraphicMarkType.FIBONACCI_LINE, checkPointOnStraightLine, function (points) {
-        return getFibonacciLines(points, _this11.viewPortHandler);
+        return getFibonacciLines(points, _this11.handler);
       }, true, pricePrecision, ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']);
     }
     /**
@@ -3071,7 +3071,7 @@ function (_Chart) {
     _classCallCheck(this, GraphicMarkChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkChart).call(this, dom, style));
-    _this.graphicMarkRender = new GraphicMarkRender(_this.viewPortHandler, storage, yAxisRender, style.marker);
+    _this.graphicMarkRender = new GraphicMarkRender(_this.handler, storage, yAxisRender, style.marker);
     _this.precision = precision;
     return _this;
   }
@@ -3546,16 +3546,16 @@ var TooltipRender =
 function (_Render) {
   _inherits(TooltipRender, _Render);
 
-  function TooltipRender(viewPortHandler, storage, indicatorParams, candleViewPortHandler, volViewPortHandler, subIndicatorViewPortHandler, candleYAxisRender, volYAxisRender, subIndicatorYAxisRender) {
+  function TooltipRender(handler, storage, indicatorParams, candleHandler, volHandler, subIndicatorHandler, candleYAxisRender, volYAxisRender, subIndicatorYAxisRender) {
     var _this;
 
     _classCallCheck(this, TooltipRender);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TooltipRender).call(this, viewPortHandler, storage));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TooltipRender).call(this, handler, storage));
     _this.indicatorParams = indicatorParams;
-    _this.candleViewPortHandler = candleViewPortHandler;
-    _this.volViewPortHandler = volViewPortHandler;
-    _this.subIndicatorViewPortHandler = subIndicatorViewPortHandler;
+    _this.candleHandler = candleHandler;
+    _this.volHandler = volHandler;
+    _this.subIndicatorHandler = subIndicatorHandler;
     _this.candleYAxisRender = candleYAxisRender;
     _this.volYAxisRender = volYAxisRender;
     _this.subIndicatorYAxisRender = subIndicatorYAxisRender;
@@ -3587,9 +3587,9 @@ function (_Render) {
       var textSize = textHorizontal.size;
       var yAxisDataLabelWidth = calcTextWidth(textSize, yAxisDataLabel);
       var rectStartX;
-      var lineStartX = this.viewPortHandler.contentLeft();
-      var lineEndX = this.viewPortHandler.contentRight();
-      var centerPoint = this.viewPortHandler.getContentCenter();
+      var lineStartX = this.handler.contentLeft();
+      var lineEndX = this.handler.contentRight();
+      var centerPoint = this.handler.getContentCenter();
       var paddingLeft = textHorizontal.paddingLeft;
       var paddingRight = textHorizontal.paddingRight;
       var paddingTop = textHorizontal.paddingTop;
@@ -3607,10 +3607,10 @@ function (_Render) {
       } else {
         if (crossPoint.x > centerPoint.x) {
           // 左边
-          lineStartX = this.viewPortHandler.contentLeft() + rectWidth;
-          rectStartX = this.viewPortHandler.contentLeft() + 1;
+          lineStartX = this.handler.contentLeft() + rectWidth;
+          rectStartX = this.handler.contentLeft() + 1;
         } else {
-          lineEndX = this.viewPortHandler.contentRight() - rectWidth;
+          lineEndX = this.handler.contentRight() - rectWidth;
           rectStartX = lineEndX - 1;
         }
       } // 绘制十字光标水平线
@@ -3660,22 +3660,22 @@ function (_Render) {
       var eventY = this.storage.crossPoint.y;
       var top;
 
-      if (eventY && eventY > 0 && eventY < this.candleViewPortHandler.height + this.volViewPortHandler.height + this.subIndicatorViewPortHandler.height) {
+      if (eventY && eventY > 0 && eventY < this.handler.height + this.handler.height + this.handler.height) {
         var yAxisRender;
         var indicatorType;
 
-        if (eventY > 0 && eventY < this.candleViewPortHandler.contentBottom()) {
+        if (eventY > 0 && eventY < this.handler.contentBottom()) {
           yAxisRender = this.candleYAxisRender;
           indicatorType = mainIndicatorType;
           top = 0;
-        } else if (eventY > this.candleViewPortHandler.contentBottom() && eventY < this.candleViewPortHandler.contentBottom() + this.volViewPortHandler.height) {
+        } else if (eventY > this.candleHandler.contentBottom() && eventY < this.candleHandler.contentBottom() + this.volHandler.height) {
           yAxisRender = this.volYAxisRender;
           indicatorType = IndicatorType.VOL;
-          top = this.candleViewPortHandler.height;
+          top = this.candleHandler.height;
         } else {
           yAxisRender = this.subIndicatorYAxisRender;
           indicatorType = subIndicatorType;
-          top = this.candleViewPortHandler.height + this.volViewPortHandler.height;
+          top = this.candleHandler.height + this.volHandler.height;
         }
 
         var yData = yAxisRender.getValue(eventY - top);
@@ -3710,8 +3710,8 @@ function (_Render) {
       }
 
       ctx.beginPath();
-      ctx.moveTo(crossPoint.x, this.viewPortHandler.contentTop());
-      ctx.lineTo(crossPoint.x, this.viewPortHandler.contentBottom());
+      ctx.moveTo(crossPoint.x, this.handler.contentTop());
+      ctx.lineTo(crossPoint.x, this.handler.contentBottom());
       ctx.stroke();
       ctx.closePath();
       ctx.setLineDash([]);
@@ -3727,16 +3727,16 @@ function (_Render) {
       var paddingBottom = textVertical.paddingBottom;
       var borderSize = textVertical.borderSize; // 保证整个x轴上的提示文字总是完全显示
 
-      if (xAxisLabelX < this.viewPortHandler.contentLeft() + paddingLeft + borderSize) {
-        xAxisLabelX = this.viewPortHandler.contentLeft() + paddingLeft + borderSize;
-      } else if (xAxisLabelX > this.viewPortHandler.contentRight() - labelWidth - borderSize - paddingRight) {
-        xAxisLabelX = this.viewPortHandler.contentRight() - labelWidth - borderSize - paddingRight;
+      if (xAxisLabelX < this.handler.contentLeft() + paddingLeft + borderSize) {
+        xAxisLabelX = this.handler.contentLeft() + paddingLeft + borderSize;
+      } else if (xAxisLabelX > this.handler.contentRight() - labelWidth - borderSize - paddingRight) {
+        xAxisLabelX = this.handler.contentRight() - labelWidth - borderSize - paddingRight;
       }
 
       var rectLeft = xAxisLabelX - borderSize - paddingLeft;
-      var rectTop = this.viewPortHandler.contentBottom();
+      var rectTop = this.handler.contentBottom();
       var rectRight = xAxisLabelX + labelWidth + borderSize + paddingRight;
-      var rectBottom = this.viewPortHandler.contentBottom() + textSize + borderSize * 2 + paddingTop + paddingBottom;
+      var rectBottom = this.handler.contentBottom() + textSize + borderSize * 2 + paddingTop + paddingBottom;
       ctx.fillStyle = textVertical.backgroundColor;
       ctx.fillRect(rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop);
       ctx.lineWidth = borderSize;
@@ -3746,7 +3746,7 @@ function (_Render) {
       ctx.textBaseline = 'top';
       ctx.font = getFont(textSize);
       ctx.fillStyle = textVertical.color;
-      ctx.fillText(text, xAxisLabelX, this.viewPortHandler.contentBottom() + borderSize + paddingTop);
+      ctx.fillText(text, xAxisLabelX, this.handler.contentBottom() + borderSize + paddingTop);
     }
     /**
      * 渲染主图提示文字
@@ -3780,7 +3780,7 @@ function (_Render) {
       }
 
       if (isCandle) {
-        this.renderIndicatorLineCircle(ctx, indicatorType, this.candleViewPortHandler.contentTop(), data.values, this.candleYAxisRender, indicatorColors, tooltip.cross.display);
+        this.renderIndicatorLineCircle(ctx, indicatorType, this.candleHandler.contentTop(), data.values, this.candleYAxisRender, indicatorColors, tooltip.cross.display);
       }
     }
     /**
@@ -3802,7 +3802,7 @@ function (_Render) {
       var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision);
       var indicatorLineColors = indicator.lineColors;
       this.renderIndicatorTooltipText(ctx, offsetTop + indicatorDataStyle.text.marginTop, data, indicatorDataStyle, indicatorLineColors);
-      var circleOffsetTop = isVolChart ? this.candleViewPortHandler.height + this.volViewPortHandler.contentTop() : this.candleViewPortHandler.height + this.volViewPortHandler.height + this.subIndicatorViewPortHandler.contentTop();
+      var circleOffsetTop = isVolChart ? this.candleHandler.height + this.volHandler.contentTop() : this.candleHandler.height + this.volHandler.height + this.subIndicatorHandler.contentTop();
       this.renderIndicatorLineCircle(ctx, indicatorType, circleOffsetTop, data.values, isVolChart ? this.volYAxisRender : this.subIndicatorYAxisRender, indicatorLineColors, tooltip.cross.display);
     }
     /**
@@ -3825,7 +3825,7 @@ function (_Render) {
       var labels = baseDataStyle.labels;
       ctx.textBaseline = 'top';
       ctx.font = getFont(textSize);
-      var startX = this.viewPortHandler.contentLeft() + textMarginLeft;
+      var startX = this.handler.contentLeft() + textMarginLeft;
       labels.forEach(function (label, i) {
         var labelText = "".concat(label, ": ");
         var labelWidth = calcTextWidth(textSize, labelText);
@@ -3909,14 +3909,14 @@ function (_Render) {
       var floatRectRight = floatRect.right;
       var floatRectWidth = floatRectBorderSize * 2 + maxLabelWidth + floatRectPaddingLeft + floatRectPaddingRight;
       var floatRectHeight = floatRectBorderSize * 2 + floatRectPaddingTop + floatRectPaddingBottom + (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length + (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length;
-      var centerPoint = this.volViewPortHandler.getContentCenter();
+      var centerPoint = this.volHandler.getContentCenter();
       var rectX;
       var crossPoint = this.storage.crossPoint;
 
       if (crossPoint && crossPoint.x < centerPoint.x) {
-        rectX = this.viewPortHandler.contentRight() - floatRectRight - floatRectWidth;
+        rectX = this.handler.contentRight() - floatRectRight - floatRectWidth;
       } else {
-        rectX = this.viewPortHandler.contentLeft() + floatRectLeft;
+        rectX = this.handler.contentLeft() + floatRectLeft;
       }
 
       var rectY = floatRect.top;
@@ -4053,7 +4053,7 @@ function (_Render) {
       var indicatorText = indicatorDataStyle.text;
       var textMarginLeft = indicatorText.marginLeft;
       var textMarginRight = indicatorText.marginRight;
-      var labelX = this.viewPortHandler.contentLeft() + textMarginLeft;
+      var labelX = this.handler.contentLeft() + textMarginLeft;
       var textSize = indicatorText.size;
       var textColor = indicatorDataStyle.text.color;
       var lineColorSize = indicatorColors.length;
@@ -4304,7 +4304,7 @@ function (_Chart) {
     _this.volChart = volChart;
     _this.subIndicatorChart = subIndicatorChart;
     _this.storage = storage;
-    _this.tooltipRender = new TooltipRender(_this.viewPortHandler, storage, indicatorParams, mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler, mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender);
+    _this.tooltipRender = new TooltipRender(_this.handler, storage, indicatorParams, mainChart.handler, volChart.handler, subIndicatorChart.handler, mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender);
     _this.precision = precision;
     return _this;
   }
@@ -4328,11 +4328,11 @@ function (_Chart) {
           this.tooltipRender.renderMainChartTooltip(this.ctx, kLineData, this.mainChart.indicatorType, this.mainChart.chartType === ChartType.CANDLE, tooltip, indicator, this.precision);
 
           if (this.volChart.indicatorType !== IndicatorType.NO) {
-            this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.mainChart.viewPortHandler.height, kLineData, IndicatorType.VOL, tooltip, indicator, true, this.precision);
+            this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.mainChart.handler.height, kLineData, IndicatorType.VOL, tooltip, indicator, true, this.precision);
           }
 
           if (this.subIndicatorChart.indicatorType !== IndicatorType.NO) {
-            this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.mainChart.viewPortHandler.height + this.volChart.viewPortHandler.height, kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator, false, this.precision);
+            this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.mainChart.handler.height + this.volChart.handler.height, kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator, false, this.precision);
           }
         }
       }
@@ -4370,8 +4370,8 @@ function (_AxisRender) {
       ctx.strokeStyle = xAxis.line.color;
       ctx.lineWidth = xAxis.line.size;
       ctx.beginPath();
-      ctx.moveTo(this.viewPortHandler.contentLeft(), this.viewPortHandler.contentTop());
-      ctx.lineTo(this.viewPortHandler.contentRight(), this.viewPortHandler.contentTop());
+      ctx.moveTo(this.handler.contentLeft(), this.handler.contentTop());
+      ctx.lineTo(this.handler.contentRight(), this.handler.contentTop());
       ctx.stroke();
       ctx.closePath();
     }
@@ -4391,8 +4391,8 @@ function (_AxisRender) {
       ctx.strokeStyle = xAxis.line.color;
       ctx.lineWidth = xAxis.line.size;
       ctx.beginPath();
-      ctx.moveTo(this.viewPortHandler.contentLeft(), this.viewPortHandler.contentBottom());
-      ctx.lineTo(this.viewPortHandler.contentRight(), this.viewPortHandler.contentBottom());
+      ctx.moveTo(this.handler.contentLeft(), this.handler.contentBottom());
+      ctx.lineTo(this.handler.contentRight(), this.handler.contentBottom());
       ctx.stroke();
       ctx.closePath();
     }
@@ -4447,7 +4447,7 @@ function (_AxisRender) {
       ctx.font = getFont(tickText.size);
       ctx.textAlign = 'center';
       ctx.fillStyle = tickText.color;
-      var labelY = this.viewPortHandler.contentBottom() + tickText.margin;
+      var labelY = this.handler.contentBottom() + tickText.margin;
 
       if (tickLine.display) {
         labelY += tickLine.length;
@@ -4512,8 +4512,8 @@ function (_AxisRender) {
       for (var i = 0; i < this.valuePoints.length; i++) {
         var x = this.valuePoints[i];
         ctx.beginPath();
-        ctx.moveTo(x, this.viewPortHandler.contentTop());
-        ctx.lineTo(x, this.viewPortHandler.contentBottom());
+        ctx.moveTo(x, this.handler.contentTop());
+        ctx.lineTo(x, this.handler.contentBottom());
         ctx.stroke();
         ctx.closePath();
       }
@@ -4537,7 +4537,7 @@ function (_AxisRender) {
 
       ctx.lineWidth = tickLine.size;
       ctx.strokeStyle = tickLine.color;
-      var startY = this.viewPortHandler.contentBottom();
+      var startY = this.handler.contentBottom();
       var endY = startY + tickLine.length;
 
       for (var i = 0; i < this.valuePoints.length; i++) {
@@ -4591,7 +4591,7 @@ function (_AxisRender) {
   }, {
     key: "pointValuesToPixel",
     value: function pointValuesToPixel() {
-      var offsetLeft = this.viewPortHandler.contentLeft();
+      var offsetLeft = this.handler.contentLeft();
       this.valuePoints = [];
 
       for (var i = 0; i < this.values.length; i++) {
@@ -4629,7 +4629,7 @@ function (_Chart) {
     _classCallCheck(this, XAxisChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisChart).call(this, dom, style));
-    _this.xAxisRender = new XAxisRender(_this.viewPortHandler, storage);
+    _this.xAxisRender = new XAxisRender(_this.handler, storage);
     _this.period = period;
     return _this;
   }
@@ -6150,7 +6150,7 @@ function () {
     this.subIndicatorChart = subIndicatorChart;
     this.xAxisChart = xAxisChart;
     this.storage = storage;
-    this.viewPortHandler = tooltipChart.viewPortHandler;
+    this.handler = tooltipChart.handler;
   }
   /**
    * 拖拽
@@ -6267,7 +6267,7 @@ function () {
 
       this.storage.range = range;
       this.storage.minPos = minPos;
-      this.storage.space(this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft());
+      this.storage.space(this.handler.contentRight() - this.handler.contentLeft());
       this.mainChart.flush();
       this.volChart.flush();
       this.subIndicatorChart.flush();
@@ -6286,7 +6286,7 @@ function () {
         x: point.x,
         y: point.y
       };
-      this.storage.calcCurrentTooltipDataPos(this.viewPortHandler.contentLeft(), point.x);
+      this.storage.calcCurrentTooltipDataPos(this.handler.contentLeft(), point.x);
       this.tooltipChart.flush();
     }
   }]);
@@ -6297,11 +6297,11 @@ function () {
 /**
  * 是否是有效事件
  * @param point
- * @param viewPortHandler
+ * @param handler
  * @returns {boolean}
  */
-function isValidEvent(point, viewPortHandler) {
-  return !(point.x < viewPortHandler.contentLeft() || point.x > viewPortHandler.contentRight() || point.y < viewPortHandler.contentTop() || point.y > viewPortHandler.contentBottom());
+function isValidEvent(point, handler) {
+  return !(point.x < handler.contentLeft() || point.x > handler.contentRight() || point.y < handler.contentTop() || point.y > handler.contentBottom());
 }
 /**
  * 获取事件对应画布上的点
@@ -6484,7 +6484,7 @@ function (_Event) {
           y: point.y
         };
 
-        if (!isValidEvent(this.touchStartPoint, this.viewPortHandler)) {
+        if (!isValidEvent(this.touchStartPoint, this.handler)) {
           return;
         }
 
@@ -6506,7 +6506,7 @@ function (_Event) {
         this.removeDelayActiveCross();
         this.postDelayDelayActiveCross();
       } else if (e.targetTouches.length > 1) {
-        if (!isValidEvent(this.touchStartPoint, this.viewPortHandler)) {
+        if (!isValidEvent(this.touchStartPoint, this.handler)) {
           return;
         }
 
@@ -6533,7 +6533,7 @@ function (_Event) {
   }, {
     key: "touchMove",
     value: function touchMove(e, loadMore) {
-      if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.storage.dataList.length === 0) {
+      if (!isValidEvent(this.touchStartPoint, this.handler) || this.storage.dataList.length === 0) {
         return;
       }
 
@@ -6602,7 +6602,7 @@ function (_Event) {
   }, {
     key: "touchEnd",
     value: function touchEnd(e) {
-      if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.storage.dataList.length === 0) {
+      if (!isValidEvent(this.touchStartPoint, this.handler) || this.storage.dataList.length === 0) {
         return;
       }
 
@@ -6742,7 +6742,7 @@ function (_Event) {
       if (e.button === 0) {
         var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
 
-        if (!isValidEvent(point, this.viewPortHandler)) {
+        if (!isValidEvent(point, this.handler)) {
           return;
         }
 
@@ -6769,7 +6769,7 @@ function (_Event) {
       stopEvent(e);
       var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
 
-      if (!isValidEvent(point, this.viewPortHandler)) {
+      if (!isValidEvent(point, this.handler)) {
         return;
       }
 
@@ -6809,7 +6809,7 @@ function (_Event) {
       stopEvent(e);
       var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
 
-      if (!isValidEvent(point, this.viewPortHandler)) {
+      if (!isValidEvent(point, this.handler)) {
         this.storage.crossPoint = null;
         this.tooltipChart.flush();
         return;
@@ -6848,7 +6848,7 @@ function (_Event) {
       stopEvent(e);
       var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
 
-      if (!isValidEvent(point, this.viewPortHandler)) {
+      if (!isValidEvent(point, this.handler)) {
         return;
       }
 
@@ -6883,7 +6883,7 @@ function () {
 
     this.storage = storage;
     this.graphicMarkChart = graphicMarkChart;
-    this.viewPortHandler = graphicMarkChart.viewPortHandler;
+    this.handler = graphicMarkChart.handler;
     this.yRender = graphicMarkChart.graphicMarkRender.yRender;
     this.style = style; // 标记当没有画线时鼠标是否按下
 
@@ -6925,7 +6925,7 @@ function () {
       var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
       this.storage.markerPoint = _objectSpread2({}, point);
 
-      if (!isValidEvent(point, this.viewPortHandler)) {
+      if (!isValidEvent(point, this.handler)) {
         return;
       }
 
@@ -7096,7 +7096,7 @@ function () {
             {
               if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], {
-                  x: _this3.viewPortHandler.contentRight(),
+                  x: _this3.handler.contentRight(),
                   y: xyPoints[0].y
                 }, point);
               })) {
@@ -7113,7 +7113,7 @@ function () {
               if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], {
                   x: xyPoints[0].x,
-                  y: _this3.viewPortHandler.contentBottom()
+                  y: _this3.handler.contentBottom()
                 }, point);
               })) {
                 return {
@@ -7177,19 +7177,19 @@ function () {
                 switch (key) {
                   case GraphicMarkType.PRICE_CHANNEL_LINE:
                     {
-                      linePoints = getParallelLines(xyPoints, _this3.viewPortHandler, true);
+                      linePoints = getParallelLines(xyPoints, _this3.handler, true);
                       break;
                     }
 
                   case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
                     {
-                      linePoints = getParallelLines(xyPoints, _this3.viewPortHandler);
+                      linePoints = getParallelLines(xyPoints, _this3.handler);
                       break;
                     }
 
                   case GraphicMarkType.FIBONACCI_LINE:
                     {
-                      linePoints = getFibonacciLines(xyPoints, _this3.viewPortHandler);
+                      linePoints = getFibonacciLines(xyPoints, _this3.handler);
                       break;
                     }
                 }
@@ -7289,7 +7289,7 @@ function () {
       var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
       this.storage.markerPoint = _objectSpread2({}, point);
 
-      if (!isValidEvent(point, this.viewPortHandler)) {
+      if (!isValidEvent(point, this.handler)) {
         return;
       }
 
@@ -7364,7 +7364,7 @@ function () {
       var _this5 = this;
 
       this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
-        var xPos = _this5.storage.minPos + (point.x - _this5.viewPortHandler.contentLeft()) / _this5.storage.dataSpace;
+        var xPos = _this5.storage.minPos + (point.x - _this5.handler.contentLeft()) / _this5.storage.dataSpace;
 
         var price = _this5.yRender.getValue(point.y);
 
@@ -7405,7 +7405,7 @@ function () {
       var _this6 = this;
 
       this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
-        var xPos = _this6.storage.minPos + (point.x - _this6.viewPortHandler.contentLeft()) / _this6.storage.dataSpace;
+        var xPos = _this6.storage.minPos + (point.x - _this6.handler.contentLeft()) / _this6.storage.dataSpace;
 
         var price = _this6.yRender.getValue(point.y);
 
@@ -7472,7 +7472,7 @@ function () {
       var _this7 = this;
 
       this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
-        var xPos = _this7.storage.minPos + (point.x - _this7.viewPortHandler.contentLeft()) / _this7.storage.dataSpace;
+        var xPos = _this7.storage.minPos + (point.x - _this7.handler.contentLeft()) / _this7.storage.dataSpace;
 
         var price = _this7.yRender.getValue(point.y);
 
@@ -7582,7 +7582,7 @@ function () {
                 var pointIndex = this.noneMarkerMouseDownActiveData.pointIndex;
 
                 if (pointIndex !== -1) {
-                  markerData[dataIndex].points[pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
+                  markerData[dataIndex].points[pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
                   markerData[dataIndex].points[pointIndex].price = this.yRender.getValue(point.y);
                 }
 
@@ -7596,7 +7596,7 @@ function () {
 
                 if (_pointIndex !== -1) {
                   var price = this.yRender.getValue(point.y);
-                  markerData[dataIndex].points[_pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
+                  markerData[dataIndex].points[_pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
                   markerData[dataIndex].points[0].price = price;
                   markerData[dataIndex].points[1].price = price;
                 }
@@ -7610,7 +7610,7 @@ function () {
                 var _pointIndex2 = this.noneMarkerMouseDownActiveData.pointIndex;
 
                 if (_pointIndex2 !== -1) {
-                  var xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
+                  var xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
                   markerData[dataIndex].points[0].xPos = xPos;
                   markerData[dataIndex].points[1].xPos = xPos;
                   markerData[dataIndex].points[_pointIndex2].price = this.yRender.getValue(point.y);
@@ -8358,7 +8358,7 @@ function () {
     value: function setDefaultRange(range) {
       if (isNumber(range) && range >= this.storage.minRange && range <= this.storage.maxRange) {
         this.storage.range = range;
-        this.storage.space(this.tooltipChart.viewPortHandler.contentRight() - this.tooltipChart.viewPortHandler.contentLeft());
+        this.storage.space(this.tooltipChart.handler.contentRight() - this.tooltipChart.handler.contentLeft());
 
         if (this.storage.minPos + range > this.storage.dataList.length) {
           this.storage.minPos = this.storage.dataList.length - range;

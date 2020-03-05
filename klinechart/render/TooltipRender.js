@@ -10,15 +10,15 @@ import { getIndicatorPrecision } from '../internal/config'
 
 class TooltipRender extends Render {
   constructor (
-    viewPortHandler, storage, indicatorParams,
-    candleViewPortHandler, volViewPortHandler, subIndicatorViewPortHandler,
+    handler, storage, indicatorParams,
+    candleHandler, volHandler, subIndicatorHandler,
     candleYAxisRender, volYAxisRender, subIndicatorYAxisRender
   ) {
-    super(viewPortHandler, storage)
+    super(handler, storage)
     this.indicatorParams = indicatorParams
-    this.candleViewPortHandler = candleViewPortHandler
-    this.volViewPortHandler = volViewPortHandler
-    this.subIndicatorViewPortHandler = subIndicatorViewPortHandler
+    this.candleHandler = candleHandler
+    this.volHandler = volHandler
+    this.subIndicatorHandler = subIndicatorHandler
     this.candleYAxisRender = candleYAxisRender
     this.volYAxisRender = volYAxisRender
     this.subIndicatorYAxisRender = subIndicatorYAxisRender
@@ -45,10 +45,10 @@ class TooltipRender extends Render {
     const yAxisDataLabelWidth = calcTextWidth(textSize, yAxisDataLabel)
     let rectStartX
 
-    let lineStartX = this.viewPortHandler.contentLeft()
-    let lineEndX = this.viewPortHandler.contentRight()
+    let lineStartX = this.handler.contentLeft()
+    let lineEndX = this.handler.contentRight()
 
-    const centerPoint = this.viewPortHandler.getContentCenter()
+    const centerPoint = this.handler.getContentCenter()
 
     const paddingLeft = textHorizontal.paddingLeft
     const paddingRight = textHorizontal.paddingRight
@@ -67,10 +67,10 @@ class TooltipRender extends Render {
     } else {
       if (crossPoint.x > centerPoint.x) {
         // 左边
-        lineStartX = this.viewPortHandler.contentLeft() + rectWidth
-        rectStartX = this.viewPortHandler.contentLeft() + 1
+        lineStartX = this.handler.contentLeft() + rectWidth
+        rectStartX = this.handler.contentLeft() + 1
       } else {
-        lineEndX = this.viewPortHandler.contentRight() - rectWidth
+        lineEndX = this.handler.contentRight() - rectWidth
         rectStartX = lineEndX - 1
       }
     }
@@ -116,21 +116,21 @@ class TooltipRender extends Render {
     }
     const eventY = this.storage.crossPoint.y
     let top
-    if (eventY && eventY > 0 && eventY < this.candleViewPortHandler.height + this.volViewPortHandler.height + this.subIndicatorViewPortHandler.height) {
+    if (eventY && eventY > 0 && eventY < this.handler.height + this.handler.height + this.handler.height) {
       let yAxisRender
       let indicatorType
-      if (eventY > 0 && eventY < this.candleViewPortHandler.contentBottom()) {
+      if (eventY > 0 && eventY < this.handler.contentBottom()) {
         yAxisRender = this.candleYAxisRender
         indicatorType = mainIndicatorType
         top = 0
-      } else if (eventY > this.candleViewPortHandler.contentBottom() && eventY < this.candleViewPortHandler.contentBottom() + this.volViewPortHandler.height) {
+      } else if (eventY > this.candleHandler.contentBottom() && eventY < this.candleHandler.contentBottom() + this.volHandler.height) {
         yAxisRender = this.volYAxisRender
         indicatorType = IndicatorType.VOL
-        top = this.candleViewPortHandler.height
+        top = this.candleHandler.height
       } else {
         yAxisRender = this.subIndicatorYAxisRender
         indicatorType = subIndicatorType
-        top = this.candleViewPortHandler.height + this.volViewPortHandler.height
+        top = this.candleHandler.height + this.volHandler.height
       }
       const yData = yAxisRender.getValue(eventY - top)
       const precisionConfig = getIndicatorPrecision(precision.pricePrecision, precision.volumePrecision)
@@ -158,8 +158,8 @@ class TooltipRender extends Render {
       ctx.setLineDash(crossLine.dashValue)
     }
     ctx.beginPath()
-    ctx.moveTo(crossPoint.x, this.viewPortHandler.contentTop())
-    ctx.lineTo(crossPoint.x, this.viewPortHandler.contentBottom())
+    ctx.moveTo(crossPoint.x, this.handler.contentTop())
+    ctx.lineTo(crossPoint.x, this.handler.contentBottom())
     ctx.stroke()
     ctx.closePath()
     ctx.setLineDash([])
@@ -179,16 +179,16 @@ class TooltipRender extends Render {
     const borderSize = textVertical.borderSize
 
     // 保证整个x轴上的提示文字总是完全显示
-    if (xAxisLabelX < this.viewPortHandler.contentLeft() + paddingLeft + borderSize) {
-      xAxisLabelX = this.viewPortHandler.contentLeft() + paddingLeft + borderSize
-    } else if (xAxisLabelX > this.viewPortHandler.contentRight() - labelWidth - borderSize - paddingRight) {
-      xAxisLabelX = this.viewPortHandler.contentRight() - labelWidth - borderSize - paddingRight
+    if (xAxisLabelX < this.handler.contentLeft() + paddingLeft + borderSize) {
+      xAxisLabelX = this.handler.contentLeft() + paddingLeft + borderSize
+    } else if (xAxisLabelX > this.handler.contentRight() - labelWidth - borderSize - paddingRight) {
+      xAxisLabelX = this.handler.contentRight() - labelWidth - borderSize - paddingRight
     }
 
     const rectLeft = xAxisLabelX - borderSize - paddingLeft
-    const rectTop = this.viewPortHandler.contentBottom()
+    const rectTop = this.handler.contentBottom()
     const rectRight = xAxisLabelX + labelWidth + borderSize + paddingRight
-    const rectBottom = this.viewPortHandler.contentBottom() + textSize + borderSize * 2 + paddingTop + paddingBottom
+    const rectBottom = this.handler.contentBottom() + textSize + borderSize * 2 + paddingTop + paddingBottom
     ctx.fillStyle = textVertical.backgroundColor
     ctx.fillRect(rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop)
 
@@ -203,7 +203,7 @@ class TooltipRender extends Render {
     ctx.fillText(
       text,
       xAxisLabelX,
-      this.viewPortHandler.contentBottom() + borderSize + paddingTop
+      this.handler.contentBottom() + borderSize + paddingTop
     )
   }
 
@@ -236,7 +236,7 @@ class TooltipRender extends Render {
       )
     }
     if (isCandle) {
-      this.renderIndicatorLineCircle(ctx, indicatorType, this.candleViewPortHandler.contentTop(), data.values, this.candleYAxisRender, indicatorColors, tooltip.cross.display)
+      this.renderIndicatorLineCircle(ctx, indicatorType, this.candleHandler.contentTop(), data.values, this.candleYAxisRender, indicatorColors, tooltip.cross.display)
     }
   }
 
@@ -260,8 +260,8 @@ class TooltipRender extends Render {
       data, indicatorDataStyle, indicatorLineColors
     )
     const circleOffsetTop = isVolChart
-      ? this.candleViewPortHandler.height + this.volViewPortHandler.contentTop()
-      : this.candleViewPortHandler.height + this.volViewPortHandler.height + this.subIndicatorViewPortHandler.contentTop()
+      ? this.candleHandler.height + this.volHandler.contentTop()
+      : this.candleHandler.height + this.volHandler.height + this.subIndicatorHandler.contentTop()
     this.renderIndicatorLineCircle(
       ctx, indicatorType, circleOffsetTop, data.values,
       isVolChart ? this.volYAxisRender : this.subIndicatorYAxisRender,
@@ -286,7 +286,7 @@ class TooltipRender extends Render {
     const labels = baseDataStyle.labels
     ctx.textBaseline = 'top'
     ctx.font = getFont(textSize)
-    let startX = this.viewPortHandler.contentLeft() + textMarginLeft
+    let startX = this.handler.contentLeft() + textMarginLeft
     labels.forEach((label, i) => {
       const labelText = `${label}: `
       const labelWidth = calcTextWidth(textSize, labelText)
@@ -371,13 +371,13 @@ class TooltipRender extends Render {
       (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length +
       (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length
 
-    const centerPoint = this.volViewPortHandler.getContentCenter()
+    const centerPoint = this.volHandler.getContentCenter()
     let rectX
     const crossPoint = this.storage.crossPoint
     if (crossPoint && crossPoint.x < centerPoint.x) {
-      rectX = this.viewPortHandler.contentRight() - floatRectRight - floatRectWidth
+      rectX = this.handler.contentRight() - floatRectRight - floatRectWidth
     } else {
-      rectX = this.viewPortHandler.contentLeft() + floatRectLeft
+      rectX = this.handler.contentLeft() + floatRectLeft
     }
     const rectY = floatRect.top
     const radius = floatRect.borderRadius
@@ -511,7 +511,7 @@ class TooltipRender extends Render {
     const indicatorText = indicatorDataStyle.text
     const textMarginLeft = indicatorText.marginLeft
     const textMarginRight = indicatorText.marginRight
-    let labelX = this.viewPortHandler.contentLeft() + textMarginLeft
+    let labelX = this.handler.contentLeft() + textMarginLeft
     const textSize = indicatorText.size
     const textColor = indicatorDataStyle.text.color
     const lineColorSize = indicatorColors.length

@@ -162,8 +162,8 @@ class CandleRender extends IndicatorRender {
     ctx.beginPath()
     ctx.rect(
       0, 0,
-      this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft(),
-      this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop()
+      this.handler.contentRight() - this.handler.contentLeft(),
+      this.handler.contentBottom() - this.handler.contentTop()
     )
     ctx.closePath()
     ctx.clip()
@@ -223,11 +223,11 @@ class CandleRender extends IndicatorRender {
     const preLastPrice = preKLineData.close || Number.MIN_SAFE_INTEGER
     const lastPrice = this.storage.dataList[dataSize - 1].close
     let priceY = this.yAxisRender.getY(lastPrice)
-    const height = this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop()
+    const height = this.handler.contentBottom() - this.handler.contentTop()
     priceY = +(Math.max(height * 0.05, Math.min(priceY, height * 0.98))).toFixed(0)
     const color = lastPrice > preLastPrice ? lastPriceMark.increasingColor : lastPriceMark.decreasingColor
-    let lineStartX = this.viewPortHandler.contentLeft()
-    let lineEndX = this.viewPortHandler.contentRight()
+    let lineStartX = this.handler.contentLeft()
+    let lineEndX = this.handler.contentRight()
     const priceMarkText = lastPriceMark.text
     const displayText = priceMarkText.display
     if (displayText) {
@@ -281,7 +281,7 @@ class CandleRender extends IndicatorRender {
    */
   renderTimeLine (ctx, realTime) {
     const timeLinePoints = []
-    const timeLineAreaPoints = [{ x: this.viewPortHandler.contentLeft(), y: this.viewPortHandler.contentBottom() }]
+    const timeLineAreaPoints = [{ x: this.handler.contentLeft(), y: this.handler.contentBottom() }]
     const averageLinePoints = []
 
     const minPos = this.storage.minPos
@@ -296,15 +296,15 @@ class CandleRender extends IndicatorRender {
         averageLinePoints.push({ x: x, y: averageY })
       }
       if (i === minPos) {
-        timeLineAreaPoints.push({ x: this.viewPortHandler.contentLeft(), y: closeY })
+        timeLineAreaPoints.push({ x: this.handler.contentLeft(), y: closeY })
         timeLineAreaPoints.push({ x: x, y: closeY })
       } else if (i === minPos + range - 1) {
         timeLineAreaPoints.push({ x: x, y: closeY })
-        timeLineAreaPoints.push({ x: this.viewPortHandler.contentRight(), y: closeY })
-        timeLineAreaPoints.push({ x: this.viewPortHandler.contentRight(), y: this.viewPortHandler.contentBottom() })
+        timeLineAreaPoints.push({ x: this.handler.contentRight(), y: closeY })
+        timeLineAreaPoints.push({ x: this.handler.contentRight(), y: this.handler.contentBottom() })
       } else if (i === dataSize - 1) {
         timeLineAreaPoints.push({ x: x, y: closeY })
-        timeLineAreaPoints.push({ x: x, y: this.viewPortHandler.contentBottom() })
+        timeLineAreaPoints.push({ x: x, y: this.handler.contentBottom() })
       } else {
         timeLineAreaPoints.push({ x: x, y: closeY })
       }

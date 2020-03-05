@@ -4,7 +4,7 @@ import GraphicMarkRender from '../render/GraphicMarkRender'
 class GraphicMarkChart extends Chart {
   constructor (dom, style, storage, yAxisRender, precision) {
     super(dom, style)
-    this.graphicMarkRender = new GraphicMarkRender(this.viewPortHandler, storage, yAxisRender, style.marker)
+    this.graphicMarkRender = new GraphicMarkRender(this.handler, storage, yAxisRender, style.marker)
     this.precision = precision
   }
 

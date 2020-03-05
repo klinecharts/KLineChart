@@ -11,8 +11,8 @@ class IndicatorChart extends Chart {
     super(dom, style)
     this.indicatorParams = indicatorParams
     this.indicatorType = defaultIndicatorType
-    this.yAxisRender = new YAxisRender(this.viewPortHandler, storage)
-    this.chartRender = new IndicatorRender(this.viewPortHandler, storage, this.yAxisRender)
+    this.yAxisRender = new YAxisRender(this.handler, storage)
+    this.chartRender = new IndicatorRender(this.handler, storage, this.yAxisRender)
   }
 
   draw () {

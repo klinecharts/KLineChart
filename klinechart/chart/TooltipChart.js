@@ -10,8 +10,8 @@ class TooltipChart extends Chart {
     this.subIndicatorChart = subIndicatorChart
     this.storage = storage
     this.tooltipRender = new TooltipRender(
-      this.viewPortHandler, storage, indicatorParams,
-      mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler,
+      this.handler, storage, indicatorParams,
+      mainChart.handler, volChart.handler, subIndicatorChart.handler,
       mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender
     )
     this.precision = precision
@@ -46,13 +46,13 @@ class TooltipChart extends Chart {
         )
         if (this.volChart.indicatorType !== IndicatorType.NO) {
           this.tooltipRender.renderIndicatorChartTooltip(
-            this.ctx, this.mainChart.viewPortHandler.height,
+            this.ctx, this.mainChart.handler.height,
             kLineData, IndicatorType.VOL, tooltip, indicator, true, this.precision
           )
         }
         if (this.subIndicatorChart.indicatorType !== IndicatorType.NO) {
           this.tooltipRender.renderIndicatorChartTooltip(
-            this.ctx, this.mainChart.viewPortHandler.height + this.volChart.viewPortHandler.height,
+            this.ctx, this.mainChart.handler.height + this.volChart.handler.height,
             kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator, false, this.precision
           )
         }

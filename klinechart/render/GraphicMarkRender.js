@@ -12,8 +12,8 @@ import { getFont } from '../utils/draw'
 import { GraphicMarkType, GraphicMarkDrawStep } from '../internal/constants'
 
 class GraphicMarkRender extends Render {
-  constructor (viewPortHandler, storage, yRender, graphicMark) {
-    super(viewPortHandler, storage)
+  constructor (handler, storage, yRender, graphicMark) {
+    super(handler, storage)
     this.yRender = yRender
     this.graphicMark = graphicMark
   }
@@ -28,10 +28,10 @@ class GraphicMarkRender extends Render {
       (points) => {
         return [[
           {
-            x: this.viewPortHandler.contentLeft(),
+            x: this.handler.contentLeft(),
             y: points[0].y
           }, {
-            x: this.viewPortHandler.contentRight(),
+            x: this.handler.contentRight(),
             y: points[0].y
           }
         ]]
@@ -50,10 +50,10 @@ class GraphicMarkRender extends Render {
         return [[
           {
             x: points[0].x,
-            y: this.viewPortHandler.contentTop()
+            y: this.handler.contentTop()
           }, {
             x: points[0].x,
-            y: this.viewPortHandler.contentBottom()
+            y: this.handler.contentBottom()
           }
         ]]
       }
@@ -72,10 +72,10 @@ class GraphicMarkRender extends Render {
           return [[
             {
               x: points[0].x,
-              y: this.viewPortHandler.contentTop()
+              y: this.handler.contentTop()
             }, {
               x: points[0].x,
-              y: this.viewPortHandler.bottom
+              y: this.handler.bottom
             }
           ]]
         }
@@ -83,20 +83,20 @@ class GraphicMarkRender extends Render {
           points[0], points[1],
           [
             {
-              x: this.viewPortHandler.contentLeft(),
+              x: this.handler.contentLeft(),
               y: points[0].y
             }, {
-              x: this.viewPortHandler.contentRight(),
+              x: this.handler.contentRight(),
               y: points[0].y
             }
           ]
         )
         return [[
           {
-            x: this.viewPortHandler.contentLeft(),
+            x: this.handler.contentLeft(),
             y: y[0]
           }, {
-            x: this.viewPortHandler.contentRight(),
+            x: this.handler.contentRight(),
             y: y[1]
           }
         ]]
@@ -112,9 +112,9 @@ class GraphicMarkRender extends Render {
     this.renderPointMarker(
       ctx, GraphicMarkType.HORIZONTAL_RAY_LINE, checkPointOnRayLine,
       (points) => {
-        const point = { x: this.viewPortHandler.contentLeft(), y: points[0].y }
+        const point = { x: this.handler.contentLeft(), y: points[0].y }
         if (points[0].x < points[1].x) {
-          point.x = this.viewPortHandler.contentRight()
+          point.x = this.handler.contentRight()
         }
         return [[points[0], point]]
       }
@@ -129,9 +129,9 @@ class GraphicMarkRender extends Render {
     this.renderPointMarker(
       ctx, GraphicMarkType.VERTICAL_RAY_LINE, checkPointOnRayLine,
       (points) => {
-        const point = { x: points[0].x, y: this.viewPortHandler.contentTop() }
+        const point = { x: points[0].x, y: this.handler.contentTop() }
         if (points[0].y < points[1].y) {
-          point.y = this.viewPortHandler.contentBottom()
+          point.y = this.handler.contentBottom()
         }
         return [[points[0], point]]
       }
@@ -151,23 +151,23 @@ class GraphicMarkRender extends Render {
           if (points[0].y < points[1].y) {
             point = {
               x: points[0].x,
-              y: this.viewPortHandler.contentBottom()
+              y: this.handler.contentBottom()
             }
           } else {
             point = {
               x: points[0].x,
-              y: this.viewPortHandler.contentTop()
+              y: this.handler.contentTop()
             }
           }
         } else if (points[0].x > points[1].x) {
           point = {
-            x: this.viewPortHandler.contentLeft(),
-            y: getLinearY(points[0], points[1], [{ x: this.viewPortHandler.contentLeft(), y: points[0].y }])[0]
+            x: this.handler.contentLeft(),
+            y: getLinearY(points[0], points[1], [{ x: this.handler.contentLeft(), y: points[0].y }])[0]
           }
         } else {
           point = {
-            x: this.viewPortHandler.contentRight(),
-            y: getLinearY(points[0], points[1], [{ x: this.viewPortHandler.contentRight(), y: points[0].y }])[0]
+            x: this.handler.contentRight(),
+            y: getLinearY(points[0], points[1], [{ x: this.handler.contentRight(), y: points[0].y }])[0]
           }
         }
         return [[points[0], point]]
@@ -200,7 +200,7 @@ class GraphicMarkRender extends Render {
     this.renderPointMarker(
       ctx, GraphicMarkType.PRICE_LINE, checkPointOnRayLine,
       (points) => {
-        return [[points[0], { x: this.viewPortHandler.contentRight(), y: points[0].y }]]
+        return [[points[0], { x: this.handler.contentRight(), y: points[0].y }]]
       },
       true, pricePrecision
     )
@@ -214,7 +214,7 @@ class GraphicMarkRender extends Render {
     this.renderPointMarker(
       ctx, GraphicMarkType.PRICE_CHANNEL_LINE, checkPointOnStraightLine,
       (points) => {
-        return getParallelLines(points, this.viewPortHandler, true)
+        return getParallelLines(points, this.handler, true)
       }
     )
   }
@@ -227,7 +227,7 @@ class GraphicMarkRender extends Render {
     this.renderPointMarker(
       ctx, GraphicMarkType.PARALLEL_STRAIGHT_LINE, checkPointOnStraightLine,
       (points) => {
-        return getParallelLines(points, this.viewPortHandler)
+        return getParallelLines(points, this.handler)
       }
     )
   }
@@ -241,7 +241,7 @@ class GraphicMarkRender extends Render {
     this.renderPointMarker(
       ctx, GraphicMarkType.FIBONACCI_LINE, checkPointOnStraightLine,
       (points) => {
-        return getFibonacciLines(points, this.viewPortHandler)
+        return getFibonacciLines(points, this.handler)
       }, true, pricePrecision, ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']
     )
   }

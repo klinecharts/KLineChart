@@ -519,7 +519,7 @@ class RootChart {
   setDefaultRange (range) {
     if (isNumber(range) && range >= this.storage.minRange && range <= this.storage.maxRange) {
       this.storage.range = range
-      this.storage.space(this.tooltipChart.viewPortHandler.contentRight() - this.tooltipChart.viewPortHandler.contentLeft())
+      this.storage.space(this.tooltipChart.handler.contentRight() - this.tooltipChart.handler.contentLeft())
       if (this.storage.minPos + range > this.storage.dataList.length) {
         this.storage.minPos = this.storage.dataList.length - range
         if (this.storage.minPos < 0) {

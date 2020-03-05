@@ -11,7 +11,7 @@ class GraphicMarkEvent {
   constructor (storage, graphicMarkChart, style) {
     this.storage = storage
     this.graphicMarkChart = graphicMarkChart
-    this.viewPortHandler = graphicMarkChart.viewPortHandler
+    this.handler = graphicMarkChart.handler
     this.yRender = graphicMarkChart.graphicMarkRender.yRender
     this.style = style
     // 标记当没有画线时鼠标是否按下
@@ -48,7 +48,7 @@ class GraphicMarkEvent {
   mouseDown (e) {
     const point = getCanvasPoint(e, this.graphicMarkChart.canvasDom)
     this.storage.markerPoint = { ...point }
-    if (!isValidEvent(point, this.viewPortHandler)) {
+    if (!isValidEvent(point, this.handler)) {
       return
     }
     const graphicMarkType = this.storage.graphicMarkType
@@ -182,7 +182,7 @@ class GraphicMarkEvent {
         case GraphicMarkType.PRICE_LINE: {
           if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnStraightLine(
-              xyPoints[0], { x: this.viewPortHandler.contentRight(), y: xyPoints[0].y }, point
+              xyPoints[0], { x: this.handler.contentRight(), y: xyPoints[0].y }, point
             )
           })) {
             return
@@ -192,7 +192,7 @@ class GraphicMarkEvent {
         case GraphicMarkType.VERTICAL_STRAIGHT_LINE: {
           if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnStraightLine(
-              xyPoints[0], { x: xyPoints[0].x, y: this.viewPortHandler.contentBottom() }, point
+              xyPoints[0], { x: xyPoints[0].x, y: this.handler.contentBottom() }, point
             )
           })) {
             return
@@ -234,15 +234,15 @@ class GraphicMarkEvent {
             let linePoints = []
             switch (key) {
               case GraphicMarkType.PRICE_CHANNEL_LINE: {
-                linePoints = getParallelLines(xyPoints, this.viewPortHandler, true)
+                linePoints = getParallelLines(xyPoints, this.handler, true)
                 break
               }
               case GraphicMarkType.PARALLEL_STRAIGHT_LINE: {
-                linePoints = getParallelLines(xyPoints, this.viewPortHandler)
+                linePoints = getParallelLines(xyPoints, this.handler)
                 break
               }
               case GraphicMarkType.FIBONACCI_LINE: {
-                linePoints = getFibonacciLines(xyPoints, this.viewPortHandler)
+                linePoints = getFibonacciLines(xyPoints, this.handler)
                 break
               }
             }
@@ -311,7 +311,7 @@ class GraphicMarkEvent {
   mouseMove (e) {
     const point = getCanvasPoint(e, this.graphicMarkChart.canvasDom)
     this.storage.markerPoint = { ...point }
-    if (!isValidEvent(point, this.viewPortHandler)) {
+    if (!isValidEvent(point, this.handler)) {
       return
     }
     if (!this.waitingForMouseMoveAnimationFrame) {
@@ -366,7 +366,7 @@ class GraphicMarkEvent {
    */
   onePointMarkerMouseMove (point, markKey) {
     this.markerMouseMove(point, markKey, (markerData, lastLineData) => {
-      const xPos = this.storage.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace
+      const xPos = this.storage.minPos + (point.x - this.handler.contentLeft()) / this.storage.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_DONE: {
@@ -392,7 +392,7 @@ class GraphicMarkEvent {
    */
   twoPointMarkerMouseMove (point, markKey, stepTwo) {
     this.markerMouseMove(point, markKey, (markerData, lastLineData) => {
-      const xPos = this.storage.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace
+      const xPos = this.storage.minPos + (point.x - this.handler.contentLeft()) / this.storage.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_DONE: {
@@ -425,7 +425,7 @@ class GraphicMarkEvent {
    */
   threePointMarkerMouseMove (point, markKey, stepTwo) {
     this.markerMouseMove(point, markKey, (markerData, lastLineData) => {
-      const xPos = this.storage.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace
+      const xPos = this.storage.minPos + (point.x - this.handler.contentLeft()) / this.storage.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_DONE: {
@@ -491,7 +491,7 @@ class GraphicMarkEvent {
           case GraphicMarkType.FIBONACCI_LINE: {
             const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
-              markerData[dataIndex].points[pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
+              markerData[dataIndex].points[pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
               markerData[dataIndex].points[pointIndex].price = this.yRender.getValue(point.y)
             }
             break
@@ -501,7 +501,7 @@ class GraphicMarkEvent {
             const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
               const price = this.yRender.getValue(point.y)
-              markerData[dataIndex].points[pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
+              markerData[dataIndex].points[pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
               markerData[dataIndex].points[0].price = price
               markerData[dataIndex].points[1].price = price
             }
@@ -511,7 +511,7 @@ class GraphicMarkEvent {
           case GraphicMarkType.VERTICAL_SEGMENT_LINE: {
             const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
-              const xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
+              const xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
               markerData[dataIndex].points[0].xPos = xPos
               markerData[dataIndex].points[1].xPos = xPos
               markerData[dataIndex].points[pointIndex].price = this.yRender.getValue(point.y)

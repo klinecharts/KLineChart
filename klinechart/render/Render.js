@@ -1,6 +1,6 @@
 class Render {
-  constructor (viewPortHandler, storage) {
-    this.viewPortHandler = viewPortHandler
+  constructor (handler, storage) {
+    this.handler = handler
     this.storage = storage
   }
 }

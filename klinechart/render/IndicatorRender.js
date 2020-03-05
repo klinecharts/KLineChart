@@ -3,8 +3,8 @@ import { DATA_MARGIN_SPACE_RATE } from '../internal/Storage'
 import { IndicatorType } from '../internal/constants'
 
 class IndicatorRender extends Render {
-  constructor (viewPortHandler, storage, yAxisRender) {
-    super(viewPortHandler, storage)
+  constructor (handler, storage, yAxisRender) {
+    super(handler, storage)
     this.yAxisRender = yAxisRender
   }
 
@@ -18,8 +18,8 @@ class IndicatorRender extends Render {
     ctx.strokeStyle = xAxis.line.color
     ctx.lineWidth = lineSize
     ctx.beginPath()
-    ctx.moveTo(this.viewPortHandler.contentLeft(), this.viewPortHandler.contentTop() + lineSize)
-    ctx.lineTo(this.viewPortHandler.contentRight(), this.viewPortHandler.contentTop() + lineSize)
+    ctx.moveTo(this.handler.contentLeft(), this.handler.contentTop() + lineSize)
+    ctx.lineTo(this.handler.contentRight(), this.handler.contentTop() + lineSize)
     ctx.stroke()
     ctx.closePath()
   }
@@ -307,7 +307,7 @@ class IndicatorRender extends Render {
    * 绘制图形
    */
   renderGraphics (ctx, onRendering, onRenderEnd) {
-    let startX = this.viewPortHandler.contentLeft()
+    let startX = this.handler.contentLeft()
     const dataSpace = this.storage.dataSpace * (1 - DATA_MARGIN_SPACE_RATE)
     const halfBarSpace = dataSpace / 2
     const lastPos = Math.min(this.storage.dataList.length, this.storage.minPos + this.storage.range)

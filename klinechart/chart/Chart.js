@@ -1,10 +1,10 @@
-import ViewPortHandler from '../internal/ViewPortHandler'
+import Handler from '../internal/Handler'
 import { getPixelRatio, requestAnimationFrame, cancelAnimationFrame } from '../utils/draw'
 
 class Chart {
   constructor (dom, style) {
     this.style = style
-    this.viewPortHandler = new ViewPortHandler()
+    this.handler = new Handler()
     this.init(dom)
   }
 
@@ -42,7 +42,7 @@ class Chart {
     this.canvasDom.style.height = `${height}px`
     this.canvasDom.width = canvasWidth
     this.canvasDom.height = canvasHeight
-    this.viewPortHandler.setDimensions(width, height, offsetLeft, offsetRight, offsetTop, offsetBottom)
+    this.handler.setDimensions(width, height, offsetLeft, offsetRight, offsetTop, offsetBottom)
     this.ctx.scale(pixelRatio, pixelRatio)
     this.ctx.translate(-0.5, -0.5)
     this.draw()
@@ -52,7 +52,7 @@ class Chart {
    * 清空画布
    */
   clearCanvas () {
-    this.ctx.clearRect(0, 0, this.viewPortHandler.width, this.viewPortHandler.height)
+    this.ctx.clearRect(0, 0, this.handler.width, this.handler.height)
   }
 
   /**

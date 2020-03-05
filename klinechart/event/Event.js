@@ -9,7 +9,7 @@ class Event {
     this.subIndicatorChart = subIndicatorChart
     this.xAxisChart = xAxisChart
     this.storage = storage
-    this.viewPortHandler = tooltipChart.viewPortHandler
+    this.handler = tooltipChart.handler
   }
 
   /**
@@ -111,7 +111,7 @@ class Event {
     }
     this.storage.range = range
     this.storage.minPos = minPos
-    this.storage.space(this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft())
+    this.storage.space(this.handler.contentRight() - this.handler.contentLeft())
     this.mainChart.flush()
     this.volChart.flush()
     this.subIndicatorChart.flush()
@@ -125,7 +125,7 @@ class Event {
    */
   cross (point) {
     this.storage.crossPoint = { x: point.x, y: point.y }
-    this.storage.calcCurrentTooltipDataPos(this.viewPortHandler.contentLeft(), point.x)
+    this.storage.calcCurrentTooltipDataPos(this.handler.contentLeft(), point.x)
     this.tooltipChart.flush()
   }
 }

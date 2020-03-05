@@ -17,13 +17,13 @@ class YAxisRender extends AxisRender {
     }
     ctx.strokeStyle = yAxis.line.color
     ctx.lineWidth = yAxis.line.size
-    let x = this.viewPortHandler.contentLeft()
+    let x = this.handler.contentLeft()
     if (yAxis.position === YAxisPosition.LEFT) {
-      x = this.viewPortHandler.contentRight()
+      x = this.handler.contentRight()
     }
     ctx.beginPath()
-    ctx.moveTo(x, this.viewPortHandler.contentTop())
-    ctx.lineTo(x, this.viewPortHandler.contentBottom())
+    ctx.moveTo(x, this.handler.contentTop())
+    ctx.lineTo(x, this.handler.contentBottom())
     ctx.stroke()
     ctx.closePath()
   }
@@ -41,11 +41,11 @@ class YAxisRender extends AxisRender {
     ctx.lineWidth = yAxis.line.size
     ctx.beginPath()
     if (yAxis.position === YAxisPosition.LEFT) {
-      ctx.moveTo(this.viewPortHandler.contentLeft(), this.viewPortHandler.contentTop())
-      ctx.lineTo(this.viewPortHandler.contentLeft(), this.viewPortHandler.contentBottom())
+      ctx.moveTo(this.handler.contentLeft(), this.handler.contentTop())
+      ctx.lineTo(this.handler.contentLeft(), this.handler.contentBottom())
     } else {
-      ctx.moveTo(this.viewPortHandler.contentRight(), this.viewPortHandler.contentTop())
-      ctx.lineTo(this.viewPortHandler.contentRight(), this.viewPortHandler.contentBottom())
+      ctx.moveTo(this.handler.contentRight(), this.handler.contentTop())
+      ctx.lineTo(this.handler.contentRight(), this.handler.contentBottom())
     }
     ctx.stroke()
     ctx.closePath()
@@ -70,29 +70,29 @@ class YAxisRender extends AxisRender {
     if (yAxis.position === YAxisPosition.LEFT) {
       if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
         if (tickLineDisplay) {
-          initX = this.viewPortHandler.contentLeft() - tickLineLength - tickTextMargin
+          initX = this.handler.contentLeft() - tickLineLength - tickTextMargin
         } else {
-          initX = this.viewPortHandler.contentLeft() - tickTextMargin
+          initX = this.handler.contentLeft() - tickTextMargin
         }
       } else {
         if (tickLineDisplay) {
-          initX = this.viewPortHandler.contentLeft() + tickLineLength + tickTextMargin
+          initX = this.handler.contentLeft() + tickLineLength + tickTextMargin
         } else {
-          initX = this.viewPortHandler.contentLeft() + tickTextMargin
+          initX = this.handler.contentLeft() + tickTextMargin
         }
       }
     } else {
       if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
         if (tickLineDisplay) {
-          initX = this.viewPortHandler.contentRight() + tickLineLength + tickTextMargin
+          initX = this.handler.contentRight() + tickLineLength + tickTextMargin
         } else {
-          initX = this.viewPortHandler.contentRight() + tickTextMargin
+          initX = this.handler.contentRight() + tickTextMargin
         }
       } else {
         if (tickLineDisplay) {
-          initX = this.viewPortHandler.contentRight() - tickLineLength - tickTextMargin
+          initX = this.handler.contentRight() - tickLineLength - tickTextMargin
         } else {
-          initX = this.viewPortHandler.contentRight() - tickTextMargin
+          initX = this.handler.contentRight() - tickTextMargin
         }
       }
     }
@@ -139,8 +139,8 @@ class YAxisRender extends AxisRender {
       const y = this.getY(this.values[i])
       if (this.checkShowLabel(y, labelHeight)) {
         ctx.beginPath()
-        ctx.moveTo(this.viewPortHandler.contentLeft(), y)
-        ctx.lineTo(this.viewPortHandler.contentRight(), y)
+        ctx.moveTo(this.handler.contentLeft(), y)
+        ctx.lineTo(this.handler.contentRight(), y)
         ctx.stroke()
         ctx.closePath()
       }
@@ -170,14 +170,14 @@ class YAxisRender extends AxisRender {
     let endX
     const tickTextPosition = tickText.position
     if (yAxis.position === YAxisPosition.LEFT) {
-      startX = this.viewPortHandler.contentLeft()
+      startX = this.handler.contentLeft()
       if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
         endX = startX - tickLineLength
       } else {
         endX = startX + tickLineLength
       }
     } else {
-      startX = this.viewPortHandler.contentRight()
+      startX = this.handler.contentRight()
       if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
         endX = startX + tickLineLength
       } else {
@@ -202,7 +202,7 @@ class YAxisRender extends AxisRender {
    * @param labelHeight
    */
   checkShowLabel (y, labelHeight) {
-    return y > this.viewPortHandler.contentTop() + labelHeight && y < this.viewPortHandler.contentBottom() - labelHeight
+    return y > this.handler.contentTop() + labelHeight && y < this.handler.contentBottom() - labelHeight
   }
 
   calcAxisMinMax (indicatorType, isMainChart = false, isRealTimeChart = false, isShowAverageLine = false) {
@@ -280,11 +280,11 @@ class YAxisRender extends AxisRender {
   }
 
   getY (value) {
-    return (1.0 - (value - this.axisMinimum) / this.axisRange) * (this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop())
+    return (1.0 - (value - this.axisMinimum) / this.axisRange) * (this.handler.contentBottom() - this.handler.contentTop())
   }
 
   getValue (y) {
-    return (1.0 - y / (this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop())) * this.axisRange + this.axisMinimum
+    return (1.0 - y / (this.handler.contentBottom() - this.handler.contentTop())) * this.axisRange + this.axisMinimum
   }
 }
 
