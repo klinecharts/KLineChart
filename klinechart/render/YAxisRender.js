@@ -1,8 +1,8 @@
 import AxisRender from './AxisRender'
-import { formatValue } from '../utils/dataUtils'
+import { formatValue } from '../utils/data'
 import { LineStyle, YAxisPosition, YAxisTextPosition, IndicatorType } from '../internal/constants'
-import { formatBigNumber } from '../utils/numberUtils'
-import { getFont } from '../utils/drawUtils'
+import { formatBigNumber } from '../utils/number'
+import { getFont } from '../utils/draw'
 
 class YAxisRender extends AxisRender {
   /**

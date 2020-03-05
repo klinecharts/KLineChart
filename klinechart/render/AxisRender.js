@@ -1,5 +1,5 @@
 import Render from './Render'
-import { nice, getIntervalPrecision, round } from '../utils/numberUtils'
+import { nice, getIntervalPrecision, round } from '../utils/number'
 
 class AxisRender extends Render {
   constructor (viewPortHandler, dataProvider) {

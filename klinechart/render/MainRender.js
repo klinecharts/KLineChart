@@ -1,6 +1,6 @@
 import IndicatorRender from './IndicatorRender'
-import { calcTextWidth, getFont } from '../utils/drawUtils'
-import { formatPrecision } from '../utils/numberUtils'
+import { calcTextWidth, getFont } from '../utils/draw'
+import { formatPrecision } from '../utils/number'
 import { CandleStyle, LineStyle } from '../internal/constants'
 
 class MainRender extends IndicatorRender {

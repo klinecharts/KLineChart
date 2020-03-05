@@ -97,7 +97,7 @@ const TooltipMainChartTextDisplayType = {
  * 标记图形类型
  * @type {{STRAIGHT_LINE: string, HORIZONTAL_SEGMENT_LINE: string, FIBONACCI_LINE: string, HORIZONTAL_STRAIGHT_LINE: string, PRICE_CHANNEL_LINE: string, VERTICAL_RAY_LINE: string, VERTICAL_SEGMENT_LINE: string, PARALLEL_STRAIGHT_LINE: string, HORIZONTAL_RAY_LINE: string, VERTICAL_STRAIGHT_LINE: string, PRICE_LINE: string, RAY_LINE: string, NONE: string, SEGMENT_LINE: string}}
  */
-const MarkerType = {
+const GraphicMarkType = {
   NONE: 'none',
   HORIZONTAL_STRAIGHT_LINE: 'horizontalStraightLine',
   VERTICAL_STRAIGHT_LINE: 'verticalStraightLine',
@@ -118,7 +118,7 @@ const MarkerType = {
  * 标记图形绘制步骤
  * @type {{STEP_3: *, STEP_DONE: *, STEP_1: *, STEP_2: *}}
  */
-const MarkerDrawStep = {
+const GraphicMarkDrawStep = {
   STEP_1: 'step_1',
   STEP_2: 'step_2',
   STEP_3: 'step_3',
@@ -128,5 +128,5 @@ const MarkerDrawStep = {
 export {
   IndicatorType, LineStyle, YAxisPosition, YAxisTextPosition, ChartType,
   CandleStyle, TooltipTextDisplayRule, TooltipMainChartTextDisplayType,
-  MarkerType, MarkerDrawStep
+  GraphicMarkType, GraphicMarkDrawStep
 }

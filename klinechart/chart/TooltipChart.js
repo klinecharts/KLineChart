@@ -1,6 +1,6 @@
 import Chart from './Chart'
 import TooltipRender from '../render/TooltipRender'
-import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType, TooltipTextDisplayRule, MarkerType } from '../internal/constants'
+import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType, TooltipTextDisplayRule, GraphicMarkType } from '../internal/constants'
 
 class TooltipChart extends Chart {
   constructor (dom, style, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider, indicatorParams, precision) {
@@ -18,10 +18,10 @@ class TooltipChart extends Chart {
   }
 
   draw () {
-    const kLineData = this.dataProvider.dataList[this.dataProvider.currentTooltipDataPos] || {}
+    const kLineData = this.dataProvider.dataList[this.dataProvider.tooltipDataPos] || {}
     const tooltip = this.style.tooltip
     // 如果不是绘图才显示十字线
-    if (this.dataProvider.currentMarkerType === MarkerType.NONE && !this.dataProvider.isDragMarker) {
+    if (this.dataProvider.graphicMarkType === GraphicMarkType.NONE && !this.dataProvider.isDragMarker) {
       this.tooltipRender.renderCrossHorizontalLine(
         this.ctx,
         this.mainChart.indicatorType,

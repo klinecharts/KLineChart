@@ -1,4 +1,4 @@
-import { isNumber } from './dataUtils'
+import { isNumber } from './data'
 
 export function nice (value) {
   const exponent = Math.floor(Math.log(value) / Math.log(10.0))

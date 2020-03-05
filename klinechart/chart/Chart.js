@@ -1,5 +1,5 @@
 import ViewPortHandler from '../internal/ViewPortHandler'
-import { getPixelRatio, requestAnimationFrame, cancelAnimationFrame } from '../utils/drawUtils'
+import { getPixelRatio, requestAnimationFrame, cancelAnimationFrame } from '../utils/draw'
 
 class Chart {
   constructor (dom, style) {

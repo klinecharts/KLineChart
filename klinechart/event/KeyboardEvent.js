@@ -23,14 +23,14 @@ class KeyboardEvent extends Event {
         // 左移
         if (this.dataProvider.minPos > 0) {
           this.dataProvider.minPos--
-          this.dataProvider.currentTooltipDataPos--
+          this.dataProvider.tooltipDataPos--
           shouldFlush = true
         }
       } else {
         // 右移
         if (this.dataProvider.minPos < this.dataProvider.dataList.length - this.dataProvider.range) {
           this.dataProvider.minPos++
-          this.dataProvider.currentTooltipDataPos++
+          this.dataProvider.tooltipDataPos++
           shouldFlush = true
         }
       }

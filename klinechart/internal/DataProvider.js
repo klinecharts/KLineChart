@@ -1,5 +1,5 @@
-import { isArray, isObject } from '../utils/dataUtils'
-import { MarkerType } from '../internal/constants'
+import { isArray, isObject } from '../utils/data'
+import { GraphicMarkType } from '../internal/constants'
 
 export const DATA_MARGIN_SPACE_RATE = 0.26
 
@@ -18,12 +18,12 @@ class DataProvider {
     // 每条数据的所占的空间
     this.dataSpace = 0
     // 当前提示数据的位置
-    this.currentTooltipDataPos = 0
+    this.tooltipDataPos = 0
     // 十字光标中心点位置坐标
     this.crossPoint = null
 
     // 当前绘制的标记图形的类型
-    this.currentMarkerType = MarkerType.NONE
+    this.graphicMarkType = GraphicMarkType.NONE
     // 标记图形点
     this.markerPoint = null
     // 是否在拖拽标记图形
@@ -91,9 +91,9 @@ class DataProvider {
   moveToLast (tooltipDataMoveCount) {
     if (this.dataList.length > this.range) {
       this.minPos = this.dataList.length - this.range
-      this.currentTooltipDataPos += tooltipDataMoveCount
-      if (this.currentTooltipDataPos > this.dataList.length - 1) {
-        this.currentTooltipDataPos = this.dataList.length - 1
+      this.tooltipDataPos += tooltipDataMoveCount
+      if (this.tooltipDataPos > this.dataList.length - 1) {
+        this.tooltipDataPos = this.dataList.length - 1
       }
     } else {
       this.minPos = 0
@@ -102,11 +102,11 @@ class DataProvider {
 
   calcCurrentTooltipDataPos (offsetLeft, x) {
     const range = +Math.ceil((x - offsetLeft) / this.dataSpace).toFixed(0)
-    this.currentTooltipDataPos = this.minPos + range - 1
-    if (this.currentTooltipDataPos > this.dataList.length - 1) {
-      this.currentTooltipDataPos = this.dataList.length - 1
+    this.tooltipDataPos = this.minPos + range - 1
+    if (this.tooltipDataPos > this.dataList.length - 1) {
+      this.tooltipDataPos = this.dataList.length - 1
     }
-    const sub = this.currentTooltipDataPos - this.minPos
+    const sub = this.tooltipDataPos - this.minPos
     this.crossPoint.x = offsetLeft + this.dataSpace * sub + this.dataSpace * (1.0 - DATA_MARGIN_SPACE_RATE) / 2
   }
 }

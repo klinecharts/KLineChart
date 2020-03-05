@@ -1,23 +1,23 @@
 import MainChart from './MainChart'
-import MarkerChart from './MarkerChart'
+import GraphicMarkChart from './GraphicMarkChart'
 import IndicatorChart from './IndicatorChart'
 import TooltipChart from './TooltipChart'
 import XAxisChart from './XAxisChart'
-import { isArray, isFunction, isNumber, isBoolean, merge, formatValue, isObject } from '../utils/dataUtils'
-import { formatDate } from '../utils/dateUtils'
-import { calcTextWidth, requestAnimationFrame } from '../utils/drawUtils'
+import { isArray, isFunction, isNumber, isBoolean, merge, formatValue, isObject } from '../utils/data'
+import { formatDate } from '../utils/date'
+import { calcTextWidth, requestAnimationFrame } from '../utils/draw'
 import calcIndicator from '../internal/calcIndicator'
 
 import DataProvider from '../internal/DataProvider'
 
 import { getDefaultStyle, getDefaultIndicatorParams, getDefaultPrecision, getDefaultPeriod } from '../internal/config'
-import { isMobile } from '../utils/platformUtils'
+import { isMobile } from '../utils/platform'
 import TouchEvent from '../event/TouchEvent'
 import MouseEvent from '../event/MouseEvent'
-import MarkerEvent from '../event/MarkerEvent'
+import GraphicMarkEvent from '../event/GraphicMarkEvent'
 import KeyboardEvent from '../event/KeyboardEvent'
 
-import { IndicatorType, YAxisPosition, YAxisTextPosition, MarkerType, ChartType } from '../internal/constants'
+import { IndicatorType, YAxisPosition, YAxisTextPosition, GraphicMarkType, ChartType } from '../internal/constants'
 
 import { DEV } from '../utils/env'
 
@@ -38,7 +38,7 @@ class RootChart {
     this.dataProvider = new DataProvider()
     this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider, this.period)
     this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams, this.precision)
-    this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender, this.precision)
+    this.graphicMarkChart = new GraphicMarkChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender, this.precision)
     this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL)
     this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams)
     this.tooltipChart = new TooltipChart(
@@ -78,24 +78,24 @@ class RootChart {
       const motionEvent = new MouseEvent(
         this.tooltipChart, this.mainChart,
         this.volIndicatorChart, this.subIndicatorChart,
-        this.xAxisChart, this.markerChart, this.dataProvider
+        this.xAxisChart, this.graphicMarkChart, this.dataProvider
       )
-      const markerEvent = new MarkerEvent(this.dataProvider, this.markerChart, this.style)
+      const graphicMarkEvent = new GraphicMarkEvent(this.dataProvider, this.graphicMarkChart, this.style)
       const keyboardEvent = new KeyboardEvent(
         this.mainChart, this.volIndicatorChart, this.subIndicatorChart,
-        this.tooltipChart, this.markerChart, this.xAxisChart, this.dataProvider
+        this.tooltipChart, this.graphicMarkChart, this.xAxisChart, this.dataProvider
       )
       this.dom.addEventListener('mousedown', (e) => {
         motionEvent.mouseDown(e)
-        markerEvent.mouseDown(e)
+        graphicMarkEvent.mouseDown(e)
       }, false)
       this.dom.addEventListener('mouseup', (e) => {
         motionEvent.mouseUp(e)
-        markerEvent.mouseUp(e)
+        graphicMarkEvent.mouseUp(e)
       }, false)
       this.dom.addEventListener('mousemove', (e) => {
         motionEvent.mouseMove(e, loadMore)
-        markerEvent.mouseMove(e)
+        graphicMarkEvent.mouseMove(e)
       }, false)
       this.dom.addEventListener('mouseleave', (e) => { motionEvent.mouseLeave(e) }, false)
       this.dom.addEventListener('wheel', (e) => { motionEvent.mouseWheel(e) }, false)
@@ -154,7 +154,7 @@ class RootChart {
     this.xAxisChart.setChartDimensions(0, domWidth, domHeight, offsetLeft, offsetRight, 0, xAxisHeight)
     const mainChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight
     this.mainChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight)
-    this.markerChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight)
+    this.graphicMarkChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight)
     chartTop += mainChartHeight
     this.volIndicatorChart.setChartDimensions(chartTop, domWidth, volChartHeight, offsetLeft, offsetRight)
     chartTop += volChartHeight
@@ -472,26 +472,21 @@ class RootChart {
    */
   setSession (session) {
     // 0900-1630,1015-1130,2100-0100|0900-1400:234;6
-    const splitArray = session.split(';')
-    switch (splitArray.length) {
+    /^[[012][0-9]{3}-[012][0-9]{3},]*[:[0-6]{1,6}]?[|[[012][0-9]{3}-[012][0-9]{3},]*[:[0-6]{1,6}]?]*[;[0-6]]?$/.test('0900-1630,1015-1130,2100-0100|0900-1400:234;6')
+    const rootSplitArray = session.split(';')
+    switch (rootSplitArray.length) {
       case 1: {
         break
       }
       case 2: {
-        try {
-          const weekDay = parseInt(splitArray[1])
-          if (weekDay < 0 || weekDay > 6) {
-            if (DEV) {
-              console.warn('The trading day is set incorrectly for the first trading day of the week. The parameters should be 0, 1, 2, 3, 4, 5, 6.')
-            }
-            return
-          }
-        } catch (e) {
+        const weekStartTradingDay = rootSplitArray[1]
+        if (!(/^[0-6]$/.test(weekStartTradingDay))) {
           if (DEV) {
             console.warn('The trading day is set incorrectly for the first trading day of the week. The parameters should be 0, 1, 2, 3, 4, 5, 6.')
           }
+          return
         }
-
+        console.log(1)
         break
       }
       default: {
@@ -604,20 +599,20 @@ class RootChart {
 
   /**
    * 绘制标记图形
-   * @param markerType
+   * @param type
    */
-  drawMarker (markerType) {
+  drawMarker (type) {
     // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
-    const currentMarkerType = this.dataProvider.currentMarkerType
-    if (currentMarkerType !== markerType) {
-      const markerData = this.dataProvider.markerDatas[currentMarkerType]
+    const graphicMarkType = this.dataProvider.graphicMarkType
+    if (graphicMarkType !== type) {
+      const markerData = this.dataProvider.markerDatas[graphicMarkType]
       if (markerData && isArray(markerData)) {
         markerData.splice(markerData.length - 1, 1)
-        this.dataProvider.markerDatas[currentMarkerType] = markerData
+        this.dataProvider.markerDatas[graphicMarkType] = markerData
         this.tooltipChart.flush()
       }
     }
-    this.dataProvider.currentMarkerType = markerType
+    this.dataProvider.graphicMarkType = type
   }
 
   /**
@@ -628,8 +623,8 @@ class RootChart {
     Object.keys(markerDatas).forEach(key => {
       this.dataProvider.markerDatas[key] = []
     })
-    this.dataProvider.currentMarkerType = MarkerType.NONE
-    this.markerChart.flush()
+    this.dataProvider.graphicMarkType = GraphicMarkType.NONE
+    this.graphicMarkChart.flush()
   }
 
   /**
@@ -671,7 +666,7 @@ class RootChart {
       ctx.drawImage(indicatorCanvas, 0, mainCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height)
     }
     if (!excludes || excludes.indexOf('marker') < 0) {
-      const markerCanvas = this.markerChart.canvasDom
+      const markerCanvas = this.graphicMarkChart.canvasDom
       ctx.drawImage(markerCanvas, 0, 0, markerCanvas.width, markerCanvas.height)
     }
     if (!excludes || excludes.indexOf('tooltip') < 0) {

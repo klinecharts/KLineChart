@@ -1,11 +1,11 @@
 import Render from './Render'
 
-import { calcTextWidth, getFont } from '../utils/drawUtils'
-import { isFunction, formatValue, isArray } from '../utils/dataUtils'
-import { formatDate } from '../utils/dateUtils'
-import { formatPrecision } from '../utils/numberUtils'
+import { calcTextWidth, getFont } from '../utils/draw'
+import { isFunction, formatValue, isArray } from '../utils/data'
+import { formatDate } from '../utils/date'
+import { formatPrecision } from '../utils/number'
 
-import { IndicatorType, LineStyle, MarkerType, TooltipMainChartTextDisplayType } from '../internal/constants'
+import { IndicatorType, LineStyle, GraphicMarkType, TooltipMainChartTextDisplayType } from '../internal/constants'
 import { getIndicatorPrecision } from '../internal/config'
 
 class TooltipRender extends Render {
@@ -543,7 +543,7 @@ class TooltipRender extends Render {
   renderIndicatorLineCircle (ctx, indicatorType, offsetTop, values = [], yAxisRender, indicatorColors = [], isShowCross) {
     const crossPoint = this.dataProvider.crossPoint
     if (!crossPoint ||
-      this.dataProvider.currentMarkerType !== MarkerType.NONE ||
+      this.dataProvider.graphicMarkType !== GraphicMarkType.NONE ||
       indicatorType === IndicatorType.SAR ||
       !isShowCross ||
       this.dataProvider.isDragMarker) {

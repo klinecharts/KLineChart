@@ -3,23 +3,23 @@ import {
   checkPointOnCircle, checkPointOnStraightLine,
   checkPointOnRayLine, checkPointOnSegmentLine,
   getParallelLines, getFibonacciLines
-} from '../utils/markerMapUtils'
-import { isFunction } from '../utils/dataUtils'
-import { MarkerDrawStep, MarkerType } from '../internal/constants'
+} from '../utils/graphicMark'
+import { isFunction } from '../utils/data'
+import { GraphicMarkDrawStep, GraphicMarkType } from '../internal/constants'
 
-class MarkerEvent {
-  constructor (dataProvider, markerChart, style) {
+class GraphicMarkEvent {
+  constructor (dataProvider, graphicMarkChart, style) {
     this.dataProvider = dataProvider
-    this.markerChart = markerChart
-    this.viewPortHandler = markerChart.viewPortHandler
-    this.yRender = markerChart.markerRender.yRender
+    this.graphicMarkChart = graphicMarkChart
+    this.viewPortHandler = graphicMarkChart.viewPortHandler
+    this.yRender = graphicMarkChart.graphicMarkRender.yRender
     this.style = style
     // 标记当没有画线时鼠标是否按下
     this.noneMarkerMouseDownFlag = false
 
     // 用来记录当没有绘制标记图形时，鼠标操作后落点线上的数据
     this.noneMarkerMouseDownActiveData = {
-      markerKey: null,
+      markKey: null,
       dataIndex: -1,
       onLine: false,
       onCircle: false,
@@ -33,7 +33,7 @@ class MarkerEvent {
   mouseUp () {
     this.noneMarkerMouseDownFlag = false
     this.noneMarkerMouseDownActiveData = {
-      markerKey: null,
+      markKey: null,
       dataIndex: -1,
       onLine: false,
       onCircle: false,
@@ -46,33 +46,33 @@ class MarkerEvent {
    * @param e
    */
   mouseDown (e) {
-    const point = getCanvasPoint(e, this.markerChart.canvasDom)
+    const point = getCanvasPoint(e, this.graphicMarkChart.canvasDom)
     this.dataProvider.markerPoint = { ...point }
     if (!isValidEvent(point, this.viewPortHandler)) {
       return
     }
-    const markerType = this.dataProvider.currentMarkerType
-    switch (markerType) {
-      case MarkerType.HORIZONTAL_STRAIGHT_LINE:
-      case MarkerType.VERTICAL_STRAIGHT_LINE:
-      case MarkerType.STRAIGHT_LINE:
-      case MarkerType.HORIZONTAL_RAY_LINE:
-      case MarkerType.VERTICAL_RAY_LINE:
-      case MarkerType.RAY_LINE:
-      case MarkerType.HORIZONTAL_SEGMENT_LINE:
-      case MarkerType.VERTICAL_SEGMENT_LINE:
-      case MarkerType.SEGMENT_LINE:
-      case MarkerType.PRICE_LINE:
-      case MarkerType.FIBONACCI_LINE: {
-        this.twoStepMarkerMouseDown(e, markerType)
+    const graphicMarkType = this.dataProvider.graphicMarkType
+    switch (graphicMarkType) {
+      case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
+      case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
+      case GraphicMarkType.STRAIGHT_LINE:
+      case GraphicMarkType.HORIZONTAL_RAY_LINE:
+      case GraphicMarkType.VERTICAL_RAY_LINE:
+      case GraphicMarkType.RAY_LINE:
+      case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
+      case GraphicMarkType.VERTICAL_SEGMENT_LINE:
+      case GraphicMarkType.SEGMENT_LINE:
+      case GraphicMarkType.PRICE_LINE:
+      case GraphicMarkType.FIBONACCI_LINE: {
+        this.twoStepMarkerMouseDown(e, graphicMarkType)
         break
       }
-      case MarkerType.PRICE_CHANNEL_LINE:
-      case MarkerType.PARALLEL_STRAIGHT_LINE: {
-        this.threeStepMarkerMouseDown(e, markerType)
+      case GraphicMarkType.PRICE_CHANNEL_LINE:
+      case GraphicMarkType.PARALLEL_STRAIGHT_LINE: {
+        this.threeStepMarkerMouseDown(e, graphicMarkType)
         break
       }
-      case MarkerType.NONE: {
+      case GraphicMarkType.NONE: {
         this.noneMarkerMouseDown(e)
         break
       }
@@ -82,18 +82,18 @@ class MarkerEvent {
   /**
    * 两步形成的标记图形鼠标按下处理
    * @param e
-   * @param markerKey
+   * @param markKey
    */
-  twoStepMarkerMouseDown (e, markerKey) {
-    this.markerMouseDown(e, markerKey, (lastLineData) => {
+  twoStepMarkerMouseDown (e, markKey) {
+    this.markerMouseDown(e, markKey, (lastLineData) => {
       switch (lastLineData.drawStep) {
-        case MarkerDrawStep.STEP_1: {
-          lastLineData.drawStep = MarkerDrawStep.STEP_2
+        case GraphicMarkDrawStep.STEP_1: {
+          lastLineData.drawStep = GraphicMarkDrawStep.STEP_2
           break
         }
-        case MarkerDrawStep.STEP_2: {
-          lastLineData.drawStep = MarkerDrawStep.STEP_DONE
-          this.dataProvider.currentMarkerType = MarkerType.NONE
+        case GraphicMarkDrawStep.STEP_2: {
+          lastLineData.drawStep = GraphicMarkDrawStep.STEP_DONE
+          this.dataProvider.graphicMarkType = GraphicMarkType.NONE
           break
         }
       }
@@ -103,22 +103,22 @@ class MarkerEvent {
   /**
    * 两个点形成的标记图形鼠标按下事件
    * @param e
-   * @param markerKey
+   * @param markKey
    */
-  threeStepMarkerMouseDown (e, markerKey) {
-    this.markerMouseDown(e, markerKey, (lastLineData) => {
+  threeStepMarkerMouseDown (e, markKey) {
+    this.markerMouseDown(e, markKey, (lastLineData) => {
       switch (lastLineData.drawStep) {
-        case MarkerDrawStep.STEP_1: {
-          lastLineData.drawStep = MarkerDrawStep.STEP_2
+        case GraphicMarkDrawStep.STEP_1: {
+          lastLineData.drawStep = GraphicMarkDrawStep.STEP_2
           break
         }
-        case MarkerDrawStep.STEP_2: {
-          lastLineData.drawStep = MarkerDrawStep.STEP_3
+        case GraphicMarkDrawStep.STEP_2: {
+          lastLineData.drawStep = GraphicMarkDrawStep.STEP_3
           break
         }
-        case MarkerDrawStep.STEP_3: {
-          lastLineData.drawStep = MarkerDrawStep.STEP_DONE
-          this.dataProvider.currentMarkerType = MarkerType.NONE
+        case GraphicMarkDrawStep.STEP_3: {
+          lastLineData.drawStep = GraphicMarkDrawStep.STEP_DONE
+          this.dataProvider.graphicMarkType = GraphicMarkType.NONE
           break
         }
       }
@@ -128,21 +128,21 @@ class MarkerEvent {
   /**
    * 绘制标记图形时鼠标按下事件
    * @param e
-   * @param markerKey
+   * @param markKey
    * @param performDifPoint
    */
-  markerMouseDown (e, markerKey, performDifPoint) {
-    const markerData = this.dataProvider.markerDatas[markerKey]
+  markerMouseDown (e, markKey, performDifPoint) {
+    const markerData = this.dataProvider.markerDatas[markKey]
     if (e.button === 2) {
       markerData.splice(markerData.length - 1, 1)
-      this.dataProvider.currentMarkerType = MarkerType.NONE
+      this.dataProvider.graphicMarkType = GraphicMarkType.NONE
     } else {
       const lastLineData = markerData[markerData.length - 1]
       performDifPoint(lastLineData)
       markerData[markerData.length - 1] = lastLineData
     }
-    this.dataProvider.markerDatas[markerKey] = markerData
-    this.markerChart.flush()
+    this.dataProvider.markerDatas[markKey] = markerData
+    this.graphicMarkChart.flush()
   }
 
   /**
@@ -150,15 +150,15 @@ class MarkerEvent {
    */
   noneMarkerMouseDown (e) {
     this.findNoneMarkerMouseDownActiveData(e)
-    const markerKey = this.noneMarkerMouseDownActiveData.markerKey
+    const markKey = this.noneMarkerMouseDownActiveData.markKey
     const dataIndex = this.noneMarkerMouseDownActiveData.dataIndex
-    if (markerKey && dataIndex !== -1) {
+    if (markKey && dataIndex !== -1) {
       if (e.button === 2) {
         // 鼠标右键
-        const markerData = this.dataProvider.markerDatas[markerKey]
+        const markerData = this.dataProvider.markerDatas[markKey]
         markerData.splice(dataIndex, 1)
-        this.dataProvider.markerDatas[markerKey] = markerData
-        this.markerChart.flush()
+        this.dataProvider.markerDatas[markKey] = markerData
+        this.graphicMarkChart.flush()
       } else {
         if (this.noneMarkerMouseDownActiveData.onCircle) {
           this.noneMarkerMouseDownFlag = true
@@ -173,13 +173,13 @@ class MarkerEvent {
    * @param e
    */
   findNoneMarkerMouseDownActiveData (e) {
-    const point = getCanvasPoint(e, this.markerChart.canvasDom)
+    const point = getCanvasPoint(e, this.graphicMarkChart.canvasDom)
     const keys = Object.keys(this.dataProvider.markerDatas)
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
       switch (key) {
-        case MarkerType.HORIZONTAL_STRAIGHT_LINE:
-        case MarkerType.PRICE_LINE: {
+        case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
+        case GraphicMarkType.PRICE_LINE: {
           if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnStraightLine(
               xyPoints[0], { x: this.viewPortHandler.contentRight(), y: xyPoints[0].y }, point
@@ -189,7 +189,7 @@ class MarkerEvent {
           }
           break
         }
-        case MarkerType.VERTICAL_STRAIGHT_LINE: {
+        case GraphicMarkType.VERTICAL_STRAIGHT_LINE: {
           if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnStraightLine(
               xyPoints[0], { x: xyPoints[0].x, y: this.viewPortHandler.contentBottom() }, point
@@ -199,7 +199,7 @@ class MarkerEvent {
           }
           break
         }
-        case MarkerType.STRAIGHT_LINE: {
+        case GraphicMarkType.STRAIGHT_LINE: {
           if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnStraightLine(xyPoints[0], xyPoints[1], point)
           })) {
@@ -207,9 +207,9 @@ class MarkerEvent {
           }
           break
         }
-        case MarkerType.HORIZONTAL_RAY_LINE:
-        case MarkerType.VERTICAL_RAY_LINE:
-        case MarkerType.RAY_LINE: {
+        case GraphicMarkType.HORIZONTAL_RAY_LINE:
+        case GraphicMarkType.VERTICAL_RAY_LINE:
+        case GraphicMarkType.RAY_LINE: {
           if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnRayLine(xyPoints[0], xyPoints[1], point)
           })) {
@@ -217,9 +217,9 @@ class MarkerEvent {
           }
           break
         }
-        case MarkerType.HORIZONTAL_SEGMENT_LINE:
-        case MarkerType.VERTICAL_SEGMENT_LINE:
-        case MarkerType.SEGMENT_LINE: {
+        case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
+        case GraphicMarkType.VERTICAL_SEGMENT_LINE:
+        case GraphicMarkType.SEGMENT_LINE: {
           if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnSegmentLine(xyPoints[0], xyPoints[1], point)
           })) {
@@ -227,21 +227,21 @@ class MarkerEvent {
           }
           break
         }
-        case MarkerType.PRICE_CHANNEL_LINE:
-        case MarkerType.PARALLEL_STRAIGHT_LINE:
-        case MarkerType.FIBONACCI_LINE: {
+        case GraphicMarkType.PRICE_CHANNEL_LINE:
+        case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
+        case GraphicMarkType.FIBONACCI_LINE: {
           if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
             let linePoints = []
             switch (key) {
-              case MarkerType.PRICE_CHANNEL_LINE: {
+              case GraphicMarkType.PRICE_CHANNEL_LINE: {
                 linePoints = getParallelLines(xyPoints, this.viewPortHandler, true)
                 break
               }
-              case MarkerType.PARALLEL_STRAIGHT_LINE: {
+              case GraphicMarkType.PARALLEL_STRAIGHT_LINE: {
                 linePoints = getParallelLines(xyPoints, this.viewPortHandler)
                 break
               }
-              case MarkerType.FIBONACCI_LINE: {
+              case GraphicMarkType.FIBONACCI_LINE: {
                 linePoints = getFibonacciLines(xyPoints, this.viewPortHandler)
                 break
               }
@@ -266,13 +266,13 @@ class MarkerEvent {
 
   /**
    * 查找没有绘制图时鼠标按下时落点在哪条数据上
-   * @param markerKey
+   * @param markKey
    * @param point
    * @param checkPointOnLine
    * @returns {boolean}
    */
-  realFindNoneMarkerMouseDownActiveData (markerKey, point, checkPointOnLine) {
-    const markerData = this.dataProvider.markerDatas[markerKey]
+  realFindNoneMarkerMouseDownActiveData (markKey, point, checkPointOnLine) {
+    const markerData = this.dataProvider.markerDatas[markKey]
     markerData.forEach((data, index) => {
       const points = data.points
       const xyPoints = []
@@ -293,7 +293,7 @@ class MarkerEvent {
       const isOnLine = checkPointOnLine(xyPoints, point)
       if (isOnLine || isOnCircle) {
         this.noneMarkerMouseDownActiveData = {
-          markerKey: markerKey,
+          markKey: markKey,
           dataIndex: index,
           onLine: isOnLine,
           onCircle: isOnCircle,
@@ -309,48 +309,48 @@ class MarkerEvent {
    * 鼠标移动事件
    */
   mouseMove (e) {
-    const point = getCanvasPoint(e, this.markerChart.canvasDom)
+    const point = getCanvasPoint(e, this.graphicMarkChart.canvasDom)
     this.dataProvider.markerPoint = { ...point }
     if (!isValidEvent(point, this.viewPortHandler)) {
       return
     }
     if (!this.waitingForMouseMoveAnimationFrame) {
       this.waitingForMouseMoveAnimationFrame = true
-      const markerType = this.dataProvider.currentMarkerType
-      switch (markerType) {
-        case MarkerType.HORIZONTAL_STRAIGHT_LINE:
-        case MarkerType.VERTICAL_STRAIGHT_LINE:
-        case MarkerType.PRICE_LINE: {
-          this.onePointMarkerMouseMove(point, markerType)
+      const graphicMarkType = this.dataProvider.graphicMarkType
+      switch (graphicMarkType) {
+        case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
+        case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
+        case GraphicMarkType.PRICE_LINE: {
+          this.onePointMarkerMouseMove(point, graphicMarkType)
           break
         }
-        case MarkerType.STRAIGHT_LINE:
-        case MarkerType.RAY_LINE:
-        case MarkerType.SEGMENT_LINE:
-        case MarkerType.FIBONACCI_LINE: {
-          this.twoPointMarkerMouseMove(point, markerType)
+        case GraphicMarkType.STRAIGHT_LINE:
+        case GraphicMarkType.RAY_LINE:
+        case GraphicMarkType.SEGMENT_LINE:
+        case GraphicMarkType.FIBONACCI_LINE: {
+          this.twoPointMarkerMouseMove(point, graphicMarkType)
           break
         }
-        case MarkerType.HORIZONTAL_RAY_LINE:
-        case MarkerType.HORIZONTAL_SEGMENT_LINE: {
-          this.twoPointMarkerMouseMove(point, markerType, (lastLineData, { price }) => {
+        case GraphicMarkType.HORIZONTAL_RAY_LINE:
+        case GraphicMarkType.HORIZONTAL_SEGMENT_LINE: {
+          this.twoPointMarkerMouseMove(point, graphicMarkType, (lastLineData, { price }) => {
             lastLineData.points[0].price = price
           })
           break
         }
-        case MarkerType.VERTICAL_RAY_LINE:
-        case MarkerType.VERTICAL_SEGMENT_LINE: {
-          this.twoPointMarkerMouseMove(point, markerType, (lastLineData, { xPos }) => {
+        case GraphicMarkType.VERTICAL_RAY_LINE:
+        case GraphicMarkType.VERTICAL_SEGMENT_LINE: {
+          this.twoPointMarkerMouseMove(point, graphicMarkType, (lastLineData, { xPos }) => {
             lastLineData.points[0].xPos = xPos
           })
           break
         }
-        case MarkerType.PRICE_CHANNEL_LINE:
-        case MarkerType.PARALLEL_STRAIGHT_LINE: {
-          this.threePointMarkerMouseMove(point, markerType)
+        case GraphicMarkType.PRICE_CHANNEL_LINE:
+        case GraphicMarkType.PARALLEL_STRAIGHT_LINE: {
+          this.threePointMarkerMouseMove(point, graphicMarkType)
           break
         }
-        case MarkerType.NONE: {
+        case GraphicMarkType.NONE: {
           this.noneMarkerMouseMove(point)
           break
         }
@@ -362,19 +362,19 @@ class MarkerEvent {
   /**
    * 一个点形成的图形鼠标移动事件
    * @param point
-   * @param markerKey
+   * @param markKey
    */
-  onePointMarkerMouseMove (point, markerKey) {
-    this.markerMouseMove(point, markerKey, (markerData, lastLineData) => {
+  onePointMarkerMouseMove (point, markKey) {
+    this.markerMouseMove(point, markKey, (markerData, lastLineData) => {
       const xPos = this.dataProvider.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
-        case MarkerDrawStep.STEP_DONE: {
-          markerData.push({ points: [{ xPos, price }], drawStep: MarkerDrawStep.STEP_1 })
+        case GraphicMarkDrawStep.STEP_DONE: {
+          markerData.push({ points: [{ xPos, price }], drawStep: GraphicMarkDrawStep.STEP_1 })
           break
         }
-        case MarkerDrawStep.STEP_1:
-        case MarkerDrawStep.STEP_2: {
+        case GraphicMarkDrawStep.STEP_1:
+        case GraphicMarkDrawStep.STEP_2: {
           lastLineData.points[0].xPos = xPos
           lastLineData.points[0].price = price
           markerData[markerData.length - 1] = lastLineData
@@ -387,25 +387,25 @@ class MarkerEvent {
   /**
    * 两个点形成的线鼠标移动事件
    * @param point
-   * @param markerKey
+   * @param markKey
    * @param stepTwo
    */
-  twoPointMarkerMouseMove (point, markerKey, stepTwo) {
-    this.markerMouseMove(point, markerKey, (markerData, lastLineData) => {
+  twoPointMarkerMouseMove (point, markKey, stepTwo) {
+    this.markerMouseMove(point, markKey, (markerData, lastLineData) => {
       const xPos = this.dataProvider.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
-        case MarkerDrawStep.STEP_DONE: {
-          markerData.push({ points: [{ xPos, price }, { xPos, price }], drawStep: MarkerDrawStep.STEP_1 })
+        case GraphicMarkDrawStep.STEP_DONE: {
+          markerData.push({ points: [{ xPos, price }, { xPos, price }], drawStep: GraphicMarkDrawStep.STEP_1 })
           break
         }
-        case MarkerDrawStep.STEP_1: {
+        case GraphicMarkDrawStep.STEP_1: {
           lastLineData.points[0] = { xPos, price }
           lastLineData.points[1] = { xPos, price }
           markerData[markerData.length - 1] = lastLineData
           break
         }
-        case MarkerDrawStep.STEP_2: {
+        case GraphicMarkDrawStep.STEP_2: {
           lastLineData.points[1] = { xPos, price }
           if (isFunction(stepTwo)) {
             stepTwo(lastLineData, { xPos, price })
@@ -420,25 +420,25 @@ class MarkerEvent {
   /**
    * 三步形成的标记图形鼠标移动事件
    * @param point
-   * @param markerKey
+   * @param markKey
    * @param stepTwo
    */
-  threePointMarkerMouseMove (point, markerKey, stepTwo) {
-    this.markerMouseMove(point, markerKey, (markerData, lastLineData) => {
+  threePointMarkerMouseMove (point, markKey, stepTwo) {
+    this.markerMouseMove(point, markKey, (markerData, lastLineData) => {
       const xPos = this.dataProvider.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
-        case MarkerDrawStep.STEP_DONE: {
-          markerData.push({ points: [{ xPos, price }, { xPos, price }], drawStep: MarkerDrawStep.STEP_1 })
+        case GraphicMarkDrawStep.STEP_DONE: {
+          markerData.push({ points: [{ xPos, price }, { xPos, price }], drawStep: GraphicMarkDrawStep.STEP_1 })
           break
         }
-        case MarkerDrawStep.STEP_1: {
+        case GraphicMarkDrawStep.STEP_1: {
           lastLineData.points[0] = { xPos, price }
           lastLineData.points[1] = { xPos, price }
           markerData[markerData.length - 1] = lastLineData
           break
         }
-        case MarkerDrawStep.STEP_2: {
+        case GraphicMarkDrawStep.STEP_2: {
           if (isFunction(stepTwo)) {
             stepTwo(lastLineData, { xPos, price })
           }
@@ -446,7 +446,7 @@ class MarkerEvent {
           markerData[markerData.length - 1] = lastLineData
           break
         }
-        case MarkerDrawStep.STEP_3: {
+        case GraphicMarkDrawStep.STEP_3: {
           lastLineData.points[2] = { xPos, price }
           markerData[markerData.length - 1] = lastLineData
           break
@@ -458,15 +458,15 @@ class MarkerEvent {
   /**
    * 绘制标记图形时鼠标移动事件
    * @param point
-   * @param markerKey
+   * @param markKey
    * @param performDifPoint
    */
-  markerMouseMove (point, markerKey, performDifPoint) {
-    const markerData = this.dataProvider.markerDatas[markerKey]
-    const lastLineData = markerData[markerData.length - 1] || { drawStep: MarkerDrawStep.STEP_DONE }
+  markerMouseMove (point, markKey, performDifPoint) {
+    const markerData = this.dataProvider.markerDatas[markKey]
+    const lastLineData = markerData[markerData.length - 1] || { drawStep: GraphicMarkDrawStep.STEP_DONE }
     performDifPoint(markerData, lastLineData)
-    this.dataProvider.markerDatas[markerKey] = markerData
-    this.markerChart.flush()
+    this.dataProvider.markerDatas[markKey] = markerData
+    this.graphicMarkChart.flush()
   }
 
   /**
@@ -475,20 +475,20 @@ class MarkerEvent {
    */
   noneMarkerMouseMove (point) {
     if (this.noneMarkerMouseDownFlag) {
-      const markerKey = this.noneMarkerMouseDownActiveData.markerKey
+      const markKey = this.noneMarkerMouseDownActiveData.markKey
       const dataIndex = this.noneMarkerMouseDownActiveData.dataIndex
-      if (markerKey && dataIndex !== -1) {
-        const markerData = this.dataProvider.markerDatas[markerKey]
-        switch (markerKey) {
-          case MarkerType.HORIZONTAL_STRAIGHT_LINE:
-          case MarkerType.VERTICAL_STRAIGHT_LINE:
-          case MarkerType.PRICE_LINE:
-          case MarkerType.STRAIGHT_LINE:
-          case MarkerType.RAY_LINE:
-          case MarkerType.SEGMENT_LINE:
-          case MarkerType.PRICE_CHANNEL_LINE:
-          case MarkerType.PARALLEL_STRAIGHT_LINE:
-          case MarkerType.FIBONACCI_LINE: {
+      if (markKey && dataIndex !== -1) {
+        const markerData = this.dataProvider.markerDatas[markKey]
+        switch (markKey) {
+          case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
+          case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
+          case GraphicMarkType.PRICE_LINE:
+          case GraphicMarkType.STRAIGHT_LINE:
+          case GraphicMarkType.RAY_LINE:
+          case GraphicMarkType.SEGMENT_LINE:
+          case GraphicMarkType.PRICE_CHANNEL_LINE:
+          case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
+          case GraphicMarkType.FIBONACCI_LINE: {
             const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
               markerData[dataIndex].points[pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace + this.dataProvider.minPos
@@ -496,8 +496,8 @@ class MarkerEvent {
             }
             break
           }
-          case MarkerType.HORIZONTAL_RAY_LINE:
-          case MarkerType.HORIZONTAL_SEGMENT_LINE: {
+          case GraphicMarkType.HORIZONTAL_RAY_LINE:
+          case GraphicMarkType.HORIZONTAL_SEGMENT_LINE: {
             const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
               const price = this.yRender.getValue(point.y)
@@ -507,8 +507,8 @@ class MarkerEvent {
             }
             break
           }
-          case MarkerType.VERTICAL_RAY_LINE:
-          case MarkerType.VERTICAL_SEGMENT_LINE: {
+          case GraphicMarkType.VERTICAL_RAY_LINE:
+          case GraphicMarkType.VERTICAL_SEGMENT_LINE: {
             const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
               const xPos = (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace + this.dataProvider.minPos
@@ -519,11 +519,11 @@ class MarkerEvent {
             break
           }
         }
-        this.dataProvider.markerDatas[markerKey] = markerData
+        this.dataProvider.markerDatas[markKey] = markerData
       }
     }
-    this.markerChart.flush()
+    this.graphicMarkChart.flush()
   }
 }
 
-export default MarkerEvent
+export default GraphicMarkEvent

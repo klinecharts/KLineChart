@@ -1,8 +1,8 @@
 import AxisRender from './AxisRender'
 
 import { DATA_MARGIN_SPACE_RATE } from '../internal/DataProvider'
-import { formatDate } from '../utils/dateUtils'
-import { calcTextWidth, getFont } from '../utils/drawUtils'
+import { formatDate } from '../utils/date'
+import { calcTextWidth, getFont } from '../utils/draw'
 import { LineStyle } from '../internal/constants'
 
 class XAxisRender extends AxisRender {

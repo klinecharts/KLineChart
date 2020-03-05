@@ -1,4 +1,4 @@
-import { isNumber } from './dataUtils'
+import { isNumber } from './data'
 
 /**
  * 格式化时间

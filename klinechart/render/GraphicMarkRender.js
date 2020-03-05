@@ -6,25 +6,25 @@ import {
   checkPointOnRayLine,
   checkPointOnSegmentLine,
   getParallelLines, getFibonacciLines
-} from '../utils/markerMapUtils'
-import { formatPrecision } from '../utils/numberUtils'
-import { getFont } from '../utils/drawUtils'
-import { MarkerType, MarkerDrawStep } from '../internal/constants'
+} from '../utils/graphicMark'
+import { formatPrecision } from '../utils/number'
+import { getFont } from '../utils/draw'
+import { GraphicMarkType, GraphicMarkDrawStep } from '../internal/constants'
 
-class MarkerRender extends Render {
-  constructor (viewPortHandler, dataProvider, yRender) {
+class GraphicMarkRender extends Render {
+  constructor (viewPortHandler, dataProvider, yRender, graphicMark) {
     super(viewPortHandler, dataProvider)
     this.yRender = yRender
+    this.graphicMark = graphicMark
   }
 
   /**
    * 渲染水平直线
    * @param ctx
-   * @param marker
    */
-  renderHorizontalStraightLine (ctx, marker) {
+  renderHorizontalStraightLine (ctx) {
     this.renderPointMarker(
-      ctx, MarkerType.HORIZONTAL_STRAIGHT_LINE, marker, checkPointOnStraightLine,
+      ctx, GraphicMarkType.HORIZONTAL_STRAIGHT_LINE, checkPointOnStraightLine,
       (points) => {
         return [[
           {
@@ -42,11 +42,10 @@ class MarkerRender extends Render {
   /**
    * 渲染垂直直线
    * @param ctx
-   * @param marker
    */
-  renderVerticalStraightLine (ctx, marker) {
+  renderVerticalStraightLine (ctx) {
     this.renderPointMarker(
-      ctx, MarkerType.VERTICAL_STRAIGHT_LINE, marker, checkPointOnStraightLine,
+      ctx, GraphicMarkType.VERTICAL_STRAIGHT_LINE, checkPointOnStraightLine,
       (points) => {
         return [[
           {
@@ -64,11 +63,10 @@ class MarkerRender extends Render {
   /**
    * 渲染直线
    * @param ctx
-   * @param marker
    */
-  renderStraightLine (ctx, marker) {
+  renderStraightLine (ctx) {
     this.renderPointMarker(
-      ctx, MarkerType.STRAIGHT_LINE, marker, checkPointOnStraightLine,
+      ctx, GraphicMarkType.STRAIGHT_LINE, checkPointOnStraightLine,
       (points) => {
         if (points[0].x === points[1].x) {
           return [[
@@ -109,11 +107,10 @@ class MarkerRender extends Render {
   /**
    * 绘制水平射线
    * @param ctx
-   * @param marker
    */
-  renderHorizontalRayLine (ctx, marker) {
+  renderHorizontalRayLine (ctx) {
     this.renderPointMarker(
-      ctx, MarkerType.HORIZONTAL_RAY_LINE, marker, checkPointOnRayLine,
+      ctx, GraphicMarkType.HORIZONTAL_RAY_LINE, checkPointOnRayLine,
       (points) => {
         const point = { x: this.viewPortHandler.contentLeft(), y: points[0].y }
         if (points[0].x < points[1].x) {
@@ -127,11 +124,10 @@ class MarkerRender extends Render {
   /**
    * 绘制垂直射线
    * @param ctx
-   * @param marker
    */
-  renderVerticalRayLine (ctx, marker) {
+  renderVerticalRayLine (ctx) {
     this.renderPointMarker(
-      ctx, MarkerType.VERTICAL_RAY_LINE, marker, checkPointOnRayLine,
+      ctx, GraphicMarkType.VERTICAL_RAY_LINE, checkPointOnRayLine,
       (points) => {
         const point = { x: points[0].x, y: this.viewPortHandler.contentTop() }
         if (points[0].y < points[1].y) {
@@ -145,11 +141,10 @@ class MarkerRender extends Render {
   /**
    * 渲染射线
    * @param ctx
-   * @param marker
    */
-  renderRayLine (ctx, marker) {
+  renderRayLine (ctx) {
     this.renderPointMarker(
-      ctx, MarkerType.RAY_LINE, marker, checkPointOnRayLine,
+      ctx, GraphicMarkType.RAY_LINE, checkPointOnRayLine,
       (points) => {
         let point
         if (points[0].x === points[1].x && points[0].y !== points[1].y) {
@@ -183,29 +178,27 @@ class MarkerRender extends Render {
   /**
    * 绘制线段，水平线段，垂直线段，普通线段一起绘制
    * @param ctx
-   * @param marker
    */
-  renderSegmentLine (ctx, marker) {
+  renderSegmentLine (ctx) {
     this.renderPointMarker(
-      ctx, MarkerType.HORIZONTAL_SEGMENT_LINE, marker, checkPointOnSegmentLine
+      ctx, GraphicMarkType.HORIZONTAL_SEGMENT_LINE, checkPointOnSegmentLine
     )
     this.renderPointMarker(
-      ctx, MarkerType.VERTICAL_SEGMENT_LINE, marker, checkPointOnSegmentLine
+      ctx, GraphicMarkType.VERTICAL_SEGMENT_LINE, checkPointOnSegmentLine
     )
     this.renderPointMarker(
-      ctx, MarkerType.SEGMENT_LINE, marker, checkPointOnSegmentLine
+      ctx, GraphicMarkType.SEGMENT_LINE, checkPointOnSegmentLine
     )
   }
 
   /**
    * 绘制价格线
    * @param ctx
-   * @param marker
    * @param pricePrecision
    */
-  renderPriceLine (ctx, marker, pricePrecision) {
+  renderPriceLine (ctx, pricePrecision) {
     this.renderPointMarker(
-      ctx, MarkerType.PRICE_LINE, marker, checkPointOnRayLine,
+      ctx, GraphicMarkType.PRICE_LINE, checkPointOnRayLine,
       (points) => {
         return [[points[0], { x: this.viewPortHandler.contentRight(), y: points[0].y }]]
       },
@@ -216,11 +209,10 @@ class MarkerRender extends Render {
   /**
    * 渲染价格通道线
    * @param ctx
-   * @param marker
    */
-  renderPriceChannelLine (ctx, marker) {
+  renderPriceChannelLine (ctx) {
     this.renderPointMarker(
-      ctx, MarkerType.PRICE_CHANNEL_LINE, marker, checkPointOnStraightLine,
+      ctx, GraphicMarkType.PRICE_CHANNEL_LINE, checkPointOnStraightLine,
       (points) => {
         return getParallelLines(points, this.viewPortHandler, true)
       }
@@ -230,11 +222,10 @@ class MarkerRender extends Render {
   /**
    * 渲染平行直线
    * @param ctx
-   * @param marker
    */
-  renderParallelStraightLine (ctx, marker) {
+  renderParallelStraightLine (ctx) {
     this.renderPointMarker(
-      ctx, MarkerType.PARALLEL_STRAIGHT_LINE, marker, checkPointOnStraightLine,
+      ctx, GraphicMarkType.PARALLEL_STRAIGHT_LINE, checkPointOnStraightLine,
       (points) => {
         return getParallelLines(points, this.viewPortHandler)
       }
@@ -244,12 +235,11 @@ class MarkerRender extends Render {
   /**
    * 渲染斐波那契线
    * @param ctx
-   * @param marker
    * @param pricePrecision
    */
-  renderFibonacciLine (ctx, marker, pricePrecision) {
+  renderFibonacciLine (ctx, pricePrecision) {
     this.renderPointMarker(
-      ctx, MarkerType.FIBONACCI_LINE, marker, checkPointOnStraightLine,
+      ctx, GraphicMarkType.FIBONACCI_LINE, checkPointOnStraightLine,
       (points) => {
         return getFibonacciLines(points, this.viewPortHandler)
       }, true, pricePrecision, ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']
@@ -260,14 +250,13 @@ class MarkerRender extends Render {
    * 渲染点形成的图形
    * @param ctx
    * @param markerKey
-   * @param marker
    * @param checkPointOnLine
    * @param generatedLinePoints
    * @param isRenderPrice
    * @param pricePrecision
    * @param priceExtendsText
    */
-  renderPointMarker (ctx, markerKey, marker, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
+  renderPointMarker (ctx, markerKey, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
     const markerData = this.dataProvider.markerDatas[markerKey]
     markerData.forEach(({ points, drawStep }) => {
       const circlePoints = []
@@ -278,7 +267,7 @@ class MarkerRender extends Render {
       })
       const linePoints = generatedLinePoints ? generatedLinePoints(circlePoints) : [circlePoints]
       this.renderMarker(
-        ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine,
+        ctx, linePoints, circlePoints, drawStep, checkPointOnLine,
         isRenderPrice, pricePrecision, priceExtendsText
       )
     })
@@ -289,7 +278,6 @@ class MarkerRender extends Render {
    * @param ctx
    * @param linePoints
    * @param circlePoints
-   * @param marker
    * @param drawStep
    * @param checkPointOnLine
    * @param isRenderPrice
@@ -297,7 +285,7 @@ class MarkerRender extends Render {
    * @param priceExtendsText
    */
   renderMarker (
-    ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine,
+    ctx, linePoints, circlePoints, drawStep, checkPointOnLine,
     isRenderPrice, pricePrecision, priceExtendsText = []
   ) {
     const markerPoint = this.dataProvider.markerPoint
@@ -308,9 +296,9 @@ class MarkerRender extends Render {
         if (!isOnLine) {
           isOnLine = isOn
         }
-        if (drawStep !== MarkerDrawStep.STEP_1) {
-          ctx.strokeStyle = marker.line.color
-          ctx.lineWidth = marker.line.size
+        if (drawStep !== GraphicMarkDrawStep.STEP_1) {
+          ctx.strokeStyle = this.graphicMark.line.color
+          ctx.lineWidth = this.graphicMark.line.size
           ctx.beginPath()
           ctx.moveTo(points[0].x, points[0].y)
           ctx.lineTo(points[1].x, points[1].y)
@@ -320,15 +308,15 @@ class MarkerRender extends Render {
           if (isRenderPrice) {
             const price = this.yRender.getValue(points[0].y)
             const priceText = formatPrecision(price, pricePrecision)
-            const textSize = marker.text.size
+            const textSize = this.graphicMark.text.size
             ctx.font = getFont(textSize)
-            ctx.fillStyle = marker.text.color
-            ctx.fillText(`${priceText} ${priceExtendsText[i] || ''}`, points[0].x + marker.text.marginLeft, points[0].y - marker.text.marginBottom)
+            ctx.fillStyle = this.graphicMark.text.color
+            ctx.fillText(`${priceText} ${priceExtendsText[i] || ''}`, points[0].x + this.graphicMark.text.marginLeft, points[0].y - this.graphicMark.text.marginBottom)
           }
         }
       }
     })
-    const radius = marker.point.radius
+    const radius = this.graphicMark.point.radius
     let isCircleActive = false
     for (let i = 0; i < circlePoints.length; i++) {
       isCircleActive = checkPointOnCircle(circlePoints[i], radius, markerPoint)
@@ -339,10 +327,10 @@ class MarkerRender extends Render {
     circlePoints.forEach(circlePoint => {
       const isOnCircle = checkPointOnCircle(circlePoint, radius, markerPoint)
       if (isCircleActive || isOnLine) {
-        const circleRadius = isOnCircle ? marker.point.activeRadius : radius
-        const circleColor = isOnCircle ? marker.point.activeBackgroundColor : marker.point.backgroundColor
-        const circleBorderColor = isOnCircle ? marker.point.activeBorderColor : marker.point.borderColor
-        const circleBorderSize = isOnCircle ? marker.point.activeBorderSize : marker.point.borderSize
+        const circleRadius = isOnCircle ? this.graphicMark.point.activeRadius : radius
+        const circleColor = isOnCircle ? this.graphicMark.point.activeBackgroundColor : this.graphicMark.point.backgroundColor
+        const circleBorderColor = isOnCircle ? this.graphicMark.point.activeBorderColor : this.graphicMark.point.borderColor
+        const circleBorderSize = isOnCircle ? this.graphicMark.point.activeBorderSize : this.graphicMark.point.borderSize
         ctx.fillStyle = circleColor
         ctx.beginPath()
         ctx.arc(circlePoint.x, circlePoint.y, circleRadius, 0, Math.PI * 2)
@@ -359,4 +347,4 @@ class MarkerRender extends Render {
   }
 }
 
-export default MarkerRender
+export default GraphicMarkRender

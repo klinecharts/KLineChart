@@ -407,77 +407,12 @@ var Render = function Render(viewPortHandler, dataProvider) {
 };
 
 /**
- * 格式化时间
- * @param timestamp
- * @param format
- * @returns {string}
- */
-function formatDate(timestamp, format) {
-  if (timestamp && isNumber(timestamp)) {
-    var date = new Date(timestamp);
-    var year = date.getFullYear().toString();
-    var month = (date.getMonth() + 1).toString();
-    var day = date.getDate().toString();
-    var hours = date.getHours().toString();
-    var minutes = date.getMinutes().toString();
-    var monthText = month.length === 1 ? "0".concat(month) : month;
-    var dayText = day.length === 1 ? "0".concat(day) : day;
-    var hourText = hours.length === 1 ? '0' + hours : hours;
-    var minuteText = minutes.length === 1 ? '0' + minutes : minutes;
-
-    switch (format) {
-      case 'YYYY':
-        {
-          return year;
-        }
-
-      case 'YYYY-MM':
-        {
-          return "".concat(year, "-").concat(monthText);
-        }
-
-      case 'YYYY-MM-DD':
-        {
-          return "".concat(year, "-").concat(monthText, "-").concat(dayText);
-        }
-
-      case 'YYYY-MM-DD hh:mm':
-        {
-          return "".concat(year, "-").concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
-        }
-
-      case 'MM-DD':
-        {
-          return "".concat(monthText, "-").concat(dayText);
-        }
-
-      case 'MM':
-        {
-          return monthText;
-        }
-
-      case 'hh:mm':
-        {
-          return "".concat(hourText, ":").concat(minuteText);
-        }
-
-      default:
-        {
-          return "".concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
-        }
-    }
-  }
-
-  return '--';
-}
-/**
  * 格式化值
  * @param data
  * @param key
  * @param defaultValue
  * @returns {string|*}
  */
-
 function formatValue(data, key) {
   var defaultValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '--';
 
@@ -650,7 +585,7 @@ var TooltipMainChartTextDisplayType = {
  * @type {{STRAIGHT_LINE: string, HORIZONTAL_SEGMENT_LINE: string, FIBONACCI_LINE: string, HORIZONTAL_STRAIGHT_LINE: string, PRICE_CHANNEL_LINE: string, VERTICAL_RAY_LINE: string, VERTICAL_SEGMENT_LINE: string, PARALLEL_STRAIGHT_LINE: string, HORIZONTAL_RAY_LINE: string, VERTICAL_STRAIGHT_LINE: string, PRICE_LINE: string, RAY_LINE: string, NONE: string, SEGMENT_LINE: string}}
  */
 
-var MarkerType = {
+var GraphicMarkType = {
   NONE: 'none',
   HORIZONTAL_STRAIGHT_LINE: 'horizontalStraightLine',
   VERTICAL_STRAIGHT_LINE: 'verticalStraightLine',
@@ -671,7 +606,7 @@ var MarkerType = {
  * @type {{STEP_3: *, STEP_DONE: *, STEP_1: *, STEP_2: *}}
  */
 
-var MarkerDrawStep = {
+var GraphicMarkDrawStep = {
   STEP_1: 'step_1',
   STEP_2: 'step_2',
   STEP_3: 'step_3',
@@ -699,11 +634,11 @@ function () {
 
     this.dataSpace = 0; // 当前提示数据的位置
 
-    this.currentTooltipDataPos = 0; // 十字光标中心点位置坐标
+    this.tooltipDataPos = 0; // 十字光标中心点位置坐标
 
     this.crossPoint = null; // 当前绘制的标记图形的类型
 
-    this.currentMarkerType = MarkerType.NONE; // 标记图形点
+    this.graphicMarkType = GraphicMarkType.NONE; // 标记图形点
 
     this.markerPoint = null; // 是否在拖拽标记图形
 
@@ -777,10 +712,10 @@ function () {
     value: function moveToLast(tooltipDataMoveCount) {
       if (this.dataList.length > this.range) {
         this.minPos = this.dataList.length - this.range;
-        this.currentTooltipDataPos += tooltipDataMoveCount;
+        this.tooltipDataPos += tooltipDataMoveCount;
 
-        if (this.currentTooltipDataPos > this.dataList.length - 1) {
-          this.currentTooltipDataPos = this.dataList.length - 1;
+        if (this.tooltipDataPos > this.dataList.length - 1) {
+          this.tooltipDataPos = this.dataList.length - 1;
         }
       } else {
         this.minPos = 0;
@@ -790,13 +725,13 @@ function () {
     key: "calcCurrentTooltipDataPos",
     value: function calcCurrentTooltipDataPos(offsetLeft, x) {
       var range = +Math.ceil((x - offsetLeft) / this.dataSpace).toFixed(0);
-      this.currentTooltipDataPos = this.minPos + range - 1;
+      this.tooltipDataPos = this.minPos + range - 1;
 
-      if (this.currentTooltipDataPos > this.dataList.length - 1) {
-        this.currentTooltipDataPos = this.dataList.length - 1;
+      if (this.tooltipDataPos > this.dataList.length - 1) {
+        this.tooltipDataPos = this.dataList.length - 1;
       }
 
-      var sub = this.currentTooltipDataPos - this.minPos;
+      var sub = this.tooltipDataPos - this.minPos;
       this.crossPoint.x = offsetLeft + this.dataSpace * sub + this.dataSpace * (1.0 - DATA_MARGIN_SPACE_RATE) / 2;
     }
   }]);
@@ -2742,33 +2677,33 @@ function getFibonacciLines(points, viewportHandler) {
   return lines;
 }
 
-var MarkerRender =
+var GraphicMarkRender =
 /*#__PURE__*/
 function (_Render) {
-  _inherits(MarkerRender, _Render);
+  _inherits(GraphicMarkRender, _Render);
 
-  function MarkerRender(viewPortHandler, dataProvider, yRender) {
+  function GraphicMarkRender(viewPortHandler, dataProvider, yRender, graphicMark) {
     var _this;
 
-    _classCallCheck(this, MarkerRender);
+    _classCallCheck(this, GraphicMarkRender);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MarkerRender).call(this, viewPortHandler, dataProvider));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkRender).call(this, viewPortHandler, dataProvider));
     _this.yRender = yRender;
+    _this.graphicMark = graphicMark;
     return _this;
   }
   /**
    * 渲染水平直线
    * @param ctx
-   * @param marker
    */
 
 
-  _createClass(MarkerRender, [{
+  _createClass(GraphicMarkRender, [{
     key: "renderHorizontalStraightLine",
-    value: function renderHorizontalStraightLine(ctx, marker) {
+    value: function renderHorizontalStraightLine(ctx) {
       var _this2 = this;
 
-      this.renderPointMarker(ctx, MarkerType.HORIZONTAL_STRAIGHT_LINE, marker, checkPointOnStraightLine, function (points) {
+      this.renderPointMarker(ctx, GraphicMarkType.HORIZONTAL_STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
         return [[{
           x: _this2.viewPortHandler.contentLeft(),
           y: points[0].y
@@ -2781,15 +2716,14 @@ function (_Render) {
     /**
      * 渲染垂直直线
      * @param ctx
-     * @param marker
      */
 
   }, {
     key: "renderVerticalStraightLine",
-    value: function renderVerticalStraightLine(ctx, marker) {
+    value: function renderVerticalStraightLine(ctx) {
       var _this3 = this;
 
-      this.renderPointMarker(ctx, MarkerType.VERTICAL_STRAIGHT_LINE, marker, checkPointOnStraightLine, function (points) {
+      this.renderPointMarker(ctx, GraphicMarkType.VERTICAL_STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
         return [[{
           x: points[0].x,
           y: _this3.viewPortHandler.contentTop()
@@ -2802,15 +2736,14 @@ function (_Render) {
     /**
      * 渲染直线
      * @param ctx
-     * @param marker
      */
 
   }, {
     key: "renderStraightLine",
-    value: function renderStraightLine(ctx, marker) {
+    value: function renderStraightLine(ctx) {
       var _this4 = this;
 
-      this.renderPointMarker(ctx, MarkerType.STRAIGHT_LINE, marker, checkPointOnStraightLine, function (points) {
+      this.renderPointMarker(ctx, GraphicMarkType.STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
         if (points[0].x === points[1].x) {
           return [[{
             x: points[0].x,
@@ -2840,15 +2773,14 @@ function (_Render) {
     /**
      * 绘制水平射线
      * @param ctx
-     * @param marker
      */
 
   }, {
     key: "renderHorizontalRayLine",
-    value: function renderHorizontalRayLine(ctx, marker) {
+    value: function renderHorizontalRayLine(ctx) {
       var _this5 = this;
 
-      this.renderPointMarker(ctx, MarkerType.HORIZONTAL_RAY_LINE, marker, checkPointOnRayLine, function (points) {
+      this.renderPointMarker(ctx, GraphicMarkType.HORIZONTAL_RAY_LINE, checkPointOnRayLine, function (points) {
         var point = {
           x: _this5.viewPortHandler.contentLeft(),
           y: points[0].y
@@ -2864,15 +2796,14 @@ function (_Render) {
     /**
      * 绘制垂直射线
      * @param ctx
-     * @param marker
      */
 
   }, {
     key: "renderVerticalRayLine",
-    value: function renderVerticalRayLine(ctx, marker) {
+    value: function renderVerticalRayLine(ctx) {
       var _this6 = this;
 
-      this.renderPointMarker(ctx, MarkerType.VERTICAL_RAY_LINE, marker, checkPointOnRayLine, function (points) {
+      this.renderPointMarker(ctx, GraphicMarkType.VERTICAL_RAY_LINE, checkPointOnRayLine, function (points) {
         var point = {
           x: points[0].x,
           y: _this6.viewPortHandler.contentTop()
@@ -2888,15 +2819,14 @@ function (_Render) {
     /**
      * 渲染射线
      * @param ctx
-     * @param marker
      */
 
   }, {
     key: "renderRayLine",
-    value: function renderRayLine(ctx, marker) {
+    value: function renderRayLine(ctx) {
       var _this7 = this;
 
-      this.renderPointMarker(ctx, MarkerType.RAY_LINE, marker, checkPointOnRayLine, function (points) {
+      this.renderPointMarker(ctx, GraphicMarkType.RAY_LINE, checkPointOnRayLine, function (points) {
         var point;
 
         if (points[0].x === points[1].x && points[0].y !== points[1].y) {
@@ -2935,29 +2865,27 @@ function (_Render) {
     /**
      * 绘制线段，水平线段，垂直线段，普通线段一起绘制
      * @param ctx
-     * @param marker
      */
 
   }, {
     key: "renderSegmentLine",
-    value: function renderSegmentLine(ctx, marker) {
-      this.renderPointMarker(ctx, MarkerType.HORIZONTAL_SEGMENT_LINE, marker, checkPointOnSegmentLine);
-      this.renderPointMarker(ctx, MarkerType.VERTICAL_SEGMENT_LINE, marker, checkPointOnSegmentLine);
-      this.renderPointMarker(ctx, MarkerType.SEGMENT_LINE, marker, checkPointOnSegmentLine);
+    value: function renderSegmentLine(ctx) {
+      this.renderPointMarker(ctx, GraphicMarkType.HORIZONTAL_SEGMENT_LINE, checkPointOnSegmentLine);
+      this.renderPointMarker(ctx, GraphicMarkType.VERTICAL_SEGMENT_LINE, checkPointOnSegmentLine);
+      this.renderPointMarker(ctx, GraphicMarkType.SEGMENT_LINE, checkPointOnSegmentLine);
     }
     /**
      * 绘制价格线
      * @param ctx
-     * @param marker
      * @param pricePrecision
      */
 
   }, {
     key: "renderPriceLine",
-    value: function renderPriceLine(ctx, marker, pricePrecision) {
+    value: function renderPriceLine(ctx, pricePrecision) {
       var _this8 = this;
 
-      this.renderPointMarker(ctx, MarkerType.PRICE_LINE, marker, checkPointOnRayLine, function (points) {
+      this.renderPointMarker(ctx, GraphicMarkType.PRICE_LINE, checkPointOnRayLine, function (points) {
         return [[points[0], {
           x: _this8.viewPortHandler.contentRight(),
           y: points[0].y
@@ -2967,46 +2895,43 @@ function (_Render) {
     /**
      * 渲染价格通道线
      * @param ctx
-     * @param marker
      */
 
   }, {
     key: "renderPriceChannelLine",
-    value: function renderPriceChannelLine(ctx, marker) {
+    value: function renderPriceChannelLine(ctx) {
       var _this9 = this;
 
-      this.renderPointMarker(ctx, MarkerType.PRICE_CHANNEL_LINE, marker, checkPointOnStraightLine, function (points) {
+      this.renderPointMarker(ctx, GraphicMarkType.PRICE_CHANNEL_LINE, checkPointOnStraightLine, function (points) {
         return getParallelLines(points, _this9.viewPortHandler, true);
       });
     }
     /**
      * 渲染平行直线
      * @param ctx
-     * @param marker
      */
 
   }, {
     key: "renderParallelStraightLine",
-    value: function renderParallelStraightLine(ctx, marker) {
+    value: function renderParallelStraightLine(ctx) {
       var _this10 = this;
 
-      this.renderPointMarker(ctx, MarkerType.PARALLEL_STRAIGHT_LINE, marker, checkPointOnStraightLine, function (points) {
+      this.renderPointMarker(ctx, GraphicMarkType.PARALLEL_STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
         return getParallelLines(points, _this10.viewPortHandler);
       });
     }
     /**
      * 渲染斐波那契线
      * @param ctx
-     * @param marker
      * @param pricePrecision
      */
 
   }, {
     key: "renderFibonacciLine",
-    value: function renderFibonacciLine(ctx, marker, pricePrecision) {
+    value: function renderFibonacciLine(ctx, pricePrecision) {
       var _this11 = this;
 
-      this.renderPointMarker(ctx, MarkerType.FIBONACCI_LINE, marker, checkPointOnStraightLine, function (points) {
+      this.renderPointMarker(ctx, GraphicMarkType.FIBONACCI_LINE, checkPointOnStraightLine, function (points) {
         return getFibonacciLines(points, _this11.viewPortHandler);
       }, true, pricePrecision, ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']);
     }
@@ -3014,7 +2939,6 @@ function (_Render) {
      * 渲染点形成的图形
      * @param ctx
      * @param markerKey
-     * @param marker
      * @param checkPointOnLine
      * @param generatedLinePoints
      * @param isRenderPrice
@@ -3024,7 +2948,7 @@ function (_Render) {
 
   }, {
     key: "renderPointMarker",
-    value: function renderPointMarker(ctx, markerKey, marker, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
+    value: function renderPointMarker(ctx, markerKey, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
       var _this12 = this;
 
       var markerData = this.dataProvider.markerDatas[markerKey];
@@ -3046,7 +2970,7 @@ function (_Render) {
         });
         var linePoints = generatedLinePoints ? generatedLinePoints(circlePoints) : [circlePoints];
 
-        _this12.renderMarker(ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine, isRenderPrice, pricePrecision, priceExtendsText);
+        _this12.renderMarker(ctx, linePoints, circlePoints, drawStep, checkPointOnLine, isRenderPrice, pricePrecision, priceExtendsText);
       });
     }
     /**
@@ -3054,7 +2978,6 @@ function (_Render) {
      * @param ctx
      * @param linePoints
      * @param circlePoints
-     * @param marker
      * @param drawStep
      * @param checkPointOnLine
      * @param isRenderPrice
@@ -3064,10 +2987,10 @@ function (_Render) {
 
   }, {
     key: "renderMarker",
-    value: function renderMarker(ctx, linePoints, circlePoints, marker, drawStep, checkPointOnLine, isRenderPrice, pricePrecision) {
+    value: function renderMarker(ctx, linePoints, circlePoints, drawStep, checkPointOnLine, isRenderPrice, pricePrecision) {
       var _this13 = this;
 
-      var priceExtendsText = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : [];
+      var priceExtendsText = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [];
       var markerPoint = this.dataProvider.markerPoint;
       var isOnLine = false;
       linePoints.forEach(function (points, i) {
@@ -3078,9 +3001,9 @@ function (_Render) {
             isOnLine = isOn;
           }
 
-          if (drawStep !== MarkerDrawStep.STEP_1) {
-            ctx.strokeStyle = marker.line.color;
-            ctx.lineWidth = marker.line.size;
+          if (drawStep !== GraphicMarkDrawStep.STEP_1) {
+            ctx.strokeStyle = _this13.graphicMark.line.color;
+            ctx.lineWidth = _this13.graphicMark.line.size;
             ctx.beginPath();
             ctx.moveTo(points[0].x, points[0].y);
             ctx.lineTo(points[1].x, points[1].y);
@@ -3091,15 +3014,15 @@ function (_Render) {
               var price = _this13.yRender.getValue(points[0].y);
 
               var priceText = formatPrecision(price, pricePrecision);
-              var textSize = marker.text.size;
+              var textSize = _this13.graphicMark.text.size;
               ctx.font = getFont(textSize);
-              ctx.fillStyle = marker.text.color;
-              ctx.fillText("".concat(priceText, " ").concat(priceExtendsText[i] || ''), points[0].x + marker.text.marginLeft, points[0].y - marker.text.marginBottom);
+              ctx.fillStyle = _this13.graphicMark.text.color;
+              ctx.fillText("".concat(priceText, " ").concat(priceExtendsText[i] || ''), points[0].x + _this13.graphicMark.text.marginLeft, points[0].y - _this13.graphicMark.text.marginBottom);
             }
           }
         }
       });
-      var radius = marker.point.radius;
+      var radius = this.graphicMark.point.radius;
       var isCircleActive = false;
 
       for (var i = 0; i < circlePoints.length; i++) {
@@ -3114,10 +3037,10 @@ function (_Render) {
         var isOnCircle = checkPointOnCircle(circlePoint, radius, markerPoint);
 
         if (isCircleActive || isOnLine) {
-          var circleRadius = isOnCircle ? marker.point.activeRadius : radius;
-          var circleColor = isOnCircle ? marker.point.activeBackgroundColor : marker.point.backgroundColor;
-          var circleBorderColor = isOnCircle ? marker.point.activeBorderColor : marker.point.borderColor;
-          var circleBorderSize = isOnCircle ? marker.point.activeBorderSize : marker.point.borderSize;
+          var circleRadius = isOnCircle ? _this13.graphicMark.point.activeRadius : radius;
+          var circleColor = isOnCircle ? _this13.graphicMark.point.activeBackgroundColor : _this13.graphicMark.point.backgroundColor;
+          var circleBorderColor = isOnCircle ? _this13.graphicMark.point.activeBorderColor : _this13.graphicMark.point.borderColor;
+          var circleBorderSize = isOnCircle ? _this13.graphicMark.point.activeBorderSize : _this13.graphicMark.point.borderSize;
           ctx.fillStyle = circleColor;
           ctx.beginPath();
           ctx.arc(circlePoint.x, circlePoint.y, circleRadius, 0, Math.PI * 2);
@@ -3134,46 +3057,120 @@ function (_Render) {
     }
   }]);
 
-  return MarkerRender;
+  return GraphicMarkRender;
 }(Render);
 
-var MarkerChart =
+var GraphicMarkChart =
 /*#__PURE__*/
 function (_Chart) {
-  _inherits(MarkerChart, _Chart);
+  _inherits(GraphicMarkChart, _Chart);
 
-  function MarkerChart(dom, style, dataProvider, yAxisRender, precision) {
+  function GraphicMarkChart(dom, style, dataProvider, yAxisRender, precision) {
     var _this;
 
-    _classCallCheck(this, MarkerChart);
+    _classCallCheck(this, GraphicMarkChart);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MarkerChart).call(this, dom, style));
-    _this.markerRender = new MarkerRender(_this.viewPortHandler, dataProvider, yAxisRender);
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkChart).call(this, dom, style));
+    _this.graphicMarkRender = new GraphicMarkRender(_this.viewPortHandler, dataProvider, yAxisRender, style.marker);
     _this.precision = precision;
     return _this;
   }
 
-  _createClass(MarkerChart, [{
+  _createClass(GraphicMarkChart, [{
     key: "draw",
     value: function draw() {
       // 画线
-      var marker = this.style.marker;
-      this.markerRender.renderHorizontalStraightLine(this.ctx, marker);
-      this.markerRender.renderVerticalStraightLine(this.ctx, marker);
-      this.markerRender.renderStraightLine(this.ctx, marker);
-      this.markerRender.renderHorizontalRayLine(this.ctx, marker);
-      this.markerRender.renderVerticalRayLine(this.ctx, marker);
-      this.markerRender.renderRayLine(this.ctx, marker);
-      this.markerRender.renderSegmentLine(this.ctx, marker);
-      this.markerRender.renderPriceLine(this.ctx, marker, this.precision.pricePrecision);
-      this.markerRender.renderPriceChannelLine(this.ctx, marker);
-      this.markerRender.renderParallelStraightLine(this.ctx, marker);
-      this.markerRender.renderFibonacciLine(this.ctx, marker, this.precision.pricePrecision);
+      this.graphicMarkRender.renderHorizontalStraightLine(this.ctx);
+      this.graphicMarkRender.renderVerticalStraightLine(this.ctx);
+      this.graphicMarkRender.renderStraightLine(this.ctx);
+      this.graphicMarkRender.renderHorizontalRayLine(this.ctx);
+      this.graphicMarkRender.renderVerticalRayLine(this.ctx);
+      this.graphicMarkRender.renderRayLine(this.ctx);
+      this.graphicMarkRender.renderSegmentLine(this.ctx);
+      this.graphicMarkRender.renderPriceLine(this.ctx, this.precision.pricePrecision);
+      this.graphicMarkRender.renderPriceChannelLine(this.ctx);
+      this.graphicMarkRender.renderParallelStraightLine(this.ctx);
+      this.graphicMarkRender.renderFibonacciLine(this.ctx, this.precision.pricePrecision);
     }
   }]);
 
-  return MarkerChart;
+  return GraphicMarkChart;
 }(Chart);
+
+/**
+ * 格式化时间
+ * @param timestamp
+ * @param format
+ * @returns {string}
+ */
+
+function formatDate(timestamp, format) {
+  var date = getDate(timestamp);
+
+  if (date) {
+    var year = date.getFullYear().toString();
+    var month = (date.getMonth() + 1).toString();
+    var day = date.getDate().toString();
+    var hours = date.getHours().toString();
+    var minutes = date.getMinutes().toString();
+    var monthText = month.length === 1 ? "0".concat(month) : month;
+    var dayText = day.length === 1 ? "0".concat(day) : day;
+    var hourText = hours.length === 1 ? '0' + hours : hours;
+    var minuteText = minutes.length === 1 ? '0' + minutes : minutes;
+
+    switch (format) {
+      case 'YYYY':
+        {
+          return year;
+        }
+
+      case 'YYYY-MM':
+        {
+          return "".concat(year, "-").concat(monthText);
+        }
+
+      case 'YYYY-MM-DD':
+        {
+          return "".concat(year, "-").concat(monthText, "-").concat(dayText);
+        }
+
+      case 'YYYY-MM-DD hh:mm':
+        {
+          return "".concat(year, "-").concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
+        }
+
+      case 'MM-DD':
+        {
+          return "".concat(monthText, "-").concat(dayText);
+        }
+
+      case 'MM':
+        {
+          return monthText;
+        }
+
+      case 'hh:mm':
+        {
+          return "".concat(hourText, ":").concat(minuteText);
+        }
+
+      default:
+        {
+          return "".concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
+        }
+    }
+  }
+
+  return '--';
+}
+
+function getDate(timestamp) {
+  if (timestamp && isNumber(timestamp)) {
+    return new Date(timestamp);
+  }
+
+  return null;
+}
 
 /**
  * 默认的样式配置
@@ -4095,7 +4092,7 @@ function (_Render) {
       var isShowCross = arguments.length > 6 ? arguments[6] : undefined;
       var crossPoint = this.dataProvider.crossPoint;
 
-      if (!crossPoint || this.dataProvider.currentMarkerType !== MarkerType.NONE || indicatorType === IndicatorType.SAR || !isShowCross || this.dataProvider.isDragMarker) {
+      if (!crossPoint || this.dataProvider.graphicMarkType !== GraphicMarkType.NONE || indicatorType === IndicatorType.SAR || !isShowCross || this.dataProvider.isDragMarker) {
         return;
       }
 
@@ -4315,10 +4312,10 @@ function (_Chart) {
   _createClass(TooltipChart, [{
     key: "draw",
     value: function draw() {
-      var kLineData = this.dataProvider.dataList[this.dataProvider.currentTooltipDataPos] || {};
+      var kLineData = this.dataProvider.dataList[this.dataProvider.tooltipDataPos] || {};
       var tooltip = this.style.tooltip; // 如果不是绘图才显示十字线
 
-      if (this.dataProvider.currentMarkerType === MarkerType.NONE && !this.dataProvider.isDragMarker) {
+      if (this.dataProvider.graphicMarkType === GraphicMarkType.NONE && !this.dataProvider.isDragMarker) {
         this.tooltipRender.renderCrossHorizontalLine(this.ctx, this.mainChart.indicatorType, this.subIndicatorChart.indicatorType, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, tooltip, this.precision);
         this.tooltipRender.renderCrossVerticalLine(this.ctx, kLineData, tooltip);
       }
@@ -6878,22 +6875,22 @@ function (_Event) {
   return MouseEvent;
 }(Event);
 
-var MarkerEvent =
+var GraphicMarkEvent =
 /*#__PURE__*/
 function () {
-  function MarkerEvent(dataProvider, markerChart, style) {
-    _classCallCheck(this, MarkerEvent);
+  function GraphicMarkEvent(dataProvider, graphicMarkChart, style) {
+    _classCallCheck(this, GraphicMarkEvent);
 
     this.dataProvider = dataProvider;
-    this.markerChart = markerChart;
-    this.viewPortHandler = markerChart.viewPortHandler;
-    this.yRender = markerChart.markerRender.yRender;
+    this.graphicMarkChart = graphicMarkChart;
+    this.viewPortHandler = graphicMarkChart.viewPortHandler;
+    this.yRender = graphicMarkChart.graphicMarkRender.yRender;
     this.style = style; // 标记当没有画线时鼠标是否按下
 
     this.noneMarkerMouseDownFlag = false; // 用来记录当没有绘制标记图形时，鼠标操作后落点线上的数据
 
     this.noneMarkerMouseDownActiveData = {
-      markerKey: null,
+      markKey: null,
       dataIndex: -1,
       onLine: false,
       onCircle: false,
@@ -6905,12 +6902,12 @@ function () {
    */
 
 
-  _createClass(MarkerEvent, [{
+  _createClass(GraphicMarkEvent, [{
     key: "mouseUp",
     value: function mouseUp() {
       this.noneMarkerMouseDownFlag = false;
       this.noneMarkerMouseDownActiveData = {
-        markerKey: null,
+        markKey: null,
         dataIndex: -1,
         onLine: false,
         onCircle: false,
@@ -6925,40 +6922,40 @@ function () {
   }, {
     key: "mouseDown",
     value: function mouseDown(e) {
-      var point = getCanvasPoint(e, this.markerChart.canvasDom);
+      var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
       this.dataProvider.markerPoint = _objectSpread2({}, point);
 
       if (!isValidEvent(point, this.viewPortHandler)) {
         return;
       }
 
-      var markerType = this.dataProvider.currentMarkerType;
+      var graphicMarkType = this.dataProvider.graphicMarkType;
 
-      switch (markerType) {
-        case MarkerType.HORIZONTAL_STRAIGHT_LINE:
-        case MarkerType.VERTICAL_STRAIGHT_LINE:
-        case MarkerType.STRAIGHT_LINE:
-        case MarkerType.HORIZONTAL_RAY_LINE:
-        case MarkerType.VERTICAL_RAY_LINE:
-        case MarkerType.RAY_LINE:
-        case MarkerType.HORIZONTAL_SEGMENT_LINE:
-        case MarkerType.VERTICAL_SEGMENT_LINE:
-        case MarkerType.SEGMENT_LINE:
-        case MarkerType.PRICE_LINE:
-        case MarkerType.FIBONACCI_LINE:
+      switch (graphicMarkType) {
+        case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
+        case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
+        case GraphicMarkType.STRAIGHT_LINE:
+        case GraphicMarkType.HORIZONTAL_RAY_LINE:
+        case GraphicMarkType.VERTICAL_RAY_LINE:
+        case GraphicMarkType.RAY_LINE:
+        case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
+        case GraphicMarkType.VERTICAL_SEGMENT_LINE:
+        case GraphicMarkType.SEGMENT_LINE:
+        case GraphicMarkType.PRICE_LINE:
+        case GraphicMarkType.FIBONACCI_LINE:
           {
-            this.twoStepMarkerMouseDown(e, markerType);
+            this.twoStepMarkerMouseDown(e, graphicMarkType);
             break;
           }
 
-        case MarkerType.PRICE_CHANNEL_LINE:
-        case MarkerType.PARALLEL_STRAIGHT_LINE:
+        case GraphicMarkType.PRICE_CHANNEL_LINE:
+        case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
           {
-            this.threeStepMarkerMouseDown(e, markerType);
+            this.threeStepMarkerMouseDown(e, graphicMarkType);
             break;
           }
 
-        case MarkerType.NONE:
+        case GraphicMarkType.NONE:
           {
             this.noneMarkerMouseDown(e);
             break;
@@ -6968,26 +6965,26 @@ function () {
     /**
      * 两步形成的标记图形鼠标按下处理
      * @param e
-     * @param markerKey
+     * @param markKey
      */
 
   }, {
     key: "twoStepMarkerMouseDown",
-    value: function twoStepMarkerMouseDown(e, markerKey) {
+    value: function twoStepMarkerMouseDown(e, markKey) {
       var _this = this;
 
-      this.markerMouseDown(e, markerKey, function (lastLineData) {
+      this.markerMouseDown(e, markKey, function (lastLineData) {
         switch (lastLineData.drawStep) {
-          case MarkerDrawStep.STEP_1:
+          case GraphicMarkDrawStep.STEP_1:
             {
-              lastLineData.drawStep = MarkerDrawStep.STEP_2;
+              lastLineData.drawStep = GraphicMarkDrawStep.STEP_2;
               break;
             }
 
-          case MarkerDrawStep.STEP_2:
+          case GraphicMarkDrawStep.STEP_2:
             {
-              lastLineData.drawStep = MarkerDrawStep.STEP_DONE;
-              _this.dataProvider.currentMarkerType = MarkerType.NONE;
+              lastLineData.drawStep = GraphicMarkDrawStep.STEP_DONE;
+              _this.dataProvider.graphicMarkType = GraphicMarkType.NONE;
               break;
             }
         }
@@ -6996,32 +6993,32 @@ function () {
     /**
      * 两个点形成的标记图形鼠标按下事件
      * @param e
-     * @param markerKey
+     * @param markKey
      */
 
   }, {
     key: "threeStepMarkerMouseDown",
-    value: function threeStepMarkerMouseDown(e, markerKey) {
+    value: function threeStepMarkerMouseDown(e, markKey) {
       var _this2 = this;
 
-      this.markerMouseDown(e, markerKey, function (lastLineData) {
+      this.markerMouseDown(e, markKey, function (lastLineData) {
         switch (lastLineData.drawStep) {
-          case MarkerDrawStep.STEP_1:
+          case GraphicMarkDrawStep.STEP_1:
             {
-              lastLineData.drawStep = MarkerDrawStep.STEP_2;
+              lastLineData.drawStep = GraphicMarkDrawStep.STEP_2;
               break;
             }
 
-          case MarkerDrawStep.STEP_2:
+          case GraphicMarkDrawStep.STEP_2:
             {
-              lastLineData.drawStep = MarkerDrawStep.STEP_3;
+              lastLineData.drawStep = GraphicMarkDrawStep.STEP_3;
               break;
             }
 
-          case MarkerDrawStep.STEP_3:
+          case GraphicMarkDrawStep.STEP_3:
             {
-              lastLineData.drawStep = MarkerDrawStep.STEP_DONE;
-              _this2.dataProvider.currentMarkerType = MarkerType.NONE;
+              lastLineData.drawStep = GraphicMarkDrawStep.STEP_DONE;
+              _this2.dataProvider.graphicMarkType = GraphicMarkType.NONE;
               break;
             }
         }
@@ -7030,26 +7027,26 @@ function () {
     /**
      * 绘制标记图形时鼠标按下事件
      * @param e
-     * @param markerKey
+     * @param markKey
      * @param performDifPoint
      */
 
   }, {
     key: "markerMouseDown",
-    value: function markerMouseDown(e, markerKey, performDifPoint) {
-      var markerData = this.dataProvider.markerDatas[markerKey];
+    value: function markerMouseDown(e, markKey, performDifPoint) {
+      var markerData = this.dataProvider.markerDatas[markKey];
 
       if (e.button === 2) {
         markerData.splice(markerData.length - 1, 1);
-        this.dataProvider.currentMarkerType = MarkerType.NONE;
+        this.dataProvider.graphicMarkType = GraphicMarkType.NONE;
       } else {
         var lastLineData = markerData[markerData.length - 1];
         performDifPoint(lastLineData);
         markerData[markerData.length - 1] = lastLineData;
       }
 
-      this.dataProvider.markerDatas[markerKey] = markerData;
-      this.markerChart.flush();
+      this.dataProvider.markerDatas[markKey] = markerData;
+      this.graphicMarkChart.flush();
     }
     /**
      * 没有绘制时鼠标按下事件
@@ -7059,16 +7056,16 @@ function () {
     key: "noneMarkerMouseDown",
     value: function noneMarkerMouseDown(e) {
       this.findNoneMarkerMouseDownActiveData(e);
-      var markerKey = this.noneMarkerMouseDownActiveData.markerKey;
+      var markKey = this.noneMarkerMouseDownActiveData.markKey;
       var dataIndex = this.noneMarkerMouseDownActiveData.dataIndex;
 
-      if (markerKey && dataIndex !== -1) {
+      if (markKey && dataIndex !== -1) {
         if (e.button === 2) {
           // 鼠标右键
-          var markerData = this.dataProvider.markerDatas[markerKey];
+          var markerData = this.dataProvider.markerDatas[markKey];
           markerData.splice(dataIndex, 1);
-          this.dataProvider.markerDatas[markerKey] = markerData;
-          this.markerChart.flush();
+          this.dataProvider.markerDatas[markKey] = markerData;
+          this.graphicMarkChart.flush();
         } else {
           if (this.noneMarkerMouseDownActiveData.onCircle) {
             this.noneMarkerMouseDownFlag = true;
@@ -7087,15 +7084,15 @@ function () {
     value: function findNoneMarkerMouseDownActiveData(e) {
       var _this3 = this;
 
-      var point = getCanvasPoint(e, this.markerChart.canvasDom);
+      var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
       var keys = Object.keys(this.dataProvider.markerDatas);
 
       var _loop = function _loop(i) {
         var key = keys[i];
 
         switch (key) {
-          case MarkerType.HORIZONTAL_STRAIGHT_LINE:
-          case MarkerType.PRICE_LINE:
+          case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
+          case GraphicMarkType.PRICE_LINE:
             {
               if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], {
@@ -7111,7 +7108,7 @@ function () {
               break;
             }
 
-          case MarkerType.VERTICAL_STRAIGHT_LINE:
+          case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
             {
               if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], {
@@ -7127,7 +7124,7 @@ function () {
               break;
             }
 
-          case MarkerType.STRAIGHT_LINE:
+          case GraphicMarkType.STRAIGHT_LINE:
             {
               if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], xyPoints[1], point);
@@ -7140,9 +7137,9 @@ function () {
               break;
             }
 
-          case MarkerType.HORIZONTAL_RAY_LINE:
-          case MarkerType.VERTICAL_RAY_LINE:
-          case MarkerType.RAY_LINE:
+          case GraphicMarkType.HORIZONTAL_RAY_LINE:
+          case GraphicMarkType.VERTICAL_RAY_LINE:
+          case GraphicMarkType.RAY_LINE:
             {
               if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnRayLine(xyPoints[0], xyPoints[1], point);
@@ -7155,9 +7152,9 @@ function () {
               break;
             }
 
-          case MarkerType.HORIZONTAL_SEGMENT_LINE:
-          case MarkerType.VERTICAL_SEGMENT_LINE:
-          case MarkerType.SEGMENT_LINE:
+          case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
+          case GraphicMarkType.VERTICAL_SEGMENT_LINE:
+          case GraphicMarkType.SEGMENT_LINE:
             {
               if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnSegmentLine(xyPoints[0], xyPoints[1], point);
@@ -7170,27 +7167,27 @@ function () {
               break;
             }
 
-          case MarkerType.PRICE_CHANNEL_LINE:
-          case MarkerType.PARALLEL_STRAIGHT_LINE:
-          case MarkerType.FIBONACCI_LINE:
+          case GraphicMarkType.PRICE_CHANNEL_LINE:
+          case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
+          case GraphicMarkType.FIBONACCI_LINE:
             {
               if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
                 var linePoints = [];
 
                 switch (key) {
-                  case MarkerType.PRICE_CHANNEL_LINE:
+                  case GraphicMarkType.PRICE_CHANNEL_LINE:
                     {
                       linePoints = getParallelLines(xyPoints, _this3.viewPortHandler, true);
                       break;
                     }
 
-                  case MarkerType.PARALLEL_STRAIGHT_LINE:
+                  case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
                     {
                       linePoints = getParallelLines(xyPoints, _this3.viewPortHandler);
                       break;
                     }
 
-                  case MarkerType.FIBONACCI_LINE:
+                  case GraphicMarkType.FIBONACCI_LINE:
                     {
                       linePoints = getFibonacciLines(xyPoints, _this3.viewPortHandler);
                       break;
@@ -7228,7 +7225,7 @@ function () {
     }
     /**
      * 查找没有绘制图时鼠标按下时落点在哪条数据上
-     * @param markerKey
+     * @param markKey
      * @param point
      * @param checkPointOnLine
      * @returns {boolean}
@@ -7236,10 +7233,10 @@ function () {
 
   }, {
     key: "realFindNoneMarkerMouseDownActiveData",
-    value: function realFindNoneMarkerMouseDownActiveData(markerKey, point, checkPointOnLine) {
+    value: function realFindNoneMarkerMouseDownActiveData(markKey, point, checkPointOnLine) {
       var _this4 = this;
 
-      var markerData = this.dataProvider.markerDatas[markerKey];
+      var markerData = this.dataProvider.markerDatas[markKey];
       markerData.forEach(function (data, index) {
         var points = data.points;
         var xyPoints = [];
@@ -7271,7 +7268,7 @@ function () {
 
         if (isOnLine || isOnCircle) {
           _this4.noneMarkerMouseDownActiveData = {
-            markerKey: markerKey,
+            markKey: markKey,
             dataIndex: index,
             onLine: isOnLine,
             onCircle: isOnCircle,
@@ -7289,7 +7286,7 @@ function () {
   }, {
     key: "mouseMove",
     value: function mouseMove(e) {
-      var point = getCanvasPoint(e, this.markerChart.canvasDom);
+      var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
       this.dataProvider.markerPoint = _objectSpread2({}, point);
 
       if (!isValidEvent(point, this.viewPortHandler)) {
@@ -7298,54 +7295,54 @@ function () {
 
       if (!this.waitingForMouseMoveAnimationFrame) {
         this.waitingForMouseMoveAnimationFrame = true;
-        var markerType = this.dataProvider.currentMarkerType;
+        var graphicMarkType = this.dataProvider.graphicMarkType;
 
-        switch (markerType) {
-          case MarkerType.HORIZONTAL_STRAIGHT_LINE:
-          case MarkerType.VERTICAL_STRAIGHT_LINE:
-          case MarkerType.PRICE_LINE:
+        switch (graphicMarkType) {
+          case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
+          case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
+          case GraphicMarkType.PRICE_LINE:
             {
-              this.onePointMarkerMouseMove(point, markerType);
+              this.onePointMarkerMouseMove(point, graphicMarkType);
               break;
             }
 
-          case MarkerType.STRAIGHT_LINE:
-          case MarkerType.RAY_LINE:
-          case MarkerType.SEGMENT_LINE:
-          case MarkerType.FIBONACCI_LINE:
+          case GraphicMarkType.STRAIGHT_LINE:
+          case GraphicMarkType.RAY_LINE:
+          case GraphicMarkType.SEGMENT_LINE:
+          case GraphicMarkType.FIBONACCI_LINE:
             {
-              this.twoPointMarkerMouseMove(point, markerType);
+              this.twoPointMarkerMouseMove(point, graphicMarkType);
               break;
             }
 
-          case MarkerType.HORIZONTAL_RAY_LINE:
-          case MarkerType.HORIZONTAL_SEGMENT_LINE:
+          case GraphicMarkType.HORIZONTAL_RAY_LINE:
+          case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
             {
-              this.twoPointMarkerMouseMove(point, markerType, function (lastLineData, _ref) {
+              this.twoPointMarkerMouseMove(point, graphicMarkType, function (lastLineData, _ref) {
                 var price = _ref.price;
                 lastLineData.points[0].price = price;
               });
               break;
             }
 
-          case MarkerType.VERTICAL_RAY_LINE:
-          case MarkerType.VERTICAL_SEGMENT_LINE:
+          case GraphicMarkType.VERTICAL_RAY_LINE:
+          case GraphicMarkType.VERTICAL_SEGMENT_LINE:
             {
-              this.twoPointMarkerMouseMove(point, markerType, function (lastLineData, _ref2) {
+              this.twoPointMarkerMouseMove(point, graphicMarkType, function (lastLineData, _ref2) {
                 var xPos = _ref2.xPos;
                 lastLineData.points[0].xPos = xPos;
               });
               break;
             }
 
-          case MarkerType.PRICE_CHANNEL_LINE:
-          case MarkerType.PARALLEL_STRAIGHT_LINE:
+          case GraphicMarkType.PRICE_CHANNEL_LINE:
+          case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
             {
-              this.threePointMarkerMouseMove(point, markerType);
+              this.threePointMarkerMouseMove(point, graphicMarkType);
               break;
             }
 
-          case MarkerType.NONE:
+          case GraphicMarkType.NONE:
             {
               this.noneMarkerMouseMove(point);
               break;
@@ -7358,34 +7355,34 @@ function () {
     /**
      * 一个点形成的图形鼠标移动事件
      * @param point
-     * @param markerKey
+     * @param markKey
      */
 
   }, {
     key: "onePointMarkerMouseMove",
-    value: function onePointMarkerMouseMove(point, markerKey) {
+    value: function onePointMarkerMouseMove(point, markKey) {
       var _this5 = this;
 
-      this.markerMouseMove(point, markerKey, function (markerData, lastLineData) {
+      this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
         var xPos = _this5.dataProvider.minPos + (point.x - _this5.viewPortHandler.contentLeft()) / _this5.dataProvider.dataSpace;
 
         var price = _this5.yRender.getValue(point.y);
 
         switch (lastLineData.drawStep) {
-          case MarkerDrawStep.STEP_DONE:
+          case GraphicMarkDrawStep.STEP_DONE:
             {
               markerData.push({
                 points: [{
                   xPos: xPos,
                   price: price
                 }],
-                drawStep: MarkerDrawStep.STEP_1
+                drawStep: GraphicMarkDrawStep.STEP_1
               });
               break;
             }
 
-          case MarkerDrawStep.STEP_1:
-          case MarkerDrawStep.STEP_2:
+          case GraphicMarkDrawStep.STEP_1:
+          case GraphicMarkDrawStep.STEP_2:
             {
               lastLineData.points[0].xPos = xPos;
               lastLineData.points[0].price = price;
@@ -7398,22 +7395,22 @@ function () {
     /**
      * 两个点形成的线鼠标移动事件
      * @param point
-     * @param markerKey
+     * @param markKey
      * @param stepTwo
      */
 
   }, {
     key: "twoPointMarkerMouseMove",
-    value: function twoPointMarkerMouseMove(point, markerKey, stepTwo) {
+    value: function twoPointMarkerMouseMove(point, markKey, stepTwo) {
       var _this6 = this;
 
-      this.markerMouseMove(point, markerKey, function (markerData, lastLineData) {
+      this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
         var xPos = _this6.dataProvider.minPos + (point.x - _this6.viewPortHandler.contentLeft()) / _this6.dataProvider.dataSpace;
 
         var price = _this6.yRender.getValue(point.y);
 
         switch (lastLineData.drawStep) {
-          case MarkerDrawStep.STEP_DONE:
+          case GraphicMarkDrawStep.STEP_DONE:
             {
               markerData.push({
                 points: [{
@@ -7423,12 +7420,12 @@ function () {
                   xPos: xPos,
                   price: price
                 }],
-                drawStep: MarkerDrawStep.STEP_1
+                drawStep: GraphicMarkDrawStep.STEP_1
               });
               break;
             }
 
-          case MarkerDrawStep.STEP_1:
+          case GraphicMarkDrawStep.STEP_1:
             {
               lastLineData.points[0] = {
                 xPos: xPos,
@@ -7442,7 +7439,7 @@ function () {
               break;
             }
 
-          case MarkerDrawStep.STEP_2:
+          case GraphicMarkDrawStep.STEP_2:
             {
               lastLineData.points[1] = {
                 xPos: xPos,
@@ -7465,22 +7462,22 @@ function () {
     /**
      * 三步形成的标记图形鼠标移动事件
      * @param point
-     * @param markerKey
+     * @param markKey
      * @param stepTwo
      */
 
   }, {
     key: "threePointMarkerMouseMove",
-    value: function threePointMarkerMouseMove(point, markerKey, stepTwo) {
+    value: function threePointMarkerMouseMove(point, markKey, stepTwo) {
       var _this7 = this;
 
-      this.markerMouseMove(point, markerKey, function (markerData, lastLineData) {
+      this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
         var xPos = _this7.dataProvider.minPos + (point.x - _this7.viewPortHandler.contentLeft()) / _this7.dataProvider.dataSpace;
 
         var price = _this7.yRender.getValue(point.y);
 
         switch (lastLineData.drawStep) {
-          case MarkerDrawStep.STEP_DONE:
+          case GraphicMarkDrawStep.STEP_DONE:
             {
               markerData.push({
                 points: [{
@@ -7490,12 +7487,12 @@ function () {
                   xPos: xPos,
                   price: price
                 }],
-                drawStep: MarkerDrawStep.STEP_1
+                drawStep: GraphicMarkDrawStep.STEP_1
               });
               break;
             }
 
-          case MarkerDrawStep.STEP_1:
+          case GraphicMarkDrawStep.STEP_1:
             {
               lastLineData.points[0] = {
                 xPos: xPos,
@@ -7509,7 +7506,7 @@ function () {
               break;
             }
 
-          case MarkerDrawStep.STEP_2:
+          case GraphicMarkDrawStep.STEP_2:
             {
               if (isFunction(stepTwo)) {
                 stepTwo(lastLineData, {
@@ -7526,7 +7523,7 @@ function () {
               break;
             }
 
-          case MarkerDrawStep.STEP_3:
+          case GraphicMarkDrawStep.STEP_3:
             {
               lastLineData.points[2] = {
                 xPos: xPos,
@@ -7541,20 +7538,20 @@ function () {
     /**
      * 绘制标记图形时鼠标移动事件
      * @param point
-     * @param markerKey
+     * @param markKey
      * @param performDifPoint
      */
 
   }, {
     key: "markerMouseMove",
-    value: function markerMouseMove(point, markerKey, performDifPoint) {
-      var markerData = this.dataProvider.markerDatas[markerKey];
+    value: function markerMouseMove(point, markKey, performDifPoint) {
+      var markerData = this.dataProvider.markerDatas[markKey];
       var lastLineData = markerData[markerData.length - 1] || {
-        drawStep: MarkerDrawStep.STEP_DONE
+        drawStep: GraphicMarkDrawStep.STEP_DONE
       };
       performDifPoint(markerData, lastLineData);
-      this.dataProvider.markerDatas[markerKey] = markerData;
-      this.markerChart.flush();
+      this.dataProvider.markerDatas[markKey] = markerData;
+      this.graphicMarkChart.flush();
     }
     /**
      * 没有绘制标记时鼠标移动事件
@@ -7565,22 +7562,22 @@ function () {
     key: "noneMarkerMouseMove",
     value: function noneMarkerMouseMove(point) {
       if (this.noneMarkerMouseDownFlag) {
-        var markerKey = this.noneMarkerMouseDownActiveData.markerKey;
+        var markKey = this.noneMarkerMouseDownActiveData.markKey;
         var dataIndex = this.noneMarkerMouseDownActiveData.dataIndex;
 
-        if (markerKey && dataIndex !== -1) {
-          var markerData = this.dataProvider.markerDatas[markerKey];
+        if (markKey && dataIndex !== -1) {
+          var markerData = this.dataProvider.markerDatas[markKey];
 
-          switch (markerKey) {
-            case MarkerType.HORIZONTAL_STRAIGHT_LINE:
-            case MarkerType.VERTICAL_STRAIGHT_LINE:
-            case MarkerType.PRICE_LINE:
-            case MarkerType.STRAIGHT_LINE:
-            case MarkerType.RAY_LINE:
-            case MarkerType.SEGMENT_LINE:
-            case MarkerType.PRICE_CHANNEL_LINE:
-            case MarkerType.PARALLEL_STRAIGHT_LINE:
-            case MarkerType.FIBONACCI_LINE:
+          switch (markKey) {
+            case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
+            case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
+            case GraphicMarkType.PRICE_LINE:
+            case GraphicMarkType.STRAIGHT_LINE:
+            case GraphicMarkType.RAY_LINE:
+            case GraphicMarkType.SEGMENT_LINE:
+            case GraphicMarkType.PRICE_CHANNEL_LINE:
+            case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
+            case GraphicMarkType.FIBONACCI_LINE:
               {
                 var pointIndex = this.noneMarkerMouseDownActiveData.pointIndex;
 
@@ -7592,8 +7589,8 @@ function () {
                 break;
               }
 
-            case MarkerType.HORIZONTAL_RAY_LINE:
-            case MarkerType.HORIZONTAL_SEGMENT_LINE:
+            case GraphicMarkType.HORIZONTAL_RAY_LINE:
+            case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
               {
                 var _pointIndex = this.noneMarkerMouseDownActiveData.pointIndex;
 
@@ -7607,8 +7604,8 @@ function () {
                 break;
               }
 
-            case MarkerType.VERTICAL_RAY_LINE:
-            case MarkerType.VERTICAL_SEGMENT_LINE:
+            case GraphicMarkType.VERTICAL_RAY_LINE:
+            case GraphicMarkType.VERTICAL_SEGMENT_LINE:
               {
                 var _pointIndex2 = this.noneMarkerMouseDownActiveData.pointIndex;
 
@@ -7623,15 +7620,15 @@ function () {
               }
           }
 
-          this.dataProvider.markerDatas[markerKey] = markerData;
+          this.dataProvider.markerDatas[markKey] = markerData;
         }
       }
 
-      this.markerChart.flush();
+      this.graphicMarkChart.flush();
     }
   }]);
 
-  return MarkerEvent;
+  return GraphicMarkEvent;
 }();
 
 var KeyboardEvent =
@@ -7667,14 +7664,14 @@ function (_Event) {
           // 左移
           if (this.dataProvider.minPos > 0) {
             this.dataProvider.minPos--;
-            this.dataProvider.currentTooltipDataPos--;
+            this.dataProvider.tooltipDataPos--;
             shouldFlush = true;
           }
         } else {
           // 右移
           if (this.dataProvider.minPos < this.dataProvider.dataList.length - this.dataProvider.range) {
             this.dataProvider.minPos++;
-            this.dataProvider.currentTooltipDataPos++;
+            this.dataProvider.tooltipDataPos++;
             shouldFlush = true;
           }
         }
@@ -7718,6 +7715,8 @@ function (_Event) {
   return KeyboardEvent;
 }(Event);
 
+var DEV = process.env.NODE_ENV === 'development';
+
 var RootChart =
 /*#__PURE__*/
 function () {
@@ -7741,7 +7740,7 @@ function () {
     this.dataProvider = new DataProvider();
     this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider, this.period);
     this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams, this.precision);
-    this.markerChart = new MarkerChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender, this.precision);
+    this.graphicMarkChart = new GraphicMarkChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender, this.precision);
     this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL);
     this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams);
     this.tooltipChart = new TooltipChart(dom, this.style, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider, this.indicatorParams, this.precision);
@@ -7784,24 +7783,24 @@ function () {
           motionEvent.touchEnd(e);
         }, false);
       } else {
-        var _motionEvent = new MouseEvent(this.tooltipChart, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.markerChart, this.dataProvider);
+        var _motionEvent = new MouseEvent(this.tooltipChart, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.graphicMarkChart, this.dataProvider);
 
-        var markerEvent = new MarkerEvent(this.dataProvider, this.markerChart, this.style);
-        var keyboardEvent = new KeyboardEvent(this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.tooltipChart, this.markerChart, this.xAxisChart, this.dataProvider);
+        var graphicMarkEvent = new GraphicMarkEvent(this.dataProvider, this.graphicMarkChart, this.style);
+        var keyboardEvent = new KeyboardEvent(this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.tooltipChart, this.graphicMarkChart, this.xAxisChart, this.dataProvider);
         this.dom.addEventListener('mousedown', function (e) {
           _motionEvent.mouseDown(e);
 
-          markerEvent.mouseDown(e);
+          graphicMarkEvent.mouseDown(e);
         }, false);
         this.dom.addEventListener('mouseup', function (e) {
           _motionEvent.mouseUp(e);
 
-          markerEvent.mouseUp(e);
+          graphicMarkEvent.mouseUp(e);
         }, false);
         this.dom.addEventListener('mousemove', function (e) {
           _motionEvent.mouseMove(e, loadMore);
 
-          markerEvent.mouseMove(e);
+          graphicMarkEvent.mouseMove(e);
         }, false);
         this.dom.addEventListener('mouseleave', function (e) {
           _motionEvent.mouseLeave(e);
@@ -7894,7 +7893,7 @@ function () {
       this.xAxisChart.setChartDimensions(0, domWidth, domHeight, offsetLeft, offsetRight, 0, xAxisHeight);
       var mainChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight;
       this.mainChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight);
-      this.markerChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight);
+      this.graphicMarkChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight);
       chartTop += mainChartHeight;
       this.volIndicatorChart.setChartDimensions(chartTop, domWidth, volChartHeight, offsetLeft, offsetRight);
       chartTop += volChartHeight;
@@ -8093,7 +8092,7 @@ function () {
 
                 if (month === lastDataMonth) {
                   pos = dataSize - 1;
-                } else if (monthDiff === periodNumber) {
+                } else if (monthDiff >= periodNumber) {
                   pos = dataSize;
                 }
 
@@ -8110,7 +8109,7 @@ function () {
 
                 if (_year === _lastDataYear) {
                   pos = dataSize - 1;
-                } else if (yearDiff === periodNumber) {
+                } else if (yearDiff >= periodNumber) {
                   pos = dataSize;
                 }
 
@@ -8289,6 +8288,48 @@ function () {
       }
     }
     /**
+     * 设置交易时段
+     * @param session
+     */
+
+  }, {
+    key: "setSession",
+    value: function setSession(session) {
+      // 0900-1630,1015-1130,2100-0100|0900-1400:234;6
+      /^[[012][0-9]{3}-[012][0-9]{3},]*[:[0-6]{1,6}]?[|[[012][0-9]{3}-[012][0-9]{3},]*[:[0-6]{1,6}]?]*[;[0-6]]?$/.test('0900-1630,1015-1130,2100-0100|0900-1400:234;6');
+      var rootSplitArray = session.split(';');
+
+      switch (rootSplitArray.length) {
+        case 1:
+          {
+            break;
+          }
+
+        case 2:
+          {
+            var weekStartTradingDay = rootSplitArray[1];
+
+            if (!/^[0-6]$/.test(weekStartTradingDay)) {
+              if (DEV) {
+                console.warn('The trading day is set incorrectly for the first trading day of the week. The parameters should be 0, 1, 2, 3, 4, 5, 6.');
+              }
+
+              return;
+            }
+
+            console.log(1);
+            break;
+          }
+
+        default:
+          {
+            if (DEV) {
+              console.warn('The format of the trading session is incorrect.');
+            }
+          }
+      }
+    }
+    /**
      * 显示成交量图
      * @param isShow
      */
@@ -8415,26 +8456,26 @@ function () {
     }
     /**
      * 绘制标记图形
-     * @param markerType
+     * @param type
      */
 
   }, {
     key: "drawMarker",
-    value: function drawMarker(markerType) {
+    value: function drawMarker(type) {
       // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
-      var currentMarkerType = this.dataProvider.currentMarkerType;
+      var graphicMarkType = this.dataProvider.graphicMarkType;
 
-      if (currentMarkerType !== markerType) {
-        var markerData = this.dataProvider.markerDatas[currentMarkerType];
+      if (graphicMarkType !== type) {
+        var markerData = this.dataProvider.markerDatas[graphicMarkType];
 
         if (markerData && isArray(markerData)) {
           markerData.splice(markerData.length - 1, 1);
-          this.dataProvider.markerDatas[currentMarkerType] = markerData;
+          this.dataProvider.markerDatas[graphicMarkType] = markerData;
           this.tooltipChart.flush();
         }
       }
 
-      this.dataProvider.currentMarkerType = markerType;
+      this.dataProvider.graphicMarkType = type;
     }
     /**
      * 清空所有标记图形
@@ -8449,8 +8490,8 @@ function () {
       Object.keys(markerDatas).forEach(function (key) {
         _this4.dataProvider.markerDatas[key] = [];
       });
-      this.dataProvider.currentMarkerType = MarkerType.NONE;
-      this.markerChart.flush();
+      this.dataProvider.graphicMarkType = GraphicMarkType.NONE;
+      this.graphicMarkChart.flush();
     }
     /**
      * 加载更多
@@ -8504,7 +8545,7 @@ function () {
       }
 
       if (!excludes || excludes.indexOf('marker') < 0) {
-        var markerCanvas = this.markerChart.canvasDom;
+        var markerCanvas = this.graphicMarkChart.canvasDom;
         ctx.drawImage(markerCanvas, 0, 0, markerCanvas.width, markerCanvas.height);
       }
 
@@ -8518,8 +8559,6 @@ function () {
 
   return RootChart;
 }();
-
-var DEV = process.env.NODE_ENV === 'development';
 
 var instances = {};
 var idBase = 1;
