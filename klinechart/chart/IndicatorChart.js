@@ -6,13 +6,13 @@ import { IndicatorType } from '../internal/constants'
 
 class IndicatorChart extends Chart {
   constructor (
-    dom, style, dataProvider, indicatorParams,
+    dom, style, storage, indicatorParams,
     defaultIndicatorType = IndicatorType.MACD) {
     super(dom, style)
     this.indicatorParams = indicatorParams
     this.indicatorType = defaultIndicatorType
-    this.yAxisRender = new YAxisRender(this.viewPortHandler, dataProvider)
-    this.chartRender = new IndicatorRender(this.viewPortHandler, dataProvider, this.yAxisRender)
+    this.yAxisRender = new YAxisRender(this.viewPortHandler, storage)
+    this.chartRender = new IndicatorRender(this.viewPortHandler, storage, this.yAxisRender)
   }
 
   draw () {

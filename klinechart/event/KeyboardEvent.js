@@ -4,9 +4,9 @@ import { stopEvent } from './eventHelper'
 class KeyboardEvent extends Event {
   constructor (
     mainChart, volChart, subIndicatorChart,
-    tooltipChart, markerChart, xAxisChart, dataProvider
+    tooltipChart, markerChart, xAxisChart, storage
   ) {
-    super(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider)
+    super(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, storage)
     this.markerChart = markerChart
   }
 
@@ -21,16 +21,16 @@ class KeyboardEvent extends Event {
       let shouldFlush = false
       if (e.keyCode === 37) {
         // 左移
-        if (this.dataProvider.minPos > 0) {
-          this.dataProvider.minPos--
-          this.dataProvider.tooltipDataPos--
+        if (this.storage.minPos > 0) {
+          this.storage.minPos--
+          this.storage.tooltipDataPos--
           shouldFlush = true
         }
       } else {
         // 右移
-        if (this.dataProvider.minPos < this.dataProvider.dataList.length - this.dataProvider.range) {
-          this.dataProvider.minPos++
-          this.dataProvider.tooltipDataPos++
+        if (this.storage.minPos < this.storage.dataList.length - this.storage.range) {
+          this.storage.minPos++
+          this.storage.tooltipDataPos++
           shouldFlush = true
         }
       }
@@ -40,10 +40,10 @@ class KeyboardEvent extends Event {
         this.subIndicatorChart.flush()
         this.xAxisChart.flush()
         this.markerChart.flush()
-        if (this.dataProvider.crossPoint) {
+        if (this.storage.crossPoint) {
           this.tooltipChart.flush()
         }
-        if (this.dataProvider.minPos === 0) {
+        if (this.storage.minPos === 0) {
           loadMore()
         }
       }
@@ -55,9 +55,9 @@ class KeyboardEvent extends Event {
         isZoomingOut = false
         scaleX = 1.05
       }
-      if (this.zoom(isZoomingOut, scaleX, this.dataProvider.minPos, this.dataProvider.range)) {
-        if (this.dataProvider.crossPoint) {
-          this.cross(this.dataProvider.crossPoint)
+      if (this.zoom(isZoomingOut, scaleX, this.storage.minPos, this.storage.range)) {
+        if (this.storage.crossPoint) {
+          this.cross(this.storage.crossPoint)
         }
         this.markerChart.flush()
       }

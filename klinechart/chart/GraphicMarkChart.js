@@ -2,9 +2,9 @@ import Chart from './Chart'
 import GraphicMarkRender from '../render/GraphicMarkRender'
 
 class GraphicMarkChart extends Chart {
-  constructor (dom, style, dataProvider, yAxisRender, precision) {
+  constructor (dom, style, storage, yAxisRender, precision) {
     super(dom, style)
-    this.graphicMarkRender = new GraphicMarkRender(this.viewPortHandler, dataProvider, yAxisRender, style.marker)
+    this.graphicMarkRender = new GraphicMarkRender(this.viewPortHandler, storage, yAxisRender, style.marker)
     this.precision = precision
   }
 

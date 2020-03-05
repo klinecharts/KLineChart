@@ -1,12 +1,12 @@
 import IndicatorChart from './IndicatorChart'
-import MainRender from '../render/MainRender'
+import CandleRender from '../render/CandleRender'
 
 import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType } from '../internal/constants'
 
-class MainChart extends IndicatorChart {
-  constructor (dom, style, dataProvider, indicatorParams, precision) {
-    super(dom, style, dataProvider, indicatorParams, IndicatorType.MA)
-    this.chartRender = new MainRender(this.viewPortHandler, dataProvider, this.yAxisRender)
+class CandleChart extends IndicatorChart {
+  constructor (dom, style, storage, indicatorParams, precision) {
+    super(dom, style, storage, indicatorParams, IndicatorType.MA)
+    this.chartRender = new CandleRender(this.viewPortHandler, storage, this.yAxisRender)
     this.precision = precision
     this.chartType = ChartType.CANDLE
   }
@@ -48,4 +48,4 @@ class MainChart extends IndicatorChart {
   }
 }
 
-export default MainChart
+export default CandleChart

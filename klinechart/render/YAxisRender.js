@@ -206,9 +206,9 @@ class YAxisRender extends AxisRender {
   }
 
   calcAxisMinMax (indicatorType, isMainChart = false, isRealTimeChart = false, isShowAverageLine = false) {
-    const dataList = this.dataProvider.dataList
-    const min = this.dataProvider.minPos
-    const max = Math.min(min + this.dataProvider.range, dataList.length)
+    const dataList = this.storage.dataList
+    const min = this.storage.minPos
+    const max = Math.min(min + this.storage.range, dataList.length)
     const minMaxArray = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER]
     if (isRealTimeChart) {
       for (let i = min; i < max; i++) {

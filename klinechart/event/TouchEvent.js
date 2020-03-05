@@ -34,9 +34,9 @@ const TOUCH_CROSS_CANCEL = 5
 class TouchEvent extends Event {
   constructor (
     tooltipChart, mainChart, volChart,
-    subIndicatorChart, xAxisChart, dataProvider
+    subIndicatorChart, xAxisChart, storage
   ) {
-    super(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider)
+    super(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, storage)
     // 事件模型
     this.touchMode = TOUCH_NO
     this.touchStartPoint = { x: 0, y: 0 }
@@ -44,8 +44,8 @@ class TouchEvent extends Event {
     this.touchCrossPoint = { x: 0, y: 0 }
     this.savedDist = 1
     this.savedXDist = 1
-    this.touchRange = dataProvider.range
-    this.touchStartPosition = dataProvider.minPos
+    this.touchRange = storage.range
+    this.touchStartPosition = storage.minPos
     this.delayTimeout = null
     this.delayActiveCross = () => {
       if (this.touchMode === TOUCH_NO || this.touchMode === TOUCH_CROSS_CANCEL) {
@@ -63,7 +63,7 @@ class TouchEvent extends Event {
    * @param e
    */
   touchStart (e) {
-    if (this.dataProvider.dataList.length === 0) {
+    if (this.storage.dataList.length === 0) {
       return
     }
     if (e.targetTouches.length === 1) {
@@ -80,7 +80,7 @@ class TouchEvent extends Event {
           this.performCross(e)
         } else {
           this.touchMode = TOUCH_CROSS_CANCEL
-          this.dataProvider.crossPoint = null
+          this.storage.crossPoint = null
           this.tooltipChart.flush()
         }
       } else {
@@ -99,8 +99,8 @@ class TouchEvent extends Event {
         if (this.savedDist > 3) {
           this.touchMode = TOUCH_ZOOM
         }
-        this.touchRange = this.dataProvider.range
-        this.touchStartPosition = this.dataProvider.minPos
+        this.touchRange = this.storage.range
+        this.touchStartPosition = this.storage.minPos
       }
     }
   }
@@ -111,7 +111,7 @@ class TouchEvent extends Event {
    * @param loadMore
    */
   touchMove (e, loadMore) {
-    if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.dataProvider.dataList.length === 0) {
+    if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.storage.dataList.length === 0) {
       return
     }
     if (!this.waitingForMouseMoveAnimationFrame) {
@@ -145,7 +145,7 @@ class TouchEvent extends Event {
             const distanceY = Math.abs(point.y - this.touchStartPoint.y)
             if (distanceY <= distanceX) {
               stopEvent(e)
-              this.dataProvider.crossPoint = null
+              this.storage.crossPoint = null
               this.touchMode = TOUCH_DRAG
               this.tooltipChart.flush()
             }
@@ -162,7 +162,7 @@ class TouchEvent extends Event {
    * @param e
    */
   touchEnd (e) {
-    if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.dataProvider.dataList.length === 0) {
+    if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.storage.dataList.length === 0) {
       return
     }
     stopEvent(e)
@@ -182,7 +182,7 @@ class TouchEvent extends Event {
           this.cross(this.touchCrossPoint)
         } else {
           this.touchMode = TOUCH_NO
-          this.dataProvider.crossPoint = null
+          this.storage.crossPoint = null
           this.tooltipChart.flush()
         }
       }

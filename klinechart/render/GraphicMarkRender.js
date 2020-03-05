@@ -12,8 +12,8 @@ import { getFont } from '../utils/draw'
 import { GraphicMarkType, GraphicMarkDrawStep } from '../internal/constants'
 
 class GraphicMarkRender extends Render {
-  constructor (viewPortHandler, dataProvider, yRender, graphicMark) {
-    super(viewPortHandler, dataProvider)
+  constructor (viewPortHandler, storage, yRender, graphicMark) {
+    super(viewPortHandler, storage)
     this.yRender = yRender
     this.graphicMark = graphicMark
   }
@@ -257,11 +257,11 @@ class GraphicMarkRender extends Render {
    * @param priceExtendsText
    */
   renderPointMarker (ctx, markerKey, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
-    const markerData = this.dataProvider.markerDatas[markerKey]
+    const markerData = this.storage.markerDatas[markerKey]
     markerData.forEach(({ points, drawStep }) => {
       const circlePoints = []
       points.forEach(({ xPos, price }) => {
-        const x = (xPos - this.dataProvider.minPos) * this.dataProvider.dataSpace
+        const x = (xPos - this.storage.minPos) * this.storage.dataSpace
         const y = this.yRender.getY(price)
         circlePoints.push({ x, y })
       })
@@ -288,7 +288,7 @@ class GraphicMarkRender extends Render {
     ctx, linePoints, circlePoints, drawStep, checkPointOnLine,
     isRenderPrice, pricePrecision, priceExtendsText = []
   ) {
-    const markerPoint = this.dataProvider.markerPoint
+    const markerPoint = this.storage.markerPoint
     let isOnLine = false
     linePoints.forEach((points, i) => {
       if (points.length > 1) {

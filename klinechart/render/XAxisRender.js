@@ -1,6 +1,6 @@
 import AxisRender from './AxisRender'
 
-import { DATA_MARGIN_SPACE_RATE } from '../internal/DataProvider'
+import { DATA_MARGIN_SPACE_RATE } from '../internal/Storage'
 import { formatDate } from '../utils/date'
 import { calcTextWidth, getFont } from '../utils/draw'
 import { LineStyle } from '../internal/constants'
@@ -89,11 +89,11 @@ class XAxisRender extends AxisRender {
     const valuePointLength = this.valuePoints.length
     for (let i = 0; i < valuePointLength; i++) {
       const x = this.valuePoints[i]
-      const kLineModel = this.dataProvider.dataList[parseInt(this.values[i])]
+      const kLineModel = this.storage.dataList[parseInt(this.values[i])]
       const timestamp = kLineModel.timestamp
       let dateText = formatDate(timestamp, dateFormatType)
       if (i !== valuePointLength - 1) {
-        const nextKLineModel = this.dataProvider.dataList[parseInt(this.values[i + 1])]
+        const nextKLineModel = this.storage.dataList[parseInt(this.values[i + 1])]
         const nextTimestamp = nextKLineModel.timestamp
         if (periodType === 'D' || periodType === 'W') {
           const month = formatDate(timestamp, 'YYYY-MM')
@@ -169,21 +169,21 @@ class XAxisRender extends AxisRender {
   }
 
   computeAxis (xAxis) {
-    const minPos = this.dataProvider.minPos
-    const max = Math.min(minPos + this.dataProvider.range - 1, this.dataProvider.dataList.length - 1)
+    const minPos = this.storage.minPos
+    const max = Math.min(minPos + this.storage.range - 1, this.storage.dataList.length - 1)
     this.computeAxisValues(minPos, max, 8.0, xAxis)
     this.pointValuesToPixel()
   }
 
   fixComputeAxisValues (xAxis) {
-    const dataSize = this.dataProvider.dataList.length
+    const dataSize = this.storage.dataList.length
     if (dataSize > 0) {
       const defaultLabelWidth = calcTextWidth(xAxis.tick.text.size, '0000-00-00 00:00:00')
-      let startPos = Math.ceil(defaultLabelWidth / 2 / this.dataProvider.dataSpace) - 1
+      let startPos = Math.ceil(defaultLabelWidth / 2 / this.storage.dataSpace) - 1
       if (startPos > dataSize - 1) {
         startPos = dataSize - 1
       }
-      const barCount = Math.ceil(defaultLabelWidth / (this.dataProvider.dataSpace * (1 + DATA_MARGIN_SPACE_RATE))) + 1
+      const barCount = Math.ceil(defaultLabelWidth / (this.storage.dataSpace * (1 + DATA_MARGIN_SPACE_RATE))) + 1
       if (dataSize > barCount) {
         this.valueCount = Math.floor((dataSize - startPos) / barCount) + 1
       } else {
@@ -204,7 +204,7 @@ class XAxisRender extends AxisRender {
     this.valuePoints = []
     for (let i = 0; i < this.values.length; i++) {
       const pos = this.values[i]
-      this.valuePoints[i] = offsetLeft + ((pos - this.dataProvider.minPos) * this.dataProvider.dataSpace + this.dataProvider.dataSpace * (1 - DATA_MARGIN_SPACE_RATE) / 2)
+      this.valuePoints[i] = offsetLeft + ((pos - this.storage.minPos) * this.storage.dataSpace + this.storage.dataSpace * (1 - DATA_MARGIN_SPACE_RATE) / 2)
     }
   }
 
@@ -216,7 +216,7 @@ class XAxisRender extends AxisRender {
   }
 
   isFillChart () {
-    return this.dataProvider.dataList.length > this.dataProvider.range
+    return this.storage.dataList.length > this.storage.range
   }
 }
 

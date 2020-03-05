@@ -3,7 +3,7 @@ import { calcTextWidth, getFont } from '../utils/draw'
 import { formatPrecision } from '../utils/number'
 import { CandleStyle, LineStyle } from '../internal/constants'
 
-class MainRender extends IndicatorRender {
+class CandleRender extends IndicatorRender {
   /**
    * 渲染蜡烛图
    * @param ctx
@@ -17,7 +17,7 @@ class MainRender extends IndicatorRender {
     let markHighestPriceX = -1
     let markLowestPrice = Number.MAX_SAFE_INTEGER
     let markLowestPriceX = -1
-    const dataList = this.dataProvider.dataList
+    const dataList = this.storage.dataList
     const onRendering = (x, i, kLineData, halfBarSpace) => {
       const refKLineData = dataList[i - 1] || {}
       const refClose = refKLineData.close || Number.MIN_SAFE_INTEGER
@@ -215,13 +215,13 @@ class MainRender extends IndicatorRender {
    * @param pricePrecision
    */
   renderLastPriceMark (ctx, lastPriceMark, isRenderTextLeft, isRenderTextOutside, pricePrecision) {
-    const dataSize = this.dataProvider.dataList.length
+    const dataSize = this.storage.dataList.length
     if (!lastPriceMark.display || dataSize === 0) {
       return
     }
-    const preKLineData = this.dataProvider.dataList[dataSize - 2] || {}
+    const preKLineData = this.storage.dataList[dataSize - 2] || {}
     const preLastPrice = preKLineData.close || Number.MIN_SAFE_INTEGER
-    const lastPrice = this.dataProvider.dataList[dataSize - 1].close
+    const lastPrice = this.storage.dataList[dataSize - 1].close
     let priceY = this.yAxisRender.getY(lastPrice)
     const height = this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop()
     priceY = +(Math.max(height * 0.05, Math.min(priceY, height * 0.98))).toFixed(0)
@@ -284,9 +284,9 @@ class MainRender extends IndicatorRender {
     const timeLineAreaPoints = [{ x: this.viewPortHandler.contentLeft(), y: this.viewPortHandler.contentBottom() }]
     const averageLinePoints = []
 
-    const minPos = this.dataProvider.minPos
-    const range = this.dataProvider.range
-    const dataSize = this.dataProvider.dataList.length
+    const minPos = this.storage.minPos
+    const range = this.storage.range
+    const dataSize = this.storage.dataList.length
     const onRendering = (x, i, kLineData) => {
       const average = kLineData.average
       const closeY = this.yAxisRender.getY(kLineData.close)
@@ -353,4 +353,4 @@ class MainRender extends IndicatorRender {
   }
 }
 
-export default MainRender
+export default CandleRender

@@ -3,7 +3,7 @@ import { GraphicMarkType } from '../internal/constants'
 
 export const DATA_MARGIN_SPACE_RATE = 0.26
 
-class DataProvider {
+class Storage {
   constructor () {
     // 数据源
     this.dataList = []
@@ -111,4 +111,4 @@ class DataProvider {
   }
 }
 
-export default DataProvider
+export default Storage

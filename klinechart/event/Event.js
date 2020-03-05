@@ -1,14 +1,14 @@
 class Event {
   constructor (
     tooltipChart, mainChart, volChart,
-    subIndicatorChart, xAxisChart, dataProvider
+    subIndicatorChart, xAxisChart, storage
   ) {
     this.tooltipChart = tooltipChart
     this.mainChart = mainChart
     this.volChart = volChart
     this.subIndicatorChart = subIndicatorChart
     this.xAxisChart = xAxisChart
-    this.dataProvider = dataProvider
+    this.storage = storage
     this.viewPortHandler = tooltipChart.viewPortHandler
   }
 
@@ -20,10 +20,10 @@ class Event {
    * @returns {boolean}
    */
   drag (eventPoint, dragX, loadMore) {
-    const dataSpace = this.dataProvider.dataSpace
-    const dataSize = this.dataProvider.dataList.length
-    const range = this.dataProvider.range
-    let minPos = this.dataProvider.minPos
+    const dataSpace = this.storage.dataSpace
+    const dataSize = this.storage.dataList.length
+    const range = this.storage.range
+    let minPos = this.storage.minPos
     const moveDist = dragX - eventPoint.x
     if (moveDist > dataSpace / 2) {
       if (minPos === 0 || dataSize < range) {
@@ -41,7 +41,7 @@ class Event {
       if (minPos < 0) {
         minPos = 0
       }
-      this.dataProvider.minPos = minPos
+      this.storage.minPos = minPos
       this.mainChart.flush()
       this.volChart.flush()
       this.subIndicatorChart.flush()
@@ -66,7 +66,7 @@ class Event {
       if (minPos >= dataSize - range) {
         minPos = dataSize - range
       }
-      this.dataProvider.minPos = minPos
+      this.storage.minPos = minPos
       this.mainChart.flush()
       this.volChart.flush()
       this.subIndicatorChart.flush()
@@ -85,9 +85,9 @@ class Event {
    * @returns {boolean}
    */
   zoom (isZoomingOut, scaleX, touchStartPosition, touchRange) {
-    let range = this.dataProvider.range
-    const maxRange = this.dataProvider.maxRange
-    const minRange = this.dataProvider.minRange
+    let range = this.storage.range
+    const maxRange = this.storage.maxRange
+    const minRange = this.storage.minRange
     if (isZoomingOut) {
       if (range >= maxRange) {
         // 无法继续缩小
@@ -106,12 +106,12 @@ class Event {
     range = Math.min(Math.max(range, minRange), maxRange)
     let minPos = touchStartPosition + touchRange - range
 
-    if (minPos + range > this.dataProvider.dataList.length || minPos < 0) {
+    if (minPos + range > this.storage.dataList.length || minPos < 0) {
       minPos = 0
     }
-    this.dataProvider.range = range
-    this.dataProvider.minPos = minPos
-    this.dataProvider.space(this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft())
+    this.storage.range = range
+    this.storage.minPos = minPos
+    this.storage.space(this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft())
     this.mainChart.flush()
     this.volChart.flush()
     this.subIndicatorChart.flush()
@@ -124,8 +124,8 @@ class Event {
    * @param point
    */
   cross (point) {
-    this.dataProvider.crossPoint = { x: point.x, y: point.y }
-    this.dataProvider.calcCurrentTooltipDataPos(this.viewPortHandler.contentLeft(), point.x)
+    this.storage.crossPoint = { x: point.x, y: point.y }
+    this.storage.calcCurrentTooltipDataPos(this.viewPortHandler.contentLeft(), point.x)
     this.tooltipChart.flush()
   }
 }

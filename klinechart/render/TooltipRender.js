@@ -10,11 +10,11 @@ import { getIndicatorPrecision } from '../internal/config'
 
 class TooltipRender extends Render {
   constructor (
-    viewPortHandler, dataProvider, indicatorParams,
+    viewPortHandler, storage, indicatorParams,
     candleViewPortHandler, volViewPortHandler, subIndicatorViewPortHandler,
     candleYAxisRender, volYAxisRender, subIndicatorYAxisRender
   ) {
-    super(viewPortHandler, dataProvider)
+    super(viewPortHandler, storage)
     this.indicatorParams = indicatorParams
     this.candleViewPortHandler = candleViewPortHandler
     this.volViewPortHandler = volViewPortHandler
@@ -36,7 +36,7 @@ class TooltipRender extends Render {
    */
   renderCrossHorizontalLine (ctx, mainIndicatorType, subIndicatorType, isRenderYAxisLeft, isRenderYAxisTextOutside, tooltip, precision) {
     const yAxisDataLabel = this.getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType, precision)
-    const crossPoint = this.dataProvider.crossPoint
+    const crossPoint = this.storage.crossPoint
     if (!yAxisDataLabel || !crossPoint || !tooltip.cross.display) {
       return
     }
@@ -111,10 +111,10 @@ class TooltipRender extends Render {
    * @returns {null|*|string}
    */
   getCrossYAxisLabel (tooltip, mainIndicatorType, subIndicatorType, precision) {
-    if (!this.dataProvider.crossPoint) {
+    if (!this.storage.crossPoint) {
       return null
     }
-    const eventY = this.dataProvider.crossPoint.y
+    const eventY = this.storage.crossPoint.y
     let top
     if (eventY && eventY > 0 && eventY < this.candleViewPortHandler.height + this.volViewPortHandler.height + this.subIndicatorViewPortHandler.height) {
       let yAxisRender
@@ -146,7 +146,7 @@ class TooltipRender extends Render {
    * @param tooltip
    */
   renderCrossVerticalLine (ctx, kLineData, tooltip) {
-    const crossPoint = this.dataProvider.crossPoint
+    const crossPoint = this.storage.crossPoint
     if (!crossPoint || !tooltip.cross.display) {
       return
     }
@@ -373,7 +373,7 @@ class TooltipRender extends Render {
 
     const centerPoint = this.volViewPortHandler.getContentCenter()
     let rectX
-    const crossPoint = this.dataProvider.crossPoint
+    const crossPoint = this.storage.crossPoint
     if (crossPoint && crossPoint.x < centerPoint.x) {
       rectX = this.viewPortHandler.contentRight() - floatRectRight - floatRectWidth
     } else {
@@ -541,12 +541,12 @@ class TooltipRender extends Render {
    * @param isShowCross
    */
   renderIndicatorLineCircle (ctx, indicatorType, offsetTop, values = [], yAxisRender, indicatorColors = [], isShowCross) {
-    const crossPoint = this.dataProvider.crossPoint
+    const crossPoint = this.storage.crossPoint
     if (!crossPoint ||
-      this.dataProvider.graphicMarkType !== GraphicMarkType.NONE ||
+      this.storage.graphicMarkType !== GraphicMarkType.NONE ||
       indicatorType === IndicatorType.SAR ||
       !isShowCross ||
-      this.dataProvider.isDragMarker) {
+      this.storage.isDragMarker) {
       return
     }
     const colorSize = indicatorColors.length

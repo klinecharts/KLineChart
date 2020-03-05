@@ -8,8 +8,8 @@ import { isFunction } from '../utils/data'
 import { GraphicMarkDrawStep, GraphicMarkType } from '../internal/constants'
 
 class GraphicMarkEvent {
-  constructor (dataProvider, graphicMarkChart, style) {
-    this.dataProvider = dataProvider
+  constructor (storage, graphicMarkChart, style) {
+    this.storage = storage
     this.graphicMarkChart = graphicMarkChart
     this.viewPortHandler = graphicMarkChart.viewPortHandler
     this.yRender = graphicMarkChart.graphicMarkRender.yRender
@@ -47,11 +47,11 @@ class GraphicMarkEvent {
    */
   mouseDown (e) {
     const point = getCanvasPoint(e, this.graphicMarkChart.canvasDom)
-    this.dataProvider.markerPoint = { ...point }
+    this.storage.markerPoint = { ...point }
     if (!isValidEvent(point, this.viewPortHandler)) {
       return
     }
-    const graphicMarkType = this.dataProvider.graphicMarkType
+    const graphicMarkType = this.storage.graphicMarkType
     switch (graphicMarkType) {
       case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
       case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
@@ -93,7 +93,7 @@ class GraphicMarkEvent {
         }
         case GraphicMarkDrawStep.STEP_2: {
           lastLineData.drawStep = GraphicMarkDrawStep.STEP_DONE
-          this.dataProvider.graphicMarkType = GraphicMarkType.NONE
+          this.storage.graphicMarkType = GraphicMarkType.NONE
           break
         }
       }
@@ -118,7 +118,7 @@ class GraphicMarkEvent {
         }
         case GraphicMarkDrawStep.STEP_3: {
           lastLineData.drawStep = GraphicMarkDrawStep.STEP_DONE
-          this.dataProvider.graphicMarkType = GraphicMarkType.NONE
+          this.storage.graphicMarkType = GraphicMarkType.NONE
           break
         }
       }
@@ -132,16 +132,16 @@ class GraphicMarkEvent {
    * @param performDifPoint
    */
   markerMouseDown (e, markKey, performDifPoint) {
-    const markerData = this.dataProvider.markerDatas[markKey]
+    const markerData = this.storage.markerDatas[markKey]
     if (e.button === 2) {
       markerData.splice(markerData.length - 1, 1)
-      this.dataProvider.graphicMarkType = GraphicMarkType.NONE
+      this.storage.graphicMarkType = GraphicMarkType.NONE
     } else {
       const lastLineData = markerData[markerData.length - 1]
       performDifPoint(lastLineData)
       markerData[markerData.length - 1] = lastLineData
     }
-    this.dataProvider.markerDatas[markKey] = markerData
+    this.storage.markerDatas[markKey] = markerData
     this.graphicMarkChart.flush()
   }
 
@@ -155,14 +155,14 @@ class GraphicMarkEvent {
     if (markKey && dataIndex !== -1) {
       if (e.button === 2) {
         // 鼠标右键
-        const markerData = this.dataProvider.markerDatas[markKey]
+        const markerData = this.storage.markerDatas[markKey]
         markerData.splice(dataIndex, 1)
-        this.dataProvider.markerDatas[markKey] = markerData
+        this.storage.markerDatas[markKey] = markerData
         this.graphicMarkChart.flush()
       } else {
         if (this.noneMarkerMouseDownActiveData.onCircle) {
           this.noneMarkerMouseDownFlag = true
-          this.dataProvider.isDragMarker = true
+          this.storage.isDragMarker = true
         }
       }
     }
@@ -174,7 +174,7 @@ class GraphicMarkEvent {
    */
   findNoneMarkerMouseDownActiveData (e) {
     const point = getCanvasPoint(e, this.graphicMarkChart.canvasDom)
-    const keys = Object.keys(this.dataProvider.markerDatas)
+    const keys = Object.keys(this.storage.markerDatas)
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
       switch (key) {
@@ -272,14 +272,14 @@ class GraphicMarkEvent {
    * @returns {boolean}
    */
   realFindNoneMarkerMouseDownActiveData (markKey, point, checkPointOnLine) {
-    const markerData = this.dataProvider.markerDatas[markKey]
+    const markerData = this.storage.markerDatas[markKey]
     markerData.forEach((data, index) => {
       const points = data.points
       const xyPoints = []
       let isOnCircle = false
       let pointIndex = -1
       points.forEach((p, i) => {
-        const x = (p.xPos - this.dataProvider.minPos) * this.dataProvider.dataSpace
+        const x = (p.xPos - this.storage.minPos) * this.storage.dataSpace
         const y = this.yRender.getY(p.price)
         xyPoints.push({ x, y })
         const isOn = checkPointOnCircle({ x, y }, this.style.marker.point.radius, point)
@@ -310,13 +310,13 @@ class GraphicMarkEvent {
    */
   mouseMove (e) {
     const point = getCanvasPoint(e, this.graphicMarkChart.canvasDom)
-    this.dataProvider.markerPoint = { ...point }
+    this.storage.markerPoint = { ...point }
     if (!isValidEvent(point, this.viewPortHandler)) {
       return
     }
     if (!this.waitingForMouseMoveAnimationFrame) {
       this.waitingForMouseMoveAnimationFrame = true
-      const graphicMarkType = this.dataProvider.graphicMarkType
+      const graphicMarkType = this.storage.graphicMarkType
       switch (graphicMarkType) {
         case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
         case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
@@ -366,7 +366,7 @@ class GraphicMarkEvent {
    */
   onePointMarkerMouseMove (point, markKey) {
     this.markerMouseMove(point, markKey, (markerData, lastLineData) => {
-      const xPos = this.dataProvider.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace
+      const xPos = this.storage.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_DONE: {
@@ -392,7 +392,7 @@ class GraphicMarkEvent {
    */
   twoPointMarkerMouseMove (point, markKey, stepTwo) {
     this.markerMouseMove(point, markKey, (markerData, lastLineData) => {
-      const xPos = this.dataProvider.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace
+      const xPos = this.storage.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_DONE: {
@@ -425,7 +425,7 @@ class GraphicMarkEvent {
    */
   threePointMarkerMouseMove (point, markKey, stepTwo) {
     this.markerMouseMove(point, markKey, (markerData, lastLineData) => {
-      const xPos = this.dataProvider.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace
+      const xPos = this.storage.minPos + (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_DONE: {
@@ -462,10 +462,10 @@ class GraphicMarkEvent {
    * @param performDifPoint
    */
   markerMouseMove (point, markKey, performDifPoint) {
-    const markerData = this.dataProvider.markerDatas[markKey]
+    const markerData = this.storage.markerDatas[markKey]
     const lastLineData = markerData[markerData.length - 1] || { drawStep: GraphicMarkDrawStep.STEP_DONE }
     performDifPoint(markerData, lastLineData)
-    this.dataProvider.markerDatas[markKey] = markerData
+    this.storage.markerDatas[markKey] = markerData
     this.graphicMarkChart.flush()
   }
 
@@ -478,7 +478,7 @@ class GraphicMarkEvent {
       const markKey = this.noneMarkerMouseDownActiveData.markKey
       const dataIndex = this.noneMarkerMouseDownActiveData.dataIndex
       if (markKey && dataIndex !== -1) {
-        const markerData = this.dataProvider.markerDatas[markKey]
+        const markerData = this.storage.markerDatas[markKey]
         switch (markKey) {
           case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
           case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
@@ -491,7 +491,7 @@ class GraphicMarkEvent {
           case GraphicMarkType.FIBONACCI_LINE: {
             const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
-              markerData[dataIndex].points[pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace + this.dataProvider.minPos
+              markerData[dataIndex].points[pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
               markerData[dataIndex].points[pointIndex].price = this.yRender.getValue(point.y)
             }
             break
@@ -501,7 +501,7 @@ class GraphicMarkEvent {
             const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
               const price = this.yRender.getValue(point.y)
-              markerData[dataIndex].points[pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace + this.dataProvider.minPos
+              markerData[dataIndex].points[pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
               markerData[dataIndex].points[0].price = price
               markerData[dataIndex].points[1].price = price
             }
@@ -511,7 +511,7 @@ class GraphicMarkEvent {
           case GraphicMarkType.VERTICAL_SEGMENT_LINE: {
             const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
-              const xPos = (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace + this.dataProvider.minPos
+              const xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
               markerData[dataIndex].points[0].xPos = xPos
               markerData[dataIndex].points[1].xPos = xPos
               markerData[dataIndex].points[pointIndex].price = this.yRender.getValue(point.y)
@@ -519,7 +519,7 @@ class GraphicMarkEvent {
             break
           }
         }
-        this.dataProvider.markerDatas[markKey] = markerData
+        this.storage.markerDatas[markKey] = markerData
       }
     }
     this.graphicMarkChart.flush()

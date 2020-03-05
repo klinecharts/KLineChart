@@ -2,9 +2,9 @@ import Chart from './Chart'
 import XAxisRender from '../render/XAxisRender'
 
 class XAxisChart extends Chart {
-  constructor (dom, style, dataProvider, period) {
+  constructor (dom, style, storage, period) {
     super(dom, style)
-    this.xAxisRender = new XAxisRender(this.viewPortHandler, dataProvider)
+    this.xAxisRender = new XAxisRender(this.viewPortHandler, storage)
     this.period = period
   }
 

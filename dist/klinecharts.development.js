@@ -399,11 +399,11 @@ function () {
   return Chart;
 }();
 
-var Render = function Render(viewPortHandler, dataProvider) {
+var Render = function Render(viewPortHandler, storage) {
   _classCallCheck(this, Render);
 
   this.viewPortHandler = viewPortHandler;
-  this.dataProvider = dataProvider;
+  this.storage = storage;
 };
 
 /**
@@ -615,11 +615,11 @@ var GraphicMarkDrawStep = {
 
 var DATA_MARGIN_SPACE_RATE = 0.26;
 
-var DataProvider =
+var Storage =
 /*#__PURE__*/
 function () {
-  function DataProvider() {
-    _classCallCheck(this, DataProvider);
+  function Storage() {
+    _classCallCheck(this, Storage);
 
     // 数据源
     this.dataList = []; // 数据绘制起始位置
@@ -674,7 +674,7 @@ function () {
     };
   }
 
-  _createClass(DataProvider, [{
+  _createClass(Storage, [{
     key: "space",
     value: function space(width) {
       this.dataSpace = width / this.range;
@@ -736,7 +736,7 @@ function () {
     }
   }]);
 
-  return DataProvider;
+  return Storage;
 }();
 
 var IndicatorRender =
@@ -744,12 +744,12 @@ var IndicatorRender =
 function (_Render) {
   _inherits(IndicatorRender, _Render);
 
-  function IndicatorRender(viewPortHandler, dataProvider, yAxisRender) {
+  function IndicatorRender(viewPortHandler, storage, yAxisRender) {
     var _this;
 
     _classCallCheck(this, IndicatorRender);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorRender).call(this, viewPortHandler, dataProvider));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorRender).call(this, viewPortHandler, storage));
     _this.yAxisRender = yAxisRender;
     return _this;
   }
@@ -815,7 +815,7 @@ function (_Render) {
 
               _this2.prepareLinePoints(x, [macd.diff, macd.dea], linePoints);
 
-              var refKLineData = _this2.dataProvider.dataList[i - 1] || {};
+              var refKLineData = _this2.storage.dataList[i - 1] || {};
               var macdValue = macd.macd;
               var refMacdValue = (refKLineData.macd || {}).macd || Number.MIN_SAFE_INTEGER;
 
@@ -846,7 +846,7 @@ function (_Render) {
 
               _this2.prepareLinePoints(x, lineValues, linePoints);
 
-              var refKLineData = _this2.dataProvider.dataList[i - 1] || {};
+              var refKLineData = _this2.storage.dataList[i - 1] || {};
               var close = kLineData.close;
               var refClose = (refKLineData || {}).close || Number.MIN_SAFE_INTEGER;
 
@@ -1103,7 +1103,7 @@ function (_Render) {
       }
 
       if (!isMainIndicator) {
-        var refKLineData = this.dataProvider.dataList[i - 1] || {};
+        var refKLineData = this.storage.dataList[i - 1] || {};
         this.renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, indicator.increasingColor, indicator.decreasingColor);
       }
     }
@@ -1115,20 +1115,20 @@ function (_Render) {
     key: "renderGraphics",
     value: function renderGraphics(ctx, onRendering, onRenderEnd) {
       var startX = this.viewPortHandler.contentLeft();
-      var dataSpace = this.dataProvider.dataSpace * (1 - DATA_MARGIN_SPACE_RATE);
+      var dataSpace = this.storage.dataSpace * (1 - DATA_MARGIN_SPACE_RATE);
       var halfBarSpace = dataSpace / 2;
-      var lastPos = Math.min(this.dataProvider.dataList.length, this.dataProvider.minPos + this.dataProvider.range);
+      var lastPos = Math.min(this.storage.dataList.length, this.storage.minPos + this.storage.range);
 
-      for (var i = this.dataProvider.minPos; i < lastPos; i++) {
+      for (var i = this.storage.minPos; i < lastPos; i++) {
         var endX = startX + dataSpace;
         var x = (startX + endX) / 2;
-        var kLineData = this.dataProvider.dataList[i];
+        var kLineData = this.storage.dataList[i];
 
         if (onRendering) {
           onRendering(x, i, kLineData, halfBarSpace);
         }
 
-        startX += this.dataProvider.dataSpace;
+        startX += this.storage.dataSpace;
       }
 
       if (onRenderEnd) {
@@ -1361,12 +1361,12 @@ var AxisRender =
 function (_Render) {
   _inherits(AxisRender, _Render);
 
-  function AxisRender(viewPortHandler, dataProvider) {
+  function AxisRender(viewPortHandler, storage) {
     var _this;
 
     _classCallCheck(this, AxisRender);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(AxisRender).call(this, viewPortHandler, dataProvider));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(AxisRender).call(this, viewPortHandler, storage));
     _this.axisMaximum = 0;
     _this.axisMinimum = 0;
     _this.axisRange = 0;
@@ -1699,9 +1699,9 @@ function (_AxisRender) {
       var isMainChart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var isRealTimeChart = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       var isShowAverageLine = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-      var dataList = this.dataProvider.dataList;
-      var min = this.dataProvider.minPos;
-      var max = Math.min(min + this.dataProvider.range, dataList.length);
+      var dataList = this.storage.dataList;
+      var min = this.storage.minPos;
+      var max = Math.min(min + this.storage.range, dataList.length);
       var minMaxArray = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER];
 
       if (isRealTimeChart) {
@@ -1802,7 +1802,7 @@ var IndicatorChart =
 function (_Chart) {
   _inherits(IndicatorChart, _Chart);
 
-  function IndicatorChart(dom, style, dataProvider, indicatorParams) {
+  function IndicatorChart(dom, style, storage, indicatorParams) {
     var _this;
 
     var defaultIndicatorType = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : IndicatorType.MACD;
@@ -1812,8 +1812,8 @@ function (_Chart) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorChart).call(this, dom, style));
     _this.indicatorParams = indicatorParams;
     _this.indicatorType = defaultIndicatorType;
-    _this.yAxisRender = new YAxisRender(_this.viewPortHandler, dataProvider);
-    _this.chartRender = new IndicatorRender(_this.viewPortHandler, dataProvider, _this.yAxisRender);
+    _this.yAxisRender = new YAxisRender(_this.viewPortHandler, storage);
+    _this.chartRender = new IndicatorRender(_this.viewPortHandler, storage, _this.yAxisRender);
     return _this;
   }
 
@@ -1864,18 +1864,18 @@ function (_Chart) {
   return IndicatorChart;
 }(Chart);
 
-var MainRender =
+var CandleRender =
 /*#__PURE__*/
 function (_IndicatorRender) {
-  _inherits(MainRender, _IndicatorRender);
+  _inherits(CandleRender, _IndicatorRender);
 
-  function MainRender() {
-    _classCallCheck(this, MainRender);
+  function CandleRender() {
+    _classCallCheck(this, CandleRender);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(MainRender).apply(this, arguments));
+    return _possibleConstructorReturn(this, _getPrototypeOf(CandleRender).apply(this, arguments));
   }
 
-  _createClass(MainRender, [{
+  _createClass(CandleRender, [{
     key: "renderCandle",
 
     /**
@@ -1893,7 +1893,7 @@ function (_IndicatorRender) {
       var markHighestPriceX = -1;
       var markLowestPrice = Number.MAX_SAFE_INTEGER;
       var markLowestPriceX = -1;
-      var dataList = this.dataProvider.dataList;
+      var dataList = this.storage.dataList;
 
       var onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
         var refKLineData = dataList[i - 1] || {};
@@ -2115,15 +2115,15 @@ function (_IndicatorRender) {
   }, {
     key: "renderLastPriceMark",
     value: function renderLastPriceMark(ctx, lastPriceMark, isRenderTextLeft, isRenderTextOutside, pricePrecision) {
-      var dataSize = this.dataProvider.dataList.length;
+      var dataSize = this.storage.dataList.length;
 
       if (!lastPriceMark.display || dataSize === 0) {
         return;
       }
 
-      var preKLineData = this.dataProvider.dataList[dataSize - 2] || {};
+      var preKLineData = this.storage.dataList[dataSize - 2] || {};
       var preLastPrice = preKLineData.close || Number.MIN_SAFE_INTEGER;
-      var lastPrice = this.dataProvider.dataList[dataSize - 1].close;
+      var lastPrice = this.storage.dataList[dataSize - 1].close;
       var priceY = this.yAxisRender.getY(lastPrice);
       var height = this.viewPortHandler.contentBottom() - this.viewPortHandler.contentTop();
       priceY = +Math.max(height * 0.05, Math.min(priceY, height * 0.98)).toFixed(0);
@@ -2199,9 +2199,9 @@ function (_IndicatorRender) {
         y: this.viewPortHandler.contentBottom()
       }];
       var averageLinePoints = [];
-      var minPos = this.dataProvider.minPos;
-      var range = this.dataProvider.range;
-      var dataSize = this.dataProvider.dataList.length;
+      var minPos = this.storage.minPos;
+      var range = this.storage.range;
+      var dataSize = this.storage.dataList.length;
 
       var onRendering = function onRendering(x, i, kLineData) {
         var average = kLineData.average;
@@ -2315,30 +2315,30 @@ function (_IndicatorRender) {
     }
   }]);
 
-  return MainRender;
+  return CandleRender;
 }(IndicatorRender);
 
-var MainChart =
+var CandleChart =
 /*#__PURE__*/
 function (_IndicatorChart) {
-  _inherits(MainChart, _IndicatorChart);
+  _inherits(CandleChart, _IndicatorChart);
 
-  function MainChart(dom, style, dataProvider, indicatorParams, precision) {
+  function CandleChart(dom, style, storage, indicatorParams, precision) {
     var _this;
 
-    _classCallCheck(this, MainChart);
+    _classCallCheck(this, CandleChart);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MainChart).call(this, dom, style, dataProvider, indicatorParams, IndicatorType.MA));
-    _this.chartRender = new MainRender(_this.viewPortHandler, dataProvider, _this.yAxisRender);
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(CandleChart).call(this, dom, style, storage, indicatorParams, IndicatorType.MA));
+    _this.chartRender = new CandleRender(_this.viewPortHandler, storage, _this.yAxisRender);
     _this.precision = precision;
     _this.chartType = ChartType.CANDLE;
     return _this;
   }
 
-  _createClass(MainChart, [{
+  _createClass(CandleChart, [{
     key: "draw",
     value: function draw() {
-      _get(_getPrototypeOf(MainChart.prototype), "draw", this).call(this);
+      _get(_getPrototypeOf(CandleChart.prototype), "draw", this).call(this);
 
       this.chartRender.renderLastPriceMark(this.ctx, this.style.lastPriceMark, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, this.precision.pricePrecision);
     }
@@ -2371,7 +2371,7 @@ function (_IndicatorChart) {
     }
   }]);
 
-  return MainChart;
+  return CandleChart;
 }(IndicatorChart);
 
 /**
@@ -2682,12 +2682,12 @@ var GraphicMarkRender =
 function (_Render) {
   _inherits(GraphicMarkRender, _Render);
 
-  function GraphicMarkRender(viewPortHandler, dataProvider, yRender, graphicMark) {
+  function GraphicMarkRender(viewPortHandler, storage, yRender, graphicMark) {
     var _this;
 
     _classCallCheck(this, GraphicMarkRender);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkRender).call(this, viewPortHandler, dataProvider));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkRender).call(this, viewPortHandler, storage));
     _this.yRender = yRender;
     _this.graphicMark = graphicMark;
     return _this;
@@ -2951,7 +2951,7 @@ function (_Render) {
     value: function renderPointMarker(ctx, markerKey, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
       var _this12 = this;
 
-      var markerData = this.dataProvider.markerDatas[markerKey];
+      var markerData = this.storage.markerDatas[markerKey];
       markerData.forEach(function (_ref) {
         var points = _ref.points,
             drawStep = _ref.drawStep;
@@ -2959,7 +2959,7 @@ function (_Render) {
         points.forEach(function (_ref2) {
           var xPos = _ref2.xPos,
               price = _ref2.price;
-          var x = (xPos - _this12.dataProvider.minPos) * _this12.dataProvider.dataSpace;
+          var x = (xPos - _this12.storage.minPos) * _this12.storage.dataSpace;
 
           var y = _this12.yRender.getY(price);
 
@@ -2991,7 +2991,7 @@ function (_Render) {
       var _this13 = this;
 
       var priceExtendsText = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [];
-      var markerPoint = this.dataProvider.markerPoint;
+      var markerPoint = this.storage.markerPoint;
       var isOnLine = false;
       linePoints.forEach(function (points, i) {
         if (points.length > 1) {
@@ -3065,13 +3065,13 @@ var GraphicMarkChart =
 function (_Chart) {
   _inherits(GraphicMarkChart, _Chart);
 
-  function GraphicMarkChart(dom, style, dataProvider, yAxisRender, precision) {
+  function GraphicMarkChart(dom, style, storage, yAxisRender, precision) {
     var _this;
 
     _classCallCheck(this, GraphicMarkChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkChart).call(this, dom, style));
-    _this.graphicMarkRender = new GraphicMarkRender(_this.viewPortHandler, dataProvider, yAxisRender, style.marker);
+    _this.graphicMarkRender = new GraphicMarkRender(_this.viewPortHandler, storage, yAxisRender, style.marker);
     _this.precision = precision;
     return _this;
   }
@@ -3546,12 +3546,12 @@ var TooltipRender =
 function (_Render) {
   _inherits(TooltipRender, _Render);
 
-  function TooltipRender(viewPortHandler, dataProvider, indicatorParams, candleViewPortHandler, volViewPortHandler, subIndicatorViewPortHandler, candleYAxisRender, volYAxisRender, subIndicatorYAxisRender) {
+  function TooltipRender(viewPortHandler, storage, indicatorParams, candleViewPortHandler, volViewPortHandler, subIndicatorViewPortHandler, candleYAxisRender, volYAxisRender, subIndicatorYAxisRender) {
     var _this;
 
     _classCallCheck(this, TooltipRender);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TooltipRender).call(this, viewPortHandler, dataProvider));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TooltipRender).call(this, viewPortHandler, storage));
     _this.indicatorParams = indicatorParams;
     _this.candleViewPortHandler = candleViewPortHandler;
     _this.volViewPortHandler = volViewPortHandler;
@@ -3577,7 +3577,7 @@ function (_Render) {
     key: "renderCrossHorizontalLine",
     value: function renderCrossHorizontalLine(ctx, mainIndicatorType, subIndicatorType, isRenderYAxisLeft, isRenderYAxisTextOutside, tooltip, precision) {
       var yAxisDataLabel = this.getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType, precision);
-      var crossPoint = this.dataProvider.crossPoint;
+      var crossPoint = this.storage.crossPoint;
 
       if (!yAxisDataLabel || !crossPoint || !tooltip.cross.display) {
         return;
@@ -3653,11 +3653,11 @@ function (_Render) {
   }, {
     key: "getCrossYAxisLabel",
     value: function getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType, precision) {
-      if (!this.dataProvider.crossPoint) {
+      if (!this.storage.crossPoint) {
         return null;
       }
 
-      var eventY = this.dataProvider.crossPoint.y;
+      var eventY = this.storage.crossPoint.y;
       var top;
 
       if (eventY && eventY > 0 && eventY < this.candleViewPortHandler.height + this.volViewPortHandler.height + this.subIndicatorViewPortHandler.height) {
@@ -3695,7 +3695,7 @@ function (_Render) {
   }, {
     key: "renderCrossVerticalLine",
     value: function renderCrossVerticalLine(ctx, kLineData, tooltip) {
-      var crossPoint = this.dataProvider.crossPoint;
+      var crossPoint = this.storage.crossPoint;
 
       if (!crossPoint || !tooltip.cross.display) {
         return;
@@ -3911,7 +3911,7 @@ function (_Render) {
       var floatRectHeight = floatRectBorderSize * 2 + floatRectPaddingTop + floatRectPaddingBottom + (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length + (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length;
       var centerPoint = this.volViewPortHandler.getContentCenter();
       var rectX;
-      var crossPoint = this.dataProvider.crossPoint;
+      var crossPoint = this.storage.crossPoint;
 
       if (crossPoint && crossPoint.x < centerPoint.x) {
         rectX = this.viewPortHandler.contentRight() - floatRectRight - floatRectWidth;
@@ -4090,9 +4090,9 @@ function (_Render) {
       var yAxisRender = arguments.length > 4 ? arguments[4] : undefined;
       var indicatorColors = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
       var isShowCross = arguments.length > 6 ? arguments[6] : undefined;
-      var crossPoint = this.dataProvider.crossPoint;
+      var crossPoint = this.storage.crossPoint;
 
-      if (!crossPoint || this.dataProvider.graphicMarkType !== GraphicMarkType.NONE || indicatorType === IndicatorType.SAR || !isShowCross || this.dataProvider.isDragMarker) {
+      if (!crossPoint || this.storage.graphicMarkType !== GraphicMarkType.NONE || indicatorType === IndicatorType.SAR || !isShowCross || this.storage.isDragMarker) {
         return;
       }
 
@@ -4294,7 +4294,7 @@ var TooltipChart =
 function (_Chart) {
   _inherits(TooltipChart, _Chart);
 
-  function TooltipChart(dom, style, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider, indicatorParams, precision) {
+  function TooltipChart(dom, style, mainChart, volChart, subIndicatorChart, xAxisChart, storage, indicatorParams, precision) {
     var _this;
 
     _classCallCheck(this, TooltipChart);
@@ -4303,8 +4303,8 @@ function (_Chart) {
     _this.mainChart = mainChart;
     _this.volChart = volChart;
     _this.subIndicatorChart = subIndicatorChart;
-    _this.dataProvider = dataProvider;
-    _this.tooltipRender = new TooltipRender(_this.viewPortHandler, dataProvider, indicatorParams, mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler, mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender);
+    _this.storage = storage;
+    _this.tooltipRender = new TooltipRender(_this.viewPortHandler, storage, indicatorParams, mainChart.viewPortHandler, volChart.viewPortHandler, subIndicatorChart.viewPortHandler, mainChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender);
     _this.precision = precision;
     return _this;
   }
@@ -4312,18 +4312,18 @@ function (_Chart) {
   _createClass(TooltipChart, [{
     key: "draw",
     value: function draw() {
-      var kLineData = this.dataProvider.dataList[this.dataProvider.tooltipDataPos] || {};
+      var kLineData = this.storage.dataList[this.storage.tooltipDataPos] || {};
       var tooltip = this.style.tooltip; // 如果不是绘图才显示十字线
 
-      if (this.dataProvider.graphicMarkType === GraphicMarkType.NONE && !this.dataProvider.isDragMarker) {
+      if (this.storage.graphicMarkType === GraphicMarkType.NONE && !this.storage.isDragMarker) {
         this.tooltipRender.renderCrossHorizontalLine(this.ctx, this.mainChart.indicatorType, this.subIndicatorChart.indicatorType, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, tooltip, this.precision);
         this.tooltipRender.renderCrossVerticalLine(this.ctx, kLineData, tooltip);
       }
 
-      if (this.dataProvider.dataList.length > 0) {
+      if (this.storage.dataList.length > 0) {
         var tooltipData = tooltip.data;
 
-        if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS || tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.dataProvider.crossPoint) {
+        if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS || tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.storage.crossPoint) {
           var indicator = this.style.indicator;
           this.tooltipRender.renderMainChartTooltip(this.ctx, kLineData, this.mainChart.indicatorType, this.mainChart.chartType === ChartType.CANDLE, tooltip, indicator, this.precision);
 
@@ -4457,12 +4457,12 @@ function (_AxisRender) {
 
       for (var i = 0; i < valuePointLength; i++) {
         var x = this.valuePoints[i];
-        var kLineModel = this.dataProvider.dataList[parseInt(this.values[i])];
+        var kLineModel = this.storage.dataList[parseInt(this.values[i])];
         var timestamp = kLineModel.timestamp;
         var dateText = formatDate(timestamp, dateFormatType);
 
         if (i !== valuePointLength - 1) {
-          var nextKLineModel = this.dataProvider.dataList[parseInt(this.values[i + 1])];
+          var nextKLineModel = this.storage.dataList[parseInt(this.values[i + 1])];
           var nextTimestamp = nextKLineModel.timestamp;
 
           if (periodType === 'D' || periodType === 'W') {
@@ -4552,25 +4552,25 @@ function (_AxisRender) {
   }, {
     key: "computeAxis",
     value: function computeAxis(xAxis) {
-      var minPos = this.dataProvider.minPos;
-      var max = Math.min(minPos + this.dataProvider.range - 1, this.dataProvider.dataList.length - 1);
+      var minPos = this.storage.minPos;
+      var max = Math.min(minPos + this.storage.range - 1, this.storage.dataList.length - 1);
       this.computeAxisValues(minPos, max, 8.0, xAxis);
       this.pointValuesToPixel();
     }
   }, {
     key: "fixComputeAxisValues",
     value: function fixComputeAxisValues(xAxis) {
-      var dataSize = this.dataProvider.dataList.length;
+      var dataSize = this.storage.dataList.length;
 
       if (dataSize > 0) {
         var defaultLabelWidth = calcTextWidth(xAxis.tick.text.size, '0000-00-00 00:00:00');
-        var startPos = Math.ceil(defaultLabelWidth / 2 / this.dataProvider.dataSpace) - 1;
+        var startPos = Math.ceil(defaultLabelWidth / 2 / this.storage.dataSpace) - 1;
 
         if (startPos > dataSize - 1) {
           startPos = dataSize - 1;
         }
 
-        var barCount = Math.ceil(defaultLabelWidth / (this.dataProvider.dataSpace * (1 + DATA_MARGIN_SPACE_RATE))) + 1;
+        var barCount = Math.ceil(defaultLabelWidth / (this.storage.dataSpace * (1 + DATA_MARGIN_SPACE_RATE))) + 1;
 
         if (dataSize > barCount) {
           this.valueCount = Math.floor((dataSize - startPos) / barCount) + 1;
@@ -4596,7 +4596,7 @@ function (_AxisRender) {
 
       for (var i = 0; i < this.values.length; i++) {
         var pos = this.values[i];
-        this.valuePoints[i] = offsetLeft + ((pos - this.dataProvider.minPos) * this.dataProvider.dataSpace + this.dataProvider.dataSpace * (1 - DATA_MARGIN_SPACE_RATE) / 2);
+        this.valuePoints[i] = offsetLeft + ((pos - this.storage.minPos) * this.storage.dataSpace + this.storage.dataSpace * (1 - DATA_MARGIN_SPACE_RATE) / 2);
       }
     }
   }, {
@@ -4611,7 +4611,7 @@ function (_AxisRender) {
   }, {
     key: "isFillChart",
     value: function isFillChart() {
-      return this.dataProvider.dataList.length > this.dataProvider.range;
+      return this.storage.dataList.length > this.storage.range;
     }
   }]);
 
@@ -4623,13 +4623,13 @@ var XAxisChart =
 function (_Chart) {
   _inherits(XAxisChart, _Chart);
 
-  function XAxisChart(dom, style, dataProvider, period) {
+  function XAxisChart(dom, style, storage, period) {
     var _this;
 
     _classCallCheck(this, XAxisChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisChart).call(this, dom, style));
-    _this.xAxisRender = new XAxisRender(_this.viewPortHandler, dataProvider);
+    _this.xAxisRender = new XAxisRender(_this.viewPortHandler, storage);
     _this.period = period;
     return _this;
   }
@@ -6141,7 +6141,7 @@ function isMobile(ua) {
 var Event =
 /*#__PURE__*/
 function () {
-  function Event(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
+  function Event(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, storage) {
     _classCallCheck(this, Event);
 
     this.tooltipChart = tooltipChart;
@@ -6149,7 +6149,7 @@ function () {
     this.volChart = volChart;
     this.subIndicatorChart = subIndicatorChart;
     this.xAxisChart = xAxisChart;
-    this.dataProvider = dataProvider;
+    this.storage = storage;
     this.viewPortHandler = tooltipChart.viewPortHandler;
   }
   /**
@@ -6164,10 +6164,10 @@ function () {
   _createClass(Event, [{
     key: "drag",
     value: function drag(eventPoint, dragX, loadMore) {
-      var dataSpace = this.dataProvider.dataSpace;
-      var dataSize = this.dataProvider.dataList.length;
-      var range = this.dataProvider.range;
-      var minPos = this.dataProvider.minPos;
+      var dataSpace = this.storage.dataSpace;
+      var dataSize = this.storage.dataList.length;
+      var range = this.storage.range;
+      var minPos = this.storage.minPos;
       var moveDist = dragX - eventPoint.x;
 
       if (moveDist > dataSpace / 2) {
@@ -6188,7 +6188,7 @@ function () {
           minPos = 0;
         }
 
-        this.dataProvider.minPos = minPos;
+        this.storage.minPos = minPos;
         this.mainChart.flush();
         this.volChart.flush();
         this.subIndicatorChart.flush();
@@ -6218,7 +6218,7 @@ function () {
           minPos = dataSize - range;
         }
 
-        this.dataProvider.minPos = minPos;
+        this.storage.minPos = minPos;
         this.mainChart.flush();
         this.volChart.flush();
         this.subIndicatorChart.flush();
@@ -6240,9 +6240,9 @@ function () {
   }, {
     key: "zoom",
     value: function zoom(isZoomingOut, scaleX, touchStartPosition, touchRange) {
-      var range = this.dataProvider.range;
-      var maxRange = this.dataProvider.maxRange;
-      var minRange = this.dataProvider.minRange;
+      var range = this.storage.range;
+      var maxRange = this.storage.maxRange;
+      var minRange = this.storage.minRange;
 
       if (isZoomingOut) {
         if (range >= maxRange) {
@@ -6261,13 +6261,13 @@ function () {
       range = Math.min(Math.max(range, minRange), maxRange);
       var minPos = touchStartPosition + touchRange - range;
 
-      if (minPos + range > this.dataProvider.dataList.length || minPos < 0) {
+      if (minPos + range > this.storage.dataList.length || minPos < 0) {
         minPos = 0;
       }
 
-      this.dataProvider.range = range;
-      this.dataProvider.minPos = minPos;
-      this.dataProvider.space(this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft());
+      this.storage.range = range;
+      this.storage.minPos = minPos;
+      this.storage.space(this.viewPortHandler.contentRight() - this.viewPortHandler.contentLeft());
       this.mainChart.flush();
       this.volChart.flush();
       this.subIndicatorChart.flush();
@@ -6282,11 +6282,11 @@ function () {
   }, {
     key: "cross",
     value: function cross(point) {
-      this.dataProvider.crossPoint = {
+      this.storage.crossPoint = {
         x: point.x,
         y: point.y
       };
-      this.dataProvider.calcCurrentTooltipDataPos(this.viewPortHandler.contentLeft(), point.x);
+      this.storage.calcCurrentTooltipDataPos(this.viewPortHandler.contentLeft(), point.x);
       this.tooltipChart.flush();
     }
   }]);
@@ -6418,12 +6418,12 @@ var TouchEvent =
 function (_Event) {
   _inherits(TouchEvent, _Event);
 
-  function TouchEvent(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider) {
+  function TouchEvent(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, storage) {
     var _this;
 
     _classCallCheck(this, TouchEvent);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TouchEvent).call(this, tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider)); // 事件模型
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TouchEvent).call(this, tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, storage)); // 事件模型
 
     _this.touchMode = TOUCH_NO;
     _this.touchStartPoint = {
@@ -6440,8 +6440,8 @@ function (_Event) {
     };
     _this.savedDist = 1;
     _this.savedXDist = 1;
-    _this.touchRange = dataProvider.range;
-    _this.touchStartPosition = dataProvider.minPos;
+    _this.touchRange = storage.range;
+    _this.touchStartPosition = storage.minPos;
     _this.delayTimeout = null;
 
     _this.delayActiveCross = function () {
@@ -6469,7 +6469,7 @@ function (_Event) {
   _createClass(TouchEvent, [{
     key: "touchStart",
     value: function touchStart(e) {
-      if (this.dataProvider.dataList.length === 0) {
+      if (this.storage.dataList.length === 0) {
         return;
       }
 
@@ -6496,7 +6496,7 @@ function (_Event) {
             this.performCross(e);
           } else {
             this.touchMode = TOUCH_CROSS_CANCEL;
-            this.dataProvider.crossPoint = null;
+            this.storage.crossPoint = null;
             this.tooltipChart.flush();
           }
         } else {
@@ -6519,8 +6519,8 @@ function (_Event) {
             this.touchMode = TOUCH_ZOOM;
           }
 
-          this.touchRange = this.dataProvider.range;
-          this.touchStartPosition = this.dataProvider.minPos;
+          this.touchRange = this.storage.range;
+          this.touchStartPosition = this.storage.minPos;
         }
       }
     }
@@ -6533,7 +6533,7 @@ function (_Event) {
   }, {
     key: "touchMove",
     value: function touchMove(e, loadMore) {
-      if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.dataProvider.dataList.length === 0) {
+      if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.storage.dataList.length === 0) {
         return;
       }
 
@@ -6581,7 +6581,7 @@ function (_Event) {
 
                 if (distanceY <= distanceX) {
                   stopEvent(e);
-                  this.dataProvider.crossPoint = null;
+                  this.storage.crossPoint = null;
                   this.touchMode = TOUCH_DRAG;
                   this.tooltipChart.flush();
                 }
@@ -6602,7 +6602,7 @@ function (_Event) {
   }, {
     key: "touchEnd",
     value: function touchEnd(e) {
-      if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.dataProvider.dataList.length === 0) {
+      if (!isValidEvent(this.touchStartPoint, this.viewPortHandler) || this.storage.dataList.length === 0) {
         return;
       }
 
@@ -6624,7 +6624,7 @@ function (_Event) {
             this.cross(this.touchCrossPoint);
           } else {
             this.touchMode = TOUCH_NO;
-            this.dataProvider.crossPoint = null;
+            this.storage.crossPoint = null;
             this.tooltipChart.flush();
           }
         }
@@ -6702,12 +6702,12 @@ var MouseEvent =
 function (_Event) {
   _inherits(MouseEvent, _Event);
 
-  function MouseEvent(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, markerChart, dataProvider) {
+  function MouseEvent(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, markerChart, storage) {
     var _this;
 
     _classCallCheck(this, MouseEvent);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MouseEvent).call(this, tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(MouseEvent).call(this, tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, storage));
     _this.markerChart = markerChart; // 事件模型
 
     _this.mouseMode = CROSS;
@@ -6719,7 +6719,7 @@ function (_Event) {
     _this.documentMouseUp = function () {
       document.removeEventListener('mouseup', _this.documentMouseUp, false);
       _this.mouseMode = CROSS;
-      _this.dataProvider.isDragMarker = false;
+      _this.storage.isDragMarker = false;
 
       _this.tooltipChart.flush();
     };
@@ -6735,7 +6735,7 @@ function (_Event) {
   _createClass(MouseEvent, [{
     key: "mouseDown",
     value: function mouseDown(e) {
-      if (this.dataProvider.dataList.length === 0) {
+      if (this.storage.dataList.length === 0) {
         return;
       }
 
@@ -6750,7 +6750,7 @@ function (_Event) {
         this.mouseDownPoint.x = e.x;
         this.mouseDownPoint.y = e.y;
         this.mouseMode = DRAG;
-        this.dataProvider.crossPoint = null;
+        this.storage.crossPoint = null;
         this.tooltipChart.flush();
       }
     }
@@ -6762,7 +6762,7 @@ function (_Event) {
   }, {
     key: "mouseUp",
     value: function mouseUp(e) {
-      if (this.dataProvider.dataList.length === 0) {
+      if (this.storage.dataList.length === 0) {
         return;
       }
 
@@ -6775,22 +6775,22 @@ function (_Event) {
 
       document.removeEventListener('mouseup', this.documentMouseUp, false);
       this.mouseMode = CROSS;
-      this.dataProvider.crossPoint = {
+      this.storage.crossPoint = {
         x: point.x,
         y: point.y
       };
-      this.dataProvider.isDragMarker = false;
+      this.storage.isDragMarker = false;
       this.tooltipChart.flush();
     }
   }, {
     key: "mouseLeave",
     value: function mouseLeave(e) {
-      if (this.dataProvider.dataList.length === 0) {
+      if (this.storage.dataList.length === 0) {
         return;
       }
 
       stopEvent(e);
-      this.dataProvider.crossPoint = null;
+      this.storage.crossPoint = null;
       this.tooltipChart.flush();
     }
     /**
@@ -6802,7 +6802,7 @@ function (_Event) {
   }, {
     key: "mouseMove",
     value: function mouseMove(e, loadMore) {
-      if (this.dataProvider.dataList.length === 0) {
+      if (this.storage.dataList.length === 0) {
         return;
       }
 
@@ -6810,7 +6810,7 @@ function (_Event) {
       var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
 
       if (!isValidEvent(point, this.viewPortHandler)) {
-        this.dataProvider.crossPoint = null;
+        this.storage.crossPoint = null;
         this.tooltipChart.flush();
         return;
       }
@@ -6819,7 +6819,7 @@ function (_Event) {
         this.waitingForMouseMoveAnimationFrame = true;
 
         if (this.mouseMode === DRAG) {
-          if (this.dataProvider.isDragMarker) {
+          if (this.storage.isDragMarker) {
             this.cross(point);
           } else {
             if (this.drag(this.mouseDownPoint, e.x, loadMore)) {
@@ -6841,7 +6841,7 @@ function (_Event) {
   }, {
     key: "mouseWheel",
     value: function mouseWheel(e) {
-      if (this.dataProvider.dataList.length === 0 || this.dataProvider.isDragMarker) {
+      if (this.storage.dataList.length === 0 || this.storage.isDragMarker) {
         return;
       }
 
@@ -6852,8 +6852,8 @@ function (_Event) {
         return;
       }
 
-      var touchStartPosition = this.dataProvider.minPos;
-      var touchRange = this.dataProvider.range;
+      var touchStartPosition = this.storage.minPos;
+      var touchRange = this.storage.range;
       var delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.deltaY)); // 是否缩小
 
       var isZoomingOut = delta === 1;
@@ -6878,10 +6878,10 @@ function (_Event) {
 var GraphicMarkEvent =
 /*#__PURE__*/
 function () {
-  function GraphicMarkEvent(dataProvider, graphicMarkChart, style) {
+  function GraphicMarkEvent(storage, graphicMarkChart, style) {
     _classCallCheck(this, GraphicMarkEvent);
 
-    this.dataProvider = dataProvider;
+    this.storage = storage;
     this.graphicMarkChart = graphicMarkChart;
     this.viewPortHandler = graphicMarkChart.viewPortHandler;
     this.yRender = graphicMarkChart.graphicMarkRender.yRender;
@@ -6923,13 +6923,13 @@ function () {
     key: "mouseDown",
     value: function mouseDown(e) {
       var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
-      this.dataProvider.markerPoint = _objectSpread2({}, point);
+      this.storage.markerPoint = _objectSpread2({}, point);
 
       if (!isValidEvent(point, this.viewPortHandler)) {
         return;
       }
 
-      var graphicMarkType = this.dataProvider.graphicMarkType;
+      var graphicMarkType = this.storage.graphicMarkType;
 
       switch (graphicMarkType) {
         case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
@@ -6984,7 +6984,7 @@ function () {
           case GraphicMarkDrawStep.STEP_2:
             {
               lastLineData.drawStep = GraphicMarkDrawStep.STEP_DONE;
-              _this.dataProvider.graphicMarkType = GraphicMarkType.NONE;
+              _this.storage.graphicMarkType = GraphicMarkType.NONE;
               break;
             }
         }
@@ -7018,7 +7018,7 @@ function () {
           case GraphicMarkDrawStep.STEP_3:
             {
               lastLineData.drawStep = GraphicMarkDrawStep.STEP_DONE;
-              _this2.dataProvider.graphicMarkType = GraphicMarkType.NONE;
+              _this2.storage.graphicMarkType = GraphicMarkType.NONE;
               break;
             }
         }
@@ -7034,18 +7034,18 @@ function () {
   }, {
     key: "markerMouseDown",
     value: function markerMouseDown(e, markKey, performDifPoint) {
-      var markerData = this.dataProvider.markerDatas[markKey];
+      var markerData = this.storage.markerDatas[markKey];
 
       if (e.button === 2) {
         markerData.splice(markerData.length - 1, 1);
-        this.dataProvider.graphicMarkType = GraphicMarkType.NONE;
+        this.storage.graphicMarkType = GraphicMarkType.NONE;
       } else {
         var lastLineData = markerData[markerData.length - 1];
         performDifPoint(lastLineData);
         markerData[markerData.length - 1] = lastLineData;
       }
 
-      this.dataProvider.markerDatas[markKey] = markerData;
+      this.storage.markerDatas[markKey] = markerData;
       this.graphicMarkChart.flush();
     }
     /**
@@ -7062,14 +7062,14 @@ function () {
       if (markKey && dataIndex !== -1) {
         if (e.button === 2) {
           // 鼠标右键
-          var markerData = this.dataProvider.markerDatas[markKey];
+          var markerData = this.storage.markerDatas[markKey];
           markerData.splice(dataIndex, 1);
-          this.dataProvider.markerDatas[markKey] = markerData;
+          this.storage.markerDatas[markKey] = markerData;
           this.graphicMarkChart.flush();
         } else {
           if (this.noneMarkerMouseDownActiveData.onCircle) {
             this.noneMarkerMouseDownFlag = true;
-            this.dataProvider.isDragMarker = true;
+            this.storage.isDragMarker = true;
           }
         }
       }
@@ -7085,7 +7085,7 @@ function () {
       var _this3 = this;
 
       var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
-      var keys = Object.keys(this.dataProvider.markerDatas);
+      var keys = Object.keys(this.storage.markerDatas);
 
       var _loop = function _loop(i) {
         var key = keys[i];
@@ -7236,14 +7236,14 @@ function () {
     value: function realFindNoneMarkerMouseDownActiveData(markKey, point, checkPointOnLine) {
       var _this4 = this;
 
-      var markerData = this.dataProvider.markerDatas[markKey];
+      var markerData = this.storage.markerDatas[markKey];
       markerData.forEach(function (data, index) {
         var points = data.points;
         var xyPoints = [];
         var isOnCircle = false;
         var pointIndex = -1;
         points.forEach(function (p, i) {
-          var x = (p.xPos - _this4.dataProvider.minPos) * _this4.dataProvider.dataSpace;
+          var x = (p.xPos - _this4.storage.minPos) * _this4.storage.dataSpace;
 
           var y = _this4.yRender.getY(p.price);
 
@@ -7287,7 +7287,7 @@ function () {
     key: "mouseMove",
     value: function mouseMove(e) {
       var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
-      this.dataProvider.markerPoint = _objectSpread2({}, point);
+      this.storage.markerPoint = _objectSpread2({}, point);
 
       if (!isValidEvent(point, this.viewPortHandler)) {
         return;
@@ -7295,7 +7295,7 @@ function () {
 
       if (!this.waitingForMouseMoveAnimationFrame) {
         this.waitingForMouseMoveAnimationFrame = true;
-        var graphicMarkType = this.dataProvider.graphicMarkType;
+        var graphicMarkType = this.storage.graphicMarkType;
 
         switch (graphicMarkType) {
           case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
@@ -7364,7 +7364,7 @@ function () {
       var _this5 = this;
 
       this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
-        var xPos = _this5.dataProvider.minPos + (point.x - _this5.viewPortHandler.contentLeft()) / _this5.dataProvider.dataSpace;
+        var xPos = _this5.storage.minPos + (point.x - _this5.viewPortHandler.contentLeft()) / _this5.storage.dataSpace;
 
         var price = _this5.yRender.getValue(point.y);
 
@@ -7405,7 +7405,7 @@ function () {
       var _this6 = this;
 
       this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
-        var xPos = _this6.dataProvider.minPos + (point.x - _this6.viewPortHandler.contentLeft()) / _this6.dataProvider.dataSpace;
+        var xPos = _this6.storage.minPos + (point.x - _this6.viewPortHandler.contentLeft()) / _this6.storage.dataSpace;
 
         var price = _this6.yRender.getValue(point.y);
 
@@ -7472,7 +7472,7 @@ function () {
       var _this7 = this;
 
       this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
-        var xPos = _this7.dataProvider.minPos + (point.x - _this7.viewPortHandler.contentLeft()) / _this7.dataProvider.dataSpace;
+        var xPos = _this7.storage.minPos + (point.x - _this7.viewPortHandler.contentLeft()) / _this7.storage.dataSpace;
 
         var price = _this7.yRender.getValue(point.y);
 
@@ -7545,12 +7545,12 @@ function () {
   }, {
     key: "markerMouseMove",
     value: function markerMouseMove(point, markKey, performDifPoint) {
-      var markerData = this.dataProvider.markerDatas[markKey];
+      var markerData = this.storage.markerDatas[markKey];
       var lastLineData = markerData[markerData.length - 1] || {
         drawStep: GraphicMarkDrawStep.STEP_DONE
       };
       performDifPoint(markerData, lastLineData);
-      this.dataProvider.markerDatas[markKey] = markerData;
+      this.storage.markerDatas[markKey] = markerData;
       this.graphicMarkChart.flush();
     }
     /**
@@ -7566,7 +7566,7 @@ function () {
         var dataIndex = this.noneMarkerMouseDownActiveData.dataIndex;
 
         if (markKey && dataIndex !== -1) {
-          var markerData = this.dataProvider.markerDatas[markKey];
+          var markerData = this.storage.markerDatas[markKey];
 
           switch (markKey) {
             case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
@@ -7582,7 +7582,7 @@ function () {
                 var pointIndex = this.noneMarkerMouseDownActiveData.pointIndex;
 
                 if (pointIndex !== -1) {
-                  markerData[dataIndex].points[pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace + this.dataProvider.minPos;
+                  markerData[dataIndex].points[pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
                   markerData[dataIndex].points[pointIndex].price = this.yRender.getValue(point.y);
                 }
 
@@ -7596,7 +7596,7 @@ function () {
 
                 if (_pointIndex !== -1) {
                   var price = this.yRender.getValue(point.y);
-                  markerData[dataIndex].points[_pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace + this.dataProvider.minPos;
+                  markerData[dataIndex].points[_pointIndex].xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
                   markerData[dataIndex].points[0].price = price;
                   markerData[dataIndex].points[1].price = price;
                 }
@@ -7610,7 +7610,7 @@ function () {
                 var _pointIndex2 = this.noneMarkerMouseDownActiveData.pointIndex;
 
                 if (_pointIndex2 !== -1) {
-                  var xPos = (point.x - this.viewPortHandler.contentLeft()) / this.dataProvider.dataSpace + this.dataProvider.minPos;
+                  var xPos = (point.x - this.viewPortHandler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
                   markerData[dataIndex].points[0].xPos = xPos;
                   markerData[dataIndex].points[1].xPos = xPos;
                   markerData[dataIndex].points[_pointIndex2].price = this.yRender.getValue(point.y);
@@ -7620,7 +7620,7 @@ function () {
               }
           }
 
-          this.dataProvider.markerDatas[markKey] = markerData;
+          this.storage.markerDatas[markKey] = markerData;
         }
       }
 
@@ -7636,12 +7636,12 @@ var KeyboardEvent =
 function (_Event) {
   _inherits(KeyboardEvent, _Event);
 
-  function KeyboardEvent(mainChart, volChart, subIndicatorChart, tooltipChart, markerChart, xAxisChart, dataProvider) {
+  function KeyboardEvent(mainChart, volChart, subIndicatorChart, tooltipChart, markerChart, xAxisChart, storage) {
     var _this;
 
     _classCallCheck(this, KeyboardEvent);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(KeyboardEvent).call(this, tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, dataProvider));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(KeyboardEvent).call(this, tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, storage));
     _this.markerChart = markerChart;
     return _this;
   }
@@ -7662,16 +7662,16 @@ function (_Event) {
 
         if (e.keyCode === 37) {
           // 左移
-          if (this.dataProvider.minPos > 0) {
-            this.dataProvider.minPos--;
-            this.dataProvider.tooltipDataPos--;
+          if (this.storage.minPos > 0) {
+            this.storage.minPos--;
+            this.storage.tooltipDataPos--;
             shouldFlush = true;
           }
         } else {
           // 右移
-          if (this.dataProvider.minPos < this.dataProvider.dataList.length - this.dataProvider.range) {
-            this.dataProvider.minPos++;
-            this.dataProvider.tooltipDataPos++;
+          if (this.storage.minPos < this.storage.dataList.length - this.storage.range) {
+            this.storage.minPos++;
+            this.storage.tooltipDataPos++;
             shouldFlush = true;
           }
         }
@@ -7683,11 +7683,11 @@ function (_Event) {
           this.xAxisChart.flush();
           this.markerChart.flush();
 
-          if (this.dataProvider.crossPoint) {
+          if (this.storage.crossPoint) {
             this.tooltipChart.flush();
           }
 
-          if (this.dataProvider.minPos === 0) {
+          if (this.storage.minPos === 0) {
             loadMore();
           }
         }
@@ -7701,9 +7701,9 @@ function (_Event) {
           scaleX = 1.05;
         }
 
-        if (this.zoom(isZoomingOut, scaleX, this.dataProvider.minPos, this.dataProvider.range)) {
-          if (this.dataProvider.crossPoint) {
-            this.cross(this.dataProvider.crossPoint);
+        if (this.zoom(isZoomingOut, scaleX, this.storage.minPos, this.storage.range)) {
+          if (this.storage.crossPoint) {
+            this.cross(this.storage.crossPoint);
           }
 
           this.markerChart.flush();
@@ -7737,13 +7737,13 @@ function () {
     dom.style.borderStyle = 'none';
     dom.tabIndex = 1;
     this.dom = dom;
-    this.dataProvider = new DataProvider();
-    this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider, this.period);
-    this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams, this.precision);
-    this.graphicMarkChart = new GraphicMarkChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender, this.precision);
-    this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL);
-    this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams);
-    this.tooltipChart = new TooltipChart(dom, this.style, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider, this.indicatorParams, this.precision);
+    this.storage = new Storage();
+    this.xAxisChart = new XAxisChart(dom, this.style, this.storage, this.period);
+    this.candleChart = new CandleChart(dom, this.style, this.storage, this.indicatorParams, this.precision);
+    this.graphicMarkChart = new GraphicMarkChart(dom, this.style, this.storage, this.candleChart.yAxisRender, this.precision);
+    this.volIndicatorChart = new IndicatorChart(dom, this.style, this.storage, this.indicatorParams, IndicatorType.VOL);
+    this.subIndicatorChart = new IndicatorChart(dom, this.style, this.storage, this.indicatorParams);
+    this.tooltipChart = new TooltipChart(dom, this.style, this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.storage, this.indicatorParams, this.precision);
     this.calcChartDimensions();
     this.initEvent();
   }
@@ -7767,12 +7767,12 @@ function () {
         if (!_this.noMore && !_this.loading && _this.loadMoreCallback && isFunction(_this.loadMoreCallback)) {
           _this.loading = true;
 
-          _this.loadMoreCallback((_this.dataProvider.dataList[0] || {}).timestamp);
+          _this.loadMoreCallback((_this.storage.dataList[0] || {}).timestamp);
         }
       };
 
       if (mobile) {
-        var motionEvent = new TouchEvent(this.tooltipChart, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.dataProvider);
+        var motionEvent = new TouchEvent(this.tooltipChart, this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.storage);
         this.dom.addEventListener('touchstart', function (e) {
           motionEvent.touchStart(e);
         }, false);
@@ -7783,10 +7783,10 @@ function () {
           motionEvent.touchEnd(e);
         }, false);
       } else {
-        var _motionEvent = new MouseEvent(this.tooltipChart, this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.graphicMarkChart, this.dataProvider);
+        var _motionEvent = new MouseEvent(this.tooltipChart, this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.graphicMarkChart, this.storage);
 
-        var graphicMarkEvent = new GraphicMarkEvent(this.dataProvider, this.graphicMarkChart, this.style);
-        var keyboardEvent = new KeyboardEvent(this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.tooltipChart, this.graphicMarkChart, this.xAxisChart, this.dataProvider);
+        var graphicMarkEvent = new GraphicMarkEvent(this.storage, this.graphicMarkChart, this.style);
+        var keyboardEvent = new KeyboardEvent(this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.tooltipChart, this.graphicMarkChart, this.xAxisChart, this.storage);
         this.dom.addEventListener('mousedown', function (e) {
           _motionEvent.mouseDown(e);
 
@@ -7889,12 +7889,12 @@ function () {
         offsetRight = yAxisWidth;
       }
 
-      this.dataProvider.space(domWidth - offsetRight - offsetLeft);
+      this.storage.space(domWidth - offsetRight - offsetLeft);
       this.xAxisChart.setChartDimensions(0, domWidth, domHeight, offsetLeft, offsetRight, 0, xAxisHeight);
-      var mainChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight;
-      this.mainChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight);
-      this.graphicMarkChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight);
-      chartTop += mainChartHeight;
+      var candleChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight;
+      this.candleChart.setChartDimensions(chartTop, domWidth, candleChartHeight, offsetLeft, offsetRight);
+      this.graphicMarkChart.setChartDimensions(chartTop, domWidth, candleChartHeight, offsetLeft, offsetRight);
+      chartTop += candleChartHeight;
       this.volIndicatorChart.setChartDimensions(chartTop, domWidth, volChartHeight, offsetLeft, offsetRight);
       chartTop += volChartHeight;
       this.subIndicatorChart.setChartDimensions(chartTop, domWidth, subIndicatorChartHeight, offsetLeft, offsetRight);
@@ -7968,16 +7968,16 @@ function () {
   }, {
     key: "calcChartIndicator",
     value: function calcChartIndicator() {
-      if (this.mainChart.chartType === ChartType.REAL_TIME) {
+      if (this.candleChart.chartType === ChartType.REAL_TIME) {
         if (this.style.realTime.averageLine.display) {
-          this.dataProvider.dataList = calcIndicator.average(this.dataProvider.dataList);
-          this.flushCharts([this.mainChart]);
+          this.storage.dataList = calcIndicator.average(this.storage.dataList);
+          this.flushCharts([this.candleChart]);
         }
       } else {
-        if (this.mainChart.indicatorType !== IndicatorType.NO) {
-          this.calcIndicator(this.mainChart.indicatorType, this.mainChart);
+        if (this.candleChart.indicatorType !== IndicatorType.NO) {
+          this.calcIndicator(this.candleChart.indicatorType, this.candleChart);
         } else {
-          this.flushCharts([this.mainChart]);
+          this.flushCharts([this.candleChart]);
         }
       }
 
@@ -8004,7 +8004,7 @@ function () {
         var calc = calcIndicator[indicatorType];
 
         if (isFunction(calc)) {
-          _this2.dataProvider.dataList = calc(_this2.dataProvider.dataList, _this2.indicatorParams[indicatorType]);
+          _this2.storage.dataList = calc(_this2.storage.dataList, _this2.indicatorParams[indicatorType]);
 
           _this2.flushCharts([chart, _this2.tooltipChart]);
         }
@@ -8136,7 +8136,7 @@ function () {
         }
 
         if (pos !== -1) {
-          this.dataProvider.addData(data, pos);
+          this.storage.addData(data, pos);
           this.calcChartIndicator();
           this.xAxisChart.flush();
         }
@@ -8162,14 +8162,14 @@ function () {
   }, {
     key: "setMainChartType",
     value: function setMainChartType(chartType) {
-      if (this.mainChart.chartType !== chartType) {
-        this.mainChart.chartType = chartType;
+      if (this.candleChart.chartType !== chartType) {
+        this.candleChart.chartType = chartType;
 
         if (chartType === ChartType.REAL_TIME && this.style.realTime.averageLine.display) {
-          this.dataProvider.dataList = calcIndicator.average(this.dataProvider.dataList);
+          this.storage.dataList = calcIndicator.average(this.storage.dataList);
         }
 
-        this.flushCharts([this.mainChart, this.tooltipChart]);
+        this.flushCharts([this.candleChart, this.tooltipChart]);
         this.clearAllMarker();
 
         if (this.period.period !== '1') {
@@ -8185,13 +8185,13 @@ function () {
   }, {
     key: "setMainIndicatorType",
     value: function setMainIndicatorType(indicatorType) {
-      if (this.mainChart.indicatorType !== indicatorType) {
-        this.mainChart.indicatorType = indicatorType;
+      if (this.candleChart.indicatorType !== indicatorType) {
+        this.candleChart.indicatorType = indicatorType;
 
         if (indicatorType === IndicatorType.NO) {
-          this.flushCharts([this.mainChart]);
+          this.flushCharts([this.candleChart]);
         } else {
-          this.calcIndicator(indicatorType, this.mainChart);
+          this.calcIndicator(indicatorType, this.candleChart);
         }
       }
     }
@@ -8232,7 +8232,7 @@ function () {
       this.indicatorParams[indicatorType] = params;
 
       if (this.getMainIndicatorType() === indicatorType) {
-        this.calcIndicator(indicatorType, this.mainChart);
+        this.calcIndicator(indicatorType, this.candleChart);
       }
 
       if (this.isShowVolChart() && indicatorType === IndicatorType.VOL) {
@@ -8356,19 +8356,19 @@ function () {
   }, {
     key: "setDefaultRange",
     value: function setDefaultRange(range) {
-      if (isNumber(range) && range >= this.dataProvider.minRange && range <= this.dataProvider.maxRange) {
-        this.dataProvider.range = range;
-        this.dataProvider.space(this.tooltipChart.viewPortHandler.contentRight() - this.tooltipChart.viewPortHandler.contentLeft());
+      if (isNumber(range) && range >= this.storage.minRange && range <= this.storage.maxRange) {
+        this.storage.range = range;
+        this.storage.space(this.tooltipChart.viewPortHandler.contentRight() - this.tooltipChart.viewPortHandler.contentLeft());
 
-        if (this.dataProvider.minPos + range > this.dataProvider.dataList.length) {
-          this.dataProvider.minPos = this.dataProvider.dataList.length - range;
+        if (this.storage.minPos + range > this.storage.dataList.length) {
+          this.storage.minPos = this.storage.dataList.length - range;
 
-          if (this.dataProvider.minPos < 0) {
-            this.dataProvider.minPos = 0;
+          if (this.storage.minPos < 0) {
+            this.storage.minPos = 0;
           }
         }
 
-        this.flushCharts([this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart]);
+        this.flushCharts([this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart]);
       }
     }
     /**
@@ -8379,8 +8379,8 @@ function () {
   }, {
     key: "setMinRange",
     value: function setMinRange(range) {
-      if (isNumber(range) && range <= this.dataProvider.range) {
-        this.dataProvider.minRange = range;
+      if (isNumber(range) && range <= this.storage.range) {
+        this.storage.minRange = range;
       }
     }
     /**
@@ -8391,8 +8391,8 @@ function () {
   }, {
     key: "setMaxRange",
     value: function setMaxRange(range) {
-      if (isNumber(range) && range >= this.dataProvider.range) {
-        this.dataProvider.maxRange = range;
+      if (isNumber(range) && range >= this.storage.range) {
+        this.storage.maxRange = range;
       }
     }
     /**
@@ -8403,7 +8403,7 @@ function () {
   }, {
     key: "getMainIndicatorType",
     value: function getMainIndicatorType() {
-      return this.mainChart.indicatorType;
+      return this.candleChart.indicatorType;
     }
     /**
      * 获取附图指标类型
@@ -8433,7 +8433,7 @@ function () {
   }, {
     key: "getDataList",
     value: function getDataList() {
-      return this.dataProvider.dataList;
+      return this.storage.dataList;
     }
     /**
      * 获取当前样式
@@ -8452,7 +8452,7 @@ function () {
   }, {
     key: "clearData",
     value: function clearData() {
-      this.dataProvider.dataList = [];
+      this.storage.dataList = [];
     }
     /**
      * 绘制标记图形
@@ -8463,19 +8463,19 @@ function () {
     key: "drawMarker",
     value: function drawMarker(type) {
       // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
-      var graphicMarkType = this.dataProvider.graphicMarkType;
+      var graphicMarkType = this.storage.graphicMarkType;
 
       if (graphicMarkType !== type) {
-        var markerData = this.dataProvider.markerDatas[graphicMarkType];
+        var markerData = this.storage.markerDatas[graphicMarkType];
 
         if (markerData && isArray(markerData)) {
           markerData.splice(markerData.length - 1, 1);
-          this.dataProvider.markerDatas[graphicMarkType] = markerData;
+          this.storage.markerDatas[graphicMarkType] = markerData;
           this.tooltipChart.flush();
         }
       }
 
-      this.dataProvider.graphicMarkType = type;
+      this.storage.graphicMarkType = type;
     }
     /**
      * 清空所有标记图形
@@ -8486,11 +8486,11 @@ function () {
     value: function clearAllMarker() {
       var _this4 = this;
 
-      var markerDatas = this.dataProvider.markerDatas;
+      var markerDatas = this.storage.markerDatas;
       Object.keys(markerDatas).forEach(function (key) {
-        _this4.dataProvider.markerDatas[key] = [];
+        _this4.storage.markerDatas[key] = [];
       });
-      this.dataProvider.graphicMarkType = GraphicMarkType.NONE;
+      this.storage.graphicMarkType = GraphicMarkType.NONE;
       this.graphicMarkChart.flush();
     }
     /**
@@ -8521,7 +8521,7 @@ function () {
 
       var c = document.createElement('canvas');
       var xAxisCanvas = this.xAxisChart.canvasDom;
-      var mainCanvas = this.mainChart.canvasDom;
+      var candleCanvas = this.candleChart.canvasDom;
       var volCanvas = this.volIndicatorChart.canvasDom;
       var indicatorCanvas = this.subIndicatorChart.canvasDom;
       var tooltipCanvas = this.tooltipChart.canvasDom;
@@ -8533,15 +8533,15 @@ function () {
       ctx.drawImage(xAxisCanvas, 0, 0, xAxisCanvas.width, xAxisCanvas.height);
 
       if (!excludes || excludes.indexOf('candle') < 0) {
-        ctx.drawImage(mainCanvas, 0, 0, mainCanvas.width, mainCanvas.height);
+        ctx.drawImage(candleCanvas, 0, 0, candleCanvas.width, candleCanvas.height);
       }
 
       if (!excludes || excludes.indexOf('vol') < 0) {
-        ctx.drawImage(volCanvas, 0, mainCanvas.height, volCanvas.width, volCanvas.height);
+        ctx.drawImage(volCanvas, 0, candleCanvas.height, volCanvas.width, volCanvas.height);
       }
 
       if (!excludes || excludes.indexOf('subIndicator') < 0) {
-        ctx.drawImage(indicatorCanvas, 0, mainCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height);
+        ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height);
       }
 
       if (!excludes || excludes.indexOf('marker') < 0) {

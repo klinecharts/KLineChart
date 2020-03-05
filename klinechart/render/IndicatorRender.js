@@ -1,10 +1,10 @@
 import Render from './Render'
-import { DATA_MARGIN_SPACE_RATE } from '../internal/DataProvider'
+import { DATA_MARGIN_SPACE_RATE } from '../internal/Storage'
 import { IndicatorType } from '../internal/constants'
 
 class IndicatorRender extends Render {
-  constructor (viewPortHandler, dataProvider, yAxisRender) {
-    super(viewPortHandler, dataProvider)
+  constructor (viewPortHandler, storage, yAxisRender) {
+    super(viewPortHandler, storage)
     this.yAxisRender = yAxisRender
   }
 
@@ -58,7 +58,7 @@ class IndicatorRender extends Render {
         onRendering = (x, i, kLineData, halfBarSpace) => {
           const macd = kLineData.macd || {}
           this.prepareLinePoints(x, [macd.diff, macd.dea], linePoints)
-          const refKLineData = this.dataProvider.dataList[i - 1] || {}
+          const refKLineData = this.storage.dataList[i - 1] || {}
           const macdValue = macd.macd
           const refMacdValue = (refKLineData.macd || {}).macd || Number.MIN_SAFE_INTEGER
           if (macdValue > 0) {
@@ -82,7 +82,7 @@ class IndicatorRender extends Render {
             lineValues.push(vol[`ma${p}`])
           })
           this.prepareLinePoints(x, lineValues, linePoints)
-          const refKLineData = this.dataProvider.dataList[i - 1] || {}
+          const refKLineData = this.storage.dataList[i - 1] || {}
           const close = kLineData.close
           const refClose = (refKLineData || {}).close || Number.MIN_SAFE_INTEGER
           if (close > refClose) {
@@ -295,7 +295,7 @@ class IndicatorRender extends Render {
       prepare(values)
     }
     if (!isMainIndicator) {
-      const refKLineData = this.dataProvider.dataList[i - 1] || {}
+      const refKLineData = this.storage.dataList[i - 1] || {}
       this.renderOhlc(
         ctx, halfBarSpace, x, kLineData,
         refKLineData, indicator.increasingColor, indicator.decreasingColor
@@ -308,17 +308,17 @@ class IndicatorRender extends Render {
    */
   renderGraphics (ctx, onRendering, onRenderEnd) {
     let startX = this.viewPortHandler.contentLeft()
-    const dataSpace = this.dataProvider.dataSpace * (1 - DATA_MARGIN_SPACE_RATE)
+    const dataSpace = this.storage.dataSpace * (1 - DATA_MARGIN_SPACE_RATE)
     const halfBarSpace = dataSpace / 2
-    const lastPos = Math.min(this.dataProvider.dataList.length, this.dataProvider.minPos + this.dataProvider.range)
-    for (let i = this.dataProvider.minPos; i < lastPos; i++) {
+    const lastPos = Math.min(this.storage.dataList.length, this.storage.minPos + this.storage.range)
+    for (let i = this.storage.minPos; i < lastPos; i++) {
       const endX = startX + dataSpace
       const x = (startX + endX) / 2
-      const kLineData = this.dataProvider.dataList[i]
+      const kLineData = this.storage.dataList[i]
       if (onRendering) {
         onRendering(x, i, kLineData, halfBarSpace)
       }
-      startX += this.dataProvider.dataSpace
+      startX += this.storage.dataSpace
     }
     if (onRenderEnd) {
       onRenderEnd()

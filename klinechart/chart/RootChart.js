@@ -1,4 +1,4 @@
-import MainChart from './MainChart'
+import CandleChart from './CandleChart'
 import GraphicMarkChart from './GraphicMarkChart'
 import IndicatorChart from './IndicatorChart'
 import TooltipChart from './TooltipChart'
@@ -8,7 +8,7 @@ import { formatDate } from '../utils/date'
 import { calcTextWidth, requestAnimationFrame } from '../utils/draw'
 import calcIndicator from '../internal/calcIndicator'
 
-import DataProvider from '../internal/DataProvider'
+import Storage from '../internal/Storage'
 
 import { getDefaultStyle, getDefaultIndicatorParams, getDefaultPrecision, getDefaultPeriod } from '../internal/config'
 import { isMobile } from '../utils/platform'
@@ -35,16 +35,16 @@ class RootChart {
     dom.style.borderStyle = 'none'
     dom.tabIndex = 1
     this.dom = dom
-    this.dataProvider = new DataProvider()
-    this.xAxisChart = new XAxisChart(dom, this.style, this.dataProvider, this.period)
-    this.mainChart = new MainChart(dom, this.style, this.dataProvider, this.indicatorParams, this.precision)
-    this.graphicMarkChart = new GraphicMarkChart(dom, this.style, this.dataProvider, this.mainChart.yAxisRender, this.precision)
-    this.volIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams, IndicatorType.VOL)
-    this.subIndicatorChart = new IndicatorChart(dom, this.style, this.dataProvider, this.indicatorParams)
+    this.storage = new Storage()
+    this.xAxisChart = new XAxisChart(dom, this.style, this.storage, this.period)
+    this.candleChart = new CandleChart(dom, this.style, this.storage, this.indicatorParams, this.precision)
+    this.graphicMarkChart = new GraphicMarkChart(dom, this.style, this.storage, this.candleChart.yAxisRender, this.precision)
+    this.volIndicatorChart = new IndicatorChart(dom, this.style, this.storage, this.indicatorParams, IndicatorType.VOL)
+    this.subIndicatorChart = new IndicatorChart(dom, this.style, this.storage, this.indicatorParams)
     this.tooltipChart = new TooltipChart(
       dom, this.style,
-      this.mainChart, this.volIndicatorChart, this.subIndicatorChart,
-      this.xAxisChart, this.dataProvider, this.indicatorParams, this.precision
+      this.candleChart, this.volIndicatorChart, this.subIndicatorChart,
+      this.xAxisChart, this.storage, this.indicatorParams, this.precision
     )
     this.calcChartDimensions()
     this.initEvent()
@@ -60,14 +60,14 @@ class RootChart {
       // 有更多并且没有在加载则去加载更多
       if (!this.noMore && !this.loading && this.loadMoreCallback && isFunction(this.loadMoreCallback)) {
         this.loading = true
-        this.loadMoreCallback((this.dataProvider.dataList[0] || {}).timestamp)
+        this.loadMoreCallback((this.storage.dataList[0] || {}).timestamp)
       }
     }
     if (mobile) {
       const motionEvent = new TouchEvent(
-        this.tooltipChart, this.mainChart,
+        this.tooltipChart, this.candleChart,
         this.volIndicatorChart, this.subIndicatorChart,
-        this.xAxisChart, this.dataProvider
+        this.xAxisChart, this.storage
       )
       this.dom.addEventListener('touchstart', (e) => { motionEvent.touchStart(e) }, false)
       this.dom.addEventListener('touchmove', (e) => {
@@ -76,14 +76,14 @@ class RootChart {
       this.dom.addEventListener('touchend', (e) => { motionEvent.touchEnd(e) }, false)
     } else {
       const motionEvent = new MouseEvent(
-        this.tooltipChart, this.mainChart,
+        this.tooltipChart, this.candleChart,
         this.volIndicatorChart, this.subIndicatorChart,
-        this.xAxisChart, this.graphicMarkChart, this.dataProvider
+        this.xAxisChart, this.graphicMarkChart, this.storage
       )
-      const graphicMarkEvent = new GraphicMarkEvent(this.dataProvider, this.graphicMarkChart, this.style)
+      const graphicMarkEvent = new GraphicMarkEvent(this.storage, this.graphicMarkChart, this.style)
       const keyboardEvent = new KeyboardEvent(
-        this.mainChart, this.volIndicatorChart, this.subIndicatorChart,
-        this.tooltipChart, this.graphicMarkChart, this.xAxisChart, this.dataProvider
+        this.candleChart, this.volIndicatorChart, this.subIndicatorChart,
+        this.tooltipChart, this.graphicMarkChart, this.xAxisChart, this.storage
       )
       this.dom.addEventListener('mousedown', (e) => {
         motionEvent.mouseDown(e)
@@ -150,12 +150,12 @@ class RootChart {
     } else {
       offsetRight = yAxisWidth
     }
-    this.dataProvider.space(domWidth - offsetRight - offsetLeft)
+    this.storage.space(domWidth - offsetRight - offsetLeft)
     this.xAxisChart.setChartDimensions(0, domWidth, domHeight, offsetLeft, offsetRight, 0, xAxisHeight)
-    const mainChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight
-    this.mainChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight)
-    this.graphicMarkChart.setChartDimensions(chartTop, domWidth, mainChartHeight, offsetLeft, offsetRight)
-    chartTop += mainChartHeight
+    const candleChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight
+    this.candleChart.setChartDimensions(chartTop, domWidth, candleChartHeight, offsetLeft, offsetRight)
+    this.graphicMarkChart.setChartDimensions(chartTop, domWidth, candleChartHeight, offsetLeft, offsetRight)
+    chartTop += candleChartHeight
     this.volIndicatorChart.setChartDimensions(chartTop, domWidth, volChartHeight, offsetLeft, offsetRight)
     chartTop += volChartHeight
     this.subIndicatorChart.setChartDimensions(chartTop, domWidth, subIndicatorChartHeight, offsetLeft, offsetRight)
@@ -212,16 +212,16 @@ class RootChart {
    * 计算图表指标
    */
   calcChartIndicator () {
-    if (this.mainChart.chartType === ChartType.REAL_TIME) {
+    if (this.candleChart.chartType === ChartType.REAL_TIME) {
       if (this.style.realTime.averageLine.display) {
-        this.dataProvider.dataList = calcIndicator.average(this.dataProvider.dataList)
-        this.flushCharts([this.mainChart])
+        this.storage.dataList = calcIndicator.average(this.storage.dataList)
+        this.flushCharts([this.candleChart])
       }
     } else {
-      if (this.mainChart.indicatorType !== IndicatorType.NO) {
-        this.calcIndicator(this.mainChart.indicatorType, this.mainChart)
+      if (this.candleChart.indicatorType !== IndicatorType.NO) {
+        this.calcIndicator(this.candleChart.indicatorType, this.candleChart)
       } else {
-        this.flushCharts([this.mainChart])
+        this.flushCharts([this.candleChart])
       }
     }
     if (this.volIndicatorChart.indicatorType !== IndicatorType.NO) {
@@ -241,7 +241,7 @@ class RootChart {
     Promise.resolve().then(() => {
       const calc = calcIndicator[indicatorType]
       if (isFunction(calc)) {
-        this.dataProvider.dataList = calc(this.dataProvider.dataList, this.indicatorParams[indicatorType])
+        this.storage.dataList = calc(this.storage.dataList, this.indicatorParams[indicatorType])
         this.flushCharts([chart, this.tooltipChart])
       }
     })
@@ -342,7 +342,7 @@ class RootChart {
         }
       }
       if (pos !== -1) {
-        this.dataProvider.addData(data, pos)
+        this.storage.addData(data, pos)
         this.calcChartIndicator()
         this.xAxisChart.flush()
       }
@@ -363,12 +363,12 @@ class RootChart {
    * @param chartType
    */
   setMainChartType (chartType) {
-    if (this.mainChart.chartType !== chartType) {
-      this.mainChart.chartType = chartType
+    if (this.candleChart.chartType !== chartType) {
+      this.candleChart.chartType = chartType
       if (chartType === ChartType.REAL_TIME && this.style.realTime.averageLine.display) {
-        this.dataProvider.dataList = calcIndicator.average(this.dataProvider.dataList)
+        this.storage.dataList = calcIndicator.average(this.storage.dataList)
       }
-      this.flushCharts([this.mainChart, this.tooltipChart])
+      this.flushCharts([this.candleChart, this.tooltipChart])
       this.clearAllMarker()
       if (this.period.period !== '1') {
         this.clearData()
@@ -381,12 +381,12 @@ class RootChart {
    * @param indicatorType
    */
   setMainIndicatorType (indicatorType) {
-    if (this.mainChart.indicatorType !== indicatorType) {
-      this.mainChart.indicatorType = indicatorType
+    if (this.candleChart.indicatorType !== indicatorType) {
+      this.candleChart.indicatorType = indicatorType
       if (indicatorType === IndicatorType.NO) {
-        this.flushCharts([this.mainChart])
+        this.flushCharts([this.candleChart])
       } else {
-        this.calcIndicator(indicatorType, this.mainChart)
+        this.calcIndicator(indicatorType, this.candleChart)
       }
     }
   }
@@ -422,7 +422,7 @@ class RootChart {
     }
     this.indicatorParams[indicatorType] = params
     if (this.getMainIndicatorType() === indicatorType) {
-      this.calcIndicator(indicatorType, this.mainChart)
+      this.calcIndicator(indicatorType, this.candleChart)
     }
     if (this.isShowVolChart() && indicatorType === IndicatorType.VOL) {
       this.calcIndicator(indicatorType, this.volIndicatorChart)
@@ -517,16 +517,16 @@ class RootChart {
    * @param range
    */
   setDefaultRange (range) {
-    if (isNumber(range) && range >= this.dataProvider.minRange && range <= this.dataProvider.maxRange) {
-      this.dataProvider.range = range
-      this.dataProvider.space(this.tooltipChart.viewPortHandler.contentRight() - this.tooltipChart.viewPortHandler.contentLeft())
-      if (this.dataProvider.minPos + range > this.dataProvider.dataList.length) {
-        this.dataProvider.minPos = this.dataProvider.dataList.length - range
-        if (this.dataProvider.minPos < 0) {
-          this.dataProvider.minPos = 0
+    if (isNumber(range) && range >= this.storage.minRange && range <= this.storage.maxRange) {
+      this.storage.range = range
+      this.storage.space(this.tooltipChart.viewPortHandler.contentRight() - this.tooltipChart.viewPortHandler.contentLeft())
+      if (this.storage.minPos + range > this.storage.dataList.length) {
+        this.storage.minPos = this.storage.dataList.length - range
+        if (this.storage.minPos < 0) {
+          this.storage.minPos = 0
         }
       }
-      this.flushCharts([this.mainChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart])
+      this.flushCharts([this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart])
     }
   }
 
@@ -535,8 +535,8 @@ class RootChart {
    * @param range
    */
   setMinRange (range) {
-    if (isNumber(range) && range <= this.dataProvider.range) {
-      this.dataProvider.minRange = range
+    if (isNumber(range) && range <= this.storage.range) {
+      this.storage.minRange = range
     }
   }
 
@@ -545,8 +545,8 @@ class RootChart {
    * @param range
    */
   setMaxRange (range) {
-    if (isNumber(range) && range >= this.dataProvider.range) {
-      this.dataProvider.maxRange = range
+    if (isNumber(range) && range >= this.storage.range) {
+      this.storage.maxRange = range
     }
   }
 
@@ -555,7 +555,7 @@ class RootChart {
    * @returns {string}
    */
   getMainIndicatorType () {
-    return this.mainChart.indicatorType
+    return this.candleChart.indicatorType
   }
 
   /**
@@ -579,7 +579,7 @@ class RootChart {
    * @returns {Array}
    */
   getDataList () {
-    return this.dataProvider.dataList
+    return this.storage.dataList
   }
 
   /**
@@ -594,7 +594,7 @@ class RootChart {
    * 清空数据
    */
   clearData () {
-    this.dataProvider.dataList = []
+    this.storage.dataList = []
   }
 
   /**
@@ -603,27 +603,27 @@ class RootChart {
    */
   drawMarker (type) {
     // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
-    const graphicMarkType = this.dataProvider.graphicMarkType
+    const graphicMarkType = this.storage.graphicMarkType
     if (graphicMarkType !== type) {
-      const markerData = this.dataProvider.markerDatas[graphicMarkType]
+      const markerData = this.storage.markerDatas[graphicMarkType]
       if (markerData && isArray(markerData)) {
         markerData.splice(markerData.length - 1, 1)
-        this.dataProvider.markerDatas[graphicMarkType] = markerData
+        this.storage.markerDatas[graphicMarkType] = markerData
         this.tooltipChart.flush()
       }
     }
-    this.dataProvider.graphicMarkType = type
+    this.storage.graphicMarkType = type
   }
 
   /**
    * 清空所有标记图形
    */
   clearAllMarker () {
-    const markerDatas = this.dataProvider.markerDatas
+    const markerDatas = this.storage.markerDatas
     Object.keys(markerDatas).forEach(key => {
-      this.dataProvider.markerDatas[key] = []
+      this.storage.markerDatas[key] = []
     })
-    this.dataProvider.graphicMarkType = GraphicMarkType.NONE
+    this.storage.graphicMarkType = GraphicMarkType.NONE
     this.graphicMarkChart.flush()
   }
 
@@ -646,7 +646,7 @@ class RootChart {
     }
     const c = document.createElement('canvas')
     const xAxisCanvas = this.xAxisChart.canvasDom
-    const mainCanvas = this.mainChart.canvasDom
+    const candleCanvas = this.candleChart.canvasDom
     const volCanvas = this.volIndicatorChart.canvasDom
     const indicatorCanvas = this.subIndicatorChart.canvasDom
     const tooltipCanvas = this.tooltipChart.canvasDom
@@ -657,13 +657,13 @@ class RootChart {
     const ctx = c.getContext('2d')
     ctx.drawImage(xAxisCanvas, 0, 0, xAxisCanvas.width, xAxisCanvas.height)
     if (!excludes || excludes.indexOf('candle') < 0) {
-      ctx.drawImage(mainCanvas, 0, 0, mainCanvas.width, mainCanvas.height)
+      ctx.drawImage(candleCanvas, 0, 0, candleCanvas.width, candleCanvas.height)
     }
     if (!excludes || excludes.indexOf('vol') < 0) {
-      ctx.drawImage(volCanvas, 0, mainCanvas.height, volCanvas.width, volCanvas.height)
+      ctx.drawImage(volCanvas, 0, candleCanvas.height, volCanvas.width, volCanvas.height)
     }
     if (!excludes || excludes.indexOf('subIndicator') < 0) {
-      ctx.drawImage(indicatorCanvas, 0, mainCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height)
+      ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height)
     }
     if (!excludes || excludes.indexOf('marker') < 0) {
       const markerCanvas = this.graphicMarkChart.canvasDom
