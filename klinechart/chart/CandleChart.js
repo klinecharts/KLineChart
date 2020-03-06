@@ -14,7 +14,7 @@ class CandleChart extends IndicatorChart {
   draw () {
     super.draw()
     this.chartRender.renderLastPriceMark(
-      this.ctx, this.style.lastPriceMark,
+      this.ctx, this.style.candle.lastPriceMark,
       this.style.yAxis.position === YAxisPosition.LEFT,
       this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE,
       this.precision.pricePrecision
@@ -22,16 +22,17 @@ class CandleChart extends IndicatorChart {
   }
 
   drawChart () {
+    const candle = this.style.candle
     if (this.chartType !== ChartType.REAL_TIME) {
-      this.chartRender.renderCandle(this.ctx, this.style.candle, this.precision.pricePrecision)
+      this.chartRender.renderCandle(this.ctx, candle.bar, this.precision.pricePrecision)
       this.chartRender.renderIndicator(
         this.ctx, this.indicatorType, this.style.indicator,
         this.indicatorParams, true
       )
-      this.chartRender.renderHighestPriceMark(this.ctx, this.style.highestPriceMark, this.precision.pricePrecision)
-      this.chartRender.renderLowestPriceMark(this.ctx, this.style.lowestPriceMark, this.precision.pricePrecision)
+      this.chartRender.renderHighestPriceMark(this.ctx, candle.highestPriceMark, this.precision.pricePrecision)
+      this.chartRender.renderLowestPriceMark(this.ctx, candle.lowestPriceMark, this.precision.pricePrecision)
     } else {
-      this.chartRender.renderTimeLine(this.ctx, this.style.realTime)
+      this.chartRender.renderTimeLine(this.ctx, candle)
     }
   }
 
@@ -43,7 +44,7 @@ class CandleChart extends IndicatorChart {
     this.yAxisRender.calcAxisMinMax(
       this.indicatorType, true,
       this.chartType === ChartType.REAL_TIME,
-      this.style.realTime.averageLine.display
+      this.style.candle.averageLine.display
     )
   }
 }

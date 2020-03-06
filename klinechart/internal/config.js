@@ -8,7 +8,7 @@ import {
  */
 export function getDefaultStyle () {
   return {
-    realTime: {
+    candle: {
       /**
        * 分时线
        */
@@ -24,69 +24,68 @@ export function getDefaultStyle () {
         display: true,
         color: '#F5A623',
         size: 1
-      }
-    },
-
-    candle: {
-      /**
-       * 蜡烛样式
-       */
-      style: CandleStyle.SOLID,
-      /**
-       * 上涨颜色
-       */
-      increasingColor: '#26A69A',
-      /**
-       * 下跌颜色
-       */
-      decreasingColor: '#EF5350'
-    },
-
-    /**
-     * 最大价格标记参数
-     */
-    highestPriceMark: {
-      display: true,
-      color: '#D9D9D9',
-      text: {
-        margin: 5,
-        size: 10
-      }
-    },
-
-    /**
-     * 最小价格标记参数
-     */
-    lowestPriceMark: {
-      display: true,
-      color: '#D9D9D9',
-      text: {
-        margin: 5,
-        size: 10
-      }
-    },
-
-    /**
-     * 最新价标记参数
-     */
-    lastPriceMark: {
-      display: true,
-      increasingColor: '#26A69A',
-      decreasingColor: '#EF5350',
-      line: {
-        display: true,
-        style: LineStyle.DASH,
-        dashValue: [4, 4],
-        size: 1
       },
-      text: {
+      bar: {
+        /**
+         * 蜡烛样式
+         */
+        style: CandleStyle.SOLID,
+        /**
+         * 上涨颜色
+         */
+        increasingColor: '#26A69A',
+        /**
+         * 下跌颜色
+         */
+        decreasingColor: '#EF5350'
+      },
+
+      /**
+       * 最大价格标记参数
+       */
+      highestPriceMark: {
         display: true,
-        size: 12,
-        paddingLeft: 2,
-        paddingTop: 2,
-        paddingRight: 2,
-        paddingBottom: 2,
-        color: '#FFFFFF'
+        color: '#D9D9D9',
+        text: {
+          margin: 5,
+          size: 10
+        }
+      },
+
+      /**
+       * 最小价格标记参数
+       */
+      lowestPriceMark: {
+        display: true,
+        color: '#D9D9D9',
+        text: {
+          margin: 5,
+          size: 10
+        }
+      },
+
+      /**
+       * 最新价标记参数
+       */
+      lastPriceMark: {
+        display: true,
+        increasingColor: '#26A69A',
+        decreasingColor: '#EF5350',
+        line: {
+          display: true,
+          style: LineStyle.DASH,
+          dashValue: [4, 4],
+          size: 1
+        },
+        text: {
+          display: true,
+          size: 12,
+          paddingLeft: 2,
+          paddingTop: 2,
+          paddingRight: 2,
+          paddingBottom: 2,
+          color: '#FFFFFF'
+        }
       }
     },
     indicator: {

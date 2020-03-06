@@ -2291,18 +2291,20 @@ function (_IndicatorChart) {
     value: function draw() {
       _get(_getPrototypeOf(CandleChart.prototype), "draw", this).call(this);
 
-      this.chartRender.renderLastPriceMark(this.ctx, this.style.lastPriceMark, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, this.precision.pricePrecision);
+      this.chartRender.renderLastPriceMark(this.ctx, this.style.candle.lastPriceMark, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, this.precision.pricePrecision);
     }
   }, {
     key: "drawChart",
     value: function drawChart() {
+      var candle = this.style.candle;
+
       if (this.chartType !== ChartType.REAL_TIME) {
-        this.chartRender.renderCandle(this.ctx, this.style.candle, this.precision.pricePrecision);
+        this.chartRender.renderCandle(this.ctx, candle.bar, this.precision.pricePrecision);
         this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, this.indicatorParams, true);
-        this.chartRender.renderHighestPriceMark(this.ctx, this.style.highestPriceMark, this.precision.pricePrecision);
-        this.chartRender.renderLowestPriceMark(this.ctx, this.style.lowestPriceMark, this.precision.pricePrecision);
+        this.chartRender.renderHighestPriceMark(this.ctx, candle.highestPriceMark, this.precision.pricePrecision);
+        this.chartRender.renderLowestPriceMark(this.ctx, candle.lowestPriceMark, this.precision.pricePrecision);
       } else {
-        this.chartRender.renderTimeLine(this.ctx, this.style.realTime);
+        this.chartRender.renderTimeLine(this.ctx, candle);
       }
     }
   }, {
@@ -2313,7 +2315,7 @@ function (_IndicatorChart) {
   }, {
     key: "calcYAxisMinMax",
     value: function calcYAxisMinMax() {
-      this.yAxisRender.calcAxisMinMax(this.indicatorType, true, this.chartType === ChartType.REAL_TIME, this.style.realTime.averageLine.display);
+      this.yAxisRender.calcAxisMinMax(this.indicatorType, true, this.chartType === ChartType.REAL_TIME, this.style.candle.averageLine.display);
     }
   }]);
 
@@ -3146,7 +3148,7 @@ function getDate(timestamp) {
 
 function getDefaultStyle() {
   return {
-    realTime: {
+    candle: {
       /**
        * 分时线
        */
@@ -3163,70 +3165,70 @@ function getDefaultStyle() {
         display: true,
         color: '#F5A623',
         size: 1
-      }
-    },
-    candle: {
-      /**
-       * 蜡烛样式
-       */
-      style: CandleStyle.SOLID,
-
-      /**
-       * 上涨颜色
-       */
-      increasingColor: '#26A69A',
-
-      /**
-       * 下跌颜色
-       */
-      decreasingColor: '#EF5350'
-    },
-
-    /**
-     * 最大价格标记参数
-     */
-    highestPriceMark: {
-      display: true,
-      color: '#D9D9D9',
-      text: {
-        margin: 5,
-        size: 10
-      }
-    },
-
-    /**
-     * 最小价格标记参数
-     */
-    lowestPriceMark: {
-      display: true,
-      color: '#D9D9D9',
-      text: {
-        margin: 5,
-        size: 10
-      }
-    },
-
-    /**
-     * 最新价标记参数
-     */
-    lastPriceMark: {
-      display: true,
-      increasingColor: '#26A69A',
-      decreasingColor: '#EF5350',
-      line: {
-        display: true,
-        style: LineStyle.DASH,
-        dashValue: [4, 4],
-        size: 1
       },
-      text: {
+      bar: {
+        /**
+         * 蜡烛样式
+         */
+        style: CandleStyle.SOLID,
+
+        /**
+         * 上涨颜色
+         */
+        increasingColor: '#26A69A',
+
+        /**
+         * 下跌颜色
+         */
+        decreasingColor: '#EF5350'
+      },
+
+      /**
+       * 最大价格标记参数
+       */
+      highestPriceMark: {
         display: true,
-        size: 12,
-        paddingLeft: 2,
-        paddingTop: 2,
-        paddingRight: 2,
-        paddingBottom: 2,
-        color: '#FFFFFF'
+        color: '#D9D9D9',
+        text: {
+          margin: 5,
+          size: 10
+        }
+      },
+
+      /**
+       * 最小价格标记参数
+       */
+      lowestPriceMark: {
+        display: true,
+        color: '#D9D9D9',
+        text: {
+          margin: 5,
+          size: 10
+        }
+      },
+
+      /**
+       * 最新价标记参数
+       */
+      lastPriceMark: {
+        display: true,
+        increasingColor: '#26A69A',
+        decreasingColor: '#EF5350',
+        line: {
+          display: true,
+          style: LineStyle.DASH,
+          dashValue: [4, 4],
+          size: 1
+        },
+        text: {
+          display: true,
+          size: 12,
+          paddingLeft: 2,
+          paddingTop: 2,
+          paddingRight: 2,
+          paddingBottom: 2,
+          color: '#FFFFFF'
+        }
       }
     },
     indicator: {

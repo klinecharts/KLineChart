@@ -601,7 +601,7 @@ class RootChart {
    * 绘制标记图形
    * @param type
    */
-  drawMarker (type) {
+  addGraphicMark (type) {
     // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
     const graphicMarkType = this.storage.graphicMarkType
     if (graphicMarkType !== type) {
@@ -618,7 +618,7 @@ class RootChart {
   /**
    * 清空所有标记图形
    */
-  clearAllMarker () {
+  removeAllGraphicMark () {
     const graphicMarkDatas = this.storage.graphicMarkDatas
     Object.keys(graphicMarkDatas).forEach(key => {
       this.storage.graphicMarkDatas[key] = []

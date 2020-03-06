@@ -1,5 +1,5 @@
 export type IndicatorType = 'NO' | 'MA' | 'VOL' | 'MACD' | 'BOLL' | 'KDJ' | 'RSI' | 'BIAS' | 'BRAR' | 'CCI' | 'DMI' | 'CR' | 'PSY' | 'DMA' | 'TRIX' | 'OBV' | 'VR' | 'WR' | 'MTM' | 'EMV' | 'SAR';
-export type MarkerType = 'none' | 'horizontalStraightLine' | 'verticalStraightLine' | 'straightLine' | 'horizontalRayLine' | 'verticalRayLine' | 'rayLine' | 'horizontalSegmentLine' | 'verticalSegmentLine' | 'segmentLine' | 'priceLine' | 'priceChannelLine' | 'parallelStraightLine' | 'fibonacciLine';
+export type GraphicMarkType = 'none' | 'horizontalStraightLine' | 'verticalStraightLine' | 'straightLine' | 'horizontalRayLine' | 'verticalRayLine' | 'rayLine' | 'horizontalSegmentLine' | 'verticalSegmentLine' | 'segmentLine' | 'priceLine' | 'priceChannelLine' | 'parallelStraightLine' | 'fibonacciLine';
 export type ChartType = 'candle' | 'real_time';
 export interface IndicatorParams {
   MA: number[];
@@ -59,9 +59,9 @@ export interface Chart {
   isShowVolChart(): boolean;
   clearData(): void;
   getConvertPictureUrl(pictureType?: PictureType, excludes?: ChartComponentType[]): string;
-  drawMarker(markerType: MarkerType): void;
+  addGraphicMark(graphicMarkType: GraphicMarkType): void;
   loadMore(cb: (timestamp: number) => {}): void;
-  clearAllMarker(): void;
+  removeAllGraphicMark(): void;
 }
 
 export function version(): string;

@@ -136,9 +136,9 @@ clearData()
 // 'none'，'horizontalStraightLine'，'verticalStraightLine'，'straightLine'，'horizontalRayLine'
 // 'verticalRayLine'，'rayLine'，'horizontalSegmentLine'，'verticalSegmentLine'，'segmentLine'
 // 'priceLine'，'priceChannelLine'，'parallelStraightLine'，'fibonacciLine';
-drawMarker(markerType)
+addGraphicMark(graphicMarkType)
 // 清空所有标记图形
-clearAllMarker()
+removeAllGraphicMark()
 // 获取当前图表装换成图片的url
 getConvertPictureUrl()
 // 加载更多

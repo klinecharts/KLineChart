@@ -1,8 +1,7 @@
 ## Style Configuration Details
 ```js
 config = {
-  grid: false,
-  realTime: {
+  candle: {
     timeLine: {
       color: '#1e88e5',
       size: 1,
@@ -12,50 +11,50 @@ config = {
       display: true,
       color: '#F5A623',
       size: 1
-    }
-  },
-  candle: {
-    // 'solid'|'stroke'|'increasing_stroke'|'decreasing_stroke'|'ohlc'
-    style: 'solid',
-    increasingColor: '#26A69A',
-    decreasingColor: '#EF5350',
-  },
-  highestPriceMark: {
-    display: true,
-    color: '#D9D9D9',
-    text: {
-      margin: 5,
-      size: 10
-    }
-  },
-  lowestPriceMark: {
-    display: true,
-    color: '#D9D9D9',
-    text: {
-      margin: 5,
-      size: 10
-    }
-  },
-
-  lastPriceMark: {
-    display: true,
-    increasingColor: '#26A69A',
-    decreasingColor: '#EF5350',
-    line: {
-      display: true,
-      // 'solid'|'dash'
-      style: 'dash',
-      dashValue: [4, 4],
-      size: 1
     },
-    text: {
+    bar: {
+      // 'solid'|'stroke'|'increasing_stroke'|'decreasing_stroke'|'ohlc'
+      style: 'solid',
+      increasingColor: '#26A69A',
+      decreasingColor: '#EF5350',
+    },
+    highestPriceMark: {
       display: true,
-      size: 12,
-      paddingLeft: 2,
-      paddingTop: 2,
-      paddingRight: 2,
-      paddingBottom: 2,
-      color: '#FFFFFF'
+      color: '#D9D9D9',
+      text: {
+        margin: 5,
+        size: 10
+        }
+    },
+    lowestPriceMark: {
+      display: true,
+      color: '#D9D9D9',
+      text: {
+        margin: 5,
+        size: 10
+      }
+    },
+
+    lastPriceMark: {
+      display: true,
+      increasingColor: '#26A69A',
+      decreasingColor: '#EF5350',
+      line: {
+        display: true,
+        // 'solid'|'dash'
+        style: 'dash',
+        dashValue: [4, 4],
+        size: 1
+      },
+      text: {
+        display: true,
+        size: 12,
+        paddingLeft: 2,
+        paddingTop: 2,
+        paddingRight: 2,
+        paddingBottom: 2,
+        color: '#FFFFFF'
+      }
     }
   },
 
