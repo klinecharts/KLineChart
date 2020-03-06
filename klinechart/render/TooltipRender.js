@@ -5,7 +5,7 @@ import { isFunction, formatValue, isArray } from '../utils/data'
 import { formatDate } from '../utils/date'
 import { formatPrecision } from '../utils/number'
 
-import { IndicatorType, LineStyle, GraphicMarkType, TooltipMainChartTextDisplayType } from '../internal/constants'
+import { IndicatorType, LineStyle, GraphicMarkType, TooltipCandleChartTextDisplayType } from '../internal/constants'
 import { getIndicatorPrecision } from '../internal/config'
 
 class TooltipRender extends Render {
@@ -217,20 +217,20 @@ class TooltipRender extends Render {
    * @param indicator
    * @param precision
    */
-  renderMainChartTooltip (ctx, kLineData, indicatorType, isCandle, tooltip, indicator, precision) {
+  renderCandleChartTooltip (ctx, kLineData, indicatorType, isCandle, tooltip, indicator, precision) {
     const baseDataStyle = tooltip.data.base
     const indicatorDataStyle = tooltip.data.indicator
     const indicatorColors = indicator.lineColors
     const data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision)
-    if (baseDataStyle.showType === TooltipMainChartTextDisplayType.FIXED) {
+    if (baseDataStyle.showType === TooltipCandleChartTextDisplayType.FIXED) {
       let startY = baseDataStyle.text.marginTop
-      this.renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision)
+      this.renderCandleChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision)
       if (isCandle) {
         startY += (baseDataStyle.text.size + baseDataStyle.text.marginBottom + tooltip.data.indicator.text.marginTop)
         this.renderIndicatorTooltipText(ctx, startY, data, indicatorDataStyle, indicatorColors)
       }
     } else {
-      this.renderMainChartFloatRectText(
+      this.renderCandleChartFloatRectText(
         ctx, kLineData, isCandle ? data : {}, baseDataStyle,
         indicatorDataStyle, indicatorColors, precision
       )
@@ -277,8 +277,8 @@ class TooltipRender extends Render {
    * @param baseDataStyle
    * @param precision
    */
-  renderMainChartFixedBaseDataTooltipText (ctx, startY, kLineData, baseDataStyle, precision) {
-    const values = this.getMainChartBaseValues(kLineData, baseDataStyle, precision)
+  renderCandleChartFixedBaseDataTooltipText (ctx, startY, kLineData, baseDataStyle, precision) {
+    const values = this.getCandleChartBaseValues(kLineData, baseDataStyle, precision)
     const textMarginLeft = baseDataStyle.text.marginLeft
     const textMarginRight = baseDataStyle.text.marginRight
     const textSize = baseDataStyle.text.size
@@ -319,12 +319,12 @@ class TooltipRender extends Render {
    * @param indicatorColors
    * @param precision
    */
-  renderMainChartFloatRectText (
+  renderCandleChartFloatRectText (
     ctx, kLineData, indicatorData, baseDataStyle, indicatorDataStyle,
     indicatorColors = [], precision
   ) {
     const baseLabels = baseDataStyle.labels
-    const baseValues = this.getMainChartBaseValues(kLineData, baseDataStyle, precision)
+    const baseValues = this.getCandleChartBaseValues(kLineData, baseDataStyle, precision)
     const baseTextMarginLeft = baseDataStyle.text.marginLeft
     const baseTextMarginRight = baseDataStyle.text.marginRight
     const baseTextMarginTop = baseDataStyle.text.marginTop
@@ -458,7 +458,7 @@ class TooltipRender extends Render {
    * @param precision
    * @returns {*}
    */
-  getMainChartBaseValues (kLineData, baseDataStyle, precision) {
+  getCandleChartBaseValues (kLineData, baseDataStyle, precision) {
     const baseValues = baseDataStyle.values
     let values = []
     if (baseValues) {

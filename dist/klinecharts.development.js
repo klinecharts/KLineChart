@@ -586,7 +586,7 @@ var TooltipTextDisplayRule = {
  * @type {{FLOAT: string, FIXED: string}}
  */
 
-var TooltipMainChartTextDisplayType = {
+var TooltipCandleChartTextDisplayType = {
   FLOAT: 'float',
   FIXED: 'fixed'
 };
@@ -3400,7 +3400,7 @@ function getDefaultStyle() {
       data: {
         displayRule: TooltipTextDisplayRule.ALWAYS,
         base: {
-          showType: TooltipMainChartTextDisplayType.FIXED,
+          showType: TooltipCandleChartTextDisplayType.FIXED,
           labels: ['时间', '开', '收', '高', '低', '成交量'],
           values: null,
           text: {
@@ -3726,23 +3726,23 @@ function (_Render) {
      */
 
   }, {
-    key: "renderMainChartTooltip",
-    value: function renderMainChartTooltip(ctx, kLineData, indicatorType, isCandle, tooltip, indicator, precision) {
+    key: "renderCandleChartTooltip",
+    value: function renderCandleChartTooltip(ctx, kLineData, indicatorType, isCandle, tooltip, indicator, precision) {
       var baseDataStyle = tooltip.data.base;
       var indicatorDataStyle = tooltip.data.indicator;
       var indicatorColors = indicator.lineColors;
       var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision);
 
-      if (baseDataStyle.showType === TooltipMainChartTextDisplayType.FIXED) {
+      if (baseDataStyle.showType === TooltipCandleChartTextDisplayType.FIXED) {
         var startY = baseDataStyle.text.marginTop;
-        this.renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision);
+        this.renderCandleChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision);
 
         if (isCandle) {
           startY += baseDataStyle.text.size + baseDataStyle.text.marginBottom + tooltip.data.indicator.text.marginTop;
           this.renderIndicatorTooltipText(ctx, startY, data, indicatorDataStyle, indicatorColors);
         }
       } else {
-        this.renderMainChartFloatRectText(ctx, kLineData, isCandle ? data : {}, baseDataStyle, indicatorDataStyle, indicatorColors, precision);
+        this.renderCandleChartFloatRectText(ctx, kLineData, isCandle ? data : {}, baseDataStyle, indicatorDataStyle, indicatorColors, precision);
       }
 
       if (isCandle) {
@@ -3781,9 +3781,9 @@ function (_Render) {
      */
 
   }, {
-    key: "renderMainChartFixedBaseDataTooltipText",
-    value: function renderMainChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision) {
-      var values = this.getMainChartBaseValues(kLineData, baseDataStyle, precision);
+    key: "renderCandleChartFixedBaseDataTooltipText",
+    value: function renderCandleChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision) {
+      var values = this.getCandleChartBaseValues(kLineData, baseDataStyle, precision);
       var textMarginLeft = baseDataStyle.text.marginLeft;
       var textMarginRight = baseDataStyle.text.marginRight;
       var textSize = baseDataStyle.text.size;
@@ -3826,12 +3826,12 @@ function (_Render) {
      */
 
   }, {
-    key: "renderMainChartFloatRectText",
-    value: function renderMainChartFloatRectText(ctx, kLineData, indicatorData, baseDataStyle, indicatorDataStyle) {
+    key: "renderCandleChartFloatRectText",
+    value: function renderCandleChartFloatRectText(ctx, kLineData, indicatorData, baseDataStyle, indicatorDataStyle) {
       var indicatorColors = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
       var precision = arguments.length > 6 ? arguments[6] : undefined;
       var baseLabels = baseDataStyle.labels;
-      var baseValues = this.getMainChartBaseValues(kLineData, baseDataStyle, precision);
+      var baseValues = this.getCandleChartBaseValues(kLineData, baseDataStyle, precision);
       var baseTextMarginLeft = baseDataStyle.text.marginLeft;
       var baseTextMarginRight = baseDataStyle.text.marginRight;
       var baseTextMarginTop = baseDataStyle.text.marginTop;
@@ -3962,8 +3962,8 @@ function (_Render) {
      */
 
   }, {
-    key: "getMainChartBaseValues",
-    value: function getMainChartBaseValues(kLineData, baseDataStyle, precision) {
+    key: "getCandleChartBaseValues",
+    value: function getCandleChartBaseValues(kLineData, baseDataStyle, precision) {
       var baseValues = baseDataStyle.values;
       var values = [];
 
@@ -4291,7 +4291,7 @@ function (_Chart) {
 
         if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS || tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.storage.crossPoint) {
           var indicator = this.style.indicator;
-          this.tooltipRender.renderMainChartTooltip(this.ctx, kLineData, this.candleChart.indicatorType, this.candleChart.chartType === ChartType.CANDLE, tooltip, indicator, this.precision);
+          this.tooltipRender.renderCandleChartTooltip(this.ctx, kLineData, this.candleChart.indicatorType, this.candleChart.chartType === ChartType.CANDLE, tooltip, indicator, this.precision);
 
           if (this.volChart.indicatorType !== IndicatorType.NO) {
             this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.candleChart.handler.height, kLineData, IndicatorType.VOL, tooltip, indicator, true, this.precision);

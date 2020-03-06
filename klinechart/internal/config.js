@@ -1,6 +1,6 @@
 import {
   IndicatorType, LineStyle, CandleStyle, YAxisTextPosition, YAxisPosition,
-  TooltipMainChartTextDisplayType, TooltipTextDisplayRule
+  TooltipCandleChartTextDisplayType, TooltipTextDisplayRule
 } from './constants'
 /**
  * 默认的样式配置
@@ -255,7 +255,7 @@ export function getDefaultStyle () {
       data: {
         displayRule: TooltipTextDisplayRule.ALWAYS,
         base: {
-          showType: TooltipMainChartTextDisplayType.FIXED,
+          showType: TooltipCandleChartTextDisplayType.FIXED,
           labels: ['时间', '开', '收', '高', '低', '成交量'],
           values: null,
           text: {

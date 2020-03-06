@@ -88,7 +88,7 @@ const TooltipTextDisplayRule = {
  * 主图数据提示显示类型
  * @type {{FLOAT: string, FIXED: string}}
  */
-const TooltipMainChartTextDisplayType = {
+const TooltipCandleChartTextDisplayType = {
   FLOAT: 'float',
   FIXED: 'fixed'
 }
@@ -127,6 +127,6 @@ const GraphicMarkDrawStep = {
 
 export {
   IndicatorType, LineStyle, YAxisPosition, YAxisTextPosition, ChartType,
-  CandleStyle, TooltipTextDisplayRule, TooltipMainChartTextDisplayType,
+  CandleStyle, TooltipTextDisplayRule, TooltipCandleChartTextDisplayType,
   GraphicMarkType, GraphicMarkDrawStep
 }

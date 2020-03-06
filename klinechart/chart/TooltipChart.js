@@ -38,7 +38,7 @@ class TooltipChart extends Chart {
         (tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.storage.crossPoint)) {
         const indicator = this.style.indicator
 
-        this.tooltipRender.renderMainChartTooltip(
+        this.tooltipRender.renderCandleChartTooltip(
           this.ctx, kLineData,
           this.candleChart.indicatorType,
           this.candleChart.chartType === ChartType.CANDLE,
