@@ -21,7 +21,7 @@ class TooltipChart extends Chart {
     const kLineData = this.storage.dataList[this.storage.tooltipDataPos] || {}
     const tooltip = this.style.tooltip
     // 如果不是绘图才显示十字线
-    if (this.storage.graphicMarkType === GraphicMarkType.NONE && !this.storage.isDragMarker) {
+    if (this.storage.graphicMarkType === GraphicMarkType.NONE && !this.storage.isDragGraphicMark) {
       this.tooltipRender.renderCrossHorizontalLine(
         this.ctx,
         this.mainChart.indicatorType,

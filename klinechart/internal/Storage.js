@@ -25,11 +25,11 @@ class Storage {
     // 当前绘制的标记图形的类型
     this.graphicMarkType = GraphicMarkType.NONE
     // 标记图形点
-    this.markerPoint = null
+    this.graphicMarkPoint = null
     // 是否在拖拽标记图形
-    this.isDragMarker = false
+    this.isDragGraphicMark = false
     // 绘图标记数据
-    this.markerDatas = {
+    this.graphicMarkDatas = {
       // 水平直线
       horizontalStraightLine: [],
       // 垂直直线

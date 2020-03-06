@@ -605,10 +605,10 @@ class RootChart {
     // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
     const graphicMarkType = this.storage.graphicMarkType
     if (graphicMarkType !== type) {
-      const markerData = this.storage.markerDatas[graphicMarkType]
-      if (markerData && isArray(markerData)) {
-        markerData.splice(markerData.length - 1, 1)
-        this.storage.markerDatas[graphicMarkType] = markerData
+      const graphicMarkData = this.storage.graphicMarkDatas[graphicMarkType]
+      if (graphicMarkData && isArray(graphicMarkData)) {
+        graphicMarkData.splice(graphicMarkData.length - 1, 1)
+        this.storage.graphicMarkDatas[graphicMarkType] = graphicMarkData
         this.tooltipChart.flush()
       }
     }
@@ -619,9 +619,9 @@ class RootChart {
    * 清空所有标记图形
    */
   clearAllMarker () {
-    const markerDatas = this.storage.markerDatas
-    Object.keys(markerDatas).forEach(key => {
-      this.storage.markerDatas[key] = []
+    const graphicMarkDatas = this.storage.graphicMarkDatas
+    Object.keys(graphicMarkDatas).forEach(key => {
+      this.storage.graphicMarkDatas[key] = []
     })
     this.storage.graphicMarkType = GraphicMarkType.NONE
     this.graphicMarkChart.flush()

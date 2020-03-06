@@ -268,8 +268,8 @@ class GraphicMarkRender extends Render {
    * @param priceExtendsText
    */
   renderPointGraphicMark (ctx, markerKey, graphicMark, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
-    const markerData = this.storage.markerDatas[markerKey]
-    markerData.forEach(({ points, drawStep }) => {
+    const graphicMarkData = this.storage.graphicMarkDatas[markerKey]
+    graphicMarkData.forEach(({ points, drawStep }) => {
       const circlePoints = []
       points.forEach(({ xPos, price }) => {
         const x = (xPos - this.storage.minPos) * this.storage.dataSpace
@@ -300,11 +300,11 @@ class GraphicMarkRender extends Render {
     ctx, graphicMark, linePoints, circlePoints, drawStep, checkPointOnLine,
     isRenderPrice, pricePrecision, priceExtendsText = []
   ) {
-    const markerPoint = this.storage.markerPoint
+    const graphicMarkPoint = this.storage.graphicMarkPoint
     let isOnLine = false
     linePoints.forEach((points, i) => {
       if (points.length > 1) {
-        const isOn = checkPointOnLine(points[0], points[1], markerPoint)
+        const isOn = checkPointOnLine(points[0], points[1], graphicMarkPoint)
         if (!isOnLine) {
           isOnLine = isOn
         }
@@ -331,13 +331,13 @@ class GraphicMarkRender extends Render {
     const radius = graphicMark.point.radius
     let isCircleActive = false
     for (let i = 0; i < circlePoints.length; i++) {
-      isCircleActive = checkPointOnCircle(circlePoints[i], radius, markerPoint)
+      isCircleActive = checkPointOnCircle(circlePoints[i], radius, graphicMarkPoint)
       if (isCircleActive) {
         break
       }
     }
     circlePoints.forEach(circlePoint => {
-      const isOnCircle = checkPointOnCircle(circlePoint, radius, markerPoint)
+      const isOnCircle = checkPointOnCircle(circlePoint, radius, graphicMarkPoint)
       if (isCircleActive || isOnLine) {
         let circleRadius = radius
         let circleColor = graphicMark.point.backgroundColor

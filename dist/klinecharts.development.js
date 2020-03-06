@@ -650,11 +650,11 @@ function () {
 
     this.graphicMarkType = GraphicMarkType.NONE; // 标记图形点
 
-    this.markerPoint = null; // 是否在拖拽标记图形
+    this.graphicMarkPoint = null; // 是否在拖拽标记图形
 
-    this.isDragMarker = false; // 绘图标记数据
+    this.isDragGraphicMark = false; // 绘图标记数据
 
-    this.markerDatas = {
+    this.graphicMarkDatas = {
       // 水平直线
       horizontalStraightLine: [],
       // 垂直直线
@@ -2908,8 +2908,8 @@ function (_Render) {
     value: function renderPointGraphicMark(ctx, markerKey, graphicMark, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
       var _this12 = this;
 
-      var markerData = this.storage.markerDatas[markerKey];
-      markerData.forEach(function (_ref) {
+      var graphicMarkData = this.storage.graphicMarkDatas[markerKey];
+      graphicMarkData.forEach(function (_ref) {
         var points = _ref.points,
             drawStep = _ref.drawStep;
         var circlePoints = [];
@@ -2949,11 +2949,11 @@ function (_Render) {
       var _this13 = this;
 
       var priceExtendsText = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : [];
-      var markerPoint = this.storage.markerPoint;
+      var graphicMarkPoint = this.storage.graphicMarkPoint;
       var isOnLine = false;
       linePoints.forEach(function (points, i) {
         if (points.length > 1) {
-          var isOn = checkPointOnLine(points[0], points[1], markerPoint);
+          var isOn = checkPointOnLine(points[0], points[1], graphicMarkPoint);
 
           if (!isOnLine) {
             isOnLine = isOn;
@@ -2984,7 +2984,7 @@ function (_Render) {
       var isCircleActive = false;
 
       for (var i = 0; i < circlePoints.length; i++) {
-        isCircleActive = checkPointOnCircle(circlePoints[i], radius, markerPoint);
+        isCircleActive = checkPointOnCircle(circlePoints[i], radius, graphicMarkPoint);
 
         if (isCircleActive) {
           break;
@@ -2992,7 +2992,7 @@ function (_Render) {
       }
 
       circlePoints.forEach(function (circlePoint) {
-        var isOnCircle = checkPointOnCircle(circlePoint, radius, markerPoint);
+        var isOnCircle = checkPointOnCircle(circlePoint, radius, graphicMarkPoint);
 
         if (isCircleActive || isOnLine) {
           var circleRadius = radius;
@@ -4058,7 +4058,7 @@ function (_Render) {
       var isShowCross = arguments.length > 6 ? arguments[6] : undefined;
       var crossPoint = this.storage.crossPoint;
 
-      if (!crossPoint || this.storage.graphicMarkType !== GraphicMarkType.NONE || indicatorType === IndicatorType.SAR || !isShowCross || this.storage.isDragMarker) {
+      if (!crossPoint || this.storage.graphicMarkType !== GraphicMarkType.NONE || indicatorType === IndicatorType.SAR || !isShowCross || this.storage.isDragGraphicMark) {
         return;
       }
 
@@ -4281,7 +4281,7 @@ function (_Chart) {
       var kLineData = this.storage.dataList[this.storage.tooltipDataPos] || {};
       var tooltip = this.style.tooltip; // 如果不是绘图才显示十字线
 
-      if (this.storage.graphicMarkType === GraphicMarkType.NONE && !this.storage.isDragMarker) {
+      if (this.storage.graphicMarkType === GraphicMarkType.NONE && !this.storage.isDragGraphicMark) {
         this.tooltipRender.renderCrossHorizontalLine(this.ctx, this.mainChart.indicatorType, this.subIndicatorChart.indicatorType, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, tooltip, this.precision);
         this.tooltipRender.renderCrossVerticalLine(this.ctx, kLineData, tooltip);
       }
@@ -6657,7 +6657,7 @@ function (_Event) {
     _this.documentMouseUp = function () {
       document.removeEventListener('mouseup', _this.documentMouseUp, false);
       _this.mouseMode = CROSS;
-      _this.storage.isDragMarker = false;
+      _this.storage.isDragGraphicMark = false;
 
       _this.tooltipChart.flush();
     };
@@ -6717,7 +6717,7 @@ function (_Event) {
         x: point.x,
         y: point.y
       };
-      this.storage.isDragMarker = false;
+      this.storage.isDragGraphicMark = false;
       this.tooltipChart.flush();
     }
   }, {
@@ -6757,7 +6757,7 @@ function (_Event) {
         this.waitingForMouseMoveAnimationFrame = true;
 
         if (this.mouseMode === DRAG) {
-          if (this.storage.isDragMarker) {
+          if (this.storage.isDragGraphicMark) {
             this.cross(point);
           } else {
             if (this.drag(this.mouseDownPoint, e.x, loadMore)) {
@@ -6779,7 +6779,7 @@ function (_Event) {
   }, {
     key: "mouseWheel",
     value: function mouseWheel(e) {
-      if (this.storage.dataList.length === 0 || this.storage.isDragMarker) {
+      if (this.storage.dataList.length === 0 || this.storage.isDragGraphicMark) {
         return;
       }
 
@@ -6861,7 +6861,7 @@ function () {
     key: "mouseDown",
     value: function mouseDown(e) {
       var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
-      this.storage.markerPoint = _objectSpread2({}, point);
+      this.storage.graphicMarkPoint = _objectSpread2({}, point);
 
       if (!isValidEvent(point, this.handler)) {
         return;
@@ -6972,18 +6972,18 @@ function () {
   }, {
     key: "markerMouseDown",
     value: function markerMouseDown(e, markKey, performDifPoint) {
-      var markerData = this.storage.markerDatas[markKey];
+      var graphicMarkData = this.storage.graphicMarkDatas[markKey];
 
       if (e.button === 2) {
-        markerData.splice(markerData.length - 1, 1);
+        graphicMarkData.splice(graphicMarkData.length - 1, 1);
         this.storage.graphicMarkType = GraphicMarkType.NONE;
       } else {
-        var lastLineData = markerData[markerData.length - 1];
+        var lastLineData = graphicMarkData[graphicMarkData.length - 1];
         performDifPoint(lastLineData);
-        markerData[markerData.length - 1] = lastLineData;
+        graphicMarkData[graphicMarkData.length - 1] = lastLineData;
       }
 
-      this.storage.markerDatas[markKey] = markerData;
+      this.storage.graphicMarkDatas[markKey] = graphicMarkData;
       this.graphicMarkChart.flush();
     }
     /**
@@ -7000,14 +7000,14 @@ function () {
       if (markKey && dataIndex !== -1) {
         if (e.button === 2) {
           // 鼠标右键
-          var markerData = this.storage.markerDatas[markKey];
-          markerData.splice(dataIndex, 1);
-          this.storage.markerDatas[markKey] = markerData;
+          var graphicMarkData = this.storage.graphicMarkDatas[markKey];
+          graphicMarkData.splice(dataIndex, 1);
+          this.storage.graphicMarkDatas[markKey] = graphicMarkData;
           this.graphicMarkChart.flush();
         } else {
           if (this.noneMarkerMouseDownActiveData.onCircle) {
             this.noneMarkerMouseDownFlag = true;
-            this.storage.isDragMarker = true;
+            this.storage.isDragGraphicMark = true;
           }
         }
       }
@@ -7023,7 +7023,7 @@ function () {
       var _this3 = this;
 
       var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
-      var keys = Object.keys(this.storage.markerDatas);
+      var keys = Object.keys(this.storage.graphicMarkDatas);
 
       var _loop = function _loop(i) {
         var key = keys[i];
@@ -7174,8 +7174,8 @@ function () {
     value: function realFindNoneMarkerMouseDownActiveData(markKey, point, checkPointOnLine) {
       var _this4 = this;
 
-      var markerData = this.storage.markerDatas[markKey];
-      markerData.forEach(function (data, index) {
+      var graphicMarkData = this.storage.graphicMarkDatas[markKey];
+      graphicMarkData.forEach(function (data, index) {
         var points = data.points;
         var xyPoints = [];
         var isOnCircle = false;
@@ -7225,7 +7225,7 @@ function () {
     key: "mouseMove",
     value: function mouseMove(e) {
       var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
-      this.storage.markerPoint = _objectSpread2({}, point);
+      this.storage.graphicMarkPoint = _objectSpread2({}, point);
 
       if (!isValidEvent(point, this.handler)) {
         return;
@@ -7301,7 +7301,7 @@ function () {
     value: function onePointMarkerMouseMove(point, markKey) {
       var _this5 = this;
 
-      this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
+      this.markerMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
         var xPos = _this5.storage.minPos + (point.x - _this5.handler.contentLeft()) / _this5.storage.dataSpace;
 
         var price = _this5.yRender.getValue(point.y);
@@ -7309,7 +7309,7 @@ function () {
         switch (lastLineData.drawStep) {
           case GraphicMarkDrawStep.STEP_DONE:
             {
-              markerData.push({
+              graphicMarkData.push({
                 points: [{
                   xPos: xPos,
                   price: price
@@ -7324,7 +7324,7 @@ function () {
             {
               lastLineData.points[0].xPos = xPos;
               lastLineData.points[0].price = price;
-              markerData[markerData.length - 1] = lastLineData;
+              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
               break;
             }
         }
@@ -7342,7 +7342,7 @@ function () {
     value: function twoPointMarkerMouseMove(point, markKey, stepTwo) {
       var _this6 = this;
 
-      this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
+      this.markerMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
         var xPos = _this6.storage.minPos + (point.x - _this6.handler.contentLeft()) / _this6.storage.dataSpace;
 
         var price = _this6.yRender.getValue(point.y);
@@ -7350,7 +7350,7 @@ function () {
         switch (lastLineData.drawStep) {
           case GraphicMarkDrawStep.STEP_DONE:
             {
-              markerData.push({
+              graphicMarkData.push({
                 points: [{
                   xPos: xPos,
                   price: price
@@ -7373,7 +7373,7 @@ function () {
                 xPos: xPos,
                 price: price
               };
-              markerData[markerData.length - 1] = lastLineData;
+              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
               break;
             }
 
@@ -7391,7 +7391,7 @@ function () {
                 });
               }
 
-              markerData[markerData.length - 1] = lastLineData;
+              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
               break;
             }
         }
@@ -7409,7 +7409,7 @@ function () {
     value: function threePointMarkerMouseMove(point, markKey, stepTwo) {
       var _this7 = this;
 
-      this.markerMouseMove(point, markKey, function (markerData, lastLineData) {
+      this.markerMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
         var xPos = _this7.storage.minPos + (point.x - _this7.handler.contentLeft()) / _this7.storage.dataSpace;
 
         var price = _this7.yRender.getValue(point.y);
@@ -7417,7 +7417,7 @@ function () {
         switch (lastLineData.drawStep) {
           case GraphicMarkDrawStep.STEP_DONE:
             {
-              markerData.push({
+              graphicMarkData.push({
                 points: [{
                   xPos: xPos,
                   price: price
@@ -7440,7 +7440,7 @@ function () {
                 xPos: xPos,
                 price: price
               };
-              markerData[markerData.length - 1] = lastLineData;
+              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
               break;
             }
 
@@ -7457,7 +7457,7 @@ function () {
                 xPos: xPos,
                 price: price
               };
-              markerData[markerData.length - 1] = lastLineData;
+              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
               break;
             }
 
@@ -7467,7 +7467,7 @@ function () {
                 xPos: xPos,
                 price: price
               };
-              markerData[markerData.length - 1] = lastLineData;
+              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
               break;
             }
         }
@@ -7483,12 +7483,12 @@ function () {
   }, {
     key: "markerMouseMove",
     value: function markerMouseMove(point, markKey, performDifPoint) {
-      var markerData = this.storage.markerDatas[markKey];
-      var lastLineData = markerData[markerData.length - 1] || {
+      var graphicMarkData = this.storage.graphicMarkDatas[markKey];
+      var lastLineData = graphicMarkData[graphicMarkData.length - 1] || {
         drawStep: GraphicMarkDrawStep.STEP_DONE
       };
-      performDifPoint(markerData, lastLineData);
-      this.storage.markerDatas[markKey] = markerData;
+      performDifPoint(graphicMarkData, lastLineData);
+      this.storage.graphicMarkDatas[markKey] = graphicMarkData;
       this.graphicMarkChart.flush();
     }
     /**
@@ -7504,7 +7504,7 @@ function () {
         var dataIndex = this.noneMarkerMouseDownActiveData.dataIndex;
 
         if (markKey && dataIndex !== -1) {
-          var markerData = this.storage.markerDatas[markKey];
+          var graphicMarkData = this.storage.graphicMarkDatas[markKey];
 
           switch (markKey) {
             case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
@@ -7520,8 +7520,8 @@ function () {
                 var pointIndex = this.noneMarkerMouseDownActiveData.pointIndex;
 
                 if (pointIndex !== -1) {
-                  markerData[dataIndex].points[pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
-                  markerData[dataIndex].points[pointIndex].price = this.yRender.getValue(point.y);
+                  graphicMarkData[dataIndex].points[pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
+                  graphicMarkData[dataIndex].points[pointIndex].price = this.yRender.getValue(point.y);
                 }
 
                 break;
@@ -7534,9 +7534,9 @@ function () {
 
                 if (_pointIndex !== -1) {
                   var price = this.yRender.getValue(point.y);
-                  markerData[dataIndex].points[_pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
-                  markerData[dataIndex].points[0].price = price;
-                  markerData[dataIndex].points[1].price = price;
+                  graphicMarkData[dataIndex].points[_pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
+                  graphicMarkData[dataIndex].points[0].price = price;
+                  graphicMarkData[dataIndex].points[1].price = price;
                 }
 
                 break;
@@ -7549,16 +7549,16 @@ function () {
 
                 if (_pointIndex2 !== -1) {
                   var xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
-                  markerData[dataIndex].points[0].xPos = xPos;
-                  markerData[dataIndex].points[1].xPos = xPos;
-                  markerData[dataIndex].points[_pointIndex2].price = this.yRender.getValue(point.y);
+                  graphicMarkData[dataIndex].points[0].xPos = xPos;
+                  graphicMarkData[dataIndex].points[1].xPos = xPos;
+                  graphicMarkData[dataIndex].points[_pointIndex2].price = this.yRender.getValue(point.y);
                 }
 
                 break;
               }
           }
 
-          this.storage.markerDatas[markKey] = markerData;
+          this.storage.graphicMarkDatas[markKey] = graphicMarkData;
         }
       }
 
@@ -8404,11 +8404,11 @@ function () {
       var graphicMarkType = this.storage.graphicMarkType;
 
       if (graphicMarkType !== type) {
-        var markerData = this.storage.markerDatas[graphicMarkType];
+        var graphicMarkData = this.storage.graphicMarkDatas[graphicMarkType];
 
-        if (markerData && isArray(markerData)) {
-          markerData.splice(markerData.length - 1, 1);
-          this.storage.markerDatas[graphicMarkType] = markerData;
+        if (graphicMarkData && isArray(graphicMarkData)) {
+          graphicMarkData.splice(graphicMarkData.length - 1, 1);
+          this.storage.graphicMarkDatas[graphicMarkType] = graphicMarkData;
           this.tooltipChart.flush();
         }
       }
@@ -8424,9 +8424,9 @@ function () {
     value: function clearAllMarker() {
       var _this4 = this;
 
-      var markerDatas = this.storage.markerDatas;
-      Object.keys(markerDatas).forEach(function (key) {
-        _this4.storage.markerDatas[key] = [];
+      var graphicMarkDatas = this.storage.graphicMarkDatas;
+      Object.keys(graphicMarkDatas).forEach(function (key) {
+        _this4.storage.graphicMarkDatas[key] = [];
       });
       this.storage.graphicMarkType = GraphicMarkType.NONE;
       this.graphicMarkChart.flush();

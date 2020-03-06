@@ -546,7 +546,7 @@ class TooltipRender extends Render {
       this.storage.graphicMarkType !== GraphicMarkType.NONE ||
       indicatorType === IndicatorType.SAR ||
       !isShowCross ||
-      this.storage.isDragMarker) {
+      this.storage.isDragGraphicMark) {
       return
     }
     const colorSize = indicatorColors.length

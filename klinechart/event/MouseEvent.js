@@ -18,7 +18,7 @@ class MouseEvent extends Event {
     this.documentMouseUp = () => {
       document.removeEventListener('mouseup', this.documentMouseUp, false)
       this.mouseMode = CROSS
-      this.storage.isDragMarker = false
+      this.storage.isDragGraphicMark = false
       this.tooltipChart.flush()
     }
   }
@@ -61,7 +61,7 @@ class MouseEvent extends Event {
     document.removeEventListener('mouseup', this.documentMouseUp, false)
     this.mouseMode = CROSS
     this.storage.crossPoint = { x: point.x, y: point.y }
-    this.storage.isDragMarker = false
+    this.storage.isDragGraphicMark = false
     this.tooltipChart.flush()
   }
 
@@ -93,7 +93,7 @@ class MouseEvent extends Event {
     if (!this.waitingForMouseMoveAnimationFrame) {
       this.waitingForMouseMoveAnimationFrame = true
       if (this.mouseMode === DRAG) {
-        if (this.storage.isDragMarker) {
+        if (this.storage.isDragGraphicMark) {
           this.cross(point)
         } else {
           if (this.drag(this.mouseDownPoint, e.x, loadMore)) {
@@ -112,7 +112,7 @@ class MouseEvent extends Event {
    * @param e
    */
   mouseWheel (e) {
-    if (this.storage.dataList.length === 0 || this.storage.isDragMarker) {
+    if (this.storage.dataList.length === 0 || this.storage.isDragGraphicMark) {
       return
     }
     stopEvent(e)
