@@ -47,6 +47,14 @@ class Handler {
     return this.height - this.contentRect.bottom
   }
 
+  getContentWidth () {
+    return this.contentRight() - this.contentLeft()
+  }
+
+  getContentHeight () {
+    return this.contentBottom() - this.contentTop()
+  }
+
   /**
    * 获取中间点坐标
    */

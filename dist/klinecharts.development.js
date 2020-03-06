@@ -225,6 +225,16 @@ function () {
     value: function contentBottom() {
       return this.height - this.contentRect.bottom;
     }
+  }, {
+    key: "getContentWidth",
+    value: function getContentWidth() {
+      return this.contentRight() - this.contentLeft();
+    }
+  }, {
+    key: "getContentHeight",
+    value: function getContentHeight() {
+      return this.contentBottom() - this.contentTop();
+    }
     /**
      * 获取中间点坐标
      */
@@ -1785,12 +1795,12 @@ function (_AxisRender) {
   }, {
     key: "getY",
     value: function getY(value) {
-      return (1.0 - (value - this.axisMinimum) / this.axisRange) * (this.handler.contentBottom() - this.handler.contentTop());
+      return (1.0 - (value - this.axisMinimum) / this.axisRange) * this.handler.getContentHeight();
     }
   }, {
     key: "getValue",
     value: function getValue(y) {
-      return (1.0 - y / (this.handler.contentBottom() - this.handler.contentTop())) * this.axisRange + this.axisMinimum;
+      return (1.0 - y / this.handler.getContentHeight()) * this.axisRange + this.axisMinimum;
     }
   }]);
 
@@ -2682,28 +2692,28 @@ var GraphicMarkRender =
 function (_Render) {
   _inherits(GraphicMarkRender, _Render);
 
-  function GraphicMarkRender(handler, storage, yRender, graphicMark) {
+  function GraphicMarkRender(handler, storage, yRender) {
     var _this;
 
     _classCallCheck(this, GraphicMarkRender);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkRender).call(this, handler, storage));
     _this.yRender = yRender;
-    _this.graphicMark = graphicMark;
     return _this;
   }
   /**
    * 渲染水平直线
    * @param ctx
+   * @param graphicMark
    */
 
 
   _createClass(GraphicMarkRender, [{
     key: "renderHorizontalStraightLine",
-    value: function renderHorizontalStraightLine(ctx) {
+    value: function renderHorizontalStraightLine(ctx, graphicMark) {
       var _this2 = this;
 
-      this.renderPointMarker(ctx, GraphicMarkType.HORIZONTAL_STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.HORIZONTAL_STRAIGHT_LINE, graphicMark, checkPointOnStraightLine, function (points) {
         return [[{
           x: _this2.handler.contentLeft(),
           y: points[0].y
@@ -2716,14 +2726,15 @@ function (_Render) {
     /**
      * 渲染垂直直线
      * @param ctx
+     * @param graphicMark
      */
 
   }, {
     key: "renderVerticalStraightLine",
-    value: function renderVerticalStraightLine(ctx) {
+    value: function renderVerticalStraightLine(ctx, graphicMark) {
       var _this3 = this;
 
-      this.renderPointMarker(ctx, GraphicMarkType.VERTICAL_STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.VERTICAL_STRAIGHT_LINE, graphicMark, checkPointOnStraightLine, function (points) {
         return [[{
           x: points[0].x,
           y: _this3.handler.contentTop()
@@ -2736,14 +2747,15 @@ function (_Render) {
     /**
      * 渲染直线
      * @param ctx
+     * @param graphicMark
      */
 
   }, {
     key: "renderStraightLine",
-    value: function renderStraightLine(ctx) {
+    value: function renderStraightLine(ctx, graphicMark) {
       var _this4 = this;
 
-      this.renderPointMarker(ctx, GraphicMarkType.STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.STRAIGHT_LINE, graphicMark, checkPointOnStraightLine, function (points) {
         if (points[0].x === points[1].x) {
           return [[{
             x: points[0].x,
@@ -2773,14 +2785,15 @@ function (_Render) {
     /**
      * 绘制水平射线
      * @param ctx
+     * @param graphicMark
      */
 
   }, {
     key: "renderHorizontalRayLine",
-    value: function renderHorizontalRayLine(ctx) {
+    value: function renderHorizontalRayLine(ctx, graphicMark) {
       var _this5 = this;
 
-      this.renderPointMarker(ctx, GraphicMarkType.HORIZONTAL_RAY_LINE, checkPointOnRayLine, function (points) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.HORIZONTAL_RAY_LINE, graphicMark, checkPointOnRayLine, function (points) {
         var point = {
           x: _this5.handler.contentLeft(),
           y: points[0].y
@@ -2796,14 +2809,15 @@ function (_Render) {
     /**
      * 绘制垂直射线
      * @param ctx
+     * @param graphicMark
      */
 
   }, {
     key: "renderVerticalRayLine",
-    value: function renderVerticalRayLine(ctx) {
+    value: function renderVerticalRayLine(ctx, graphicMark) {
       var _this6 = this;
 
-      this.renderPointMarker(ctx, GraphicMarkType.VERTICAL_RAY_LINE, checkPointOnRayLine, function (points) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.VERTICAL_RAY_LINE, graphicMark, checkPointOnRayLine, function (points) {
         var point = {
           x: points[0].x,
           y: _this6.handler.contentTop()
@@ -2819,14 +2833,15 @@ function (_Render) {
     /**
      * 渲染射线
      * @param ctx
+     * @param graphicMark
      */
 
   }, {
     key: "renderRayLine",
-    value: function renderRayLine(ctx) {
+    value: function renderRayLine(ctx, graphicMark) {
       var _this7 = this;
 
-      this.renderPointMarker(ctx, GraphicMarkType.RAY_LINE, checkPointOnRayLine, function (points) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.RAY_LINE, graphicMark, checkPointOnRayLine, function (points) {
         var point;
 
         if (points[0].x === points[1].x && points[0].y !== points[1].y) {
@@ -2865,27 +2880,29 @@ function (_Render) {
     /**
      * 绘制线段，水平线段，垂直线段，普通线段一起绘制
      * @param ctx
+     * @param graphicMark
      */
 
   }, {
     key: "renderSegmentLine",
-    value: function renderSegmentLine(ctx) {
-      this.renderPointMarker(ctx, GraphicMarkType.HORIZONTAL_SEGMENT_LINE, checkPointOnSegmentLine);
-      this.renderPointMarker(ctx, GraphicMarkType.VERTICAL_SEGMENT_LINE, checkPointOnSegmentLine);
-      this.renderPointMarker(ctx, GraphicMarkType.SEGMENT_LINE, checkPointOnSegmentLine);
+    value: function renderSegmentLine(ctx, graphicMark) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.HORIZONTAL_SEGMENT_LINE, graphicMark, checkPointOnSegmentLine);
+      this.renderPointGraphicMark(ctx, GraphicMarkType.VERTICAL_SEGMENT_LINE, graphicMark, checkPointOnSegmentLine);
+      this.renderPointGraphicMark(ctx, GraphicMarkType.SEGMENT_LINE, graphicMark, checkPointOnSegmentLine);
     }
     /**
      * 绘制价格线
      * @param ctx
+     * @param graphicMark
      * @param pricePrecision
      */
 
   }, {
     key: "renderPriceLine",
-    value: function renderPriceLine(ctx, pricePrecision) {
+    value: function renderPriceLine(ctx, graphicMark, pricePrecision) {
       var _this8 = this;
 
-      this.renderPointMarker(ctx, GraphicMarkType.PRICE_LINE, checkPointOnRayLine, function (points) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.PRICE_LINE, graphicMark, checkPointOnRayLine, function (points) {
         return [[points[0], {
           x: _this8.handler.contentRight(),
           y: points[0].y
@@ -2895,43 +2912,46 @@ function (_Render) {
     /**
      * 渲染价格通道线
      * @param ctx
+     * @param graphicMark
      */
 
   }, {
     key: "renderPriceChannelLine",
-    value: function renderPriceChannelLine(ctx) {
+    value: function renderPriceChannelLine(ctx, graphicMark) {
       var _this9 = this;
 
-      this.renderPointMarker(ctx, GraphicMarkType.PRICE_CHANNEL_LINE, checkPointOnStraightLine, function (points) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.PRICE_CHANNEL_LINE, graphicMark, checkPointOnStraightLine, function (points) {
         return getParallelLines(points, _this9.handler, true);
       });
     }
     /**
      * 渲染平行直线
      * @param ctx
+     * @param graphicMark
      */
 
   }, {
     key: "renderParallelStraightLine",
-    value: function renderParallelStraightLine(ctx) {
+    value: function renderParallelStraightLine(ctx, graphicMark) {
       var _this10 = this;
 
-      this.renderPointMarker(ctx, GraphicMarkType.PARALLEL_STRAIGHT_LINE, checkPointOnStraightLine, function (points) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.PARALLEL_STRAIGHT_LINE, graphicMark, checkPointOnStraightLine, function (points) {
         return getParallelLines(points, _this10.handler);
       });
     }
     /**
      * 渲染斐波那契线
      * @param ctx
+     * @param graphicMark
      * @param pricePrecision
      */
 
   }, {
     key: "renderFibonacciLine",
-    value: function renderFibonacciLine(ctx, pricePrecision) {
+    value: function renderFibonacciLine(ctx, graphicMark, pricePrecision) {
       var _this11 = this;
 
-      this.renderPointMarker(ctx, GraphicMarkType.FIBONACCI_LINE, checkPointOnStraightLine, function (points) {
+      this.renderPointGraphicMark(ctx, GraphicMarkType.FIBONACCI_LINE, graphicMark, checkPointOnStraightLine, function (points) {
         return getFibonacciLines(points, _this11.handler);
       }, true, pricePrecision, ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']);
     }
@@ -2939,6 +2959,7 @@ function (_Render) {
      * 渲染点形成的图形
      * @param ctx
      * @param markerKey
+     * @param graphicMark
      * @param checkPointOnLine
      * @param generatedLinePoints
      * @param isRenderPrice
@@ -2947,8 +2968,8 @@ function (_Render) {
      */
 
   }, {
-    key: "renderPointMarker",
-    value: function renderPointMarker(ctx, markerKey, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
+    key: "renderPointGraphicMark",
+    value: function renderPointGraphicMark(ctx, markerKey, graphicMark, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
       var _this12 = this;
 
       var markerData = this.storage.markerDatas[markerKey];
@@ -2970,12 +2991,13 @@ function (_Render) {
         });
         var linePoints = generatedLinePoints ? generatedLinePoints(circlePoints) : [circlePoints];
 
-        _this12.renderMarker(ctx, linePoints, circlePoints, drawStep, checkPointOnLine, isRenderPrice, pricePrecision, priceExtendsText);
+        _this12.renderGraphicMark(ctx, graphicMark, linePoints, circlePoints, drawStep, checkPointOnLine, isRenderPrice, pricePrecision, priceExtendsText);
       });
     }
     /**
      * 绘制标记图形
      * @param ctx
+     * @param graphicMark
      * @param linePoints
      * @param circlePoints
      * @param drawStep
@@ -2986,11 +3008,11 @@ function (_Render) {
      */
 
   }, {
-    key: "renderMarker",
-    value: function renderMarker(ctx, linePoints, circlePoints, drawStep, checkPointOnLine, isRenderPrice, pricePrecision) {
+    key: "renderGraphicMark",
+    value: function renderGraphicMark(ctx, graphicMark, linePoints, circlePoints, drawStep, checkPointOnLine, isRenderPrice, pricePrecision) {
       var _this13 = this;
 
-      var priceExtendsText = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [];
+      var priceExtendsText = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : [];
       var markerPoint = this.storage.markerPoint;
       var isOnLine = false;
       linePoints.forEach(function (points, i) {
@@ -3002,8 +3024,8 @@ function (_Render) {
           }
 
           if (drawStep !== GraphicMarkDrawStep.STEP_1) {
-            ctx.strokeStyle = _this13.graphicMark.line.color;
-            ctx.lineWidth = _this13.graphicMark.line.size;
+            ctx.strokeStyle = graphicMark.line.color;
+            ctx.lineWidth = graphicMark.line.size;
             ctx.beginPath();
             ctx.moveTo(points[0].x, points[0].y);
             ctx.lineTo(points[1].x, points[1].y);
@@ -3014,15 +3036,15 @@ function (_Render) {
               var price = _this13.yRender.getValue(points[0].y);
 
               var priceText = formatPrecision(price, pricePrecision);
-              var textSize = _this13.graphicMark.text.size;
+              var textSize = graphicMark.text.size;
               ctx.font = getFont(textSize);
-              ctx.fillStyle = _this13.graphicMark.text.color;
-              ctx.fillText("".concat(priceText, " ").concat(priceExtendsText[i] || ''), points[0].x + _this13.graphicMark.text.marginLeft, points[0].y - _this13.graphicMark.text.marginBottom);
+              ctx.fillStyle = graphicMark.text.color;
+              ctx.fillText("".concat(priceText, " ").concat(priceExtendsText[i] || ''), points[0].x + graphicMark.text.marginLeft, points[0].y - graphicMark.text.marginBottom);
             }
           }
         }
       });
-      var radius = this.graphicMark.point.radius;
+      var radius = graphicMark.point.radius;
       var isCircleActive = false;
 
       for (var i = 0; i < circlePoints.length; i++) {
@@ -3037,10 +3059,18 @@ function (_Render) {
         var isOnCircle = checkPointOnCircle(circlePoint, radius, markerPoint);
 
         if (isCircleActive || isOnLine) {
-          var circleRadius = isOnCircle ? _this13.graphicMark.point.activeRadius : radius;
-          var circleColor = isOnCircle ? _this13.graphicMark.point.activeBackgroundColor : _this13.graphicMark.point.backgroundColor;
-          var circleBorderColor = isOnCircle ? _this13.graphicMark.point.activeBorderColor : _this13.graphicMark.point.borderColor;
-          var circleBorderSize = isOnCircle ? _this13.graphicMark.point.activeBorderSize : _this13.graphicMark.point.borderSize;
+          var circleRadius = radius;
+          var circleColor = graphicMark.point.backgroundColor;
+          var circleBorderColor = graphicMark.point.borderColor;
+          var circleBorderSize = graphicMark.point.borderSize;
+
+          if (isOnCircle) {
+            circleRadius = graphicMark.point.activeRadius;
+            circleColor = graphicMark.point.activeBackgroundColor;
+            circleBorderColor = graphicMark.point.activeBorderColor;
+            circleBorderSize = graphicMark.point.activeBorderSize;
+          }
+
           ctx.fillStyle = circleColor;
           ctx.beginPath();
           ctx.arc(circlePoint.x, circlePoint.y, circleRadius, 0, Math.PI * 2);
@@ -3071,7 +3101,7 @@ function (_Chart) {
     _classCallCheck(this, GraphicMarkChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkChart).call(this, dom, style));
-    _this.graphicMarkRender = new GraphicMarkRender(_this.handler, storage, yAxisRender, style.marker);
+    _this.graphicMarkRender = new GraphicMarkRender(_this.handler, storage, yAxisRender);
     _this.precision = precision;
     return _this;
   }
@@ -3079,18 +3109,19 @@ function (_Chart) {
   _createClass(GraphicMarkChart, [{
     key: "draw",
     value: function draw() {
-      // 画线
-      this.graphicMarkRender.renderHorizontalStraightLine(this.ctx);
-      this.graphicMarkRender.renderVerticalStraightLine(this.ctx);
-      this.graphicMarkRender.renderStraightLine(this.ctx);
-      this.graphicMarkRender.renderHorizontalRayLine(this.ctx);
-      this.graphicMarkRender.renderVerticalRayLine(this.ctx);
-      this.graphicMarkRender.renderRayLine(this.ctx);
-      this.graphicMarkRender.renderSegmentLine(this.ctx);
-      this.graphicMarkRender.renderPriceLine(this.ctx, this.precision.pricePrecision);
-      this.graphicMarkRender.renderPriceChannelLine(this.ctx);
-      this.graphicMarkRender.renderParallelStraightLine(this.ctx);
-      this.graphicMarkRender.renderFibonacciLine(this.ctx, this.precision.pricePrecision);
+      var graphicMark = this.style.marker; // 画线
+
+      this.graphicMarkRender.renderHorizontalStraightLine(this.ctx, graphicMark);
+      this.graphicMarkRender.renderVerticalStraightLine(this.ctx, graphicMark);
+      this.graphicMarkRender.renderStraightLine(this.ctx, graphicMark);
+      this.graphicMarkRender.renderHorizontalRayLine(this.ctx, graphicMark);
+      this.graphicMarkRender.renderVerticalRayLine(this.ctx, graphicMark);
+      this.graphicMarkRender.renderRayLine(this.ctx, graphicMark);
+      this.graphicMarkRender.renderSegmentLine(this.ctx, graphicMark);
+      this.graphicMarkRender.renderPriceLine(this.ctx, graphicMark, this.precision.pricePrecision);
+      this.graphicMarkRender.renderPriceChannelLine(this.ctx, graphicMark);
+      this.graphicMarkRender.renderParallelStraightLine(this.ctx, graphicMark);
+      this.graphicMarkRender.renderFibonacciLine(this.ctx, graphicMark, this.precision.pricePrecision);
     }
   }]);
 

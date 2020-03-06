@@ -280,11 +280,11 @@ class YAxisRender extends AxisRender {
   }
 
   getY (value) {
-    return (1.0 - (value - this.axisMinimum) / this.axisRange) * (this.handler.contentBottom() - this.handler.contentTop())
+    return (1.0 - (value - this.axisMinimum) / this.axisRange) * this.handler.getContentHeight()
   }
 
   getValue (y) {
-    return (1.0 - y / (this.handler.contentBottom() - this.handler.contentTop())) * this.axisRange + this.axisMinimum
+    return (1.0 - y / this.handler.getContentHeight()) * this.axisRange + this.axisMinimum
   }
 }
 
