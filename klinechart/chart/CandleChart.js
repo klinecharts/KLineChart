@@ -35,16 +35,16 @@ class CandleChart extends IndicatorChart {
     }
   }
 
-  isRealTimeChart () {
-    return this.chartType === ChartType.REAL_TIME
-  }
-
   isDrawChart () {
     return true
   }
 
-  isMainChart () {
-    return true
+  calcYAxisMinMax () {
+    this.yAxisRender.calcAxisMinMax(
+      this.indicatorType, true,
+      this.chartType === ChartType.REAL_TIME,
+      this.style.realTime.averageLine.display
+    )
   }
 }
 

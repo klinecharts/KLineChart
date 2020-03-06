@@ -1622,7 +1622,7 @@ function (_AxisRender) {
   }, {
     key: "calcAxisMinMax",
     value: function calcAxisMinMax(indicatorType) {
-      var isMainChart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var isCandleChart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var isRealTimeChart = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       var isShowAverageLine = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
       var dataList = this.storage.dataList;
@@ -1649,7 +1649,7 @@ function (_AxisRender) {
           var _kLineData = dataList[_i];
           this.compareMinMax(_kLineData, indicatorType, minMaxArray);
 
-          if (isMainChart) {
+          if (isCandleChart) {
             minMaxArray[0] = Math.min(_kLineData.low, minMaxArray[0]);
             minMaxArray[1] = Math.max(_kLineData.high, minMaxArray[1]);
           }
@@ -1784,15 +1784,8 @@ function (_Chart) {
     key: "draw",
     value: function draw() {
       if (this.isDrawChart()) {
-        var isMainChart = this.isMainChart();
-
-        if (!isMainChart) {
-          this.chartRender.renderHorizontalSeparatorLine(this.ctx, this.style.xAxis);
-        }
-
         var yAxis = this.style.yAxis;
-        var isRealTimeChart = this.isRealTimeChart();
-        this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart, this.style.realTime.averageLine.display);
+        this.calcYAxisMinMax();
         this.yAxisRender.computeAxis(yAxis);
         this.yAxisRender.renderSeparatorLines(this.ctx, yAxis);
         this.drawChart();
@@ -1805,6 +1798,7 @@ function (_Chart) {
     key: "drawChart",
     value: function drawChart() {
       this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, this.indicatorParams, false);
+      this.chartRender.renderHorizontalSeparatorLine(this.ctx, this.style.xAxis);
     }
   }, {
     key: "isDrawChart",
@@ -1812,14 +1806,9 @@ function (_Chart) {
       return this.indicatorType !== IndicatorType.NO;
     }
   }, {
-    key: "isMainChart",
-    value: function isMainChart() {
-      return false;
-    }
-  }, {
-    key: "isRealTimeChart",
-    value: function isRealTimeChart() {
-      return false;
+    key: "calcYAxisMinMax",
+    value: function calcYAxisMinMax() {
+      this.yAxisRender.calcAxisMinMax(this.indicatorType, false, false, false);
     }
   }]);
 
@@ -2317,19 +2306,14 @@ function (_IndicatorChart) {
       }
     }
   }, {
-    key: "isRealTimeChart",
-    value: function isRealTimeChart() {
-      return this.chartType === ChartType.REAL_TIME;
-    }
-  }, {
     key: "isDrawChart",
     value: function isDrawChart() {
       return true;
     }
   }, {
-    key: "isMainChart",
-    value: function isMainChart() {
-      return true;
+    key: "calcYAxisMinMax",
+    value: function calcYAxisMinMax() {
+      this.yAxisRender.calcAxisMinMax(this.indicatorType, true, this.chartType === ChartType.REAL_TIME, this.style.realTime.averageLine.display);
     }
   }]);
 
@@ -3646,7 +3630,7 @@ function (_Render) {
         var yAxisRender;
         var indicatorType;
 
-        if (eventY > 0 && eventY < this.handler.contentBottom()) {
+        if (eventY > 0 && eventY < this.candleHandler.contentBottom()) {
           yAxisRender = this.candleYAxisRender;
           indicatorType = mainIndicatorType;
           top = 0;

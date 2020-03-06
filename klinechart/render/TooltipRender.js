@@ -119,7 +119,7 @@ class TooltipRender extends Render {
     if (eventY && eventY > 0 && eventY < this.handler.height + this.handler.height + this.handler.height) {
       let yAxisRender
       let indicatorType
-      if (eventY > 0 && eventY < this.handler.contentBottom()) {
+      if (eventY > 0 && eventY < this.candleHandler.contentBottom()) {
         yAxisRender = this.candleYAxisRender
         indicatorType = mainIndicatorType
         top = 0

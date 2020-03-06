@@ -17,13 +17,8 @@ class IndicatorChart extends Chart {
 
   draw () {
     if (this.isDrawChart()) {
-      const isMainChart = this.isMainChart()
-      if (!isMainChart) {
-        this.chartRender.renderHorizontalSeparatorLine(this.ctx, this.style.xAxis)
-      }
       const yAxis = this.style.yAxis
-      const isRealTimeChart = this.isRealTimeChart()
-      this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart, this.style.realTime.averageLine.display)
+      this.calcYAxisMinMax()
       this.yAxisRender.computeAxis(yAxis)
       this.yAxisRender.renderSeparatorLines(this.ctx, yAxis)
       this.drawChart()
@@ -36,18 +31,15 @@ class IndicatorChart extends Chart {
   drawChart () {
     this.chartRender.renderIndicator(
       this.ctx, this.indicatorType, this.style.indicator, this.indicatorParams, false)
+    this.chartRender.renderHorizontalSeparatorLine(this.ctx, this.style.xAxis)
   }
 
   isDrawChart () {
     return this.indicatorType !== IndicatorType.NO
   }
 
-  isMainChart () {
-    return false
-  }
-
-  isRealTimeChart () {
-    return false
+  calcYAxisMinMax () {
+    this.yAxisRender.calcAxisMinMax(this.indicatorType, false, false, false)
   }
 }
 

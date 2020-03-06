@@ -164,7 +164,7 @@ class YAxisRender extends AxisRender {
     }
   }
 
-  calcAxisMinMax (indicatorType, isMainChart = false, isRealTimeChart = false, isShowAverageLine = false) {
+  calcAxisMinMax (indicatorType, isCandleChart = false, isRealTimeChart = false, isShowAverageLine = false) {
     const dataList = this.storage.dataList
     const min = this.storage.minPos
     const max = Math.min(min + this.storage.range, dataList.length)
@@ -185,7 +185,7 @@ class YAxisRender extends AxisRender {
       for (let i = min; i < max; i++) {
         const kLineData = dataList[i]
         this.compareMinMax(kLineData, indicatorType, minMaxArray)
-        if (isMainChart) {
+        if (isCandleChart) {
           minMaxArray[0] = Math.min(kLineData.low, minMaxArray[0])
           minMaxArray[1] = Math.max(kLineData.high, minMaxArray[1])
         }
