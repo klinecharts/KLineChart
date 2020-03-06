@@ -6,29 +6,6 @@ import { getFont } from '../utils/draw'
 
 class YAxisRender extends AxisRender {
   /**
-   * 绘制边框线
-   * @param ctx
-   * @param yAxis
-   * @param display
-   */
-  renderStrokeLine (ctx, yAxis, display) {
-    if (!display) {
-      return
-    }
-    ctx.strokeStyle = yAxis.line.color
-    ctx.lineWidth = yAxis.line.size
-    let x = this.handler.contentLeft()
-    if (yAxis.position === YAxisPosition.LEFT) {
-      x = this.handler.contentRight()
-    }
-    ctx.beginPath()
-    ctx.moveTo(x, this.handler.contentTop())
-    ctx.lineTo(x, this.handler.contentBottom())
-    ctx.stroke()
-    ctx.closePath()
-  }
-
-  /**
    * 绘制轴线
    * @param ctx
    * @param yAxis
@@ -102,17 +79,15 @@ class YAxisRender extends AxisRender {
     ctx.fillStyle = tickText.color
 
     for (let i = 0; i < this.values.length; i++) {
-      const labelY = this.getY(this.values[i])
-      const text = formatBigNumber(this.values[i])
-      if (this.checkShowLabel(labelY, textSize)) {
-        if ((yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE) ||
-          (yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE)) {
-          ctx.textAlign = 'right'
-        } else {
-          ctx.textAlign = 'left'
-        }
-        ctx.fillText(text, initX, labelY)
+      const y = this.values[i].y
+      const text = formatBigNumber(this.values[i].v)
+      if ((yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE) ||
+        (yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE)) {
+        ctx.textAlign = 'right'
+      } else {
+        ctx.textAlign = 'left'
       }
+      ctx.fillText(text, initX, y)
     }
     ctx.textAlign = 'left'
   }
@@ -130,20 +105,17 @@ class YAxisRender extends AxisRender {
     ctx.strokeStyle = separatorLine.color
     ctx.lineWidth = separatorLine.size
 
-    const labelHeight = yAxis.tick.text.size
     if (separatorLine.style === LineStyle.DASH) {
       ctx.setLineDash(separatorLine.dashValue)
     }
 
     for (let i = 0; i < this.values.length; i++) {
-      const y = this.getY(this.values[i])
-      if (this.checkShowLabel(y, labelHeight)) {
-        ctx.beginPath()
-        ctx.moveTo(this.handler.contentLeft(), y)
-        ctx.lineTo(this.handler.contentRight(), y)
-        ctx.stroke()
-        ctx.closePath()
-      }
+      const y = this.values[i].y
+      ctx.beginPath()
+      ctx.moveTo(this.handler.contentLeft(), y)
+      ctx.lineTo(this.handler.contentRight(), y)
+      ctx.stroke()
+      ctx.closePath()
     }
     ctx.setLineDash([])
   }
@@ -161,8 +133,6 @@ class YAxisRender extends AxisRender {
     const tickLine = yAxis.tick.line
     ctx.lineWidth = tickLine.size
     ctx.strokeStyle = tickLine.color
-
-    const labelHeight = tickText.size
 
     const tickLineLength = tickLine.length
 
@@ -185,24 +155,13 @@ class YAxisRender extends AxisRender {
       }
     }
     for (let i = 0; i < this.values.length; i++) {
-      const y = this.getY(this.values[i])
-      if (this.checkShowLabel(y, labelHeight)) {
-        ctx.beginPath()
-        ctx.moveTo(startX, y)
-        ctx.lineTo(endX, y)
-        ctx.stroke()
-        ctx.closePath()
-      }
+      const y = this.values[i].y
+      ctx.beginPath()
+      ctx.moveTo(startX, y)
+      ctx.lineTo(endX, y)
+      ctx.stroke()
+      ctx.closePath()
     }
-  }
-
-  /**
-   * 检查是否需要真正显示label及tick线 分割线
-   * @param y
-   * @param labelHeight
-   */
-  checkShowLabel (y, labelHeight) {
-    return y > this.handler.contentTop() + labelHeight && y < this.handler.contentBottom() - labelHeight
   }
 
   calcAxisMinMax (indicatorType, isMainChart = false, isRealTimeChart = false, isShowAverageLine = false) {
@@ -258,7 +217,7 @@ class YAxisRender extends AxisRender {
     return minMaxArray
   }
 
-  computeAxis () {
+  computeAxis (yAxis) {
     let min = this.axisMinimum
     let max = this.axisMaximum
     if (min === Number.MAX_SAFE_INTEGER || max === Number.MIN_SAFE_INTEGER || (max === 0 && min === 0)) {
@@ -276,7 +235,34 @@ class YAxisRender extends AxisRender {
 
     this.axisRange = Math.abs(this.axisMaximum - this.axisMinimum)
 
-    this.computeAxisValues(this.axisMinimum, this.axisMaximum)
+    this.computeAxisValues()
+    this.fixComputeAxisValues(yAxis)
+  }
+
+  fixComputeAxisValues (yAxis) {
+    const valueLength = this.values.length
+    if (valueLength > 0) {
+      const textHeight = yAxis.tick.text.size
+      const firstValueY = this.getY(this.values[0].v)
+      let subValueCount = 1
+      if (valueLength > 1) {
+        const secondValueY = this.getY(this.values[1].v)
+        const subY = Math.abs(secondValueY - firstValueY)
+        if (subY < textHeight * 2) {
+          subValueCount = Math.ceil(textHeight * 2 / subY)
+        }
+      }
+      const values = []
+      for (let i = 0; i < valueLength; i += subValueCount) {
+        const v = this.values[i].v
+        const y = this.getY(v)
+        if (y > this.handler.contentTop() + textHeight &&
+          y < this.handler.contentBottom() - textHeight) {
+          values.push({ v, y })
+        }
+      }
+      this.values = values
+    }
   }
 
   getY (value) {

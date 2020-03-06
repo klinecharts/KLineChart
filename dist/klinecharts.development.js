@@ -1385,76 +1385,41 @@ function (_Render) {
   }
   /**
    * 计算轴上的值
-   * @param min
-   * @param max
-   * @param splitNumber
-   * @param axis
    */
 
 
   _createClass(AxisRender, [{
     key: "computeAxisValues",
-    value: function computeAxisValues(min, max) {
-      var splitNumber = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 6.0;
-      var axis = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-      var span = this.calcRange(max, min);
-
-      if (span < 0) {
+    value: function computeAxisValues() {
+      if (this.axisRange < 0) {
         this.values = [];
         return;
       }
 
-      if (this.isFillChart()) {
-        var interval = +nice(span / splitNumber);
-        var precision = getIntervalPrecision(interval);
-        var first = +round(Math.ceil(min / interval) * interval, precision);
-        var last = +round(Math.floor(max / interval) * interval, precision);
-        var n = 0;
-        var f = first;
+      var interval = +nice(this.axisRange / 8.0);
+      var precision = getIntervalPrecision(interval);
+      var first = +round(Math.ceil(this.axisMinimum / interval) * interval, precision);
+      var last = +round(Math.floor(this.axisMaximum / interval) * interval, precision);
+      var n = 0;
+      var f = first;
 
-        if (interval !== 0) {
-          while (f <= +last) {
-            ++n;
-            f += interval;
-          }
-        }
-
-        this.values = [];
-        f = first;
-
-        for (var i = 0; i < n; i++) {
-          this.values[i] = +f.toFixed(precision);
+      if (interval !== 0) {
+        while (f <= +last) {
+          ++n;
           f += interval;
         }
-      } else {
-        this.fixComputeAxisValues(axis);
+      }
+
+      this.values = [];
+      f = first;
+
+      for (var i = 0; i < n; i++) {
+        this.values[i] = {
+          v: +f.toFixed(precision)
+        };
+        f += interval;
       }
     }
-    /**
-     * 计算range
-     * @param max
-     * @param min
-     * @returns {number}
-     */
-
-  }, {
-    key: "calcRange",
-    value: function calcRange(max, min) {
-      return Math.abs(max - min);
-    }
-    /**
-     * 是否数据会超过整个绘制区域
-     * @return Boolean
-     */
-
-  }, {
-    key: "isFillChart",
-    value: function isFillChart() {
-      return true;
-    }
-  }, {
-    key: "fixComputeAxisValues",
-    value: function fixComputeAxisValues() {}
   }]);
 
   return AxisRender;
@@ -1472,41 +1437,13 @@ function (_AxisRender) {
   }
 
   _createClass(YAxisRender, [{
-    key: "renderStrokeLine",
+    key: "renderAxisLine",
 
-    /**
-     * 绘制边框线
-     * @param ctx
-     * @param yAxis
-     * @param display
-     */
-    value: function renderStrokeLine(ctx, yAxis, display) {
-      if (!display) {
-        return;
-      }
-
-      ctx.strokeStyle = yAxis.line.color;
-      ctx.lineWidth = yAxis.line.size;
-      var x = this.handler.contentLeft();
-
-      if (yAxis.position === YAxisPosition.LEFT) {
-        x = this.handler.contentRight();
-      }
-
-      ctx.beginPath();
-      ctx.moveTo(x, this.handler.contentTop());
-      ctx.lineTo(x, this.handler.contentBottom());
-      ctx.stroke();
-      ctx.closePath();
-    }
     /**
      * 绘制轴线
      * @param ctx
      * @param yAxis
      */
-
-  }, {
-    key: "renderAxisLine",
     value: function renderAxisLine(ctx, yAxis) {
       if (!yAxis.display || !yAxis.line.display) {
         return;
@@ -1585,18 +1522,16 @@ function (_AxisRender) {
       ctx.fillStyle = tickText.color;
 
       for (var i = 0; i < this.values.length; i++) {
-        var labelY = this.getY(this.values[i]);
-        var text = formatBigNumber(this.values[i]);
+        var y = this.values[i].y;
+        var text = formatBigNumber(this.values[i].v);
 
-        if (this.checkShowLabel(labelY, textSize)) {
-          if (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE || yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE) {
-            ctx.textAlign = 'right';
-          } else {
-            ctx.textAlign = 'left';
-          }
-
-          ctx.fillText(text, initX, labelY);
+        if (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE || yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE) {
+          ctx.textAlign = 'right';
+        } else {
+          ctx.textAlign = 'left';
         }
+
+        ctx.fillText(text, initX, y);
       }
 
       ctx.textAlign = 'left';
@@ -1618,22 +1553,18 @@ function (_AxisRender) {
 
       ctx.strokeStyle = separatorLine.color;
       ctx.lineWidth = separatorLine.size;
-      var labelHeight = yAxis.tick.text.size;
 
       if (separatorLine.style === LineStyle.DASH) {
         ctx.setLineDash(separatorLine.dashValue);
       }
 
       for (var i = 0; i < this.values.length; i++) {
-        var y = this.getY(this.values[i]);
-
-        if (this.checkShowLabel(y, labelHeight)) {
-          ctx.beginPath();
-          ctx.moveTo(this.handler.contentLeft(), y);
-          ctx.lineTo(this.handler.contentRight(), y);
-          ctx.stroke();
-          ctx.closePath();
-        }
+        var y = this.values[i].y;
+        ctx.beginPath();
+        ctx.moveTo(this.handler.contentLeft(), y);
+        ctx.lineTo(this.handler.contentRight(), y);
+        ctx.stroke();
+        ctx.closePath();
       }
 
       ctx.setLineDash([]);
@@ -1656,7 +1587,6 @@ function (_AxisRender) {
       var tickLine = yAxis.tick.line;
       ctx.lineWidth = tickLine.size;
       ctx.strokeStyle = tickLine.color;
-      var labelHeight = tickText.size;
       var tickLineLength = tickLine.length;
       var startX;
       var endX;
@@ -1681,27 +1611,13 @@ function (_AxisRender) {
       }
 
       for (var i = 0; i < this.values.length; i++) {
-        var y = this.getY(this.values[i]);
-
-        if (this.checkShowLabel(y, labelHeight)) {
-          ctx.beginPath();
-          ctx.moveTo(startX, y);
-          ctx.lineTo(endX, y);
-          ctx.stroke();
-          ctx.closePath();
-        }
+        var y = this.values[i].y;
+        ctx.beginPath();
+        ctx.moveTo(startX, y);
+        ctx.lineTo(endX, y);
+        ctx.stroke();
+        ctx.closePath();
       }
-    }
-    /**
-     * 检查是否需要真正显示label及tick线 分割线
-     * @param y
-     * @param labelHeight
-     */
-
-  }, {
-    key: "checkShowLabel",
-    value: function checkShowLabel(y, labelHeight) {
-      return y > this.handler.contentTop() + labelHeight && y < this.handler.contentBottom() - labelHeight;
     }
   }, {
     key: "calcAxisMinMax",
@@ -1771,7 +1687,7 @@ function (_AxisRender) {
     }
   }, {
     key: "computeAxis",
-    value: function computeAxis() {
+    value: function computeAxis(yAxis) {
       var min = this.axisMinimum;
       var max = this.axisMaximum;
 
@@ -1790,7 +1706,44 @@ function (_AxisRender) {
       this.axisMinimum = min - range / 100.0 * 10.0;
       this.axisMaximum = max + range / 100.0 * 20.0;
       this.axisRange = Math.abs(this.axisMaximum - this.axisMinimum);
-      this.computeAxisValues(this.axisMinimum, this.axisMaximum);
+      this.computeAxisValues();
+      this.fixComputeAxisValues(yAxis);
+    }
+  }, {
+    key: "fixComputeAxisValues",
+    value: function fixComputeAxisValues(yAxis) {
+      var valueLength = this.values.length;
+
+      if (valueLength > 0) {
+        var textHeight = yAxis.tick.text.size;
+        var firstValueY = this.getY(this.values[0].v);
+        var subValueCount = 1;
+
+        if (valueLength > 1) {
+          var secondValueY = this.getY(this.values[1].v);
+          var subY = Math.abs(secondValueY - firstValueY);
+
+          if (subY < textHeight * 2) {
+            subValueCount = Math.ceil(textHeight * 2 / subY);
+          }
+        }
+
+        var values = [];
+
+        for (var i = 0; i < valueLength; i += subValueCount) {
+          var v = this.values[i].v;
+          var y = this.getY(v);
+
+          if (y > this.handler.contentTop() + textHeight && y < this.handler.contentBottom() - textHeight) {
+            values.push({
+              v: v,
+              y: y
+            });
+          }
+        }
+
+        this.values = values;
+      }
     }
   }, {
     key: "getY",
@@ -1840,10 +1793,9 @@ function (_Chart) {
         var yAxis = this.style.yAxis;
         var isRealTimeChart = this.isRealTimeChart();
         this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart, this.style.realTime.averageLine.display);
-        this.yAxisRender.computeAxis();
+        this.yAxisRender.computeAxis(yAxis);
         this.yAxisRender.renderSeparatorLines(this.ctx, yAxis);
         this.drawChart();
-        this.yAxisRender.renderStrokeLine(this.ctx, yAxis, this.style.grid);
         this.yAxisRender.renderAxisLine(this.ctx, yAxis);
         this.yAxisRender.renderTickLines(this.ctx, yAxis);
         this.yAxisRender.renderAxisLabels(this.ctx, yAxis);
@@ -3210,7 +3162,6 @@ function getDate(timestamp) {
 
 function getDefaultStyle() {
   return {
-    grid: false,
     realTime: {
       /**
        * 分时线
@@ -4385,35 +4336,13 @@ function (_AxisRender) {
   }
 
   _createClass(XAxisRender, [{
-    key: "renderStrokeLine",
+    key: "renderAxisLine",
 
-    /**
-     * 渲染边框
-     * @param ctx
-     * @param xAxis
-     * @param display
-     */
-    value: function renderStrokeLine(ctx, xAxis, display) {
-      if (!display) {
-        return;
-      }
-
-      ctx.strokeStyle = xAxis.line.color;
-      ctx.lineWidth = xAxis.line.size;
-      ctx.beginPath();
-      ctx.moveTo(this.handler.contentLeft(), this.handler.contentTop());
-      ctx.lineTo(this.handler.contentRight(), this.handler.contentTop());
-      ctx.stroke();
-      ctx.closePath();
-    }
     /**
      * 绘制轴线
      * @param ctx
      * @param xAxis
      */
-
-  }, {
-    key: "renderAxisLine",
     value: function renderAxisLine(ctx, xAxis) {
       if (!xAxis.display || !xAxis.line.display) {
         return;
@@ -4484,16 +4413,18 @@ function (_AxisRender) {
         labelY += tickLine.length;
       }
 
-      var valuePointLength = this.valuePoints.length;
+      var valueLength = this.values.length;
 
-      for (var i = 0; i < valuePointLength; i++) {
-        var x = this.valuePoints[i];
-        var kLineModel = this.storage.dataList[parseInt(this.values[i])];
+      for (var i = 0; i < valueLength; i++) {
+        var x = this.values[i].x;
+        var dataPos = parseInt(this.values[i].v);
+        var kLineModel = this.storage.dataList[dataPos];
         var timestamp = kLineModel.timestamp;
         var dateText = formatDate(timestamp, dateFormatType);
 
-        if (i !== valuePointLength - 1) {
-          var nextKLineModel = this.storage.dataList[parseInt(this.values[i + 1])];
+        if (i !== valueLength - 1) {
+          var nextDataPos = parseInt(this.values[i + 1].v);
+          var nextKLineModel = this.storage.dataList[nextDataPos];
           var nextTimestamp = nextKLineModel.timestamp;
 
           if (periodType === 'D' || periodType === 'W') {
@@ -4540,8 +4471,8 @@ function (_AxisRender) {
         ctx.setLineDash(xAxis.separatorLine.dashValue);
       }
 
-      for (var i = 0; i < this.valuePoints.length; i++) {
-        var x = this.valuePoints[i];
+      for (var i = 0; i < this.values.length; i++) {
+        var x = this.values[i].x;
         ctx.beginPath();
         ctx.moveTo(x, this.handler.contentTop());
         ctx.lineTo(x, this.handler.contentBottom());
@@ -4571,8 +4502,8 @@ function (_AxisRender) {
       var startY = this.handler.contentBottom();
       var endY = startY + tickLine.length;
 
-      for (var i = 0; i < this.valuePoints.length; i++) {
-        var x = this.valuePoints[i];
+      for (var i = 0; i < this.values.length; i++) {
+        var x = this.values[i].x;
         ctx.beginPath();
         ctx.moveTo(x, startY);
         ctx.lineTo(x, endY);
@@ -4584,65 +4515,58 @@ function (_AxisRender) {
     key: "computeAxis",
     value: function computeAxis(xAxis) {
       var minPos = this.storage.minPos;
-      var max = Math.min(minPos + this.storage.range - 1, this.storage.dataList.length - 1);
-      this.computeAxisValues(minPos, max, 8.0, xAxis);
-      this.pointValuesToPixel();
+      this.axisMinimum = minPos;
+      this.axisMaximum = Math.min(minPos + this.storage.range - 1, this.storage.dataList.length - 1);
+      this.axisRange = this.axisMaximum - this.axisMinimum + 1;
+      this.computeAxisValues();
+      this.fixComputeAxisValues(xAxis);
     }
   }, {
     key: "fixComputeAxisValues",
     value: function fixComputeAxisValues(xAxis) {
-      var dataSize = this.storage.dataList.length;
+      var valueLength = this.values.length;
 
-      if (dataSize > 0) {
-        var defaultLabelWidth = calcTextWidth(xAxis.tick.text.size, '0000-00-00 00:00:00');
-        var startPos = Math.ceil(defaultLabelWidth / 2 / this.storage.dataSpace) - 1;
+      if (valueLength > 0) {
+        var defaultLabelWidth = calcTextWidth(xAxis.tick.text.size, '00-00 00:00');
+        var firstValueX = this.getX(this.values[0].v);
+        var subValueCount = 1;
 
-        if (startPos > dataSize - 1) {
-          startPos = dataSize - 1;
+        if (valueLength > 1) {
+          var secondValueX = this.getX(this.values[1].v);
+          var subX = Math.abs(secondValueX - firstValueX);
+
+          if (subX < defaultLabelWidth) {
+            subValueCount = Math.ceil(defaultLabelWidth / subX);
+          }
         }
 
-        var barCount = Math.ceil(defaultLabelWidth / (this.storage.dataSpace * (1 + DATA_MARGIN_SPACE_RATE))) + 1;
+        var values = [];
 
-        if (dataSize > barCount) {
-          this.valueCount = Math.floor((dataSize - startPos) / barCount) + 1;
-        } else {
-          this.valueCount = 1;
+        for (var i = 0; i < valueLength; i += subValueCount) {
+          var v = this.values[i].v;
+          var x = this.getX(v);
+
+          if (x > this.handler.contentLeft() + defaultLabelWidth / 2 && x < this.handler.contentRight() - defaultLabelWidth / 2) {
+            values.push({
+              v: v,
+              x: x
+            });
+          }
         }
 
-        this.values = [startPos];
-
-        for (var i = 1; i < this.valueCount; i++) {
-          this.values[i] = startPos + i * (barCount - 1);
-        }
-      } else {
-        this.valueCount = 0;
-        this.values = [];
+        this.values = values;
       }
     }
-  }, {
-    key: "pointValuesToPixel",
-    value: function pointValuesToPixel() {
-      var offsetLeft = this.handler.contentLeft();
-      this.valuePoints = [];
+    /**
+     * 获取x轴点
+     * @param pos
+     * @returns {*}
+     */
 
-      for (var i = 0; i < this.values.length; i++) {
-        var pos = this.values[i];
-        this.valuePoints[i] = offsetLeft + ((pos - this.storage.minPos) * this.storage.dataSpace + this.storage.dataSpace * (1 - DATA_MARGIN_SPACE_RATE) / 2);
-      }
-    }
   }, {
-    key: "calcRange",
-    value: function calcRange(max, min) {
-      if (max < 0) {
-        return 0;
-      }
-
-      return Math.abs(max - min) + 1;
-    }
-  }, {
-    key: "isFillChart",
-    value: function isFillChart() {
-      return this.storage.dataList.length > this.storage.range;
+    key: "getX",
+    value: function getX(pos) {
+      return this.handler.contentLeft() + ((pos - this.storage.minPos) * this.storage.dataSpace + this.storage.dataSpace * (1 - DATA_MARGIN_SPACE_RATE) / 2);
     }
   }]);
 
@@ -4674,7 +4598,6 @@ function (_Chart) {
       this.xAxisRender.renderAxisLabels(this.ctx, xAxis, this.period.period);
       this.xAxisRender.renderSeparatorLines(this.ctx, xAxis);
       this.xAxisRender.renderTickLines(this.ctx, xAxis);
-      this.xAxisRender.renderStrokeLine(this.ctx, xAxis, this.style.grid);
     }
   }]);
 

@@ -8,7 +8,6 @@ import {
  */
 export function getDefaultStyle () {
   return {
-    grid: false,
     realTime: {
       /**
        * 分时线

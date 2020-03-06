@@ -15,7 +15,6 @@ class XAxisChart extends Chart {
     this.xAxisRender.renderAxisLabels(this.ctx, xAxis, this.period.period)
     this.xAxisRender.renderSeparatorLines(this.ctx, xAxis)
     this.xAxisRender.renderTickLines(this.ctx, xAxis)
-    this.xAxisRender.renderStrokeLine(this.ctx, xAxis, this.style.grid)
   }
 }
 

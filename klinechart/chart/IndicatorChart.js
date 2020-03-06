@@ -24,10 +24,9 @@ class IndicatorChart extends Chart {
       const yAxis = this.style.yAxis
       const isRealTimeChart = this.isRealTimeChart()
       this.yAxisRender.calcAxisMinMax(this.indicatorType, isMainChart, isRealTimeChart, this.style.realTime.averageLine.display)
-      this.yAxisRender.computeAxis()
+      this.yAxisRender.computeAxis(yAxis)
       this.yAxisRender.renderSeparatorLines(this.ctx, yAxis)
       this.drawChart()
-      this.yAxisRender.renderStrokeLine(this.ctx, yAxis, this.style.grid)
       this.yAxisRender.renderAxisLine(this.ctx, yAxis)
       this.yAxisRender.renderTickLines(this.ctx, yAxis)
       this.yAxisRender.renderAxisLabels(this.ctx, yAxis)
