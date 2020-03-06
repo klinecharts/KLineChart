@@ -3,10 +3,10 @@ import { stopEvent } from './eventHelper'
 
 class KeyboardEvent extends Event {
   constructor (
-    mainChart, volChart, subIndicatorChart,
+    candleChart, volChart, subIndicatorChart,
     tooltipChart, markerChart, xAxisChart, storage
   ) {
-    super(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, storage)
+    super(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage)
     this.markerChart = markerChart
   }
 
@@ -35,7 +35,7 @@ class KeyboardEvent extends Event {
         }
       }
       if (shouldFlush) {
-        this.mainChart.flush()
+        this.candleChart.flush()
         this.volChart.flush()
         this.subIndicatorChart.flush()
         this.xAxisChart.flush()

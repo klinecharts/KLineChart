@@ -6,11 +6,11 @@ const DRAG = 'drag'
 
 class MouseEvent extends Event {
   constructor (
-    tooltipChart, mainChart, volChart,
+    tooltipChart, candleChart, volChart,
     subIndicatorChart, xAxisChart,
     markerChart, storage
   ) {
-    super(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, storage)
+    super(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage)
     this.markerChart = markerChart
     // 事件模型
     this.mouseMode = CROSS

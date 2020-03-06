@@ -33,10 +33,10 @@ const TOUCH_CROSS_CANCEL = 5
 
 class TouchEvent extends Event {
   constructor (
-    tooltipChart, mainChart, volChart,
+    tooltipChart, candleChart, volChart,
     subIndicatorChart, xAxisChart, storage
   ) {
-    super(tooltipChart, mainChart, volChart, subIndicatorChart, xAxisChart, storage)
+    super(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage)
     // 事件模型
     this.touchMode = TOUCH_NO
     this.touchStartPoint = { x: 0, y: 0 }
