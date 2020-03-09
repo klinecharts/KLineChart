@@ -4,13 +4,12 @@ import IndicatorChart from './IndicatorChart'
 import TooltipChart from './TooltipChart'
 import XAxisChart from './XAxisChart'
 import { isArray, isFunction, isNumber, isBoolean, merge, formatValue, isObject } from '../utils/data'
-import { formatDate } from '../utils/date'
 import { calcTextWidth, requestAnimationFrame } from '../utils/draw'
 import calcIndicator from '../internal/calcIndicator'
 
 import Storage from '../internal/Storage'
 
-import { getDefaultStyle, getDefaultIndicatorParams, getDefaultPrecision, getDefaultPeriod } from '../internal/config'
+import { getDefaultStyle, getDefaultIndicatorParams, getDefaultPrecision } from '../internal/config'
 import { isMobile } from '../utils/platform'
 import TouchEvent from '../event/TouchEvent'
 import MouseEvent from '../event/MouseEvent'
@@ -18,8 +17,6 @@ import GraphicMarkEvent from '../event/GraphicMarkEvent'
 import KeyboardEvent from '../event/KeyboardEvent'
 
 import { IndicatorType, YAxisPosition, YAxisTextPosition, GraphicMarkType, ChartType } from '../internal/constants'
-
-import { DEV } from '../utils/env'
 
 class RootChart {
   constructor (dom, s = {}) {
@@ -29,14 +26,13 @@ class RootChart {
     merge(this.style, s)
     this.indicatorParams = getDefaultIndicatorParams()
     this.precision = getDefaultPrecision()
-    this.period = getDefaultPeriod()
     dom.style.position = 'relative'
     dom.style.outline = 'none'
     dom.style.borderStyle = 'none'
     dom.tabIndex = 1
     this.dom = dom
     this.storage = new Storage()
-    this.xAxisChart = new XAxisChart(dom, this.style, this.storage, this.period)
+    this.xAxisChart = new XAxisChart(dom, this.style, this.storage)
     this.candleChart = new CandleChart(dom, this.style, this.storage, this.indicatorParams, this.precision)
     this.graphicMarkChart = new GraphicMarkChart(dom, this.style, this.storage, this.candleChart.yAxisRender, this.precision)
     this.volIndicatorChart = new IndicatorChart(dom, this.style, this.storage, this.indicatorParams, IndicatorType.VOL)
@@ -270,7 +266,7 @@ class RootChart {
     if (isObject(data)) {
       const dataList = this.getDataList()
       const dataSize = dataList.length
-      let pos = -1
+      let pos
       if (isArray(data)) {
         if (dataSize > 0) {
           // 当数据是数组，且有历史数据时则判断是在加载更多的数据请求来的，将loading重置为未加载状态
@@ -281,71 +277,14 @@ class RootChart {
         // 这里判断单个数据应该添加到哪个位置
         const timestamp = +formatValue(data, 'timestamp', 0)
         const lastDataTimestamp = +formatValue(dataList[dataSize - 1], 'timestamp', 0)
-        const periodValue = this.period.period
-        const periodType = periodValue.replace(/[1-9]/, '').toUpperCase()
-        const periodNumber = +((periodValue.replace(/[DWMY]/i, '')) || 1)
-        const timeDiff = Math.abs(timestamp - lastDataTimestamp)
-        switch (periodType) {
-          case 'D': {
-            if (timeDiff < periodNumber * 24 * 3600 * 1000) {
-              pos = dataSize - 1
-            } else if (timestamp > lastDataTimestamp) {
-              pos = dataSize
-            }
-            break
-          }
-          case 'W': {
-            if (timeDiff < periodNumber * 7 * 24 * 3600 * 1000) {
-              pos = dataSize - 1
-            } else if (timestamp > lastDataTimestamp) {
-              pos = dataSize
-            }
-            break
-          }
-          case 'M': {
-            const lastDataYear = +formatDate(lastDataTimestamp, 'YYYY')
-            const lastDataMonth = +formatDate(lastDataTimestamp, 'MM')
-            const year = +formatDate(timestamp, 'YYYY')
-            const month = +formatDate(timestamp, 'MM')
-            const monthDiff = Math.abs((year - lastDataYear) * 12 + month - lastDataMonth)
-            if (month === lastDataMonth) {
-              pos = dataSize - 1
-            } else if (monthDiff >= periodNumber) {
-              pos = dataSize
-            }
-            break
-          }
-          case 'Y': {
-            const lastDataYear = +formatDate(lastDataTimestamp, 'YYYY')
-            const year = +formatDate(timestamp, 'YYYY')
-            const yearDiff = Math.abs(year - lastDataYear)
-            if (year === lastDataYear) {
-              pos = dataSize - 1
-            } else if (yearDiff >= periodNumber) {
-              pos = dataSize
-            }
-            break
-          }
-          default: {
-            if (timeDiff < periodNumber * 60 * 1000) {
-              pos = dataSize - 1
-            } else if (timestamp > lastDataTimestamp) {
-              pos = dataSize
-            }
-            break
-          }
-        }
-        if (pos === dataSize - 1) {
-          data.timestamp = lastDataTimestamp
-        } else {
-          data.timestamp = Math.floor(timestamp / 60 / 1000) * 60 * 1000
+        pos = dataSize
+        if (timestamp === lastDataTimestamp) {
+          pos = dataSize - 1
         }
       }
-      if (pos !== -1) {
-        this.storage.addData(data, pos)
-        this.calcChartIndicator()
-        this.xAxisChart.flush()
-      }
+      this.storage.addData(data, pos)
+      this.calcChartIndicator()
+      this.xAxisChart.flush()
     }
   }
 
@@ -369,10 +308,7 @@ class RootChart {
         this.storage.dataList = calcIndicator.average(this.storage.dataList)
       }
       this.flushCharts([this.candleChart, this.tooltipChart])
-      this.clearAllMarker()
-      if (this.period.period !== '1') {
-        this.clearData()
-      }
+      this.removeAllGraphicMark()
     }
   }
 
@@ -451,50 +387,6 @@ class RootChart {
   setPrecision (pricePrecision = this.precision.pricePrecision, volumePrecision = this.precision.volumePrecision) {
     this.precision.pricePrecision = pricePrecision
     this.precision.volumePrecision = volumePrecision
-  }
-
-  /**
-   * 设置k线周期
-   * @param period
-   */
-  setPeriod (period) {
-    const periodValue = `${period}`
-    if (this.period.period !== periodValue && period && (/^[1-9]*?[DWMY]?$/i).test(periodValue)) {
-      this.period.period = periodValue
-      // 设置新周期后清空现有数据
-      this.clearData()
-    }
-  }
-
-  /**
-   * 设置交易时段
-   * @param session
-   */
-  setSession (session) {
-    // 0900-1630,1015-1130,2100-0100|0900-1400:234;6
-    /^[[012][0-9]{3}-[012][0-9]{3},]*[:[0-6]{1,6}]?[|[[012][0-9]{3}-[012][0-9]{3},]*[:[0-6]{1,6}]?]*[;[0-6]]?$/.test('0900-1630,1015-1130,2100-0100|0900-1400:234;6')
-    const rootSplitArray = session.split(';')
-    switch (rootSplitArray.length) {
-      case 1: {
-        break
-      }
-      case 2: {
-        const weekStartTradingDay = rootSplitArray[1]
-        if (!(/^[0-6]$/.test(weekStartTradingDay))) {
-          if (DEV) {
-            console.warn('The trading day is set incorrectly for the first trading day of the week. The parameters should be 0, 1, 2, 3, 4, 5, 6.')
-          }
-          return
-        }
-        console.log(1)
-        break
-      }
-      default: {
-        if (DEV) {
-          console.warn('The format of the trading session is incorrect.')
-        }
-      }
-    }
   }
 
   /**
@@ -598,7 +490,7 @@ class RootChart {
   }
 
   /**
-   * 绘制标记图形
+   * 添加图形标记
    * @param type
    */
   addGraphicMark (type) {
@@ -616,7 +508,7 @@ class RootChart {
   }
 
   /**
-   * 清空所有标记图形
+   * 移除所有标记图形
    */
   removeAllGraphicMark () {
     const graphicMarkDatas = this.storage.graphicMarkDatas
@@ -665,9 +557,9 @@ class RootChart {
     if (!excludes || excludes.indexOf('subIndicator') < 0) {
       ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height)
     }
-    if (!excludes || excludes.indexOf('marker') < 0) {
-      const markerCanvas = this.graphicMarkChart.canvasDom
-      ctx.drawImage(markerCanvas, 0, 0, markerCanvas.width, markerCanvas.height)
+    if (!excludes || excludes.indexOf('graphicMark') < 0) {
+      const graphicMarkCanvas = this.graphicMarkChart.canvasDom
+      ctx.drawImage(graphicMarkCanvas, 0, 0, graphicMarkCanvas.width, graphicMarkCanvas.height)
     }
     if (!excludes || excludes.indexOf('tooltip') < 0) {
       ctx.drawImage(tooltipCanvas, 0, 0, tooltipCanvas.width, tooltipCanvas.height)

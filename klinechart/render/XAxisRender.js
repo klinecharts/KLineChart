@@ -2,6 +2,8 @@ import AxisRender from './AxisRender'
 
 import { DATA_MARGIN_SPACE_RATE } from '../internal/Storage'
 import { formatDate } from '../utils/date'
+import { formatValue } from '../utils/data'
+
 import { calcTextWidth, getFont } from '../utils/draw'
 import { LineStyle } from '../internal/constants'
 
@@ -28,33 +30,11 @@ class XAxisRender extends AxisRender {
    * 绘制坐标轴上的文字
    * @param ctx
    * @param xAxis
-   * @param period
    */
-  renderAxisLabels (ctx, xAxis, period) {
+  renderAxisLabels (ctx, xAxis) {
     const tickText = xAxis.tick.text
     if (!xAxis.display || !tickText.display) {
       return
-    }
-    const periodType = period.replace(/[1-9]/, '').toUpperCase()
-    let dateFormatType
-    switch (periodType) {
-      case 'D':
-      case 'W': {
-        dateFormatType = 'YYYY-MM-DD'
-        break
-      }
-      case 'M': {
-        dateFormatType = 'YYYY-MM'
-        break
-      }
-      case 'Y': {
-        dateFormatType = 'YYYY'
-        break
-      }
-      default: {
-        dateFormatType = 'hh:mm'
-        break
-      }
     }
     const tickLine = xAxis.tick.line
 
@@ -73,26 +53,20 @@ class XAxisRender extends AxisRender {
       const dataPos = parseInt(this.values[i].v)
       const kLineModel = this.storage.dataList[dataPos]
       const timestamp = kLineModel.timestamp
-      let dateText = formatDate(timestamp, dateFormatType)
+      let dateText = formatDate(timestamp, this.tickLabelFormatType)
       if (i !== valueLength - 1) {
         const nextDataPos = parseInt(this.values[i + 1].v)
         const nextKLineModel = this.storage.dataList[nextDataPos]
         const nextTimestamp = nextKLineModel.timestamp
-        if (periodType === 'D' || periodType === 'W') {
-          const month = formatDate(timestamp, 'YYYY-MM')
-          if (month !== formatDate(nextTimestamp, 'YYYY-MM')) {
-            dateText = month
-          }
-        } else if (periodType === 'M') {
-          const year = formatDate(timestamp, 'YYYY')
-          if (year !== formatDate(nextTimestamp, 'YYYY')) {
-            dateText = year
-          }
-        } else if (!periodType) {
-          const day = formatDate(timestamp, 'MM-DD')
-          if (day !== formatDate(nextTimestamp, 'MM-DD')) {
-            dateText = day
-          }
+        const year = formatDate(timestamp, 'YYYY')
+        const month = formatDate(timestamp, 'YYYY-MM')
+        const day = formatDate(timestamp, 'MM-DD')
+        if (year !== formatDate(nextTimestamp, 'YYYY')) {
+          dateText = year
+        } else if (month !== formatDate(nextTimestamp, 'YYYY-MM')) {
+          dateText = month
+        } else if (day !== formatDate(nextTimestamp, 'MM-DD')) {
+          dateText = day
         }
       }
       ctx.fillText(dateText, x, labelY)
@@ -164,17 +138,33 @@ class XAxisRender extends AxisRender {
     const valueLength = this.values.length
     if (valueLength > 0) {
       const defaultLabelWidth = calcTextWidth(xAxis.tick.text.size, '00-00 00:00')
-      const firstValueX = this.getX(this.values[0].v)
-      let subValueCount = 1
+      const pos = parseInt(this.values[0].v)
+      const timestamp = formatValue(this.storage.dataList[pos], 'timestamp', 0)
+      const x = this.getX(pos)
+      let valueCountDif = 1
+      this.tickLabelFormatType = 'MM:DD hh:mm'
       if (valueLength > 1) {
-        const secondValueX = this.getX(this.values[1].v)
-        const subX = Math.abs(secondValueX - firstValueX)
-        if (subX < defaultLabelWidth) {
-          subValueCount = Math.ceil(defaultLabelWidth / subX)
+        const nextPos = parseInt(this.values[1].v)
+        const nextTimestamp = formatValue(this.storage.dataList[nextPos], 'timestamp', 0)
+        const nextX = this.getX(nextPos)
+        const xDif = Math.abs(nextX - x)
+        if (xDif < defaultLabelWidth) {
+          valueCountDif = Math.ceil(defaultLabelWidth / xDif)
+        }
+        const timeDif = nextTimestamp - timestamp
+        const minuteDif = timeDif / 1000 / 60
+        if (minuteDif < 12 * 60) {
+          this.tickLabelFormatType = 'hh:mm'
+        } else if (minuteDif < 15 * 24 * 60) {
+          this.tickLabelFormatType = 'MM-DD'
+        } else if (minuteDif < 180 * 24 * 60) {
+          this.tickLabelFormatType = 'YYYY-MM'
+        } else {
+          this.tickLabelFormatType = 'YYYY'
         }
       }
       const values = []
-      for (let i = 0; i < valueLength; i += subValueCount) {
+      for (let i = 0; i < valueLength; i += valueCountDif) {
         const v = this.values[i].v
         const x = this.getX(v)
         if (x > this.handler.contentLeft() + defaultLabelWidth / 2 &&

@@ -2896,7 +2896,7 @@ function (_Render) {
     /**
      * 渲染点形成的图形
      * @param ctx
-     * @param markerKey
+     * @param markKey
      * @param graphicMark
      * @param checkPointOnLine
      * @param generatedLinePoints
@@ -2907,10 +2907,10 @@ function (_Render) {
 
   }, {
     key: "renderPointGraphicMark",
-    value: function renderPointGraphicMark(ctx, markerKey, graphicMark, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
+    value: function renderPointGraphicMark(ctx, markKey, graphicMark, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
       var _this12 = this;
 
-      var graphicMarkData = this.storage.graphicMarkDatas[markerKey];
+      var graphicMarkData = this.storage.graphicMarkDatas[markKey];
       graphicMarkData.forEach(function (_ref) {
         var points = _ref.points,
             drawStep = _ref.drawStep;
@@ -3047,7 +3047,7 @@ function (_Chart) {
   _createClass(GraphicMarkChart, [{
     key: "draw",
     value: function draw() {
-      var graphicMark = this.style.marker; // 画线
+      var graphicMark = this.style.graphicMark; // 画线
 
       this.graphicMarkRender.renderHorizontalStraightLine(this.ctx, graphicMark);
       this.graphicMarkRender.renderVerticalStraightLine(this.ctx, graphicMark);
@@ -3143,7 +3143,7 @@ function getDate(timestamp) {
 
 /**
  * 默认的样式配置
- * @returns {{realTime: {timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}, indicator: {decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}, yAxis: {line: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null, position: string}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}, maxWidth: number}, lowestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}, xAxis: {minHeight: number, maxHeight: number, line: {color: string, size: number, display: boolean}, display: boolean, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}}, lastPriceMark: {decreasingColor: string, line: {dashValue: number[], size: number, display: boolean, style: string}, display: boolean, increasingColor: string, text: {paddingBottom: number, size: number, color: string, display: boolean, paddingRight: number, valueFormatter: null, paddingTop: number, paddingLeft: number}}, grid: boolean, marker: {line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}, candle: {decreasingColor: string, style: string, increasingColor: string}, tooltip: {data: {indicator: {text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}}, displayRule: string, base: {floatRect: {fillColor: string, borderColor: string, paddingBottom: number, top: number, borderRadius: number, left: number, paddingRight: number, borderSize: number, paddingTop: number, right: number, paddingLeft: number}, values: null, showType: string, text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, labels: string[]}}, cross: {line: {dashValue: number[], size: number, color: string, style: string}, display: boolean, text: {horizontal: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}, vertical: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}}}}, highestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}}}
+ * @returns {{realTime: {timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}, indicator: {decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}, yAxis: {line: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null, position: string}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}, maxWidth: number}, lowestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}, xAxis: {minHeight: number, maxHeight: number, line: {color: string, size: number, display: boolean}, display: boolean, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}}, lastPriceMark: {decreasingColor: string, line: {dashValue: number[], size: number, display: boolean, style: string}, display: boolean, increasingColor: string, text: {paddingBottom: number, size: number, color: string, display: boolean, paddingRight: number, valueFormatter: null, paddingTop: number, paddingLeft: number}}, grid: boolean, graphicMark: {line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}, candle: {decreasingColor: string, style: string, increasingColor: string}, tooltip: {data: {indicator: {text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}}, displayRule: string, base: {floatRect: {fillColor: string, borderColor: string, paddingBottom: number, top: number, borderRadius: number, left: number, paddingRight: number, borderSize: number, paddingTop: number, right: number, paddingLeft: number}, values: null, showType: string, text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, labels: string[]}}, cross: {line: {dashValue: number[], size: number, color: string, style: string}, display: boolean, text: {horizontal: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}, vertical: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}}}}, highestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}}}
  */
 
 function getDefaultStyle() {
@@ -3439,7 +3439,7 @@ function getDefaultStyle() {
         }
       }
     },
-    marker: {
+    graphicMark: {
       line: {
         color: '#1e88e5',
         size: 1
@@ -3484,16 +3484,6 @@ function getDefaultPrecision() {
   return {
     pricePrecision: 2,
     volumePrecision: 0
-  };
-}
-/**
- * 获取默认周期
- * @returns {{period: string}}
- */
-
-function getDefaultPeriod() {
-  return {
-    period: '1'
   };
 }
 /**
@@ -4346,46 +4336,15 @@ function (_AxisRender) {
      * 绘制坐标轴上的文字
      * @param ctx
      * @param xAxis
-     * @param period
      */
 
   }, {
     key: "renderAxisLabels",
-    value: function renderAxisLabels(ctx, xAxis, period) {
+    value: function renderAxisLabels(ctx, xAxis) {
       var tickText = xAxis.tick.text;
 
       if (!xAxis.display || !tickText.display) {
         return;
-      }
-
-      var periodType = period.replace(/[1-9]/, '').toUpperCase();
-      var dateFormatType;
-
-      switch (periodType) {
-        case 'D':
-        case 'W':
-          {
-            dateFormatType = 'YYYY-MM-DD';
-            break;
-          }
-
-        case 'M':
-          {
-            dateFormatType = 'YYYY-MM';
-            break;
-          }
-
-        case 'Y':
-          {
-            dateFormatType = 'YYYY';
-            break;
-          }
-
-        default:
-          {
-            dateFormatType = 'hh:mm';
-            break;
-          }
       }
 
       var tickLine = xAxis.tick.line;
@@ -4406,31 +4365,22 @@ function (_AxisRender) {
         var dataPos = parseInt(this.values[i].v);
         var kLineModel = this.storage.dataList[dataPos];
         var timestamp = kLineModel.timestamp;
-        var dateText = formatDate(timestamp, dateFormatType);
+        var dateText = formatDate(timestamp, this.tickLabelFormatType);
 
         if (i !== valueLength - 1) {
           var nextDataPos = parseInt(this.values[i + 1].v);
           var nextKLineModel = this.storage.dataList[nextDataPos];
           var nextTimestamp = nextKLineModel.timestamp;
+          var year = formatDate(timestamp, 'YYYY');
+          var month = formatDate(timestamp, 'YYYY-MM');
+          var day = formatDate(timestamp, 'MM-DD');
 
-          if (periodType === 'D' || periodType === 'W') {
-            var month = formatDate(timestamp, 'YYYY-MM');
-
-            if (month !== formatDate(nextTimestamp, 'YYYY-MM')) {
-              dateText = month;
-            }
-          } else if (periodType === 'M') {
-            var year = formatDate(timestamp, 'YYYY');
-
-            if (year !== formatDate(nextTimestamp, 'YYYY')) {
-              dateText = year;
-            }
-          } else if (!periodType) {
-            var day = formatDate(timestamp, 'MM-DD');
-
-            if (day !== formatDate(nextTimestamp, 'MM-DD')) {
-              dateText = day;
-            }
+          if (year !== formatDate(nextTimestamp, 'YYYY')) {
+            dateText = year;
+          } else if (month !== formatDate(nextTimestamp, 'YYYY-MM')) {
+            dateText = month;
+          } else if (day !== formatDate(nextTimestamp, 'MM-DD')) {
+            dateText = day;
           }
         }
 
@@ -4514,28 +4464,47 @@ function (_AxisRender) {
 
       if (valueLength > 0) {
         var defaultLabelWidth = calcTextWidth(xAxis.tick.text.size, '00-00 00:00');
-        var firstValueX = this.getX(this.values[0].v);
-        var subValueCount = 1;
+        var pos = parseInt(this.values[0].v);
+        var timestamp = formatValue(this.storage.dataList[pos], 'timestamp', 0);
+        var x = this.getX(pos);
+        var valueCountDif = 1;
+        this.tickLabelFormatType = 'MM:DD hh:mm';
 
         if (valueLength > 1) {
-          var secondValueX = this.getX(this.values[1].v);
-          var subX = Math.abs(secondValueX - firstValueX);
+          var nextPos = parseInt(this.values[1].v);
+          var nextTimestamp = formatValue(this.storage.dataList[nextPos], 'timestamp', 0);
+          var nextX = this.getX(nextPos);
+          var xDif = Math.abs(nextX - x);
 
-          if (subX < defaultLabelWidth) {
-            subValueCount = Math.ceil(defaultLabelWidth / subX);
+          if (xDif < defaultLabelWidth) {
+            valueCountDif = Math.ceil(defaultLabelWidth / xDif);
+          }
+
+          var timeDif = nextTimestamp - timestamp;
+          var minuteDif = timeDif / 1000 / 60;
+
+          if (minuteDif < 12 * 60) {
+            this.tickLabelFormatType = 'hh:mm';
+          } else if (minuteDif < 15 * 24 * 60) {
+            this.tickLabelFormatType = 'MM-DD';
+          } else if (minuteDif < 180 * 24 * 60) {
+            this.tickLabelFormatType = 'YYYY-MM';
+          } else {
+            this.tickLabelFormatType = 'YYYY';
           }
         }
 
         var values = [];
 
-        for (var i = 0; i < valueLength; i += subValueCount) {
+        for (var i = 0; i < valueLength; i += valueCountDif) {
           var v = this.values[i].v;
-          var x = this.getX(v);
 
-          if (x > this.handler.contentLeft() + defaultLabelWidth / 2 && x < this.handler.contentRight() - defaultLabelWidth / 2) {
+          var _x = this.getX(v);
+
+          if (_x > this.handler.contentLeft() + defaultLabelWidth / 2 && _x < this.handler.contentRight() - defaultLabelWidth / 2) {
             values.push({
               v: v,
-              x: x
+              x: _x
             });
           }
         }
@@ -4564,14 +4533,13 @@ var XAxisChart =
 function (_Chart) {
   _inherits(XAxisChart, _Chart);
 
-  function XAxisChart(dom, style, storage, period) {
+  function XAxisChart(dom, style, storage) {
     var _this;
 
     _classCallCheck(this, XAxisChart);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisChart).call(this, dom, style));
     _this.xAxisRender = new XAxisRender(_this.handler, storage);
-    _this.period = period;
     return _this;
   }
 
@@ -4581,7 +4549,7 @@ function (_Chart) {
       var xAxis = this.style.xAxis;
       this.xAxisRender.computeAxis(xAxis);
       this.xAxisRender.renderAxisLine(this.ctx, xAxis);
-      this.xAxisRender.renderAxisLabels(this.ctx, xAxis, this.period.period);
+      this.xAxisRender.renderAxisLabels(this.ctx, xAxis);
       this.xAxisRender.renderSeparatorLines(this.ctx, xAxis);
       this.xAxisRender.renderTickLines(this.ctx, xAxis);
     }
@@ -6642,13 +6610,13 @@ var MouseEvent =
 function (_Event) {
   _inherits(MouseEvent, _Event);
 
-  function MouseEvent(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, markerChart, storage) {
+  function MouseEvent(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, graphicMarkChart, storage) {
     var _this;
 
     _classCallCheck(this, MouseEvent);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MouseEvent).call(this, tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage));
-    _this.markerChart = markerChart; // 事件模型
+    _this.graphicMarkChart = graphicMarkChart; // 事件模型
 
     _this.mouseMode = CROSS;
     _this.mouseDownPoint = {
@@ -6763,7 +6731,7 @@ function (_Event) {
             this.cross(point);
           } else {
             if (this.drag(this.mouseDownPoint, e.x, loadMore)) {
-              this.markerChart.flush();
+              this.graphicMarkChart.flush();
             }
           }
         } else if (this.mouseMode === CROSS) {
@@ -6807,7 +6775,7 @@ function (_Event) {
 
       if (this.zoom(isZoomingOut, scaleX, touchStartPosition, touchRange)) {
         this.cross(point);
-        this.markerChart.flush();
+        this.graphicMarkChart.flush();
       }
     }
   }]);
@@ -6827,9 +6795,9 @@ function () {
     this.yRender = graphicMarkChart.graphicMarkRender.yRender;
     this.style = style; // 标记当没有画线时鼠标是否按下
 
-    this.noneMarkerMouseDownFlag = false; // 用来记录当没有绘制标记图形时，鼠标操作后落点线上的数据
+    this.noneGraphicMarkMouseDownFlag = false; // 用来记录当没有绘制标记图形时，鼠标操作后落点线上的数据
 
-    this.noneMarkerMouseDownActiveData = {
+    this.noneGraphicMarkMouseDownActiveData = {
       markKey: null,
       dataIndex: -1,
       onLine: false,
@@ -6845,8 +6813,8 @@ function () {
   _createClass(GraphicMarkEvent, [{
     key: "mouseUp",
     value: function mouseUp() {
-      this.noneMarkerMouseDownFlag = false;
-      this.noneMarkerMouseDownActiveData = {
+      this.noneGraphicMarkMouseDownFlag = false;
+      this.noneGraphicMarkMouseDownActiveData = {
         markKey: null,
         dataIndex: -1,
         onLine: false,
@@ -6884,20 +6852,20 @@ function () {
         case GraphicMarkType.PRICE_LINE:
         case GraphicMarkType.FIBONACCI_LINE:
           {
-            this.twoStepMarkerMouseDown(e, graphicMarkType);
+            this.twoStepGraphicMarkMouseDown(e, graphicMarkType);
             break;
           }
 
         case GraphicMarkType.PRICE_CHANNEL_LINE:
         case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
           {
-            this.threeStepMarkerMouseDown(e, graphicMarkType);
+            this.threeStepGraphicMarkMouseDown(e, graphicMarkType);
             break;
           }
 
         case GraphicMarkType.NONE:
           {
-            this.noneMarkerMouseDown(e);
+            this.noneGraphicMarkMouseDown(e);
             break;
           }
       }
@@ -6909,11 +6877,11 @@ function () {
      */
 
   }, {
-    key: "twoStepMarkerMouseDown",
-    value: function twoStepMarkerMouseDown(e, markKey) {
+    key: "twoStepGraphicMarkMouseDown",
+    value: function twoStepGraphicMarkMouseDown(e, markKey) {
       var _this = this;
 
-      this.markerMouseDown(e, markKey, function (lastLineData) {
+      this.graphicMarkMouseDown(e, markKey, function (lastLineData) {
         switch (lastLineData.drawStep) {
           case GraphicMarkDrawStep.STEP_1:
             {
@@ -6937,11 +6905,11 @@ function () {
      */
 
   }, {
-    key: "threeStepMarkerMouseDown",
-    value: function threeStepMarkerMouseDown(e, markKey) {
+    key: "threeStepGraphicMarkMouseDown",
+    value: function threeStepGraphicMarkMouseDown(e, markKey) {
       var _this2 = this;
 
-      this.markerMouseDown(e, markKey, function (lastLineData) {
+      this.graphicMarkMouseDown(e, markKey, function (lastLineData) {
         switch (lastLineData.drawStep) {
           case GraphicMarkDrawStep.STEP_1:
             {
@@ -6972,8 +6940,8 @@ function () {
      */
 
   }, {
-    key: "markerMouseDown",
-    value: function markerMouseDown(e, markKey, performDifPoint) {
+    key: "graphicMarkMouseDown",
+    value: function graphicMarkMouseDown(e, markKey, performDifPoint) {
       var graphicMarkData = this.storage.graphicMarkDatas[markKey];
 
       if (e.button === 2) {
@@ -6993,11 +6961,11 @@ function () {
      */
 
   }, {
-    key: "noneMarkerMouseDown",
-    value: function noneMarkerMouseDown(e) {
-      this.findNoneMarkerMouseDownActiveData(e);
-      var markKey = this.noneMarkerMouseDownActiveData.markKey;
-      var dataIndex = this.noneMarkerMouseDownActiveData.dataIndex;
+    key: "noneGraphicMarkMouseDown",
+    value: function noneGraphicMarkMouseDown(e) {
+      this.findNoneGraphicMarkMouseDownActiveData(e);
+      var markKey = this.noneGraphicMarkMouseDownActiveData.markKey;
+      var dataIndex = this.noneGraphicMarkMouseDownActiveData.dataIndex;
 
       if (markKey && dataIndex !== -1) {
         if (e.button === 2) {
@@ -7007,8 +6975,8 @@ function () {
           this.storage.graphicMarkDatas[markKey] = graphicMarkData;
           this.graphicMarkChart.flush();
         } else {
-          if (this.noneMarkerMouseDownActiveData.onCircle) {
-            this.noneMarkerMouseDownFlag = true;
+          if (this.noneGraphicMarkMouseDownActiveData.onCircle) {
+            this.noneGraphicMarkMouseDownFlag = true;
             this.storage.isDragGraphicMark = true;
           }
         }
@@ -7020,8 +6988,8 @@ function () {
      */
 
   }, {
-    key: "findNoneMarkerMouseDownActiveData",
-    value: function findNoneMarkerMouseDownActiveData(e) {
+    key: "findNoneGraphicMarkMouseDownActiveData",
+    value: function findNoneGraphicMarkMouseDownActiveData(e) {
       var _this3 = this;
 
       var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
@@ -7034,7 +7002,7 @@ function () {
           case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
           case GraphicMarkType.PRICE_LINE:
             {
-              if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
+              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], {
                   x: _this3.handler.contentRight(),
                   y: xyPoints[0].y
@@ -7050,7 +7018,7 @@ function () {
 
           case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
             {
-              if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
+              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], {
                   x: xyPoints[0].x,
                   y: _this3.handler.contentBottom()
@@ -7066,7 +7034,7 @@ function () {
 
           case GraphicMarkType.STRAIGHT_LINE:
             {
-              if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
+              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], xyPoints[1], point);
               })) {
                 return {
@@ -7081,7 +7049,7 @@ function () {
           case GraphicMarkType.VERTICAL_RAY_LINE:
           case GraphicMarkType.RAY_LINE:
             {
-              if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
+              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnRayLine(xyPoints[0], xyPoints[1], point);
               })) {
                 return {
@@ -7096,7 +7064,7 @@ function () {
           case GraphicMarkType.VERTICAL_SEGMENT_LINE:
           case GraphicMarkType.SEGMENT_LINE:
             {
-              if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
+              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnSegmentLine(xyPoints[0], xyPoints[1], point);
               })) {
                 return {
@@ -7111,7 +7079,7 @@ function () {
           case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
           case GraphicMarkType.FIBONACCI_LINE:
             {
-              if (_this3.realFindNoneMarkerMouseDownActiveData(key, point, function (xyPoints) {
+              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 var linePoints = [];
 
                 switch (key) {
@@ -7134,18 +7102,18 @@ function () {
                     }
                 }
 
-                var isOnMarker = false;
+                var isOnGraphicMark = false;
 
                 for (var _i = 0; _i < linePoints.length; _i++) {
                   var points = linePoints[_i];
-                  isOnMarker = checkPointOnStraightLine(points[0], points[1], point);
+                  isOnGraphicMark = checkPointOnStraightLine(points[0], points[1], point);
 
-                  if (isOnMarker) {
-                    return isOnMarker;
+                  if (isOnGraphicMark) {
+                    return isOnGraphicMark;
                   }
                 }
 
-                return isOnMarker;
+                return isOnGraphicMark;
               })) {
                 return {
                   v: void 0
@@ -7172,8 +7140,8 @@ function () {
      */
 
   }, {
-    key: "realFindNoneMarkerMouseDownActiveData",
-    value: function realFindNoneMarkerMouseDownActiveData(markKey, point, checkPointOnLine) {
+    key: "realFindNoneGraphicMarkMouseDownActiveData",
+    value: function realFindNoneGraphicMarkMouseDownActiveData(markKey, point, checkPointOnLine) {
       var _this4 = this;
 
       var graphicMarkData = this.storage.graphicMarkDatas[markKey];
@@ -7194,7 +7162,7 @@ function () {
           var isOn = checkPointOnCircle({
             x: x,
             y: y
-          }, _this4.style.marker.point.radius, point);
+          }, _this4.style.graphicMark.point.radius, point);
 
           if (isOn) {
             pointIndex = i;
@@ -7207,7 +7175,7 @@ function () {
         var isOnLine = checkPointOnLine(xyPoints, point);
 
         if (isOnLine || isOnCircle) {
-          _this4.noneMarkerMouseDownActiveData = {
+          _this4.noneGraphicMarkMouseDownActiveData = {
             markKey: markKey,
             dataIndex: index,
             onLine: isOnLine,
@@ -7242,7 +7210,7 @@ function () {
           case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
           case GraphicMarkType.PRICE_LINE:
             {
-              this.onePointMarkerMouseMove(point, graphicMarkType);
+              this.onePointGraphicMarkMouseMove(point, graphicMarkType);
               break;
             }
 
@@ -7251,14 +7219,14 @@ function () {
           case GraphicMarkType.SEGMENT_LINE:
           case GraphicMarkType.FIBONACCI_LINE:
             {
-              this.twoPointMarkerMouseMove(point, graphicMarkType);
+              this.twoPointGraphicMarkMouseMove(point, graphicMarkType);
               break;
             }
 
           case GraphicMarkType.HORIZONTAL_RAY_LINE:
           case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
             {
-              this.twoPointMarkerMouseMove(point, graphicMarkType, function (lastLineData, _ref) {
+              this.twoPointGraphicMarkMouseMove(point, graphicMarkType, function (lastLineData, _ref) {
                 var price = _ref.price;
                 lastLineData.points[0].price = price;
               });
@@ -7268,7 +7236,7 @@ function () {
           case GraphicMarkType.VERTICAL_RAY_LINE:
           case GraphicMarkType.VERTICAL_SEGMENT_LINE:
             {
-              this.twoPointMarkerMouseMove(point, graphicMarkType, function (lastLineData, _ref2) {
+              this.twoPointGraphicMarkMouseMove(point, graphicMarkType, function (lastLineData, _ref2) {
                 var xPos = _ref2.xPos;
                 lastLineData.points[0].xPos = xPos;
               });
@@ -7278,13 +7246,13 @@ function () {
           case GraphicMarkType.PRICE_CHANNEL_LINE:
           case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
             {
-              this.threePointMarkerMouseMove(point, graphicMarkType);
+              this.threePointGraphicMarkMouseMove(point, graphicMarkType);
               break;
             }
 
           case GraphicMarkType.NONE:
             {
-              this.noneMarkerMouseMove(point);
+              this.noneGraphicMarkMouseMove(point);
               break;
             }
         }
@@ -7299,11 +7267,11 @@ function () {
      */
 
   }, {
-    key: "onePointMarkerMouseMove",
-    value: function onePointMarkerMouseMove(point, markKey) {
+    key: "onePointGraphicMarkMouseMove",
+    value: function onePointGraphicMarkMouseMove(point, markKey) {
       var _this5 = this;
 
-      this.markerMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
+      this.graphicMarkMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
         var xPos = _this5.storage.minPos + (point.x - _this5.handler.contentLeft()) / _this5.storage.dataSpace;
 
         var price = _this5.yRender.getValue(point.y);
@@ -7340,11 +7308,11 @@ function () {
      */
 
   }, {
-    key: "twoPointMarkerMouseMove",
-    value: function twoPointMarkerMouseMove(point, markKey, stepTwo) {
+    key: "twoPointGraphicMarkMouseMove",
+    value: function twoPointGraphicMarkMouseMove(point, markKey, stepTwo) {
       var _this6 = this;
 
-      this.markerMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
+      this.graphicMarkMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
         var xPos = _this6.storage.minPos + (point.x - _this6.handler.contentLeft()) / _this6.storage.dataSpace;
 
         var price = _this6.yRender.getValue(point.y);
@@ -7407,11 +7375,11 @@ function () {
      */
 
   }, {
-    key: "threePointMarkerMouseMove",
-    value: function threePointMarkerMouseMove(point, markKey, stepTwo) {
+    key: "threePointGraphicMarkMouseMove",
+    value: function threePointGraphicMarkMouseMove(point, markKey, stepTwo) {
       var _this7 = this;
 
-      this.markerMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
+      this.graphicMarkMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
         var xPos = _this7.storage.minPos + (point.x - _this7.handler.contentLeft()) / _this7.storage.dataSpace;
 
         var price = _this7.yRender.getValue(point.y);
@@ -7483,8 +7451,8 @@ function () {
      */
 
   }, {
-    key: "markerMouseMove",
-    value: function markerMouseMove(point, markKey, performDifPoint) {
+    key: "graphicMarkMouseMove",
+    value: function graphicMarkMouseMove(point, markKey, performDifPoint) {
       var graphicMarkData = this.storage.graphicMarkDatas[markKey];
       var lastLineData = graphicMarkData[graphicMarkData.length - 1] || {
         drawStep: GraphicMarkDrawStep.STEP_DONE
@@ -7499,11 +7467,11 @@ function () {
      */
 
   }, {
-    key: "noneMarkerMouseMove",
-    value: function noneMarkerMouseMove(point) {
-      if (this.noneMarkerMouseDownFlag) {
-        var markKey = this.noneMarkerMouseDownActiveData.markKey;
-        var dataIndex = this.noneMarkerMouseDownActiveData.dataIndex;
+    key: "noneGraphicMarkMouseMove",
+    value: function noneGraphicMarkMouseMove(point) {
+      if (this.noneGraphicMarkMouseDownFlag) {
+        var markKey = this.noneGraphicMarkMouseDownActiveData.markKey;
+        var dataIndex = this.noneGraphicMarkMouseDownActiveData.dataIndex;
 
         if (markKey && dataIndex !== -1) {
           var graphicMarkData = this.storage.graphicMarkDatas[markKey];
@@ -7519,7 +7487,7 @@ function () {
             case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
             case GraphicMarkType.FIBONACCI_LINE:
               {
-                var pointIndex = this.noneMarkerMouseDownActiveData.pointIndex;
+                var pointIndex = this.noneGraphicMarkMouseDownActiveData.pointIndex;
 
                 if (pointIndex !== -1) {
                   graphicMarkData[dataIndex].points[pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
@@ -7532,7 +7500,7 @@ function () {
             case GraphicMarkType.HORIZONTAL_RAY_LINE:
             case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
               {
-                var _pointIndex = this.noneMarkerMouseDownActiveData.pointIndex;
+                var _pointIndex = this.noneGraphicMarkMouseDownActiveData.pointIndex;
 
                 if (_pointIndex !== -1) {
                   var price = this.yRender.getValue(point.y);
@@ -7547,7 +7515,7 @@ function () {
             case GraphicMarkType.VERTICAL_RAY_LINE:
             case GraphicMarkType.VERTICAL_SEGMENT_LINE:
               {
-                var _pointIndex2 = this.noneMarkerMouseDownActiveData.pointIndex;
+                var _pointIndex2 = this.noneGraphicMarkMouseDownActiveData.pointIndex;
 
                 if (_pointIndex2 !== -1) {
                   var xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
@@ -7576,13 +7544,13 @@ var KeyboardEvent =
 function (_Event) {
   _inherits(KeyboardEvent, _Event);
 
-  function KeyboardEvent(candleChart, volChart, subIndicatorChart, tooltipChart, markerChart, xAxisChart, storage) {
+  function KeyboardEvent(candleChart, volChart, subIndicatorChart, tooltipChart, graphicMarkChart, xAxisChart, storage) {
     var _this;
 
     _classCallCheck(this, KeyboardEvent);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(KeyboardEvent).call(this, tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage));
-    _this.markerChart = markerChart;
+    _this.graphicMarkChart = graphicMarkChart;
     return _this;
   }
   /**
@@ -7621,7 +7589,7 @@ function (_Event) {
           this.volChart.flush();
           this.subIndicatorChart.flush();
           this.xAxisChart.flush();
-          this.markerChart.flush();
+          this.graphicMarkChart.flush();
 
           if (this.storage.crossPoint) {
             this.tooltipChart.flush();
@@ -7646,7 +7614,7 @@ function (_Event) {
             this.cross(this.storage.crossPoint);
           }
 
-          this.markerChart.flush();
+          this.graphicMarkChart.flush();
         }
       }
     }
@@ -7654,8 +7622,6 @@ function (_Event) {
 
   return KeyboardEvent;
 }(Event);
-
-var DEV = process.env.NODE_ENV === 'development';
 
 var RootChart =
 /*#__PURE__*/
@@ -7671,14 +7637,13 @@ function () {
     merge(this.style, s);
     this.indicatorParams = getDefaultIndicatorParams();
     this.precision = getDefaultPrecision();
-    this.period = getDefaultPeriod();
     dom.style.position = 'relative';
     dom.style.outline = 'none';
     dom.style.borderStyle = 'none';
     dom.tabIndex = 1;
     this.dom = dom;
     this.storage = new Storage();
-    this.xAxisChart = new XAxisChart(dom, this.style, this.storage, this.period);
+    this.xAxisChart = new XAxisChart(dom, this.style, this.storage);
     this.candleChart = new CandleChart(dom, this.style, this.storage, this.indicatorParams, this.precision);
     this.graphicMarkChart = new GraphicMarkChart(dom, this.style, this.storage, this.candleChart.yAxisRender, this.precision);
     this.volIndicatorChart = new IndicatorChart(dom, this.style, this.storage, this.indicatorParams, IndicatorType.VOL);
@@ -7981,7 +7946,7 @@ function () {
       if (isObject(data)) {
         var dataList = this.getDataList();
         var dataSize = dataList.length;
-        var pos = -1;
+        var pos;
 
         if (isArray(data)) {
           if (dataSize > 0) {
@@ -7994,92 +7959,16 @@ function () {
           // 这里判断单个数据应该添加到哪个位置
           var timestamp = +formatValue(data, 'timestamp', 0);
           var lastDataTimestamp = +formatValue(dataList[dataSize - 1], 'timestamp', 0);
-          var periodValue = this.period.period;
-          var periodType = periodValue.replace(/[1-9]/, '').toUpperCase();
-          var periodNumber = +(periodValue.replace(/[DWMY]/i, '') || 1);
-          var timeDiff = Math.abs(timestamp - lastDataTimestamp);
+          pos = dataSize;
 
-          switch (periodType) {
-            case 'D':
-              {
-                if (timeDiff < periodNumber * 24 * 3600 * 1000) {
-                  pos = dataSize - 1;
-                } else if (timestamp > lastDataTimestamp) {
-                  pos = dataSize;
-                }
-
-                break;
-              }
-
-            case 'W':
-              {
-                if (timeDiff < periodNumber * 7 * 24 * 3600 * 1000) {
-                  pos = dataSize - 1;
-                } else if (timestamp > lastDataTimestamp) {
-                  pos = dataSize;
-                }
-
-                break;
-              }
-
-            case 'M':
-              {
-                var lastDataYear = +formatDate(lastDataTimestamp, 'YYYY');
-                var lastDataMonth = +formatDate(lastDataTimestamp, 'MM');
-                var year = +formatDate(timestamp, 'YYYY');
-                var month = +formatDate(timestamp, 'MM');
-                var monthDiff = Math.abs((year - lastDataYear) * 12 + month - lastDataMonth);
-
-                if (month === lastDataMonth) {
-                  pos = dataSize - 1;
-                } else if (monthDiff >= periodNumber) {
-                  pos = dataSize;
-                }
-
-                break;
-              }
-
-            case 'Y':
-              {
-                var _lastDataYear = +formatDate(lastDataTimestamp, 'YYYY');
-
-                var _year = +formatDate(timestamp, 'YYYY');
-
-                var yearDiff = Math.abs(_year - _lastDataYear);
-
-                if (_year === _lastDataYear) {
-                  pos = dataSize - 1;
-                } else if (yearDiff >= periodNumber) {
-                  pos = dataSize;
-                }
-
-                break;
-              }
-
-            default:
-              {
-                if (timeDiff < periodNumber * 60 * 1000) {
-                  pos = dataSize - 1;
-                } else if (timestamp > lastDataTimestamp) {
-                  pos = dataSize;
-                }
-
-                break;
-              }
-          }
-
-          if (pos === dataSize - 1) {
-            data.timestamp = lastDataTimestamp;
-          } else {
-            data.timestamp = Math.floor(timestamp / 60 / 1000) * 60 * 1000;
+          if (timestamp === lastDataTimestamp) {
+            pos = dataSize - 1;
           }
         }
 
-        if (pos !== -1) {
-          this.storage.addData(data, pos);
-          this.calcChartIndicator();
-          this.xAxisChart.flush();
-        }
+        this.storage.addData(data, pos);
+        this.calcChartIndicator();
+        this.xAxisChart.flush();
       }
     }
     /**
@@ -8110,11 +7999,7 @@ function () {
         }
 
         this.flushCharts([this.candleChart, this.tooltipChart]);
-        this.clearAllMarker();
-
-        if (this.period.period !== '1') {
-          this.clearData();
-        }
+        this.removeAllGraphicMark();
       }
     }
     /**
@@ -8210,64 +8095,6 @@ function () {
       var volumePrecision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.precision.volumePrecision;
       this.precision.pricePrecision = pricePrecision;
       this.precision.volumePrecision = volumePrecision;
-    }
-    /**
-     * 设置k线周期
-     * @param period
-     */
-
-  }, {
-    key: "setPeriod",
-    value: function setPeriod(period) {
-      var periodValue = "".concat(period);
-
-      if (this.period.period !== periodValue && period && /^[1-9]*?[DWMY]?$/i.test(periodValue)) {
-        this.period.period = periodValue; // 设置新周期后清空现有数据
-
-        this.clearData();
-      }
-    }
-    /**
-     * 设置交易时段
-     * @param session
-     */
-
-  }, {
-    key: "setSession",
-    value: function setSession(session) {
-      // 0900-1630,1015-1130,2100-0100|0900-1400:234;6
-      /^[[012][0-9]{3}-[012][0-9]{3},]*[:[0-6]{1,6}]?[|[[012][0-9]{3}-[012][0-9]{3},]*[:[0-6]{1,6}]?]*[;[0-6]]?$/.test('0900-1630,1015-1130,2100-0100|0900-1400:234;6');
-      var rootSplitArray = session.split(';');
-
-      switch (rootSplitArray.length) {
-        case 1:
-          {
-            break;
-          }
-
-        case 2:
-          {
-            var weekStartTradingDay = rootSplitArray[1];
-
-            if (!/^[0-6]$/.test(weekStartTradingDay)) {
-              if (DEV) {
-                console.warn('The trading day is set incorrectly for the first trading day of the week. The parameters should be 0, 1, 2, 3, 4, 5, 6.');
-              }
-
-              return;
-            }
-
-            console.log(1);
-            break;
-          }
-
-        default:
-          {
-            if (DEV) {
-              console.warn('The format of the trading session is incorrect.');
-            }
-          }
-      }
     }
     /**
      * 显示成交量图
@@ -8395,13 +8222,13 @@ function () {
       this.storage.dataList = [];
     }
     /**
-     * 绘制标记图形
+     * 添加图形标记
      * @param type
      */
 
   }, {
-    key: "drawMarker",
-    value: function drawMarker(type) {
+    key: "addGraphicMark",
+    value: function addGraphicMark(type) {
       // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
       var graphicMarkType = this.storage.graphicMarkType;
 
@@ -8418,12 +8245,12 @@ function () {
       this.storage.graphicMarkType = type;
     }
     /**
-     * 清空所有标记图形
+     * 移除所有标记图形
      */
 
   }, {
-    key: "clearAllMarker",
-    value: function clearAllMarker() {
+    key: "removeAllGraphicMark",
+    value: function removeAllGraphicMark() {
       var _this4 = this;
 
       var graphicMarkDatas = this.storage.graphicMarkDatas;
@@ -8484,9 +8311,9 @@ function () {
         ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height);
       }
 
-      if (!excludes || excludes.indexOf('marker') < 0) {
-        var markerCanvas = this.graphicMarkChart.canvasDom;
-        ctx.drawImage(markerCanvas, 0, 0, markerCanvas.width, markerCanvas.height);
+      if (!excludes || excludes.indexOf('graphicMark') < 0) {
+        var graphicMarkCanvas = this.graphicMarkChart.canvasDom;
+        ctx.drawImage(graphicMarkCanvas, 0, 0, graphicMarkCanvas.width, graphicMarkCanvas.height);
       }
 
       if (!excludes || excludes.indexOf('tooltip') < 0) {
@@ -8499,6 +8326,8 @@ function () {
 
   return RootChart;
 }();
+
+var DEV = process.env.NODE_ENV === 'development';
 
 var instances = {};
 var idBase = 1;

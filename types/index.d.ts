@@ -36,7 +36,7 @@ export interface KLineData {
 
 export type PictureType = 'png' | 'jpeg' | 'bmp';
 
-export type ChartComponentType = 'candle' | 'vol' | 'subIndicator' | 'tooltip' | 'marker';
+export type ChartComponentType = 'candle' | 'vol' | 'subIndicator' | 'tooltip' | 'graphicMark';
 
 export interface Chart {
   resize(): void;

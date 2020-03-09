@@ -15,10 +15,10 @@ class GraphicMarkEvent {
     this.yRender = graphicMarkChart.graphicMarkRender.yRender
     this.style = style
     // 标记当没有画线时鼠标是否按下
-    this.noneMarkerMouseDownFlag = false
+    this.noneGraphicMarkMouseDownFlag = false
 
     // 用来记录当没有绘制标记图形时，鼠标操作后落点线上的数据
-    this.noneMarkerMouseDownActiveData = {
+    this.noneGraphicMarkMouseDownActiveData = {
       markKey: null,
       dataIndex: -1,
       onLine: false,
@@ -31,8 +31,8 @@ class GraphicMarkEvent {
    * 鼠标抬起事件
    */
   mouseUp () {
-    this.noneMarkerMouseDownFlag = false
-    this.noneMarkerMouseDownActiveData = {
+    this.noneGraphicMarkMouseDownFlag = false
+    this.noneGraphicMarkMouseDownActiveData = {
       markKey: null,
       dataIndex: -1,
       onLine: false,
@@ -64,16 +64,16 @@ class GraphicMarkEvent {
       case GraphicMarkType.SEGMENT_LINE:
       case GraphicMarkType.PRICE_LINE:
       case GraphicMarkType.FIBONACCI_LINE: {
-        this.twoStepMarkerMouseDown(e, graphicMarkType)
+        this.twoStepGraphicMarkMouseDown(e, graphicMarkType)
         break
       }
       case GraphicMarkType.PRICE_CHANNEL_LINE:
       case GraphicMarkType.PARALLEL_STRAIGHT_LINE: {
-        this.threeStepMarkerMouseDown(e, graphicMarkType)
+        this.threeStepGraphicMarkMouseDown(e, graphicMarkType)
         break
       }
       case GraphicMarkType.NONE: {
-        this.noneMarkerMouseDown(e)
+        this.noneGraphicMarkMouseDown(e)
         break
       }
     }
@@ -84,8 +84,8 @@ class GraphicMarkEvent {
    * @param e
    * @param markKey
    */
-  twoStepMarkerMouseDown (e, markKey) {
-    this.markerMouseDown(e, markKey, (lastLineData) => {
+  twoStepGraphicMarkMouseDown (e, markKey) {
+    this.graphicMarkMouseDown(e, markKey, (lastLineData) => {
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_1: {
           lastLineData.drawStep = GraphicMarkDrawStep.STEP_2
@@ -105,8 +105,8 @@ class GraphicMarkEvent {
    * @param e
    * @param markKey
    */
-  threeStepMarkerMouseDown (e, markKey) {
-    this.markerMouseDown(e, markKey, (lastLineData) => {
+  threeStepGraphicMarkMouseDown (e, markKey) {
+    this.graphicMarkMouseDown(e, markKey, (lastLineData) => {
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_1: {
           lastLineData.drawStep = GraphicMarkDrawStep.STEP_2
@@ -131,7 +131,7 @@ class GraphicMarkEvent {
    * @param markKey
    * @param performDifPoint
    */
-  markerMouseDown (e, markKey, performDifPoint) {
+  graphicMarkMouseDown (e, markKey, performDifPoint) {
     const graphicMarkData = this.storage.graphicMarkDatas[markKey]
     if (e.button === 2) {
       graphicMarkData.splice(graphicMarkData.length - 1, 1)
@@ -148,10 +148,10 @@ class GraphicMarkEvent {
   /**
    * 没有绘制时鼠标按下事件
    */
-  noneMarkerMouseDown (e) {
-    this.findNoneMarkerMouseDownActiveData(e)
-    const markKey = this.noneMarkerMouseDownActiveData.markKey
-    const dataIndex = this.noneMarkerMouseDownActiveData.dataIndex
+  noneGraphicMarkMouseDown (e) {
+    this.findNoneGraphicMarkMouseDownActiveData(e)
+    const markKey = this.noneGraphicMarkMouseDownActiveData.markKey
+    const dataIndex = this.noneGraphicMarkMouseDownActiveData.dataIndex
     if (markKey && dataIndex !== -1) {
       if (e.button === 2) {
         // 鼠标右键
@@ -160,8 +160,8 @@ class GraphicMarkEvent {
         this.storage.graphicMarkDatas[markKey] = graphicMarkData
         this.graphicMarkChart.flush()
       } else {
-        if (this.noneMarkerMouseDownActiveData.onCircle) {
-          this.noneMarkerMouseDownFlag = true
+        if (this.noneGraphicMarkMouseDownActiveData.onCircle) {
+          this.noneGraphicMarkMouseDownFlag = true
           this.storage.isDragGraphicMark = true
         }
       }
@@ -172,7 +172,7 @@ class GraphicMarkEvent {
    * 查找没有绘制时鼠标按下时在哪条数据上
    * @param e
    */
-  findNoneMarkerMouseDownActiveData (e) {
+  findNoneGraphicMarkMouseDownActiveData (e) {
     const point = getCanvasPoint(e, this.graphicMarkChart.canvasDom)
     const keys = Object.keys(this.storage.graphicMarkDatas)
     for (let i = 0; i < keys.length; i++) {
@@ -180,7 +180,7 @@ class GraphicMarkEvent {
       switch (key) {
         case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
         case GraphicMarkType.PRICE_LINE: {
-          if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
+          if (this.realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnStraightLine(
               xyPoints[0], { x: this.handler.contentRight(), y: xyPoints[0].y }, point
             )
@@ -190,7 +190,7 @@ class GraphicMarkEvent {
           break
         }
         case GraphicMarkType.VERTICAL_STRAIGHT_LINE: {
-          if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
+          if (this.realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnStraightLine(
               xyPoints[0], { x: xyPoints[0].x, y: this.handler.contentBottom() }, point
             )
@@ -200,7 +200,7 @@ class GraphicMarkEvent {
           break
         }
         case GraphicMarkType.STRAIGHT_LINE: {
-          if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
+          if (this.realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnStraightLine(xyPoints[0], xyPoints[1], point)
           })) {
             return
@@ -210,7 +210,7 @@ class GraphicMarkEvent {
         case GraphicMarkType.HORIZONTAL_RAY_LINE:
         case GraphicMarkType.VERTICAL_RAY_LINE:
         case GraphicMarkType.RAY_LINE: {
-          if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
+          if (this.realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnRayLine(xyPoints[0], xyPoints[1], point)
           })) {
             return
@@ -220,7 +220,7 @@ class GraphicMarkEvent {
         case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
         case GraphicMarkType.VERTICAL_SEGMENT_LINE:
         case GraphicMarkType.SEGMENT_LINE: {
-          if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
+          if (this.realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnSegmentLine(xyPoints[0], xyPoints[1], point)
           })) {
             return
@@ -230,7 +230,7 @@ class GraphicMarkEvent {
         case GraphicMarkType.PRICE_CHANNEL_LINE:
         case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
         case GraphicMarkType.FIBONACCI_LINE: {
-          if (this.realFindNoneMarkerMouseDownActiveData(key, point, (xyPoints) => {
+          if (this.realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
             let linePoints = []
             switch (key) {
               case GraphicMarkType.PRICE_CHANNEL_LINE: {
@@ -246,15 +246,15 @@ class GraphicMarkEvent {
                 break
               }
             }
-            let isOnMarker = false
+            let isOnGraphicMark = false
             for (let i = 0; i < linePoints.length; i++) {
               const points = linePoints[i]
-              isOnMarker = checkPointOnStraightLine(points[0], points[1], point)
-              if (isOnMarker) {
-                return isOnMarker
+              isOnGraphicMark = checkPointOnStraightLine(points[0], points[1], point)
+              if (isOnGraphicMark) {
+                return isOnGraphicMark
               }
             }
-            return isOnMarker
+            return isOnGraphicMark
           })) {
             return
           }
@@ -271,7 +271,7 @@ class GraphicMarkEvent {
    * @param checkPointOnLine
    * @returns {boolean}
    */
-  realFindNoneMarkerMouseDownActiveData (markKey, point, checkPointOnLine) {
+  realFindNoneGraphicMarkMouseDownActiveData (markKey, point, checkPointOnLine) {
     const graphicMarkData = this.storage.graphicMarkDatas[markKey]
     graphicMarkData.forEach((data, index) => {
       const points = data.points
@@ -282,7 +282,7 @@ class GraphicMarkEvent {
         const x = (p.xPos - this.storage.minPos) * this.storage.dataSpace
         const y = this.yRender.getY(p.price)
         xyPoints.push({ x, y })
-        const isOn = checkPointOnCircle({ x, y }, this.style.marker.point.radius, point)
+        const isOn = checkPointOnCircle({ x, y }, this.style.graphicMark.point.radius, point)
         if (isOn) {
           pointIndex = i
         }
@@ -292,7 +292,7 @@ class GraphicMarkEvent {
       })
       const isOnLine = checkPointOnLine(xyPoints, point)
       if (isOnLine || isOnCircle) {
-        this.noneMarkerMouseDownActiveData = {
+        this.noneGraphicMarkMouseDownActiveData = {
           markKey: markKey,
           dataIndex: index,
           onLine: isOnLine,
@@ -321,37 +321,37 @@ class GraphicMarkEvent {
         case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
         case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
         case GraphicMarkType.PRICE_LINE: {
-          this.onePointMarkerMouseMove(point, graphicMarkType)
+          this.onePointGraphicMarkMouseMove(point, graphicMarkType)
           break
         }
         case GraphicMarkType.STRAIGHT_LINE:
         case GraphicMarkType.RAY_LINE:
         case GraphicMarkType.SEGMENT_LINE:
         case GraphicMarkType.FIBONACCI_LINE: {
-          this.twoPointMarkerMouseMove(point, graphicMarkType)
+          this.twoPointGraphicMarkMouseMove(point, graphicMarkType)
           break
         }
         case GraphicMarkType.HORIZONTAL_RAY_LINE:
         case GraphicMarkType.HORIZONTAL_SEGMENT_LINE: {
-          this.twoPointMarkerMouseMove(point, graphicMarkType, (lastLineData, { price }) => {
+          this.twoPointGraphicMarkMouseMove(point, graphicMarkType, (lastLineData, { price }) => {
             lastLineData.points[0].price = price
           })
           break
         }
         case GraphicMarkType.VERTICAL_RAY_LINE:
         case GraphicMarkType.VERTICAL_SEGMENT_LINE: {
-          this.twoPointMarkerMouseMove(point, graphicMarkType, (lastLineData, { xPos }) => {
+          this.twoPointGraphicMarkMouseMove(point, graphicMarkType, (lastLineData, { xPos }) => {
             lastLineData.points[0].xPos = xPos
           })
           break
         }
         case GraphicMarkType.PRICE_CHANNEL_LINE:
         case GraphicMarkType.PARALLEL_STRAIGHT_LINE: {
-          this.threePointMarkerMouseMove(point, graphicMarkType)
+          this.threePointGraphicMarkMouseMove(point, graphicMarkType)
           break
         }
         case GraphicMarkType.NONE: {
-          this.noneMarkerMouseMove(point)
+          this.noneGraphicMarkMouseMove(point)
           break
         }
       }
@@ -364,8 +364,8 @@ class GraphicMarkEvent {
    * @param point
    * @param markKey
    */
-  onePointMarkerMouseMove (point, markKey) {
-    this.markerMouseMove(point, markKey, (graphicMarkData, lastLineData) => {
+  onePointGraphicMarkMouseMove (point, markKey) {
+    this.graphicMarkMouseMove(point, markKey, (graphicMarkData, lastLineData) => {
       const xPos = this.storage.minPos + (point.x - this.handler.contentLeft()) / this.storage.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
@@ -390,8 +390,8 @@ class GraphicMarkEvent {
    * @param markKey
    * @param stepTwo
    */
-  twoPointMarkerMouseMove (point, markKey, stepTwo) {
-    this.markerMouseMove(point, markKey, (graphicMarkData, lastLineData) => {
+  twoPointGraphicMarkMouseMove (point, markKey, stepTwo) {
+    this.graphicMarkMouseMove(point, markKey, (graphicMarkData, lastLineData) => {
       const xPos = this.storage.minPos + (point.x - this.handler.contentLeft()) / this.storage.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
@@ -423,8 +423,8 @@ class GraphicMarkEvent {
    * @param markKey
    * @param stepTwo
    */
-  threePointMarkerMouseMove (point, markKey, stepTwo) {
-    this.markerMouseMove(point, markKey, (graphicMarkData, lastLineData) => {
+  threePointGraphicMarkMouseMove (point, markKey, stepTwo) {
+    this.graphicMarkMouseMove(point, markKey, (graphicMarkData, lastLineData) => {
       const xPos = this.storage.minPos + (point.x - this.handler.contentLeft()) / this.storage.dataSpace
       const price = this.yRender.getValue(point.y)
       switch (lastLineData.drawStep) {
@@ -461,7 +461,7 @@ class GraphicMarkEvent {
    * @param markKey
    * @param performDifPoint
    */
-  markerMouseMove (point, markKey, performDifPoint) {
+  graphicMarkMouseMove (point, markKey, performDifPoint) {
     const graphicMarkData = this.storage.graphicMarkDatas[markKey]
     const lastLineData = graphicMarkData[graphicMarkData.length - 1] || { drawStep: GraphicMarkDrawStep.STEP_DONE }
     performDifPoint(graphicMarkData, lastLineData)
@@ -473,10 +473,10 @@ class GraphicMarkEvent {
    * 没有绘制标记时鼠标移动事件
    * @param point
    */
-  noneMarkerMouseMove (point) {
-    if (this.noneMarkerMouseDownFlag) {
-      const markKey = this.noneMarkerMouseDownActiveData.markKey
-      const dataIndex = this.noneMarkerMouseDownActiveData.dataIndex
+  noneGraphicMarkMouseMove (point) {
+    if (this.noneGraphicMarkMouseDownFlag) {
+      const markKey = this.noneGraphicMarkMouseDownActiveData.markKey
+      const dataIndex = this.noneGraphicMarkMouseDownActiveData.dataIndex
       if (markKey && dataIndex !== -1) {
         const graphicMarkData = this.storage.graphicMarkDatas[markKey]
         switch (markKey) {
@@ -489,7 +489,7 @@ class GraphicMarkEvent {
           case GraphicMarkType.PRICE_CHANNEL_LINE:
           case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
           case GraphicMarkType.FIBONACCI_LINE: {
-            const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
+            const pointIndex = this.noneGraphicMarkMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
               graphicMarkData[dataIndex].points[pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
               graphicMarkData[dataIndex].points[pointIndex].price = this.yRender.getValue(point.y)
@@ -498,7 +498,7 @@ class GraphicMarkEvent {
           }
           case GraphicMarkType.HORIZONTAL_RAY_LINE:
           case GraphicMarkType.HORIZONTAL_SEGMENT_LINE: {
-            const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
+            const pointIndex = this.noneGraphicMarkMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
               const price = this.yRender.getValue(point.y)
               graphicMarkData[dataIndex].points[pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
@@ -509,7 +509,7 @@ class GraphicMarkEvent {
           }
           case GraphicMarkType.VERTICAL_RAY_LINE:
           case GraphicMarkType.VERTICAL_SEGMENT_LINE: {
-            const pointIndex = this.noneMarkerMouseDownActiveData.pointIndex
+            const pointIndex = this.noneGraphicMarkMouseDownActiveData.pointIndex
             if (pointIndex !== -1) {
               const xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos
               graphicMarkData[dataIndex].points[0].xPos = xPos

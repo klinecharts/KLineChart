@@ -259,7 +259,7 @@ class GraphicMarkRender extends Render {
   /**
    * 渲染点形成的图形
    * @param ctx
-   * @param markerKey
+   * @param markKey
    * @param graphicMark
    * @param checkPointOnLine
    * @param generatedLinePoints
@@ -267,8 +267,8 @@ class GraphicMarkRender extends Render {
    * @param pricePrecision
    * @param priceExtendsText
    */
-  renderPointGraphicMark (ctx, markerKey, graphicMark, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
-    const graphicMarkData = this.storage.graphicMarkDatas[markerKey]
+  renderPointGraphicMark (ctx, markKey, graphicMark, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
+    const graphicMarkData = this.storage.graphicMarkDatas[markKey]
     graphicMarkData.forEach(({ points, drawStep }) => {
       const circlePoints = []
       points.forEach(({ xPos, price }) => {

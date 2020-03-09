@@ -9,7 +9,7 @@ class GraphicMarkChart extends Chart {
   }
 
   draw () {
-    const graphicMark = this.style.marker
+    const graphicMark = this.style.graphicMark
     // 画线
     this.graphicMarkRender.renderHorizontalStraightLine(this.ctx, graphicMark)
     this.graphicMarkRender.renderVerticalStraightLine(this.ctx, graphicMark)

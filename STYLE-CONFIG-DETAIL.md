@@ -209,7 +209,7 @@ config = {
       }
     }
   },
-  marker: {
+  graphicMark: {
     line: {
       color: '#1e88e5',
       size: 1

@@ -4,10 +4,10 @@ import { stopEvent } from './eventHelper'
 class KeyboardEvent extends Event {
   constructor (
     candleChart, volChart, subIndicatorChart,
-    tooltipChart, markerChart, xAxisChart, storage
+    tooltipChart, graphicMarkChart, xAxisChart, storage
   ) {
     super(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage)
-    this.markerChart = markerChart
+    this.graphicMarkChart = graphicMarkChart
   }
 
   /**
@@ -39,7 +39,7 @@ class KeyboardEvent extends Event {
         this.volChart.flush()
         this.subIndicatorChart.flush()
         this.xAxisChart.flush()
-        this.markerChart.flush()
+        this.graphicMarkChart.flush()
         if (this.storage.crossPoint) {
           this.tooltipChart.flush()
         }
@@ -59,7 +59,7 @@ class KeyboardEvent extends Event {
         if (this.storage.crossPoint) {
           this.cross(this.storage.crossPoint)
         }
-        this.markerChart.flush()
+        this.graphicMarkChart.flush()
       }
     }
   }

@@ -8,10 +8,10 @@ class MouseEvent extends Event {
   constructor (
     tooltipChart, candleChart, volChart,
     subIndicatorChart, xAxisChart,
-    markerChart, storage
+    graphicMarkChart, storage
   ) {
     super(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage)
-    this.markerChart = markerChart
+    this.graphicMarkChart = graphicMarkChart
     // 事件模型
     this.mouseMode = CROSS
     this.mouseDownPoint = { x: 0, y: 0 }
@@ -97,7 +97,7 @@ class MouseEvent extends Event {
           this.cross(point)
         } else {
           if (this.drag(this.mouseDownPoint, e.x, loadMore)) {
-            this.markerChart.flush()
+            this.graphicMarkChart.flush()
           }
         }
       } else if (this.mouseMode === CROSS) {
@@ -133,7 +133,7 @@ class MouseEvent extends Event {
     }
     if (this.zoom(isZoomingOut, scaleX, touchStartPosition, touchRange)) {
       this.cross(point)
-      this.markerChart.flush()
+      this.graphicMarkChart.flush()
     }
   }
 }
