@@ -78,9 +78,9 @@ class YAxisRender extends AxisRender {
     ctx.font = getFont(textSize)
     ctx.fillStyle = tickText.color
 
-    for (let i = 0; i < this.values.length; i++) {
-      const y = this.values[i].y
-      const text = formatBigNumber(this.values[i].v)
+    for (let i = 0; i < this.ticks.length; i++) {
+      const y = this.ticks[i].y
+      const text = formatBigNumber(this.ticks[i].v)
       if ((yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE) ||
         (yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE)) {
         ctx.textAlign = 'right'
@@ -109,8 +109,8 @@ class YAxisRender extends AxisRender {
       ctx.setLineDash(separatorLine.dashValue)
     }
 
-    for (let i = 0; i < this.values.length; i++) {
-      const y = this.values[i].y
+    for (let i = 0; i < this.ticks.length; i++) {
+      const y = this.ticks[i].y
       ctx.beginPath()
       ctx.moveTo(this.handler.contentLeft(), y)
       ctx.lineTo(this.handler.contentRight(), y)
@@ -154,8 +154,8 @@ class YAxisRender extends AxisRender {
         endX = startX - tickLineLength
       }
     }
-    for (let i = 0; i < this.values.length; i++) {
-      const y = this.values[i].y
+    for (let i = 0; i < this.ticks.length; i++) {
+      const y = this.ticks[i].y
       ctx.beginPath()
       ctx.moveTo(startX, y)
       ctx.lineTo(endX, y)
@@ -235,33 +235,33 @@ class YAxisRender extends AxisRender {
 
     this.axisRange = Math.abs(this.axisMaximum - this.axisMinimum)
 
-    this.computeAxisValues()
-    this.fixComputeAxisValues(yAxis)
+    this.computeAxisTicks()
+    this.fixComputeAxisTicks(yAxis)
   }
 
-  fixComputeAxisValues (yAxis) {
-    const valueLength = this.values.length
-    if (valueLength > 0) {
+  fixComputeAxisTicks (yAxis) {
+    const tickLength = this.ticks.length
+    if (tickLength > 0) {
       const textHeight = yAxis.tick.text.size
-      const firstValueY = this.getY(this.values[0].v)
-      let subValueCount = 1
-      if (valueLength > 1) {
-        const secondValueY = this.getY(this.values[1].v)
-        const subY = Math.abs(secondValueY - firstValueY)
-        if (subY < textHeight * 2) {
-          subValueCount = Math.ceil(textHeight * 2 / subY)
+      const y = this.getY(this.ticks[0].v)
+      let valueCountDif = 1
+      if (tickLength > 1) {
+        const nextY = this.getY(this.ticks[1].v)
+        const yDif = Math.abs(nextY - y)
+        if (yDif < textHeight * 2) {
+          valueCountDif = Math.ceil(textHeight * 2 / yDif)
         }
       }
-      const values = []
-      for (let i = 0; i < valueLength; i += subValueCount) {
-        const v = this.values[i].v
+      const ticks = []
+      for (let i = 0; i < tickLength; i += valueCountDif) {
+        const v = this.ticks[i].v
         const y = this.getY(v)
         if (y > this.handler.contentTop() + textHeight &&
           y < this.handler.contentBottom() - textHeight) {
-          values.push({ v, y })
+          ticks.push({ v, y })
         }
       }
-      this.values = values
+      this.ticks = ticks
     }
   }
 

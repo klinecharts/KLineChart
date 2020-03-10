@@ -7,15 +7,15 @@ class AxisRender extends Render {
     this.axisMaximum = 0
     this.axisMinimum = 0
     this.axisRange = 0
-    this.values = []
+    this.ticks = []
   }
 
   /**
    * 计算轴上的值
    */
-  computeAxisValues () {
+  computeAxisTicks () {
     if (this.axisRange < 0) {
-      this.values = []
+      this.ticks = []
       return
     }
     const interval = +nice(this.axisRange / 8.0)
@@ -31,10 +31,10 @@ class AxisRender extends Render {
         f += interval
       }
     }
-    this.values = []
+    this.ticks = []
     f = first
     for (let i = 0; i < n; i++) {
-      this.values[i] = { v: +(f.toFixed(precision)) }
+      this.ticks[i] = { v: +(f.toFixed(precision)) }
       f += interval
     }
   }

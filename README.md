@@ -6,7 +6,7 @@
 [![types](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-📈A kline library for browser. Support technical indicators and parameter setting, support drawing marker maps, custom styles.
+📈A kline library for browser. Support technical indicators and parameter setting, support for graphic markup, custom style.
 ## Browser Support
 The chart is based on canvas. In theory, as long as it supports canvas, it is the same on mobile.
 ## Installing
@@ -138,7 +138,7 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
     </tbody>
 </table>
 
-## Marker Maps
+## Graphic Mark
 **Does not support mobile.**
 + [x] Horizontal straight line
 + [x] Vertical straight line
@@ -158,22 +158,4 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
 [https://liihuu.github.io/kline](https://liihuu.github.io/kline)
 
 ## License
-Copyright (c) 2019 lihu
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+[MIT](./LICENSE)

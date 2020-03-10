@@ -1380,7 +1380,7 @@ function (_Render) {
     _this.axisMaximum = 0;
     _this.axisMinimum = 0;
     _this.axisRange = 0;
-    _this.values = [];
+    _this.ticks = [];
     return _this;
   }
   /**
@@ -1389,10 +1389,10 @@ function (_Render) {
 
 
   _createClass(AxisRender, [{
-    key: "computeAxisValues",
-    value: function computeAxisValues() {
+    key: "computeAxisTicks",
+    value: function computeAxisTicks() {
       if (this.axisRange < 0) {
-        this.values = [];
+        this.ticks = [];
         return;
       }
 
@@ -1410,11 +1410,11 @@ function (_Render) {
         }
       }
 
-      this.values = [];
+      this.ticks = [];
       f = first;
 
       for (var i = 0; i < n; i++) {
-        this.values[i] = {
+        this.ticks[i] = {
           v: +f.toFixed(precision)
         };
         f += interval;
@@ -1521,9 +1521,9 @@ function (_AxisRender) {
       ctx.font = getFont(textSize);
       ctx.fillStyle = tickText.color;
 
-      for (var i = 0; i < this.values.length; i++) {
-        var y = this.values[i].y;
-        var text = formatBigNumber(this.values[i].v);
+      for (var i = 0; i < this.ticks.length; i++) {
+        var y = this.ticks[i].y;
+        var text = formatBigNumber(this.ticks[i].v);
 
         if (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE || yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE) {
           ctx.textAlign = 'right';
@@ -1558,8 +1558,8 @@ function (_AxisRender) {
         ctx.setLineDash(separatorLine.dashValue);
       }
 
-      for (var i = 0; i < this.values.length; i++) {
-        var y = this.values[i].y;
+      for (var i = 0; i < this.ticks.length; i++) {
+        var y = this.ticks[i].y;
         ctx.beginPath();
         ctx.moveTo(this.handler.contentLeft(), y);
         ctx.lineTo(this.handler.contentRight(), y);
@@ -1610,8 +1610,8 @@ function (_AxisRender) {
         }
       }
 
-      for (var i = 0; i < this.values.length; i++) {
-        var y = this.values[i].y;
+      for (var i = 0; i < this.ticks.length; i++) {
+        var y = this.ticks[i].y;
         ctx.beginPath();
         ctx.moveTo(startX, y);
         ctx.lineTo(endX, y);
@@ -1706,43 +1706,44 @@ function (_AxisRender) {
       this.axisMinimum = min - range / 100.0 * 10.0;
       this.axisMaximum = max + range / 100.0 * 20.0;
       this.axisRange = Math.abs(this.axisMaximum - this.axisMinimum);
-      this.computeAxisValues();
-      this.fixComputeAxisValues(yAxis);
+      this.computeAxisTicks();
+      this.fixComputeAxisTicks(yAxis);
     }
   }, {
-    key: "fixComputeAxisValues",
-    value: function fixComputeAxisValues(yAxis) {
-      var valueLength = this.values.length;
+    key: "fixComputeAxisTicks",
+    value: function fixComputeAxisTicks(yAxis) {
+      var tickLength = this.ticks.length;
 
-      if (valueLength > 0) {
+      if (tickLength > 0) {
         var textHeight = yAxis.tick.text.size;
-        var firstValueY = this.getY(this.values[0].v);
-        var subValueCount = 1;
+        var y = this.getY(this.ticks[0].v);
+        var valueCountDif = 1;
 
-        if (valueLength > 1) {
-          var secondValueY = this.getY(this.values[1].v);
-          var subY = Math.abs(secondValueY - firstValueY);
+        if (tickLength > 1) {
+          var nextY = this.getY(this.ticks[1].v);
+          var yDif = Math.abs(nextY - y);
 
-          if (subY < textHeight * 2) {
-            subValueCount = Math.ceil(textHeight * 2 / subY);
+          if (yDif < textHeight * 2) {
+            valueCountDif = Math.ceil(textHeight * 2 / yDif);
           }
         }
 
-        var values = [];
+        var ticks = [];
 
-        for (var i = 0; i < valueLength; i += subValueCount) {
-          var v = this.values[i].v;
-          var y = this.getY(v);
+        for (var i = 0; i < tickLength; i += valueCountDif) {
+          var v = this.ticks[i].v;
 
-          if (y > this.handler.contentTop() + textHeight && y < this.handler.contentBottom() - textHeight) {
-            values.push({
+          var _y = this.getY(v);
+
+          if (_y > this.handler.contentTop() + textHeight && _y < this.handler.contentBottom() - textHeight) {
+            ticks.push({
               v: v,
-              y: y
+              y: _y
             });
           }
         }
 
-        this.values = values;
+        this.ticks = ticks;
       }
     }
   }, {
@@ -3113,11 +3114,6 @@ function formatDate(timestamp, format) {
           return "".concat(monthText, "-").concat(dayText);
         }
 
-      case 'MM':
-        {
-          return monthText;
-        }
-
       case 'hh:mm':
         {
           return "".concat(hourText, ":").concat(minuteText);
@@ -4358,17 +4354,17 @@ function (_AxisRender) {
         labelY += tickLine.length;
       }
 
-      var valueLength = this.values.length;
+      var valueLength = this.ticks.length;
 
       for (var i = 0; i < valueLength; i++) {
-        var x = this.values[i].x;
-        var dataPos = parseInt(this.values[i].v);
+        var x = this.ticks[i].x;
+        var dataPos = parseInt(this.ticks[i].v);
         var kLineModel = this.storage.dataList[dataPos];
         var timestamp = kLineModel.timestamp;
         var dateText = formatDate(timestamp, this.tickLabelFormatType);
 
         if (i !== valueLength - 1) {
-          var nextDataPos = parseInt(this.values[i + 1].v);
+          var nextDataPos = parseInt(this.ticks[i + 1].v);
           var nextKLineModel = this.storage.dataList[nextDataPos];
           var nextTimestamp = nextKLineModel.timestamp;
           var year = formatDate(timestamp, 'YYYY');
@@ -4407,8 +4403,8 @@ function (_AxisRender) {
         ctx.setLineDash(xAxis.separatorLine.dashValue);
       }
 
-      for (var i = 0; i < this.values.length; i++) {
-        var x = this.values[i].x;
+      for (var i = 0; i < this.ticks.length; i++) {
+        var x = this.ticks[i].x;
         ctx.beginPath();
         ctx.moveTo(x, this.handler.contentTop());
         ctx.lineTo(x, this.handler.contentBottom());
@@ -4438,8 +4434,8 @@ function (_AxisRender) {
       var startY = this.handler.contentBottom();
       var endY = startY + tickLine.length;
 
-      for (var i = 0; i < this.values.length; i++) {
-        var x = this.values[i].x;
+      for (var i = 0; i < this.ticks.length; i++) {
+        var x = this.ticks[i].x;
         ctx.beginPath();
         ctx.moveTo(x, startY);
         ctx.lineTo(x, endY);
@@ -4454,24 +4450,24 @@ function (_AxisRender) {
       this.axisMinimum = minPos;
       this.axisMaximum = Math.min(minPos + this.storage.range - 1, this.storage.dataList.length - 1);
       this.axisRange = this.axisMaximum - this.axisMinimum + 1;
-      this.computeAxisValues();
-      this.fixComputeAxisValues(xAxis);
+      this.computeAxisTicks();
+      this.fixComputeAxisTicks(xAxis);
     }
   }, {
-    key: "fixComputeAxisValues",
-    value: function fixComputeAxisValues(xAxis) {
-      var valueLength = this.values.length;
+    key: "fixComputeAxisTicks",
+    value: function fixComputeAxisTicks(xAxis) {
+      var valueLength = this.ticks.length;
 
       if (valueLength > 0) {
         var defaultLabelWidth = calcTextWidth(xAxis.tick.text.size, '00-00 00:00');
-        var pos = parseInt(this.values[0].v);
+        var pos = parseInt(this.ticks[0].v);
         var timestamp = formatValue(this.storage.dataList[pos], 'timestamp', 0);
         var x = this.getX(pos);
         var valueCountDif = 1;
         this.tickLabelFormatType = 'MM:DD hh:mm';
 
         if (valueLength > 1) {
-          var nextPos = parseInt(this.values[1].v);
+          var nextPos = parseInt(this.ticks[1].v);
           var nextTimestamp = formatValue(this.storage.dataList[nextPos], 'timestamp', 0);
           var nextX = this.getX(nextPos);
           var xDif = Math.abs(nextX - x);
@@ -4494,22 +4490,22 @@ function (_AxisRender) {
           }
         }
 
-        var values = [];
+        var ticks = [];
 
         for (var i = 0; i < valueLength; i += valueCountDif) {
-          var v = this.values[i].v;
+          var v = this.ticks[i].v;
 
           var _x = this.getX(v);
 
           if (_x > this.handler.contentLeft() + defaultLabelWidth / 2 && _x < this.handler.contentRight() - defaultLabelWidth / 2) {
-            values.push({
+            ticks.push({
               v: v,
               x: _x
             });
           }
         }
 
-        this.values = values;
+        this.ticks = ticks;
       }
     }
     /**

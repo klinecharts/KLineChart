@@ -47,15 +47,15 @@ class XAxisRender extends AxisRender {
     if (tickLine.display) {
       labelY += (tickLine.length)
     }
-    const valueLength = this.values.length
+    const valueLength = this.ticks.length
     for (let i = 0; i < valueLength; i++) {
-      const x = this.values[i].x
-      const dataPos = parseInt(this.values[i].v)
+      const x = this.ticks[i].x
+      const dataPos = parseInt(this.ticks[i].v)
       const kLineModel = this.storage.dataList[dataPos]
       const timestamp = kLineModel.timestamp
       let dateText = formatDate(timestamp, this.tickLabelFormatType)
       if (i !== valueLength - 1) {
-        const nextDataPos = parseInt(this.values[i + 1].v)
+        const nextDataPos = parseInt(this.ticks[i + 1].v)
         const nextKLineModel = this.storage.dataList[nextDataPos]
         const nextTimestamp = nextKLineModel.timestamp
         const year = formatDate(timestamp, 'YYYY')
@@ -87,8 +87,8 @@ class XAxisRender extends AxisRender {
     if (xAxis.separatorLine.style === LineStyle.DASH) {
       ctx.setLineDash(xAxis.separatorLine.dashValue)
     }
-    for (let i = 0; i < this.values.length; i++) {
-      const x = this.values[i].x
+    for (let i = 0; i < this.ticks.length; i++) {
+      const x = this.ticks[i].x
       ctx.beginPath()
       ctx.moveTo(x, this.handler.contentTop())
       ctx.lineTo(x, this.handler.contentBottom())
@@ -115,8 +115,8 @@ class XAxisRender extends AxisRender {
 
     const endY = startY + tickLine.length
 
-    for (let i = 0; i < this.values.length; i++) {
-      const x = this.values[i].x
+    for (let i = 0; i < this.ticks.length; i++) {
+      const x = this.ticks[i].x
       ctx.beginPath()
       ctx.moveTo(x, startY)
       ctx.lineTo(x, endY)
@@ -130,21 +130,21 @@ class XAxisRender extends AxisRender {
     this.axisMinimum = minPos
     this.axisMaximum = Math.min(minPos + this.storage.range - 1, this.storage.dataList.length - 1)
     this.axisRange = this.axisMaximum - this.axisMinimum + 1
-    this.computeAxisValues()
-    this.fixComputeAxisValues(xAxis)
+    this.computeAxisTicks()
+    this.fixComputeAxisTicks(xAxis)
   }
 
-  fixComputeAxisValues (xAxis) {
-    const valueLength = this.values.length
+  fixComputeAxisTicks (xAxis) {
+    const valueLength = this.ticks.length
     if (valueLength > 0) {
       const defaultLabelWidth = calcTextWidth(xAxis.tick.text.size, '00-00 00:00')
-      const pos = parseInt(this.values[0].v)
+      const pos = parseInt(this.ticks[0].v)
       const timestamp = formatValue(this.storage.dataList[pos], 'timestamp', 0)
       const x = this.getX(pos)
       let valueCountDif = 1
       this.tickLabelFormatType = 'MM:DD hh:mm'
       if (valueLength > 1) {
-        const nextPos = parseInt(this.values[1].v)
+        const nextPos = parseInt(this.ticks[1].v)
         const nextTimestamp = formatValue(this.storage.dataList[nextPos], 'timestamp', 0)
         const nextX = this.getX(nextPos)
         const xDif = Math.abs(nextX - x)
@@ -163,16 +163,16 @@ class XAxisRender extends AxisRender {
           this.tickLabelFormatType = 'YYYY'
         }
       }
-      const values = []
+      const ticks = []
       for (let i = 0; i < valueLength; i += valueCountDif) {
-        const v = this.values[i].v
+        const v = this.ticks[i].v
         const x = this.getX(v)
         if (x > this.handler.contentLeft() + defaultLabelWidth / 2 &&
           x < this.handler.contentRight() - defaultLabelWidth / 2) {
-          values.push({ v, x })
+          ticks.push({ v, x })
         }
       }
-      this.values = values
+      this.ticks = ticks
     }
   }
 

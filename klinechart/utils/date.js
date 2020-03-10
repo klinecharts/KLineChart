@@ -34,9 +34,6 @@ export function formatDate (timestamp, format) {
       case 'MM-DD': {
         return `${monthText}-${dayText}`
       }
-      case 'MM': {
-        return monthText
-      }
       case 'hh:mm': {
         return `${hourText}:${minuteText}`
       }
@@ -46,19 +43,6 @@ export function formatDate (timestamp, format) {
     }
   }
   return '--'
-}
-
-/**
- * 获取周几
- * @param timestamp
- * @returns {number}
- */
-export function getWeekDay (timestamp) {
-  const date = getDate(timestamp)
-  if (date) {
-    return date.getDay()
-  }
-  return -1
 }
 
 function getDate (timestamp) {
