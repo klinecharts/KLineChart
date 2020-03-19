@@ -68,6 +68,10 @@ export default class ChartData {
     }
   }
 
+  styleOptions () {
+    return this._styleOptions
+  }
+
   space (width) {
     this.dataSpace = width / this.range
   }

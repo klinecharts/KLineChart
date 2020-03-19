@@ -48,16 +48,20 @@ export default class Series {
   _createYAxisWidget (container) {
   }
 
+  _setCellSize (cell, size) {
+    cell.style.left = `${size.left}px`
+    cell.style.width = `${size.width}px`
+    cell.style.height = `${size.height}px`
+  }
+
   /**
    * 设置尺寸
    * @param mainWidgetSize
    * @param yAxisWidgetSize
    */
   setSize (mainWidgetSize, yAxisWidgetSize) {
-    this._mainWidgetCell.style.width = `${mainWidgetSize.width}px`
-    this._mainWidgetCell.style.height = `${mainWidgetSize.height}px`
-    this._yAxisWidgetCell.style.height = `${yAxisWidgetSize.width}px`
-    this._yAxisWidgetCell.style.height = `${yAxisWidgetSize.height}px`
+    this._setCellSize(this._mainWidgetCell, mainWidgetSize)
+    this._setCellSize(this._yAxisWidgetCell, yAxisWidgetSize)
     this._mainWidget.setSize(mainWidgetSize.width, mainWidgetSize.height)
     if (this._yAxisWidget) {
       this._yAxisWidget.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height)
