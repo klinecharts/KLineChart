@@ -1,6 +1,11 @@
 import View from './View'
 
 export default class AxisView extends View {
+  constructor (container, chartData, axis) {
+    super(container, chartData)
+    this._axis = axis
+  }
+
   _draw () {
     this._drawAxisLine()
     this._drawTickLines()

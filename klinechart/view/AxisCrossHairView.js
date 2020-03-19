@@ -1,6 +1,11 @@
 import View from './View'
 
 export default class AxisCrossHairView extends View {
+  constructor (container, chartData, axis) {
+    super(container, chartData)
+    this._axis = axis
+  }
+
   _draw () {
     this._drawCrossHairLabel()
   }

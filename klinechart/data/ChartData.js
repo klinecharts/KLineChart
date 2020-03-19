@@ -3,14 +3,14 @@ import { defaultStyleOptions } from './options/styleOptions'
 
 import { GraphicMarkType } from '../internal/constants'
 
-export const DATA_MARGIN_SPACE_RATE = 0.26
+export const DATA_MARGIN_SPACE_RATE = 0.25
 
 export const InvalidateLevel = {
   CROSS_HAIR: 1,
   FULL: 2
 }
 
-class ChartData {
+export default class ChartData {
   constructor (styleOptions) {
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
@@ -119,5 +119,3 @@ class ChartData {
     this.crossPoint.x = offsetLeft + this.dataSpace * sub + this.dataSpace * (1.0 - DATA_MARGIN_SPACE_RATE) / 2
   }
 }
-
-export default ChartData
