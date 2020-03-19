@@ -1,5 +1,5 @@
 import Axis from './Axis'
-import { TechnicalIndicatorType } from '../data/constants/technicalIndicatorTypeConstants'
+import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 import { formatValue } from '../utils/format'
 
 export const YAxisType = {
@@ -13,6 +13,73 @@ export default class YAxis extends Axis {
     this._yAxisType = yAxisType
   }
 
+  _compareMinMax (kLineData, technicalIndicatorType, minMaxArray) {
+    const technicalIndicatorData = formatValue(kLineData, technicalIndicatorType.toLowerCase(), {})
+    Object.keys(technicalIndicatorData).forEach(key => {
+      const value = technicalIndicatorData[key]
+      if (value || value === 0) {
+        minMaxArray[0] = Math.min(minMaxArray[0], value)
+        minMaxArray[1] = Math.max(minMaxArray[1], value)
+      }
+    })
+    if (technicalIndicatorType === TechnicalIndicatorType.BOLL || technicalIndicatorType === TechnicalIndicatorType.SAR) {
+      minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)
+      minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
+    }
+    return minMaxArray
+  }
+
+  _computeMinMaxValue () {
+    let min = this._minValue
+    let max = this._maxValue
+    if (min === Infinity || max === -Infinity || (max === 0 && min === 0)) {
+      return { min: 0, max: 0, range: 0 }
+    }
+
+    let range = Math.abs(max - min)
+    if (range === 0) {
+      max += 1
+      min -= 1
+      range = Math.abs(max - min)
+    }
+    // 保证每次图形绘制上下都留间隙
+    min = min - (range / 100.0) * 10.0
+    max = max + (range / 100.0) * 20.0
+    range = Math.abs(max - min)
+    return { min, max, range }
+  }
+
+  _computeOptimalTicks (ticks) {
+    const optimalTicks = []
+    const tickLength = ticks.length
+    if (tickLength > 0) {
+      const textHeight = this._chartData.styleOptions().xAxis.tick.text.fontSize
+      const y = this.convertToPixel(ticks[0].v)
+      let tickCountDif = 1
+      if (tickLength > 1) {
+        const nextY = this.convertToPixel(ticks[1].v)
+        const yDif = Math.abs(nextY - y)
+        if (yDif < textHeight * 2) {
+          tickCountDif = Math.ceil(textHeight * 2 / yDif)
+        }
+      }
+      for (let i = 0; i < tickLength; i += tickCountDif) {
+        const v = ticks[i].v
+        const y = this.convertToPixel(v)
+        if (y > textHeight &&
+          y < this._height - textHeight) {
+          optimalTicks.push({ v, y })
+        }
+      }
+    }
+    return optimalTicks
+  }
+
+  /**
+   * 计算最大最小值
+   * @param technicalIndicatorType
+   * @param isRealTimeChart
+   */
   calcMinMaxValue (technicalIndicatorType, isRealTimeChart) {
     const dataList = this._chartData.dataList()
     const from = this._chartData.from()
@@ -45,79 +112,17 @@ export default class YAxis extends Axis {
       }
     }
 
-    if (minMaxArray[0] !== Number.MAX_SAFE_INTEGER && minMaxArray[1] !== Number.MIN_SAFE_INTEGER) {
+    if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
       this._minValue = minMaxArray[0]
       this._maxValue = minMaxArray[1]
     }
   }
 
-  _compareMinMax (kLineData, indicatorType, minMaxArray) {
-    const indicatorData = formatValue(kLineData, indicatorType.toLowerCase(), {})
-    Object.keys(indicatorData).forEach(key => {
-      const value = indicatorData[key]
-      if (value || value === 0) {
-        minMaxArray[0] = Math.min(minMaxArray[0], value)
-        minMaxArray[1] = Math.max(minMaxArray[1], value)
-      }
-    })
-    if (indicatorType === TechnicalIndicatorType.BOLL || indicatorType === TechnicalIndicatorType.SAR) {
-      minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)
-      minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
-    }
-    return minMaxArray
-  }
-
-  _computeMinMaxValue () {
-    let min = this._minValue
-    let max = this._maxValue
-    if (min === Number.MAX_SAFE_INTEGER || max === Number.MIN_SAFE_INTEGER || (max === 0 && min === 0)) {
-      return
-    }
-
-    let range = Math.abs(max - min)
-    if (range === 0) {
-      max += 1
-      min -= 1
-      range = Math.abs(max - min)
-    }
-    // 保证每次图形绘制上下都留间隙
-    min = min - (range / 100.0) * 10.0
-    max = max + (range / 100.0) * 20.0
-    range = Math.abs(max - min)
-    return { min, max, range }
-  }
-
-  _computeOptimalTicks (ticks) {
-    const optimalTicks = []
-    const tickLength = ticks.length
-    if (tickLength > 0) {
-      const textHeight = this._view.styleOptions().xAxis.tick.text.fontSize
-      const y = this.getY(ticks[0].v)
-      let tickCountDif = 1
-      if (tickLength > 1) {
-        const nextY = this.getY(ticks[1].v)
-        const yDif = Math.abs(nextY - y)
-        if (yDif < textHeight * 2) {
-          tickCountDif = Math.ceil(textHeight * 2 / yDif)
-        }
-      }
-      for (let i = 0; i < tickLength; i += tickCountDif) {
-        const v = ticks[i].v
-        const y = this.getY(v)
-        if (y > this.handler.contentTop() + textHeight &&
-          y < this.handler.contentBottom() - textHeight) {
-          optimalTicks.push({ v, y })
-        }
-      }
-    }
-    return optimalTicks
-  }
-
   convertFromPixel (pixel) {
-
+    return (1.0 - pixel / this._height) * this._range + this._minValue
   }
 
   convertToPixel (value) {
-
+    return (1.0 - (value - this._minValue) / this._range) * this._height
   }
 }

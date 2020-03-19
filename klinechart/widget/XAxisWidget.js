@@ -3,9 +3,8 @@ import XAxisView from '../view/XAxisView'
 import XAxisCrossHairView from '../view/XAxisCrossHairView'
 
 export default class XAxisWidget extends Widget {
-  constructor (container, chartData, xAxis) {
-    super(container, chartData)
-    this._xAxis = xAxis
+  _initBefore (props) {
+    this._xAxis = props.xAxis
   }
 
   _createMainView () {

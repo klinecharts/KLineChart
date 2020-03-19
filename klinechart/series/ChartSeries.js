@@ -6,6 +6,7 @@ import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
 import { isArray, isObject } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
+import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 
 const DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE = 0.2
 
@@ -13,14 +14,22 @@ const CANDLE_STICK_MIN_HEIGHT_RATE = 0.4
 
 const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_'
 
+export const CANDLE_STICK_SERIES_TAG = 'candle_stick_series_tag'
+
 export default class ChartSeries {
   constructor (container, styleOptions) {
     this._container = container
     this._technicalIndicatorBaseId = 0
     this._chartData = new ChartData(styleOptions)
-    this._xAxisSeries = new XAxisSeries(container, this._chartData)
-    this._candleStickSeries = new CandleStickSeries(container, this._chartData, this._xAxisSeries.xAxis())
+    this._xAxisSeries = new XAxisSeries({ container, chartData: this._chartData })
+    this._candleStickSeries = new CandleStickSeries({
+      container,
+      chartData: this._chartData,
+      xAxis: this._xAxisSeries.xAxis(),
+      technicalIndicatorType: TechnicalIndicatorType.MA
+    })
     this._technicalIndicatorSeries = {}
+    this.measureSeriesSize()
   }
 
   /**
@@ -111,7 +120,7 @@ export default class ChartSeries {
    * 测量尺寸
    * @private
    */
-  measureWidgetSize () {
+  measureSeriesSize () {
     const seriesHeight = this._container.offsetHeight
     const seriesWidth = this._container.offsetWidth
     const xAxisHeight = this._measureXAxisHeight()
@@ -134,6 +143,7 @@ export default class ChartSeries {
       yAxisOffsetLeft = 0
       mainOffsetLeft = yAxisWidth
     }
+    this._chartData.setTotalDataSpace(seriesExcludeYAxisWidth)
     this._candleStickSeries.setSize(
       { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: candleStickSeriesHeight },
       { left: yAxisOffsetLeft, width: yAxisWidth, height: candleStickSeriesHeight }
@@ -156,7 +166,7 @@ export default class ChartSeries {
    */
   applyStyleOptions (styleOptions) {
     this._chartData.applyStyleOptions(styleOptions)
-    this.measureWidgetSize()
+    this.measureSeriesSize()
   }
 
   /**
@@ -210,8 +220,13 @@ export default class ChartSeries {
   createTechnicalIndicator (technicalIndicatorType) {
     this._technicalIndicatorBaseId++
     const tag = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
-    this._technicalIndicatorSeries[tag] = new TechnicalIndicatorSeries(this._container, this._chartData, this._xAxisSeries.xAxis(), technicalIndicatorType)
-    this.measureWidgetSize()
+    this._technicalIndicatorSeries[tag] = new TechnicalIndicatorSeries({
+      container: this._container,
+      chartData: this._chartData,
+      xAxis: this._xAxisSeries.xAxis(),
+      technicalIndicatorType
+    })
+    this.measureSeriesSize()
     return tag
   }
 
@@ -224,7 +239,7 @@ export default class ChartSeries {
     if (series) {
       series.destroy()
       delete this._technicalIndicatorSeries[tag]
-      this.measureWidgetSize()
+      this.measureSeriesSize()
     }
   }
 
@@ -234,12 +249,16 @@ export default class ChartSeries {
    * @param technicalIndicatorType
    */
   setTechnicalIndicatorType (tag, technicalIndicatorType) {
-    if (tag === 'main') {
+    if (tag === CANDLE_STICK_SERIES_TAG) {
       this._technicalIndicatorSeries.setTechnicalIndicatorType(technicalIndicatorType)
     } else {
       const series = this._technicalIndicatorSeries[tag]
       if (series) {
-        series.setTechnicalIndicatorType(technicalIndicatorType)
+        if (technicalIndicatorType === TechnicalIndicatorType.NO) {
+          this.removeTechnicalIndicator(tag)
+        } else {
+          series.setTechnicalIndicatorType(technicalIndicatorType)
+        }
       }
     }
   }

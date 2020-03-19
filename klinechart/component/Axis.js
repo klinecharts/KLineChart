@@ -9,11 +9,20 @@ export default class Axis {
     this._ticks = []
   }
 
+  /**
+   * 设置尺寸
+   * @param width
+   * @param height
+   */
   setSize (width, height) {
     this._width = width
     this._height = height
   }
 
+  /**
+   * 获取ticks
+   * @returns {[]|*[]}
+   */
   ticks () {
     return this._ticks
   }

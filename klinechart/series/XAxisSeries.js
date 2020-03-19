@@ -3,20 +3,24 @@ import XAxisWidget from '../widget/XAxisWidget'
 import XAxis from '../component/XAxis'
 
 export default class XAxisSeries extends Series {
-  constructor (container, chartData) {
-    super(container, chartData)
-    this._xAxis = new XAxis(chartData)
+  _initBefore () {
+    this._xAxis = new XAxis(this._chartData)
   }
 
   _createMainWidget (container) {
-    return new XAxisWidget(container, this._chartData, this._xAxis)
+    return new XAxisWidget({ container, chartData: this._chartData, xAxis: this._xAxis })
+  }
+
+  _computeAxis () {
+    this._xAxis.computeAxis()
   }
 
   xAxis () {
     return this._xAxis
   }
 
-  _computeAxis () {
-    this._xAxis.computeAxis()
+  setSize (mainWidgetSize, yAxisWidgetSize) {
+    super.setSize(mainWidgetSize, yAxisWidgetSize)
+    this._xAxis.setSize(mainWidgetSize.width, mainWidgetSize.height)
   }
 }

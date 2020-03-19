@@ -61,7 +61,6 @@ const GraphicMarkDrawStep = {
 }
 
 export {
-  IndicatorType, LineStyle, YAxisPosition, YAxisTextPosition, ChartType,
-  CandleStyle, TooltipTextDisplayRule, TooltipCandleChartTextDisplayType,
+  IndicatorType,
   GraphicMarkType, GraphicMarkDrawStep
 }

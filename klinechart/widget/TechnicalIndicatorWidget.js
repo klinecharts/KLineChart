@@ -3,10 +3,9 @@ import TechnicalIndicatorView from '../view/TechnicalIndicatorView'
 import TechnicalIndicatorCrossHairView from '../view/TechnicalIndicatorCrossHairView'
 
 export default class TechnicalIndicatorWidget extends Widget {
-  constructor (container, chartData, xAxis, yAxis) {
-    super(container, chartData)
-    this._xAxis = xAxis
-    this._yAxis = yAxis
+  _initBefore (props) {
+    this._xAxis = props.xAxis
+    this._yAxis = props.yAxis
   }
 
   _createMainView () {

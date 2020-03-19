@@ -1,25 +1,34 @@
 import { InvalidateLevel } from '../data/ChartData'
 
 export default class Series {
-  constructor (container, chartData) {
-    this._container = container
-    this._chartData = chartData
+  constructor (props) {
+    this._container = props.container
+    this._chartData = props.chartData
+    this._initBefore(props)
     this._initElement()
     this._mainWidget = this._createMainWidget(this._mainWidgetCell)
     this._yAxisWidget = this._createYAxisWidget(this._yAxisWidgetCell)
   }
 
-  _initElement (container) {
+  _initBefore (props) {}
+
+  _initElement () {
     this._element = document.createElement('div')
     this._element.style.margin = '0'
     this._element.style.padding = '0'
+    this._element.style.width = '100%'
     this._element.style.position = 'relative'
     this._element.style.overflow = 'hidden'
     this._mainWidgetCell = this._createCell()
     this._yAxisWidgetCell = this._createCell()
     this._element.appendChild(this._mainWidgetCell)
     this._element.appendChild(this._yAxisWidgetCell)
-    container.appendChild(this._element)
+    const lastElement = this._container.lastChild
+    if (lastElement) {
+      this._container.insertBefore(this._element, lastElement)
+    } else {
+      this._container.appendChild(this._element)
+    }
   }
 
   _createCell () {
@@ -60,6 +69,7 @@ export default class Series {
    * @param yAxisWidgetSize
    */
   setSize (mainWidgetSize, yAxisWidgetSize) {
+    this._element.style.height = `${mainWidgetSize.height}px`
     this._setCellSize(this._mainWidgetCell, mainWidgetSize)
     this._setCellSize(this._yAxisWidgetCell, yAxisWidgetSize)
     this._mainWidget.setSize(mainWidgetSize.width, mainWidgetSize.height)
@@ -68,9 +78,7 @@ export default class Series {
     }
   }
 
-  _computeAxis () {
-
-  }
+  _computeAxis () {}
 
   /**
    * 刷新

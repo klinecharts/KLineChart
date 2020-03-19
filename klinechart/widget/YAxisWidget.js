@@ -3,9 +3,8 @@ import YAxisView from '../view/YAxisView'
 import YAxisCrossHairView from '../view/YAxisCrossHairView'
 
 export default class YAxisWidget extends Widget {
-  constructor (container, chartData, yAxis) {
-    super(container, chartData)
-    this._yAxis = yAxis
+  _initBefore (props) {
+    this._yAxis = props.yAxis
   }
 
   _createMainView () {
