@@ -1,4 +1,4 @@
-import Render from './Render'
+import View from './Render'
 import {
   checkPointOnStraightLine,
   checkPointOnCircle,
@@ -6,12 +6,12 @@ import {
   checkPointOnRayLine,
   checkPointOnSegmentLine,
   getParallelLines, getFibonacciLines
-} from '../utils/graphicMark'
-import { formatPrecision } from '../utils/number'
-import { getFont } from '../utils/draw'
+} from '../utils/graphic'
+import { formatPrecision } from '../utils/format'
+import { getFont } from '../utils/canvas'
 import { GraphicMarkType, GraphicMarkDrawStep } from '../internal/constants'
 
-class GraphicMarkRender extends Render {
+class GraphicMarkRender extends View {
   constructor (handler, storage, yRender) {
     super(handler, storage)
     this.yRender = yRender

@@ -1,20 +1,3 @@
-/**
- * 格式化值
- * @param data
- * @param key
- * @param defaultValue
- * @returns {string|*}
- */
-export function formatValue (data, key, defaultValue = '--') {
-  if (data && isObject(data)) {
-    const value = data[key]
-    if (value || value === 0 || value === false) {
-      return value
-    }
-  }
-  return defaultValue
-}
-
 export function merge (target, source) {
   if (!isObject(target) || !isObject(source)) {
     return
@@ -36,6 +19,33 @@ export function merge (target, source) {
       }
     }
   }
+}
+
+export function clone (target) {
+  if (!target || !isObject(target)) {
+    return target
+  }
+
+  let copy
+  if (isArray(target)) {
+    copy = []
+  } else {
+    copy = {}
+  }
+  let p
+  let v
+  for (p in target) {
+    if (target.hasOwnProperty(p)) {
+      v = target[p]
+      if (v && isObject(v)) {
+        copy[p] = clone(v)
+      } else {
+        copy[p] = v
+      }
+    }
+  }
+
+  return copy
 }
 
 export function isArray (value) {

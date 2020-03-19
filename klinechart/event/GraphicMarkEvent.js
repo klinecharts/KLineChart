@@ -3,8 +3,8 @@ import {
   checkPointOnCircle, checkPointOnStraightLine,
   checkPointOnRayLine, checkPointOnSegmentLine,
   getParallelLines, getFibonacciLines
-} from '../utils/graphicMark'
-import { isFunction } from '../utils/data'
+} from '../utils/graphic'
+import { isFunction } from '../utils/typeChecks'
 import { GraphicMarkDrawStep, GraphicMarkType } from '../internal/constants'
 
 class GraphicMarkEvent {

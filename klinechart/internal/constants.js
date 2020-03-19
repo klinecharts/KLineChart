@@ -26,72 +26,7 @@ const IndicatorType = {
   SAR: 'SAR'
 }
 
-/**
- * 线的样式
- * @type {{DASH: string, SOLID: string}}
- */
-const LineStyle = {
-  DASH: 'dash',
-  SOLID: 'solid'
-}
 
-/**
- * y轴位置
- * @type {{LEFT: string, RIGHT: string}}
- */
-const YAxisPosition = {
-  LEFT: 'left',
-  RIGHT: 'right'
-}
-
-/**
- * y轴文字位置
- * @type {{OUTSIDE: string, INSIDE: string}}
- */
-const YAxisTextPosition = {
-  INSIDE: 'inside',
-  OUTSIDE: 'outside'
-}
-
-/**
- * 主图类型
- * @type {{TIME_LINE: string, CANDLE: string}}
- */
-const ChartType = {
-  REAL_TIME: 'real_time',
-  CANDLE: 'candle'
-}
-
-/**
- * 蜡烛图样式
- * @type {{STROKE: string, DECREASING_STROKE: string, OHLC: string, INCREASING_STROKE: string, SOLID: string}}
- */
-const CandleStyle = {
-  SOLID: 'solid',
-  STROKE: 'stroke',
-  INCREASING_STROKE: 'increasing_stroke',
-  DECREASING_STROKE: 'decreasing_stroke',
-  OHLC: 'ohlc'
-}
-
-/**
- * 提示文字显示规则
- * @type {{FOLLOW_CROSS: string, NONE: string, ALWAYS: string}}
- */
-const TooltipTextDisplayRule = {
-  ALWAYS: 'always',
-  FOLLOW_CROSS: 'follow_cross',
-  NONE: 'none'
-}
-
-/**
- * 主图数据提示显示类型
- * @type {{FLOAT: string, FIXED: string}}
- */
-const TooltipCandleChartTextDisplayType = {
-  FLOAT: 'float',
-  FIXED: 'fixed'
-}
 
 /**
  * 标记图形类型

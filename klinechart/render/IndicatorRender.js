@@ -1,8 +1,8 @@
-import Render from './Render'
-import { DATA_MARGIN_SPACE_RATE } from '../internal/Storage'
+import View from './Render'
+import { DATA_MARGIN_SPACE_RATE } from '../data/ChartData'
 import { IndicatorType } from '../internal/constants'
 
-class IndicatorRender extends Render {
+class IndicatorRender extends View {
   constructor (handler, storage, yAxisRender) {
     super(handler, storage)
     this.yAxisRender = yAxisRender

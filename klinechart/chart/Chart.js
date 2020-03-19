@@ -1,5 +1,6 @@
 import Handler from '../internal/Handler'
-import { getPixelRatio, requestAnimationFrame, cancelAnimationFrame } from '../utils/draw'
+import { requestAnimationFrame, cancelAnimationFrame } from '../utils/compatible'
+import { getPixelRatio } from '../utils/canvas'
 
 class Chart {
   constructor (dom, style) {

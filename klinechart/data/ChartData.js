@@ -1,10 +1,19 @@
-import { isArray, isObject } from '../utils/data'
+import { isArray, isObject, merge, clone } from '../utils/typeChecks'
+import { defaultStyleOptions } from './options/styleOptions'
+
 import { GraphicMarkType } from '../internal/constants'
 
 export const DATA_MARGIN_SPACE_RATE = 0.26
 
-class Storage {
-  constructor () {
+export const InvalidateLevel = {
+  CROSS_HAIR: 1,
+  FULL: 2
+}
+
+class ChartData {
+  constructor (styleOptions) {
+    this._styleOptions = clone(defaultStyleOptions)
+    merge(this._styleOptions, styleOptions)
     // 数据源
     this.dataList = []
     // 数据绘制起始位置
@@ -111,4 +120,4 @@ class Storage {
   }
 }
 
-export default Storage
+export default ChartData

@@ -1,4 +1,21 @@
-import { isNumber } from './data'
+import { isNumber, isObject } from './typeChecks'
+
+/**
+ * 格式化值
+ * @param data
+ * @param key
+ * @param defaultValue
+ * @returns {string|*}
+ */
+export function formatValue (data, key, defaultValue = '--') {
+  if (data && isObject(data)) {
+    const value = data[key]
+    if (value || value === 0 || value === false) {
+      return value
+    }
+  }
+  return defaultValue
+}
 
 /**
  * 格式化时间
@@ -7,8 +24,8 @@ import { isNumber } from './data'
  * @returns {string}
  */
 export function formatDate (timestamp, format) {
-  const date = getDate(timestamp)
-  if (date) {
+  if (timestamp && isNumber(timestamp)) {
+    const date = new Date(timestamp)
     const year = date.getFullYear().toString()
     const month = (date.getMonth() + 1).toString()
     const day = date.getDate().toString()
@@ -45,9 +62,30 @@ export function formatDate (timestamp, format) {
   return '--'
 }
 
-function getDate (timestamp) {
-  if (timestamp && isNumber(timestamp)) {
-    return new Date(timestamp)
+/**
+ * 格式化精度
+ */
+export function formatPrecision (value, precision = 2) {
+  const v = +value
+  if ((v || v === 0) && isNumber(v)) {
+    return value.toFixed(precision)
   }
-  return null
+  return `${v}`
+}
+
+/**
+ * 格式化大数据
+ * @param value
+ */
+export function formatBigNumber (value) {
+  if (isNumber(value)) {
+    if (value > 50000) {
+      return `${+((value / 1000).toFixed(1))}K`
+    }
+    if (value > 5000000) {
+      return `${+((value / 1000000).toFixed(3))}M`
+    }
+    return `${value}`
+  }
+  return '--'
 }

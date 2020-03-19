@@ -1,12 +1,12 @@
 import IndicatorChart from './IndicatorChart'
-import CandleRender from '../render/CandleRender'
+import CandleStickView from '../render/CandleRender'
 
 import { IndicatorType, YAxisPosition, YAxisTextPosition, ChartType } from '../internal/constants'
 
 class CandleChart extends IndicatorChart {
   constructor (dom, style, storage, indicatorParams, precision) {
     super(dom, style, storage, indicatorParams, IndicatorType.MA)
-    this.chartRender = new CandleRender(this.handler, storage, this.yAxisRender)
+    this.chartRender = new CandleStickView(this.handler, storage, this.yAxisRender)
     this.precision = precision
     this.chartType = ChartType.CANDLE
   }

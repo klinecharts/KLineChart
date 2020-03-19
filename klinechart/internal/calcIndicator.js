@@ -1,5 +1,5 @@
 import { IndicatorType } from '../internal/constants'
-import { isArray } from '../utils/data'
+import { isArray } from '../utils/typeChecks'
 
 const calcIndicator = {}
 

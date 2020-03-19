@@ -3,11 +3,13 @@ import GraphicMarkChart from './GraphicMarkChart'
 import IndicatorChart from './IndicatorChart'
 import TooltipChart from './TooltipChart'
 import XAxisChart from './XAxisChart'
-import { isArray, isFunction, isNumber, isBoolean, merge, formatValue, isObject } from '../utils/data'
-import { calcTextWidth, requestAnimationFrame } from '../utils/draw'
+import { isArray, isFunction, isNumber, isBoolean, merge, isObject } from '../utils/typeChecks'
+import { formatValue } from '../utils/format'
+import { calcTextWidth } from '../utils/canvas'
+import { requestAnimationFrame } from '../utils/compatible'
 import calcIndicator from '../internal/calcIndicator'
 
-import Storage from '../internal/Storage'
+import ChartData from '../data/ChartData'
 
 import { getDefaultStyle, getDefaultIndicatorParams, getDefaultPrecision } from '../internal/config'
 import { isMobile } from '../utils/platform'
@@ -31,7 +33,7 @@ class RootChart {
     dom.style.borderStyle = 'none'
     dom.tabIndex = 1
     this.dom = dom
-    this.storage = new Storage()
+    this.storage = new ChartData()
     this.xAxisChart = new XAxisChart(dom, this.style, this.storage)
     this.candleChart = new CandleChart(dom, this.style, this.storage, this.indicatorParams, this.precision)
     this.graphicMarkChart = new GraphicMarkChart(dom, this.style, this.storage, this.candleChart.yAxisRender, this.precision)

@@ -1,9 +1,9 @@
 import IndicatorRender from './IndicatorRender'
-import { calcTextWidth, getFont } from '../utils/draw'
-import { formatPrecision } from '../utils/number'
+import { calcTextWidth, getFont } from '../utils/canvas'
+import { formatPrecision } from '../utils/format'
 import { CandleStyle, LineStyle } from '../internal/constants'
 
-class CandleRender extends IndicatorRender {
+class CandleStickView extends IndicatorRender {
   /**
    * 渲染蜡烛图
    * @param ctx
@@ -353,4 +353,4 @@ class CandleRender extends IndicatorRender {
   }
 }
 
-export default CandleRender
+export default CandleStickView

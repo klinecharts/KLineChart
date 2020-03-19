@@ -1,14 +1,13 @@
-import Render from './Render'
+import View from './Render'
 
-import { calcTextWidth, getFont } from '../utils/draw'
-import { isFunction, formatValue, isArray } from '../utils/data'
-import { formatDate } from '../utils/date'
-import { formatPrecision } from '../utils/number'
+import { calcTextWidth, getFont } from '../utils/canvas'
+import { isFunction, isArray } from '../utils/typeChecks'
+import { formatDate, formatValue, formatPrecision } from '../utils/format'
 
 import { IndicatorType, LineStyle, GraphicMarkType, TooltipCandleChartTextDisplayType } from '../internal/constants'
 import { getIndicatorPrecision } from '../internal/config'
 
-class TooltipRender extends Render {
+class TooltipRender extends View {
   constructor (
     handler, storage, indicatorParams,
     candleHandler, volHandler, subIndicatorHandler,
@@ -42,7 +41,8 @@ class TooltipRender extends Render {
     }
     const textHorizontal = tooltip.cross.text.horizontal
     const textSize = textHorizontal.size
-    const yAxisDataLabelWidth = calcTextWidth(textSize, yAxisDataLabel)
+    ctx.font = getFont(textSize)
+    const yAxisDataLabelWidth = calcTextWidth(ctx, yAxisDataLabel)
     let rectStartX
 
     let lineStartX = this.handler.contentLeft()
@@ -98,7 +98,6 @@ class TooltipRender extends Render {
 
     ctx.textBaseline = 'middle'
     ctx.fillStyle = textHorizontal.color
-    ctx.font = getFont(textSize)
     ctx.fillText(yAxisDataLabel, rectStartX + borderSize + paddingLeft, crossPoint.y)
   }
 
