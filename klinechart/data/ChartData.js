@@ -1,7 +1,10 @@
 import { isArray, isObject, merge, clone } from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
+import {defaultTechnicalIndicatorParamOptions, TechnicalIndicatorType} from './options/technicalIndicatorParamOptions'
 
 import { GraphicMarkType } from '../internal/constants'
+
+import calcIndicator from '../internal/calcIndicator'
 
 export const DATA_MARGIN_SPACE_RATE = 0.25
 
@@ -14,6 +17,8 @@ export default class ChartData {
   constructor (styleOptions) {
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
+    this._technicalIndicatorParamOptions = clone(defaultTechnicalIndicatorParamOptions)
+
     // 数据源
     this.dataList = []
     // 数据绘制起始位置
@@ -68,35 +73,57 @@ export default class ChartData {
     }
   }
 
+  /**
+   * 获取样式配置
+   */
   styleOptions () {
     return this._styleOptions
   }
 
-  space (width) {
-    this.dataSpace = width / this.range
+  /**
+   * 计算指标
+   * @param technicalIndicatorType
+   * @returns {boolean}
+   */
+  calcTechnicalIndicator (technicalIndicatorType) {
+    if (technicalIndicatorType === TechnicalIndicatorType.NO) {
+      return true
+    }
+    const calcFun = calcIndicator[technicalIndicatorType]
+    if (calcFun) {
+      calcFun(this._technicalIndicatorParamOptions[technicalIndicatorType])
+      return true
+    }
+    return false
+  }
+
+  clearDataList () {
+    this._dataList = []
   }
 
   addData (data, pos) {
-    if (isObject(data) && !isArray(data)) {
-      let tooltipDataMoveCount = 0
-      if (pos >= this.dataList.length) {
-        tooltipDataMoveCount = 1
-        this.dataList.push(data)
-      } else if (pos <= 0) {
-        this.dataList.unshift(data)
+    if (isObject(data)) {
+      if (isArray(data)) {
+        if (this.dataList.length === 0) {
+          this.dataList = data.concat(this.dataList)
+          this.moveToLast(data.length)
+        } else {
+          this.dataList = data.concat(this.dataList)
+          this.minPos += data.length
+        }
       } else {
-        this.dataList[pos] = data
-      }
-      if (this.minPos + this.range >= this.dataList.length - 1) {
-        this.moveToLast(tooltipDataMoveCount)
-      }
-    } else if (isArray(data)) {
-      if (this.dataList.length === 0) {
-        this.dataList = data.concat(this.dataList)
-        this.moveToLast(data.length)
-      } else {
-        this.dataList = data.concat(this.dataList)
-        this.minPos += data.length
+        let tooltipDataMoveCount = 0
+        if (pos >= this.dataList.length) {
+          tooltipDataMoveCount = 1
+          this.dataList.push(data)
+        } else if (pos <= 0) {
+          this.dataList.unshift(data)
+        } else {
+          this.dataList[pos] = data
+        }
+        if (this.minPos + this.range >= this.dataList.length - 1) {
+          this.moveToLast(tooltipDataMoveCount)
+        }
       }
     }
   }
@@ -111,6 +138,10 @@ export default class ChartData {
     } else {
       this.minPos = 0
     }
+  }
+
+  space (width) {
+    this.dataSpace = width / this.range
   }
 
   calcCurrentTooltipDataPos (offsetLeft, x) {

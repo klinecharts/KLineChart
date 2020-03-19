@@ -1,8 +1,11 @@
-import ChartData from '../data/ChartData'
+import ChartData, { InvalidateLevel } from '../data/ChartData'
 import CandleStickSeries from './CandleStickSeries'
 import XAxisSeries from './XAxisSeries'
 
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
+import { isArray, isObject } from '../utils/typeChecks'
+import { formatValue } from '../utils/format'
+import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
 
 const DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE = 0.2
 
@@ -20,6 +23,11 @@ export default class ChartSeries {
     this._technicalIndicatorSeries = {}
   }
 
+  /**
+   * 计算x轴的高度
+   * @returns {number}
+   * @private
+   */
   _measureXAxisHeight () {
     const xAxis = this._chartData.styleOptions().xAxis
     const tickText = xAxis.tick.text
@@ -35,6 +43,11 @@ export default class ChartSeries {
     return (+Math.ceil(Number(height)).toFixed(0))
   }
 
+  /**
+   * 计算y轴宽度
+   * @returns {number}
+   * @private
+   */
   _measureYAxisWidth () {
     const yAxis = this._chartData.styleOptions().yAxis
     const tickText = yAxis.tick.text
@@ -58,6 +71,36 @@ export default class ChartSeries {
       return Math.ceil(width)
     }
     return 0
+  }
+
+  /**
+   * 更新所有series
+   * @private
+   */
+  _updateAllSeries () {
+    this._xAxisSeries.invalidate(InvalidateLevel.FULL)
+    this._candleStickSeries.invalidate(InvalidateLevel.FULL)
+    for (const key in this._technicalIndicatorSeries) {
+      this._technicalIndicatorSeries[key]._invalidate(InvalidateLevel.FULL)
+    }
+  }
+
+  /**
+   * 计算所有series的指标
+   * @private
+   */
+  _calcAllSeriesTechnicalIndicator () {
+    const technicalIndicatorTypeArray = [this._candleStickSeries.technicalIndicatorType()]
+    for (const key in this._technicalIndicatorSeries) {
+      const technicalIndicatorSeriesTechnicalIndicatorType = this._technicalIndicatorSeries[key].technicalIndicatorType()
+      if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {
+        technicalIndicatorTypeArray.push(technicalIndicatorSeriesTechnicalIndicatorType)
+      }
+    }
+    for (const technicalIndicatorType of technicalIndicatorTypeArray) {
+      this._chartData.calcTechnicalIndicator(technicalIndicatorType)
+    }
+    this._updateAllSeries()
   }
 
   chartData () {
@@ -107,10 +150,97 @@ export default class ChartSeries {
     )
   }
 
+  /**
+   * 加载样式配置
+   * @param styleOptions
+   */
   applyStyleOptions (styleOptions) {
     this._chartData.applyStyleOptions(styleOptions)
     this.measureWidgetSize()
   }
 
-  
+  /**
+   * 添加新数据
+   * @param dataList
+   */
+  applyNewData (dataList) {
+    if (isArray(dataList)) {
+      this._chartData.clearDataList()
+      this._chartData.addData(dataList, 0)
+      this._calcAllSeriesTechnicalIndicator()
+    }
+  }
+
+  /**
+   * 添加更多数据
+   * @param dataList
+   */
+  applyMoreData (dataList) {
+    if (isArray(dataList)) {
+      this._chartData.addData(dataList, 0)
+      this._calcAllSeriesTechnicalIndicator()
+    }
+  }
+
+  /**
+   * 更新数据
+   * @param data
+   */
+  updateData (data) {
+    if (isObject(data) && !isArray(data)) {
+      const dataList = this._chartData.dataList()
+      const dataSize = dataList.length
+      // 这里判断单个数据应该添加到哪个位置
+      const timestamp = +formatValue(data, 'timestamp', 0)
+      const lastDataTimestamp = +formatValue(dataList[dataSize - 1], 'timestamp', 0)
+      let pos = dataSize
+      if (timestamp === lastDataTimestamp) {
+        pos = dataSize - 1
+      }
+      this._chartData.addData(data, pos)
+      this._calcAllSeriesTechnicalIndicator()
+    }
+  }
+
+  /**
+   * 创建一个指标
+   * @param technicalIndicatorType
+   * @returns {string}
+   */
+  createTechnicalIndicator (technicalIndicatorType) {
+    this._technicalIndicatorBaseId++
+    const tag = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
+    this._technicalIndicatorSeries[tag] = new TechnicalIndicatorSeries(this._container, this._chartData, this._xAxisSeries.xAxis(), technicalIndicatorType)
+    this.measureWidgetSize()
+    return tag
+  }
+
+  /**
+   * 移除一个指标
+   * @param tag
+   */
+  removeTechnicalIndicator (tag) {
+    const series = this._technicalIndicatorSeries[tag]
+    if (series) {
+      series.destroy()
+      delete this._technicalIndicatorSeries[tag]
+      this.measureWidgetSize()
+    }
+  }
+
+  /**
+   * 设置指标类型
+   * @param tag
+   * @param technicalIndicatorType
+   */
+  setTechnicalIndicatorType (tag, technicalIndicatorType) {
+    if (tag === 'main') {
+      this._technicalIndicatorSeries.setTechnicalIndicatorType(technicalIndicatorType)
+    } else {
+      const series = this._technicalIndicatorSeries[tag]
+      if (series) {
+        series.setTechnicalIndicatorType(technicalIndicatorType)
+      }
+    }
+  }
 }

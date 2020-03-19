@@ -1,4 +1,4 @@
-import { IndicatorType } from '../internal/constants'
+import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 import { isArray } from '../utils/typeChecks'
 
 const calcIndicator = {}
@@ -32,7 +32,7 @@ calcIndicator.average = function (dataList) {
  * @param params
  * @returns {*}
  */
-calcIndicator[IndicatorType.MA] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.MA] = function (dataList, params) {
   if (!checkParams(params)) {
     return dataList
   }
@@ -62,7 +62,7 @@ calcIndicator[IndicatorType.MA] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.VOL] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.VOL] = function (dataList, params) {
   if (!checkParams(params)) {
     return dataList
   }
@@ -99,7 +99,7 @@ calcIndicator[IndicatorType.VOL] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.MACD] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.MACD] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
@@ -140,7 +140,7 @@ calcIndicator[IndicatorType.MACD] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.BOLL] = function (dataList, params) {
   if (!checkParamsWithSize(params, 1)) {
     return dataList
   }
@@ -174,7 +174,7 @@ calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.KDJ] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
@@ -217,7 +217,7 @@ calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.RSI] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.RSI] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
@@ -319,7 +319,7 @@ calcIndicator[IndicatorType.RSI] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.BIAS] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
@@ -376,7 +376,7 @@ calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.BRAR] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.BRAR] = function (dataList, params) {
   if (!checkParamsWithSize(params, 1)) {
     return dataList
   }
@@ -435,7 +435,7 @@ calcIndicator[IndicatorType.BRAR] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.CCI] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.CCI] = function (dataList, params) {
   if (!checkParamsWithSize(params, 1)) {
     return dataList
   }
@@ -477,7 +477,7 @@ calcIndicator[IndicatorType.CCI] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.DMI] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.DMI] = function (dataList, params) {
   if (!checkParamsWithSize(params, 2)) {
     return dataList
   }
@@ -576,7 +576,7 @@ calcIndicator[IndicatorType.DMI] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.CR] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.CR] = function (dataList, params) {
   if (!checkParamsWithSize(params, 5)) {
     return dataList
   }
@@ -740,7 +740,7 @@ calcIndicator[IndicatorType.CR] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.PSY] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.PSY] = function (dataList, params) {
   if (!checkParamsWithSize(params, 1)) {
     return dataList
   }
@@ -771,7 +771,7 @@ calcIndicator[IndicatorType.PSY] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.DMA] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.DMA] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
@@ -822,7 +822,7 @@ calcIndicator[IndicatorType.DMA] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.TRIX] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.TRIX] = function (dataList, params) {
   // TR=收盘价的N日指数移动平均的N日指数移动平均的N日指数移动平均；
   // TRIX=(TR-昨日TR)/昨日TR*100；
   // MATRIX=TRIX的M日简单移动平均；
@@ -889,7 +889,7 @@ calcIndicator[IndicatorType.TRIX] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.OBV] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.OBV] = function (dataList, params) {
   if (!checkParamsWithSize(params, 1)) {
     return dataList
   }
@@ -933,7 +933,7 @@ calcIndicator[IndicatorType.OBV] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.VR] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.VR] = function (dataList, params) {
   if (!checkParamsWithSize(params, 2)) {
     return dataList
   }
@@ -991,7 +991,7 @@ calcIndicator[IndicatorType.VR] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.WR] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.WR] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
@@ -1059,7 +1059,7 @@ calcIndicator[IndicatorType.WR] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.MTM] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.MTM] = function (dataList, params) {
   if (!checkParamsWithSize(params, 2)) {
     return dataList
   }
@@ -1099,7 +1099,7 @@ calcIndicator[IndicatorType.MTM] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.EMV] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.EMV] = function (dataList, params) {
   if (!checkParamsWithSize(params, 2)) {
     return dataList
   }
@@ -1147,7 +1147,7 @@ calcIndicator[IndicatorType.EMV] = function (dataList, params) {
  * @param params
  * @return
  */
-calcIndicator[IndicatorType.SAR] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.SAR] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList
   }
