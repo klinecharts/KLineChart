@@ -4,7 +4,7 @@
  */
 export function requestAnimationFrame (fn) {
   if (!window.requestAnimationFrame) {
-    return window.setTimeout(function () { fn() }, 1000 / 60)
+    return window.setTimeout(() => { fn() }, 1000 / 60)
   }
   return window.requestAnimationFrame(fn)
 }

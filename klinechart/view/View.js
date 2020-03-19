@@ -28,16 +28,11 @@ class View {
    * @private
    */
   _redraw (extendFun) {
-    if (this.requestAnimationId) {
-      cancelAnimationFrame(this.requestAnimationId)
+    this._ctx.clearRect(0, 0, this._width, this._height)
+    if (extendFun) {
+      extendFun()
     }
-    this.requestAnimationId = requestAnimationFrame(() => {
-      this._ctx.clearRect(0, 0, this._width, this._height)
-      if (extendFun) {
-        extendFun()
-      }
-      this._draw()
-    })
+    this._draw()
   }
 
   /**
@@ -55,13 +50,13 @@ class View {
     if (width !== this._width || height !== this._height) {
       this._redraw(() => {
         const pixelRatio = getPixelRatio(this._ctx)
-        this._width = width * pixelRatio
-        this._height = height * pixelRatio
+        this._width = width
+        this._height = height
         this._canvas.style.top = '0'
         this._canvas.style.width = `${width}px`
         this._canvas.style.height = `${height}px`
-        this._canvas.width = this._width
-        this._canvas.height = this._height
+        this._canvas.width = width * pixelRatio
+        this._canvas.height = height * pixelRatio
         this._ctx.scale(pixelRatio, pixelRatio)
         this._ctx.translate(0.5, 0.5)
       })
@@ -72,7 +67,12 @@ class View {
    * 刷新
    */
   flush () {
-    this._redraw()
+    if (this.requestAnimationId) {
+      cancelAnimationFrame(this.requestAnimationId)
+    }
+    this.requestAnimationId = requestAnimationFrame(() => {
+      this._redraw()
+    })
   }
 }
 

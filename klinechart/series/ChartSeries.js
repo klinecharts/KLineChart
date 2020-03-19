@@ -90,7 +90,7 @@ export default class ChartSeries {
     this._xAxisSeries.invalidate(InvalidateLevel.FULL)
     this._candleStickSeries.invalidate(InvalidateLevel.FULL)
     for (const key in this._technicalIndicatorSeries) {
-      this._technicalIndicatorSeries[key]._invalidate(InvalidateLevel.FULL)
+      this._technicalIndicatorSeries[key].invalidate(InvalidateLevel.FULL)
     }
   }
 

@@ -1,6 +1,7 @@
 import { isArray, isObject, merge, clone } from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
 import { defaultTechnicalIndicatorParamOptions, TechnicalIndicatorType } from './options/technicalIndicatorParamOptions'
+import { defaultPrecisionOptions } from './options/precisionOptions'
 
 import { GraphicMarkType } from '../internal/constants'
 
@@ -24,6 +25,8 @@ export default class ChartData {
     merge(this._styleOptions, styleOptions)
     // 指标参数配置
     this._technicalIndicatorParamOptions = clone(defaultTechnicalIndicatorParamOptions)
+
+    this._precisionOptions = clone(defaultPrecisionOptions)
 
     // 数据源
     this._dataList = []
@@ -112,6 +115,13 @@ export default class ChartData {
    */
   styleOptions () {
     return this._styleOptions
+  }
+
+  /**
+   * 精度配置
+   */
+  precisionOptions () {
+    return this._precisionOptions
   }
 
   /**
