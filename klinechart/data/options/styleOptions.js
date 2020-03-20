@@ -38,7 +38,7 @@ export const ChartType = {
  * 蜡烛图样式
  * @type {{STROKE: string, DECREASING_STROKE: string, OHLC: string, INCREASING_STROKE: string, SOLID: string}}
  */
-export const CandleStyle = {
+export const CandleStickStyle = {
   SOLID: 'solid',
   STROKE: 'stroke',
   INCREASING_STROKE: 'increasing_stroke',
@@ -50,7 +50,7 @@ export const CandleStyle = {
  * 提示文字显示规则
  * @type {{FOLLOW_CROSS: string, NONE: string, ALWAYS: string}}
  */
-export const TooltipTextDisplayRule = {
+export const FloatLayerPromptDisplayRule = {
   ALWAYS: 'always',
   FOLLOW_CROSS: 'follow_cross',
   NONE: 'none'
@@ -60,75 +60,70 @@ export const TooltipTextDisplayRule = {
  * 主图数据提示显示类型
  * @type {{FLOAT: string, FIXED: string}}
  */
-export const TooltipCandleChartTextDisplayType = {
-  FLOAT: 'float',
-  FIXED: 'fixed'
+export const FloatLayerPromptCandleStickTextDisplayType = {
+  RECT: 'rect',
+  STANDARD: 'standard'
 }
 
-export const defaultStyleOptions = {
-  candle: {
-    /**
-     * 分时线
-     */
-    timeLine: {
-      color: '#1e88e5',
-      size: 1,
-      areaFillColor: 'rgba(30, 136, 229, 0.08)'
-    },
-    /**
-     * 均线
-     */
-    averageLine: {
-      display: true,
-      color: '#F5A623',
-      size: 1
-    },
-    bar: {
-      /**
-       * 蜡烛样式
-       */
-      style: CandleStyle.SOLID,
-      /**
-       * 上涨颜色
-       */
-      increasingColor: '#26A69A',
-      /**
-       * 下跌颜色
-       */
-      decreasingColor: '#EF5350'
-    },
+/**
+ * 默认网格配置
+ * @type {{horizontal: {size: number, color: string, dashValue: number[], display: boolean, style: string}, display: boolean, vertical: {size: number, color: string, dashValue: number[], display: boolean, style: string}}}
+ */
+const defaultGrid = {
+  display: true,
+  horizontal: {
+    display: true,
+    size: 1,
+    color: '#393939',
+    style: LineStyle.DASH,
+    dashValue: [2, 2]
+  },
+  vertical: {
+    display: true,
+    size: 1,
+    color: '#393939',
+    style: LineStyle.DASH,
+    dashValue: [2, 2]
+  }
+}
 
+/**
+ * 默认蜡烛柱图配置
+ * @type {{bar: {upColor: string, style: string, downColor: string}}}
+ */
+const defaultCandleStick = {
+  bar: {
     /**
-     * 最大价格标记参数
+     * 蜡烛样式
      */
-    highestPriceMark: {
+    style: CandleStickStyle.SOLID,
+    /**
+     * 上涨颜色
+     */
+    upColor: '#26A69A',
+    /**
+     * 下跌颜色
+     */
+    downColor: '#EF5350'
+  },
+  priceMark: {
+    display: true,
+    high: {
       display: true,
       color: '#D9D9D9',
-      text: {
-        margin: 5,
-        size: 10
-      }
+      textMargin: 5,
+      textSize: 10
     },
-
-    /**
-     * 最小价格标记参数
-     */
-    lowestPriceMark: {
+    low: {
       display: true,
       color: '#D9D9D9',
-      text: {
-        margin: 5,
-        size: 10
-      }
+      textMargin: 5,
+      textSize: 10
     },
-
-    /**
-     * 最新价标记参数
-     */
-    lastPriceMark: {
+    last: {
       display: true,
-      increasingColor: '#26A69A',
-      decreasingColor: '#EF5350',
+      upColor: '#26A69A',
+      downColor: '#EF5350',
       line: {
         display: true,
         style: LineStyle.DASH,
@@ -145,234 +140,257 @@ export const defaultStyleOptions = {
         color: '#FFFFFF'
       }
     }
+  }
+}
+
+/**
+ * 默认的分时图配置
+ * @type {{timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}}
+ */
+const defaultRealTime = {
+  timeLine: {
+    color: '#1e88e5',
+    size: 1,
+    areaFillColor: 'rgba(30, 136, 229, 0.08)'
   },
-  indicator: {
-    /**
-     * 线的尺寸
-     */
-    lineSize: 1,
-    increasingColor: '#26A69A',
-    decreasingColor: '#EF5350',
-    lineColors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
-  },
-  xAxis: {
-    /**
-     * 是否显示整个轴
-     */
+  /**
+   * 均线
+   */
+  averageLine: {
     display: true,
-    /**
-     * x轴最大高度
-     */
-    maxHeight: 50,
-    /**
-     * x轴最小高度
-     */
-    minHeight: 30,
-    /**
-     * 轴线配置
-     */
-    line: {
-      display: true,
-      color: '#888888',
-      size: 1
-    },
+    color: '#F5A623',
+    size: 1
+  }
+}
 
-    /**
-     * 分割配置
-     */
-    tick: {
-      // 文字
-      text: {
-        display: true,
-        color: '#D9D9D9',
-        size: 12,
-        margin: 3
-      },
-      // 线
-      line: {
-        display: true,
-        size: 1,
-        length: 3,
-        color: '#888888'
-      }
-    },
+/**
+ * 默认的技术指标图配置
+ * @type {{decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}}
+ */
+const defaultTechnicalIndicator = {
+  /**
+   * 线的尺寸
+   */
+  lineSize: 1,
+  upColor: '#26A69A',
+  downColor: '#EF5350',
+  colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+}
 
-    /**
-     * 分割线配置
-     */
-    separatorLine: {
-      display: false,
-      size: 1,
-      color: '#393939',
-      style: LineStyle.DASH,
-      dashValue: [2, 2]
-    }
-  },
-  yAxis: {
-    /**
-     * 是否显示整个轴
-     */
+const defaultXAxis = {
+  /**
+   * 是否显示整个轴
+   */
+  display: true,
+  /**
+   * x轴最大高度
+   */
+  maxHeight: 50,
+  /**
+   * x轴最小高度
+   */
+  minHeight: 30,
+  /**
+   * 轴线配置
+   */
+  axisLine: {
     display: true,
-    /**
-     * y轴位置
-     */
-    position: YAxisPosition.RIGHT,
-
-    /**
-     * y轴最大宽度
-     */
-    maxWidth: 80,
-
-    /**
-     * y轴最小宽度
-     */
-    minWidth: 60,
-    /**
-     * 轴线配置
-     */
-    line: {
-      display: true,
-      color: '#888888',
-      size: 1
-    },
-
-    /**
-     * 分割配置
-     */
-    tick: {
-      // 文字
-      text: {
-        display: true,
-        position: YAxisTextPosition.OUTSIDE,
-        color: '#D9D9D9',
-        size: 12,
-        margin: 3
-      },
-      // 线
-      line: {
-        display: true,
-        size: 1,
-        length: 3,
-        color: '#888888'
-      }
-    },
-
-    /**
-     * 分割线配置
-     */
-    separatorLine: {
-      display: true,
-      size: 1,
-      color: '#393939',
-      style: LineStyle.DASH,
-      dashValue: [2, 2]
-    }
+    color: '#888888',
+    size: 1
   },
-  tooltip: {
-    /**
-     * 光标线配置
-     */
-    cross: {
+
+  /**
+   * tick文字
+   */
+  tickText: {
+    display: true,
+    color: '#D9D9D9',
+    size: 12,
+    margin: 3
+  },
+  // tick线
+  tickLine: {
+    display: true,
+    size: 1,
+    length: 3,
+    color: '#888888'
+  }
+}
+
+const defaultYAxis = {
+  /**
+   * 是否显示整个轴
+   */
+  display: true,
+  /**
+   * x轴最大宽度
+   */
+  maxWidth: 100,
+  /**
+   * x轴最小宽度
+   */
+  minWidth: 60,
+  /**
+   * 轴位置
+   */
+  position: YAxisPosition.RIGHT,
+  /**
+   * 轴线配置
+   */
+  axisLine: {
+    display: true,
+    color: '#888888',
+    size: 1
+  },
+
+  /**
+   * tick文字
+   */
+  tickText: {
+    position: YAxisTextPosition.OUTSIDE,
+    display: true,
+    color: '#D9D9D9',
+    size: 12,
+    margin: 3
+  },
+  // tick线
+  tickLine: {
+    display: true,
+    size: 1,
+    length: 3,
+    color: '#888888'
+  }
+}
+
+/**
+ * 默认十字光标配置
+ * @type {{display: boolean}}
+ */
+const defaultFloatLayer = {
+  crossHair: {
+    display: true,
+    horizontal: {
       display: true,
       line: {
+        display: true,
         style: LineStyle.DASH,
         dashValue: [4, 2],
         size: 1,
         color: '#888888'
       },
       text: {
-        horizontal: {
-          color: '#D9D9D9',
-          size: 12,
-          paddingLeft: 2,
-          paddingRight: 2,
-          paddingTop: 2,
-          paddingBottom: 2,
-          borderSize: 1,
-          borderColor: '#505050',
-          backgroundColor: '#505050'
-        },
-        vertical: {
-          color: '#D9D9D9',
-          size: 12,
-          paddingLeft: 2,
-          paddingRight: 2,
-          paddingTop: 2,
-          paddingBottom: 2,
-          borderSize: 1,
-          borderColor: '#505050',
-          backgroundColor: '#505050'
-        }
+        display: true,
+        color: '#D9D9D9',
+        size: 12,
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderSize: 1,
+        borderColor: '#505050',
+        backgroundColor: '#505050'
       }
     },
-
-    /**
-     * 数据配置
-     */
-    data: {
-      displayRule: TooltipTextDisplayRule.ALWAYS,
-      base: {
-        showType: TooltipCandleChartTextDisplayType.FIXED,
-        labels: ['时间', '开', '收', '高', '低', '成交量'],
-        values: null,
-        text: {
-          size: 12,
-          color: '#D9D9D9',
-          marginLeft: 8,
-          marginTop: 6,
-          marginRight: 8,
-          marginBottom: 0
-        },
-        floatRect: {
-          paddingLeft: 0,
-          paddingRight: 0,
-          paddingTop: 0,
-          paddingBottom: 6,
-          left: 8,
-          top: 8,
-          right: 8,
-          borderRadius: 4,
-          borderSize: 1,
-          borderColor: '#3f4254',
-          fillColor: 'rgba(17, 17, 17, .3)'
-        }
+    vertical: {
+      display: true,
+      line: {
+        display: true,
+        style: LineStyle.DASH,
+        dashValue: [4, 2],
+        size: 1,
+        color: '#888888'
       },
-      indicator: {
-        text: {
-          size: 12,
-          color: '#D9D9D9',
-          marginTop: 6,
-          marginRight: 8,
-          marginBottom: 0,
-          marginLeft: 8
-        }
+      text: {
+        display: true,
+        color: '#D9D9D9',
+        size: 12,
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderSize: 1,
+        borderColor: '#505050',
+        backgroundColor: '#505050'
       }
     }
   },
-
-  graphicMark: {
-    line: {
-      color: '#1e88e5',
-      size: 1
+  prompt: {
+    displayRule: FloatLayerPromptDisplayRule.ALWAYS,
+    candleStick: {
+      showType: FloatLayerPromptCandleStickTextDisplayType,
+      labels: ['时间', '开', '收', '高', '低', '成交量'],
+      values: null,
+      rect: {
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingTop: 0,
+        paddingBottom: 6,
+        left: 8,
+        top: 8,
+        right: 8,
+        borderRadius: 4,
+        borderSize: 1,
+        borderColor: '#3f4254',
+        fillColor: 'rgba(17, 17, 17, .3)'
+      },
+      text: {
+        size: 12,
+        color: '#D9D9D9',
+        marginLeft: 8,
+        marginTop: 6,
+        marginRight: 8,
+        marginBottom: 0
+      }
     },
-    point: {
-      backgroundColor: '#1e88e5',
-      borderColor: '#1e88e5',
-      borderSize: 1,
-      radius: 4,
-      activeBackgroundColor: '#1e88e5',
-      activeBorderColor: '#1e88e5',
-      activeBorderSize: 1,
-      activeRadius: 6
-    },
-    text: {
-      color: '#1e88e5',
-      size: 12,
-      marginLeft: 2,
-      marginRight: 2,
-      marginTop: 2,
-      marginBottom: 6,
-      valueFormatter: null
+    technicalIndicator: {
+      text: {
+        size: 12,
+        color: '#D9D9D9',
+        marginTop: 6,
+        marginRight: 8,
+        marginBottom: 0,
+        marginLeft: 8
+      }
     }
   }
+}
+
+/**
+ * 默认图形标记配置
+ * @type {{line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
+ */
+const defaultGraphicMark = {
+  line: {
+    color: '#1e88e5',
+    size: 1
+  },
+  point: {
+    backgroundColor: '#1e88e5',
+    borderColor: '#1e88e5',
+    borderSize: 1,
+    radius: 4,
+    activeBackgroundColor: '#1e88e5',
+    activeBorderColor: '#1e88e5',
+    activeBorderSize: 1,
+    activeRadius: 6
+  },
+  text: {
+    color: '#1e88e5',
+    size: 12,
+    marginLeft: 2,
+    marginRight: 2,
+    marginTop: 2,
+    marginBottom: 6
+  }
+}
+
+export const defaultStyleOptions = {
+  grid: defaultGrid,
+  candleStick: defaultCandleStick,
+  realTime: defaultRealTime,
+  technicalIndicator: defaultTechnicalIndicator,
+  xAxis: defaultXAxis,
+  yAxis: defaultYAxis,
+  floatLayer: defaultFloatLayer,
+  graphicMark: defaultGraphicMark
 }

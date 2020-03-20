@@ -2,14 +2,10 @@ import { InvalidateLevel } from '../data/ChartData'
 
 export default class Widget {
   constructor (props) {
-    this._chartData = props.chartData
     this._initElement(props.container)
-    this._initBefore(props)
-    this._mainView = this._createMainView()
-    this._crossHairView = this._createCrossHairView()
+    this._mainView = this._createMainView(this._element, props)
+    this._crossHairView = this._createCrossHairView(this._element, props)
   }
-
-  _initBefore (props) {}
 
   /**
    * 初始化element

@@ -39,14 +39,14 @@ export default class ChartSeries {
    */
   _measureXAxisHeight () {
     const xAxis = this._chartData.styleOptions().xAxis
-    const tickText = xAxis.tick.text
-    const tickLine = xAxis.tick.line
+    const tickText = xAxis.tickText
+    const tickLine = xAxis.tickLine
     let height = tickText.size + tickText.margin
     if (xAxis.display && tickLine.display) {
       height += tickLine.length
     }
-    if (xAxis.display && xAxis.line.display) {
-      height += xAxis.line.size
+    if (xAxis.display && xAxis.axisLine.display) {
+      height += xAxis.axisLine.size
     }
     height = Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight))
     return (+Math.ceil(Number(height)).toFixed(0))
@@ -59,9 +59,9 @@ export default class ChartSeries {
    */
   _measureYAxisWidth () {
     const yAxis = this._chartData.styleOptions().yAxis
-    const tickText = yAxis.tick.text
-    const tickLine = yAxis.tick.line
-    const needsOffset = (((tickText.display || tickLine.display || tickText.margin > 0) && tickText.position === YAxisTextPosition.OUTSIDE) || yAxis.line.display) && yAxis.display
+    const tickText = yAxis.tickText
+    const tickLine = yAxis.tickLine
+    const needsOffset = (((tickText.display || tickLine.display || tickText.margin > 0) && tickText.position === YAxisTextPosition.OUTSIDE) || yAxis.axisLine.display) && yAxis.display
     if (needsOffset) {
       let width = 0
       if (tickText.position === YAxisTextPosition.OUTSIDE) {
@@ -70,8 +70,8 @@ export default class ChartSeries {
           width += tickLine.length
         }
       }
-      const axisLineSize = yAxis.line.size
-      if (yAxis.display && yAxis.line.display) {
+      const axisLineSize = yAxis.axisLine.size
+      if (yAxis.display && yAxis.axisLine.display) {
         width += axisLineSize
       }
       if (width > axisLineSize) {

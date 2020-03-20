@@ -3,11 +3,11 @@ import CandleStickCrossHairView from '../view/CandleStickCrossHairView'
 import TechnicalIndicatorWidget from './TechnicalIndicatorWidget'
 
 export default class CandleStickWidget extends TechnicalIndicatorWidget {
-  _createMainView () {
-    return new CandleStickView(this._element, this._chartData)
+  _createMainView (container, props) {
+    return new CandleStickView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
   }
 
-  _createCrossHairView () {
-    return new CandleStickCrossHairView(this._element, this._chartData)
+  _createCrossHairView (container, props) {
+    return new CandleStickCrossHairView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
   }
 }

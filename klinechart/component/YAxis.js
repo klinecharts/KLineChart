@@ -53,7 +53,7 @@ export default class YAxis extends Axis {
     const optimalTicks = []
     const tickLength = ticks.length
     if (tickLength > 0) {
-      const textHeight = this._chartData.styleOptions().xAxis.tick.text.fontSize
+      const textHeight = this._chartData.styleOptions().xAxis.tickText.size
       const y = this.convertToPixel(ticks[0].v)
       let tickCountDif = 1
       if (tickLength > 1) {
@@ -84,7 +84,7 @@ export default class YAxis extends Axis {
     const dataList = this._chartData.dataList()
     const from = this._chartData.from()
     const to = this._chartData.to()
-    const isShowAverageLine = this._chartData.styleOptions().candle.averageLine.display
+    const isShowAverageLine = this._chartData.styleOptions().realTime.averageLine.display
     const minMaxArray = [Infinity, -Infinity]
     if (isRealTimeChart) {
       for (let i = from; i < to; i++) {
@@ -116,6 +116,10 @@ export default class YAxis extends Axis {
       this._minValue = minMaxArray[0]
       this._maxValue = minMaxArray[1]
     }
+  }
+
+  yAxisType () {
+    return this._yAxisType
   }
 
   convertFromPixel (pixel) {

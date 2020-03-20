@@ -11,15 +11,15 @@ export default class YAxisView extends AxisView {
 
   _drawAxisLine () {
     const yAxis = this._chartData.styleOptions().yAxis
-    if (!yAxis.display || !yAxis.line.display) {
+    if (!yAxis.display || !yAxis.axisLine.display) {
       return
     }
-    this._ctx.strokeStyle = yAxis.line.color
-    this._ctx.lineWidth = yAxis.line.size
+    this._ctx.strokeStyle = yAxis.axisLine.color
+    this._ctx.lineWidth = yAxis.axisLine.size
     this._ctx.beginPath()
     if (
-      (yAxis.position === YAxisPosition.LEFT && yAxis.tick.text.position === YAxisTextPosition.INSIDE) ||
-      (yAxis.position === YAxisPosition.RIGHT && yAxis.tick.text.position === YAxisTextPosition.OUTSIDE)
+      (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE) ||
+      (yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE)
     ) {
       this._ctx.moveTo(0, 0)
       this._ctx.lineTo(0, this._height)
@@ -33,11 +33,11 @@ export default class YAxisView extends AxisView {
 
   _drawTickLines () {
     const yAxis = this._chartData.styleOptions().yAxis
-    const tickText = yAxis.tick.text
+    const tickText = yAxis.tickText
     if (!yAxis.display || !tickText.display) {
       return
     }
-    const tickLine = yAxis.tick.line
+    const tickLine = yAxis.tickLine
     this._ctx.lineWidth = tickLine.size
     this._ctx.strokeStyle = tickLine.color
 
@@ -51,14 +51,14 @@ export default class YAxisView extends AxisView {
       (yAxis.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE)
     ) {
       startX = 0
-      if (yAxis.line.display) {
-        startX += yAxis.line.size
+      if (yAxis.axisLine.display) {
+        startX += yAxis.axisLine.size
       }
       endX = startX + tickLineLength
     } else {
       startX = this._width
-      if (yAxis.line.display) {
-        startX -= yAxis.line.size
+      if (yAxis.axisLine.display) {
+        startX -= yAxis.axisLine.size
       }
       endX = startX - tickLineLength
     }
@@ -74,11 +74,11 @@ export default class YAxisView extends AxisView {
 
   _drawTickLabels () {
     const yAxis = this._chartData.styleOptions().yAxis
-    const tickText = yAxis.tick.text
+    const tickText = yAxis.tickText
     if (!yAxis.display || !tickText.display) {
       return
     }
-    const tickLine = yAxis.tick.line
+    const tickLine = yAxis.tickLine
     const tickTextPosition = tickText.position
     const tickLineDisplay = tickLine.display
     const tickLineLength = tickLine.length
@@ -89,8 +89,8 @@ export default class YAxisView extends AxisView {
       (yAxis.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE)
     ) {
       labelX = tickTextMargin
-      if (yAxis.line.display) {
-        labelX += yAxis.line.size
+      if (yAxis.axisLine.display) {
+        labelX += yAxis.axisLine.size
       }
       if (tickLineDisplay) {
         labelX += tickLineLength
@@ -98,8 +98,8 @@ export default class YAxisView extends AxisView {
       this._ctx.textAlign = 'left'
     } else {
       labelX = this.width - tickTextMargin
-      if (yAxis.line.display) {
-        labelX -= yAxis.line.size
+      if (yAxis.axisLine.display) {
+        labelX -= yAxis.axisLine.size
       }
       if (tickLineDisplay) {
         labelX -= tickLineLength
@@ -122,10 +122,11 @@ export default class YAxisView extends AxisView {
    * @private
    */
   _drawLastPriceLabel () {
-    const lastPriceMark = this._chartData.styleOptions().candle.lastPriceMark
+    const priceMark = this._chartData.styleOptions().candleStick.priceMark
+    const lastPriceMark = priceMark.last
     const dataList = this._chartData.dataList()
     const dataSize = dataList.length
-    if (!lastPriceMark.display || dataSize === 0) {
+    if (!priceMark.display || !lastPriceMark.display || !lastPriceMark.text.display || dataSize === 0) {
       return
     }
     const preKLineData = dataList[dataSize - 2] || {}
@@ -133,30 +134,27 @@ export default class YAxisView extends AxisView {
     const lastPrice = dataList[dataSize - 1].close
     let priceY = this._axis.convertToPixel(lastPrice)
     priceY = +(Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98))).toFixed(0)
-    const color = lastPrice > preLastPrice ? lastPriceMark.increasingColor : lastPriceMark.decreasingColor
+    const color = lastPrice > preLastPrice ? lastPriceMark.upColor : lastPriceMark.downColor
     const priceMarkText = lastPriceMark.text
-    const displayText = priceMarkText.display
-    if (displayText) {
-      const text = formatPrecision(lastPrice, this._chartData.precisionOptions().price)
-      const textSize = lastPriceMark.text.size
-      this._ctx.font = getFont(textSize)
-      const rectWidth = calcTextWidth(this._ctx, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight
-      const rectHeight = priceMarkText.paddingTop + textSize + priceMarkText.paddingBottom
-      let rectStartX
-      const yAxis = this._chartData.styleOptions().yAxis
-      if (
-        (yAxis.position === YAxisPosition.LEFT && yAxis.tick.text.position === YAxisTextPosition.INSIDE) ||
-        (yAxis.position === YAxisPosition.RIGHT && yAxis.tick.text.position === YAxisTextPosition.OUTSIDE)
-      ) {
-        rectStartX = 0
-      } else {
-        rectStartX = this._width - rectWidth
-      }
-      this._ctx.fillStyle = color
-      this._ctx.fillRect(rectStartX, priceY - priceMarkText.paddingTop - textSize / 2, rectWidth, rectHeight)
-      this._ctx.fillStyle = priceMarkText.color
-      this._ctx.textBaseline = 'middle'
-      this._ctx.fillText(text, rectStartX + priceMarkText.paddingLeft, priceY)
+    const text = formatPrecision(lastPrice, this._chartData.precisionOptions().price)
+    const textSize = lastPriceMark.text.size
+    this._ctx.font = getFont(textSize)
+    const rectWidth = calcTextWidth(this._ctx, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight
+    const rectHeight = priceMarkText.paddingTop + textSize + priceMarkText.paddingBottom
+    let rectStartX
+    const yAxis = this._chartData.styleOptions().yAxis
+    if (
+      (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE) ||
+      (yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE)
+    ) {
+      rectStartX = 0
+    } else {
+      rectStartX = this._width - rectWidth
     }
+    this._ctx.fillStyle = color
+    this._ctx.fillRect(rectStartX, priceY - priceMarkText.paddingTop - textSize / 2, rectWidth, rectHeight)
+    this._ctx.fillStyle = priceMarkText.color
+    this._ctx.textBaseline = 'middle'
+    this._ctx.fillText(text, rectStartX + priceMarkText.paddingLeft, priceY)
   }
 }

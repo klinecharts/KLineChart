@@ -7,8 +7,8 @@ export default class XAxisSeries extends Series {
     this._xAxis = new XAxis(this._chartData)
   }
 
-  _createMainWidget (container) {
-    return new XAxisWidget({ container, chartData: this._chartData, xAxis: this._xAxis })
+  _createMainWidget (container, props) {
+    return new XAxisWidget({ container, chartData: props.chartData, xAxis: this._xAxis })
   }
 
   _computeAxis () {

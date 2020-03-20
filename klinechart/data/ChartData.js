@@ -34,7 +34,7 @@ export default class ChartData {
     // 可见区域数据占用的空间
     this._totalDataSpace = 0
     // 向右偏移的空间
-    this._offsetRightSpace = 30
+    this._offsetRightSpace = 50
     // 开始绘制的索引
     this._from = 0
     // 结束的索引
@@ -117,6 +117,10 @@ export default class ChartData {
     return this._styleOptions
   }
 
+  technicalIndicatorParamOptions () {
+    return this._technicalIndicatorParamOptions
+  }
+
   /**
    * 精度配置
    */
@@ -135,7 +139,7 @@ export default class ChartData {
     }
     const calcFun = calcIndicator[technicalIndicatorType]
     if (calcFun) {
-      calcFun(this._technicalIndicatorParamOptions[technicalIndicatorType])
+      this._dataList = calcFun(this._dataList, this._technicalIndicatorParamOptions[technicalIndicatorType])
       return true
     }
     return false

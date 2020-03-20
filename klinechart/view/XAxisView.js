@@ -5,11 +5,11 @@ import { formatDate } from '../utils/format'
 export default class XAxisView extends AxisView {
   _drawAxisLine () {
     const xAxis = this._chartData.styleOptions().xAxis
-    if (!xAxis.display || !xAxis.line.display) {
+    if (!xAxis.display || !xAxis.axisLine.display) {
       return
     }
-    this._ctx.strokeStyle = xAxis.line.color
-    this._ctx.lineWidth = xAxis.line.size
+    this._ctx.strokeStyle = xAxis.axisLine.color
+    this._ctx.lineWidth = xAxis.axisLine.size
     this._ctx.beginPath()
     this._ctx.moveTo(0, 0)
     this._ctx.lineTo(this._width, 0)
@@ -19,14 +19,14 @@ export default class XAxisView extends AxisView {
 
   _drawTickLines () {
     const xAxis = this._chartData.styleOptions().xAxis
-    const tickLine = xAxis.tick.line
+    const tickLine = xAxis.tickLine
     if (!xAxis.display || !tickLine.display) {
       return
     }
     this._ctx.lineWidth = tickLine.size
     this._ctx.strokeStyle = tickLine.color
 
-    const startY = xAxis.line.display ? xAxis.line.size : 0
+    const startY = xAxis.axisLine.display ? xAxis.axisLine.size : 0
 
     const endY = startY + tickLine.length
     this._axis.ticks().forEach(tick => {
@@ -41,11 +41,11 @@ export default class XAxisView extends AxisView {
 
   _drawTickLabels () {
     const xAxis = this._chartData.styleOptions().xAxis
-    const tickText = xAxis.tick.text
+    const tickText = xAxis.tickText
     if (!xAxis.display || !tickText.display) {
       return
     }
-    const tickLine = xAxis.tick.line
+    const tickLine = xAxis.tickLine
 
     this._ctx.textBaseline = 'top'
     this._ctx.font = getFont(tickText.size)
@@ -53,8 +53,8 @@ export default class XAxisView extends AxisView {
     this._ctx.fillStyle = tickText.color
 
     let labelY = tickText.margin
-    if (xAxis.line.display) {
-      labelY += (xAxis.line.size)
+    if (xAxis.axisLine.display) {
+      labelY += (xAxis.axisLine.size)
     }
     if (tickLine.display) {
       labelY += (tickLine.length)

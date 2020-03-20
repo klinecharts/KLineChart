@@ -6,8 +6,8 @@ export default class Series {
     this._chartData = props.chartData
     this._initBefore(props)
     this._initElement()
-    this._mainWidget = this._createMainWidget(this._mainWidgetCell)
-    this._yAxisWidget = this._createYAxisWidget(this._yAxisWidgetCell)
+    this._mainWidget = this._createMainWidget(this._mainWidgetCell, props)
+    this._yAxisWidget = this._createYAxisWidget(this._yAxisWidgetCell, props)
   }
 
   _initBefore (props) {}
@@ -44,17 +44,19 @@ export default class Series {
   /**
    * 创建主组件
    * @param container
+   * @param props
    * @private
    */
-  _createMainWidget (container) {
+  _createMainWidget (container, props) {
   }
 
   /**
    * 创建y轴组件
    * @param container
+   * @param props
    * @private
    */
-  _createYAxisWidget (container) {
+  _createYAxisWidget (container, props) {
   }
 
   _setCellSize (cell, size) {

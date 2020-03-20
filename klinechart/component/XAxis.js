@@ -17,7 +17,7 @@ export default class XAxis extends Axis {
 
   _computeMinMaxValue () {
     const min = this._chartData.from()
-    const max = this._chartData.to()
+    const max = this._chartData.to() - 1
     const range = max - min
     return { min, max, range }
   }
@@ -27,7 +27,7 @@ export default class XAxis extends Axis {
     const tickLength = ticks.length
     const dataList = this._chartData.dataList()
     if (tickLength > 0) {
-      const fontSize = this._chartData.styleOptions().xAxis.tick.text.fontSize
+      const fontSize = this._chartData.styleOptions().xAxis.tickText.size
       this._measureCtx.font = getFont(fontSize)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
       const pos = parseInt(ticks[0].v)

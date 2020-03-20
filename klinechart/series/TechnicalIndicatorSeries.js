@@ -13,27 +13,29 @@ export default class TechnicalIndicatorSeries extends Series {
   }
 
   _initBefore (props) {
-    this._xAxis = props.xAxis
-    this._yAxis = this._createYAxis()
+    this._yAxis = this._createYAxis(props)
   }
 
-  _createYAxis () {
-    return new YAxis(this._chartData, YAxisType.TECHNICAL_INDICATOR)
+  _createYAxis (props) {
+    return new YAxis(props.chartData, YAxisType.TECHNICAL_INDICATOR)
   }
 
-  _createMainWidget (container) {
+  _createMainWidget (container, props) {
     return new TechnicalIndicatorWidget({
       container,
-      chartData: this._chartData,
-      xAxis: this._xAxis,
-      yAxis: this._yAxis
+      chartData: props.chartData,
+      xAxis: props.xAxis,
+      yAxis: this._yAxis,
+      additionalDataProvider: {
+        technicalIndicatorType: this.technicalIndicatorType.bind(this)
+      }
     })
   }
 
-  _createYAxisWidget (container) {
+  _createYAxisWidget (container, props) {
     return new YAxisWidget({
       container,
-      chartData: this._chartData,
+      chartData: props.chartData,
       yAxis: this._yAxis
     })
   }
