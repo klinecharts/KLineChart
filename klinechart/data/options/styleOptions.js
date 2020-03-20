@@ -318,7 +318,7 @@ const defaultFloatLayer = {
   prompt: {
     displayRule: FloatLayerPromptDisplayRule.ALWAYS,
     candleStick: {
-      showType: FloatLayerPromptCandleStickTextDisplayType,
+      showType: FloatLayerPromptCandleStickTextDisplayType.RECT,
       labels: ['时间', '开', '收', '高', '低', '成交量'],
       values: null,
       rect: {
