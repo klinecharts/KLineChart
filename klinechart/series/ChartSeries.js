@@ -28,7 +28,8 @@ export default class ChartSeries {
       container,
       chartData: this._chartData,
       xAxis: this._xAxisSeries.xAxis(),
-      technicalIndicatorType: TechnicalIndicatorType.MA
+      technicalIndicatorType: TechnicalIndicatorType.MA,
+      tag: CANDLE_STICK_SERIES_TAG
     })
     this._technicalIndicatorSeries = {}
     this.measureSeriesSize()
@@ -245,14 +246,13 @@ export default class ChartSeries {
   createTechnicalIndicator (technicalIndicatorType) {
     this._technicalIndicatorBaseId++
     const tag = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
-    const technicalIndicatorSeries = new TechnicalIndicatorSeries({
+    this._technicalIndicatorSeries[tag] = new TechnicalIndicatorSeries({
       container: this._container,
       chartData: this._chartData,
       xAxis: this._xAxisSeries.xAxis(),
-      technicalIndicatorType
+      technicalIndicatorType,
+      tag
     })
-    technicalIndicatorSeries.setTag(tag)
-    this._technicalIndicatorSeries[tag] = technicalIndicatorSeries
     this.measureSeriesSize()
     return tag
   }

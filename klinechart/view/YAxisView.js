@@ -122,6 +122,9 @@ export default class YAxisView extends AxisView {
    * @private
    */
   _drawLastPriceLabel () {
+    if (!this._axis.isCandleStickYAxis()) {
+      return
+    }
     const priceMark = this._chartData.styleOptions().candleStick.priceMark
     const lastPriceMark = priceMark.last
     const dataList = this._chartData.dataList()

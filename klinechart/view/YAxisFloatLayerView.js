@@ -1,6 +1,5 @@
 import AxisFloatLayerView from './AxisFloatLayerView'
 import { calcTextWidth, getFont } from '../utils/canvas'
-import { YAxisType } from '../component/YAxis'
 import { formatPrecision } from '../utils/format'
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
 
@@ -20,7 +19,7 @@ export default class YAxisFloatLayerView extends AxisFloatLayerView {
       return
     }
     const price = this._axis.convertFromPixel(crossHairPoint.y)
-    const precision = this._chartData.precisionOptions[this._axis.yAxisType() === YAxisType.CANDLE_STICK ? 'price' : this._additionalDataProvider.technicalIndicatorType()]
+    const precision = this._chartData.precisionOptions[this._axis.isCandleStickYAxis() ? 'price' : this._additionalDataProvider.technicalIndicatorType()]
     const yAxisDataLabel = formatPrecision(price, precision)
     const textSize = crossHairHorizontalText.size
     this._ctx.font = getFont(textSize)

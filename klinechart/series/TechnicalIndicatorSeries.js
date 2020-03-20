@@ -13,7 +13,7 @@ export default class TechnicalIndicatorSeries extends Series {
   }
 
   _initBefore (props) {
-    this._tag = 'series_tag'
+    this._tag = props.tag
     this._yAxis = this._createYAxis(props)
   }
 
@@ -40,6 +40,7 @@ export default class TechnicalIndicatorSeries extends Series {
       chartData: props.chartData,
       yAxis: this._yAxis,
       additionalDataProvider: {
+        technicalIndicatorType: this.technicalIndicatorType.bind(this),
         tag: this.tag.bind(this)
       }
     })
@@ -70,14 +71,6 @@ export default class TechnicalIndicatorSeries extends Series {
    */
   tag () {
     return this._tag
-  }
-
-  /**
-   * 设置series标识
-   * @param tag
-   */
-  setTag (tag) {
-    this._tag = tag
   }
 
   /**

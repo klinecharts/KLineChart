@@ -168,13 +168,14 @@ const defaultRealTime = {
  * @type {{decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}}
  */
 const defaultTechnicalIndicator = {
-  /**
-   * 线的尺寸
-   */
-  lineSize: 1,
-  upColor: '#26A69A',
-  downColor: '#EF5350',
-  colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+  bar: {
+    upColor: '#26A69A',
+    downColor: '#EF5350'
+  },
+  line: {
+    size: 1,
+    colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+  }
 }
 
 const defaultXAxis = {

@@ -102,7 +102,7 @@ export default class YAxis extends Axis {
       for (let i = from; i < to; i++) {
         const kLineData = dataList[i]
         this._compareMinMax(kLineData, technicalIndicatorType, minMaxArray)
-        if (this._yAxisType === YAxisType.CANDLE_STICK) {
+        if (this.isCandleStickYAxis()) {
           minMaxArray[0] = Math.min(kLineData.low, minMaxArray[0])
           minMaxArray[1] = Math.max(kLineData.high, minMaxArray[1])
         }
@@ -117,8 +117,12 @@ export default class YAxis extends Axis {
     }
   }
 
-  yAxisType () {
-    return this._yAxisType
+  /**
+   * 是否是蜡烛图y轴组件
+   * @returns {boolean}
+   */
+  isCandleStickYAxis () {
+    return this._yAxisType === YAxisType.CANDLE_STICK
   }
 
   convertFromPixel (pixel) {
@@ -126,6 +130,6 @@ export default class YAxis extends Axis {
   }
 
   convertToPixel (value) {
-    return (1.0 - (value - this._minValue) / this._range) * this._height
+    return Math.floor((1.0 - (value - this._minValue) / this._range) * this._height)
   }
 }

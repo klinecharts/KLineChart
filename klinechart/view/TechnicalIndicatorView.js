@@ -1,6 +1,5 @@
 import View from './View'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
-import { YAxisType } from '../component/YAxis'
 import { LineStyle } from '../data/options/styleOptions'
 
 export default class TechnicalIndicatorView extends View {
@@ -76,12 +75,11 @@ export default class TechnicalIndicatorView extends View {
         technicalIndicatorParams.forEach(p => {
           dataKeys.push(`ma${p}`)
         })
-        const isCandleStick = this._yAxis.yAxisType() === YAxisType.CANDLE_STICK
         onDrawing = (x, i, kLineData, halfBarSpace) => {
           this._ohlcTechnicalIndicatorDrawing(
             i, x, halfBarSpace, technicalIndicatorOptions,
             kLineData, technicalIndicatorType, dataKeys,
-            isCandleStick, (values) => {
+            this._yAxis.isCandleStickYAxis(), (values) => {
               this._prepareLinePoints(x, values, linePoints)
             }
           )
@@ -90,18 +88,19 @@ export default class TechnicalIndicatorView extends View {
       }
 
       case TechnicalIndicatorType.MACD: {
+        const dataList = this._chartData.dataList()
         onDrawing = (x, i, kLineData, halfBarSpace) => {
           const macd = kLineData.macd || {}
           this._prepareLinePoints(x, [macd.diff, macd.dea], linePoints)
-          const refKLineData = this.storage.dataList[i - 1] || {}
+          const refKLineData = dataList[i - 1] || {}
           const macdValue = macd.macd
-          const refMacdValue = (refKLineData.macd || {}).macd || Number.MIN_SAFE_INTEGER
+          const refMacdValue = (refKLineData.macd || {}).macd || -Infinity
           if (macdValue > 0) {
-            this._ctx.strokeStyle = technicalIndicatorOptions.increasingColor
-            this._ctx.fillStyle = technicalIndicatorOptions.increasingColor
+            this._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor
+            this._ctx.fillStyle = technicalIndicatorOptions.bar.upColor
           } else {
-            this._ctx.strokeStyle = technicalIndicatorOptions.decreasingColor
-            this._ctx.fillStyle = technicalIndicatorOptions.decreasingColor
+            this._ctx.strokeStyle = technicalIndicatorOptions.bar.downColor
+            this._ctx.fillStyle = technicalIndicatorOptions.bar.downColor
           }
           const isFill = !((refMacdValue || refMacdValue === 0) && macdValue > refMacdValue)
           this._drawBars(x, halfBarSpace, macdValue, isFill)
@@ -110,6 +109,7 @@ export default class TechnicalIndicatorView extends View {
       }
 
       case TechnicalIndicatorType.VOL: {
+        const dataList = this._chartData.dataList()
         onDrawing = (x, i, kLineData, halfBarSpace) => {
           const vol = kLineData.vol || {}
           const lineValues = []
@@ -117,13 +117,13 @@ export default class TechnicalIndicatorView extends View {
             lineValues.push(vol[`ma${p}`])
           })
           this._prepareLinePoints(x, lineValues, linePoints)
-          const refKLineData = this.storage.dataList[i - 1] || {}
+          const refKLineData = dataList[i - 1] || {}
           const close = kLineData.close
-          const refClose = (refKLineData || {}).close || Number.MIN_SAFE_INTEGER
+          const refClose = (refKLineData || {}).close || -Infinity
           if (close > refClose) {
-            this._ctx.fillStyle = technicalIndicatorOptions.upColor
+            this._ctx.fillStyle = technicalIndicatorOptions.bar.upColor
           } else {
-            this._ctx.fillStyle = technicalIndicatorOptions.downColor
+            this._ctx.fillStyle = technicalIndicatorOptions.bar.downColor
           }
           this._drawBars(x, halfBarSpace, vol.num, true)
         }
@@ -131,12 +131,11 @@ export default class TechnicalIndicatorView extends View {
       }
 
       case TechnicalIndicatorType.BOLL: {
-        const isCandleStick = this._yAxis.yAxisType() === YAxisType.CANDLE_STICK
         onDrawing = (x, i, kLineData, halfBarSpace) => {
           this._ohlcTechnicalIndicatorDrawing(
             i, x, halfBarSpace, technicalIndicatorOptions,
             kLineData, technicalIndicatorType, ['up', 'mid', 'dn'],
-            isCandleStick, (values) => {
+            this._yAxis.isCandleStickYAxis(), (values) => {
               this._prepareLinePoints(x, values, linePoints)
             }
           )
@@ -273,19 +272,18 @@ export default class TechnicalIndicatorView extends View {
       }
 
       case TechnicalIndicatorType.SAR: {
-        const isCandleStick = this._yAxis.yAxisType() === YAxisType.CANDLE_STICK
         onDrawing = (x, i, kLineData, halfBarSpace) => {
           this._ohlcTechnicalIndicatorDrawing(
             i, x, halfBarSpace, technicalIndicatorOptions,
             kLineData, technicalIndicatorType, ['sar'],
-            isCandleStick, (values) => {
+            this._yAxis.isCandleStickYAxis(), (values) => {
               const sar = values[0]
               if (sar || sar === 0) {
                 const dataY = this._yAxis.convertToPixel(sar)
                 if (sar < (kLineData.high + kLineData.low) / 2) {
-                  this._ctx.strokeStyle = technicalIndicatorOptions.upColor
+                  this._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor
                 } else {
-                  this._ctx.strokeStyle = technicalIndicatorOptions.downColor
+                  this._ctx.strokeStyle = technicalIndicatorOptions.bar.downColor
                 }
                 this._ctx.beginPath()
                 this._ctx.arc(x, dataY, halfBarSpace, Math.PI * 2, 0, true)
@@ -329,11 +327,12 @@ export default class TechnicalIndicatorView extends View {
     if (prepare) {
       prepare(values)
     }
+    const dataList = this._chartData.dataList()
     if (!isCandleStick) {
-      const refKLineData = this.storage.dataList[i - 1] || {}
+      const refKLineData = dataList[i - 1] || {}
       this._drawOhlc(
         halfBarSpace, x, kLineData,
-        refKLineData, technicalIndicatorOptions.upColor, technicalIndicatorOptions.downColor
+        refKLineData, technicalIndicatorOptions.bar.upColor, technicalIndicatorOptions.bar.downColor
       )
     }
   }
@@ -362,10 +361,10 @@ export default class TechnicalIndicatorView extends View {
    * @param technicalIndicatorOptions
    */
   _drawLines (linePoints, technicalIndicatorOptions) {
-    const colors = technicalIndicatorOptions.colors
+    const colors = technicalIndicatorOptions.line.colors
     const pointCount = linePoints.length
     const colorSize = (colors || []).length
-    this._ctx.lineWidth = technicalIndicatorOptions.lineSize
+    this._ctx.lineWidth = technicalIndicatorOptions.line.size
     for (let i = 0; i < pointCount; i++) {
       const points = linePoints[i]
       if (points.length > 0) {
