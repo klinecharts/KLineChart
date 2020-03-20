@@ -1,5 +1,6 @@
 export const TechnicalIndicatorType = {
   NO: 'NO',
+  AVERAGE: 'AVERAGE',
   MA: 'MA',
   VOL: 'VOL',
   MACD: 'MACD',

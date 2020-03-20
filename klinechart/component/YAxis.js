@@ -78,15 +78,15 @@ export default class YAxis extends Axis {
   /**
    * 计算最大最小值
    * @param technicalIndicatorType
-   * @param isRealTimeChart
+   * @param isRealTime
    */
-  calcMinMaxValue (technicalIndicatorType, isRealTimeChart) {
+  calcMinMaxValue (technicalIndicatorType, isRealTime) {
     const dataList = this._chartData.dataList()
     const from = this._chartData.from()
     const to = this._chartData.to()
     const isShowAverageLine = this._chartData.styleOptions().realTime.averageLine.display
     const minMaxArray = [Infinity, -Infinity]
-    if (isRealTimeChart) {
+    if (isRealTime) {
       for (let i = from; i < to; i++) {
         const kLineData = dataList[i]
         const minCompareArray = [kLineData.close, minMaxArray[0]]
@@ -111,7 +111,6 @@ export default class YAxis extends Axis {
         minMaxArray[0] = 0
       }
     }
-
     if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
       this._minValue = minMaxArray[0]
       this._maxValue = minMaxArray[1]

@@ -1,5 +1,5 @@
 import CandleStickView from '../view/CandleStickView'
-import CandleStickCrossHairView from '../view/CandleStickCrossHairView'
+import CandleStickFloatLayerView from '../view/CandleStickFloatLayerView'
 import TechnicalIndicatorWidget from './TechnicalIndicatorWidget'
 
 export default class CandleStickWidget extends TechnicalIndicatorWidget {
@@ -7,7 +7,7 @@ export default class CandleStickWidget extends TechnicalIndicatorWidget {
     return new CandleStickView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
   }
 
-  _createCrossHairView (container, props) {
-    return new CandleStickCrossHairView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
+  _createFloatLayerView (container, props) {
+    return new CandleStickFloatLayerView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
   }
 }

@@ -243,4 +243,8 @@ export default class ChartData {
   to () {
     return this._to
   }
+
+  range () {
+    return this._range
+  }
 }

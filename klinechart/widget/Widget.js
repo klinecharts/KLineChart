@@ -4,7 +4,7 @@ export default class Widget {
   constructor (props) {
     this._initElement(props.container)
     this._mainView = this._createMainView(this._element, props)
-    this._crossHairView = this._createCrossHairView(this._element, props)
+    this._floatLayerView = this._createFloatLayerView(this._element, props)
   }
 
   /**
@@ -31,7 +31,7 @@ export default class Widget {
    * 创建十字光标view
    * @private
    */
-  _createCrossHairView () {}
+  _createFloatLayerView () {}
 
   /**
    * 设置尺寸
@@ -42,7 +42,7 @@ export default class Widget {
     this._element.style.width = `${width}px`
     this._element.style.height = `${height}px`
     this._mainView.setSize(width, height)
-    this._crossHairView.setSize(width, height)
+    this._floatLayerView.setSize(width, height)
   }
 
   /**
@@ -57,7 +57,7 @@ export default class Widget {
       }
       case InvalidateLevel.FULL: {
         this._mainView.flush()
-        this._crossHairView.flush()
+        this._floatLayerView.flush()
         break
       }
       default: {

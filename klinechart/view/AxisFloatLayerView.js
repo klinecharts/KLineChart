@@ -1,6 +1,6 @@
 import View from './View'
 
-export default class AxisCrossHairView extends View {
+export default class AxisFloatLayerView extends View {
   constructor (container, chartData, axis) {
     super(container, chartData)
     this._axis = axis

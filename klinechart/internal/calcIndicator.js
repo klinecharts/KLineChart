@@ -10,7 +10,7 @@ export default calcIndicator
  * @param dataList
  * @returns {*}
  */
-calcIndicator.average = function (dataList) {
+calcIndicator[TechnicalIndicatorType.AVERAGE] = function (dataList) {
   let totalTurnover = 0
   let totalVolume = 0
   return calc(dataList, (i) => {

@@ -2,7 +2,7 @@ import ChartData, { InvalidateLevel } from '../data/ChartData'
 import CandleStickSeries from './CandleStickSeries'
 import XAxisSeries from './XAxisSeries'
 
-import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
+import { ChartType, YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
 import { isArray, isObject } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
@@ -99,7 +99,12 @@ export default class ChartSeries {
    * @private
    */
   _calcAllSeriesTechnicalIndicator () {
-    const technicalIndicatorTypeArray = [this._candleStickSeries.technicalIndicatorType()]
+    const technicalIndicatorTypeArray = []
+    if (this._candleStickSeries.chartType() === ChartType.CANDLE) {
+      technicalIndicatorTypeArray.push(this._candleStickSeries.technicalIndicatorType())
+    } else {
+      this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE)
+    }
     for (const key in this._technicalIndicatorSeries) {
       const technicalIndicatorSeriesTechnicalIndicatorType = this._technicalIndicatorSeries[key].technicalIndicatorType()
       if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {

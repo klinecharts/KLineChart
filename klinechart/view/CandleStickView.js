@@ -1,15 +1,19 @@
 import TechnicalIndicatorView from './TechnicalIndicatorView'
-import { LineStyle, CandleStickStyle } from '../data/options/styleOptions'
+import { LineStyle, CandleStickStyle, ChartType } from '../data/options/styleOptions'
 import { getFont } from '../utils/canvas'
 import { formatPrecision } from '../utils/format'
 
 export default class CandleStickView extends TechnicalIndicatorView {
   _draw () {
     this._drawGrid()
-    this._drawCandleStick()
-    this._drawTechnicalIndicator()
-    this._drawHighestPriceMark()
-    this._drawLowestPriceMark()
+    if (this._additionalDataProvider.chartType() === ChartType.REAL_TIME) {
+      this._drawRealTime()
+    } else {
+      this._drawCandleStick()
+      this._drawTechnicalIndicator()
+      this._drawHighestPriceMark()
+      this._drawLowestPriceMark()
+    }
     this._drawLastPriceLine()
   }
 
@@ -18,7 +22,80 @@ export default class CandleStickView extends TechnicalIndicatorView {
    * @private
    */
   _drawRealTime () {
+    const timeLinePoints = []
+    const timeLineAreaPoints = [{ x: 0, y: this._height }]
+    const averageLinePoints = []
 
+    const from = this._chartData.from()
+    const range = this._chartData.range()
+    const to = this._chartData.to()
+    const onDrawing = (x, i, kLineData) => {
+      const average = kLineData.average
+      const closeY = this._yAxis.convertToPixel(kLineData.close)
+      const averageY = this._yAxis.convertToPixel(average)
+      timeLinePoints.push({ x: x, y: closeY })
+      if (average || average === 0) {
+        averageLinePoints.push({ x: x, y: averageY })
+      }
+      if (i === from) {
+        timeLineAreaPoints.push({ x: 0, y: closeY })
+      }
+      timeLineAreaPoints.push({ x: x, y: closeY })
+    }
+    const onDrawEnd = () => {
+      const areaPointLength = timeLineAreaPoints.length
+      if (areaPointLength > 0) {
+        const lastPoint = timeLineAreaPoints[areaPointLength - 1]
+        const isFit = !(from - to < range)
+        if (isFit) {
+          timeLineAreaPoints.push({ x: this._width, y: lastPoint.y })
+          timeLineAreaPoints.push({ x: this._width, y: this._height })
+        } else {
+          timeLineAreaPoints.push({ x: lastPoint.x, y: this._height })
+        }
+      }
+
+      const realTime = this._chartData.styleOptions().realTime
+      const timeLine = realTime.timeLine
+      if (timeLinePoints.length > 0) {
+        // 绘制分时线
+        this._ctx.lineWidth = timeLine.size
+        this._ctx.strokeStyle = timeLine.color
+        this._ctx.beginPath()
+        this._ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y)
+        for (let i = 1; i < timeLinePoints.length; i++) {
+          this._ctx.lineTo(timeLinePoints[i].x, timeLinePoints[i].y)
+        }
+        this._ctx.stroke()
+        this._ctx.closePath()
+      }
+
+      if (timeLineAreaPoints.length > 0) {
+        // 绘制分时线填充区域
+        this._ctx.fillStyle = timeLine.areaFillColor
+        this._ctx.beginPath()
+        this._ctx.moveTo(timeLineAreaPoints[0].x, timeLineAreaPoints[0].y)
+        for (let i = 1; i < timeLineAreaPoints.length; i++) {
+          this._ctx.lineTo(timeLineAreaPoints[i].x, timeLineAreaPoints[i].y)
+        }
+        this._ctx.closePath()
+        this._ctx.fill()
+      }
+      const averageLine = realTime.averageLine
+      if (averageLine.display && averageLinePoints.length > 0) {
+        // 绘制均线
+        this._ctx.lineWidth = averageLine.size
+        this._ctx.strokeStyle = averageLine.color
+        this._ctx.beginPath()
+        this._ctx.moveTo(averageLinePoints[0].x, averageLinePoints[0].y)
+        for (let i = 1; i < averageLinePoints.length; i++) {
+          this._ctx.lineTo(averageLinePoints[i].x, averageLinePoints[i].y)
+        }
+        this._ctx.stroke()
+        this._ctx.closePath()
+      }
+    }
+    this._drawGraphics(onDrawing, onDrawEnd)
   }
 
   /**
