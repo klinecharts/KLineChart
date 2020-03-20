@@ -8,6 +8,6 @@ export default class YAxisWidget extends Widget {
   }
 
   _createFloatLayerView (container, props) {
-    return new YAxisFloatLayerView(container, props.chartData, props.yAxis)
+    return new YAxisFloatLayerView(container, props.chartData, props.yAxis, props.additionalDataProvider)
   }
 }

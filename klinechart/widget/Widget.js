@@ -52,7 +52,7 @@ export default class Widget {
   invalidate (level) {
     switch (level) {
       case InvalidateLevel.CROSS_HAIR: {
-        this._mainView.flush()
+        this._floatLayerView.flush()
         break
       }
       case InvalidateLevel.FULL: {

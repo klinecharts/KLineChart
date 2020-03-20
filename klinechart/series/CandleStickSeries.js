@@ -23,7 +23,8 @@ export default class CandleStickSeries extends TechnicalIndicatorSeries {
       yAxis: this._yAxis,
       additionalDataProvider: {
         technicalIndicatorType: this.technicalIndicatorType.bind(this),
-        chartType: this.chartType.bind(this)
+        chartType: this.chartType.bind(this),
+        tag: this.tag.bind(this)
       }
     })
   }

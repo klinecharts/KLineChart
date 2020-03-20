@@ -1,4 +1,4 @@
-import RootChart from './chart/RootChart'
+import Chart from './chart/Chart'
 import { DEV } from './utils/env'
 
 const instances = {}
@@ -30,7 +30,7 @@ function init (dom, style = {}) {
     return instance
   }
   const id = `k_line_chart_${idBase++}`
-  const chart = new RootChart(dom, style)
+  const chart = new Chart(dom, style)
   chart.id = id
   dom.chart_id = id
   instances[id] = chart
@@ -44,7 +44,7 @@ function init (dom, style = {}) {
 function dispose (dc) {
   if (dc) {
     let id = dc.chart_id
-    if (!id && dc instanceof RootChart) {
+    if (!id && dc instanceof Chart) {
       id = dc.id
     }
     if (id) {

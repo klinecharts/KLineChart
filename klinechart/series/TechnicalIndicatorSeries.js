@@ -13,6 +13,7 @@ export default class TechnicalIndicatorSeries extends Series {
   }
 
   _initBefore (props) {
+    this._tag = 'series_tag'
     this._yAxis = this._createYAxis(props)
   }
 
@@ -27,7 +28,8 @@ export default class TechnicalIndicatorSeries extends Series {
       xAxis: props.xAxis,
       yAxis: this._yAxis,
       additionalDataProvider: {
-        technicalIndicatorType: this.technicalIndicatorType.bind(this)
+        technicalIndicatorType: this.technicalIndicatorType.bind(this),
+        tag: this.tag.bind(this)
       }
     })
   }
@@ -36,7 +38,10 @@ export default class TechnicalIndicatorSeries extends Series {
     return new YAxisWidget({
       container,
       chartData: props.chartData,
-      yAxis: this._yAxis
+      yAxis: this._yAxis,
+      additionalDataProvider: {
+        tag: this.tag.bind(this)
+      }
     })
   }
 
@@ -59,6 +64,27 @@ export default class TechnicalIndicatorSeries extends Series {
     }
   }
 
+  /**
+   * 获取标识
+   * @returns {string}
+   */
+  tag () {
+    return this._tag
+  }
+
+  /**
+   * 设置series标识
+   * @param tag
+   */
+  setTag (tag) {
+    this._tag = tag
+  }
+
+  /**
+   * 设置尺寸
+   * @param mainWidgetSize
+   * @param yAxisWidgetSize
+   */
   setSize (mainWidgetSize, yAxisWidgetSize) {
     super.setSize(mainWidgetSize, yAxisWidgetSize)
     this._yAxis.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height)

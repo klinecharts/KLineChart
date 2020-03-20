@@ -1,9 +1,10 @@
 import View from './View'
 
 export default class AxisFloatLayerView extends View {
-  constructor (container, chartData, axis) {
+  constructor (container, chartData, axis, additionalDataProvider) {
     super(container, chartData)
     this._axis = axis
+    this._additionalDataProvider = additionalDataProvider
   }
 
   _draw () {

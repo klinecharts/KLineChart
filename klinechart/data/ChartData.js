@@ -46,10 +46,10 @@ export default class ChartData {
     // bar的空间
     this._barSpace = this._calcBarSpace()
 
-    // 当前提示数据的位置
-    this.tooltipDataPos = 0
-    // 十字光标中心点位置坐标
-    this.crossPoint = null
+    // 十字光标位置
+    this._crossHairPoint = null
+    // 标识十字光标在哪个series
+    this._crossHairSeriesTag = null
 
     // 当前绘制的标记图形的类型
     this.graphicMarkType = GraphicMarkType.NONE
@@ -246,5 +246,36 @@ export default class ChartData {
 
   range () {
     return this._range
+  }
+
+  crossHairPoint () {
+    return this._crossHairPoint
+  }
+
+  crossHairSeriesTag () {
+    return this._crossHairSeriesTag
+  }
+
+  setCrossHairSeriesTag (tag) {
+    this._crossHairSeriesTag = tag
+    this._invalidateHandler(InvalidateLevel.CROSS_HAIR)
+  }
+
+  setCrossHairPoint (point) {
+    this._crossHairPoint = point
+  }
+
+  getCrossHairDataPos () {
+    let pos
+    if (!this._crossHairPoint) {
+      pos = this._to - 1
+    } else {
+      const range = Math.floor(this._crossHairPoint.x / this._dataSpace)
+      pos = this._from + range - 1
+      if (pos > this._to - 1) {
+        pos = this._to - 1
+      }
+    }
+    return pos
   }
 }

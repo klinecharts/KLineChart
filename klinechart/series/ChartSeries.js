@@ -8,6 +8,8 @@ import { formatValue } from '../utils/format'
 import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 
+// import EventBase from '../e/Event'
+
 const DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE = 0.2
 
 const CANDLE_STICK_MIN_HEIGHT_RATE = 0.4
@@ -20,7 +22,7 @@ export default class ChartSeries {
   constructor (container, styleOptions) {
     this._container = container
     this._technicalIndicatorBaseId = 0
-    this._chartData = new ChartData(styleOptions)
+    this._chartData = new ChartData(styleOptions, this._updateSeries.bind(this))
     this._xAxisSeries = new XAxisSeries({ container, chartData: this._chartData })
     this._candleStickSeries = new CandleStickSeries({
       container,
@@ -30,6 +32,24 @@ export default class ChartSeries {
     })
     this._technicalIndicatorSeries = {}
     this.measureSeriesSize()
+    // this.e = new EventBase(this._container, {
+    //   pinchStartEvent: (e) => { console.log('pinchStartEvent'); console.log(e) },
+    //   pinchEvent: (e) => { console.log('pinchEvent'); console.log(e) },
+    //   pinchEndEvent: (e) => { console.log('pinchEndEvent'); console.log(e) },
+    //   mouseClickEvent: (e) => { console.log('mouseClickEvent'); console.log(e) },
+    //   mouseDoubleClickEvent: (e) => { console.log('mouseDoubleClickEvent'); console.log(e) },
+    //   mouseDownEvent: (e) => { console.log('mouseDownEvent'); console.log(e) },
+    //   mouseDownOutsideEvent: (e) => { console.log('mouseDownOutsideEvent'); console.log(e) },
+    //   mouseEnterEvent: (e) => { console.log('mouseEnterEvent'); console.log(e) },
+    //   mouseLeaveEvent: (e) => { console.log('mouseLeaveEvent'); console.log(e) },
+    //   mouseMoveEvent: (e) => { console.log('mouseMoveEvent'); console.log(e) },
+    //   mouseUpEvent: (e) => { console.log('mouseUpEvent'); console.log(e) },
+    //   pressedMouseMoveEvent: (e) => { console.log('pressedMouseMoveEvent'); console.log(e) },
+    //   longTapEvent: (e) => { console.log('longTapEvent'); console.log(e) }
+    // }, {
+    //   treatVertTouchDragAsPageScroll: false,
+    //   treatHorzTouchDragAsPageScroll: false
+    // })
   }
 
   /**
@@ -86,11 +106,11 @@ export default class ChartSeries {
    * 更新所有series
    * @private
    */
-  _updateAllSeries () {
-    this._xAxisSeries.invalidate(InvalidateLevel.FULL)
-    this._candleStickSeries.invalidate(InvalidateLevel.FULL)
+  _updateSeries (invalidateLevel = InvalidateLevel.FULL) {
+    this._xAxisSeries.invalidate(invalidateLevel)
+    this._candleStickSeries.invalidate(invalidateLevel)
     for (const key in this._technicalIndicatorSeries) {
-      this._technicalIndicatorSeries[key].invalidate(InvalidateLevel.FULL)
+      this._technicalIndicatorSeries[key].invalidate(invalidateLevel)
     }
   }
 
@@ -114,7 +134,7 @@ export default class ChartSeries {
     for (const technicalIndicatorType of technicalIndicatorTypeArray) {
       this._chartData.calcTechnicalIndicator(technicalIndicatorType)
     }
-    this._updateAllSeries()
+    this._updateSeries()
   }
 
   chartData () {
@@ -225,12 +245,14 @@ export default class ChartSeries {
   createTechnicalIndicator (technicalIndicatorType) {
     this._technicalIndicatorBaseId++
     const tag = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
-    this._technicalIndicatorSeries[tag] = new TechnicalIndicatorSeries({
+    const technicalIndicatorSeries = new TechnicalIndicatorSeries({
       container: this._container,
       chartData: this._chartData,
       xAxis: this._xAxisSeries.xAxis(),
       technicalIndicatorType
     })
+    technicalIndicatorSeries.setTag(tag)
+    this._technicalIndicatorSeries[tag] = technicalIndicatorSeries
     this.measureSeriesSize()
     return tag
   }
