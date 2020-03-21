@@ -6,12 +6,12 @@ import { ChartType, YAxisPosition, YAxisTextPosition } from '../data/options/sty
 import { isArray, isObject } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
+import SeparatorSeries from './SeparatorSeries'
+
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 import ChartEvent from '../e/ChartEvent'
 
-const DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE = 0.2
-
-const CANDLE_STICK_MIN_HEIGHT_RATE = 0.4
+const DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT_RATE = 0.2
 
 const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_'
 
@@ -21,7 +21,9 @@ export default class ChartSeries {
   constructor (container, styleOptions) {
     this._container = container
     this._technicalIndicatorBaseId = 0
-    this._technicalIndicatorSeries = {}
+    this._technicalIndicatorSeries = []
+    this._separatorSeries = []
+    this._separatorDragStartHeight = {}
     this._chartData = new ChartData(styleOptions, this._updateSeries.bind(this))
     this._chartEvent = new ChartEvent(this._container, this._chartData)
     this._xAxisSeries = new XAxisSeries({ container, chartData: this._chartData })
@@ -32,6 +34,25 @@ export default class ChartSeries {
       technicalIndicatorType: TechnicalIndicatorType.MA,
       tag: CANDLE_STICK_SERIES_TAG
     })
+    this.measureSeriesSize()
+  }
+
+  _separatorStartDrag (topSeriesIndex, bottomSeriesIndex) {
+    if (topSeriesIndex === -1) {
+      this._separatorDragStartHeight.top = this._candleStickSeries.height()
+    } else {
+      this._separatorDragStartHeight.top = this._technicalIndicatorSeries[topSeriesIndex].height()
+    }
+    this._separatorDragStartHeight.bottom = this._technicalIndicatorSeries[bottomSeriesIndex].height()
+  }
+
+  _separatorDrag (dragDistance, topSeriesIndex, bottomSeriesIndex) {
+    if (topSeriesIndex === -1) {
+      this._candleStickSeries.setTempHeight(this._separatorDragStartHeight.top + dragDistance)
+    } else {
+      this._technicalIndicatorSeries[topSeriesIndex].setTempHeight(this._separatorDragStartHeight.top + dragDistance)
+    }
+    this._technicalIndicatorSeries[bottomSeriesIndex].setTempHeight(this._separatorDragStartHeight.bottom - dragDistance)
     this.measureSeriesSize()
   }
 
@@ -86,14 +107,24 @@ export default class ChartSeries {
   }
 
   /**
+   * 测量图表间分割线的高度
+   * @returns {number}
+   * @private
+   */
+  _measureSeparatorHeight () {
+    const separator = this._chartData.styleOptions().separator
+    return separator.size * this._separatorSeries.length
+  }
+
+  /**
    * 更新所有series
    * @private
    */
   _updateSeries (invalidateLevel = InvalidateLevel.FULL) {
     this._xAxisSeries.invalidate(invalidateLevel)
     this._candleStickSeries.invalidate(invalidateLevel)
-    for (const key in this._technicalIndicatorSeries) {
-      this._technicalIndicatorSeries[key].invalidate(invalidateLevel)
+    for (const series of this._technicalIndicatorSeries) {
+      series.invalidate(invalidateLevel)
     }
   }
 
@@ -108,8 +139,8 @@ export default class ChartSeries {
     } else {
       this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE)
     }
-    for (const key in this._technicalIndicatorSeries) {
-      const technicalIndicatorSeriesTechnicalIndicatorType = this._technicalIndicatorSeries[key].technicalIndicatorType()
+    for (const series of this._technicalIndicatorSeries) {
+      const technicalIndicatorSeriesTechnicalIndicatorType = series.technicalIndicatorType()
       if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {
         technicalIndicatorTypeArray.push(technicalIndicatorSeriesTechnicalIndicatorType)
       }
@@ -129,21 +160,13 @@ export default class ChartSeries {
    * @private
    */
   measureSeriesSize () {
-    const seriesSize = {}
     const seriesHeight = this._container.offsetHeight
     const seriesWidth = this._container.offsetWidth
+    const separatorHeight = this._measureSeparatorHeight()
     const xAxisHeight = this._measureXAxisHeight()
     const yAxisWidth = this._measureYAxisWidth()
-    const seriesExcludeXAxisHeight = seriesHeight - xAxisHeight
+    const seriesExcludeXAxisSeparatorHeight = seriesHeight - xAxisHeight - separatorHeight
     const seriesExcludeYAxisWidth = seriesWidth - yAxisWidth
-    const technicalIndicatorSeriesCount = Object.values(this._technicalIndicatorSeries).length
-    let technicalIndicatorSeriesHeight
-    if (technicalIndicatorSeriesCount * DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE > CANDLE_STICK_MIN_HEIGHT_RATE) {
-      technicalIndicatorSeriesHeight = Math.floor((1 - CANDLE_STICK_MIN_HEIGHT_RATE) * seriesExcludeXAxisHeight / technicalIndicatorSeriesCount)
-    } else {
-      technicalIndicatorSeriesHeight = Math.floor(seriesExcludeXAxisHeight * DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE)
-    }
-    const candleStickSeriesHeight = seriesExcludeXAxisHeight - (technicalIndicatorSeriesCount * technicalIndicatorSeriesHeight)
 
     const isLeft = this._chartData.styleOptions().yAxis.position === YAxisPosition.LEFT
     let yAxisOffsetLeft = seriesExcludeYAxisWidth
@@ -152,31 +175,59 @@ export default class ChartSeries {
       yAxisOffsetLeft = 0
       mainOffsetLeft = yAxisWidth
     }
+
+    let seriesKnowTotalHeight = 0
+    let candleStickSeriesHeight = this._candleStickSeries.height()
+    if (candleStickSeriesHeight >= 0) {
+      seriesKnowTotalHeight += candleStickSeriesHeight
+    }
+
+    let unKnowTechnicalIndicatorSeriesCount = 0
+    for (const series of this._technicalIndicatorSeries) {
+      const seriesHeight = series.height()
+      if (seriesHeight < 0) {
+        unKnowTechnicalIndicatorSeriesCount++
+      } else {
+        seriesKnowTotalHeight += seriesHeight
+      }
+    }
+
+    const seriesUnKnowTotalHeight = seriesExcludeXAxisSeparatorHeight - seriesKnowTotalHeight
+    const defaultTechnicalIndicatorSeriesHeight = Math.floor(seriesUnKnowTotalHeight * DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT_RATE)
+    if (candleStickSeriesHeight < 0) {
+      candleStickSeriesHeight = seriesUnKnowTotalHeight - defaultTechnicalIndicatorSeriesHeight * unKnowTechnicalIndicatorSeriesCount
+    }
     this._chartData.setTotalDataSpace(seriesExcludeYAxisWidth)
+    const seriesSize = {}
     seriesSize.contentLeft = mainOffsetLeft
     seriesSize.contentRight = mainOffsetLeft + seriesExcludeYAxisWidth
-    this._candleStickSeries.setSize(
-      { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: candleStickSeriesHeight },
-      { left: yAxisOffsetLeft, width: yAxisWidth, height: candleStickSeriesHeight }
-    )
     const tags = {}
     tags[CANDLE_STICK_SERIES_TAG] = { contentTop: 0, contentBottom: candleStickSeriesHeight }
     let contentTop = candleStickSeriesHeight
     let contentBottom = candleStickSeriesHeight
-    for (const key in this._technicalIndicatorSeries) {
-      this._technicalIndicatorSeries[key].setSize(
-        { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: technicalIndicatorSeriesHeight },
-        { left: yAxisOffsetLeft, width: yAxisWidth, height: technicalIndicatorSeriesHeight }
+    this._candleStickSeries.setSize(
+      { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: candleStickSeriesHeight },
+      { left: yAxisOffsetLeft, width: yAxisWidth, height: candleStickSeriesHeight }
+    )
+
+    for (const series of this._technicalIndicatorSeries) {
+      let seriesHeight = series.height()
+      if (seriesHeight < 0) {
+        seriesHeight = defaultTechnicalIndicatorSeriesHeight
+      }
+      series.setSize(
+        { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: seriesHeight },
+        { left: yAxisOffsetLeft, width: yAxisWidth, height: seriesHeight }
       )
-      contentBottom += technicalIndicatorSeriesHeight
-      tags[key] = { contentTop, contentBottom }
+      contentBottom += seriesHeight
+      tags[series.tag()] = { contentTop, contentBottom }
       contentTop = contentBottom
     }
+    seriesSize.tags = tags
     this._xAxisSeries.setSize(
       { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: xAxisHeight },
       { left: yAxisOffsetLeft, width: yAxisWidth, height: xAxisHeight }
     )
-    seriesSize.tags = tags
     this._chartEvent.setSeriesSize(seriesSize)
   }
 
@@ -238,15 +289,28 @@ export default class ChartSeries {
    * @returns {string}
    */
   createTechnicalIndicator (technicalIndicatorType) {
+    const technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length
+    this._separatorSeries.push(
+      new SeparatorSeries(
+        this._container, this._chartData,
+        technicalIndicatorSeriesCount - 1,
+        technicalIndicatorSeriesCount, {
+          startDrag: this._separatorStartDrag.bind(this),
+          drag: this._separatorDrag.bind(this)
+        }
+      )
+    )
     this._technicalIndicatorBaseId++
     const tag = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
-    this._technicalIndicatorSeries[tag] = new TechnicalIndicatorSeries({
-      container: this._container,
-      chartData: this._chartData,
-      xAxis: this._xAxisSeries.xAxis(),
-      technicalIndicatorType,
-      tag
-    })
+    this._technicalIndicatorSeries.push(
+      new TechnicalIndicatorSeries({
+        container: this._container,
+        chartData: this._chartData,
+        xAxis: this._xAxisSeries.xAxis(),
+        technicalIndicatorType,
+        tag
+      })
+    )
     this.measureSeriesSize()
     return tag
   }
@@ -256,10 +320,22 @@ export default class ChartSeries {
    * @param tag
    */
   removeTechnicalIndicator (tag) {
-    const series = this._technicalIndicatorSeries[tag]
-    if (series) {
-      series.destroy()
-      delete this._technicalIndicatorSeries[tag]
+    let seriesPos = -1
+    for (let i = 0; i < this._technicalIndicatorSeries.length; i++) {
+      const series = this._technicalIndicatorSeries[i]
+      if (series.tag() === tag) {
+        seriesPos = i
+        break
+      }
+    }
+    if (seriesPos !== -1) {
+      this._technicalIndicatorSeries[seriesPos].destroy()
+      this._separatorSeries[seriesPos].destroy()
+      delete this._technicalIndicatorSeries[seriesPos]
+      delete this._separatorSeries[seriesPos]
+      for (let i = 0; i < this._separatorSeries.length; i++) {
+        this._separatorSeries[i].updateSeriesIndex(i - 1, i)
+      }
       this.measureSeriesSize()
     }
   }
@@ -271,14 +347,20 @@ export default class ChartSeries {
    */
   setTechnicalIndicatorType (tag, technicalIndicatorType) {
     if (tag === CANDLE_STICK_SERIES_TAG) {
-      this._technicalIndicatorSeries.setTechnicalIndicatorType(technicalIndicatorType)
+      this._candleStickSeries.setTechnicalIndicatorType(technicalIndicatorType)
     } else {
-      const series = this._technicalIndicatorSeries[tag]
-      if (series) {
+      let s
+      for (const series of this._technicalIndicatorSeries) {
+        if (series.tag() === tag) {
+          s = series
+          break
+        }
+      }
+      if (s) {
         if (technicalIndicatorType === TechnicalIndicatorType.NO) {
           this.removeTechnicalIndicator(tag)
         } else {
-          series.setTechnicalIndicatorType(technicalIndicatorType)
+          s.setTechnicalIndicatorType(technicalIndicatorType)
         }
       }
     }

@@ -79,8 +79,9 @@ export default class TechnicalIndicatorSeries extends Series {
    * @param yAxisWidgetSize
    */
   setSize (mainWidgetSize, yAxisWidgetSize) {
-    super.setSize(mainWidgetSize, yAxisWidgetSize)
     this._yAxis.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height)
+    this._computeAxis()
+    super.setSize(mainWidgetSize, yAxisWidgetSize)
   }
 
   /**

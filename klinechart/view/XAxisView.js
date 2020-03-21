@@ -8,11 +8,13 @@ export default class XAxisView extends AxisView {
     if (!xAxis.display || !xAxis.axisLine.display) {
       return
     }
+    const lineSize = xAxis.axisLine.size
+    const y = lineSize / 2
     this._ctx.strokeStyle = xAxis.axisLine.color
-    this._ctx.lineWidth = xAxis.axisLine.size
+    this._ctx.lineWidth = lineSize
     this._ctx.beginPath()
-    this._ctx.moveTo(0, 0)
-    this._ctx.lineTo(this._width, 0)
+    this._ctx.moveTo(0, y)
+    this._ctx.lineTo(this._width, y)
     this._ctx.stroke()
     this._ctx.closePath()
   }

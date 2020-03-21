@@ -14,18 +14,21 @@ export default class YAxisView extends AxisView {
     if (!yAxis.display || !yAxis.axisLine.display) {
       return
     }
+    const lineSize = yAxis.axisLine.size
     this._ctx.strokeStyle = yAxis.axisLine.color
-    this._ctx.lineWidth = yAxis.axisLine.size
+    this._ctx.lineWidth = lineSize
     this._ctx.beginPath()
     if (
       (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE) ||
       (yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE)
     ) {
-      this._ctx.moveTo(0, 0)
-      this._ctx.lineTo(0, this._height)
+      const x = lineSize / 2
+      this._ctx.moveTo(x, 0)
+      this._ctx.lineTo(x, this._height)
     } else {
-      this._ctx.moveTo(this._width, 0)
-      this._ctx.lineTo(this._width, this._height)
+      const x = this._width - lineSize / 2
+      this._ctx.moveTo(x, 0)
+      this._ctx.lineTo(x, this._height)
     }
     this._ctx.stroke()
     this._ctx.closePath()

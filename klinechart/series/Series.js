@@ -4,6 +4,8 @@ export default class Series {
   constructor (props) {
     this._container = props.container
     this._chartData = props.chartData
+    this._width = -1
+    this._height = -1
     this._initBefore(props)
     this._initElement()
     this._mainWidget = this._createMainWidget(this._mainWidgetCell, props)
@@ -19,6 +21,7 @@ export default class Series {
     this._element.style.width = '100%'
     this._element.style.position = 'relative'
     this._element.style.overflow = 'hidden'
+    this._width = this._element.offsetWidth
     this._mainWidgetCell = this._createCell()
     this._yAxisWidgetCell = this._createCell()
     this._element.appendChild(this._mainWidgetCell)
@@ -47,8 +50,7 @@ export default class Series {
    * @param props
    * @private
    */
-  _createMainWidget (container, props) {
-  }
+  _createMainWidget (container, props) {}
 
   /**
    * 创建y轴组件
@@ -56,13 +58,47 @@ export default class Series {
    * @param props
    * @private
    */
-  _createYAxisWidget (container, props) {
-  }
+  _createYAxisWidget (container, props) {}
 
+  /**
+   * 设置cell的尺寸
+   * @param cell
+   * @param size
+   * @private
+   */
   _setCellSize (cell, size) {
     cell.style.left = `${size.left}px`
     cell.style.width = `${size.width}px`
     cell.style.height = `${size.height}px`
+  }
+
+  /**
+   * 计算轴
+   * @private
+   */
+  _computeAxis () {}
+
+  /**
+   * 获取宽度
+   * @returns {number}
+   */
+  width () {
+    return this._width
+  }
+
+  /**
+   * 获取高度
+   */
+  height () {
+    return this._height
+  }
+
+  /**
+   * 设置临时高度
+   * @param height
+   */
+  setTempHeight (height) {
+    this._height = height
   }
 
   /**
@@ -74,13 +110,12 @@ export default class Series {
     this._element.style.height = `${mainWidgetSize.height}px`
     this._setCellSize(this._mainWidgetCell, mainWidgetSize)
     this._setCellSize(this._yAxisWidgetCell, yAxisWidgetSize)
+    this._height = mainWidgetSize.height
     this._mainWidget.setSize(mainWidgetSize.width, mainWidgetSize.height)
     if (this._yAxisWidget) {
       this._yAxisWidget.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height)
     }
   }
-
-  _computeAxis () {}
 
   /**
    * 刷新

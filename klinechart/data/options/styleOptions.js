@@ -385,6 +385,16 @@ const defaultGraphicMark = {
   }
 }
 
+/**
+ * 图表之间默认分割配置
+ * @type {{size: number, color: string}}
+ */
+const defaultSeparator = {
+  size: 1,
+  color: '#888888',
+  fill: false
+}
+
 export const defaultStyleOptions = {
   grid: defaultGrid,
   candleStick: defaultCandleStick,
@@ -392,6 +402,7 @@ export const defaultStyleOptions = {
   technicalIndicator: defaultTechnicalIndicator,
   xAxis: defaultXAxis,
   yAxis: defaultYAxis,
+  separator: defaultSeparator,
   floatLayer: defaultFloatLayer,
   graphicMark: defaultGraphicMark
 }
