@@ -21,16 +21,19 @@ export default class ChartEvent {
 
     // 开始拖动时坐标点
     this._startDragPoint = {}
+    // 开始触摸时坐标
     this._touchPoint = {}
+    // 是否是取消了十字光标
     this._touchCancelCrossHair = false
-    this._touchZooming = false
-
+    // 是否缩放过
+    this._touchZoomed = false
+    // 用来记录捏合缩放的尺寸
     this._pinchScale = 1
   }
 
   _pinchStartEvent () {
     this._pinchScale = 1
-    this._touchZooming = true
+    this._touchZoomed = true
   }
 
   _pinchEvent (middlePoint, scale) {
@@ -98,7 +101,7 @@ export default class ChartEvent {
     if (!real) {
       return
     }
-    if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZooming) {
+    if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
       this._touchPoint = { x: event.localX, y: event.localY }
       this._chartData.setCrossHairPoint({ x: event.localX, y: real.y })
       this._chartData.setCrossHairSeriesTag(real.tag)
@@ -116,7 +119,7 @@ export default class ChartEvent {
       return
     }
     const crossHairPoint = { x: event.localX, y: real.y }
-    this._touchZooming = false
+    this._touchZoomed = false
     if (this._touchPoint) {
       const xDif = event.localX - this._touchPoint.x
       const yDif = event.localY - this._touchPoint.y
