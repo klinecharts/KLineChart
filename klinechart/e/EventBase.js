@@ -1,16 +1,10 @@
 const MOUSE_EVENT_BUTTON_LEFT = 0
 
 const DELAY_RESET_CLICK = 500
-const DELAY_LONG_TAG = 500
+const DELAY_LONG_TAG = 600
 
 function getBoundingClientRect (element) {
   return element.getBoundingClientRect() || { left: 0, top: 0 }
-}
-
-function getDistance (p1, p2) {
-  const xDiff = p1.clientX - p2.clientX
-  const yDiff = p1.clientY - p2.clientY
-  return Math.sqrt(xDiff * xDiff + yDiff * yDiff)
 }
 
 function isTouchEvent (event) {
@@ -33,6 +27,25 @@ function checkTouchEvents () {
 
 const touch = !!navigator.maxTouchPoints || !!navigator.msMaxTouchPoints || checkTouchEvents()
 const mobileTouch = 'onorientationchange' in window && touch
+
+function getDistance (p1, p2) {
+  const xDiff = p1.clientX - p2.clientX
+  const yDiff = p1.clientY - p2.clientY
+  return Math.sqrt(xDiff * xDiff + yDiff * yDiff)
+}
+
+export const EventType = {
+  MOUSE: 'mouse',
+  TOUCH: 'touch'
+}
+
+export function isTouch (event) {
+  return event.type === EventType.TOUCH
+}
+
+export function isMouse (event) {
+  return event.type === EventType.MOUSE
+}
 
 export default class EventBase {
   constructor (target, eventHandler, options) {
@@ -88,10 +101,13 @@ export default class EventBase {
 
     {
       const boundMouseMoveHandler = this._mouseMoveHandler.bind(this)
+      const boundMouseWheelHandler = this._mouseWheelHandler.bind(this)
       this._unsubscribeMousemove = () => {
         this._target.removeEventListener('mousemove', boundMouseMoveHandler)
+        this._target.removeEventListener('wheel', boundMouseWheelHandler)
       }
       this._target.addEventListener('mousemove', boundMouseMoveHandler)
+      this._target.addEventListener('wheel', boundMouseWheelHandler, { passive: false })
     }
 
     if (isTouchEvent(enterEvent)) {
@@ -118,6 +134,13 @@ export default class EventBase {
 
     const compatEvent = this._makeCompatEvent(moveEvent)
     this._processEvent(compatEvent, this._handler.mouseMoveEvent)
+  }
+
+  _mouseWheelHandler (wheelEvent) {
+    const compatEvent = this._makeCompatEvent(wheelEvent)
+    wheelEvent.localX = compatEvent.localX
+    wheelEvent.localY = compatEvent.localY
+    this._processEvent(wheelEvent, this._handler.mouseWheelEvent)
   }
 
   _mouseMoveWithDownHandler (moveEvent) {
@@ -191,7 +214,6 @@ export default class EventBase {
     if ('button' in mouseUpEvent && mouseUpEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
       return
     }
-
     const compatEvent = this._makeCompatEvent(mouseUpEvent)
 
     this._clearLongTapTimeout()
@@ -476,7 +498,7 @@ export default class EventBase {
       shiftKey: event.shiftKey,
       metaKey: event.metaKey,
 
-      type: event.type.startsWith('mouse') ? 'mouse' : 'touch',
+      type: event.type.startsWith('mouse') ? EventType.MOUSE : EventType.TOUCH,
 
       target: eventLike.target,
       view: event.view

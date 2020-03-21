@@ -7,8 +7,7 @@ import { isArray, isObject } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
-
-// import EventBase from '../e/Event'
+import ChartEvent from '../e/ChartEvent'
 
 const DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE = 0.2
 
@@ -22,7 +21,9 @@ export default class ChartSeries {
   constructor (container, styleOptions) {
     this._container = container
     this._technicalIndicatorBaseId = 0
+    this._technicalIndicatorSeries = {}
     this._chartData = new ChartData(styleOptions, this._updateSeries.bind(this))
+    this._chartEvent = new ChartEvent(this._container, this._chartData)
     this._xAxisSeries = new XAxisSeries({ container, chartData: this._chartData })
     this._candleStickSeries = new CandleStickSeries({
       container,
@@ -31,26 +32,7 @@ export default class ChartSeries {
       technicalIndicatorType: TechnicalIndicatorType.MA,
       tag: CANDLE_STICK_SERIES_TAG
     })
-    this._technicalIndicatorSeries = {}
     this.measureSeriesSize()
-    // this.e = new EventBase(this._container, {
-    //   pinchStartEvent: (e) => { console.log('pinchStartEvent'); console.log(e) },
-    //   pinchEvent: (e) => { console.log('pinchEvent'); console.log(e) },
-    //   pinchEndEvent: (e) => { console.log('pinchEndEvent'); console.log(e) },
-    //   mouseClickEvent: (e) => { console.log('mouseClickEvent'); console.log(e) },
-    //   mouseDoubleClickEvent: (e) => { console.log('mouseDoubleClickEvent'); console.log(e) },
-    //   mouseDownEvent: (e) => { console.log('mouseDownEvent'); console.log(e) },
-    //   mouseDownOutsideEvent: (e) => { console.log('mouseDownOutsideEvent'); console.log(e) },
-    //   mouseEnterEvent: (e) => { console.log('mouseEnterEvent'); console.log(e) },
-    //   mouseLeaveEvent: (e) => { console.log('mouseLeaveEvent'); console.log(e) },
-    //   mouseMoveEvent: (e) => { console.log('mouseMoveEvent'); console.log(e) },
-    //   mouseUpEvent: (e) => { console.log('mouseUpEvent'); console.log(e) },
-    //   pressedMouseMoveEvent: (e) => { console.log('pressedMouseMoveEvent'); console.log(e) },
-    //   longTapEvent: (e) => { console.log('longTapEvent'); console.log(e) }
-    // }, {
-    //   treatVertTouchDragAsPageScroll: false,
-    //   treatHorzTouchDragAsPageScroll: false
-    // })
   }
 
   /**
@@ -147,6 +129,7 @@ export default class ChartSeries {
    * @private
    */
   measureSeriesSize () {
+    const seriesSize = {}
     const seriesHeight = this._container.offsetHeight
     const seriesWidth = this._container.offsetWidth
     const xAxisHeight = this._measureXAxisHeight()
@@ -170,20 +153,31 @@ export default class ChartSeries {
       mainOffsetLeft = yAxisWidth
     }
     this._chartData.setTotalDataSpace(seriesExcludeYAxisWidth)
+    seriesSize.contentLeft = mainOffsetLeft
+    seriesSize.contentRight = mainOffsetLeft + seriesExcludeYAxisWidth
     this._candleStickSeries.setSize(
       { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: candleStickSeriesHeight },
       { left: yAxisOffsetLeft, width: yAxisWidth, height: candleStickSeriesHeight }
     )
+    const tags = {}
+    tags[CANDLE_STICK_SERIES_TAG] = { contentTop: 0, contentBottom: candleStickSeriesHeight }
+    let contentTop = candleStickSeriesHeight
+    let contentBottom = candleStickSeriesHeight
     for (const key in this._technicalIndicatorSeries) {
       this._technicalIndicatorSeries[key].setSize(
         { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: technicalIndicatorSeriesHeight },
         { left: yAxisOffsetLeft, width: yAxisWidth, height: technicalIndicatorSeriesHeight }
       )
+      contentBottom += technicalIndicatorSeriesHeight
+      tags[key] = { contentTop, contentBottom }
+      contentTop = contentBottom
     }
     this._xAxisSeries.setSize(
       { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: xAxisHeight },
       { left: yAxisOffsetLeft, width: yAxisWidth, height: xAxisHeight }
     )
+    seriesSize.tags = tags
+    this._chartEvent.setSeriesSize(seriesSize)
   }
 
   /**

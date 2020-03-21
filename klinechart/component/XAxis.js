@@ -73,7 +73,15 @@ export default class XAxis extends Axis {
 
   convertFromPixel (pixel) {
     const dataSpace = this._chartData.dataSpace()
-    const range = Math.floor(pixel / dataSpace)
+    let range = pixel / dataSpace
+    const floorRange = Math.floor(range)
+    const spaceDif = (range - floorRange) * dataSpace
+    if (spaceDif < this._chartData.barSpace() / 2) {
+      range = floorRange
+    } else {
+      range = Math.ceil(range)
+    }
+
     return this._chartData.from() + range - 1
   }
 

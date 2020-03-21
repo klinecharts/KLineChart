@@ -55,40 +55,6 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread2(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(source, true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(source).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -166,276 +132,6 @@ function _get(target, property, receiver) {
   return _get(target, property, receiver || target);
 }
 
-var Handler =
-/*#__PURE__*/
-function () {
-  function Handler() {
-    _classCallCheck(this, Handler);
-
-    // 绘制区域参数
-    this.contentRect = {
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0
-    }; // 整个view的高度
-
-    this.height = 0; // 整个view的宽度
-
-    this.width = 0;
-  }
-  /**
-   * 设置尺寸
-   * @param width
-   * @param height
-   * @param offsetLeft
-   * @param offsetRight
-   * @param offsetTop
-   * @param offsetBottom
-   */
-
-
-  _createClass(Handler, [{
-    key: "setDimensions",
-    value: function setDimensions(width, height, offsetLeft, offsetRight, offsetTop, offsetBottom) {
-      this.width = width;
-      this.height = height;
-      this.contentRect.left = offsetLeft;
-      this.contentRect.right = offsetRight;
-      this.contentRect.top = offsetTop;
-      this.contentRect.bottom = offsetBottom;
-    }
-  }, {
-    key: "contentTop",
-    value: function contentTop() {
-      return this.contentRect.top;
-    }
-  }, {
-    key: "contentLeft",
-    value: function contentLeft() {
-      return this.contentRect.left;
-    }
-  }, {
-    key: "contentRight",
-    value: function contentRight() {
-      return this.width - this.contentRect.right;
-    }
-  }, {
-    key: "contentBottom",
-    value: function contentBottom() {
-      return this.height - this.contentRect.bottom;
-    }
-  }, {
-    key: "getContentWidth",
-    value: function getContentWidth() {
-      return this.contentRight() - this.contentLeft();
-    }
-  }, {
-    key: "getContentHeight",
-    value: function getContentHeight() {
-      return this.contentBottom() - this.contentTop();
-    }
-    /**
-     * 获取中间点坐标
-     */
-
-  }, {
-    key: "getContentCenter",
-    value: function getContentCenter() {
-      var point = {};
-      point.x = (this.contentLeft() + this.contentRight()) / 2;
-      point.y = (this.contentTop() + this.contentBottom()) / 2;
-      return point;
-    }
-  }]);
-
-  return Handler;
-}();
-
-var ctx = document.createElement('canvas').getContext('2d');
-var pixelRatio = getPixelRatio(ctx);
-ctx.scale(pixelRatio, pixelRatio);
-/**
- * 获取屏幕比
- * @param ctx
- * @returns {number}
- */
-
-function getPixelRatio(ctx) {
-  var backingStore = ctx.backingStorePixelRatio || ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio || ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio || ctx.backingStorePixelRatio || 1;
-  return (window.devicePixelRatio || 1) / backingStore;
-}
-/**
- * requestAnimationFrame兼容
- * @param fn
- */
-
-function requestAnimationFrame(fn) {
-  if (!window.requestAnimationFrame) {
-    return window.setTimeout(function () {
-      fn();
-    }, 1000 / 60);
-  }
-
-  return window.requestAnimationFrame(fn);
-}
-/**
- * cancelAnimationFrame兼容
- * @param id
- */
-
-function cancelAnimationFrame(id) {
-  if (!window.cancelAnimationFrame) {
-    clearTimeout(id);
-  }
-
-  window.cancelAnimationFrame(id);
-}
-/**
- * 测量文字的宽度
- * @param fontSize
- * @param text
- * @returns {number}
- */
-
-function calcTextWidth(fontSize, text) {
-  ctx.font = getFont(fontSize);
-  return ctx.measureText(text).width;
-}
-/**
- * 获取字体
- * @param fontSize
- * @returns {string}
- */
-
-function getFont(fontSize) {
-  return "".concat(fontSize, "px Arial");
-}
-
-var Chart =
-/*#__PURE__*/
-function () {
-  function Chart(dom, style) {
-    _classCallCheck(this, Chart);
-
-    this.style = style;
-    this.handler = new Handler();
-    this.init(dom);
-  }
-  /**
-   * 初始化canvas
-   * @param dom
-   */
-
-
-  _createClass(Chart, [{
-    key: "init",
-    value: function init(dom) {
-      var canvasDom = document.createElement('canvas');
-      canvasDom.style.position = 'absolute';
-      canvasDom.style.right = '0';
-      canvasDom.style.left = '0';
-      this.canvasDom = canvasDom;
-      this.ctx = this.canvasDom.getContext('2d');
-      dom.appendChild(this.canvasDom);
-    }
-    /**
-     * 设置图尺寸
-     * @param chartTop
-     * @param width
-     * @param height
-     * @param offsetLeft
-     * @param offsetRight
-     * @param offsetTop
-     * @param offsetBottom
-     */
-
-  }, {
-    key: "setChartDimensions",
-    value: function setChartDimensions(chartTop, width, height, offsetLeft, offsetRight) {
-      var offsetTop = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
-      var offsetBottom = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 0;
-      this.clearCanvas();
-      var pixelRatio = getPixelRatio(this.ctx);
-      var canvasWidth = width * pixelRatio;
-      var canvasHeight = height * pixelRatio;
-      this.canvasDom.style.top = "".concat(chartTop, "px");
-      this.canvasDom.style.width = "".concat(width, "px");
-      this.canvasDom.style.height = "".concat(height, "px");
-      this.canvasDom.width = canvasWidth;
-      this.canvasDom.height = canvasHeight;
-      this.handler.setDimensions(width, height, offsetLeft, offsetRight, offsetTop, offsetBottom);
-      this.ctx.scale(pixelRatio, pixelRatio);
-      this.ctx.translate(-0.5, -0.5);
-      this.draw();
-    }
-    /**
-     * 清空画布
-     */
-
-  }, {
-    key: "clearCanvas",
-    value: function clearCanvas() {
-      this.ctx.clearRect(0, 0, this.handler.width, this.handler.height);
-    }
-    /**
-     * 刷新
-     */
-
-  }, {
-    key: "flush",
-    value: function flush() {
-      var _this = this;
-
-      if (this.requestAnimationId) {
-        cancelAnimationFrame(this.requestAnimationId);
-      }
-
-      this.requestAnimationId = requestAnimationFrame(function () {
-        _this.clearCanvas();
-
-        _this.draw();
-      });
-    }
-    /**
-     * 绘制
-     */
-
-  }, {
-    key: "draw",
-    value: function draw() {}
-  }]);
-
-  return Chart;
-}();
-
-var Render = function Render(handler, storage) {
-  _classCallCheck(this, Render);
-
-  this.handler = handler;
-  this.storage = storage;
-};
-
-/**
- * 格式化值
- * @param data
- * @param key
- * @param defaultValue
- * @returns {string|*}
- */
-function formatValue(data, key) {
-  var defaultValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '--';
-
-  if (data && isObject(data)) {
-    var value = data[key];
-
-    if (value || value === 0 || value === false) {
-      return value;
-    }
-  }
-
-  return defaultValue;
-}
 function merge(target, source) {
   if (!isObject(target) || !isObject(source)) {
     return;
@@ -455,6 +151,36 @@ function merge(target, source) {
       }
     }
   }
+}
+function clone(target) {
+  if (!target || !isObject(target)) {
+    return target;
+  }
+
+  var copy;
+
+  if (isArray(target)) {
+    copy = [];
+  } else {
+    copy = {};
+  }
+
+  var p;
+  var v;
+
+  for (p in target) {
+    if (target.hasOwnProperty(p)) {
+      v = target[p];
+
+      if (v && isObject(v)) {
+        copy[p] = clone(v);
+      } else {
+        copy[p] = v;
+      }
+    }
+  }
+
+  return copy;
 }
 function isArray(value) {
   return Object.prototype.toString.call(value) === '[object Array]';
@@ -486,48 +212,11 @@ function isObject(value) {
 function isNumber(value) {
   return typeof value === 'number' && !isNaN(value);
 }
-/**
- * 判断是否是boolean
- * @param value
- * @returns {boolean}
- */
 
-function isBoolean(value) {
-  return typeof value === 'boolean';
-}
-
-/**
- * 指标类型
- * @type {{NO: string, DMI: string, OBV: string, SAR: string, BIAS: string, MTM: string, CCI: string, RSI: string, TRIX: string, CR: string, EMV: string, KDJ: string, VOL: string, BOLL: string, MA: string, MACD: string, PSY: string, KD: string, DMA: string, WR: string, VR: string, BRAR: string}}
- */
-var IndicatorType = {
-  NO: 'NO',
-  MA: 'MA',
-  VOL: 'VOL',
-  MACD: 'MACD',
-  BOLL: 'BOLL',
-  KDJ: 'KDJ',
-  RSI: 'RSI',
-  BIAS: 'BIAS',
-  BRAR: 'BRAR',
-  CCI: 'CCI',
-  DMI: 'DMI',
-  CR: 'CR',
-  PSY: 'PSY',
-  DMA: 'DMA',
-  TRIX: 'TRIX',
-  OBV: 'OBV',
-  VR: 'VR',
-  WR: 'WR',
-  MTM: 'MTM',
-  EMV: 'EMV',
-  SAR: 'SAR'
-};
 /**
  * 线的样式
  * @type {{DASH: string, SOLID: string}}
  */
-
 var LineStyle = {
   DASH: 'dash',
   SOLID: 'solid'
@@ -564,7 +253,7 @@ var ChartType = {
  * @type {{STROKE: string, DECREASING_STROKE: string, OHLC: string, INCREASING_STROKE: string, SOLID: string}}
  */
 
-var CandleStyle = {
+var CandleStickStyle = {
   SOLID: 'solid',
   STROKE: 'stroke',
   INCREASING_STROKE: 'increasing_stroke',
@@ -576,7 +265,7 @@ var CandleStyle = {
  * @type {{FOLLOW_CROSS: string, NONE: string, ALWAYS: string}}
  */
 
-var TooltipTextDisplayRule = {
+var FloatLayerPromptDisplayRule = {
   ALWAYS: 'always',
   FOLLOW_CROSS: 'follow_cross',
   NONE: 'none'
@@ -586,10 +275,387 @@ var TooltipTextDisplayRule = {
  * @type {{FLOAT: string, FIXED: string}}
  */
 
-var TooltipCandleChartTextDisplayType = {
-  FLOAT: 'float',
-  FIXED: 'fixed'
+var FloatLayerPromptCandleStickTextDisplayType = {
+  RECT: 'rect',
+  STANDARD: 'standard'
 };
+/**
+ * 默认网格配置
+ * @type {{horizontal: {size: number, color: string, dashValue: number[], display: boolean, style: string}, display: boolean, vertical: {size: number, color: string, dashValue: number[], display: boolean, style: string}}}
+ */
+
+var defaultGrid = {
+  display: true,
+  horizontal: {
+    display: true,
+    size: 1,
+    color: '#393939',
+    style: LineStyle.DASH,
+    dashValue: [2, 2]
+  },
+  vertical: {
+    display: true,
+    size: 1,
+    color: '#393939',
+    style: LineStyle.DASH,
+    dashValue: [2, 2]
+  }
+};
+/**
+ * 默认蜡烛柱图配置
+ * @type {{bar: {upColor: string, style: string, downColor: string}}}
+ */
+
+var defaultCandleStick = {
+  bar: {
+    /**
+     * 蜡烛样式
+     */
+    style: CandleStickStyle.SOLID,
+
+    /**
+     * 上涨颜色
+     */
+    upColor: '#26A69A',
+
+    /**
+     * 下跌颜色
+     */
+    downColor: '#EF5350'
+  },
+  priceMark: {
+    display: true,
+    high: {
+      display: true,
+      color: '#D9D9D9',
+      textMargin: 5,
+      textSize: 10
+    },
+    low: {
+      display: true,
+      color: '#D9D9D9',
+      textMargin: 5,
+      textSize: 10
+    },
+    last: {
+      display: true,
+      upColor: '#26A69A',
+      downColor: '#EF5350',
+      line: {
+        display: true,
+        style: LineStyle.DASH,
+        dashValue: [4, 4],
+        size: 1
+      },
+      text: {
+        display: true,
+        size: 12,
+        paddingLeft: 2,
+        paddingTop: 2,
+        paddingRight: 2,
+        paddingBottom: 2,
+        color: '#FFFFFF'
+      }
+    }
+  }
+};
+/**
+ * 默认的分时图配置
+ * @type {{timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}}
+ */
+
+var defaultRealTime = {
+  timeLine: {
+    color: '#1e88e5',
+    size: 1,
+    areaFillColor: 'rgba(30, 136, 229, 0.08)'
+  },
+
+  /**
+   * 均线
+   */
+  averageLine: {
+    display: true,
+    color: '#F5A623',
+    size: 1
+  }
+};
+/**
+ * 默认的技术指标图配置
+ * @type {{decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}}
+ */
+
+var defaultTechnicalIndicator = {
+  bar: {
+    upColor: '#26A69A',
+    downColor: '#EF5350'
+  },
+  line: {
+    size: 1,
+    colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+  }
+};
+var defaultXAxis = {
+  /**
+   * 是否显示整个轴
+   */
+  display: true,
+
+  /**
+   * x轴最大高度
+   */
+  maxHeight: 50,
+
+  /**
+   * x轴最小高度
+   */
+  minHeight: 30,
+
+  /**
+   * 轴线配置
+   */
+  axisLine: {
+    display: true,
+    color: '#888888',
+    size: 1
+  },
+
+  /**
+   * tick文字
+   */
+  tickText: {
+    display: true,
+    color: '#D9D9D9',
+    size: 12,
+    margin: 3
+  },
+  // tick线
+  tickLine: {
+    display: true,
+    size: 1,
+    length: 3,
+    color: '#888888'
+  }
+};
+var defaultYAxis = {
+  /**
+   * 是否显示整个轴
+   */
+  display: true,
+
+  /**
+   * x轴最大宽度
+   */
+  maxWidth: 100,
+
+  /**
+   * x轴最小宽度
+   */
+  minWidth: 60,
+
+  /**
+   * 轴位置
+   */
+  position: YAxisPosition.RIGHT,
+
+  /**
+   * 轴线配置
+   */
+  axisLine: {
+    display: true,
+    color: '#888888',
+    size: 1
+  },
+
+  /**
+   * tick文字
+   */
+  tickText: {
+    position: YAxisTextPosition.OUTSIDE,
+    display: true,
+    color: '#D9D9D9',
+    size: 12,
+    margin: 3
+  },
+  // tick线
+  tickLine: {
+    display: true,
+    size: 1,
+    length: 3,
+    color: '#888888'
+  }
+};
+/**
+ * 默认十字光标配置
+ * @type {{display: boolean}}
+ */
+
+var defaultFloatLayer = {
+  crossHair: {
+    display: true,
+    horizontal: {
+      display: true,
+      line: {
+        display: true,
+        style: LineStyle.DASH,
+        dashValue: [4, 2],
+        size: 1,
+        color: '#888888'
+      },
+      text: {
+        display: true,
+        color: '#D9D9D9',
+        size: 12,
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderSize: 1,
+        borderColor: '#505050',
+        backgroundColor: '#505050'
+      }
+    },
+    vertical: {
+      display: true,
+      line: {
+        display: true,
+        style: LineStyle.DASH,
+        dashValue: [4, 2],
+        size: 1,
+        color: '#888888'
+      },
+      text: {
+        display: true,
+        color: '#D9D9D9',
+        size: 12,
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderSize: 1,
+        borderColor: '#505050',
+        backgroundColor: '#505050'
+      }
+    }
+  },
+  prompt: {
+    displayRule: FloatLayerPromptDisplayRule.ALWAYS,
+    candleStick: {
+      showType: FloatLayerPromptCandleStickTextDisplayType.STANDARD,
+      labels: ['时间', '开', '收', '高', '低', '成交量'],
+      values: null,
+      rect: {
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingTop: 0,
+        paddingBottom: 6,
+        left: 8,
+        top: 8,
+        right: 8,
+        borderRadius: 4,
+        borderSize: 1,
+        borderColor: '#3f4254',
+        fillColor: 'rgba(17, 17, 17, .3)'
+      },
+      text: {
+        size: 12,
+        color: '#D9D9D9',
+        marginLeft: 8,
+        marginTop: 6,
+        marginRight: 8,
+        marginBottom: 0
+      }
+    },
+    technicalIndicator: {
+      text: {
+        size: 12,
+        color: '#D9D9D9',
+        marginTop: 6,
+        marginRight: 8,
+        marginBottom: 0,
+        marginLeft: 8
+      }
+    }
+  }
+};
+/**
+ * 默认图形标记配置
+ * @type {{line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
+ */
+
+var defaultGraphicMark = {
+  line: {
+    color: '#1e88e5',
+    size: 1
+  },
+  point: {
+    backgroundColor: '#1e88e5',
+    borderColor: '#1e88e5',
+    borderSize: 1,
+    radius: 4,
+    activeBackgroundColor: '#1e88e5',
+    activeBorderColor: '#1e88e5',
+    activeBorderSize: 1,
+    activeRadius: 6
+  },
+  text: {
+    color: '#1e88e5',
+    size: 12,
+    marginLeft: 2,
+    marginRight: 2,
+    marginTop: 2,
+    marginBottom: 6
+  }
+};
+var defaultStyleOptions = {
+  grid: defaultGrid,
+  candleStick: defaultCandleStick,
+  realTime: defaultRealTime,
+  technicalIndicator: defaultTechnicalIndicator,
+  xAxis: defaultXAxis,
+  yAxis: defaultYAxis,
+  floatLayer: defaultFloatLayer,
+  graphicMark: defaultGraphicMark
+};
+
+var _defaultTechnicalIndi;
+
+var TechnicalIndicatorType = {
+  NO: 'NO',
+  AVERAGE: 'AVERAGE',
+  MA: 'MA',
+  VOL: 'VOL',
+  MACD: 'MACD',
+  BOLL: 'BOLL',
+  KDJ: 'KDJ',
+  RSI: 'RSI',
+  BIAS: 'BIAS',
+  BRAR: 'BRAR',
+  CCI: 'CCI',
+  DMI: 'DMI',
+  CR: 'CR',
+  PSY: 'PSY',
+  DMA: 'DMA',
+  TRIX: 'TRIX',
+  OBV: 'OBV',
+  VR: 'VR',
+  WR: 'WR',
+  MTM: 'MTM',
+  EMV: 'EMV',
+  SAR: 'SAR'
+};
+var defaultTechnicalIndicatorParamOptions = (_defaultTechnicalIndi = {}, _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MA, [5, 10, 30, 60]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.VOL, [5, 10, 20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MACD, [12, 26, 9]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BOLL, [20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.KDJ, [9, 3, 3]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.RSI, [6, 12, 24]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BIAS, [6, 12, 24]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BRAR, [26]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.CCI, [13]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.DMI, [14, 6]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.CR, [26, 10, 20, 40, 60]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.PSY, [12]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.DMA, [10, 50, 10]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.TRIX, [12, 20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.OBV, [30]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.VR, [24, 30]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.WR, [13, 34, 89]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MTM, [6, 10]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.EMV, [14, 9]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.SAR, [2, 2, 20]), _defaultTechnicalIndi);
+
+var _defaultPrecisionOpti;
+var defaultPrecisionOptions = (_defaultPrecisionOpti = {
+  price: 2,
+  volume: 0
+}, _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.NO, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.MA, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.VOL, 0), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.MACD, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.BOLL, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.KDJ, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.RSI, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.BIAS, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.BRAR, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.CCI, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.DMI, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.CR, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.PSY, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.DMA, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.TRIX, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.OBV, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.VR, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.WR, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.MTM, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.EMV, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.SAR, 2), _defaultPrecisionOpti);
+
+/**
+ * 指标类型
+ * @type {{NO: string, DMI: string, OBV: string, SAR: string, BIAS: string, MTM: string, CCI: string, RSI: string, TRIX: string, CR: string, EMV: string, KDJ: string, VOL: string, BOLL: string, MA: string, MACD: string, PSY: string, KD: string, DMA: string, WR: string, VR: string, BRAR: string}}
+ */
 /**
  * 标记图形类型
  * @type {{STRAIGHT_LINE: string, HORIZONTAL_SEGMENT_LINE: string, FIBONACCI_LINE: string, HORIZONTAL_STRAIGHT_LINE: string, PRICE_CHANNEL_LINE: string, VERTICAL_RAY_LINE: string, VERTICAL_SEGMENT_LINE: string, PARALLEL_STRAIGHT_LINE: string, HORIZONTAL_RAY_LINE: string, VERTICAL_STRAIGHT_LINE: string, PRICE_LINE: string, RAY_LINE: string, NONE: string, SEGMENT_LINE: string}}
@@ -611,3948 +677,6 @@ var GraphicMarkType = {
   PARALLEL_STRAIGHT_LINE: 'parallelStraightLine',
   FIBONACCI_LINE: 'fibonacciLine'
 };
-/**
- * 标记图形绘制步骤
- * @type {{STEP_3: *, STEP_DONE: *, STEP_1: *, STEP_2: *}}
- */
-
-var GraphicMarkDrawStep = {
-  STEP_1: 'step_1',
-  STEP_2: 'step_2',
-  STEP_3: 'step_3',
-  STEP_DONE: 'step_done'
-};
-
-var DATA_MARGIN_SPACE_RATE = 0.26;
-
-var Storage =
-/*#__PURE__*/
-function () {
-  function Storage() {
-    _classCallCheck(this, Storage);
-
-    // 数据源
-    this.dataList = []; // 数据绘制起始位置
-
-    this.minPos = 0; // 绘制的数据条数
-
-    this.range = 180; // 最大绘制条数
-
-    this.maxRange = 300; // 最小绘制条数
-
-    this.minRange = 20; // 每条数据的所占的空间
-
-    this.dataSpace = 0; // 当前提示数据的位置
-
-    this.tooltipDataPos = 0; // 十字光标中心点位置坐标
-
-    this.crossPoint = null; // 当前绘制的标记图形的类型
-
-    this.graphicMarkType = GraphicMarkType.NONE; // 标记图形点
-
-    this.graphicMarkPoint = null; // 是否在拖拽标记图形
-
-    this.isDragGraphicMark = false; // 绘图标记数据
-
-    this.graphicMarkDatas = {
-      // 水平直线
-      horizontalStraightLine: [],
-      // 垂直直线
-      verticalStraightLine: [],
-      // 直线
-      straightLine: [],
-      // 水平射线
-      horizontalRayLine: [],
-      // 垂直射线
-      verticalRayLine: [],
-      // 射线
-      rayLine: [],
-      // 水平线段
-      horizontalSegmentLine: [],
-      // 垂直线段
-      verticalSegmentLine: [],
-      // 线段
-      segmentLine: [],
-      // 价格线
-      priceLine: [],
-      // 平行直线
-      parallelStraightLine: [],
-      // 价格通道线
-      priceChannelLine: [],
-      // 斐波那契线
-      fibonacciLine: []
-    };
-  }
-
-  _createClass(Storage, [{
-    key: "space",
-    value: function space(width) {
-      this.dataSpace = width / this.range;
-    }
-  }, {
-    key: "addData",
-    value: function addData(data, pos) {
-      if (isObject(data) && !isArray(data)) {
-        var tooltipDataMoveCount = 0;
-
-        if (pos >= this.dataList.length) {
-          tooltipDataMoveCount = 1;
-          this.dataList.push(data);
-        } else if (pos <= 0) {
-          this.dataList.unshift(data);
-        } else {
-          this.dataList[pos] = data;
-        }
-
-        if (this.minPos + this.range >= this.dataList.length - 1) {
-          this.moveToLast(tooltipDataMoveCount);
-        }
-      } else if (isArray(data)) {
-        if (this.dataList.length === 0) {
-          this.dataList = data.concat(this.dataList);
-          this.moveToLast(data.length);
-        } else {
-          this.dataList = data.concat(this.dataList);
-          this.minPos += data.length;
-        }
-      }
-    }
-  }, {
-    key: "moveToLast",
-    value: function moveToLast(tooltipDataMoveCount) {
-      if (this.dataList.length > this.range) {
-        this.minPos = this.dataList.length - this.range;
-        this.tooltipDataPos += tooltipDataMoveCount;
-
-        if (this.tooltipDataPos > this.dataList.length - 1) {
-          this.tooltipDataPos = this.dataList.length - 1;
-        }
-      } else {
-        this.minPos = 0;
-      }
-    }
-  }, {
-    key: "calcCurrentTooltipDataPos",
-    value: function calcCurrentTooltipDataPos(offsetLeft, x) {
-      var range = +Math.ceil((x - offsetLeft) / this.dataSpace).toFixed(0);
-      this.tooltipDataPos = this.minPos + range - 1;
-
-      if (this.tooltipDataPos > this.dataList.length - 1) {
-        this.tooltipDataPos = this.dataList.length - 1;
-      }
-
-      var sub = this.tooltipDataPos - this.minPos;
-      this.crossPoint.x = offsetLeft + this.dataSpace * sub + this.dataSpace * (1.0 - DATA_MARGIN_SPACE_RATE) / 2;
-    }
-  }]);
-
-  return Storage;
-}();
-
-var IndicatorRender =
-/*#__PURE__*/
-function (_Render) {
-  _inherits(IndicatorRender, _Render);
-
-  function IndicatorRender(handler, storage, yAxisRender) {
-    var _this;
-
-    _classCallCheck(this, IndicatorRender);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorRender).call(this, handler, storage));
-    _this.yAxisRender = yAxisRender;
-    return _this;
-  }
-  /**
-   * 绘制图与图直接的分割线
-   * @param ctx
-   * @param xAxis
-   */
-
-
-  _createClass(IndicatorRender, [{
-    key: "renderHorizontalSeparatorLine",
-    value: function renderHorizontalSeparatorLine(ctx, xAxis) {
-      var lineSize = xAxis.line.size;
-      ctx.strokeStyle = xAxis.line.color;
-      ctx.lineWidth = lineSize;
-      ctx.beginPath();
-      ctx.moveTo(this.handler.contentLeft(), this.handler.contentTop() + lineSize);
-      ctx.lineTo(this.handler.contentRight(), this.handler.contentTop() + lineSize);
-      ctx.stroke();
-      ctx.closePath();
-    }
-    /**
-     * 绘制指标
-     * @param ctx
-     * @param indicatorType
-     * @param indicator
-     * @param indicatorParams
-     * @param isMainIndicator
-     */
-
-  }, {
-    key: "renderIndicator",
-    value: function renderIndicator(ctx, indicatorType, indicator, indicatorParams) {
-      var _this2 = this;
-
-      var isMainIndicator = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
-      var onRendering;
-      var params = indicatorParams[indicatorType] || [];
-      var linePoints = [];
-
-      switch (indicatorType) {
-        case IndicatorType.MA:
-          {
-            var dataKeys = [];
-            params.forEach(function (p) {
-              dataKeys.push("ma".concat(p));
-            });
-
-            onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
-              _this2.ohlcIndicatorRendering(ctx, i, x, halfBarSpace, indicator, kLineData, indicatorType, dataKeys, isMainIndicator, function (values) {
-                _this2.prepareLinePoints(x, values, linePoints);
-              });
-            };
-
-            break;
-          }
-
-        case IndicatorType.MACD:
-          {
-            onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
-              var macd = kLineData.macd || {};
-
-              _this2.prepareLinePoints(x, [macd.diff, macd.dea], linePoints);
-
-              var refKLineData = _this2.storage.dataList[i - 1] || {};
-              var macdValue = macd.macd;
-              var refMacdValue = (refKLineData.macd || {}).macd || Number.MIN_SAFE_INTEGER;
-
-              if (macdValue > 0) {
-                ctx.strokeStyle = indicator.increasingColor;
-                ctx.fillStyle = indicator.increasingColor;
-              } else {
-                ctx.strokeStyle = indicator.decreasingColor;
-                ctx.fillStyle = indicator.decreasingColor;
-              }
-
-              var isFill = !((refMacdValue || refMacdValue === 0) && macdValue > refMacdValue);
-
-              _this2.renderBars(ctx, x, halfBarSpace, macdValue, isFill);
-            };
-
-            break;
-          }
-
-        case IndicatorType.VOL:
-          {
-            onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
-              var vol = kLineData.vol || {};
-              var lineValues = [];
-              params.forEach(function (p) {
-                lineValues.push(vol["ma".concat(p)]);
-              });
-
-              _this2.prepareLinePoints(x, lineValues, linePoints);
-
-              var refKLineData = _this2.storage.dataList[i - 1] || {};
-              var close = kLineData.close;
-              var refClose = (refKLineData || {}).close || Number.MIN_SAFE_INTEGER;
-
-              if (close > refClose) {
-                ctx.fillStyle = indicator.increasingColor;
-              } else {
-                ctx.fillStyle = indicator.decreasingColor;
-              }
-
-              _this2.renderBars(ctx, x, halfBarSpace, vol.num, true);
-            };
-
-            break;
-          }
-
-        case IndicatorType.BOLL:
-          {
-            onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
-              _this2.ohlcIndicatorRendering(ctx, i, x, halfBarSpace, indicator, kLineData, indicatorType, ['up', 'mid', 'dn'], isMainIndicator, function (values) {
-                _this2.prepareLinePoints(x, values, linePoints);
-              });
-            };
-
-            break;
-          }
-
-        case IndicatorType.BIAS:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var bias = kLineData.bias || {};
-              var lineValues = [];
-              params.forEach(function (p) {
-                lineValues.push(bias["bias".concat(p)]);
-              });
-
-              _this2.prepareLinePoints(x, lineValues, linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.BRAR:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var brar = kLineData.brar || {};
-
-              _this2.prepareLinePoints(x, [brar.br, brar.ar], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.CCI:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var cci = kLineData.cci || {};
-
-              _this2.prepareLinePoints(x, [cci.cci], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.CR:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var cr = kLineData.cr || {};
-
-              _this2.prepareLinePoints(x, [cr.cr, cr.ma1, cr.ma2, cr.ma3, cr.ma4], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.DMA:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var dma = kLineData.dma || {};
-
-              _this2.prepareLinePoints(x, [dma.dif, dma.difMa], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.DMI:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var dmi = kLineData.dmi || {};
-
-              _this2.prepareLinePoints(x, [dmi.mdi, dmi.pdi, dmi.adx, dmi.adxr], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.KDJ:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var kdj = kLineData.kdj || {};
-
-              _this2.prepareLinePoints(x, [kdj.k, kdj.d, kdj.j], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.RSI:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var rsi = kLineData.rsi || {};
-              var lineValues = [];
-              params.forEach(function (p) {
-                lineValues.push(rsi["rsi".concat(p)]);
-              });
-
-              _this2.prepareLinePoints(x, lineValues, linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.PSY:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var psy = kLineData.psy || {};
-
-              _this2.prepareLinePoints(x, [psy.psy], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.TRIX:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var trix = kLineData.trix || {};
-
-              _this2.prepareLinePoints(x, [trix.trix, trix.maTrix], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.OBV:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var obv = kLineData.obv || {};
-
-              _this2.prepareLinePoints(x, [obv.obv, obv.maObv], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.VR:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var vr = kLineData.vr || {};
-
-              _this2.prepareLinePoints(x, [vr.vr, vr.maVr], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.WR:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var wr = kLineData.wr || {};
-
-              _this2.prepareLinePoints(x, [wr.wr1, wr.wr2, wr.wr3], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.MTM:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var mtm = kLineData.mtm || {};
-
-              _this2.prepareLinePoints(x, [mtm.mtm, mtm.mtmMa], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.EMV:
-          {
-            onRendering = function onRendering(x, i, kLineData) {
-              var emv = kLineData.emv || {};
-
-              _this2.prepareLinePoints(x, [emv.emv, emv.maEmv], linePoints);
-            };
-
-            break;
-          }
-
-        case IndicatorType.SAR:
-          {
-            onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
-              _this2.ohlcIndicatorRendering(ctx, i, x, halfBarSpace, indicator, kLineData, indicatorType, ['sar'], isMainIndicator, function (values) {
-                var sar = values[0];
-
-                if (sar || sar === 0) {
-                  var dataY = _this2.yAxisRender.getY(sar);
-
-                  if (sar < (kLineData.high + kLineData.low) / 2) {
-                    ctx.strokeStyle = indicator.increasingColor;
-                  } else {
-                    ctx.strokeStyle = indicator.decreasingColor;
-                  }
-
-                  ctx.beginPath();
-                  ctx.arc(x, dataY, halfBarSpace, Math.PI * 2, 0, true);
-                  ctx.stroke();
-                  ctx.closePath();
-                }
-              });
-            };
-          }
-      }
-
-      this.renderGraphics(ctx, onRendering, function () {
-        _this2.renderLines(ctx, linePoints, indicator);
-      });
-    }
-    /**
-     * 需要绘制ohlc指标每条数据渲染
-     * @param ctx
-     * @param i
-     * @param x
-     * @param halfBarSpace
-     * @param indicator
-     * @param kLineData
-     * @param indicatorType
-     * @param dataKeys
-     * @param isMainIndicator
-     * @param prepare
-     */
-
-  }, {
-    key: "ohlcIndicatorRendering",
-    value: function ohlcIndicatorRendering(ctx, i, x, halfBarSpace, indicator, kLineData, indicatorType, dataKeys, isMainIndicator, prepare) {
-      var indicatorData = kLineData[indicatorType.toLowerCase()] || {};
-      var values = [];
-      dataKeys.forEach(function (key) {
-        values.push(indicatorData[key]);
-      });
-
-      if (prepare) {
-        prepare(values);
-      }
-
-      if (!isMainIndicator) {
-        var refKLineData = this.storage.dataList[i - 1] || {};
-        this.renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, indicator.increasingColor, indicator.decreasingColor);
-      }
-    }
-    /**
-     * 绘制图形
-     */
-
-  }, {
-    key: "renderGraphics",
-    value: function renderGraphics(ctx, onRendering, onRenderEnd) {
-      var startX = this.handler.contentLeft();
-      var dataSpace = this.storage.dataSpace * (1 - DATA_MARGIN_SPACE_RATE);
-      var halfBarSpace = dataSpace / 2;
-      var lastPos = Math.min(this.storage.dataList.length, this.storage.minPos + this.storage.range);
-
-      for (var i = this.storage.minPos; i < lastPos; i++) {
-        var endX = startX + dataSpace;
-        var x = (startX + endX) / 2;
-        var kLineData = this.storage.dataList[i];
-
-        if (onRendering) {
-          onRendering(x, i, kLineData, halfBarSpace);
-        }
-
-        startX += this.storage.dataSpace;
-      }
-
-      if (onRenderEnd) {
-        onRenderEnd();
-      }
-    }
-    /**
-     * 准备绘制线的数据
-     * @param x
-     * @param lineValues
-     * @param linePoints
-     */
-
-  }, {
-    key: "prepareLinePoints",
-    value: function prepareLinePoints(x, lineValues, linePoints) {
-      for (var i = 0; i < lineValues.length; i++) {
-        var value = lineValues[i];
-        var valueY = this.yAxisRender.getY(value);
-
-        if (!linePoints[i]) {
-          linePoints[i] = [{
-            x: x,
-            y: valueY
-          }];
-        } else {
-          linePoints[i].push({
-            x: x,
-            y: valueY
-          });
-        }
-      }
-    }
-    /**
-     * 绘制线
-     * @param ctx
-     * @param linePoints
-     * @param indicator
-     */
-
-  }, {
-    key: "renderLines",
-    value: function renderLines(ctx, linePoints, indicator) {
-      var colors = indicator.lineColors;
-      var pointCount = linePoints.length;
-      var lineColorSize = (indicator.lineColors || []).length;
-      ctx.lineWidth = indicator.lineSize;
-
-      for (var i = 0; i < pointCount; i++) {
-        var points = linePoints[i];
-
-        if (points.length > 0) {
-          ctx.strokeStyle = colors[i % lineColorSize];
-          ctx.beginPath();
-          ctx.moveTo(points[0].x, points[0].y);
-
-          for (var j = 1; j < points.length; j++) {
-            ctx.lineTo(points[j].x, points[j].y);
-          }
-
-          ctx.stroke();
-          ctx.closePath();
-        }
-      }
-    }
-    /**
-     * 绘制柱状图
-     * @param ctx
-     * @param x
-     * @param halfBarSpace
-     * @param barData
-     * @param isFill
-     */
-
-  }, {
-    key: "renderBars",
-    value: function renderBars(ctx, x, halfBarSpace, barData, isFill) {
-      if (barData || barData === 0) {
-        ctx.lineWidth = 1;
-        var dataY = this.yAxisRender.getY(barData);
-        var zeroY = this.yAxisRender.getY(0);
-        var y = dataY;
-
-        if (barData < 0) {
-          y = zeroY;
-        }
-
-        var barHeight = Math.abs(zeroY - dataY);
-
-        if (barHeight < 1) {
-          barHeight = 1;
-        }
-
-        if (isFill) {
-          ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight);
-        } else {
-          ctx.strokeRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight);
-        }
-      }
-    }
-    /**
-     * 绘制ohlc
-     * @param ctx
-     * @param halfBarSpace
-     * @param x
-     * @param kLineData
-     * @param refKLineData
-     * @param increasingColor
-     * @param decreasingColor
-     */
-
-  }, {
-    key: "renderOhlc",
-    value: function renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, increasingColor, decreasingColor) {
-      var openY = this.yAxisRender.getY(kLineData.open);
-      var closeY = this.yAxisRender.getY(kLineData.close);
-      var highY = this.yAxisRender.getY(kLineData.high);
-      var lowY = this.yAxisRender.getY(kLineData.low);
-
-      if (kLineData.close > refKLineData.close) {
-        ctx.strokeStyle = increasingColor;
-      } else {
-        ctx.strokeStyle = decreasingColor;
-      }
-
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(x, highY);
-      ctx.lineTo(x, lowY);
-      ctx.stroke();
-      ctx.closePath();
-      ctx.beginPath();
-      ctx.moveTo(x - halfBarSpace, openY);
-      ctx.lineTo(x, openY);
-      ctx.stroke();
-      ctx.closePath();
-      ctx.beginPath();
-      ctx.moveTo(x + halfBarSpace, closeY);
-      ctx.lineTo(x, closeY);
-      ctx.stroke();
-      ctx.closePath();
-    }
-  }]);
-
-  return IndicatorRender;
-}(Render);
-
-function nice(value) {
-  var exponent = Math.floor(Math.log(value) / Math.log(10.0));
-  var exp10 = Math.pow(10.0, exponent);
-  var f = value / exp10; // 1 <= f < 10
-
-  var nf = 0;
-
-  if (f < 1) {
-    nf = 1;
-  } else if (f < 2) {
-    nf = 2;
-  } else if (f < 3) {
-    nf = 3;
-  } else if (f < 5) {
-    nf = 5;
-  } else {
-    nf = 10;
-  }
-
-  value = nf * exp10;
-  return exponent >= -20 ? +value.toFixed(exponent < 0 ? -exponent : 0) : value;
-}
-function getIntervalPrecision(value) {
-  var str = value.toString(); // Consider scientific notation: '3.4e-12' '3.4e+12'
-
-  var eIndex = str.indexOf('e');
-
-  if (eIndex > 0) {
-    var precision = +str.slice(eIndex + 1);
-    return precision < 0 ? -precision : 0;
-  } else {
-    var dotIndex = str.indexOf('.');
-    return dotIndex < 0 ? 0 : str.length - 1 - dotIndex;
-  }
-}
-function round(x, precision) {
-  if (precision == null) {
-    precision = 10;
-  } // Avoid range error
-
-
-  precision = Math.min(Math.max(0, precision), 20);
-  x = (+x).toFixed(precision);
-  return x;
-}
-/**
- * 格式化精度
- */
-
-function formatPrecision(value) {
-  var precision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-  var v = +value;
-
-  if ((v || v === 0) && isNumber(v)) {
-    return value.toFixed(precision);
-  }
-
-  return "".concat(v);
-}
-/**
- * 格式化大数据
- * @param value
- */
-
-function formatBigNumber(value) {
-  if (isNumber(value)) {
-    if (value > 50000) {
-      return "".concat(+(value / 1000).toFixed(1), "K");
-    }
-
-    if (value > 5000000) {
-      return "".concat(+(value / 1000000).toFixed(3), "M");
-    }
-
-    return "".concat(value);
-  }
-
-  return '--';
-}
-
-var AxisRender =
-/*#__PURE__*/
-function (_Render) {
-  _inherits(AxisRender, _Render);
-
-  function AxisRender(handler, storage) {
-    var _this;
-
-    _classCallCheck(this, AxisRender);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(AxisRender).call(this, handler, storage));
-    _this.axisMaximum = 0;
-    _this.axisMinimum = 0;
-    _this.axisRange = 0;
-    _this.ticks = [];
-    return _this;
-  }
-  /**
-   * 计算轴上的值
-   */
-
-
-  _createClass(AxisRender, [{
-    key: "computeAxisTicks",
-    value: function computeAxisTicks() {
-      if (this.axisRange < 0) {
-        this.ticks = [];
-        return;
-      }
-
-      var interval = +nice(this.axisRange / 8.0);
-      var precision = getIntervalPrecision(interval);
-      var first = +round(Math.ceil(this.axisMinimum / interval) * interval, precision);
-      var last = +round(Math.floor(this.axisMaximum / interval) * interval, precision);
-      var n = 0;
-      var f = first;
-
-      if (interval !== 0) {
-        while (f <= +last) {
-          ++n;
-          f += interval;
-        }
-      }
-
-      this.ticks = [];
-      f = first;
-
-      for (var i = 0; i < n; i++) {
-        this.ticks[i] = {
-          v: +f.toFixed(precision)
-        };
-        f += interval;
-      }
-    }
-  }]);
-
-  return AxisRender;
-}(Render);
-
-var YAxisRender =
-/*#__PURE__*/
-function (_AxisRender) {
-  _inherits(YAxisRender, _AxisRender);
-
-  function YAxisRender() {
-    _classCallCheck(this, YAxisRender);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(YAxisRender).apply(this, arguments));
-  }
-
-  _createClass(YAxisRender, [{
-    key: "renderAxisLine",
-
-    /**
-     * 绘制轴线
-     * @param ctx
-     * @param yAxis
-     */
-    value: function renderAxisLine(ctx, yAxis) {
-      if (!yAxis.display || !yAxis.line.display) {
-        return;
-      }
-
-      ctx.strokeStyle = yAxis.line.color;
-      ctx.lineWidth = yAxis.line.size;
-      ctx.beginPath();
-
-      if (yAxis.position === YAxisPosition.LEFT) {
-        ctx.moveTo(this.handler.contentLeft(), this.handler.contentTop());
-        ctx.lineTo(this.handler.contentLeft(), this.handler.contentBottom());
-      } else {
-        ctx.moveTo(this.handler.contentRight(), this.handler.contentTop());
-        ctx.lineTo(this.handler.contentRight(), this.handler.contentBottom());
-      }
-
-      ctx.stroke();
-      ctx.closePath();
-    }
-    /**
-     * 绘制y轴上文字
-     * @param ctx
-     * @param yAxis
-     */
-
-  }, {
-    key: "renderAxisLabels",
-    value: function renderAxisLabels(ctx, yAxis) {
-      var tickText = yAxis.tick.text;
-
-      if (!yAxis.display || !tickText.display) {
-        return;
-      }
-
-      var tickLine = yAxis.tick.line;
-      var tickTextPosition = tickText.position;
-      var tickLineDisplay = tickLine.display;
-      var tickLineLength = tickLine.length;
-      var tickTextMargin = tickText.margin;
-      var initX;
-
-      if (yAxis.position === YAxisPosition.LEFT) {
-        if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
-          if (tickLineDisplay) {
-            initX = this.handler.contentLeft() - tickLineLength - tickTextMargin;
-          } else {
-            initX = this.handler.contentLeft() - tickTextMargin;
-          }
-        } else {
-          if (tickLineDisplay) {
-            initX = this.handler.contentLeft() + tickLineLength + tickTextMargin;
-          } else {
-            initX = this.handler.contentLeft() + tickTextMargin;
-          }
-        }
-      } else {
-        if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
-          if (tickLineDisplay) {
-            initX = this.handler.contentRight() + tickLineLength + tickTextMargin;
-          } else {
-            initX = this.handler.contentRight() + tickTextMargin;
-          }
-        } else {
-          if (tickLineDisplay) {
-            initX = this.handler.contentRight() - tickLineLength - tickTextMargin;
-          } else {
-            initX = this.handler.contentRight() - tickTextMargin;
-          }
-        }
-      }
-
-      var textSize = tickText.size;
-      ctx.textBaseline = 'middle';
-      ctx.font = getFont(textSize);
-      ctx.fillStyle = tickText.color;
-
-      for (var i = 0; i < this.ticks.length; i++) {
-        var y = this.ticks[i].y;
-        var text = formatBigNumber(this.ticks[i].v);
-
-        if (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.OUTSIDE || yAxis.position === YAxisPosition.RIGHT && tickTextPosition !== YAxisTextPosition.OUTSIDE) {
-          ctx.textAlign = 'right';
-        } else {
-          ctx.textAlign = 'left';
-        }
-
-        ctx.fillText(text, initX, y);
-      }
-
-      ctx.textAlign = 'left';
-    }
-    /**
-     * 绘制y轴分割线
-     * @param ctx
-     * @param yAxis
-     */
-
-  }, {
-    key: "renderSeparatorLines",
-    value: function renderSeparatorLines(ctx, yAxis) {
-      var separatorLine = yAxis.separatorLine;
-
-      if (!yAxis.display || !separatorLine.display) {
-        return;
-      }
-
-      ctx.strokeStyle = separatorLine.color;
-      ctx.lineWidth = separatorLine.size;
-
-      if (separatorLine.style === LineStyle.DASH) {
-        ctx.setLineDash(separatorLine.dashValue);
-      }
-
-      for (var i = 0; i < this.ticks.length; i++) {
-        var y = this.ticks[i].y;
-        ctx.beginPath();
-        ctx.moveTo(this.handler.contentLeft(), y);
-        ctx.lineTo(this.handler.contentRight(), y);
-        ctx.stroke();
-        ctx.closePath();
-      }
-
-      ctx.setLineDash([]);
-    }
-    /**
-     * 绘制刻度线
-     * @param ctx
-     * @param yAxis
-     */
-
-  }, {
-    key: "renderTickLines",
-    value: function renderTickLines(ctx, yAxis) {
-      var tickText = yAxis.tick.text;
-
-      if (!yAxis.display || !tickText.display) {
-        return;
-      }
-
-      var tickLine = yAxis.tick.line;
-      ctx.lineWidth = tickLine.size;
-      ctx.strokeStyle = tickLine.color;
-      var tickLineLength = tickLine.length;
-      var startX;
-      var endX;
-      var tickTextPosition = tickText.position;
-
-      if (yAxis.position === YAxisPosition.LEFT) {
-        startX = this.handler.contentLeft();
-
-        if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
-          endX = startX - tickLineLength;
-        } else {
-          endX = startX + tickLineLength;
-        }
-      } else {
-        startX = this.handler.contentRight();
-
-        if (tickTextPosition === YAxisTextPosition.OUTSIDE) {
-          endX = startX + tickLineLength;
-        } else {
-          endX = startX - tickLineLength;
-        }
-      }
-
-      for (var i = 0; i < this.ticks.length; i++) {
-        var y = this.ticks[i].y;
-        ctx.beginPath();
-        ctx.moveTo(startX, y);
-        ctx.lineTo(endX, y);
-        ctx.stroke();
-        ctx.closePath();
-      }
-    }
-  }, {
-    key: "calcAxisMinMax",
-    value: function calcAxisMinMax(indicatorType) {
-      var isCandleChart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var isRealTimeChart = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-      var isShowAverageLine = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-      var dataList = this.storage.dataList;
-      var min = this.storage.minPos;
-      var max = Math.min(min + this.storage.range, dataList.length);
-      var minMaxArray = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER];
-
-      if (isRealTimeChart) {
-        for (var i = min; i < max; i++) {
-          var kLineData = dataList[i];
-          var minCompareArray = [kLineData.close, minMaxArray[0]];
-          var maxCompareArray = [kLineData.close, minMaxArray[1]];
-
-          if (isShowAverageLine) {
-            minCompareArray.push(kLineData.average);
-            maxCompareArray.push(kLineData.average);
-          }
-
-          minMaxArray[0] = Math.min.apply(null, minCompareArray);
-          minMaxArray[1] = Math.max.apply(null, maxCompareArray);
-        }
-      } else {
-        for (var _i = min; _i < max; _i++) {
-          var _kLineData = dataList[_i];
-          this.compareMinMax(_kLineData, indicatorType, minMaxArray);
-
-          if (isCandleChart) {
-            minMaxArray[0] = Math.min(_kLineData.low, minMaxArray[0]);
-            minMaxArray[1] = Math.max(_kLineData.high, minMaxArray[1]);
-          }
-        }
-
-        if (indicatorType === IndicatorType.VOL) {
-          minMaxArray[0] = 0;
-        }
-      }
-
-      if (minMaxArray[0] !== Number.MAX_SAFE_INTEGER && minMaxArray[1] !== Number.MIN_SAFE_INTEGER) {
-        this.axisMinimum = minMaxArray[0];
-        this.axisMaximum = minMaxArray[1];
-      }
-    }
-  }, {
-    key: "compareMinMax",
-    value: function compareMinMax(kLineData, indicatorType, minMaxArray) {
-      var indicatorData = formatValue(kLineData, indicatorType.toLowerCase(), {});
-      Object.keys(indicatorData).forEach(function (key) {
-        var value = indicatorData[key];
-
-        if (value || value === 0) {
-          minMaxArray[0] = Math.min(minMaxArray[0], value);
-          minMaxArray[1] = Math.max(minMaxArray[1], value);
-        }
-      });
-
-      if (indicatorType === IndicatorType.BOLL || indicatorType === IndicatorType.SAR) {
-        minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low);
-        minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high);
-      }
-
-      return minMaxArray;
-    }
-  }, {
-    key: "computeAxis",
-    value: function computeAxis(yAxis) {
-      var min = this.axisMinimum;
-      var max = this.axisMaximum;
-
-      if (min === Number.MAX_SAFE_INTEGER || max === Number.MIN_SAFE_INTEGER || max === 0 && min === 0) {
-        return;
-      }
-
-      var range = Math.abs(max - min);
-
-      if (range === 0) {
-        max += 1;
-        min -= 1;
-        range = Math.abs(max - min);
-      }
-
-      this.axisMinimum = min - range / 100.0 * 10.0;
-      this.axisMaximum = max + range / 100.0 * 20.0;
-      this.axisRange = Math.abs(this.axisMaximum - this.axisMinimum);
-      this.computeAxisTicks();
-      this.fixComputeAxisTicks(yAxis);
-    }
-  }, {
-    key: "fixComputeAxisTicks",
-    value: function fixComputeAxisTicks(yAxis) {
-      var tickLength = this.ticks.length;
-
-      if (tickLength > 0) {
-        var textHeight = yAxis.tick.text.size;
-        var y = this.getY(this.ticks[0].v);
-        var valueCountDif = 1;
-
-        if (tickLength > 1) {
-          var nextY = this.getY(this.ticks[1].v);
-          var yDif = Math.abs(nextY - y);
-
-          if (yDif < textHeight * 2) {
-            valueCountDif = Math.ceil(textHeight * 2 / yDif);
-          }
-        }
-
-        var ticks = [];
-
-        for (var i = 0; i < tickLength; i += valueCountDif) {
-          var v = this.ticks[i].v;
-
-          var _y = this.getY(v);
-
-          if (_y > this.handler.contentTop() + textHeight && _y < this.handler.contentBottom() - textHeight) {
-            ticks.push({
-              v: v,
-              y: _y
-            });
-          }
-        }
-
-        this.ticks = ticks;
-      }
-    }
-  }, {
-    key: "getY",
-    value: function getY(value) {
-      return (1.0 - (value - this.axisMinimum) / this.axisRange) * this.handler.getContentHeight();
-    }
-  }, {
-    key: "getValue",
-    value: function getValue(y) {
-      return (1.0 - y / this.handler.getContentHeight()) * this.axisRange + this.axisMinimum;
-    }
-  }]);
-
-  return YAxisRender;
-}(AxisRender);
-
-var IndicatorChart =
-/*#__PURE__*/
-function (_Chart) {
-  _inherits(IndicatorChart, _Chart);
-
-  function IndicatorChart(dom, style, storage, indicatorParams) {
-    var _this;
-
-    var defaultIndicatorType = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : IndicatorType.MACD;
-
-    _classCallCheck(this, IndicatorChart);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(IndicatorChart).call(this, dom, style));
-    _this.indicatorParams = indicatorParams;
-    _this.indicatorType = defaultIndicatorType;
-    _this.yAxisRender = new YAxisRender(_this.handler, storage);
-    _this.chartRender = new IndicatorRender(_this.handler, storage, _this.yAxisRender);
-    return _this;
-  }
-
-  _createClass(IndicatorChart, [{
-    key: "draw",
-    value: function draw() {
-      if (this.isDrawChart()) {
-        var yAxis = this.style.yAxis;
-        this.calcYAxisMinMax();
-        this.yAxisRender.computeAxis(yAxis);
-        this.yAxisRender.renderSeparatorLines(this.ctx, yAxis);
-        this.drawChart();
-        this.yAxisRender.renderAxisLine(this.ctx, yAxis);
-        this.yAxisRender.renderTickLines(this.ctx, yAxis);
-        this.yAxisRender.renderAxisLabels(this.ctx, yAxis);
-      }
-    }
-  }, {
-    key: "drawChart",
-    value: function drawChart() {
-      this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, this.indicatorParams, false);
-      this.chartRender.renderHorizontalSeparatorLine(this.ctx, this.style.xAxis);
-    }
-  }, {
-    key: "isDrawChart",
-    value: function isDrawChart() {
-      return this.indicatorType !== IndicatorType.NO;
-    }
-  }, {
-    key: "calcYAxisMinMax",
-    value: function calcYAxisMinMax() {
-      this.yAxisRender.calcAxisMinMax(this.indicatorType, false, false, false);
-    }
-  }]);
-
-  return IndicatorChart;
-}(Chart);
-
-var CandleRender =
-/*#__PURE__*/
-function (_IndicatorRender) {
-  _inherits(CandleRender, _IndicatorRender);
-
-  function CandleRender() {
-    _classCallCheck(this, CandleRender);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(CandleRender).apply(this, arguments));
-  }
-
-  _createClass(CandleRender, [{
-    key: "renderCandle",
-
-    /**
-     * 渲染蜡烛图
-     * @param ctx
-     * @param candle
-     * @param pricePrecision
-     */
-    value: function renderCandle(ctx, candle, pricePrecision) {
-      var _this = this;
-
-      ctx.lineWidth = 1;
-      var rect = [];
-      var markHighestPrice = Number.MIN_SAFE_INTEGER;
-      var markHighestPriceX = -1;
-      var markLowestPrice = Number.MAX_SAFE_INTEGER;
-      var markLowestPriceX = -1;
-      var dataList = this.storage.dataList;
-
-      var onRendering = function onRendering(x, i, kLineData, halfBarSpace) {
-        var refKLineData = dataList[i - 1] || {};
-        var refClose = refKLineData.close || Number.MIN_SAFE_INTEGER;
-        var high = kLineData.high;
-        var low = kLineData.low;
-        var close = kLineData.close;
-        var open = kLineData.open;
-
-        if (markHighestPrice < high) {
-          markHighestPrice = high;
-          markHighestPriceX = x;
-        }
-
-        if (low < markLowestPrice) {
-          markLowestPrice = low;
-          markLowestPriceX = x;
-        }
-
-        if (close > refClose) {
-          ctx.strokeStyle = candle.increasingColor;
-          ctx.fillStyle = candle.increasingColor;
-        } else {
-          ctx.strokeStyle = candle.decreasingColor;
-          ctx.fillStyle = candle.decreasingColor;
-        }
-
-        if (candle.style !== CandleStyle.OHLC) {
-          var openY = _this.yAxisRender.getY(open);
-
-          var closeY = _this.yAxisRender.getY(close);
-
-          var highY = _this.yAxisRender.getY(high);
-
-          var lowY = _this.yAxisRender.getY(low);
-
-          var highLine = [];
-          var lowLine = [];
-          highLine[0] = highY;
-          lowLine[1] = lowY;
-
-          if (openY > closeY) {
-            highLine[1] = closeY;
-            lowLine[0] = openY;
-            rect = [x - halfBarSpace, closeY, halfBarSpace * 2, openY - closeY];
-          } else if (openY < closeY) {
-            highLine[1] = openY;
-            lowLine[0] = closeY;
-            rect = [x - halfBarSpace, openY, halfBarSpace * 2, closeY - openY];
-          } else {
-            highLine[1] = openY;
-            lowLine[0] = closeY;
-            rect = [x - halfBarSpace, openY, halfBarSpace * 2, 1];
-          }
-
-          ctx.beginPath();
-          ctx.moveTo(x, highLine[0]);
-          ctx.lineTo(x, highLine[1]);
-          ctx.stroke();
-          ctx.closePath();
-          ctx.beginPath();
-          ctx.moveTo(x, lowLine[0]);
-          ctx.lineTo(x, lowLine[1]);
-          ctx.stroke();
-          ctx.closePath();
-
-          if (rect[3] < 1) {
-            rect[3] = 1;
-          }
-
-          switch (candle.style) {
-            case CandleStyle.SOLID:
-              {
-                ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
-                break;
-              }
-
-            case CandleStyle.STROKE:
-              {
-                ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
-                break;
-              }
-
-            case CandleStyle.INCREASING_STROKE:
-              {
-                if (close > refClose) {
-                  ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
-                } else {
-                  ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
-                }
-
-                break;
-              }
-
-            case CandleStyle.DECREASING_STROKE:
-              {
-                if (close > refClose) {
-                  ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
-                } else {
-                  ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
-                }
-
-                break;
-              }
-          }
-        } else {
-          _this.renderOhlc(ctx, halfBarSpace, x, kLineData, refKLineData, candle.increasingColor, candle.decreasingColor);
-        }
-      };
-
-      this.renderGraphics(ctx, onRendering);
-      this.highestMarkData = {
-        x: markHighestPriceX,
-        price: markHighestPrice
-      };
-      this.lowestMarkData = {
-        x: markLowestPriceX,
-        price: markLowestPrice
-      };
-    }
-    /**
-     * 渲染最高价标记
-     * @param ctx
-     * @param highestPriceMark
-     * @param pricePrecision
-     */
-
-  }, {
-    key: "renderHighestPriceMark",
-    value: function renderHighestPriceMark(ctx, highestPriceMark, pricePrecision) {
-      var price = this.highestMarkData.price;
-
-      if (price === Number.MIN_SAFE_INTEGER || !highestPriceMark.display) {
-        return;
-      }
-
-      this.renderLowestHighestPriceMark(ctx, highestPriceMark, this.highestMarkData.x, price, true, pricePrecision);
-    }
-    /**
-     * 绘制最低价标记
-     * @param ctx
-     * @param lowestPriceMark
-     * @param pricePrecision
-     */
-
-  }, {
-    key: "renderLowestPriceMark",
-    value: function renderLowestPriceMark(ctx, lowestPriceMark, pricePrecision) {
-      var price = this.lowestMarkData.price;
-
-      if (price === Number.MAX_SAFE_INTEGER || !lowestPriceMark.display) {
-        return;
-      }
-
-      this.renderLowestHighestPriceMark(ctx, lowestPriceMark, this.lowestMarkData.x, price, false, pricePrecision);
-    }
-    /**
-     * 渲染最高最低价格标记
-     * @param ctx
-     * @param priceMark
-     * @param x
-     * @param price
-     * @param isHigh
-     * @param pricePrecision
-     */
-
-  }, {
-    key: "renderLowestHighestPriceMark",
-    value: function renderLowestHighestPriceMark(ctx, priceMark, x, price, isHigh, pricePrecision) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(0, 0, this.handler.contentRight() - this.handler.contentLeft(), this.handler.contentBottom() - this.handler.contentTop());
-      ctx.closePath();
-      ctx.clip();
-      var priceY = this.yAxisRender.getY(price);
-      var startX = x;
-      var startY = priceY + (isHigh ? -2 : 2);
-      ctx.textAlign = 'left';
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = priceMark.color;
-      ctx.fillStyle = priceMark.color;
-      ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      ctx.lineTo(startX - 2, startY + (isHigh ? -2 : 2));
-      ctx.stroke();
-      ctx.closePath();
-      ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      ctx.lineTo(startX + 2, startY + (isHigh ? -2 : 2));
-      ctx.stroke();
-      ctx.closePath(); // 绘制竖线
-
-      ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      startY = startY + (isHigh ? -5 : 5);
-      ctx.lineTo(startX, startY);
-      ctx.stroke();
-      ctx.closePath();
-      ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      ctx.lineTo(startX + 5, startY);
-      ctx.stroke();
-      ctx.closePath();
-      ctx.font = getFont(priceMark.text.size);
-      var text = formatPrecision(price, pricePrecision);
-      ctx.textBaseline = 'middle';
-      ctx.fillText(text, startX + 5 + priceMark.text.margin, startY);
-      ctx.restore();
-    }
-    /**
-     * 绘制最新价标记
-     * @param ctx
-     * @param lastPriceMark
-     * @param isRenderTextLeft
-     * @param isRenderTextOutside
-     * @param pricePrecision
-     */
-
-  }, {
-    key: "renderLastPriceMark",
-    value: function renderLastPriceMark(ctx, lastPriceMark, isRenderTextLeft, isRenderTextOutside, pricePrecision) {
-      var dataSize = this.storage.dataList.length;
-
-      if (!lastPriceMark.display || dataSize === 0) {
-        return;
-      }
-
-      var preKLineData = this.storage.dataList[dataSize - 2] || {};
-      var preLastPrice = preKLineData.close || Number.MIN_SAFE_INTEGER;
-      var lastPrice = this.storage.dataList[dataSize - 1].close;
-      var priceY = this.yAxisRender.getY(lastPrice);
-      var height = this.handler.contentBottom() - this.handler.contentTop();
-      priceY = +Math.max(height * 0.05, Math.min(priceY, height * 0.98)).toFixed(0);
-      var color = lastPrice > preLastPrice ? lastPriceMark.increasingColor : lastPriceMark.decreasingColor;
-      var lineStartX = this.handler.contentLeft();
-      var lineEndX = this.handler.contentRight();
-      var priceMarkText = lastPriceMark.text;
-      var displayText = priceMarkText.display;
-
-      if (displayText) {
-        var text = formatPrecision(lastPrice, pricePrecision);
-        var textSize = lastPriceMark.text.size;
-        var rectWidth = calcTextWidth(textSize, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight;
-        var rectHeight = priceMarkText.paddingTop + textSize + priceMarkText.paddingBottom;
-        var rectStartX;
-
-        if (isRenderTextOutside) {
-          if (isRenderTextLeft) {
-            rectStartX = lineStartX - rectWidth;
-          } else {
-            rectStartX = lineEndX;
-          }
-        } else {
-          if (isRenderTextLeft) {
-            rectStartX = lineStartX;
-            lineStartX += rectWidth;
-          } else {
-            rectStartX = lineEndX - rectWidth;
-            lineEndX = rectStartX;
-          }
-        }
-
-        ctx.fillStyle = color;
-        ctx.fillRect(rectStartX, priceY - priceMarkText.paddingTop - textSize / 2, rectWidth, rectHeight);
-        ctx.fillStyle = priceMarkText.color;
-        ctx.font = getFont(textSize);
-        ctx.textBaseline = 'middle';
-        ctx.fillText(text, rectStartX + priceMarkText.paddingLeft, priceY);
-      }
-
-      var priceMarkLine = lastPriceMark.line;
-
-      if (priceMarkLine.display) {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = priceMarkLine.size;
-
-        if (priceMarkLine.style === LineStyle.DASH) {
-          ctx.setLineDash(priceMarkLine.dashValue);
-        }
-
-        ctx.beginPath();
-        ctx.moveTo(lineStartX, priceY);
-        ctx.lineTo(lineEndX, priceY);
-        ctx.stroke();
-        ctx.closePath();
-        ctx.setLineDash([]);
-      }
-    }
-    /**
-     * 绘制分时线
-     * @param ctx
-     * @param realTime
-     */
-
-  }, {
-    key: "renderTimeLine",
-    value: function renderTimeLine(ctx, realTime) {
-      var _this2 = this;
-
-      var timeLinePoints = [];
-      var timeLineAreaPoints = [{
-        x: this.handler.contentLeft(),
-        y: this.handler.contentBottom()
-      }];
-      var averageLinePoints = [];
-      var minPos = this.storage.minPos;
-      var range = this.storage.range;
-      var dataSize = this.storage.dataList.length;
-
-      var onRendering = function onRendering(x, i, kLineData) {
-        var average = kLineData.average;
-
-        var closeY = _this2.yAxisRender.getY(kLineData.close);
-
-        var averageY = _this2.yAxisRender.getY(average);
-
-        timeLinePoints.push({
-          x: x,
-          y: closeY
-        });
-
-        if (average || average === 0) {
-          averageLinePoints.push({
-            x: x,
-            y: averageY
-          });
-        }
-
-        if (i === minPos) {
-          timeLineAreaPoints.push({
-            x: _this2.handler.contentLeft(),
-            y: closeY
-          });
-          timeLineAreaPoints.push({
-            x: x,
-            y: closeY
-          });
-        } else if (i === minPos + range - 1) {
-          timeLineAreaPoints.push({
-            x: x,
-            y: closeY
-          });
-          timeLineAreaPoints.push({
-            x: _this2.handler.contentRight(),
-            y: closeY
-          });
-          timeLineAreaPoints.push({
-            x: _this2.handler.contentRight(),
-            y: _this2.handler.contentBottom()
-          });
-        } else if (i === dataSize - 1) {
-          timeLineAreaPoints.push({
-            x: x,
-            y: closeY
-          });
-          timeLineAreaPoints.push({
-            x: x,
-            y: _this2.handler.contentBottom()
-          });
-        } else {
-          timeLineAreaPoints.push({
-            x: x,
-            y: closeY
-          });
-        }
-      };
-
-      var onRenderEnd = function onRenderEnd() {
-        var timeLine = realTime.timeLine;
-
-        if (timeLinePoints.length > 0) {
-          // 绘制分时线
-          ctx.lineWidth = timeLine.size;
-          ctx.strokeStyle = timeLine.color;
-          ctx.beginPath();
-          ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y);
-
-          for (var i = 1; i < timeLinePoints.length; i++) {
-            ctx.lineTo(timeLinePoints[i].x, timeLinePoints[i].y);
-          }
-
-          ctx.stroke();
-          ctx.closePath();
-        }
-
-        if (timeLineAreaPoints.length > 0) {
-          // 绘制分时线填充区域
-          ctx.fillStyle = timeLine.areaFillColor;
-          ctx.beginPath();
-          ctx.moveTo(timeLineAreaPoints[0].x, timeLineAreaPoints[0].y);
-
-          for (var _i = 1; _i < timeLineAreaPoints.length; _i++) {
-            ctx.lineTo(timeLineAreaPoints[_i].x, timeLineAreaPoints[_i].y);
-          }
-
-          ctx.closePath();
-          ctx.fill();
-        }
-
-        var averageLine = realTime.averageLine;
-
-        if (averageLine.display && averageLinePoints.length > 0) {
-          // 绘制均线
-          ctx.lineWidth = averageLine.size;
-          ctx.strokeStyle = averageLine.color;
-          ctx.beginPath();
-          ctx.moveTo(averageLinePoints[0].x, averageLinePoints[0].y);
-
-          for (var _i2 = 1; _i2 < averageLinePoints.length; _i2++) {
-            ctx.lineTo(averageLinePoints[_i2].x, averageLinePoints[_i2].y);
-          }
-
-          ctx.stroke();
-          ctx.closePath();
-        }
-      };
-
-      this.renderGraphics(ctx, onRendering, onRenderEnd);
-    }
-  }]);
-
-  return CandleRender;
-}(IndicatorRender);
-
-var CandleChart =
-/*#__PURE__*/
-function (_IndicatorChart) {
-  _inherits(CandleChart, _IndicatorChart);
-
-  function CandleChart(dom, style, storage, indicatorParams, precision) {
-    var _this;
-
-    _classCallCheck(this, CandleChart);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(CandleChart).call(this, dom, style, storage, indicatorParams, IndicatorType.MA));
-    _this.chartRender = new CandleRender(_this.handler, storage, _this.yAxisRender);
-    _this.precision = precision;
-    _this.chartType = ChartType.CANDLE;
-    return _this;
-  }
-
-  _createClass(CandleChart, [{
-    key: "draw",
-    value: function draw() {
-      _get(_getPrototypeOf(CandleChart.prototype), "draw", this).call(this);
-
-      this.chartRender.renderLastPriceMark(this.ctx, this.style.candle.lastPriceMark, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, this.precision.pricePrecision);
-    }
-  }, {
-    key: "drawChart",
-    value: function drawChart() {
-      var candle = this.style.candle;
-
-      if (this.chartType !== ChartType.REAL_TIME) {
-        this.chartRender.renderCandle(this.ctx, candle.bar, this.precision.pricePrecision);
-        this.chartRender.renderIndicator(this.ctx, this.indicatorType, this.style.indicator, this.indicatorParams, true);
-        this.chartRender.renderHighestPriceMark(this.ctx, candle.highestPriceMark, this.precision.pricePrecision);
-        this.chartRender.renderLowestPriceMark(this.ctx, candle.lowestPriceMark, this.precision.pricePrecision);
-      } else {
-        this.chartRender.renderTimeLine(this.ctx, candle);
-      }
-    }
-  }, {
-    key: "isDrawChart",
-    value: function isDrawChart() {
-      return true;
-    }
-  }, {
-    key: "calcYAxisMinMax",
-    value: function calcYAxisMinMax() {
-      this.yAxisRender.calcAxisMinMax(this.indicatorType, true, this.chartType === ChartType.REAL_TIME, this.style.candle.averageLine.display);
-    }
-  }]);
-
-  return CandleChart;
-}(IndicatorChart);
-
-/**
- * 获取某点在两点决定的一次函数上的y值
- * @param point1
- * @param point2
- * @param targetPoints
- */
-function getLinearY(point1, point2, targetPoints) {
-  var v = [];
-
-  if (point1 && point2 && targetPoints.length > 0) {
-    var subX = point1.x - point2.x;
-
-    if (subX === 0) {
-      targetPoints.forEach(function (point) {
-        v.push(point.y);
-      });
-    } else {
-      var k = (point1.y - point2.y) / subX;
-      var b = point1.y - k * point1.x;
-      targetPoints.forEach(function (point) {
-        v.push(point.x * k + b);
-      });
-    }
-  }
-
-  return v;
-}
-/**
- * 点是否在线上
- * @param point1
- * @param point2
- * @param targetPoint
- */
-
-function checkPointOnStraightLine(point1, point2, targetPoint) {
-  if (!targetPoint || !point1 || !point2) {
-    return false;
-  }
-
-  if (point1.x === point2.x) {
-    return Math.abs(targetPoint.x - point1.x) < 1;
-  }
-
-  if (point1.y === point2.y) {
-    return Math.abs(targetPoint.y - point1.y) < 1;
-  }
-
-  return Math.abs(targetPoint.y - getLinearY(point1, point2, [targetPoint])[0]) < 1;
-}
-/**
- * 点是否在线段上
- * @param point1
- * @param point2
- * @param targetPoint
- * @returns {boolean}
- */
-
-function checkPointOnRayLine(point1, point2, targetPoint) {
-  if (!targetPoint || !point1 || !point2) {
-    return false;
-  }
-
-  if (checkPointOnStraightLine(point1, point2, targetPoint)) {
-    if (point1.x === point2.x) {
-      if (point1.y < point2.y) {
-        return targetPoint.y > point1.y - 2;
-      } else {
-        return targetPoint.y < point1.y + 2;
-      }
-    }
-
-    if (point1.x < point2.x) {
-      return targetPoint.x > point1.x - 2;
-    } else {
-      return targetPoint.x < point1.x + 2;
-    }
-  }
-
-  return false;
-}
-/**
- * 判断点是否在线段上面
- * @param point1
- * @param point2
- * @param targetPoint
- */
-
-function checkPointOnSegmentLine(point1, point2, targetPoint) {
-  if (!targetPoint || !point1 || !point2) {
-    return false;
-  }
-
-  if (checkPointOnStraightLine(point1, point2, targetPoint)) {
-    var a = Math.sqrt(Math.pow(targetPoint.x - point1.x, 2) + Math.pow(targetPoint.y - point1.y, 2));
-    var b = Math.sqrt(Math.pow(targetPoint.x - point2.x, 2) + Math.pow(targetPoint.y - point2.y, 2));
-    var c = Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
-    return Math.abs(a + b - c) < 2;
-  }
-
-  return false;
-}
-/**
- * 点是否在圆上
- * @param circleCenterPoint
- * @param radius
- * @param targetPoint
- * @returns {boolean}
- */
-
-function checkPointOnCircle(circleCenterPoint, radius, targetPoint) {
-  if (!targetPoint) {
-    return false;
-  }
-
-  var subX = targetPoint.x - circleCenterPoint.x;
-  var subY = targetPoint.y - circleCenterPoint.y;
-  return !(subX * subX + subY * subY > radius * radius);
-}
-/**
- * 获取平行线
- * @param points
- * @param handler
- * @param isPriceChannelLine
- * @returns {Array}
- */
-
-function getParallelLines(points, handler, isPriceChannelLine) {
-  var lines = [];
-
-  if (points.length > 1) {
-    if (points[0].x === points[1].x) {
-      var startY = handler.contentTop();
-      var endY = handler.contentBottom();
-      lines.push([{
-        x: points[0].x,
-        y: startY
-      }, {
-        x: points[0].x,
-        y: endY
-      }]);
-
-      if (points.length > 2) {
-        lines.push([{
-          x: points[2].x,
-          y: startY
-        }, {
-          x: points[2].x,
-          y: endY
-        }]);
-
-        if (isPriceChannelLine) {
-          var distance = points[0].x - points[2].x;
-          lines.push([{
-            x: points[0].x + distance,
-            y: startY
-          }, {
-            x: points[0].x + distance,
-            y: endY
-          }]);
-        }
-      }
-    } else {
-      var startX = handler.contentLeft();
-      var endX = handler.contentRight();
-
-      if (points[0].y === points[1].y) {
-        lines.push([{
-          x: startX,
-          y: points[0].y
-        }, {
-          x: endX,
-          y: points[0].y
-        }]);
-
-        if (points.length > 2) {
-          lines.push([{
-            x: startX,
-            y: points[2].y
-          }, {
-            x: endX,
-            y: points[2].y
-          }]);
-
-          if (isPriceChannelLine) {
-            var _distance = points[0].y - points[2].y;
-
-            lines.push([{
-              x: startX,
-              y: points[0].y + _distance
-            }, {
-              x: endX,
-              y: points[0].y + _distance
-            }]);
-          }
-        }
-      } else {
-        var k = (points[0].y - points[1].y) / (points[0].x - points[1].x);
-        var b = points[0].y - k * points[0].x;
-        lines.push([{
-          x: startX,
-          y: startX * k + b
-        }, {
-          x: endX,
-          y: endX * k + b
-        }]);
-
-        if (points.length > 2) {
-          var b1 = points[2].y - k * points[2].x;
-          lines.push([{
-            x: startX,
-            y: startX * k + b1
-          }, {
-            x: endX,
-            y: endX * k + b1
-          }]);
-
-          if (isPriceChannelLine) {
-            var b2 = b + (b - b1);
-            lines.push([{
-              x: startX,
-              y: startX * k + b2
-            }, {
-              x: endX,
-              y: endX * k + b2
-            }]);
-          }
-        }
-      }
-    }
-  }
-
-  return lines;
-}
-/**
- * 获取斐波那契线
- * @param points
- * @param handler
- */
-
-function getFibonacciLines(points, handler) {
-  var lines = [];
-
-  if (points.length > 0) {
-    var startX = handler.contentLeft();
-    var endX = handler.contentRight();
-    lines.push([{
-      x: startX,
-      y: points[0].y
-    }, {
-      x: endX,
-      y: points[0].y
-    }]);
-
-    if (points.length > 1) {
-      var yDistance = points[0].y - points[1].y;
-      lines.push([{
-        x: startX,
-        y: points[1].y + yDistance * 0.786
-      }, {
-        x: endX,
-        y: points[1].y + yDistance * 0.786
-      }]);
-      lines.push([{
-        x: startX,
-        y: points[1].y + yDistance * 0.618
-      }, {
-        x: endX,
-        y: points[1].y + yDistance * 0.618
-      }]);
-      lines.push([{
-        x: startX,
-        y: points[1].y + yDistance * 0.5
-      }, {
-        x: endX,
-        y: points[1].y + yDistance * 0.5
-      }]);
-      lines.push([{
-        x: startX,
-        y: points[1].y + yDistance * 0.382
-      }, {
-        x: endX,
-        y: points[1].y + yDistance * 0.382
-      }]);
-      lines.push([{
-        x: startX,
-        y: points[1].y + yDistance * 0.236
-      }, {
-        x: endX,
-        y: points[1].y + yDistance * 0.236
-      }]);
-      lines.push([{
-        x: startX,
-        y: points[1].y
-      }, {
-        x: endX,
-        y: points[1].y
-      }]);
-    }
-  }
-
-  return lines;
-}
-
-var GraphicMarkRender =
-/*#__PURE__*/
-function (_Render) {
-  _inherits(GraphicMarkRender, _Render);
-
-  function GraphicMarkRender(handler, storage, yRender) {
-    var _this;
-
-    _classCallCheck(this, GraphicMarkRender);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkRender).call(this, handler, storage));
-    _this.yRender = yRender;
-    return _this;
-  }
-  /**
-   * 渲染水平直线
-   * @param ctx
-   * @param graphicMark
-   */
-
-
-  _createClass(GraphicMarkRender, [{
-    key: "renderHorizontalStraightLine",
-    value: function renderHorizontalStraightLine(ctx, graphicMark) {
-      var _this2 = this;
-
-      this.renderPointGraphicMark(ctx, GraphicMarkType.HORIZONTAL_STRAIGHT_LINE, graphicMark, checkPointOnStraightLine, function (points) {
-        return [[{
-          x: _this2.handler.contentLeft(),
-          y: points[0].y
-        }, {
-          x: _this2.handler.contentRight(),
-          y: points[0].y
-        }]];
-      });
-    }
-    /**
-     * 渲染垂直直线
-     * @param ctx
-     * @param graphicMark
-     */
-
-  }, {
-    key: "renderVerticalStraightLine",
-    value: function renderVerticalStraightLine(ctx, graphicMark) {
-      var _this3 = this;
-
-      this.renderPointGraphicMark(ctx, GraphicMarkType.VERTICAL_STRAIGHT_LINE, graphicMark, checkPointOnStraightLine, function (points) {
-        return [[{
-          x: points[0].x,
-          y: _this3.handler.contentTop()
-        }, {
-          x: points[0].x,
-          y: _this3.handler.contentBottom()
-        }]];
-      });
-    }
-    /**
-     * 渲染直线
-     * @param ctx
-     * @param graphicMark
-     */
-
-  }, {
-    key: "renderStraightLine",
-    value: function renderStraightLine(ctx, graphicMark) {
-      var _this4 = this;
-
-      this.renderPointGraphicMark(ctx, GraphicMarkType.STRAIGHT_LINE, graphicMark, checkPointOnStraightLine, function (points) {
-        if (points[0].x === points[1].x) {
-          return [[{
-            x: points[0].x,
-            y: _this4.handler.contentTop()
-          }, {
-            x: points[0].x,
-            y: _this4.handler.bottom
-          }]];
-        }
-
-        var y = getLinearY(points[0], points[1], [{
-          x: _this4.handler.contentLeft(),
-          y: points[0].y
-        }, {
-          x: _this4.handler.contentRight(),
-          y: points[0].y
-        }]);
-        return [[{
-          x: _this4.handler.contentLeft(),
-          y: y[0]
-        }, {
-          x: _this4.handler.contentRight(),
-          y: y[1]
-        }]];
-      });
-    }
-    /**
-     * 绘制水平射线
-     * @param ctx
-     * @param graphicMark
-     */
-
-  }, {
-    key: "renderHorizontalRayLine",
-    value: function renderHorizontalRayLine(ctx, graphicMark) {
-      var _this5 = this;
-
-      this.renderPointGraphicMark(ctx, GraphicMarkType.HORIZONTAL_RAY_LINE, graphicMark, checkPointOnRayLine, function (points) {
-        var point = {
-          x: _this5.handler.contentLeft(),
-          y: points[0].y
-        };
-
-        if (points[0].x < points[1].x) {
-          point.x = _this5.handler.contentRight();
-        }
-
-        return [[points[0], point]];
-      });
-    }
-    /**
-     * 绘制垂直射线
-     * @param ctx
-     * @param graphicMark
-     */
-
-  }, {
-    key: "renderVerticalRayLine",
-    value: function renderVerticalRayLine(ctx, graphicMark) {
-      var _this6 = this;
-
-      this.renderPointGraphicMark(ctx, GraphicMarkType.VERTICAL_RAY_LINE, graphicMark, checkPointOnRayLine, function (points) {
-        var point = {
-          x: points[0].x,
-          y: _this6.handler.contentTop()
-        };
-
-        if (points[0].y < points[1].y) {
-          point.y = _this6.handler.contentBottom();
-        }
-
-        return [[points[0], point]];
-      });
-    }
-    /**
-     * 渲染射线
-     * @param ctx
-     * @param graphicMark
-     */
-
-  }, {
-    key: "renderRayLine",
-    value: function renderRayLine(ctx, graphicMark) {
-      var _this7 = this;
-
-      this.renderPointGraphicMark(ctx, GraphicMarkType.RAY_LINE, graphicMark, checkPointOnRayLine, function (points) {
-        var point;
-
-        if (points[0].x === points[1].x && points[0].y !== points[1].y) {
-          if (points[0].y < points[1].y) {
-            point = {
-              x: points[0].x,
-              y: _this7.handler.contentBottom()
-            };
-          } else {
-            point = {
-              x: points[0].x,
-              y: _this7.handler.contentTop()
-            };
-          }
-        } else if (points[0].x > points[1].x) {
-          point = {
-            x: _this7.handler.contentLeft(),
-            y: getLinearY(points[0], points[1], [{
-              x: _this7.handler.contentLeft(),
-              y: points[0].y
-            }])[0]
-          };
-        } else {
-          point = {
-            x: _this7.handler.contentRight(),
-            y: getLinearY(points[0], points[1], [{
-              x: _this7.handler.contentRight(),
-              y: points[0].y
-            }])[0]
-          };
-        }
-
-        return [[points[0], point]];
-      });
-    }
-    /**
-     * 绘制线段，水平线段，垂直线段，普通线段一起绘制
-     * @param ctx
-     * @param graphicMark
-     */
-
-  }, {
-    key: "renderSegmentLine",
-    value: function renderSegmentLine(ctx, graphicMark) {
-      this.renderPointGraphicMark(ctx, GraphicMarkType.HORIZONTAL_SEGMENT_LINE, graphicMark, checkPointOnSegmentLine);
-      this.renderPointGraphicMark(ctx, GraphicMarkType.VERTICAL_SEGMENT_LINE, graphicMark, checkPointOnSegmentLine);
-      this.renderPointGraphicMark(ctx, GraphicMarkType.SEGMENT_LINE, graphicMark, checkPointOnSegmentLine);
-    }
-    /**
-     * 绘制价格线
-     * @param ctx
-     * @param graphicMark
-     * @param pricePrecision
-     */
-
-  }, {
-    key: "renderPriceLine",
-    value: function renderPriceLine(ctx, graphicMark, pricePrecision) {
-      var _this8 = this;
-
-      this.renderPointGraphicMark(ctx, GraphicMarkType.PRICE_LINE, graphicMark, checkPointOnRayLine, function (points) {
-        return [[points[0], {
-          x: _this8.handler.contentRight(),
-          y: points[0].y
-        }]];
-      }, true, pricePrecision);
-    }
-    /**
-     * 渲染价格通道线
-     * @param ctx
-     * @param graphicMark
-     */
-
-  }, {
-    key: "renderPriceChannelLine",
-    value: function renderPriceChannelLine(ctx, graphicMark) {
-      var _this9 = this;
-
-      this.renderPointGraphicMark(ctx, GraphicMarkType.PRICE_CHANNEL_LINE, graphicMark, checkPointOnStraightLine, function (points) {
-        return getParallelLines(points, _this9.handler, true);
-      });
-    }
-    /**
-     * 渲染平行直线
-     * @param ctx
-     * @param graphicMark
-     */
-
-  }, {
-    key: "renderParallelStraightLine",
-    value: function renderParallelStraightLine(ctx, graphicMark) {
-      var _this10 = this;
-
-      this.renderPointGraphicMark(ctx, GraphicMarkType.PARALLEL_STRAIGHT_LINE, graphicMark, checkPointOnStraightLine, function (points) {
-        return getParallelLines(points, _this10.handler);
-      });
-    }
-    /**
-     * 渲染斐波那契线
-     * @param ctx
-     * @param graphicMark
-     * @param pricePrecision
-     */
-
-  }, {
-    key: "renderFibonacciLine",
-    value: function renderFibonacciLine(ctx, graphicMark, pricePrecision) {
-      var _this11 = this;
-
-      this.renderPointGraphicMark(ctx, GraphicMarkType.FIBONACCI_LINE, graphicMark, checkPointOnStraightLine, function (points) {
-        return getFibonacciLines(points, _this11.handler);
-      }, true, pricePrecision, ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']);
-    }
-    /**
-     * 渲染点形成的图形
-     * @param ctx
-     * @param markKey
-     * @param graphicMark
-     * @param checkPointOnLine
-     * @param generatedLinePoints
-     * @param isRenderPrice
-     * @param pricePrecision
-     * @param priceExtendsText
-     */
-
-  }, {
-    key: "renderPointGraphicMark",
-    value: function renderPointGraphicMark(ctx, markKey, graphicMark, checkPointOnLine, generatedLinePoints, isRenderPrice, pricePrecision, priceExtendsText) {
-      var _this12 = this;
-
-      var graphicMarkData = this.storage.graphicMarkDatas[markKey];
-      graphicMarkData.forEach(function (_ref) {
-        var points = _ref.points,
-            drawStep = _ref.drawStep;
-        var circlePoints = [];
-        points.forEach(function (_ref2) {
-          var xPos = _ref2.xPos,
-              price = _ref2.price;
-          var x = (xPos - _this12.storage.minPos) * _this12.storage.dataSpace;
-
-          var y = _this12.yRender.getY(price);
-
-          circlePoints.push({
-            x: x,
-            y: y
-          });
-        });
-        var linePoints = generatedLinePoints ? generatedLinePoints(circlePoints) : [circlePoints];
-
-        _this12.renderGraphicMark(ctx, graphicMark, linePoints, circlePoints, drawStep, checkPointOnLine, isRenderPrice, pricePrecision, priceExtendsText);
-      });
-    }
-    /**
-     * 绘制标记图形
-     * @param ctx
-     * @param graphicMark
-     * @param linePoints
-     * @param circlePoints
-     * @param drawStep
-     * @param checkPointOnLine
-     * @param isRenderPrice
-     * @param pricePrecision
-     * @param priceExtendsText
-     */
-
-  }, {
-    key: "renderGraphicMark",
-    value: function renderGraphicMark(ctx, graphicMark, linePoints, circlePoints, drawStep, checkPointOnLine, isRenderPrice, pricePrecision) {
-      var _this13 = this;
-
-      var priceExtendsText = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : [];
-      var graphicMarkPoint = this.storage.graphicMarkPoint;
-      var isOnLine = false;
-      linePoints.forEach(function (points, i) {
-        if (points.length > 1) {
-          var isOn = checkPointOnLine(points[0], points[1], graphicMarkPoint);
-
-          if (!isOnLine) {
-            isOnLine = isOn;
-          }
-
-          if (drawStep !== GraphicMarkDrawStep.STEP_1) {
-            ctx.strokeStyle = graphicMark.line.color;
-            ctx.lineWidth = graphicMark.line.size;
-            ctx.beginPath();
-            ctx.moveTo(points[0].x, points[0].y);
-            ctx.lineTo(points[1].x, points[1].y);
-            ctx.stroke();
-            ctx.closePath(); // 渲染价格
-
-            if (isRenderPrice) {
-              var price = _this13.yRender.getValue(points[0].y);
-
-              var priceText = formatPrecision(price, pricePrecision);
-              var textSize = graphicMark.text.size;
-              ctx.font = getFont(textSize);
-              ctx.fillStyle = graphicMark.text.color;
-              ctx.fillText("".concat(priceText, " ").concat(priceExtendsText[i] || ''), points[0].x + graphicMark.text.marginLeft, points[0].y - graphicMark.text.marginBottom);
-            }
-          }
-        }
-      });
-      var radius = graphicMark.point.radius;
-      var isCircleActive = false;
-
-      for (var i = 0; i < circlePoints.length; i++) {
-        isCircleActive = checkPointOnCircle(circlePoints[i], radius, graphicMarkPoint);
-
-        if (isCircleActive) {
-          break;
-        }
-      }
-
-      circlePoints.forEach(function (circlePoint) {
-        var isOnCircle = checkPointOnCircle(circlePoint, radius, graphicMarkPoint);
-
-        if (isCircleActive || isOnLine) {
-          var circleRadius = radius;
-          var circleColor = graphicMark.point.backgroundColor;
-          var circleBorderColor = graphicMark.point.borderColor;
-          var circleBorderSize = graphicMark.point.borderSize;
-
-          if (isOnCircle) {
-            circleRadius = graphicMark.point.activeRadius;
-            circleColor = graphicMark.point.activeBackgroundColor;
-            circleBorderColor = graphicMark.point.activeBorderColor;
-            circleBorderSize = graphicMark.point.activeBorderSize;
-          }
-
-          ctx.fillStyle = circleColor;
-          ctx.beginPath();
-          ctx.arc(circlePoint.x, circlePoint.y, circleRadius, 0, Math.PI * 2);
-          ctx.closePath();
-          ctx.fill();
-          ctx.lineWidth = circleBorderSize;
-          ctx.strokeStyle = circleBorderColor;
-          ctx.beginPath();
-          ctx.arc(circlePoint.x, circlePoint.y, circleRadius, 0, Math.PI * 2);
-          ctx.closePath();
-          ctx.stroke();
-        }
-      });
-    }
-  }]);
-
-  return GraphicMarkRender;
-}(Render);
-
-var GraphicMarkChart =
-/*#__PURE__*/
-function (_Chart) {
-  _inherits(GraphicMarkChart, _Chart);
-
-  function GraphicMarkChart(dom, style, storage, yAxisRender, precision) {
-    var _this;
-
-    _classCallCheck(this, GraphicMarkChart);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkChart).call(this, dom, style));
-    _this.graphicMarkRender = new GraphicMarkRender(_this.handler, storage, yAxisRender);
-    _this.precision = precision;
-    return _this;
-  }
-
-  _createClass(GraphicMarkChart, [{
-    key: "draw",
-    value: function draw() {
-      var graphicMark = this.style.graphicMark; // 画线
-
-      this.graphicMarkRender.renderHorizontalStraightLine(this.ctx, graphicMark);
-      this.graphicMarkRender.renderVerticalStraightLine(this.ctx, graphicMark);
-      this.graphicMarkRender.renderStraightLine(this.ctx, graphicMark);
-      this.graphicMarkRender.renderHorizontalRayLine(this.ctx, graphicMark);
-      this.graphicMarkRender.renderVerticalRayLine(this.ctx, graphicMark);
-      this.graphicMarkRender.renderRayLine(this.ctx, graphicMark);
-      this.graphicMarkRender.renderSegmentLine(this.ctx, graphicMark);
-      this.graphicMarkRender.renderPriceLine(this.ctx, graphicMark, this.precision.pricePrecision);
-      this.graphicMarkRender.renderPriceChannelLine(this.ctx, graphicMark);
-      this.graphicMarkRender.renderParallelStraightLine(this.ctx, graphicMark);
-      this.graphicMarkRender.renderFibonacciLine(this.ctx, graphicMark, this.precision.pricePrecision);
-    }
-  }]);
-
-  return GraphicMarkChart;
-}(Chart);
-
-/**
- * 格式化时间
- * @param timestamp
- * @param format
- * @returns {string}
- */
-
-function formatDate(timestamp, format) {
-  var date = getDate(timestamp);
-
-  if (date) {
-    var year = date.getFullYear().toString();
-    var month = (date.getMonth() + 1).toString();
-    var day = date.getDate().toString();
-    var hours = date.getHours().toString();
-    var minutes = date.getMinutes().toString();
-    var monthText = month.length === 1 ? "0".concat(month) : month;
-    var dayText = day.length === 1 ? "0".concat(day) : day;
-    var hourText = hours.length === 1 ? '0' + hours : hours;
-    var minuteText = minutes.length === 1 ? '0' + minutes : minutes;
-
-    switch (format) {
-      case 'YYYY':
-        {
-          return year;
-        }
-
-      case 'YYYY-MM':
-        {
-          return "".concat(year, "-").concat(monthText);
-        }
-
-      case 'YYYY-MM-DD':
-        {
-          return "".concat(year, "-").concat(monthText, "-").concat(dayText);
-        }
-
-      case 'YYYY-MM-DD hh:mm':
-        {
-          return "".concat(year, "-").concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
-        }
-
-      case 'MM-DD':
-        {
-          return "".concat(monthText, "-").concat(dayText);
-        }
-
-      case 'hh:mm':
-        {
-          return "".concat(hourText, ":").concat(minuteText);
-        }
-
-      default:
-        {
-          return "".concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
-        }
-    }
-  }
-
-  return '--';
-}
-
-function getDate(timestamp) {
-  if (timestamp && isNumber(timestamp)) {
-    return new Date(timestamp);
-  }
-
-  return null;
-}
-
-/**
- * 默认的样式配置
- * @returns {{realTime: {timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}, indicator: {decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}, yAxis: {line: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null, position: string}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}, maxWidth: number}, lowestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}, xAxis: {minHeight: number, maxHeight: number, line: {color: string, size: number, display: boolean}, display: boolean, tick: {line: {size: number, color: string, display: boolean, length: number}, text: {margin: number, color: string, size: number, display: boolean, valueFormatter: null}}, separatorLine: {size: number, color: string, dashValue: number[], display: boolean, style: string}}, lastPriceMark: {decreasingColor: string, line: {dashValue: number[], size: number, display: boolean, style: string}, display: boolean, increasingColor: string, text: {paddingBottom: number, size: number, color: string, display: boolean, paddingRight: number, valueFormatter: null, paddingTop: number, paddingLeft: number}}, grid: boolean, graphicMark: {line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}, candle: {decreasingColor: string, style: string, increasingColor: string}, tooltip: {data: {indicator: {text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}}, displayRule: string, base: {floatRect: {fillColor: string, borderColor: string, paddingBottom: number, top: number, borderRadius: number, left: number, paddingRight: number, borderSize: number, paddingTop: number, right: number, paddingLeft: number}, values: null, showType: string, text: {marginRight: number, size: number, color: string, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, labels: string[]}}, cross: {line: {dashValue: number[], size: number, color: string, style: string}, display: boolean, text: {horizontal: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}, vertical: {borderColor: string, backgroundColor: string, paddingBottom: number, color: string, size: number, paddingRight: number, valueFormatter: null, borderSize: number, paddingTop: number, paddingLeft: number}}}}, highestPriceMark: {color: string, display: boolean, text: {margin: number, size: number, valueFormatter: null}}}}
- */
-
-function getDefaultStyle() {
-  return {
-    candle: {
-      /**
-       * 分时线
-       */
-      timeLine: {
-        color: '#1e88e5',
-        size: 1,
-        areaFillColor: 'rgba(30, 136, 229, 0.08)'
-      },
-
-      /**
-       * 均线
-       */
-      averageLine: {
-        display: true,
-        color: '#F5A623',
-        size: 1
-      },
-      bar: {
-        /**
-         * 蜡烛样式
-         */
-        style: CandleStyle.SOLID,
-
-        /**
-         * 上涨颜色
-         */
-        increasingColor: '#26A69A',
-
-        /**
-         * 下跌颜色
-         */
-        decreasingColor: '#EF5350'
-      },
-
-      /**
-       * 最大价格标记参数
-       */
-      highestPriceMark: {
-        display: true,
-        color: '#D9D9D9',
-        text: {
-          margin: 5,
-          size: 10
-        }
-      },
-
-      /**
-       * 最小价格标记参数
-       */
-      lowestPriceMark: {
-        display: true,
-        color: '#D9D9D9',
-        text: {
-          margin: 5,
-          size: 10
-        }
-      },
-
-      /**
-       * 最新价标记参数
-       */
-      lastPriceMark: {
-        display: true,
-        increasingColor: '#26A69A',
-        decreasingColor: '#EF5350',
-        line: {
-          display: true,
-          style: LineStyle.DASH,
-          dashValue: [4, 4],
-          size: 1
-        },
-        text: {
-          display: true,
-          size: 12,
-          paddingLeft: 2,
-          paddingTop: 2,
-          paddingRight: 2,
-          paddingBottom: 2,
-          color: '#FFFFFF'
-        }
-      }
-    },
-    indicator: {
-      /**
-       * 线的尺寸
-       */
-      lineSize: 1,
-      increasingColor: '#26A69A',
-      decreasingColor: '#EF5350',
-      lineColors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
-    },
-    xAxis: {
-      /**
-       * 是否显示整个轴
-       */
-      display: true,
-
-      /**
-       * x轴最大高度
-       */
-      maxHeight: 50,
-
-      /**
-       * x轴最小高度
-       */
-      minHeight: 30,
-
-      /**
-       * 轴线配置
-       */
-      line: {
-        display: true,
-        color: '#888888',
-        size: 1
-      },
-
-      /**
-       * 分割配置
-       */
-      tick: {
-        // 文字
-        text: {
-          display: true,
-          color: '#D9D9D9',
-          size: 12,
-          margin: 3
-        },
-        // 线
-        line: {
-          display: true,
-          size: 1,
-          length: 3,
-          color: '#888888'
-        }
-      },
-
-      /**
-       * 分割线配置
-       */
-      separatorLine: {
-        display: false,
-        size: 1,
-        color: '#393939',
-        style: LineStyle.DASH,
-        dashValue: [2, 2]
-      }
-    },
-    yAxis: {
-      /**
-       * 是否显示整个轴
-       */
-      display: true,
-
-      /**
-       * y轴位置
-       */
-      position: YAxisPosition.RIGHT,
-
-      /**
-       * y轴最大宽度
-       */
-      maxWidth: 80,
-
-      /**
-       * y轴最小宽度
-       */
-      minWidth: 60,
-
-      /**
-       * 轴线配置
-       */
-      line: {
-        display: true,
-        color: '#888888',
-        size: 1
-      },
-
-      /**
-       * 分割配置
-       */
-      tick: {
-        // 文字
-        text: {
-          display: true,
-          position: YAxisTextPosition.OUTSIDE,
-          color: '#D9D9D9',
-          size: 12,
-          margin: 3
-        },
-        // 线
-        line: {
-          display: true,
-          size: 1,
-          length: 3,
-          color: '#888888'
-        }
-      },
-
-      /**
-       * 分割线配置
-       */
-      separatorLine: {
-        display: true,
-        size: 1,
-        color: '#393939',
-        style: LineStyle.DASH,
-        dashValue: [2, 2]
-      }
-    },
-    tooltip: {
-      /**
-       * 光标线配置
-       */
-      cross: {
-        display: true,
-        line: {
-          style: LineStyle.DASH,
-          dashValue: [4, 2],
-          size: 1,
-          color: '#888888'
-        },
-        text: {
-          horizontal: {
-            color: '#D9D9D9',
-            size: 12,
-            paddingLeft: 2,
-            paddingRight: 2,
-            paddingTop: 2,
-            paddingBottom: 2,
-            borderSize: 1,
-            borderColor: '#505050',
-            backgroundColor: '#505050'
-          },
-          vertical: {
-            color: '#D9D9D9',
-            size: 12,
-            paddingLeft: 2,
-            paddingRight: 2,
-            paddingTop: 2,
-            paddingBottom: 2,
-            borderSize: 1,
-            borderColor: '#505050',
-            backgroundColor: '#505050'
-          }
-        }
-      },
-
-      /**
-       * 数据配置
-       */
-      data: {
-        displayRule: TooltipTextDisplayRule.ALWAYS,
-        base: {
-          showType: TooltipCandleChartTextDisplayType.FIXED,
-          labels: ['时间', '开', '收', '高', '低', '成交量'],
-          values: null,
-          text: {
-            size: 12,
-            color: '#D9D9D9',
-            marginLeft: 8,
-            marginTop: 6,
-            marginRight: 8,
-            marginBottom: 0
-          },
-          floatRect: {
-            paddingLeft: 0,
-            paddingRight: 0,
-            paddingTop: 0,
-            paddingBottom: 6,
-            left: 8,
-            top: 8,
-            right: 8,
-            borderRadius: 4,
-            borderSize: 1,
-            borderColor: '#3f4254',
-            fillColor: 'rgba(17, 17, 17, .3)'
-          }
-        },
-        indicator: {
-          text: {
-            size: 12,
-            color: '#D9D9D9',
-            marginTop: 6,
-            marginRight: 8,
-            marginBottom: 0,
-            marginLeft: 8
-          }
-        }
-      }
-    },
-    graphicMark: {
-      line: {
-        color: '#1e88e5',
-        size: 1
-      },
-      point: {
-        backgroundColor: '#1e88e5',
-        borderColor: '#1e88e5',
-        borderSize: 1,
-        radius: 4,
-        activeBackgroundColor: '#1e88e5',
-        activeBorderColor: '#1e88e5',
-        activeBorderSize: 1,
-        activeRadius: 6
-      },
-      text: {
-        color: '#1e88e5',
-        size: 12,
-        marginLeft: 2,
-        marginRight: 2,
-        marginTop: 2,
-        marginBottom: 6,
-        valueFormatter: null
-      }
-    }
-  };
-}
-/**
- * 默认的指标参数配置
- */
-
-function getDefaultIndicatorParams() {
-  var _ref;
-
-  return _ref = {}, _defineProperty(_ref, IndicatorType.MA, [5, 10, 30, 60]), _defineProperty(_ref, IndicatorType.VOL, [5, 10, 20]), _defineProperty(_ref, IndicatorType.MACD, [12, 26, 9]), _defineProperty(_ref, IndicatorType.BOLL, [20]), _defineProperty(_ref, IndicatorType.KDJ, [9, 3, 3]), _defineProperty(_ref, IndicatorType.RSI, [6, 12, 24]), _defineProperty(_ref, IndicatorType.BIAS, [6, 12, 24]), _defineProperty(_ref, IndicatorType.BRAR, [26]), _defineProperty(_ref, IndicatorType.CCI, [13]), _defineProperty(_ref, IndicatorType.DMI, [14, 6]), _defineProperty(_ref, IndicatorType.CR, [26, 10, 20, 40, 60]), _defineProperty(_ref, IndicatorType.PSY, [12]), _defineProperty(_ref, IndicatorType.DMA, [10, 50, 10]), _defineProperty(_ref, IndicatorType.TRIX, [12, 20]), _defineProperty(_ref, IndicatorType.OBV, [30]), _defineProperty(_ref, IndicatorType.VR, [24, 30]), _defineProperty(_ref, IndicatorType.WR, [13, 34, 89]), _defineProperty(_ref, IndicatorType.MTM, [6, 10]), _defineProperty(_ref, IndicatorType.EMV, [14, 9]), _defineProperty(_ref, IndicatorType.SAR, [2, 2, 20]), _ref;
-}
-/**
- * 获取价格精度配置
- * @returns {{pricePrecision: number, volumePrecision: number}}
- */
-
-function getDefaultPrecision() {
-  return {
-    pricePrecision: 2,
-    volumePrecision: 0
-  };
-}
-/**
- * 获取指标精度
- * @param pricePrecision
- * @param volumePrecision
- * @returns {{[p: string]: *|number}}
- */
-
-function getIndicatorPrecision(pricePrecision, volumePrecision) {
-  var _ref2;
-
-  return _ref2 = {}, _defineProperty(_ref2, IndicatorType.NO, pricePrecision), _defineProperty(_ref2, IndicatorType.MA, pricePrecision), _defineProperty(_ref2, IndicatorType.VOL, volumePrecision), _defineProperty(_ref2, IndicatorType.MACD, 2), _defineProperty(_ref2, IndicatorType.BOLL, pricePrecision), _defineProperty(_ref2, IndicatorType.KDJ, 2), _defineProperty(_ref2, IndicatorType.RSI, 2), _defineProperty(_ref2, IndicatorType.BIAS, 2), _defineProperty(_ref2, IndicatorType.BRAR, 4), _defineProperty(_ref2, IndicatorType.CCI, 4), _defineProperty(_ref2, IndicatorType.DMI, 4), _defineProperty(_ref2, IndicatorType.CR, 2), _defineProperty(_ref2, IndicatorType.PSY, 2), _defineProperty(_ref2, IndicatorType.DMA, 4), _defineProperty(_ref2, IndicatorType.TRIX, 4), _defineProperty(_ref2, IndicatorType.OBV, 4), _defineProperty(_ref2, IndicatorType.VR, 4), _defineProperty(_ref2, IndicatorType.WR, 4), _defineProperty(_ref2, IndicatorType.MTM, 4), _defineProperty(_ref2, IndicatorType.EMV, 4), _defineProperty(_ref2, IndicatorType.SAR, pricePrecision), _ref2;
-}
-
-var TooltipRender =
-/*#__PURE__*/
-function (_Render) {
-  _inherits(TooltipRender, _Render);
-
-  function TooltipRender(handler, storage, indicatorParams, candleHandler, volHandler, subIndicatorHandler, candleYAxisRender, volYAxisRender, subIndicatorYAxisRender) {
-    var _this;
-
-    _classCallCheck(this, TooltipRender);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TooltipRender).call(this, handler, storage));
-    _this.indicatorParams = indicatorParams;
-    _this.candleHandler = candleHandler;
-    _this.volHandler = volHandler;
-    _this.subIndicatorHandler = subIndicatorHandler;
-    _this.candleYAxisRender = candleYAxisRender;
-    _this.volYAxisRender = volYAxisRender;
-    _this.subIndicatorYAxisRender = subIndicatorYAxisRender;
-    return _this;
-  }
-  /**
-   * 绘制水平线
-   * @param ctx
-   * @param mainIndicatorType
-   * @param subIndicatorType
-   * @param isRenderYAxisLeft
-   * @param isRenderYAxisTextOutside
-   * @param tooltip
-   * @param precision
-   */
-
-
-  _createClass(TooltipRender, [{
-    key: "renderCrossHorizontalLine",
-    value: function renderCrossHorizontalLine(ctx, mainIndicatorType, subIndicatorType, isRenderYAxisLeft, isRenderYAxisTextOutside, tooltip, precision) {
-      var yAxisDataLabel = this.getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType, precision);
-      var crossPoint = this.storage.crossPoint;
-
-      if (!yAxisDataLabel || !crossPoint || !tooltip.cross.display) {
-        return;
-      }
-
-      var textHorizontal = tooltip.cross.text.horizontal;
-      var textSize = textHorizontal.size;
-      var yAxisDataLabelWidth = calcTextWidth(textSize, yAxisDataLabel);
-      var rectStartX;
-      var lineStartX = this.handler.contentLeft();
-      var lineEndX = this.handler.contentRight();
-      var centerPoint = this.handler.getContentCenter();
-      var paddingLeft = textHorizontal.paddingLeft;
-      var paddingRight = textHorizontal.paddingRight;
-      var paddingTop = textHorizontal.paddingTop;
-      var paddingBottom = textHorizontal.paddingBottom;
-      var borderSize = textHorizontal.borderSize;
-      var rectWidth = yAxisDataLabelWidth + borderSize * 2 + paddingLeft + paddingRight;
-      var rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom;
-
-      if (isRenderYAxisTextOutside) {
-        if (isRenderYAxisLeft) {
-          rectStartX = lineStartX - rectWidth;
-        } else {
-          rectStartX = lineEndX;
-        }
-      } else {
-        if (crossPoint.x > centerPoint.x) {
-          // 左边
-          lineStartX = this.handler.contentLeft() + rectWidth;
-          rectStartX = this.handler.contentLeft() + 1;
-        } else {
-          lineEndX = this.handler.contentRight() - rectWidth;
-          rectStartX = lineEndX - 1;
-        }
-      } // 绘制十字光标水平线
-
-
-      ctx.lineWidth = tooltip.cross.line.size;
-      ctx.strokeStyle = tooltip.cross.line.color;
-
-      if (tooltip.cross.line.style === LineStyle.DASH) {
-        ctx.setLineDash(tooltip.cross.line.dashValue);
-      }
-
-      ctx.beginPath();
-      ctx.moveTo(lineStartX, crossPoint.y);
-      ctx.lineTo(lineEndX, crossPoint.y);
-      ctx.stroke();
-      ctx.closePath();
-      ctx.setLineDash([]);
-      var rectY = crossPoint.y - borderSize - paddingTop - textSize / 2; // 绘制y轴文字外的边框
-
-      ctx.fillStyle = textHorizontal.backgroundColor;
-      ctx.fillRect(rectStartX, rectY, rectWidth, rectHeight);
-      ctx.lineWidth = borderSize;
-      ctx.strokeStyle = textHorizontal.borderColor;
-      ctx.strokeRect(rectStartX, rectY, rectWidth, rectHeight);
-      ctx.textBaseline = 'middle';
-      ctx.fillStyle = textHorizontal.color;
-      ctx.font = getFont(textSize);
-      ctx.fillText(yAxisDataLabel, rectStartX + borderSize + paddingLeft, crossPoint.y);
-    }
-    /**
-     * 获取十字光标y轴上的文字
-     * @param tooltip
-     * @param mainIndicatorType
-     * @param subIndicatorType
-     * @param precision
-     * @returns {null|*|string}
-     */
-
-  }, {
-    key: "getCrossYAxisLabel",
-    value: function getCrossYAxisLabel(tooltip, mainIndicatorType, subIndicatorType, precision) {
-      if (!this.storage.crossPoint) {
-        return null;
-      }
-
-      var eventY = this.storage.crossPoint.y;
-      var top;
-
-      if (eventY && eventY > 0 && eventY < this.handler.height + this.handler.height + this.handler.height) {
-        var yAxisRender;
-        var indicatorType;
-
-        if (eventY > 0 && eventY < this.candleHandler.contentBottom()) {
-          yAxisRender = this.candleYAxisRender;
-          indicatorType = mainIndicatorType;
-          top = 0;
-        } else if (eventY > this.candleHandler.contentBottom() && eventY < this.candleHandler.contentBottom() + this.volHandler.height) {
-          yAxisRender = this.volYAxisRender;
-          indicatorType = IndicatorType.VOL;
-          top = this.candleHandler.height;
-        } else {
-          yAxisRender = this.subIndicatorYAxisRender;
-          indicatorType = subIndicatorType;
-          top = this.candleHandler.height + this.volHandler.height;
-        }
-
-        var yData = yAxisRender.getValue(eventY - top);
-        var precisionConfig = getIndicatorPrecision(precision.pricePrecision, precision.volumePrecision);
-        return formatPrecision(yData, precisionConfig[indicatorType]);
-      }
-
-      return null;
-    }
-    /**
-     * 绘制十字光标垂直线
-     * @param ctx
-     * @param kLineData
-     * @param tooltip
-     */
-
-  }, {
-    key: "renderCrossVerticalLine",
-    value: function renderCrossVerticalLine(ctx, kLineData, tooltip) {
-      var crossPoint = this.storage.crossPoint;
-
-      if (!crossPoint || !tooltip.cross.display) {
-        return;
-      }
-
-      var crossLine = tooltip.cross.line;
-      ctx.lineWidth = crossLine.size;
-      ctx.strokeStyle = crossLine.color;
-
-      if (crossLine.style === LineStyle.DASH) {
-        ctx.setLineDash(crossLine.dashValue);
-      }
-
-      ctx.beginPath();
-      ctx.moveTo(crossPoint.x, this.handler.contentTop());
-      ctx.lineTo(crossPoint.x, this.handler.contentBottom());
-      ctx.stroke();
-      ctx.closePath();
-      ctx.setLineDash([]);
-      var timestamp = kLineData.timestamp;
-      var text = formatDate(timestamp, 'YYYY-MM-DD hh:mm');
-      var textVertical = tooltip.cross.text.vertical;
-      var textSize = textVertical.size;
-      var labelWidth = calcTextWidth(textSize, text);
-      var xAxisLabelX = crossPoint.x - labelWidth / 2;
-      var paddingLeft = textVertical.paddingLeft;
-      var paddingRight = textVertical.paddingRight;
-      var paddingTop = textVertical.paddingTop;
-      var paddingBottom = textVertical.paddingBottom;
-      var borderSize = textVertical.borderSize; // 保证整个x轴上的提示文字总是完全显示
-
-      if (xAxisLabelX < this.handler.contentLeft() + paddingLeft + borderSize) {
-        xAxisLabelX = this.handler.contentLeft() + paddingLeft + borderSize;
-      } else if (xAxisLabelX > this.handler.contentRight() - labelWidth - borderSize - paddingRight) {
-        xAxisLabelX = this.handler.contentRight() - labelWidth - borderSize - paddingRight;
-      }
-
-      var rectLeft = xAxisLabelX - borderSize - paddingLeft;
-      var rectTop = this.handler.contentBottom();
-      var rectRight = xAxisLabelX + labelWidth + borderSize + paddingRight;
-      var rectBottom = this.handler.contentBottom() + textSize + borderSize * 2 + paddingTop + paddingBottom;
-      ctx.fillStyle = textVertical.backgroundColor;
-      ctx.fillRect(rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop);
-      ctx.lineWidth = borderSize;
-      ctx.strokeStyle = textVertical.borderColor;
-      ctx.strokeRect(rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop); // 绘制轴上的提示文字
-
-      ctx.textBaseline = 'top';
-      ctx.font = getFont(textSize);
-      ctx.fillStyle = textVertical.color;
-      ctx.fillText(text, xAxisLabelX, this.handler.contentBottom() + borderSize + paddingTop);
-    }
-    /**
-     * 渲染主图提示文字
-     * @param ctx
-     * @param kLineData
-     * @param indicatorType
-     * @param isCandle
-     * @param tooltip
-     * @param indicator
-     * @param precision
-     */
-
-  }, {
-    key: "renderCandleChartTooltip",
-    value: function renderCandleChartTooltip(ctx, kLineData, indicatorType, isCandle, tooltip, indicator, precision) {
-      var baseDataStyle = tooltip.data.base;
-      var indicatorDataStyle = tooltip.data.indicator;
-      var indicatorColors = indicator.lineColors;
-      var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision);
-
-      if (baseDataStyle.showType === TooltipCandleChartTextDisplayType.FIXED) {
-        var startY = baseDataStyle.text.marginTop;
-        this.renderCandleChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision);
-
-        if (isCandle) {
-          startY += baseDataStyle.text.size + baseDataStyle.text.marginBottom + tooltip.data.indicator.text.marginTop;
-          this.renderIndicatorTooltipText(ctx, startY, data, indicatorDataStyle, indicatorColors);
-        }
-      } else {
-        this.renderCandleChartFloatRectText(ctx, kLineData, isCandle ? data : {}, baseDataStyle, indicatorDataStyle, indicatorColors, precision);
-      }
-
-      if (isCandle) {
-        this.renderIndicatorLineCircle(ctx, indicatorType, this.candleHandler.contentTop(), data.values, this.candleYAxisRender, indicatorColors, tooltip.cross.display);
-      }
-    }
-    /**
-     * 渲染指标图提示文字
-     * @param ctx
-     * @param offsetTop
-     * @param kLineData
-     * @param indicatorType
-     * @param tooltip
-     * @param indicator
-     * @param isVolChart
-     * @param precision
-     */
-
-  }, {
-    key: "renderIndicatorChartTooltip",
-    value: function renderIndicatorChartTooltip(ctx, offsetTop, kLineData, indicatorType, tooltip, indicator, isVolChart, precision) {
-      var indicatorDataStyle = tooltip.data.indicator;
-      var data = this.getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision);
-      var indicatorLineColors = indicator.lineColors;
-      this.renderIndicatorTooltipText(ctx, offsetTop + indicatorDataStyle.text.marginTop, data, indicatorDataStyle, indicatorLineColors);
-      var circleOffsetTop = isVolChart ? this.candleHandler.height + this.volHandler.contentTop() : this.candleHandler.height + this.volHandler.height + this.subIndicatorHandler.contentTop();
-      this.renderIndicatorLineCircle(ctx, indicatorType, circleOffsetTop, data.values, isVolChart ? this.volYAxisRender : this.subIndicatorYAxisRender, indicatorLineColors, tooltip.cross.display);
-    }
-    /**
-     * 渲染主图固定的基础数据文字
-     * @param ctx
-     * @param startY
-     * @param kLineData
-     * @param baseDataStyle
-     * @param precision
-     */
-
-  }, {
-    key: "renderCandleChartFixedBaseDataTooltipText",
-    value: function renderCandleChartFixedBaseDataTooltipText(ctx, startY, kLineData, baseDataStyle, precision) {
-      var values = this.getCandleChartBaseValues(kLineData, baseDataStyle, precision);
-      var textMarginLeft = baseDataStyle.text.marginLeft;
-      var textMarginRight = baseDataStyle.text.marginRight;
-      var textSize = baseDataStyle.text.size;
-      var textColor = baseDataStyle.text.color;
-      var labels = baseDataStyle.labels;
-      ctx.textBaseline = 'top';
-      ctx.font = getFont(textSize);
-      var startX = this.handler.contentLeft() + textMarginLeft;
-      labels.forEach(function (label, i) {
-        var labelText = "".concat(label, ": ");
-        var labelWidth = calcTextWidth(textSize, labelText);
-        ctx.fillStyle = textColor;
-        ctx.fillText(labelText, startX, startY);
-        startX += labelWidth;
-        var value = values[i] || '--';
-        var valueText;
-
-        if (_typeof(value) === 'object') {
-          valueText = value.value || '--';
-          ctx.fillStyle = value.color || textColor;
-        } else {
-          ctx.fillStyle = textColor;
-          valueText = value;
-        }
-
-        var textWidth = calcTextWidth(textSize, valueText);
-        ctx.fillText(valueText, startX, startY);
-        startX += textWidth + textMarginLeft + textMarginRight;
-      });
-    }
-    /**
-     * 渲染主图浮动文字
-     * @param ctx
-     * @param kLineData
-     * @param indicatorData
-     * @param baseDataStyle
-     * @param indicatorDataStyle
-     * @param indicatorColors
-     * @param precision
-     */
-
-  }, {
-    key: "renderCandleChartFloatRectText",
-    value: function renderCandleChartFloatRectText(ctx, kLineData, indicatorData, baseDataStyle, indicatorDataStyle) {
-      var indicatorColors = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
-      var precision = arguments.length > 6 ? arguments[6] : undefined;
-      var baseLabels = baseDataStyle.labels;
-      var baseValues = this.getCandleChartBaseValues(kLineData, baseDataStyle, precision);
-      var baseTextMarginLeft = baseDataStyle.text.marginLeft;
-      var baseTextMarginRight = baseDataStyle.text.marginRight;
-      var baseTextMarginTop = baseDataStyle.text.marginTop;
-      var baseTextMarginBottom = baseDataStyle.text.marginBottom;
-      var baseTextSize = baseDataStyle.text.size;
-      var baseTextColor = baseDataStyle.text.color;
-      ctx.textBaseline = 'top';
-      var maxLabelWidth = 0;
-      baseLabels.forEach(function (label, i) {
-        var value = baseValues[i] || '--';
-        var v = value;
-
-        if (_typeof(value) === 'object') {
-          v = value.value || '--';
-        }
-
-        var text = "".concat(label, ": ").concat(v);
-        var labelWidth = calcTextWidth(baseTextSize, text) + baseTextMarginLeft + baseTextMarginRight;
-        maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
-      });
-      var indicatorLabels = indicatorData.labels || [];
-      var indicatorValues = indicatorData.values || [];
-      var indicatorTextMarginLeft = indicatorDataStyle.text.marginLeft;
-      var indicatorTextMarginRight = indicatorDataStyle.text.marginRight;
-      var indicatorTextMarginTop = indicatorDataStyle.text.marginTop;
-      var indicatorTextMarginBottom = indicatorDataStyle.text.marginBottom;
-      var indicatorTextSize = indicatorDataStyle.text.size;
-      indicatorLabels.forEach(function (label, i) {
-        var v = indicatorValues[i] || '--';
-        var text = "".concat(label, ": ").concat(v);
-        var labelWidth = calcTextWidth(indicatorTextSize, text) + indicatorTextMarginLeft + indicatorTextMarginRight;
-        maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
-      });
-      var floatRect = baseDataStyle.floatRect;
-      var floatRectBorderSize = floatRect.borderSize;
-      var floatRectPaddingLeft = floatRect.paddingLeft;
-      var floatRectPaddingRight = floatRect.paddingRight;
-      var floatRectPaddingTop = floatRect.paddingTop;
-      var floatRectPaddingBottom = floatRect.paddingBottom;
-      var floatRectLeft = floatRect.left;
-      var floatRectRight = floatRect.right;
-      var floatRectWidth = floatRectBorderSize * 2 + maxLabelWidth + floatRectPaddingLeft + floatRectPaddingRight;
-      var floatRectHeight = floatRectBorderSize * 2 + floatRectPaddingTop + floatRectPaddingBottom + (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length + (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length;
-      var centerPoint = this.volHandler.getContentCenter();
-      var rectX;
-      var crossPoint = this.storage.crossPoint;
-
-      if (crossPoint && crossPoint.x < centerPoint.x) {
-        rectX = this.handler.contentRight() - floatRectRight - floatRectWidth;
-      } else {
-        rectX = this.handler.contentLeft() + floatRectLeft;
-      }
-
-      var rectY = floatRect.top;
-      var radius = floatRect.borderRadius;
-      ctx.lineWidth = floatRectBorderSize;
-      ctx.strokeStyle = floatRect.borderColor;
-      ctx.fillStyle = floatRect.fillColor;
-      this.renderRoundRect(ctx, rectX, rectY, floatRectWidth, floatRectHeight, radius);
-      ctx.stroke();
-      this.renderRoundRect(ctx, rectX, rectY, floatRectWidth, floatRectHeight, radius);
-      ctx.fill();
-      var baseLabelX = rectX + floatRectBorderSize + floatRectPaddingLeft + baseTextMarginLeft;
-      var labelY = rectY + floatRectBorderSize + floatRectPaddingTop; // 开始渲染基础数据文字
-
-      ctx.font = getFont(baseTextSize);
-      baseLabels.forEach(function (label, i) {
-        labelY += baseTextMarginTop;
-        ctx.textAlign = 'left';
-        ctx.fillStyle = baseTextColor;
-        ctx.fillText("".concat(label, ": "), baseLabelX, labelY);
-        var value = baseValues[i] || '--';
-        var text;
-        ctx.fillStyle = value.color || baseTextColor;
-
-        if (_typeof(value) === 'object') {
-          text = value.value || '--';
-        } else {
-          text = value;
-        }
-
-        ctx.textAlign = 'right';
-        ctx.fillText(text, rectX + floatRectWidth - floatRectBorderSize - baseTextMarginRight - floatRectPaddingRight, labelY);
-        labelY += baseTextSize + baseTextMarginBottom;
-      }); // 开始渲染指标数据文字
-
-      var indicatorLabelX = rectX + floatRectBorderSize + floatRectPaddingLeft + indicatorTextMarginLeft;
-      var colorLength = indicatorColors.length;
-      ctx.font = getFont(indicatorTextSize);
-      indicatorLabels.forEach(function (label, i) {
-        labelY += indicatorTextMarginTop;
-        ctx.textAlign = 'left';
-        ctx.fillStyle = indicatorColors[i % colorLength] || indicatorDataStyle.text.color;
-        ctx.fillText("".concat(label.toUpperCase(), ": "), indicatorLabelX, labelY);
-        ctx.textAlign = 'right';
-        ctx.fillText(indicatorValues[i] || '--', rectX + floatRectWidth - floatRectBorderSize - indicatorTextMarginRight - floatRectPaddingRight, labelY);
-        labelY += indicatorTextSize + indicatorTextMarginBottom;
-      });
-      ctx.textAlign = 'left';
-    }
-    /**
-     * 渲染圆角矩形
-     * @param ctx
-     * @param x
-     * @param y
-     * @param w
-     * @param h
-     * @param r
-     */
-
-  }, {
-    key: "renderRoundRect",
-    value: function renderRoundRect(ctx, x, y, w, h, r) {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.arcTo(x + w, y, x + w, y + h, r);
-      ctx.arcTo(x + w, y + h, x, y + h, r);
-      ctx.arcTo(x, y + h, x, y, r);
-      ctx.arcTo(x, y, x + w, y, r);
-      ctx.closePath();
-    }
-    /**
-     * 获取主信息提示值
-     * @param kLineData
-     * @param baseDataStyle
-     * @param precision
-     * @returns {*}
-     */
-
-  }, {
-    key: "getCandleChartBaseValues",
-    value: function getCandleChartBaseValues(kLineData, baseDataStyle, precision) {
-      var baseValues = baseDataStyle.values;
-      var values = [];
-
-      if (baseValues) {
-        if (isFunction(baseValues)) {
-          values = baseValues(kLineData) || [];
-        } else {
-          values = baseValues;
-        }
-      } else {
-        values = [formatValue(kLineData, 'timestamp'), formatValue(kLineData, 'open'), formatValue(kLineData, 'close'), formatValue(kLineData, 'high'), formatValue(kLineData, 'low'), formatValue(kLineData, 'volume')];
-        values.forEach(function (value, index) {
-          switch (index) {
-            case 0:
-              {
-                values[index] = formatDate(value, 'YYYY-MM-DD hh:mm');
-                break;
-              }
-
-            case values.length - 1:
-              {
-                values[index] = formatPrecision(value, precision.volumePrecision);
-                break;
-              }
-
-            default:
-              {
-                values[index] = formatPrecision(value, precision.pricePrecision);
-                break;
-              }
-          }
-        });
-      }
-
-      return values;
-    }
-    /**
-     * 绘制指标提示文字
-     * @param ctx
-     * @param startY
-     * @param data
-     * @param indicatorDataStyle
-     * @param indicatorColors
-     */
-
-  }, {
-    key: "renderIndicatorTooltipText",
-    value: function renderIndicatorTooltipText(ctx, startY, data, indicatorDataStyle) {
-      var indicatorColors = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
-      var nameText = data.name;
-      var labels = data.labels;
-      var values = data.values;
-      var indicatorText = indicatorDataStyle.text;
-      var textMarginLeft = indicatorText.marginLeft;
-      var textMarginRight = indicatorText.marginRight;
-      var labelX = this.handler.contentLeft() + textMarginLeft;
-      var textSize = indicatorText.size;
-      var textColor = indicatorDataStyle.text.color;
-      var lineColorSize = indicatorColors.length;
-      ctx.textBaseline = 'top';
-      ctx.font = getFont(textSize);
-      var nameTextWidth = calcTextWidth(textSize, nameText);
-      ctx.fillStyle = textColor;
-      ctx.fillText(nameText, labelX, startY);
-      labelX += textMarginLeft + nameTextWidth;
-
-      for (var i = 0; i < labels.length; i++) {
-        var text = "".concat(labels[i].toUpperCase(), ": ").concat(values[i] || '--');
-        var textWidth = calcTextWidth(textSize, text);
-        ctx.fillStyle = indicatorColors[i % lineColorSize] || textColor;
-        ctx.fillText(text, labelX, startY);
-        labelX += textMarginLeft + textMarginRight + textWidth;
-      }
-    }
-    /**
-     * 渲染指标线上的圆点
-     * @param ctx
-     * @param indicatorType
-     * @param values
-     * @param offsetTop
-     * @param yAxisRender
-     * @param indicatorColors
-     * @param isShowCross
-     */
-
-  }, {
-    key: "renderIndicatorLineCircle",
-    value: function renderIndicatorLineCircle(ctx, indicatorType, offsetTop) {
-      var values = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
-      var yAxisRender = arguments.length > 4 ? arguments[4] : undefined;
-      var indicatorColors = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : [];
-      var isShowCross = arguments.length > 6 ? arguments[6] : undefined;
-      var crossPoint = this.storage.crossPoint;
-
-      if (!crossPoint || this.storage.graphicMarkType !== GraphicMarkType.NONE || indicatorType === IndicatorType.SAR || !isShowCross || this.storage.isDragGraphicMark) {
-        return;
-      }
-
-      var colorSize = indicatorColors.length;
-      var valueSize = indicatorType === IndicatorType.MACD || indicatorType === IndicatorType.VOL ? values.length - 1 : values.length;
-
-      for (var i = 0; i < valueSize; i++) {
-        var value = values[i];
-
-        if (value || value === 0) {
-          var y = yAxisRender.getY(value) + offsetTop;
-          ctx.fillStyle = indicatorColors[i % colorSize];
-          ctx.beginPath();
-          ctx.arc(crossPoint.x, y, 3, 0, Math.PI * 2);
-          ctx.closePath();
-          ctx.fill();
-        }
-      }
-    }
-    /**
-     * 获取需要渲染的指标提示数据
-     * @param kLineData
-     * @param indicatorType
-     * @param indicatorDataStyle
-     * @param precision
-     * @returns {{values: Array, labels: Array}}
-     */
-
-  }, {
-    key: "getRenderIndicatorTooltipData",
-    value: function getRenderIndicatorTooltipData(kLineData, indicatorType, indicatorDataStyle, precision) {
-      var values = [];
-      var labels = [];
-      var params = this.indicatorParams[indicatorType] || [];
-
-      switch (indicatorType) {
-        case IndicatorType.MA:
-          {
-            params.forEach(function (p) {
-              labels.push("ma".concat(p));
-            });
-            break;
-          }
-
-        case IndicatorType.VOL:
-          {
-            params.forEach(function (p) {
-              labels.push("ma".concat(p));
-            });
-            labels.push('num');
-            break;
-          }
-
-        case IndicatorType.MACD:
-          {
-            labels = ['diff', 'dea', 'macd'];
-            break;
-          }
-
-        case IndicatorType.BOLL:
-          {
-            labels = ['up', 'mid', 'dn'];
-            break;
-          }
-
-        case IndicatorType.BIAS:
-          {
-            params.forEach(function (p) {
-              labels.push("bias".concat(p));
-            });
-            break;
-          }
-
-        case IndicatorType.BRAR:
-          {
-            labels = ['br', 'ar'];
-            break;
-          }
-
-        case IndicatorType.CCI:
-          {
-            labels = ['cci'];
-            break;
-          }
-
-        case IndicatorType.CR:
-          {
-            labels = ['cr', 'ma1', 'ma2', 'ma3', 'ma4'];
-            break;
-          }
-
-        case IndicatorType.DMA:
-          {
-            labels = ['dif', 'difMa'];
-            break;
-          }
-
-        case IndicatorType.DMI:
-          {
-            labels = ['mdi', 'pdi', 'adx', 'adxr'];
-            break;
-          }
-
-        case IndicatorType.KDJ:
-          {
-            labels = ['k', 'd', 'j'];
-            break;
-          }
-
-        case IndicatorType.RSI:
-          {
-            params.forEach(function (p) {
-              labels.push("rsi".concat(p));
-            });
-            break;
-          }
-
-        case IndicatorType.PSY:
-          {
-            labels = ['psy'];
-            break;
-          }
-
-        case IndicatorType.TRIX:
-          {
-            labels = ['trix', 'maTrix'];
-            break;
-          }
-
-        case IndicatorType.OBV:
-          {
-            labels = ['obv', 'maObv'];
-            break;
-          }
-
-        case IndicatorType.VR:
-          {
-            labels = ['vr', 'maVr'];
-            break;
-          }
-
-        case IndicatorType.WR:
-          {
-            labels = ['wr1', 'wr2', 'wr3'];
-            break;
-          }
-
-        case IndicatorType.MTM:
-          {
-            labels = ['mtm', 'mtmMa'];
-            break;
-          }
-
-        case IndicatorType.EMV:
-          {
-            labels = ['emv', 'maEmv'];
-            break;
-          }
-
-        case IndicatorType.SAR:
-          {
-            labels = ['sar'];
-            break;
-          }
-      }
-
-      var name = '';
-
-      if (labels.length > 0) {
-        name = "".concat(indicatorType);
-
-        if (params && isArray(params) && params.length > 0) {
-          name = "".concat(name, "(").concat(params.join(','), ")");
-        }
-
-        var indicatorData = formatValue(kLineData, indicatorType.toLowerCase());
-        labels.forEach(function (label) {
-          values.push(formatValue(indicatorData, label));
-        });
-        var decimal = getIndicatorPrecision(precision.pricePrecision, precision.volumePrecision)[indicatorType];
-        values.forEach(function (value, index) {
-          values[index] = formatPrecision(value, decimal);
-        });
-      }
-
-      return {
-        labels: labels,
-        values: values,
-        name: name
-      };
-    }
-  }]);
-
-  return TooltipRender;
-}(Render);
-
-var TooltipChart =
-/*#__PURE__*/
-function (_Chart) {
-  _inherits(TooltipChart, _Chart);
-
-  function TooltipChart(dom, style, candleChart, volChart, subIndicatorChart, xAxisChart, storage, indicatorParams, precision) {
-    var _this;
-
-    _classCallCheck(this, TooltipChart);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TooltipChart).call(this, dom, style));
-    _this.candleChart = candleChart;
-    _this.volChart = volChart;
-    _this.subIndicatorChart = subIndicatorChart;
-    _this.storage = storage;
-    _this.tooltipRender = new TooltipRender(_this.handler, storage, indicatorParams, candleChart.handler, volChart.handler, subIndicatorChart.handler, candleChart.yAxisRender, volChart.yAxisRender, subIndicatorChart.yAxisRender);
-    _this.precision = precision;
-    return _this;
-  }
-
-  _createClass(TooltipChart, [{
-    key: "draw",
-    value: function draw() {
-      var kLineData = this.storage.dataList[this.storage.tooltipDataPos] || {};
-      var tooltip = this.style.tooltip; // 如果不是绘图才显示十字线
-
-      if (this.storage.graphicMarkType === GraphicMarkType.NONE && !this.storage.isDragGraphicMark) {
-        this.tooltipRender.renderCrossHorizontalLine(this.ctx, this.candleChart.indicatorType, this.subIndicatorChart.indicatorType, this.style.yAxis.position === YAxisPosition.LEFT, this.style.yAxis.tick.text.position === YAxisTextPosition.OUTSIDE, tooltip, this.precision);
-        this.tooltipRender.renderCrossVerticalLine(this.ctx, kLineData, tooltip);
-      }
-
-      if (this.storage.dataList.length > 0) {
-        var tooltipData = tooltip.data;
-
-        if (tooltipData.displayRule === TooltipTextDisplayRule.ALWAYS || tooltipData.displayRule === TooltipTextDisplayRule.FOLLOW_CROSS && this.storage.crossPoint) {
-          var indicator = this.style.indicator;
-          this.tooltipRender.renderCandleChartTooltip(this.ctx, kLineData, this.candleChart.indicatorType, this.candleChart.chartType === ChartType.CANDLE, tooltip, indicator, this.precision);
-
-          if (this.volChart.indicatorType !== IndicatorType.NO) {
-            this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.candleChart.handler.height, kLineData, IndicatorType.VOL, tooltip, indicator, true, this.precision);
-          }
-
-          if (this.subIndicatorChart.indicatorType !== IndicatorType.NO) {
-            this.tooltipRender.renderIndicatorChartTooltip(this.ctx, this.candleChart.handler.height + this.volChart.handler.height, kLineData, this.subIndicatorChart.indicatorType, tooltip, indicator, false, this.precision);
-          }
-        }
-      }
-    }
-  }]);
-
-  return TooltipChart;
-}(Chart);
-
-var XAxisRender =
-/*#__PURE__*/
-function (_AxisRender) {
-  _inherits(XAxisRender, _AxisRender);
-
-  function XAxisRender() {
-    _classCallCheck(this, XAxisRender);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(XAxisRender).apply(this, arguments));
-  }
-
-  _createClass(XAxisRender, [{
-    key: "renderAxisLine",
-
-    /**
-     * 绘制轴线
-     * @param ctx
-     * @param xAxis
-     */
-    value: function renderAxisLine(ctx, xAxis) {
-      if (!xAxis.display || !xAxis.line.display) {
-        return;
-      }
-
-      ctx.strokeStyle = xAxis.line.color;
-      ctx.lineWidth = xAxis.line.size;
-      ctx.beginPath();
-      ctx.moveTo(this.handler.contentLeft(), this.handler.contentBottom());
-      ctx.lineTo(this.handler.contentRight(), this.handler.contentBottom());
-      ctx.stroke();
-      ctx.closePath();
-    }
-    /**
-     * 绘制坐标轴上的文字
-     * @param ctx
-     * @param xAxis
-     */
-
-  }, {
-    key: "renderAxisLabels",
-    value: function renderAxisLabels(ctx, xAxis) {
-      var tickText = xAxis.tick.text;
-
-      if (!xAxis.display || !tickText.display) {
-        return;
-      }
-
-      var tickLine = xAxis.tick.line;
-      ctx.textBaseline = 'top';
-      ctx.font = getFont(tickText.size);
-      ctx.textAlign = 'center';
-      ctx.fillStyle = tickText.color;
-      var labelY = this.handler.contentBottom() + tickText.margin;
-
-      if (tickLine.display) {
-        labelY += tickLine.length;
-      }
-
-      var valueLength = this.ticks.length;
-
-      for (var i = 0; i < valueLength; i++) {
-        var x = this.ticks[i].x;
-        var dataPos = parseInt(this.ticks[i].v);
-        var kLineModel = this.storage.dataList[dataPos];
-        var timestamp = kLineModel.timestamp;
-        var dateText = formatDate(timestamp, this.tickLabelFormatType);
-
-        if (i !== valueLength - 1) {
-          var nextDataPos = parseInt(this.ticks[i + 1].v);
-          var nextKLineModel = this.storage.dataList[nextDataPos];
-          var nextTimestamp = nextKLineModel.timestamp;
-          var year = formatDate(timestamp, 'YYYY');
-          var month = formatDate(timestamp, 'YYYY-MM');
-          var day = formatDate(timestamp, 'MM-DD');
-
-          if (year !== formatDate(nextTimestamp, 'YYYY')) {
-            dateText = year;
-          } else if (month !== formatDate(nextTimestamp, 'YYYY-MM')) {
-            dateText = month;
-          } else if (day !== formatDate(nextTimestamp, 'MM-DD')) {
-            dateText = day;
-          }
-        }
-
-        ctx.fillText(dateText, x, labelY);
-      }
-    }
-    /**
-     * 绘制分割线
-     * @param ctx
-     * @param xAxis
-     */
-
-  }, {
-    key: "renderSeparatorLines",
-    value: function renderSeparatorLines(ctx, xAxis) {
-      if (!xAxis.display || !xAxis.separatorLine.display) {
-        return;
-      }
-
-      ctx.strokeStyle = xAxis.separatorLine.color;
-      ctx.lineWidth = xAxis.separatorLine.size;
-
-      if (xAxis.separatorLine.style === LineStyle.DASH) {
-        ctx.setLineDash(xAxis.separatorLine.dashValue);
-      }
-
-      for (var i = 0; i < this.ticks.length; i++) {
-        var x = this.ticks[i].x;
-        ctx.beginPath();
-        ctx.moveTo(x, this.handler.contentTop());
-        ctx.lineTo(x, this.handler.contentBottom());
-        ctx.stroke();
-        ctx.closePath();
-      }
-
-      ctx.setLineDash([]);
-    }
-    /**
-     * 绘制tick线
-     * @param ctx
-     * @param xAxis
-     */
-
-  }, {
-    key: "renderTickLines",
-    value: function renderTickLines(ctx, xAxis) {
-      var tickLine = xAxis.tick.line;
-
-      if (!xAxis.display || !tickLine.display) {
-        return;
-      }
-
-      ctx.lineWidth = tickLine.size;
-      ctx.strokeStyle = tickLine.color;
-      var startY = this.handler.contentBottom();
-      var endY = startY + tickLine.length;
-
-      for (var i = 0; i < this.ticks.length; i++) {
-        var x = this.ticks[i].x;
-        ctx.beginPath();
-        ctx.moveTo(x, startY);
-        ctx.lineTo(x, endY);
-        ctx.stroke();
-        ctx.closePath();
-      }
-    }
-  }, {
-    key: "computeAxis",
-    value: function computeAxis(xAxis) {
-      var minPos = this.storage.minPos;
-      this.axisMinimum = minPos;
-      this.axisMaximum = Math.min(minPos + this.storage.range - 1, this.storage.dataList.length - 1);
-      this.axisRange = this.axisMaximum - this.axisMinimum + 1;
-      this.computeAxisTicks();
-      this.fixComputeAxisTicks(xAxis);
-    }
-  }, {
-    key: "fixComputeAxisTicks",
-    value: function fixComputeAxisTicks(xAxis) {
-      var valueLength = this.ticks.length;
-
-      if (valueLength > 0) {
-        var defaultLabelWidth = calcTextWidth(xAxis.tick.text.size, '00-00 00:00');
-        var pos = parseInt(this.ticks[0].v);
-        var timestamp = formatValue(this.storage.dataList[pos], 'timestamp', 0);
-        var x = this.getX(pos);
-        var valueCountDif = 1;
-        this.tickLabelFormatType = 'MM:DD hh:mm';
-
-        if (valueLength > 1) {
-          var nextPos = parseInt(this.ticks[1].v);
-          var nextTimestamp = formatValue(this.storage.dataList[nextPos], 'timestamp', 0);
-          var nextX = this.getX(nextPos);
-          var xDif = Math.abs(nextX - x);
-
-          if (xDif < defaultLabelWidth) {
-            valueCountDif = Math.ceil(defaultLabelWidth / xDif);
-          }
-
-          var timeDif = nextTimestamp - timestamp;
-          var minuteDif = timeDif / 1000 / 60;
-
-          if (minuteDif < 12 * 60) {
-            this.tickLabelFormatType = 'hh:mm';
-          } else if (minuteDif < 15 * 24 * 60) {
-            this.tickLabelFormatType = 'MM-DD';
-          } else if (minuteDif < 180 * 24 * 60) {
-            this.tickLabelFormatType = 'YYYY-MM';
-          } else {
-            this.tickLabelFormatType = 'YYYY';
-          }
-        }
-
-        var ticks = [];
-
-        for (var i = 0; i < valueLength; i += valueCountDif) {
-          var v = this.ticks[i].v;
-
-          var _x = this.getX(v);
-
-          if (_x > this.handler.contentLeft() + defaultLabelWidth / 2 && _x < this.handler.contentRight() - defaultLabelWidth / 2) {
-            ticks.push({
-              v: v,
-              x: _x
-            });
-          }
-        }
-
-        this.ticks = ticks;
-      }
-    }
-    /**
-     * 获取x轴点
-     * @param pos
-     * @returns {*}
-     */
-
-  }, {
-    key: "getX",
-    value: function getX(pos) {
-      return this.handler.contentLeft() + ((pos - this.storage.minPos) * this.storage.dataSpace + this.storage.dataSpace * (1 - DATA_MARGIN_SPACE_RATE) / 2);
-    }
-  }]);
-
-  return XAxisRender;
-}(AxisRender);
-
-var XAxisChart =
-/*#__PURE__*/
-function (_Chart) {
-  _inherits(XAxisChart, _Chart);
-
-  function XAxisChart(dom, style, storage) {
-    var _this;
-
-    _classCallCheck(this, XAxisChart);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisChart).call(this, dom, style));
-    _this.xAxisRender = new XAxisRender(_this.handler, storage);
-    return _this;
-  }
-
-  _createClass(XAxisChart, [{
-    key: "draw",
-    value: function draw() {
-      var xAxis = this.style.xAxis;
-      this.xAxisRender.computeAxis(xAxis);
-      this.xAxisRender.renderAxisLine(this.ctx, xAxis);
-      this.xAxisRender.renderAxisLabels(this.ctx, xAxis);
-      this.xAxisRender.renderSeparatorLines(this.ctx, xAxis);
-      this.xAxisRender.renderTickLines(this.ctx, xAxis);
-    }
-  }]);
-
-  return XAxisChart;
-}(Chart);
 
 var calcIndicator = {};
 /**
@@ -4561,7 +685,7 @@ var calcIndicator = {};
  * @returns {*}
  */
 
-calcIndicator.average = function (dataList) {
+calcIndicator[TechnicalIndicatorType.AVERAGE] = function (dataList) {
   var totalTurnover = 0;
   var totalVolume = 0;
   return calc(dataList, function (i) {
@@ -4585,7 +709,7 @@ calcIndicator.average = function (dataList) {
  */
 
 
-calcIndicator[IndicatorType.MA] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.MA] = function (dataList, params) {
   if (!checkParams(params)) {
     return dataList;
   }
@@ -4620,7 +744,7 @@ calcIndicator[IndicatorType.MA] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.VOL] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.VOL] = function (dataList, params) {
   if (!checkParams(params)) {
     return dataList;
   }
@@ -4662,7 +786,7 @@ calcIndicator[IndicatorType.VOL] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.MACD] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.MACD] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
@@ -4708,7 +832,7 @@ calcIndicator[IndicatorType.MACD] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.BOLL] = function (dataList, params) {
   if (!checkParamsWithSize(params, 1)) {
     return dataList;
   }
@@ -4753,7 +877,7 @@ calcIndicator[IndicatorType.BOLL] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.KDJ] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
@@ -4801,7 +925,7 @@ calcIndicator[IndicatorType.KDJ] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.RSI] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.RSI] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList;
   } // N日RSI =
@@ -4913,7 +1037,7 @@ calcIndicator[IndicatorType.RSI] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.BIAS] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
@@ -4973,7 +1097,7 @@ calcIndicator[IndicatorType.BIAS] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.BRAR] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.BRAR] = function (dataList, params) {
   if (!checkParamsWithSize(params, 1)) {
     return dataList;
   }
@@ -5043,7 +1167,7 @@ calcIndicator[IndicatorType.BRAR] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.CCI] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.CCI] = function (dataList, params) {
   if (!checkParamsWithSize(params, 1)) {
     return dataList;
   }
@@ -5089,7 +1213,7 @@ calcIndicator[IndicatorType.CCI] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.DMI] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.DMI] = function (dataList, params) {
   if (!checkParamsWithSize(params, 2)) {
     return dataList;
   } // 默认参数 14，6
@@ -5193,7 +1317,7 @@ calcIndicator[IndicatorType.DMI] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.CR] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.CR] = function (dataList, params) {
   if (!checkParamsWithSize(params, 5)) {
     return dataList;
   } // 默认参数26、10、20、40、60
@@ -5372,7 +1496,7 @@ calcIndicator[IndicatorType.CR] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.PSY] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.PSY] = function (dataList, params) {
   if (!checkParamsWithSize(params, 1)) {
     return dataList;
   }
@@ -5409,7 +1533,7 @@ calcIndicator[IndicatorType.PSY] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.DMA] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.DMA] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
@@ -5465,7 +1589,7 @@ calcIndicator[IndicatorType.DMA] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.TRIX] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.TRIX] = function (dataList, params) {
   // TR=收盘价的N日指数移动平均的N日指数移动平均的N日指数移动平均；
   // TRIX=(TR-昨日TR)/昨日TR*100；
   // MATRIX=TRIX的M日简单移动平均；
@@ -5537,7 +1661,7 @@ calcIndicator[IndicatorType.TRIX] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.OBV] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.OBV] = function (dataList, params) {
   if (!checkParamsWithSize(params, 1)) {
     return dataList;
   }
@@ -5588,7 +1712,7 @@ calcIndicator[IndicatorType.OBV] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.VR] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.VR] = function (dataList, params) {
   if (!checkParamsWithSize(params, 2)) {
     return dataList;
   }
@@ -5657,7 +1781,7 @@ calcIndicator[IndicatorType.VR] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.WR] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.WR] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
@@ -5733,7 +1857,7 @@ calcIndicator[IndicatorType.WR] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.MTM] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.MTM] = function (dataList, params) {
   if (!checkParamsWithSize(params, 2)) {
     return dataList;
   }
@@ -5780,7 +1904,7 @@ calcIndicator[IndicatorType.MTM] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.EMV] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.EMV] = function (dataList, params) {
   if (!checkParamsWithSize(params, 2)) {
     return dataList;
   }
@@ -5835,7 +1959,7 @@ calcIndicator[IndicatorType.EMV] = function (dataList, params) {
  */
 
 
-calcIndicator[IndicatorType.SAR] = function (dataList, params) {
+calcIndicator[TechnicalIndicatorType.SAR] = function (dataList, params) {
   if (!checkParamsWithSize(params, 3)) {
     return dataList;
   }
@@ -6028,1797 +2152,4722 @@ function checkParamsWithSize(params, paramsSize) {
   return checkParams(params) && params.length === paramsSize;
 }
 
-function isIPad(ua) {
-  return ua.match(/(iPad).*OS\s([\d_]+)/);
-}
-function isIPhone(ua) {
-  return !isIPad(ua) && ua.match(/(iPhone\sOS)\s([\d_]+)/);
-}
-function isAndroid(ua) {
-  // eslint-disable-next-line no-useless-escape
-  return ua.match(/(Android);?[\s\/]+([\d.]+)?/);
-}
-function isMobile(ua) {
-  return isIPad(ua) || isIPhone(ua) || isAndroid(ua);
-}
+var BAR_MARGIN_SPACE_RATE = 0.25;
+var InvalidateLevel = {
+  CROSS_HAIR: 1,
+  FULL: 2
+};
+var MAX_DATA_SPACE = 20;
+var MIN_DATA_SPACE = 2;
 
-var Event =
+var ChartData =
 /*#__PURE__*/
 function () {
-  function Event(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage) {
-    _classCallCheck(this, Event);
+  function ChartData(styleOptions, invalidateHandler) {
+    _classCallCheck(this, ChartData);
 
-    this.tooltipChart = tooltipChart;
-    this.candleChart = candleChart;
-    this.volChart = volChart;
-    this.subIndicatorChart = subIndicatorChart;
-    this.xAxisChart = xAxisChart;
-    this.storage = storage;
-    this.handler = tooltipChart.handler;
+    this._invalidateHandler = invalidateHandler; // 样式配置
+
+    this._styleOptions = clone(defaultStyleOptions);
+    merge(this._styleOptions, styleOptions); // 指标参数配置
+
+    this._technicalIndicatorParamOptions = clone(defaultTechnicalIndicatorParamOptions);
+    this._precisionOptions = clone(defaultPrecisionOptions); // 数据源
+
+    this._dataList = []; // 可见区域数据占用的空间
+
+    this._totalDataSpace = 0; // 向右偏移的空间
+
+    this._offsetRightSpace = 50; // 开始绘制的索引
+
+    this._from = 0; // 结束的索引
+
+    this._to = 0; // 绘制区间数据数量
+
+    this._range = 0; // 每一条数据的空间
+
+    this._dataSpace = 6; // bar的空间
+
+    this._barSpace = this._calcBarSpace(); // 十字光标位置
+
+    this._crossHairPoint = null; // 标识十字光标在哪个series
+
+    this._crossHairSeriesTag = null; // 当前绘制的标记图形的类型
+
+    this.graphicMarkType = GraphicMarkType.NONE; // 标记图形点
+
+    this.graphicMarkPoint = null; // 是否在拖拽标记图形
+
+    this.isDragGraphicMark = false; // 绘图标记数据
+
+    this.graphicMarkDatas = {
+      // 水平直线
+      horizontalStraightLine: [],
+      // 垂直直线
+      verticalStraightLine: [],
+      // 直线
+      straightLine: [],
+      // 水平射线
+      horizontalRayLine: [],
+      // 垂直射线
+      verticalRayLine: [],
+      // 射线
+      rayLine: [],
+      // 水平线段
+      horizontalSegmentLine: [],
+      // 垂直线段
+      verticalSegmentLine: [],
+      // 线段
+      segmentLine: [],
+      // 价格线
+      priceLine: [],
+      // 平行直线
+      parallelStraightLine: [],
+      // 价格通道线
+      priceChannelLine: [],
+      // 斐波那契线
+      fibonacciLine: []
+    };
   }
-  /**
-   * 拖拽
-   * @param eventPoint
-   * @param dragX
-   * @param loadMore
-   * @returns {boolean}
-   */
 
+  _createClass(ChartData, [{
+    key: "_calcRange",
+    value: function _calcRange() {
+      this._range = Math.floor(this._totalDataSpace / this._dataSpace);
+      var to = this._from + this._range;
 
-  _createClass(Event, [{
-    key: "drag",
-    value: function drag(eventPoint, dragX, loadMore) {
-      var dataSpace = this.storage.dataSpace;
-      var dataSize = this.storage.dataList.length;
-      var range = this.storage.range;
-      var minPos = this.storage.minPos;
-      var moveDist = dragX - eventPoint.x;
+      if (to > this._dataList.length) {
+        to = this._dataList.length;
+      }
 
-      if (moveDist > dataSpace / 2) {
-        if (minPos === 0 || dataSize < range) {
-          return false;
-        }
+      this._to = to;
+    }
+  }, {
+    key: "_calcBarSpace",
+    value: function _calcBarSpace() {
+      return (1 - BAR_MARGIN_SPACE_RATE) * this._dataSpace;
+    }
+    /**
+     * 计算rang dif
+     * @private
+     */
 
-        eventPoint.x = dragX;
-        var moveRange = +Math.abs(moveDist / dataSpace).toFixed(0);
+  }, {
+    key: "_calcRangDif",
+    value: function _calcRangDif() {
+      var offsetRightRange = Math.floor(this._offsetRightSpace / this._dataSpace);
+      return this._range - offsetRightRange;
+    }
+    /**
+     * 获取样式配置
+     */
 
-        if (moveRange === 0) {
-          moveRange = 1;
-        }
+  }, {
+    key: "styleOptions",
+    value: function styleOptions() {
+      return this._styleOptions;
+    }
+  }, {
+    key: "technicalIndicatorParamOptions",
+    value: function technicalIndicatorParamOptions() {
+      return this._technicalIndicatorParamOptions;
+    }
+    /**
+     * 精度配置
+     */
 
-        minPos -= moveRange;
+  }, {
+    key: "precisionOptions",
+    value: function precisionOptions() {
+      return this._precisionOptions;
+    }
+    /**
+     * 计算指标
+     * @param technicalIndicatorType
+     * @returns {boolean}
+     */
 
-        if (minPos < 0) {
-          minPos = 0;
-        }
-
-        this.storage.minPos = minPos;
-        this.candleChart.flush();
-        this.volChart.flush();
-        this.subIndicatorChart.flush();
-        this.xAxisChart.flush();
-
-        if (minPos === 0) {
-          loadMore();
-        }
-
+  }, {
+    key: "calcTechnicalIndicator",
+    value: function calcTechnicalIndicator(technicalIndicatorType) {
+      if (technicalIndicatorType === TechnicalIndicatorType.NO) {
         return true;
-      } else if (moveDist < 0 - dataSpace / 2) {
-        if (minPos + range === dataSize || dataSize < range) {
-          return false;
-        }
+      }
 
-        eventPoint.x = dragX;
+      var calcFun = calcIndicator[technicalIndicatorType];
 
-        var _moveRange = +Math.abs(moveDist / dataSpace).toFixed(0);
-
-        if (_moveRange === 0) {
-          _moveRange = 1;
-        }
-
-        minPos += _moveRange;
-
-        if (minPos >= dataSize - range) {
-          minPos = dataSize - range;
-        }
-
-        this.storage.minPos = minPos;
-        this.candleChart.flush();
-        this.volChart.flush();
-        this.subIndicatorChart.flush();
-        this.xAxisChart.flush();
+      if (calcFun) {
+        this._dataList = calcFun(this._dataList, this._technicalIndicatorParamOptions[technicalIndicatorType]);
         return true;
       }
 
       return false;
     }
-    /**
-     * 缩放
-     * @param isZoomingOut
-     * @param scaleX
-     * @param touchStartPosition
-     * @param touchRange
-     * @returns {boolean}
-     */
-
   }, {
-    key: "zoom",
-    value: function zoom(isZoomingOut, scaleX, touchStartPosition, touchRange) {
-      var range = this.storage.range;
-      var maxRange = this.storage.maxRange;
-      var minRange = this.storage.minRange;
+    key: "dataList",
+    value: function dataList() {
+      return this._dataList;
+    }
+  }, {
+    key: "clearDataList",
+    value: function clearDataList() {
+      this._dataList = [];
+      this._from = 0;
+      this._to = 0;
+    }
+  }, {
+    key: "addData",
+    value: function addData(data, pos) {
+      if (isObject(data)) {
+        if (isArray(data)) {
+          if (this._dataList.length === 0) {
+            this._dataList = data.concat(this._dataList);
 
-      if (isZoomingOut) {
-        if (range >= maxRange) {
-          // 无法继续缩小
-          return false;
+            var rangeDif = this._calcRangDif();
+
+            var from = this._dataList.length - rangeDif;
+
+            if (from < 0) {
+              from = 0;
+            }
+
+            this._from = from;
+            this._to = this._dataList.length;
+          } else {
+            this._dataList = data.concat(this._dataList);
+            this._from += data.length;
+          }
+        } else {
+          if (pos >= this._dataList.length) {
+            var oldDataSize = this._dataList.length;
+
+            this._dataList.push(data);
+
+            if (this._from !== 0) {
+              if (this._to === oldDataSize) {
+                this._to += 1;
+
+                var _rangeDif = this._calcRangDif();
+
+                if (this._to - this._from > _rangeDif) {
+                  this._from += 1;
+                }
+              }
+            } else {
+              var _rangeDif2 = this._calcRangDif();
+
+              if (this._dataList.length < _rangeDif2) {
+                this._to = this._dataList.length;
+              } else {
+                this._from += 1;
+                this._to += 1;
+              }
+            }
+          } else {
+            this._dataList[pos] = data;
+          }
         }
-      } else {
-        if (range <= minRange) {
-          // 无法继续放大
-          return false;
-        }
-      } // 计算缩放后的range大小
-
-
-      range = +(touchRange / scaleX).toFixed(0);
-      range = Math.min(Math.max(range, minRange), maxRange);
-      var minPos = touchStartPosition + touchRange - range;
-
-      if (minPos + range > this.storage.dataList.length || minPos < 0) {
-        minPos = 0;
       }
-
-      this.storage.range = range;
-      this.storage.minPos = minPos;
-      this.storage.space(this.handler.contentRight() - this.handler.contentLeft());
-      this.candleChart.flush();
-      this.volChart.flush();
-      this.subIndicatorChart.flush();
-      this.xAxisChart.flush();
-      return true;
+    }
+  }, {
+    key: "dataSpace",
+    value: function dataSpace() {
+      return this._dataSpace;
+    }
+  }, {
+    key: "barSpace",
+    value: function barSpace() {
+      return this._barSpace;
     }
     /**
-     * 十字光标
-     * @param point
+     * 设置一条数据的空间
+     * @param dataSpace
      */
 
   }, {
-    key: "cross",
-    value: function cross(point) {
-      this.storage.crossPoint = {
-        x: point.x,
-        y: point.y
-      };
-      this.storage.calcCurrentTooltipDataPos(this.handler.contentLeft(), point.x);
-      this.tooltipChart.flush();
+    key: "setDataSpace",
+    value: function setDataSpace(dataSpace) {
+      if (dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE) {
+        return;
+      }
+
+      if (this._dataSpace === dataSpace) {
+        return;
+      }
+
+      this._dataSpace = dataSpace;
+      this._barSpace = this._calcBarSpace();
+
+      this._calcRange();
+
+      this._invalidateHandler();
+    }
+    /**
+     * 设置可见区域数据占用的总空间
+     * @param totalSpace
+     */
+
+  }, {
+    key: "setTotalDataSpace",
+    value: function setTotalDataSpace(totalSpace) {
+      if (this._totalDataSpace === totalSpace) {
+        return;
+      }
+
+      this._totalDataSpace = totalSpace;
+
+      this._calcRange();
+    }
+  }, {
+    key: "from",
+    value: function from() {
+      return this._from;
+    }
+  }, {
+    key: "to",
+    value: function to() {
+      return this._to;
+    }
+  }, {
+    key: "range",
+    value: function range() {
+      return this._range;
+    }
+  }, {
+    key: "crossHairPoint",
+    value: function crossHairPoint() {
+      return this._crossHairPoint;
+    }
+  }, {
+    key: "crossHairSeriesTag",
+    value: function crossHairSeriesTag() {
+      return this._crossHairSeriesTag;
+    }
+  }, {
+    key: "setCrossHairSeriesTag",
+    value: function setCrossHairSeriesTag(tag) {
+      this._crossHairSeriesTag = tag;
+
+      this._invalidateHandler(InvalidateLevel.CROSS_HAIR);
+    }
+  }, {
+    key: "setCrossHairPoint",
+    value: function setCrossHairPoint(point) {
+      this._crossHairPoint = point;
+    }
+  }, {
+    key: "getCrossHairDataPos",
+    value: function getCrossHairDataPos() {
+      var pos;
+
+      if (!this._crossHairPoint) {
+        pos = this._to - 1;
+      } else {
+        var range = Math.floor(this._crossHairPoint.x / this._dataSpace);
+        pos = this._from + range - 1;
+
+        if (pos > this._to - 1) {
+          pos = this._to - 1;
+        }
+      }
+
+      return pos;
     }
   }]);
 
-  return Event;
+  return ChartData;
+}();
+
+var Series =
+/*#__PURE__*/
+function () {
+  function Series(props) {
+    _classCallCheck(this, Series);
+
+    this._container = props.container;
+    this._chartData = props.chartData;
+
+    this._initBefore(props);
+
+    this._initElement();
+
+    this._mainWidget = this._createMainWidget(this._mainWidgetCell, props);
+    this._yAxisWidget = this._createYAxisWidget(this._yAxisWidgetCell, props);
+  }
+
+  _createClass(Series, [{
+    key: "_initBefore",
+    value: function _initBefore(props) {}
+  }, {
+    key: "_initElement",
+    value: function _initElement() {
+      this._element = document.createElement('div');
+      this._element.style.margin = '0';
+      this._element.style.padding = '0';
+      this._element.style.width = '100%';
+      this._element.style.position = 'relative';
+      this._element.style.overflow = 'hidden';
+      this._mainWidgetCell = this._createCell();
+      this._yAxisWidgetCell = this._createCell();
+
+      this._element.appendChild(this._mainWidgetCell);
+
+      this._element.appendChild(this._yAxisWidgetCell);
+
+      var lastElement = this._container.lastChild;
+
+      if (lastElement) {
+        this._container.insertBefore(this._element, lastElement);
+      } else {
+        this._container.appendChild(this._element);
+      }
+    }
+  }, {
+    key: "_createCell",
+    value: function _createCell() {
+      var cell = document.createElement('div');
+      cell.style.position = 'absolute';
+      cell.style.margin = '0';
+      cell.style.padding = '0';
+      cell.style.top = '0';
+      cell.style.zIndex = '1';
+      return cell;
+    }
+    /**
+     * 创建主组件
+     * @param container
+     * @param props
+     * @private
+     */
+
+  }, {
+    key: "_createMainWidget",
+    value: function _createMainWidget(container, props) {}
+    /**
+     * 创建y轴组件
+     * @param container
+     * @param props
+     * @private
+     */
+
+  }, {
+    key: "_createYAxisWidget",
+    value: function _createYAxisWidget(container, props) {}
+  }, {
+    key: "_setCellSize",
+    value: function _setCellSize(cell, size) {
+      cell.style.left = "".concat(size.left, "px");
+      cell.style.width = "".concat(size.width, "px");
+      cell.style.height = "".concat(size.height, "px");
+    }
+    /**
+     * 设置尺寸
+     * @param mainWidgetSize
+     * @param yAxisWidgetSize
+     */
+
+  }, {
+    key: "setSize",
+    value: function setSize(mainWidgetSize, yAxisWidgetSize) {
+      this._element.style.height = "".concat(mainWidgetSize.height, "px");
+
+      this._setCellSize(this._mainWidgetCell, mainWidgetSize);
+
+      this._setCellSize(this._yAxisWidgetCell, yAxisWidgetSize);
+
+      this._mainWidget.setSize(mainWidgetSize.width, mainWidgetSize.height);
+
+      if (this._yAxisWidget) {
+        this._yAxisWidget.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height);
+      }
+    }
+  }, {
+    key: "_computeAxis",
+    value: function _computeAxis() {}
+    /**
+     * 刷新
+     * @param level
+     */
+
+  }, {
+    key: "invalidate",
+    value: function invalidate(level) {
+      if (level === InvalidateLevel.FULL) {
+        this._computeAxis();
+      }
+
+      this._mainWidget.invalidate(level);
+
+      if (this._yAxisWidget) {
+        this._yAxisWidget.invalidate(level);
+      }
+    }
+    /**
+     * 销毁
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this._container.removeChild(this._element);
+    }
+  }]);
+
+  return Series;
+}();
+
+var Widget =
+/*#__PURE__*/
+function () {
+  function Widget(props) {
+    _classCallCheck(this, Widget);
+
+    this._initElement(props.container);
+
+    this._mainView = this._createMainView(this._element, props);
+    this._floatLayerView = this._createFloatLayerView(this._element, props);
+  }
+  /**
+   * 初始化element
+   * @param container
+   * @private
+   */
+
+
+  _createClass(Widget, [{
+    key: "_initElement",
+    value: function _initElement(container) {
+      this._element = document.createElement('div');
+      this._element.style.margin = '0';
+      this._element.style.padding = '0';
+      this._element.style.position = 'relative';
+      this._element.style.overflow = 'hidden';
+      container.appendChild(this._element);
+    }
+    /**
+     * 创建主view
+     * @private
+     */
+
+  }, {
+    key: "_createMainView",
+    value: function _createMainView() {}
+    /**
+     * 创建十字光标view
+     * @private
+     */
+
+  }, {
+    key: "_createFloatLayerView",
+    value: function _createFloatLayerView() {}
+    /**
+     * 设置尺寸
+     * @param width
+     * @param height
+     */
+
+  }, {
+    key: "setSize",
+    value: function setSize(width, height) {
+      this._element.style.width = "".concat(width, "px");
+      this._element.style.height = "".concat(height, "px");
+
+      this._mainView.setSize(width, height);
+
+      this._floatLayerView.setSize(width, height);
+    }
+    /**
+     * 更新
+     * @param level
+     */
+
+  }, {
+    key: "invalidate",
+    value: function invalidate(level) {
+      switch (level) {
+        case InvalidateLevel.CROSS_HAIR:
+          {
+            this._floatLayerView.flush();
+
+            break;
+          }
+
+        case InvalidateLevel.FULL:
+          {
+            this._mainView.flush();
+
+            this._floatLayerView.flush();
+
+            break;
+          }
+
+        default:
+          {
+            break;
+          }
+      }
+    }
+  }]);
+
+  return Widget;
 }();
 
 /**
- * 是否是有效事件
- * @param point
- * @param handler
- * @returns {boolean}
+ * 获取屏幕比
+ * @param ctx
+ * @returns {number}
  */
-function isValidEvent(point, handler) {
-  return !(point.x < handler.contentLeft() || point.x > handler.contentRight() || point.y < handler.contentTop() || point.y > handler.contentBottom());
+function getPixelRatio(ctx) {
+  var backingStore = ctx.backingStorePixelRatio || ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio || ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio || ctx.backingStorePixelRatio || 1;
+  return (window.devicePixelRatio || 1) / backingStore;
 }
 /**
- * 获取事件对应画布上的点
- * @param e
- * @param canvasDom
- * @returns {{x: number, y: number}}
- */
-
-function getCanvasPoint(e, canvasDom) {
-  var rect = canvasDom.getBoundingClientRect();
-  var x = Math.round(e.clientX - rect.left);
-  var y = Math.round(e.clientY - rect.top);
-  return {
-    x: x,
-    y: y
-  };
-}
-/**
- * 阻止事件
- * @param e
- */
-
-function stopEvent(e) {
-  if (e && e.stopPropagation) {
-    e.stopPropagation();
-  } else {
-    window.event.cancelBubble = true;
-  }
-
-  if (e && e.preventDefault) {
-    e.preventDefault();
-  } else {
-    window.event.returnValue = false;
-  }
-}
-/**
- * 两点之间的距离
- * @param eventX
- * @param startX
- * @param eventY
- * @param startY
- * @returns {*}
- */
-
-function distance(eventX, startX, eventY, startY) {
-  var dx = eventX - startX;
-  var dy = eventY - startY;
-  return Math.sqrt(dx * dx + dy * dy);
-}
-/**
- * 计算移动距离
- * @param e
- * @param canvasDom
+ * 测量文字的宽度
+ * @param ctx
+ * @param text
  * @returns {number}
  */
 
-function spacing(e, canvasDom) {
-  if (e.targetTouches.length < 2) {
-    return 0;
-  }
-
-  var point1 = getCanvasPoint(e.targetTouches[0], canvasDom);
-  var point2 = getCanvasPoint(e.targetTouches[1], canvasDom);
-  var x = Math.abs(point1.x - point2.x);
-  var y = Math.abs(point1.y - point2.y);
-  return Math.sqrt(x * x + y * y);
+function calcTextWidth(ctx, text) {
+  return ctx.measureText(text).width;
 }
 /**
- * 获取两点间x的距离
- * @param e
- * @param canvasDom
- * @returns {number}
+ * 获取字体
+ * @param fontSize
+ * @returns {string}
  */
 
-function getXDist(e, canvasDom) {
-  var point1 = getCanvasPoint(e.targetTouches[0], canvasDom);
-  var point2 = getCanvasPoint(e.targetTouches[1], canvasDom);
-  return Math.abs(point1.x - point2.x);
+function getFont(fontSize) {
+  return "".concat(fontSize, "px Arial");
 }
 
 /**
- * 无
+ * requestAnimationFrame兼容
+ * @param fn
  */
-
-var TOUCH_NO = 0;
-/**
- * 拖拽
- */
-
-var TOUCH_DRAG = 1;
-/**
- * 缩放
- */
-
-var TOUCH_ZOOM = 2;
-/**
- *
- */
-
-var TOUCH_POST_ZOOM = 3;
-/**
- * 十字光标
- */
-
-var TOUCH_CROSS = 4;
-/**
- * 十字光标取消
- */
-
-var TOUCH_CROSS_CANCEL = 5;
-
-var TouchEvent =
-/*#__PURE__*/
-function (_Event) {
-  _inherits(TouchEvent, _Event);
-
-  function TouchEvent(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage) {
-    var _this;
-
-    _classCallCheck(this, TouchEvent);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TouchEvent).call(this, tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage)); // 事件模型
-
-    _this.touchMode = TOUCH_NO;
-    _this.touchStartPoint = {
-      x: 0,
-      y: 0
-    };
-    _this.touchMovePoint = {
-      x: 0,
-      y: 0
-    };
-    _this.touchCrossPoint = {
-      x: 0,
-      y: 0
-    };
-    _this.savedDist = 1;
-    _this.savedXDist = 1;
-    _this.touchRange = storage.range;
-    _this.touchStartPosition = storage.minPos;
-    _this.delayTimeout = null;
-
-    _this.delayActiveCross = function () {
-      if (_this.touchMode === TOUCH_NO || _this.touchMode === TOUCH_CROSS_CANCEL) {
-        if (_this.tooltipChart) {
-          _this.touchMode = TOUCH_CROSS;
-          _this.touchCrossPoint = {
-            x: _this.touchStartPoint.x,
-            y: _this.touchStartPoint.y
-          };
-
-          _this.cross(_this.touchCrossPoint);
-        }
-      }
-    };
-
-    return _this;
+function requestAnimationFrame(fn) {
+  if (!window.requestAnimationFrame) {
+    return window.setTimeout(function () {
+      fn();
+    }, 1000 / 60);
   }
-  /**
-   * 触摸事件开始
-   * @param e
-   */
 
+  return window.requestAnimationFrame(fn);
+}
+/**
+ * cancelAnimationFrame兼容
+ * @param id
+ */
 
-  _createClass(TouchEvent, [{
-    key: "touchStart",
-    value: function touchStart(e) {
-      if (this.storage.dataList.length === 0) {
-        return;
-      }
-
-      if (e.targetTouches.length === 1) {
-        var point = getCanvasPoint(e.targetTouches[0], this.tooltipChart.canvasDom);
-        this.touchStartPoint = {
-          x: point.x,
-          y: point.y
-        };
-        this.touchMovePoint = {
-          x: point.x,
-          y: point.y
-        };
-
-        if (!isValidEvent(this.touchStartPoint, this.handler)) {
-          return;
-        }
-
-        if (this.touchMode === TOUCH_CROSS) {
-          stopEvent(e);
-          var crossRadius = distance(point.x, this.touchCrossPoint.x, point.y, this.touchCrossPoint.y);
-
-          if (crossRadius < 10) {
-            this.performCross(e);
-          } else {
-            this.touchMode = TOUCH_CROSS_CANCEL;
-            this.storage.crossPoint = null;
-            this.tooltipChart.flush();
-          }
-        } else {
-          this.touchMode = TOUCH_NO;
-        }
-
-        this.removeDelayActiveCross();
-        this.postDelayDelayActiveCross();
-      } else if (e.targetTouches.length > 1) {
-        if (!isValidEvent(this.touchStartPoint, this.handler)) {
-          return;
-        }
-
-        if (this.touchMode !== TOUCH_CROSS) {
-          stopEvent(e);
-          this.savedDist = spacing(e, this.tooltipChart.canvasDom);
-          this.savedXDist = getXDist(e, this.tooltipChart.canvasDom);
-
-          if (this.savedDist > 3) {
-            this.touchMode = TOUCH_ZOOM;
-          }
-
-          this.touchRange = this.storage.range;
-          this.touchStartPosition = this.storage.minPos;
-        }
-      }
-    }
-    /**
-     * 触摸事件移动
-     * @param e
-     * @param loadMore
-     */
-
-  }, {
-    key: "touchMove",
-    value: function touchMove(e, loadMore) {
-      if (!isValidEvent(this.touchStartPoint, this.handler) || this.storage.dataList.length === 0) {
-        return;
-      }
-
-      if (!this.waitingForMouseMoveAnimationFrame) {
-        this.waitingForMouseMoveAnimationFrame = true;
-
-        switch (this.touchMode) {
-          case TOUCH_ZOOM:
-            {
-              stopEvent(e);
-              this.performZoom(e);
-              break;
-            }
-
-          case TOUCH_DRAG:
-            {
-              stopEvent(e);
-              var point = getCanvasPoint(e.targetTouches[0], this.tooltipChart.canvasDom);
-              this.drag(this.touchMovePoint, point.x, loadMore);
-              break;
-            }
-
-          case TOUCH_CROSS:
-            {
-              stopEvent(e);
-              this.performCross(e);
-              break;
-            }
-
-          case TOUCH_CROSS_CANCEL:
-            {
-              this.removeDelayActiveCross();
-              break;
-            }
-
-          case TOUCH_NO:
-            {
-              var _point = getCanvasPoint(e.targetTouches[0], this.tooltipChart.canvasDom);
-
-              var dis = Math.abs(distance(_point.x, this.touchStartPoint.x, _point.y, this.touchStartPoint.y));
-
-              if (dis > 10) {
-                var distanceX = Math.abs(_point.x - this.touchStartPoint.x);
-                var distanceY = Math.abs(_point.y - this.touchStartPoint.y);
-
-                if (distanceY <= distanceX) {
-                  stopEvent(e);
-                  this.storage.crossPoint = null;
-                  this.touchMode = TOUCH_DRAG;
-                  this.tooltipChart.flush();
-                }
-              }
-
-              this.removeDelayActiveCross();
-            }
-        }
-
-        this.waitingForMouseMoveAnimationFrame = false;
-      }
-    }
-    /**
-     * 触摸事件结束
-     * @param e
-     */
-
-  }, {
-    key: "touchEnd",
-    value: function touchEnd(e) {
-      if (!isValidEvent(this.touchStartPoint, this.handler) || this.storage.dataList.length === 0) {
-        return;
-      }
-
-      stopEvent(e);
-
-      if (e.targetTouches.length > 0) {
-        if (this.touchMode === TOUCH_CROSS) {
-          this.performCross(e);
-        } else {
-          this.touchMode = TOUCH_POST_ZOOM;
-        }
-      } else {
-        this.removeDelayActiveCross(); // 拿起
-
-        if (this.touchMode !== TOUCH_CROSS) {
-          if (this.touchMode === TOUCH_NO) {
-            this.touchMode = TOUCH_CROSS;
-            this.touchCrossPoint = _objectSpread2({}, this.touchStartPoint);
-            this.cross(this.touchCrossPoint);
-          } else {
-            this.touchMode = TOUCH_NO;
-            this.storage.crossPoint = null;
-            this.tooltipChart.flush();
-          }
-        }
-      }
-    }
-    /**
-     * 处理缩放
-     * @param e
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "performZoom",
-    value: function performZoom(e) {
-      if (e.targetTouches.length > 1) {
-        var totalDist = spacing(e, this.tooltipChart.canvasDom);
-
-        if (totalDist > 10) {
-          var xDist = getXDist(e, this.tooltipChart.canvasDom); // x轴方向 scale
-
-          var scaleX = xDist / this.savedXDist; // 是否缩小
-
-          var isZoomingOut = scaleX < 1;
-          this.zoom(isZoomingOut, scaleX, this.touchStartPosition, this.touchRange);
-        }
-      }
-    }
-    /**
-     * 处理移动光标
-     * @param e
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "performCross",
-    value: function performCross(e) {
-      var point = getCanvasPoint(e.targetTouches[0], this.tooltipChart.canvasDom);
-      this.touchCrossPoint = {
-        x: point.x,
-        y: point.y
-      };
-      this.cross(this.touchCrossPoint);
-    }
-    /**
-     * 执行延迟事件
-     */
-
-  }, {
-    key: "postDelayDelayActiveCross",
-    value: function postDelayDelayActiveCross() {
-      this.delayTimeout = setTimeout(this.delayActiveCross, 200);
-    }
-    /**
-     * 移除延迟事件
-     */
-
-  }, {
-    key: "removeDelayActiveCross",
-    value: function removeDelayActiveCross() {
-      if (this.delayTimeout) {
-        clearTimeout(this.delayTimeout);
-        this.delayTimeout = null;
-      }
-    }
-  }]);
-
-  return TouchEvent;
-}(Event);
-
-var CROSS = 'cross';
-var DRAG = 'drag';
-
-var MouseEvent =
-/*#__PURE__*/
-function (_Event) {
-  _inherits(MouseEvent, _Event);
-
-  function MouseEvent(tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, graphicMarkChart, storage) {
-    var _this;
-
-    _classCallCheck(this, MouseEvent);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(MouseEvent).call(this, tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage));
-    _this.graphicMarkChart = graphicMarkChart; // 事件模型
-
-    _this.mouseMode = CROSS;
-    _this.mouseDownPoint = {
-      x: 0,
-      y: 0
-    };
-
-    _this.documentMouseUp = function () {
-      document.removeEventListener('mouseup', _this.documentMouseUp, false);
-      _this.mouseMode = CROSS;
-      _this.storage.isDragGraphicMark = false;
-
-      _this.tooltipChart.flush();
-    };
-
-    return _this;
+function cancelAnimationFrame(id) {
+  if (!window.cancelAnimationFrame) {
+    clearTimeout(id);
   }
-  /**
-   * 鼠标按下事件
-   * @param e
-   */
 
+  window.cancelAnimationFrame(id);
+}
 
-  _createClass(MouseEvent, [{
-    key: "mouseDown",
-    value: function mouseDown(e) {
-      if (this.storage.dataList.length === 0) {
-        return;
-      }
-
-      if (e.button === 0) {
-        var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
-
-        if (!isValidEvent(point, this.handler)) {
-          return;
-        }
-
-        document.addEventListener('mouseup', this.documentMouseUp, false);
-        this.mouseDownPoint.x = e.x;
-        this.mouseDownPoint.y = e.y;
-        this.mouseMode = DRAG;
-        this.storage.crossPoint = null;
-        this.tooltipChart.flush();
-      }
-    }
-    /**
-     * 鼠标抬起时事件
-     * @param e
-     */
-
-  }, {
-    key: "mouseUp",
-    value: function mouseUp(e) {
-      if (this.storage.dataList.length === 0) {
-        return;
-      }
-
-      stopEvent(e);
-      var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
-
-      if (!isValidEvent(point, this.handler)) {
-        return;
-      }
-
-      document.removeEventListener('mouseup', this.documentMouseUp, false);
-      this.mouseMode = CROSS;
-      this.storage.crossPoint = {
-        x: point.x,
-        y: point.y
-      };
-      this.storage.isDragGraphicMark = false;
-      this.tooltipChart.flush();
-    }
-  }, {
-    key: "mouseLeave",
-    value: function mouseLeave(e) {
-      if (this.storage.dataList.length === 0) {
-        return;
-      }
-
-      stopEvent(e);
-      this.storage.crossPoint = null;
-      this.tooltipChart.flush();
-    }
-    /**
-     * 鼠标移动时事件
-     * @param e
-     * @param loadMore
-     */
-
-  }, {
-    key: "mouseMove",
-    value: function mouseMove(e, loadMore) {
-      if (this.storage.dataList.length === 0) {
-        return;
-      }
-
-      stopEvent(e);
-      var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
-
-      if (!isValidEvent(point, this.handler)) {
-        this.storage.crossPoint = null;
-        this.tooltipChart.flush();
-        return;
-      }
-
-      if (!this.waitingForMouseMoveAnimationFrame) {
-        this.waitingForMouseMoveAnimationFrame = true;
-
-        if (this.mouseMode === DRAG) {
-          if (this.storage.isDragGraphicMark) {
-            this.cross(point);
-          } else {
-            if (this.drag(this.mouseDownPoint, e.x, loadMore)) {
-              this.graphicMarkChart.flush();
-            }
-          }
-        } else if (this.mouseMode === CROSS) {
-          this.cross(point);
-        }
-
-        this.waitingForMouseMoveAnimationFrame = false;
-      }
-    }
-    /**
-     * 鼠标滚轮事件
-     * @param e
-     */
-
-  }, {
-    key: "mouseWheel",
-    value: function mouseWheel(e) {
-      if (this.storage.dataList.length === 0 || this.storage.isDragGraphicMark) {
-        return;
-      }
-
-      stopEvent(e);
-      var point = getCanvasPoint(e, this.tooltipChart.canvasDom);
-
-      if (!isValidEvent(point, this.handler)) {
-        return;
-      }
-
-      var touchStartPosition = this.storage.minPos;
-      var touchRange = this.storage.range;
-      var delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.deltaY)); // 是否缩小
-
-      var isZoomingOut = delta === 1;
-      var scaleX = 1;
-
-      if (isZoomingOut) {
-        scaleX = 0.95;
-      } else {
-        scaleX = 1.05;
-      }
-
-      if (this.zoom(isZoomingOut, scaleX, touchStartPosition, touchRange)) {
-        this.cross(point);
-        this.graphicMarkChart.flush();
-      }
-    }
-  }]);
-
-  return MouseEvent;
-}(Event);
-
-var GraphicMarkEvent =
+var View =
 /*#__PURE__*/
 function () {
-  function GraphicMarkEvent(storage, graphicMarkChart, style) {
-    _classCallCheck(this, GraphicMarkEvent);
+  function View(container, chartData) {
+    _classCallCheck(this, View);
 
-    this.storage = storage;
-    this.graphicMarkChart = graphicMarkChart;
-    this.handler = graphicMarkChart.handler;
-    this.yRender = graphicMarkChart.graphicMarkRender.yRender;
-    this.style = style; // 标记当没有画线时鼠标是否按下
+    this._chartData = chartData;
 
-    this.noneGraphicMarkMouseDownFlag = false; // 用来记录当没有绘制标记图形时，鼠标操作后落点线上的数据
-
-    this.noneGraphicMarkMouseDownActiveData = {
-      markKey: null,
-      dataIndex: -1,
-      onLine: false,
-      onCircle: false,
-      pointIndex: -1
-    };
+    this._initCanvas(container);
   }
   /**
-   * 鼠标抬起事件
+   * 初始化画布
+   * @param container
+   * @private
    */
 
 
-  _createClass(GraphicMarkEvent, [{
-    key: "mouseUp",
-    value: function mouseUp() {
-      this.noneGraphicMarkMouseDownFlag = false;
-      this.noneGraphicMarkMouseDownActiveData = {
-        markKey: null,
-        dataIndex: -1,
-        onLine: false,
-        onCircle: false,
-        pointIndex: -1
-      };
+  _createClass(View, [{
+    key: "_initCanvas",
+    value: function _initCanvas(container) {
+      this._canvas = document.createElement('canvas');
+      this._canvas.style.position = 'absolute';
+      this._canvas.style.right = '0';
+      this._canvas.style.left = '0';
+      this._canvas.style.zIndex = '2';
+      this._ctx = this._canvas.getContext('2d');
+      container.appendChild(this._canvas);
     }
     /**
-     * 鼠标按下事件
-     * @param e
+     * 重新绘制
+     * @param extendFun
+     * @private
      */
 
   }, {
-    key: "mouseDown",
-    value: function mouseDown(e) {
-      var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
-      this.storage.graphicMarkPoint = _objectSpread2({}, point);
+    key: "_redraw",
+    value: function _redraw(extendFun) {
+      this._ctx.clearRect(0, 0, this._width, this._height);
 
-      if (!isValidEvent(point, this.handler)) {
-        return;
+      if (extendFun) {
+        extendFun();
       }
 
-      var graphicMarkType = this.storage.graphicMarkType;
-
-      switch (graphicMarkType) {
-        case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
-        case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
-        case GraphicMarkType.STRAIGHT_LINE:
-        case GraphicMarkType.HORIZONTAL_RAY_LINE:
-        case GraphicMarkType.VERTICAL_RAY_LINE:
-        case GraphicMarkType.RAY_LINE:
-        case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
-        case GraphicMarkType.VERTICAL_SEGMENT_LINE:
-        case GraphicMarkType.SEGMENT_LINE:
-        case GraphicMarkType.PRICE_LINE:
-        case GraphicMarkType.FIBONACCI_LINE:
-          {
-            this.twoStepGraphicMarkMouseDown(e, graphicMarkType);
-            break;
-          }
-
-        case GraphicMarkType.PRICE_CHANNEL_LINE:
-        case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
-          {
-            this.threeStepGraphicMarkMouseDown(e, graphicMarkType);
-            break;
-          }
-
-        case GraphicMarkType.NONE:
-          {
-            this.noneGraphicMarkMouseDown(e);
-            break;
-          }
-      }
+      this._draw();
     }
     /**
-     * 两步形成的标记图形鼠标按下处理
-     * @param e
-     * @param markKey
+     * 绘制
      */
 
   }, {
-    key: "twoStepGraphicMarkMouseDown",
-    value: function twoStepGraphicMarkMouseDown(e, markKey) {
+    key: "_draw",
+    value: function _draw() {}
+    /**
+     * 设置尺寸
+     * @param width
+     * @param height
+     */
+
+  }, {
+    key: "setSize",
+    value: function setSize(width, height) {
       var _this = this;
 
-      this.graphicMarkMouseDown(e, markKey, function (lastLineData) {
-        switch (lastLineData.drawStep) {
-          case GraphicMarkDrawStep.STEP_1:
-            {
-              lastLineData.drawStep = GraphicMarkDrawStep.STEP_2;
-              break;
-            }
+      if (width !== this._width || height !== this._height) {
+        this._redraw(function () {
+          var pixelRatio = getPixelRatio(_this._ctx);
+          _this._width = width;
+          _this._height = height;
+          _this._canvas.style.top = '0';
+          _this._canvas.style.width = "".concat(width, "px");
+          _this._canvas.style.height = "".concat(height, "px");
+          _this._canvas.width = width * pixelRatio;
+          _this._canvas.height = height * pixelRatio;
 
-          case GraphicMarkDrawStep.STEP_2:
-            {
-              lastLineData.drawStep = GraphicMarkDrawStep.STEP_DONE;
-              _this.storage.graphicMarkType = GraphicMarkType.NONE;
-              break;
-            }
-        }
-      });
+          _this._ctx.scale(pixelRatio, pixelRatio); // this._ctx.translate(0.5, 0.5)
+
+        });
+      }
     }
     /**
-     * 两个点形成的标记图形鼠标按下事件
-     * @param e
-     * @param markKey
+     * 刷新
      */
 
   }, {
-    key: "threeStepGraphicMarkMouseDown",
-    value: function threeStepGraphicMarkMouseDown(e, markKey) {
+    key: "flush",
+    value: function flush() {
       var _this2 = this;
 
-      this.graphicMarkMouseDown(e, markKey, function (lastLineData) {
-        switch (lastLineData.drawStep) {
-          case GraphicMarkDrawStep.STEP_1:
-            {
-              lastLineData.drawStep = GraphicMarkDrawStep.STEP_2;
-              break;
-            }
+      if (this.requestAnimationId) {
+        cancelAnimationFrame(this.requestAnimationId);
+      }
 
-          case GraphicMarkDrawStep.STEP_2:
-            {
-              lastLineData.drawStep = GraphicMarkDrawStep.STEP_3;
-              break;
-            }
+      this.requestAnimationId = requestAnimationFrame(function () {
+        _this2._redraw();
+      });
+    }
+  }]);
 
-          case GraphicMarkDrawStep.STEP_3:
-            {
-              lastLineData.drawStep = GraphicMarkDrawStep.STEP_DONE;
-              _this2.storage.graphicMarkType = GraphicMarkType.NONE;
-              break;
-            }
+  return View;
+}();
+
+var TechnicalIndicatorView =
+/*#__PURE__*/
+function (_View) {
+  _inherits(TechnicalIndicatorView, _View);
+
+  function TechnicalIndicatorView(container, chartData, xAxis, yAxis, additionalDataProvider) {
+    var _this;
+
+    _classCallCheck(this, TechnicalIndicatorView);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TechnicalIndicatorView).call(this, container, chartData));
+    _this._xAxis = xAxis;
+    _this._yAxis = yAxis;
+    _this._additionalDataProvider = additionalDataProvider;
+    return _this;
+  }
+
+  _createClass(TechnicalIndicatorView, [{
+    key: "_draw",
+    value: function _draw() {
+      this._drawGrid();
+
+      this._drawTechnicalIndicator();
+    }
+    /**
+     * 绘制网格
+     * @private
+     */
+
+  }, {
+    key: "_drawGrid",
+    value: function _drawGrid() {
+      var _this2 = this;
+
+      var grid = this._chartData.styleOptions().grid;
+
+      if (!grid.display) {
+        return;
+      }
+
+      var horizontalGrid = grid.horizontal;
+
+      if (horizontalGrid.display) {
+        this._ctx.strokeStyle = horizontalGrid.color;
+        this._ctx.lineWidth = horizontalGrid.size;
+
+        if (horizontalGrid.style === LineStyle.DASH) {
+          this._ctx.setLineDash(horizontalGrid.dashValue);
         }
+
+        this._xAxis.ticks().forEach(function (tick) {
+          var x = tick.x;
+
+          _this2._ctx.beginPath();
+
+          _this2._ctx.moveTo(x, 0);
+
+          _this2._ctx.lineTo(x, _this2._height);
+
+          _this2._ctx.stroke();
+
+          _this2._ctx.closePath();
+        });
+      }
+
+      var verticalGrid = grid.vertical;
+
+      if (verticalGrid.display) {
+        this._ctx.strokeStyle = verticalGrid.color;
+        this._ctx.lineWidth = verticalGrid.size;
+
+        if (verticalGrid.style === LineStyle.DASH) {
+          this._ctx.setLineDash(verticalGrid.dashValue);
+        }
+
+        this._yAxis.ticks().forEach(function (tick) {
+          var y = tick.y;
+
+          _this2._ctx.beginPath();
+
+          _this2._ctx.moveTo(0, y);
+
+          _this2._ctx.lineTo(_this2._width, y);
+
+          _this2._ctx.stroke();
+
+          _this2._ctx.closePath();
+        });
+      }
+
+      this._ctx.setLineDash([]);
+    }
+    /**
+     * 绘制指标
+     * @private
+     */
+
+  }, {
+    key: "_drawTechnicalIndicator",
+    value: function _drawTechnicalIndicator() {
+      var _this3 = this;
+
+      var onDrawing;
+
+      var technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType();
+
+      var technicalIndicatorParams = this._chartData.technicalIndicatorParamOptions()[technicalIndicatorType] || [];
+      var linePoints = [];
+
+      var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
+
+      switch (technicalIndicatorType) {
+        case TechnicalIndicatorType.MA:
+          {
+            var dataKeys = [];
+            technicalIndicatorParams.forEach(function (p) {
+              dataKeys.push("ma".concat(p));
+            });
+
+            onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
+              _this3._ohlcTechnicalIndicatorDrawing(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, technicalIndicatorType, dataKeys, _this3._yAxis.isCandleStickYAxis(), function (values) {
+                _this3._prepareLinePoints(x, values, linePoints);
+              });
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.MACD:
+          {
+            var dataList = this._chartData.dataList();
+
+            onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
+              var macd = kLineData.macd || {};
+
+              _this3._prepareLinePoints(x, [macd.diff, macd.dea], linePoints);
+
+              var refKLineData = dataList[i - 1] || {};
+              var macdValue = macd.macd;
+              var refMacdValue = (refKLineData.macd || {}).macd || -Infinity;
+
+              if (macdValue > 0) {
+                _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor;
+                _this3._ctx.fillStyle = technicalIndicatorOptions.bar.upColor;
+              } else {
+                _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.downColor;
+                _this3._ctx.fillStyle = technicalIndicatorOptions.bar.downColor;
+              }
+
+              var isFill = !((refMacdValue || refMacdValue === 0) && macdValue > refMacdValue);
+
+              _this3._drawBars(x, halfBarSpace, macdValue, isFill);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.VOL:
+          {
+            var _dataList = this._chartData.dataList();
+
+            onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
+              var vol = kLineData.vol || {};
+              var lineValues = [];
+              technicalIndicatorParams.forEach(function (p) {
+                lineValues.push(vol["ma".concat(p)]);
+              });
+
+              _this3._prepareLinePoints(x, lineValues, linePoints);
+
+              var refKLineData = _dataList[i - 1] || {};
+              var close = kLineData.close;
+              var refClose = (refKLineData || {}).close || -Infinity;
+
+              if (close > refClose) {
+                _this3._ctx.fillStyle = technicalIndicatorOptions.bar.upColor;
+              } else {
+                _this3._ctx.fillStyle = technicalIndicatorOptions.bar.downColor;
+              }
+
+              _this3._drawBars(x, halfBarSpace, vol.num, true);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.BOLL:
+          {
+            onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
+              _this3._ohlcTechnicalIndicatorDrawing(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, technicalIndicatorType, ['up', 'mid', 'dn'], _this3._yAxis.isCandleStickYAxis(), function (values) {
+                _this3._prepareLinePoints(x, values, linePoints);
+              });
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.BIAS:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var bias = kLineData.bias || {};
+              var lineValues = [];
+              technicalIndicatorParams.forEach(function (p) {
+                lineValues.push(bias["bias".concat(p)]);
+              });
+
+              _this3._prepareLinePoints(x, lineValues, linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.BRAR:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var brar = kLineData.brar || {};
+
+              _this3._prepareLinePoints(x, [brar.br, brar.ar], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.CCI:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var cci = kLineData.cci || {};
+
+              _this3._prepareLinePoints(x, [cci.cci], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.CR:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var cr = kLineData.cr || {};
+
+              _this3._prepareLinePoints(x, [cr.cr, cr.ma1, cr.ma2, cr.ma3, cr.ma4], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.DMA:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var dma = kLineData.dma || {};
+
+              _this3._prepareLinePoints(x, [dma.dif, dma.difMa], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.DMI:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var dmi = kLineData.dmi || {};
+
+              _this3._prepareLinePoints(x, [dmi.mdi, dmi.pdi, dmi.adx, dmi.adxr], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.KDJ:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var kdj = kLineData.kdj || {};
+
+              _this3._prepareLinePoints(x, [kdj.k, kdj.d, kdj.j], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.RSI:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var rsi = kLineData.rsi || {};
+              var lineValues = [];
+              technicalIndicatorParams.forEach(function (p) {
+                lineValues.push(rsi["rsi".concat(p)]);
+              });
+
+              _this3._prepareLinePoints(x, lineValues, linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.PSY:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var psy = kLineData.psy || {};
+
+              _this3._prepareLinePoints(x, [psy.psy], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.TRIX:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var trix = kLineData.trix || {};
+
+              _this3._prepareLinePoints(x, [trix.trix, trix.maTrix], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.OBV:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var obv = kLineData.obv || {};
+
+              _this3._prepareLinePoints(x, [obv.obv, obv.maObv], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.VR:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var vr = kLineData.vr || {};
+
+              _this3._prepareLinePoints(x, [vr.vr, vr.maVr], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.WR:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var wr = kLineData.wr || {};
+
+              _this3._prepareLinePoints(x, [wr.wr1, wr.wr2, wr.wr3], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.MTM:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var mtm = kLineData.mtm || {};
+
+              _this3._prepareLinePoints(x, [mtm.mtm, mtm.mtmMa], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.EMV:
+          {
+            onDrawing = function onDrawing(x, i, kLineData) {
+              var emv = kLineData.emv || {};
+
+              _this3._prepareLinePoints(x, [emv.emv, emv.maEmv], linePoints);
+            };
+
+            break;
+          }
+
+        case TechnicalIndicatorType.SAR:
+          {
+            onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
+              _this3._ohlcTechnicalIndicatorDrawing(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, technicalIndicatorType, ['sar'], _this3._yAxis.isCandleStickYAxis(), function (values) {
+                var sar = values[0];
+
+                if (sar || sar === 0) {
+                  var dataY = _this3._yAxis.convertToPixel(sar);
+
+                  if (sar < (kLineData.high + kLineData.low) / 2) {
+                    _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor;
+                  } else {
+                    _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.downColor;
+                  }
+
+                  _this3._ctx.beginPath();
+
+                  _this3._ctx.arc(x, dataY, halfBarSpace, Math.PI * 2, 0, true);
+
+                  _this3._ctx.stroke();
+
+                  _this3._ctx.closePath();
+                }
+              });
+            };
+          }
+      }
+
+      this._drawGraphics(onDrawing, function () {
+        _this3._drawLines(linePoints, technicalIndicatorOptions);
       });
     }
     /**
-     * 绘制标记图形时鼠标按下事件
-     * @param e
-     * @param markKey
-     * @param performDifPoint
+     * 需要绘制ohlc指标每条数据渲染
+     * @param i
+     * @param x
+     * @param halfBarSpace
+     * @param technicalIndicatorOptions
+     * @param kLineData
+     * @param technicalIndicatorType
+     * @param dataKeys
+     * @param isCandleStick
+     * @param prepare
      */
 
   }, {
-    key: "graphicMarkMouseDown",
-    value: function graphicMarkMouseDown(e, markKey, performDifPoint) {
-      var graphicMarkData = this.storage.graphicMarkDatas[markKey];
+    key: "_ohlcTechnicalIndicatorDrawing",
+    value: function _ohlcTechnicalIndicatorDrawing(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, technicalIndicatorType, dataKeys, isCandleStick, prepare) {
+      var technicalIndicatorData = kLineData[technicalIndicatorType.toLowerCase()] || {};
+      var values = [];
+      dataKeys.forEach(function (key) {
+        values.push(technicalIndicatorData[key]);
+      });
 
-      if (e.button === 2) {
-        graphicMarkData.splice(graphicMarkData.length - 1, 1);
-        this.storage.graphicMarkType = GraphicMarkType.NONE;
-      } else {
-        var lastLineData = graphicMarkData[graphicMarkData.length - 1];
-        performDifPoint(lastLineData);
-        graphicMarkData[graphicMarkData.length - 1] = lastLineData;
+      if (prepare) {
+        prepare(values);
       }
 
-      this.storage.graphicMarkDatas[markKey] = graphicMarkData;
-      this.graphicMarkChart.flush();
+      var dataList = this._chartData.dataList();
+
+      if (!isCandleStick) {
+        var refKLineData = dataList[i - 1] || {};
+
+        this._drawOhlc(halfBarSpace, x, kLineData, refKLineData, technicalIndicatorOptions.bar.upColor, technicalIndicatorOptions.bar.downColor);
+      }
     }
     /**
-     * 没有绘制时鼠标按下事件
+     * 准备绘制线的数据
+     * @param x
+     * @param lineValues
+     * @param linePoints
      */
 
   }, {
-    key: "noneGraphicMarkMouseDown",
-    value: function noneGraphicMarkMouseDown(e) {
-      this.findNoneGraphicMarkMouseDownActiveData(e);
-      var markKey = this.noneGraphicMarkMouseDownActiveData.markKey;
-      var dataIndex = this.noneGraphicMarkMouseDownActiveData.dataIndex;
+    key: "_prepareLinePoints",
+    value: function _prepareLinePoints(x, lineValues, linePoints) {
+      for (var i = 0; i < lineValues.length; i++) {
+        var value = lineValues[i];
 
-      if (markKey && dataIndex !== -1) {
-        if (e.button === 2) {
-          // 鼠标右键
-          var graphicMarkData = this.storage.graphicMarkDatas[markKey];
-          graphicMarkData.splice(dataIndex, 1);
-          this.storage.graphicMarkDatas[markKey] = graphicMarkData;
-          this.graphicMarkChart.flush();
+        var valueY = this._yAxis.convertToPixel(value);
+
+        if (!linePoints[i]) {
+          linePoints[i] = [{
+            x: x,
+            y: valueY
+          }];
         } else {
-          if (this.noneGraphicMarkMouseDownActiveData.onCircle) {
-            this.noneGraphicMarkMouseDownFlag = true;
-            this.storage.isDragGraphicMark = true;
+          linePoints[i].push({
+            x: x,
+            y: valueY
+          });
+        }
+      }
+    }
+    /**
+     * 绘制线
+     * @param linePoints
+     * @param technicalIndicatorOptions
+     */
+
+  }, {
+    key: "_drawLines",
+    value: function _drawLines(linePoints, technicalIndicatorOptions) {
+      var colors = technicalIndicatorOptions.line.colors;
+      var pointCount = linePoints.length;
+      var colorSize = (colors || []).length;
+      this._ctx.lineWidth = technicalIndicatorOptions.line.size;
+
+      for (var i = 0; i < pointCount; i++) {
+        var points = linePoints[i];
+
+        if (points.length > 0) {
+          this._ctx.strokeStyle = colors[i % colorSize];
+
+          this._ctx.beginPath();
+
+          this._ctx.moveTo(points[0].x, points[0].y);
+
+          for (var j = 1; j < points.length; j++) {
+            this._ctx.lineTo(points[j].x, points[j].y);
+          }
+
+          this._ctx.stroke();
+
+          this._ctx.closePath();
+        }
+      }
+    }
+    /**
+     * 绘制柱状图
+     * @param x
+     * @param halfBarSpace
+     * @param barData
+     * @param isFill
+     */
+
+  }, {
+    key: "_drawBars",
+    value: function _drawBars(x, halfBarSpace, barData, isFill) {
+      if (barData || barData === 0) {
+        this._ctx.lineWidth = 1;
+
+        var dataY = this._yAxis.convertToPixel(barData);
+
+        var zeroY = this._yAxis.convertToPixel(0);
+
+        var y = dataY;
+
+        if (barData < 0) {
+          y = zeroY;
+        }
+
+        var barHeight = Math.abs(zeroY - dataY);
+
+        if (barHeight < 1) {
+          barHeight = 1;
+        }
+
+        if (isFill) {
+          this._ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight);
+        } else {
+          this._ctx.strokeRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight);
+        }
+      }
+    }
+    /**
+     * 绘制ohlc
+     * @param halfBarSpace
+     * @param x
+     * @param kLineData
+     * @param refKLineData
+     * @param increasingColor
+     * @param decreasingColor
+     * @private
+     */
+
+  }, {
+    key: "_drawOhlc",
+    value: function _drawOhlc(halfBarSpace, x, kLineData, refKLineData, increasingColor, decreasingColor) {
+      var openY = this._yAxis.convertToPixel(kLineData.open);
+
+      var closeY = this._yAxis.convertToPixel(kLineData.close);
+
+      var highY = this._yAxis.convertToPixel(kLineData.high);
+
+      var lowY = this._yAxis.convertToPixel(kLineData.low);
+
+      if (kLineData.close > refKLineData.close) {
+        this._ctx.strokeStyle = increasingColor;
+      } else {
+        this._ctx.strokeStyle = decreasingColor;
+      }
+
+      this._ctx.lineWidth = 1;
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(x, highY);
+
+      this._ctx.lineTo(x, lowY);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(x - halfBarSpace, openY);
+
+      this._ctx.lineTo(x, openY);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(x + halfBarSpace, closeY);
+
+      this._ctx.lineTo(x, closeY);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+    }
+    /**
+     * 绘制图形
+     * @param onDrawing
+     * @param onDrawEnd
+     * @private
+     */
+
+  }, {
+    key: "_drawGraphics",
+    value: function _drawGraphics(onDrawing, onDrawEnd) {
+      var startX = 0;
+
+      var dataList = this._chartData.dataList();
+
+      var barSpace = this._chartData.barSpace();
+
+      var dataSpace = this._chartData.dataSpace();
+
+      var halfBarSpace = barSpace / 2;
+
+      var to = this._chartData.to();
+
+      for (var i = this._chartData.from(); i < to; i++) {
+        var endX = startX + barSpace;
+        var x = (startX + endX) / 2;
+        var kLineData = dataList[i];
+
+        if (onDrawing) {
+          onDrawing(x, i, kLineData, halfBarSpace, barSpace);
+        }
+
+        startX += dataSpace;
+      }
+
+      if (onDrawEnd) {
+        onDrawEnd();
+      }
+    }
+  }]);
+
+  return TechnicalIndicatorView;
+}(View);
+
+var MOUSE_EVENT_BUTTON_LEFT = 0;
+var DELAY_RESET_CLICK = 500;
+var DELAY_LONG_TAG = 500;
+
+function getBoundingClientRect(element) {
+  return element.getBoundingClientRect() || {
+    left: 0,
+    top: 0
+  };
+}
+
+function getDistance(p1, p2) {
+  var xDiff = p1.clientX - p2.clientX;
+  var yDiff = p1.clientY - p2.clientY;
+  return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+}
+
+function isTouchEvent(event) {
+  return Boolean(event.touches);
+}
+
+function preventDefault(event) {
+  if (event.cancelable) {
+    event.preventDefault();
+  }
+}
+
+function checkTouchEvents() {
+  if ('ontouchstart' in window) {
+    return true;
+  }
+
+  return Boolean(window.DocumentTouch && document instanceof window.DocumentTouch);
+}
+
+var touch = !!navigator.maxTouchPoints || !!navigator.msMaxTouchPoints || checkTouchEvents();
+var mobileTouch = 'onorientationchange' in window && touch;
+
+var EventBase =
+/*#__PURE__*/
+function () {
+  function EventBase(target, eventHandler, options) {
+    _classCallCheck(this, EventBase);
+
+    this._target = target;
+    this._handler = eventHandler;
+    this._options = options;
+    this._clickCount = 0;
+    this._clickTimeoutId = null;
+    this._longTapTimeoutId = null;
+    this._longTapActive = false;
+    this._mouseMoveStartPosition = null;
+    this._moveExceededManhattanDistance = false;
+    this._cancelClick = false;
+    this._unsubscribeOutsideEvents = null;
+    this._unsubscribeMousemove = null;
+    this._unsubscribeRoot = null;
+    this._startPinchMiddlePoint = null;
+    this._startPinchDistance = 0;
+    this._pinchPrevented = false;
+    this._preventDragProcess = false;
+    this._mousePressed = false;
+
+    this._init();
+  }
+
+  _createClass(EventBase, [{
+    key: "destroy",
+    value: function destroy() {
+      if (this._unsubscribeOutsideEvents !== null) {
+        this._unsubscribeOutsideEvents();
+
+        this._unsubscribeOutsideEvents = null;
+      }
+
+      if (this._unsubscribeMousemove !== null) {
+        this._unsubscribeMousemove();
+
+        this._unsubscribeMousemove = null;
+      }
+
+      if (this._unsubscribeRoot !== null) {
+        this._unsubscribeRoot();
+
+        this._unsubscribeRoot = null;
+      }
+
+      this._clearLongTapTimeout();
+
+      this._resetClickTimeout();
+    }
+  }, {
+    key: "_mouseEnterHandler",
+    value: function _mouseEnterHandler(enterEvent) {
+      var _this = this;
+
+      if (this._unsubscribeMousemove) {
+        this._unsubscribeMousemove();
+      }
+
+      {
+        var boundMouseMoveHandler = this._mouseMoveHandler.bind(this);
+
+        this._unsubscribeMousemove = function () {
+          _this._target.removeEventListener('mousemove', boundMouseMoveHandler);
+        };
+
+        this._target.addEventListener('mousemove', boundMouseMoveHandler);
+      }
+
+      if (isTouchEvent(enterEvent)) {
+        this._mouseMoveHandler(enterEvent);
+      }
+
+      var compatEvent = this._makeCompatEvent(enterEvent);
+
+      this._processEvent(compatEvent, this._handler.mouseEnterEvent);
+    }
+  }, {
+    key: "_resetClickTimeout",
+    value: function _resetClickTimeout() {
+      if (this._clickTimeoutId !== null) {
+        clearTimeout(this._clickTimeoutId);
+      }
+
+      this._clickCount = 0;
+      this._clickTimeoutId = null;
+    }
+  }, {
+    key: "_mouseMoveHandler",
+    value: function _mouseMoveHandler(moveEvent) {
+      if (this._mousePressed && !isTouchEvent(moveEvent)) {
+        return;
+      }
+
+      var compatEvent = this._makeCompatEvent(moveEvent);
+
+      this._processEvent(compatEvent, this._handler.mouseMoveEvent);
+    }
+  }, {
+    key: "_mouseMoveWithDownHandler",
+    value: function _mouseMoveWithDownHandler(moveEvent) {
+      if ('button' in moveEvent && moveEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
+        return;
+      }
+
+      if (this._startPinchMiddlePoint !== null) {
+        return;
+      }
+
+      var isTouch = isTouchEvent(moveEvent);
+
+      if (this._preventDragProcess && isTouch) {
+        return;
+      }
+
+      this._pinchPrevented = true;
+
+      var compatEvent = this._makeCompatEvent(moveEvent);
+
+      var startMouseMovePos = this._mouseMoveStartPosition;
+      var xOffset = Math.abs(startMouseMovePos.x - compatEvent.pageX);
+      var yOffset = Math.abs(startMouseMovePos.y - compatEvent.pageY);
+      var moveExceededManhattanDistance = xOffset + yOffset > 5;
+
+      if (!moveExceededManhattanDistance && isTouch) {
+        return;
+      }
+
+      if (moveExceededManhattanDistance && !this._moveExceededManhattanDistance && isTouch) {
+        // vertical drag is more important than horizontal drag
+        // because we scroll the page vertically often than horizontally
+        var correctedXOffset = xOffset * 0.5; // a drag can be only if touch page scroll isn't allowed
+
+        var isVertDrag = yOffset >= correctedXOffset && !this._options.treatVertTouchDragAsPageScroll;
+        var isHorzDrag = correctedXOffset > yOffset && !this._options.treatHorzTouchDragAsPageScroll; // if drag event happened then we should revert preventDefault state to original one
+        // and try to process the drag event
+        // else we shouldn't prevent default of the event and ignore processing the drag event
+
+        if (!isVertDrag && !isHorzDrag) {
+          this._preventDragProcess = true;
+        }
+      }
+
+      if (moveExceededManhattanDistance) {
+        this._moveExceededManhattanDistance = true; // if manhattan distance is more that 5 - we should cancel click event
+
+        this._cancelClick = true;
+
+        if (isTouch) {
+          this._clearLongTapTimeout();
+        }
+      }
+
+      if (!this._preventDragProcess) {
+        this._processEvent(compatEvent, this._handler.pressedMouseMoveEvent); // we should prevent default in case of touch only
+        // to prevent scroll of the page
+
+
+        if (isTouch) {
+          preventDefault(moveEvent);
+        }
+      }
+    }
+  }, {
+    key: "_mouseUpHandler",
+    value: function _mouseUpHandler(mouseUpEvent) {
+      if ('button' in mouseUpEvent && mouseUpEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
+        return;
+      }
+
+      var compatEvent = this._makeCompatEvent(mouseUpEvent);
+
+      this._clearLongTapTimeout();
+
+      this._mouseMoveStartPosition = null;
+      this._mousePressed = false;
+
+      if (this._unsubscribeRoot) {
+        this._unsubscribeRoot();
+
+        this._unsubscribeRoot = null;
+      }
+
+      if (isTouchEvent(mouseUpEvent)) {
+        this._mouseLeaveHandler(mouseUpEvent);
+      }
+
+      this._processEvent(compatEvent, this._handler.mouseUpEvent);
+
+      ++this._clickCount;
+
+      if (this._clickTimeoutId && this._clickCount > 1) {
+        this._processEvent(compatEvent, this._handler.mouseDoubleClickEvent);
+
+        this._resetClickTimeout();
+      } else {
+        if (!this._cancelClick) {
+          this._processEvent(compatEvent, this._handler.mouseClickEvent);
+        }
+      } // prevent safari's dblclick-to-zoom
+      // we handle mouseDoubleClickEvent here ourself
+
+
+      if (isTouchEvent(mouseUpEvent)) {
+        preventDefault(mouseUpEvent);
+
+        this._mouseLeaveHandler(mouseUpEvent);
+
+        if (mouseUpEvent.touches.length === 0) {
+          this._longTapActive = false;
+        }
+      }
+    }
+  }, {
+    key: "_clearLongTapTimeout",
+    value: function _clearLongTapTimeout() {
+      if (this._longTapTimeoutId === null) {
+        return;
+      }
+
+      clearTimeout(this._longTapTimeoutId);
+      this._longTapTimeoutId = null;
+    }
+  }, {
+    key: "_mouseDownHandler",
+    value: function _mouseDownHandler(downEvent) {
+      if ('button' in downEvent && downEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
+        return;
+      }
+
+      var compatEvent = this._makeCompatEvent(downEvent);
+
+      this._cancelClick = false;
+      this._moveExceededManhattanDistance = false;
+      this._preventDragProcess = false;
+
+      if (isTouchEvent(downEvent)) {
+        this._mouseEnterHandler(downEvent);
+      }
+
+      this._mouseMoveStartPosition = {
+        x: compatEvent.pageX,
+        y: compatEvent.pageY
+      };
+
+      if (this._unsubscribeRoot) {
+        this._unsubscribeRoot();
+
+        this._unsubscribeRoot = null;
+      }
+
+      {
+        var boundMouseMoveWithDownHandler = this._mouseMoveWithDownHandler.bind(this);
+
+        var boundMouseUpHandler = this._mouseUpHandler.bind(this);
+
+        var rootElement = this._target.ownerDocument.documentElement;
+
+        this._unsubscribeRoot = function () {
+          rootElement.removeEventListener('touchmove', boundMouseMoveWithDownHandler);
+          rootElement.removeEventListener('touchend', boundMouseUpHandler);
+          rootElement.removeEventListener('mousemove', boundMouseMoveWithDownHandler);
+          rootElement.removeEventListener('mouseup', boundMouseUpHandler);
+        };
+
+        rootElement.addEventListener('touchmove', boundMouseMoveWithDownHandler, {
+          passive: false
+        });
+        rootElement.addEventListener('touchend', boundMouseUpHandler, {
+          passive: false
+        });
+
+        this._clearLongTapTimeout();
+
+        if (isTouchEvent(downEvent) && downEvent.touches.length === 1) {
+          this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), DELAY_LONG_TAG);
+        } else {
+          rootElement.addEventListener('mousemove', boundMouseMoveWithDownHandler);
+          rootElement.addEventListener('mouseup', boundMouseUpHandler);
+        }
+      }
+      this._mousePressed = true;
+
+      this._processEvent(compatEvent, this._handler.mouseDownEvent);
+
+      if (!this._clickTimeoutId) {
+        this._clickCount = 0;
+        this._clickTimeoutId = setTimeout(this._resetClickTimeout.bind(this), DELAY_RESET_CLICK);
+      }
+    }
+  }, {
+    key: "_init",
+    value: function _init() {
+      var _this2 = this;
+
+      this._target.addEventListener('mouseenter', this._mouseEnterHandler.bind(this));
+
+      this._target.addEventListener('touchcancel', this._clearLongTapTimeout.bind(this));
+
+      {
+        var doc = this._target.ownerDocument;
+
+        var outsideHandler = function outsideHandler(event) {
+          if (!_this2._handler.mouseDownOutsideEvent) {
+            return;
+          }
+
+          if (event.target && _this2._target.contains(event.target)) {
+            return;
+          }
+
+          _this2._handler.mouseDownOutsideEvent();
+        };
+
+        this._unsubscribeOutsideEvents = function () {
+          doc.removeEventListener('mousedown', outsideHandler);
+          doc.removeEventListener('touchstart', outsideHandler);
+        };
+
+        doc.addEventListener('mousedown', outsideHandler);
+        doc.addEventListener('touchstart', outsideHandler, {
+          passive: true
+        });
+      }
+
+      this._target.addEventListener('mouseleave', this._mouseLeaveHandler.bind(this));
+
+      this._target.addEventListener('touchstart', this._mouseDownHandler.bind(this), {
+        passive: true
+      });
+
+      if (!mobileTouch) {
+        this._target.addEventListener('mousedown', this._mouseDownHandler.bind(this));
+      }
+
+      this._initPinch(); // Hey mobile Safari, what's up?
+      // If mobile Safari doesn't have any touchmove handler with passive=false
+      // it treats a touchstart and the following touchmove events as cancelable=false,
+      // so we can't prevent them (as soon we subscribe on touchmove inside handler of touchstart).
+      // And we'll get scroll of the page along with chart's one instead of only chart's scroll.
+
+
+      this._target.addEventListener('touchmove', function () {}, {
+        passive: false
+      });
+    }
+  }, {
+    key: "_initPinch",
+    value: function _initPinch() {
+      var _this3 = this;
+
+      if (this._handler.pinchStartEvent === undefined && this._handler.pinchEvent === undefined && this._handler.pinchEndEvent === undefined) {
+        return;
+      }
+
+      this._target.addEventListener('touchstart', function (event) {
+        return _this3._checkPinchState(event.touches);
+      }, {
+        passive: true
+      });
+
+      this._target.addEventListener('touchmove', function (event) {
+        if (event.touches.length !== 2 || _this3._startPinchMiddlePoint === null) {
+          return;
+        }
+
+        if (_this3._handler.pinchEvent !== undefined) {
+          var currentDistance = getDistance(event.touches[0], event.touches[1]);
+          var scale = currentDistance / _this3._startPinchDistance;
+
+          _this3._handler.pinchEvent(_this3._startPinchMiddlePoint, scale);
+
+          preventDefault(event);
+        }
+      }, {
+        passive: false
+      });
+
+      this._target.addEventListener('touchend', function (event) {
+        _this3._checkPinchState(event.touches);
+      });
+    }
+  }, {
+    key: "_checkPinchState",
+    value: function _checkPinchState(touches) {
+      if (touches.length === 1) {
+        this._pinchPrevented = false;
+      }
+
+      if (touches.length !== 2 || this._pinchPrevented || this._longTapActive) {
+        this._stopPinch();
+      } else {
+        this._startPinch(touches);
+      }
+    }
+  }, {
+    key: "_startPinch",
+    value: function _startPinch(touches) {
+      var box = getBoundingClientRect(this._target);
+      this._startPinchMiddlePoint = {
+        x: (touches[0].clientX - box.left + (touches[1].clientX - box.left)) / 2,
+        y: (touches[0].clientY - box.top + (touches[1].clientY - box.top)) / 2
+      };
+      this._startPinchDistance = getDistance(touches[0], touches[1]);
+
+      if (this._handler.pinchStartEvent !== undefined) {
+        this._handler.pinchStartEvent();
+      }
+
+      this._clearLongTapTimeout();
+    }
+  }, {
+    key: "_stopPinch",
+    value: function _stopPinch() {
+      if (this._startPinchMiddlePoint === null) {
+        return;
+      }
+
+      this._startPinchMiddlePoint = null;
+
+      if (this._handler.pinchEndEvent !== undefined) {
+        this._handler.pinchEndEvent();
+      }
+    }
+  }, {
+    key: "_mouseLeaveHandler",
+    value: function _mouseLeaveHandler(event) {
+      if (this._unsubscribeMousemove) {
+        this._unsubscribeMousemove();
+      }
+
+      var compatEvent = this._makeCompatEvent(event);
+
+      this._processEvent(compatEvent, this._handler.mouseLeaveEvent);
+    }
+  }, {
+    key: "_longTapHandler",
+    value: function _longTapHandler(event) {
+      var compatEvent = this._makeCompatEvent(event);
+
+      this._processEvent(compatEvent, this._handler.longTapEvent);
+
+      this._cancelClick = true; // long tap is active untill touchend event with 0 touches occured
+
+      this._longTapActive = true;
+    }
+  }, {
+    key: "_processEvent",
+    value: function _processEvent(event, callback) {
+      if (!callback) {
+        return;
+      }
+
+      callback.call(this._handler, event);
+    }
+  }, {
+    key: "_makeCompatEvent",
+    value: function _makeCompatEvent(event) {
+      // TouchEvent has no clientX/Y coordinates:
+      // We have to use the last Touch instead
+      var eventLike;
+
+      if ('touches' in event && event.touches.length) {
+        eventLike = event.touches[0];
+      } else if ('changedTouches' in event && event.changedTouches.length) {
+        eventLike = event.changedTouches[0];
+      } else {
+        eventLike = event;
+      }
+
+      var box = getBoundingClientRect(this._target);
+      return {
+        clientX: eventLike.clientX,
+        clientY: eventLike.clientY,
+        pageX: eventLike.pageX,
+        pageY: eventLike.pageY,
+        screenX: eventLike.screenX,
+        screenY: eventLike.screenY,
+        localX: eventLike.clientX - box.left,
+        localY: eventLike.clientY - box.top,
+        ctrlKey: event.ctrlKey,
+        altKey: event.altKey,
+        shiftKey: event.shiftKey,
+        metaKey: event.metaKey,
+        type: event.type.startsWith('mouse') ? 'mouse' : 'touch',
+        target: eventLike.target,
+        view: event.view
+      };
+    }
+  }]);
+
+  return EventBase;
+}();
+
+var CrossHairEvent =
+/*#__PURE__*/
+function () {
+  function CrossHairEvent(target, chartData, tag) {
+    _classCallCheck(this, CrossHairEvent);
+
+    this._chartData = chartData;
+    this._tag = tag;
+    this._event = new EventBase(target, {
+      mouseLeaveEvent: this._eventLeave.bind(this),
+      mouseMoveEvent: this._eventMove.bind(this)
+    }, {
+      treatVertTouchDragAsPageScroll: true,
+      treatHorzTouchDragAsPageScroll: true
+    });
+  }
+
+  _createClass(CrossHairEvent, [{
+    key: "_eventLeave",
+    value: function _eventLeave() {
+      this._chartData.setCrossHairSeriesTag(null);
+    }
+  }, {
+    key: "_eventMove",
+    value: function _eventMove(event) {
+      this._chartData.setCrossHairPoint({
+        x: event.localX,
+        y: event.localY
+      });
+
+      this._chartData.setCrossHairSeriesTag(this._tag);
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this._event.destroy();
+    }
+  }]);
+
+  return CrossHairEvent;
+}();
+
+/**
+ * 格式化值
+ * @param data
+ * @param key
+ * @param defaultValue
+ * @returns {string|*}
+ */
+
+function formatValue(data, key) {
+  var defaultValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '--';
+
+  if (data && isObject(data)) {
+    var value = data[key];
+
+    if (value || value === 0 || value === false) {
+      return value;
+    }
+  }
+
+  return defaultValue;
+}
+/**
+ * 格式化时间
+ * @param timestamp
+ * @param format
+ * @returns {string}
+ */
+
+function formatDate(timestamp, format) {
+  if (timestamp && isNumber(timestamp)) {
+    var date = new Date(timestamp);
+    var year = date.getFullYear().toString();
+    var month = (date.getMonth() + 1).toString();
+    var day = date.getDate().toString();
+    var hours = date.getHours().toString();
+    var minutes = date.getMinutes().toString();
+    var monthText = month.length === 1 ? "0".concat(month) : month;
+    var dayText = day.length === 1 ? "0".concat(day) : day;
+    var hourText = hours.length === 1 ? '0' + hours : hours;
+    var minuteText = minutes.length === 1 ? '0' + minutes : minutes;
+
+    switch (format) {
+      case 'YYYY':
+        {
+          return year;
+        }
+
+      case 'YYYY-MM':
+        {
+          return "".concat(year, "-").concat(monthText);
+        }
+
+      case 'YYYY-MM-DD':
+        {
+          return "".concat(year, "-").concat(monthText, "-").concat(dayText);
+        }
+
+      case 'YYYY-MM-DD hh:mm':
+        {
+          return "".concat(year, "-").concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
+        }
+
+      case 'MM-DD':
+        {
+          return "".concat(monthText, "-").concat(dayText);
+        }
+
+      case 'hh:mm':
+        {
+          return "".concat(hourText, ":").concat(minuteText);
+        }
+
+      default:
+        {
+          return "".concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
+        }
+    }
+  }
+
+  return '--';
+}
+/**
+ * 格式化精度
+ */
+
+function formatPrecision(value) {
+  var precision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  var v = +value;
+
+  if ((v || v === 0) && isNumber(v)) {
+    return value.toFixed(precision);
+  }
+
+  return "".concat(v);
+}
+/**
+ * 格式化大数据
+ * @param value
+ */
+
+function formatBigNumber(value) {
+  if (isNumber(value)) {
+    if (value > 50000) {
+      return "".concat(+(value / 1000).toFixed(1), "K");
+    }
+
+    if (value > 5000000) {
+      return "".concat(+(value / 1000000).toFixed(3), "M");
+    }
+
+    return "".concat(value);
+  }
+
+  return '--';
+}
+
+var TechnicalIndicatorFloatLayerView =
+/*#__PURE__*/
+function (_View) {
+  _inherits(TechnicalIndicatorFloatLayerView, _View);
+
+  function TechnicalIndicatorFloatLayerView(container, chartData, xAxis, yAxis, additionalDataProvider) {
+    var _this;
+
+    _classCallCheck(this, TechnicalIndicatorFloatLayerView);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TechnicalIndicatorFloatLayerView).call(this, container, chartData));
+    _this._xAxis = xAxis;
+    _this._yAxis = yAxis;
+    _this._additionalDataProvider = additionalDataProvider;
+    _this._crossHairEvent = new CrossHairEvent(_this._canvas, chartData, additionalDataProvider.tag());
+    return _this;
+  }
+
+  _createClass(TechnicalIndicatorFloatLayerView, [{
+    key: "_draw",
+    value: function _draw() {
+      var dataPos = this._chartData.getCrossHairDataPos();
+
+      var kLineData = this._chartData.dataList()[dataPos];
+
+      var x = this._xAxis.convertToPixel(dataPos);
+
+      this._drawCrossHairHorizontalLine();
+
+      this._drawCrossHairVerticalLine(kLineData, x);
+
+      var displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule;
+
+      if (displayRule === FloatLayerPromptDisplayRule.ALWAYS || displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairSeriesTag()) {
+        this._drawPrompt(kLineData, x);
+      }
+    }
+    /**
+     * 绘制提示
+     * @param kLineData
+     * @param x
+     * @private
+     */
+
+  }, {
+    key: "_drawPrompt",
+    value: function _drawPrompt(kLineData, x) {
+      this._drawTechnicalIndicatorPrompt(kLineData, x);
+    }
+    /**
+     * 绘制十字光标水平线
+     * @private
+     */
+
+  }, {
+    key: "_drawCrossHairHorizontalLine",
+    value: function _drawCrossHairHorizontalLine() {
+      if (this._chartData.crossHairSeriesTag() !== this._additionalDataProvider.tag()) {
+        return;
+      }
+
+      var crossHair = this._chartData.styleOptions().floatLayer.crossHair;
+
+      var crossHairHorizontal = crossHair.horizontal;
+      var crossHairHorizontalLine = crossHairHorizontal.line;
+
+      if (!crossHair.display || !crossHairHorizontal.display || !crossHairHorizontalLine.display) {
+        return;
+      }
+
+      var crossHairPoint = this._chartData.crossHairPoint();
+
+      if (!crossHairPoint) {
+        return;
+      } // 绘制十字光标水平线
+
+
+      this._ctx.lineWidth = crossHairHorizontalLine.size;
+      this._ctx.strokeStyle = crossHairHorizontalLine.color;
+
+      if (crossHairHorizontalLine.style === LineStyle.DASH) {
+        this._ctx.setLineDash(crossHairHorizontalLine.dashValue);
+      }
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(0, crossHairPoint.y);
+
+      this._ctx.lineTo(this._width, crossHairPoint.y);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+
+      this._ctx.setLineDash([]);
+    }
+    /**
+     * 绘制十字光标垂直线
+     * @param kLineData
+     * @param x
+     * @private
+     */
+
+  }, {
+    key: "_drawCrossHairVerticalLine",
+    value: function _drawCrossHairVerticalLine(kLineData, x) {
+      if (!this._chartData.crossHairSeriesTag()) {
+        return;
+      }
+
+      var crossHair = this._chartData.styleOptions().floatLayer.crossHair;
+
+      var crossHairVertical = crossHair.vertical;
+      var crossHairVerticalLine = crossHairVertical.line;
+
+      if (!crossHair.display || !crossHairVertical.display || !crossHairVerticalLine.display) {
+        return;
+      }
+
+      if (!kLineData) {
+        return;
+      }
+
+      this._ctx.lineWidth = crossHairVerticalLine.size;
+      this._ctx.strokeStyle = crossHairVerticalLine.color;
+
+      if (crossHairVerticalLine.style === LineStyle.DASH) {
+        this._ctx.setLineDash(crossHairVerticalLine.dashValue);
+      }
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(x, 0);
+
+      this._ctx.lineTo(x, this._height);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+
+      this._ctx.setLineDash([]);
+    }
+    /**
+     * 绘制指标提示
+     * @param kLineData
+     * @param x
+     * @param offsetTop
+     * @private
+     */
+
+  }, {
+    key: "_drawTechnicalIndicatorPrompt",
+    value: function _drawTechnicalIndicatorPrompt(kLineData, x) {
+      var offsetTop = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+      var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
+
+      var data = this._getTechnicalIndicatorPromptData(kLineData);
+
+      var colors = technicalIndicatorOptions.line.colors;
+
+      this._drawTechnicalIndicatorPromptText(data, colors, offsetTop);
+
+      this._drawTechnicalIndicatorPromptPoint(data.values, colors, x);
+    }
+    /**
+     * 绘制指标提示文字
+     * @param data
+     * @param colors
+     * @param offsetTop
+     * @private
+     */
+
+  }, {
+    key: "_drawTechnicalIndicatorPromptText",
+    value: function _drawTechnicalIndicatorPromptText(data, colors, offsetTop) {
+      var floatLayerPromptTechnicalIndicatorText = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.text;
+
+      var nameText = data.name;
+      var labels = data.labels;
+      var values = data.values;
+      var textMarginLeft = floatLayerPromptTechnicalIndicatorText.marginLeft;
+      var textMarginRight = floatLayerPromptTechnicalIndicatorText.marginRight;
+      var labelX = textMarginLeft;
+      var labelY = floatLayerPromptTechnicalIndicatorText.marginTop + offsetTop;
+      var textSize = floatLayerPromptTechnicalIndicatorText.size;
+      var textColor = floatLayerPromptTechnicalIndicatorText.color;
+      var colorSize = colors.length;
+      this._ctx.textBaseline = 'top';
+      this._ctx.font = getFont(textSize);
+      var nameTextWidth = calcTextWidth(this._ctx, nameText);
+      this._ctx.fillStyle = textColor;
+
+      this._ctx.fillText(nameText, labelX, labelY);
+
+      labelX += textMarginLeft + nameTextWidth;
+
+      for (var i = 0; i < labels.length; i++) {
+        var text = "".concat(labels[i].toUpperCase(), ": ").concat(values[i] || '--');
+        var textWidth = calcTextWidth(this._ctx, text);
+        this._ctx.fillStyle = colors[i % colorSize] || textColor;
+
+        this._ctx.fillText(text, labelX, labelY);
+
+        labelX += textMarginLeft + textMarginRight + textWidth;
+      }
+    }
+    /**
+     * 绘制指标提示点
+     * @param values
+     * @param colors
+     * @param x
+     * @private
+     */
+
+  }, {
+    key: "_drawTechnicalIndicatorPromptPoint",
+    value: function _drawTechnicalIndicatorPromptPoint(values, colors, x) {
+      var technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType();
+
+      if (!this._chartData.crossHairSeriesTag() || technicalIndicatorType === TechnicalIndicatorType.SAR) {
+        return;
+      }
+
+      var colorSize = colors.length;
+      var valueSize = technicalIndicatorType === TechnicalIndicatorType.MACD || technicalIndicatorType === TechnicalIndicatorType.VOL ? values.length - 1 : values.length;
+
+      for (var i = 0; i < valueSize; i++) {
+        var value = values[i];
+
+        if (value || value === 0) {
+          var y = this._yAxis.convertToPixel(value);
+
+          this._ctx.fillStyle = colors[i % colorSize];
+
+          this._ctx.beginPath();
+
+          this._ctx.arc(x, y, 3, 0, Math.PI * 2);
+
+          this._ctx.closePath();
+
+          this._ctx.fill();
+        }
+      }
+    }
+    /**
+     * 获取需要绘制的指标提示数据
+     * @param kLineData
+     * @returns {{values: Array, labels: Array}}
+     */
+
+  }, {
+    key: "_getTechnicalIndicatorPromptData",
+    value: function _getTechnicalIndicatorPromptData(kLineData) {
+      var technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType();
+
+      var params = this._chartData.technicalIndicatorParamOptions()[technicalIndicatorType] || [];
+      var values = [];
+      var labels = [];
+
+      switch (technicalIndicatorType) {
+        case TechnicalIndicatorType.MA:
+          {
+            params.forEach(function (p) {
+              labels.push("ma".concat(p));
+            });
+            break;
+          }
+
+        case TechnicalIndicatorType.VOL:
+          {
+            params.forEach(function (p) {
+              labels.push("ma".concat(p));
+            });
+            labels.push('num');
+            break;
+          }
+
+        case TechnicalIndicatorType.MACD:
+          {
+            labels = ['diff', 'dea', 'macd'];
+            break;
+          }
+
+        case TechnicalIndicatorType.BOLL:
+          {
+            labels = ['up', 'mid', 'dn'];
+            break;
+          }
+
+        case TechnicalIndicatorType.BIAS:
+          {
+            params.forEach(function (p) {
+              labels.push("bias".concat(p));
+            });
+            break;
+          }
+
+        case TechnicalIndicatorType.BRAR:
+          {
+            labels = ['br', 'ar'];
+            break;
+          }
+
+        case TechnicalIndicatorType.CCI:
+          {
+            labels = ['cci'];
+            break;
+          }
+
+        case TechnicalIndicatorType.CR:
+          {
+            labels = ['cr', 'ma1', 'ma2', 'ma3', 'ma4'];
+            break;
+          }
+
+        case TechnicalIndicatorType.DMA:
+          {
+            labels = ['dif', 'difMa'];
+            break;
+          }
+
+        case TechnicalIndicatorType.DMI:
+          {
+            labels = ['mdi', 'pdi', 'adx', 'adxr'];
+            break;
+          }
+
+        case TechnicalIndicatorType.KDJ:
+          {
+            labels = ['k', 'd', 'j'];
+            break;
+          }
+
+        case TechnicalIndicatorType.RSI:
+          {
+            params.forEach(function (p) {
+              labels.push("rsi".concat(p));
+            });
+            break;
+          }
+
+        case TechnicalIndicatorType.PSY:
+          {
+            labels = ['psy'];
+            break;
+          }
+
+        case TechnicalIndicatorType.TRIX:
+          {
+            labels = ['trix', 'maTrix'];
+            break;
+          }
+
+        case TechnicalIndicatorType.OBV:
+          {
+            labels = ['obv', 'maObv'];
+            break;
+          }
+
+        case TechnicalIndicatorType.VR:
+          {
+            labels = ['vr', 'maVr'];
+            break;
+          }
+
+        case TechnicalIndicatorType.WR:
+          {
+            labels = ['wr1', 'wr2', 'wr3'];
+            break;
+          }
+
+        case TechnicalIndicatorType.MTM:
+          {
+            labels = ['mtm', 'mtmMa'];
+            break;
+          }
+
+        case TechnicalIndicatorType.EMV:
+          {
+            labels = ['emv', 'maEmv'];
+            break;
+          }
+
+        case TechnicalIndicatorType.SAR:
+          {
+            labels = ['sar'];
+            break;
+          }
+      }
+
+      var name = '';
+
+      if (labels.length > 0) {
+        name = "".concat(technicalIndicatorType);
+
+        if (params && isArray(params) && params.length > 0) {
+          name = "".concat(name, "(").concat(params.join(','), ")");
+        }
+
+        var indicatorData = formatValue(kLineData, technicalIndicatorType.toLowerCase());
+        labels.forEach(function (label) {
+          values.push(formatValue(indicatorData, label));
+        });
+
+        var decimal = this._chartData.precisionOptions()[technicalIndicatorType];
+
+        values.forEach(function (value, index) {
+          values[index] = formatPrecision(value, decimal);
+        });
+      }
+
+      return {
+        labels: labels,
+        values: values,
+        name: name
+      };
+    }
+  }]);
+
+  return TechnicalIndicatorFloatLayerView;
+}(View);
+
+var TechnicalIndicatorWidget =
+/*#__PURE__*/
+function (_Widget) {
+  _inherits(TechnicalIndicatorWidget, _Widget);
+
+  function TechnicalIndicatorWidget() {
+    _classCallCheck(this, TechnicalIndicatorWidget);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(TechnicalIndicatorWidget).apply(this, arguments));
+  }
+
+  _createClass(TechnicalIndicatorWidget, [{
+    key: "_createMainView",
+    value: function _createMainView(container, props) {
+      return new TechnicalIndicatorView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
+    }
+  }, {
+    key: "_createFloatLayerView",
+    value: function _createFloatLayerView(container, props) {
+      return new TechnicalIndicatorFloatLayerView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
+    }
+  }]);
+
+  return TechnicalIndicatorWidget;
+}(Widget);
+
+var AxisView =
+/*#__PURE__*/
+function (_View) {
+  _inherits(AxisView, _View);
+
+  function AxisView(container, chartData, axis) {
+    var _this;
+
+    _classCallCheck(this, AxisView);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(AxisView).call(this, container, chartData));
+    _this._axis = axis;
+    return _this;
+  }
+
+  _createClass(AxisView, [{
+    key: "_draw",
+    value: function _draw() {
+      this._drawAxisLine();
+
+      this._drawTickLines();
+
+      this._drawTickLabels();
+    }
+    /**
+     * 绘制轴线
+     * @private
+     */
+
+  }, {
+    key: "_drawAxisLine",
+    value: function _drawAxisLine() {}
+    /**
+     * 绘制tick线
+     * @private
+     */
+
+  }, {
+    key: "_drawTickLines",
+    value: function _drawTickLines() {}
+    /**
+     * 绘制tick文字
+     * @private
+     */
+
+  }, {
+    key: "_drawTickLabels",
+    value: function _drawTickLabels() {}
+  }]);
+
+  return AxisView;
+}(View);
+
+var YAxisView =
+/*#__PURE__*/
+function (_AxisView) {
+  _inherits(YAxisView, _AxisView);
+
+  function YAxisView() {
+    _classCallCheck(this, YAxisView);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(YAxisView).apply(this, arguments));
+  }
+
+  _createClass(YAxisView, [{
+    key: "_draw",
+    value: function _draw() {
+      _get(_getPrototypeOf(YAxisView.prototype), "_draw", this).call(this);
+
+      this._drawLastPriceLabel();
+    }
+  }, {
+    key: "_drawAxisLine",
+    value: function _drawAxisLine() {
+      var yAxis = this._chartData.styleOptions().yAxis;
+
+      if (!yAxis.display || !yAxis.axisLine.display) {
+        return;
+      }
+
+      this._ctx.strokeStyle = yAxis.axisLine.color;
+      this._ctx.lineWidth = yAxis.axisLine.size;
+
+      this._ctx.beginPath();
+
+      if (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE) {
+        this._ctx.moveTo(0, 0);
+
+        this._ctx.lineTo(0, this._height);
+      } else {
+        this._ctx.moveTo(this._width, 0);
+
+        this._ctx.lineTo(this._width, this._height);
+      }
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+    }
+  }, {
+    key: "_drawTickLines",
+    value: function _drawTickLines() {
+      var _this = this;
+
+      var yAxis = this._chartData.styleOptions().yAxis;
+
+      var tickText = yAxis.tickText;
+
+      if (!yAxis.display || !tickText.display) {
+        return;
+      }
+
+      var tickLine = yAxis.tickLine;
+      this._ctx.lineWidth = tickLine.size;
+      this._ctx.strokeStyle = tickLine.color;
+      var tickLineLength = tickLine.length;
+      var startX;
+      var endX;
+      var tickTextPosition = tickText.position;
+
+      if (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE) {
+        startX = 0;
+
+        if (yAxis.axisLine.display) {
+          startX += yAxis.axisLine.size;
+        }
+
+        endX = startX + tickLineLength;
+      } else {
+        startX = this._width;
+
+        if (yAxis.axisLine.display) {
+          startX -= yAxis.axisLine.size;
+        }
+
+        endX = startX - tickLineLength;
+      }
+
+      this._axis.ticks().forEach(function (tick) {
+        var y = tick.y;
+
+        _this._ctx.beginPath();
+
+        _this._ctx.moveTo(startX, y);
+
+        _this._ctx.lineTo(endX, y);
+
+        _this._ctx.stroke();
+
+        _this._ctx.closePath();
+      });
+    }
+  }, {
+    key: "_drawTickLabels",
+    value: function _drawTickLabels() {
+      var _this2 = this;
+
+      var yAxis = this._chartData.styleOptions().yAxis;
+
+      var tickText = yAxis.tickText;
+
+      if (!yAxis.display || !tickText.display) {
+        return;
+      }
+
+      var tickLine = yAxis.tickLine;
+      var tickTextPosition = tickText.position;
+      var tickLineDisplay = tickLine.display;
+      var tickLineLength = tickLine.length;
+      var tickTextMargin = tickText.margin;
+      var labelX;
+
+      if (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE) {
+        labelX = tickTextMargin;
+
+        if (yAxis.axisLine.display) {
+          labelX += yAxis.axisLine.size;
+        }
+
+        if (tickLineDisplay) {
+          labelX += tickLineLength;
+        }
+
+        this._ctx.textAlign = 'left';
+      } else {
+        labelX = this.width - tickTextMargin;
+
+        if (yAxis.axisLine.display) {
+          labelX -= yAxis.axisLine.size;
+        }
+
+        if (tickLineDisplay) {
+          labelX -= tickLineLength;
+        }
+
+        this._ctx.textAlign = 'right';
+      }
+
+      var textSize = tickText.size;
+      this._ctx.textBaseline = 'middle';
+      this._ctx.font = getFont(textSize);
+      this._ctx.fillStyle = tickText.color;
+
+      this._axis.ticks().forEach(function (tick) {
+        var text = formatBigNumber(tick.v);
+
+        _this2._ctx.fillText(text, labelX, tick.y);
+      });
+
+      this._ctx.textAlign = 'left';
+    }
+    /**
+     * 绘制最新价文字
+     * @private
+     */
+
+  }, {
+    key: "_drawLastPriceLabel",
+    value: function _drawLastPriceLabel() {
+      if (!this._axis.isCandleStickYAxis()) {
+        return;
+      }
+
+      var priceMark = this._chartData.styleOptions().candleStick.priceMark;
+
+      var lastPriceMark = priceMark.last;
+
+      var dataList = this._chartData.dataList();
+
+      var dataSize = dataList.length;
+
+      if (!priceMark.display || !lastPriceMark.display || !lastPriceMark.text.display || dataSize === 0) {
+        return;
+      }
+
+      var preKLineData = dataList[dataSize - 2] || {};
+      var preLastPrice = preKLineData.close || -Infinity;
+      var lastPrice = dataList[dataSize - 1].close;
+
+      var priceY = this._axis.convertToPixel(lastPrice);
+
+      priceY = +Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98)).toFixed(0);
+      var color = lastPrice > preLastPrice ? lastPriceMark.upColor : lastPriceMark.downColor;
+      var priceMarkText = lastPriceMark.text;
+      var text = formatPrecision(lastPrice, this._chartData.precisionOptions().price);
+      var textSize = lastPriceMark.text.size;
+      this._ctx.font = getFont(textSize);
+      var rectWidth = calcTextWidth(this._ctx, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight;
+      var rectHeight = priceMarkText.paddingTop + textSize + priceMarkText.paddingBottom;
+      var rectStartX;
+
+      var yAxis = this._chartData.styleOptions().yAxis;
+
+      if (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE) {
+        rectStartX = 0;
+      } else {
+        rectStartX = this._width - rectWidth;
+      }
+
+      this._ctx.fillStyle = color;
+
+      this._ctx.fillRect(rectStartX, priceY - priceMarkText.paddingTop - textSize / 2, rectWidth, rectHeight);
+
+      this._ctx.fillStyle = priceMarkText.color;
+      this._ctx.textBaseline = 'middle';
+
+      this._ctx.fillText(text, rectStartX + priceMarkText.paddingLeft, priceY);
+    }
+  }]);
+
+  return YAxisView;
+}(AxisView);
+
+var AxisFloatLayerView =
+/*#__PURE__*/
+function (_View) {
+  _inherits(AxisFloatLayerView, _View);
+
+  function AxisFloatLayerView(container, chartData, axis, additionalDataProvider) {
+    var _this;
+
+    _classCallCheck(this, AxisFloatLayerView);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(AxisFloatLayerView).call(this, container, chartData));
+    _this._axis = axis;
+    _this._additionalDataProvider = additionalDataProvider;
+    return _this;
+  }
+
+  _createClass(AxisFloatLayerView, [{
+    key: "_draw",
+    value: function _draw() {
+      this._drawCrossHairLabel();
+    }
+    /**
+     * 绘制十字光标文字
+     * @private
+     */
+
+  }, {
+    key: "_drawCrossHairLabel",
+    value: function _drawCrossHairLabel() {}
+  }]);
+
+  return AxisFloatLayerView;
+}(View);
+
+var YAxisFloatLayerView =
+/*#__PURE__*/
+function (_AxisFloatLayerView) {
+  _inherits(YAxisFloatLayerView, _AxisFloatLayerView);
+
+  function YAxisFloatLayerView() {
+    _classCallCheck(this, YAxisFloatLayerView);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(YAxisFloatLayerView).apply(this, arguments));
+  }
+
+  _createClass(YAxisFloatLayerView, [{
+    key: "_drawCrossHairLabel",
+    value: function _drawCrossHairLabel() {
+      if (this._chartData.crossHairSeriesTag() !== this._additionalDataProvider.tag()) {
+        return;
+      }
+
+      var crossHair = this._chartData.styleOptions().floatLayer.crossHair;
+
+      var crossHairHorizontal = crossHair.horizontal;
+      var crossHairHorizontalText = crossHairHorizontal.text;
+
+      if (!crossHair.display || !crossHairHorizontal.display || !crossHairHorizontalText.display) {
+        return;
+      }
+
+      var crossHairPoint = this._chartData.crossHairPoint();
+
+      if (!crossHairPoint) {
+        return;
+      }
+
+      var price = this._axis.convertFromPixel(crossHairPoint.y);
+
+      var precision = this._chartData.precisionOptions[this._axis.isCandleStickYAxis() ? 'price' : this._additionalDataProvider.technicalIndicatorType()];
+      var yAxisDataLabel = formatPrecision(price, precision);
+      var textSize = crossHairHorizontalText.size;
+      this._ctx.font = getFont(textSize);
+      var yAxisDataLabelWidth = calcTextWidth(this._ctx, yAxisDataLabel);
+      var rectStartX;
+      var paddingLeft = crossHairHorizontalText.paddingLeft;
+      var paddingRight = crossHairHorizontalText.paddingRight;
+      var paddingTop = crossHairHorizontalText.paddingTop;
+      var paddingBottom = crossHairHorizontalText.paddingBottom;
+      var borderSize = crossHairHorizontalText.borderSize;
+      var rectWidth = yAxisDataLabelWidth + borderSize * 2 + paddingLeft + paddingRight;
+      var rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom;
+
+      var yAxis = this._chartData.styleOptions().yAxis;
+
+      if (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE) {
+        rectStartX = 0;
+      } else {
+        rectStartX = this._width - rectWidth;
+      }
+
+      var rectY = crossHairPoint.y - borderSize - paddingTop - textSize / 2; // 绘制y轴文字外的边框
+
+      this._ctx.fillStyle = crossHairHorizontalText.backgroundColor;
+
+      this._ctx.fillRect(rectStartX, rectY, rectWidth, rectHeight);
+
+      this._ctx.lineWidth = borderSize;
+      this._ctx.strokeStyle = crossHairHorizontalText.borderColor;
+
+      this._ctx.strokeRect(rectStartX, rectY, rectWidth, rectHeight);
+
+      this._ctx.textBaseline = 'middle';
+      this._ctx.fillStyle = crossHairHorizontalText.color;
+
+      this._ctx.fillText(yAxisDataLabel, rectStartX + borderSize + paddingLeft, crossHairPoint.y);
+    }
+  }]);
+
+  return YAxisFloatLayerView;
+}(AxisFloatLayerView);
+
+var YAxisWidget =
+/*#__PURE__*/
+function (_Widget) {
+  _inherits(YAxisWidget, _Widget);
+
+  function YAxisWidget() {
+    _classCallCheck(this, YAxisWidget);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(YAxisWidget).apply(this, arguments));
+  }
+
+  _createClass(YAxisWidget, [{
+    key: "_createMainView",
+    value: function _createMainView(container, props) {
+      return new YAxisView(container, props.chartData, props.yAxis);
+    }
+  }, {
+    key: "_createFloatLayerView",
+    value: function _createFloatLayerView(container, props) {
+      return new YAxisFloatLayerView(container, props.chartData, props.yAxis, props.additionalDataProvider);
+    }
+  }]);
+
+  return YAxisWidget;
+}(Widget);
+
+var Axis =
+/*#__PURE__*/
+function () {
+  function Axis(chartData) {
+    _classCallCheck(this, Axis);
+
+    this._chartData = chartData;
+    this._width = 0;
+    this._height = 0;
+    this._minValue = 0;
+    this._maxValue = 0;
+    this._range = 0;
+    this._ticks = [];
+  }
+  /**
+   * 设置尺寸
+   * @param width
+   * @param height
+   */
+
+
+  _createClass(Axis, [{
+    key: "setSize",
+    value: function setSize(width, height) {
+      this._width = width;
+      this._height = height;
+    }
+    /**
+     * 获取ticks
+     * @returns {[]|*[]}
+     */
+
+  }, {
+    key: "ticks",
+    value: function ticks() {
+      return this._ticks;
+    }
+    /**
+     * 计算轴
+     */
+
+  }, {
+    key: "computeAxis",
+    value: function computeAxis() {
+      var _this$_computeMinMaxV = this._computeMinMaxValue(),
+          min = _this$_computeMinMaxV.min,
+          max = _this$_computeMinMaxV.max,
+          range = _this$_computeMinMaxV.range;
+
+      this._minValue = min;
+      this._maxValue = max;
+      this._range = range;
+      this._ticks = this._computeOptimalTicks(this._computeTicks());
+    }
+    /**
+     * 计算最大最小值
+     */
+
+  }, {
+    key: "_computeMinMaxValue",
+    value: function _computeMinMaxValue() {}
+    /**
+     * 计算最佳的tick
+     * @param ticks
+     */
+
+  }, {
+    key: "_computeOptimalTicks",
+    value: function _computeOptimalTicks(ticks) {}
+    /**
+     * 计算轴上的tick值
+     */
+
+  }, {
+    key: "_computeTicks",
+    value: function _computeTicks() {
+      var ticks = [];
+
+      if (this._range >= 0) {
+        var interval = +this._nice(this._range / 8.0);
+
+        var precision = this._getIntervalPrecision(interval);
+
+        var first = +this._round(Math.ceil(this._minValue / interval) * interval, precision);
+        var last = +this._round(Math.floor(this._maxValue / interval) * interval, precision);
+        var n = 0;
+        var f = first;
+
+        if (interval !== 0) {
+          while (f <= +last) {
+            ++n;
+            f += interval;
+          }
+        }
+
+        f = first;
+
+        for (var i = 0; i < n; i++) {
+          ticks[i] = {
+            v: +f.toFixed(precision)
+          };
+          f += interval;
+        }
+      }
+
+      return ticks;
+    }
+  }, {
+    key: "_nice",
+    value: function _nice(value) {
+      var exponent = Math.floor(Math.log(value) / Math.log(10.0));
+      var exp10 = Math.pow(10.0, exponent);
+      var f = value / exp10; // 1 <= f < 10
+
+      var nf = 0;
+
+      if (f < 1) {
+        nf = 1;
+      } else if (f < 2) {
+        nf = 2;
+      } else if (f < 3) {
+        nf = 3;
+      } else if (f < 5) {
+        nf = 5;
+      } else {
+        nf = 10;
+      }
+
+      value = nf * exp10;
+      return exponent >= -20 ? +value.toFixed(exponent < 0 ? -exponent : 0) : value;
+    }
+  }, {
+    key: "_getIntervalPrecision",
+    value: function _getIntervalPrecision(value) {
+      var str = value.toString(); // Consider scientific notation: '3.4e-12' '3.4e+12'
+
+      var eIndex = str.indexOf('e');
+
+      if (eIndex > 0) {
+        var precision = +str.slice(eIndex + 1);
+        return precision < 0 ? -precision : 0;
+      } else {
+        var dotIndex = str.indexOf('.');
+        return dotIndex < 0 ? 0 : str.length - 1 - dotIndex;
+      }
+    }
+  }, {
+    key: "_round",
+    value: function _round(x, precision) {
+      if (precision == null) {
+        precision = 10;
+      } // Avoid range error
+
+
+      precision = Math.min(Math.max(0, precision), 20);
+      x = (+x).toFixed(precision);
+      return x;
+    }
+  }]);
+
+  return Axis;
+}();
+
+var YAxisType = {
+  CANDLE_STICK: 'candle_stick',
+  TECHNICAL_INDICATOR: 'technical_indicator'
+};
+
+var YAxis =
+/*#__PURE__*/
+function (_Axis) {
+  _inherits(YAxis, _Axis);
+
+  function YAxis(chartData, yAxisType) {
+    var _this;
+
+    _classCallCheck(this, YAxis);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(YAxis).call(this, chartData));
+    _this._yAxisType = yAxisType;
+    return _this;
+  }
+
+  _createClass(YAxis, [{
+    key: "_compareMinMax",
+    value: function _compareMinMax(kLineData, technicalIndicatorType, minMaxArray) {
+      var technicalIndicatorData = formatValue(kLineData, technicalIndicatorType.toLowerCase(), {});
+      Object.keys(technicalIndicatorData).forEach(function (key) {
+        var value = technicalIndicatorData[key];
+
+        if (value || value === 0) {
+          minMaxArray[0] = Math.min(minMaxArray[0], value);
+          minMaxArray[1] = Math.max(minMaxArray[1], value);
+        }
+      });
+
+      if (technicalIndicatorType === TechnicalIndicatorType.BOLL || technicalIndicatorType === TechnicalIndicatorType.SAR) {
+        minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low);
+        minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high);
+      }
+
+      return minMaxArray;
+    }
+  }, {
+    key: "_computeMinMaxValue",
+    value: function _computeMinMaxValue() {
+      var min = this._minValue;
+      var max = this._maxValue;
+
+      if (min === Infinity || max === -Infinity || max === 0 && min === 0) {
+        return {
+          min: 0,
+          max: 0,
+          range: 0
+        };
+      }
+
+      var range = Math.abs(max - min);
+
+      if (range === 0) {
+        max += 1;
+        min -= 1;
+        range = Math.abs(max - min);
+      } // 保证每次图形绘制上下都留间隙
+
+
+      min = min - range / 100.0 * 10.0;
+      max = max + range / 100.0 * 20.0;
+      range = Math.abs(max - min);
+      return {
+        min: min,
+        max: max,
+        range: range
+      };
+    }
+  }, {
+    key: "_computeOptimalTicks",
+    value: function _computeOptimalTicks(ticks) {
+      var optimalTicks = [];
+      var tickLength = ticks.length;
+
+      if (tickLength > 0) {
+        var textHeight = this._chartData.styleOptions().xAxis.tickText.size;
+
+        var y = this.convertToPixel(ticks[0].v);
+        var tickCountDif = 1;
+
+        if (tickLength > 1) {
+          var nextY = this.convertToPixel(ticks[1].v);
+          var yDif = Math.abs(nextY - y);
+
+          if (yDif < textHeight * 2) {
+            tickCountDif = Math.ceil(textHeight * 2 / yDif);
+          }
+        }
+
+        for (var i = 0; i < tickLength; i += tickCountDif) {
+          var v = ticks[i].v;
+
+          var _y = this.convertToPixel(v);
+
+          if (_y > textHeight && _y < this._height - textHeight) {
+            optimalTicks.push({
+              v: v,
+              y: _y
+            });
           }
         }
       }
+
+      return optimalTicks;
     }
     /**
-     * 查找没有绘制时鼠标按下时在哪条数据上
-     * @param e
+     * 计算最大最小值
+     * @param technicalIndicatorType
+     * @param isRealTime
      */
 
   }, {
-    key: "findNoneGraphicMarkMouseDownActiveData",
-    value: function findNoneGraphicMarkMouseDownActiveData(e) {
-      var _this3 = this;
+    key: "calcMinMaxValue",
+    value: function calcMinMaxValue(technicalIndicatorType, isRealTime) {
+      var dataList = this._chartData.dataList();
 
-      var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
-      var keys = Object.keys(this.storage.graphicMarkDatas);
+      var from = this._chartData.from();
 
-      var _loop = function _loop(i) {
-        var key = keys[i];
+      var to = this._chartData.to();
 
-        switch (key) {
-          case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
-          case GraphicMarkType.PRICE_LINE:
-            {
-              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
-                return checkPointOnStraightLine(xyPoints[0], {
-                  x: _this3.handler.contentRight(),
-                  y: xyPoints[0].y
-                }, point);
-              })) {
-                return {
-                  v: void 0
-                };
-              }
+      var isShowAverageLine = this._chartData.styleOptions().realTime.averageLine.display;
 
-              break;
-            }
+      var minMaxArray = [Infinity, -Infinity];
 
-          case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
-            {
-              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
-                return checkPointOnStraightLine(xyPoints[0], {
-                  x: xyPoints[0].x,
-                  y: _this3.handler.contentBottom()
-                }, point);
-              })) {
-                return {
-                  v: void 0
-                };
-              }
+      if (isRealTime) {
+        for (var i = from; i < to; i++) {
+          var kLineData = dataList[i];
+          var minCompareArray = [kLineData.close, minMaxArray[0]];
+          var maxCompareArray = [kLineData.close, minMaxArray[1]];
 
-              break;
-            }
+          if (isShowAverageLine) {
+            minCompareArray.push(kLineData.average);
+            maxCompareArray.push(kLineData.average);
+          }
 
-          case GraphicMarkType.STRAIGHT_LINE:
-            {
-              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
-                return checkPointOnStraightLine(xyPoints[0], xyPoints[1], point);
-              })) {
-                return {
-                  v: void 0
-                };
-              }
-
-              break;
-            }
-
-          case GraphicMarkType.HORIZONTAL_RAY_LINE:
-          case GraphicMarkType.VERTICAL_RAY_LINE:
-          case GraphicMarkType.RAY_LINE:
-            {
-              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
-                return checkPointOnRayLine(xyPoints[0], xyPoints[1], point);
-              })) {
-                return {
-                  v: void 0
-                };
-              }
-
-              break;
-            }
-
-          case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
-          case GraphicMarkType.VERTICAL_SEGMENT_LINE:
-          case GraphicMarkType.SEGMENT_LINE:
-            {
-              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
-                return checkPointOnSegmentLine(xyPoints[0], xyPoints[1], point);
-              })) {
-                return {
-                  v: void 0
-                };
-              }
-
-              break;
-            }
-
-          case GraphicMarkType.PRICE_CHANNEL_LINE:
-          case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
-          case GraphicMarkType.FIBONACCI_LINE:
-            {
-              if (_this3.realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
-                var linePoints = [];
-
-                switch (key) {
-                  case GraphicMarkType.PRICE_CHANNEL_LINE:
-                    {
-                      linePoints = getParallelLines(xyPoints, _this3.handler, true);
-                      break;
-                    }
-
-                  case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
-                    {
-                      linePoints = getParallelLines(xyPoints, _this3.handler);
-                      break;
-                    }
-
-                  case GraphicMarkType.FIBONACCI_LINE:
-                    {
-                      linePoints = getFibonacciLines(xyPoints, _this3.handler);
-                      break;
-                    }
-                }
-
-                var isOnGraphicMark = false;
-
-                for (var _i = 0; _i < linePoints.length; _i++) {
-                  var points = linePoints[_i];
-                  isOnGraphicMark = checkPointOnStraightLine(points[0], points[1], point);
-
-                  if (isOnGraphicMark) {
-                    return isOnGraphicMark;
-                  }
-                }
-
-                return isOnGraphicMark;
-              })) {
-                return {
-                  v: void 0
-                };
-              }
-
-              break;
-            }
+          minMaxArray[0] = Math.min.apply(null, minCompareArray);
+          minMaxArray[1] = Math.max.apply(null, maxCompareArray);
         }
-      };
+      } else {
+        for (var _i = from; _i < to; _i++) {
+          var _kLineData = dataList[_i];
 
-      for (var i = 0; i < keys.length; i++) {
-        var _ret = _loop(i);
+          this._compareMinMax(_kLineData, technicalIndicatorType, minMaxArray);
 
-        if (_typeof(_ret) === "object") return _ret.v;
+          if (this.isCandleStickYAxis()) {
+            minMaxArray[0] = Math.min(_kLineData.low, minMaxArray[0]);
+            minMaxArray[1] = Math.max(_kLineData.high, minMaxArray[1]);
+          }
+        }
+
+        if (technicalIndicatorType === TechnicalIndicatorType.VOL) {
+          minMaxArray[0] = 0;
+        }
+      }
+
+      if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
+        this._minValue = minMaxArray[0];
+        this._maxValue = minMaxArray[1];
       }
     }
     /**
-     * 查找没有绘制图时鼠标按下时落点在哪条数据上
-     * @param markKey
-     * @param point
-     * @param checkPointOnLine
+     * 是否是蜡烛图y轴组件
      * @returns {boolean}
      */
 
   }, {
-    key: "realFindNoneGraphicMarkMouseDownActiveData",
-    value: function realFindNoneGraphicMarkMouseDownActiveData(markKey, point, checkPointOnLine) {
-      var _this4 = this;
+    key: "isCandleStickYAxis",
+    value: function isCandleStickYAxis() {
+      return this._yAxisType === YAxisType.CANDLE_STICK;
+    }
+  }, {
+    key: "convertFromPixel",
+    value: function convertFromPixel(pixel) {
+      return (1.0 - pixel / this._height) * this._range + this._minValue;
+    }
+  }, {
+    key: "convertToPixel",
+    value: function convertToPixel(value) {
+      return Math.floor((1.0 - (value - this._minValue) / this._range) * this._height);
+    }
+  }]);
 
-      var graphicMarkData = this.storage.graphicMarkDatas[markKey];
-      graphicMarkData.forEach(function (data, index) {
-        var points = data.points;
-        var xyPoints = [];
-        var isOnCircle = false;
-        var pointIndex = -1;
-        points.forEach(function (p, i) {
-          var x = (p.xPos - _this4.storage.minPos) * _this4.storage.dataSpace;
+  return YAxis;
+}(Axis);
 
-          var y = _this4.yRender.getY(p.price);
+var TechnicalIndicatorSeries =
+/*#__PURE__*/
+function (_Series) {
+  _inherits(TechnicalIndicatorSeries, _Series);
 
-          xyPoints.push({
-            x: x,
-            y: y
-          });
-          var isOn = checkPointOnCircle({
-            x: x,
-            y: y
-          }, _this4.style.graphicMark.point.radius, point);
+  function TechnicalIndicatorSeries(props) {
+    var _this;
 
-          if (isOn) {
-            pointIndex = i;
-          }
+    _classCallCheck(this, TechnicalIndicatorSeries);
 
-          if (!isOnCircle) {
-            isOnCircle = isOn;
-          }
-        });
-        var isOnLine = checkPointOnLine(xyPoints, point);
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TechnicalIndicatorSeries).call(this, props));
+    _this._technicalIndicatorType = props.technicalIndicatorType || TechnicalIndicatorType.MACD;
 
-        if (isOnLine || isOnCircle) {
-          _this4.noneGraphicMarkMouseDownActiveData = {
-            markKey: markKey,
-            dataIndex: index,
-            onLine: isOnLine,
-            onCircle: isOnCircle,
-            pointIndex: pointIndex
-          };
-          return true;
+    _this._calcTechnicalIndicator();
+
+    return _this;
+  }
+
+  _createClass(TechnicalIndicatorSeries, [{
+    key: "_initBefore",
+    value: function _initBefore(props) {
+      this._tag = props.tag;
+      this._yAxis = this._createYAxis(props);
+    }
+  }, {
+    key: "_createYAxis",
+    value: function _createYAxis(props) {
+      return new YAxis(props.chartData, YAxisType.TECHNICAL_INDICATOR);
+    }
+  }, {
+    key: "_createMainWidget",
+    value: function _createMainWidget(container, props) {
+      return new TechnicalIndicatorWidget({
+        container: container,
+        chartData: props.chartData,
+        xAxis: props.xAxis,
+        yAxis: this._yAxis,
+        additionalDataProvider: {
+          technicalIndicatorType: this.technicalIndicatorType.bind(this),
+          tag: this.tag.bind(this)
         }
       });
+    }
+  }, {
+    key: "_createYAxisWidget",
+    value: function _createYAxisWidget(container, props) {
+      return new YAxisWidget({
+        container: container,
+        chartData: props.chartData,
+        yAxis: this._yAxis,
+        additionalDataProvider: {
+          technicalIndicatorType: this.technicalIndicatorType.bind(this),
+          tag: this.tag.bind(this)
+        }
+      });
+    }
+  }, {
+    key: "_computeAxis",
+    value: function _computeAxis() {
+      this._yAxis.calcMinMaxValue(this._technicalIndicatorType, this._isRealTime());
+
+      this._yAxis.computeAxis();
+    }
+  }, {
+    key: "_isRealTime",
+    value: function _isRealTime() {
       return false;
     }
     /**
-     * 鼠标移动事件
+     * 计算指标
+     * @private
      */
 
   }, {
-    key: "mouseMove",
-    value: function mouseMove(e) {
-      var point = getCanvasPoint(e, this.graphicMarkChart.canvasDom);
-      this.storage.graphicMarkPoint = _objectSpread2({}, point);
+    key: "_calcTechnicalIndicator",
+    value: function _calcTechnicalIndicator() {
+      if (this._chartData.calcTechnicalIndicator(this._technicalIndicatorType)) {
+        this.invalidate(InvalidateLevel.FULL);
+      }
+    }
+    /**
+     * 获取标识
+     * @returns {string}
+     */
 
-      if (!isValidEvent(point, this.handler)) {
+  }, {
+    key: "tag",
+    value: function tag() {
+      return this._tag;
+    }
+    /**
+     * 设置尺寸
+     * @param mainWidgetSize
+     * @param yAxisWidgetSize
+     */
+
+  }, {
+    key: "setSize",
+    value: function setSize(mainWidgetSize, yAxisWidgetSize) {
+      _get(_getPrototypeOf(TechnicalIndicatorSeries.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
+
+      this._yAxis.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height);
+    }
+    /**
+     * 获取技术指标类型
+     * @returns {string}
+     */
+
+  }, {
+    key: "technicalIndicatorType",
+    value: function technicalIndicatorType() {
+      return this._technicalIndicatorType;
+    }
+  }, {
+    key: "setTechnicalIndicatorType",
+    value: function setTechnicalIndicatorType(technicalIndicatorType) {
+      if (this._technicalIndicatorType !== technicalIndicatorType) {
+        this._technicalIndicatorType = technicalIndicatorType;
+
+        this._calcTechnicalIndicator();
+      }
+    }
+  }]);
+
+  return TechnicalIndicatorSeries;
+}(Series);
+
+var CandleStickView =
+/*#__PURE__*/
+function (_TechnicalIndicatorVi) {
+  _inherits(CandleStickView, _TechnicalIndicatorVi);
+
+  function CandleStickView() {
+    _classCallCheck(this, CandleStickView);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(CandleStickView).apply(this, arguments));
+  }
+
+  _createClass(CandleStickView, [{
+    key: "_draw",
+    value: function _draw() {
+      this._drawGrid();
+
+      if (this._additionalDataProvider.chartType() === ChartType.REAL_TIME) {
+        this._drawRealTime();
+      } else {
+        this._drawCandleStick();
+
+        this._drawTechnicalIndicator();
+
+        this._drawHighestPriceMark();
+
+        this._drawLowestPriceMark();
+      }
+
+      this._drawLastPriceLine();
+    }
+    /**
+     * 绘制分时图
+     * @private
+     */
+
+  }, {
+    key: "_drawRealTime",
+    value: function _drawRealTime() {
+      var _this = this;
+
+      var timeLinePoints = [];
+      var timeLineAreaPoints = [{
+        x: 0,
+        y: this._height
+      }];
+      var averageLinePoints = [];
+
+      var from = this._chartData.from();
+
+      var range = this._chartData.range();
+
+      var to = this._chartData.to();
+
+      var onDrawing = function onDrawing(x, i, kLineData) {
+        var average = kLineData.average;
+
+        var closeY = _this._yAxis.convertToPixel(kLineData.close);
+
+        var averageY = _this._yAxis.convertToPixel(average);
+
+        timeLinePoints.push({
+          x: x,
+          y: closeY
+        });
+
+        if (average || average === 0) {
+          averageLinePoints.push({
+            x: x,
+            y: averageY
+          });
+        }
+
+        if (i === from) {
+          timeLineAreaPoints.push({
+            x: 0,
+            y: closeY
+          });
+        }
+
+        timeLineAreaPoints.push({
+          x: x,
+          y: closeY
+        });
+      };
+
+      var onDrawEnd = function onDrawEnd() {
+        var areaPointLength = timeLineAreaPoints.length;
+
+        if (areaPointLength > 0) {
+          var lastPoint = timeLineAreaPoints[areaPointLength - 1];
+          var isFit = !(from - to < range);
+
+          if (isFit) {
+            timeLineAreaPoints.push({
+              x: _this._width,
+              y: lastPoint.y
+            });
+            timeLineAreaPoints.push({
+              x: _this._width,
+              y: _this._height
+            });
+          } else {
+            timeLineAreaPoints.push({
+              x: lastPoint.x,
+              y: _this._height
+            });
+          }
+        }
+
+        var realTime = _this._chartData.styleOptions().realTime;
+
+        var timeLine = realTime.timeLine;
+
+        if (timeLinePoints.length > 0) {
+          // 绘制分时线
+          _this._ctx.lineWidth = timeLine.size;
+          _this._ctx.strokeStyle = timeLine.color;
+
+          _this._ctx.beginPath();
+
+          _this._ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y);
+
+          for (var i = 1; i < timeLinePoints.length; i++) {
+            _this._ctx.lineTo(timeLinePoints[i].x, timeLinePoints[i].y);
+          }
+
+          _this._ctx.stroke();
+
+          _this._ctx.closePath();
+        }
+
+        if (timeLineAreaPoints.length > 0) {
+          // 绘制分时线填充区域
+          _this._ctx.fillStyle = timeLine.areaFillColor;
+
+          _this._ctx.beginPath();
+
+          _this._ctx.moveTo(timeLineAreaPoints[0].x, timeLineAreaPoints[0].y);
+
+          for (var _i = 1; _i < timeLineAreaPoints.length; _i++) {
+            _this._ctx.lineTo(timeLineAreaPoints[_i].x, timeLineAreaPoints[_i].y);
+          }
+
+          _this._ctx.closePath();
+
+          _this._ctx.fill();
+        }
+
+        var averageLine = realTime.averageLine;
+
+        if (averageLine.display && averageLinePoints.length > 0) {
+          // 绘制均线
+          _this._ctx.lineWidth = averageLine.size;
+          _this._ctx.strokeStyle = averageLine.color;
+
+          _this._ctx.beginPath();
+
+          _this._ctx.moveTo(averageLinePoints[0].x, averageLinePoints[0].y);
+
+          for (var _i2 = 1; _i2 < averageLinePoints.length; _i2++) {
+            _this._ctx.lineTo(averageLinePoints[_i2].x, averageLinePoints[_i2].y);
+          }
+
+          _this._ctx.stroke();
+
+          _this._ctx.closePath();
+        }
+      };
+
+      this._drawGraphics(onDrawing, onDrawEnd);
+    }
+    /**
+     * 绘制蜡烛
+     * @private
+     */
+
+  }, {
+    key: "_drawCandleStick",
+    value: function _drawCandleStick() {
+      var _this2 = this;
+
+      this._ctx.lineWidth = 1;
+      var rect = [];
+      var markHighestPrice = -Infinity;
+      var markHighestPriceX = -1;
+      var markLowestPrice = Infinity;
+      var markLowestPriceX = -1;
+
+      var dataList = this._chartData.dataList();
+
+      var candleStick = this._chartData.styleOptions().candleStick;
+
+      var onDrawing = function onDrawing(x, i, kLineData, halfBarSpace, barSpace) {
+        var refKLineData = dataList[i - 1] || {};
+        var refClose = refKLineData.close || -Infinity;
+        var high = kLineData.high;
+        var low = kLineData.low;
+        var close = kLineData.close;
+        var open = kLineData.open;
+
+        if (markHighestPrice < high) {
+          markHighestPrice = high;
+          markHighestPriceX = x;
+        }
+
+        if (low < markLowestPrice) {
+          markLowestPrice = low;
+          markLowestPriceX = x;
+        }
+
+        if (close > refClose) {
+          _this2._ctx.strokeStyle = candleStick.bar.upColor;
+          _this2._ctx.fillStyle = candleStick.bar.upColor;
+        } else {
+          _this2._ctx.strokeStyle = candleStick.bar.downColor;
+          _this2._ctx.fillStyle = candleStick.bar.downColor;
+        }
+
+        if (candleStick.bar.style !== CandleStickStyle.OHLC) {
+          var openY = _this2._yAxis.convertToPixel(open);
+
+          var closeY = _this2._yAxis.convertToPixel(close);
+
+          var highY = _this2._yAxis.convertToPixel(high);
+
+          var lowY = _this2._yAxis.convertToPixel(low);
+
+          var highLine = [];
+          var lowLine = [];
+          highLine[0] = highY;
+          lowLine[1] = lowY;
+
+          if (openY > closeY) {
+            highLine[1] = closeY;
+            lowLine[0] = openY;
+            rect = [x - halfBarSpace, closeY, barSpace, openY - closeY];
+          } else if (openY < closeY) {
+            highLine[1] = openY;
+            lowLine[0] = closeY;
+            rect = [x - halfBarSpace, openY, barSpace, closeY - openY];
+          } else {
+            highLine[1] = openY;
+            lowLine[0] = closeY;
+            rect = [x - halfBarSpace, openY, barSpace, 1];
+          }
+
+          _this2._ctx.beginPath();
+
+          _this2._ctx.moveTo(x, highLine[0]);
+
+          _this2._ctx.lineTo(x, highLine[1]);
+
+          _this2._ctx.stroke();
+
+          _this2._ctx.closePath();
+
+          _this2._ctx.beginPath();
+
+          _this2._ctx.moveTo(x, lowLine[0]);
+
+          _this2._ctx.lineTo(x, lowLine[1]);
+
+          _this2._ctx.stroke();
+
+          _this2._ctx.closePath();
+
+          if (rect[3] < 1) {
+            rect[3] = 1;
+          }
+
+          switch (candleStick.bar.style) {
+            case CandleStickStyle.SOLID:
+              {
+                _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
+
+                break;
+              }
+
+            case CandleStickStyle.STROKE:
+              {
+                _this2._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
+
+                break;
+              }
+
+            case CandleStickStyle.INCREASING_STROKE:
+              {
+                if (close > refClose) {
+                  _this2._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
+                } else {
+                  _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
+                }
+
+                break;
+              }
+
+            case CandleStickStyle.DECREASING_STROKE:
+              {
+                if (close > refClose) {
+                  _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
+                } else {
+                  _this2._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
+                }
+
+                break;
+              }
+          }
+        } else {
+          _this2._drawOhlc(halfBarSpace, x, kLineData, refKLineData, candleStick.bar.upColor, candleStick.bar.downColor);
+        }
+      };
+
+      this._drawGraphics(onDrawing);
+
+      this._highestMarkData = {
+        x: markHighestPriceX,
+        price: markHighestPrice
+      };
+      this._lowestMarkData = {
+        x: markLowestPriceX,
+        price: markLowestPrice
+      };
+    }
+    /**
+     * 渲染最高价标记
+     * @param pricePrecision
+     */
+
+  }, {
+    key: "_drawHighestPriceMark",
+    value: function _drawHighestPriceMark(pricePrecision) {
+      if (!this._highestMarkData) {
         return;
       }
 
-      if (!this.waitingForMouseMoveAnimationFrame) {
-        this.waitingForMouseMoveAnimationFrame = true;
-        var graphicMarkType = this.storage.graphicMarkType;
+      var price = this._highestMarkData.price;
 
-        switch (graphicMarkType) {
-          case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
-          case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
-          case GraphicMarkType.PRICE_LINE:
-            {
-              this.onePointGraphicMarkMouseMove(point, graphicMarkType);
-              break;
-            }
+      var priceMark = this._chartData.styleOptions().candleStick.priceMark;
 
-          case GraphicMarkType.STRAIGHT_LINE:
-          case GraphicMarkType.RAY_LINE:
-          case GraphicMarkType.SEGMENT_LINE:
-          case GraphicMarkType.FIBONACCI_LINE:
-            {
-              this.twoPointGraphicMarkMouseMove(point, graphicMarkType);
-              break;
-            }
+      var highestPriceMark = priceMark.high;
 
-          case GraphicMarkType.HORIZONTAL_RAY_LINE:
-          case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
-            {
-              this.twoPointGraphicMarkMouseMove(point, graphicMarkType, function (lastLineData, _ref) {
-                var price = _ref.price;
-                lastLineData.points[0].price = price;
-              });
-              break;
-            }
-
-          case GraphicMarkType.VERTICAL_RAY_LINE:
-          case GraphicMarkType.VERTICAL_SEGMENT_LINE:
-            {
-              this.twoPointGraphicMarkMouseMove(point, graphicMarkType, function (lastLineData, _ref2) {
-                var xPos = _ref2.xPos;
-                lastLineData.points[0].xPos = xPos;
-              });
-              break;
-            }
-
-          case GraphicMarkType.PRICE_CHANNEL_LINE:
-          case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
-            {
-              this.threePointGraphicMarkMouseMove(point, graphicMarkType);
-              break;
-            }
-
-          case GraphicMarkType.NONE:
-            {
-              this.noneGraphicMarkMouseMove(point);
-              break;
-            }
-        }
-
-        this.waitingForMouseMoveAnimationFrame = false;
-      }
-    }
-    /**
-     * 一个点形成的图形鼠标移动事件
-     * @param point
-     * @param markKey
-     */
-
-  }, {
-    key: "onePointGraphicMarkMouseMove",
-    value: function onePointGraphicMarkMouseMove(point, markKey) {
-      var _this5 = this;
-
-      this.graphicMarkMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
-        var xPos = _this5.storage.minPos + (point.x - _this5.handler.contentLeft()) / _this5.storage.dataSpace;
-
-        var price = _this5.yRender.getValue(point.y);
-
-        switch (lastLineData.drawStep) {
-          case GraphicMarkDrawStep.STEP_DONE:
-            {
-              graphicMarkData.push({
-                points: [{
-                  xPos: xPos,
-                  price: price
-                }],
-                drawStep: GraphicMarkDrawStep.STEP_1
-              });
-              break;
-            }
-
-          case GraphicMarkDrawStep.STEP_1:
-          case GraphicMarkDrawStep.STEP_2:
-            {
-              lastLineData.points[0].xPos = xPos;
-              lastLineData.points[0].price = price;
-              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
-              break;
-            }
-        }
-      });
-    }
-    /**
-     * 两个点形成的线鼠标移动事件
-     * @param point
-     * @param markKey
-     * @param stepTwo
-     */
-
-  }, {
-    key: "twoPointGraphicMarkMouseMove",
-    value: function twoPointGraphicMarkMouseMove(point, markKey, stepTwo) {
-      var _this6 = this;
-
-      this.graphicMarkMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
-        var xPos = _this6.storage.minPos + (point.x - _this6.handler.contentLeft()) / _this6.storage.dataSpace;
-
-        var price = _this6.yRender.getValue(point.y);
-
-        switch (lastLineData.drawStep) {
-          case GraphicMarkDrawStep.STEP_DONE:
-            {
-              graphicMarkData.push({
-                points: [{
-                  xPos: xPos,
-                  price: price
-                }, {
-                  xPos: xPos,
-                  price: price
-                }],
-                drawStep: GraphicMarkDrawStep.STEP_1
-              });
-              break;
-            }
-
-          case GraphicMarkDrawStep.STEP_1:
-            {
-              lastLineData.points[0] = {
-                xPos: xPos,
-                price: price
-              };
-              lastLineData.points[1] = {
-                xPos: xPos,
-                price: price
-              };
-              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
-              break;
-            }
-
-          case GraphicMarkDrawStep.STEP_2:
-            {
-              lastLineData.points[1] = {
-                xPos: xPos,
-                price: price
-              };
-
-              if (isFunction(stepTwo)) {
-                stepTwo(lastLineData, {
-                  xPos: xPos,
-                  price: price
-                });
-              }
-
-              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
-              break;
-            }
-        }
-      });
-    }
-    /**
-     * 三步形成的标记图形鼠标移动事件
-     * @param point
-     * @param markKey
-     * @param stepTwo
-     */
-
-  }, {
-    key: "threePointGraphicMarkMouseMove",
-    value: function threePointGraphicMarkMouseMove(point, markKey, stepTwo) {
-      var _this7 = this;
-
-      this.graphicMarkMouseMove(point, markKey, function (graphicMarkData, lastLineData) {
-        var xPos = _this7.storage.minPos + (point.x - _this7.handler.contentLeft()) / _this7.storage.dataSpace;
-
-        var price = _this7.yRender.getValue(point.y);
-
-        switch (lastLineData.drawStep) {
-          case GraphicMarkDrawStep.STEP_DONE:
-            {
-              graphicMarkData.push({
-                points: [{
-                  xPos: xPos,
-                  price: price
-                }, {
-                  xPos: xPos,
-                  price: price
-                }],
-                drawStep: GraphicMarkDrawStep.STEP_1
-              });
-              break;
-            }
-
-          case GraphicMarkDrawStep.STEP_1:
-            {
-              lastLineData.points[0] = {
-                xPos: xPos,
-                price: price
-              };
-              lastLineData.points[1] = {
-                xPos: xPos,
-                price: price
-              };
-              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
-              break;
-            }
-
-          case GraphicMarkDrawStep.STEP_2:
-            {
-              if (isFunction(stepTwo)) {
-                stepTwo(lastLineData, {
-                  xPos: xPos,
-                  price: price
-                });
-              }
-
-              lastLineData.points[1] = {
-                xPos: xPos,
-                price: price
-              };
-              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
-              break;
-            }
-
-          case GraphicMarkDrawStep.STEP_3:
-            {
-              lastLineData.points[2] = {
-                xPos: xPos,
-                price: price
-              };
-              graphicMarkData[graphicMarkData.length - 1] = lastLineData;
-              break;
-            }
-        }
-      });
-    }
-    /**
-     * 绘制标记图形时鼠标移动事件
-     * @param point
-     * @param markKey
-     * @param performDifPoint
-     */
-
-  }, {
-    key: "graphicMarkMouseMove",
-    value: function graphicMarkMouseMove(point, markKey, performDifPoint) {
-      var graphicMarkData = this.storage.graphicMarkDatas[markKey];
-      var lastLineData = graphicMarkData[graphicMarkData.length - 1] || {
-        drawStep: GraphicMarkDrawStep.STEP_DONE
-      };
-      performDifPoint(graphicMarkData, lastLineData);
-      this.storage.graphicMarkDatas[markKey] = graphicMarkData;
-      this.graphicMarkChart.flush();
-    }
-    /**
-     * 没有绘制标记时鼠标移动事件
-     * @param point
-     */
-
-  }, {
-    key: "noneGraphicMarkMouseMove",
-    value: function noneGraphicMarkMouseMove(point) {
-      if (this.noneGraphicMarkMouseDownFlag) {
-        var markKey = this.noneGraphicMarkMouseDownActiveData.markKey;
-        var dataIndex = this.noneGraphicMarkMouseDownActiveData.dataIndex;
-
-        if (markKey && dataIndex !== -1) {
-          var graphicMarkData = this.storage.graphicMarkDatas[markKey];
-
-          switch (markKey) {
-            case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
-            case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
-            case GraphicMarkType.PRICE_LINE:
-            case GraphicMarkType.STRAIGHT_LINE:
-            case GraphicMarkType.RAY_LINE:
-            case GraphicMarkType.SEGMENT_LINE:
-            case GraphicMarkType.PRICE_CHANNEL_LINE:
-            case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
-            case GraphicMarkType.FIBONACCI_LINE:
-              {
-                var pointIndex = this.noneGraphicMarkMouseDownActiveData.pointIndex;
-
-                if (pointIndex !== -1) {
-                  graphicMarkData[dataIndex].points[pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
-                  graphicMarkData[dataIndex].points[pointIndex].price = this.yRender.getValue(point.y);
-                }
-
-                break;
-              }
-
-            case GraphicMarkType.HORIZONTAL_RAY_LINE:
-            case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
-              {
-                var _pointIndex = this.noneGraphicMarkMouseDownActiveData.pointIndex;
-
-                if (_pointIndex !== -1) {
-                  var price = this.yRender.getValue(point.y);
-                  graphicMarkData[dataIndex].points[_pointIndex].xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
-                  graphicMarkData[dataIndex].points[0].price = price;
-                  graphicMarkData[dataIndex].points[1].price = price;
-                }
-
-                break;
-              }
-
-            case GraphicMarkType.VERTICAL_RAY_LINE:
-            case GraphicMarkType.VERTICAL_SEGMENT_LINE:
-              {
-                var _pointIndex2 = this.noneGraphicMarkMouseDownActiveData.pointIndex;
-
-                if (_pointIndex2 !== -1) {
-                  var xPos = (point.x - this.handler.contentLeft()) / this.storage.dataSpace + this.storage.minPos;
-                  graphicMarkData[dataIndex].points[0].xPos = xPos;
-                  graphicMarkData[dataIndex].points[1].xPos = xPos;
-                  graphicMarkData[dataIndex].points[_pointIndex2].price = this.yRender.getValue(point.y);
-                }
-
-                break;
-              }
-          }
-
-          this.storage.graphicMarkDatas[markKey] = graphicMarkData;
-        }
+      if (price === -Infinity || !priceMark.display || !highestPriceMark.display) {
+        return;
       }
 
-      this.graphicMarkChart.flush();
+      this._drawLowestHighestPriceMark(highestPriceMark, this._highestMarkData.x, price, true, this._chartData.precisionOptions().price);
+    }
+    /**
+     * 绘制最低价标记
+     */
+
+  }, {
+    key: "_drawLowestPriceMark",
+    value: function _drawLowestPriceMark() {
+      if (!this._lowestMarkData) {
+        return;
+      }
+
+      var price = this._lowestMarkData.price;
+
+      var priceMark = this._chartData.styleOptions().candleStick.priceMark;
+
+      var lowestPriceMark = priceMark.low;
+
+      if (price === Infinity || !priceMark.display || !lowestPriceMark.display) {
+        return;
+      }
+
+      this._drawLowestHighestPriceMark(lowestPriceMark, this._lowestMarkData.x, price, false, this._chartData.precisionOptions().price);
+    }
+    /**
+     * 渲染最高最低价格标记
+     * @param priceMark
+     * @param x
+     * @param price
+     * @param isHigh
+     * @param pricePrecision
+     */
+
+  }, {
+    key: "_drawLowestHighestPriceMark",
+    value: function _drawLowestHighestPriceMark(priceMark, x, price, isHigh, pricePrecision) {
+      var priceY = this._yAxis.convertToPixel(price);
+
+      var startX = x;
+      var startY = priceY + (isHigh ? -2 : 2);
+      this._ctx.textAlign = 'left';
+      this._ctx.lineWidth = 1;
+      this._ctx.strokeStyle = priceMark.color;
+      this._ctx.fillStyle = priceMark.color;
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(startX, startY);
+
+      this._ctx.lineTo(startX - 2, startY + (isHigh ? -2 : 2));
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(startX, startY);
+
+      this._ctx.lineTo(startX + 2, startY + (isHigh ? -2 : 2));
+
+      this._ctx.stroke();
+
+      this._ctx.closePath(); // 绘制竖线
+
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(startX, startY);
+
+      startY = startY + (isHigh ? -5 : 5);
+
+      this._ctx.lineTo(startX, startY);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(startX, startY);
+
+      this._ctx.lineTo(startX + 5, startY);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+
+      this._ctx.font = getFont(priceMark.textSize);
+      var text = formatPrecision(price, pricePrecision);
+      this._ctx.textBaseline = 'middle';
+
+      this._ctx.fillText(text, startX + 5 + priceMark.textMargin, startY);
+    }
+    /**
+     * 绘制最新价线
+     * @private
+     */
+
+  }, {
+    key: "_drawLastPriceLine",
+    value: function _drawLastPriceLine() {
+      var dataList = this._chartData.dataList();
+
+      var dataSize = dataList.length;
+
+      var priceMark = this._chartData.styleOptions().candleStick.priceMark;
+
+      var lastPriceMark = priceMark.last;
+
+      if (!priceMark.display || !lastPriceMark.display || !lastPriceMark.line.display || dataSize === 0) {
+        return;
+      }
+
+      var preKLineData = dataList[dataSize - 2] || {};
+      var preLastPrice = preKLineData.close || -Infinity;
+      var lastPrice = dataList[dataSize - 1].close;
+
+      var priceY = this._yAxis.convertToPixel(lastPrice);
+
+      priceY = +Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98)).toFixed(0);
+      var color = lastPrice > preLastPrice ? lastPriceMark.upColor : lastPriceMark.downColor;
+      var priceMarkLine = lastPriceMark.line;
+      this._ctx.strokeStyle = color;
+      this._ctx.lineWidth = priceMarkLine.size;
+
+      if (priceMarkLine.style === LineStyle.DASH) {
+        this._ctx.setLineDash(priceMarkLine.dashValue);
+      }
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(0, priceY);
+
+      this._ctx.lineTo(this._width, priceY);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+
+      this._ctx.setLineDash([]);
     }
   }]);
 
-  return GraphicMarkEvent;
-}();
+  return CandleStickView;
+}(TechnicalIndicatorView);
 
-var KeyboardEvent =
+var CandleStickFloatLayerView =
 /*#__PURE__*/
-function (_Event) {
-  _inherits(KeyboardEvent, _Event);
+function (_TechnicalIndicatorFl) {
+  _inherits(CandleStickFloatLayerView, _TechnicalIndicatorFl);
 
-  function KeyboardEvent(candleChart, volChart, subIndicatorChart, tooltipChart, graphicMarkChart, xAxisChart, storage) {
-    var _this;
+  function CandleStickFloatLayerView() {
+    _classCallCheck(this, CandleStickFloatLayerView);
 
-    _classCallCheck(this, KeyboardEvent);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(KeyboardEvent).call(this, tooltipChart, candleChart, volChart, subIndicatorChart, xAxisChart, storage));
-    _this.graphicMarkChart = graphicMarkChart;
-    return _this;
+    return _possibleConstructorReturn(this, _getPrototypeOf(CandleStickFloatLayerView).apply(this, arguments));
   }
-  /**
-   * 按键按下事件
-   * @param e
-   * @param loadMore
-   */
 
+  _createClass(CandleStickFloatLayerView, [{
+    key: "_drawPrompt",
+    value: function _drawPrompt(kLineData, x) {
+      var floatLayerPromptCandleStick = this._chartData.styleOptions().floatLayer.prompt.candleStick;
 
-  _createClass(KeyboardEvent, [{
-    key: "keyDown",
-    value: function keyDown(e, loadMore) {
-      stopEvent(e);
+      var candleStickPromptData = this._getCandleStickPromptData(kLineData, floatLayerPromptCandleStick);
 
-      if (e.keyCode === 37 || e.keyCode === 39) {
-        var shouldFlush = false;
+      if (floatLayerPromptCandleStick.showType === FloatLayerPromptCandleStickTextDisplayType.STANDARD) {
+        this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData);
 
-        if (e.keyCode === 37) {
-          // 左移
-          if (this.storage.minPos > 0) {
-            this.storage.minPos--;
-            this.storage.tooltipDataPos--;
-            shouldFlush = true;
-          }
-        } else {
-          // 右移
-          if (this.storage.minPos < this.storage.dataList.length - this.storage.range) {
-            this.storage.minPos++;
-            this.storage.tooltipDataPos++;
-            shouldFlush = true;
-          }
-        }
-
-        if (shouldFlush) {
-          this.candleChart.flush();
-          this.volChart.flush();
-          this.subIndicatorChart.flush();
-          this.xAxisChart.flush();
-          this.graphicMarkChart.flush();
-
-          if (this.storage.crossPoint) {
-            this.tooltipChart.flush();
-          }
-
-          if (this.storage.minPos === 0) {
-            loadMore();
-          }
-        }
-      } else if (e.keyCode === 38 || e.keyCode === 40) {
-        var isZoomingOut = true;
-        var scaleX = 0.95;
-
-        if (e.keyCode === 38) {
-          // 放大
-          isZoomingOut = false;
-          scaleX = 1.05;
-        }
-
-        if (this.zoom(isZoomingOut, scaleX, this.storage.minPos, this.storage.range)) {
-          if (this.storage.crossPoint) {
-            this.cross(this.storage.crossPoint);
-          }
-
-          this.graphicMarkChart.flush();
-        }
+        this._drawTechnicalIndicatorPrompt(kLineData, x, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
+      } else {
+        this._drawCandleStickRectPromptText(kLineData, x, floatLayerPromptCandleStick, candleStickPromptData);
       }
     }
-  }]);
-
-  return KeyboardEvent;
-}(Event);
-
-var RootChart =
-/*#__PURE__*/
-function () {
-  function RootChart(dom) {
-    var s = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    _classCallCheck(this, RootChart);
-
-    // 是否没有更多
-    this.noMore = true;
-    this.style = getDefaultStyle();
-    merge(this.style, s);
-    this.indicatorParams = getDefaultIndicatorParams();
-    this.precision = getDefaultPrecision();
-    dom.style.position = 'relative';
-    dom.style.outline = 'none';
-    dom.style.borderStyle = 'none';
-    dom.tabIndex = 1;
-    this.dom = dom;
-    this.storage = new Storage();
-    this.xAxisChart = new XAxisChart(dom, this.style, this.storage);
-    this.candleChart = new CandleChart(dom, this.style, this.storage, this.indicatorParams, this.precision);
-    this.graphicMarkChart = new GraphicMarkChart(dom, this.style, this.storage, this.candleChart.yAxisRender, this.precision);
-    this.volIndicatorChart = new IndicatorChart(dom, this.style, this.storage, this.indicatorParams, IndicatorType.VOL);
-    this.subIndicatorChart = new IndicatorChart(dom, this.style, this.storage, this.indicatorParams);
-    this.tooltipChart = new TooltipChart(dom, this.style, this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.storage, this.indicatorParams, this.precision);
-    this.calcChartDimensions();
-    this.initEvent();
-  }
-  /**
-   * 初始化事件
-   */
-
-
-  _createClass(RootChart, [{
-    key: "initEvent",
-    value: function initEvent() {
+  }, {
+    key: "_drawCandleStickStandardPromptText",
+    value: function _drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData) {
       var _this = this;
 
-      var mobile = isMobile(window.navigator.userAgent);
-      this.dom.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-      }, false);
+      var values = candleStickPromptData;
+      var textMarginLeft = floatLayerPromptCandleStick.text.marginLeft;
+      var textMarginRight = floatLayerPromptCandleStick.text.marginRight;
+      var textSize = floatLayerPromptCandleStick.text.size;
+      var textColor = floatLayerPromptCandleStick.text.color;
+      var labels = floatLayerPromptCandleStick.labels;
+      this._ctx.textBaseline = 'top';
+      this._ctx.font = getFont(textSize);
+      var labelX = textMarginLeft;
+      var labelY = floatLayerPromptCandleStick.text.marginTop;
+      labels.forEach(function (label, i) {
+        var labelText = label ? "".concat(label, ": ") : '';
+        var labelWidth = calcTextWidth(_this._ctx, labelText);
+        _this._ctx.fillStyle = textColor;
 
-      var loadMore = function loadMore() {
-        // 有更多并且没有在加载则去加载更多
-        if (!_this.noMore && !_this.loading && _this.loadMoreCallback && isFunction(_this.loadMoreCallback)) {
-          _this.loading = true;
+        _this._ctx.fillText(labelText, labelX, labelY);
 
-          _this.loadMoreCallback((_this.storage.dataList[0] || {}).timestamp);
-        }
-      };
+        labelX += labelWidth;
+        var value = values[i] || '--';
+        var valueText;
 
-      if (mobile) {
-        var motionEvent = new TouchEvent(this.tooltipChart, this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.storage);
-        this.dom.addEventListener('touchstart', function (e) {
-          motionEvent.touchStart(e);
-        }, false);
-        this.dom.addEventListener('touchmove', function (e) {
-          motionEvent.touchMove(e, loadMore);
-        }, false);
-        this.dom.addEventListener('touchend', function (e) {
-          motionEvent.touchEnd(e);
-        }, false);
-      } else {
-        var _motionEvent = new MouseEvent(this.tooltipChart, this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart, this.graphicMarkChart, this.storage);
-
-        var graphicMarkEvent = new GraphicMarkEvent(this.storage, this.graphicMarkChart, this.style);
-        var keyboardEvent = new KeyboardEvent(this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.tooltipChart, this.graphicMarkChart, this.xAxisChart, this.storage);
-        this.dom.addEventListener('mousedown', function (e) {
-          _motionEvent.mouseDown(e);
-
-          graphicMarkEvent.mouseDown(e);
-        }, false);
-        this.dom.addEventListener('mouseup', function (e) {
-          _motionEvent.mouseUp(e);
-
-          graphicMarkEvent.mouseUp(e);
-        }, false);
-        this.dom.addEventListener('mousemove', function (e) {
-          _motionEvent.mouseMove(e, loadMore);
-
-          graphicMarkEvent.mouseMove(e);
-        }, false);
-        this.dom.addEventListener('mouseleave', function (e) {
-          _motionEvent.mouseLeave(e);
-        }, false);
-        this.dom.addEventListener('wheel', function (e) {
-          _motionEvent.mouseWheel(e);
-        }, false);
-        this.dom.addEventListener('keydown', function (e) {
-          keyboardEvent.keyDown(e, loadMore);
-        }, false);
-      }
-    }
-    /**
-     * 刷新图
-     * @param charts
-     */
-
-  }, {
-    key: "flushCharts",
-    value: function flushCharts() {
-      var charts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = charts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var chart = _step.value;
-          chart.flush();
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-    }
-    /**
-     * 计算图的尺寸
-     */
-
-  }, {
-    key: "calcChartDimensions",
-    value: function calcChartDimensions() {
-      var xAxisHeight = this.calcXAxisHeight();
-      var yAxisWidth = this.calcYAxisWidth();
-      var domWidth = this.dom.offsetWidth;
-      var domHeight = this.dom.offsetHeight;
-      this.domWidth = domWidth;
-      this.domHeight = domHeight;
-      var contentHeight = domHeight - xAxisHeight;
-      var chartTop = 0;
-      var volChartHeight = 0;
-      var subIndicatorChartHeight = 0;
-      var isShowVolIndicator = this.volIndicatorChart.indicatorType !== IndicatorType.NO;
-      var isShowSubIndicator = this.subIndicatorChart.indicatorType !== IndicatorType.NO;
-
-      if (isShowVolIndicator && isShowSubIndicator) {
-        var height = +(contentHeight * 0.18).toFixed(0);
-        volChartHeight = height;
-        subIndicatorChartHeight = height;
-      } else if (!isShowVolIndicator && isShowSubIndicator || isShowVolIndicator && !isShowSubIndicator) {
-        var _height = +(contentHeight * 0.26).toFixed(0);
-
-        if (isShowVolIndicator) {
-          volChartHeight = _height;
+        if (_typeof(value) === 'object') {
+          valueText = value.value || '--';
+          _this._ctx.fillStyle = value.color || textColor;
         } else {
-          subIndicatorChartHeight = _height;
+          _this._ctx.fillStyle = textColor;
+          valueText = value;
         }
-      }
 
-      var offsetLeft = 0;
-      var offsetRight = 0;
+        var textWidth = calcTextWidth(_this._ctx, valueText);
 
-      if (this.style.yAxis.position === YAxisPosition.LEFT) {
-        offsetLeft = yAxisWidth;
+        _this._ctx.fillText(valueText, labelX, labelY);
+
+        labelX += textWidth + textMarginLeft + textMarginRight;
+      });
+    }
+  }, {
+    key: "_drawCandleStickRectPromptText",
+    value: function _drawCandleStickRectPromptText(kLineData, x, floatLayerPromptCandleStick, candleStickPromptData) {
+      var _this2 = this;
+
+      var baseLabels = floatLayerPromptCandleStick.labels;
+      var baseValues = candleStickPromptData;
+      var baseTextMarginLeft = floatLayerPromptCandleStick.text.marginLeft;
+      var baseTextMarginRight = floatLayerPromptCandleStick.text.marginRight;
+      var baseTextMarginTop = floatLayerPromptCandleStick.text.marginTop;
+      var baseTextMarginBottom = floatLayerPromptCandleStick.text.marginBottom;
+      var baseTextSize = floatLayerPromptCandleStick.text.size;
+      var baseTextColor = floatLayerPromptCandleStick.text.color;
+      this._ctx.textBaseline = 'top';
+      this._ctx.font = getFont(baseTextSize);
+      var maxLabelWidth = 0;
+      baseLabels.forEach(function (label, i) {
+        var value = baseValues[i] || '--';
+        var v = value;
+
+        if (_typeof(value) === 'object') {
+          v = value.value || '--';
+        }
+
+        var text = "".concat(label, ": ").concat(v);
+        var labelWidth = calcTextWidth(_this2._ctx, text) + baseTextMarginLeft + baseTextMarginRight;
+        maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
+      });
+
+      var technicalIndicatorPromptData = this._getTechnicalIndicatorPromptData(kLineData);
+
+      var indicatorLabels = technicalIndicatorPromptData.labels || [];
+      var indicatorValues = technicalIndicatorPromptData.values || [];
+
+      var floatLayerPromptTechnicalIndicator = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator;
+
+      var indicatorTextMarginLeft = floatLayerPromptTechnicalIndicator.text.marginLeft;
+      var indicatorTextMarginRight = floatLayerPromptTechnicalIndicator.text.marginRight;
+      var indicatorTextMarginTop = floatLayerPromptTechnicalIndicator.text.marginTop;
+      var indicatorTextMarginBottom = floatLayerPromptTechnicalIndicator.text.marginBottom;
+      var indicatorTextSize = floatLayerPromptTechnicalIndicator.text.size;
+      this._ctx.font = getFont(indicatorTextSize);
+      indicatorLabels.forEach(function (label, i) {
+        var v = indicatorValues[i] || '--';
+        var text = "".concat(label, ": ").concat(v);
+        var labelWidth = calcTextWidth(_this2._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight;
+        maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
+      });
+      var rect = floatLayerPromptCandleStick.rect;
+      var rectBorderSize = rect.borderSize;
+      var rectPaddingLeft = rect.paddingLeft;
+      var rectPaddingRight = rect.paddingRight;
+      var rectPaddingTop = rect.paddingTop;
+      var rectPaddingBottom = rect.paddingBottom;
+      var rectLeft = rect.left;
+      var rectRight = rect.right;
+      var rectWidth = rectBorderSize * 2 + maxLabelWidth + rectPaddingLeft + rectPaddingRight;
+      var rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom + (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length + (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length;
+      var centerX = this._width / 2;
+      var rectX;
+
+      if (x < centerX) {
+        rectX = this._width - rectRight - rectWidth;
       } else {
-        offsetRight = yAxisWidth;
+        rectX = rectLeft;
       }
 
-      this.storage.space(domWidth - offsetRight - offsetLeft);
-      this.xAxisChart.setChartDimensions(0, domWidth, domHeight, offsetLeft, offsetRight, 0, xAxisHeight);
-      var candleChartHeight = contentHeight - volChartHeight - subIndicatorChartHeight;
-      this.candleChart.setChartDimensions(chartTop, domWidth, candleChartHeight, offsetLeft, offsetRight);
-      this.graphicMarkChart.setChartDimensions(chartTop, domWidth, candleChartHeight, offsetLeft, offsetRight);
-      chartTop += candleChartHeight;
-      this.volIndicatorChart.setChartDimensions(chartTop, domWidth, volChartHeight, offsetLeft, offsetRight);
-      chartTop += volChartHeight;
-      this.subIndicatorChart.setChartDimensions(chartTop, domWidth, subIndicatorChartHeight, offsetLeft, offsetRight);
-      this.tooltipChart.setChartDimensions(0, domWidth, domHeight, offsetLeft, offsetRight, 0, xAxisHeight);
+      var rectY = rect.top;
+      var radius = rect.borderRadius;
+      this._ctx.lineWidth = rectBorderSize;
+      this._ctx.strokeStyle = rect.borderColor;
+      this._ctx.fillStyle = rect.fillColor;
+
+      this._drawRoundRect(rectX, rectY, rectWidth, rectHeight, radius);
+
+      this._ctx.stroke();
+
+      this._drawRoundRect(rectX, rectY, rectWidth, rectHeight, radius);
+
+      this._ctx.fill();
+
+      var baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft;
+      var labelY = rectY + rectBorderSize + rectPaddingTop; // 开始渲染基础数据文字
+
+      this._ctx.font = getFont(baseTextSize);
+      baseLabels.forEach(function (label, i) {
+        labelY += baseTextMarginTop;
+        _this2._ctx.textAlign = 'left';
+        _this2._ctx.fillStyle = baseTextColor;
+
+        _this2._ctx.fillText("".concat(label, ": "), baseLabelX, labelY);
+
+        var value = baseValues[i] || '--';
+        var text;
+        _this2._ctx.fillStyle = value.color || baseTextColor;
+
+        if (_typeof(value) === 'object') {
+          text = value.value || '--';
+        } else {
+          text = value;
+        }
+
+        _this2._ctx.textAlign = 'right';
+
+        _this2._ctx.fillText(text, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY);
+
+        labelY += baseTextSize + baseTextMarginBottom;
+      }); // 开始渲染指标数据文字
+
+      var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
+
+      var colors = technicalIndicatorOptions.line.colors;
+      var indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft;
+      var colorSize = colors.length;
+      this._ctx.font = getFont(indicatorTextSize);
+      indicatorLabels.forEach(function (label, i) {
+        labelY += indicatorTextMarginTop;
+        _this2._ctx.textAlign = 'left';
+        _this2._ctx.fillStyle = colors[i % colorSize] || technicalIndicatorOptions.text.color;
+
+        _this2._ctx.fillText("".concat(label.toUpperCase(), ": "), indicatorLabelX, labelY);
+
+        _this2._ctx.textAlign = 'right';
+
+        _this2._ctx.fillText(indicatorValues[i] || '--', rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight, labelY);
+
+        labelY += indicatorTextSize + indicatorTextMarginBottom;
+      });
+      this._ctx.textAlign = 'left';
     }
     /**
-     * 计算x轴高度
+     * 渲染圆角矩形
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param r
      */
 
   }, {
-    key: "calcXAxisHeight",
-    value: function calcXAxisHeight() {
-      var xAxis = this.style.xAxis;
-      var tickText = xAxis.tick.text;
-      var tickLine = xAxis.tick.line;
+    key: "_drawRoundRect",
+    value: function _drawRoundRect(x, y, w, h, r) {
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(x + r, y);
+
+      this._ctx.arcTo(x + w, y, x + w, y + h, r);
+
+      this._ctx.arcTo(x + w, y + h, x, y + h, r);
+
+      this._ctx.arcTo(x, y + h, x, y, r);
+
+      this._ctx.arcTo(x, y, x + w, y, r);
+
+      this._ctx.closePath();
+    }
+    /**
+     * 获取蜡烛提示数据
+     * @param kLineData
+     * @param floatLayerPromptCandleStick
+     * @returns {*}
+     * @private
+     */
+
+  }, {
+    key: "_getCandleStickPromptData",
+    value: function _getCandleStickPromptData(kLineData, floatLayerPromptCandleStick) {
+      var baseValues = floatLayerPromptCandleStick.values;
+      var values = [];
+
+      if (baseValues) {
+        if (isFunction(baseValues)) {
+          values = baseValues(kLineData) || [];
+        } else {
+          values = baseValues;
+        }
+      } else {
+        var precisionOptions = this._chartData.precisionOptions();
+
+        values = [formatValue(kLineData, 'timestamp'), formatValue(kLineData, 'open'), formatValue(kLineData, 'close'), formatValue(kLineData, 'high'), formatValue(kLineData, 'low'), formatValue(kLineData, 'volume')];
+        values.forEach(function (value, index) {
+          switch (index) {
+            case 0:
+              {
+                values[index] = formatDate(value, 'YYYY-MM-DD hh:mm');
+                break;
+              }
+
+            case values.length - 1:
+              {
+                values[index] = formatPrecision(value, precisionOptions.volume);
+                break;
+              }
+
+            default:
+              {
+                values[index] = formatPrecision(value, precisionOptions.price);
+                break;
+              }
+          }
+        });
+      }
+
+      return values;
+    }
+  }]);
+
+  return CandleStickFloatLayerView;
+}(TechnicalIndicatorFloatLayerView);
+
+var CandleStickWidget =
+/*#__PURE__*/
+function (_TechnicalIndicatorWi) {
+  _inherits(CandleStickWidget, _TechnicalIndicatorWi);
+
+  function CandleStickWidget() {
+    _classCallCheck(this, CandleStickWidget);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(CandleStickWidget).apply(this, arguments));
+  }
+
+  _createClass(CandleStickWidget, [{
+    key: "_createMainView",
+    value: function _createMainView(container, props) {
+      return new CandleStickView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
+    }
+  }, {
+    key: "_createFloatLayerView",
+    value: function _createFloatLayerView(container, props) {
+      return new CandleStickFloatLayerView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
+    }
+  }]);
+
+  return CandleStickWidget;
+}(TechnicalIndicatorWidget);
+
+var CandleStickSeries =
+/*#__PURE__*/
+function (_TechnicalIndicatorSe) {
+  _inherits(CandleStickSeries, _TechnicalIndicatorSe);
+
+  function CandleStickSeries(props) {
+    var _this;
+
+    _classCallCheck(this, CandleStickSeries);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(CandleStickSeries).call(this, props));
+    _this._chartType = ChartType.CANDLE;
+    return _this;
+  }
+
+  _createClass(CandleStickSeries, [{
+    key: "_createYAxis",
+    value: function _createYAxis(props) {
+      return new YAxis(props.chartData, YAxisType.CANDLE_STICK);
+    }
+  }, {
+    key: "_createMainWidget",
+    value: function _createMainWidget(container, props) {
+      return new CandleStickWidget({
+        container: container,
+        chartData: props.chartData,
+        xAxis: props.xAxis,
+        yAxis: this._yAxis,
+        additionalDataProvider: {
+          technicalIndicatorType: this.technicalIndicatorType.bind(this),
+          chartType: this.chartType.bind(this),
+          tag: this.tag.bind(this)
+        }
+      });
+    }
+  }, {
+    key: "_isRealTime",
+    value: function _isRealTime() {
+      return this._chartType === ChartType.REAL_TIME;
+    }
+  }, {
+    key: "chartType",
+    value: function chartType() {
+      return this._chartType;
+    }
+  }, {
+    key: "setChartType",
+    value: function setChartType(chartType) {
+      if (this._chartType !== chartType) {
+        this._chartType = chartType;
+
+        if (this._chartData.styleOptions().realTime.averageLine.display && this._isRealTime()) {
+          this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE);
+
+          this.invalidate(InvalidateLevel.FULL);
+        }
+      }
+    }
+  }]);
+
+  return CandleStickSeries;
+}(TechnicalIndicatorSeries);
+
+var XAxisView =
+/*#__PURE__*/
+function (_AxisView) {
+  _inherits(XAxisView, _AxisView);
+
+  function XAxisView() {
+    _classCallCheck(this, XAxisView);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(XAxisView).apply(this, arguments));
+  }
+
+  _createClass(XAxisView, [{
+    key: "_drawAxisLine",
+    value: function _drawAxisLine() {
+      var xAxis = this._chartData.styleOptions().xAxis;
+
+      if (!xAxis.display || !xAxis.axisLine.display) {
+        return;
+      }
+
+      this._ctx.strokeStyle = xAxis.axisLine.color;
+      this._ctx.lineWidth = xAxis.axisLine.size;
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(0, 0);
+
+      this._ctx.lineTo(this._width, 0);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+    }
+  }, {
+    key: "_drawTickLines",
+    value: function _drawTickLines() {
+      var _this = this;
+
+      var xAxis = this._chartData.styleOptions().xAxis;
+
+      var tickLine = xAxis.tickLine;
+
+      if (!xAxis.display || !tickLine.display) {
+        return;
+      }
+
+      this._ctx.lineWidth = tickLine.size;
+      this._ctx.strokeStyle = tickLine.color;
+      var startY = xAxis.axisLine.display ? xAxis.axisLine.size : 0;
+      var endY = startY + tickLine.length;
+
+      this._axis.ticks().forEach(function (tick) {
+        var x = tick.x;
+
+        _this._ctx.beginPath();
+
+        _this._ctx.moveTo(x, startY);
+
+        _this._ctx.lineTo(x, endY);
+
+        _this._ctx.stroke();
+
+        _this._ctx.closePath();
+      });
+    }
+  }, {
+    key: "_drawTickLabels",
+    value: function _drawTickLabels() {
+      var xAxis = this._chartData.styleOptions().xAxis;
+
+      var tickText = xAxis.tickText;
+
+      if (!xAxis.display || !tickText.display) {
+        return;
+      }
+
+      var tickLine = xAxis.tickLine;
+      this._ctx.textBaseline = 'top';
+      this._ctx.font = getFont(tickText.size);
+      this._ctx.textAlign = 'center';
+      this._ctx.fillStyle = tickText.color;
+      var labelY = tickText.margin;
+
+      if (xAxis.axisLine.display) {
+        labelY += xAxis.axisLine.size;
+      }
+
+      if (tickLine.display) {
+        labelY += tickLine.length;
+      }
+
+      var dataList = this._chartData.dataList();
+
+      var ticks = this._axis.ticks();
+
+      var tickLength = ticks.length;
+
+      for (var i = 0; i < tickLength; i++) {
+        var x = ticks[i].x;
+        var dataPos = parseInt(ticks[i].v);
+        var kLineData = dataList[dataPos];
+        var timestamp = kLineData.timestamp;
+        var dateText = formatDate(timestamp, this._axis.tickLabelFormatType());
+
+        if (i !== tickLength - 1) {
+          var nextDataPos = parseInt(ticks[i + 1].v);
+          var nextKLineData = dataList[nextDataPos];
+          var nextTimestamp = nextKLineData.timestamp;
+          var year = formatDate(timestamp, 'YYYY');
+          var month = formatDate(timestamp, 'YYYY-MM');
+          var day = formatDate(timestamp, 'MM-DD');
+
+          if (year !== formatDate(nextTimestamp, 'YYYY')) {
+            dateText = year;
+          } else if (month !== formatDate(nextTimestamp, 'YYYY-MM')) {
+            dateText = month;
+          } else if (day !== formatDate(nextTimestamp, 'MM-DD')) {
+            dateText = day;
+          }
+        }
+
+        this._ctx.fillText(dateText, x, labelY);
+      }
+    }
+  }]);
+
+  return XAxisView;
+}(AxisView);
+
+var XAxisFloatLayerView =
+/*#__PURE__*/
+function (_AxisFloatLayerView) {
+  _inherits(XAxisFloatLayerView, _AxisFloatLayerView);
+
+  function XAxisFloatLayerView() {
+    _classCallCheck(this, XAxisFloatLayerView);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(XAxisFloatLayerView).apply(this, arguments));
+  }
+
+  _createClass(XAxisFloatLayerView, [{
+    key: "_drawCrossHairLabel",
+    value: function _drawCrossHairLabel() {
+      if (!this._chartData.crossHairSeriesTag()) {
+        return;
+      }
+
+      var crossHair = this._chartData.styleOptions().floatLayer.crossHair;
+
+      var crossHairVertical = crossHair.vertical;
+      var crossHairVerticalText = crossHairVertical.text;
+
+      if (!crossHair.display || !crossHairVertical.display || !crossHairVerticalText.display) {
+        return;
+      }
+
+      var dataPos = this._chartData.getCrossHairDataPos();
+
+      var kLineData = this._chartData.dataList()[dataPos];
+
+      if (!kLineData) {
+        return;
+      }
+
+      var x = this._axis.convertToPixel(dataPos);
+
+      var timestamp = kLineData.timestamp;
+      var text = formatDate(timestamp, 'YYYY-MM-DD hh:mm');
+      var textSize = crossHairVerticalText.size;
+      this._ctx.font = getFont(textSize);
+      var labelWidth = calcTextWidth(this._ctx, text);
+      var xAxisLabelX = x - labelWidth / 2;
+      var paddingLeft = crossHairVerticalText.paddingLeft;
+      var paddingRight = crossHairVerticalText.paddingRight;
+      var paddingTop = crossHairVerticalText.paddingTop;
+      var paddingBottom = crossHairVerticalText.paddingBottom;
+      var borderSize = crossHairVerticalText.borderSize; // 保证整个x轴上的提示文字总是完全显示
+
+      if (xAxisLabelX < paddingLeft + borderSize) {
+        xAxisLabelX = paddingLeft + borderSize;
+      } else if (xAxisLabelX > this._width - labelWidth - borderSize - paddingRight) {
+        xAxisLabelX = this._width - labelWidth - borderSize - paddingRight;
+      }
+
+      var rectLeft = xAxisLabelX - borderSize - paddingLeft;
+      var rectTop = 0;
+      var rectRight = xAxisLabelX + labelWidth + borderSize + paddingRight;
+      var rectBottom = rectTop + textSize + borderSize * 2 + paddingTop + paddingBottom;
+      this._ctx.fillStyle = crossHairVerticalText.backgroundColor;
+
+      this._ctx.fillRect(rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop);
+
+      this._ctx.lineWidth = borderSize;
+      this._ctx.strokeStyle = crossHairVerticalText.borderColor;
+
+      this._ctx.strokeRect(rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop); // 绘制轴上的提示文字
+
+
+      this._ctx.textBaseline = 'top';
+      this._ctx.fillStyle = crossHairVerticalText.color;
+
+      this._ctx.fillText(text, xAxisLabelX, borderSize + paddingTop);
+    }
+  }]);
+
+  return XAxisFloatLayerView;
+}(AxisFloatLayerView);
+
+var XAxisWidget =
+/*#__PURE__*/
+function (_Widget) {
+  _inherits(XAxisWidget, _Widget);
+
+  function XAxisWidget() {
+    _classCallCheck(this, XAxisWidget);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(XAxisWidget).apply(this, arguments));
+  }
+
+  _createClass(XAxisWidget, [{
+    key: "_createMainView",
+    value: function _createMainView(container, props) {
+      return new XAxisView(container, props.chartData, props.xAxis);
+    }
+  }, {
+    key: "_createFloatLayerView",
+    value: function _createFloatLayerView(container, props) {
+      return new XAxisFloatLayerView(container, props.chartData, props.xAxis);
+    }
+  }]);
+
+  return XAxisWidget;
+}(Widget);
+
+var XAxis =
+/*#__PURE__*/
+function (_Axis) {
+  _inherits(XAxis, _Axis);
+
+  function XAxis(chartData) {
+    var _this;
+
+    _classCallCheck(this, XAxis);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxis).call(this, chartData));
+
+    _this._initMeasureCanvas();
+
+    return _this;
+  }
+
+  _createClass(XAxis, [{
+    key: "_initMeasureCanvas",
+    value: function _initMeasureCanvas() {
+      var measureCanvas = document.createElement('canvas');
+      this._measureCtx = measureCanvas.getContext('2d');
+      var pixelRatio = getPixelRatio(this._measureCtx);
+
+      this._measureCtx.scale(pixelRatio, pixelRatio);
+    }
+  }, {
+    key: "_computeMinMaxValue",
+    value: function _computeMinMaxValue() {
+      var min = this._chartData.from();
+
+      var max = this._chartData.to() - 1;
+      var range = max - min;
+      return {
+        min: min,
+        max: max,
+        range: range
+      };
+    }
+  }, {
+    key: "_computeOptimalTicks",
+    value: function _computeOptimalTicks(ticks) {
+      var optimalTicks = [];
+      var tickLength = ticks.length;
+
+      var dataList = this._chartData.dataList();
+
+      if (tickLength > 0) {
+        var fontSize = this._chartData.styleOptions().xAxis.tickText.size;
+
+        this._measureCtx.font = getFont(fontSize);
+        var defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00');
+        var pos = parseInt(ticks[0].v);
+        var timestamp = formatValue(dataList[pos], 'timestamp', 0);
+        var x = this.convertToPixel(pos);
+        var tickCountDif = 1;
+        this._tickLabelFormatType = 'MM:DD hh:mm';
+
+        if (tickLength > 1) {
+          var nextPos = parseInt(ticks[1].v);
+          var nextTimestamp = formatValue(dataList[nextPos], 'timestamp', 0);
+          var nextX = this.convertToPixel(nextPos);
+          var xDif = Math.abs(nextX - x);
+
+          if (xDif < defaultLabelWidth) {
+            tickCountDif = Math.ceil(defaultLabelWidth / xDif);
+          }
+
+          var timeDif = nextTimestamp - timestamp;
+          var minuteDif = timeDif / 1000 / 60;
+
+          if (minuteDif < 12 * 60) {
+            this._tickLabelFormatType = 'hh:mm';
+          } else if (minuteDif < 15 * 24 * 60) {
+            this._tickLabelFormatType = 'MM-DD';
+          } else if (minuteDif < 180 * 24 * 60) {
+            this._tickLabelFormatType = 'YYYY-MM';
+          } else {
+            this._tickLabelFormatType = 'YYYY';
+          }
+        }
+
+        for (var i = 0; i < tickLength; i += tickCountDif) {
+          var v = ticks[i].v;
+
+          var _x = this.convertToPixel(v);
+
+          if (_x > defaultLabelWidth / 2 && _x < this._width - defaultLabelWidth / 2) {
+            optimalTicks.push({
+              v: v,
+              x: _x
+            });
+          }
+        }
+      }
+
+      return optimalTicks;
+    }
+  }, {
+    key: "tickLabelFormatType",
+    value: function tickLabelFormatType() {
+      return this._tickLabelFormatType;
+    }
+  }, {
+    key: "convertFromPixel",
+    value: function convertFromPixel(pixel) {
+      var dataSpace = this._chartData.dataSpace();
+
+      var range = Math.floor(pixel / dataSpace);
+      return this._chartData.from() + range - 1;
+    }
+  }, {
+    key: "convertToPixel",
+    value: function convertToPixel(value) {
+      var dataSpace = this._chartData.dataSpace();
+
+      return Math.floor((value - this._chartData.from()) * dataSpace + this._chartData.barSpace() / 2);
+    }
+  }]);
+
+  return XAxis;
+}(Axis);
+
+var XAxisSeries =
+/*#__PURE__*/
+function (_Series) {
+  _inherits(XAxisSeries, _Series);
+
+  function XAxisSeries() {
+    _classCallCheck(this, XAxisSeries);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(XAxisSeries).apply(this, arguments));
+  }
+
+  _createClass(XAxisSeries, [{
+    key: "_initBefore",
+    value: function _initBefore() {
+      this._xAxis = new XAxis(this._chartData);
+    }
+  }, {
+    key: "_createMainWidget",
+    value: function _createMainWidget(container, props) {
+      return new XAxisWidget({
+        container: container,
+        chartData: props.chartData,
+        xAxis: this._xAxis
+      });
+    }
+  }, {
+    key: "_computeAxis",
+    value: function _computeAxis() {
+      this._xAxis.computeAxis();
+    }
+  }, {
+    key: "xAxis",
+    value: function xAxis() {
+      return this._xAxis;
+    }
+  }, {
+    key: "setSize",
+    value: function setSize(mainWidgetSize, yAxisWidgetSize) {
+      _get(_getPrototypeOf(XAxisSeries.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
+
+      this._xAxis.setSize(mainWidgetSize.width, mainWidgetSize.height);
+    }
+  }]);
+
+  return XAxisSeries;
+}(Series);
+
+var DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE = 0.2;
+var CANDLE_STICK_MIN_HEIGHT_RATE = 0.4;
+var TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_';
+var CANDLE_STICK_SERIES_TAG = 'candle_stick_series_tag';
+
+var ChartSeries =
+/*#__PURE__*/
+function () {
+  function ChartSeries(container, styleOptions) {
+    _classCallCheck(this, ChartSeries);
+
+    this._container = container;
+    this._technicalIndicatorBaseId = 0;
+    this._chartData = new ChartData(styleOptions, this._updateSeries.bind(this));
+    this._xAxisSeries = new XAxisSeries({
+      container: container,
+      chartData: this._chartData
+    });
+    this._candleStickSeries = new CandleStickSeries({
+      container: container,
+      chartData: this._chartData,
+      xAxis: this._xAxisSeries.xAxis(),
+      technicalIndicatorType: TechnicalIndicatorType.MA,
+      tag: CANDLE_STICK_SERIES_TAG
+    });
+    this._technicalIndicatorSeries = {};
+    this.measureSeriesSize(); // this.e = new EventBase(this._container, {
+    //   pinchStartEvent: (e) => { console.log('pinchStartEvent'); console.log(e) },
+    //   pinchEvent: (e) => { console.log('pinchEvent'); console.log(e) },
+    //   pinchEndEvent: (e) => { console.log('pinchEndEvent'); console.log(e) },
+    //   mouseClickEvent: (e) => { console.log('mouseClickEvent'); console.log(e) },
+    //   mouseDoubleClickEvent: (e) => { console.log('mouseDoubleClickEvent'); console.log(e) },
+    //   mouseDownEvent: (e) => { console.log('mouseDownEvent'); console.log(e) },
+    //   mouseDownOutsideEvent: (e) => { console.log('mouseDownOutsideEvent'); console.log(e) },
+    //   mouseEnterEvent: (e) => { console.log('mouseEnterEvent'); console.log(e) },
+    //   mouseLeaveEvent: (e) => { console.log('mouseLeaveEvent'); console.log(e) },
+    //   mouseMoveEvent: (e) => { console.log('mouseMoveEvent'); console.log(e) },
+    //   mouseUpEvent: (e) => { console.log('mouseUpEvent'); console.log(e) },
+    //   pressedMouseMoveEvent: (e) => { console.log('pressedMouseMoveEvent'); console.log(e) },
+    //   longTapEvent: (e) => { console.log('longTapEvent'); console.log(e) }
+    // }, {
+    //   treatVertTouchDragAsPageScroll: false,
+    //   treatHorzTouchDragAsPageScroll: false
+    // })
+  }
+  /**
+   * 计算x轴的高度
+   * @returns {number}
+   * @private
+   */
+
+
+  _createClass(ChartSeries, [{
+    key: "_measureXAxisHeight",
+    value: function _measureXAxisHeight() {
+      var xAxis = this._chartData.styleOptions().xAxis;
+
+      var tickText = xAxis.tickText;
+      var tickLine = xAxis.tickLine;
       var height = tickText.size + tickText.margin;
 
       if (xAxis.display && tickLine.display) {
         height += tickLine.length;
       }
 
-      if (xAxis.display && xAxis.line.display) {
-        height += xAxis.line.size;
+      if (xAxis.display && xAxis.axisLine.display) {
+        height += xAxis.axisLine.size;
       }
 
       height = Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight));
@@ -7826,30 +6875,33 @@ function () {
     }
     /**
      * 计算y轴宽度
+     * @returns {number}
+     * @private
      */
 
   }, {
-    key: "calcYAxisWidth",
-    value: function calcYAxisWidth() {
-      var yAxis = this.style.yAxis;
-      var tickText = yAxis.tick.text;
-      var tickLine = yAxis.tick.line;
-      var needsOffset = ((tickText.display || tickLine.display || tickText.margin > 0) && tickText.position === YAxisTextPosition.OUTSIDE || yAxis.line.display) && yAxis.display;
+    key: "_measureYAxisWidth",
+    value: function _measureYAxisWidth() {
+      var yAxis = this._chartData.styleOptions().yAxis;
+
+      var tickText = yAxis.tickText;
+      var tickLine = yAxis.tickLine;
+      var needsOffset = ((tickText.display || tickLine.display || tickText.margin > 0) && tickText.position === YAxisTextPosition.OUTSIDE || yAxis.axisLine.display) && yAxis.display;
 
       if (needsOffset) {
         var width = 0;
 
         if (tickText.position === YAxisTextPosition.OUTSIDE) {
-          width += calcTextWidth(tickText.size, '0000000') + tickText.margin;
+          width += tickText.margin;
 
           if (yAxis.display && tickLine.display) {
             width += tickLine.length;
           }
         }
 
-        var axisLineSize = yAxis.line.size;
+        var axisLineSize = yAxis.axisLine.size;
 
-        if (yAxis.display && yAxis.line.display) {
+        if (yAxis.display && yAxis.axisLine.display) {
           width += axisLineSize;
         }
 
@@ -7863,464 +6915,325 @@ function () {
       return 0;
     }
     /**
-     * 计算图表指标
+     * 更新所有series
+     * @private
      */
 
   }, {
-    key: "calcChartIndicator",
-    value: function calcChartIndicator() {
-      if (this.candleChart.chartType === ChartType.REAL_TIME) {
-        if (this.style.realTime.averageLine.display) {
-          this.storage.dataList = calcIndicator.average(this.storage.dataList);
-          this.flushCharts([this.candleChart]);
-        }
+    key: "_updateSeries",
+    value: function _updateSeries() {
+      var invalidateLevel = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : InvalidateLevel.FULL;
+
+      this._xAxisSeries.invalidate(invalidateLevel);
+
+      this._candleStickSeries.invalidate(invalidateLevel);
+
+      for (var key in this._technicalIndicatorSeries) {
+        this._technicalIndicatorSeries[key].invalidate(invalidateLevel);
+      }
+    }
+    /**
+     * 计算所有series的指标
+     * @private
+     */
+
+  }, {
+    key: "_calcAllSeriesTechnicalIndicator",
+    value: function _calcAllSeriesTechnicalIndicator() {
+      var technicalIndicatorTypeArray = [];
+
+      if (this._candleStickSeries.chartType() === ChartType.CANDLE) {
+        technicalIndicatorTypeArray.push(this._candleStickSeries.technicalIndicatorType());
       } else {
-        if (this.candleChart.indicatorType !== IndicatorType.NO) {
-          this.calcIndicator(this.candleChart.indicatorType, this.candleChart);
-        } else {
-          this.flushCharts([this.candleChart]);
+        this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE);
+      }
+
+      for (var key in this._technicalIndicatorSeries) {
+        var technicalIndicatorSeriesTechnicalIndicatorType = this._technicalIndicatorSeries[key].technicalIndicatorType();
+
+        if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {
+          technicalIndicatorTypeArray.push(technicalIndicatorSeriesTechnicalIndicatorType);
         }
       }
 
-      if (this.volIndicatorChart.indicatorType !== IndicatorType.NO) {
-        this.calcIndicator(IndicatorType.VOL, this.volIndicatorChart);
+      for (var _i = 0, _technicalIndicatorTy = technicalIndicatorTypeArray; _i < _technicalIndicatorTy.length; _i++) {
+        var technicalIndicatorType = _technicalIndicatorTy[_i];
+
+        this._chartData.calcTechnicalIndicator(technicalIndicatorType);
       }
 
-      if (this.subIndicatorChart.indicatorType !== IndicatorType.NO) {
-        this.calcIndicator(this.subIndicatorChart.indicatorType, this.subIndicatorChart);
-      }
+      this._updateSeries();
+    }
+  }, {
+    key: "chartData",
+    value: function chartData() {
+      return this._chartData;
     }
     /**
-     * 计算指标
-     * @param indicatorType
-     * @param chart
+     * 测量尺寸
+     * @private
      */
 
   }, {
-    key: "calcIndicator",
-    value: function calcIndicator$1(indicatorType, chart) {
-      var _this2 = this;
+    key: "measureSeriesSize",
+    value: function measureSeriesSize() {
+      var seriesHeight = this._container.offsetHeight;
+      var seriesWidth = this._container.offsetWidth;
 
-      Promise.resolve().then(function () {
-        var calc = calcIndicator[indicatorType];
+      var xAxisHeight = this._measureXAxisHeight();
 
-        if (isFunction(calc)) {
-          _this2.storage.dataList = calc(_this2.storage.dataList, _this2.indicatorParams[indicatorType]);
+      var yAxisWidth = this._measureYAxisWidth();
 
-          _this2.flushCharts([chart, _this2.tooltipChart]);
-        }
+      var seriesExcludeXAxisHeight = seriesHeight - xAxisHeight;
+      var seriesExcludeYAxisWidth = seriesWidth - yAxisWidth;
+      var technicalIndicatorSeriesCount = Object.values(this._technicalIndicatorSeries).length;
+      var technicalIndicatorSeriesHeight;
+
+      if (technicalIndicatorSeriesCount * DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE > CANDLE_STICK_MIN_HEIGHT_RATE) {
+        technicalIndicatorSeriesHeight = Math.floor((1 - CANDLE_STICK_MIN_HEIGHT_RATE) * seriesExcludeXAxisHeight / technicalIndicatorSeriesCount);
+      } else {
+        technicalIndicatorSeriesHeight = Math.floor(seriesExcludeXAxisHeight * DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE);
+      }
+
+      var candleStickSeriesHeight = seriesExcludeXAxisHeight - technicalIndicatorSeriesCount * technicalIndicatorSeriesHeight;
+      var isLeft = this._chartData.styleOptions().yAxis.position === YAxisPosition.LEFT;
+      var yAxisOffsetLeft = seriesExcludeYAxisWidth;
+      var mainOffsetLeft = 0;
+
+      if (isLeft) {
+        yAxisOffsetLeft = 0;
+        mainOffsetLeft = yAxisWidth;
+      }
+
+      this._chartData.setTotalDataSpace(seriesExcludeYAxisWidth);
+
+      this._candleStickSeries.setSize({
+        left: mainOffsetLeft,
+        width: seriesExcludeYAxisWidth,
+        height: candleStickSeriesHeight
+      }, {
+        left: yAxisOffsetLeft,
+        width: yAxisWidth,
+        height: candleStickSeriesHeight
       });
-    }
-    /**
-     * 调整尺寸
-     */
 
-  }, {
-    key: "resize",
-    value: function resize() {
-      var _this3 = this;
-
-      if (this.domWidth !== this.dom.offsetWidth || this.domHeight !== this.dom.offsetHeight) {
-        requestAnimationFrame(function () {
-          _this3.calcChartDimensions();
+      for (var key in this._technicalIndicatorSeries) {
+        this._technicalIndicatorSeries[key].setSize({
+          left: mainOffsetLeft,
+          width: seriesExcludeYAxisWidth,
+          height: technicalIndicatorSeriesHeight
+        }, {
+          left: yAxisOffsetLeft,
+          width: yAxisWidth,
+          height: technicalIndicatorSeriesHeight
         });
       }
-    }
-    /**
-     * 添加数据集合
-     * @param data
-     * @param noMore
-     */
 
-  }, {
-    key: "addData",
-    value: function addData(data, noMore) {
-      if (isBoolean(noMore)) {
-        this.noMore = noMore;
-      }
-
-      if (isObject(data)) {
-        var dataList = this.getDataList();
-        var dataSize = dataList.length;
-        var pos;
-
-        if (isArray(data)) {
-          if (dataSize > 0) {
-            // 当数据是数组，且有历史数据时则判断是在加载更多的数据请求来的，将loading重置为未加载状态
-            this.loading = false;
-          }
-
-          pos = 0;
-        } else {
-          // 这里判断单个数据应该添加到哪个位置
-          var timestamp = +formatValue(data, 'timestamp', 0);
-          var lastDataTimestamp = +formatValue(dataList[dataSize - 1], 'timestamp', 0);
-          pos = dataSize;
-
-          if (timestamp === lastDataTimestamp) {
-            pos = dataSize - 1;
-          }
-        }
-
-        this.storage.addData(data, pos);
-        this.calcChartIndicator();
-        this.xAxisChart.flush();
-      }
-    }
-    /**
-     * 设置样式
-     * @param s
-     */
-
-  }, {
-    key: "setStyle",
-    value: function setStyle() {
-      var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      merge(this.style, s);
-      this.calcChartDimensions();
-    }
-    /**
-     * 设置主图类型
-     * @param chartType
-     */
-
-  }, {
-    key: "setMainChartType",
-    value: function setMainChartType(chartType) {
-      if (this.candleChart.chartType !== chartType) {
-        this.candleChart.chartType = chartType;
-
-        if (chartType === ChartType.REAL_TIME && this.style.realTime.averageLine.display) {
-          this.storage.dataList = calcIndicator.average(this.storage.dataList);
-        }
-
-        this.flushCharts([this.candleChart, this.tooltipChart]);
-        this.removeAllGraphicMark();
-      }
-    }
-    /**
-     * 设置主图指标
-     * @param indicatorType
-     */
-
-  }, {
-    key: "setMainIndicatorType",
-    value: function setMainIndicatorType(indicatorType) {
-      if (this.candleChart.indicatorType !== indicatorType) {
-        this.candleChart.indicatorType = indicatorType;
-
-        if (indicatorType === IndicatorType.NO) {
-          this.flushCharts([this.candleChart]);
-        } else {
-          this.calcIndicator(indicatorType, this.candleChart);
-        }
-      }
-    }
-    /**
-     * 设置副图指标
-     * @param indicatorType
-     */
-
-  }, {
-    key: "setSubIndicatorType",
-    value: function setSubIndicatorType(indicatorType) {
-      if (this.subIndicatorChart.indicatorType !== indicatorType) {
-        var shouldCalcChartHeight = indicatorType === IndicatorType.NO || this.subIndicatorChart.indicatorType === IndicatorType.NO;
-        this.subIndicatorChart.indicatorType = indicatorType;
-
-        if (shouldCalcChartHeight) {
-          this.calcChartDimensions();
-        }
-
-        if (indicatorType !== IndicatorType.NO) {
-          this.calcIndicator(indicatorType, this.subIndicatorChart);
-        }
-      }
-    }
-    /**
-     * 设置指标参数
-     * @param indicatorType
-     * @param params
-     */
-
-  }, {
-    key: "setIndicatorParams",
-    value: function setIndicatorParams(indicatorType, params) {
-      if (!this.indicatorParams.hasOwnProperty(indicatorType) || indicatorType !== IndicatorType.MA && indicatorType !== IndicatorType.VOL && params.length !== this.indicatorParams[indicatorType].length) {
-        return;
-      }
-
-      this.indicatorParams[indicatorType] = params;
-
-      if (this.getMainIndicatorType() === indicatorType) {
-        this.calcIndicator(indicatorType, this.candleChart);
-      }
-
-      if (this.isShowVolChart() && indicatorType === IndicatorType.VOL) {
-        this.calcIndicator(indicatorType, this.volIndicatorChart);
-      }
-
-      if (this.getSubIndicatorType() === indicatorType) {
-        this.calcIndicator(indicatorType, this.subIndicatorChart);
-      }
-    }
-    /**
-     * 获取指标参数
-     * @returns {{DMI: number[], OBV: [number], SAR: number[], BIAS: number[], MTM: number[], CCI: [number], RSI: number[], TRIX: number[], CR: number[], EMV: number[], KDJ: number[], VOL: number[], BOLL: [number], MA: number[], MACD: number[], PSY: [number], DMA: number[], WR: number[], VR: number[], BRAR: [number]}}
-     */
-
-  }, {
-    key: "getIndicatorParams",
-    value: function getIndicatorParams(indicatorType) {
-      if (indicatorType) {
-        return this.indicatorParams[indicatorType] || [];
-      }
-
-      return this.indicatorParams;
-    }
-    /**
-     * 设置精度
-     * @param pricePrecision
-     * @param volumePrecision
-     */
-
-  }, {
-    key: "setPrecision",
-    value: function setPrecision() {
-      var pricePrecision = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.precision.pricePrecision;
-      var volumePrecision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.precision.volumePrecision;
-      this.precision.pricePrecision = pricePrecision;
-      this.precision.volumePrecision = volumePrecision;
-    }
-    /**
-     * 显示成交量图
-     * @param isShow
-     */
-
-  }, {
-    key: "showVolChart",
-    value: function showVolChart(isShow) {
-      var isShowVol = this.volIndicatorChart.indicatorType !== IndicatorType.NO;
-
-      if (isShow !== isShowVol) {
-        this.volIndicatorChart.indicatorType = isShow ? IndicatorType.VOL : IndicatorType.NO;
-        this.calcChartDimensions();
-
-        if (isShow) {
-          this.calcIndicator(IndicatorType.VOL, this.volIndicatorChart);
-        }
-      }
-    }
-    /**
-     * 设置默认的range
-     * @param range
-     */
-
-  }, {
-    key: "setDefaultRange",
-    value: function setDefaultRange(range) {
-      if (isNumber(range) && range >= this.storage.minRange && range <= this.storage.maxRange) {
-        this.storage.range = range;
-        this.storage.space(this.tooltipChart.handler.contentRight() - this.tooltipChart.handler.contentLeft());
-
-        if (this.storage.minPos + range > this.storage.dataList.length) {
-          this.storage.minPos = this.storage.dataList.length - range;
-
-          if (this.storage.minPos < 0) {
-            this.storage.minPos = 0;
-          }
-        }
-
-        this.flushCharts([this.candleChart, this.volIndicatorChart, this.subIndicatorChart, this.xAxisChart]);
-      }
-    }
-    /**
-     * 设置最小range
-     * @param range
-     */
-
-  }, {
-    key: "setMinRange",
-    value: function setMinRange(range) {
-      if (isNumber(range) && range <= this.storage.range) {
-        this.storage.minRange = range;
-      }
-    }
-    /**
-     * 设置最大range
-     * @param range
-     */
-
-  }, {
-    key: "setMaxRange",
-    value: function setMaxRange(range) {
-      if (isNumber(range) && range >= this.storage.range) {
-        this.storage.maxRange = range;
-      }
-    }
-    /**
-     * 获取主图指标类型
-     * @returns {string}
-     */
-
-  }, {
-    key: "getMainIndicatorType",
-    value: function getMainIndicatorType() {
-      return this.candleChart.indicatorType;
-    }
-    /**
-     * 获取附图指标类型
-     * @returns {string}
-     */
-
-  }, {
-    key: "getSubIndicatorType",
-    value: function getSubIndicatorType() {
-      return this.subIndicatorChart.indicatorType;
-    }
-    /**
-     * 成交量图是否显示
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "isShowVolChart",
-    value: function isShowVolChart() {
-      return this.volIndicatorChart.indicatorType !== IndicatorType.NO;
-    }
-    /**
-     * 获取数据集合
-     * @returns {Array}
-     */
-
-  }, {
-    key: "getDataList",
-    value: function getDataList() {
-      return this.storage.dataList;
-    }
-    /**
-     * 获取当前样式
-     * @returns {{indicator, yAxis, xAxis, grid, candle, tooltip}}
-     */
-
-  }, {
-    key: "getStyle",
-    value: function getStyle() {
-      return this.style;
-    }
-    /**
-     * 清空数据
-     */
-
-  }, {
-    key: "clearData",
-    value: function clearData() {
-      this.storage.dataList = [];
-    }
-    /**
-     * 添加图形标记
-     * @param type
-     */
-
-  }, {
-    key: "addGraphicMark",
-    value: function addGraphicMark(type) {
-      // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
-      var graphicMarkType = this.storage.graphicMarkType;
-
-      if (graphicMarkType !== type) {
-        var graphicMarkData = this.storage.graphicMarkDatas[graphicMarkType];
-
-        if (graphicMarkData && isArray(graphicMarkData)) {
-          graphicMarkData.splice(graphicMarkData.length - 1, 1);
-          this.storage.graphicMarkDatas[graphicMarkType] = graphicMarkData;
-          this.tooltipChart.flush();
-        }
-      }
-
-      this.storage.graphicMarkType = type;
-    }
-    /**
-     * 移除所有标记图形
-     */
-
-  }, {
-    key: "removeAllGraphicMark",
-    value: function removeAllGraphicMark() {
-      var _this4 = this;
-
-      var graphicMarkDatas = this.storage.graphicMarkDatas;
-      Object.keys(graphicMarkDatas).forEach(function (key) {
-        _this4.storage.graphicMarkDatas[key] = [];
+      this._xAxisSeries.setSize({
+        left: mainOffsetLeft,
+        width: seriesExcludeYAxisWidth,
+        height: xAxisHeight
+      }, {
+        left: yAxisOffsetLeft,
+        width: yAxisWidth,
+        height: xAxisHeight
       });
-      this.storage.graphicMarkType = GraphicMarkType.NONE;
-      this.graphicMarkChart.flush();
     }
     /**
-     * 加载更多
-     * @param cb
+     * 加载样式配置
+     * @param styleOptions
      */
 
   }, {
-    key: "loadMore",
-    value: function loadMore(cb) {
-      this.loadMoreCallback = cb;
+    key: "applyStyleOptions",
+    value: function applyStyleOptions(styleOptions) {
+      this._chartData.applyStyleOptions(styleOptions);
+
+      this.measureSeriesSize();
     }
     /**
-     * 获取图表转换为图片后url
-     * @param type
-     * @param excludes
+     * 添加新数据
+     * @param dataList
      */
 
   }, {
-    key: "getConvertPictureUrl",
-    value: function getConvertPictureUrl() {
-      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'jpeg';
-      var excludes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+    key: "applyNewData",
+    value: function applyNewData(dataList) {
+      if (isArray(dataList)) {
+        this._chartData.clearDataList();
 
-      if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
-        throw new Error('Picture format only supports jpeg, png and bmp!!!');
+        this._chartData.addData(dataList, 0);
+
+        this._calcAllSeriesTechnicalIndicator();
       }
+    }
+    /**
+     * 添加更多数据
+     * @param dataList
+     */
 
-      var c = document.createElement('canvas');
-      var xAxisCanvas = this.xAxisChart.canvasDom;
-      var candleCanvas = this.candleChart.canvasDom;
-      var volCanvas = this.volIndicatorChart.canvasDom;
-      var indicatorCanvas = this.subIndicatorChart.canvasDom;
-      var tooltipCanvas = this.tooltipChart.canvasDom;
-      c.width = tooltipCanvas.width;
-      c.height = tooltipCanvas.height;
-      c.style.width = tooltipCanvas.style.width;
-      c.style.height = tooltipCanvas.style.height;
-      var ctx = c.getContext('2d');
-      ctx.drawImage(xAxisCanvas, 0, 0, xAxisCanvas.width, xAxisCanvas.height);
+  }, {
+    key: "applyMoreData",
+    value: function applyMoreData(dataList) {
+      if (isArray(dataList)) {
+        this._chartData.addData(dataList, 0);
 
-      if (!excludes || excludes.indexOf('candle') < 0) {
-        ctx.drawImage(candleCanvas, 0, 0, candleCanvas.width, candleCanvas.height);
+        this._calcAllSeriesTechnicalIndicator();
       }
+    }
+    /**
+     * 更新数据
+     * @param data
+     */
 
-      if (!excludes || excludes.indexOf('vol') < 0) {
-        ctx.drawImage(volCanvas, 0, candleCanvas.height, volCanvas.width, volCanvas.height);
+  }, {
+    key: "updateData",
+    value: function updateData(data) {
+      if (isObject(data) && !isArray(data)) {
+        var dataList = this._chartData.dataList();
+
+        var dataSize = dataList.length; // 这里判断单个数据应该添加到哪个位置
+
+        var timestamp = +formatValue(data, 'timestamp', 0);
+        var lastDataTimestamp = +formatValue(dataList[dataSize - 1], 'timestamp', 0);
+        var pos = dataSize;
+
+        if (timestamp === lastDataTimestamp) {
+          pos = dataSize - 1;
+        }
+
+        this._chartData.addData(data, pos);
+
+        this._calcAllSeriesTechnicalIndicator();
       }
+    }
+    /**
+     * 创建一个指标
+     * @param technicalIndicatorType
+     * @returns {string}
+     */
 
-      if (!excludes || excludes.indexOf('subIndicator') < 0) {
-        ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height);
+  }, {
+    key: "createTechnicalIndicator",
+    value: function createTechnicalIndicator(technicalIndicatorType) {
+      this._technicalIndicatorBaseId++;
+      var tag = "".concat(TECHNICAL_INDICATOR_NAME_PREFIX).concat(this._technicalIndicatorBaseId);
+      this._technicalIndicatorSeries[tag] = new TechnicalIndicatorSeries({
+        container: this._container,
+        chartData: this._chartData,
+        xAxis: this._xAxisSeries.xAxis(),
+        technicalIndicatorType: technicalIndicatorType,
+        tag: tag
+      });
+      this.measureSeriesSize();
+      return tag;
+    }
+    /**
+     * 移除一个指标
+     * @param tag
+     */
+
+  }, {
+    key: "removeTechnicalIndicator",
+    value: function removeTechnicalIndicator(tag) {
+      var series = this._technicalIndicatorSeries[tag];
+
+      if (series) {
+        series.destroy();
+        delete this._technicalIndicatorSeries[tag];
+        this.measureSeriesSize();
       }
+    }
+    /**
+     * 设置指标类型
+     * @param tag
+     * @param technicalIndicatorType
+     */
 
-      if (!excludes || excludes.indexOf('graphicMark') < 0) {
-        var graphicMarkCanvas = this.graphicMarkChart.canvasDom;
-        ctx.drawImage(graphicMarkCanvas, 0, 0, graphicMarkCanvas.width, graphicMarkCanvas.height);
+  }, {
+    key: "setTechnicalIndicatorType",
+    value: function setTechnicalIndicatorType(tag, technicalIndicatorType) {
+      if (tag === CANDLE_STICK_SERIES_TAG) {
+        this._technicalIndicatorSeries.setTechnicalIndicatorType(technicalIndicatorType);
+      } else {
+        var series = this._technicalIndicatorSeries[tag];
+
+        if (series) {
+          if (technicalIndicatorType === TechnicalIndicatorType.NO) {
+            this.removeTechnicalIndicator(tag);
+          } else {
+            series.setTechnicalIndicatorType(technicalIndicatorType);
+          }
+        }
       }
-
-      if (!excludes || excludes.indexOf('tooltip') < 0) {
-        ctx.drawImage(tooltipCanvas, 0, 0, tooltipCanvas.width, tooltipCanvas.height);
-      }
-
-      return c.toDataURL("image/".concat(type));
     }
   }]);
 
-  return RootChart;
+  return ChartSeries;
+}();
+
+var Chart =
+/*#__PURE__*/
+function () {
+  function Chart(container, styleOptions) {
+    _classCallCheck(this, Chart);
+
+    this._chartSeries = new ChartSeries(container, styleOptions);
+  }
+
+  _createClass(Chart, [{
+    key: "resize",
+    value: function resize() {
+      this._chartSeries.measureSeriesSize();
+    }
+  }, {
+    key: "clearData",
+    value: function clearData() {
+      this._chartSeries.chartData().clearDataList();
+    }
+  }, {
+    key: "applyStyleOptions",
+    value: function applyStyleOptions(options) {
+      this._chartSeries.applyStyleOptions(options);
+    }
+  }, {
+    key: "applyNewData",
+    value: function applyNewData(dataList) {
+      this._chartSeries.applyNewData(dataList);
+    }
+  }, {
+    key: "applyMoreData",
+    value: function applyMoreData(dataList) {
+      this._chartSeries.applyMoreData(dataList);
+    }
+  }, {
+    key: "updateData",
+    value: function updateData(data) {
+      this._chartSeries.updateData(data);
+    }
+  }, {
+    key: "setCandleStickTechnicalIndicatorType",
+    value: function setCandleStickTechnicalIndicatorType(technicalIndicatorType) {
+      this._chartSeries.setTechnicalIndicatorType(CANDLE_STICK_SERIES_TAG, technicalIndicatorType);
+    }
+  }, {
+    key: "setTechnicalIndicatorType",
+    value: function setTechnicalIndicatorType(tag, technicalIndicatorType) {
+      this._chartSeries.setTechnicalIndicatorType(tag, technicalIndicatorType);
+    }
+  }, {
+    key: "addTechnicalIndicator",
+    value: function addTechnicalIndicator(technicalIndicatorType) {
+      return this._chartSeries.createTechnicalIndicator(technicalIndicatorType);
+    }
+  }, {
+    key: "removeTechnicalIndicator",
+    value: function removeTechnicalIndicator(tag) {
+      this._chartSeries.removeTechnicalIndicator(tag);
+    }
+  }]);
+
+  return Chart;
 }();
 
 var DEV = process.env.NODE_ENV === 'development';
@@ -8361,7 +7274,7 @@ function init(dom) {
   }
 
   var id = "k_line_chart_".concat(idBase++);
-  var chart = new RootChart(dom, style);
+  var chart = new Chart(dom, style);
   chart.id = id;
   dom.chart_id = id;
   instances[id] = chart;
@@ -8377,7 +7290,7 @@ function dispose(dc) {
   if (dc) {
     var id = dc.chart_id;
 
-    if (!id && dc instanceof RootChart) {
+    if (!id && dc instanceof Chart) {
       id = dc.id;
     }
 

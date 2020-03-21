@@ -1,4 +1,4 @@
-import Chart from './chart/Chart'
+import Chart from './Chart'
 import { DEV } from './utils/env'
 
 const instances = {}

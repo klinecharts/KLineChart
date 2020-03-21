@@ -1,5 +1,4 @@
 import View from './View'
-import { CrossHairEvent } from '../e/CrossHairEvent'
 import { FloatLayerPromptDisplayRule, LineStyle } from '../data/options/styleOptions'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 import { isArray } from '../utils/typeChecks'
@@ -12,7 +11,6 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     this._xAxis = xAxis
     this._yAxis = yAxis
     this._additionalDataProvider = additionalDataProvider
-    this._crossHairEvent = new CrossHairEvent(this._canvas, chartData, additionalDataProvider.tag())
   }
 
   _draw () {
