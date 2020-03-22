@@ -19,6 +19,10 @@ export const CANDLE_STICK_SERIES_TAG = 'candle_stick_series_tag'
 
 export default class ChartSeries {
   constructor (container, styleOptions) {
+    container.style.position = 'relative'
+    container.style.outline = 'none'
+    container.style.borderStyle = 'none'
+    container.tabIndex = 1
     this._container = container
     this._technicalIndicatorBaseId = 0
     this._technicalIndicatorSeries = []

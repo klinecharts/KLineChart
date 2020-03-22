@@ -106,6 +106,14 @@ export default class Chart {
   }
 
   /**
+   * 设置加载更多回调
+   * @param cb
+   */
+  loadMore (cb) {
+    this._chartSeries.chartData().loadMore(cb)
+  }
+
+  /**
    * 设置蜡烛图表类型
    * @param type
    */

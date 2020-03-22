@@ -1,4 +1,4 @@
-import {isArray, isObject, merge, clone, isFunction, isBoolean} from '../utils/typeChecks'
+import { isArray, isObject, merge, clone, isFunction, isBoolean } from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
 import { defaultTechnicalIndicatorParamOptions, TechnicalIndicatorType } from './options/technicalIndicatorParamOptions'
 import { defaultPrecisionOptions } from './options/precisionOptions'

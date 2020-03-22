@@ -2,12 +2,14 @@ import EventBase from './EventBase'
 import ZoomDragEventHandler from './ZoomDragEventHandler'
 import GraphicMarkEventHandler from './GraphicMarkEventHandler'
 import { GraphicMarkType } from '../data/ChartData'
+import KeyBoardEventHandler from './KeyBoardEventHandler'
 
 export default class ChartEvent {
   constructor (target, chartData, xAxis, yAxis) {
+    this._target = target
     this._chartData = chartData
     this._seriesSize = {}
-    this._event = new EventBase(target, {
+    this._event = new EventBase(this._target, {
       pinchStartEvent: this._pinchStartEvent.bind(this),
       pinchEvent: this._pinchEvent.bind(this),
       mouseUpEvent: this._mouseUpEvent.bind(this),
@@ -22,8 +24,15 @@ export default class ChartEvent {
       treatVertTouchDragAsPageScroll: false,
       treatHorzTouchDragAsPageScroll: false
     })
+    this._boundKeyBoardDownEvent = this._keyBoardDownEvent.bind(this)
+    this._target.addEventListener('keydown', this._boundKeyBoardDownEvent)
     this._zoomDragEventHandler = new ZoomDragEventHandler(chartData)
     this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData, xAxis, yAxis)
+    this._keyBoardEventHandler = new KeyBoardEventHandler(chartData)
+  }
+
+  _keyBoardDownEvent (event) {
+    this._keyBoardEventHandler.keyBoardDownEvent(event)
   }
 
   _pinchStartEvent () {
@@ -92,5 +101,6 @@ export default class ChartEvent {
 
   destroy () {
     this._event.destroy()
+    this._target.removeEventListener('keydown', this._boundKeyBoardDownEvent)
   }
 }
