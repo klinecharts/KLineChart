@@ -3,16 +3,32 @@ import { defaultStyleOptions } from './options/styleOptions'
 import { defaultTechnicalIndicatorParamOptions, TechnicalIndicatorType } from './options/technicalIndicatorParamOptions'
 import { defaultPrecisionOptions } from './options/precisionOptions'
 
-import { GraphicMarkType } from '../internal/constants'
-
 import calcIndicator from '../internal/calcIndicator'
-
-const BAR_MARGIN_SPACE_RATE = 0.25
 
 export const InvalidateLevel = {
   CROSS_HAIR: 1,
-  FULL: 2
+  GRAPHIC_MARK: 2,
+  FULL: 3
 }
+
+export const GraphicMarkType = {
+  NONE: 'none',
+  HORIZONTAL_STRAIGHT_LINE: 'horizontalStraightLine',
+  VERTICAL_STRAIGHT_LINE: 'verticalStraightLine',
+  STRAIGHT_LINE: 'straightLine',
+  HORIZONTAL_RAY_LINE: 'horizontalRayLine',
+  VERTICAL_RAY_LINE: 'verticalRayLine',
+  RAY_LINE: 'rayLine',
+  HORIZONTAL_SEGMENT_LINE: 'horizontalSegmentLine',
+  VERTICAL_SEGMENT_LINE: 'verticalSegmentLine',
+  SEGMENT_LINE: 'segmentLine',
+  PRICE_LINE: 'priceLine',
+  PRICE_CHANNEL_LINE: 'priceChannelLine',
+  PARALLEL_STRAIGHT_LINE: 'parallelStraightLine',
+  FIBONACCI_LINE: 'fibonacciLine'
+}
+
+const BAR_MARGIN_SPACE_RATE = 0.25
 
 const MAX_DATA_SPACE = 30
 const MIN_DATA_SPACE = 3
@@ -54,13 +70,13 @@ export default class ChartData {
     this._preFrom = 0
 
     // 当前绘制的标记图形的类型
-    this.graphicMarkType = GraphicMarkType.NONE
+    this._graphicMarkType = GraphicMarkType.NONE
     // 标记图形点
-    this.graphicMarkPoint = null
-    // 是否在拖拽标记图形
-    this.isDragGraphicMark = false
+    this._graphicMarkPoint = null
+    // 拖拽标记图形标记
+    this._dragGraphicMarkFlag = false
     // 绘图标记数据
-    this.graphicMarkDatas = {
+    this._graphicMarkDatas = {
       // 水平直线
       horizontalStraightLine: [],
       // 垂直直线
@@ -150,6 +166,10 @@ export default class ChartData {
     return this._styleOptions
   }
 
+  applyStyleOptions (options) {
+    merge(this._styleOptions, options)
+  }
+
   /**
    * 获取计算指标参数配置
    */
@@ -158,10 +178,39 @@ export default class ChartData {
   }
 
   /**
+   * 加载技术指标参数
+   * @param technicalIndicatorType
+   * @param params
+   */
+  applyTechnicalIndicatorParams (technicalIndicatorType, params = []) {
+    if (this._technicalIndicatorParamOptions.hasOwnProperty(technicalIndicatorType)) {
+      this._technicalIndicatorParamOptions[technicalIndicatorType] = params
+    }
+  }
+
+  /**
    * 精度配置
    */
   precisionOptions () {
     return this._precisionOptions
+  }
+
+  /**
+   * 加载精度
+   * @param pricePrecision
+   * @param volumePrecision
+   */
+  applyPrecision (pricePrecision, volumePrecision) {
+    if ((pricePrecision || pricePrecision === 0) && !(pricePrecision < 0)) {
+      this._precisionOptions.price = pricePrecision
+      this._precisionOptions[TechnicalIndicatorType.MA] = pricePrecision
+      this._precisionOptions[TechnicalIndicatorType.BOLL] = pricePrecision
+      this._precisionOptions[TechnicalIndicatorType.SAR] = pricePrecision
+    }
+    if ((volumePrecision || volumePrecision === 0) && !(volumePrecision < 0)) {
+      this._precisionOptions.volume = volumePrecision
+      this._precisionOptions[TechnicalIndicatorType.VOL] = volumePrecision
+    }
   }
 
   /**
@@ -435,5 +484,62 @@ export default class ChartData {
     if (this._to > dataSize) {
       this._to = dataSize
     }
+  }
+
+  /**
+   * 获取图形标记类型
+   * @returns {string}
+   */
+  graphicMarkType () {
+    return this._graphicMarkType
+  }
+
+  /**
+   * 设置图形标记类型
+   * @param graphicMarkType
+   */
+  setGraphicMarkType (graphicMarkType) {
+    this._graphicMarkType = graphicMarkType
+  }
+
+  dragGraphicMarkFlag () {
+    return this._dragGraphicMarkFlag
+  }
+
+  setDragGraphicMarkFlag (flag) {
+    this._dragGraphicMarkFlag = flag
+  }
+
+  /**
+   * 获取图形标记开始的点
+   * @returns {null}
+   */
+  graphicMarkPoint () {
+    return this._graphicMarkPoint
+  }
+
+  /**
+   * 设置图形标记开始的点
+   * @param point
+   */
+  setGraphicMarkPoint (point) {
+    this._graphicMarkPoint = point
+  }
+
+  /**
+   * 获取图形标记的数据
+   * @returns {{straightLine: [], verticalRayLine: [], rayLine: [], segmentLine: [], horizontalRayLine: [], horizontalSegmentLine: [], fibonacciLine: [], verticalStraightLine: [], priceChannelLine: [], priceLine: [], verticalSegmentLine: [], horizontalStraightLine: [], parallelStraightLine: []}}
+   */
+  graphicMarkData () {
+    return this._graphicMarkDatas
+  }
+
+  /**
+   * 设置图形标记的数据
+   * @param datas
+   */
+  setGraphicMarkData (datas) {
+    this._graphicMarkDatas = datas
+    this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK)
   }
 }

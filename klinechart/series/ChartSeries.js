@@ -11,7 +11,7 @@ import SeparatorSeries from './SeparatorSeries'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 import ChartEvent from '../e/ChartEvent'
 
-const DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT = 120
+const DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT = 100
 
 const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_'
 
@@ -25,7 +25,6 @@ export default class ChartSeries {
     this._separatorSeries = []
     this._separatorDragStartTechnicalIndicatorHeight = 0
     this._chartData = new ChartData(styleOptions, this._updateSeries.bind(this))
-    this._chartEvent = new ChartEvent(this._container, this._chartData)
     this._xAxisSeries = new XAxisSeries({ container, chartData: this._chartData })
     this._candleStickSeries = new CandleStickSeries({
       container,
@@ -34,6 +33,7 @@ export default class ChartSeries {
       technicalIndicatorType: TechnicalIndicatorType.MA,
       tag: CANDLE_STICK_SERIES_TAG
     })
+    this._chartEvent = new ChartEvent(this._container, this._chartData, this._candleStickSeries.yAxis(), this._xAxisSeries.xAxis())
     this.measureSeriesSize()
   }
 
@@ -111,11 +111,14 @@ export default class ChartSeries {
    * @private
    */
   _updateSeries (invalidateLevel = InvalidateLevel.FULL) {
-    this._xAxisSeries.invalidate(invalidateLevel)
-    this._candleStickSeries.invalidate(invalidateLevel)
-    for (const series of this._technicalIndicatorSeries) {
-      series.invalidate(invalidateLevel)
+    if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
+      this._xAxisSeries.invalidate(invalidateLevel)
+      this._candleStickSeries.invalidate(invalidateLevel)
+      for (const series of this._technicalIndicatorSeries) {
+        series.invalidate(invalidateLevel)
+      }
     }
+    this._candleStickSeries.invalidate(invalidateLevel)
   }
 
   /**
@@ -141,6 +144,10 @@ export default class ChartSeries {
     this._updateSeries()
   }
 
+  /**
+   * 获取图表上的数据
+   * @returns {ChartData}
+   */
   chartData () {
     return this._chartData
   }
@@ -216,6 +223,27 @@ export default class ChartSeries {
   }
 
   /**
+   * 加载技术指标参数
+   * @param technicalIndicatorType
+   * @param params
+   */
+  applyTechnicalIndicatorParams (technicalIndicatorType, params) {
+    this._chartData.applyTechnicalIndicatorParams(technicalIndicatorType, params)
+    if (this._chartData.calcTechnicalIndicator(technicalIndicatorType)) {
+      const candleStickSeriesTechnicalIndicatorType = this._candleStickSeries.technicalIndicatorType()
+      if (candleStickSeriesTechnicalIndicatorType === technicalIndicatorType) {
+        this._candleStickSeries.invalidate(InvalidateLevel.FULL)
+      }
+      for (const series of this._technicalIndicatorSeries) {
+        const seriesTechnicalIndicatorType = series.technicalIndicatorType()
+        if (seriesTechnicalIndicatorType === technicalIndicatorType) {
+          series.invalidate(InvalidateLevel.FULL)
+        }
+      }
+    }
+  }
+
+  /**
    * 添加新数据
    * @param dataList
    */
@@ -256,6 +284,14 @@ export default class ChartSeries {
       this._chartData.addData(data, pos)
       this._calcAllSeriesTechnicalIndicator()
     }
+  }
+
+  /**
+   * 设置蜡烛图图表类型
+   * @param type
+   */
+  setCandleStickSeriesType (type) {
+    this._candleStickSeries.setChartType(type)
   }
 
   /**

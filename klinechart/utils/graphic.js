@@ -108,16 +108,16 @@ export function checkPointOnCircle (circleCenterPoint, radius, targetPoint) {
 /**
  * 获取平行线
  * @param points
- * @param handler
+ * @param size
  * @param isPriceChannelLine
  * @returns {Array}
  */
-export function getParallelLines (points, handler, isPriceChannelLine) {
+export function getParallelLines (points, size, isPriceChannelLine) {
   const lines = []
   if (points.length > 1) {
     if (points[0].x === points[1].x) {
-      const startY = handler.contentTop()
-      const endY = handler.contentBottom()
+      const startY = 0
+      const endY = size.height
       lines.push([{ x: points[0].x, y: startY }, { x: points[0].x, y: endY }])
       if (points.length > 2) {
         lines.push([{ x: points[2].x, y: startY }, { x: points[2].x, y: endY }])
@@ -127,8 +127,8 @@ export function getParallelLines (points, handler, isPriceChannelLine) {
         }
       }
     } else {
-      const startX = handler.contentLeft()
-      const endX = handler.contentRight()
+      const startX = 0
+      const endX = size.width
       if (points[0].y === points[1].y) {
         lines.push([{ x: startX, y: points[0].y }, { x: endX, y: points[0].y }])
         if (points.length > 2) {
@@ -159,13 +159,13 @@ export function getParallelLines (points, handler, isPriceChannelLine) {
 /**
  * 获取斐波那契线
  * @param points
- * @param handler
+ * @param size
  */
-export function getFibonacciLines (points, handler) {
+export function getFibonacciLines (points, size) {
   const lines = []
   if (points.length > 0) {
-    const startX = handler.contentLeft()
-    const endX = handler.contentRight()
+    const startX = 0
+    const endX = size.width
     lines.push([{ x: startX, y: points[0].y }, { x: endX, y: points[0].y }])
     if (points.length > 1) {
       const yDistance = points[0].y - points[1].y

@@ -125,10 +125,12 @@ export default class Series {
     if (level === InvalidateLevel.FULL) {
       this._computeAxis()
     }
-    this._mainWidget.invalidate(level)
-    if (this._yAxisWidget) {
-      this._yAxisWidget.invalidate(level)
+    if (level !== InvalidateLevel.GRAPHIC_MARK) {
+      if (this._yAxisWidget) {
+        this._yAxisWidget.invalidate(level)
+      }
     }
+    this._mainWidget.invalidate(level)
   }
 
   /**

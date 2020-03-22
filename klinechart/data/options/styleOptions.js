@@ -392,7 +392,7 @@ const defaultGraphicMark = {
 const defaultSeparator = {
   size: 1,
   color: '#888888',
-  fill: false
+  fill: true
 }
 
 export const defaultStyleOptions = {

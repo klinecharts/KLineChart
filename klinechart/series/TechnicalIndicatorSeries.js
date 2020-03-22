@@ -84,6 +84,10 @@ export default class TechnicalIndicatorSeries extends Series {
     super.setSize(mainWidgetSize, yAxisWidgetSize)
   }
 
+  yAxis () {
+    return this._yAxis
+  }
+
   /**
    * 获取技术指标类型
    * @returns {string}

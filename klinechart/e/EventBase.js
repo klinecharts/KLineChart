@@ -39,14 +39,6 @@ export const EventType = {
   TOUCH: 'touch'
 }
 
-export function isTouch (event) {
-  return event.type === EventType.TOUCH
-}
-
-export function isMouse (event) {
-  return event.type === EventType.MOUSE
-}
-
 export default class EventBase {
   constructor (target, eventHandler, options) {
     this._target = target

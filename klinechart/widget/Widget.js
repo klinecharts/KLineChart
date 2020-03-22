@@ -4,6 +4,7 @@ export default class Widget {
   constructor (props) {
     this._initElement(props.container)
     this._mainView = this._createMainView(this._element, props)
+    this._expandView = this._createExpandView (this._element, props)
     this._floatLayerView = this._createFloatLayerView(this._element, props)
   }
 
@@ -23,15 +24,27 @@ export default class Widget {
 
   /**
    * 创建主view
+   * @param container
+   * @param props
    * @private
    */
-  _createMainView () {}
+  _createMainView (container, props) {}
 
   /**
-   * 创建十字光标view
+   * 创建拓展的view
+   * @param container
+   * @param props
    * @private
    */
-  _createFloatLayerView () {}
+  _createExpandView (container, props) {}
+
+  /**
+   * 创建浮层view
+   * @param container
+   * @param props
+   * @private
+   */
+  _createFloatLayerView (container, props) {}
 
   /**
    * 设置尺寸
