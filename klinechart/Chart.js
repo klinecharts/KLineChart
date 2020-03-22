@@ -189,4 +189,12 @@ export default class Chart {
     this._chartSeries.chartData().setGraphicMarkType(GraphicMarkType.NONE)
     this._chartSeries.chartData().setGraphicMarkData(newGraphicMarkDatas)
   }
+
+  /**
+   * 销毁
+   */
+  destroy () {
+    this._chartSeries.destroy()
+    delete this
+  }
 }

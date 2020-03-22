@@ -9,7 +9,7 @@ import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
 import SeparatorSeries from './SeparatorSeries'
 
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
-import ChartEvent from '../e/ChartEvent'
+import ChartEvent from '../event/ChartEvent'
 
 const DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT = 100
 
@@ -81,8 +81,7 @@ export default class ChartSeries {
     if (xAxis.display && xAxis.axisLine.display) {
       height += xAxis.axisLine.size
     }
-    height = Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight))
-    return (+Math.ceil(Number(height)).toFixed(0))
+    return Math.ceil(Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight)))
   }
 
   /**
@@ -95,7 +94,8 @@ export default class ChartSeries {
     const axisLine = yAxis.axisLine
     const tickText = yAxis.tickText
     const tickLine = yAxis.tickLine
-    return axisLine.size + tickLine.length + tickText.margin + (tickText.size - 2) * 6
+    const width = axisLine.size + tickLine.length + tickText.margin + (tickText.size - 2) * 6
+    return Math.ceil(Math.max(yAxis.minWidth, Math.min(width, yAxis.maxWidth)))
   }
 
   /**
@@ -382,5 +382,18 @@ export default class ChartSeries {
         }
       }
     }
+  }
+
+  destroy () {
+    this._candleStickSeries.destroy()
+    this._separatorSeries.forEach(series => {
+      series.destroy()
+    })
+    this._separatorSeries.forEach(series => {
+      series.destroy()
+    })
+    this._xAxisSeries.destroy()
+    this._chartEvent.destroy()
+    delete this
   }
 }

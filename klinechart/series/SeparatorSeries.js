@@ -1,4 +1,4 @@
-import EventBase from '../e/EventBase'
+import EventBase from '../event/EventBase'
 
 export default class SeparatorSeries {
   constructor (container, chartData, seriesIndex, dragEventHandler) {
@@ -30,7 +30,7 @@ export default class SeparatorSeries {
       container.appendChild(this._wrapper)
     }
     this._dragEvent = new EventBase(this._element, {
-      mouseDownEvent: this._mouseDownEvent.bind(this),
+      mouseLeftDownEvent: this._mouseLeftDownEvent.bind(this),
       pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
     }, {
       treatVertTouchDragAsPageScroll: false,
@@ -38,7 +38,7 @@ export default class SeparatorSeries {
     })
   }
 
-  _mouseDownEvent (event) {
+  _mouseLeftDownEvent (event) {
     this._startY = event.pageY
     this._dragEventHandler.startDrag(this._seriesIndex)
   }
@@ -82,5 +82,6 @@ export default class SeparatorSeries {
   destroy () {
     this._dragEvent.destroy()
     this._container.removeChild(this._wrapper)
+    delete this
   }
 }

@@ -57,7 +57,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
    * 鼠标按下事件
    * @param event
    */
-  mouseDownEvent (event) {
+  mouseLeftDownEvent (event) {
     if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY)) {
       return
     }
@@ -85,8 +85,25 @@ export default class GraphicMarkEventHandler extends EventHandler {
         break
       }
       case GraphicMarkType.NONE: {
-        this._noneGraphicMarkMouseDown(event)
+        this._noneGraphicMarkMouseLeftDown(event)
         break
+      }
+    }
+  }
+
+  mouseRightDownEvent (event) {
+    const graphicMarkType = this._chartData.graphicMarkType()
+    if (graphicMarkType === GraphicMarkType.NONE) {
+      this._findNoneGraphicMarkMouseDownActiveData(event)
+      const markKey = this._noneGraphicMarkMouseDownActiveData.markKey
+      const dataIndex = this._noneGraphicMarkMouseDownActiveData.dataIndex
+      if (markKey && dataIndex !== -1) {
+        const graphicMarkDatas = this._chartData.graphicMarkData()
+        const graphicMarkData = graphicMarkDatas[markKey]
+        graphicMarkData.splice(dataIndex, 1)
+        graphicMarkDatas[markKey] = graphicMarkData
+        this._chartData.setGraphicMarkData(graphicMarkDatas)
+        this.mouseUpEvent(event)
       }
     }
   }
@@ -162,24 +179,14 @@ export default class GraphicMarkEventHandler extends EventHandler {
   /**
    * 没有绘制时鼠标按下事件
    */
-  _noneGraphicMarkMouseDown (event) {
+  _noneGraphicMarkMouseLeftDown (event) {
     this._findNoneGraphicMarkMouseDownActiveData(event)
     const markKey = this._noneGraphicMarkMouseDownActiveData.markKey
     const dataIndex = this._noneGraphicMarkMouseDownActiveData.dataIndex
     if (markKey && dataIndex !== -1) {
-      if (event.button === 2) {
-        // 鼠标右键
-        const graphicMarkDatas = this._chartData.graphicMarkData()
-        const graphicMarkData = graphicMarkDatas[markKey]
-        graphicMarkData.splice(dataIndex, 1)
-        graphicMarkDatas[markKey] = graphicMarkData
-        this._chartData.setGraphicMarkData(graphicMarkDatas)
-        // this.graphicMarkChart.flush()
-      } else {
-        if (this._noneGraphicMarkMouseDownActiveData.onCircle) {
-          this._noneGraphicMarkMouseDownFlag = true
-          this._chartData.setDragGraphicMarkFlag(true)
-        }
+      if (this._noneGraphicMarkMouseDownActiveData.onCircle) {
+        this._noneGraphicMarkMouseDownFlag = true
+        this._chartData.setDragGraphicMarkFlag(true)
       }
     }
   }

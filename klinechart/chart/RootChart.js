@@ -7,7 +7,7 @@ import { isArray, isFunction, isNumber, isBoolean, merge, isObject } from '../ut
 import { formatValue } from '../utils/format'
 import { calcTextWidth } from '../utils/canvas'
 import { requestAnimationFrame } from '../utils/compatible'
-import calcIndicator from '../internal/calcIndicator'
+import calcIndicator from '../data/calcIndicator'
 
 import ChartData from '../data/ChartData'
 

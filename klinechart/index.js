@@ -48,6 +48,7 @@ function dispose (dc) {
       id = dc.id
     }
     if (id) {
+      instances[id].destroy()
       delete instances[id]
     }
   }

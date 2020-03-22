@@ -138,5 +138,6 @@ export default class Series {
    */
   destroy () {
     this._container.removeChild(this._element)
+    delete this
   }
 }

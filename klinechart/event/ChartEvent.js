@@ -14,7 +14,8 @@ export default class ChartEvent {
       pinchEvent: this._pinchEvent.bind(this),
       mouseUpEvent: this._mouseUpEvent.bind(this),
       mouseClickEvent: this._mouseClickEvent.bind(this),
-      mouseDownEvent: this._mouseDownEvent.bind(this),
+      mouseLeftDownEvent: this._mouseLeftDownEvent.bind(this),
+      mouseRightDownEvent: this._mouseRightDownEvent.bind(this),
       mouseLeaveEvent: this._mouseLeaveEvent.bind(this),
       mouseMoveEvent: this._mouseMoveEvent.bind(this),
       mouseWheelEvent: this._mouseWheelEvent.bind(this),
@@ -26,6 +27,8 @@ export default class ChartEvent {
     })
     this._boundKeyBoardDownEvent = this._keyBoardDownEvent.bind(this)
     this._target.addEventListener('keydown', this._boundKeyBoardDownEvent)
+    this._boundContextMenuEvent = (e) => { e.preventDefault() }
+    this._target.addEventListener('contextmenu', this._boundContextMenuEvent, false)
     this._zoomDragEventHandler = new ZoomDragEventHandler(chartData)
     this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData, xAxis, yAxis)
     this._keyBoardEventHandler = new KeyBoardEventHandler(chartData)
@@ -72,11 +75,15 @@ export default class ChartEvent {
     }
   }
 
-  _mouseDownEvent (event) {
-    this._graphicMarkEventHandler.mouseDownEvent(event)
+  _mouseLeftDownEvent (event) {
+    this._graphicMarkEventHandler.mouseLeftDownEvent(event)
     if (this._checkZoomDrag()) {
-      this._zoomDragEventHandler.mouseDownEvent(event)
+      this._zoomDragEventHandler.mouseLeftDownEvent(event)
     }
+  }
+
+  _mouseRightDownEvent (event) {
+    this._graphicMarkEventHandler.mouseRightDownEvent(event)
   }
 
   _pressedMouseMoveEvent (event) {
@@ -110,5 +117,6 @@ export default class ChartEvent {
   destroy () {
     this._event.destroy()
     this._target.removeEventListener('keydown', this._boundKeyBoardDownEvent)
+    this._target.removeEventListener('contextmenu', this._boundContextMenuEvent)
   }
 }

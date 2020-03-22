@@ -3,7 +3,7 @@ import { defaultStyleOptions } from './options/styleOptions'
 import { defaultTechnicalIndicatorParamOptions, TechnicalIndicatorType } from './options/technicalIndicatorParamOptions'
 import { defaultPrecisionOptions } from './options/precisionOptions'
 
-import calcIndicator from '../internal/calcIndicator'
+import calcIndicator from './calcIndicator'
 import { formatValue } from '../utils/format'
 
 export const InvalidateLevel = {

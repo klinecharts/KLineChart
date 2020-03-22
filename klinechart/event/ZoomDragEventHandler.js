@@ -92,7 +92,7 @@ export default class ZoomDragEventHandler extends EventHandler {
     }
   }
 
-  mouseDownEvent (event) {
+  mouseLeftDownEvent (event) {
     this._startDragPoint = { x: event.localX, y: event.localY }
     this._chartData.startDrag()
     if (!isTouch(event) || !this._checkEventPointX(event.localX)) {

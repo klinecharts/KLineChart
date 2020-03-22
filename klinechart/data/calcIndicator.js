@@ -1,4 +1,4 @@
-import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
+import { TechnicalIndicatorType } from './options/technicalIndicatorParamOptions'
 import { isArray } from '../utils/typeChecks'
 
 const calcIndicator = {}

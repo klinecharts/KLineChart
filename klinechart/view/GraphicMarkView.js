@@ -9,7 +9,7 @@ import {
 } from '../utils/graphic'
 
 import { GraphicMarkType } from '../data/ChartData'
-import { GraphicMarkDrawStep } from '../e/GraphicMarkEventHandler'
+import { GraphicMarkDrawStep } from '../event/GraphicMarkEventHandler'
 import { formatPrecision } from '../utils/format'
 import { getFont } from '../utils/canvas'
 

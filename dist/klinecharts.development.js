@@ -303,7 +303,7 @@ var defaultGrid = {
     dashValue: [2, 2]
   },
   vertical: {
-    display: true,
+    display: false,
     size: 1,
     color: '#393939',
     style: LineStyle.DASH,
@@ -2285,7 +2285,7 @@ var GraphicMarkType = {
 };
 var BAR_MARGIN_SPACE_RATE = 0.25;
 var MAX_DATA_SPACE = 30;
-var MIN_DATA_SPACE = 3;
+var MIN_DATA_SPACE = 2;
 
 var ChartData =
 /*#__PURE__*/
@@ -2321,7 +2321,7 @@ function () {
 
     this._range = 0; // 每一条数据的空间
 
-    this._dataSpace = 6; // bar的空间
+    this._dataSpace = 4; // bar的空间
 
     this._barSpace = this._calcBarSpace(); // 十字光标位置
 
@@ -2391,13 +2391,7 @@ function () {
     key: "_calcRange",
     value: function _calcRange() {
       this._range = Math.floor(this._totalDataSpace / this._dataSpace);
-      var to = this._from + this._range;
-
-      if (to > this._dataList.length) {
-        to = this._dataList.length;
-      }
-
-      this._to = to;
+      this.adjustFromTo();
     }
     /**
      * 计算一条柱子的空间
@@ -2867,8 +2861,6 @@ function () {
       var dataSpace = this._dataSpace + zoomScale * (this._dataSpace / 10);
 
       if (this._innerSetDataSpace(dataSpace)) {
-        this.adjustFromTo();
-
         this._invalidateHandler();
       }
     }
@@ -2977,8 +2969,7 @@ function () {
     value: function setGraphicMarkData(datas) {
       this._graphicMarkDatas = datas;
 
-      this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK); // this._invalidateHandler(InvalidateLevel.CROSS_HAIR)
-
+      this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK);
     }
     /**
      * 设置加载更多
@@ -3410,21 +3401,19 @@ function () {
     value: function setSize(width, height) {
       var _this = this;
 
-      if (width !== this._width || height !== this._height) {
-        this._redraw(function () {
-          var pixelRatio = getPixelRatio(_this._ctx);
-          _this._width = width;
-          _this._height = height;
-          _this._canvas.style.top = '0';
-          _this._canvas.style.width = "".concat(width, "px");
-          _this._canvas.style.height = "".concat(height, "px");
-          _this._canvas.width = width * pixelRatio;
-          _this._canvas.height = height * pixelRatio;
+      this._redraw(function () {
+        var pixelRatio = getPixelRatio(_this._ctx);
+        _this._width = width;
+        _this._height = height;
+        _this._canvas.style.top = '0';
+        _this._canvas.style.width = "".concat(width, "px");
+        _this._canvas.style.height = "".concat(height, "px");
+        _this._canvas.width = width * pixelRatio;
+        _this._canvas.height = height * pixelRatio;
 
-          _this._ctx.scale(pixelRatio, pixelRatio); // this._ctx.translate(0.5, 0.5)
+        _this._ctx.scale(pixelRatio, pixelRatio); // this._ctx.translate(0.5, 0.5)
 
-        });
-      }
+      });
     }
     /**
      * 刷新
@@ -3498,14 +3487,14 @@ function (_View) {
           this._ctx.setLineDash(horizontalGrid.dashValue);
         }
 
-        this._xAxis.ticks().forEach(function (tick) {
-          var x = tick.x;
+        this._yAxis.ticks().forEach(function (tick) {
+          var y = tick.y;
 
           _this2._ctx.beginPath();
 
-          _this2._ctx.moveTo(x, 0);
+          _this2._ctx.moveTo(0, y);
 
-          _this2._ctx.lineTo(x, _this2._height);
+          _this2._ctx.lineTo(_this2._width, y);
 
           _this2._ctx.stroke();
 
@@ -3521,16 +3510,18 @@ function (_View) {
 
         if (verticalGrid.style === LineStyle.DASH) {
           this._ctx.setLineDash(verticalGrid.dashValue);
+        } else {
+          this._ctx.setLineDash([]);
         }
 
-        this._yAxis.ticks().forEach(function (tick) {
-          var y = tick.y;
+        this._xAxis.ticks().forEach(function (tick) {
+          var x = tick.x;
 
           _this2._ctx.beginPath();
 
-          _this2._ctx.moveTo(0, y);
+          _this2._ctx.moveTo(x, 0);
 
-          _this2._ctx.lineTo(_this2._width, y);
+          _this2._ctx.lineTo(x, _this2._height);
 
           _this2._ctx.stroke();
 
@@ -4645,21 +4636,19 @@ function (_AxisView) {
 
       var yAxis = this._chartData.styleOptions().yAxis;
 
-      var tickText = yAxis.tickText;
+      var tickLine = yAxis.tickLine;
 
-      if (!yAxis.display || !tickText.display) {
+      if (!yAxis.display || !tickLine.display) {
         return;
       }
 
-      var tickLine = yAxis.tickLine;
       this._ctx.lineWidth = tickLine.size;
       this._ctx.strokeStyle = tickLine.color;
       var tickLineLength = tickLine.length;
       var startX;
       var endX;
-      var tickTextPosition = tickText.position;
 
-      if (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE) {
+      if (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE) {
         startX = 0;
 
         if (yAxis.axisLine.display) {
@@ -4724,7 +4713,7 @@ function (_AxisView) {
 
         this._ctx.textAlign = 'left';
       } else {
-        labelX = this.width - tickTextMargin;
+        labelX = this._width - tickTextMargin;
 
         if (yAxis.axisLine.display) {
           labelX -= yAxis.axisLine.size;
@@ -6519,7 +6508,10 @@ function getFibonacciLines(points, size) {
   return lines;
 }
 
-var MOUSE_EVENT_BUTTON_LEFT = 0;
+var MouseEventButton = {
+  LEFT: 0,
+  RIGHT: 2
+};
 var DELAY_RESET_CLICK = 500;
 var DELAY_LONG_TAG = 600;
 
@@ -6684,7 +6676,7 @@ function () {
   }, {
     key: "_mouseMoveWithDownHandler",
     value: function _mouseMoveWithDownHandler(moveEvent) {
-      if ('button' in moveEvent && moveEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
+      if ('button' in moveEvent && moveEvent.button !== MouseEventButton.LEFT) {
         return;
       }
 
@@ -6749,7 +6741,7 @@ function () {
   }, {
     key: "_mouseUpHandler",
     value: function _mouseUpHandler(mouseUpEvent) {
-      if ('button' in mouseUpEvent && mouseUpEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
+      if ('button' in mouseUpEvent && mouseUpEvent.button !== MouseEventButton.LEFT) {
         return;
       }
 
@@ -6809,68 +6801,74 @@ function () {
   }, {
     key: "_mouseDownHandler",
     value: function _mouseDownHandler(downEvent) {
-      if ('button' in downEvent && downEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
+      if ('button' in downEvent) {
         return;
       }
 
       var compatEvent = this._makeCompatEvent(downEvent);
 
-      this._cancelClick = false;
-      this._moveExceededManhattanDistance = false;
-      this._preventDragProcess = false;
+      if (downEvent.button === MouseEventButton.LEFT) {
+        this._cancelClick = false;
+        this._moveExceededManhattanDistance = false;
+        this._preventDragProcess = false;
 
-      if (isTouchEvent(downEvent)) {
-        this._mouseEnterHandler(downEvent);
-      }
+        if (isTouchEvent(downEvent)) {
+          this._mouseEnterHandler(downEvent);
+        }
 
-      this._mouseMoveStartPosition = {
-        x: compatEvent.pageX,
-        y: compatEvent.pageY
-      };
-
-      if (this._unsubscribeRoot) {
-        this._unsubscribeRoot();
-
-        this._unsubscribeRoot = null;
-      }
-
-      {
-        var boundMouseMoveWithDownHandler = this._mouseMoveWithDownHandler.bind(this);
-
-        var boundMouseUpHandler = this._mouseUpHandler.bind(this);
-
-        var rootElement = this._target.ownerDocument.documentElement;
-
-        this._unsubscribeRoot = function () {
-          rootElement.removeEventListener('touchmove', boundMouseMoveWithDownHandler);
-          rootElement.removeEventListener('touchend', boundMouseUpHandler);
-          rootElement.removeEventListener('mousemove', boundMouseMoveWithDownHandler);
-          rootElement.removeEventListener('mouseup', boundMouseUpHandler);
+        this._mouseMoveStartPosition = {
+          x: compatEvent.pageX,
+          y: compatEvent.pageY
         };
 
-        rootElement.addEventListener('touchmove', boundMouseMoveWithDownHandler, {
-          passive: false
-        });
-        rootElement.addEventListener('touchend', boundMouseUpHandler, {
-          passive: false
-        });
+        if (this._unsubscribeRoot) {
+          this._unsubscribeRoot();
 
-        this._clearLongTapTimeout();
-
-        if (isTouchEvent(downEvent) && downEvent.touches.length === 1) {
-          this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), DELAY_LONG_TAG);
-        } else {
-          rootElement.addEventListener('mousemove', boundMouseMoveWithDownHandler);
-          rootElement.addEventListener('mouseup', boundMouseUpHandler);
+          this._unsubscribeRoot = null;
         }
-      }
-      this._mousePressed = true;
 
-      this._processEvent(compatEvent, this._handler.mouseDownEvent);
+        {
+          var boundMouseMoveWithDownHandler = this._mouseMoveWithDownHandler.bind(this);
 
-      if (!this._clickTimeoutId) {
-        this._clickCount = 0;
-        this._clickTimeoutId = setTimeout(this._resetClickTimeout.bind(this), DELAY_RESET_CLICK);
+          var boundMouseUpHandler = this._mouseUpHandler.bind(this);
+
+          var rootElement = this._target.ownerDocument.documentElement;
+
+          this._unsubscribeRoot = function () {
+            rootElement.removeEventListener('touchmove', boundMouseMoveWithDownHandler);
+            rootElement.removeEventListener('touchend', boundMouseUpHandler);
+            rootElement.removeEventListener('mousemove', boundMouseMoveWithDownHandler);
+            rootElement.removeEventListener('mouseup', boundMouseUpHandler);
+          };
+
+          rootElement.addEventListener('touchmove', boundMouseMoveWithDownHandler, {
+            passive: false
+          });
+          rootElement.addEventListener('touchend', boundMouseUpHandler, {
+            passive: false
+          });
+
+          this._clearLongTapTimeout();
+
+          if (isTouchEvent(downEvent) && downEvent.touches.length === 1) {
+            this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), DELAY_LONG_TAG);
+          } else {
+            rootElement.addEventListener('mousemove', boundMouseMoveWithDownHandler);
+            rootElement.addEventListener('mouseup', boundMouseUpHandler);
+          }
+        }
+        this._mousePressed = true;
+
+        if (!this._clickTimeoutId) {
+          this._clickCount = 0;
+          this._clickTimeoutId = setTimeout(this._resetClickTimeout.bind(this), DELAY_RESET_CLICK);
+        }
+
+        this._processEvent(compatEvent, this._handler.mouseLeftDownEvent);
+      } else {
+        preventDefault(downEvent);
+
+        this._processEvent(compatEvent, this._handler.mouseRightDownEvent);
       }
     }
   }, {
@@ -7155,6 +7153,8 @@ function (_EventHandler) {
   _createClass(GraphicMarkEventHandler, [{
     key: "mouseUpEvent",
     value: function mouseUpEvent(event) {
+      this._chartData.setDragGraphicMarkFlag(false);
+
       this._noneGraphicMarkMouseDownFlag = false;
       this._noneGraphicMarkMouseDownActiveData = {
         markKey: null,
@@ -7170,8 +7170,8 @@ function (_EventHandler) {
      */
 
   }, {
-    key: "mouseDownEvent",
-    value: function mouseDownEvent(event) {
+    key: "mouseLeftDownEvent",
+    value: function mouseLeftDownEvent(event) {
       if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY)) {
         return;
       }
@@ -7213,7 +7213,7 @@ function (_EventHandler) {
 
         case GraphicMarkType.NONE:
           {
-            this._noneGraphicMarkMouseDown(event);
+            this._noneGraphicMarkMouseLeftDown(event);
 
             break;
           }
@@ -7319,8 +7319,8 @@ function (_EventHandler) {
      */
 
   }, {
-    key: "_noneGraphicMarkMouseDown",
-    value: function _noneGraphicMarkMouseDown(event) {
+    key: "_noneGraphicMarkMouseLeftDown",
+    value: function _noneGraphicMarkMouseLeftDown(event) {
       this._findNoneGraphicMarkMouseDownActiveData(event);
 
       var markKey = this._noneGraphicMarkMouseDownActiveData.markKey;
@@ -7570,8 +7570,6 @@ function (_EventHandler) {
   }, {
     key: "mouseMoveEvent",
     value: function mouseMoveEvent(event) {
-      console.log(event);
-
       if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY)) {
         return;
       }
@@ -7583,8 +7581,8 @@ function (_EventHandler) {
 
       this._chartData.setGraphicMarkPoint(point);
 
-      if (!this.waitingForMouseMoveAnimationFrame) {
-        this.waitingForMouseMoveAnimationFrame = true;
+      if (!this._waitingForMouseMoveAnimationFrame) {
+        this._waitingForMouseMoveAnimationFrame = true;
 
         var graphicMarkType = this._chartData.graphicMarkType();
 
@@ -7640,13 +7638,92 @@ function (_EventHandler) {
 
           case GraphicMarkType.NONE:
             {
-              this._noneGraphicMarkMouseMove(point);
+              this._chartData.setGraphicMarkData(this._chartData.graphicMarkData());
 
               break;
             }
         }
 
-        this.waitingForMouseMoveAnimationFrame = false;
+        this._waitingForMouseMoveAnimationFrame = false;
+      }
+    }
+  }, {
+    key: "pressedMouseMoveEvent",
+    value: function pressedMouseMoveEvent(event) {
+      var markKey = this._noneGraphicMarkMouseDownActiveData.markKey;
+      var dataIndex = this._noneGraphicMarkMouseDownActiveData.dataIndex;
+
+      if (markKey && dataIndex !== -1) {
+        var graphicMarkDatas = this._chartData.graphicMarkData();
+
+        var graphicMarkData = graphicMarkDatas[markKey];
+        var point = {
+          x: event.localX,
+          y: event.localY
+        };
+
+        switch (markKey) {
+          case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
+          case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
+          case GraphicMarkType.PRICE_LINE:
+          case GraphicMarkType.STRAIGHT_LINE:
+          case GraphicMarkType.RAY_LINE:
+          case GraphicMarkType.SEGMENT_LINE:
+          case GraphicMarkType.PRICE_CHANNEL_LINE:
+          case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
+          case GraphicMarkType.FIBONACCI_LINE:
+            {
+              var pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex;
+
+              if (pointIndex !== -1) {
+                graphicMarkData[dataIndex].points[pointIndex].xPos = this._xAxis.convertFromPixel(point.x);
+                graphicMarkData[dataIndex].points[pointIndex].price = this._yAxis.convertFromPixel(point.y);
+              }
+
+              break;
+            }
+
+          case GraphicMarkType.HORIZONTAL_RAY_LINE:
+          case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
+            {
+              var _pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex;
+
+              if (_pointIndex !== -1) {
+                var price = this._yAxis.convertFromPixel(point.y);
+
+                graphicMarkData[dataIndex].points[_pointIndex].xPos = this._xAxis.convertFromPixel(point.x);
+                graphicMarkData[dataIndex].points[0].price = price;
+                graphicMarkData[dataIndex].points[1].price = price;
+              }
+
+              break;
+            }
+
+          case GraphicMarkType.VERTICAL_RAY_LINE:
+          case GraphicMarkType.VERTICAL_SEGMENT_LINE:
+            {
+              var _pointIndex2 = this._noneGraphicMarkMouseDownActiveData.pointIndex;
+
+              if (_pointIndex2 !== -1) {
+                var xPos = this._xAxis.convertFromPixel(point.x);
+
+                graphicMarkData[dataIndex].points[0].xPos = xPos;
+                graphicMarkData[dataIndex].points[1].xPos = xPos;
+                graphicMarkData[dataIndex].points[_pointIndex2].price = this._yAxis.convertFromPixel(point.y);
+              }
+
+              break;
+            }
+        }
+
+        graphicMarkDatas[markKey] = graphicMarkData;
+
+        this._chartData.setGraphicMarkPoint({
+          x: event.localX,
+          y: event.localY
+        });
+
+        this._chartData.setGraphicMarkData(graphicMarkDatas);
       }
     }
     /**
@@ -7852,84 +7929,6 @@ function (_EventHandler) {
       graphicMarkDatas[markKey] = graphicMarkData;
 
       this._chartData.setGraphicMarkData(graphicMarkDatas); // this.graphicMarkChart.flush()
-
-    }
-    /**
-     * 没有绘制标记时鼠标移动事件
-     * @param point
-     */
-
-  }, {
-    key: "_noneGraphicMarkMouseMove",
-    value: function _noneGraphicMarkMouseMove(point) {
-      if (this._noneGraphicMarkMouseDownFlag) {
-        var markKey = this._noneGraphicMarkMouseDownActiveData.markKey;
-        var dataIndex = this._noneGraphicMarkMouseDownActiveData.dataIndex;
-
-        if (markKey && dataIndex !== -1) {
-          var graphicMarkDatas = this._chartData.graphicMarkData();
-
-          var graphicMarkData = graphicMarkDatas[markKey];
-
-          switch (markKey) {
-            case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
-            case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
-            case GraphicMarkType.PRICE_LINE:
-            case GraphicMarkType.STRAIGHT_LINE:
-            case GraphicMarkType.RAY_LINE:
-            case GraphicMarkType.SEGMENT_LINE:
-            case GraphicMarkType.PRICE_CHANNEL_LINE:
-            case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
-            case GraphicMarkType.FIBONACCI_LINE:
-              {
-                var pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex;
-
-                if (pointIndex !== -1) {
-                  graphicMarkData[dataIndex].points[pointIndex].xPos = this._xAxis.convertFromPixel(point.x);
-                  graphicMarkData[dataIndex].points[pointIndex].price = this._yAxis.convertFromPixel(point.y);
-                }
-
-                break;
-              }
-
-            case GraphicMarkType.HORIZONTAL_RAY_LINE:
-            case GraphicMarkType.HORIZONTAL_SEGMENT_LINE:
-              {
-                var _pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex;
-
-                if (_pointIndex !== -1) {
-                  var price = this._yAxis.convertFromPixel(point.y);
-
-                  graphicMarkData[dataIndex].points[_pointIndex].xPos = this._xAxis.convertFromPixel(point.x);
-                  graphicMarkData[dataIndex].points[0].price = price;
-                  graphicMarkData[dataIndex].points[1].price = price;
-                }
-
-                break;
-              }
-
-            case GraphicMarkType.VERTICAL_RAY_LINE:
-            case GraphicMarkType.VERTICAL_SEGMENT_LINE:
-              {
-                var _pointIndex2 = this._noneGraphicMarkMouseDownActiveData.pointIndex;
-
-                if (_pointIndex2 !== -1) {
-                  var xPos = this._xAxis.convertFromPixel(point.x);
-
-                  graphicMarkData[dataIndex].points[0].xPos = xPos;
-                  graphicMarkData[dataIndex].points[1].xPos = xPos;
-                  graphicMarkData[dataIndex].points[_pointIndex2].price = this._yAxis.convertFromPixel(point.y);
-                }
-
-                break;
-              }
-          }
-
-          graphicMarkDatas[markKey] = graphicMarkData;
-
-          this._chartData.setGraphicMarkData(graphicMarkDatas);
-        }
-      } // this.graphicMarkChart.flush()
 
     }
   }, {
@@ -8964,7 +8963,7 @@ function () {
       }
 
       this._dragEvent = new EventBase(this._element, {
-        mouseDownEvent: this._mouseDownEvent.bind(this),
+        mouseLeftDownEvent: this._mouseLeftDownEvent.bind(this),
         pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
       }, {
         treatVertTouchDragAsPageScroll: false,
@@ -8972,8 +8971,8 @@ function () {
       });
     }
   }, {
-    key: "_mouseDownEvent",
-    value: function _mouseDownEvent(event) {
+    key: "_mouseLeftDownEvent",
+    value: function _mouseLeftDownEvent(event) {
       this._startY = event.pageY;
 
       this._dragEventHandler.startDrag(this._seriesIndex);
@@ -9170,8 +9169,8 @@ function (_EventHandler) {
       }
     }
   }, {
-    key: "mouseDownEvent",
-    value: function mouseDownEvent(event) {
+    key: "mouseLeftDownEvent",
+    value: function mouseLeftDownEvent(event) {
       this._startDragPoint = {
         x: event.localX,
         y: event.localY
@@ -9394,7 +9393,8 @@ function () {
       pinchEvent: this._pinchEvent.bind(this),
       mouseUpEvent: this._mouseUpEvent.bind(this),
       mouseClickEvent: this._mouseClickEvent.bind(this),
-      mouseDownEvent: this._mouseDownEvent.bind(this),
+      mouseLeftDownEvent: this._mouseLeftDownEvent.bind(this),
+      mouseRightDownEvent: this._mouseRightDownEvent.bind(this),
       mouseLeaveEvent: this._mouseLeaveEvent.bind(this),
       mouseMoveEvent: this._mouseMoveEvent.bind(this),
       mouseWheelEvent: this._mouseWheelEvent.bind(this),
@@ -9464,17 +9464,29 @@ function () {
       }
     }
   }, {
-    key: "_mouseDownEvent",
-    value: function _mouseDownEvent(event) {
-      this._graphicMarkEventHandler.mouseDownEvent(event);
+    key: "_mouseLeftDownEvent",
+    value: function _mouseLeftDownEvent(event) {
+      this._graphicMarkEventHandler.mouseLeftDownEvent(event);
 
       if (this._checkZoomDrag()) {
-        this._zoomDragEventHandler.mouseDownEvent(event);
+        this._zoomDragEventHandler.mouseLeftDownEvent(event);
       }
     }
   }, {
+    key: "_mouseRightDownEvent",
+    value: function _mouseRightDownEvent(event) {}
+  }, {
     key: "_pressedMouseMoveEvent",
     value: function _pressedMouseMoveEvent(event) {
+      if (this._chartData.dragGraphicMarkFlag()) {
+        this._graphicMarkEventHandler.pressedMouseMoveEvent(event); // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
+
+
+        if (this._chartData.crossHairSeriesTag() !== null) {
+          this._chartData.setCrossHairSeriesTag(null);
+        }
+      }
+
       if (this._checkZoomDrag()) {
         this._zoomDragEventHandler.pressedMouseMoveEvent(event);
       }
@@ -9495,6 +9507,8 @@ function () {
     key: "setSeriesSize",
     value: function setSeriesSize(seriesSize) {
       this._zoomDragEventHandler.setSeriesSize(seriesSize);
+
+      this._graphicMarkEventHandler.setSeriesSize(seriesSize);
     }
   }, {
     key: "destroy",
@@ -9539,7 +9553,7 @@ function () {
       technicalIndicatorType: TechnicalIndicatorType.MA,
       tag: CANDLE_STICK_SERIES_TAG
     });
-    this._chartEvent = new ChartEvent(this._container, this._chartData, this._candleStickSeries.yAxis(), this._xAxisSeries.xAxis());
+    this._chartEvent = new ChartEvent(this._container, this._chartData, this._xAxisSeries.xAxis(), this._candleStickSeries.yAxis());
     this.measureSeriesSize();
   }
   /**
@@ -9591,8 +9605,7 @@ function () {
         height += xAxis.axisLine.size;
       }
 
-      height = Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight));
-      return +Math.ceil(Number(height)).toFixed(0);
+      return Math.ceil(Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight)));
     }
     /**
      * 计算y轴宽度
@@ -9605,35 +9618,11 @@ function () {
     value: function _measureYAxisWidth() {
       var yAxis = this._chartData.styleOptions().yAxis;
 
+      var axisLine = yAxis.axisLine;
       var tickText = yAxis.tickText;
       var tickLine = yAxis.tickLine;
-      var needsOffset = ((tickText.display || tickLine.display || tickText.margin > 0) && tickText.position === YAxisTextPosition.OUTSIDE || yAxis.axisLine.display) && yAxis.display;
-
-      if (needsOffset) {
-        var width = 0;
-
-        if (tickText.position === YAxisTextPosition.OUTSIDE) {
-          width += tickText.margin;
-
-          if (yAxis.display && tickLine.display) {
-            width += tickLine.length;
-          }
-        }
-
-        var axisLineSize = yAxis.axisLine.size;
-
-        if (yAxis.display && yAxis.axisLine.display) {
-          width += axisLineSize;
-        }
-
-        if (width > axisLineSize) {
-          width = Math.max(yAxis.minWidth, Math.min(width, yAxis.maxWidth));
-        }
-
-        return Math.ceil(width);
-      }
-
-      return 0;
+      var width = axisLine.size + tickLine.length + tickText.margin + (tickText.size - 2) * 6;
+      return Math.ceil(Math.max(yAxis.minWidth, Math.min(width, yAxis.maxWidth)));
     }
     /**
      * 测量图表间分割线的高度
@@ -9760,6 +9749,10 @@ function () {
   }, {
     key: "measureSeriesSize",
     value: function measureSeriesSize() {
+      var yAxis = this._chartData.styleOptions().yAxis;
+
+      var isYAxisLeft = yAxis.position === YAxisPosition.LEFT;
+      var isYAxisTextOutsize = yAxis.tickText.position === YAxisTextPosition.OUTSIDE;
       var seriesHeight = this._container.offsetHeight;
       var seriesWidth = this._container.offsetWidth;
 
@@ -9770,14 +9763,16 @@ function () {
       var yAxisWidth = this._measureYAxisWidth();
 
       var seriesExcludeXAxisSeparatorHeight = seriesHeight - xAxisHeight - separatorHeight;
-      var seriesExcludeYAxisWidth = seriesWidth - yAxisWidth;
-      var isLeft = this._chartData.styleOptions().yAxis.position === YAxisPosition.LEFT;
-      var yAxisOffsetLeft = seriesExcludeYAxisWidth;
+      var mainWidthWidth = seriesWidth - (isYAxisTextOutsize ? yAxisWidth : 0);
+      var yAxisOffsetLeft = seriesWidth - yAxisWidth;
       var mainOffsetLeft = 0;
 
-      if (isLeft) {
+      if (isYAxisLeft) {
         yAxisOffsetLeft = 0;
-        mainOffsetLeft = yAxisWidth;
+
+        if (isYAxisTextOutsize) {
+          mainOffsetLeft = yAxisWidth;
+        }
       }
 
       var technicalIndicatorSeriesTotalHeight = 0;
@@ -9807,11 +9802,11 @@ function () {
 
       var candleStickSeriesHeight = seriesExcludeXAxisSeparatorHeight - technicalIndicatorSeriesTotalHeight;
 
-      this._chartData.setTotalDataSpace(seriesExcludeYAxisWidth);
+      this._chartData.setTotalDataSpace(mainWidthWidth);
 
       var seriesSize = {};
       seriesSize.contentLeft = mainOffsetLeft;
-      seriesSize.contentRight = mainOffsetLeft + seriesExcludeYAxisWidth;
+      seriesSize.contentRight = mainOffsetLeft + mainWidthWidth;
       var tags = {};
       tags[CANDLE_STICK_SERIES_TAG] = {
         contentTop: 0,
@@ -9822,7 +9817,7 @@ function () {
 
       this._candleStickSeries.setSize({
         left: mainOffsetLeft,
-        width: seriesExcludeYAxisWidth,
+        width: mainWidthWidth,
         height: candleStickSeriesHeight
       }, {
         left: yAxisOffsetLeft,
@@ -9836,14 +9831,14 @@ function () {
         var technicalIndicatorSeriesHeight = technicalIndicatorSeries.height();
         technicalIndicatorSeries.setSize({
           left: mainOffsetLeft,
-          width: seriesExcludeYAxisWidth,
+          width: mainWidthWidth,
           height: technicalIndicatorSeriesHeight
         }, {
           left: yAxisOffsetLeft,
           width: yAxisWidth,
           height: technicalIndicatorSeriesHeight
         });
-        separatorSeries.setExcludeYAxisWidth(seriesExcludeYAxisWidth);
+        separatorSeries.setExcludeYAxisWidth(mainWidthWidth);
         contentBottom += technicalIndicatorSeriesHeight;
         tags[technicalIndicatorSeries.tag()] = {
           contentTop: contentTop,
@@ -9856,7 +9851,7 @@ function () {
 
       this._xAxisSeries.setSize({
         left: mainOffsetLeft,
-        width: seriesExcludeYAxisWidth,
+        width: mainWidthWidth,
         height: xAxisHeight
       }, {
         left: yAxisOffsetLeft,
@@ -10329,7 +10324,9 @@ function () {
         if (graphicMarkData && isArray(graphicMarkData)) {
           graphicMarkData.splice(graphicMarkData.length - 1, 1);
           graphicMarkDatas[graphicMarkType] = graphicMarkData;
-        } else {
+        }
+
+        if (!graphicMarkDatas.hasOwnProperty(type)) {
           type = GraphicMarkType.NONE;
         }
 
