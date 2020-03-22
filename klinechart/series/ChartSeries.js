@@ -11,7 +11,7 @@ import SeparatorSeries from './SeparatorSeries'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 import ChartEvent from '../e/ChartEvent'
 
-const DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT_RATE = 0.2
+const DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT = 120
 
 const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_'
 
@@ -23,7 +23,7 @@ export default class ChartSeries {
     this._technicalIndicatorBaseId = 0
     this._technicalIndicatorSeries = []
     this._separatorSeries = []
-    this._separatorDragStartHeight = {}
+    this._separatorDragStartTechnicalIndicatorHeight = 0
     this._chartData = new ChartData(styleOptions, this._updateSeries.bind(this))
     this._chartEvent = new ChartEvent(this._container, this._chartData)
     this._xAxisSeries = new XAxisSeries({ container, chartData: this._chartData })
@@ -37,22 +37,12 @@ export default class ChartSeries {
     this.measureSeriesSize()
   }
 
-  _separatorStartDrag (topSeriesIndex, bottomSeriesIndex) {
-    if (topSeriesIndex === -1) {
-      this._separatorDragStartHeight.top = this._candleStickSeries.height()
-    } else {
-      this._separatorDragStartHeight.top = this._technicalIndicatorSeries[topSeriesIndex].height()
-    }
-    this._separatorDragStartHeight.bottom = this._technicalIndicatorSeries[bottomSeriesIndex].height()
+  _separatorStartDrag (seriesIndex) {
+    this._separatorDragStartTechnicalIndicatorHeight = this._technicalIndicatorSeries[seriesIndex].height()
   }
 
-  _separatorDrag (dragDistance, topSeriesIndex, bottomSeriesIndex) {
-    if (topSeriesIndex === -1) {
-      this._candleStickSeries.setTempHeight(this._separatorDragStartHeight.top + dragDistance)
-    } else {
-      this._technicalIndicatorSeries[topSeriesIndex].setTempHeight(this._separatorDragStartHeight.top + dragDistance)
-    }
-    this._technicalIndicatorSeries[bottomSeriesIndex].setTempHeight(this._separatorDragStartHeight.bottom - dragDistance)
+  _separatorDrag (dragDistance, seriesIndex) {
+    this._technicalIndicatorSeries[seriesIndex].setTempHeight(this._separatorDragStartTechnicalIndicatorHeight - dragDistance)
     this.measureSeriesSize()
   }
 
@@ -175,28 +165,13 @@ export default class ChartSeries {
       yAxisOffsetLeft = 0
       mainOffsetLeft = yAxisWidth
     }
-
-    let seriesKnowTotalHeight = 0
-    let candleStickSeriesHeight = this._candleStickSeries.height()
-    if (candleStickSeriesHeight >= 0) {
-      seriesKnowTotalHeight += candleStickSeriesHeight
-    }
-
-    let unKnowTechnicalIndicatorSeriesCount = 0
+    let technicalIndicatorSeriesTotalHeight = 0
     for (const series of this._technicalIndicatorSeries) {
-      const seriesHeight = series.height()
-      if (seriesHeight < 0) {
-        unKnowTechnicalIndicatorSeriesCount++
-      } else {
-        seriesKnowTotalHeight += seriesHeight
-      }
+      technicalIndicatorSeriesTotalHeight += series.height()
     }
 
-    const seriesUnKnowTotalHeight = seriesExcludeXAxisSeparatorHeight - seriesKnowTotalHeight
-    const defaultTechnicalIndicatorSeriesHeight = Math.floor(seriesUnKnowTotalHeight * DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT_RATE)
-    if (candleStickSeriesHeight < 0) {
-      candleStickSeriesHeight = seriesUnKnowTotalHeight - defaultTechnicalIndicatorSeriesHeight * unKnowTechnicalIndicatorSeriesCount
-    }
+    const candleStickSeriesHeight = seriesExcludeXAxisSeparatorHeight - technicalIndicatorSeriesTotalHeight
+
     this._chartData.setTotalDataSpace(seriesExcludeYAxisWidth)
     const seriesSize = {}
     seriesSize.contentLeft = mainOffsetLeft
@@ -210,17 +185,17 @@ export default class ChartSeries {
       { left: yAxisOffsetLeft, width: yAxisWidth, height: candleStickSeriesHeight }
     )
 
-    for (const series of this._technicalIndicatorSeries) {
-      let seriesHeight = series.height()
-      if (seriesHeight < 0) {
-        seriesHeight = defaultTechnicalIndicatorSeriesHeight
-      }
-      series.setSize(
-        { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: seriesHeight },
-        { left: yAxisOffsetLeft, width: yAxisWidth, height: seriesHeight }
+    for (let i = 0; i < this._technicalIndicatorSeries.length; i++) {
+      const technicalIndicatorSeries = this._technicalIndicatorSeries[i]
+      const separatorSeries = this._separatorSeries[i]
+      const technicalIndicatorSeriesHeight = technicalIndicatorSeries.height()
+      technicalIndicatorSeries.setSize(
+        { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: technicalIndicatorSeriesHeight },
+        { left: yAxisOffsetLeft, width: yAxisWidth, height: technicalIndicatorSeriesHeight }
       )
-      contentBottom += seriesHeight
-      tags[series.tag()] = { contentTop, contentBottom }
+      separatorSeries.setExcludeYAxisWidth(seriesExcludeYAxisWidth)
+      contentBottom += technicalIndicatorSeriesHeight
+      tags[technicalIndicatorSeries.tag()] = { contentTop, contentBottom }
       contentTop = contentBottom
     }
     seriesSize.tags = tags
@@ -286,14 +261,14 @@ export default class ChartSeries {
   /**
    * 创建一个指标
    * @param technicalIndicatorType
+   * @param height
    * @returns {string}
    */
-  createTechnicalIndicator (technicalIndicatorType) {
+  createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT) {
     const technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length
     this._separatorSeries.push(
       new SeparatorSeries(
         this._container, this._chartData,
-        technicalIndicatorSeriesCount - 1,
         technicalIndicatorSeriesCount, {
           startDrag: this._separatorStartDrag.bind(this),
           drag: this._separatorDrag.bind(this)
@@ -302,15 +277,15 @@ export default class ChartSeries {
     )
     this._technicalIndicatorBaseId++
     const tag = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
-    this._technicalIndicatorSeries.push(
-      new TechnicalIndicatorSeries({
-        container: this._container,
-        chartData: this._chartData,
-        xAxis: this._xAxisSeries.xAxis(),
-        technicalIndicatorType,
-        tag
-      })
-    )
+    const technicalIndicatorSeries = new TechnicalIndicatorSeries({
+      container: this._container,
+      chartData: this._chartData,
+      xAxis: this._xAxisSeries.xAxis(),
+      technicalIndicatorType,
+      tag
+    })
+    technicalIndicatorSeries.setTempHeight(height)
+    this._technicalIndicatorSeries.push(technicalIndicatorSeries)
     this.measureSeriesSize()
     return tag
   }
@@ -334,7 +309,7 @@ export default class ChartSeries {
       delete this._technicalIndicatorSeries[seriesPos]
       delete this._separatorSeries[seriesPos]
       for (let i = 0; i < this._separatorSeries.length; i++) {
-        this._separatorSeries[i].updateSeriesIndex(i - 1, i)
+        this._separatorSeries[i].updateSeriesIndex(i)
       }
       this.measureSeriesSize()
     }

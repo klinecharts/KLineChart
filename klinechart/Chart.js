@@ -6,7 +6,16 @@ export default class Chart {
   }
 
   resize () {
+    this._chartSeries.chartData().adjustFromTo()
     this._chartSeries.measureSeriesSize()
+  }
+
+  setOffsetRightSpace (space) {
+    this._chartSeries.chartData().setOffsetRightSpace(space)
+  }
+
+  setBarSpace (space) {
+    this._chartSeries.chartData().setDataSpace(space)
   }
 
   clearData () {
@@ -37,8 +46,8 @@ export default class Chart {
     this._chartSeries.setTechnicalIndicatorType(tag, technicalIndicatorType)
   }
 
-  addTechnicalIndicator (technicalIndicatorType) {
-    return this._chartSeries.createTechnicalIndicator(technicalIndicatorType)
+  addTechnicalIndicator (technicalIndicatorType, height) {
+    return this._chartSeries.createTechnicalIndicator(technicalIndicatorType, height)
   }
 
   removeTechnicalIndicator (tag) {

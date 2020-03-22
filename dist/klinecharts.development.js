@@ -607,6 +607,16 @@ var defaultGraphicMark = {
     marginBottom: 6
   }
 };
+/**
+ * 图表之间默认分割配置
+ * @type {{size: number, color: string}}
+ */
+
+var defaultSeparator = {
+  size: 1,
+  color: '#888888',
+  fill: false
+};
 var defaultStyleOptions = {
   grid: defaultGrid,
   candleStick: defaultCandleStick,
@@ -614,6 +624,7 @@ var defaultStyleOptions = {
   technicalIndicator: defaultTechnicalIndicator,
   xAxis: defaultXAxis,
   yAxis: defaultYAxis,
+  separator: defaultSeparator,
   floatLayer: defaultFloatLayer,
   graphicMark: defaultGraphicMark
 };
@@ -2157,8 +2168,8 @@ var InvalidateLevel = {
   CROSS_HAIR: 1,
   FULL: 2
 };
-var MAX_DATA_SPACE = 20;
-var MIN_DATA_SPACE = 2;
+var MAX_DATA_SPACE = 30;
+var MIN_DATA_SPACE = 3;
 
 var ChartData =
 /*#__PURE__*/
@@ -2192,7 +2203,9 @@ function () {
 
     this._crossHairPoint = null; // 标识十字光标在哪个series
 
-    this._crossHairSeriesTag = null; // 当前绘制的标记图形的类型
+    this._crossHairSeriesTag = null; // 用来记录开始拖拽时数据绘制开始位置
+
+    this._preFrom = 0; // 当前绘制的标记图形的类型
 
     this.graphicMarkType = GraphicMarkType.NONE; // 标记图形点
 
@@ -2258,6 +2271,46 @@ function () {
       var offsetRightRange = Math.floor(this._offsetRightSpace / this._dataSpace);
       return this._range - offsetRightRange;
     }
+  }, {
+    key: "_innerSetDataSpace",
+    value: function _innerSetDataSpace(dataSpace) {
+      if (dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE) {
+        return false;
+      }
+
+      if (this._dataSpace === dataSpace) {
+        return;
+      }
+
+      this._dataSpace = dataSpace;
+      this._barSpace = this._calcBarSpace();
+
+      this._calcRange();
+
+      return true;
+    }
+    /**
+     * 将x转换成pos
+     * @param x
+     * @returns {number}
+     * @private
+     */
+
+  }, {
+    key: "_xToPos",
+    value: function _xToPos(x) {
+      var range = x / this._dataSpace;
+      var floorRange = Math.floor(range);
+      var spaceDif = (range - floorRange) * this._dataSpace;
+
+      if (spaceDif < this._barSpace / 2) {
+        range = floorRange;
+      } else {
+        range = Math.ceil(range);
+      }
+
+      return range;
+    }
     /**
      * 获取样式配置
      */
@@ -2267,6 +2320,10 @@ function () {
     value: function styleOptions() {
       return this._styleOptions;
     }
+    /**
+     * 获取计算指标参数配置
+     */
+
   }, {
     key: "technicalIndicatorParamOptions",
     value: function technicalIndicatorParamOptions() {
@@ -2303,11 +2360,20 @@ function () {
 
       return false;
     }
+    /**
+     * 获取数据源
+     * @returns {[]|*[]}
+     */
+
   }, {
     key: "dataList",
     value: function dataList() {
       return this._dataList;
     }
+    /**
+     * 清空数据源
+     */
+
   }, {
     key: "clearDataList",
     value: function clearDataList() {
@@ -2315,6 +2381,12 @@ function () {
       this._from = 0;
       this._to = 0;
     }
+    /**
+     * 添加数据
+     * @param data
+     * @param pos
+     */
+
   }, {
     key: "addData",
     value: function addData(data, pos) {
@@ -2325,14 +2397,9 @@ function () {
 
             var rangeDif = this._calcRangDif();
 
-            var from = this._dataList.length - rangeDif;
+            this._from = this._dataList.length - rangeDif;
 
-            if (from < 0) {
-              from = 0;
-            }
-
-            this._from = from;
-            this._to = this._dataList.length;
+            this._fixFromTo();
           } else {
             this._dataList = data.concat(this._dataList);
             this._from += data.length;
@@ -2369,11 +2436,21 @@ function () {
         }
       }
     }
+    /**
+     * 获取一条数据的空间
+     * @returns {number}
+     */
+
   }, {
     key: "dataSpace",
     value: function dataSpace() {
       return this._dataSpace;
     }
+    /**
+     * 获取绘制一条数据的空间（不包括bar之间的间隙）
+     * @returns {*}
+     */
+
   }, {
     key: "barSpace",
     value: function barSpace() {
@@ -2387,20 +2464,9 @@ function () {
   }, {
     key: "setDataSpace",
     value: function setDataSpace(dataSpace) {
-      if (dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE) {
-        return;
+      if (this._innerSetDataSpace(dataSpace)) {
+        this._invalidateHandler();
       }
-
-      if (this._dataSpace === dataSpace) {
-        return;
-      }
-
-      this._dataSpace = dataSpace;
-      this._barSpace = this._calcBarSpace();
-
-      this._calcRange();
-
-      this._invalidateHandler();
     }
     /**
      * 设置可见区域数据占用的总空间
@@ -2418,31 +2484,61 @@ function () {
 
       this._calcRange();
     }
+    /**
+     * 获取数据绘制起点
+     * @returns {number}
+     */
+
   }, {
     key: "from",
     value: function from() {
       return this._from;
     }
+    /**
+     * 获取数据绘制终点
+     * @returns {number}
+     */
+
   }, {
     key: "to",
     value: function to() {
       return this._to;
     }
+    /**
+     * 获取绘制数据个数
+     * @returns {number}
+     */
+
   }, {
     key: "range",
     value: function range() {
       return this._range;
     }
+    /**
+     * 获取十字光标点
+     * @returns {null}
+     */
+
   }, {
     key: "crossHairPoint",
     value: function crossHairPoint() {
       return this._crossHairPoint;
     }
+    /**
+     * 获取十字光标点所在的series的标识
+     * @returns {null}
+     */
+
   }, {
     key: "crossHairSeriesTag",
     value: function crossHairSeriesTag() {
       return this._crossHairSeriesTag;
     }
+    /**
+     * 设置十字光标点所在的series的标识
+     * @param tag
+     */
+
   }, {
     key: "setCrossHairSeriesTag",
     value: function setCrossHairSeriesTag(tag) {
@@ -2450,11 +2546,21 @@ function () {
 
       this._invalidateHandler(InvalidateLevel.CROSS_HAIR);
     }
+    /**
+     * 设置十字光标点
+     * @param point
+     */
+
   }, {
     key: "setCrossHairPoint",
     value: function setCrossHairPoint(point) {
       this._crossHairPoint = point;
     }
+    /**
+     * 获取十字光标所在数据的位置
+     * @returns {number}
+     */
+
   }, {
     key: "getCrossHairDataPos",
     value: function getCrossHairDataPos() {
@@ -2463,7 +2569,8 @@ function () {
       if (!this._crossHairPoint) {
         pos = this._to - 1;
       } else {
-        var range = Math.floor(this._crossHairPoint.x / this._dataSpace);
+        var range = this._xToPos(this._crossHairPoint.x);
+
         pos = this._from + range - 1;
 
         if (pos > this._to - 1) {
@@ -2472,6 +2579,102 @@ function () {
       }
 
       return pos;
+    }
+    /**
+     * 开始拖拽
+     */
+
+  }, {
+    key: "startDrag",
+    value: function startDrag() {
+      this._preFrom = this._from;
+    }
+    /**
+     * 拖动
+     * @param distance
+     */
+
+  }, {
+    key: "drag",
+    value: function drag(distance) {
+      if (Math.abs(distance) < this._dataSpace / 2) {
+        return;
+      }
+
+      var distanceRange = distance / this._dataSpace;
+      distanceRange = distanceRange < 0 ? Math.floor(distanceRange) : Math.ceil(distanceRange);
+
+      if (distanceRange === 0) {
+        return;
+      }
+
+      if (distanceRange > 0) {
+        // 右移
+        if (this._from === 0) {
+          this._invalidateHandler(InvalidateLevel.CROSS_HAIR);
+
+          return;
+        }
+      } else {
+        // 左移
+        var rangeDif = this._calcRangDif();
+
+        var dataSize = this._dataList.length;
+
+        if (this._from === dataSize - rangeDif) {
+          this._invalidateHandler(InvalidateLevel.CROSS_HAIR);
+
+          return;
+        }
+      }
+
+      this._from = this._preFrom - distanceRange;
+
+      this._fixFromTo();
+
+      this._invalidateHandler();
+    }
+    /**
+     * 缩放
+     * @param zoomScale
+     */
+
+  }, {
+    key: "zoom",
+    value: function zoom(zoomScale) {
+      var dataSpace = this._dataSpace + zoomScale * (this._dataSpace / 10);
+
+      if (this._innerSetDataSpace(dataSpace)) {
+        this._fixFromTo();
+
+        this._invalidateHandler();
+      }
+    }
+    /**
+     * 修正from和to
+     * @private
+     */
+
+  }, {
+    key: "_fixFromTo",
+    value: function _fixFromTo() {
+      var dataSize = this._dataList.length;
+
+      var rangeDif = this._calcRangDif();
+
+      if (this._from > dataSize - rangeDif) {
+        this._from = dataSize - rangeDif;
+      }
+
+      if (this._from < 0) {
+        this._from = 0;
+      }
+
+      this._to = this._from + this._range;
+
+      if (this._to > dataSize) {
+        this._to = dataSize;
+      }
     }
   }]);
 
@@ -2486,6 +2689,8 @@ function () {
 
     this._container = props.container;
     this._chartData = props.chartData;
+    this._width = -1;
+    this._height = -1;
 
     this._initBefore(props);
 
@@ -2507,6 +2712,7 @@ function () {
       this._element.style.width = '100%';
       this._element.style.position = 'relative';
       this._element.style.overflow = 'hidden';
+      this._width = this._element.offsetWidth;
       this._mainWidgetCell = this._createCell();
       this._yAxisWidgetCell = this._createCell();
 
@@ -2553,12 +2759,56 @@ function () {
   }, {
     key: "_createYAxisWidget",
     value: function _createYAxisWidget(container, props) {}
+    /**
+     * 设置cell的尺寸
+     * @param cell
+     * @param size
+     * @private
+     */
+
   }, {
     key: "_setCellSize",
     value: function _setCellSize(cell, size) {
       cell.style.left = "".concat(size.left, "px");
       cell.style.width = "".concat(size.width, "px");
       cell.style.height = "".concat(size.height, "px");
+    }
+    /**
+     * 计算轴
+     * @private
+     */
+
+  }, {
+    key: "_computeAxis",
+    value: function _computeAxis() {}
+    /**
+     * 获取宽度
+     * @returns {number}
+     */
+
+  }, {
+    key: "width",
+    value: function width() {
+      return this._width;
+    }
+    /**
+     * 获取高度
+     */
+
+  }, {
+    key: "height",
+    value: function height() {
+      return this._height;
+    }
+    /**
+     * 设置临时高度
+     * @param height
+     */
+
+  }, {
+    key: "setTempHeight",
+    value: function setTempHeight(height) {
+      this._height = height;
     }
     /**
      * 设置尺寸
@@ -2575,15 +2825,14 @@ function () {
 
       this._setCellSize(this._yAxisWidgetCell, yAxisWidgetSize);
 
+      this._height = mainWidgetSize.height;
+
       this._mainWidget.setSize(mainWidgetSize.width, mainWidgetSize.height);
 
       if (this._yAxisWidget) {
         this._yAxisWidget.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height);
       }
     }
-  }, {
-    key: "_computeAxis",
-    value: function _computeAxis() {}
     /**
      * 刷新
      * @param level
@@ -3506,583 +3755,6 @@ function (_View) {
   return TechnicalIndicatorView;
 }(View);
 
-var MOUSE_EVENT_BUTTON_LEFT = 0;
-var DELAY_RESET_CLICK = 500;
-var DELAY_LONG_TAG = 500;
-
-function getBoundingClientRect(element) {
-  return element.getBoundingClientRect() || {
-    left: 0,
-    top: 0
-  };
-}
-
-function getDistance(p1, p2) {
-  var xDiff = p1.clientX - p2.clientX;
-  var yDiff = p1.clientY - p2.clientY;
-  return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-}
-
-function isTouchEvent(event) {
-  return Boolean(event.touches);
-}
-
-function preventDefault(event) {
-  if (event.cancelable) {
-    event.preventDefault();
-  }
-}
-
-function checkTouchEvents() {
-  if ('ontouchstart' in window) {
-    return true;
-  }
-
-  return Boolean(window.DocumentTouch && document instanceof window.DocumentTouch);
-}
-
-var touch = !!navigator.maxTouchPoints || !!navigator.msMaxTouchPoints || checkTouchEvents();
-var mobileTouch = 'onorientationchange' in window && touch;
-
-var EventBase =
-/*#__PURE__*/
-function () {
-  function EventBase(target, eventHandler, options) {
-    _classCallCheck(this, EventBase);
-
-    this._target = target;
-    this._handler = eventHandler;
-    this._options = options;
-    this._clickCount = 0;
-    this._clickTimeoutId = null;
-    this._longTapTimeoutId = null;
-    this._longTapActive = false;
-    this._mouseMoveStartPosition = null;
-    this._moveExceededManhattanDistance = false;
-    this._cancelClick = false;
-    this._unsubscribeOutsideEvents = null;
-    this._unsubscribeMousemove = null;
-    this._unsubscribeRoot = null;
-    this._startPinchMiddlePoint = null;
-    this._startPinchDistance = 0;
-    this._pinchPrevented = false;
-    this._preventDragProcess = false;
-    this._mousePressed = false;
-
-    this._init();
-  }
-
-  _createClass(EventBase, [{
-    key: "destroy",
-    value: function destroy() {
-      if (this._unsubscribeOutsideEvents !== null) {
-        this._unsubscribeOutsideEvents();
-
-        this._unsubscribeOutsideEvents = null;
-      }
-
-      if (this._unsubscribeMousemove !== null) {
-        this._unsubscribeMousemove();
-
-        this._unsubscribeMousemove = null;
-      }
-
-      if (this._unsubscribeRoot !== null) {
-        this._unsubscribeRoot();
-
-        this._unsubscribeRoot = null;
-      }
-
-      this._clearLongTapTimeout();
-
-      this._resetClickTimeout();
-    }
-  }, {
-    key: "_mouseEnterHandler",
-    value: function _mouseEnterHandler(enterEvent) {
-      var _this = this;
-
-      if (this._unsubscribeMousemove) {
-        this._unsubscribeMousemove();
-      }
-
-      {
-        var boundMouseMoveHandler = this._mouseMoveHandler.bind(this);
-
-        this._unsubscribeMousemove = function () {
-          _this._target.removeEventListener('mousemove', boundMouseMoveHandler);
-        };
-
-        this._target.addEventListener('mousemove', boundMouseMoveHandler);
-      }
-
-      if (isTouchEvent(enterEvent)) {
-        this._mouseMoveHandler(enterEvent);
-      }
-
-      var compatEvent = this._makeCompatEvent(enterEvent);
-
-      this._processEvent(compatEvent, this._handler.mouseEnterEvent);
-    }
-  }, {
-    key: "_resetClickTimeout",
-    value: function _resetClickTimeout() {
-      if (this._clickTimeoutId !== null) {
-        clearTimeout(this._clickTimeoutId);
-      }
-
-      this._clickCount = 0;
-      this._clickTimeoutId = null;
-    }
-  }, {
-    key: "_mouseMoveHandler",
-    value: function _mouseMoveHandler(moveEvent) {
-      if (this._mousePressed && !isTouchEvent(moveEvent)) {
-        return;
-      }
-
-      var compatEvent = this._makeCompatEvent(moveEvent);
-
-      this._processEvent(compatEvent, this._handler.mouseMoveEvent);
-    }
-  }, {
-    key: "_mouseMoveWithDownHandler",
-    value: function _mouseMoveWithDownHandler(moveEvent) {
-      if ('button' in moveEvent && moveEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
-        return;
-      }
-
-      if (this._startPinchMiddlePoint !== null) {
-        return;
-      }
-
-      var isTouch = isTouchEvent(moveEvent);
-
-      if (this._preventDragProcess && isTouch) {
-        return;
-      }
-
-      this._pinchPrevented = true;
-
-      var compatEvent = this._makeCompatEvent(moveEvent);
-
-      var startMouseMovePos = this._mouseMoveStartPosition;
-      var xOffset = Math.abs(startMouseMovePos.x - compatEvent.pageX);
-      var yOffset = Math.abs(startMouseMovePos.y - compatEvent.pageY);
-      var moveExceededManhattanDistance = xOffset + yOffset > 5;
-
-      if (!moveExceededManhattanDistance && isTouch) {
-        return;
-      }
-
-      if (moveExceededManhattanDistance && !this._moveExceededManhattanDistance && isTouch) {
-        // vertical drag is more important than horizontal drag
-        // because we scroll the page vertically often than horizontally
-        var correctedXOffset = xOffset * 0.5; // a drag can be only if touch page scroll isn't allowed
-
-        var isVertDrag = yOffset >= correctedXOffset && !this._options.treatVertTouchDragAsPageScroll;
-        var isHorzDrag = correctedXOffset > yOffset && !this._options.treatHorzTouchDragAsPageScroll; // if drag event happened then we should revert preventDefault state to original one
-        // and try to process the drag event
-        // else we shouldn't prevent default of the event and ignore processing the drag event
-
-        if (!isVertDrag && !isHorzDrag) {
-          this._preventDragProcess = true;
-        }
-      }
-
-      if (moveExceededManhattanDistance) {
-        this._moveExceededManhattanDistance = true; // if manhattan distance is more that 5 - we should cancel click event
-
-        this._cancelClick = true;
-
-        if (isTouch) {
-          this._clearLongTapTimeout();
-        }
-      }
-
-      if (!this._preventDragProcess) {
-        this._processEvent(compatEvent, this._handler.pressedMouseMoveEvent); // we should prevent default in case of touch only
-        // to prevent scroll of the page
-
-
-        if (isTouch) {
-          preventDefault(moveEvent);
-        }
-      }
-    }
-  }, {
-    key: "_mouseUpHandler",
-    value: function _mouseUpHandler(mouseUpEvent) {
-      if ('button' in mouseUpEvent && mouseUpEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
-        return;
-      }
-
-      var compatEvent = this._makeCompatEvent(mouseUpEvent);
-
-      this._clearLongTapTimeout();
-
-      this._mouseMoveStartPosition = null;
-      this._mousePressed = false;
-
-      if (this._unsubscribeRoot) {
-        this._unsubscribeRoot();
-
-        this._unsubscribeRoot = null;
-      }
-
-      if (isTouchEvent(mouseUpEvent)) {
-        this._mouseLeaveHandler(mouseUpEvent);
-      }
-
-      this._processEvent(compatEvent, this._handler.mouseUpEvent);
-
-      ++this._clickCount;
-
-      if (this._clickTimeoutId && this._clickCount > 1) {
-        this._processEvent(compatEvent, this._handler.mouseDoubleClickEvent);
-
-        this._resetClickTimeout();
-      } else {
-        if (!this._cancelClick) {
-          this._processEvent(compatEvent, this._handler.mouseClickEvent);
-        }
-      } // prevent safari's dblclick-to-zoom
-      // we handle mouseDoubleClickEvent here ourself
-
-
-      if (isTouchEvent(mouseUpEvent)) {
-        preventDefault(mouseUpEvent);
-
-        this._mouseLeaveHandler(mouseUpEvent);
-
-        if (mouseUpEvent.touches.length === 0) {
-          this._longTapActive = false;
-        }
-      }
-    }
-  }, {
-    key: "_clearLongTapTimeout",
-    value: function _clearLongTapTimeout() {
-      if (this._longTapTimeoutId === null) {
-        return;
-      }
-
-      clearTimeout(this._longTapTimeoutId);
-      this._longTapTimeoutId = null;
-    }
-  }, {
-    key: "_mouseDownHandler",
-    value: function _mouseDownHandler(downEvent) {
-      if ('button' in downEvent && downEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
-        return;
-      }
-
-      var compatEvent = this._makeCompatEvent(downEvent);
-
-      this._cancelClick = false;
-      this._moveExceededManhattanDistance = false;
-      this._preventDragProcess = false;
-
-      if (isTouchEvent(downEvent)) {
-        this._mouseEnterHandler(downEvent);
-      }
-
-      this._mouseMoveStartPosition = {
-        x: compatEvent.pageX,
-        y: compatEvent.pageY
-      };
-
-      if (this._unsubscribeRoot) {
-        this._unsubscribeRoot();
-
-        this._unsubscribeRoot = null;
-      }
-
-      {
-        var boundMouseMoveWithDownHandler = this._mouseMoveWithDownHandler.bind(this);
-
-        var boundMouseUpHandler = this._mouseUpHandler.bind(this);
-
-        var rootElement = this._target.ownerDocument.documentElement;
-
-        this._unsubscribeRoot = function () {
-          rootElement.removeEventListener('touchmove', boundMouseMoveWithDownHandler);
-          rootElement.removeEventListener('touchend', boundMouseUpHandler);
-          rootElement.removeEventListener('mousemove', boundMouseMoveWithDownHandler);
-          rootElement.removeEventListener('mouseup', boundMouseUpHandler);
-        };
-
-        rootElement.addEventListener('touchmove', boundMouseMoveWithDownHandler, {
-          passive: false
-        });
-        rootElement.addEventListener('touchend', boundMouseUpHandler, {
-          passive: false
-        });
-
-        this._clearLongTapTimeout();
-
-        if (isTouchEvent(downEvent) && downEvent.touches.length === 1) {
-          this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), DELAY_LONG_TAG);
-        } else {
-          rootElement.addEventListener('mousemove', boundMouseMoveWithDownHandler);
-          rootElement.addEventListener('mouseup', boundMouseUpHandler);
-        }
-      }
-      this._mousePressed = true;
-
-      this._processEvent(compatEvent, this._handler.mouseDownEvent);
-
-      if (!this._clickTimeoutId) {
-        this._clickCount = 0;
-        this._clickTimeoutId = setTimeout(this._resetClickTimeout.bind(this), DELAY_RESET_CLICK);
-      }
-    }
-  }, {
-    key: "_init",
-    value: function _init() {
-      var _this2 = this;
-
-      this._target.addEventListener('mouseenter', this._mouseEnterHandler.bind(this));
-
-      this._target.addEventListener('touchcancel', this._clearLongTapTimeout.bind(this));
-
-      {
-        var doc = this._target.ownerDocument;
-
-        var outsideHandler = function outsideHandler(event) {
-          if (!_this2._handler.mouseDownOutsideEvent) {
-            return;
-          }
-
-          if (event.target && _this2._target.contains(event.target)) {
-            return;
-          }
-
-          _this2._handler.mouseDownOutsideEvent();
-        };
-
-        this._unsubscribeOutsideEvents = function () {
-          doc.removeEventListener('mousedown', outsideHandler);
-          doc.removeEventListener('touchstart', outsideHandler);
-        };
-
-        doc.addEventListener('mousedown', outsideHandler);
-        doc.addEventListener('touchstart', outsideHandler, {
-          passive: true
-        });
-      }
-
-      this._target.addEventListener('mouseleave', this._mouseLeaveHandler.bind(this));
-
-      this._target.addEventListener('touchstart', this._mouseDownHandler.bind(this), {
-        passive: true
-      });
-
-      if (!mobileTouch) {
-        this._target.addEventListener('mousedown', this._mouseDownHandler.bind(this));
-      }
-
-      this._initPinch(); // Hey mobile Safari, what's up?
-      // If mobile Safari doesn't have any touchmove handler with passive=false
-      // it treats a touchstart and the following touchmove events as cancelable=false,
-      // so we can't prevent them (as soon we subscribe on touchmove inside handler of touchstart).
-      // And we'll get scroll of the page along with chart's one instead of only chart's scroll.
-
-
-      this._target.addEventListener('touchmove', function () {}, {
-        passive: false
-      });
-    }
-  }, {
-    key: "_initPinch",
-    value: function _initPinch() {
-      var _this3 = this;
-
-      if (this._handler.pinchStartEvent === undefined && this._handler.pinchEvent === undefined && this._handler.pinchEndEvent === undefined) {
-        return;
-      }
-
-      this._target.addEventListener('touchstart', function (event) {
-        return _this3._checkPinchState(event.touches);
-      }, {
-        passive: true
-      });
-
-      this._target.addEventListener('touchmove', function (event) {
-        if (event.touches.length !== 2 || _this3._startPinchMiddlePoint === null) {
-          return;
-        }
-
-        if (_this3._handler.pinchEvent !== undefined) {
-          var currentDistance = getDistance(event.touches[0], event.touches[1]);
-          var scale = currentDistance / _this3._startPinchDistance;
-
-          _this3._handler.pinchEvent(_this3._startPinchMiddlePoint, scale);
-
-          preventDefault(event);
-        }
-      }, {
-        passive: false
-      });
-
-      this._target.addEventListener('touchend', function (event) {
-        _this3._checkPinchState(event.touches);
-      });
-    }
-  }, {
-    key: "_checkPinchState",
-    value: function _checkPinchState(touches) {
-      if (touches.length === 1) {
-        this._pinchPrevented = false;
-      }
-
-      if (touches.length !== 2 || this._pinchPrevented || this._longTapActive) {
-        this._stopPinch();
-      } else {
-        this._startPinch(touches);
-      }
-    }
-  }, {
-    key: "_startPinch",
-    value: function _startPinch(touches) {
-      var box = getBoundingClientRect(this._target);
-      this._startPinchMiddlePoint = {
-        x: (touches[0].clientX - box.left + (touches[1].clientX - box.left)) / 2,
-        y: (touches[0].clientY - box.top + (touches[1].clientY - box.top)) / 2
-      };
-      this._startPinchDistance = getDistance(touches[0], touches[1]);
-
-      if (this._handler.pinchStartEvent !== undefined) {
-        this._handler.pinchStartEvent();
-      }
-
-      this._clearLongTapTimeout();
-    }
-  }, {
-    key: "_stopPinch",
-    value: function _stopPinch() {
-      if (this._startPinchMiddlePoint === null) {
-        return;
-      }
-
-      this._startPinchMiddlePoint = null;
-
-      if (this._handler.pinchEndEvent !== undefined) {
-        this._handler.pinchEndEvent();
-      }
-    }
-  }, {
-    key: "_mouseLeaveHandler",
-    value: function _mouseLeaveHandler(event) {
-      if (this._unsubscribeMousemove) {
-        this._unsubscribeMousemove();
-      }
-
-      var compatEvent = this._makeCompatEvent(event);
-
-      this._processEvent(compatEvent, this._handler.mouseLeaveEvent);
-    }
-  }, {
-    key: "_longTapHandler",
-    value: function _longTapHandler(event) {
-      var compatEvent = this._makeCompatEvent(event);
-
-      this._processEvent(compatEvent, this._handler.longTapEvent);
-
-      this._cancelClick = true; // long tap is active untill touchend event with 0 touches occured
-
-      this._longTapActive = true;
-    }
-  }, {
-    key: "_processEvent",
-    value: function _processEvent(event, callback) {
-      if (!callback) {
-        return;
-      }
-
-      callback.call(this._handler, event);
-    }
-  }, {
-    key: "_makeCompatEvent",
-    value: function _makeCompatEvent(event) {
-      // TouchEvent has no clientX/Y coordinates:
-      // We have to use the last Touch instead
-      var eventLike;
-
-      if ('touches' in event && event.touches.length) {
-        eventLike = event.touches[0];
-      } else if ('changedTouches' in event && event.changedTouches.length) {
-        eventLike = event.changedTouches[0];
-      } else {
-        eventLike = event;
-      }
-
-      var box = getBoundingClientRect(this._target);
-      return {
-        clientX: eventLike.clientX,
-        clientY: eventLike.clientY,
-        pageX: eventLike.pageX,
-        pageY: eventLike.pageY,
-        screenX: eventLike.screenX,
-        screenY: eventLike.screenY,
-        localX: eventLike.clientX - box.left,
-        localY: eventLike.clientY - box.top,
-        ctrlKey: event.ctrlKey,
-        altKey: event.altKey,
-        shiftKey: event.shiftKey,
-        metaKey: event.metaKey,
-        type: event.type.startsWith('mouse') ? 'mouse' : 'touch',
-        target: eventLike.target,
-        view: event.view
-      };
-    }
-  }]);
-
-  return EventBase;
-}();
-
-var CrossHairEvent =
-/*#__PURE__*/
-function () {
-  function CrossHairEvent(target, chartData, tag) {
-    _classCallCheck(this, CrossHairEvent);
-
-    this._chartData = chartData;
-    this._tag = tag;
-    this._event = new EventBase(target, {
-      mouseLeaveEvent: this._eventLeave.bind(this),
-      mouseMoveEvent: this._eventMove.bind(this)
-    }, {
-      treatVertTouchDragAsPageScroll: true,
-      treatHorzTouchDragAsPageScroll: true
-    });
-  }
-
-  _createClass(CrossHairEvent, [{
-    key: "_eventLeave",
-    value: function _eventLeave() {
-      this._chartData.setCrossHairSeriesTag(null);
-    }
-  }, {
-    key: "_eventMove",
-    value: function _eventMove(event) {
-      this._chartData.setCrossHairPoint({
-        x: event.localX,
-        y: event.localY
-      });
-
-      this._chartData.setCrossHairSeriesTag(this._tag);
-    }
-  }, {
-    key: "destroy",
-    value: function destroy() {
-      this._event.destroy();
-    }
-  }]);
-
-  return CrossHairEvent;
-}();
-
 /**
  * 格式化值
  * @param data
@@ -4213,7 +3885,6 @@ function (_View) {
     _this._xAxis = xAxis;
     _this._yAxis = yAxis;
     _this._additionalDataProvider = additionalDataProvider;
-    _this._crossHairEvent = new CrossHairEvent(_this._canvas, chartData, additionalDataProvider.tag());
     return _this;
   }
 
@@ -4728,19 +4399,24 @@ function (_AxisView) {
         return;
       }
 
+      var lineSize = yAxis.axisLine.size;
       this._ctx.strokeStyle = yAxis.axisLine.color;
-      this._ctx.lineWidth = yAxis.axisLine.size;
+      this._ctx.lineWidth = lineSize;
 
       this._ctx.beginPath();
 
       if (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE) {
-        this._ctx.moveTo(0, 0);
+        var x = lineSize / 2;
 
-        this._ctx.lineTo(0, this._height);
+        this._ctx.moveTo(x, 0);
+
+        this._ctx.lineTo(x, this._height);
       } else {
-        this._ctx.moveTo(this._width, 0);
+        var _x = this._width - lineSize / 2;
 
-        this._ctx.lineTo(this._width, this._height);
+        this._ctx.moveTo(_x, 0);
+
+        this._ctx.lineTo(_x, this._height);
       }
 
       this._ctx.stroke();
@@ -5510,9 +5186,11 @@ function (_Series) {
   }, {
     key: "setSize",
     value: function setSize(mainWidgetSize, yAxisWidgetSize) {
-      _get(_getPrototypeOf(TechnicalIndicatorSeries.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
-
       this._yAxis.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height);
+
+      this._computeAxis();
+
+      _get(_getPrototypeOf(TechnicalIndicatorSeries.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
     }
     /**
      * 获取技术指标类型
@@ -6417,14 +6095,16 @@ function (_AxisView) {
         return;
       }
 
+      var lineSize = xAxis.axisLine.size;
+      var y = lineSize / 2;
       this._ctx.strokeStyle = xAxis.axisLine.color;
-      this._ctx.lineWidth = xAxis.axisLine.size;
+      this._ctx.lineWidth = lineSize;
 
       this._ctx.beginPath();
 
-      this._ctx.moveTo(0, 0);
+      this._ctx.moveTo(0, y);
 
-      this._ctx.lineTo(this._width, 0);
+      this._ctx.lineTo(this._width, y);
 
       this._ctx.stroke();
 
@@ -6739,7 +6419,16 @@ function (_Axis) {
     value: function convertFromPixel(pixel) {
       var dataSpace = this._chartData.dataSpace();
 
-      var range = Math.floor(pixel / dataSpace);
+      var range = pixel / dataSpace;
+      var floorRange = Math.floor(range);
+      var spaceDif = (range - floorRange) * dataSpace;
+
+      if (spaceDif < this._chartData.barSpace() / 2) {
+        range = floorRange;
+      } else {
+        range = Math.ceil(range);
+      }
+
       return this._chartData.from() + range - 1;
     }
   }, {
@@ -6801,8 +6490,979 @@ function (_Series) {
   return XAxisSeries;
 }(Series);
 
-var DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE = 0.2;
-var CANDLE_STICK_MIN_HEIGHT_RATE = 0.4;
+var MOUSE_EVENT_BUTTON_LEFT = 0;
+var DELAY_RESET_CLICK = 500;
+var DELAY_LONG_TAG = 600;
+
+function getBoundingClientRect(element) {
+  return element.getBoundingClientRect() || {
+    left: 0,
+    top: 0
+  };
+}
+
+function isTouchEvent(event) {
+  return Boolean(event.touches);
+}
+
+function preventDefault(event) {
+  if (event.cancelable) {
+    event.preventDefault();
+  }
+}
+
+function checkTouchEvents() {
+  if ('ontouchstart' in window) {
+    return true;
+  }
+
+  return Boolean(window.DocumentTouch && document instanceof window.DocumentTouch);
+}
+
+var touch = !!navigator.maxTouchPoints || !!navigator.msMaxTouchPoints || checkTouchEvents();
+var mobileTouch = 'onorientationchange' in window && touch;
+
+function getDistance(p1, p2) {
+  var xDiff = p1.clientX - p2.clientX;
+  var yDiff = p1.clientY - p2.clientY;
+  return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+}
+
+var EventType = {
+  MOUSE: 'mouse',
+  TOUCH: 'touch'
+};
+function isTouch(event) {
+  return event.type === EventType.TOUCH;
+}
+function isMouse(event) {
+  return event.type === EventType.MOUSE;
+}
+
+var EventBase =
+/*#__PURE__*/
+function () {
+  function EventBase(target, eventHandler, options) {
+    _classCallCheck(this, EventBase);
+
+    this._target = target;
+    this._handler = eventHandler;
+    this._options = options;
+    this._clickCount = 0;
+    this._clickTimeoutId = null;
+    this._longTapTimeoutId = null;
+    this._longTapActive = false;
+    this._mouseMoveStartPosition = null;
+    this._moveExceededManhattanDistance = false;
+    this._cancelClick = false;
+    this._unsubscribeOutsideEvents = null;
+    this._unsubscribeMousemove = null;
+    this._unsubscribeRoot = null;
+    this._startPinchMiddlePoint = null;
+    this._startPinchDistance = 0;
+    this._pinchPrevented = false;
+    this._preventDragProcess = false;
+    this._mousePressed = false;
+
+    this._init();
+  }
+
+  _createClass(EventBase, [{
+    key: "destroy",
+    value: function destroy() {
+      if (this._unsubscribeOutsideEvents !== null) {
+        this._unsubscribeOutsideEvents();
+
+        this._unsubscribeOutsideEvents = null;
+      }
+
+      if (this._unsubscribeMousemove !== null) {
+        this._unsubscribeMousemove();
+
+        this._unsubscribeMousemove = null;
+      }
+
+      if (this._unsubscribeRoot !== null) {
+        this._unsubscribeRoot();
+
+        this._unsubscribeRoot = null;
+      }
+
+      this._clearLongTapTimeout();
+
+      this._resetClickTimeout();
+    }
+  }, {
+    key: "_mouseEnterHandler",
+    value: function _mouseEnterHandler(enterEvent) {
+      var _this = this;
+
+      if (this._unsubscribeMousemove) {
+        this._unsubscribeMousemove();
+      }
+
+      {
+        var boundMouseMoveHandler = this._mouseMoveHandler.bind(this);
+
+        var boundMouseWheelHandler = this._mouseWheelHandler.bind(this);
+
+        this._unsubscribeMousemove = function () {
+          _this._target.removeEventListener('mousemove', boundMouseMoveHandler);
+
+          _this._target.removeEventListener('wheel', boundMouseWheelHandler);
+        };
+
+        this._target.addEventListener('mousemove', boundMouseMoveHandler);
+
+        this._target.addEventListener('wheel', boundMouseWheelHandler, {
+          passive: false
+        });
+      }
+
+      if (isTouchEvent(enterEvent)) {
+        this._mouseMoveHandler(enterEvent);
+      }
+
+      var compatEvent = this._makeCompatEvent(enterEvent);
+
+      this._processEvent(compatEvent, this._handler.mouseEnterEvent);
+    }
+  }, {
+    key: "_resetClickTimeout",
+    value: function _resetClickTimeout() {
+      if (this._clickTimeoutId !== null) {
+        clearTimeout(this._clickTimeoutId);
+      }
+
+      this._clickCount = 0;
+      this._clickTimeoutId = null;
+    }
+  }, {
+    key: "_mouseMoveHandler",
+    value: function _mouseMoveHandler(moveEvent) {
+      if (this._mousePressed && !isTouchEvent(moveEvent)) {
+        return;
+      }
+
+      var compatEvent = this._makeCompatEvent(moveEvent);
+
+      this._processEvent(compatEvent, this._handler.mouseMoveEvent);
+    }
+  }, {
+    key: "_mouseWheelHandler",
+    value: function _mouseWheelHandler(wheelEvent) {
+      var compatEvent = this._makeCompatEvent(wheelEvent);
+
+      wheelEvent.localX = compatEvent.localX;
+      wheelEvent.localY = compatEvent.localY;
+
+      this._processEvent(wheelEvent, this._handler.mouseWheelEvent);
+    }
+  }, {
+    key: "_mouseMoveWithDownHandler",
+    value: function _mouseMoveWithDownHandler(moveEvent) {
+      if ('button' in moveEvent && moveEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
+        return;
+      }
+
+      if (this._startPinchMiddlePoint !== null) {
+        return;
+      }
+
+      var isTouch = isTouchEvent(moveEvent);
+
+      if (this._preventDragProcess && isTouch) {
+        return;
+      }
+
+      this._pinchPrevented = true;
+
+      var compatEvent = this._makeCompatEvent(moveEvent);
+
+      var startMouseMovePos = this._mouseMoveStartPosition;
+      var xOffset = Math.abs(startMouseMovePos.x - compatEvent.pageX);
+      var yOffset = Math.abs(startMouseMovePos.y - compatEvent.pageY);
+      var moveExceededManhattanDistance = xOffset + yOffset > 5;
+
+      if (!moveExceededManhattanDistance && isTouch) {
+        return;
+      }
+
+      if (moveExceededManhattanDistance && !this._moveExceededManhattanDistance && isTouch) {
+        // vertical drag is more important than horizontal drag
+        // because we scroll the page vertically often than horizontally
+        var correctedXOffset = xOffset * 0.5; // a drag can be only if touch page scroll isn't allowed
+
+        var isVertDrag = yOffset >= correctedXOffset && !this._options.treatVertTouchDragAsPageScroll;
+        var isHorzDrag = correctedXOffset > yOffset && !this._options.treatHorzTouchDragAsPageScroll; // if drag event happened then we should revert preventDefault state to original one
+        // and try to process the drag event
+        // else we shouldn't prevent default of the event and ignore processing the drag event
+
+        if (!isVertDrag && !isHorzDrag) {
+          this._preventDragProcess = true;
+        }
+      }
+
+      if (moveExceededManhattanDistance) {
+        this._moveExceededManhattanDistance = true; // if manhattan distance is more that 5 - we should cancel click event
+
+        this._cancelClick = true;
+
+        if (isTouch) {
+          this._clearLongTapTimeout();
+        }
+      }
+
+      if (!this._preventDragProcess) {
+        this._processEvent(compatEvent, this._handler.pressedMouseMoveEvent); // we should prevent default in case of touch only
+        // to prevent scroll of the page
+
+
+        if (isTouch) {
+          preventDefault(moveEvent);
+        }
+      }
+    }
+  }, {
+    key: "_mouseUpHandler",
+    value: function _mouseUpHandler(mouseUpEvent) {
+      if ('button' in mouseUpEvent && mouseUpEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
+        return;
+      }
+
+      var compatEvent = this._makeCompatEvent(mouseUpEvent);
+
+      this._clearLongTapTimeout();
+
+      this._mouseMoveStartPosition = null;
+      this._mousePressed = false;
+
+      if (this._unsubscribeRoot) {
+        this._unsubscribeRoot();
+
+        this._unsubscribeRoot = null;
+      }
+
+      if (isTouchEvent(mouseUpEvent)) {
+        this._mouseLeaveHandler(mouseUpEvent);
+      }
+
+      this._processEvent(compatEvent, this._handler.mouseUpEvent);
+
+      ++this._clickCount;
+
+      if (this._clickTimeoutId && this._clickCount > 1) {
+        this._processEvent(compatEvent, this._handler.mouseDoubleClickEvent);
+
+        this._resetClickTimeout();
+      } else {
+        if (!this._cancelClick) {
+          this._processEvent(compatEvent, this._handler.mouseClickEvent);
+        }
+      } // prevent safari's dblclick-to-zoom
+      // we handle mouseDoubleClickEvent here ourself
+
+
+      if (isTouchEvent(mouseUpEvent)) {
+        preventDefault(mouseUpEvent);
+
+        this._mouseLeaveHandler(mouseUpEvent);
+
+        if (mouseUpEvent.touches.length === 0) {
+          this._longTapActive = false;
+        }
+      }
+    }
+  }, {
+    key: "_clearLongTapTimeout",
+    value: function _clearLongTapTimeout() {
+      if (this._longTapTimeoutId === null) {
+        return;
+      }
+
+      clearTimeout(this._longTapTimeoutId);
+      this._longTapTimeoutId = null;
+    }
+  }, {
+    key: "_mouseDownHandler",
+    value: function _mouseDownHandler(downEvent) {
+      if ('button' in downEvent && downEvent.button !== MOUSE_EVENT_BUTTON_LEFT) {
+        return;
+      }
+
+      var compatEvent = this._makeCompatEvent(downEvent);
+
+      this._cancelClick = false;
+      this._moveExceededManhattanDistance = false;
+      this._preventDragProcess = false;
+
+      if (isTouchEvent(downEvent)) {
+        this._mouseEnterHandler(downEvent);
+      }
+
+      this._mouseMoveStartPosition = {
+        x: compatEvent.pageX,
+        y: compatEvent.pageY
+      };
+
+      if (this._unsubscribeRoot) {
+        this._unsubscribeRoot();
+
+        this._unsubscribeRoot = null;
+      }
+
+      {
+        var boundMouseMoveWithDownHandler = this._mouseMoveWithDownHandler.bind(this);
+
+        var boundMouseUpHandler = this._mouseUpHandler.bind(this);
+
+        var rootElement = this._target.ownerDocument.documentElement;
+
+        this._unsubscribeRoot = function () {
+          rootElement.removeEventListener('touchmove', boundMouseMoveWithDownHandler);
+          rootElement.removeEventListener('touchend', boundMouseUpHandler);
+          rootElement.removeEventListener('mousemove', boundMouseMoveWithDownHandler);
+          rootElement.removeEventListener('mouseup', boundMouseUpHandler);
+        };
+
+        rootElement.addEventListener('touchmove', boundMouseMoveWithDownHandler, {
+          passive: false
+        });
+        rootElement.addEventListener('touchend', boundMouseUpHandler, {
+          passive: false
+        });
+
+        this._clearLongTapTimeout();
+
+        if (isTouchEvent(downEvent) && downEvent.touches.length === 1) {
+          this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), DELAY_LONG_TAG);
+        } else {
+          rootElement.addEventListener('mousemove', boundMouseMoveWithDownHandler);
+          rootElement.addEventListener('mouseup', boundMouseUpHandler);
+        }
+      }
+      this._mousePressed = true;
+
+      this._processEvent(compatEvent, this._handler.mouseDownEvent);
+
+      if (!this._clickTimeoutId) {
+        this._clickCount = 0;
+        this._clickTimeoutId = setTimeout(this._resetClickTimeout.bind(this), DELAY_RESET_CLICK);
+      }
+    }
+  }, {
+    key: "_init",
+    value: function _init() {
+      var _this2 = this;
+
+      this._target.addEventListener('mouseenter', this._mouseEnterHandler.bind(this));
+
+      this._target.addEventListener('touchcancel', this._clearLongTapTimeout.bind(this));
+
+      {
+        var doc = this._target.ownerDocument;
+
+        var outsideHandler = function outsideHandler(event) {
+          if (!_this2._handler.mouseDownOutsideEvent) {
+            return;
+          }
+
+          if (event.target && _this2._target.contains(event.target)) {
+            return;
+          }
+
+          _this2._handler.mouseDownOutsideEvent();
+        };
+
+        this._unsubscribeOutsideEvents = function () {
+          doc.removeEventListener('mousedown', outsideHandler);
+          doc.removeEventListener('touchstart', outsideHandler);
+        };
+
+        doc.addEventListener('mousedown', outsideHandler);
+        doc.addEventListener('touchstart', outsideHandler, {
+          passive: true
+        });
+      }
+
+      this._target.addEventListener('mouseleave', this._mouseLeaveHandler.bind(this));
+
+      this._target.addEventListener('touchstart', this._mouseDownHandler.bind(this), {
+        passive: true
+      });
+
+      if (!mobileTouch) {
+        this._target.addEventListener('mousedown', this._mouseDownHandler.bind(this));
+      }
+
+      this._initPinch(); // Hey mobile Safari, what's up?
+      // If mobile Safari doesn't have any touchmove handler with passive=false
+      // it treats a touchstart and the following touchmove events as cancelable=false,
+      // so we can't prevent them (as soon we subscribe on touchmove inside handler of touchstart).
+      // And we'll get scroll of the page along with chart's one instead of only chart's scroll.
+
+
+      this._target.addEventListener('touchmove', function () {}, {
+        passive: false
+      });
+    }
+  }, {
+    key: "_initPinch",
+    value: function _initPinch() {
+      var _this3 = this;
+
+      if (this._handler.pinchStartEvent === undefined && this._handler.pinchEvent === undefined && this._handler.pinchEndEvent === undefined) {
+        return;
+      }
+
+      this._target.addEventListener('touchstart', function (event) {
+        return _this3._checkPinchState(event.touches);
+      }, {
+        passive: true
+      });
+
+      this._target.addEventListener('touchmove', function (event) {
+        if (event.touches.length !== 2 || _this3._startPinchMiddlePoint === null) {
+          return;
+        }
+
+        if (_this3._handler.pinchEvent !== undefined) {
+          var currentDistance = getDistance(event.touches[0], event.touches[1]);
+          var scale = currentDistance / _this3._startPinchDistance;
+
+          _this3._handler.pinchEvent(_this3._startPinchMiddlePoint, scale);
+
+          preventDefault(event);
+        }
+      }, {
+        passive: false
+      });
+
+      this._target.addEventListener('touchend', function (event) {
+        _this3._checkPinchState(event.touches);
+      });
+    }
+  }, {
+    key: "_checkPinchState",
+    value: function _checkPinchState(touches) {
+      if (touches.length === 1) {
+        this._pinchPrevented = false;
+      }
+
+      if (touches.length !== 2 || this._pinchPrevented || this._longTapActive) {
+        this._stopPinch();
+      } else {
+        this._startPinch(touches);
+      }
+    }
+  }, {
+    key: "_startPinch",
+    value: function _startPinch(touches) {
+      var box = getBoundingClientRect(this._target);
+      this._startPinchMiddlePoint = {
+        x: (touches[0].clientX - box.left + (touches[1].clientX - box.left)) / 2,
+        y: (touches[0].clientY - box.top + (touches[1].clientY - box.top)) / 2
+      };
+      this._startPinchDistance = getDistance(touches[0], touches[1]);
+
+      if (this._handler.pinchStartEvent !== undefined) {
+        this._handler.pinchStartEvent();
+      }
+
+      this._clearLongTapTimeout();
+    }
+  }, {
+    key: "_stopPinch",
+    value: function _stopPinch() {
+      if (this._startPinchMiddlePoint === null) {
+        return;
+      }
+
+      this._startPinchMiddlePoint = null;
+
+      if (this._handler.pinchEndEvent !== undefined) {
+        this._handler.pinchEndEvent();
+      }
+    }
+  }, {
+    key: "_mouseLeaveHandler",
+    value: function _mouseLeaveHandler(event) {
+      if (this._unsubscribeMousemove) {
+        this._unsubscribeMousemove();
+      }
+
+      var compatEvent = this._makeCompatEvent(event);
+
+      this._processEvent(compatEvent, this._handler.mouseLeaveEvent);
+    }
+  }, {
+    key: "_longTapHandler",
+    value: function _longTapHandler(event) {
+      var compatEvent = this._makeCompatEvent(event);
+
+      this._processEvent(compatEvent, this._handler.longTapEvent);
+
+      this._cancelClick = true; // long tap is active untill touchend event with 0 touches occured
+
+      this._longTapActive = true;
+    }
+  }, {
+    key: "_processEvent",
+    value: function _processEvent(event, callback) {
+      if (!callback) {
+        return;
+      }
+
+      callback.call(this._handler, event);
+    }
+  }, {
+    key: "_makeCompatEvent",
+    value: function _makeCompatEvent(event) {
+      // TouchEvent has no clientX/Y coordinates:
+      // We have to use the last Touch instead
+      var eventLike;
+
+      if ('touches' in event && event.touches.length) {
+        eventLike = event.touches[0];
+      } else if ('changedTouches' in event && event.changedTouches.length) {
+        eventLike = event.changedTouches[0];
+      } else {
+        eventLike = event;
+      }
+
+      var box = getBoundingClientRect(this._target);
+      return {
+        clientX: eventLike.clientX,
+        clientY: eventLike.clientY,
+        pageX: eventLike.pageX,
+        pageY: eventLike.pageY,
+        screenX: eventLike.screenX,
+        screenY: eventLike.screenY,
+        localX: eventLike.clientX - box.left,
+        localY: eventLike.clientY - box.top,
+        ctrlKey: event.ctrlKey,
+        altKey: event.altKey,
+        shiftKey: event.shiftKey,
+        metaKey: event.metaKey,
+        type: event.type.startsWith('mouse') ? EventType.MOUSE : EventType.TOUCH,
+        target: eventLike.target,
+        view: event.view
+      };
+    }
+  }]);
+
+  return EventBase;
+}();
+
+var SeparatorSeries =
+/*#__PURE__*/
+function () {
+  function SeparatorSeries(container, chartData, topSeriesIndex, bottomSeriesIndex, dragEventHandler) {
+    _classCallCheck(this, SeparatorSeries);
+
+    this._chartData = chartData;
+    this._topSeriesIndex = topSeriesIndex;
+    this._bottomSeriesIndex = bottomSeriesIndex;
+    this._dragEventHandler = dragEventHandler;
+
+    this._initElement(container);
+  }
+
+  _createClass(SeparatorSeries, [{
+    key: "_initElement",
+    value: function _initElement(container) {
+      this._container = container;
+      this._wrapper = document.createElement('div');
+      this._wrapper.style.margin = '0';
+      this._wrapper.style.padding = '0';
+      this._wrapper.style.width = '100%';
+      this._wrapper.style.position = 'relative';
+      this._wrapper.style.overflow = 'hidden';
+      this._wrapper.style.zIndex = '10';
+      this._element = document.createElement('div');
+      this._element.style.margin = '0';
+      this._element.style.padding = '0';
+      this._element.style.cursor = 'ns-resize';
+      this._element.style.height = '6px';
+
+      this._wrapper.appendChild(this._element);
+
+      var lastElement = container.lastChild;
+
+      if (lastElement) {
+        container.insertBefore(this._wrapper, lastElement);
+      } else {
+        container.appendChild(this._wrapper);
+      }
+
+      this.invalidate();
+      this._dragEvent = new EventBase(this._element, {
+        mouseDownEvent: this._mouseDownEvent.bind(this),
+        pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
+      }, {
+        treatVertTouchDragAsPageScroll: false,
+        treatHorzTouchDragAsPageScroll: true
+      });
+    }
+  }, {
+    key: "_mouseDownEvent",
+    value: function _mouseDownEvent(event) {
+      this._startY = event.pageY;
+
+      this._dragEventHandler.startDrag(this._topSeriesIndex, this._bottomSeriesIndex);
+    }
+  }, {
+    key: "_pressedMouseMoveEvent",
+    value: function _pressedMouseMoveEvent(event) {
+      var dragDistance = event.pageY - this._startY;
+
+      this._dragEventHandler.drag(dragDistance, this._topSeriesIndex, this._bottomSeriesIndex);
+    }
+    /**
+     * 更新上下两个图表的索引
+     * @param topSeriesIndex
+     * @param bottomSeriesIndex
+     */
+
+  }, {
+    key: "updateSeriesIndex",
+    value: function updateSeriesIndex(topSeriesIndex, bottomSeriesIndex) {
+      this._topSeriesIndex = topSeriesIndex;
+      this._bottomSeriesIndex = bottomSeriesIndex;
+    }
+    /**
+     * 刷新
+     */
+
+  }, {
+    key: "invalidate",
+    value: function invalidate() {
+      var separator = this._chartData.styleOptions().separator;
+
+      this._wrapper.style.backgroundColor = separator.color;
+      this._wrapper.style.height = "".concat(separator.size, "px");
+    }
+    /**
+     * 销毁
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this._dragEvent.destroy();
+
+      this._container.removeChild(this._wrapper);
+    }
+  }]);
+
+  return SeparatorSeries;
+}();
+
+var ChartEvent =
+/*#__PURE__*/
+function () {
+  function ChartEvent(target, chartData) {
+    _classCallCheck(this, ChartEvent);
+
+    this._chartData = chartData;
+    this._seriesSize = {};
+    this._event = new EventBase(target, {
+      pinchStartEvent: this._pinchStartEvent.bind(this),
+      pinchEvent: this._pinchEvent.bind(this),
+      mouseClickEvent: this._mouseClickEvent.bind(this),
+      mouseDownEvent: this._mouseDownEvent.bind(this),
+      mouseLeaveEvent: this._mouseLeaveEvent.bind(this),
+      mouseMoveEvent: this._mouseMoveEvent.bind(this),
+      mouseWheelEvent: this._mouseWheelEvent.bind(this),
+      pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this),
+      longTapEvent: this._longTapEvent.bind(this)
+    }, {
+      treatVertTouchDragAsPageScroll: false,
+      treatHorzTouchDragAsPageScroll: false
+    }); // 开始拖动时坐标点
+
+    this._startDragPoint = {}; // 开始触摸时坐标
+
+    this._touchPoint = {}; // 是否是取消了十字光标
+
+    this._touchCancelCrossHair = false; // 是否缩放过
+
+    this._touchZoomed = false; // 用来记录捏合缩放的尺寸
+
+    this._pinchScale = 1;
+  }
+
+  _createClass(ChartEvent, [{
+    key: "_pinchStartEvent",
+    value: function _pinchStartEvent() {
+      this._pinchScale = 1;
+      this._touchZoomed = true;
+    }
+  }, {
+    key: "_pinchEvent",
+    value: function _pinchEvent(middlePoint, scale) {
+      var zoomScale = (scale - this._pinchScale) * 5;
+      this._pinchScale = scale;
+
+      this._chartData.zoom(zoomScale);
+    }
+  }, {
+    key: "_mouseLeaveEvent",
+    value: function _mouseLeaveEvent(event) {
+      if (isMouse(event)) {
+        this._chartData.setCrossHairSeriesTag(null);
+      }
+    }
+  }, {
+    key: "_mouseMoveEvent",
+    value: function _mouseMoveEvent(event) {
+      if (!isMouse(event)) {
+        return;
+      }
+
+      if (!this._checkEventPointX(event.localX)) {
+        this._chartData.setCrossHairSeriesTag(null);
+
+        return;
+      }
+
+      var real = this._translateCrossHairRealY(event.localY);
+
+      if (!real) {
+        this._chartData.setCrossHairSeriesTag(null);
+
+        return;
+      }
+
+      this._chartData.setCrossHairPoint({
+        x: event.localX,
+        y: real.y
+      });
+
+      this._chartData.setCrossHairSeriesTag(real.tag);
+    }
+  }, {
+    key: "_mouseWheelEvent",
+    value: function _mouseWheelEvent(event) {
+      if (!this._checkEventPointX(event.localX)) {
+        return;
+      }
+
+      var deltaY = -(event.deltaY / 100);
+
+      if (deltaY === 0) {
+        return;
+      }
+
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+
+      switch (event.deltaMode) {
+        case event.DOM_DELTA_PAGE:
+          deltaY *= 120;
+          break;
+
+        case event.DOM_DELTA_LINE:
+          deltaY *= 32;
+          break;
+      }
+
+      if (deltaY !== 0) {
+        var zoomScale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY));
+
+        this._chartData.zoom(zoomScale);
+      }
+    }
+  }, {
+    key: "_mouseClickEvent",
+    value: function _mouseClickEvent(event) {
+      if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
+        return;
+      }
+
+      var real = this._translateCrossHairRealY(event.localY);
+
+      if (!real) {
+        return;
+      }
+
+      if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
+        this._touchPoint = {
+          x: event.localX,
+          y: event.localY
+        };
+
+        this._chartData.setCrossHairPoint({
+          x: event.localX,
+          y: real.y
+        });
+
+        this._chartData.setCrossHairSeriesTag(real.tag);
+      }
+    }
+  }, {
+    key: "_mouseDownEvent",
+    value: function _mouseDownEvent(event) {
+      this._startDragPoint = {
+        x: event.localX,
+        y: event.localY
+      };
+
+      this._chartData.startDrag();
+
+      if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
+        return;
+      }
+
+      var real = this._translateCrossHairRealY(event.localY);
+
+      if (!real) {
+        return;
+      }
+
+      var crossHairPoint = {
+        x: event.localX,
+        y: real.y
+      };
+      this._touchZoomed = false;
+
+      if (this._touchPoint) {
+        var xDif = event.localX - this._touchPoint.x;
+        var yDif = event.localY - this._touchPoint.y;
+        var radius = Math.sqrt(xDif * xDif + yDif * yDif);
+
+        if (radius < 10) {
+          this._touchPoint = {
+            x: event.localX,
+            y: event.localY
+          };
+
+          this._chartData.setCrossHairPoint(crossHairPoint);
+
+          this._chartData.setCrossHairSeriesTag(real.tag);
+        } else {
+          this._touchCancelCrossHair = true;
+          this._touchPoint = null;
+
+          this._chartData.setCrossHairPoint(crossHairPoint);
+
+          this._chartData.setCrossHairSeriesTag(null);
+        }
+      } else {
+        this._touchCancelCrossHair = false;
+      }
+    }
+  }, {
+    key: "_pressedMouseMoveEvent",
+    value: function _pressedMouseMoveEvent(event) {
+      if (!this._checkEventPointX(event.localX)) {
+        return;
+      }
+
+      var real = this._translateCrossHairRealY(event.localY);
+
+      if (!real) {
+        return;
+      }
+
+      var crossHairPoint = {
+        x: event.localX,
+        y: real.y
+      };
+
+      if (isTouch(event)) {
+        if (this._touchPoint) {
+          this._touchPoint = {
+            x: event.localX,
+            y: event.localY
+          };
+
+          this._chartData.setCrossHairPoint(crossHairPoint);
+
+          this._chartData.setCrossHairSeriesTag(real.tag);
+
+          return;
+        }
+      }
+
+      var distance = event.localX - this._startDragPoint.x;
+
+      this._chartData.setCrossHairPoint(crossHairPoint);
+
+      this._chartData.drag(distance);
+    }
+  }, {
+    key: "_longTapEvent",
+    value: function _longTapEvent(event) {
+      if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
+        return;
+      }
+
+      var real = this._translateCrossHairRealY(event.localY);
+
+      if (!real) {
+        return;
+      }
+
+      this._touchPoint = {
+        x: event.localX,
+        y: event.localY
+      };
+
+      this._chartData.setCrossHairPoint({
+        x: event.localX,
+        y: real.y
+      });
+
+      this._chartData.setCrossHairSeriesTag(real.tag);
+    }
+  }, {
+    key: "_checkEventPointX",
+    value: function _checkEventPointX(x) {
+      return x > this._seriesSize.contentLeft && x < this._seriesSize.contentRight;
+    }
+    /**
+     * 将事件的y点转换成十字光标点的y
+     * @param y
+     * @returns {{}|null}
+     * @private
+     */
+
+  }, {
+    key: "_translateCrossHairRealY",
+    value: function _translateCrossHairRealY(y) {
+      var tags = this._seriesSize.tags || {};
+
+      for (var tag in tags) {
+        var size = tags[tag];
+
+        if (y > size.contentTop && y < size.contentBottom) {
+          return {
+            tag: tag,
+            y: y - size.contentTop
+          };
+        }
+      }
+
+      return null;
+    }
+  }, {
+    key: "setSeriesSize",
+    value: function setSeriesSize(seriesSize) {
+      this._seriesSize = seriesSize;
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this._event.destroy();
+    }
+  }]);
+
+  return ChartEvent;
+}();
+
+var DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT_RATE = 0.2;
 var TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_';
 var CANDLE_STICK_SERIES_TAG = 'candle_stick_series_tag';
 
@@ -6814,7 +7474,11 @@ function () {
 
     this._container = container;
     this._technicalIndicatorBaseId = 0;
+    this._technicalIndicatorSeries = [];
+    this._separatorSeries = [];
+    this._separatorDragStartHeight = {};
     this._chartData = new ChartData(styleOptions, this._updateSeries.bind(this));
+    this._chartEvent = new ChartEvent(this._container, this._chartData);
     this._xAxisSeries = new XAxisSeries({
       container: container,
       chartData: this._chartData
@@ -6826,34 +7490,40 @@ function () {
       technicalIndicatorType: TechnicalIndicatorType.MA,
       tag: CANDLE_STICK_SERIES_TAG
     });
-    this._technicalIndicatorSeries = {};
-    this.measureSeriesSize(); // this.e = new EventBase(this._container, {
-    //   pinchStartEvent: (e) => { console.log('pinchStartEvent'); console.log(e) },
-    //   pinchEvent: (e) => { console.log('pinchEvent'); console.log(e) },
-    //   pinchEndEvent: (e) => { console.log('pinchEndEvent'); console.log(e) },
-    //   mouseClickEvent: (e) => { console.log('mouseClickEvent'); console.log(e) },
-    //   mouseDoubleClickEvent: (e) => { console.log('mouseDoubleClickEvent'); console.log(e) },
-    //   mouseDownEvent: (e) => { console.log('mouseDownEvent'); console.log(e) },
-    //   mouseDownOutsideEvent: (e) => { console.log('mouseDownOutsideEvent'); console.log(e) },
-    //   mouseEnterEvent: (e) => { console.log('mouseEnterEvent'); console.log(e) },
-    //   mouseLeaveEvent: (e) => { console.log('mouseLeaveEvent'); console.log(e) },
-    //   mouseMoveEvent: (e) => { console.log('mouseMoveEvent'); console.log(e) },
-    //   mouseUpEvent: (e) => { console.log('mouseUpEvent'); console.log(e) },
-    //   pressedMouseMoveEvent: (e) => { console.log('pressedMouseMoveEvent'); console.log(e) },
-    //   longTapEvent: (e) => { console.log('longTapEvent'); console.log(e) }
-    // }, {
-    //   treatVertTouchDragAsPageScroll: false,
-    //   treatHorzTouchDragAsPageScroll: false
-    // })
+    this.measureSeriesSize();
   }
-  /**
-   * 计算x轴的高度
-   * @returns {number}
-   * @private
-   */
-
 
   _createClass(ChartSeries, [{
+    key: "_separatorStartDrag",
+    value: function _separatorStartDrag(topSeriesIndex, bottomSeriesIndex) {
+      if (topSeriesIndex === -1) {
+        this._separatorDragStartHeight.top = this._candleStickSeries.height();
+      } else {
+        this._separatorDragStartHeight.top = this._technicalIndicatorSeries[topSeriesIndex].height();
+      }
+
+      this._separatorDragStartHeight.bottom = this._technicalIndicatorSeries[bottomSeriesIndex].height();
+    }
+  }, {
+    key: "_separatorDrag",
+    value: function _separatorDrag(dragDistance, topSeriesIndex, bottomSeriesIndex) {
+      if (topSeriesIndex === -1) {
+        this._candleStickSeries.setTempHeight(this._separatorDragStartHeight.top + dragDistance);
+      } else {
+        this._technicalIndicatorSeries[topSeriesIndex].setTempHeight(this._separatorDragStartHeight.top + dragDistance);
+      }
+
+      this._technicalIndicatorSeries[bottomSeriesIndex].setTempHeight(this._separatorDragStartHeight.bottom - dragDistance);
+
+      this.measureSeriesSize();
+    }
+    /**
+     * 计算x轴的高度
+     * @returns {number}
+     * @private
+     */
+
+  }, {
     key: "_measureXAxisHeight",
     value: function _measureXAxisHeight() {
       var xAxis = this._chartData.styleOptions().xAxis;
@@ -6915,6 +7585,19 @@ function () {
       return 0;
     }
     /**
+     * 测量图表间分割线的高度
+     * @returns {number}
+     * @private
+     */
+
+  }, {
+    key: "_measureSeparatorHeight",
+    value: function _measureSeparatorHeight() {
+      var separator = this._chartData.styleOptions().separator;
+
+      return separator.size * this._separatorSeries.length;
+    }
+    /**
      * 更新所有series
      * @private
      */
@@ -6928,8 +7611,28 @@ function () {
 
       this._candleStickSeries.invalidate(invalidateLevel);
 
-      for (var key in this._technicalIndicatorSeries) {
-        this._technicalIndicatorSeries[key].invalidate(invalidateLevel);
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this._technicalIndicatorSeries[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var series = _step.value;
+          series.invalidate(invalidateLevel);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
       }
     }
     /**
@@ -6948,11 +7651,31 @@ function () {
         this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE);
       }
 
-      for (var key in this._technicalIndicatorSeries) {
-        var technicalIndicatorSeriesTechnicalIndicatorType = this._technicalIndicatorSeries[key].technicalIndicatorType();
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
 
-        if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {
-          technicalIndicatorTypeArray.push(technicalIndicatorSeriesTechnicalIndicatorType);
+      try {
+        for (var _iterator2 = this._technicalIndicatorSeries[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var series = _step2.value;
+          var technicalIndicatorSeriesTechnicalIndicatorType = series.technicalIndicatorType();
+
+          if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {
+            technicalIndicatorTypeArray.push(technicalIndicatorSeriesTechnicalIndicatorType);
+          }
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
         }
       }
 
@@ -6980,22 +7703,14 @@ function () {
       var seriesHeight = this._container.offsetHeight;
       var seriesWidth = this._container.offsetWidth;
 
+      var separatorHeight = this._measureSeparatorHeight();
+
       var xAxisHeight = this._measureXAxisHeight();
 
       var yAxisWidth = this._measureYAxisWidth();
 
-      var seriesExcludeXAxisHeight = seriesHeight - xAxisHeight;
+      var seriesExcludeXAxisSeparatorHeight = seriesHeight - xAxisHeight - separatorHeight;
       var seriesExcludeYAxisWidth = seriesWidth - yAxisWidth;
-      var technicalIndicatorSeriesCount = Object.values(this._technicalIndicatorSeries).length;
-      var technicalIndicatorSeriesHeight;
-
-      if (technicalIndicatorSeriesCount * DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE > CANDLE_STICK_MIN_HEIGHT_RATE) {
-        technicalIndicatorSeriesHeight = Math.floor((1 - CANDLE_STICK_MIN_HEIGHT_RATE) * seriesExcludeXAxisHeight / technicalIndicatorSeriesCount);
-      } else {
-        technicalIndicatorSeriesHeight = Math.floor(seriesExcludeXAxisHeight * DEFAULT_TECHNICAL_INDICATOR_HEIGHT_RATE);
-      }
-
-      var candleStickSeriesHeight = seriesExcludeXAxisHeight - technicalIndicatorSeriesCount * technicalIndicatorSeriesHeight;
       var isLeft = this._chartData.styleOptions().yAxis.position === YAxisPosition.LEFT;
       var yAxisOffsetLeft = seriesExcludeYAxisWidth;
       var mainOffsetLeft = 0;
@@ -7005,7 +7720,65 @@ function () {
         mainOffsetLeft = yAxisWidth;
       }
 
+      var seriesKnowTotalHeight = 0;
+
+      var candleStickSeriesHeight = this._candleStickSeries.height();
+
+      if (candleStickSeriesHeight >= 0) {
+        seriesKnowTotalHeight += candleStickSeriesHeight;
+      }
+
+      var unKnowTechnicalIndicatorSeriesCount = 0;
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = this._technicalIndicatorSeries[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var series = _step3.value;
+
+          var _seriesHeight = series.height();
+
+          if (_seriesHeight < 0) {
+            unKnowTechnicalIndicatorSeriesCount++;
+          } else {
+            seriesKnowTotalHeight += _seriesHeight;
+          }
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+
+      var seriesUnKnowTotalHeight = seriesExcludeXAxisSeparatorHeight - seriesKnowTotalHeight;
+      var defaultTechnicalIndicatorSeriesHeight = Math.floor(seriesUnKnowTotalHeight * DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT_RATE);
+
+      if (candleStickSeriesHeight < 0) {
+        candleStickSeriesHeight = seriesUnKnowTotalHeight - defaultTechnicalIndicatorSeriesHeight * unKnowTechnicalIndicatorSeriesCount;
+      }
+
       this._chartData.setTotalDataSpace(seriesExcludeYAxisWidth);
+
+      var seriesSize = {};
+      seriesSize.contentLeft = mainOffsetLeft;
+      seriesSize.contentRight = mainOffsetLeft + seriesExcludeYAxisWidth;
+      var tags = {};
+      tags[CANDLE_STICK_SERIES_TAG] = {
+        contentTop: 0,
+        contentBottom: candleStickSeriesHeight
+      };
+      var contentTop = candleStickSeriesHeight;
+      var contentBottom = candleStickSeriesHeight;
 
       this._candleStickSeries.setSize({
         left: mainOffsetLeft,
@@ -7017,17 +7790,53 @@ function () {
         height: candleStickSeriesHeight
       });
 
-      for (var key in this._technicalIndicatorSeries) {
-        this._technicalIndicatorSeries[key].setSize({
-          left: mainOffsetLeft,
-          width: seriesExcludeYAxisWidth,
-          height: technicalIndicatorSeriesHeight
-        }, {
-          left: yAxisOffsetLeft,
-          width: yAxisWidth,
-          height: technicalIndicatorSeriesHeight
-        });
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
+
+      try {
+        for (var _iterator4 = this._technicalIndicatorSeries[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var _series = _step4.value;
+
+          var _seriesHeight2 = _series.height();
+
+          if (_seriesHeight2 < 0) {
+            _seriesHeight2 = defaultTechnicalIndicatorSeriesHeight;
+          }
+
+          _series.setSize({
+            left: mainOffsetLeft,
+            width: seriesExcludeYAxisWidth,
+            height: _seriesHeight2
+          }, {
+            left: yAxisOffsetLeft,
+            width: yAxisWidth,
+            height: _seriesHeight2
+          });
+
+          contentBottom += _seriesHeight2;
+          tags[_series.tag()] = {
+            contentTop: contentTop,
+            contentBottom: contentBottom
+          };
+          contentTop = contentBottom;
+        }
+      } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+            _iterator4.return();
+          }
+        } finally {
+          if (_didIteratorError4) {
+            throw _iteratorError4;
+          }
+        }
       }
+
+      seriesSize.tags = tags;
 
       this._xAxisSeries.setSize({
         left: mainOffsetLeft,
@@ -7038,6 +7847,8 @@ function () {
         width: yAxisWidth,
         height: xAxisHeight
       });
+
+      this._chartEvent.setSeriesSize(seriesSize);
     }
     /**
      * 加载样式配置
@@ -7116,15 +7927,24 @@ function () {
   }, {
     key: "createTechnicalIndicator",
     value: function createTechnicalIndicator(technicalIndicatorType) {
+      var technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length;
+
+      this._separatorSeries.push(new SeparatorSeries(this._container, this._chartData, technicalIndicatorSeriesCount - 1, technicalIndicatorSeriesCount, {
+        startDrag: this._separatorStartDrag.bind(this),
+        drag: this._separatorDrag.bind(this)
+      }));
+
       this._technicalIndicatorBaseId++;
       var tag = "".concat(TECHNICAL_INDICATOR_NAME_PREFIX).concat(this._technicalIndicatorBaseId);
-      this._technicalIndicatorSeries[tag] = new TechnicalIndicatorSeries({
+
+      this._technicalIndicatorSeries.push(new TechnicalIndicatorSeries({
         container: this._container,
         chartData: this._chartData,
         xAxis: this._xAxisSeries.xAxis(),
         technicalIndicatorType: technicalIndicatorType,
         tag: tag
-      });
+      }));
+
       this.measureSeriesSize();
       return tag;
     }
@@ -7136,11 +7956,29 @@ function () {
   }, {
     key: "removeTechnicalIndicator",
     value: function removeTechnicalIndicator(tag) {
-      var series = this._technicalIndicatorSeries[tag];
+      var seriesPos = -1;
 
-      if (series) {
-        series.destroy();
-        delete this._technicalIndicatorSeries[tag];
+      for (var i = 0; i < this._technicalIndicatorSeries.length; i++) {
+        var series = this._technicalIndicatorSeries[i];
+
+        if (series.tag() === tag) {
+          seriesPos = i;
+          break;
+        }
+      }
+
+      if (seriesPos !== -1) {
+        this._technicalIndicatorSeries[seriesPos].destroy();
+
+        this._separatorSeries[seriesPos].destroy();
+
+        delete this._technicalIndicatorSeries[seriesPos];
+        delete this._separatorSeries[seriesPos];
+
+        for (var _i2 = 0; _i2 < this._separatorSeries.length; _i2++) {
+          this._separatorSeries[_i2].updateSeriesIndex(_i2 - 1, _i2);
+        }
+
         this.measureSeriesSize();
       }
     }
@@ -7154,15 +7992,42 @@ function () {
     key: "setTechnicalIndicatorType",
     value: function setTechnicalIndicatorType(tag, technicalIndicatorType) {
       if (tag === CANDLE_STICK_SERIES_TAG) {
-        this._technicalIndicatorSeries.setTechnicalIndicatorType(technicalIndicatorType);
+        this._candleStickSeries.setTechnicalIndicatorType(technicalIndicatorType);
       } else {
-        var series = this._technicalIndicatorSeries[tag];
+        var s;
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
 
-        if (series) {
+        try {
+          for (var _iterator5 = this._technicalIndicatorSeries[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var series = _step5.value;
+
+            if (series.tag() === tag) {
+              s = series;
+              break;
+            }
+          }
+        } catch (err) {
+          _didIteratorError5 = true;
+          _iteratorError5 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+              _iterator5.return();
+            }
+          } finally {
+            if (_didIteratorError5) {
+              throw _iteratorError5;
+            }
+          }
+        }
+
+        if (s) {
           if (technicalIndicatorType === TechnicalIndicatorType.NO) {
             this.removeTechnicalIndicator(tag);
           } else {
-            series.setTechnicalIndicatorType(technicalIndicatorType);
+            s.setTechnicalIndicatorType(technicalIndicatorType);
           }
         }
       }

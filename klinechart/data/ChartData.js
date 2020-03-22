@@ -113,7 +113,7 @@ export default class ChartData {
   }
 
   _innerSetDataSpace (dataSpace) {
-    if (dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE) {
+    if (!dataSpace || dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE) {
       return false
     }
     if (this._dataSpace === dataSpace) {
@@ -210,7 +210,7 @@ export default class ChartData {
           this._dataList = data.concat(this._dataList)
           const rangeDif = this._calcRangDif()
           this._from = this._dataList.length - rangeDif
-          this._fixFromTo()
+          this.adjustFromTo()
         } else {
           this._dataList = data.concat(this._dataList)
           this._from += data.length
@@ -279,6 +279,17 @@ export default class ChartData {
     }
     this._totalDataSpace = totalSpace
     this._calcRange()
+  }
+
+  /**
+   * 设置右边可以偏移的空间
+   * @param space
+   */
+  setOffsetRightSpace (space) {
+    if (space < 0) {
+      space = 0
+    }
+    this._offsetRightSpace = space
   }
 
   /**
@@ -392,7 +403,7 @@ export default class ChartData {
       }
     }
     this._from = this._preFrom - distanceRange
-    this._fixFromTo()
+    this.adjustFromTo()
     this._invalidateHandler()
   }
 
@@ -403,16 +414,15 @@ export default class ChartData {
   zoom (zoomScale) {
     const dataSpace = this._dataSpace + zoomScale * (this._dataSpace / 10)
     if (this._innerSetDataSpace(dataSpace)) {
-      this._fixFromTo()
+      this.adjustFromTo()
       this._invalidateHandler()
     }
   }
 
   /**
-   * 修正from和to
-   * @private
+   * 调整from和to
    */
-  _fixFromTo () {
+  adjustFromTo () {
     const dataSize = this._dataList.length
     const rangeDif = this._calcRangDif()
     if (this._from > dataSize - rangeDif) {

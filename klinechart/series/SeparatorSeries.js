@@ -1,10 +1,10 @@
 import EventBase from '../e/EventBase'
 
 export default class SeparatorSeries {
-  constructor (container, chartData, topSeriesIndex, bottomSeriesIndex, dragEventHandler) {
+  constructor (container, chartData, seriesIndex, dragEventHandler) {
     this._chartData = chartData
-    this._topSeriesIndex = topSeriesIndex
-    this._bottomSeriesIndex = bottomSeriesIndex
+    this._seriesIndex = seriesIndex
+    this._excludeYAxisWidth = 0
     this._dragEventHandler = dragEventHandler
     this._initElement(container)
   }
@@ -14,7 +14,6 @@ export default class SeparatorSeries {
     this._wrapper = document.createElement('div')
     this._wrapper.style.margin = '0'
     this._wrapper.style.padding = '0'
-    this._wrapper.style.width = '100%'
     this._wrapper.style.position = 'relative'
     this._wrapper.style.overflow = 'hidden'
     this._wrapper.style.zIndex = '10'
@@ -30,7 +29,6 @@ export default class SeparatorSeries {
     } else {
       container.appendChild(this._wrapper)
     }
-    this.invalidate()
     this._dragEvent = new EventBase(this._element, {
       mouseDownEvent: this._mouseDownEvent.bind(this),
       pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
@@ -42,22 +40,30 @@ export default class SeparatorSeries {
 
   _mouseDownEvent (event) {
     this._startY = event.pageY
-    this._dragEventHandler.startDrag(this._topSeriesIndex, this._bottomSeriesIndex)
+    this._dragEventHandler.startDrag(this._seriesIndex)
   }
 
   _pressedMouseMoveEvent (event) {
     const dragDistance = event.pageY - this._startY
-    this._dragEventHandler.drag(dragDistance, this._topSeriesIndex, this._bottomSeriesIndex)
+    this._dragEventHandler.drag(dragDistance, this._seriesIndex)
+  }
+
+  /**
+   * 设置去除y轴的宽度
+   * 用于fill属性
+   * @param width
+   */
+  setExcludeYAxisWidth (width) {
+    this._excludeYAxisWidth = width
+    this.invalidate()
   }
 
   /**
    * 更新上下两个图表的索引
-   * @param topSeriesIndex
-   * @param bottomSeriesIndex
+   * @param seriesIndex
    */
-  updateSeriesIndex (topSeriesIndex, bottomSeriesIndex) {
-    this._topSeriesIndex = topSeriesIndex
-    this._bottomSeriesIndex = bottomSeriesIndex
+  updateSeriesIndex (seriesIndex) {
+    this._seriesIndex = seriesIndex
   }
 
   /**
@@ -67,6 +73,7 @@ export default class SeparatorSeries {
     const separator = this._chartData.styleOptions().separator
     this._wrapper.style.backgroundColor = separator.color
     this._wrapper.style.height = `${separator.size}px`
+    this._wrapper.style.width = separator.fill ? '100%' : `${this._excludeYAxisWidth}px`
   }
 
   /**
