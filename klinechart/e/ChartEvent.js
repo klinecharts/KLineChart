@@ -80,6 +80,13 @@ export default class ChartEvent {
   }
 
   _pressedMouseMoveEvent (event) {
+    if (this._chartData.dragGraphicMarkFlag()) {
+      this._graphicMarkEventHandler.pressedMouseMoveEvent(event)
+      // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
+      if (this._chartData.crossHairSeriesTag() !== null) {
+        this._chartData.setCrossHairSeriesTag(null)
+      }
+    }
     if (this._checkZoomDrag()) {
       this._zoomDragEventHandler.pressedMouseMoveEvent(event)
     }
@@ -97,6 +104,7 @@ export default class ChartEvent {
 
   setSeriesSize (seriesSize) {
     this._zoomDragEventHandler.setSeriesSize(seriesSize)
+    this._graphicMarkEventHandler.setSeriesSize(seriesSize)
   }
 
   destroy () {

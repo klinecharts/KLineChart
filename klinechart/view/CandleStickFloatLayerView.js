@@ -2,7 +2,7 @@ import TechnicalIndicatorFloatLayerView from './TechnicalIndicatorFloatLayerView
 import { isFunction } from '../utils/typeChecks'
 import { formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, getFont } from '../utils/canvas'
-import { FloatLayerPromptCandleStickTextDisplayType } from '../data/options/styleOptions'
+import { ChartType, FloatLayerPromptCandleStickTextDisplayType } from '../data/options/styleOptions'
 
 export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLayerView {
   _drawPrompt (kLineData, x) {
@@ -10,10 +10,12 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     const candleStickPromptData = this._getCandleStickPromptData(kLineData, floatLayerPromptCandleStick)
     if (floatLayerPromptCandleStick.showType === FloatLayerPromptCandleStickTextDisplayType.STANDARD) {
       this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData)
-      this._drawTechnicalIndicatorPrompt(
-        kLineData, x,
-        floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop
-      )
+      if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
+        this._drawTechnicalIndicatorPrompt(
+          kLineData, x,
+          floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop
+        )
+      }
     } else {
       this._drawCandleStickRectPromptText(kLineData, x, floatLayerPromptCandleStick, candleStickPromptData)
     }
@@ -76,23 +78,6 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
     })
 
-    const technicalIndicatorPromptData = this._getTechnicalIndicatorPromptData(kLineData)
-    const indicatorLabels = technicalIndicatorPromptData.labels || []
-    const indicatorValues = technicalIndicatorPromptData.values || []
-    const floatLayerPromptTechnicalIndicator = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator
-
-    const indicatorTextMarginLeft = floatLayerPromptTechnicalIndicator.text.marginLeft
-    const indicatorTextMarginRight = floatLayerPromptTechnicalIndicator.text.marginRight
-    const indicatorTextMarginTop = floatLayerPromptTechnicalIndicator.text.marginTop
-    const indicatorTextMarginBottom = floatLayerPromptTechnicalIndicator.text.marginBottom
-    const indicatorTextSize = floatLayerPromptTechnicalIndicator.text.size
-    this._ctx.font = getFont(indicatorTextSize)
-    indicatorLabels.forEach((label, i) => {
-      const v = indicatorValues[i] || '--'
-      const text = `${label}: ${v}`
-      const labelWidth = calcTextWidth(this._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
-      maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
-    })
     const rect = floatLayerPromptCandleStick.rect
     const rectBorderSize = rect.borderSize
     const rectPaddingLeft = rect.paddingLeft
@@ -101,11 +86,34 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     const rectPaddingBottom = rect.paddingBottom
     const rectLeft = rect.left
     const rectRight = rect.right
-    const rectWidth = rectBorderSize * 2 + maxLabelWidth + rectPaddingLeft + rectPaddingRight
-    const rectHeight = rectBorderSize * 2 +
+    let rectHeight = rectBorderSize * 2 +
       rectPaddingTop + rectPaddingBottom +
-      (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length +
-      (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length
+      (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length
+
+    const technicalIndicatorPromptData = this._getTechnicalIndicatorPromptData(kLineData)
+    const floatLayerPromptTechnicalIndicator = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator
+
+    const indicatorTextMarginLeft = floatLayerPromptTechnicalIndicator.text.marginLeft
+    const indicatorTextMarginRight = floatLayerPromptTechnicalIndicator.text.marginRight
+    const indicatorTextMarginTop = floatLayerPromptTechnicalIndicator.text.marginTop
+    const indicatorTextMarginBottom = floatLayerPromptTechnicalIndicator.text.marginBottom
+    const indicatorTextSize = floatLayerPromptTechnicalIndicator.text.size
+
+    const isCandleStick = this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK
+    const indicatorLabels = technicalIndicatorPromptData.labels || []
+    const indicatorValues = technicalIndicatorPromptData.values || []
+    if (isCandleStick) {
+      this._ctx.font = getFont(indicatorTextSize)
+      indicatorLabels.forEach((label, i) => {
+        const v = indicatorValues[i] || '--'
+        const text = `${label}: ${v}`
+        const labelWidth = calcTextWidth(this._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
+        maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
+      })
+      rectHeight += ((indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length)
+    }
+
+    const rectWidth = rectBorderSize * 2 + maxLabelWidth + rectPaddingLeft + rectPaddingRight
 
     const centerX = this._width / 2
     let rectX
@@ -124,48 +132,50 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     this._drawRoundRect(rectX, rectY, rectWidth, rectHeight, radius)
     this._ctx.fill()
 
-    const baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
-    let labelY = rectY + rectBorderSize + rectPaddingTop
-    // 开始渲染基础数据文字
-    this._ctx.font = getFont(baseTextSize)
-    baseLabels.forEach((label, i) => {
-      labelY += baseTextMarginTop
-      this._ctx.textAlign = 'left'
-      this._ctx.fillStyle = baseTextColor
-      this._ctx.fillText(`${label}: `, baseLabelX, labelY)
+    if (isCandleStick) {
+      const baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
+      let labelY = rectY + rectBorderSize + rectPaddingTop
+      // 开始渲染基础数据文字
+      this._ctx.font = getFont(baseTextSize)
+      baseLabels.forEach((label, i) => {
+        labelY += baseTextMarginTop
+        this._ctx.textAlign = 'left'
+        this._ctx.fillStyle = baseTextColor
+        this._ctx.fillText(`${label}: `, baseLabelX, labelY)
 
-      const value = baseValues[i] || '--'
-      let text
-      this._ctx.fillStyle = value.color || baseTextColor
-      if (typeof value === 'object') {
-        text = value.value || '--'
-      } else {
-        text = value
-      }
-      this._ctx.textAlign = 'right'
-      this._ctx.fillText(text, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY)
-      labelY += (baseTextSize + baseTextMarginBottom)
-    })
-    // 开始渲染指标数据文字
-    const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
-    const colors = technicalIndicatorOptions.line.colors
-    const indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft
-    const colorSize = colors.length
-    this._ctx.font = getFont(indicatorTextSize)
-    indicatorLabels.forEach((label, i) => {
-      labelY += indicatorTextMarginTop
-      this._ctx.textAlign = 'left'
-      this._ctx.fillStyle = colors[i % colorSize] || technicalIndicatorOptions.text.color
-      this._ctx.fillText(`${label.toUpperCase()}: `, indicatorLabelX, labelY)
+        const value = baseValues[i] || '--'
+        let text
+        this._ctx.fillStyle = value.color || baseTextColor
+        if (typeof value === 'object') {
+          text = value.value || '--'
+        } else {
+          text = value
+        }
+        this._ctx.textAlign = 'right'
+        this._ctx.fillText(text, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY)
+        labelY += (baseTextSize + baseTextMarginBottom)
+      })
+      // 开始渲染指标数据文字
+      const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
+      const colors = technicalIndicatorOptions.line.colors
+      const indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft
+      const colorSize = colors.length
+      this._ctx.font = getFont(indicatorTextSize)
+      indicatorLabels.forEach((label, i) => {
+        labelY += indicatorTextMarginTop
+        this._ctx.textAlign = 'left'
+        this._ctx.fillStyle = colors[i % colorSize] || technicalIndicatorOptions.text.color
+        this._ctx.fillText(`${label.toUpperCase()}: `, indicatorLabelX, labelY)
 
-      this._ctx.textAlign = 'right'
-      this._ctx.fillText(
-        indicatorValues[i] || '--',
-        rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
-        labelY
-      )
-      labelY += (indicatorTextSize + indicatorTextMarginBottom)
-    })
+        this._ctx.textAlign = 'right'
+        this._ctx.fillText(
+          indicatorValues[i] || '--',
+          rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
+          labelY
+        )
+        labelY += (indicatorTextSize + indicatorTextMarginBottom)
+      })
+    }
     this._ctx.textAlign = 'left'
   }
 

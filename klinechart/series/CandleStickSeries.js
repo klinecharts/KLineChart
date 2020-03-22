@@ -8,7 +8,7 @@ import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamO
 export default class CandleStickSeries extends TechnicalIndicatorSeries {
   constructor (props) {
     super(props)
-    this._chartType = ChartType.CANDLE
+    this._chartType = ChartType.CANDLE_STICK
   }
 
   _createYAxis (props) {
@@ -42,8 +42,8 @@ export default class CandleStickSeries extends TechnicalIndicatorSeries {
       this._chartType = chartType
       if (this._chartData.styleOptions().realTime.averageLine.display && this._isRealTime()) {
         this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE)
-        this.invalidate(InvalidateLevel.FULL)
       }
+      this.invalidate(InvalidateLevel.FULL)
     }
   }
 }

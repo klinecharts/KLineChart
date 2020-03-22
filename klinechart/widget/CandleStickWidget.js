@@ -24,4 +24,9 @@ export default class CandleStickWidget extends TechnicalIndicatorWidget {
       super.invalidate(level)
     }
   }
+
+  setSize (width, height) {
+    super.setSize(width, height)
+    this._expandView.setSize(width, height)
+  }
 }

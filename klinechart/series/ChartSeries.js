@@ -39,7 +39,8 @@ export default class ChartSeries {
     })
     this._chartEvent = new ChartEvent(
       this._container, this._chartData,
-      this._candleStickSeries.yAxis(), this._xAxisSeries.xAxis()
+      this._xAxisSeries.xAxis(),
+      this._candleStickSeries.yAxis()
     )
     this.measureSeriesSize()
   }
@@ -91,27 +92,10 @@ export default class ChartSeries {
    */
   _measureYAxisWidth () {
     const yAxis = this._chartData.styleOptions().yAxis
+    const axisLine = yAxis.axisLine
     const tickText = yAxis.tickText
     const tickLine = yAxis.tickLine
-    const needsOffset = (((tickText.display || tickLine.display || tickText.margin > 0) && tickText.position === YAxisTextPosition.OUTSIDE) || yAxis.axisLine.display) && yAxis.display
-    if (needsOffset) {
-      let width = 0
-      if (tickText.position === YAxisTextPosition.OUTSIDE) {
-        width += tickText.margin
-        if (yAxis.display && tickLine.display) {
-          width += tickLine.length
-        }
-      }
-      const axisLineSize = yAxis.axisLine.size
-      if (yAxis.display && yAxis.axisLine.display) {
-        width += axisLineSize
-      }
-      if (width > axisLineSize) {
-        width = Math.max(yAxis.minWidth, Math.min(width, yAxis.maxWidth))
-      }
-      return Math.ceil(width)
-    }
-    return 0
+    return axisLine.size + tickLine.length + tickText.margin + (tickText.size - 2) * 6
   }
 
   /**
@@ -145,7 +129,7 @@ export default class ChartSeries {
    */
   _calcAllSeriesTechnicalIndicator () {
     const technicalIndicatorTypeArray = []
-    if (this._candleStickSeries.chartType() === ChartType.CANDLE) {
+    if (this._candleStickSeries.chartType() === ChartType.CANDLE_STICK) {
       technicalIndicatorTypeArray.push(this._candleStickSeries.technicalIndicatorType())
     } else {
       this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE)
@@ -175,20 +159,23 @@ export default class ChartSeries {
    * @private
    */
   measureSeriesSize () {
+    const yAxis = this._chartData.styleOptions().yAxis
+    const isYAxisLeft = yAxis.position === YAxisPosition.LEFT
+    const isYAxisTextOutsize = yAxis.tickText.position === YAxisTextPosition.OUTSIDE
     const seriesHeight = this._container.offsetHeight
     const seriesWidth = this._container.offsetWidth
     const separatorHeight = this._measureSeparatorHeight()
     const xAxisHeight = this._measureXAxisHeight()
     const yAxisWidth = this._measureYAxisWidth()
     const seriesExcludeXAxisSeparatorHeight = seriesHeight - xAxisHeight - separatorHeight
-    const seriesExcludeYAxisWidth = seriesWidth - yAxisWidth
-
-    const isLeft = this._chartData.styleOptions().yAxis.position === YAxisPosition.LEFT
-    let yAxisOffsetLeft = seriesExcludeYAxisWidth
+    const mainWidthWidth = seriesWidth - (isYAxisTextOutsize ? yAxisWidth : 0)
+    let yAxisOffsetLeft = seriesWidth - yAxisWidth
     let mainOffsetLeft = 0
-    if (isLeft) {
+    if (isYAxisLeft) {
       yAxisOffsetLeft = 0
-      mainOffsetLeft = yAxisWidth
+      if (isYAxisTextOutsize) {
+        mainOffsetLeft = yAxisWidth
+      }
     }
     let technicalIndicatorSeriesTotalHeight = 0
     for (const series of this._technicalIndicatorSeries) {
@@ -197,16 +184,16 @@ export default class ChartSeries {
 
     const candleStickSeriesHeight = seriesExcludeXAxisSeparatorHeight - technicalIndicatorSeriesTotalHeight
 
-    this._chartData.setTotalDataSpace(seriesExcludeYAxisWidth)
+    this._chartData.setTotalDataSpace(mainWidthWidth)
     const seriesSize = {}
     seriesSize.contentLeft = mainOffsetLeft
-    seriesSize.contentRight = mainOffsetLeft + seriesExcludeYAxisWidth
+    seriesSize.contentRight = mainOffsetLeft + mainWidthWidth
     const tags = {}
     tags[CANDLE_STICK_SERIES_TAG] = { contentTop: 0, contentBottom: candleStickSeriesHeight }
     let contentTop = candleStickSeriesHeight
     let contentBottom = candleStickSeriesHeight
     this._candleStickSeries.setSize(
-      { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: candleStickSeriesHeight },
+      { left: mainOffsetLeft, width: mainWidthWidth, height: candleStickSeriesHeight },
       { left: yAxisOffsetLeft, width: yAxisWidth, height: candleStickSeriesHeight }
     )
 
@@ -215,17 +202,17 @@ export default class ChartSeries {
       const separatorSeries = this._separatorSeries[i]
       const technicalIndicatorSeriesHeight = technicalIndicatorSeries.height()
       technicalIndicatorSeries.setSize(
-        { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: technicalIndicatorSeriesHeight },
+        { left: mainOffsetLeft, width: mainWidthWidth, height: technicalIndicatorSeriesHeight },
         { left: yAxisOffsetLeft, width: yAxisWidth, height: technicalIndicatorSeriesHeight }
       )
-      separatorSeries.setExcludeYAxisWidth(seriesExcludeYAxisWidth)
+      separatorSeries.setExcludeYAxisWidth(mainWidthWidth)
       contentBottom += technicalIndicatorSeriesHeight
       tags[technicalIndicatorSeries.tag()] = { contentTop, contentBottom }
       contentTop = contentBottom
     }
     seriesSize.tags = tags
     this._xAxisSeries.setSize(
-      { left: mainOffsetLeft, width: seriesExcludeYAxisWidth, height: xAxisHeight },
+      { left: mainOffsetLeft, width: mainWidthWidth, height: xAxisHeight },
       { left: yAxisOffsetLeft, width: yAxisWidth, height: xAxisHeight }
     )
     this._chartEvent.setSeriesSize(seriesSize)

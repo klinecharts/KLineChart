@@ -58,10 +58,10 @@ export default class Chart {
   }
 
   /**
-   * 设置柱子的空间
+   * 设置一条数据的空间
    * @param space
    */
-  setBarSpace (space) {
+  setDataSpace (space) {
     this._chartSeries.chartData().setDataSpace(space)
   }
 
@@ -76,7 +76,7 @@ export default class Chart {
    * 获取数据源
    */
   getDataList () {
-    this._chartSeries.chartData().dataList()
+    return this._chartSeries.chartData().dataList()
   }
 
   /**
@@ -168,7 +168,8 @@ export default class Chart {
       if (graphicMarkData && isArray(graphicMarkData)) {
         graphicMarkData.splice(graphicMarkData.length - 1, 1)
         graphicMarkDatas[graphicMarkType] = graphicMarkData
-      } else {
+      }
+      if (!graphicMarkDatas.hasOwnProperty(type)) {
         type = GraphicMarkType.NONE
       }
       this._chartSeries.chartData().setGraphicMarkType(type)

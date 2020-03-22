@@ -36,11 +36,10 @@ export default class YAxisView extends AxisView {
 
   _drawTickLines () {
     const yAxis = this._chartData.styleOptions().yAxis
-    const tickText = yAxis.tickText
-    if (!yAxis.display || !tickText.display) {
+    const tickLine = yAxis.tickLine
+    if (!yAxis.display || !tickLine.display) {
       return
     }
-    const tickLine = yAxis.tickLine
     this._ctx.lineWidth = tickLine.size
     this._ctx.strokeStyle = tickLine.color
 
@@ -48,10 +47,9 @@ export default class YAxisView extends AxisView {
 
     let startX
     let endX
-    const tickTextPosition = tickText.position
     if (
-      (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.INSIDE) ||
-      (yAxis.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE)
+      (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE) ||
+      (yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE)
     ) {
       startX = 0
       if (yAxis.axisLine.display) {
@@ -100,7 +98,7 @@ export default class YAxisView extends AxisView {
       }
       this._ctx.textAlign = 'left'
     } else {
-      labelX = this.width - tickTextMargin
+      labelX = this._width - tickTextMargin
       if (yAxis.axisLine.display) {
         labelX -= yAxis.axisLine.size
       }

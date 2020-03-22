@@ -7,7 +7,7 @@ import calcIndicator from '../internal/calcIndicator'
 import { formatValue } from '../utils/format'
 
 export const InvalidateLevel = {
-  CROSS_HAIR: 1,
+  FLOAT_LAYER: 1,
   GRAPHIC_MARK: 2,
   FULL: 3
 }
@@ -32,7 +32,7 @@ export const GraphicMarkType = {
 const BAR_MARGIN_SPACE_RATE = 0.25
 
 const MAX_DATA_SPACE = 30
-const MIN_DATA_SPACE = 3
+const MIN_DATA_SPACE = 2
 
 export default class ChartData {
   constructor (styleOptions, invalidateHandler) {
@@ -67,7 +67,7 @@ export default class ChartData {
     // 绘制区间数据数量
     this._range = 0
     // 每一条数据的空间
-    this._dataSpace = 6
+    this._dataSpace = 4
     // bar的空间
     this._barSpace = this._calcBarSpace()
 
@@ -133,11 +133,7 @@ export default class ChartData {
    */
   _calcRange () {
     this._range = Math.floor(this._totalDataSpace / this._dataSpace)
-    let to = this._from + this._range
-    if (to > this._dataList.length) {
-      to = this._dataList.length
-    }
-    this._to = to
+    this.adjustFromTo()
   }
 
   /**
@@ -303,6 +299,7 @@ export default class ChartData {
           this._more = more
           this._dataList = data.concat(this._dataList)
           this._from += data.length
+          this.adjustFromTo()
         }
       } else {
         if (pos >= this._dataList.length) {
@@ -427,7 +424,7 @@ export default class ChartData {
    */
   setCrossHairSeriesTag (tag) {
     this._crossHairSeriesTag = tag
-    this._invalidateHandler(InvalidateLevel.CROSS_HAIR)
+    this._invalidateHandler(InvalidateLevel.FLOAT_LAYER)
   }
 
   /**
@@ -481,7 +478,7 @@ export default class ChartData {
       // 右移
       if (this._from === 0) {
         this._loadMoreHandler(formatValue(this._dataList[0], 'timestamp'))
-        this._invalidateHandler(InvalidateLevel.CROSS_HAIR)
+        this._invalidateHandler(InvalidateLevel.FLOAT_LAYER)
         return
       }
     } else {
@@ -489,7 +486,7 @@ export default class ChartData {
       const rangeDif = this._calcRangDif()
       const dataSize = this._dataList.length
       if (this._from === dataSize - rangeDif) {
-        this._invalidateHandler(InvalidateLevel.CROSS_HAIR)
+        this._invalidateHandler(InvalidateLevel.FLOAT_LAYER)
         return
       }
     }
@@ -508,7 +505,6 @@ export default class ChartData {
   zoom (zoomScale) {
     const dataSpace = this._dataSpace + zoomScale * (this._dataSpace / 10)
     if (this._innerSetDataSpace(dataSpace)) {
-      this.adjustFromTo()
       this._invalidateHandler()
     }
   }

@@ -42,6 +42,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
    * @param event
    */
   mouseUpEvent (event) {
+    this._chartData.setDragGraphicMarkFlag(false)
     this._noneGraphicMarkMouseDownFlag = false
     this._noneGraphicMarkMouseDownActiveData = {
       markKey: null,
@@ -335,8 +336,8 @@ export default class GraphicMarkEventHandler extends EventHandler {
     }
     const point = { x: event.localX, y: event.localY }
     this._chartData.setGraphicMarkPoint(point)
-    if (!this.waitingForMouseMoveAnimationFrame) {
-      this.waitingForMouseMoveAnimationFrame = true
+    if (!this._waitingForMouseMoveAnimationFrame) {
+      this._waitingForMouseMoveAnimationFrame = true
       const graphicMarkType = this._chartData.graphicMarkType()
       switch (graphicMarkType) {
         case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
@@ -372,11 +373,64 @@ export default class GraphicMarkEventHandler extends EventHandler {
           break
         }
         case GraphicMarkType.NONE: {
-          this._noneGraphicMarkMouseMove(point)
+          this._chartData.setGraphicMarkData(this._chartData.graphicMarkData())
           break
         }
       }
-      this.waitingForMouseMoveAnimationFrame = false
+      this._waitingForMouseMoveAnimationFrame = false
+    }
+  }
+
+  pressedMouseMoveEvent (event) {
+    const markKey = this._noneGraphicMarkMouseDownActiveData.markKey
+    const dataIndex = this._noneGraphicMarkMouseDownActiveData.dataIndex
+    if (markKey && dataIndex !== -1) {
+      const graphicMarkDatas = this._chartData.graphicMarkData()
+      const graphicMarkData = graphicMarkDatas[markKey]
+      const point = { x: event.localX, y: event.localY }
+      switch (markKey) {
+        case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
+        case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
+        case GraphicMarkType.PRICE_LINE:
+        case GraphicMarkType.STRAIGHT_LINE:
+        case GraphicMarkType.RAY_LINE:
+        case GraphicMarkType.SEGMENT_LINE:
+        case GraphicMarkType.PRICE_CHANNEL_LINE:
+        case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
+        case GraphicMarkType.FIBONACCI_LINE: {
+          const pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex
+          if (pointIndex !== -1) {
+            graphicMarkData[dataIndex].points[pointIndex].xPos = this._xAxis.convertFromPixel(point.x)
+            graphicMarkData[dataIndex].points[pointIndex].price = this._yAxis.convertFromPixel(point.y)
+          }
+          break
+        }
+        case GraphicMarkType.HORIZONTAL_RAY_LINE:
+        case GraphicMarkType.HORIZONTAL_SEGMENT_LINE: {
+          const pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex
+          if (pointIndex !== -1) {
+            const price = this._yAxis.convertFromPixel(point.y)
+            graphicMarkData[dataIndex].points[pointIndex].xPos = this._xAxis.convertFromPixel(point.x)
+            graphicMarkData[dataIndex].points[0].price = price
+            graphicMarkData[dataIndex].points[1].price = price
+          }
+          break
+        }
+        case GraphicMarkType.VERTICAL_RAY_LINE:
+        case GraphicMarkType.VERTICAL_SEGMENT_LINE: {
+          const pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex
+          if (pointIndex !== -1) {
+            const xPos = this._xAxis.convertFromPixel(point.x)
+            graphicMarkData[dataIndex].points[0].xPos = xPos
+            graphicMarkData[dataIndex].points[1].xPos = xPos
+            graphicMarkData[dataIndex].points[pointIndex].price = this._yAxis.convertFromPixel(point.y)
+          }
+          break
+        }
+      }
+      graphicMarkDatas[markKey] = graphicMarkData
+      this._chartData.setGraphicMarkPoint({ x: event.localX, y: event.localY })
+      this._chartData.setGraphicMarkData(graphicMarkDatas)
     }
   }
 
@@ -489,64 +543,6 @@ export default class GraphicMarkEventHandler extends EventHandler {
     performDifPoint(graphicMarkData, lastLineData)
     graphicMarkDatas[markKey] = graphicMarkData
     this._chartData.setGraphicMarkData(graphicMarkDatas)
-    // this.graphicMarkChart.flush()
-  }
-
-  /**
-   * 没有绘制标记时鼠标移动事件
-   * @param point
-   */
-  _noneGraphicMarkMouseMove (point) {
-    if (this._noneGraphicMarkMouseDownFlag) {
-      const markKey = this._noneGraphicMarkMouseDownActiveData.markKey
-      const dataIndex = this._noneGraphicMarkMouseDownActiveData.dataIndex
-      if (markKey && dataIndex !== -1) {
-        const graphicMarkDatas = this._chartData.graphicMarkData()
-        const graphicMarkData = graphicMarkDatas[markKey]
-        switch (markKey) {
-          case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
-          case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
-          case GraphicMarkType.PRICE_LINE:
-          case GraphicMarkType.STRAIGHT_LINE:
-          case GraphicMarkType.RAY_LINE:
-          case GraphicMarkType.SEGMENT_LINE:
-          case GraphicMarkType.PRICE_CHANNEL_LINE:
-          case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
-          case GraphicMarkType.FIBONACCI_LINE: {
-            const pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex
-            if (pointIndex !== -1) {
-              graphicMarkData[dataIndex].points[pointIndex].xPos = this._xAxis.convertFromPixel(point.x)
-              graphicMarkData[dataIndex].points[pointIndex].price = this._yAxis.convertFromPixel(point.y)
-            }
-            break
-          }
-          case GraphicMarkType.HORIZONTAL_RAY_LINE:
-          case GraphicMarkType.HORIZONTAL_SEGMENT_LINE: {
-            const pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex
-            if (pointIndex !== -1) {
-              const price = this._yAxis.convertFromPixel(point.y)
-              graphicMarkData[dataIndex].points[pointIndex].xPos = this._xAxis.convertFromPixel(point.x)
-              graphicMarkData[dataIndex].points[0].price = price
-              graphicMarkData[dataIndex].points[1].price = price
-            }
-            break
-          }
-          case GraphicMarkType.VERTICAL_RAY_LINE:
-          case GraphicMarkType.VERTICAL_SEGMENT_LINE: {
-            const pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex
-            if (pointIndex !== -1) {
-              const xPos = this._xAxis.convertFromPixel(point.x)
-              graphicMarkData[dataIndex].points[0].xPos = xPos
-              graphicMarkData[dataIndex].points[1].xPos = xPos
-              graphicMarkData[dataIndex].points[pointIndex].price = this._yAxis.convertFromPixel(point.y)
-            }
-            break
-          }
-        }
-        graphicMarkDatas[markKey] = graphicMarkData
-        this._chartData.setGraphicMarkData(graphicMarkDatas)
-      }
-    }
     // this.graphicMarkChart.flush()
   }
 

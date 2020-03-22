@@ -31,7 +31,7 @@ export const YAxisTextPosition = {
  */
 export const ChartType = {
   REAL_TIME: 'real_time',
-  CANDLE: 'candle'
+  CANDLE_STICK: 'candle_stick'
 }
 
 /**
@@ -41,8 +41,8 @@ export const ChartType = {
 export const CandleStickStyle = {
   SOLID: 'solid',
   STROKE: 'stroke',
-  INCREASING_STROKE: 'increasing_stroke',
-  DECREASING_STROKE: 'decreasing_stroke',
+  UP_STROKE: 'up_stroke',
+  DOWN_STROKE: 'down_stroke',
   OHLC: 'ohlc'
 }
 
@@ -79,7 +79,7 @@ const defaultGrid = {
     dashValue: [2, 2]
   },
   vertical: {
-    display: true,
+    display: false,
     size: 1,
     color: '#393939',
     style: LineStyle.DASH,
@@ -264,7 +264,7 @@ const defaultYAxis = {
 }
 
 /**
- * 默认十字光标配置
+ * 默认浮层配置
  * @type {{display: boolean}}
  */
 const defaultFloatLayer = {

@@ -31,22 +31,6 @@ export default class TechnicalIndicatorView extends View {
       if (horizontalGrid.style === LineStyle.DASH) {
         this._ctx.setLineDash(horizontalGrid.dashValue)
       }
-      this._xAxis.ticks().forEach(tick => {
-        const x = tick.x
-        this._ctx.beginPath()
-        this._ctx.moveTo(x, 0)
-        this._ctx.lineTo(x, this._height)
-        this._ctx.stroke()
-        this._ctx.closePath()
-      })
-    }
-    const verticalGrid = grid.vertical
-    if (verticalGrid.display) {
-      this._ctx.strokeStyle = verticalGrid.color
-      this._ctx.lineWidth = verticalGrid.size
-      if (verticalGrid.style === LineStyle.DASH) {
-        this._ctx.setLineDash(verticalGrid.dashValue)
-      }
       this._yAxis.ticks().forEach(tick => {
         const y = tick.y
         this._ctx.beginPath()
@@ -56,6 +40,26 @@ export default class TechnicalIndicatorView extends View {
         this._ctx.closePath()
       })
     }
+
+    const verticalGrid = grid.vertical
+    if (verticalGrid.display) {
+      this._ctx.strokeStyle = verticalGrid.color
+      this._ctx.lineWidth = verticalGrid.size
+      if (verticalGrid.style === LineStyle.DASH) {
+        this._ctx.setLineDash(verticalGrid.dashValue)
+      } else {
+        this._ctx.setLineDash([])
+      }
+      this._xAxis.ticks().forEach(tick => {
+        const x = tick.x
+        this._ctx.beginPath()
+        this._ctx.moveTo(x, 0)
+        this._ctx.lineTo(x, this._height)
+        this._ctx.stroke()
+        this._ctx.closePath()
+      })
+    }
+
     this._ctx.setLineDash([])
   }
 

@@ -4,7 +4,7 @@ export default class Widget {
   constructor (props) {
     this._initElement(props.container)
     this._mainView = this._createMainView(this._element, props)
-    this._expandView = this._createExpandView (this._element, props)
+    this._expandView = this._createExpandView(this._element, props)
     this._floatLayerView = this._createFloatLayerView(this._element, props)
   }
 
@@ -64,7 +64,7 @@ export default class Widget {
    */
   invalidate (level) {
     switch (level) {
-      case InvalidateLevel.CROSS_HAIR: {
+      case InvalidateLevel.FLOAT_LAYER: {
         this._floatLayerView.flush()
         break
       }

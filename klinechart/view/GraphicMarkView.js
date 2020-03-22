@@ -276,7 +276,8 @@ export default class GraphicMarkView extends View {
    * @param priceExtendsText
    */
   _drawPointGraphicMark (markKey, graphicMark, checkPointOnLine, generatedLinePoints, isDrawPrice, pricePrecision, priceExtendsText) {
-    const graphicMarkData = this.storage.graphicMarkDatas[markKey]
+    const graphicMarkDatas = this._chartData.graphicMarkData()
+    const graphicMarkData = graphicMarkDatas[markKey]
     graphicMarkData.forEach(({ points, drawStep }) => {
       const circlePoints = []
       points.forEach(({ xPos, price }) => {
@@ -307,7 +308,7 @@ export default class GraphicMarkView extends View {
     graphicMark, linePoints, circlePoints, drawStep, checkPointOnLine,
     isDrawPrice, pricePrecision, priceExtendsText = []
   ) {
-    const graphicMarkPoint = this.storage.graphicMarkPoint
+    const graphicMarkPoint = this._chartData.graphicMarkPoint()
     let isOnLine = false
     linePoints.forEach((points, i) => {
       if (points.length > 1) {

@@ -212,6 +212,15 @@ function isObject(value) {
 function isNumber(value) {
   return typeof value === 'number' && !isNaN(value);
 }
+/**
+ * 判断是否是boolean
+ * @param value
+ * @returns {boolean}
+ */
+
+function isBoolean(value) {
+  return typeof value === 'boolean';
+}
 
 /**
  * 线的样式
@@ -246,7 +255,7 @@ var YAxisTextPosition = {
 
 var ChartType = {
   REAL_TIME: 'real_time',
-  CANDLE: 'candle'
+  CANDLE_STICK: 'candle_stick'
 };
 /**
  * 蜡烛图样式
@@ -256,8 +265,8 @@ var ChartType = {
 var CandleStickStyle = {
   SOLID: 'solid',
   STROKE: 'stroke',
-  INCREASING_STROKE: 'increasing_stroke',
-  DECREASING_STROKE: 'decreasing_stroke',
+  UP_STROKE: 'up_stroke',
+  DOWN_STROKE: 'down_stroke',
   OHLC: 'ohlc'
 };
 /**
@@ -486,7 +495,7 @@ var defaultYAxis = {
   }
 };
 /**
- * 默认十字光标配置
+ * 默认浮层配置
  * @type {{display: boolean}}
  */
 
@@ -615,7 +624,7 @@ var defaultGraphicMark = {
 var defaultSeparator = {
   size: 1,
   color: '#888888',
-  fill: false
+  fill: true
 };
 var defaultStyleOptions = {
   grid: defaultGrid,
@@ -2137,8 +2146,124 @@ function checkParamsWithSize(params, paramsSize) {
   return checkParams(params) && params.length === paramsSize;
 }
 
+/**
+ * 格式化值
+ * @param data
+ * @param key
+ * @param defaultValue
+ * @returns {string|*}
+ */
+
+function formatValue(data, key) {
+  var defaultValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '--';
+
+  if (data && isObject(data)) {
+    var value = data[key];
+
+    if (value || value === 0 || value === false) {
+      return value;
+    }
+  }
+
+  return defaultValue;
+}
+/**
+ * 格式化时间
+ * @param timestamp
+ * @param format
+ * @returns {string}
+ */
+
+function formatDate(timestamp, format) {
+  if (timestamp && isNumber(timestamp)) {
+    var date = new Date(timestamp);
+    var year = date.getFullYear().toString();
+    var month = (date.getMonth() + 1).toString();
+    var day = date.getDate().toString();
+    var hours = date.getHours().toString();
+    var minutes = date.getMinutes().toString();
+    var monthText = month.length === 1 ? "0".concat(month) : month;
+    var dayText = day.length === 1 ? "0".concat(day) : day;
+    var hourText = hours.length === 1 ? '0' + hours : hours;
+    var minuteText = minutes.length === 1 ? '0' + minutes : minutes;
+
+    switch (format) {
+      case 'YYYY':
+        {
+          return year;
+        }
+
+      case 'YYYY-MM':
+        {
+          return "".concat(year, "-").concat(monthText);
+        }
+
+      case 'YYYY-MM-DD':
+        {
+          return "".concat(year, "-").concat(monthText, "-").concat(dayText);
+        }
+
+      case 'YYYY-MM-DD hh:mm':
+        {
+          return "".concat(year, "-").concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
+        }
+
+      case 'MM-DD':
+        {
+          return "".concat(monthText, "-").concat(dayText);
+        }
+
+      case 'hh:mm':
+        {
+          return "".concat(hourText, ":").concat(minuteText);
+        }
+
+      default:
+        {
+          return "".concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
+        }
+    }
+  }
+
+  return '--';
+}
+/**
+ * 格式化精度
+ */
+
+function formatPrecision(value) {
+  var precision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
+  var v = +value;
+
+  if ((v || v === 0) && isNumber(v)) {
+    return value.toFixed(precision);
+  }
+
+  return "".concat(v);
+}
+/**
+ * 格式化大数据
+ * @param value
+ */
+
+function formatBigNumber(value) {
+  if (isNumber(value)) {
+    if (value > 50000) {
+      return "".concat(+(value / 1000).toFixed(1), "K");
+    }
+
+    if (value > 5000000) {
+      return "".concat(+(value / 1000000).toFixed(3), "M");
+    }
+
+    return "".concat(value);
+  }
+
+  return '--';
+}
+
 var InvalidateLevel = {
-  CROSS_HAIR: 1,
+  FLOAT_LAYER: 1,
   GRAPHIC_MARK: 2,
   FULL: 3
 };
@@ -2168,15 +2293,23 @@ function () {
   function ChartData(styleOptions, invalidateHandler) {
     _classCallCheck(this, ChartData);
 
+    // 刷新持有者
     this._invalidateHandler = invalidateHandler; // 样式配置
 
     this._styleOptions = clone(defaultStyleOptions);
     merge(this._styleOptions, styleOptions); // 指标参数配置
 
-    this._technicalIndicatorParamOptions = clone(defaultTechnicalIndicatorParamOptions);
+    this._technicalIndicatorParamOptions = clone(defaultTechnicalIndicatorParamOptions); // 精度配置
+
     this._precisionOptions = clone(defaultPrecisionOptions); // 数据源
 
-    this._dataList = []; // 可见区域数据占用的空间
+    this._dataList = []; // 是否在加载中
+
+    this._loading = true; // 加载更多回调
+
+    this._loadMoreCallback = null; // 还有更多
+
+    this._more = true; // 可见区域数据占用的空间
 
     this._totalDataSpace = 0; // 向右偏移的空间
 
@@ -2233,8 +2366,28 @@ function () {
       fibonacciLine: []
     };
   }
+  /**
+   * 加载更多持有者
+   * @private
+   */
+
 
   _createClass(ChartData, [{
+    key: "_loadMoreHandler",
+    value: function _loadMoreHandler() {
+      // 有更多并且没有在加载则去加载更多
+      if (this._more && !this._loading && this._loadMoreCallback && isFunction(this._loadMoreCallback)) {
+        this._loading = true;
+
+        this._loadMoreCallback(formatValue(this._dataList[0], 'timestamp'));
+      }
+    }
+    /**
+     * 计算绘制区间
+     * @private
+     */
+
+  }, {
     key: "_calcRange",
     value: function _calcRange() {
       this._range = Math.floor(this._totalDataSpace / this._dataSpace);
@@ -2246,6 +2399,12 @@ function () {
 
       this._to = to;
     }
+    /**
+     * 计算一条柱子的空间
+     * @returns {number}
+     * @private
+     */
+
   }, {
     key: "_calcBarSpace",
     value: function _calcBarSpace() {
@@ -2262,15 +2421,18 @@ function () {
       var offsetRightRange = Math.floor(this._offsetRightSpace / this._dataSpace);
       return this._range - offsetRightRange;
     }
+    /**
+     * 内部用来设置一条数据的空间
+     * @param dataSpace
+     * @returns {boolean}
+     * @private
+     */
+
   }, {
     key: "_innerSetDataSpace",
     value: function _innerSetDataSpace(dataSpace) {
-      if (!dataSpace || dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE) {
+      if (!dataSpace || dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE || this._dataSpace === dataSpace) {
         return false;
-      }
-
-      if (this._dataSpace === dataSpace) {
-        return;
       }
 
       this._dataSpace = dataSpace;
@@ -2409,6 +2571,8 @@ function () {
   }, {
     key: "clearDataList",
     value: function clearDataList() {
+      this._more = true;
+      this._loading = true;
       this._dataList = [];
       this._from = 0;
       this._to = 0;
@@ -2417,14 +2581,17 @@ function () {
      * 添加数据
      * @param data
      * @param pos
+     * @param more
      */
 
   }, {
     key: "addData",
-    value: function addData(data, pos) {
+    value: function addData(data, pos, more) {
       if (isObject(data)) {
         if (isArray(data)) {
           if (this._dataList.length === 0) {
+            this._loading = false;
+            this._more = isBoolean(more) ? more : true;
             this._dataList = data.concat(this._dataList);
 
             var rangeDif = this._calcRangDif();
@@ -2432,8 +2599,11 @@ function () {
             this._from = this._dataList.length - rangeDif;
             this.adjustFromTo();
           } else {
+            this._loading = false;
+            this._more = more;
             this._dataList = data.concat(this._dataList);
             this._from += data.length;
+            this.adjustFromTo();
           }
         } else {
           if (pos >= this._dataList.length) {
@@ -2589,7 +2759,7 @@ function () {
     value: function setCrossHairSeriesTag(tag) {
       this._crossHairSeriesTag = tag;
 
-      this._invalidateHandler(InvalidateLevel.CROSS_HAIR);
+      this._invalidateHandler(InvalidateLevel.FLOAT_LAYER);
     }
     /**
      * 设置十字光标点
@@ -2650,13 +2820,17 @@ function () {
       distanceRange = distanceRange < 0 ? Math.floor(distanceRange) : Math.ceil(distanceRange);
 
       if (distanceRange === 0) {
+        this._loadMoreHandler();
+
         return;
       }
 
       if (distanceRange > 0) {
         // 右移
         if (this._from === 0) {
-          this._invalidateHandler(InvalidateLevel.CROSS_HAIR);
+          this._loadMoreHandler(formatValue(this._dataList[0], 'timestamp'));
+
+          this._invalidateHandler(InvalidateLevel.FLOAT_LAYER);
 
           return;
         }
@@ -2667,7 +2841,7 @@ function () {
         var dataSize = this._dataList.length;
 
         if (this._from === dataSize - rangeDif) {
-          this._invalidateHandler(InvalidateLevel.CROSS_HAIR);
+          this._invalidateHandler(InvalidateLevel.FLOAT_LAYER);
 
           return;
         }
@@ -2675,6 +2849,10 @@ function () {
 
       this._from = this._preFrom - distanceRange;
       this.adjustFromTo();
+
+      if (this._from === 0) {
+        this._loadMoreHandler();
+      }
 
       this._invalidateHandler();
     }
@@ -2739,11 +2917,21 @@ function () {
     value: function setGraphicMarkType(graphicMarkType) {
       this._graphicMarkType = graphicMarkType;
     }
+    /**
+     * 获取图形标记拖拽标记
+     * @returns {boolean}
+     */
+
   }, {
     key: "dragGraphicMarkFlag",
     value: function dragGraphicMarkFlag() {
       return this._dragGraphicMarkFlag;
     }
+    /**
+     * 设置图形标记拖拽标记
+     * @param flag
+     */
+
   }, {
     key: "setDragGraphicMarkFlag",
     value: function setDragGraphicMarkFlag(flag) {
@@ -2789,7 +2977,18 @@ function () {
     value: function setGraphicMarkData(datas) {
       this._graphicMarkDatas = datas;
 
-      this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK);
+      this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK); // this._invalidateHandler(InvalidateLevel.CROSS_HAIR)
+
+    }
+    /**
+     * 设置加载更多
+     * @param callback
+     */
+
+  }, {
+    key: "loadMore",
+    value: function loadMore(callback) {
+      this._loadMoreCallback = callback;
     }
   }]);
 
@@ -3066,7 +3265,7 @@ function () {
     key: "invalidate",
     value: function invalidate(level) {
       switch (level) {
-        case InvalidateLevel.CROSS_HAIR:
+        case InvalidateLevel.FLOAT_LAYER:
           {
             this._floatLayerView.flush();
 
@@ -3886,122 +4085,6 @@ function (_View) {
 
   return TechnicalIndicatorView;
 }(View);
-
-/**
- * 格式化值
- * @param data
- * @param key
- * @param defaultValue
- * @returns {string|*}
- */
-
-function formatValue(data, key) {
-  var defaultValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '--';
-
-  if (data && isObject(data)) {
-    var value = data[key];
-
-    if (value || value === 0 || value === false) {
-      return value;
-    }
-  }
-
-  return defaultValue;
-}
-/**
- * 格式化时间
- * @param timestamp
- * @param format
- * @returns {string}
- */
-
-function formatDate(timestamp, format) {
-  if (timestamp && isNumber(timestamp)) {
-    var date = new Date(timestamp);
-    var year = date.getFullYear().toString();
-    var month = (date.getMonth() + 1).toString();
-    var day = date.getDate().toString();
-    var hours = date.getHours().toString();
-    var minutes = date.getMinutes().toString();
-    var monthText = month.length === 1 ? "0".concat(month) : month;
-    var dayText = day.length === 1 ? "0".concat(day) : day;
-    var hourText = hours.length === 1 ? '0' + hours : hours;
-    var minuteText = minutes.length === 1 ? '0' + minutes : minutes;
-
-    switch (format) {
-      case 'YYYY':
-        {
-          return year;
-        }
-
-      case 'YYYY-MM':
-        {
-          return "".concat(year, "-").concat(monthText);
-        }
-
-      case 'YYYY-MM-DD':
-        {
-          return "".concat(year, "-").concat(monthText, "-").concat(dayText);
-        }
-
-      case 'YYYY-MM-DD hh:mm':
-        {
-          return "".concat(year, "-").concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
-        }
-
-      case 'MM-DD':
-        {
-          return "".concat(monthText, "-").concat(dayText);
-        }
-
-      case 'hh:mm':
-        {
-          return "".concat(hourText, ":").concat(minuteText);
-        }
-
-      default:
-        {
-          return "".concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
-        }
-    }
-  }
-
-  return '--';
-}
-/**
- * 格式化精度
- */
-
-function formatPrecision(value) {
-  var precision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 2;
-  var v = +value;
-
-  if ((v || v === 0) && isNumber(v)) {
-    return value.toFixed(precision);
-  }
-
-  return "".concat(v);
-}
-/**
- * 格式化大数据
- * @param value
- */
-
-function formatBigNumber(value) {
-  if (isNumber(value)) {
-    if (value > 50000) {
-      return "".concat(+(value / 1000).toFixed(1), "K");
-    }
-
-    if (value > 5000000) {
-      return "".concat(+(value / 1000000).toFixed(3), "M");
-    }
-
-    return "".concat(value);
-  }
-
-  return '--';
-}
 
 var TechnicalIndicatorFloatLayerView =
 /*#__PURE__*/
@@ -5638,7 +5721,7 @@ function (_TechnicalIndicatorVi) {
                 break;
               }
 
-            case CandleStickStyle.INCREASING_STROKE:
+            case CandleStickStyle.UP_STROKE:
               {
                 if (close > refClose) {
                   _this2._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
@@ -5649,7 +5732,7 @@ function (_TechnicalIndicatorVi) {
                 break;
               }
 
-            case CandleStickStyle.DECREASING_STROKE:
+            case CandleStickStyle.DOWN_STROKE:
               {
                 if (close > refClose) {
                   _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
@@ -5867,7 +5950,9 @@ function (_TechnicalIndicatorFl) {
       if (floatLayerPromptCandleStick.showType === FloatLayerPromptCandleStickTextDisplayType.STANDARD) {
         this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData);
 
-        this._drawTechnicalIndicatorPrompt(kLineData, x, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
+        if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
+          this._drawTechnicalIndicatorPrompt(kLineData, x, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
+        }
       } else {
         this._drawCandleStickRectPromptText(kLineData, x, floatLayerPromptCandleStick, candleStickPromptData);
       }
@@ -5941,26 +6026,6 @@ function (_TechnicalIndicatorFl) {
         var labelWidth = calcTextWidth(_this2._ctx, text) + baseTextMarginLeft + baseTextMarginRight;
         maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
       });
-
-      var technicalIndicatorPromptData = this._getTechnicalIndicatorPromptData(kLineData);
-
-      var indicatorLabels = technicalIndicatorPromptData.labels || [];
-      var indicatorValues = technicalIndicatorPromptData.values || [];
-
-      var floatLayerPromptTechnicalIndicator = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator;
-
-      var indicatorTextMarginLeft = floatLayerPromptTechnicalIndicator.text.marginLeft;
-      var indicatorTextMarginRight = floatLayerPromptTechnicalIndicator.text.marginRight;
-      var indicatorTextMarginTop = floatLayerPromptTechnicalIndicator.text.marginTop;
-      var indicatorTextMarginBottom = floatLayerPromptTechnicalIndicator.text.marginBottom;
-      var indicatorTextSize = floatLayerPromptTechnicalIndicator.text.size;
-      this._ctx.font = getFont(indicatorTextSize);
-      indicatorLabels.forEach(function (label, i) {
-        var v = indicatorValues[i] || '--';
-        var text = "".concat(label, ": ").concat(v);
-        var labelWidth = calcTextWidth(_this2._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight;
-        maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
-      });
       var rect = floatLayerPromptCandleStick.rect;
       var rectBorderSize = rect.borderSize;
       var rectPaddingLeft = rect.paddingLeft;
@@ -5969,8 +6034,33 @@ function (_TechnicalIndicatorFl) {
       var rectPaddingBottom = rect.paddingBottom;
       var rectLeft = rect.left;
       var rectRight = rect.right;
+      var rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom + (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length;
+
+      var technicalIndicatorPromptData = this._getTechnicalIndicatorPromptData(kLineData);
+
+      var floatLayerPromptTechnicalIndicator = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator;
+
+      var indicatorTextMarginLeft = floatLayerPromptTechnicalIndicator.text.marginLeft;
+      var indicatorTextMarginRight = floatLayerPromptTechnicalIndicator.text.marginRight;
+      var indicatorTextMarginTop = floatLayerPromptTechnicalIndicator.text.marginTop;
+      var indicatorTextMarginBottom = floatLayerPromptTechnicalIndicator.text.marginBottom;
+      var indicatorTextSize = floatLayerPromptTechnicalIndicator.text.size;
+      var isCandleStick = this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK;
+      var indicatorLabels = technicalIndicatorPromptData.labels || [];
+      var indicatorValues = technicalIndicatorPromptData.values || [];
+
+      if (isCandleStick) {
+        this._ctx.font = getFont(indicatorTextSize);
+        indicatorLabels.forEach(function (label, i) {
+          var v = indicatorValues[i] || '--';
+          var text = "".concat(label, ": ").concat(v);
+          var labelWidth = calcTextWidth(_this2._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight;
+          maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
+        });
+        rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length;
+      }
+
       var rectWidth = rectBorderSize * 2 + maxLabelWidth + rectPaddingLeft + rectPaddingRight;
-      var rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom + (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length + (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length;
       var centerX = this._width / 2;
       var rectX;
 
@@ -5994,53 +6084,56 @@ function (_TechnicalIndicatorFl) {
 
       this._ctx.fill();
 
-      var baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft;
-      var labelY = rectY + rectBorderSize + rectPaddingTop; // 开始渲染基础数据文字
+      if (isCandleStick) {
+        var baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft;
+        var labelY = rectY + rectBorderSize + rectPaddingTop; // 开始渲染基础数据文字
 
-      this._ctx.font = getFont(baseTextSize);
-      baseLabels.forEach(function (label, i) {
-        labelY += baseTextMarginTop;
-        _this2._ctx.textAlign = 'left';
-        _this2._ctx.fillStyle = baseTextColor;
+        this._ctx.font = getFont(baseTextSize);
+        baseLabels.forEach(function (label, i) {
+          labelY += baseTextMarginTop;
+          _this2._ctx.textAlign = 'left';
+          _this2._ctx.fillStyle = baseTextColor;
 
-        _this2._ctx.fillText("".concat(label, ": "), baseLabelX, labelY);
+          _this2._ctx.fillText("".concat(label, ": "), baseLabelX, labelY);
 
-        var value = baseValues[i] || '--';
-        var text;
-        _this2._ctx.fillStyle = value.color || baseTextColor;
+          var value = baseValues[i] || '--';
+          var text;
+          _this2._ctx.fillStyle = value.color || baseTextColor;
 
-        if (_typeof(value) === 'object') {
-          text = value.value || '--';
-        } else {
-          text = value;
-        }
+          if (_typeof(value) === 'object') {
+            text = value.value || '--';
+          } else {
+            text = value;
+          }
 
-        _this2._ctx.textAlign = 'right';
+          _this2._ctx.textAlign = 'right';
 
-        _this2._ctx.fillText(text, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY);
+          _this2._ctx.fillText(text, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY);
 
-        labelY += baseTextSize + baseTextMarginBottom;
-      }); // 开始渲染指标数据文字
+          labelY += baseTextSize + baseTextMarginBottom;
+        }); // 开始渲染指标数据文字
 
-      var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
+        var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
-      var colors = technicalIndicatorOptions.line.colors;
-      var indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft;
-      var colorSize = colors.length;
-      this._ctx.font = getFont(indicatorTextSize);
-      indicatorLabels.forEach(function (label, i) {
-        labelY += indicatorTextMarginTop;
-        _this2._ctx.textAlign = 'left';
-        _this2._ctx.fillStyle = colors[i % colorSize] || technicalIndicatorOptions.text.color;
+        var colors = technicalIndicatorOptions.line.colors;
+        var indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft;
+        var colorSize = colors.length;
+        this._ctx.font = getFont(indicatorTextSize);
+        indicatorLabels.forEach(function (label, i) {
+          labelY += indicatorTextMarginTop;
+          _this2._ctx.textAlign = 'left';
+          _this2._ctx.fillStyle = colors[i % colorSize] || technicalIndicatorOptions.text.color;
 
-        _this2._ctx.fillText("".concat(label.toUpperCase(), ": "), indicatorLabelX, labelY);
+          _this2._ctx.fillText("".concat(label.toUpperCase(), ": "), indicatorLabelX, labelY);
 
-        _this2._ctx.textAlign = 'right';
+          _this2._ctx.textAlign = 'right';
 
-        _this2._ctx.fillText(indicatorValues[i] || '--', rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight, labelY);
+          _this2._ctx.fillText(indicatorValues[i] || '--', rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight, labelY);
 
-        labelY += indicatorTextSize + indicatorTextMarginBottom;
-      });
+          labelY += indicatorTextSize + indicatorTextMarginBottom;
+        });
+      }
+
       this._ctx.textAlign = 'left';
     }
     /**
@@ -7477,6 +7570,8 @@ function (_EventHandler) {
   }, {
     key: "mouseMoveEvent",
     value: function mouseMoveEvent(event) {
+      console.log(event);
+
       if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY)) {
         return;
       }
@@ -8163,7 +8258,9 @@ function (_View) {
     value: function _drawPointGraphicMark(markKey, graphicMark, checkPointOnLine, generatedLinePoints, isDrawPrice, pricePrecision, priceExtendsText) {
       var _this12 = this;
 
-      var graphicMarkData = this.storage.graphicMarkDatas[markKey];
+      var graphicMarkDatas = this._chartData.graphicMarkData();
+
+      var graphicMarkData = graphicMarkDatas[markKey];
       graphicMarkData.forEach(function (_ref) {
         var points = _ref.points,
             drawStep = _ref.drawStep;
@@ -8204,7 +8301,9 @@ function (_View) {
       var _this13 = this;
 
       var priceExtendsText = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : [];
-      var graphicMarkPoint = this.storage.graphicMarkPoint;
+
+      var graphicMarkPoint = this._chartData.graphicMarkPoint();
+
       var isOnLine = false;
       linePoints.forEach(function (points, i) {
         if (points.length > 1) {
@@ -8332,6 +8431,13 @@ function (_TechnicalIndicatorWi) {
         _get(_getPrototypeOf(CandleStickWidget.prototype), "invalidate", this).call(this, level);
       }
     }
+  }, {
+    key: "setSize",
+    value: function setSize(width, height) {
+      _get(_getPrototypeOf(CandleStickWidget.prototype), "setSize", this).call(this, width, height);
+
+      this._expandView.setSize(width, height);
+    }
   }]);
 
   return CandleStickWidget;
@@ -8348,7 +8454,7 @@ function (_TechnicalIndicatorSe) {
     _classCallCheck(this, CandleStickSeries);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(CandleStickSeries).call(this, props));
-    _this._chartType = ChartType.CANDLE;
+    _this._chartType = ChartType.CANDLE_STICK;
     return _this;
   }
 
@@ -8390,9 +8496,9 @@ function (_TechnicalIndicatorSe) {
 
         if (this._chartData.styleOptions().realTime.averageLine.display && this._isRealTime()) {
           this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE);
-
-          this.invalidate(InvalidateLevel.FULL);
         }
+
+        this.invalidate(InvalidateLevel.FULL);
       }
     }
   }]);
@@ -8806,9 +8912,11 @@ function (_Series) {
   }, {
     key: "setSize",
     value: function setSize(mainWidgetSize, yAxisWidgetSize) {
-      _get(_getPrototypeOf(XAxisSeries.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
-
       this._xAxis.setSize(mainWidgetSize.width, mainWidgetSize.height);
+
+      this._computeAxis();
+
+      _get(_getPrototypeOf(XAxisSeries.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
     }
   }]);
 
@@ -9207,15 +9315,81 @@ function (_EventHandler) {
   return ZoomDragEventHandler;
 }(EventHandler);
 
+var KeyBoardEventHandler =
+/*#__PURE__*/
+function (_EventHandler) {
+  _inherits(KeyBoardEventHandler, _EventHandler);
+
+  function KeyBoardEventHandler() {
+    _classCallCheck(this, KeyBoardEventHandler);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(KeyBoardEventHandler).apply(this, arguments));
+  }
+
+  _createClass(KeyBoardEventHandler, [{
+    key: "keyBoardDownEvent",
+
+    /**
+     * 键盘事件
+     * @param event
+     */
+    value: function keyBoardDownEvent(event) {
+      if (event.shiftKey) {
+        switch (event.code) {
+          case 'ArrowUp':
+            {
+              this._chartData.zoom(-0.05);
+
+              break;
+            }
+
+          case 'ArrowDown':
+            {
+              this._chartData.zoom(0.05);
+
+              break;
+            }
+
+          case 'ArrowLeft':
+            {
+              this._chartData.startDrag();
+
+              this._chartData.drag(-this._chartData.dataSpace());
+
+              break;
+            }
+
+          case 'ArrowRight':
+            {
+              this._chartData.startDrag();
+
+              this._chartData.drag(this._chartData.dataSpace());
+
+              break;
+            }
+
+          default:
+            {
+              break;
+            }
+        }
+      }
+    }
+  }]);
+
+  return KeyBoardEventHandler;
+}(EventHandler);
+
 var ChartEvent =
 /*#__PURE__*/
 function () {
   function ChartEvent(target, chartData, xAxis, yAxis) {
     _classCallCheck(this, ChartEvent);
 
+    this._target = target;
     this._chartData = chartData;
     this._seriesSize = {};
-    this._event = new EventBase(target, {
+    this._event = new EventBase(this._target, {
       pinchStartEvent: this._pinchStartEvent.bind(this),
       pinchEvent: this._pinchEvent.bind(this),
       mouseUpEvent: this._mouseUpEvent.bind(this),
@@ -9230,11 +9404,21 @@ function () {
       treatVertTouchDragAsPageScroll: false,
       treatHorzTouchDragAsPageScroll: false
     });
+    this._boundKeyBoardDownEvent = this._keyBoardDownEvent.bind(this);
+
+    this._target.addEventListener('keydown', this._boundKeyBoardDownEvent);
+
     this._zoomDragEventHandler = new ZoomDragEventHandler(chartData);
     this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData, xAxis, yAxis);
+    this._keyBoardEventHandler = new KeyBoardEventHandler(chartData);
   }
 
   _createClass(ChartEvent, [{
+    key: "_keyBoardDownEvent",
+    value: function _keyBoardDownEvent(event) {
+      this._keyBoardEventHandler.keyBoardDownEvent(event);
+    }
+  }, {
     key: "_pinchStartEvent",
     value: function _pinchStartEvent() {
       this._zoomDragEventHandler.pinchStartEvent();
@@ -9316,13 +9500,15 @@ function () {
     key: "destroy",
     value: function destroy() {
       this._event.destroy();
+
+      this._target.removeEventListener('keydown', this._boundKeyBoardDownEvent);
     }
   }]);
 
   return ChartEvent;
 }();
 
-var DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT = 120;
+var DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT = 100;
 var TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_';
 var CANDLE_STICK_SERIES_TAG = 'candle_stick_series_tag';
 
@@ -9332,6 +9518,10 @@ function () {
   function ChartSeries(container, styleOptions) {
     _classCallCheck(this, ChartSeries);
 
+    container.style.position = 'relative';
+    container.style.outline = 'none';
+    container.style.borderStyle = 'none';
+    container.tabIndex = 1;
     this._container = container;
     this._technicalIndicatorBaseId = 0;
     this._technicalIndicatorSeries = [];
@@ -9352,12 +9542,25 @@ function () {
     this._chartEvent = new ChartEvent(this._container, this._chartData, this._candleStickSeries.yAxis(), this._xAxisSeries.xAxis());
     this.measureSeriesSize();
   }
+  /**
+   * 分割线拖拽开始
+   * @param seriesIndex
+   * @private
+   */
+
 
   _createClass(ChartSeries, [{
     key: "_separatorStartDrag",
     value: function _separatorStartDrag(seriesIndex) {
       this._separatorDragStartTechnicalIndicatorHeight = this._technicalIndicatorSeries[seriesIndex].height();
     }
+    /**
+     * 分割线拖拽
+     * @param dragDistance
+     * @param seriesIndex
+     * @private
+     */
+
   }, {
     key: "_separatorDrag",
     value: function _separatorDrag(dragDistance, seriesIndex) {
@@ -9497,7 +9700,7 @@ function () {
     value: function _calcAllSeriesTechnicalIndicator() {
       var technicalIndicatorTypeArray = [];
 
-      if (this._candleStickSeries.chartType() === ChartType.CANDLE) {
+      if (this._candleStickSeries.chartType() === ChartType.CANDLE_STICK) {
         technicalIndicatorTypeArray.push(this._candleStickSeries.technicalIndicatorType());
       } else {
         this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE);
@@ -9725,15 +9928,16 @@ function () {
     /**
      * 添加新数据
      * @param dataList
+     * @param more
      */
 
   }, {
     key: "applyNewData",
-    value: function applyNewData(dataList) {
+    value: function applyNewData(dataList, more) {
       if (isArray(dataList)) {
         this._chartData.clearDataList();
 
-        this._chartData.addData(dataList, 0);
+        this._chartData.addData(dataList, 0, more);
 
         this._calcAllSeriesTechnicalIndicator();
       }
@@ -9741,13 +9945,14 @@ function () {
     /**
      * 添加更多数据
      * @param dataList
+     * @param more
      */
 
   }, {
     key: "applyMoreData",
-    value: function applyMoreData(dataList) {
+    value: function applyMoreData(dataList, more) {
       if (isArray(dataList)) {
-        this._chartData.addData(dataList, 0);
+        this._chartData.addData(dataList, 0, more);
 
         this._calcAllSeriesTechnicalIndicator();
       }
@@ -9920,64 +10125,25 @@ function () {
     this._chartSeries = new ChartSeries(container, styleOptions);
   }
   /**
-   * 重置尺寸，总是会填充父容器
+   * 加载样式配置
+   * @param options
    */
 
 
   _createClass(Chart, [{
-    key: "resize",
-    value: function resize() {
-      this._chartSeries.chartData().adjustFromTo();
-
-      this._chartSeries.measureSeriesSize();
-    }
-    /**
-     * 设置右边间距
-     * @param space
-     */
-
-  }, {
-    key: "setOffsetRightSpace",
-    value: function setOffsetRightSpace(space) {
-      this._chartSeries.chartData().setOffsetRightSpace(space);
-    }
-    /**
-     * 设置柱子的空间
-     * @param space
-     */
-
-  }, {
-    key: "setBarSpace",
-    value: function setBarSpace(space) {
-      this._chartSeries.chartData().setDataSpace(space);
-    }
-    /**
-     * 清空数据
-     */
-
-  }, {
-    key: "clearData",
-    value: function clearData() {
-      this._chartSeries.chartData().clearDataList();
-    }
-    /**
-     * 获取数据源
-     */
-
-  }, {
-    key: "getDataList",
-    value: function getDataList() {
-      this._chartSeries.chartData().dataList();
-    }
-    /**
-     * 加载样式配置
-     * @param options
-     */
-
-  }, {
     key: "applyStyleOptions",
     value: function applyStyleOptions(options) {
       this._chartSeries.applyStyleOptions(options);
+    }
+    /**
+     * 获取样式配置
+     * @returns {[]|*[]}
+     */
+
+  }, {
+    key: "getStyleOptions",
+    value: function getStyleOptions() {
+      return this._chartSeries.chartData().styleOptions();
     }
     /**
      * 加载技术指标参数
@@ -10002,24 +10168,75 @@ function () {
       this._chartSeries.chartData().applyPrecision(pricePrecision, volumePrecision);
     }
     /**
+     * 重置尺寸，总是会填充父容器
+     */
+
+  }, {
+    key: "resize",
+    value: function resize() {
+      this._chartSeries.chartData().adjustFromTo();
+
+      this._chartSeries.measureSeriesSize();
+    }
+    /**
+     * 设置右边间距
+     * @param space
+     */
+
+  }, {
+    key: "setOffsetRightSpace",
+    value: function setOffsetRightSpace(space) {
+      this._chartSeries.chartData().setOffsetRightSpace(space);
+    }
+    /**
+     * 设置一条数据的空间
+     * @param space
+     */
+
+  }, {
+    key: "setDataSpace",
+    value: function setDataSpace(space) {
+      this._chartSeries.chartData().setDataSpace(space);
+    }
+    /**
+     * 清空数据
+     */
+
+  }, {
+    key: "clearData",
+    value: function clearData() {
+      this._chartSeries.chartData().clearDataList();
+    }
+    /**
+     * 获取数据源
+     */
+
+  }, {
+    key: "getDataList",
+    value: function getDataList() {
+      return this._chartSeries.chartData().dataList();
+    }
+    /**
      * 添加新数据
      * @param dataList
+     * @param more
      */
 
   }, {
     key: "applyNewData",
-    value: function applyNewData(dataList) {
-      this._chartSeries.applyNewData(dataList);
+    value: function applyNewData(dataList, more) {
+      this._chartSeries.applyNewData(dataList, more);
     }
     /**
      * 添加历史更多数据
      * @param dataList
+     * @param more
      */
 
   }, {
     key: "applyMoreData",
-    value: function applyMoreData(dataList) {
-      this._chartSeries.applyMoreData(dataList);
+    value: function applyMoreData(dataList, more) {
+      this._chartSeries.applyMoreData(dataList, more);
     }
     /**
      * 更新数据
@@ -10030,6 +10247,16 @@ function () {
     key: "updateData",
     value: function updateData(data) {
       this._chartSeries.updateData(data);
+    }
+    /**
+     * 设置加载更多回调
+     * @param cb
+     */
+
+  }, {
+    key: "loadMore",
+    value: function loadMore(cb) {
+      this._chartSeries.chartData().loadMore(cb);
     }
     /**
      * 设置蜡烛图表类型

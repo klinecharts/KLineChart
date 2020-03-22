@@ -180,7 +180,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
             this._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3])
             break
           }
-          case CandleStickStyle.INCREASING_STROKE: {
+          case CandleStickStyle.UP_STROKE: {
             if (close > refClose) {
               this._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3])
             } else {
@@ -188,7 +188,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
             }
             break
           }
-          case CandleStickStyle.DECREASING_STROKE: {
+          case CandleStickStyle.DOWN_STROKE: {
             if (close > refClose) {
               this._ctx.fillRect(rect[0], rect[1], rect[2], rect[3])
             } else {
