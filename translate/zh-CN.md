@@ -87,62 +87,58 @@ klinecharts.version()
 
 ### klinecharts实例方法
 ```js
+// 设置样式配置
+setStyleOptions(options)
+// 获取图表当前样式配置
+getStyleOptions()
+// 设置技术指标参数
+setTechnicalIndicatorParams(technicalIndicatorType, params)
+// 获取技术指标参数
+getTechnicalIndicatorParamOptions()
+// 设置精度
+setPrecision(pricePrecision, volumePrecision)
 // 调整图表大小，总是会填充容器大小
 resize()
-// 设置图表样式
-setStyle(style)
-// 获取图表当前样式配置
-getStyle()
-// 设置图表类型，类型为'candle'和'real_time'
-setMainChartType(chartType)
-// 设置指标参数
-setIndicatorParams(indicatorType, params)
-// 获取指标参数
-getIndicatorParams(indicatorType)
-// 设置主图指标类型
-// 入参类型：
+// 设置图表右边可以空出来的间隙
+setOffsetRightSpace(space)
+// 设置图表一条数据的间隙
+setDataSpace(space)
+// 清空数据
+clearData()
+// 获取数据源
+getDataList()
+// 添加新数据, more是告诉图表还有没有更多历史数据
+applyNewData(dataList, more)
+// 添加历史更多数据
+applyMoreData(dataList, more)
+// 更新数据
+updateData(data)
+// 设置加载更多回调函数
+loadMore(cb)
+// 设置蜡烛图图表类型
+// 类型为'candle_stick'和'real_time'
+setCandleStickChartType(chartType)
+// 设置蜡烛图上的技术指标类型
+setCandleStickTechnicalIndicatorType(technicalIndicatorType)
+// 设置其它技术指标图的指标类型
+// 技术指标参数类型：
 // 'NO'，'MA'，'VOL'，'MACD'，'BOLL'，'KDJ'，'RSI'，'BIAS'
 // 'BRAR'，'CCI'，'DMI'，'CR'，'PSY'，'DMA'，'TRIX'，'OBV'
 // 'VR'，'WR'，'MTM'，'EMV'，'SAR'
-setMainIndicatorType(indicatorType)
-// 获取主图指标类型
-getMainIndicatorType()
-// 设置副图指标类型(类型参考同主图指标类型)
-setSubIndicatorType(indicatorType)
-// 获取副图指标类型
-getSubIndicatorType()
-// 显示成交图
-showVolChart(true)
-// 获取当前成交图的显示状态
-isShowVolChart()
-// 设置默认的一屏显示的数据个数
-setDefaultRange(range)
-// 设置一屏显示的最小数据个数
-setMinRange(range)
-// 设置一屏显示的最大数据个数
-setMaxRange(range)
-// 添加数据
-// pos是告诉图表数据添加的位置，默认为添加到现有数据最后
-// noMore是告诉图表没有更多数据，默认是true
-addData(dataList, pos, noMore)
-// 获取图表当前的数据
-getDataList()
-// 用于设置价格数量精度
-setPrecision(pricePrecision, volumePrecision)
-// 清空图表当前数据
-clearData()
-// 绘制标记图形
+// tag 是创建图的返回的一个标识
+setTechnicalIndicatorType(tag, technicalIndicatorType)
+// 添加技术指标图，返回图表的标识
+addTechnicalIndicator(technicalIndicatorType, height)
+// 移除技术指标图
+removeTechnicalIndicator(tag)
+// 添加图形标记
 // 入参类型：
 // 'none'，'horizontalStraightLine'，'verticalStraightLine'，'straightLine'，'horizontalRayLine'
 // 'verticalRayLine'，'rayLine'，'horizontalSegmentLine'，'verticalSegmentLine'，'segmentLine'
-// 'priceLine'，'priceChannelLine'，'parallelStraightLine'，'fibonacciLine';
+// 'priceLine'，'priceChannelLine'，'parallelStraightLine'，'fibonacciLine'
 addGraphicMark(graphicMarkType)
-// 清空所有标记图形
+// 移除所有的图形标记
 removeAllGraphicMark()
-// 获取当前图表装换成图片的url
-getConvertPictureUrl()
-// 加载更多
-loadMore((timestamp) => {})
 ```
 
 ## 数据源

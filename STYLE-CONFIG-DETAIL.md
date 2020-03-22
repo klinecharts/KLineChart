@@ -1,7 +1,70 @@
 ## Style Configuration Details
 ```js
 config = {
-  candle: {
+  grid: {
+    display: true,
+    horizontal: {
+      display: true,
+      size: 1,
+      color: '#393939',
+      // 'solid'|'dash'
+      style: 'dash',
+      dashValue: [2, 2]
+    },
+    vertical: {
+      display: false,
+      size: 1,
+      color: '#393939',
+      // 'solid'|'dash'
+      style: 'dash',
+      dashValue: [2, 2]
+    }
+  },
+  candleStick: {
+    bar: {
+      // 'solid'|'stroke'|'up_stroke'|'down_stroke'|'ohlc'
+      style: 'solid',
+      upColor: '#26A69A',
+      downColor: '#EF5350'
+    },
+    priceMark: {
+      display: true,
+      high: {
+        display: true,
+        color: '#D9D9D9',
+        textMargin: 5,
+        textSize: 10
+      },
+      low: {
+        display: true,
+        color: '#D9D9D9',
+        textMargin: 5,
+        textSize: 10
+      },
+      last: {
+        display: true,
+        upColor: '#26A69A',
+        downColor: '#EF5350',
+        line: {
+          display: true,
+          // 'solid'|'dash'
+          style: 'dash',
+          dashValue: [4, 4],
+          size: 1
+        },
+        text: {
+          display: true,
+          size: 12,
+          paddingLeft: 2,
+          paddingTop: 2,
+          paddingRight: 2,
+          paddingBottom: 2,
+          color: '#FFFFFF'
+        }
+      }
+    }
+  },
+  realTime: {
     timeLine: {
       color: '#1e88e5',
       size: 1,
@@ -11,139 +74,86 @@ config = {
       display: true,
       color: '#F5A623',
       size: 1
-    },
-    bar: {
-      // 'solid'|'stroke'|'increasing_stroke'|'decreasing_stroke'|'ohlc'
-      style: 'solid',
-      increasingColor: '#26A69A',
-      decreasingColor: '#EF5350',
-    },
-    highestPriceMark: {
-      display: true,
-      color: '#D9D9D9',
-      text: {
-        margin: 5,
-        size: 10
-        }
-    },
-    lowestPriceMark: {
-      display: true,
-      color: '#D9D9D9',
-      text: {
-        margin: 5,
-        size: 10
-      }
-    },
-
-    lastPriceMark: {
-      display: true,
-      increasingColor: '#26A69A',
-      decreasingColor: '#EF5350',
-      line: {
-        display: true,
-        // 'solid'|'dash'
-        style: 'dash',
-        dashValue: [4, 4],
-        size: 1
-      },
-      text: {
-        display: true,
-        size: 12,
-        paddingLeft: 2,
-        paddingTop: 2,
-        paddingRight: 2,
-        paddingBottom: 2,
-        color: '#FFFFFF'
-      }
     }
   },
-
-  indicator: {
-    lineSize: 1,
-    increasingColor: '#26A69A',
-    decreasingColor: '#EF5350',
-    lineColors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#50A300']
+  technicalIndicator: {
+    bar: {
+      upColor: '#26A69A',
+      downColor: '#EF5350'
+    },
+    line: {
+      size: 1,
+      colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+    }
   },
   xAxis: {
     display: true,
     maxHeight: 50,
     minHeight: 30,
-    line: {
+    axisLine: {
       display: true,
       color: '#888888',
       size: 1
     },
-    tick: {
-      text: {
-        display: true,
-        color: '#D9D9D9',
-        size: 12,
-        margin: 3
-      },
-      line: {
-        display: true,
-        size: 1,
-        length: 3,
-        color: '#888888'
-      }
+    tickText: {
+      display: true,
+      color: '#D9D9D9',
+      size: 12,
+      margin: 3
     },
-    separatorLine: {
-      display: false,
+    tickLine: {
+      display: true,
       size: 1,
-      color: '#393939',
-      // 'solid'|'dash'
-      style: 'dash',
-      dashValue: [2, 2]
+      length: 3,
+      color: '#888888'
     }
   },
   yAxis: {
     display: true,
+    maxWidth: 100,
+    minWidth: 60,
     // 'left' | 'right'
     position: 'right',
-    maxWidth: 80,
-    minWidth: 60,
-    line: {
+    axisLine: {
       display: true,
       color: '#888888',
       size: 1
     },
-    tick: {
-      text: {
-        display: true,
-        // 'outside' | 'inside
-        position: 'outside',
-        color: '#D9D9D9',
-        size: 12,
-        margin: 3
-      },
-      line: {
-        display: true,
-        size: 1,
-        length: 3,
-        color: '#888888'
-      }
+    tickText: {
+      // 'outside' | 'inside'
+      position: 'outside',
+      display: true,
+      color: '#D9D9D9',
+      size: 12,
+      margin: 3
     },
-    separatorLine: {
+    tickLine: {
       display: true,
       size: 1,
-      color: '#393939',
-      // 'dash' | 'solid'
-      style: 'dash',
-      dashValue: [2, 2]
+      length: 3,
+      color: '#888888'
     }
   },
-  tooltip: {
-    cross: {
+  separator: {
+    size: 1,
+    color: '#888888',
+    fill: true
+  },
+  floatLayer: {
+    crossHair: {
       display: true,
-      line: {
-        // 'dash' | 'solid'
-        style: 'solid',
-        dashValue: [2, 2],
-        size: 1,
-        color: '#888888'
-      },
-      text: {
-        horizontal: {
+      horizontal: {
+        display: true,
+        line: {
+          display: true,
+          // 'solid'|'dash'
+          style: 'dash',
+          dashValue: [4, 2],
+          size: 1,
+          color: '#888888'
+        },
+        text: {
+          display: true,
           color: '#D9D9D9',
           size: 12,
           paddingLeft: 2,
@@ -153,8 +163,20 @@ config = {
           borderSize: 1,
           borderColor: '#505050',
           backgroundColor: '#505050'
+        }
+      },
+      vertical: {
+        display: true,
+        line: {
+          display: true,
+          // 'solid'|'dash'
+          style: 'dash',
+          dashValue: [4, 2],
+          size: 1,
+          color: '#888888'
         },
-        vertical: {
+        text: {
+          display: true,
           color: '#D9D9D9',
           size: 12,
           paddingLeft: 2,
@@ -167,23 +189,15 @@ config = {
         }
       }
     },
-    data: {
-      // 'always'|'follow_cross'|'none'
+    prompt: {
+      // 'always' | 'follow_cross' | 'none'
       displayRule: 'always',
-      base: {
-        // 'fixed' | 'float'
-        showType: 'fixed',
+      candleStick: {
+        // 'standard' | 'rect'
+        showType: 'standard',
         labels: ['时间', '开', '收', '高', '低', '成交量'],
         values: null,
-        text: {
-          size: 12,
-          color: '#D9D9D9',
-          marginLeft: 8,
-          marginTop: 6,
-          marginRight: 8,
-          marginBottom: 0
-        },
-        floatRect: {
+        rect: {
           paddingLeft: 0,
           paddingRight: 0,
           paddingTop: 0,
@@ -195,9 +209,7 @@ config = {
           borderSize: 1,
           borderColor: '#3f4254',
           fillColor: 'rgba(17, 17, 17, .3)'
-        }
-      },
-      indicator: {
+        },
         text: {
           size: 12,
           color: '#D9D9D9',
@@ -205,6 +217,16 @@ config = {
           marginTop: 6,
           marginRight: 8,
           marginBottom: 0
+        }
+      },
+      technicalIndicator: {
+        text: {
+          size: 12,
+          color: '#D9D9D9',
+          marginTop: 6,
+          marginRight: 8,
+          marginBottom: 0,
+          marginLeft: 8
         }
       }
     }

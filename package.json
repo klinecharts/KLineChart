@@ -1,6 +1,6 @@
 {
   "name": "klinecharts",
-  "version": "4.2.0",
+  "version": "5.0.0",
   "description": "A kline library for browser. Support mobile.",
   "main": "index.js",
   "types": "./types/index.d.ts",
@@ -32,7 +32,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
-    "@babel/plugin-proposal-private-methods": "^7.7.4",
     "@babel/preset-env": "^7.6.3",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.5.1",

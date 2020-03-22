@@ -8,10 +8,10 @@ export default class Chart {
   }
 
   /**
-   * 加载样式配置
+   * 设置样式配置
    * @param options
    */
-  applyStyleOptions (options) {
+  setStyleOptions (options) {
     this._chartSeries.applyStyleOptions(options)
   }
 
@@ -28,8 +28,15 @@ export default class Chart {
    * @param technicalIndicatorType
    * @param params
    */
-  applyTechnicalIndicatorParams (technicalIndicatorType, params) {
+  setTechnicalIndicatorParams (technicalIndicatorType, params) {
     this._chartSeries.applyTechnicalIndicatorParams(technicalIndicatorType, params)
+  }
+
+  /**
+   * 获取技术指标参数配置
+   */
+  getTechnicalIndicatorParamOptions () {
+    this._chartSeries.chartData().technicalIndicatorParamOptions()
   }
 
   /**
@@ -37,7 +44,7 @@ export default class Chart {
    * @param pricePrecision
    * @param volumePrecision
    */
-  applyPrecision (pricePrecision, volumePrecision) {
+  setPrecision (pricePrecision, volumePrecision) {
     this._chartSeries.chartData().applyPrecision(pricePrecision, volumePrecision)
   }
 

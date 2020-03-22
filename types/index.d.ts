@@ -1,7 +1,7 @@
-export type IndicatorType = 'NO' | 'MA' | 'VOL' | 'MACD' | 'BOLL' | 'KDJ' | 'RSI' | 'BIAS' | 'BRAR' | 'CCI' | 'DMI' | 'CR' | 'PSY' | 'DMA' | 'TRIX' | 'OBV' | 'VR' | 'WR' | 'MTM' | 'EMV' | 'SAR';
+export type TechnicalIndicatorType = 'NO' | 'MA' | 'VOL' | 'MACD' | 'BOLL' | 'KDJ' | 'RSI' | 'BIAS' | 'BRAR' | 'CCI' | 'DMI' | 'CR' | 'PSY' | 'DMA' | 'TRIX' | 'OBV' | 'VR' | 'WR' | 'MTM' | 'EMV' | 'SAR';
 export type GraphicMarkType = 'none' | 'horizontalStraightLine' | 'verticalStraightLine' | 'straightLine' | 'horizontalRayLine' | 'verticalRayLine' | 'rayLine' | 'horizontalSegmentLine' | 'verticalSegmentLine' | 'segmentLine' | 'priceLine' | 'priceChannelLine' | 'parallelStraightLine' | 'fibonacciLine';
-export type ChartType = 'candle' | 'real_time';
-export interface IndicatorParams {
+export type ChartType = 'candle_stick' | 'real_time';
+export interface TechnicalIndicatorParams {
   MA: number[];
   VOL: number[];
   MACD: number[];
@@ -39,28 +39,26 @@ export type PictureType = 'png' | 'jpeg' | 'bmp';
 export type ChartComponentType = 'candle' | 'vol' | 'subIndicator' | 'tooltip' | 'graphicMark';
 
 export interface Chart {
+  setStyleOptions(options: any): void;
+  getStyleOptions(): any;
+  setTechnicalIndicatorParams(technicalIndicatorType: TechnicalIndicatorType, params: number[]): void;
+  getTechnicalIndicatorParamOptions(): TechnicalIndicatorParams;
+  setPrecision(pricePrecision: number, volumePrecision: number): void;
   resize(): void;
-  setStyle(style: any): void;
-  addData(data: KLineData[] | KLineData, pos?: number, noMore?: boolean): void;
-  setMainIndicatorType(indicatorType: IndicatorType): void;
-  setSubIndicatorType(indicatorType: IndicatorType): void;
-  setIndicatorParams(indicatorType: IndicatorType, params: number[]): void;
-  getIndicatorParams(indicatorType?: IndicatorType): IndicatorParams | number[];
-  showVolChart(isShow: boolean): void;
-  setDefaultRange(range: number): void;
-  setMinRange(range: number): void;
-  setMaxRange(range: number): void;
-  getDataList(): KLineData[];
-  setMainChartType(chartType: ChartType): void;
-  getMainIndicatorType(): IndicatorType;
-  getSubIndicatorType(): IndicatorType;
-  getStyle(): any;
-  setPrecision(pricePrecision?: number, volumePrecision?: number): void;
-  isShowVolChart(): boolean;
+  setOffsetRightSpace(space: number): void;
+  setDataSpace(space: number): void;
   clearData(): void;
-  getConvertPictureUrl(pictureType?: PictureType, excludes?: ChartComponentType[]): string;
-  addGraphicMark(graphicMarkType: GraphicMarkType): void;
+  getDataList(): KLineData[];
+  applyNewData(dataList: KLineData[], more: boolean): void;
+  applyMoreData(dataList: KLineData[], more: boolean): void;
+  updateData(data: KLineData): void
   loadMore(cb: (timestamp: number) => {}): void;
+  setCandleStickChartType(chartType: ChartType): void;
+  setCandleStickTechnicalIndicatorType(technicalIndicatorType: TechnicalIndicatorType): void;
+  setTechnicalIndicatorType(tag: string, technicalIndicatorType: TechnicalIndicatorType): void;
+  addTechnicalIndicator(technicalIndicatorType: TechnicalIndicatorType, height: number): void;
+  removeTechnicalIndicator(tag: string): void;
+  addGraphicMark(graphicMarkType: GraphicMarkType): void;
   removeAllGraphicMark(): void;
 }
 
