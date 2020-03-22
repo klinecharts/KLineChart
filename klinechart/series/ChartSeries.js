@@ -33,14 +33,28 @@ export default class ChartSeries {
       technicalIndicatorType: TechnicalIndicatorType.MA,
       tag: CANDLE_STICK_SERIES_TAG
     })
-    this._chartEvent = new ChartEvent(this._container, this._chartData, this._candleStickSeries.yAxis(), this._xAxisSeries.xAxis())
+    this._chartEvent = new ChartEvent(
+      this._container, this._chartData,
+      this._candleStickSeries.yAxis(), this._xAxisSeries.xAxis()
+    )
     this.measureSeriesSize()
   }
 
+  /**
+   * 分割线拖拽开始
+   * @param seriesIndex
+   * @private
+   */
   _separatorStartDrag (seriesIndex) {
     this._separatorDragStartTechnicalIndicatorHeight = this._technicalIndicatorSeries[seriesIndex].height()
   }
 
+  /**
+   * 分割线拖拽
+   * @param dragDistance
+   * @param seriesIndex
+   * @private
+   */
   _separatorDrag (dragDistance, seriesIndex) {
     this._technicalIndicatorSeries[seriesIndex].setTempHeight(this._separatorDragStartTechnicalIndicatorHeight - dragDistance)
     this.measureSeriesSize()
@@ -246,11 +260,12 @@ export default class ChartSeries {
   /**
    * 添加新数据
    * @param dataList
+   * @param more
    */
-  applyNewData (dataList) {
+  applyNewData (dataList, more) {
     if (isArray(dataList)) {
       this._chartData.clearDataList()
-      this._chartData.addData(dataList, 0)
+      this._chartData.addData(dataList, 0, more)
       this._calcAllSeriesTechnicalIndicator()
     }
   }
@@ -258,10 +273,11 @@ export default class ChartSeries {
   /**
    * 添加更多数据
    * @param dataList
+   * @param more
    */
-  applyMoreData (dataList) {
+  applyMoreData (dataList, more) {
     if (isArray(dataList)) {
-      this._chartData.addData(dataList, 0)
+      this._chartData.addData(dataList, 0, more)
       this._calcAllSeriesTechnicalIndicator()
     }
   }

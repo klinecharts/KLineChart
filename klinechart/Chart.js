@@ -82,17 +82,19 @@ export default class Chart {
   /**
    * 添加新数据
    * @param dataList
+   * @param more
    */
-  applyNewData (dataList) {
-    this._chartSeries.applyNewData(dataList)
+  applyNewData (dataList, more) {
+    this._chartSeries.applyNewData(dataList, more)
   }
 
   /**
    * 添加历史更多数据
    * @param dataList
+   * @param more
    */
-  applyMoreData (dataList) {
-    this._chartSeries.applyMoreData(dataList)
+  applyMoreData (dataList, more) {
+    this._chartSeries.applyMoreData(dataList, more)
   }
 
   /**

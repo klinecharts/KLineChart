@@ -1,9 +1,10 @@
-import { isArray, isObject, merge, clone } from '../utils/typeChecks'
+import {isArray, isObject, merge, clone, isFunction, isBoolean} from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
 import { defaultTechnicalIndicatorParamOptions, TechnicalIndicatorType } from './options/technicalIndicatorParamOptions'
 import { defaultPrecisionOptions } from './options/precisionOptions'
 
 import calcIndicator from '../internal/calcIndicator'
+import { formatValue } from '../utils/format'
 
 export const InvalidateLevel = {
   CROSS_HAIR: 1,
@@ -35,17 +36,25 @@ const MIN_DATA_SPACE = 3
 
 export default class ChartData {
   constructor (styleOptions, invalidateHandler) {
+    // 刷新持有者
     this._invalidateHandler = invalidateHandler
     // 样式配置
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
     // 指标参数配置
     this._technicalIndicatorParamOptions = clone(defaultTechnicalIndicatorParamOptions)
-
+    // 精度配置
     this._precisionOptions = clone(defaultPrecisionOptions)
 
     // 数据源
     this._dataList = []
+
+    // 是否在加载中
+    this._loading = true
+    // 加载更多回调
+    this._loadMoreCallback = null
+    // 还有更多
+    this._more = true
 
     // 可见区域数据占用的空间
     this._totalDataSpace = 0
@@ -106,6 +115,22 @@ export default class ChartData {
     }
   }
 
+  /**
+   * 加载更多持有者
+   * @private
+   */
+  _loadMoreHandler () {
+    // 有更多并且没有在加载则去加载更多
+    if (this._more && !this._loading && this._loadMoreCallback && isFunction(this._loadMoreCallback)) {
+      this._loading = true
+      this._loadMoreCallback(formatValue(this._dataList[0], 'timestamp'))
+    }
+  }
+
+  /**
+   * 计算绘制区间
+   * @private
+   */
   _calcRange () {
     this._range = Math.floor(this._totalDataSpace / this._dataSpace)
     let to = this._from + this._range
@@ -115,6 +140,11 @@ export default class ChartData {
     this._to = to
   }
 
+  /**
+   * 计算一条柱子的空间
+   * @returns {number}
+   * @private
+   */
   _calcBarSpace () {
     return (1 - BAR_MARGIN_SPACE_RATE) * this._dataSpace
   }
@@ -128,12 +158,15 @@ export default class ChartData {
     return this._range - offsetRightRange
   }
 
+  /**
+   * 内部用来设置一条数据的空间
+   * @param dataSpace
+   * @returns {boolean}
+   * @private
+   */
   _innerSetDataSpace (dataSpace) {
-    if (!dataSpace || dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE) {
+    if (!dataSpace || dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE || this._dataSpace === dataSpace) {
       return false
-    }
-    if (this._dataSpace === dataSpace) {
-      return
     }
     this._dataSpace = dataSpace
     this._barSpace = this._calcBarSpace()
@@ -242,6 +275,8 @@ export default class ChartData {
    * 清空数据源
    */
   clearDataList () {
+    this._more = true
+    this._loading = true
     this._dataList = []
     this._from = 0
     this._to = 0
@@ -251,16 +286,21 @@ export default class ChartData {
    * 添加数据
    * @param data
    * @param pos
+   * @param more
    */
-  addData (data, pos) {
+  addData (data, pos, more) {
     if (isObject(data)) {
       if (isArray(data)) {
         if (this._dataList.length === 0) {
+          this._loading = false
+          this._more = isBoolean(more) ? more : true
           this._dataList = data.concat(this._dataList)
           const rangeDif = this._calcRangDif()
           this._from = this._dataList.length - rangeDif
           this.adjustFromTo()
         } else {
+          this._loading = false
+          this._more = more
           this._dataList = data.concat(this._dataList)
           this._from += data.length
         }
@@ -434,11 +474,13 @@ export default class ChartData {
     let distanceRange = distance / this._dataSpace
     distanceRange = distanceRange < 0 ? Math.floor(distanceRange) : Math.ceil(distanceRange)
     if (distanceRange === 0) {
+      this._loadMoreHandler()
       return
     }
     if (distanceRange > 0) {
       // 右移
       if (this._from === 0) {
+        this._loadMoreHandler(formatValue(this._dataList[0], 'timestamp'))
         this._invalidateHandler(InvalidateLevel.CROSS_HAIR)
         return
       }
@@ -453,6 +495,9 @@ export default class ChartData {
     }
     this._from = this._preFrom - distanceRange
     this.adjustFromTo()
+    if (this._from === 0) {
+      this._loadMoreHandler()
+    }
     this._invalidateHandler()
   }
 
@@ -502,10 +547,18 @@ export default class ChartData {
     this._graphicMarkType = graphicMarkType
   }
 
+  /**
+   * 获取图形标记拖拽标记
+   * @returns {boolean}
+   */
   dragGraphicMarkFlag () {
     return this._dragGraphicMarkFlag
   }
 
+  /**
+   * 设置图形标记拖拽标记
+   * @param flag
+   */
   setDragGraphicMarkFlag (flag) {
     this._dragGraphicMarkFlag = flag
   }
@@ -541,5 +594,13 @@ export default class ChartData {
   setGraphicMarkData (datas) {
     this._graphicMarkDatas = datas
     this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK)
+  }
+
+  /**
+   * 设置加载更多
+   * @param callback
+   */
+  loadMore (callback) {
+    this._loadMoreCallback = callback
   }
 }

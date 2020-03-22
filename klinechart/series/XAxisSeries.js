@@ -20,7 +20,8 @@ export default class XAxisSeries extends Series {
   }
 
   setSize (mainWidgetSize, yAxisWidgetSize) {
-    super.setSize(mainWidgetSize, yAxisWidgetSize)
     this._xAxis.setSize(mainWidgetSize.width, mainWidgetSize.height)
+    this._computeAxis()
+    super.setSize(mainWidgetSize, yAxisWidgetSize)
   }
 }
