@@ -6801,10 +6801,6 @@ function () {
   }, {
     key: "_mouseDownHandler",
     value: function _mouseDownHandler(downEvent) {
-      if ('button' in downEvent) {
-        return;
-      }
-
       var compatEvent = this._makeCompatEvent(downEvent);
 
       if (downEvent.button === MouseEventButton.LEFT) {
@@ -6866,8 +6862,6 @@ function () {
 
         this._processEvent(compatEvent, this._handler.mouseLeftDownEvent);
       } else {
-        preventDefault(downEvent);
-
         this._processEvent(compatEvent, this._handler.mouseRightDownEvent);
       }
     }
@@ -7219,6 +7213,30 @@ function (_EventHandler) {
           }
       }
     }
+  }, {
+    key: "mouseRightDownEvent",
+    value: function mouseRightDownEvent(event) {
+      var graphicMarkType = this._chartData.graphicMarkType();
+
+      if (graphicMarkType === GraphicMarkType.NONE) {
+        this._findNoneGraphicMarkMouseDownActiveData(event);
+
+        var markKey = this._noneGraphicMarkMouseDownActiveData.markKey;
+        var dataIndex = this._noneGraphicMarkMouseDownActiveData.dataIndex;
+
+        if (markKey && dataIndex !== -1) {
+          var graphicMarkDatas = this._chartData.graphicMarkData();
+
+          var graphicMarkData = graphicMarkDatas[markKey];
+          graphicMarkData.splice(dataIndex, 1);
+          graphicMarkDatas[markKey] = graphicMarkData;
+
+          this._chartData.setGraphicMarkData(graphicMarkDatas);
+
+          this.mouseUpEvent(event);
+        }
+      }
+    }
     /**
      * 两步形成的标记图形鼠标按下处理
      * @param event
@@ -7327,22 +7345,10 @@ function (_EventHandler) {
       var dataIndex = this._noneGraphicMarkMouseDownActiveData.dataIndex;
 
       if (markKey && dataIndex !== -1) {
-        if (event.button === 2) {
-          // 鼠标右键
-          var graphicMarkDatas = this._chartData.graphicMarkData();
+        if (this._noneGraphicMarkMouseDownActiveData.onCircle) {
+          this._noneGraphicMarkMouseDownFlag = true;
 
-          var graphicMarkData = graphicMarkDatas[markKey];
-          graphicMarkData.splice(dataIndex, 1);
-          graphicMarkDatas[markKey] = graphicMarkData;
-
-          this._chartData.setGraphicMarkData(graphicMarkDatas); // this.graphicMarkChart.flush()
-
-        } else {
-          if (this._noneGraphicMarkMouseDownActiveData.onCircle) {
-            this._noneGraphicMarkMouseDownFlag = true;
-
-            this._chartData.setDragGraphicMarkFlag(true);
-          }
+          this._chartData.setDragGraphicMarkFlag(true);
         }
       }
     }
@@ -9408,6 +9414,12 @@ function () {
 
     this._target.addEventListener('keydown', this._boundKeyBoardDownEvent);
 
+    this._boundContextMenuEvent = function (e) {
+      e.preventDefault();
+    };
+
+    this._target.addEventListener('contextmenu', this._boundContextMenuEvent, false);
+
     this._zoomDragEventHandler = new ZoomDragEventHandler(chartData);
     this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData, xAxis, yAxis);
     this._keyBoardEventHandler = new KeyBoardEventHandler(chartData);
@@ -9474,7 +9486,9 @@ function () {
     }
   }, {
     key: "_mouseRightDownEvent",
-    value: function _mouseRightDownEvent(event) {}
+    value: function _mouseRightDownEvent(event) {
+      this._graphicMarkEventHandler.mouseRightDownEvent(event);
+    }
   }, {
     key: "_pressedMouseMoveEvent",
     value: function _pressedMouseMoveEvent(event) {
@@ -9516,6 +9530,8 @@ function () {
       this._event.destroy();
 
       this._target.removeEventListener('keydown', this._boundKeyBoardDownEvent);
+
+      this._target.removeEventListener('contextmenu', this._boundContextMenuEvent);
     }
   }]);
 
@@ -10106,6 +10122,75 @@ function () {
         }
       }
     }
+    /**
+     * 获取图表转换为图片后url
+     * @param type
+     * @param excludes
+     */
+
+  }, {
+    key: "getConvertPictureUrl",
+    value: function getConvertPictureUrl() {
+      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'jpeg';
+      var excludes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+      if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
+        throw new Error('Picture format only supports jpeg, png and bmp!!!');
+      }
+
+      var c = document.createElement('canvas');
+      var xAxisCanvas = this.xAxisChart.canvasDom;
+      var candleCanvas = this.candleChart.canvasDom;
+      var volCanvas = this.volIndicatorChart.canvasDom;
+      var indicatorCanvas = this.subIndicatorChart.canvasDom;
+      var tooltipCanvas = this.tooltipChart.canvasDom;
+      c.width = tooltipCanvas.width;
+      c.height = tooltipCanvas.height;
+      c.style.width = tooltipCanvas.style.width;
+      c.style.height = tooltipCanvas.style.height;
+      var ctx = c.getContext('2d');
+      ctx.drawImage(xAxisCanvas, 0, 0, xAxisCanvas.width, xAxisCanvas.height);
+
+      if (!excludes || excludes.indexOf('candle') < 0) {
+        ctx.drawImage(candleCanvas, 0, 0, candleCanvas.width, candleCanvas.height);
+      }
+
+      if (!excludes || excludes.indexOf('vol') < 0) {
+        ctx.drawImage(volCanvas, 0, candleCanvas.height, volCanvas.width, volCanvas.height);
+      }
+
+      if (!excludes || excludes.indexOf('subIndicator') < 0) {
+        ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height);
+      }
+
+      if (!excludes || excludes.indexOf('graphicMark') < 0) {
+        var graphicMarkCanvas = this.graphicMarkChart.canvasDom;
+        ctx.drawImage(graphicMarkCanvas, 0, 0, graphicMarkCanvas.width, graphicMarkCanvas.height);
+      }
+
+      if (!excludes || excludes.indexOf('tooltip') < 0) {
+        ctx.drawImage(tooltipCanvas, 0, 0, tooltipCanvas.width, tooltipCanvas.height);
+      }
+
+      return c.toDataURL("image/".concat(type));
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this._candleStickSeries.destroy();
+
+      this._separatorSeries.forEach(function (series) {
+        series.destroy();
+      });
+
+      this._separatorSeries.forEach(function (series) {
+        series.destroy();
+      });
+
+      this._xAxisSeries.destroy();
+
+      this._chartEvent.destroy();
+    }
   }]);
 
   return ChartSeries;
@@ -10120,14 +10205,14 @@ function () {
     this._chartSeries = new ChartSeries(container, styleOptions);
   }
   /**
-   * 加载样式配置
+   * 设置样式配置
    * @param options
    */
 
 
   _createClass(Chart, [{
-    key: "applyStyleOptions",
-    value: function applyStyleOptions(options) {
+    key: "setStyleOptions",
+    value: function setStyleOptions(options) {
       this._chartSeries.applyStyleOptions(options);
     }
     /**
@@ -10147,9 +10232,18 @@ function () {
      */
 
   }, {
-    key: "applyTechnicalIndicatorParams",
-    value: function applyTechnicalIndicatorParams(technicalIndicatorType, params) {
+    key: "setTechnicalIndicatorParams",
+    value: function setTechnicalIndicatorParams(technicalIndicatorType, params) {
       this._chartSeries.applyTechnicalIndicatorParams(technicalIndicatorType, params);
+    }
+    /**
+     * 获取技术指标参数配置
+     */
+
+  }, {
+    key: "getTechnicalIndicatorParamOptions",
+    value: function getTechnicalIndicatorParamOptions() {
+      this._chartSeries.chartData().technicalIndicatorParamOptions();
     }
     /**
      * 加载精度
@@ -10158,8 +10252,8 @@ function () {
      */
 
   }, {
-    key: "applyPrecision",
-    value: function applyPrecision(pricePrecision, volumePrecision) {
+    key: "setPrecision",
+    value: function setPrecision(pricePrecision, volumePrecision) {
       this._chartSeries.chartData().applyPrecision(pricePrecision, volumePrecision);
     }
     /**
@@ -10353,6 +10447,15 @@ function () {
 
       this._chartSeries.chartData().setGraphicMarkData(newGraphicMarkDatas);
     }
+    /**
+     * 销毁
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this._chartSeries.destroy();
+    }
   }]);
 
   return Chart;
@@ -10368,7 +10471,7 @@ var idBase = 1;
  */
 
 function version() {
-  return '4.2.0';
+  return '5.0.0';
 }
 /**
  * 初始化
@@ -10382,7 +10485,7 @@ function init(dom) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   if (!dom) {
-    throw new Error('Chart version is 4.2.0. Root dom is null, can not initialize the chart!!!');
+    throw new Error('Chart version is 5.0.0. Root dom is null, can not initialize the chart!!!');
   }
 
   var instance = instances[dom.chart_id || ''];
@@ -10417,6 +10520,7 @@ function dispose(dc) {
     }
 
     if (id) {
+      instances[id].destroy();
       delete instances[id];
     }
   }

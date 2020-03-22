@@ -384,6 +384,46 @@ export default class ChartSeries {
     }
   }
 
+  /**
+   * 获取图表转换为图片后url
+   * @param type
+   * @param excludes
+   */
+  getConvertPictureUrl (type = 'jpeg', excludes = []) {
+    if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
+      throw new Error('Picture format only supports jpeg, png and bmp!!!')
+    }
+    const c = document.createElement('canvas')
+    const xAxisCanvas = this.xAxisChart.canvasDom
+    const candleCanvas = this.candleChart.canvasDom
+    const volCanvas = this.volIndicatorChart.canvasDom
+    const indicatorCanvas = this.subIndicatorChart.canvasDom
+    const tooltipCanvas = this.tooltipChart.canvasDom
+    c.width = tooltipCanvas.width
+    c.height = tooltipCanvas.height
+    c.style.width = tooltipCanvas.style.width
+    c.style.height = tooltipCanvas.style.height
+    const ctx = c.getContext('2d')
+    ctx.drawImage(xAxisCanvas, 0, 0, xAxisCanvas.width, xAxisCanvas.height)
+    if (!excludes || excludes.indexOf('candle') < 0) {
+      ctx.drawImage(candleCanvas, 0, 0, candleCanvas.width, candleCanvas.height)
+    }
+    if (!excludes || excludes.indexOf('vol') < 0) {
+      ctx.drawImage(volCanvas, 0, candleCanvas.height, volCanvas.width, volCanvas.height)
+    }
+    if (!excludes || excludes.indexOf('subIndicator') < 0) {
+      ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height)
+    }
+    if (!excludes || excludes.indexOf('graphicMark') < 0) {
+      const graphicMarkCanvas = this.graphicMarkChart.canvasDom
+      ctx.drawImage(graphicMarkCanvas, 0, 0, graphicMarkCanvas.width, graphicMarkCanvas.height)
+    }
+    if (!excludes || excludes.indexOf('tooltip') < 0) {
+      ctx.drawImage(tooltipCanvas, 0, 0, tooltipCanvas.width, tooltipCanvas.height)
+    }
+    return c.toDataURL(`image/${type}`)
+  }
+
   destroy () {
     this._candleStickSeries.destroy()
     this._separatorSeries.forEach(series => {
