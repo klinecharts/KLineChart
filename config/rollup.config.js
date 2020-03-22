@@ -4,7 +4,7 @@ const { terser } = require('rollup-plugin-terser')
 const replace = require('rollup-plugin-replace')
 const packageJson = require('../package.json')
 
-const inputPath = 'klinechart/index.js'
+const inputPath = 'src/index.js'
 
 const getPlugins = (env) => {
   return [
