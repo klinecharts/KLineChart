@@ -72,6 +72,14 @@ class View {
       this._redraw()
     })
   }
+
+  /**
+   * 获取图片
+   * @returns {HTMLCanvasElement}
+   */
+  getImage () {
+    return this._canvas
+  }
 }
 
 export default View

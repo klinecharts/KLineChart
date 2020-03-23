@@ -10,6 +10,7 @@ import SeparatorSeries from './SeparatorSeries'
 
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 import ChartEvent from '../event/ChartEvent'
+import { getPixelRatio } from '../utils/canvas'
 
 const DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT = 100
 
@@ -205,7 +206,7 @@ export default class ChartSeries {
         { left: mainOffsetLeft, width: mainWidthWidth, height: technicalIndicatorSeriesHeight },
         { left: yAxisOffsetLeft, width: yAxisWidth, height: technicalIndicatorSeriesHeight }
       )
-      separatorSeries.setExcludeYAxisWidth(mainWidthWidth)
+      separatorSeries.setSize(mainOffsetLeft, mainWidthWidth)
       contentBottom += technicalIndicatorSeriesHeight
       tags[technicalIndicatorSeries.tag()] = { contentTop, contentBottom }
       contentTop = contentBottom
@@ -386,42 +387,52 @@ export default class ChartSeries {
 
   /**
    * 获取图表转换为图片后url
+   * @param includeFloatLayer,
+   * @param includeGraphicMark
    * @param type
-   * @param excludes
    */
-  getConvertPictureUrl (type = 'jpeg', excludes = []) {
+  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type = 'jpeg') {
     if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
       throw new Error('Picture format only supports jpeg, png and bmp!!!')
     }
-    const c = document.createElement('canvas')
-    const xAxisCanvas = this.xAxisChart.canvasDom
-    const candleCanvas = this.candleChart.canvasDom
-    const volCanvas = this.volIndicatorChart.canvasDom
-    const indicatorCanvas = this.subIndicatorChart.canvasDom
-    const tooltipCanvas = this.tooltipChart.canvasDom
-    c.width = tooltipCanvas.width
-    c.height = tooltipCanvas.height
-    c.style.width = tooltipCanvas.style.width
-    c.style.height = tooltipCanvas.style.height
-    const ctx = c.getContext('2d')
-    ctx.drawImage(xAxisCanvas, 0, 0, xAxisCanvas.width, xAxisCanvas.height)
-    if (!excludes || excludes.indexOf('candle') < 0) {
-      ctx.drawImage(candleCanvas, 0, 0, candleCanvas.width, candleCanvas.height)
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    const pixelRatio = getPixelRatio(ctx)
+    const width = this._container.offsetWidth
+    const height = this._container.offsetHeight
+    canvas.style.width = `${width}px`
+    canvas.style.height = `${height}px`
+    canvas.width = width * pixelRatio
+    canvas.height = height * pixelRatio
+    let offsetTop = 0
+    const candleStickSeriesHeight = this._candleStickSeries.height()
+    ctx.drawImage(
+      this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark),
+      0, offsetTop, width, candleStickSeriesHeight
+    )
+    offsetTop += candleStickSeriesHeight
+    for (let i = 0; i < this._separatorSeries.length; i++) {
+      const separatorSeries = this._separatorSeries[i]
+      const separatorSeriesHeight = separatorSeries.height()
+      const technicalIndicatorSeries = this._technicalIndicatorSeries[i]
+      const technicalIndicatorSeriesHeight = technicalIndicatorSeries.height()
+      ctx.drawImage(
+        separatorSeries.getImage(),
+        0, offsetTop, width, separatorSeriesHeight
+      )
+      offsetTop += separatorSeriesHeight
+      ctx.drawImage(
+        technicalIndicatorSeries.getImage(includeFloatLayer),
+        0, offsetTop, width, technicalIndicatorSeriesHeight
+      )
+      offsetTop += technicalIndicatorSeriesHeight
     }
-    if (!excludes || excludes.indexOf('vol') < 0) {
-      ctx.drawImage(volCanvas, 0, candleCanvas.height, volCanvas.width, volCanvas.height)
-    }
-    if (!excludes || excludes.indexOf('subIndicator') < 0) {
-      ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height)
-    }
-    if (!excludes || excludes.indexOf('graphicMark') < 0) {
-      const graphicMarkCanvas = this.graphicMarkChart.canvasDom
-      ctx.drawImage(graphicMarkCanvas, 0, 0, graphicMarkCanvas.width, graphicMarkCanvas.height)
-    }
-    if (!excludes || excludes.indexOf('tooltip') < 0) {
-      ctx.drawImage(tooltipCanvas, 0, 0, tooltipCanvas.width, tooltipCanvas.height)
-    }
-    return c.toDataURL(`image/${type}`)
+
+    ctx.drawImage(
+      this._xAxisSeries.getImage(includeFloatLayer),
+      0, offsetTop, width, this._xAxisSeries.height()
+    )
+    return canvas.toDataURL(`image/${type}`)
   }
 
   destroy () {

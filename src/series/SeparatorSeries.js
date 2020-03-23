@@ -1,10 +1,12 @@
 import EventBase from '../event/EventBase'
+import { getPixelRatio } from '../utils/canvas'
 
 export default class SeparatorSeries {
   constructor (container, chartData, seriesIndex, dragEventHandler) {
     this._chartData = chartData
     this._seriesIndex = seriesIndex
-    this._excludeYAxisWidth = 0
+    this._width = 0
+    this._offsetLeft = 0
     this._dragEventHandler = dragEventHandler
     this._initElement(container)
   }
@@ -49,12 +51,22 @@ export default class SeparatorSeries {
   }
 
   /**
-   * 设置去除y轴的宽度
+   * 获取高度
+   * @returns {number}
+   */
+  height () {
+    return this._wrapper.offsetHeight
+  }
+
+  /**
+   * 设置尺寸
    * 用于fill属性
+   * @param offsetLeft
    * @param width
    */
-  setExcludeYAxisWidth (width) {
-    this._excludeYAxisWidth = width
+  setSize (offsetLeft, width) {
+    this._offsetLeft = offsetLeft
+    this._width = width
     this.invalidate()
   }
 
@@ -73,7 +85,29 @@ export default class SeparatorSeries {
     const separator = this._chartData.styleOptions().separator
     this._wrapper.style.backgroundColor = separator.color
     this._wrapper.style.height = `${separator.size}px`
-    this._wrapper.style.width = separator.fill ? '100%' : `${this._excludeYAxisWidth}px`
+    this._wrapper.style.marginLeft = `${separator.fill ? 0 : this._offsetLeft}px`
+    this._wrapper.style.width = separator.fill ? '100%' : `${this._width}px`
+  }
+
+  /**
+   * 将图形转换成图片
+   * @returns {HTMLCanvasElement}
+   */
+  getImage () {
+    const separator = this._chartData.styleOptions().separator
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    const pixelRatio = getPixelRatio(ctx)
+    const width = this._wrapper.offsetWidth
+    const height = separator.size
+    canvas.style.width = `${width}px`
+    canvas.style.height = `${height}px`
+    canvas.width = width * pixelRatio
+    canvas.height = height * pixelRatio
+    ctx.scale(pixelRatio, pixelRatio)
+    ctx.fillStyle = separator.color
+    ctx.fillRect(this._offsetLeft, 0, width, height)
+    return canvas
   }
 
   /**

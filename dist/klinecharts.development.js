@@ -2986,6 +2986,35 @@ function () {
   return ChartData;
 }();
 
+/**
+ * 获取屏幕比
+ * @param ctx
+ * @returns {number}
+ */
+function getPixelRatio(ctx) {
+  var backingStore = ctx.backingStorePixelRatio || ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio || ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio || ctx.backingStorePixelRatio || 1;
+  return (window.devicePixelRatio || 1) / backingStore;
+}
+/**
+ * 测量文字的宽度
+ * @param ctx
+ * @param text
+ * @returns {number}
+ */
+
+function calcTextWidth(ctx, text) {
+  return ctx.measureText(text).width;
+}
+/**
+ * 获取字体
+ * @param fontSize
+ * @returns {string}
+ */
+
+function getFont(fontSize) {
+  return "".concat(fontSize, "px Arial");
+}
+
 var Series =
 /*#__PURE__*/
 function () {
@@ -3158,6 +3187,33 @@ function () {
 
       this._mainWidget.invalidate(level);
     }
+  }, {
+    key: "getImage",
+    value: function getImage(includeFloatLayer, includeGraphicMark) {
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      var pixelRatio = getPixelRatio(ctx);
+      var width = this._element.offsetWidth;
+      var height = this._element.offsetHeight;
+      canvas.style.width = "".concat(width, "px");
+      canvas.style.height = "".concat(height, "px");
+      canvas.width = width * pixelRatio;
+      canvas.height = height * pixelRatio;
+      ctx.scale(pixelRatio, pixelRatio);
+      var mainWidgetWidth = this._mainWidgetCell.offsetWidth;
+      var mainWidgetHeight = this._mainWidgetCell.offsetHeight;
+      var mainWidgetOffsetLeft = Number(this._mainWidgetCell.style.left);
+      var yAxisWidgetWidth = this._yAxisWidgetCell.offsetWidth;
+      var yAxisWidgetHeight = this._yAxisWidgetCell.offsetHeight;
+      var yAxisWidgetOffsetLeft = Number(this._yAxisWidgetCell.style.left);
+      ctx.drawImage(this._mainWidget.getImage(includeFloatLayer, includeGraphicMark), mainWidgetOffsetLeft, 0, mainWidgetWidth, mainWidgetHeight);
+
+      if (this._yAxisWidget) {
+        ctx.drawImage(this._mainWidget.getImage(includeFloatLayer), yAxisWidgetOffsetLeft, 0, yAxisWidgetWidth, yAxisWidgetHeight);
+      }
+
+      return canvas;
+    }
     /**
      * 销毁
      */
@@ -3177,6 +3233,9 @@ var Widget =
 function () {
   function Widget(props) {
     _classCallCheck(this, Widget);
+
+    this._width = 0;
+    this._height = 0;
 
     this._initElement(props.container);
 
@@ -3240,6 +3299,8 @@ function () {
   }, {
     key: "setSize",
     value: function setSize(width, height) {
+      this._width = width;
+      this._height = height;
       this._element.style.width = "".concat(width, "px");
       this._element.style.height = "".concat(height, "px");
 
@@ -3278,39 +3339,40 @@ function () {
           }
       }
     }
+    /**
+     * 将widget转换成图片
+     * @param includeFloatLayer
+     * @param includeGraphicMark
+     * @returns {HTMLCanvasElement}
+     */
+
+  }, {
+    key: "getImage",
+    value: function getImage(includeFloatLayer, includeGraphicMark) {
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      var pixelRatio = getPixelRatio(ctx);
+      canvas.style.width = "".concat(this._width, "px");
+      canvas.style.height = "".concat(this._height, "px");
+      canvas.width = this._width * pixelRatio;
+      canvas.height = this._height * pixelRatio;
+      ctx.scale(pixelRatio, pixelRatio);
+      ctx.drawImage(this._mainView.getImage(), 0, 0, this._width, this._height);
+
+      if (includeGraphicMark && this._expandView) {
+        ctx.drawImage(this._expandView.getImage(), 0, 0, this._width, this._height);
+      }
+
+      if (includeFloatLayer) {
+        ctx.drawImage(this._floatLayerView.getImage(), 0, 0, this._width, this._height);
+      }
+
+      return canvas;
+    }
   }]);
 
   return Widget;
 }();
-
-/**
- * 获取屏幕比
- * @param ctx
- * @returns {number}
- */
-function getPixelRatio(ctx) {
-  var backingStore = ctx.backingStorePixelRatio || ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio || ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio || ctx.backingStorePixelRatio || 1;
-  return (window.devicePixelRatio || 1) / backingStore;
-}
-/**
- * 测量文字的宽度
- * @param ctx
- * @param text
- * @returns {number}
- */
-
-function calcTextWidth(ctx, text) {
-  return ctx.measureText(text).width;
-}
-/**
- * 获取字体
- * @param fontSize
- * @returns {string}
- */
-
-function getFont(fontSize) {
-  return "".concat(fontSize, "px Arial");
-}
 
 /**
  * requestAnimationFrame兼容
@@ -3431,6 +3493,16 @@ function () {
       this.requestAnimationId = requestAnimationFrame(function () {
         _this2._redraw();
       });
+    }
+    /**
+     * 获取图片
+     * @returns {HTMLCanvasElement}
+     */
+
+  }, {
+    key: "getImage",
+    value: function getImage() {
+      return this._canvas;
     }
   }]);
 
@@ -8942,7 +9014,8 @@ function () {
 
     this._chartData = chartData;
     this._seriesIndex = seriesIndex;
-    this._excludeYAxisWidth = 0;
+    this._width = 0;
+    this._offsetLeft = 0;
     this._dragEventHandler = dragEventHandler;
 
     this._initElement(container);
@@ -8997,15 +9070,27 @@ function () {
       this._dragEventHandler.drag(dragDistance, this._seriesIndex);
     }
     /**
-     * 设置去除y轴的宽度
+     * 获取高度
+     * @returns {number}
+     */
+
+  }, {
+    key: "height",
+    value: function height() {
+      return this._wrapper.offsetHeight;
+    }
+    /**
+     * 设置尺寸
      * 用于fill属性
+     * @param offsetLeft
      * @param width
      */
 
   }, {
-    key: "setExcludeYAxisWidth",
-    value: function setExcludeYAxisWidth(width) {
-      this._excludeYAxisWidth = width;
+    key: "setSize",
+    value: function setSize(offsetLeft, width) {
+      this._offsetLeft = offsetLeft;
+      this._width = width;
       this.invalidate();
     }
     /**
@@ -9029,7 +9114,32 @@ function () {
 
       this._wrapper.style.backgroundColor = separator.color;
       this._wrapper.style.height = "".concat(separator.size, "px");
-      this._wrapper.style.width = separator.fill ? '100%' : "".concat(this._excludeYAxisWidth, "px");
+      this._wrapper.style.marginLeft = "".concat(separator.fill ? 0 : this._offsetLeft, "px");
+      this._wrapper.style.width = separator.fill ? '100%' : "".concat(this._width, "px");
+    }
+    /**
+     * 将图形转换成图片
+     * @returns {HTMLCanvasElement}
+     */
+
+  }, {
+    key: "getImage",
+    value: function getImage() {
+      var separator = this._chartData.styleOptions().separator;
+
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      var pixelRatio = getPixelRatio(ctx);
+      var width = this._wrapper.offsetWidth;
+      var height = separator.size;
+      canvas.style.width = "".concat(width, "px");
+      canvas.style.height = "".concat(height, "px");
+      canvas.width = width * pixelRatio;
+      canvas.height = height * pixelRatio;
+      ctx.scale(pixelRatio, pixelRatio);
+      ctx.fillStyle = separator.color;
+      ctx.fillRect(this._offsetLeft, 0, width, height);
+      return canvas;
     }
     /**
      * 销毁
@@ -9860,7 +9970,7 @@ function () {
           width: yAxisWidth,
           height: technicalIndicatorSeriesHeight
         });
-        separatorSeries.setExcludeYAxisWidth(mainWidthWidth);
+        separatorSeries.setSize(mainOffsetLeft, mainWidthWidth);
         contentBottom += technicalIndicatorSeriesHeight;
         tags[technicalIndicatorSeries.tag()] = {
           contentTop: contentTop,
@@ -10130,55 +10240,49 @@ function () {
     }
     /**
      * 获取图表转换为图片后url
+     * @param includeFloatLayer,
+     * @param includeGraphicMark
      * @param type
-     * @param excludes
      */
 
   }, {
     key: "getConvertPictureUrl",
-    value: function getConvertPictureUrl() {
-      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'jpeg';
-      var excludes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+    value: function getConvertPictureUrl(includeFloatLayer, includeGraphicMark) {
+      var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'jpeg';
 
       if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
         throw new Error('Picture format only supports jpeg, png and bmp!!!');
       }
 
-      var c = document.createElement('canvas');
-      var xAxisCanvas = this.xAxisChart.canvasDom;
-      var candleCanvas = this.candleChart.canvasDom;
-      var volCanvas = this.volIndicatorChart.canvasDom;
-      var indicatorCanvas = this.subIndicatorChart.canvasDom;
-      var tooltipCanvas = this.tooltipChart.canvasDom;
-      c.width = tooltipCanvas.width;
-      c.height = tooltipCanvas.height;
-      c.style.width = tooltipCanvas.style.width;
-      c.style.height = tooltipCanvas.style.height;
-      var ctx = c.getContext('2d');
-      ctx.drawImage(xAxisCanvas, 0, 0, xAxisCanvas.width, xAxisCanvas.height);
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      var pixelRatio = getPixelRatio(ctx);
+      var width = this._container.offsetWidth;
+      var height = this._container.offsetHeight;
+      canvas.style.width = "".concat(width, "px");
+      canvas.style.height = "".concat(height, "px");
+      canvas.width = width * pixelRatio;
+      canvas.height = height * pixelRatio;
+      var offsetTop = 0;
 
-      if (!excludes || excludes.indexOf('candle') < 0) {
-        ctx.drawImage(candleCanvas, 0, 0, candleCanvas.width, candleCanvas.height);
+      var candleStickSeriesHeight = this._candleStickSeries.height();
+
+      ctx.drawImage(this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark), 0, offsetTop, width, candleStickSeriesHeight);
+      offsetTop += candleStickSeriesHeight;
+
+      for (var i = 0; i < this._separatorSeries.length; i++) {
+        var separatorSeries = this._separatorSeries[i];
+        var separatorSeriesHeight = separatorSeries.height();
+        var technicalIndicatorSeries = this._technicalIndicatorSeries[i];
+        var technicalIndicatorSeriesHeight = technicalIndicatorSeries.height();
+        ctx.drawImage(separatorSeries.getImage(), 0, offsetTop, width, separatorSeriesHeight);
+        offsetTop += separatorSeriesHeight;
+        ctx.drawImage(technicalIndicatorSeries.getImage(includeFloatLayer), 0, offsetTop, width, technicalIndicatorSeriesHeight);
+        offsetTop += technicalIndicatorSeriesHeight;
       }
 
-      if (!excludes || excludes.indexOf('vol') < 0) {
-        ctx.drawImage(volCanvas, 0, candleCanvas.height, volCanvas.width, volCanvas.height);
-      }
-
-      if (!excludes || excludes.indexOf('subIndicator') < 0) {
-        ctx.drawImage(indicatorCanvas, 0, candleCanvas.height + volCanvas.height, indicatorCanvas.width, indicatorCanvas.height);
-      }
-
-      if (!excludes || excludes.indexOf('graphicMark') < 0) {
-        var graphicMarkCanvas = this.graphicMarkChart.canvasDom;
-        ctx.drawImage(graphicMarkCanvas, 0, 0, graphicMarkCanvas.width, graphicMarkCanvas.height);
-      }
-
-      if (!excludes || excludes.indexOf('tooltip') < 0) {
-        ctx.drawImage(tooltipCanvas, 0, 0, tooltipCanvas.width, tooltipCanvas.height);
-      }
-
-      return c.toDataURL("image/".concat(type));
+      ctx.drawImage(this._xAxisSeries.getImage(includeFloatLayer), 0, offsetTop, width, this._xAxisSeries.height());
+      return canvas.toDataURL("image/".concat(type));
     }
   }, {
     key: "destroy",
@@ -10452,6 +10556,18 @@ function () {
       this._chartSeries.chartData().setGraphicMarkType(GraphicMarkType.NONE);
 
       this._chartSeries.chartData().setGraphicMarkData(newGraphicMarkDatas);
+    }
+    /**
+     * 获取将图表装换成图片后的url
+     * @param includeFloatLayer
+     * @param includeGraphicMark
+     * @param type
+     */
+
+  }, {
+    key: "getConvertPictureUrl",
+    value: function getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type) {
+      return this._chartSeries.getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type);
     }
     /**
      * 销毁

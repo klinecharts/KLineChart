@@ -1,7 +1,10 @@
 import { InvalidateLevel } from '../data/ChartData'
+import { getPixelRatio } from '../utils/canvas'
 
 export default class Widget {
   constructor (props) {
+    this._width = 0
+    this._height = 0
     this._initElement(props.container)
     this._mainView = this._createMainView(this._element, props)
     this._expandView = this._createExpandView(this._element, props)
@@ -52,6 +55,8 @@ export default class Widget {
    * @param height
    */
   setSize (width, height) {
+    this._width = width
+    this._height = height
     this._element.style.width = `${width}px`
     this._element.style.height = `${height}px`
     this._mainView.setSize(width, height)
@@ -77,5 +82,31 @@ export default class Widget {
         break
       }
     }
+  }
+
+  /**
+   * 将widget转换成图片
+   * @param includeFloatLayer
+   * @param includeGraphicMark
+   * @returns {HTMLCanvasElement}
+   */
+  getImage (includeFloatLayer, includeGraphicMark) {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    const pixelRatio = getPixelRatio(ctx)
+    canvas.style.width = `${this._width}px`
+    canvas.style.height = `${this._height}px`
+    canvas.width = this._width * pixelRatio
+    canvas.height = this._height * pixelRatio
+    ctx.scale(pixelRatio, pixelRatio)
+    ctx.drawImage(this._mainView.getImage(), 0, 0, this._width, this._height)
+
+    if (includeGraphicMark && this._expandView) {
+      ctx.drawImage(this._expandView.getImage(), 0, 0, this._width, this._height)
+    }
+    if (includeFloatLayer) {
+      ctx.drawImage(this._floatLayerView.getImage(), 0, 0, this._width, this._height)
+    }
+    return canvas
   }
 }

@@ -198,6 +198,16 @@ export default class Chart {
   }
 
   /**
+   * 获取将图表装换成图片后的url
+   * @param includeFloatLayer
+   * @param includeGraphicMark
+   * @param type
+   */
+  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type) {
+    return this._chartSeries.getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type)
+  }
+
+  /**
    * 销毁
    */
   destroy () {

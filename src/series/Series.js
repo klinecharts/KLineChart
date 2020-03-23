@@ -1,4 +1,5 @@
 import { InvalidateLevel } from '../data/ChartData'
+import { getPixelRatio } from '../utils/canvas'
 
 export default class Series {
   constructor (props) {
@@ -131,6 +132,41 @@ export default class Series {
       }
     }
     this._mainWidget.invalidate(level)
+  }
+
+  getImage (includeFloatLayer, includeGraphicMark) {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    const pixelRatio = getPixelRatio(ctx)
+    const width = this._element.offsetWidth
+    const height = this._element.offsetHeight
+    canvas.style.width = `${width}px`
+    canvas.style.height = `${height}px`
+    canvas.width = width * pixelRatio
+    canvas.height = height * pixelRatio
+    ctx.scale(pixelRatio, pixelRatio)
+
+    const mainWidgetWidth = this._mainWidgetCell.offsetWidth
+    const mainWidgetHeight = this._mainWidgetCell.offsetHeight
+    const mainWidgetOffsetLeft = Number(this._mainWidgetCell.style.left)
+
+    const yAxisWidgetWidth = this._yAxisWidgetCell.offsetWidth
+    const yAxisWidgetHeight = this._yAxisWidgetCell.offsetHeight
+    const yAxisWidgetOffsetLeft = Number(this._yAxisWidgetCell.style.left)
+
+    ctx.drawImage(
+      this._mainWidget.getImage(includeFloatLayer, includeGraphicMark),
+      mainWidgetOffsetLeft, 0,
+      mainWidgetWidth, mainWidgetHeight
+    )
+    if (this._yAxisWidget) {
+      ctx.drawImage(
+        this._mainWidget.getImage(includeFloatLayer),
+        yAxisWidgetOffsetLeft, 0,
+        yAxisWidgetWidth, yAxisWidgetHeight
+      )
+    }
+    return canvas
   }
 
   /**
