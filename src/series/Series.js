@@ -19,10 +19,9 @@ export default class Series {
     this._element = document.createElement('div')
     this._element.style.margin = '0'
     this._element.style.padding = '0'
-    this._element.style.width = '100%'
     this._element.style.position = 'relative'
     this._element.style.overflow = 'hidden'
-    this._width = this._element.offsetWidth
+    this._element.style.width = '100%'
     this._mainWidgetCell = this._createCell()
     this._yAxisWidgetCell = this._createCell()
     this._element.appendChild(this._mainWidgetCell)
@@ -37,6 +36,7 @@ export default class Series {
 
   _createCell () {
     const cell = document.createElement('div')
+    cell.style.display = 'table-cell'
     cell.style.position = 'absolute'
     cell.style.margin = '0'
     cell.style.padding = '0'
@@ -84,7 +84,7 @@ export default class Series {
    * @returns {number}
    */
   width () {
-    return this._width
+    return this._element.offsetWidth
   }
 
   /**
@@ -108,11 +108,11 @@ export default class Series {
    * @param yAxisWidgetSize
    */
   setSize (mainWidgetSize, yAxisWidgetSize) {
+    this._height = mainWidgetSize.height
     this._element.style.height = `${mainWidgetSize.height}px`
     this._setCellSize(this._mainWidgetCell, mainWidgetSize)
     this._setCellSize(this._yAxisWidgetCell, yAxisWidgetSize)
-    this._height = mainWidgetSize.height
-    this._mainWidget.setSize(mainWidgetSize.width, mainWidgetSize.height)
+    this._mainWidget.setSize(mainWidgetSize.width, this._height)
     if (this._yAxisWidget) {
       this._yAxisWidget.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height)
     }

@@ -57,7 +57,7 @@ export default class XAxis extends Axis {
       }
       for (let i = 0; i < tickLength; i += tickCountDif) {
         const v = ticks[i].v
-        const x = this.convertToPixel(v)
+        const x = this.convertToPixel(+v)
         if (x > defaultLabelWidth / 2 &&
           x < this._width - defaultLabelWidth / 2) {
           optimalTicks.push({ v, x })

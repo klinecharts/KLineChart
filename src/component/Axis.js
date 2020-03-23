@@ -70,7 +70,7 @@ export default class Axis {
       }
       f = first
       for (let i = 0; i < n; i++) {
-        ticks[i] = { v: +(f.toFixed(precision)) }
+        ticks[i] = { v: f.toFixed(precision) }
         f += interval
       }
     }

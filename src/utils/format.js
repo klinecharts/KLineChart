@@ -78,7 +78,7 @@ export function formatPrecision (value, precision = 2) {
  * @param value
  */
 export function formatBigNumber (value) {
-  if (isNumber(value)) {
+  if (isNumber(+value)) {
     if (value > 50000) {
       return `${+((value / 1000).toFixed(1))}K`
     }

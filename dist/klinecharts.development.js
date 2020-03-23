@@ -2247,7 +2247,7 @@ function formatPrecision(value) {
  */
 
 function formatBigNumber(value) {
-  if (isNumber(value)) {
+  if (isNumber(+value)) {
     if (value > 50000) {
       return "".concat(+(value / 1000).toFixed(1), "K");
     }
@@ -3043,10 +3043,9 @@ function () {
       this._element = document.createElement('div');
       this._element.style.margin = '0';
       this._element.style.padding = '0';
-      this._element.style.width = '100%';
       this._element.style.position = 'relative';
       this._element.style.overflow = 'hidden';
-      this._width = this._element.offsetWidth;
+      this._element.style.width = '100%';
       this._mainWidgetCell = this._createCell();
       this._yAxisWidgetCell = this._createCell();
 
@@ -3066,6 +3065,7 @@ function () {
     key: "_createCell",
     value: function _createCell() {
       var cell = document.createElement('div');
+      cell.style.display = 'table-cell';
       cell.style.position = 'absolute';
       cell.style.margin = '0';
       cell.style.padding = '0';
@@ -3123,7 +3123,7 @@ function () {
   }, {
     key: "width",
     value: function width() {
-      return this._width;
+      return this._element.offsetWidth;
     }
     /**
      * 获取高度
@@ -3153,15 +3153,14 @@ function () {
   }, {
     key: "setSize",
     value: function setSize(mainWidgetSize, yAxisWidgetSize) {
+      this._height = mainWidgetSize.height;
       this._element.style.height = "".concat(mainWidgetSize.height, "px");
 
       this._setCellSize(this._mainWidgetCell, mainWidgetSize);
 
       this._setCellSize(this._yAxisWidgetCell, yAxisWidgetSize);
 
-      this._height = mainWidgetSize.height;
-
-      this._mainWidget.setSize(mainWidgetSize.width, mainWidgetSize.height);
+      this._mainWidget.setSize(mainWidgetSize.width, this._height);
 
       if (this._yAxisWidget) {
         this._yAxisWidget.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height);
@@ -3256,6 +3255,8 @@ function () {
       this._element = document.createElement('div');
       this._element.style.margin = '0';
       this._element.style.padding = '0';
+      this._element.style.width = '100%';
+      this._element.style.height = '100%';
       this._element.style.position = 'relative';
       this._element.style.overflow = 'hidden';
       container.appendChild(this._element);
@@ -3301,8 +3302,6 @@ function () {
     value: function setSize(width, height) {
       this._width = width;
       this._height = height;
-      this._element.style.width = "".concat(width, "px");
-      this._element.style.height = "".concat(height, "px");
 
       this._mainView.setSize(width, height);
 
@@ -5110,7 +5109,7 @@ function () {
 
         for (var i = 0; i < n; i++) {
           ticks[i] = {
-            v: +f.toFixed(precision)
+            v: f.toFixed(precision)
           };
           f += interval;
         }
@@ -5220,7 +5219,7 @@ function (_Axis) {
       var min = this._minValue;
       var max = this._maxValue;
 
-      if (min === Infinity || max === -Infinity || max === 0 && min === 0) {
+      if (min === Infinity || max === -Infinity) {
         return {
           min: 0,
           max: 0,
@@ -5232,7 +5231,6 @@ function (_Axis) {
 
       if (range === 0) {
         max += 1;
-        min -= 1;
         range = Math.abs(max - min);
       } // 保证每次图形绘制上下都留间隙
 
@@ -5255,11 +5253,11 @@ function (_Axis) {
       if (tickLength > 0) {
         var textHeight = this._chartData.styleOptions().xAxis.tickText.size;
 
-        var y = this.convertToPixel(ticks[0].v);
+        var y = this.convertToPixel(+ticks[0].v);
         var tickCountDif = 1;
 
         if (tickLength > 1) {
-          var nextY = this.convertToPixel(ticks[1].v);
+          var nextY = this.convertToPixel(+ticks[1].v);
           var yDif = Math.abs(nextY - y);
 
           if (yDif < textHeight * 2) {
@@ -5270,7 +5268,7 @@ function (_Axis) {
         for (var i = 0; i < tickLength; i += tickCountDif) {
           var v = ticks[i].v;
 
-          var _y = this.convertToPixel(v);
+          var _y = this.convertToPixel(+v);
 
           if (_y > textHeight && _y < this._height - textHeight) {
             optimalTicks.push({
@@ -8910,7 +8908,7 @@ function (_Axis) {
         for (var i = 0; i < tickLength; i += tickCountDif) {
           var v = ticks[i].v;
 
-          var _x = this.convertToPixel(v);
+          var _x = this.convertToPixel(+v);
 
           if (_x > defaultLabelWidth / 2 && _x < this._width - defaultLabelWidth / 2) {
             optimalTicks.push({
@@ -9664,38 +9662,48 @@ function () {
   function ChartSeries(container, styleOptions) {
     _classCallCheck(this, ChartSeries);
 
-    container.style.position = 'relative';
-    container.style.outline = 'none';
-    container.style.borderStyle = 'none';
-    container.tabIndex = 1;
-    this._container = container;
+    this._initChartContainer(container);
+
     this._technicalIndicatorBaseId = 0;
     this._technicalIndicatorSeries = [];
     this._separatorSeries = [];
     this._separatorDragStartTechnicalIndicatorHeight = 0;
     this._chartData = new ChartData(styleOptions, this._updateSeries.bind(this));
     this._xAxisSeries = new XAxisSeries({
-      container: container,
+      container: this._chartContainer,
       chartData: this._chartData
     });
     this._candleStickSeries = new CandleStickSeries({
-      container: container,
+      container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisSeries.xAxis(),
       technicalIndicatorType: TechnicalIndicatorType.MA,
       tag: CANDLE_STICK_SERIES_TAG
     });
-    this._chartEvent = new ChartEvent(this._container, this._chartData, this._xAxisSeries.xAxis(), this._candleStickSeries.yAxis());
+    this._chartEvent = new ChartEvent(this._chartContainer, this._chartData, this._xAxisSeries.xAxis(), this._candleStickSeries.yAxis());
     this.measureSeriesSize();
   }
-  /**
-   * 分割线拖拽开始
-   * @param seriesIndex
-   * @private
-   */
-
 
   _createClass(ChartSeries, [{
+    key: "_initChartContainer",
+    value: function _initChartContainer(container) {
+      this._container = container;
+      this._chartContainer = document.createElement('div');
+      this._chartContainer.style.position = 'relative';
+      this._chartContainer.style.outline = 'none';
+      this._chartContainer.style.borderStyle = 'none';
+      this._chartContainer.style.width = '100%';
+      this._chartContainer.style.height = '100%';
+      this._chartContainer.tabIndex = 1;
+      container.appendChild(this._chartContainer);
+    }
+    /**
+     * 分割线拖拽开始
+     * @param seriesIndex
+     * @private
+     */
+
+  }, {
     key: "_separatorStartDrag",
     value: function _separatorStartDrag(seriesIndex) {
       this._separatorDragStartTechnicalIndicatorHeight = this._technicalIndicatorSeries[seriesIndex].height();
@@ -9885,8 +9893,8 @@ function () {
 
       var isYAxisLeft = yAxis.position === YAxisPosition.LEFT;
       var isYAxisTextOutsize = yAxis.tickText.position === YAxisTextPosition.OUTSIDE;
-      var seriesHeight = this._container.offsetHeight;
-      var seriesWidth = this._container.offsetWidth;
+      var seriesWidth = this._chartContainer.offsetWidth;
+      var seriesHeight = this._chartContainer.offsetHeight;
 
       var separatorHeight = this._measureSeparatorHeight();
 
@@ -10133,7 +10141,7 @@ function () {
       var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT;
       var technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length;
 
-      this._separatorSeries.push(new SeparatorSeries(this._container, this._chartData, technicalIndicatorSeriesCount, {
+      this._separatorSeries.push(new SeparatorSeries(this._chartContainer, this._chartData, technicalIndicatorSeriesCount, {
         startDrag: this._separatorStartDrag.bind(this),
         drag: this._separatorDrag.bind(this)
       }));
@@ -10141,7 +10149,7 @@ function () {
       this._technicalIndicatorBaseId++;
       var tag = "".concat(TECHNICAL_INDICATOR_NAME_PREFIX).concat(this._technicalIndicatorBaseId);
       var technicalIndicatorSeries = new TechnicalIndicatorSeries({
-        container: this._container,
+        container: this._chartContainer,
         chartData: this._chartData,
         xAxis: this._xAxisSeries.xAxis(),
         technicalIndicatorType: technicalIndicatorType,
@@ -10257,8 +10265,8 @@ function () {
       var canvas = document.createElement('canvas');
       var ctx = canvas.getContext('2d');
       var pixelRatio = getPixelRatio(ctx);
-      var width = this._container.offsetWidth;
-      var height = this._container.offsetHeight;
+      var width = this._chartContainer.offsetWidth;
+      var height = this._chartContainer.offsetHeight;
       canvas.style.width = "".concat(width, "px");
       canvas.style.height = "".concat(height, "px");
       canvas.width = width * pixelRatio;

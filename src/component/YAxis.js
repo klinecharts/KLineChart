@@ -32,14 +32,13 @@ export default class YAxis extends Axis {
   _computeMinMaxValue () {
     let min = this._minValue
     let max = this._maxValue
-    if (min === Infinity || max === -Infinity || (max === 0 && min === 0)) {
+    if (min === Infinity || max === -Infinity) {
       return { min: 0, max: 0, range: 0 }
     }
 
     let range = Math.abs(max - min)
     if (range === 0) {
       max += 1
-      min -= 1
       range = Math.abs(max - min)
     }
     // 保证每次图形绘制上下都留间隙
@@ -54,10 +53,10 @@ export default class YAxis extends Axis {
     const tickLength = ticks.length
     if (tickLength > 0) {
       const textHeight = this._chartData.styleOptions().xAxis.tickText.size
-      const y = this.convertToPixel(ticks[0].v)
+      const y = this.convertToPixel(+ticks[0].v)
       let tickCountDif = 1
       if (tickLength > 1) {
-        const nextY = this.convertToPixel(ticks[1].v)
+        const nextY = this.convertToPixel(+ticks[1].v)
         const yDif = Math.abs(nextY - y)
         if (yDif < textHeight * 2) {
           tickCountDif = Math.ceil(textHeight * 2 / yDif)
@@ -65,7 +64,7 @@ export default class YAxis extends Axis {
       }
       for (let i = 0; i < tickLength; i += tickCountDif) {
         const v = ticks[i].v
-        const y = this.convertToPixel(v)
+        const y = this.convertToPixel(+v)
         if (y > textHeight &&
           y < this._height - textHeight) {
           optimalTicks.push({ v, y })

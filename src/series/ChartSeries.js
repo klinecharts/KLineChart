@@ -20,30 +20,38 @@ export const CANDLE_STICK_SERIES_TAG = 'candle_stick_series_tag'
 
 export default class ChartSeries {
   constructor (container, styleOptions) {
-    container.style.position = 'relative'
-    container.style.outline = 'none'
-    container.style.borderStyle = 'none'
-    container.tabIndex = 1
-    this._container = container
+    this._initChartContainer(container)
     this._technicalIndicatorBaseId = 0
     this._technicalIndicatorSeries = []
     this._separatorSeries = []
     this._separatorDragStartTechnicalIndicatorHeight = 0
     this._chartData = new ChartData(styleOptions, this._updateSeries.bind(this))
-    this._xAxisSeries = new XAxisSeries({ container, chartData: this._chartData })
+    this._xAxisSeries = new XAxisSeries({ container: this._chartContainer, chartData: this._chartData })
     this._candleStickSeries = new CandleStickSeries({
-      container,
+      container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisSeries.xAxis(),
       technicalIndicatorType: TechnicalIndicatorType.MA,
       tag: CANDLE_STICK_SERIES_TAG
     })
     this._chartEvent = new ChartEvent(
-      this._container, this._chartData,
+      this._chartContainer, this._chartData,
       this._xAxisSeries.xAxis(),
       this._candleStickSeries.yAxis()
     )
     this.measureSeriesSize()
+  }
+
+  _initChartContainer (container) {
+    this._container = container
+    this._chartContainer = document.createElement('div')
+    this._chartContainer.style.position = 'relative'
+    this._chartContainer.style.outline = 'none'
+    this._chartContainer.style.borderStyle = 'none'
+    this._chartContainer.style.width = '100%'
+    this._chartContainer.style.height = '100%'
+    this._chartContainer.tabIndex = 1
+    container.appendChild(this._chartContainer)
   }
 
   /**
@@ -163,8 +171,8 @@ export default class ChartSeries {
     const yAxis = this._chartData.styleOptions().yAxis
     const isYAxisLeft = yAxis.position === YAxisPosition.LEFT
     const isYAxisTextOutsize = yAxis.tickText.position === YAxisTextPosition.OUTSIDE
-    const seriesHeight = this._container.offsetHeight
-    const seriesWidth = this._container.offsetWidth
+    const seriesWidth = this._chartContainer.offsetWidth
+    const seriesHeight = this._chartContainer.offsetHeight
     const separatorHeight = this._measureSeparatorHeight()
     const xAxisHeight = this._measureXAxisHeight()
     const yAxisWidth = this._measureYAxisWidth()
@@ -312,7 +320,7 @@ export default class ChartSeries {
     const technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length
     this._separatorSeries.push(
       new SeparatorSeries(
-        this._container, this._chartData,
+        this._chartContainer, this._chartData,
         technicalIndicatorSeriesCount, {
           startDrag: this._separatorStartDrag.bind(this),
           drag: this._separatorDrag.bind(this)
@@ -322,7 +330,7 @@ export default class ChartSeries {
     this._technicalIndicatorBaseId++
     const tag = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
     const technicalIndicatorSeries = new TechnicalIndicatorSeries({
-      container: this._container,
+      container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisSeries.xAxis(),
       technicalIndicatorType,
@@ -398,8 +406,8 @@ export default class ChartSeries {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(ctx)
-    const width = this._container.offsetWidth
-    const height = this._container.offsetHeight
+    const width = this._chartContainer.offsetWidth
+    const height = this._chartContainer.offsetHeight
     canvas.style.width = `${width}px`
     canvas.style.height = `${height}px`
     canvas.width = width * pixelRatio

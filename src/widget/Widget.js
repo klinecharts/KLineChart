@@ -20,6 +20,8 @@ export default class Widget {
     this._element = document.createElement('div')
     this._element.style.margin = '0'
     this._element.style.padding = '0'
+    this._element.style.width = '100%'
+    this._element.style.height = '100%'
     this._element.style.position = 'relative'
     this._element.style.overflow = 'hidden'
     container.appendChild(this._element)
@@ -57,8 +59,6 @@ export default class Widget {
   setSize (width, height) {
     this._width = width
     this._height = height
-    this._element.style.width = `${width}px`
-    this._element.style.height = `${height}px`
     this._mainView.setSize(width, height)
     this._floatLayerView.setSize(width, height)
   }
