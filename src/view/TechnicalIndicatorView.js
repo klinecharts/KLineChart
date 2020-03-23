@@ -400,9 +400,11 @@ export default class TechnicalIndicatorView extends View {
       if (barData < 0) {
         y = zeroY
       }
-      let barHeight = Math.abs(zeroY - dataY)
+      const yDif = zeroY - dataY
+      let barHeight = Math.abs(yDif)
       if (barHeight < 1) {
         barHeight = 1
+        y = barData < 0 ? y + 1 : y - 1
       }
       if (isFill) {
         this._ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight)

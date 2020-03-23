@@ -4032,10 +4032,12 @@ function (_View) {
           y = zeroY;
         }
 
-        var barHeight = Math.abs(zeroY - dataY);
+        var yDif = zeroY - dataY;
+        var barHeight = Math.abs(yDif);
 
         if (barHeight < 1) {
           barHeight = 1;
+          y = barData < 0 ? y + 1 : y - 1;
         }
 
         if (isFill) {
