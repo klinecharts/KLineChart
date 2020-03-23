@@ -99,6 +99,7 @@ export default class Widget {
     canvas.width = this._width * pixelRatio
     canvas.height = this._height * pixelRatio
     ctx.scale(pixelRatio, pixelRatio)
+
     ctx.drawImage(this._mainView.getImage(), 0, 0, this._width, this._height)
 
     if (includeGraphicMark && this._expandView) {

@@ -53,6 +53,7 @@ addTechnicalIndicator(technicalIndicatorType, height)
 removeTechnicalIndicator(tag)
 addGraphicMark(graphicMarkType)
 removeAllGraphicMark()
+getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type)
 ```
 
 ## Data Source

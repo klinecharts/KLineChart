@@ -3202,14 +3202,14 @@ function () {
       ctx.scale(pixelRatio, pixelRatio);
       var mainWidgetWidth = this._mainWidgetCell.offsetWidth;
       var mainWidgetHeight = this._mainWidgetCell.offsetHeight;
-      var mainWidgetOffsetLeft = Number(this._mainWidgetCell.style.left);
+      var mainWidgetOffsetLeft = parseInt(this._mainWidgetCell.style.left);
       var yAxisWidgetWidth = this._yAxisWidgetCell.offsetWidth;
       var yAxisWidgetHeight = this._yAxisWidgetCell.offsetHeight;
-      var yAxisWidgetOffsetLeft = Number(this._yAxisWidgetCell.style.left);
+      var yAxisWidgetOffsetLeft = parseInt(this._yAxisWidgetCell.style.left);
       ctx.drawImage(this._mainWidget.getImage(includeFloatLayer, includeGraphicMark), mainWidgetOffsetLeft, 0, mainWidgetWidth, mainWidgetHeight);
 
       if (this._yAxisWidget) {
-        ctx.drawImage(this._mainWidget.getImage(includeFloatLayer), yAxisWidgetOffsetLeft, 0, yAxisWidgetWidth, yAxisWidgetHeight);
+        ctx.drawImage(this._yAxisWidget.getImage(includeFloatLayer), yAxisWidgetOffsetLeft, 0, yAxisWidgetWidth, yAxisWidgetHeight);
       }
 
       return canvas;
@@ -10263,10 +10263,12 @@ function () {
       canvas.style.height = "".concat(height, "px");
       canvas.width = width * pixelRatio;
       canvas.height = height * pixelRatio;
+      ctx.scale(pixelRatio, pixelRatio);
       var offsetTop = 0;
 
       var candleStickSeriesHeight = this._candleStickSeries.height();
 
+      ctx.drawImage(this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark), 0, offsetTop, width, candleStickSeriesHeight);
       ctx.drawImage(this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark), 0, offsetTop, width, candleStickSeriesHeight);
       offsetTop += candleStickSeriesHeight;
 

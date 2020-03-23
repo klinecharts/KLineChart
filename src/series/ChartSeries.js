@@ -404,8 +404,13 @@ export default class ChartSeries {
     canvas.style.height = `${height}px`
     canvas.width = width * pixelRatio
     canvas.height = height * pixelRatio
+    ctx.scale(pixelRatio, pixelRatio)
     let offsetTop = 0
     const candleStickSeriesHeight = this._candleStickSeries.height()
+    ctx.drawImage(
+      this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark),
+      0, offsetTop, width, candleStickSeriesHeight
+    )
     ctx.drawImage(
       this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark),
       0, offsetTop, width, candleStickSeriesHeight

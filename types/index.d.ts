@@ -36,8 +36,6 @@ export interface KLineData {
 
 export type PictureType = 'png' | 'jpeg' | 'bmp';
 
-export type ChartComponentType = 'candle' | 'vol' | 'subIndicator' | 'tooltip' | 'graphicMark';
-
 export interface Chart {
   setStyleOptions(options: any): void;
   getStyleOptions(): any;
@@ -60,6 +58,7 @@ export interface Chart {
   removeTechnicalIndicator(tag: string): void;
   addGraphicMark(graphicMarkType: GraphicMarkType): void;
   removeAllGraphicMark(): void;
+  getConvertPictureUrl(includeFloatLayer: boolean, includeGraphicMark: boolean, type: PictureType): string;
 }
 
 export function version(): string;

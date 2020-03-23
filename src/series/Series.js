@@ -148,11 +148,11 @@ export default class Series {
 
     const mainWidgetWidth = this._mainWidgetCell.offsetWidth
     const mainWidgetHeight = this._mainWidgetCell.offsetHeight
-    const mainWidgetOffsetLeft = Number(this._mainWidgetCell.style.left)
+    const mainWidgetOffsetLeft = parseInt(this._mainWidgetCell.style.left)
 
     const yAxisWidgetWidth = this._yAxisWidgetCell.offsetWidth
     const yAxisWidgetHeight = this._yAxisWidgetCell.offsetHeight
-    const yAxisWidgetOffsetLeft = Number(this._yAxisWidgetCell.style.left)
+    const yAxisWidgetOffsetLeft = parseInt(this._yAxisWidgetCell.style.left)
 
     ctx.drawImage(
       this._mainWidget.getImage(includeFloatLayer, includeGraphicMark),
@@ -161,7 +161,7 @@ export default class Series {
     )
     if (this._yAxisWidget) {
       ctx.drawImage(
-        this._mainWidget.getImage(includeFloatLayer),
+        this._yAxisWidget.getImage(includeFloatLayer),
         yAxisWidgetOffsetLeft, 0,
         yAxisWidgetWidth, yAxisWidgetHeight
       )

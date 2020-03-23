@@ -139,6 +139,8 @@ removeTechnicalIndicator(tag)
 addGraphicMark(graphicMarkType)
 // 移除所有的图形标记
 removeAllGraphicMark()
+// 获取图表转换成图片后的图片url
+getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type)
 ```
 
 ## 数据源
