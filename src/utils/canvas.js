@@ -14,13 +14,6 @@ export function getPixelRatio (ctx) {
 }
 
 /**
- * 创建画布
- */
-export function createCanvas () {
-  const canvas = document.createElement('canvas')
-}
-
-/**
  * 测量文字的宽度
  * @param ctx
  * @param text
