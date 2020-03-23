@@ -30,7 +30,7 @@ export default class SeparatorSeries {
       container.appendChild(this._wrapper)
     }
     this._dragEvent = new EventBase(this._element, {
-      mouseLeftDownEvent: this._mouseLeftDownEvent.bind(this),
+      mouseDownEvent: this._mouseDownEvent.bind(this),
       pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
     }, {
       treatVertTouchDragAsPageScroll: false,
@@ -38,7 +38,7 @@ export default class SeparatorSeries {
     })
   }
 
-  _mouseLeftDownEvent (event) {
+  _mouseDownEvent (event) {
     this._startY = event.pageY
     this._dragEventHandler.startDrag(this._seriesIndex)
   }

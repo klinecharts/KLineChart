@@ -14,7 +14,7 @@ export default class ChartEvent {
       pinchEvent: this._pinchEvent.bind(this),
       mouseUpEvent: this._mouseUpEvent.bind(this),
       mouseClickEvent: this._mouseClickEvent.bind(this),
-      mouseLeftDownEvent: this._mouseLeftDownEvent.bind(this),
+      mouseDownEvent: this._mouseDownEvent.bind(this),
       mouseRightDownEvent: this._mouseRightDownEvent.bind(this),
       mouseLeaveEvent: this._mouseLeaveEvent.bind(this),
       mouseMoveEvent: this._mouseMoveEvent.bind(this),
@@ -75,10 +75,10 @@ export default class ChartEvent {
     }
   }
 
-  _mouseLeftDownEvent (event) {
-    this._graphicMarkEventHandler.mouseLeftDownEvent(event)
+  _mouseDownEvent (event) {
+    this._graphicMarkEventHandler.mouseDownEvent(event)
     if (this._checkZoomDrag()) {
-      this._zoomDragEventHandler.mouseLeftDownEvent(event)
+      this._zoomDragEventHandler.mouseDownEvent(event)
     }
   }
 

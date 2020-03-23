@@ -6801,68 +6801,74 @@ function () {
   }, {
     key: "_mouseDownHandler",
     value: function _mouseDownHandler(downEvent) {
+      if ('button' in downEvent && downEvent.button !== MouseEventButton.LEFT && downEvent.button !== MouseEventButton.RIGHT) {
+        return;
+      }
+
       var compatEvent = this._makeCompatEvent(downEvent);
 
-      if (downEvent.button === MouseEventButton.LEFT) {
-        this._cancelClick = false;
-        this._moveExceededManhattanDistance = false;
-        this._preventDragProcess = false;
+      if ('button' in downEvent && downEvent.button === MouseEventButton.RIGHT) {
+        this._processEvent(compatEvent, this._handler.mouseRightDownEvent);
 
-        if (isTouchEvent(downEvent)) {
-          this._mouseEnterHandler(downEvent);
-        }
+        return;
+      }
 
-        this._mouseMoveStartPosition = {
-          x: compatEvent.pageX,
-          y: compatEvent.pageY
+      this._cancelClick = false;
+      this._moveExceededManhattanDistance = false;
+      this._preventDragProcess = false;
+
+      if (isTouchEvent(downEvent)) {
+        this._mouseEnterHandler(downEvent);
+      }
+
+      this._mouseMoveStartPosition = {
+        x: compatEvent.pageX,
+        y: compatEvent.pageY
+      };
+
+      if (this._unsubscribeRoot) {
+        this._unsubscribeRoot();
+
+        this._unsubscribeRoot = null;
+      }
+
+      {
+        var boundMouseMoveWithDownHandler = this._mouseMoveWithDownHandler.bind(this);
+
+        var boundMouseUpHandler = this._mouseUpHandler.bind(this);
+
+        var rootElement = this._target.ownerDocument.documentElement;
+
+        this._unsubscribeRoot = function () {
+          rootElement.removeEventListener('touchmove', boundMouseMoveWithDownHandler);
+          rootElement.removeEventListener('touchend', boundMouseUpHandler);
+          rootElement.removeEventListener('mousemove', boundMouseMoveWithDownHandler);
+          rootElement.removeEventListener('mouseup', boundMouseUpHandler);
         };
 
-        if (this._unsubscribeRoot) {
-          this._unsubscribeRoot();
+        rootElement.addEventListener('touchmove', boundMouseMoveWithDownHandler, {
+          passive: false
+        });
+        rootElement.addEventListener('touchend', boundMouseUpHandler, {
+          passive: false
+        });
 
-          this._unsubscribeRoot = null;
+        this._clearLongTapTimeout();
+
+        if (isTouchEvent(downEvent) && downEvent.touches.length === 1) {
+          this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), DELAY_LONG_TAG);
+        } else {
+          rootElement.addEventListener('mousemove', boundMouseMoveWithDownHandler);
+          rootElement.addEventListener('mouseup', boundMouseUpHandler);
         }
+      }
+      this._mousePressed = true;
 
-        {
-          var boundMouseMoveWithDownHandler = this._mouseMoveWithDownHandler.bind(this);
+      this._processEvent(compatEvent, this._handler.mouseDownEvent);
 
-          var boundMouseUpHandler = this._mouseUpHandler.bind(this);
-
-          var rootElement = this._target.ownerDocument.documentElement;
-
-          this._unsubscribeRoot = function () {
-            rootElement.removeEventListener('touchmove', boundMouseMoveWithDownHandler);
-            rootElement.removeEventListener('touchend', boundMouseUpHandler);
-            rootElement.removeEventListener('mousemove', boundMouseMoveWithDownHandler);
-            rootElement.removeEventListener('mouseup', boundMouseUpHandler);
-          };
-
-          rootElement.addEventListener('touchmove', boundMouseMoveWithDownHandler, {
-            passive: false
-          });
-          rootElement.addEventListener('touchend', boundMouseUpHandler, {
-            passive: false
-          });
-
-          this._clearLongTapTimeout();
-
-          if (isTouchEvent(downEvent) && downEvent.touches.length === 1) {
-            this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), DELAY_LONG_TAG);
-          } else {
-            rootElement.addEventListener('mousemove', boundMouseMoveWithDownHandler);
-            rootElement.addEventListener('mouseup', boundMouseUpHandler);
-          }
-        }
-        this._mousePressed = true;
-
-        if (!this._clickTimeoutId) {
-          this._clickCount = 0;
-          this._clickTimeoutId = setTimeout(this._resetClickTimeout.bind(this), DELAY_RESET_CLICK);
-        }
-
-        this._processEvent(compatEvent, this._handler.mouseLeftDownEvent);
-      } else {
-        this._processEvent(compatEvent, this._handler.mouseRightDownEvent);
+      if (!this._clickTimeoutId) {
+        this._clickCount = 0;
+        this._clickTimeoutId = setTimeout(this._resetClickTimeout.bind(this), DELAY_RESET_CLICK);
       }
     }
   }, {
@@ -7164,8 +7170,8 @@ function (_EventHandler) {
      */
 
   }, {
-    key: "mouseLeftDownEvent",
-    value: function mouseLeftDownEvent(event) {
+    key: "mouseDownEvent",
+    value: function mouseDownEvent(event) {
       if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY)) {
         return;
       }
@@ -8969,7 +8975,7 @@ function () {
       }
 
       this._dragEvent = new EventBase(this._element, {
-        mouseLeftDownEvent: this._mouseLeftDownEvent.bind(this),
+        mouseDownEvent: this._mouseDownEvent.bind(this),
         pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
       }, {
         treatVertTouchDragAsPageScroll: false,
@@ -8977,8 +8983,8 @@ function () {
       });
     }
   }, {
-    key: "_mouseLeftDownEvent",
-    value: function _mouseLeftDownEvent(event) {
+    key: "_mouseDownEvent",
+    value: function _mouseDownEvent(event) {
       this._startY = event.pageY;
 
       this._dragEventHandler.startDrag(this._seriesIndex);
@@ -9175,8 +9181,8 @@ function (_EventHandler) {
       }
     }
   }, {
-    key: "mouseLeftDownEvent",
-    value: function mouseLeftDownEvent(event) {
+    key: "mouseDownEvent",
+    value: function mouseDownEvent(event) {
       this._startDragPoint = {
         x: event.localX,
         y: event.localY
@@ -9399,7 +9405,7 @@ function () {
       pinchEvent: this._pinchEvent.bind(this),
       mouseUpEvent: this._mouseUpEvent.bind(this),
       mouseClickEvent: this._mouseClickEvent.bind(this),
-      mouseLeftDownEvent: this._mouseLeftDownEvent.bind(this),
+      mouseDownEvent: this._mouseDownEvent.bind(this),
       mouseRightDownEvent: this._mouseRightDownEvent.bind(this),
       mouseLeaveEvent: this._mouseLeaveEvent.bind(this),
       mouseMoveEvent: this._mouseMoveEvent.bind(this),
@@ -9476,12 +9482,12 @@ function () {
       }
     }
   }, {
-    key: "_mouseLeftDownEvent",
-    value: function _mouseLeftDownEvent(event) {
-      this._graphicMarkEventHandler.mouseLeftDownEvent(event);
+    key: "_mouseDownEvent",
+    value: function _mouseDownEvent(event) {
+      this._graphicMarkEventHandler.mouseDownEvent(event);
 
       if (this._checkZoomDrag()) {
-        this._zoomDragEventHandler.mouseLeftDownEvent(event);
+        this._zoomDragEventHandler.mouseDownEvent(event);
       }
     }
   }, {

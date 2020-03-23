@@ -260,61 +260,64 @@ export default class EventBase {
   }
 
   _mouseDownHandler (downEvent) {
+    if ('button' in downEvent && downEvent.button !== MouseEventButton.LEFT && downEvent.button !== MouseEventButton.RIGHT) {
+      return
+    }
     const compatEvent = this._makeCompatEvent(downEvent)
-    if (downEvent.button === MouseEventButton.LEFT) {
-      this._cancelClick = false
-      this._moveExceededManhattanDistance = false
-      this._preventDragProcess = false
-
-      if (isTouchEvent(downEvent)) {
-        this._mouseEnterHandler(downEvent)
-      }
-
-      this._mouseMoveStartPosition = {
-        x: compatEvent.pageX,
-        y: compatEvent.pageY
-      }
-
-      if (this._unsubscribeRoot) {
-        this._unsubscribeRoot()
-        this._unsubscribeRoot = null
-      }
-
-      {
-        const boundMouseMoveWithDownHandler = this._mouseMoveWithDownHandler.bind(this)
-        const boundMouseUpHandler = this._mouseUpHandler.bind(this)
-        const rootElement = this._target.ownerDocument.documentElement
-
-        this._unsubscribeRoot = () => {
-          rootElement.removeEventListener('touchmove', boundMouseMoveWithDownHandler)
-          rootElement.removeEventListener('touchend', boundMouseUpHandler)
-
-          rootElement.removeEventListener('mousemove', boundMouseMoveWithDownHandler)
-          rootElement.removeEventListener('mouseup', boundMouseUpHandler)
-        }
-
-        rootElement.addEventListener('touchmove', boundMouseMoveWithDownHandler, { passive: false })
-        rootElement.addEventListener('touchend', boundMouseUpHandler, { passive: false })
-
-        this._clearLongTapTimeout()
-
-        if (isTouchEvent(downEvent) && downEvent.touches.length === 1) {
-          this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), DELAY_LONG_TAG)
-        } else {
-          rootElement.addEventListener('mousemove', boundMouseMoveWithDownHandler)
-          rootElement.addEventListener('mouseup', boundMouseUpHandler)
-        }
-      }
-
-      this._mousePressed = true
-
-      if (!this._clickTimeoutId) {
-        this._clickCount = 0
-        this._clickTimeoutId = setTimeout(this._resetClickTimeout.bind(this), DELAY_RESET_CLICK)
-      }
-      this._processEvent(compatEvent, this._handler.mouseLeftDownEvent)
-    } else {
+    if ('button' in downEvent && downEvent.button === MouseEventButton.RIGHT) {
       this._processEvent(compatEvent, this._handler.mouseRightDownEvent)
+      return
+    }
+    this._cancelClick = false
+    this._moveExceededManhattanDistance = false
+    this._preventDragProcess = false
+
+    if (isTouchEvent(downEvent)) {
+      this._mouseEnterHandler(downEvent)
+    }
+
+    this._mouseMoveStartPosition = {
+      x: compatEvent.pageX,
+      y: compatEvent.pageY
+    }
+
+    if (this._unsubscribeRoot) {
+      this._unsubscribeRoot()
+      this._unsubscribeRoot = null
+    }
+
+    {
+      const boundMouseMoveWithDownHandler = this._mouseMoveWithDownHandler.bind(this)
+      const boundMouseUpHandler = this._mouseUpHandler.bind(this)
+      const rootElement = this._target.ownerDocument.documentElement
+
+      this._unsubscribeRoot = () => {
+        rootElement.removeEventListener('touchmove', boundMouseMoveWithDownHandler)
+        rootElement.removeEventListener('touchend', boundMouseUpHandler)
+
+        rootElement.removeEventListener('mousemove', boundMouseMoveWithDownHandler)
+        rootElement.removeEventListener('mouseup', boundMouseUpHandler)
+      }
+
+      rootElement.addEventListener('touchmove', boundMouseMoveWithDownHandler, { passive: false })
+      rootElement.addEventListener('touchend', boundMouseUpHandler, { passive: false })
+
+      this._clearLongTapTimeout()
+
+      if (isTouchEvent(downEvent) && downEvent.touches.length === 1) {
+        this._longTapTimeoutId = setTimeout(this._longTapHandler.bind(this, downEvent), DELAY_LONG_TAG)
+      } else {
+        rootElement.addEventListener('mousemove', boundMouseMoveWithDownHandler)
+        rootElement.addEventListener('mouseup', boundMouseUpHandler)
+      }
+    }
+
+    this._mousePressed = true
+    this._processEvent(compatEvent, this._handler.mouseDownEvent)
+
+    if (!this._clickTimeoutId) {
+      this._clickCount = 0
+      this._clickTimeoutId = setTimeout(this._resetClickTimeout.bind(this), DELAY_RESET_CLICK)
     }
   }
 

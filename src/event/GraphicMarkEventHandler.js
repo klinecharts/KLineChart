@@ -57,7 +57,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
    * 鼠标按下事件
    * @param event
    */
-  mouseLeftDownEvent (event) {
+  mouseDownEvent (event) {
     if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY)) {
       return
     }
