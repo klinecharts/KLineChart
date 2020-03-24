@@ -5657,18 +5657,19 @@ function (_TechnicalIndicatorVi) {
           // 绘制均线
           _this._ctx.lineWidth = averageLine.size;
           _this._ctx.strokeStyle = averageLine.color;
+          strokeInPixel(_this._ctx, function () {
+            _this._ctx.beginPath();
 
-          _this._ctx.beginPath();
+            _this._ctx.moveTo(averageLinePoints[0].x, averageLinePoints[0].y);
 
-          _this._ctx.moveTo(averageLinePoints[0].x, averageLinePoints[0].y);
+            for (var _i = 1; _i < averageLinePoints.length; _i++) {
+              _this._ctx.lineTo(averageLinePoints[_i].x, averageLinePoints[_i].y);
+            }
 
-          for (var _i = 1; _i < averageLinePoints.length; _i++) {
-            _this._ctx.lineTo(averageLinePoints[_i].x, averageLinePoints[_i].y);
-          }
+            _this._ctx.stroke();
 
-          _this._ctx.stroke();
-
-          _this._ctx.closePath();
+            _this._ctx.closePath();
+          });
         }
       };
 

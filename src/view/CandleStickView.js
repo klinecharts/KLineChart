@@ -88,13 +88,15 @@ export default class CandleStickView extends TechnicalIndicatorView {
         // 绘制均线
         this._ctx.lineWidth = averageLine.size
         this._ctx.strokeStyle = averageLine.color
-        this._ctx.beginPath()
-        this._ctx.moveTo(averageLinePoints[0].x, averageLinePoints[0].y)
-        for (let i = 1; i < averageLinePoints.length; i++) {
-          this._ctx.lineTo(averageLinePoints[i].x, averageLinePoints[i].y)
-        }
-        this._ctx.stroke()
-        this._ctx.closePath()
+        strokeInPixel(this._ctx, () => {
+          this._ctx.beginPath()
+          this._ctx.moveTo(averageLinePoints[0].x, averageLinePoints[0].y)
+          for (let i = 1; i < averageLinePoints.length; i++) {
+            this._ctx.lineTo(averageLinePoints[i].x, averageLinePoints[i].y)
+          }
+          this._ctx.stroke()
+          this._ctx.closePath()
+        })
       }
     }
     this._drawGraphics(onDrawing, onDrawEnd)
