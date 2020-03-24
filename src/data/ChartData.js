@@ -45,6 +45,8 @@ export default class ChartData {
     this._technicalIndicatorParamOptions = clone(defaultTechnicalIndicatorParamOptions)
     // 精度配置
     this._precisionOptions = clone(defaultPrecisionOptions)
+    // 时区
+    this._timezone = null
 
     // 数据源
     this._dataList = []
@@ -171,24 +173,6 @@ export default class ChartData {
   }
 
   /**
-   * 将x转换成pos
-   * @param x
-   * @returns {number}
-   * @private
-   */
-  _xToPos (x) {
-    let range = x / this._dataSpace
-    const floorRange = Math.floor(range)
-    const spaceDif = (range - floorRange) * this._dataSpace
-    if (spaceDif < this._barSpace / 2) {
-      range = floorRange
-    } else {
-      range = Math.ceil(range)
-    }
-    return range
-  }
-
-  /**
    * 获取样式配置
    */
   styleOptions () {
@@ -222,6 +206,22 @@ export default class ChartData {
    */
   precisionOptions () {
     return this._precisionOptions
+  }
+
+  /**
+   * 设置时区
+   * @param timezone
+   */
+  setTimezone (timezone) {
+    this._timezone = timezone
+  }
+
+  /**
+   * 获取时区
+   * @returns {null}
+   */
+  timezone () {
+    return this._timezone
   }
 
   /**
@@ -433,24 +433,6 @@ export default class ChartData {
    */
   setCrossHairPoint (point) {
     this._crossHairPoint = point
-  }
-
-  /**
-   * 获取十字光标所在数据的位置
-   * @returns {number}
-   */
-  getCrossHairDataPos () {
-    let pos
-    if (!this._crossHairPoint) {
-      pos = this._to - 1
-    } else {
-      const range = this._xToPos(this._crossHairPoint.x)
-      pos = this._from + range - 1
-      if (pos > this._to - 1) {
-        pos = this._to - 1
-      }
-    }
-    return pos
   }
 
   /**

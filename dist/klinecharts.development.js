@@ -2171,56 +2171,81 @@ function formatValue(data, key) {
  * 格式化时间
  * @param timestamp
  * @param format
+ * @param timezone
  * @returns {string}
  */
 
-function formatDate(timestamp, format) {
+var locales = 'en-us';
+function formatDate(timestamp, format, timezone) {
   if (timestamp && isNumber(timestamp)) {
     var date = new Date(timestamp);
-    var year = date.getFullYear().toString();
-    var month = (date.getMonth() + 1).toString();
-    var day = date.getDate().toString();
-    var hours = date.getHours().toString();
-    var minutes = date.getMinutes().toString();
-    var monthText = month.length === 1 ? "0".concat(month) : month;
-    var dayText = day.length === 1 ? "0".concat(day) : day;
-    var hourText = hours.length === 1 ? '0' + hours : hours;
-    var minuteText = minutes.length === 1 ? '0' + minutes : minutes;
+    var dateTimeString;
+
+    try {
+      dateTimeString = new Intl.DateTimeFormat(locales, {
+        hour12: false,
+        timeZone: timezone,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      }).format(date);
+    } catch (e) {
+      dateTimeString = new Intl.DateTimeFormat(locales, {
+        hour12: false,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      }).format(date);
+    }
+
+    var dateString = dateTimeString.match(/^[\d]{1,2}\/[\d]{1,2}\/[\d]{4}/)[0];
+    var dateStringArray = dateString.split('/');
+    var month = "".concat(dateStringArray[0].length === 1 ? "0".concat(dateStringArray[0]) : dateStringArray[0]);
+    var day = "".concat(dateStringArray[1].length === 1 ? "0".concat(dateStringArray[1]) : dateStringArray[1]);
+    var timeString = dateTimeString.match(/[\d]{2}:[\d]{2}$/)[0]; // 这里将小时24转换成00
+
+    if (timeString.match(/^[\d]{2}/)[0] === '24') {
+      timeString = timeString.replace(/^[\d]{2}/, '00');
+    }
 
     switch (format) {
       case 'YYYY':
         {
-          return year;
+          return dateStringArray[2];
         }
 
       case 'YYYY-MM':
         {
-          return "".concat(year, "-").concat(monthText);
+          return "".concat(dateStringArray[2], "-").concat(month);
         }
 
       case 'YYYY-MM-DD':
         {
-          return "".concat(year, "-").concat(monthText, "-").concat(dayText);
+          return "".concat(dateStringArray[2], "-").concat(month, "-").concat(day);
         }
 
       case 'YYYY-MM-DD hh:mm':
         {
-          return "".concat(year, "-").concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
+          return "".concat(dateStringArray[2], "-").concat(month, "-").concat(day, " ").concat(timeString);
         }
 
       case 'MM-DD':
         {
-          return "".concat(monthText, "-").concat(dayText);
+          return "".concat(month, "-").concat(day);
         }
 
       case 'hh:mm':
         {
-          return "".concat(hourText, ":").concat(minuteText);
+          return timeString;
         }
 
       default:
         {
-          return "".concat(monthText, "-").concat(dayText, " ").concat(hourText, ":").concat(minuteText);
+          return "".concat(month, "-").concat(day, " ").concat(timeString);
         }
     }
   }
@@ -2301,7 +2326,9 @@ function () {
 
     this._technicalIndicatorParamOptions = clone(defaultTechnicalIndicatorParamOptions); // 精度配置
 
-    this._precisionOptions = clone(defaultPrecisionOptions); // 数据源
+    this._precisionOptions = clone(defaultPrecisionOptions); // 时区
+
+    this._timezone = null; // 数据源
 
     this._dataList = []; // 是否在加载中
 
@@ -2437,28 +2464,6 @@ function () {
       return true;
     }
     /**
-     * 将x转换成pos
-     * @param x
-     * @returns {number}
-     * @private
-     */
-
-  }, {
-    key: "_xToPos",
-    value: function _xToPos(x) {
-      var range = x / this._dataSpace;
-      var floorRange = Math.floor(range);
-      var spaceDif = (range - floorRange) * this._dataSpace;
-
-      if (spaceDif < this._barSpace / 2) {
-        range = floorRange;
-      } else {
-        range = Math.ceil(range);
-      }
-
-      return range;
-    }
-    /**
      * 获取样式配置
      */
 
@@ -2504,6 +2509,26 @@ function () {
     key: "precisionOptions",
     value: function precisionOptions() {
       return this._precisionOptions;
+    }
+    /**
+     * 设置时区
+     * @param timezone
+     */
+
+  }, {
+    key: "setTimezone",
+    value: function setTimezone(timezone) {
+      this._timezone = timezone;
+    }
+    /**
+     * 获取时区
+     * @returns {null}
+     */
+
+  }, {
+    key: "timezone",
+    value: function timezone() {
+      return this._timezone;
     }
     /**
      * 加载精度
@@ -2764,30 +2789,6 @@ function () {
     key: "setCrossHairPoint",
     value: function setCrossHairPoint(point) {
       this._crossHairPoint = point;
-    }
-    /**
-     * 获取十字光标所在数据的位置
-     * @returns {number}
-     */
-
-  }, {
-    key: "getCrossHairDataPos",
-    value: function getCrossHairDataPos() {
-      var pos;
-
-      if (!this._crossHairPoint) {
-        pos = this._to - 1;
-      } else {
-        var range = this._xToPos(this._crossHairPoint.x);
-
-        pos = this._from + range - 1;
-
-        if (pos > this._to - 1) {
-          pos = this._to - 1;
-        }
-      }
-
-      return pos;
     }
     /**
      * 开始拖拽
@@ -4170,7 +4171,15 @@ function (_View) {
   _createClass(TechnicalIndicatorFloatLayerView, [{
     key: "_draw",
     value: function _draw() {
-      var dataPos = this._chartData.getCrossHairDataPos();
+      var crossHairPoint = this._chartData.crossHairPoint();
+
+      var dataPos;
+
+      if (crossHairPoint) {
+        dataPos = this._xAxis.convertFromPixel(crossHairPoint.x);
+      } else {
+        dataPos = this._chartData.dataList().length - 1;
+      }
 
       var kLineData = this._chartData.dataList()[dataPos];
 
@@ -5356,7 +5365,7 @@ function (_Axis) {
   }, {
     key: "convertToPixel",
     value: function convertToPixel(value) {
-      return Math.floor((1.0 - (value - this._minValue) / this._range) * this._height);
+      return Math.round((1.0 - (value - this._minValue) / this._range) * this._height);
     }
   }]);
 
@@ -6234,6 +6243,8 @@ function (_TechnicalIndicatorFl) {
   }, {
     key: "_getCandleStickPromptData",
     value: function _getCandleStickPromptData(kLineData, floatLayerPromptCandleStick) {
+      var _this3 = this;
+
       var baseValues = floatLayerPromptCandleStick.values;
       var values = [];
 
@@ -6251,7 +6262,7 @@ function (_TechnicalIndicatorFl) {
           switch (index) {
             case 0:
               {
-                values[index] = formatDate(value, 'YYYY-MM-DD hh:mm');
+                values[index] = formatDate(value, 'YYYY-MM-DD hh:mm', _this3._chartData.timezone());
                 break;
               }
 
@@ -8682,37 +8693,12 @@ function (_AxisView) {
         labelY += tickLine.length;
       }
 
-      var dataList = this._chartData.dataList();
-
       var ticks = this._axis.ticks();
 
       var tickLength = ticks.length;
 
       for (var i = 0; i < tickLength; i++) {
-        var x = ticks[i].x;
-        var dataPos = parseInt(ticks[i].v);
-        var kLineData = dataList[dataPos];
-        var timestamp = kLineData.timestamp;
-        var dateText = formatDate(timestamp, this._axis.tickLabelFormatType());
-
-        if (i !== tickLength - 1) {
-          var nextDataPos = parseInt(ticks[i + 1].v);
-          var nextKLineData = dataList[nextDataPos];
-          var nextTimestamp = nextKLineData.timestamp;
-          var year = formatDate(timestamp, 'YYYY');
-          var month = formatDate(timestamp, 'YYYY-MM');
-          var day = formatDate(timestamp, 'MM-DD');
-
-          if (year !== formatDate(nextTimestamp, 'YYYY')) {
-            dateText = year;
-          } else if (month !== formatDate(nextTimestamp, 'YYYY-MM')) {
-            dateText = month;
-          } else if (day !== formatDate(nextTimestamp, 'MM-DD')) {
-            dateText = day;
-          }
-        }
-
-        this._ctx.fillText(dateText, x, labelY);
+        this._ctx.fillText(ticks[i].v, ticks[i].x, labelY);
       }
     }
   }]);
@@ -8747,7 +8733,15 @@ function (_AxisFloatLayerView) {
         return;
       }
 
-      var dataPos = this._chartData.getCrossHairDataPos();
+      var crossHairPoint = this._chartData.crossHairPoint();
+
+      var dataPos;
+
+      if (crossHairPoint) {
+        dataPos = this._axis.convertFromPixel(crossHairPoint.x);
+      } else {
+        dataPos = this._chartData.dataList().length - 1;
+      }
 
       var kLineData = this._chartData.dataList()[dataPos];
 
@@ -8758,7 +8752,7 @@ function (_AxisFloatLayerView) {
       var x = this._axis.convertToPixel(dataPos);
 
       var timestamp = kLineData.timestamp;
-      var text = formatDate(timestamp, 'YYYY-MM-DD hh:mm');
+      var text = formatDate(timestamp, 'YYYY-MM-DD hh:mm', this._chartData.timezone());
       var textSize = crossHairVerticalText.size;
       this._ctx.font = getFont(textSize);
       var labelWidth = calcTextWidth(this._ctx, text);
@@ -8873,6 +8867,8 @@ function (_Axis) {
       var dataList = this._chartData.dataList();
 
       if (tickLength > 0) {
+        var timezone = this._chartData.timezone();
+
         var fontSize = this._chartData.styleOptions().xAxis.tickText.size;
 
         this._measureCtx.font = getFont(fontSize);
@@ -8881,7 +8877,7 @@ function (_Axis) {
         var timestamp = formatValue(dataList[pos], 'timestamp', 0);
         var x = this.convertToPixel(pos);
         var tickCountDif = 1;
-        this._tickLabelFormatType = 'MM:DD hh:mm';
+        var tickLabelFormatType = 'MM:DD hh:mm';
 
         if (tickLength > 1) {
           var nextPos = parseInt(ticks[1].v);
@@ -8897,60 +8893,89 @@ function (_Axis) {
           var minuteDif = timeDif / 1000 / 60;
 
           if (minuteDif < 12 * 60) {
-            this._tickLabelFormatType = 'hh:mm';
+            tickLabelFormatType = 'hh:mm';
           } else if (minuteDif < 15 * 24 * 60) {
-            this._tickLabelFormatType = 'MM-DD';
+            tickLabelFormatType = 'MM-DD';
           } else if (minuteDif < 180 * 24 * 60) {
-            this._tickLabelFormatType = 'YYYY-MM';
+            tickLabelFormatType = 'YYYY-MM';
           } else {
-            this._tickLabelFormatType = 'YYYY';
+            tickLabelFormatType = 'YYYY';
           }
         }
 
         for (var i = 0; i < tickLength; i += tickCountDif) {
-          var v = ticks[i].v;
+          var _pos = parseInt(ticks[i].v);
 
-          var _x = this.convertToPixel(+v);
+          var kLineData = dataList[_pos];
+          var _timestamp = kLineData.timestamp;
+          var label = formatDate(_timestamp, tickLabelFormatType, timezone);
+
+          if (i <= tickLength - 1 - tickCountDif) {
+            var _nextPos = parseInt(ticks[i + tickCountDif].v);
+
+            var nextKLineData = dataList[_nextPos];
+            var _nextTimestamp = nextKLineData.timestamp;
+            var year = formatDate(_timestamp, 'YYYY', timezone);
+            var month = formatDate(_timestamp, 'YYYY-MM', timezone);
+            var day = formatDate(_timestamp, 'MM-DD', timezone);
+
+            if (year !== formatDate(_nextTimestamp, 'YYYY', timezone)) {
+              label = year;
+            } else if (month !== formatDate(_nextTimestamp, 'YYYY-MM', timezone)) {
+              label = month;
+            } else if (day !== formatDate(_nextTimestamp, 'MM-DD', timezone)) {
+              label = day;
+            }
+          }
+
+          var _x = this.convertToPixel(_pos);
 
           if (_x > defaultLabelWidth / 2 && _x < this._width - defaultLabelWidth / 2) {
             optimalTicks.push({
-              v: v,
+              v: label,
               x: _x
             });
           }
+        }
+
+        if (optimalTicks.length === 0) {
+          var _pos2 = parseInt(ticks[ticks.length - 1].v);
+
+          var _timestamp2 = dataList[_pos2].timestamp;
+
+          var _x2 = this.convertToPixel(_pos2);
+
+          optimalTicks.push({
+            v: formatDate(_timestamp2, 'MM-DD', timezone),
+            x: _x2
+          });
         }
       }
 
       return optimalTicks;
     }
   }, {
-    key: "tickLabelFormatType",
-    value: function tickLabelFormatType() {
-      return this._tickLabelFormatType;
-    }
-  }, {
     key: "convertFromPixel",
     value: function convertFromPixel(pixel) {
       var dataSpace = this._chartData.dataSpace();
 
-      var range = pixel / dataSpace;
-      var floorRange = Math.floor(range);
-      var spaceDif = (range - floorRange) * dataSpace;
+      var range = Math.ceil(pixel / dataSpace);
+      var dataPos = this._chartData.from() + range - 1;
 
-      if (spaceDif < this._chartData.barSpace() / 2) {
-        range = floorRange;
-      } else {
-        range = Math.ceil(range);
+      var to = this._chartData.to();
+
+      if (dataPos > to - 1) {
+        dataPos = to - 1;
       }
 
-      return this._chartData.from() + range - 1;
+      return dataPos;
     }
   }, {
     key: "convertToPixel",
     value: function convertToPixel(value) {
       var dataSpace = this._chartData.dataSpace();
 
-      return Math.floor((value - this._chartData.from()) * dataSpace + this._chartData.barSpace() / 2);
+      return Math.round((value - this._chartData.from()) * dataSpace + this._chartData.barSpace() / 2);
     }
   }]);
 
@@ -10377,6 +10402,16 @@ function () {
     key: "setPrecision",
     value: function setPrecision(pricePrecision, volumePrecision) {
       this._chartSeries.chartData().applyPrecision(pricePrecision, volumePrecision);
+    }
+    /**
+     * 设置时区
+     * @param timezone
+     */
+
+  }, {
+    key: "setTimezone",
+    value: function setTimezone(timezone) {
+      this._chartSeries.chartData().setTimezone(timezone);
     }
     /**
      * 重置尺寸，总是会填充父容器

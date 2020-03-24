@@ -97,6 +97,10 @@ setTechnicalIndicatorParams(technicalIndicatorType, params)
 getTechnicalIndicatorParamOptions()
 // 设置精度
 setPrecision(pricePrecision, volumePrecision)
+// 设置时区，如：'Asia/Shanghai'
+// 如果不设置会自动获取本机时区
+// 时区配置请自寻查找相关文档
+setTimezone(timezone)
 // 调整图表大小，总是会填充容器大小
 resize()
 // 设置图表右边可以空出来的间隙

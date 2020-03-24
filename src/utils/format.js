@@ -21,41 +21,53 @@ export function formatValue (data, key, defaultValue = '--') {
  * 格式化时间
  * @param timestamp
  * @param format
+ * @param timezone
  * @returns {string}
  */
-export function formatDate (timestamp, format) {
+const locales = 'en-us'
+export function formatDate (timestamp, format, timezone) {
   if (timestamp && isNumber(timestamp)) {
     const date = new Date(timestamp)
-    const year = date.getFullYear().toString()
-    const month = (date.getMonth() + 1).toString()
-    const day = date.getDate().toString()
-    const hours = date.getHours().toString()
-    const minutes = date.getMinutes().toString()
-    const monthText = month.length === 1 ? `0${month}` : month
-    const dayText = day.length === 1 ? `0${day}` : day
-    const hourText = hours.length === 1 ? '0' + hours : hours
-    const minuteText = minutes.length === 1 ? '0' + minutes : minutes
+    let dateTimeString
+    try {
+      dateTimeString = new Intl.DateTimeFormat(
+        locales, { hour12: false, timeZone: timezone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+      ).format(date)
+    } catch (e) {
+      dateTimeString = new Intl.DateTimeFormat(
+        locales, { hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+      ).format(date)
+    }
+    const dateString = dateTimeString.match(/^[\d]{1,2}\/[\d]{1,2}\/[\d]{4}/)[0]
+    const dateStringArray = dateString.split('/')
+    const month = `${dateStringArray[0].length === 1 ? `0${dateStringArray[0]}` : dateStringArray[0]}`
+    const day = `${dateStringArray[1].length === 1 ? `0${dateStringArray[1]}` : dateStringArray[1]}`
+    let timeString = dateTimeString.match(/[\d]{2}:[\d]{2}$/)[0]
+    // 这里将小时24转换成00
+    if (timeString.match(/^[\d]{2}/)[0] === '24') {
+      timeString = timeString.replace(/^[\d]{2}/, '00')
+    }
     switch (format) {
       case 'YYYY': {
-        return year
+        return dateStringArray[2]
       }
       case 'YYYY-MM': {
-        return `${year}-${monthText}`
+        return `${dateStringArray[2]}-${month}`
       }
       case 'YYYY-MM-DD': {
-        return `${year}-${monthText}-${dayText}`
+        return `${dateStringArray[2]}-${month}-${day}`
       }
       case 'YYYY-MM-DD hh:mm': {
-        return `${year}-${monthText}-${dayText} ${hourText}:${minuteText}`
+        return `${dateStringArray[2]}-${month}-${day} ${timeString}`
       }
       case 'MM-DD': {
-        return `${monthText}-${dayText}`
+        return `${month}-${day}`
       }
       case 'hh:mm': {
-        return `${hourText}:${minuteText}`
+        return timeString
       }
       default: {
-        return `${monthText}-${dayText} ${hourText}:${minuteText}`
+        return `${month}-${day} ${timeString}`
       }
     }
   }

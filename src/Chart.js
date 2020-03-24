@@ -49,6 +49,14 @@ export default class Chart {
   }
 
   /**
+   * 设置时区
+   * @param timezone
+   */
+  setTimezone (timezone) {
+    this._chartSeries.chartData().setTimezone(timezone)
+  }
+
+  /**
    * 重置尺寸，总是会填充父容器
    */
   resize () {

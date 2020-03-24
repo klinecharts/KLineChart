@@ -13,14 +13,20 @@ export default class XAxisFloatLayerView extends AxisFloatLayerView {
     if (!crossHair.display || !crossHairVertical.display || !crossHairVerticalText.display) {
       return
     }
-    const dataPos = this._chartData.getCrossHairDataPos()
+    const crossHairPoint = this._chartData.crossHairPoint()
+    let dataPos
+    if (crossHairPoint) {
+      dataPos = this._axis.convertFromPixel(crossHairPoint.x)
+    } else {
+      dataPos = this._chartData.dataList().length - 1
+    }
     const kLineData = this._chartData.dataList()[dataPos]
     if (!kLineData) {
       return
     }
     const x = this._axis.convertToPixel(dataPos)
     const timestamp = kLineData.timestamp
-    const text = formatDate(timestamp, 'YYYY-MM-DD hh:mm')
+    const text = formatDate(timestamp, 'YYYY-MM-DD hh:mm', this._chartData.timezone())
 
     const textSize = crossHairVerticalText.size
     this._ctx.font = getFont(textSize)

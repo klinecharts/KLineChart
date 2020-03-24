@@ -14,7 +14,13 @@ export default class TechnicalIndicatorFloatLayerView extends View {
   }
 
   _draw () {
-    const dataPos = this._chartData.getCrossHairDataPos()
+    const crossHairPoint = this._chartData.crossHairPoint()
+    let dataPos
+    if (crossHairPoint) {
+      dataPos = this._xAxis.convertFromPixel(crossHairPoint.x)
+    } else {
+      dataPos = this._chartData.dataList().length - 1
+    }
     const kLineData = this._chartData.dataList()[dataPos]
     const x = this._xAxis.convertToPixel(dataPos)
     this._drawCrossHairHorizontalLine()

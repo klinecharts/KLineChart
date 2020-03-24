@@ -37,6 +37,7 @@ getStyleOptions()
 setTechnicalIndicatorParams(technicalIndicatorType, params)
 getTechnicalIndicatorParamOptions()
 setPrecision(pricePrecision, volumePrecision)
+setTimezone(timezone)
 resize()
 setOffsetRightSpace(space)
 setDataSpace(space)
@@ -138,7 +139,6 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
 </table>
 
 ## Graphic Mark
-**Does not support mobile.**
 + [x] Horizontal straight line
 + [x] Vertical straight line
 + [x] Straight line

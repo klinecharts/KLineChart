@@ -1,6 +1,5 @@
 import AxisView from './AxisView'
 import { getFont } from '../utils/canvas'
-import { formatDate } from '../utils/format'
 
 export default class XAxisView extends AxisView {
   _drawAxisLine () {
@@ -61,31 +60,10 @@ export default class XAxisView extends AxisView {
     if (tickLine.display) {
       labelY += (tickLine.length)
     }
-    const dataList = this._chartData.dataList()
     const ticks = this._axis.ticks()
     const tickLength = ticks.length
     for (let i = 0; i < tickLength; i++) {
-      const x = ticks[i].x
-      const dataPos = parseInt(ticks[i].v)
-      const kLineData = dataList[dataPos]
-      const timestamp = kLineData.timestamp
-      let dateText = formatDate(timestamp, this._axis.tickLabelFormatType())
-      if (i !== tickLength - 1) {
-        const nextDataPos = parseInt(ticks[i + 1].v)
-        const nextKLineData = dataList[nextDataPos]
-        const nextTimestamp = nextKLineData.timestamp
-        const year = formatDate(timestamp, 'YYYY')
-        const month = formatDate(timestamp, 'YYYY-MM')
-        const day = formatDate(timestamp, 'MM-DD')
-        if (year !== formatDate(nextTimestamp, 'YYYY')) {
-          dateText = year
-        } else if (month !== formatDate(nextTimestamp, 'YYYY-MM')) {
-          dateText = month
-        } else if (day !== formatDate(nextTimestamp, 'MM-DD')) {
-          dateText = day
-        }
-      }
-      this._ctx.fillText(dateText, x, labelY)
+      this._ctx.fillText(ticks[i].v, ticks[i].x, labelY)
     }
   }
 }
