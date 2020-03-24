@@ -10673,8 +10673,6 @@ function () {
   return Chart;
 }();
 
-var DEV = process && process.env && process.env.NODE_ENV === 'development';
-
 var instances = {};
 var idBase = 1;
 var errorMessage = 'Chart version is 5.0.0. Root dom is null, can not initialize the chart!!!';
@@ -10713,7 +10711,7 @@ function init(ds) {
   var instance = instances[container.chart_id || ''];
 
   if (instance) {
-    if (DEV) {
+    {
       console.warn('The chart has been initialized on the dom！！！');
     }
 
