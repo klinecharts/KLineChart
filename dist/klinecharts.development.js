@@ -10367,7 +10367,7 @@ function () {
     value: function destroy() {
       this._candleStickSeries.destroy();
 
-      this._separatorSeries.forEach(function (series) {
+      this._technicalIndicatorSeries.forEach(function (series) {
         series.destroy();
       });
 
@@ -10376,6 +10376,8 @@ function () {
       });
 
       this._xAxisSeries.destroy();
+
+      this._container.removeChild(this._chartContainer);
 
       this._chartEvent.destroy();
     }
@@ -10671,10 +10673,11 @@ function () {
   return Chart;
 }();
 
-var DEV = process.env.NODE_ENV === 'development';
+var DEV = process && process.env && process.env.NODE_ENV === 'development';
 
 var instances = {};
 var idBase = 1;
+var errorMessage = 'Chart version is 5.0.0. Root dom is null, can not initialize the chart!!!';
 /**
  * 获取版本号
  * @returns {string}
@@ -10685,20 +10688,29 @@ function version() {
 }
 /**
  * 初始化
- * @param dom
+ * @param ds
  * @param style
- * @returns {RootChart}
+ * @returns {Chart}
  */
 
 
-function init(dom) {
+function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var container = ds;
 
-  if (!dom) {
-    throw new Error('Chart version is 5.0.0. Root dom is null, can not initialize the chart!!!');
+  if (!container) {
+    throw new Error(errorMessage);
   }
 
-  var instance = instances[dom.chart_id || ''];
+  if (typeof container === 'string') {
+    container = document.getElementById(ds) || document.getElementsByClassName(ds);
+  }
+
+  if (!container) {
+    throw new Error(errorMessage);
+  }
+
+  var instance = instances[container.chart_id || ''];
 
   if (instance) {
     if (DEV) {
@@ -10709,24 +10721,33 @@ function init(dom) {
   }
 
   var id = "k_line_chart_".concat(idBase++);
-  var chart = new Chart(dom, style);
+  var chart = new Chart(container, style);
   chart.id = id;
-  dom.chart_id = id;
+  container.chart_id = id;
   instances[id] = chart;
   return chart;
 }
 /**
  * 销毁
- * @param dc
+ * @param dcs
  */
 
 
-function dispose(dc) {
-  if (dc) {
-    var id = dc.chart_id;
+function dispose(dcs) {
+  if (dcs) {
+    var id;
 
-    if (!id && dc instanceof Chart) {
-      id = dc.id;
+    if (typeof dcs === 'string') {
+      dcs = document.getElementById(dcs) || document.getElementsByClassName(dcs);
+      id = dcs.chart_id;
+    }
+
+    if (!id) {
+      id = dcs.chart_id;
+    }
+
+    if (!id && dcs instanceof Chart) {
+      id = dcs.id;
     }
 
     if (id) {

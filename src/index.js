@@ -4,6 +4,8 @@ import { DEV } from './utils/env'
 const instances = {}
 let idBase = 1
 
+const errorMessage = 'Chart version is K_LINE_VERSION. Root dom is null, can not initialize the chart!!!'
+
 /**
  * 获取版本号
  * @returns {string}
@@ -14,15 +16,22 @@ function version () {
 
 /**
  * 初始化
- * @param dom
+ * @param ds
  * @param style
- * @returns {RootChart}
+ * @returns {Chart}
  */
-function init (dom, style = {}) {
-  if (!dom) {
-    throw new Error('Chart version is K_LINE_VERSION. Root dom is null, can not initialize the chart!!!')
+function init (ds, style = {}) {
+  let container = ds
+  if (!container) {
+    throw new Error(errorMessage)
   }
-  const instance = instances[dom.chart_id || '']
+  if (typeof container === 'string') {
+    container = document.getElementById(ds) || document.getElementsByClassName(ds)
+  }
+  if (!container) {
+    throw new Error(errorMessage)
+  }
+  const instance = instances[container.chart_id || '']
   if (instance) {
     if (DEV) {
       console.warn('The chart has been initialized on the dom！！！')
@@ -30,22 +39,29 @@ function init (dom, style = {}) {
     return instance
   }
   const id = `k_line_chart_${idBase++}`
-  const chart = new Chart(dom, style)
+  const chart = new Chart(container, style)
   chart.id = id
-  dom.chart_id = id
+  container.chart_id = id
   instances[id] = chart
   return chart
 }
 
 /**
  * 销毁
- * @param dc
+ * @param dcs
  */
-function dispose (dc) {
-  if (dc) {
-    let id = dc.chart_id
-    if (!id && dc instanceof Chart) {
-      id = dc.id
+function dispose (dcs) {
+  if (dcs) {
+    let id
+    if (typeof dcs === 'string') {
+      dcs = document.getElementById(dcs) || document.getElementsByClassName(dcs)
+      id = dcs.chart_id
+    }
+    if (!id) {
+      id = dcs.chart_id
+    }
+    if (!id && dcs instanceof Chart) {
+      id = dcs.id
     }
     if (id) {
       instances[id].destroy()

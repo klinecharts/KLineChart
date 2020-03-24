@@ -63,6 +63,6 @@ export interface Chart {
 
 export function version(): string;
 
-export function init(dom: HTMLDivElement, style?: any): Chart;
+export function init(ds: HTMLDivElement | string, style?: any): Chart;
 
-export function dispose(dc: HTMLDivElement | Chart): void;
+export function dispose(dcs: HTMLDivElement | Chart | string): void;

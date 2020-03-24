@@ -450,13 +450,14 @@ export default class ChartSeries {
 
   destroy () {
     this._candleStickSeries.destroy()
-    this._separatorSeries.forEach(series => {
+    this._technicalIndicatorSeries.forEach(series => {
       series.destroy()
     })
     this._separatorSeries.forEach(series => {
       series.destroy()
     })
     this._xAxisSeries.destroy()
+    this._container.removeChild(this._chartContainer)
     this._chartEvent.destroy()
     delete this
   }
