@@ -11,7 +11,13 @@ import {
 import { GraphicMarkType } from '../data/ChartData'
 import { GraphicMarkDrawStep } from '../event/GraphicMarkEventHandler'
 import { formatPrecision } from '../utils/format'
-import { getFont } from '../utils/canvas'
+import { drawHorizontalLine, drawVerticalLine, getFont, strokeInPixel } from '../utils/canvas'
+
+const LineType = {
+  COMMON: 0,
+  HORIZONTAL: 1,
+  VERTICAL: 2
+}
 
 export default class GraphicMarkView extends View {
   constructor (container, chartData, xAxis, yAxis) {
@@ -287,7 +293,8 @@ export default class GraphicMarkView extends View {
       })
       const linePoints = generatedLinePoints ? generatedLinePoints(circlePoints) : [circlePoints]
       this._drawGraphicMark(
-        graphicMark, linePoints, circlePoints, drawStep, checkPointOnLine,
+        graphicMark, linePoints, circlePoints, drawStep,
+        checkPointOnLine,
         isDrawPrice, pricePrecision, priceExtendsText
       )
     })
@@ -319,11 +326,28 @@ export default class GraphicMarkView extends View {
         if (drawStep !== GraphicMarkDrawStep.STEP_1) {
           this._ctx.strokeStyle = graphicMark.line.color
           this._ctx.lineWidth = graphicMark.line.size
-          this._ctx.beginPath()
-          this._ctx.moveTo(points[0].x, points[0].y)
-          this._ctx.lineTo(points[1].x, points[1].y)
-          this._ctx.stroke()
-          this._ctx.closePath()
+          const lineType = this._getLineType(points[0], points[1])
+          switch (lineType) {
+            case LineType.COMMON: {
+              strokeInPixel(this._ctx, () => {
+                this._ctx.beginPath()
+                this._ctx.moveTo(points[0].x, points[0].y)
+                this._ctx.lineTo(points[1].x, points[1].y)
+                this._ctx.stroke()
+                this._ctx.closePath()
+              })
+              break
+            }
+            case LineType.HORIZONTAL: {
+              drawHorizontalLine(this._ctx, points[0].y, points[0].x, points[1].x)
+              break
+            }
+            case LineType.VERTICAL: {
+              drawVerticalLine(this._ctx, points[0].x, points[0].y, points[1].y)
+              break
+            }
+            default: { break }
+          }
           // 渲染价格
           if (isDrawPrice) {
             const price = this._yAxis.convertFromPixel(points[0].y)
@@ -370,5 +394,21 @@ export default class GraphicMarkView extends View {
         this._ctx.stroke()
       }
     })
+  }
+
+  /**
+   * 获取绘制线类型
+   * @param point1
+   * @param point2
+   * @private
+   */
+  _getLineType (point1, point2) {
+    if (point1.x === point2.x) {
+      return LineType.VERTICAL
+    }
+    if (point1.y === point2.y) {
+      return LineType.HORIZONTAL
+    }
+    return LineType.COMMON
   }
 }

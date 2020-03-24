@@ -1,6 +1,6 @@
 import AxisView from './AxisView'
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
-import { calcTextWidth, getFont } from '../utils/canvas'
+import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
 
 export default class YAxisView extends AxisView {
@@ -17,21 +17,16 @@ export default class YAxisView extends AxisView {
     const lineSize = yAxis.axisLine.size
     this._ctx.strokeStyle = yAxis.axisLine.color
     this._ctx.lineWidth = lineSize
-    this._ctx.beginPath()
+    let x
     if (
       (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE) ||
       (yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE)
     ) {
-      const x = lineSize / 2
-      this._ctx.moveTo(x, 0)
-      this._ctx.lineTo(x, this._height)
+      x = 0
     } else {
-      const x = this._width - lineSize / 2
-      this._ctx.moveTo(x, 0)
-      this._ctx.lineTo(x, this._height)
+      x = this._width
     }
-    this._ctx.stroke()
-    this._ctx.closePath()
+    drawVerticalLine(this._ctx, x, 0, this._height)
   }
 
   _drawTickLines () {
@@ -64,12 +59,7 @@ export default class YAxisView extends AxisView {
       endX = startX - tickLineLength
     }
     this._axis.ticks().forEach(tick => {
-      const y = tick.y
-      this._ctx.beginPath()
-      this._ctx.moveTo(startX, y)
-      this._ctx.lineTo(endX, y)
-      this._ctx.stroke()
-      this._ctx.closePath()
+      drawHorizontalLine(this._ctx, tick.y, startX, endX)
     })
   }
 

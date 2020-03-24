@@ -1,6 +1,6 @@
 import TechnicalIndicatorView from './TechnicalIndicatorView'
 import { LineStyle, CandleStickStyle, ChartType } from '../data/options/styleOptions'
-import { getFont } from '../utils/canvas'
+import { drawHorizontalLine, drawVerticalLine, getFont, strokeInPixel } from '../utils/canvas'
 import { formatPrecision } from '../utils/format'
 
 export default class CandleStickView extends TechnicalIndicatorView {
@@ -61,13 +61,15 @@ export default class CandleStickView extends TechnicalIndicatorView {
         // 绘制分时线
         this._ctx.lineWidth = timeLine.size
         this._ctx.strokeStyle = timeLine.color
-        this._ctx.beginPath()
-        this._ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y)
-        for (let i = 1; i < timeLinePoints.length; i++) {
-          this._ctx.lineTo(timeLinePoints[i].x, timeLinePoints[i].y)
-        }
-        this._ctx.stroke()
-        this._ctx.closePath()
+        strokeInPixel(this._ctx, () => {
+          this._ctx.beginPath()
+          this._ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y)
+          for (let i = 1; i < timeLinePoints.length; i++) {
+            this._ctx.lineTo(timeLinePoints[i].x, timeLinePoints[i].y)
+          }
+          this._ctx.stroke()
+          this._ctx.closePath()
+        })
       }
 
       if (timeLineAreaPoints.length > 0) {
@@ -113,8 +115,8 @@ export default class CandleStickView extends TechnicalIndicatorView {
     const candleStick = this._chartData.styleOptions().candleStick
     const onDrawing = (x, i, kLineData, halfBarSpace, barSpace) => {
       const close = kLineData.close
-      const refKLineData = dataList[i - 1] || {}
-      const refClose = refKLineData.close || close
+      const preKLineData = dataList[i - 1] || {}
+      const preClose = preKLineData.close || close
       const high = kLineData.high
       const low = kLineData.low
       const open = kLineData.open
@@ -127,10 +129,10 @@ export default class CandleStickView extends TechnicalIndicatorView {
         markLowestPrice = low
         markLowestPriceX = x
       }
-      if (close > refClose) {
+      if (close > preClose) {
         this._ctx.strokeStyle = candleStick.bar.upColor
         this._ctx.fillStyle = candleStick.bar.upColor
-      } else if (close < refClose) {
+      } else if (close < preClose) {
         this._ctx.strokeStyle = candleStick.bar.downColor
         this._ctx.fillStyle = candleStick.bar.downColor
       } else {
@@ -160,17 +162,8 @@ export default class CandleStickView extends TechnicalIndicatorView {
           lowLine[0] = closeY
           rect = [x - halfBarSpace, openY, barSpace, 1]
         }
-        this._ctx.beginPath()
-        this._ctx.moveTo(x, highLine[0])
-        this._ctx.lineTo(x, highLine[1])
-        this._ctx.stroke()
-        this._ctx.closePath()
-
-        this._ctx.beginPath()
-        this._ctx.moveTo(x, lowLine[0])
-        this._ctx.lineTo(x, lowLine[1])
-        this._ctx.stroke()
-        this._ctx.closePath()
+        drawVerticalLine(this._ctx, x, highLine[0], highLine[1])
+        drawVerticalLine(this._ctx, x, lowLine[0], lowLine[1])
         if (rect[3] < 1) {
           rect[3] = 1
         }
@@ -184,7 +177,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
             break
           }
           case CandleStickStyle.UP_STROKE: {
-            if (close > refClose) {
+            if (close > preClose) {
               this._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3])
             } else {
               this._ctx.fillRect(rect[0], rect[1], rect[2], rect[3])
@@ -192,7 +185,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
             break
           }
           case CandleStickStyle.DOWN_STROKE: {
-            if (close > refClose) {
+            if (close > preClose) {
               this._ctx.fillRect(rect[0], rect[1], rect[2], rect[3])
             } else {
               this._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3])
@@ -203,7 +196,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
       } else {
         this._drawOhlc(
           halfBarSpace, x, kLineData,
-          refKLineData, candleStick.bar.upColor,
+          preKLineData, candleStick.bar.upColor,
           candleStick.bar.downColor, candleStick.bar.noChangeColor
         )
       }
@@ -261,35 +254,30 @@ export default class CandleStickView extends TechnicalIndicatorView {
   _drawLowestHighestPriceMark (priceMark, x, price, isHigh, pricePrecision) {
     const priceY = this._yAxis.convertToPixel(price)
     const startX = x
-    let startY = priceY + (isHigh ? -2 : 2)
+    const startY = priceY + (isHigh ? -2 : 2)
     this._ctx.textAlign = 'left'
     this._ctx.lineWidth = 1
     this._ctx.strokeStyle = priceMark.color
     this._ctx.fillStyle = priceMark.color
-    this._ctx.beginPath()
-    this._ctx.moveTo(startX, startY)
-    this._ctx.lineTo(startX - 2, startY + (isHigh ? -2 : 2))
-    this._ctx.stroke()
-    this._ctx.closePath()
 
-    this._ctx.beginPath()
-    this._ctx.moveTo(startX, startY)
-    this._ctx.lineTo(startX + 2, startY + (isHigh ? -2 : 2))
-    this._ctx.stroke()
-    this._ctx.closePath()
+    strokeInPixel(this._ctx, () => {
+      this._ctx.beginPath()
+      this._ctx.moveTo(startX, startY)
+      this._ctx.lineTo(startX - 2, startY + (isHigh ? -2 : 2))
+      this._ctx.stroke()
+      this._ctx.closePath()
+
+      this._ctx.beginPath()
+      this._ctx.moveTo(startX, startY)
+      this._ctx.lineTo(startX + 2, startY + (isHigh ? -2 : 2))
+      this._ctx.stroke()
+      this._ctx.closePath()
+    })
+
     // 绘制竖线
-    this._ctx.beginPath()
-    this._ctx.moveTo(startX, startY)
-    startY = startY + (isHigh ? -5 : 5)
-    this._ctx.lineTo(startX, startY)
-    this._ctx.stroke()
-    this._ctx.closePath()
-
-    this._ctx.beginPath()
-    this._ctx.moveTo(startX, startY)
-    this._ctx.lineTo(startX + 5, startY)
-    this._ctx.stroke()
-    this._ctx.closePath()
+    const y = startY + (isHigh ? -5 : 5)
+    drawVerticalLine(this._ctx, startX, startY, y)
+    drawHorizontalLine(this._ctx, y, startX + 5)
 
     this._ctx.font = getFont(priceMark.textSize)
     const text = formatPrecision(price, pricePrecision)
@@ -328,11 +316,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
     if (priceMarkLine.style === LineStyle.DASH) {
       this._ctx.setLineDash(priceMarkLine.dashValue)
     }
-    this._ctx.beginPath()
-    this._ctx.moveTo(0, priceY)
-    this._ctx.lineTo(this._width, priceY)
-    this._ctx.stroke()
-    this._ctx.closePath()
+    drawHorizontalLine(this._ctx, priceY, 0, this._width)
     this._ctx.setLineDash([])
   }
 }

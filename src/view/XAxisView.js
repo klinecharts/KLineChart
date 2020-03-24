@@ -1,5 +1,5 @@
 import AxisView from './AxisView'
-import { getFont } from '../utils/canvas'
+import { drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 
 export default class XAxisView extends AxisView {
   _drawAxisLine () {
@@ -7,15 +7,9 @@ export default class XAxisView extends AxisView {
     if (!xAxis.display || !xAxis.axisLine.display) {
       return
     }
-    const lineSize = xAxis.axisLine.size
-    const y = lineSize / 2
     this._ctx.strokeStyle = xAxis.axisLine.color
-    this._ctx.lineWidth = lineSize
-    this._ctx.beginPath()
-    this._ctx.moveTo(0, y)
-    this._ctx.lineTo(this._width, y)
-    this._ctx.stroke()
-    this._ctx.closePath()
+    this._ctx.lineWidth = xAxis.axisLine.size
+    drawHorizontalLine(this._ctx, 0, 0, this._width)
   }
 
   _drawTickLines () {
@@ -31,12 +25,7 @@ export default class XAxisView extends AxisView {
 
     const endY = startY + tickLine.length
     this._axis.ticks().forEach(tick => {
-      const x = tick.x
-      this._ctx.beginPath()
-      this._ctx.moveTo(x, startY)
-      this._ctx.lineTo(x, endY)
-      this._ctx.stroke()
-      this._ctx.closePath()
+      drawVerticalLine(this._ctx, tick.x, startY, endY)
     })
   }
 

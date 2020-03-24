@@ -1,6 +1,7 @@
 import View from './View'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 import { LineStyle } from '../data/options/styleOptions'
+import {drawHorizontalLine, drawVerticalLine, strokeInPixel} from '../utils/canvas'
 
 export default class TechnicalIndicatorView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
@@ -32,12 +33,7 @@ export default class TechnicalIndicatorView extends View {
         this._ctx.setLineDash(horizontalGrid.dashValue)
       }
       this._yAxis.ticks().forEach(tick => {
-        const y = tick.y
-        this._ctx.beginPath()
-        this._ctx.moveTo(0, y)
-        this._ctx.lineTo(this._width, y)
-        this._ctx.stroke()
-        this._ctx.closePath()
+        drawHorizontalLine(this._ctx, tick.y, 0, this._width)
       })
     }
 
@@ -51,12 +47,7 @@ export default class TechnicalIndicatorView extends View {
         this._ctx.setLineDash([])
       }
       this._xAxis.ticks().forEach(tick => {
-        const x = tick.x
-        this._ctx.beginPath()
-        this._ctx.moveTo(x, 0)
-        this._ctx.lineTo(x, this._height)
-        this._ctx.stroke()
-        this._ctx.closePath()
+        drawVerticalLine(this._ctx, tick.x, 0, this._height)
       })
     }
 
@@ -96,9 +87,9 @@ export default class TechnicalIndicatorView extends View {
         onDrawing = (x, i, kLineData, halfBarSpace) => {
           const macd = kLineData.macd || {}
           this._prepareLinePoints(x, [macd.diff, macd.dea], linePoints)
-          const refKLineData = dataList[i - 1] || {}
+          const preKLineData = dataList[i - 1] || {}
           const macdValue = macd.macd
-          const refMacdValue = (refKLineData.macd || {}).macd || -Infinity
+          const preMacdValue = (preKLineData.macd || {}).macd || -Infinity
           if (macdValue > 0) {
             this._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor
             this._ctx.fillStyle = technicalIndicatorOptions.bar.upColor
@@ -109,7 +100,7 @@ export default class TechnicalIndicatorView extends View {
             this._ctx.strokeStyle = technicalIndicatorOptions.bar.noChangeColor
             this._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor
           }
-          const isFill = !((refMacdValue || refMacdValue === 0) && macdValue > refMacdValue)
+          const isFill = !((preMacdValue || preMacdValue === 0) && macdValue > preMacdValue)
           this._drawBars(x, halfBarSpace, macdValue, isFill)
         }
         break
@@ -124,12 +115,12 @@ export default class TechnicalIndicatorView extends View {
             lineValues.push(vol[`ma${p}`])
           })
           this._prepareLinePoints(x, lineValues, linePoints)
-          const refKLineData = dataList[i - 1] || {}
+          const preKLineData = dataList[i - 1] || {}
           const close = kLineData.close
-          const refClose = (refKLineData || {}).close || close
-          if (close > refClose) {
+          const preClose = (preKLineData || {}).close || close
+          if (close > preClose) {
             this._ctx.fillStyle = technicalIndicatorOptions.bar.upColor
-          } else if (close < refClose) {
+          } else if (close < preClose) {
             this._ctx.fillStyle = technicalIndicatorOptions.bar.downColor
           } else {
             this._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor
@@ -338,10 +329,10 @@ export default class TechnicalIndicatorView extends View {
     }
     const dataList = this._chartData.dataList()
     if (!isCandleStick) {
-      const refKLineData = dataList[i - 1] || {}
+      const preKLineData = dataList[i - 1] || {}
       this._drawOhlc(
         halfBarSpace, x, kLineData,
-        refKLineData, technicalIndicatorOptions.bar.upColor,
+        preKLineData, technicalIndicatorOptions.bar.upColor,
         technicalIndicatorOptions.bar.downColor, technicalIndicatorOptions.bar.noChangeColor
       )
     }
@@ -375,19 +366,21 @@ export default class TechnicalIndicatorView extends View {
     const pointCount = linePoints.length
     const colorSize = (colors || []).length
     this._ctx.lineWidth = technicalIndicatorOptions.line.size
-    for (let i = 0; i < pointCount; i++) {
-      const points = linePoints[i]
-      if (points.length > 0) {
-        this._ctx.strokeStyle = colors[i % colorSize]
-        this._ctx.beginPath()
-        this._ctx.moveTo(points[0].x, points[0].y)
-        for (let j = 1; j < points.length; j++) {
-          this._ctx.lineTo(points[j].x, points[j].y)
+    strokeInPixel(this._ctx, () => {
+      for (let i = 0; i < pointCount; i++) {
+        const points = linePoints[i]
+        if (points.length > 0) {
+          this._ctx.strokeStyle = colors[i % colorSize]
+          this._ctx.beginPath()
+          this._ctx.moveTo(points[0].x, points[0].y)
+          for (let j = 1; j < points.length; j++) {
+            this._ctx.lineTo(points[j].x, points[j].y)
+          }
+          this._ctx.stroke()
+          this._ctx.closePath()
         }
-        this._ctx.stroke()
-        this._ctx.closePath()
       }
-    }
+    })
   }
 
   /**
@@ -425,44 +418,30 @@ export default class TechnicalIndicatorView extends View {
    * @param halfBarSpace
    * @param x
    * @param kLineData
-   * @param refKLineData
+   * @param preKLineData
    * @param upColor
    * @param downColor
    * @param noChangeColor
    * @private
    */
-  _drawOhlc (halfBarSpace, x, kLineData, refKLineData, upColor, downColor, noChangeColor) {
+  _drawOhlc (halfBarSpace, x, kLineData, preKLineData, upColor, downColor, noChangeColor) {
     const close = kLineData.close
     const openY = this._yAxis.convertToPixel(kLineData.open)
     const closeY = this._yAxis.convertToPixel(close)
     const highY = this._yAxis.convertToPixel(kLineData.high)
     const lowY = this._yAxis.convertToPixel(kLineData.low)
-    const refClose = (refKLineData || {}).close || close
-    if (close > refClose) {
+    const preClose = (preKLineData || {}).close || close
+    if (close > preClose) {
       this._ctx.strokeStyle = upColor
-    } else if (close < refClose) {
+    } else if (close < preClose) {
       this._ctx.strokeStyle = downColor
     } else {
       this._ctx.strokeStyle = noChangeColor
     }
     this._ctx.lineWidth = 1
-    this._ctx.beginPath()
-    this._ctx.moveTo(x, highY)
-    this._ctx.lineTo(x, lowY)
-    this._ctx.stroke()
-    this._ctx.closePath()
-
-    this._ctx.beginPath()
-    this._ctx.moveTo(x - halfBarSpace, openY)
-    this._ctx.lineTo(x, openY)
-    this._ctx.stroke()
-    this._ctx.closePath()
-
-    this._ctx.beginPath()
-    this._ctx.moveTo(x + halfBarSpace, closeY)
-    this._ctx.lineTo(x, closeY)
-    this._ctx.stroke()
-    this._ctx.closePath()
+    drawVerticalLine(this._ctx, x, highY, lowY)
+    drawHorizontalLine(this._ctx, openY, x - halfBarSpace, x)
+    drawHorizontalLine(this._ctx, closeY, x + halfBarSpace, x)
   }
 
   /**

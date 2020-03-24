@@ -3,7 +3,7 @@ import { FloatLayerPromptDisplayRule, LineStyle } from '../data/options/styleOpt
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 import { isArray } from '../utils/typeChecks'
 import { formatPrecision, formatValue } from '../utils/format'
-import { calcTextWidth, getFont } from '../utils/canvas'
+import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 
 export default class TechnicalIndicatorFloatLayerView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
@@ -66,11 +66,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     if (crossHairHorizontalLine.style === LineStyle.DASH) {
       this._ctx.setLineDash(crossHairHorizontalLine.dashValue)
     }
-    this._ctx.beginPath()
-    this._ctx.moveTo(0, crossHairPoint.y)
-    this._ctx.lineTo(this._width, crossHairPoint.y)
-    this._ctx.stroke()
-    this._ctx.closePath()
+    drawHorizontalLine(this._ctx, crossHairPoint.y, 0, this._width)
     this._ctx.setLineDash([])
   }
 
@@ -99,11 +95,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     if (crossHairVerticalLine.style === LineStyle.DASH) {
       this._ctx.setLineDash(crossHairVerticalLine.dashValue)
     }
-    this._ctx.beginPath()
-    this._ctx.moveTo(x, 0)
-    this._ctx.lineTo(x, this._height)
-    this._ctx.stroke()
-    this._ctx.closePath()
+    drawVerticalLine(this._ctx, x, 0, this._height)
     this._ctx.setLineDash([])
   }
 

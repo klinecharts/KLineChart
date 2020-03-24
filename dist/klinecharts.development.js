@@ -3022,6 +3022,54 @@ function calcTextWidth(ctx, text) {
 function getFont(fontSize) {
   return "".concat(fontSize, "px Arial");
 }
+/**
+ * 绘制水平直线
+ * @param ctx
+ * @param y
+ * @param left
+ * @param right
+ */
+
+function drawHorizontalLine(ctx, y, left, right) {
+  ctx.beginPath();
+  var correction = ctx.lineWidth % 2 ? 0.5 : 0;
+  ctx.moveTo(left, y + correction);
+  ctx.lineTo(right, y + correction);
+  ctx.stroke();
+  ctx.closePath();
+}
+/**
+ * 绘制垂直直线
+ * @param ctx
+ * @param x
+ * @param top
+ * @param bottom
+ */
+
+function drawVerticalLine(ctx, x, top, bottom) {
+  ctx.beginPath();
+  var correction = ctx.lineWidth % 2 ? 0.5 : 0;
+  ctx.moveTo(x + correction, top);
+  ctx.lineTo(x + correction, bottom);
+  ctx.stroke();
+  ctx.closePath();
+}
+/**
+ * 绘制线
+ * @param ctx
+ * @param drawFuc
+ */
+
+function strokeInPixel(ctx, drawFuc) {
+  ctx.save();
+
+  if (ctx.lineWidth % 2) {
+    ctx.translate(0.5, 0.5);
+  }
+
+  drawFuc();
+  ctx.restore();
+}
 
 var Series =
 /*#__PURE__*/
@@ -3567,17 +3615,7 @@ function (_View) {
         }
 
         this._yAxis.ticks().forEach(function (tick) {
-          var y = tick.y;
-
-          _this2._ctx.beginPath();
-
-          _this2._ctx.moveTo(0, y);
-
-          _this2._ctx.lineTo(_this2._width, y);
-
-          _this2._ctx.stroke();
-
-          _this2._ctx.closePath();
+          drawHorizontalLine(_this2._ctx, tick.y, 0, _this2._width);
         });
       }
 
@@ -3594,17 +3632,7 @@ function (_View) {
         }
 
         this._xAxis.ticks().forEach(function (tick) {
-          var x = tick.x;
-
-          _this2._ctx.beginPath();
-
-          _this2._ctx.moveTo(x, 0);
-
-          _this2._ctx.lineTo(x, _this2._height);
-
-          _this2._ctx.stroke();
-
-          _this2._ctx.closePath();
+          drawVerticalLine(_this2._ctx, tick.x, 0, _this2._height);
         });
       }
 
@@ -3655,9 +3683,9 @@ function (_View) {
 
               _this3._prepareLinePoints(x, [macd.diff, macd.dea], linePoints);
 
-              var refKLineData = dataList[i - 1] || {};
+              var preKLineData = dataList[i - 1] || {};
               var macdValue = macd.macd;
-              var refMacdValue = (refKLineData.macd || {}).macd || -Infinity;
+              var preMacdValue = (preKLineData.macd || {}).macd || -Infinity;
 
               if (macdValue > 0) {
                 _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor;
@@ -3670,7 +3698,7 @@ function (_View) {
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor;
               }
 
-              var isFill = !((refMacdValue || refMacdValue === 0) && macdValue > refMacdValue);
+              var isFill = !((preMacdValue || preMacdValue === 0) && macdValue > preMacdValue);
 
               _this3._drawBars(x, halfBarSpace, macdValue, isFill);
             };
@@ -3691,13 +3719,13 @@ function (_View) {
 
               _this3._prepareLinePoints(x, lineValues, linePoints);
 
-              var refKLineData = _dataList[i - 1] || {};
+              var preKLineData = _dataList[i - 1] || {};
               var close = kLineData.close;
-              var refClose = (refKLineData || {}).close || close;
+              var preClose = (preKLineData || {}).close || close;
 
-              if (close > refClose) {
+              if (close > preClose) {
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.upColor;
-              } else if (close < refClose) {
+              } else if (close < preClose) {
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.downColor;
               } else {
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor;
@@ -3954,9 +3982,9 @@ function (_View) {
       var dataList = this._chartData.dataList();
 
       if (!isCandleStick) {
-        var refKLineData = dataList[i - 1] || {};
+        var preKLineData = dataList[i - 1] || {};
 
-        this._drawOhlc(halfBarSpace, x, kLineData, refKLineData, technicalIndicatorOptions.bar.upColor, technicalIndicatorOptions.bar.downColor, technicalIndicatorOptions.bar.noChangeColor);
+        this._drawOhlc(halfBarSpace, x, kLineData, preKLineData, technicalIndicatorOptions.bar.upColor, technicalIndicatorOptions.bar.downColor, technicalIndicatorOptions.bar.noChangeColor);
       }
     }
     /**
@@ -3996,30 +4024,33 @@ function (_View) {
   }, {
     key: "_drawLines",
     value: function _drawLines(linePoints, technicalIndicatorOptions) {
+      var _this4 = this;
+
       var colors = technicalIndicatorOptions.line.colors;
       var pointCount = linePoints.length;
       var colorSize = (colors || []).length;
       this._ctx.lineWidth = technicalIndicatorOptions.line.size;
+      strokeInPixel(this._ctx, function () {
+        for (var i = 0; i < pointCount; i++) {
+          var points = linePoints[i];
 
-      for (var i = 0; i < pointCount; i++) {
-        var points = linePoints[i];
+          if (points.length > 0) {
+            _this4._ctx.strokeStyle = colors[i % colorSize];
 
-        if (points.length > 0) {
-          this._ctx.strokeStyle = colors[i % colorSize];
+            _this4._ctx.beginPath();
 
-          this._ctx.beginPath();
+            _this4._ctx.moveTo(points[0].x, points[0].y);
 
-          this._ctx.moveTo(points[0].x, points[0].y);
+            for (var j = 1; j < points.length; j++) {
+              _this4._ctx.lineTo(points[j].x, points[j].y);
+            }
 
-          for (var j = 1; j < points.length; j++) {
-            this._ctx.lineTo(points[j].x, points[j].y);
+            _this4._ctx.stroke();
+
+            _this4._ctx.closePath();
           }
-
-          this._ctx.stroke();
-
-          this._ctx.closePath();
         }
-      }
+      });
     }
     /**
      * 绘制柱状图
@@ -4065,7 +4096,7 @@ function (_View) {
      * @param halfBarSpace
      * @param x
      * @param kLineData
-     * @param refKLineData
+     * @param preKLineData
      * @param upColor
      * @param downColor
      * @param noChangeColor
@@ -4074,7 +4105,7 @@ function (_View) {
 
   }, {
     key: "_drawOhlc",
-    value: function _drawOhlc(halfBarSpace, x, kLineData, refKLineData, upColor, downColor, noChangeColor) {
+    value: function _drawOhlc(halfBarSpace, x, kLineData, preKLineData, upColor, downColor, noChangeColor) {
       var close = kLineData.close;
 
       var openY = this._yAxis.convertToPixel(kLineData.open);
@@ -4085,47 +4116,20 @@ function (_View) {
 
       var lowY = this._yAxis.convertToPixel(kLineData.low);
 
-      var refClose = (refKLineData || {}).close || close;
+      var preClose = (preKLineData || {}).close || close;
 
-      if (close > refClose) {
+      if (close > preClose) {
         this._ctx.strokeStyle = upColor;
-      } else if (close < refClose) {
+      } else if (close < preClose) {
         this._ctx.strokeStyle = downColor;
       } else {
         this._ctx.strokeStyle = noChangeColor;
       }
 
       this._ctx.lineWidth = 1;
-
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(x, highY);
-
-      this._ctx.lineTo(x, lowY);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
-
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(x - halfBarSpace, openY);
-
-      this._ctx.lineTo(x, openY);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
-
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(x + halfBarSpace, closeY);
-
-      this._ctx.lineTo(x, closeY);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
+      drawVerticalLine(this._ctx, x, highY, lowY);
+      drawHorizontalLine(this._ctx, openY, x - halfBarSpace, x);
+      drawHorizontalLine(this._ctx, closeY, x + halfBarSpace, x);
     }
     /**
      * 绘制图形
@@ -4261,15 +4265,7 @@ function (_View) {
         this._ctx.setLineDash(crossHairHorizontalLine.dashValue);
       }
 
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(0, crossHairPoint.y);
-
-      this._ctx.lineTo(this._width, crossHairPoint.y);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
+      drawHorizontalLine(this._ctx, crossHairPoint.y, 0, this._width);
 
       this._ctx.setLineDash([]);
     }
@@ -4307,15 +4303,7 @@ function (_View) {
         this._ctx.setLineDash(crossHairVerticalLine.dashValue);
       }
 
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(x, 0);
-
-      this._ctx.lineTo(x, this._height);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
+      drawVerticalLine(this._ctx, x, 0, this._height);
 
       this._ctx.setLineDash([]);
     }
@@ -4709,26 +4697,15 @@ function (_AxisView) {
       var lineSize = yAxis.axisLine.size;
       this._ctx.strokeStyle = yAxis.axisLine.color;
       this._ctx.lineWidth = lineSize;
-
-      this._ctx.beginPath();
+      var x;
 
       if (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE) {
-        var x = lineSize / 2;
-
-        this._ctx.moveTo(x, 0);
-
-        this._ctx.lineTo(x, this._height);
+        x = 0;
       } else {
-        var _x = this._width - lineSize / 2;
-
-        this._ctx.moveTo(_x, 0);
-
-        this._ctx.lineTo(_x, this._height);
+        x = this._width;
       }
 
-      this._ctx.stroke();
-
-      this._ctx.closePath();
+      drawVerticalLine(this._ctx, x, 0, this._height);
     }
   }, {
     key: "_drawTickLines",
@@ -4768,17 +4745,7 @@ function (_AxisView) {
       }
 
       this._axis.ticks().forEach(function (tick) {
-        var y = tick.y;
-
-        _this._ctx.beginPath();
-
-        _this._ctx.moveTo(startX, y);
-
-        _this._ctx.lineTo(endX, y);
-
-        _this._ctx.stroke();
-
-        _this._ctx.closePath();
+        drawHorizontalLine(_this._ctx, tick.y, startX, endX);
       });
     }
   }, {
@@ -5652,18 +5619,19 @@ function (_TechnicalIndicatorVi) {
           // 绘制分时线
           _this._ctx.lineWidth = timeLine.size;
           _this._ctx.strokeStyle = timeLine.color;
+          strokeInPixel(_this._ctx, function () {
+            _this._ctx.beginPath();
 
-          _this._ctx.beginPath();
+            _this._ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y);
 
-          _this._ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y);
+            for (var i = 1; i < timeLinePoints.length; i++) {
+              _this._ctx.lineTo(timeLinePoints[i].x, timeLinePoints[i].y);
+            }
 
-          for (var i = 1; i < timeLinePoints.length; i++) {
-            _this._ctx.lineTo(timeLinePoints[i].x, timeLinePoints[i].y);
-          }
+            _this._ctx.stroke();
 
-          _this._ctx.stroke();
-
-          _this._ctx.closePath();
+            _this._ctx.closePath();
+          });
         }
 
         if (timeLineAreaPoints.length > 0) {
@@ -5674,8 +5642,8 @@ function (_TechnicalIndicatorVi) {
 
           _this._ctx.moveTo(timeLineAreaPoints[0].x, timeLineAreaPoints[0].y);
 
-          for (var _i = 1; _i < timeLineAreaPoints.length; _i++) {
-            _this._ctx.lineTo(timeLineAreaPoints[_i].x, timeLineAreaPoints[_i].y);
+          for (var i = 1; i < timeLineAreaPoints.length; i++) {
+            _this._ctx.lineTo(timeLineAreaPoints[i].x, timeLineAreaPoints[i].y);
           }
 
           _this._ctx.closePath();
@@ -5694,8 +5662,8 @@ function (_TechnicalIndicatorVi) {
 
           _this._ctx.moveTo(averageLinePoints[0].x, averageLinePoints[0].y);
 
-          for (var _i2 = 1; _i2 < averageLinePoints.length; _i2++) {
-            _this._ctx.lineTo(averageLinePoints[_i2].x, averageLinePoints[_i2].y);
+          for (var _i = 1; _i < averageLinePoints.length; _i++) {
+            _this._ctx.lineTo(averageLinePoints[_i].x, averageLinePoints[_i].y);
           }
 
           _this._ctx.stroke();
@@ -5729,8 +5697,8 @@ function (_TechnicalIndicatorVi) {
 
       var onDrawing = function onDrawing(x, i, kLineData, halfBarSpace, barSpace) {
         var close = kLineData.close;
-        var refKLineData = dataList[i - 1] || {};
-        var refClose = refKLineData.close || close;
+        var preKLineData = dataList[i - 1] || {};
+        var preClose = preKLineData.close || close;
         var high = kLineData.high;
         var low = kLineData.low;
         var open = kLineData.open;
@@ -5745,10 +5713,10 @@ function (_TechnicalIndicatorVi) {
           markLowestPriceX = x;
         }
 
-        if (close > refClose) {
+        if (close > preClose) {
           _this2._ctx.strokeStyle = candleStick.bar.upColor;
           _this2._ctx.fillStyle = candleStick.bar.upColor;
-        } else if (close < refClose) {
+        } else if (close < preClose) {
           _this2._ctx.strokeStyle = candleStick.bar.downColor;
           _this2._ctx.fillStyle = candleStick.bar.downColor;
         } else {
@@ -5784,25 +5752,8 @@ function (_TechnicalIndicatorVi) {
             rect = [x - halfBarSpace, openY, barSpace, 1];
           }
 
-          _this2._ctx.beginPath();
-
-          _this2._ctx.moveTo(x, highLine[0]);
-
-          _this2._ctx.lineTo(x, highLine[1]);
-
-          _this2._ctx.stroke();
-
-          _this2._ctx.closePath();
-
-          _this2._ctx.beginPath();
-
-          _this2._ctx.moveTo(x, lowLine[0]);
-
-          _this2._ctx.lineTo(x, lowLine[1]);
-
-          _this2._ctx.stroke();
-
-          _this2._ctx.closePath();
+          drawVerticalLine(_this2._ctx, x, highLine[0], highLine[1]);
+          drawVerticalLine(_this2._ctx, x, lowLine[0], lowLine[1]);
 
           if (rect[3] < 1) {
             rect[3] = 1;
@@ -5825,7 +5776,7 @@ function (_TechnicalIndicatorVi) {
 
             case CandleStickStyle.UP_STROKE:
               {
-                if (close > refClose) {
+                if (close > preClose) {
                   _this2._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
                 } else {
                   _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
@@ -5836,7 +5787,7 @@ function (_TechnicalIndicatorVi) {
 
             case CandleStickStyle.DOWN_STROKE:
               {
-                if (close > refClose) {
+                if (close > preClose) {
                   _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
                 } else {
                   _this2._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
@@ -5846,7 +5797,7 @@ function (_TechnicalIndicatorVi) {
               }
           }
         } else {
-          _this2._drawOhlc(halfBarSpace, x, kLineData, refKLineData, candleStick.bar.upColor, candleStick.bar.downColor, candleStick.bar.noChangeColor);
+          _this2._drawOhlc(halfBarSpace, x, kLineData, preKLineData, candleStick.bar.upColor, candleStick.bar.downColor, candleStick.bar.noChangeColor);
         }
       };
 
@@ -5920,6 +5871,8 @@ function (_TechnicalIndicatorVi) {
   }, {
     key: "_drawLowestHighestPriceMark",
     value: function _drawLowestHighestPriceMark(priceMark, x, price, isHigh, pricePrecision) {
+      var _this3 = this;
+
       var priceY = this._yAxis.convertToPixel(price);
 
       var startX = x;
@@ -5928,50 +5881,31 @@ function (_TechnicalIndicatorVi) {
       this._ctx.lineWidth = 1;
       this._ctx.strokeStyle = priceMark.color;
       this._ctx.fillStyle = priceMark.color;
+      strokeInPixel(this._ctx, function () {
+        _this3._ctx.beginPath();
 
-      this._ctx.beginPath();
+        _this3._ctx.moveTo(startX, startY);
 
-      this._ctx.moveTo(startX, startY);
+        _this3._ctx.lineTo(startX - 2, startY + (isHigh ? -2 : 2));
 
-      this._ctx.lineTo(startX - 2, startY + (isHigh ? -2 : 2));
+        _this3._ctx.stroke();
 
-      this._ctx.stroke();
+        _this3._ctx.closePath();
 
-      this._ctx.closePath();
+        _this3._ctx.beginPath();
 
-      this._ctx.beginPath();
+        _this3._ctx.moveTo(startX, startY);
 
-      this._ctx.moveTo(startX, startY);
+        _this3._ctx.lineTo(startX + 2, startY + (isHigh ? -2 : 2));
 
-      this._ctx.lineTo(startX + 2, startY + (isHigh ? -2 : 2));
+        _this3._ctx.stroke();
 
-      this._ctx.stroke();
+        _this3._ctx.closePath();
+      }); // 绘制竖线
 
-      this._ctx.closePath(); // 绘制竖线
-
-
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(startX, startY);
-
-      startY = startY + (isHigh ? -5 : 5);
-
-      this._ctx.lineTo(startX, startY);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
-
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(startX, startY);
-
-      this._ctx.lineTo(startX + 5, startY);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
-
+      var y = startY + (isHigh ? -5 : 5);
+      drawVerticalLine(this._ctx, startX, startY, y);
+      drawHorizontalLine(this._ctx, y, startX + 5);
       this._ctx.font = getFont(priceMark.textSize);
       var text = formatPrecision(price, pricePrecision);
       this._ctx.textBaseline = 'middle';
@@ -6023,15 +5957,7 @@ function (_TechnicalIndicatorVi) {
         this._ctx.setLineDash(priceMarkLine.dashValue);
       }
 
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(0, priceY);
-
-      this._ctx.lineTo(this._width, priceY);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
+      drawHorizontalLine(this._ctx, priceY, 0, this._width);
 
       this._ctx.setLineDash([]);
     }
@@ -8078,6 +8004,12 @@ function (_EventHandler) {
   return GraphicMarkEventHandler;
 }(EventHandler);
 
+var LineType = {
+  COMMON: 0,
+  HORIZONTAL: 1,
+  VERTICAL: 2
+};
+
 var GraphicMarkView =
 /*#__PURE__*/
 function (_View) {
@@ -8452,15 +8384,42 @@ function (_View) {
             _this13._ctx.strokeStyle = graphicMark.line.color;
             _this13._ctx.lineWidth = graphicMark.line.size;
 
-            _this13._ctx.beginPath();
+            var lineType = _this13._getLineType(points[0], points[1]);
 
-            _this13._ctx.moveTo(points[0].x, points[0].y);
+            switch (lineType) {
+              case LineType.COMMON:
+                {
+                  strokeInPixel(_this13._ctx, function () {
+                    _this13._ctx.beginPath();
 
-            _this13._ctx.lineTo(points[1].x, points[1].y);
+                    _this13._ctx.moveTo(points[0].x, points[0].y);
 
-            _this13._ctx.stroke();
+                    _this13._ctx.lineTo(points[1].x, points[1].y);
 
-            _this13._ctx.closePath(); // 渲染价格
+                    _this13._ctx.stroke();
+
+                    _this13._ctx.closePath();
+                  });
+                  break;
+                }
+
+              case LineType.HORIZONTAL:
+                {
+                  drawHorizontalLine(_this13._ctx, points[0].y, points[0].x, points[1].x);
+                  break;
+                }
+
+              case LineType.VERTICAL:
+                {
+                  drawVerticalLine(_this13._ctx, points[0].x, points[0].y, points[1].y);
+                  break;
+                }
+
+              default:
+                {
+                  break;
+                }
+            } // 渲染价格
 
 
             if (isDrawPrice) {
@@ -8525,6 +8484,26 @@ function (_View) {
           _this13._ctx.stroke();
         }
       });
+    }
+    /**
+     * 获取绘制线类型
+     * @param point1
+     * @param point2
+     * @private
+     */
+
+  }, {
+    key: "_getLineType",
+    value: function _getLineType(point1, point2) {
+      if (point1.x === point2.x) {
+        return LineType.VERTICAL;
+      }
+
+      if (point1.y === point2.y) {
+        return LineType.HORIZONTAL;
+      }
+
+      return LineType.COMMON;
     }
   }]);
 
@@ -8661,20 +8640,9 @@ function (_AxisView) {
         return;
       }
 
-      var lineSize = xAxis.axisLine.size;
-      var y = lineSize / 2;
       this._ctx.strokeStyle = xAxis.axisLine.color;
-      this._ctx.lineWidth = lineSize;
-
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(0, y);
-
-      this._ctx.lineTo(this._width, y);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
+      this._ctx.lineWidth = xAxis.axisLine.size;
+      drawHorizontalLine(this._ctx, 0, 0, this._width);
     }
   }, {
     key: "_drawTickLines",
@@ -8695,17 +8663,7 @@ function (_AxisView) {
       var endY = startY + tickLine.length;
 
       this._axis.ticks().forEach(function (tick) {
-        var x = tick.x;
-
-        _this._ctx.beginPath();
-
-        _this._ctx.moveTo(x, startY);
-
-        _this._ctx.lineTo(x, endY);
-
-        _this._ctx.stroke();
-
-        _this._ctx.closePath();
+        drawVerticalLine(_this._ctx, tick.x, startY, endY);
       });
     }
   }, {
