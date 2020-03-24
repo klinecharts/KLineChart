@@ -335,7 +335,7 @@ var defaultCandleStick = {
     /**
      * 无变化时颜色
      */
-    noChangeColor: '#505050'
+    noChangeColor: '#666666'
   },
   priceMark: {
     display: true,
@@ -355,7 +355,7 @@ var defaultCandleStick = {
       display: true,
       upColor: '#26A69A',
       downColor: '#EF5350',
-      noChangeColor: '#505050',
+      noChangeColor: '#666666',
       line: {
         display: true,
         style: LineStyle.DASH,
@@ -404,7 +404,7 @@ var defaultTechnicalIndicator = {
   bar: {
     upColor: '#26A69A',
     downColor: '#EF5350',
-    noChangeColor: '#505050'
+    noChangeColor: '#666666'
   },
   line: {
     size: 1,

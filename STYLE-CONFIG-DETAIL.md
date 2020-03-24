@@ -26,7 +26,7 @@ config = {
       style: 'solid',
       upColor: '#26A69A',
       downColor: '#EF5350',
-      noChangeColor: '#505050'
+      noChangeColor: '#666666'
     },
     priceMark: {
       display: true,
@@ -46,7 +46,7 @@ config = {
         display: true,
         upColor: '#26A69A',
         downColor: '#EF5350',
-        noChangeColor: '#505050',
+        noChangeColor: '#666666',
         line: {
           display: true,
           // 'solid'|'dash'
@@ -82,7 +82,7 @@ config = {
     bar: {
       upColor: '#26A69A',
       downColor: '#EF5350',
-      noChangeColor: '#505050'
+      noChangeColor: '#666666'
     },
     line: {
       size: 1,
