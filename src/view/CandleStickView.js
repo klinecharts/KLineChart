@@ -279,12 +279,12 @@ export default class CandleStickView extends TechnicalIndicatorView {
     // 绘制竖线
     const y = startY + (isHigh ? -5 : 5)
     drawVerticalLine(this._ctx, startX, startY, y)
-    drawHorizontalLine(this._ctx, y, startX + 5)
+    drawHorizontalLine(this._ctx, y, startX, startX + 5)
 
     this._ctx.font = getFont(priceMark.textSize)
     const text = formatPrecision(price, pricePrecision)
     this._ctx.textBaseline = 'middle'
-    this._ctx.fillText(text, startX + 5 + priceMark.textMargin, startY)
+    this._ctx.fillText(text, startX + 5 + priceMark.textMargin, y)
   }
 
   /**
