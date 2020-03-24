@@ -112,11 +112,11 @@ export default class CandleStickView extends TechnicalIndicatorView {
     const dataList = this._chartData.dataList()
     const candleStick = this._chartData.styleOptions().candleStick
     const onDrawing = (x, i, kLineData, halfBarSpace, barSpace) => {
+      const close = kLineData.close
       const refKLineData = dataList[i - 1] || {}
-      const refClose = refKLineData.close || -Infinity
+      const refClose = refKLineData.close || close
       const high = kLineData.high
       const low = kLineData.low
-      const close = kLineData.close
       const open = kLineData.open
       if (markHighestPrice < high) {
         markHighestPrice = high
@@ -130,9 +130,12 @@ export default class CandleStickView extends TechnicalIndicatorView {
       if (close > refClose) {
         this._ctx.strokeStyle = candleStick.bar.upColor
         this._ctx.fillStyle = candleStick.bar.upColor
-      } else {
+      } else if (close < refClose) {
         this._ctx.strokeStyle = candleStick.bar.downColor
         this._ctx.fillStyle = candleStick.bar.downColor
+      } else {
+        this._ctx.strokeStyle = candleStick.bar.noChangeColor
+        this._ctx.fillStyle = candleStick.bar.noChangeColor
       }
 
       if (candleStick.bar.style !== CandleStickStyle.OHLC) {
@@ -200,7 +203,8 @@ export default class CandleStickView extends TechnicalIndicatorView {
       } else {
         this._drawOhlc(
           halfBarSpace, x, kLineData,
-          refKLineData, candleStick.bar.upColor, candleStick.bar.downColor
+          refKLineData, candleStick.bar.upColor,
+          candleStick.bar.downColor, candleStick.bar.noChangeColor
         )
       }
     }
@@ -305,12 +309,19 @@ export default class CandleStickView extends TechnicalIndicatorView {
     if (!priceMark.display || !lastPriceMark.display || !lastPriceMark.line.display || dataSize === 0) {
       return
     }
-    const preKLineData = dataList[dataSize - 2] || {}
-    const preLastPrice = preKLineData.close || -Infinity
     const lastPrice = dataList[dataSize - 1].close
+    const preKLineData = dataList[dataSize - 2] || {}
+    const preLastPrice = preKLineData.close || lastPrice
     let priceY = this._yAxis.convertToPixel(lastPrice)
     priceY = +(Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98))).toFixed(0)
-    const color = lastPrice > preLastPrice ? lastPriceMark.upColor : lastPriceMark.downColor
+    let color
+    if (lastPrice > preLastPrice) {
+      color = lastPriceMark.upColor
+    } else if (lastPrice < preLastPrice) {
+      color = lastPriceMark.downColor
+    } else {
+      color = lastPriceMark.noChangeColor
+    }
     const priceMarkLine = lastPriceMark.line
     this._ctx.strokeStyle = color
     this._ctx.lineWidth = priceMarkLine.size

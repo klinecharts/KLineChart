@@ -133,12 +133,19 @@ export default class YAxisView extends AxisView {
     if (!priceMark.display || !lastPriceMark.display || !lastPriceMark.text.display || dataSize === 0) {
       return
     }
-    const preKLineData = dataList[dataSize - 2] || {}
-    const preLastPrice = preKLineData.close || -Infinity
     const lastPrice = dataList[dataSize - 1].close
+    const preKLineData = dataList[dataSize - 2] || {}
+    const preLastPrice = preKLineData.close || lastPrice
     let priceY = this._axis.convertToPixel(lastPrice)
     priceY = +(Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98))).toFixed(0)
-    const color = lastPrice > preLastPrice ? lastPriceMark.upColor : lastPriceMark.downColor
+    let color
+    if (lastPrice > preLastPrice) {
+      color = lastPriceMark.upColor
+    } else if (lastPrice < preLastPrice) {
+      color = lastPriceMark.downColor
+    } else {
+      color = lastPriceMark.noChangeColor
+    }
     const priceMarkText = lastPriceMark.text
     const text = formatPrecision(lastPrice, this._chartData.precisionOptions().price)
     const textSize = lastPriceMark.text.size

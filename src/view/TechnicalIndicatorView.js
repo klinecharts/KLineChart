@@ -102,9 +102,12 @@ export default class TechnicalIndicatorView extends View {
           if (macdValue > 0) {
             this._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor
             this._ctx.fillStyle = technicalIndicatorOptions.bar.upColor
-          } else {
+          } else if (macdValue < 0) {
             this._ctx.strokeStyle = technicalIndicatorOptions.bar.downColor
             this._ctx.fillStyle = technicalIndicatorOptions.bar.downColor
+          } else {
+            this._ctx.strokeStyle = technicalIndicatorOptions.bar.noChangeColor
+            this._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor
           }
           const isFill = !((refMacdValue || refMacdValue === 0) && macdValue > refMacdValue)
           this._drawBars(x, halfBarSpace, macdValue, isFill)
@@ -123,11 +126,13 @@ export default class TechnicalIndicatorView extends View {
           this._prepareLinePoints(x, lineValues, linePoints)
           const refKLineData = dataList[i - 1] || {}
           const close = kLineData.close
-          const refClose = (refKLineData || {}).close || -Infinity
+          const refClose = (refKLineData || {}).close || close
           if (close > refClose) {
             this._ctx.fillStyle = technicalIndicatorOptions.bar.upColor
-          } else {
+          } else if (close < refClose) {
             this._ctx.fillStyle = technicalIndicatorOptions.bar.downColor
+          } else {
+            this._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor
           }
           this._drawBars(x, halfBarSpace, vol.num, true)
         }
@@ -336,7 +341,8 @@ export default class TechnicalIndicatorView extends View {
       const refKLineData = dataList[i - 1] || {}
       this._drawOhlc(
         halfBarSpace, x, kLineData,
-        refKLineData, technicalIndicatorOptions.bar.upColor, technicalIndicatorOptions.bar.downColor
+        refKLineData, technicalIndicatorOptions.bar.upColor,
+        technicalIndicatorOptions.bar.downColor, technicalIndicatorOptions.bar.noChangeColor
       )
     }
   }
@@ -420,19 +426,24 @@ export default class TechnicalIndicatorView extends View {
    * @param x
    * @param kLineData
    * @param refKLineData
-   * @param increasingColor
-   * @param decreasingColor
+   * @param upColor
+   * @param downColor
+   * @param noChangeColor
    * @private
    */
-  _drawOhlc (halfBarSpace, x, kLineData, refKLineData, increasingColor, decreasingColor) {
+  _drawOhlc (halfBarSpace, x, kLineData, refKLineData, upColor, downColor, noChangeColor) {
+    const close = kLineData.close
     const openY = this._yAxis.convertToPixel(kLineData.open)
-    const closeY = this._yAxis.convertToPixel(kLineData.close)
+    const closeY = this._yAxis.convertToPixel(close)
     const highY = this._yAxis.convertToPixel(kLineData.high)
     const lowY = this._yAxis.convertToPixel(kLineData.low)
-    if (kLineData.close > refKLineData.close) {
-      this._ctx.strokeStyle = increasingColor
+    const refClose = (refKLineData || {}).close || close
+    if (close > refClose) {
+      this._ctx.strokeStyle = upColor
+    } else if (close < refClose) {
+      this._ctx.strokeStyle = downColor
     } else {
-      this._ctx.strokeStyle = decreasingColor
+      this._ctx.strokeStyle = noChangeColor
     }
     this._ctx.lineWidth = 1
     this._ctx.beginPath()

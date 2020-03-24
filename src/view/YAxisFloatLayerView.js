@@ -18,9 +18,9 @@ export default class YAxisFloatLayerView extends AxisFloatLayerView {
     if (!crossHairPoint) {
       return
     }
-    const price = this._axis.convertFromPixel(crossHairPoint.y)
-    const precision = this._chartData.precisionOptions[this._axis.isCandleStickYAxis() ? 'price' : this._additionalDataProvider.technicalIndicatorType()]
-    const yAxisDataLabel = formatPrecision(price, precision)
+    const value = this._axis.convertFromPixel(crossHairPoint.y)
+    const precision = this._chartData.precisionOptions()[this._axis.isCandleStickYAxis() ? 'price' : this._additionalDataProvider.technicalIndicatorType()]
+    const yAxisDataLabel = formatPrecision(value, precision)
     const textSize = crossHairHorizontalText.size
     this._ctx.font = getFont(textSize)
     const yAxisDataLabelWidth = calcTextWidth(this._ctx, yAxisDataLabel)

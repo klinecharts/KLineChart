@@ -25,7 +25,8 @@ config = {
       // 'solid'|'stroke'|'up_stroke'|'down_stroke'|'ohlc'
       style: 'solid',
       upColor: '#26A69A',
-      downColor: '#EF5350'
+      downColor: '#EF5350',
+      noChangeColor: '#505050'
     },
     priceMark: {
       display: true,
@@ -45,6 +46,7 @@ config = {
         display: true,
         upColor: '#26A69A',
         downColor: '#EF5350',
+        noChangeColor: '#505050',
         line: {
           display: true,
           // 'solid'|'dash'
@@ -79,7 +81,8 @@ config = {
   technicalIndicator: {
     bar: {
       upColor: '#26A69A',
-      downColor: '#EF5350'
+      downColor: '#EF5350',
+      noChangeColor: '#505050'
     },
     line: {
       size: 1,
