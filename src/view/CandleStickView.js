@@ -164,8 +164,18 @@ export default class CandleStickView extends TechnicalIndicatorView {
           lowLine[0] = closeY
           rect = [x - halfBarSpace, openY, barSpace, 1]
         }
-        drawVerticalLine(this._ctx, x, highLine[0], highLine[1])
-        drawVerticalLine(this._ctx, x, lowLine[0], lowLine[1])
+        this._ctx.beginPath()
+        this._ctx.moveTo(x, highLine[0])
+        this._ctx.lineTo(x, highLine[1])
+        this._ctx.stroke()
+        this._ctx.closePath()
+
+        this._ctx.beginPath()
+        this._ctx.moveTo(x, lowLine[0])
+        this._ctx.lineTo(x, lowLine[1])
+        this._ctx.stroke()
+        this._ctx.closePath()
+
         if (rect[3] < 1) {
           rect[3] = 1
         }

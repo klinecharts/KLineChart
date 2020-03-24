@@ -1,7 +1,7 @@
 import View from './View'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 import { LineStyle } from '../data/options/styleOptions'
-import {drawHorizontalLine, drawVerticalLine, strokeInPixel} from '../utils/canvas'
+import { drawHorizontalLine, drawVerticalLine, strokeInPixel } from '../utils/canvas'
 
 export default class TechnicalIndicatorView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
@@ -439,9 +439,23 @@ export default class TechnicalIndicatorView extends View {
       this._ctx.strokeStyle = noChangeColor
     }
     this._ctx.lineWidth = 1
-    drawVerticalLine(this._ctx, x, highY, lowY)
-    drawHorizontalLine(this._ctx, openY, x - halfBarSpace, x)
-    drawHorizontalLine(this._ctx, closeY, x + halfBarSpace, x)
+    this._ctx.beginPath()
+    this._ctx.moveTo(x, highY)
+    this._ctx.lineTo(x, lowY)
+    this._ctx.stroke()
+    this._ctx.closePath()
+
+    this._ctx.beginPath()
+    this._ctx.moveTo(x - halfBarSpace, openY)
+    this._ctx.lineTo(x, openY)
+    this._ctx.stroke()
+    this._ctx.closePath()
+
+    this._ctx.beginPath()
+    this._ctx.moveTo(x, closeY)
+    this._ctx.lineTo(x + halfBarSpace, closeY)
+    this._ctx.stroke()
+    this._ctx.closePath()
   }
 
   /**

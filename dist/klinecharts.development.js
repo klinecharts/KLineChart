@@ -4127,9 +4127,36 @@ function (_View) {
       }
 
       this._ctx.lineWidth = 1;
-      drawVerticalLine(this._ctx, x, highY, lowY);
-      drawHorizontalLine(this._ctx, openY, x - halfBarSpace, x);
-      drawHorizontalLine(this._ctx, closeY, x + halfBarSpace, x);
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(x, highY);
+
+      this._ctx.lineTo(x, lowY);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(x - halfBarSpace, openY);
+
+      this._ctx.lineTo(x, openY);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
+
+      this._ctx.beginPath();
+
+      this._ctx.moveTo(x, closeY);
+
+      this._ctx.lineTo(x + halfBarSpace, closeY);
+
+      this._ctx.stroke();
+
+      this._ctx.closePath();
     }
     /**
      * 绘制图形
@@ -5753,8 +5780,25 @@ function (_TechnicalIndicatorVi) {
             rect = [x - halfBarSpace, openY, barSpace, 1];
           }
 
-          drawVerticalLine(_this2._ctx, x, highLine[0], highLine[1]);
-          drawVerticalLine(_this2._ctx, x, lowLine[0], lowLine[1]);
+          _this2._ctx.beginPath();
+
+          _this2._ctx.moveTo(x, highLine[0]);
+
+          _this2._ctx.lineTo(x, highLine[1]);
+
+          _this2._ctx.stroke();
+
+          _this2._ctx.closePath();
+
+          _this2._ctx.beginPath();
+
+          _this2._ctx.moveTo(x, lowLine[0]);
+
+          _this2._ctx.lineTo(x, lowLine[1]);
+
+          _this2._ctx.stroke();
+
+          _this2._ctx.closePath();
 
           if (rect[3] < 1) {
             rect[3] = 1;
