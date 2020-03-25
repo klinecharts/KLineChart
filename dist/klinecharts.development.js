@@ -4641,92 +4641,50 @@ function (_Widget) {
   return TechnicalIndicatorWidget;
 }(Widget);
 
-var AxisView =
-/*#__PURE__*/
-function (_View) {
-  _inherits(AxisView, _View);
-
-  function AxisView(container, chartData, axis) {
-    var _this;
-
-    _classCallCheck(this, AxisView);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(AxisView).call(this, container, chartData));
-    _this._axis = axis;
-    return _this;
-  }
-
-  _createClass(AxisView, [{
-    key: "_draw",
-    value: function _draw() {
-      this._drawAxisLine();
-
-      this._drawTickLines();
-
-      this._drawTickLabels();
-    }
-    /**
-     * 绘制轴线
-     * @private
-     */
-
-  }, {
-    key: "_drawAxisLine",
-    value: function _drawAxisLine() {}
-    /**
-     * 绘制tick线
-     * @private
-     */
-
-  }, {
-    key: "_drawTickLines",
-    value: function _drawTickLines() {}
-    /**
-     * 绘制tick文字
-     * @private
-     */
-
-  }, {
-    key: "_drawTickLabels",
-    value: function _drawTickLabels() {}
-  }]);
-
-  return AxisView;
-}(View);
-
 var YAxisView =
 /*#__PURE__*/
-function (_AxisView) {
-  _inherits(YAxisView, _AxisView);
+function (_View) {
+  _inherits(YAxisView, _View);
 
-  function YAxisView() {
+  function YAxisView(container, chartData, yAxis) {
+    var _this;
+
     _classCallCheck(this, YAxisView);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(YAxisView).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(YAxisView).call(this, container, chartData));
+    _this._yAxis = yAxis;
+    return _this;
   }
 
   _createClass(YAxisView, [{
     key: "_draw",
     value: function _draw() {
-      _get(_getPrototypeOf(YAxisView.prototype), "_draw", this).call(this);
+      var yAxisOptions = this._chartData.styleOptions().yAxis;
 
-      this._drawLastPriceLabel();
+      if (yAxisOptions.display) {
+        this._drawAxisLine(yAxisOptions);
+
+        this._drawTickLines(yAxisOptions);
+
+        this._drawTickLabels(yAxisOptions);
+
+        this._drawLastPriceLabel(yAxisOptions);
+      }
     }
   }, {
     key: "_drawAxisLine",
-    value: function _drawAxisLine() {
-      var yAxis = this._chartData.styleOptions().yAxis;
+    value: function _drawAxisLine(yAxisOptions) {
+      var axisLine = yAxisOptions.axisLine;
 
-      if (!yAxis.display || !yAxis.axisLine.display) {
+      if (!axisLine.display) {
         return;
       }
 
-      var lineSize = yAxis.axisLine.size;
-      this._ctx.strokeStyle = yAxis.axisLine.color;
-      this._ctx.lineWidth = lineSize;
+      this._ctx.strokeStyle = axisLine.color;
+      this._ctx.lineWidth = axisLine.size;
       var x;
 
-      if (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE) {
+      if (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE || yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE) {
         x = 0;
       } else {
         x = this._width;
@@ -4736,14 +4694,12 @@ function (_AxisView) {
     }
   }, {
     key: "_drawTickLines",
-    value: function _drawTickLines() {
-      var _this = this;
+    value: function _drawTickLines(yAxisOptions) {
+      var _this2 = this;
 
-      var yAxis = this._chartData.styleOptions().yAxis;
+      var tickLine = yAxisOptions.tickLine;
 
-      var tickLine = yAxis.tickLine;
-
-      if (!yAxis.display || !tickLine.display) {
+      if (!tickLine.display) {
         return;
       }
 
@@ -4753,53 +4709,51 @@ function (_AxisView) {
       var startX;
       var endX;
 
-      if (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE) {
+      if (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE || yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE) {
         startX = 0;
 
-        if (yAxis.axisLine.display) {
-          startX += yAxis.axisLine.size;
+        if (yAxisOptions.axisLine.display) {
+          startX += yAxisOptions.axisLine.size;
         }
 
         endX = startX + tickLineLength;
       } else {
         startX = this._width;
 
-        if (yAxis.axisLine.display) {
-          startX -= yAxis.axisLine.size;
+        if (yAxisOptions.axisLine.display) {
+          startX -= yAxisOptions.axisLine.size;
         }
 
         endX = startX - tickLineLength;
       }
 
-      this._axis.ticks().forEach(function (tick) {
-        drawHorizontalLine(_this._ctx, tick.y, startX, endX);
+      this._yAxis.ticks().forEach(function (tick) {
+        drawHorizontalLine(_this2._ctx, tick.y, startX, endX);
       });
     }
   }, {
     key: "_drawTickLabels",
-    value: function _drawTickLabels() {
-      var _this2 = this;
+    value: function _drawTickLabels(yAxisOptions) {
+      var _this3 = this;
 
-      var yAxis = this._chartData.styleOptions().yAxis;
+      var tickText = yAxisOptions.tickText;
 
-      var tickText = yAxis.tickText;
-
-      if (!yAxis.display || !tickText.display) {
+      if (!tickText.display) {
         return;
       }
 
-      var tickLine = yAxis.tickLine;
+      var tickLine = yAxisOptions.tickLine;
       var tickTextPosition = tickText.position;
       var tickLineDisplay = tickLine.display;
       var tickLineLength = tickLine.length;
       var tickTextMargin = tickText.margin;
       var labelX;
 
-      if (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE) {
+      if (yAxisOptions.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.INSIDE || yAxisOptions.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE) {
         labelX = tickTextMargin;
 
-        if (yAxis.axisLine.display) {
-          labelX += yAxis.axisLine.size;
+        if (yAxisOptions.axisLine.display) {
+          labelX += yAxisOptions.axisLine.size;
         }
 
         if (tickLineDisplay) {
@@ -4810,8 +4764,8 @@ function (_AxisView) {
       } else {
         labelX = this._width - tickTextMargin;
 
-        if (yAxis.axisLine.display) {
-          labelX -= yAxis.axisLine.size;
+        if (yAxisOptions.axisLine.display) {
+          labelX -= yAxisOptions.axisLine.size;
         }
 
         if (tickLineDisplay) {
@@ -4826,10 +4780,10 @@ function (_AxisView) {
       this._ctx.font = getFont(textSize);
       this._ctx.fillStyle = tickText.color;
 
-      this._axis.ticks().forEach(function (tick) {
+      this._yAxis.ticks().forEach(function (tick) {
         var text = formatBigNumber(tick.v);
 
-        _this2._ctx.fillText(text, labelX, tick.y);
+        _this3._ctx.fillText(text, labelX, tick.y);
       });
 
       this._ctx.textAlign = 'left';
@@ -4842,7 +4796,7 @@ function (_AxisView) {
   }, {
     key: "_drawLastPriceLabel",
     value: function _drawLastPriceLabel() {
-      if (!this._axis.isCandleStickYAxis()) {
+      if (!this._yAxis.isCandleStickYAxis()) {
         return;
       }
 
@@ -4862,7 +4816,7 @@ function (_AxisView) {
       var preKLineData = dataList[dataSize - 2] || {};
       var preLastPrice = preKLineData.close || lastPrice;
 
-      var priceY = this._axis.convertToPixel(lastPrice);
+      var priceY = this._yAxis.convertToPixel(lastPrice);
 
       priceY = +Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98)).toFixed(0);
       var color;
@@ -4903,7 +4857,7 @@ function (_AxisView) {
   }]);
 
   return YAxisView;
-}(AxisView);
+}(View);
 
 var AxisFloatLayerView =
 /*#__PURE__*/
@@ -8667,77 +8621,90 @@ function (_TechnicalIndicatorSe) {
 
 var XAxisView =
 /*#__PURE__*/
-function (_AxisView) {
-  _inherits(XAxisView, _AxisView);
+function (_View) {
+  _inherits(XAxisView, _View);
 
-  function XAxisView() {
+  function XAxisView(container, chartData, xAxis) {
+    var _this;
+
     _classCallCheck(this, XAxisView);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(XAxisView).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisView).call(this, container, chartData));
+    _this._xAxis = xAxis;
+    return _this;
   }
 
   _createClass(XAxisView, [{
-    key: "_drawAxisLine",
-    value: function _drawAxisLine() {
-      var xAxis = this._chartData.styleOptions().xAxis;
+    key: "_draw",
+    value: function _draw() {
+      var xAxisOptions = this._chartData.styleOptions().xAxis;
 
-      if (!xAxis.display || !xAxis.axisLine.display) {
+      if (xAxisOptions.display) {
+        this._drawAxisLine(xAxisOptions);
+
+        this._drawTickLines(xAxisOptions);
+
+        this._drawTickLabels(xAxisOptions);
+      }
+    }
+  }, {
+    key: "_drawAxisLine",
+    value: function _drawAxisLine(xAxisOptions) {
+      var xAxisLine = xAxisOptions.axisLine;
+
+      if (!xAxisLine.display) {
         return;
       }
 
-      this._ctx.strokeStyle = xAxis.axisLine.color;
-      this._ctx.lineWidth = xAxis.axisLine.size;
+      this._ctx.strokeStyle = xAxisLine.color;
+      this._ctx.lineWidth = xAxisLine.size;
       drawHorizontalLine(this._ctx, 0, 0, this._width);
     }
   }, {
     key: "_drawTickLines",
-    value: function _drawTickLines() {
-      var _this = this;
+    value: function _drawTickLines(xAxisOptions) {
+      var _this2 = this;
 
-      var xAxis = this._chartData.styleOptions().xAxis;
+      var tickLine = xAxisOptions.tickLine;
 
-      var tickLine = xAxis.tickLine;
-
-      if (!xAxis.display || !tickLine.display) {
+      if (!tickLine.display) {
         return;
       }
 
       this._ctx.lineWidth = tickLine.size;
       this._ctx.strokeStyle = tickLine.color;
-      var startY = xAxis.axisLine.display ? xAxis.axisLine.size : 0;
+      var startY = xAxisOptions.axisLine.display ? xAxisOptions.axisLine.size : 0;
       var endY = startY + tickLine.length;
 
-      this._axis.ticks().forEach(function (tick) {
-        drawVerticalLine(_this._ctx, tick.x, startY, endY);
+      this._xAxis.ticks().forEach(function (tick) {
+        drawVerticalLine(_this2._ctx, tick.x, startY, endY);
       });
     }
   }, {
     key: "_drawTickLabels",
-    value: function _drawTickLabels() {
-      var xAxis = this._chartData.styleOptions().xAxis;
+    value: function _drawTickLabels(xAxisOptions) {
+      var tickText = xAxisOptions.tickText;
 
-      var tickText = xAxis.tickText;
-
-      if (!xAxis.display || !tickText.display) {
+      if (!tickText.display) {
         return;
       }
 
-      var tickLine = xAxis.tickLine;
+      var tickLine = xAxisOptions.tickLine;
       this._ctx.textBaseline = 'top';
       this._ctx.font = getFont(tickText.size);
       this._ctx.textAlign = 'center';
       this._ctx.fillStyle = tickText.color;
       var labelY = tickText.margin;
 
-      if (xAxis.axisLine.display) {
-        labelY += xAxis.axisLine.size;
+      if (xAxisOptions.axisLine.display) {
+        labelY += xAxisOptions.axisLine.size;
       }
 
       if (tickLine.display) {
         labelY += tickLine.length;
       }
 
-      var ticks = this._axis.ticks();
+      var ticks = this._xAxis.ticks();
 
       var tickLength = ticks.length;
 
@@ -8748,7 +8715,7 @@ function (_AxisView) {
   }]);
 
   return XAxisView;
-}(AxisView);
+}(View);
 
 var XAxisFloatLayerView =
 /*#__PURE__*/
@@ -9804,19 +9771,30 @@ function () {
     value: function _measureXAxisHeight() {
       var xAxis = this._chartData.styleOptions().xAxis;
 
+      var axisLine = xAxis.axisLine;
       var tickText = xAxis.tickText;
       var tickLine = xAxis.tickLine;
-      var height = tickText.size + tickText.margin;
+      var height = 0;
 
-      if (xAxis.display && tickLine.display) {
-        height += tickLine.length;
+      if (xAxis.display) {
+        if (axisLine.display) {
+          height += axisLine.size;
+        }
+
+        if (tickLine.display) {
+          height += tickLine.length;
+        }
+
+        if (tickText.display) {
+          height += tickText.size + tickText.margin;
+        }
       }
 
-      if (xAxis.display && xAxis.axisLine.display) {
-        height += xAxis.axisLine.size;
+      if (height > 0) {
+        height = Math.ceil(Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight)));
       }
 
-      return Math.ceil(Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight)));
+      return height;
     }
     /**
      * 计算y轴宽度
@@ -9832,8 +9810,27 @@ function () {
       var axisLine = yAxis.axisLine;
       var tickText = yAxis.tickText;
       var tickLine = yAxis.tickLine;
-      var width = axisLine.size + tickLine.length + tickText.margin + (tickText.size - 2) * 6;
-      return Math.ceil(Math.max(yAxis.minWidth, Math.min(width, yAxis.maxWidth)));
+      var width = 0;
+
+      if (yAxis.display) {
+        if (yAxis.axisLine.display) {
+          width += axisLine.size;
+        }
+
+        if (yAxis.tickLine.display) {
+          width += tickLine.length;
+        }
+
+        if (yAxis.tickText.display) {
+          width += tickText.margin + (tickText.size - 2) * 6;
+        }
+      }
+
+      if (width > 0) {
+        width = Math.ceil(Math.max(yAxis.minWidth, Math.min(width, yAxis.maxWidth)));
+      }
+
+      return width;
     }
     /**
      * 测量图表间分割线的高度

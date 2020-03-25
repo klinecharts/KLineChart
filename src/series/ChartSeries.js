@@ -81,16 +81,25 @@ export default class ChartSeries {
    */
   _measureXAxisHeight () {
     const xAxis = this._chartData.styleOptions().xAxis
+    const axisLine = xAxis.axisLine
     const tickText = xAxis.tickText
     const tickLine = xAxis.tickLine
-    let height = tickText.size + tickText.margin
-    if (xAxis.display && tickLine.display) {
-      height += tickLine.length
+    let height = 0
+    if (xAxis.display) {
+      if (axisLine.display) {
+        height += axisLine.size
+      }
+      if (tickLine.display) {
+        height += tickLine.length
+      }
+      if (tickText.display) {
+        height += (tickText.size + tickText.margin)
+      }
     }
-    if (xAxis.display && xAxis.axisLine.display) {
-      height += xAxis.axisLine.size
+    if (height > 0) {
+      height = Math.ceil(Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight)))
     }
-    return Math.ceil(Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight)))
+    return height
   }
 
   /**
@@ -103,8 +112,22 @@ export default class ChartSeries {
     const axisLine = yAxis.axisLine
     const tickText = yAxis.tickText
     const tickLine = yAxis.tickLine
-    const width = axisLine.size + tickLine.length + tickText.margin + (tickText.size - 2) * 6
-    return Math.ceil(Math.max(yAxis.minWidth, Math.min(width, yAxis.maxWidth)))
+    let width = 0
+    if (yAxis.display) {
+      if (yAxis.axisLine.display) {
+        width += axisLine.size
+      }
+      if (yAxis.tickLine.display) {
+        width += tickLine.length
+      }
+      if (yAxis.tickText.display) {
+        width += (tickText.margin + (tickText.size - 2) * 6)
+      }
+    }
+    if (width > 0) {
+      width = Math.ceil(Math.max(yAxis.minWidth, Math.min(width, yAxis.maxWidth)))
+    }
+    return width
   }
 
   /**

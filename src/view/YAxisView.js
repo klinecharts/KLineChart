@@ -1,26 +1,35 @@
-import AxisView from './AxisView'
+import View from './View'
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
 
-export default class YAxisView extends AxisView {
-  _draw () {
-    super._draw()
-    this._drawLastPriceLabel()
+export default class YAxisView extends View {
+  constructor (container, chartData, yAxis) {
+    super(container, chartData)
+    this._yAxis = yAxis
   }
 
-  _drawAxisLine () {
-    const yAxis = this._chartData.styleOptions().yAxis
-    if (!yAxis.display || !yAxis.axisLine.display) {
+  _draw () {
+    const yAxisOptions = this._chartData.styleOptions().yAxis
+    if (yAxisOptions.display) {
+      this._drawAxisLine(yAxisOptions)
+      this._drawTickLines(yAxisOptions)
+      this._drawTickLabels(yAxisOptions)
+      this._drawLastPriceLabel(yAxisOptions)
+    }
+  }
+
+  _drawAxisLine (yAxisOptions) {
+    const axisLine = yAxisOptions.axisLine
+    if (!axisLine.display) {
       return
     }
-    const lineSize = yAxis.axisLine.size
-    this._ctx.strokeStyle = yAxis.axisLine.color
-    this._ctx.lineWidth = lineSize
+    this._ctx.strokeStyle = axisLine.color
+    this._ctx.lineWidth = axisLine.size
     let x
     if (
-      (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE) ||
-      (yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE)
+      (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE) ||
+      (yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE)
     ) {
       x = 0
     } else {
@@ -29,10 +38,9 @@ export default class YAxisView extends AxisView {
     drawVerticalLine(this._ctx, x, 0, this._height)
   }
 
-  _drawTickLines () {
-    const yAxis = this._chartData.styleOptions().yAxis
-    const tickLine = yAxis.tickLine
-    if (!yAxis.display || !tickLine.display) {
+  _drawTickLines (yAxisOptions) {
+    const tickLine = yAxisOptions.tickLine
+    if (!tickLine.display) {
       return
     }
     this._ctx.lineWidth = tickLine.size
@@ -43,45 +51,44 @@ export default class YAxisView extends AxisView {
     let startX
     let endX
     if (
-      (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE) ||
-      (yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE)
+      (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE) ||
+      (yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE)
     ) {
       startX = 0
-      if (yAxis.axisLine.display) {
-        startX += yAxis.axisLine.size
+      if (yAxisOptions.axisLine.display) {
+        startX += yAxisOptions.axisLine.size
       }
       endX = startX + tickLineLength
     } else {
       startX = this._width
-      if (yAxis.axisLine.display) {
-        startX -= yAxis.axisLine.size
+      if (yAxisOptions.axisLine.display) {
+        startX -= yAxisOptions.axisLine.size
       }
       endX = startX - tickLineLength
     }
-    this._axis.ticks().forEach(tick => {
+    this._yAxis.ticks().forEach(tick => {
       drawHorizontalLine(this._ctx, tick.y, startX, endX)
     })
   }
 
-  _drawTickLabels () {
-    const yAxis = this._chartData.styleOptions().yAxis
-    const tickText = yAxis.tickText
-    if (!yAxis.display || !tickText.display) {
+  _drawTickLabels (yAxisOptions) {
+    const tickText = yAxisOptions.tickText
+    if (!tickText.display) {
       return
     }
-    const tickLine = yAxis.tickLine
+    const tickLine = yAxisOptions.tickLine
     const tickTextPosition = tickText.position
     const tickLineDisplay = tickLine.display
     const tickLineLength = tickLine.length
     const tickTextMargin = tickText.margin
     let labelX
     if (
-      (yAxis.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.INSIDE) ||
-      (yAxis.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE)
+      (yAxisOptions.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.INSIDE) ||
+      (yAxisOptions.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE)
     ) {
       labelX = tickTextMargin
-      if (yAxis.axisLine.display) {
-        labelX += yAxis.axisLine.size
+      if (yAxisOptions.axisLine.display) {
+        labelX += yAxisOptions.axisLine.size
       }
       if (tickLineDisplay) {
         labelX += tickLineLength
@@ -89,8 +96,8 @@ export default class YAxisView extends AxisView {
       this._ctx.textAlign = 'left'
     } else {
       labelX = this._width - tickTextMargin
-      if (yAxis.axisLine.display) {
-        labelX -= yAxis.axisLine.size
+      if (yAxisOptions.axisLine.display) {
+        labelX -= yAxisOptions.axisLine.size
       }
       if (tickLineDisplay) {
         labelX -= tickLineLength
@@ -101,7 +108,7 @@ export default class YAxisView extends AxisView {
     this._ctx.textBaseline = 'middle'
     this._ctx.font = getFont(textSize)
     this._ctx.fillStyle = tickText.color
-    this._axis.ticks().forEach(tick => {
+    this._yAxis.ticks().forEach(tick => {
       const text = formatBigNumber(tick.v)
       this._ctx.fillText(text, labelX, tick.y)
     })
@@ -113,7 +120,7 @@ export default class YAxisView extends AxisView {
    * @private
    */
   _drawLastPriceLabel () {
-    if (!this._axis.isCandleStickYAxis()) {
+    if (!this._yAxis.isCandleStickYAxis()) {
       return
     }
     const priceMark = this._chartData.styleOptions().candleStick.priceMark
@@ -126,7 +133,7 @@ export default class YAxisView extends AxisView {
     const lastPrice = dataList[dataSize - 1].close
     const preKLineData = dataList[dataSize - 2] || {}
     const preLastPrice = preKLineData.close || lastPrice
-    let priceY = this._axis.convertToPixel(lastPrice)
+    let priceY = this._yAxis.convertToPixel(lastPrice)
     priceY = +(Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98))).toFixed(0)
     let color
     if (lastPrice > preLastPrice) {
