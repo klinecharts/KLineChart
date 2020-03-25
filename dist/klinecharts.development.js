@@ -3518,19 +3518,21 @@ function () {
     value: function setSize(width, height) {
       var _this = this;
 
-      this._redraw(function () {
-        var pixelRatio = getPixelRatio(_this._ctx);
-        _this._width = width;
-        _this._height = height;
-        _this._canvas.style.top = '0';
-        _this._canvas.style.width = "".concat(width, "px");
-        _this._canvas.style.height = "".concat(height, "px");
-        _this._canvas.width = width * pixelRatio;
-        _this._canvas.height = height * pixelRatio;
+      if (this._width !== width || this._height !== height) {
+        this._redraw(function () {
+          var pixelRatio = getPixelRatio(_this._ctx);
+          _this._width = width;
+          _this._height = height;
+          _this._canvas.style.top = '0';
+          _this._canvas.style.width = "".concat(width, "px");
+          _this._canvas.style.height = "".concat(height, "px");
+          _this._canvas.width = width * pixelRatio;
+          _this._canvas.height = height * pixelRatio;
 
-        _this._ctx.scale(pixelRatio, pixelRatio); // this._ctx.translate(0.5, 0.5)
+          _this._ctx.scale(pixelRatio, pixelRatio); // this._ctx.translate(0.5, 0.5)
 
-      });
+        });
+      }
     }
     /**
      * 刷新

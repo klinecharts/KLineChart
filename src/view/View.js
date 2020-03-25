@@ -47,18 +47,20 @@ class View {
    * @param height
    */
   setSize (width, height) {
-    this._redraw(() => {
-      const pixelRatio = getPixelRatio(this._ctx)
-      this._width = width
-      this._height = height
-      this._canvas.style.top = '0'
-      this._canvas.style.width = `${width}px`
-      this._canvas.style.height = `${height}px`
-      this._canvas.width = width * pixelRatio
-      this._canvas.height = height * pixelRatio
-      this._ctx.scale(pixelRatio, pixelRatio)
-      // this._ctx.translate(0.5, 0.5)
-    })
+    if (this._width !== width || this._height !== height) {
+      this._redraw(() => {
+        const pixelRatio = getPixelRatio(this._ctx)
+        this._width = width
+        this._height = height
+        this._canvas.style.top = '0'
+        this._canvas.style.width = `${width}px`
+        this._canvas.style.height = `${height}px`
+        this._canvas.width = width * pixelRatio
+        this._canvas.height = height * pixelRatio
+        this._ctx.scale(pixelRatio, pixelRatio)
+        // this._ctx.translate(0.5, 0.5)
+      })
+    }
   }
 
   /**
