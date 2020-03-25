@@ -27,10 +27,7 @@ export default class YAxisView extends View {
     this._ctx.strokeStyle = axisLine.color
     this._ctx.lineWidth = axisLine.size
     let x
-    if (
-      (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE) ||
-      (yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE)
-    ) {
+    if (this._isDrawFromStart(yAxisOptions)) {
       x = 0
     } else {
       x = this._width
@@ -50,10 +47,7 @@ export default class YAxisView extends View {
 
     let startX
     let endX
-    if (
-      (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE) ||
-      (yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE)
-    ) {
+    if (this._isDrawFromStart(yAxisOptions)) {
       startX = 0
       if (yAxisOptions.axisLine.display) {
         startX += yAxisOptions.axisLine.size
@@ -77,15 +71,11 @@ export default class YAxisView extends View {
       return
     }
     const tickLine = yAxisOptions.tickLine
-    const tickTextPosition = tickText.position
     const tickLineDisplay = tickLine.display
     const tickLineLength = tickLine.length
     const tickTextMargin = tickText.margin
     let labelX
-    if (
-      (yAxisOptions.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.INSIDE) ||
-      (yAxisOptions.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE)
-    ) {
+    if (this._isDrawFromStart(yAxisOptions)) {
       labelX = tickTextMargin
       if (yAxisOptions.axisLine.display) {
         labelX += yAxisOptions.axisLine.size
@@ -119,7 +109,7 @@ export default class YAxisView extends View {
    * 绘制最新价文字
    * @private
    */
-  _drawLastPriceLabel () {
+  _drawLastPriceLabel (yAxisOptions) {
     if (!this._yAxis.isCandleStickYAxis()) {
       return
     }
@@ -150,11 +140,7 @@ export default class YAxisView extends View {
     const rectWidth = calcTextWidth(this._ctx, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight
     const rectHeight = priceMarkText.paddingTop + textSize + priceMarkText.paddingBottom
     let rectStartX
-    const yAxis = this._chartData.styleOptions().yAxis
-    if (
-      (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE) ||
-      (yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE)
-    ) {
+    if (this._isDrawFromStart(yAxisOptions)) {
       rectStartX = 0
     } else {
       rectStartX = this._width - rectWidth
@@ -164,5 +150,14 @@ export default class YAxisView extends View {
     this._ctx.fillStyle = priceMarkText.color
     this._ctx.textBaseline = 'middle'
     this._ctx.fillText(text, rectStartX + priceMarkText.paddingLeft, priceY)
+  }
+
+  /**
+   * 判断是否从开始点绘制
+   * @private
+   */
+  _isDrawFromStart (yAxisOptions) {
+    return ((yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE) ||
+      (yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE))
   }
 }
