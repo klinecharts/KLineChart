@@ -4684,7 +4684,7 @@ function (_View) {
       this._ctx.lineWidth = axisLine.size;
       var x;
 
-      if (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE || yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE) {
+      if (this._isDrawFromStart(yAxisOptions)) {
         x = 0;
       } else {
         x = this._width;
@@ -4709,7 +4709,7 @@ function (_View) {
       var startX;
       var endX;
 
-      if (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE || yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE) {
+      if (this._isDrawFromStart(yAxisOptions)) {
         startX = 0;
 
         if (yAxisOptions.axisLine.display) {
@@ -4743,13 +4743,12 @@ function (_View) {
       }
 
       var tickLine = yAxisOptions.tickLine;
-      var tickTextPosition = tickText.position;
       var tickLineDisplay = tickLine.display;
       var tickLineLength = tickLine.length;
       var tickTextMargin = tickText.margin;
       var labelX;
 
-      if (yAxisOptions.position === YAxisPosition.LEFT && tickTextPosition === YAxisTextPosition.INSIDE || yAxisOptions.position === YAxisPosition.RIGHT && tickTextPosition === YAxisTextPosition.OUTSIDE) {
+      if (this._isDrawFromStart(yAxisOptions)) {
         labelX = tickTextMargin;
 
         if (yAxisOptions.axisLine.display) {
@@ -4795,7 +4794,7 @@ function (_View) {
 
   }, {
     key: "_drawLastPriceLabel",
-    value: function _drawLastPriceLabel() {
+    value: function _drawLastPriceLabel(yAxisOptions) {
       if (!this._yAxis.isCandleStickYAxis()) {
         return;
       }
@@ -4837,9 +4836,7 @@ function (_View) {
       var rectHeight = priceMarkText.paddingTop + textSize + priceMarkText.paddingBottom;
       var rectStartX;
 
-      var yAxis = this._chartData.styleOptions().yAxis;
-
-      if (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE) {
+      if (this._isDrawFromStart(yAxisOptions)) {
         rectStartX = 0;
       } else {
         rectStartX = this._width - rectWidth;
@@ -4853,6 +4850,16 @@ function (_View) {
       this._ctx.textBaseline = 'middle';
 
       this._ctx.fillText(text, rectStartX + priceMarkText.paddingLeft, priceY);
+    }
+    /**
+     * 判断是否从开始点绘制
+     * @private
+     */
+
+  }, {
+    key: "_isDrawFromStart",
+    value: function _isDrawFromStart(yAxisOptions) {
+      return yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE || yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE;
     }
   }]);
 
