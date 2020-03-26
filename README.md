@@ -68,7 +68,7 @@ The single data format is as follows:
 ## Style Config
 Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DETAIL.md)
 
-## Technical Indicators
+## Technical Indicator
 <table>
     <tbody>
         <tr>

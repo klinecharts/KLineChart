@@ -2,7 +2,7 @@ import Series from './Series'
 import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
-import YAxis, { YAxisType } from '../component/YAxis'
+import YAxis from '../component/YAxis'
 import { InvalidateLevel } from '../data/ChartData'
 
 export default class TechnicalIndicatorSeries extends Series {
@@ -18,7 +18,7 @@ export default class TechnicalIndicatorSeries extends Series {
   }
 
   _createYAxis (props) {
-    return new YAxis(props.chartData, YAxisType.TECHNICAL_INDICATOR)
+    return new YAxis(props.chartData, false)
   }
 
   _createMainWidget (container, props) {

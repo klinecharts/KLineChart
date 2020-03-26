@@ -1,7 +1,7 @@
 import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
 import CandleStickWidget from '../widget/CandleStickWidget'
 import { ChartType } from '../data/options/styleOptions'
-import YAxis, { YAxisType } from '../component/YAxis'
+import YAxis from '../component/YAxis'
 import { InvalidateLevel } from '../data/ChartData'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 
@@ -12,7 +12,7 @@ export default class CandleStickSeries extends TechnicalIndicatorSeries {
   }
 
   _createYAxis (props) {
-    return new YAxis(props.chartData, YAxisType.CANDLE_STICK)
+    return new YAxis(props.chartData, true)
   }
 
   _createMainWidget (container, props) {

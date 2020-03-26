@@ -17,6 +17,15 @@ export const YAxisPosition = {
 }
 
 /**
+ * y轴类型
+ * @type {{PERCENTAGE: string, NORMAL: string}}
+ */
+export const YAxisType = {
+  NORMAL: 'normal',
+  PERCENTAGE: 'percentage'
+}
+
+/**
  * y轴文字位置
  * @type {{OUTSIDE: string, INSIDE: string}}
  */
@@ -237,6 +246,10 @@ const defaultYAxis = {
    * x轴最小宽度
    */
   minWidth: 60,
+  /**
+   * y轴类型
+   */
+  type: YAxisType.NORMAL,
   /**
    * 轴位置
    */

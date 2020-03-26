@@ -1,8 +1,18 @@
-import AxisFloatLayerView from './AxisFloatLayerView'
+import View from './View'
+
 import { formatDate } from '../utils/format'
 import { calcTextWidth, getFont } from '../utils/canvas'
 
-export default class XAxisFloatLayerView extends AxisFloatLayerView {
+export default class XAxisFloatLayerView extends View {
+  constructor (container, chartData, xAxis) {
+    super(container, chartData)
+    this._xAxis = xAxis
+  }
+
+  _draw () {
+    this._drawCrossHairLabel()
+  }
+
   _drawCrossHairLabel () {
     if (!this._chartData.crossHairSeriesTag()) {
       return
@@ -16,7 +26,7 @@ export default class XAxisFloatLayerView extends AxisFloatLayerView {
     const crossHairPoint = this._chartData.crossHairPoint()
     let dataPos
     if (crossHairPoint) {
-      dataPos = this._axis.convertFromPixel(crossHairPoint.x)
+      dataPos = this._xAxis.convertFromPixel(crossHairPoint.x)
     } else {
       dataPos = this._chartData.dataList().length - 1
     }
@@ -24,7 +34,7 @@ export default class XAxisFloatLayerView extends AxisFloatLayerView {
     if (!kLineData) {
       return
     }
-    const x = this._axis.convertToPixel(dataPos)
+    const x = this._xAxis.convertToPixel(dataPos)
     const timestamp = kLineData.timestamp
     const text = formatDate(timestamp, 'YYYY-MM-DD hh:mm', this._chartData.timezone())
 

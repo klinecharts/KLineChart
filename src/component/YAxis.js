@@ -1,16 +1,12 @@
 import Axis from './Axis'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
-import { formatValue } from '../utils/format'
-
-export const YAxisType = {
-  CANDLE_STICK: 'candle_stick',
-  TECHNICAL_INDICATOR: 'technical_indicator'
-}
+import { formatBigNumber, formatValue } from '../utils/format'
+import { YAxisType } from '../data/options/styleOptions'
 
 export default class YAxis extends Axis {
-  constructor (chartData, yAxisType) {
+  constructor (chartData, isCandleStickYAxis) {
     super(chartData)
-    this._yAxisType = yAxisType
+    this._isCandleStickYAxis = isCandleStickYAxis
   }
 
   _compareMinMax (kLineData, technicalIndicatorType, minMaxArray) {
@@ -39,6 +35,7 @@ export default class YAxis extends Axis {
     let range = Math.abs(max - min)
     if (range === 0) {
       max += 1
+      max -= 1
       range = Math.abs(max - min)
     }
     // 保证每次图形绘制上下都留间隙
@@ -53,21 +50,22 @@ export default class YAxis extends Axis {
     const tickLength = ticks.length
     if (tickLength > 0) {
       const textHeight = this._chartData.styleOptions().xAxis.tickText.size
-      const y = this.convertToPixel(+ticks[0].v)
+      const y = this._innerConvertToPixel(+ticks[0].v)
       let tickCountDif = 1
       if (tickLength > 1) {
-        const nextY = this.convertToPixel(+ticks[1].v)
+        const nextY = this._innerConvertToPixel(+ticks[1].v)
         const yDif = Math.abs(nextY - y)
         if (yDif < textHeight * 2) {
           tickCountDif = Math.ceil(textHeight * 2 / yDif)
         }
       }
+      const isPercentageAxis = this.isPercentageYAxis()
       for (let i = 0; i < tickLength; i += tickCountDif) {
         const v = ticks[i].v
-        const y = this.convertToPixel(+v)
+        const y = this._innerConvertToPixel(+v)
         if (y > textHeight &&
           y < this._height - textHeight) {
-          optimalTicks.push({ v, y })
+          optimalTicks.push({ v: isPercentageAxis ? `${(+v).toFixed(2)}%` : formatBigNumber(v), y })
         }
       }
     }
@@ -101,7 +99,7 @@ export default class YAxis extends Axis {
       for (let i = from; i < to; i++) {
         const kLineData = dataList[i]
         this._compareMinMax(kLineData, technicalIndicatorType, minMaxArray)
-        if (this.isCandleStickYAxis()) {
+        if (this._isCandleStickYAxis) {
           minMaxArray[0] = Math.min(kLineData.low, minMaxArray[0])
           minMaxArray[1] = Math.max(kLineData.high, minMaxArray[1])
         }
@@ -111,24 +109,48 @@ export default class YAxis extends Axis {
       }
     }
     if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
-      this._minValue = minMaxArray[0]
-      this._maxValue = minMaxArray[1]
+      if (this.isPercentageYAxis()) {
+        const fromClose = dataList[from].close
+        this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100
+        this._maxValue = (minMaxArray[1] - fromClose) / fromClose * 100
+      } else {
+        this._minValue = minMaxArray[0]
+        this._maxValue = minMaxArray[1]
+      }
     }
+  }
+
+  _innerConvertToPixel (value) {
+    return Math.round((1.0 - (value - this._minValue) / this._range) * this._height)
+  }
+
+  isCandleStickYAxis () {
+    return this._isCandleStickYAxis
   }
 
   /**
    * 是否是蜡烛图y轴组件
    * @returns {boolean}
    */
-  isCandleStickYAxis () {
-    return this._yAxisType === YAxisType.CANDLE_STICK
+  isPercentageYAxis () {
+    return this._isCandleStickYAxis && this._chartData.styleOptions().yAxis.type === YAxisType.PERCENTAGE
   }
 
   convertFromPixel (pixel) {
-    return (1.0 - pixel / this._height) * this._range + this._minValue
+    const yAxisValue = (1.0 - pixel / this._height) * this._range + this._minValue
+    if (this.isPercentageYAxis()) {
+      const fromClose = this._chartData.dataList()[this._chartData.from()].close
+      return fromClose * yAxisValue / 100 + fromClose
+    }
+    return yAxisValue
   }
 
   convertToPixel (value) {
-    return Math.round((1.0 - (value - this._minValue) / this._range) * this._height)
+    let realValue = value
+    if (this.isPercentageYAxis()) {
+      const fromClose = this._chartData.dataList()[this._chartData.from()].close
+      realValue = (value - fromClose) / fromClose * 100
+    }
+    return this._innerConvertToPixel(realValue)
   }
 }

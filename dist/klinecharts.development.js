@@ -240,6 +240,15 @@ var YAxisPosition = {
   RIGHT: 'right'
 };
 /**
+ * y轴类型
+ * @type {{PERCENTAGE: string, NORMAL: string}}
+ */
+
+var YAxisType = {
+  NORMAL: 'normal',
+  PERCENTAGE: 'percentage'
+};
+/**
  * y轴文字位置
  * @type {{OUTSIDE: string, INSIDE: string}}
  */
@@ -468,6 +477,11 @@ var defaultYAxis = {
    * x轴最小宽度
    */
   minWidth: 60,
+
+  /**
+   * y轴类型
+   */
+  type: YAxisType.NORMAL,
 
   /**
    * 轴位置
@@ -4782,9 +4796,7 @@ function (_View) {
       this._ctx.fillStyle = tickText.color;
 
       this._yAxis.ticks().forEach(function (tick) {
-        var text = formatBigNumber(tick.v);
-
-        _this3._ctx.fillText(text, labelX, tick.y);
+        _this3._ctx.fillText(tick.v, labelX, tick.y);
       });
 
       this._ctx.textAlign = 'left';
@@ -4831,7 +4843,16 @@ function (_View) {
       }
 
       var priceMarkText = lastPriceMark.text;
-      var text = formatPrecision(lastPrice, this._chartData.precisionOptions().price);
+      var text;
+
+      if (this._yAxis.isPercentageYAxis()) {
+        var fromClose = dataList[this._chartData.from()].close;
+
+        text = "".concat(((lastPrice - fromClose) / fromClose * 100).toFixed(2), "%");
+      } else {
+        text = formatPrecision(lastPrice, this._chartData.precisionOptions().price);
+      }
+
       var textSize = lastPriceMark.text.size;
       this._ctx.font = getFont(textSize);
       var rectWidth = calcTextWidth(this._ctx, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight;
@@ -4868,52 +4889,28 @@ function (_View) {
   return YAxisView;
 }(View);
 
-var AxisFloatLayerView =
+var YAxisFloatLayerView =
 /*#__PURE__*/
 function (_View) {
-  _inherits(AxisFloatLayerView, _View);
+  _inherits(YAxisFloatLayerView, _View);
 
-  function AxisFloatLayerView(container, chartData, axis, additionalDataProvider) {
+  function YAxisFloatLayerView(container, chartData, yAxis, additionalDataProvider) {
     var _this;
 
-    _classCallCheck(this, AxisFloatLayerView);
+    _classCallCheck(this, YAxisFloatLayerView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(AxisFloatLayerView).call(this, container, chartData));
-    _this._axis = axis;
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(YAxisFloatLayerView).call(this, container, chartData));
+    _this._yAxis = yAxis;
     _this._additionalDataProvider = additionalDataProvider;
     return _this;
   }
 
-  _createClass(AxisFloatLayerView, [{
+  _createClass(YAxisFloatLayerView, [{
     key: "_draw",
     value: function _draw() {
       this._drawCrossHairLabel();
     }
-    /**
-     * 绘制十字光标文字
-     * @private
-     */
-
   }, {
-    key: "_drawCrossHairLabel",
-    value: function _drawCrossHairLabel() {}
-  }]);
-
-  return AxisFloatLayerView;
-}(View);
-
-var YAxisFloatLayerView =
-/*#__PURE__*/
-function (_AxisFloatLayerView) {
-  _inherits(YAxisFloatLayerView, _AxisFloatLayerView);
-
-  function YAxisFloatLayerView() {
-    _classCallCheck(this, YAxisFloatLayerView);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(YAxisFloatLayerView).apply(this, arguments));
-  }
-
-  _createClass(YAxisFloatLayerView, [{
     key: "_drawCrossHairLabel",
     value: function _drawCrossHairLabel() {
       if (this._chartData.crossHairSeriesTag() !== this._additionalDataProvider.tag()) {
@@ -4935,11 +4932,20 @@ function (_AxisFloatLayerView) {
         return;
       }
 
-      var value = this._axis.convertFromPixel(crossHairPoint.y);
+      var value = this._yAxis.convertFromPixel(crossHairPoint.y);
 
-      var precision = this._chartData.precisionOptions()[this._axis.isCandleStickYAxis() ? 'price' : this._additionalDataProvider.technicalIndicatorType()];
+      var yAxisDataLabel;
 
-      var yAxisDataLabel = formatPrecision(value, precision);
+      if (this._yAxis.isPercentageYAxis()) {
+        var fromClose = this._chartData.dataList()[this._chartData.from()].close;
+
+        yAxisDataLabel = "".concat(((value - fromClose) / fromClose * 100).toFixed(2), "%");
+      } else {
+        var precision = this._chartData.precisionOptions()[this._yAxis.isCandleStickYAxis() ? 'price' : this._additionalDataProvider.technicalIndicatorType()];
+
+        yAxisDataLabel = formatPrecision(value, precision);
+      }
+
       var textSize = crossHairHorizontalText.size;
       this._ctx.font = getFont(textSize);
       var yAxisDataLabelWidth = calcTextWidth(this._ctx, yAxisDataLabel);
@@ -4979,7 +4985,7 @@ function (_AxisFloatLayerView) {
   }]);
 
   return YAxisFloatLayerView;
-}(AxisFloatLayerView);
+}(View);
 
 var YAxisWidget =
 /*#__PURE__*/
@@ -5170,23 +5176,18 @@ function () {
   return Axis;
 }();
 
-var YAxisType = {
-  CANDLE_STICK: 'candle_stick',
-  TECHNICAL_INDICATOR: 'technical_indicator'
-};
-
 var YAxis =
 /*#__PURE__*/
 function (_Axis) {
   _inherits(YAxis, _Axis);
 
-  function YAxis(chartData, yAxisType) {
+  function YAxis(chartData, isCandleStickYAxis) {
     var _this;
 
     _classCallCheck(this, YAxis);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(YAxis).call(this, chartData));
-    _this._yAxisType = yAxisType;
+    _this._isCandleStickYAxis = isCandleStickYAxis;
     return _this;
   }
 
@@ -5228,6 +5229,7 @@ function (_Axis) {
 
       if (range === 0) {
         max += 1;
+        max -= 1;
         range = Math.abs(max - min);
       } // 保证每次图形绘制上下都留间隙
 
@@ -5250,11 +5252,13 @@ function (_Axis) {
       if (tickLength > 0) {
         var textHeight = this._chartData.styleOptions().xAxis.tickText.size;
 
-        var y = this.convertToPixel(+ticks[0].v);
+        var y = this._innerConvertToPixel(+ticks[0].v);
+
         var tickCountDif = 1;
 
         if (tickLength > 1) {
-          var nextY = this.convertToPixel(+ticks[1].v);
+          var nextY = this._innerConvertToPixel(+ticks[1].v);
+
           var yDif = Math.abs(nextY - y);
 
           if (yDif < textHeight * 2) {
@@ -5262,14 +5266,16 @@ function (_Axis) {
           }
         }
 
+        var isPercentageAxis = this.isPercentageYAxis();
+
         for (var i = 0; i < tickLength; i += tickCountDif) {
           var v = ticks[i].v;
 
-          var _y = this.convertToPixel(+v);
+          var _y = this._innerConvertToPixel(+v);
 
           if (_y > textHeight && _y < this._height - textHeight) {
             optimalTicks.push({
-              v: v,
+              v: isPercentageAxis ? "".concat((+v).toFixed(2), "%") : formatBigNumber(v),
               y: _y
             });
           }
@@ -5317,7 +5323,7 @@ function (_Axis) {
 
           this._compareMinMax(_kLineData, technicalIndicatorType, minMaxArray);
 
-          if (this.isCandleStickYAxis()) {
+          if (this._isCandleStickYAxis) {
             minMaxArray[0] = Math.min(_kLineData.low, minMaxArray[0]);
             minMaxArray[1] = Math.max(_kLineData.high, minMaxArray[1]);
           }
@@ -5329,9 +5335,25 @@ function (_Axis) {
       }
 
       if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
-        this._minValue = minMaxArray[0];
-        this._maxValue = minMaxArray[1];
+        if (this.isPercentageYAxis()) {
+          var fromClose = dataList[from].close;
+          this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100;
+          this._maxValue = (minMaxArray[1] - fromClose) / fromClose * 100;
+        } else {
+          this._minValue = minMaxArray[0];
+          this._maxValue = minMaxArray[1];
+        }
       }
+    }
+  }, {
+    key: "_innerConvertToPixel",
+    value: function _innerConvertToPixel(value) {
+      return Math.round((1.0 - (value - this._minValue) / this._range) * this._height);
+    }
+  }, {
+    key: "isCandleStickYAxis",
+    value: function isCandleStickYAxis() {
+      return this._isCandleStickYAxis;
     }
     /**
      * 是否是蜡烛图y轴组件
@@ -5339,19 +5361,35 @@ function (_Axis) {
      */
 
   }, {
-    key: "isCandleStickYAxis",
-    value: function isCandleStickYAxis() {
-      return this._yAxisType === YAxisType.CANDLE_STICK;
+    key: "isPercentageYAxis",
+    value: function isPercentageYAxis() {
+      return this._isCandleStickYAxis && this._chartData.styleOptions().yAxis.type === YAxisType.PERCENTAGE;
     }
   }, {
     key: "convertFromPixel",
     value: function convertFromPixel(pixel) {
-      return (1.0 - pixel / this._height) * this._range + this._minValue;
+      var yAxisValue = (1.0 - pixel / this._height) * this._range + this._minValue;
+
+      if (this.isPercentageYAxis()) {
+        var fromClose = this._chartData.dataList()[this._chartData.from()].close;
+
+        return fromClose * yAxisValue / 100 + fromClose;
+      }
+
+      return yAxisValue;
     }
   }, {
     key: "convertToPixel",
     value: function convertToPixel(value) {
-      return Math.round((1.0 - (value - this._minValue) / this._range) * this._height);
+      var realValue = value;
+
+      if (this.isPercentageYAxis()) {
+        var fromClose = this._chartData.dataList()[this._chartData.from()].close;
+
+        realValue = (value - fromClose) / fromClose * 100;
+      }
+
+      return this._innerConvertToPixel(realValue);
     }
   }]);
 
@@ -5385,7 +5423,7 @@ function (_Series) {
   }, {
     key: "_createYAxis",
     value: function _createYAxis(props) {
-      return new YAxis(props.chartData, YAxisType.TECHNICAL_INDICATOR);
+      return new YAxis(props.chartData, false);
     }
   }, {
     key: "_createMainWidget",
@@ -8583,7 +8621,7 @@ function (_TechnicalIndicatorSe) {
   _createClass(CandleStickSeries, [{
     key: "_createYAxis",
     value: function _createYAxis(props) {
-      return new YAxis(props.chartData, YAxisType.CANDLE_STICK);
+      return new YAxis(props.chartData, true);
     }
   }, {
     key: "_createMainWidget",
@@ -8728,16 +8766,25 @@ function (_View) {
 
 var XAxisFloatLayerView =
 /*#__PURE__*/
-function (_AxisFloatLayerView) {
-  _inherits(XAxisFloatLayerView, _AxisFloatLayerView);
+function (_View) {
+  _inherits(XAxisFloatLayerView, _View);
 
-  function XAxisFloatLayerView() {
+  function XAxisFloatLayerView(container, chartData, xAxis) {
+    var _this;
+
     _classCallCheck(this, XAxisFloatLayerView);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(XAxisFloatLayerView).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisFloatLayerView).call(this, container, chartData));
+    _this._xAxis = xAxis;
+    return _this;
   }
 
   _createClass(XAxisFloatLayerView, [{
+    key: "_draw",
+    value: function _draw() {
+      this._drawCrossHairLabel();
+    }
+  }, {
     key: "_drawCrossHairLabel",
     value: function _drawCrossHairLabel() {
       if (!this._chartData.crossHairSeriesTag()) {
@@ -8758,7 +8805,7 @@ function (_AxisFloatLayerView) {
       var dataPos;
 
       if (crossHairPoint) {
-        dataPos = this._axis.convertFromPixel(crossHairPoint.x);
+        dataPos = this._xAxis.convertFromPixel(crossHairPoint.x);
       } else {
         dataPos = this._chartData.dataList().length - 1;
       }
@@ -8769,7 +8816,7 @@ function (_AxisFloatLayerView) {
         return;
       }
 
-      var x = this._axis.convertToPixel(dataPos);
+      var x = this._xAxis.convertToPixel(dataPos);
 
       var timestamp = kLineData.timestamp;
       var text = formatDate(timestamp, 'YYYY-MM-DD hh:mm', this._chartData.timezone());
@@ -8811,7 +8858,7 @@ function (_AxisFloatLayerView) {
   }]);
 
   return XAxisFloatLayerView;
-}(AxisFloatLayerView);
+}(View);
 
 var XAxisWidget =
 /*#__PURE__*/

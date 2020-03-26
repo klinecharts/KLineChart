@@ -117,6 +117,8 @@ config = {
     minWidth: 60,
     // 'left' | 'right'
     position: 'right',
+    // 'normal' | 'percentage'
+    type: 'normal',
     axisLine: {
       display: true,
       color: '#888888',

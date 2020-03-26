@@ -1,9 +1,19 @@
-import AxisFloatLayerView from './AxisFloatLayerView'
+import View from './View'
 import { calcTextWidth, getFont } from '../utils/canvas'
 import { formatPrecision } from '../utils/format'
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
 
-export default class YAxisFloatLayerView extends AxisFloatLayerView {
+export default class YAxisFloatLayerView extends View {
+  constructor (container, chartData, yAxis, additionalDataProvider) {
+    super(container, chartData)
+    this._yAxis = yAxis
+    this._additionalDataProvider = additionalDataProvider
+  }
+
+  _draw () {
+    this._drawCrossHairLabel()
+  }
+
   _drawCrossHairLabel () {
     if (this._chartData.crossHairSeriesTag() !== this._additionalDataProvider.tag()) {
       return
@@ -18,9 +28,15 @@ export default class YAxisFloatLayerView extends AxisFloatLayerView {
     if (!crossHairPoint) {
       return
     }
-    const value = this._axis.convertFromPixel(crossHairPoint.y)
-    const precision = this._chartData.precisionOptions()[this._axis.isCandleStickYAxis() ? 'price' : this._additionalDataProvider.technicalIndicatorType()]
-    const yAxisDataLabel = formatPrecision(value, precision)
+    const value = this._yAxis.convertFromPixel(crossHairPoint.y)
+    let yAxisDataLabel
+    if (this._yAxis.isPercentageYAxis()) {
+      const fromClose = this._chartData.dataList()[this._chartData.from()].close
+      yAxisDataLabel = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
+    } else {
+      const precision = this._chartData.precisionOptions()[this._yAxis.isCandleStickYAxis() ? 'price' : this._additionalDataProvider.technicalIndicatorType()]
+      yAxisDataLabel = formatPrecision(value, precision)
+    }
     const textSize = crossHairHorizontalText.size
     this._ctx.font = getFont(textSize)
     const yAxisDataLabelWidth = calcTextWidth(this._ctx, yAxisDataLabel)

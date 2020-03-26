@@ -1,7 +1,7 @@
 import View from './View'
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
-import { formatBigNumber, formatPrecision } from '../utils/format'
+import { formatPrecision } from '../utils/format'
 
 export default class YAxisView extends View {
   constructor (container, chartData, yAxis) {
@@ -99,8 +99,7 @@ export default class YAxisView extends View {
     this._ctx.font = getFont(textSize)
     this._ctx.fillStyle = tickText.color
     this._yAxis.ticks().forEach(tick => {
-      const text = formatBigNumber(tick.v)
-      this._ctx.fillText(text, labelX, tick.y)
+      this._ctx.fillText(tick.v, labelX, tick.y)
     })
     this._ctx.textAlign = 'left'
   }
@@ -134,7 +133,13 @@ export default class YAxisView extends View {
       color = lastPriceMark.noChangeColor
     }
     const priceMarkText = lastPriceMark.text
-    const text = formatPrecision(lastPrice, this._chartData.precisionOptions().price)
+    let text
+    if (this._yAxis.isPercentageYAxis()) {
+      const fromClose = dataList[this._chartData.from()].close
+      text = `${((lastPrice - fromClose) / fromClose * 100).toFixed(2)}%`
+    } else {
+      text = formatPrecision(lastPrice, this._chartData.precisionOptions().price)
+    }
     const textSize = lastPriceMark.text.size
     this._ctx.font = getFont(textSize)
     const rectWidth = calcTextWidth(this._ctx, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight
