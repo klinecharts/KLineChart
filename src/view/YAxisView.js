@@ -28,9 +28,9 @@ export default class YAxisView extends View {
     this._ctx.lineWidth = axisLine.size
     let x
     if (this._isDrawFromStart(yAxisOptions)) {
-      x = 0
+      x = 1
     } else {
-      x = this._width
+      x = this._width - 1
     }
     drawVerticalLine(this._ctx, x, 0, this._height)
   }

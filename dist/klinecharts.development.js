@@ -4712,9 +4712,9 @@ function (_View) {
       var x;
 
       if (this._isDrawFromStart(yAxisOptions)) {
-        x = 0;
+        x = 1;
       } else {
-        x = this._width;
+        x = this._width - 1;
       }
 
       drawVerticalLine(this._ctx, x, 0, this._height);
@@ -7284,7 +7284,7 @@ function (_EventHandler) {
       }
 
       var point = {
-        x: event.localX,
+        x: event.localX - this._seriesSize.contentLeft,
         y: event.localY
       };
 
@@ -7476,7 +7476,7 @@ function (_EventHandler) {
       var _this4 = this;
 
       var point = {
-        x: event.localX,
+        x: event.localX - this._seriesSize.contentLeft,
         y: event.localY
       };
       var keys = Object.keys(this._chartData.graphicMarkData());
@@ -7694,7 +7694,7 @@ function (_EventHandler) {
       }
 
       var point = {
-        x: event.localX,
+        x: event.localX - this._seriesSize.contentLeft,
         y: event.localY
       };
 
@@ -7777,7 +7777,7 @@ function (_EventHandler) {
 
         var graphicMarkData = graphicMarkDatas[markKey];
         var point = {
-          x: event.localX,
+          x: event.localX - this._seriesSize.contentLeft,
           y: event.localY
         };
 
@@ -7838,7 +7838,7 @@ function (_EventHandler) {
         graphicMarkDatas[markKey] = graphicMarkData;
 
         this._chartData.setGraphicMarkPoint({
-          x: event.localX,
+          x: event.localX - this._seriesSize.contentLeft,
           y: event.localY
         });
 
@@ -9329,7 +9329,7 @@ function (_EventHandler) {
       }
 
       this._chartData.setCrossHairPoint({
-        x: event.localX,
+        x: event.localX - this._seriesSize.contentLeft,
         y: real.y
       });
 
@@ -9383,12 +9383,12 @@ function (_EventHandler) {
 
       if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
         this._touchPoint = {
-          x: event.localX,
+          x: event.localX - this._seriesSize.contentLeft,
           y: event.localY
         };
 
         this._chartData.setCrossHairPoint({
-          x: event.localX,
+          x: event.localX - this._seriesSize.contentLeft,
           y: real.y
         });
 
@@ -9399,7 +9399,7 @@ function (_EventHandler) {
     key: "mouseDownEvent",
     value: function mouseDownEvent(event) {
       this._startDragPoint = {
-        x: event.localX,
+        x: event.localX - this._seriesSize.contentLeft,
         y: event.localY
       };
 
@@ -9416,19 +9416,19 @@ function (_EventHandler) {
       }
 
       var crossHairPoint = {
-        x: event.localX,
+        x: event.localX - this._seriesSize.contentLeft,
         y: real.y
       };
       this._touchZoomed = false;
 
       if (this._touchPoint) {
-        var xDif = event.localX - this._touchPoint.x;
+        var xDif = event.localX - this._seriesSize.contentLeft - this._touchPoint.x;
         var yDif = event.localY - this._touchPoint.y;
         var radius = Math.sqrt(xDif * xDif + yDif * yDif);
 
         if (radius < 10) {
           this._touchPoint = {
-            x: event.localX,
+            x: event.localX - this._seriesSize.contentLeft,
             y: event.localY
           };
 
@@ -9461,14 +9461,14 @@ function (_EventHandler) {
       }
 
       var crossHairPoint = {
-        x: event.localX,
+        x: event.localX - this._seriesSize.contentLeft,
         y: real.y
       };
 
       if (isTouch(event)) {
         if (this._touchPoint) {
           this._touchPoint = {
-            x: event.localX,
+            x: event.localX - this._seriesSize.contentLeft,
             y: event.localY
           };
 
@@ -9480,7 +9480,7 @@ function (_EventHandler) {
         }
       }
 
-      var distance = event.localX - this._startDragPoint.x;
+      var distance = event.localX - this._seriesSize.contentLeft - this._startDragPoint.x;
 
       this._chartData.setCrossHairPoint(crossHairPoint);
 
@@ -9500,12 +9500,12 @@ function (_EventHandler) {
       }
 
       this._touchPoint = {
-        x: event.localX,
+        x: event.localX - this._seriesSize.contentLeft,
         y: event.localY
       };
 
       this._chartData.setCrossHairPoint({
-        x: event.localX,
+        x: event.localX - this._seriesSize.contentLeft,
         y: real.y
       });
 
