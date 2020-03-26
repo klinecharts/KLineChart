@@ -153,6 +153,12 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
 + [x] Price channel line
 + [X] Fibonacci line
 
+## Hot Key
++ ```shift + ←``` can be used to shift left.
++ ```shift + →``` can be used to shift right.
++ ```shift + ↑``` can be used to zoom out.
++ ```shift + ↓``` can be used to zoom in.
+
 ## Samples
 [https://liihuu.github.io/kline](https://liihuu.github.io/kline)
 
