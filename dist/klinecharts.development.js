@@ -604,6 +604,10 @@ var defaultFloatLayer = {
         marginRight: 8,
         marginBottom: 0,
         marginLeft: 8
+      },
+      point: {
+        display: true,
+        radius: 3
       }
     }
   }
@@ -4426,6 +4430,12 @@ function (_View) {
   }, {
     key: "_drawTechnicalIndicatorPromptPoint",
     value: function _drawTechnicalIndicatorPromptPoint(values, colors, x) {
+      var floatLayerPromptTechnicalIndicatorPoint = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.point;
+
+      if (!floatLayerPromptTechnicalIndicatorPoint.display) {
+        return;
+      }
+
       var technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType();
 
       if (!this._chartData.crossHairSeriesTag() || technicalIndicatorType === TechnicalIndicatorType.SAR) {
@@ -4434,6 +4444,7 @@ function (_View) {
 
       var colorSize = colors.length;
       var valueSize = technicalIndicatorType === TechnicalIndicatorType.MACD || technicalIndicatorType === TechnicalIndicatorType.VOL ? values.length - 1 : values.length;
+      var radius = floatLayerPromptTechnicalIndicatorPoint.radius;
 
       for (var i = 0; i < valueSize; i++) {
         var value = values[i];
@@ -4445,7 +4456,7 @@ function (_View) {
 
           this._ctx.beginPath();
 
-          this._ctx.arc(x, y, 3, 0, Math.PI * 2);
+          this._ctx.arc(x, y, radius, 0, Math.PI * 2);
 
           this._ctx.closePath();
 
@@ -9119,15 +9130,17 @@ function () {
       this._container = container;
       this._wrapper = document.createElement('div');
       this._wrapper.style.margin = '0';
-      this._wrapper.style.padding = '0';
-      this._wrapper.style.position = 'relative';
+      this._wrapper.style.padding = '0'; // this._wrapper.style.position = 'relative'
+
       this._wrapper.style.overflow = 'hidden';
-      this._wrapper.style.zIndex = '10';
       this._element = document.createElement('div');
       this._element.style.margin = '0';
       this._element.style.padding = '0';
+      this._element.style.width = '100%';
       this._element.style.cursor = 'ns-resize';
-      this._element.style.height = '6px';
+      this._element.style.position = 'absolute';
+      this._element.style.zIndex = '20';
+      this._element.style.height = '5px';
 
       this._wrapper.appendChild(this._element);
 
@@ -10731,14 +10744,14 @@ function () {
 
 var instances = {};
 var idBase = 1;
-var errorMessage = 'Chart version is 5.0.0. Root dom is null, can not initialize the chart!!!';
+var errorMessage = 'Chart version is 5.1.0. Root dom is null, can not initialize the chart!!!';
 /**
  * 获取版本号
  * @returns {string}
  */
 
 function version() {
-  return '5.0.0';
+  return '5.1.0';
 }
 /**
  * 初始化

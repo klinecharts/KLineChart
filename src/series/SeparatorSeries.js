@@ -16,14 +16,16 @@ export default class SeparatorSeries {
     this._wrapper = document.createElement('div')
     this._wrapper.style.margin = '0'
     this._wrapper.style.padding = '0'
-    this._wrapper.style.position = 'relative'
+    // this._wrapper.style.position = 'relative'
     this._wrapper.style.overflow = 'hidden'
-    this._wrapper.style.zIndex = '10'
     this._element = document.createElement('div')
     this._element.style.margin = '0'
     this._element.style.padding = '0'
+    this._element.style.width = '100%'
     this._element.style.cursor = 'ns-resize'
-    this._element.style.height = '6px'
+    this._element.style.position = 'absolute'
+    this._element.style.zIndex = '20'
+    this._element.style.height = '5px'
     this._wrapper.appendChild(this._element)
     const lastElement = container.lastChild
     if (lastElement) {

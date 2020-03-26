@@ -160,6 +160,10 @@ export default class TechnicalIndicatorFloatLayerView extends View {
    * @private
    */
   _drawTechnicalIndicatorPromptPoint (values, colors, x) {
+    const floatLayerPromptTechnicalIndicatorPoint = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.point
+    if (!floatLayerPromptTechnicalIndicatorPoint.display) {
+      return
+    }
     const technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType()
     if (!this._chartData.crossHairSeriesTag() ||
       technicalIndicatorType === TechnicalIndicatorType.SAR) {
@@ -167,14 +171,14 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     }
     const colorSize = colors.length
     const valueSize = technicalIndicatorType === TechnicalIndicatorType.MACD || technicalIndicatorType === TechnicalIndicatorType.VOL ? values.length - 1 : values.length
-
+    const radius = floatLayerPromptTechnicalIndicatorPoint.radius
     for (let i = 0; i < valueSize; i++) {
       const value = values[i]
       if (value || value === 0) {
         const y = this._yAxis.convertToPixel(value)
         this._ctx.fillStyle = colors[i % colorSize]
         this._ctx.beginPath()
-        this._ctx.arc(x, y, 3, 0, Math.PI * 2)
+        this._ctx.arc(x, y, radius, 0, Math.PI * 2)
         this._ctx.closePath()
         this._ctx.fill()
       }

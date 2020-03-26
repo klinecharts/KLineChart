@@ -232,6 +232,10 @@ config = {
           marginRight: 8,
           marginBottom: 0,
           marginLeft: 8
+        },
+        point: {
+          display: true,
+          radius: 3
         }
       }
     }
