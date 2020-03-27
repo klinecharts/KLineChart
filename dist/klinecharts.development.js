@@ -4712,7 +4712,7 @@ function (_View) {
       var x;
 
       if (this._isDrawFromStart(yAxisOptions)) {
-        x = 1;
+        x = 0;
       } else {
         x = this._width - 1;
       }
@@ -7202,7 +7202,7 @@ function () {
   _createClass(EventHandler, [{
     key: "_checkEventPointX",
     value: function _checkEventPointX(x) {
-      return x > this._seriesSize.contentLeft && x < this._seriesSize.contentRight;
+      return x > 0 && x < this._seriesSize.contentRight - this._seriesSize.contentLeft;
     }
   }, {
     key: "setSeriesSize",
@@ -7284,7 +7284,7 @@ function (_EventHandler) {
       }
 
       var point = {
-        x: event.localX - this._seriesSize.contentLeft,
+        x: event.localX,
         y: event.localY
       };
 
@@ -7476,7 +7476,7 @@ function (_EventHandler) {
       var _this4 = this;
 
       var point = {
-        x: event.localX - this._seriesSize.contentLeft,
+        x: event.localX,
         y: event.localY
       };
       var keys = Object.keys(this._chartData.graphicMarkData());
@@ -7568,7 +7568,7 @@ function (_EventHandler) {
               if (_this4._realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 var linePoints = [];
                 var size = {
-                  width: _this4._seriesSize.contentRight - _this4._seriesSize.contentLeft,
+                  width: _this4._seriesSize.contentRight,
                   height: _this4._seriesSize.tags[CANDLE_STICK_SERIES_TAG].contentBottom - _this4._seriesSize.tags[CANDLE_STICK_SERIES_TAG].contentTop
                 };
 
@@ -7694,7 +7694,7 @@ function (_EventHandler) {
       }
 
       var point = {
-        x: event.localX - this._seriesSize.contentLeft,
+        x: event.localX,
         y: event.localY
       };
 
@@ -7777,7 +7777,7 @@ function (_EventHandler) {
 
         var graphicMarkData = graphicMarkDatas[markKey];
         var point = {
-          x: event.localX - this._seriesSize.contentLeft,
+          x: event.localX,
           y: event.localY
         };
 
@@ -7838,7 +7838,7 @@ function (_EventHandler) {
         graphicMarkDatas[markKey] = graphicMarkData;
 
         this._chartData.setGraphicMarkPoint({
-          x: event.localX - this._seriesSize.contentLeft,
+          x: event.localX,
           y: event.localY
         });
 
@@ -9329,7 +9329,7 @@ function (_EventHandler) {
       }
 
       this._chartData.setCrossHairPoint({
-        x: event.localX - this._seriesSize.contentLeft,
+        x: event.localX,
         y: real.y
       });
 
@@ -9383,12 +9383,12 @@ function (_EventHandler) {
 
       if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
         this._touchPoint = {
-          x: event.localX - this._seriesSize.contentLeft,
+          x: event.localX,
           y: event.localY
         };
 
         this._chartData.setCrossHairPoint({
-          x: event.localX - this._seriesSize.contentLeft,
+          x: event.localX,
           y: real.y
         });
 
@@ -9399,7 +9399,7 @@ function (_EventHandler) {
     key: "mouseDownEvent",
     value: function mouseDownEvent(event) {
       this._startDragPoint = {
-        x: event.localX - this._seriesSize.contentLeft,
+        x: event.localX,
         y: event.localY
       };
 
@@ -9416,19 +9416,19 @@ function (_EventHandler) {
       }
 
       var crossHairPoint = {
-        x: event.localX - this._seriesSize.contentLeft,
+        x: event.localX,
         y: real.y
       };
       this._touchZoomed = false;
 
       if (this._touchPoint) {
-        var xDif = event.localX - this._seriesSize.contentLeft - this._touchPoint.x;
+        var xDif = event.localX - this._touchPoint.x;
         var yDif = event.localY - this._touchPoint.y;
         var radius = Math.sqrt(xDif * xDif + yDif * yDif);
 
         if (radius < 10) {
           this._touchPoint = {
-            x: event.localX - this._seriesSize.contentLeft,
+            x: event.localX,
             y: event.localY
           };
 
@@ -9461,14 +9461,14 @@ function (_EventHandler) {
       }
 
       var crossHairPoint = {
-        x: event.localX - this._seriesSize.contentLeft,
+        x: event.localX,
         y: real.y
       };
 
       if (isTouch(event)) {
         if (this._touchPoint) {
           this._touchPoint = {
-            x: event.localX - this._seriesSize.contentLeft,
+            x: event.localX,
             y: event.localY
           };
 
@@ -9480,7 +9480,7 @@ function (_EventHandler) {
         }
       }
 
-      var distance = event.localX - this._seriesSize.contentLeft - this._startDragPoint.x;
+      var distance = event.localX - this._startDragPoint.x;
 
       this._chartData.setCrossHairPoint(crossHairPoint);
 
@@ -9500,12 +9500,12 @@ function (_EventHandler) {
       }
 
       this._touchPoint = {
-        x: event.localX - this._seriesSize.contentLeft,
+        x: event.localX,
         y: event.localY
       };
 
       this._chartData.setCrossHairPoint({
-        x: event.localX - this._seriesSize.contentLeft,
+        x: event.localX,
         y: real.y
       });
 
@@ -9664,18 +9664,24 @@ function () {
   }, {
     key: "_mouseUpEvent",
     value: function _mouseUpEvent(event) {
+      event.localX -= this._seriesSize.contentLeft;
+
       this._graphicMarkEventHandler.mouseUpEvent(event);
     }
   }, {
     key: "_mouseLeaveEvent",
     value: function _mouseLeaveEvent(event) {
       if (this._checkZoomDrag()) {
+        event.localX -= this._seriesSize.contentLeft;
+
         this._zoomDragEventHandler.mouseLeaveEvent(event);
       }
     }
   }, {
     key: "_mouseMoveEvent",
     value: function _mouseMoveEvent(event) {
+      event.localX -= this._seriesSize.contentLeft;
+
       this._graphicMarkEventHandler.mouseMoveEvent(event);
 
       if (this._checkZoomDrag()) {
@@ -9693,12 +9699,16 @@ function () {
     key: "_mouseClickEvent",
     value: function _mouseClickEvent(event) {
       if (this._checkZoomDrag()) {
+        event.localX -= this._seriesSize.contentLeft;
+
         this._zoomDragEventHandler.mouseClickEvent(event);
       }
     }
   }, {
     key: "_mouseDownEvent",
     value: function _mouseDownEvent(event) {
+      event.localX -= this._seriesSize.contentLeft;
+
       this._graphicMarkEventHandler.mouseDownEvent(event);
 
       if (this._checkZoomDrag()) {
@@ -9708,11 +9718,15 @@ function () {
   }, {
     key: "_mouseRightDownEvent",
     value: function _mouseRightDownEvent(event) {
+      event.localX -= this._seriesSize.contentLeft;
+
       this._graphicMarkEventHandler.mouseRightDownEvent(event);
     }
   }, {
     key: "_pressedMouseMoveEvent",
     value: function _pressedMouseMoveEvent(event) {
+      event.localX -= this._seriesSize.contentLeft;
+
       if (this._chartData.dragGraphicMarkFlag()) {
         this._graphicMarkEventHandler.pressedMouseMoveEvent(event); // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
 
@@ -9730,6 +9744,8 @@ function () {
     key: "_longTapEvent",
     value: function _longTapEvent(event) {
       if (this._checkZoomDrag()) {
+        event.localX -= this._seriesSize.contentLeft;
+
         this._zoomDragEventHandler.longTapEvent(event);
       }
     }
@@ -9741,6 +9757,8 @@ function () {
   }, {
     key: "setSeriesSize",
     value: function setSeriesSize(seriesSize) {
+      this._seriesSize = seriesSize;
+
       this._zoomDragEventHandler.setSeriesSize(seriesSize);
 
       this._graphicMarkEventHandler.setSeriesSize(seriesSize);

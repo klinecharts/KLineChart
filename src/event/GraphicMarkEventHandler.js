@@ -61,7 +61,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
     if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY)) {
       return
     }
-    const point = { x: event.localX - this._seriesSize.contentLeft, y: event.localY }
+    const point = { x: event.localX, y: event.localY }
     this._chartData.setGraphicMarkPoint(point)
     const graphicMarkType = this._chartData.graphicMarkType()
     switch (graphicMarkType) {
@@ -196,7 +196,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
    * @param event
    */
   _findNoneGraphicMarkMouseDownActiveData (event) {
-    const point = { x: event.localX - this._seriesSize.contentLeft, y: event.localY }
+    const point = { x: event.localX, y: event.localY }
     const keys = Object.keys(this._chartData.graphicMarkData())
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
@@ -256,7 +256,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
           if (this._realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
             let linePoints = []
             const size = {
-              width: this._seriesSize.contentRight - this._seriesSize.contentLeft,
+              width: this._seriesSize.contentRight,
               height: this._seriesSize.tags[CANDLE_STICK_SERIES_TAG].contentBottom - this._seriesSize.tags[CANDLE_STICK_SERIES_TAG].contentTop
             }
             switch (key) {
@@ -341,7 +341,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
     if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY)) {
       return
     }
-    const point = { x: event.localX - this._seriesSize.contentLeft, y: event.localY }
+    const point = { x: event.localX, y: event.localY }
     this._chartData.setGraphicMarkPoint(point)
     if (!this._waitingForMouseMoveAnimationFrame) {
       this._waitingForMouseMoveAnimationFrame = true
@@ -394,7 +394,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
     if (markKey && dataIndex !== -1) {
       const graphicMarkDatas = this._chartData.graphicMarkData()
       const graphicMarkData = graphicMarkDatas[markKey]
-      const point = { x: event.localX - this._seriesSize.contentLeft, y: event.localY }
+      const point = { x: event.localX, y: event.localY }
       switch (markKey) {
         case GraphicMarkType.HORIZONTAL_STRAIGHT_LINE:
         case GraphicMarkType.VERTICAL_STRAIGHT_LINE:
@@ -436,7 +436,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
         }
       }
       graphicMarkDatas[markKey] = graphicMarkData
-      this._chartData.setGraphicMarkPoint({ x: event.localX - this._seriesSize.contentLeft, y: event.localY })
+      this._chartData.setGraphicMarkPoint({ x: event.localX, y: event.localY })
       this._chartData.setGraphicMarkData(graphicMarkDatas)
     }
   }

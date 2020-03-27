@@ -28,7 +28,7 @@ export default class YAxisView extends View {
     this._ctx.lineWidth = axisLine.size
     let x
     if (this._isDrawFromStart(yAxisOptions)) {
-      x = 1
+      x = 0
     } else {
       x = this._width - 1
     }

@@ -45,7 +45,7 @@ export default class ZoomDragEventHandler extends EventHandler {
       this._chartData.setCrossHairSeriesTag(null)
       return
     }
-    this._chartData.setCrossHairPoint({ x: event.localX - this._seriesSize.contentLeft, y: real.y })
+    this._chartData.setCrossHairPoint({ x: event.localX, y: real.y })
     this._chartData.setCrossHairSeriesTag(real.tag)
   }
 
@@ -86,14 +86,14 @@ export default class ZoomDragEventHandler extends EventHandler {
       return
     }
     if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
-      this._touchPoint = { x: event.localX - this._seriesSize.contentLeft, y: event.localY }
-      this._chartData.setCrossHairPoint({ x: event.localX - this._seriesSize.contentLeft, y: real.y })
+      this._touchPoint = { x: event.localX, y: event.localY }
+      this._chartData.setCrossHairPoint({ x: event.localX, y: real.y })
       this._chartData.setCrossHairSeriesTag(real.tag)
     }
   }
 
   mouseDownEvent (event) {
-    this._startDragPoint = { x: event.localX - this._seriesSize.contentLeft, y: event.localY }
+    this._startDragPoint = { x: event.localX, y: event.localY }
     this._chartData.startDrag()
     if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
       return
@@ -102,14 +102,14 @@ export default class ZoomDragEventHandler extends EventHandler {
     if (!real) {
       return
     }
-    const crossHairPoint = { x: event.localX - this._seriesSize.contentLeft, y: real.y }
+    const crossHairPoint = { x: event.localX, y: real.y }
     this._touchZoomed = false
     if (this._touchPoint) {
-      const xDif = event.localX - this._seriesSize.contentLeft - this._touchPoint.x
+      const xDif = event.localX - this._touchPoint.x
       const yDif = event.localY - this._touchPoint.y
       const radius = Math.sqrt(xDif * xDif + yDif * yDif)
       if (radius < 10) {
-        this._touchPoint = { x: event.localX - this._seriesSize.contentLeft, y: event.localY }
+        this._touchPoint = { x: event.localX, y: event.localY }
         this._chartData.setCrossHairPoint(crossHairPoint)
         this._chartData.setCrossHairSeriesTag(real.tag)
       } else {
@@ -131,16 +131,16 @@ export default class ZoomDragEventHandler extends EventHandler {
     if (!real) {
       return
     }
-    const crossHairPoint = { x: event.localX - this._seriesSize.contentLeft, y: real.y }
+    const crossHairPoint = { x: event.localX, y: real.y }
     if (isTouch(event)) {
       if (this._touchPoint) {
-        this._touchPoint = { x: event.localX - this._seriesSize.contentLeft, y: event.localY }
+        this._touchPoint = { x: event.localX, y: event.localY }
         this._chartData.setCrossHairPoint(crossHairPoint)
         this._chartData.setCrossHairSeriesTag(real.tag)
         return
       }
     }
-    const distance = event.localX - this._seriesSize.contentLeft - this._startDragPoint.x
+    const distance = event.localX - this._startDragPoint.x
     this._chartData.setCrossHairPoint(crossHairPoint)
     this._chartData.drag(distance)
   }
@@ -153,8 +153,8 @@ export default class ZoomDragEventHandler extends EventHandler {
     if (!real) {
       return
     }
-    this._touchPoint = { x: event.localX - this._seriesSize.contentLeft, y: event.localY }
-    this._chartData.setCrossHairPoint({ x: event.localX - this._seriesSize.contentLeft, y: real.y })
+    this._touchPoint = { x: event.localX, y: event.localY }
+    this._chartData.setCrossHairPoint({ x: event.localX, y: real.y })
     this._chartData.setCrossHairSeriesTag(real.tag)
   }
 

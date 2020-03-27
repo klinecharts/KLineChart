@@ -47,16 +47,19 @@ export default class ChartEvent {
   }
 
   _mouseUpEvent (event) {
+    event.localX -= this._seriesSize.contentLeft
     this._graphicMarkEventHandler.mouseUpEvent(event)
   }
 
   _mouseLeaveEvent (event) {
     if (this._checkZoomDrag()) {
+      event.localX -= this._seriesSize.contentLeft
       this._zoomDragEventHandler.mouseLeaveEvent(event)
     }
   }
 
   _mouseMoveEvent (event) {
+    event.localX -= this._seriesSize.contentLeft
     this._graphicMarkEventHandler.mouseMoveEvent(event)
     if (this._checkZoomDrag()) {
       this._zoomDragEventHandler.mouseMoveEvent(event)
@@ -71,11 +74,13 @@ export default class ChartEvent {
 
   _mouseClickEvent (event) {
     if (this._checkZoomDrag()) {
+      event.localX -= this._seriesSize.contentLeft
       this._zoomDragEventHandler.mouseClickEvent(event)
     }
   }
 
   _mouseDownEvent (event) {
+    event.localX -= this._seriesSize.contentLeft
     this._graphicMarkEventHandler.mouseDownEvent(event)
     if (this._checkZoomDrag()) {
       this._zoomDragEventHandler.mouseDownEvent(event)
@@ -83,10 +88,12 @@ export default class ChartEvent {
   }
 
   _mouseRightDownEvent (event) {
+    event.localX -= this._seriesSize.contentLeft
     this._graphicMarkEventHandler.mouseRightDownEvent(event)
   }
 
   _pressedMouseMoveEvent (event) {
+    event.localX -= this._seriesSize.contentLeft
     if (this._chartData.dragGraphicMarkFlag()) {
       this._graphicMarkEventHandler.pressedMouseMoveEvent(event)
       // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
@@ -101,6 +108,7 @@ export default class ChartEvent {
 
   _longTapEvent (event) {
     if (this._checkZoomDrag()) {
+      event.localX -= this._seriesSize.contentLeft
       this._zoomDragEventHandler.longTapEvent(event)
     }
   }
@@ -110,6 +118,7 @@ export default class ChartEvent {
   }
 
   setSeriesSize (seriesSize) {
+    this._seriesSize = seriesSize
     this._zoomDragEventHandler.setSeriesSize(seriesSize)
     this._graphicMarkEventHandler.setSeriesSize(seriesSize)
   }

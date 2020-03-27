@@ -15,7 +15,7 @@ export default class EventHandler {
   }
 
   _checkEventPointX (x) {
-    return x > this._seriesSize.contentLeft && x < this._seriesSize.contentRight
+    return x > 0 && x < this._seriesSize.contentRight - this._seriesSize.contentLeft
   }
 
   setSeriesSize (seriesSize) {
