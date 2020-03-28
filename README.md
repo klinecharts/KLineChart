@@ -6,7 +6,7 @@
 [![types](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-📈A kline library for browser. Support technical indicators and parameter setting, support for graphic markup, custom style.
+📈Lightweight k-line chart built with html5 canvas. Support technical indicator and parameter setting, support for graphic markup, custom style.
 ## Browser Support
 The chart is based on canvas. In theory, as long as it supports canvas, it is the same on mobile.
 ## Installing
