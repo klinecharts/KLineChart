@@ -9816,7 +9816,6 @@ function () {
       this._chartContainer.style.outline = 'none';
       this._chartContainer.style.borderStyle = 'none';
       this._chartContainer.style.width = '100%';
-      this._chartContainer.style.height = '100%';
       this._chartContainer.tabIndex = 1;
       container.appendChild(this._chartContainer);
     }
@@ -10046,8 +10045,8 @@ function () {
 
       var isYAxisLeft = yAxis.position === YAxisPosition.LEFT;
       var isYAxisTextOutsize = yAxis.tickText.position === YAxisTextPosition.OUTSIDE;
-      var seriesWidth = this._chartContainer.offsetWidth;
-      var seriesHeight = this._chartContainer.offsetHeight;
+      var seriesWidth = this._container.offsetWidth;
+      var seriesHeight = this._container.offsetHeight;
 
       var separatorHeight = this._measureSeparatorHeight();
 

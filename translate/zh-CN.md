@@ -1,5 +1,5 @@
-# Web端K线插件（[English](../README.md)|中文）
-图表支持20种技术指标，支持自定义指标参数，支持绘制标记图形，支持自定义样式。
+# k线图（[English](../README.md)|中文）
+基于html5 canvas构建，图表支持20种技术指标，支持自定义指标参数，支持绘制标记图形，支持自定义样式。
 
 ## 技术指标
 <table>
@@ -105,7 +105,7 @@ setTimezone(timezone)
 resize()
 // 设置图表右边可以空出来的间隙
 setOffsetRightSpace(space)
-// 设置图表一条数据的间隙
+// 设置图表一条数据所占用的空间
 setDataSpace(space)
 // 清空数据
 clearData()

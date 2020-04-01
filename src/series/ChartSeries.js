@@ -49,7 +49,6 @@ export default class ChartSeries {
     this._chartContainer.style.outline = 'none'
     this._chartContainer.style.borderStyle = 'none'
     this._chartContainer.style.width = '100%'
-    this._chartContainer.style.height = '100%'
     this._chartContainer.tabIndex = 1
     container.appendChild(this._chartContainer)
   }
@@ -194,8 +193,8 @@ export default class ChartSeries {
     const yAxis = this._chartData.styleOptions().yAxis
     const isYAxisLeft = yAxis.position === YAxisPosition.LEFT
     const isYAxisTextOutsize = yAxis.tickText.position === YAxisTextPosition.OUTSIDE
-    const seriesWidth = this._chartContainer.offsetWidth
-    const seriesHeight = this._chartContainer.offsetHeight
+    const seriesWidth = this._container.offsetWidth
+    const seriesHeight = this._container.offsetHeight
     const separatorHeight = this._measureSeparatorHeight()
     const xAxisHeight = this._measureXAxisHeight()
     const yAxisWidth = this._measureYAxisWidth()
