@@ -5234,14 +5234,7 @@ function (_Axis) {
         };
       }
 
-      var range = Math.abs(max - min);
-
-      if (range === 0) {
-        max += 1;
-        max -= 1;
-        range = Math.abs(max - min);
-      } // 保证每次图形绘制上下都留间隙
-
+      var range = Math.abs(max - min); // 保证每次图形绘制上下都留间隙
 
       min = min - range / 100.0 * 10.0;
       max = max + range / 100.0 * 20.0;
@@ -5344,13 +5337,50 @@ function (_Axis) {
       }
 
       if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
+        var minValueString = minMaxArray[0].toString();
+        var minValueDotIndex = minValueString.indexOf('.') + 1;
+        var minValuePrecision = 0;
+
+        if (minValueDotIndex > 0) {
+          minValuePrecision = minValueString.length - minValueDotIndex;
+        }
+
+        var maxValueString = minMaxArray[1].toString();
+        var maxValueDotIndex = maxValueString.indexOf('.') + 1;
+        var maxValuePrecision = 0;
+
+        if (maxValueDotIndex > 0) {
+          maxValuePrecision = maxValueString.length - maxValueDotIndex;
+        }
+
+        var precision = Math.min(minValuePrecision, maxValuePrecision);
+        var temp = Math.pow(10, precision);
+        minMaxArray[0] = Math.round(minMaxArray[0] * temp) / temp;
+        minMaxArray[1] = Math.round(minMaxArray[1] * temp) / temp;
+
         if (this.isPercentageYAxis()) {
           var fromClose = dataList[from].close;
           this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100;
           this._maxValue = (minMaxArray[1] - fromClose) / fromClose * 100;
+
+          if (this._minValue === this._maxValue) {
+            this._minValue -= 10;
+            this._minValue += 10;
+          }
         } else {
           this._minValue = minMaxArray[0];
           this._maxValue = minMaxArray[1];
+
+          if (this._minValue === this._maxValue) {
+            this._minValue -= 1;
+
+            if (this._minValue < 0) {
+              this._minValue = 0;
+              this._maxValue += this._maxValue;
+            } else {
+              this._maxValue += 1;
+            }
+          }
         }
       }
     }
