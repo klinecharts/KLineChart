@@ -2333,7 +2333,6 @@ var GraphicMarkType = {
   PARALLEL_STRAIGHT_LINE: 'parallelStraightLine',
   FIBONACCI_LINE: 'fibonacciLine'
 };
-var BAR_MARGIN_SPACE_RATE = 0.25;
 var MAX_DATA_SPACE = 30;
 var MIN_DATA_SPACE = 2;
 
@@ -2454,7 +2453,10 @@ function () {
   }, {
     key: "_calcBarSpace",
     value: function _calcBarSpace() {
-      return (1 - BAR_MARGIN_SPACE_RATE) * this._dataSpace;
+      var rateBarSpace = Math.floor(this._dataSpace * 0.8);
+      var floorBarSpace = Math.floor(this._dataSpace);
+      var optimalBarSpace = Math.min(rateBarSpace, floorBarSpace - 1);
+      return Math.max(1, optimalBarSpace);
     }
     /**
      * 计算rang dif
@@ -4105,7 +4107,7 @@ function (_View) {
         if (isFill) {
           this._ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight);
         } else {
-          this._ctx.strokeRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight);
+          this._ctx.strokeRect(x - halfBarSpace + 0.5, y, halfBarSpace * 2 - 1, barHeight);
         }
       }
     }
@@ -4137,44 +4139,18 @@ function (_View) {
       var preClose = (preKLineData || {}).close || close;
 
       if (close > preClose) {
-        this._ctx.strokeStyle = upColor;
+        this._ctx.fillStyle = upColor;
       } else if (close < preClose) {
-        this._ctx.strokeStyle = downColor;
+        this._ctx.fillStyle = downColor;
       } else {
-        this._ctx.strokeStyle = noChangeColor;
+        this._ctx.fillStyle = noChangeColor;
       }
 
-      this._ctx.lineWidth = 1;
+      this._ctx.fillRect(x - 0.5, highY, 1, lowY - highY);
 
-      this._ctx.beginPath();
+      this._ctx.fillRect(x - halfBarSpace, openY - 0.5, halfBarSpace, 1);
 
-      this._ctx.moveTo(x, highY);
-
-      this._ctx.lineTo(x, lowY);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
-
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(x - halfBarSpace, openY);
-
-      this._ctx.lineTo(x, openY);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
-
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(x, closeY);
-
-      this._ctx.lineTo(x + halfBarSpace, closeY);
-
-      this._ctx.stroke();
-
-      this._ctx.closePath();
+      this._ctx.fillRect(x, closeY - 0.5, halfBarSpace, 1);
     }
     /**
      * 绘制图形
@@ -5752,7 +5728,6 @@ function (_TechnicalIndicatorVi) {
     value: function _drawCandleStick() {
       var _this2 = this;
 
-      this._ctx.lineWidth = 1;
       var rect = [];
       var markHighestPrice = -Infinity;
       var markHighestPriceX = -1;
@@ -5820,25 +5795,9 @@ function (_TechnicalIndicatorVi) {
             rect = [x - halfBarSpace, openY, barSpace, 1];
           }
 
-          _this2._ctx.beginPath();
+          _this2._ctx.fillRect(x - 0.5, highLine[0], 1, highLine[1] - highLine[0]);
 
-          _this2._ctx.moveTo(x, highLine[0]);
-
-          _this2._ctx.lineTo(x, highLine[1]);
-
-          _this2._ctx.stroke();
-
-          _this2._ctx.closePath();
-
-          _this2._ctx.beginPath();
-
-          _this2._ctx.moveTo(x, lowLine[0]);
-
-          _this2._ctx.lineTo(x, lowLine[1]);
-
-          _this2._ctx.stroke();
-
-          _this2._ctx.closePath();
+          _this2._ctx.fillRect(x - 0.5, lowLine[0], 1, lowLine[1] - lowLine[0]);
 
           if (rect[3] < 1) {
             rect[3] = 1;
@@ -5854,7 +5813,7 @@ function (_TechnicalIndicatorVi) {
 
             case CandleStickStyle.STROKE:
               {
-                _this2._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
+                _this2._ctx.strokeRect(rect[0] + 0.5, rect[1], rect[2] - 1, rect[3]);
 
                 break;
               }
@@ -5862,7 +5821,7 @@ function (_TechnicalIndicatorVi) {
             case CandleStickStyle.UP_STROKE:
               {
                 if (close > preClose) {
-                  _this2._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
+                  _this2._ctx.strokeRect(rect[0] + 0.5, rect[1], rect[2] - 1, rect[3]);
                 } else {
                   _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
                 }
@@ -9079,9 +9038,7 @@ function (_Axis) {
   }, {
     key: "convertToPixel",
     value: function convertToPixel(value) {
-      var dataSpace = this._chartData.dataSpace();
-
-      return Math.round((value - this._chartData.from()) * dataSpace + this._chartData.barSpace() / 2);
+      return (value - this._chartData.from()) * this._chartData.dataSpace() + this._chartData.barSpace() / 2;
     }
   }]);
 

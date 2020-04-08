@@ -408,7 +408,7 @@ export default class TechnicalIndicatorView extends View {
       if (isFill) {
         this._ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight)
       } else {
-        this._ctx.strokeRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight)
+        this._ctx.strokeRect(x - halfBarSpace + 0.5, y, halfBarSpace * 2 - 1, barHeight)
       }
     }
   }
@@ -432,30 +432,15 @@ export default class TechnicalIndicatorView extends View {
     const lowY = this._yAxis.convertToPixel(kLineData.low)
     const preClose = (preKLineData || {}).close || close
     if (close > preClose) {
-      this._ctx.strokeStyle = upColor
+      this._ctx.fillStyle = upColor
     } else if (close < preClose) {
-      this._ctx.strokeStyle = downColor
+      this._ctx.fillStyle = downColor
     } else {
-      this._ctx.strokeStyle = noChangeColor
+      this._ctx.fillStyle = noChangeColor
     }
-    this._ctx.lineWidth = 1
-    this._ctx.beginPath()
-    this._ctx.moveTo(x, highY)
-    this._ctx.lineTo(x, lowY)
-    this._ctx.stroke()
-    this._ctx.closePath()
-
-    this._ctx.beginPath()
-    this._ctx.moveTo(x - halfBarSpace, openY)
-    this._ctx.lineTo(x, openY)
-    this._ctx.stroke()
-    this._ctx.closePath()
-
-    this._ctx.beginPath()
-    this._ctx.moveTo(x, closeY)
-    this._ctx.lineTo(x + halfBarSpace, closeY)
-    this._ctx.stroke()
-    this._ctx.closePath()
+    this._ctx.fillRect(x - 0.5, highY, 1, lowY - highY)
+    this._ctx.fillRect(x - halfBarSpace, openY - 0.5, halfBarSpace, 1)
+    this._ctx.fillRect(x, closeY - 0.5, halfBarSpace, 1)
   }
 
   /**

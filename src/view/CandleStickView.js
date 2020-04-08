@@ -107,7 +107,6 @@ export default class CandleStickView extends TechnicalIndicatorView {
    * @private
    */
   _drawCandleStick () {
-    this._ctx.lineWidth = 1
     let rect = []
     let markHighestPrice = -Infinity
     let markHighestPriceX = -1
@@ -164,17 +163,8 @@ export default class CandleStickView extends TechnicalIndicatorView {
           lowLine[0] = closeY
           rect = [x - halfBarSpace, openY, barSpace, 1]
         }
-        this._ctx.beginPath()
-        this._ctx.moveTo(x, highLine[0])
-        this._ctx.lineTo(x, highLine[1])
-        this._ctx.stroke()
-        this._ctx.closePath()
-
-        this._ctx.beginPath()
-        this._ctx.moveTo(x, lowLine[0])
-        this._ctx.lineTo(x, lowLine[1])
-        this._ctx.stroke()
-        this._ctx.closePath()
+        this._ctx.fillRect(x - 0.5, highLine[0], 1, highLine[1] - highLine[0])
+        this._ctx.fillRect(x - 0.5, lowLine[0], 1, lowLine[1] - lowLine[0])
 
         if (rect[3] < 1) {
           rect[3] = 1
@@ -185,12 +175,12 @@ export default class CandleStickView extends TechnicalIndicatorView {
             break
           }
           case CandleStickStyle.STROKE: {
-            this._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3])
+            this._ctx.strokeRect(rect[0] + 0.5, rect[1], rect[2] - 1, rect[3])
             break
           }
           case CandleStickStyle.UP_STROKE: {
             if (close > preClose) {
-              this._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3])
+              this._ctx.strokeRect(rect[0] + 0.5, rect[1], rect[2] - 1, rect[3])
             } else {
               this._ctx.fillRect(rect[0], rect[1], rect[2], rect[3])
             }

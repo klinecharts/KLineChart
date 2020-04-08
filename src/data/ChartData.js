@@ -29,8 +29,6 @@ export const GraphicMarkType = {
   FIBONACCI_LINE: 'fibonacciLine'
 }
 
-const BAR_MARGIN_SPACE_RATE = 0.25
-
 const MAX_DATA_SPACE = 30
 const MIN_DATA_SPACE = 2
 
@@ -144,7 +142,10 @@ export default class ChartData {
    * @private
    */
   _calcBarSpace () {
-    return (1 - BAR_MARGIN_SPACE_RATE) * this._dataSpace
+    const rateBarSpace = Math.floor(this._dataSpace * 0.8)
+    const floorBarSpace = Math.floor(this._dataSpace)
+    const optimalBarSpace = Math.min(rateBarSpace, floorBarSpace - 1)
+    return Math.max(1, optimalBarSpace)
   }
 
   /**

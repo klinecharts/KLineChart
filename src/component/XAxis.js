@@ -105,7 +105,6 @@ export default class XAxis extends Axis {
   }
 
   convertToPixel (value) {
-    const dataSpace = this._chartData.dataSpace()
-    return Math.round((value - this._chartData.from()) * dataSpace + this._chartData.barSpace() / 2)
+    return (value - this._chartData.from()) * this._chartData.dataSpace() + this._chartData.barSpace() / 2
   }
 }

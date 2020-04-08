@@ -47,18 +47,18 @@ export interface Chart {
   setDataSpace(space: number): void;
   clearData(): void;
   getDataList(): KLineData[];
-  applyNewData(dataList: KLineData[], more: boolean): void;
-  applyMoreData(dataList: KLineData[], more: boolean): void;
+  applyNewData(dataList: KLineData[], more?: boolean): void;
+  applyMoreData(dataList: KLineData[], more?: boolean): void;
   updateData(data: KLineData): void
   loadMore(cb: (timestamp: number) => {}): void;
   setCandleStickChartType(chartType: ChartType): void;
   setCandleStickTechnicalIndicatorType(technicalIndicatorType: TechnicalIndicatorType): void;
   setTechnicalIndicatorType(tag: string, technicalIndicatorType: TechnicalIndicatorType): void;
-  addTechnicalIndicator(technicalIndicatorType: TechnicalIndicatorType, height: number): void;
+  addTechnicalIndicator(technicalIndicatorType: TechnicalIndicatorType, height?: number): void;
   removeTechnicalIndicator(tag: string): void;
   addGraphicMark(graphicMarkType: GraphicMarkType): void;
   removeAllGraphicMark(): void;
-  getConvertPictureUrl(includeFloatLayer: boolean, includeGraphicMark: boolean, type: PictureType): string;
+  getConvertPictureUrl(includeFloatLayer?: boolean, includeGraphicMark?: boolean, type?: PictureType): string;
 }
 
 export function version(): string;
