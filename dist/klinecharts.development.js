@@ -2334,7 +2334,7 @@ var GraphicMarkType = {
   FIBONACCI_LINE: 'fibonacciLine'
 };
 var MAX_DATA_SPACE = 30;
-var MIN_DATA_SPACE = 2;
+var MIN_DATA_SPACE = 3;
 
 var ChartData =
 /*#__PURE__*/
@@ -2372,7 +2372,7 @@ function () {
 
     this._range = 0; // 每一条数据的空间
 
-    this._dataSpace = 4; // bar的空间
+    this._dataSpace = 8; // bar的空间
 
     this._barSpace = this._calcBarSpace(); // 十字光标位置
 
@@ -10278,6 +10278,11 @@ function () {
     key: "createTechnicalIndicator",
     value: function createTechnicalIndicator(technicalIndicatorType) {
       var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT;
+
+      if (!technicalIndicatorType || !TechnicalIndicatorType.hasOwnProperty(technicalIndicatorType) || technicalIndicatorType === TechnicalIndicatorType.NO || technicalIndicatorType === TechnicalIndicatorType.AVERAGE) {
+        technicalIndicatorType = TechnicalIndicatorType.MACD;
+      }
+
       var technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length;
 
       this._separatorSeries.push(new SeparatorSeries(this._chartContainer, this._chartData, technicalIndicatorSeriesCount, {

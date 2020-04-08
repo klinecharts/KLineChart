@@ -339,6 +339,14 @@ export default class ChartSeries {
    * @returns {string}
    */
   createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT) {
+    if (
+      !technicalIndicatorType ||
+      !TechnicalIndicatorType.hasOwnProperty(technicalIndicatorType) ||
+      technicalIndicatorType === TechnicalIndicatorType.NO ||
+      technicalIndicatorType === TechnicalIndicatorType.AVERAGE
+    ) {
+      technicalIndicatorType = TechnicalIndicatorType.MACD
+    }
     const technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length
     this._separatorSeries.push(
       new SeparatorSeries(
