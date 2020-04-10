@@ -388,8 +388,8 @@ export default class ChartSeries {
     if (seriesPos !== -1) {
       this._technicalIndicatorSeries[seriesPos].destroy()
       this._separatorSeries[seriesPos].destroy()
-      delete this._technicalIndicatorSeries[seriesPos]
-      delete this._separatorSeries[seriesPos]
+      this._technicalIndicatorSeries.splice(seriesPos, 1)
+      this._separatorSeries.splice(seriesPos, 1)
       for (let i = 0; i < this._separatorSeries.length; i++) {
         this._separatorSeries[i].updateSeriesIndex(i)
       }

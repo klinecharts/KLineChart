@@ -10330,8 +10330,9 @@ function () {
 
         this._separatorSeries[seriesPos].destroy();
 
-        delete this._technicalIndicatorSeries[seriesPos];
-        delete this._separatorSeries[seriesPos];
+        this._technicalIndicatorSeries.splice(seriesPos, 1);
+
+        this._separatorSeries.splice(seriesPos, 1);
 
         for (var _i2 = 0; _i2 < this._separatorSeries.length; _i2++) {
           this._separatorSeries[_i2].updateSeriesIndex(_i2);
@@ -10751,14 +10752,14 @@ function () {
 
 var instances = {};
 var idBase = 1;
-var errorMessage = 'Chart version is 5.1.0. Root dom is null, can not initialize the chart!!!';
+var errorMessage = 'Chart version is 5.1.1. Root dom is null, can not initialize the chart!!!';
 /**
  * 获取版本号
  * @returns {string}
  */
 
 function version() {
-  return '5.1.0';
+  return '5.1.1';
 }
 /**
  * 初始化
