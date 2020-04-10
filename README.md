@@ -160,7 +160,7 @@ Used to configure the style of the chart. [Here is the details.](STYLE-CONFIG-DE
 + ```shift + ↓``` can be used to zoom in.
 
 ## Samples
-+ [Feature preview](https://liihuu.github.io/kline)
++ [Feature preview](https://liihuu.github.io/KLineChartSample)
 + [Sample code](https://github.com/liihuu/KLineChartSample)
 
 ## License
