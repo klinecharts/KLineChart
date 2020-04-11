@@ -1,12 +1,14 @@
 import View from './View'
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
+import { getTechnicalIndicatorDataKeysAndValues } from '../data/options/technicalIndicatorParamOptions'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 import { formatPrecision } from '../utils/format'
 
 export default class YAxisView extends View {
-  constructor (container, chartData, yAxis) {
+  constructor (container, chartData, yAxis, additionalDataProvider) {
     super(container, chartData)
     this._yAxis = yAxis
+    this._additionalDataProvider = additionalDataProvider
   }
 
   _draw () {
@@ -15,6 +17,7 @@ export default class YAxisView extends View {
       this._drawAxisLine(yAxisOptions)
       this._drawTickLines(yAxisOptions)
       this._drawTickLabels(yAxisOptions)
+      this._drawTechnicalIndicatorLastValue(yAxisOptions)
       this._drawLastPriceLabel(yAxisOptions)
     }
   }
@@ -105,6 +108,38 @@ export default class YAxisView extends View {
   }
 
   /**
+   * 绘制技术指标最后值
+   * @param yAxisOptions
+   * @private
+   */
+  _drawTechnicalIndicatorLastValue (yAxisOptions) {
+    const technicalIndicatorStyleOptions = this._chartData.styleOptions().technicalIndicator
+    const lastValueMarkStyleOptions = technicalIndicatorStyleOptions.lastValueMark
+    const dataList = this._chartData.dataList()
+    const lastKLineData = dataList[dataList.length - 1]
+    if (!lastValueMarkStyleOptions.display || !lastKLineData) {
+      return
+    }
+    const technicalIndicatorParamOptions = this._chartData.technicalIndicatorParamOptions()
+    const technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType()
+    const keysAndValues = getTechnicalIndicatorDataKeysAndValues(lastKLineData, technicalIndicatorType, technicalIndicatorParamOptions)
+    const values = keysAndValues.values
+    const colors = technicalIndicatorStyleOptions.line.colors || []
+    const colorSize = colors.length
+    const valueCount = values.length
+    for (let i = 0; i < valueCount; i++) {
+      const value = values[i]
+      const backgroundColor = colors[i % colorSize]
+      this._drawMarkLabel(
+        yAxisOptions, value, this._chartData.precisionOptions()[technicalIndicatorType],
+        lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textColor, backgroundColor,
+        lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop,
+        lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom
+      )
+    }
+  }
+
+  /**
    * 绘制最新价文字
    * @private
    */
@@ -122,39 +157,64 @@ export default class YAxisView extends View {
     const lastPrice = dataList[dataSize - 1].close
     const preKLineData = dataList[dataSize - 2] || {}
     const preLastPrice = preKLineData.close || lastPrice
-    let priceY = this._yAxis.convertToPixel(lastPrice)
-    priceY = +(Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98))).toFixed(0)
-    let color
+    let backgroundColor
     if (lastPrice > preLastPrice) {
-      color = lastPriceMark.upColor
+      backgroundColor = lastPriceMark.upColor
     } else if (lastPrice < preLastPrice) {
-      color = lastPriceMark.downColor
+      backgroundColor = lastPriceMark.downColor
     } else {
-      color = lastPriceMark.noChangeColor
+      backgroundColor = lastPriceMark.noChangeColor
     }
     const priceMarkText = lastPriceMark.text
+    this._drawMarkLabel(
+      yAxisOptions, lastPrice, this._chartData.precisionOptions().price,
+      priceMarkText.size, priceMarkText.color, backgroundColor,
+      priceMarkText.paddingLeft, priceMarkText.paddingTop,
+      priceMarkText.paddingRight, priceMarkText.paddingBottom
+    )
+  }
+
+  /**
+   * 绘制标记label
+   * @param yAxisOptions
+   * @param value
+   * @param precision
+   * @param textSize
+   * @param textColor
+   * @param backgroundColor
+   * @param textPaddingLeft
+   * @param textPaddingTop
+   * @param textPaddingRight
+   * @param textPaddingBottom
+   * @private
+   */
+  _drawMarkLabel (
+    yAxisOptions, value, precision, textSize, textColor, backgroundColor,
+    textPaddingLeft, textPaddingTop, textPaddingRight, textPaddingBottom
+  ) {
+    let valueY = this._yAxis.convertToPixel(value)
+    valueY = +(Math.max(this._height * 0.05, Math.min(valueY, this._height * 0.98))).toFixed(0)
     let text
     if (this._yAxis.isPercentageYAxis()) {
-      const fromClose = dataList[this._chartData.from()].close
-      text = `${((lastPrice - fromClose) / fromClose * 100).toFixed(2)}%`
+      const fromClose = this._chartData.dataList()[this._chartData.from()].close
+      text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {
-      text = formatPrecision(lastPrice, this._chartData.precisionOptions().price)
+      text = formatPrecision(value, precision)
     }
-    const textSize = lastPriceMark.text.size
     this._ctx.font = getFont(textSize)
-    const rectWidth = calcTextWidth(this._ctx, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight
-    const rectHeight = priceMarkText.paddingTop + textSize + priceMarkText.paddingBottom
+    const rectWidth = calcTextWidth(this._ctx, text) + textPaddingLeft + textPaddingRight
+    const rectHeight = textPaddingTop + textSize + textPaddingBottom
     let rectStartX
     if (this._isDrawFromStart(yAxisOptions)) {
       rectStartX = 0
     } else {
       rectStartX = this._width - rectWidth
     }
-    this._ctx.fillStyle = color
-    this._ctx.fillRect(rectStartX, priceY - priceMarkText.paddingTop - textSize / 2, rectWidth, rectHeight)
-    this._ctx.fillStyle = priceMarkText.color
+    this._ctx.fillStyle = backgroundColor
+    this._ctx.fillRect(rectStartX, valueY - textPaddingTop - textSize / 2, rectWidth, rectHeight)
+    this._ctx.fillStyle = textColor
     this._ctx.textBaseline = 'middle'
-    this._ctx.fillText(text, rectStartX + priceMarkText.paddingLeft, priceY)
+    this._ctx.fillText(text, rectStartX + textPaddingLeft, valueY)
   }
 
   /**

@@ -440,12 +440,12 @@ var defaultTechnicalIndicator = {
     colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
   },
   lastValueMark: {
-    display: true,
+    display: false,
     textColor: '#ffffff',
     textSize: 12,
-    textPaddingLeft: 2,
+    textPaddingLeft: 3,
     textPaddingTop: 2,
-    textPaddingRight: 2,
+    textPaddingRight: 3,
     textPaddingBottom: 2
   }
 };
@@ -4664,7 +4664,36 @@ function (_View) {
 
   }, {
     key: "_drawTechnicalIndicatorLastValue",
-    value: function _drawTechnicalIndicatorLastValue(yAxisOptions) {}
+    value: function _drawTechnicalIndicatorLastValue(yAxisOptions) {
+      var technicalIndicatorStyleOptions = this._chartData.styleOptions().technicalIndicator;
+
+      var lastValueMarkStyleOptions = technicalIndicatorStyleOptions.lastValueMark;
+
+      var dataList = this._chartData.dataList();
+
+      var lastKLineData = dataList[dataList.length - 1];
+
+      if (!lastValueMarkStyleOptions.display || !lastKLineData) {
+        return;
+      }
+
+      var technicalIndicatorParamOptions = this._chartData.technicalIndicatorParamOptions();
+
+      var technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType();
+
+      var keysAndValues = getTechnicalIndicatorDataKeysAndValues(lastKLineData, technicalIndicatorType, technicalIndicatorParamOptions);
+      var values = keysAndValues.values;
+      var colors = technicalIndicatorStyleOptions.line.colors || [];
+      var colorSize = colors.length;
+      var valueCount = values.length;
+
+      for (var i = 0; i < valueCount; i++) {
+        var value = values[i];
+        var backgroundColor = colors[i % colorSize];
+
+        this._drawMarkLabel(yAxisOptions, value, this._chartData.precisionOptions()[technicalIndicatorType], lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textColor, backgroundColor, lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop, lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom);
+      }
+    }
     /**
      * 绘制最新价文字
      * @private
@@ -4692,35 +4721,54 @@ function (_View) {
       var lastPrice = dataList[dataSize - 1].close;
       var preKLineData = dataList[dataSize - 2] || {};
       var preLastPrice = preKLineData.close || lastPrice;
-
-      var priceY = this._yAxis.convertToPixel(lastPrice);
-
-      priceY = +Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98)).toFixed(0);
-      var color;
+      var backgroundColor;
 
       if (lastPrice > preLastPrice) {
-        color = lastPriceMark.upColor;
+        backgroundColor = lastPriceMark.upColor;
       } else if (lastPrice < preLastPrice) {
-        color = lastPriceMark.downColor;
+        backgroundColor = lastPriceMark.downColor;
       } else {
-        color = lastPriceMark.noChangeColor;
+        backgroundColor = lastPriceMark.noChangeColor;
       }
 
       var priceMarkText = lastPriceMark.text;
+
+      this._drawMarkLabel(yAxisOptions, lastPrice, this._chartData.precisionOptions().price, priceMarkText.size, priceMarkText.color, backgroundColor, priceMarkText.paddingLeft, priceMarkText.paddingTop, priceMarkText.paddingRight, priceMarkText.paddingBottom);
+    }
+    /**
+     * 绘制标记label
+     * @param yAxisOptions
+     * @param value
+     * @param precision
+     * @param textSize
+     * @param textColor
+     * @param backgroundColor
+     * @param textPaddingLeft
+     * @param textPaddingTop
+     * @param textPaddingRight
+     * @param textPaddingBottom
+     * @private
+     */
+
+  }, {
+    key: "_drawMarkLabel",
+    value: function _drawMarkLabel(yAxisOptions, value, precision, textSize, textColor, backgroundColor, textPaddingLeft, textPaddingTop, textPaddingRight, textPaddingBottom) {
+      var valueY = this._yAxis.convertToPixel(value);
+
+      valueY = +Math.max(this._height * 0.05, Math.min(valueY, this._height * 0.98)).toFixed(0);
       var text;
 
       if (this._yAxis.isPercentageYAxis()) {
-        var fromClose = dataList[this._chartData.from()].close;
+        var fromClose = this._chartData.dataList()[this._chartData.from()].close;
 
-        text = "".concat(((lastPrice - fromClose) / fromClose * 100).toFixed(2), "%");
+        text = "".concat(((value - fromClose) / fromClose * 100).toFixed(2), "%");
       } else {
-        text = formatPrecision(lastPrice, this._chartData.precisionOptions().price);
+        text = formatPrecision(value, precision);
       }
 
-      var textSize = lastPriceMark.text.size;
       this._ctx.font = getFont(textSize);
-      var rectWidth = calcTextWidth(this._ctx, text) + priceMarkText.paddingLeft + priceMarkText.paddingRight;
-      var rectHeight = priceMarkText.paddingTop + textSize + priceMarkText.paddingBottom;
+      var rectWidth = calcTextWidth(this._ctx, text) + textPaddingLeft + textPaddingRight;
+      var rectHeight = textPaddingTop + textSize + textPaddingBottom;
       var rectStartX;
 
       if (this._isDrawFromStart(yAxisOptions)) {
@@ -4729,14 +4777,14 @@ function (_View) {
         rectStartX = this._width - rectWidth;
       }
 
-      this._ctx.fillStyle = color;
+      this._ctx.fillStyle = backgroundColor;
 
-      this._ctx.fillRect(rectStartX, priceY - priceMarkText.paddingTop - textSize / 2, rectWidth, rectHeight);
+      this._ctx.fillRect(rectStartX, valueY - textPaddingTop - textSize / 2, rectWidth, rectHeight);
 
-      this._ctx.fillStyle = priceMarkText.color;
+      this._ctx.fillStyle = textColor;
       this._ctx.textBaseline = 'middle';
 
-      this._ctx.fillText(text, rectStartX + priceMarkText.paddingLeft, priceY);
+      this._ctx.fillText(text, rectStartX + textPaddingLeft, valueY);
     }
     /**
      * 判断是否从开始点绘制

@@ -4,7 +4,7 @@ import YAxisFloatLayerView from '../view/YAxisFloatLayerView'
 
 export default class YAxisWidget extends Widget {
   _createMainView (container, props) {
-    return new YAxisView(container, props.chartData, props.yAxis)
+    return new YAxisView(container, props.chartData, props.yAxis, props.additionalDataProvider)
   }
 
   _createFloatLayerView (container, props) {

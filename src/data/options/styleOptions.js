@@ -190,9 +190,22 @@ const defaultTechnicalIndicator = {
   line: {
     size: 1,
     colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+  },
+  lastValueMark: {
+    display: false,
+    textColor: '#ffffff',
+    textSize: 12,
+    textPaddingLeft: 3,
+    textPaddingTop: 2,
+    textPaddingRight: 3,
+    textPaddingBottom: 2
   }
 }
 
+/**
+ * 默认x轴配置
+ * @type {{minHeight: number, maxHeight: number, axisLine: {color: string, size: number, display: boolean}, display: boolean, tickText: {margin: number, color: string, size: number, display: boolean}, tickLine: {size: number, color: string, display: boolean, length: number}}}
+ */
 const defaultXAxis = {
   /**
    * 是否显示整个轴
@@ -233,6 +246,10 @@ const defaultXAxis = {
   }
 }
 
+/**
+ * 默认y轴配置
+ * @type {{axisLine: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tickText: {margin: number, color: string, size: number, display: boolean, position: string}, type: string, maxWidth: number, tickLine: {size: number, color: string, display: boolean, length: number}}}
+ */
 const defaultYAxis = {
   /**
    * 是否显示整个轴
