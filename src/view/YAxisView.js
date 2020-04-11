@@ -97,9 +97,8 @@ export default class YAxisView extends View {
       }
       this._ctx.textAlign = 'right'
     }
-    const textSize = tickText.size
     this._ctx.textBaseline = 'middle'
-    this._ctx.font = getFont(textSize)
+    this._ctx.font = getFont(tickText.size, tickText.family)
     this._ctx.fillStyle = tickText.color
     this._yAxis.ticks().forEach(tick => {
       this._ctx.fillText(tick.v, labelX, tick.y)
@@ -132,7 +131,8 @@ export default class YAxisView extends View {
       const backgroundColor = colors[i % colorSize]
       this._drawMarkLabel(
         yAxisOptions, value, this._chartData.precisionOptions()[technicalIndicatorType],
-        lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textColor, backgroundColor,
+        lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textFamily,
+        lastValueMarkStyleOptions.textColor, backgroundColor,
         lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop,
         lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom
       )
@@ -168,7 +168,7 @@ export default class YAxisView extends View {
     const priceMarkText = lastPriceMark.text
     this._drawMarkLabel(
       yAxisOptions, lastPrice, this._chartData.precisionOptions().price,
-      priceMarkText.size, priceMarkText.color, backgroundColor,
+      priceMarkText.size, priceMarkText.family, priceMarkText.color, backgroundColor,
       priceMarkText.paddingLeft, priceMarkText.paddingTop,
       priceMarkText.paddingRight, priceMarkText.paddingBottom
     )
@@ -180,6 +180,7 @@ export default class YAxisView extends View {
    * @param value
    * @param precision
    * @param textSize
+   * @param textFamily
    * @param textColor
    * @param backgroundColor
    * @param textPaddingLeft
@@ -189,7 +190,7 @@ export default class YAxisView extends View {
    * @private
    */
   _drawMarkLabel (
-    yAxisOptions, value, precision, textSize, textColor, backgroundColor,
+    yAxisOptions, value, precision, textSize, textFamily, textColor, backgroundColor,
     textPaddingLeft, textPaddingTop, textPaddingRight, textPaddingBottom
   ) {
     let valueY = this._yAxis.convertToPixel(value)
@@ -201,7 +202,7 @@ export default class YAxisView extends View {
     } else {
       text = formatPrecision(value, precision)
     }
-    this._ctx.font = getFont(textSize)
+    this._ctx.font = getFont(textSize, textFamily)
     const rectWidth = calcTextWidth(this._ctx, text) + textPaddingLeft + textPaddingRight
     const rectHeight = textPaddingTop + textSize + textPaddingBottom
     let rectStartX

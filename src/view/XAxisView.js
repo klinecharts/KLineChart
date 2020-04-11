@@ -50,7 +50,7 @@ export default class XAxisView extends View {
     const tickLine = xAxisOptions.tickLine
 
     this._ctx.textBaseline = 'top'
-    this._ctx.font = getFont(tickText.size)
+    this._ctx.font = getFont(tickText.size, tickText.family)
     this._ctx.textAlign = 'center'
     this._ctx.fillStyle = tickText.color
 

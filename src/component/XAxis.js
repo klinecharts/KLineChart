@@ -28,8 +28,8 @@ export default class XAxis extends Axis {
     const dataList = this._chartData.dataList()
     if (tickLength > 0) {
       const timezone = this._chartData.timezone()
-      const fontSize = this._chartData.styleOptions().xAxis.tickText.size
-      this._measureCtx.font = getFont(fontSize)
+      const tickText = this._chartData.styleOptions().xAxis.tickText
+      this._measureCtx.font = getFont(tickText.size, tickText.family)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
       const pos = parseInt(ticks[0].v)
       const x = this.convertToPixel(pos)

@@ -138,7 +138,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     const textColor = floatLayerPromptTechnicalIndicatorText.color
     const colorSize = colors.length
     this._ctx.textBaseline = 'top'
-    this._ctx.font = getFont(textSize)
+    this._ctx.font = getFont(textSize, floatLayerPromptTechnicalIndicatorText.family)
     const nameTextWidth = calcTextWidth(this._ctx, nameText)
     this._ctx.fillStyle = textColor
     this._ctx.fillText(nameText, labelX, labelY)

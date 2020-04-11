@@ -125,13 +125,15 @@ const defaultCandleStick = {
       display: true,
       color: '#D9D9D9',
       textMargin: 5,
-      textSize: 10
+      textSize: 10,
+      textFamily: 'Arial'
     },
     low: {
       display: true,
       color: '#D9D9D9',
       textMargin: 5,
-      textSize: 10
+      textSize: 10,
+      textFamily: 'Arial'
     },
     last: {
       display: true,
@@ -151,7 +153,8 @@ const defaultCandleStick = {
         paddingTop: 2,
         paddingRight: 2,
         paddingBottom: 2,
-        color: '#FFFFFF'
+        color: '#FFFFFF',
+        family: 'Arial'
       }
     }
   }
@@ -195,6 +198,7 @@ const defaultTechnicalIndicator = {
     display: false,
     textColor: '#ffffff',
     textSize: 12,
+    textFamily: 'Arial',
     textPaddingLeft: 3,
     textPaddingTop: 2,
     textPaddingRight: 3,
@@ -235,6 +239,7 @@ const defaultXAxis = {
     display: true,
     color: '#D9D9D9',
     size: 12,
+    family: 'Arial',
     margin: 3
   },
   // tick线
@@ -288,6 +293,7 @@ const defaultYAxis = {
     display: true,
     color: '#D9D9D9',
     size: 12,
+    family: 'Arial',
     margin: 3
   },
   // tick线
@@ -319,6 +325,7 @@ const defaultFloatLayer = {
         display: true,
         color: '#D9D9D9',
         size: 12,
+        family: 'Arial',
         paddingLeft: 2,
         paddingRight: 2,
         paddingTop: 2,
@@ -341,6 +348,7 @@ const defaultFloatLayer = {
         display: true,
         color: '#D9D9D9',
         size: 12,
+        family: 'Arial',
         paddingLeft: 2,
         paddingRight: 2,
         paddingTop: 2,
@@ -372,6 +380,7 @@ const defaultFloatLayer = {
       },
       text: {
         size: 12,
+        family: 'Arial',
         color: '#D9D9D9',
         marginLeft: 8,
         marginTop: 6,
@@ -382,6 +391,7 @@ const defaultFloatLayer = {
     technicalIndicator: {
       text: {
         size: 12,
+        family: 'Arial',
         color: '#D9D9D9',
         marginTop: 6,
         marginRight: 8,
@@ -418,6 +428,7 @@ const defaultGraphicMark = {
   text: {
     color: '#1e88e5',
     size: 12,
+    family: 'Arial',
     marginLeft: 2,
     marginRight: 2,
     marginTop: 2,
