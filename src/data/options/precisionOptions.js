@@ -5,6 +5,7 @@ export const defaultPrecisionOptions = {
   volume: 0,
   [TechnicalIndicatorType.NO]: 2,
   [TechnicalIndicatorType.MA]: 2,
+  [TechnicalIndicatorType.EMA]: 2,
   [TechnicalIndicatorType.VOL]: 0,
   [TechnicalIndicatorType.MACD]: 2,
   [TechnicalIndicatorType.BOLL]: 2,

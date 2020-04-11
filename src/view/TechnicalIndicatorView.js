@@ -72,6 +72,7 @@ export default class TechnicalIndicatorView extends View {
         const lineValues = [...values]
         switch (technicalIndicatorType) {
           case TechnicalIndicatorType.MA:
+          case TechnicalIndicatorType.EMA:
           case TechnicalIndicatorType.BOLL: {
             this._drawTechnicalIndicatorOhlc(
               i, x, halfBarSpace, technicalIndicatorOptions,

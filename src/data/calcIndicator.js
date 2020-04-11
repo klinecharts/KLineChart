@@ -56,6 +56,36 @@ calcIndicator[TechnicalIndicatorType.MA] = function (dataList, params) {
 }
 
 /**
+ * 计算指数移动平均
+ * 6，12，20
+ * @param dataList
+ * @param params
+ * @returns {*}
+ */
+calcIndicator[TechnicalIndicatorType.EMA] = function (dataList, params) {
+  if (!checkParams(params)) {
+    return dataList
+  }
+  const oldEmas = []
+  const paramsLength = params.length
+  return calc(dataList, (i) => {
+    const ema = {}
+    const close = dataList[i].close
+    for (let j = 0; j < paramsLength; j++) {
+      let emaValue
+      if (i === 0) {
+        emaValue = close
+      } else {
+        emaValue = (2 * close + (params[j] - 1) * oldEmas[j]) / (params[j] + 1)
+      }
+      ema[`ema${params[j]}`] = emaValue
+      oldEmas[j] = emaValue
+    }
+    dataList[i].ema = ema
+  })
+}
+
+/**
  * 计算成交量包含ma5、ma10、ma20
  * 默认参数5，10，20
  * @param dataList

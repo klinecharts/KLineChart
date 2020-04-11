@@ -708,6 +708,7 @@ var TechnicalIndicatorType = {
   NO: 'NO',
   AVERAGE: 'AVERAGE',
   MA: 'MA',
+  EMA: 'EMA',
   VOL: 'VOL',
   MACD: 'MACD',
   BOLL: 'BOLL',
@@ -728,7 +729,7 @@ var TechnicalIndicatorType = {
   EMV: 'EMV',
   SAR: 'SAR'
 };
-var defaultTechnicalIndicatorParamOptions = (_defaultTechnicalIndi = {}, _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MA, [5, 10, 30, 60]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.VOL, [5, 10, 20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MACD, [12, 26, 9]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BOLL, [20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.KDJ, [9, 3, 3]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.RSI, [6, 12, 24]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BIAS, [6, 12, 24]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BRAR, [26]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.CCI, [13]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.DMI, [14, 6]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.CR, [26, 10, 20, 40, 60]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.PSY, [12]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.DMA, [10, 50, 10]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.TRIX, [12, 20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.OBV, [30]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.VR, [24, 30]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.WR, [13, 34, 89]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MTM, [6, 10]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.EMV, [14, 9]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.SAR, [2, 2, 20]), _defaultTechnicalIndi);
+var defaultTechnicalIndicatorParamOptions = (_defaultTechnicalIndi = {}, _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MA, [5, 10, 30, 60]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.EMA, [6, 12, 20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.VOL, [5, 10, 20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MACD, [12, 26, 9]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BOLL, [20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.KDJ, [9, 3, 3]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.RSI, [6, 12, 24]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BIAS, [6, 12, 24]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BRAR, [26]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.CCI, [13]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.DMI, [14, 6]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.CR, [26, 10, 20, 40, 60]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.PSY, [12]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.DMA, [10, 50, 10]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.TRIX, [12, 20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.OBV, [30]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.VR, [24, 30]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.WR, [13, 34, 89]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MTM, [6, 10]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.EMV, [14, 9]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.SAR, [2, 2, 20]), _defaultTechnicalIndi);
 /**
  * 获取指标数据的key和value
  * @param kLineData
@@ -748,6 +749,16 @@ function getTechnicalIndicatorDataKeysAndValues(kLineData, technicalIndicatorTyp
       {
         technicalIndicatorParams.forEach(function (p) {
           var key = "ma".concat(p);
+          keys.push(key);
+          values.push(technicalIndicatorData[key]);
+        });
+        break;
+      }
+
+    case TechnicalIndicatorType.EMA:
+      {
+        technicalIndicatorParams.forEach(function (p) {
+          var key = "ema".concat(p);
           keys.push(key);
           values.push(technicalIndicatorData[key]);
         });
@@ -909,7 +920,7 @@ var _defaultPrecisionOpti;
 var defaultPrecisionOptions = (_defaultPrecisionOpti = {
   price: 2,
   volume: 0
-}, _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.NO, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.MA, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.VOL, 0), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.MACD, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.BOLL, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.KDJ, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.RSI, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.BIAS, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.BRAR, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.CCI, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.DMI, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.CR, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.PSY, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.DMA, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.TRIX, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.OBV, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.VR, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.WR, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.MTM, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.EMV, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.SAR, 2), _defaultPrecisionOpti);
+}, _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.NO, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.MA, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.EMA, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.VOL, 0), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.MACD, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.BOLL, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.KDJ, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.RSI, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.BIAS, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.BRAR, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.CCI, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.DMI, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.CR, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.PSY, 2), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.DMA, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.TRIX, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.OBV, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.VR, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.WR, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.MTM, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.EMV, 4), _defineProperty(_defaultPrecisionOpti, TechnicalIndicatorType.SAR, 2), _defaultPrecisionOpti);
 
 var calcIndicator = {};
 /**
@@ -966,6 +977,42 @@ calcIndicator[TechnicalIndicatorType.MA] = function (dataList, params) {
     }
 
     dataList[i].ma = ma;
+  });
+};
+/**
+ * 计算指数移动平均
+ * 6，12，20
+ * @param dataList
+ * @param params
+ * @returns {*}
+ */
+
+
+calcIndicator[TechnicalIndicatorType.EMA] = function (dataList, params) {
+  if (!checkParams(params)) {
+    return dataList;
+  }
+
+  var oldEmas = [];
+  var paramsLength = params.length;
+  return calc(dataList, function (i) {
+    var ema = {};
+    var close = dataList[i].close;
+
+    for (var j = 0; j < paramsLength; j++) {
+      var emaValue = void 0;
+
+      if (i === 0) {
+        emaValue = close;
+      } else {
+        emaValue = (2 * close + (params[j] - 1) * oldEmas[j]) / (params[j] + 1);
+      }
+
+      ema["ema".concat(params[j])] = emaValue;
+      oldEmas[j] = emaValue;
+    }
+
+    dataList[i].ema = ema;
   });
 };
 /**
@@ -3900,6 +3947,7 @@ function (_View) {
 
         switch (technicalIndicatorType) {
           case TechnicalIndicatorType.MA:
+          case TechnicalIndicatorType.EMA:
           case TechnicalIndicatorType.BOLL:
             {
               _this3._drawTechnicalIndicatorOhlc(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, _this3._yAxis.isCandleStickYAxis());

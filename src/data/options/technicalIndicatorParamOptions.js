@@ -2,6 +2,7 @@ export const TechnicalIndicatorType = {
   NO: 'NO',
   AVERAGE: 'AVERAGE',
   MA: 'MA',
+  EMA: 'EMA',
   VOL: 'VOL',
   MACD: 'MACD',
   BOLL: 'BOLL',
@@ -25,6 +26,7 @@ export const TechnicalIndicatorType = {
 
 export const defaultTechnicalIndicatorParamOptions = {
   [TechnicalIndicatorType.MA]: [5, 10, 30, 60],
+  [TechnicalIndicatorType.EMA]: [6, 12, 20],
   [TechnicalIndicatorType.VOL]: [5, 10, 20],
   [TechnicalIndicatorType.MACD]: [12, 26, 9],
   [TechnicalIndicatorType.BOLL]: [20],
@@ -62,6 +64,14 @@ export function getTechnicalIndicatorDataKeysAndValues (kLineData, technicalIndi
     case TechnicalIndicatorType.MA: {
       technicalIndicatorParams.forEach(p => {
         const key = `ma${p}`
+        keys.push(key)
+        values.push(technicalIndicatorData[key])
+      })
+      break
+    }
+    case TechnicalIndicatorType.EMA: {
+      technicalIndicatorParams.forEach(p => {
+        const key = `ema${p}`
         keys.push(key)
         values.push(technicalIndicatorData[key])
       })
