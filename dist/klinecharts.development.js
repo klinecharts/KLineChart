@@ -132,6 +132,26 @@ function _get(target, property, receiver) {
   return _get(target, property, receiver || target);
 }
 
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
 function merge(target, source) {
   if (!isObject(target) || !isObject(source)) {
     return;
@@ -418,8 +438,22 @@ var defaultTechnicalIndicator = {
   line: {
     size: 1,
     colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+  },
+  lastValueMark: {
+    display: true,
+    textColor: '#ffffff',
+    textSize: 12,
+    textPaddingLeft: 2,
+    textPaddingTop: 2,
+    textPaddingRight: 2,
+    textPaddingBottom: 2
   }
 };
+/**
+ * 默认x轴配置
+ * @type {{minHeight: number, maxHeight: number, axisLine: {color: string, size: number, display: boolean}, display: boolean, tickText: {margin: number, color: string, size: number, display: boolean}, tickLine: {size: number, color: string, display: boolean, length: number}}}
+ */
+
 var defaultXAxis = {
   /**
    * 是否显示整个轴
@@ -462,6 +496,11 @@ var defaultXAxis = {
     color: '#888888'
   }
 };
+/**
+ * 默认y轴配置
+ * @type {{axisLine: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tickText: {margin: number, color: string, size: number, display: boolean, position: string}, type: string, maxWidth: number, tickLine: {size: number, color: string, display: boolean, length: number}}}
+ */
+
 var defaultYAxis = {
   /**
    * 是否显示整个轴
@@ -690,6 +729,181 @@ var TechnicalIndicatorType = {
   SAR: 'SAR'
 };
 var defaultTechnicalIndicatorParamOptions = (_defaultTechnicalIndi = {}, _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MA, [5, 10, 30, 60]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.VOL, [5, 10, 20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MACD, [12, 26, 9]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BOLL, [20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.KDJ, [9, 3, 3]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.RSI, [6, 12, 24]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BIAS, [6, 12, 24]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.BRAR, [26]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.CCI, [13]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.DMI, [14, 6]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.CR, [26, 10, 20, 40, 60]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.PSY, [12]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.DMA, [10, 50, 10]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.TRIX, [12, 20]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.OBV, [30]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.VR, [24, 30]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.WR, [13, 34, 89]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.MTM, [6, 10]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.EMV, [14, 9]), _defineProperty(_defaultTechnicalIndi, TechnicalIndicatorType.SAR, [2, 2, 20]), _defaultTechnicalIndi);
+/**
+ * 获取指标数据的key和value
+ * @param kLineData
+ * @param technicalIndicatorType
+ * @param technicalIndicatorParamOptions
+ * @returns {{keys: [], values: []}}
+ */
+
+function getTechnicalIndicatorDataKeysAndValues(kLineData, technicalIndicatorType, technicalIndicatorParamOptions) {
+  var technicalIndicatorParams = technicalIndicatorParamOptions[technicalIndicatorType] || [];
+  var technicalIndicatorData = (kLineData || {})[technicalIndicatorType.toLowerCase()] || {};
+  var keys = [];
+  var values = [];
+
+  switch (technicalIndicatorType) {
+    case TechnicalIndicatorType.MA:
+      {
+        technicalIndicatorParams.forEach(function (p) {
+          var key = "ma".concat(p);
+          keys.push(key);
+          values.push(technicalIndicatorData[key]);
+        });
+        break;
+      }
+
+    case TechnicalIndicatorType.MACD:
+      {
+        keys = ['diff', 'dea', 'macd'];
+        values = [technicalIndicatorData.diff, technicalIndicatorData.dea, technicalIndicatorData.macd];
+        break;
+      }
+
+    case TechnicalIndicatorType.VOL:
+      {
+        technicalIndicatorParams.forEach(function (p) {
+          var key = "ma".concat(p);
+          keys.push(key);
+          values.push(technicalIndicatorData[key]);
+        });
+        keys.push('num');
+        values.push(technicalIndicatorData.num);
+        break;
+      }
+
+    case TechnicalIndicatorType.BOLL:
+      {
+        keys = ['up', 'mid', 'dn'];
+        values = [technicalIndicatorData.up, technicalIndicatorData.mid, technicalIndicatorData.dn];
+        break;
+      }
+
+    case TechnicalIndicatorType.BIAS:
+      {
+        technicalIndicatorParams.forEach(function (p) {
+          var key = "bias".concat(p);
+          keys.push(key);
+          values.push(technicalIndicatorData[key]);
+        });
+        break;
+      }
+
+    case TechnicalIndicatorType.BRAR:
+      {
+        keys = ['br', 'ar'];
+        values = [technicalIndicatorData.br, technicalIndicatorData.ar];
+        break;
+      }
+
+    case TechnicalIndicatorType.CCI:
+      {
+        keys = ['cci'];
+        values = [technicalIndicatorData.cci];
+        break;
+      }
+
+    case TechnicalIndicatorType.CR:
+      {
+        keys = ['cr', 'ma1', 'ma2', 'ma3', 'ma4'];
+        values = [technicalIndicatorData.cr, technicalIndicatorData.ma1, technicalIndicatorData.ma2, technicalIndicatorData.ma3, technicalIndicatorData.ma4];
+        break;
+      }
+
+    case TechnicalIndicatorType.DMA:
+      {
+        keys = ['dif', 'difMa'];
+        values = [technicalIndicatorData.dif, technicalIndicatorData.difMa];
+        break;
+      }
+
+    case TechnicalIndicatorType.DMI:
+      {
+        keys = ['mdi', 'pdi', 'adx', 'adxr'];
+        values = [technicalIndicatorData.mdi, technicalIndicatorData.pdi, technicalIndicatorData.adx, technicalIndicatorData.adxr];
+        break;
+      }
+
+    case TechnicalIndicatorType.KDJ:
+      {
+        keys = ['k', 'd', 'j'];
+        values = [technicalIndicatorData.k, technicalIndicatorData.d, technicalIndicatorData.j];
+        break;
+      }
+
+    case TechnicalIndicatorType.RSI:
+      {
+        technicalIndicatorParams.forEach(function (p) {
+          var key = "rsi".concat(p);
+          keys.push(key);
+          values.push(technicalIndicatorData[key]);
+        });
+        break;
+      }
+
+    case TechnicalIndicatorType.PSY:
+      {
+        keys = ['psy'];
+        values = [technicalIndicatorData.psy];
+        break;
+      }
+
+    case TechnicalIndicatorType.TRIX:
+      {
+        keys = ['trix', 'maTrix'];
+        values = [technicalIndicatorData.trix, technicalIndicatorData.maTrix];
+        break;
+      }
+
+    case TechnicalIndicatorType.OBV:
+      {
+        keys = ['obv', 'maObv'];
+        values = [technicalIndicatorData.obv, technicalIndicatorData.maObv];
+        break;
+      }
+
+    case TechnicalIndicatorType.VR:
+      {
+        keys = ['vr', 'maVr'];
+        values = [technicalIndicatorData.vr, technicalIndicatorData.maVr];
+        break;
+      }
+
+    case TechnicalIndicatorType.WR:
+      {
+        keys = ['wr1', 'wr2', 'wr3'];
+        values = [technicalIndicatorData.wr1, technicalIndicatorData.wr2, technicalIndicatorData.wr3];
+        break;
+      }
+
+    case TechnicalIndicatorType.MTM:
+      {
+        keys = ['mtm', 'mtmMa'];
+        values = [technicalIndicatorData.mtm, technicalIndicatorData.mtmMa];
+        break;
+      }
+
+    case TechnicalIndicatorType.EMV:
+      {
+        keys = ['emv', 'maEmv'];
+        values = [technicalIndicatorData.emv, technicalIndicatorData.maEmv];
+        break;
+      }
+
+    case TechnicalIndicatorType.SAR:
+      {
+        keys = ['sar'];
+        values = [technicalIndicatorData.sar];
+        break;
+      }
+  }
+
+  return {
+    keys: keys,
+    values: values
+  };
+}
 
 var _defaultPrecisionOpti;
 var defaultPrecisionOptions = (_defaultPrecisionOpti = {
@@ -2372,7 +2586,7 @@ function () {
 
     this._range = 0; // 每一条数据的空间
 
-    this._dataSpace = 8; // bar的空间
+    this._dataSpace = 6; // bar的空间
 
     this._barSpace = this._calcBarSpace(); // 十字光标位置
 
@@ -3668,49 +3882,40 @@ function (_View) {
     value: function _drawTechnicalIndicator() {
       var _this3 = this;
 
-      var onDrawing;
-
       var technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType();
 
-      var technicalIndicatorParams = this._chartData.technicalIndicatorParamOptions()[technicalIndicatorType] || [];
+      var technicalIndicatorParamOptions = this._chartData.technicalIndicatorParamOptions();
+
       var linePoints = [];
 
       var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
-      switch (technicalIndicatorType) {
-        case TechnicalIndicatorType.MA:
-          {
-            var dataKeys = [];
-            technicalIndicatorParams.forEach(function (p) {
-              dataKeys.push("ma".concat(p));
-            });
+      var dataList = this._chartData.dataList();
 
-            onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
-              _this3._ohlcTechnicalIndicatorDrawing(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, technicalIndicatorType, dataKeys, _this3._yAxis.isCandleStickYAxis(), function (values) {
-                _this3._prepareLinePoints(x, values, linePoints);
-              });
-            };
+      this._drawGraphics(function (x, i, kLineData, halfBarSpace) {
+        var keysAndValues = getTechnicalIndicatorDataKeysAndValues(kLineData, technicalIndicatorType, technicalIndicatorParamOptions);
+        var values = keysAndValues.values;
 
-            break;
-          }
+        var lineValues = _toConsumableArray(values);
 
-        case TechnicalIndicatorType.MACD:
-          {
-            var dataList = this._chartData.dataList();
+        switch (technicalIndicatorType) {
+          case TechnicalIndicatorType.MA:
+          case TechnicalIndicatorType.BOLL:
+            {
+              _this3._drawTechnicalIndicatorOhlc(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, _this3._yAxis.isCandleStickYAxis());
 
-            onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
-              var macd = kLineData.macd || {};
+              break;
+            }
 
-              _this3._prepareLinePoints(x, [macd.diff, macd.dea], linePoints);
+          case TechnicalIndicatorType.MACD:
+            {
+              lineValues.splice(lineValues.length - 1, 1);
+              var macd = values[values.length - 1];
 
-              var preKLineData = dataList[i - 1] || {};
-              var macdValue = macd.macd;
-              var preMacdValue = (preKLineData.macd || {}).macd || -Infinity;
-
-              if (macdValue > 0) {
+              if (macd > 0) {
                 _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor;
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.upColor;
-              } else if (macdValue < 0) {
+              } else if (macd < 0) {
                 _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.downColor;
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.downColor;
               } else {
@@ -3718,30 +3923,20 @@ function (_View) {
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor;
               }
 
-              var isFill = !((preMacdValue || preMacdValue === 0) && macdValue > preMacdValue);
+              var preKLineData = formatValue(dataList, i - 1, {});
+              var preMacd = formatValue(preKLineData, 'macd', {}).macd;
+              var isFill = !((preMacd || preMacd === 0) && macd > preMacd);
 
-              _this3._drawBars(x, halfBarSpace, macdValue, isFill);
-            };
+              _this3._drawBars(x, halfBarSpace, macd, isFill);
 
-            break;
-          }
+              break;
+            }
 
-        case TechnicalIndicatorType.VOL:
-          {
-            var _dataList = this._chartData.dataList();
-
-            onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
-              var vol = kLineData.vol || {};
-              var lineValues = [];
-              technicalIndicatorParams.forEach(function (p) {
-                lineValues.push(vol["ma".concat(p)]);
-              });
-
-              _this3._prepareLinePoints(x, lineValues, linePoints);
-
-              var preKLineData = _dataList[i - 1] || {};
+          case TechnicalIndicatorType.VOL:
+            {
+              lineValues.splice(lineValues.length - 1, 1);
               var close = kLineData.close;
-              var preClose = (preKLineData || {}).close || close;
+              var preClose = formatValue(dataList, i - 1, {}).close || close;
 
               if (close > preClose) {
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.upColor;
@@ -3751,225 +3946,44 @@ function (_View) {
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor;
               }
 
-              _this3._drawBars(x, halfBarSpace, vol.num, true);
-            };
+              var num = values[values.length - 1];
 
-            break;
-          }
+              _this3._drawBars(x, halfBarSpace, num, true);
 
-        case TechnicalIndicatorType.BOLL:
-          {
-            onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
-              _this3._ohlcTechnicalIndicatorDrawing(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, technicalIndicatorType, ['up', 'mid', 'dn'], _this3._yAxis.isCandleStickYAxis(), function (values) {
-                _this3._prepareLinePoints(x, values, linePoints);
-              });
-            };
+              break;
+            }
 
-            break;
-          }
+          case TechnicalIndicatorType.SAR:
+            {
+              lineValues.splice(0, 1);
+              var sar = values[0];
 
-        case TechnicalIndicatorType.BIAS:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var bias = kLineData.bias || {};
-              var lineValues = [];
-              technicalIndicatorParams.forEach(function (p) {
-                lineValues.push(bias["bias".concat(p)]);
-              });
+              if (sar || sar === 0) {
+                var dataY = _this3._yAxis.convertToPixel(sar);
 
-              _this3._prepareLinePoints(x, lineValues, linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.BRAR:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var brar = kLineData.brar || {};
-
-              _this3._prepareLinePoints(x, [brar.br, brar.ar], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.CCI:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var cci = kLineData.cci || {};
-
-              _this3._prepareLinePoints(x, [cci.cci], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.CR:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var cr = kLineData.cr || {};
-
-              _this3._prepareLinePoints(x, [cr.cr, cr.ma1, cr.ma2, cr.ma3, cr.ma4], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.DMA:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var dma = kLineData.dma || {};
-
-              _this3._prepareLinePoints(x, [dma.dif, dma.difMa], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.DMI:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var dmi = kLineData.dmi || {};
-
-              _this3._prepareLinePoints(x, [dmi.mdi, dmi.pdi, dmi.adx, dmi.adxr], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.KDJ:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var kdj = kLineData.kdj || {};
-
-              _this3._prepareLinePoints(x, [kdj.k, kdj.d, kdj.j], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.RSI:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var rsi = kLineData.rsi || {};
-              var lineValues = [];
-              technicalIndicatorParams.forEach(function (p) {
-                lineValues.push(rsi["rsi".concat(p)]);
-              });
-
-              _this3._prepareLinePoints(x, lineValues, linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.PSY:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var psy = kLineData.psy || {};
-
-              _this3._prepareLinePoints(x, [psy.psy], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.TRIX:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var trix = kLineData.trix || {};
-
-              _this3._prepareLinePoints(x, [trix.trix, trix.maTrix], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.OBV:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var obv = kLineData.obv || {};
-
-              _this3._prepareLinePoints(x, [obv.obv, obv.maObv], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.VR:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var vr = kLineData.vr || {};
-
-              _this3._prepareLinePoints(x, [vr.vr, vr.maVr], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.WR:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var wr = kLineData.wr || {};
-
-              _this3._prepareLinePoints(x, [wr.wr1, wr.wr2, wr.wr3], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.MTM:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var mtm = kLineData.mtm || {};
-
-              _this3._prepareLinePoints(x, [mtm.mtm, mtm.mtmMa], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.EMV:
-          {
-            onDrawing = function onDrawing(x, i, kLineData) {
-              var emv = kLineData.emv || {};
-
-              _this3._prepareLinePoints(x, [emv.emv, emv.maEmv], linePoints);
-            };
-
-            break;
-          }
-
-        case TechnicalIndicatorType.SAR:
-          {
-            onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
-              _this3._ohlcTechnicalIndicatorDrawing(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, technicalIndicatorType, ['sar'], _this3._yAxis.isCandleStickYAxis(), function (values) {
-                var sar = values[0];
-
-                if (sar || sar === 0) {
-                  var dataY = _this3._yAxis.convertToPixel(sar);
-
-                  if (sar < (kLineData.high + kLineData.low) / 2) {
-                    _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor;
-                  } else {
-                    _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.downColor;
-                  }
-
-                  _this3._ctx.beginPath();
-
-                  _this3._ctx.arc(x, dataY, halfBarSpace, Math.PI * 2, 0, true);
-
-                  _this3._ctx.stroke();
-
-                  _this3._ctx.closePath();
+                if (sar < (kLineData.high + kLineData.low) / 2) {
+                  _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor;
+                } else {
+                  _this3._ctx.strokeStyle = technicalIndicatorOptions.bar.downColor;
                 }
-              });
-            };
-          }
-      }
 
-      this._drawGraphics(onDrawing, function () {
+                _this3._ctx.beginPath();
+
+                _this3._ctx.arc(x, dataY, halfBarSpace, Math.PI * 2, 0, true);
+
+                _this3._ctx.stroke();
+
+                _this3._ctx.closePath();
+              }
+
+              _this3._drawTechnicalIndicatorOhlc(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, _this3._yAxis.isCandleStickYAxis());
+
+              break;
+            }
+        }
+
+        _this3._prepareLinePoints(x, lineValues, linePoints);
+      }, function () {
         _this3._drawLines(linePoints, technicalIndicatorOptions);
       });
     }
@@ -3980,28 +3994,15 @@ function (_View) {
      * @param halfBarSpace
      * @param technicalIndicatorOptions
      * @param kLineData
-     * @param technicalIndicatorType
-     * @param dataKeys
      * @param isCandleStick
-     * @param prepare
      */
 
   }, {
-    key: "_ohlcTechnicalIndicatorDrawing",
-    value: function _ohlcTechnicalIndicatorDrawing(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, technicalIndicatorType, dataKeys, isCandleStick, prepare) {
-      var technicalIndicatorData = kLineData[technicalIndicatorType.toLowerCase()] || {};
-      var values = [];
-      dataKeys.forEach(function (key) {
-        values.push(technicalIndicatorData[key]);
-      });
-
-      if (prepare) {
-        prepare(values);
-      }
-
-      var dataList = this._chartData.dataList();
-
+    key: "_drawTechnicalIndicatorOhlc",
+    value: function _drawTechnicalIndicatorOhlc(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, isCandleStick) {
       if (!isCandleStick) {
+        var dataList = this._chartData.dataList();
+
         var preKLineData = dataList[i - 1] || {};
 
         this._drawOhlc(halfBarSpace, x, kLineData, preKLineData, technicalIndicatorOptions.bar.upColor, technicalIndicatorOptions.bar.downColor, technicalIndicatorOptions.bar.noChangeColor);
@@ -4447,143 +4448,14 @@ function (_View) {
   }, {
     key: "_getTechnicalIndicatorPromptData",
     value: function _getTechnicalIndicatorPromptData(kLineData) {
+      var technicalIndicatorParamOptions = this._chartData.technicalIndicatorParamOptions();
+
       var technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType();
 
+      var keysAndValues = getTechnicalIndicatorDataKeysAndValues(kLineData, technicalIndicatorType, technicalIndicatorParamOptions);
       var params = this._chartData.technicalIndicatorParamOptions()[technicalIndicatorType] || [];
-      var values = [];
-      var labels = [];
-
-      switch (technicalIndicatorType) {
-        case TechnicalIndicatorType.MA:
-          {
-            params.forEach(function (p) {
-              labels.push("ma".concat(p));
-            });
-            break;
-          }
-
-        case TechnicalIndicatorType.VOL:
-          {
-            params.forEach(function (p) {
-              labels.push("ma".concat(p));
-            });
-            labels.push('num');
-            break;
-          }
-
-        case TechnicalIndicatorType.MACD:
-          {
-            labels = ['diff', 'dea', 'macd'];
-            break;
-          }
-
-        case TechnicalIndicatorType.BOLL:
-          {
-            labels = ['up', 'mid', 'dn'];
-            break;
-          }
-
-        case TechnicalIndicatorType.BIAS:
-          {
-            params.forEach(function (p) {
-              labels.push("bias".concat(p));
-            });
-            break;
-          }
-
-        case TechnicalIndicatorType.BRAR:
-          {
-            labels = ['br', 'ar'];
-            break;
-          }
-
-        case TechnicalIndicatorType.CCI:
-          {
-            labels = ['cci'];
-            break;
-          }
-
-        case TechnicalIndicatorType.CR:
-          {
-            labels = ['cr', 'ma1', 'ma2', 'ma3', 'ma4'];
-            break;
-          }
-
-        case TechnicalIndicatorType.DMA:
-          {
-            labels = ['dif', 'difMa'];
-            break;
-          }
-
-        case TechnicalIndicatorType.DMI:
-          {
-            labels = ['mdi', 'pdi', 'adx', 'adxr'];
-            break;
-          }
-
-        case TechnicalIndicatorType.KDJ:
-          {
-            labels = ['k', 'd', 'j'];
-            break;
-          }
-
-        case TechnicalIndicatorType.RSI:
-          {
-            params.forEach(function (p) {
-              labels.push("rsi".concat(p));
-            });
-            break;
-          }
-
-        case TechnicalIndicatorType.PSY:
-          {
-            labels = ['psy'];
-            break;
-          }
-
-        case TechnicalIndicatorType.TRIX:
-          {
-            labels = ['trix', 'maTrix'];
-            break;
-          }
-
-        case TechnicalIndicatorType.OBV:
-          {
-            labels = ['obv', 'maObv'];
-            break;
-          }
-
-        case TechnicalIndicatorType.VR:
-          {
-            labels = ['vr', 'maVr'];
-            break;
-          }
-
-        case TechnicalIndicatorType.WR:
-          {
-            labels = ['wr1', 'wr2', 'wr3'];
-            break;
-          }
-
-        case TechnicalIndicatorType.MTM:
-          {
-            labels = ['mtm', 'mtmMa'];
-            break;
-          }
-
-        case TechnicalIndicatorType.EMV:
-          {
-            labels = ['emv', 'maEmv'];
-            break;
-          }
-
-        case TechnicalIndicatorType.SAR:
-          {
-            labels = ['sar'];
-            break;
-          }
-      }
-
+      var labels = keysAndValues.keys;
+      var values = keysAndValues.values;
       var name = '';
 
       if (labels.length > 0) {
@@ -4592,11 +4464,6 @@ function (_View) {
         if (params && isArray(params) && params.length > 0) {
           name = "".concat(name, "(").concat(params.join(','), ")");
         }
-
-        var indicatorData = formatValue(kLineData, technicalIndicatorType.toLowerCase());
-        labels.forEach(function (label) {
-          values.push(formatValue(indicatorData, label));
-        });
 
         var decimal = this._chartData.precisionOptions()[technicalIndicatorType];
 
@@ -4647,13 +4514,14 @@ var YAxisView =
 function (_View) {
   _inherits(YAxisView, _View);
 
-  function YAxisView(container, chartData, yAxis) {
+  function YAxisView(container, chartData, yAxis, additionalDataProvider) {
     var _this;
 
     _classCallCheck(this, YAxisView);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(YAxisView).call(this, container, chartData));
     _this._yAxis = yAxis;
+    _this._additionalDataProvider = additionalDataProvider;
     return _this;
   }
 
@@ -4668,6 +4536,8 @@ function (_View) {
         this._drawTickLines(yAxisOptions);
 
         this._drawTickLabels(yAxisOptions);
+
+        this._drawTechnicalIndicatorLastValue(yAxisOptions);
 
         this._drawLastPriceLabel(yAxisOptions);
       }
@@ -4786,6 +4656,15 @@ function (_View) {
 
       this._ctx.textAlign = 'left';
     }
+    /**
+     * 绘制技术指标最后值
+     * @param yAxisOptions
+     * @private
+     */
+
+  }, {
+    key: "_drawTechnicalIndicatorLastValue",
+    value: function _drawTechnicalIndicatorLastValue(yAxisOptions) {}
     /**
      * 绘制最新价文字
      * @private
@@ -4986,7 +4865,7 @@ function (_Widget) {
   _createClass(YAxisWidget, [{
     key: "_createMainView",
     value: function _createMainView(container, props) {
-      return new YAxisView(container, props.chartData, props.yAxis);
+      return new YAxisView(container, props.chartData, props.yAxis, props.additionalDataProvider);
     }
   }, {
     key: "_createFloatLayerView",
@@ -8939,32 +8818,16 @@ function (_Axis) {
         this._measureCtx.font = getFont(fontSize);
         var defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00');
         var pos = parseInt(ticks[0].v);
-        var timestamp = formatValue(dataList[pos], 'timestamp', 0);
         var x = this.convertToPixel(pos);
         var tickCountDif = 1;
-        var tickLabelFormatType = 'MM:DD hh:mm';
 
         if (tickLength > 1) {
           var nextPos = parseInt(ticks[1].v);
-          var nextTimestamp = formatValue(dataList[nextPos], 'timestamp', 0);
           var nextX = this.convertToPixel(nextPos);
           var xDif = Math.abs(nextX - x);
 
           if (xDif < defaultLabelWidth) {
             tickCountDif = Math.ceil(defaultLabelWidth / xDif);
-          }
-
-          var timeDif = nextTimestamp - timestamp;
-          var minuteDif = timeDif / 1000 / 60;
-
-          if (minuteDif < 12 * 60) {
-            tickLabelFormatType = 'hh:mm';
-          } else if (minuteDif < 15 * 24 * 60) {
-            tickLabelFormatType = 'MM-DD';
-          } else if (minuteDif < 180 * 24 * 60) {
-            tickLabelFormatType = 'YYYY-MM';
-          } else {
-            tickLabelFormatType = 'YYYY';
           }
         }
 
@@ -8972,25 +8835,15 @@ function (_Axis) {
           var _pos = parseInt(ticks[i].v);
 
           var kLineData = dataList[_pos];
-          var _timestamp = kLineData.timestamp;
-          var label = formatDate(_timestamp, tickLabelFormatType, timezone);
+          var timestamp = kLineData.timestamp;
+          var label = formatDate(timestamp, 'hh:mm', timezone);
 
           if (i <= tickLength - 1 - tickCountDif) {
             var _nextPos = parseInt(ticks[i + tickCountDif].v);
 
             var nextKLineData = dataList[_nextPos];
-            var _nextTimestamp = nextKLineData.timestamp;
-            var year = formatDate(_timestamp, 'YYYY', timezone);
-            var month = formatDate(_timestamp, 'YYYY-MM', timezone);
-            var day = formatDate(_timestamp, 'MM-DD', timezone);
-
-            if (year !== formatDate(_nextTimestamp, 'YYYY', timezone)) {
-              label = year;
-            } else if (month !== formatDate(_nextTimestamp, 'YYYY-MM', timezone)) {
-              label = month;
-            } else if (day !== formatDate(_nextTimestamp, 'MM-DD', timezone)) {
-              label = day;
-            }
+            var nextTimestamp = nextKLineData.timestamp;
+            label = this._optimalTickLabel(timestamp, nextTimestamp, timezone) || label;
           }
 
           var _x = this.convertToPixel(_pos);
@@ -8998,26 +8851,52 @@ function (_Axis) {
           if (_x > defaultLabelWidth / 2 && _x < this._width - defaultLabelWidth / 2) {
             optimalTicks.push({
               v: label,
-              x: _x
+              x: _x,
+              oV: timestamp
             });
           }
         }
 
-        if (optimalTicks.length === 0) {
+        var optimalTickLength = optimalTicks.length;
+
+        if (optimalTickLength === 0) {
           var _pos2 = parseInt(ticks[ticks.length - 1].v);
 
-          var _timestamp2 = dataList[_pos2].timestamp;
+          var _timestamp = dataList[_pos2].timestamp;
 
           var _x2 = this.convertToPixel(_pos2);
 
           optimalTicks.push({
-            v: formatDate(_timestamp2, 'MM-DD', timezone),
-            x: _x2
+            v: formatDate(_timestamp, 'MM-DD', timezone),
+            x: _x2,
+            oV: _timestamp
           });
+        } else if (optimalTickLength > 1) {
+          var lastTimestamp = optimalTicks[optimalTickLength - 1].oV;
+          var lastV = optimalTicks[optimalTickLength - 1].v;
+          var secondLastTimestamp = optimalTicks[optimalTickLength - 2].oV;
+          optimalTicks[optimalTickLength - 1].v = this._optimalTickLabel(lastTimestamp, secondLastTimestamp, timezone) || lastV;
         }
       }
 
       return optimalTicks;
+    }
+  }, {
+    key: "_optimalTickLabel",
+    value: function _optimalTickLabel(timestamp, comparedTimestamp, timezone) {
+      var year = formatDate(timestamp, 'YYYY', timezone);
+      var month = formatDate(timestamp, 'YYYY-MM', timezone);
+      var day = formatDate(timestamp, 'MM-DD', timezone);
+
+      if (year !== formatDate(comparedTimestamp, 'YYYY', timezone)) {
+        return year;
+      } else if (month !== formatDate(comparedTimestamp, 'YYYY-MM', timezone)) {
+        return month;
+      } else if (day !== formatDate(comparedTimestamp, 'MM-DD', timezone)) {
+        return day;
+      }
+
+      return null;
     }
   }, {
     key: "convertFromPixel",

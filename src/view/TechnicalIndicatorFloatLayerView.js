@@ -1,8 +1,8 @@
 import View from './View'
 import { FloatLayerPromptDisplayRule, LineStyle } from '../data/options/styleOptions'
-import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
+import { TechnicalIndicatorType, getTechnicalIndicatorDataKeysAndValues } from '../data/options/technicalIndicatorParamOptions'
 import { isArray } from '../utils/typeChecks'
-import { formatPrecision, formatValue } from '../utils/format'
+import { formatPrecision } from '../utils/format'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 
 export default class TechnicalIndicatorFloatLayerView extends View {
@@ -191,114 +191,18 @@ export default class TechnicalIndicatorFloatLayerView extends View {
    * @returns {{values: Array, labels: Array}}
    */
   _getTechnicalIndicatorPromptData (kLineData) {
+    const technicalIndicatorParamOptions = this._chartData.technicalIndicatorParamOptions()
     const technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType()
+    const keysAndValues = getTechnicalIndicatorDataKeysAndValues(kLineData, technicalIndicatorType, technicalIndicatorParamOptions)
     const params = this._chartData.technicalIndicatorParamOptions()[technicalIndicatorType] || []
-    const values = []
-    let labels = []
-    switch (technicalIndicatorType) {
-      case TechnicalIndicatorType.MA: {
-        params.forEach(p => {
-          labels.push(`ma${p}`)
-        })
-        break
-      }
-      case TechnicalIndicatorType.VOL: {
-        params.forEach(p => {
-          labels.push(`ma${p}`)
-        })
-        labels.push('num')
-        break
-      }
-      case TechnicalIndicatorType.MACD: {
-        labels = ['diff', 'dea', 'macd']
-        break
-      }
-      case TechnicalIndicatorType.BOLL: {
-        labels = ['up', 'mid', 'dn']
-        break
-      }
-      case TechnicalIndicatorType.BIAS: {
-        params.forEach(p => {
-          labels.push(`bias${p}`)
-        })
-        break
-      }
-      case TechnicalIndicatorType.BRAR: {
-        labels = ['br', 'ar']
-        break
-      }
-      case TechnicalIndicatorType.CCI: {
-        labels = ['cci']
-        break
-      }
-      case TechnicalIndicatorType.CR: {
-        labels = ['cr', 'ma1', 'ma2', 'ma3', 'ma4']
-        break
-      }
-      case TechnicalIndicatorType.DMA: {
-        labels = ['dif', 'difMa']
-        break
-      }
-      case TechnicalIndicatorType.DMI: {
-        labels = ['mdi', 'pdi', 'adx', 'adxr']
-        break
-      }
-      case TechnicalIndicatorType.KDJ: {
-        labels = ['k', 'd', 'j']
-        break
-      }
-
-      case TechnicalIndicatorType.RSI: {
-        params.forEach(p => {
-          labels.push(`rsi${p}`)
-        })
-        break
-      }
-      case TechnicalIndicatorType.PSY: {
-        labels = ['psy']
-        break
-      }
-      case TechnicalIndicatorType.TRIX: {
-        labels = ['trix', 'maTrix']
-        break
-      }
-      case TechnicalIndicatorType.OBV: {
-        labels = ['obv', 'maObv']
-        break
-      }
-      case TechnicalIndicatorType.VR: {
-        labels = ['vr', 'maVr']
-        break
-      }
-      case TechnicalIndicatorType.WR: {
-        labels = ['wr1', 'wr2', 'wr3']
-        break
-      }
-      case TechnicalIndicatorType.MTM: {
-        labels = ['mtm', 'mtmMa']
-        break
-      }
-
-      case TechnicalIndicatorType.EMV: {
-        labels = ['emv', 'maEmv']
-        break
-      }
-
-      case TechnicalIndicatorType.SAR: {
-        labels = ['sar']
-        break
-      }
-    }
+    const labels = keysAndValues.keys
+    const values = keysAndValues.values
     let name = ''
     if (labels.length > 0) {
       name = `${technicalIndicatorType}`
       if (params && isArray(params) && params.length > 0) {
         name = `${name}(${params.join(',')})`
       }
-      const indicatorData = formatValue(kLineData, technicalIndicatorType.toLowerCase())
-      labels.forEach(label => {
-        values.push(formatValue(indicatorData, label))
-      })
       const decimal = this._chartData.precisionOptions()[technicalIndicatorType]
       values.forEach((value, index) => {
         values[index] = formatPrecision(value, decimal)

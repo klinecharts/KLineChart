@@ -67,7 +67,7 @@ export default class ChartData {
     // 绘制区间数据数量
     this._range = 0
     // 每一条数据的空间
-    this._dataSpace = 8
+    this._dataSpace = 6
     // bar的空间
     this._barSpace = this._calcBarSpace()
 

@@ -1,6 +1,6 @@
 import Axis from './Axis'
 import { calcTextWidth, getFont, getPixelRatio } from '../utils/canvas'
-import { formatDate, formatValue } from '../utils/format'
+import { formatDate } from '../utils/format'
 
 export default class XAxis extends Axis {
   constructor (chartData) {
@@ -32,65 +32,62 @@ export default class XAxis extends Axis {
       this._measureCtx.font = getFont(fontSize)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
       const pos = parseInt(ticks[0].v)
-      const timestamp = formatValue(dataList[pos], 'timestamp', 0)
       const x = this.convertToPixel(pos)
       let tickCountDif = 1
-      let tickLabelFormatType = 'MM:DD hh:mm'
       if (tickLength > 1) {
         const nextPos = parseInt(ticks[1].v)
-        const nextTimestamp = formatValue(dataList[nextPos], 'timestamp', 0)
         const nextX = this.convertToPixel(nextPos)
         const xDif = Math.abs(nextX - x)
         if (xDif < defaultLabelWidth) {
           tickCountDif = Math.ceil(defaultLabelWidth / xDif)
-        }
-        const timeDif = nextTimestamp - timestamp
-        const minuteDif = timeDif / 1000 / 60
-        if (minuteDif < 12 * 60) {
-          tickLabelFormatType = 'hh:mm'
-        } else if (minuteDif < 15 * 24 * 60) {
-          tickLabelFormatType = 'MM-DD'
-        } else if (minuteDif < 180 * 24 * 60) {
-          tickLabelFormatType = 'YYYY-MM'
-        } else {
-          tickLabelFormatType = 'YYYY'
         }
       }
       for (let i = 0; i < tickLength; i += tickCountDif) {
         const pos = parseInt(ticks[i].v)
         const kLineData = dataList[pos]
         const timestamp = kLineData.timestamp
-        let label = formatDate(timestamp, tickLabelFormatType, timezone)
+        let label = formatDate(timestamp, 'hh:mm', timezone)
         if (i <= tickLength - 1 - tickCountDif) {
           const nextPos = parseInt(ticks[i + tickCountDif].v)
           const nextKLineData = dataList[nextPos]
           const nextTimestamp = nextKLineData.timestamp
-          const year = formatDate(timestamp, 'YYYY', timezone)
-          const month = formatDate(timestamp, 'YYYY-MM', timezone)
-          const day = formatDate(timestamp, 'MM-DD', timezone)
-          if (year !== formatDate(nextTimestamp, 'YYYY', timezone)) {
-            label = year
-          } else if (month !== formatDate(nextTimestamp, 'YYYY-MM', timezone)) {
-            label = month
-          } else if (day !== formatDate(nextTimestamp, 'MM-DD', timezone)) {
-            label = day
-          }
+          label = this._optimalTickLabel(timestamp, nextTimestamp, timezone) || label
         }
 
         const x = this.convertToPixel(pos)
         if (x > defaultLabelWidth / 2 &&
           x < this._width - defaultLabelWidth / 2) {
-          optimalTicks.push({ v: label, x })
+          optimalTicks.push({ v: label, x, oV: timestamp })
         }
       }
-      if (optimalTicks.length === 0) {
+      const optimalTickLength = optimalTicks.length
+      if (optimalTickLength === 0) {
         const pos = parseInt(ticks[ticks.length - 1].v)
         const timestamp = dataList[pos].timestamp
         const x = this.convertToPixel(pos)
-        optimalTicks.push({ v: formatDate(timestamp, 'MM-DD', timezone), x })
+        optimalTicks.push({ v: formatDate(timestamp, 'MM-DD', timezone), x, oV: timestamp })
+      } else if (optimalTickLength > 1) {
+        const lastTimestamp = optimalTicks[optimalTickLength - 1].oV
+        const lastV = optimalTicks[optimalTickLength - 1].v
+        const secondLastTimestamp = optimalTicks[optimalTickLength - 2].oV
+        optimalTicks[optimalTickLength - 1].v = this._optimalTickLabel(lastTimestamp, secondLastTimestamp, timezone) || lastV
       }
     }
     return optimalTicks
+  }
+
+  _optimalTickLabel (timestamp, comparedTimestamp, timezone) {
+    const year = formatDate(timestamp, 'YYYY', timezone)
+    const month = formatDate(timestamp, 'YYYY-MM', timezone)
+    const day = formatDate(timestamp, 'MM-DD', timezone)
+    if (year !== formatDate(comparedTimestamp, 'YYYY', timezone)) {
+      return year
+    } else if (month !== formatDate(comparedTimestamp, 'YYYY-MM', timezone)) {
+      return month
+    } else if (day !== formatDate(comparedTimestamp, 'MM-DD', timezone)) {
+      return day
+    }
+    return null
   }
 
   convertFromPixel (pixel) {
