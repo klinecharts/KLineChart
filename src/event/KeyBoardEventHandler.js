@@ -9,21 +9,21 @@ export default class KeyBoardEventHandler extends EventHandler {
     if (event.shiftKey) {
       switch (event.code) {
         case 'ArrowUp': {
-          this._chartData.zoom(-0.05)
+          this._chartData.zoom(-0.05, this._chartData.crossHairPoint())
           break
         }
         case 'ArrowDown': {
-          this._chartData.zoom(0.05)
+          this._chartData.zoom(0.05, this._chartData.crossHairPoint())
           break
         }
         case 'ArrowLeft': {
-          this._chartData.startDrag()
-          this._chartData.drag(-this._chartData.dataSpace())
+          this._chartData.startScroll()
+          this._chartData.scroll(-this._chartData.dataSpace())
           break
         }
         case 'ArrowRight': {
-          this._chartData.startDrag()
-          this._chartData.drag(this._chartData.dataSpace())
+          this._chartData.startScroll()
+          this._chartData.scroll(this._chartData.dataSpace())
           break
         }
         default: {
