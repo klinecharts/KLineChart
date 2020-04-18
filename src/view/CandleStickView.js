@@ -23,36 +23,34 @@ export default class CandleStickView extends TechnicalIndicatorView {
    */
   _drawRealTime () {
     const timeLinePoints = []
-    const timeLineAreaPoints = [{ x: 0, y: this._height }]
+    const timeLineAreaPoints = []
     const averageLinePoints = []
-
     const from = this._chartData.from()
-    const to = this._chartData.to()
-    const range = to - from
-    const onDrawing = (x, i, kLineData) => {
+    const onDrawing = (x, i, kLineData, halfBarSpace) => {
       const average = kLineData.average
       const closeY = this._yAxis.convertToPixel(kLineData.close)
       const averageY = this._yAxis.convertToPixel(average)
-      timeLinePoints.push({ x: x, y: closeY })
       if (average || average === 0) {
         averageLinePoints.push({ x: x, y: averageY })
       }
       if (i === from) {
-        timeLineAreaPoints.push({ x: 0, y: closeY })
+        const startX = x - halfBarSpace
+        timeLineAreaPoints.push({ x: startX, y: this._height })
+        timeLineAreaPoints.push({ x: startX, y: closeY })
+        timeLinePoints.push({ x: startX, y: closeY })
       }
+      timeLinePoints.push({ x: x, y: closeY })
       timeLineAreaPoints.push({ x: x, y: closeY })
     }
     const onDrawEnd = () => {
       const areaPointLength = timeLineAreaPoints.length
       if (areaPointLength > 0) {
         const lastPoint = timeLineAreaPoints[areaPointLength - 1]
-        const isFit = !(from - to < range)
-        if (isFit) {
-          timeLineAreaPoints.push({ x: this._width, y: lastPoint.y })
-          timeLineAreaPoints.push({ x: this._width, y: this._height })
-        } else {
-          timeLineAreaPoints.push({ x: lastPoint.x, y: this._height })
-        }
+        const halfBarSpace = this._chartData.barSpace() / 2
+        const endX = lastPoint.x + halfBarSpace
+        timeLinePoints.push({ x: endX, y: lastPoint.y })
+        timeLineAreaPoints.push({ x: endX, y: lastPoint.y })
+        timeLineAreaPoints.push({ x: endX, y: this._height })
       }
 
       const realTime = this._chartData.styleOptions().realTime

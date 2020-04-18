@@ -5503,29 +5503,17 @@ function (_TechnicalIndicatorVi) {
       var _this = this;
 
       var timeLinePoints = [];
-      var timeLineAreaPoints = [{
-        x: 0,
-        y: this._height
-      }];
+      var timeLineAreaPoints = [];
       var averageLinePoints = [];
 
       var from = this._chartData.from();
 
-      var to = this._chartData.to();
-
-      var range = to - from;
-
-      var onDrawing = function onDrawing(x, i, kLineData) {
+      var onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
         var average = kLineData.average;
 
         var closeY = _this._yAxis.convertToPixel(kLineData.close);
 
         var averageY = _this._yAxis.convertToPixel(average);
-
-        timeLinePoints.push({
-          x: x,
-          y: closeY
-        });
 
         if (average || average === 0) {
           averageLinePoints.push({
@@ -5535,12 +5523,25 @@ function (_TechnicalIndicatorVi) {
         }
 
         if (i === from) {
+          var startX = x - halfBarSpace;
           timeLineAreaPoints.push({
-            x: 0,
+            x: startX,
+            y: _this._height
+          });
+          timeLineAreaPoints.push({
+            x: startX,
+            y: closeY
+          });
+          timeLinePoints.push({
+            x: startX,
             y: closeY
           });
         }
 
+        timeLinePoints.push({
+          x: x,
+          y: closeY
+        });
         timeLineAreaPoints.push({
           x: x,
           y: closeY
@@ -5552,23 +5553,20 @@ function (_TechnicalIndicatorVi) {
 
         if (areaPointLength > 0) {
           var lastPoint = timeLineAreaPoints[areaPointLength - 1];
-          var isFit = !(from - to < range);
-
-          if (isFit) {
-            timeLineAreaPoints.push({
-              x: _this._width,
-              y: lastPoint.y
-            });
-            timeLineAreaPoints.push({
-              x: _this._width,
-              y: _this._height
-            });
-          } else {
-            timeLineAreaPoints.push({
-              x: lastPoint.x,
-              y: _this._height
-            });
-          }
+          var halfBarSpace = _this._chartData.barSpace() / 2;
+          var endX = lastPoint.x + halfBarSpace;
+          timeLinePoints.push({
+            x: endX,
+            y: lastPoint.y
+          });
+          timeLineAreaPoints.push({
+            x: endX,
+            y: lastPoint.y
+          });
+          timeLineAreaPoints.push({
+            x: endX,
+            y: _this._height
+          });
         }
 
         var realTime = _this._chartData.styleOptions().realTime;
