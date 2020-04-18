@@ -91,17 +91,14 @@ export default class XAxis extends Axis {
   }
 
   convertFromPixel (pixel) {
-    const dataSpace = this._chartData.dataSpace()
-    const range = Math.ceil(pixel / dataSpace)
-    let dataPos = this._chartData.from() + range - 1
-    const to = this._chartData.to()
-    if (dataPos > to - 1) {
-      dataPos = to - 1
-    }
-    return dataPos
+    return Math.round(this._chartData.coordinateToFloatIndex(pixel)) - 1
   }
 
   convertToPixel (value) {
-    return (value - this._chartData.from()) * this._chartData.dataSpace() + this._chartData.barSpace() / 2
+    const dataList = this._chartData.dataList()
+    const dataSize = dataList.length
+    const dataSpace = this._chartData.dataSpace()
+    const deltaFromRight = dataSize + this._chartData.offsetRightBarCount() - value
+    return this._width - (deltaFromRight - 0.5) * dataSpace + this._chartData.barSpace() / 2
   }
 }

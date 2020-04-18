@@ -2636,7 +2636,9 @@ function () {
 
     this._totalDataSpace = 0; // 向右偏移的空间
 
-    this._offsetRightSpace = 50; // 开始绘制的索引
+    this._offsetRightSpace = 50; // 向右偏移的数量
+
+    this._offsetRightCount = 10; // 开始绘制的索引
 
     this._from = 0; // 结束的索引
 
@@ -2650,9 +2652,9 @@ function () {
 
     this._crossHairPoint = null; // 标识十字光标在哪个series
 
-    this._crossHairSeriesTag = null; // 用来记录开始拖拽时数据绘制开始位置
+    this._crossHairSeriesTag = null; // 用来记录开始拖拽时向右偏移的数量
 
-    this._preFrom = 0; // 当前绘制的标记图形的类型
+    this._preOffsetRightCount = 0; // 当前绘制的标记图形的类型
 
     this._graphicMarkType = GraphicMarkType.NONE; // 标记图形点
 
@@ -2731,17 +2733,6 @@ function () {
       return Math.max(1, optimalBarSpace);
     }
     /**
-     * 计算rang dif
-     * @private
-     */
-
-  }, {
-    key: "_calcRangDif",
-    value: function _calcRangDif() {
-      var offsetRightRange = Math.floor(this._offsetRightSpace / this._dataSpace);
-      return this._range - offsetRightRange;
-    }
-    /**
      * 内部用来设置一条数据的空间
      * @param dataSpace
      * @returns {boolean}
@@ -2761,6 +2752,28 @@ function () {
       this._calcRange();
 
       return true;
+    }
+    /**
+     * 调整向右偏移量
+     * @private
+     */
+
+  }, {
+    key: "_adjustOffsetCount",
+    value: function _adjustOffsetCount() {
+      var dataSize = this._dataList.length;
+      var lastDataIndex = dataSize - 1;
+      var maxRightOffsetCount = this._totalDataSpace / this._dataSpace - Math.min(2, dataSize);
+
+      if (this._offsetRightCount > maxRightOffsetCount) {
+        this._offsetRightCount = maxRightOffsetCount;
+      }
+
+      var minRightOffsetCount = this._from - lastDataIndex - 1 + Math.min(2, dataSize);
+
+      if (this._offsetRightCount < minRightOffsetCount) {
+        this._offsetRightCount = minRightOffsetCount;
+      }
     }
     /**
      * 获取样式配置
@@ -2912,9 +2925,8 @@ function () {
             this._more = isBoolean(more) ? more : true;
             this._dataList = data.concat(this._dataList);
 
-            var rangeDif = this._calcRangDif();
+            this._adjustOffsetCount();
 
-            this._from = this._dataList.length - rangeDif;
             this.adjustFromTo();
           } else {
             this._loading = false;
@@ -2933,16 +2945,16 @@ function () {
               if (this._to === oldDataSize) {
                 this._to += 1;
 
-                var _rangeDif = this._calcRangDif();
+                var rangeDif = this._calcRangDif();
 
-                if (this._to - this._from > _rangeDif) {
+                if (this._to - this._from > rangeDif) {
                   this._from += 1;
                 }
               }
             } else {
-              var _rangeDif2 = this._calcRangDif();
+              var _rangeDif = this._calcRangDif();
 
-              if (this._dataList.length < _rangeDif2) {
+              if (this._dataList.length < _rangeDif) {
                 this._to = this._dataList.length;
               } else {
                 this._from += 1;
@@ -3011,11 +3023,20 @@ function () {
   }, {
     key: "setOffsetRightSpace",
     value: function setOffsetRightSpace(space) {
-      if (space < 0) {
-        space = 0;
+      this._offsetRightSpace = space;
+      var dataSize = this._dataList.size;
+      var lastDataIndex = dataSize - 1;
+      var maxRightOffset = this._from - lastDataIndex - 1 + Math.min(2, dataSize);
+
+      if (this._rightOffset > maxRightOffset) {
+        this._rightOffset = maxRightOffset;
       }
 
-      this._offsetRightSpace = space;
+      var minRightOffset = this._minRightOffset();
+
+      if (minRightOffset !== null && this._rightOffset < minRightOffset) {
+        this._rightOffset = minRightOffset;
+      }
     }
     /**
      * 获取数据绘制起点
@@ -3106,20 +3127,15 @@ function () {
   }, {
     key: "drag",
     value: function drag(distance) {
-      if (Math.abs(distance) < this._dataSpace / 2) {
-        return;
-      }
+      var distanceCount = distance / this._dataSpace;
 
-      var distanceRange = distance / this._dataSpace;
-      distanceRange = distanceRange < 0 ? Math.floor(distanceRange) : Math.ceil(distanceRange);
-
-      if (distanceRange === 0) {
+      if (distanceCount === 0) {
         this._loadMoreHandler();
 
         return;
       }
 
-      if (distanceRange > 0) {
+      if (distanceCount > 0) {
         // 右移
         if (this._from === 0) {
           this._loadMoreHandler(formatValue(this._dataList[0], 'timestamp'));
@@ -3128,20 +3144,12 @@ function () {
 
           return;
         }
-      } else {
-        // 左移
-        var rangeDif = this._calcRangDif();
-
-        var dataSize = this._dataList.length;
-
-        if (this._from === dataSize - rangeDif) {
-          this._invalidateHandler(InvalidateLevel.FLOAT_LAYER);
-
-          return;
-        }
       }
 
-      this._from = this._preFrom - distanceRange;
+      this._offsetRightCount = this._preOffsetRightCount - distanceCount;
+
+      this._adjustOffsetCount();
+
       this.adjustFromTo();
 
       if (this._from === 0) {
@@ -3171,23 +3179,10 @@ function () {
   }, {
     key: "adjustFromTo",
     value: function adjustFromTo() {
-      var dataSize = this._dataList.length;
-
-      var rangeDif = this._calcRangDif();
-
-      if (this._from > dataSize - rangeDif) {
-        this._from = dataSize - rangeDif;
-      }
-
-      if (this._from < 0) {
-        this._from = 0;
-      }
-
-      this._to = this._from + this._range;
-
-      if (this._to > dataSize) {
-        this._to = dataSize;
-      }
+      var baseIndex = this._dataList - 1;
+      var newBarsLength = Math.ceil(this._totalDataSpace / this._dataSpace) - 1;
+      this._to = Math.round(this._offsetRightCount + baseIndex);
+      this._from = this._to - newBarsLength;
     }
     /**
      * 获取图形标记类型

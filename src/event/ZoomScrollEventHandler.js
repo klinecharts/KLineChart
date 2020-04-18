@@ -1,10 +1,10 @@
 import EventHandler, { isMouse, isTouch } from './EventHandler'
 
-export default class ZoomDragEventHandler extends EventHandler {
+export default class ZoomScrollEventHandler extends EventHandler {
   constructor (chartData) {
     super(chartData)
-    // 开始拖动时坐标点
-    this._startDragPoint = {}
+    // 开始滚动时坐标点
+    this._startScrollPoint = {}
     // 开始触摸时坐标
     this._touchPoint = {}
     // 是否是取消了十字光标
@@ -23,7 +23,7 @@ export default class ZoomDragEventHandler extends EventHandler {
   pinchEvent (middlePoint, scale) {
     const zoomScale = (scale - this._pinchScale) * 5
     this._pinchScale = scale
-    this._chartData.zoom(zoomScale)
+    this._chartData.zoom(zoomScale, middlePoint)
   }
 
   mouseLeaveEvent (event) {
@@ -72,8 +72,8 @@ export default class ZoomDragEventHandler extends EventHandler {
     }
 
     if (deltaY !== 0) {
-      const zoomScale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY))
-      this._chartData.zoom(zoomScale)
+      const scale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY))
+      this._chartData.zoom(scale, { x: event.localX, y: event.localY })
     }
   }
 
@@ -93,8 +93,8 @@ export default class ZoomDragEventHandler extends EventHandler {
   }
 
   mouseDownEvent (event) {
-    this._startDragPoint = { x: event.localX, y: event.localY }
-    this._chartData.startDrag()
+    this._startScrollPoint = { x: event.localX, y: event.localY }
+    this._chartData.startScroll()
     if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
       return
     }
@@ -140,9 +140,9 @@ export default class ZoomDragEventHandler extends EventHandler {
         return
       }
     }
-    const distance = event.localX - this._startDragPoint.x
+    const distance = event.localX - this._startScrollPoint.x
     this._chartData.setCrossHairPoint(crossHairPoint)
-    this._chartData.drag(distance)
+    this._chartData.scroll(distance)
   }
 
   longTapEvent (event) {

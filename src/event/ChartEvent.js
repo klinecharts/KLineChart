@@ -1,5 +1,5 @@
 import EventBase from './EventBase'
-import ZoomDragEventHandler from './ZoomDragEventHandler'
+import ZoomScrollEventHandler from './ZoomScrollEventHandler'
 import GraphicMarkEventHandler from './GraphicMarkEventHandler'
 import { GraphicMarkType } from '../data/ChartData'
 import KeyBoardEventHandler from './KeyBoardEventHandler'
@@ -29,7 +29,7 @@ export default class ChartEvent {
     this._target.addEventListener('keydown', this._boundKeyBoardDownEvent)
     this._boundContextMenuEvent = (e) => { e.preventDefault() }
     this._target.addEventListener('contextmenu', this._boundContextMenuEvent, false)
-    this._zoomDragEventHandler = new ZoomDragEventHandler(chartData)
+    this._zoomDragEventHandler = new ZoomScrollEventHandler(chartData)
     this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData, xAxis, yAxis)
     this._keyBoardEventHandler = new KeyBoardEventHandler(chartData)
   }

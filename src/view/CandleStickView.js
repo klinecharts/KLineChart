@@ -27,8 +27,8 @@ export default class CandleStickView extends TechnicalIndicatorView {
     const averageLinePoints = []
 
     const from = this._chartData.from()
-    const range = this._chartData.range()
     const to = this._chartData.to()
+    const range = to - from
     const onDrawing = (x, i, kLineData) => {
       const average = kLineData.average
       const closeY = this._yAxis.convertToPixel(kLineData.close)
@@ -163,8 +163,8 @@ export default class CandleStickView extends TechnicalIndicatorView {
           lowLine[0] = closeY
           rect = [x - halfBarSpace, openY, barSpace, 1]
         }
-        this._ctx.fillRect(x - 0.5, highLine[0], 1, highLine[1] - highLine[0])
-        this._ctx.fillRect(x - 0.5, lowLine[0], 1, lowLine[1] - lowLine[0])
+        this._ctx.fillRect(x - 0.5, highLine[0], 1, highLine[1] - highLine[0] + 1)
+        this._ctx.fillRect(x - 0.5, lowLine[0], 1, lowLine[1] - lowLine[0] + 1)
 
         if (rect[3] < 1) {
           rect[3] = 1

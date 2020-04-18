@@ -277,20 +277,20 @@ export default class TechnicalIndicatorView extends View {
    * @private
    */
   _drawGraphics (onDrawing, onDrawEnd) {
-    let startX = 0
     const dataList = this._chartData.dataList()
+    const dataSize = dataList.length
     const barSpace = this._chartData.barSpace()
     const dataSpace = this._chartData.dataSpace()
     const halfBarSpace = barSpace / 2
+    const offsetRightBarCount = this._chartData.offsetRightBarCount()
     const to = this._chartData.to()
     for (let i = this._chartData.from(); i < to; i++) {
-      const endX = startX + barSpace
-      const x = (startX + endX) / 2
+      const deltaFromRight = dataSize + offsetRightBarCount - i
+      const x = this._width - (deltaFromRight - 0.5) * dataSpace + halfBarSpace
       const kLineData = dataList[i]
       if (onDrawing) {
         onDrawing(x, i, kLineData, halfBarSpace, barSpace)
       }
-      startX += dataSpace
     }
     if (onDrawEnd) {
       onDrawEnd()

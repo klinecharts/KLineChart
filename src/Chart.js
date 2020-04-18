@@ -60,7 +60,7 @@ export default class Chart {
    * 重置尺寸，总是会填充父容器
    */
   resize () {
-    this._chartSeries.chartData().adjustFromTo()
+    this._chartSeries.chartData().adjustOffsetBarCount()
     this._chartSeries.measureSeriesSize()
   }
 
