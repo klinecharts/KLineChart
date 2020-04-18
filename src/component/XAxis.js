@@ -53,12 +53,8 @@ export default class XAxis extends Axis {
           const nextTimestamp = nextKLineData.timestamp
           label = this._optimalTickLabel(timestamp, nextTimestamp, timezone) || label
         }
-
         const x = this.convertToPixel(pos)
-        if (x > defaultLabelWidth / 2 &&
-          x < this._width - defaultLabelWidth / 2) {
-          optimalTicks.push({ v: label, x, oV: timestamp })
-        }
+        optimalTicks.push({ v: label, x, oV: timestamp })
       }
       const optimalTickLength = optimalTicks.length
       if (optimalTickLength === 0) {

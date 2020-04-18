@@ -2634,27 +2634,25 @@ function () {
 
     this._more = true; // 可见区域数据占用的空间
 
-    this._totalDataSpace = 0; // 向右偏移的空间
-
-    this._offsetRightSpace = 50; // 向右偏移的数量
-
-    this._offsetRightCount = 10; // 开始绘制的索引
-
-    this._from = 0; // 结束的索引
-
-    this._to = 0; // 绘制区间数据数量
-
-    this._range = 0; // 每一条数据的空间
+    this._totalDataSpace = 0; // 每一条数据的空间
 
     this._dataSpace = 6; // bar的空间
 
-    this._barSpace = this._calcBarSpace(); // 十字光标位置
+    this._barSpace = this._calcBarSpace(); // 向右偏移的空间
+
+    this._offsetRightSpace = 50; // 向右偏移的数量
+
+    this._offsetRightBarCount = this._offsetRightSpace / this._dataSpace; // 开始绘制的索引
+
+    this._from = 0; // 结束的索引
+
+    this._to = 0; // 十字光标位置
 
     this._crossHairPoint = null; // 标识十字光标在哪个series
 
     this._crossHairSeriesTag = null; // 用来记录开始拖拽时向右偏移的数量
 
-    this._preOffsetRightCount = 0; // 当前绘制的标记图形的类型
+    this._preOffsetRightBarCount = 0; // 当前绘制的标记图形的类型
 
     this._graphicMarkType = GraphicMarkType.NONE; // 标记图形点
 
@@ -2708,17 +2706,6 @@ function () {
       }
     }
     /**
-     * 计算绘制区间
-     * @private
-     */
-
-  }, {
-    key: "_calcRange",
-    value: function _calcRange() {
-      this._range = Math.floor(this._totalDataSpace / this._dataSpace);
-      this.adjustFromTo();
-    }
-    /**
      * 计算一条柱子的空间
      * @returns {number}
      * @private
@@ -2748,32 +2735,7 @@ function () {
 
       this._dataSpace = dataSpace;
       this._barSpace = this._calcBarSpace();
-
-      this._calcRange();
-
       return true;
-    }
-    /**
-     * 调整向右偏移量
-     * @private
-     */
-
-  }, {
-    key: "_adjustOffsetCount",
-    value: function _adjustOffsetCount() {
-      var dataSize = this._dataList.length;
-      var lastDataIndex = dataSize - 1;
-      var maxRightOffsetCount = this._totalDataSpace / this._dataSpace - Math.min(2, dataSize);
-
-      if (this._offsetRightCount > maxRightOffsetCount) {
-        this._offsetRightCount = maxRightOffsetCount;
-      }
-
-      var minRightOffsetCount = this._from - lastDataIndex - 1 + Math.min(2, dataSize);
-
-      if (this._offsetRightCount < minRightOffsetCount) {
-        this._offsetRightCount = minRightOffsetCount;
-      }
     }
     /**
      * 获取样式配置
@@ -2920,47 +2882,19 @@ function () {
     value: function addData(data, pos, more) {
       if (isObject(data)) {
         if (isArray(data)) {
-          if (this._dataList.length === 0) {
-            this._loading = false;
-            this._more = isBoolean(more) ? more : true;
-            this._dataList = data.concat(this._dataList);
-
-            this._adjustOffsetCount();
-
-            this.adjustFromTo();
-          } else {
-            this._loading = false;
-            this._more = more;
-            this._dataList = data.concat(this._dataList);
-            this._from += data.length;
-            this.adjustFromTo();
-          }
+          this._loading = false;
+          this._more = isBoolean(more) ? more : true;
+          this._dataList = data.concat(this._dataList);
+          this.adjustOffsetBarCount();
         } else {
           if (pos >= this._dataList.length) {
-            var oldDataSize = this._dataList.length;
-
             this._dataList.push(data);
 
-            if (this._from !== 0) {
-              if (this._to === oldDataSize) {
-                this._to += 1;
-
-                var rangeDif = this._calcRangDif();
-
-                if (this._to - this._from > rangeDif) {
-                  this._from += 1;
-                }
-              }
-            } else {
-              var _rangeDif = this._calcRangDif();
-
-              if (this._dataList.length < _rangeDif) {
-                this._to = this._dataList.length;
-              } else {
-                this._from += 1;
-                this._to += 1;
-              }
+            if (this._offsetRightBarCount < 0) {
+              this._offsetRightBarCount += 1;
             }
+
+            this.adjustOffsetBarCount();
           } else {
             this._dataList[pos] = data;
           }
@@ -2988,6 +2922,16 @@ function () {
       return this._barSpace;
     }
     /**
+     * 获取向右偏移的bar的数量
+     * @returns {number}
+     */
+
+  }, {
+    key: "offsetRightBarCount",
+    value: function offsetRightBarCount() {
+      return this._offsetRightBarCount;
+    }
+    /**
      * 设置一条数据的空间
      * @param dataSpace
      */
@@ -2996,6 +2940,8 @@ function () {
     key: "setDataSpace",
     value: function setDataSpace(dataSpace) {
       if (this._innerSetDataSpace(dataSpace)) {
+        this.adjustOffsetBarCount();
+
         this._invalidateHandler();
       }
     }
@@ -3012,8 +2958,7 @@ function () {
       }
 
       this._totalDataSpace = totalSpace;
-
-      this._calcRange();
+      this.adjustOffsetBarCount();
     }
     /**
      * 设置右边可以偏移的空间
@@ -3023,20 +2968,8 @@ function () {
   }, {
     key: "setOffsetRightSpace",
     value: function setOffsetRightSpace(space) {
-      this._offsetRightSpace = space;
-      var dataSize = this._dataList.size;
-      var lastDataIndex = dataSize - 1;
-      var maxRightOffset = this._from - lastDataIndex - 1 + Math.min(2, dataSize);
-
-      if (this._rightOffset > maxRightOffset) {
-        this._rightOffset = maxRightOffset;
-      }
-
-      var minRightOffset = this._minRightOffset();
-
-      if (minRightOffset !== null && this._rightOffset < minRightOffset) {
-        this._rightOffset = minRightOffset;
-      }
+      this._offsetRightBarCount = space / this._dataSpace;
+      this.adjustOffsetBarCount();
     }
     /**
      * 获取数据绘制起点
@@ -3057,16 +2990,6 @@ function () {
     key: "to",
     value: function to() {
       return this._to;
-    }
-    /**
-     * 获取绘制数据个数
-     * @returns {number}
-     */
-
-  }, {
-    key: "range",
-    value: function range() {
-      return this._range;
     }
     /**
      * 获取十字光标点
@@ -3111,46 +3034,25 @@ function () {
       this._crossHairPoint = point;
     }
     /**
-     * 开始拖拽
+     * 开始滚动
      */
 
   }, {
-    key: "startDrag",
-    value: function startDrag() {
-      this._preFrom = this._from;
+    key: "startScroll",
+    value: function startScroll() {
+      this._preOffsetRightBarCount = this._offsetRightBarCount;
     }
     /**
-     * 拖动
+     * 滚动
      * @param distance
      */
 
   }, {
-    key: "drag",
-    value: function drag(distance) {
-      var distanceCount = distance / this._dataSpace;
-
-      if (distanceCount === 0) {
-        this._loadMoreHandler();
-
-        return;
-      }
-
-      if (distanceCount > 0) {
-        // 右移
-        if (this._from === 0) {
-          this._loadMoreHandler(formatValue(this._dataList[0], 'timestamp'));
-
-          this._invalidateHandler(InvalidateLevel.FLOAT_LAYER);
-
-          return;
-        }
-      }
-
-      this._offsetRightCount = this._preOffsetRightCount - distanceCount;
-
-      this._adjustOffsetCount();
-
-      this.adjustFromTo();
+    key: "scroll",
+    value: function scroll(distance) {
+      var distanceBarCount = distance / this._dataSpace;
+      this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount;
+      this.adjustOffsetBarCount();
 
       if (this._from === 0) {
         this._loadMoreHandler();
@@ -3158,31 +3060,66 @@ function () {
 
       this._invalidateHandler();
     }
+  }, {
+    key: "coordinateToFloatIndex",
+    value: function coordinateToFloatIndex(x) {
+      var dataSize = this._dataList.length;
+      var deltaFromRight = (this._totalDataSpace - x) / this._dataSpace;
+      var index = dataSize + this._offsetRightBarCount - deltaFromRight;
+      return Math.round(index * 10000000) / 10000000;
+    }
     /**
      * 缩放
-     * @param zoomScale
+     * @param scale
+     * @param point
      */
 
   }, {
     key: "zoom",
-    value: function zoom(zoomScale) {
-      var dataSpace = this._dataSpace + zoomScale * (this._dataSpace / 10);
+    value: function zoom(scale, point) {
+      var floatIndexAtZoomPoint = this.coordinateToFloatIndex(point.x);
+      var dataSpace = this._dataSpace + scale * (this._dataSpace / 10);
 
       if (this._innerSetDataSpace(dataSpace)) {
+        this._offsetRightBarCount += floatIndexAtZoomPoint - this.coordinateToFloatIndex(point.x);
+        this.adjustOffsetBarCount();
+
         this._invalidateHandler();
       }
     }
     /**
-     * 调整from和to
+     * 调整向右偏移bar的个数
+     * @private
      */
 
   }, {
-    key: "adjustFromTo",
-    value: function adjustFromTo() {
-      var baseIndex = this._dataList - 1;
-      var newBarsLength = Math.ceil(this._totalDataSpace / this._dataSpace) - 1;
-      this._to = Math.round(this._offsetRightCount + baseIndex);
-      this._from = this._to - newBarsLength;
+    key: "adjustOffsetBarCount",
+    value: function adjustOffsetBarCount() {
+      var dataSize = this._dataList.length;
+      var barLength = this._totalDataSpace / this._dataSpace;
+      var difBarCount = 1 - this._barSpace / 2 / this._dataSpace;
+      var maxRightOffsetBarCount = barLength - Math.min(2, dataSize) + difBarCount;
+
+      if (this._offsetRightBarCount > maxRightOffsetBarCount) {
+        this._offsetRightBarCount = maxRightOffsetBarCount;
+      }
+
+      var minRightOffsetBarCount = -dataSize + Math.min(2, dataSize) - difBarCount;
+
+      if (this._offsetRightBarCount < minRightOffsetBarCount) {
+        this._offsetRightBarCount = minRightOffsetBarCount;
+      }
+
+      this._to = Math.round(this._offsetRightBarCount + dataSize);
+      this._from = Math.floor(this._to - barLength) - 1;
+
+      if (this._to > dataSize) {
+        this._to = dataSize;
+      }
+
+      if (this._from < 0) {
+        this._from = 0;
+      }
     }
     /**
      * 获取图形标记类型
@@ -4219,9 +4156,9 @@ function (_View) {
   }, {
     key: "_drawGraphics",
     value: function _drawGraphics(onDrawing, onDrawEnd) {
-      var startX = 0;
-
       var dataList = this._chartData.dataList();
+
+      var dataSize = dataList.length;
 
       var barSpace = this._chartData.barSpace();
 
@@ -4229,18 +4166,18 @@ function (_View) {
 
       var halfBarSpace = barSpace / 2;
 
+      var offsetRightBarCount = this._chartData.offsetRightBarCount();
+
       var to = this._chartData.to();
 
       for (var i = this._chartData.from(); i < to; i++) {
-        var endX = startX + barSpace;
-        var x = (startX + endX) / 2;
+        var deltaFromRight = dataSize + offsetRightBarCount - i;
+        var x = this._width - (deltaFromRight - 0.5) * dataSpace + halfBarSpace;
         var kLineData = dataList[i];
 
         if (onDrawing) {
           onDrawing(x, i, kLineData, halfBarSpace, barSpace);
         }
-
-        startX += dataSpace;
       }
 
       if (onDrawEnd) {
@@ -4274,39 +4211,56 @@ function (_View) {
     value: function _draw() {
       var crossHairPoint = this._chartData.crossHairPoint();
 
+      var dataList = this._chartData.dataList();
+
       var dataPos;
 
       if (crossHairPoint) {
         dataPos = this._xAxis.convertFromPixel(crossHairPoint.x);
       } else {
-        dataPos = this._chartData.dataList().length - 1;
+        dataPos = dataList.length - 1;
       }
 
-      var kLineData = this._chartData.dataList()[dataPos];
+      var kLineData = dataList[dataPos];
 
-      var x = this._xAxis.convertToPixel(dataPos);
+      if (!kLineData) {
+        var to = this._chartData.to();
 
-      this._drawCrossHairHorizontalLine();
+        if (dataPos > to - 1) {
+          kLineData = dataList[to - 1];
+        } else if (dataPos < 0) {
+          kLineData = dataList[0];
+        }
+      }
 
-      this._drawCrossHairVerticalLine(kLineData, x);
+      if (kLineData) {
+        var x = this._xAxis.convertToPixel(dataPos);
 
-      var displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule;
+        this._drawCrossHairHorizontalLine();
 
-      if (displayRule === FloatLayerPromptDisplayRule.ALWAYS || displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairSeriesTag()) {
-        this._drawPrompt(kLineData, x);
+        this._drawCrossHairVerticalLine(kLineData, x);
+
+        var displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule;
+
+        if (displayRule === FloatLayerPromptDisplayRule.ALWAYS || displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairSeriesTag()) {
+          var isDrawTechnicalIndicatorPromptPoint = dataPos > 0 && dataPos < dataList.length;
+
+          this._drawPrompt(kLineData, x, isDrawTechnicalIndicatorPromptPoint);
+        }
       }
     }
     /**
      * 绘制提示
      * @param kLineData
      * @param x
+     * @param isDrawTechnicalIndicatorPromptPoint
      * @private
      */
 
   }, {
     key: "_drawPrompt",
-    value: function _drawPrompt(kLineData, x) {
-      this._drawTechnicalIndicatorPrompt(kLineData, x);
+    value: function _drawPrompt(kLineData, x, isDrawTechnicalIndicatorPromptPoint) {
+      this._drawTechnicalIndicatorPrompt(kLineData, x, isDrawTechnicalIndicatorPromptPoint);
     }
     /**
      * 绘制十字光标水平线
@@ -4370,10 +4324,6 @@ function (_View) {
         return;
       }
 
-      if (!kLineData) {
-        return;
-      }
-
       this._ctx.lineWidth = crossHairVerticalLine.size;
       this._ctx.strokeStyle = crossHairVerticalLine.color;
 
@@ -4389,14 +4339,15 @@ function (_View) {
      * 绘制指标提示
      * @param kLineData
      * @param x
+     * @param isDrawTechnicalIndicatorPromptPoint
      * @param offsetTop
      * @private
      */
 
   }, {
     key: "_drawTechnicalIndicatorPrompt",
-    value: function _drawTechnicalIndicatorPrompt(kLineData, x) {
-      var offsetTop = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    value: function _drawTechnicalIndicatorPrompt(kLineData, x, isDrawTechnicalIndicatorPromptPoint) {
+      var offsetTop = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
 
       var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
@@ -4406,7 +4357,7 @@ function (_View) {
 
       this._drawTechnicalIndicatorPromptText(data, colors, offsetTop);
 
-      this._drawTechnicalIndicatorPromptPoint(data.values, colors, x);
+      this._drawTechnicalIndicatorPromptPoint(data.values, colors, x, isDrawTechnicalIndicatorPromptPoint);
     }
     /**
      * 绘制指标提示文字
@@ -4455,12 +4406,13 @@ function (_View) {
      * @param values
      * @param colors
      * @param x
+     * @param isDrawTechnicalIndicatorPromptPoint
      * @private
      */
 
   }, {
     key: "_drawTechnicalIndicatorPromptPoint",
-    value: function _drawTechnicalIndicatorPromptPoint(values, colors, x) {
+    value: function _drawTechnicalIndicatorPromptPoint(values, colors, x, isDrawTechnicalIndicatorPromptPoint) {
       var floatLayerPromptTechnicalIndicatorPoint = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.point;
 
       if (!floatLayerPromptTechnicalIndicatorPoint.display) {
@@ -4469,7 +4421,7 @@ function (_View) {
 
       var technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType();
 
-      if (!this._chartData.crossHairSeriesTag() || technicalIndicatorType === TechnicalIndicatorType.SAR) {
+      if (!this._chartData.crossHairSeriesTag() || technicalIndicatorType === TechnicalIndicatorType.SAR || !isDrawTechnicalIndicatorPromptPoint) {
         return;
       }
 
@@ -4881,7 +4833,7 @@ function (_View) {
   }, {
     key: "_drawCrossHairLabel",
     value: function _drawCrossHairLabel() {
-      if (this._chartData.crossHairSeriesTag() !== this._additionalDataProvider.tag()) {
+      if (this._chartData.crossHairSeriesTag() !== this._additionalDataProvider.tag() || this._chartData.dataList().length === 0) {
         return;
       }
 
@@ -5577,9 +5529,9 @@ function (_TechnicalIndicatorVi) {
 
       var from = this._chartData.from();
 
-      var range = this._chartData.range();
-
       var to = this._chartData.to();
+
+      var range = to - from;
 
       var onDrawing = function onDrawing(x, i, kLineData) {
         var average = kLineData.average;
@@ -5778,9 +5730,9 @@ function (_TechnicalIndicatorVi) {
             rect = [x - halfBarSpace, openY, barSpace, 1];
           }
 
-          _this2._ctx.fillRect(x - 0.5, highLine[0], 1, highLine[1] - highLine[0]);
+          _this2._ctx.fillRect(x - 0.5, highLine[0], 1, highLine[1] - highLine[0] + 1);
 
-          _this2._ctx.fillRect(x - 0.5, lowLine[0], 1, lowLine[1] - lowLine[0]);
+          _this2._ctx.fillRect(x - 0.5, lowLine[0], 1, lowLine[1] - lowLine[0] + 1);
 
           if (rect[3] < 1) {
             rect[3] = 1;
@@ -6006,7 +5958,7 @@ function (_TechnicalIndicatorFl) {
 
   _createClass(CandleStickFloatLayerView, [{
     key: "_drawPrompt",
-    value: function _drawPrompt(kLineData, x) {
+    value: function _drawPrompt(kLineData, x, isDrawTechnicalIndicatorPromptPoint) {
       var floatLayerPromptCandleStick = this._chartData.styleOptions().floatLayer.prompt.candleStick;
 
       var candleStickPromptData = this._getCandleStickPromptData(kLineData, floatLayerPromptCandleStick);
@@ -6015,7 +5967,7 @@ function (_TechnicalIndicatorFl) {
         this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData);
 
         if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
-          this._drawTechnicalIndicatorPrompt(kLineData, x, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
+          this._drawTechnicalIndicatorPrompt(kLineData, x, isDrawTechnicalIndicatorPromptPoint, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
         }
       } else {
         this._drawCandleStickRectPromptText(kLineData, x, floatLayerPromptCandleStick, candleStickPromptData);
@@ -8780,6 +8732,8 @@ function (_View) {
         return;
       }
 
+      var dataList = this._chartData.dataList();
+
       var crossHairPoint = this._chartData.crossHairPoint();
 
       var dataPos;
@@ -8787,10 +8741,10 @@ function (_View) {
       if (crossHairPoint) {
         dataPos = this._xAxis.convertFromPixel(crossHairPoint.x);
       } else {
-        dataPos = this._chartData.dataList().length - 1;
+        dataPos = dataList.length - 1;
       }
 
-      var kLineData = this._chartData.dataList()[dataPos];
+      var kLineData = dataList[dataPos];
 
       if (!kLineData) {
         return;
@@ -8951,13 +8905,11 @@ function (_Axis) {
 
           var _x = this.convertToPixel(_pos);
 
-          if (_x > defaultLabelWidth / 2 && _x < this._width - defaultLabelWidth / 2) {
-            optimalTicks.push({
-              v: label,
-              x: _x,
-              oV: timestamp
-            });
-          }
+          optimalTicks.push({
+            v: label,
+            x: _x,
+            oV: timestamp
+          });
         }
 
         var optimalTickLength = optimalTicks.length;
@@ -9004,23 +8956,19 @@ function (_Axis) {
   }, {
     key: "convertFromPixel",
     value: function convertFromPixel(pixel) {
-      var dataSpace = this._chartData.dataSpace();
-
-      var range = Math.ceil(pixel / dataSpace);
-      var dataPos = this._chartData.from() + range - 1;
-
-      var to = this._chartData.to();
-
-      if (dataPos > to - 1) {
-        dataPos = to - 1;
-      }
-
-      return dataPos;
+      return Math.round(this._chartData.coordinateToFloatIndex(pixel)) - 1;
     }
   }, {
     key: "convertToPixel",
     value: function convertToPixel(value) {
-      return (value - this._chartData.from()) * this._chartData.dataSpace() + this._chartData.barSpace() / 2;
+      var dataList = this._chartData.dataList();
+
+      var dataSize = dataList.length;
+
+      var dataSpace = this._chartData.dataSpace();
+
+      var deltaFromRight = dataSize + this._chartData.offsetRightBarCount() - value;
+      return this._width - (deltaFromRight - 0.5) * dataSpace + this._chartData.barSpace() / 2;
     }
   }]);
 
@@ -9229,19 +9177,19 @@ function () {
   return SeparatorSeries;
 }();
 
-var ZoomDragEventHandler =
+var ZoomScrollEventHandler =
 /*#__PURE__*/
 function (_EventHandler) {
-  _inherits(ZoomDragEventHandler, _EventHandler);
+  _inherits(ZoomScrollEventHandler, _EventHandler);
 
-  function ZoomDragEventHandler(chartData) {
+  function ZoomScrollEventHandler(chartData) {
     var _this;
 
-    _classCallCheck(this, ZoomDragEventHandler);
+    _classCallCheck(this, ZoomScrollEventHandler);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(ZoomDragEventHandler).call(this, chartData)); // 开始拖动时坐标点
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ZoomScrollEventHandler).call(this, chartData)); // 开始滚动时坐标点
 
-    _this._startDragPoint = {}; // 开始触摸时坐标
+    _this._startScrollPoint = {}; // 开始触摸时坐标
 
     _this._touchPoint = {}; // 是否是取消了十字光标
 
@@ -9253,7 +9201,7 @@ function (_EventHandler) {
     return _this;
   }
 
-  _createClass(ZoomDragEventHandler, [{
+  _createClass(ZoomScrollEventHandler, [{
     key: "pinchStartEvent",
     value: function pinchStartEvent() {
       this._pinchScale = 1;
@@ -9265,7 +9213,7 @@ function (_EventHandler) {
       var zoomScale = (scale - this._pinchScale) * 5;
       this._pinchScale = scale;
 
-      this._chartData.zoom(zoomScale);
+      this._chartData.zoom(zoomScale, middlePoint);
     }
   }, {
     key: "mouseLeaveEvent",
@@ -9330,9 +9278,12 @@ function (_EventHandler) {
       }
 
       if (deltaY !== 0) {
-        var zoomScale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY));
+        var scale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY));
 
-        this._chartData.zoom(zoomScale);
+        this._chartData.zoom(scale, {
+          x: event.localX,
+          y: event.localY
+        });
       }
     }
   }, {
@@ -9365,12 +9316,12 @@ function (_EventHandler) {
   }, {
     key: "mouseDownEvent",
     value: function mouseDownEvent(event) {
-      this._startDragPoint = {
+      this._startScrollPoint = {
         x: event.localX,
         y: event.localY
       };
 
-      this._chartData.startDrag();
+      this._chartData.startScroll();
 
       if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
         return;
@@ -9447,11 +9398,11 @@ function (_EventHandler) {
         }
       }
 
-      var distance = event.localX - this._startDragPoint.x;
+      var distance = event.localX - this._startScrollPoint.x;
 
       this._chartData.setCrossHairPoint(crossHairPoint);
 
-      this._chartData.drag(distance);
+      this._chartData.scroll(distance);
     }
   }, {
     key: "longTapEvent",
@@ -9505,7 +9456,7 @@ function (_EventHandler) {
     }
   }]);
 
-  return ZoomDragEventHandler;
+  return ZoomScrollEventHandler;
 }(EventHandler);
 
 var KeyBoardEventHandler =
@@ -9608,7 +9559,7 @@ function () {
 
     this._target.addEventListener('contextmenu', this._boundContextMenuEvent, false);
 
-    this._zoomDragEventHandler = new ZoomDragEventHandler(chartData);
+    this._zoomDragEventHandler = new ZoomScrollEventHandler(chartData);
     this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData, xAxis, yAxis);
     this._keyBoardEventHandler = new KeyBoardEventHandler(chartData);
   }
@@ -10522,7 +10473,7 @@ function () {
   }, {
     key: "resize",
     value: function resize() {
-      this._chartSeries.chartData().adjustFromTo();
+      this._chartSeries.chartData().adjustOffsetBarCount();
 
       this._chartSeries.measureSeriesSize();
     }

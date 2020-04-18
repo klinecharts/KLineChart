@@ -23,14 +23,15 @@ export default class XAxisFloatLayerView extends View {
     if (!crossHair.display || !crossHairVertical.display || !crossHairVerticalText.display) {
       return
     }
+    const dataList = this._chartData.dataList()
     const crossHairPoint = this._chartData.crossHairPoint()
     let dataPos
     if (crossHairPoint) {
       dataPos = this._xAxis.convertFromPixel(crossHairPoint.x)
     } else {
-      dataPos = this._chartData.dataList().length - 1
+      dataPos = dataList.length - 1
     }
-    const kLineData = this._chartData.dataList()[dataPos]
+    const kLineData = dataList[dataPos]
     if (!kLineData) {
       return
     }
