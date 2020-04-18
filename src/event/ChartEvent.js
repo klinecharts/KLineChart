@@ -29,7 +29,7 @@ export default class ChartEvent {
     this._target.addEventListener('keydown', this._boundKeyBoardDownEvent)
     this._boundContextMenuEvent = (e) => { e.preventDefault() }
     this._target.addEventListener('contextmenu', this._boundContextMenuEvent, false)
-    this._zoomDragEventHandler = new ZoomScrollEventHandler(chartData)
+    this._zoomScrollEventHandler = new ZoomScrollEventHandler(chartData)
     this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData, xAxis, yAxis)
     this._keyBoardEventHandler = new KeyBoardEventHandler(chartData)
   }
@@ -39,51 +39,53 @@ export default class ChartEvent {
   }
 
   _pinchStartEvent () {
-    this._zoomDragEventHandler.pinchStartEvent()
+    this._zoomScrollEventHandler.pinchStartEvent()
   }
 
   _pinchEvent (middlePoint, scale) {
-    this._zoomDragEventHandler.pinchEvent(middlePoint, scale)
+    this._zoomScrollEventHandler.pinchEvent(middlePoint, scale)
   }
 
   _mouseUpEvent (event) {
+    this._target.style.cursor = 'crosshair'
     event.localX -= this._seriesSize.contentLeft
     this._graphicMarkEventHandler.mouseUpEvent(event)
   }
 
   _mouseLeaveEvent (event) {
-    if (this._checkZoomDrag()) {
+    if (this._checkZoomScroll()) {
       event.localX -= this._seriesSize.contentLeft
-      this._zoomDragEventHandler.mouseLeaveEvent(event)
+      this._zoomScrollEventHandler.mouseLeaveEvent(event)
     }
   }
 
   _mouseMoveEvent (event) {
     event.localX -= this._seriesSize.contentLeft
     this._graphicMarkEventHandler.mouseMoveEvent(event)
-    if (this._checkZoomDrag()) {
-      this._zoomDragEventHandler.mouseMoveEvent(event)
+    if (this._checkZoomScroll()) {
+      this._zoomScrollEventHandler.mouseMoveEvent(event)
     }
   }
 
   _mouseWheelEvent (event) {
-    if (this._checkZoomDrag()) {
-      this._zoomDragEventHandler.mouseWheelEvent(event)
+    if (this._checkZoomScroll()) {
+      this._zoomScrollEventHandler.mouseWheelEvent(event)
     }
   }
 
   _mouseClickEvent (event) {
-    if (this._checkZoomDrag()) {
+    if (this._checkZoomScroll()) {
       event.localX -= this._seriesSize.contentLeft
-      this._zoomDragEventHandler.mouseClickEvent(event)
+      this._zoomScrollEventHandler.mouseClickEvent(event)
     }
   }
 
   _mouseDownEvent (event) {
+    this._target.style.cursor = 'pointer'
     event.localX -= this._seriesSize.contentLeft
     this._graphicMarkEventHandler.mouseDownEvent(event)
-    if (this._checkZoomDrag()) {
-      this._zoomDragEventHandler.mouseDownEvent(event)
+    if (this._checkZoomScroll()) {
+      this._zoomScrollEventHandler.mouseDownEvent(event)
     }
   }
 
@@ -101,25 +103,25 @@ export default class ChartEvent {
         this._chartData.setCrossHairSeriesTag(null)
       }
     }
-    if (this._checkZoomDrag()) {
-      this._zoomDragEventHandler.pressedMouseMoveEvent(event)
+    if (this._checkZoomScroll()) {
+      this._zoomScrollEventHandler.pressedMouseMoveEvent(event)
     }
   }
 
   _longTapEvent (event) {
-    if (this._checkZoomDrag()) {
+    if (this._checkZoomScroll()) {
       event.localX -= this._seriesSize.contentLeft
-      this._zoomDragEventHandler.longTapEvent(event)
+      this._zoomScrollEventHandler.longTapEvent(event)
     }
   }
 
-  _checkZoomDrag () {
+  _checkZoomScroll () {
     return !this._chartData.dragGraphicMarkFlag() && this._chartData.graphicMarkType() === GraphicMarkType.NONE
   }
 
   setSeriesSize (seriesSize) {
     this._seriesSize = seriesSize
-    this._zoomDragEventHandler.setSeriesSize(seriesSize)
+    this._zoomScrollEventHandler.setSeriesSize(seriesSize)
     this._graphicMarkEventHandler.setSeriesSize(seriesSize)
   }
 

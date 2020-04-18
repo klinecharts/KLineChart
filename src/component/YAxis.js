@@ -104,31 +104,15 @@ export default class YAxis extends Axis {
       }
     }
     if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
-      const minValueString = minMaxArray[0].toString()
-      const minValueDotIndex = minValueString.indexOf('.') + 1
-      let minValuePrecision = 0
-      if (minValueDotIndex > 0) {
-        minValuePrecision = minValueString.length - minValueDotIndex
-      }
-
-      const maxValueString = minMaxArray[1].toString()
-      const maxValueDotIndex = maxValueString.indexOf('.') + 1
-      let maxValuePrecision = 0
-      if (maxValueDotIndex > 0) {
-        maxValuePrecision = maxValueString.length - maxValueDotIndex
-      }
-
-      const precision = Math.min(minValuePrecision, maxValuePrecision)
-      const temp = Math.pow(10, precision)
-      minMaxArray[0] = Math.round(minMaxArray[0] * temp) / temp
-      minMaxArray[1] = Math.round(minMaxArray[1] * temp) / temp
+      minMaxArray[0] = Math.round(minMaxArray[0] * 100000000) / 100000000
+      minMaxArray[1] = Math.round(minMaxArray[1] * 100000000) / 100000000
       if (this.isPercentageYAxis()) {
         const fromClose = dataList[from].close
         this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100
         this._maxValue = (minMaxArray[1] - fromClose) / fromClose * 100
         if (this._minValue === this._maxValue) {
           this._minValue -= 10
-          this._minValue += 10
+          this._maxValue += 10
         }
       } else {
         this._minValue = minMaxArray[0]
@@ -137,7 +121,7 @@ export default class YAxis extends Axis {
           this._minValue -= 1
           if (this._minValue < 0) {
             this._minValue = 0
-            this._maxValue += this._maxValue
+            this._maxValue = Math.max(1, this._maxValue * 2)
           } else {
             this._maxValue += 1
           }

@@ -5248,26 +5248,8 @@ function (_Axis) {
       }
 
       if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
-        var minValueString = minMaxArray[0].toString();
-        var minValueDotIndex = minValueString.indexOf('.') + 1;
-        var minValuePrecision = 0;
-
-        if (minValueDotIndex > 0) {
-          minValuePrecision = minValueString.length - minValueDotIndex;
-        }
-
-        var maxValueString = minMaxArray[1].toString();
-        var maxValueDotIndex = maxValueString.indexOf('.') + 1;
-        var maxValuePrecision = 0;
-
-        if (maxValueDotIndex > 0) {
-          maxValuePrecision = maxValueString.length - maxValueDotIndex;
-        }
-
-        var precision = Math.min(minValuePrecision, maxValuePrecision);
-        var temp = Math.pow(10, precision);
-        minMaxArray[0] = Math.round(minMaxArray[0] * temp) / temp;
-        minMaxArray[1] = Math.round(minMaxArray[1] * temp) / temp;
+        minMaxArray[0] = Math.round(minMaxArray[0] * 100000000) / 100000000;
+        minMaxArray[1] = Math.round(minMaxArray[1] * 100000000) / 100000000;
 
         if (this.isPercentageYAxis()) {
           var fromClose = dataList[from].close;
@@ -5276,7 +5258,7 @@ function (_Axis) {
 
           if (this._minValue === this._maxValue) {
             this._minValue -= 10;
-            this._minValue += 10;
+            this._maxValue += 10;
           }
         } else {
           this._minValue = minMaxArray[0];
@@ -5287,7 +5269,7 @@ function (_Axis) {
 
             if (this._minValue < 0) {
               this._minValue = 0;
-              this._maxValue += this._maxValue;
+              this._maxValue = Math.max(1, this._maxValue * 2);
             } else {
               this._maxValue += 1;
             }
@@ -9559,7 +9541,7 @@ function () {
 
     this._target.addEventListener('contextmenu', this._boundContextMenuEvent, false);
 
-    this._zoomDragEventHandler = new ZoomScrollEventHandler(chartData);
+    this._zoomScrollEventHandler = new ZoomScrollEventHandler(chartData);
     this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData, xAxis, yAxis);
     this._keyBoardEventHandler = new KeyBoardEventHandler(chartData);
   }
@@ -9572,16 +9554,17 @@ function () {
   }, {
     key: "_pinchStartEvent",
     value: function _pinchStartEvent() {
-      this._zoomDragEventHandler.pinchStartEvent();
+      this._zoomScrollEventHandler.pinchStartEvent();
     }
   }, {
     key: "_pinchEvent",
     value: function _pinchEvent(middlePoint, scale) {
-      this._zoomDragEventHandler.pinchEvent(middlePoint, scale);
+      this._zoomScrollEventHandler.pinchEvent(middlePoint, scale);
     }
   }, {
     key: "_mouseUpEvent",
     value: function _mouseUpEvent(event) {
+      this._target.style.cursor = 'crosshair';
       event.localX -= this._seriesSize.contentLeft;
 
       this._graphicMarkEventHandler.mouseUpEvent(event);
@@ -9589,10 +9572,10 @@ function () {
   }, {
     key: "_mouseLeaveEvent",
     value: function _mouseLeaveEvent(event) {
-      if (this._checkZoomDrag()) {
+      if (this._checkZoomScroll()) {
         event.localX -= this._seriesSize.contentLeft;
 
-        this._zoomDragEventHandler.mouseLeaveEvent(event);
+        this._zoomScrollEventHandler.mouseLeaveEvent(event);
       }
     }
   }, {
@@ -9602,35 +9585,36 @@ function () {
 
       this._graphicMarkEventHandler.mouseMoveEvent(event);
 
-      if (this._checkZoomDrag()) {
-        this._zoomDragEventHandler.mouseMoveEvent(event);
+      if (this._checkZoomScroll()) {
+        this._zoomScrollEventHandler.mouseMoveEvent(event);
       }
     }
   }, {
     key: "_mouseWheelEvent",
     value: function _mouseWheelEvent(event) {
-      if (this._checkZoomDrag()) {
-        this._zoomDragEventHandler.mouseWheelEvent(event);
+      if (this._checkZoomScroll()) {
+        this._zoomScrollEventHandler.mouseWheelEvent(event);
       }
     }
   }, {
     key: "_mouseClickEvent",
     value: function _mouseClickEvent(event) {
-      if (this._checkZoomDrag()) {
+      if (this._checkZoomScroll()) {
         event.localX -= this._seriesSize.contentLeft;
 
-        this._zoomDragEventHandler.mouseClickEvent(event);
+        this._zoomScrollEventHandler.mouseClickEvent(event);
       }
     }
   }, {
     key: "_mouseDownEvent",
     value: function _mouseDownEvent(event) {
+      this._target.style.cursor = 'pointer';
       event.localX -= this._seriesSize.contentLeft;
 
       this._graphicMarkEventHandler.mouseDownEvent(event);
 
-      if (this._checkZoomDrag()) {
-        this._zoomDragEventHandler.mouseDownEvent(event);
+      if (this._checkZoomScroll()) {
+        this._zoomScrollEventHandler.mouseDownEvent(event);
       }
     }
   }, {
@@ -9654,22 +9638,22 @@ function () {
         }
       }
 
-      if (this._checkZoomDrag()) {
-        this._zoomDragEventHandler.pressedMouseMoveEvent(event);
+      if (this._checkZoomScroll()) {
+        this._zoomScrollEventHandler.pressedMouseMoveEvent(event);
       }
     }
   }, {
     key: "_longTapEvent",
     value: function _longTapEvent(event) {
-      if (this._checkZoomDrag()) {
+      if (this._checkZoomScroll()) {
         event.localX -= this._seriesSize.contentLeft;
 
-        this._zoomDragEventHandler.longTapEvent(event);
+        this._zoomScrollEventHandler.longTapEvent(event);
       }
     }
   }, {
-    key: "_checkZoomDrag",
-    value: function _checkZoomDrag() {
+    key: "_checkZoomScroll",
+    value: function _checkZoomScroll() {
       return !this._chartData.dragGraphicMarkFlag() && this._chartData.graphicMarkType() === GraphicMarkType.NONE;
     }
   }, {
@@ -9677,7 +9661,7 @@ function () {
     value: function setSeriesSize(seriesSize) {
       this._seriesSize = seriesSize;
 
-      this._zoomDragEventHandler.setSeriesSize(seriesSize);
+      this._zoomScrollEventHandler.setSeriesSize(seriesSize);
 
       this._graphicMarkEventHandler.setSeriesSize(seriesSize);
     }
@@ -9736,6 +9720,7 @@ function () {
       this._chartContainer.style.outline = 'none';
       this._chartContainer.style.borderStyle = 'none';
       this._chartContainer.style.width = '100%';
+      this._chartContainer.style.cursor = 'crosshair';
       this._chartContainer.tabIndex = 1;
       container.appendChild(this._chartContainer);
     }
