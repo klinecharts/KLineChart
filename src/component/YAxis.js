@@ -104,8 +104,8 @@ export default class YAxis extends Axis {
       }
     }
     if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
-      minMaxArray[0] = Math.round(minMaxArray[0] * 100000000) / 100000000
-      minMaxArray[1] = Math.round(minMaxArray[1] * 100000000) / 100000000
+      minMaxArray[0] = Math.round(minMaxArray[0] * 1000000) / 1000000
+      minMaxArray[1] = Math.round(minMaxArray[1] * 1000000) / 1000000
       if (this.isPercentageYAxis()) {
         const fromClose = dataList[from].close
         this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100

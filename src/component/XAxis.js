@@ -31,11 +31,11 @@ export default class XAxis extends Axis {
       const tickText = this._chartData.styleOptions().xAxis.tickText
       this._measureCtx.font = getFont(tickText.size, tickText.family)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
-      const pos = parseInt(ticks[0].v)
+      const pos = parseInt(ticks[0].v, 10)
       const x = this.convertToPixel(pos)
       let tickCountDif = 1
       if (tickLength > 1) {
-        const nextPos = parseInt(ticks[1].v)
+        const nextPos = parseInt(ticks[1].v, 10)
         const nextX = this.convertToPixel(nextPos)
         const xDif = Math.abs(nextX - x)
         if (xDif < defaultLabelWidth) {
@@ -43,12 +43,12 @@ export default class XAxis extends Axis {
         }
       }
       for (let i = 0; i < tickLength; i += tickCountDif) {
-        const pos = parseInt(ticks[i].v)
+        const pos = parseInt(ticks[i].v, 10)
         const kLineData = dataList[pos]
         const timestamp = kLineData.timestamp
         let label = formatDate(timestamp, 'hh:mm', timezone)
         if (i <= tickLength - 1 - tickCountDif) {
-          const nextPos = parseInt(ticks[i + tickCountDif].v)
+          const nextPos = parseInt(ticks[i + tickCountDif].v, 10)
           const nextKLineData = dataList[nextPos]
           const nextTimestamp = nextKLineData.timestamp
           label = this._optimalTickLabel(timestamp, nextTimestamp, timezone) || label

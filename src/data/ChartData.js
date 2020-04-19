@@ -1,4 +1,4 @@
-import {isArray, isObject, merge, clone, isFunction, isBoolean, isNumber} from '../utils/typeChecks'
+import { isArray, isObject, merge, clone, isFunction, isBoolean, isNumber } from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
 import { defaultTechnicalIndicatorParamOptions, TechnicalIndicatorType } from './options/technicalIndicatorParamOptions'
 import { defaultPrecisionOptions } from './options/precisionOptions'
@@ -452,7 +452,7 @@ export default class ChartData {
     const dataSize = this._dataList.length
     const deltaFromRight = (this._totalDataSpace - x) / this._dataSpace
     const index = dataSize + this._offsetRightBarCount - deltaFromRight
-    return Math.round(index * 10000000) / 10000000
+    return Math.round(index * 1000000) / 1000000
   }
 
   /**
@@ -551,7 +551,7 @@ export default class ChartData {
    * @returns {{straightLine: [], verticalRayLine: [], rayLine: [], segmentLine: [], horizontalRayLine: [], horizontalSegmentLine: [], fibonacciLine: [], verticalStraightLine: [], priceChannelLine: [], priceLine: [], verticalSegmentLine: [], horizontalStraightLine: [], parallelStraightLine: []}}
    */
   graphicMarkData () {
-    return this._graphicMarkDatas
+    return clone(this._graphicMarkDatas)
   }
 
   /**
@@ -560,7 +560,7 @@ export default class ChartData {
    */
   setGraphicMarkData (datas) {
     const shouldInvalidate = this.shouldInvalidateGraphicMark()
-    this._graphicMarkDatas = datas
+    this._graphicMarkDatas = clone(datas)
     if (shouldInvalidate) {
       this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK)
     } else {

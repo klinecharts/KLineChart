@@ -3109,7 +3109,7 @@ function () {
       var dataSize = this._dataList.length;
       var deltaFromRight = (this._totalDataSpace - x) / this._dataSpace;
       var index = dataSize + this._offsetRightBarCount - deltaFromRight;
-      return Math.round(index * 10000000) / 10000000;
+      return Math.round(index * 1000000) / 1000000;
     }
     /**
      * 缩放
@@ -3232,7 +3232,7 @@ function () {
   }, {
     key: "graphicMarkData",
     value: function graphicMarkData() {
-      return this._graphicMarkDatas;
+      return clone(this._graphicMarkDatas);
     }
     /**
      * 设置图形标记的数据
@@ -3243,7 +3243,7 @@ function () {
     key: "setGraphicMarkData",
     value: function setGraphicMarkData(datas) {
       var shouldInvalidate = this.shouldInvalidateGraphicMark();
-      this._graphicMarkDatas = datas;
+      this._graphicMarkDatas = clone(datas);
 
       if (shouldInvalidate) {
         this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK);
@@ -3551,10 +3551,10 @@ function () {
       ctx.scale(pixelRatio, pixelRatio);
       var mainWidgetWidth = this._mainWidgetCell.offsetWidth;
       var mainWidgetHeight = this._mainWidgetCell.offsetHeight;
-      var mainWidgetOffsetLeft = parseInt(this._mainWidgetCell.style.left);
+      var mainWidgetOffsetLeft = parseInt(this._mainWidgetCell.style.left, 10);
       var yAxisWidgetWidth = this._yAxisWidgetCell.offsetWidth;
       var yAxisWidgetHeight = this._yAxisWidgetCell.offsetHeight;
-      var yAxisWidgetOffsetLeft = parseInt(this._yAxisWidgetCell.style.left);
+      var yAxisWidgetOffsetLeft = parseInt(this._yAxisWidgetCell.style.left, 10);
       ctx.drawImage(this._mainWidget.getImage(includeFloatLayer, includeGraphicMark), mainWidgetOffsetLeft, 0, mainWidgetWidth, mainWidgetHeight);
 
       if (this._yAxisWidget) {
@@ -5317,8 +5317,8 @@ function (_Axis) {
       }
 
       if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
-        minMaxArray[0] = Math.round(minMaxArray[0] * 100000000) / 100000000;
-        minMaxArray[1] = Math.round(minMaxArray[1] * 100000000) / 100000000;
+        minMaxArray[0] = Math.round(minMaxArray[0] * 1000000) / 1000000;
+        minMaxArray[1] = Math.round(minMaxArray[1] * 1000000) / 1000000;
 
         if (this.isPercentageYAxis()) {
           var fromClose = dataList[from].close;
@@ -8923,12 +8923,12 @@ function (_Axis) {
 
         this._measureCtx.font = getFont(tickText.size, tickText.family);
         var defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00');
-        var pos = parseInt(ticks[0].v);
+        var pos = parseInt(ticks[0].v, 10);
         var x = this.convertToPixel(pos);
         var tickCountDif = 1;
 
         if (tickLength > 1) {
-          var nextPos = parseInt(ticks[1].v);
+          var nextPos = parseInt(ticks[1].v, 10);
           var nextX = this.convertToPixel(nextPos);
           var xDif = Math.abs(nextX - x);
 
@@ -8938,14 +8938,14 @@ function (_Axis) {
         }
 
         for (var i = 0; i < tickLength; i += tickCountDif) {
-          var _pos = parseInt(ticks[i].v);
+          var _pos = parseInt(ticks[i].v, 10);
 
           var kLineData = dataList[_pos];
           var timestamp = kLineData.timestamp;
           var label = formatDate(timestamp, 'hh:mm', timezone);
 
           if (i <= tickLength - 1 - tickCountDif) {
-            var _nextPos = parseInt(ticks[i + tickCountDif].v);
+            var _nextPos = parseInt(ticks[i + tickCountDif].v, 10);
 
             var nextKLineData = dataList[_nextPos];
             var nextTimestamp = nextKLineData.timestamp;
