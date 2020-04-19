@@ -42,6 +42,7 @@ export interface Chart {
   setTechnicalIndicatorParams(technicalIndicatorType: TechnicalIndicatorType, params: number[]): void;
   getTechnicalIndicatorParamOptions(): TechnicalIndicatorParams;
   setPrecision(pricePrecision: number, volumePrecision: number): void;
+  setTimezone(timezone: string):void;
   resize(): void;
   setOffsetRightSpace(space: number): void;
   setLeftMinVisibleBarCount(barCount: number): void;

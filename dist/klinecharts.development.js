@@ -10768,14 +10768,14 @@ function () {
 
 var instances = {};
 var idBase = 1;
-var errorMessage = 'Chart version is 5.1.1. Root dom is null, can not initialize the chart!!!';
+var errorMessage = 'Chart version is 5.2.0. Root dom is null, can not initialize the chart!!!';
 /**
  * 获取版本号
  * @returns {string}
  */
 
 function version() {
-  return '5.1.1';
+  return '5.2.0';
 }
 /**
  * 初始化
