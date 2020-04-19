@@ -2585,9 +2585,11 @@ function formatBigNumber(value) {
 }
 
 var InvalidateLevel = {
-  FLOAT_LAYER: 1,
-  GRAPHIC_MARK: 2,
-  FULL: 3
+  NONE: 0,
+  GRAPHIC_MARK: 1,
+  FLOAT_LAYER: 2,
+  MAIN: 3,
+  FULL: 4
 };
 var GraphicMarkType = {
   NONE: 'none',
@@ -2886,8 +2888,13 @@ function () {
           this._more = isBoolean(more) ? more : true;
           this._dataList = data.concat(this._dataList);
           this.adjustOffsetBarCount();
+          return InvalidateLevel.FULL;
         } else {
-          if (pos >= this._dataList.length) {
+          var dataSize = this._dataList.length;
+
+          if (pos >= dataSize) {
+            var level = this._to - this._from < this._totalDataSpace / this._dataSpace ? InvalidateLevel.FULL : InvalidateLevel.MAIN;
+
             this._dataList.push(data);
 
             if (this._offsetRightBarCount < 0) {
@@ -2895,11 +2902,15 @@ function () {
             }
 
             this.adjustOffsetBarCount();
+            return level;
           } else {
             this._dataList[pos] = data;
+            return InvalidateLevel.MAIN;
           }
         }
       }
+
+      return InvalidateLevel.NONE;
     }
     /**
      * 获取一条数据的空间
@@ -3199,9 +3210,16 @@ function () {
   }, {
     key: "setGraphicMarkData",
     value: function setGraphicMarkData(datas) {
+      var shouldInvalidate = this.shouldInvalidateGraphicMark();
       this._graphicMarkDatas = datas;
 
-      this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK);
+      if (shouldInvalidate) {
+        this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK);
+      } else {
+        if (this.shouldInvalidateGraphicMark()) {
+          this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK);
+        }
+      }
     }
     /**
      * 设置加载更多
@@ -3212,6 +3230,26 @@ function () {
     key: "loadMore",
     value: function loadMore(callback) {
       this._loadMoreCallback = callback;
+    }
+    /**
+     * 是否需要刷新图形标记层
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "shouldInvalidateGraphicMark",
+    value: function shouldInvalidateGraphicMark() {
+      if (this._graphicMarkType !== GraphicMarkType.NONE) {
+        return true;
+      }
+
+      for (var graphicMarkKey in this._graphicMarkDatas) {
+        if (this._graphicMarkDatas[graphicMarkKey].length > 0) {
+          return true;
+        }
+      }
+
+      return false;
     }
   }]);
 
@@ -3458,9 +3496,7 @@ function () {
     value: function invalidate(level) {
       if (level === InvalidateLevel.FULL) {
         this._computeAxis();
-      }
 
-      if (level !== InvalidateLevel.GRAPHIC_MARK) {
         if (this._yAxisWidget) {
           this._yAxisWidget.invalidate(level);
         }
@@ -3605,6 +3641,7 @@ function () {
             break;
           }
 
+        case InvalidateLevel.MAIN:
         case InvalidateLevel.FULL:
           {
             this._mainView.flush();
@@ -8497,11 +8534,11 @@ function (_TechnicalIndicatorWi) {
   }, {
     key: "invalidate",
     value: function invalidate(level) {
-      if (level === InvalidateLevel.GRAPHIC_MARK) {
-        this._expandView.flush();
-      } else {
+      if (level !== InvalidateLevel.GRAPHIC_MARK) {
         _get(_getPrototypeOf(CandleStickWidget.prototype), "invalidate", this).call(this, level);
       }
+
+      this._expandView.flush();
     }
   }, {
     key: "setSize",
@@ -9581,7 +9618,9 @@ function () {
     value: function _mouseMoveEvent(event) {
       event.localX -= this._seriesSize.contentLeft;
 
-      this._graphicMarkEventHandler.mouseMoveEvent(event);
+      if (this._chartData.shouldInvalidateGraphicMark()) {
+        this._graphicMarkEventHandler.mouseMoveEvent(event);
+      }
 
       if (this._checkZoomScroll()) {
         this._zoomScrollEventHandler.mouseMoveEvent(event);
@@ -9708,6 +9747,12 @@ function () {
     this._chartEvent = new ChartEvent(this._chartContainer, this._chartData, this._xAxisSeries.xAxis(), this._candleStickSeries.yAxis());
     this.measureSeriesSize();
   }
+  /**
+   * 初始化图表容器
+   * @param container
+   * @private
+   */
+
 
   _createClass(ChartSeries, [{
     key: "_initChartContainer",
@@ -9844,8 +9889,6 @@ function () {
 
       if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
         this._xAxisSeries.invalidate(invalidateLevel);
-
-        this._candleStickSeries.invalidate(invalidateLevel);
 
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
@@ -10116,6 +10159,29 @@ function () {
       }
     }
     /**
+     * 处理数组数据
+     * @param dataList
+     * @param more
+     * @param extendFun
+     * @private
+     */
+
+  }, {
+    key: "_applyDataList",
+    value: function _applyDataList(dataList, more, extendFun) {
+      if (isArray(dataList)) {
+        if (isFunction(extendFun)) {
+          extendFun();
+        }
+
+        var level = this._chartData.addData(dataList, 0, more);
+
+        if (level !== InvalidateLevel.NONE) {
+          this._calcAllSeriesTechnicalIndicator(level);
+        }
+      }
+    }
+    /**
      * 添加新数据
      * @param dataList
      * @param more
@@ -10124,13 +10190,11 @@ function () {
   }, {
     key: "applyNewData",
     value: function applyNewData(dataList, more) {
-      if (isArray(dataList)) {
-        this._chartData.clearDataList();
+      var _this = this;
 
-        this._chartData.addData(dataList, 0, more);
-
-        this._calcAllSeriesTechnicalIndicator();
-      }
+      this._applyDataList(dataList, more, function () {
+        _this._chartData.clearDataList();
+      });
     }
     /**
      * 添加更多数据
@@ -10141,11 +10205,7 @@ function () {
   }, {
     key: "applyMoreData",
     value: function applyMoreData(dataList, more) {
-      if (isArray(dataList)) {
-        this._chartData.addData(dataList, 0, more);
-
-        this._calcAllSeriesTechnicalIndicator();
-      }
+      this._applyDataList(dataList, more);
     }
     /**
      * 更新数据
@@ -10456,8 +10516,6 @@ function () {
   }, {
     key: "resize",
     value: function resize() {
-      this._chartSeries.chartData().adjustOffsetBarCount();
-
       this._chartSeries.measureSeriesSize();
     }
     /**

@@ -7,9 +7,11 @@ import calcIndicator from './calcIndicator'
 import { formatValue } from '../utils/format'
 
 export const InvalidateLevel = {
-  FLOAT_LAYER: 1,
-  GRAPHIC_MARK: 2,
-  FULL: 3
+  NONE: 0,
+  GRAPHIC_MARK: 1,
+  FLOAT_LAYER: 2,
+  MAIN: 3,
+  FULL: 4
 }
 
 export const GraphicMarkType = {
@@ -273,18 +275,24 @@ export default class ChartData {
         this._more = isBoolean(more) ? more : true
         this._dataList = data.concat(this._dataList)
         this.adjustOffsetBarCount()
+        return InvalidateLevel.FULL
       } else {
-        if (pos >= this._dataList.length) {
+        const dataSize = this._dataList.length
+        if (pos >= dataSize) {
+          const level = this._to - this._from < this._totalDataSpace / this._dataSpace ? InvalidateLevel.FULL : InvalidateLevel.MAIN
           this._dataList.push(data)
           if (this._offsetRightBarCount < 0) {
             this._offsetRightBarCount += 1
           }
           this.adjustOffsetBarCount()
+          return level
         } else {
           this._dataList[pos] = data
+          return InvalidateLevel.MAIN
         }
       }
     }
+    return InvalidateLevel.NONE
   }
 
   /**
@@ -524,8 +532,15 @@ export default class ChartData {
    * @param datas
    */
   setGraphicMarkData (datas) {
+    const shouldInvalidate = this.shouldInvalidateGraphicMark()
     this._graphicMarkDatas = datas
-    this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK)
+    if (shouldInvalidate) {
+      this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK)
+    } else {
+      if (this.shouldInvalidateGraphicMark()) {
+        this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK)
+      }
+    }
   }
 
   /**
@@ -534,5 +549,21 @@ export default class ChartData {
    */
   loadMore (callback) {
     this._loadMoreCallback = callback
+  }
+
+  /**
+   * 是否需要刷新图形标记层
+   * @returns {boolean}
+   */
+  shouldInvalidateGraphicMark () {
+    if (this._graphicMarkType !== GraphicMarkType.NONE) {
+      return true
+    }
+    for (const graphicMarkKey in this._graphicMarkDatas) {
+      if (this._graphicMarkDatas[graphicMarkKey].length > 0) {
+        return true
+      }
+    }
+    return false
   }
 }

@@ -3,7 +3,7 @@ import CandleStickSeries from './CandleStickSeries'
 import XAxisSeries from './XAxisSeries'
 
 import { ChartType, YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
-import { isArray, isObject } from '../utils/typeChecks'
+import { isArray, isFunction, isObject } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
 import SeparatorSeries from './SeparatorSeries'
@@ -42,6 +42,11 @@ export default class ChartSeries {
     this.measureSeriesSize()
   }
 
+  /**
+   * 初始化图表容器
+   * @param container
+   * @private
+   */
   _initChartContainer (container) {
     this._container = container
     this._chartContainer = document.createElement('div')
@@ -147,7 +152,6 @@ export default class ChartSeries {
   _updateSeries (invalidateLevel = InvalidateLevel.FULL) {
     if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
       this._xAxisSeries.invalidate(invalidateLevel)
-      this._candleStickSeries.invalidate(invalidateLevel)
       for (const series of this._technicalIndicatorSeries) {
         series.invalidate(invalidateLevel)
       }
@@ -281,16 +285,33 @@ export default class ChartSeries {
   }
 
   /**
+   * 处理数组数据
+   * @param dataList
+   * @param more
+   * @param extendFun
+   * @private
+   */
+  _applyDataList (dataList, more, extendFun) {
+    if (isArray(dataList)) {
+      if (isFunction(extendFun)) {
+        extendFun()
+      }
+      const level = this._chartData.addData(dataList, 0, more)
+      if (level !== InvalidateLevel.NONE) {
+        this._calcAllSeriesTechnicalIndicator(level)
+      }
+    }
+  }
+
+  /**
    * 添加新数据
    * @param dataList
    * @param more
    */
   applyNewData (dataList, more) {
-    if (isArray(dataList)) {
+    this._applyDataList(dataList, more, () => {
       this._chartData.clearDataList()
-      this._chartData.addData(dataList, 0, more)
-      this._calcAllSeriesTechnicalIndicator()
-    }
+    })
   }
 
   /**
@@ -299,10 +320,7 @@ export default class ChartSeries {
    * @param more
    */
   applyMoreData (dataList, more) {
-    if (isArray(dataList)) {
-      this._chartData.addData(dataList, 0, more)
-      this._calcAllSeriesTechnicalIndicator()
-    }
+    this._applyDataList(dataList, more)
   }
 
   /**

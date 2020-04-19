@@ -73,6 +73,7 @@ export default class Widget {
         this._floatLayerView.flush()
         break
       }
+      case InvalidateLevel.MAIN:
       case InvalidateLevel.FULL: {
         this._mainView.flush()
         this._floatLayerView.flush()

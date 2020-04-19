@@ -1,5 +1,5 @@
-import { InvalidateLevel } from '../data/ChartData'
 import { getPixelRatio } from '../utils/canvas'
+import { InvalidateLevel } from '../data/ChartData'
 
 export default class Series {
   constructor (props) {
@@ -125,8 +125,6 @@ export default class Series {
   invalidate (level) {
     if (level === InvalidateLevel.FULL) {
       this._computeAxis()
-    }
-    if (level !== InvalidateLevel.GRAPHIC_MARK) {
       if (this._yAxisWidget) {
         this._yAxisWidget.invalidate(level)
       }

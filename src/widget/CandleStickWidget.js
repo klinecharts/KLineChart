@@ -18,11 +18,10 @@ export default class CandleStickWidget extends TechnicalIndicatorWidget {
   }
 
   invalidate (level) {
-    if (level === InvalidateLevel.GRAPHIC_MARK) {
-      this._expandView.flush()
-    } else {
+    if (level !== InvalidateLevel.GRAPHIC_MARK) {
       super.invalidate(level)
     }
+    this._expandView.flush()
   }
 
   setSize (width, height) {
