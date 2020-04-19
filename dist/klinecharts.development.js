@@ -2900,7 +2900,7 @@ function () {
             this._dataList.push(data);
 
             if (this._offsetRightBarCount < 0) {
-              this._offsetRightBarCount += 1;
+              this._offsetRightBarCount -= 1;
             }
 
             this.adjustOffsetBarCount();
@@ -5081,7 +5081,7 @@ function () {
       var ticks = [];
 
       if (this._range >= 0) {
-        var interval = +this._nice(this._range / 8.0);
+        var interval = +this._nice(this._range / 6.0);
 
         var precision = this._getIntervalPrecision(interval);
 
@@ -5118,16 +5118,16 @@ function () {
 
       var nf = 0;
 
-      if (f < 1) {
+      if (f < 1.5) {
         nf = 1;
-      } else if (f < 2) {
+      } else if (f < 2.5) {
         nf = 2;
-      } else if (f < 3) {
+      } else if (f < 4) {
         nf = 3;
-      } else if (f < 5) {
+      } else if (f < 7) {
         nf = 5;
       } else {
-        nf = 10;
+        nf = 8;
       }
 
       value = nf * exp10;

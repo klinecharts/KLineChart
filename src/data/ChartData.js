@@ -284,7 +284,7 @@ export default class ChartData {
           const level = this._to - this._from < this._totalDataSpace / this._dataSpace ? InvalidateLevel.FULL : InvalidateLevel.MAIN
           this._dataList.push(data)
           if (this._offsetRightBarCount < 0) {
-            this._offsetRightBarCount += 1
+            this._offsetRightBarCount -= 1
           }
           this.adjustOffsetBarCount()
           return level
