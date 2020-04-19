@@ -1,4 +1,4 @@
-import { isArray, isObject, merge, clone, isFunction, isBoolean } from '../utils/typeChecks'
+import {isArray, isObject, merge, clone, isFunction, isBoolean, isNumber} from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
 import { defaultTechnicalIndicatorParamOptions, TechnicalIndicatorType } from './options/technicalIndicatorParamOptions'
 import { defaultPrecisionOptions } from './options/precisionOptions'
@@ -64,10 +64,12 @@ export default class ChartData {
     this._dataSpace = 6
     // bar的空间
     this._barSpace = this._calcBarSpace()
-    // 向右偏移的空间
-    this._offsetRightSpace = 50
     // 向右偏移的数量
-    this._offsetRightBarCount = this._offsetRightSpace / this._dataSpace
+    this._offsetRightBarCount = 50 / this._dataSpace
+    // 左边最小可见bar的个数
+    this._leftMinVisibleBarCount = 2
+    // 右边最小可见bar的个数
+    this._rightMinVisibleBarCount = 2
     // 开始绘制的索引
     this._from = 0
     // 结束的索引
@@ -352,6 +354,26 @@ export default class ChartData {
   }
 
   /**
+   * 设置左边可见的最小bar数量
+   * @param barCount
+   */
+  setLeftMinVisibleBarCount (barCount) {
+    if (isNumber(barCount) && barCount > 0) {
+      this._leftMinVisibleBarCount = Math.ceil(barCount)
+    }
+  }
+
+  /**
+   * 设置右边可见的最小bar数量
+   * @param barCount
+   */
+  setRightMinVisibleBarCount (barCount) {
+    if (isNumber(barCount) && barCount > 0) {
+      this._rightMinVisibleBarCount = Math.ceil(barCount)
+    }
+  }
+
+  /**
    * 获取数据绘制起点
    * @returns {number}
    */
@@ -415,12 +437,17 @@ export default class ChartData {
     const distanceBarCount = distance / this._dataSpace
     this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount
     this.adjustOffsetBarCount()
-    if (this._from === 0) {
+    if (distanceBarCount > 0 && this._from === 0) {
       this._loadMoreHandler()
     }
     this._invalidateHandler()
   }
 
+  /**
+   * x转换成浮点数的位置
+   * @param x
+   * @returns {number}
+   */
   coordinateToFloatIndex (x) {
     const dataSize = this._dataList.length
     const deltaFromRight = (this._totalDataSpace - x) / this._dataSpace
@@ -451,12 +478,12 @@ export default class ChartData {
     const dataSize = this._dataList.length
     const barLength = this._totalDataSpace / this._dataSpace
     const difBarCount = 1 - this._barSpace / 2 / this._dataSpace
-    const maxRightOffsetBarCount = barLength - Math.min(2, dataSize) + difBarCount
+    const maxRightOffsetBarCount = barLength - Math.min(this._leftMinVisibleBarCount, dataSize) + difBarCount
     if (this._offsetRightBarCount > maxRightOffsetBarCount) {
       this._offsetRightBarCount = maxRightOffsetBarCount
     }
 
-    const minRightOffsetBarCount = -dataSize + Math.min(2, dataSize) - difBarCount
+    const minRightOffsetBarCount = -dataSize + 1 + Math.min(this._rightMinVisibleBarCount, dataSize) - difBarCount
 
     if (this._offsetRightBarCount < minRightOffsetBarCount) {
       this._offsetRightBarCount = minRightOffsetBarCount

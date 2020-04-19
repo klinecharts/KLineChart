@@ -72,6 +72,22 @@ export default class Chart {
   }
 
   /**
+   * 设置左边可见的最小bar数量
+   * @param barCount
+   */
+  setLeftMinVisibleBarCount (barCount) {
+    this._chartSeries.chartData().setLeftMinVisibleBarCount(barCount)
+  }
+
+  /**
+   * 设置右边可见的最小bar数量
+   * @param barCount
+   */
+  setRightMinVisibleBarCount (barCount) {
+    this._chartSeries.chartData().setRightMinVisibleBarCount(barCount)
+  }
+
+  /**
    * 设置一条数据的空间
    * @param space
    */

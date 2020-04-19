@@ -57,12 +57,9 @@ export default class XAxis extends Axis {
         optimalTicks.push({ v: label, x, oV: timestamp })
       }
       const optimalTickLength = optimalTicks.length
-      if (optimalTickLength === 0) {
-        const pos = parseInt(ticks[ticks.length - 1].v)
-        const timestamp = dataList[pos].timestamp
-        const x = this.convertToPixel(pos)
-        optimalTicks.push({ v: formatDate(timestamp, 'MM-DD', timezone), x, oV: timestamp })
-      } else if (optimalTickLength > 1) {
+      if (optimalTickLength === 1) {
+        optimalTicks[0].v = formatDate(optimalTicks[0].oV, 'YYYY-MM-DD hh:mm', timezone)
+      } else {
         const lastTimestamp = optimalTicks[optimalTickLength - 1].oV
         const lastV = optimalTicks[optimalTickLength - 1].v
         const secondLastTimestamp = optimalTicks[optimalTickLength - 2].oV

@@ -125,9 +125,9 @@ export default class Series {
   invalidate (level) {
     if (level === InvalidateLevel.FULL) {
       this._computeAxis()
-      if (this._yAxisWidget) {
-        this._yAxisWidget.invalidate(level)
-      }
+    }
+    if (this._yAxisWidget) {
+      this._yAxisWidget.invalidate(level)
     }
     this._mainWidget.invalidate(level)
   }

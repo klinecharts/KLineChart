@@ -44,6 +44,8 @@ export interface Chart {
   setPrecision(pricePrecision: number, volumePrecision: number): void;
   resize(): void;
   setOffsetRightSpace(space: number): void;
+  setLeftMinVisibleBarCount(barCount: number): void;
+  setRightMinVisibleBarCount(barCount: number): void;
   setDataSpace(space: number): void;
   clearData(): void;
   getDataList(): KLineData[];

@@ -2640,11 +2640,13 @@ function () {
 
     this._dataSpace = 6; // bar的空间
 
-    this._barSpace = this._calcBarSpace(); // 向右偏移的空间
+    this._barSpace = this._calcBarSpace(); // 向右偏移的数量
 
-    this._offsetRightSpace = 50; // 向右偏移的数量
+    this._offsetRightBarCount = 50 / this._dataSpace; // 左边最小可见bar的个数
 
-    this._offsetRightBarCount = this._offsetRightSpace / this._dataSpace; // 开始绘制的索引
+    this._leftMinVisibleBarCount = 2; // 右边最小可见bar的个数
+
+    this._rightMinVisibleBarCount = 2; // 开始绘制的索引
 
     this._from = 0; // 结束的索引
 
@@ -2983,6 +2985,30 @@ function () {
       this.adjustOffsetBarCount();
     }
     /**
+     * 设置左边可见的最小bar数量
+     * @param barCount
+     */
+
+  }, {
+    key: "setLeftMinVisibleBarCount",
+    value: function setLeftMinVisibleBarCount(barCount) {
+      if (isNumber(barCount) && barCount > 0) {
+        this._leftMinVisibleBarCount = Math.ceil(barCount);
+      }
+    }
+    /**
+     * 设置右边可见的最小bar数量
+     * @param barCount
+     */
+
+  }, {
+    key: "setRightMinVisibleBarCount",
+    value: function setRightMinVisibleBarCount(barCount) {
+      if (isNumber(barCount) && barCount > 0) {
+        this._rightMinVisibleBarCount = Math.ceil(barCount);
+      }
+    }
+    /**
      * 获取数据绘制起点
      * @returns {number}
      */
@@ -3065,12 +3091,18 @@ function () {
       this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount;
       this.adjustOffsetBarCount();
 
-      if (this._from === 0) {
+      if (distanceBarCount > 0 && this._from === 0) {
         this._loadMoreHandler();
       }
 
       this._invalidateHandler();
     }
+    /**
+     * x转换成浮点数的位置
+     * @param x
+     * @returns {number}
+     */
+
   }, {
     key: "coordinateToFloatIndex",
     value: function coordinateToFloatIndex(x) {
@@ -3109,13 +3141,13 @@ function () {
       var dataSize = this._dataList.length;
       var barLength = this._totalDataSpace / this._dataSpace;
       var difBarCount = 1 - this._barSpace / 2 / this._dataSpace;
-      var maxRightOffsetBarCount = barLength - Math.min(2, dataSize) + difBarCount;
+      var maxRightOffsetBarCount = barLength - Math.min(this._leftMinVisibleBarCount, dataSize) + difBarCount;
 
       if (this._offsetRightBarCount > maxRightOffsetBarCount) {
         this._offsetRightBarCount = maxRightOffsetBarCount;
       }
 
-      var minRightOffsetBarCount = -dataSize + Math.min(2, dataSize) - difBarCount;
+      var minRightOffsetBarCount = -dataSize + 1 + Math.min(this._rightMinVisibleBarCount, dataSize) - difBarCount;
 
       if (this._offsetRightBarCount < minRightOffsetBarCount) {
         this._offsetRightBarCount = minRightOffsetBarCount;
@@ -3496,10 +3528,10 @@ function () {
     value: function invalidate(level) {
       if (level === InvalidateLevel.FULL) {
         this._computeAxis();
+      }
 
-        if (this._yAxisWidget) {
-          this._yAxisWidget.invalidate(level);
-        }
+      if (this._yAxisWidget) {
+        this._yAxisWidget.invalidate(level);
       }
 
       this._mainWidget.invalidate(level);
@@ -8931,19 +8963,9 @@ function (_Axis) {
 
         var optimalTickLength = optimalTicks.length;
 
-        if (optimalTickLength === 0) {
-          var _pos2 = parseInt(ticks[ticks.length - 1].v);
-
-          var _timestamp = dataList[_pos2].timestamp;
-
-          var _x2 = this.convertToPixel(_pos2);
-
-          optimalTicks.push({
-            v: formatDate(_timestamp, 'MM-DD', timezone),
-            x: _x2,
-            oV: _timestamp
-          });
-        } else if (optimalTickLength > 1) {
+        if (optimalTickLength === 1) {
+          optimalTicks[0].v = formatDate(optimalTicks[0].oV, 'YYYY-MM-DD hh:mm', timezone);
+        } else {
           var lastTimestamp = optimalTicks[optimalTickLength - 1].oV;
           var lastV = optimalTicks[optimalTickLength - 1].v;
           var secondLastTimestamp = optimalTicks[optimalTickLength - 2].oV;
@@ -10527,6 +10549,26 @@ function () {
     key: "setOffsetRightSpace",
     value: function setOffsetRightSpace(space) {
       this._chartSeries.chartData().setOffsetRightSpace(space);
+    }
+    /**
+     * 设置左边可见的最小bar数量
+     * @param barCount
+     */
+
+  }, {
+    key: "setLeftMinVisibleBarCount",
+    value: function setLeftMinVisibleBarCount(barCount) {
+      this._chartSeries.chartData().setLeftMinVisibleBarCount(barCount);
+    }
+    /**
+     * 设置右边可见的最小bar数量
+     * @param barCount
+     */
+
+  }, {
+    key: "setRightMinVisibleBarCount",
+    value: function setRightMinVisibleBarCount(barCount) {
+      this._chartSeries.chartData().setRightMinVisibleBarCount(barCount);
     }
     /**
      * 设置一条数据的空间
