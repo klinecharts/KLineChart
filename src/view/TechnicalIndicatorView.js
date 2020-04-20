@@ -102,10 +102,10 @@ export default class TechnicalIndicatorView extends View {
           case TechnicalIndicatorType.VOL: {
             lineValues.splice(lineValues.length - 1, 1)
             const close = kLineData.close
-            const preClose = formatValue(dataList, i - 1, {}).close || close
-            if (close > preClose) {
+            const open = kLineData.open
+            if (close > open) {
               this._ctx.fillStyle = technicalIndicatorOptions.bar.upColor
-            } else if (close < preClose) {
+            } else if (close < open) {
               this._ctx.fillStyle = technicalIndicatorOptions.bar.downColor
             } else {
               this._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor
@@ -155,11 +155,9 @@ export default class TechnicalIndicatorView extends View {
    */
   _drawTechnicalIndicatorOhlc (i, x, halfBarSpace, technicalIndicatorOptions, kLineData, isCandleStick) {
     if (!isCandleStick) {
-      const dataList = this._chartData.dataList()
-      const preKLineData = dataList[i - 1] || {}
       this._drawOhlc(
         halfBarSpace, x, kLineData,
-        preKLineData, technicalIndicatorOptions.bar.upColor,
+        technicalIndicatorOptions.bar.upColor,
         technicalIndicatorOptions.bar.downColor, technicalIndicatorOptions.bar.noChangeColor
       )
     }
@@ -245,22 +243,21 @@ export default class TechnicalIndicatorView extends View {
    * @param halfBarSpace
    * @param x
    * @param kLineData
-   * @param preKLineData
    * @param upColor
    * @param downColor
    * @param noChangeColor
    * @private
    */
-  _drawOhlc (halfBarSpace, x, kLineData, preKLineData, upColor, downColor, noChangeColor) {
+  _drawOhlc (halfBarSpace, x, kLineData, upColor, downColor, noChangeColor) {
+    const open = kLineData.open
     const close = kLineData.close
-    const openY = this._yAxis.convertToPixel(kLineData.open)
+    const openY = this._yAxis.convertToPixel(open)
     const closeY = this._yAxis.convertToPixel(close)
     const highY = this._yAxis.convertToPixel(kLineData.high)
     const lowY = this._yAxis.convertToPixel(kLineData.low)
-    const preClose = (preKLineData || {}).close || close
-    if (close > preClose) {
+    if (close > open) {
       this._ctx.fillStyle = upColor
-    } else if (close < preClose) {
+    } else if (close < open) {
       this._ctx.fillStyle = downColor
     } else {
       this._ctx.fillStyle = noChangeColor

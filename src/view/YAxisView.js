@@ -154,20 +154,20 @@ export default class YAxisView extends View {
     if (!priceMark.display || !lastPriceMark.display || !lastPriceMark.text.display || dataSize === 0) {
       return
     }
-    const lastPrice = dataList[dataSize - 1].close
-    const preKLineData = dataList[dataSize - 2] || {}
-    const preLastPrice = preKLineData.close || lastPrice
+    const kLineData = dataList[dataSize - 1]
+    const close = kLineData.close
+    const open = kLineData.open
     let backgroundColor
-    if (lastPrice > preLastPrice) {
+    if (close > open) {
       backgroundColor = lastPriceMark.upColor
-    } else if (lastPrice < preLastPrice) {
+    } else if (close < open) {
       backgroundColor = lastPriceMark.downColor
     } else {
       backgroundColor = lastPriceMark.noChangeColor
     }
     const priceMarkText = lastPriceMark.text
     this._drawMarkLabel(
-      yAxisOptions, lastPrice, this._chartData.precisionOptions().price,
+      yAxisOptions, close, this._chartData.precisionOptions().price,
       priceMarkText.size, priceMarkText.family, priceMarkText.color, backgroundColor,
       priceMarkText.paddingLeft, priceMarkText.paddingTop,
       priceMarkText.paddingRight, priceMarkText.paddingBottom

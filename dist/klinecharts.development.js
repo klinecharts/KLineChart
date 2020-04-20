@@ -436,7 +436,7 @@ var defaultTechnicalIndicator = {
   bar: {
     upColor: '#26A69A',
     downColor: '#EF5350',
-    noChangeColor: '#666666'
+    noChangeColor: '#999999'
   },
   line: {
     size: 1,
@@ -3998,11 +3998,11 @@ function (_View) {
             {
               lineValues.splice(lineValues.length - 1, 1);
               var close = kLineData.close;
-              var preClose = formatValue(dataList, i - 1, {}).close || close;
+              var open = kLineData.open;
 
-              if (close > preClose) {
+              if (close > open) {
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.upColor;
-              } else if (close < preClose) {
+              } else if (close < open) {
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.downColor;
               } else {
                 _this3._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor;
@@ -4063,11 +4063,7 @@ function (_View) {
     key: "_drawTechnicalIndicatorOhlc",
     value: function _drawTechnicalIndicatorOhlc(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, isCandleStick) {
       if (!isCandleStick) {
-        var dataList = this._chartData.dataList();
-
-        var preKLineData = dataList[i - 1] || {};
-
-        this._drawOhlc(halfBarSpace, x, kLineData, preKLineData, technicalIndicatorOptions.bar.upColor, technicalIndicatorOptions.bar.downColor, technicalIndicatorOptions.bar.noChangeColor);
+        this._drawOhlc(halfBarSpace, x, kLineData, technicalIndicatorOptions.bar.upColor, technicalIndicatorOptions.bar.downColor, technicalIndicatorOptions.bar.noChangeColor);
       }
     }
     /**
@@ -4179,7 +4175,6 @@ function (_View) {
      * @param halfBarSpace
      * @param x
      * @param kLineData
-     * @param preKLineData
      * @param upColor
      * @param downColor
      * @param noChangeColor
@@ -4188,10 +4183,11 @@ function (_View) {
 
   }, {
     key: "_drawOhlc",
-    value: function _drawOhlc(halfBarSpace, x, kLineData, preKLineData, upColor, downColor, noChangeColor) {
+    value: function _drawOhlc(halfBarSpace, x, kLineData, upColor, downColor, noChangeColor) {
+      var open = kLineData.open;
       var close = kLineData.close;
 
-      var openY = this._yAxis.convertToPixel(kLineData.open);
+      var openY = this._yAxis.convertToPixel(open);
 
       var closeY = this._yAxis.convertToPixel(close);
 
@@ -4199,11 +4195,9 @@ function (_View) {
 
       var lowY = this._yAxis.convertToPixel(kLineData.low);
 
-      var preClose = (preKLineData || {}).close || close;
-
-      if (close > preClose) {
+      if (close > open) {
         this._ctx.fillStyle = upColor;
-      } else if (close < preClose) {
+      } else if (close < open) {
         this._ctx.fillStyle = downColor;
       } else {
         this._ctx.fillStyle = noChangeColor;
@@ -4794,14 +4788,14 @@ function (_View) {
         return;
       }
 
-      var lastPrice = dataList[dataSize - 1].close;
-      var preKLineData = dataList[dataSize - 2] || {};
-      var preLastPrice = preKLineData.close || lastPrice;
+      var kLineData = dataList[dataSize - 1];
+      var close = kLineData.close;
+      var open = kLineData.open;
       var backgroundColor;
 
-      if (lastPrice > preLastPrice) {
+      if (close > open) {
         backgroundColor = lastPriceMark.upColor;
-      } else if (lastPrice < preLastPrice) {
+      } else if (close < open) {
         backgroundColor = lastPriceMark.downColor;
       } else {
         backgroundColor = lastPriceMark.noChangeColor;
@@ -4809,7 +4803,7 @@ function (_View) {
 
       var priceMarkText = lastPriceMark.text;
 
-      this._drawMarkLabel(yAxisOptions, lastPrice, this._chartData.precisionOptions().price, priceMarkText.size, priceMarkText.family, priceMarkText.color, backgroundColor, priceMarkText.paddingLeft, priceMarkText.paddingTop, priceMarkText.paddingRight, priceMarkText.paddingBottom);
+      this._drawMarkLabel(yAxisOptions, close, this._chartData.precisionOptions().price, priceMarkText.size, priceMarkText.family, priceMarkText.color, backgroundColor, priceMarkText.paddingLeft, priceMarkText.paddingTop, priceMarkText.paddingRight, priceMarkText.paddingBottom);
     }
     /**
      * 绘制标记label
@@ -5718,17 +5712,13 @@ function (_TechnicalIndicatorVi) {
       var markLowestPrice = Infinity;
       var markLowestPriceX = -1;
 
-      var dataList = this._chartData.dataList();
-
       var candleStick = this._chartData.styleOptions().candleStick;
 
       var onDrawing = function onDrawing(x, i, kLineData, halfBarSpace, barSpace) {
+        var open = kLineData.open;
         var close = kLineData.close;
-        var preKLineData = dataList[i - 1] || {};
-        var preClose = preKLineData.close || close;
         var high = kLineData.high;
         var low = kLineData.low;
-        var open = kLineData.open;
 
         if (markHighestPrice < high) {
           markHighestPrice = high;
@@ -5740,18 +5730,18 @@ function (_TechnicalIndicatorVi) {
           markLowestPriceX = x;
         }
 
-        if (close > preClose) {
-          _this2._ctx.strokeStyle = candleStick.bar.upColor;
-          _this2._ctx.fillStyle = candleStick.bar.upColor;
-        } else if (close < preClose) {
-          _this2._ctx.strokeStyle = candleStick.bar.downColor;
-          _this2._ctx.fillStyle = candleStick.bar.downColor;
-        } else {
-          _this2._ctx.strokeStyle = candleStick.bar.noChangeColor;
-          _this2._ctx.fillStyle = candleStick.bar.noChangeColor;
-        }
-
         if (candleStick.bar.style !== CandleStickStyle.OHLC) {
+          if (close > open) {
+            _this2._ctx.strokeStyle = candleStick.bar.upColor;
+            _this2._ctx.fillStyle = candleStick.bar.upColor;
+          } else if (close < open) {
+            _this2._ctx.strokeStyle = candleStick.bar.downColor;
+            _this2._ctx.fillStyle = candleStick.bar.downColor;
+          } else {
+            _this2._ctx.strokeStyle = candleStick.bar.noChangeColor;
+            _this2._ctx.fillStyle = candleStick.bar.noChangeColor;
+          }
+
           var openY = _this2._yAxis.convertToPixel(open);
 
           var closeY = _this2._yAxis.convertToPixel(close);
@@ -5804,7 +5794,7 @@ function (_TechnicalIndicatorVi) {
 
             case CandleStickStyle.UP_STROKE:
               {
-                if (close > preClose) {
+                if (close > open) {
                   _this2._ctx.strokeRect(rect[0] + 0.5, rect[1], rect[2] - 1, rect[3]);
                 } else {
                   _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
@@ -5815,7 +5805,7 @@ function (_TechnicalIndicatorVi) {
 
             case CandleStickStyle.DOWN_STROKE:
               {
-                if (close > preClose) {
+                if (close > open) {
                   _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
                 } else {
                   _this2._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
@@ -5825,7 +5815,7 @@ function (_TechnicalIndicatorVi) {
               }
           }
         } else {
-          _this2._drawOhlc(halfBarSpace, x, kLineData, preKLineData, candleStick.bar.upColor, candleStick.bar.downColor, candleStick.bar.noChangeColor);
+          _this2._drawOhlc(halfBarSpace, x, kLineData, candleStick.bar.upColor, candleStick.bar.downColor, candleStick.bar.noChangeColor);
         }
       };
 
@@ -5960,18 +5950,18 @@ function (_TechnicalIndicatorVi) {
         return;
       }
 
-      var lastPrice = dataList[dataSize - 1].close;
-      var preKLineData = dataList[dataSize - 2] || {};
-      var preLastPrice = preKLineData.close || lastPrice;
+      var kLineData = dataList[dataSize - 1];
+      var close = kLineData.close;
+      var open = kLineData.open;
 
-      var priceY = this._yAxis.convertToPixel(lastPrice);
+      var priceY = this._yAxis.convertToPixel(close);
 
       priceY = +Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98)).toFixed(0);
       var color;
 
-      if (lastPrice > preLastPrice) {
+      if (close > open) {
         color = lastPriceMark.upColor;
-      } else if (lastPrice < preLastPrice) {
+      } else if (close < open) {
         color = lastPriceMark.downColor;
       } else {
         color = lastPriceMark.noChangeColor;

@@ -188,7 +188,7 @@ const defaultTechnicalIndicator = {
   bar: {
     upColor: '#26A69A',
     downColor: '#EF5350',
-    noChangeColor: '#666666'
+    noChangeColor: '#999999'
   },
   line: {
     size: 1,

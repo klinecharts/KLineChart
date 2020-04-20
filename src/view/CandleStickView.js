@@ -110,15 +110,12 @@ export default class CandleStickView extends TechnicalIndicatorView {
     let markHighestPriceX = -1
     let markLowestPrice = Infinity
     let markLowestPriceX = -1
-    const dataList = this._chartData.dataList()
     const candleStick = this._chartData.styleOptions().candleStick
     const onDrawing = (x, i, kLineData, halfBarSpace, barSpace) => {
+      const open = kLineData.open
       const close = kLineData.close
-      const preKLineData = dataList[i - 1] || {}
-      const preClose = preKLineData.close || close
       const high = kLineData.high
       const low = kLineData.low
-      const open = kLineData.open
       if (markHighestPrice < high) {
         markHighestPrice = high
         markHighestPriceX = x
@@ -128,18 +125,18 @@ export default class CandleStickView extends TechnicalIndicatorView {
         markLowestPrice = low
         markLowestPriceX = x
       }
-      if (close > preClose) {
-        this._ctx.strokeStyle = candleStick.bar.upColor
-        this._ctx.fillStyle = candleStick.bar.upColor
-      } else if (close < preClose) {
-        this._ctx.strokeStyle = candleStick.bar.downColor
-        this._ctx.fillStyle = candleStick.bar.downColor
-      } else {
-        this._ctx.strokeStyle = candleStick.bar.noChangeColor
-        this._ctx.fillStyle = candleStick.bar.noChangeColor
-      }
 
       if (candleStick.bar.style !== CandleStickStyle.OHLC) {
+        if (close > open) {
+          this._ctx.strokeStyle = candleStick.bar.upColor
+          this._ctx.fillStyle = candleStick.bar.upColor
+        } else if (close < open) {
+          this._ctx.strokeStyle = candleStick.bar.downColor
+          this._ctx.fillStyle = candleStick.bar.downColor
+        } else {
+          this._ctx.strokeStyle = candleStick.bar.noChangeColor
+          this._ctx.fillStyle = candleStick.bar.noChangeColor
+        }
         const openY = this._yAxis.convertToPixel(open)
         const closeY = this._yAxis.convertToPixel(close)
         const highY = this._yAxis.convertToPixel(high)
@@ -177,7 +174,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
             break
           }
           case CandleStickStyle.UP_STROKE: {
-            if (close > preClose) {
+            if (close > open) {
               this._ctx.strokeRect(rect[0] + 0.5, rect[1], rect[2] - 1, rect[3])
             } else {
               this._ctx.fillRect(rect[0], rect[1], rect[2], rect[3])
@@ -185,7 +182,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
             break
           }
           case CandleStickStyle.DOWN_STROKE: {
-            if (close > preClose) {
+            if (close > open) {
               this._ctx.fillRect(rect[0], rect[1], rect[2], rect[3])
             } else {
               this._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3])
@@ -196,8 +193,9 @@ export default class CandleStickView extends TechnicalIndicatorView {
       } else {
         this._drawOhlc(
           halfBarSpace, x, kLineData,
-          preKLineData, candleStick.bar.upColor,
-          candleStick.bar.downColor, candleStick.bar.noChangeColor
+          candleStick.bar.upColor,
+          candleStick.bar.downColor,
+          candleStick.bar.noChangeColor
         )
       }
     }
@@ -297,15 +295,15 @@ export default class CandleStickView extends TechnicalIndicatorView {
     if (!priceMark.display || !lastPriceMark.display || !lastPriceMark.line.display || dataSize === 0) {
       return
     }
-    const lastPrice = dataList[dataSize - 1].close
-    const preKLineData = dataList[dataSize - 2] || {}
-    const preLastPrice = preKLineData.close || lastPrice
-    let priceY = this._yAxis.convertToPixel(lastPrice)
+    const kLineData = dataList[dataSize - 1]
+    const close = kLineData.close
+    const open = kLineData.open
+    let priceY = this._yAxis.convertToPixel(close)
     priceY = +(Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98))).toFixed(0)
     let color
-    if (lastPrice > preLastPrice) {
+    if (close > open) {
       color = lastPriceMark.upColor
-    } else if (lastPrice < preLastPrice) {
+    } else if (close < open) {
       color = lastPriceMark.downColor
     } else {
       color = lastPriceMark.noChangeColor
