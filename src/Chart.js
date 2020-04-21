@@ -1,5 +1,5 @@
 import ChartSeries, { CANDLE_STICK_SERIES_TAG } from './series/ChartSeries'
-import { isArray } from './utils/typeChecks'
+import { isArray, clone } from './utils/typeChecks'
 import { GraphicMarkType } from './data/ChartData'
 
 export default class Chart {
@@ -21,7 +21,7 @@ export default class Chart {
    * @returns {[]|*[]}
    */
   getStyleOptions () {
-    return this._chartSeries.chartData().styleOptions()
+    return clone(this._chartSeries.chartData().styleOptions())
   }
 
   /**
@@ -37,7 +37,7 @@ export default class Chart {
    * 获取技术指标参数配置
    */
   getTechnicalIndicatorParamOptions () {
-    this._chartSeries.chartData().technicalIndicatorParamOptions()
+    return clone(this._chartSeries.chartData().technicalIndicatorParamOptions())
   }
 
   /**

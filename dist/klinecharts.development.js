@@ -10480,7 +10480,7 @@ function () {
   }, {
     key: "getStyleOptions",
     value: function getStyleOptions() {
-      return this._chartSeries.chartData().styleOptions();
+      return clone(this._chartSeries.chartData().styleOptions());
     }
     /**
      * 加载技术指标参数
@@ -10500,7 +10500,7 @@ function () {
   }, {
     key: "getTechnicalIndicatorParamOptions",
     value: function getTechnicalIndicatorParamOptions() {
-      this._chartSeries.chartData().technicalIndicatorParamOptions();
+      return clone(this._chartSeries.chartData().technicalIndicatorParamOptions());
     }
     /**
      * 加载精度
