@@ -1,0 +1,105 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?lft1vd');
+  src:  url('fonts/icomoon.eot?lft1vd#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?lft1vd') format('truetype'),
+    url('fonts/icomoon.woff?lft1vd') format('woff'),
+    url('fonts/icomoon.svg?lft1vd#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-moon:before {
+  content: "\e918";
+}
+.icon-sun:before {
+  content: "\e919";
+}
+.icon-setting:before {
+  content: "\e917";
+}
+.icon-close:before {
+  content: "\e916";
+}
+.icon-candle-stick-down-stroke:before {
+  content: "\e900";
+}
+.icon-candle-stick-ohlc:before {
+  content: "\e901";
+}
+.icon-candle-stick-solid:before {
+  content: "\e902";
+}
+.icon-candle-stick-stroke:before {
+  content: "\e903";
+}
+.icon-candle-stick-up-stroke:before {
+  content: "\e904";
+}
+.icon-delete:before {
+  content: "\e905";
+}
+.icon-fibonacci-line:before {
+  content: "\e906";
+}
+.icon-github:before {
+  content: "\e907";
+}
+.icon-horizontal-ray-line:before {
+  content: "\e908";
+}
+.icon-horizontal-segment-line:before {
+  content: "\e909";
+}
+.icon-horizontal-straight-line:before {
+  content: "\e90a";
+}
+.icon-parallel-straight-line:before {
+  content: "\e90b";
+}
+.icon-price-channel-line:before {
+  content: "\e90c";
+}
+.icon-price-line:before {
+  content: "\e90d";
+}
+.icon-ray-line:before {
+  content: "\e90e";
+}
+.icon-screen-shot:before {
+  content: "\e90f";
+}
+.icon-segment-line:before {
+  content: "\e910";
+}
+.icon-straight-line:before {
+  content: "\e911";
+}
+.icon-technical-indicator:before {
+  content: "\e912";
+}
+.icon-vertical-ray-line:before {
+  content: "\e913";
+}
+.icon-vertical-segment-line:before {
+  content: "\e914";
+}
+.icon-vertical-straight-line:before {
+  content: "\e915";
+}
