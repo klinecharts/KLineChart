@@ -10112,18 +10112,6 @@ function () {
       this._chartEvent.setSeriesSize(seriesSize);
     }
     /**
-     * 加载样式配置
-     * @param styleOptions
-     */
-
-  }, {
-    key: "applyStyleOptions",
-    value: function applyStyleOptions(styleOptions) {
-      this._chartData.applyStyleOptions(styleOptions);
-
-      this.measureSeriesSize();
-    }
-    /**
      * 加载技术指标参数
      * @param technicalIndicatorType
      * @param params
@@ -10380,6 +10368,18 @@ function () {
       }
     }
     /**
+     * 设置时区
+     * @param timezone
+     */
+
+  }, {
+    key: "setTimezone",
+    value: function setTimezone(timezone) {
+      this._chartData.setTimezone(timezone);
+
+      this._xAxisSeries.invalidate(InvalidateLevel.FULL);
+    }
+    /**
      * 获取图表转换为图片后url
      * @param includeFloatLayer,
      * @param includeGraphicMark
@@ -10468,7 +10468,9 @@ function () {
   _createClass(Chart, [{
     key: "setStyleOptions",
     value: function setStyleOptions(options) {
-      this._chartSeries.applyStyleOptions(options);
+      this._chartSeries.chartData().applyStyleOptions(options);
+
+      this._chartSeries.measureSeriesSize();
     }
     /**
      * 获取样式配置
@@ -10519,7 +10521,7 @@ function () {
   }, {
     key: "setTimezone",
     value: function setTimezone(timezone) {
-      this._chartSeries.chartData().setTimezone(timezone);
+      this._chartSeries.setTimezone(timezone);
     }
     /**
      * 重置尺寸，总是会填充父容器

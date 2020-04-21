@@ -12,7 +12,8 @@ export default class Chart {
    * @param options
    */
   setStyleOptions (options) {
-    this._chartSeries.applyStyleOptions(options)
+    this._chartSeries.chartData().applyStyleOptions(options)
+    this._chartSeries.measureSeriesSize()
   }
 
   /**
@@ -53,7 +54,7 @@ export default class Chart {
    * @param timezone
    */
   setTimezone (timezone) {
-    this._chartSeries.chartData().setTimezone(timezone)
+    this._chartSeries.setTimezone(timezone)
   }
 
   /**

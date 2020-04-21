@@ -255,15 +255,6 @@ export default class ChartSeries {
   }
 
   /**
-   * 加载样式配置
-   * @param styleOptions
-   */
-  applyStyleOptions (styleOptions) {
-    this._chartData.applyStyleOptions(styleOptions)
-    this.measureSeriesSize()
-  }
-
-  /**
    * 加载技术指标参数
    * @param technicalIndicatorType
    * @param params
@@ -440,6 +431,15 @@ export default class ChartSeries {
         }
       }
     }
+  }
+
+  /**
+   * 设置时区
+   * @param timezone
+   */
+  setTimezone (timezone) {
+    this._chartData.setTimezone(timezone)
+    this._xAxisSeries.invalidate(InvalidateLevel.FULL)
   }
 
   /**
