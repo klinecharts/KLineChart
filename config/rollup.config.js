@@ -1,7 +1,7 @@
 const babel = require('rollup-plugin-babel')
 const fileSize = require('rollup-plugin-filesize')
 const { terser } = require('rollup-plugin-terser')
-const replace = require('rollup-plugin-replace')
+const replace = require('@rollup/plugin-replace')
 const packageJson = require('../package.json')
 
 const inputPath = 'src/index.js'

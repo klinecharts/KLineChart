@@ -2,9 +2,11 @@
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
 (global = global || self, factory(global.klinecharts = {}));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function (obj) {
       return typeof obj;
@@ -86,6 +88,19 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -100,6 +115,23 @@ function _possibleConstructorReturn(self, call) {
   }
 
   return _assertThisInitialized(self);
+}
+
+function _createSuper(Derived) {
+  return function () {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (_isNativeReflectConstruct()) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
 }
 
 function _superPropBase(object, property) {
@@ -133,23 +165,91 @@ function _get(target, property, receiver) {
 }
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-    return arr2;
-  }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(n);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _createForOfIteratorHelper(o) {
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) {
+      var i = 0;
+
+      var F = function () {};
+
+      return {
+        s: F,
+        n: function () {
+          if (i >= o.length) return {
+            done: true
+          };
+          return {
+            done: false,
+            value: o[i++]
+          };
+        },
+        e: function (e) {
+          throw e;
+        },
+        f: F
+      };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  var it,
+      normalCompletion = true,
+      didErr = false,
+      err;
+  return {
+    s: function () {
+      it = o[Symbol.iterator]();
+    },
+    n: function () {
+      var step = it.next();
+      normalCompletion = step.done;
+      return step;
+    },
+    e: function (e) {
+      didErr = true;
+      err = e;
+    },
+    f: function () {
+      try {
+        if (!normalCompletion && it.return != null) it.return();
+      } finally {
+        if (didErr) throw err;
+      }
+    }
+  };
 }
 
 function merge(target, source) {
@@ -2610,9 +2710,7 @@ var GraphicMarkType = {
 var MAX_DATA_SPACE = 30;
 var MIN_DATA_SPACE = 3;
 
-var ChartData =
-/*#__PURE__*/
-function () {
+var ChartData = /*#__PURE__*/function () {
   function ChartData(styleOptions, invalidateHandler) {
     _classCallCheck(this, ChartData);
 
@@ -3367,9 +3465,7 @@ function strokeInPixel(ctx, drawFuc) {
   ctx.restore();
 }
 
-var Series =
-/*#__PURE__*/
-function () {
+var Series = /*#__PURE__*/function () {
   function Series(props) {
     _classCallCheck(this, Series);
 
@@ -3577,9 +3673,7 @@ function () {
   return Series;
 }();
 
-var Widget =
-/*#__PURE__*/
-function () {
+var Widget = /*#__PURE__*/function () {
   function Widget(props) {
     _classCallCheck(this, Widget);
 
@@ -3682,11 +3776,6 @@ function () {
 
             break;
           }
-
-        default:
-          {
-            break;
-          }
       }
     }
     /**
@@ -3750,9 +3839,7 @@ function cancelAnimationFrame(id) {
   window.cancelAnimationFrame(id);
 }
 
-var View =
-/*#__PURE__*/
-function () {
+var View = /*#__PURE__*/function () {
   function View(container, chartData) {
     _classCallCheck(this, View);
 
@@ -3859,17 +3946,17 @@ function () {
   return View;
 }();
 
-var TechnicalIndicatorView =
-/*#__PURE__*/
-function (_View) {
+var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
   _inherits(TechnicalIndicatorView, _View);
+
+  var _super = _createSuper(TechnicalIndicatorView);
 
   function TechnicalIndicatorView(container, chartData, xAxis, yAxis, additionalDataProvider) {
     var _this;
 
     _classCallCheck(this, TechnicalIndicatorView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TechnicalIndicatorView).call(this, container, chartData));
+    _this = _super.call(this, container, chartData);
     _this._xAxis = xAxis;
     _this._yAxis = yAxis;
     _this._additionalDataProvider = additionalDataProvider;
@@ -4252,17 +4339,17 @@ function (_View) {
   return TechnicalIndicatorView;
 }(View);
 
-var TechnicalIndicatorFloatLayerView =
-/*#__PURE__*/
-function (_View) {
+var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
   _inherits(TechnicalIndicatorFloatLayerView, _View);
+
+  var _super = _createSuper(TechnicalIndicatorFloatLayerView);
 
   function TechnicalIndicatorFloatLayerView(container, chartData, xAxis, yAxis, additionalDataProvider) {
     var _this;
 
     _classCallCheck(this, TechnicalIndicatorFloatLayerView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TechnicalIndicatorFloatLayerView).call(this, container, chartData));
+    _this = _super.call(this, container, chartData);
     _this._xAxis = xAxis;
     _this._yAxis = yAxis;
     _this._additionalDataProvider = additionalDataProvider;
@@ -4554,15 +4641,15 @@ function (_View) {
   return TechnicalIndicatorFloatLayerView;
 }(View);
 
-var TechnicalIndicatorWidget =
-/*#__PURE__*/
-function (_Widget) {
+var TechnicalIndicatorWidget = /*#__PURE__*/function (_Widget) {
   _inherits(TechnicalIndicatorWidget, _Widget);
+
+  var _super = _createSuper(TechnicalIndicatorWidget);
 
   function TechnicalIndicatorWidget() {
     _classCallCheck(this, TechnicalIndicatorWidget);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(TechnicalIndicatorWidget).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(TechnicalIndicatorWidget, [{
@@ -4580,17 +4667,17 @@ function (_Widget) {
   return TechnicalIndicatorWidget;
 }(Widget);
 
-var YAxisView =
-/*#__PURE__*/
-function (_View) {
+var YAxisView = /*#__PURE__*/function (_View) {
   _inherits(YAxisView, _View);
+
+  var _super = _createSuper(YAxisView);
 
   function YAxisView(container, chartData, yAxis, additionalDataProvider) {
     var _this;
 
     _classCallCheck(this, YAxisView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(YAxisView).call(this, container, chartData));
+    _this = _super.call(this, container, chartData);
     _this._yAxis = yAxis;
     _this._additionalDataProvider = additionalDataProvider;
     return _this;
@@ -4872,17 +4959,17 @@ function (_View) {
   return YAxisView;
 }(View);
 
-var YAxisFloatLayerView =
-/*#__PURE__*/
-function (_View) {
+var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
   _inherits(YAxisFloatLayerView, _View);
+
+  var _super = _createSuper(YAxisFloatLayerView);
 
   function YAxisFloatLayerView(container, chartData, yAxis, additionalDataProvider) {
     var _this;
 
     _classCallCheck(this, YAxisFloatLayerView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(YAxisFloatLayerView).call(this, container, chartData));
+    _this = _super.call(this, container, chartData);
     _this._yAxis = yAxis;
     _this._additionalDataProvider = additionalDataProvider;
     return _this;
@@ -4970,15 +5057,15 @@ function (_View) {
   return YAxisFloatLayerView;
 }(View);
 
-var YAxisWidget =
-/*#__PURE__*/
-function (_Widget) {
+var YAxisWidget = /*#__PURE__*/function (_Widget) {
   _inherits(YAxisWidget, _Widget);
+
+  var _super = _createSuper(YAxisWidget);
 
   function YAxisWidget() {
     _classCallCheck(this, YAxisWidget);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(YAxisWidget).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(YAxisWidget, [{
@@ -4996,9 +5083,7 @@ function (_Widget) {
   return YAxisWidget;
 }(Widget);
 
-var Axis =
-/*#__PURE__*/
-function () {
+var Axis = /*#__PURE__*/function () {
   function Axis(chartData) {
     _classCallCheck(this, Axis);
 
@@ -5159,17 +5244,17 @@ function () {
   return Axis;
 }();
 
-var YAxis =
-/*#__PURE__*/
-function (_Axis) {
+var YAxis = /*#__PURE__*/function (_Axis) {
   _inherits(YAxis, _Axis);
+
+  var _super = _createSuper(YAxis);
 
   function YAxis(chartData, isCandleStickYAxis) {
     var _this;
 
     _classCallCheck(this, YAxis);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(YAxis).call(this, chartData));
+    _this = _super.call(this, chartData);
     _this._isCandleStickYAxis = isCandleStickYAxis;
     return _this;
   }
@@ -5391,17 +5476,17 @@ function (_Axis) {
   return YAxis;
 }(Axis);
 
-var TechnicalIndicatorSeries =
-/*#__PURE__*/
-function (_Series) {
+var TechnicalIndicatorSeries = /*#__PURE__*/function (_Series) {
   _inherits(TechnicalIndicatorSeries, _Series);
+
+  var _super = _createSuper(TechnicalIndicatorSeries);
 
   function TechnicalIndicatorSeries(props) {
     var _this;
 
     _classCallCheck(this, TechnicalIndicatorSeries);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(TechnicalIndicatorSeries).call(this, props));
+    _this = _super.call(this, props);
     _this._technicalIndicatorType = props.technicalIndicatorType || TechnicalIndicatorType.MACD;
 
     _this._calcTechnicalIndicator();
@@ -5525,15 +5610,15 @@ function (_Series) {
   return TechnicalIndicatorSeries;
 }(Series);
 
-var CandleStickView =
-/*#__PURE__*/
-function (_TechnicalIndicatorVi) {
+var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
   _inherits(CandleStickView, _TechnicalIndicatorVi);
+
+  var _super = _createSuper(CandleStickView);
 
   function CandleStickView() {
     _classCallCheck(this, CandleStickView);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(CandleStickView).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(CandleStickView, [{
@@ -5984,15 +6069,15 @@ function (_TechnicalIndicatorVi) {
   return CandleStickView;
 }(TechnicalIndicatorView);
 
-var CandleStickFloatLayerView =
-/*#__PURE__*/
-function (_TechnicalIndicatorFl) {
+var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
   _inherits(CandleStickFloatLayerView, _TechnicalIndicatorFl);
+
+  var _super = _createSuper(CandleStickFloatLayerView);
 
   function CandleStickFloatLayerView() {
     _classCallCheck(this, CandleStickFloatLayerView);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(CandleStickFloatLayerView).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(CandleStickFloatLayerView, [{
@@ -6622,9 +6707,7 @@ var EventType = {
   TOUCH: 'touch'
 };
 
-var EventBase =
-/*#__PURE__*/
-function () {
+var EventBase = /*#__PURE__*/function () {
   function EventBase(target, eventHandler, options) {
     _classCallCheck(this, EventBase);
 
@@ -7150,9 +7233,7 @@ function isMouse(event) {
   return event.type === EventType.MOUSE;
 }
 
-var EventHandler =
-/*#__PURE__*/
-function () {
+var EventHandler = /*#__PURE__*/function () {
   function EventHandler(chartData) {
     _classCallCheck(this, EventHandler);
 
@@ -7187,17 +7268,17 @@ var GraphicMarkDrawStep = {
   STEP_DONE: 'step_done'
 };
 
-var GraphicMarkEventHandler =
-/*#__PURE__*/
-function (_EventHandler) {
+var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
   _inherits(GraphicMarkEventHandler, _EventHandler);
+
+  var _super = _createSuper(GraphicMarkEventHandler);
 
   function GraphicMarkEventHandler(chartData, xAxis, yAxis) {
     var _this;
 
     _classCallCheck(this, GraphicMarkEventHandler);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkEventHandler).call(this, chartData));
+    _this = _super.call(this, chartData);
     _this._xAxis = xAxis;
     _this._yAxis = yAxis; // 标记当没有画线时鼠标是否按下
 
@@ -8028,17 +8109,17 @@ var LineType = {
   VERTICAL: 2
 };
 
-var GraphicMarkView =
-/*#__PURE__*/
-function (_View) {
+var GraphicMarkView = /*#__PURE__*/function (_View) {
   _inherits(GraphicMarkView, _View);
+
+  var _super = _createSuper(GraphicMarkView);
 
   function GraphicMarkView(container, chartData, xAxis, yAxis) {
     var _this;
 
     _classCallCheck(this, GraphicMarkView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(GraphicMarkView).call(this, container, chartData));
+    _this = _super.call(this, container, chartData);
     _this._xAxis = xAxis;
     _this._yAxis = yAxis;
     return _this;
@@ -8432,11 +8513,6 @@ function (_View) {
                   drawVerticalLine(_this13._ctx, points[0].x, points[0].y, points[1].y);
                   break;
                 }
-
-              default:
-                {
-                  break;
-                }
             } // 渲染价格
 
 
@@ -8527,15 +8603,15 @@ function (_View) {
   return GraphicMarkView;
 }(View);
 
-var CandleStickWidget =
-/*#__PURE__*/
-function (_TechnicalIndicatorWi) {
+var CandleStickWidget = /*#__PURE__*/function (_TechnicalIndicatorWi) {
   _inherits(CandleStickWidget, _TechnicalIndicatorWi);
+
+  var _super = _createSuper(CandleStickWidget);
 
   function CandleStickWidget() {
     _classCallCheck(this, CandleStickWidget);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(CandleStickWidget).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(CandleStickWidget, [{
@@ -8574,17 +8650,17 @@ function (_TechnicalIndicatorWi) {
   return CandleStickWidget;
 }(TechnicalIndicatorWidget);
 
-var CandleStickSeries =
-/*#__PURE__*/
-function (_TechnicalIndicatorSe) {
+var CandleStickSeries = /*#__PURE__*/function (_TechnicalIndicatorSe) {
   _inherits(CandleStickSeries, _TechnicalIndicatorSe);
+
+  var _super = _createSuper(CandleStickSeries);
 
   function CandleStickSeries(props) {
     var _this;
 
     _classCallCheck(this, CandleStickSeries);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(CandleStickSeries).call(this, props));
+    _this = _super.call(this, props);
     _this._chartType = ChartType.CANDLE_STICK;
     return _this;
   }
@@ -8637,17 +8713,17 @@ function (_TechnicalIndicatorSe) {
   return CandleStickSeries;
 }(TechnicalIndicatorSeries);
 
-var XAxisView =
-/*#__PURE__*/
-function (_View) {
+var XAxisView = /*#__PURE__*/function (_View) {
   _inherits(XAxisView, _View);
+
+  var _super = _createSuper(XAxisView);
 
   function XAxisView(container, chartData, xAxis) {
     var _this;
 
     _classCallCheck(this, XAxisView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisView).call(this, container, chartData));
+    _this = _super.call(this, container, chartData);
     _this._xAxis = xAxis;
     return _this;
   }
@@ -8735,17 +8811,17 @@ function (_View) {
   return XAxisView;
 }(View);
 
-var XAxisFloatLayerView =
-/*#__PURE__*/
-function (_View) {
+var XAxisFloatLayerView = /*#__PURE__*/function (_View) {
   _inherits(XAxisFloatLayerView, _View);
+
+  var _super = _createSuper(XAxisFloatLayerView);
 
   function XAxisFloatLayerView(container, chartData, xAxis) {
     var _this;
 
     _classCallCheck(this, XAxisFloatLayerView);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxisFloatLayerView).call(this, container, chartData));
+    _this = _super.call(this, container, chartData);
     _this._xAxis = xAxis;
     return _this;
   }
@@ -8833,15 +8909,15 @@ function (_View) {
   return XAxisFloatLayerView;
 }(View);
 
-var XAxisWidget =
-/*#__PURE__*/
-function (_Widget) {
+var XAxisWidget = /*#__PURE__*/function (_Widget) {
   _inherits(XAxisWidget, _Widget);
+
+  var _super = _createSuper(XAxisWidget);
 
   function XAxisWidget() {
     _classCallCheck(this, XAxisWidget);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(XAxisWidget).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(XAxisWidget, [{
@@ -8859,17 +8935,17 @@ function (_Widget) {
   return XAxisWidget;
 }(Widget);
 
-var XAxis =
-/*#__PURE__*/
-function (_Axis) {
+var XAxis = /*#__PURE__*/function (_Axis) {
   _inherits(XAxis, _Axis);
+
+  var _super = _createSuper(XAxis);
 
   function XAxis(chartData) {
     var _this;
 
     _classCallCheck(this, XAxis);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(XAxis).call(this, chartData));
+    _this = _super.call(this, chartData);
 
     _this._initMeasureCanvas();
 
@@ -9004,15 +9080,15 @@ function (_Axis) {
   return XAxis;
 }(Axis);
 
-var XAxisSeries =
-/*#__PURE__*/
-function (_Series) {
+var XAxisSeries = /*#__PURE__*/function (_Series) {
   _inherits(XAxisSeries, _Series);
+
+  var _super = _createSuper(XAxisSeries);
 
   function XAxisSeries() {
     _classCallCheck(this, XAxisSeries);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(XAxisSeries).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(XAxisSeries, [{
@@ -9053,9 +9129,7 @@ function (_Series) {
   return XAxisSeries;
 }(Series);
 
-var SeparatorSeries =
-/*#__PURE__*/
-function () {
+var SeparatorSeries = /*#__PURE__*/function () {
   function SeparatorSeries(container, chartData, seriesIndex, dragEventHandler) {
     _classCallCheck(this, SeparatorSeries);
 
@@ -9206,17 +9280,17 @@ function () {
   return SeparatorSeries;
 }();
 
-var ZoomScrollEventHandler =
-/*#__PURE__*/
-function (_EventHandler) {
+var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
   _inherits(ZoomScrollEventHandler, _EventHandler);
+
+  var _super = _createSuper(ZoomScrollEventHandler);
 
   function ZoomScrollEventHandler(chartData) {
     var _this;
 
     _classCallCheck(this, ZoomScrollEventHandler);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(ZoomScrollEventHandler).call(this, chartData)); // 开始滚动时坐标点
+    _this = _super.call(this, chartData); // 开始滚动时坐标点
 
     _this._startScrollPoint = {}; // 开始触摸时坐标
 
@@ -9488,15 +9562,15 @@ function (_EventHandler) {
   return ZoomScrollEventHandler;
 }(EventHandler);
 
-var KeyBoardEventHandler =
-/*#__PURE__*/
-function (_EventHandler) {
+var KeyBoardEventHandler = /*#__PURE__*/function (_EventHandler) {
   _inherits(KeyBoardEventHandler, _EventHandler);
+
+  var _super = _createSuper(KeyBoardEventHandler);
 
   function KeyBoardEventHandler() {
     _classCallCheck(this, KeyBoardEventHandler);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(KeyBoardEventHandler).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(KeyBoardEventHandler, [{
@@ -9540,11 +9614,6 @@ function (_EventHandler) {
 
               break;
             }
-
-          default:
-            {
-              break;
-            }
         }
       }
     }
@@ -9553,9 +9622,7 @@ function (_EventHandler) {
   return KeyBoardEventHandler;
 }(EventHandler);
 
-var ChartEvent =
-/*#__PURE__*/
-function () {
+var ChartEvent = /*#__PURE__*/function () {
   function ChartEvent(target, chartData, xAxis, yAxis) {
     _classCallCheck(this, ChartEvent);
 
@@ -9732,9 +9799,7 @@ var DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT = 100;
 var TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_';
 var CANDLE_STICK_SERIES_TAG = 'candle_stick_series_tag';
 
-var ChartSeries =
-/*#__PURE__*/
-function () {
+var ChartSeries = /*#__PURE__*/function () {
   function ChartSeries(container, styleOptions) {
     _classCallCheck(this, ChartSeries);
 
@@ -9902,28 +9967,18 @@ function () {
       if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
         this._xAxisSeries.invalidate(invalidateLevel);
 
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+        var _iterator = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+            _step;
 
         try {
-          for (var _iterator = this._technicalIndicatorSeries[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
             var series = _step.value;
             series.invalidate(invalidateLevel);
           }
         } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
+          _iterator.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return != null) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
+          _iterator.f();
         }
       }
 
@@ -9945,12 +10000,11 @@ function () {
         this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE);
       }
 
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
+      var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+          _step2;
 
       try {
-        for (var _iterator2 = this._technicalIndicatorSeries[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
           var series = _step2.value;
           var technicalIndicatorSeriesTechnicalIndicatorType = series.technicalIndicatorType();
 
@@ -9959,18 +10013,9 @@ function () {
           }
         }
       } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
+        _iterator2.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
-        }
+        _iterator2.f();
       }
 
       for (var _i = 0, _technicalIndicatorTy = technicalIndicatorTypeArray; _i < _technicalIndicatorTy.length; _i++) {
@@ -10026,28 +10071,19 @@ function () {
       }
 
       var technicalIndicatorSeriesTotalHeight = 0;
-      var _iteratorNormalCompletion3 = true;
-      var _didIteratorError3 = false;
-      var _iteratorError3 = undefined;
+
+      var _iterator3 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+          _step3;
 
       try {
-        for (var _iterator3 = this._technicalIndicatorSeries[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
           var series = _step3.value;
           technicalIndicatorSeriesTotalHeight += series.height();
         }
       } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
+        _iterator3.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-            _iterator3.return();
-          }
-        } finally {
-          if (_didIteratorError3) {
-            throw _iteratorError3;
-          }
-        }
+        _iterator3.f();
       }
 
       var candleStickSeriesHeight = seriesExcludeXAxisSeparatorHeight - technicalIndicatorSeriesTotalHeight;
@@ -10129,12 +10165,11 @@ function () {
           this._candleStickSeries.invalidate(InvalidateLevel.FULL);
         }
 
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
+        var _iterator4 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+            _step4;
 
         try {
-          for (var _iterator4 = this._technicalIndicatorSeries[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
             var series = _step4.value;
             var seriesTechnicalIndicatorType = series.technicalIndicatorType();
 
@@ -10143,18 +10178,9 @@ function () {
             }
           }
         } catch (err) {
-          _didIteratorError4 = true;
-          _iteratorError4 = err;
+          _iterator4.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-              _iterator4.return();
-            }
-          } finally {
-            if (_didIteratorError4) {
-              throw _iteratorError4;
-            }
-          }
+          _iterator4.f();
         }
       }
     }
@@ -10330,12 +10356,12 @@ function () {
         this._candleStickSeries.setTechnicalIndicatorType(technicalIndicatorType);
       } else {
         var s;
-        var _iteratorNormalCompletion5 = true;
-        var _didIteratorError5 = false;
-        var _iteratorError5 = undefined;
+
+        var _iterator5 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+            _step5;
 
         try {
-          for (var _iterator5 = this._technicalIndicatorSeries[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
             var series = _step5.value;
 
             if (series.tag() === tag) {
@@ -10344,18 +10370,9 @@ function () {
             }
           }
         } catch (err) {
-          _didIteratorError5 = true;
-          _iteratorError5 = err;
+          _iterator5.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
-              _iterator5.return();
-            }
-          } finally {
-            if (_didIteratorError5) {
-              throw _iteratorError5;
-            }
-          }
+          _iterator5.f();
         }
 
         if (s) {
@@ -10451,9 +10468,7 @@ function () {
   return ChartSeries;
 }();
 
-var Chart =
-/*#__PURE__*/
-function () {
+var Chart = /*#__PURE__*/function () {
   function Chart(container, styleOptions) {
     _classCallCheck(this, Chart);
 
@@ -10846,5 +10861,5 @@ exports.version = version;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 //# sourceMappingURL=klinecharts.development.js.map
