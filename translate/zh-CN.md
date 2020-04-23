@@ -1,5 +1,5 @@
 # k线图（[English](../README.md)|中文）
-基于html5 canvas构建，图表支持20种技术指标，支持自定义指标参数，支持绘制标记图形，支持自定义样式。
+基于html5 canvas构建，图表支持21种技术指标，支持自定义指标参数，支持绘制标记图形，支持自定义样式。
 
 ## 技术指标
 <table>
@@ -7,6 +7,7 @@
         <tr>
             <th>指标类型</th>
             <th>MA</th>
+            <th>EMA</th>
             <th>VOL</th>
             <th>MACD</th>
             <th>BOLL</th>
@@ -15,6 +16,7 @@
         <tr>
             <th>默认参数</th>
             <th>[5,10,30,60]</th>
+            <th>[6,12,20]</th>
             <th>[5,10,20]</th>
             <th>[12,26,9]</th>
             <th>[20]</th>
@@ -27,6 +29,7 @@
            <th>BRAR</th>
            <th>CCI</th>
            <th>DMI</th>
+           <th>CR</th>
         </tr>
         <tr>
             <th>默认参数</th>
@@ -35,35 +38,34 @@
             <th>[26]</th>
             <th>[13]</th>
             <th>[14,6]</th>
+            <th>[26,10,20,40,60]</th>
         </tr>
         <tr>
             <th>指标类型</th>
-            <th>CR</th>
             <th>PSY</th>
             <th>DMA</th>
             <th>TRIX</th>
             <th>OBV</th>
+            <th>VR</th>
+            <th>WR</th>
         </tr>
         <tr>
             <th>默认参数</th>
-            <th>[26,10,20,40,60]</th>
             <th>[12]</th>
             <th>[10,50,10]</th>
             <th>[12,20]</th>
             <th>[30]</th>
+            <th>[24,30]</th>
+            <th>[13,34,89]</th>
         </tr>
         <tr>
             <th>指标类型</th>
-            <th>VR</th>
-            <th>WR</th>
             <th>MTM</th>
             <th>EMV</th>
             <th>SAR</th>
         </tr>
         <tr>
             <th>默认参数</th>
-            <th>[24,30]</th>
-            <th>[13,34,89]</th>
             <th>[6,10]</th>
             <th>[14,9]</th>
             <th>[2,2,20]</th>
@@ -105,6 +107,10 @@ setTimezone(timezone)
 resize()
 // 设置图表右边可以空出来的间隙
 setOffsetRightSpace(space)
+// 设置左边最小可见的蜡烛数量
+setLeftMinVisibleBarCount(barCount)
+// 设置右边最小可见的蜡烛数量
+setRightMinVisibleBarCount(barCount)
 // 设置图表一条数据所占用的空间
 setDataSpace(space)
 // 清空数据
@@ -126,9 +132,9 @@ setCandleStickChartType(chartType)
 setCandleStickTechnicalIndicatorType(technicalIndicatorType)
 // 设置其它技术指标图的指标类型
 // 技术指标参数类型：
-// 'NO'，'MA'，'VOL'，'MACD'，'BOLL'，'KDJ'，'RSI'，'BIAS'
-// 'BRAR'，'CCI'，'DMI'，'CR'，'PSY'，'DMA'，'TRIX'，'OBV'
-// 'VR'，'WR'，'MTM'，'EMV'，'SAR'
+// 'NO'，'MA'，'EMA'，'VOL'，'MACD'，'BOLL'，'KDJ'，'RSI'，
+// 'BIAS'，'BRAR'，'CCI'，'DMI'，'CR'，'PSY'，'DMA'，'TRIX'，
+// 'OBV'，'VR'，'WR'，'MTM'，'EMV'，'SAR'
 // tag 是创建图的返回的一个标识
 setTechnicalIndicatorType(tag, technicalIndicatorType)
 // 添加技术指标图，返回图表的标识
@@ -161,3 +167,6 @@ getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type)
 线段（segmentLine）、价格线（priceLine）、
 价格通道线（priceChannelLine）、平行线（parallelStraightLine）、
 斐波那契线（fibonacciLine）
+
+## 交流群
++ QQ: 677936660

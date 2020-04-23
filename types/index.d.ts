@@ -1,8 +1,9 @@
-export type TechnicalIndicatorType = 'NO' | 'MA' | 'VOL' | 'MACD' | 'BOLL' | 'KDJ' | 'RSI' | 'BIAS' | 'BRAR' | 'CCI' | 'DMI' | 'CR' | 'PSY' | 'DMA' | 'TRIX' | 'OBV' | 'VR' | 'WR' | 'MTM' | 'EMV' | 'SAR';
+export type TechnicalIndicatorType = 'NO' | 'MA' | 'EMA' | 'VOL' | 'MACD' | 'BOLL' | 'KDJ' | 'RSI' | 'BIAS' | 'BRAR' | 'CCI' | 'DMI' | 'CR' | 'PSY' | 'DMA' | 'TRIX' | 'OBV' | 'VR' | 'WR' | 'MTM' | 'EMV' | 'SAR';
 export type GraphicMarkType = 'none' | 'horizontalStraightLine' | 'verticalStraightLine' | 'straightLine' | 'horizontalRayLine' | 'verticalRayLine' | 'rayLine' | 'horizontalSegmentLine' | 'verticalSegmentLine' | 'segmentLine' | 'priceLine' | 'priceChannelLine' | 'parallelStraightLine' | 'fibonacciLine';
 export type ChartType = 'candle_stick' | 'real_time';
 export interface TechnicalIndicatorParams {
   MA: number[];
+  EMA: number[];
   VOL: number[];
   MACD: number[];
   BOLL: number[];
@@ -52,8 +53,8 @@ export interface Chart {
   getDataList(): KLineData[];
   applyNewData(dataList: KLineData[], more?: boolean): void;
   applyMoreData(dataList: KLineData[], more?: boolean): void;
-  updateData(data: KLineData): void
-  loadMore(cb: (timestamp: number) => {}): void;
+  updateData(data: KLineData): void;
+  loadMore(cb: (timestamp: number) => void): void;
   setCandleStickChartType(chartType: ChartType): void;
   setCandleStickTechnicalIndicatorType(technicalIndicatorType: TechnicalIndicatorType): void;
   setTechnicalIndicatorType(tag: string, technicalIndicatorType: TechnicalIndicatorType): void;

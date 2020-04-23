@@ -5854,9 +5854,9 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
             rect = [x - halfBarSpace, openY, barSpace, 1];
           }
 
-          _this2._ctx.fillRect(x - 0.5, highLine[0], 1, highLine[1] - highLine[0] + 1);
+          _this2._ctx.fillRect(x - 0.5, highLine[0], 1, highLine[1] - highLine[0]);
 
-          _this2._ctx.fillRect(x - 0.5, lowLine[0], 1, lowLine[1] - lowLine[0] + 1);
+          _this2._ctx.fillRect(x - 0.5, lowLine[0], 1, lowLine[1] - lowLine[0]);
 
           if (rect[3] < 1) {
             rect[3] = 1;
