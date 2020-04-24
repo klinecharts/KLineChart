@@ -17,8 +17,8 @@ $ npm install klinecharts --save
 [unpkg CDN](https://unpkg.com/klinecharts)
 
 ## Docs
-+ [中文](./docs/zh-CN/)
-+ [English](./docs/en/)
++ [中文](./docs/zh-CN/README.md)
++ [English](./docs/en/README.md)
 
 ## Build
 Execute command in root directory. [Node.js](https://nodejs.org) is required.

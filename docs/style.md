@@ -1,4 +1,3 @@
-## Style Configuration Details
 ```js
 config = {
   grid: {

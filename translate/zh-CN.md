@@ -74,7 +74,7 @@
 </table>
 
 ## 样式配置
-[查看配置详情。](../STYLE-CONFIG-DETAIL.md)
+[查看配置详情。](../docs/STYLE-CONFIG-DETAIL.md)
 
 ## API
 ### klinecharts方法
