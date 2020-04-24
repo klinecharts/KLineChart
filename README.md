@@ -11,10 +11,10 @@
 ## Installing
 #### Using npm
 ```bash
-$ npm install klinecharts --save
+npm install klinecharts --save
 ```
 #### CDN
-You can use [unpkg](https://unpkg.com):
+You can use [unpkg](https://unpkg.com):  
 https://unpkg.com/klinecharts/dist/klinecharts.production.min.js
 
 ## Docs
