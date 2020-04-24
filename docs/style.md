@@ -33,13 +33,15 @@ config = {
         display: true,
         color: '#D9D9D9',
         textMargin: 5,
-        textSize: 10
+        textSize: 10,
+        textFamily: 'Arial'
       },
       low: {
         display: true,
         color: '#D9D9D9',
         textMargin: 5,
-        textSize: 10
+        textSize: 10,
+        textFamily: 'Arial'
       },
       last: {
         display: true,
@@ -60,7 +62,8 @@ config = {
           paddingTop: 2,
           paddingRight: 2,
           paddingBottom: 2,
-          color: '#FFFFFF'
+          color: '#FFFFFF',
+          family: 'Arial'
         }
       }
     }
@@ -86,6 +89,16 @@ config = {
     line: {
       size: 1,
       colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+    },
+    lastValueMark: {
+      display: false,
+      textColor: '#ffffff',
+      textSize: 12,
+      textFamily: 'Arial',
+      textPaddingLeft: 3,
+      textPaddingTop: 2,
+      textPaddingRight: 3,
+      textPaddingBottom: 2
     }
   },
   xAxis: {
@@ -100,6 +113,7 @@ config = {
     tickText: {
       display: true,
       color: '#D9D9D9',
+      family: 'Arial',
       size: 12,
       margin: 3
     },
@@ -128,6 +142,7 @@ config = {
       position: 'outside',
       display: true,
       color: '#D9D9D9',
+      family: 'Arial',
       size: 12,
       margin: 3
     },
@@ -160,6 +175,7 @@ config = {
           display: true,
           color: '#D9D9D9',
           size: 12,
+          family: 'Arial',
           paddingLeft: 2,
           paddingRight: 2,
           paddingTop: 2,
@@ -183,6 +199,7 @@ config = {
           display: true,
           color: '#D9D9D9',
           size: 12,
+          family: 'Arial',
           paddingLeft: 2,
           paddingRight: 2,
           paddingTop: 2,
@@ -217,6 +234,7 @@ config = {
         text: {
           size: 12,
           color: '#D9D9D9',
+          family: 'Arial',
           marginLeft: 8,
           marginTop: 6,
           marginRight: 8,
@@ -226,6 +244,7 @@ config = {
       technicalIndicator: {
         text: {
           size: 12,
+          family: 'Arial',
           color: '#D9D9D9',
           marginTop: 6,
           marginRight: 8,
@@ -257,6 +276,7 @@ config = {
     text: {
       color: '#1e88e5',
       size: 12,
+      family: 'Arial',
       marginLeft: 2,
       marginRight: 2,
       marginTop: 2,

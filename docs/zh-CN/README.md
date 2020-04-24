@@ -94,7 +94,6 @@ applyNewData(dataList, more)
 // dataList 是一个KLineData数组，KLineData类型详情可参阅数据源
 // more 告诉图表还有没有更多历史数据，可缺省，默认为true
 applyMoreData(dataList, more)
-// 更新数据
 
 // 更新数据
 // 目前只会匹配当前最后一条数据的时间戳，相同则覆盖，不同则追加
