@@ -12,6 +12,16 @@
  * limitations under the License.
  */
 
+/**
+ * The file comes from tradingview/lightweight-charts
+ * https://www.tradingview.com/
+ * Convert files from typescript to javascript.
+ * Modified the class name.
+ * The use of the source code of this file is also subject to the terms
+ * and consitions of the license of "lightweight-charts" (Apache License V2, see
+ * </licenses/LICENSE-lightweight-charts>).
+ */
+
 const MouseEventButton = {
   LEFT: 0,
   RIGHT: 2
