@@ -98,7 +98,7 @@ export default class Series {
    * 设置临时高度
    * @param height
    */
-  setTempHeight (height) {
+  setHeight (height) {
     this._height = height
   }
 

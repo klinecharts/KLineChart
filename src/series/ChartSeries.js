@@ -75,7 +75,11 @@ export default class ChartSeries {
    * @private
    */
   _separatorDrag (dragDistance, seriesIndex) {
-    this._technicalIndicatorSeries[seriesIndex].setTempHeight(this._separatorDragStartTechnicalIndicatorHeight - dragDistance)
+    let height = this._separatorDragStartTechnicalIndicatorHeight - dragDistance
+    if (height < 0) {
+      height = 0
+    }
+    this._technicalIndicatorSeries[seriesIndex].setHeight(height)
     this.measureSeriesSize()
   }
 
@@ -215,7 +219,14 @@ export default class ChartSeries {
     }
     let technicalIndicatorSeriesTotalHeight = 0
     for (const series of this._technicalIndicatorSeries) {
-      technicalIndicatorSeriesTotalHeight += series.height()
+      const seriesHeight = series.height()
+      technicalIndicatorSeriesTotalHeight += seriesHeight
+      // 修复拖拽会超出容器高度问题
+      if (technicalIndicatorSeriesTotalHeight > seriesExcludeXAxisSeparatorHeight) {
+        const difHeight = technicalIndicatorSeriesTotalHeight - seriesExcludeXAxisSeparatorHeight
+        technicalIndicatorSeriesTotalHeight = seriesExcludeXAxisSeparatorHeight
+        series.setHeight(seriesHeight - difHeight)
+      }
     }
 
     const candleStickSeriesHeight = seriesExcludeXAxisSeparatorHeight - technicalIndicatorSeriesTotalHeight
@@ -376,7 +387,7 @@ export default class ChartSeries {
       technicalIndicatorType,
       tag
     })
-    technicalIndicatorSeries.setTempHeight(height)
+    technicalIndicatorSeries.setHeight(height)
     this._technicalIndicatorSeries.push(technicalIndicatorSeries)
     this.measureSeriesSize()
     return tag

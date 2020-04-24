@@ -3588,8 +3588,8 @@ var Series = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "setTempHeight",
-    value: function setTempHeight(height) {
+    key: "setHeight",
+    value: function setHeight(height) {
       this._height = height;
     }
     /**
@@ -9865,7 +9865,13 @@ var ChartSeries = /*#__PURE__*/function () {
   }, {
     key: "_separatorDrag",
     value: function _separatorDrag(dragDistance, seriesIndex) {
-      this._technicalIndicatorSeries[seriesIndex].setTempHeight(this._separatorDragStartTechnicalIndicatorHeight - dragDistance);
+      var height = this._separatorDragStartTechnicalIndicatorHeight - dragDistance;
+
+      if (height < 0) {
+        height = 0;
+      }
+
+      this._technicalIndicatorSeries[seriesIndex].setHeight(height);
 
       this.measureSeriesSize();
     }
@@ -10078,7 +10084,16 @@ var ChartSeries = /*#__PURE__*/function () {
       try {
         for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
           var series = _step3.value;
-          technicalIndicatorSeriesTotalHeight += series.height();
+
+          var _seriesHeight = series.height();
+
+          technicalIndicatorSeriesTotalHeight += _seriesHeight; // 修复拖拽会超出容器高度问题
+
+          if (technicalIndicatorSeriesTotalHeight > seriesExcludeXAxisSeparatorHeight) {
+            var difHeight = technicalIndicatorSeriesTotalHeight - seriesExcludeXAxisSeparatorHeight;
+            technicalIndicatorSeriesTotalHeight = seriesExcludeXAxisSeparatorHeight;
+            series.setHeight(_seriesHeight - difHeight);
+          }
         }
       } catch (err) {
         _iterator3.e(err);
@@ -10301,7 +10316,7 @@ var ChartSeries = /*#__PURE__*/function () {
         technicalIndicatorType: technicalIndicatorType,
         tag: tag
       });
-      technicalIndicatorSeries.setTempHeight(height);
+      technicalIndicatorSeries.setHeight(height);
 
       this._technicalIndicatorSeries.push(technicalIndicatorSeries);
 
