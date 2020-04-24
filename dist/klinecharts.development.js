@@ -9757,14 +9757,14 @@ var KeyBoardEventHandler = /*#__PURE__*/function (_EventHandler) {
         switch (event.code) {
           case 'ArrowUp':
             {
-              this._chartData.zoom(-0.05, this._chartData.crossHairPoint());
+              this._chartData.zoom(-0.5, this._chartData.crossHairPoint());
 
               break;
             }
 
           case 'ArrowDown':
             {
-              this._chartData.zoom(0.05, this._chartData.crossHairPoint());
+              this._chartData.zoom(0.5, this._chartData.crossHairPoint());
 
               break;
             }
