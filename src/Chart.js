@@ -248,9 +248,10 @@ export default class Chart {
    * @param includeFloatLayer
    * @param includeGraphicMark
    * @param type
+   * @param backgroundColor
    */
-  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type) {
-    return this._chartSeries.getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type)
+  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type, backgroundColor) {
+    return this._chartSeries.getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor)
   }
 
   /**

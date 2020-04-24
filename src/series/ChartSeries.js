@@ -480,8 +480,9 @@ export default class ChartSeries {
    * @param includeFloatLayer,
    * @param includeGraphicMark
    * @param type
+   * @param backgroundColor
    */
-  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type = 'jpeg') {
+  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type = 'jpeg', backgroundColor = '#333333') {
     if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
       throw new Error('Picture format only supports jpeg, png and bmp!!!')
     }
@@ -495,6 +496,9 @@ export default class ChartSeries {
     canvas.width = width * pixelRatio
     canvas.height = height * pixelRatio
     ctx.scale(pixelRatio, pixelRatio)
+
+    ctx.fillStyle = backgroundColor
+    ctx.fillRect(0, 0, width, height)
     let offsetTop = 0
     const candleStickSeriesHeight = this._candleStickSeries.height()
     ctx.drawImage(

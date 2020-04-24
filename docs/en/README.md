@@ -58,7 +58,7 @@ setTechnicalIndicatorType(tag, technicalIndicatorType)
 removeTechnicalIndicator(tag)
 addGraphicMark(graphicMarkType)
 removeAllGraphicMark()
-getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type)
+getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor)
 ```
 
 ## Data source

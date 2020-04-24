@@ -148,7 +148,8 @@ removeAllGraphicMark()
 // includeFloatLayer 是否需要包含浮层, 可缺省
 // includeGraphicMark, 可缺省
 // type 转换后的图片类型，类型是'png'、'jpeg'、'bmp'三种中的一种，可缺省，默认为'jpeg'
-getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type)
+// backgroundColor 背景色，可缺省，默认为'#333333'
+getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor)
 ```
 
 ## 数据源
