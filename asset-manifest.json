@@ -1,22 +1,18 @@
 {
   "files": {
-    "main.css": "/KLineChart/static/css/main.de02d5ae.chunk.css",
-    "main.js": "/KLineChart/static/js/main.ef445ea1.chunk.js",
-    "main.js.map": "/KLineChart/static/js/main.ef445ea1.chunk.js.map",
-    "runtime-main.js": "/KLineChart/static/js/runtime-main.ef32f9ab.js",
-    "runtime-main.js.map": "/KLineChart/static/js/runtime-main.ef32f9ab.js.map",
-    "static/js/2.03e39a9d.chunk.js": "/KLineChart/static/js/2.03e39a9d.chunk.js",
-    "static/js/2.03e39a9d.chunk.js.map": "/KLineChart/static/js/2.03e39a9d.chunk.js.map",
+    "main.css": "/KLineChart/static/css/main.7013ed3e.chunk.css",
+    "main.js": "/KLineChart/static/js/main.d7672439.chunk.js",
+    "runtime-main.js": "/KLineChart/static/js/runtime-main.7f79d0f0.js",
+    "static/js/2.ddf2d861.chunk.js": "/KLineChart/static/js/2.ddf2d861.chunk.js",
     "index.html": "/KLineChart/index.html",
-    "precache-manifest.4cf904566ab7c6e3fcecf2d0b561b5aa.js": "/KLineChart/precache-manifest.4cf904566ab7c6e3fcecf2d0b561b5aa.js",
+    "precache-manifest.cc3f5d035e844c2c7ddc312537bb4a33.js": "/KLineChart/precache-manifest.cc3f5d035e844c2c7ddc312537bb4a33.js",
     "service-worker.js": "/KLineChart/service-worker.js",
-    "static/css/main.de02d5ae.chunk.css.map": "/KLineChart/static/css/main.de02d5ae.chunk.css.map",
-    "static/js/2.03e39a9d.chunk.js.LICENSE.txt": "/KLineChart/static/js/2.03e39a9d.chunk.js.LICENSE.txt"
+    "static/js/2.ddf2d861.chunk.js.LICENSE.txt": "/KLineChart/static/js/2.ddf2d861.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.ef32f9ab.js",
-    "static/js/2.03e39a9d.chunk.js",
-    "static/css/main.de02d5ae.chunk.css",
-    "static/js/main.ef445ea1.chunk.js"
+    "static/js/runtime-main.7f79d0f0.js",
+    "static/js/2.ddf2d861.chunk.js",
+    "static/css/main.7013ed3e.chunk.css",
+    "static/js/main.d7672439.chunk.js"
   ]
 }
