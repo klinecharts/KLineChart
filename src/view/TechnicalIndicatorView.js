@@ -15,7 +15,7 @@
 import View from './View'
 import { TechnicalIndicatorType, getTechnicalIndicatorDataKeysAndValues } from '../data/options/technicalIndicatorParamOptions'
 import { LineStyle } from '../data/options/styleOptions'
-import { drawHorizontalLine, drawVerticalLine, strokeInPixel } from '../utils/canvas'
+import { drawHorizontalLine, drawVerticalLine, drawLine } from '../utils/canvas'
 import { formatValue } from '../utils/format'
 
 export default class TechnicalIndicatorView extends View {
@@ -205,7 +205,7 @@ export default class TechnicalIndicatorView extends View {
     const pointCount = linePoints.length
     const colorSize = (colors || []).length
     this._ctx.lineWidth = technicalIndicatorOptions.line.size
-    strokeInPixel(this._ctx, () => {
+    drawLine(this._ctx, () => {
       for (let i = 0; i < pointCount; i++) {
         const points = linePoints[i]
         if (points.length > 0) {

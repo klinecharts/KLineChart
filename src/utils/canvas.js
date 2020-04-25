@@ -84,7 +84,7 @@ export function drawVerticalLine (ctx, x, top, bottom) {
  * @param ctx
  * @param drawFuc
  */
-export function strokeInPixel (ctx, drawFuc) {
+export function drawLine (ctx, drawFuc) {
   ctx.save()
   if (ctx.lineWidth % 2) {
     ctx.translate(0.5, 0.5)

@@ -18,14 +18,14 @@ import { DEV } from './utils/env'
 const instances = {}
 let idBase = 1
 
-const errorMessage = 'Chart version is K_LINE_VERSION. Root dom is null, can not initialize the chart!!!'
+const errorMessage = 'Chart version is __BUILD_VERSION__. Root dom is null, can not initialize the chart!!!'
 
 /**
  * 获取版本号
  * @returns {string}
  */
 function version () {
-  return 'K_LINE_VERSION'
+  return '__BUILD_VERSION__'
 }
 
 /**

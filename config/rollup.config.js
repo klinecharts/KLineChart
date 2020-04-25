@@ -13,8 +13,8 @@ const getPlugins = (env) => {
     }),
     fileSize(),
     replace({
-      'process.env.NODE_ENV': JSON.stringify(env),
-      'K_LINE_VERSION': packageJson.version,
+      '__BUILD_ENV__': env,
+      '__BUILD_VERSION__': packageJson.version,
     }),
     env === 'production' && terser({
       compress: {

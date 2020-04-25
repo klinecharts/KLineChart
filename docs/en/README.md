@@ -66,7 +66,9 @@ The chart data source needs a specific format, and the single data format is as 
 ```js
 { open, close, high, low, volume, turnover, timestamp }
 ```
-Field turnover can be default.
+The timestamp needs ```milliseconds```, others need the ```number``` type,
+The turnover field is not necessary, but if you need to display the ```moving average``` of the time-sharing chart and the technical indicator ```EMV```,
+you need to fill in the data for this field.
 
 ## Technical indicator
 The chart supports 21 technical indicators, the following are the types and calculation parameters:

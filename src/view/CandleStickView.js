@@ -14,7 +14,7 @@
 
 import TechnicalIndicatorView from './TechnicalIndicatorView'
 import { LineStyle, CandleStickStyle, ChartType } from '../data/options/styleOptions'
-import { drawHorizontalLine, drawVerticalLine, getFont, strokeInPixel } from '../utils/canvas'
+import { drawHorizontalLine, drawVerticalLine, getFont, drawLine } from '../utils/canvas'
 import { formatPrecision } from '../utils/format'
 
 export default class CandleStickView extends TechnicalIndicatorView {
@@ -73,7 +73,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
         // 绘制分时线
         this._ctx.lineWidth = timeLine.size
         this._ctx.strokeStyle = timeLine.color
-        strokeInPixel(this._ctx, () => {
+        drawLine(this._ctx, () => {
           this._ctx.beginPath()
           this._ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y)
           for (let i = 1; i < timeLinePoints.length; i++) {
@@ -100,7 +100,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
         // 绘制均线
         this._ctx.lineWidth = averageLine.size
         this._ctx.strokeStyle = averageLine.color
-        strokeInPixel(this._ctx, () => {
+        drawLine(this._ctx, () => {
           this._ctx.beginPath()
           this._ctx.moveTo(averageLinePoints[0].x, averageLinePoints[0].y)
           for (let i = 1; i < averageLinePoints.length; i++) {
@@ -272,7 +272,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
     this._ctx.strokeStyle = priceMark.color
     this._ctx.fillStyle = priceMark.color
 
-    strokeInPixel(this._ctx, () => {
+    drawLine(this._ctx, () => {
       this._ctx.beginPath()
       this._ctx.moveTo(startX, startY)
       this._ctx.lineTo(startX - 2, startY + (isHigh ? -2 : 2))

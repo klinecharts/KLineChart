@@ -12,4 +12,4 @@
  * limitations under the License.
  */
 
-export const DEV = process.env.NODE_ENV === 'development'
+export const DEV = '__BUILD_ENV__' === 'development'

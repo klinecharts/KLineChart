@@ -157,7 +157,10 @@ getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColo
 ```js
 { open, close, high, low, volume, turnover, timestamp }
 ```
-字段turnover可缺省
+分别对应开盘价、收盘价、最高价、最低价、成交量、成交额、时间戳，
+其中时间戳timestamp需要```毫秒```，其它的都需要```number```类型
+成交额turnover字段并不是必须的，但是如果你需要展示分时图的```均线```和技术指标```EMV```则需要为该字段填充数据。
+
 
 ## 技术指标
 图表目前支持21种技术指标，类型及计算参数如下：
