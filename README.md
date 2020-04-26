@@ -4,7 +4,6 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8cc3d651f78143bf8232cb4f7bfac7c2)](https://www.codacy.com/app/liihuu/klineweb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=liihuu/klineweb&amp;utm_campaign=Badge_Grade)
 [![size](https://badgen.net/bundlephobia/minzip/klinecharts@latest)](https://bundlephobia.com/result?p=klinecharts@latest)
 [![types](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
-[![NPM](https://img.shields.io/npm/l/klinecharts)](LICENSE)
 
 📈Lightweight k-line chart built with html5 canvas. Support technical indicator and parameter setting, support for graphic markup, custom style.
 
