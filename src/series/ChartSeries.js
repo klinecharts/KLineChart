@@ -183,21 +183,23 @@ export default class ChartSeries {
    */
   _calcAllSeriesTechnicalIndicator () {
     const technicalIndicatorTypeArray = []
+    let candleStickTechnicalIndicatorType
     if (this._candleStickSeries.chartType() === ChartType.CANDLE_STICK) {
-      technicalIndicatorTypeArray.push(this._candleStickSeries.technicalIndicatorType())
+      candleStickTechnicalIndicatorType = this._candleStickSeries.technicalIndicatorType()
+      technicalIndicatorTypeArray.push(candleStickTechnicalIndicatorType)
     } else {
-      this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE)
+      candleStickTechnicalIndicatorType = TechnicalIndicatorType.AVERAGE
     }
+    this._chartData.calcTechnicalIndicator(this._candleStickSeries, candleStickTechnicalIndicatorType)
     for (const series of this._technicalIndicatorSeries) {
       const technicalIndicatorSeriesTechnicalIndicatorType = series.technicalIndicatorType()
       if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {
         technicalIndicatorTypeArray.push(technicalIndicatorSeriesTechnicalIndicatorType)
+        this._chartData.calcTechnicalIndicator(series, technicalIndicatorSeriesTechnicalIndicatorType)
+      } else {
+        series.invalidate(InvalidateLevel.FULL)
       }
     }
-    for (const technicalIndicatorType of technicalIndicatorTypeArray) {
-      this._chartData.calcTechnicalIndicator(technicalIndicatorType)
-    }
-    this._updateSeries()
   }
 
   /**
@@ -286,18 +288,18 @@ export default class ChartSeries {
    */
   applyTechnicalIndicatorParams (technicalIndicatorType, params) {
     this._chartData.applyTechnicalIndicatorParams(technicalIndicatorType, params)
-    if (this._chartData.calcTechnicalIndicator(technicalIndicatorType)) {
-      const candleStickSeriesTechnicalIndicatorType = this._candleStickSeries.technicalIndicatorType()
-      if (candleStickSeriesTechnicalIndicatorType === technicalIndicatorType) {
-        this._candleStickSeries.invalidate(InvalidateLevel.FULL)
-      }
-      for (const series of this._technicalIndicatorSeries) {
-        const seriesTechnicalIndicatorType = series.technicalIndicatorType()
-        if (seriesTechnicalIndicatorType === technicalIndicatorType) {
-          series.invalidate(InvalidateLevel.FULL)
-        }
+    const seriesCollection = []
+    const candleStickSeriesTechnicalIndicatorType = this._candleStickSeries.technicalIndicatorType()
+    if (candleStickSeriesTechnicalIndicatorType === technicalIndicatorType) {
+      seriesCollection.push(this._candleStickSeries)
+    }
+    for (const series of this._technicalIndicatorSeries) {
+      const seriesTechnicalIndicatorType = series.technicalIndicatorType()
+      if (seriesTechnicalIndicatorType === technicalIndicatorType) {
+        seriesCollection.push(series)
       }
     }
+    this._chartData.calcTechnicalIndicator(seriesCollection, technicalIndicatorType)
   }
 
   /**

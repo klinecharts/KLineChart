@@ -71,7 +71,6 @@ class View {
       this._canvas.width = width * pixelRatio
       this._canvas.height = height * pixelRatio
       this._ctx.scale(pixelRatio, pixelRatio)
-      // this._ctx.translate(0.5, 0.5)
     })
   }
 

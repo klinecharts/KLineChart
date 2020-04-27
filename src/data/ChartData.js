@@ -244,19 +244,31 @@ export default class ChartData {
 
   /**
    * 计算指标
+   * @param series
    * @param technicalIndicatorType
-   * @returns {boolean}
    */
-  calcTechnicalIndicator (technicalIndicatorType) {
-    if (technicalIndicatorType === TechnicalIndicatorType.NO) {
-      return true
-    }
-    const calcFun = calcIndicator[technicalIndicatorType]
-    if (calcFun) {
-      this._dataList = calcFun(this._dataList, this._technicalIndicatorParamOptions[technicalIndicatorType])
-      return true
-    }
-    return false
+  calcTechnicalIndicator (series, technicalIndicatorType) {
+    new Promise((resolve, reject) => {
+      if (technicalIndicatorType === TechnicalIndicatorType.NO) {
+        resolve(true)
+      }
+      const calcFun = calcIndicator[technicalIndicatorType]
+      if (calcFun) {
+        this._dataList = calcFun(this._dataList, this._technicalIndicatorParamOptions[technicalIndicatorType])
+        resolve(true)
+      }
+      reject(new Error('Technical indicator type is error!'))
+    }).then(
+      _ => {
+        if (isArray(series)) {
+          for (const s of series) {
+            s.invalidate(InvalidateLevel.FULL)
+          }
+        } else {
+          series.invalidate(InvalidateLevel.FULL)
+        }
+      }
+    ).catch(_ => {})
   }
 
   /**

@@ -2982,25 +2982,47 @@ var ChartData = /*#__PURE__*/function () {
     }
     /**
      * 计算指标
+     * @param series
      * @param technicalIndicatorType
-     * @returns {boolean}
      */
 
   }, {
     key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(technicalIndicatorType) {
-      if (technicalIndicatorType === TechnicalIndicatorType.NO) {
-        return true;
-      }
+    value: function calcTechnicalIndicator(series, technicalIndicatorType) {
+      var _this = this;
 
-      var calcFun = calcIndicator[technicalIndicatorType];
+      new Promise(function (resolve, reject) {
+        if (technicalIndicatorType === TechnicalIndicatorType.NO) {
+          resolve(true);
+        }
 
-      if (calcFun) {
-        this._dataList = calcFun(this._dataList, this._technicalIndicatorParamOptions[technicalIndicatorType]);
-        return true;
-      }
+        var calcFun = calcIndicator[technicalIndicatorType];
 
-      return false;
+        if (calcFun) {
+          _this._dataList = calcFun(_this._dataList, _this._technicalIndicatorParamOptions[technicalIndicatorType]);
+          resolve(true);
+        }
+
+        reject(new Error('Technical indicator type is error!'));
+      }).then(function (_) {
+        if (isArray(series)) {
+          var _iterator = _createForOfIteratorHelper(series),
+              _step;
+
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var s = _step.value;
+              s.invalidate(InvalidateLevel.FULL);
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
+        } else {
+          series.invalidate(InvalidateLevel.FULL);
+        }
+      }).catch(function (_) {});
     }
     /**
      * 获取数据源
@@ -3991,8 +4013,7 @@ var View = /*#__PURE__*/function () {
         _this._canvas.width = width * pixelRatio;
         _this._canvas.height = height * pixelRatio;
 
-        _this._ctx.scale(pixelRatio, pixelRatio); // this._ctx.translate(0.5, 0.5)
-
+        _this._ctx.scale(pixelRatio, pixelRatio);
       });
     }
     /**
@@ -5583,7 +5604,7 @@ var TechnicalIndicatorSeries = /*#__PURE__*/function (_Series) {
     _this = _super.call(this, props);
     _this._technicalIndicatorType = props.technicalIndicatorType || TechnicalIndicatorType.MACD;
 
-    _this._calcTechnicalIndicator();
+    _this._chartData.calcTechnicalIndicator(_assertThisInitialized(_this), _this._technicalIndicatorType);
 
     return _this;
   }
@@ -5639,18 +5660,6 @@ var TechnicalIndicatorSeries = /*#__PURE__*/function (_Series) {
       return false;
     }
     /**
-     * 计算指标
-     * @private
-     */
-
-  }, {
-    key: "_calcTechnicalIndicator",
-    value: function _calcTechnicalIndicator() {
-      if (this._chartData.calcTechnicalIndicator(this._technicalIndicatorType)) {
-        this.invalidate(InvalidateLevel.FULL);
-      }
-    }
-    /**
      * 获取标识
      * @returns {string}
      */
@@ -5696,7 +5705,7 @@ var TechnicalIndicatorSeries = /*#__PURE__*/function (_Series) {
       if (this._technicalIndicatorType !== technicalIndicatorType) {
         this._technicalIndicatorType = technicalIndicatorType;
 
-        this._calcTechnicalIndicator();
+        this._chartData.calcTechnicalIndicator(this, this._technicalIndicatorType);
       }
     }
   }]);
@@ -8832,11 +8841,7 @@ var CandleStickSeries = /*#__PURE__*/function (_TechnicalIndicatorSe) {
       if (this._chartType !== chartType) {
         this._chartType = chartType;
 
-        if (this._chartData.styleOptions().realTime.averageLine.display && this._isRealTime()) {
-          this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE);
-        }
-
-        this.invalidate(InvalidateLevel.FULL);
+        this._chartData.calcTechnicalIndicator(this, TechnicalIndicatorType.AVERAGE);
       }
     }
   }]);
@@ -10130,12 +10135,16 @@ var ChartSeries = /*#__PURE__*/function () {
     key: "_calcAllSeriesTechnicalIndicator",
     value: function _calcAllSeriesTechnicalIndicator() {
       var technicalIndicatorTypeArray = [];
+      var candleStickTechnicalIndicatorType;
 
       if (this._candleStickSeries.chartType() === ChartType.CANDLE_STICK) {
-        technicalIndicatorTypeArray.push(this._candleStickSeries.technicalIndicatorType());
+        candleStickTechnicalIndicatorType = this._candleStickSeries.technicalIndicatorType();
+        technicalIndicatorTypeArray.push(candleStickTechnicalIndicatorType);
       } else {
-        this._chartData.calcTechnicalIndicator(TechnicalIndicatorType.AVERAGE);
+        candleStickTechnicalIndicatorType = TechnicalIndicatorType.AVERAGE;
       }
+
+      this._chartData.calcTechnicalIndicator(this._candleStickSeries, candleStickTechnicalIndicatorType);
 
       var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
           _step2;
@@ -10147,6 +10156,10 @@ var ChartSeries = /*#__PURE__*/function () {
 
           if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {
             technicalIndicatorTypeArray.push(technicalIndicatorSeriesTechnicalIndicatorType);
+
+            this._chartData.calcTechnicalIndicator(series, technicalIndicatorSeriesTechnicalIndicatorType);
+          } else {
+            series.invalidate(InvalidateLevel.FULL);
           }
         }
       } catch (err) {
@@ -10154,14 +10167,6 @@ var ChartSeries = /*#__PURE__*/function () {
       } finally {
         _iterator2.f();
       }
-
-      for (var _i = 0, _technicalIndicatorTy = technicalIndicatorTypeArray; _i < _technicalIndicatorTy.length; _i++) {
-        var technicalIndicatorType = _technicalIndicatorTy[_i];
-
-        this._chartData.calcTechnicalIndicator(technicalIndicatorType);
-      }
-
-      this._updateSeries();
     }
     /**
      * 获取图表上的数据
@@ -10304,31 +10309,33 @@ var ChartSeries = /*#__PURE__*/function () {
     value: function applyTechnicalIndicatorParams(technicalIndicatorType, params) {
       this._chartData.applyTechnicalIndicatorParams(technicalIndicatorType, params);
 
-      if (this._chartData.calcTechnicalIndicator(technicalIndicatorType)) {
-        var candleStickSeriesTechnicalIndicatorType = this._candleStickSeries.technicalIndicatorType();
+      var seriesCollection = [];
 
-        if (candleStickSeriesTechnicalIndicatorType === technicalIndicatorType) {
-          this._candleStickSeries.invalidate(InvalidateLevel.FULL);
-        }
+      var candleStickSeriesTechnicalIndicatorType = this._candleStickSeries.technicalIndicatorType();
 
-        var _iterator4 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
-            _step4;
-
-        try {
-          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-            var series = _step4.value;
-            var seriesTechnicalIndicatorType = series.technicalIndicatorType();
-
-            if (seriesTechnicalIndicatorType === technicalIndicatorType) {
-              series.invalidate(InvalidateLevel.FULL);
-            }
-          }
-        } catch (err) {
-          _iterator4.e(err);
-        } finally {
-          _iterator4.f();
-        }
+      if (candleStickSeriesTechnicalIndicatorType === technicalIndicatorType) {
+        seriesCollection.push(this._candleStickSeries);
       }
+
+      var _iterator4 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+          _step4;
+
+      try {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var series = _step4.value;
+          var seriesTechnicalIndicatorType = series.technicalIndicatorType();
+
+          if (seriesTechnicalIndicatorType === technicalIndicatorType) {
+            seriesCollection.push(series);
+          }
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
+
+      this._chartData.calcTechnicalIndicator(seriesCollection, technicalIndicatorType);
     }
     /**
      * 处理数组数据
@@ -10482,8 +10489,8 @@ var ChartSeries = /*#__PURE__*/function () {
 
         this._separatorSeries.splice(seriesPos, 1);
 
-        for (var _i2 = 0; _i2 < this._separatorSeries.length; _i2++) {
-          this._separatorSeries[_i2].updateSeriesIndex(_i2);
+        for (var _i = 0; _i < this._separatorSeries.length; _i++) {
+          this._separatorSeries[_i].updateSeriesIndex(_i);
         }
 
         this.measureSeriesSize();
