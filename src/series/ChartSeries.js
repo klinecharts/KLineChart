@@ -314,10 +314,9 @@ export default class ChartSeries {
       if (isFunction(extendFun)) {
         extendFun()
       }
-      const level = this._chartData.addData(dataList, 0, more)
-      if (level !== InvalidateLevel.NONE) {
-        this._calcAllSeriesTechnicalIndicator(level)
-      }
+      this._chartData.addData(dataList, 0, more)
+      this._xAxisSeries.invalidate(InvalidateLevel.FULL)
+      this._calcAllSeriesTechnicalIndicator()
     }
   }
 
@@ -357,6 +356,7 @@ export default class ChartSeries {
         pos = dataSize - 1
       }
       this._chartData.addData(data, pos)
+      this._xAxisSeries.invalidate(pos === dataSize - 1 ? InvalidateLevel.NONE : InvalidateLevel.FULL)
       this._calcAllSeriesTechnicalIndicator()
     }
   }

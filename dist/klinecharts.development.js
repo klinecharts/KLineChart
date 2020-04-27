@@ -3005,6 +3005,8 @@ var ChartData = /*#__PURE__*/function () {
 
         reject(new Error('Technical indicator type is error!'));
       }).then(function (_) {
+        var level = _this._to - _this._from < _this._totalDataSpace / _this._dataSpace ? InvalidateLevel.FULL : InvalidateLevel.MAIN;
+
         if (isArray(series)) {
           var _iterator = _createForOfIteratorHelper(series),
               _step;
@@ -3012,7 +3014,7 @@ var ChartData = /*#__PURE__*/function () {
           try {
             for (_iterator.s(); !(_step = _iterator.n()).done;) {
               var s = _step.value;
-              s.invalidate(InvalidateLevel.FULL);
+              s.invalidate(level);
             }
           } catch (err) {
             _iterator.e(err);
@@ -3020,7 +3022,7 @@ var ChartData = /*#__PURE__*/function () {
             _iterator.f();
           }
         } else {
-          series.invalidate(InvalidateLevel.FULL);
+          series.invalidate(level);
         }
       }).catch(function (_) {});
     }
@@ -3063,13 +3065,10 @@ var ChartData = /*#__PURE__*/function () {
           this._more = isBoolean(more) ? more : true;
           this._dataList = data.concat(this._dataList);
           this.adjustOffsetBarCount();
-          return InvalidateLevel.FULL;
         } else {
           var dataSize = this._dataList.length;
 
           if (pos >= dataSize) {
-            var level = this._to - this._from < this._totalDataSpace / this._dataSpace ? InvalidateLevel.FULL : InvalidateLevel.MAIN;
-
             this._dataList.push(data);
 
             if (this._offsetRightBarCount < 0) {
@@ -3077,15 +3076,11 @@ var ChartData = /*#__PURE__*/function () {
             }
 
             this.adjustOffsetBarCount();
-            return level;
           } else {
             this._dataList[pos] = data;
-            return InvalidateLevel.MAIN;
           }
         }
       }
-
-      return InvalidateLevel.NONE;
     }
     /**
      * 获取一条数据的空间
@@ -10353,11 +10348,11 @@ var ChartSeries = /*#__PURE__*/function () {
           extendFun();
         }
 
-        var level = this._chartData.addData(dataList, 0, more);
+        this._chartData.addData(dataList, 0, more);
 
-        if (level !== InvalidateLevel.NONE) {
-          this._calcAllSeriesTechnicalIndicator(level);
-        }
+        this._xAxisSeries.invalidate(InvalidateLevel.FULL);
+
+        this._calcAllSeriesTechnicalIndicator();
       }
     }
     /**
@@ -10408,6 +10403,8 @@ var ChartSeries = /*#__PURE__*/function () {
         }
 
         this._chartData.addData(data, pos);
+
+        this._xAxisSeries.invalidate(pos === dataSize - 1 ? InvalidateLevel.NONE : InvalidateLevel.FULL);
 
         this._calcAllSeriesTechnicalIndicator();
       }
