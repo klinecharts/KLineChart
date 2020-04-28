@@ -263,13 +263,12 @@ export default class ChartData {
     })
     task.then(
       _ => {
-        const level = this._to - this._from < this._totalDataSpace / this._dataSpace ? InvalidateLevel.FULL : InvalidateLevel.MAIN
         if (isArray(series)) {
           for (const s of series) {
-            s.invalidate(level)
+            s.invalidate(InvalidateLevel.FULL)
           }
         } else {
-          series.invalidate(level)
+          series.invalidate(InvalidateLevel.FULL)
         }
       }
     ).catch(_ => {})

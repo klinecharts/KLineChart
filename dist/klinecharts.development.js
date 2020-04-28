@@ -3006,8 +3006,6 @@ var ChartData = /*#__PURE__*/function () {
         }
       });
       task.then(function (_) {
-        var level = _this._to - _this._from < _this._totalDataSpace / _this._dataSpace ? InvalidateLevel.FULL : InvalidateLevel.MAIN;
-
         if (isArray(series)) {
           var _iterator = _createForOfIteratorHelper(series),
               _step;
@@ -3015,7 +3013,7 @@ var ChartData = /*#__PURE__*/function () {
           try {
             for (_iterator.s(); !(_step = _iterator.n()).done;) {
               var s = _step.value;
-              s.invalidate(level);
+              s.invalidate(InvalidateLevel.FULL);
             }
           } catch (err) {
             _iterator.e(err);
@@ -3023,7 +3021,7 @@ var ChartData = /*#__PURE__*/function () {
             _iterator.f();
           }
         } else {
-          series.invalidate(level);
+          series.invalidate(InvalidateLevel.FULL);
         }
       }).catch(function (_) {});
     }
@@ -4172,9 +4170,9 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
 
               var preKLineData = formatValue(dataList, i - 1, {});
               var preMacd = formatValue(preKLineData, 'macd', {}).macd;
-              var isFill = !((preMacd || preMacd === 0) && macd > preMacd);
+              var isSolid = !((preMacd || preMacd === 0) && macd > preMacd);
 
-              _this3._drawBars(x, halfBarSpace, macd, isFill);
+              _this3._drawBars(x, halfBarSpace, macd, isSolid);
 
               break;
             }
@@ -4321,12 +4319,12 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
      * @param x
      * @param halfBarSpace
      * @param barData
-     * @param isFill
+     * @param isSolid
      */
 
   }, {
     key: "_drawBars",
-    value: function _drawBars(x, halfBarSpace, barData, isFill) {
+    value: function _drawBars(x, halfBarSpace, barData, isSolid) {
       if (barData || barData === 0) {
         this._ctx.lineWidth = 1;
 
@@ -4348,7 +4346,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
           y = barData < 0 ? y + 1 : y - 1;
         }
 
-        if (isFill) {
+        if (isSolid) {
           this._ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight);
         } else {
           this._ctx.strokeRect(x - halfBarSpace + 0.5, y, halfBarSpace * 2 - 1, barHeight);
@@ -4422,10 +4420,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
         var deltaFromRight = dataSize + offsetRightBarCount - i;
         var x = this._width - (deltaFromRight - 0.5) * dataSpace + halfBarSpace;
         var kLineData = dataList[i];
-
-        if (onDrawing) {
-          onDrawing(x, i, kLineData, halfBarSpace, barSpace);
-        }
+        onDrawing(x, i, kLineData, halfBarSpace, barSpace);
       }
 
       if (onDrawEnd) {

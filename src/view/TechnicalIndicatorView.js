@@ -109,8 +109,8 @@ export default class TechnicalIndicatorView extends View {
             }
             const preKLineData = formatValue(dataList, i - 1, {})
             const preMacd = formatValue(preKLineData, 'macd', {}).macd
-            const isFill = !((preMacd || preMacd === 0) && macd > preMacd)
-            this._drawBars(x, halfBarSpace, macd, isFill)
+            const isSolid = !((preMacd || preMacd === 0) && macd > preMacd)
+            this._drawBars(x, halfBarSpace, macd, isSolid)
             break
           }
           case TechnicalIndicatorType.VOL: {
@@ -227,9 +227,9 @@ export default class TechnicalIndicatorView extends View {
    * @param x
    * @param halfBarSpace
    * @param barData
-   * @param isFill
+   * @param isSolid
    */
-  _drawBars (x, halfBarSpace, barData, isFill) {
+  _drawBars (x, halfBarSpace, barData, isSolid) {
     if (barData || barData === 0) {
       this._ctx.lineWidth = 1
       const dataY = this._yAxis.convertToPixel(barData)
@@ -244,7 +244,7 @@ export default class TechnicalIndicatorView extends View {
         barHeight = 1
         y = barData < 0 ? y + 1 : y - 1
       }
-      if (isFill) {
+      if (isSolid) {
         this._ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight)
       } else {
         this._ctx.strokeRect(x - halfBarSpace + 0.5, y, halfBarSpace * 2 - 1, barHeight)
@@ -299,9 +299,7 @@ export default class TechnicalIndicatorView extends View {
       const deltaFromRight = dataSize + offsetRightBarCount - i
       const x = this._width - (deltaFromRight - 0.5) * dataSpace + halfBarSpace
       const kLineData = dataList[i]
-      if (onDrawing) {
-        onDrawing(x, i, kLineData, halfBarSpace, barSpace)
-      }
+      onDrawing(x, i, kLineData, halfBarSpace, barSpace)
     }
     if (onDrawEnd) {
       onDrawEnd()
