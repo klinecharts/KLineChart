@@ -2991,20 +2991,21 @@ var ChartData = /*#__PURE__*/function () {
     value: function calcTechnicalIndicator(series, technicalIndicatorType) {
       var _this = this;
 
-      new Promise(function (resolve, reject) {
+      var task = new Promise(function (resolve, reject) {
         if (technicalIndicatorType === TechnicalIndicatorType.NO) {
           resolve(true);
+        } else {
+          var calcFun = calcIndicator[technicalIndicatorType];
+
+          if (calcFun) {
+            _this._dataList = calcFun(_this._dataList, _this._technicalIndicatorParamOptions[technicalIndicatorType]);
+            resolve(true);
+          } else {
+            reject(new Error('Technical indicator type is error!'));
+          }
         }
-
-        var calcFun = calcIndicator[technicalIndicatorType];
-
-        if (calcFun) {
-          _this._dataList = calcFun(_this._dataList, _this._technicalIndicatorParamOptions[technicalIndicatorType]);
-          resolve(true);
-        }
-
-        reject(new Error('Technical indicator type is error!'));
-      }).then(function (_) {
+      });
+      task.then(function (_) {
         var level = _this._to - _this._from < _this._totalDataSpace / _this._dataSpace ? InvalidateLevel.FULL : InvalidateLevel.MAIN;
 
         if (isArray(series)) {
@@ -7619,8 +7620,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
 
       graphicMarkDatas[markKey] = graphicMarkData;
 
-      this._chartData.setGraphicMarkData(graphicMarkDatas); // this.graphicMarkChart.flush()
-
+      this._chartData.setGraphicMarkData(graphicMarkDatas);
     }
     /**
      * 没有绘制时鼠标按下事件
@@ -8224,8 +8224,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
       performDifPoint(graphicMarkData, lastLineData);
       graphicMarkDatas[markKey] = graphicMarkData;
 
-      this._chartData.setGraphicMarkData(graphicMarkDatas); // this.graphicMarkChart.flush()
-
+      this._chartData.setGraphicMarkData(graphicMarkDatas);
     }
   }, {
     key: "_checkEventPointY",

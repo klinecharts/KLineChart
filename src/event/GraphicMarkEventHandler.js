@@ -187,7 +187,6 @@ export default class GraphicMarkEventHandler extends EventHandler {
     }
     graphicMarkDatas[markKey] = graphicMarkData
     this._chartData.setGraphicMarkData(graphicMarkDatas)
-    // this.graphicMarkChart.flush()
   }
 
   /**
@@ -564,7 +563,6 @@ export default class GraphicMarkEventHandler extends EventHandler {
     performDifPoint(graphicMarkData, lastLineData)
     graphicMarkDatas[markKey] = graphicMarkData
     this._chartData.setGraphicMarkData(graphicMarkDatas)
-    // this.graphicMarkChart.flush()
   }
 
   _checkEventPointY (y) {
