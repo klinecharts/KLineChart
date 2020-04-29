@@ -105,13 +105,16 @@ export function formatPrecision (value, precision = 2) {
  */
 export function formatBigNumber (value) {
   if (isNumber(+value)) {
-    if (value > 50000) {
-      return `${+((value / 1000).toFixed(1))}K`
+    if (value > 1000000000) {
+      return `${+((value / 1000000000).toFixed(3))}B`
     }
-    if (value > 5000000) {
+    if (value > 1000000) {
       return `${+((value / 1000000).toFixed(3))}M`
     }
-    return `${value}`
+    if (value > 1000) {
+      return `${+((value / 1000).toFixed(3))}K`
+    }
+    return value
   }
   return '--'
 }

@@ -16,7 +16,7 @@ import View from './View'
 import { FloatLayerPromptDisplayRule, LineStyle } from '../data/options/styleOptions'
 import { TechnicalIndicatorType, getTechnicalIndicatorDataKeysAndValues } from '../data/options/technicalIndicatorParamOptions'
 import { isArray } from '../utils/typeChecks'
-import { formatPrecision } from '../utils/format'
+import { formatBigNumber, formatPrecision } from '../utils/format'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 
 export default class TechnicalIndicatorFloatLayerView extends View {
@@ -168,8 +168,9 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     this._ctx.fillStyle = textColor
     this._ctx.fillText(nameText, labelX, labelY)
     labelX += (textMarginLeft + nameTextWidth)
+    const isVol = this._additionalDataProvider.technicalIndicatorType() === TechnicalIndicatorType.VOL
     for (let i = 0; i < labels.length; i++) {
-      const text = `${labels[i].toUpperCase()}: ${values[i] || '--'}`
+      const text = `${labels[i].toUpperCase()}: ${(isVol ? formatBigNumber(values[i]) : values[i]) || '--'}`
       const textWidth = calcTextWidth(this._ctx, text)
       this._ctx.fillStyle = colors[i % colorSize] || textColor
       this._ctx.fillText(text, labelX, labelY)

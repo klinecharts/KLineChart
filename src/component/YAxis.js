@@ -14,7 +14,7 @@
 
 import Axis from './Axis'
 import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
-import { formatBigNumber, formatValue } from '../utils/format'
+import { formatValue } from '../utils/format'
 import { YAxisType } from '../data/options/styleOptions'
 
 export default class YAxis extends Axis {
@@ -74,7 +74,12 @@ export default class YAxis extends Axis {
         const y = this._innerConvertToPixel(+v)
         if (y > textHeight &&
           y < this._height - textHeight) {
-          optimalTicks.push({ v: isPercentageAxis ? `${(+v).toFixed(2)}%` : formatBigNumber(v), y })
+          optimalTicks.push({
+            v: isPercentageAxis
+              ? `${(+v).toFixed(2)}%`
+              : v,
+            y
+          })
         }
       }
     }

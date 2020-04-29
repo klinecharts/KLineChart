@@ -14,8 +14,9 @@
 
 import View from './View'
 import { calcTextWidth, getFont } from '../utils/canvas'
-import { formatPrecision } from '../utils/format'
+import { formatBigNumber, formatPrecision } from '../utils/format'
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
+import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
 
 export default class YAxisFloatLayerView extends View {
   constructor (container, chartData, yAxis, additionalDataProvider) {
@@ -51,8 +52,12 @@ export default class YAxisFloatLayerView extends View {
       const fromClose = this._chartData.dataList()[this._chartData.from()].close
       yAxisDataLabel = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {
-      const precision = this._chartData.precisionOptions()[this._yAxis.isCandleStickYAxis() ? 'price' : this._additionalDataProvider.technicalIndicatorType()]
+      const technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType()
+      const precision = this._chartData.precisionOptions()[this._yAxis.isCandleStickYAxis() ? 'price' : technicalIndicatorType]
       yAxisDataLabel = formatPrecision(value, precision)
+      if (technicalIndicatorType === TechnicalIndicatorType.VOL) {
+        yAxisDataLabel = formatBigNumber(yAxisDataLabel)
+      }
     }
     const textSize = crossHairHorizontalText.size
     this._ctx.font = getFont(textSize, crossHairHorizontalText.family)

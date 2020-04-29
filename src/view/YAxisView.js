@@ -14,9 +14,12 @@
 
 import View from './View'
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
-import { getTechnicalIndicatorDataKeysAndValues } from '../data/options/technicalIndicatorParamOptions'
+import {
+  getTechnicalIndicatorDataKeysAndValues,
+  TechnicalIndicatorType
+} from '../data/options/technicalIndicatorParamOptions'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
-import { formatPrecision } from '../utils/format'
+import { formatBigNumber, formatPrecision } from '../utils/format'
 
 export default class YAxisView extends View {
   constructor (container, chartData, yAxis, additionalDataProvider) {
@@ -114,8 +117,9 @@ export default class YAxisView extends View {
     this._ctx.textBaseline = 'middle'
     this._ctx.font = getFont(tickText.size, tickText.family)
     this._ctx.fillStyle = tickText.color
+    const isVol = this._additionalDataProvider.technicalIndicatorType() === TechnicalIndicatorType.VOL
     this._yAxis.ticks().forEach(tick => {
-      this._ctx.fillText(tick.v, labelX, tick.y)
+      this._ctx.fillText(isVol ? formatBigNumber(tick.v) : tick.v, labelX, tick.y)
     })
     this._ctx.textAlign = 'left'
   }
@@ -215,6 +219,9 @@ export default class YAxisView extends View {
       text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {
       text = formatPrecision(value, precision)
+      if (this._additionalDataProvider.technicalIndicatorType() === TechnicalIndicatorType.VOL) {
+        text = formatBigNumber(text)
+      }
     }
     this._ctx.font = getFont(textSize, textFamily)
     const rectWidth = calcTextWidth(this._ctx, text) + textPaddingLeft + textPaddingRight

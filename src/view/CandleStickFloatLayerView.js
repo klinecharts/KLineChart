@@ -13,8 +13,8 @@
  */
 
 import TechnicalIndicatorFloatLayerView from './TechnicalIndicatorFloatLayerView'
-import { isFunction } from '../utils/typeChecks'
-import { formatDate, formatPrecision, formatValue } from '../utils/format'
+import { isFunction, isObject } from '../utils/typeChecks'
+import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, getFont } from '../utils/canvas'
 import { ChartType, FloatLayerPromptCandleStickTextDisplayType } from '../data/options/styleOptions'
 
@@ -55,7 +55,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
 
       const value = values[i] || '--'
       let valueText
-      if (typeof value === 'object') {
+      if (isObject(value)) {
         valueText = value.value || '--'
         this._ctx.fillStyle = value.color || textColor
       } else {
@@ -84,7 +84,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     baseLabels.forEach((label, i) => {
       const value = baseValues[i] || '--'
       let v = value
-      if (typeof value === 'object') {
+      if (isObject(value)) {
         v = value.value || '--'
       }
       const text = `${label}: ${v}`
@@ -160,7 +160,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
         const value = baseValues[i] || '--'
         let text
         this._ctx.fillStyle = value.color || baseTextColor
-        if (typeof value === 'object') {
+        if (isObject(value)) {
           text = value.value || '--'
         } else {
           text = value
@@ -244,7 +244,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
             break
           }
           case values.length - 1: {
-            values[index] = formatPrecision(value, precisionOptions.volume)
+            values[index] = formatBigNumber(formatPrecision(value, precisionOptions.volume))
             break
           }
           default: {
