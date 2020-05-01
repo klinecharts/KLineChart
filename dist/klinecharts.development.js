@@ -10952,8 +10952,8 @@ var Chart = /*#__PURE__*/function () {
  * limitations under the License.
  */
 var instances = {};
-var idBase = 1;
-var errorMessage = 'Chart version is 5.2.0. Root dom is null, can not initialize the chart!!!';
+var chartBaseId = 1;
+var CHART_NAME_PREFIX = 'k_line_chart_';
 /**
  * 获取版本号
  * @returns {string}
@@ -10972,6 +10972,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var errorMessage = 'Chart version is 5.2.0. Root dom is null, can not initialize the chart!!!';
   var container = ds;
 
   if (!container) {
@@ -10986,7 +10987,7 @@ function init(ds) {
     throw new Error(errorMessage);
   }
 
-  var instance = instances[container.chart_id || ''];
+  var instance = instances[container.chartId || ''];
 
   if (instance) {
     {
@@ -10996,10 +10997,10 @@ function init(ds) {
     return instance;
   }
 
-  var id = "k_line_chart_".concat(idBase++);
+  var id = "".concat(CHART_NAME_PREFIX).concat(chartBaseId++);
   var chart = new Chart(container, style);
   chart.id = id;
-  container.chart_id = id;
+  container.chartId = id;
   instances[id] = chart;
   return chart;
 }
@@ -11015,11 +11016,11 @@ function dispose(dcs) {
 
     if (typeof dcs === 'string') {
       dcs = document.getElementById(dcs) || document.getElementsByClassName(dcs);
-      id = dcs.chart_id;
+      id = dcs.chartId;
     }
 
     if (!id) {
-      id = dcs.chart_id;
+      id = dcs.chartId;
     }
 
     if (!id && dcs instanceof Chart) {
