@@ -9170,9 +9170,8 @@ var XAxis = /*#__PURE__*/function (_Axis) {
           optimalTicks[0].v = formatDate(optimalTicks[0].oV, 'YYYY-MM-DD hh:mm', timezone);
         } else {
           var firstTimestamp = optimalTicks[0].oV;
-          var firstV = optimalTicks[0].v;
           var secondTimestamp = optimalTicks[1].oV;
-          optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || firstV;
+          optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || optimalTicks[0].v;
         }
       }
 
@@ -9267,7 +9266,7 @@ var XAxisSeries = /*#__PURE__*/function (_Series) {
 }(Series);
 
 var SeparatorSeries = /*#__PURE__*/function () {
-  function SeparatorSeries(container, chartData, seriesIndex, dragEventHandler) {
+  function SeparatorSeries(container, chartData, seriesIndex, dragEnabled, dragEventHandler) {
     _classCallCheck(this, SeparatorSeries);
 
     this._chartData = chartData;
@@ -9276,26 +9275,35 @@ var SeparatorSeries = /*#__PURE__*/function () {
     this._offsetLeft = 0;
     this._dragEventHandler = dragEventHandler;
 
-    this._initElement(container);
+    this._initElement(container, dragEnabled);
   }
 
   _createClass(SeparatorSeries, [{
     key: "_initElement",
-    value: function _initElement(container) {
+    value: function _initElement(container, dragEnabled) {
       this._container = container;
       this._wrapper = document.createElement('div');
       this._wrapper.style.margin = '0';
-      this._wrapper.style.padding = '0'; // this._wrapper.style.position = 'relative'
-
+      this._wrapper.style.padding = '0';
       this._wrapper.style.overflow = 'hidden';
       this._element = document.createElement('div');
       this._element.style.margin = '0';
       this._element.style.padding = '0';
       this._element.style.width = '100%';
-      this._element.style.cursor = 'ns-resize';
       this._element.style.position = 'absolute';
       this._element.style.zIndex = '20';
       this._element.style.height = '5px';
+
+      if (dragEnabled) {
+        this._element.style.cursor = 'ns-resize';
+        this._dragEvent = new EventBase(this._element, {
+          mouseDownEvent: this._mouseDownEvent.bind(this),
+          pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
+        }, {
+          treatVertTouchDragAsPageScroll: false,
+          treatHorzTouchDragAsPageScroll: true
+        });
+      }
 
       this._wrapper.appendChild(this._element);
 
@@ -9306,14 +9314,6 @@ var SeparatorSeries = /*#__PURE__*/function () {
       } else {
         container.appendChild(this._wrapper);
       }
-
-      this._dragEvent = new EventBase(this._element, {
-        mouseDownEvent: this._mouseDownEvent.bind(this),
-        pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
-      }, {
-        treatVertTouchDragAsPageScroll: false,
-        treatHorzTouchDragAsPageScroll: true
-      });
     }
   }, {
     key: "_mouseDownEvent",
@@ -9408,7 +9408,9 @@ var SeparatorSeries = /*#__PURE__*/function () {
   }, {
     key: "destroy",
     value: function destroy() {
-      this._dragEvent.destroy();
+      if (this._dragEvent) {
+        this._dragEvent.destroy();
+      }
 
       this._container.removeChild(this._wrapper);
     }
@@ -10429,6 +10431,7 @@ var ChartSeries = /*#__PURE__*/function () {
      * 创建一个指标
      * @param technicalIndicatorType
      * @param height
+     * @param dragEnabled
      * @returns {string}
      */
 
@@ -10436,14 +10439,16 @@ var ChartSeries = /*#__PURE__*/function () {
     key: "createTechnicalIndicator",
     value: function createTechnicalIndicator(technicalIndicatorType) {
       var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT;
+      var dragEnabled = arguments.length > 2 ? arguments[2] : undefined;
 
       if (!technicalIndicatorType || !TechnicalIndicatorType.hasOwnProperty(technicalIndicatorType) || technicalIndicatorType === TechnicalIndicatorType.NO || technicalIndicatorType === TechnicalIndicatorType.AVERAGE) {
         technicalIndicatorType = TechnicalIndicatorType.MACD;
       }
 
       var technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length;
+      var isDrag = !isBoolean(dragEnabled) ? true : dragEnabled;
 
-      this._separatorSeries.push(new SeparatorSeries(this._chartContainer, this._chartData, technicalIndicatorSeriesCount, {
+      this._separatorSeries.push(new SeparatorSeries(this._chartContainer, this._chartData, technicalIndicatorSeriesCount, isDrag, {
         startDrag: this._separatorStartDrag.bind(this),
         drag: this._separatorDrag.bind(this)
       }));
@@ -10842,13 +10847,14 @@ var Chart = /*#__PURE__*/function () {
      * 添加一个技术指标
      * @param technicalIndicatorType
      * @param height
+     * @param dragEnabled
      * @returns {string}
      */
 
   }, {
     key: "addTechnicalIndicator",
-    value: function addTechnicalIndicator(technicalIndicatorType, height) {
-      return this._chartSeries.createTechnicalIndicator(technicalIndicatorType, height);
+    value: function addTechnicalIndicator(technicalIndicatorType, height, dragEnabled) {
+      return this._chartSeries.createTechnicalIndicator(technicalIndicatorType, height, dragEnabled);
     }
     /**
      * 移除一个技术指标

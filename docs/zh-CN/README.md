@@ -122,8 +122,9 @@ setCandleStickTechnicalIndicatorType(technicalIndicatorType)
 // 添加技术指标图
 // technicalIndicatorType 技术指标类型，详情参阅技术指标，可缺省，默认为'MACD'
 // height 技术指标图的高度，可缺省，默认为100
+// dragEnabled 技术指标图是否可以拖拽调整高度，可缺省，默认为true
 // 返回值是一个字符串类型的技术指标图标识，这非常重要，后续对该图表的一些操作，都需要此标识
-addTechnicalIndicator(technicalIndicatorType, height)
+addTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
 
 // 设置其它技术指标图的指标类型
 // technicalIndicatorType 技术指标类型，当technicalIndicatorType是'NO'时，图表会移除当前技术指标图，详情类型详情可参阅技术指标

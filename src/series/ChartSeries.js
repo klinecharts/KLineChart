@@ -17,7 +17,7 @@ import CandleStickSeries from './CandleStickSeries'
 import XAxisSeries from './XAxisSeries'
 
 import { ChartType, YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
-import { isArray, isFunction, isObject } from '../utils/typeChecks'
+import { isArray, isBoolean, isFunction, isObject } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
 import SeparatorSeries from './SeparatorSeries'
@@ -373,9 +373,10 @@ export default class ChartSeries {
    * 创建一个指标
    * @param technicalIndicatorType
    * @param height
+   * @param dragEnabled
    * @returns {string}
    */
-  createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT) {
+  createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT, dragEnabled) {
     if (
       !technicalIndicatorType ||
       !TechnicalIndicatorType.hasOwnProperty(technicalIndicatorType) ||
@@ -385,10 +386,12 @@ export default class ChartSeries {
       technicalIndicatorType = TechnicalIndicatorType.MACD
     }
     const technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length
+    const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
     this._separatorSeries.push(
       new SeparatorSeries(
         this._chartContainer, this._chartData,
-        technicalIndicatorSeriesCount, {
+        technicalIndicatorSeriesCount, isDrag,
+        {
           startDrag: this._separatorStartDrag.bind(this),
           drag: this._separatorDrag.bind(this)
         }

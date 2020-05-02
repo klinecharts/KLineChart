@@ -75,9 +75,8 @@ export default class XAxis extends Axis {
         optimalTicks[0].v = formatDate(optimalTicks[0].oV, 'YYYY-MM-DD hh:mm', timezone)
       } else {
         const firstTimestamp = optimalTicks[0].oV
-        const firstV = optimalTicks[0].v
         const secondTimestamp = optimalTicks[1].oV
-        optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || firstV
+        optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || optimalTicks[0].v
       }
     }
     return optimalTicks

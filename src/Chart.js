@@ -187,10 +187,11 @@ export default class Chart {
    * 添加一个技术指标
    * @param technicalIndicatorType
    * @param height
+   * @param dragEnabled
    * @returns {string}
    */
-  addTechnicalIndicator (technicalIndicatorType, height) {
-    return this._chartSeries.createTechnicalIndicator(technicalIndicatorType, height)
+  addTechnicalIndicator (technicalIndicatorType, height, dragEnabled) {
+    return this._chartSeries.createTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
   }
 
   /**

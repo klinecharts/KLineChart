@@ -16,30 +16,38 @@ import EventBase from '../event/EventBase'
 import { getPixelRatio } from '../utils/canvas'
 
 export default class SeparatorSeries {
-  constructor (container, chartData, seriesIndex, dragEventHandler) {
+  constructor (container, chartData, seriesIndex, dragEnabled, dragEventHandler) {
     this._chartData = chartData
     this._seriesIndex = seriesIndex
     this._width = 0
     this._offsetLeft = 0
     this._dragEventHandler = dragEventHandler
-    this._initElement(container)
+    this._initElement(container, dragEnabled)
   }
 
-  _initElement (container) {
+  _initElement (container, dragEnabled) {
     this._container = container
     this._wrapper = document.createElement('div')
     this._wrapper.style.margin = '0'
     this._wrapper.style.padding = '0'
-    // this._wrapper.style.position = 'relative'
     this._wrapper.style.overflow = 'hidden'
     this._element = document.createElement('div')
     this._element.style.margin = '0'
     this._element.style.padding = '0'
     this._element.style.width = '100%'
-    this._element.style.cursor = 'ns-resize'
     this._element.style.position = 'absolute'
     this._element.style.zIndex = '20'
     this._element.style.height = '5px'
+    if (dragEnabled) {
+      this._element.style.cursor = 'ns-resize'
+      this._dragEvent = new EventBase(this._element, {
+        mouseDownEvent: this._mouseDownEvent.bind(this),
+        pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
+      }, {
+        treatVertTouchDragAsPageScroll: false,
+        treatHorzTouchDragAsPageScroll: true
+      })
+    }
     this._wrapper.appendChild(this._element)
     const lastElement = container.lastChild
     if (lastElement) {
@@ -47,13 +55,6 @@ export default class SeparatorSeries {
     } else {
       container.appendChild(this._wrapper)
     }
-    this._dragEvent = new EventBase(this._element, {
-      mouseDownEvent: this._mouseDownEvent.bind(this),
-      pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
-    }, {
-      treatVertTouchDragAsPageScroll: false,
-      treatHorzTouchDragAsPageScroll: true
-    })
   }
 
   _mouseDownEvent (event) {
@@ -130,7 +131,9 @@ export default class SeparatorSeries {
    * 销毁
    */
   destroy () {
-    this._dragEvent.destroy()
+    if (this._dragEvent) {
+      this._dragEvent.destroy()
+    }
     this._container.removeChild(this._wrapper)
     delete this
   }
