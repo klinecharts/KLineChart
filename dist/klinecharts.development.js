@@ -9147,19 +9147,12 @@ var XAxis = /*#__PURE__*/function (_Axis) {
           var kLineData = dataList[_pos];
           var timestamp = kLineData.timestamp;
           var label = formatDate(timestamp, 'hh:mm', timezone);
-          var compareKLineData = dataList[_pos - 1] || dataList[_pos + 1];
 
-          if (compareKLineData) {
-            var compareTimestamp = compareKLineData.timestamp;
-            var timeDif = Math.abs(timestamp - compareTimestamp);
-
-            if (timeDif >= 3600 * 1000) {
-              label = formatDate(timestamp, 'MM-DD hh:mm', timezone);
-            } else if (timeDif >= 4 * 3600 * 1000) {
-              label = formatDate(timestamp, 'MM-DD', timezone);
-            }
-
-            label = this._optimalTickLabel(timestamp, compareTimestamp, timezone) || label;
+          if (i !== 0) {
+            var prePos = parseInt(ticks[i - tickCountDif].v, 10);
+            var preKLineData = dataList[prePos];
+            var preTimestamp = preKLineData.timestamp;
+            label = this._optimalTickLabel(timestamp, preTimestamp, timezone) || label;
           }
 
           var _x = this.convertToPixel(_pos);
@@ -9175,6 +9168,11 @@ var XAxis = /*#__PURE__*/function (_Axis) {
 
         if (optimalTickLength === 1) {
           optimalTicks[0].v = formatDate(optimalTicks[0].oV, 'YYYY-MM-DD hh:mm', timezone);
+        } else {
+          var firstTimestamp = optimalTicks[0].oV;
+          var firstV = optimalTicks[0].v;
+          var secondTimestamp = optimalTicks[1].oV;
+          optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || firstV;
         }
       }
 
