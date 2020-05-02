@@ -77,22 +77,18 @@ export default class Axis {
       let f = first
 
       if (interval !== 0) {
-        while (f <= (+last)) {
+        while (f <= last) {
+          ticks[n] = { v: f.toFixed(precision) }
           ++n
           f += interval
         }
-      }
-      f = first
-      for (let i = 0; i < n; i++) {
-        ticks[i] = { v: f.toFixed(precision) }
-        f += interval
       }
     }
     return ticks
   }
 
   _nice (value) {
-    const exponent = Math.floor(Math.log(value) / Math.log(10.0))
+    const exponent = Math.floor(Math.log(value) / Math.LN10)
     const exp10 = Math.pow(10.0, exponent)
     const f = value / exp10 // 1 <= f < 10
     let nf = 0
@@ -100,10 +96,14 @@ export default class Axis {
       nf = 1
     } else if (f < 2.5) {
       nf = 2
-    } else if (f < 4) {
+    } else if (f < 3.5) {
       nf = 3
-    } else if (f < 7) {
+    } else if (f < 4.5) {
+      nf = 4
+    } else if (f < 5.5) {
       nf = 5
+    } else if (f < 6.5) {
+      nf = 6
     } else {
       nf = 8
     }
@@ -129,7 +129,6 @@ export default class Axis {
     if (precision == null) {
       precision = 10
     }
-    // Avoid range error
     precision = Math.min(Math.max(0, precision), 20)
     x = (+x).toFixed(precision)
     return x

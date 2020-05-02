@@ -5292,19 +5292,13 @@ var Axis = /*#__PURE__*/function () {
         var f = first;
 
         if (interval !== 0) {
-          while (f <= +last) {
+          while (f <= last) {
+            ticks[n] = {
+              v: f.toFixed(precision)
+            };
             ++n;
             f += interval;
           }
-        }
-
-        f = first;
-
-        for (var i = 0; i < n; i++) {
-          ticks[i] = {
-            v: f.toFixed(precision)
-          };
-          f += interval;
         }
       }
 
@@ -5313,7 +5307,7 @@ var Axis = /*#__PURE__*/function () {
   }, {
     key: "_nice",
     value: function _nice(value) {
-      var exponent = Math.floor(Math.log(value) / Math.log(10.0));
+      var exponent = Math.floor(Math.log(value) / Math.LN10);
       var exp10 = Math.pow(10.0, exponent);
       var f = value / exp10; // 1 <= f < 10
 
@@ -5323,10 +5317,14 @@ var Axis = /*#__PURE__*/function () {
         nf = 1;
       } else if (f < 2.5) {
         nf = 2;
-      } else if (f < 4) {
+      } else if (f < 3.5) {
         nf = 3;
-      } else if (f < 7) {
+      } else if (f < 4.5) {
+        nf = 4;
+      } else if (f < 5.5) {
         nf = 5;
+      } else if (f < 6.5) {
+        nf = 6;
       } else {
         nf = 8;
       }
@@ -5354,8 +5352,7 @@ var Axis = /*#__PURE__*/function () {
     value: function _round(x, precision) {
       if (precision == null) {
         precision = 10;
-      } // Avoid range error
-
+      }
 
       precision = Math.min(Math.max(0, precision), 20);
       x = (+x).toFixed(precision);
@@ -9150,13 +9147,19 @@ var XAxis = /*#__PURE__*/function (_Axis) {
           var kLineData = dataList[_pos];
           var timestamp = kLineData.timestamp;
           var label = formatDate(timestamp, 'hh:mm', timezone);
+          var compareKLineData = dataList[_pos - 1] || dataList[_pos + 1];
 
-          if (i <= tickLength - 1 - tickCountDif) {
-            var _nextPos = parseInt(ticks[i + tickCountDif].v, 10);
+          if (compareKLineData) {
+            var compareTimestamp = compareKLineData.timestamp;
+            var timeDif = Math.abs(timestamp - compareTimestamp);
 
-            var nextKLineData = dataList[_nextPos];
-            var nextTimestamp = nextKLineData.timestamp;
-            label = this._optimalTickLabel(timestamp, nextTimestamp, timezone) || label;
+            if (timeDif >= 3600 * 1000) {
+              label = formatDate(timestamp, 'MM-DD hh:mm', timezone);
+            } else if (timeDif >= 4 * 3600 * 1000) {
+              label = formatDate(timestamp, 'MM-DD', timezone);
+            }
+
+            label = this._optimalTickLabel(timestamp, compareTimestamp, timezone) || label;
           }
 
           var _x = this.convertToPixel(_pos);
@@ -9172,11 +9175,6 @@ var XAxis = /*#__PURE__*/function (_Axis) {
 
         if (optimalTickLength === 1) {
           optimalTicks[0].v = formatDate(optimalTicks[0].oV, 'YYYY-MM-DD hh:mm', timezone);
-        } else {
-          var lastTimestamp = optimalTicks[optimalTickLength - 1].oV;
-          var lastV = optimalTicks[optimalTickLength - 1].v;
-          var secondLastTimestamp = optimalTicks[optimalTickLength - 2].oV;
-          optimalTicks[optimalTickLength - 1].v = this._optimalTickLabel(lastTimestamp, secondLastTimestamp, timezone) || lastV;
         }
       }
 
