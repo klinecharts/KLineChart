@@ -9105,7 +9105,7 @@ var XAxis = /*#__PURE__*/function (_Axis) {
       var min = this._chartData.from();
 
       var max = this._chartData.to() - 1;
-      var range = max - min;
+      var range = max - min + 1;
       return {
         min: min,
         max: max,
@@ -9171,7 +9171,20 @@ var XAxis = /*#__PURE__*/function (_Axis) {
         } else {
           var firstTimestamp = optimalTicks[0].oV;
           var secondTimestamp = optimalTicks[1].oV;
-          optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || optimalTicks[0].v;
+
+          if (optimalTicks[2]) {
+            var thirdV = optimalTicks[2].v;
+
+            if (/^[0-9]{2}-[0-9]{2}$/.test(thirdV)) {
+              optimalTicks[0].v = formatDate(firstTimestamp, 'MM-DD', timezone);
+            } else if (/^[0-9]{4}-[0-9]{2}$/.test(thirdV)) {
+              optimalTicks[0].v = formatDate(firstTimestamp, 'YYYY-MM', timezone);
+            } else if (/^[0-9]{4}$/.test(thirdV)) {
+              optimalTicks[0].v = formatDate(firstTimestamp, 'YYYY', timezone);
+            }
+          } else {
+            optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || optimalTicks[0].v;
+          }
         }
       }
 
@@ -10446,7 +10459,7 @@ var ChartSeries = /*#__PURE__*/function () {
       }
 
       var technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length;
-      var isDrag = !isBoolean(dragEnabled) ? true : dragEnabled;
+      var isDrag = isBoolean(dragEnabled) ? dragEnabled : true;
 
       this._separatorSeries.push(new SeparatorSeries(this._chartContainer, this._chartData, technicalIndicatorSeriesCount, isDrag, {
         startDrag: this._separatorStartDrag.bind(this),
