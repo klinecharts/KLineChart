@@ -10605,7 +10605,6 @@ var ChartSeries = /*#__PURE__*/function () {
       var candleStickSeriesHeight = this._candleStickSeries.height();
 
       ctx.drawImage(this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark), 0, offsetTop, width, candleStickSeriesHeight);
-      ctx.drawImage(this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark), 0, offsetTop, width, candleStickSeriesHeight);
       offsetTop += candleStickSeriesHeight;
 
       for (var i = 0; i < this._separatorSeries.length; i++) {
