@@ -331,7 +331,7 @@ export default class ChartData {
     if (isObject(data)) {
       const listFirst = this._dataList[0]
       const listLast = this._dataList[this._dataList.length-1]
-      const tempList = this._dataList
+      let tempList = this._dataList
 
       if (isArray(data)) {
         this._loading = false
@@ -342,7 +342,7 @@ export default class ChartData {
 
         if (this._dataList.length === 0) {
           this._dataList = data
-        } else  {
+        } else {
           // 后追加
           if (dataFirst.timestamp >= listFirst.timestamp && dataLast.timestamp >= listLast.timestamp) {
             const index = tempList.findIndex(item => item.timestamp === dataFirst.timestamp)
