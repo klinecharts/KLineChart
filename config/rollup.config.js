@@ -2,6 +2,7 @@ const babel = require('rollup-plugin-babel')
 const fileSize = require('rollup-plugin-filesize')
 const { terser } = require('rollup-plugin-terser')
 const replace = require('@rollup/plugin-replace')
+const progress = require('rollup-plugin-progress')
 const packageJson = require('../package.json')
 
 const inputPath = 'src/index.js'
@@ -11,6 +12,7 @@ const getPlugins = (env) => {
     babel({
       exclude: 'node_modules/**'
     }),
+    progress(),
     fileSize(),
     replace({
       '__BUILD_ENV__': env,
