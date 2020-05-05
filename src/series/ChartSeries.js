@@ -515,10 +515,6 @@ export default class ChartSeries {
       this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark),
       0, offsetTop, width, candleStickSeriesHeight
     )
-    ctx.drawImage(
-      this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark),
-      0, offsetTop, width, candleStickSeriesHeight
-    )
     offsetTop += candleStickSeriesHeight
     for (let i = 0; i < this._separatorSeries.length; i++) {
       const separatorSeries = this._separatorSeries[i]
