@@ -36,6 +36,10 @@ export default class YAxis extends Axis {
       minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)
       minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
     }
+    if (technicalIndicatorType === TechnicalIndicatorType.POSITION) {
+      minMaxArray[0] = Math.min(minMaxArray[0], kLineData.position)
+      minMaxArray[1] = Math.max(minMaxArray[1], kLineData.position)
+    }
     return minMaxArray
   }
 

@@ -19,6 +19,19 @@ const calcIndicator = {}
 
 export default calcIndicator
 
+
+/**
+ * 计算持仓量
+ * @param dataList
+ * @returns {*}
+ */
+calcIndicator[TechnicalIndicatorType.POSITION] = function (dataList) {
+  return calc(dataList, (i) => {
+    const position = dataList[i].position || 0
+    dataList[i].position = position
+  })
+}
+
 /**
  * 计算均价
  * @param dataList

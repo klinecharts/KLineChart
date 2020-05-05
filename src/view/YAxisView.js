@@ -117,7 +117,8 @@ export default class YAxisView extends View {
     this._ctx.textBaseline = 'middle'
     this._ctx.font = getFont(tickText.size, tickText.family)
     this._ctx.fillStyle = tickText.color
-    const isVol = this._additionalDataProvider.technicalIndicatorType() === TechnicalIndicatorType.VOL
+    const isVol = (this._additionalDataProvider.technicalIndicatorType() === TechnicalIndicatorType.VOL
+                    || this._additionalDataProvider.technicalIndicatorType() === TechnicalIndicatorType.POSITION)
     this._yAxis.ticks().forEach(tick => {
       this._ctx.fillText(isVol ? formatBigNumber(tick.v) : tick.v, labelX, tick.y)
     })

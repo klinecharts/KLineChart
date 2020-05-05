@@ -322,6 +322,74 @@ export default class ChartData {
   }
 
   /**
+   * 设置数据
+   * @param data
+   * @param pos
+   * @param more
+   */
+  setData(data, more) {
+    if (isObject(data)) {
+      let listFirst = this._dataList[0]
+      let listLast = this._dataList[this._dataList.length-1]
+      let tempList = this._dataList
+
+      if (isArray(data)) {
+        this._loading = false
+        this._more = isBoolean(more) ? more : true
+
+        let dataFirst = data[0]
+        let dataLast = data[data.length-1]
+
+        if (this._dataList.length === 0) {
+          this._dataList = data
+        } else  {
+          // 后追加
+          if (dataFirst.timestamp >= listFirst.timestamp && dataLast.timestamp >= listLast.timestamp) {
+            let index = tempList.findIndex(item => item.timestamp === dataFirst.timestamp)
+            if (index !== -1) {
+              tempList = tempList.slice(0, index)
+            }
+            this._dataList = tempList.concat(data)
+          }
+          // 前追加
+          else if (dataFirst.timestamp <= listFirst.timestamp && dataLast.timestamp <= listLast.timestamp) {
+            let index = tempList.findIndex(item => item.timestamp === dataLast.timestamp)
+            if (index !== -1) {
+              tempList = tempList.slice(index)
+            }
+            this._dataList = data.concat(tempList)
+          }
+          // 覆盖
+          else if (dataFirst.timestamp <= listFirst.timestamp && dataLast.timestamp >= listLast.timestamp) {
+            this._dataList = data
+          }
+        }
+      } else {
+        if (this._dataList.length === 0) {
+          this._dataList = [data]
+        } else {
+          // 后追加
+          if (data.timestamp >= listLast.timestamp) {
+            this._dataList.push(data)
+          }
+          // 前追加
+          else if (data.timestamp <= listFirst.timestamp) {
+            this._dataList.unshift(data)
+          }
+          // 更新
+          else {
+            let index = tempList.findIndex(item => item.timestamp === data.timestamp)
+            if (index !== -1) {
+              this._dataList[index] = data
+            }
+          }
+        }
+      }
+      this.adjustOffsetBarCount()
+    }
+  }
+
+  /**
    * 获取一条数据的空间
    * @returns {number}
    */

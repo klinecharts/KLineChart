@@ -35,7 +35,8 @@ export const TechnicalIndicatorType = {
   WR: 'WR',
   MTM: 'MTM',
   EMV: 'EMV',
-  SAR: 'SAR'
+  SAR: 'SAR',
+  POSITION: 'POSITION'
 }
 
 export const defaultTechnicalIndicatorParamOptions = {
@@ -195,6 +196,11 @@ export function getTechnicalIndicatorDataKeysAndValues (kLineData, technicalIndi
     case TechnicalIndicatorType.SAR: {
       keys = ['sar']
       values = [technicalIndicatorData.sar]
+      break
+    }
+    case TechnicalIndicatorType.POSITION: {
+      keys = ['position']
+      values = [technicalIndicatorData]
       break
     }
   }

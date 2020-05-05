@@ -32,21 +32,13 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     const dataList = this._chartData.dataList()
     let dataPos
     if (crossHairPoint) {
-      dataPos = this._xAxis.convertFromPixel(crossHairPoint.x)
+      dataPos = this._xAxis.convertFromIndex(crossHairPoint.x)
     } else {
       dataPos = dataList.length - 1
     }
-    let kLineData = dataList[dataPos]
-    if (!kLineData) {
-      const to = this._chartData.to()
-      if (dataPos > to - 1) {
-        kLineData = dataList[to - 1]
-      } else if (dataPos < 0) {
-        kLineData = dataList[0]
-      }
-    }
+    const kLineData = dataList[dataPos]
     if (kLineData) {
-      const x = this._xAxis.convertToPixel(dataPos)
+      const x = this._xAxis.convertToIndex(dataPos)
       this._drawCrossHairHorizontalLine()
       this._drawCrossHairVerticalLine(kLineData, x)
       const displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule
@@ -170,7 +162,8 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     labelX += (textMarginLeft + nameTextWidth)
     const isVol = this._additionalDataProvider.technicalIndicatorType() === TechnicalIndicatorType.VOL
     for (let i = 0; i < labels.length; i++) {
-      const text = `${labels[i].toUpperCase()}: ${(isVol ? formatBigNumber(values[i]) : values[i]) || '--'}`
+      // const text = `${labels[i].toUpperCase()}: ${(isVol ? formatBigNumber(values[i]) : values[i]) || '--'}`
+      const text = `${labels[i].toUpperCase()}: ${(isVol ? values[i] : values[i]) || '--'}`
       const textWidth = calcTextWidth(this._ctx, text)
       this._ctx.fillStyle = colors[i % colorSize] || textColor
       this._ctx.fillText(text, labelX, labelY)

@@ -321,7 +321,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
       let isOnCircle = false
       let pointIndex = -1
       points.forEach((p, i) => {
-        const x = this._xAxis.convertToPixel(p.xPos)
+        const x = this._xAxis.convertToPixel(p.timestamp)
         const y = this._yAxis.convertToPixel(p.price)
         xyPoints.push({ x, y })
         const isOn = checkPointOnCircle({ x, y }, graphicMark.point.radius, point)
@@ -382,8 +382,8 @@ export default class GraphicMarkEventHandler extends EventHandler {
         }
         case GraphicMarkType.VERTICAL_RAY_LINE:
         case GraphicMarkType.VERTICAL_SEGMENT_LINE: {
-          this._twoPointGraphicMarkMouseMove(point, graphicMarkType, (lastLineData, { xPos }) => {
-            lastLineData.points[0].xPos = xPos
+          this._twoPointGraphicMarkMouseMove(point, graphicMarkType, (lastLineData, { timestamp }) => {
+            lastLineData.points[0].timestamp = timestamp
           })
           break
         }
@@ -420,7 +420,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
         case GraphicMarkType.FIBONACCI_LINE: {
           const pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex
           if (pointIndex !== -1) {
-            graphicMarkData[dataIndex].points[pointIndex].xPos = this._xAxis.convertFromPixel(point.x)
+            graphicMarkData[dataIndex].points[pointIndex].timestamp = this._xAxis.convertFromPixel(point.x)
             graphicMarkData[dataIndex].points[pointIndex].price = this._yAxis.convertFromPixel(point.y)
           }
           break
@@ -430,7 +430,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
           const pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex
           if (pointIndex !== -1) {
             const price = this._yAxis.convertFromPixel(point.y)
-            graphicMarkData[dataIndex].points[pointIndex].xPos = this._xAxis.convertFromPixel(point.x)
+            graphicMarkData[dataIndex].points[pointIndex].timestamp = this._xAxis.convertFromPixel(point.x)
             graphicMarkData[dataIndex].points[0].price = price
             graphicMarkData[dataIndex].points[1].price = price
           }
@@ -440,9 +440,9 @@ export default class GraphicMarkEventHandler extends EventHandler {
         case GraphicMarkType.VERTICAL_SEGMENT_LINE: {
           const pointIndex = this._noneGraphicMarkMouseDownActiveData.pointIndex
           if (pointIndex !== -1) {
-            const xPos = this._xAxis.convertFromPixel(point.x)
-            graphicMarkData[dataIndex].points[0].xPos = xPos
-            graphicMarkData[dataIndex].points[1].xPos = xPos
+            const timestamp = this._xAxis.convertFromPixel(point.x)
+            graphicMarkData[dataIndex].points[0].timestamp = timestamp
+            graphicMarkData[dataIndex].points[1].timestamp = timestamp
             graphicMarkData[dataIndex].points[pointIndex].price = this._yAxis.convertFromPixel(point.y)
           }
           break
@@ -461,16 +461,16 @@ export default class GraphicMarkEventHandler extends EventHandler {
    */
   _onePointGraphicMarkMouseMove (point, markKey) {
     this._graphicMarkMouseMove(point, markKey, (graphicMarkData, lastLineData) => {
-      const xPos = this._xAxis.convertFromPixel(point.x)
+      const timestamp = this._xAxis.convertFromPixel(point.x)
       const price = this._yAxis.convertFromPixel(point.y)
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_DONE: {
-          graphicMarkData.push({ points: [{ xPos, price }], drawStep: GraphicMarkDrawStep.STEP_1 })
+          graphicMarkData.push({ points: [{ timestamp, price }], drawStep: GraphicMarkDrawStep.STEP_1 })
           break
         }
         case GraphicMarkDrawStep.STEP_1:
         case GraphicMarkDrawStep.STEP_2: {
-          lastLineData.points[0].xPos = xPos
+          lastLineData.points[0].timestamp = timestamp
           lastLineData.points[0].price = price
           graphicMarkData[graphicMarkData.length - 1] = lastLineData
           break
@@ -487,23 +487,23 @@ export default class GraphicMarkEventHandler extends EventHandler {
    */
   _twoPointGraphicMarkMouseMove (point, markKey, stepTwo) {
     this._graphicMarkMouseMove(point, markKey, (graphicMarkData, lastLineData) => {
-      const xPos = this._xAxis.convertFromPixel(point.x)
+      const timestamp = this._xAxis.convertFromPixel(point.x)
       const price = this._yAxis.convertFromPixel(point.y)
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_DONE: {
-          graphicMarkData.push({ points: [{ xPos, price }, { xPos, price }], drawStep: GraphicMarkDrawStep.STEP_1 })
+          graphicMarkData.push({ points: [{ timestamp, price }, { timestamp, price }], drawStep: GraphicMarkDrawStep.STEP_1 })
           break
         }
         case GraphicMarkDrawStep.STEP_1: {
-          lastLineData.points[0] = { xPos, price }
-          lastLineData.points[1] = { xPos, price }
+          lastLineData.points[0] = { timestamp, price }
+          lastLineData.points[1] = { timestamp, price }
           graphicMarkData[graphicMarkData.length - 1] = lastLineData
           break
         }
         case GraphicMarkDrawStep.STEP_2: {
-          lastLineData.points[1] = { xPos, price }
+          lastLineData.points[1] = { timestamp, price }
           if (isFunction(stepTwo)) {
-            stepTwo(lastLineData, { xPos, price })
+            stepTwo(lastLineData, { timestamp, price })
           }
           graphicMarkData[graphicMarkData.length - 1] = lastLineData
           break
@@ -520,29 +520,29 @@ export default class GraphicMarkEventHandler extends EventHandler {
    */
   _threePointGraphicMarkMouseMove (point, markKey, stepTwo) {
     this._graphicMarkMouseMove(point, markKey, (graphicMarkData, lastLineData) => {
-      const xPos = this._xAxis.convertFromPixel(point.x)
+      const timestamp = this._xAxis.convertFromPixel(point.x)
       const price = this._yAxis.convertFromPixel(point.y)
       switch (lastLineData.drawStep) {
         case GraphicMarkDrawStep.STEP_DONE: {
-          graphicMarkData.push({ points: [{ xPos, price }, { xPos, price }], drawStep: GraphicMarkDrawStep.STEP_1 })
+          graphicMarkData.push({ points: [{ timestamp, price }, { timestamp, price }], drawStep: GraphicMarkDrawStep.STEP_1 })
           break
         }
         case GraphicMarkDrawStep.STEP_1: {
-          lastLineData.points[0] = { xPos, price }
-          lastLineData.points[1] = { xPos, price }
+          lastLineData.points[0] = { timestamp, price }
+          lastLineData.points[1] = { timestamp, price }
           graphicMarkData[graphicMarkData.length - 1] = lastLineData
           break
         }
         case GraphicMarkDrawStep.STEP_2: {
           if (isFunction(stepTwo)) {
-            stepTwo(lastLineData, { xPos, price })
+            stepTwo(lastLineData, { timestamp, price })
           }
-          lastLineData.points[1] = { xPos, price }
+          lastLineData.points[1] = { timestamp, price }
           graphicMarkData[graphicMarkData.length - 1] = lastLineData
           break
         }
         case GraphicMarkDrawStep.STEP_3: {
-          lastLineData.points[2] = { xPos, price }
+          lastLineData.points[2] = { timestamp, price }
           graphicMarkData[graphicMarkData.length - 1] = lastLineData
           break
         }

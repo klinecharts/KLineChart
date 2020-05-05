@@ -41,7 +41,7 @@ export default class XAxisFloatLayerView extends View {
     const crossHairPoint = this._chartData.crossHairPoint()
     let dataPos
     if (crossHairPoint) {
-      dataPos = this._xAxis.convertFromPixel(crossHairPoint.x)
+      dataPos = this._xAxis.convertFromIndex(crossHairPoint.x)
     } else {
       dataPos = dataList.length - 1
     }
@@ -49,7 +49,7 @@ export default class XAxisFloatLayerView extends View {
     if (!kLineData) {
       return
     }
-    const x = this._xAxis.convertToPixel(dataPos)
+    const x = this._xAxis.convertToIndex(dataPos)
     const timestamp = kLineData.timestamp
     const text = formatDate(timestamp, 'YYYY-MM-DD hh:mm', this._chartData.timezone())
 

@@ -244,7 +244,8 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
             break
           }
           case values.length - 1: {
-            values[index] = formatBigNumber(formatPrecision(value, precisionOptions.volume))
+            // values[index] = formatBigNumber(formatPrecision(value, precisionOptions.volume))
+            values[index] = formatPrecision(value, precisionOptions.volume)
             break
           }
           default: {

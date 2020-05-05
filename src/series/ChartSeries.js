@@ -332,6 +332,19 @@ export default class ChartSeries {
   }
 
   /**
+   * 更新数据
+   * @param data
+   */
+  setData(data, isClear, more) {
+    if (isClear) {
+      this._chartData.clearDataList()
+    }
+    this._chartData.setData(data, more)
+    this._xAxisSeries.invalidate(InvalidateLevel.FULL)
+    this._calcAllSeriesTechnicalIndicator()
+  }
+
+  /**
    * 添加更多数据
    * @param dataList
    * @param more
@@ -373,7 +386,7 @@ export default class ChartSeries {
    * 创建一个指标
    * @param technicalIndicatorType
    * @param height
-   * @param dragEnabled
+   * * @param dragEnabled
    * @returns {string}
    */
   createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT, dragEnabled) {

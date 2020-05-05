@@ -46,11 +46,11 @@ export default class XAxis extends Axis {
       this._measureCtx.font = getFont(tickText.size, tickText.family)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
       const pos = parseInt(ticks[0].v, 10)
-      const x = this.convertToPixel(pos)
+      const x = this.convertToIndex(pos)
       let tickCountDif = 1
       if (tickLength > 1) {
         const nextPos = parseInt(ticks[1].v, 10)
-        const nextX = this.convertToPixel(nextPos)
+        const nextX = this.convertToIndex(nextPos)
         const xDif = Math.abs(nextX - x)
         if (xDif < defaultLabelWidth) {
           tickCountDif = Math.ceil(defaultLabelWidth / xDif)
@@ -67,7 +67,7 @@ export default class XAxis extends Axis {
           const preTimestamp = preKLineData.timestamp
           label = this._optimalTickLabel(timestamp, preTimestamp, timezone) || label
         }
-        const x = this.convertToPixel(pos)
+        const x = this.convertToIndex(pos)
         optimalTicks.push({ v: label, x, oV: timestamp })
       }
       const optimalTickLength = optimalTicks.length
@@ -76,18 +76,7 @@ export default class XAxis extends Axis {
       } else {
         const firstTimestamp = optimalTicks[0].oV
         const secondTimestamp = optimalTicks[1].oV
-        if (optimalTicks[2]) {
-          const thirdV = optimalTicks[2].v
-          if (/^[0-9]{2}-[0-9]{2}$/.test(thirdV)) {
-            optimalTicks[0].v = formatDate(firstTimestamp, 'MM-DD', timezone)
-          } else if (/^[0-9]{4}-[0-9]{2}$/.test(thirdV)) {
-            optimalTicks[0].v = formatDate(firstTimestamp, 'YYYY-MM', timezone)
-          } else if (/^[0-9]{4}$/.test(thirdV)) {
-            optimalTicks[0].v = formatDate(firstTimestamp, 'YYYY', timezone)
-          }
-        } else {
-          optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || optimalTicks[0].v
-        }
+        optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || optimalTicks[0].v
       }
     }
     return optimalTicks
@@ -107,15 +96,50 @@ export default class XAxis extends Axis {
     return null
   }
 
-  convertFromPixel (pixel) {
-    return Math.round(this._chartData.coordinateToFloatIndex(pixel)) - 1
+  convertFromIndex (pixel) {
+    let index =  Math.round(this._chartData.coordinateToFloatIndex(pixel)) - 1
+    const dataList = this._chartData.dataList()
+    if (index > dataList.length - 1)  {
+      index = dataList.length - 1
+    } else if (index < 0) {
+      index = 0
+    }
+    return index
   }
 
-  convertToPixel (value) {
+  convertToIndex (index) {
     const dataList = this._chartData.dataList()
     const dataSize = dataList.length
     const dataSpace = this._chartData.dataSpace()
-    const deltaFromRight = dataSize + this._chartData.offsetRightBarCount() - value
+    const deltaFromRight = dataSize + this._chartData.offsetRightBarCount() - index
+    return this._width - (deltaFromRight - 0.5) * dataSpace + this._chartData.barSpace() / 2
+  }
+
+  convertFromPixel (pixel) {
+    let index = Math.round(this._chartData.coordinateToFloatIndex(pixel)) - 1
+    const dataList = this._chartData.dataList()
+    if (index > dataList.length - 1)  {
+      index = dataList.length - 1
+    } else if (index < 0) {
+      index = 0
+    }
+    return dataList[index].timestamp
+  }
+
+  convertToPixel (timestamp) {
+    const dataList = this._chartData.dataList()
+    let index = dataList.findIndex(item => item.timestamp === timestamp)
+    if (index === -1) {
+      const timediff = dataList[1].timestamp - dataList[0].timestamp
+      index = dataList.findIndex(item => {
+        if (item.timestamp <= timestamp && item.timestamp + timediff > timestamp) {
+          return true
+        }
+      })
+    }
+    const dataSize = dataList.length
+    const dataSpace = this._chartData.dataSpace()
+    const deltaFromRight = dataSize + this._chartData.offsetRightBarCount() - index
     return this._width - (deltaFromRight - 0.5) * dataSpace + this._chartData.barSpace() / 2
   }
 }

@@ -300,8 +300,8 @@ export default class GraphicMarkView extends View {
     const graphicMarkData = graphicMarkDatas[markKey]
     graphicMarkData.forEach(({ points, drawStep }) => {
       const circlePoints = []
-      points.forEach(({ xPos, price }) => {
-        const x = this._xAxis.convertToPixel(xPos)
+      points.forEach(({ timestamp, price }) => {
+        const x = this._xAxis.convertToPixel(timestamp)
         const y = this._yAxis.convertToPixel(price)
         circlePoints.push({ x, y })
       })

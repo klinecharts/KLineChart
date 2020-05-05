@@ -146,6 +146,14 @@ export default class Chart {
    * 更新数据
    * @param data
    */
+  setData (data, isClear) {
+    this._chartSeries.setData(data, isClear)
+  }
+
+  /**
+   * 更新数据
+   * @param data
+   */
   updateData (data) {
     this._chartSeries.updateData(data)
   }
@@ -187,7 +195,6 @@ export default class Chart {
    * 添加一个技术指标
    * @param technicalIndicatorType
    * @param height
-   * @param dragEnabled
    * @returns {string}
    */
   addTechnicalIndicator (technicalIndicatorType, height, dragEnabled) {
@@ -200,6 +207,28 @@ export default class Chart {
    */
   removeTechnicalIndicator (tag) {
     this._chartSeries.removeTechnicalIndicator(tag)
+  }
+
+  /**
+   * 设置图形标记数据
+   * @param type
+   * @param data
+   */
+  setGraphicMarkData (type, data) {
+    if (isArray(data)) {
+      const graphicMarkDatas = this._chartSeries.chartData().graphicMarkData()
+      graphicMarkDatas[type] = data
+      this._chartSeries.chartData().setGraphicMarkData(graphicMarkDatas)
+    }
+  }
+
+  /**
+   * 获取图形标记数据
+   * @param type
+   */
+  getGraphicMarkData (type) {
+    const graphicMarkDatas = this._chartSeries.chartData().graphicMarkData()
+    return graphicMarkDatas[type]
   }
 
   /**

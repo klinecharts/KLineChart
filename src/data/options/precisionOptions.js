@@ -38,5 +38,6 @@ export const defaultPrecisionOptions = {
   [TechnicalIndicatorType.WR]: 4,
   [TechnicalIndicatorType.MTM]: 4,
   [TechnicalIndicatorType.EMV]: 4,
-  [TechnicalIndicatorType.SAR]: 2
+  [TechnicalIndicatorType.SAR]: 2,
+  [TechnicalIndicatorType.POSITION]: 0
 }
