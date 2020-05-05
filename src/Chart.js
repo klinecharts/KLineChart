@@ -195,6 +195,7 @@ export default class Chart {
    * 添加一个技术指标
    * @param technicalIndicatorType
    * @param height
+   * @param dragEnabled
    * @returns {string}
    */
   addTechnicalIndicator (technicalIndicatorType, height, dragEnabled) {
