@@ -218,6 +218,11 @@ export default class Chart {
   setGraphicMarkData (type, data) {
     if (isArray(data)) {
       const graphicMarkDatas = this._chartSeries.chartData().graphicMarkData()
+      if (isArray(data[0])) {
+        data = data.map(item => {
+          return {drawStep: "step_done", points: item}
+        })
+      }
       graphicMarkDatas[type] = data
       this._chartSeries.chartData().setGraphicMarkData(graphicMarkDatas)
     }
@@ -229,7 +234,9 @@ export default class Chart {
    */
   getGraphicMarkData (type) {
     const graphicMarkDatas = this._chartSeries.chartData().graphicMarkData()
-    return graphicMarkDatas[type]
+    return graphicMarkDatas[type].map(item => {
+      return item.points
+    })
   }
 
   /**

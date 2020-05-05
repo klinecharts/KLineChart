@@ -651,14 +651,10 @@ export default class ChartData {
    * @param datas
    */
   setGraphicMarkData (datas) {
-    const shouldInvalidate = this.shouldInvalidateGraphicMark()
     this._graphicMarkDatas = clone(datas)
+    const shouldInvalidate = this.shouldInvalidateGraphicMark()
     if (shouldInvalidate) {
       this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK)
-    } else {
-      if (this.shouldInvalidateGraphicMark()) {
-        this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK)
-      }
     }
   }
 
