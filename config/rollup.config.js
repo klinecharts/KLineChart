@@ -1,4 +1,4 @@
-const babel = require('rollup-plugin-babel')
+const { babel } = require('@rollup/plugin-babel')
 const fileSize = require('rollup-plugin-filesize')
 const { terser } = require('rollup-plugin-terser')
 const replace = require('@rollup/plugin-replace')
@@ -10,7 +10,7 @@ const inputPath = 'src/index.js'
 const getPlugins = (env) => {
   return [
     babel({
-      exclude: 'node_modules/**'
+      babelHelpers: 'bundled'
     }),
     progress(),
     fileSize(),

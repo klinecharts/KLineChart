@@ -70,7 +70,8 @@ export default class YAxis extends Axis {
       }
       const isPercentageAxis = this.isPercentageYAxis()
       for (let i = 0; i < tickLength; i += tickCountDif) {
-        const v = ticks[i].v
+        let v = ticks[i].v
+        v = +v === 0 ? '0' : v
         const y = this._innerConvertToPixel(+v)
         if (y > textHeight &&
           y < this._height - textHeight) {
@@ -123,8 +124,11 @@ export default class YAxis extends Axis {
       }
     }
     if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
+<<<<<<< HEAD
       minMaxArray[0] = Math.round(minMaxArray[0] * 10e20) / 10e20
       minMaxArray[1] = Math.round(minMaxArray[1] * 10e20) / 10e20
+=======
+>>>>>>> former/dev
       if (this.isPercentageYAxis()) {
         const fromClose = dataList[from].close
         this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100

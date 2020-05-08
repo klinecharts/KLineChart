@@ -118,11 +118,13 @@ function _possibleConstructorReturn(self, call) {
 }
 
 function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
   return function () {
     var Super = _getPrototypeOf(Derived),
         result;
 
-    if (_isNativeReflectConstruct()) {
+    if (hasNativeReflectConstruct) {
       var NewTarget = _getPrototypeOf(this).constructor;
 
       result = Reflect.construct(Super, arguments, NewTarget);
@@ -181,7 +183,7 @@ function _unsupportedIterableToArray(o, minLen) {
   if (typeof o === "string") return _arrayLikeToArray(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(n);
+  if (n === "Map" || n === "Set") return Array.from(o);
   if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
@@ -5450,7 +5452,6 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
         for (var i = 0; i < tickLength; i += tickCountDif) {
           var v = ticks[i].v;
-          v = +v === 0 ? '0' : v;
 
           var _y = this._innerConvertToPixel(+v);
 
@@ -5516,6 +5517,9 @@ var YAxis = /*#__PURE__*/function (_Axis) {
       }
 
       if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
+        minMaxArray[0] = Math.round(minMaxArray[0] * 10e20) / 10e20;
+        minMaxArray[1] = Math.round(minMaxArray[1] * 10e20) / 10e20;
+
         if (this.isPercentageYAxis()) {
           var fromClose = dataList[from].close;
           this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100;
