@@ -10973,7 +10973,7 @@ var CHART_NAME_PREFIX = 'k_line_chart_';
  */
 
 function version() {
-  return '5.2.0';
+  return '5.2.1';
 }
 /**
  * 初始化
@@ -10985,7 +10985,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 5.2.0. Root dom is null, can not initialize the chart!!!';
+  var errorMessage = 'Chart version is 5.2.1. Root dom is null, can not initialize the chart!!!';
   var container = ds;
 
   if (!container) {

@@ -1,16 +1,18 @@
 {
   "name": "klinecharts",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "description": "Lightweight k-line chart built with html5 canvas",
   "main": "index.js",
   "types": "./types/index.d.ts",
   "files": [
     "LICENSE",
     "README.md",
-    "docs/STYLE-CONFIG-DETAIL.md",
+    "docs/",
     "index.js",
     "types/index.d.ts",
-    "dist/"
+    "dist/",
+    "licenses/",
+    "NOTICE"
   ],
   "repository": {
     "type": "git",
