@@ -6329,35 +6329,36 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
 
       this._ctx.fill();
 
+      var baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft;
+      var labelY = rectY + rectBorderSize + rectPaddingTop; // 开始渲染基础数据文字
+
+      this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.family);
+      baseLabels.forEach(function (label, i) {
+        labelY += baseTextMarginTop;
+        _this2._ctx.textAlign = 'left';
+        _this2._ctx.fillStyle = baseTextColor;
+
+        _this2._ctx.fillText("".concat(label, ": "), baseLabelX, labelY);
+
+        var value = baseValues[i] || '--';
+        var text;
+        _this2._ctx.fillStyle = value.color || baseTextColor;
+
+        if (isObject(value)) {
+          text = value.value || '--';
+        } else {
+          text = value;
+        }
+
+        _this2._ctx.textAlign = 'right';
+
+        _this2._ctx.fillText(text, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY);
+
+        labelY += baseTextSize + baseTextMarginBottom;
+      });
+
       if (isCandleStick) {
-        var baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft;
-        var labelY = rectY + rectBorderSize + rectPaddingTop; // 开始渲染基础数据文字
-
-        this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.family);
-        baseLabels.forEach(function (label, i) {
-          labelY += baseTextMarginTop;
-          _this2._ctx.textAlign = 'left';
-          _this2._ctx.fillStyle = baseTextColor;
-
-          _this2._ctx.fillText("".concat(label, ": "), baseLabelX, labelY);
-
-          var value = baseValues[i] || '--';
-          var text;
-          _this2._ctx.fillStyle = value.color || baseTextColor;
-
-          if (isObject(value)) {
-            text = value.value || '--';
-          } else {
-            text = value;
-          }
-
-          _this2._ctx.textAlign = 'right';
-
-          _this2._ctx.fillText(text, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY);
-
-          labelY += baseTextSize + baseTextMarginBottom;
-        }); // 开始渲染指标数据文字
-
+        // 开始渲染指标数据文字
         var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
         var colors = technicalIndicatorOptions.line.colors;
