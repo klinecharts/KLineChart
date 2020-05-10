@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "da03fd700471250d5533700b23ac5d3d",
+    "revision": "44d79c19eb2d6f6addf70d25f0b65e1d",
     "url": "/KLineChart/index.html"
   },
   {
-    "revision": "1ff971adb7f84ef8fca7",
+    "revision": "85bef0f62b537b014eb1",
     "url": "/KLineChart/static/css/main.7013ed3e.chunk.css"
   },
   {
-    "revision": "93ba90fe27539b1a2c55",
-    "url": "/KLineChart/static/js/2.ddf2d861.chunk.js"
+    "revision": "14afcd7c1d18dd062cb6",
+    "url": "/KLineChart/static/js/2.45228ec7.chunk.js"
   },
   {
     "revision": "e88a3e95b5364d46e95b35ae8c0dc27d",
-    "url": "/KLineChart/static/js/2.ddf2d861.chunk.js.LICENSE.txt"
+    "url": "/KLineChart/static/js/2.45228ec7.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "1ff971adb7f84ef8fca7",
-    "url": "/KLineChart/static/js/main.5f67abfd.chunk.js"
+    "revision": "85bef0f62b537b014eb1",
+    "url": "/KLineChart/static/js/main.9c82f87b.chunk.js"
   },
   {
     "revision": "dd3418977e5e32552eeb",
