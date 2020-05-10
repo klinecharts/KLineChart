@@ -2625,14 +2625,13 @@ function formatValue(data, key) {
  * @returns {string}
  */
 
-var locales = 'en-us';
 function formatDate(timestamp, format, timezone) {
   if (timestamp && isNumber(timestamp)) {
     var date = new Date(timestamp);
     var dateTimeString;
 
     try {
-      dateTimeString = new Intl.DateTimeFormat(locales, {
+      dateTimeString = new Intl.DateTimeFormat('en', {
         hour12: false,
         timeZone: timezone,
         year: 'numeric',
@@ -2642,7 +2641,7 @@ function formatDate(timestamp, format, timezone) {
         minute: 'numeric'
       }).format(date);
     } catch (e) {
-      dateTimeString = new Intl.DateTimeFormat(locales, {
+      dateTimeString = new Intl.DateTimeFormat('en', {
         hour12: false,
         year: 'numeric',
         month: 'numeric',
