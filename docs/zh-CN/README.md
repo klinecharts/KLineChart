@@ -247,6 +247,25 @@ getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColo
 + ```shift + ↑``` 放大
 + ```shift + ↓``` 缩小
 
+## 浏览器兼容
+理论上图表能运行在任何支持canvas的浏览器上，如果遇到图表不能正常渲染，请尝试如下方案：
++ [core-js](https://github.com/zloirock/core-js)
++ [Intl.js](https://github.com/andyearnshaw/Intl.js)
+
+引入core-js示例：
+```js
+import 'core-js'
+import { init } from 'klinecharts'
+```
+
+引入Intl.js示例：
+```js
+import 'intl'
+import 'intl/locale-data/jsonp/en'
+import { init } from 'klinecharts'
+```
+注意：不管是core还是Intl都需要在图表库前引用。
+
 ## 交流群
 + QQ: 677936660
 

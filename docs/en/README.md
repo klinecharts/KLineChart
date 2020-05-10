@@ -147,6 +147,25 @@ The chart supports 21 technical indicators, the following are the types and calc
 For full configuration please see [here](../style.md).
 
 
+## Browser Compatible
+In theory, the chart can run on any browser that supports canvas. If the chart cannot be rendered normally, try the following scheme:
++ [core-js](https://github.com/zloirock/core-js)
++ [Intl.js](https://github.com/andyearnshaw/Intl.js)
+
+Introduce core-js example：
+```js
+import 'core-js'
+import { init } from 'klinecharts'
+```
+Introduce Intl.js example：
+```js
+import 'intl'
+import 'intl/locale-data/jsonp/en'
+import { init } from 'klinecharts'
+```
+Note: Both core and Intl need to be referenced in the chart library.
+
+
 ## Hot key
 Currently only supports moving and zooming.
 + ```shift + ←``` shift left

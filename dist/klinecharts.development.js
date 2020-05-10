@@ -9986,6 +9986,11 @@ var ChartSeries = /*#__PURE__*/function () {
     value: function _initChartContainer(container) {
       this._container = container;
       this._chartContainer = document.createElement('div');
+      this._chartContainer.style.userSelect = 'none';
+      this._chartContainer.style.webkitUserSelect = 'none';
+      this._chartContainer.style.msUserSelect = 'none';
+      this._chartContainer.style.MozUserSelect = 'none';
+      this._chartContainer.style.webkitTapHighlightColor = 'transparent';
       this._chartContainer.style.position = 'relative';
       this._chartContainer.style.outline = 'none';
       this._chartContainer.style.borderStyle = 'none';
@@ -10972,7 +10977,7 @@ var CHART_NAME_PREFIX = 'k_line_chart_';
  */
 
 function version() {
-  return '5.2.1';
+  return '5.2.2';
 }
 /**
  * 初始化
@@ -10984,7 +10989,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 5.2.1. Root dom is null, can not initialize the chart!!!';
+  var errorMessage = 'Chart version is 5.2.2. Root dom is null, can not initialize the chart!!!';
   var container = ds;
 
   if (!container) {
