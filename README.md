@@ -14,7 +14,7 @@
 npm install klinecharts --save
 ```
 #### CDN
-You can use [unpkg](https://unpkg.com):  
+You can use [unpkg](https://unpkg.com):
 https://unpkg.com/klinecharts/dist/klinecharts.production.min.js
 
 ## Docs
@@ -34,7 +34,7 @@ The generated files are in the dist folder.
 
 
 ## Sample
-+ [Feature preview](https://liihuu.github.io/KLineChart)
++ [Feature preview](https://liihuu.github.io/KLineChart/)
 + [Sample code](https://github.com/liihuu/KLineChartSample)
 
 ## License
