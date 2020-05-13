@@ -128,14 +128,19 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     }
 
     const rectWidth = rectBorderSize * 2 + maxLabelWidth + rectPaddingLeft + rectPaddingRight
-
-    const centerX = this._width / 2
-    let rectX
-    if (x < centerX) {
-      rectX = this._width - rectRight - rectWidth
-    } else {
-      rectX = rectLeft
+    const rectX;
+    if (!window.rectKlineChartAlert) {
+      window.rectKlineChartAlert = rectLeft
     }
+    if (x < rectWidth) {
+      rectX = this._width - rectRight - rectWidth
+      window.rectKlineChartAlert = rectX
+    }
+    if (x > this._width - rectRight - rectWidth) {
+      rectX = rectLeft
+      window.rectKlineChartAlert = rectX
+    }
+    rectX = window.rectKlineChartAlert
     const rectY = rect.top
     const radius = rect.borderRadius
     this._ctx.lineWidth = rectBorderSize

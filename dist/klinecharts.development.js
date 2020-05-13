@@ -118,11 +118,13 @@ function _possibleConstructorReturn(self, call) {
 }
 
 function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
   return function () {
     var Super = _getPrototypeOf(Derived),
         result;
 
-    if (_isNativeReflectConstruct()) {
+    if (hasNativeReflectConstruct) {
       var NewTarget = _getPrototypeOf(this).constructor;
 
       result = Reflect.construct(Super, arguments, NewTarget);
@@ -181,7 +183,7 @@ function _unsupportedIterableToArray(o, minLen) {
   if (typeof o === "string") return _arrayLikeToArray(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(n);
+  if (n === "Map" || n === "Set") return Array.from(o);
   if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
@@ -6304,11 +6306,11 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
         rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length;
       }
 
-      var rectWidth = rectBorderSize * 2 + maxLabelWidth + rectPaddingLeft + rectPaddingRight;
-      var centerX = this._width / 2;
+      var rectWidth = rectBorderSize * 2 + maxLabelWidth + rectPaddingLeft + rectPaddingRight; // const centerX = this._width / 2
+
       var rectX;
 
-      if (x < centerX) {
+      if (x < rectWidth) {
         rectX = this._width - rectRight - rectWidth;
       } else {
         rectX = rectLeft;
@@ -9506,6 +9508,12 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
   }, {
     key: "mouseWheelEvent",
     value: function mouseWheelEvent(event) {
+      event.preventDefault(event);
+
+      this._chartData.startScroll();
+
+      this._chartData.scroll(-event.deltaX);
+
       if (!this._checkEventPointX(event.localX)) {
         return;
       }
@@ -9531,7 +9539,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
       }
 
       if (deltaY !== 0) {
-        var scale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY));
+        var scale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY)) * 5;
 
         this._chartData.zoom(scale, {
           x: event.localX,
