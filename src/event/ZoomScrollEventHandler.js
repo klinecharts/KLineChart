@@ -67,7 +67,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
     event.preventDefault(event)
     this._chartData.startScroll()
     this._chartData.scroll(-event.deltaX)
-    console.log(event.deltaX, event.deltaY)
+
     if (!this._checkEventPointX(event.localX)) {
       return
     }
