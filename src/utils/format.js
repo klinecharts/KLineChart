@@ -38,18 +38,17 @@ export function formatValue (data, key, defaultValue = '--') {
  * @param timezone
  * @returns {string}
  */
-const locales = 'en-us'
 export function formatDate (timestamp, format, timezone) {
   if (timestamp && isNumber(timestamp)) {
     const date = new Date(timestamp)
     let dateTimeString
     try {
       dateTimeString = new Intl.DateTimeFormat(
-        locales, { hour12: false, timeZone: timezone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+        'en', { hour12: false, timeZone: timezone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }
       ).format(date)
     } catch (e) {
       dateTimeString = new Intl.DateTimeFormat(
-        locales, { hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+        'en', { hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }
       ).format(date)
     }
     const dateString = dateTimeString.match(/^[\d]{1,2}\/[\d]{1,2}\/[\d]{4}/)[0]

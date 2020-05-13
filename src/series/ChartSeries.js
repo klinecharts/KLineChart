@@ -64,6 +64,11 @@ export default class ChartSeries {
   _initChartContainer (container) {
     this._container = container
     this._chartContainer = document.createElement('div')
+    this._chartContainer.style.userSelect = 'none'
+    this._chartContainer.style.webkitUserSelect = 'none'
+    this._chartContainer.style.msUserSelect = 'none'
+    this._chartContainer.style.MozUserSelect = 'none'
+    this._chartContainer.style.webkitTapHighlightColor = 'transparent'
     this._chartContainer.style.position = 'relative'
     this._chartContainer.style.outline = 'none'
     this._chartContainer.style.borderStyle = 'none'

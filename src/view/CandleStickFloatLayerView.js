@@ -145,30 +145,29 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     this._ctx.stroke()
     this._drawRoundRect(rectX, rectY, rectWidth, rectHeight, radius)
     this._ctx.fill()
+    const baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
+    let labelY = rectY + rectBorderSize + rectPaddingTop
+    // 开始渲染基础数据文字
+    this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.family)
+    baseLabels.forEach((label, i) => {
+      labelY += baseTextMarginTop
+      this._ctx.textAlign = 'left'
+      this._ctx.fillStyle = baseTextColor
+      this._ctx.fillText(`${label}: `, baseLabelX, labelY)
 
+      const value = baseValues[i] || '--'
+      let text
+      this._ctx.fillStyle = value.color || baseTextColor
+      if (isObject(value)) {
+        text = value.value || '--'
+      } else {
+        text = value
+      }
+      this._ctx.textAlign = 'right'
+      this._ctx.fillText(text, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY)
+      labelY += (baseTextSize + baseTextMarginBottom)
+    })
     if (isCandleStick) {
-      const baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
-      let labelY = rectY + rectBorderSize + rectPaddingTop
-      // 开始渲染基础数据文字
-      this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.family)
-      baseLabels.forEach((label, i) => {
-        labelY += baseTextMarginTop
-        this._ctx.textAlign = 'left'
-        this._ctx.fillStyle = baseTextColor
-        this._ctx.fillText(`${label}: `, baseLabelX, labelY)
-
-        const value = baseValues[i] || '--'
-        let text
-        this._ctx.fillStyle = value.color || baseTextColor
-        if (isObject(value)) {
-          text = value.value || '--'
-        } else {
-          text = value
-        }
-        this._ctx.textAlign = 'right'
-        this._ctx.fillText(text, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY)
-        labelY += (baseTextSize + baseTextMarginBottom)
-      })
       // 开始渲染指标数据文字
       const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
       const colors = technicalIndicatorOptions.line.colors
