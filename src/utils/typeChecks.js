@@ -93,6 +93,15 @@ export function isNumber (value) {
 }
 
 /**
+ * 判断是否有效
+ * @param value
+ * @returns {boolean}
+ */
+export function isValid (value) {
+  return value !== null && value !== undefined
+}
+
+/**
  * 判断是否是boolean
  * @param value
  * @returns {boolean}
