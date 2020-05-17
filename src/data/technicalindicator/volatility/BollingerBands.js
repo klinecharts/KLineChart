@@ -30,22 +30,19 @@ export default class BollingerBands extends TechnicalIndicator {
   calcTechnicalIndicator (dataList) {
     const p = this.calcParams[0] - 1
     let closeSum = 0
-    const result = []
     this._calc(dataList, i => {
       const close = dataList[i].close
-      let boll = {}
+      const boll = {}
       closeSum += close
       if (i >= p) {
-        const ma = closeSum / this.calcParams[0]
-        const md = this._getBollMd(dataList.slice(i - p, i + 1), ma)
-        const up = ma + 2 * md
-        const dn = ma - 2 * md
-        boll = { up, mid: ma, dn }
+        boll.mid = closeSum / this.calcParams[0]
+        const md = this._getBollMd(dataList.slice(i - p, i + 1), boll.mid)
+        boll.up = boll.mid + 2 * md
+        boll.dn = boll.mid - 2 * md
         closeSum -= dataList[i - p].close
       }
-      result.push(boll)
+      dataList[i].boll = boll
     })
-    return result
   }
 
   /**

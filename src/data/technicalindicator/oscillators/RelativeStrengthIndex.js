@@ -44,7 +44,6 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
   calcTechnicalIndicator (dataList) {
     const sumCloseAs = []
     const sumCloseBs = []
-    const result = []
     const paramCount = this.calcParams.length
     this._calc(dataList, i => {
       const rsi = {}
@@ -72,8 +71,7 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
           }
         }
       }
-      result.push(rsi)
+      dataList[i].rsi = rsi
     })
-    return result
   }
 }

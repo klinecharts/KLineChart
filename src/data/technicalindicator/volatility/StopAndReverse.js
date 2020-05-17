@@ -30,7 +30,6 @@ export default class StopAndReverse extends TechnicalIndicator {
     const step = this.calcParams[1] / 100
     const maxAf = this.calcParams[2] / 100
 
-    const result = []
     // 加速因子
     let af = startAf
     // 极值
@@ -80,8 +79,7 @@ export default class StopAndReverse extends TechnicalIndicator {
           sar = highMax
         }
       }
-      result.push({ sar })
+      dataList[i].sar = { sar }
     })
-    return result
   }
 }

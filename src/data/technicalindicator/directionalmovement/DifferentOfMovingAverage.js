@@ -38,7 +38,6 @@ export default class DifferentOfMovingAverage extends TechnicalIndicator {
     let closeSum1 = 0
     let closeSum2 = 0
     let dmaSum = 0
-    const result = []
     this._calc(dataList, i => {
       const dma = {}
       const close = dataList[i].close
@@ -61,11 +60,10 @@ export default class DifferentOfMovingAverage extends TechnicalIndicator {
         dmaSum += dif
         if (i >= maxParam + this.calcParams[2] - 2) {
           dma.ama = dmaSum / this.calcParams[2]
-          dmaSum -= result[i - (this.calcParams[2] - 1)].dma
+          dmaSum -= dataList[i - (this.calcParams[2] - 1)].dma.dma
         }
       }
-      result.push(dma)
+      dataList[i].dma = dma
     })
-    return result
   }
 }

@@ -38,7 +38,6 @@ export default class MovingAverage extends TechnicalIndicator {
   calcTechnicalIndicator (dataList) {
     const paramCount = this.calcParams.length
     const closeSums = []
-    const result = []
     this._calc(dataList, i => {
       const ma = {}
       const close = dataList[i].close
@@ -50,8 +49,7 @@ export default class MovingAverage extends TechnicalIndicator {
           closeSums[j] -= dataList[i - (p - 1)].close
         }
       }
-      result.push(ma)
+      dataList[i].ma = ma
     })
-    return result
   }
 }

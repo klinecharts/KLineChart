@@ -63,7 +63,6 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
     const dmmList = []
     let dxSum = 0
     const dxList = []
-    const result = []
     this._calc(dataList, i => {
       const dmi = {}
       if (i > 0) {
@@ -98,7 +97,7 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
             const adx = dxSum / this.calcParams[1]
             dmi.adx = adx
             if (i >= this.calcParams[0] + this.calcParams[1] * 2 - 2) {
-              dmi.adxr = (adx + result[this.calcParams[1] - 1].adx) / 2
+              dmi.adxr = (adx + dataList[this.calcParams[1] - 1].dmi.adx) / 2
             }
             dxSum -= dxList[i - (this.calcParams[0] + this.calcParams[1] - 1)]
           }
@@ -107,9 +106,7 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
           dmmSum -= dmmList[i - this.calcParams[0]]
         }
       }
-      result.push(dmi)
+      dataList[i].dmi = dmi
     })
-
-    return result
   }
 }

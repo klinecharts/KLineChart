@@ -42,7 +42,6 @@ export default class Brar extends TechnicalIndicator {
     let cyl = 0
     let ho = 0
     let ol = 0
-    const result = []
     this._calc(dataList, i => {
       const brar = {}
       if (i > 0) {
@@ -76,8 +75,7 @@ export default class Brar extends TechnicalIndicator {
           ol -= (agoOpen - agoLow)
         }
       }
-      result.push(brar)
+      dataList[i].brar = brar
     })
-    return result
   }
 }

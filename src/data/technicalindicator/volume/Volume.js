@@ -39,7 +39,6 @@ export default class Volume extends TechnicalIndicator {
   calcTechnicalIndicator (dataList) {
     const paramCount = this.calcParams.length
     const volSums = []
-    const result = []
     this._calc(dataList, i => {
       const volume = dataList[i].volume
       const vol = { num: volume }
@@ -51,8 +50,7 @@ export default class Volume extends TechnicalIndicator {
           volSums[j] -= dataList[i - (p - 1)].volume
         }
       }
-      result.push(vol)
+      dataList[i].vol = vol
     })
-    return result
   }
 }

@@ -43,7 +43,6 @@ export default class WilliamsR extends TechnicalIndicator {
    * @returns {[]}
    */
   calcTechnicalIndicator (dataList) {
-    const result = []
     this._calc(dataList, i => {
       const wr = {}
       const close = dataList[i].close
@@ -57,8 +56,7 @@ export default class WilliamsR extends TechnicalIndicator {
           wr[this.plots[index].key] = hnSubLn === 0 ? 0 : (hn - close) / hnSubLn * 100
         }
       })
-      result.push(wr)
+      dataList[i].wr = wr
     })
-    return result
   }
 }

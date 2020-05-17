@@ -44,7 +44,6 @@ export default class ExponentialMovingAverage extends TechnicalIndicator {
   calcTechnicalIndicator (dataList) {
     const paramCount = this.calcParams.length
     const oldEmas = []
-    const result = []
     this._calc(dataList, i => {
       const ema = {}
       const close = dataList[i].close
@@ -58,8 +57,7 @@ export default class ExponentialMovingAverage extends TechnicalIndicator {
         ema[this.plots[j].key] = emaValue
         oldEmas[j] = emaValue
       }
-      result.push(ema)
+      dataList[i].ema = ema
     })
-    return result
   }
 }

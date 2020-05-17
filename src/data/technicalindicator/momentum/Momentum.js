@@ -35,7 +35,6 @@ export default class Momentum extends TechnicalIndicator {
    */
   calcTechnicalIndicator (dataList) {
     let mtmSum = 0
-    const result = []
     this._calc(dataList, i => {
       const mtm = {}
       if (i >= this.calcParams[0] - 1) {
@@ -45,11 +44,10 @@ export default class Momentum extends TechnicalIndicator {
         mtmSum += mtm.mtm
         if (i >= this.calcParams[0] + this.calcParams[1] - 2) {
           mtm.mtmMa = mtmSum / this.calcParams[1]
-          mtmSum -= result[i - (this.calcParams[1] - 1)].mtm
+          mtmSum -= dataList[i - (this.calcParams[1] - 1)].mtm.mtm
         }
       }
-      result.push(mtm)
+      dataList[i].mtm = mtm
     })
-    return result
   }
 }

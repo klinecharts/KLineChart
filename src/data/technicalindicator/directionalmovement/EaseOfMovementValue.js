@@ -44,7 +44,6 @@ export default class EaseOfMovementValue extends TechnicalIndicator {
     let emSum = 0
     let emvSum = 0
     const emList = []
-    const result = []
     this._calc(dataList, i => {
       const emv = {}
       if (i > 0) {
@@ -61,13 +60,12 @@ export default class EaseOfMovementValue extends TechnicalIndicator {
           emvSum += emv.emv
           if (i >= this.calcParams[0] + this.calcParams[1] - 1) {
             emv.emvMa = emvSum / this.calcParams[1]
-            emvSum -= result[i - (this.calcParams[1] - 1)].emv
+            emvSum -= dataList[i - (this.calcParams[1] - 1)].emv.emv
           }
           emSum -= emList[i - this.calcParams[0]]
         }
       }
-      result.push(emv)
+      dataList[i].emv = emv
     })
-    return result
   }
 }

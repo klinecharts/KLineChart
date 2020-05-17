@@ -60,7 +60,6 @@ export default class CurrentRatio extends TechnicalIndicator {
     const ma4List = []
     let highSubPreMidSum = 0
     let preMidSubLowSum = 0
-    const result = []
     this._calc(dataList, i => {
       const cr = {}
       if (i > 0) {
@@ -95,33 +94,32 @@ export default class CurrentRatio extends TechnicalIndicator {
             if (i >= this.calcParams[0] + this.calcParams[1] + ma1ForwardPeriod - 2) {
               cr.ma1 = ma1List[ma1List.length - ma1ForwardPeriod]
             }
-            ma1Sum -= result[i - (this.calcParams[1] - 1)].cr
+            ma1Sum -= dataList[i - (this.calcParams[1] - 1)].cr.cr
           }
           if (i >= this.calcParams[0] + this.calcParams[2] - 1) {
             ma2List.push(ma2Sum / this.calcParams[2])
             if (i >= this.calcParams[0] + this.calcParams[2] + ma2ForwardPeriod - 2) {
               cr.ma2 = ma2List[ma2List.length - ma2ForwardPeriod]
             }
-            ma2Sum -= result[i - (this.calcParams[2] - 1)].cr
+            ma2Sum -= dataList[i - (this.calcParams[2] - 1)].cr.cr
           }
           if (i >= this.calcParams[0] + this.calcParams[3] - 1) {
             ma3List.push(ma3Sum / this.calcParams[3])
             if (i >= this.calcParams[0] + this.calcParams[3] + ma3ForwardPeriod - 2) {
               cr.ma3 = ma3List[ma3List.length - ma3ForwardPeriod]
             }
-            ma3Sum -= result[i - (this.calcParams[3] - 1)].cr
+            ma3Sum -= dataList[i - (this.calcParams[3] - 1)].cr.cr
           }
           if (i >= this.calcParams[0] + this.calcParams[4] - 1) {
             ma4List.push(ma4Sum / this.calcParams[4])
             if (i >= this.calcParams[0] + this.calcParams[4] + ma4ForwardPeriod - 2) {
               cr.ma4 = ma4List[ma4List.length - ma4ForwardPeriod]
             }
-            ma4Sum -= result[i - (this.calcParams[4] - 1)].cr
+            ma4Sum -= dataList[i - (this.calcParams[4] - 1)].cr.cr
           }
         }
       }
-      result.push(cr)
+      dataList[i].cr = cr
     })
-    return result
   }
 }

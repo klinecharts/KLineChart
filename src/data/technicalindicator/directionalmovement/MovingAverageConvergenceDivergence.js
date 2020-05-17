@@ -49,8 +49,6 @@ export default class MovingAverageConvergenceDivergence extends TechnicalIndicat
     let oldDea = 0
     let macd = 0
 
-    const result = []
-
     this._calc(dataList, i => {
       const close = dataList[i].close
       if (i === 0) {
@@ -68,8 +66,7 @@ export default class MovingAverageConvergenceDivergence extends TechnicalIndicat
       oldEmaLong = emaLong
       oldDea = dea
 
-      result.push({ diff, dea, macd })
+      dataList[i].macd = { diff, dea, macd }
     })
-    return result
   }
 }
