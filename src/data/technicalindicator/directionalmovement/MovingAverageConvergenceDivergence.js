@@ -1,10 +1,24 @@
-import TechnicalIndicator from './TechnicalIndicator'
-import { MACD as name } from './createTechnicalIndicator'
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
 
-export default class MACD extends TechnicalIndicator {
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import TechnicalIndicator from '../TechnicalIndicator'
+import { MACD } from '../createTechnicalIndicator'
+
+export default class MovingAverageConvergenceDivergence extends TechnicalIndicator {
   constructor () {
     super(
-      name, [12, 26, 9],
+      MACD, [12, 26, 9],
       [
         { key: 'diff', type: 'line' },
         { key: 'dea', type: 'line' },
@@ -37,18 +51,18 @@ export default class MACD extends TechnicalIndicator {
 
     const result = []
 
-    this._calc(dataList, (i) => {
+    this._calc(dataList, i => {
       const close = dataList[i].close
       if (i === 0) {
         emaShort = close
         emaLong = close
       } else {
-        emaShort = (2 * close + (this._calcParams[0] - 1) * oldEmaShort) / (this._calcParams[0] + 1)
-        emaLong = (2 * close + (this._calcParams[1] - 1) * oldEmaLong) / (this._calcParams[1] + 1)
+        emaShort = (2 * close + (this.calcParams[0] - 1) * oldEmaShort) / (this.calcParams[0] + 1)
+        emaLong = (2 * close + (this.calcParams[1] - 1) * oldEmaLong) / (this.calcParams[1] + 1)
       }
 
       const diff = emaShort - emaLong
-      dea = (diff * 2 + oldDea * (this._calcParams[2] - 1)) / (this._calcParams[2] + 1)
+      dea = (diff * 2 + oldDea * (this.calcParams[2] - 1)) / (this.calcParams[2] + 1)
       macd = (diff - dea) * 2
       oldEmaShort = emaShort
       oldEmaLong = emaLong
