@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { OBV } from '../createTechnicalIndicator'
+import { OBV } from '../technicalIndicatorType'
 
 export default class OnBalanceVolume extends TechnicalIndicator {
   constructor () {

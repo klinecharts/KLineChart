@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { SAR } from '../createTechnicalIndicator'
+import { SAR } from '../technicalIndicatorType'
 
 export default class StopAndReverse extends TechnicalIndicator {
   constructor () {

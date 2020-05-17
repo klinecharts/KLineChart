@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { BRAR } from '../createTechnicalIndicator'
+import { BRAR } from '../technicalIndicatorType'
 
 export default class Brar extends TechnicalIndicator {
   constructor () {

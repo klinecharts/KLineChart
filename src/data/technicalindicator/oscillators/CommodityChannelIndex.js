@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { CCI } from '../createTechnicalIndicator'
+import { CCI } from '../technicalIndicatorType'
 
 export default class CommodityChannelIndex extends TechnicalIndicator {
   constructor () {

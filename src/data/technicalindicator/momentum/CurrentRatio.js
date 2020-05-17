@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { CR } from '../createTechnicalIndicator'
+import { CR } from '../technicalIndicatorType'
 
 export default class CurrentRatio extends TechnicalIndicator {
   constructor () {

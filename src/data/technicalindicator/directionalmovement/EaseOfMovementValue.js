@@ -14,7 +14,7 @@
 
 import TechnicalIndicator from '../TechnicalIndicator'
 
-import { EMV } from '../createTechnicalIndicator'
+import { EMV } from '../technicalIndicatorType'
 
 export default class EaseOfMovementValue extends TechnicalIndicator {
   constructor () {

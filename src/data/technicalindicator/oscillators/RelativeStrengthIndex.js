@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { RSI } from '../createTechnicalIndicator'
+import { RSI } from '../technicalIndicatorType'
 
 export default class RelativeStrengthIndex extends TechnicalIndicator {
   constructor () {

@@ -13,12 +13,12 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { VOL as name } from '../createTechnicalIndicator'
+import { VOL } from '../technicalIndicatorType'
 
 export default class Volume extends TechnicalIndicator {
   constructor () {
     super(
-      name, [5, 10, 20],
+      VOL, [5, 10, 20],
       [
         { key: 'ma5', type: 'line' },
         { key: 'ma10', type: 'line' },

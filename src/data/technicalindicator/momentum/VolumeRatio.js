@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { VR } from '../createTechnicalIndicator'
+import { VR } from '../technicalIndicatorType'
 
 export default class VolumeRatio extends TechnicalIndicator {
   constructor () {
