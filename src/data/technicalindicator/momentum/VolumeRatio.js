@@ -41,6 +41,7 @@ export default class VolumeRatio extends TechnicalIndicator {
     let dvs = 0
     let pvs = 0
     let vrSum = 0
+    const result = []
     this._calc(dataList, i => {
       const vr = {}
       const close = dataList[i].close
@@ -59,7 +60,7 @@ export default class VolumeRatio extends TechnicalIndicator {
         vrSum += vr.vr
         if (i >= this.calcParams[0] + this.calcParams[1] - 2) {
           vr.vrMa = vrSum / this.calcParams[1]
-          vrSum -= dataList[i - (this.calcParams[1] - 1)].vr.vr
+          vrSum -= result[i - (this.calcParams[1] - 1)].vr
         }
 
         const agoData = dataList[i - (this.calcParams[0] - 1)]
@@ -74,7 +75,8 @@ export default class VolumeRatio extends TechnicalIndicator {
           pvs -= agoVolume
         }
       }
-      dataList[i].vr = vr
+      result.push(vr)
     })
+    return result
   }
 }

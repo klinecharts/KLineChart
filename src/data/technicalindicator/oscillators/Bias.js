@@ -44,6 +44,7 @@ export default class Bias extends TechnicalIndicator {
   calcTechnicalIndicator (dataList) {
     const closeSums = []
     const paramCount = this.calcParams.length
+    const result = []
     this._calc(dataList, i => {
       const bias = {}
       const close = dataList[i].close
@@ -57,7 +58,8 @@ export default class Bias extends TechnicalIndicator {
           closeSums[j] -= dataList[i - p].close
         }
       }
-      dataList[i].bias = bias
+      result.push(bias)
     })
+    return result
   }
 }

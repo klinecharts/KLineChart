@@ -48,6 +48,7 @@ export default class TripleExponentiallySmoothedAverage extends TechnicalIndicat
     let oldEmaClose2
     let oldEmaClose3
     let trixSum = 0
+    const result = []
     this._calc(dataList, i => {
       const trix = {}
       const close = dataList[i].close
@@ -63,13 +64,14 @@ export default class TripleExponentiallySmoothedAverage extends TechnicalIndicat
         trixSum += trix.trix
         if (i >= this.calcParams[1] - 1) {
           trix.trixMa = trixSum / this.calcParams[1]
-          trixSum -= (dataList[i - (this.calcParams[1] - 1)].trix.trix || 0)
+          trixSum -= (result[i - (this.calcParams[1] - 1)].trix || 0)
         }
       }
       oldEmaClose1 = emaClose1
       oldEmaClose2 = emaClose2
       oldEmaClose3 = emaClose3
-      dataList[i].trix = trix
+      result.push(trix)
     })
+    return result
   }
 }

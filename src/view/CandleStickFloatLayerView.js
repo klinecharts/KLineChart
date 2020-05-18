@@ -17,21 +17,22 @@ import { isFunction, isObject } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, getFont } from '../utils/canvas'
 import { ChartType, FloatLayerPromptCandleStickTextDisplayType } from '../data/options/styleOptions'
+import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalIndicatorControl'
 
 export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLayerView {
-  _drawPrompt (kLineData, x, isDrawTechnicalIndicatorPromptPoint) {
+  _drawPrompt (kLineData, technicalIndicatorData, technicalIndicator, x) {
     const floatLayerPromptCandleStick = this._chartData.styleOptions().floatLayer.prompt.candleStick
     const candleStickPromptData = this._getCandleStickPromptData(kLineData, floatLayerPromptCandleStick)
     if (floatLayerPromptCandleStick.showType === FloatLayerPromptCandleStickTextDisplayType.STANDARD) {
       this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData)
       if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
         this._drawTechnicalIndicatorPrompt(
-          kLineData, x, isDrawTechnicalIndicatorPromptPoint,
+          technicalIndicatorData, technicalIndicator, x,
           floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop
         )
       }
     } else {
-      this._drawCandleStickRectPromptText(kLineData, x, floatLayerPromptCandleStick, candleStickPromptData)
+      this._drawCandleStickRectPromptText(kLineData, technicalIndicatorData, technicalIndicator, x, floatLayerPromptCandleStick, candleStickPromptData)
     }
   }
 
@@ -68,7 +69,10 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     })
   }
 
-  _drawCandleStickRectPromptText (kLineData, x, floatLayerPromptCandleStick, candleStickPromptData) {
+  _drawCandleStickRectPromptText (
+    kLineData, technicalIndicatorData, technicalIndicator, x,
+    floatLayerPromptCandleStick, candleStickPromptData
+  ) {
     const baseLabels = floatLayerPromptCandleStick.labels
     const baseValues = candleStickPromptData
     const baseTextMarginLeft = floatLayerPromptCandleStick.text.marginLeft
@@ -104,7 +108,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       rectPaddingTop + rectPaddingBottom +
       (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length
 
-    const technicalIndicatorPromptData = this._getTechnicalIndicatorPromptData(kLineData)
+    const technicalIndicatorPromptData = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
     const floatLayerPromptTechnicalIndicator = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator
 
     const indicatorTextMarginLeft = floatLayerPromptTechnicalIndicator.text.marginLeft
@@ -227,7 +231,8 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
         values = baseValues
       }
     } else {
-      const precisionOptions = this._chartData.precisionOptions()
+      const pricePrecision = this._chartData.pricePrecision()
+      const volumePrecision = this._chartData.volumePrecision()
       values = [
         formatValue(kLineData, 'timestamp'),
         formatValue(kLineData, 'open'),
@@ -243,11 +248,11 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
             break
           }
           case values.length - 1: {
-            values[index] = formatBigNumber(formatPrecision(value, precisionOptions.volume))
+            values[index] = formatBigNumber(formatPrecision(value, volumePrecision))
             break
           }
           default: {
-            values[index] = formatPrecision(value, precisionOptions.price)
+            values[index] = formatPrecision(value, pricePrecision)
             break
           }
         }

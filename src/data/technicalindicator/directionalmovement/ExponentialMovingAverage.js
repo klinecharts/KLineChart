@@ -24,7 +24,7 @@ export default class ExponentialMovingAverage extends TechnicalIndicator {
         { key: 'ema6', type: 'line' },
         { key: 'ema12', type: 'line' },
         { key: 'ema20', type: 'line' }
-      ]
+      ], 4, false, true
     )
   }
 
@@ -44,6 +44,7 @@ export default class ExponentialMovingAverage extends TechnicalIndicator {
   calcTechnicalIndicator (dataList) {
     const paramCount = this.calcParams.length
     const oldEmas = []
+    const result = []
     this._calc(dataList, i => {
       const ema = {}
       const close = dataList[i].close
@@ -57,7 +58,8 @@ export default class ExponentialMovingAverage extends TechnicalIndicator {
         ema[this.plots[j].key] = emaValue
         oldEmas[j] = emaValue
       }
-      dataList[i].ema = ema
+      result.push(ema)
     })
+    return result
   }
 }

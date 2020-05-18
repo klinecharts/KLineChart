@@ -42,7 +42,7 @@ export default class GraphicMarkView extends View {
 
   _draw () {
     const graphicMark = this._chartData.styleOptions().graphicMark
-    const pricePrecision = this._chartData.precisionOptions().price
+    const pricePrecision = this._chartData.pricePrecision()
     // 画线
     this._drawHorizontalStraightLine(graphicMark)
     this._drawVerticalStraightLine(graphicMark)

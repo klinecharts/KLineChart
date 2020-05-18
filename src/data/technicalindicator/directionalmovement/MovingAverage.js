@@ -24,7 +24,7 @@ export default class MovingAverage extends TechnicalIndicator {
         { key: 'ma10', type: 'line' },
         { key: 'ma30', type: 'line' },
         { key: 'ma60', type: 'line' }
-      ]
+      ], 4, false, true
     )
   }
 
@@ -38,6 +38,7 @@ export default class MovingAverage extends TechnicalIndicator {
   calcTechnicalIndicator (dataList) {
     const paramCount = this.calcParams.length
     const closeSums = []
+    const result = []
     this._calc(dataList, i => {
       const ma = {}
       const close = dataList[i].close
@@ -49,7 +50,8 @@ export default class MovingAverage extends TechnicalIndicator {
           closeSums[j] -= dataList[i - (p - 1)].close
         }
       }
-      dataList[i].ma = ma
+      result.push(ma)
     })
+    return result
   }
 }

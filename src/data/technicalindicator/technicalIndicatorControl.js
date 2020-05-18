@@ -38,8 +38,13 @@ import {
   BIAS, BRAR, CCI, DMI, CR, PSY, DMA,
   TRIX, OBV, VR, WR, MTM, EMV, SAR
 } from './technicalIndicatorType'
+import { isValid } from '../../utils/typeChecks'
+import { formatBigNumber, formatPrecision } from '../../utils/format'
 
-export default function createTechnicalIndicator () {
+/**
+ * 创建技术指标集合
+ */
+export function createTechnicalIndicators () {
   return {
     [MA]: new MovingAverage(),
     [EMA]: new ExponentialMovingAverage(),
@@ -63,4 +68,32 @@ export default function createTechnicalIndicator () {
     [EMV]: new EaseOfMovementValue(),
     [SAR]: new StopAndReverse()
   }
+}
+
+export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technicalIndicator, yAxis) {
+  const calcParams = technicalIndicator.calcParams
+  const plots = technicalIndicator.plots
+  const precision = technicalIndicator.precision
+  const isVolumeTechnicalIndicator = technicalIndicator.isVolumeTechnicalIndicator
+
+  const labels = []
+  const values = []
+  let name = technicalIndicator.name
+  if (calcParams.length > 0) {
+    name = `${name}(${calcParams.join(',')})`
+  }
+  plots.forEach(plot => {
+    labels.push(plot.key.toUpperCase())
+    let value = technicalIndicatorData[plot.key]
+    let y
+    if (isValid(value)) {
+      y = yAxis.convertToPixel(value)
+      value = formatPrecision(value, precision)
+      if (isVolumeTechnicalIndicator) {
+        value = formatBigNumber(value)
+      }
+    }
+    values.push({ value, y })
+  })
+  return { labels, values, name }
 }

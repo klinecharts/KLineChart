@@ -233,7 +233,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
       return
     }
     this._drawLowestHighestPriceMark(
-      highestPriceMark, this._highestMarkData.x, price, true, this._chartData.precisionOptions().price
+      highestPriceMark, this._highestMarkData.x, price, true, this._chartData.pricePrecision()
     )
   }
 
@@ -251,7 +251,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
       return
     }
     this._drawLowestHighestPriceMark(
-      lowestPriceMark, this._lowestMarkData.x, price, false, this._chartData.precisionOptions().price
+      lowestPriceMark, this._lowestMarkData.x, price, false, this._chartData.pricePrecision()
     )
   }
 

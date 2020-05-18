@@ -23,13 +23,14 @@ export default class BollingerBands extends TechnicalIndicator {
         { key: 'up', type: 'line' },
         { key: 'mid', type: 'line' },
         { key: 'dn', type: 'line' }
-      ], 4, true
+      ], 4, true, true
     )
   }
 
   calcTechnicalIndicator (dataList) {
     const p = this.calcParams[0] - 1
     let closeSum = 0
+    const result = []
     this._calc(dataList, i => {
       const close = dataList[i].close
       const boll = {}
@@ -41,8 +42,9 @@ export default class BollingerBands extends TechnicalIndicator {
         boll.dn = boll.mid - 2 * md
         closeSum -= dataList[i - p].close
       }
-      dataList[i].boll = boll
+      result.push(boll)
     })
+    return result
   }
 
   /**

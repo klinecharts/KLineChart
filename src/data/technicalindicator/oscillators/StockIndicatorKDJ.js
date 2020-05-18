@@ -35,6 +35,7 @@ export default class StockIndicatorKDJ extends TechnicalIndicator {
    */
   calcTechnicalIndicator (dataList) {
     const p1 = this.calcParams[0] - 1
+    const result = []
     this._calc(dataList, i => {
       const kdj = {}
       const close = dataList[i].close
@@ -49,11 +50,12 @@ export default class StockIndicatorKDJ extends TechnicalIndicator {
         // 当日D值=2/3×前一日D值+1/3×当日K值
         // 若无前一日K 值与D值，则可分别用50来代替。
         // J值=3*当日K值-2*当日D值
-        kdj.k = ((this.calcParams[1] - 1) * (dataList[i - 1].kdj.k || 50) + rsv) / this.calcParams[1]
-        kdj.d = ((this.calcParams[2] - 1) * (dataList[i - 1].kdj.d || 50) + kdj.k) / this.calcParams[2]
+        kdj.k = ((this.calcParams[1] - 1) * (result[i - 1].k || 50) + rsv) / this.calcParams[1]
+        kdj.d = ((this.calcParams[2] - 1) * (result[i - 1].d || 50) + kdj.k) / this.calcParams[2]
         kdj.j = 3.0 * kdj.k - 2.0 * kdj.d
       }
-      dataList[i].kdj = kdj
+      result.push(kdj)
     })
+    return result
   }
 }

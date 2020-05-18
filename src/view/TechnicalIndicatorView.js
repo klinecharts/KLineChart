@@ -13,10 +13,13 @@
  */
 
 import View from './View'
-import { TechnicalIndicatorType, getTechnicalIndicatorDataKeysAndValues } from '../data/options/technicalIndicatorParamOptions'
 import { LineStyle } from '../data/options/styleOptions'
 import { drawHorizontalLine, drawVerticalLine, drawLine } from '../utils/canvas'
 import { formatValue } from '../utils/format'
+import { isValid } from '../utils/typeChecks'
+
+export const BAR = 'bar'
+export const CIRCLE = 'circle'
 
 export default class TechnicalIndicatorView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
@@ -74,86 +77,96 @@ export default class TechnicalIndicatorView extends View {
    * @private
    */
   _drawTechnicalIndicator () {
-    const technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType()
-    const technicalIndicatorParamOptions = this._chartData.technicalIndicatorParamOptions()
-    const linePoints = []
+    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
+    const plots = technicalIndicator.plots
+    const lines = []
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const dataList = this._chartData.dataList()
+    const technicalIndicatorResult = technicalIndicator.result
+    this._ctx.lineWidth = 1
     this._drawGraphics(
       (x, i, kLineData, halfBarSpace) => {
-        const keysAndValues = getTechnicalIndicatorDataKeysAndValues(kLineData, technicalIndicatorType, technicalIndicatorParamOptions)
-        const values = keysAndValues.values
-        const lineValues = [...values]
-        switch (technicalIndicatorType) {
-          case TechnicalIndicatorType.MA:
-          case TechnicalIndicatorType.EMA:
-          case TechnicalIndicatorType.BOLL: {
-            this._drawTechnicalIndicatorOhlc(
-              i, x, halfBarSpace, technicalIndicatorOptions,
-              kLineData, this._yAxis.isCandleStickYAxis()
-            )
-            break
-          }
-          case TechnicalIndicatorType.MACD: {
-            lineValues.splice(lineValues.length - 1, 1)
-            const macd = values[values.length - 1]
-            if (macd > 0) {
-              this._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor
-              this._ctx.fillStyle = technicalIndicatorOptions.bar.upColor
-            } else if (macd < 0) {
-              this._ctx.strokeStyle = technicalIndicatorOptions.bar.downColor
-              this._ctx.fillStyle = technicalIndicatorOptions.bar.downColor
-            } else {
-              this._ctx.strokeStyle = technicalIndicatorOptions.bar.noChangeColor
-              this._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor
-            }
-            const preKLineData = formatValue(dataList, i - 1, {})
-            const preMacd = formatValue(preKLineData, 'macd', {}).macd
-            const isSolid = !((preMacd || preMacd === 0) && macd > preMacd)
-            this._drawBars(x, halfBarSpace, macd, isSolid)
-            break
-          }
-          case TechnicalIndicatorType.VOL: {
-            lineValues.splice(lineValues.length - 1, 1)
-            const close = kLineData.close
-            const open = kLineData.open
-            if (close > open) {
-              this._ctx.fillStyle = technicalIndicatorOptions.bar.upColor
-            } else if (close < open) {
-              this._ctx.fillStyle = technicalIndicatorOptions.bar.downColor
-            } else {
-              this._ctx.fillStyle = technicalIndicatorOptions.bar.noChangeColor
-            }
-            const num = values[values.length - 1]
-            this._drawBars(x, halfBarSpace, num, true)
-            break
-          }
-          case TechnicalIndicatorType.SAR: {
-            lineValues.splice(0, 1)
-            const sar = values[0]
-            if (sar || sar === 0) {
-              const dataY = this._yAxis.convertToPixel(sar)
-              if (sar < (kLineData.high + kLineData.low) / 2) {
-                this._ctx.strokeStyle = technicalIndicatorOptions.bar.upColor
-              } else {
-                this._ctx.strokeStyle = technicalIndicatorOptions.bar.downColor
-              }
-              this._ctx.beginPath()
-              this._ctx.arc(x, dataY, halfBarSpace, Math.PI * 2, 0, true)
-              this._ctx.stroke()
-              this._ctx.closePath()
-            }
-            this._drawTechnicalIndicatorOhlc(
-              i, x, halfBarSpace, technicalIndicatorOptions,
-              kLineData, this._yAxis.isCandleStickYAxis()
-            )
-            break
-          }
+        if (technicalIndicator.isPriceTechnicalIndicator) {
+          this._drawTechnicalIndicatorOhlc(
+            i, x, halfBarSpace, technicalIndicatorOptions,
+            kLineData, this._yAxis.isCandleStickYAxis()
+          )
         }
-        this._prepareLinePoints(x, lineValues, linePoints)
+        const technicalIndicatorData = technicalIndicatorResult[i] || {}
+        let lineValueIndex = 0
+        plots.forEach(plot => {
+          const value = technicalIndicatorData[plot.key]
+          switch (plot.type) {
+            case CIRCLE: {
+              if (isValid(value)) {
+                const preKLineData = dataList[i - 1]
+                const valueY = this._yAxis.convertToPixel(value)
+                const circle = {
+                  x,
+                  y: valueY,
+                  radius: halfBarSpace,
+                  color: plot.color
+                    ? plot.color(preKLineData, kLineData, technicalIndicatorOptions)
+                    : technicalIndicatorOptions.circle.noChangeColor,
+                  isStroke: plot.isStroke
+                    ? plot.isStroke(preKLineData, kLineData)
+                    : true
+                }
+                this._drawCircle(circle)
+              }
+              break
+            }
+            case BAR: {
+              if (isValid(value)) {
+                const preKLineData = dataList[i - 1]
+                const valueY = this._yAxis.convertToPixel(value)
+                const referenceValue = plot.referenceValue || 0
+                const referenceValueY = this._yAxis.convertToPixel(referenceValue)
+                const height = Math.abs(referenceValueY - valueY)
+                const bar = {
+                  x: x - halfBarSpace,
+                  width: halfBarSpace * 2,
+                  height: Math.max(1, height)
+                }
+                if (valueY <= referenceValueY) {
+                  bar.y = height < 1 ? referenceValueY + 1 : valueY
+                } else {
+                  bar.y = referenceValueY
+                }
+                bar.color = plot.color
+                  ? plot.color(preKLineData, kLineData, technicalIndicatorOptions)
+                  : technicalIndicatorOptions.bar.noChangeColor
+                bar.isStroke = plot.isStroke
+                  ? plot.isStroke(preKLineData, kLineData)
+                  : false
+                this._drawBar(bar)
+              }
+              break
+            }
+            default: {
+              if (isValid(value)) {
+                const valueY = this._yAxis.convertToPixel(value)
+                const line = { x: x, y: valueY }
+                if (lines[lineValueIndex]) {
+                  lines[lineValueIndex].push(line)
+                } else {
+                  lines[lineValueIndex] = [line]
+                }
+              } else {
+                if (lines[lineValueIndex]) {
+                  lines[lineValueIndex].push(null)
+                } else {
+                  lines[lineValueIndex] = [null]
+                }
+              }
+              lineValueIndex++
+              break
+            }
+          }
+        })
       },
       () => {
-        this._drawLines(linePoints, technicalIndicatorOptions)
+        this._drawLines(lines, technicalIndicatorOptions)
       }
     )
   }
@@ -178,78 +191,64 @@ export default class TechnicalIndicatorView extends View {
   }
 
   /**
-   * 准备绘制线的数据
-   * @param x
-   * @param lineValues
-   * @param linePoints
-   */
-  _prepareLinePoints (x, lineValues, linePoints) {
-    for (let i = 0; i < lineValues.length; i++) {
-      const value = lineValues[i]
-      const valueY = this._yAxis.convertToPixel(value)
-      if (!linePoints[i]) {
-        linePoints[i] = [{ x: x, y: valueY }]
-      } else {
-        linePoints[i].push({ x: x, y: valueY })
-      }
-    }
-  }
-
-  /**
    * 绘制线
-   * @param linePoints
+   * @param lines
    * @param technicalIndicatorOptions
    */
-  _drawLines (linePoints, technicalIndicatorOptions) {
+  _drawLines (lines, technicalIndicatorOptions) {
     const colors = technicalIndicatorOptions.line.colors
-    const pointCount = linePoints.length
     const colorSize = (colors || []).length
     this._ctx.lineWidth = technicalIndicatorOptions.line.size
     drawLine(this._ctx, () => {
-      for (let i = 0; i < pointCount; i++) {
-        const points = linePoints[i]
-        if (points.length > 0) {
-          this._ctx.strokeStyle = colors[i % colorSize]
-          this._ctx.beginPath()
-          this._ctx.moveTo(points[0].x, points[0].y)
-          for (let j = 1; j < points.length; j++) {
-            this._ctx.lineTo(points[j].x, points[j].y)
+      lines.forEach((lineItem, i) => {
+        this._ctx.strokeStyle = colors[i % colorSize]
+        this._ctx.beginPath()
+        let isStart = true
+        lineItem.forEach(line => {
+          if (isValid(line)) {
+            if (isStart) {
+              this._ctx.moveTo(line.x, line.y)
+              isStart = false
+            } else {
+              this._ctx.lineTo(line.x, line.y)
+            }
           }
-          this._ctx.stroke()
-          this._ctx.closePath()
-        }
-      }
+        })
+        this._ctx.stroke()
+        this._ctx.closePath()
+      })
     })
   }
 
   /**
-   * 绘制柱状图
-   * @param x
-   * @param halfBarSpace
-   * @param barData
-   * @param isSolid
+   * 绘制柱
    */
-  _drawBars (x, halfBarSpace, barData, isSolid) {
-    if (barData || barData === 0) {
-      this._ctx.lineWidth = 1
-      const dataY = this._yAxis.convertToPixel(barData)
-      const zeroY = this._yAxis.convertToPixel(0)
-      let y = dataY
-      if (barData < 0) {
-        y = zeroY
-      }
-      const yDif = zeroY - dataY
-      let barHeight = Math.abs(yDif)
-      if (barHeight < 1) {
-        barHeight = 1
-        y = barData < 0 ? y + 1 : y - 1
-      }
-      if (isSolid) {
-        this._ctx.fillRect(x - halfBarSpace, y, halfBarSpace * 2, barHeight)
-      } else {
-        this._ctx.strokeRect(x - halfBarSpace + 0.5, y, halfBarSpace * 2 - 1, barHeight)
-      }
+  _drawBar (bar) {
+    if (bar.isStroke) {
+      this._ctx.strokeStyle = bar.color
+      this._ctx.strokeRect(bar.x + 0.5, bar.y, bar.width - 1, bar.height)
+    } else {
+      this._ctx.fillStyle = bar.color
+      this._ctx.fillRect(bar.x, bar.y, bar.width, bar.height)
     }
+  }
+
+  /**
+   * 绘制圆点
+   * @param circle
+   * @private
+   */
+  _drawCircle (circle) {
+    this._ctx.strokeStyle = circle.color
+    this._ctx.fillStyle = circle.color
+    this._ctx.beginPath()
+    this._ctx.arc(circle.x, circle.y, circle.radius, Math.PI * 2, 0, true)
+    if (circle.isStroke) {
+      this._ctx.stroke()
+    } else {
+      this._ctx.fill()
+    }
+    this._ctx.closePath()
   }
 
   /**

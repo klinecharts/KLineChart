@@ -16,7 +16,7 @@ import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
 import CandleStickWidget from '../widget/CandleStickWidget'
 import { ChartType } from '../data/options/styleOptions'
 import YAxis from '../component/YAxis'
-import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
+import { AVERAGE } from '../data/technicalindicator/technicalIndicatorType'
 
 export default class CandleStickSeries extends TechnicalIndicatorSeries {
   constructor (props) {
@@ -35,7 +35,7 @@ export default class CandleStickSeries extends TechnicalIndicatorSeries {
       xAxis: props.xAxis,
       yAxis: this._yAxis,
       additionalDataProvider: {
-        technicalIndicatorType: this.technicalIndicatorType.bind(this),
+        technicalIndicator: this.technicalIndicator.bind(this),
         chartType: this.chartType.bind(this),
         tag: this.tag.bind(this)
       }
@@ -53,7 +53,7 @@ export default class CandleStickSeries extends TechnicalIndicatorSeries {
   setChartType (chartType) {
     if (this._chartType !== chartType) {
       this._chartType = chartType
-      this._chartData.calcTechnicalIndicator(this, TechnicalIndicatorType.AVERAGE)
+      this._chartData.calcTechnicalIndicator(this, this._chartData.technicalIndicator(AVERAGE))
     }
   }
 }

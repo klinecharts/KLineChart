@@ -21,7 +21,7 @@ export default class StopAndReverse extends TechnicalIndicator {
       SAR, [2, 2, 20],
       [
         { key: 'sar', type: 'circle' }
-      ], 4, true
+      ], 4, true, true
     )
   }
 
@@ -37,7 +37,7 @@ export default class StopAndReverse extends TechnicalIndicator {
     // 判断是上涨还是下跌  false：下跌
     let isIncreasing = false
     let sar = 0
-
+    const result = []
     this._calc(dataList, i => {
       // 上一个周期的sar
       const preSar = sar
@@ -79,7 +79,8 @@ export default class StopAndReverse extends TechnicalIndicator {
           sar = highMax
         }
       }
-      dataList[i].sar = { sar }
+      result.push({ sar })
     })
+    return result
   }
 }

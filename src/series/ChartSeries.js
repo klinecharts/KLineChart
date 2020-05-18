@@ -22,7 +22,7 @@ import { formatValue } from '../utils/format'
 import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
 import SeparatorSeries from './SeparatorSeries'
 
-import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
+import { NO, MA, AVERAGE, MACD } from '../data/technicalindicator/technicalIndicatorType'
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 
@@ -45,7 +45,7 @@ export default class ChartSeries {
       container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisSeries.xAxis(),
-      technicalIndicatorType: TechnicalIndicatorType.MA,
+      technicalIndicatorType: MA,
       tag: CANDLE_STICK_SERIES_TAG
     })
     this._chartEvent = new ChartEvent(
@@ -190,14 +190,14 @@ export default class ChartSeries {
     const technicalIndicatorTypeArray = []
     let candleStickTechnicalIndicatorType
     if (this._candleStickSeries.chartType() === ChartType.CANDLE_STICK) {
-      candleStickTechnicalIndicatorType = this._candleStickSeries.technicalIndicatorType()
+      candleStickTechnicalIndicatorType = this._candleStickSeries.technicalIndicator().name
       technicalIndicatorTypeArray.push(candleStickTechnicalIndicatorType)
     } else {
-      candleStickTechnicalIndicatorType = TechnicalIndicatorType.AVERAGE
+      candleStickTechnicalIndicatorType = AVERAGE
     }
     this._chartData.calcTechnicalIndicator(this._candleStickSeries, candleStickTechnicalIndicatorType)
     for (const series of this._technicalIndicatorSeries) {
-      const technicalIndicatorSeriesTechnicalIndicatorType = series.technicalIndicatorType()
+      const technicalIndicatorSeriesTechnicalIndicatorType = series.technicalIndicator().name
       if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {
         technicalIndicatorTypeArray.push(technicalIndicatorSeriesTechnicalIndicatorType)
         this._chartData.calcTechnicalIndicator(series, technicalIndicatorSeriesTechnicalIndicatorType)
@@ -384,11 +384,11 @@ export default class ChartSeries {
   createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT, dragEnabled) {
     if (
       !technicalIndicatorType ||
-      !TechnicalIndicatorType.hasOwnProperty(technicalIndicatorType) ||
-      technicalIndicatorType === TechnicalIndicatorType.NO ||
-      technicalIndicatorType === TechnicalIndicatorType.AVERAGE
+      !this._chartData.technicalIndicator(technicalIndicatorType) ||
+      technicalIndicatorType === NO ||
+      technicalIndicatorType === AVERAGE
     ) {
-      technicalIndicatorType = TechnicalIndicatorType.MACD
+      technicalIndicatorType = MACD
     }
     const technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length
     const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
@@ -459,7 +459,7 @@ export default class ChartSeries {
         }
       }
       if (s) {
-        if (technicalIndicatorType === TechnicalIndicatorType.NO) {
+        if (technicalIndicatorType === NO) {
           this.removeTechnicalIndicator(tag)
         } else {
           s.setTechnicalIndicatorType(technicalIndicatorType)

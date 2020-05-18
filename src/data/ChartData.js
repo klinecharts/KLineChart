@@ -12,13 +12,12 @@
  * limitations under the License.
  */
 
-import { isArray, isObject, merge, clone, isFunction, isBoolean, isNumber } from '../utils/typeChecks'
+import { isArray, isObject, merge, clone, isFunction, isBoolean, isNumber, isValid } from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
-import { defaultTechnicalIndicatorParamOptions, TechnicalIndicatorType } from './options/technicalIndicatorParamOptions'
-import { defaultPrecisionOptions } from './options/precisionOptions'
+import { NO, VOL } from './technicalindicator/technicalIndicatorType'
 
-import calcIndicator from './calcIndicator'
 import { formatValue } from '../utils/format'
+import { createTechnicalIndicators } from './technicalindicator/technicalIndicatorControl'
 
 export const InvalidateLevel = {
   NONE: 0,
@@ -55,10 +54,15 @@ export default class ChartData {
     // 样式配置
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
-    // 指标参数配置
-    this._technicalIndicatorParamOptions = clone(defaultTechnicalIndicatorParamOptions)
-    // 精度配置
-    this._precisionOptions = clone(defaultPrecisionOptions)
+
+    // 所有技术指标信息
+    this._technicalIndicators = createTechnicalIndicators()
+
+    // 价格精度
+    this._pricePrecision = 2
+    // 数量精度
+    this._volumePrecision = 0
+
     // 时区
     this._timezone = null
 
@@ -184,10 +188,11 @@ export default class ChartData {
   }
 
   /**
-   * 获取计算指标参数配置
+   * 获取指标
+   * @param technicalIndicatorType
    */
-  technicalIndicatorParamOptions () {
-    return this._technicalIndicatorParamOptions
+  technicalIndicator (technicalIndicatorType) {
+    return this._technicalIndicators[technicalIndicatorType]
   }
 
   /**
@@ -196,16 +201,26 @@ export default class ChartData {
    * @param params
    */
   applyTechnicalIndicatorParams (technicalIndicatorType, params = []) {
-    if (this._technicalIndicatorParamOptions.hasOwnProperty(technicalIndicatorType)) {
-      this._technicalIndicatorParamOptions[technicalIndicatorType] = params
+    const technicalIndicator = this.technicalIndicator(technicalIndicatorType)
+    if (technicalIndicator) {
+      technicalIndicator.calcParams = clone(params)
     }
   }
 
   /**
-   * 精度配置
+   * 价格精度
+   * @returns {number}
    */
-  precisionOptions () {
-    return this._precisionOptions
+  pricePrecision () {
+    return this._pricePrecision
+  }
+
+  /**
+   * 数量精度
+   * @returns {number}
+   */
+  volumePrecision () {
+    return this._volumePrecision
   }
 
   /**
@@ -230,15 +245,12 @@ export default class ChartData {
    * @param volumePrecision
    */
   applyPrecision (pricePrecision, volumePrecision) {
-    if ((pricePrecision || pricePrecision === 0) && !(pricePrecision < 0)) {
-      this._precisionOptions.price = pricePrecision
-      this._precisionOptions[TechnicalIndicatorType.MA] = pricePrecision
-      this._precisionOptions[TechnicalIndicatorType.BOLL] = pricePrecision
-      this._precisionOptions[TechnicalIndicatorType.SAR] = pricePrecision
+    if (isValid(pricePrecision) && isNumber(pricePrecision) && pricePrecision >= 0) {
+      this._pricePrecision = pricePrecision
     }
-    if ((volumePrecision || volumePrecision === 0) && !(volumePrecision < 0)) {
-      this._precisionOptions.volume = volumePrecision
-      this._precisionOptions[TechnicalIndicatorType.VOL] = volumePrecision
+    if (isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0) {
+      this._volumePrecision = volumePrecision
+      this.technicalIndicator(VOL).precision = volumePrecision
     }
   }
 
@@ -249,12 +261,12 @@ export default class ChartData {
    */
   calcTechnicalIndicator (series, technicalIndicatorType) {
     const task = new Promise((resolve, reject) => {
-      if (technicalIndicatorType === TechnicalIndicatorType.NO) {
+      if (technicalIndicatorType === NO) {
         resolve(true)
       } else {
-        const calcFun = calcIndicator[technicalIndicatorType]
-        if (calcFun) {
-          this._dataList = calcFun(this._dataList, this._technicalIndicatorParamOptions[technicalIndicatorType])
+        const technicalIndicator = this.technicalIndicator(technicalIndicatorType)
+        if (technicalIndicator && technicalIndicator.calcTechnicalIndicator) {
+          technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList) || []
           resolve(true)
         } else {
           reject(new Error('Technical indicator type is error!'))

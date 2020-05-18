@@ -13,30 +13,13 @@
  */
 
 import Axis from './Axis'
-import { TechnicalIndicatorType } from '../data/options/technicalIndicatorParamOptions'
-import { formatValue } from '../utils/format'
 import { YAxisType } from '../data/options/styleOptions'
+import { isNumber, isValid } from '../utils/typeChecks'
 
 export default class YAxis extends Axis {
   constructor (chartData, isCandleStickYAxis) {
     super(chartData)
     this._isCandleStickYAxis = isCandleStickYAxis
-  }
-
-  _compareMinMax (kLineData, technicalIndicatorType, minMaxArray) {
-    const technicalIndicatorData = formatValue(kLineData, technicalIndicatorType.toLowerCase(), {})
-    Object.keys(technicalIndicatorData).forEach(key => {
-      const value = technicalIndicatorData[key]
-      if (value || value === 0) {
-        minMaxArray[0] = Math.min(minMaxArray[0], value)
-        minMaxArray[1] = Math.max(minMaxArray[1], value)
-      }
-    })
-    if (technicalIndicatorType === TechnicalIndicatorType.BOLL || technicalIndicatorType === TechnicalIndicatorType.SAR) {
-      minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)
-      minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
-    }
-    return minMaxArray
   }
 
   _computeMinMaxValue () {
@@ -89,11 +72,12 @@ export default class YAxis extends Axis {
 
   /**
    * 计算最大最小值
-   * @param technicalIndicatorType
+   * @param technicalIndicator
    * @param isRealTime
    */
-  calcMinMaxValue (technicalIndicatorType, isRealTime) {
+  calcMinMaxValue (technicalIndicator, isRealTime) {
     const dataList = this._chartData.dataList()
+    const technicalIndicatorResult = technicalIndicator.result
     const from = this._chartData.from()
     const to = this._chartData.to()
     const isShowAverageLine = this._chartData.styleOptions().realTime.averageLine.display
@@ -111,16 +95,27 @@ export default class YAxis extends Axis {
         minMaxArray[1] = Math.max.apply(null, maxCompareArray)
       }
     } else {
+      const plots = technicalIndicator.plots || []
       for (let i = from; i < to; i++) {
         const kLineData = dataList[i]
-        this._compareMinMax(kLineData, technicalIndicatorType, minMaxArray)
+        const technicalIndicatorData = technicalIndicatorResult[i]
+        plots.forEach(plot => {
+          const value = technicalIndicatorData[plot.key]
+          if (isValid(value)) {
+            minMaxArray[0] = Math.min(minMaxArray[0], value)
+            minMaxArray[1] = Math.max(minMaxArray[1], value)
+          }
+        })
         if (this._isCandleStickYAxis) {
-          minMaxArray[0] = Math.min(kLineData.low, minMaxArray[0])
-          minMaxArray[1] = Math.max(kLineData.high, minMaxArray[1])
+          minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)
+          minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
         }
       }
-      if (technicalIndicatorType === TechnicalIndicatorType.VOL) {
-        minMaxArray[0] = 0
+      if (isValid(technicalIndicator.min) && isNumber(technicalIndicator.min)) {
+        minMaxArray[0] = technicalIndicator.min
+      }
+      if (isValid(technicalIndicator.max) && isNumber(technicalIndicator.max)) {
+        minMaxArray[1] = technicalIndicator.max
       }
     }
     if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {

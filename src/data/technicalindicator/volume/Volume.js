@@ -23,8 +23,20 @@ export default class Volume extends TechnicalIndicator {
         { key: 'ma5', type: 'line' },
         { key: 'ma10', type: 'line' },
         { key: 'ma30', type: 'line' },
-        { key: 'num', type: 'bar' }
-      ]
+        {
+          key: 'num',
+          type: 'bar',
+          referenceValue: 0,
+          color: (preKLineData, kLineData, options) => {
+            if (kLineData.close > kLineData.open) {
+              return options.bar.upColor
+            } else if (kLineData.close < kLineData.open) {
+              return options.bar.downColor
+            }
+            return options.bar.noChangeColor
+          }
+        }
+      ], 0, false, false, 0
     )
   }
 
@@ -39,6 +51,7 @@ export default class Volume extends TechnicalIndicator {
   calcTechnicalIndicator (dataList) {
     const paramCount = this.calcParams.length
     const volSums = []
+    const result = []
     this._calc(dataList, i => {
       const volume = dataList[i].volume
       const vol = { num: volume }
@@ -50,7 +63,8 @@ export default class Volume extends TechnicalIndicator {
           volSums[j] -= dataList[i - (p - 1)].volume
         }
       }
-      dataList[i].vol = vol
+      result.push(vol)
     })
+    return result
   }
 }

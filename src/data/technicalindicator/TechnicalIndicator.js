@@ -15,12 +15,19 @@
 import { clone, isNumber } from '../../utils/typeChecks'
 
 export default class TechnicalIndicator {
-  constructor (name, calcParams = [], plots = [], precision = 4, shouldCheckParamCount) {
+  constructor (
+    name, calcParams = [], plots = [],
+    precision = 4, shouldCheckParamCount,
+    isPriceTechnicalIndicator, min, max
+  ) {
     this.name = name
     this.precision = precision
     this.calcParams = calcParams
     this.plots = plots
     this.shouldCheckParamCount = shouldCheckParamCount
+    this.isPriceTechnicalIndicator = isPriceTechnicalIndicator
+    this.min = min
+    this.max = max
     this.result = []
   }
 

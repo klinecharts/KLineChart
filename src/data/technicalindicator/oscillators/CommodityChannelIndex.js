@@ -41,6 +41,7 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
     let md
     let maSubCloseSum = 0
     const maList = []
+    const result = []
     this._calc(dataList, i => {
       const cci = {}
       const close = dataList[i].close
@@ -63,7 +64,8 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
         const agoMa = maList[i - p]
         maSubCloseSum -= Math.abs(agoMa - agoClose)
       }
-      dataList[i].cci = cci
+      result.push(cci)
     })
+    return result
   }
 }

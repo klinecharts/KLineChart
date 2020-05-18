@@ -14,10 +14,9 @@
 
 import View from './View'
 import { FloatLayerPromptDisplayRule, LineStyle } from '../data/options/styleOptions'
-import { TechnicalIndicatorType, getTechnicalIndicatorDataKeysAndValues } from '../data/options/technicalIndicatorParamOptions'
-import { isArray } from '../utils/typeChecks'
-import { formatBigNumber, formatPrecision } from '../utils/format'
+import { isValid } from '../utils/typeChecks'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
+import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalIndicatorControl'
 
 export default class TechnicalIndicatorFloatLayerView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
@@ -30,6 +29,8 @@ export default class TechnicalIndicatorFloatLayerView extends View {
   _draw () {
     const crossHairPoint = this._chartData.crossHairPoint()
     const dataList = this._chartData.dataList()
+    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
+    const technicalIndicatorResult = technicalIndicator.result
     let dataPos
     if (crossHairPoint) {
       dataPos = this._xAxis.convertFromPixel(crossHairPoint.x)
@@ -37,23 +38,25 @@ export default class TechnicalIndicatorFloatLayerView extends View {
       dataPos = dataList.length - 1
     }
     let kLineData = dataList[dataPos]
+    let technicalIndicatorData = technicalIndicatorResult[dataPos]
     if (!kLineData) {
       const to = this._chartData.to()
       if (dataPos > to - 1) {
         kLineData = dataList[to - 1]
+        technicalIndicatorData = technicalIndicatorResult[to - 1]
       } else if (dataPos < 0) {
         kLineData = dataList[0]
+        technicalIndicatorData = technicalIndicatorResult[0]
       }
     }
     if (kLineData) {
       const x = this._xAxis.convertToPixel(dataPos)
       this._drawCrossHairHorizontalLine()
-      this._drawCrossHairVerticalLine(kLineData, x)
+      this._drawCrossHairVerticalLine(x)
       const displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule
       if (displayRule === FloatLayerPromptDisplayRule.ALWAYS ||
         (displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairSeriesTag())) {
-        const isDrawTechnicalIndicatorPromptPoint = dataPos > 0 && dataPos < dataList.length
-        this._drawPrompt(kLineData, x, isDrawTechnicalIndicatorPromptPoint)
+        this._drawPrompt(kLineData, technicalIndicatorData, technicalIndicator, x)
       }
     }
   }
@@ -61,12 +64,13 @@ export default class TechnicalIndicatorFloatLayerView extends View {
   /**
    * 绘制提示
    * @param kLineData
+   * @param technicalIndicatorData
+   * @param technicalIndicator
    * @param x
-   * @param isDrawTechnicalIndicatorPromptPoint
    * @private
    */
-  _drawPrompt (kLineData, x, isDrawTechnicalIndicatorPromptPoint) {
-    this._drawTechnicalIndicatorPrompt(kLineData, x, isDrawTechnicalIndicatorPromptPoint)
+  _drawPrompt (kLineData, technicalIndicatorData, technicalIndicator, x) {
+    this._drawTechnicalIndicatorPrompt(technicalIndicatorData, technicalIndicator, x)
   }
 
   /**
@@ -99,11 +103,10 @@ export default class TechnicalIndicatorFloatLayerView extends View {
 
   /**
    * 绘制十字光标垂直线
-   * @param kLineData
    * @param x
    * @private
    */
-  _drawCrossHairVerticalLine (kLineData, x) {
+  _drawCrossHairVerticalLine (x) {
     if (!this._chartData.crossHairSeriesTag()) {
       return
     }
@@ -125,32 +128,34 @@ export default class TechnicalIndicatorFloatLayerView extends View {
 
   /**
    * 绘制指标提示
-   * @param kLineData
+   * @param technicalIndicatorData
+   * @param technicalIndicator
    * @param x
-   * @param isDrawTechnicalIndicatorPromptPoint
    * @param offsetTop
    * @private
    */
-  _drawTechnicalIndicatorPrompt (kLineData, x, isDrawTechnicalIndicatorPromptPoint, offsetTop = 0) {
+  _drawTechnicalIndicatorPrompt (technicalIndicatorData, technicalIndicator, x, offsetTop = 0) {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
-    const data = this._getTechnicalIndicatorPromptData(kLineData)
+    const data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
     const colors = technicalIndicatorOptions.line.colors
     this._drawTechnicalIndicatorPromptText(
-      data, colors, offsetTop
+      technicalIndicator, data, colors, offsetTop
     )
     this._drawTechnicalIndicatorPromptPoint(
-      data.values, colors, x, isDrawTechnicalIndicatorPromptPoint
+      technicalIndicator, data.values, colors, x
     )
   }
 
   /**
    * 绘制指标提示文字
+   * @param technicalIndicator
    * @param data
    * @param colors
    * @param offsetTop
    * @private
    */
-  _drawTechnicalIndicatorPromptText (data, colors, offsetTop) {
+  _drawTechnicalIndicatorPromptText (technicalIndicator, data, colors, offsetTop) {
+    const plots = technicalIndicator.plots
     const floatLayerPromptTechnicalIndicatorText = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.text
     const nameText = data.name
     const labels = data.labels
@@ -168,11 +173,16 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     this._ctx.fillStyle = textColor
     this._ctx.fillText(nameText, labelX, labelY)
     labelX += (textMarginLeft + nameTextWidth)
-    const isVol = this._additionalDataProvider.technicalIndicatorType() === TechnicalIndicatorType.VOL
+    let lineCount = -1
     for (let i = 0; i < labels.length; i++) {
-      const text = `${labels[i].toUpperCase()}: ${(isVol ? formatBigNumber(values[i]) : values[i]) || '--'}`
+      if (plots[i].type === 'line') {
+        this._ctx.fillStyle = colors[lineCount % colorSize] || textColor
+        lineCount++
+      } else {
+        this._ctx.fillStyle = textColor
+      }
+      const text = `${labels[i]}: ${values[i].value || 'n/a'}`
       const textWidth = calcTextWidth(this._ctx, text)
-      this._ctx.fillStyle = colors[i % colorSize] || textColor
       this._ctx.fillText(text, labelX, labelY)
       labelX += (textMarginLeft + textMarginRight + textWidth)
     }
@@ -180,63 +190,37 @@ export default class TechnicalIndicatorFloatLayerView extends View {
 
   /**
    * 绘制指标提示点
+   * @param technicalIndicator
    * @param values
    * @param colors
    * @param x
-   * @param isDrawTechnicalIndicatorPromptPoint
    * @private
    */
-  _drawTechnicalIndicatorPromptPoint (values, colors, x, isDrawTechnicalIndicatorPromptPoint) {
+  _drawTechnicalIndicatorPromptPoint (technicalIndicator, values, colors, x) {
     const floatLayerPromptTechnicalIndicatorPoint = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.point
     if (!floatLayerPromptTechnicalIndicatorPoint.display) {
       return
     }
-    const technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType()
-    if (!this._chartData.crossHairSeriesTag() ||
-      technicalIndicatorType === TechnicalIndicatorType.SAR ||
-      !isDrawTechnicalIndicatorPromptPoint
-    ) {
+    if (!this._chartData.crossHairSeriesTag()) {
       return
     }
+    const plots = technicalIndicator.plots
     const colorSize = colors.length
-    const valueSize = technicalIndicatorType === TechnicalIndicatorType.MACD || technicalIndicatorType === TechnicalIndicatorType.VOL ? values.length - 1 : values.length
+    const valueSize = values.length
     const radius = floatLayerPromptTechnicalIndicatorPoint.radius
+    let lineCount = 0
     for (let i = 0; i < valueSize; i++) {
-      const value = values[i]
-      if (value || value === 0) {
-        const y = this._yAxis.convertToPixel(value)
-        this._ctx.fillStyle = colors[i % colorSize]
-        this._ctx.beginPath()
-        this._ctx.arc(x, y, radius, 0, Math.PI * 2)
-        this._ctx.closePath()
-        this._ctx.fill()
+      const value = values[i].value
+      if (plots[i].type === 'line') {
+        if (isValid(value)) {
+          this._ctx.fillStyle = colors[lineCount % colorSize]
+          this._ctx.beginPath()
+          this._ctx.arc(x, values[i].y, radius, 0, Math.PI * 2)
+          this._ctx.closePath()
+          this._ctx.fill()
+        }
+        lineCount++
       }
     }
-  }
-
-  /**
-   * 获取需要绘制的指标提示数据
-   * @param kLineData
-   * @returns {{values: Array, labels: Array}}
-   */
-  _getTechnicalIndicatorPromptData (kLineData) {
-    const technicalIndicatorParamOptions = this._chartData.technicalIndicatorParamOptions()
-    const technicalIndicatorType = this._additionalDataProvider.technicalIndicatorType()
-    const keysAndValues = getTechnicalIndicatorDataKeysAndValues(kLineData, technicalIndicatorType, technicalIndicatorParamOptions)
-    const params = this._chartData.technicalIndicatorParamOptions()[technicalIndicatorType] || []
-    const labels = keysAndValues.keys
-    const values = keysAndValues.values
-    let name = ''
-    if (labels.length > 0) {
-      name = `${technicalIndicatorType}`
-      if (params && isArray(params) && params.length > 0) {
-        name = `${name}(${params.join(',')})`
-      }
-      const decimal = this._chartData.precisionOptions()[technicalIndicatorType]
-      values.forEach((value, index) => {
-        values[index] = formatPrecision(value, decimal)
-      })
-    }
-    return { labels, values, name }
   }
 }
