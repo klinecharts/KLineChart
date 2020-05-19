@@ -56,7 +56,11 @@ export default class VolumeRatio extends TechnicalIndicator {
       }
       if (i >= this.calcParams[0] - 1) {
         const halfPvs = pvs / 2
-        vr.vr = (uvs + halfPvs) / (dvs + halfPvs)
+        if (dvs + halfPvs === 0) {
+          vr.vr = 0
+        } else {
+          vr.vr = (uvs + halfPvs) / (dvs + halfPvs)
+        }
         vrSum += vr.vr
         if (i >= this.calcParams[0] + this.calcParams[1] - 2) {
           vr.vrMa = vrSum / this.calcParams[1]

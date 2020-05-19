@@ -53,7 +53,7 @@ export default class EaseOfMovementValue extends TechnicalIndicator {
         const halfHl = (high + low) / 2
         const preHalfHl = (dataList[i - 1].high + dataList[i - 1].low) / 2
         const hl = high - low
-        const em = (halfHl - preHalfHl) * hl - dataList[i].turnover
+        const em = (halfHl - preHalfHl) * hl - (dataList[i].turnover || 0)
         emList.push(em)
         emSum += em
         if (i >= this.calcParams[0]) {

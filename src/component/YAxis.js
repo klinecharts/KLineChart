@@ -123,21 +123,23 @@ export default class YAxis extends Axis {
         const fromClose = dataList[from].close
         this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100
         this._maxValue = (minMaxArray[1] - fromClose) / fromClose * 100
-        if (this._minValue === this._maxValue) {
+        if (
+          this._minValue === this._maxValue ||
+          Math.abs(this._minValue - this._maxValue) < Math.pow(10, -2)
+        ) {
           this._minValue -= 10
           this._maxValue += 10
         }
       } else {
         this._minValue = minMaxArray[0]
         this._maxValue = minMaxArray[1]
-        if (this._minValue === this._maxValue) {
-          this._minValue -= 1
-          if (this._minValue < 0) {
-            this._minValue = 0
-            this._maxValue = Math.max(1, this._maxValue * 2)
-          } else {
-            this._maxValue += 1
-          }
+        if (
+          this._minValue === this._maxValue ||
+          Math.abs(this._minValue - this._maxValue) < Math.pow(10, -6)
+        ) {
+          const percentValue = this._minValue * 0.2
+          this._minValue -= percentValue
+          this._maxValue += percentValue
         }
       }
     }

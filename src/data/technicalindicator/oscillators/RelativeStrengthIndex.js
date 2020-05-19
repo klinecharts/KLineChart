@@ -50,21 +50,23 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
       const rsi = {}
       const open = dataList[i].open
       for (let j = 0; j < paramCount; j++) {
-        const tmp = open === 0 ? 0 : (dataList[i].close - open) / open
+        const tmp = (dataList[i].close - open) / open
+        sumCloseAs[j] = sumCloseAs[j] || 0
+        sumCloseBs[j] = sumCloseBs[j] || 0
         if (tmp > 0) {
-          sumCloseAs[j] = (sumCloseAs[j] || 0) + tmp
+          sumCloseAs[j] = sumCloseAs[j] + tmp
         } else {
-          sumCloseBs[j] = (sumCloseBs[j] || 0) + Math.abs(tmp)
+          sumCloseBs[j] = sumCloseBs[j] + Math.abs(tmp)
         }
 
         if (i >= this.calcParams[j] - 1) {
           const a = sumCloseAs[j] / this.calcParams[j]
           const b = (sumCloseAs[j] + sumCloseBs[j]) / this.calcParams[j]
-          rsi[this.plots[j].key] = b !== 0.0 ? a / b * 100 : 0.0
+          rsi[this.plots[j].key] = (b === 0 ? 0 : a / b * 100)
 
           const agoData = dataList[i - (this.calcParams[j] - 1)]
           const agoOpen = agoData.open
-          const agoTmp = agoData.open === 0 ? 0 : (agoData.close - agoOpen) / agoOpen
+          const agoTmp = (agoData.close - agoOpen) / agoOpen
           if (agoTmp > 0) {
             sumCloseAs[j] -= agoTmp
           } else {

@@ -87,9 +87,21 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
         dmmSum += l
         dmmList.push(l)
         if (i >= this.calcParams[0]) {
-          const pdi = dmpSum * 100 / trSum
-          const mdi = dmmSum * 100 / trSum
-          const dx = Math.abs((mdi - pdi)) / (mdi + pdi) * 100
+          let pdi
+          let mdi
+          if (trSum === 0) {
+            pdi = 0
+            mdi = 0
+          } else {
+            pdi = dmpSum * 100 / trSum
+            mdi = dmmSum * 100 / trSum
+          }
+          let dx
+          if (mdi + pdi === 0) {
+            dx = 0
+          } else {
+            dx = Math.abs((mdi - pdi)) / (mdi + pdi) * 100
+          }
           dxSum += dx
           dxList.push(dx)
           dmi.pdi = pdi

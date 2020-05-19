@@ -1634,21 +1634,23 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
         var open = dataList[i].open;
 
         for (var j = 0; j < paramCount; j++) {
-          var tmp = open === 0 ? 0 : (dataList[i].close - open) / open;
+          var tmp = (dataList[i].close - open) / open;
+          sumCloseAs[j] = sumCloseAs[j] || 0;
+          sumCloseBs[j] = sumCloseBs[j] || 0;
 
           if (tmp > 0) {
-            sumCloseAs[j] = (sumCloseAs[j] || 0) + tmp;
+            sumCloseAs[j] = sumCloseAs[j] + tmp;
           } else {
-            sumCloseBs[j] = (sumCloseBs[j] || 0) + Math.abs(tmp);
+            sumCloseBs[j] = sumCloseBs[j] + Math.abs(tmp);
           }
 
           if (i >= _this2.calcParams[j] - 1) {
             var a = sumCloseAs[j] / _this2.calcParams[j];
             var b = (sumCloseAs[j] + sumCloseBs[j]) / _this2.calcParams[j];
-            rsi[_this2.plots[j].key] = b !== 0.0 ? a / b * 100 : 0.0;
+            rsi[_this2.plots[j].key] = b === 0 ? 0 : a / b * 100;
             var agoData = dataList[i - (_this2.calcParams[j] - 1)];
             var agoOpen = agoData.open;
-            var agoTmp = agoData.open === 0 ? 0 : (agoData.close - agoOpen) / agoOpen;
+            var agoTmp = (agoData.close - agoOpen) / agoOpen;
 
             if (agoTmp > 0) {
               sumCloseAs[j] -= agoTmp;
@@ -1987,9 +1989,25 @@ var DirectionalMovementIndex = /*#__PURE__*/function (_TechnicalIndicator) {
           dmmList.push(l);
 
           if (i >= _this.calcParams[0]) {
-            var pdi = dmpSum * 100 / trSum;
-            var mdi = dmmSum * 100 / trSum;
-            var dx = Math.abs(mdi - pdi) / (mdi + pdi) * 100;
+            var pdi;
+            var mdi;
+
+            if (trSum === 0) {
+              pdi = 0;
+              mdi = 0;
+            } else {
+              pdi = dmpSum * 100 / trSum;
+              mdi = dmmSum * 100 / trSum;
+            }
+
+            var dx;
+
+            if (mdi + pdi === 0) {
+              dx = 0;
+            } else {
+              dx = Math.abs(mdi - pdi) / (mdi + pdi) * 100;
+            }
+
             dxSum += dx;
             dxList.push(dx);
             dmi.pdi = pdi;
@@ -2497,7 +2515,13 @@ var VolumeRatio = /*#__PURE__*/function (_TechnicalIndicator) {
 
         if (i >= _this.calcParams[0] - 1) {
           var halfPvs = pvs / 2;
-          vr.vr = (uvs + halfPvs) / (dvs + halfPvs);
+
+          if (dvs + halfPvs === 0) {
+            vr.vr = 0;
+          } else {
+            vr.vr = (uvs + halfPvs) / (dvs + halfPvs);
+          }
+
           vrSum += vr.vr;
 
           if (i >= _this.calcParams[0] + _this.calcParams[1] - 2) {
@@ -2799,7 +2823,7 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
           var halfHl = (high + low) / 2;
           var preHalfHl = (dataList[i - 1].high + dataList[i - 1].low) / 2;
           var hl = high - low;
-          var em = (halfHl - preHalfHl) * hl - dataList[i].turnover;
+          var em = (halfHl - preHalfHl) * hl - (dataList[i].turnover || 0);
           emList.push(em);
           emSum += em;
 
@@ -5631,7 +5655,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
           this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100;
           this._maxValue = (minMaxArray[1] - fromClose) / fromClose * 100;
 
-          if (this._minValue === this._maxValue) {
+          if (this._minValue === this._maxValue || Math.abs(this._minValue - this._maxValue) < Math.pow(10, -2)) {
             this._minValue -= 10;
             this._maxValue += 10;
           }
@@ -5639,15 +5663,10 @@ var YAxis = /*#__PURE__*/function (_Axis) {
           this._minValue = minMaxArray[0];
           this._maxValue = minMaxArray[1];
 
-          if (this._minValue === this._maxValue) {
-            this._minValue -= 1;
-
-            if (this._minValue < 0) {
-              this._minValue = 0;
-              this._maxValue = Math.max(1, this._maxValue * 2);
-            } else {
-              this._maxValue += 1;
-            }
+          if (this._minValue === this._maxValue || Math.abs(this._minValue - this._maxValue) < Math.pow(10, -6)) {
+            var percentValue = this._minValue * 0.2;
+            this._minValue -= percentValue;
+            this._maxValue += percentValue;
           }
         }
       }
