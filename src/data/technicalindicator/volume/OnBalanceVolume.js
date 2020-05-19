@@ -37,12 +37,16 @@ export default class OnBalanceVolume extends TechnicalIndicator {
     let obvSum = 0
     const result = []
     this._calc(dataList, i => {
+      const obv = {}
       const close = dataList[i].close
       const high = dataList[i].high
       const hc = high - close
-      const va = (close - dataList[i].low - hc) / hc * dataList[i].volume
-      const obv = { obv: va }
-      obvSum += va
+      if (hc === 0) {
+        obv.obv = 0
+      } else {
+        obv.obv = (close - dataList[i].low - hc) / hc * dataList[i].volume
+      }
+      obvSum += obv.obv
       if (i >= this.calcParams[0] - 1) {
         obv.obvMa = obvSum / this.calcParams[0]
         obvSum -= result[i - (this.calcParams[0] - 1)].obv

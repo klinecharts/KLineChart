@@ -187,20 +187,20 @@ export default class ChartSeries {
    * @private
    */
   _calcAllSeriesTechnicalIndicator () {
-    const technicalIndicatorTypeArray = []
-    let candleStickTechnicalIndicatorType
+    const technicalIndicatorArray = []
+    let candleStickTechnicalIndicator
     if (this._candleStickSeries.chartType() === ChartType.CANDLE_STICK) {
-      candleStickTechnicalIndicatorType = this._candleStickSeries.technicalIndicator().name
-      technicalIndicatorTypeArray.push(candleStickTechnicalIndicatorType)
+      candleStickTechnicalIndicator = this._candleStickSeries.technicalIndicator()
+      technicalIndicatorArray.push(candleStickTechnicalIndicator)
     } else {
-      candleStickTechnicalIndicatorType = AVERAGE
+      candleStickTechnicalIndicator = AVERAGE
     }
-    this._chartData.calcTechnicalIndicator(this._candleStickSeries, candleStickTechnicalIndicatorType)
+    this._chartData.calcTechnicalIndicator(this._candleStickSeries, candleStickTechnicalIndicator)
     for (const series of this._technicalIndicatorSeries) {
-      const technicalIndicatorSeriesTechnicalIndicatorType = series.technicalIndicator().name
-      if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {
-        technicalIndicatorTypeArray.push(technicalIndicatorSeriesTechnicalIndicatorType)
-        this._chartData.calcTechnicalIndicator(series, technicalIndicatorSeriesTechnicalIndicatorType)
+      const technicalIndicator = series.technicalIndicator()
+      if (technicalIndicatorArray.indexOf(technicalIndicator) < 0) {
+        technicalIndicatorArray.push(technicalIndicator)
+        this._chartData.calcTechnicalIndicator(series, technicalIndicator)
       } else {
         series.invalidate(InvalidateLevel.FULL)
       }

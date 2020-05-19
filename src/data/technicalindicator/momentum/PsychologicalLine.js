@@ -40,7 +40,7 @@ export default class PsychologicalLine extends TechnicalIndicator {
     const result = []
     this._calc(dataList, i => {
       const psy = {}
-      const upFlag = dataList[i].close - dataList[i - 1].open > 0 ? 1 : 0
+      const upFlag = dataList[i].close - dataList[i].open > 0 ? 1 : 0
       upList.push(upFlag)
       upCount += upFlag
       if (i >= this.calcParams[0] - 1) {
@@ -48,7 +48,7 @@ export default class PsychologicalLine extends TechnicalIndicator {
         psySum += psy.psy
         if (i >= this.calcParams[0] + this.calcParams[1] - 2) {
           psy.psyMa = psySum / this.calcParams[1]
-          psySum -= psy.psy
+          psySum -= result[i - (this.calcParams[1] - 1)].psy
         }
         upCount -= upList[i - (this.calcParams[0] - 1)]
       }

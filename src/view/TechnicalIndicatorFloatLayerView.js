@@ -173,7 +173,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     this._ctx.fillStyle = textColor
     this._ctx.fillText(nameText, labelX, labelY)
     labelX += (textMarginLeft + nameTextWidth)
-    let lineCount = -1
+    let lineCount = 0
     for (let i = 0; i < labels.length; i++) {
       if (plots[i].type === 'line') {
         this._ctx.fillStyle = colors[lineCount % colorSize] || textColor

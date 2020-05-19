@@ -257,14 +257,13 @@ export default class ChartData {
   /**
    * 计算指标
    * @param series
-   * @param technicalIndicatorType
+   * @param technicalIndicator
    */
-  calcTechnicalIndicator (series, technicalIndicatorType) {
+  calcTechnicalIndicator (series, technicalIndicator) {
     const task = new Promise((resolve, reject) => {
-      if (technicalIndicatorType === NO) {
+      if (technicalIndicator.name === NO) {
         resolve(true)
       } else {
-        const technicalIndicator = this.technicalIndicator(technicalIndicatorType)
         if (technicalIndicator && technicalIndicator.calcTechnicalIndicator) {
           technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList) || []
           resolve(true)

@@ -23,7 +23,7 @@ export default class TechnicalIndicatorSeries extends Series {
     super(props)
     const technicalIndicatorType = props.technicalIndicatorType || MACD
     this._technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
-    this._chartData.calcTechnicalIndicator(this, this._technicalIndicatorType)
+    this._chartData.calcTechnicalIndicator(this, this._technicalIndicator)
   }
 
   _initBefore (props) {

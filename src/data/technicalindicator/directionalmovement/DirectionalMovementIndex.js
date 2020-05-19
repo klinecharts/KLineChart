@@ -98,7 +98,7 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
             const adx = dxSum / this.calcParams[1]
             dmi.adx = adx
             if (i >= this.calcParams[0] + this.calcParams[1] * 2 - 2) {
-              dmi.adxr = (adx + result[this.calcParams[1] - 1].adx) / 2
+              dmi.adxr = (adx + result[i - (this.calcParams[1] - 1)].adx) / 2
             }
             dxSum -= dxList[i - (this.calcParams[0] + this.calcParams[1] - 1)]
           }

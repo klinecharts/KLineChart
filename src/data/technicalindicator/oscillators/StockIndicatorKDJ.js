@@ -23,7 +23,7 @@ export default class StockIndicatorKDJ extends TechnicalIndicator {
       [
         { key: 'k', type: 'line' },
         { key: 'd', type: 'line' },
-        { key: 'j', type: 'bar' }
+        { key: 'j', type: 'line' }
       ], 4, true
     )
   }

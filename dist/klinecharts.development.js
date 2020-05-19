@@ -1531,7 +1531,7 @@ var StockIndicatorKDJ = /*#__PURE__*/function (_TechnicalIndicator) {
       type: 'line'
     }, {
       key: 'j',
-      type: 'bar'
+      type: 'line'
     }], 4, true);
   }
   /**
@@ -2000,7 +2000,7 @@ var DirectionalMovementIndex = /*#__PURE__*/function (_TechnicalIndicator) {
               dmi.adx = adx;
 
               if (i >= _this.calcParams[0] + _this.calcParams[1] * 2 - 2) {
-                dmi.adxr = (adx + result[_this.calcParams[1] - 1].adx) / 2;
+                dmi.adxr = (adx + result[i - (_this.calcParams[1] - 1)].adx) / 2;
               }
 
               dxSum -= dxList[i - (_this.calcParams[0] + _this.calcParams[1] - 1)];
@@ -2102,7 +2102,7 @@ var CurrentRatio = /*#__PURE__*/function (_TechnicalIndicator) {
 
             var agoPreData = dataList[i - _this.calcParams[0]];
             var agoPreMid = (agoPreData.high + agoPreData.close + agoPreData.low + agoPreData.open) / 4;
-            var agoData = dataList[i - _this.calcParams[0] - 1];
+            var agoData = dataList[i - (_this.calcParams[0] - 1)];
             var agoHighSubPreMid = Math.max(0, agoData.high - agoPreMid);
             var agoPreMidSubLow = Math.max(0, agoPreMid - agoData.low);
             ma1Sum += cr.cr;
@@ -2114,7 +2114,7 @@ var CurrentRatio = /*#__PURE__*/function (_TechnicalIndicator) {
               ma1List.push(ma1Sum / _this.calcParams[1]);
 
               if (i >= _this.calcParams[0] + _this.calcParams[1] + ma1ForwardPeriod - 2) {
-                cr.ma1 = ma1List[ma1List.length - ma1ForwardPeriod];
+                cr.ma1 = ma1List[ma1List.length - 1 - ma1ForwardPeriod];
               }
 
               ma1Sum -= result[i - (_this.calcParams[1] - 1)].cr;
@@ -2124,7 +2124,7 @@ var CurrentRatio = /*#__PURE__*/function (_TechnicalIndicator) {
               ma2List.push(ma2Sum / _this.calcParams[2]);
 
               if (i >= _this.calcParams[0] + _this.calcParams[2] + ma2ForwardPeriod - 2) {
-                cr.ma2 = ma2List[ma2List.length - ma2ForwardPeriod];
+                cr.ma2 = ma2List[ma2List.length - 1 - ma2ForwardPeriod];
               }
 
               ma2Sum -= result[i - (_this.calcParams[2] - 1)].cr;
@@ -2134,7 +2134,7 @@ var CurrentRatio = /*#__PURE__*/function (_TechnicalIndicator) {
               ma3List.push(ma3Sum / _this.calcParams[3]);
 
               if (i >= _this.calcParams[0] + _this.calcParams[3] + ma3ForwardPeriod - 2) {
-                cr.ma3 = ma3List[ma3List.length - ma3ForwardPeriod];
+                cr.ma3 = ma3List[ma3List.length - 1 - ma3ForwardPeriod];
               }
 
               ma3Sum -= result[i - (_this.calcParams[3] - 1)].cr;
@@ -2144,7 +2144,7 @@ var CurrentRatio = /*#__PURE__*/function (_TechnicalIndicator) {
               ma4List.push(ma4Sum / _this.calcParams[4]);
 
               if (i >= _this.calcParams[0] + _this.calcParams[4] + ma4ForwardPeriod - 2) {
-                cr.ma4 = ma4List[ma4List.length - ma4ForwardPeriod];
+                cr.ma4 = ma4List[ma4List.length - 1 - ma4ForwardPeriod];
               }
 
               ma4Sum -= result[i - (_this.calcParams[4] - 1)].cr;
@@ -2199,7 +2199,7 @@ var PsychologicalLine = /*#__PURE__*/function (_TechnicalIndicator) {
 
       this._calc(dataList, function (i) {
         var psy = {};
-        var upFlag = dataList[i].close - dataList[i - 1].open > 0 ? 1 : 0;
+        var upFlag = dataList[i].close - dataList[i].open > 0 ? 1 : 0;
         upList.push(upFlag);
         upCount += upFlag;
 
@@ -2209,7 +2209,7 @@ var PsychologicalLine = /*#__PURE__*/function (_TechnicalIndicator) {
 
           if (i >= _this.calcParams[0] + _this.calcParams[1] - 2) {
             psy.psyMa = psySum / _this.calcParams[1];
-            psySum -= psy.psy;
+            psySum -= result[i - (_this.calcParams[1] - 1)].psy;
           }
 
           upCount -= upList[i - (_this.calcParams[0] - 1)];
@@ -2265,18 +2265,18 @@ var DifferentOfMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
         var dma = {};
         var close = dataList[i].close;
         closeSum1 += close;
-        closeSum1 += close;
+        closeSum2 += close;
         var ma1;
         var ma2;
 
         if (i >= _this.calcParams[0] - 1) {
           ma1 = closeSum1 / _this.calcParams[0];
-          closeSum1 -= result[_this.calcParams[0] - 1].close;
+          closeSum1 -= dataList[i - (_this.calcParams[0] - 1)].close;
         }
 
         if (i >= _this.calcParams[1] - 1) {
           ma2 = closeSum2 / _this.calcParams[1];
-          closeSum2 -= result[_this.calcParams[1] - 1].close;
+          closeSum2 -= dataList[i - (_this.calcParams[1] - 1)].close;
         }
 
         if (i >= maxParam - 1) {
@@ -2414,14 +2414,18 @@ var OnBalanceVolume = /*#__PURE__*/function (_TechnicalIndicator) {
       var result = [];
 
       this._calc(dataList, function (i) {
+        var obv = {};
         var close = dataList[i].close;
         var high = dataList[i].high;
         var hc = high - close;
-        var va = (close - dataList[i].low - hc) / hc * dataList[i].volume;
-        var obv = {
-          obv: va
-        };
-        obvSum += va;
+
+        if (hc === 0) {
+          obv.obv = 0;
+        } else {
+          obv.obv = (close - dataList[i].low - hc) / hc * dataList[i].volume;
+        }
+
+        obvSum += obv.obv;
 
         if (i >= _this.calcParams[0] - 1) {
           obv.obvMa = obvSum / _this.calcParams[0];
@@ -3131,20 +3135,18 @@ var ChartData = /*#__PURE__*/function () {
     /**
      * 计算指标
      * @param series
-     * @param technicalIndicatorType
+     * @param technicalIndicator
      */
 
   }, {
     key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(series, technicalIndicatorType) {
+    value: function calcTechnicalIndicator(series, technicalIndicator) {
       var _this = this;
 
       var task = new Promise(function (resolve, reject) {
-        if (technicalIndicatorType === NO) {
+        if (technicalIndicator.name === NO) {
           resolve(true);
         } else {
-          var technicalIndicator = _this.technicalIndicator(technicalIndicatorType);
-
           if (technicalIndicator && technicalIndicator.calcTechnicalIndicator) {
             technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(_this._dataList) || [];
             resolve(true);
@@ -4769,7 +4771,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
       this._ctx.fillText(nameText, labelX, labelY);
 
       labelX += textMarginLeft + nameTextWidth;
-      var lineCount = -1;
+      var lineCount = 0;
 
       for (var i = 0; i < labels.length; i++) {
         if (plots[i].type === 'line') {
@@ -5715,7 +5717,7 @@ var TechnicalIndicatorSeries = /*#__PURE__*/function (_Series) {
     var technicalIndicatorType = props.technicalIndicatorType || MACD;
     _this._technicalIndicator = _this._chartData.technicalIndicator(technicalIndicatorType);
 
-    _this._chartData.calcTechnicalIndicator(_assertThisInitialized(_this), _this._technicalIndicatorType);
+    _this._chartData.calcTechnicalIndicator(_assertThisInitialized(_this), _this._technicalIndicator);
 
     return _this;
   }
@@ -10264,17 +10266,17 @@ var ChartSeries = /*#__PURE__*/function () {
   }, {
     key: "_calcAllSeriesTechnicalIndicator",
     value: function _calcAllSeriesTechnicalIndicator() {
-      var technicalIndicatorTypeArray = [];
-      var candleStickTechnicalIndicatorType;
+      var technicalIndicatorArray = [];
+      var candleStickTechnicalIndicator;
 
       if (this._candleStickSeries.chartType() === ChartType.CANDLE_STICK) {
-        candleStickTechnicalIndicatorType = this._candleStickSeries.technicalIndicator().name;
-        technicalIndicatorTypeArray.push(candleStickTechnicalIndicatorType);
+        candleStickTechnicalIndicator = this._candleStickSeries.technicalIndicator();
+        technicalIndicatorArray.push(candleStickTechnicalIndicator);
       } else {
-        candleStickTechnicalIndicatorType = AVERAGE;
+        candleStickTechnicalIndicator = AVERAGE;
       }
 
-      this._chartData.calcTechnicalIndicator(this._candleStickSeries, candleStickTechnicalIndicatorType);
+      this._chartData.calcTechnicalIndicator(this._candleStickSeries, candleStickTechnicalIndicator);
 
       var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
           _step2;
@@ -10282,12 +10284,12 @@ var ChartSeries = /*#__PURE__*/function () {
       try {
         for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
           var series = _step2.value;
-          var technicalIndicatorSeriesTechnicalIndicatorType = series.technicalIndicator().name;
+          var technicalIndicator = series.technicalIndicator();
 
-          if (technicalIndicatorTypeArray.indexOf(technicalIndicatorSeriesTechnicalIndicatorType) < 0) {
-            technicalIndicatorTypeArray.push(technicalIndicatorSeriesTechnicalIndicatorType);
+          if (technicalIndicatorArray.indexOf(technicalIndicator) < 0) {
+            technicalIndicatorArray.push(technicalIndicator);
 
-            this._chartData.calcTechnicalIndicator(series, technicalIndicatorSeriesTechnicalIndicatorType);
+            this._chartData.calcTechnicalIndicator(series, technicalIndicator);
           } else {
             series.invalidate(InvalidateLevel.FULL);
           }
