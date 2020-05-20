@@ -255,37 +255,6 @@ export default class ChartData {
   }
 
   /**
-   * 计算指标
-   * @param pane
-   * @param technicalIndicator
-   */
-  calcTechnicalIndicator (pane, technicalIndicator) {
-    const task = new Promise((resolve, reject) => {
-      if (technicalIndicator.name === NO) {
-        resolve(true)
-      } else {
-        if (technicalIndicator && technicalIndicator.calcTechnicalIndicator) {
-          technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList) || []
-          resolve(true)
-        } else {
-          reject(new Error('Technical indicator type is error!'))
-        }
-      }
-    })
-    task.then(
-      _ => {
-        if (isArray(pane)) {
-          for (const p of pane) {
-            p.invalidate(InvalidateLevel.FULL)
-          }
-        } else {
-          pane.invalidate(InvalidateLevel.FULL)
-        }
-      }
-    ).catch(_ => {})
-  }
-
-  /**
    * 获取数据源
    * @returns {[]|*[]}
    */

@@ -17,13 +17,13 @@ import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 import { MACD } from '../data/technicalindicator/technicalIndicatorType'
 import YAxis from '../component/YAxis'
+import { InvalidateLevel } from '../data/ChartData'
 
 export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
     super(props)
     const technicalIndicatorType = props.technicalIndicatorType || MACD
-    this._technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
-    this._chartData.calcTechnicalIndicator(this, this._technicalIndicator)
+    this.setTechnicalIndicatorType(technicalIndicatorType)
   }
 
   _initBefore (props) {
@@ -100,10 +100,37 @@ export default class TechnicalIndicatorPane extends Pane {
     return this._technicalIndicator
   }
 
+  /**
+   * 计算数据源
+   */
+  calcDataSource () {
+    Promise.resolve().then(
+      _ => {
+        if (this._technicalIndicator) {
+          this._technicalIndicator.result = this._technicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), this._technicalIndicator.calcParams) || []
+        }
+        this.invalidate(InvalidateLevel.FULL)
+      }
+    )
+  }
+
+  /**
+   * 设置技术指标类型
+   * @param technicalIndicatorType
+   */
   setTechnicalIndicatorType (technicalIndicatorType) {
-    if (this._technicalIndicator.name !== technicalIndicatorType) {
-      this._technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
-      this._chartData.calcTechnicalIndicator(this, this._technicalIndicator)
+    const TechnicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
+    if (
+      (!this._technicalIndicator && !TechnicalIndicator) ||
+      (this._technicalIndicator && this._technicalIndicator.name === technicalIndicatorType)
+    ) {
+      return
     }
+    if (TechnicalIndicator) {
+      this._technicalIndicator = new TechnicalIndicator()
+    } else {
+      this._technicalIndicator = null
+    }
+    this.calcDataSource()
   }
 }

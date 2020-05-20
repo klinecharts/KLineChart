@@ -50,27 +50,27 @@ import { DEV } from '../../utils/env'
  */
 export function createTechnicalIndicators () {
   return {
-    [MA]: new MovingAverage(),
-    [EMA]: new ExponentialMovingAverage(),
-    [VOL]: new Volume(),
-    [MACD]: new MovingAverageConvergenceDivergence(),
-    [BOLL]: new BollingerBands(),
-    [KDJ]: new StockIndicatorKDJ(),
-    [RSI]: new RelativeStrengthIndex(),
-    [BIAS]: new Bias(),
-    [BRAR]: new Brar(),
-    [CCI]: new CommodityChannelIndex(),
-    [DMI]: new DirectionalMovementIndex(),
-    [CR]: new CurrentRatio(),
-    [PSY]: new PsychologicalLine(),
-    [DMA]: new DifferentOfMovingAverage(),
-    [TRIX]: new TripleExponentiallySmoothedAverage(),
-    [OBV]: new OnBalanceVolume(),
-    [VR]: new VolumeRatio(),
-    [WR]: new WilliamsR(),
-    [MTM]: new Momentum(),
-    [EMV]: new EaseOfMovementValue(),
-    [SAR]: new StopAndReverse()
+    [MA]: MovingAverage,
+    [EMA]: ExponentialMovingAverage,
+    [VOL]: Volume,
+    [MACD]: MovingAverageConvergenceDivergence,
+    [BOLL]: BollingerBands,
+    [KDJ]: StockIndicatorKDJ,
+    [RSI]: RelativeStrengthIndex,
+    [BIAS]: Bias,
+    [BRAR]: Brar,
+    [CCI]: CommodityChannelIndex,
+    [DMI]: DirectionalMovementIndex,
+    [CR]: CurrentRatio,
+    [PSY]: PsychologicalLine,
+    [DMA]: DifferentOfMovingAverage,
+    [TRIX]: TripleExponentiallySmoothedAverage,
+    [OBV]: OnBalanceVolume,
+    [VR]: VolumeRatio,
+    [WR]: WilliamsR,
+    [MTM]: Momentum,
+    [EMV]: EaseOfMovementValue,
+    [SAR]: StopAndReverse
   }
 }
 

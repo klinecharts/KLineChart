@@ -16,7 +16,7 @@ import ChartData, { InvalidateLevel } from '../data/ChartData'
 import CandleStickPane from './CandleStickPane'
 import XAxisPane from './XAxisPane'
 
-import { ChartType, YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
+import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
 import { isArray, isBoolean, isFunction, isObject } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
@@ -25,6 +25,7 @@ import SeparatorPane from './SeparatorPane'
 import { NO, MA, AVERAGE, MACD } from '../data/technicalindicator/technicalIndicatorType'
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
+import {DEV} from "../utils/env"
 
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
@@ -187,23 +188,9 @@ export default class ChartPane {
    * @private
    */
   _calcAllPaneTechnicalIndicator () {
-    const technicalIndicatorArray = []
-    let candleStickTechnicalIndicator
-    if (this._candleStickPane.chartType() === ChartType.CANDLE_STICK) {
-      candleStickTechnicalIndicator = this._candleStickPane.technicalIndicator()
-      technicalIndicatorArray.push(candleStickTechnicalIndicator)
-    } else {
-      candleStickTechnicalIndicator = AVERAGE
-    }
-    this._chartData.calcTechnicalIndicator(this._candleStickPane, candleStickTechnicalIndicator)
+    this._candleStickPane.calcDataSource()
     for (const pane of this._technicalIndicatorPanes) {
-      const technicalIndicator = pane.technicalIndicator()
-      if (technicalIndicatorArray.indexOf(technicalIndicator) < 0) {
-        technicalIndicatorArray.push(technicalIndicator)
-        this._chartData.calcTechnicalIndicator(pane, technicalIndicator)
-      } else {
-        pane.invalidate(InvalidateLevel.FULL)
-      }
+      pane.calcDataSource()
     }
   }
 
@@ -382,13 +369,11 @@ export default class ChartPane {
    * @returns {string}
    */
   createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled) {
-    if (
-      !technicalIndicatorType ||
-      !this._chartData.technicalIndicator(technicalIndicatorType) ||
-      technicalIndicatorType === NO ||
-      technicalIndicatorType === AVERAGE
-    ) {
-      technicalIndicatorType = MACD
+    if (!this._chartData.technicalIndicator(technicalIndicatorType)) {
+      if (DEV) {
+        console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!')
+      }
+      return null
     }
     const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
     const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
