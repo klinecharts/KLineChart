@@ -95,8 +95,8 @@ export default class ChartData {
 
     // 十字光标位置
     this._crossHairPoint = null
-    // 标识十字光标在哪个series
-    this._crossHairSeriesTag = null
+    // 标识十字光标在哪个pane
+    this._crossHairPaneTag = null
     // 用来记录开始拖拽时向右偏移的数量
     this._preOffsetRightBarCount = 0
 
@@ -256,10 +256,10 @@ export default class ChartData {
 
   /**
    * 计算指标
-   * @param series
+   * @param pane
    * @param technicalIndicator
    */
-  calcTechnicalIndicator (series, technicalIndicator) {
+  calcTechnicalIndicator (pane, technicalIndicator) {
     const task = new Promise((resolve, reject) => {
       if (technicalIndicator.name === NO) {
         resolve(true)
@@ -274,12 +274,12 @@ export default class ChartData {
     })
     task.then(
       _ => {
-        if (isArray(series)) {
-          for (const s of series) {
-            s.invalidate(InvalidateLevel.FULL)
+        if (isArray(pane)) {
+          for (const p of pane) {
+            p.invalidate(InvalidateLevel.FULL)
           }
         } else {
-          series.invalidate(InvalidateLevel.FULL)
+          pane.invalidate(InvalidateLevel.FULL)
         }
       }
     ).catch(_ => {})
@@ -433,19 +433,19 @@ export default class ChartData {
   }
 
   /**
-   * 获取十字光标点所在的series的标识
+   * 获取十字光标点所在的pane的标识
    * @returns {null}
    */
-  crossHairSeriesTag () {
-    return this._crossHairSeriesTag
+  crossHairPaneTag () {
+    return this._crossHairPaneTag
   }
 
   /**
-   * 设置十字光标点所在的series的标识
+   * 设置十字光标点所在的pane的标识
    * @param tag
    */
-  setCrossHairSeriesTag (tag) {
-    this._crossHairSeriesTag = tag
+  setCrossHairPaneTag (tag) {
+    this._crossHairPaneTag = tag
     this._invalidateHandler(InvalidateLevel.FLOAT_LAYER)
   }
 

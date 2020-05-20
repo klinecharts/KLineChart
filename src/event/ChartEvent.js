@@ -22,7 +22,7 @@ export default class ChartEvent {
   constructor (target, chartData, xAxis, yAxis) {
     this._target = target
     this._chartData = chartData
-    this._seriesSize = {}
+    this._paneSize = {}
     this._event = new EventBase(this._target, {
       pinchStartEvent: this._pinchStartEvent.bind(this),
       pinchEvent: this._pinchEvent.bind(this),
@@ -62,19 +62,19 @@ export default class ChartEvent {
 
   _mouseUpEvent (event) {
     this._target.style.cursor = 'crosshair'
-    event.localX -= this._seriesSize.contentLeft
+    event.localX -= this._paneSize.contentLeft
     this._graphicMarkEventHandler.mouseUpEvent(event)
   }
 
   _mouseLeaveEvent (event) {
     if (this._checkZoomScroll()) {
-      event.localX -= this._seriesSize.contentLeft
+      event.localX -= this._paneSize.contentLeft
       this._zoomScrollEventHandler.mouseLeaveEvent(event)
     }
   }
 
   _mouseMoveEvent (event) {
-    event.localX -= this._seriesSize.contentLeft
+    event.localX -= this._paneSize.contentLeft
     if (this._chartData.shouldInvalidateGraphicMark()) {
       this._graphicMarkEventHandler.mouseMoveEvent(event)
     }
@@ -91,14 +91,14 @@ export default class ChartEvent {
 
   _mouseClickEvent (event) {
     if (this._checkZoomScroll()) {
-      event.localX -= this._seriesSize.contentLeft
+      event.localX -= this._paneSize.contentLeft
       this._zoomScrollEventHandler.mouseClickEvent(event)
     }
   }
 
   _mouseDownEvent (event) {
     this._target.style.cursor = 'pointer'
-    event.localX -= this._seriesSize.contentLeft
+    event.localX -= this._paneSize.contentLeft
     this._graphicMarkEventHandler.mouseDownEvent(event)
     if (this._checkZoomScroll()) {
       this._zoomScrollEventHandler.mouseDownEvent(event)
@@ -106,17 +106,17 @@ export default class ChartEvent {
   }
 
   _mouseRightDownEvent (event) {
-    event.localX -= this._seriesSize.contentLeft
+    event.localX -= this._paneSize.contentLeft
     this._graphicMarkEventHandler.mouseRightDownEvent(event)
   }
 
   _pressedMouseMoveEvent (event) {
-    event.localX -= this._seriesSize.contentLeft
+    event.localX -= this._paneSize.contentLeft
     if (this._chartData.dragGraphicMarkFlag()) {
       this._graphicMarkEventHandler.pressedMouseMoveEvent(event)
       // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
-      if (this._chartData.crossHairSeriesTag() !== null) {
-        this._chartData.setCrossHairSeriesTag(null)
+      if (this._chartData.crossHairPaneTag() !== null) {
+        this._chartData.setCrossHairPaneTag(null)
       }
     }
     if (this._checkZoomScroll()) {
@@ -126,7 +126,7 @@ export default class ChartEvent {
 
   _longTapEvent (event) {
     if (this._checkZoomScroll()) {
-      event.localX -= this._seriesSize.contentLeft
+      event.localX -= this._paneSize.contentLeft
       this._zoomScrollEventHandler.longTapEvent(event)
     }
   }
@@ -135,10 +135,10 @@ export default class ChartEvent {
     return !this._chartData.dragGraphicMarkFlag() && this._chartData.graphicMarkType() === GraphicMarkType.NONE
   }
 
-  setSeriesSize (seriesSize) {
-    this._seriesSize = seriesSize
-    this._zoomScrollEventHandler.setSeriesSize(seriesSize)
-    this._graphicMarkEventHandler.setSeriesSize(seriesSize)
+  setPaneSize (paneSize) {
+    this._paneSize = paneSize
+    this._zoomScrollEventHandler.setPaneSize(paneSize)
+    this._graphicMarkEventHandler.setPaneSize(paneSize)
   }
 
   destroy () {

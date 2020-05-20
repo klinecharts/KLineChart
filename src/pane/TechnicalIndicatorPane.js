@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import Series from './Series'
+import Pane from './Pane'
 import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 import { MACD } from '../data/technicalindicator/technicalIndicatorType'
 import YAxis from '../component/YAxis'
 
-export default class TechnicalIndicatorSeries extends Series {
+export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
     super(props)
     const technicalIndicatorType = props.technicalIndicatorType || MACD

@@ -15,7 +15,7 @@
 import { getPixelRatio } from '../utils/canvas'
 import { InvalidateLevel } from '../data/ChartData'
 
-export default class Series {
+export default class Pane {
   constructor (props) {
     this._container = props.container
     this._chartData = props.chartData

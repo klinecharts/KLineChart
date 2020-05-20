@@ -25,14 +25,14 @@ export function isMouse (event) {
 export default class EventHandler {
   constructor (chartData) {
     this._chartData = chartData
-    this._seriesSize = {}
+    this._paneSize = {}
   }
 
   _checkEventPointX (x) {
-    return x > 0 && x < this._seriesSize.contentRight - this._seriesSize.contentLeft
+    return x > 0 && x < this._paneSize.contentRight - this._paneSize.contentLeft
   }
 
-  setSeriesSize (seriesSize) {
-    this._seriesSize = seriesSize
+  setPaneSize (paneSize) {
+    this._paneSize = paneSize
   }
 }

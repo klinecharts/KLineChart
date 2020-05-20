@@ -30,7 +30,7 @@ export default class YAxisFloatLayerView extends View {
 
   _drawCrossHairLabel () {
     if (
-      this._chartData.crossHairSeriesTag() !== this._additionalDataProvider.tag() ||
+      this._chartData.crossHairPaneTag() !== this._additionalDataProvider.tag() ||
       this._chartData.dataList().length === 0
     ) {
       return

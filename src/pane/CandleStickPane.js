@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import TechnicalIndicatorSeries from './TechnicalIndicatorSeries'
+import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import CandleStickWidget from '../widget/CandleStickWidget'
 import { ChartType } from '../data/options/styleOptions'
 import YAxis from '../component/YAxis'
 import { AVERAGE } from '../data/technicalindicator/technicalIndicatorType'
 
-export default class CandleStickSeries extends TechnicalIndicatorSeries {
+export default class CandleStickPane extends TechnicalIndicatorPane {
   constructor (props) {
     super(props)
     this._chartType = ChartType.CANDLE_STICK

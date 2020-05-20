@@ -42,7 +42,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
 
   mouseLeaveEvent (event) {
     if (isMouse(event)) {
-      this._chartData.setCrossHairSeriesTag(null)
+      this._chartData.setCrossHairPaneTag(null)
     }
   }
 
@@ -51,16 +51,16 @@ export default class ZoomScrollEventHandler extends EventHandler {
       return
     }
     if (!this._checkEventPointX(event.localX)) {
-      this._chartData.setCrossHairSeriesTag(null)
+      this._chartData.setCrossHairPaneTag(null)
       return
     }
     const real = this._translateCrossHairRealY(event.localY)
     if (!real) {
-      this._chartData.setCrossHairSeriesTag(null)
+      this._chartData.setCrossHairPaneTag(null)
       return
     }
     this._chartData.setCrossHairPoint({ x: event.localX, y: real.y })
-    this._chartData.setCrossHairSeriesTag(real.tag)
+    this._chartData.setCrossHairPaneTag(real.tag)
   }
 
   mouseWheelEvent (event) {
@@ -102,7 +102,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
     if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
       this._touchPoint = { x: event.localX, y: event.localY }
       this._chartData.setCrossHairPoint({ x: event.localX, y: real.y })
-      this._chartData.setCrossHairSeriesTag(real.tag)
+      this._chartData.setCrossHairPaneTag(real.tag)
     }
   }
 
@@ -125,12 +125,12 @@ export default class ZoomScrollEventHandler extends EventHandler {
       if (radius < 10) {
         this._touchPoint = { x: event.localX, y: event.localY }
         this._chartData.setCrossHairPoint(crossHairPoint)
-        this._chartData.setCrossHairSeriesTag(real.tag)
+        this._chartData.setCrossHairPaneTag(real.tag)
       } else {
         this._touchCancelCrossHair = true
         this._touchPoint = null
         this._chartData.setCrossHairPoint(crossHairPoint)
-        this._chartData.setCrossHairSeriesTag(null)
+        this._chartData.setCrossHairPaneTag(null)
       }
     } else {
       this._touchCancelCrossHair = false
@@ -150,7 +150,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
       if (this._touchPoint) {
         this._touchPoint = { x: event.localX, y: event.localY }
         this._chartData.setCrossHairPoint(crossHairPoint)
-        this._chartData.setCrossHairSeriesTag(real.tag)
+        this._chartData.setCrossHairPaneTag(real.tag)
         return
       }
     }
@@ -169,7 +169,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
     }
     this._touchPoint = { x: event.localX, y: event.localY }
     this._chartData.setCrossHairPoint({ x: event.localX, y: real.y })
-    this._chartData.setCrossHairSeriesTag(real.tag)
+    this._chartData.setCrossHairPaneTag(real.tag)
   }
 
   /**
@@ -179,7 +179,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
    * @private
    */
   _translateCrossHairRealY (y) {
-    const tags = this._seriesSize.tags || {}
+    const tags = this._paneSize.tags || {}
     for (const tag in tags) {
       const size = tags[tag]
       if (y > size.contentTop && y < size.contentBottom) {

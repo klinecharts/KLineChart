@@ -28,7 +28,7 @@ export default class XAxisFloatLayerView extends View {
   }
 
   _drawCrossHairLabel () {
-    if (!this._chartData.crossHairSeriesTag()) {
+    if (!this._chartData.crossHairPaneTag()) {
       return
     }
     const crossHair = this._chartData.styleOptions().floatLayer.crossHair

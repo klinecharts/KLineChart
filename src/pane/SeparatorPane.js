@@ -15,10 +15,10 @@
 import EventBase from '../event/EventBase'
 import { getPixelRatio } from '../utils/canvas'
 
-export default class SeparatorSeries {
-  constructor (container, chartData, seriesIndex, dragEnabled, dragEventHandler) {
+export default class SeparatorPane {
+  constructor (container, chartData, paneIndex, dragEnabled, dragEventHandler) {
     this._chartData = chartData
-    this._seriesIndex = seriesIndex
+    this._paneIndex = paneIndex
     this._width = 0
     this._offsetLeft = 0
     this._dragEventHandler = dragEventHandler
@@ -59,12 +59,12 @@ export default class SeparatorSeries {
 
   _mouseDownEvent (event) {
     this._startY = event.pageY
-    this._dragEventHandler.startDrag(this._seriesIndex)
+    this._dragEventHandler.startDrag(this._paneIndex)
   }
 
   _pressedMouseMoveEvent (event) {
     const dragDistance = event.pageY - this._startY
-    this._dragEventHandler.drag(dragDistance, this._seriesIndex)
+    this._dragEventHandler.drag(dragDistance, this._paneIndex)
   }
 
   /**
@@ -89,10 +89,10 @@ export default class SeparatorSeries {
 
   /**
    * 更新上下两个图表的索引
-   * @param seriesIndex
+   * @param paneIndex
    */
-  updateSeriesIndex (seriesIndex) {
-    this._seriesIndex = seriesIndex
+  updatePaneIndex (paneIndex) {
+    this._paneIndex = paneIndex
   }
 
   /**

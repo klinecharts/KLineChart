@@ -55,7 +55,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
       this._drawCrossHairVerticalLine(x)
       const displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule
       if (displayRule === FloatLayerPromptDisplayRule.ALWAYS ||
-        (displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairSeriesTag())) {
+        (displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairPaneTag())) {
         this._drawPrompt(kLineData, technicalIndicatorData, technicalIndicator, x)
       }
     }
@@ -78,7 +78,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
    * @private
    */
   _drawCrossHairHorizontalLine () {
-    if (this._chartData.crossHairSeriesTag() !== this._additionalDataProvider.tag()) {
+    if (this._chartData.crossHairPaneTag() !== this._additionalDataProvider.tag()) {
       return
     }
     const crossHair = this._chartData.styleOptions().floatLayer.crossHair
@@ -107,7 +107,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
    * @private
    */
   _drawCrossHairVerticalLine (x) {
-    if (!this._chartData.crossHairSeriesTag()) {
+    if (!this._chartData.crossHairPaneTag()) {
       return
     }
     const crossHair = this._chartData.styleOptions().floatLayer.crossHair
@@ -201,7 +201,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     if (!floatLayerPromptTechnicalIndicatorPoint.display) {
       return
     }
-    if (!this._chartData.crossHairSeriesTag()) {
+    if (!this._chartData.crossHairPaneTag()) {
       return
     }
     const plots = technicalIndicator.plots

@@ -12,11 +12,11 @@
  * limitations under the License.
  */
 
-import Series from './Series'
+import Pane from './Pane'
 import XAxisWidget from '../widget/XAxisWidget'
 import XAxis from '../component/XAxis'
 
-export default class XAxisSeries extends Series {
+export default class XAxisPane extends Pane {
   _initBefore () {
     this._xAxis = new XAxis(this._chartData)
   }

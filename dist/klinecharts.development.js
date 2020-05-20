@@ -2969,9 +2969,9 @@ var ChartData = /*#__PURE__*/function () {
 
     this._to = 0; // 十字光标位置
 
-    this._crossHairPoint = null; // 标识十字光标在哪个series
+    this._crossHairPoint = null; // 标识十字光标在哪个pane
 
-    this._crossHairSeriesTag = null; // 用来记录开始拖拽时向右偏移的数量
+    this._crossHairPaneTag = null; // 用来记录开始拖拽时向右偏移的数量
 
     this._preOffsetRightBarCount = 0; // 当前绘制的标记图形的类型
 
@@ -3158,13 +3158,13 @@ var ChartData = /*#__PURE__*/function () {
     }
     /**
      * 计算指标
-     * @param series
+     * @param pane
      * @param technicalIndicator
      */
 
   }, {
     key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(series, technicalIndicator) {
+    value: function calcTechnicalIndicator(pane, technicalIndicator) {
       var _this = this;
 
       var task = new Promise(function (resolve, reject) {
@@ -3180,14 +3180,14 @@ var ChartData = /*#__PURE__*/function () {
         }
       });
       task.then(function (_) {
-        if (isArray(series)) {
-          var _iterator = _createForOfIteratorHelper(series),
+        if (isArray(pane)) {
+          var _iterator = _createForOfIteratorHelper(pane),
               _step;
 
           try {
             for (_iterator.s(); !(_step = _iterator.n()).done;) {
-              var s = _step.value;
-              s.invalidate(InvalidateLevel.FULL);
+              var p = _step.value;
+              p.invalidate(InvalidateLevel.FULL);
             }
           } catch (err) {
             _iterator.e(err);
@@ -3195,7 +3195,7 @@ var ChartData = /*#__PURE__*/function () {
             _iterator.f();
           }
         } else {
-          series.invalidate(InvalidateLevel.FULL);
+          pane.invalidate(InvalidateLevel.FULL);
         }
       }).catch(function (_) {});
     }
@@ -3380,24 +3380,24 @@ var ChartData = /*#__PURE__*/function () {
       return this._crossHairPoint;
     }
     /**
-     * 获取十字光标点所在的series的标识
+     * 获取十字光标点所在的pane的标识
      * @returns {null}
      */
 
   }, {
-    key: "crossHairSeriesTag",
-    value: function crossHairSeriesTag() {
-      return this._crossHairSeriesTag;
+    key: "crossHairPaneTag",
+    value: function crossHairPaneTag() {
+      return this._crossHairPaneTag;
     }
     /**
-     * 设置十字光标点所在的series的标识
+     * 设置十字光标点所在的pane的标识
      * @param tag
      */
 
   }, {
-    key: "setCrossHairSeriesTag",
-    value: function setCrossHairSeriesTag(tag) {
-      this._crossHairSeriesTag = tag;
+    key: "setCrossHairPaneTag",
+    value: function setCrossHairPaneTag(tag) {
+      this._crossHairPaneTag = tag;
 
       this._invalidateHandler(InvalidateLevel.FLOAT_LAYER);
     }
@@ -3722,9 +3722,9 @@ function drawLine(ctx, drawFuc) {
   ctx.restore();
 }
 
-var Series = /*#__PURE__*/function () {
-  function Series(props) {
-    _classCallCheck(this, Series);
+var Pane = /*#__PURE__*/function () {
+  function Pane(props) {
+    _classCallCheck(this, Pane);
 
     this._container = props.container;
     this._chartData = props.chartData;
@@ -3739,7 +3739,7 @@ var Series = /*#__PURE__*/function () {
     this._yAxisWidget = this._createYAxisWidget(this._yAxisWidgetCell, props);
   }
 
-  _createClass(Series, [{
+  _createClass(Pane, [{
     key: "_initBefore",
     value: function _initBefore(props) {}
   }, {
@@ -3927,7 +3927,7 @@ var Series = /*#__PURE__*/function () {
     }
   }]);
 
-  return Series;
+  return Pane;
 }();
 
 var Widget = /*#__PURE__*/function () {
@@ -4647,7 +4647,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
         var displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule;
 
-        if (displayRule === FloatLayerPromptDisplayRule.ALWAYS || displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairSeriesTag()) {
+        if (displayRule === FloatLayerPromptDisplayRule.ALWAYS || displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairPaneTag()) {
           this._drawPrompt(kLineData, technicalIndicatorData, technicalIndicator, x);
         }
       }
@@ -4674,7 +4674,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawCrossHairHorizontalLine",
     value: function _drawCrossHairHorizontalLine() {
-      if (this._chartData.crossHairSeriesTag() !== this._additionalDataProvider.tag()) {
+      if (this._chartData.crossHairPaneTag() !== this._additionalDataProvider.tag()) {
         return;
       }
 
@@ -4714,7 +4714,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawCrossHairVerticalLine",
     value: function _drawCrossHairVerticalLine(x) {
-      if (!this._chartData.crossHairSeriesTag()) {
+      if (!this._chartData.crossHairPaneTag()) {
         return;
       }
 
@@ -4831,7 +4831,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
         return;
       }
 
-      if (!this._chartData.crossHairSeriesTag()) {
+      if (!this._chartData.crossHairPaneTag()) {
         return;
       }
 
@@ -5220,7 +5220,7 @@ var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawCrossHairLabel",
     value: function _drawCrossHairLabel() {
-      if (this._chartData.crossHairSeriesTag() !== this._additionalDataProvider.tag() || this._chartData.dataList().length === 0) {
+      if (this._chartData.crossHairPaneTag() !== this._additionalDataProvider.tag() || this._chartData.dataList().length === 0) {
         return;
       }
 
@@ -5722,15 +5722,15 @@ var YAxis = /*#__PURE__*/function (_Axis) {
   return YAxis;
 }(Axis);
 
-var TechnicalIndicatorSeries = /*#__PURE__*/function (_Series) {
-  _inherits(TechnicalIndicatorSeries, _Series);
+var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
+  _inherits(TechnicalIndicatorPane, _Pane);
 
-  var _super = _createSuper(TechnicalIndicatorSeries);
+  var _super = _createSuper(TechnicalIndicatorPane);
 
-  function TechnicalIndicatorSeries(props) {
+  function TechnicalIndicatorPane(props) {
     var _this;
 
-    _classCallCheck(this, TechnicalIndicatorSeries);
+    _classCallCheck(this, TechnicalIndicatorPane);
 
     _this = _super.call(this, props);
     var technicalIndicatorType = props.technicalIndicatorType || MACD;
@@ -5741,7 +5741,7 @@ var TechnicalIndicatorSeries = /*#__PURE__*/function (_Series) {
     return _this;
   }
 
-  _createClass(TechnicalIndicatorSeries, [{
+  _createClass(TechnicalIndicatorPane, [{
     key: "_initBefore",
     value: function _initBefore(props) {
       this._tag = props.tag;
@@ -5814,7 +5814,7 @@ var TechnicalIndicatorSeries = /*#__PURE__*/function (_Series) {
 
       this._computeAxis();
 
-      _get(_getPrototypeOf(TechnicalIndicatorSeries.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
+      _get(_getPrototypeOf(TechnicalIndicatorPane.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
     }
   }, {
     key: "yAxis",
@@ -5842,8 +5842,8 @@ var TechnicalIndicatorSeries = /*#__PURE__*/function (_Series) {
     }
   }]);
 
-  return TechnicalIndicatorSeries;
-}(Series);
+  return TechnicalIndicatorPane;
+}(Pane);
 
 var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
   _inherits(CandleStickView, _TechnicalIndicatorVi);
@@ -7512,18 +7512,18 @@ var EventHandler = /*#__PURE__*/function () {
     _classCallCheck(this, EventHandler);
 
     this._chartData = chartData;
-    this._seriesSize = {};
+    this._paneSize = {};
   }
 
   _createClass(EventHandler, [{
     key: "_checkEventPointX",
     value: function _checkEventPointX(x) {
-      return x > 0 && x < this._seriesSize.contentRight - this._seriesSize.contentLeft;
+      return x > 0 && x < this._paneSize.contentRight - this._paneSize.contentLeft;
     }
   }, {
-    key: "setSeriesSize",
-    value: function setSeriesSize(seriesSize) {
-      this._seriesSize = seriesSize;
+    key: "setPaneSize",
+    value: function setPaneSize(paneSize) {
+      this._paneSize = paneSize;
     }
   }]);
 
@@ -7805,7 +7805,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
             {
               if (_this4._realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], {
-                  x: _this4._seriesSize.contentRight,
+                  x: _this4._paneSize.contentRight,
                   y: xyPoints[0].y
                 }, point);
               })) {
@@ -7822,7 +7822,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
               if (_this4._realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], {
                   x: xyPoints[0].x,
-                  y: _this4._seriesSize.tags[CANDLE_STICK_SERIES_TAG].contentBottom
+                  y: _this4._paneSize.tags[CANDLE_STICK_PANE_TAG].contentBottom
                 }, point);
               })) {
                 return {
@@ -7883,8 +7883,8 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
               if (_this4._realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 var linePoints = [];
                 var size = {
-                  width: _this4._seriesSize.contentRight,
-                  height: _this4._seriesSize.tags[CANDLE_STICK_SERIES_TAG].contentBottom - _this4._seriesSize.tags[CANDLE_STICK_SERIES_TAG].contentTop
+                  width: _this4._paneSize.contentRight,
+                  height: _this4._paneSize.tags[CANDLE_STICK_PANE_TAG].contentBottom - _this4._paneSize.tags[CANDLE_STICK_PANE_TAG].contentTop
                 };
 
                 switch (key) {
@@ -8367,7 +8367,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
   }, {
     key: "_checkEventPointY",
     value: function _checkEventPointY(y) {
-      var size = this._seriesSize.tags[CANDLE_STICK_SERIES_TAG];
+      var size = this._paneSize.tags[CANDLE_STICK_PANE_TAG];
       return y > size.contentTop && y < size.contentBottom;
     }
   }]);
@@ -8922,22 +8922,22 @@ var CandleStickWidget = /*#__PURE__*/function (_TechnicalIndicatorWi) {
   return CandleStickWidget;
 }(TechnicalIndicatorWidget);
 
-var CandleStickSeries = /*#__PURE__*/function (_TechnicalIndicatorSe) {
-  _inherits(CandleStickSeries, _TechnicalIndicatorSe);
+var CandleStickPane = /*#__PURE__*/function (_TechnicalIndicatorPa) {
+  _inherits(CandleStickPane, _TechnicalIndicatorPa);
 
-  var _super = _createSuper(CandleStickSeries);
+  var _super = _createSuper(CandleStickPane);
 
-  function CandleStickSeries(props) {
+  function CandleStickPane(props) {
     var _this;
 
-    _classCallCheck(this, CandleStickSeries);
+    _classCallCheck(this, CandleStickPane);
 
     _this = _super.call(this, props);
     _this._chartType = ChartType.CANDLE_STICK;
     return _this;
   }
 
-  _createClass(CandleStickSeries, [{
+  _createClass(CandleStickPane, [{
     key: "_createYAxis",
     value: function _createYAxis(props) {
       return new YAxis(props.chartData, true);
@@ -8978,8 +8978,8 @@ var CandleStickSeries = /*#__PURE__*/function (_TechnicalIndicatorSe) {
     }
   }]);
 
-  return CandleStickSeries;
-}(TechnicalIndicatorSeries);
+  return CandleStickPane;
+}(TechnicalIndicatorPane);
 
 var XAxisView = /*#__PURE__*/function (_View) {
   _inherits(XAxisView, _View);
@@ -9102,7 +9102,7 @@ var XAxisFloatLayerView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawCrossHairLabel",
     value: function _drawCrossHairLabel() {
-      if (!this._chartData.crossHairSeriesTag()) {
+      if (!this._chartData.crossHairPaneTag()) {
         return;
       }
 
@@ -9359,18 +9359,18 @@ var XAxis = /*#__PURE__*/function (_Axis) {
   return XAxis;
 }(Axis);
 
-var XAxisSeries = /*#__PURE__*/function (_Series) {
-  _inherits(XAxisSeries, _Series);
+var XAxisPane = /*#__PURE__*/function (_Pane) {
+  _inherits(XAxisPane, _Pane);
 
-  var _super = _createSuper(XAxisSeries);
+  var _super = _createSuper(XAxisPane);
 
-  function XAxisSeries() {
-    _classCallCheck(this, XAxisSeries);
+  function XAxisPane() {
+    _classCallCheck(this, XAxisPane);
 
     return _super.apply(this, arguments);
   }
 
-  _createClass(XAxisSeries, [{
+  _createClass(XAxisPane, [{
     key: "_initBefore",
     value: function _initBefore() {
       this._xAxis = new XAxis(this._chartData);
@@ -9401,19 +9401,19 @@ var XAxisSeries = /*#__PURE__*/function (_Series) {
 
       this._computeAxis();
 
-      _get(_getPrototypeOf(XAxisSeries.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
+      _get(_getPrototypeOf(XAxisPane.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
     }
   }]);
 
-  return XAxisSeries;
-}(Series);
+  return XAxisPane;
+}(Pane);
 
-var SeparatorSeries = /*#__PURE__*/function () {
-  function SeparatorSeries(container, chartData, seriesIndex, dragEnabled, dragEventHandler) {
-    _classCallCheck(this, SeparatorSeries);
+var SeparatorPane = /*#__PURE__*/function () {
+  function SeparatorPane(container, chartData, paneIndex, dragEnabled, dragEventHandler) {
+    _classCallCheck(this, SeparatorPane);
 
     this._chartData = chartData;
-    this._seriesIndex = seriesIndex;
+    this._paneIndex = paneIndex;
     this._width = 0;
     this._offsetLeft = 0;
     this._dragEventHandler = dragEventHandler;
@@ -9421,7 +9421,7 @@ var SeparatorSeries = /*#__PURE__*/function () {
     this._initElement(container, dragEnabled);
   }
 
-  _createClass(SeparatorSeries, [{
+  _createClass(SeparatorPane, [{
     key: "_initElement",
     value: function _initElement(container, dragEnabled) {
       this._container = container;
@@ -9463,14 +9463,14 @@ var SeparatorSeries = /*#__PURE__*/function () {
     value: function _mouseDownEvent(event) {
       this._startY = event.pageY;
 
-      this._dragEventHandler.startDrag(this._seriesIndex);
+      this._dragEventHandler.startDrag(this._paneIndex);
     }
   }, {
     key: "_pressedMouseMoveEvent",
     value: function _pressedMouseMoveEvent(event) {
       var dragDistance = event.pageY - this._startY;
 
-      this._dragEventHandler.drag(dragDistance, this._seriesIndex);
+      this._dragEventHandler.drag(dragDistance, this._paneIndex);
     }
     /**
      * 获取高度
@@ -9498,13 +9498,13 @@ var SeparatorSeries = /*#__PURE__*/function () {
     }
     /**
      * 更新上下两个图表的索引
-     * @param seriesIndex
+     * @param paneIndex
      */
 
   }, {
-    key: "updateSeriesIndex",
-    value: function updateSeriesIndex(seriesIndex) {
-      this._seriesIndex = seriesIndex;
+    key: "updatePaneIndex",
+    value: function updatePaneIndex(paneIndex) {
+      this._paneIndex = paneIndex;
     }
     /**
      * 刷新
@@ -9559,7 +9559,7 @@ var SeparatorSeries = /*#__PURE__*/function () {
     }
   }]);
 
-  return SeparatorSeries;
+  return SeparatorPane;
 }();
 
 var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
@@ -9604,7 +9604,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
     key: "mouseLeaveEvent",
     value: function mouseLeaveEvent(event) {
       if (isMouse(event)) {
-        this._chartData.setCrossHairSeriesTag(null);
+        this._chartData.setCrossHairPaneTag(null);
       }
     }
   }, {
@@ -9615,7 +9615,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
       }
 
       if (!this._checkEventPointX(event.localX)) {
-        this._chartData.setCrossHairSeriesTag(null);
+        this._chartData.setCrossHairPaneTag(null);
 
         return;
       }
@@ -9623,7 +9623,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
       var real = this._translateCrossHairRealY(event.localY);
 
       if (!real) {
-        this._chartData.setCrossHairSeriesTag(null);
+        this._chartData.setCrossHairPaneTag(null);
 
         return;
       }
@@ -9633,7 +9633,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
         y: real.y
       });
 
-      this._chartData.setCrossHairSeriesTag(real.tag);
+      this._chartData.setCrossHairPaneTag(real.tag);
     }
   }, {
     key: "mouseWheelEvent",
@@ -9695,7 +9695,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
           y: real.y
         });
 
-        this._chartData.setCrossHairSeriesTag(real.tag);
+        this._chartData.setCrossHairPaneTag(real.tag);
       }
     }
   }, {
@@ -9737,14 +9737,14 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
 
           this._chartData.setCrossHairPoint(crossHairPoint);
 
-          this._chartData.setCrossHairSeriesTag(real.tag);
+          this._chartData.setCrossHairPaneTag(real.tag);
         } else {
           this._touchCancelCrossHair = true;
           this._touchPoint = null;
 
           this._chartData.setCrossHairPoint(crossHairPoint);
 
-          this._chartData.setCrossHairSeriesTag(null);
+          this._chartData.setCrossHairPaneTag(null);
         }
       } else {
         this._touchCancelCrossHair = false;
@@ -9777,7 +9777,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
 
           this._chartData.setCrossHairPoint(crossHairPoint);
 
-          this._chartData.setCrossHairSeriesTag(real.tag);
+          this._chartData.setCrossHairPaneTag(real.tag);
 
           return;
         }
@@ -9812,7 +9812,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
         y: real.y
       });
 
-      this._chartData.setCrossHairSeriesTag(real.tag);
+      this._chartData.setCrossHairPaneTag(real.tag);
     }
     /**
      * 将事件的y点转换成十字光标点的y
@@ -9824,7 +9824,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
   }, {
     key: "_translateCrossHairRealY",
     value: function _translateCrossHairRealY(y) {
-      var tags = this._seriesSize.tags || {};
+      var tags = this._paneSize.tags || {};
 
       for (var tag in tags) {
         var size = tags[tag];
@@ -9910,7 +9910,7 @@ var ChartEvent = /*#__PURE__*/function () {
 
     this._target = target;
     this._chartData = chartData;
-    this._seriesSize = {};
+    this._paneSize = {};
     this._event = new EventBase(this._target, {
       pinchStartEvent: this._pinchStartEvent.bind(this),
       pinchEvent: this._pinchEvent.bind(this),
@@ -9961,7 +9961,7 @@ var ChartEvent = /*#__PURE__*/function () {
     key: "_mouseUpEvent",
     value: function _mouseUpEvent(event) {
       this._target.style.cursor = 'crosshair';
-      event.localX -= this._seriesSize.contentLeft;
+      event.localX -= this._paneSize.contentLeft;
 
       this._graphicMarkEventHandler.mouseUpEvent(event);
     }
@@ -9969,7 +9969,7 @@ var ChartEvent = /*#__PURE__*/function () {
     key: "_mouseLeaveEvent",
     value: function _mouseLeaveEvent(event) {
       if (this._checkZoomScroll()) {
-        event.localX -= this._seriesSize.contentLeft;
+        event.localX -= this._paneSize.contentLeft;
 
         this._zoomScrollEventHandler.mouseLeaveEvent(event);
       }
@@ -9977,7 +9977,7 @@ var ChartEvent = /*#__PURE__*/function () {
   }, {
     key: "_mouseMoveEvent",
     value: function _mouseMoveEvent(event) {
-      event.localX -= this._seriesSize.contentLeft;
+      event.localX -= this._paneSize.contentLeft;
 
       if (this._chartData.shouldInvalidateGraphicMark()) {
         this._graphicMarkEventHandler.mouseMoveEvent(event);
@@ -9998,7 +9998,7 @@ var ChartEvent = /*#__PURE__*/function () {
     key: "_mouseClickEvent",
     value: function _mouseClickEvent(event) {
       if (this._checkZoomScroll()) {
-        event.localX -= this._seriesSize.contentLeft;
+        event.localX -= this._paneSize.contentLeft;
 
         this._zoomScrollEventHandler.mouseClickEvent(event);
       }
@@ -10007,7 +10007,7 @@ var ChartEvent = /*#__PURE__*/function () {
     key: "_mouseDownEvent",
     value: function _mouseDownEvent(event) {
       this._target.style.cursor = 'pointer';
-      event.localX -= this._seriesSize.contentLeft;
+      event.localX -= this._paneSize.contentLeft;
 
       this._graphicMarkEventHandler.mouseDownEvent(event);
 
@@ -10018,21 +10018,21 @@ var ChartEvent = /*#__PURE__*/function () {
   }, {
     key: "_mouseRightDownEvent",
     value: function _mouseRightDownEvent(event) {
-      event.localX -= this._seriesSize.contentLeft;
+      event.localX -= this._paneSize.contentLeft;
 
       this._graphicMarkEventHandler.mouseRightDownEvent(event);
     }
   }, {
     key: "_pressedMouseMoveEvent",
     value: function _pressedMouseMoveEvent(event) {
-      event.localX -= this._seriesSize.contentLeft;
+      event.localX -= this._paneSize.contentLeft;
 
       if (this._chartData.dragGraphicMarkFlag()) {
         this._graphicMarkEventHandler.pressedMouseMoveEvent(event); // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
 
 
-        if (this._chartData.crossHairSeriesTag() !== null) {
-          this._chartData.setCrossHairSeriesTag(null);
+        if (this._chartData.crossHairPaneTag() !== null) {
+          this._chartData.setCrossHairPaneTag(null);
         }
       }
 
@@ -10044,7 +10044,7 @@ var ChartEvent = /*#__PURE__*/function () {
     key: "_longTapEvent",
     value: function _longTapEvent(event) {
       if (this._checkZoomScroll()) {
-        event.localX -= this._seriesSize.contentLeft;
+        event.localX -= this._paneSize.contentLeft;
 
         this._zoomScrollEventHandler.longTapEvent(event);
       }
@@ -10055,13 +10055,13 @@ var ChartEvent = /*#__PURE__*/function () {
       return !this._chartData.dragGraphicMarkFlag() && this._chartData.graphicMarkType() === GraphicMarkType.NONE;
     }
   }, {
-    key: "setSeriesSize",
-    value: function setSeriesSize(seriesSize) {
-      this._seriesSize = seriesSize;
+    key: "setPaneSize",
+    value: function setPaneSize(paneSize) {
+      this._paneSize = paneSize;
 
-      this._zoomScrollEventHandler.setSeriesSize(seriesSize);
+      this._zoomScrollEventHandler.setPaneSize(paneSize);
 
-      this._graphicMarkEventHandler.setSeriesSize(seriesSize);
+      this._graphicMarkEventHandler.setPaneSize(paneSize);
     }
   }, {
     key: "destroy",
@@ -10077,34 +10077,34 @@ var ChartEvent = /*#__PURE__*/function () {
   return ChartEvent;
 }();
 
-var DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT = 100;
+var DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100;
 var TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_';
-var CANDLE_STICK_SERIES_TAG = 'candle_stick_series_tag';
+var CANDLE_STICK_PANE_TAG = 'candle_stick_pane_tag';
 
-var ChartSeries = /*#__PURE__*/function () {
-  function ChartSeries(container, styleOptions) {
-    _classCallCheck(this, ChartSeries);
+var ChartPane = /*#__PURE__*/function () {
+  function ChartPane(container, styleOptions) {
+    _classCallCheck(this, ChartPane);
 
     this._initChartContainer(container);
 
     this._technicalIndicatorBaseId = 0;
-    this._technicalIndicatorSeries = [];
-    this._separatorSeries = [];
+    this._technicalIndicatorPanes = [];
+    this._separatorPanes = [];
     this._separatorDragStartTechnicalIndicatorHeight = 0;
-    this._chartData = new ChartData(styleOptions, this._updateSeries.bind(this));
-    this._xAxisSeries = new XAxisSeries({
+    this._chartData = new ChartData(styleOptions, this._updatePane.bind(this));
+    this._xAxisPane = new XAxisPane({
       container: this._chartContainer,
       chartData: this._chartData
     });
-    this._candleStickSeries = new CandleStickSeries({
+    this._candleStickPane = new CandleStickPane({
       container: this._chartContainer,
       chartData: this._chartData,
-      xAxis: this._xAxisSeries.xAxis(),
+      xAxis: this._xAxisPane.xAxis(),
       technicalIndicatorType: MA,
-      tag: CANDLE_STICK_SERIES_TAG
+      tag: CANDLE_STICK_PANE_TAG
     });
-    this._chartEvent = new ChartEvent(this._chartContainer, this._chartData, this._xAxisSeries.xAxis(), this._candleStickSeries.yAxis());
-    this.measureSeriesSize();
+    this._chartEvent = new ChartEvent(this._chartContainer, this._chartData, this._xAxisPane.xAxis(), this._candleStickPane.yAxis());
+    this.measurePaneSize();
   }
   /**
    * 初始化图表容器
@@ -10113,7 +10113,7 @@ var ChartSeries = /*#__PURE__*/function () {
    */
 
 
-  _createClass(ChartSeries, [{
+  _createClass(ChartPane, [{
     key: "_initChartContainer",
     value: function _initChartContainer(container) {
       this._container = container;
@@ -10133,34 +10133,34 @@ var ChartSeries = /*#__PURE__*/function () {
     }
     /**
      * 分割线拖拽开始
-     * @param seriesIndex
+     * @param paneIndex
      * @private
      */
 
   }, {
     key: "_separatorStartDrag",
-    value: function _separatorStartDrag(seriesIndex) {
-      this._separatorDragStartTechnicalIndicatorHeight = this._technicalIndicatorSeries[seriesIndex].height();
+    value: function _separatorStartDrag(paneIndex) {
+      this._separatorDragStartTechnicalIndicatorHeight = this._technicalIndicatorPanes[paneIndex].height();
     }
     /**
      * 分割线拖拽
      * @param dragDistance
-     * @param seriesIndex
+     * @param paneIndex
      * @private
      */
 
   }, {
     key: "_separatorDrag",
-    value: function _separatorDrag(dragDistance, seriesIndex) {
+    value: function _separatorDrag(dragDistance, paneIndex) {
       var height = this._separatorDragStartTechnicalIndicatorHeight - dragDistance;
 
       if (height < 0) {
         height = 0;
       }
 
-      this._technicalIndicatorSeries[seriesIndex].setHeight(height);
+      this._technicalIndicatorPanes[paneIndex].setHeight(height);
 
-      this.measureSeriesSize();
+      this.measurePaneSize();
     }
     /**
      * 计算x轴的高度
@@ -10245,28 +10245,28 @@ var ChartSeries = /*#__PURE__*/function () {
     value: function _measureSeparatorHeight() {
       var separator = this._chartData.styleOptions().separator;
 
-      return separator.size * this._separatorSeries.length;
+      return separator.size * this._separatorPanes.length;
     }
     /**
-     * 更新所有series
+     * 更新所有pane
      * @private
      */
 
   }, {
-    key: "_updateSeries",
-    value: function _updateSeries() {
+    key: "_updatePane",
+    value: function _updatePane() {
       var invalidateLevel = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : InvalidateLevel.FULL;
 
       if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
-        this._xAxisSeries.invalidate(invalidateLevel);
+        this._xAxisPane.invalidate(invalidateLevel);
 
-        var _iterator = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+        var _iterator = _createForOfIteratorHelper(this._technicalIndicatorPanes),
             _step;
 
         try {
           for (_iterator.s(); !(_step = _iterator.n()).done;) {
-            var series = _step.value;
-            series.invalidate(invalidateLevel);
+            var pane = _step.value;
+            pane.invalidate(invalidateLevel);
           }
         } catch (err) {
           _iterator.e(err);
@@ -10275,42 +10275,42 @@ var ChartSeries = /*#__PURE__*/function () {
         }
       }
 
-      this._candleStickSeries.invalidate(invalidateLevel);
+      this._candleStickPane.invalidate(invalidateLevel);
     }
     /**
-     * 计算所有series的指标
+     * 计算所有pane的指标
      * @private
      */
 
   }, {
-    key: "_calcAllSeriesTechnicalIndicator",
-    value: function _calcAllSeriesTechnicalIndicator() {
+    key: "_calcAllPaneTechnicalIndicator",
+    value: function _calcAllPaneTechnicalIndicator() {
       var technicalIndicatorArray = [];
       var candleStickTechnicalIndicator;
 
-      if (this._candleStickSeries.chartType() === ChartType.CANDLE_STICK) {
-        candleStickTechnicalIndicator = this._candleStickSeries.technicalIndicator();
+      if (this._candleStickPane.chartType() === ChartType.CANDLE_STICK) {
+        candleStickTechnicalIndicator = this._candleStickPane.technicalIndicator();
         technicalIndicatorArray.push(candleStickTechnicalIndicator);
       } else {
         candleStickTechnicalIndicator = AVERAGE;
       }
 
-      this._chartData.calcTechnicalIndicator(this._candleStickSeries, candleStickTechnicalIndicator);
+      this._chartData.calcTechnicalIndicator(this._candleStickPane, candleStickTechnicalIndicator);
 
-      var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+      var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
           _step2;
 
       try {
         for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var series = _step2.value;
-          var technicalIndicator = series.technicalIndicator();
+          var pane = _step2.value;
+          var technicalIndicator = pane.technicalIndicator();
 
           if (technicalIndicatorArray.indexOf(technicalIndicator) < 0) {
             technicalIndicatorArray.push(technicalIndicator);
 
-            this._chartData.calcTechnicalIndicator(series, technicalIndicator);
+            this._chartData.calcTechnicalIndicator(pane, technicalIndicator);
           } else {
-            series.invalidate(InvalidateLevel.FULL);
+            pane.invalidate(InvalidateLevel.FULL);
           }
         }
       } catch (err) {
@@ -10335,14 +10335,14 @@ var ChartSeries = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "measureSeriesSize",
-    value: function measureSeriesSize() {
+    key: "measurePaneSize",
+    value: function measurePaneSize() {
       var yAxis = this._chartData.styleOptions().yAxis;
 
       var isYAxisLeft = yAxis.position === YAxisPosition.LEFT;
       var isYAxisTextOutsize = yAxis.tickText.position === YAxisTextPosition.OUTSIDE;
-      var seriesWidth = this._container.offsetWidth;
-      var seriesHeight = this._container.offsetHeight;
+      var paneWidth = this._container.offsetWidth;
+      var paneHeight = this._container.offsetHeight;
 
       var separatorHeight = this._measureSeparatorHeight();
 
@@ -10350,9 +10350,9 @@ var ChartSeries = /*#__PURE__*/function () {
 
       var yAxisWidth = this._measureYAxisWidth();
 
-      var seriesExcludeXAxisSeparatorHeight = seriesHeight - xAxisHeight - separatorHeight;
-      var mainWidthWidth = seriesWidth - (isYAxisTextOutsize ? yAxisWidth : 0);
-      var yAxisOffsetLeft = seriesWidth - yAxisWidth;
+      var paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorHeight;
+      var mainWidthWidth = paneWidth - (isYAxisTextOutsize ? yAxisWidth : 0);
+      var yAxisOffsetLeft = paneWidth - yAxisWidth;
       var mainOffsetLeft = 0;
 
       if (isYAxisLeft) {
@@ -10363,23 +10363,23 @@ var ChartSeries = /*#__PURE__*/function () {
         }
       }
 
-      var technicalIndicatorSeriesTotalHeight = 0;
+      var technicalIndicatorPaneTotalHeight = 0;
 
-      var _iterator3 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+      var _iterator3 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
           _step3;
 
       try {
         for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var series = _step3.value;
+          var pane = _step3.value;
 
-          var _seriesHeight = series.height();
+          var _paneHeight = pane.height();
 
-          technicalIndicatorSeriesTotalHeight += _seriesHeight; // 修复拖拽会超出容器高度问题
+          technicalIndicatorPaneTotalHeight += _paneHeight; // 修复拖拽会超出容器高度问题
 
-          if (technicalIndicatorSeriesTotalHeight > seriesExcludeXAxisSeparatorHeight) {
-            var difHeight = technicalIndicatorSeriesTotalHeight - seriesExcludeXAxisSeparatorHeight;
-            technicalIndicatorSeriesTotalHeight = seriesExcludeXAxisSeparatorHeight;
-            series.setHeight(_seriesHeight - difHeight);
+          if (technicalIndicatorPaneTotalHeight > paneExcludeXAxisSeparatorHeight) {
+            var difHeight = technicalIndicatorPaneTotalHeight - paneExcludeXAxisSeparatorHeight;
+            technicalIndicatorPaneTotalHeight = paneExcludeXAxisSeparatorHeight;
+            pane.setHeight(_paneHeight - difHeight);
           }
         }
       } catch (err) {
@@ -10388,56 +10388,56 @@ var ChartSeries = /*#__PURE__*/function () {
         _iterator3.f();
       }
 
-      var candleStickSeriesHeight = seriesExcludeXAxisSeparatorHeight - technicalIndicatorSeriesTotalHeight;
+      var candleStickPaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight;
 
       this._chartData.setTotalDataSpace(mainWidthWidth);
 
-      var seriesSize = {};
-      seriesSize.contentLeft = mainOffsetLeft;
-      seriesSize.contentRight = mainOffsetLeft + mainWidthWidth;
+      var paneSize = {};
+      paneSize.contentLeft = mainOffsetLeft;
+      paneSize.contentRight = mainOffsetLeft + mainWidthWidth;
       var tags = {};
-      tags[CANDLE_STICK_SERIES_TAG] = {
+      tags[CANDLE_STICK_PANE_TAG] = {
         contentTop: 0,
-        contentBottom: candleStickSeriesHeight
+        contentBottom: candleStickPaneHeight
       };
-      var contentTop = candleStickSeriesHeight;
-      var contentBottom = candleStickSeriesHeight;
+      var contentTop = candleStickPaneHeight;
+      var contentBottom = candleStickPaneHeight;
 
-      this._candleStickSeries.setSize({
+      this._candleStickPane.setSize({
         left: mainOffsetLeft,
         width: mainWidthWidth,
-        height: candleStickSeriesHeight
+        height: candleStickPaneHeight
       }, {
         left: yAxisOffsetLeft,
         width: yAxisWidth,
-        height: candleStickSeriesHeight
+        height: candleStickPaneHeight
       });
 
-      for (var i = 0; i < this._technicalIndicatorSeries.length; i++) {
-        var technicalIndicatorSeries = this._technicalIndicatorSeries[i];
-        var separatorSeries = this._separatorSeries[i];
-        var technicalIndicatorSeriesHeight = technicalIndicatorSeries.height();
-        technicalIndicatorSeries.setSize({
+      for (var i = 0; i < this._technicalIndicatorPanes.length; i++) {
+        var technicalIndicatorPane = this._technicalIndicatorPanes[i];
+        var separatorPane = this._separatorPanes[i];
+        var technicalIndicatorPaneHeight = technicalIndicatorPane.height();
+        technicalIndicatorPane.setSize({
           left: mainOffsetLeft,
           width: mainWidthWidth,
-          height: technicalIndicatorSeriesHeight
+          height: technicalIndicatorPaneHeight
         }, {
           left: yAxisOffsetLeft,
           width: yAxisWidth,
-          height: technicalIndicatorSeriesHeight
+          height: technicalIndicatorPaneHeight
         });
-        separatorSeries.setSize(mainOffsetLeft, mainWidthWidth);
-        contentBottom += technicalIndicatorSeriesHeight;
-        tags[technicalIndicatorSeries.tag()] = {
+        separatorPane.setSize(mainOffsetLeft, mainWidthWidth);
+        contentBottom += technicalIndicatorPaneHeight;
+        tags[technicalIndicatorPane.tag()] = {
           contentTop: contentTop,
           contentBottom: contentBottom
         };
         contentTop = contentBottom;
       }
 
-      seriesSize.tags = tags;
+      paneSize.tags = tags;
 
-      this._xAxisSeries.setSize({
+      this._xAxisPane.setSize({
         left: mainOffsetLeft,
         width: mainWidthWidth,
         height: xAxisHeight
@@ -10447,7 +10447,7 @@ var ChartSeries = /*#__PURE__*/function () {
         height: xAxisHeight
       });
 
-      this._chartEvent.setSeriesSize(seriesSize);
+      this._chartEvent.setPaneSize(paneSize);
     }
     /**
      * 加载技术指标参数
@@ -10460,24 +10460,24 @@ var ChartSeries = /*#__PURE__*/function () {
     value: function applyTechnicalIndicatorParams(technicalIndicatorType, params) {
       this._chartData.applyTechnicalIndicatorParams(technicalIndicatorType, params);
 
-      var seriesCollection = [];
+      var paneCollection = [];
 
-      var candleStickSeriesTechnicalIndicatorType = this._candleStickSeries.technicalIndicatorType();
+      var candleStickPaneTechnicalIndicatorType = this._candleStickPane.technicalIndicatorType();
 
-      if (candleStickSeriesTechnicalIndicatorType === technicalIndicatorType) {
-        seriesCollection.push(this._candleStickSeries);
+      if (candleStickPaneTechnicalIndicatorType === technicalIndicatorType) {
+        paneCollection.push(this._candleStickPane);
       }
 
-      var _iterator4 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+      var _iterator4 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
           _step4;
 
       try {
         for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var series = _step4.value;
-          var seriesTechnicalIndicatorType = series.technicalIndicatorType();
+          var pane = _step4.value;
+          var paneTechnicalIndicatorType = pane.technicalIndicatorType();
 
-          if (seriesTechnicalIndicatorType === technicalIndicatorType) {
-            seriesCollection.push(series);
+          if (paneTechnicalIndicatorType === technicalIndicatorType) {
+            paneCollection.push(pane);
           }
         }
       } catch (err) {
@@ -10486,7 +10486,7 @@ var ChartSeries = /*#__PURE__*/function () {
         _iterator4.f();
       }
 
-      this._chartData.calcTechnicalIndicator(seriesCollection, technicalIndicatorType);
+      this._chartData.calcTechnicalIndicator(paneCollection, technicalIndicatorType);
     }
     /**
      * 处理数组数据
@@ -10506,9 +10506,9 @@ var ChartSeries = /*#__PURE__*/function () {
 
         this._chartData.addData(dataList, 0, more);
 
-        this._xAxisSeries.invalidate(InvalidateLevel.FULL);
+        this._xAxisPane.invalidate(InvalidateLevel.FULL);
 
-        this._calcAllSeriesTechnicalIndicator();
+        this._calcAllPaneTechnicalIndicator();
       }
     }
     /**
@@ -10560,9 +10560,9 @@ var ChartSeries = /*#__PURE__*/function () {
 
         this._chartData.addData(data, pos);
 
-        this._xAxisSeries.invalidate(pos === dataSize - 1 ? InvalidateLevel.NONE : InvalidateLevel.FULL);
+        this._xAxisPane.invalidate(pos === dataSize - 1 ? InvalidateLevel.NONE : InvalidateLevel.FULL);
 
-        this._calcAllSeriesTechnicalIndicator();
+        this._calcAllPaneTechnicalIndicator();
       }
     }
     /**
@@ -10571,9 +10571,9 @@ var ChartSeries = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "setCandleStickSeriesType",
-    value: function setCandleStickSeriesType(type) {
-      this._candleStickSeries.setChartType(type);
+    key: "setCandleStickPaneType",
+    value: function setCandleStickPaneType(type) {
+      this._candleStickPane.setChartType(type);
     }
     /**
      * 创建一个指标
@@ -10586,35 +10586,35 @@ var ChartSeries = /*#__PURE__*/function () {
   }, {
     key: "createTechnicalIndicator",
     value: function createTechnicalIndicator(technicalIndicatorType) {
-      var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_TECHNICAL_INDICATOR_SERIES_HEIGHT;
+      var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT;
       var dragEnabled = arguments.length > 2 ? arguments[2] : undefined;
 
       if (!technicalIndicatorType || !this._chartData.technicalIndicator(technicalIndicatorType) || technicalIndicatorType === NO || technicalIndicatorType === AVERAGE) {
         technicalIndicatorType = MACD;
       }
 
-      var technicalIndicatorSeriesCount = this._technicalIndicatorSeries.length;
+      var technicalIndicatorPaneCount = this._technicalIndicatorPanes.length;
       var isDrag = isBoolean(dragEnabled) ? dragEnabled : true;
 
-      this._separatorSeries.push(new SeparatorSeries(this._chartContainer, this._chartData, technicalIndicatorSeriesCount, isDrag, {
+      this._separatorPanes.push(new SeparatorPane(this._chartContainer, this._chartData, technicalIndicatorPaneCount, isDrag, {
         startDrag: this._separatorStartDrag.bind(this),
         drag: this._separatorDrag.bind(this)
       }));
 
       this._technicalIndicatorBaseId++;
       var tag = "".concat(TECHNICAL_INDICATOR_NAME_PREFIX).concat(this._technicalIndicatorBaseId);
-      var technicalIndicatorSeries = new TechnicalIndicatorSeries({
+      var technicalIndicatorPane = new TechnicalIndicatorPane({
         container: this._chartContainer,
         chartData: this._chartData,
-        xAxis: this._xAxisSeries.xAxis(),
+        xAxis: this._xAxisPane.xAxis(),
         technicalIndicatorType: technicalIndicatorType,
         tag: tag
       });
-      technicalIndicatorSeries.setHeight(height);
+      technicalIndicatorPane.setHeight(height);
 
-      this._technicalIndicatorSeries.push(technicalIndicatorSeries);
+      this._technicalIndicatorPanes.push(technicalIndicatorPane);
 
-      this.measureSeriesSize();
+      this.measurePaneSize();
       return tag;
     }
     /**
@@ -10625,31 +10625,31 @@ var ChartSeries = /*#__PURE__*/function () {
   }, {
     key: "removeTechnicalIndicator",
     value: function removeTechnicalIndicator(tag) {
-      var seriesPos = -1;
+      var panePos = -1;
 
-      for (var i = 0; i < this._technicalIndicatorSeries.length; i++) {
-        var series = this._technicalIndicatorSeries[i];
+      for (var i = 0; i < this._technicalIndicatorPanes.length; i++) {
+        var pane = this._technicalIndicatorPanes[i];
 
-        if (series.tag() === tag) {
-          seriesPos = i;
+        if (pane.tag() === tag) {
+          panePos = i;
           break;
         }
       }
 
-      if (seriesPos !== -1) {
-        this._technicalIndicatorSeries[seriesPos].destroy();
+      if (panePos !== -1) {
+        this._technicalIndicatorPanes[panePos].destroy();
 
-        this._separatorSeries[seriesPos].destroy();
+        this._separatorPanes[panePos].destroy();
 
-        this._technicalIndicatorSeries.splice(seriesPos, 1);
+        this._technicalIndicatorPanes.splice(panePos, 1);
 
-        this._separatorSeries.splice(seriesPos, 1);
+        this._separatorPanes.splice(panePos, 1);
 
-        for (var _i = 0; _i < this._separatorSeries.length; _i++) {
-          this._separatorSeries[_i].updateSeriesIndex(_i);
+        for (var _i = 0; _i < this._separatorPanes.length; _i++) {
+          this._separatorPanes[_i].updatePaneIndex(_i);
         }
 
-        this.measureSeriesSize();
+        this.measurePaneSize();
       }
     }
     /**
@@ -10661,20 +10661,20 @@ var ChartSeries = /*#__PURE__*/function () {
   }, {
     key: "setTechnicalIndicatorType",
     value: function setTechnicalIndicatorType(tag, technicalIndicatorType) {
-      if (tag === CANDLE_STICK_SERIES_TAG) {
-        this._candleStickSeries.setTechnicalIndicatorType(technicalIndicatorType);
+      if (tag === CANDLE_STICK_PANE_TAG) {
+        this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType);
       } else {
         var s;
 
-        var _iterator5 = _createForOfIteratorHelper(this._technicalIndicatorSeries),
+        var _iterator5 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
             _step5;
 
         try {
           for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-            var series = _step5.value;
+            var pane = _step5.value;
 
-            if (series.tag() === tag) {
-              s = series;
+            if (pane.tag() === tag) {
+              s = pane;
               break;
             }
           }
@@ -10703,7 +10703,7 @@ var ChartSeries = /*#__PURE__*/function () {
     value: function setTimezone(timezone) {
       this._chartData.setTimezone(timezone);
 
-      this._xAxisSeries.invalidate(InvalidateLevel.FULL);
+      this._xAxisPane.invalidate(InvalidateLevel.FULL);
     }
     /**
      * 获取图表转换为图片后url
@@ -10737,39 +10737,39 @@ var ChartSeries = /*#__PURE__*/function () {
       ctx.fillRect(0, 0, width, height);
       var offsetTop = 0;
 
-      var candleStickSeriesHeight = this._candleStickSeries.height();
+      var candleStickPaneHeight = this._candleStickPane.height();
 
-      ctx.drawImage(this._candleStickSeries.getImage(includeFloatLayer, includeGraphicMark), 0, offsetTop, width, candleStickSeriesHeight);
-      offsetTop += candleStickSeriesHeight;
+      ctx.drawImage(this._candleStickPane.getImage(includeFloatLayer, includeGraphicMark), 0, offsetTop, width, candleStickPaneHeight);
+      offsetTop += candleStickPaneHeight;
 
-      for (var i = 0; i < this._separatorSeries.length; i++) {
-        var separatorSeries = this._separatorSeries[i];
-        var separatorSeriesHeight = separatorSeries.height();
-        var technicalIndicatorSeries = this._technicalIndicatorSeries[i];
-        var technicalIndicatorSeriesHeight = technicalIndicatorSeries.height();
-        ctx.drawImage(separatorSeries.getImage(), 0, offsetTop, width, separatorSeriesHeight);
-        offsetTop += separatorSeriesHeight;
-        ctx.drawImage(technicalIndicatorSeries.getImage(includeFloatLayer), 0, offsetTop, width, technicalIndicatorSeriesHeight);
-        offsetTop += technicalIndicatorSeriesHeight;
+      for (var i = 0; i < this._separatorPanes.length; i++) {
+        var separatorPane = this._separatorPanes[i];
+        var separatorPaneHeight = separatorPane.height();
+        var technicalIndicatorPane = this._technicalIndicatorPanes[i];
+        var technicalIndicatorPaneHeight = technicalIndicatorPane.height();
+        ctx.drawImage(separatorPane.getImage(), 0, offsetTop, width, separatorPaneHeight);
+        offsetTop += separatorPaneHeight;
+        ctx.drawImage(technicalIndicatorPane.getImage(includeFloatLayer), 0, offsetTop, width, technicalIndicatorPaneHeight);
+        offsetTop += technicalIndicatorPaneHeight;
       }
 
-      ctx.drawImage(this._xAxisSeries.getImage(includeFloatLayer), 0, offsetTop, width, this._xAxisSeries.height());
+      ctx.drawImage(this._xAxisPane.getImage(includeFloatLayer), 0, offsetTop, width, this._xAxisPane.height());
       return canvas.toDataURL("image/".concat(type));
     }
   }, {
     key: "destroy",
     value: function destroy() {
-      this._candleStickSeries.destroy();
+      this._candleStickPane.destroy();
 
-      this._technicalIndicatorSeries.forEach(function (series) {
-        series.destroy();
+      this._technicalIndicatorPanes.forEach(function (pane) {
+        pane.destroy();
       });
 
-      this._separatorSeries.forEach(function (series) {
-        series.destroy();
+      this._separatorPanes.forEach(function (pane) {
+        pane.destroy();
       });
 
-      this._xAxisSeries.destroy();
+      this._xAxisPane.destroy();
 
       this._container.removeChild(this._chartContainer);
 
@@ -10777,14 +10777,14 @@ var ChartSeries = /*#__PURE__*/function () {
     }
   }]);
 
-  return ChartSeries;
+  return ChartPane;
 }();
 
 var Chart = /*#__PURE__*/function () {
   function Chart(container, styleOptions) {
     _classCallCheck(this, Chart);
 
-    this._chartSeries = new ChartSeries(container, styleOptions);
+    this._chartPane = new ChartPane(container, styleOptions);
   }
   /**
    * 设置样式配置
@@ -10795,9 +10795,9 @@ var Chart = /*#__PURE__*/function () {
   _createClass(Chart, [{
     key: "setStyleOptions",
     value: function setStyleOptions(options) {
-      this._chartSeries.chartData().applyStyleOptions(options);
+      this._chartPane.chartData().applyStyleOptions(options);
 
-      this._chartSeries.measureSeriesSize();
+      this._chartPane.measurePaneSize();
     }
     /**
      * 获取样式配置
@@ -10807,7 +10807,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "getStyleOptions",
     value: function getStyleOptions() {
-      return clone(this._chartSeries.chartData().styleOptions());
+      return clone(this._chartPane.chartData().styleOptions());
     }
     /**
      * 加载技术指标参数
@@ -10818,7 +10818,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setTechnicalIndicatorParams",
     value: function setTechnicalIndicatorParams(technicalIndicatorType, params) {
-      this._chartSeries.applyTechnicalIndicatorParams(technicalIndicatorType, params);
+      this._chartPane.applyTechnicalIndicatorParams(technicalIndicatorType, params);
     }
     /**
      * 获取技术指标参数配置
@@ -10827,7 +10827,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "getTechnicalIndicatorParamOptions",
     value: function getTechnicalIndicatorParamOptions() {
-      return clone(this._chartSeries.chartData().technicalIndicatorParamOptions());
+      return clone(this._chartPane.chartData().technicalIndicatorParamOptions());
     }
     /**
      * 加载精度
@@ -10838,7 +10838,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setPrecision",
     value: function setPrecision(pricePrecision, volumePrecision) {
-      this._chartSeries.chartData().applyPrecision(pricePrecision, volumePrecision);
+      this._chartPane.chartData().applyPrecision(pricePrecision, volumePrecision);
     }
     /**
      * 设置时区
@@ -10848,7 +10848,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setTimezone",
     value: function setTimezone(timezone) {
-      this._chartSeries.setTimezone(timezone);
+      this._chartPane.setTimezone(timezone);
     }
     /**
      * 重置尺寸，总是会填充父容器
@@ -10857,7 +10857,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "resize",
     value: function resize() {
-      this._chartSeries.measureSeriesSize();
+      this._chartPane.measurePaneSize();
     }
     /**
      * 设置右边间距
@@ -10867,7 +10867,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setOffsetRightSpace",
     value: function setOffsetRightSpace(space) {
-      this._chartSeries.chartData().setOffsetRightSpace(space);
+      this._chartPane.chartData().setOffsetRightSpace(space);
     }
     /**
      * 设置左边可见的最小bar数量
@@ -10877,7 +10877,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setLeftMinVisibleBarCount",
     value: function setLeftMinVisibleBarCount(barCount) {
-      this._chartSeries.chartData().setLeftMinVisibleBarCount(barCount);
+      this._chartPane.chartData().setLeftMinVisibleBarCount(barCount);
     }
     /**
      * 设置右边可见的最小bar数量
@@ -10887,7 +10887,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setRightMinVisibleBarCount",
     value: function setRightMinVisibleBarCount(barCount) {
-      this._chartSeries.chartData().setRightMinVisibleBarCount(barCount);
+      this._chartPane.chartData().setRightMinVisibleBarCount(barCount);
     }
     /**
      * 设置一条数据的空间
@@ -10897,7 +10897,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setDataSpace",
     value: function setDataSpace(space) {
-      this._chartSeries.chartData().setDataSpace(space);
+      this._chartPane.chartData().setDataSpace(space);
     }
     /**
      * 清空数据
@@ -10906,7 +10906,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "clearData",
     value: function clearData() {
-      this._chartSeries.chartData().clearDataList();
+      this._chartPane.chartData().clearDataList();
     }
     /**
      * 获取数据源
@@ -10915,7 +10915,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "getDataList",
     value: function getDataList() {
-      return this._chartSeries.chartData().dataList();
+      return this._chartPane.chartData().dataList();
     }
     /**
      * 添加新数据
@@ -10926,7 +10926,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "applyNewData",
     value: function applyNewData(dataList, more) {
-      this._chartSeries.applyNewData(dataList, more);
+      this._chartPane.applyNewData(dataList, more);
     }
     /**
      * 添加历史更多数据
@@ -10937,7 +10937,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "applyMoreData",
     value: function applyMoreData(dataList, more) {
-      this._chartSeries.applyMoreData(dataList, more);
+      this._chartPane.applyMoreData(dataList, more);
     }
     /**
      * 更新数据
@@ -10947,7 +10947,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "updateData",
     value: function updateData(data) {
-      this._chartSeries.updateData(data);
+      this._chartPane.updateData(data);
     }
     /**
      * 设置加载更多回调
@@ -10957,7 +10957,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "loadMore",
     value: function loadMore(cb) {
-      this._chartSeries.chartData().loadMore(cb);
+      this._chartPane.chartData().loadMore(cb);
     }
     /**
      * 设置蜡烛图表类型
@@ -10967,7 +10967,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setCandleStickChartType",
     value: function setCandleStickChartType(type) {
-      this._chartSeries.setCandleStickSeriesType(type);
+      this._chartPane.setCandleStickPaneType(type);
     }
     /**
      * 设置蜡烛图技术指标类型
@@ -10977,7 +10977,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setCandleStickTechnicalIndicatorType",
     value: function setCandleStickTechnicalIndicatorType(technicalIndicatorType) {
-      this._chartSeries.setTechnicalIndicatorType(CANDLE_STICK_SERIES_TAG, technicalIndicatorType);
+      this._chartPane.setTechnicalIndicatorType(CANDLE_STICK_PANE_TAG, technicalIndicatorType);
     }
     /**
      * 设置技术指标类型
@@ -10988,7 +10988,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setTechnicalIndicatorType",
     value: function setTechnicalIndicatorType(tag, technicalIndicatorType) {
-      this._chartSeries.setTechnicalIndicatorType(tag, technicalIndicatorType);
+      this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType);
     }
     /**
      * 添加一个技术指标
@@ -11001,7 +11001,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "addTechnicalIndicator",
     value: function addTechnicalIndicator(technicalIndicatorType, height, dragEnabled) {
-      return this._chartSeries.createTechnicalIndicator(technicalIndicatorType, height, dragEnabled);
+      return this._chartPane.createTechnicalIndicator(technicalIndicatorType, height, dragEnabled);
     }
     /**
      * 移除一个技术指标
@@ -11011,7 +11011,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "removeTechnicalIndicator",
     value: function removeTechnicalIndicator(tag) {
-      this._chartSeries.removeTechnicalIndicator(tag);
+      this._chartPane.removeTechnicalIndicator(tag);
     }
     /**
      * 添加图形标记
@@ -11021,10 +11021,10 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "addGraphicMark",
     value: function addGraphicMark(type) {
-      var graphicMarkType = this._chartSeries.chartData().graphicMarkType();
+      var graphicMarkType = this._chartPane.chartData().graphicMarkType();
 
       if (graphicMarkType !== type) {
-        var graphicMarkDatas = this._chartSeries.chartData().graphicMarkData();
+        var graphicMarkDatas = this._chartPane.chartData().graphicMarkData();
 
         var graphicMarkData = graphicMarkDatas[graphicMarkType];
 
@@ -11037,9 +11037,9 @@ var Chart = /*#__PURE__*/function () {
           type = GraphicMarkType.NONE;
         }
 
-        this._chartSeries.chartData().setGraphicMarkType(type);
+        this._chartPane.chartData().setGraphicMarkType(type);
 
-        this._chartSeries.chartData().setGraphicMarkData(graphicMarkDatas);
+        this._chartPane.chartData().setGraphicMarkData(graphicMarkDatas);
       }
     }
     /**
@@ -11049,16 +11049,16 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "removeAllGraphicMark",
     value: function removeAllGraphicMark() {
-      var graphicMarkDatas = this._chartSeries.chartData().graphicMarkData();
+      var graphicMarkDatas = this._chartPane.chartData().graphicMarkData();
 
       var newGraphicMarkDatas = {};
       Object.keys(graphicMarkDatas).forEach(function (key) {
         newGraphicMarkDatas[key] = [];
       });
 
-      this._chartSeries.chartData().setGraphicMarkType(GraphicMarkType.NONE);
+      this._chartPane.chartData().setGraphicMarkType(GraphicMarkType.NONE);
 
-      this._chartSeries.chartData().setGraphicMarkData(newGraphicMarkDatas);
+      this._chartPane.chartData().setGraphicMarkData(newGraphicMarkDatas);
     }
     /**
      * 获取将图表装换成图片后的url
@@ -11071,7 +11071,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "getConvertPictureUrl",
     value: function getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor) {
-      return this._chartSeries.getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor);
+      return this._chartPane.getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor);
     }
     /**
      * 销毁
@@ -11080,7 +11080,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "destroy",
     value: function destroy() {
-      this._chartSeries.destroy();
+      this._chartPane.destroy();
     }
   }]);
 
