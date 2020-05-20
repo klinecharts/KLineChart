@@ -17,14 +17,15 @@ import { BRAR } from '../technicalIndicatorType'
 
 export default class Brar extends TechnicalIndicator {
   constructor () {
-    super(
-      BRAR, [26],
-      [
+    super({
+      name: BRAR,
+      calcParams: [26],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'br', type: 'line' },
         { key: 'ar', type: 'line' }
-      ],
-      4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -34,10 +35,12 @@ export default class Brar extends TechnicalIndicator {
    * 其中，H为当日最高价，L为当日最低价，CY为前一交易日的收盘价，N为设定的时间参数。
    * N日AR=(N日内（H－O）之和除以N日内（O－L）之和)*100，
    * 其中，H为当日最高价，L为当日最低价，O为当日开盘价，N为设定的时间参数
+   *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     let hcy = 0
     let cyl = 0
     let ho = 0
@@ -54,7 +57,7 @@ export default class Brar extends TechnicalIndicator {
         ol += (open - low)
         hcy += (high - preClose)
         cyl += (preClose - low)
-        if (i >= this.calcParams[0]) {
+        if (i >= calcParams[0]) {
           if (ol !== 0) {
             brar.ar = ho / ol * 100
           } else {
@@ -66,10 +69,10 @@ export default class Brar extends TechnicalIndicator {
             brar.br = 0
           }
 
-          const agoHigh = dataList[i - (this.calcParams[0] - 1)].high
-          const agoLow = dataList[i - (this.calcParams[0] - 1)].low
-          const agoOpen = dataList[i - (this.calcParams[0] - 1)].open
-          const agoPreClose = dataList[i - this.calcParams[0]].close
+          const agoHigh = dataList[i - (calcParams[0] - 1)].high
+          const agoLow = dataList[i - (calcParams[0] - 1)].low
+          const agoOpen = dataList[i - (calcParams[0] - 1)].open
+          const agoPreClose = dataList[i - calcParams[0]].close
           hcy -= (agoHigh - agoPreClose)
           cyl -= (agoPreClose - agoLow)
           ho -= (agoHigh - agoOpen)

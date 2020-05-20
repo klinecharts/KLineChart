@@ -17,9 +17,11 @@ import { VOL } from '../technicalIndicatorType'
 
 export default class Volume extends TechnicalIndicator {
   constructor () {
-    super(
-      VOL, [5, 10, 20],
-      [
+    super({
+      name: VOL,
+      calcParams: [5, 10, 20],
+      isVolumeTechnicalIndicator: true,
+      plots: [
         { key: 'ma5', type: 'line' },
         { key: 'ma10', type: 'line' },
         { key: 'ma30', type: 'line' },
@@ -36,20 +38,21 @@ export default class Volume extends TechnicalIndicator {
             return options.bar.noChangeColor
           }
         }
-      ], 0, false, false, 0
-    )
-  }
-
-  _regeneratePlots () {
-    this.plots = []
-    this.calcParams.forEach(p => {
-      this.plots.push({ key: `ma${p}`, type: 'line' })
+      ]
     })
-    this.plots.push({ key: 'num', type: 'bar' })
   }
 
-  calcTechnicalIndicator (dataList) {
-    const paramCount = this.calcParams.length
+  regeneratePlots (params) {
+    const plots = []
+    plots.forEach(p => {
+      plots.push({ key: `ma${p}`, type: 'line' })
+    })
+    plots.push({ key: 'num', type: 'bar' })
+    return plots
+  }
+
+  calcTechnicalIndicator (dataList, calcParams) {
+    const paramCount = calcParams.length
     const volSums = []
     const result = []
     this._calc(dataList, i => {
@@ -57,7 +60,7 @@ export default class Volume extends TechnicalIndicator {
       const vol = { num: volume }
       for (let j = 0; j < paramCount; j++) {
         volSums[j] = (volSums[j] || 0) + volume
-        const p = this.calcParams[j]
+        const p = calcParams[j]
         if (i >= p - 1) {
           vol[this.plots[j].key] = volSums[j] / p
           volSums[j] -= dataList[i - (p - 1)].volume

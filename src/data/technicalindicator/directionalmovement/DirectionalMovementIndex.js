@@ -18,15 +18,17 @@ import { DMI } from '../technicalIndicatorType'
 
 export default class DirectionalMovementIndex extends TechnicalIndicator {
   constructor () {
-    super(
-      DMI, [14, 6],
-      [
+    super({
+      name: DMI,
+      calcParams: [14, 6],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'pdi', type: 'line' },
         { key: 'mdi', type: 'line' },
         { key: 'adx', type: 'line' },
         { key: 'adxr', type: 'line' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -52,9 +54,10 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
    * 输出ADX:MDI-PDI的绝对值/(MDI+PDI)*100的MM日指数平滑移动平均
    * 输出ADXR:ADX的MM日指数平滑移动平均
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     let trSum = 0
     const trList = []
     let dmpSum = 0
@@ -86,7 +89,7 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
         const l = (lyl > 0 && lyl > hhy) ? lyl : 0.0
         dmmSum += l
         dmmList.push(l)
-        if (i >= this.calcParams[0]) {
+        if (i >= calcParams[0]) {
           let pdi
           let mdi
           if (trSum === 0) {
@@ -106,17 +109,17 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
           dxList.push(dx)
           dmi.pdi = pdi
           dmi.mdi = mdi
-          if (i >= this.calcParams[0] + this.calcParams[1] - 1) {
-            const adx = dxSum / this.calcParams[1]
+          if (i >= calcParams[0] + calcParams[1] - 1) {
+            const adx = dxSum / calcParams[1]
             dmi.adx = adx
-            if (i >= this.calcParams[0] + this.calcParams[1] * 2 - 2) {
-              dmi.adxr = (adx + result[i - (this.calcParams[1] - 1)].adx) / 2
+            if (i >= calcParams[0] + calcParams[1] * 2 - 2) {
+              dmi.adxr = (adx + result[i - (calcParams[1] - 1)].adx) / 2
             }
-            dxSum -= dxList[i - (this.calcParams[0] + this.calcParams[1] - 1)]
+            dxSum -= dxList[i - (calcParams[0] + calcParams[1] - 1)]
           }
-          trSum -= trList[i - this.calcParams[0]]
-          dmpSum -= dmpList[i - this.calcParams[0]]
-          dmmSum -= dmmList[i - this.calcParams[0]]
+          trSum -= trList[i - calcParams[0]]
+          dmpSum -= dmpList[i - calcParams[0]]
+          dmmSum -= dmmList[i - calcParams[0]]
         }
       }
       result.push(dmi)

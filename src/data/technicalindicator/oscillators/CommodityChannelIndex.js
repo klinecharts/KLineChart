@@ -17,13 +17,14 @@ import { CCI } from '../technicalIndicatorType'
 
 export default class CommodityChannelIndex extends TechnicalIndicator {
   constructor () {
-    super(
-      CCI, [13],
-      [
+    super({
+      name: CCI,
+      calcParams: [13],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'cci', type: 'line' }
-      ],
-      4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -32,11 +33,13 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
    * 其中，TP=（最高价+最低价+收盘价）÷3
    * MA=近N日收盘价的累计之和÷N
    * MD=近N日（MA－收盘价）的累计之和÷N
+   *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
-    const p = this.calcParams[0] - 1
+  calcTechnicalIndicator (dataList, calcParams) {
+    const p = calcParams[0] - 1
     let closeSum = 0
     let md
     let maSubCloseSum = 0
@@ -48,7 +51,7 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
       closeSum += close
       let ma
       if (i >= p) {
-        ma = closeSum / this.calcParams[0]
+        ma = closeSum / calcParams[0]
       } else {
         ma = closeSum / (i + 1)
       }
@@ -56,7 +59,7 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
       maSubCloseSum += Math.abs(ma - close)
       if (i >= p) {
         const tp = (dataList[i].high + dataList[i].low + close) / 3
-        md = maSubCloseSum / this.calcParams[0]
+        md = maSubCloseSum / calcParams[0]
         cci.cci = md !== 0 ? (tp - ma) / md / 0.015 : 0.0
 
         const agoClose = dataList[i - p].close

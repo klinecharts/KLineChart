@@ -18,23 +18,26 @@ import calcHnLn from '../calcHnLn'
 
 export default class StockIndicatorKDJ extends TechnicalIndicator {
   constructor () {
-    super(
-      KDJ, [9, 3, 3],
-      [
+    super({
+      name: KDJ,
+      calcParams: [9, 3, 3],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'k', type: 'line' },
         { key: 'd', type: 'line' },
         { key: 'j', type: 'line' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
    * 计算KDJ
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
-    const p1 = this.calcParams[0] - 1
+  calcTechnicalIndicator (dataList, calcParams) {
+    const p1 = calcParams[0] - 1
     const result = []
     this._calc(dataList, i => {
       const kdj = {}
@@ -50,8 +53,8 @@ export default class StockIndicatorKDJ extends TechnicalIndicator {
         // 当日D值=2/3×前一日D值+1/3×当日K值
         // 若无前一日K 值与D值，则可分别用50来代替。
         // J值=3*当日K值-2*当日D值
-        kdj.k = ((this.calcParams[1] - 1) * (result[i - 1].k || 50) + rsv) / this.calcParams[1]
-        kdj.d = ((this.calcParams[2] - 1) * (result[i - 1].d || 50) + kdj.k) / this.calcParams[2]
+        kdj.k = ((calcParams[1] - 1) * (result[i - 1].k || 50) + rsv) / calcParams[1]
+        kdj.d = ((calcParams[2] - 1) * (result[i - 1].d || 50) + kdj.k) / calcParams[2]
         kdj.j = 3.0 * kdj.k - 2.0 * kdj.d
       }
       result.push(kdj)

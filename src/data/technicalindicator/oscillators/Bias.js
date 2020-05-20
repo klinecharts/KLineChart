@@ -13,25 +13,27 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { BIAS as name } from '../technicalIndicatorType'
+import { BIAS } from '../technicalIndicatorType'
 
 export default class Bias extends TechnicalIndicator {
   constructor () {
-    super(
-      name, [6, 12, 24],
-      [
+    super({
+      name: BIAS,
+      calcParams: [6, 12, 24],
+      plots: [
         { key: 'bias6', type: 'line' },
         { key: 'bias12', type: 'line' },
         { key: 'bias24', type: 'line' }
       ]
-    )
+    })
   }
 
-  _regeneratePlots () {
-    this.plots = []
-    this.calcParams.forEach(p => {
-      this.plots.push({ key: `bias${p}`, type: 'line' })
+  regeneratePlots (params) {
+    const plots = []
+    params.forEach(p => {
+      plots.push({ key: `bias${p}`, type: 'line' })
     })
+    return plots
   }
 
   /**
@@ -39,20 +41,21 @@ export default class Bias extends TechnicalIndicator {
    * 乖离率=[(当日收盘价-N日平均价)/N日平均价]*100%
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     const closeSums = []
-    const paramCount = this.calcParams.length
+    const paramCount = calcParams.length
     const result = []
     this._calc(dataList, i => {
       const bias = {}
       const close = dataList[i].close
       for (let j = 0; j < paramCount; j++) {
         closeSums[j] = (closeSums[j] || 0) + close
-        const p = this.calcParams[j] - 1
+        const p = calcParams[j] - 1
         if (i >= p) {
-          const mean = closeSums[j] / this.calcParams[j]
+          const mean = closeSums[j] / calcParams[j]
           bias[this.plots[j].key] = (close - mean) / mean * 100
 
           closeSums[j] -= dataList[i - p].close

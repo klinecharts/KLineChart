@@ -17,13 +17,15 @@ import { OBV } from '../technicalIndicatorType'
 
 export default class OnBalanceVolume extends TechnicalIndicator {
   constructor () {
-    super(
-      OBV, [30],
-      [
+    super({
+      name: OBV,
+      calcParams: [30],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'obv', type: 'line' },
         { key: 'obvMa', type: 'line' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -31,9 +33,10 @@ export default class OnBalanceVolume extends TechnicalIndicator {
    * VA = V × [（C - L）- （H - C）]/（H - C）
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     let obvSum = 0
     const result = []
     this._calc(dataList, i => {
@@ -47,9 +50,9 @@ export default class OnBalanceVolume extends TechnicalIndicator {
         obv.obv = (close - dataList[i].low - hc) / hc * dataList[i].volume
       }
       obvSum += obv.obv
-      if (i >= this.calcParams[0] - 1) {
-        obv.obvMa = obvSum / this.calcParams[0]
-        obvSum -= result[i - (this.calcParams[0] - 1)].obv
+      if (i >= calcParams[0] - 1) {
+        obv.obvMa = obvSum / calcParams[0]
+        obvSum -= result[i - (calcParams[0] - 1)].obv
       }
       result.push(obv)
     })

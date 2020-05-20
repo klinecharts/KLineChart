@@ -11,6 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import TechnicalIndicator from './TechnicalIndicator'
+
 import MovingAverage from './directionalmovement/MovingAverage'
 import ExponentialMovingAverage from './directionalmovement/ExponentialMovingAverage'
 import Volume from './volume/Volume'
@@ -38,8 +41,9 @@ import {
   BIAS, BRAR, CCI, DMI, CR, PSY, DMA,
   TRIX, OBV, VR, WR, MTM, EMV, SAR
 } from './technicalIndicatorType'
-import { isValid } from '../../utils/typeChecks'
+import { isFunction, isValid } from '../../utils/typeChecks'
 import { formatBigNumber, formatPrecision } from '../../utils/format'
+import { DEV } from '../../utils/env'
 
 /**
  * 创建技术指标集合
@@ -70,6 +74,52 @@ export function createTechnicalIndicators () {
   }
 }
 
+/**
+ * 创建一个新的技术指标
+ * @param props
+ * @returns {NewTechnicalIndicator}
+ */
+export function createNewTechnicalIndicator (props = {}) {
+  if (!props.name || !props.calcTechnicalIndicator || !isFunction(props.calcTechnicalIndicator)) {
+    if (DEV) {
+      console.warn(
+        'The required attribute "name" and method "calcTechnicalIndicator" are missing, and new technical indicator cannot be generated!!!'
+      )
+    }
+    return null
+  }
+  function NewTechnicalIndicator () {
+    TechnicalIndicator.call(this)
+  }
+  NewTechnicalIndicator.prototype = new TechnicalIndicator({
+    name: props.name,
+    calcParams: props.calcParams,
+    plots: props.plots,
+    precision: props.precision,
+    shouldCheckParamCount: props.shouldCheckParamCount,
+    isPriceTechnicalIndicator: props.isPriceTechnicalIndicator,
+    isVolumeTechnicalIndicator: props.isVolumeTechnicalIndicator,
+    minValue: props.minValue,
+    maxValue: props.maxValue
+  })
+  const calcTechnicalIndicator = props.calcTechnicalIndicator
+  if (calcTechnicalIndicator && isFunction(calcTechnicalIndicator)) {
+    NewTechnicalIndicator.prototype.calcTechnicalIndicator = props.calcTechnicalIndicator
+  }
+  const regeneratePlots = props.regeneratePlots
+  if (regeneratePlots && isFunction(regeneratePlots)) {
+    NewTechnicalIndicator.prototype.regeneratePlots = regeneratePlots
+  }
+  return NewTechnicalIndicator
+}
+
+/**
+ * 获取技术指标信息
+ * @param technicalIndicatorData
+ * @param technicalIndicator
+ * @param yAxis
+ * @returns {{values: [], name: string, labels: []}}
+ */
 export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technicalIndicator, yAxis) {
   const calcParams = technicalIndicator.calcParams
   const plots = technicalIndicator.plots

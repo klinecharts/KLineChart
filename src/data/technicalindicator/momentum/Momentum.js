@@ -17,13 +17,15 @@ import { MTM } from '../technicalIndicatorType'
 
 export default class Momentum extends TechnicalIndicator {
   constructor () {
-    super(
-      MTM, [6, 10],
-      [
+    super({
+      name: MTM,
+      calcParams: [6, 10],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'mtm', type: 'line' },
         { key: 'mtmMa', type: 'line' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -31,21 +33,22 @@ export default class Momentum extends TechnicalIndicator {
    * 公式 MTM（N日）=C－CN
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     let mtmSum = 0
     const result = []
     this._calc(dataList, i => {
       const mtm = {}
-      if (i >= this.calcParams[0] - 1) {
+      if (i >= calcParams[0] - 1) {
         const close = dataList[i].close
-        const agoClose = dataList[i - (this.calcParams[0] - 1)].close
+        const agoClose = dataList[i - (calcParams[0] - 1)].close
         mtm.mtm = close - agoClose
         mtmSum += mtm.mtm
-        if (i >= this.calcParams[0] + this.calcParams[1] - 2) {
-          mtm.mtmMa = mtmSum / this.calcParams[1]
-          mtmSum -= result[i - (this.calcParams[1] - 1)].mtm
+        if (i >= calcParams[0] + calcParams[1] - 2) {
+          mtm.mtmMa = mtmSum / calcParams[1]
+          mtmSum -= result[i - (calcParams[1] - 1)].mtm
         }
       }
       result.push(mtm)

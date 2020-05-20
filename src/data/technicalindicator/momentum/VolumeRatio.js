@@ -17,13 +17,15 @@ import { VR } from '../technicalIndicatorType'
 
 export default class VolumeRatio extends TechnicalIndicator {
   constructor () {
-    super(
-      VR, [24, 30],
-      [
+    super({
+      name: VR,
+      calcParams: [24, 30],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'vr', type: 'line' },
         { key: 'vrMa', type: 'line' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -34,9 +36,10 @@ export default class VolumeRatio extends TechnicalIndicator {
    * 24天以来凡是股价不涨不跌，则那一天的成交量都称为CV，将24天内的CV总和相加后称为PVS
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     let uvs = 0
     let dvs = 0
     let pvs = 0
@@ -54,7 +57,7 @@ export default class VolumeRatio extends TechnicalIndicator {
       } else {
         pvs += volume
       }
-      if (i >= this.calcParams[0] - 1) {
+      if (i >= calcParams[0] - 1) {
         const halfPvs = pvs / 2
         if (dvs + halfPvs === 0) {
           vr.vr = 0
@@ -62,12 +65,12 @@ export default class VolumeRatio extends TechnicalIndicator {
           vr.vr = (uvs + halfPvs) / (dvs + halfPvs)
         }
         vrSum += vr.vr
-        if (i >= this.calcParams[0] + this.calcParams[1] - 2) {
-          vr.vrMa = vrSum / this.calcParams[1]
-          vrSum -= result[i - (this.calcParams[1] - 1)].vr
+        if (i >= calcParams[0] + calcParams[1] - 2) {
+          vr.vrMa = vrSum / calcParams[1]
+          vrSum -= result[i - (calcParams[1] - 1)].vr
         }
 
-        const agoData = dataList[i - (this.calcParams[0] - 1)]
+        const agoData = dataList[i - (calcParams[0] - 1)]
         const agoOpen = agoData.open
         const agoClose = agoData.close
         const agoVolume = agoData.volume

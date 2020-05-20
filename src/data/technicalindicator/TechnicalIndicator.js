@@ -12,22 +12,34 @@
  * limitations under the License.
  */
 
-import { clone, isNumber } from '../../utils/typeChecks'
+import { clone, isArray, isNumber, isValid } from '../../utils/typeChecks'
 
 export default class TechnicalIndicator {
-  constructor (
-    name, calcParams = [], plots = [],
-    precision = 4, shouldCheckParamCount,
-    isPriceTechnicalIndicator, min, max
-  ) {
-    this.name = name
-    this.precision = precision
-    this.calcParams = calcParams
-    this.plots = plots
+  constructor ({
+    name, calcParams, plots,
+    precision, shouldCheckParamCount,
+    isPriceTechnicalIndicator, isVolumeTechnicalIndicator,
+    minValue, maxValue
+  }) {
+    // 指标名
+    this.name = name || ''
+    // 精度
+    this.precision = isValid(precision) && isNumber(precision) && precision >= 0 ? precision : 4
+    // 计算参数
+    this.calcParams = isArray(calcParams) ? calcParams : []
+    // 数据信息
+    this.plots = isArray(plots) ? plots : []
+    // 是否需要检查参数
     this.shouldCheckParamCount = shouldCheckParamCount
+    // 是否是价格技术指标
     this.isPriceTechnicalIndicator = isPriceTechnicalIndicator
-    this.min = min
-    this.max = max
+    // 是否是数量技术指标
+    this.isVolumeTechnicalIndicator = isVolumeTechnicalIndicator
+    // 指定的最小值
+    this.minValue = minValue
+    // 指定的最大值
+    this.maxValue = maxValue
+    // 指标计算结果
     this.result = []
   }
 
@@ -42,19 +54,22 @@ export default class TechnicalIndicator {
       return
     }
     this.calcParams = clone(params)
-    this._regeneratePlots()
+    const plots = this.regeneratePlots(params)
+    if (plots && isArray(plots)) {
+      this.plots = plots
+    }
   }
 
   /**
    * 计算技术指标
    */
-  calcTechnicalIndicator (dataList) {}
+  calcTechnicalIndicator (dataList, calcParams) {}
 
   /**
    * 重新生成各项数据
    * @private
    */
-  _regeneratePlots () {}
+  regeneratePlots (params) {}
 
   /**
    * 基础计算

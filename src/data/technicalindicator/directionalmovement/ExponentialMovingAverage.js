@@ -18,31 +18,35 @@ import { EMA } from '../technicalIndicatorType'
 
 export default class ExponentialMovingAverage extends TechnicalIndicator {
   constructor () {
-    super(
-      EMA, [6, 12, 20],
-      [
+    super({
+      name: EMA,
+      calcParams: [6, 12, 20],
+      isPriceTechnicalIndicator: true,
+      plots: [
         { key: 'ema6', type: 'line' },
         { key: 'ema12', type: 'line' },
         { key: 'ema20', type: 'line' }
-      ], 4, false, true
-    )
+      ]
+    })
   }
 
-  _regeneratePlots () {
-    this.plots = []
-    this.calcParams.forEach(p => {
-      this.plots.push({ key: `ema${p}`, type: 'line' })
+  regeneratePlots (params) {
+    const plots = []
+    params.forEach(p => {
+      plots.push({ key: `ema${p}`, type: 'line' })
     })
+    return plots
   }
 
   /**
    * 计算指数移动平均
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
-    const paramCount = this.calcParams.length
+  calcTechnicalIndicator (dataList, calcParams) {
+    const paramCount = calcParams.length
     const oldEmas = []
     const result = []
     this._calc(dataList, i => {
@@ -53,7 +57,7 @@ export default class ExponentialMovingAverage extends TechnicalIndicator {
         if (i === 0) {
           emaValue = close
         } else {
-          emaValue = (2 * close + (this.calcParams[j] - 1) * oldEmas[j]) / (this.calcParams[j] + 1)
+          emaValue = (2 * close + (calcParams[j] - 1) * oldEmas[j]) / (calcParams[j] + 1)
         }
         ema[this.plots[j].key] = emaValue
         oldEmas[j] = emaValue

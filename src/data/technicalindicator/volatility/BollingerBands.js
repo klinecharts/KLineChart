@@ -17,18 +17,21 @@ import { BOLL } from '../technicalIndicatorType'
 
 export default class BollingerBands extends TechnicalIndicator {
   constructor () {
-    super(
-      BOLL, [20],
-      [
+    super({
+      name: BOLL,
+      calcParams: [20],
+      shouldCheckParamCount: true,
+      isPriceTechnicalIndicator: true,
+      plots: [
         { key: 'up', type: 'line' },
         { key: 'mid', type: 'line' },
         { key: 'dn', type: 'line' }
-      ], 4, true, true
-    )
+      ]
+    })
   }
 
-  calcTechnicalIndicator (dataList) {
-    const p = this.calcParams[0] - 1
+  calcTechnicalIndicator (dataList, calcParams) {
+    const p = calcParams[0] - 1
     let closeSum = 0
     const result = []
     this._calc(dataList, i => {
@@ -36,7 +39,7 @@ export default class BollingerBands extends TechnicalIndicator {
       const boll = {}
       closeSum += close
       if (i >= p) {
-        boll.mid = closeSum / this.calcParams[0]
+        boll.mid = closeSum / calcParams[0]
         const md = this._getBollMd(dataList.slice(i - p, i + 1), boll.mid)
         boll.up = boll.mid + 2 * md
         boll.dn = boll.mid - 2 * md

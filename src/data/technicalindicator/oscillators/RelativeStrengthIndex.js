@@ -17,21 +17,23 @@ import { RSI } from '../technicalIndicatorType'
 
 export default class RelativeStrengthIndex extends TechnicalIndicator {
   constructor () {
-    super(
-      RSI, [6, 12, 24],
-      [
+    super({
+      name: RSI,
+      calcParams: [6, 12, 24],
+      plots: [
         { key: 'rsi6', type: 'line' },
         { key: 'rsi12', type: 'line' },
         { key: 'rsi24', type: 'line' }
       ]
-    )
+    })
   }
 
-  _regeneratePlots () {
-    this.plots = []
-    this.calcParams.forEach(p => {
-      this.plots.push({ key: `rsi${p}`, type: 'line' })
+  regeneratePlots (params) {
+    const plots = []
+    params.forEach(p => {
+      plots.push({ key: `rsi${p}`, type: 'line' })
     })
+    return plots
   }
 
   /**
@@ -39,12 +41,13 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
    * N日RSI = N日内收盘涨幅的平均值/(N日内收盘涨幅均值+N日内收盘跌幅均值) ×100%
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     const sumCloseAs = []
     const sumCloseBs = []
-    const paramCount = this.calcParams.length
+    const paramCount = calcParams.length
     const result = []
     this._calc(dataList, i => {
       const rsi = {}
@@ -59,12 +62,12 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
           sumCloseBs[j] = sumCloseBs[j] + Math.abs(tmp)
         }
 
-        if (i >= this.calcParams[j] - 1) {
-          const a = sumCloseAs[j] / this.calcParams[j]
-          const b = (sumCloseAs[j] + sumCloseBs[j]) / this.calcParams[j]
+        if (i >= calcParams[j] - 1) {
+          const a = sumCloseAs[j] / calcParams[j]
+          const b = (sumCloseAs[j] + sumCloseBs[j]) / calcParams[j]
           rsi[this.plots[j].key] = (b === 0 ? 0 : a / b * 100)
 
-          const agoData = dataList[i - (this.calcParams[j] - 1)]
+          const agoData = dataList[i - (calcParams[j] - 1)]
           const agoOpen = agoData.open
           const agoTmp = (agoData.close - agoOpen) / agoOpen
           if (agoTmp > 0) {

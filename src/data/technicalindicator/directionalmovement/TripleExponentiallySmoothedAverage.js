@@ -17,13 +17,15 @@ import { TRIX } from '../technicalIndicatorType'
 
 export default class TripleExponentiallySmoothedAverage extends TechnicalIndicator {
   constructor () {
-    super(
-      TRIX, [12, 20],
-      [
+    super({
+      name: TRIX,
+      calcParams: [12, 20],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'trix', type: 'line' },
         { key: 'trixMa', type: 'line' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -38,9 +40,10 @@ export default class TripleExponentiallySmoothedAverage extends TechnicalIndicat
    * TRMA:MA(TRIX,M)
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     let emaClose1
     let emaClose2
     let emaClose3
@@ -57,14 +60,14 @@ export default class TripleExponentiallySmoothedAverage extends TechnicalIndicat
         emaClose2 = close
         emaClose3 = close
       } else {
-        emaClose1 = (2 * close + (this.calcParams[0] - 1) * oldEmaClose1) / (this.calcParams[0] + 1)
-        emaClose2 = (2 * emaClose1 + (this.calcParams[0] - 1) * oldEmaClose2) / (this.calcParams[0] + 1)
-        emaClose3 = (2 * emaClose2 + (this.calcParams[0] - 1) * oldEmaClose3) / (this.calcParams[0] + 1)
+        emaClose1 = (2 * close + (calcParams[0] - 1) * oldEmaClose1) / (calcParams[0] + 1)
+        emaClose2 = (2 * emaClose1 + (calcParams[0] - 1) * oldEmaClose2) / (calcParams[0] + 1)
+        emaClose3 = (2 * emaClose2 + (calcParams[0] - 1) * oldEmaClose3) / (calcParams[0] + 1)
         trix.trix = oldEmaClose3 === 0.0 ? 0.0 : (emaClose3 - oldEmaClose3) / oldEmaClose3 * 100
         trixSum += trix.trix
-        if (i >= this.calcParams[1] - 1) {
-          trix.trixMa = trixSum / this.calcParams[1]
-          trixSum -= (result[i - (this.calcParams[1] - 1)].trix || 0)
+        if (i >= calcParams[1] - 1) {
+          trix.trixMa = trixSum / calcParams[1]
+          trixSum -= (result[i - (calcParams[1] - 1)].trix || 0)
         }
       }
       oldEmaClose1 = emaClose1

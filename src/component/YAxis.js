@@ -111,11 +111,11 @@ export default class YAxis extends Axis {
           minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
         }
       }
-      if (isValid(technicalIndicator.min) && isNumber(technicalIndicator.min)) {
-        minMaxArray[0] = technicalIndicator.min
+      if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
+        minMaxArray[0] = technicalIndicator.minValue
       }
-      if (isValid(technicalIndicator.max) && isNumber(technicalIndicator.max)) {
-        minMaxArray[1] = technicalIndicator.max
+      if (isValid(technicalIndicator.maxValue) && isNumber(technicalIndicator.maxValue)) {
+        minMaxArray[1] = technicalIndicator.maxValue
       }
     }
     if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {

@@ -18,13 +18,15 @@ import { EMV } from '../technicalIndicatorType'
 
 export default class EaseOfMovementValue extends TechnicalIndicator {
   constructor () {
-    super(
-      EMV, [14, 9],
-      [
+    super({
+      name: EMV,
+      calcParams: [14, 9],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'emv', type: 'line' },
         { key: 'emvMa', type: 'line' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -38,9 +40,10 @@ export default class EaseOfMovementValue extends TechnicalIndicator {
    * MAEMV=EMV的M日的简单移动平均
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     let emSum = 0
     let emvSum = 0
     const emList = []
@@ -56,14 +59,14 @@ export default class EaseOfMovementValue extends TechnicalIndicator {
         const em = (halfHl - preHalfHl) * hl - (dataList[i].turnover || 0)
         emList.push(em)
         emSum += em
-        if (i >= this.calcParams[0]) {
-          emv.emv = emSum / this.calcParams[0]
+        if (i >= calcParams[0]) {
+          emv.emv = emSum / calcParams[0]
           emvSum += emv.emv
-          if (i >= this.calcParams[0] + this.calcParams[1] - 1) {
-            emv.emvMa = emvSum / this.calcParams[1]
-            emvSum -= result[i - (this.calcParams[1] - 1)].emv
+          if (i >= calcParams[0] + calcParams[1] - 1) {
+            emv.emvMa = emvSum / calcParams[1]
+            emvSum -= result[i - (calcParams[1] - 1)].emv
           }
-          emSum -= emList[i - this.calcParams[0]]
+          emSum -= emList[i - calcParams[0]]
         }
       }
       result.push(emv)

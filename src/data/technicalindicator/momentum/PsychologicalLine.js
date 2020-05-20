@@ -17,13 +17,15 @@ import { PSY } from '../technicalIndicatorType'
 
 export default class PsychologicalLine extends TechnicalIndicator {
   constructor () {
-    super(
-      PSY, [12, 6],
-      [
+    super({
+      name: PSY,
+      calcParams: [12, 6],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'psy', type: 'line' },
         { key: 'psyMa', type: 'line' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -31,9 +33,10 @@ export default class PsychologicalLine extends TechnicalIndicator {
    * 公式：PSY=N日内的上涨天数/N×100%。
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     let upCount = 0
     let psySum = 0
     const upList = []
@@ -43,14 +46,14 @@ export default class PsychologicalLine extends TechnicalIndicator {
       const upFlag = dataList[i].close - dataList[i].open > 0 ? 1 : 0
       upList.push(upFlag)
       upCount += upFlag
-      if (i >= this.calcParams[0] - 1) {
-        psy.psy = upCount / this.calcParams[0] * 100
+      if (i >= calcParams[0] - 1) {
+        psy.psy = upCount / calcParams[0] * 100
         psySum += psy.psy
-        if (i >= this.calcParams[0] + this.calcParams[1] - 2) {
-          psy.psyMa = psySum / this.calcParams[1]
-          psySum -= result[i - (this.calcParams[1] - 1)].psy
+        if (i >= calcParams[0] + calcParams[1] - 2) {
+          psy.psyMa = psySum / calcParams[1]
+          psySum -= result[i - (calcParams[1] - 1)].psy
         }
-        upCount -= upList[i - (this.calcParams[0] - 1)]
+        upCount -= upList[i - (calcParams[0] - 1)]
       }
       result.push(psy)
     })

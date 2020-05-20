@@ -17,18 +17,21 @@ import { SAR } from '../technicalIndicatorType'
 
 export default class StopAndReverse extends TechnicalIndicator {
   constructor () {
-    super(
-      SAR, [2, 2, 20],
-      [
+    super({
+      name: SAR,
+      calcParams: [2, 2, 20],
+      shouldCheckParamCount: true,
+      isPriceTechnicalIndicator: true,
+      plots: [
         { key: 'sar', type: 'circle' }
-      ], 4, true, true
-    )
+      ]
+    })
   }
 
-  calcTechnicalIndicator (dataList) {
-    const startAf = this.calcParams[0] / 100
-    const step = this.calcParams[1] / 100
-    const maxAf = this.calcParams[2] / 100
+  calcTechnicalIndicator (dataList, calcParams) {
+    const startAf = calcParams[0] / 100
+    const step = calcParams[1] / 100
+    const maxAf = calcParams[2] / 100
 
     // 加速因子
     let af = startAf

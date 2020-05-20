@@ -17,13 +17,15 @@ import { DMA } from '../technicalIndicatorType'
 
 export default class DifferentOfMovingAverage extends TechnicalIndicator {
   constructor () {
-    super(
-      DMA, [10, 50, 10],
-      [
+    super({
+      name: DMA,
+      calcParams: [10, 50, 10],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'dma', type: 'line' },
         { key: 'ama', type: 'line' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -31,10 +33,11 @@ export default class DifferentOfMovingAverage extends TechnicalIndicator {
    * 公式：DIF:MA(CLOSE,N1)-MA(CLOSE,N2);DIFMA:MA(DIF,M)
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
-    const maxParam = Math.max(this.calcParams[0], this.calcParams[1])
+  calcTechnicalIndicator (dataList, calcParams) {
+    const maxParam = Math.max(calcParams[0], calcParams[1])
     let closeSum1 = 0
     let closeSum2 = 0
     let dmaSum = 0
@@ -46,22 +49,22 @@ export default class DifferentOfMovingAverage extends TechnicalIndicator {
       closeSum2 += close
       let ma1
       let ma2
-      if (i >= this.calcParams[0] - 1) {
-        ma1 = closeSum1 / this.calcParams[0]
-        closeSum1 -= dataList[i - (this.calcParams[0] - 1)].close
+      if (i >= calcParams[0] - 1) {
+        ma1 = closeSum1 / calcParams[0]
+        closeSum1 -= dataList[i - (calcParams[0] - 1)].close
       }
-      if (i >= this.calcParams[1] - 1) {
-        ma2 = closeSum2 / this.calcParams[1]
-        closeSum2 -= dataList[i - (this.calcParams[1] - 1)].close
+      if (i >= calcParams[1] - 1) {
+        ma2 = closeSum2 / calcParams[1]
+        closeSum2 -= dataList[i - (calcParams[1] - 1)].close
       }
 
       if (i >= maxParam - 1) {
         const dif = ma1 - ma2
         dma.dma = dif
         dmaSum += dif
-        if (i >= maxParam + this.calcParams[2] - 2) {
-          dma.ama = dmaSum / this.calcParams[2]
-          dmaSum -= result[i - (this.calcParams[2] - 1)].dma
+        if (i >= maxParam + calcParams[2] - 2) {
+          dma.ama = dmaSum / calcParams[2]
+          dmaSum -= result[i - (calcParams[2] - 1)].dma
         }
       }
       result.push(dma)

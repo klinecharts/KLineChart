@@ -17,14 +17,16 @@ import { MACD } from '../technicalIndicatorType'
 
 export default class MovingAverageConvergenceDivergence extends TechnicalIndicator {
   constructor () {
-    super(
-      MACD, [12, 26, 9],
-      [
+    super({
+      name: MACD,
+      calcParams: [12, 26, 9],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'diff', type: 'line' },
         { key: 'dea', type: 'line' },
         { key: 'macd', type: 'bar' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -38,9 +40,10 @@ export default class MovingAverageConvergenceDivergence extends TechnicalIndicat
    * ⒋最后用DIFF减DEA，得MACD。MACD通常绘制成围绕零轴线波动的柱形图。MACD柱状大于0涨颜色，小于0跌颜色。
    *
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator (dataList, calcParams) {
     let emaShort
     let emaLong
     let oldEmaShort = 0
@@ -55,12 +58,12 @@ export default class MovingAverageConvergenceDivergence extends TechnicalIndicat
         emaShort = close
         emaLong = close
       } else {
-        emaShort = (2 * close + (this.calcParams[0] - 1) * oldEmaShort) / (this.calcParams[0] + 1)
-        emaLong = (2 * close + (this.calcParams[1] - 1) * oldEmaLong) / (this.calcParams[1] + 1)
+        emaShort = (2 * close + (calcParams[0] - 1) * oldEmaShort) / (calcParams[0] + 1)
+        emaLong = (2 * close + (calcParams[1] - 1) * oldEmaLong) / (calcParams[1] + 1)
       }
 
       const diff = emaShort - emaLong
-      dea = (diff * 2 + oldDea * (this.calcParams[2] - 1)) / (this.calcParams[2] + 1)
+      dea = (diff * 2 + oldDea * (calcParams[2] - 1)) / (calcParams[2] + 1)
       macd = (diff - dea) * 2
       oldEmaShort = emaShort
       oldEmaLong = emaLong

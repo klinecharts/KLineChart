@@ -17,16 +17,18 @@ import { CR } from '../technicalIndicatorType'
 
 export default class CurrentRatio extends TechnicalIndicator {
   constructor () {
-    super(
-      CR, [26, 10, 20, 40, 60],
-      [
+    super({
+      name: CR,
+      calcParams: [26, 10, 20, 40, 60],
+      shouldCheckParamCount: true,
+      plots: [
         { key: 'cr', type: 'line' },
         { key: 'ma1', type: 'line' },
         { key: 'ma2', type: 'line' },
         { key: 'ma3', type: 'line' },
         { key: 'ma4', type: 'line' }
-      ], 4, true
-    )
+      ]
+    })
   }
 
   /**
@@ -43,13 +45,14 @@ export default class CurrentRatio extends TechnicalIndicator {
    * 输出MA3:M3(20)/2.5+1日前的CR的M3(20)日简单移动平均
    * 输出MA4:M4/2.5+1日前的CR的M4日简单移动平均
    * @param dataList
+   * @param calcParams
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList) {
-    const ma1ForwardPeriod = Math.ceil(this.calcParams[1] / 2.5 + 1)
-    const ma2ForwardPeriod = Math.ceil(this.calcParams[2] / 2.5 + 1)
-    const ma3ForwardPeriod = Math.ceil(this.calcParams[3] / 2.5 + 1)
-    const ma4ForwardPeriod = Math.ceil(this.calcParams[4] / 2.5 + 1)
+  calcTechnicalIndicator (dataList, calcParams) {
+    const ma1ForwardPeriod = Math.ceil(calcParams[1] / 2.5 + 1)
+    const ma2ForwardPeriod = Math.ceil(calcParams[2] / 2.5 + 1)
+    const ma3ForwardPeriod = Math.ceil(calcParams[3] / 2.5 + 1)
+    const ma4ForwardPeriod = Math.ceil(calcParams[4] / 2.5 + 1)
     let ma1Sum = 0
     const ma1List = []
     let ma2Sum = 0
@@ -73,15 +76,15 @@ export default class CurrentRatio extends TechnicalIndicator {
         const preMidSubLow = Math.max(0, preMid - dataList[i].low)
         preMidSubLowSum += preMidSubLow
 
-        if (i >= this.calcParams[0]) {
+        if (i >= calcParams[0]) {
           if (preMidSubLow !== 0) {
             cr.cr = highSubPreMid / preMidSubLow * 100
           } else {
             cr.cr = 0
           }
-          const agoPreData = dataList[i - this.calcParams[0]]
+          const agoPreData = dataList[i - calcParams[0]]
           const agoPreMid = (agoPreData.high + agoPreData.close + agoPreData.low + agoPreData.open) / 4
-          const agoData = dataList[i - (this.calcParams[0] - 1)]
+          const agoData = dataList[i - (calcParams[0] - 1)]
           const agoHighSubPreMid = Math.max(0, agoData.high - agoPreMid)
           highSubPreMidSum -= agoHighSubPreMid
           const agoPreMidSubLow = Math.max(0, agoPreMid - agoData.low)
@@ -90,33 +93,33 @@ export default class CurrentRatio extends TechnicalIndicator {
           ma2Sum += cr.cr
           ma3Sum += cr.cr
           ma4Sum += cr.cr
-          if (i >= this.calcParams[0] + this.calcParams[1] - 1) {
-            ma1List.push(ma1Sum / this.calcParams[1])
-            if (i >= this.calcParams[0] + this.calcParams[1] + ma1ForwardPeriod - 2) {
+          if (i >= calcParams[0] + calcParams[1] - 1) {
+            ma1List.push(ma1Sum / calcParams[1])
+            if (i >= calcParams[0] + calcParams[1] + ma1ForwardPeriod - 2) {
               cr.ma1 = ma1List[ma1List.length - 1 - ma1ForwardPeriod]
             }
-            ma1Sum -= result[i - (this.calcParams[1] - 1)].cr
+            ma1Sum -= result[i - (calcParams[1] - 1)].cr
           }
-          if (i >= this.calcParams[0] + this.calcParams[2] - 1) {
-            ma2List.push(ma2Sum / this.calcParams[2])
-            if (i >= this.calcParams[0] + this.calcParams[2] + ma2ForwardPeriod - 2) {
+          if (i >= calcParams[0] + calcParams[2] - 1) {
+            ma2List.push(ma2Sum / calcParams[2])
+            if (i >= calcParams[0] + calcParams[2] + ma2ForwardPeriod - 2) {
               cr.ma2 = ma2List[ma2List.length - 1 - ma2ForwardPeriod]
             }
-            ma2Sum -= result[i - (this.calcParams[2] - 1)].cr
+            ma2Sum -= result[i - (calcParams[2] - 1)].cr
           }
-          if (i >= this.calcParams[0] + this.calcParams[3] - 1) {
-            ma3List.push(ma3Sum / this.calcParams[3])
-            if (i >= this.calcParams[0] + this.calcParams[3] + ma3ForwardPeriod - 2) {
+          if (i >= calcParams[0] + calcParams[3] - 1) {
+            ma3List.push(ma3Sum / calcParams[3])
+            if (i >= calcParams[0] + calcParams[3] + ma3ForwardPeriod - 2) {
               cr.ma3 = ma3List[ma3List.length - 1 - ma3ForwardPeriod]
             }
-            ma3Sum -= result[i - (this.calcParams[3] - 1)].cr
+            ma3Sum -= result[i - (calcParams[3] - 1)].cr
           }
-          if (i >= this.calcParams[0] + this.calcParams[4] - 1) {
-            ma4List.push(ma4Sum / this.calcParams[4])
-            if (i >= this.calcParams[0] + this.calcParams[4] + ma4ForwardPeriod - 2) {
+          if (i >= calcParams[0] + calcParams[4] - 1) {
+            ma4List.push(ma4Sum / calcParams[4])
+            if (i >= calcParams[0] + calcParams[4] + ma4ForwardPeriod - 2) {
               cr.ma4 = ma4List[ma4List.length - 1 - ma4ForwardPeriod]
             }
-            ma4Sum -= result[i - (this.calcParams[4] - 1)].cr
+            ma4Sum -= result[i - (calcParams[4] - 1)].cr
           }
         }
       }

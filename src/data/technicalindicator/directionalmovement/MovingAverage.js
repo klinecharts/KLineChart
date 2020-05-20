@@ -17,26 +17,29 @@ import { MA } from '../technicalIndicatorType'
 
 export default class MovingAverage extends TechnicalIndicator {
   constructor () {
-    super(
-      MA, [5, 10, 30, 60],
-      [
+    super({
+      name: MA,
+      calcParams: [5, 10, 30, 60],
+      isPriceTechnicalIndicator: true,
+      plots: [
         { key: 'ma5', type: 'line' },
         { key: 'ma10', type: 'line' },
         { key: 'ma30', type: 'line' },
         { key: 'ma60', type: 'line' }
-      ], 4, false, true
-    )
-  }
-
-  _regeneratePlots () {
-    this.plots = []
-    this.calcParams.forEach(p => {
-      this.plots.push({ key: `ma${p}`, type: 'line' })
+      ]
     })
   }
 
-  calcTechnicalIndicator (dataList) {
-    const paramCount = this.calcParams.length
+  regeneratePlots (params) {
+    const plots = []
+    params.forEach(p => {
+      plots.push({ key: `ma${p}`, type: 'line' })
+    })
+    return plots
+  }
+
+  calcTechnicalIndicator (dataList, calcParams) {
+    const paramCount = calcParams.length
     const closeSums = []
     const result = []
     this._calc(dataList, i => {
@@ -44,7 +47,7 @@ export default class MovingAverage extends TechnicalIndicator {
       const close = dataList[i].close
       for (let j = 0; j < paramCount; j++) {
         closeSums[j] = (closeSums[j] || 0) + close
-        const p = this.calcParams[j]
+        const p = calcParams[j]
         if (i >= p - 1) {
           ma[this.plots[j].key] = closeSums[j] / p
           closeSums[j] -= dataList[i - (p - 1)].close
