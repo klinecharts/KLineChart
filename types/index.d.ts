@@ -1,4 +1,3 @@
-export declare type TechnicalIndicatorType = 'NO' | 'MA' | 'EMA' | 'VOL' | 'MACD' | 'BOLL' | 'KDJ' | 'RSI' | 'BIAS' | 'BRAR' | 'CCI' | 'DMI' | 'CR' | 'PSY' | 'DMA' | 'TRIX' | 'OBV' | 'VR' | 'WR' | 'MTM' | 'EMV' | 'SAR';
 export declare type GraphicMarkType = 'none' | 'horizontalStraightLine' | 'verticalStraightLine' | 'straightLine' | 'horizontalRayLine' | 'verticalRayLine' | 'rayLine' | 'horizontalSegmentLine' | 'verticalSegmentLine' | 'segmentLine' | 'priceLine' | 'priceChannelLine' | 'parallelStraightLine' | 'fibonacciLine';
 export declare type ChartType = 'candle_stick' | 'real_time';
 export declare interface TechnicalIndicatorParams {
@@ -37,10 +36,25 @@ export declare interface KLineData {
 
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 
+export declare interface TechnicalIndicatorInfo {
+  name: string;
+  calcTechnicalIndicator: (kLineDataList: KLineData[], calcParams: number[]) => any[];
+  calcParams?: number[];
+  plots?: any[];
+  precision?: number;
+  shouldCheckParamCount?: boolean;
+  isPriceTechnicalIndicator?: boolean;
+  isVolumeTechnicalIndicator?: boolean;
+  baseValue?: number;
+  minValue?: number;
+  maxValue?: number;
+  regeneratePlots?: (calcParams: number[]) => any[];
+}
+
 export declare interface Chart {
   setStyleOptions(options: any): void;
   getStyleOptions(): any;
-  setTechnicalIndicatorParams(technicalIndicatorType: TechnicalIndicatorType, params: number[]): void;
+  setTechnicalIndicatorParams(technicalIndicatorType: string, params: number[]): void;
   getTechnicalIndicatorParamOptions(): TechnicalIndicatorParams;
   setPrecision(pricePrecision: number, volumePrecision: number): void;
   setTimezone(timezone: string):void;
@@ -56,9 +70,10 @@ export declare interface Chart {
   updateData(data: KLineData): void;
   loadMore(cb: (timestamp: number) => void): void;
   setCandleStickChartType(chartType: ChartType): void;
-  setCandleStickTechnicalIndicatorType(technicalIndicatorType: TechnicalIndicatorType): void;
-  setTechnicalIndicatorType(tag: string, technicalIndicatorType: TechnicalIndicatorType): void;
-  addTechnicalIndicator(technicalIndicatorType?: TechnicalIndicatorType, height?: number, dragEnabled?: boolean): string;
+  setCandleStickTechnicalIndicatorType(technicalIndicatorType: string): void;
+  setTechnicalIndicatorType(tag: string, technicalIndicatorType: string): void;
+  createTechnicalIndicator(technicalIndicatorType?: string, height?: number, dragEnabled?: boolean): string | null;
+  addCustomTechnicalIndicator(technicalIndicatorInfo: TechnicalIndicatorInfo)
   removeTechnicalIndicator(tag: string): void;
   addGraphicMark(graphicMarkType: GraphicMarkType): void;
   removeAllGraphicMark(): void;

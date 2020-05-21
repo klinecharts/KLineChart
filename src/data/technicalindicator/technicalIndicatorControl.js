@@ -76,11 +76,16 @@ export function createTechnicalIndicators () {
 
 /**
  * 创建一个新的技术指标
- * @param props
+ * @param technicalIndicatorInfo
  * @returns {NewTechnicalIndicator}
  */
-export function createNewTechnicalIndicator (props = {}) {
-  if (!props.name || !props.calcTechnicalIndicator || !isFunction(props.calcTechnicalIndicator)) {
+export function createNewTechnicalIndicator ({
+  name, calcParams, plots, precision, shouldCheckParamCount,
+  isPriceTechnicalIndicator, isVolumeTechnicalIndicator,
+  baseValue, minValue, maxValue,
+  calcTechnicalIndicator, regeneratePlots
+}) {
+  if (!name || !isFunction(calcTechnicalIndicator)) {
     if (DEV) {
       console.warn(
         'The required attribute "name" and method "calcTechnicalIndicator" are missing, and new technical indicator cannot be generated!!!'
@@ -88,26 +93,26 @@ export function createNewTechnicalIndicator (props = {}) {
     }
     return null
   }
-  function NewTechnicalIndicator () {
-    TechnicalIndicator.call(this)
+  class NewTechnicalIndicator extends TechnicalIndicator {
+    constructor () {
+      super(
+        {
+          name,
+          calcParams,
+          plots,
+          precision,
+          shouldCheckParamCount,
+          isPriceTechnicalIndicator,
+          isVolumeTechnicalIndicator,
+          baseValue,
+          minValue,
+          maxValue
+        }
+      )
+    }
   }
-  NewTechnicalIndicator.prototype = new TechnicalIndicator({
-    name: props.name,
-    calcParams: props.calcParams,
-    plots: props.plots,
-    precision: props.precision,
-    shouldCheckParamCount: props.shouldCheckParamCount,
-    isPriceTechnicalIndicator: props.isPriceTechnicalIndicator,
-    isVolumeTechnicalIndicator: props.isVolumeTechnicalIndicator,
-    minValue: props.minValue,
-    maxValue: props.maxValue
-  })
-  const calcTechnicalIndicator = props.calcTechnicalIndicator
-  if (calcTechnicalIndicator && isFunction(calcTechnicalIndicator)) {
-    NewTechnicalIndicator.prototype.calcTechnicalIndicator = props.calcTechnicalIndicator
-  }
-  const regeneratePlots = props.regeneratePlots
-  if (regeneratePlots && isFunction(regeneratePlots)) {
+  NewTechnicalIndicator.prototype.calcTechnicalIndicator = calcTechnicalIndicator
+  if (regeneratePlots) {
     NewTechnicalIndicator.prototype.regeneratePlots = regeneratePlots
   }
   return NewTechnicalIndicator
@@ -128,9 +133,9 @@ export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technica
 
   const labels = []
   const values = []
-  let name = ''
-  if (plots.length > 0) {
-    name = `${technicalIndicator.name}(${calcParams.join(',')})`
+  let name = technicalIndicator.name
+  if (calcParams.length > 0) {
+    name = `${calcParams}(${calcParams.join(',')})`
   }
   plots.forEach(plot => {
     labels.push(plot.key.toUpperCase())

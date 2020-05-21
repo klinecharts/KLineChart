@@ -22,7 +22,7 @@ import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import SeparatorPane from './SeparatorPane'
 
-import { MA } from '../data/technicalindicator/technicalIndicatorType'
+import { MA, MACD } from '../data/technicalindicator/technicalIndicatorType'
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { DEV } from '../utils/env'
@@ -364,7 +364,7 @@ export default class ChartPane {
    * @param dragEnabled
    * @returns {string}
    */
-  createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled) {
+  createTechnicalIndicator (technicalIndicatorType = MACD, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled) {
     if (!this._chartData.technicalIndicator(technicalIndicatorType)) {
       if (DEV) {
         console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!')

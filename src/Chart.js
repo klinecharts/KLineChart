@@ -184,14 +184,22 @@ export default class Chart {
   }
 
   /**
-   * 添加一个技术指标
+   * 创建一个技术指标
    * @param technicalIndicatorType
    * @param height
    * @param dragEnabled
    * @returns {string}
    */
-  addTechnicalIndicator (technicalIndicatorType, height, dragEnabled) {
+  createTechnicalIndicator (technicalIndicatorType, height, dragEnabled) {
     return this._chartPane.createTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
+  }
+
+  /**
+   * 添加自定义技术指标
+   * @param technicalIndicatorInfo
+   */
+  addCustomTechnicalIndicator (technicalIndicatorInfo) {
+    this._chartPane.chartData().addCustomTechnicalIndicator(technicalIndicatorInfo)
   }
 
   /**

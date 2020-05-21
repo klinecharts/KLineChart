@@ -2984,6 +2984,67 @@ function createTechnicalIndicators() {
   return _ref = {}, _defineProperty(_ref, MA, MovingAverage), _defineProperty(_ref, EMA, ExponentialMovingAverage), _defineProperty(_ref, VOL, Volume), _defineProperty(_ref, MACD, MovingAverageConvergenceDivergence), _defineProperty(_ref, BOLL, BollingerBands), _defineProperty(_ref, KDJ, StockIndicatorKDJ), _defineProperty(_ref, RSI, RelativeStrengthIndex), _defineProperty(_ref, BIAS, Bias), _defineProperty(_ref, BRAR, Brar), _defineProperty(_ref, CCI, CommodityChannelIndex), _defineProperty(_ref, DMI, DirectionalMovementIndex), _defineProperty(_ref, CR, CurrentRatio), _defineProperty(_ref, PSY, PsychologicalLine), _defineProperty(_ref, DMA, DifferentOfMovingAverage), _defineProperty(_ref, TRIX, TripleExponentiallySmoothedAverage), _defineProperty(_ref, OBV, OnBalanceVolume), _defineProperty(_ref, VR, VolumeRatio), _defineProperty(_ref, WR, WilliamsR), _defineProperty(_ref, MTM, Momentum), _defineProperty(_ref, EMV, EaseOfMovementValue), _defineProperty(_ref, SAR, StopAndReverse), _ref;
 }
 /**
+ * 创建一个新的技术指标
+ * @param technicalIndicatorInfo
+ * @returns {NewTechnicalIndicator}
+ */
+
+function createNewTechnicalIndicator(_ref2) {
+  var name = _ref2.name,
+      calcParams = _ref2.calcParams,
+      plots = _ref2.plots,
+      precision = _ref2.precision,
+      shouldCheckParamCount = _ref2.shouldCheckParamCount,
+      isPriceTechnicalIndicator = _ref2.isPriceTechnicalIndicator,
+      isVolumeTechnicalIndicator = _ref2.isVolumeTechnicalIndicator,
+      baseValue = _ref2.baseValue,
+      minValue = _ref2.minValue,
+      maxValue = _ref2.maxValue,
+      calcTechnicalIndicator = _ref2.calcTechnicalIndicator,
+      regeneratePlots = _ref2.regeneratePlots;
+
+  if (!name || !isFunction(calcTechnicalIndicator)) {
+    {
+      console.warn('The required attribute "name" and method "calcTechnicalIndicator" are missing, and new technical indicator cannot be generated!!!');
+    }
+
+    return null;
+  }
+
+  var NewTechnicalIndicator = /*#__PURE__*/function (_TechnicalIndicator) {
+    _inherits(NewTechnicalIndicator, _TechnicalIndicator);
+
+    var _super = _createSuper(NewTechnicalIndicator);
+
+    function NewTechnicalIndicator() {
+      _classCallCheck(this, NewTechnicalIndicator);
+
+      return _super.call(this, {
+        name: name,
+        calcParams: calcParams,
+        plots: plots,
+        precision: precision,
+        shouldCheckParamCount: shouldCheckParamCount,
+        isPriceTechnicalIndicator: isPriceTechnicalIndicator,
+        isVolumeTechnicalIndicator: isVolumeTechnicalIndicator,
+        baseValue: baseValue,
+        minValue: minValue,
+        maxValue: maxValue
+      });
+    }
+
+    return NewTechnicalIndicator;
+  }(TechnicalIndicator);
+
+  NewTechnicalIndicator.prototype.calcTechnicalIndicator = calcTechnicalIndicator;
+
+  if (regeneratePlots) {
+    NewTechnicalIndicator.prototype.regeneratePlots = regeneratePlots;
+  }
+
+  return NewTechnicalIndicator;
+}
+/**
  * 获取技术指标信息
  * @param technicalIndicatorData
  * @param technicalIndicator
@@ -3001,10 +3062,10 @@ function getTechnicalIndicatorInfo() {
   var isVolumeTechnicalIndicator = technicalIndicator.isVolumeTechnicalIndicator;
   var labels = [];
   var values = [];
-  var name = '';
+  var name = technicalIndicator.name;
 
-  if (plots.length > 0) {
-    name = "".concat(technicalIndicator.name, "(").concat(calcParams.join(','), ")");
+  if (calcParams.length > 0) {
+    name = "".concat(calcParams, "(").concat(calcParams.join(','), ")");
   }
 
   plots.forEach(function (plot) {
@@ -3067,9 +3128,9 @@ var ChartData = /*#__PURE__*/function () {
     this._invalidateHandler = invalidateHandler; // 样式配置
 
     this._styleOptions = clone(defaultStyleOptions);
-    merge(this._styleOptions, styleOptions); // 技术指标参数
+    merge(this._styleOptions, styleOptions); // 技术指标计算参数集合
 
-    this._technicalIndicatorCalcParams = clone(technicalIndicatorCalcParams); // 所有技术指标信息
+    this._technicalIndicatorCalcParams = clone(technicalIndicatorCalcParams); // 所有技术指标类集合
 
     this._technicalIndicators = createTechnicalIndicators(); // 价格精度
 
@@ -3207,13 +3268,18 @@ var ChartData = /*#__PURE__*/function () {
     value: function styleOptions() {
       return this._styleOptions;
     }
+    /**
+     * 设置样式配置
+     * @param options
+     */
+
   }, {
     key: "applyStyleOptions",
     value: function applyStyleOptions(options) {
       merge(this._styleOptions, options);
     }
     /**
-     * 获取技术指标计算参数
+     * 获取技术指标计算参数结合
      * @returns {function(Array<string>, string, string): Promise}
      */
 
@@ -3223,7 +3289,7 @@ var ChartData = /*#__PURE__*/function () {
       return this._technicalIndicatorCalcParams;
     }
     /**
-     * 获取指标
+     * 根据指标类型获取指标类
      * @param technicalIndicatorType
      */
 
@@ -3743,6 +3809,24 @@ var ChartData = /*#__PURE__*/function () {
       }
 
       return false;
+    }
+    /**
+     * 添加一个自定义指标
+     * @param technicalIndicatorInfo
+     */
+
+  }, {
+    key: "addCustomTechnicalIndicator",
+    value: function addCustomTechnicalIndicator(technicalIndicatorInfo) {
+      var NewTechnicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo);
+
+      if (NewTechnicalIndicator) {
+        var name = technicalIndicatorInfo.name; // 将计算参数，放入参数集合
+
+        this._technicalIndicatorCalcParams[name] = technicalIndicatorInfo.calcParams || []; // 将生成的新的指标类放入集合
+
+        this._technicalIndicators[name] = NewTechnicalIndicator;
+      }
     }
     /**
      * 计算指标
@@ -10883,7 +10967,8 @@ var ChartPane = /*#__PURE__*/function () {
 
   }, {
     key: "createTechnicalIndicator",
-    value: function createTechnicalIndicator(technicalIndicatorType) {
+    value: function createTechnicalIndicator() {
+      var technicalIndicatorType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : MACD;
       var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT;
       var dragEnabled = arguments.length > 2 ? arguments[2] : undefined;
 
@@ -11289,7 +11374,7 @@ var Chart = /*#__PURE__*/function () {
       this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType);
     }
     /**
-     * 添加一个技术指标
+     * 创建一个技术指标
      * @param technicalIndicatorType
      * @param height
      * @param dragEnabled
@@ -11297,9 +11382,19 @@ var Chart = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "addTechnicalIndicator",
-    value: function addTechnicalIndicator(technicalIndicatorType, height, dragEnabled) {
+    key: "createTechnicalIndicator",
+    value: function createTechnicalIndicator(technicalIndicatorType, height, dragEnabled) {
       return this._chartPane.createTechnicalIndicator(technicalIndicatorType, height, dragEnabled);
+    }
+    /**
+     * 添加自定义技术指标
+     * @param technicalIndicatorInfo
+     */
+
+  }, {
+    key: "addCustomTechnicalIndicator",
+    value: function addCustomTechnicalIndicator(technicalIndicatorInfo) {
+      this._chartPane.chartData().addCustomTechnicalIndicator(technicalIndicatorInfo);
     }
     /**
      * 移除一个技术指标
