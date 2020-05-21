@@ -16,12 +16,13 @@ import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import CandleStickWidget from '../widget/CandleStickWidget'
 import { ChartType } from '../data/options/styleOptions'
 import YAxis from '../component/YAxis'
-import { AVERAGE } from '../data/technicalindicator/technicalIndicatorType'
+import TransactionAveragePrice from '../data/technicalindicator/directionalmovement/TransactionAveragePrice'
 
 export default class CandleStickPane extends TechnicalIndicatorPane {
   constructor (props) {
     super(props)
     this._chartType = ChartType.CANDLE_STICK
+    this._realTimeTechnicalIndicator = new TransactionAveragePrice()
   }
 
   _createYAxis (props) {
@@ -46,6 +47,10 @@ export default class CandleStickPane extends TechnicalIndicatorPane {
     return this._chartType === ChartType.REAL_TIME
   }
 
+  technicalIndicator () {
+    return this._isRealTime() ? this._realTimeTechnicalIndicator : this._technicalIndicator
+  }
+
   chartType () {
     return this._chartType
   }
@@ -53,7 +58,7 @@ export default class CandleStickPane extends TechnicalIndicatorPane {
   setChartType (chartType) {
     if (this._chartType !== chartType) {
       this._chartType = chartType
-      this._chartData.calcTechnicalIndicator(this, this._chartData.technicalIndicator(AVERAGE))
+      this._chartData.calcTechnicalIndicator(this, this.technicalIndicator())
     }
   }
 }

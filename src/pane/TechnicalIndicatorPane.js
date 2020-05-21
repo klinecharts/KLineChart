@@ -17,7 +17,6 @@ import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 import { MACD } from '../data/technicalindicator/technicalIndicatorType'
 import YAxis from '../component/YAxis'
-import { InvalidateLevel } from '../data/ChartData'
 
 export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
@@ -101,20 +100,6 @@ export default class TechnicalIndicatorPane extends Pane {
   }
 
   /**
-   * 计算数据源
-   */
-  calcDataSource () {
-    Promise.resolve().then(
-      _ => {
-        if (this._technicalIndicator) {
-          this._technicalIndicator.result = this._technicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), this._technicalIndicator.calcParams) || []
-        }
-        this.invalidate(InvalidateLevel.FULL)
-      }
-    )
-  }
-
-  /**
    * 设置技术指标类型
    * @param technicalIndicatorType
    */
@@ -131,6 +116,6 @@ export default class TechnicalIndicatorPane extends Pane {
     } else {
       this._technicalIndicator = null
     }
-    this.calcDataSource()
+    this._chartData.calcTechnicalIndicator(this, this._technicalIndicator)
   }
 }

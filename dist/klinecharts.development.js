@@ -838,8 +838,6 @@ var defaultStyleOptions = {
   graphicMark: defaultGraphicMark
 };
 
-var NO = 'NO';
-var AVERAGE = 'AVERAGE';
 var MA = 'MA';
 var EMA = 'EMA';
 var VOL = 'VOL';
@@ -861,6 +859,9 @@ var WR = 'WR';
 var MTM = 'MTM';
 var EMV = 'EMV';
 var SAR = 'SAR';
+
+var _technicalIndicatorCa;
+var technicalIndicatorCalcParams = (_technicalIndicatorCa = {}, _defineProperty(_technicalIndicatorCa, MA, [5, 10, 30, 60]), _defineProperty(_technicalIndicatorCa, EMA, [6, 12, 20]), _defineProperty(_technicalIndicatorCa, VOL, [5, 10, 20]), _defineProperty(_technicalIndicatorCa, MACD, [12, 26, 9]), _defineProperty(_technicalIndicatorCa, BOLL, [20]), _defineProperty(_technicalIndicatorCa, KDJ, [9, 3, 3]), _defineProperty(_technicalIndicatorCa, RSI, [6, 12, 24]), _defineProperty(_technicalIndicatorCa, BIAS, [6, 12, 24]), _defineProperty(_technicalIndicatorCa, BRAR, [26]), _defineProperty(_technicalIndicatorCa, CCI, [13]), _defineProperty(_technicalIndicatorCa, DMI, [14, 6]), _defineProperty(_technicalIndicatorCa, CR, [26, 10, 20, 40, 60]), _defineProperty(_technicalIndicatorCa, PSY, [12]), _defineProperty(_technicalIndicatorCa, DMA, [10, 50, 10]), _defineProperty(_technicalIndicatorCa, TRIX, [12, 20]), _defineProperty(_technicalIndicatorCa, OBV, [30]), _defineProperty(_technicalIndicatorCa, VR, [24, 30]), _defineProperty(_technicalIndicatorCa, WR, [13, 34, 89]), _defineProperty(_technicalIndicatorCa, MTM, [6, 10]), _defineProperty(_technicalIndicatorCa, EMV, [14, 9]), _defineProperty(_technicalIndicatorCa, SAR, [2, 2, 20]), _technicalIndicatorCa);
 
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1113,6 +1114,53 @@ var TechnicalIndicator = /*#__PURE__*/function () {
   return TechnicalIndicator;
 }();
 
+var TransactionAveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
+  _inherits(TransactionAveragePrice, _TechnicalIndicator);
+
+  var _super = _createSuper(TransactionAveragePrice);
+
+  function TransactionAveragePrice() {
+    _classCallCheck(this, TransactionAveragePrice);
+
+    return _super.call(this, {
+      name: 'TAP',
+      isPriceTechnicalIndicator: true,
+      shouldCheckParamCount: true,
+      plots: [{
+        key: 'average',
+        type: 'line'
+      }]
+    });
+  }
+
+  _createClass(TransactionAveragePrice, [{
+    key: "calcTechnicalIndicator",
+    value: function calcTechnicalIndicator(dataList, calcParams) {
+      var turnoverSum = 0;
+      var volumeSum = 0;
+      var result = [];
+
+      this._calc(dataList, function (i) {
+        var average = {};
+        var turnover = dataList[i].turnover || 0;
+        var volume = dataList[i].volume || 0;
+        turnoverSum += turnover;
+        volumeSum += volume;
+
+        if (volume !== 0) {
+          average.average = turnoverSum / volumeSum;
+        }
+
+        result.push(average);
+      });
+
+      return result;
+    }
+  }]);
+
+  return TransactionAveragePrice;
+}(TechnicalIndicator);
+
 var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
   _inherits(MovingAverage, _TechnicalIndicator);
 
@@ -1309,7 +1357,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
     key: "regeneratePlots",
     value: function regeneratePlots(params) {
       var plots = [];
-      plots.forEach(function (p) {
+      params.forEach(function (p) {
         plots.push({
           key: "ma".concat(p),
           type: 'line'
@@ -1317,7 +1365,8 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
       });
       plots.push({
         key: 'num',
-        type: 'bar'
+        type: 'bar',
+        referenceValue: 0
       });
       return plots;
     }
@@ -2321,12 +2370,12 @@ var DifferentOfMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
 
   var _super = _createSuper(DifferentOfMovingAverage);
 
-  function DifferentOfMovingAverage() {
+  function DifferentOfMovingAverage(calcParams) {
     _classCallCheck(this, DifferentOfMovingAverage);
 
     return _super.call(this, {
       name: DMA,
-      calcParams: [10, 50, 10],
+      calcParams: calcParams,
       shouldCheckParamCount: true,
       plots: [{
         key: 'dma',
@@ -2388,6 +2437,7 @@ var DifferentOfMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
         result.push(dma);
       });
 
+      console.log(result);
       return result;
     }
   }]);
@@ -3048,7 +3098,9 @@ var ChartData = /*#__PURE__*/function () {
     this._invalidateHandler = invalidateHandler; // 样式配置
 
     this._styleOptions = clone(defaultStyleOptions);
-    merge(this._styleOptions, styleOptions); // 所有技术指标信息
+    merge(this._styleOptions, styleOptions); // 技术指标参数
+
+    this._technicalIndicatorCalcParams = clone(technicalIndicatorCalcParams); // 所有技术指标信息
 
     this._technicalIndicators = createTechnicalIndicators(); // 价格精度
 
@@ -3186,6 +3238,16 @@ var ChartData = /*#__PURE__*/function () {
       merge(this._styleOptions, options);
     }
     /**
+     * 获取技术指标计算参数
+     * @returns {function(Array<string>, string, string): Promise}
+     */
+
+  }, {
+    key: "technicalIndicatorCalcParams",
+    value: function technicalIndicatorCalcParams() {
+      return this._technicalIndicatorCalcParams;
+    }
+    /**
      * 获取指标
      * @param technicalIndicatorType
      */
@@ -3266,7 +3328,6 @@ var ChartData = /*#__PURE__*/function () {
 
       if (isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0) {
         this._volumePrecision = volumePrecision;
-        this.technicalIndicator(VOL).precision = volumePrecision;
       }
     }
     /**
@@ -3693,6 +3754,26 @@ var ChartData = /*#__PURE__*/function () {
       }
 
       return false;
+    }
+    /**
+     * 计算指标
+     * @param pane
+     * @param technicalIndicator
+     */
+
+  }, {
+    key: "calcTechnicalIndicator",
+    value: function calcTechnicalIndicator(pane, technicalIndicator) {
+      var _this = this;
+
+      Promise.resolve().then(function (_) {
+        if (technicalIndicator) {
+          technicalIndicator.setCalcParams(_this._technicalIndicatorCalcParams[technicalIndicator.name]);
+          technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(_this._dataList, technicalIndicator.calcParams) || [];
+        }
+
+        pane.invalidate(InvalidateLevel.FULL);
+      });
     }
   }]);
 
@@ -5690,7 +5771,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
         var _loop = function _loop(_i) {
           var kLineData = dataList[_i];
-          var technicalIndicatorData = technicalIndicatorResult[_i];
+          var technicalIndicatorData = technicalIndicatorResult[_i] || {};
           plots.forEach(function (plot) {
             var value = technicalIndicatorData[plot.key];
 
@@ -5901,23 +5982,6 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
       return this._technicalIndicator;
     }
     /**
-     * 计算数据源
-     */
-
-  }, {
-    key: "calcDataSource",
-    value: function calcDataSource() {
-      var _this2 = this;
-
-      Promise.resolve().then(function (_) {
-        if (_this2._technicalIndicator) {
-          _this2._technicalIndicator.result = _this2._technicalIndicator.calcTechnicalIndicator(_this2._chartData.dataList(), _this2._technicalIndicator.calcParams) || [];
-        }
-
-        _this2.invalidate(InvalidateLevel.FULL);
-      });
-    }
-    /**
      * 设置技术指标类型
      * @param technicalIndicatorType
      */
@@ -5937,7 +6001,7 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
         this._technicalIndicator = null;
       }
 
-      this.calcDataSource();
+      this._chartData.calcTechnicalIndicator(this, this._technicalIndicator);
     }
   }]);
 
@@ -9033,6 +9097,7 @@ var CandleStickPane = /*#__PURE__*/function (_TechnicalIndicatorPa) {
 
     _this = _super.call(this, props);
     _this._chartType = ChartType.CANDLE_STICK;
+    _this._realTimeTechnicalIndicator = new TransactionAveragePrice();
     return _this;
   }
 
@@ -9062,6 +9127,11 @@ var CandleStickPane = /*#__PURE__*/function (_TechnicalIndicatorPa) {
       return this._chartType === ChartType.REAL_TIME;
     }
   }, {
+    key: "technicalIndicator",
+    value: function technicalIndicator() {
+      return this._isRealTime() ? this._realTimeTechnicalIndicator : this._technicalIndicator;
+    }
+  }, {
     key: "chartType",
     value: function chartType() {
       return this._chartType;
@@ -9072,7 +9142,7 @@ var CandleStickPane = /*#__PURE__*/function (_TechnicalIndicatorPa) {
       if (this._chartType !== chartType) {
         this._chartType = chartType;
 
-        this._chartData.calcTechnicalIndicator(this, this._chartData.technicalIndicator(AVERAGE));
+        this._chartData.calcTechnicalIndicator(this, this.technicalIndicator());
       }
     }
   }]);
@@ -10384,7 +10454,9 @@ var ChartPane = /*#__PURE__*/function () {
   }, {
     key: "_calcAllPaneTechnicalIndicator",
     value: function _calcAllPaneTechnicalIndicator() {
-      this._candleStickPane.calcDataSource();
+      var candleStickTechnicalIndicator = this._candleStickPane.technicalIndicator();
+
+      this._chartData.calcTechnicalIndicator(this._candleStickPane, candleStickTechnicalIndicator);
 
       var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
           _step2;
@@ -10392,7 +10464,9 @@ var ChartPane = /*#__PURE__*/function () {
       try {
         for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
           var pane = _step2.value;
-          pane.calcDataSource();
+          var technicalIndicator = pane.technicalIndicator();
+
+          this._chartData.calcTechnicalIndicator(pane, technicalIndicator);
         }
       } catch (err) {
         _iterator2.e(err);
@@ -10749,7 +10823,7 @@ var ChartPane = /*#__PURE__*/function () {
       if (tag === CANDLE_STICK_PANE_TAG) {
         this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType);
       } else {
-        var s;
+        var p;
 
         var _iterator5 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
             _step5;
@@ -10759,7 +10833,7 @@ var ChartPane = /*#__PURE__*/function () {
             var pane = _step5.value;
 
             if (pane.tag() === tag) {
-              s = pane;
+              p = pane;
               break;
             }
           }
@@ -10769,12 +10843,8 @@ var ChartPane = /*#__PURE__*/function () {
           _iterator5.f();
         }
 
-        if (s) {
-          if (technicalIndicatorType === NO) {
-            this.removeTechnicalIndicator(tag);
-          } else {
-            s.setTechnicalIndicatorType(technicalIndicatorType);
-          }
+        if (p) {
+          p.setTechnicalIndicatorType(technicalIndicatorType);
         }
       }
     }
@@ -10912,7 +10982,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "getTechnicalIndicatorParamOptions",
     value: function getTechnicalIndicatorParamOptions() {
-      return clone(this._chartPane.chartData().technicalIndicatorParamOptions());
+      return clone(this._chartPane.chartData().technicalIndicatorCalcParams());
     }
     /**
      * 加载精度

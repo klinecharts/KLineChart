@@ -14,6 +14,7 @@
 
 import TechnicalIndicator from './TechnicalIndicator'
 
+import TransactionAveragePrice from './directionalmovement/TransactionAveragePrice'
 import MovingAverage from './directionalmovement/MovingAverage'
 import ExponentialMovingAverage from './directionalmovement/ExponentialMovingAverage'
 import Volume from './volume/Volume'

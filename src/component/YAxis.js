@@ -98,7 +98,7 @@ export default class YAxis extends Axis {
       const plots = technicalIndicator.plots || []
       for (let i = from; i < to; i++) {
         const kLineData = dataList[i]
-        const technicalIndicatorData = technicalIndicatorResult[i]
+        const technicalIndicatorData = technicalIndicatorResult[i] || {}
         plots.forEach(plot => {
           const value = technicalIndicatorData[plot.key]
           if (isValid(value)) {

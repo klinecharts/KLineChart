@@ -14,7 +14,8 @@
 
 import { isArray, isObject, merge, clone, isFunction, isBoolean, isNumber, isValid } from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
-import { NO, VOL } from './technicalindicator/technicalIndicatorType'
+
+import technicalIndicatorCalcParams from './technicalindicator/technicalIndicatorCalcParams'
 
 import { formatValue } from '../utils/format'
 import { createTechnicalIndicators } from './technicalindicator/technicalIndicatorControl'
@@ -55,6 +56,8 @@ export default class ChartData {
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
 
+    // 技术指标参数
+    this._technicalIndicatorCalcParams = clone(technicalIndicatorCalcParams)
     // 所有技术指标信息
     this._technicalIndicators = createTechnicalIndicators()
 
@@ -188,6 +191,14 @@ export default class ChartData {
   }
 
   /**
+   * 获取技术指标计算参数
+   * @returns {function(Array<string>, string, string): Promise}
+   */
+  technicalIndicatorCalcParams () {
+    return this._technicalIndicatorCalcParams
+  }
+
+  /**
    * 获取指标
    * @param technicalIndicatorType
    */
@@ -250,7 +261,6 @@ export default class ChartData {
     }
     if (isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0) {
       this._volumePrecision = volumePrecision
-      this.technicalIndicator(VOL).precision = volumePrecision
     }
   }
 
@@ -596,5 +606,22 @@ export default class ChartData {
       }
     }
     return false
+  }
+
+  /**
+   * 计算指标
+   * @param pane
+   * @param technicalIndicator
+   */
+  calcTechnicalIndicator (pane, technicalIndicator) {
+    Promise.resolve().then(
+      _ => {
+        if (technicalIndicator) {
+          technicalIndicator.setCalcParams(this._technicalIndicatorCalcParams[technicalIndicator.name])
+          technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
+        }
+        pane.invalidate(InvalidateLevel.FULL)
+      }
+    )
   }
 }

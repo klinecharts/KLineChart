@@ -1,5 +1,3 @@
-export const NO = 'NO'
-export const AVERAGE = 'AVERAGE'
 export const MA = 'MA'
 export const EMA = 'EMA'
 export const VOL = 'VOL'

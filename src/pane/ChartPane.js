@@ -22,10 +22,10 @@ import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import SeparatorPane from './SeparatorPane'
 
-import { NO, MA, AVERAGE, MACD } from '../data/technicalindicator/technicalIndicatorType'
+import { MA } from '../data/technicalindicator/technicalIndicatorType'
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
-import {DEV} from "../utils/env"
+import { DEV } from '../utils/env'
 
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
@@ -188,9 +188,11 @@ export default class ChartPane {
    * @private
    */
   _calcAllPaneTechnicalIndicator () {
-    this._candleStickPane.calcDataSource()
+    const candleStickTechnicalIndicator = this._candleStickPane.technicalIndicator()
+    this._chartData.calcTechnicalIndicator(this._candleStickPane, candleStickTechnicalIndicator)
     for (const pane of this._technicalIndicatorPanes) {
-      pane.calcDataSource()
+      const technicalIndicator = pane.technicalIndicator()
+      this._chartData.calcTechnicalIndicator(pane, technicalIndicator)
     }
   }
 
@@ -436,19 +438,15 @@ export default class ChartPane {
     if (tag === CANDLE_STICK_PANE_TAG) {
       this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType)
     } else {
-      let s
+      let p
       for (const pane of this._technicalIndicatorPanes) {
         if (pane.tag() === tag) {
-          s = pane
+          p = pane
           break
         }
       }
-      if (s) {
-        if (technicalIndicatorType === NO) {
-          this.removeTechnicalIndicator(tag)
-        } else {
-          s.setTechnicalIndicatorType(technicalIndicatorType)
-        }
+      if (p) {
+        p.setTechnicalIndicatorType(technicalIndicatorType)
       }
     }
   }

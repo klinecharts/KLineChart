@@ -44,10 +44,12 @@ export default class Volume extends TechnicalIndicator {
 
   regeneratePlots (params) {
     const plots = []
-    plots.forEach(p => {
+    params.forEach(p => {
       plots.push({ key: `ma${p}`, type: 'line' })
     })
-    plots.push({ key: 'num', type: 'bar' })
+    plots.push({
+      key: 'num', type: 'bar', referenceValue: 0
+    })
     return plots
   }
 
