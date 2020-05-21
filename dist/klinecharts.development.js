@@ -838,6 +838,19 @@ var defaultStyleOptions = {
   graphicMark: defaultGraphicMark
 };
 
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 var MA = 'MA';
 var EMA = 'EMA';
 var VOL = 'VOL';
@@ -2811,7 +2824,19 @@ var StopAndReverse = /*#__PURE__*/function (_TechnicalIndicator) {
       isPriceTechnicalIndicator: true,
       plots: [{
         key: 'sar',
-        type: 'circle'
+        type: 'circle',
+        color: function color(data, options) {
+          var currentData = data.currentData;
+          var kLineData = currentData.kLineData || {};
+          var technicalIndicatorData = currentData.technicalIndicatorData || {};
+          var halfHL = (kLineData.high + kLineData.low) / 2;
+
+          if (technicalIndicatorData.sar < halfHL) {
+            return options.circle.upColor;
+          }
+
+          return options.circle.downColor;
+        }
       }]
     });
   }
@@ -4770,6 +4795,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
         dataPos = dataList.length - 1;
       }
 
+      var realDataPos = dataPos;
       var kLineData = dataList[dataPos];
       var technicalIndicatorData = technicalIndicatorResult[dataPos];
 
@@ -4779,9 +4805,11 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
         if (dataPos > to - 1) {
           kLineData = dataList[to - 1];
           technicalIndicatorData = technicalIndicatorResult[to - 1];
+          realDataPos = to - 1;
         } else if (dataPos < 0) {
           kLineData = dataList[0];
           technicalIndicatorData = technicalIndicatorResult[0];
+          realDataPos = 0;
         }
       }
 
@@ -4795,7 +4823,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
         var displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule;
 
         if (displayRule === FloatLayerPromptDisplayRule.ALWAYS || displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairPaneTag()) {
-          this._drawPrompt(dataPos, kLineData, technicalIndicatorData, technicalIndicator, x);
+          this._drawPrompt(realDataPos, kLineData, technicalIndicatorData, technicalIndicator, x, dataPos >= 0 && dataPos <= dataList.length - 1);
         }
       }
     }
@@ -4806,13 +4834,14 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
      * @param technicalIndicatorData
      * @param technicalIndicator
      * @param x
+     * @param isDrawValueIndicator 是否需要绘制指示点
      * @private
      */
 
   }, {
     key: "_drawPrompt",
-    value: function _drawPrompt(dataPos, kLineData, technicalIndicatorData, technicalIndicator, x) {
-      this._drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x);
+    value: function _drawPrompt(dataPos, kLineData, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
+      this._drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator);
     }
     /**
      * 绘制十字光标水平线
@@ -4892,14 +4921,15 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
      * @param technicalIndicatorData
      * @param technicalIndicator
      * @param x
+     * @param isDrawValueIndicator
      * @param offsetTop
      * @private
      */
 
   }, {
     key: "_drawTechnicalIndicatorPrompt",
-    value: function _drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x) {
-      var offsetTop = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+    value: function _drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
+      var offsetTop = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
 
       var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
@@ -4908,7 +4938,9 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
       this._drawTechnicalIndicatorPromptText(dataPos, technicalIndicator, data, colors, offsetTop);
 
-      this._drawTechnicalIndicatorPromptPoint(technicalIndicator, data.values, colors, x);
+      if (isDrawValueIndicator) {
+        this._drawTechnicalIndicatorPromptPoint(dataPos, technicalIndicator, data.values, colors, x);
+      }
     }
     /**
      * 绘制指标提示文字
@@ -4992,6 +5024,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
     }
     /**
      * 绘制指标提示点
+     * @param dataPos
      * @param technicalIndicator
      * @param values
      * @param colors
@@ -5001,7 +5034,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
   }, {
     key: "_drawTechnicalIndicatorPromptPoint",
-    value: function _drawTechnicalIndicatorPromptPoint(technicalIndicator, values, colors, x) {
+    value: function _drawTechnicalIndicatorPromptPoint(dataPos, technicalIndicator, values, colors, x) {
       var floatLayerPromptTechnicalIndicatorPoint = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.point;
 
       if (!floatLayerPromptTechnicalIndicatorPoint.display) {
@@ -6547,7 +6580,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
 
   _createClass(CandleStickFloatLayerView, [{
     key: "_drawPrompt",
-    value: function _drawPrompt(kLineData, technicalIndicatorData, technicalIndicator, x) {
+    value: function _drawPrompt(dataPos, kLineData, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
       var floatLayerPromptCandleStick = this._chartData.styleOptions().floatLayer.prompt.candleStick;
 
       var candleStickPromptData = this._getCandleStickPromptData(kLineData, floatLayerPromptCandleStick);
@@ -6556,10 +6589,16 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
         this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData);
 
         if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
-          this._drawTechnicalIndicatorPrompt(technicalIndicatorData, technicalIndicator, x, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
+          this._drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
         }
       } else {
         this._drawCandleStickRectPromptText(kLineData, technicalIndicatorData, technicalIndicator, x, floatLayerPromptCandleStick, candleStickPromptData);
+
+        if (isDrawValueIndicator) {
+          var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
+
+          this._drawTechnicalIndicatorPromptPoint(dataPos, technicalIndicator, technicalIndicatorData.values, technicalIndicatorOptions.line.colors, x);
+        }
       }
     }
   }, {

@@ -23,7 +23,20 @@ export default class StopAndReverse extends TechnicalIndicator {
       shouldCheckParamCount: true,
       isPriceTechnicalIndicator: true,
       plots: [
-        { key: 'sar', type: 'circle' }
+        {
+          key: 'sar',
+          type: 'circle',
+          color: (data, options) => {
+            const { currentData } = data
+            const kLineData = currentData.kLineData || {}
+            const technicalIndicatorData = currentData.technicalIndicatorData || {}
+            const halfHL = (kLineData.high + kLineData.low) / 2
+            if (technicalIndicatorData.sar < halfHL) {
+              return options.circle.upColor
+            }
+            return options.circle.downColor
+          }
+        }
       ]
     })
   }

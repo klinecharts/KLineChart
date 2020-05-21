@@ -20,19 +20,27 @@ import { ChartType, FloatLayerPromptCandleStickTextDisplayType } from '../data/o
 import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalIndicatorControl'
 
 export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLayerView {
-  _drawPrompt (kLineData, technicalIndicatorData, technicalIndicator, x) {
+  _drawPrompt (dataPos, kLineData, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
     const floatLayerPromptCandleStick = this._chartData.styleOptions().floatLayer.prompt.candleStick
     const candleStickPromptData = this._getCandleStickPromptData(kLineData, floatLayerPromptCandleStick)
     if (floatLayerPromptCandleStick.showType === FloatLayerPromptCandleStickTextDisplayType.STANDARD) {
       this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData)
       if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
         this._drawTechnicalIndicatorPrompt(
-          technicalIndicatorData, technicalIndicator, x,
+          dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator,
           floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop
         )
       }
     } else {
       this._drawCandleStickRectPromptText(kLineData, technicalIndicatorData, technicalIndicator, x, floatLayerPromptCandleStick, candleStickPromptData)
+      if (isDrawValueIndicator) {
+        const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
+        this._drawTechnicalIndicatorPromptPoint(
+          dataPos, technicalIndicator,
+          technicalIndicatorData.values,
+          technicalIndicatorOptions.line.colors, x
+        )
+      }
     }
   }
 
