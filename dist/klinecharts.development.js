@@ -912,38 +912,16 @@ function formatValue(data, key) {
 }
 /**
  * 格式化时间
+ * @param dateTimeFormat
  * @param timestamp
  * @param format
- * @param timezone
  * @returns {string}
  */
 
-function formatDate(timestamp, format, timezone) {
+function formatDate(dateTimeFormat, timestamp, format) {
   if (timestamp && isNumber(timestamp)) {
     var date = new Date(timestamp);
-    var dateTimeString;
-
-    try {
-      dateTimeString = new Intl.DateTimeFormat('en', {
-        hour12: false,
-        timeZone: timezone,
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric'
-      }).format(date);
-    } catch (e) {
-      dateTimeString = new Intl.DateTimeFormat('en', {
-        hour12: false,
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric'
-      }).format(date);
-    }
-
+    var dateTimeString = dateTimeFormat.format(date);
     var dateString = dateTimeString.match(/^[\d]{1,2}\/[\d]{1,2}\/[\d]{4}/)[0];
     var dateStringArray = dateString.split('/');
     var month = "".concat(dateStringArray[0].length === 1 ? "0".concat(dateStringArray[0]) : dateStringArray[0]);
@@ -3097,9 +3075,15 @@ var ChartData = /*#__PURE__*/function () {
 
     this._pricePrecision = 2; // 数量精度
 
-    this._volumePrecision = 0; // 时区
-
-    this._timezone = null; // 数据源
+    this._volumePrecision = 0;
+    this._dateTimeFormat = new Intl.DateTimeFormat('en', {
+      hour12: false,
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric'
+    }); // 数据源
 
     this._dataList = []; // 是否在加载中
 
@@ -3285,6 +3269,16 @@ var ChartData = /*#__PURE__*/function () {
       return this._volumePrecision;
     }
     /**
+     * 获取时间格式化
+     * @returns {Intl.DateTimeFormat | Intl.DateTimeFormat}
+     */
+
+  }, {
+    key: "dateTimeFormat",
+    value: function dateTimeFormat() {
+      return this._dateTimeFormat;
+    }
+    /**
      * 设置时区
      * @param timezone
      */
@@ -3292,7 +3286,27 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "setTimezone",
     value: function setTimezone(timezone) {
-      this._timezone = timezone;
+      var dateTimeFormat;
+
+      try {
+        dateTimeFormat = new Intl.DateTimeFormat('en', {
+          hour12: false,
+          timeZone: timezone,
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric'
+        });
+      } catch (e) {
+        {
+          console.warn(e.message);
+        }
+      }
+
+      if (dateTimeFormat) {
+        this._dateTimeFormat = dateTimeFormat;
+      }
     }
     /**
      * 获取时区
@@ -3302,7 +3316,7 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "timezone",
     value: function timezone() {
-      return this._timezone;
+      return this._dateTimeFormat.resolvedOptions().timeZone;
     }
     /**
      * 加载精度
@@ -6838,7 +6852,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
           switch (index) {
             case 0:
               {
-                values[index] = formatDate(value, 'YYYY-MM-DD hh:mm', _this3._chartData.timezone());
+                values[index] = formatDate(_this3._chartData.dateTimeFormat(), value, 'YYYY-MM-DD hh:mm');
                 break;
               }
 
@@ -9458,7 +9472,7 @@ var XAxisFloatLayerView = /*#__PURE__*/function (_View) {
       var x = this._xAxis.convertToPixel(dataPos);
 
       var timestamp = kLineData.timestamp;
-      var text = formatDate(timestamp, 'YYYY-MM-DD hh:mm', this._chartData.timezone());
+      var text = formatDate(this._chartData.dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm');
       var textSize = crossHairVerticalText.size;
       this._ctx.font = getFont(textSize, crossHairVerticalText.family);
       var labelWidth = calcTextWidth(this._ctx, text);
@@ -9573,7 +9587,7 @@ var XAxis = /*#__PURE__*/function (_Axis) {
       var dataList = this._chartData.dataList();
 
       if (tickLength > 0) {
-        var timezone = this._chartData.timezone();
+        var dateTimeFormat = this._chartData.dateTimeFormat();
 
         var tickText = this._chartData.styleOptions().xAxis.tickText;
 
@@ -9598,13 +9612,13 @@ var XAxis = /*#__PURE__*/function (_Axis) {
 
           var kLineData = dataList[_pos];
           var timestamp = kLineData.timestamp;
-          var label = formatDate(timestamp, 'hh:mm', timezone);
+          var label = formatDate(dateTimeFormat, timestamp, 'hh:mm');
 
           if (i !== 0) {
             var prePos = parseInt(ticks[i - tickCountDif].v, 10);
             var preKLineData = dataList[prePos];
             var preTimestamp = preKLineData.timestamp;
-            label = this._optimalTickLabel(timestamp, preTimestamp, timezone) || label;
+            label = this._optimalTickLabel(dateTimeFormat, timestamp, preTimestamp) || label;
           }
 
           var _x = this.convertToPixel(_pos);
@@ -9619,7 +9633,7 @@ var XAxis = /*#__PURE__*/function (_Axis) {
         var optimalTickLength = optimalTicks.length;
 
         if (optimalTickLength === 1) {
-          optimalTicks[0].v = formatDate(optimalTicks[0].oV, 'YYYY-MM-DD hh:mm', timezone);
+          optimalTicks[0].v = formatDate(dateTimeFormat, optimalTicks[0].oV, 'YYYY-MM-DD hh:mm');
         } else {
           var firstTimestamp = optimalTicks[0].oV;
           var secondTimestamp = optimalTicks[1].oV;
@@ -9628,14 +9642,14 @@ var XAxis = /*#__PURE__*/function (_Axis) {
             var thirdV = optimalTicks[2].v;
 
             if (/^[0-9]{2}-[0-9]{2}$/.test(thirdV)) {
-              optimalTicks[0].v = formatDate(firstTimestamp, 'MM-DD', timezone);
+              optimalTicks[0].v = formatDate(dateTimeFormat, firstTimestamp, 'MM-DD');
             } else if (/^[0-9]{4}-[0-9]{2}$/.test(thirdV)) {
-              optimalTicks[0].v = formatDate(firstTimestamp, 'YYYY-MM', timezone);
+              optimalTicks[0].v = formatDate(dateTimeFormat, firstTimestamp, 'YYYY-MM');
             } else if (/^[0-9]{4}$/.test(thirdV)) {
-              optimalTicks[0].v = formatDate(firstTimestamp, 'YYYY', timezone);
+              optimalTicks[0].v = formatDate(dateTimeFormat, firstTimestamp, 'YYYY');
             }
           } else {
-            optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || optimalTicks[0].v;
+            optimalTicks[0].v = this._optimalTickLabel(dateTimeFormat, firstTimestamp, secondTimestamp) || optimalTicks[0].v;
           }
         }
       }
@@ -9644,16 +9658,16 @@ var XAxis = /*#__PURE__*/function (_Axis) {
     }
   }, {
     key: "_optimalTickLabel",
-    value: function _optimalTickLabel(timestamp, comparedTimestamp, timezone) {
-      var year = formatDate(timestamp, 'YYYY', timezone);
-      var month = formatDate(timestamp, 'YYYY-MM', timezone);
-      var day = formatDate(timestamp, 'MM-DD', timezone);
+    value: function _optimalTickLabel(dateTimeFormat, timestamp, comparedTimestamp) {
+      var year = formatDate(dateTimeFormat, timestamp, 'YYYY');
+      var month = formatDate(dateTimeFormat, timestamp, 'YYYY-MM');
+      var day = formatDate(dateTimeFormat, timestamp, 'MM-DD');
 
-      if (year !== formatDate(comparedTimestamp, 'YYYY', timezone)) {
+      if (year !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY')) {
         return year;
-      } else if (month !== formatDate(comparedTimestamp, 'YYYY-MM', timezone)) {
+      } else if (month !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY-MM')) {
         return month;
-      } else if (day !== formatDate(comparedTimestamp, 'MM-DD', timezone)) {
+      } else if (day !== formatDate(dateTimeFormat, comparedTimestamp, 'MM-DD')) {
         return day;
       }
 

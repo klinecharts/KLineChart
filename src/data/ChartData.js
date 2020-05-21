@@ -19,6 +19,7 @@ import technicalIndicatorCalcParams from './technicalindicator/technicalIndicato
 
 import { formatValue } from '../utils/format'
 import { createTechnicalIndicators } from './technicalindicator/technicalIndicatorControl'
+import { DEV } from '../utils/env'
 
 export const InvalidateLevel = {
   NONE: 0,
@@ -66,8 +67,11 @@ export default class ChartData {
     // 数量精度
     this._volumePrecision = 0
 
-    // 时区
-    this._timezone = null
+    this._dateTimeFormat = new Intl.DateTimeFormat(
+      'en', {
+        hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'
+      }
+    )
 
     // 数据源
     this._dataList = []
@@ -235,11 +239,33 @@ export default class ChartData {
   }
 
   /**
+   * 获取时间格式化
+   * @returns {Intl.DateTimeFormat | Intl.DateTimeFormat}
+   */
+  dateTimeFormat () {
+    return this._dateTimeFormat
+  }
+
+  /**
    * 设置时区
    * @param timezone
    */
   setTimezone (timezone) {
-    this._timezone = timezone
+    let dateTimeFormat
+    try {
+      dateTimeFormat = new Intl.DateTimeFormat(
+        'en', {
+          hour12: false, timeZone: timezone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'
+        }
+      )
+    } catch (e) {
+      if (DEV) {
+        console.warn(e.message)
+      }
+    }
+    if (dateTimeFormat) {
+      this._dateTimeFormat = dateTimeFormat
+    }
   }
 
   /**
@@ -247,7 +273,7 @@ export default class ChartData {
    * @returns {null}
    */
   timezone () {
-    return this._timezone
+    return this._dateTimeFormat.resolvedOptions().timeZone
   }
 
   /**

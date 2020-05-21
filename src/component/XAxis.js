@@ -41,7 +41,7 @@ export default class XAxis extends Axis {
     const tickLength = ticks.length
     const dataList = this._chartData.dataList()
     if (tickLength > 0) {
-      const timezone = this._chartData.timezone()
+      const dateTimeFormat = this._chartData.dateTimeFormat()
       const tickText = this._chartData.styleOptions().xAxis.tickText
       this._measureCtx.font = getFont(tickText.size, tickText.family)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
@@ -60,48 +60,48 @@ export default class XAxis extends Axis {
         const pos = parseInt(ticks[i].v, 10)
         const kLineData = dataList[pos]
         const timestamp = kLineData.timestamp
-        let label = formatDate(timestamp, 'hh:mm', timezone)
+        let label = formatDate(dateTimeFormat, timestamp, 'hh:mm')
         if (i !== 0) {
           const prePos = parseInt(ticks[i - tickCountDif].v, 10)
           const preKLineData = dataList[prePos]
           const preTimestamp = preKLineData.timestamp
-          label = this._optimalTickLabel(timestamp, preTimestamp, timezone) || label
+          label = this._optimalTickLabel(dateTimeFormat, timestamp, preTimestamp) || label
         }
         const x = this.convertToPixel(pos)
         optimalTicks.push({ v: label, x, oV: timestamp })
       }
       const optimalTickLength = optimalTicks.length
       if (optimalTickLength === 1) {
-        optimalTicks[0].v = formatDate(optimalTicks[0].oV, 'YYYY-MM-DD hh:mm', timezone)
+        optimalTicks[0].v = formatDate(dateTimeFormat, optimalTicks[0].oV, 'YYYY-MM-DD hh:mm')
       } else {
         const firstTimestamp = optimalTicks[0].oV
         const secondTimestamp = optimalTicks[1].oV
         if (optimalTicks[2]) {
           const thirdV = optimalTicks[2].v
           if (/^[0-9]{2}-[0-9]{2}$/.test(thirdV)) {
-            optimalTicks[0].v = formatDate(firstTimestamp, 'MM-DD', timezone)
+            optimalTicks[0].v = formatDate(dateTimeFormat, firstTimestamp, 'MM-DD')
           } else if (/^[0-9]{4}-[0-9]{2}$/.test(thirdV)) {
-            optimalTicks[0].v = formatDate(firstTimestamp, 'YYYY-MM', timezone)
+            optimalTicks[0].v = formatDate(dateTimeFormat, firstTimestamp, 'YYYY-MM')
           } else if (/^[0-9]{4}$/.test(thirdV)) {
-            optimalTicks[0].v = formatDate(firstTimestamp, 'YYYY', timezone)
+            optimalTicks[0].v = formatDate(dateTimeFormat, firstTimestamp, 'YYYY')
           }
         } else {
-          optimalTicks[0].v = this._optimalTickLabel(firstTimestamp, secondTimestamp, timezone) || optimalTicks[0].v
+          optimalTicks[0].v = this._optimalTickLabel(dateTimeFormat, firstTimestamp, secondTimestamp) || optimalTicks[0].v
         }
       }
     }
     return optimalTicks
   }
 
-  _optimalTickLabel (timestamp, comparedTimestamp, timezone) {
-    const year = formatDate(timestamp, 'YYYY', timezone)
-    const month = formatDate(timestamp, 'YYYY-MM', timezone)
-    const day = formatDate(timestamp, 'MM-DD', timezone)
-    if (year !== formatDate(comparedTimestamp, 'YYYY', timezone)) {
+  _optimalTickLabel (dateTimeFormat, timestamp, comparedTimestamp) {
+    const year = formatDate(dateTimeFormat, timestamp, 'YYYY')
+    const month = formatDate(dateTimeFormat, timestamp, 'YYYY-MM')
+    const day = formatDate(dateTimeFormat, timestamp, 'MM-DD')
+    if (year !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY')) {
       return year
-    } else if (month !== formatDate(comparedTimestamp, 'YYYY-MM', timezone)) {
+    } else if (month !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY-MM')) {
       return month
-    } else if (day !== formatDate(comparedTimestamp, 'MM-DD', timezone)) {
+    } else if (day !== formatDate(dateTimeFormat, comparedTimestamp, 'MM-DD')) {
       return day
     }
     return null

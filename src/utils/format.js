@@ -33,24 +33,15 @@ export function formatValue (data, key, defaultValue = '--') {
 
 /**
  * 格式化时间
+ * @param dateTimeFormat
  * @param timestamp
  * @param format
- * @param timezone
  * @returns {string}
  */
-export function formatDate (timestamp, format, timezone) {
+export function formatDate (dateTimeFormat, timestamp, format) {
   if (timestamp && isNumber(timestamp)) {
     const date = new Date(timestamp)
-    let dateTimeString
-    try {
-      dateTimeString = new Intl.DateTimeFormat(
-        'en', { hour12: false, timeZone: timezone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }
-      ).format(date)
-    } catch (e) {
-      dateTimeString = new Intl.DateTimeFormat(
-        'en', { hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }
-      ).format(date)
-    }
+    const dateTimeString = dateTimeFormat.format(date)
     const dateString = dateTimeString.match(/^[\d]{1,2}\/[\d]{1,2}\/[\d]{4}/)[0]
     const dateStringArray = dateString.split('/')
     const month = `${dateStringArray[0].length === 1 ? `0${dateStringArray[0]}` : dateStringArray[0]}`

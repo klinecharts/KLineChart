@@ -252,7 +252,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       values.forEach((value, index) => {
         switch (index) {
           case 0: {
-            values[index] = formatDate(value, 'YYYY-MM-DD hh:mm', this._chartData.timezone())
+            values[index] = formatDate(this._chartData.dateTimeFormat(), value, 'YYYY-MM-DD hh:mm')
             break
           }
           case values.length - 1: {

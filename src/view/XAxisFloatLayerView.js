@@ -51,7 +51,7 @@ export default class XAxisFloatLayerView extends View {
     }
     const x = this._xAxis.convertToPixel(dataPos)
     const timestamp = kLineData.timestamp
-    const text = formatDate(timestamp, 'YYYY-MM-DD hh:mm', this._chartData.timezone())
+    const text = formatDate(this._chartData.dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
 
     const textSize = crossHairVerticalText.size
     this._ctx.font = getFont(textSize, crossHairVerticalText.family)
