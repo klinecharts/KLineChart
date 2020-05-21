@@ -1043,7 +1043,7 @@ var TechnicalIndicator = /*#__PURE__*/function () {
 
     this.plots = isArray(plots) ? plots : []; // 是否需要检查参数
 
-    this.shouldCheckParamCount = shouldCheckParamCount; // 是否是价格技术指标
+    this.shouldCheckParamCount = isBoolean(shouldCheckParamCount) ? shouldCheckParamCount : false; // 是否是价格技术指标
 
     this.isPriceTechnicalIndicator = isPriceTechnicalIndicator; // 是否是数量技术指标
 
@@ -1113,53 +1113,6 @@ var TechnicalIndicator = /*#__PURE__*/function () {
 
   return TechnicalIndicator;
 }();
-
-var TransactionAveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
-  _inherits(TransactionAveragePrice, _TechnicalIndicator);
-
-  var _super = _createSuper(TransactionAveragePrice);
-
-  function TransactionAveragePrice() {
-    _classCallCheck(this, TransactionAveragePrice);
-
-    return _super.call(this, {
-      name: 'TAP',
-      isPriceTechnicalIndicator: true,
-      shouldCheckParamCount: true,
-      plots: [{
-        key: 'average',
-        type: 'line'
-      }]
-    });
-  }
-
-  _createClass(TransactionAveragePrice, [{
-    key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(dataList, calcParams) {
-      var turnoverSum = 0;
-      var volumeSum = 0;
-      var result = [];
-
-      this._calc(dataList, function (i) {
-        var average = {};
-        var turnover = dataList[i].turnover || 0;
-        var volume = dataList[i].volume || 0;
-        turnoverSum += turnover;
-        volumeSum += volume;
-
-        if (volume !== 0) {
-          average.average = turnoverSum / volumeSum;
-        }
-
-        result.push(average);
-      });
-
-      return result;
-    }
-  }]);
-
-  return TransactionAveragePrice;
-}(TechnicalIndicator);
 
 var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
   _inherits(MovingAverage, _TechnicalIndicator);
@@ -3031,10 +2984,10 @@ function getTechnicalIndicatorInfo() {
   var isVolumeTechnicalIndicator = technicalIndicator.isVolumeTechnicalIndicator;
   var labels = [];
   var values = [];
-  var name = technicalIndicator.name;
+  var name = '';
 
-  if (calcParams.length > 0) {
-    name = "".concat(name, "(").concat(calcParams.join(','), ")");
+  if (plots.length > 0) {
+    name = "".concat(technicalIndicator.name, "(").concat(calcParams.join(','), ")");
   }
 
   plots.forEach(function (plot) {
@@ -5737,8 +5690,6 @@ var YAxis = /*#__PURE__*/function (_Axis) {
   }, {
     key: "calcMinMaxValue",
     value: function calcMinMaxValue(technicalIndicator, isRealTime) {
-      var _this2 = this;
-
       var dataList = this._chartData.dataList();
 
       var technicalIndicatorResult = technicalIndicator.result;
@@ -5754,12 +5705,13 @@ var YAxis = /*#__PURE__*/function (_Axis) {
       if (isRealTime) {
         for (var i = from; i < to; i++) {
           var kLineData = dataList[i];
+          var technicalIndicatorData = technicalIndicatorResult[i] || {};
           var minCompareArray = [kLineData.close, minMaxArray[0]];
           var maxCompareArray = [kLineData.close, minMaxArray[1]];
 
-          if (isShowAverageLine) {
-            minCompareArray.push(kLineData.average);
-            maxCompareArray.push(kLineData.average);
+          if (isShowAverageLine && isValid(technicalIndicatorData.average)) {
+            minCompareArray.push(technicalIndicatorData.average);
+            maxCompareArray.push(technicalIndicatorData.average);
           }
 
           minMaxArray[0] = Math.min.apply(null, minCompareArray);
@@ -5780,7 +5732,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
             }
           });
 
-          if (_this2._isCandleStickYAxis) {
+          if (technicalIndicator.isPriceTechnicalIndicator) {
             minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low);
             minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high);
           }
@@ -5789,14 +5741,14 @@ var YAxis = /*#__PURE__*/function (_Axis) {
         for (var _i = from; _i < to; _i++) {
           _loop(_i);
         }
+      }
 
-        if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
-          minMaxArray[0] = technicalIndicator.minValue;
-        }
+      if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
+        minMaxArray[0] = technicalIndicator.minValue;
+      }
 
-        if (isValid(technicalIndicator.maxValue) && isNumber(technicalIndicator.maxValue)) {
-          minMaxArray[1] = technicalIndicator.maxValue;
-        }
+      if (isValid(technicalIndicator.maxValue) && isNumber(technicalIndicator.maxValue)) {
+        minMaxArray[1] = technicalIndicator.maxValue;
       }
 
       if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
@@ -5988,16 +5940,18 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
   }, {
     key: "setTechnicalIndicatorType",
     value: function setTechnicalIndicatorType(technicalIndicatorType) {
-      var TechnicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType);
+      var TechnicalIndicator$1 = this._chartData.technicalIndicator(technicalIndicatorType);
 
-      if (!this._technicalIndicator && !TechnicalIndicator || this._technicalIndicator && this._technicalIndicator.name === technicalIndicatorType) {
+      if (!this._technicalIndicator && !TechnicalIndicator$1 || this._technicalIndicator && this._technicalIndicator.name === technicalIndicatorType) {
         return;
       }
 
-      if (TechnicalIndicator) {
-        this._technicalIndicator = new TechnicalIndicator();
+      if (TechnicalIndicator$1) {
+        this._technicalIndicator = new TechnicalIndicator$1();
       } else {
-        this._technicalIndicator = null;
+        this._technicalIndicator = new TechnicalIndicator({
+          isPriceTechnicalIndicator: true
+        });
       }
 
       this._chartData.calcTechnicalIndicator(this, this._technicalIndicator);
@@ -9083,6 +9037,53 @@ var CandleStickWidget = /*#__PURE__*/function (_TechnicalIndicatorWi) {
 
   return CandleStickWidget;
 }(TechnicalIndicatorWidget);
+
+var TransactionAveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
+  _inherits(TransactionAveragePrice, _TechnicalIndicator);
+
+  var _super = _createSuper(TransactionAveragePrice);
+
+  function TransactionAveragePrice() {
+    _classCallCheck(this, TransactionAveragePrice);
+
+    return _super.call(this, {
+      name: 'TAP',
+      isPriceTechnicalIndicator: true,
+      shouldCheckParamCount: true,
+      plots: [{
+        key: 'average',
+        type: 'line'
+      }]
+    });
+  }
+
+  _createClass(TransactionAveragePrice, [{
+    key: "calcTechnicalIndicator",
+    value: function calcTechnicalIndicator(dataList, calcParams) {
+      var turnoverSum = 0;
+      var volumeSum = 0;
+      var result = [];
+
+      this._calc(dataList, function (i) {
+        var average = {};
+        var turnover = dataList[i].turnover || 0;
+        var volume = dataList[i].volume || 0;
+        turnoverSum += turnover;
+        volumeSum += volume;
+
+        if (volume !== 0) {
+          average.average = turnoverSum / volumeSum;
+        }
+
+        result.push(average);
+      });
+
+      return result;
+    }
+  }]);
+
+  return TransactionAveragePrice;
+}(TechnicalIndicator);
 
 var CandleStickPane = /*#__PURE__*/function (_TechnicalIndicatorPa) {
   _inherits(CandleStickPane, _TechnicalIndicatorPa);

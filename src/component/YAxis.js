@@ -82,14 +82,16 @@ export default class YAxis extends Axis {
     const to = this._chartData.to()
     const isShowAverageLine = this._chartData.styleOptions().realTime.averageLine.display
     const minMaxArray = [Infinity, -Infinity]
+
     if (isRealTime) {
       for (let i = from; i < to; i++) {
         const kLineData = dataList[i]
+        const technicalIndicatorData = technicalIndicatorResult[i] || {}
         const minCompareArray = [kLineData.close, minMaxArray[0]]
         const maxCompareArray = [kLineData.close, minMaxArray[1]]
-        if (isShowAverageLine) {
-          minCompareArray.push(kLineData.average)
-          maxCompareArray.push(kLineData.average)
+        if (isShowAverageLine && isValid(technicalIndicatorData.average)) {
+          minCompareArray.push(technicalIndicatorData.average)
+          maxCompareArray.push(technicalIndicatorData.average)
         }
         minMaxArray[0] = Math.min.apply(null, minCompareArray)
         minMaxArray[1] = Math.max.apply(null, maxCompareArray)
@@ -106,17 +108,17 @@ export default class YAxis extends Axis {
             minMaxArray[1] = Math.max(minMaxArray[1], value)
           }
         })
-        if (this._isCandleStickYAxis) {
+        if (technicalIndicator.isPriceTechnicalIndicator) {
           minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)
           minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
         }
       }
-      if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
-        minMaxArray[0] = technicalIndicator.minValue
-      }
-      if (isValid(technicalIndicator.maxValue) && isNumber(technicalIndicator.maxValue)) {
-        minMaxArray[1] = technicalIndicator.maxValue
-      }
+    }
+    if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
+      minMaxArray[0] = technicalIndicator.minValue
+    }
+    if (isValid(technicalIndicator.maxValue) && isNumber(technicalIndicator.maxValue)) {
+      minMaxArray[1] = technicalIndicator.maxValue
     }
     if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
       if (this.isPercentageYAxis()) {

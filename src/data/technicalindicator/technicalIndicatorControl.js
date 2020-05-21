@@ -14,7 +14,6 @@
 
 import TechnicalIndicator from './TechnicalIndicator'
 
-import TransactionAveragePrice from './directionalmovement/TransactionAveragePrice'
 import MovingAverage from './directionalmovement/MovingAverage'
 import ExponentialMovingAverage from './directionalmovement/ExponentialMovingAverage'
 import Volume from './volume/Volume'
@@ -129,9 +128,9 @@ export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technica
 
   const labels = []
   const values = []
-  let name = technicalIndicator.name
-  if (calcParams.length > 0) {
-    name = `${name}(${calcParams.join(',')})`
+  let name = ''
+  if (plots.length > 0) {
+    name = `${technicalIndicator.name}(${calcParams.join(',')})`
   }
   plots.forEach(plot => {
     labels.push(plot.key.toUpperCase())

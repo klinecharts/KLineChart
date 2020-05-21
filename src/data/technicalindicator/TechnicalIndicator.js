@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { clone, isArray, isNumber, isValid } from '../../utils/typeChecks'
+import { clone, isArray, isBoolean, isNumber, isValid } from '../../utils/typeChecks'
 
 export default class TechnicalIndicator {
   constructor ({
@@ -30,7 +30,7 @@ export default class TechnicalIndicator {
     // 数据信息
     this.plots = isArray(plots) ? plots : []
     // 是否需要检查参数
-    this.shouldCheckParamCount = shouldCheckParamCount
+    this.shouldCheckParamCount = isBoolean(shouldCheckParamCount) ? shouldCheckParamCount : false
     // 是否是价格技术指标
     this.isPriceTechnicalIndicator = isPriceTechnicalIndicator
     // 是否是数量技术指标

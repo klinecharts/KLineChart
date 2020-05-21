@@ -16,6 +16,7 @@ import Pane from './Pane'
 import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 import { MACD } from '../data/technicalindicator/technicalIndicatorType'
+import EmptyTechnicalIndicator from '../data/technicalindicator/TechnicalIndicator'
 import YAxis from '../component/YAxis'
 
 export default class TechnicalIndicatorPane extends Pane {
@@ -114,7 +115,7 @@ export default class TechnicalIndicatorPane extends Pane {
     if (TechnicalIndicator) {
       this._technicalIndicator = new TechnicalIndicator()
     } else {
-      this._technicalIndicator = null
+      this._technicalIndicator = new EmptyTechnicalIndicator({ isPriceTechnicalIndicator: true })
     }
     this._chartData.calcTechnicalIndicator(this, this._technicalIndicator)
   }
