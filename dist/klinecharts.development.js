@@ -1029,6 +1029,7 @@ var TechnicalIndicator = /*#__PURE__*/function () {
         shouldCheckParamCount = _ref.shouldCheckParamCount,
         isPriceTechnicalIndicator = _ref.isPriceTechnicalIndicator,
         isVolumeTechnicalIndicator = _ref.isVolumeTechnicalIndicator,
+        baseValue = _ref.baseValue,
         minValue = _ref.minValue,
         maxValue = _ref.maxValue;
 
@@ -1047,7 +1048,9 @@ var TechnicalIndicator = /*#__PURE__*/function () {
 
     this.isPriceTechnicalIndicator = isPriceTechnicalIndicator; // 是否是数量技术指标
 
-    this.isVolumeTechnicalIndicator = isVolumeTechnicalIndicator; // 指定的最小值
+    this.isVolumeTechnicalIndicator = isVolumeTechnicalIndicator; // 基础比对数据
+
+    this.baseValue = isNumber(baseValue) ? baseValue : null; // 指定的最小值
 
     this.minValue = minValue; // 指定的最大值
 
@@ -1280,29 +1283,9 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
       name: VOL,
       calcParams: [5, 10, 20],
       isVolumeTechnicalIndicator: true,
-      plots: [{
-        key: 'ma5',
-        type: 'line'
-      }, {
-        key: 'ma10',
-        type: 'line'
-      }, {
-        key: 'ma30',
-        type: 'line'
-      }, {
-        key: 'num',
-        type: 'bar',
-        referenceValue: 0,
-        color: function color(preKLineData, kLineData, options) {
-          if (kLineData.close > kLineData.open) {
-            return options.bar.upColor;
-          } else if (kLineData.close < kLineData.open) {
-            return options.bar.downColor;
-          }
-
-          return options.bar.noChangeColor;
-        }
-      }]
+      baseValue: 0,
+      minValue: 0,
+      plots: []
     });
   }
 
@@ -1319,7 +1302,18 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
       plots.push({
         key: 'num',
         type: 'bar',
-        referenceValue: 0
+        referenceValue: 0,
+        color: function color(data, options) {
+          var kLineData = data.currentData.kLineData || {};
+
+          if (kLineData.close > kLineData.open) {
+            return options.bar.upColor;
+          } else if (kLineData.close < kLineData.open) {
+            return options.bar.downColor;
+          }
+
+          return options.bar.noChangeColor;
+        }
       });
       return plots;
     }
@@ -1370,6 +1364,7 @@ var MovingAverageConvergenceDivergence = /*#__PURE__*/function (_TechnicalIndica
       name: MACD,
       calcParams: [12, 26, 9],
       shouldCheckParamCount: true,
+      baseValue: 0,
       plots: [{
         key: 'diff',
         type: 'line'
@@ -1378,7 +1373,26 @@ var MovingAverageConvergenceDivergence = /*#__PURE__*/function (_TechnicalIndica
         type: 'line'
       }, {
         key: 'macd',
-        type: 'bar'
+        type: 'bar',
+        color: function color(data, technicalIndicatorOptions) {
+          var currentData = data.currentData;
+          var macd = (currentData.technicalIndicatorData || {}).macd;
+
+          if (macd > 0) {
+            return technicalIndicatorOptions.bar.upColor;
+          } else if (macd < 0) {
+            return technicalIndicatorOptions.bar.downColor;
+          } else {
+            return technicalIndicatorOptions.bar.noChangeColor;
+          }
+        },
+        isStroke: function isStroke(data) {
+          var preData = data.preData,
+              currentData = data.currentData;
+          var macd = (currentData.technicalIndicatorData || {}).macd;
+          var preMacd = (preData.technicalIndicatorData || {}).macd;
+          return preMacd < macd;
+        }
       }]
     });
   }
@@ -4213,6 +4227,17 @@ function cancelAnimationFrame(id) {
   window.cancelAnimationFrame(id);
 }
 
+/**
+ * 绘制类型
+ * @type {{BAR: string, LINE: string, CIRCLE: string}}
+ */
+
+var PlotType = {
+  LINE: 'line',
+  BAR: 'bar',
+  CIRCLE: 'circle'
+};
+
 var View = /*#__PURE__*/function () {
   function View(container, chartData) {
     _classCallCheck(this, View);
@@ -4319,9 +4344,6 @@ var View = /*#__PURE__*/function () {
   return View;
 }();
 
-var BAR = 'bar';
-var CIRCLE = 'circle';
-
 var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
   _inherits(TechnicalIndicatorView, _View);
 
@@ -4416,6 +4438,14 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
       var dataList = this._chartData.dataList();
 
       var technicalIndicatorResult = technicalIndicator.result;
+      var baseValue = technicalIndicator.baseValue;
+
+      if (!isValid(baseValue)) {
+        baseValue = this._yAxis.min();
+      }
+
+      var baseValueY = this._yAxis.convertToPixel(baseValue);
+
       this._ctx.lineWidth = 1;
 
       this._drawGraphics(function (x, i, kLineData, halfBarSpace) {
@@ -4429,10 +4459,19 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
           var value = technicalIndicatorData[plot.key];
 
           switch (plot.type) {
-            case CIRCLE:
+            case PlotType.CIRCLE:
               {
                 if (isValid(value)) {
-                  var preKLineData = dataList[i - 1];
+                  var cbData = {
+                    preData: {
+                      kLineData: dataList[i - 1],
+                      technicalIndicatorData: technicalIndicatorResult[i - 1]
+                    },
+                    currentData: {
+                      kLineData: kLineData,
+                      technicalIndicatorData: technicalIndicatorData
+                    }
+                  };
 
                   var valueY = _this3._yAxis.convertToPixel(value);
 
@@ -4440,8 +4479,8 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                     x: x,
                     y: valueY,
                     radius: halfBarSpace,
-                    color: plot.color ? plot.color(preKLineData, kLineData, technicalIndicatorOptions) : technicalIndicatorOptions.circle.noChangeColor,
-                    isStroke: plot.isStroke ? plot.isStroke(preKLineData, kLineData) : true
+                    color: plot.color && plot.color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.circle.noChangeColor,
+                    isStroke: plot.isStroke ? plot.isStroke(cbData) : true
                   };
 
                   _this3._drawCircle(circle);
@@ -4450,32 +4489,37 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                 break;
               }
 
-            case BAR:
+            case PlotType.BAR:
               {
                 if (isValid(value)) {
-                  var _preKLineData = dataList[i - 1];
+                  var _cbData = {
+                    preData: {
+                      kLineData: dataList[i - 1],
+                      technicalIndicatorData: technicalIndicatorResult[i - 1]
+                    },
+                    currentData: {
+                      kLineData: kLineData,
+                      technicalIndicatorData: technicalIndicatorData
+                    }
+                  };
 
                   var _valueY = _this3._yAxis.convertToPixel(value);
 
-                  var referenceValue = plot.referenceValue || 0;
-
-                  var referenceValueY = _this3._yAxis.convertToPixel(referenceValue);
-
-                  var height = Math.abs(referenceValueY - _valueY);
+                  var height = Math.abs(baseValueY - _valueY);
                   var bar = {
                     x: x - halfBarSpace,
                     width: halfBarSpace * 2,
                     height: Math.max(1, height)
                   };
 
-                  if (_valueY <= referenceValueY) {
-                    bar.y = height < 1 ? referenceValueY + 1 : _valueY;
+                  if (_valueY <= baseValueY) {
+                    bar.y = height < 1 ? baseValueY + 1 : _valueY;
                   } else {
-                    bar.y = referenceValueY;
+                    bar.y = baseValueY;
                   }
 
-                  bar.color = plot.color ? plot.color(_preKLineData, kLineData, technicalIndicatorOptions) : technicalIndicatorOptions.bar.noChangeColor;
-                  bar.isStroke = plot.isStroke ? plot.isStroke(_preKLineData, kLineData) : false;
+                  bar.color = plot.color && plot.color(_cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
+                  bar.isStroke = plot.isStroke ? plot.isStroke(_cbData) : false;
 
                   _this3._drawBar(bar);
                 }
@@ -4751,12 +4795,13 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
         var displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule;
 
         if (displayRule === FloatLayerPromptDisplayRule.ALWAYS || displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairPaneTag()) {
-          this._drawPrompt(kLineData, technicalIndicatorData, technicalIndicator, x);
+          this._drawPrompt(dataPos, kLineData, technicalIndicatorData, technicalIndicator, x);
         }
       }
     }
     /**
      * 绘制提示
+     * @param dataPos
      * @param kLineData
      * @param technicalIndicatorData
      * @param technicalIndicator
@@ -4766,8 +4811,8 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
   }, {
     key: "_drawPrompt",
-    value: function _drawPrompt(kLineData, technicalIndicatorData, technicalIndicator, x) {
-      this._drawTechnicalIndicatorPrompt(technicalIndicatorData, technicalIndicator, x);
+    value: function _drawPrompt(dataPos, kLineData, technicalIndicatorData, technicalIndicator, x) {
+      this._drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x);
     }
     /**
      * 绘制十字光标水平线
@@ -4843,6 +4888,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
     }
     /**
      * 绘制指标提示
+     * @param dataPos
      * @param technicalIndicatorData
      * @param technicalIndicator
      * @param x
@@ -4852,20 +4898,21 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
   }, {
     key: "_drawTechnicalIndicatorPrompt",
-    value: function _drawTechnicalIndicatorPrompt(technicalIndicatorData, technicalIndicator, x) {
-      var offsetTop = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    value: function _drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x) {
+      var offsetTop = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
 
       var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
       var data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
       var colors = technicalIndicatorOptions.line.colors;
 
-      this._drawTechnicalIndicatorPromptText(technicalIndicator, data, colors, offsetTop);
+      this._drawTechnicalIndicatorPromptText(dataPos, technicalIndicator, data, colors, offsetTop);
 
       this._drawTechnicalIndicatorPromptPoint(technicalIndicator, data.values, colors, x);
     }
     /**
      * 绘制指标提示文字
+     * @param dataPos
      * @param technicalIndicator
      * @param data
      * @param colors
@@ -4875,7 +4922,21 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
   }, {
     key: "_drawTechnicalIndicatorPromptText",
-    value: function _drawTechnicalIndicatorPromptText(technicalIndicator, data, colors, offsetTop) {
+    value: function _drawTechnicalIndicatorPromptText(dataPos, technicalIndicator, data, colors, offsetTop) {
+      var dataList = this._chartData.dataList();
+
+      var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
+
+      var cbData = {
+        preData: {
+          kLineData: dataList[dataPos - 1],
+          technicalIndicatorData: technicalIndicator.result[dataPos - 1]
+        },
+        currentData: {
+          kLineData: dataList[dataPos],
+          technicalIndicatorData: technicalIndicator.result[dataPos]
+        }
+      };
       var plots = technicalIndicator.plots;
 
       var floatLayerPromptTechnicalIndicatorText = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.text;
@@ -4901,11 +4962,24 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
       var lineCount = 0;
 
       for (var i = 0; i < labels.length; i++) {
-        if (plots[i].type === 'line') {
-          this._ctx.fillStyle = colors[lineCount % colorSize] || textColor;
-          lineCount++;
-        } else {
-          this._ctx.fillStyle = textColor;
+        switch (plots[i].type) {
+          case PlotType.CIRCLE:
+            {
+              this._ctx.fillStyle = plots[i].color && plots[i].color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.circle.noChangeColor;
+              break;
+            }
+
+          case PlotType.BAR:
+            {
+              this._ctx.fillStyle = plots[i].color && plots[i].color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
+              break;
+            }
+
+          default:
+            {
+              this._ctx.fillStyle = colors[lineCount % colorSize] || textColor;
+              lineCount++;
+            }
         }
 
         var text = "".concat(labels[i], ": ").concat(values[i].value || 'n/a');
@@ -4947,7 +5021,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
       for (var i = 0; i < valueSize; i++) {
         var value = values[i].value;
 
-        if (plots[i].type === 'line') {
+        if (plots[i].type === PlotType.LINE) {
           if (isValid(value)) {
             this._ctx.fillStyle = colors[lineCount % colorSize];
 
@@ -5152,6 +5226,8 @@ var YAxisView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawTechnicalIndicatorLastValue",
     value: function _drawTechnicalIndicatorLastValue(yAxisOptions) {
+      var _this4 = this;
+
       var technicalIndicatorStyleOptions = this._chartData.styleOptions().technicalIndicator;
 
       var lastValueMarkStyleOptions = technicalIndicatorStyleOptions.lastValueMark;
@@ -5159,33 +5235,58 @@ var YAxisView = /*#__PURE__*/function (_View) {
       var technicalIndicator = this._additionalDataProvider.technicalIndicator();
 
       var technicalIndicatorResult = technicalIndicator.result;
-      var technicalIndicatorInfo = getTechnicalIndicatorInfo(technicalIndicatorResult[technicalIndicatorResult.length - 1], technicalIndicator, this._yAxis);
+      var dataSize = technicalIndicatorResult.length;
+      var technicalIndicatorData = technicalIndicatorResult[dataSize - 1];
 
-      if (!lastValueMarkStyleOptions.display || !technicalIndicatorInfo) {
+      if (!lastValueMarkStyleOptions.display || !technicalIndicatorData) {
         return;
       }
 
+      var dataList = this._chartData.dataList();
+
       var plots = technicalIndicator.plots;
+      var cbData = {
+        preData: {
+          kLineData: dataList[dataSize - 2],
+          technicalIndicatorData: technicalIndicatorResult[dataSize - 2]
+        },
+        currentData: {
+          kLineData: dataList[dataSize - 1],
+          technicalIndicatorData: technicalIndicatorData
+        }
+      };
       var precision = technicalIndicator.precision;
-      var values = technicalIndicatorInfo.values;
       var colors = technicalIndicatorStyleOptions.line.colors || [];
       var colorSize = colors.length;
-      var valueCount = values.length;
       var lineCount = 0;
+      plots.forEach(function (plot) {
+        var value = technicalIndicatorData[plot.key];
+        var backgroundColor;
 
-      for (var i = 0; i < valueCount; i++) {
-        if (plots.type === 'line') {
-          var value = values[i].value;
+        switch (plot.type) {
+          case PlotType.CIRCLE:
+            {
+              backgroundColor = plot.color && plot.color(cbData, technicalIndicatorStyleOptions) || technicalIndicatorStyleOptions.circle.noChangeColor;
+              break;
+            }
 
-          if (isValid(value)) {
-            var backgroundColor = colors[lineCount % colorSize];
+          case PlotType.BAR:
+            {
+              backgroundColor = plot.color && plot.color(cbData, technicalIndicatorStyleOptions) || technicalIndicatorStyleOptions.bar.noChangeColor;
+              break;
+            }
 
-            this._drawMarkLabel(yAxisOptions, value, precision, lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textFamily, lastValueMarkStyleOptions.textColor, backgroundColor, lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop, lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom);
-          }
-
-          lineCount++;
+          default:
+            {
+              backgroundColor = colors[lineCount % colorSize];
+              lineCount++;
+            }
         }
-      }
+
+        if (isValid(value)) {
+          _this4._drawMarkLabel(yAxisOptions, value, precision, lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textFamily, lastValueMarkStyleOptions.textColor, backgroundColor, lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop, lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom);
+        }
+      });
     }
     /**
      * 绘制最新价文字
@@ -5453,14 +5554,24 @@ var Axis = /*#__PURE__*/function () {
     this._range = 0;
     this._ticks = [];
   }
-  /**
-   * 设置尺寸
-   * @param width
-   * @param height
-   */
-
 
   _createClass(Axis, [{
+    key: "min",
+    value: function min() {
+      return this._minValue;
+    }
+  }, {
+    key: "max",
+    value: function max() {
+      return this._maxValue;
+    }
+    /**
+     * 设置尺寸
+     * @param width
+     * @param height
+     */
+
+  }, {
     key: "setSize",
     value: function setSize(width, height) {
       this._width = width;

@@ -21,24 +21,9 @@ export default class Volume extends TechnicalIndicator {
       name: VOL,
       calcParams: [5, 10, 20],
       isVolumeTechnicalIndicator: true,
-      plots: [
-        { key: 'ma5', type: 'line' },
-        { key: 'ma10', type: 'line' },
-        { key: 'ma30', type: 'line' },
-        {
-          key: 'num',
-          type: 'bar',
-          referenceValue: 0,
-          color: (preKLineData, kLineData, options) => {
-            if (kLineData.close > kLineData.open) {
-              return options.bar.upColor
-            } else if (kLineData.close < kLineData.open) {
-              return options.bar.downColor
-            }
-            return options.bar.noChangeColor
-          }
-        }
-      ]
+      baseValue: 0,
+      minValue: 0,
+      plots: []
     })
   }
 
@@ -48,7 +33,18 @@ export default class Volume extends TechnicalIndicator {
       plots.push({ key: `ma${p}`, type: 'line' })
     })
     plots.push({
-      key: 'num', type: 'bar', referenceValue: 0
+      key: 'num',
+      type: 'bar',
+      referenceValue: 0,
+      color: (data, options) => {
+        const kLineData = data.currentData.kLineData || {}
+        if (kLineData.close > kLineData.open) {
+          return options.bar.upColor
+        } else if (kLineData.close < kLineData.open) {
+          return options.bar.downColor
+        }
+        return options.bar.noChangeColor
+      }
     })
     return plots
   }

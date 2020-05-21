@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import View from './View'
+import View, { PlotType } from './View'
 import { FloatLayerPromptDisplayRule, LineStyle } from '../data/options/styleOptions'
 import { isValid } from '../utils/typeChecks'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
@@ -56,21 +56,22 @@ export default class TechnicalIndicatorFloatLayerView extends View {
       const displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule
       if (displayRule === FloatLayerPromptDisplayRule.ALWAYS ||
         (displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairPaneTag())) {
-        this._drawPrompt(kLineData, technicalIndicatorData, technicalIndicator, x)
+        this._drawPrompt(dataPos, kLineData, technicalIndicatorData, technicalIndicator, x)
       }
     }
   }
 
   /**
    * 绘制提示
+   * @param dataPos
    * @param kLineData
    * @param technicalIndicatorData
    * @param technicalIndicator
    * @param x
    * @private
    */
-  _drawPrompt (kLineData, technicalIndicatorData, technicalIndicator, x) {
-    this._drawTechnicalIndicatorPrompt(technicalIndicatorData, technicalIndicator, x)
+  _drawPrompt (dataPos, kLineData, technicalIndicatorData, technicalIndicator, x) {
+    this._drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x)
   }
 
   /**
@@ -128,18 +129,19 @@ export default class TechnicalIndicatorFloatLayerView extends View {
 
   /**
    * 绘制指标提示
+   * @param dataPos
    * @param technicalIndicatorData
    * @param technicalIndicator
    * @param x
    * @param offsetTop
    * @private
    */
-  _drawTechnicalIndicatorPrompt (technicalIndicatorData, technicalIndicator, x, offsetTop = 0) {
+  _drawTechnicalIndicatorPrompt (dataPos, technicalIndicatorData, technicalIndicator, x, offsetTop = 0) {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
     const colors = technicalIndicatorOptions.line.colors
     this._drawTechnicalIndicatorPromptText(
-      technicalIndicator, data, colors, offsetTop
+      dataPos, technicalIndicator, data, colors, offsetTop
     )
     this._drawTechnicalIndicatorPromptPoint(
       technicalIndicator, data.values, colors, x
@@ -148,13 +150,20 @@ export default class TechnicalIndicatorFloatLayerView extends View {
 
   /**
    * 绘制指标提示文字
+   * @param dataPos
    * @param technicalIndicator
    * @param data
    * @param colors
    * @param offsetTop
    * @private
    */
-  _drawTechnicalIndicatorPromptText (technicalIndicator, data, colors, offsetTop) {
+  _drawTechnicalIndicatorPromptText (dataPos, technicalIndicator, data, colors, offsetTop) {
+    const dataList = this._chartData.dataList()
+    const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
+    const cbData = {
+      preData: { kLineData: dataList[dataPos - 1], technicalIndicatorData: technicalIndicator.result[dataPos - 1] },
+      currentData: { kLineData: dataList[dataPos], technicalIndicatorData: technicalIndicator.result[dataPos] }
+    }
     const plots = technicalIndicator.plots
     const floatLayerPromptTechnicalIndicatorText = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.text
     const nameText = data.name
@@ -175,11 +184,19 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     labelX += (textMarginLeft + nameTextWidth)
     let lineCount = 0
     for (let i = 0; i < labels.length; i++) {
-      if (plots[i].type === 'line') {
-        this._ctx.fillStyle = colors[lineCount % colorSize] || textColor
-        lineCount++
-      } else {
-        this._ctx.fillStyle = textColor
+      switch (plots[i].type) {
+        case PlotType.CIRCLE: {
+          this._ctx.fillStyle = (plots[i].color && plots[i].color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor
+          break
+        }
+        case PlotType.BAR: {
+          this._ctx.fillStyle = (plots[i].color && plots[i].color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
+          break
+        }
+        default: {
+          this._ctx.fillStyle = colors[lineCount % colorSize] || textColor
+          lineCount++
+        }
       }
       const text = `${labels[i]}: ${values[i].value || 'n/a'}`
       const textWidth = calcTextWidth(this._ctx, text)
@@ -211,7 +228,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     let lineCount = 0
     for (let i = 0; i < valueSize; i++) {
       const value = values[i].value
-      if (plots[i].type === 'line') {
+      if (plots[i].type === PlotType.LINE) {
         if (isValid(value)) {
           this._ctx.fillStyle = colors[lineCount % colorSize]
           this._ctx.beginPath()

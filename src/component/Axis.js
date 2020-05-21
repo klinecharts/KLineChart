@@ -23,6 +23,14 @@ export default class Axis {
     this._ticks = []
   }
 
+  min () {
+    return this._minValue
+  }
+
+  max () {
+    return this._maxValue
+  }
+
   /**
    * 设置尺寸
    * @param width

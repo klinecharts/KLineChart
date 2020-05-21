@@ -12,14 +12,10 @@
  * limitations under the License.
  */
 
-import View from './View'
+import View, { PlotType } from './View'
 import { LineStyle } from '../data/options/styleOptions'
 import { drawHorizontalLine, drawVerticalLine, drawLine } from '../utils/canvas'
-import { formatValue } from '../utils/format'
 import { isValid } from '../utils/typeChecks'
-
-export const BAR = 'bar'
-export const CIRCLE = 'circle'
 
 export default class TechnicalIndicatorView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
@@ -83,6 +79,11 @@ export default class TechnicalIndicatorView extends View {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const dataList = this._chartData.dataList()
     const technicalIndicatorResult = technicalIndicator.result
+    let baseValue = technicalIndicator.baseValue
+    if (!isValid(baseValue)) {
+      baseValue = this._yAxis.min()
+    }
+    const baseValueY = this._yAxis.convertToPixel(baseValue)
     this._ctx.lineWidth = 1
     this._drawGraphics(
       (x, i, kLineData, halfBarSpace) => {
@@ -97,47 +98,47 @@ export default class TechnicalIndicatorView extends View {
         plots.forEach(plot => {
           const value = technicalIndicatorData[plot.key]
           switch (plot.type) {
-            case CIRCLE: {
+            case PlotType.CIRCLE: {
               if (isValid(value)) {
-                const preKLineData = dataList[i - 1]
+                const cbData = {
+                  preData: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
+                  currentData: { kLineData, technicalIndicatorData }
+                }
                 const valueY = this._yAxis.convertToPixel(value)
                 const circle = {
                   x,
                   y: valueY,
                   radius: halfBarSpace,
-                  color: plot.color
-                    ? plot.color(preKLineData, kLineData, technicalIndicatorOptions)
-                    : technicalIndicatorOptions.circle.noChangeColor,
+                  color: (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor,
                   isStroke: plot.isStroke
-                    ? plot.isStroke(preKLineData, kLineData)
+                    ? plot.isStroke(cbData)
                     : true
                 }
                 this._drawCircle(circle)
               }
               break
             }
-            case BAR: {
+            case PlotType.BAR: {
               if (isValid(value)) {
-                const preKLineData = dataList[i - 1]
+                const cbData = {
+                  preData: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
+                  currentData: { kLineData, technicalIndicatorData }
+                }
                 const valueY = this._yAxis.convertToPixel(value)
-                const referenceValue = plot.referenceValue || 0
-                const referenceValueY = this._yAxis.convertToPixel(referenceValue)
-                const height = Math.abs(referenceValueY - valueY)
+                const height = Math.abs(baseValueY - valueY)
                 const bar = {
                   x: x - halfBarSpace,
                   width: halfBarSpace * 2,
                   height: Math.max(1, height)
                 }
-                if (valueY <= referenceValueY) {
-                  bar.y = height < 1 ? referenceValueY + 1 : valueY
+                if (valueY <= baseValueY) {
+                  bar.y = height < 1 ? baseValueY + 1 : valueY
                 } else {
-                  bar.y = referenceValueY
+                  bar.y = baseValueY
                 }
-                bar.color = plot.color
-                  ? plot.color(preKLineData, kLineData, technicalIndicatorOptions)
-                  : technicalIndicatorOptions.bar.noChangeColor
+                bar.color = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
                 bar.isStroke = plot.isStroke
-                  ? plot.isStroke(preKLineData, kLineData)
+                  ? plot.isStroke(cbData)
                   : false
                 this._drawBar(bar)
               }

@@ -21,10 +21,31 @@ export default class MovingAverageConvergenceDivergence extends TechnicalIndicat
       name: MACD,
       calcParams: [12, 26, 9],
       shouldCheckParamCount: true,
+      baseValue: 0,
       plots: [
         { key: 'diff', type: 'line' },
         { key: 'dea', type: 'line' },
-        { key: 'macd', type: 'bar' }
+        {
+          key: 'macd',
+          type: 'bar',
+          color: (data, technicalIndicatorOptions) => {
+            const { currentData } = data
+            const macd = (currentData.technicalIndicatorData || {}).macd
+            if (macd > 0) {
+              return technicalIndicatorOptions.bar.upColor
+            } else if (macd < 0) {
+              return technicalIndicatorOptions.bar.downColor
+            } else {
+              return technicalIndicatorOptions.bar.noChangeColor
+            }
+          },
+          isStroke: (data) => {
+            const { preData, currentData } = data
+            const macd = (currentData.technicalIndicatorData || {}).macd
+            const preMacd = (preData.technicalIndicatorData || {}).macd
+            return preMacd < macd
+          }
+        }
       ]
     })
   }

@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import View from './View'
+import View, { PlotType } from './View'
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
-import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalIndicatorControl'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
 import { isValid } from '../utils/typeChecks'
@@ -132,36 +131,48 @@ export default class YAxisView extends View {
     const lastValueMarkStyleOptions = technicalIndicatorStyleOptions.lastValueMark
     const technicalIndicator = this._additionalDataProvider.technicalIndicator()
     const technicalIndicatorResult = technicalIndicator.result
-    const technicalIndicatorInfo = getTechnicalIndicatorInfo(
-      technicalIndicatorResult[technicalIndicatorResult.length - 1],
-      technicalIndicator, this._yAxis
-    )
-    if (!lastValueMarkStyleOptions.display || !technicalIndicatorInfo) {
+    const dataSize = technicalIndicatorResult.length
+    const technicalIndicatorData = technicalIndicatorResult[dataSize - 1]
+    if (!lastValueMarkStyleOptions.display || !technicalIndicatorData) {
       return
     }
+    const dataList = this._chartData.dataList()
     const plots = technicalIndicator.plots
+    const cbData = {
+      preData: { kLineData: dataList[dataSize - 2], technicalIndicatorData: technicalIndicatorResult[dataSize - 2] },
+      currentData: { kLineData: dataList[dataSize - 1], technicalIndicatorData }
+    }
     const precision = technicalIndicator.precision
-    const values = technicalIndicatorInfo.values
     const colors = technicalIndicatorStyleOptions.line.colors || []
     const colorSize = colors.length
-    const valueCount = values.length
     let lineCount = 0
-    for (let i = 0; i < valueCount; i++) {
-      if (plots.type === 'line') {
-        const value = values[i].value
-        if (isValid(value)) {
-          const backgroundColor = colors[lineCount % colorSize]
-          this._drawMarkLabel(
-            yAxisOptions, value, precision,
-            lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textFamily,
-            lastValueMarkStyleOptions.textColor, backgroundColor,
-            lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop,
-            lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom
-          )
+    plots.forEach(plot => {
+      const value = technicalIndicatorData[plot.key]
+      let backgroundColor
+      switch (plot.type) {
+        case PlotType.CIRCLE: {
+          backgroundColor = (plot.color && plot.color(cbData, technicalIndicatorStyleOptions)) || technicalIndicatorStyleOptions.circle.noChangeColor
+          break
         }
-        lineCount++
+        case PlotType.BAR: {
+          backgroundColor = (plot.color && plot.color(cbData, technicalIndicatorStyleOptions)) || technicalIndicatorStyleOptions.bar.noChangeColor
+          break
+        }
+        default: {
+          backgroundColor = colors[lineCount % colorSize]
+          lineCount++
+        }
       }
-    }
+      if (isValid(value)) {
+        this._drawMarkLabel(
+          yAxisOptions, value, precision,
+          lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textFamily,
+          lastValueMarkStyleOptions.textColor, backgroundColor,
+          lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop,
+          lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom
+        )
+      }
+    })
   }
 
   /**
