@@ -16,10 +16,10 @@ import TechnicalIndicator from '../TechnicalIndicator'
 import { DMA } from '../technicalIndicatorType'
 
 export default class DifferentOfMovingAverage extends TechnicalIndicator {
-  constructor (calcParams) {
+  constructor () {
     super({
       name: DMA,
-      calcParams,
+      calcParams: [10, 50, 10],
       shouldCheckParamCount: true,
       plots: [
         { key: 'dma', type: 'line' },

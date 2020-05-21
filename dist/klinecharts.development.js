@@ -2370,12 +2370,12 @@ var DifferentOfMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
 
   var _super = _createSuper(DifferentOfMovingAverage);
 
-  function DifferentOfMovingAverage(calcParams) {
+  function DifferentOfMovingAverage() {
     _classCallCheck(this, DifferentOfMovingAverage);
 
     return _super.call(this, {
       name: DMA,
-      calcParams: calcParams,
+      calcParams: [10, 50, 10],
       shouldCheckParamCount: true,
       plots: [{
         key: 'dma',
@@ -2437,7 +2437,6 @@ var DifferentOfMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
         result.push(dma);
       });
 
-      console.log(result);
       return result;
     }
   }]);
