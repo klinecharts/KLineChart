@@ -61,7 +61,7 @@ export default class TechnicalIndicatorPane extends Pane {
   }
 
   _computeAxis () {
-    this._yAxis.calcMinMaxValue(this._technicalIndicator, this._isRealTime())
+    this._yAxis.calcMinMaxValue(this.technicalIndicator(), this._isRealTime())
     this._yAxis.computeAxis()
   }
 

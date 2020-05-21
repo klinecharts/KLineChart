@@ -40,13 +40,14 @@ export default class CandleStickView extends TechnicalIndicatorView {
     const timeLineAreaPoints = []
     const averageLinePoints = []
     const from = this._chartData.from()
+    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
+    const technicalIndicatorResult = technicalIndicator.result
     const onDrawing = (x, i, kLineData, halfBarSpace) => {
-      const average = kLineData.average
+      const technicalIndicatorData = technicalIndicatorResult[i] || {}
+      const average = technicalIndicatorData.average || 0
       const closeY = this._yAxis.convertToPixel(kLineData.close)
       const averageY = this._yAxis.convertToPixel(average)
-      if (average || average === 0) {
-        averageLinePoints.push({ x: x, y: averageY })
-      }
+      averageLinePoints.push({ x: x, y: averageY })
       if (i === from) {
         const startX = x - halfBarSpace
         timeLineAreaPoints.push({ x: startX, y: this._height })

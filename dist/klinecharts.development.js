@@ -5883,7 +5883,7 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
   }, {
     key: "_computeAxis",
     value: function _computeAxis() {
-      this._yAxis.calcMinMaxValue(this._technicalIndicator, this._isRealTime());
+      this._yAxis.calcMinMaxValue(this.technicalIndicator(), this._isRealTime());
 
       this._yAxis.computeAxis();
     }
@@ -6007,19 +6007,22 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
 
       var from = this._chartData.from();
 
+      var technicalIndicator = this._additionalDataProvider.technicalIndicator();
+
+      var technicalIndicatorResult = technicalIndicator.result;
+
       var onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
-        var average = kLineData.average;
+        var technicalIndicatorData = technicalIndicatorResult[i] || {};
+        var average = technicalIndicatorData.average || 0;
 
         var closeY = _this._yAxis.convertToPixel(kLineData.close);
 
         var averageY = _this._yAxis.convertToPixel(average);
 
-        if (average || average === 0) {
-          averageLinePoints.push({
-            x: x,
-            y: averageY
-          });
-        }
+        averageLinePoints.push({
+          x: x,
+          y: averageY
+        });
 
         if (i === from) {
           var startX = x - halfBarSpace;
