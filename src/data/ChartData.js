@@ -211,18 +211,6 @@ export default class ChartData {
   }
 
   /**
-   * 加载技术指标参数
-   * @param technicalIndicatorType
-   * @param params
-   */
-  applyTechnicalIndicatorParams (technicalIndicatorType, params = []) {
-    const technicalIndicator = this.technicalIndicator(technicalIndicatorType)
-    if (technicalIndicator) {
-      technicalIndicator.calcParams = clone(params)
-    }
-  }
-
-  /**
    * 价格精度
    * @returns {number}
    */
@@ -637,13 +625,18 @@ export default class ChartData {
   /**
    * 计算指标
    * @param pane
-   * @param technicalIndicator
    */
-  calcTechnicalIndicator (pane, technicalIndicator) {
+  calcTechnicalIndicator (pane) {
     Promise.resolve().then(
       _ => {
+        const technicalIndicator = pane.technicalIndicator()
         if (technicalIndicator) {
           technicalIndicator.setCalcParams(this._technicalIndicatorCalcParams[technicalIndicator.name])
+          if (technicalIndicator.isPriceTechnicalIndicator) {
+            technicalIndicator.precision = this._pricePrecision
+          } else if (technicalIndicator.isVolumeTechnicalIndicator) {
+            technicalIndicator.precision = this._volumePrecision
+          }
           technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
         }
         pane.invalidate(InvalidateLevel.FULL)

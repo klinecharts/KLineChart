@@ -188,11 +188,9 @@ export default class ChartPane {
    * @private
    */
   _calcAllPaneTechnicalIndicator () {
-    const candleStickTechnicalIndicator = this._candleStickPane.technicalIndicator()
-    this._chartData.calcTechnicalIndicator(this._candleStickPane, candleStickTechnicalIndicator)
+    this._chartData.calcTechnicalIndicator(this._candleStickPane)
     for (const pane of this._technicalIndicatorPanes) {
-      const technicalIndicator = pane.technicalIndicator()
-      this._chartData.calcTechnicalIndicator(pane, technicalIndicator)
+      this._chartData.calcTechnicalIndicator(pane)
     }
   }
 
@@ -281,19 +279,15 @@ export default class ChartPane {
    * @param params
    */
   applyTechnicalIndicatorParams (technicalIndicatorType, params) {
-    this._chartData.applyTechnicalIndicatorParams(technicalIndicatorType, params)
-    const paneCollection = []
-    const candleStickPaneTechnicalIndicatorType = this._candleStickPane.technicalIndicatorType()
-    if (candleStickPaneTechnicalIndicatorType === technicalIndicatorType) {
-      paneCollection.push(this._candleStickPane)
+    this._chartData.technicalIndicatorCalcParams()[technicalIndicatorType] = params
+    if (this._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
+      this._chartData.calcTechnicalIndicator(this._candleStickPane)
     }
     for (const pane of this._technicalIndicatorPanes) {
-      const paneTechnicalIndicatorType = pane.technicalIndicatorType()
-      if (paneTechnicalIndicatorType === technicalIndicatorType) {
-        paneCollection.push(pane)
+      if (pane.technicalIndicator().name === technicalIndicatorType) {
+        this._chartData.calcTechnicalIndicator(pane)
       }
     }
-    this._chartData.calcTechnicalIndicator(paneCollection, technicalIndicatorType)
   }
 
   /**

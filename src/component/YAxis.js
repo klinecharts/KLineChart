@@ -25,10 +25,6 @@ export default class YAxis extends Axis {
   _computeMinMaxValue () {
     let min = this._minValue
     let max = this._maxValue
-    if (min === Infinity || max === -Infinity) {
-      return { min: 0, max: 0, range: 0 }
-    }
-
     let range = Math.abs(max - min)
     // 保证每次图形绘制上下都留间隙
     min = min - (range / 100.0) * 10.0
@@ -144,6 +140,9 @@ export default class YAxis extends Axis {
           this._maxValue += percentValue
         }
       }
+    } else {
+      this._minValue = 0
+      this._maxValue = 10
     }
   }
 

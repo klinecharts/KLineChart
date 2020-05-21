@@ -117,6 +117,6 @@ export default class TechnicalIndicatorPane extends Pane {
     } else {
       this._technicalIndicator = new EmptyTechnicalIndicator({ isPriceTechnicalIndicator: true })
     }
-    this._chartData.calcTechnicalIndicator(this, this._technicalIndicator)
+    this._chartData.calcTechnicalIndicator(this)
   }
 }
