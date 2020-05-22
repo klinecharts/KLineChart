@@ -1,3 +1,9 @@
+/**
+ * @license
+ * KLineChart v5.2.2
+ * Copyright (c) 2019 lihu.
+ * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
+ */
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -3062,7 +3068,11 @@ function getTechnicalIndicatorInfo() {
   var isVolumeTechnicalIndicator = technicalIndicator.isVolumeTechnicalIndicator;
   var labels = [];
   var values = [];
-  var name = technicalIndicator.name;
+  var name = '';
+
+  if (plots.length > 0) {
+    name = technicalIndicator.name;
+  }
 
   if (calcParams.length > 0) {
     name = "".concat(calcParams, "(").concat(calcParams.join(','), ")");

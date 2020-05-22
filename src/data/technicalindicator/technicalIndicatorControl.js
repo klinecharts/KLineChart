@@ -133,7 +133,10 @@ export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technica
 
   const labels = []
   const values = []
-  let name = technicalIndicator.name
+  let name = ''
+  if (plots.length > 0) {
+    name = technicalIndicator.name
+  }
   if (calcParams.length > 0) {
     name = `${calcParams}(${calcParams.join(',')})`
   }

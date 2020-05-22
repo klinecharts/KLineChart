@@ -7,6 +7,8 @@ const packageJson = require('../package.json')
 
 const inputPath = 'src/index.js'
 
+const version = packageJson.version
+
 const getPlugins = (env) => {
   return [
     babel({
@@ -16,9 +18,13 @@ const getPlugins = (env) => {
     fileSize(),
     replace({
       '__BUILD_ENV__': env,
-      '__BUILD_VERSION__': packageJson.version,
+      '__BUILD_VERSION__': version,
     }),
     env === 'production' && terser({
+      output: {
+        comments: /@license/,
+        inline_script: true,
+      },
       compress: {
         pure_getters: true,
         unsafe: true,
@@ -35,7 +41,14 @@ const getOutputConfig = (fileName) => {
     format: 'umd',
     name: 'klinecharts',
     sourcemap: fileName === 'development',
-    indent: false
+    indent: false,
+    banner: `
+/**
+ * @license
+ * KLineChart v${version}
+ * Copyright (c) 2019 lihu.
+ * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
+ */`.trim(),
   }
 }
 
