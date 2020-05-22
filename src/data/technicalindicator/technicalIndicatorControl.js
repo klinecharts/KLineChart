@@ -138,7 +138,7 @@ export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technica
     name = technicalIndicator.name
   }
   if (calcParams.length > 0) {
-    name = `${calcParams}(${calcParams.join(',')})`
+    name = `${name}(${calcParams.join(',')})`
   }
   plots.forEach(plot => {
     labels.push(plot.key.toUpperCase())
