@@ -23,7 +23,25 @@ export default class Volume extends TechnicalIndicator {
       isVolumeTechnicalIndicator: true,
       baseValue: 0,
       minValue: 0,
-      plots: []
+      plots: [
+        { key: 'ma5', line: 'line' },
+        { key: 'ma10', line: 'line' },
+        { key: 'ma20', line: 'line' },
+        {
+          key: 'num',
+          type: 'bar',
+          referenceValue: 0,
+          color: (data, options) => {
+            const kLineData = data.currentData.kLineData || {}
+            if (kLineData.close > kLineData.open) {
+              return options.bar.upColor
+            } else if (kLineData.close < kLineData.open) {
+              return options.bar.downColor
+            }
+            return options.bar.noChangeColor
+          }
+        }
+      ]
     })
   }
 
