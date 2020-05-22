@@ -174,8 +174,10 @@ export default class YAxis extends Axis {
   convertToPixel (value) {
     let realValue = value
     if (this.isPercentageYAxis()) {
-      const fromClose = this._chartData.dataList()[this._chartData.from()].close
-      realValue = (value - fromClose) / fromClose * 100
+      const fromClose = (this._chartData.dataList()[this._chartData.from()] || {}).close
+      if (isValid(fromClose)) {
+        realValue = (value - fromClose) / fromClose * 100
+      }
     }
     return this._innerConvertToPixel(realValue)
   }

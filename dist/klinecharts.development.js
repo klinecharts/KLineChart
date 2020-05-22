@@ -6076,9 +6076,11 @@ var YAxis = /*#__PURE__*/function (_Axis) {
       var realValue = value;
 
       if (this.isPercentageYAxis()) {
-        var fromClose = this._chartData.dataList()[this._chartData.from()].close;
+        var fromClose = (this._chartData.dataList()[this._chartData.from()] || {}).close;
 
-        realValue = (value - fromClose) / fromClose * 100;
+        if (isValid(fromClose)) {
+          realValue = (value - fromClose) / fromClose * 100;
+        }
       }
 
       return this._innerConvertToPixel(realValue);
