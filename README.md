@@ -33,9 +33,13 @@ npm run build
 The generated files are in the dist folder.
 
 
-## Sample
-+ [Feature preview](https://liihuu.github.io/KLineChart/)
-+ [Sample code](https://github.com/liihuu/KLineChartSample)
+## Resources
+#### Technical Indicator
+[https://github.com/liihuu/TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator)
+
+#### Sample Code
+[https://github.com/liihuu/KLineChartSample]((https://github.com/liihuu/KLineChartSample))
+
 
 ## License
 KLineChart is available under the Apache License V2.
