@@ -14,8 +14,7 @@
 npm install klinecharts --save
 ```
 ### CDN
-You can use [unpkg](https://unpkg.com):
-
+You can use [unpkg](https://unpkg.com):<br/>
 https://unpkg.com/klinecharts/dist/klinecharts.production.min.js
 
 ## Docs
