@@ -4600,10 +4600,6 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
       this._ctx.lineWidth = 1;
 
       this._drawGraphics(function (x, i, kLineData, halfBarSpace) {
-        if (technicalIndicator.isPriceTechnicalIndicator) {
-          _this3._drawTechnicalIndicatorOhlc(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, _this3._yAxis.isCandleStickYAxis());
-        }
-
         var technicalIndicatorData = technicalIndicatorResult[i] || {};
         var lineValueIndex = 0;
         plots.forEach(function (plot) {
@@ -4711,23 +4707,6 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
       });
     }
     /**
-     * 需要绘制ohlc指标每条数据渲染
-     * @param i
-     * @param x
-     * @param halfBarSpace
-     * @param technicalIndicatorOptions
-     * @param kLineData
-     * @param isCandleStick
-     */
-
-  }, {
-    key: "_drawTechnicalIndicatorOhlc",
-    value: function _drawTechnicalIndicatorOhlc(i, x, halfBarSpace, technicalIndicatorOptions, kLineData, isCandleStick) {
-      if (!isCandleStick) {
-        this._drawOhlc(halfBarSpace, x, kLineData, technicalIndicatorOptions.bar.upColor, technicalIndicatorOptions.bar.downColor, technicalIndicatorOptions.bar.noChangeColor);
-      }
-    }
-    /**
      * 绘制线
      * @param lines
      * @param technicalIndicatorOptions
@@ -4806,45 +4785,6 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
       }
 
       this._ctx.closePath();
-    }
-    /**
-     * 绘制ohlc
-     * @param halfBarSpace
-     * @param x
-     * @param kLineData
-     * @param upColor
-     * @param downColor
-     * @param noChangeColor
-     * @private
-     */
-
-  }, {
-    key: "_drawOhlc",
-    value: function _drawOhlc(halfBarSpace, x, kLineData, upColor, downColor, noChangeColor) {
-      var open = kLineData.open;
-      var close = kLineData.close;
-
-      var openY = this._yAxis.convertToPixel(open);
-
-      var closeY = this._yAxis.convertToPixel(close);
-
-      var highY = this._yAxis.convertToPixel(kLineData.high);
-
-      var lowY = this._yAxis.convertToPixel(kLineData.low);
-
-      if (close > open) {
-        this._ctx.fillStyle = upColor;
-      } else if (close < open) {
-        this._ctx.fillStyle = downColor;
-      } else {
-        this._ctx.fillStyle = noChangeColor;
-      }
-
-      this._ctx.fillRect(x - 0.5, highY, 1, lowY - highY);
-
-      this._ctx.fillRect(x - halfBarSpace, openY - 0.5, halfBarSpace, 1);
-
-      this._ctx.fillRect(x, closeY - 0.5, halfBarSpace, 1);
     }
     /**
      * 绘制图形
@@ -5967,22 +5907,18 @@ var YAxis = /*#__PURE__*/function (_Axis) {
         for (var i = from; i < to; i++) {
           var kLineData = dataList[i];
           var technicalIndicatorData = technicalIndicatorResult[i] || {};
-          var minCompareArray = [kLineData.close, minMaxArray[0]];
-          var maxCompareArray = [kLineData.close, minMaxArray[1]];
+          minMaxArray[0] = Math.min(kLineData.close, minMaxArray[0]);
+          minMaxArray[1] = Math.max(kLineData.close, minMaxArray[1]);
 
           if (isShowAverageLine && isValid(technicalIndicatorData.average)) {
-            minCompareArray.push(technicalIndicatorData.average);
-            maxCompareArray.push(technicalIndicatorData.average);
+            minMaxArray[0] = Math.min(technicalIndicatorData.average, minMaxArray[0]);
+            minMaxArray[1] = Math.max(technicalIndicatorData.average, minMaxArray[1]);
           }
-
-          minMaxArray[0] = Math.min.apply(null, minCompareArray);
-          minMaxArray[1] = Math.max.apply(null, maxCompareArray);
         }
       } else {
         var plots = technicalIndicator.plots || [];
 
         var _loop = function _loop(_i) {
-          var kLineData = dataList[_i];
           var technicalIndicatorData = technicalIndicatorResult[_i] || {};
           plots.forEach(function (plot) {
             var value = technicalIndicatorData[plot.key];
@@ -5992,11 +5928,6 @@ var YAxis = /*#__PURE__*/function (_Axis) {
               minMaxArray[1] = Math.max(minMaxArray[1], value);
             }
           });
-
-          if (technicalIndicator.isPriceTechnicalIndicator) {
-            minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low);
-            minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high);
-          }
         };
 
         for (var _i = from; _i < to; _i++) {
@@ -6411,7 +6342,6 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
     value: function _drawCandleStick() {
       var _this2 = this;
 
-      var rect = [];
       var markHighestPrice = -Infinity;
       var markHighestPriceX = -1;
       var markLowestPrice = Infinity;
@@ -6435,92 +6365,85 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
           markLowestPriceX = x;
         }
 
-        if (candleStick.bar.style !== CandleStickStyle.OHLC) {
-          if (close > open) {
-            _this2._ctx.strokeStyle = candleStick.bar.upColor;
-            _this2._ctx.fillStyle = candleStick.bar.upColor;
-          } else if (close < open) {
-            _this2._ctx.strokeStyle = candleStick.bar.downColor;
-            _this2._ctx.fillStyle = candleStick.bar.downColor;
-          } else {
-            _this2._ctx.strokeStyle = candleStick.bar.noChangeColor;
-            _this2._ctx.fillStyle = candleStick.bar.noChangeColor;
-          }
-
-          var openY = _this2._yAxis.convertToPixel(open);
-
-          var closeY = _this2._yAxis.convertToPixel(close);
-
-          var highY = _this2._yAxis.convertToPixel(high);
-
-          var lowY = _this2._yAxis.convertToPixel(low);
-
-          var highLine = [];
-          var lowLine = [];
-          highLine[0] = highY;
-          lowLine[1] = lowY;
-
-          if (openY > closeY) {
-            highLine[1] = closeY;
-            lowLine[0] = openY;
-            rect = [x - halfBarSpace, closeY, barSpace, openY - closeY];
-          } else if (openY < closeY) {
-            highLine[1] = openY;
-            lowLine[0] = closeY;
-            rect = [x - halfBarSpace, openY, barSpace, closeY - openY];
-          } else {
-            highLine[1] = openY;
-            lowLine[0] = closeY;
-            rect = [x - halfBarSpace, openY, barSpace, 1];
-          }
-
-          _this2._ctx.fillRect(x - 0.5, highLine[0], 1, highLine[1] - highLine[0]);
-
-          _this2._ctx.fillRect(x - 0.5, lowLine[0], 1, lowLine[1] - lowLine[0]);
-
-          if (rect[3] < 1) {
-            rect[3] = 1;
-          }
-
-          switch (candleStick.bar.style) {
-            case CandleStickStyle.SOLID:
-              {
-                _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
-
-                break;
-              }
-
-            case CandleStickStyle.STROKE:
-              {
-                _this2._ctx.strokeRect(rect[0] + 0.5, rect[1], rect[2] - 1, rect[3]);
-
-                break;
-              }
-
-            case CandleStickStyle.UP_STROKE:
-              {
-                if (close > open) {
-                  _this2._ctx.strokeRect(rect[0] + 0.5, rect[1], rect[2] - 1, rect[3]);
-                } else {
-                  _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
-                }
-
-                break;
-              }
-
-            case CandleStickStyle.DOWN_STROKE:
-              {
-                if (close > open) {
-                  _this2._ctx.fillRect(rect[0], rect[1], rect[2], rect[3]);
-                } else {
-                  _this2._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3]);
-                }
-
-                break;
-              }
-          }
+        if (close > open) {
+          _this2._ctx.strokeStyle = candleStick.bar.upColor;
+          _this2._ctx.fillStyle = candleStick.bar.upColor;
+        } else if (close < open) {
+          _this2._ctx.strokeStyle = candleStick.bar.downColor;
+          _this2._ctx.fillStyle = candleStick.bar.downColor;
         } else {
-          _this2._drawOhlc(halfBarSpace, x, kLineData, candleStick.bar.upColor, candleStick.bar.downColor, candleStick.bar.noChangeColor);
+          _this2._ctx.strokeStyle = candleStick.bar.noChangeColor;
+          _this2._ctx.fillStyle = candleStick.bar.noChangeColor;
+        }
+
+        var openY = _this2._yAxis.convertToPixel(open);
+
+        var closeY = _this2._yAxis.convertToPixel(close);
+
+        var highY = _this2._yAxis.convertToPixel(high);
+
+        var lowY = _this2._yAxis.convertToPixel(low);
+
+        switch (candleStick.bar.style) {
+          case CandleStickStyle.SOLID:
+            {
+              _this2._drawCandleStickBar(x, openY, closeY, highY, lowY, halfBarSpace, barSpace, 0, _this2._ctx.fillRect);
+
+              break;
+            }
+
+          case CandleStickStyle.STROKE:
+            {
+              _this2._drawCandleStickBar(x, openY, closeY, highY, lowY, halfBarSpace, barSpace, 0.5, _this2._ctx.strokeRect);
+
+              break;
+            }
+
+          case CandleStickStyle.UP_STROKE:
+            {
+              var drawFuc;
+              var correction = 0;
+
+              if (close > open) {
+                drawFuc = _this2._ctx.strokeRect;
+                correction = 0.5;
+              } else {
+                drawFuc = _this2._ctx.fillRect;
+              }
+
+              _this2._drawCandleStickBar(x, openY, closeY, highY, lowY, halfBarSpace, barSpace, correction, drawFuc);
+
+              break;
+            }
+
+          case CandleStickStyle.DOWN_STROKE:
+            {
+              var _drawFuc;
+
+              var _correction = 0;
+
+              if (close > open) {
+                _drawFuc = _this2._ctx.fillRect;
+              } else {
+                _correction = 0.5;
+                _drawFuc = _this2._ctx.strokeRect;
+              }
+
+              _this2._drawCandleStickBar(x, openY, closeY, highY, lowY, halfBarSpace, barSpace, _correction, _drawFuc);
+
+              break;
+            }
+
+          default:
+            {
+              _this2._ctx.fillRect(x - 0.5, highY, 1, lowY - highY);
+
+              _this2._ctx.fillRect(x - halfBarSpace, openY - 0.5, halfBarSpace, 1);
+
+              _this2._ctx.fillRect(x, closeY - 0.5, halfBarSpace, 1);
+
+              break;
+            }
         }
       };
 
@@ -6534,6 +6457,32 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
         x: markLowestPriceX,
         price: markLowestPrice
       };
+    }
+    /**
+     * 绘制蜡烛柱
+     * @param x
+     * @param openY
+     * @param closeY
+     * @param highY
+     * @param lowY
+     * @param halfBarSpace
+     * @param barSpace
+     * @param correction
+     * @param drawFuc
+     * @private
+     */
+
+  }, {
+    key: "_drawCandleStickBar",
+    value: function _drawCandleStickBar(x, openY, closeY, highY, lowY, halfBarSpace, barSpace, correction, drawFuc) {
+      var highEndY = Math.min(openY, closeY);
+      var lowStartY = Math.max(openY, closeY);
+
+      this._ctx.fillRect(x - 0.5, highY, 1, highEndY - highY);
+
+      this._ctx.fillRect(x - 0.5, lowStartY, 1, lowY - lowStartY);
+
+      drawFuc.call(this._ctx, x - halfBarSpace + correction, highEndY, barSpace - correction * 2, Math.max(1, lowStartY - highEndY));
     }
     /**
      * 渲染最高价标记

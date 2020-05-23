@@ -87,12 +87,6 @@ export default class TechnicalIndicatorView extends View {
     this._ctx.lineWidth = 1
     this._drawGraphics(
       (x, i, kLineData, halfBarSpace) => {
-        if (technicalIndicator.isPriceTechnicalIndicator) {
-          this._drawTechnicalIndicatorOhlc(
-            i, x, halfBarSpace, technicalIndicatorOptions,
-            kLineData, this._yAxis.isCandleStickYAxis()
-          )
-        }
         const technicalIndicatorData = technicalIndicatorResult[i] || {}
         let lineValueIndex = 0
         plots.forEach(plot => {
@@ -173,25 +167,6 @@ export default class TechnicalIndicatorView extends View {
   }
 
   /**
-   * 需要绘制ohlc指标每条数据渲染
-   * @param i
-   * @param x
-   * @param halfBarSpace
-   * @param technicalIndicatorOptions
-   * @param kLineData
-   * @param isCandleStick
-   */
-  _drawTechnicalIndicatorOhlc (i, x, halfBarSpace, technicalIndicatorOptions, kLineData, isCandleStick) {
-    if (!isCandleStick) {
-      this._drawOhlc(
-        halfBarSpace, x, kLineData,
-        technicalIndicatorOptions.bar.upColor,
-        technicalIndicatorOptions.bar.downColor, technicalIndicatorOptions.bar.noChangeColor
-      )
-    }
-  }
-
-  /**
    * 绘制线
    * @param lines
    * @param technicalIndicatorOptions
@@ -250,35 +225,6 @@ export default class TechnicalIndicatorView extends View {
       this._ctx.fill()
     }
     this._ctx.closePath()
-  }
-
-  /**
-   * 绘制ohlc
-   * @param halfBarSpace
-   * @param x
-   * @param kLineData
-   * @param upColor
-   * @param downColor
-   * @param noChangeColor
-   * @private
-   */
-  _drawOhlc (halfBarSpace, x, kLineData, upColor, downColor, noChangeColor) {
-    const open = kLineData.open
-    const close = kLineData.close
-    const openY = this._yAxis.convertToPixel(open)
-    const closeY = this._yAxis.convertToPixel(close)
-    const highY = this._yAxis.convertToPixel(kLineData.high)
-    const lowY = this._yAxis.convertToPixel(kLineData.low)
-    if (close > open) {
-      this._ctx.fillStyle = upColor
-    } else if (close < open) {
-      this._ctx.fillStyle = downColor
-    } else {
-      this._ctx.fillStyle = noChangeColor
-    }
-    this._ctx.fillRect(x - 0.5, highY, 1, lowY - highY)
-    this._ctx.fillRect(x - halfBarSpace, openY - 0.5, halfBarSpace, 1)
-    this._ctx.fillRect(x, closeY - 0.5, halfBarSpace, 1)
   }
 
   /**

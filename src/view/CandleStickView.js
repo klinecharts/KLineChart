@@ -120,7 +120,6 @@ export default class CandleStickView extends TechnicalIndicatorView {
    * @private
    */
   _drawCandleStick () {
-    let rect = []
     let markHighestPrice = -Infinity
     let markHighestPriceX = -1
     let markLowestPrice = Infinity
@@ -141,82 +140,97 @@ export default class CandleStickView extends TechnicalIndicatorView {
         markLowestPriceX = x
       }
 
-      if (candleStick.bar.style !== CandleStickStyle.OHLC) {
-        if (close > open) {
-          this._ctx.strokeStyle = candleStick.bar.upColor
-          this._ctx.fillStyle = candleStick.bar.upColor
-        } else if (close < open) {
-          this._ctx.strokeStyle = candleStick.bar.downColor
-          this._ctx.fillStyle = candleStick.bar.downColor
-        } else {
-          this._ctx.strokeStyle = candleStick.bar.noChangeColor
-          this._ctx.fillStyle = candleStick.bar.noChangeColor
-        }
-        const openY = this._yAxis.convertToPixel(open)
-        const closeY = this._yAxis.convertToPixel(close)
-        const highY = this._yAxis.convertToPixel(high)
-        const lowY = this._yAxis.convertToPixel(low)
-        const highLine = []
-        const lowLine = []
-        highLine[0] = highY
-        lowLine[1] = lowY
-        if (openY > closeY) {
-          highLine[1] = closeY
-          lowLine[0] = openY
-          rect = [x - halfBarSpace, closeY, barSpace, openY - closeY]
-        } else if (openY < closeY) {
-          highLine[1] = openY
-          lowLine[0] = closeY
-          rect = [x - halfBarSpace, openY, barSpace, closeY - openY]
-        } else {
-          highLine[1] = openY
-          lowLine[0] = closeY
-          rect = [x - halfBarSpace, openY, barSpace, 1]
-        }
-        this._ctx.fillRect(x - 0.5, highLine[0], 1, highLine[1] - highLine[0])
-        this._ctx.fillRect(x - 0.5, lowLine[0], 1, lowLine[1] - lowLine[0])
-
-        if (rect[3] < 1) {
-          rect[3] = 1
-        }
-        switch (candleStick.bar.style) {
-          case CandleStickStyle.SOLID: {
-            this._ctx.fillRect(rect[0], rect[1], rect[2], rect[3])
-            break
-          }
-          case CandleStickStyle.STROKE: {
-            this._ctx.strokeRect(rect[0] + 0.5, rect[1], rect[2] - 1, rect[3])
-            break
-          }
-          case CandleStickStyle.UP_STROKE: {
-            if (close > open) {
-              this._ctx.strokeRect(rect[0] + 0.5, rect[1], rect[2] - 1, rect[3])
-            } else {
-              this._ctx.fillRect(rect[0], rect[1], rect[2], rect[3])
-            }
-            break
-          }
-          case CandleStickStyle.DOWN_STROKE: {
-            if (close > open) {
-              this._ctx.fillRect(rect[0], rect[1], rect[2], rect[3])
-            } else {
-              this._ctx.strokeRect(rect[0], rect[1], rect[2], rect[3])
-            }
-            break
-          }
-        }
+      if (close > open) {
+        this._ctx.strokeStyle = candleStick.bar.upColor
+        this._ctx.fillStyle = candleStick.bar.upColor
+      } else if (close < open) {
+        this._ctx.strokeStyle = candleStick.bar.downColor
+        this._ctx.fillStyle = candleStick.bar.downColor
       } else {
-        this._drawOhlc(
-          halfBarSpace, x, kLineData,
-          candleStick.bar.upColor,
-          candleStick.bar.downColor,
-          candleStick.bar.noChangeColor
-        )
+        this._ctx.strokeStyle = candleStick.bar.noChangeColor
+        this._ctx.fillStyle = candleStick.bar.noChangeColor
+      }
+      const openY = this._yAxis.convertToPixel(open)
+      const closeY = this._yAxis.convertToPixel(close)
+      const highY = this._yAxis.convertToPixel(high)
+      const lowY = this._yAxis.convertToPixel(low)
+      switch (candleStick.bar.style) {
+        case CandleStickStyle.SOLID: {
+          this._drawCandleStickBar(
+            x, openY, closeY, highY, lowY,
+            halfBarSpace, barSpace, 0, this._ctx.fillRect
+          )
+          break
+        }
+        case CandleStickStyle.STROKE: {
+          this._drawCandleStickBar(
+            x, openY, closeY, highY, lowY,
+            halfBarSpace, barSpace, 0.5, this._ctx.strokeRect
+          )
+          break
+        }
+        case CandleStickStyle.UP_STROKE: {
+          let drawFuc
+          let correction = 0
+          if (close > open) {
+            drawFuc = this._ctx.strokeRect
+            correction = 0.5
+          } else {
+            drawFuc = this._ctx.fillRect
+          }
+          this._drawCandleStickBar(
+            x, openY, closeY, highY, lowY,
+            halfBarSpace, barSpace, correction, drawFuc
+          )
+          break
+        }
+        case CandleStickStyle.DOWN_STROKE: {
+          let drawFuc
+          let correction = 0
+          if (close > open) {
+            drawFuc = this._ctx.fillRect
+          } else {
+            correction = 0.5
+            drawFuc = this._ctx.strokeRect
+          }
+          this._drawCandleStickBar(
+            x, openY, closeY, highY, lowY,
+            halfBarSpace, barSpace, correction, drawFuc
+          )
+          break
+        }
+        default: {
+          this._ctx.fillRect(x - 0.5, highY, 1, lowY - highY)
+          this._ctx.fillRect(x - halfBarSpace, openY - 0.5, halfBarSpace, 1)
+          this._ctx.fillRect(x, closeY - 0.5, halfBarSpace, 1)
+          break
+        }
       }
     }
     this._drawGraphics(onDrawing)
     this._highestMarkData = { x: markHighestPriceX, price: markHighestPrice }
     this._lowestMarkData = { x: markLowestPriceX, price: markLowestPrice }
+  }
+
+  /**
+   * 绘制蜡烛柱
+   * @param x
+   * @param openY
+   * @param closeY
+   * @param highY
+   * @param lowY
+   * @param halfBarSpace
+   * @param barSpace
+   * @param correction
+   * @param drawFuc
+   * @private
+   */
+  _drawCandleStickBar (x, openY, closeY, highY, lowY, halfBarSpace, barSpace, correction, drawFuc) {
+    const highEndY = Math.min(openY, closeY)
+    const lowStartY = Math.max(openY, closeY)
+    this._ctx.fillRect(x - 0.5, highY, 1, highEndY - highY)
+    this._ctx.fillRect(x - 0.5, lowStartY, 1, lowY - lowStartY)
+    drawFuc.call(this._ctx, x - halfBarSpace + correction, highEndY, barSpace - correction * 2, Math.max(1, lowStartY - highEndY))
   }
 
   /**

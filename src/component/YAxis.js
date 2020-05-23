@@ -83,19 +83,16 @@ export default class YAxis extends Axis {
       for (let i = from; i < to; i++) {
         const kLineData = dataList[i]
         const technicalIndicatorData = technicalIndicatorResult[i] || {}
-        const minCompareArray = [kLineData.close, minMaxArray[0]]
-        const maxCompareArray = [kLineData.close, minMaxArray[1]]
+        minMaxArray[0] = Math.min(kLineData.close, minMaxArray[0])
+        minMaxArray[1] = Math.max(kLineData.close, minMaxArray[1])
         if (isShowAverageLine && isValid(technicalIndicatorData.average)) {
-          minCompareArray.push(technicalIndicatorData.average)
-          maxCompareArray.push(technicalIndicatorData.average)
+          minMaxArray[0] = Math.min(technicalIndicatorData.average, minMaxArray[0])
+          minMaxArray[1] = Math.max(technicalIndicatorData.average, minMaxArray[1])
         }
-        minMaxArray[0] = Math.min.apply(null, minCompareArray)
-        minMaxArray[1] = Math.max.apply(null, maxCompareArray)
       }
     } else {
       const plots = technicalIndicator.plots || []
       for (let i = from; i < to; i++) {
-        const kLineData = dataList[i]
         const technicalIndicatorData = technicalIndicatorResult[i] || {}
         plots.forEach(plot => {
           const value = technicalIndicatorData[plot.key]
@@ -104,10 +101,6 @@ export default class YAxis extends Axis {
             minMaxArray[1] = Math.max(minMaxArray[1], value)
           }
         })
-        if (technicalIndicator.isPriceTechnicalIndicator) {
-          minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)
-          minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
-        }
       }
     }
     if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
