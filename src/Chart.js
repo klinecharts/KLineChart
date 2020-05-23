@@ -26,8 +26,10 @@ export default class Chart {
    * @param options
    */
   setStyleOptions (options) {
-    this._chartPane.chartData().applyStyleOptions(options)
-    this._chartPane.measurePaneSize()
+    if (options) {
+      this._chartPane.chartData().applyStyleOptions(options)
+      this._chartPane.measurePaneSize()
+    }
   }
 
   /**
@@ -44,7 +46,9 @@ export default class Chart {
    * @param params
    */
   setTechnicalIndicatorParams (technicalIndicatorType, params) {
-    this._chartPane.applyTechnicalIndicatorParams(technicalIndicatorType, params)
+    if (technicalIndicatorType) {
+      this._chartPane.applyTechnicalIndicatorParams(technicalIndicatorType, params)
+    }
   }
 
   /**
@@ -163,7 +167,7 @@ export default class Chart {
    * @param type
    */
   setCandleStickChartType (type) {
-    this._chartPane.setCandleStickPaneType(type)
+    this._chartPane.setCandleStickChartType(type)
   }
 
   /**
@@ -171,7 +175,9 @@ export default class Chart {
    * @param technicalIndicatorType
    */
   setCandleStickTechnicalIndicatorType (technicalIndicatorType) {
-    this._chartPane.setTechnicalIndicatorType(CANDLE_STICK_PANE_TAG, technicalIndicatorType)
+    if (technicalIndicatorType) {
+      this._chartPane.setTechnicalIndicatorType(CANDLE_STICK_PANE_TAG, technicalIndicatorType)
+    }
   }
 
   /**
@@ -180,7 +186,9 @@ export default class Chart {
    * @param technicalIndicatorType
    */
   setTechnicalIndicatorType (tag, technicalIndicatorType) {
-    this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType)
+    if (tag) {
+      this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType)
+    }
   }
 
   /**
@@ -207,7 +215,9 @@ export default class Chart {
    * @param tag
    */
   removeTechnicalIndicator (tag) {
-    this._chartPane.removeTechnicalIndicator(tag)
+    if (tag) {
+      this._chartPane.removeTechnicalIndicator(tag)
+    }
   }
 
   /**

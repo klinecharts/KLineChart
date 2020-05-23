@@ -353,7 +353,7 @@ export default class ChartPane {
    * 设置蜡烛图图表类型
    * @param type
    */
-  setCandleStickPaneType (type) {
+  setCandleStickChartType (type) {
     this._candleStickPane.setChartType(type)
   }
 
