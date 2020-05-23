@@ -93,6 +93,7 @@ export default class YAxis extends Axis {
     } else {
       const plots = technicalIndicator.plots || []
       for (let i = from; i < to; i++) {
+        const kLineData = dataList[i]
         const technicalIndicatorData = technicalIndicatorResult[i] || {}
         plots.forEach(plot => {
           const value = technicalIndicatorData[plot.key]
@@ -101,6 +102,10 @@ export default class YAxis extends Axis {
             minMaxArray[1] = Math.max(minMaxArray[1], value)
           }
         })
+        if (this._isCandleStickYAxis) {
+          minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)
+          minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
+        }
       }
     }
     if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {

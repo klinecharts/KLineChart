@@ -32,7 +32,7 @@ export default class WilliamsR extends TechnicalIndicator {
   regeneratePlots (params) {
     const plots = []
     params.forEach((_, i) => {
-      plots.push({ key: `wr${i}`, type: 'line' })
+      plots.push({ key: `wr${i + 1}`, type: 'line' })
     })
     return plots
   }

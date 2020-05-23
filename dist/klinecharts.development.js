@@ -2711,7 +2711,7 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
       var plots = [];
       params.forEach(function (_, i) {
         plots.push({
-          key: "wr".concat(i),
+          key: "wr".concat(i + 1),
           type: 'line'
         });
       });
@@ -5891,6 +5891,8 @@ var YAxis = /*#__PURE__*/function (_Axis) {
   }, {
     key: "calcMinMaxValue",
     value: function calcMinMaxValue(technicalIndicator, isRealTime) {
+      var _this2 = this;
+
       var dataList = this._chartData.dataList();
 
       var technicalIndicatorResult = technicalIndicator.result;
@@ -5919,6 +5921,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
         var plots = technicalIndicator.plots || [];
 
         var _loop = function _loop(_i) {
+          var kLineData = dataList[_i];
           var technicalIndicatorData = technicalIndicatorResult[_i] || {};
           plots.forEach(function (plot) {
             var value = technicalIndicatorData[plot.key];
@@ -5928,6 +5931,11 @@ var YAxis = /*#__PURE__*/function (_Axis) {
               minMaxArray[1] = Math.max(minMaxArray[1], value);
             }
           });
+
+          if (_this2._isCandleStickYAxis) {
+            minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low);
+            minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high);
+          }
         };
 
         for (var _i = from; _i < to; _i++) {

@@ -23,6 +23,13 @@ import BollingerBands from '../src/data/technicalindicator/volatility/BollingerB
 import StopAndReverse from '../src/data/technicalindicator/volatility/StopAndReverse'
 import OnBalanceVolume from '../src/data/technicalindicator/volume/OnBalanceVolume'
 import Volume from '../src/data/technicalindicator/volume/Volume'
+import {
+  createNewTechnicalIndicator,
+  getTechnicalIndicatorInfo
+} from '../src/data/technicalindicator/technicalIndicatorControl'
+import TechnicalIndicator from '../src/data/technicalindicator/TechnicalIndicator'
+import YAxis from '../src/component/YAxis'
+import ChartData from '../src/data/ChartData'
 
 const kLineDataList = [
   { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
@@ -49,7 +56,7 @@ const kLineDataList = [
 ]
 
 function technicalIndicatorResultSizeCase (TechnicalIndicator) {
-  it('should be consistent with the number of original data', function () {
+  it('should that the number of calculation results is consistent with the format of the original data', function () {
     const technicalIndicator = new TechnicalIndicator()
     const result = technicalIndicator.calcTechnicalIndicator(kLineDataList, technicalIndicator.calcParams)
     expect(result.length).to.equal(kLineDataList.length)
@@ -57,14 +64,14 @@ function technicalIndicatorResultSizeCase (TechnicalIndicator) {
 }
 
 function technicalIndicatorNameCase (TechnicalIndicator, equalName) {
-  it('should name is same', function () {
+  it('should be the same name', function () {
     const technicalIndicator = new TechnicalIndicator()
     expect(technicalIndicator.name).to.equal(equalName)
   })
 }
 
 function technicalIndicatorCheckParamsCountCase (TechnicalIndicator, calcParams) {
-  it('should check params count', function () {
+  it('should check number of calculation parameters', function () {
     const technicalIndicator = new TechnicalIndicator()
     technicalIndicator.setCalcParams(calcParams)
     expect(technicalIndicator.calcParams).to.deep.not.equal(calcParams)
@@ -72,7 +79,7 @@ function technicalIndicatorCheckParamsCountCase (TechnicalIndicator, calcParams)
 }
 
 function technicalIndicatorNoCheckParamsCountCase (TechnicalIndicator, calcParams) {
-  it('should no check params count', function () {
+  it('should no be check number of calculation parameters', function () {
     const technicalIndicator = new TechnicalIndicator()
     technicalIndicator.setCalcParams(calcParams)
     expect(technicalIndicator.calcParams).to.deep.equal(calcParams)
@@ -81,7 +88,7 @@ function technicalIndicatorNoCheckParamsCountCase (TechnicalIndicator, calcParam
 
 describe('technicalIndicator', function () {
   describe('calcHnLn', function () {
-    it('should return high and low', function () {
+    it('should return the correct value', function () {
       const dataList = [
         { open: 10, low: 8, high: 16, close: 9, timestamp: Date.now() },
         { open: 7, low: 6, high: 80, close: 60, timestamp: Date.now() },
@@ -215,5 +222,24 @@ describe('technicalIndicator', function () {
     technicalIndicatorResultSizeCase(Volume)
     technicalIndicatorNameCase(Volume, 'VOL')
     technicalIndicatorNoCheckParamsCountCase(Volume, [1, 2, 3, 4, 5, 6, 7])
+  })
+
+  describe('createNewIndicator', function () {
+    it('should be null when passed in empty', function () {
+      const TechnicalIndicator = createNewTechnicalIndicator({})
+      expect(TechnicalIndicator).to.be.a('null')
+    })
+
+    it('should be create new technical indicator when the correct data is passed in', function () {
+      const TechnicalIndicator = createNewTechnicalIndicator({ name: 'T', calcTechnicalIndicator: () => {} })
+      const t = new TechnicalIndicator()
+      expect(t.name).to.be.equals('T')
+    })
+  })
+
+  describe('getTechnicalIndicatorInfo', function () {
+    it('should return objects containing labels labels and name', function () {
+      expect(getTechnicalIndicatorInfo({}, new TechnicalIndicator({}), new YAxis(new ChartData({})))).to.have.all.keys('labels', 'labels', 'name')
+    })
   })
 })
