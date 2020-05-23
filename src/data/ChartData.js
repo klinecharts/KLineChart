@@ -469,9 +469,6 @@ export default class ChartData {
     const distanceBarCount = distance / this._dataSpace
     this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount
     this.adjustOffsetBarCount()
-    if (distanceBarCount > 0 && this._from === 0) {
-      this._loadMoreHandler()
-    }
     this._invalidateHandler()
   }
 
@@ -527,6 +524,9 @@ export default class ChartData {
     }
     if (this._from < 0) {
       this._from = 0
+    }
+    if (this._from === 0) {
+      this._loadMoreHandler()
     }
   }
 

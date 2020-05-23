@@ -9,12 +9,13 @@
 📈Lightweight k-line chart built with html5 canvas. Support parameter setting of technical indicators, support custom indicators, draw marker lines, and support custom styles.
 
 ## Installing
-#### Using npm
+### Using npm
 ```bash
 npm install klinecharts --save
 ```
-#### CDN
+### CDN
 You can use [unpkg](https://unpkg.com):
+
 https://unpkg.com/klinecharts/dist/klinecharts.production.min.js
 
 ## Docs
@@ -34,11 +35,11 @@ The generated files are in the dist folder.
 
 
 ## Resources
-#### Technical Indicator
+### Technical Indicators
 [https://github.com/liihuu/TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator)
 
-#### Sample Code
-[https://github.com/liihuu/KLineChartSample]((https://github.com/liihuu/KLineChartSample))
+### Sample Code
+[https://github.com/liihuu/KLineChartSample](https://github.com/liihuu/KLineChartSample)
 
 
 ## License

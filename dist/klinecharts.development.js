@@ -1,6 +1,6 @@
 /**
  * @license
- * KLineChart v5.2.2
+ * KLineChart v5.3.0
  * Copyright (c) 2019 lihu.
  * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
@@ -1043,7 +1043,7 @@ var TechnicalIndicator = /*#__PURE__*/function () {
 
     this.plots = isArray(plots) ? plots : []; // 是否需要检查参数
 
-    this.shouldCheckParamCount = isBoolean(shouldCheckParamCount) ? shouldCheckParamCount : false; // 是否是价格技术指标
+    this.shouldCheckParamCount = isBoolean(shouldCheckParamCount) ? shouldCheckParamCount : true; // 是否是价格技术指标
 
     this.isPriceTechnicalIndicator = isPriceTechnicalIndicator; // 是否是数量技术指标
 
@@ -1127,6 +1127,7 @@ var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: MA,
       calcParams: [5, 10, 30, 60],
+      shouldCheckParamCount: false,
       isPriceTechnicalIndicator: true,
       plots: [{
         key: 'ma5',
@@ -1200,6 +1201,7 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: EMA,
       calcParams: [6, 12, 20],
+      shouldCheckParamCount: false,
       isPriceTechnicalIndicator: true,
       plots: [{
         key: 'ema6',
@@ -1282,6 +1284,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
       name: VOL,
       calcParams: [5, 10, 20],
       isVolumeTechnicalIndicator: true,
+      shouldCheckParamCount: false,
       baseValue: 0,
       minValue: 0,
       plots: [{
@@ -1386,7 +1389,6 @@ var MovingAverageConvergenceDivergence = /*#__PURE__*/function (_TechnicalIndica
     return _super.call(this, {
       name: MACD,
       calcParams: [12, 26, 9],
-      shouldCheckParamCount: true,
       baseValue: 0,
       plots: [{
         key: 'diff',
@@ -1489,7 +1491,6 @@ var BollingerBands = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: BOLL,
       calcParams: [20],
-      shouldCheckParamCount: true,
       isPriceTechnicalIndicator: true,
       plots: [{
         key: 'up',
@@ -1604,7 +1605,6 @@ var StockIndicatorKDJ = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: KDJ,
       calcParams: [9, 3, 3],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'k',
         type: 'line'
@@ -1671,6 +1671,7 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: RSI,
       calcParams: [6, 12, 24],
+      shouldCheckParamCount: false,
       plots: [{
         key: 'rsi6',
         type: 'line'
@@ -1767,6 +1768,7 @@ var Bias = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: BIAS,
       calcParams: [6, 12, 24],
+      shouldCheckParamCount: false,
       plots: [{
         key: 'bias6',
         type: 'line'
@@ -1846,7 +1848,6 @@ var Brar = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: BRAR,
       calcParams: [26],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'br',
         type: 'line'
@@ -1937,7 +1938,6 @@ var CommodityChannelIndex = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: CCI,
       calcParams: [13],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'cci',
         type: 'line'
@@ -2013,7 +2013,6 @@ var DirectionalMovementIndex = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: DMI,
       calcParams: [14, 6],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'pdi',
         type: 'line'
@@ -2155,7 +2154,6 @@ var CurrentRatio = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: CR,
       calcParams: [26, 10, 20, 40, 60],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'cr',
         type: 'line'
@@ -2299,7 +2297,6 @@ var PsychologicalLine = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: PSY,
       calcParams: [12, 6],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'psy',
         type: 'line'
@@ -2366,7 +2363,6 @@ var DifferentOfMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: DMA,
       calcParams: [10, 50, 10],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'dma',
         type: 'line'
@@ -2445,7 +2441,6 @@ var TripleExponentiallySmoothedAverage = /*#__PURE__*/function (_TechnicalIndica
     return _super.call(this, {
       name: TRIX,
       calcParams: [12, 20],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'trix',
         type: 'line'
@@ -2529,7 +2524,6 @@ var OnBalanceVolume = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: OBV,
       calcParams: [30],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'obv',
         type: 'line'
@@ -2595,7 +2589,6 @@ var VolumeRatio = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: VR,
       calcParams: [24, 30],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'vr',
         type: 'line'
@@ -2692,6 +2685,7 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: WR,
       calcParams: [6, 10, 14],
+      shouldCheckParamCount: false,
       plots: [{
         key: 'wr1',
         type: 'line'
@@ -2768,7 +2762,6 @@ var Momentum = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: MTM,
       calcParams: [6, 10],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'mtm',
         type: 'line'
@@ -2830,7 +2823,6 @@ var StopAndReverse = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: SAR,
       calcParams: [2, 2, 20],
-      shouldCheckParamCount: true,
       isPriceTechnicalIndicator: true,
       plots: [{
         key: 'sar',
@@ -2936,7 +2928,6 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: EMV,
       calcParams: [14, 9],
-      shouldCheckParamCount: true,
       plots: [{
         key: 'emv',
         type: 'line'
@@ -3654,10 +3645,6 @@ var ChartData = /*#__PURE__*/function () {
       this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount;
       this.adjustOffsetBarCount();
 
-      if (distanceBarCount > 0 && this._from === 0) {
-        this._loadMoreHandler();
-      }
-
       this._invalidateHandler();
     }
     /**
@@ -3725,6 +3712,10 @@ var ChartData = /*#__PURE__*/function () {
 
       if (this._from < 0) {
         this._from = 0;
+      }
+
+      if (this._from === 0) {
+        this._loadMoreHandler();
       }
     }
     /**
@@ -9281,7 +9272,6 @@ var TransactionAveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
     return _super.call(this, {
       name: 'TAP',
       isPriceTechnicalIndicator: true,
-      shouldCheckParamCount: true,
       plots: [{
         key: 'average',
         type: 'line'
@@ -11501,7 +11491,7 @@ var CHART_NAME_PREFIX = 'k_line_chart_';
  */
 
 function version() {
-  return '5.2.2';
+  return '5.3.0';
 }
 /**
  * 初始化
@@ -11513,7 +11503,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 5.2.2. Root dom is null, can not initialize the chart!!!';
+  var errorMessage = 'Chart version is 5.3.0. Root dom is null, can not initialize the chart!!!';
   var container = ds;
 
   if (!container) {
