@@ -21,6 +21,7 @@ export default class WilliamsR extends TechnicalIndicator {
     super({
       name: WR,
       calcParams: [6, 10, 14],
+      shouldCheckParamCount: false,
       plots: [
         { key: 'wr1', type: 'line' },
         { key: 'wr2', type: 'line' },

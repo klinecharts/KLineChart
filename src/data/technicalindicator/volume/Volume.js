@@ -21,6 +21,7 @@ export default class Volume extends TechnicalIndicator {
       name: VOL,
       calcParams: [5, 10, 20],
       isVolumeTechnicalIndicator: true,
+      shouldCheckParamCount: false,
       baseValue: 0,
       minValue: 0,
       plots: [

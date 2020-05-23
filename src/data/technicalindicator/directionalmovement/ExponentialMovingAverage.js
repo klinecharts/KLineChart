@@ -21,6 +21,7 @@ export default class ExponentialMovingAverage extends TechnicalIndicator {
     super({
       name: EMA,
       calcParams: [6, 12, 20],
+      shouldCheckParamCount: false,
       isPriceTechnicalIndicator: true,
       plots: [
         { key: 'ema6', type: 'line' },

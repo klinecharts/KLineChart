@@ -20,7 +20,6 @@ export default class Brar extends TechnicalIndicator {
     super({
       name: BRAR,
       calcParams: [26],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'br', type: 'line' },
         { key: 'ar', type: 'line' }

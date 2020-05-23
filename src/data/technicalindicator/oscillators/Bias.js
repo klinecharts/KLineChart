@@ -20,6 +20,7 @@ export default class Bias extends TechnicalIndicator {
     super({
       name: BIAS,
       calcParams: [6, 12, 24],
+      shouldCheckParamCount: false,
       plots: [
         { key: 'bias6', type: 'line' },
         { key: 'bias12', type: 'line' },

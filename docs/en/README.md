@@ -53,7 +53,8 @@ clearData()
 loadMore(cb)
 setCandleStickChartType(chartType)
 setCandleStickTechnicalIndicatorType(technicalIndicatorType)
-addTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
+createTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
+addCustomTechnicalIndicator(technicalIndicatorInfo)
 setTechnicalIndicatorType(tag, technicalIndicatorType)
 removeTechnicalIndicator(tag)
 addGraphicMark(graphicMarkType)
@@ -71,6 +72,7 @@ The turnover field is not necessary, but if you need to display the ```moving av
 you need to fill in the data for this field.
 
 ## Technical indicator
+### Default
 The chart supports 21 technical indicators, the following are the types and calculation parameters:
 <table>
     <tbody>
@@ -142,6 +144,29 @@ The chart supports 21 technical indicators, the following are the types and calc
         </tr>
     </tbody>
 </table>
+
+### Custom
+Through the chart api ```addCustomTechnicalIndicator(technicalIndicatorInfo)```, you can add custom technical indicators.
+
+After adding, you can operate like the default technical indicators, such as setting calculation parameters.
+
+The technicalIndicatorInfo format is as follows:
+```
+{
+  name: 'NAME',
+  calcTechnicalIndicator: (kLineDataList, calcParams) => { return [...] },
+  precision: 4,
+  calcParams: [],
+  plots: []
+  shouldCheckParamCount: true
+  isPriceTechnicalIndicator: false,
+  isVolumeTechnicalIndicator: false
+  baseValue: null
+  minValue: null
+  maxValue: null
+}
+```
+Specific reference [TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator).
 
 ## Style option
 For full configuration please see [here](../style.md).

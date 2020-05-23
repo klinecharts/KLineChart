@@ -19,7 +19,6 @@ export default class TransactionAveragePrice extends TechnicalIndicator {
     super({
       name: 'TAP',
       isPriceTechnicalIndicator: true,
-      shouldCheckParamCount: true,
       plots: [
         { key: 'average', type: 'line' }
       ]

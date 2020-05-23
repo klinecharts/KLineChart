@@ -21,7 +21,6 @@ export default class StockIndicatorKDJ extends TechnicalIndicator {
     super({
       name: KDJ,
       calcParams: [9, 3, 3],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'k', type: 'line' },
         { key: 'd', type: 'line' },

@@ -20,7 +20,6 @@ export default class CurrentRatio extends TechnicalIndicator {
     super({
       name: CR,
       calcParams: [26, 10, 20, 40, 60],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'cr', type: 'line' },
         { key: 'ma1', type: 'line' },

@@ -20,7 +20,6 @@ export default class MovingAverageConvergenceDivergence extends TechnicalIndicat
     super({
       name: MACD,
       calcParams: [12, 26, 9],
-      shouldCheckParamCount: true,
       baseValue: 0,
       plots: [
         { key: 'diff', type: 'line' },

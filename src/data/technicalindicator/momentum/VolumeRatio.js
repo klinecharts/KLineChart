@@ -20,7 +20,6 @@ export default class VolumeRatio extends TechnicalIndicator {
     super({
       name: VR,
       calcParams: [24, 30],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'vr', type: 'line' },
         { key: 'vrMa', type: 'line' }

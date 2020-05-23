@@ -20,7 +20,6 @@ export default class PsychologicalLine extends TechnicalIndicator {
     super({
       name: PSY,
       calcParams: [12, 6],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'psy', type: 'line' },
         { key: 'psyMa', type: 'line' }

@@ -20,6 +20,7 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
     super({
       name: RSI,
       calcParams: [6, 12, 24],
+      shouldCheckParamCount: false,
       plots: [
         { key: 'rsi6', type: 'line' },
         { key: 'rsi12', type: 'line' },

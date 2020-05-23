@@ -20,7 +20,6 @@ export default class DifferentOfMovingAverage extends TechnicalIndicator {
     super({
       name: DMA,
       calcParams: [10, 50, 10],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'dma', type: 'line' },
         { key: 'ama', type: 'line' }

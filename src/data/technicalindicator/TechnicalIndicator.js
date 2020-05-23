@@ -30,7 +30,7 @@ export default class TechnicalIndicator {
     // 数据信息
     this.plots = isArray(plots) ? plots : []
     // 是否需要检查参数
-    this.shouldCheckParamCount = isBoolean(shouldCheckParamCount) ? shouldCheckParamCount : false
+    this.shouldCheckParamCount = isBoolean(shouldCheckParamCount) ? shouldCheckParamCount : true
     // 是否是价格技术指标
     this.isPriceTechnicalIndicator = isPriceTechnicalIndicator
     // 是否是数量技术指标

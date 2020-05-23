@@ -20,7 +20,6 @@ export default class Momentum extends TechnicalIndicator {
     super({
       name: MTM,
       calcParams: [6, 10],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'mtm', type: 'line' },
         { key: 'mtmMa', type: 'line' }

@@ -119,12 +119,16 @@ setCandleStickChartType(chartType)
 // 一般来说，只是设置'NO'，'MA'，'EMA'，'BOLL'，'SAR'，当设置为'NO'时将不展示
 setCandleStickTechnicalIndicatorType(technicalIndicatorType)
 
-// 添加技术指标图
+// 创建技术指标图
 // technicalIndicatorType 技术指标类型，详情参阅技术指标，可缺省，默认为'MACD'
 // height 技术指标图的高度，可缺省，默认为100
 // dragEnabled 技术指标图是否可以拖拽调整高度，可缺省，默认为true
 // 返回值是一个字符串类型的技术指标图标识，这非常重要，后续对该图表的一些操作，都需要此标识
-addTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
+createTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
+
+// 添加一个自定义技术指标
+// technicalIndicatorInfo 技术指标信息，详细请参考自定义指标
+addCustomTechnicalIndicator(technicalIndicatorInfo)
 
 // 设置其它技术指标图的指标类型
 // technicalIndicatorType 技术指标类型，当technicalIndicatorType是'NO'时，图表会移除当前技术指标图，详情类型详情可参阅技术指标
@@ -164,7 +168,8 @@ getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColo
 
 
 ## 技术指标
-图表目前支持21种技术指标，类型及计算参数如下：
+### 默认技术指标
+图表默认支持21种技术指标，类型及计算参数如下：
 <table>
     <tbody>
         <tr>
@@ -235,6 +240,47 @@ getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColo
         </tr>
     </tbody>
 </table>
+
+### 自定义技术指标
+通过图表api```addCustomTechnicalIndicator(technicalIndicatorInfo)```可以添加自定义技术指标。
+
+添加后，可以像操作默认的技术指标一样去操作，比如设置计算参数
+technicalIndicatorInfo格式如下：
+```
+{
+  // 技术指标名字，必要字段，是技术指标的唯一标识
+  name: 'NAME',
+  // 技术指标计算方法，必要字段
+  // 该字段是一个回调方法，回调参数是当前图表的源数据和计算的参数，需要返回一个数组
+  calcTechnicalIndicator: (kLineDataList, calcParams) => { return [...] },
+  // 精度，可缺省，默认为4
+  precision: 4,
+  // 计算参数，可缺省
+  calcParams: [],
+  // 数据信息，需要对应计算方法返回的结果里面的key值
+  // 示例：
+  // 如果calcTechnicalIndicator返回的结果形式是[{ a: 1, b: 2 }, { a: 5, b: 6 }]
+  // 则plots应该是[{ key: 'a', type: 'line' }, { key: 'b', type: 'line' }]
+  // type可以是'line'，'circle'和'bar'
+  plots: []
+  // 是否需要检查计算参数，可缺省，默认为true
+  // 如果为true，当设置指标参数时，如果参数个数和默认的参数个数不一致，将不能生效
+  shouldCheckParamCount: true
+  // 是否是价格技术指标，可缺省，默认为false
+  // 如果为true，当设置价格精度时将会同步精度
+  isPriceTechnicalIndicator: false,
+  // 是否是数量技术指标，可缺省，默认为false
+  // 如果为true，当设置数量精度时将会同步精度
+  isVolumeTechnicalIndicator: false
+  // 基础比对数据，可缺省
+  baseValue: null
+  // 指定的最小值，可缺省
+  minValue: null
+  // 指定的最大值，可缺省
+  maxValue: null
+}
+```
+具体可参考[TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator)
 
 ## 样式配置
 全部配置请参阅[style](../style.md)

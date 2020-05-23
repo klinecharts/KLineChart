@@ -20,7 +20,6 @@ export default class OnBalanceVolume extends TechnicalIndicator {
     super({
       name: OBV,
       calcParams: [30],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'obv', type: 'line' },
         { key: 'obvMa', type: 'line' }

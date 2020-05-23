@@ -21,7 +21,6 @@ export default class EaseOfMovementValue extends TechnicalIndicator {
     super({
       name: EMV,
       calcParams: [14, 9],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'emv', type: 'line' },
         { key: 'emvMa', type: 'line' }

@@ -21,7 +21,6 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
     super({
       name: DMI,
       calcParams: [14, 6],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'pdi', type: 'line' },
         { key: 'mdi', type: 'line' },

@@ -20,7 +20,6 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
     super({
       name: CCI,
       calcParams: [13],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'cci', type: 'line' }
       ]

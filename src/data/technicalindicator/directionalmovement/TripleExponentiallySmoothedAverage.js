@@ -20,7 +20,6 @@ export default class TripleExponentiallySmoothedAverage extends TechnicalIndicat
     super({
       name: TRIX,
       calcParams: [12, 20],
-      shouldCheckParamCount: true,
       plots: [
         { key: 'trix', type: 'line' },
         { key: 'trixMa', type: 'line' }
