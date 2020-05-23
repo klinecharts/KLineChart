@@ -10938,8 +10938,8 @@ var ChartPane = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "setCandleStickPaneType",
-    value: function setCandleStickPaneType(type) {
+    key: "setCandleStickChartType",
+    value: function setCandleStickChartType(type) {
       this._candleStickPane.setChartType(type);
     }
     /**
@@ -11167,9 +11167,11 @@ var Chart = /*#__PURE__*/function () {
   _createClass(Chart, [{
     key: "setStyleOptions",
     value: function setStyleOptions(options) {
-      this._chartPane.chartData().applyStyleOptions(options);
+      if (options) {
+        this._chartPane.chartData().applyStyleOptions(options);
 
-      this._chartPane.measurePaneSize();
+        this._chartPane.measurePaneSize();
+      }
     }
     /**
      * 获取样式配置
@@ -11190,7 +11192,9 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setTechnicalIndicatorParams",
     value: function setTechnicalIndicatorParams(technicalIndicatorType, params) {
-      this._chartPane.applyTechnicalIndicatorParams(technicalIndicatorType, params);
+      if (technicalIndicatorType) {
+        this._chartPane.applyTechnicalIndicatorParams(technicalIndicatorType, params);
+      }
     }
     /**
      * 获取技术指标参数配置
@@ -11339,7 +11343,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setCandleStickChartType",
     value: function setCandleStickChartType(type) {
-      this._chartPane.setCandleStickPaneType(type);
+      this._chartPane.setCandleStickChartType(type);
     }
     /**
      * 设置蜡烛图技术指标类型
@@ -11349,7 +11353,9 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setCandleStickTechnicalIndicatorType",
     value: function setCandleStickTechnicalIndicatorType(technicalIndicatorType) {
-      this._chartPane.setTechnicalIndicatorType(CANDLE_STICK_PANE_TAG, technicalIndicatorType);
+      if (technicalIndicatorType) {
+        this._chartPane.setTechnicalIndicatorType(CANDLE_STICK_PANE_TAG, technicalIndicatorType);
+      }
     }
     /**
      * 设置技术指标类型
@@ -11360,7 +11366,9 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "setTechnicalIndicatorType",
     value: function setTechnicalIndicatorType(tag, technicalIndicatorType) {
-      this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType);
+      if (tag) {
+        this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType);
+      }
     }
     /**
      * 创建一个技术指标
@@ -11393,7 +11401,9 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "removeTechnicalIndicator",
     value: function removeTechnicalIndicator(tag) {
-      this._chartPane.removeTechnicalIndicator(tag);
+      if (tag) {
+        this._chartPane.removeTechnicalIndicator(tag);
+      }
     }
     /**
      * 添加图形标记
