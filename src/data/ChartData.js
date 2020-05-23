@@ -631,7 +631,7 @@ export default class ChartData {
    * @param technicalIndicatorInfo
    */
   addCustomTechnicalIndicator (technicalIndicatorInfo) {
-    const NewTechnicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo)
+    const NewTechnicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo || {})
     if (NewTechnicalIndicator) {
       const name = technicalIndicatorInfo.name
       // 将计算参数，放入参数集合

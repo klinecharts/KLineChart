@@ -3854,7 +3854,7 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "addCustomTechnicalIndicator",
     value: function addCustomTechnicalIndicator(technicalIndicatorInfo) {
-      var NewTechnicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo);
+      var NewTechnicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo || {});
 
       if (NewTechnicalIndicator) {
         var name = technicalIndicatorInfo.name; // 将计算参数，放入参数集合
@@ -5966,8 +5966,8 @@ var YAxis = /*#__PURE__*/function (_Axis) {
           this._maxValue = minMaxArray[1];
 
           if (this._minValue === this._maxValue || Math.abs(this._minValue - this._maxValue) < Math.pow(10, -6)) {
-            var percentValue = this._minValue * 0.2;
-            this._minValue -= percentValue;
+            var percentValue = this._minValue !== 0 ? Math.abs(this._minValue * 0.2) : 10;
+            this._minValue = this._minValue !== 0 ? this._minValue - percentValue : this._minValue;
             this._maxValue += percentValue;
           }
         }
@@ -11067,7 +11067,11 @@ var ChartPane = /*#__PURE__*/function () {
         }
 
         if (p) {
-          p.setTechnicalIndicatorType(technicalIndicatorType);
+          if (!this._chartData.technicalIndicator(technicalIndicatorType)) {
+            this.removeTechnicalIndicator(tag);
+          } else {
+            p.setTechnicalIndicatorType(technicalIndicatorType);
+          }
         }
       }
     }

@@ -440,7 +440,11 @@ export default class ChartPane {
         }
       }
       if (p) {
-        p.setTechnicalIndicatorType(technicalIndicatorType)
+        if (!this._chartData.technicalIndicator(technicalIndicatorType)) {
+          this.removeTechnicalIndicator(tag)
+        } else {
+          p.setTechnicalIndicatorType(technicalIndicatorType)
+        }
       }
     }
   }

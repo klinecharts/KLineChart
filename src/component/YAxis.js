@@ -133,8 +133,8 @@ export default class YAxis extends Axis {
           this._minValue === this._maxValue ||
           Math.abs(this._minValue - this._maxValue) < Math.pow(10, -6)
         ) {
-          const percentValue = this._minValue * 0.2
-          this._minValue -= percentValue
+          const percentValue = this._minValue !== 0 ? Math.abs(this._minValue * 0.2) : 10
+          this._minValue = this._minValue !== 0 ? this._minValue - percentValue : this._minValue
           this._maxValue += percentValue
         }
       }
