@@ -312,6 +312,9 @@ import { init } from 'klinecharts'
 ```
 注意：不管是core还是Intl都需要在图表库前引用。
 
+## 版本日志
+[CHANGELOG.md](CHANGELOG.md)
+
 ## 交流群
 + QQ: 677936660
 

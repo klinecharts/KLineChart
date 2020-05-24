@@ -191,10 +191,13 @@ import { init } from 'klinecharts'
 Note: Both core and Intl need to be referenced in the chart library.
 
 
-## Hot key
+## Hot Key
 Currently only supports moving and zooming.
 + ```shift + ←``` shift left
 + ```shift + →``` shift right
 + ```shift + ↑``` zoom out
 + ```shift + ↓``` zoom in
+
+## Change Log
+[CHANGELOG.md](CHANGELOG.md)
 
