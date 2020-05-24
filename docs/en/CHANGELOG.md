@@ -3,6 +3,16 @@
 #### Update Cycle
 New versions are generally released in about two weeks (emergency versions that affect functions will be released at any time).
 
+## 5.3.0
+`Release time to be determined`
++ 🛠 Refactoring technical indicator module.
++ 💄 The optimization method `formatDate` is called frequently and the resource occupation is too high.
++ 💄 Optimized to load more trigger mechanisms, instead of zooming, scrolling will trigger.
++ 💄 Optimize the Y axis to calculate the maximum and minimum values.
++ 🆕 The new method `addCustomTechnicalIndicator` is used to add custom technical indicators to the chart.
++ 👉 The method `addTechnicalIndicator` was changed to` createTechnicalIndicator`.
++ 🗑 Remove the technical indicators and draw ohlc.
+
 ## 5.2.2
 `2020-05-11`
 + 🐞 Solve the problem that some browsers can't render the chart without `Intl`.
