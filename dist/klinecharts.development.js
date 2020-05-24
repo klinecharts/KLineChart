@@ -6662,12 +6662,14 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
           this._drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
         }
       } else {
-        this._drawCandleStickRectPromptText(kLineData, technicalIndicatorData, technicalIndicator, x, floatLayerPromptCandleStick, candleStickPromptData);
+        var data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
+
+        this._drawCandleStickRectPromptText(x, floatLayerPromptCandleStick, candleStickPromptData, data);
 
         if (isDrawValueIndicator) {
           var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
-          this._drawTechnicalIndicatorPromptPoint(dataPos, technicalIndicator, technicalIndicatorData.values, technicalIndicatorOptions.line.colors, x);
+          this._drawTechnicalIndicatorPromptPoint(dataPos, technicalIndicator, data.values, technicalIndicatorOptions.line.colors, x);
         }
       }
     }
@@ -6714,7 +6716,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
     }
   }, {
     key: "_drawCandleStickRectPromptText",
-    value: function _drawCandleStickRectPromptText(kLineData, technicalIndicatorData, technicalIndicator, x, floatLayerPromptCandleStick, candleStickPromptData) {
+    value: function _drawCandleStickRectPromptText(x, floatLayerPromptCandleStick, candleStickPromptData, technicalIndicatorPromptData) {
       var _this2 = this;
 
       var baseLabels = floatLayerPromptCandleStick.labels;
@@ -6749,7 +6751,6 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       var rectLeft = rect.left;
       var rectRight = rect.right;
       var rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom + (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length;
-      var technicalIndicatorPromptData = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
 
       var floatLayerPromptTechnicalIndicator = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator;
 
@@ -6765,7 +6766,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       if (isCandleStick) {
         this._ctx.font = getFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.family);
         indicatorLabels.forEach(function (label, i) {
-          var v = indicatorValues[i] || '--';
+          var v = indicatorValues[i].value || 'n/a';
           var text = "".concat(label, ": ").concat(v);
           var labelWidth = calcTextWidth(_this2._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight;
           maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
@@ -6842,7 +6843,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
 
           _this2._ctx.textAlign = 'right';
 
-          _this2._ctx.fillText(indicatorValues[i] || '--', rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight, labelY);
+          _this2._ctx.fillText(indicatorValues[i].value || 'n/a', rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight, labelY);
 
           labelY += indicatorTextSize + indicatorTextMarginBottom;
         });
