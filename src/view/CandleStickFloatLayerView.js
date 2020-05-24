@@ -65,10 +65,10 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       this._ctx.fillText(labelText, labelX, labelY)
       labelX += labelWidth
 
-      const value = values[i] || '--'
+      const value = values[i] || 'n/a'
       let valueText
       if (isObject(value)) {
-        valueText = value.value || '--'
+        valueText = value.value || 'n/a'
         this._ctx.fillStyle = value.color || textColor
       } else {
         this._ctx.fillStyle = textColor
@@ -96,10 +96,10 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.family)
     let maxLabelWidth = 0
     baseLabels.forEach((label, i) => {
-      const value = baseValues[i] || '--'
+      const value = baseValues[i] || 'n/a'
       let v = value
       if (isObject(value)) {
-        v = value.value || '--'
+        v = value.value || 'n/a'
       }
       const text = `${label}: ${v}`
       const labelWidth = calcTextWidth(this._ctx, text) + baseTextMarginLeft + baseTextMarginRight

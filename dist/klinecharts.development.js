@@ -6696,11 +6696,11 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
         _this._ctx.fillText(labelText, labelX, labelY);
 
         labelX += labelWidth;
-        var value = values[i] || '--';
+        var value = values[i] || 'n/a';
         var valueText;
 
         if (isObject(value)) {
-          valueText = value.value || '--';
+          valueText = value.value || 'n/a';
           _this._ctx.fillStyle = value.color || textColor;
         } else {
           _this._ctx.fillStyle = textColor;
@@ -6731,11 +6731,11 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.family);
       var maxLabelWidth = 0;
       baseLabels.forEach(function (label, i) {
-        var value = baseValues[i] || '--';
+        var value = baseValues[i] || 'n/a';
         var v = value;
 
         if (isObject(value)) {
-          v = value.value || '--';
+          v = value.value || 'n/a';
         }
 
         var text = "".concat(label, ": ").concat(v);
