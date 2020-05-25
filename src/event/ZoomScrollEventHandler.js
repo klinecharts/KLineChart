@@ -50,17 +50,12 @@ export default class ZoomScrollEventHandler extends EventHandler {
     if (!isMouse(event)) {
       return
     }
-    if (!this._checkEventPointX(event.localX)) {
+    this._performCross(event, false, cross => {
+      this._chartData.setCrossHairPoint({ x: event.localX, y: cross.y })
+      this._chartData.setCrossHairPaneTag(cross.tag)
+    }, () => {
       this._chartData.setCrossHairPaneTag(null)
-      return
-    }
-    const real = this._translateCrossHairRealY(event.localY)
-    if (!real) {
-      this._chartData.setCrossHairPaneTag(null)
-      return
-    }
-    this._chartData.setCrossHairPoint({ x: event.localX, y: real.y })
-    this._chartData.setCrossHairPaneTag(real.tag)
+    })
   }
 
   mouseWheelEvent (event) {
@@ -92,100 +87,98 @@ export default class ZoomScrollEventHandler extends EventHandler {
   }
 
   mouseClickEvent (event) {
-    if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
-      return
-    }
-    const real = this._translateCrossHairRealY(event.localY)
-    if (!real) {
-      return
-    }
-    if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
-      this._touchPoint = { x: event.localX, y: event.localY }
-      this._chartData.setCrossHairPoint({ x: event.localX, y: real.y })
-      this._chartData.setCrossHairPaneTag(real.tag)
-    }
+    this._performCross(event, true, cross => {
+      if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
+        this._touchPoint = { x: event.localX, y: event.localY }
+        this._chartData.setCrossHairPoint({ x: event.localX, y: cross.y })
+        this._chartData.setCrossHairPaneTag(cross.tag)
+      }
+    })
   }
 
   mouseDownEvent (event) {
     this._startScrollPoint = { x: event.localX, y: event.localY }
     this._chartData.startScroll()
-    if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
-      return
-    }
-    const real = this._translateCrossHairRealY(event.localY)
-    if (!real) {
-      return
-    }
-    const crossHairPoint = { x: event.localX, y: real.y }
-    this._touchZoomed = false
-    if (this._touchPoint) {
-      const xDif = event.localX - this._touchPoint.x
-      const yDif = event.localY - this._touchPoint.y
-      const radius = Math.sqrt(xDif * xDif + yDif * yDif)
-      if (radius < 10) {
-        this._touchPoint = { x: event.localX, y: event.localY }
-        this._chartData.setCrossHairPoint(crossHairPoint)
-        this._chartData.setCrossHairPaneTag(real.tag)
+    this._performCross(event, true, cross => {
+      const crossHairPoint = { x: event.localX, y: cross.y }
+      this._touchZoomed = false
+      if (this._touchPoint) {
+        const xDif = event.localX - this._touchPoint.x
+        const yDif = event.localY - this._touchPoint.y
+        const radius = Math.sqrt(xDif * xDif + yDif * yDif)
+        if (radius < 10) {
+          this._touchPoint = { x: event.localX, y: event.localY }
+          this._chartData.setCrossHairPoint(crossHairPoint)
+          this._chartData.setCrossHairPaneTag(cross.tag)
+        } else {
+          this._touchCancelCrossHair = true
+          this._touchPoint = null
+          this._chartData.setCrossHairPoint(crossHairPoint)
+          this._chartData.setCrossHairPaneTag(null)
+        }
       } else {
-        this._touchCancelCrossHair = true
-        this._touchPoint = null
-        this._chartData.setCrossHairPoint(crossHairPoint)
-        this._chartData.setCrossHairPaneTag(null)
+        this._touchCancelCrossHair = false
       }
-    } else {
-      this._touchCancelCrossHair = false
-    }
+    })
   }
 
   pressedMouseMoveEvent (event) {
-    if (!this._checkEventPointX(event.localX)) {
-      return
-    }
-    const real = this._translateCrossHairRealY(event.localY)
-    if (!real) {
-      return
-    }
-    const crossHairPoint = { x: event.localX, y: real.y }
-    if (isTouch(event)) {
-      if (this._touchPoint) {
-        this._touchPoint = { x: event.localX, y: event.localY }
-        this._chartData.setCrossHairPoint(crossHairPoint)
-        this._chartData.setCrossHairPaneTag(real.tag)
-        return
+    this._performCross(event, false, cross => {
+      const crossHairPoint = { x: event.localX, y: cross.y }
+      if (isTouch(event)) {
+        if (this._touchPoint) {
+          this._touchPoint = { x: event.localX, y: event.localY }
+          this._chartData.setCrossHairPoint(crossHairPoint)
+          this._chartData.setCrossHairPaneTag(cross.tag)
+          return
+        }
       }
-    }
-    const distance = event.localX - this._startScrollPoint.x
-    this._chartData.setCrossHairPoint(crossHairPoint)
-    this._chartData.scroll(distance)
+      const distance = event.localX - this._startScrollPoint.x
+      this._chartData.setCrossHairPoint(crossHairPoint)
+      this._chartData.scroll(distance)
+    })
   }
 
   longTapEvent (event) {
-    if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
-      return
-    }
-    const real = this._translateCrossHairRealY(event.localY)
-    if (!real) {
-      return
-    }
-    this._touchPoint = { x: event.localX, y: event.localY }
-    this._chartData.setCrossHairPoint({ x: event.localX, y: real.y })
-    this._chartData.setCrossHairPaneTag(real.tag)
+    this._performCross(event, true, cross => {
+      this._touchPoint = { x: event.localX, y: event.localY }
+      this._chartData.setCrossHairPoint({ x: event.localX, y: cross.y })
+      this._chartData.setCrossHairPaneTag(cross.tag)
+    })
   }
 
   /**
-   * 将事件的y点转换成十字光标点的y
-   * @param y
-   * @returns {{}|null}
+   * 处理十字光标
+   * @param event
+   * @param checkTouchEvent
+   * @param performFuc
+   * @param extendFun
    * @private
    */
-  _translateCrossHairRealY (y) {
+  _performCross (event, checkTouchEvent, performFuc, extendFun) {
+    if (checkTouchEvent && !isTouch(event)) {
+      return
+    }
+    if (!this._checkEventPointX(event.localX)) {
+      if (extendFun) {
+        extendFun()
+      }
+      return
+    }
     const tags = this._paneSize.tags || {}
+    let isPerform = false
     for (const tag in tags) {
       const size = tags[tag]
-      if (y > size.contentTop && y < size.contentBottom) {
-        return { tag, y: y - size.contentTop }
+      if (event.localY > size.contentTop && event.localY < size.contentBottom) {
+        isPerform = true
+        if (performFuc) {
+          performFuc({ tag, y: event.localY - size.contentTop })
+        }
+        break
       }
     }
-    return null
+    if (!isPerform && extendFun) {
+      extendFun()
+    }
   }
 }

@@ -10002,30 +10002,22 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
   }, {
     key: "mouseMoveEvent",
     value: function mouseMoveEvent(event) {
+      var _this2 = this;
+
       if (!isMouse(event)) {
         return;
       }
 
-      if (!this._checkEventPointX(event.localX)) {
-        this._chartData.setCrossHairPaneTag(null);
+      this._performCross(event, false, function (cross) {
+        _this2._chartData.setCrossHairPoint({
+          x: event.localX,
+          y: cross.y
+        });
 
-        return;
-      }
-
-      var real = this._translateCrossHairRealY(event.localY);
-
-      if (!real) {
-        this._chartData.setCrossHairPaneTag(null);
-
-        return;
-      }
-
-      this._chartData.setCrossHairPoint({
-        x: event.localX,
-        y: real.y
+        _this2._chartData.setCrossHairPaneTag(cross.tag);
+      }, function () {
+        _this2._chartData.setCrossHairPaneTag(null);
       });
-
-      this._chartData.setCrossHairPaneTag(real.tag);
     }
   }, {
     key: "mouseWheelEvent",
@@ -10066,33 +10058,29 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
   }, {
     key: "mouseClickEvent",
     value: function mouseClickEvent(event) {
-      if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
-        return;
-      }
+      var _this3 = this;
 
-      var real = this._translateCrossHairRealY(event.localY);
+      this._performCross(event, true, function (cross) {
+        if (!_this3._touchPoint && !_this3._touchCancelCrossHair && !_this3._touchZoomed) {
+          _this3._touchPoint = {
+            x: event.localX,
+            y: event.localY
+          };
 
-      if (!real) {
-        return;
-      }
+          _this3._chartData.setCrossHairPoint({
+            x: event.localX,
+            y: cross.y
+          });
 
-      if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
-        this._touchPoint = {
-          x: event.localX,
-          y: event.localY
-        };
-
-        this._chartData.setCrossHairPoint({
-          x: event.localX,
-          y: real.y
-        });
-
-        this._chartData.setCrossHairPaneTag(real.tag);
-      }
+          _this3._chartData.setCrossHairPaneTag(cross.tag);
+        }
+      });
     }
   }, {
     key: "mouseDownEvent",
     value: function mouseDownEvent(event) {
+      var _this4 = this;
+
       this._startScrollPoint = {
         x: event.localX,
         y: event.localY
@@ -10100,136 +10088,139 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
 
       this._chartData.startScroll();
 
-      if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
-        return;
-      }
+      this._performCross(event, true, function (cross) {
+        var crossHairPoint = {
+          x: event.localX,
+          y: cross.y
+        };
+        _this4._touchZoomed = false;
 
-      var real = this._translateCrossHairRealY(event.localY);
+        if (_this4._touchPoint) {
+          var xDif = event.localX - _this4._touchPoint.x;
+          var yDif = event.localY - _this4._touchPoint.y;
+          var radius = Math.sqrt(xDif * xDif + yDif * yDif);
 
-      if (!real) {
-        return;
-      }
+          if (radius < 10) {
+            _this4._touchPoint = {
+              x: event.localX,
+              y: event.localY
+            };
 
-      var crossHairPoint = {
-        x: event.localX,
-        y: real.y
-      };
-      this._touchZoomed = false;
+            _this4._chartData.setCrossHairPoint(crossHairPoint);
 
-      if (this._touchPoint) {
-        var xDif = event.localX - this._touchPoint.x;
-        var yDif = event.localY - this._touchPoint.y;
-        var radius = Math.sqrt(xDif * xDif + yDif * yDif);
+            _this4._chartData.setCrossHairPaneTag(cross.tag);
+          } else {
+            _this4._touchCancelCrossHair = true;
+            _this4._touchPoint = null;
 
-        if (radius < 10) {
-          this._touchPoint = {
-            x: event.localX,
-            y: event.localY
-          };
+            _this4._chartData.setCrossHairPoint(crossHairPoint);
 
-          this._chartData.setCrossHairPoint(crossHairPoint);
-
-          this._chartData.setCrossHairPaneTag(real.tag);
+            _this4._chartData.setCrossHairPaneTag(null);
+          }
         } else {
-          this._touchCancelCrossHair = true;
-          this._touchPoint = null;
-
-          this._chartData.setCrossHairPoint(crossHairPoint);
-
-          this._chartData.setCrossHairPaneTag(null);
+          _this4._touchCancelCrossHair = false;
         }
-      } else {
-        this._touchCancelCrossHair = false;
-      }
+      });
     }
   }, {
     key: "pressedMouseMoveEvent",
     value: function pressedMouseMoveEvent(event) {
-      if (!this._checkEventPointX(event.localX)) {
-        return;
-      }
+      var _this5 = this;
 
-      var real = this._translateCrossHairRealY(event.localY);
+      this._performCross(event, false, function (cross) {
+        var crossHairPoint = {
+          x: event.localX,
+          y: cross.y
+        };
 
-      if (!real) {
-        return;
-      }
+        if (isTouch(event)) {
+          if (_this5._touchPoint) {
+            _this5._touchPoint = {
+              x: event.localX,
+              y: event.localY
+            };
 
-      var crossHairPoint = {
-        x: event.localX,
-        y: real.y
-      };
+            _this5._chartData.setCrossHairPoint(crossHairPoint);
 
-      if (isTouch(event)) {
-        if (this._touchPoint) {
-          this._touchPoint = {
-            x: event.localX,
-            y: event.localY
-          };
+            _this5._chartData.setCrossHairPaneTag(cross.tag);
 
-          this._chartData.setCrossHairPoint(crossHairPoint);
-
-          this._chartData.setCrossHairPaneTag(real.tag);
-
-          return;
+            return;
+          }
         }
-      }
 
-      var distance = event.localX - this._startScrollPoint.x;
+        var distance = event.localX - _this5._startScrollPoint.x;
 
-      this._chartData.setCrossHairPoint(crossHairPoint);
+        _this5._chartData.setCrossHairPoint(crossHairPoint);
 
-      this._chartData.scroll(distance);
+        _this5._chartData.scroll(distance);
+      });
     }
   }, {
     key: "longTapEvent",
     value: function longTapEvent(event) {
-      if (!isTouch(event) || !this._checkEventPointX(event.localX)) {
-        return;
-      }
+      var _this6 = this;
 
-      var real = this._translateCrossHairRealY(event.localY);
+      this._performCross(event, true, function (cross) {
+        _this6._touchPoint = {
+          x: event.localX,
+          y: event.localY
+        };
 
-      if (!real) {
-        return;
-      }
+        _this6._chartData.setCrossHairPoint({
+          x: event.localX,
+          y: cross.y
+        });
 
-      this._touchPoint = {
-        x: event.localX,
-        y: event.localY
-      };
-
-      this._chartData.setCrossHairPoint({
-        x: event.localX,
-        y: real.y
+        _this6._chartData.setCrossHairPaneTag(cross.tag);
       });
-
-      this._chartData.setCrossHairPaneTag(real.tag);
     }
     /**
-     * 将事件的y点转换成十字光标点的y
-     * @param y
-     * @returns {{}|null}
+     * 处理十字光标
+     * @param event
+     * @param checkTouchEvent
+     * @param performFuc
+     * @param extendFun
      * @private
      */
 
   }, {
-    key: "_translateCrossHairRealY",
-    value: function _translateCrossHairRealY(y) {
+    key: "_performCross",
+    value: function _performCross(event, checkTouchEvent, performFuc, extendFun) {
+      if (checkTouchEvent && !isTouch(event)) {
+        return;
+      }
+
+      if (!this._checkEventPointX(event.localX)) {
+        if (extendFun) {
+          extendFun();
+        }
+
+        return;
+      }
+
       var tags = this._paneSize.tags || {};
+      var isPerform = false;
 
       for (var tag in tags) {
         var size = tags[tag];
 
-        if (y > size.contentTop && y < size.contentBottom) {
-          return {
-            tag: tag,
-            y: y - size.contentTop
-          };
+        if (event.localY > size.contentTop && event.localY < size.contentBottom) {
+          isPerform = true;
+
+          if (performFuc) {
+            performFuc({
+              tag: tag,
+              y: event.localY - size.contentTop
+            });
+          }
+
+          break;
         }
       }
 
-      return null;
+      if (!isPerform && extendFun) {
+        extendFun();
+      }
     }
   }]);
 
