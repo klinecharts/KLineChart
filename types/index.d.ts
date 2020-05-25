@@ -36,11 +36,18 @@ export declare interface KLineData {
 
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 
+export declare interface TechnicalIndicatorInfoPlot {
+  key: string;
+  type?: 'circle' | 'bar' | 'line';
+  color: (data: any, options?: any) => string;
+  isStroke: (data: any) => boolean;
+}
+
 export declare interface TechnicalIndicatorInfo {
   name: string;
   calcTechnicalIndicator: (kLineDataList: KLineData[], calcParams: number[]) => any[];
   calcParams?: number[];
-  plots?: any[];
+  plots?: TechnicalIndicatorInfoPlot[];
   precision?: number;
   shouldCheckParamCount?: boolean;
   isPriceTechnicalIndicator?: boolean;
@@ -48,7 +55,7 @@ export declare interface TechnicalIndicatorInfo {
   baseValue?: number;
   minValue?: number;
   maxValue?: number;
-  regeneratePlots?: (calcParams: number[]) => any[];
+  regeneratePlots?: (calcParams: number[]) => TechnicalIndicatorInfoPlot[];
 }
 
 export declare interface Chart {

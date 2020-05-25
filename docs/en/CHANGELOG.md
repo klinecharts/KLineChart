@@ -4,7 +4,7 @@
 New versions are generally released in about two weeks (emergency versions that affect functions will be released at any time).
 
 ## 5.3.0
-`Release time to be determined`
+`2020-05-26`
 + 🛠 Refactoring technical indicator module.
 + 💄 The optimization method `formatDate` is called frequently and the resource occupation is too high.
 + 💄 Optimized to load more trigger mechanisms, instead of zooming, scrolling will trigger.
