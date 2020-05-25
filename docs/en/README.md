@@ -146,10 +146,8 @@ The chart supports 21 technical indicators, the following are the types and calc
 </table>
 
 ### Custom
-Through the chart api ```addCustomTechnicalIndicator(technicalIndicatorInfo)```, you can add custom technical indicators.
-
-After adding, you can operate like the default technical indicators, such as setting calculation parameters.
-
+Through the chart api ```addCustomTechnicalIndicator(technicalIndicatorInfo)```, you can add custom technical indicators.<br/>
+After adding, you can operate like the default technical indicators, such as setting calculation parameters.<br/>
 The technicalIndicatorInfo format is as follows:
 ```
 {

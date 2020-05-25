@@ -242,9 +242,8 @@ getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColo
 </table>
 
 ### 自定义技术指标
-通过图表api```addCustomTechnicalIndicator(technicalIndicatorInfo)```可以添加自定义技术指标。
-
-添加后，可以像操作默认的技术指标一样去操作，比如设置计算参数
+通过图表api```addCustomTechnicalIndicator(technicalIndicatorInfo)```可以添加自定义技术指标。<br/>
+添加后，可以像操作默认的技术指标一样去操作，比如设置计算参数。<br/>
 technicalIndicatorInfo格式如下：
 ```
 {
