@@ -41,9 +41,9 @@ export default class DifferentOfMovingAverage extends TechnicalIndicator {
     let closeSum2 = 0
     let dmaSum = 0
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const dma = {}
-      const close = dataList[i].close
+      const close = kLineData.close
       closeSum1 += close
       closeSum2 += close
       let ma1

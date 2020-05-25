@@ -33,8 +33,8 @@ export default class BollingerBands extends TechnicalIndicator {
     const p = calcParams[0] - 1
     let closeSum = 0
     const result = []
-    this._calc(dataList, i => {
-      const close = dataList[i].close
+    dataList.forEach((kLineData, i) => {
+      const close = kLineData.close
       const boll = {}
       closeSum += close
       if (i >= p) {

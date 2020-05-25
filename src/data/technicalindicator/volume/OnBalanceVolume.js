@@ -38,15 +38,15 @@ export default class OnBalanceVolume extends TechnicalIndicator {
   calcTechnicalIndicator (dataList, calcParams) {
     let obvSum = 0
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const obv = {}
-      const close = dataList[i].close
-      const high = dataList[i].high
+      const close = kLineData.close
+      const high = kLineData.high
       const hc = high - close
       if (hc === 0) {
         obv.obv = 0
       } else {
-        obv.obv = (close - dataList[i].low - hc) / hc * dataList[i].volume
+        obv.obv = (close - kLineData.low - hc) / hc * kLineData.volume
       }
       obvSum += obv.obv
       if (i >= calcParams[0] - 1) {

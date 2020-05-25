@@ -1096,21 +1096,6 @@ var TechnicalIndicator = /*#__PURE__*/function () {
   }, {
     key: "regeneratePlots",
     value: function regeneratePlots(params) {}
-    /**
-     * 基础计算
-     * @param dataList
-     * @param calcIndicator
-     */
-
-  }, {
-    key: "_calc",
-    value: function _calc(dataList, calcIndicator) {
-      var dataSize = dataList.length;
-
-      for (var i = 0; i < dataSize; i++) {
-        calcIndicator(i);
-      }
-    }
   }]);
 
   return TechnicalIndicator;
@@ -1162,27 +1147,21 @@ var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
     value: function calcTechnicalIndicator(dataList, calcParams) {
       var _this = this;
 
-      var paramCount = calcParams.length;
       var closeSums = [];
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var ma = {};
-        var close = dataList[i].close;
-
-        for (var j = 0; j < paramCount; j++) {
+        var close = kLineData.close;
+        calcParams.forEach(function (param, j) {
           closeSums[j] = (closeSums[j] || 0) + close;
-          var p = calcParams[j];
 
-          if (i >= p - 1) {
-            ma[_this.plots[j].key] = closeSums[j] / p;
-            closeSums[j] -= dataList[i - (p - 1)].close;
+          if (i >= param - 1) {
+            ma[_this.plots[j].key] = closeSums[j] / param;
+            closeSums[j] -= dataList[i - (param - 1)].close;
           }
-        }
-
+        });
         result.push(ma);
       });
-
       return result;
     }
   }]);
@@ -1241,30 +1220,25 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
     value: function calcTechnicalIndicator(dataList, calcParams) {
       var _this = this;
 
-      var paramCount = calcParams.length;
       var oldEmas = [];
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var ema = {};
-        var close = dataList[i].close;
-
-        for (var j = 0; j < paramCount; j++) {
-          var emaValue = void 0;
+        var close = kLineData.close;
+        calcParams.forEach(function (param, j) {
+          var emaValue;
 
           if (i === 0) {
             emaValue = close;
           } else {
-            emaValue = (2 * close + (calcParams[j] - 1) * oldEmas[j]) / (calcParams[j] + 1);
+            emaValue = (2 * close + (param - 1) * oldEmas[j]) / (param + 1);
           }
 
           ema[_this.plots[j].key] = emaValue;
           oldEmas[j] = emaValue;
-        }
-
+        });
         result.push(ema);
       });
-
       return result;
     }
   }]);
@@ -1348,29 +1322,23 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
     value: function calcTechnicalIndicator(dataList, calcParams) {
       var _this = this;
 
-      var paramCount = calcParams.length;
       var volSums = [];
       var result = [];
-
-      this._calc(dataList, function (i) {
-        var volume = dataList[i].volume;
+      dataList.forEach(function (kLineData, i) {
+        var volume = kLineData.volume || 0;
         var vol = {
           num: volume
         };
-
-        for (var j = 0; j < paramCount; j++) {
+        calcParams.forEach(function (param, j) {
           volSums[j] = (volSums[j] || 0) + volume;
-          var p = calcParams[j];
 
-          if (i >= p - 1) {
-            vol[_this.plots[j].key] = volSums[j] / p;
-            volSums[j] -= dataList[i - (p - 1)].volume;
+          if (i >= param - 1) {
+            vol[_this.plots[j].key] = volSums[j] / param;
+            volSums[j] -= dataList[i - (param - 1)].volume;
           }
-        }
-
+        });
         result.push(vol);
       });
-
       return result;
     }
   }]);
@@ -1448,9 +1416,8 @@ var MovingAverageConvergenceDivergence = /*#__PURE__*/function (_TechnicalIndica
       var oldDea = 0;
       var macd = 0;
       var result = [];
-
-      this._calc(dataList, function (i) {
-        var close = dataList[i].close;
+      dataList.forEach(function (kLineData, i) {
+        var close = kLineData.close;
 
         if (i === 0) {
           emaShort = close;
@@ -1472,7 +1439,6 @@ var MovingAverageConvergenceDivergence = /*#__PURE__*/function (_TechnicalIndica
           macd: macd
         });
       });
-
       return result;
     }
   }]);
@@ -1513,9 +1479,8 @@ var BollingerBands = /*#__PURE__*/function (_TechnicalIndicator) {
       var p = calcParams[0] - 1;
       var closeSum = 0;
       var result = [];
-
-      this._calc(dataList, function (i) {
-        var close = dataList[i].close;
+      dataList.forEach(function (kLineData, i) {
+        var close = kLineData.close;
         var boll = {};
         closeSum += close;
 
@@ -1531,7 +1496,6 @@ var BollingerBands = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(boll);
       });
-
       return result;
     }
     /**
@@ -1628,15 +1592,13 @@ var StockIndicatorKDJ = /*#__PURE__*/function (_TechnicalIndicator) {
   _createClass(StockIndicatorKDJ, [{
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams) {
-      var p1 = calcParams[0] - 1;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var kdj = {};
-        var close = dataList[i].close;
+        var close = kLineData.close;
 
-        if (i >= p1) {
-          var lhn = calcHnLn(dataList.slice(i - p1, i + 1));
+        if (i >= calcParams[0] - 1) {
+          var lhn = calcHnLn(dataList.slice(i - (calcParams[0] - 1), i + 1));
           var ln = lhn.ln;
           var hn = lhn.hn;
           var hnSubLn = hn - ln;
@@ -1652,7 +1614,6 @@ var StockIndicatorKDJ = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(kdj);
       });
-
       return result;
     }
   }]);
@@ -1713,15 +1674,12 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
 
       var sumCloseAs = [];
       var sumCloseBs = [];
-      var paramCount = calcParams.length;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var rsi = {};
-        var open = dataList[i].open;
-
-        for (var j = 0; j < paramCount; j++) {
-          var tmp = (dataList[i].close - open) / open;
+        var open = kLineData.open;
+        calcParams.forEach(function (param, j) {
+          var tmp = (kLineData.close - open) / open;
           sumCloseAs[j] = sumCloseAs[j] || 0;
           sumCloseBs[j] = sumCloseBs[j] || 0;
 
@@ -1731,11 +1689,11 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
             sumCloseBs[j] = sumCloseBs[j] + Math.abs(tmp);
           }
 
-          if (i >= calcParams[j] - 1) {
-            var a = sumCloseAs[j] / calcParams[j];
-            var b = (sumCloseAs[j] + sumCloseBs[j]) / calcParams[j];
+          if (i >= param - 1) {
+            var a = sumCloseAs[j] / param;
+            var b = (sumCloseAs[j] + sumCloseBs[j]) / param;
             rsi[_this.plots[j].key] = b === 0 ? 0 : a / b * 100;
-            var agoData = dataList[i - (calcParams[j] - 1)];
+            var agoData = dataList[i - (param - 1)];
             var agoOpen = agoData.open;
             var agoTmp = (agoData.close - agoOpen) / agoOpen;
 
@@ -1745,11 +1703,9 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
               sumCloseBs[j] -= Math.abs(agoTmp);
             }
           }
-        }
-
+        });
         result.push(rsi);
       });
-
       return result;
     }
   }]);
@@ -1809,27 +1765,21 @@ var Bias = /*#__PURE__*/function (_TechnicalIndicator) {
       var _this = this;
 
       var closeSums = [];
-      var paramCount = calcParams.length;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var bias = {};
-        var close = dataList[i].close;
-
-        for (var j = 0; j < paramCount; j++) {
+        var close = kLineData.close;
+        calcParams.forEach(function (param, j) {
           closeSums[j] = (closeSums[j] || 0) + close;
-          var p = calcParams[j] - 1;
 
-          if (i >= p) {
+          if (i >= param - 1) {
             var mean = closeSums[j] / calcParams[j];
             bias[_this.plots[j].key] = (close - mean) / mean * 100;
-            closeSums[j] -= dataList[i - p].close;
+            closeSums[j] -= dataList[i - (param - 1)].close;
           }
-        }
-
+        });
         result.push(bias);
       });
-
       return result;
     }
   }]);
@@ -1879,14 +1829,13 @@ var Brar = /*#__PURE__*/function (_TechnicalIndicator) {
       var ho = 0;
       var ol = 0;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var brar = {};
 
         if (i > 0) {
-          var high = dataList[i].high;
-          var low = dataList[i].low;
-          var open = dataList[i].open;
+          var high = kLineData.high;
+          var low = kLineData.low;
+          var open = kLineData.open;
           var preClose = dataList[i - 1].close;
           ho += high - open;
           ol += open - low;
@@ -1919,7 +1868,6 @@ var Brar = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(brar);
       });
-
       return result;
     }
   }]);
@@ -1966,10 +1914,9 @@ var CommodityChannelIndex = /*#__PURE__*/function (_TechnicalIndicator) {
       var maSubCloseSum = 0;
       var maList = [];
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var cci = {};
-        var close = dataList[i].close;
+        var close = kLineData.close;
         closeSum += close;
         var ma;
 
@@ -1983,7 +1930,7 @@ var CommodityChannelIndex = /*#__PURE__*/function (_TechnicalIndicator) {
         maSubCloseSum += Math.abs(ma - close);
 
         if (i >= p) {
-          var tp = (dataList[i].high + dataList[i].low + close) / 3;
+          var tp = (kLineData.high + kLineData.low + close) / 3;
           md = maSubCloseSum / calcParams[0];
           cci.cci = md !== 0 ? (tp - ma) / md / 0.015 : 0.0;
           var agoClose = dataList[i - p].close;
@@ -1994,7 +1941,6 @@ var CommodityChannelIndex = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(cci);
       });
-
       return result;
     }
   }]);
@@ -2068,14 +2014,13 @@ var DirectionalMovementIndex = /*#__PURE__*/function (_TechnicalIndicator) {
       var dxSum = 0;
       var dxList = [];
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var dmi = {};
 
         if (i > 0) {
           var preClose = dataList[i - 1].close;
-          var high = dataList[i].high;
-          var low = dataList[i].low;
+          var high = kLineData.high;
+          var low = kLineData.low;
           var hl = high - low;
           var hcy = Math.abs(high - preClose);
           var lcy = Math.abs(low - preClose);
@@ -2135,7 +2080,6 @@ var DirectionalMovementIndex = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(dmi);
       });
-
       return result;
     }
   }]);
@@ -2207,15 +2151,14 @@ var CurrentRatio = /*#__PURE__*/function (_TechnicalIndicator) {
       var ma4Sum = 0;
       var ma4List = [];
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var cr = {};
 
         if (i > 0) {
           var preData = dataList[i - 1];
           var preMid = (preData.high + preData.close + preData.low + preData.open) / 4;
-          var highSubPreMid = Math.max(0, dataList[i].high - preMid);
-          var preMidSubLow = Math.max(0, preMid - dataList[i].low);
+          var highSubPreMid = Math.max(0, kLineData.high - preMid);
+          var preMidSubLow = Math.max(0, preMid - kLineData.low);
 
           if (i >= calcParams[0]) {
             if (preMidSubLow !== 0) {
@@ -2278,7 +2221,6 @@ var CurrentRatio = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(cr);
       });
-
       return result;
     }
   }]);
@@ -2323,10 +2265,9 @@ var PsychologicalLine = /*#__PURE__*/function (_TechnicalIndicator) {
       var psySum = 0;
       var upList = [];
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var psy = {};
-        var upFlag = dataList[i].close - dataList[i].open > 0 ? 1 : 0;
+        var upFlag = kLineData.close - kLineData.open > 0 ? 1 : 0;
         upList.push(upFlag);
         upCount += upFlag;
 
@@ -2344,7 +2285,6 @@ var PsychologicalLine = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(psy);
       });
-
       return result;
     }
   }]);
@@ -2390,10 +2330,9 @@ var DifferentOfMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
       var closeSum2 = 0;
       var dmaSum = 0;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var dma = {};
-        var close = dataList[i].close;
+        var close = kLineData.close;
         closeSum1 += close;
         closeSum2 += close;
         var ma1;
@@ -2422,7 +2361,6 @@ var DifferentOfMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(dma);
       });
-
       return result;
     }
   }]);
@@ -2478,10 +2416,9 @@ var TripleExponentiallySmoothedAverage = /*#__PURE__*/function (_TechnicalIndica
       var oldEmaClose3;
       var trixSum = 0;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var trix = {};
-        var close = dataList[i].close;
+        var close = kLineData.close;
 
         if (i === 0) {
           emaClose1 = close;
@@ -2505,7 +2442,6 @@ var TripleExponentiallySmoothedAverage = /*#__PURE__*/function (_TechnicalIndica
         oldEmaClose3 = emaClose3;
         result.push(trix);
       });
-
       return result;
     }
   }]);
@@ -2548,17 +2484,16 @@ var OnBalanceVolume = /*#__PURE__*/function (_TechnicalIndicator) {
     value: function calcTechnicalIndicator(dataList, calcParams) {
       var obvSum = 0;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var obv = {};
-        var close = dataList[i].close;
-        var high = dataList[i].high;
+        var close = kLineData.close;
+        var high = kLineData.high;
         var hc = high - close;
 
         if (hc === 0) {
           obv.obv = 0;
         } else {
-          obv.obv = (close - dataList[i].low - hc) / hc * dataList[i].volume;
+          obv.obv = (close - kLineData.low - hc) / hc * kLineData.volume;
         }
 
         obvSum += obv.obv;
@@ -2570,7 +2505,6 @@ var OnBalanceVolume = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(obv);
       });
-
       return result;
     }
   }]);
@@ -2619,12 +2553,11 @@ var VolumeRatio = /*#__PURE__*/function (_TechnicalIndicator) {
       var pvs = 0;
       var vrSum = 0;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var vr = {};
-        var close = dataList[i].close;
-        var open = dataList[i].open;
-        var volume = dataList[i].volume;
+        var close = kLineData.close;
+        var open = kLineData.open;
+        var volume = kLineData.volume;
 
         if (close > open) {
           uvs += volume;
@@ -2666,7 +2599,6 @@ var VolumeRatio = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(vr);
       });
-
       return result;
     }
   }]);
@@ -2726,10 +2658,9 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
       var _this = this;
 
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var wr = {};
-        var close = dataList[i].close;
+        var close = kLineData.close;
         calcParams.forEach(function (param, index) {
           var p = param - 1;
 
@@ -2743,7 +2674,6 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
         });
         result.push(wr);
       });
-
       return result;
     }
   }]);
@@ -2786,12 +2716,11 @@ var Momentum = /*#__PURE__*/function (_TechnicalIndicator) {
     value: function calcTechnicalIndicator(dataList, calcParams) {
       var mtmSum = 0;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var mtm = {};
 
         if (i >= calcParams[0] - 1) {
-          var close = dataList[i].close;
+          var close = kLineData.close;
           var agoClose = dataList[i - (calcParams[0] - 1)].close;
           mtm.mtm = close - agoClose;
           mtmSum += mtm.mtm;
@@ -2804,7 +2733,6 @@ var Momentum = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(mtm);
       });
-
       return result;
     }
   }]);
@@ -2857,12 +2785,11 @@ var StopAndReverse = /*#__PURE__*/function (_TechnicalIndicator) {
       var isIncreasing = false;
       var sar = 0;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         // 上一个周期的sar
         var preSar = sar;
-        var high = dataList[i].high;
-        var low = dataList[i].low;
+        var high = kLineData.high;
+        var low = kLineData.low;
 
         if (isIncreasing) {
           // 上涨
@@ -2875,7 +2802,7 @@ var StopAndReverse = /*#__PURE__*/function (_TechnicalIndicator) {
           sar = preSar + af * (ep - preSar);
           var lowMin = Math.min(dataList[Math.max(1, i) - 1].low, low);
 
-          if (sar > dataList[i].low) {
+          if (sar > kLineData.low) {
             sar = ep; // 重新初始化值
 
             af = startAf;
@@ -2894,7 +2821,7 @@ var StopAndReverse = /*#__PURE__*/function (_TechnicalIndicator) {
           sar = preSar + af * (ep - preSar);
           var highMax = Math.max(dataList[Math.max(1, i) - 1].high, high);
 
-          if (sar < dataList[i].high) {
+          if (sar < kLineData.high) {
             sar = ep; // 重新初始化值
 
             af = 0;
@@ -2909,7 +2836,6 @@ var StopAndReverse = /*#__PURE__*/function (_TechnicalIndicator) {
           sar: sar
         });
       });
-
       return result;
     }
   }]);
@@ -2960,17 +2886,16 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
       var emvSum = 0;
       var emList = [];
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData, i) {
         var emv = {};
 
         if (i > 0) {
-          var high = dataList[i].high;
-          var low = dataList[i].low;
+          var high = kLineData.high;
+          var low = kLineData.low;
           var halfHl = (high + low) / 2;
           var preHalfHl = (dataList[i - 1].high + dataList[i - 1].low) / 2;
           var hl = high - low;
-          var em = (halfHl - preHalfHl) * hl - (dataList[i].turnover || 0);
+          var em = (halfHl - preHalfHl) * hl - (kLineData.turnover || 0);
           emList.push(em);
           emSum += em;
 
@@ -2989,7 +2914,6 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(emv);
       });
-
       return result;
     }
   }]);
@@ -8221,7 +8145,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
           case GraphicMarkType.FIBONACCI_LINE:
             {
               if (_this4._realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
-                var linePoints = [];
+                var linePoints;
                 var size = {
                   width: _this4._paneSize.contentRight,
                   height: _this4._paneSize.tags[CANDLE_STICK_PANE_TAG].contentBottom - _this4._paneSize.tags[CANDLE_STICK_PANE_TAG].contentTop
@@ -8249,12 +8173,14 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
 
                 var isOnGraphicMark = false;
 
-                for (var _i = 0; _i < linePoints.length; _i++) {
-                  var points = linePoints[_i];
-                  isOnGraphicMark = checkPointOnStraightLine(points[0], points[1], point);
+                if (linePoints) {
+                  for (var _i = 0; _i < linePoints.length; _i++) {
+                    var points = linePoints[_i];
+                    isOnGraphicMark = checkPointOnStraightLine(points[0], points[1], point);
 
-                  if (isOnGraphicMark) {
-                    return isOnGraphicMark;
+                    if (isOnGraphicMark) {
+                      return isOnGraphicMark;
+                    }
                   }
                 }
 
@@ -9286,11 +9212,10 @@ var TransactionAveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
       var turnoverSum = 0;
       var volumeSum = 0;
       var result = [];
-
-      this._calc(dataList, function (i) {
+      dataList.forEach(function (kLineData) {
         var average = {};
-        var turnover = dataList[i].turnover || 0;
-        var volume = dataList[i].volume || 0;
+        var turnover = kLineData.turnover || 0;
+        var volume = kLineData.volume || 0;
         turnoverSum += turnover;
         volumeSum += volume;
 
@@ -9300,7 +9225,6 @@ var TransactionAveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
 
         result.push(average);
       });
-
       return result;
     }
   }]);
@@ -9817,13 +9741,9 @@ var SeparatorPane = /*#__PURE__*/function () {
     key: "_initElement",
     value: function _initElement(container, dragEnabled) {
       this._container = container;
-      this._wrapper = document.createElement('div');
-      this._wrapper.style.margin = '0';
-      this._wrapper.style.padding = '0';
+      this._wrapper = this._createElement();
       this._wrapper.style.overflow = 'hidden';
-      this._element = document.createElement('div');
-      this._element.style.margin = '0';
-      this._element.style.padding = '0';
+      this._element = this._createElement();
       this._element.style.width = '100%';
       this._element.style.position = 'absolute';
       this._element.style.zIndex = '20';
@@ -9849,6 +9769,19 @@ var SeparatorPane = /*#__PURE__*/function () {
       } else {
         container.appendChild(this._wrapper);
       }
+    }
+    /**
+     * 创建div节点
+     * @private
+     */
+
+  }, {
+    key: "_createElement",
+    value: function _createElement() {
+      var element = document.createElement('div');
+      element.style.margin = '0';
+      element.style.padding = '0';
+      return element;
     }
   }, {
     key: "_mouseDownEvent",

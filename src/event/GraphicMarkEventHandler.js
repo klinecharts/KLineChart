@@ -267,7 +267,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
         case GraphicMarkType.PARALLEL_STRAIGHT_LINE:
         case GraphicMarkType.FIBONACCI_LINE: {
           if (this._realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
-            let linePoints = []
+            let linePoints
             const size = {
               width: this._paneSize.contentRight,
               height: this._paneSize.tags[CANDLE_STICK_PANE_TAG].contentBottom - this._paneSize.tags[CANDLE_STICK_PANE_TAG].contentTop
@@ -287,11 +287,13 @@ export default class GraphicMarkEventHandler extends EventHandler {
               }
             }
             let isOnGraphicMark = false
-            for (let i = 0; i < linePoints.length; i++) {
-              const points = linePoints[i]
-              isOnGraphicMark = checkPointOnStraightLine(points[0], points[1], point)
-              if (isOnGraphicMark) {
-                return isOnGraphicMark
+            if (linePoints) {
+              for (let i = 0; i < linePoints.length; i++) {
+                const points = linePoints[i]
+                isOnGraphicMark = checkPointOnStraightLine(points[0], points[1], point)
+                if (isOnGraphicMark) {
+                  return isOnGraphicMark
+                }
               }
             }
             return isOnGraphicMark

@@ -38,10 +38,10 @@ export default class Momentum extends TechnicalIndicator {
   calcTechnicalIndicator (dataList, calcParams) {
     let mtmSum = 0
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const mtm = {}
       if (i >= calcParams[0] - 1) {
-        const close = dataList[i].close
+        const close = kLineData.close
         const agoClose = dataList[i - (calcParams[0] - 1)].close
         mtm.mtm = close - agoClose
         mtmSum += mtm.mtm

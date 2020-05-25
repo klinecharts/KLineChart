@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
 
-import calcHnLn from '../src/data/technicalindicator/calcHnLn'
+import commonCalc from '../src/data/technicalindicator/calcHnLn'
 import DifferentOfMovingAverage from '../src/data/technicalindicator/directionalmovement/DifferentOfMovingAverage'
 import DirectionalMovementIndex from '../src/data/technicalindicator/directionalmovement/DirectionalMovementIndex'
 import EaseOfMovementValue from '../src/data/technicalindicator/directionalmovement/EaseOfMovementValue'
@@ -94,7 +94,7 @@ describe('technicalIndicator', function () {
         { open: 7, low: 6, high: 80, close: 60, timestamp: Date.now() },
         { open: 80, low: 58, high: 90, close: 60, timestamp: Date.now() }
       ]
-      expect(calcHnLn(dataList)).to.deep.equal({ hn: 90, ln: 6 })
+      expect(commonCalc(dataList)).to.deep.equal({ hn: 90, ln: 6 })
     })
   })
 

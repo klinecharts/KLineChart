@@ -63,16 +63,16 @@ export default class CurrentRatio extends TechnicalIndicator {
     let highSubPreMidSum = 0
     let preMidSubLowSum = 0
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const cr = {}
       if (i > 0) {
         const preData = dataList[i - 1]
         const preMid = (preData.high + preData.close + preData.low + preData.open) / 4
 
-        const highSubPreMid = Math.max(0, dataList[i].high - preMid)
+        const highSubPreMid = Math.max(0, kLineData.high - preMid)
         highSubPreMidSum += highSubPreMid
 
-        const preMidSubLow = Math.max(0, preMid - dataList[i].low)
+        const preMidSubLow = Math.max(0, preMid - kLineData.low)
         preMidSubLowSum += preMidSubLow
 
         if (i >= calcParams[0]) {

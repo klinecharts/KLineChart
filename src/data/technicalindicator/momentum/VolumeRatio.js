@@ -44,11 +44,11 @@ export default class VolumeRatio extends TechnicalIndicator {
     let pvs = 0
     let vrSum = 0
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const vr = {}
-      const close = dataList[i].close
-      const open = dataList[i].open
-      const volume = dataList[i].volume
+      const close = kLineData.close
+      const open = kLineData.open
+      const volume = kLineData.volume
       if (close > open) {
         uvs += volume
       } else if (close < open) {

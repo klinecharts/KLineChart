@@ -45,12 +45,12 @@ export default class Brar extends TechnicalIndicator {
     let ho = 0
     let ol = 0
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const brar = {}
       if (i > 0) {
-        const high = dataList[i].high
-        const low = dataList[i].low
-        const open = dataList[i].open
+        const high = kLineData.high
+        const low = kLineData.low
+        const open = kLineData.open
         const preClose = dataList[i - 1].close
         ho += (high - open)
         ol += (open - low)

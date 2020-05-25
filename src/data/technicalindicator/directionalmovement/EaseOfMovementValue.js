@@ -47,15 +47,15 @@ export default class EaseOfMovementValue extends TechnicalIndicator {
     let emvSum = 0
     const emList = []
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const emv = {}
       if (i > 0) {
-        const high = dataList[i].high
-        const low = dataList[i].low
+        const high = kLineData.high
+        const low = kLineData.low
         const halfHl = (high + low) / 2
         const preHalfHl = (dataList[i - 1].high + dataList[i - 1].low) / 2
         const hl = high - low
-        const em = (halfHl - preHalfHl) * hl - (dataList[i].turnover || 0)
+        const em = (halfHl - preHalfHl) * hl - (kLineData.turnover || 0)
         emList.push(em)
         emSum += em
         if (i >= calcParams[0]) {

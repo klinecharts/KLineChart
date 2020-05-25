@@ -48,13 +48,12 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
   calcTechnicalIndicator (dataList, calcParams) {
     const sumCloseAs = []
     const sumCloseBs = []
-    const paramCount = calcParams.length
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const rsi = {}
-      const open = dataList[i].open
-      for (let j = 0; j < paramCount; j++) {
-        const tmp = (dataList[i].close - open) / open
+      const open = kLineData.open
+      calcParams.forEach((param, j) => {
+        const tmp = (kLineData.close - open) / open
         sumCloseAs[j] = sumCloseAs[j] || 0
         sumCloseBs[j] = sumCloseBs[j] || 0
         if (tmp > 0) {
@@ -63,12 +62,12 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
           sumCloseBs[j] = sumCloseBs[j] + Math.abs(tmp)
         }
 
-        if (i >= calcParams[j] - 1) {
-          const a = sumCloseAs[j] / calcParams[j]
-          const b = (sumCloseAs[j] + sumCloseBs[j]) / calcParams[j]
+        if (i >= param - 1) {
+          const a = sumCloseAs[j] / param
+          const b = (sumCloseAs[j] + sumCloseBs[j]) / param
           rsi[this.plots[j].key] = (b === 0 ? 0 : a / b * 100)
 
-          const agoData = dataList[i - (calcParams[j] - 1)]
+          const agoData = dataList[i - (param - 1)]
           const agoOpen = agoData.open
           const agoTmp = (agoData.close - agoOpen) / agoOpen
           if (agoTmp > 0) {
@@ -77,7 +76,7 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
             sumCloseBs[j] -= Math.abs(agoTmp)
           }
         }
-      }
+      })
       result.push(rsi)
     })
     return result

@@ -14,7 +14,7 @@
 
 import TechnicalIndicator from '../TechnicalIndicator'
 import { KDJ } from '../technicalIndicatorType'
-import calcHnLn from '../calcHnLn'
+import commonCalc from '../calcHnLn'
 
 export default class StockIndicatorKDJ extends TechnicalIndicator {
   constructor () {
@@ -36,14 +36,13 @@ export default class StockIndicatorKDJ extends TechnicalIndicator {
    * @returns {[]}
    */
   calcTechnicalIndicator (dataList, calcParams) {
-    const p1 = calcParams[0] - 1
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const kdj = {}
-      const close = dataList[i].close
+      const close = kLineData.close
 
-      if (i >= p1) {
-        const lhn = calcHnLn(dataList.slice(i - p1, i + 1))
+      if (i >= calcParams[0] - 1) {
+        const lhn = commonCalc(dataList.slice(i - (calcParams[0] - 1), i + 1))
         const ln = lhn.ln
         const hn = lhn.hn
         const hnSubLn = hn - ln

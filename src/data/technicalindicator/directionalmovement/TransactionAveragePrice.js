@@ -29,10 +29,10 @@ export default class TransactionAveragePrice extends TechnicalIndicator {
     let turnoverSum = 0
     let volumeSum = 0
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach(kLineData => {
       const average = {}
-      const turnover = dataList[i].turnover || 0
-      const volume = dataList[i].volume || 0
+      const turnover = kLineData.turnover || 0
+      const volume = kLineData.volume || 0
       turnoverSum += turnover
       volumeSum += volume
       if (volume !== 0) {

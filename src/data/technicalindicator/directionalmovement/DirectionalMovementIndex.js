@@ -66,12 +66,12 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
     let dxSum = 0
     const dxList = []
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const dmi = {}
       if (i > 0) {
         const preClose = dataList[i - 1].close
-        const high = dataList[i].high
-        const low = dataList[i].low
+        const high = kLineData.high
+        const low = kLineData.low
         const hl = high - low
         const hcy = Math.abs(high - preClose)
         const lcy = Math.abs(low - preClose)

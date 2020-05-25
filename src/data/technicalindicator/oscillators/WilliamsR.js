@@ -14,7 +14,7 @@
 
 import TechnicalIndicator from '../TechnicalIndicator'
 import { WR } from '../technicalIndicatorType'
-import calcHnLn from '../calcHnLn'
+import commonCalc from '../calcHnLn'
 
 export default class WilliamsR extends TechnicalIndicator {
   constructor () {
@@ -48,13 +48,13 @@ export default class WilliamsR extends TechnicalIndicator {
    */
   calcTechnicalIndicator (dataList, calcParams) {
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const wr = {}
-      const close = dataList[i].close
+      const close = kLineData.close
       calcParams.forEach((param, index) => {
         const p = param - 1
         if (i >= p) {
-          const hln = calcHnLn(dataList.slice(i - p, i + 1))
+          const hln = commonCalc(dataList.slice(i - p, i + 1))
           const hn = hln.hn
           const ln = hln.ln
           const hnSubLn = hn - ln

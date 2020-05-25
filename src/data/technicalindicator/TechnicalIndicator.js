@@ -72,16 +72,4 @@ export default class TechnicalIndicator {
    * @private
    */
   regeneratePlots (params) {}
-
-  /**
-   * 基础计算
-   * @param dataList
-   * @param calcIndicator
-   */
-  _calc (dataList, calcIndicator) {
-    const dataSize = dataList.length
-    for (let i = 0; i < dataSize; i++) {
-      calcIndicator(i)
-    }
-  }
 }

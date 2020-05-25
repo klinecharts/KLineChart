@@ -40,9 +40,9 @@ export default class PsychologicalLine extends TechnicalIndicator {
     let psySum = 0
     const upList = []
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const psy = {}
-      const upFlag = dataList[i].close - dataList[i].open > 0 ? 1 : 0
+      const upFlag = kLineData.close - kLineData.open > 0 ? 1 : 0
       upList.push(upFlag)
       upCount += upFlag
       if (i >= calcParams[0] - 1) {

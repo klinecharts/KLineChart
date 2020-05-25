@@ -27,13 +27,9 @@ export default class SeparatorPane {
 
   _initElement (container, dragEnabled) {
     this._container = container
-    this._wrapper = document.createElement('div')
-    this._wrapper.style.margin = '0'
-    this._wrapper.style.padding = '0'
+    this._wrapper = this._createElement()
     this._wrapper.style.overflow = 'hidden'
-    this._element = document.createElement('div')
-    this._element.style.margin = '0'
-    this._element.style.padding = '0'
+    this._element = this._createElement()
     this._element.style.width = '100%'
     this._element.style.position = 'absolute'
     this._element.style.zIndex = '20'
@@ -55,6 +51,17 @@ export default class SeparatorPane {
     } else {
       container.appendChild(this._wrapper)
     }
+  }
+
+  /**
+   * 创建div节点
+   * @private
+   */
+  _createElement () {
+    const element = document.createElement('div')
+    element.style.margin = '0'
+    element.style.padding = '0'
+    return element
   }
 
   _mouseDownEvent (event) {

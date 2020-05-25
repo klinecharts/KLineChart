@@ -72,8 +72,8 @@ export default class MovingAverageConvergenceDivergence extends TechnicalIndicat
     let oldDea = 0
     let macd = 0
     const result = []
-    this._calc(dataList, i => {
-      const close = dataList[i].close
+    dataList.forEach((kLineData, i) => {
+      const close = kLineData.close
       if (i === 0) {
         emaShort = close
         emaLong = close

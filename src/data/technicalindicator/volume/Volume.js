@@ -69,20 +69,18 @@ export default class Volume extends TechnicalIndicator {
   }
 
   calcTechnicalIndicator (dataList, calcParams) {
-    const paramCount = calcParams.length
     const volSums = []
     const result = []
-    this._calc(dataList, i => {
-      const volume = dataList[i].volume
+    dataList.forEach((kLineData, i) => {
+      const volume = kLineData.volume || 0
       const vol = { num: volume }
-      for (let j = 0; j < paramCount; j++) {
+      calcParams.forEach((param, j) => {
         volSums[j] = (volSums[j] || 0) + volume
-        const p = calcParams[j]
-        if (i >= p - 1) {
-          vol[this.plots[j].key] = volSums[j] / p
-          volSums[j] -= dataList[i - (p - 1)].volume
+        if (i >= param - 1) {
+          vol[this.plots[j].key] = volSums[j] / param
+          volSums[j] -= dataList[i - (param - 1)].volume
         }
-      }
+      })
       result.push(vol)
     })
     return result

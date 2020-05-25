@@ -53,11 +53,11 @@ export default class StopAndReverse extends TechnicalIndicator {
     let isIncreasing = false
     let sar = 0
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       // 上一个周期的sar
       const preSar = sar
-      const high = dataList[i].high
-      const low = dataList[i].low
+      const high = kLineData.high
+      const low = kLineData.low
       if (isIncreasing) {
         // 上涨
         if (ep === -100 || ep < high) {
@@ -67,7 +67,7 @@ export default class StopAndReverse extends TechnicalIndicator {
         }
         sar = preSar + af * (ep - preSar)
         const lowMin = Math.min(dataList[Math.max(1, i) - 1].low, low)
-        if (sar > dataList[i].low) {
+        if (sar > kLineData.low) {
           sar = ep
           // 重新初始化值
           af = startAf
@@ -84,7 +84,7 @@ export default class StopAndReverse extends TechnicalIndicator {
         }
         sar = preSar + af * (ep - preSar)
         const highMax = Math.max(dataList[Math.max(1, i) - 1].high, high)
-        if (sar < dataList[i].high) {
+        if (sar < kLineData.high) {
           sar = ep
           // 重新初始化值
           af = 0

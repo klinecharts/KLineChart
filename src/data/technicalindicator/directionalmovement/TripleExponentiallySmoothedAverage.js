@@ -51,9 +51,9 @@ export default class TripleExponentiallySmoothedAverage extends TechnicalIndicat
     let oldEmaClose3
     let trixSum = 0
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const trix = {}
-      const close = dataList[i].close
+      const close = kLineData.close
       if (i === 0) {
         emaClose1 = close
         emaClose2 = close

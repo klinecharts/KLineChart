@@ -44,9 +44,9 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
     let maSubCloseSum = 0
     const maList = []
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const cci = {}
-      const close = dataList[i].close
+      const close = kLineData.close
       closeSum += close
       let ma
       if (i >= p) {
@@ -57,7 +57,7 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
       maList.push(ma)
       maSubCloseSum += Math.abs(ma - close)
       if (i >= p) {
-        const tp = (dataList[i].high + dataList[i].low + close) / 3
+        const tp = (kLineData.high + kLineData.low + close) / 3
         md = maSubCloseSum / calcParams[0]
         cci.cci = md !== 0 ? (tp - ma) / md / 0.015 : 0.0
 

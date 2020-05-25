@@ -47,22 +47,21 @@ export default class ExponentialMovingAverage extends TechnicalIndicator {
    * @returns {[]}
    */
   calcTechnicalIndicator (dataList, calcParams) {
-    const paramCount = calcParams.length
     const oldEmas = []
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const ema = {}
-      const close = dataList[i].close
-      for (let j = 0; j < paramCount; j++) {
+      const close = kLineData.close
+      calcParams.forEach((param, j) => {
         let emaValue
         if (i === 0) {
           emaValue = close
         } else {
-          emaValue = (2 * close + (calcParams[j] - 1) * oldEmas[j]) / (calcParams[j] + 1)
+          emaValue = (2 * close + (param - 1) * oldEmas[j]) / (param + 1)
         }
         ema[this.plots[j].key] = emaValue
         oldEmas[j] = emaValue
-      }
+      })
       result.push(ema)
     })
     return result

@@ -40,20 +40,18 @@ export default class MovingAverage extends TechnicalIndicator {
   }
 
   calcTechnicalIndicator (dataList, calcParams) {
-    const paramCount = calcParams.length
     const closeSums = []
     const result = []
-    this._calc(dataList, i => {
+    dataList.forEach((kLineData, i) => {
       const ma = {}
-      const close = dataList[i].close
-      for (let j = 0; j < paramCount; j++) {
+      const close = kLineData.close
+      calcParams.forEach((param, j) => {
         closeSums[j] = (closeSums[j] || 0) + close
-        const p = calcParams[j]
-        if (i >= p - 1) {
-          ma[this.plots[j].key] = closeSums[j] / p
-          closeSums[j] -= dataList[i - (p - 1)].close
+        if (i >= param - 1) {
+          ma[this.plots[j].key] = closeSums[j] / param
+          closeSums[j] -= dataList[i - (param - 1)].close
         }
-      }
+      })
       result.push(ma)
     })
     return result
