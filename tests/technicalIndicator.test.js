@@ -31,35 +31,37 @@ import TechnicalIndicator from '../src/data/technicalindicator/TechnicalIndicato
 import YAxis from '../src/component/YAxis'
 import ChartData from '../src/data/ChartData'
 
-const kLineDataList = [
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() },
-  { open: 10, low: 8, high: 16, close: 9, volume: 1, timestamp: Date.now() }
-]
+function generatedKLineDataList () {
+  const dataList = []
+  for (let i = 0; i < 100; i++) {
+    const prices = []
+    for (let j = 0; j < 4; j++) {
+      prices.push(Math.random() * 20 - 10 + 500)
+    }
+    prices.sort()
+    const openIdx = +Math.round(Math.random() * 3).toFixed(0)
+    let closeIdx = +Math.round(Math.random() * 2).toFixed(0)
+    if (closeIdx === openIdx) {
+      closeIdx++
+    }
+    dataList.push({
+      open: prices[openIdx],
+      close: prices[closeIdx],
+      low: prices[0],
+      high: prices[3],
+      volume: Math.random() * 20 + 20,
+      timestamp: Date.now()
+    })
+  }
+  return dataList
+}
 
 function technicalIndicatorResultSizeCase (TechnicalIndicator) {
   it('should that the number of calculation results is consistent with the format of the original data', function () {
     const technicalIndicator = new TechnicalIndicator()
-    const result = technicalIndicator.calcTechnicalIndicator(kLineDataList, technicalIndicator.calcParams)
-    expect(result.length).to.equal(kLineDataList.length)
+    const dataList = generatedKLineDataList()
+    const result = technicalIndicator.calcTechnicalIndicator(dataList, technicalIndicator.calcParams)
+    expect(result.length).to.equal(dataList.length)
   })
 }
 
