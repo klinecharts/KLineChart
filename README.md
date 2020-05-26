@@ -1,7 +1,7 @@
 # KLineChart
 [![npm version](https://badgen.net/npm/v/klinecharts)](https://www.npmjs.com/package/klinecharts)
-[![Build Status](https://travis-ci.org/liihuu/klineweb.svg?branch=master)](https://travis-ci.org/liihuu/klineweb)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8cc3d651f78143bf8232cb4f7bfac7c2)](https://www.codacy.com/app/liihuu/klineweb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=liihuu/klineweb&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/liihuu/KLineChart.svg?branch=master)](https://travis-ci.org/liihuu/KLineChart)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/44d60927c56540cfb64a0f476afbc96d)](https://www.codacy.com/manual/liihuu/KLineChart?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=liihuu/KLineChart&amp;utm_campaign=Badge_Grade)
 [![size](https://badgen.net/bundlephobia/minzip/klinecharts@latest)](https://bundlephobia.com/result?p=klinecharts@latest)
 [![types](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
 [![NPM](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
