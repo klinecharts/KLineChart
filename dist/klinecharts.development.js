@@ -6575,9 +6575,11 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
   _createClass(CandleStickFloatLayerView, [{
     key: "_drawPrompt",
     value: function _drawPrompt(dataPos, kLineData, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
-      var floatLayerPromptCandleStick = this._chartData.styleOptions().floatLayer.prompt.candleStick;
+      var options = this._chartData.styleOptions();
 
-      var candleStickPromptData = this._getCandleStickPromptData(kLineData, floatLayerPromptCandleStick);
+      var floatLayerPromptCandleStick = options.floatLayer.prompt.candleStick;
+
+      var candleStickPromptData = this._getCandleStickPromptData(kLineData, options.candleStick, floatLayerPromptCandleStick);
 
       if (floatLayerPromptCandleStick.showType === FloatLayerPromptCandleStickTextDisplayType.STANDARD) {
         this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData);
@@ -6733,12 +6735,12 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
 
         _this2._ctx.fillText("".concat(label, ": "), baseLabelX, labelY);
 
-        var value = baseValues[i] || '--';
+        var value = baseValues[i] || 'n/a';
         var text;
         _this2._ctx.fillStyle = value.color || baseTextColor;
 
         if (isObject(value)) {
-          text = value.value || '--';
+          text = value.value || 'n/a';
         } else {
           text = value;
         }
@@ -6804,6 +6806,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
     /**
      * 获取蜡烛提示数据
      * @param kLineData
+     * @param candleStick
      * @param floatLayerPromptCandleStick
      * @returns {*}
      * @private
@@ -6811,7 +6814,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
 
   }, {
     key: "_getCandleStickPromptData",
-    value: function _getCandleStickPromptData(kLineData, floatLayerPromptCandleStick) {
+    value: function _getCandleStickPromptData(kLineData, candleStick, floatLayerPromptCandleStick) {
       var _this3 = this;
 
       var baseValues = floatLayerPromptCandleStick.values;
@@ -6819,7 +6822,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
 
       if (baseValues) {
         if (isFunction(baseValues)) {
-          values = baseValues(kLineData) || [];
+          values = baseValues(kLineData, candleStick, floatLayerPromptCandleStick) || [];
         } else {
           values = baseValues;
         }

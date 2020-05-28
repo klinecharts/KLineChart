@@ -21,8 +21,9 @@ import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalI
 
 export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLayerView {
   _drawPrompt (dataPos, kLineData, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
-    const floatLayerPromptCandleStick = this._chartData.styleOptions().floatLayer.prompt.candleStick
-    const candleStickPromptData = this._getCandleStickPromptData(kLineData, floatLayerPromptCandleStick)
+    const options = this._chartData.styleOptions()
+    const floatLayerPromptCandleStick = options.floatLayer.prompt.candleStick
+    const candleStickPromptData = this._getCandleStickPromptData(kLineData, options.candleStick, floatLayerPromptCandleStick)
     if (floatLayerPromptCandleStick.showType === FloatLayerPromptCandleStickTextDisplayType.STANDARD) {
       this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData)
       if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
@@ -168,11 +169,11 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       this._ctx.fillStyle = baseTextColor
       this._ctx.fillText(`${label}: `, baseLabelX, labelY)
 
-      const value = baseValues[i] || '--'
+      const value = baseValues[i] || 'n/a'
       let text
       this._ctx.fillStyle = value.color || baseTextColor
       if (isObject(value)) {
-        text = value.value || '--'
+        text = value.value || 'n/a'
       } else {
         text = value
       }
@@ -226,16 +227,17 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
   /**
    * 获取蜡烛提示数据
    * @param kLineData
+   * @param candleStick
    * @param floatLayerPromptCandleStick
    * @returns {*}
    * @private
    */
-  _getCandleStickPromptData (kLineData, floatLayerPromptCandleStick) {
+  _getCandleStickPromptData (kLineData, candleStick, floatLayerPromptCandleStick) {
     const baseValues = floatLayerPromptCandleStick.values
     let values = []
     if (baseValues) {
       if (isFunction(baseValues)) {
-        values = baseValues(kLineData) || []
+        values = baseValues(kLineData, candleStick, floatLayerPromptCandleStick) || []
       } else {
         values = baseValues
       }
