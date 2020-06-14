@@ -90,6 +90,11 @@ config = {
       size: 1,
       colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
     },
+    circle: {
+      upColor: '#26A69A',
+      downColor: '#EF5350',
+      noChangeColor: '#666666'
+    },
     lastValueMark: {
       display: false,
       textColor: '#ffffff',
