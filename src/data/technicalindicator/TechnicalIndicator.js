@@ -19,7 +19,7 @@ export default class TechnicalIndicator {
     name, calcParams, plots,
     precision, shouldCheckParamCount,
     isPriceTechnicalIndicator, isVolumeTechnicalIndicator,
-    baseValue, minValue, maxValue
+    shouldOhlc, baseValue, minValue, maxValue
   }) {
     // 指标名
     this.name = name || ''
@@ -35,6 +35,8 @@ export default class TechnicalIndicator {
     this.isPriceTechnicalIndicator = isPriceTechnicalIndicator
     // 是否是数量技术指标
     this.isVolumeTechnicalIndicator = isVolumeTechnicalIndicator
+    // 是否需要ohlc
+    this.shouldOhlc = shouldOhlc
     // 基础比对数据
     this.baseValue = isNumber(baseValue) ? baseValue : null
     // 指定的最小值

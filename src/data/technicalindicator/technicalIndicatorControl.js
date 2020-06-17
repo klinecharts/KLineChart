@@ -82,7 +82,7 @@ export function createTechnicalIndicators () {
 export function createNewTechnicalIndicator ({
   name, calcParams, plots, precision, shouldCheckParamCount,
   isPriceTechnicalIndicator, isVolumeTechnicalIndicator,
-  baseValue, minValue, maxValue,
+  shouldOhlc, baseValue, minValue, maxValue,
   calcTechnicalIndicator, regeneratePlots
 }) {
   if (!name || !isFunction(calcTechnicalIndicator)) {
@@ -104,6 +104,7 @@ export function createNewTechnicalIndicator ({
           shouldCheckParamCount,
           isPriceTechnicalIndicator,
           isVolumeTechnicalIndicator,
+          shouldOhlc,
           baseValue,
           minValue,
           maxValue

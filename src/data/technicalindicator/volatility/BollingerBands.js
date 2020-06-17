@@ -21,6 +21,7 @@ export default class BollingerBands extends TechnicalIndicator {
       name: BOLL,
       calcParams: [20],
       isPriceTechnicalIndicator: true,
+      shouldOhlc: true,
       plots: [
         { key: 'up', type: 'line' },
         { key: 'mid', type: 'line' },

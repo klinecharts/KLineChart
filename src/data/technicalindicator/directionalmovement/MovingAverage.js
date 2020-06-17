@@ -22,6 +22,7 @@ export default class MovingAverage extends TechnicalIndicator {
       calcParams: [5, 10, 30, 60],
       shouldCheckParamCount: false,
       isPriceTechnicalIndicator: true,
+      shouldOhlc: true,
       plots: [
         { key: 'ma5', type: 'line' },
         { key: 'ma10', type: 'line' },

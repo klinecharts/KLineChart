@@ -13,7 +13,7 @@
  */
 
 import View, { PlotType } from './View'
-import { LineStyle } from '../data/options/styleOptions'
+import { CandleStickStyle, LineStyle } from '../data/options/styleOptions'
 import { drawHorizontalLine, drawVerticalLine, drawLine } from '../utils/canvas'
 import { isValid } from '../utils/typeChecks'
 
@@ -84,11 +84,15 @@ export default class TechnicalIndicatorView extends View {
       baseValue = this._yAxis.min()
     }
     const baseValueY = this._yAxis.convertToPixel(baseValue)
+    const isCandleStickYAxis = this._yAxis.isCandleStickYAxis()
     this._ctx.lineWidth = 1
     this._drawGraphics(
-      (x, i, kLineData, halfBarSpace) => {
+      (x, i, kLineData, halfBarSpace, barSpace) => {
         const technicalIndicatorData = technicalIndicatorResult[i] || {}
         let lineValueIndex = 0
+        if (technicalIndicator.shouldOhlc && !isCandleStickYAxis) {
+          this._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, technicalIndicatorOptions.bar, CandleStickStyle.OHLC)
+        }
         plots.forEach(plot => {
           const value = technicalIndicatorData[plot.key]
           switch (plot.type) {
@@ -249,6 +253,75 @@ export default class TechnicalIndicatorView extends View {
     }
     if (onDrawEnd) {
       onDrawEnd()
+    }
+  }
+
+  /**
+   * 绘制蜡烛柱
+   * @param x
+   * @param halfBarSpace
+   * @param barSpace
+   * @param kLineData
+   * @param barOptions
+   * @private
+   */
+  _drawCandleStickBar (x, halfBarSpace, barSpace, kLineData, barOptions, barStyle) {
+    const open = kLineData.open
+    const close = kLineData.close
+    const high = kLineData.high
+    const low = kLineData.low
+    if (close > open) {
+      this._ctx.strokeStyle = barOptions.upColor
+      this._ctx.fillStyle = barOptions.upColor
+    } else if (close < open) {
+      this._ctx.strokeStyle = barOptions.downColor
+      this._ctx.fillStyle = barOptions.downColor
+    } else {
+      this._ctx.strokeStyle = barOptions.noChangeColor
+      this._ctx.fillStyle = barOptions.noChangeColor
+    }
+    const openY = this._yAxis.convertToPixel(open)
+    const closeY = this._yAxis.convertToPixel(close)
+    const highY = this._yAxis.convertToPixel(high)
+    const lowY = this._yAxis.convertToPixel(low)
+
+    const highEndY = Math.min(openY, closeY)
+    const lowStartY = Math.max(openY, closeY)
+    this._ctx.fillRect(x - 0.5, highY, 1, highEndY - highY)
+    this._ctx.fillRect(x - 0.5, lowStartY, 1, lowY - lowStartY)
+
+    const barHeight = Math.max(1, lowStartY - highEndY)
+    switch (barStyle) {
+      case CandleStickStyle.SOLID: {
+        this._ctx.fillRect(x - halfBarSpace, highEndY, barSpace, barHeight)
+        break
+      }
+      case CandleStickStyle.STROKE: {
+        this._ctx.strokeRect(x - halfBarSpace + 0.5, highEndY, barSpace - 1, barHeight)
+        break
+      }
+      case CandleStickStyle.UP_STROKE: {
+        if (close > open) {
+          this._ctx.strokeRect(x - halfBarSpace + 0.5, highEndY, barSpace - 1, barHeight)
+        } else {
+          this._ctx.fillRect(x - halfBarSpace, highEndY, barSpace, barHeight)
+        }
+        break
+      }
+      case CandleStickStyle.DOWN_STROKE: {
+        if (close > open) {
+          this._ctx.fillRect(x - halfBarSpace, highEndY, barSpace, barHeight)
+        } else {
+          this._ctx.strokeRect(x - halfBarSpace + 0.5, highEndY, barSpace - 1, barHeight)
+        }
+        break
+      }
+      default: {
+        this._ctx.fillRect(x - 0.5, highY, 1, lowY - highY)
+        this._ctx.fillRect(x - halfBarSpace, openY - 0.5, halfBarSpace, 1)
+        this._ctx.fillRect(x, closeY - 0.5, halfBarSpace, 1)
+        break
+      }
     }
   }
 }

@@ -21,6 +21,7 @@ export default class StopAndReverse extends TechnicalIndicator {
       name: SAR,
       calcParams: [2, 2, 20],
       isPriceTechnicalIndicator: true,
+      shouldOhlc: true,
       plots: [
         {
           key: 'sar',
