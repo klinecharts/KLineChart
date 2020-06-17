@@ -102,7 +102,7 @@ export default class YAxis extends Axis {
             minMaxArray[1] = Math.max(minMaxArray[1], value)
           }
         })
-        if (this._isCandleStickYAxis) {
+        if (this._isCandleStickYAxis || technicalIndicator.shouldOhlc) {
           minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)
           minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
         }
