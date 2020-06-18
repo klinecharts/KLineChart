@@ -20,7 +20,6 @@ export default class BollingerBands extends TechnicalIndicator {
     super({
       name: BOLL,
       calcParams: [20],
-      isPriceTechnicalIndicator: true,
       shouldOhlc: true,
       plots: [
         { key: 'up', type: 'line' },

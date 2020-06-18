@@ -114,9 +114,9 @@ export default class YAxisView extends View {
     this._ctx.textBaseline = 'middle'
     this._ctx.font = getFont(tickText.size, tickText.family)
     this._ctx.fillStyle = tickText.color
-    const isVolumeTechnicalIndicator = this._additionalDataProvider.technicalIndicator().isVolumeTechnicalIndicator
+    const shouldFormatBigNumber = this._additionalDataProvider.technicalIndicator().shouldFormatBigNumber
     this._yAxis.ticks().forEach(tick => {
-      this._ctx.fillText(isVolumeTechnicalIndicator ? formatBigNumber(tick.v) : tick.v, labelX, tick.y)
+      this._ctx.fillText(shouldFormatBigNumber ? formatBigNumber(tick.v) : tick.v, labelX, tick.y)
     })
     this._ctx.textAlign = 'left'
   }
@@ -237,7 +237,7 @@ export default class YAxisView extends View {
       text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {
       text = formatPrecision(value, precision)
-      if (this._additionalDataProvider.technicalIndicator().isVolumeTechnicalIndicator) {
+      if (this._additionalDataProvider.technicalIndicator().shouldFormatBigNumber) {
         text = formatBigNumber(text)
       }
     }

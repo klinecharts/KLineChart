@@ -54,7 +54,7 @@ export default class YAxisFloatLayerView extends View {
       const technicalIndicator = this._additionalDataProvider.technicalIndicator()
       const precision = technicalIndicator.precision
       yAxisDataLabel = formatPrecision(value, precision)
-      if (technicalIndicator.isVolumeTechnicalIndicator) {
+      if (technicalIndicator.shouldFormatBigNumber) {
         yAxisDataLabel = formatBigNumber(yAxisDataLabel)
       }
     }

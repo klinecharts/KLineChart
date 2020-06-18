@@ -261,20 +261,18 @@ technicalIndicatorInfo格式如下：
   // 如果calcTechnicalIndicator返回的结果形式是[{ a: 1, b: 2 }, { a: 5, b: 6 }]
   // 则plots应该是[{ key: 'a', type: 'line' }, { key: 'b', type: 'line' }]
   // type可以是'line'，'circle'和'bar'
-  plots: []
+  plots: [],
   // 是否需要检查计算参数，可缺省，默认为true
   // 如果为true，当设置指标参数时，如果参数个数和默认的参数个数不一致，将不能生效
-  shouldCheckParamCount: true
-  // 是否是价格技术指标，可缺省，默认为false
-  // 如果为true，当设置价格精度时将会同步精度
-  isPriceTechnicalIndicator: false,
-  // 是否是数量技术指标，可缺省，默认为false
-  // 如果为true，当设置数量精度时将会同步精度
-  isVolumeTechnicalIndicator: false
+  shouldCheckParamCount: true,
+  // 是否需要格式化大数据值
+  shouldFormatBigNumber: false,
+  // 是否需要辅助ohlc线
+  shouldOhlc: false,
   // 基础比对数据，可缺省
-  baseValue: null
+  baseValue: null,
   // 指定的最小值，可缺省
-  minValue: null
+  minValue: null,
   // 指定的最大值，可缺省
   maxValue: null
 }

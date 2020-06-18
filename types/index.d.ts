@@ -50,8 +50,8 @@ export declare interface TechnicalIndicatorInfo {
   plots?: TechnicalIndicatorInfoPlot[];
   precision?: number;
   shouldCheckParamCount?: boolean;
-  isPriceTechnicalIndicator?: boolean;
-  isVolumeTechnicalIndicator?: boolean;
+  shouldOhlc?: boolean;
+  shouldFormatBigNumber?: boolean,
   baseValue?: number;
   minValue?: number;
   maxValue?: number;

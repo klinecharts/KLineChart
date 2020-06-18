@@ -18,7 +18,6 @@ export default class TransactionAveragePrice extends TechnicalIndicator {
   constructor () {
     super({
       name: 'TAP',
-      isPriceTechnicalIndicator: true,
       plots: [
         { key: 'average', type: 'line' }
       ]

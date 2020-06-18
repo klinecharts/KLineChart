@@ -20,7 +20,6 @@ export default class StopAndReverse extends TechnicalIndicator {
     super({
       name: SAR,
       calcParams: [2, 2, 20],
-      isPriceTechnicalIndicator: true,
       shouldOhlc: true,
       plots: [
         {

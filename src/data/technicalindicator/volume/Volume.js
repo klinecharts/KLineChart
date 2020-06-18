@@ -20,8 +20,8 @@ export default class Volume extends TechnicalIndicator {
     super({
       name: VOL,
       calcParams: [5, 10, 20],
-      isVolumeTechnicalIndicator: true,
       shouldCheckParamCount: false,
+      shouldFormatBigNumber: true,
       baseValue: 0,
       minValue: 0,
       plots: [

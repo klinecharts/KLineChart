@@ -81,8 +81,7 @@ export function createTechnicalIndicators () {
  */
 export function createNewTechnicalIndicator ({
   name, calcParams, plots, precision, shouldCheckParamCount,
-  isPriceTechnicalIndicator, isVolumeTechnicalIndicator,
-  shouldOhlc, baseValue, minValue, maxValue,
+  shouldOhlc, shouldFormatBigNumber, baseValue, minValue, maxValue,
   calcTechnicalIndicator, regeneratePlots
 }) {
   if (!name || !isFunction(calcTechnicalIndicator)) {
@@ -102,9 +101,8 @@ export function createNewTechnicalIndicator ({
           plots,
           precision,
           shouldCheckParamCount,
-          isPriceTechnicalIndicator,
-          isVolumeTechnicalIndicator,
           shouldOhlc,
+          shouldFormatBigNumber,
           baseValue,
           minValue,
           maxValue
@@ -130,7 +128,7 @@ export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technica
   const calcParams = technicalIndicator.calcParams
   const plots = technicalIndicator.plots
   const precision = technicalIndicator.precision
-  const isVolumeTechnicalIndicator = technicalIndicator.isVolumeTechnicalIndicator
+  const shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
 
   const labels = []
   const values = []
@@ -148,7 +146,7 @@ export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technica
     if (isValid(value)) {
       y = yAxis.convertToPixel(value)
       value = formatPrecision(value, precision)
-      if (isVolumeTechnicalIndicator) {
+      if (shouldFormatBigNumber) {
         value = formatBigNumber(value)
       }
     }

@@ -155,12 +155,12 @@ The technicalIndicatorInfo format is as follows:
   calcTechnicalIndicator: (kLineDataList, calcParams) => { return [...] },
   precision: 4,
   calcParams: [],
-  plots: []
-  shouldCheckParamCount: true
-  isPriceTechnicalIndicator: false,
-  isVolumeTechnicalIndicator: false
-  baseValue: null
-  minValue: null
+  plots: [],
+  shouldCheckParamCount: true,
+  shouldOhlc: false,
+  shouldFormatBigNumber: false,
+  baseValue: null,
+  minValue: null,
   maxValue: null
 }
 ```
