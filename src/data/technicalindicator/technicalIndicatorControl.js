@@ -41,7 +41,7 @@ import {
   BIAS, BRAR, CCI, DMI, CR, PSY, DMA,
   TRIX, OBV, VR, WR, MTM, EMV, SAR
 } from './technicalIndicatorType'
-import { isFunction, isValid } from '../../utils/typeChecks'
+import { isArray, isFunction, isNumber, isValid } from '../../utils/typeChecks'
 import { formatBigNumber, formatPrecision } from '../../utils/format'
 import { DEV } from '../../utils/env'
 
@@ -50,34 +50,129 @@ import { DEV } from '../../utils/env'
  */
 export function createTechnicalIndicators () {
   return {
-    [MA]: MovingAverage,
-    [EMA]: ExponentialMovingAverage,
-    [VOL]: Volume,
-    [MACD]: MovingAverageConvergenceDivergence,
-    [BOLL]: BollingerBands,
-    [KDJ]: StockIndicatorKDJ,
-    [RSI]: RelativeStrengthIndex,
-    [BIAS]: Bias,
-    [BRAR]: Brar,
-    [CCI]: CommodityChannelIndex,
-    [DMI]: DirectionalMovementIndex,
-    [CR]: CurrentRatio,
-    [PSY]: PsychologicalLine,
-    [DMA]: DifferentOfMovingAverage,
-    [TRIX]: TripleExponentiallySmoothedAverage,
-    [OBV]: OnBalanceVolume,
-    [VR]: VolumeRatio,
-    [WR]: WilliamsR,
-    [MTM]: Momentum,
-    [EMV]: EaseOfMovementValue,
-    [SAR]: StopAndReverse
+    [MA]: {
+      structure: MovingAverage,
+      precision: 4,
+      calcParams: [5, 10, 30, 60]
+    },
+    [EMA]: {
+      structure: ExponentialMovingAverage,
+      precision: 4,
+      calcParams: [6, 12, 20]
+    },
+    [VOL]: {
+      structure: Volume,
+      precision: 0,
+      calcParams: [5, 10, 20]
+    },
+    [MACD]: {
+      structure: MovingAverageConvergenceDivergence,
+      precision: 4,
+      calcParams: [12, 26, 9]
+    },
+    [BOLL]: {
+      structure: BollingerBands,
+      precision: 4,
+      calcParams: [20]
+    },
+    [KDJ]: {
+      structure: StockIndicatorKDJ,
+      precision: 4,
+      calcParams: [9, 3, 3]
+    },
+    [RSI]: {
+      structure: RelativeStrengthIndex,
+      precision: 4,
+      calcParams: [6, 12, 24]
+    },
+    [BIAS]: {
+      structure: Bias,
+      precision: 4,
+      calcParams: [6, 12, 24]
+    },
+    [BRAR]: {
+      structure: Brar,
+      precision: 4,
+      calcParams: [26]
+    },
+    [CCI]: {
+      structure: CommodityChannelIndex,
+      precision: 4,
+      calcParams: [13]
+    },
+    [DMI]: {
+      structure: DirectionalMovementIndex,
+      precision: 4,
+      calcParams: [14, 6]
+    },
+    [CR]: {
+      structure: CurrentRatio,
+      precision: 4,
+      calcParams: [26, 10, 20, 40, 60]
+    },
+    [PSY]: {
+      structure: PsychologicalLine,
+      precision: 4,
+      calcParams: [12, 6]
+    },
+    [DMA]: {
+      structure: DifferentOfMovingAverage,
+      precision: 4,
+      calcParams: [10, 50, 10]
+    },
+    [TRIX]: {
+      structure: TripleExponentiallySmoothedAverage,
+      precision: 4,
+      calcParams: [12, 20]
+    },
+    [OBV]: {
+      structure: OnBalanceVolume,
+      precision: 4,
+      calcParams: [30]
+    },
+    [VR]: {
+      structure: VolumeRatio,
+      precision: 4,
+      calcParams: [24, 30]
+    },
+    [WR]: {
+      structure: WilliamsR,
+      precision: 4,
+      calcParams: [6, 10, 14]
+    },
+    [MTM]: {
+      structure: Momentum,
+      precision: 4,
+      calcParams: [6, 10]
+    },
+    [EMV]: {
+      structure: EaseOfMovementValue,
+      precision: 4,
+      calcParams: [14, 9]
+    },
+    [SAR]: {
+      structure: StopAndReverse,
+      precision: 4,
+      calcParams: [2, 2, 20]
+    }
   }
 }
 
 /**
  * 创建一个新的技术指标
- * @param technicalIndicatorInfo
- * @returns {NewTechnicalIndicator}
+ * @param name
+ * @param calcParams
+ * @param plots
+ * @param precision
+ * @param shouldCheckParamCount
+ * @param shouldOhlc
+ * @param shouldFormatBigNumber
+ * @param baseValue
+ * @param minValue
+ * @param maxValue
+ * @param calcTechnicalIndicator
+ * @param regeneratePlots
+ * @returns {null|{precision: (*|number), calcParams: (*|[]), structure: NewTechnicalIndicator}}
  */
 export function createNewTechnicalIndicator ({
   name, calcParams, plots, precision, shouldCheckParamCount,
@@ -114,7 +209,11 @@ export function createNewTechnicalIndicator ({
   if (regeneratePlots) {
     NewTechnicalIndicator.prototype.regeneratePlots = regeneratePlots
   }
-  return NewTechnicalIndicator
+  return {
+    structure: NewTechnicalIndicator,
+    precision: isValid(precision) && isNumber(precision) && precision >= 0 ? precision : 4,
+    calcParams: isArray(calcParams) ? calcParams : []
+  }
 }
 
 /**

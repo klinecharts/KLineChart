@@ -15,8 +15,6 @@
 import { isArray, isObject, merge, clone, isFunction, isBoolean, isNumber, isValid } from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
 
-import technicalIndicatorCalcParams from './technicalindicator/technicalIndicatorCalcParams'
-
 import { formatValue } from '../utils/format'
 import { createNewTechnicalIndicator, createTechnicalIndicators } from './technicalindicator/technicalIndicatorControl'
 import { DEV } from '../utils/env'
@@ -56,9 +54,6 @@ export default class ChartData {
     // 样式配置
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
-
-    // 技术指标计算参数集合
-    this._technicalIndicatorCalcParams = clone(technicalIndicatorCalcParams)
     // 所有技术指标类集合
     this._technicalIndicators = createTechnicalIndicators()
 
@@ -203,7 +198,11 @@ export default class ChartData {
    * @returns {function(Array<string>, string, string): Promise}
    */
   technicalIndicatorCalcParams () {
-    return this._technicalIndicatorCalcParams
+    const calcParams = {}
+    Object.keys(this._technicalIndicators).forEach(name => {
+      calcParams[name] = this._technicalIndicators[name].calcParams
+    })
+    return calcParams
   }
 
   /**
@@ -211,7 +210,7 @@ export default class ChartData {
    * @param technicalIndicatorType
    */
   technicalIndicator (technicalIndicatorType) {
-    return this._technicalIndicators[technicalIndicatorType]
+    return this._technicalIndicators[technicalIndicatorType] || {}
   }
 
   /**
@@ -631,13 +630,11 @@ export default class ChartData {
    * @param technicalIndicatorInfo
    */
   addCustomTechnicalIndicator (technicalIndicatorInfo) {
-    const NewTechnicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo || {})
-    if (NewTechnicalIndicator) {
+    const info = createNewTechnicalIndicator(technicalIndicatorInfo || {})
+    if (info) {
       const name = technicalIndicatorInfo.name
-      // 将计算参数，放入参数集合
-      this._technicalIndicatorCalcParams[name] = technicalIndicatorInfo.calcParams || []
       // 将生成的新的指标类放入集合
-      this._technicalIndicators[name] = NewTechnicalIndicator
+      this._technicalIndicators[name] = info
     }
   }
 
@@ -650,7 +647,9 @@ export default class ChartData {
       _ => {
         const technicalIndicator = pane.technicalIndicator()
         if (technicalIndicator) {
-          technicalIndicator.setCalcParams(this._technicalIndicatorCalcParams[technicalIndicator.name])
+          const { calcParams, precision } = this._technicalIndicators[technicalIndicator.name]
+          technicalIndicator.setPrecision(precision)
+          technicalIndicator.setCalcParams(calcParams)
           technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
         }
         pane.invalidate(InvalidateLevel.FULL)

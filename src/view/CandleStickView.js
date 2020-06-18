@@ -138,7 +138,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
         markLowestPriceX = x
       }
 
-      this._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, candleStick.bar, candleStick.style)
+      this._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, candleStick.bar, candleStick.bar.style)
     }
     this._drawGraphics(onDrawing)
     this._highestMarkData = { x: markHighestPriceX, price: markHighestPrice }

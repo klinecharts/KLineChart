@@ -279,13 +279,16 @@ export default class ChartPane {
    * @param params
    */
   applyTechnicalIndicatorParams (technicalIndicatorType, params) {
-    this._chartData.technicalIndicatorCalcParams()[technicalIndicatorType] = params
-    if (this._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
-      this._chartData.calcTechnicalIndicator(this._candleStickPane)
-    }
-    for (const pane of this._technicalIndicatorPanes) {
-      if (pane.technicalIndicator().name === technicalIndicatorType) {
-        this._chartData.calcTechnicalIndicator(pane)
+    const info = this._chartData.technicalIndicator(technicalIndicatorType)
+    if (info.structure) {
+      info.calcParams = params
+      if (this._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
+        this._chartData.calcTechnicalIndicator(this._candleStickPane)
+      }
+      for (const pane of this._technicalIndicatorPanes) {
+        if (pane.technicalIndicator().name === technicalIndicatorType) {
+          this._chartData.calcTechnicalIndicator(pane)
+        }
       }
     }
   }
@@ -365,7 +368,8 @@ export default class ChartPane {
    * @returns {string}
    */
   createTechnicalIndicator (technicalIndicatorType = MACD, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled) {
-    if (!this._chartData.technicalIndicator(technicalIndicatorType)) {
+    const { structure: TechnicalIndicator } = this._chartData.technicalIndicator(technicalIndicatorType)
+    if (!TechnicalIndicator) {
       if (DEV) {
         console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!')
       }
@@ -440,7 +444,8 @@ export default class ChartPane {
         }
       }
       if (p) {
-        if (!this._chartData.technicalIndicator(technicalIndicatorType)) {
+        const { structure: TechnicalIndicator } = this._chartData.technicalIndicator(technicalIndicatorType)
+        if (!TechnicalIndicator) {
           this.removeTechnicalIndicator(tag)
         } else {
           p.setTechnicalIndicatorType(technicalIndicatorType)

@@ -105,7 +105,7 @@ export default class TechnicalIndicatorPane extends Pane {
    * @param technicalIndicatorType
    */
   setTechnicalIndicatorType (technicalIndicatorType) {
-    const TechnicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
+    const { structure: TechnicalIndicator } = this._chartData.technicalIndicator(technicalIndicatorType)
     if (
       (!this._technicalIndicator && !TechnicalIndicator) ||
       (this._technicalIndicator && this._technicalIndicator.name === technicalIndicatorType)
