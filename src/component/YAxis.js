@@ -98,8 +98,13 @@ export default class YAxis extends Axis {
         plots.forEach(plot => {
           const value = technicalIndicatorData[plot.key]
           if (isValid(value)) {
-            minMaxArray[0] = Math.min(minMaxArray[0], value)
-            minMaxArray[1] = Math.max(minMaxArray[1], value)
+            if (plot.type==="ohlc") {
+              minMaxArray[0] = Math.min(minMaxArray[0], technicalIndicatorData[plot.key].low)
+              minMaxArray[1] = Math.max(minMaxArray[1], technicalIndicatorData[plot.key].high)
+            }else{
+              minMaxArray[0] = Math.min(minMaxArray[0], value)
+              minMaxArray[1] = Math.max(minMaxArray[1], value)
+            }
           }
         })
         if (this._isCandleStickYAxis) {
