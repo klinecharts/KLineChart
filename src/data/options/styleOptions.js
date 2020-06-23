@@ -213,6 +213,11 @@ const defaultTechnicalIndicator = {
     downColor: '#EF5350',
     noChangeColor: '#666666'
   },
+  ohlc:{
+    upColor: '#26A69A',
+    downColor: '#EF5350',
+    noChangeColor: '#666666'
+  },
   lastValueMark: {
     display: false,
     textColor: '#ffffff',
