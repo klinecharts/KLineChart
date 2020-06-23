@@ -123,7 +123,16 @@ export default class TechnicalIndicatorView extends View {
                 const closeY = this._yAxis.convertToPixel(value.close);
                 const highY = this._yAxis.convertToPixel(value.high);
                 const lowY = this._yAxis.convertToPixel(value.low);
-                
+
+                let color;
+                if(value.open>value.close){
+                  color = technicalIndicatorOptions.ohlc.downColor
+                }else if(value.open<value.close){
+                  color = technicalIndicatorOptions.ohlc.upColor
+                }else{
+                  color = technicalIndicatorOptions.ohlc.noChangeColor
+                }
+
                 const ohlc = {
                   x,
                   openY,
@@ -131,7 +140,7 @@ export default class TechnicalIndicatorView extends View {
                   highY,
                   lowY,
                   halfBarSpace,
-                  color: (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.ohlc.noChangeColor,
+                  color,
                   isStroke: plot.isStroke
                     ? plot.isStroke(cbData)
                     : true
@@ -255,7 +264,7 @@ export default class TechnicalIndicatorView extends View {
     this._ctx.closePath()
   }
 
-  
+
     /**
      * 绘制ohlc
      * @param ohlc
