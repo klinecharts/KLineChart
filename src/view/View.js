@@ -22,7 +22,8 @@ import { cancelAnimationFrame, requestAnimationFrame } from '../utils/compatible
 export const PlotType = {
   LINE: 'line',
   BAR: 'bar',
-  CIRCLE: 'circle'
+  CIRCLE: 'circle',
+  OHLC:'ohlc'
 }
 
 class View {
