@@ -112,6 +112,34 @@ export default class TechnicalIndicatorView extends View {
               }
               break
             }
+            case PlotType.OHLC: {
+              if (isValid(value)) {
+                
+                const cbData = {
+                  preData: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
+                  currentData: { kLineData, technicalIndicatorData }
+                };
+                const openY = this._yAxis.convertToPixel(value.open);
+                const closeY = this._yAxis.convertToPixel(value.close);
+                const highY = this._yAxis.convertToPixel(value.high);
+                const lowY = this._yAxis.convertToPixel(value.low);
+                
+                const ohlc = {
+                  x,
+                  openY,
+                  closeY,
+                  highY,
+                  lowY,
+                  halfBarSpace,
+                  color: (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.ohlc.noChangeColor,
+                  isStroke: plot.isStroke
+                    ? plot.isStroke(cbData)
+                    : true
+                };
+                this._drawOhlc(ohlc);
+              }
+              break
+            }
             case PlotType.BAR: {
               if (isValid(value)) {
                 const cbData = {
@@ -227,6 +255,25 @@ export default class TechnicalIndicatorView extends View {
     this._ctx.closePath()
   }
 
+  
+    /**
+     * 绘制ohlc
+     * @param ohlc
+     * @private
+     */
+    _drawOhlc (ohlc) {
+      const openY = ohlc.openY;
+      const closeY = ohlc.closeY;
+      const highY = ohlc.highY;
+      const lowY = ohlc.lowY;
+
+      this._ctx.fillStyle = ohlc.color;
+      this._ctx.fillRect(ohlc.x - 0.5, highY, 1, lowY - highY);
+      this._ctx.fillRect(ohlc.x - ohlc.halfBarSpace, openY - 0.5, ohlc.halfBarSpace, 1);
+      this._ctx.fillRect(ohlc.x, closeY - 0.5, ohlc.halfBarSpace, 1);
+    }
+
+    
   /**
    * 绘制图形
    * @param onDrawing
