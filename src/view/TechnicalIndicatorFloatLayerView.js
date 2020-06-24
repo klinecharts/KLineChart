@@ -18,6 +18,8 @@ import { isValid } from '../utils/typeChecks'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalIndicatorControl'
 
+import { formatBigNumber, formatPrecision } from '../utils/format'
+
 export default class TechnicalIndicatorFloatLayerView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
     super(container, chartData)
@@ -205,6 +207,30 @@ export default class TechnicalIndicatorFloatLayerView extends View {
         }
         case PlotType.BAR: {
           this._ctx.fillStyle = (plots[i].color && plots[i].color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
+          break
+        }
+        case PlotType.OHLC: {
+          let value = values[i].value
+          if (isValid(value)) {          
+          let color;
+          if(value.open>value.close){
+            color = technicalIndicatorOptions.ohlc.downColor
+          }else if(value.open<value.close){
+            color = technicalIndicatorOptions.ohlc.upColor
+          }else{
+            color = technicalIndicatorOptions.ohlc.noChangeColor
+          }
+          const precision = technicalIndicator.precision
+          const isVolumeTechnicalIndicator = technicalIndicator.isVolumeTechnicalIndicator
+          for (const k in value) {
+            value[k] = formatPrecision(value[k], precision)
+            if (isVolumeTechnicalIndicator) {
+              value[k] = formatBigNumber(value[k])
+            }
+          }
+          values[i].value = `[ O=${value.open} H=${value.high} L=${value.low} C=${value.close} ]`
+          this._ctx.fillStyle = color
+        }
           break
         }
         default: {
