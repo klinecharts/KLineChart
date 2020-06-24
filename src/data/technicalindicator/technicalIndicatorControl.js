@@ -145,10 +145,19 @@ export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technica
     let value = technicalIndicatorData[plot.key]
     let y
     if (isValid(value)) {
-      y = yAxis.convertToPixel(value)
-      value = formatPrecision(value, precision)
-      if (isVolumeTechnicalIndicator) {
-        value = formatBigNumber(value)
+      if (plot.type==="ohlc") {
+        const open = value.open        
+        const high = value.high
+        const low = value.low
+        const close = value.close
+        y = yAxis.convertToPixel(close)
+        value = {open,high,low,close}
+      }else{
+        y = yAxis.convertToPixel(value)
+        value = formatPrecision(value, precision)
+        if (isVolumeTechnicalIndicator) {
+          value = formatBigNumber(value)
+        }
       }
     }
     values.push({ value, y })
