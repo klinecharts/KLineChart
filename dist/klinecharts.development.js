@@ -3203,9 +3203,11 @@ var ChartData = /*#__PURE__*/function () {
 
     this._dataSpace = 6; // bar的空间
 
-    this._barSpace = this._calcBarSpace(); // 向右偏移的数量
+    this._barSpace = this._calcBarSpace(); // 向右偏移的空间
 
-    this._offsetRightBarCount = 50 / this._dataSpace; // 左边最小可见bar的个数
+    this._offsetRightSpace = 50; // 向右偏移的数量
+
+    this._offsetRightBarCount = this._offsetRightSpace / this._dataSpace; // 左边最小可见bar的个数
 
     this._leftMinVisibleBarCount = 2; // 右边最小可见bar的个数
 
@@ -3472,8 +3474,14 @@ var ChartData = /*#__PURE__*/function () {
         if (isArray(data)) {
           this._loading = false;
           this._more = isBoolean(more) ? more : true;
+          var isFirstAdd = this._dataList.length === 0;
           this._dataList = data.concat(this._dataList);
-          this.adjustOffsetBarCount();
+
+          if (isFirstAdd) {
+            this.setOffsetRightSpace(this._offsetRightSpace);
+          } else {
+            this.adjustOffsetBarCount();
+          }
         } else {
           var dataSize = this._dataList.length;
 
@@ -3558,6 +3566,7 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "setOffsetRightSpace",
     value: function setOffsetRightSpace(space) {
+      this._offsetRightSpace = space;
       this._offsetRightBarCount = space / this._dataSpace;
       this.adjustOffsetBarCount();
     }

@@ -85,8 +85,10 @@ export default class ChartData {
     this._dataSpace = 6
     // bar的空间
     this._barSpace = this._calcBarSpace()
+    // 向右偏移的空间
+    this._offsetRightSpace = 50
     // 向右偏移的数量
-    this._offsetRightBarCount = 50 / this._dataSpace
+    this._offsetRightBarCount = this._offsetRightSpace / this._dataSpace
     // 左边最小可见bar的个数
     this._leftMinVisibleBarCount = 2
     // 右边最小可见bar的个数
@@ -311,8 +313,13 @@ export default class ChartData {
       if (isArray(data)) {
         this._loading = false
         this._more = isBoolean(more) ? more : true
+        const isFirstAdd = this._dataList.length === 0
         this._dataList = data.concat(this._dataList)
-        this.adjustOffsetBarCount()
+        if (isFirstAdd) {
+          this.setOffsetRightSpace(this._offsetRightSpace)
+        } else {
+          this.adjustOffsetBarCount()
+        }
       } else {
         const dataSize = this._dataList.length
         if (pos >= dataSize) {
@@ -380,6 +387,7 @@ export default class ChartData {
    * @param space
    */
   setOffsetRightSpace (space) {
+    this._offsetRightSpace = space
     this._offsetRightBarCount = space / this._dataSpace
     this.adjustOffsetBarCount()
   }
