@@ -393,6 +393,7 @@ export default class ChartPane {
       tag
     })
     technicalIndicatorPane.setHeight(height)
+    technicalIndicatorPane._mainWidgetCell.id = tag //给div增加id
     this._technicalIndicatorPanes.push(technicalIndicatorPane)
     this.measurePaneSize()
     return tag
