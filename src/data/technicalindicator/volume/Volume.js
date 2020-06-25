@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { VOL } from '../technicalIndicatorType'
+import { VOL } from '../defaultTechnicalIndicatorType'
 
 export default class Volume extends TechnicalIndicator {
   constructor () {

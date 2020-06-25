@@ -22,7 +22,7 @@ import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import SeparatorPane from './SeparatorPane'
 
-import { MA, MACD } from '../data/technicalindicator/technicalIndicatorType'
+import { MA, MACD } from '../data/technicalindicator/defaultTechnicalIndicatorType'
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { DEV } from '../utils/env'
@@ -216,7 +216,7 @@ export default class ChartPane {
     const xAxisHeight = this._measureXAxisHeight()
     const yAxisWidth = this._measureYAxisWidth()
     const paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorHeight
-    const mainWidthWidth = paneWidth - (isYAxisTextOutsize ? yAxisWidth : 0)
+    const mainWidth = paneWidth - (isYAxisTextOutsize ? yAxisWidth : 0)
     let yAxisOffsetLeft = paneWidth - yAxisWidth
     let mainOffsetLeft = 0
     if (isYAxisLeft) {
@@ -239,16 +239,16 @@ export default class ChartPane {
 
     const candleStickPaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight
 
-    this._chartData.setTotalDataSpace(mainWidthWidth)
+    this._chartData.setTotalDataSpace(mainWidth)
     const paneSize = {}
     paneSize.contentLeft = mainOffsetLeft
-    paneSize.contentRight = mainOffsetLeft + mainWidthWidth
+    paneSize.contentRight = mainOffsetLeft + mainWidth
     const tags = {}
     tags[CANDLE_STICK_PANE_TAG] = { contentTop: 0, contentBottom: candleStickPaneHeight }
     let contentTop = candleStickPaneHeight
     let contentBottom = candleStickPaneHeight
     this._candleStickPane.setSize(
-      { left: mainOffsetLeft, width: mainWidthWidth, height: candleStickPaneHeight },
+      { left: mainOffsetLeft, width: mainWidth, height: candleStickPaneHeight },
       { left: yAxisOffsetLeft, width: yAxisWidth, height: candleStickPaneHeight }
     )
 
@@ -257,17 +257,17 @@ export default class ChartPane {
       const separatorPane = this._separatorPanes[i]
       const technicalIndicatorPaneHeight = technicalIndicatorPane.height()
       technicalIndicatorPane.setSize(
-        { left: mainOffsetLeft, width: mainWidthWidth, height: technicalIndicatorPaneHeight },
+        { left: mainOffsetLeft, width: mainWidth, height: technicalIndicatorPaneHeight },
         { left: yAxisOffsetLeft, width: yAxisWidth, height: technicalIndicatorPaneHeight }
       )
-      separatorPane.setSize(mainOffsetLeft, mainWidthWidth)
+      separatorPane.setSize(mainOffsetLeft, mainWidth)
       contentBottom += technicalIndicatorPaneHeight
       tags[technicalIndicatorPane.tag()] = { contentTop, contentBottom }
       contentTop = contentBottom
     }
     paneSize.tags = tags
     this._xAxisPane.setSize(
-      { left: mainOffsetLeft, width: mainWidthWidth, height: xAxisHeight },
+      { left: mainOffsetLeft, width: mainWidth, height: xAxisHeight },
       { left: yAxisOffsetLeft, width: yAxisWidth, height: xAxisHeight }
     )
     this._chartEvent.setPaneSize(paneSize)

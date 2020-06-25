@@ -3213,11 +3213,12 @@ var ChartData = /*#__PURE__*/function () {
 
     this._from = 0; // 结束的索引
 
-    this._to = 0; // 十字光标位置
+    this._to = 0; // 十字光标
 
-    this._crossHairPoint = null; // 标识十字光标在哪个pane
-
-    this._crossHairPaneTag = null; // 用来记录开始拖拽时向右偏移的数量
+    this._crossHair = {}; // this._crossHairPoint = null
+    // // 标识十字光标在哪个pane
+    // this._crossHairPaneTag = null
+    // 用来记录开始拖拽时向右偏移的数量
 
     this._preOffsetRightBarCount = 0; // 当前绘制的标记图形的类型
 
@@ -3433,6 +3434,7 @@ var ChartData = /*#__PURE__*/function () {
       }
 
       if (isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0) {
+        this.technicalIndicator(VOL).precision = volumePrecision;
         this._volumePrecision = volumePrecision;
       }
     }
@@ -3607,46 +3609,38 @@ var ChartData = /*#__PURE__*/function () {
       return this._to;
     }
     /**
-     * 获取十字光标点
-     * @returns {null}
+     * 获取十字光标信息
+     * @returns {{}}
      */
 
   }, {
-    key: "crossHairPoint",
-    value: function crossHairPoint() {
-      return this._crossHairPoint;
-    }
-    /**
-     * 获取十字光标点所在的pane的标识
-     * @returns {null}
-     */
-
-  }, {
-    key: "crossHairPaneTag",
-    value: function crossHairPaneTag() {
-      return this._crossHairPaneTag;
+    key: "crossHair",
+    value: function crossHair() {
+      return this._crossHair;
     }
     /**
      * 设置十字光标点所在的pane的标识
-     * @param tag
-     */
-
-  }, {
-    key: "setCrossHairPaneTag",
-    value: function setCrossHairPaneTag(tag) {
-      this._crossHairPaneTag = tag;
-
-      this._invalidateHandler(InvalidateLevel.FLOAT_LAYER);
-    }
-    /**
-     * 设置十字光标点
      * @param point
+     * @param paneTag
      */
 
   }, {
-    key: "setCrossHairPoint",
-    value: function setCrossHairPoint(point) {
-      this._crossHairPoint = point;
+    key: "setCrossHairPointPaneTag",
+    value: function setCrossHairPointPaneTag(point, paneTag) {
+      var crossHair = {};
+
+      if (point) {
+        crossHair.x = point.x;
+        crossHair.y = point.y;
+        crossHair.paneTag = this._crossHair.paneTag;
+      }
+
+      if (paneTag !== undefined) {
+        crossHair.paneTag = paneTag;
+        this._crossHair = crossHair;
+
+        this._invalidateHandler(InvalidateLevel.FLOAT_LAYER);
+      }
     }
     /**
      * 开始滚动
@@ -3872,9 +3866,8 @@ var ChartData = /*#__PURE__*/function () {
       var info = createNewTechnicalIndicator(technicalIndicatorInfo || {});
 
       if (info) {
-        var name = technicalIndicatorInfo.name; // 将生成的新的指标类放入集合
-
-        this._technicalIndicators[name] = info;
+        // 将生成的新的指标类放入集合
+        this._technicalIndicators[technicalIndicatorInfo.name] = info;
       }
     }
     /**
@@ -4958,93 +4951,82 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
   _createClass(TechnicalIndicatorFloatLayerView, [{
     key: "_draw",
     value: function _draw() {
-      var crossHairPoint = this._chartData.crossHairPoint();
+      var crossHair = this._chartData.crossHair();
 
       var dataList = this._chartData.dataList();
 
       var technicalIndicator = this._additionalDataProvider.technicalIndicator();
 
       var technicalIndicatorResult = technicalIndicator.result;
-      var dataPos;
+      var realDataPos;
 
-      if (crossHairPoint) {
-        dataPos = this._xAxis.convertFromPixel(crossHairPoint.x);
+      if (isValid(crossHair.x)) {
+        realDataPos = this._xAxis.convertFromPixel(crossHair.x);
       } else {
+        realDataPos = dataList.length - 1;
+      }
+
+      var dataPos = realDataPos;
+
+      if (dataPos < 0) {
+        dataPos = 0;
+      } else if (dataPos > dataList.length - 1) {
         dataPos = dataList.length - 1;
       }
 
-      var realDataPos = dataPos;
       var kLineData = dataList[dataPos];
       var technicalIndicatorData = technicalIndicatorResult[dataPos];
 
-      if (!kLineData) {
-        var to = this._chartData.to();
-
-        if (dataPos > to - 1) {
-          kLineData = dataList[to - 1];
-          technicalIndicatorData = technicalIndicatorResult[to - 1];
-          realDataPos = to - 1;
-        } else if (dataPos < 0) {
-          kLineData = dataList[0];
-          technicalIndicatorData = technicalIndicatorResult[0];
-          realDataPos = 0;
-        }
-      }
-
       if (kLineData) {
-        var x = this._xAxis.convertToPixel(dataPos);
+        var realDataPosX = this._xAxis.convertToPixel(realDataPos);
 
-        this._drawCrossHairHorizontalLine();
+        this._drawCrossHairHorizontalLine(crossHair);
 
-        this._drawCrossHairVerticalLine(x);
+        this._drawCrossHairVerticalLine(crossHair, realDataPosX);
 
         var displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule;
 
-        if (displayRule === FloatLayerPromptDisplayRule.ALWAYS || displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairPaneTag()) {
-          this._drawPrompt(realDataPos, kLineData, technicalIndicatorData, technicalIndicator, x, dataPos >= 0 && dataPos <= dataList.length - 1);
+        if (displayRule === FloatLayerPromptDisplayRule.ALWAYS || displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && crossHair.paneTag) {
+          this._drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, realDataPos >= 0 && realDataPos <= dataList.length - 1 && crossHair.paneTag);
         }
       }
     }
     /**
      * 绘制提示
-     * @param dataPos
+     * @param crossHair
      * @param kLineData
      * @param technicalIndicatorData
+     * @param realDataPos
+     * @param realDataPosX
      * @param technicalIndicator
-     * @param x
      * @param isDrawValueIndicator 是否需要绘制指示点
      * @private
      */
 
   }, {
     key: "_drawPrompt",
-    value: function _drawPrompt(dataPos, kLineData, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
-      this._drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator);
+    value: function _drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, isDrawValueIndicator) {
+      this._drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, isDrawValueIndicator);
     }
     /**
      * 绘制十字光标水平线
+     * @param crossHair
      * @private
      */
 
   }, {
     key: "_drawCrossHairHorizontalLine",
-    value: function _drawCrossHairHorizontalLine() {
-      if (this._chartData.crossHairPaneTag() !== this._additionalDataProvider.tag()) {
+    value: function _drawCrossHairHorizontalLine(crossHair) {
+      if (crossHair.paneTag !== this._additionalDataProvider.tag()) {
         return;
       }
 
-      var crossHair = this._chartData.styleOptions().floatLayer.crossHair;
+      var crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair;
 
-      var crossHairHorizontal = crossHair.horizontal;
+      var crossHairHorizontal = crossHairOptions.horizontal;
       var crossHairHorizontalLine = crossHairHorizontal.line;
 
-      if (!crossHair.display || !crossHairHorizontal.display || !crossHairHorizontalLine.display) {
-        return;
-      }
-
-      var crossHairPoint = this._chartData.crossHairPoint();
-
-      if (!crossHairPoint) {
+      if (!crossHairOptions.display || !crossHairHorizontal.display || !crossHairHorizontalLine.display) {
         return;
       } // 绘制十字光标水平线
 
@@ -5056,29 +5038,30 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
         this._ctx.setLineDash(crossHairHorizontalLine.dashValue);
       }
 
-      drawHorizontalLine(this._ctx, crossHairPoint.y, 0, this._width);
+      drawHorizontalLine(this._ctx, crossHair.y, 0, this._width);
 
       this._ctx.setLineDash([]);
     }
     /**
      * 绘制十字光标垂直线
-     * @param x
+     * @param crossHair
+     * @param realDataPosX
      * @private
      */
 
   }, {
     key: "_drawCrossHairVerticalLine",
-    value: function _drawCrossHairVerticalLine(x) {
-      if (!this._chartData.crossHairPaneTag()) {
+    value: function _drawCrossHairVerticalLine(crossHair, realDataPosX) {
+      if (!crossHair.paneTag) {
         return;
       }
 
-      var crossHair = this._chartData.styleOptions().floatLayer.crossHair;
+      var crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair;
 
-      var crossHairVertical = crossHair.vertical;
+      var crossHairVertical = crossHairOptions.vertical;
       var crossHairVerticalLine = crossHairVertical.line;
 
-      if (!crossHair.display || !crossHairVertical.display || !crossHairVerticalLine.display) {
+      if (!crossHairOptions.display || !crossHairVertical.display || !crossHairVerticalLine.display) {
         return;
       }
 
@@ -5089,16 +5072,16 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
         this._ctx.setLineDash(crossHairVerticalLine.dashValue);
       }
 
-      drawVerticalLine(this._ctx, x, 0, this._height);
+      drawVerticalLine(this._ctx, realDataPosX, 0, this._height);
 
       this._ctx.setLineDash([]);
     }
     /**
      * 绘制指标提示
-     * @param dataPos
      * @param technicalIndicatorData
+     * @param realDataPos
+     * @param realDataPosX
      * @param technicalIndicator
-     * @param x
      * @param isDrawValueIndicator
      * @param offsetTop
      * @private
@@ -5106,7 +5089,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
   }, {
     key: "_drawTechnicalIndicatorPrompt",
-    value: function _drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
+    value: function _drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, isDrawValueIndicator) {
       var offsetTop = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
 
       var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
@@ -5114,10 +5097,10 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
       var data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
       var colors = technicalIndicatorOptions.line.colors;
 
-      this._drawTechnicalIndicatorPromptText(dataPos, technicalIndicator, data, colors, offsetTop);
+      this._drawTechnicalIndicatorPromptText(realDataPos, technicalIndicator, data, colors, offsetTop);
 
       if (isDrawValueIndicator) {
-        this._drawTechnicalIndicatorPromptPoint(dataPos, technicalIndicator, data.values, colors, x);
+        this._drawTechnicalIndicatorPromptPoint(realDataPos, realDataPosX, technicalIndicator, data.values, colors);
       }
     }
     /**
@@ -5202,24 +5185,20 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
     }
     /**
      * 绘制指标提示点
-     * @param dataPos
+     * @param realDataPos
+     * @param realDataPosX
      * @param technicalIndicator
      * @param values
      * @param colors
-     * @param x
      * @private
      */
 
   }, {
     key: "_drawTechnicalIndicatorPromptPoint",
-    value: function _drawTechnicalIndicatorPromptPoint(dataPos, technicalIndicator, values, colors, x) {
+    value: function _drawTechnicalIndicatorPromptPoint(realDataPos, realDataPosX, technicalIndicator, values, colors) {
       var floatLayerPromptTechnicalIndicatorPoint = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.point;
 
       if (!floatLayerPromptTechnicalIndicatorPoint.display) {
-        return;
-      }
-
-      if (!this._chartData.crossHairPaneTag()) {
         return;
       }
 
@@ -5238,7 +5217,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
             this._ctx.beginPath();
 
-            this._ctx.arc(x, values[i].y, radius, 0, Math.PI * 2);
+            this._ctx.arc(realDataPosX, values[i].y, radius, 0, Math.PI * 2);
 
             this._ctx.closePath();
 
@@ -5648,26 +5627,22 @@ var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawCrossHairLabel",
     value: function _drawCrossHairLabel() {
-      if (this._chartData.crossHairPaneTag() !== this._additionalDataProvider.tag() || this._chartData.dataList().length === 0) {
+      var crossHair = this._chartData.crossHair();
+
+      if (crossHair.paneTag !== this._additionalDataProvider.tag()) {
         return;
       }
 
-      var crossHair = this._chartData.styleOptions().floatLayer.crossHair;
+      var crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair;
 
-      var crossHairHorizontal = crossHair.horizontal;
+      var crossHairHorizontal = crossHairOptions.horizontal;
       var crossHairHorizontalText = crossHairHorizontal.text;
 
-      if (!crossHair.display || !crossHairHorizontal.display || !crossHairHorizontalText.display) {
+      if (!crossHairOptions.display || !crossHairHorizontal.display || !crossHairHorizontalText.display) {
         return;
       }
 
-      var crossHairPoint = this._chartData.crossHairPoint();
-
-      if (!crossHairPoint) {
-        return;
-      }
-
-      var value = this._yAxis.convertFromPixel(crossHairPoint.y);
+      var value = this._yAxis.convertFromPixel(crossHair.y);
 
       var yAxisDataLabel;
 
@@ -5706,7 +5681,7 @@ var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
         rectStartX = this._width - rectWidth;
       }
 
-      var rectY = crossHairPoint.y - borderSize - paddingTop - textSize / 2; // 绘制y轴文字外的边框
+      var rectY = crossHair.y - borderSize - paddingTop - textSize / 2; // 绘制y轴文字外的边框
 
       this._ctx.fillStyle = crossHairHorizontalText.backgroundColor;
 
@@ -5720,7 +5695,7 @@ var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
       this._ctx.textBaseline = 'middle';
       this._ctx.fillStyle = crossHairHorizontalText.color;
 
-      this._ctx.fillText(yAxisDataLabel, rectStartX + borderSize + paddingLeft, crossHairPoint.y);
+      this._ctx.fillText(yAxisDataLabel, rectStartX + borderSize + paddingLeft, crossHair.y);
     }
   }]);
 
@@ -6675,7 +6650,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
 
   _createClass(CandleStickFloatLayerView, [{
     key: "_drawPrompt",
-    value: function _drawPrompt(dataPos, kLineData, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
+    value: function _drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, isDrawValueIndicator) {
       var options = this._chartData.styleOptions();
 
       var floatLayerPromptCandleStick = options.floatLayer.prompt.candleStick;
@@ -6686,17 +6661,17 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
         this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData);
 
         if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
-          this._drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
+          this._drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, isDrawValueIndicator, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
         }
       } else {
         var data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
 
-        this._drawCandleStickRectPromptText(x, floatLayerPromptCandleStick, candleStickPromptData, data);
+        this._drawCandleStickRectPromptText(realDataPosX, floatLayerPromptCandleStick, candleStickPromptData, data);
 
         if (isDrawValueIndicator) {
           var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
-          this._drawTechnicalIndicatorPromptPoint(dataPos, technicalIndicator, data.values, technicalIndicatorOptions.line.colors, x);
+          this._drawTechnicalIndicatorPromptPoint(realDataPos, technicalIndicator, data.values, technicalIndicatorOptions.line.colors, realDataPosX);
         }
       }
     }
@@ -9521,27 +9496,27 @@ var XAxisFloatLayerView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawCrossHairLabel",
     value: function _drawCrossHairLabel() {
-      if (!this._chartData.crossHairPaneTag()) {
+      var crossHair = this._chartData.crossHair();
+
+      if (!crossHair.paneTag) {
         return;
       }
 
-      var crossHair = this._chartData.styleOptions().floatLayer.crossHair;
+      var crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair;
 
-      var crossHairVertical = crossHair.vertical;
+      var crossHairVertical = crossHairOptions.vertical;
       var crossHairVerticalText = crossHairVertical.text;
 
-      if (!crossHair.display || !crossHairVertical.display || !crossHairVerticalText.display) {
+      if (!crossHairOptions.display || !crossHairVertical.display || !crossHairVerticalText.display) {
         return;
       }
 
       var dataList = this._chartData.dataList();
 
-      var crossHairPoint = this._chartData.crossHairPoint();
-
       var dataPos;
 
-      if (crossHairPoint) {
-        dataPos = this._xAxis.convertFromPixel(crossHairPoint.x);
+      if (isValid(crossHair.x)) {
+        dataPos = this._xAxis.convertFromPixel(crossHair.x);
       } else {
         dataPos = dataList.length - 1;
       }
@@ -10032,7 +10007,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
     key: "mouseLeaveEvent",
     value: function mouseLeaveEvent(event) {
       if (isMouse(event)) {
-        this._chartData.setCrossHairPaneTag(null);
+        this._chartData.setCrossHairPointPaneTag(null, null);
       }
     }
   }, {
@@ -10045,14 +10020,12 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
       }
 
       this._performCross(event, false, function (cross) {
-        _this2._chartData.setCrossHairPoint({
+        _this2._chartData.setCrossHairPointPaneTag({
           x: event.localX,
           y: cross.y
-        });
-
-        _this2._chartData.setCrossHairPaneTag(cross.tag);
+        }, cross.tag);
       }, function () {
-        _this2._chartData.setCrossHairPaneTag(null);
+        _this2._chartData.setCrossHairPointPaneTag(null, null);
       });
     }
   }, {
@@ -10103,12 +10076,10 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
             y: event.localY
           };
 
-          _this3._chartData.setCrossHairPoint({
+          _this3._chartData.setCrossHairPointPaneTag({
             x: event.localX,
             y: cross.y
-          });
-
-          _this3._chartData.setCrossHairPaneTag(cross.tag);
+          }, cross.tag);
         }
       });
     }
@@ -10142,16 +10113,12 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
               y: event.localY
             };
 
-            _this4._chartData.setCrossHairPoint(crossHairPoint);
-
-            _this4._chartData.setCrossHairPaneTag(cross.tag);
+            _this4._chartData.setCrossHairPointPaneTag(crossHairPoint, cross.tag);
           } else {
             _this4._touchCancelCrossHair = true;
             _this4._touchPoint = null;
 
-            _this4._chartData.setCrossHairPoint(crossHairPoint);
-
-            _this4._chartData.setCrossHairPaneTag(null);
+            _this4._chartData.setCrossHairPointPaneTag(null, null);
           }
         } else {
           _this4._touchCancelCrossHair = false;
@@ -10176,9 +10143,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
               y: event.localY
             };
 
-            _this5._chartData.setCrossHairPoint(crossHairPoint);
-
-            _this5._chartData.setCrossHairPaneTag(cross.tag);
+            _this5._chartData.setCrossHairPointPaneTag(crossHairPoint, cross.tag);
 
             return;
           }
@@ -10186,7 +10151,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
 
         var distance = event.localX - _this5._startScrollPoint.x;
 
-        _this5._chartData.setCrossHairPoint(crossHairPoint);
+        _this5._chartData.setCrossHairPointPaneTag(crossHairPoint, cross.tag);
 
         _this5._chartData.scroll(distance);
       });
@@ -10202,12 +10167,10 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
           y: event.localY
         };
 
-        _this6._chartData.setCrossHairPoint({
+        _this6._chartData.setCrossHairPointPaneTag({
           x: event.localX,
           y: cross.y
-        });
-
-        _this6._chartData.setCrossHairPaneTag(cross.tag);
+        }, cross.tag);
       });
     }
     /**
@@ -10263,6 +10226,13 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
   return ZoomScrollEventHandler;
 }(EventHandler);
 
+var ArrowKey = {
+  UP: 'ArrowUp',
+  DOWN: 'ArrowDown',
+  LEFT: 'ArrowLeft',
+  RIGHT: 'ArrowRight'
+};
+
 var KeyBoardEventHandler = /*#__PURE__*/function (_EventHandler) {
   _inherits(KeyBoardEventHandler, _EventHandler);
 
@@ -10284,21 +10254,25 @@ var KeyBoardEventHandler = /*#__PURE__*/function (_EventHandler) {
     value: function keyBoardDownEvent(event) {
       if (event.shiftKey) {
         switch (event.code) {
-          case 'ArrowUp':
+          case ArrowKey.UP:
             {
-              this._chartData.zoom(-0.5, this._chartData.crossHairPoint());
+              this._chartData.zoom(-0.5, {
+                x: Math.floor((this._paneSize.contentRight + this._paneSize.contentLeft) / 2)
+              });
 
               break;
             }
 
-          case 'ArrowDown':
+          case ArrowKey.DOWN:
             {
-              this._chartData.zoom(0.5, this._chartData.crossHairPoint());
+              this._chartData.zoom(0.5, {
+                x: Math.floor((this._paneSize.contentRight + this._paneSize.contentLeft) / 2)
+              });
 
               break;
             }
 
-          case 'ArrowLeft':
+          case ArrowKey.LEFT:
             {
               this._chartData.startScroll();
 
@@ -10307,7 +10281,7 @@ var KeyBoardEventHandler = /*#__PURE__*/function (_EventHandler) {
               break;
             }
 
-          case 'ArrowRight':
+          case ArrowKey.RIGHT:
             {
               this._chartData.startScroll();
 
@@ -10450,8 +10424,8 @@ var ChartEvent = /*#__PURE__*/function () {
         this._graphicMarkEventHandler.pressedMouseMoveEvent(event); // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
 
 
-        if (this._chartData.crossHairPaneTag() !== null) {
-          this._chartData.setCrossHairPaneTag(null);
+        if (this._chartData.crossHair().paneTag) {
+          this._chartData.setCrossHairPointPaneTag(null, null);
         }
       }
 
@@ -10753,7 +10727,7 @@ var ChartPane = /*#__PURE__*/function () {
       var yAxisWidth = this._measureYAxisWidth();
 
       var paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorHeight;
-      var mainWidthWidth = paneWidth - (isYAxisTextOutsize ? yAxisWidth : 0);
+      var mainWidth = paneWidth - (isYAxisTextOutsize ? yAxisWidth : 0);
       var yAxisOffsetLeft = paneWidth - yAxisWidth;
       var mainOffsetLeft = 0;
 
@@ -10792,11 +10766,11 @@ var ChartPane = /*#__PURE__*/function () {
 
       var candleStickPaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight;
 
-      this._chartData.setTotalDataSpace(mainWidthWidth);
+      this._chartData.setTotalDataSpace(mainWidth);
 
       var paneSize = {};
       paneSize.contentLeft = mainOffsetLeft;
-      paneSize.contentRight = mainOffsetLeft + mainWidthWidth;
+      paneSize.contentRight = mainOffsetLeft + mainWidth;
       var tags = {};
       tags[CANDLE_STICK_PANE_TAG] = {
         contentTop: 0,
@@ -10807,7 +10781,7 @@ var ChartPane = /*#__PURE__*/function () {
 
       this._candleStickPane.setSize({
         left: mainOffsetLeft,
-        width: mainWidthWidth,
+        width: mainWidth,
         height: candleStickPaneHeight
       }, {
         left: yAxisOffsetLeft,
@@ -10821,14 +10795,14 @@ var ChartPane = /*#__PURE__*/function () {
         var technicalIndicatorPaneHeight = technicalIndicatorPane.height();
         technicalIndicatorPane.setSize({
           left: mainOffsetLeft,
-          width: mainWidthWidth,
+          width: mainWidth,
           height: technicalIndicatorPaneHeight
         }, {
           left: yAxisOffsetLeft,
           width: yAxisWidth,
           height: technicalIndicatorPaneHeight
         });
-        separatorPane.setSize(mainOffsetLeft, mainWidthWidth);
+        separatorPane.setSize(mainOffsetLeft, mainWidth);
         contentBottom += technicalIndicatorPaneHeight;
         tags[technicalIndicatorPane.tag()] = {
           contentTop: contentTop,
@@ -10841,7 +10815,7 @@ var ChartPane = /*#__PURE__*/function () {
 
       this._xAxisPane.setSize({
         left: mainOffsetLeft,
-        width: mainWidthWidth,
+        width: mainWidth,
         height: xAxisHeight
       }, {
         left: yAxisOffsetLeft,

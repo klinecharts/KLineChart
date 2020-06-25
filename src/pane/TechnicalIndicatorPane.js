@@ -15,7 +15,7 @@
 import Pane from './Pane'
 import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
-import { MACD } from '../data/technicalindicator/technicalIndicatorType'
+import { MACD } from '../data/technicalindicator/defaultTechnicalIndicatorType'
 import EmptyTechnicalIndicator from '../data/technicalindicator/TechnicalIndicator'
 import YAxis from '../component/YAxis'
 

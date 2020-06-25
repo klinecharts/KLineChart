@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { MTM } from '../technicalIndicatorType'
+import { MTM } from '../defaultTechnicalIndicatorType'
 
 export default class Momentum extends TechnicalIndicator {
   constructor () {

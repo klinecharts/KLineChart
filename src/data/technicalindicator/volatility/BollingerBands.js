@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { BOLL } from '../technicalIndicatorType'
+import { BOLL } from '../defaultTechnicalIndicatorType'
 
 export default class BollingerBands extends TechnicalIndicator {
   constructor () {

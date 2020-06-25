@@ -115,8 +115,8 @@ export default class ChartEvent {
     if (this._chartData.dragGraphicMarkFlag()) {
       this._graphicMarkEventHandler.pressedMouseMoveEvent(event)
       // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
-      if (this._chartData.crossHairPaneTag() !== null) {
-        this._chartData.setCrossHairPaneTag(null)
+      if (this._chartData.crossHair().paneTag) {
+        this._chartData.setCrossHairPointPaneTag(null, null)
       }
     }
     if (this._checkZoomScroll()) {

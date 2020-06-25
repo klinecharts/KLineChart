@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { MA } from '../technicalIndicatorType'
+import { MA } from '../defaultTechnicalIndicatorType'
 
 export default class MovingAverage extends TechnicalIndicator {
   constructor () {

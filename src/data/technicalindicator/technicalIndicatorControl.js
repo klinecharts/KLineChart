@@ -40,7 +40,7 @@ import {
   MA, EMA, VOL, MACD, KDJ, BOLL, RSI,
   BIAS, BRAR, CCI, DMI, CR, PSY, DMA,
   TRIX, OBV, VR, WR, MTM, EMV, SAR
-} from './technicalIndicatorType'
+} from './defaultTechnicalIndicatorType'
 import { isArray, isFunction, isNumber, isValid } from '../../utils/typeChecks'
 import { formatBigNumber, formatPrecision } from '../../utils/format'
 import { DEV } from '../../utils/env'

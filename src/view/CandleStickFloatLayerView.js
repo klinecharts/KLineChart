@@ -20,7 +20,10 @@ import { ChartType, FloatLayerPromptCandleStickTextDisplayType } from '../data/o
 import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalIndicatorControl'
 
 export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLayerView {
-  _drawPrompt (dataPos, kLineData, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
+  _drawPrompt (
+    kLineData, technicalIndicatorData, realDataPos, realDataPosX,
+    technicalIndicator, isDrawValueIndicator
+  ) {
     const options = this._chartData.styleOptions()
     const floatLayerPromptCandleStick = options.floatLayer.prompt.candleStick
     const candleStickPromptData = this._getCandleStickPromptData(kLineData, options.candleStick, floatLayerPromptCandleStick)
@@ -28,21 +31,22 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData)
       if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
         this._drawTechnicalIndicatorPrompt(
-          dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator,
+          technicalIndicatorData, realDataPos, realDataPosX,
+          technicalIndicator, isDrawValueIndicator,
           floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop
         )
       }
     } else {
       const data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
       this._drawCandleStickRectPromptText(
-        x, floatLayerPromptCandleStick, candleStickPromptData, data
+        realDataPosX, floatLayerPromptCandleStick, candleStickPromptData, data
       )
       if (isDrawValueIndicator) {
         const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
         this._drawTechnicalIndicatorPromptPoint(
-          dataPos, technicalIndicator,
+          realDataPos, technicalIndicator,
           data.values,
-          technicalIndicatorOptions.line.colors, x
+          technicalIndicatorOptions.line.colors, realDataPosX
         )
       }
     }

@@ -14,7 +14,7 @@
 
 import TechnicalIndicator from '../TechnicalIndicator'
 
-import { EMA } from '../technicalIndicatorType'
+import { EMA } from '../defaultTechnicalIndicatorType'
 
 export default class ExponentialMovingAverage extends TechnicalIndicator {
   constructor () {

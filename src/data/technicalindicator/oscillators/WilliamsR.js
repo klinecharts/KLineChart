@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { WR } from '../technicalIndicatorType'
+import { WR } from '../defaultTechnicalIndicatorType'
 import commonCalc from '../calcHnLn'
 
 export default class WilliamsR extends TechnicalIndicator {

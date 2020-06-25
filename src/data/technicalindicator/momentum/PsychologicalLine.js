@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { PSY } from '../technicalIndicatorType'
+import { PSY } from '../defaultTechnicalIndicatorType'
 
 export default class PsychologicalLine extends TechnicalIndicator {
   constructor () {
