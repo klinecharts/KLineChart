@@ -30,11 +30,11 @@ export default class KeyBoardEventHandler extends EventHandler {
     if (event.shiftKey) {
       switch (event.code) {
         case ArrowKey.UP: {
-          this._chartData.zoom(-0.5, { x: Math.floor((this._paneSize.contentRight + this._paneSize.contentLeft) / 2) })
+          this._chartData.zoom(-0.5)
           break
         }
         case ArrowKey.DOWN: {
-          this._chartData.zoom(0.5, { x: Math.floor((this._paneSize.contentRight + this._paneSize.contentLeft) / 2) })
+          this._chartData.zoom(0.5)
           break
         }
         case ArrowKey.LEFT: {

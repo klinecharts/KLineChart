@@ -3213,12 +3213,9 @@ var ChartData = /*#__PURE__*/function () {
 
     this._from = 0; // 结束的索引
 
-    this._to = 0; // 十字光标
+    this._to = 0; // 十字光标信息
 
-    this._crossHair = {}; // this._crossHairPoint = null
-    // // 标识十字光标在哪个pane
-    // this._crossHairPaneTag = null
-    // 用来记录开始拖拽时向右偏移的数量
+    this._crossHair = {}; // 用来记录开始拖拽时向右偏移的数量
 
     this._preOffsetRightBarCount = 0; // 当前绘制的标记图形的类型
 
@@ -3688,6 +3685,12 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "zoom",
     value: function zoom(scale, point) {
+      if (!point || isValid(point.x)) {
+        point = {
+          x: isValid(this._crossHair.x) ? this._crossHair.x : this._totalDataSpace / 2
+        };
+      }
+
       var floatIndexAtZoomPoint = this.coordinateToFloatIndex(point.x);
       var dataSpace = this._dataSpace + scale * (this._dataSpace / 10);
 
@@ -10256,18 +10259,14 @@ var KeyBoardEventHandler = /*#__PURE__*/function (_EventHandler) {
         switch (event.code) {
           case ArrowKey.UP:
             {
-              this._chartData.zoom(-0.5, {
-                x: Math.floor((this._paneSize.contentRight + this._paneSize.contentLeft) / 2)
-              });
+              this._chartData.zoom(-0.5);
 
               break;
             }
 
           case ArrowKey.DOWN:
             {
-              this._chartData.zoom(0.5, {
-                x: Math.floor((this._paneSize.contentRight + this._paneSize.contentLeft) / 2)
-              });
+              this._chartData.zoom(0.5);
 
               break;
             }

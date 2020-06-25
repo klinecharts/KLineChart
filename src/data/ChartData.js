@@ -483,6 +483,9 @@ export default class ChartData {
    * @param point
    */
   zoom (scale, point) {
+    if (!point || isValid(point.x)) {
+      point = { x: isValid(this._crossHair.x) ? this._crossHair.x : this._totalDataSpace / 2 }
+    }
     const floatIndexAtZoomPoint = this.coordinateToFloatIndex(point.x)
     const dataSpace = this._dataSpace + scale * (this._dataSpace / 10)
     if (this._innerSetDataSpace(dataSpace)) {
