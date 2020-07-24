@@ -647,17 +647,13 @@ export default class ChartData {
    * @param pane
    */
   calcTechnicalIndicator (pane) {
-    Promise.resolve().then(
-      _ => {
-        const technicalIndicator = pane.technicalIndicator()
-        if (technicalIndicator) {
-          const { calcParams, precision } = this._technicalIndicators[technicalIndicator.name]
-          technicalIndicator.setPrecision(precision)
-          technicalIndicator.setCalcParams(calcParams)
-          technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
-        }
-        pane.invalidate(InvalidateLevel.FULL)
-      }
-    )
+    const technicalIndicator = pane.technicalIndicator()
+    if (technicalIndicator) {
+      const { calcParams, precision } = this._technicalIndicators[technicalIndicator.name] || {}
+      technicalIndicator.setPrecision(precision)
+      technicalIndicator.setCalcParams(calcParams)
+      technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
+      pane.computeAxis()
+    }
   }
 }

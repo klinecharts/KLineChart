@@ -58,7 +58,7 @@ export default class CandleStickPane extends TechnicalIndicatorPane {
   setChartType (chartType) {
     if (this._chartType !== chartType) {
       this._chartType = chartType
-      this._chartData.calcTechnicalIndicator(this, this.technicalIndicator())
+      this._chartData.calcTechnicalIndicator(this)
     }
   }
 }

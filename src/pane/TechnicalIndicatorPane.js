@@ -60,13 +60,27 @@ export default class TechnicalIndicatorPane extends Pane {
     })
   }
 
-  _computeAxis () {
+  _isRealTime () {
+    return false
+  }
+
+  setHeight (height) {
+    super.setHeight(height)
+    this._yAxis.setHeight(height)
+  }
+
+  setWidth (mainWidgetWidth, yAxisWidgetWidth) {
+    super.setWidth(mainWidgetWidth, yAxisWidgetWidth)
+    this._yAxis.setWidth(yAxisWidgetWidth)
+  }
+
+  computeAxis () {
     this._yAxis.calcMinMaxValue(this.technicalIndicator(), this._isRealTime())
     this._yAxis.computeAxis()
   }
 
-  _isRealTime () {
-    return false
+  getSelfAxisWidth () {
+    return this._yAxis.getSelfWidth(this._technicalIndicator)
   }
 
   /**
@@ -75,17 +89,6 @@ export default class TechnicalIndicatorPane extends Pane {
    */
   tag () {
     return this._tag
-  }
-
-  /**
-   * 设置尺寸
-   * @param mainWidgetSize
-   * @param yAxisWidgetSize
-   */
-  setSize (mainWidgetSize, yAxisWidgetSize) {
-    this._yAxis.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height)
-    this._computeAxis()
-    super.setSize(mainWidgetSize, yAxisWidgetSize)
   }
 
   yAxis () {

@@ -1,6 +1,6 @@
 /**
  * @license
- * KLineChart v5.3.0
+ * KLineChart v5.5.0
  * Copyright (c) 2019 lihu.
  * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
@@ -598,16 +598,6 @@ var defaultXAxis = {
   display: true,
 
   /**
-   * x轴最大高度
-   */
-  maxHeight: 50,
-
-  /**
-   * x轴最小高度
-   */
-  minHeight: 30,
-
-  /**
    * 轴线配置
    */
   axisLine: {
@@ -644,16 +634,6 @@ var defaultYAxis = {
    * 是否显示整个轴
    */
   display: true,
-
-  /**
-   * x轴最大宽度
-   */
-  maxWidth: 100,
-
-  /**
-   * x轴最小宽度
-   */
-  minWidth: 60,
 
   /**
    * y轴类型
@@ -3890,22 +3870,18 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(pane) {
-      var _this2 = this;
+      var technicalIndicator = pane.technicalIndicator();
 
-      Promise.resolve().then(function (_) {
-        var technicalIndicator = pane.technicalIndicator();
+      if (technicalIndicator) {
+        var _ref = this._technicalIndicators[technicalIndicator.name] || {},
+            calcParams = _ref.calcParams,
+            precision = _ref.precision;
 
-        if (technicalIndicator) {
-          var _this2$_technicalIndi = _this2._technicalIndicators[technicalIndicator.name],
-              calcParams = _this2$_technicalIndi.calcParams,
-              precision = _this2$_technicalIndi.precision;
-          technicalIndicator.setPrecision(precision);
-          technicalIndicator.setCalcParams(calcParams);
-          technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(_this2._dataList, technicalIndicator.calcParams) || [];
-        }
-
-        pane.invalidate(InvalidateLevel.FULL);
-      });
+        technicalIndicator.setPrecision(precision);
+        technicalIndicator.setCalcParams(calcParams);
+        technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || [];
+        pane.computeAxis();
+      }
     }
   }]);
 
@@ -3943,7 +3919,7 @@ function getPixelRatio(ctx) {
  */
 
 function calcTextWidth(ctx, text) {
-  return ctx.measureText(text).width;
+  return Math.round(ctx.measureText(text).width);
 }
 /**
  * 获取字体
@@ -4009,17 +3985,16 @@ var Pane = /*#__PURE__*/function () {
   function Pane(props) {
     _classCallCheck(this, Pane);
 
+    this._height = -1;
     this._container = props.container;
     this._chartData = props.chartData;
-    this._width = -1;
-    this._height = -1;
 
     this._initBefore(props);
 
     this._initElement();
 
-    this._mainWidget = this._createMainWidget(this._mainWidgetCell, props);
-    this._yAxisWidget = this._createYAxisWidget(this._yAxisWidgetCell, props);
+    this._mainWidget = this._createMainWidget(this._element, props);
+    this._yAxisWidget = this._createYAxisWidget(this._element, props);
   }
 
   _createClass(Pane, [{
@@ -4034,13 +4009,6 @@ var Pane = /*#__PURE__*/function () {
       this._element.style.position = 'relative';
       this._element.style.overflow = 'hidden';
       this._element.style.width = '100%';
-      this._mainWidgetCell = this._createCell();
-      this._yAxisWidgetCell = this._createCell();
-
-      this._element.appendChild(this._mainWidgetCell);
-
-      this._element.appendChild(this._yAxisWidgetCell);
-
       var lastElement = this._container.lastChild;
 
       if (lastElement) {
@@ -4048,18 +4016,6 @@ var Pane = /*#__PURE__*/function () {
       } else {
         this._container.appendChild(this._element);
       }
-    }
-  }, {
-    key: "_createCell",
-    value: function _createCell() {
-      var cell = document.createElement('div');
-      cell.style.display = 'table-cell';
-      cell.style.position = 'absolute';
-      cell.style.margin = '0';
-      cell.style.padding = '0';
-      cell.style.top = '0';
-      cell.style.zIndex = '1';
-      return cell;
     }
     /**
      * 创建主组件
@@ -4101,8 +4057,8 @@ var Pane = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "_computeAxis",
-    value: function _computeAxis() {}
+    key: "computeAxis",
+    value: function computeAxis() {}
     /**
      * 获取宽度
      * @returns {number}
@@ -4112,6 +4068,13 @@ var Pane = /*#__PURE__*/function () {
     key: "width",
     value: function width() {
       return this._element.offsetWidth;
+    }
+  }, {
+    key: "setWidth",
+    value: function setWidth(mainWidgetWidth, yAxisWidgetWidth) {
+      this._mainWidget.setWidth(mainWidgetWidth);
+
+      this._yAxisWidget && this._yAxisWidget.setWidth(yAxisWidgetWidth);
     }
     /**
      * 获取高度
@@ -4131,28 +4094,28 @@ var Pane = /*#__PURE__*/function () {
     key: "setHeight",
     value: function setHeight(height) {
       this._height = height;
+
+      this._mainWidget.setHeight(height);
+
+      this._yAxisWidget && this._yAxisWidget.setHeight(height);
     }
-    /**
-     * 设置尺寸
-     * @param mainWidgetSize
-     * @param yAxisWidgetSize
-     */
-
   }, {
-    key: "setSize",
-    value: function setSize(mainWidgetSize, yAxisWidgetSize) {
-      this._height = mainWidgetSize.height;
-      this._element.style.height = "".concat(mainWidgetSize.height, "px");
+    key: "setOffsetLeft",
+    value: function setOffsetLeft(mainWidgetOffsetLeft, yAxisWidgetOffsetLeft) {
+      this._mainWidget.setOffsetLeft(mainWidgetOffsetLeft);
 
-      this._setCellSize(this._mainWidgetCell, mainWidgetSize);
-
-      this._setCellSize(this._yAxisWidgetCell, yAxisWidgetSize);
-
-      this._mainWidget.setSize(mainWidgetSize.width, this._height);
-
-      if (this._yAxisWidget) {
-        this._yAxisWidget.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height);
+      this._yAxisWidget && this._yAxisWidget.setOffsetLeft(yAxisWidgetOffsetLeft);
+    }
+  }, {
+    key: "layout",
+    value: function layout() {
+      if (this._element.offsetHeight !== this._height) {
+        this._element.style.height = "".concat(this._height, "px");
       }
+
+      this._mainWidget.layout();
+
+      this._yAxisWidget && this._yAxisWidget.layout();
     }
     /**
      * 刷新
@@ -4162,13 +4125,7 @@ var Pane = /*#__PURE__*/function () {
   }, {
     key: "invalidate",
     value: function invalidate(level) {
-      if (level === InvalidateLevel.FULL) {
-        this._computeAxis();
-      }
-
-      if (this._yAxisWidget) {
-        this._yAxisWidget.invalidate(level);
-      }
+      this._yAxisWidget && this._yAxisWidget.invalidate(level);
 
       this._mainWidget.invalidate(level);
     }
@@ -4237,11 +4194,10 @@ var Widget = /*#__PURE__*/function () {
     key: "_initElement",
     value: function _initElement(container) {
       this._element = document.createElement('div');
+      this._element.style.top = '0';
       this._element.style.margin = '0';
       this._element.style.padding = '0';
-      this._element.style.width = '100%';
-      this._element.style.height = '100%';
-      this._element.style.position = 'relative';
+      this._element.style.position = 'absolute';
       this._element.style.overflow = 'hidden';
       container.appendChild(this._element);
     }
@@ -4275,21 +4231,49 @@ var Widget = /*#__PURE__*/function () {
   }, {
     key: "_createFloatLayerView",
     value: function _createFloatLayerView(container, props) {}
-    /**
-     * 设置尺寸
-     * @param width
-     * @param height
-     */
-
   }, {
-    key: "setSize",
-    value: function setSize(width, height) {
+    key: "setWidth",
+    value: function setWidth(width) {
       this._width = width;
+
+      this._mainView.setWidth(width);
+
+      this._floatLayerView.setWidth(width);
+
+      this._expandView && this._expandView.setWidth(width);
+    }
+  }, {
+    key: "setHeight",
+    value: function setHeight(height) {
       this._height = height;
 
-      this._mainView.setSize(width, height);
+      this._mainView.setHeight(height);
 
-      this._floatLayerView.setSize(width, height);
+      this._floatLayerView.setHeight(height);
+
+      this._expandView && this._expandView.setHeight(height);
+    }
+  }, {
+    key: "setOffsetLeft",
+    value: function setOffsetLeft(offsetLeft) {
+      this._element.style.left = "".concat(offsetLeft, "px");
+    }
+  }, {
+    key: "layout",
+    value: function layout() {
+      if (this._element.offsetWidth !== this._width) {
+        this._element.style.width = "".concat(this._width, "px");
+      }
+
+      if (this._element.offsetHeight !== this._height) {
+        this._element.style.height = "".concat(this._height, "px");
+      }
+
+      this._mainView.layout();
+
+      this._floatLayerView.layout();
+
+      this._expandView && this._expandView.layout();
     }
     /**
      * 更新
@@ -4424,7 +4408,7 @@ var View = /*#__PURE__*/function () {
     value: function _initCanvas(container) {
       this._canvas = document.createElement('canvas');
       this._canvas.style.position = 'absolute';
-      this._canvas.style.right = '0';
+      this._canvas.style.top = '0';
       this._canvas.style.left = '0';
       this._canvas.style.zIndex = '2';
       this._ctx = this._canvas.getContext('2d');
@@ -4439,7 +4423,7 @@ var View = /*#__PURE__*/function () {
   }, {
     key: "_redraw",
     value: function _redraw(extendFun) {
-      this._ctx.clearRect(0, 0, this._width, this._height);
+      this._ctx.clearRect(0, 0, this._canvas.offsetWidth, this._canvas.offsetHeight);
 
       if (extendFun) {
         extendFun();
@@ -4454,29 +4438,34 @@ var View = /*#__PURE__*/function () {
   }, {
     key: "_draw",
     value: function _draw() {}
-    /**
-     * 设置尺寸
-     * @param width
-     * @param height
-     */
-
   }, {
-    key: "setSize",
-    value: function setSize(width, height) {
+    key: "setWidth",
+    value: function setWidth(width) {
+      this._width = width;
+    }
+  }, {
+    key: "setHeight",
+    value: function setHeight(height) {
+      this._height = height;
+    }
+  }, {
+    key: "layout",
+    value: function layout() {
       var _this = this;
 
-      this._redraw(function () {
-        var pixelRatio = getPixelRatio(_this._ctx);
-        _this._width = width;
-        _this._height = height;
-        _this._canvas.style.top = '0';
-        _this._canvas.style.width = "".concat(width, "px");
-        _this._canvas.style.height = "".concat(height, "px");
-        _this._canvas.width = width * pixelRatio;
-        _this._canvas.height = height * pixelRatio;
+      if (this._height !== this._canvas.offsetHeight || this._width !== this._canvas.offsetWidth) {
+        this._redraw(function () {
+          var pixelRatio = getPixelRatio(_this._ctx);
+          _this._canvas.style.width = "".concat(_this._width, "px");
+          _this._canvas.style.height = "".concat(_this._height, "px");
+          _this._canvas.width = _this._width * pixelRatio;
+          _this._canvas.height = _this._height * pixelRatio;
 
-        _this._ctx.scale(pixelRatio, pixelRatio);
-      });
+          _this._ctx.scale(pixelRatio, pixelRatio);
+        });
+      } else {
+        this.flush();
+      }
     }
     /**
      * 刷新
@@ -5753,6 +5742,7 @@ var YAxisWidget = /*#__PURE__*/function (_Widget) {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 var Axis = /*#__PURE__*/function () {
   function Axis(chartData) {
     _classCallCheck(this, Axis);
@@ -5764,9 +5754,20 @@ var Axis = /*#__PURE__*/function () {
     this._maxValue = 0;
     this._range = 0;
     this._ticks = [];
+
+    this._initMeasureCanvas();
   }
 
   _createClass(Axis, [{
+    key: "_initMeasureCanvas",
+    value: function _initMeasureCanvas() {
+      var measureCanvas = document.createElement('canvas');
+      this._measureCtx = measureCanvas.getContext('2d');
+      var pixelRatio = getPixelRatio(this._measureCtx);
+
+      this._measureCtx.scale(pixelRatio, pixelRatio);
+    }
+  }, {
     key: "min",
     value: function min() {
       return this._minValue;
@@ -5776,16 +5777,14 @@ var Axis = /*#__PURE__*/function () {
     value: function max() {
       return this._maxValue;
     }
-    /**
-     * 设置尺寸
-     * @param width
-     * @param height
-     */
-
   }, {
-    key: "setSize",
-    value: function setSize(width, height) {
+    key: "setWidth",
+    value: function setWidth(width) {
       this._width = width;
+    }
+  }, {
+    key: "setHeight",
+    value: function setHeight(height) {
       this._height = height;
     }
     /**
@@ -6109,6 +6108,63 @@ var YAxis = /*#__PURE__*/function (_Axis) {
       return this._isCandleStickYAxis && this._chartData.styleOptions().yAxis.type === YAxisType.PERCENTAGE;
     }
   }, {
+    key: "getSelfWidth",
+    value: function getSelfWidth(technicalIndicator) {
+      var _this3 = this;
+
+      var stylOptions = this._chartData.styleOptions();
+
+      var yAxisOptions = stylOptions.yAxis;
+      var yAxisWidth = 0;
+
+      if (yAxisOptions.display) {
+        if (yAxisOptions.axisLine.display) {
+          yAxisWidth += yAxisOptions.axisLine.size;
+        }
+
+        if (yAxisOptions.tickLine.display) {
+          yAxisWidth += yAxisOptions.tickLine.length;
+        }
+
+        if (yAxisOptions.tickText.display) {
+          var textWidth = 0;
+          this._measureCtx.font = getFont(yAxisOptions.tickText.size, yAxisOptions.tickText.family);
+
+          this._ticks.forEach(function (tick) {
+            textWidth = Math.max(textWidth, calcTextWidth(_this3._measureCtx, tick.v));
+          });
+
+          yAxisWidth += yAxisOptions.tickText.margin * 2 + textWidth;
+        }
+      }
+
+      var crossHairOptions = stylOptions.floatLayer.crossHair;
+      var crossHairVerticalTextWidth = 0;
+
+      if (crossHairOptions.display && crossHairOptions.horizontal.display && crossHairOptions.horizontal.text.display) {
+        this._measureCtx.font = getFont(crossHairOptions.horizontal.text.size, crossHairOptions.horizontal.text.family);
+        var precision = 2;
+
+        if (!this.isPercentageYAxis()) {
+          if (this._isCandleStickYAxis && stylOptions.technicalIndicator.lastValueMark.display) {
+            precision = Math.max(technicalIndicator.precision, this._chartData.pricePrecision());
+          } else {
+            precision = technicalIndicator.precision;
+          }
+        }
+
+        var valueText = formatPrecision(this._maxValue, precision);
+
+        if (technicalIndicator.shouldFormatBigNumber) {
+          valueText = formatBigNumber(valueText);
+        }
+
+        crossHairVerticalTextWidth += crossHairOptions.horizontal.text.paddingLeft + crossHairOptions.horizontal.text.paddingRight + crossHairOptions.horizontal.text.borderSize * 2 + calcTextWidth(this._measureCtx, valueText);
+      }
+
+      return Math.max(yAxisWidth, crossHairVerticalTextWidth);
+    }
+  }, {
     key: "convertFromPixel",
     value: function convertFromPixel(pixel) {
       var yAxisValue = (1.0 - pixel / this._height) * this._range + this._minValue;
@@ -6198,16 +6254,35 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
       });
     }
   }, {
-    key: "_computeAxis",
-    value: function _computeAxis() {
+    key: "_isRealTime",
+    value: function _isRealTime() {
+      return false;
+    }
+  }, {
+    key: "setHeight",
+    value: function setHeight(height) {
+      _get(_getPrototypeOf(TechnicalIndicatorPane.prototype), "setHeight", this).call(this, height);
+
+      this._yAxis.setHeight(height);
+    }
+  }, {
+    key: "setWidth",
+    value: function setWidth(mainWidgetWidth, yAxisWidgetWidth) {
+      _get(_getPrototypeOf(TechnicalIndicatorPane.prototype), "setWidth", this).call(this, mainWidgetWidth, yAxisWidgetWidth);
+
+      this._yAxis.setWidth(yAxisWidgetWidth);
+    }
+  }, {
+    key: "computeAxis",
+    value: function computeAxis() {
       this._yAxis.calcMinMaxValue(this.technicalIndicator(), this._isRealTime());
 
       this._yAxis.computeAxis();
     }
   }, {
-    key: "_isRealTime",
-    value: function _isRealTime() {
-      return false;
+    key: "getSelfAxisWidth",
+    value: function getSelfAxisWidth() {
+      return this._yAxis.getSelfWidth(this._technicalIndicator);
     }
     /**
      * 获取标识
@@ -6218,21 +6293,6 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
     key: "tag",
     value: function tag() {
       return this._tag;
-    }
-    /**
-     * 设置尺寸
-     * @param mainWidgetSize
-     * @param yAxisWidgetSize
-     */
-
-  }, {
-    key: "setSize",
-    value: function setSize(mainWidgetSize, yAxisWidgetSize) {
-      this._yAxis.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height);
-
-      this._computeAxis();
-
-      _get(_getPrototypeOf(TechnicalIndicatorPane.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
     }
   }, {
     key: "yAxis",
@@ -7867,18 +7927,24 @@ var EventHandler = /*#__PURE__*/function () {
     _classCallCheck(this, EventHandler);
 
     this._chartData = chartData;
-    this._paneSize = {};
+    this._chartContentSize = {};
+    this._paneContentSize = {};
   }
 
   _createClass(EventHandler, [{
     key: "_checkEventPointX",
     value: function _checkEventPointX(x) {
-      return x > 0 && x < this._paneSize.contentRight - this._paneSize.contentLeft;
+      return x > 0 && x < this._chartContentSize.contentRight - this._chartContentSize.contentLeft;
     }
   }, {
-    key: "setPaneSize",
-    value: function setPaneSize(paneSize) {
-      this._paneSize = paneSize;
+    key: "setChartContentSize",
+    value: function setChartContentSize(chartContentSize) {
+      this._chartContentSize = chartContentSize;
+    }
+  }, {
+    key: "setPaneContentSize",
+    value: function setPaneContentSize(paneContentSize) {
+      this._paneContentSize = paneContentSize;
     }
   }]);
 
@@ -8160,7 +8226,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
             {
               if (_this4._realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], {
-                  x: _this4._paneSize.contentRight,
+                  x: _this4._chartContentSize.contentRight,
                   y: xyPoints[0].y
                 }, point);
               })) {
@@ -8177,7 +8243,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
               if (_this4._realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 return checkPointOnStraightLine(xyPoints[0], {
                   x: xyPoints[0].x,
-                  y: _this4._paneSize.tags[CANDLE_STICK_PANE_TAG].contentBottom
+                  y: _this4._paneContentSize[CANDLE_STICK_PANE_TAG].contentBottom
                 }, point);
               })) {
                 return {
@@ -8238,8 +8304,8 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
               if (_this4._realFindNoneGraphicMarkMouseDownActiveData(key, point, function (xyPoints) {
                 var linePoints;
                 var size = {
-                  width: _this4._paneSize.contentRight,
-                  height: _this4._paneSize.tags[CANDLE_STICK_PANE_TAG].contentBottom - _this4._paneSize.tags[CANDLE_STICK_PANE_TAG].contentTop
+                  width: _this4._chartContentSize.contentRight,
+                  height: _this4._paneContentSize[CANDLE_STICK_PANE_TAG].contentBottom - _this4._paneContentSize[CANDLE_STICK_PANE_TAG].contentTop
                 };
 
                 switch (key) {
@@ -8724,7 +8790,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
   }, {
     key: "_checkEventPointY",
     value: function _checkEventPointY(y) {
-      var size = this._paneSize.tags[CANDLE_STICK_PANE_TAG];
+      var size = this._paneContentSize[CANDLE_STICK_PANE_TAG];
       return y > size.contentTop && y < size.contentBottom;
     }
   }]);
@@ -9379,7 +9445,7 @@ var CandleStickPane = /*#__PURE__*/function (_TechnicalIndicatorPa) {
       if (this._chartType !== chartType) {
         this._chartType = chartType;
 
-        this._chartData.calcTechnicalIndicator(this, this.technicalIndicator());
+        this._chartData.calcTechnicalIndicator(this);
       }
     }
   }]);
@@ -9614,28 +9680,13 @@ var XAxis = /*#__PURE__*/function (_Axis) {
 
   var _super = _createSuper(XAxis);
 
-  function XAxis(chartData) {
-    var _this;
-
+  function XAxis() {
     _classCallCheck(this, XAxis);
 
-    _this = _super.call(this, chartData);
-
-    _this._initMeasureCanvas();
-
-    return _this;
+    return _super.apply(this, arguments);
   }
 
   _createClass(XAxis, [{
-    key: "_initMeasureCanvas",
-    value: function _initMeasureCanvas() {
-      var measureCanvas = document.createElement('canvas');
-      this._measureCtx = measureCanvas.getContext('2d');
-      var pixelRatio = getPixelRatio(this._measureCtx);
-
-      this._measureCtx.scale(pixelRatio, pixelRatio);
-    }
-  }, {
     key: "_computeMinMaxValue",
     value: function _computeMinMaxValue() {
       var min = this._chartData.from();
@@ -9743,6 +9794,41 @@ var XAxis = /*#__PURE__*/function (_Axis) {
 
       return null;
     }
+    /**
+     * 获取自身高度
+     */
+
+  }, {
+    key: "getSelfHeight",
+    value: function getSelfHeight() {
+      var stylOptions = this._chartData.styleOptions();
+
+      var xAxisOptions = stylOptions.xAxis;
+      var crossHairOptions = stylOptions.floatLayer.crossHair;
+      var xAxisHeight = 0;
+
+      if (xAxisOptions.display) {
+        if (xAxisOptions.axisLine.display) {
+          xAxisHeight += xAxisOptions.axisLine.size;
+        }
+
+        if (xAxisOptions.tickLine.display) {
+          xAxisHeight += xAxisOptions.tickLine.length;
+        }
+
+        if (xAxisOptions.tickText.display) {
+          xAxisHeight += xAxisOptions.tickText.margin * 2 + xAxisOptions.tickText.size;
+        }
+      }
+
+      var crossHairVerticalTextHeight = 0;
+
+      if (crossHairOptions.display && crossHairOptions.vertical.display && crossHairOptions.vertical.text.display) {
+        crossHairVerticalTextHeight += crossHairOptions.vertical.text.paddingTop + crossHairOptions.vertical.text.paddingBottom + crossHairOptions.vertical.text.borderSize * 2 + crossHairOptions.vertical.text.size;
+      }
+
+      return Math.max(xAxisHeight, crossHairVerticalTextHeight);
+    }
   }, {
     key: "convertFromPixel",
     value: function convertFromPixel(pixel) {
@@ -9791,9 +9877,14 @@ var XAxisPane = /*#__PURE__*/function (_Pane) {
       });
     }
   }, {
-    key: "_computeAxis",
-    value: function _computeAxis() {
+    key: "computeAxis",
+    value: function computeAxis() {
       this._xAxis.computeAxis();
+    }
+  }, {
+    key: "getSelfAxisHeight",
+    value: function getSelfAxisHeight() {
+      return this._xAxis.getSelfHeight();
     }
   }, {
     key: "xAxis",
@@ -9801,13 +9892,18 @@ var XAxisPane = /*#__PURE__*/function (_Pane) {
       return this._xAxis;
     }
   }, {
-    key: "setSize",
-    value: function setSize(mainWidgetSize, yAxisWidgetSize) {
-      this._xAxis.setSize(mainWidgetSize.width, mainWidgetSize.height);
+    key: "setWidth",
+    value: function setWidth(mainWidgetWidth, yAxisWidgetWidth) {
+      _get(_getPrototypeOf(XAxisPane.prototype), "setWidth", this).call(this, mainWidgetWidth, yAxisWidgetWidth);
 
-      this._computeAxis();
+      this._xAxis.setWidth(mainWidgetWidth);
+    }
+  }, {
+    key: "setHeight",
+    value: function setHeight(height) {
+      _get(_getPrototypeOf(XAxisPane.prototype), "setHeight", this).call(this, height);
 
-      _get(_getPrototypeOf(XAxisPane.prototype), "setSize", this).call(this, mainWidgetSize, yAxisWidgetSize);
+      this._xAxis.setHeight(height);
     }
   }]);
 
@@ -10209,11 +10305,10 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
         return;
       }
 
-      var tags = this._paneSize.tags || {};
       var isPerform = false;
 
-      for (var tag in tags) {
-        var size = tags[tag];
+      for (var tag in this._paneContentSize) {
+        var size = this._paneContentSize[tag];
 
         if (event.localY > size.contentTop && event.localY < size.contentBottom) {
           isPerform = true;
@@ -10305,13 +10400,41 @@ var KeyBoardEventHandler = /*#__PURE__*/function (_EventHandler) {
   return KeyBoardEventHandler;
 }(EventHandler);
 
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+function throttle(func) {
+  var wait = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 16;
+  var previous = 0;
+  return function () {
+    var now = Date.now();
+    var context = this;
+    var args = arguments;
+
+    if (now - previous > wait) {
+      func.apply(context, args);
+      previous = now;
+    }
+  };
+}
+
 var ChartEvent = /*#__PURE__*/function () {
   function ChartEvent(target, chartData, xAxis, yAxis) {
     _classCallCheck(this, ChartEvent);
 
     this._target = target;
     this._chartData = chartData;
-    this._paneSize = {};
+    this._chartContentSize = {};
     this._event = new EventBase(this._target, {
       pinchStartEvent: this._pinchStartEvent.bind(this),
       pinchEvent: this._pinchEvent.bind(this),
@@ -10320,9 +10443,9 @@ var ChartEvent = /*#__PURE__*/function () {
       mouseDownEvent: this._mouseDownEvent.bind(this),
       mouseRightDownEvent: this._mouseRightDownEvent.bind(this),
       mouseLeaveEvent: this._mouseLeaveEvent.bind(this),
-      mouseMoveEvent: this._mouseMoveEvent.bind(this),
+      mouseMoveEvent: throttle(this._mouseMoveEvent.bind(this)),
       mouseWheelEvent: this._mouseWheelEvent.bind(this),
-      pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this),
+      pressedMouseMoveEvent: throttle(this._pressedMouseMoveEvent.bind(this)),
       longTapEvent: this._longTapEvent.bind(this)
     }, {
       treatVertTouchDragAsPageScroll: false,
@@ -10362,7 +10485,7 @@ var ChartEvent = /*#__PURE__*/function () {
     key: "_mouseUpEvent",
     value: function _mouseUpEvent(event) {
       this._target.style.cursor = 'crosshair';
-      event.localX -= this._paneSize.contentLeft;
+      event.localX -= this._chartContentSize.contentLeft;
 
       this._graphicMarkEventHandler.mouseUpEvent(event);
     }
@@ -10370,7 +10493,7 @@ var ChartEvent = /*#__PURE__*/function () {
     key: "_mouseLeaveEvent",
     value: function _mouseLeaveEvent(event) {
       if (this._checkZoomScroll()) {
-        event.localX -= this._paneSize.contentLeft;
+        event.localX -= this._chartContentSize.contentLeft;
 
         this._zoomScrollEventHandler.mouseLeaveEvent(event);
       }
@@ -10378,7 +10501,7 @@ var ChartEvent = /*#__PURE__*/function () {
   }, {
     key: "_mouseMoveEvent",
     value: function _mouseMoveEvent(event) {
-      event.localX -= this._paneSize.contentLeft;
+      event.localX -= this._chartContentSize.contentLeft;
 
       if (this._chartData.shouldInvalidateGraphicMark()) {
         this._graphicMarkEventHandler.mouseMoveEvent(event);
@@ -10399,7 +10522,7 @@ var ChartEvent = /*#__PURE__*/function () {
     key: "_mouseClickEvent",
     value: function _mouseClickEvent(event) {
       if (this._checkZoomScroll()) {
-        event.localX -= this._paneSize.contentLeft;
+        event.localX -= this._chartContentSize.contentLeft;
 
         this._zoomScrollEventHandler.mouseClickEvent(event);
       }
@@ -10408,7 +10531,7 @@ var ChartEvent = /*#__PURE__*/function () {
     key: "_mouseDownEvent",
     value: function _mouseDownEvent(event) {
       this._target.style.cursor = 'pointer';
-      event.localX -= this._paneSize.contentLeft;
+      event.localX -= this._chartContentSize.contentLeft;
 
       this._graphicMarkEventHandler.mouseDownEvent(event);
 
@@ -10419,14 +10542,14 @@ var ChartEvent = /*#__PURE__*/function () {
   }, {
     key: "_mouseRightDownEvent",
     value: function _mouseRightDownEvent(event) {
-      event.localX -= this._paneSize.contentLeft;
+      event.localX -= this._chartContentSize.contentLeft;
 
       this._graphicMarkEventHandler.mouseRightDownEvent(event);
     }
   }, {
     key: "_pressedMouseMoveEvent",
     value: function _pressedMouseMoveEvent(event) {
-      event.localX -= this._paneSize.contentLeft;
+      event.localX -= this._chartContentSize.contentLeft;
 
       if (this._chartData.dragGraphicMarkFlag()) {
         this._graphicMarkEventHandler.pressedMouseMoveEvent(event); // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
@@ -10445,7 +10568,7 @@ var ChartEvent = /*#__PURE__*/function () {
     key: "_longTapEvent",
     value: function _longTapEvent(event) {
       if (this._checkZoomScroll()) {
-        event.localX -= this._paneSize.contentLeft;
+        event.localX -= this._chartContentSize.contentLeft;
 
         this._zoomScrollEventHandler.longTapEvent(event);
       }
@@ -10456,13 +10579,20 @@ var ChartEvent = /*#__PURE__*/function () {
       return !this._chartData.dragGraphicMarkFlag() && this._chartData.graphicMarkType() === GraphicMarkType.NONE;
     }
   }, {
-    key: "setPaneSize",
-    value: function setPaneSize(paneSize) {
-      this._paneSize = paneSize;
+    key: "setChartContentSize",
+    value: function setChartContentSize(chartContentSize) {
+      this._chartContentSize = chartContentSize;
 
-      this._zoomScrollEventHandler.setPaneSize(paneSize);
+      this._zoomScrollEventHandler.setChartContentSize(chartContentSize);
 
-      this._graphicMarkEventHandler.setPaneSize(paneSize);
+      this._graphicMarkEventHandler.setChartContentSize(chartContentSize);
+    }
+  }, {
+    key: "setPaneContentSize",
+    value: function setPaneContentSize(paneContentSize) {
+      this._zoomScrollEventHandler.setPaneContentSize(paneContentSize);
+
+      this._graphicMarkEventHandler.setPaneContentSize(paneContentSize);
     }
   }, {
     key: "destroy",
@@ -10505,7 +10635,10 @@ var ChartPane = /*#__PURE__*/function () {
       tag: CANDLE_STICK_PANE_TAG
     });
     this._chartEvent = new ChartEvent(this._chartContainer, this._chartData, this._xAxisPane.xAxis(), this._candleStickPane.yAxis());
-    this.measurePaneSize();
+
+    this._measurePaneHeight();
+
+    this._measurePaneWidth();
   }
   /**
    * 初始化图表容器
@@ -10561,92 +10694,48 @@ var ChartPane = /*#__PURE__*/function () {
 
       this._technicalIndicatorPanes[paneIndex].setHeight(height);
 
-      this.measurePaneSize();
+      this._measurePaneHeight();
+
+      this._candleStickPane.layout();
+
+      var _iterator = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var pane = _step.value;
+          pane.layout();
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
     }
-    /**
-     * 计算x轴的高度
-     * @returns {number}
-     * @private
-     */
-
   }, {
-    key: "_measureXAxisHeight",
-    value: function _measureXAxisHeight() {
-      var xAxis = this._chartData.styleOptions().xAxis;
+    key: "_layoutPane",
+    value: function _layoutPane() {
+      this._measurePaneWidth();
 
-      var axisLine = xAxis.axisLine;
-      var tickText = xAxis.tickText;
-      var tickLine = xAxis.tickLine;
-      var height = 0;
+      this._xAxisPane.computeAxis();
 
-      if (xAxis.display) {
-        if (axisLine.display) {
-          height += axisLine.size;
+      this._xAxisPane.layout();
+
+      this._candleStickPane.layout();
+
+      var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+          _step2;
+
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var pane = _step2.value;
+          pane.layout();
         }
-
-        if (tickLine.display) {
-          height += tickLine.length;
-        }
-
-        if (tickText.display) {
-          height += tickText.size + tickText.margin;
-        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
       }
-
-      if (height > 0) {
-        height = Math.ceil(Math.max(xAxis.minHeight, Math.min(height, xAxis.maxHeight)));
-      }
-
-      return height;
-    }
-    /**
-     * 计算y轴宽度
-     * @returns {number}
-     * @private
-     */
-
-  }, {
-    key: "_measureYAxisWidth",
-    value: function _measureYAxisWidth() {
-      var yAxis = this._chartData.styleOptions().yAxis;
-
-      var axisLine = yAxis.axisLine;
-      var tickText = yAxis.tickText;
-      var tickLine = yAxis.tickLine;
-      var width = 0;
-
-      if (yAxis.display) {
-        if (yAxis.axisLine.display) {
-          width += axisLine.size;
-        }
-
-        if (yAxis.tickLine.display) {
-          width += tickLine.length;
-        }
-
-        if (yAxis.tickText.display) {
-          width += tickText.margin + (tickText.size - 2) * 6;
-        }
-      }
-
-      if (width > 0) {
-        width = Math.ceil(Math.max(yAxis.minWidth, Math.min(width, yAxis.maxWidth)));
-      }
-
-      return width;
-    }
-    /**
-     * 测量图表间分割线的高度
-     * @returns {number}
-     * @private
-     */
-
-  }, {
-    key: "_measureSeparatorHeight",
-    value: function _measureSeparatorHeight() {
-      var separator = this._chartData.styleOptions().separator;
-
-      return separator.size * this._separatorPanes.length;
     }
     /**
      * 更新所有pane
@@ -10658,25 +10747,46 @@ var ChartPane = /*#__PURE__*/function () {
     value: function _updatePane() {
       var invalidateLevel = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : InvalidateLevel.FULL;
 
-      if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
+      if (invalidateLevel === InvalidateLevel.FLOAT_LAYER) {
         this._xAxisPane.invalidate(invalidateLevel);
 
-        var _iterator = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step;
+        this._candleStickPane.invalidate(invalidateLevel);
+
+        var _iterator3 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+            _step3;
 
         try {
-          for (_iterator.s(); !(_step = _iterator.n()).done;) {
-            var pane = _step.value;
+          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+            var pane = _step3.value;
             pane.invalidate(invalidateLevel);
           }
         } catch (err) {
-          _iterator.e(err);
+          _iterator3.e(err);
         } finally {
-          _iterator.f();
+          _iterator3.f();
         }
-      }
+      } else {
+        this._candleStickPane.computeAxis();
 
-      this._candleStickPane.invalidate(invalidateLevel);
+        if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
+          var _iterator4 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+              _step4;
+
+          try {
+            for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+              var _pane = _step4.value;
+
+              _pane.computeAxis();
+            }
+          } catch (err) {
+            _iterator4.e(err);
+          } finally {
+            _iterator4.f();
+          }
+        }
+
+        this._layoutPane();
+      }
     }
     /**
      * 计算所有pane的指标
@@ -10686,75 +10796,48 @@ var ChartPane = /*#__PURE__*/function () {
   }, {
     key: "_calcAllPaneTechnicalIndicator",
     value: function _calcAllPaneTechnicalIndicator() {
-      this._chartData.calcTechnicalIndicator(this._candleStickPane);
+      var _this = this;
 
-      var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-          _step2;
+      Promise.resolve().then(function (_) {
+        _this._chartData.calcTechnicalIndicator(_this._candleStickPane);
 
-      try {
-        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var pane = _step2.value;
+        var _iterator5 = _createForOfIteratorHelper(_this._technicalIndicatorPanes),
+            _step5;
 
-          this._chartData.calcTechnicalIndicator(pane);
+        try {
+          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+            var pane = _step5.value;
+
+            _this._chartData.calcTechnicalIndicator(pane);
+          }
+        } catch (err) {
+          _iterator5.e(err);
+        } finally {
+          _iterator5.f();
         }
-      } catch (err) {
-        _iterator2.e(err);
-      } finally {
-        _iterator2.f();
-      }
+
+        _this._layoutPane();
+      });
     }
-    /**
-     * 获取图表上的数据
-     * @returns {ChartData}
-     */
-
   }, {
-    key: "chartData",
-    value: function chartData() {
-      return this._chartData;
-    }
-    /**
-     * 测量尺寸
-     * @private
-     */
+    key: "_measurePaneHeight",
+    value: function _measurePaneHeight() {
+      var styleOptions = this._chartData.styleOptions();
 
-  }, {
-    key: "measurePaneSize",
-    value: function measurePaneSize() {
-      var yAxis = this._chartData.styleOptions().yAxis;
-
-      var isYAxisLeft = yAxis.position === YAxisPosition.LEFT;
-      var isYAxisTextOutsize = yAxis.tickText.position === YAxisTextPosition.OUTSIDE;
-      var paneWidth = this._container.offsetWidth;
       var paneHeight = this._container.offsetHeight;
+      var separatorHeight = styleOptions.separator.size * this._separatorPanes.length;
 
-      var separatorHeight = this._measureSeparatorHeight();
-
-      var xAxisHeight = this._measureXAxisHeight();
-
-      var yAxisWidth = this._measureYAxisWidth();
+      var xAxisHeight = this._xAxisPane.getSelfAxisHeight();
 
       var paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorHeight;
-      var mainWidth = paneWidth - (isYAxisTextOutsize ? yAxisWidth : 0);
-      var yAxisOffsetLeft = paneWidth - yAxisWidth;
-      var mainOffsetLeft = 0;
-
-      if (isYAxisLeft) {
-        yAxisOffsetLeft = 0;
-
-        if (isYAxisTextOutsize) {
-          mainOffsetLeft = yAxisWidth;
-        }
-      }
-
       var technicalIndicatorPaneTotalHeight = 0;
 
-      var _iterator3 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-          _step3;
+      var _iterator6 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+          _step6;
 
       try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var pane = _step3.value;
+        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+          var pane = _step6.value;
 
           var _paneHeight = pane.height();
 
@@ -10767,71 +10850,138 @@ var ChartPane = /*#__PURE__*/function () {
           }
         }
       } catch (err) {
-        _iterator3.e(err);
+        _iterator6.e(err);
       } finally {
-        _iterator3.f();
+        _iterator6.f();
       }
 
       var candleStickPaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight;
-
-      this._chartData.setTotalDataSpace(mainWidth);
-
-      var paneSize = {};
-      paneSize.contentLeft = mainOffsetLeft;
-      paneSize.contentRight = mainOffsetLeft + mainWidth;
-      var tags = {};
-      tags[CANDLE_STICK_PANE_TAG] = {
+      var paneContentSize = {};
+      paneContentSize[CANDLE_STICK_PANE_TAG] = {
         contentTop: 0,
         contentBottom: candleStickPaneHeight
       };
       var contentTop = candleStickPaneHeight;
       var contentBottom = candleStickPaneHeight;
 
-      this._candleStickPane.setSize({
-        left: mainOffsetLeft,
-        width: mainWidth,
-        height: candleStickPaneHeight
-      }, {
-        left: yAxisOffsetLeft,
-        width: yAxisWidth,
-        height: candleStickPaneHeight
-      });
+      this._candleStickPane.setHeight(candleStickPaneHeight);
 
       for (var i = 0; i < this._technicalIndicatorPanes.length; i++) {
         var technicalIndicatorPane = this._technicalIndicatorPanes[i];
-        var separatorPane = this._separatorPanes[i];
         var technicalIndicatorPaneHeight = technicalIndicatorPane.height();
-        technicalIndicatorPane.setSize({
-          left: mainOffsetLeft,
-          width: mainWidth,
-          height: technicalIndicatorPaneHeight
-        }, {
-          left: yAxisOffsetLeft,
-          width: yAxisWidth,
-          height: technicalIndicatorPaneHeight
-        });
-        separatorPane.setSize(mainOffsetLeft, mainWidth);
+        technicalIndicatorPane.setHeight(technicalIndicatorPaneHeight);
         contentBottom += technicalIndicatorPaneHeight;
-        tags[technicalIndicatorPane.tag()] = {
+        paneContentSize[technicalIndicatorPane.tag()] = {
           contentTop: contentTop,
           contentBottom: contentBottom
         };
         contentTop = contentBottom;
       }
 
-      paneSize.tags = tags;
+      this._xAxisPane.setHeight(xAxisHeight);
 
-      this._xAxisPane.setSize({
-        left: mainOffsetLeft,
-        width: mainWidth,
-        height: xAxisHeight
-      }, {
-        left: yAxisOffsetLeft,
-        width: yAxisWidth,
-        height: xAxisHeight
+      this._chartEvent.setPaneContentSize(paneContentSize);
+    }
+  }, {
+    key: "_measurePaneWidth",
+    value: function _measurePaneWidth() {
+      var styleOptions = this._chartData.styleOptions();
+
+      var yAxisOptions = styleOptions.yAxis;
+      var isYAxisLeft = yAxisOptions.position === YAxisPosition.LEFT;
+      var isYAxisTextOutsize = yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE;
+      var paneWidth = this._container.offsetWidth;
+      var yAxisWidth = 0;
+
+      if (isYAxisTextOutsize) {
+        yAxisWidth = this._candleStickPane.getSelfAxisWidth();
+
+        var _iterator7 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+            _step7;
+
+        try {
+          for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+            var pane = _step7.value;
+            yAxisWidth = Math.max(yAxisWidth, pane.getSelfAxisWidth());
+          }
+        } catch (err) {
+          _iterator7.e(err);
+        } finally {
+          _iterator7.f();
+        }
+      }
+
+      var mainWidth = paneWidth - yAxisWidth;
+      var yAxisOffsetLeft = paneWidth - yAxisWidth;
+      var mainOffsetLeft = 0;
+
+      if (isYAxisLeft) {
+        yAxisOffsetLeft = 0;
+
+        if (isYAxisTextOutsize) {
+          mainOffsetLeft = yAxisWidth;
+        }
+      }
+
+      this._chartData.setTotalDataSpace(mainWidth);
+
+      this._candleStickPane.setWidth(mainWidth, yAxisWidth);
+
+      this._candleStickPane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft);
+
+      for (var i = 0; i < this._technicalIndicatorPanes.length; i++) {
+        var technicalIndicatorPane = this._technicalIndicatorPanes[i];
+        var separatorPane = this._separatorPanes[i];
+        technicalIndicatorPane.setWidth(mainWidth, yAxisWidth);
+        technicalIndicatorPane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft);
+        separatorPane.setSize(mainOffsetLeft, mainWidth);
+      }
+
+      this._xAxisPane.setWidth(mainWidth, yAxisWidth);
+
+      this._xAxisPane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft);
+
+      this._chartEvent.setChartContentSize({
+        contentLeft: mainOffsetLeft,
+        contentRight: mainOffsetLeft + mainWidth
       });
+    }
+    /**
+     * 获取图表上的数据
+     * @returns {ChartData}
+     */
 
-      this._chartEvent.setPaneSize(paneSize);
+  }, {
+    key: "chartData",
+    value: function chartData() {
+      return this._chartData;
+    }
+    /**
+     * 重置尺寸
+     */
+
+  }, {
+    key: "resize",
+    value: function resize() {
+      this._measurePaneHeight();
+
+      this._candleStickPane.computeAxis();
+
+      var _iterator8 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+          _step8;
+
+      try {
+        for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+          var pane = _step8.value;
+          pane.computeAxis();
+        }
+      } catch (err) {
+        _iterator8.e(err);
+      } finally {
+        _iterator8.f();
+      }
+
+      this._layoutPane();
     }
     /**
      * 加载技术指标参数
@@ -10842,31 +10992,36 @@ var ChartPane = /*#__PURE__*/function () {
   }, {
     key: "applyTechnicalIndicatorParams",
     value: function applyTechnicalIndicatorParams(technicalIndicatorType, params) {
+      var _this2 = this;
+
       var info = this._chartData.technicalIndicator(technicalIndicatorType);
 
       if (info.structure) {
         info.calcParams = params;
-
-        if (this._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
-          this._chartData.calcTechnicalIndicator(this._candleStickPane);
-        }
-
-        var _iterator4 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step4;
-
-        try {
-          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-            var pane = _step4.value;
-
-            if (pane.technicalIndicator().name === technicalIndicatorType) {
-              this._chartData.calcTechnicalIndicator(pane);
-            }
+        Promise.resolve().then(function (_) {
+          if (_this2._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
+            _this2._chartData.calcTechnicalIndicator(_this2._candleStickPane);
           }
-        } catch (err) {
-          _iterator4.e(err);
-        } finally {
-          _iterator4.f();
-        }
+
+          var _iterator9 = _createForOfIteratorHelper(_this2._technicalIndicatorPanes),
+              _step9;
+
+          try {
+            for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+              var pane = _step9.value;
+
+              if (pane.technicalIndicator().name === technicalIndicatorType) {
+                _this2._chartData.calcTechnicalIndicator(pane);
+              }
+            }
+          } catch (err) {
+            _iterator9.e(err);
+          } finally {
+            _iterator9.f();
+          }
+
+          _this2._layoutPane();
+        });
       }
     }
     /**
@@ -10887,8 +11042,6 @@ var ChartPane = /*#__PURE__*/function () {
 
         this._chartData.addData(dataList, 0, more);
 
-        this._xAxisPane.invalidate(InvalidateLevel.FULL);
-
         this._calcAllPaneTechnicalIndicator();
       }
     }
@@ -10901,10 +11054,10 @@ var ChartPane = /*#__PURE__*/function () {
   }, {
     key: "applyNewData",
     value: function applyNewData(dataList, more) {
-      var _this = this;
+      var _this3 = this;
 
       this._applyDataList(dataList, more, function () {
-        _this._chartData.clearDataList();
+        _this3._chartData.clearDataList();
       });
     }
     /**
@@ -10940,8 +11093,6 @@ var ChartPane = /*#__PURE__*/function () {
         }
 
         this._chartData.addData(data, pos);
-
-        this._xAxisPane.invalidate(pos === dataSize - 1 ? InvalidateLevel.NONE : InvalidateLevel.FULL);
 
         this._calcAllPaneTechnicalIndicator();
       }
@@ -10987,7 +11138,7 @@ var ChartPane = /*#__PURE__*/function () {
 
       this._separatorPanes.push(new SeparatorPane(this._chartContainer, this._chartData, technicalIndicatorPaneCount, isDrag, {
         startDrag: this._separatorStartDrag.bind(this),
-        drag: this._separatorDrag.bind(this)
+        drag: throttle(this._separatorDrag.bind(this), 50)
       }));
 
       this._technicalIndicatorBaseId++;
@@ -11003,7 +11154,10 @@ var ChartPane = /*#__PURE__*/function () {
 
       this._technicalIndicatorPanes.push(technicalIndicatorPane);
 
-      this.measurePaneSize();
+      this._measurePaneHeight();
+
+      this._layoutPane();
+
       return tag;
     }
     /**
@@ -11038,7 +11192,9 @@ var ChartPane = /*#__PURE__*/function () {
           this._separatorPanes[_i].updatePaneIndex(_i);
         }
 
-        this.measurePaneSize();
+        this._measurePaneHeight();
+
+        this._layoutPane();
       }
     }
     /**
@@ -11052,15 +11208,19 @@ var ChartPane = /*#__PURE__*/function () {
     value: function setTechnicalIndicatorType(tag, technicalIndicatorType) {
       if (tag === CANDLE_STICK_PANE_TAG) {
         this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType);
+
+        this._measurePaneWidth();
+
+        this._layoutPane();
       } else {
         var p;
 
-        var _iterator5 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step5;
+        var _iterator10 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+            _step10;
 
         try {
-          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-            var pane = _step5.value;
+          for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+            var pane = _step10.value;
 
             if (pane.tag() === tag) {
               p = pane;
@@ -11068,9 +11228,9 @@ var ChartPane = /*#__PURE__*/function () {
             }
           }
         } catch (err) {
-          _iterator5.e(err);
+          _iterator10.e(err);
         } finally {
-          _iterator5.f();
+          _iterator10.f();
         }
 
         if (p) {
@@ -11081,6 +11241,10 @@ var ChartPane = /*#__PURE__*/function () {
             this.removeTechnicalIndicator(tag);
           } else {
             p.setTechnicalIndicatorType(technicalIndicatorType);
+
+            this._measurePaneWidth();
+
+            this._layoutPane();
           }
         }
       }
@@ -11188,9 +11352,8 @@ var Chart = /*#__PURE__*/function () {
     key: "setStyleOptions",
     value: function setStyleOptions(options) {
       if (options) {
-        this._chartPane.chartData().applyStyleOptions(options);
+        this._chartPane.chartData().applyStyleOptions(options); // this._chartPane.measurePaneSize()
 
-        this._chartPane.measurePaneSize();
       }
     }
     /**
@@ -11253,7 +11416,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "resize",
     value: function resize() {
-      this._chartPane.measurePaneSize();
+      this._chartPane.resize();
     }
     /**
      * 设置右边间距
@@ -11521,7 +11684,7 @@ var CHART_NAME_PREFIX = 'k_line_chart_';
  */
 
 function version() {
-  return '5.3.0';
+  return '5.5.0';
 }
 /**
  * 初始化
@@ -11533,7 +11696,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 5.3.0. Root dom is null, can not initialize the chart!!!';
+  var errorMessage = 'Chart version is 5.5.0. Root dom is null, can not initialize the chart!!!';
   var container = ds;
 
   if (!container) {

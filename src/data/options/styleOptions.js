@@ -235,14 +235,6 @@ const defaultXAxis = {
    */
   display: true,
   /**
-   * x轴最大高度
-   */
-  maxHeight: 50,
-  /**
-   * x轴最小高度
-   */
-  minHeight: 30,
-  /**
    * 轴线配置
    */
   axisLine: {
@@ -279,14 +271,6 @@ const defaultYAxis = {
    * 是否显示整个轴
    */
   display: true,
-  /**
-   * x轴最大宽度
-   */
-  maxWidth: 100,
-  /**
-   * x轴最小宽度
-   */
-  minWidth: 60,
   /**
    * y轴类型
    */

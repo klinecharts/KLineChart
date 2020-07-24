@@ -218,7 +218,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
         case GraphicMarkType.PRICE_LINE: {
           if (this._realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnStraightLine(
-              xyPoints[0], { x: this._paneSize.contentRight, y: xyPoints[0].y }, point
+              xyPoints[0], { x: this._chartContentSize.contentRight, y: xyPoints[0].y }, point
             )
           })) {
             return
@@ -228,7 +228,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
         case GraphicMarkType.VERTICAL_STRAIGHT_LINE: {
           if (this._realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
             return checkPointOnStraightLine(
-              xyPoints[0], { x: xyPoints[0].x, y: this._paneSize.tags[CANDLE_STICK_PANE_TAG].contentBottom }, point
+              xyPoints[0], { x: xyPoints[0].x, y: this._paneContentSize[CANDLE_STICK_PANE_TAG].contentBottom }, point
             )
           })) {
             return
@@ -269,8 +269,8 @@ export default class GraphicMarkEventHandler extends EventHandler {
           if (this._realFindNoneGraphicMarkMouseDownActiveData(key, point, (xyPoints) => {
             let linePoints
             const size = {
-              width: this._paneSize.contentRight,
-              height: this._paneSize.tags[CANDLE_STICK_PANE_TAG].contentBottom - this._paneSize.tags[CANDLE_STICK_PANE_TAG].contentTop
+              width: this._chartContentSize.contentRight,
+              height: this._paneContentSize[CANDLE_STICK_PANE_TAG].contentBottom - this._paneContentSize[CANDLE_STICK_PANE_TAG].contentTop
             }
             switch (key) {
               case GraphicMarkType.PRICE_CHANNEL_LINE: {
@@ -568,7 +568,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
   }
 
   _checkEventPointY (y) {
-    const size = this._paneSize.tags[CANDLE_STICK_PANE_TAG]
+    const size = this._paneContentSize[CANDLE_STICK_PANE_TAG]
     return y > size.contentTop && y < size.contentBottom
   }
 }

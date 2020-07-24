@@ -28,7 +28,7 @@ export default class Chart {
   setStyleOptions (options) {
     if (options) {
       this._chartPane.chartData().applyStyleOptions(options)
-      this._chartPane.measurePaneSize()
+      // this._chartPane.measurePaneSize()
     }
   }
 
@@ -79,7 +79,7 @@ export default class Chart {
    * 重置尺寸，总是会填充父容器
    */
   resize () {
-    this._chartPane.measurePaneSize()
+    this._chartPane.resize()
   }
 
   /**

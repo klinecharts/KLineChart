@@ -159,10 +159,9 @@ export default class ZoomScrollEventHandler extends EventHandler {
       }
       return
     }
-    const tags = this._paneSize.tags || {}
     let isPerform = false
-    for (const tag in tags) {
-      const size = tags[tag]
+    for (const tag in this._paneContentSize) {
+      const size = this._paneContentSize[tag]
       if (event.localY > size.contentTop && event.localY < size.contentBottom) {
         isPerform = true
         if (performFuc) {

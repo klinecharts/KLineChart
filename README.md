@@ -6,7 +6,7 @@
 [![types](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
 [![NPM](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
 
-📈Lightweight k-line chart built with html5 canvas. Support parameter setting of technical indicators, support custom indicators, draw marker lines, and support custom styles.
+📈Lightweight k-line chart that can be highly customized, built with html5 canvas. Support custom technical indicators and parameter settings. Support line drawing.
 
 ## Installing
 ### Using npm

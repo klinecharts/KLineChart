@@ -13,18 +13,16 @@
  */
 
 import { getPixelRatio } from '../utils/canvas'
-import { InvalidateLevel } from '../data/ChartData'
 
 export default class Pane {
   constructor (props) {
+    this._height = -1
     this._container = props.container
     this._chartData = props.chartData
-    this._width = -1
-    this._height = -1
     this._initBefore(props)
     this._initElement()
-    this._mainWidget = this._createMainWidget(this._mainWidgetCell, props)
-    this._yAxisWidget = this._createYAxisWidget(this._yAxisWidgetCell, props)
+    this._mainWidget = this._createMainWidget(this._element, props)
+    this._yAxisWidget = this._createYAxisWidget(this._element, props)
   }
 
   _initBefore (props) {}
@@ -36,27 +34,12 @@ export default class Pane {
     this._element.style.position = 'relative'
     this._element.style.overflow = 'hidden'
     this._element.style.width = '100%'
-    this._mainWidgetCell = this._createCell()
-    this._yAxisWidgetCell = this._createCell()
-    this._element.appendChild(this._mainWidgetCell)
-    this._element.appendChild(this._yAxisWidgetCell)
     const lastElement = this._container.lastChild
     if (lastElement) {
       this._container.insertBefore(this._element, lastElement)
     } else {
       this._container.appendChild(this._element)
     }
-  }
-
-  _createCell () {
-    const cell = document.createElement('div')
-    cell.style.display = 'table-cell'
-    cell.style.position = 'absolute'
-    cell.style.margin = '0'
-    cell.style.padding = '0'
-    cell.style.top = '0'
-    cell.style.zIndex = '1'
-    return cell
   }
 
   /**
@@ -91,7 +74,7 @@ export default class Pane {
    * 计算轴
    * @private
    */
-  _computeAxis () {}
+  computeAxis () {}
 
   /**
    * 获取宽度
@@ -99,6 +82,11 @@ export default class Pane {
    */
   width () {
     return this._element.offsetWidth
+  }
+
+  setWidth (mainWidgetWidth, yAxisWidgetWidth) {
+    this._mainWidget.setWidth(mainWidgetWidth)
+    this._yAxisWidget && this._yAxisWidget.setWidth(yAxisWidgetWidth)
   }
 
   /**
@@ -114,22 +102,21 @@ export default class Pane {
    */
   setHeight (height) {
     this._height = height
+    this._mainWidget.setHeight(height)
+    this._yAxisWidget && this._yAxisWidget.setHeight(height)
   }
 
-  /**
-   * 设置尺寸
-   * @param mainWidgetSize
-   * @param yAxisWidgetSize
-   */
-  setSize (mainWidgetSize, yAxisWidgetSize) {
-    this._height = mainWidgetSize.height
-    this._element.style.height = `${mainWidgetSize.height}px`
-    this._setCellSize(this._mainWidgetCell, mainWidgetSize)
-    this._setCellSize(this._yAxisWidgetCell, yAxisWidgetSize)
-    this._mainWidget.setSize(mainWidgetSize.width, this._height)
-    if (this._yAxisWidget) {
-      this._yAxisWidget.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height)
+  setOffsetLeft (mainWidgetOffsetLeft, yAxisWidgetOffsetLeft) {
+    this._mainWidget.setOffsetLeft(mainWidgetOffsetLeft)
+    this._yAxisWidget && this._yAxisWidget.setOffsetLeft(yAxisWidgetOffsetLeft)
+  }
+
+  layout () {
+    if (this._element.offsetHeight !== this._height) {
+      this._element.style.height = `${this._height}px`
     }
+    this._mainWidget.layout()
+    this._yAxisWidget && this._yAxisWidget.layout()
   }
 
   /**
@@ -137,12 +124,7 @@ export default class Pane {
    * @param level
    */
   invalidate (level) {
-    if (level === InvalidateLevel.FULL) {
-      this._computeAxis()
-    }
-    if (this._yAxisWidget) {
-      this._yAxisWidget.invalidate(level)
-    }
+    this._yAxisWidget && this._yAxisWidget.invalidate(level)
     this._mainWidget.invalidate(level)
   }
 

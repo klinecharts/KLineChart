@@ -34,7 +34,7 @@ export function getPixelRatio (ctx) {
  * @returns {number}
  */
 export function calcTextWidth (ctx, text) {
-  return ctx.measureText(text).width
+  return Math.round(ctx.measureText(text).width)
 }
 
 /**

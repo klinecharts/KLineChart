@@ -1,3 +1,5 @@
+import { getPixelRatio } from '../utils/canvas'
+
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +23,14 @@ export default class Axis {
     this._maxValue = 0
     this._range = 0
     this._ticks = []
+    this._initMeasureCanvas()
+  }
+
+  _initMeasureCanvas () {
+    const measureCanvas = document.createElement('canvas')
+    this._measureCtx = measureCanvas.getContext('2d')
+    const pixelRatio = getPixelRatio(this._measureCtx)
+    this._measureCtx.scale(pixelRatio, pixelRatio)
   }
 
   min () {
@@ -31,13 +41,11 @@ export default class Axis {
     return this._maxValue
   }
 
-  /**
-   * 设置尺寸
-   * @param width
-   * @param height
-   */
-  setSize (width, height) {
+  setWidth (width) {
     this._width = width
+  }
+
+  setHeight (height) {
     this._height = height
   }
 

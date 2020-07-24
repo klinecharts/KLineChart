@@ -15,6 +15,8 @@
 import Axis from './Axis'
 import { YAxisType } from '../data/options/styleOptions'
 import { isNumber, isValid } from '../utils/typeChecks'
+import { calcTextWidth, getFont } from '../utils/canvas'
+import { formatBigNumber, formatPrecision } from '../utils/format'
 
 export default class YAxis extends Axis {
   constructor (chartData, isCandleStickYAxis) {
@@ -158,6 +160,56 @@ export default class YAxis extends Axis {
    */
   isPercentageYAxis () {
     return this._isCandleStickYAxis && this._chartData.styleOptions().yAxis.type === YAxisType.PERCENTAGE
+  }
+
+  getSelfWidth (technicalIndicator) {
+    const stylOptions = this._chartData.styleOptions()
+    const yAxisOptions = stylOptions.yAxis
+    let yAxisWidth = 0
+    if (yAxisOptions.display) {
+      if (yAxisOptions.axisLine.display) {
+        yAxisWidth += yAxisOptions.axisLine.size
+      }
+      if (yAxisOptions.tickLine.display) {
+        yAxisWidth += yAxisOptions.tickLine.length
+      }
+      if (yAxisOptions.tickText.display) {
+        let textWidth = 0
+        this._measureCtx.font = getFont(yAxisOptions.tickText.size, yAxisOptions.tickText.family)
+        this._ticks.forEach(tick => {
+          textWidth = Math.max(textWidth, calcTextWidth(this._measureCtx, tick.v))
+        })
+        yAxisWidth += (yAxisOptions.tickText.margin * 2 + textWidth)
+      }
+    }
+    const crossHairOptions = stylOptions.floatLayer.crossHair
+    let crossHairVerticalTextWidth = 0
+    if (
+      crossHairOptions.display &&
+      crossHairOptions.horizontal.display &&
+      crossHairOptions.horizontal.text.display
+    ) {
+      this._measureCtx.font = getFont(crossHairOptions.horizontal.text.size, crossHairOptions.horizontal.text.family)
+      let precision = 2
+      if (!this.isPercentageYAxis()) {
+        if (this._isCandleStickYAxis && stylOptions.technicalIndicator.lastValueMark.display) {
+          precision = Math.max(technicalIndicator.precision, this._chartData.pricePrecision())
+        } else {
+          precision = technicalIndicator.precision
+        }
+      }
+      let valueText = formatPrecision(this._maxValue, precision)
+      if (technicalIndicator.shouldFormatBigNumber) {
+        valueText = formatBigNumber(valueText)
+      }
+      crossHairVerticalTextWidth += (
+        crossHairOptions.horizontal.text.paddingLeft +
+        crossHairOptions.horizontal.text.paddingRight +
+        crossHairOptions.horizontal.text.borderSize * 2 +
+        calcTextWidth(this._measureCtx, valueText)
+      )
+    }
+    return Math.max(yAxisWidth, crossHairVerticalTextWidth)
   }
 
   convertFromPixel (pixel) {
