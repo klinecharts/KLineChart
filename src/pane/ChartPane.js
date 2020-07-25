@@ -17,7 +17,7 @@ import CandleStickPane from './CandleStickPane'
 import XAxisPane from './XAxisPane'
 
 import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
-import { isArray, isBoolean, isFunction, isObject } from '../utils/typeChecks'
+import { isArray, isBoolean, isFunction, isObject, isNumber, clone } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import SeparatorPane from './SeparatorPane'
@@ -273,8 +273,13 @@ export default class ChartPane {
    */
   applyTechnicalIndicatorParams (technicalIndicatorType, params) {
     const info = this._chartData.technicalIndicator(technicalIndicatorType)
-    if (info.structure) {
-      info.calcParams = params
+    if (info.structure && isArray(params)) {
+      for (const v of params) {
+        if (!isNumber(v) || v <= 0 || parseInt(v, 10) !== v) {
+          return
+        }
+      }
+      info.calcParams = clone(params)
       Promise.resolve().then(
         _ => {
           if (this._candleStickPane.technicalIndicator().name === technicalIndicatorType) {

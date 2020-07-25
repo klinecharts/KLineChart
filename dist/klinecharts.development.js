@@ -11019,28 +11019,45 @@ var ChartPane = /*#__PURE__*/function () {
 
       var info = this._chartData.technicalIndicator(technicalIndicatorType);
 
-      if (info.structure) {
-        info.calcParams = params;
+      if (info.structure && isArray(params)) {
+        var _iterator9 = _createForOfIteratorHelper(params),
+            _step9;
+
+        try {
+          for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+            var v = _step9.value;
+
+            if (!isNumber(v) || v <= 0 || parseInt(v, 10) !== v) {
+              return;
+            }
+          }
+        } catch (err) {
+          _iterator9.e(err);
+        } finally {
+          _iterator9.f();
+        }
+
+        info.calcParams = clone(params);
         Promise.resolve().then(function (_) {
           if (_this2._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
             _this2._chartData.calcTechnicalIndicator(_this2._candleStickPane);
           }
 
-          var _iterator9 = _createForOfIteratorHelper(_this2._technicalIndicatorPanes),
-              _step9;
+          var _iterator10 = _createForOfIteratorHelper(_this2._technicalIndicatorPanes),
+              _step10;
 
           try {
-            for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-              var pane = _step9.value;
+            for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+              var pane = _step10.value;
 
               if (pane.technicalIndicator().name === technicalIndicatorType) {
                 _this2._chartData.calcTechnicalIndicator(pane);
               }
             }
           } catch (err) {
-            _iterator9.e(err);
+            _iterator10.e(err);
           } finally {
-            _iterator9.f();
+            _iterator10.f();
           }
 
           _this2._layoutPane();
@@ -11236,12 +11253,12 @@ var ChartPane = /*#__PURE__*/function () {
       } else {
         var p;
 
-        var _iterator10 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step10;
+        var _iterator11 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+            _step11;
 
         try {
-          for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-            var pane = _step10.value;
+          for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
+            var pane = _step11.value;
 
             if (pane.tag() === tag) {
               p = pane;
@@ -11249,9 +11266,9 @@ var ChartPane = /*#__PURE__*/function () {
             }
           }
         } catch (err) {
-          _iterator10.e(err);
+          _iterator11.e(err);
         } finally {
-          _iterator10.f();
+          _iterator11.f();
         }
 
         if (p) {
@@ -11371,8 +11388,9 @@ var Chart = /*#__PURE__*/function () {
     key: "setStyleOptions",
     value: function setStyleOptions(options) {
       if (options) {
-        this._chartPane.chartData().applyStyleOptions(options); // this._chartPane.measurePaneSize()
+        this._chartPane.chartData().applyStyleOptions(options);
 
+        this._chartPane.resize();
       }
     }
     /**
@@ -11405,7 +11423,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "getTechnicalIndicatorParamOptions",
     value: function getTechnicalIndicatorParamOptions() {
-      return this._chartPane.chartData().technicalIndicatorCalcParams();
+      return clone(this._chartPane.chartData().technicalIndicatorCalcParams());
     }
     /**
      * 加载精度

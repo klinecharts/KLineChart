@@ -28,7 +28,7 @@ export default class Chart {
   setStyleOptions (options) {
     if (options) {
       this._chartPane.chartData().applyStyleOptions(options)
-      // this._chartPane.measurePaneSize()
+      this._chartPane.resize()
     }
   }
 
@@ -55,7 +55,7 @@ export default class Chart {
    * 获取技术指标参数配置
    */
   getTechnicalIndicatorParamOptions () {
-    return this._chartPane.chartData().technicalIndicatorCalcParams()
+    return clone(this._chartPane.chartData().technicalIndicatorCalcParams())
   }
 
   /**
