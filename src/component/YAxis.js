@@ -205,8 +205,13 @@ export default class YAxis extends Axis {
       )
       let precision = 2
       if (!this.isPercentageYAxis()) {
-        if (this._isCandleStickYAxis && stylOptions.technicalIndicator.lastValueMark.display) {
-          precision = Math.max(technicalIndicator.precision, this._chartData.pricePrecision())
+        if (this._isCandleStickYAxis) {
+          const pricePrecision = this._chartData.pricePrecision()
+          if (stylOptions.technicalIndicator.lastValueMark.display) {
+            precision = Math.max(technicalIndicator.precision, pricePrecision)
+          } else {
+            precision = pricePrecision
+          }
         } else {
           precision = technicalIndicator.precision
         }
