@@ -40,15 +40,6 @@ export const YAxisType = {
 }
 
 /**
- * y轴文字位置
- * @type {{OUTSIDE: string, INSIDE: string}}
- */
-export const YAxisTextPosition = {
-  INSIDE: 'inside',
-  OUTSIDE: 'outside'
-}
-
-/**
  * 主图类型
  * @type {{TIME_LINE: string, CANDLE: string}}
  */
@@ -285,6 +276,10 @@ const defaultYAxis = {
    */
   position: YAxisPosition.RIGHT,
   /**
+   * 轴是否在内部
+   */
+  inside: false,
+  /**
    * 轴线配置
    */
   axisLine: {
@@ -297,7 +292,6 @@ const defaultYAxis = {
    * tick文字
    */
   tickText: {
-    position: YAxisTextPosition.OUTSIDE,
     display: true,
     color: '#D9D9D9',
     size: 12,

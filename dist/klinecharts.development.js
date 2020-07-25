@@ -397,15 +397,6 @@ var YAxisType = {
   PERCENTAGE: 'percentage'
 };
 /**
- * y轴文字位置
- * @type {{OUTSIDE: string, INSIDE: string}}
- */
-
-var YAxisTextPosition = {
-  INSIDE: 'inside',
-  OUTSIDE: 'outside'
-};
-/**
  * 主图类型
  * @type {{TIME_LINE: string, CANDLE: string}}
  */
@@ -651,6 +642,11 @@ var defaultYAxis = {
   position: YAxisPosition.RIGHT,
 
   /**
+   * 轴是否在内部
+   */
+  inside: false,
+
+  /**
    * 轴线配置
    */
   axisLine: {
@@ -663,7 +659,6 @@ var defaultYAxis = {
    * tick文字
    */
   tickText: {
-    position: YAxisTextPosition.OUTSIDE,
     display: true,
     color: '#D9D9D9',
     size: 12,
@@ -5593,7 +5588,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
   }, {
     key: "_isDrawFromStart",
     value: function _isDrawFromStart(yAxisOptions) {
-      return yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE || yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE;
+      return yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside || yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside;
     }
   }]);
 
@@ -5670,9 +5665,9 @@ var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
       var rectWidth = yAxisDataLabelWidth + borderSize * 2 + paddingLeft + paddingRight;
       var rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom;
 
-      var yAxis = this._chartData.styleOptions().yAxis;
+      var yAxisOptions = this._chartData.styleOptions().yAxis;
 
-      if (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE || yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE) {
+      if (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside || yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside) {
         rectStartX = 0;
       } else {
         rectStartX = this._width - rectWidth;
@@ -10927,11 +10922,14 @@ var ChartPane = /*#__PURE__*/function () {
 
       var yAxisOptions = styleOptions.yAxis;
       var isYAxisLeft = yAxisOptions.position === YAxisPosition.LEFT;
-      var isYAxisTextOutsize = yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE;
+      var isOutside = !yAxisOptions.inside;
       var paneWidth = this._container.offsetWidth;
-      var yAxisWidth = 0;
+      var mainWidth;
+      var yAxisWidth;
+      var yAxisOffsetLeft;
+      var mainOffsetLeft;
 
-      if (isYAxisTextOutsize) {
+      if (isOutside) {
         yAxisWidth = this._candleStickPane.getSelfAxisWidth();
 
         var _iterator7 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
@@ -10947,18 +10945,21 @@ var ChartPane = /*#__PURE__*/function () {
         } finally {
           _iterator7.f();
         }
-      }
 
-      var mainWidth = paneWidth - yAxisWidth;
-      var yAxisOffsetLeft = paneWidth - yAxisWidth;
-      var mainOffsetLeft = 0;
+        mainWidth = paneWidth - yAxisWidth;
 
-      if (isYAxisLeft) {
-        yAxisOffsetLeft = 0;
-
-        if (isYAxisTextOutsize) {
+        if (isYAxisLeft) {
+          yAxisOffsetLeft = 0;
           mainOffsetLeft = yAxisWidth;
+        } else {
+          mainOffsetLeft = 0;
+          yAxisOffsetLeft = paneWidth - yAxisWidth;
         }
+      } else {
+        mainWidth = paneWidth;
+        yAxisWidth = paneWidth;
+        yAxisOffsetLeft = 0;
+        mainOffsetLeft = 0;
       }
 
       this._chartData.setTotalDataSpace(mainWidth);

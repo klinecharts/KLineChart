@@ -15,7 +15,7 @@
 import View from './View'
 import { calcTextWidth, getFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
-import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
+import { YAxisPosition } from '../data/options/styleOptions'
 
 export default class YAxisFloatLayerView extends View {
   constructor (container, chartData, yAxis, additionalDataProvider) {
@@ -65,10 +65,10 @@ export default class YAxisFloatLayerView extends View {
 
     const rectWidth = yAxisDataLabelWidth + borderSize * 2 + paddingLeft + paddingRight
     const rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom
-    const yAxis = this._chartData.styleOptions().yAxis
+    const yAxisOptions = this._chartData.styleOptions().yAxis
     if (
-      (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE) ||
-      (yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE)
+      (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside) ||
+      (yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside)
     ) {
       rectStartX = 0
     } else {

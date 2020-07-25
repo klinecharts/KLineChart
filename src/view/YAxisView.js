@@ -13,7 +13,7 @@
  */
 
 import View, { PlotType } from './View'
-import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
+import { YAxisPosition } from '../data/options/styleOptions'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
 import { isValid } from '../utils/typeChecks'
@@ -263,7 +263,7 @@ export default class YAxisView extends View {
    * @private
    */
   _isDrawFromStart (yAxisOptions) {
-    return ((yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE) ||
-      (yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE))
+    return ((yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside) ||
+      (yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside))
   }
 }

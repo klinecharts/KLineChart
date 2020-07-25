@@ -138,14 +138,13 @@ config = {
     position: 'right',
     // 'normal' | 'percentage'
     type: 'normal',
+    inside: false,
     axisLine: {
       display: true,
       color: '#888888',
       size: 1
     },
     tickText: {
-      // 'outside' | 'inside'
-      position: 'outside',
       display: true,
       color: '#D9D9D9',
       family: 'Helvetica Neue',

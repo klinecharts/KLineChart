@@ -16,7 +16,7 @@ import ChartData, { InvalidateLevel } from '../data/ChartData'
 import CandleStickPane from './CandleStickPane'
 import XAxisPane from './XAxisPane'
 
-import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
+import { YAxisPosition } from '../data/options/styleOptions'
 import { isArray, isBoolean, isFunction, isObject, isNumber, clone } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
@@ -211,23 +211,30 @@ export default class ChartPane {
     const styleOptions = this._chartData.styleOptions()
     const yAxisOptions = styleOptions.yAxis
     const isYAxisLeft = yAxisOptions.position === YAxisPosition.LEFT
-    const isYAxisTextOutsize = yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE
+    const isOutside = !yAxisOptions.inside
     const paneWidth = this._container.offsetWidth
-    let yAxisWidth = 0
-    if (isYAxisTextOutsize) {
+    let mainWidth
+    let yAxisWidth
+    let yAxisOffsetLeft
+    let mainOffsetLeft
+    if (isOutside) {
       yAxisWidth = this._candleStickPane.getSelfAxisWidth()
       for (const pane of this._technicalIndicatorPanes) {
         yAxisWidth = Math.max(yAxisWidth, pane.getSelfAxisWidth())
       }
-    }
-    const mainWidth = paneWidth - yAxisWidth
-    let yAxisOffsetLeft = paneWidth - yAxisWidth
-    let mainOffsetLeft = 0
-    if (isYAxisLeft) {
-      yAxisOffsetLeft = 0
-      if (isYAxisTextOutsize) {
+      mainWidth = paneWidth - yAxisWidth
+      if (isYAxisLeft) {
+        yAxisOffsetLeft = 0
         mainOffsetLeft = yAxisWidth
+      } else {
+        mainOffsetLeft = 0
+        yAxisOffsetLeft = paneWidth - yAxisWidth
       }
+    } else {
+      mainWidth = paneWidth
+      yAxisWidth = paneWidth
+      yAxisOffsetLeft = 0
+      mainOffsetLeft = 0
     }
 
     this._chartData.setTotalDataSpace(mainWidth)
