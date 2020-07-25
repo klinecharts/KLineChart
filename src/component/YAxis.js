@@ -184,7 +184,7 @@ export default class YAxis extends Axis {
       }
       if (yAxisOptions.tickText.display) {
         let textWidth = 0
-        this._measureCtx.font = getFont(yAxisOptions.tickText.size, yAxisOptions.tickText.family)
+        this._measureCtx.font = getFont(yAxisOptions.tickText.size, yAxisOptions.tickText.weight, yAxisOptions.tickText.family)
         this._ticks.forEach(tick => {
           textWidth = Math.max(textWidth, calcTextWidth(this._measureCtx, tick.v))
         })
@@ -198,7 +198,11 @@ export default class YAxis extends Axis {
       crossHairOptions.horizontal.display &&
       crossHairOptions.horizontal.text.display
     ) {
-      this._measureCtx.font = getFont(crossHairOptions.horizontal.text.size, crossHairOptions.horizontal.text.family)
+      this._measureCtx.font = getFont(
+        crossHairOptions.horizontal.text.size,
+        crossHairOptions.horizontal.text.weight,
+        crossHairOptions.horizontal.text.family
+      )
       let precision = 2
       if (!this.isPercentageYAxis()) {
         if (this._isCandleStickYAxis && stylOptions.technicalIndicator.lastValueMark.display) {

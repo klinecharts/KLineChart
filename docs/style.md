@@ -34,14 +34,16 @@ config = {
         color: '#D9D9D9',
         textMargin: 5,
         textSize: 10,
-        textFamily: 'Arial'
+        textFamily: 'Helvetica Neue',
+        textWeight: 'normal'
       },
       low: {
         display: true,
         color: '#D9D9D9',
         textMargin: 5,
         textSize: 10,
-        textFamily: 'Arial'
+        textFamily: 'Helvetica Neue',
+        textWeight: 'normal',
       },
       last: {
         display: true,
@@ -63,7 +65,8 @@ config = {
           paddingRight: 2,
           paddingBottom: 2,
           color: '#FFFFFF',
-          family: 'Arial'
+          family: 'Helvetica Neue',
+          weight: 'normal'
         }
       }
     }
@@ -99,7 +102,8 @@ config = {
       display: false,
       textColor: '#ffffff',
       textSize: 12,
-      textFamily: 'Arial',
+      textFamily: 'Helvetica Neue',
+      textWeight: 'normal',
       textPaddingLeft: 3,
       textPaddingTop: 2,
       textPaddingRight: 3,
@@ -116,7 +120,8 @@ config = {
     tickText: {
       display: true,
       color: '#D9D9D9',
-      family: 'Arial',
+      family: 'Helvetica Neue',
+      weight: 'normal',
       size: 12,
       margin: 3
     },
@@ -143,7 +148,8 @@ config = {
       position: 'outside',
       display: true,
       color: '#D9D9D9',
-      family: 'Arial',
+      family: 'Helvetica Neue',
+      weight: 'normal',
       size: 12,
       margin: 3
     },
@@ -176,7 +182,8 @@ config = {
           display: true,
           color: '#D9D9D9',
           size: 12,
-          family: 'Arial',
+          family: 'Helvetica Neue',
+          weight: 'normal',
           paddingLeft: 2,
           paddingRight: 2,
           paddingTop: 2,
@@ -200,7 +207,8 @@ config = {
           display: true,
           color: '#D9D9D9',
           size: 12,
-          family: 'Arial',
+          family: 'Helvetica Neue',
+          weight: 'normal',
           paddingLeft: 2,
           paddingRight: 2,
           paddingTop: 2,
@@ -235,7 +243,8 @@ config = {
         text: {
           size: 12,
           color: '#D9D9D9',
-          family: 'Arial',
+          family: 'Helvetica Neue',
+          weight: 'normal',
           marginLeft: 8,
           marginTop: 6,
           marginRight: 8,
@@ -245,7 +254,8 @@ config = {
       technicalIndicator: {
         text: {
           size: 12,
-          family: 'Arial',
+          family: 'Helvetica Neue',
+          weight: 'normal',
           color: '#D9D9D9',
           marginTop: 6,
           marginRight: 8,
@@ -277,7 +287,8 @@ config = {
     text: {
       color: '#1e88e5',
       size: 12,
-      family: 'Arial',
+      family: 'Helvetica Neue',
+      weight: 'normal',
       marginLeft: 2,
       marginRight: 2,
       marginTop: 2,

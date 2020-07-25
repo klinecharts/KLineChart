@@ -366,7 +366,7 @@ export default class GraphicMarkView extends View {
           if (isDrawPrice) {
             const price = this._yAxis.convertFromPixel(points[0].y)
             const priceText = formatPrecision(price, pricePrecision)
-            this._ctx.font = getFont(graphicMark.text.size, graphicMark.text.family)
+            this._ctx.font = getFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family)
             this._ctx.fillStyle = graphicMark.text.color
             this._ctx.fillText(`${priceText} ${priceExtendsText[i] || ''}`, points[0].x + graphicMark.text.marginLeft, points[0].y - graphicMark.text.marginBottom)
           }

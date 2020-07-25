@@ -31,7 +31,7 @@ export default class XAxis extends Axis {
     if (tickLength > 0) {
       const dateTimeFormat = this._chartData.dateTimeFormat()
       const tickText = this._chartData.styleOptions().xAxis.tickText
-      this._measureCtx.font = getFont(tickText.size, tickText.family)
+      this._measureCtx.font = getFont(tickText.size, tickText.weight, tickText.family)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
       const pos = parseInt(ticks[0].v, 10)
       const x = this.convertToPixel(pos)

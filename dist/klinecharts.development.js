@@ -501,14 +501,16 @@ var defaultCandleStick = {
       color: '#D9D9D9',
       textMargin: 5,
       textSize: 10,
-      textFamily: 'Arial'
+      textFamily: 'Helvetica Neue',
+      textWeight: 'normal'
     },
     low: {
       display: true,
       color: '#D9D9D9',
       textMargin: 5,
       textSize: 10,
-      textFamily: 'Arial'
+      textFamily: 'Helvetica Neue',
+      textWeight: 'normal'
     },
     last: {
       display: true,
@@ -529,7 +531,8 @@ var defaultCandleStick = {
         paddingRight: 2,
         paddingBottom: 2,
         color: '#FFFFFF',
-        family: 'Arial'
+        family: 'Helvetica Neue',
+        weight: 'normal'
       }
     }
   }
@@ -579,7 +582,8 @@ var defaultTechnicalIndicator = {
     display: false,
     textColor: '#ffffff',
     textSize: 12,
-    textFamily: 'Arial',
+    textFamily: 'Helvetica Neue',
+    textWeight: 'normal',
     textPaddingLeft: 3,
     textPaddingTop: 2,
     textPaddingRight: 3,
@@ -613,7 +617,8 @@ var defaultXAxis = {
     display: true,
     color: '#D9D9D9',
     size: 12,
-    family: 'Arial',
+    family: 'Helvetica Neue',
+    weight: 'normal',
     margin: 3
   },
   // tick线
@@ -662,7 +667,8 @@ var defaultYAxis = {
     display: true,
     color: '#D9D9D9',
     size: 12,
-    family: 'Arial',
+    family: 'Helvetica Neue',
+    weight: 'normal',
     margin: 3
   },
   // tick线
@@ -694,7 +700,8 @@ var defaultFloatLayer = {
         display: true,
         color: '#D9D9D9',
         size: 12,
-        family: 'Arial',
+        family: 'Helvetica Neue',
+        weight: 'normal',
         paddingLeft: 2,
         paddingRight: 2,
         paddingTop: 2,
@@ -717,7 +724,8 @@ var defaultFloatLayer = {
         display: true,
         color: '#D9D9D9',
         size: 12,
-        family: 'Arial',
+        family: 'Helvetica Neue',
+        weight: 'normal',
         paddingLeft: 2,
         paddingRight: 2,
         paddingTop: 2,
@@ -749,7 +757,8 @@ var defaultFloatLayer = {
       },
       text: {
         size: 12,
-        family: 'Arial',
+        family: 'Helvetica Neue',
+        weight: 'normal',
         color: '#D9D9D9',
         marginLeft: 8,
         marginTop: 6,
@@ -760,7 +769,8 @@ var defaultFloatLayer = {
     technicalIndicator: {
       text: {
         size: 12,
-        family: 'Arial',
+        family: 'Helvetica Neue',
+        weight: 'normal',
         color: '#D9D9D9',
         marginTop: 6,
         marginRight: 8,
@@ -797,7 +807,8 @@ var defaultGraphicMark = {
   text: {
     color: '#1e88e5',
     size: 12,
-    family: 'Arial',
+    family: 'Helvetica Neue',
+    weight: 'normal',
     marginLeft: 2,
     marginRight: 2,
     marginTop: 2,
@@ -3925,12 +3936,15 @@ function calcTextWidth(ctx, text) {
  * 获取字体
  * @param fontSize
  * @param fontFamily
+ * @param fontWeight
  * @returns {string}
  */
 
-function getFont(fontSize) {
-  var fontFamily = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Arial';
-  return "".concat(fontSize, "px ").concat(fontFamily);
+function getFont() {
+  var fontSize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 12;
+  var fontWeight = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'normal';
+  var fontFamily = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'Helvetica Neue';
+  return "".concat(fontWeight, " ").concat(fontSize, "px ").concat(fontFamily);
 }
 /**
  * 绘制水平直线
@@ -5142,7 +5156,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
       var textColor = floatLayerPromptTechnicalIndicatorText.color;
       var colorSize = colors.length;
       this._ctx.textBaseline = 'top';
-      this._ctx.font = getFont(textSize, floatLayerPromptTechnicalIndicatorText.family);
+      this._ctx.font = getFont(textSize, floatLayerPromptTechnicalIndicatorText.weight, floatLayerPromptTechnicalIndicatorText.family);
       var nameTextWidth = calcTextWidth(this._ctx, nameText);
       this._ctx.fillStyle = textColor;
 
@@ -5393,7 +5407,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
       }
 
       this._ctx.textBaseline = 'middle';
-      this._ctx.font = getFont(tickText.size, tickText.family);
+      this._ctx.font = getFont(tickText.size, tickText.weight, tickText.family);
       this._ctx.fillStyle = tickText.color;
 
       this._yAxis.ticks().forEach(function (tick) {
@@ -5469,7 +5483,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
         }
 
         if (isValid(value)) {
-          _this4._drawMarkLabel(yAxisOptions, value, precision, lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textFamily, lastValueMarkStyleOptions.textColor, backgroundColor, lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop, lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom);
+          _this4._drawMarkLabel(yAxisOptions, value, precision, lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textWeight, lastValueMarkStyleOptions.textFamily, lastValueMarkStyleOptions.textColor, backgroundColor, lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop, lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom);
         }
       });
     }
@@ -5512,7 +5526,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
 
       var priceMarkText = lastPriceMark.text;
 
-      this._drawMarkLabel(yAxisOptions, close, this._chartData.pricePrecision(), priceMarkText.size, priceMarkText.family, priceMarkText.color, backgroundColor, priceMarkText.paddingLeft, priceMarkText.paddingTop, priceMarkText.paddingRight, priceMarkText.paddingBottom);
+      this._drawMarkLabel(yAxisOptions, close, this._chartData.pricePrecision(), priceMarkText.size, priceMarkText.weight, priceMarkText.family, priceMarkText.color, backgroundColor, priceMarkText.paddingLeft, priceMarkText.paddingTop, priceMarkText.paddingRight, priceMarkText.paddingBottom);
     }
     /**
      * 绘制标记label
@@ -5520,6 +5534,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
      * @param value
      * @param precision
      * @param textSize
+     * @param textWeight
      * @param textFamily
      * @param textColor
      * @param backgroundColor
@@ -5532,7 +5547,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
 
   }, {
     key: "_drawMarkLabel",
-    value: function _drawMarkLabel(yAxisOptions, value, precision, textSize, textFamily, textColor, backgroundColor, textPaddingLeft, textPaddingTop, textPaddingRight, textPaddingBottom) {
+    value: function _drawMarkLabel(yAxisOptions, value, precision, textSize, textWeight, textFamily, textColor, backgroundColor, textPaddingLeft, textPaddingTop, textPaddingRight, textPaddingBottom) {
       var valueY = this._yAxis.convertToPixel(value);
 
       valueY = +Math.max(this._height * 0.05, Math.min(valueY, this._height * 0.98)).toFixed(0);
@@ -5550,7 +5565,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
         }
       }
 
-      this._ctx.font = getFont(textSize, textFamily);
+      this._ctx.font = getFont(textSize, textWeight, textFamily);
       var rectWidth = calcTextWidth(this._ctx, text) + textPaddingLeft + textPaddingRight;
       var rectHeight = textPaddingTop + textSize + textPaddingBottom;
       var rectStartX;
@@ -5644,7 +5659,7 @@ var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
       }
 
       var textSize = crossHairHorizontalText.size;
-      this._ctx.font = getFont(textSize, crossHairHorizontalText.family);
+      this._ctx.font = getFont(textSize, crossHairHorizontalText.weight, crossHairHorizontalText.family);
       var yAxisDataLabelWidth = calcTextWidth(this._ctx, yAxisDataLabel);
       var rectStartX;
       var paddingLeft = crossHairHorizontalText.paddingLeft;
@@ -6130,7 +6145,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
         if (yAxisOptions.tickText.display) {
           var textWidth = 0;
-          this._measureCtx.font = getFont(yAxisOptions.tickText.size, yAxisOptions.tickText.family);
+          this._measureCtx.font = getFont(yAxisOptions.tickText.size, yAxisOptions.tickText.weight, yAxisOptions.tickText.family);
 
           this._ticks.forEach(function (tick) {
             textWidth = Math.max(textWidth, calcTextWidth(_this3._measureCtx, tick.v));
@@ -6144,7 +6159,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
       var crossHairVerticalTextWidth = 0;
 
       if (crossHairOptions.display && crossHairOptions.horizontal.display && crossHairOptions.horizontal.text.display) {
-        this._measureCtx.font = getFont(crossHairOptions.horizontal.text.size, crossHairOptions.horizontal.text.family);
+        this._measureCtx.font = getFont(crossHairOptions.horizontal.text.size, crossHairOptions.horizontal.text.weight, crossHairOptions.horizontal.text.family);
         var precision = 2;
 
         if (!this.isPercentageYAxis()) {
@@ -6654,7 +6669,7 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       var y = startY + (isHigh ? -5 : 5);
       drawVerticalLine(this._ctx, startX, startY, y);
       drawHorizontalLine(this._ctx, y, startX, startX + 5);
-      this._ctx.font = getFont(priceMark.textSize, priceMark.textFamily);
+      this._ctx.font = getFont(priceMark.textSize, priceMark.textWeight, priceMark.textFamily);
       var text = formatPrecision(price, pricePrecision);
       this._ctx.textBaseline = 'middle';
 
@@ -6764,7 +6779,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       var textColor = floatLayerPromptCandleStick.text.color;
       var labels = floatLayerPromptCandleStick.labels;
       this._ctx.textBaseline = 'top';
-      this._ctx.font = getFont(textSize, floatLayerPromptCandleStick.text.family);
+      this._ctx.font = getFont(textSize, floatLayerPromptCandleStick.text.weight, floatLayerPromptCandleStick.text.family);
       var labelX = textMarginLeft;
       var labelY = floatLayerPromptCandleStick.text.marginTop;
       labels.forEach(function (label, i) {
@@ -6807,7 +6822,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       var baseTextSize = floatLayerPromptCandleStick.text.size;
       var baseTextColor = floatLayerPromptCandleStick.text.color;
       this._ctx.textBaseline = 'top';
-      this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.family);
+      this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.weight, floatLayerPromptCandleStick.text.family);
       var maxLabelWidth = 0;
       baseLabels.forEach(function (label, i) {
         var value = baseValues[i] || 'n/a';
@@ -6843,7 +6858,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       var indicatorValues = technicalIndicatorPromptData.values || [];
 
       if (isCandleStick) {
-        this._ctx.font = getFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.family);
+        this._ctx.font = getFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.weight, floatLayerPromptTechnicalIndicator.text.family);
         indicatorLabels.forEach(function (label, i) {
           var v = indicatorValues[i].value || 'n/a';
           var text = "".concat(label, ": ").concat(v);
@@ -6880,7 +6895,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       var baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft;
       var labelY = rectY + rectBorderSize + rectPaddingTop; // 开始渲染基础数据文字
 
-      this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.family);
+      this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.weight, floatLayerPromptCandleStick.text.family);
       baseLabels.forEach(function (label, i) {
         labelY += baseTextMarginTop;
         _this2._ctx.textAlign = 'left';
@@ -6912,7 +6927,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
         var colors = technicalIndicatorOptions.line.colors;
         var indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft;
         var colorSize = colors.length;
-        this._ctx.font = getFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.family);
+        this._ctx.font = getFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.weight, floatLayerPromptTechnicalIndicator.text.family);
         indicatorLabels.forEach(function (label, i) {
           labelY += indicatorTextMarginTop;
           _this2._ctx.textAlign = 'left';
@@ -9220,7 +9235,7 @@ var GraphicMarkView = /*#__PURE__*/function (_View) {
               var price = _this13._yAxis.convertFromPixel(points[0].y);
 
               var priceText = formatPrecision(price, pricePrecision);
-              _this13._ctx.font = getFont(graphicMark.text.size, graphicMark.text.family);
+              _this13._ctx.font = getFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family);
               _this13._ctx.fillStyle = graphicMark.text.color;
 
               _this13._ctx.fillText("".concat(priceText, " ").concat(priceExtendsText[i] || ''), points[0].x + graphicMark.text.marginLeft, points[0].y - graphicMark.text.marginBottom);
@@ -9533,7 +9548,7 @@ var XAxisView = /*#__PURE__*/function (_View) {
 
       var tickLine = xAxisOptions.tickLine;
       this._ctx.textBaseline = 'top';
-      this._ctx.font = getFont(tickText.size, tickText.family);
+      this._ctx.font = getFont(tickText.size, tickText.weight, tickText.family);
       this._ctx.textAlign = 'center';
       this._ctx.fillStyle = tickText.color;
       var labelY = tickText.margin;
@@ -9618,7 +9633,7 @@ var XAxisFloatLayerView = /*#__PURE__*/function (_View) {
       var timestamp = kLineData.timestamp;
       var text = formatDate(this._chartData.dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm');
       var textSize = crossHairVerticalText.size;
-      this._ctx.font = getFont(textSize, crossHairVerticalText.family);
+      this._ctx.font = getFont(textSize, crossHairVerticalText.weight, crossHairVerticalText.family);
       var labelWidth = calcTextWidth(this._ctx, text);
       var xAxisLabelX = x - labelWidth / 2;
       var paddingLeft = crossHairVerticalText.paddingLeft;
@@ -9720,7 +9735,7 @@ var XAxis = /*#__PURE__*/function (_Axis) {
 
         var tickText = this._chartData.styleOptions().xAxis.tickText;
 
-        this._measureCtx.font = getFont(tickText.size, tickText.family);
+        this._measureCtx.font = getFont(tickText.size, tickText.weight, tickText.family);
         var defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00');
         var pos = parseInt(ticks[0].v, 10);
         var x = this.convertToPixel(pos);

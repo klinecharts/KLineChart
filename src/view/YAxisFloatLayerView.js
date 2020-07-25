@@ -53,7 +53,7 @@ export default class YAxisFloatLayerView extends View {
       }
     }
     const textSize = crossHairHorizontalText.size
-    this._ctx.font = getFont(textSize, crossHairHorizontalText.family)
+    this._ctx.font = getFont(textSize, crossHairHorizontalText.weight, crossHairHorizontalText.family)
     const yAxisDataLabelWidth = calcTextWidth(this._ctx, yAxisDataLabel)
     let rectStartX
 

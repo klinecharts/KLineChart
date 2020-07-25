@@ -41,10 +41,11 @@ export function calcTextWidth (ctx, text) {
  * 获取字体
  * @param fontSize
  * @param fontFamily
+ * @param fontWeight
  * @returns {string}
  */
-export function getFont (fontSize, fontFamily = 'Arial') {
-  return `${fontSize}px ${fontFamily}`
+export function getFont (fontSize = 12, fontWeight = 'normal', fontFamily = 'Helvetica Neue') {
+  return `${fontWeight} ${fontSize}px ${fontFamily}`
 }
 
 /**

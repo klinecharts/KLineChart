@@ -55,7 +55,7 @@ export default class XAxisFloatLayerView extends View {
     const text = formatDate(this._chartData.dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
 
     const textSize = crossHairVerticalText.size
-    this._ctx.font = getFont(textSize, crossHairVerticalText.family)
+    this._ctx.font = getFont(textSize, crossHairVerticalText.weight, crossHairVerticalText.family)
     const labelWidth = calcTextWidth(this._ctx, text)
     let xAxisLabelX = x - labelWidth / 2
 
