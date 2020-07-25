@@ -1254,7 +1254,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
         key: 'ma20',
         line: 'line'
       }, {
-        key: 'num',
+        key: 'volume',
         type: 'bar',
         referenceValue: 0,
         color: function color(data, options) {
@@ -1283,7 +1283,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
         });
       });
       plots.push({
-        key: 'num',
+        key: 'volume',
         type: 'bar',
         referenceValue: 0,
         color: function color(data, options) {
@@ -1310,7 +1310,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
       dataList.forEach(function (kLineData, i) {
         var volume = kLineData.volume || 0;
         var vol = {
-          num: volume
+          volume: volume
         };
         calcParams.forEach(function (param, j) {
           volSums[j] = (volSums[j] || 0) + volume;
@@ -6158,8 +6158,14 @@ var YAxis = /*#__PURE__*/function (_Axis) {
         var precision = 2;
 
         if (!this.isPercentageYAxis()) {
-          if (this._isCandleStickYAxis && stylOptions.technicalIndicator.lastValueMark.display) {
-            precision = Math.max(technicalIndicator.precision, this._chartData.pricePrecision());
+          if (this._isCandleStickYAxis) {
+            var pricePrecision = this._chartData.pricePrecision();
+
+            if (stylOptions.technicalIndicator.lastValueMark.display) {
+              precision = Math.max(technicalIndicator.precision, pricePrecision);
+            } else {
+              precision = pricePrecision;
+            }
           } else {
             precision = technicalIndicator.precision;
           }

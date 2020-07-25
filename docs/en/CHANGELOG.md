@@ -3,6 +3,22 @@
 #### Update Cycle
 New versions are generally released in about two weeks (emergency versions that affect functions will be released at any time).
 
+## 5.5.0
+`To be released`
++ 🆕 Add back the technical indicator ohlc display.
++ 🆕 Add text `weight` configuration.
++ 🆕 A new `shouldFormatBigNumber` property is added to the custom technical indicators, which is used to inform the chart whether larger numbers need to be formatted.
++ 💄 Optimize the data display after moving the mouse over the chart, and display the last data instead.
++ 💄 Optimize the starting position of chart drawing when loading new data.
++ 💄 Optimize the internal dom element level to reduce nesting.
++ 💄 Optimize the prompt text display of `VOL`.
++ 🐞 Fix the problem that illegal technical indicator calculation parameters may cause the chart to crash.
++ 👉 The style configuration `yAxis.tickText.position` is changed to `yAxis.inside`.
++ 👉 The default font family is changed from `Arial` to `Helvetica Neue`.
++ 🗑 Remove the x-axis `minHeight` and `maxHeight` configuration, change to height adaptive.
++ 🗑 Remove the y-axis `minWidth` and `maxWidth` configuration, change to width adaptive.
++ 🗑 Remove the custom technical indicator `isPriceTechnicalIndicator` attribute.
+
 ## 5.3.0
 `2020-05-26`
 + 🛠 Refactoring technical indicator module.
