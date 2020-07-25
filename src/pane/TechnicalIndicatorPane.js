@@ -32,7 +32,10 @@ export default class TechnicalIndicatorPane extends Pane {
   }
 
   _createYAxis (props) {
-    return new YAxis(props.chartData, false)
+    return new YAxis(
+      props.chartData,
+      false,
+      { technicalIndicator: this.technicalIndicator.bind(this), isTimeLine: this._isRealTime.bind(this) })
   }
 
   _createMainWidget (container, props) {
@@ -75,7 +78,7 @@ export default class TechnicalIndicatorPane extends Pane {
   }
 
   computeAxis () {
-    this._yAxis.calcMinMaxValue(this.technicalIndicator(), this._isRealTime())
+    this._yAxis.calcMinMaxValue()
     this._yAxis.computeAxis()
   }
 

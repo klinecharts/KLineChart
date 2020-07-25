@@ -669,7 +669,7 @@ var defaultYAxis = {
   tickLine: {
     display: true,
     size: 1,
-    length: 3,
+    length: 20,
     color: '#888888'
   }
 };
@@ -5400,23 +5400,8 @@ var YAxisView = /*#__PURE__*/function (_View) {
       this._ctx.font = getFont(tickText.size, tickText.family);
       this._ctx.fillStyle = tickText.color;
 
-      var technicalIndicator = this._additionalDataProvider.technicalIndicator();
-
-      var isPercentageYAxis = this._yAxis.isPercentageYAxis();
-
-      var precision = this._yAxis.isCandleStickYAxis() ? this._chartData.pricePrecision() : technicalIndicator.precision;
-
       this._yAxis.ticks().forEach(function (tick) {
-        var label;
-
-        if (isPercentageYAxis) {
-          label = tick.v;
-        } else {
-          var formatValue = formatPrecision(tick.v, precision);
-          label = technicalIndicator.shouldFormatBigNumber ? formatBigNumber(formatValue) : formatValue;
-        }
-
-        _this3._ctx.fillText(label, labelX, tick.y);
+        _this3._ctx.fillText(tick.v, labelX, tick.y);
       });
 
       this._ctx.textAlign = 'left';
@@ -5925,13 +5910,14 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
   var _super = _createSuper(YAxis);
 
-  function YAxis(chartData, isCandleStickYAxis) {
+  function YAxis(chartData, isCandleStickYAxis, additionalDataProvider) {
     var _this;
 
     _classCallCheck(this, YAxis);
 
     _this = _super.call(this, chartData);
     _this._isCandleStickYAxis = isCandleStickYAxis;
+    _this._additionalDataProvider = additionalDataProvider;
     return _this;
   }
 
@@ -5974,7 +5960,11 @@ var YAxis = /*#__PURE__*/function (_Axis) {
           }
         }
 
+        var technicalIndicator = this._additionalDataProvider.technicalIndicator();
+
         var isPercentageAxis = this.isPercentageYAxis();
+        var precision = this._isCandleStickYAxis ? this._chartData.pricePrecision() : technicalIndicator.precision;
+        var shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber;
 
         for (var i = 0; i < tickLength; i += tickCountDif) {
           var v = ticks[i].v;
@@ -5982,9 +5972,21 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
           var _y = this._innerConvertToPixel(+v);
 
+          var value = '';
+
+          if (isPercentageAxis) {
+            value = "".concat(formatPrecision(v, 2), "%");
+          } else {
+            value = formatPrecision(v, precision);
+
+            if (shouldFormatBigNumber) {
+              value = formatBigNumber(value);
+            }
+          }
+
           if (_y > textHeight && _y < this._height - textHeight) {
             optimalTicks.push({
-              v: isPercentageAxis ? "".concat((+v).toFixed(2), "%") : v,
+              v: value,
               y: _y
             });
           }
@@ -5995,14 +5997,16 @@ var YAxis = /*#__PURE__*/function (_Axis) {
     }
     /**
      * 计算最大最小值
-     * @param technicalIndicator
-     * @param isRealTime
      */
 
   }, {
     key: "calcMinMaxValue",
-    value: function calcMinMaxValue(technicalIndicator, isRealTime) {
+    value: function calcMinMaxValue() {
       var _this2 = this;
+
+      var technicalIndicator = this._additionalDataProvider.technicalIndicator();
+
+      var isTimeLine = this._additionalDataProvider.isTimeLine();
 
       var dataList = this._chartData.dataList();
 
@@ -6016,7 +6020,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
       var minMaxArray = [Infinity, -Infinity];
 
-      if (isRealTime) {
+      if (isTimeLine) {
         for (var i = from; i < to; i++) {
           var kLineData = dataList[i];
           var technicalIndicatorData = technicalIndicatorResult[i] || {};
@@ -6109,8 +6113,10 @@ var YAxis = /*#__PURE__*/function (_Axis) {
     }
   }, {
     key: "getSelfWidth",
-    value: function getSelfWidth(technicalIndicator) {
+    value: function getSelfWidth() {
       var _this3 = this;
+
+      var technicalIndicator = this._additionalDataProvider.technicalIndicator();
 
       var stylOptions = this._chartData.styleOptions();
 
@@ -6224,7 +6230,10 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
   }, {
     key: "_createYAxis",
     value: function _createYAxis(props) {
-      return new YAxis(props.chartData, false);
+      return new YAxis(props.chartData, false, {
+        technicalIndicator: this.technicalIndicator.bind(this),
+        isTimeLine: this._isRealTime.bind(this)
+      });
     }
   }, {
     key: "_createMainWidget",
@@ -6275,7 +6284,7 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
   }, {
     key: "computeAxis",
     value: function computeAxis() {
-      this._yAxis.calcMinMaxValue(this.technicalIndicator(), this._isRealTime());
+      this._yAxis.calcMinMaxValue();
 
       this._yAxis.computeAxis();
     }
@@ -9407,7 +9416,10 @@ var CandleStickPane = /*#__PURE__*/function (_TechnicalIndicatorPa) {
   _createClass(CandleStickPane, [{
     key: "_createYAxis",
     value: function _createYAxis(props) {
-      return new YAxis(props.chartData, true);
+      return new YAxis(props.chartData, true, {
+        technicalIndicator: this.technicalIndicator.bind(this),
+        isTimeLine: this._isRealTime.bind(this)
+      });
     }
   }, {
     key: "_createMainWidget",
@@ -10638,7 +10650,7 @@ var ChartPane = /*#__PURE__*/function () {
 
     this._measurePaneHeight();
 
-    this._measurePaneWidth();
+    this._layoutPane();
   }
   /**
    * 初始化图表容器
@@ -11209,8 +11221,6 @@ var ChartPane = /*#__PURE__*/function () {
       if (tag === CANDLE_STICK_PANE_TAG) {
         this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType);
 
-        this._measurePaneWidth();
-
         this._layoutPane();
       } else {
         var p;
@@ -11241,8 +11251,6 @@ var ChartPane = /*#__PURE__*/function () {
             this.removeTechnicalIndicator(tag);
           } else {
             p.setTechnicalIndicatorType(technicalIndicatorType);
-
-            this._measurePaneWidth();
 
             this._layoutPane();
           }

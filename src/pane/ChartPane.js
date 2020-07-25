@@ -56,7 +56,7 @@ export default class ChartPane {
       this._candleStickPane.yAxis()
     )
     this._measurePaneHeight()
-    this._measurePaneWidth()
+    this._layoutPane()
   }
 
   /**
@@ -421,7 +421,6 @@ export default class ChartPane {
   setTechnicalIndicatorType (tag, technicalIndicatorType) {
     if (tag === CANDLE_STICK_PANE_TAG) {
       this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType)
-      this._measurePaneWidth()
       this._layoutPane()
     } else {
       let p
@@ -437,7 +436,6 @@ export default class ChartPane {
           this.removeTechnicalIndicator(tag)
         } else {
           p.setTechnicalIndicatorType(technicalIndicatorType)
-          this._measurePaneWidth()
           this._layoutPane()
         }
       }

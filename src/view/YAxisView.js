@@ -114,18 +114,8 @@ export default class YAxisView extends View {
     this._ctx.textBaseline = 'middle'
     this._ctx.font = getFont(tickText.size, tickText.family)
     this._ctx.fillStyle = tickText.color
-    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
-    const isPercentageYAxis = this._yAxis.isPercentageYAxis()
-    const precision = this._yAxis.isCandleStickYAxis() ? this._chartData.pricePrecision() : technicalIndicator.precision
     this._yAxis.ticks().forEach(tick => {
-      let label
-      if (isPercentageYAxis) {
-        label = tick.v
-      } else {
-        const formatValue = formatPrecision(tick.v, precision)
-        label = technicalIndicator.shouldFormatBigNumber ? formatBigNumber(formatValue) : formatValue
-      }
-      this._ctx.fillText(label, labelX, tick.y)
+      this._ctx.fillText(tick.v, labelX, tick.y)
     })
     this._ctx.textAlign = 'left'
   }

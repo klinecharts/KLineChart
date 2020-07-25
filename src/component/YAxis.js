@@ -19,9 +19,10 @@ import { calcTextWidth, getFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
 
 export default class YAxis extends Axis {
-  constructor (chartData, isCandleStickYAxis) {
+  constructor (chartData, isCandleStickYAxis, additionalDataProvider) {
     super(chartData)
     this._isCandleStickYAxis = isCandleStickYAxis
+    this._additionalDataProvider = additionalDataProvider
   }
 
   _computeMinMaxValue () {
@@ -49,19 +50,26 @@ export default class YAxis extends Axis {
           tickCountDif = Math.ceil(textHeight * 2 / yDif)
         }
       }
+      const technicalIndicator = this._additionalDataProvider.technicalIndicator()
       const isPercentageAxis = this.isPercentageYAxis()
+      const precision = this._isCandleStickYAxis ? this._chartData.pricePrecision() : technicalIndicator.precision
+      const shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
       for (let i = 0; i < tickLength; i += tickCountDif) {
         let v = ticks[i].v
         v = +v === 0 ? '0' : v
         const y = this._innerConvertToPixel(+v)
+        let value = ''
+        if (isPercentageAxis) {
+          value = `${formatPrecision(v, 2)}%`
+        } else {
+          value = formatPrecision(v, precision)
+          if (shouldFormatBigNumber) {
+            value = formatBigNumber(value)
+          }
+        }
         if (y > textHeight &&
           y < this._height - textHeight) {
-          optimalTicks.push({
-            v: isPercentageAxis
-              ? `${(+v).toFixed(2)}%`
-              : v,
-            y
-          })
+          optimalTicks.push({ v: value, y })
         }
       }
     }
@@ -70,10 +78,10 @@ export default class YAxis extends Axis {
 
   /**
    * 计算最大最小值
-   * @param technicalIndicator
-   * @param isRealTime
    */
-  calcMinMaxValue (technicalIndicator, isRealTime) {
+  calcMinMaxValue () {
+    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
+    const isTimeLine = this._additionalDataProvider.isTimeLine()
     const dataList = this._chartData.dataList()
     const technicalIndicatorResult = technicalIndicator.result
     const from = this._chartData.from()
@@ -81,7 +89,7 @@ export default class YAxis extends Axis {
     const isShowAverageLine = this._chartData.styleOptions().realTime.averageLine.display
     const minMaxArray = [Infinity, -Infinity]
 
-    if (isRealTime) {
+    if (isTimeLine) {
       for (let i = from; i < to; i++) {
         const kLineData = dataList[i]
         const technicalIndicatorData = technicalIndicatorResult[i] || {}
@@ -162,7 +170,8 @@ export default class YAxis extends Axis {
     return this._isCandleStickYAxis && this._chartData.styleOptions().yAxis.type === YAxisType.PERCENTAGE
   }
 
-  getSelfWidth (technicalIndicator) {
+  getSelfWidth () {
+    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
     const stylOptions = this._chartData.styleOptions()
     const yAxisOptions = stylOptions.yAxis
     let yAxisWidth = 0
