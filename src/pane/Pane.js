@@ -59,18 +59,6 @@ export default class Pane {
   _createYAxisWidget (container, props) {}
 
   /**
-   * 设置cell的尺寸
-   * @param cell
-   * @param size
-   * @private
-   */
-  _setCellSize (cell, size) {
-    cell.style.left = `${size.left}px`
-    cell.style.width = `${size.width}px`
-    cell.style.height = `${size.height}px`
-  }
-
-  /**
    * 计算轴
    * @private
    */
@@ -140,13 +128,10 @@ export default class Pane {
     canvas.height = height * pixelRatio
     ctx.scale(pixelRatio, pixelRatio)
 
-    const mainWidgetWidth = this._mainWidgetCell.offsetWidth
-    const mainWidgetHeight = this._mainWidgetCell.offsetHeight
-    const mainWidgetOffsetLeft = parseInt(this._mainWidgetCell.style.left, 10)
-
-    const yAxisWidgetWidth = this._yAxisWidgetCell.offsetWidth
-    const yAxisWidgetHeight = this._yAxisWidgetCell.offsetHeight
-    const yAxisWidgetOffsetLeft = parseInt(this._yAxisWidgetCell.style.left, 10)
+    const mainWidgetElement = this._mainWidget.getElement()
+    const mainWidgetWidth = mainWidgetElement.offsetWidth
+    const mainWidgetHeight = mainWidgetElement.offsetHeight
+    const mainWidgetOffsetLeft = parseInt(mainWidgetElement.style.left, 10)
 
     ctx.drawImage(
       this._mainWidget.getImage(includeFloatLayer, includeGraphicMark),
@@ -154,6 +139,10 @@ export default class Pane {
       mainWidgetWidth, mainWidgetHeight
     )
     if (this._yAxisWidget) {
+      const yAxisWidgetElement = this._yAxisWidget.getElement()
+      const yAxisWidgetWidth = yAxisWidgetElement.offsetWidth
+      const yAxisWidgetHeight = yAxisWidgetElement.offsetHeight
+      const yAxisWidgetOffsetLeft = parseInt(yAxisWidgetElement.style.left, 10)
       ctx.drawImage(
         this._yAxisWidget.getImage(includeFloatLayer),
         yAxisWidgetOffsetLeft, 0,

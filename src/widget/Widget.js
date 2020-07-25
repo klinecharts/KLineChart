@@ -64,6 +64,10 @@ export default class Widget {
    */
   _createFloatLayerView (container, props) {}
 
+  getElement () {
+    return this._element
+  }
+
   setWidth (width) {
     this._width = width
     this._mainView.setWidth(width)

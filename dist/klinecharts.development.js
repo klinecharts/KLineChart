@@ -4038,20 +4038,6 @@ var Pane = /*#__PURE__*/function () {
     key: "_createYAxisWidget",
     value: function _createYAxisWidget(container, props) {}
     /**
-     * 设置cell的尺寸
-     * @param cell
-     * @param size
-     * @private
-     */
-
-  }, {
-    key: "_setCellSize",
-    value: function _setCellSize(cell, size) {
-      cell.style.left = "".concat(size.left, "px");
-      cell.style.width = "".concat(size.width, "px");
-      cell.style.height = "".concat(size.height, "px");
-    }
-    /**
      * 计算轴
      * @private
      */
@@ -4142,15 +4128,20 @@ var Pane = /*#__PURE__*/function () {
       canvas.width = width * pixelRatio;
       canvas.height = height * pixelRatio;
       ctx.scale(pixelRatio, pixelRatio);
-      var mainWidgetWidth = this._mainWidgetCell.offsetWidth;
-      var mainWidgetHeight = this._mainWidgetCell.offsetHeight;
-      var mainWidgetOffsetLeft = parseInt(this._mainWidgetCell.style.left, 10);
-      var yAxisWidgetWidth = this._yAxisWidgetCell.offsetWidth;
-      var yAxisWidgetHeight = this._yAxisWidgetCell.offsetHeight;
-      var yAxisWidgetOffsetLeft = parseInt(this._yAxisWidgetCell.style.left, 10);
+
+      var mainWidgetElement = this._mainWidget.getElement();
+
+      var mainWidgetWidth = mainWidgetElement.offsetWidth;
+      var mainWidgetHeight = mainWidgetElement.offsetHeight;
+      var mainWidgetOffsetLeft = parseInt(mainWidgetElement.style.left, 10);
       ctx.drawImage(this._mainWidget.getImage(includeFloatLayer, includeGraphicMark), mainWidgetOffsetLeft, 0, mainWidgetWidth, mainWidgetHeight);
 
       if (this._yAxisWidget) {
+        var yAxisWidgetElement = this._yAxisWidget.getElement();
+
+        var yAxisWidgetWidth = yAxisWidgetElement.offsetWidth;
+        var yAxisWidgetHeight = yAxisWidgetElement.offsetHeight;
+        var yAxisWidgetOffsetLeft = parseInt(yAxisWidgetElement.style.left, 10);
         ctx.drawImage(this._yAxisWidget.getImage(includeFloatLayer), yAxisWidgetOffsetLeft, 0, yAxisWidgetWidth, yAxisWidgetHeight);
       }
 
@@ -4231,6 +4222,11 @@ var Widget = /*#__PURE__*/function () {
   }, {
     key: "_createFloatLayerView",
     value: function _createFloatLayerView(container, props) {}
+  }, {
+    key: "getElement",
+    value: function getElement() {
+      return this._element;
+    }
   }, {
     key: "setWidth",
     value: function setWidth(width) {
@@ -10724,6 +10720,11 @@ var ChartPane = /*#__PURE__*/function () {
         _iterator.f();
       }
     }
+    /**
+     * 重新布局
+     * @private
+     */
+
   }, {
     key: "_layoutPane",
     value: function _layoutPane() {
@@ -10831,6 +10832,11 @@ var ChartPane = /*#__PURE__*/function () {
         _this._layoutPane();
       });
     }
+    /**
+     * 测量pane高度
+     * @private
+     */
+
   }, {
     key: "_measurePaneHeight",
     value: function _measurePaneHeight() {
@@ -10894,6 +10900,11 @@ var ChartPane = /*#__PURE__*/function () {
 
       this._chartEvent.setPaneContentSize(paneContentSize);
     }
+    /**
+     * 测量pan宽度
+     * @private
+     */
+
   }, {
     key: "_measurePaneWidth",
     value: function _measurePaneWidth() {

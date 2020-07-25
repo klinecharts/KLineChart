@@ -109,6 +109,10 @@ export default class ChartPane {
     }
   }
 
+  /**
+   * 重新布局
+   * @private
+   */
   _layoutPane () {
     this._measurePaneWidth()
     this._xAxisPane.computeAxis()
@@ -157,6 +161,10 @@ export default class ChartPane {
     )
   }
 
+  /**
+   * 测量pane高度
+   * @private
+   */
   _measurePaneHeight () {
     const styleOptions = this._chartData.styleOptions()
     const paneHeight = this._container.offsetHeight
@@ -195,6 +203,10 @@ export default class ChartPane {
     this._chartEvent.setPaneContentSize(paneContentSize)
   }
 
+  /**
+   * 测量pan宽度
+   * @private
+   */
   _measurePaneWidth () {
     const styleOptions = this._chartData.styleOptions()
     const yAxisOptions = styleOptions.yAxis

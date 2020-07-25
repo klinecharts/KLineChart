@@ -108,8 +108,6 @@ config = {
   },
   xAxis: {
     display: true,
-    maxHeight: 50,
-    minHeight: 30,
     axisLine: {
       display: true,
       color: '#888888',
@@ -131,8 +129,6 @@ config = {
   },
   yAxis: {
     display: true,
-    maxWidth: 100,
-    minWidth: 60,
     // 'left' | 'right'
     position: 'right',
     // 'normal' | 'percentage'
