@@ -18,8 +18,6 @@ import GraphicMarkEventHandler from './GraphicMarkEventHandler'
 import { GraphicMarkType } from '../data/ChartData'
 import KeyBoardEventHandler from './KeyBoardEventHandler'
 
-import { throttle } from '../utils/performance'
-
 export default class ChartEvent {
   constructor (target, chartData, xAxis, yAxis) {
     this._target = target
@@ -33,9 +31,9 @@ export default class ChartEvent {
       mouseDownEvent: this._mouseDownEvent.bind(this),
       mouseRightDownEvent: this._mouseRightDownEvent.bind(this),
       mouseLeaveEvent: this._mouseLeaveEvent.bind(this),
-      mouseMoveEvent: throttle(this._mouseMoveEvent.bind(this)),
+      mouseMoveEvent: this._mouseMoveEvent.bind(this),
       mouseWheelEvent: this._mouseWheelEvent.bind(this),
-      pressedMouseMoveEvent: throttle(this._pressedMouseMoveEvent.bind(this)),
+      pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this),
       longTapEvent: this._longTapEvent.bind(this)
     }, {
       treatVertTouchDragAsPageScroll: false,

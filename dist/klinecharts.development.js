@@ -669,7 +669,7 @@ var defaultYAxis = {
   tickLine: {
     display: true,
     size: 1,
-    length: 20,
+    length: 3,
     color: '#888888'
   }
 };
@@ -10412,34 +10412,6 @@ var KeyBoardEventHandler = /*#__PURE__*/function (_EventHandler) {
   return KeyBoardEventHandler;
 }(EventHandler);
 
-/**
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
-
- * http://www.apache.org/licenses/LICENSE-2.0
-
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-function throttle(func) {
-  var wait = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 16;
-  var previous = 0;
-  return function () {
-    var now = Date.now();
-    var context = this;
-    var args = arguments;
-
-    if (now - previous > wait) {
-      func.apply(context, args);
-      previous = now;
-    }
-  };
-}
-
 var ChartEvent = /*#__PURE__*/function () {
   function ChartEvent(target, chartData, xAxis, yAxis) {
     _classCallCheck(this, ChartEvent);
@@ -10455,9 +10427,9 @@ var ChartEvent = /*#__PURE__*/function () {
       mouseDownEvent: this._mouseDownEvent.bind(this),
       mouseRightDownEvent: this._mouseRightDownEvent.bind(this),
       mouseLeaveEvent: this._mouseLeaveEvent.bind(this),
-      mouseMoveEvent: throttle(this._mouseMoveEvent.bind(this)),
+      mouseMoveEvent: this._mouseMoveEvent.bind(this),
       mouseWheelEvent: this._mouseWheelEvent.bind(this),
-      pressedMouseMoveEvent: throttle(this._pressedMouseMoveEvent.bind(this)),
+      pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this),
       longTapEvent: this._longTapEvent.bind(this)
     }, {
       treatVertTouchDragAsPageScroll: false,
@@ -10619,6 +10591,34 @@ var ChartEvent = /*#__PURE__*/function () {
 
   return ChartEvent;
 }();
+
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+function throttle(func) {
+  var wait = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 16;
+  var previous = 0;
+  return function () {
+    var now = Date.now();
+    var context = this;
+    var args = arguments;
+
+    if (now - previous > wait) {
+      func.apply(context, args);
+      previous = now;
+    }
+  };
+}
 
 var DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100;
 var TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_';
