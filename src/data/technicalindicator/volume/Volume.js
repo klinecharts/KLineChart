@@ -29,7 +29,7 @@ export default class Volume extends TechnicalIndicator {
         { key: 'ma10', line: 'line' },
         { key: 'ma20', line: 'line' },
         {
-          key: 'num',
+          key: 'volume',
           type: 'bar',
           referenceValue: 0,
           color: (data, options) => {
@@ -52,7 +52,7 @@ export default class Volume extends TechnicalIndicator {
       plots.push({ key: `ma${p}`, type: 'line' })
     })
     plots.push({
-      key: 'num',
+      key: 'volume',
       type: 'bar',
       referenceValue: 0,
       color: (data, options) => {
@@ -73,7 +73,7 @@ export default class Volume extends TechnicalIndicator {
     const result = []
     dataList.forEach((kLineData, i) => {
       const volume = kLineData.volume || 0
-      const vol = { num: volume }
+      const vol = { volume }
       calcParams.forEach((param, j) => {
         volSums[j] = (volSums[j] || 0) + volume
         if (i >= param - 1) {
