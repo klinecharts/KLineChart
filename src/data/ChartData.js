@@ -17,8 +17,8 @@ import { defaultStyleOptions } from './options/styleOptions'
 
 import { formatValue } from '../utils/format'
 import { createNewTechnicalIndicator, createTechnicalIndicators } from './technicalindicator/technicalIndicatorControl'
-import { VOL } from './technicalindicator/defaultTechnicalIndicatorType'
 import { DEV } from '../utils/env'
+import { TechnicalIndicatorSeries } from './technicalindicator/TechnicalIndicator'
 
 export const InvalidateLevel = {
   NONE: 0,
@@ -200,9 +200,9 @@ export default class ChartData {
    */
   technicalIndicatorCalcParams () {
     const calcParams = {}
-    Object.keys(this._technicalIndicators).forEach(name => {
-      calcParams[name] = this._technicalIndicators[name].calcParams
-    })
+    for (const name in this._technicalIndicators) {
+      calcParams[name] = clone(this._technicalIndicators[name].calcParams)
+    }
     return calcParams
   }
 
@@ -274,12 +274,45 @@ export default class ChartData {
    * @param volumePrecision
    */
   applyPrecision (pricePrecision, volumePrecision) {
-    if (isValid(pricePrecision) && isNumber(pricePrecision) && pricePrecision >= 0) {
+    const pricePrecisionValid = isValid(pricePrecision) && isNumber(pricePrecision) && pricePrecision >= 0
+    const volumePrecisionValid = isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0
+    if (pricePrecisionValid) {
       this._pricePrecision = pricePrecision
     }
-    if (isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0) {
-      this.technicalIndicator(VOL).precision = volumePrecision
+    if (volumePrecisionValid) {
       this._volumePrecision = volumePrecision
+    }
+    if (pricePrecisionValid || volumePrecisionValid) {
+      for (const name in this._technicalIndicators) {
+        const series = this._technicalIndicators[name].series
+        switch (series) {
+          case TechnicalIndicatorSeries.PRICE: {
+            this._technicalIndicators[name].precision = pricePrecision
+            break
+          }
+          case TechnicalIndicatorSeries.VOLUME: {
+            this._technicalIndicators[name].precision = volumePrecision
+            break
+          }
+          default: { break }
+        }
+      }
+    }
+  }
+
+  /**
+   * 加载技术指标精度
+   * @param precision
+   * @param technicalIndicatorType
+   */
+  applyTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
+    const technicalIndicator = this.technicalIndicator(technicalIndicatorType)
+    if (technicalIndicator) {
+      technicalIndicator.precision = precision
+    } else {
+      for (const name in this._technicalIndicators) {
+        this._technicalIndicators[name].precision = precision
+      }
     }
   }
 
@@ -650,7 +683,7 @@ export default class ChartData {
     const technicalIndicator = pane.technicalIndicator()
     if (technicalIndicator) {
       const { calcParams, precision } = this._technicalIndicators[technicalIndicator.name] || {}
-      technicalIndicator.setPrecision(precision)
+      technicalIndicator.setPrecision(precision || this._pricePrecision)
       technicalIndicator.setCalcParams(calcParams)
       technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
       pane.computeAxis()

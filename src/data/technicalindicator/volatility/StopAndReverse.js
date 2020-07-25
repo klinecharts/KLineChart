@@ -12,14 +12,16 @@
  * limitations under the License.
  */
 
-import TechnicalIndicator from '../TechnicalIndicator'
+import TechnicalIndicator, { TechnicalIndicatorSeries } from '../TechnicalIndicator'
 import { SAR } from '../defaultTechnicalIndicatorType'
 
 export default class StopAndReverse extends TechnicalIndicator {
   constructor () {
     super({
       name: SAR,
+      series: TechnicalIndicatorSeries.PRICE,
       calcParams: [2, 2, 20],
+      precision: 2,
       shouldOhlc: true,
       plots: [
         {

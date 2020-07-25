@@ -12,13 +12,14 @@
  * limitations under the License.
  */
 
-import TechnicalIndicator from '../TechnicalIndicator'
+import TechnicalIndicator, { TechnicalIndicatorSeries } from '../TechnicalIndicator'
 import { VOL } from '../defaultTechnicalIndicatorType'
 
 export default class Volume extends TechnicalIndicator {
   constructor () {
     super({
       name: VOL,
+      series: TechnicalIndicatorSeries.VOLUME,
       calcParams: [5, 10, 20],
       shouldCheckParamCount: false,
       shouldFormatBigNumber: true,

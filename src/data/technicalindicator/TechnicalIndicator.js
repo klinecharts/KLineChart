@@ -14,15 +14,27 @@
 
 import { clone, isArray, isBoolean, isNumber, isValid } from '../../utils/typeChecks'
 
+/**
+ * 技术指标系列
+ * @type {{PRICE: string, VOLUME: string, NORMAL: string}}
+ */
+export const TechnicalIndicatorSeries = {
+  PRICE: 'price',
+  VOLUME: 'volume',
+  NORMAL: 'normal'
+}
+
 export default class TechnicalIndicator {
   constructor ({
-    name, calcParams, plots,
+    name, series, calcParams, plots,
     precision, shouldCheckParamCount,
     shouldOhlc, shouldFormatBigNumber,
     baseValue, minValue, maxValue
   }) {
     // 指标名
     this.name = name || ''
+    // 指标系列，值有'price', 'volume', 'normal
+    this.series = series || 'normal'
     // 精度
     this.precision = isValid(precision) && isNumber(precision) && precision >= 0 ? precision : 4
     // 计算参数

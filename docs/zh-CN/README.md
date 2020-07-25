@@ -58,9 +58,14 @@ setTechnicalIndicatorParams(technicalIndicatorType, params)
 getTechnicalIndicatorParamOptions()
 
 // 设置精度
-// pricePrecision 价格精度，影响整个图表显示的价格的数字精度，还包括技术指标MA, EMA, BOLL, SAR，不包括y轴刻度值
-// volumePrecision 数量精度，影响整个图表显示的价格的数字精度，还包括技术指标VOL，不包括y轴刻度值
+// pricePrecision 价格精度，影响整个图表显示的价格的数字精度，还包括指标系列是price的技术指标
+// volumePrecision 数量精度，影响整个图表显示的价格的数字精度，还包括指标系列是volume的技术指标
 setPrecision(pricePrecision, volumePrecision)
+
+// 设置技术指标精度
+// precision 精度小数位数
+// technicalIndicatorType 技术指标类型，可缺省，缺省则设置所有技术指标精度
+setTechnicalIndicatorPrecision(precision, technicalIndicatorType)
 
 // 设置时区
 // timezone 时区名，如'Asia/Shanghai'

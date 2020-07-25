@@ -12,14 +12,16 @@
  * limitations under the License.
  */
 
-import TechnicalIndicator from '../TechnicalIndicator'
+import TechnicalIndicator, { TechnicalIndicatorSeries } from '../TechnicalIndicator'
 import { MA } from '../defaultTechnicalIndicatorType'
 
 export default class MovingAverage extends TechnicalIndicator {
   constructor () {
     super({
       name: MA,
+      series: TechnicalIndicatorSeries.PRICE,
       calcParams: [5, 10, 30, 60],
+      precision: 2,
       shouldCheckParamCount: false,
       shouldOhlc: true,
       plots: [

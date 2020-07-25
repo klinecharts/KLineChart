@@ -55,7 +55,7 @@ export default class Chart {
    * 获取技术指标参数配置
    */
   getTechnicalIndicatorParamOptions () {
-    return clone(this._chartPane.chartData().technicalIndicatorCalcParams())
+    return this._chartPane.chartData().technicalIndicatorCalcParams()
   }
 
   /**
@@ -65,6 +65,15 @@ export default class Chart {
    */
   setPrecision (pricePrecision, volumePrecision) {
     this._chartPane.chartData().applyPrecision(pricePrecision, volumePrecision)
+  }
+
+  /**
+   * 设置技术指标精度
+   * @param precision
+   * @param technicalIndicatorType
+   */
+  setTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
+    this._chartPane.chartData().applyTechnicalIndicatorPrecision(precision, technicalIndicatorType)
   }
 
   /**

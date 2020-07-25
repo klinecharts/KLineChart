@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TechnicalIndicator from './TechnicalIndicator'
+import TechnicalIndicator, { TechnicalIndicatorSeries } from './TechnicalIndicator'
 
 import MovingAverage from './directionalmovement/MovingAverage'
 import ExponentialMovingAverage from './directionalmovement/ExponentialMovingAverage'
@@ -52,16 +52,19 @@ export function createTechnicalIndicators () {
   return {
     [MA]: {
       structure: MovingAverage,
-      precision: 4,
+      series: TechnicalIndicatorSeries.PRICE,
+      precision: 2,
       calcParams: [5, 10, 30, 60]
     },
     [EMA]: {
       structure: ExponentialMovingAverage,
-      precision: 4,
+      series: TechnicalIndicatorSeries.PRICE,
+      precision: 2,
       calcParams: [6, 12, 20]
     },
     [VOL]: {
       structure: Volume,
+      series: TechnicalIndicatorSeries.VOLUME,
       precision: 0,
       calcParams: [5, 10, 20]
     },
@@ -72,7 +75,8 @@ export function createTechnicalIndicators () {
     },
     [BOLL]: {
       structure: BollingerBands,
-      precision: 4,
+      series: TechnicalIndicatorSeries.PRICE,
+      precision: 2,
       calcParams: [20]
     },
     [KDJ]: {
@@ -152,7 +156,8 @@ export function createTechnicalIndicators () {
     },
     [SAR]: {
       structure: StopAndReverse,
-      precision: 4,
+      series: TechnicalIndicatorSeries.PRICE,
+      precision: 2,
       calcParams: [2, 2, 20]
     }
   }
@@ -161,6 +166,7 @@ export function createTechnicalIndicators () {
 /**
  * 创建一个新的技术指标
  * @param name
+ * @param series
  * @param calcParams
  * @param plots
  * @param precision
@@ -175,7 +181,7 @@ export function createTechnicalIndicators () {
  * @returns {null|{precision: (*|number), calcParams: (*|[]), structure: NewTechnicalIndicator}}
  */
 export function createNewTechnicalIndicator ({
-  name, calcParams, plots, precision, shouldCheckParamCount,
+  name, series, calcParams, plots, precision, shouldCheckParamCount,
   shouldOhlc, shouldFormatBigNumber, baseValue, minValue, maxValue,
   calcTechnicalIndicator, regeneratePlots
 }) {
@@ -192,6 +198,7 @@ export function createNewTechnicalIndicator ({
       super(
         {
           name,
+          series,
           calcParams,
           plots,
           precision,
@@ -211,7 +218,10 @@ export function createNewTechnicalIndicator ({
   }
   return {
     structure: NewTechnicalIndicator,
-    precision: isValid(precision) && isNumber(precision) && precision >= 0 ? precision : 4,
+    series: series || TechnicalIndicatorSeries.NORMAL,
+    precision: isValid(precision) && isNumber(precision) && precision >= 0
+      ? precision
+      : (series === TechnicalIndicatorSeries.PRICE ? 2 : (series === TechnicalIndicatorSeries.VOLUME ? 0 : 4)),
     calcParams: isArray(calcParams) ? calcParams : []
   }
 }

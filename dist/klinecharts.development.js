@@ -967,9 +967,21 @@ function formatBigNumber(value) {
   return '--';
 }
 
+/**
+ * 技术指标系列
+ * @type {{PRICE: string, VOLUME: string, NORMAL: string}}
+ */
+
+var TechnicalIndicatorSeries = {
+  PRICE: 'price',
+  VOLUME: 'volume',
+  NORMAL: 'normal'
+};
+
 var TechnicalIndicator = /*#__PURE__*/function () {
   function TechnicalIndicator(_ref) {
     var name = _ref.name,
+        series = _ref.series,
         calcParams = _ref.calcParams,
         plots = _ref.plots,
         precision = _ref.precision,
@@ -983,7 +995,9 @@ var TechnicalIndicator = /*#__PURE__*/function () {
     _classCallCheck(this, TechnicalIndicator);
 
     // 指标名
-    this.name = name || ''; // 精度
+    this.name = name || ''; // 指标系列，值有'price', 'volume', 'normal
+
+    this.series = series || 'normal'; // 精度
 
     this.precision = isValid(precision) && isNumber(precision) && precision >= 0 ? precision : 4; // 计算参数
 
@@ -1094,7 +1108,9 @@ var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
 
     return _super.call(this, {
       name: MA,
+      series: TechnicalIndicatorSeries.PRICE,
       calcParams: [5, 10, 30, 60],
+      precision: 2,
       shouldCheckParamCount: false,
       shouldOhlc: true,
       plots: [{
@@ -1162,7 +1178,9 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
 
     return _super.call(this, {
       name: EMA,
+      series: TechnicalIndicatorSeries.PRICE,
       calcParams: [6, 12, 20],
+      precision: 2,
       shouldCheckParamCount: false,
       shouldOhlc: true,
       plots: [{
@@ -1239,6 +1257,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
 
     return _super.call(this, {
       name: VOL,
+      series: TechnicalIndicatorSeries.VOLUME,
       calcParams: [5, 10, 20],
       shouldCheckParamCount: false,
       shouldFormatBigNumber: true,
@@ -1439,7 +1458,9 @@ var BollingerBands = /*#__PURE__*/function (_TechnicalIndicator) {
 
     return _super.call(this, {
       name: BOLL,
+      series: TechnicalIndicatorSeries.PRICE,
       calcParams: [20],
+      precision: 2,
       shouldOhlc: true,
       plots: [{
         key: 'up',
@@ -2733,7 +2754,9 @@ var StopAndReverse = /*#__PURE__*/function (_TechnicalIndicator) {
 
     return _super.call(this, {
       name: SAR,
+      series: TechnicalIndicatorSeries.PRICE,
       calcParams: [2, 2, 20],
+      precision: 2,
       shouldOhlc: true,
       plots: [{
         key: 'sar',
@@ -2913,14 +2936,17 @@ function createTechnicalIndicators() {
 
   return _ref = {}, _defineProperty(_ref, MA, {
     structure: MovingAverage,
-    precision: 4,
+    series: TechnicalIndicatorSeries.PRICE,
+    precision: 2,
     calcParams: [5, 10, 30, 60]
   }), _defineProperty(_ref, EMA, {
     structure: ExponentialMovingAverage,
-    precision: 4,
+    series: TechnicalIndicatorSeries.PRICE,
+    precision: 2,
     calcParams: [6, 12, 20]
   }), _defineProperty(_ref, VOL, {
     structure: Volume,
+    series: TechnicalIndicatorSeries.VOLUME,
     precision: 0,
     calcParams: [5, 10, 20]
   }), _defineProperty(_ref, MACD, {
@@ -2929,7 +2955,8 @@ function createTechnicalIndicators() {
     calcParams: [12, 26, 9]
   }), _defineProperty(_ref, BOLL, {
     structure: BollingerBands,
-    precision: 4,
+    series: TechnicalIndicatorSeries.PRICE,
+    precision: 2,
     calcParams: [20]
   }), _defineProperty(_ref, KDJ, {
     structure: StockIndicatorKDJ,
@@ -2993,13 +3020,15 @@ function createTechnicalIndicators() {
     calcParams: [14, 9]
   }), _defineProperty(_ref, SAR, {
     structure: StopAndReverse,
-    precision: 4,
+    series: TechnicalIndicatorSeries.PRICE,
+    precision: 2,
     calcParams: [2, 2, 20]
   }), _ref;
 }
 /**
  * 创建一个新的技术指标
  * @param name
+ * @param series
  * @param calcParams
  * @param plots
  * @param precision
@@ -3016,6 +3045,7 @@ function createTechnicalIndicators() {
 
 function createNewTechnicalIndicator(_ref2) {
   var name = _ref2.name,
+      series = _ref2.series,
       calcParams = _ref2.calcParams,
       plots = _ref2.plots,
       precision = _ref2.precision,
@@ -3046,6 +3076,7 @@ function createNewTechnicalIndicator(_ref2) {
 
       return _super.call(this, {
         name: name,
+        series: series,
         calcParams: calcParams,
         plots: plots,
         precision: precision,
@@ -3069,7 +3100,8 @@ function createNewTechnicalIndicator(_ref2) {
 
   return {
     structure: NewTechnicalIndicator,
-    precision: isValid(precision) && isNumber(precision) && precision >= 0 ? precision : 4,
+    series: series || TechnicalIndicatorSeries.NORMAL,
+    precision: isValid(precision) && isNumber(precision) && precision >= 0 ? precision : series === TechnicalIndicatorSeries.PRICE ? 2 : series === TechnicalIndicatorSeries.VOLUME ? 0 : 4,
     calcParams: isArray(calcParams) ? calcParams : []
   };
 }
@@ -3317,12 +3349,12 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "technicalIndicatorCalcParams",
     value: function technicalIndicatorCalcParams() {
-      var _this = this;
-
       var calcParams = {};
-      Object.keys(this._technicalIndicators).forEach(function (name) {
-        calcParams[name] = _this._technicalIndicators[name].calcParams;
-      });
+
+      for (var name in this._technicalIndicators) {
+        calcParams[name] = clone(this._technicalIndicators[name].calcParams);
+      }
+
       return calcParams;
     }
     /**
@@ -3414,13 +3446,54 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "applyPrecision",
     value: function applyPrecision(pricePrecision, volumePrecision) {
-      if (isValid(pricePrecision) && isNumber(pricePrecision) && pricePrecision >= 0) {
+      var pricePrecisionValid = isValid(pricePrecision) && isNumber(pricePrecision) && pricePrecision >= 0;
+      var volumePrecisionValid = isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0;
+
+      if (pricePrecisionValid) {
         this._pricePrecision = pricePrecision;
       }
 
-      if (isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0) {
-        this.technicalIndicator(VOL).precision = volumePrecision;
+      if (volumePrecisionValid) {
         this._volumePrecision = volumePrecision;
+      }
+
+      if (pricePrecisionValid || volumePrecisionValid) {
+        for (var name in this._technicalIndicators) {
+          var series = this._technicalIndicators[name].series;
+
+          switch (series) {
+            case TechnicalIndicatorSeries.PRICE:
+              {
+                this._technicalIndicators[name].precision = pricePrecision;
+                break;
+              }
+
+            case TechnicalIndicatorSeries.VOLUME:
+              {
+                this._technicalIndicators[name].precision = volumePrecision;
+                break;
+              }
+          }
+        }
+      }
+    }
+    /**
+     * 加载技术指标精度
+     * @param precision
+     * @param technicalIndicatorType
+     */
+
+  }, {
+    key: "applyTechnicalIndicatorPrecision",
+    value: function applyTechnicalIndicatorPrecision(precision, technicalIndicatorType) {
+      var technicalIndicator = this.technicalIndicator(technicalIndicatorType);
+
+      if (technicalIndicator) {
+        technicalIndicator.precision = precision;
+      } else {
+        for (var name in this._technicalIndicators) {
+          this._technicalIndicators[name].precision = precision;
+        }
       }
     }
     /**
@@ -3883,7 +3956,7 @@ var ChartData = /*#__PURE__*/function () {
             calcParams = _ref.calcParams,
             precision = _ref.precision;
 
-        technicalIndicator.setPrecision(precision);
+        technicalIndicator.setPrecision(precision || this._pricePrecision);
         technicalIndicator.setCalcParams(calcParams);
         technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || [];
         pane.computeAxis();
@@ -9376,6 +9449,7 @@ var TransactionAveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
 
     return _super.call(this, {
       name: 'TAP',
+      // precision: 2,
       plots: [{
         key: 'average',
         type: 'line'
@@ -11445,7 +11519,7 @@ var Chart = /*#__PURE__*/function () {
   }, {
     key: "getTechnicalIndicatorParamOptions",
     value: function getTechnicalIndicatorParamOptions() {
-      return clone(this._chartPane.chartData().technicalIndicatorCalcParams());
+      return this._chartPane.chartData().technicalIndicatorCalcParams();
     }
     /**
      * 加载精度
@@ -11457,6 +11531,17 @@ var Chart = /*#__PURE__*/function () {
     key: "setPrecision",
     value: function setPrecision(pricePrecision, volumePrecision) {
       this._chartPane.chartData().applyPrecision(pricePrecision, volumePrecision);
+    }
+    /**
+     * 设置技术指标精度
+     * @param precision
+     * @param technicalIndicatorType
+     */
+
+  }, {
+    key: "setTechnicalIndicatorPrecision",
+    value: function setTechnicalIndicatorPrecision(precision, technicalIndicatorType) {
+      this._chartPane.chartData().applyTechnicalIndicatorPrecision(precision, technicalIndicatorType);
     }
     /**
      * 设置时区
