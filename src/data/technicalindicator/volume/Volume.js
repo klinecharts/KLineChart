@@ -23,6 +23,7 @@ export default class Volume extends TechnicalIndicator {
       calcParams: [5, 10, 20],
       shouldCheckParamCount: false,
       shouldFormatBigNumber: true,
+      precision: 0,
       baseValue: 0,
       minValue: 0,
       plots: [

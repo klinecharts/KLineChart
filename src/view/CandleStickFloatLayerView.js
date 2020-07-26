@@ -96,7 +96,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     const baseTextMarginBottom = floatLayerPromptCandleStick.text.marginBottom
     const baseTextSize = floatLayerPromptCandleStick.text.size
     const baseTextColor = floatLayerPromptCandleStick.text.color
-
+    this._ctx.save()
     this._ctx.textBaseline = 'top'
     this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.weight, floatLayerPromptCandleStick.text.family)
     let maxLabelWidth = 0
@@ -219,7 +219,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
         labelY += (indicatorTextSize + indicatorTextMarginBottom)
       })
     }
-    this._ctx.textAlign = 'left'
+    this._ctx.restore()
   }
 
   /**

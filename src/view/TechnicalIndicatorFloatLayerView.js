@@ -98,6 +98,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     if (!crossHairOptions.display || !crossHairHorizontal.display || !crossHairHorizontalLine.display) {
       return
     }
+    this._ctx.save()
     // 绘制十字光标水平线
     this._ctx.lineWidth = crossHairHorizontalLine.size
     this._ctx.strokeStyle = crossHairHorizontalLine.color
@@ -105,7 +106,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
       this._ctx.setLineDash(crossHairHorizontalLine.dashValue)
     }
     drawHorizontalLine(this._ctx, crossHair.y, 0, this._width)
-    this._ctx.setLineDash([])
+    this._ctx.restore()
   }
 
   /**
@@ -124,6 +125,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     if (!crossHairOptions.display || !crossHairVertical.display || !crossHairVerticalLine.display) {
       return
     }
+    this._ctx.save()
     this._ctx.lineWidth = crossHairVerticalLine.size
     this._ctx.strokeStyle = crossHairVerticalLine.color
 
@@ -131,7 +133,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
       this._ctx.setLineDash(crossHairVerticalLine.dashValue)
     }
     drawVerticalLine(this._ctx, realDataPosX, 0, this._height)
-    this._ctx.setLineDash([])
+    this._ctx.restore()
   }
 
   /**

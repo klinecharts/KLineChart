@@ -562,7 +562,7 @@ var defaultTechnicalIndicator = {
   },
   line: {
     size: 1,
-    colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+    colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1e88e5', '#9157DB']
   },
   circle: {
     upColor: '#26A69A',
@@ -1261,6 +1261,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [5, 10, 20],
       shouldCheckParamCount: false,
       shouldFormatBigNumber: true,
+      precision: 0,
       baseValue: 0,
       minValue: 0,
       plots: [{
@@ -3956,7 +3957,7 @@ var ChartData = /*#__PURE__*/function () {
             calcParams = _ref.calcParams,
             precision = _ref.precision;
 
-        technicalIndicator.setPrecision(precision || this._pricePrecision);
+        technicalIndicator.setPrecision(isValid(precision) ? precision : this._pricePrecision);
         technicalIndicator.setCalcParams(calcParams);
         technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || [];
         pane.computeAxis();
@@ -4619,6 +4620,8 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
 
       var horizontalGrid = grid.horizontal;
 
+      this._ctx.save();
+
       if (horizontalGrid.display) {
         this._ctx.strokeStyle = horizontalGrid.color;
         this._ctx.lineWidth = horizontalGrid.size;
@@ -4649,7 +4652,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
         });
       }
 
-      this._ctx.setLineDash([]);
+      this._ctx.restore();
     }
     /**
      * 绘制指标
@@ -5107,7 +5110,9 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
       if (!crossHairOptions.display || !crossHairHorizontal.display || !crossHairHorizontalLine.display) {
         return;
-      } // 绘制十字光标水平线
+      }
+
+      this._ctx.save(); // 绘制十字光标水平线
 
 
       this._ctx.lineWidth = crossHairHorizontalLine.size;
@@ -5119,7 +5124,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
       drawHorizontalLine(this._ctx, crossHair.y, 0, this._width);
 
-      this._ctx.setLineDash([]);
+      this._ctx.restore();
     }
     /**
      * 绘制十字光标垂直线
@@ -5144,6 +5149,8 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
         return;
       }
 
+      this._ctx.save();
+
       this._ctx.lineWidth = crossHairVerticalLine.size;
       this._ctx.strokeStyle = crossHairVerticalLine.color;
 
@@ -5153,7 +5160,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
 
       drawVerticalLine(this._ctx, realDataPosX, 0, this._height);
 
-      this._ctx.setLineDash([]);
+      this._ctx.restore();
     }
     /**
      * 绘制指标提示
@@ -5903,7 +5910,7 @@ var Axis = /*#__PURE__*/function () {
       var ticks = [];
 
       if (this._range >= 0) {
-        var interval = +this._nice(this._range / 6.0);
+        var interval = +this._nice(this._range / 8.0);
 
         var precision = this._getIntervalPrecision(interval);
 
@@ -6787,6 +6794,9 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       }
 
       var priceMarkLine = lastPriceMark.line;
+
+      this._ctx.save();
+
       this._ctx.strokeStyle = color;
       this._ctx.lineWidth = priceMarkLine.size;
 
@@ -6796,7 +6806,7 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
 
       drawHorizontalLine(this._ctx, priceY, 0, this._width);
 
-      this._ctx.setLineDash([]);
+      this._ctx.restore();
     }
   }]);
 
@@ -6895,6 +6905,9 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       var baseTextMarginBottom = floatLayerPromptCandleStick.text.marginBottom;
       var baseTextSize = floatLayerPromptCandleStick.text.size;
       var baseTextColor = floatLayerPromptCandleStick.text.color;
+
+      this._ctx.save();
+
       this._ctx.textBaseline = 'top';
       this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.weight, floatLayerPromptCandleStick.text.family);
       var maxLabelWidth = 0;
@@ -7017,7 +7030,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
         });
       }
 
-      this._ctx.textAlign = 'left';
+      this._ctx.restore();
     }
     /**
      * 渲染圆角矩形
@@ -9449,7 +9462,7 @@ var TransactionAveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
 
     return _super.call(this, {
       name: 'TAP',
-      // precision: 2,
+      precision: 2,
       plots: [{
         key: 'average',
         type: 'line'

@@ -249,12 +249,13 @@ export default class CandleStickView extends TechnicalIndicatorView {
       color = lastPriceMark.noChangeColor
     }
     const priceMarkLine = lastPriceMark.line
+    this._ctx.save()
     this._ctx.strokeStyle = color
     this._ctx.lineWidth = priceMarkLine.size
     if (priceMarkLine.style === LineStyle.DASH) {
       this._ctx.setLineDash(priceMarkLine.dashValue)
     }
     drawHorizontalLine(this._ctx, priceY, 0, this._width)
-    this._ctx.setLineDash([])
+    this._ctx.restore()
   }
 }

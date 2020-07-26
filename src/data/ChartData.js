@@ -683,7 +683,7 @@ export default class ChartData {
     const technicalIndicator = pane.technicalIndicator()
     if (technicalIndicator) {
       const { calcParams, precision } = this._technicalIndicators[technicalIndicator.name] || {}
-      technicalIndicator.setPrecision(precision || this._pricePrecision)
+      technicalIndicator.setPrecision(isValid(precision) ? precision : this._pricePrecision)
       technicalIndicator.setCalcParams(calcParams)
       technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
       pane.computeAxis()

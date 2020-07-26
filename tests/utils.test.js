@@ -8,10 +8,10 @@ describe('utils', function () {
   describe('canvas', function () {
     describe('getFont', function () {
       it('should contain text size and font style', function () {
-        expect(getFont(12, 'bold')).to.equals('12px bold')
+        expect(getFont(12, 'bold', 'mono')).to.equals('bold 12px mono')
       })
       it('should contain text size and default font style', function () {
-        expect(getFont(12)).to.equals('12px Arial')
+        expect(getFont(12)).to.equals('normal 12px Helvetica Neue')
       })
     })
   })

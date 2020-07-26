@@ -40,6 +40,7 @@ export default class TechnicalIndicatorView extends View {
       return
     }
     const horizontalGrid = grid.horizontal
+    this._ctx.save()
     if (horizontalGrid.display) {
       this._ctx.strokeStyle = horizontalGrid.color
       this._ctx.lineWidth = horizontalGrid.size
@@ -65,7 +66,7 @@ export default class TechnicalIndicatorView extends View {
       })
     }
 
-    this._ctx.setLineDash([])
+    this._ctx.restore()
   }
 
   /**
