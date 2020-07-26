@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "2443974dc0556cc6335c206a3697d863",
+    "revision": "81761919f622bd47c4c8118cdc25abe4",
     "url": "/KLineChart/index.html"
   },
   {
-    "revision": "e5e2166fa59fc1a57fb5",
+    "revision": "44738e2a41d5a0db00e7",
     "url": "/KLineChart/static/css/main.36d96dd1.chunk.css"
   },
   {
@@ -16,12 +16,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/KLineChart/static/js/2.29bdd034.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "e5e2166fa59fc1a57fb5",
-    "url": "/KLineChart/static/js/main.07d83af5.chunk.js"
+    "revision": "44738e2a41d5a0db00e7",
+    "url": "/KLineChart/static/js/main.505c5a76.chunk.js"
   },
   {
     "revision": "a8db9746838aec4af8e23e9aaa867338",
-    "url": "/KLineChart/static/js/main.07d83af5.chunk.js.LICENSE.txt"
+    "url": "/KLineChart/static/js/main.505c5a76.chunk.js.LICENSE.txt"
   },
   {
     "revision": "dd3418977e5e32552eeb",
