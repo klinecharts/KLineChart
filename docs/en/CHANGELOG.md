@@ -1,10 +1,7 @@
 # Change Log
 
-#### Update Cycle
-New versions are generally released in about two weeks (emergency versions that affect functions will be released at any time).
-
 ## 5.5.0
-`To be released`
+`2020-07-26`
 + 🆕 Add back the technical indicator ohlc display.
 + 🆕 Add text `weight` configuration.
 + 🆕 A new `shouldFormatBigNumber` property is added to the custom technical indicators, which is used to inform the chart whether larger numbers need to be formatted.
