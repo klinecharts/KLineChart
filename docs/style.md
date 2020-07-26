@@ -91,7 +91,7 @@ config = {
     },
     line: {
       size: 1,
-      colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+      colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1e88e5', '#9157DB']
     },
     circle: {
       upColor: '#26A69A',

@@ -6847,7 +6847,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
         if (isDrawValueIndicator) {
           var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
-          this._drawTechnicalIndicatorPromptPoint(realDataPos, technicalIndicator, data.values, technicalIndicatorOptions.line.colors, realDataPosX);
+          this._drawTechnicalIndicatorPromptPoint(realDataPos, realDataPosX, technicalIndicator, data.values, technicalIndicatorOptions.line.colors);
         }
       }
     }

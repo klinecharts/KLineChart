@@ -44,9 +44,8 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       if (isDrawValueIndicator) {
         const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
         this._drawTechnicalIndicatorPromptPoint(
-          realDataPos, technicalIndicator,
-          data.values,
-          technicalIndicatorOptions.line.colors, realDataPosX
+          realDataPos, realDataPosX, technicalIndicator,
+          data.values, technicalIndicatorOptions.line.colors
         )
       }
     }
