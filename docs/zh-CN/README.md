@@ -259,6 +259,10 @@ technicalIndicatorInfo格式如下：
   calcTechnicalIndicator: (kLineDataList, calcParams) => { return [...] },
   // 精度，可缺省，默认为4
   precision: 4,
+  // 技术指标系列，值为'price', 'volume'和'normal'
+  // 当值为price时，价格设置价格精度时会影响该技术指标的精度
+  // 当值为volume时，价格设置数量精度时会影响该技术指标的精度
+  series: 'normal',
   // 计算参数，可缺省
   calcParams: [],
   // 数据信息，需要对应计算方法返回的结果里面的key值

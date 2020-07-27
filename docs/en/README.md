@@ -155,6 +155,7 @@ The technicalIndicatorInfo format is as follows:
   name: 'NAME',
   calcTechnicalIndicator: (kLineDataList, calcParams) => { return [...] },
   precision: 4,
+  series: 'normal',
   calcParams: [],
   plots: [],
   shouldCheckParamCount: true,
