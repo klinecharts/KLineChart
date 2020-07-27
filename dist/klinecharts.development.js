@@ -483,7 +483,7 @@ var defaultCandleStick = {
     /**
      * 无变化时颜色
      */
-    noChangeColor: '#666666'
+    noChangeColor: '#888888'
   },
   priceMark: {
     display: true,
@@ -507,7 +507,7 @@ var defaultCandleStick = {
       display: true,
       upColor: '#26A69A',
       downColor: '#EF5350',
-      noChangeColor: '#666666',
+      noChangeColor: '#888888',
       line: {
         display: true,
         style: LineStyle.DASH,
@@ -535,9 +535,9 @@ var defaultCandleStick = {
 
 var defaultRealTime = {
   timeLine: {
-    color: '#1e88e5',
+    color: '#2196F3',
     size: 1,
-    areaFillColor: 'rgba(30, 136, 229, 0.08)'
+    areaFillColor: 'rgba(33, 150, 243, 0.08)'
   },
 
   /**
@@ -545,7 +545,7 @@ var defaultRealTime = {
    */
   averageLine: {
     display: true,
-    color: '#F5A623',
+    color: '#FF9600',
     size: 1
   }
 };
@@ -558,16 +558,16 @@ var defaultTechnicalIndicator = {
   bar: {
     upColor: '#26A69A',
     downColor: '#EF5350',
-    noChangeColor: '#666666'
+    noChangeColor: '#888888'
   },
   line: {
     size: 1,
-    colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1e88e5', '#9157DB']
+    colors: ['#D9D9D9', '#FF9600', '#F632FF', '#2196F3', '#9157DB']
   },
   circle: {
     upColor: '#26A69A',
     downColor: '#EF5350',
-    noChangeColor: '#666666'
+    noChangeColor: '#888888'
   },
   lastValueMark: {
     display: false,
@@ -786,16 +786,16 @@ var defaultFloatLayer = {
 
 var defaultGraphicMark = {
   line: {
-    color: '#1e88e5',
+    color: '#2196F3',
     size: 1
   },
   point: {
-    backgroundColor: '#1e88e5',
-    borderColor: '#1e88e5',
+    backgroundColor: '#2196F3',
+    borderColor: '#2196F3',
     borderSize: 1,
     radius: 4,
-    activeBackgroundColor: '#1e88e5',
-    activeBorderColor: '#1e88e5',
+    activeBackgroundColor: '#2196F3',
+    activeBorderColor: '#2196F3',
     activeBorderSize: 1,
     activeRadius: 6
   },
