@@ -25,17 +25,25 @@ export default class XAxisPane extends Pane {
     return new XAxisWidget({ container, chartData: props.chartData, xAxis: this._xAxis })
   }
 
-  _computeAxis () {
+  computeAxis () {
     this._xAxis.computeAxis()
+  }
+
+  getSelfAxisHeight () {
+    return this._xAxis.getSelfHeight()
   }
 
   xAxis () {
     return this._xAxis
   }
 
-  setSize (mainWidgetSize, yAxisWidgetSize) {
-    this._xAxis.setSize(mainWidgetSize.width, mainWidgetSize.height)
-    this._computeAxis()
-    super.setSize(mainWidgetSize, yAxisWidgetSize)
+  setWidth (mainWidgetWidth, yAxisWidgetWidth) {
+    super.setWidth(mainWidgetWidth, yAxisWidgetWidth)
+    this._xAxis.setWidth(mainWidgetWidth)
+  }
+
+  setHeight (height) {
+    super.setHeight(height)
+    this._xAxis.setHeight(height)
   }
 }

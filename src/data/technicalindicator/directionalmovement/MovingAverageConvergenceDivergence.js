@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { MACD } from '../technicalIndicatorType'
+import { MACD } from '../defaultTechnicalIndicatorType'
 
 export default class MovingAverageConvergenceDivergence extends TechnicalIndicator {
   constructor () {

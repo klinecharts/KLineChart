@@ -40,15 +40,6 @@ export const YAxisType = {
 }
 
 /**
- * y轴文字位置
- * @type {{OUTSIDE: string, INSIDE: string}}
- */
-export const YAxisTextPosition = {
-  INSIDE: 'inside',
-  OUTSIDE: 'outside'
-}
-
-/**
  * 主图类型
  * @type {{TIME_LINE: string, CANDLE: string}}
  */
@@ -140,14 +131,16 @@ const defaultCandleStick = {
       color: '#D9D9D9',
       textMargin: 5,
       textSize: 10,
-      textFamily: 'Arial'
+      textFamily: 'Helvetica Neue',
+      textWeight: 'normal'
     },
     low: {
       display: true,
       color: '#D9D9D9',
       textMargin: 5,
       textSize: 10,
-      textFamily: 'Arial'
+      textFamily: 'Helvetica Neue',
+      textWeight: 'normal'
     },
     last: {
       display: true,
@@ -168,7 +161,8 @@ const defaultCandleStick = {
         paddingRight: 2,
         paddingBottom: 2,
         color: '#FFFFFF',
-        family: 'Arial'
+        family: 'Helvetica Neue',
+        weight: 'normal'
       }
     }
   }
@@ -206,7 +200,7 @@ const defaultTechnicalIndicator = {
   },
   line: {
     size: 1,
-    colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+    colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1e88e5', '#9157DB']
   },
   circle: {
     upColor: '#26A69A',
@@ -217,7 +211,8 @@ const defaultTechnicalIndicator = {
     display: false,
     textColor: '#ffffff',
     textSize: 12,
-    textFamily: 'Arial',
+    textFamily: 'Helvetica Neue',
+    textWeight: 'normal',
     textPaddingLeft: 3,
     textPaddingTop: 2,
     textPaddingRight: 3,
@@ -235,14 +230,6 @@ const defaultXAxis = {
    */
   display: true,
   /**
-   * x轴最大高度
-   */
-  maxHeight: 50,
-  /**
-   * x轴最小高度
-   */
-  minHeight: 30,
-  /**
    * 轴线配置
    */
   axisLine: {
@@ -258,7 +245,8 @@ const defaultXAxis = {
     display: true,
     color: '#D9D9D9',
     size: 12,
-    family: 'Arial',
+    family: 'Helvetica Neue',
+    weight: 'normal',
     margin: 3
   },
   // tick线
@@ -280,14 +268,6 @@ const defaultYAxis = {
    */
   display: true,
   /**
-   * x轴最大宽度
-   */
-  maxWidth: 100,
-  /**
-   * x轴最小宽度
-   */
-  minWidth: 60,
-  /**
    * y轴类型
    */
   type: YAxisType.NORMAL,
@@ -295,6 +275,10 @@ const defaultYAxis = {
    * 轴位置
    */
   position: YAxisPosition.RIGHT,
+  /**
+   * 轴是否在内部
+   */
+  inside: false,
   /**
    * 轴线配置
    */
@@ -308,11 +292,11 @@ const defaultYAxis = {
    * tick文字
    */
   tickText: {
-    position: YAxisTextPosition.OUTSIDE,
     display: true,
     color: '#D9D9D9',
     size: 12,
-    family: 'Arial',
+    family: 'Helvetica Neue',
+    weight: 'normal',
     margin: 3
   },
   // tick线
@@ -344,7 +328,8 @@ const defaultFloatLayer = {
         display: true,
         color: '#D9D9D9',
         size: 12,
-        family: 'Arial',
+        family: 'Helvetica Neue',
+        weight: 'normal',
         paddingLeft: 2,
         paddingRight: 2,
         paddingTop: 2,
@@ -367,7 +352,8 @@ const defaultFloatLayer = {
         display: true,
         color: '#D9D9D9',
         size: 12,
-        family: 'Arial',
+        family: 'Helvetica Neue',
+        weight: 'normal',
         paddingLeft: 2,
         paddingRight: 2,
         paddingTop: 2,
@@ -399,7 +385,8 @@ const defaultFloatLayer = {
       },
       text: {
         size: 12,
-        family: 'Arial',
+        family: 'Helvetica Neue',
+        weight: 'normal',
         color: '#D9D9D9',
         marginLeft: 8,
         marginTop: 6,
@@ -410,7 +397,8 @@ const defaultFloatLayer = {
     technicalIndicator: {
       text: {
         size: 12,
-        family: 'Arial',
+        family: 'Helvetica Neue',
+        weight: 'normal',
         color: '#D9D9D9',
         marginTop: 6,
         marginRight: 8,
@@ -447,7 +435,8 @@ const defaultGraphicMark = {
   text: {
     color: '#1e88e5',
     size: 12,
-    family: 'Arial',
+    family: 'Helvetica Neue',
+    weight: 'normal',
     marginLeft: 2,
     marginRight: 2,
     marginTop: 2,

@@ -39,6 +39,7 @@ getStyleOptions()
 setTechnicalIndicatorParams(technicalIndicatorType, params)
 getTechnicalIndicatorParamOptions()
 setPrecision(pricePrecision, volumePrecision)
+setTechnicalIndicatorPrecision(precision, technicalIndicatorType)
 setTimezone(timezone)
 resize()
 setOffsetRightSpace(space)
@@ -154,13 +155,14 @@ The technicalIndicatorInfo format is as follows:
   name: 'NAME',
   calcTechnicalIndicator: (kLineDataList, calcParams) => { return [...] },
   precision: 4,
+  series: 'normal',
   calcParams: [],
-  plots: []
-  shouldCheckParamCount: true
-  isPriceTechnicalIndicator: false,
-  isVolumeTechnicalIndicator: false
-  baseValue: null
-  minValue: null
+  plots: [],
+  shouldCheckParamCount: true,
+  shouldOhlc: false,
+  shouldFormatBigNumber: false,
+  baseValue: null,
+  minValue: null,
   maxValue: null
 }
 ```

@@ -20,7 +20,10 @@ import { ChartType, FloatLayerPromptCandleStickTextDisplayType } from '../data/o
 import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalIndicatorControl'
 
 export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLayerView {
-  _drawPrompt (dataPos, kLineData, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
+  _drawPrompt (
+    kLineData, technicalIndicatorData, realDataPos, realDataPosX,
+    technicalIndicator, isDrawValueIndicator
+  ) {
     const options = this._chartData.styleOptions()
     const floatLayerPromptCandleStick = options.floatLayer.prompt.candleStick
     const candleStickPromptData = this._getCandleStickPromptData(kLineData, options.candleStick, floatLayerPromptCandleStick)
@@ -28,21 +31,21 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData)
       if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
         this._drawTechnicalIndicatorPrompt(
-          dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator,
+          technicalIndicatorData, realDataPos, realDataPosX,
+          technicalIndicator, isDrawValueIndicator,
           floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop
         )
       }
     } else {
       const data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
       this._drawCandleStickRectPromptText(
-        x, floatLayerPromptCandleStick, candleStickPromptData, data
+        realDataPosX, floatLayerPromptCandleStick, candleStickPromptData, data
       )
       if (isDrawValueIndicator) {
         const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
         this._drawTechnicalIndicatorPromptPoint(
-          dataPos, technicalIndicator,
-          data.values,
-          technicalIndicatorOptions.line.colors, x
+          realDataPos, realDataPosX, technicalIndicator,
+          data.values, technicalIndicatorOptions.line.colors
         )
       }
     }
@@ -56,7 +59,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     const textColor = floatLayerPromptCandleStick.text.color
     const labels = floatLayerPromptCandleStick.labels
     this._ctx.textBaseline = 'top'
-    this._ctx.font = getFont(textSize, floatLayerPromptCandleStick.text.family)
+    this._ctx.font = getFont(textSize, floatLayerPromptCandleStick.text.weight, floatLayerPromptCandleStick.text.family)
     let labelX = textMarginLeft
     const labelY = floatLayerPromptCandleStick.text.marginTop
     labels.forEach((label, i) => {
@@ -92,9 +95,9 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     const baseTextMarginBottom = floatLayerPromptCandleStick.text.marginBottom
     const baseTextSize = floatLayerPromptCandleStick.text.size
     const baseTextColor = floatLayerPromptCandleStick.text.color
-
+    this._ctx.save()
     this._ctx.textBaseline = 'top'
-    this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.family)
+    this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.weight, floatLayerPromptCandleStick.text.family)
     let maxLabelWidth = 0
     baseLabels.forEach((label, i) => {
       const value = baseValues[i] || 'n/a'
@@ -131,7 +134,11 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     const indicatorLabels = technicalIndicatorPromptData.labels || []
     const indicatorValues = technicalIndicatorPromptData.values || []
     if (isCandleStick) {
-      this._ctx.font = getFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.family)
+      this._ctx.font = getFont(
+        indicatorTextSize,
+        floatLayerPromptTechnicalIndicator.text.weight,
+        floatLayerPromptTechnicalIndicator.text.family
+      )
       indicatorLabels.forEach((label, i) => {
         const v = indicatorValues[i].value || 'n/a'
         const text = `${label}: ${v}`
@@ -162,7 +169,11 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     const baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
     let labelY = rectY + rectBorderSize + rectPaddingTop
     // 开始渲染基础数据文字
-    this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.family)
+    this._ctx.font = getFont(
+      baseTextSize,
+      floatLayerPromptCandleStick.text.weight,
+      floatLayerPromptCandleStick.text.family
+    )
     baseLabels.forEach((label, i) => {
       labelY += baseTextMarginTop
       this._ctx.textAlign = 'left'
@@ -187,7 +198,11 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       const colors = technicalIndicatorOptions.line.colors
       const indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft
       const colorSize = colors.length
-      this._ctx.font = getFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.family)
+      this._ctx.font = getFont(
+        indicatorTextSize,
+        floatLayerPromptTechnicalIndicator.text.weight,
+        floatLayerPromptTechnicalIndicator.text.family
+      )
       indicatorLabels.forEach((label, i) => {
         labelY += indicatorTextMarginTop
         this._ctx.textAlign = 'left'
@@ -203,7 +218,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
         labelY += (indicatorTextSize + indicatorTextMarginBottom)
       })
     }
-    this._ctx.textAlign = 'left'
+    this._ctx.restore()
   }
 
   /**

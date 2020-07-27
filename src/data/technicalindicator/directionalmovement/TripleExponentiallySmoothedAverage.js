@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { TRIX } from '../technicalIndicatorType'
+import { TRIX } from '../defaultTechnicalIndicatorType'
 
 export default class TripleExponentiallySmoothedAverage extends TechnicalIndicator {
   constructor () {

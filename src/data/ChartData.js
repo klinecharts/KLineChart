@@ -15,11 +15,10 @@
 import { isArray, isObject, merge, clone, isFunction, isBoolean, isNumber, isValid } from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
 
-import technicalIndicatorCalcParams from './technicalindicator/technicalIndicatorCalcParams'
-
 import { formatValue } from '../utils/format'
 import { createNewTechnicalIndicator, createTechnicalIndicators } from './technicalindicator/technicalIndicatorControl'
 import { DEV } from '../utils/env'
+import { TechnicalIndicatorSeries } from './technicalindicator/TechnicalIndicator'
 
 export const InvalidateLevel = {
   NONE: 0,
@@ -56,9 +55,6 @@ export default class ChartData {
     // 样式配置
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
-
-    // 技术指标计算参数集合
-    this._technicalIndicatorCalcParams = clone(technicalIndicatorCalcParams)
     // 所有技术指标类集合
     this._technicalIndicators = createTechnicalIndicators()
 
@@ -89,8 +85,10 @@ export default class ChartData {
     this._dataSpace = 6
     // bar的空间
     this._barSpace = this._calcBarSpace()
+    // 向右偏移的空间
+    this._offsetRightSpace = 50
     // 向右偏移的数量
-    this._offsetRightBarCount = 50 / this._dataSpace
+    this._offsetRightBarCount = this._offsetRightSpace / this._dataSpace
     // 左边最小可见bar的个数
     this._leftMinVisibleBarCount = 2
     // 右边最小可见bar的个数
@@ -100,10 +98,8 @@ export default class ChartData {
     // 结束的索引
     this._to = 0
 
-    // 十字光标位置
-    this._crossHairPoint = null
-    // 标识十字光标在哪个pane
-    this._crossHairPaneTag = null
+    // 十字光标信息
+    this._crossHair = {}
     // 用来记录开始拖拽时向右偏移的数量
     this._preOffsetRightBarCount = 0
 
@@ -203,7 +199,11 @@ export default class ChartData {
    * @returns {function(Array<string>, string, string): Promise}
    */
   technicalIndicatorCalcParams () {
-    return this._technicalIndicatorCalcParams
+    const calcParams = {}
+    for (const name in this._technicalIndicators) {
+      calcParams[name] = clone(this._technicalIndicators[name].calcParams)
+    }
+    return calcParams
   }
 
   /**
@@ -211,7 +211,7 @@ export default class ChartData {
    * @param technicalIndicatorType
    */
   technicalIndicator (technicalIndicatorType) {
-    return this._technicalIndicators[technicalIndicatorType]
+    return this._technicalIndicators[technicalIndicatorType] || {}
   }
 
   /**
@@ -274,11 +274,45 @@ export default class ChartData {
    * @param volumePrecision
    */
   applyPrecision (pricePrecision, volumePrecision) {
-    if (isValid(pricePrecision) && isNumber(pricePrecision) && pricePrecision >= 0) {
+    const pricePrecisionValid = isValid(pricePrecision) && isNumber(pricePrecision) && pricePrecision >= 0
+    const volumePrecisionValid = isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0
+    if (pricePrecisionValid) {
       this._pricePrecision = pricePrecision
     }
-    if (isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0) {
+    if (volumePrecisionValid) {
       this._volumePrecision = volumePrecision
+    }
+    if (pricePrecisionValid || volumePrecisionValid) {
+      for (const name in this._technicalIndicators) {
+        const series = this._technicalIndicators[name].series
+        switch (series) {
+          case TechnicalIndicatorSeries.PRICE: {
+            this._technicalIndicators[name].precision = pricePrecision
+            break
+          }
+          case TechnicalIndicatorSeries.VOLUME: {
+            this._technicalIndicators[name].precision = volumePrecision
+            break
+          }
+          default: { break }
+        }
+      }
+    }
+  }
+
+  /**
+   * 加载技术指标精度
+   * @param precision
+   * @param technicalIndicatorType
+   */
+  applyTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
+    const technicalIndicator = this.technicalIndicator(technicalIndicatorType)
+    if (technicalIndicator) {
+      technicalIndicator.precision = precision
+    } else {
+      for (const name in this._technicalIndicators) {
+        this._technicalIndicators[name].precision = precision
+      }
     }
   }
 
@@ -312,8 +346,13 @@ export default class ChartData {
       if (isArray(data)) {
         this._loading = false
         this._more = isBoolean(more) ? more : true
+        const isFirstAdd = this._dataList.length === 0
         this._dataList = data.concat(this._dataList)
-        this.adjustOffsetBarCount()
+        if (isFirstAdd) {
+          this.setOffsetRightSpace(this._offsetRightSpace)
+        } else {
+          this.adjustOffsetBarCount()
+        }
       } else {
         const dataSize = this._dataList.length
         if (pos >= dataSize) {
@@ -381,6 +420,7 @@ export default class ChartData {
    * @param space
    */
   setOffsetRightSpace (space) {
+    this._offsetRightSpace = space
     this._offsetRightBarCount = space / this._dataSpace
     this.adjustOffsetBarCount()
   }
@@ -422,36 +462,30 @@ export default class ChartData {
   }
 
   /**
-   * 获取十字光标点
-   * @returns {null}
+   * 获取十字光标信息
+   * @returns {{}}
    */
-  crossHairPoint () {
-    return this._crossHairPoint
-  }
-
-  /**
-   * 获取十字光标点所在的pane的标识
-   * @returns {null}
-   */
-  crossHairPaneTag () {
-    return this._crossHairPaneTag
+  crossHair () {
+    return this._crossHair
   }
 
   /**
    * 设置十字光标点所在的pane的标识
-   * @param tag
-   */
-  setCrossHairPaneTag (tag) {
-    this._crossHairPaneTag = tag
-    this._invalidateHandler(InvalidateLevel.FLOAT_LAYER)
-  }
-
-  /**
-   * 设置十字光标点
    * @param point
+   * @param paneTag
    */
-  setCrossHairPoint (point) {
-    this._crossHairPoint = point
+  setCrossHairPointPaneTag (point, paneTag) {
+    const crossHair = {}
+    if (point) {
+      crossHair.x = point.x
+      crossHair.y = point.y
+      crossHair.paneTag = this._crossHair.paneTag
+    }
+    if (paneTag !== undefined) {
+      crossHair.paneTag = paneTag
+      this._crossHair = crossHair
+      this._invalidateHandler(InvalidateLevel.FLOAT_LAYER)
+    }
   }
 
   /**
@@ -490,6 +524,9 @@ export default class ChartData {
    * @param point
    */
   zoom (scale, point) {
+    if (!point || isValid(point.x)) {
+      point = { x: isValid(this._crossHair.x) ? this._crossHair.x : this._totalDataSpace / 2 }
+    }
     const floatIndexAtZoomPoint = this.coordinateToFloatIndex(point.x)
     const dataSpace = this._dataSpace + scale * (this._dataSpace / 10)
     if (this._innerSetDataSpace(dataSpace)) {
@@ -631,13 +668,10 @@ export default class ChartData {
    * @param technicalIndicatorInfo
    */
   addCustomTechnicalIndicator (technicalIndicatorInfo) {
-    const NewTechnicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo || {})
-    if (NewTechnicalIndicator) {
-      const name = technicalIndicatorInfo.name
-      // 将计算参数，放入参数集合
-      this._technicalIndicatorCalcParams[name] = technicalIndicatorInfo.calcParams || []
+    const info = createNewTechnicalIndicator(technicalIndicatorInfo || {})
+    if (info) {
       // 将生成的新的指标类放入集合
-      this._technicalIndicators[name] = NewTechnicalIndicator
+      this._technicalIndicators[technicalIndicatorInfo.name] = info
     }
   }
 
@@ -646,20 +680,13 @@ export default class ChartData {
    * @param pane
    */
   calcTechnicalIndicator (pane) {
-    Promise.resolve().then(
-      _ => {
-        const technicalIndicator = pane.technicalIndicator()
-        if (technicalIndicator) {
-          technicalIndicator.setCalcParams(this._technicalIndicatorCalcParams[technicalIndicator.name])
-          if (technicalIndicator.isPriceTechnicalIndicator) {
-            technicalIndicator.precision = this._pricePrecision
-          } else if (technicalIndicator.isVolumeTechnicalIndicator) {
-            technicalIndicator.precision = this._volumePrecision
-          }
-          technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
-        }
-        pane.invalidate(InvalidateLevel.FULL)
-      }
-    )
+    const technicalIndicator = pane.technicalIndicator()
+    if (technicalIndicator) {
+      const { calcParams, precision } = this._technicalIndicators[technicalIndicator.name] || {}
+      technicalIndicator.setPrecision(isValid(precision) ? precision : this._pricePrecision)
+      technicalIndicator.setCalcParams(calcParams)
+      technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
+      pane.computeAxis()
+    }
   }
 }

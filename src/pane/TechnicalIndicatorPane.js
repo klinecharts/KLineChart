@@ -15,7 +15,7 @@
 import Pane from './Pane'
 import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
-import { MACD } from '../data/technicalindicator/technicalIndicatorType'
+import { MACD } from '../data/technicalindicator/defaultTechnicalIndicatorType'
 import EmptyTechnicalIndicator from '../data/technicalindicator/TechnicalIndicator'
 import YAxis from '../component/YAxis'
 
@@ -32,7 +32,10 @@ export default class TechnicalIndicatorPane extends Pane {
   }
 
   _createYAxis (props) {
-    return new YAxis(props.chartData, false)
+    return new YAxis(
+      props.chartData,
+      false,
+      { technicalIndicator: this.technicalIndicator.bind(this), isTimeLine: this._isRealTime.bind(this) })
   }
 
   _createMainWidget (container, props) {
@@ -60,13 +63,27 @@ export default class TechnicalIndicatorPane extends Pane {
     })
   }
 
-  _computeAxis () {
-    this._yAxis.calcMinMaxValue(this.technicalIndicator(), this._isRealTime())
+  _isRealTime () {
+    return false
+  }
+
+  setHeight (height) {
+    super.setHeight(height)
+    this._yAxis.setHeight(height)
+  }
+
+  setWidth (mainWidgetWidth, yAxisWidgetWidth) {
+    super.setWidth(mainWidgetWidth, yAxisWidgetWidth)
+    this._yAxis.setWidth(yAxisWidgetWidth)
+  }
+
+  computeAxis () {
+    this._yAxis.calcMinMaxValue()
     this._yAxis.computeAxis()
   }
 
-  _isRealTime () {
-    return false
+  getSelfAxisWidth () {
+    return this._yAxis.getSelfWidth(this._technicalIndicator)
   }
 
   /**
@@ -75,17 +92,6 @@ export default class TechnicalIndicatorPane extends Pane {
    */
   tag () {
     return this._tag
-  }
-
-  /**
-   * 设置尺寸
-   * @param mainWidgetSize
-   * @param yAxisWidgetSize
-   */
-  setSize (mainWidgetSize, yAxisWidgetSize) {
-    this._yAxis.setSize(yAxisWidgetSize.width, yAxisWidgetSize.height)
-    this._computeAxis()
-    super.setSize(mainWidgetSize, yAxisWidgetSize)
   }
 
   yAxis () {
@@ -105,7 +111,7 @@ export default class TechnicalIndicatorPane extends Pane {
    * @param technicalIndicatorType
    */
   setTechnicalIndicatorType (technicalIndicatorType) {
-    const TechnicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
+    const { structure: TechnicalIndicator } = this._chartData.technicalIndicator(technicalIndicatorType)
     if (
       (!this._technicalIndicator && !TechnicalIndicator) ||
       (this._technicalIndicator && this._technicalIndicator.name === technicalIndicatorType)
@@ -115,7 +121,7 @@ export default class TechnicalIndicatorPane extends Pane {
     if (TechnicalIndicator) {
       this._technicalIndicator = new TechnicalIndicator()
     } else {
-      this._technicalIndicator = new EmptyTechnicalIndicator({ isPriceTechnicalIndicator: true })
+      this._technicalIndicator = new EmptyTechnicalIndicator({})
     }
     this._chartData.calcTechnicalIndicator(this)
   }

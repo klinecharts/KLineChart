@@ -12,15 +12,17 @@
  * limitations under the License.
  */
 
-import TechnicalIndicator from '../TechnicalIndicator'
-import { BOLL } from '../technicalIndicatorType'
+import TechnicalIndicator, { TechnicalIndicatorSeries } from '../TechnicalIndicator'
+import { BOLL } from '../defaultTechnicalIndicatorType'
 
 export default class BollingerBands extends TechnicalIndicator {
   constructor () {
     super({
       name: BOLL,
+      series: TechnicalIndicatorSeries.PRICE,
       calcParams: [20],
-      isPriceTechnicalIndicator: true,
+      precision: 2,
+      shouldOhlc: true,
       plots: [
         { key: 'up', type: 'line' },
         { key: 'mid', type: 'line' },

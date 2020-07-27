@@ -28,7 +28,7 @@ export default class Chart {
   setStyleOptions (options) {
     if (options) {
       this._chartPane.chartData().applyStyleOptions(options)
-      this._chartPane.measurePaneSize()
+      this._chartPane.resize()
     }
   }
 
@@ -55,7 +55,7 @@ export default class Chart {
    * 获取技术指标参数配置
    */
   getTechnicalIndicatorParamOptions () {
-    return clone(this._chartPane.chartData().technicalIndicatorCalcParams())
+    return this._chartPane.chartData().technicalIndicatorCalcParams()
   }
 
   /**
@@ -65,6 +65,15 @@ export default class Chart {
    */
   setPrecision (pricePrecision, volumePrecision) {
     this._chartPane.chartData().applyPrecision(pricePrecision, volumePrecision)
+  }
+
+  /**
+   * 设置技术指标精度
+   * @param precision
+   * @param technicalIndicatorType
+   */
+  setTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
+    this._chartPane.chartData().applyTechnicalIndicatorPrecision(precision, technicalIndicatorType)
   }
 
   /**
@@ -79,7 +88,7 @@ export default class Chart {
    * 重置尺寸，总是会填充父容器
    */
   resize () {
-    this._chartPane.measurePaneSize()
+    this._chartPane.resize()
   }
 
   /**

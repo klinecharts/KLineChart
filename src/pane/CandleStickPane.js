@@ -26,7 +26,10 @@ export default class CandleStickPane extends TechnicalIndicatorPane {
   }
 
   _createYAxis (props) {
-    return new YAxis(props.chartData, true)
+    return new YAxis(
+      props.chartData, true,
+      { technicalIndicator: this.technicalIndicator.bind(this), isTimeLine: this._isRealTime.bind(this) }
+    )
   }
 
   _createMainWidget (container, props) {
@@ -58,7 +61,7 @@ export default class CandleStickPane extends TechnicalIndicatorPane {
   setChartType (chartType) {
     if (this._chartType !== chartType) {
       this._chartType = chartType
-      this._chartData.calcTechnicalIndicator(this, this.technicalIndicator())
+      this._chartData.calcTechnicalIndicator(this)
     }
   }
 }

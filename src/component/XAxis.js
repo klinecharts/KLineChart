@@ -13,22 +13,10 @@
  */
 
 import Axis from './Axis'
-import { calcTextWidth, getFont, getPixelRatio } from '../utils/canvas'
+import { calcTextWidth, getFont } from '../utils/canvas'
 import { formatDate } from '../utils/format'
 
 export default class XAxis extends Axis {
-  constructor (chartData) {
-    super(chartData)
-    this._initMeasureCanvas()
-  }
-
-  _initMeasureCanvas () {
-    const measureCanvas = document.createElement('canvas')
-    this._measureCtx = measureCanvas.getContext('2d')
-    const pixelRatio = getPixelRatio(this._measureCtx)
-    this._measureCtx.scale(pixelRatio, pixelRatio)
-  }
-
   _computeMinMaxValue () {
     const min = this._chartData.from()
     const max = this._chartData.to() - 1
@@ -43,7 +31,7 @@ export default class XAxis extends Axis {
     if (tickLength > 0) {
       const dateTimeFormat = this._chartData.dateTimeFormat()
       const tickText = this._chartData.styleOptions().xAxis.tickText
-      this._measureCtx.font = getFont(tickText.size, tickText.family)
+      this._measureCtx.font = getFont(tickText.size, tickText.weight, tickText.family)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
       const pos = parseInt(ticks[0].v, 10)
       const x = this.convertToPixel(pos)
@@ -105,6 +93,41 @@ export default class XAxis extends Axis {
       return day
     }
     return null
+  }
+
+  /**
+   * 获取自身高度
+   */
+  getSelfHeight () {
+    const stylOptions = this._chartData.styleOptions()
+    const xAxisOptions = stylOptions.xAxis
+    const crossHairOptions = stylOptions.floatLayer.crossHair
+    let xAxisHeight = 0
+    if (xAxisOptions.display) {
+      if (xAxisOptions.axisLine.display) {
+        xAxisHeight += xAxisOptions.axisLine.size
+      }
+      if (xAxisOptions.tickLine.display) {
+        xAxisHeight += xAxisOptions.tickLine.length
+      }
+      if (xAxisOptions.tickText.display) {
+        xAxisHeight += (xAxisOptions.tickText.margin * 2 + xAxisOptions.tickText.size)
+      }
+    }
+    let crossHairVerticalTextHeight = 0
+    if (
+      crossHairOptions.display &&
+      crossHairOptions.vertical.display &&
+      crossHairOptions.vertical.text.display
+    ) {
+      crossHairVerticalTextHeight += (
+        crossHairOptions.vertical.text.paddingTop +
+        crossHairOptions.vertical.text.paddingBottom +
+        crossHairOptions.vertical.text.borderSize * 2 +
+        crossHairOptions.vertical.text.size
+      )
+    }
+    return Math.max(xAxisHeight, crossHairVerticalTextHeight)
   }
 
   convertFromPixel (pixel) {

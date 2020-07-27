@@ -84,7 +84,7 @@ export function formatDate (dateTimeFormat, timestamp, format) {
 export function formatPrecision (value, precision = 2) {
   const v = +value
   if ((v || v === 0) && isNumber(v)) {
-    return value.toFixed(precision)
+    return v.toFixed(precision)
   }
   return `${v}`
 }

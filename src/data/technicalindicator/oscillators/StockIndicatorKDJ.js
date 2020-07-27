@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { KDJ } from '../technicalIndicatorType'
+import { KDJ } from '../defaultTechnicalIndicatorType'
 import commonCalc from '../calcHnLn'
 
 export default class StockIndicatorKDJ extends TechnicalIndicator {

@@ -34,17 +34,18 @@ export function getPixelRatio (ctx) {
  * @returns {number}
  */
 export function calcTextWidth (ctx, text) {
-  return ctx.measureText(text).width
+  return Math.round(ctx.measureText(text).width)
 }
 
 /**
  * 获取字体
  * @param fontSize
  * @param fontFamily
+ * @param fontWeight
  * @returns {string}
  */
-export function getFont (fontSize, fontFamily = 'Arial') {
-  return `${fontSize}px ${fontFamily}`
+export function getFont (fontSize = 12, fontWeight = 'normal', fontFamily = 'Helvetica Neue') {
+  return `${fontWeight} ${fontSize}px ${fontFamily}`
 }
 
 /**

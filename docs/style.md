@@ -34,14 +34,16 @@ config = {
         color: '#D9D9D9',
         textMargin: 5,
         textSize: 10,
-        textFamily: 'Arial'
+        textFamily: 'Helvetica Neue',
+        textWeight: 'normal'
       },
       low: {
         display: true,
         color: '#D9D9D9',
         textMargin: 5,
         textSize: 10,
-        textFamily: 'Arial'
+        textFamily: 'Helvetica Neue',
+        textWeight: 'normal',
       },
       last: {
         display: true,
@@ -63,7 +65,8 @@ config = {
           paddingRight: 2,
           paddingBottom: 2,
           color: '#FFFFFF',
-          family: 'Arial'
+          family: 'Helvetica Neue',
+          weight: 'normal'
         }
       }
     }
@@ -88,7 +91,7 @@ config = {
     },
     line: {
       size: 1,
-      colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1587DD', '#1e88e5']
+      colors: ['#D9D9D9', '#F5A623', '#F601FF', '#1e88e5', '#9157DB']
     },
     circle: {
       upColor: '#26A69A',
@@ -99,7 +102,8 @@ config = {
       display: false,
       textColor: '#ffffff',
       textSize: 12,
-      textFamily: 'Arial',
+      textFamily: 'Helvetica Neue',
+      textWeight: 'normal',
       textPaddingLeft: 3,
       textPaddingTop: 2,
       textPaddingRight: 3,
@@ -108,8 +112,6 @@ config = {
   },
   xAxis: {
     display: true,
-    maxHeight: 50,
-    minHeight: 30,
     axisLine: {
       display: true,
       color: '#888888',
@@ -118,7 +120,8 @@ config = {
     tickText: {
       display: true,
       color: '#D9D9D9',
-      family: 'Arial',
+      family: 'Helvetica Neue',
+      weight: 'normal',
       size: 12,
       margin: 3
     },
@@ -131,23 +134,21 @@ config = {
   },
   yAxis: {
     display: true,
-    maxWidth: 100,
-    minWidth: 60,
     // 'left' | 'right'
     position: 'right',
     // 'normal' | 'percentage'
     type: 'normal',
+    inside: false,
     axisLine: {
       display: true,
       color: '#888888',
       size: 1
     },
     tickText: {
-      // 'outside' | 'inside'
-      position: 'outside',
       display: true,
       color: '#D9D9D9',
-      family: 'Arial',
+      family: 'Helvetica Neue',
+      weight: 'normal',
       size: 12,
       margin: 3
     },
@@ -180,7 +181,8 @@ config = {
           display: true,
           color: '#D9D9D9',
           size: 12,
-          family: 'Arial',
+          family: 'Helvetica Neue',
+          weight: 'normal',
           paddingLeft: 2,
           paddingRight: 2,
           paddingTop: 2,
@@ -204,7 +206,8 @@ config = {
           display: true,
           color: '#D9D9D9',
           size: 12,
-          family: 'Arial',
+          family: 'Helvetica Neue',
+          weight: 'normal',
           paddingLeft: 2,
           paddingRight: 2,
           paddingTop: 2,
@@ -239,7 +242,8 @@ config = {
         text: {
           size: 12,
           color: '#D9D9D9',
-          family: 'Arial',
+          family: 'Helvetica Neue',
+          weight: 'normal',
           marginLeft: 8,
           marginTop: 6,
           marginRight: 8,
@@ -249,7 +253,8 @@ config = {
       technicalIndicator: {
         text: {
           size: 12,
-          family: 'Arial',
+          family: 'Helvetica Neue',
+          weight: 'normal',
           color: '#D9D9D9',
           marginTop: 6,
           marginRight: 8,
@@ -281,7 +286,8 @@ config = {
     text: {
       color: '#1e88e5',
       size: 12,
-      family: 'Arial',
+      family: 'Helvetica Neue',
+      weight: 'normal',
       marginLeft: 2,
       marginRight: 2,
       marginTop: 2,

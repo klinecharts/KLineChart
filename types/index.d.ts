@@ -39,19 +39,20 @@ export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 export declare interface TechnicalIndicatorInfoPlot {
   key: string;
   type?: 'circle' | 'bar' | 'line';
-  color: (data: any, options?: any) => string;
-  isStroke: (data: any) => boolean;
+  color?: (data: any, options?: any) => string;
+  isStroke?: (data: any) => boolean;
 }
 
 export declare interface TechnicalIndicatorInfo {
   name: string;
   calcTechnicalIndicator: (kLineDataList: KLineData[], calcParams: number[]) => any[];
+  series?: 'price' | 'volume' | 'normal'
   calcParams?: number[];
   plots?: TechnicalIndicatorInfoPlot[];
   precision?: number;
   shouldCheckParamCount?: boolean;
-  isPriceTechnicalIndicator?: boolean;
-  isVolumeTechnicalIndicator?: boolean;
+  shouldOhlc?: boolean;
+  shouldFormatBigNumber?: boolean,
   baseValue?: number;
   minValue?: number;
   maxValue?: number;
@@ -64,6 +65,7 @@ export declare interface Chart {
   setTechnicalIndicatorParams(technicalIndicatorType: string, params: number[]): void;
   getTechnicalIndicatorParamOptions(): TechnicalIndicatorParams;
   setPrecision(pricePrecision: number, volumePrecision: number): void;
+  setTechnicalIndicatorPrecision(precision: number, technicalIndicatorType?: string): void;
   setTimezone(timezone: string):void;
   resize(): void;
   setOffsetRightSpace(space: number): void;

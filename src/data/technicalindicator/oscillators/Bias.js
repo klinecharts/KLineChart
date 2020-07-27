@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { BIAS } from '../technicalIndicatorType'
+import { BIAS } from '../defaultTechnicalIndicatorType'
 
 export default class Bias extends TechnicalIndicator {
   constructor () {

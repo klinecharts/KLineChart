@@ -15,7 +15,7 @@
 import View from './View'
 import { calcTextWidth, getFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
-import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
+import { YAxisPosition } from '../data/options/styleOptions'
 
 export default class YAxisFloatLayerView extends View {
   constructor (container, chartData, yAxis, additionalDataProvider) {
@@ -29,37 +29,31 @@ export default class YAxisFloatLayerView extends View {
   }
 
   _drawCrossHairLabel () {
-    if (
-      this._chartData.crossHairPaneTag() !== this._additionalDataProvider.tag() ||
-      this._chartData.dataList().length === 0
-    ) {
+    const crossHair = this._chartData.crossHair()
+    if (crossHair.paneTag !== this._additionalDataProvider.tag()) {
       return
     }
-    const crossHair = this._chartData.styleOptions().floatLayer.crossHair
-    const crossHairHorizontal = crossHair.horizontal
+    const crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair
+    const crossHairHorizontal = crossHairOptions.horizontal
     const crossHairHorizontalText = crossHairHorizontal.text
-    if (!crossHair.display || !crossHairHorizontal.display || !crossHairHorizontalText.display) {
+    if (!crossHairOptions.display || !crossHairHorizontal.display || !crossHairHorizontalText.display) {
       return
     }
-    const crossHairPoint = this._chartData.crossHairPoint()
-    if (!crossHairPoint) {
-      return
-    }
-    const value = this._yAxis.convertFromPixel(crossHairPoint.y)
+    const value = this._yAxis.convertFromPixel(crossHair.y)
     let yAxisDataLabel
     if (this._yAxis.isPercentageYAxis()) {
       const fromClose = this._chartData.dataList()[this._chartData.from()].close
       yAxisDataLabel = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {
       const technicalIndicator = this._additionalDataProvider.technicalIndicator()
-      const precision = technicalIndicator.precision
+      const precision = this._yAxis.isCandleStickYAxis() ? this._chartData.pricePrecision() : technicalIndicator.precision
       yAxisDataLabel = formatPrecision(value, precision)
-      if (technicalIndicator.isVolumeTechnicalIndicator) {
+      if (technicalIndicator.shouldFormatBigNumber) {
         yAxisDataLabel = formatBigNumber(yAxisDataLabel)
       }
     }
     const textSize = crossHairHorizontalText.size
-    this._ctx.font = getFont(textSize, crossHairHorizontalText.family)
+    this._ctx.font = getFont(textSize, crossHairHorizontalText.weight, crossHairHorizontalText.family)
     const yAxisDataLabelWidth = calcTextWidth(this._ctx, yAxisDataLabel)
     let rectStartX
 
@@ -71,17 +65,17 @@ export default class YAxisFloatLayerView extends View {
 
     const rectWidth = yAxisDataLabelWidth + borderSize * 2 + paddingLeft + paddingRight
     const rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom
-    const yAxis = this._chartData.styleOptions().yAxis
+    const yAxisOptions = this._chartData.styleOptions().yAxis
     if (
-      (yAxis.position === YAxisPosition.LEFT && yAxis.tickText.position === YAxisTextPosition.INSIDE) ||
-      (yAxis.position === YAxisPosition.RIGHT && yAxis.tickText.position === YAxisTextPosition.OUTSIDE)
+      (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside) ||
+      (yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside)
     ) {
       rectStartX = 0
     } else {
       rectStartX = this._width - rectWidth
     }
 
-    const rectY = crossHairPoint.y - borderSize - paddingTop - textSize / 2
+    const rectY = crossHair.y - borderSize - paddingTop - textSize / 2
     // 绘制y轴文字外的边框
     this._ctx.fillStyle = crossHairHorizontalText.backgroundColor
     this._ctx.fillRect(rectStartX, rectY, rectWidth, rectHeight)
@@ -92,6 +86,6 @@ export default class YAxisFloatLayerView extends View {
 
     this._ctx.textBaseline = 'middle'
     this._ctx.fillStyle = crossHairHorizontalText.color
-    this._ctx.fillText(yAxisDataLabel, rectStartX + borderSize + paddingLeft, crossHairPoint.y)
+    this._ctx.fillText(yAxisDataLabel, rectStartX + borderSize + paddingLeft, crossHair.y)
   }
 }

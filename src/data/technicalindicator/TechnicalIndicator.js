@@ -14,15 +14,27 @@
 
 import { clone, isArray, isBoolean, isNumber, isValid } from '../../utils/typeChecks'
 
+/**
+ * 技术指标系列
+ * @type {{PRICE: string, VOLUME: string, NORMAL: string}}
+ */
+export const TechnicalIndicatorSeries = {
+  PRICE: 'price',
+  VOLUME: 'volume',
+  NORMAL: 'normal'
+}
+
 export default class TechnicalIndicator {
   constructor ({
-    name, calcParams, plots,
+    name, series, calcParams, plots,
     precision, shouldCheckParamCount,
-    isPriceTechnicalIndicator, isVolumeTechnicalIndicator,
+    shouldOhlc, shouldFormatBigNumber,
     baseValue, minValue, maxValue
   }) {
     // 指标名
     this.name = name || ''
+    // 指标系列，值有'price', 'volume', 'normal
+    this.series = series || 'normal'
     // 精度
     this.precision = isValid(precision) && isNumber(precision) && precision >= 0 ? precision : 4
     // 计算参数
@@ -31,10 +43,10 @@ export default class TechnicalIndicator {
     this.plots = isArray(plots) ? plots : []
     // 是否需要检查参数
     this.shouldCheckParamCount = isBoolean(shouldCheckParamCount) ? shouldCheckParamCount : true
-    // 是否是价格技术指标
-    this.isPriceTechnicalIndicator = isPriceTechnicalIndicator
-    // 是否是数量技术指标
-    this.isVolumeTechnicalIndicator = isVolumeTechnicalIndicator
+    // 是否需要ohlc
+    this.shouldOhlc = shouldOhlc
+    // 是否需要格式化大数据值，从1000开始格式化，比如100000是否需要格式化100K
+    this.shouldFormatBigNumber = shouldFormatBigNumber
     // 基础比对数据
     this.baseValue = isNumber(baseValue) ? baseValue : null
     // 指定的最小值

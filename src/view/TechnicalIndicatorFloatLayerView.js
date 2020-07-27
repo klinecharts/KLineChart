@@ -27,41 +27,35 @@ export default class TechnicalIndicatorFloatLayerView extends View {
   }
 
   _draw () {
-    const crossHairPoint = this._chartData.crossHairPoint()
+    const crossHair = this._chartData.crossHair()
     const dataList = this._chartData.dataList()
     const technicalIndicator = this._additionalDataProvider.technicalIndicator()
     const technicalIndicatorResult = technicalIndicator.result
-    let dataPos
-    if (crossHairPoint) {
-      dataPos = this._xAxis.convertFromPixel(crossHairPoint.x)
+    let realDataPos
+    if (isValid(crossHair.x)) {
+      realDataPos = this._xAxis.convertFromPixel(crossHair.x)
     } else {
+      realDataPos = dataList.length - 1
+    }
+    let dataPos = realDataPos
+    if (dataPos < 0) {
+      dataPos = 0
+    } else if (dataPos > dataList.length - 1) {
       dataPos = dataList.length - 1
     }
-    let realDataPos = dataPos
-    let kLineData = dataList[dataPos]
-    let technicalIndicatorData = technicalIndicatorResult[dataPos]
-    if (!kLineData) {
-      const to = this._chartData.to()
-      if (dataPos > to - 1) {
-        kLineData = dataList[to - 1]
-        technicalIndicatorData = technicalIndicatorResult[to - 1]
-        realDataPos = to - 1
-      } else if (dataPos < 0) {
-        kLineData = dataList[0]
-        technicalIndicatorData = technicalIndicatorResult[0]
-        realDataPos = 0
-      }
-    }
+    const kLineData = dataList[dataPos]
+    const technicalIndicatorData = technicalIndicatorResult[dataPos]
     if (kLineData) {
-      const x = this._xAxis.convertToPixel(dataPos)
-      this._drawCrossHairHorizontalLine()
-      this._drawCrossHairVerticalLine(x)
+      const realDataPosX = this._xAxis.convertToPixel(realDataPos)
+      this._drawCrossHairHorizontalLine(crossHair)
+      this._drawCrossHairVerticalLine(crossHair, realDataPosX)
       const displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule
       if (displayRule === FloatLayerPromptDisplayRule.ALWAYS ||
-        (displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && this._chartData.crossHairPaneTag())) {
+        (displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && crossHair.paneTag)) {
         this._drawPrompt(
-          realDataPos, kLineData, technicalIndicatorData,
-          technicalIndicator, x, dataPos >= 0 && dataPos <= dataList.length - 1
+          kLineData, technicalIndicatorData,
+          realDataPos, realDataPosX, technicalIndicator,
+          realDataPos >= 0 && realDataPos <= dataList.length - 1 && crossHair.paneTag
         )
       }
     }
@@ -69,95 +63,103 @@ export default class TechnicalIndicatorFloatLayerView extends View {
 
   /**
    * 绘制提示
-   * @param dataPos
+   * @param crossHair
    * @param kLineData
    * @param technicalIndicatorData
+   * @param realDataPos
+   * @param realDataPosX
    * @param technicalIndicator
-   * @param x
    * @param isDrawValueIndicator 是否需要绘制指示点
    * @private
    */
-  _drawPrompt (dataPos, kLineData, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator) {
-    this._drawTechnicalIndicatorPrompt(dataPos, technicalIndicatorData, technicalIndicator, x, isDrawValueIndicator)
+  _drawPrompt (
+    kLineData, technicalIndicatorData,
+    realDataPos, realDataPosX, technicalIndicator,
+    isDrawValueIndicator
+  ) {
+    this._drawTechnicalIndicatorPrompt(
+      technicalIndicatorData, realDataPos, realDataPosX,
+      technicalIndicator, isDrawValueIndicator
+    )
   }
 
   /**
    * 绘制十字光标水平线
+   * @param crossHair
    * @private
    */
-  _drawCrossHairHorizontalLine () {
-    if (this._chartData.crossHairPaneTag() !== this._additionalDataProvider.tag()) {
+  _drawCrossHairHorizontalLine (crossHair) {
+    if (crossHair.paneTag !== this._additionalDataProvider.tag()) {
       return
     }
-    const crossHair = this._chartData.styleOptions().floatLayer.crossHair
-    const crossHairHorizontal = crossHair.horizontal
+    const crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair
+    const crossHairHorizontal = crossHairOptions.horizontal
     const crossHairHorizontalLine = crossHairHorizontal.line
-    if (!crossHair.display || !crossHairHorizontal.display || !crossHairHorizontalLine.display) {
+    if (!crossHairOptions.display || !crossHairHorizontal.display || !crossHairHorizontalLine.display) {
       return
     }
-    const crossHairPoint = this._chartData.crossHairPoint()
-    if (!crossHairPoint) {
-      return
-    }
+    this._ctx.save()
     // 绘制十字光标水平线
     this._ctx.lineWidth = crossHairHorizontalLine.size
     this._ctx.strokeStyle = crossHairHorizontalLine.color
     if (crossHairHorizontalLine.style === LineStyle.DASH) {
       this._ctx.setLineDash(crossHairHorizontalLine.dashValue)
     }
-    drawHorizontalLine(this._ctx, crossHairPoint.y, 0, this._width)
-    this._ctx.setLineDash([])
+    drawHorizontalLine(this._ctx, crossHair.y, 0, this._width)
+    this._ctx.restore()
   }
 
   /**
    * 绘制十字光标垂直线
-   * @param x
+   * @param crossHair
+   * @param realDataPosX
    * @private
    */
-  _drawCrossHairVerticalLine (x) {
-    if (!this._chartData.crossHairPaneTag()) {
+  _drawCrossHairVerticalLine (crossHair, realDataPosX) {
+    if (!crossHair.paneTag) {
       return
     }
-    const crossHair = this._chartData.styleOptions().floatLayer.crossHair
-    const crossHairVertical = crossHair.vertical
+    const crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair
+    const crossHairVertical = crossHairOptions.vertical
     const crossHairVerticalLine = crossHairVertical.line
-    if (!crossHair.display || !crossHairVertical.display || !crossHairVerticalLine.display) {
+    if (!crossHairOptions.display || !crossHairVertical.display || !crossHairVerticalLine.display) {
       return
     }
+    this._ctx.save()
     this._ctx.lineWidth = crossHairVerticalLine.size
     this._ctx.strokeStyle = crossHairVerticalLine.color
 
     if (crossHairVerticalLine.style === LineStyle.DASH) {
       this._ctx.setLineDash(crossHairVerticalLine.dashValue)
     }
-    drawVerticalLine(this._ctx, x, 0, this._height)
-    this._ctx.setLineDash([])
+    drawVerticalLine(this._ctx, realDataPosX, 0, this._height)
+    this._ctx.restore()
   }
 
   /**
    * 绘制指标提示
-   * @param dataPos
    * @param technicalIndicatorData
+   * @param realDataPos
+   * @param realDataPosX
    * @param technicalIndicator
-   * @param x
    * @param isDrawValueIndicator
    * @param offsetTop
    * @private
    */
   _drawTechnicalIndicatorPrompt (
-    dataPos, technicalIndicatorData,
-    technicalIndicator, x, isDrawValueIndicator,
+    technicalIndicatorData, realDataPos, realDataPosX,
+    technicalIndicator, isDrawValueIndicator,
     offsetTop = 0
   ) {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
     const colors = technicalIndicatorOptions.line.colors
     this._drawTechnicalIndicatorPromptText(
-      dataPos, technicalIndicator, data, colors, offsetTop
+      realDataPos, technicalIndicator, data, colors, offsetTop
     )
     if (isDrawValueIndicator) {
       this._drawTechnicalIndicatorPromptPoint(
-        dataPos, technicalIndicator, data.values, colors, x
+        realDataPos, realDataPosX, technicalIndicator, data.values, colors
       )
     }
   }
@@ -191,7 +193,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     const textColor = floatLayerPromptTechnicalIndicatorText.color
     const colorSize = colors.length
     this._ctx.textBaseline = 'top'
-    this._ctx.font = getFont(textSize, floatLayerPromptTechnicalIndicatorText.family)
+    this._ctx.font = getFont(textSize, floatLayerPromptTechnicalIndicatorText.weight, floatLayerPromptTechnicalIndicatorText.family)
     const nameTextWidth = calcTextWidth(this._ctx, nameText)
     this._ctx.fillStyle = textColor
     this._ctx.fillText(nameText, labelX, labelY)
@@ -221,19 +223,16 @@ export default class TechnicalIndicatorFloatLayerView extends View {
 
   /**
    * 绘制指标提示点
-   * @param dataPos
+   * @param realDataPos
+   * @param realDataPosX
    * @param technicalIndicator
    * @param values
    * @param colors
-   * @param x
    * @private
    */
-  _drawTechnicalIndicatorPromptPoint (dataPos, technicalIndicator, values, colors, x) {
+  _drawTechnicalIndicatorPromptPoint (realDataPos, realDataPosX, technicalIndicator, values, colors) {
     const floatLayerPromptTechnicalIndicatorPoint = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.point
     if (!floatLayerPromptTechnicalIndicatorPoint.display) {
-      return
-    }
-    if (!this._chartData.crossHairPaneTag()) {
       return
     }
     const plots = technicalIndicator.plots
@@ -247,7 +246,7 @@ export default class TechnicalIndicatorFloatLayerView extends View {
         if (isValid(value)) {
           this._ctx.fillStyle = colors[lineCount % colorSize]
           this._ctx.beginPath()
-          this._ctx.arc(x, values[i].y, radius, 0, Math.PI * 2)
+          this._ctx.arc(realDataPosX, values[i].y, radius, 0, Math.PI * 2)
           this._ctx.closePath()
           this._ctx.fill()
         }

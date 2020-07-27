@@ -13,7 +13,7 @@
  */
 
 import View, { PlotType } from './View'
-import { YAxisPosition, YAxisTextPosition } from '../data/options/styleOptions'
+import { YAxisPosition } from '../data/options/styleOptions'
 import { calcTextWidth, drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
 import { isValid } from '../utils/typeChecks'
@@ -112,11 +112,10 @@ export default class YAxisView extends View {
       this._ctx.textAlign = 'right'
     }
     this._ctx.textBaseline = 'middle'
-    this._ctx.font = getFont(tickText.size, tickText.family)
+    this._ctx.font = getFont(tickText.size, tickText.weight, tickText.family)
     this._ctx.fillStyle = tickText.color
-    const isVolumeTechnicalIndicator = this._additionalDataProvider.technicalIndicator().isVolumeTechnicalIndicator
     this._yAxis.ticks().forEach(tick => {
-      this._ctx.fillText(isVolumeTechnicalIndicator ? formatBigNumber(tick.v) : tick.v, labelX, tick.y)
+      this._ctx.fillText(tick.v, labelX, tick.y)
     })
     this._ctx.textAlign = 'left'
   }
@@ -166,8 +165,8 @@ export default class YAxisView extends View {
       if (isValid(value)) {
         this._drawMarkLabel(
           yAxisOptions, value, precision,
-          lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textFamily,
-          lastValueMarkStyleOptions.textColor, backgroundColor,
+          lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textWeight,
+          lastValueMarkStyleOptions.textFamily, lastValueMarkStyleOptions.textColor, backgroundColor,
           lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop,
           lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom
         )
@@ -204,7 +203,8 @@ export default class YAxisView extends View {
     const priceMarkText = lastPriceMark.text
     this._drawMarkLabel(
       yAxisOptions, close, this._chartData.pricePrecision(),
-      priceMarkText.size, priceMarkText.family, priceMarkText.color, backgroundColor,
+      priceMarkText.size, priceMarkText.weight, priceMarkText.family,
+      priceMarkText.color, backgroundColor,
       priceMarkText.paddingLeft, priceMarkText.paddingTop,
       priceMarkText.paddingRight, priceMarkText.paddingBottom
     )
@@ -216,6 +216,7 @@ export default class YAxisView extends View {
    * @param value
    * @param precision
    * @param textSize
+   * @param textWeight
    * @param textFamily
    * @param textColor
    * @param backgroundColor
@@ -226,7 +227,7 @@ export default class YAxisView extends View {
    * @private
    */
   _drawMarkLabel (
-    yAxisOptions, value, precision, textSize, textFamily, textColor, backgroundColor,
+    yAxisOptions, value, precision, textSize, textWeight, textFamily, textColor, backgroundColor,
     textPaddingLeft, textPaddingTop, textPaddingRight, textPaddingBottom
   ) {
     let valueY = this._yAxis.convertToPixel(value)
@@ -237,11 +238,11 @@ export default class YAxisView extends View {
       text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {
       text = formatPrecision(value, precision)
-      if (this._additionalDataProvider.technicalIndicator().isVolumeTechnicalIndicator) {
+      if (this._additionalDataProvider.technicalIndicator().shouldFormatBigNumber) {
         text = formatBigNumber(text)
       }
     }
-    this._ctx.font = getFont(textSize, textFamily)
+    this._ctx.font = getFont(textSize, textWeight, textFamily)
     const rectWidth = calcTextWidth(this._ctx, text) + textPaddingLeft + textPaddingRight
     const rectHeight = textPaddingTop + textSize + textPaddingBottom
     let rectStartX
@@ -262,7 +263,7 @@ export default class YAxisView extends View {
    * @private
    */
   _isDrawFromStart (yAxisOptions) {
-    return ((yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.tickText.position === YAxisTextPosition.INSIDE) ||
-      (yAxisOptions.position === YAxisPosition.RIGHT && yAxisOptions.tickText.position === YAxisTextPosition.OUTSIDE))
+    return ((yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside) ||
+      (yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside))
   }
 }

@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicator from '../TechnicalIndicator'
-import { DMA } from '../technicalIndicatorType'
+import { DMA } from '../defaultTechnicalIndicatorType'
 
 export default class DifferentOfMovingAverage extends TechnicalIndicator {
   constructor () {

@@ -12,17 +12,19 @@
  * limitations under the License.
  */
 
-import TechnicalIndicator from '../TechnicalIndicator'
+import TechnicalIndicator, { TechnicalIndicatorSeries } from '../TechnicalIndicator'
 
-import { EMA } from '../technicalIndicatorType'
+import { EMA } from '../defaultTechnicalIndicatorType'
 
 export default class ExponentialMovingAverage extends TechnicalIndicator {
   constructor () {
     super({
       name: EMA,
+      series: TechnicalIndicatorSeries.PRICE,
       calcParams: [6, 12, 20],
+      precision: 2,
       shouldCheckParamCount: false,
-      isPriceTechnicalIndicator: true,
+      shouldOhlc: true,
       plots: [
         { key: 'ema6', type: 'line' },
         { key: 'ema12', type: 'line' },

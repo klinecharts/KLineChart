@@ -14,7 +14,7 @@
 
 import TechnicalIndicator from '../TechnicalIndicator'
 
-import { DMI } from '../technicalIndicatorType'
+import { DMI } from '../defaultTechnicalIndicatorType'
 
 export default class DirectionalMovementIndex extends TechnicalIndicator {
   constructor () {

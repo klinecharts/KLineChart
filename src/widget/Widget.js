@@ -32,11 +32,10 @@ export default class Widget {
    */
   _initElement (container) {
     this._element = document.createElement('div')
+    this._element.style.top = '0'
     this._element.style.margin = '0'
     this._element.style.padding = '0'
-    this._element.style.width = '100%'
-    this._element.style.height = '100%'
-    this._element.style.position = 'relative'
+    this._element.style.position = 'absolute'
     this._element.style.overflow = 'hidden'
     container.appendChild(this._element)
   }
@@ -65,16 +64,38 @@ export default class Widget {
    */
   _createFloatLayerView (container, props) {}
 
-  /**
-   * 设置尺寸
-   * @param width
-   * @param height
-   */
-  setSize (width, height) {
+  getElement () {
+    return this._element
+  }
+
+  setWidth (width) {
     this._width = width
+    this._mainView.setWidth(width)
+    this._floatLayerView.setWidth(width)
+    this._expandView && this._expandView.setWidth(width)
+  }
+
+  setHeight (height) {
     this._height = height
-    this._mainView.setSize(width, height)
-    this._floatLayerView.setSize(width, height)
+    this._mainView.setHeight(height)
+    this._floatLayerView.setHeight(height)
+    this._expandView && this._expandView.setHeight(height)
+  }
+
+  setOffsetLeft (offsetLeft) {
+    this._element.style.left = `${offsetLeft}px`
+  }
+
+  layout () {
+    if (this._element.offsetWidth !== this._width) {
+      this._element.style.width = `${this._width}px`
+    }
+    if (this._element.offsetHeight !== this._height) {
+      this._element.style.height = `${this._height}px`
+    }
+    this._mainView.layout()
+    this._floatLayerView.layout()
+    this._expandView && this._expandView.layout()
   }
 
   /**

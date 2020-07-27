@@ -16,6 +16,7 @@ import View from './View'
 
 import { formatDate } from '../utils/format'
 import { calcTextWidth, getFont } from '../utils/canvas'
+import { isValid } from '../utils/typeChecks'
 
 export default class XAxisFloatLayerView extends View {
   constructor (container, chartData, xAxis) {
@@ -28,20 +29,20 @@ export default class XAxisFloatLayerView extends View {
   }
 
   _drawCrossHairLabel () {
-    if (!this._chartData.crossHairPaneTag()) {
+    const crossHair = this._chartData.crossHair()
+    if (!crossHair.paneTag) {
       return
     }
-    const crossHair = this._chartData.styleOptions().floatLayer.crossHair
-    const crossHairVertical = crossHair.vertical
+    const crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair
+    const crossHairVertical = crossHairOptions.vertical
     const crossHairVerticalText = crossHairVertical.text
-    if (!crossHair.display || !crossHairVertical.display || !crossHairVerticalText.display) {
+    if (!crossHairOptions.display || !crossHairVertical.display || !crossHairVerticalText.display) {
       return
     }
     const dataList = this._chartData.dataList()
-    const crossHairPoint = this._chartData.crossHairPoint()
     let dataPos
-    if (crossHairPoint) {
-      dataPos = this._xAxis.convertFromPixel(crossHairPoint.x)
+    if (isValid(crossHair.x)) {
+      dataPos = this._xAxis.convertFromPixel(crossHair.x)
     } else {
       dataPos = dataList.length - 1
     }
@@ -54,7 +55,7 @@ export default class XAxisFloatLayerView extends View {
     const text = formatDate(this._chartData.dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
 
     const textSize = crossHairVerticalText.size
-    this._ctx.font = getFont(textSize, crossHairVerticalText.family)
+    this._ctx.font = getFont(textSize, crossHairVerticalText.weight, crossHairVerticalText.family)
     const labelWidth = calcTextWidth(this._ctx, text)
     let xAxisLabelX = x - labelWidth / 2
 
