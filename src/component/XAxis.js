@@ -111,7 +111,7 @@ export default class XAxis extends Axis {
         xAxisHeight += xAxisOptions.tickLine.length
       }
       if (xAxisOptions.tickText.display) {
-        xAxisHeight += (xAxisOptions.tickText.margin * 2 + xAxisOptions.tickText.size)
+        xAxisHeight += (xAxisOptions.tickText.paddingTop + xAxisOptions.tickText.paddingBottom + xAxisOptions.tickText.size)
       }
     }
     let crossHairVerticalTextHeight = 0

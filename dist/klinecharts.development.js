@@ -610,7 +610,8 @@ var defaultXAxis = {
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
-    margin: 3
+    paddingTop: 3,
+    paddingBottom: 6
   },
   // tick线
   tickLine: {
@@ -664,7 +665,8 @@ var defaultYAxis = {
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
-    margin: 3
+    paddingLeft: 3,
+    paddingRight: 6
   },
   // tick线
   tickLine: {
@@ -5452,11 +5454,10 @@ var YAxisView = /*#__PURE__*/function (_View) {
       var tickLine = yAxisOptions.tickLine;
       var tickLineDisplay = tickLine.display;
       var tickLineLength = tickLine.length;
-      var tickTextMargin = tickText.margin;
       var labelX;
 
       if (this._isDrawFromStart(yAxisOptions)) {
-        labelX = tickTextMargin;
+        labelX = tickText.paddingLeft;
 
         if (yAxisOptions.axisLine.display) {
           labelX += yAxisOptions.axisLine.size;
@@ -5468,7 +5469,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
 
         this._ctx.textAlign = 'left';
       } else {
-        labelX = this._width - tickTextMargin;
+        labelX = this._width - tickText.paddingRight;
 
         if (yAxisOptions.axisLine.display) {
           labelX -= yAxisOptions.axisLine.size;
@@ -6226,7 +6227,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
             textWidth = Math.max(textWidth, calcTextWidth(_this3._measureCtx, tick.v));
           });
 
-          yAxisWidth += yAxisOptions.tickText.margin * 2 + textWidth;
+          yAxisWidth += yAxisOptions.tickText.paddingLeft + yAxisOptions.tickText.paddingRight + textWidth;
         }
       }
 
@@ -9639,7 +9640,7 @@ var XAxisView = /*#__PURE__*/function (_View) {
       this._ctx.font = getFont(tickText.size, tickText.weight, tickText.family);
       this._ctx.textAlign = 'center';
       this._ctx.fillStyle = tickText.color;
-      var labelY = tickText.margin;
+      var labelY = tickText.paddingTop;
 
       if (xAxisOptions.axisLine.display) {
         labelY += xAxisOptions.axisLine.size;
@@ -9928,7 +9929,7 @@ var XAxis = /*#__PURE__*/function (_Axis) {
         }
 
         if (xAxisOptions.tickText.display) {
-          xAxisHeight += xAxisOptions.tickText.margin * 2 + xAxisOptions.tickText.size;
+          xAxisHeight += xAxisOptions.tickText.paddingTop + xAxisOptions.tickText.paddingBottom + xAxisOptions.tickText.size;
         }
       }
 

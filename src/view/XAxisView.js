@@ -68,7 +68,7 @@ export default class XAxisView extends View {
     this._ctx.textAlign = 'center'
     this._ctx.fillStyle = tickText.color
 
-    let labelY = tickText.margin
+    let labelY = tickText.paddingTop
     if (xAxisOptions.axisLine.display) {
       labelY += (xAxisOptions.axisLine.size)
     }

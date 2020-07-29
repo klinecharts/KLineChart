@@ -247,7 +247,8 @@ const defaultXAxis = {
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
-    margin: 3
+    paddingTop: 3,
+    paddingBottom: 6
   },
   // tick线
   tickLine: {
@@ -297,7 +298,8 @@ const defaultYAxis = {
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
-    margin: 3
+    paddingLeft: 3,
+    paddingRight: 6
   },
   // tick线
   tickLine: {

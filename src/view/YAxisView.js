@@ -90,10 +90,9 @@ export default class YAxisView extends View {
     const tickLine = yAxisOptions.tickLine
     const tickLineDisplay = tickLine.display
     const tickLineLength = tickLine.length
-    const tickTextMargin = tickText.margin
     let labelX
     if (this._isDrawFromStart(yAxisOptions)) {
-      labelX = tickTextMargin
+      labelX = tickText.paddingLeft
       if (yAxisOptions.axisLine.display) {
         labelX += yAxisOptions.axisLine.size
       }
@@ -102,7 +101,7 @@ export default class YAxisView extends View {
       }
       this._ctx.textAlign = 'left'
     } else {
-      labelX = this._width - tickTextMargin
+      labelX = this._width - tickText.paddingRight
       if (yAxisOptions.axisLine.display) {
         labelX -= yAxisOptions.axisLine.size
       }

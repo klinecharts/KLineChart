@@ -188,7 +188,7 @@ export default class YAxis extends Axis {
         this._ticks.forEach(tick => {
           textWidth = Math.max(textWidth, calcTextWidth(this._measureCtx, tick.v))
         })
-        yAxisWidth += (yAxisOptions.tickText.margin * 2 + textWidth)
+        yAxisWidth += (yAxisOptions.tickText.paddingLeft + yAxisOptions.tickText.paddingRight + textWidth)
       }
     }
     const crossHairOptions = stylOptions.floatLayer.crossHair
