@@ -59,7 +59,7 @@ getTechnicalIndicatorParamOptions()
 
 // 设置精度
 // pricePrecision 价格精度，影响整个图表显示的价格的数字精度，还包括指标系列是price的技术指标
-// volumePrecision 数量精度，影响整个图表显示的价格的数字精度，还包括指标系列是volume的技术指标
+// volumePrecision 数量精度，影响整个图表显示的数量的数字精度，还包括指标系列是volume的技术指标
 setPrecision(pricePrecision, volumePrecision)
 
 // 设置技术指标精度

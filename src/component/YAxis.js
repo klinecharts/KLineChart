@@ -148,9 +148,6 @@ export default class YAxis extends Axis {
           this._maxValue += percentValue
         }
       }
-    } else {
-      this._minValue = 0
-      this._maxValue = 10
     }
   }
 

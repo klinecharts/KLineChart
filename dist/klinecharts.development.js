@@ -5702,7 +5702,7 @@ var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
     value: function _drawCrossHairLabel() {
       var crossHair = this._chartData.crossHair();
 
-      if (crossHair.paneTag !== this._additionalDataProvider.tag()) {
+      if (crossHair.paneTag !== this._additionalDataProvider.tag() || this._chartData.dataList().length === 0) {
         return;
       }
 
@@ -6173,9 +6173,6 @@ var YAxis = /*#__PURE__*/function (_Axis) {
             this._maxValue += percentValue;
           }
         }
-      } else {
-        this._minValue = 0;
-        this._maxValue = 10;
       }
     }
   }, {
