@@ -41,7 +41,7 @@ The generated files are in the dist folder.
 [https://github.com/liihuu/KLineChartSample](https://github.com/liihuu/KLineChartSample)
 
 ## Screenshot
-<img width="600" src="./screenshot/screenshot.png"/>
+<img width="800" src="./screenshot/screenshot.png"/>
 
 ## License
 KLineChart is available under the Apache License V2.
