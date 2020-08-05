@@ -104,6 +104,10 @@ export default class Widget {
    */
   invalidate (level) {
     switch (level) {
+      case InvalidateLevel.GRAPHIC_MARK: {
+        this._expandView && this._expandView.flush()
+        break
+      }
       case InvalidateLevel.FLOAT_LAYER: {
         this._floatLayerView.flush()
         break
@@ -112,6 +116,7 @@ export default class Widget {
       case InvalidateLevel.FULL: {
         this._mainView.flush()
         this._floatLayerView.flush()
+        this._expandView && this._expandView.flush()
         break
       }
       default: {

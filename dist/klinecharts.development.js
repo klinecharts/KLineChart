@@ -4365,6 +4365,12 @@ var Widget = /*#__PURE__*/function () {
     key: "invalidate",
     value: function invalidate(level) {
       switch (level) {
+        case InvalidateLevel.GRAPHIC_MARK:
+          {
+            this._expandView && this._expandView.flush();
+            break;
+          }
+
         case InvalidateLevel.FLOAT_LAYER:
           {
             this._floatLayerView.flush();
@@ -4379,6 +4385,7 @@ var Widget = /*#__PURE__*/function () {
 
             this._floatLayerView.flush();
 
+            this._expandView && this._expandView.flush();
             break;
           }
       }
@@ -9428,22 +9435,6 @@ var CandleStickWidget = /*#__PURE__*/function (_TechnicalIndicatorWi) {
     key: "_createFloatLayerView",
     value: function _createFloatLayerView(container, props) {
       return new CandleStickFloatLayerView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
-    }
-  }, {
-    key: "invalidate",
-    value: function invalidate(level) {
-      if (level !== InvalidateLevel.GRAPHIC_MARK) {
-        _get(_getPrototypeOf(CandleStickWidget.prototype), "invalidate", this).call(this, level);
-      }
-
-      this._expandView.flush();
-    }
-  }, {
-    key: "setSize",
-    value: function setSize(width, height) {
-      _get(_getPrototypeOf(CandleStickWidget.prototype), "setSize", this).call(this, width, height);
-
-      this._expandView.setSize(width, height);
     }
   }]);
 

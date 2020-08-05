@@ -15,7 +15,6 @@
 import CandleStickView from '../view/CandleStickView'
 import CandleStickFloatLayerView from '../view/CandleStickFloatLayerView'
 import TechnicalIndicatorWidget from './TechnicalIndicatorWidget'
-import { InvalidateLevel } from '../data/ChartData'
 import GraphicMarkView from '../view/GraphicMarkView'
 
 export default class CandleStickWidget extends TechnicalIndicatorWidget {
@@ -29,17 +28,5 @@ export default class CandleStickWidget extends TechnicalIndicatorWidget {
 
   _createFloatLayerView (container, props) {
     return new CandleStickFloatLayerView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
-  }
-
-  invalidate (level) {
-    if (level !== InvalidateLevel.GRAPHIC_MARK) {
-      super.invalidate(level)
-    }
-    this._expandView.flush()
-  }
-
-  setSize (width, height) {
-    super.setSize(width, height)
-    this._expandView.setSize(width, height)
   }
 }
