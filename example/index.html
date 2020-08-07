@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" type="text/css" href="index.css" />
-    <script src="./getData.js"></script>
+
+　　<script src="./jquery-2.1.4.min.js"></script>
+
+    <script src="./priceAndVolumeTrend.js"></script>
+    <script src="./simpleMovingAverage.js"></script>
+    <script src="./dataManager.js"></script>
     <script src="../dist/klinecharts.development.js"></script>
     <style>
       
@@ -23,10 +28,19 @@
 
 
       const chart = klinecharts.init('stock_chart')
-      const stock_data = getData()
+      console.log('add data')
       chart.applyNewData(stock_data)
+
+      chart.setPrecision(6, 3)
       //取消默认指标
-      // kLineChart.setCandleStickTechnicalIndicatorType("NO")
-      console.log(klinecharts.version())
+      chart.setCandleStickTechnicalIndicatorType("NO")
+
+      chart.addCustomTechnicalIndicator(simpleMovingAverage)
+      chart.setCandleStickTechnicalIndicatorType('BNMA')
+
+      //副图指标
+    //   chart.addCustomTechnicalIndicator(priceAndVolumeTrend)
+    //   chart.createTechnicalIndicator('PVTss')
+
 </script>
 </html>

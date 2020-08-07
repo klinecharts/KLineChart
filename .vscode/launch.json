@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "file:///F:/KLineChart/example/index.html",
+            "url":"http://localhost:8000/example/index.html",
             "webRoot": "${workspaceFolder}"
         }
     ]
