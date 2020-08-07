@@ -1,46 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" type="text/css" href="index.css" />
-
-　　<script src="./jquery-2.1.4.min.js"></script>
-
-    <script src="./priceAndVolumeTrend.js"></script>
-    <script src="./simpleMovingAverage.js"></script>
-    <script src="./dataManager.js"></script>
+    <title>KLineChart Demo</title>
+    <link rel="stylesheet" type="text/css" href="./css/index.css" />
+    　　
+    <script src="./common/jquery-2.1.4.min.js"></script>
     <script src="../dist/klinecharts.development.js"></script>
-    <style>
-      
-    </style>
+
 
 
 </head>
+
 <body>
     <div class="k-line-chart-container">
         <p class="k-line-chart-title">自定义技术指标</p>
-        <div id="stock_chart" class="k-line-chart ichat"/>
-      </div>
+        <div id="stock_chart" class="k-line-chart ichat" />
+    </div>
 </body>
-<script>
+<script type="module">
+    import { simpleMovingAverage } from './indicator/simpleMovingAverage.js'
+    import { priceAndVolumeTrend } from './indicator/priceAndVolumeTrend.js'
+    import {get_csv_data} from './common/dataManager.js'
 
+    const chart = klinecharts.init('stock_chart')
+    console.log('add data')
+    const stock_data = get_csv_data('/example/datas/testdata.csv')
+    chart.applyNewData(stock_data)
 
-      const chart = klinecharts.init('stock_chart')
-      console.log('add data')
-      chart.applyNewData(stock_data)
+    chart.setPrecision(6, 3)
+    //取消默认指标
+    chart.setCandleStickTechnicalIndicatorType("NO")
 
-      chart.setPrecision(6, 3)
-      //取消默认指标
-      chart.setCandleStickTechnicalIndicatorType("NO")
+    chart.addCustomTechnicalIndicator(simpleMovingAverage)
+    chart.setCandleStickTechnicalIndicatorType('BNMA')
 
-      chart.addCustomTechnicalIndicator(simpleMovingAverage)
-      chart.setCandleStickTechnicalIndicatorType('BNMA')
-
-      //副图指标
-    //   chart.addCustomTechnicalIndicator(priceAndVolumeTrend)
-    //   chart.createTechnicalIndicator('PVTss')
+    //副图指标
+    chart.addCustomTechnicalIndicator(priceAndVolumeTrend)
+    chart.createTechnicalIndicator('PVTss')
 
 </script>
+
 </html>

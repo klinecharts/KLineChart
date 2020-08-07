@@ -1,4 +1,4 @@
-var priceAndVolumeTrend = {
+export  const priceAndVolumeTrend = {
     name: 'PVTss',
     plots: [
       { key: 'pvt', type: 'line' }
