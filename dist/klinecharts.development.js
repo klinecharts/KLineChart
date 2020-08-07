@@ -7,7 +7,7 @@
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
-(global = global || self, factory(global.klinecharts = {}));
+(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.klinecharts = {}));
 }(this, (function (exports) { 'use strict';
 
 function _typeof(obj) {
@@ -126,7 +126,7 @@ function _possibleConstructorReturn(self, call) {
 function _createSuper(Derived) {
   var hasNativeReflectConstruct = _isNativeReflectConstruct();
 
-  return function () {
+  return function _createSuperInternal() {
     var Super = _getPrototypeOf(Derived),
         result;
 
@@ -189,9 +189,12 @@ function _arrayLikeToArray(arr, len) {
   return arr2;
 }
 
-function _createForOfIteratorHelper(o) {
+function _createForOfIteratorHelper(o, allowArrayLike) {
+  var it;
+
   if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
       var i = 0;
 
       var F = function () {};
@@ -217,8 +220,7 @@ function _createForOfIteratorHelper(o) {
     throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
-  var it,
-      normalCompletion = true,
+  var normalCompletion = true,
       didErr = false,
       err;
   return {
@@ -4587,6 +4589,38 @@ var View = /*#__PURE__*/function () {
   return View;
 }();
 
+var ChartHandle = /*#__PURE__*/function () {
+  function ChartHandle() {
+    _classCallCheck(this, ChartHandle);
+
+    this.xtimemap = {};
+    this.ctxs = {};
+  }
+
+  _createClass(ChartHandle, [{
+    key: "add_xts_mapping",
+    value: function add_xts_mapping(x, timestamp) {
+      this.xtimemap[x] = timestamp;
+    }
+  }, {
+    key: "add_tag",
+    value: function add_tag(tag, ctx) {
+      this.ctxs[(ctx)];
+    }
+  }], [{
+    key: "getInstance",
+    value: function getInstance() {
+      if (!this.instance) {
+        this.instance = new ChartHandle();
+      }
+
+      return this.instance;
+    }
+  }]);
+
+  return ChartHandle;
+}();
+
 var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
   _inherits(TechnicalIndicatorView, _View);
 
@@ -4939,6 +4973,8 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
       var close = kLineData.close;
       var high = kLineData.high;
       var low = kLineData.low;
+      var timestamp = kLineData.timestamp;
+      ChartHandle.getInstance().add_xts_mapping(x, timestamp);
 
       if (close > open) {
         this._ctx.strokeStyle = barOptions.upColor;

@@ -35,7 +35,8 @@
     "build": "./node_modules/.bin/rollup -c ./config/rollup.config.js",
     "test": "./node_modules/.bin/mocha --require @babel/register tests/",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d homepage"
+    "deploy": "gh-pages -d homepage",
+    "start" : "http-server . -p 8000"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
@@ -58,5 +59,8 @@
     "rollup-plugin-progress": "^1.1.1",
     "rollup-plugin-terser": "^5.3.0",
     "typescript": "^3.6.4"
+  },
+  "dependencies": {
+    "http-server": "^0.12.3"
   }
 }

@@ -16,6 +16,7 @@ import View, { PlotType } from './View'
 import { CandleStickStyle, LineStyle } from '../data/options/styleOptions'
 import { drawHorizontalLine, drawVerticalLine, drawLine } from '../utils/canvas'
 import { isValid } from '../utils/typeChecks'
+import ChartHandle from '../component/ChartHandle'
 
 export default class TechnicalIndicatorView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
@@ -23,6 +24,7 @@ export default class TechnicalIndicatorView extends View {
     this._xAxis = xAxis
     this._yAxis = yAxis
     this._additionalDataProvider = additionalDataProvider
+    
   }
 
   _draw () {
@@ -271,6 +273,10 @@ export default class TechnicalIndicatorView extends View {
     const close = kLineData.close
     const high = kLineData.high
     const low = kLineData.low
+    const timestamp = kLineData.timestamp
+    ChartHandle.getInstance().add_xts_mapping(x,timestamp)
+
+
     if (close > open) {
       this._ctx.strokeStyle = barOptions.upColor
       this._ctx.fillStyle = barOptions.upColor

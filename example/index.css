@@ -1,0 +1,75 @@
+body {
+    margin: 0;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-width: 1300px;
+    width: 800px;
+    height: 800px;
+    background-color: #EAEAEA;
+}
+
+div, p {
+    box-sizing: border-box;
+}
+
+p {
+    margin: 0;
+}
+
+.app {
+    padding: 0 20px 60px 20px;
+}
+
+.k-line-chart-row {
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+    justify-content: space-around;
+}
+
+.k-line-chart-title {
+    line-height: 60px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.k-line-chart {
+    width: 600px;
+    height: 280px;
+    background-color: #25272F;
+    border-radius: 2px;
+}
+
+.k-line-chart-setting-container {
+    margin-top: 4px;
+}
+
+.k-line-chart-setting-button {
+    line-height: 22px;
+    height: 22px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #333333;
+    margin-right: 20px;
+    background-color: transparent;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.k-line-chart-setting-button:hover {
+    background-color: #e1eff9;
+}
+
+.k-line-chart-setting-button-selected {
+    background-color: #e1eff9;
+}
+
+.ichat {
+    width: 80%;
+    height: 800px;
+    margin-left: 30px;
+    margin-right: 30px;
+}
