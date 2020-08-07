@@ -4469,13 +4469,14 @@ function cancelAnimationFrame(id) {
 
 /**
  * 绘制类型
- * @type {{BAR: string, LINE: string, CIRCLE: string}}
+ * @type {{BAR: string, LINE: string, CIRCLE: string, TEXT: string}}
  */
 
 var PlotType = {
   LINE: 'line',
   BAR: 'bar',
-  CIRCLE: 'circle'
+  CIRCLE: 'circle',
+  TEXT: 'text'
 };
 
 var View = /*#__PURE__*/function () {
@@ -4771,6 +4772,23 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                 break;
               }
 
+            case PlotType.TEXT:
+              {
+                if (isValid(value)) {
+                  var _valueY = _this3._yAxis.convertToPixel(value);
+
+                  var text = {
+                    content: plot.content,
+                    x: x,
+                    y: _valueY
+                  };
+
+                  _this3._drawText(text);
+                }
+
+                break;
+              }
+
             case PlotType.BAR:
               {
                 if (isValid(value)) {
@@ -4785,17 +4803,17 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                     }
                   };
 
-                  var _valueY = _this3._yAxis.convertToPixel(value);
+                  var _valueY2 = _this3._yAxis.convertToPixel(value);
 
-                  var height = Math.abs(baseValueY - _valueY);
+                  var height = Math.abs(baseValueY - _valueY2);
                   var bar = {
                     x: x - halfBarSpace,
                     width: halfBarSpace * 2,
                     height: Math.max(1, height)
                   };
 
-                  if (_valueY <= baseValueY) {
-                    bar.y = height < 1 ? baseValueY + 1 : _valueY;
+                  if (_valueY2 <= baseValueY) {
+                    bar.y = height < 1 ? baseValueY + 1 : _valueY2;
                   } else {
                     bar.y = baseValueY;
                   }
@@ -4812,11 +4830,11 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
             default:
               {
                 if (isValid(value)) {
-                  var _valueY2 = _this3._yAxis.convertToPixel(value);
+                  var _valueY3 = _this3._yAxis.convertToPixel(value);
 
                   var line = {
                     x: x,
-                    y: _valueY2
+                    y: _valueY3
                   };
 
                   if (lines[lineValueIndex]) {
@@ -4869,6 +4887,9 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
 
                 isStart = false;
               } else {
+                // if(line.y == null){
+                //   return
+                // }
                 _this4._ctx.lineTo(line.x, line.y);
               }
             }
@@ -4920,6 +4941,20 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
       }
 
       this._ctx.closePath();
+    }
+    /**
+     * 绘制文字
+     * @param {*} icon 
+     */
+
+  }, {
+    key: "_drawText",
+    value: function _drawText(text) {
+      var txt = text.content;
+
+      var width = this._ctx.measureText(txt).width;
+
+      this._ctx.fillText(txt, text.x - width / 2, text.y);
     }
     /**
      * 绘制图形

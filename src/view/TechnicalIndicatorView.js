@@ -119,6 +119,18 @@ export default class TechnicalIndicatorView extends View {
               }
               break
             }
+            case PlotType.TEXT: {
+              if (isValid(value)) {
+                const valueY = this._yAxis.convertToPixel(value)
+                const text = {
+                  content:plot.content,
+                  x,
+                  y: valueY
+                }
+                this._drawText(text)
+              }
+              break
+            }
             case PlotType.BAR: {
               if (isValid(value)) {
                 const cbData = {
@@ -232,7 +244,19 @@ export default class TechnicalIndicatorView extends View {
       this._ctx.fill()
     }
     this._ctx.closePath()
+
   }
+
+  /**
+   * 绘制文字
+   * @param {*} icon 
+   */
+  _drawText (text) {
+    const txt = text.content
+    const width = this._ctx.measureText(txt).width
+    this._ctx.fillText(txt, text.x - width / 2, text.y);
+  }
+
 
   /**
    * 绘制图形

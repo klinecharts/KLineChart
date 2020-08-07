@@ -1,7 +1,7 @@
 export  const priceAndVolumeTrend = {
     name: 'PVTss',
     plots: [
-      { key: 'pvt', type: 'line' }
+      { key: 'pvt', type: 'line',color:'#d51b1b' }
     ],
     calcTechnicalIndicator: (kLineDataList) => {
       const result = []
