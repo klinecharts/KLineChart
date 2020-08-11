@@ -28,8 +28,8 @@ export default class Axis {
 
   _initMeasureCanvas () {
     const measureCanvas = document.createElement('canvas')
+    const pixelRatio = getPixelRatio(measureCanvas)
     this._measureCtx = measureCanvas.getContext('2d')
-    const pixelRatio = getPixelRatio(this._measureCtx)
     this._measureCtx.scale(pixelRatio, pixelRatio)
   }
 

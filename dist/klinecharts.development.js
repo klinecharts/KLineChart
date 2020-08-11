@@ -3986,12 +3986,11 @@ var ChartData = /*#__PURE__*/function () {
 
 /**
  * 获取屏幕比
- * @param ctx
+ * @param canvas
  * @returns {number}
  */
-function getPixelRatio(ctx) {
-  var backingStore = ctx.backingStorePixelRatio || ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio || ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio || ctx.backingStorePixelRatio || 1;
-  return (window.devicePixelRatio || 1) / backingStore;
+function getPixelRatio(canvas) {
+  return canvas.ownerDocument && canvas.ownerDocument.defaultView && canvas.ownerDocument.defaultView.devicePixelRatio || 1;
 }
 /**
  * 测量文字的宽度
@@ -4205,7 +4204,7 @@ var Pane = /*#__PURE__*/function () {
     value: function getImage(includeFloatLayer, includeGraphicMark) {
       var canvas = document.createElement('canvas');
       var ctx = canvas.getContext('2d');
-      var pixelRatio = getPixelRatio(ctx);
+      var pixelRatio = getPixelRatio(canvas);
       var width = this._element.offsetWidth;
       var height = this._element.offsetHeight;
       canvas.style.width = "".concat(width, "px");
@@ -4402,7 +4401,7 @@ var Widget = /*#__PURE__*/function () {
     value: function getImage(includeFloatLayer, includeGraphicMark) {
       var canvas = document.createElement('canvas');
       var ctx = canvas.getContext('2d');
-      var pixelRatio = getPixelRatio(ctx);
+      var pixelRatio = getPixelRatio(canvas);
       canvas.style.width = "".concat(this._width, "px");
       canvas.style.height = "".concat(this._height, "px");
       canvas.width = this._width * pixelRatio;
@@ -4543,7 +4542,7 @@ var View = /*#__PURE__*/function () {
 
       if (this._height !== this._canvas.offsetHeight || this._width !== this._canvas.offsetWidth) {
         this._redraw(function () {
-          var pixelRatio = getPixelRatio(_this._ctx);
+          var pixelRatio = getPixelRatio(_this._canvas);
           _this._canvas.style.width = "".concat(_this._width, "px");
           _this._canvas.style.height = "".concat(_this._height, "px");
           _this._canvas.width = _this._width * pixelRatio;
@@ -5841,8 +5840,8 @@ var Axis = /*#__PURE__*/function () {
     key: "_initMeasureCanvas",
     value: function _initMeasureCanvas() {
       var measureCanvas = document.createElement('canvas');
+      var pixelRatio = getPixelRatio(measureCanvas);
       this._measureCtx = measureCanvas.getContext('2d');
-      var pixelRatio = getPixelRatio(this._measureCtx);
 
       this._measureCtx.scale(pixelRatio, pixelRatio);
     }
@@ -10143,7 +10142,7 @@ var SeparatorPane = /*#__PURE__*/function () {
 
       var canvas = document.createElement('canvas');
       var ctx = canvas.getContext('2d');
-      var pixelRatio = getPixelRatio(ctx);
+      var pixelRatio = getPixelRatio(canvas);
       var width = this._wrapper.offsetWidth;
       var height = separator.size;
       canvas.style.width = "".concat(width, "px");
@@ -11415,7 +11414,7 @@ var ChartPane = /*#__PURE__*/function () {
 
       var canvas = document.createElement('canvas');
       var ctx = canvas.getContext('2d');
-      var pixelRatio = getPixelRatio(ctx);
+      var pixelRatio = getPixelRatio(canvas);
       var width = this._chartContainer.offsetWidth;
       var height = this._chartContainer.offsetHeight;
       canvas.style.width = "".concat(width, "px");

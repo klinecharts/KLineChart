@@ -14,17 +14,11 @@
 
 /**
  * 获取屏幕比
- * @param ctx
+ * @param canvas
  * @returns {number}
  */
-export function getPixelRatio (ctx) {
-  const backingStore = ctx.backingStorePixelRatio ||
-    ctx.webkitBackingStorePixelRatio ||
-    ctx.mozBackingStorePixelRatio ||
-    ctx.msBackingStorePixelRatio ||
-    ctx.oBackingStorePixelRatio ||
-    ctx.backingStorePixelRatio || 1
-  return (window.devicePixelRatio || 1) / backingStore
+export function getPixelRatio (canvas) {
+  return (canvas.ownerDocument && canvas.ownerDocument.defaultView && canvas.ownerDocument.defaultView.devicePixelRatio) || 1
 }
 
 /**

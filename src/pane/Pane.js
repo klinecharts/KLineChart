@@ -119,7 +119,7 @@ export default class Pane {
   getImage (includeFloatLayer, includeGraphicMark) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
-    const pixelRatio = getPixelRatio(ctx)
+    const pixelRatio = getPixelRatio(canvas)
     const width = this._element.offsetWidth
     const height = this._element.offsetHeight
     canvas.style.width = `${width}px`

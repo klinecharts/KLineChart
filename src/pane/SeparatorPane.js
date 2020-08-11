@@ -121,7 +121,7 @@ export default class SeparatorPane {
     const separator = this._chartData.styleOptions().separator
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
-    const pixelRatio = getPixelRatio(ctx)
+    const pixelRatio = getPixelRatio(canvas)
     const width = this._wrapper.offsetWidth
     const height = separator.size
     canvas.style.width = `${width}px`

@@ -488,7 +488,7 @@ export default class ChartPane {
     }
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
-    const pixelRatio = getPixelRatio(ctx)
+    const pixelRatio = getPixelRatio(canvas)
     const width = this._chartContainer.offsetWidth
     const height = this._chartContainer.offsetHeight
     canvas.style.width = `${width}px`

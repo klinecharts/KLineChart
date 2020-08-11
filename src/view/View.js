@@ -76,7 +76,7 @@ class View {
   layout () {
     if (this._height !== this._canvas.offsetHeight || this._width !== this._canvas.offsetWidth) {
       this._redraw(() => {
-        const pixelRatio = getPixelRatio(this._ctx)
+        const pixelRatio = getPixelRatio(this._canvas)
         this._canvas.style.width = `${this._width}px`
         this._canvas.style.height = `${this._height}px`
         this._canvas.width = this._width * pixelRatio

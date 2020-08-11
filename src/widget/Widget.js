@@ -134,7 +134,7 @@ export default class Widget {
   getImage (includeFloatLayer, includeGraphicMark) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
-    const pixelRatio = getPixelRatio(ctx)
+    const pixelRatio = getPixelRatio(canvas)
     canvas.style.width = `${this._width}px`
     canvas.style.height = `${this._height}px`
     canvas.width = this._width * pixelRatio
