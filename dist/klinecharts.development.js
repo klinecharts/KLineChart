@@ -1,6 +1,6 @@
 /**
  * @license
- * KLineChart v5.5.0
+ * KLineChart v5.5.1
  * Copyright (c) 2019 lihu.
  * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
@@ -4928,6 +4928,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
      * @param barSpace
      * @param kLineData
      * @param barOptions
+     * @param barStyle
      * @private
      */
 
@@ -6626,40 +6627,11 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
     value: function _drawCandleStick() {
       var _this2 = this;
 
-      var markHighestPrice = -Infinity;
-      var markHighestPriceX = -1;
-      var markLowestPrice = Infinity;
-      var markLowestPriceX = -1;
+      var candleStickOptions = this._chartData.styleOptions().candleStick;
 
-      var candleStick = this._chartData.styleOptions().candleStick;
-
-      var onDrawing = function onDrawing(x, i, kLineData, halfBarSpace, barSpace) {
-        var high = kLineData.high;
-        var low = kLineData.low;
-
-        if (markHighestPrice < high) {
-          markHighestPrice = high;
-          markHighestPriceX = x;
-        }
-
-        if (low < markLowestPrice) {
-          markLowestPrice = low;
-          markLowestPriceX = x;
-        }
-
-        _this2._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, candleStick.bar, candleStick.bar.style);
-      };
-
-      this._drawGraphics(onDrawing);
-
-      this._highestMarkData = {
-        x: markHighestPriceX,
-        price: markHighestPrice
-      };
-      this._lowestMarkData = {
-        x: markLowestPriceX,
-        price: markLowestPrice
-      };
+      this._drawGraphics(function (x, i, kLineData, halfBarSpace, barSpace) {
+        _this2._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, candleStickOptions.bar, candleStickOptions.bar.style);
+      });
     }
     /**
      * 渲染最高价标记
@@ -6668,21 +6640,33 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
   }, {
     key: "_drawHighestPriceMark",
     value: function _drawHighestPriceMark() {
-      if (!this._highestMarkData) {
+      var priceMarkOptions = this._chartData.styleOptions().candleStick.priceMark;
+
+      var highestPriceMarkOptions = priceMarkOptions.high;
+
+      if (!priceMarkOptions.display || !highestPriceMarkOptions.display) {
         return;
       }
 
-      var price = this._highestMarkData.price;
+      var dataList = this._chartData.dataList();
 
-      var priceMark = this._chartData.styleOptions().candleStick.priceMark;
+      var to = this._chartData.to();
 
-      var highestPriceMark = priceMark.high;
+      var highestPrice = -Infinity;
+      var highestPos = -1;
 
-      if (price === -Infinity || !priceMark.display || !highestPriceMark.display) {
-        return;
+      for (var i = this._chartData.from(); i < to; i++) {
+        var high = formatValue(dataList[i], 'high', -Infinity);
+
+        if (high > highestPrice) {
+          highestPrice = high;
+          highestPos = i;
+        }
       }
 
-      this._drawLowestHighestPriceMark(highestPriceMark, this._highestMarkData.x, price, true, this._chartData.pricePrecision());
+      if (highestPrice !== -Infinity) {
+        this._drawLowestHighestPriceMark(highestPriceMarkOptions, highestPos, highestPrice, true);
+      }
     }
     /**
      * 绘制最低价标记
@@ -6691,44 +6675,58 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
   }, {
     key: "_drawLowestPriceMark",
     value: function _drawLowestPriceMark() {
-      if (!this._lowestMarkData) {
+      var priceMarkOptions = this._chartData.styleOptions().candleStick.priceMark;
+
+      var lowestPriceMarkOptions = priceMarkOptions.low;
+
+      if (!priceMarkOptions.display || !lowestPriceMarkOptions.display) {
         return;
       }
 
-      var price = this._lowestMarkData.price;
+      var dataList = this._chartData.dataList();
 
-      var priceMark = this._chartData.styleOptions().candleStick.priceMark;
+      var to = this._chartData.to();
 
-      var lowestPriceMark = priceMark.low;
+      var lowestPrice = Infinity;
+      var lowestPos = -1;
 
-      if (price === Infinity || !priceMark.display || !lowestPriceMark.display) {
-        return;
+      for (var i = this._chartData.from(); i < to; i++) {
+        var low = formatValue(dataList[i], 'low', Infinity);
+
+        if (low < lowestPrice) {
+          lowestPrice = low;
+          lowestPos = i;
+        }
       }
 
-      this._drawLowestHighestPriceMark(lowestPriceMark, this._lowestMarkData.x, price, false, this._chartData.pricePrecision());
+      if (lowestPrice !== Infinity) {
+        this._drawLowestHighestPriceMark(lowestPriceMarkOptions, lowestPos, lowestPrice);
+      }
     }
     /**
      * 渲染最高最低价格标记
-     * @param priceMark
-     * @param x
+     * @param priceMarkOptions
+     * @param pricePos
      * @param price
      * @param isHigh
-     * @param pricePrecision
      */
 
   }, {
     key: "_drawLowestHighestPriceMark",
-    value: function _drawLowestHighestPriceMark(priceMark, x, price, isHigh, pricePrecision) {
+    value: function _drawLowestHighestPriceMark(priceMarkOptions, pricePos, price, isHigh) {
       var _this3 = this;
+
+      var pricePrecision = this._chartData.pricePrecision();
 
       var priceY = this._yAxis.convertToPixel(price);
 
-      var startX = x;
+      var startX = this._xAxis.convertToPixel(pricePos);
+
       var startY = priceY + (isHigh ? -2 : 2);
       this._ctx.textAlign = 'left';
       this._ctx.lineWidth = 1;
-      this._ctx.strokeStyle = priceMark.color;
-      this._ctx.fillStyle = priceMark.color;
+      this._ctx.strokeStyle = priceMarkOptions.color;
+      this._ctx.fillStyle = priceMarkOptions.color;
       drawLine(this._ctx, function () {
         _this3._ctx.beginPath();
 
@@ -6754,11 +6752,11 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       var y = startY + (isHigh ? -5 : 5);
       drawVerticalLine(this._ctx, startX, startY, y);
       drawHorizontalLine(this._ctx, y, startX, startX + 5);
-      this._ctx.font = getFont(priceMark.textSize, priceMark.textWeight, priceMark.textFamily);
+      this._ctx.font = getFont(priceMarkOptions.textSize, priceMarkOptions.textWeight, priceMarkOptions.textFamily);
       var text = formatPrecision(price, pricePrecision);
       this._ctx.textBaseline = 'middle';
 
-      this._ctx.fillText(text, startX + 5 + priceMark.textMargin, y);
+      this._ctx.fillText(text, startX + 5 + priceMarkOptions.textMargin, y);
     }
     /**
      * 绘制最新价线
@@ -11829,7 +11827,7 @@ var CHART_NAME_PREFIX = 'k_line_chart_';
  */
 
 function version() {
-  return '5.5.0';
+  return '5.5.1';
 }
 /**
  * 初始化
@@ -11841,7 +11839,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 5.5.0. Root dom is null, can not initialize the chart!!!';
+  var errorMessage = 'Chart version is 5.5.1. Root dom is null, can not initialize the chart!!!';
   var container = ds;
 
   if (!container) {

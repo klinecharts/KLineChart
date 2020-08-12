@@ -15,7 +15,7 @@
 import TechnicalIndicatorView from './TechnicalIndicatorView'
 import { LineStyle, ChartType } from '../data/options/styleOptions'
 import { drawHorizontalLine, drawVerticalLine, getFont, drawLine } from '../utils/canvas'
-import { formatPrecision } from '../utils/format'
+import { formatPrecision, formatValue } from '../utils/format'
 
 export default class CandleStickView extends TechnicalIndicatorView {
   _draw () {
@@ -120,83 +120,78 @@ export default class CandleStickView extends TechnicalIndicatorView {
    * @private
    */
   _drawCandleStick () {
-    let markHighestPrice = -Infinity
-    let markHighestPriceX = -1
-    let markLowestPrice = Infinity
-    let markLowestPriceX = -1
-    const candleStick = this._chartData.styleOptions().candleStick
-    const onDrawing = (x, i, kLineData, halfBarSpace, barSpace) => {
-      const high = kLineData.high
-      const low = kLineData.low
-      if (markHighestPrice < high) {
-        markHighestPrice = high
-        markHighestPriceX = x
-      }
-
-      if (low < markLowestPrice) {
-        markLowestPrice = low
-        markLowestPriceX = x
-      }
-
-      this._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, candleStick.bar, candleStick.bar.style)
-    }
-    this._drawGraphics(onDrawing)
-    this._highestMarkData = { x: markHighestPriceX, price: markHighestPrice }
-    this._lowestMarkData = { x: markLowestPriceX, price: markLowestPrice }
+    const candleStickOptions = this._chartData.styleOptions().candleStick
+    this._drawGraphics((x, i, kLineData, halfBarSpace, barSpace) => {
+      this._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, candleStickOptions.bar, candleStickOptions.bar.style)
+    })
   }
 
   /**
    * 渲染最高价标记
    */
   _drawHighestPriceMark () {
-    if (!this._highestMarkData) {
+    const priceMarkOptions = this._chartData.styleOptions().candleStick.priceMark
+    const highestPriceMarkOptions = priceMarkOptions.high
+    if (!priceMarkOptions.display || !highestPriceMarkOptions.display) {
       return
     }
-    const price = this._highestMarkData.price
-    const priceMark = this._chartData.styleOptions().candleStick.priceMark
-    const highestPriceMark = priceMark.high
-    if (price === -Infinity || !priceMark.display || !highestPriceMark.display) {
-      return
+    const dataList = this._chartData.dataList()
+    const to = this._chartData.to()
+    let highestPrice = -Infinity
+    let highestPos = -1
+    for (let i = this._chartData.from(); i < to; i++) {
+      const high = formatValue(dataList[i], 'high', -Infinity)
+      if (high > highestPrice) {
+        highestPrice = high
+        highestPos = i
+      }
     }
-    this._drawLowestHighestPriceMark(
-      highestPriceMark, this._highestMarkData.x, price, true, this._chartData.pricePrecision()
-    )
+    if (highestPrice !== -Infinity) {
+      this._drawLowestHighestPriceMark(highestPriceMarkOptions, highestPos, highestPrice, true)
+    }
   }
 
   /**
    * 绘制最低价标记
    */
   _drawLowestPriceMark () {
-    if (!this._lowestMarkData) {
+    const priceMarkOptions = this._chartData.styleOptions().candleStick.priceMark
+    const lowestPriceMarkOptions = priceMarkOptions.low
+    if (!priceMarkOptions.display || !lowestPriceMarkOptions.display) {
       return
     }
-    const price = this._lowestMarkData.price
-    const priceMark = this._chartData.styleOptions().candleStick.priceMark
-    const lowestPriceMark = priceMark.low
-    if (price === Infinity || !priceMark.display || !lowestPriceMark.display) {
-      return
+    const dataList = this._chartData.dataList()
+    const to = this._chartData.to()
+    let lowestPrice = Infinity
+    let lowestPos = -1
+    for (let i = this._chartData.from(); i < to; i++) {
+      const low = formatValue(dataList[i], 'low', Infinity)
+      if (low < lowestPrice) {
+        lowestPrice = low
+        lowestPos = i
+      }
     }
-    this._drawLowestHighestPriceMark(
-      lowestPriceMark, this._lowestMarkData.x, price, false, this._chartData.pricePrecision()
-    )
+    if (lowestPrice !== Infinity) {
+      this._drawLowestHighestPriceMark(lowestPriceMarkOptions, lowestPos, lowestPrice)
+    }
   }
 
   /**
    * 渲染最高最低价格标记
-   * @param priceMark
-   * @param x
+   * @param priceMarkOptions
+   * @param pricePos
    * @param price
    * @param isHigh
-   * @param pricePrecision
    */
-  _drawLowestHighestPriceMark (priceMark, x, price, isHigh, pricePrecision) {
+  _drawLowestHighestPriceMark (priceMarkOptions, pricePos, price, isHigh) {
+    const pricePrecision = this._chartData.pricePrecision()
     const priceY = this._yAxis.convertToPixel(price)
-    const startX = x
+    const startX = this._xAxis.convertToPixel(pricePos)
     const startY = priceY + (isHigh ? -2 : 2)
     this._ctx.textAlign = 'left'
     this._ctx.lineWidth = 1
-    this._ctx.strokeStyle = priceMark.color
-    this._ctx.fillStyle = priceMark.color
+    this._ctx.strokeStyle = priceMarkOptions.color
+    this._ctx.fillStyle = priceMarkOptions.color
 
     drawLine(this._ctx, () => {
       this._ctx.beginPath()
@@ -217,10 +212,10 @@ export default class CandleStickView extends TechnicalIndicatorView {
     drawVerticalLine(this._ctx, startX, startY, y)
     drawHorizontalLine(this._ctx, y, startX, startX + 5)
 
-    this._ctx.font = getFont(priceMark.textSize, priceMark.textWeight, priceMark.textFamily)
+    this._ctx.font = getFont(priceMarkOptions.textSize, priceMarkOptions.textWeight, priceMarkOptions.textFamily)
     const text = formatPrecision(price, pricePrecision)
     this._ctx.textBaseline = 'middle'
-    this._ctx.fillText(text, startX + 5 + priceMark.textMargin, y)
+    this._ctx.fillText(text, startX + 5 + priceMarkOptions.textMargin, y)
   }
 
   /**

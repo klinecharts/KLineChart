@@ -1,6 +1,6 @@
 {
   "name": "klinecharts",
-  "version": "5.5.0",
+  "version": "5.5.1",
   "description": "Lightweight k-line chart built with html5 canvas",
   "main": "index.js",
   "types": "./types/index.d.ts",

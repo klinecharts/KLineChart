@@ -264,6 +264,7 @@ export default class TechnicalIndicatorView extends View {
    * @param barSpace
    * @param kLineData
    * @param barOptions
+   * @param barStyle
    * @private
    */
   _drawCandleStickBar (x, halfBarSpace, barSpace, kLineData, barOptions, barStyle) {
