@@ -20,38 +20,18 @@ export default class Volume extends TechnicalIndicator {
     super({
       name: VOL,
       series: TechnicalIndicatorSeries.VOLUME,
-      calcParams: [5, 10, 20],
       shouldCheckParamCount: false,
       shouldFormatBigNumber: true,
       precision: 0,
       baseValue: 0,
-      minValue: 0,
-      plots: [
-        { key: 'ma5', line: 'line' },
-        { key: 'ma10', line: 'line' },
-        { key: 'ma20', line: 'line' },
-        {
-          key: 'volume',
-          type: 'bar',
-          referenceValue: 0,
-          color: (data, options) => {
-            const kLineData = data.currentData.kLineData || {}
-            if (kLineData.close > kLineData.open) {
-              return options.bar.upColor
-            } else if (kLineData.close < kLineData.open) {
-              return options.bar.downColor
-            }
-            return options.bar.noChangeColor
-          }
-        }
-      ]
+      minValue: 0
     })
+    this.setCalcParams([5, 10, 20])
   }
 
   regeneratePlots (params) {
-    const plots = []
-    params.forEach(p => {
-      plots.push({ key: `ma${p}`, type: 'line' })
+    const plots = params.map(p => {
+      return { key: `ma${p}`, type: 'line' }
     })
     plots.push({
       key: 'volume',

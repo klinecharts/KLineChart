@@ -1106,47 +1106,37 @@ var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
   var _super = _createSuper(MovingAverage);
 
   function MovingAverage() {
+    var _this;
+
     _classCallCheck(this, MovingAverage);
 
-    return _super.call(this, {
+    _this = _super.call(this, {
       name: MA,
       series: TechnicalIndicatorSeries.PRICE,
-      calcParams: [5, 10, 30, 60],
       precision: 2,
       shouldCheckParamCount: false,
-      shouldOhlc: true,
-      plots: [{
-        key: 'ma5',
-        type: 'line'
-      }, {
-        key: 'ma10',
-        type: 'line'
-      }, {
-        key: 'ma30',
-        type: 'line'
-      }, {
-        key: 'ma60',
-        type: 'line'
-      }]
+      shouldOhlc: true
     });
+
+    _this.setCalcParams([5, 10, 30, 60]);
+
+    return _this;
   }
 
   _createClass(MovingAverage, [{
     key: "regeneratePlots",
     value: function regeneratePlots(params) {
-      var plots = [];
-      params.forEach(function (p) {
-        plots.push({
+      return params.map(function (p) {
+        return {
           key: "ma".concat(p),
           type: 'line'
-        });
+        };
       });
-      return plots;
     }
   }, {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this = this;
+      var _this2 = this;
 
       var closeSums = [];
       var result = [];
@@ -1157,7 +1147,7 @@ var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
           closeSums[j] = (closeSums[j] || 0) + close;
 
           if (i >= param - 1) {
-            ma[_this.plots[j].key] = closeSums[j] / param;
+            ma[_this2.plots[j].key] = closeSums[j] / param;
             closeSums[j] -= dataList[i - (param - 1)].close;
           }
         });
@@ -1176,39 +1166,32 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
   var _super = _createSuper(ExponentialMovingAverage);
 
   function ExponentialMovingAverage() {
+    var _this;
+
     _classCallCheck(this, ExponentialMovingAverage);
 
-    return _super.call(this, {
+    _this = _super.call(this, {
       name: EMA,
       series: TechnicalIndicatorSeries.PRICE,
-      calcParams: [6, 12, 20],
       precision: 2,
       shouldCheckParamCount: false,
-      shouldOhlc: true,
-      plots: [{
-        key: 'ema6',
-        type: 'line'
-      }, {
-        key: 'ema12',
-        type: 'line'
-      }, {
-        key: 'ema20',
-        type: 'line'
-      }]
+      shouldOhlc: true
     });
+
+    _this.setCalcParams([6, 12, 20]);
+
+    return _this;
   }
 
   _createClass(ExponentialMovingAverage, [{
     key: "regeneratePlots",
     value: function regeneratePlots(params) {
-      var plots = [];
-      params.forEach(function (p) {
-        plots.push({
+      return params.map(function (p) {
+        return {
           key: "ema".concat(p),
           type: 'line'
-        });
+        };
       });
-      return plots;
     }
     /**
      * 计算指数移动平均
@@ -1221,7 +1204,7 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
   }, {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this = this;
+      var _this2 = this;
 
       var oldEmas = [];
       var result = [];
@@ -1237,7 +1220,7 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
             emaValue = (2 * close + (param - 1) * oldEmas[j]) / (param + 1);
           }
 
-          ema[_this.plots[j].key] = emaValue;
+          ema[_this2.plots[j].key] = emaValue;
           oldEmas[j] = emaValue;
         });
         result.push(ema);
@@ -1255,54 +1238,33 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
   var _super = _createSuper(Volume);
 
   function Volume() {
+    var _this;
+
     _classCallCheck(this, Volume);
 
-    return _super.call(this, {
+    _this = _super.call(this, {
       name: VOL,
       series: TechnicalIndicatorSeries.VOLUME,
-      calcParams: [5, 10, 20],
       shouldCheckParamCount: false,
       shouldFormatBigNumber: true,
       precision: 0,
       baseValue: 0,
-      minValue: 0,
-      plots: [{
-        key: 'ma5',
-        line: 'line'
-      }, {
-        key: 'ma10',
-        line: 'line'
-      }, {
-        key: 'ma20',
-        line: 'line'
-      }, {
-        key: 'volume',
-        type: 'bar',
-        referenceValue: 0,
-        color: function color(data, options) {
-          var kLineData = data.currentData.kLineData || {};
-
-          if (kLineData.close > kLineData.open) {
-            return options.bar.upColor;
-          } else if (kLineData.close < kLineData.open) {
-            return options.bar.downColor;
-          }
-
-          return options.bar.noChangeColor;
-        }
-      }]
+      minValue: 0
     });
+
+    _this.setCalcParams([5, 10, 20]);
+
+    return _this;
   }
 
   _createClass(Volume, [{
     key: "regeneratePlots",
     value: function regeneratePlots(params) {
-      var plots = [];
-      params.forEach(function (p) {
-        plots.push({
+      var plots = params.map(function (p) {
+        return {
           key: "ma".concat(p),
           type: 'line'
-        });
+        };
       });
       plots.push({
         key: 'volume',
@@ -1325,7 +1287,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
   }, {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this = this;
+      var _this2 = this;
 
       var volSums = [];
       var result = [];
@@ -1338,7 +1300,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
           volSums[j] = (volSums[j] || 0) + volume;
 
           if (i >= param - 1) {
-            vol[_this.plots[j].key] = volSums[j] / param;
+            vol[_this2.plots[j].key] = volSums[j] / param;
             volSums[j] -= dataList[i - (param - 1)].volume;
           }
         });
@@ -1634,36 +1596,29 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
   var _super = _createSuper(RelativeStrengthIndex);
 
   function RelativeStrengthIndex() {
+    var _this;
+
     _classCallCheck(this, RelativeStrengthIndex);
 
-    return _super.call(this, {
+    _this = _super.call(this, {
       name: RSI,
-      calcParams: [6, 12, 24],
-      shouldCheckParamCount: false,
-      plots: [{
-        key: 'rsi6',
-        type: 'line'
-      }, {
-        key: 'rsi12',
-        type: 'line'
-      }, {
-        key: 'rsi24',
-        type: 'line'
-      }]
+      shouldCheckParamCount: false
     });
+
+    _this.setCalcParams([6, 12, 24]);
+
+    return _this;
   }
 
   _createClass(RelativeStrengthIndex, [{
     key: "regeneratePlots",
     value: function regeneratePlots(params) {
-      var plots = [];
-      params.forEach(function (p) {
-        plots.push({
+      return params.map(function (p) {
+        return {
           key: "rsi".concat(p),
           type: 'line'
-        });
+        };
       });
-      return plots;
     }
     /**
      * 计算RSI
@@ -1677,7 +1632,7 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
   }, {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this = this;
+      var _this2 = this;
 
       var sumCloseAs = [];
       var sumCloseBs = [];
@@ -1699,7 +1654,7 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
           if (i >= param - 1) {
             var a = sumCloseAs[j] / param;
             var b = (sumCloseAs[j] + sumCloseBs[j]) / param;
-            rsi[_this.plots[j].key] = b === 0 ? 0 : a / b * 100;
+            rsi[_this2.plots[j].key] = b === 0 ? 0 : a / b * 100;
             var agoData = dataList[i - (param - 1)];
             var agoOpen = agoData.open;
             var agoTmp = (agoData.close - agoOpen) / agoOpen;
@@ -1726,36 +1681,29 @@ var Bias = /*#__PURE__*/function (_TechnicalIndicator) {
   var _super = _createSuper(Bias);
 
   function Bias() {
+    var _this;
+
     _classCallCheck(this, Bias);
 
-    return _super.call(this, {
+    _this = _super.call(this, {
       name: BIAS,
-      calcParams: [6, 12, 24],
-      shouldCheckParamCount: false,
-      plots: [{
-        key: 'bias6',
-        type: 'line'
-      }, {
-        key: 'bias12',
-        type: 'line'
-      }, {
-        key: 'bias24',
-        type: 'line'
-      }]
+      shouldCheckParamCount: false
     });
+
+    _this.setCalcParams([6, 12, 24]);
+
+    return _this;
   }
 
   _createClass(Bias, [{
     key: "regeneratePlots",
     value: function regeneratePlots(params) {
-      var plots = [];
-      params.forEach(function (p) {
-        plots.push({
+      return params.map(function (p) {
+        return {
           key: "bias".concat(p),
           type: 'line'
-        });
+        };
       });
-      return plots;
     }
     /**
      * 计算BIAS指标
@@ -1769,7 +1717,7 @@ var Bias = /*#__PURE__*/function (_TechnicalIndicator) {
   }, {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this = this;
+      var _this2 = this;
 
       var closeSums = [];
       var result = [];
@@ -1781,7 +1729,7 @@ var Bias = /*#__PURE__*/function (_TechnicalIndicator) {
 
           if (i >= param - 1) {
             var mean = closeSums[j] / calcParams[j];
-            bias[_this.plots[j].key] = (close - mean) / mean * 100;
+            bias[_this2.plots[j].key] = (close - mean) / mean * 100;
             closeSums[j] -= dataList[i - (param - 1)].close;
           }
         });
@@ -2619,36 +2567,29 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
   var _super = _createSuper(WilliamsR);
 
   function WilliamsR() {
+    var _this;
+
     _classCallCheck(this, WilliamsR);
 
-    return _super.call(this, {
+    _this = _super.call(this, {
       name: WR,
-      calcParams: [6, 10, 14],
-      shouldCheckParamCount: false,
-      plots: [{
-        key: 'wr1',
-        type: 'line'
-      }, {
-        key: 'wr2',
-        type: 'line'
-      }, {
-        key: 'wr3',
-        type: 'line'
-      }]
+      shouldCheckParamCount: false
     });
+
+    _this.setCalcParams([6, 10, 14]);
+
+    return _this;
   }
 
   _createClass(WilliamsR, [{
     key: "regeneratePlots",
     value: function regeneratePlots(params) {
-      var plots = [];
-      params.forEach(function (_, i) {
-        plots.push({
+      return params.map(function (_, i) {
+        return {
           key: "wr".concat(i + 1),
           type: 'line'
-        });
+        };
       });
-      return plots;
     }
     /**
      * 计算wr指标
@@ -2662,7 +2603,7 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
   }, {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this = this;
+      var _this2 = this;
 
       var result = [];
       dataList.forEach(function (kLineData, i) {
@@ -2676,7 +2617,7 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
             var hn = hln.hn;
             var ln = hln.ln;
             var hnSubLn = hn - ln;
-            wr[_this.plots[index].key] = hnSubLn === 0 ? 0 : (hn - close) / hnSubLn * 100;
+            wr[_this2.plots[index].key] = hnSubLn === 0 ? 0 : (hn - close) / hnSubLn * 100;
           }
         });
         result.push(wr);

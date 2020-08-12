@@ -19,22 +19,15 @@ export default class Bias extends TechnicalIndicator {
   constructor () {
     super({
       name: BIAS,
-      calcParams: [6, 12, 24],
-      shouldCheckParamCount: false,
-      plots: [
-        { key: 'bias6', type: 'line' },
-        { key: 'bias12', type: 'line' },
-        { key: 'bias24', type: 'line' }
-      ]
+      shouldCheckParamCount: false
     })
+    this.setCalcParams([6, 12, 24])
   }
 
   regeneratePlots (params) {
-    const plots = []
-    params.forEach(p => {
-      plots.push({ key: `bias${p}`, type: 'line' })
+    return params.map(p => {
+      return { key: `bias${p}`, type: 'line' }
     })
-    return plots
   }
 
   /**

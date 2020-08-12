@@ -19,22 +19,15 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
   constructor () {
     super({
       name: RSI,
-      calcParams: [6, 12, 24],
-      shouldCheckParamCount: false,
-      plots: [
-        { key: 'rsi6', type: 'line' },
-        { key: 'rsi12', type: 'line' },
-        { key: 'rsi24', type: 'line' }
-      ]
+      shouldCheckParamCount: false
     })
+    this.setCalcParams([6, 12, 24])
   }
 
   regeneratePlots (params) {
-    const plots = []
-    params.forEach(p => {
-      plots.push({ key: `rsi${p}`, type: 'line' })
+    return params.map(p => {
+      return { key: `rsi${p}`, type: 'line' }
     })
-    return plots
   }
 
   /**

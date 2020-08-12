@@ -20,22 +20,15 @@ export default class WilliamsR extends TechnicalIndicator {
   constructor () {
     super({
       name: WR,
-      calcParams: [6, 10, 14],
-      shouldCheckParamCount: false,
-      plots: [
-        { key: 'wr1', type: 'line' },
-        { key: 'wr2', type: 'line' },
-        { key: 'wr3', type: 'line' }
-      ]
+      shouldCheckParamCount: false
     })
+    this.setCalcParams([6, 10, 14])
   }
 
   regeneratePlots (params) {
-    const plots = []
-    params.forEach((_, i) => {
-      plots.push({ key: `wr${i + 1}`, type: 'line' })
+    return params.map((_, i) => {
+      return { key: `wr${i + 1}`, type: 'line' }
     })
-    return plots
   }
 
   /**

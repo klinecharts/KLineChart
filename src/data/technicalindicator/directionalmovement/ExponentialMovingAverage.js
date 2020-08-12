@@ -21,24 +21,17 @@ export default class ExponentialMovingAverage extends TechnicalIndicator {
     super({
       name: EMA,
       series: TechnicalIndicatorSeries.PRICE,
-      calcParams: [6, 12, 20],
       precision: 2,
       shouldCheckParamCount: false,
-      shouldOhlc: true,
-      plots: [
-        { key: 'ema6', type: 'line' },
-        { key: 'ema12', type: 'line' },
-        { key: 'ema20', type: 'line' }
-      ]
+      shouldOhlc: true
     })
+    this.setCalcParams([6, 12, 20])
   }
 
   regeneratePlots (params) {
-    const plots = []
-    params.forEach(p => {
-      plots.push({ key: `ema${p}`, type: 'line' })
+    return params.map(p => {
+      return { key: `ema${p}`, type: 'line' }
     })
-    return plots
   }
 
   /**
