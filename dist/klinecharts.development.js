@@ -5829,10 +5829,12 @@ var Axis = /*#__PURE__*/function () {
           max = _this$_computeMinMaxV.max,
           range = _this$_computeMinMaxV.range;
 
-      this._minValue = min;
-      this._maxValue = max;
-      this._range = range;
-      this._ticks = this._computeOptimalTicks(this._computeTicks());
+      if (min !== this._minValue || max !== this._maxValue) {
+        this._minValue = min;
+        this._maxValue = max;
+        this._range = range;
+        this._ticks = this._computeOptimalTicks(this._computeTicks());
+      }
     }
     /**
      * 计算最大最小值
