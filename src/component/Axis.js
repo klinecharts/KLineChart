@@ -19,6 +19,8 @@ export default class Axis {
     this._chartData = chartData
     this._width = 0
     this._height = 0
+    this._cacheMinValue = 0
+    this._cacheMaxValue = 0
     this._minValue = 0
     this._maxValue = 0
     this._range = 0
@@ -62,9 +64,11 @@ export default class Axis {
    */
   computeAxis (forceCompute) {
     const { min, max, range } = this._computeMinMaxValue()
-    if (this._minValue !== min || this._maxValue !== max || forceCompute) {
-      this._minValue = min
-      this._maxValue = max
+    this._minValue = min
+    this._maxValue = max
+    if (this._cacheMinValue !== min || this._cacheMaxValue !== max || forceCompute) {
+      this._cacheMinValue = min
+      this._cacheMaxValue = max
       this._range = range
       this._ticks = this._computeOptimalTicks(this._computeTicks())
       return true
