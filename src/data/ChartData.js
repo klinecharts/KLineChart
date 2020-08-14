@@ -686,7 +686,6 @@ export default class ChartData {
       technicalIndicator.setPrecision(isValid(precision) ? precision : this._pricePrecision)
       technicalIndicator.setCalcParams(calcParams)
       technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
-      pane.computeAxis()
     }
   }
 }

@@ -15,15 +15,16 @@
 import Pane from './Pane'
 import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
-import { MACD } from '../data/technicalindicator/defaultTechnicalIndicatorType'
 import EmptyTechnicalIndicator from '../data/technicalindicator/TechnicalIndicator'
 import YAxis from '../component/YAxis'
 
 export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
     super(props)
-    const technicalIndicatorType = props.technicalIndicatorType || MACD
-    this.setTechnicalIndicatorType(technicalIndicatorType)
+    if ('height' in props) {
+      this.setHeight(props.height)
+    }
+    this.setTechnicalIndicatorType(props.technicalIndicatorType)
   }
 
   _initBefore (props) {

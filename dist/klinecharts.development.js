@@ -3903,7 +3903,6 @@ var ChartData = /*#__PURE__*/function () {
         technicalIndicator.setPrecision(isValid(precision) ? precision : this._pricePrecision);
         technicalIndicator.setCalcParams(calcParams);
         technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || [];
-        pane.computeAxis();
       }
     }
   }]);
@@ -6254,9 +6253,12 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
     _classCallCheck(this, TechnicalIndicatorPane);
 
     _this = _super.call(this, props);
-    var technicalIndicatorType = props.technicalIndicatorType || MACD;
 
-    _this.setTechnicalIndicatorType(technicalIndicatorType);
+    if ('height' in props) {
+      _this.setHeight(props.height);
+    }
+
+    _this.setTechnicalIndicatorType(props.technicalIndicatorType);
 
     return _this;
   }
@@ -10671,14 +10673,13 @@ var ChartPane = /*#__PURE__*/function () {
       container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
-      technicalIndicatorType: MA,
       tag: CANDLE_STICK_PANE_TAG
     });
     this._chartEvent = new ChartEvent(this._chartContainer, this._chartData, this._xAxisPane.xAxis(), this._candleStickPane.yAxis());
 
     this._measurePaneHeight();
 
-    this._layoutPane();
+    this._measureWidthAndLayoutPane();
   }
   /**
    * 初始化图表容器
@@ -10734,53 +10735,7 @@ var ChartPane = /*#__PURE__*/function () {
 
       this._technicalIndicatorPanes[paneIndex].setHeight(height);
 
-      this._measurePaneHeight();
-
-      this._candleStickPane.layout();
-
-      var _iterator = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-          _step;
-
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var pane = _step.value;
-          pane.layout();
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-    }
-    /**
-     * 重新布局
-     * @private
-     */
-
-  }, {
-    key: "_layoutPane",
-    value: function _layoutPane() {
-      this._measurePaneWidth();
-
-      this._xAxisPane.computeAxis();
-
-      this._xAxisPane.layout();
-
-      this._candleStickPane.layout();
-
-      var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-          _step2;
-
-      try {
-        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var pane = _step2.value;
-          pane.layout();
-        }
-      } catch (err) {
-        _iterator2.e(err);
-      } finally {
-        _iterator2.f();
-      }
+      this.resize();
     }
     /**
      * 更新所有pane
@@ -10797,40 +10752,40 @@ var ChartPane = /*#__PURE__*/function () {
 
         this._candleStickPane.invalidate(invalidateLevel);
 
-        var _iterator3 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step3;
+        var _iterator = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+            _step;
 
         try {
-          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-            var pane = _step3.value;
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var pane = _step.value;
             pane.invalidate(invalidateLevel);
           }
         } catch (err) {
-          _iterator3.e(err);
+          _iterator.e(err);
         } finally {
-          _iterator3.f();
+          _iterator.f();
         }
       } else {
         this._candleStickPane.computeAxis();
 
         if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
-          var _iterator4 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-              _step4;
+          var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+              _step2;
 
           try {
-            for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-              var _pane = _step4.value;
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+              var _pane = _step2.value;
 
               _pane.computeAxis();
             }
           } catch (err) {
-            _iterator4.e(err);
+            _iterator2.e(err);
           } finally {
-            _iterator4.f();
+            _iterator2.f();
           }
         }
 
-        this._layoutPane();
+        this._measureWidthAndLayoutPane();
       }
     }
     /**
@@ -10846,23 +10801,57 @@ var ChartPane = /*#__PURE__*/function () {
       Promise.resolve().then(function (_) {
         _this._chartData.calcTechnicalIndicator(_this._candleStickPane);
 
-        var _iterator5 = _createForOfIteratorHelper(_this._technicalIndicatorPanes),
-            _step5;
+        _this._candleStickPane.computeAxis();
+
+        var _iterator3 = _createForOfIteratorHelper(_this._technicalIndicatorPanes),
+            _step3;
 
         try {
-          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-            var pane = _step5.value;
+          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+            var pane = _step3.value;
 
             _this._chartData.calcTechnicalIndicator(pane);
+
+            pane.computeAxis();
           }
         } catch (err) {
-          _iterator5.e(err);
+          _iterator3.e(err);
         } finally {
-          _iterator5.f();
+          _iterator3.f();
         }
 
-        _this._layoutPane();
+        _this._measureWidthAndLayoutPane();
       });
+    }
+    /**
+     * 计算宽度和重新布局
+     * @private
+     */
+
+  }, {
+    key: "_measureWidthAndLayoutPane",
+    value: function _measureWidthAndLayoutPane() {
+      this._measurePaneWidth();
+
+      this._xAxisPane.computeAxis();
+
+      this._xAxisPane.layout();
+
+      this._candleStickPane.layout();
+
+      var _iterator4 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+          _step4;
+
+      try {
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var pane = _step4.value;
+          pane.layout();
+        }
+      } catch (err) {
+        _iterator4.e(err);
+      } finally {
+        _iterator4.f();
+      }
     }
     /**
      * 测量pane高度
@@ -10882,12 +10871,12 @@ var ChartPane = /*#__PURE__*/function () {
       var paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorHeight;
       var technicalIndicatorPaneTotalHeight = 0;
 
-      var _iterator6 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-          _step6;
+      var _iterator5 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+          _step5;
 
       try {
-        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-          var pane = _step6.value;
+        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+          var pane = _step5.value;
 
           var _paneHeight = pane.height();
 
@@ -10900,9 +10889,9 @@ var ChartPane = /*#__PURE__*/function () {
           }
         }
       } catch (err) {
-        _iterator6.e(err);
+        _iterator5.e(err);
       } finally {
-        _iterator6.f();
+        _iterator5.f();
       }
 
       var candleStickPaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight;
@@ -10954,18 +10943,18 @@ var ChartPane = /*#__PURE__*/function () {
       if (isOutside) {
         yAxisWidth = this._candleStickPane.getSelfAxisWidth();
 
-        var _iterator7 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step7;
+        var _iterator6 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+            _step6;
 
         try {
-          for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-            var pane = _step7.value;
+          for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+            var pane = _step6.value;
             yAxisWidth = Math.max(yAxisWidth, pane.getSelfAxisWidth());
           }
         } catch (err) {
-          _iterator7.e(err);
+          _iterator6.e(err);
         } finally {
-          _iterator7.f();
+          _iterator6.f();
         }
 
         mainWidth = paneWidth - yAxisWidth;
@@ -11028,21 +11017,21 @@ var ChartPane = /*#__PURE__*/function () {
 
       this._candleStickPane.computeAxis();
 
-      var _iterator8 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-          _step8;
+      var _iterator7 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+          _step7;
 
       try {
-        for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-          var pane = _step8.value;
+        for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+          var pane = _step7.value;
           pane.computeAxis();
         }
       } catch (err) {
-        _iterator8.e(err);
+        _iterator7.e(err);
       } finally {
-        _iterator8.f();
+        _iterator7.f();
       }
 
-      this._layoutPane();
+      this._measureWidthAndLayoutPane();
     }
     /**
      * 加载技术指标参数
@@ -11058,47 +11047,51 @@ var ChartPane = /*#__PURE__*/function () {
       var info = this._chartData.technicalIndicator(technicalIndicatorType);
 
       if (info.structure && isArray(params)) {
-        var _iterator9 = _createForOfIteratorHelper(params),
-            _step9;
+        var _iterator8 = _createForOfIteratorHelper(params),
+            _step8;
 
         try {
-          for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-            var v = _step9.value;
+          for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
+            var v = _step8.value;
 
             if (!isNumber(v) || v <= 0 || parseInt(v, 10) !== v) {
               return;
             }
           }
         } catch (err) {
-          _iterator9.e(err);
+          _iterator8.e(err);
         } finally {
-          _iterator9.f();
+          _iterator8.f();
         }
 
         info.calcParams = clone(params);
         Promise.resolve().then(function (_) {
           if (_this2._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
             _this2._chartData.calcTechnicalIndicator(_this2._candleStickPane);
+
+            _this2._candleStickPane.computeAxis();
           }
 
-          var _iterator10 = _createForOfIteratorHelper(_this2._technicalIndicatorPanes),
-              _step10;
+          var _iterator9 = _createForOfIteratorHelper(_this2._technicalIndicatorPanes),
+              _step9;
 
           try {
-            for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-              var pane = _step10.value;
+            for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+              var pane = _step9.value;
 
               if (pane.technicalIndicator().name === technicalIndicatorType) {
                 _this2._chartData.calcTechnicalIndicator(pane);
+
+                pane.computeAxis();
               }
             }
           } catch (err) {
-            _iterator10.e(err);
+            _iterator9.e(err);
           } finally {
-            _iterator10.f();
+            _iterator9.f();
           }
 
-          _this2._layoutPane();
+          _this2._measureWidthAndLayoutPane();
         });
       }
     }
@@ -11184,6 +11177,10 @@ var ChartPane = /*#__PURE__*/function () {
     key: "setCandleStickChartType",
     value: function setCandleStickChartType(type) {
       this._candleStickPane.setChartType(type);
+
+      this._candleStickPane.computeAxis();
+
+      this._measureWidthAndLayoutPane();
     }
     /**
      * 创建一个指标
@@ -11195,8 +11192,7 @@ var ChartPane = /*#__PURE__*/function () {
 
   }, {
     key: "createTechnicalIndicator",
-    value: function createTechnicalIndicator() {
-      var technicalIndicatorType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : MACD;
+    value: function createTechnicalIndicator(technicalIndicatorType) {
       var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT;
       var dragEnabled = arguments.length > 2 ? arguments[2] : undefined;
 
@@ -11226,16 +11222,13 @@ var ChartPane = /*#__PURE__*/function () {
         chartData: this._chartData,
         xAxis: this._xAxisPane.xAxis(),
         technicalIndicatorType: technicalIndicatorType,
-        tag: tag
+        tag: tag,
+        height: height
       });
-      technicalIndicatorPane.setHeight(height);
 
       this._technicalIndicatorPanes.push(technicalIndicatorPane);
 
-      this._measurePaneHeight();
-
-      this._layoutPane();
-
+      this.resize();
       return tag;
     }
     /**
@@ -11270,9 +11263,7 @@ var ChartPane = /*#__PURE__*/function () {
           this._separatorPanes[_i].updatePaneIndex(_i);
         }
 
-        this._measurePaneHeight();
-
-        this._layoutPane();
+        this.resize();
       }
     }
     /**
@@ -11287,16 +11278,18 @@ var ChartPane = /*#__PURE__*/function () {
       if (tag === CANDLE_STICK_PANE_TAG) {
         this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType);
 
-        this._layoutPane();
+        this._candleStickPane.computeAxis();
+
+        this._measureWidthAndLayoutPane();
       } else {
         var p;
 
-        var _iterator11 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step11;
+        var _iterator10 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+            _step10;
 
         try {
-          for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
-            var pane = _step11.value;
+          for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
+            var pane = _step10.value;
 
             if (pane.tag() === tag) {
               p = pane;
@@ -11304,9 +11297,9 @@ var ChartPane = /*#__PURE__*/function () {
             }
           }
         } catch (err) {
-          _iterator11.e(err);
+          _iterator10.e(err);
         } finally {
-          _iterator11.f();
+          _iterator10.f();
         }
 
         if (p) {
@@ -11317,8 +11310,9 @@ var ChartPane = /*#__PURE__*/function () {
             this.removeTechnicalIndicator(tag);
           } else {
             p.setTechnicalIndicatorType(technicalIndicatorType);
+            p.computeAxis();
 
-            this._layoutPane();
+            this._measureWidthAndLayoutPane();
           }
         }
       }

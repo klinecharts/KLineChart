@@ -62,12 +62,10 @@ export default class Axis {
    */
   computeAxis () {
     const { min, max, range } = this._computeMinMaxValue()
-    if (min !== this._minValue || max !== this._maxValue) {
-      this._minValue = min
-      this._maxValue = max
-      this._range = range
-      this._ticks = this._computeOptimalTicks(this._computeTicks())
-    }
+    this._minValue = min
+    this._maxValue = max
+    this._range = range
+    this._ticks = this._computeOptimalTicks(this._computeTicks())
   }
 
   /**

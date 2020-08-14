@@ -81,7 +81,7 @@ export declare interface Chart {
   setCandleStickChartType(chartType: ChartType): void;
   setCandleStickTechnicalIndicatorType(technicalIndicatorType: string): void;
   setTechnicalIndicatorType(tag: string, technicalIndicatorType: string): void;
-  createTechnicalIndicator(technicalIndicatorType?: string, height?: number, dragEnabled?: boolean): string | null;
+  createTechnicalIndicator(technicalIndicatorType: string, height?: number, dragEnabled?: boolean): string | null;
   addCustomTechnicalIndicator(technicalIndicatorInfo: TechnicalIndicatorInfo)
   removeTechnicalIndicator(tag: string): void;
   addGraphicMark(graphicMarkType: GraphicMarkType): void;
