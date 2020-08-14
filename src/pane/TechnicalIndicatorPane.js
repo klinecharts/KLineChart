@@ -21,6 +21,7 @@ import YAxis from '../component/YAxis'
 export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
     super(props)
+    this._technicalIndicator = new EmptyTechnicalIndicator({})
     if ('height' in props) {
       this.setHeight(props.height)
     }
@@ -101,7 +102,7 @@ export default class TechnicalIndicatorPane extends Pane {
 
   /**
    * 获取技术指标
-   * @returns {string}
+   * @returns {TechnicalIndicator}
    */
   technicalIndicator () {
     return this._technicalIndicator
@@ -113,10 +114,7 @@ export default class TechnicalIndicatorPane extends Pane {
    */
   setTechnicalIndicatorType (technicalIndicatorType) {
     const { structure: TechnicalIndicator } = this._chartData.technicalIndicator(technicalIndicatorType)
-    if (
-      (!this._technicalIndicator && !TechnicalIndicator) ||
-      (this._technicalIndicator && this._technicalIndicator.name === technicalIndicatorType)
-    ) {
+    if (this._technicalIndicator.name === technicalIndicatorType) {
       return
     }
     if (TechnicalIndicator) {

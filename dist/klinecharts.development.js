@@ -5828,12 +5828,10 @@ var Axis = /*#__PURE__*/function () {
           max = _this$_computeMinMaxV.max,
           range = _this$_computeMinMaxV.range;
 
-      if (min !== this._minValue || max !== this._maxValue) {
-        this._minValue = min;
-        this._maxValue = max;
-        this._range = range;
-        this._ticks = this._computeOptimalTicks(this._computeTicks());
-      }
+      this._minValue = min;
+      this._maxValue = max;
+      this._range = range;
+      this._ticks = this._computeOptimalTicks(this._computeTicks());
     }
     /**
      * 计算最大最小值
@@ -6253,6 +6251,7 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
     _classCallCheck(this, TechnicalIndicatorPane);
 
     _this = _super.call(this, props);
+    _this._technicalIndicator = new TechnicalIndicator({});
 
     if ('height' in props) {
       _this.setHeight(props.height);
@@ -6371,7 +6370,7 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
       var _this$_chartData$tech = this._chartData.technicalIndicator(technicalIndicatorType),
           TechnicalIndicator$1 = _this$_chartData$tech.structure;
 
-      if (!this._technicalIndicator && !TechnicalIndicator$1 || this._technicalIndicator && this._technicalIndicator.name === technicalIndicatorType) {
+      if (this._technicalIndicator.name === technicalIndicatorType) {
         return;
       }
 
