@@ -26,7 +26,7 @@ export default class XAxisPane extends Pane {
   }
 
   computeAxis () {
-    this._xAxis.computeAxis()
+    this._xAxis.computeAxis(true)
   }
 
   getSelfAxisHeight () {

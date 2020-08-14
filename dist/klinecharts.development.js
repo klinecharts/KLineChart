@@ -5822,16 +5822,18 @@ var Axis = /*#__PURE__*/function () {
 
   }, {
     key: "computeAxis",
-    value: function computeAxis() {
+    value: function computeAxis(forceCompute) {
       var _this$_computeMinMaxV = this._computeMinMaxValue(),
           min = _this$_computeMinMaxV.min,
           max = _this$_computeMinMaxV.max,
           range = _this$_computeMinMaxV.range;
 
-      this._minValue = min;
-      this._maxValue = max;
-      this._range = range;
-      this._ticks = this._computeOptimalTicks(this._computeTicks());
+      if (this._minValue !== min || this._maxValue !== max || forceCompute) {
+        this._minValue = min;
+        this._maxValue = max;
+        this._range = range;
+        this._ticks = this._computeOptimalTicks(this._computeTicks());
+      }
     }
     /**
      * 计算最大最小值
@@ -6324,10 +6326,10 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
     }
   }, {
     key: "computeAxis",
-    value: function computeAxis() {
+    value: function computeAxis(forceCompute) {
       this._yAxis.calcMinMaxValue();
 
-      this._yAxis.computeAxis();
+      this._yAxis.computeAxis(forceCompute);
     }
   }, {
     key: "getSelfAxisWidth",
@@ -6351,7 +6353,7 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
     }
     /**
      * 获取技术指标
-     * @returns {string}
+     * @returns {TechnicalIndicator}
      */
 
   }, {
@@ -9920,7 +9922,7 @@ var XAxisPane = /*#__PURE__*/function (_Pane) {
   }, {
     key: "computeAxis",
     value: function computeAxis() {
-      this._xAxis.computeAxis();
+      this._xAxis.computeAxis(true);
     }
   }, {
     key: "getSelfAxisHeight",
@@ -11014,7 +11016,7 @@ var ChartPane = /*#__PURE__*/function () {
     value: function resize() {
       this._measurePaneHeight();
 
-      this._candleStickPane.computeAxis();
+      this._candleStickPane.computeAxis(true);
 
       var _iterator7 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
           _step7;
@@ -11022,7 +11024,7 @@ var ChartPane = /*#__PURE__*/function () {
       try {
         for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
           var pane = _step7.value;
-          pane.computeAxis();
+          pane.computeAxis(true);
         }
       } catch (err) {
         _iterator7.e(err);

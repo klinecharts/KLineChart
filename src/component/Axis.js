@@ -60,12 +60,14 @@ export default class Axis {
   /**
    * 计算轴
    */
-  computeAxis () {
+  computeAxis (forceCompute) {
     const { min, max, range } = this._computeMinMaxValue()
-    this._minValue = min
-    this._maxValue = max
-    this._range = range
-    this._ticks = this._computeOptimalTicks(this._computeTicks())
+    if (this._minValue !== min || this._maxValue !== max || forceCompute) {
+      this._minValue = min
+      this._maxValue = max
+      this._range = range
+      this._ticks = this._computeOptimalTicks(this._computeTicks())
+    }
   }
 
   /**

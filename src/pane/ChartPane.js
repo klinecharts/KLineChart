@@ -262,9 +262,9 @@ export default class ChartPane {
    */
   resize () {
     this._measurePaneHeight()
-    this._candleStickPane.computeAxis()
+    this._candleStickPane.computeAxis(true)
     for (const pane of this._technicalIndicatorPanes) {
-      pane.computeAxis()
+      pane.computeAxis(true)
     }
     this._measureWidthAndLayoutPane()
   }
