@@ -67,7 +67,9 @@ export default class Axis {
       this._maxValue = max
       this._range = range
       this._ticks = this._computeOptimalTicks(this._computeTicks())
+      return true
     }
+    return false
   }
 
   /**

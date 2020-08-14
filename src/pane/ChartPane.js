@@ -54,7 +54,7 @@ export default class ChartPane {
       this._candleStickPane.yAxis()
     )
     this._measurePaneHeight()
-    this._measureWidthAndLayoutPane()
+    this._measureWidthAndLayoutPane(true)
   }
 
   /**
@@ -115,13 +115,16 @@ export default class ChartPane {
         pane.invalidate(invalidateLevel)
       }
     } else {
-      this._candleStickPane.computeAxis()
+      let shouldMeasureWidth = this._candleStickPane.computeAxis()
       if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
         for (const pane of this._technicalIndicatorPanes) {
-          pane.computeAxis()
+          const should = pane.computeAxis()
+          if (should) {
+            shouldMeasureWidth = should
+          }
         }
       }
-      this._measureWidthAndLayoutPane()
+      this._measureWidthAndLayoutPane(shouldMeasureWidth)
     }
   }
 
@@ -133,12 +136,15 @@ export default class ChartPane {
     Promise.resolve().then(
       _ => {
         this._chartData.calcTechnicalIndicator(this._candleStickPane)
-        this._candleStickPane.computeAxis()
+        let shouldMeasureWidth = this._candleStickPane.computeAxis()
         for (const pane of this._technicalIndicatorPanes) {
           this._chartData.calcTechnicalIndicator(pane)
-          pane.computeAxis()
+          const should = pane.computeAxis()
+          if (should) {
+            shouldMeasureWidth = should
+          }
         }
-        this._measureWidthAndLayoutPane()
+        this._measureWidthAndLayoutPane(shouldMeasureWidth)
       }
     )
   }
@@ -147,8 +153,10 @@ export default class ChartPane {
    * 计算宽度和重新布局
    * @private
    */
-  _measureWidthAndLayoutPane () {
-    this._measurePaneWidth()
+  _measureWidthAndLayoutPane (shouldMeasureWidth) {
+    if (shouldMeasureWidth) {
+      this._measurePaneWidth()
+    }
     this._xAxisPane.computeAxis()
     this._xAxisPane.layout()
     this._candleStickPane.layout()
@@ -266,7 +274,7 @@ export default class ChartPane {
     for (const pane of this._technicalIndicatorPanes) {
       pane.computeAxis(true)
     }
-    this._measureWidthAndLayoutPane()
+    this._measureWidthAndLayoutPane(true)
   }
 
   /**
@@ -285,17 +293,21 @@ export default class ChartPane {
       info.calcParams = clone(params)
       Promise.resolve().then(
         _ => {
+          let shouldMeasureWidth = false
           if (this._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
             this._chartData.calcTechnicalIndicator(this._candleStickPane)
-            this._candleStickPane.computeAxis()
+            shouldMeasureWidth = this._candleStickPane.computeAxis()
           }
           for (const pane of this._technicalIndicatorPanes) {
             if (pane.technicalIndicator().name === technicalIndicatorType) {
               this._chartData.calcTechnicalIndicator(pane)
-              pane.computeAxis()
+              const should = pane.computeAxis()
+              if (should) {
+                shouldMeasureWidth = should
+              }
             }
           }
-          this._measureWidthAndLayoutPane()
+          this._measureWidthAndLayoutPane(shouldMeasureWidth)
         }
       )
     }
@@ -364,8 +376,8 @@ export default class ChartPane {
    */
   setCandleStickChartType (type) {
     this._candleStickPane.setChartType(type)
-    this._candleStickPane.computeAxis()
-    this._measureWidthAndLayoutPane()
+    const shouldMeasureWidth = this._candleStickPane.computeAxis()
+    this._measureWidthAndLayoutPane(shouldMeasureWidth)
   }
 
   /**
@@ -443,8 +455,8 @@ export default class ChartPane {
   setTechnicalIndicatorType (tag, technicalIndicatorType) {
     if (tag === CANDLE_STICK_PANE_TAG) {
       this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType)
-      this._candleStickPane.computeAxis()
-      this._measureWidthAndLayoutPane()
+      const shouldMeasureWidth = this._candleStickPane.computeAxis()
+      this._measureWidthAndLayoutPane(shouldMeasureWidth)
     } else {
       let p
       for (const pane of this._technicalIndicatorPanes) {
@@ -459,8 +471,8 @@ export default class ChartPane {
           this.removeTechnicalIndicator(tag)
         } else {
           p.setTechnicalIndicatorType(technicalIndicatorType)
-          p.computeAxis()
-          this._measureWidthAndLayoutPane()
+          const shouldMeasureWidth = p.computeAxis()
+          this._measureWidthAndLayoutPane(shouldMeasureWidth)
         }
       }
     }

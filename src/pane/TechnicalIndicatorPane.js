@@ -81,7 +81,7 @@ export default class TechnicalIndicatorPane extends Pane {
 
   computeAxis (forceCompute) {
     this._yAxis.calcMinMaxValue()
-    this._yAxis.computeAxis(forceCompute)
+    return this._yAxis.computeAxis(forceCompute)
   }
 
   getSelfAxisWidth () {
