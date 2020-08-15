@@ -1,5 +1,14 @@
 # Change Log
 
+## 5.5.1
+`To be released`
++ 💄 When there is no data, the y-axis is displayed.
++ 💄 Optimize the default main chart technical indicator type, the default chart is simpler.
++ 💄 Optimize performance and reduce useless calculations.
++ 🐞 Fix the problem that the y-axis cannot be displayed and displayed incorrectly when switching the chart type and the newly added secondary chart indicator.
++ 👉 `xAxis.tickText.margin` changed to `xAxis.tickText.paddingTop` and `xAxis.tickText.paddingBottom`.
++ 👉 `yAxis.tickText.margin` changed to `yAxis.tickText.paddingLeft` and `yAxis.tickText.paddingRight`.
+
 ## 5.5.0
 `2020-07-26`
 + 🆕 Add back the technical indicator ohlc display.
