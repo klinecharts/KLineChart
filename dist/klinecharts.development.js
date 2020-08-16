@@ -324,9 +324,7 @@ function isFunction(value) {
  */
 
 function isObject(value) {
-  var type = _typeof(value);
-
-  return type === 'function' || !!value && type === 'object';
+  return !!value && _typeof(value) === 'object';
 }
 /**
  * 判断是否是数字
@@ -7034,7 +7032,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       if (baseValues) {
         if (isFunction(baseValues)) {
           values = baseValues(kLineData, candleStick, floatLayerPromptCandleStick) || [];
-        } else {
+        } else if (isArray(baseValues)) {
           values = baseValues;
         }
       } else {

@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicatorFloatLayerView from './TechnicalIndicatorFloatLayerView'
-import { isFunction, isObject } from '../utils/typeChecks'
+import { isFunction, isObject, isArray } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, getFont } from '../utils/canvas'
 import { ChartType, FloatLayerPromptCandleStickTextDisplayType } from '../data/options/styleOptions'
@@ -253,7 +253,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
     if (baseValues) {
       if (isFunction(baseValues)) {
         values = baseValues(kLineData, candleStick, floatLayerPromptCandleStick) || []
-      } else {
+      } else if (isArray(baseValues)) {
         values = baseValues
       }
     } else {

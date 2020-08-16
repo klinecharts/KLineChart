@@ -79,8 +79,7 @@ export function isFunction (value) {
  * @return {boolean}
  */
 export function isObject (value) {
-  const type = typeof value
-  return type === 'function' || (!!value && type === 'object')
+  return (!!value && typeof value === 'object')
 }
 
 /**
