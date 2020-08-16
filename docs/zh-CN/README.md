@@ -121,11 +121,11 @@ setCandleStickChartType(chartType)
 
 // 设置蜡烛图上的技术指标类型
 // 理论上支持目前图表支持的所以技术指标
-// 一般来说，只是设置'NO'，'MA'，'EMA'，'BOLL'，'SAR'，当设置为'NO'时将不展示
+// 当设置为'NO'时将不展示
 setCandleStickTechnicalIndicatorType(technicalIndicatorType)
 
 // 创建技术指标图
-// technicalIndicatorType 技术指标类型，详情参阅技术指标，可缺省，默认为'MACD'
+// technicalIndicatorType 技术指标类型
 // height 技术指标图的高度，可缺省，默认为100
 // dragEnabled 技术指标图是否可以拖拽调整高度，可缺省，默认为true
 // 返回值是一个字符串类型的技术指标图标识，这非常重要，后续对该图表的一些操作，都需要此标识
@@ -136,7 +136,7 @@ createTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
 addCustomTechnicalIndicator(technicalIndicatorInfo)
 
 // 设置其它技术指标图的指标类型
-// technicalIndicatorType 技术指标类型，当technicalIndicatorType是'NO'时，图表会移除当前技术指标图，详情类型详情可参阅技术指标
+// technicalIndicatorType 技术指标类型，当technicalIndicatorType是不存在时，图表会移除当前技术指标图，详情类型详情可参阅技术指标
 // tag 技术指标图标识
 setTechnicalIndicatorType(tag, technicalIndicatorType)
 

@@ -1,11 +1,12 @@
 # 版本日志
 
 ## 5.5.1
-`待发布`
+`2020-08-16`
 + 💄 优化无数据时，y轴显示。
 + 💄 优化默认主图技术指标类型，默认图表更纯粹。
 + 💄 优化性能，减少无用的计算。
 + 🐞 修复切换图表类型和新增副图指标y轴不能显示和显示不对问题。
++ 🐞 修复当配置是方法时，不能正确合并的问题。
 + 👉 `xAxis.tickText.margin`变更为`xAxis.tickText.paddingTop`和`xAxis.tickText.paddingBottom`。
 + 👉 `yAxis.tickText.margin`变更为`yAxis.tickText.paddingLeft`和`yAxis.tickText.paddingRight`。
 

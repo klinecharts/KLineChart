@@ -1,11 +1,12 @@
 # Change Log
 
 ## 5.5.1
-`To be released`
+`2020-08-16`
 + 💄 When there is no data, the y-axis is displayed.
 + 💄 Optimize the default main chart technical indicator type, the default chart is simpler.
 + 💄 Optimize performance and reduce useless calculations.
 + 🐞 Fix the problem that the y-axis cannot be displayed and displayed incorrectly when switching the chart type and the newly added secondary chart indicator.
++ 🐞 Fix the problem that cannot be merged correctly when configuration is a method.
 + 👉 `xAxis.tickText.margin` changed to `xAxis.tickText.paddingTop` and `xAxis.tickText.paddingBottom`.
 + 👉 `yAxis.tickText.margin` changed to `yAxis.tickText.paddingLeft` and `yAxis.tickText.paddingRight`.
 
