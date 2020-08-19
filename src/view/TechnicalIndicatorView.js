@@ -109,9 +109,7 @@ export default class TechnicalIndicatorView extends View {
                   y: valueY,
                   radius: halfBarSpace,
                   color: (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor,
-                  isStroke: plot.isStroke
-                    ? plot.isStroke(cbData)
-                    : true
+                  isStroke: plot.isStroke ? plot.isStroke(cbData) : true
                 }
                 this._drawCircle(circle)
               }
@@ -136,9 +134,7 @@ export default class TechnicalIndicatorView extends View {
                   bar.y = baseValueY
                 }
                 bar.color = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
-                bar.isStroke = plot.isStroke
-                  ? plot.isStroke(cbData)
-                  : false
+                bar.isStroke = plot.isStroke ? plot.isStroke(cbData) : false
                 this._drawBar(bar)
               }
               break
@@ -249,12 +245,9 @@ export default class TechnicalIndicatorView extends View {
     for (let i = this._chartData.from(); i < to; i++) {
       const deltaFromRight = dataSize + offsetRightBarCount - i
       const x = this._width - (deltaFromRight - 0.5) * dataSpace + halfBarSpace
-      const kLineData = dataList[i]
-      onDrawing(x, i, kLineData, halfBarSpace, barSpace)
+      onDrawing(x, i, dataList[i], halfBarSpace, barSpace)
     }
-    if (onDrawEnd) {
-      onDrawEnd()
-    }
+    onDrawEnd && onDrawEnd()
   }
 
   /**
