@@ -17,12 +17,13 @@ import { cancelAnimationFrame, requestAnimationFrame } from '../utils/compatible
 
 /**
  * 绘制类型
- * @type {{BAR: string, LINE: string, CIRCLE: string}}
+ * @type {{BAR: string, LINE: string, CUSTOM: string, CIRCLE: string}}
  */
 export const PlotType = {
   LINE: 'line',
   BAR: 'bar',
-  CIRCLE: 'circle'
+  CIRCLE: 'circle',
+  CUSTOM: 'custom'
 }
 
 class View {

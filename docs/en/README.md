@@ -163,7 +163,11 @@ The technicalIndicatorInfo format is as follows:
   shouldFormatBigNumber: false,
   baseValue: null,
   minValue: null,
-  maxValue: null
+  maxValue: null,
+  render: (
+    ctx, customRenderDataSource, technicalIndicatorOptions,
+    xAxisConvertToPixel, yAxisConvertToPixel
+  ) => {}
 }
 ```
 Specific reference [TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator).

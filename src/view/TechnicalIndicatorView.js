@@ -86,6 +86,7 @@ export default class TechnicalIndicatorView extends View {
     }
     const baseValueY = this._yAxis.convertToPixel(baseValue)
     const isCandleStickYAxis = this._yAxis.isCandleStickYAxis()
+    const customRenderDataSource = {}
     this._ctx.lineWidth = 1
     this._drawGraphics(
       (x, i, kLineData, halfBarSpace, barSpace) => {
@@ -139,7 +140,7 @@ export default class TechnicalIndicatorView extends View {
               }
               break
             }
-            default: {
+            case PlotType.LINE: {
               if (isValid(value)) {
                 const valueY = this._yAxis.convertToPixel(value)
                 const line = { x: x, y: valueY }
@@ -158,6 +159,23 @@ export default class TechnicalIndicatorView extends View {
               lineValueIndex++
               break
             }
+            case PlotType.CUSTOM: {
+              if (!customRenderDataSource[plot.key]) {
+                customRenderDataSource[plot.key] = []
+              }
+              if (isValid(value)) {
+                customRenderDataSource[plot.key].push({
+                  x,
+                  y: this._yAxis.convertToPixel(value),
+                  pos: i,
+                  value
+                })
+              } else {
+                customRenderDataSource[plot.key].push(null)
+              }
+              break
+            }
+            default: { break }
           }
         })
       },
@@ -165,6 +183,14 @@ export default class TechnicalIndicatorView extends View {
         this._drawLines(lines, technicalIndicatorOptions)
       }
     )
+    if (technicalIndicator.render) {
+      this._ctx.save()
+      technicalIndicator.render(
+        this._ctx, customRenderDataSource, technicalIndicatorOptions,
+        this._xAxis.convertToPixel, this._yAxis.convertToPixel
+      )
+      this._ctx.restore()
+    }
   }
 
   /**
