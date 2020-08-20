@@ -38,42 +38,20 @@ export function formatValue (data, key, defaultValue = '--') {
  * @param format
  * @returns {string}
  */
-export function formatDate (dateTimeFormat, timestamp, format) {
+export function formatDate (dateTimeFormat, timestamp, format = 'MM-DD hh:mm') {
   if (timestamp && isNumber(timestamp)) {
-    const date = new Date(timestamp)
-    const dateTimeString = dateTimeFormat.format(date)
-    const dateString = dateTimeString.match(/^[\d]{1,2}\/[\d]{1,2}\/[\d]{4}/)[0]
-    const dateStringArray = dateString.split('/')
-    const month = `${dateStringArray[0].length === 1 ? `0${dateStringArray[0]}` : dateStringArray[0]}`
-    const day = `${dateStringArray[1].length === 1 ? `0${dateStringArray[1]}` : dateStringArray[1]}`
-    let timeString = dateTimeString.match(/[\d]{2}:[\d]{2}$/)[0]
-    // 这里将小时24转换成00
-    if (timeString.match(/^[\d]{2}/)[0] === '24') {
-      timeString = timeString.replace(/^[\d]{2}/, '00')
+    const dateTimeString = dateTimeFormat.format(new Date(timestamp))
+    const dateTimeStringArray = dateTimeString.split(', ')
+    const dateStringArray = dateTimeStringArray[0].split('/')
+    const date = {
+      YYYY: dateStringArray[2],
+      MM: dateStringArray[0],
+      DD: dateStringArray[1],
+      'hh:mm': dateTimeStringArray[1].match(/^[\d]{2}/)[0] === '24'
+        ? dateTimeStringArray[1].replace(/^[\d]{2}/, '00')
+        : dateTimeStringArray[1]
     }
-    switch (format) {
-      case 'YYYY': {
-        return dateStringArray[2]
-      }
-      case 'YYYY-MM': {
-        return `${dateStringArray[2]}-${month}`
-      }
-      case 'YYYY-MM-DD': {
-        return `${dateStringArray[2]}-${month}-${day}`
-      }
-      case 'YYYY-MM-DD hh:mm': {
-        return `${dateStringArray[2]}-${month}-${day} ${timeString}`
-      }
-      case 'MM-DD': {
-        return `${month}-${day}`
-      }
-      case 'hh:mm': {
-        return timeString
-      }
-      default: {
-        return `${month}-${day} ${timeString}`
-      }
-    }
+    return format.replace(/YYYY|MM|DD|(hh:mm)/g, key => date[key])
   }
   return '--'
 }

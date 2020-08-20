@@ -874,56 +874,22 @@ function formatValue(data, key) {
  * @returns {string}
  */
 
-function formatDate(dateTimeFormat, timestamp, format) {
+function formatDate(dateTimeFormat, timestamp) {
+  var format = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'MM-DD hh:mm';
+
   if (timestamp && isNumber(timestamp)) {
-    var date = new Date(timestamp);
-    var dateTimeString = dateTimeFormat.format(date);
-    var dateString = dateTimeString.match(/^[\d]{1,2}\/[\d]{1,2}\/[\d]{4}/)[0];
-    var dateStringArray = dateString.split('/');
-    var month = "".concat(dateStringArray[0].length === 1 ? "0".concat(dateStringArray[0]) : dateStringArray[0]);
-    var day = "".concat(dateStringArray[1].length === 1 ? "0".concat(dateStringArray[1]) : dateStringArray[1]);
-    var timeString = dateTimeString.match(/[\d]{2}:[\d]{2}$/)[0]; // 这里将小时24转换成00
-
-    if (timeString.match(/^[\d]{2}/)[0] === '24') {
-      timeString = timeString.replace(/^[\d]{2}/, '00');
-    }
-
-    switch (format) {
-      case 'YYYY':
-        {
-          return dateStringArray[2];
-        }
-
-      case 'YYYY-MM':
-        {
-          return "".concat(dateStringArray[2], "-").concat(month);
-        }
-
-      case 'YYYY-MM-DD':
-        {
-          return "".concat(dateStringArray[2], "-").concat(month, "-").concat(day);
-        }
-
-      case 'YYYY-MM-DD hh:mm':
-        {
-          return "".concat(dateStringArray[2], "-").concat(month, "-").concat(day, " ").concat(timeString);
-        }
-
-      case 'MM-DD':
-        {
-          return "".concat(month, "-").concat(day);
-        }
-
-      case 'hh:mm':
-        {
-          return timeString;
-        }
-
-      default:
-        {
-          return "".concat(month, "-").concat(day, " ").concat(timeString);
-        }
-    }
+    var dateTimeString = dateTimeFormat.format(new Date(timestamp));
+    var dateTimeStringArray = dateTimeString.split(', ');
+    var dateStringArray = dateTimeStringArray[0].split('/');
+    var date = {
+      YYYY: dateStringArray[2],
+      MM: dateStringArray[0],
+      DD: dateStringArray[1],
+      'hh:mm': dateTimeStringArray[1].match(/^[\d]{2}/)[0] === '24' ? dateTimeStringArray[1].replace(/^[\d]{2}/, '00') : dateTimeStringArray[1]
+    };
+    return format.replace(/YYYY|MM|DD|(hh:mm)/g, function (key) {
+      return date[key];
+    });
   }
 
   return '--';
@@ -3145,10 +3111,10 @@ var ChartData = /*#__PURE__*/function () {
     this._dateTimeFormat = new Intl.DateTimeFormat('en', {
       hour12: false,
       year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric'
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
     }); // 数据源
 
     this._dataList = []; // 是否在加载中
@@ -3354,10 +3320,10 @@ var ChartData = /*#__PURE__*/function () {
           hour12: false,
           timeZone: timezone,
           year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric'
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
         });
       } catch (e) {
         {
@@ -4851,13 +4817,10 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
       for (var i = this._chartData.from(); i < to; i++) {
         var deltaFromRight = dataSize + offsetRightBarCount - i;
         var x = this._width - (deltaFromRight - 0.5) * dataSpace + halfBarSpace;
-        var kLineData = dataList[i];
-        onDrawing(x, i, kLineData, halfBarSpace, barSpace);
+        onDrawing(x, i, dataList[i], halfBarSpace, barSpace);
       }
 
-      if (onDrawEnd) {
-        onDrawEnd();
-      }
+      onDrawEnd && onDrawEnd();
     }
     /**
      * 绘制蜡烛柱
