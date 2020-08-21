@@ -165,8 +165,8 @@ The technicalIndicatorInfo format is as follows:
   minValue: null,
   maxValue: null,
   render: (
-    ctx, customRenderDataSource, technicalIndicatorOptions,
-    xAxisConvertToPixel, yAxisConvertToPixel
+    ctx, dataSource, viewport,
+    styleOptions, xAxis, yAxis
   ) => {}
 }
 ```

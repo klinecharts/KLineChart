@@ -269,7 +269,7 @@ technicalIndicatorInfo格式如下：
   // 示例：
   // 如果calcTechnicalIndicator返回的结果形式是[{ a: 1, b: 2 }, { a: 5, b: 6 }]
   // 则plots应该是[{ key: 'a', type: 'line' }, { key: 'b', type: 'line' }]
-  // type可以是'line'，'circle'，'bar'和'custom'
+  // type可以是'line'，'circle'，'bar'
   plots: [],
   // 是否需要检查计算参数，可缺省，默认为true
   // 如果为true，当设置指标参数时，如果参数个数和默认的参数个数不一致，将不能生效
@@ -284,10 +284,15 @@ technicalIndicatorInfo格式如下：
   minValue: null,
   // 指定的最大值，可缺省
   maxValue: null,
-  // 自定义渲染，结合plots，type是'custom'使用，可缺省
+  // 自定义渲染，可缺省，
+  // ctx canvas上下文
+  // dataSource 数据源，包含了原始的k线数据和计算出来的指标数据以及起始绘制点位置
+  // viewport 一些绘图可能需要的一些参数
+  // xAxis x轴组件，包含值和坐标转换的一些方法
+  // yAxis y轴组件，包含值和坐标转换的一些方法
   render: (
-    ctx, customRenderDataSource, technicalIndicatorOptions,
-    xAxisConvertToPixel, yAxisConvertToPixel
+    ctx, dataSource, viewport,
+    styleOptions, xAxis, yAxis
   ) => {}
 }
 ```

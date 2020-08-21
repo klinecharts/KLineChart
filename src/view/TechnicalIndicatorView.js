@@ -86,7 +86,6 @@ export default class TechnicalIndicatorView extends View {
     }
     const baseValueY = this._yAxis.convertToPixel(baseValue)
     const isCandleStickYAxis = this._yAxis.isCandleStickYAxis()
-    const customRenderDataSource = {}
     this._ctx.lineWidth = 1
     this._drawGraphics(
       (x, i, kLineData, halfBarSpace, barSpace) => {
@@ -159,22 +158,6 @@ export default class TechnicalIndicatorView extends View {
               lineValueIndex++
               break
             }
-            case PlotType.CUSTOM: {
-              if (!customRenderDataSource[plot.key]) {
-                customRenderDataSource[plot.key] = []
-              }
-              if (isValid(value)) {
-                customRenderDataSource[plot.key].push({
-                  x,
-                  y: this._yAxis.convertToPixel(value),
-                  pos: i,
-                  value
-                })
-              } else {
-                customRenderDataSource[plot.key].push(null)
-              }
-              break
-            }
             default: { break }
           }
         })
@@ -186,8 +169,22 @@ export default class TechnicalIndicatorView extends View {
     if (technicalIndicator.render) {
       this._ctx.save()
       technicalIndicator.render(
-        this._ctx, customRenderDataSource, technicalIndicatorOptions,
-        this._xAxis.convertToPixel, this._yAxis.convertToPixel
+        this._ctx,
+        {
+          from: this._chartData.from(),
+          to: this._chartData.to(),
+          kLineDataList: this._chartData.dataList(),
+          technicalIndicatorDataList: technicalIndicatorResult
+        },
+        {
+          width: this._width,
+          height: this._height,
+          dataSpace: this._chartData.dataSpace(),
+          barSpace: this._chartData.barSpace()
+        },
+        this._chartData.styleOptions(),
+        this._xAxis,
+        this._yAxis
       )
       this._ctx.restore()
     }

@@ -200,7 +200,6 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     labelX += (textMarginLeft + nameTextWidth)
     let lineCount = 0
     for (let i = 0; i < labels.length; i++) {
-      let showTipText = true
       switch (plots[i].type) {
         case PlotType.CIRCLE: {
           this._ctx.fillStyle = (plots[i].color && plots[i].color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor
@@ -215,19 +214,12 @@ export default class TechnicalIndicatorFloatLayerView extends View {
           lineCount++
           break
         }
-        case PlotType.CUSTOM: {
-          showTipText = !!plots[i].showTipText
-          this._ctx.fillStyle = (plots[i].color && plots[i].color(cbData, technicalIndicatorOptions)) || floatLayerPromptTechnicalIndicatorText.color
-          break
-        }
         default: { break }
       }
-      if (showTipText) {
-        const text = `${labels[i]}: ${values[i].value || 'n/a'}`
-        const textWidth = calcTextWidth(this._ctx, text)
-        this._ctx.fillText(text, labelX, labelY)
-        labelX += (textMarginLeft + textMarginRight + textWidth)
-      }
+      const text = `${labels[i]}: ${values[i].value || 'n/a'}`
+      const textWidth = calcTextWidth(this._ctx, text)
+      this._ctx.fillText(text, labelX, labelY)
+      labelX += (textMarginLeft + textMarginRight + textWidth)
     }
   }
 

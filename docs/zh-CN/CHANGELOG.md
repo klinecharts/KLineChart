@@ -2,7 +2,7 @@
 
 ## 5.6.0
 `待发布`
-+ 🆕 自定义技术指标新增`render`属性，`plots`子项新增`type`新增`custom`类型。
++ 🆕 自定义技术指标新增`render`属性。
 + 🆕 新增`subscribe`和`unsubscribe`方法，用于关键操作监听和取消。
 + 💄 优化时间格式化`formatDate`方法。
 

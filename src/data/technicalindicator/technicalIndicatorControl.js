@@ -178,12 +178,13 @@ export function createTechnicalIndicators () {
  * @param maxValue
  * @param calcTechnicalIndicator
  * @param regeneratePlots
+ * @param render
  * @returns {null|{precision: (*|number), calcParams: (*|[]), structure: NewTechnicalIndicator}}
  */
 export function createNewTechnicalIndicator ({
   name, series, calcParams, plots, precision, shouldCheckParamCount,
   shouldOhlc, shouldFormatBigNumber, baseValue, minValue, maxValue,
-  calcTechnicalIndicator, regeneratePlots
+  calcTechnicalIndicator, regeneratePlots, render
 }) {
   if (!name || !isFunction(calcTechnicalIndicator)) {
     if (DEV) {
@@ -213,8 +214,11 @@ export function createNewTechnicalIndicator ({
     }
   }
   NewTechnicalIndicator.prototype.calcTechnicalIndicator = calcTechnicalIndicator
-  if (regeneratePlots) {
+  if (regeneratePlots && isFunction(regeneratePlots)) {
     NewTechnicalIndicator.prototype.regeneratePlots = regeneratePlots
+  }
+  if (render && isFunction(render)) {
+    NewTechnicalIndicator.prototype.render = render
   }
   return {
     structure: NewTechnicalIndicator,

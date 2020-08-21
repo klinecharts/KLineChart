@@ -2948,6 +2948,7 @@ function createTechnicalIndicators() {
  * @param maxValue
  * @param calcTechnicalIndicator
  * @param regeneratePlots
+ * @param render
  * @returns {null|{precision: (*|number), calcParams: (*|[]), structure: NewTechnicalIndicator}}
  */
 
@@ -2964,7 +2965,8 @@ function createNewTechnicalIndicator(_ref2) {
       minValue = _ref2.minValue,
       maxValue = _ref2.maxValue,
       calcTechnicalIndicator = _ref2.calcTechnicalIndicator,
-      regeneratePlots = _ref2.regeneratePlots;
+      regeneratePlots = _ref2.regeneratePlots,
+      render = _ref2.render;
 
   if (!name || !isFunction(calcTechnicalIndicator)) {
     {
@@ -3002,8 +3004,12 @@ function createNewTechnicalIndicator(_ref2) {
 
   NewTechnicalIndicator.prototype.calcTechnicalIndicator = calcTechnicalIndicator;
 
-  if (regeneratePlots) {
+  if (regeneratePlots && isFunction(regeneratePlots)) {
     NewTechnicalIndicator.prototype.regeneratePlots = regeneratePlots;
+  }
+
+  if (render && isFunction(render)) {
+    NewTechnicalIndicator.prototype.render = render;
   }
 
   return {
@@ -4370,7 +4376,7 @@ function cancelAnimationFrame(id) {
 
 /**
  * 绘制类型
- * @type {{BAR: string, LINE: string, CIRCLE: string}}
+ * @type {{BAR: string, LINE: string, CUSTOM: string, CIRCLE: string}}
  */
 
 var PlotType = {
@@ -4678,7 +4684,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                 break;
               }
 
-            default:
+            case PlotType.LINE:
               {
                 if (isValid(value)) {
                   var _valueY2 = _this3._yAxis.convertToPixel(value);
@@ -4709,6 +4715,24 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
       }, function () {
         _this3._drawLines(lines, technicalIndicatorOptions);
       });
+
+      if (technicalIndicator.render) {
+        this._ctx.save();
+
+        technicalIndicator.render(this._ctx, {
+          from: this._chartData.from(),
+          to: this._chartData.to(),
+          kLineDataList: this._chartData.dataList(),
+          technicalIndicatorDataList: technicalIndicatorResult
+        }, {
+          width: this._width,
+          height: this._height,
+          dataSpace: this._chartData.dataSpace(),
+          barSpace: this._chartData.barSpace()
+        }, this._chartData.styleOptions(), this._xAxis, this._yAxis);
+
+        this._ctx.restore();
+      }
     }
     /**
      * 绘制线
@@ -5164,10 +5188,11 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
               break;
             }
 
-          default:
+          case PlotType.LINE:
             {
               this._ctx.fillStyle = colors[lineCount % colorSize] || textColor;
               lineCount++;
+              break;
             }
         }
 
