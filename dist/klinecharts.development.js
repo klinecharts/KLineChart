@@ -1,6 +1,6 @@
 /**
  * @license
- * KLineChart v5.5.1
+ * KLineChart v5.6.0
  * Copyright (c) 2019 lihu.
  * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
@@ -591,6 +591,11 @@ var defaultXAxis = {
   display: true,
 
   /**
+   * 高度
+   */
+  height: null,
+
+  /**
    * 轴线配置
    */
   axisLine: {
@@ -629,6 +634,11 @@ var defaultYAxis = {
    * 是否显示整个轴
    */
   display: true,
+
+  /**
+   * 宽度
+   */
+  width: null,
 
   /**
    * y轴类型
@@ -4729,7 +4739,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
           height: this._height,
           dataSpace: this._chartData.dataSpace(),
           barSpace: this._chartData.barSpace()
-        }, this._chartData.styleOptions(), this._xAxis, this._yAxis);
+        }, this._chartData.styleOptions(), this._xAxis, this._yAxis, this._yAxis.isCandleStickYAxis());
 
         this._ctx.restore();
       }
@@ -6143,11 +6153,15 @@ var YAxis = /*#__PURE__*/function (_Axis) {
     value: function getSelfWidth() {
       var _this3 = this;
 
-      var technicalIndicator = this._additionalDataProvider.technicalIndicator();
-
       var stylOptions = this._chartData.styleOptions();
 
       var yAxisOptions = stylOptions.yAxis;
+      var width = yAxisOptions.width;
+
+      if (isValid(width) && isNumber(+width)) {
+        return +width;
+      }
+
       var yAxisWidth = 0;
 
       if (yAxisOptions.display) {
@@ -6175,6 +6189,8 @@ var YAxis = /*#__PURE__*/function (_Axis) {
       var crossHairVerticalTextWidth = 0;
 
       if (crossHairOptions.display && crossHairOptions.horizontal.display && crossHairOptions.horizontal.text.display) {
+        var technicalIndicator = this._additionalDataProvider.technicalIndicator();
+
         this._measureCtx.font = getFont(crossHairOptions.horizontal.text.size, crossHairOptions.horizontal.text.weight, crossHairOptions.horizontal.text.family);
         var precision = 2;
 
@@ -9841,6 +9857,12 @@ var XAxis = /*#__PURE__*/function (_Axis) {
       var stylOptions = this._chartData.styleOptions();
 
       var xAxisOptions = stylOptions.xAxis;
+      var height = xAxisOptions.height;
+
+      if (isValid(height) && isNumber(+height)) {
+        return +height;
+      }
+
       var crossHairOptions = stylOptions.floatLayer.crossHair;
       var xAxisHeight = 0;
 
@@ -11776,7 +11798,7 @@ var CHART_NAME_PREFIX = 'k_line_chart_';
  */
 
 function version() {
-  return '5.5.1';
+  return '5.6.0';
 }
 /**
  * 初始化
@@ -11788,7 +11810,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 5.5.1. Root dom is null, can not initialize the chart!!!';
+  var errorMessage = 'Chart version is 5.6.0. Root dom is null, can not initialize the chart!!!';
   var container = ds;
 
   if (!container) {

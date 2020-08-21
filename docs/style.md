@@ -112,6 +112,7 @@ config = {
   },
   xAxis: {
     display: true,
+    height: null,
     axisLine: {
       display: true,
       color: '#888888',
@@ -135,6 +136,7 @@ config = {
   },
   yAxis: {
     display: true,
+    width: null,
     // 'left' | 'right'
     position: 'right',
     // 'normal' | 'percentage'

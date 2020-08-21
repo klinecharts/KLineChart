@@ -168,9 +168,12 @@ export default class YAxis extends Axis {
   }
 
   getSelfWidth () {
-    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
     const stylOptions = this._chartData.styleOptions()
     const yAxisOptions = stylOptions.yAxis
+    const width = yAxisOptions.width
+    if (isValid(width) && isNumber(+width)) {
+      return +width
+    }
     let yAxisWidth = 0
     if (yAxisOptions.display) {
       if (yAxisOptions.axisLine.display) {
@@ -195,6 +198,7 @@ export default class YAxis extends Axis {
       crossHairOptions.horizontal.display &&
       crossHairOptions.horizontal.text.display
     ) {
+      const technicalIndicator = this._additionalDataProvider.technicalIndicator()
       this._measureCtx.font = getFont(
         crossHairOptions.horizontal.text.size,
         crossHairOptions.horizontal.text.weight,
