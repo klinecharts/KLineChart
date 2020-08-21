@@ -290,9 +290,11 @@ technicalIndicatorInfo格式如下：
   // viewport 一些绘图可能需要的一些参数
   // xAxis x轴组件，包含值和坐标转换的一些方法
   // yAxis y轴组件，包含值和坐标转换的一些方法
+  // isCandleStickTechnicalIndicator 是否是蜡烛图指标
   render: (
     ctx, dataSource, viewport,
-    styleOptions, xAxis, yAxis
+    styleOptions, xAxis, yAxis,
+    isCandleStickTechnicalIndicator
   ) => {}
 }
 ```

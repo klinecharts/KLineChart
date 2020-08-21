@@ -184,7 +184,8 @@ export default class TechnicalIndicatorView extends View {
         },
         this._chartData.styleOptions(),
         this._xAxis,
-        this._yAxis
+        this._yAxis,
+        this._yAxis.isCandleStickYAxis()
       )
       this._ctx.restore()
     }

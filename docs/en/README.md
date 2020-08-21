@@ -166,13 +166,14 @@ The technicalIndicatorInfo format is as follows:
   maxValue: null,
   render: (
     ctx, dataSource, viewport,
-    styleOptions, xAxis, yAxis
+    styleOptions, xAxis, yAxis,
+    isCandleStickTechnicalIndicator
   ) => {}
 }
 ```
 Specific reference [TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator).
 
-## Style option
+## Style Option
 For full configuration please see [here](../style.md).
 
 

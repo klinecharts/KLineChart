@@ -43,6 +43,25 @@ export declare interface TechnicalIndicatorInfoPlot {
   isStroke?: (data: any) => boolean;
 }
 
+export declare interface TechnicalIndicatorCustomRenderDataSource {
+  from: number;
+  to: number;
+  kLineDataList: KLineData[];
+  technicalIndicatorDataList: any[];
+}
+
+export declare interface TechnicalIndicatorCustomRenderViewport {
+  width: number;
+  height: number;
+  dataSpace: number;
+  barSpace: number;
+}
+
+export declare interface Axis {
+  convertFromPixel: (pixel: number) => number;
+  convertToPixel: (value: number) => number;
+}
+
 export declare interface TechnicalIndicatorInfo {
   name: string;
   calcTechnicalIndicator: (kLineDataList: KLineData[], calcParams: number[]) => any[];
@@ -57,6 +76,13 @@ export declare interface TechnicalIndicatorInfo {
   minValue?: number;
   maxValue?: number;
   regeneratePlots?: (calcParams: number[]) => TechnicalIndicatorInfoPlot[];
+  render?: (
+    ctx: CanvasRenderingContext2D,
+    dataSource: TechnicalIndicatorCustomRenderDataSource,
+    viewport: TechnicalIndicatorCustomRenderViewport,
+    styleOptions: any, xAxis: Axis, yAxis: Axis,
+    isCandleStickTechnicalIndicator: boolean
+  ) => void
 }
 
 export declare interface Chart {
