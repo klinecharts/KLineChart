@@ -5,12 +5,7 @@
 + 🆕 自定义技术指标新增`render`属性。
 + 🆕 配置项新增`xAxis.height`和`yAxis.width`。
 + 🆕 新增方法`subscribe`和`unsubscribe`，用于关键操作监听和取消。
-+ 🆕 新增方法`removeCandleStickTechnicalIndicatorType`，用于移除主图上的指标类型。
-+ 🆕 新增方法`removeTechnialIndicatorType`，用于移除副图上的指标类型。
 + 💄 优化时间格式化`formatDate`方法。
-+ 👉 方法`setCandleStickTechnicalIndicatorType`变更为`addCandleStickTechnicalIndicatorType`。
-+ 👉 方法`setTechnialIndicatorType`变更为`addTechnialIndicatorType`。
-+ 👉 方法`createTechnicalIndicator`变更为`createTechnicalIndicatorPane`。
 
 
 ## 5.5.1

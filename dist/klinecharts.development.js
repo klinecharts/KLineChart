@@ -2852,96 +2852,7 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
 function createTechnicalIndicators() {
   var _ref;
 
-  return _ref = {}, _defineProperty(_ref, MA, {
-    structure: MovingAverage,
-    series: TechnicalIndicatorSeries.PRICE,
-    precision: 2,
-    calcParams: [5, 10, 30, 60]
-  }), _defineProperty(_ref, EMA, {
-    structure: ExponentialMovingAverage,
-    series: TechnicalIndicatorSeries.PRICE,
-    precision: 2,
-    calcParams: [6, 12, 20]
-  }), _defineProperty(_ref, VOL, {
-    structure: Volume,
-    series: TechnicalIndicatorSeries.VOLUME,
-    precision: 0,
-    calcParams: [5, 10, 20]
-  }), _defineProperty(_ref, MACD, {
-    structure: MovingAverageConvergenceDivergence,
-    precision: 4,
-    calcParams: [12, 26, 9]
-  }), _defineProperty(_ref, BOLL, {
-    structure: BollingerBands,
-    series: TechnicalIndicatorSeries.PRICE,
-    precision: 2,
-    calcParams: [20]
-  }), _defineProperty(_ref, KDJ, {
-    structure: StockIndicatorKDJ,
-    precision: 4,
-    calcParams: [9, 3, 3]
-  }), _defineProperty(_ref, RSI, {
-    structure: RelativeStrengthIndex,
-    precision: 4,
-    calcParams: [6, 12, 24]
-  }), _defineProperty(_ref, BIAS, {
-    structure: Bias,
-    precision: 4,
-    calcParams: [6, 12, 24]
-  }), _defineProperty(_ref, BRAR, {
-    structure: Brar,
-    precision: 4,
-    calcParams: [26]
-  }), _defineProperty(_ref, CCI, {
-    structure: CommodityChannelIndex,
-    precision: 4,
-    calcParams: [13]
-  }), _defineProperty(_ref, DMI, {
-    structure: DirectionalMovementIndex,
-    precision: 4,
-    calcParams: [14, 6]
-  }), _defineProperty(_ref, CR, {
-    structure: CurrentRatio,
-    precision: 4,
-    calcParams: [26, 10, 20, 40, 60]
-  }), _defineProperty(_ref, PSY, {
-    structure: PsychologicalLine,
-    precision: 4,
-    calcParams: [12, 6]
-  }), _defineProperty(_ref, DMA, {
-    structure: DifferentOfMovingAverage,
-    precision: 4,
-    calcParams: [10, 50, 10]
-  }), _defineProperty(_ref, TRIX, {
-    structure: TripleExponentiallySmoothedAverage,
-    precision: 4,
-    calcParams: [12, 20]
-  }), _defineProperty(_ref, OBV, {
-    structure: OnBalanceVolume,
-    precision: 4,
-    calcParams: [30]
-  }), _defineProperty(_ref, VR, {
-    structure: VolumeRatio,
-    precision: 4,
-    calcParams: [24, 30]
-  }), _defineProperty(_ref, WR, {
-    structure: WilliamsR,
-    precision: 4,
-    calcParams: [6, 10, 14]
-  }), _defineProperty(_ref, MTM, {
-    structure: Momentum,
-    precision: 4,
-    calcParams: [6, 10]
-  }), _defineProperty(_ref, EMV, {
-    structure: EaseOfMovementValue,
-    precision: 4,
-    calcParams: [14, 9]
-  }), _defineProperty(_ref, SAR, {
-    structure: StopAndReverse,
-    series: TechnicalIndicatorSeries.PRICE,
-    precision: 2,
-    calcParams: [2, 2, 20]
-  }), _ref;
+  return _ref = {}, _defineProperty(_ref, MA, new MovingAverage()), _defineProperty(_ref, EMA, new ExponentialMovingAverage()), _defineProperty(_ref, VOL, new Volume()), _defineProperty(_ref, MACD, new MovingAverageConvergenceDivergence()), _defineProperty(_ref, BOLL, new BollingerBands()), _defineProperty(_ref, KDJ, new StockIndicatorKDJ()), _defineProperty(_ref, RSI, new RelativeStrengthIndex()), _defineProperty(_ref, BIAS, new Bias()), _defineProperty(_ref, BRAR, new Brar()), _defineProperty(_ref, CCI, new CommodityChannelIndex()), _defineProperty(_ref, DMI, new DirectionalMovementIndex()), _defineProperty(_ref, CR, new CurrentRatio()), _defineProperty(_ref, PSY, new PsychologicalLine()), _defineProperty(_ref, DMA, new DifferentOfMovingAverage()), _defineProperty(_ref, TRIX, new TripleExponentiallySmoothedAverage()), _defineProperty(_ref, OBV, new OnBalanceVolume()), _defineProperty(_ref, VR, new VolumeRatio()), _defineProperty(_ref, WR, new WilliamsR()), _defineProperty(_ref, MTM, new Momentum()), _defineProperty(_ref, EMV, new EaseOfMovementValue()), _defineProperty(_ref, SAR, new StopAndReverse()), _ref;
 }
 /**
  * 创建一个新的技术指标
@@ -2959,7 +2870,7 @@ function createTechnicalIndicators() {
  * @param calcTechnicalIndicator
  * @param regeneratePlots
  * @param render
- * @returns {null|{precision: (*|number), calcParams: (*|[]), structure: NewTechnicalIndicator}}
+ * @returns {NewTechnicalIndicator|null}
  */
 
 function createNewTechnicalIndicator(_ref2) {
@@ -3022,12 +2933,7 @@ function createNewTechnicalIndicator(_ref2) {
     NewTechnicalIndicator.prototype.render = render;
   }
 
-  return {
-    structure: NewTechnicalIndicator,
-    series: series || TechnicalIndicatorSeries.NORMAL,
-    precision: isValid(precision) && isNumber(precision) && precision >= 0 ? precision : series === TechnicalIndicatorSeries.PRICE ? 2 : series === TechnicalIndicatorSeries.VOLUME ? 0 : 4,
-    calcParams: isArray(calcParams) ? calcParams : []
-  };
+  return new NewTechnicalIndicator();
 }
 /**
  * 获取技术指标信息
@@ -3289,7 +3195,7 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "technicalIndicator",
     value: function technicalIndicator(technicalIndicatorType) {
-      return this._technicalIndicators[technicalIndicatorType] || {};
+      return this._technicalIndicators[technicalIndicatorType];
     }
     /**
      * 价格精度
@@ -3388,13 +3294,15 @@ var ChartData = /*#__PURE__*/function () {
           switch (series) {
             case TechnicalIndicatorSeries.PRICE:
               {
-                this._technicalIndicators[name].precision = pricePrecision;
+                this._technicalIndicators[name].setPrecision(pricePrecision);
+
                 break;
               }
 
             case TechnicalIndicatorSeries.VOLUME:
               {
-                this._technicalIndicators[name].precision = volumePrecision;
+                this._technicalIndicators[name].setPrecision(volumePrecision);
+
                 break;
               }
           }
@@ -3413,10 +3321,10 @@ var ChartData = /*#__PURE__*/function () {
       var technicalIndicator = this.technicalIndicator(technicalIndicatorType);
 
       if (technicalIndicator) {
-        technicalIndicator.precision = precision;
+        technicalIndicator.setPrecision(precision);
       } else {
         for (var name in this._technicalIndicators) {
-          this._technicalIndicators[name].precision = precision;
+          this._technicalIndicators[name].setPrecision(precision);
         }
       }
     }
@@ -3858,31 +3766,11 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "addCustomTechnicalIndicator",
     value: function addCustomTechnicalIndicator(technicalIndicatorInfo) {
-      var info = createNewTechnicalIndicator(technicalIndicatorInfo || {});
-
-      if (info) {
-        // 将生成的新的指标类放入集合
-        this._technicalIndicators[technicalIndicatorInfo.name] = info;
-      }
-    }
-    /**
-     * 计算指标
-     * @param pane
-     */
-
-  }, {
-    key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(pane) {
-      var technicalIndicator = pane.technicalIndicator();
+      var technicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo || {});
 
       if (technicalIndicator) {
-        var _ref = this._technicalIndicators[technicalIndicator.name] || {},
-            calcParams = _ref.calcParams,
-            precision = _ref.precision;
-
-        technicalIndicator.setPrecision(isValid(precision) ? precision : this._pricePrecision);
-        technicalIndicator.setCalcParams(calcParams);
-        technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || [];
+        // 将生成的新的指标类放入集合
+        this._technicalIndicators[technicalIndicatorInfo.name] = technicalIndicator;
       }
     }
   }]);
@@ -6379,20 +6267,37 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
   }, {
     key: "setTechnicalIndicatorType",
     value: function setTechnicalIndicatorType(technicalIndicatorType) {
-      var _this$_chartData$tech = this._chartData.technicalIndicator(technicalIndicatorType),
-          TechnicalIndicator$1 = _this$_chartData$tech.structure;
+      var technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType);
 
-      if (this._technicalIndicator.name === technicalIndicatorType) {
-        return;
+      if (this._technicalIndicator && this._technicalIndicator.name === technicalIndicatorType) {
+        return false;
       }
 
-      if (TechnicalIndicator$1) {
-        this._technicalIndicator = new TechnicalIndicator$1();
+      if (technicalIndicator) {
+        this._technicalIndicator = Object.create(technicalIndicator);
       } else {
         this._technicalIndicator = new TechnicalIndicator({});
       }
 
-      this._chartData.calcTechnicalIndicator(this);
+      return this.calcTechnicalIndicator();
+    }
+    /**
+     * 计算指标
+     */
+
+  }, {
+    key: "calcTechnicalIndicator",
+    value: function calcTechnicalIndicator() {
+      var currentTechnicalIndicator = this.technicalIndicator();
+      var technicalIndicator = this._chartData.technicalIndicator[currentTechnicalIndicator.name];
+
+      if (technicalIndicator) {
+        currentTechnicalIndicator.setPrecision(technicalIndicator.precision);
+        currentTechnicalIndicator.setCalcParams(technicalIndicator.calcParams);
+      }
+
+      currentTechnicalIndicator.result = currentTechnicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), currentTechnicalIndicator.calcParams) || [];
+      return this.computeAxis();
     }
   }]);
 
@@ -9497,9 +9402,10 @@ var CandleStickPane = /*#__PURE__*/function (_TechnicalIndicatorPa) {
     value: function setChartType(chartType) {
       if (this._chartType !== chartType) {
         this._chartType = chartType;
-
-        this._chartData.calcTechnicalIndicator(this);
+        return this.calcTechnicalIndicator();
       }
+
+      return false;
     }
   }]);
 
@@ -10820,9 +10726,7 @@ var ChartPane = /*#__PURE__*/function () {
       var _this = this;
 
       Promise.resolve().then(function (_) {
-        _this._chartData.calcTechnicalIndicator(_this._candleStickPane);
-
-        var shouldMeasureWidth = _this._candleStickPane.computeAxis();
+        var shouldMeasureWidth = _this._candleStickPane.calcTechnicalIndicator();
 
         var _iterator3 = _createForOfIteratorHelper(_this._technicalIndicatorPanes),
             _step3;
@@ -10830,10 +10734,7 @@ var ChartPane = /*#__PURE__*/function () {
         try {
           for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
             var pane = _step3.value;
-
-            _this._chartData.calcTechnicalIndicator(pane);
-
-            var should = pane.computeAxis();
+            var should = pane.calcTechnicalIndicator();
 
             if (should) {
               shouldMeasureWidth = should;
@@ -11071,9 +10972,9 @@ var ChartPane = /*#__PURE__*/function () {
     value: function applyTechnicalIndicatorParams(technicalIndicatorType, params) {
       var _this2 = this;
 
-      var info = this._chartData.technicalIndicator(technicalIndicatorType);
+      var technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType);
 
-      if (info.structure && isArray(params)) {
+      if (technicalIndicator && isArray(params)) {
         var _iterator8 = _createForOfIteratorHelper(params),
             _step8;
 
@@ -11091,14 +10992,12 @@ var ChartPane = /*#__PURE__*/function () {
           _iterator8.f();
         }
 
-        info.calcParams = clone(params);
+        technicalIndicator.setCalcParams(clone(params));
         Promise.resolve().then(function (_) {
           var shouldMeasureWidth = false;
 
           if (_this2._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
-            _this2._chartData.calcTechnicalIndicator(_this2._candleStickPane);
-
-            shouldMeasureWidth = _this2._candleStickPane.computeAxis();
+            shouldMeasureWidth = _this2._candleStickPane.calcTechnicalIndicator();
           }
 
           var _iterator9 = _createForOfIteratorHelper(_this2._technicalIndicatorPanes),
@@ -11109,9 +11008,7 @@ var ChartPane = /*#__PURE__*/function () {
               var pane = _step9.value;
 
               if (pane.technicalIndicator().name === technicalIndicatorType) {
-                _this2._chartData.calcTechnicalIndicator(pane);
-
-                var should = pane.computeAxis();
+                var should = pane.calcTechnicalIndicator();
 
                 if (should) {
                   shouldMeasureWidth = should;
@@ -11209,9 +11106,7 @@ var ChartPane = /*#__PURE__*/function () {
   }, {
     key: "setCandleStickChartType",
     value: function setCandleStickChartType(type) {
-      this._candleStickPane.setChartType(type);
-
-      var shouldMeasureWidth = this._candleStickPane.computeAxis();
+      var shouldMeasureWidth = this._candleStickPane.setChartType(type);
 
       this._measureWidthAndLayoutPane(shouldMeasureWidth);
     }
@@ -11229,10 +11124,9 @@ var ChartPane = /*#__PURE__*/function () {
       var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT;
       var dragEnabled = arguments.length > 2 ? arguments[2] : undefined;
 
-      var _this$_chartData$tech = this._chartData.technicalIndicator(technicalIndicatorType),
-          TechnicalIndicator = _this$_chartData$tech.structure;
+      var technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType);
 
-      if (!TechnicalIndicator) {
+      if (!technicalIndicator) {
         {
           console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!');
         }
@@ -11309,9 +11203,7 @@ var ChartPane = /*#__PURE__*/function () {
     key: "setTechnicalIndicatorType",
     value: function setTechnicalIndicatorType(tag, technicalIndicatorType) {
       if (tag === CANDLE_STICK_PANE_TAG) {
-        this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType);
-
-        var shouldMeasureWidth = this._candleStickPane.computeAxis();
+        var shouldMeasureWidth = this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType);
 
         this._measureWidthAndLayoutPane(shouldMeasureWidth);
       } else {
@@ -11336,15 +11228,12 @@ var ChartPane = /*#__PURE__*/function () {
         }
 
         if (p) {
-          var _this$_chartData$tech2 = this._chartData.technicalIndicator(technicalIndicatorType),
-              TechnicalIndicator = _this$_chartData$tech2.structure;
+          var technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType);
 
-          if (!TechnicalIndicator) {
+          if (!technicalIndicator) {
             this.removeTechnicalIndicator(tag);
           } else {
-            p.setTechnicalIndicatorType(technicalIndicatorType);
-
-            var _shouldMeasureWidth = p.computeAxis();
+            var _shouldMeasureWidth = p.setTechnicalIndicatorType(technicalIndicatorType);
 
             this._measureWidthAndLayoutPane(_shouldMeasureWidth);
           }

@@ -211,7 +211,7 @@ export default class ChartData {
    * @param technicalIndicatorType
    */
   technicalIndicator (technicalIndicatorType) {
-    return this._technicalIndicators[technicalIndicatorType] || {}
+    return this._technicalIndicators[technicalIndicatorType]
   }
 
   /**
@@ -287,11 +287,11 @@ export default class ChartData {
         const series = this._technicalIndicators[name].series
         switch (series) {
           case TechnicalIndicatorSeries.PRICE: {
-            this._technicalIndicators[name].precision = pricePrecision
+            this._technicalIndicators[name].setPrecision(pricePrecision)
             break
           }
           case TechnicalIndicatorSeries.VOLUME: {
-            this._technicalIndicators[name].precision = volumePrecision
+            this._technicalIndicators[name].setPrecision(volumePrecision)
             break
           }
           default: { break }
@@ -308,10 +308,10 @@ export default class ChartData {
   applyTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
     const technicalIndicator = this.technicalIndicator(technicalIndicatorType)
     if (technicalIndicator) {
-      technicalIndicator.precision = precision
+      technicalIndicator.setPrecision(precision)
     } else {
       for (const name in this._technicalIndicators) {
-        this._technicalIndicators[name].precision = precision
+        this._technicalIndicators[name].setPrecision(precision)
       }
     }
   }
@@ -668,24 +668,10 @@ export default class ChartData {
    * @param technicalIndicatorInfo
    */
   addCustomTechnicalIndicator (technicalIndicatorInfo) {
-    const info = createNewTechnicalIndicator(technicalIndicatorInfo || {})
-    if (info) {
-      // 将生成的新的指标类放入集合
-      this._technicalIndicators[technicalIndicatorInfo.name] = info
-    }
-  }
-
-  /**
-   * 计算指标
-   * @param pane
-   */
-  calcTechnicalIndicator (pane) {
-    const technicalIndicator = pane.technicalIndicator()
+    const technicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo || {})
     if (technicalIndicator) {
-      const { calcParams, precision } = this._technicalIndicators[technicalIndicator.name] || {}
-      technicalIndicator.setPrecision(isValid(precision) ? precision : this._pricePrecision)
-      technicalIndicator.setCalcParams(calcParams)
-      technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
+      // 将生成的新的指标类放入集合
+      this._technicalIndicators[technicalIndicatorInfo.name] = technicalIndicator
     }
   }
 }
