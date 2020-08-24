@@ -22,7 +22,7 @@ export default class PsychologicalLine extends TechnicalIndicator {
       calcParams: [12, 6],
       plots: [
         { key: 'psy', type: 'line' },
-        { key: 'psyMa', type: 'line' }
+        { key: 'maPsy', type: 'line' }
       ]
     })
   }
@@ -49,7 +49,7 @@ export default class PsychologicalLine extends TechnicalIndicator {
         psy.psy = upCount / calcParams[0] * 100
         psySum += psy.psy
         if (i >= calcParams[0] + calcParams[1] - 2) {
-          psy.psyMa = psySum / calcParams[1]
+          psy.maPsy = psySum / calcParams[1]
           psySum -= result[i - (calcParams[1] - 1)].psy
         }
         upCount -= upList[i - (calcParams[0] - 1)]

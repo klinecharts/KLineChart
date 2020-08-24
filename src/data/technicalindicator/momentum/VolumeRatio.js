@@ -22,7 +22,7 @@ export default class VolumeRatio extends TechnicalIndicator {
       calcParams: [24, 30],
       plots: [
         { key: 'vr', type: 'line' },
-        { key: 'vrMa', type: 'line' }
+        { key: 'maVr', type: 'line' }
       ]
     })
   }
@@ -65,7 +65,7 @@ export default class VolumeRatio extends TechnicalIndicator {
         }
         vrSum += vr.vr
         if (i >= calcParams[0] + calcParams[1] - 2) {
-          vr.vrMa = vrSum / calcParams[1]
+          vr.maVr = vrSum / calcParams[1]
           vrSum -= result[i - (calcParams[1] - 1)].vr
         }
 

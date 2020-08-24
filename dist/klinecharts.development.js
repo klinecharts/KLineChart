@@ -2172,7 +2172,7 @@ var PsychologicalLine = /*#__PURE__*/function (_TechnicalIndicator) {
         key: 'psy',
         type: 'line'
       }, {
-        key: 'psyMa',
+        key: 'maPsy',
         type: 'line'
       }]
     });
@@ -2205,7 +2205,7 @@ var PsychologicalLine = /*#__PURE__*/function (_TechnicalIndicator) {
           psySum += psy.psy;
 
           if (i >= calcParams[0] + calcParams[1] - 2) {
-            psy.psyMa = psySum / calcParams[1];
+            psy.maPsy = psySum / calcParams[1];
             psySum -= result[i - (calcParams[1] - 1)].psy;
           }
 
@@ -2312,7 +2312,7 @@ var TripleExponentiallySmoothedAverage = /*#__PURE__*/function (_TechnicalIndica
         key: 'trix',
         type: 'line'
       }, {
-        key: 'trixMa',
+        key: 'maTrix',
         type: 'line'
       }]
     });
@@ -2361,7 +2361,7 @@ var TripleExponentiallySmoothedAverage = /*#__PURE__*/function (_TechnicalIndica
           trixSum += trix.trix;
 
           if (i >= calcParams[1] - 1) {
-            trix.trixMa = trixSum / calcParams[1];
+            trix.maTrix = trixSum / calcParams[1];
             trixSum -= result[i - (calcParams[1] - 1)].trix || 0;
           }
         }
@@ -2393,7 +2393,7 @@ var OnBalanceVolume = /*#__PURE__*/function (_TechnicalIndicator) {
         key: 'obv',
         type: 'line'
       }, {
-        key: 'obvMa',
+        key: 'maObv',
         type: 'line'
       }]
     });
@@ -2428,7 +2428,7 @@ var OnBalanceVolume = /*#__PURE__*/function (_TechnicalIndicator) {
         obvSum += obv.obv;
 
         if (i >= calcParams[0] - 1) {
-          obv.obvMa = obvSum / calcParams[0];
+          obv.maObv = obvSum / calcParams[0];
           obvSum -= result[i - (calcParams[0] - 1)].obv;
         }
 
@@ -2456,7 +2456,7 @@ var VolumeRatio = /*#__PURE__*/function (_TechnicalIndicator) {
         key: 'vr',
         type: 'line'
       }, {
-        key: 'vrMa',
+        key: 'maVr',
         type: 'line'
       }]
     });
@@ -2508,7 +2508,7 @@ var VolumeRatio = /*#__PURE__*/function (_TechnicalIndicator) {
           vrSum += vr.vr;
 
           if (i >= calcParams[0] + calcParams[1] - 2) {
-            vr.vrMa = vrSum / calcParams[1];
+            vr.maVr = vrSum / calcParams[1];
             vrSum -= result[i - (calcParams[1] - 1)].vr;
           }
 
@@ -2618,7 +2618,7 @@ var Momentum = /*#__PURE__*/function (_TechnicalIndicator) {
         key: 'mtm',
         type: 'line'
       }, {
-        key: 'mtmMa',
+        key: 'maMtm',
         type: 'line'
       }]
     });
@@ -2648,7 +2648,7 @@ var Momentum = /*#__PURE__*/function (_TechnicalIndicator) {
           mtmSum += mtm.mtm;
 
           if (i >= calcParams[0] + calcParams[1] - 2) {
-            mtm.mtmMa = mtmSum / calcParams[1];
+            mtm.maMtm = mtmSum / calcParams[1];
             mtmSum -= result[i - (calcParams[1] - 1)].mtm;
           }
         }
@@ -2782,7 +2782,7 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
         key: 'emv',
         type: 'line'
       }, {
-        key: 'emvMa',
+        key: 'maEmv',
         type: 'line'
       }]
     });
@@ -2828,7 +2828,7 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
             emvSum += emv.emv;
 
             if (i >= calcParams[0] + calcParams[1] - 1) {
-              emv.emvMa = emvSum / calcParams[1];
+              emv.maEmv = emvSum / calcParams[1];
               emvSum -= result[i - (calcParams[1] - 1)].emv;
             }
 
@@ -11267,7 +11267,11 @@ var ChartPane = /*#__PURE__*/function () {
       var backgroundColor = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '#333333';
 
       if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
-        throw new Error('Picture format only supports jpeg, png and bmp!!!');
+        {
+          console.warn('Picture format only supports jpeg, png and bmp!!!');
+        }
+
+        return;
       }
 
       var canvas = document.createElement('canvas');
@@ -11703,7 +11707,11 @@ function init(ds) {
   var container = ds;
 
   if (!container) {
-    throw new Error(errorMessage);
+    {
+      console.warn(errorMessage);
+    }
+
+    return null;
   }
 
   if (typeof container === 'string') {
@@ -11711,7 +11719,11 @@ function init(ds) {
   }
 
   if (!container) {
-    throw new Error(errorMessage);
+    {
+      console.warn(errorMessage);
+    }
+
+    return null;
   }
 
   var instance = instances[container.chartId || ''];
