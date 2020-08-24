@@ -117,6 +117,6 @@ export declare interface Chart {
 
 export declare function version(): string;
 
-export declare function init(ds: HTMLDivElement | string, style?: any): Chart;
+export declare function init(ds: HTMLDivElement | string, style?: any): Chart|null;
 
 export declare function dispose(dcs: HTMLDivElement | Chart | string): void;

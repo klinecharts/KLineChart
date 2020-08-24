@@ -37,13 +37,19 @@ function init (ds, style = {}) {
   const errorMessage = 'Chart version is __BUILD_VERSION__. Root dom is null, can not initialize the chart!!!'
   let container = ds
   if (!container) {
-    throw new Error(errorMessage)
+    if (DEV) {
+      console.warn(errorMessage)
+    }
+    return null
   }
   if (typeof container === 'string') {
     container = document.getElementById(ds) || document.getElementsByClassName(ds)
   }
   if (!container) {
-    throw new Error(errorMessage)
+    if (DEV) {
+      console.warn(errorMessage)
+    }
+    return null
   }
   const instance = instances[container.chartId || '']
   if (instance) {

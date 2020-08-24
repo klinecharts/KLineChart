@@ -489,7 +489,10 @@ export default class ChartPane {
    */
   getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type = 'jpeg', backgroundColor = '#333333') {
     if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
-      throw new Error('Picture format only supports jpeg, png and bmp!!!')
+      if (DEV) {
+        console.warn('Picture format only supports jpeg, png and bmp!!!')
+      }
+      return
     }
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
