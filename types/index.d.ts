@@ -64,7 +64,7 @@ export declare interface Axis {
 
 export declare interface TechnicalIndicatorInfo {
   name: string;
-  calcTechnicalIndicator: (kLineDataList: KLineData[], calcParams: number[]) => any[];
+  calcTechnicalIndicator: (kLineDataList: KLineData[], calcParams: number[], plots: TechnicalIndicatorInfoPlot[]) => any[];
   series?: 'price' | 'volume' | 'normal'
   calcParams?: number[];
   plots?: TechnicalIndicatorInfoPlot[];
@@ -83,6 +83,19 @@ export declare interface TechnicalIndicatorInfo {
     styleOptions: any, xAxis: Axis, yAxis: Axis,
     isCandleStickTechnicalIndicator: boolean
   ) => void
+}
+
+export declare type DrawActionType = 'drawCandle' | 'drawTechnicalIndicator'
+
+export declare interface DrawActionCallbackParams {
+  ctx: CanvasRenderingContext2D;
+  kLineData: KLineData;
+  technicalIndicatorData?: any
+  technicalIndicatorType?: string
+  coordinate: any;
+  barSpace: number;
+  halfBarSpace: number;
+  isCandleStick: boolean;
 }
 
 export declare interface Chart {
@@ -112,6 +125,8 @@ export declare interface Chart {
   removeTechnicalIndicator(tag: string): void;
   addGraphicMark(graphicMarkType: GraphicMarkType): void;
   removeAllGraphicMark(): void;
+  subscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void);
+  unsubscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void);
   getConvertPictureUrl(includeFloatLayer?: boolean, includeGraphicMark?: boolean, type?: PictureType, backgroundColor?: string): string;
 }
 

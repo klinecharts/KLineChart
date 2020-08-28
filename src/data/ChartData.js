@@ -19,6 +19,7 @@ import { formatValue } from '../utils/format'
 import { createNewTechnicalIndicator, createTechnicalIndicators } from './technicalindicator/technicalIndicatorControl'
 import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './technicalindicator/TechnicalIndicator'
+import Delegate from './delegate/Delegate'
 
 export const InvalidateLevel = {
   NONE: 0,
@@ -43,6 +44,11 @@ export const GraphicMarkType = {
   PRICE_CHANNEL_LINE: 'priceChannelLine',
   PARALLEL_STRAIGHT_LINE: 'parallelStraightLine',
   FIBONACCI_LINE: 'fibonacciLine'
+}
+
+export const DrawActionType = {
+  DRAW_CANDLE: 'drawCandle',
+  DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator'
 }
 
 const MAX_DATA_SPACE = 30
@@ -137,6 +143,12 @@ export default class ChartData {
       priceChannelLine: [],
       // 斐波那契线
       fibonacciLine: []
+    }
+
+    // 绘制事件代理
+    this._drawActionDelegate = {
+      [DrawActionType.DRAW_CANDLE]: new Delegate(),
+      [DrawActionType.DRAW_TECHNICAL_INDICATOR]: new Delegate()
     }
   }
 
@@ -673,5 +685,14 @@ export default class ChartData {
       // 将生成的新的指标类放入集合
       this._technicalIndicators[technicalIndicatorInfo.name] = technicalIndicator
     }
+  }
+
+  /**
+   * 获取绘制事件代理
+   * @param type
+   * @returns {Delegate}
+   */
+  drawActionDelegate (type) {
+    return this._drawActionDelegate[type]
   }
 }

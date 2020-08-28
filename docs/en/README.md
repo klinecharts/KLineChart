@@ -60,6 +60,8 @@ setTechnicalIndicatorType(tag, technicalIndicatorType)
 removeTechnicalIndicator(tag)
 addGraphicMark(graphicMarkType)
 removeAllGraphicMark()
+subscribeDrawAction(type, callback)
+unsubscribeDrawAction(type, callback)
 getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor)
 ```
 
@@ -153,7 +155,7 @@ The technicalIndicatorInfo format is as follows:
 ```
 {
   name: 'NAME',
-  calcTechnicalIndicator: (kLineDataList, calcParams) => { return [...] },
+  calcTechnicalIndicator: (kLineDataList, calcParams, plots) => { return [...] },
   precision: 4,
   series: 'normal',
   calcParams: [],

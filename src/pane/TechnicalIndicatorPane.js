@@ -135,7 +135,7 @@ export default class TechnicalIndicatorPane extends Pane {
       currentTechnicalIndicator.setPrecision(technicalIndicator.precision)
       currentTechnicalIndicator.setCalcParams(technicalIndicator.calcParams)
     }
-    currentTechnicalIndicator.result = currentTechnicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), currentTechnicalIndicator.calcParams) || []
+    currentTechnicalIndicator.result = currentTechnicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), currentTechnicalIndicator.calcParams, currentTechnicalIndicator.plots) || []
     return this.computeAxis()
   }
 }

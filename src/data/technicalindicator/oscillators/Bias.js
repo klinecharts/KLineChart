@@ -36,9 +36,10 @@ export default class Bias extends TechnicalIndicator {
    *
    * @param dataList
    * @param calcParams
+   * @param plots
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator (dataList, calcParams, plots) {
     const closeSums = []
     const result = []
     dataList.forEach((kLineData, i) => {
@@ -48,7 +49,7 @@ export default class Bias extends TechnicalIndicator {
         closeSums[j] = (closeSums[j] || 0) + close
         if (i >= param - 1) {
           const mean = closeSums[j] / calcParams[j]
-          bias[this.plots[j].key] = (close - mean) / mean * 100
+          bias[plots[j].key] = (close - mean) / mean * 100
 
           closeSums[j] -= dataList[i - (param - 1)].close
         }

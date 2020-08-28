@@ -154,6 +154,16 @@ addGraphicMark(graphicMarkType)
 // 移除所有的图形标记
 removeAllGraphicMark()
 
+// 订阅绘制事件
+// type类型是'drawCandle'和'drawTechnicalIndicator'
+// callback 是回调方法
+subscribeDrawAction(type, callback)
+
+// 取消订阅绘制事件
+// 入参同方法subscribeDrawAction
+unsubscribeDrawAction(type, callback)
+
+
 // 获取图表转换成图片后的图片url
 // includeFloatLayer 是否需要包含浮层, 可缺省
 // includeGraphicMark, 可缺省
@@ -256,7 +266,7 @@ technicalIndicatorInfo格式如下：
   name: 'NAME',
   // 技术指标计算方法，必要字段
   // 该字段是一个回调方法，回调参数是当前图表的源数据和计算的参数，需要返回一个数组
-  calcTechnicalIndicator: (kLineDataList, calcParams) => { return [...] },
+  calcTechnicalIndicator: (kLineDataList, calcParams, plots) => { return [...] },
   // 精度，可缺省，默认为4
   precision: 4,
   // 技术指标系列，值为'price', 'volume'和'normal'

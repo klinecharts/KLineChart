@@ -63,6 +63,40 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -1109,9 +1143,7 @@ var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
     }
   }, {
     key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this2 = this;
-
+    value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var closeSums = [];
       var result = [];
       dataList.forEach(function (kLineData, i) {
@@ -1121,7 +1153,7 @@ var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
           closeSums[j] = (closeSums[j] || 0) + close;
 
           if (i >= param - 1) {
-            ma[_this2.plots[j].key] = closeSums[j] / param;
+            ma[plots[j].key] = closeSums[j] / param;
             closeSums[j] -= dataList[i - (param - 1)].close;
           }
         });
@@ -1172,14 +1204,13 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
      *
      * @param dataList
      * @param calcParams
+     * @param plots
      * @returns {[]}
      */
 
   }, {
     key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this2 = this;
-
+    value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var oldEmas = [];
       var result = [];
       dataList.forEach(function (kLineData, i) {
@@ -1194,7 +1225,7 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
             emaValue = (2 * close + (param - 1) * oldEmas[j]) / (param + 1);
           }
 
-          ema[_this2.plots[j].key] = emaValue;
+          ema[plots[j].key] = emaValue;
           oldEmas[j] = emaValue;
         });
         result.push(ema);
@@ -1260,9 +1291,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
     }
   }, {
     key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this2 = this;
-
+    value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var volSums = [];
       var result = [];
       dataList.forEach(function (kLineData, i) {
@@ -1274,7 +1303,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
           volSums[j] = (volSums[j] || 0) + volume;
 
           if (i >= param - 1) {
-            vol[_this2.plots[j].key] = volSums[j] / param;
+            vol[plots[j].key] = volSums[j] / param;
             volSums[j] -= dataList[i - (param - 1)].volume;
           }
         });
@@ -1600,14 +1629,13 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
      *
      * @param dataList
      * @param calcParams
+     * @param plots
      * @returns {[]}
      */
 
   }, {
     key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this2 = this;
-
+    value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var sumCloseAs = [];
       var sumCloseBs = [];
       var result = [];
@@ -1628,7 +1656,7 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
           if (i >= param - 1) {
             var a = sumCloseAs[j] / param;
             var b = (sumCloseAs[j] + sumCloseBs[j]) / param;
-            rsi[_this2.plots[j].key] = b === 0 ? 0 : a / b * 100;
+            rsi[plots[j].key] = b === 0 ? 0 : a / b * 100;
             var agoData = dataList[i - (param - 1)];
             var agoOpen = agoData.open;
             var agoTmp = (agoData.close - agoOpen) / agoOpen;
@@ -1685,14 +1713,13 @@ var Bias = /*#__PURE__*/function (_TechnicalIndicator) {
      *
      * @param dataList
      * @param calcParams
+     * @param plots
      * @returns {[]}
      */
 
   }, {
     key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this2 = this;
-
+    value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var closeSums = [];
       var result = [];
       dataList.forEach(function (kLineData, i) {
@@ -1703,7 +1730,7 @@ var Bias = /*#__PURE__*/function (_TechnicalIndicator) {
 
           if (i >= param - 1) {
             var mean = closeSums[j] / calcParams[j];
-            bias[_this2.plots[j].key] = (close - mean) / mean * 100;
+            bias[plots[j].key] = (close - mean) / mean * 100;
             closeSums[j] -= dataList[i - (param - 1)].close;
           }
         });
@@ -2571,14 +2598,13 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
      *
      * @param dataList
      * @param calcParams
+     * @param plots
      * @returns {[]}
      */
 
   }, {
     key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(dataList, calcParams) {
-      var _this2 = this;
-
+    value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var result = [];
       dataList.forEach(function (kLineData, i) {
         var wr = {};
@@ -2591,7 +2617,7 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
             var hn = hln.hn;
             var ln = hln.ln;
             var hnSubLn = hn - ln;
-            wr[_this2.plots[index].key] = hnSubLn === 0 ? 0 : (hn - close) / hnSubLn * 100;
+            wr[plots[index].key] = hnSubLn === 0 ? 0 : (hn - close) / hnSubLn * 100;
           }
         });
         result.push(wr);
@@ -2989,6 +3015,46 @@ function getTechnicalIndicatorInfo() {
   };
 }
 
+var Delegate = /*#__PURE__*/function () {
+  function Delegate() {
+    _classCallCheck(this, Delegate);
+
+    this._observers = [];
+  }
+
+  _createClass(Delegate, [{
+    key: "subscribe",
+    value: function subscribe(observer) {
+      if (this._observers.indexOf(observer) < 0) {
+        this._observers.push(observer);
+      }
+    }
+  }, {
+    key: "unsubscribe",
+    value: function unsubscribe(observer) {
+      var index = this._observers.indexOf(observer);
+
+      if (index > -1) {
+        this._observers.splice(index, 1);
+      }
+    }
+  }, {
+    key: "execute",
+    value: function execute(data) {
+      this._observers.forEach(function (observer) {
+        observer(data);
+      });
+    }
+  }, {
+    key: "hasObservers",
+    value: function hasObservers() {
+      return this._observers.length > 0;
+    }
+  }]);
+
+  return Delegate;
+}();
+
 var InvalidateLevel = {
   NONE: 0,
   GRAPHIC_MARK: 1,
@@ -3012,11 +3078,17 @@ var GraphicMarkType = {
   PARALLEL_STRAIGHT_LINE: 'parallelStraightLine',
   FIBONACCI_LINE: 'fibonacciLine'
 };
+var DrawActionType = {
+  DRAW_CANDLE: 'drawCandle',
+  DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator'
+};
 var MAX_DATA_SPACE = 30;
 var MIN_DATA_SPACE = 3;
 
 var ChartData = /*#__PURE__*/function () {
   function ChartData(styleOptions, invalidateHandler) {
+    var _this$_drawActionDele;
+
     _classCallCheck(this, ChartData);
 
     // 刷新持有者
@@ -3102,7 +3174,9 @@ var ChartData = /*#__PURE__*/function () {
       priceChannelLine: [],
       // 斐波那契线
       fibonacciLine: []
-    };
+    }; // 绘制事件代理
+
+    this._drawActionDelegate = (_this$_drawActionDele = {}, _defineProperty(_this$_drawActionDele, DrawActionType.DRAW_CANDLE, new Delegate()), _defineProperty(_this$_drawActionDele, DrawActionType.DRAW_TECHNICAL_INDICATOR, new Delegate()), _this$_drawActionDele);
   }
   /**
    * 加载更多持有者
@@ -3772,6 +3846,17 @@ var ChartData = /*#__PURE__*/function () {
         // 将生成的新的指标类放入集合
         this._technicalIndicators[technicalIndicatorInfo.name] = technicalIndicator;
       }
+    }
+    /**
+     * 获取绘制事件代理
+     * @param type
+     * @returns {Delegate}
+     */
+
+  }, {
+    key: "drawActionDelegate",
+    value: function drawActionDelegate(type) {
+      return this._drawActionDelegate[type];
     }
   }]);
 
@@ -4489,7 +4574,26 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
 
       var dataList = this._chartData.dataList();
 
-      var technicalIndicatorResult = technicalIndicator.result;
+      var technicalIndicatorResult = technicalIndicator.result; // 技术指标自定义绘制
+
+      if (technicalIndicator.render) {
+        this._ctx.save();
+
+        technicalIndicator.render(this._ctx, {
+          from: this._chartData.from(),
+          to: this._chartData.to(),
+          kLineDataList: this._chartData.dataList(),
+          technicalIndicatorDataList: technicalIndicatorResult
+        }, {
+          width: this._width,
+          height: this._height,
+          dataSpace: this._chartData.dataSpace(),
+          barSpace: this._chartData.barSpace()
+        }, this._chartData.styleOptions(), this._xAxis, this._yAxis, this._yAxis.isCandleStickYAxis());
+
+        this._ctx.restore();
+      }
+
       var baseValue = technicalIndicator.baseValue;
 
       if (!isValid(baseValue)) {
@@ -4510,8 +4614,13 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
           _this3._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, technicalIndicatorOptions.bar, CandleStickStyle.OHLC);
         }
 
+        var coordinateY = {};
         plots.forEach(function (plot) {
           var value = technicalIndicatorData[plot.key];
+
+          var valueY = _this3._yAxis.convertToPixel(value);
+
+          coordinateY[plot.key] = valueY;
 
           switch (plot.type) {
             case PlotType.CIRCLE:
@@ -4527,9 +4636,6 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                       technicalIndicatorData: technicalIndicatorData
                     }
                   };
-
-                  var valueY = _this3._yAxis.convertToPixel(value);
-
                   var circle = {
                     x: x,
                     y: valueY,
@@ -4557,18 +4663,15 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                       technicalIndicatorData: technicalIndicatorData
                     }
                   };
-
-                  var _valueY = _this3._yAxis.convertToPixel(value);
-
-                  var height = Math.abs(baseValueY - _valueY);
+                  var height = Math.abs(baseValueY - valueY);
                   var bar = {
                     x: x - halfBarSpace,
                     width: halfBarSpace * 2,
                     height: Math.max(1, height)
                   };
 
-                  if (_valueY <= baseValueY) {
-                    bar.y = height < 1 ? baseValueY + 1 : _valueY;
+                  if (valueY <= baseValueY) {
+                    bar.y = height < 1 ? baseValueY + 1 : valueY;
                   } else {
                     bar.y = baseValueY;
                   }
@@ -4585,11 +4688,9 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
             case PlotType.LINE:
               {
                 if (isValid(value)) {
-                  var _valueY2 = _this3._yAxis.convertToPixel(value);
-
                   var line = {
                     x: x,
-                    y: _valueY2
+                    y: valueY
                   };
 
                   if (lines[lineValueIndex]) {
@@ -4609,28 +4710,20 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                 break;
               }
           }
+
+          _this3._drawActionExecute(DrawActionType.DRAW_TECHNICAL_INDICATOR, {
+            ctx: _this3._ctx,
+            kLineData: kLineData,
+            technicalIndicatorData: technicalIndicatorData,
+            coordinate: _objectSpread2({
+              x: x
+            }, coordinateY),
+            isCandleStick: _this3._yAxis.isCandleStickYAxis()
+          });
         });
       }, function () {
         _this3._drawLines(lines, technicalIndicatorOptions);
       });
-
-      if (technicalIndicator.render) {
-        this._ctx.save();
-
-        technicalIndicator.render(this._ctx, {
-          from: this._chartData.from(),
-          to: this._chartData.to(),
-          kLineDataList: this._chartData.dataList(),
-          technicalIndicatorDataList: technicalIndicatorResult
-        }, {
-          width: this._width,
-          height: this._height,
-          dataSpace: this._chartData.dataSpace(),
-          barSpace: this._chartData.barSpace()
-        }, this._chartData.styleOptions(), this._xAxis, this._yAxis, this._yAxis.isCandleStickYAxis());
-
-        this._ctx.restore();
-      }
     }
     /**
      * 绘制线
@@ -4838,6 +4931,40 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
 
             break;
           }
+      }
+
+      this._drawActionExecute(DrawActionType.DRAW_CANDLE, {
+        ctx: this._ctx,
+        kLineData: kLineData,
+        coordinate: {
+          x: x,
+          open: openY,
+          close: closeY,
+          high: highY,
+          low: lowY
+        },
+        isCandleStick: this._yAxis.isCandleStickYAxis()
+      });
+    }
+    /**
+     * 执行绘制事件监听
+     * @param type
+     * @param data
+     * @private
+     */
+
+  }, {
+    key: "_drawActionExecute",
+    value: function _drawActionExecute(type, data) {
+      // 绘制事件监听
+      var delegate = this._chartData.drawActionDelegate(type);
+
+      if (delegate.hasObservers()) {
+        this._ctx.save();
+
+        delegate.execute(data);
+
+        this._ctx.restore();
       }
     }
   }]);
@@ -6296,7 +6423,7 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
         currentTechnicalIndicator.setCalcParams(technicalIndicator.calcParams);
       }
 
-      currentTechnicalIndicator.result = currentTechnicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), currentTechnicalIndicator.calcParams) || [];
+      currentTechnicalIndicator.result = currentTechnicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), currentTechnicalIndicator.calcParams, currentTechnicalIndicator.plots) || [];
       return this.computeAxis();
     }
   }]);
@@ -11641,6 +11768,48 @@ var Chart = /*#__PURE__*/function () {
       this._chartPane.chartData().setGraphicMarkType(GraphicMarkType.NONE);
 
       this._chartPane.chartData().setGraphicMarkData(newGraphicMarkDatas);
+    }
+    /**
+     * 订阅绘制事件
+     * @param type
+     * @param callback
+     */
+
+  }, {
+    key: "subscribeDrawAction",
+    value: function subscribeDrawAction(type, callback) {
+      var delegate = this._chartPane.chartData().drawActionDelegate(type);
+
+      if (!delegate) {
+        {
+          console.warn('Draw action type does not exist!!!');
+        }
+
+        return;
+      }
+
+      delegate.subscribe(callback);
+    }
+    /**
+     * 取消订阅绘制事件
+     * @param type
+     * @param callback
+     */
+
+  }, {
+    key: "unsubscribeDrawAction",
+    value: function unsubscribeDrawAction(type, callback) {
+      var delegate = this._chartPane.chartData().drawActionDelegate(type);
+
+      if (!delegate) {
+        {
+          console.warn('Draw action type does not exist!!!');
+        }
+
+        return;
+      }
+
+      delegate.unsubscribe(callback);
     }
     /**
      * 获取将图表装换成图片后的url
