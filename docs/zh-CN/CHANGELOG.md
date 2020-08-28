@@ -3,9 +3,10 @@
 ## 5.6.0
 `待发布`
 + 🆕 自定义技术指标新增`render`属性。
++ 🆕 自定义指标方法`calcTechnicalIndicator`，增加参数`plots`。
 + 🆕 配置项新增`xAxis.height`和`yAxis.width`。
-+ 🆕 新增方法`subscribe`和`unsubscribe`，用于关键操作监听和取消。
-+ 💄 优化时间格式化`formatDate`方法。
++ 🆕 新增方法`subscribeDrawAction`和`unsubscribeDrawAction`，用于绘制监听和取消。
++ 👉 内置指标文字提示显示`xxxMa`变更为`maXxx`。
 
 
 ## 5.5.1

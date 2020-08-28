@@ -3082,7 +3082,7 @@ var DrawActionType = {
   DRAW_CANDLE: 'drawCandle',
   DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator'
 };
-var MAX_DATA_SPACE = 30;
+var MAX_DATA_SPACE = 50;
 var MIN_DATA_SPACE = 3;
 
 var ChartData = /*#__PURE__*/function () {
@@ -4715,10 +4715,17 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
             ctx: _this3._ctx,
             kLineData: kLineData,
             technicalIndicatorData: technicalIndicatorData,
+            technicalIndicatorType: technicalIndicator.name,
             coordinate: _objectSpread2({
               x: x
             }, coordinateY),
-            isCandleStick: _this3._yAxis.isCandleStickYAxis()
+            viewport: {
+              width: _this3._width,
+              height: _this3._height
+            },
+            barSpace: barSpace,
+            halfBarSpace: halfBarSpace,
+            isCandleStick: isCandleStickYAxis
           });
         });
       }, function () {
@@ -4943,6 +4950,12 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
           high: highY,
           low: lowY
         },
+        viewport: {
+          width: this._width,
+          height: this._height
+        },
+        barSpace: barSpace,
+        halfBarSpace: halfBarSpace,
         isCandleStick: this._yAxis.isCandleStickYAxis()
       });
     }

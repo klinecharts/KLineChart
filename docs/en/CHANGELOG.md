@@ -1,5 +1,13 @@
 # Change Log
 
+## 5.6.0
+`To be released`
++ 🆕 Add `render` property for custom technical indicators.
++ 🆕 Custom indicator method `calcTechnicalIndicator`, add parameter `plots`.
++ 🆕 Add `xAxis.height` and `yAxis.width` to configuration items.
++ 🆕 Add methods `subscribeDrawAction` and `unsubscribeDrawAction` for drawing monitoring and cancellation.
++ 👉 The built-in indicator text prompt shows that `xxxMa` is changed to `maXxx`.
+
 ## 5.5.1
 `2020-08-16`
 + 💄 When there is no data, the y-axis is displayed.

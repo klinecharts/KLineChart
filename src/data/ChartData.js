@@ -51,7 +51,7 @@ export const DrawActionType = {
   DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator'
 }
 
-const MAX_DATA_SPACE = 30
+const MAX_DATA_SPACE = 50
 const MIN_DATA_SPACE = 3
 
 export default class ChartData {

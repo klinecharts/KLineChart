@@ -192,6 +192,7 @@ export default class TechnicalIndicatorView extends View {
             technicalIndicatorData,
             technicalIndicatorType: technicalIndicator.name,
             coordinate: { x, ...coordinateY },
+            viewport: { width: this._width, height: this._height },
             barSpace,
             halfBarSpace,
             isCandleStick: isCandleStickYAxis
@@ -359,6 +360,7 @@ export default class TechnicalIndicatorView extends View {
       ctx: this._ctx,
       kLineData: kLineData,
       coordinate: { x, open: openY, close: closeY, high: highY, low: lowY },
+      viewport: { width: this._width, height: this._height },
       barSpace,
       halfBarSpace,
       isCandleStick: this._yAxis.isCandleStickYAxis()
