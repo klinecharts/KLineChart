@@ -7,6 +7,7 @@
 + 🆕 Add `xAxis.height` and `yAxis.width` to configuration items.
 + 🆕 Add methods `subscribeDrawAction` and `unsubscribeDrawAction` for drawing monitoring and cancellation.
 + 👉 The built-in indicator text prompt shows that `xxxMa` is changed to `maXxx`.
++ 🗑 Remove the configuration item `floatLayer.prompt.technicalIndicator.point`.
 
 ## 5.5.1
 `2020-08-16`

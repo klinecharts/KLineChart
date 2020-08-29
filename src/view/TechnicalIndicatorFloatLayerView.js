@@ -74,9 +74,8 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     kLineData, technicalIndicatorData,
     realDataPos, realDataPosX, technicalIndicator
   ) {
-    this._drawTechnicalIndicatorPrompt(
-      technicalIndicatorData, realDataPos, realDataPosX,
-      technicalIndicator
+    this._drawTechnicalIndicatorPromptText(
+      technicalIndicatorData, realDataPos, technicalIndicator
     )
   }
 
@@ -134,40 +133,21 @@ export default class TechnicalIndicatorFloatLayerView extends View {
   }
 
   /**
-   * 绘制指标提示
+   * 绘制指标提示文字
    * @param technicalIndicatorData
    * @param realDataPos
-   * @param realDataPosX
    * @param technicalIndicator
    * @param offsetTop
    * @private
    */
-  _drawTechnicalIndicatorPrompt (
-    technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, offsetTop = 0
-  ) {
+  _drawTechnicalIndicatorPromptText (technicalIndicatorData, realDataPos, technicalIndicator, offsetTop = 0) {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
     const colors = technicalIndicatorOptions.line.colors
-    this._drawTechnicalIndicatorPromptText(
-      realDataPos, technicalIndicator, data, colors, offsetTop
-    )
-  }
-
-  /**
-   * 绘制指标提示文字
-   * @param dataPos
-   * @param technicalIndicator
-   * @param data
-   * @param colors
-   * @param offsetTop
-   * @private
-   */
-  _drawTechnicalIndicatorPromptText (dataPos, technicalIndicator, data, colors, offsetTop) {
     const dataList = this._chartData.dataList()
-    const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const cbData = {
-      preData: { kLineData: dataList[dataPos - 1], technicalIndicatorData: technicalIndicator.result[dataPos - 1] },
-      currentData: { kLineData: dataList[dataPos], technicalIndicatorData: technicalIndicator.result[dataPos] }
+      preData: { kLineData: dataList[realDataPos - 1], technicalIndicatorData: technicalIndicator.result[realDataPos - 1] },
+      currentData: { kLineData: dataList[realDataPos], technicalIndicatorData: technicalIndicator.result[realDataPos] }
     }
     const plots = technicalIndicator.plots
     const floatLayerPromptTechnicalIndicatorText = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.text

@@ -7,6 +7,7 @@
 + 🆕 配置项新增`xAxis.height`和`yAxis.width`。
 + 🆕 新增方法`subscribeDrawAction`和`unsubscribeDrawAction`，用于绘制监听和取消。
 + 👉 内置指标文字提示显示`xxxMa`变更为`maXxx`。
++ 🗑 去除配置项`floatLayer.prompt.technicalIndicator.point`。
 
 
 ## 5.5.1

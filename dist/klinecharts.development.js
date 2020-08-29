@@ -3011,6 +3011,19 @@ function getTechnicalIndicatorInfo() {
   };
 }
 
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 var Delegate = /*#__PURE__*/function () {
   function Delegate() {
     _classCallCheck(this, Delegate);
@@ -5054,7 +5067,7 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawPrompt",
     value: function _drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
-      this._drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator);
+      this._drawTechnicalIndicatorPromptText(technicalIndicatorData, realDataPos, technicalIndicator);
     }
     /**
      * 绘制十字光标水平线
@@ -5129,52 +5142,34 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
       this._ctx.restore();
     }
     /**
-     * 绘制指标提示
+     * 绘制指标提示文字
      * @param technicalIndicatorData
      * @param realDataPos
-     * @param realDataPosX
      * @param technicalIndicator
-     * @param offsetTop
-     * @private
-     */
-
-  }, {
-    key: "_drawTechnicalIndicatorPrompt",
-    value: function _drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
-      var offsetTop = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
-
-      var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
-
-      var data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
-      var colors = technicalIndicatorOptions.line.colors;
-
-      this._drawTechnicalIndicatorPromptText(realDataPos, technicalIndicator, data, colors, offsetTop);
-    }
-    /**
-     * 绘制指标提示文字
-     * @param dataPos
-     * @param technicalIndicator
-     * @param data
-     * @param colors
      * @param offsetTop
      * @private
      */
 
   }, {
     key: "_drawTechnicalIndicatorPromptText",
-    value: function _drawTechnicalIndicatorPromptText(dataPos, technicalIndicator, data, colors, offsetTop) {
-      var dataList = this._chartData.dataList();
+    value: function _drawTechnicalIndicatorPromptText(technicalIndicatorData, realDataPos, technicalIndicator) {
+      var offsetTop = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
 
       var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
+      var data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
+      var colors = technicalIndicatorOptions.line.colors;
+
+      var dataList = this._chartData.dataList();
+
       var cbData = {
         preData: {
-          kLineData: dataList[dataPos - 1],
-          technicalIndicatorData: technicalIndicator.result[dataPos - 1]
+          kLineData: dataList[realDataPos - 1],
+          technicalIndicatorData: technicalIndicator.result[realDataPos - 1]
         },
         currentData: {
-          kLineData: dataList[dataPos],
-          technicalIndicatorData: technicalIndicator.result[dataPos]
+          kLineData: dataList[realDataPos],
+          technicalIndicatorData: technicalIndicator.result[realDataPos]
         }
       };
       var plots = technicalIndicator.plots;
@@ -6784,7 +6779,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
         this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData);
 
         if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
-          this._drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
+          this._drawTechnicalIndicatorPromptText(technicalIndicatorData, realDataPos, technicalIndicator, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
         }
       } else {
         var data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
