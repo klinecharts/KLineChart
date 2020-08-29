@@ -63,23 +63,20 @@ export default class TechnicalIndicatorFloatLayerView extends View {
 
   /**
    * 绘制提示
-   * @param crossHair
    * @param kLineData
    * @param technicalIndicatorData
    * @param realDataPos
    * @param realDataPosX
    * @param technicalIndicator
-   * @param isDrawValueIndicator 是否需要绘制指示点
    * @private
    */
   _drawPrompt (
     kLineData, technicalIndicatorData,
-    realDataPos, realDataPosX, technicalIndicator,
-    isDrawValueIndicator
+    realDataPos, realDataPosX, technicalIndicator
   ) {
     this._drawTechnicalIndicatorPrompt(
       technicalIndicatorData, realDataPos, realDataPosX,
-      technicalIndicator, isDrawValueIndicator
+      technicalIndicator
     )
   }
 
@@ -142,14 +139,11 @@ export default class TechnicalIndicatorFloatLayerView extends View {
    * @param realDataPos
    * @param realDataPosX
    * @param technicalIndicator
-   * @param isDrawValueIndicator
    * @param offsetTop
    * @private
    */
   _drawTechnicalIndicatorPrompt (
-    technicalIndicatorData, realDataPos, realDataPosX,
-    technicalIndicator, isDrawValueIndicator,
-    offsetTop = 0
+    technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, offsetTop = 0
   ) {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
@@ -157,11 +151,6 @@ export default class TechnicalIndicatorFloatLayerView extends View {
     this._drawTechnicalIndicatorPromptText(
       realDataPos, technicalIndicator, data, colors, offsetTop
     )
-    if (isDrawValueIndicator) {
-      this._drawTechnicalIndicatorPromptPoint(
-        realDataPos, realDataPosX, technicalIndicator, data.values, colors
-      )
-    }
   }
 
   /**
@@ -220,40 +209,6 @@ export default class TechnicalIndicatorFloatLayerView extends View {
       const textWidth = calcTextWidth(this._ctx, text)
       this._ctx.fillText(text, labelX, labelY)
       labelX += (textMarginLeft + textMarginRight + textWidth)
-    }
-  }
-
-  /**
-   * 绘制指标提示点
-   * @param realDataPos
-   * @param realDataPosX
-   * @param technicalIndicator
-   * @param values
-   * @param colors
-   * @private
-   */
-  _drawTechnicalIndicatorPromptPoint (realDataPos, realDataPosX, technicalIndicator, values, colors) {
-    const floatLayerPromptTechnicalIndicatorPoint = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.point
-    if (!floatLayerPromptTechnicalIndicatorPoint.display) {
-      return
-    }
-    const plots = technicalIndicator.plots
-    const colorSize = colors.length
-    const valueSize = values.length
-    const radius = floatLayerPromptTechnicalIndicatorPoint.radius
-    let lineCount = 0
-    for (let i = 0; i < valueSize; i++) {
-      const value = values[i].value
-      if (plots[i].type === PlotType.LINE) {
-        if (isValid(value)) {
-          this._ctx.fillStyle = colors[lineCount % colorSize]
-          this._ctx.beginPath()
-          this._ctx.arc(realDataPosX, values[i].y, radius, 0, Math.PI * 2)
-          this._ctx.closePath()
-          this._ctx.fill()
-        }
-        lineCount++
-      }
     }
   }
 }

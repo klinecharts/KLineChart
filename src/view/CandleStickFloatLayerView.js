@@ -21,8 +21,7 @@ import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalI
 
 export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLayerView {
   _drawPrompt (
-    kLineData, technicalIndicatorData, realDataPos, realDataPosX,
-    technicalIndicator, isDrawValueIndicator
+    kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator
   ) {
     const options = this._chartData.styleOptions()
     const floatLayerPromptCandleStick = options.floatLayer.prompt.candleStick
@@ -32,8 +31,7 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
         this._drawTechnicalIndicatorPrompt(
           technicalIndicatorData, realDataPos, realDataPosX,
-          technicalIndicator, isDrawValueIndicator,
-          floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop
+          technicalIndicator, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop
         )
       }
     } else {
@@ -41,13 +39,6 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       this._drawCandleStickRectPromptText(
         realDataPosX, floatLayerPromptCandleStick, candleStickPromptData, data
       )
-      if (isDrawValueIndicator) {
-        const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
-        this._drawTechnicalIndicatorPromptPoint(
-          realDataPos, realDataPosX, technicalIndicator,
-          data.values, technicalIndicatorOptions.line.colors
-        )
-      }
     }
   }
 

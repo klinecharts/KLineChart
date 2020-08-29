@@ -815,10 +815,6 @@ var defaultFloatLayer = {
         marginRight: 8,
         marginBottom: 0,
         marginLeft: 8
-      },
-      point: {
-        display: true,
-        radius: 3
       }
     }
   }
@@ -5047,20 +5043,18 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
     }
     /**
      * 绘制提示
-     * @param crossHair
      * @param kLineData
      * @param technicalIndicatorData
      * @param realDataPos
      * @param realDataPosX
      * @param technicalIndicator
-     * @param isDrawValueIndicator 是否需要绘制指示点
      * @private
      */
 
   }, {
     key: "_drawPrompt",
-    value: function _drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, isDrawValueIndicator) {
-      this._drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, isDrawValueIndicator);
+    value: function _drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
+      this._drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator);
     }
     /**
      * 绘制十字光标水平线
@@ -5140,15 +5134,14 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
      * @param realDataPos
      * @param realDataPosX
      * @param technicalIndicator
-     * @param isDrawValueIndicator
      * @param offsetTop
      * @private
      */
 
   }, {
     key: "_drawTechnicalIndicatorPrompt",
-    value: function _drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, isDrawValueIndicator) {
-      var offsetTop = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
+    value: function _drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
+      var offsetTop = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
 
       var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
@@ -5156,10 +5149,6 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
       var colors = technicalIndicatorOptions.line.colors;
 
       this._drawTechnicalIndicatorPromptText(realDataPos, technicalIndicator, data, colors, offsetTop);
-
-      if (isDrawValueIndicator) {
-        this._drawTechnicalIndicatorPromptPoint(realDataPos, realDataPosX, technicalIndicator, data.values, colors);
-      }
     }
     /**
      * 绘制指标提示文字
@@ -5240,51 +5229,6 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
         this._ctx.fillText(text, labelX, labelY);
 
         labelX += textMarginLeft + textMarginRight + textWidth;
-      }
-    }
-    /**
-     * 绘制指标提示点
-     * @param realDataPos
-     * @param realDataPosX
-     * @param technicalIndicator
-     * @param values
-     * @param colors
-     * @private
-     */
-
-  }, {
-    key: "_drawTechnicalIndicatorPromptPoint",
-    value: function _drawTechnicalIndicatorPromptPoint(realDataPos, realDataPosX, technicalIndicator, values, colors) {
-      var floatLayerPromptTechnicalIndicatorPoint = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.point;
-
-      if (!floatLayerPromptTechnicalIndicatorPoint.display) {
-        return;
-      }
-
-      var plots = technicalIndicator.plots;
-      var colorSize = colors.length;
-      var valueSize = values.length;
-      var radius = floatLayerPromptTechnicalIndicatorPoint.radius;
-      var lineCount = 0;
-
-      for (var i = 0; i < valueSize; i++) {
-        var value = values[i].value;
-
-        if (plots[i].type === PlotType.LINE) {
-          if (isValid(value)) {
-            this._ctx.fillStyle = colors[lineCount % colorSize];
-
-            this._ctx.beginPath();
-
-            this._ctx.arc(realDataPosX, values[i].y, radius, 0, Math.PI * 2);
-
-            this._ctx.closePath();
-
-            this._ctx.fill();
-          }
-
-          lineCount++;
-        }
       }
     }
   }]);
@@ -6829,7 +6773,7 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
 
   _createClass(CandleStickFloatLayerView, [{
     key: "_drawPrompt",
-    value: function _drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, isDrawValueIndicator) {
+    value: function _drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
       var options = this._chartData.styleOptions();
 
       var floatLayerPromptCandleStick = options.floatLayer.prompt.candleStick;
@@ -6840,18 +6784,12 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
         this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData);
 
         if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
-          this._drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, isDrawValueIndicator, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
+          this._drawTechnicalIndicatorPrompt(technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
         }
       } else {
         var data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
 
         this._drawCandleStickRectPromptText(realDataPosX, floatLayerPromptCandleStick, candleStickPromptData, data);
-
-        if (isDrawValueIndicator) {
-          var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
-
-          this._drawTechnicalIndicatorPromptPoint(realDataPos, realDataPosX, technicalIndicator, data.values, technicalIndicatorOptions.line.colors);
-        }
       }
     }
   }, {
