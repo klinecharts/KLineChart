@@ -54,9 +54,11 @@ export default class Chart {
 
   /**
    * 获取技术指标参数配置
+   * @param technicalIndicatorType
+   * @returns {function(Array<string>, string, string): Promise}
    */
-  getTechnicalIndicatorParamOptions () {
-    return this._chartPane.chartData().technicalIndicatorCalcParams()
+  getTechnicalIndicatorParams (technicalIndicatorType) {
+    return this._chartPane.chartData().technicalIndicatorCalcParams(technicalIndicatorType)
   }
 
   /**
@@ -83,6 +85,13 @@ export default class Chart {
    */
   setTimezone (timezone) {
     this._chartPane.setTimezone(timezone)
+  }
+
+  /**
+   * 获取当前时区
+   */
+  getTimezone () {
+    return this._chartPane.chartData().timezone()
   }
 
   /**

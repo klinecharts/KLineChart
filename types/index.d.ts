@@ -1,28 +1,5 @@
 export declare type GraphicMarkType = 'none' | 'horizontalStraightLine' | 'verticalStraightLine' | 'straightLine' | 'horizontalRayLine' | 'verticalRayLine' | 'rayLine' | 'horizontalSegmentLine' | 'verticalSegmentLine' | 'segmentLine' | 'priceLine' | 'priceChannelLine' | 'parallelStraightLine' | 'fibonacciLine';
 export declare type ChartType = 'candle_stick' | 'real_time';
-export declare interface TechnicalIndicatorParams {
-  MA: number[];
-  EMA: number[];
-  VOL: number[];
-  MACD: number[];
-  BOLL: number[];
-  KDJ: number[];
-  RSI: number[];
-  BIAS: number[];
-  BRAR: number[];
-  CCI: number[];
-  DMI: number[];
-  CR: number[];
-  PSY: number[];
-  DMA: number[];
-  TRIX: number[];
-  OBV: number[];
-  VR: number[];
-  WR: number[];
-  MTM: number[];
-  EMV: number[];
-  SAR: number[];
-}
 
 export declare interface KLineData {
   open: number;
@@ -102,10 +79,11 @@ export declare interface Chart {
   setStyleOptions(options: any): void;
   getStyleOptions(): any;
   setTechnicalIndicatorParams(technicalIndicatorType: string, params: number[]): void;
-  getTechnicalIndicatorParamOptions(): TechnicalIndicatorParams;
+  getTechnicalIndicatorParams(technicalIndicatorType?: string): any;
   setPrecision(pricePrecision: number, volumePrecision: number): void;
   setTechnicalIndicatorPrecision(precision: number, technicalIndicatorType?: string): void;
-  setTimezone(timezone: string):void;
+  setTimezone(timezone: string): void;
+  getTimezone(): string;
   resize(): void;
   setOffsetRightSpace(space: number): void;
   setLeftMinVisibleBarCount(barCount: number): void;

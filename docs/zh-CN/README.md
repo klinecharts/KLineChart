@@ -54,8 +54,9 @@ getStyleOptions()
 // params 技术指标计算参数，详情可参阅技术指标参数
 setTechnicalIndicatorParams(technicalIndicatorType, params)
 
-// 获取所有技术指标参数
-getTechnicalIndicatorParamOptions()
+// 获取技术指标参数
+// technicalIndicatorType 技术指标类型，可缺省，缺省则返回所有
+getTechnicalIndicatorParams(technicalIndicatorType)
 
 // 设置精度
 // pricePrecision 价格精度，影响整个图表显示的价格的数字精度，还包括指标系列是price的技术指标
@@ -72,6 +73,9 @@ setTechnicalIndicatorPrecision(precision, technicalIndicatorType)
 // 如果不设置会自动获取本机时区
 // 时区对应名字列表请自寻查找相关文档
 setTimezone(timezone)
+
+// 获取图表时区
+getTimezone()
 
 // 调整图表大小，总是会填充容器大小
 // 注意：此方法会重新计算整个图表各个模块的大小，频繁调用可能会影响到性能，调用请谨慎

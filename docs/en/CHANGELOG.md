@@ -3,9 +3,11 @@
 ## 5.6.0
 `To be released`
 + 🆕 Add `render` property for custom technical indicators.
-+ 🆕 Custom indicator method `calcTechnicalIndicator`, add parameter `plots`.
++ 🆕 Custom indicator api `calcTechnicalIndicator`, add parameter `plots`.
 + 🆕 Add `xAxis.height` and `yAxis.width` to configuration items.
-+ 🆕 Add methods `subscribeDrawAction` and `unsubscribeDrawAction` for drawing monitoring and cancellation.
++ 🆕 Add api `subscribeDrawAction` and `unsubscribeDrawAction` for drawing monitoring and cancellation.
++ 🆕 Add api `getTimezone`.
++ 👉 Api `getTechnicalIndicatorParamOptions` changed to `getTechnicalIndicatorParams`。
 + 👉 The built-in indicator text prompt shows that `xxxMa` is changed to `maXxx`.
 + 🗑 Remove the configuration item `floatLayer.prompt.technicalIndicator.point`.
 

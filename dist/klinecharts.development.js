@@ -3256,12 +3256,19 @@ var ChartData = /*#__PURE__*/function () {
     }
     /**
      * 获取技术指标计算参数结合
+     * @param technicalIndicatorType
      * @returns {function(Array<string>, string, string): Promise}
      */
 
   }, {
     key: "technicalIndicatorCalcParams",
-    value: function technicalIndicatorCalcParams() {
+    value: function technicalIndicatorCalcParams(technicalIndicatorType) {
+      var technical = this.technicalIndicator(technicalIndicatorType);
+
+      if (technical) {
+        return clone(technical.calcParams);
+      }
+
       var calcParams = {};
 
       for (var name in this._technicalIndicators) {
@@ -11450,12 +11457,14 @@ var Chart = /*#__PURE__*/function () {
     }
     /**
      * 获取技术指标参数配置
+     * @param technicalIndicatorType
+     * @returns {function(Array<string>, string, string): Promise}
      */
 
   }, {
-    key: "getTechnicalIndicatorParamOptions",
-    value: function getTechnicalIndicatorParamOptions() {
-      return this._chartPane.chartData().technicalIndicatorCalcParams();
+    key: "getTechnicalIndicatorParams",
+    value: function getTechnicalIndicatorParams(technicalIndicatorType) {
+      return this._chartPane.chartData().technicalIndicatorCalcParams(technicalIndicatorType);
     }
     /**
      * 加载精度
@@ -11488,6 +11497,15 @@ var Chart = /*#__PURE__*/function () {
     key: "setTimezone",
     value: function setTimezone(timezone) {
       this._chartPane.setTimezone(timezone);
+    }
+    /**
+     * 获取当前时区
+     */
+
+  }, {
+    key: "getTimezone",
+    value: function getTimezone() {
+      return this._chartPane.chartData().timezone();
     }
     /**
      * 重置尺寸，总是会填充父容器

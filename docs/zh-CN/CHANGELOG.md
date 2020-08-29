@@ -6,6 +6,8 @@
 + 🆕 自定义指标方法`calcTechnicalIndicator`，增加参数`plots`。
 + 🆕 配置项新增`xAxis.height`和`yAxis.width`。
 + 🆕 新增方法`subscribeDrawAction`和`unsubscribeDrawAction`，用于绘制监听和取消。
++ 🆕 新增方法`getTimezone`。
++ 👉 方法`getTechnicalIndicatorParamOptions`变更为`getTechnicalIndicatorParams`。
 + 👉 内置指标文字提示显示`xxxMa`变更为`maXxx`。
 + 🗑 去除配置项`floatLayer.prompt.technicalIndicator.point`。
 

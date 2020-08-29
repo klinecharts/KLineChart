@@ -208,9 +208,14 @@ export default class ChartData {
 
   /**
    * 获取技术指标计算参数结合
+   * @param technicalIndicatorType
    * @returns {function(Array<string>, string, string): Promise}
    */
-  technicalIndicatorCalcParams () {
+  technicalIndicatorCalcParams (technicalIndicatorType) {
+    const technical = this.technicalIndicator(technicalIndicatorType)
+    if (technical) {
+      return clone(technical.calcParams)
+    }
     const calcParams = {}
     for (const name in this._technicalIndicators) {
       calcParams[name] = clone(this._technicalIndicators[name].calcParams)
