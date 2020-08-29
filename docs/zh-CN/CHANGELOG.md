@@ -1,7 +1,7 @@
 # 版本日志
 
 ## 5.6.0
-`待发布`
+`2020-08-29`
 + 🆕 自定义技术指标新增`render`属性。
 + 🆕 自定义指标方法`calcTechnicalIndicator`，增加参数`plots`。
 + 🆕 配置项新增`xAxis.height`和`yAxis.width`。

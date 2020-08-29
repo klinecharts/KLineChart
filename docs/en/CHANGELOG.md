@@ -1,7 +1,7 @@
 # Change Log
 
 ## 5.6.0
-`To be released`
+`2020-08-29`
 + 🆕 Add `render` property for custom technical indicators.
 + 🆕 Custom indicator api `calcTechnicalIndicator`, add parameter `plots`.
 + 🆕 Add `xAxis.height` and `yAxis.width` to configuration items.
