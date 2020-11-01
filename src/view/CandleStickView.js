@@ -122,7 +122,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
   _drawCandleStick () {
     const candleStickOptions = this._chartData.styleOptions().candleStick
     this._drawGraphics((x, i, kLineData, halfBarSpace, barSpace) => {
-      this._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, candleStickOptions.bar, candleStickOptions.bar.style)
+      this._drawCandleStickBar(x, halfBarSpace, barSpace, i, kLineData, candleStickOptions.bar, candleStickOptions.bar.style)
     })
   }
 

@@ -118,7 +118,7 @@ export default class TechnicalIndicatorView extends View {
         const technicalIndicatorData = technicalIndicatorResult[i] || {}
         let lineValueIndex = 0
         if (technicalIndicator.shouldOhlc && !isCandleStickYAxis) {
-          this._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, technicalIndicatorOptions.bar, CandleStickStyle.OHLC)
+          this._drawCandleStickBar(x, halfBarSpace, barSpace, i, kLineData, technicalIndicatorOptions.bar, CandleStickStyle.OHLC)
         }
         const coordinateY = {}
         plots.forEach(plot => {
@@ -293,12 +293,13 @@ export default class TechnicalIndicatorView extends View {
    * @param x
    * @param halfBarSpace
    * @param barSpace
+   * @param dataIndex
    * @param kLineData
    * @param barOptions
    * @param barStyle
    * @private
    */
-  _drawCandleStickBar (x, halfBarSpace, barSpace, kLineData, barOptions, barStyle) {
+  _drawCandleStickBar (x, halfBarSpace, barSpace, dataIndex, kLineData, barOptions, barStyle) {
     const open = kLineData.open
     const close = kLineData.close
     const high = kLineData.high
@@ -358,7 +359,8 @@ export default class TechnicalIndicatorView extends View {
     }
     this._drawActionExecute(DrawActionType.DRAW_CANDLE, {
       ctx: this._ctx,
-      kLineData: kLineData,
+      dataIndex,
+      kLineData,
       coordinate: { x, open: openY, close: closeY, high: highY, low: lowY },
       viewport: { width: this._width, height: this._height },
       barSpace,

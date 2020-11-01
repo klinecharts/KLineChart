@@ -4627,7 +4627,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
         var lineValueIndex = 0;
 
         if (technicalIndicator.shouldOhlc && !isCandleStickYAxis) {
-          _this3._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, technicalIndicatorOptions.bar, CandleStickStyle.OHLC);
+          _this3._drawCandleStickBar(x, halfBarSpace, barSpace, i, kLineData, technicalIndicatorOptions.bar, CandleStickStyle.OHLC);
         }
 
         var coordinateY = {};
@@ -4865,6 +4865,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
      * @param x
      * @param halfBarSpace
      * @param barSpace
+     * @param dataIndex
      * @param kLineData
      * @param barOptions
      * @param barStyle
@@ -4873,7 +4874,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
 
   }, {
     key: "_drawCandleStickBar",
-    value: function _drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, barOptions, barStyle) {
+    value: function _drawCandleStickBar(x, halfBarSpace, barSpace, dataIndex, kLineData, barOptions, barStyle) {
       var open = kLineData.open;
       var close = kLineData.close;
       var high = kLineData.high;
@@ -4958,6 +4959,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
 
       this._drawActionExecute(DrawActionType.DRAW_CANDLE, {
         ctx: this._ctx,
+        dataIndex: dataIndex,
         kLineData: kLineData,
         coordinate: {
           x: x,
@@ -6577,7 +6579,7 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       var candleStickOptions = this._chartData.styleOptions().candleStick;
 
       this._drawGraphics(function (x, i, kLineData, halfBarSpace, barSpace) {
-        _this2._drawCandleStickBar(x, halfBarSpace, barSpace, kLineData, candleStickOptions.bar, candleStickOptions.bar.style);
+        _this2._drawCandleStickBar(x, halfBarSpace, barSpace, i, kLineData, candleStickOptions.bar, candleStickOptions.bar.style);
       });
     }
     /**
