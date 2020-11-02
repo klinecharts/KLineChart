@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/KLineChart/static/css/main.0ff731fb.chunk.css",
-    "main.js": "/KLineChart/static/js/main.51cc13c3.chunk.js",
+    "main.js": "/KLineChart/static/js/main.78d64464.chunk.js",
     "runtime-main.js": "/KLineChart/static/js/runtime-main.7f79d0f0.js",
     "static/css/2.54a50c43.chunk.css": "/KLineChart/static/css/2.54a50c43.chunk.css",
     "static/js/2.1511186c.chunk.js": "/KLineChart/static/js/2.1511186c.chunk.js",
     "index.html": "/KLineChart/index.html",
-    "precache-manifest.d3e8eef109e2bbaf6db315ec6a26d4c4.js": "/KLineChart/precache-manifest.d3e8eef109e2bbaf6db315ec6a26d4c4.js",
+    "precache-manifest.5d5c38c53c21b93f57cbafa92720668a.js": "/KLineChart/precache-manifest.5d5c38c53c21b93f57cbafa92720668a.js",
     "service-worker.js": "/KLineChart/service-worker.js",
     "static/js/2.1511186c.chunk.js.LICENSE.txt": "/KLineChart/static/js/2.1511186c.chunk.js.LICENSE.txt",
-    "static/js/main.51cc13c3.chunk.js.LICENSE.txt": "/KLineChart/static/js/main.51cc13c3.chunk.js.LICENSE.txt",
+    "static/js/main.78d64464.chunk.js.LICENSE.txt": "/KLineChart/static/js/main.78d64464.chunk.js.LICENSE.txt",
     "static/media/index.less": "/KLineChart/static/media/Roboto-Regular.5673da52.ttf"
   },
   "entrypoints": [
@@ -17,6 +17,6 @@
     "static/css/2.54a50c43.chunk.css",
     "static/js/2.1511186c.chunk.js",
     "static/css/main.0ff731fb.chunk.css",
-    "static/js/main.51cc13c3.chunk.js"
+    "static/js/main.78d64464.chunk.js"
   ]
 }
