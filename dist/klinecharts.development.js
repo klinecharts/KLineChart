@@ -6096,7 +6096,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
           this._minValue = minMaxArray[0];
           this._maxValue = minMaxArray[1];
 
-          if (this._minValue === this._maxValue || Math.abs(this._minValue - this._maxValue) < Math.pow(10, -6)) {
+          if (this._minValue === this._maxValue || Math.abs(this._minValue - this._maxValue) < Math.pow(10, -12)) {
             var percentValue = this._minValue !== 0 ? Math.abs(this._minValue * 0.2) : 10;
             this._minValue = this._minValue !== 0 ? this._minValue - percentValue : this._minValue;
             this._maxValue += percentValue;
