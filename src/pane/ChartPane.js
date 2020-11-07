@@ -26,6 +26,7 @@ import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { DEV } from '../utils/env'
 import { throttle } from '../utils/performance'
+import { NONE } from '../mark/defaultGraphicMarkType'
 
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
@@ -48,11 +49,7 @@ export default class ChartPane {
       xAxis: this._xAxisPane.xAxis(),
       tag: CANDLE_STICK_PANE_TAG
     })
-    this._chartEvent = new ChartEvent(
-      this._chartContainer, this._chartData,
-      this._xAxisPane.xAxis(),
-      this._candleStickPane.yAxis()
-    )
+    this._chartEvent = new ChartEvent(this._chartContainer, this._chartData)
     this._measurePaneHeight()
     this._measureWidthAndLayoutPane(true)
   }
@@ -469,6 +466,27 @@ export default class ChartPane {
         }
       }
     }
+  }
+
+  /**
+   * 添加图形标记
+   * @param type
+   */
+  addGraphicMark (type) {
+    const graphicMarkType = this._chartData.graphicMarkType()
+    if (graphicMarkType !== NONE) {
+      const graphicMarks = this._chartData.graphicMarks()
+      const graphicMarkArray = graphicMarks[graphicMarkType]
+      if (graphicMarkArray && isArray(graphicMarkArray)) {
+        graphicMarkArray.splice(graphicMarkArray.length - 1, 1)
+        if (graphicMarks[graphicMarkType].length === 0) {
+          delete graphicMarks[graphicMarkType]
+        }
+      }
+    }
+    const graphicMarkMapping = this._chartData.graphicMarkMapping()
+    const GraphicMark = graphicMarkMapping[type]
+    this._chartData.setGraphicMarkType(type, new GraphicMark(this._chartData, this._xAxisPane.xAxis(), this._candleStickPane.yAxis()))
   }
 
   /**

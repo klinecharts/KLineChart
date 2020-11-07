@@ -15,11 +15,11 @@
 import EventBase from './EventBase'
 import ZoomScrollEventHandler from './ZoomScrollEventHandler'
 import GraphicMarkEventHandler from './GraphicMarkEventHandler'
-import { GraphicMarkType } from '../data/ChartData'
+import { NONE } from '../mark/defaultGraphicMarkType'
 import KeyBoardEventHandler from './KeyBoardEventHandler'
 
 export default class ChartEvent {
-  constructor (target, chartData, xAxis, yAxis) {
+  constructor (target, chartData) {
     this._target = target
     this._chartData = chartData
     this._chartContentSize = {}
@@ -44,7 +44,7 @@ export default class ChartEvent {
     this._boundContextMenuEvent = (e) => { e.preventDefault() }
     this._target.addEventListener('contextmenu', this._boundContextMenuEvent, false)
     this._zoomScrollEventHandler = new ZoomScrollEventHandler(chartData)
-    this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData, xAxis, yAxis)
+    this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData)
     this._keyBoardEventHandler = new KeyBoardEventHandler(chartData)
   }
 
@@ -132,7 +132,7 @@ export default class ChartEvent {
   }
 
   _checkZoomScroll () {
-    return !this._chartData.dragGraphicMarkFlag() && this._chartData.graphicMarkType() === GraphicMarkType.NONE
+    return !this._chartData.dragGraphicMarkFlag() && this._chartData.graphicMarkType() === NONE
   }
 
   setChartContentSize (chartContentSize) {

@@ -33,8 +33,7 @@ export const MousePointOnGraphicType = {
  * 标记图形
  */
 export default class GraphicMark {
-  constructor (name, chartData, xAxis, yAxis) {
-    this._name = name
+  constructor (chartData, xAxis, yAxis) {
     this._chartData = chartData
     this._xAxis = xAxis
     this._yAxis = yAxis
@@ -46,15 +45,23 @@ export default class GraphicMark {
 
   _checkMousePointOnDifGraphic (point) {}
 
+  mousePointOnGraphicType () {
+    return this._mousePointOnGraphicType
+  }
+
+  resetMousePointOnGraphicParams () {
+    this._mousePointOnGraphicType = MousePointOnGraphicType.NONE
+    this._mousePointOnGraphicIndex = -1
+  }
+
   checkMousePointOnGraphic (point) {
     const mousePointOnGraphicParams = this._checkMousePointOnDifGraphic(point)
     if (mousePointOnGraphicParams) {
       this._mousePointOnGraphicType = mousePointOnGraphicParams.mousePointOnGraphicType
       this._mousePointOnGraphicIndex = mousePointOnGraphicParams.mousePointOnGraphicIndex
-    } else {
-      this._mousePointOnGraphicType = MousePointOnGraphicType.NONE
-      this._mousePointOnGraphicIndex = -1
+      return true
     }
+    this.resetMousePointOnGraphicParams()
   }
 
   _drawGraphic (ctx, xyPoints, graphicMark) {}

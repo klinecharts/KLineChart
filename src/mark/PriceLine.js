@@ -15,10 +15,12 @@
 import OnePointLineGraphicMark from './OnePointLineGraphicMark'
 import { checkPointOnRayLine } from '../utils/graphic'
 import { MousePointOnGraphicType } from './GraphicMark'
+import { formatPrecision } from '../utils/format'
+import { getFont } from '../utils/canvas'
 
 export default class PriceLine extends OnePointLineGraphicMark {
   _checkMousePointOnLine (point, xyPoints) {
-    if (checkPointOnRayLine(xyPoints[0], { x: this.xAxis.width(), y: xyPoints[0].y }, point)) {
+    if (checkPointOnRayLine(xyPoints[0], { x: this._xAxis.width(), y: xyPoints[0].y }, point)) {
       return {
         mousePointOnGraphicType: MousePointOnGraphicType.LINE,
         mousePointOnGraphicIndex: 0
@@ -28,7 +30,17 @@ export default class PriceLine extends OnePointLineGraphicMark {
 
   _generatedDrawLines (xyPoints) {
     return [
-      [xyPoints[0], { x: this.xAxis.width(), y: xyPoints[0].y }]
+      [xyPoints[0], { x: this._xAxis.width(), y: xyPoints[0].y }]
     ]
+  }
+
+  _drawGraphicExtend (ctx, lines, graphicMark) {
+    const pricePrecision = this._chartData.pricePrecision()
+    const point = lines[0][0]
+    const price = this._yAxis.convertFromPixel(point.y)
+    const priceText = formatPrecision(price, pricePrecision)
+    ctx.font = getFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family)
+    ctx.fillStyle = graphicMark.text.color
+    ctx.fillText(priceText, point.x + graphicMark.text.marginLeft, point.y - graphicMark.text.marginBottom)
   }
 }

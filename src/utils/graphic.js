@@ -169,27 +169,3 @@ export function getParallelLines (points, size, extendParallelLineCount = 0) {
   }
   return lines
 }
-
-/**
- * 获取斐波那契线
- * @param points
- * @param size
- */
-export function getFibonacciLines (points, size) {
-  const lines = []
-  if (points.length > 0) {
-    const startX = 0
-    const endX = size.width
-    lines.push([{ x: startX, y: points[0].y }, { x: endX, y: points[0].y }])
-    if (points.length > 1) {
-      const yDistance = points[0].y - points[1].y
-      lines.push([{ x: startX, y: points[1].y + yDistance * 0.786 }, { x: endX, y: points[1].y + yDistance * 0.786 }])
-      lines.push([{ x: startX, y: points[1].y + yDistance * 0.618 }, { x: endX, y: points[1].y + yDistance * 0.618 }])
-      lines.push([{ x: startX, y: points[1].y + yDistance * 0.5 }, { x: endX, y: points[1].y + yDistance * 0.5 }])
-      lines.push([{ x: startX, y: points[1].y + yDistance * 0.382 }, { x: endX, y: points[1].y + yDistance * 0.382 }])
-      lines.push([{ x: startX, y: points[1].y + yDistance * 0.236 }, { x: endX, y: points[1].y + yDistance * 0.236 }])
-      lines.push([{ x: startX, y: points[1].y }, { x: endX, y: points[1].y }])
-    }
-  }
-  return lines
-}

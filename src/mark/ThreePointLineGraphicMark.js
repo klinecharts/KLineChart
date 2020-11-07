@@ -13,11 +13,11 @@
  */
 
 import LineGraphicMark from './LineGraphicMark'
-import { GraphicMarkDrawStep } from '../event/GraphicMarkEventHandler'
-import { GraphicMarkType } from '../data/ChartData'
+import { GraphicMarkDrawStep } from './GraphicMark'
+import { NONE } from './defaultGraphicMarkType'
 
 export default class ThreePointLineGraphicMark extends LineGraphicMark {
-  mousePressedMove (point) {
+  mouseMoveForDrawing (point) {
     const xPos = this._xAxis.convertFromPixel(point.x)
     const price = this._yAxis.convertFromPixel(point.y)
     switch (this._drawStep) {
@@ -54,7 +54,7 @@ export default class ThreePointLineGraphicMark extends LineGraphicMark {
       }
       case GraphicMarkDrawStep.STEP_3: {
         this._drawStep = GraphicMarkDrawStep.STEP_DONE
-        this._chartData.setGraphicMarkType(GraphicMarkType.NONE)
+        this._chartData.setGraphicMarkType(NONE)
         break
       }
     }

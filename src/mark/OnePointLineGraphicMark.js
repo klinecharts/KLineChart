@@ -41,11 +41,11 @@ export default class OnePointLineGraphicMark extends LineGraphicMark {
   mouseLeftButtonDownForDrawing () {
     switch (this._drawStep) {
       case GraphicMarkDrawStep.STEP_1: {
-        this._drawStep.drawStep = GraphicMarkDrawStep.STEP_2
+        this._drawStep = GraphicMarkDrawStep.STEP_2
         break
       }
       case GraphicMarkDrawStep.STEP_2: {
-        this._drawStep.drawStep = GraphicMarkDrawStep.STEP_DONE
+        this._drawStep = GraphicMarkDrawStep.STEP_DONE
         this._chartData.setGraphicMarkType(NONE)
         break
       }

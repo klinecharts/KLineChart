@@ -19,14 +19,15 @@ import { MousePointOnGraphicType } from './GraphicMark'
 export default class ParallelStraightLine extends ThreePointLineGraphicMark {
   _checkMousePointOnLine (point, xyPoints) {
     const lines = this._generatedDrawLines(xyPoints)
-    lines.forEach((points, index) => {
+    for (let i = 0; i < lines.length; i++) {
+      const points = lines[i]
       if (checkPointOnStraightLine(points[0], points[1], point)) {
         return {
           mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-          mousePointOnGraphicIndex: index
+          mousePointOnGraphicIndex: i
         }
       }
-    })
+    }
   }
 
   _generatedDrawLines (xyPoints) {

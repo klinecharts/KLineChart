@@ -49,7 +49,8 @@ export default class LineGraphicMark extends GraphicMark {
   _checkMousePointOnDifGraphic (point) {
     const graphicMark = this._chartData.styleOptions().graphicMark
     const xyPoints = []
-    this._points.forEach(({ xPos, price }, index) => {
+    for (let i = 0; i < this._points.length; i++) {
+      const { xPos, price } = this._points[i]
       const xyPoint = {
         x: this._xAxis.convertToPixel(xPos),
         y: this._yAxis.convertToPixel(price)
@@ -58,10 +59,10 @@ export default class LineGraphicMark extends GraphicMark {
       if (checkPointOnCircle(xyPoint, graphicMark.point.radius, point)) {
         return {
           mousePointOnGraphicType: MousePointOnGraphicType.POINT,
-          mousePointOnGraphicIndex: index
+          mousePointOnGraphicIndex: i
         }
       }
-    })
+    }
     return this._checkMousePointOnLine(point, xyPoints)
   }
 
@@ -74,15 +75,24 @@ export default class LineGraphicMark extends GraphicMark {
    */
   _generatedDrawLines (xyPoints) {}
 
+  /**
+   * 绘制拓展
+   * @private
+   */
+  _drawGraphicExtend (ctx, lines, graphicMark) {}
+
   _drawGraphic (ctx, xyPoints, graphicMark) {
     ctx.strokeStyle = graphicMark.line.color
     ctx.lineWidth = graphicMark.line.size
-    const lines = this._generatedDrawLines(xyPoints)
+    let lines = []
+    if (xyPoints.length > 0) {
+      lines = this._generatedDrawLines(xyPoints)
+    }
     lines.forEach(points => {
       const lineType = getLineType(points[0], points[1])
       switch (lineType) {
         case LineType.COMMON: {
-          drawLine(this._ctx, () => {
+          drawLine(ctx, () => {
             ctx.beginPath()
             ctx.moveTo(points[0].x, points[0].y)
             ctx.lineTo(points[1].x, points[1].y)
@@ -102,5 +112,6 @@ export default class LineGraphicMark extends GraphicMark {
         default: { break }
       }
     })
+    this._drawGraphicExtend(ctx, lines, graphicMark)
   }
 }

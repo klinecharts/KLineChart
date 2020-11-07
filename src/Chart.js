@@ -13,8 +13,7 @@
  */
 
 import ChartPane, { CANDLE_STICK_PANE_TAG } from './pane/ChartPane'
-import { isArray, clone } from './utils/typeChecks'
-import { GraphicMarkType } from './data/ChartData'
+import { clone, isNumber, isValid, isArray } from './utils/typeChecks'
 import { DEV } from './utils/env'
 
 export default class Chart {
@@ -67,6 +66,18 @@ export default class Chart {
    * @param volumePrecision
    */
   setPrecision (pricePrecision, volumePrecision) {
+    if (!isValid(pricePrecision) || !isNumber(pricePrecision) || pricePrecision < 0) {
+      if (DEV) {
+        console.warn('Invalid parameter: pricePrecision!!!')
+      }
+      return
+    }
+    if (!isValid(volumePrecision) || !isNumber(volumePrecision) || volumePrecision < 0) {
+      if (DEV) {
+        console.warn('Invalid parameter: volumePrecision!!!')
+      }
+      return
+    }
     this._chartPane.chartData().applyPrecision(pricePrecision, volumePrecision)
   }
 
@@ -76,6 +87,12 @@ export default class Chart {
    * @param technicalIndicatorType
    */
   setTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
+    if (!isValid(precision) || !isNumber(precision) || precision < 0) {
+      if (DEV) {
+        console.warn('Invalid parameter: precision!!!')
+      }
+      return
+    }
     this._chartPane.chartData().applyTechnicalIndicatorPrecision(precision, technicalIndicatorType)
   }
 
@@ -114,7 +131,13 @@ export default class Chart {
    * @param barCount
    */
   setLeftMinVisibleBarCount (barCount) {
-    this._chartPane.chartData().setLeftMinVisibleBarCount(barCount)
+    if (!isValid(barCount) || !isNumber(barCount) || barCount <= 0) {
+      if (DEV) {
+        console.warn('Invalid parameter: barCount!!!')
+      }
+      return
+    }
+    this._chartPane.chartData().setLeftMinVisibleBarCount(Math.ceil(barCount))
   }
 
   /**
@@ -122,7 +145,13 @@ export default class Chart {
    * @param barCount
    */
   setRightMinVisibleBarCount (barCount) {
-    this._chartPane.chartData().setRightMinVisibleBarCount(barCount)
+    if (!isValid(barCount) || !isNumber(barCount) || barCount <= 0) {
+      if (DEV) {
+        console.warn('Invalid parameter: barCount!!!')
+      }
+      return
+    }
+    this._chartPane.chartData().setRightMinVisibleBarCount(Math.ceil(barCount))
   }
 
   /**
@@ -153,6 +182,12 @@ export default class Chart {
    * @param more
    */
   applyNewData (dataList, more) {
+    if (!isArray(dataList)) {
+      if (DEV) {
+        console.warn('Invalid parameter: dataList, dataList be an array!!!')
+      }
+      return
+    }
     this._chartPane.applyNewData(dataList, more)
   }
 
@@ -162,6 +197,12 @@ export default class Chart {
    * @param more
    */
   applyMoreData (dataList, more) {
+    if (!isArray(dataList)) {
+      if (DEV) {
+        console.warn('Invalid parameter: dataList, dataList be an array!!!')
+      }
+      return
+    }
     this._chartPane.applyMoreData(dataList, more)
   }
 
@@ -194,9 +235,12 @@ export default class Chart {
    * @param technicalIndicatorType
    */
   setCandleStickTechnicalIndicatorType (technicalIndicatorType) {
-    if (technicalIndicatorType) {
-      this._chartPane.setTechnicalIndicatorType(CANDLE_STICK_PANE_TAG, technicalIndicatorType)
+    if (!technicalIndicatorType) {
+      if (DEV) {
+        console.warn('Invalid parameter: technicalIndicatorType!!!')
+      }
     }
+    this._chartPane.setTechnicalIndicatorType(CANDLE_STICK_PANE_TAG, technicalIndicatorType)
   }
 
   /**
@@ -205,9 +249,13 @@ export default class Chart {
    * @param technicalIndicatorType
    */
   setTechnicalIndicatorType (tag, technicalIndicatorType) {
-    if (tag) {
-      this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType)
+    if (!tag) {
+      if (DEV) {
+        console.warn('Invalid parameter: tag!!!')
+      }
+      return
     }
+    this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType)
   }
 
   /**
@@ -244,33 +292,20 @@ export default class Chart {
    * @param type
    */
   addGraphicMark (type) {
-    const graphicMarkType = this._chartPane.chartData().graphicMarkType()
-    if (graphicMarkType !== type) {
-      const graphicMarkDatas = this._chartPane.chartData().graphicMarkData()
-      const graphicMarkData = graphicMarkDatas[graphicMarkType]
-      if (graphicMarkData && isArray(graphicMarkData)) {
-        graphicMarkData.splice(graphicMarkData.length - 1, 1)
-        graphicMarkDatas[graphicMarkType] = graphicMarkData
+    const graphicMarkMapping = this._chartPane.chartData().graphicMarkMapping()
+    if (!(type in graphicMarkMapping)) {
+      if (DEV) {
+        console.warn('Graphic mark type not found!!!')
       }
-      if (!graphicMarkDatas.hasOwnProperty(type)) {
-        type = GraphicMarkType.NONE
-      }
-      this._chartPane.chartData().setGraphicMarkType(type)
-      this._chartPane.chartData().setGraphicMarkData(graphicMarkDatas)
     }
+    this._chartPane.addGraphicMark(type)
   }
 
   /**
    * 移除所有标记图形
    */
   removeAllGraphicMark () {
-    const graphicMarkDatas = this._chartPane.chartData().graphicMarkData()
-    const newGraphicMarkDatas = {}
-    Object.keys(graphicMarkDatas).forEach(key => {
-      newGraphicMarkDatas[key] = []
-    })
-    this._chartPane.chartData().setGraphicMarkType(GraphicMarkType.NONE)
-    this._chartPane.chartData().setGraphicMarkData(newGraphicMarkDatas)
+    this._chartPane.chartData().clearGraphicMark()
   }
 
   /**
