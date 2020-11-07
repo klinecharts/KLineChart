@@ -43,17 +43,34 @@ export default class GraphicMark {
     this._mousePointOnGraphicIndex = -1
   }
 
+  /**
+   * 针对不同图形去检查鼠标点在哪个上面
+   * @param point
+   * @private
+   */
   _checkMousePointOnDifGraphic (point) {}
 
+  /**
+   * 获取鼠标点在图形上的类型
+   * @return {string}
+   */
   mousePointOnGraphicType () {
     return this._mousePointOnGraphicType
   }
 
+  /**
+   * 重置鼠标点在图形上的参数
+   */
   resetMousePointOnGraphicParams () {
     this._mousePointOnGraphicType = MousePointOnGraphicType.NONE
     this._mousePointOnGraphicIndex = -1
   }
 
+  /**
+   * 检查鼠标点是否在图形上
+   * @param point
+   * @return {boolean}
+   */
   checkMousePointOnGraphic (point) {
     const mousePointOnGraphicParams = this._checkMousePointOnDifGraphic(point)
     if (mousePointOnGraphicParams) {
@@ -64,8 +81,19 @@ export default class GraphicMark {
     this.resetMousePointOnGraphicParams()
   }
 
+  /**
+   * 获取图形
+   * @param ctx
+   * @param xyPoints
+   * @param graphicMark
+   * @private
+   */
   _drawGraphic (ctx, xyPoints, graphicMark) {}
 
+  /**
+   * 绘制
+   * @param ctx
+   */
   draw (ctx) {
     const xyPoints = this._points.map(({ xPos, price }) => {
       return {

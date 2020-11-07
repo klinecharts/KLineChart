@@ -42,6 +42,10 @@ import ParallelStraightLine from './ParallelStraightLine'
 import PriceChannelLine from './PriceChannelLine'
 import FibonacciLine from './FibonacciLine'
 
+/**
+ * 创建图形标记映射
+ * @return {{}}
+ */
 export function createGraphicMarkMapping () {
   return {
     [HORIZONTAL_STRAIGHT_LINE]: HorizontalStraightLine,

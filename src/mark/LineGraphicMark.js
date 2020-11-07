@@ -39,6 +39,10 @@ function getLineType (point1, point2) {
 }
 
 export default class LineGraphicMark extends GraphicMark {
+  /**
+   * 鼠标按住移动方法
+   * @param point
+   */
   mousePressedMove (point) {
     if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && this._mousePointOnGraphicIndex !== -1) {
       this._points[this._mousePointOnGraphicIndex].xPos = this._xAxis.convertFromPixel(point.x)

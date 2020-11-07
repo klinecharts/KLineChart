@@ -24,7 +24,6 @@ import SeparatorPane from './SeparatorPane'
 
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
-import { DEV } from '../utils/env'
 import { throttle } from '../utils/performance'
 import { NONE } from '../mark/defaultGraphicMarkType'
 
@@ -380,13 +379,6 @@ export default class ChartPane {
    * @returns {string}
    */
   createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled) {
-    const technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
-    if (!technicalIndicator) {
-      if (DEV) {
-        console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!')
-      }
-      return null
-    }
     const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
     const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
     this._separatorPanes.push(
@@ -505,13 +497,7 @@ export default class ChartPane {
    * @param type
    * @param backgroundColor
    */
-  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type = 'jpeg', backgroundColor = '#333333') {
-    if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
-      if (DEV) {
-        console.warn('Picture format only supports jpeg, png and bmp!!!')
-      }
-      return
-    }
+  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type, backgroundColor) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)

@@ -17,6 +17,10 @@ import { NONE } from './defaultGraphicMarkType'
 import LineGraphicMark from './LineGraphicMark'
 
 export default class OnePointLineGraphicMark extends LineGraphicMark {
+  /**
+   * 绘制过程总鼠标移动事件
+   * @param point
+   */
   mouseMoveForDrawing (point) {
     const xPos = this._xAxis.convertFromPixel(point.x)
     const price = this._yAxis.convertFromPixel(point.y)

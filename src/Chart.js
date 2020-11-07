@@ -263,9 +263,16 @@ export default class Chart {
    * @param technicalIndicatorType
    * @param height
    * @param dragEnabled
-   * @returns {string}
+   * @returns {string|null}
    */
   createTechnicalIndicator (technicalIndicatorType, height, dragEnabled) {
+    const technicalIndicator = this._chartPane.chartData().technicalIndicator(technicalIndicatorType)
+    if (!technicalIndicator) {
+      if (DEV) {
+        console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!')
+      }
+      return null
+    }
     return this._chartPane.createTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
   }
 
@@ -347,7 +354,13 @@ export default class Chart {
    * @param type
    * @param backgroundColor
    */
-  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type, backgroundColor) {
+  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type = 'jpeg', backgroundColor = '#333333') {
+    if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
+      if (DEV) {
+        console.warn('Picture format only supports jpeg, png and bmp!!!')
+      }
+      return
+    }
     return this._chartPane.getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor)
   }
 

@@ -3137,21 +3137,42 @@ var GraphicMark = /*#__PURE__*/function () {
     this._mousePointOnGraphicType = MousePointOnGraphicType.NONE;
     this._mousePointOnGraphicIndex = -1;
   }
+  /**
+   * 针对不同图形去检查鼠标点在哪个上面
+   * @param point
+   * @private
+   */
+
 
   _createClass(GraphicMark, [{
     key: "_checkMousePointOnDifGraphic",
     value: function _checkMousePointOnDifGraphic(point) {}
+    /**
+     * 获取鼠标点在图形上的类型
+     * @return {string}
+     */
+
   }, {
     key: "mousePointOnGraphicType",
     value: function mousePointOnGraphicType() {
       return this._mousePointOnGraphicType;
     }
+    /**
+     * 重置鼠标点在图形上的参数
+     */
+
   }, {
     key: "resetMousePointOnGraphicParams",
     value: function resetMousePointOnGraphicParams() {
       this._mousePointOnGraphicType = MousePointOnGraphicType.NONE;
       this._mousePointOnGraphicIndex = -1;
     }
+    /**
+     * 检查鼠标点是否在图形上
+     * @param point
+     * @return {boolean}
+     */
+
   }, {
     key: "checkMousePointOnGraphic",
     value: function checkMousePointOnGraphic(point) {
@@ -3165,9 +3186,22 @@ var GraphicMark = /*#__PURE__*/function () {
 
       this.resetMousePointOnGraphicParams();
     }
+    /**
+     * 获取图形
+     * @param ctx
+     * @param xyPoints
+     * @param graphicMark
+     * @private
+     */
+
   }, {
     key: "_drawGraphic",
     value: function _drawGraphic(ctx, xyPoints, graphicMark) {}
+    /**
+     * 绘制
+     * @param ctx
+     */
+
   }, {
     key: "draw",
     value: function draw(ctx) {
@@ -3604,6 +3638,11 @@ var LineGraphicMark = /*#__PURE__*/function (_GraphicMark) {
 
   _createClass(LineGraphicMark, [{
     key: "mousePressedMove",
+
+    /**
+     * 鼠标按住移动方法
+     * @param point
+     */
     value: function mousePressedMove(point) {
       if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && this._mousePointOnGraphicIndex !== -1) {
         this._points[this._mousePointOnGraphicIndex].xPos = this._xAxis.convertFromPixel(point.x);
@@ -3718,6 +3757,11 @@ var OnePointLineGraphicMark = /*#__PURE__*/function (_LineGraphicMark) {
 
   _createClass(OnePointLineGraphicMark, [{
     key: "mouseMoveForDrawing",
+
+    /**
+     * 绘制过程总鼠标移动事件
+     * @param point
+     */
     value: function mouseMoveForDrawing(point) {
       var xPos = this._xAxis.convertFromPixel(point.x);
 
@@ -4564,6 +4608,11 @@ var FibonacciLine = /*#__PURE__*/function (_TwoPointLineGraphicM) {
 
   return FibonacciLine;
 }(TwoPointLineGraphicMark);
+
+/**
+ * 创建图形标记映射
+ * @return {{}}
+ */
 
 function createGraphicMarkMapping() {
   var _ref;
@@ -11097,17 +11146,6 @@ var ChartPane = /*#__PURE__*/function () {
     value: function createTechnicalIndicator(technicalIndicatorType) {
       var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT;
       var dragEnabled = arguments.length > 2 ? arguments[2] : undefined;
-
-      var technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType);
-
-      if (!technicalIndicator) {
-        {
-          console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!');
-        }
-
-        return null;
-      }
-
       var technicalIndicatorPaneCount = this._technicalIndicatorPanes.length;
       var isDrag = isBoolean(dragEnabled) ? dragEnabled : true;
 
@@ -11266,18 +11304,7 @@ var ChartPane = /*#__PURE__*/function () {
 
   }, {
     key: "getConvertPictureUrl",
-    value: function getConvertPictureUrl(includeFloatLayer, includeGraphicMark) {
-      var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'jpeg';
-      var backgroundColor = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '#333333';
-
-      if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
-        {
-          console.warn('Picture format only supports jpeg, png and bmp!!!');
-        }
-
-        return;
-      }
-
+    value: function getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor) {
       var canvas = document.createElement('canvas');
       var ctx = canvas.getContext('2d');
       var pixelRatio = getPixelRatio(canvas);
@@ -11646,12 +11673,22 @@ var Chart = /*#__PURE__*/function () {
      * @param technicalIndicatorType
      * @param height
      * @param dragEnabled
-     * @returns {string}
+     * @returns {string|null}
      */
 
   }, {
     key: "createTechnicalIndicator",
     value: function createTechnicalIndicator(technicalIndicatorType, height, dragEnabled) {
+      var technicalIndicator = this._chartPane.chartData().technicalIndicator(technicalIndicatorType);
+
+      if (!technicalIndicator) {
+        {
+          console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!');
+        }
+
+        return null;
+      }
+
       return this._chartPane.createTechnicalIndicator(technicalIndicatorType, height, dragEnabled);
     }
     /**
@@ -11755,7 +11792,18 @@ var Chart = /*#__PURE__*/function () {
 
   }, {
     key: "getConvertPictureUrl",
-    value: function getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor) {
+    value: function getConvertPictureUrl(includeFloatLayer, includeGraphicMark) {
+      var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'jpeg';
+      var backgroundColor = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '#333333';
+
+      if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
+        {
+          console.warn('Picture format only supports jpeg, png and bmp!!!');
+        }
+
+        return;
+      }
+
       return this._chartPane.getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor);
     }
     /**
