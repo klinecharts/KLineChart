@@ -13,7 +13,7 @@
  */
 
 import OnePointLineGraphicMark from './OnePointLineGraphicMark'
-import { checkPointOnRayLine } from '../utils/graphic'
+import { checkPointOnRayLine } from './graphicHelper'
 import { MousePointOnGraphicType } from './GraphicMark'
 import { formatPrecision } from '../utils/format'
 import { getFont } from '../utils/canvas'

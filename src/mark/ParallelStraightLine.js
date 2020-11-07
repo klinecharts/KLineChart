@@ -13,7 +13,7 @@
  */
 
 import ThreePointLineGraphicMark from './ThreePointLineGraphicMark'
-import { checkPointOnStraightLine, getParallelLines } from '../utils/graphic'
+import { checkPointOnStraightLine, getParallelLines } from './graphicHelper'
 import { MousePointOnGraphicType } from './GraphicMark'
 
 export default class ParallelStraightLine extends ThreePointLineGraphicMark {

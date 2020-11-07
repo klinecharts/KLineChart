@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { getParallelLines } from '../utils/graphic'
+import { getParallelLines } from './graphicHelper'
 import ParallelStraightLine from './ParallelStraightLine'
 
 export default class PriceChannelLine extends ParallelStraightLine {

@@ -13,7 +13,7 @@
  */
 
 import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
-import { checkPointOnSegmentLine } from '../utils/graphic'
+import { checkPointOnSegmentLine } from './graphicHelper'
 import { MousePointOnGraphicType } from './GraphicMark'
 
 export default class SegmentLine extends TwoPointLineGraphicMark {

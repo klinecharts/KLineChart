@@ -13,7 +13,7 @@
  */
 
 import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
-import { checkPointOnRayLine, getLinearY } from '../utils/graphic'
+import { checkPointOnRayLine, getLinearY } from './graphicHelper'
 import { MousePointOnGraphicType } from './GraphicMark'
 
 export default class RayLine extends TwoPointLineGraphicMark {

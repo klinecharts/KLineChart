@@ -14,7 +14,7 @@
 
 import GraphicMark, { MousePointOnGraphicType } from './GraphicMark'
 import { drawHorizontalLine, drawLine, drawVerticalLine } from '../utils/canvas'
-import { checkPointOnCircle } from '../utils/graphic'
+import { checkPointOnCircle } from './graphicHelper'
 
 const LineType = {
   COMMON: 0,

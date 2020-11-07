@@ -13,7 +13,7 @@
  */
 
 import OnePointLineGraphicMark from './OnePointLineGraphicMark'
-import { checkPointOnStraightLine } from '../utils/graphic'
+import { checkPointOnStraightLine } from './graphicHelper'
 import { MousePointOnGraphicType } from './GraphicMark'
 
 export default class HorizontalStraightLine extends OnePointLineGraphicMark {

@@ -13,7 +13,7 @@
  */
 
 import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
-import { checkPointOnStraightLine } from '../utils/graphic'
+import { checkPointOnStraightLine } from './graphicHelper'
 import { MousePointOnGraphicType } from './GraphicMark'
 import { formatPrecision } from '../utils/format'
 import { getFont } from '../utils/canvas'
