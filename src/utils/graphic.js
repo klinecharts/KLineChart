@@ -123,10 +123,10 @@ export function checkPointOnCircle (circleCenterPoint, radius, targetPoint) {
  * 获取平行线
  * @param points
  * @param size
- * @param isPriceChannelLine
+ * @param extendParallelLineCount
  * @returns {Array}
  */
-export function getParallelLines (points, size, isPriceChannelLine) {
+export function getParallelLines (points, size, extendParallelLineCount = 0) {
   const lines = []
   if (points.length > 1) {
     if (points[0].x === points[1].x) {
@@ -135,7 +135,7 @@ export function getParallelLines (points, size, isPriceChannelLine) {
       lines.push([{ x: points[0].x, y: startY }, { x: points[0].x, y: endY }])
       if (points.length > 2) {
         lines.push([{ x: points[2].x, y: startY }, { x: points[2].x, y: endY }])
-        if (isPriceChannelLine) {
+        if (extendParallelLineCount > 0) {
           const distance = points[0].x - points[2].x
           lines.push([{ x: points[0].x + distance, y: startY }, { x: points[0].x + distance, y: endY }])
         }
@@ -147,7 +147,7 @@ export function getParallelLines (points, size, isPriceChannelLine) {
         lines.push([{ x: startX, y: points[0].y }, { x: endX, y: points[0].y }])
         if (points.length > 2) {
           lines.push([{ x: startX, y: points[2].y }, { x: endX, y: points[2].y }])
-          if (isPriceChannelLine) {
+          if (extendParallelLineCount > 0) {
             const distance = points[0].y - points[2].y
             lines.push([{ x: startX, y: points[0].y + distance }, { x: endX, y: points[0].y + distance }])
           }
@@ -159,7 +159,7 @@ export function getParallelLines (points, size, isPriceChannelLine) {
         if (points.length > 2) {
           const b1 = points[2].y - k * points[2].x
           lines.push([{ x: startX, y: startX * k + b1 }, { x: endX, y: endX * k + b1 }])
-          if (isPriceChannelLine) {
+          if (extendParallelLineCount > 0) {
             const b2 = b + (b - b1)
             lines.push([{ x: startX, y: startX * k + b2 }, { x: endX, y: endX * k + b2 }])
           }

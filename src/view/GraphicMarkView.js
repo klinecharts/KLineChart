@@ -17,7 +17,8 @@ import {
   checkPointOnCircle,
   checkPointOnRayLine,
   checkPointOnSegmentLine,
-  checkPointOnStraightLine, getFibonacciLines,
+  checkPointOnStraightLine,
+  getFibonacciLines,
   getLinearY,
   getParallelLines
 } from '../utils/graphic'

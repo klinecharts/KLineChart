@@ -33,12 +33,12 @@ export default class TechnicalIndicator {
   }) {
     // 指标名
     this.name = name || ''
-    // 指标系列，值有'price', 'volume', 'normal
+    // 指标系列，值有 'price', 'volume', 'normal
     this.series = series || 'normal'
     // 精度
     this.precision = isValid(precision) && isNumber(precision) && precision >= 0 ? precision : 4
     // 计算参数
-    this.calcParams = isArray(calcParams) ? calcParams : []
+    this._calcParams = isArray(calcParams) ? calcParams : []
     // 数据信息
     this.plots = isArray(plots) ? plots : []
     // 是否需要检查参数
