@@ -297,7 +297,7 @@ function merge(target, source) {
   }
 
   for (var key in source) {
-    if (target.hasOwnProperty(key)) {
+    if (key in target) {
       var targetProp = target[key];
       var sourceProp = source[key];
 
@@ -2868,10 +2868,10 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
 }(TechnicalIndicator);
 
 /**
- * 创建技术指标集合
+ * 创建技术指标映射
  */
 
-function createTechnicalIndicators() {
+function createTechnicalIndicatorMapping() {
   var _ref;
 
   return _ref = {}, _defineProperty(_ref, MA, new MovingAverage()), _defineProperty(_ref, EMA, new ExponentialMovingAverage()), _defineProperty(_ref, VOL, new Volume()), _defineProperty(_ref, MACD, new MovingAverageConvergenceDivergence()), _defineProperty(_ref, BOLL, new BollingerBands()), _defineProperty(_ref, KDJ, new StockIndicatorKDJ()), _defineProperty(_ref, RSI, new RelativeStrengthIndex()), _defineProperty(_ref, BIAS, new Bias()), _defineProperty(_ref, BRAR, new Brar()), _defineProperty(_ref, CCI, new CommodityChannelIndex()), _defineProperty(_ref, DMI, new DirectionalMovementIndex()), _defineProperty(_ref, CR, new CurrentRatio()), _defineProperty(_ref, PSY, new PsychologicalLine()), _defineProperty(_ref, DMA, new DifferentOfMovingAverage()), _defineProperty(_ref, TRIX, new TripleExponentiallySmoothedAverage()), _defineProperty(_ref, OBV, new OnBalanceVolume()), _defineProperty(_ref, VR, new VolumeRatio()), _defineProperty(_ref, WR, new WilliamsR()), _defineProperty(_ref, MTM, new Momentum()), _defineProperty(_ref, EMV, new EaseOfMovementValue()), _defineProperty(_ref, SAR, new StopAndReverse()), _ref;
@@ -4637,9 +4637,9 @@ var ChartData = /*#__PURE__*/function () {
     this._invalidateHandler = invalidateHandler; // 样式配置
 
     this._styleOptions = clone(defaultStyleOptions);
-    merge(this._styleOptions, styleOptions); // 所有技术指标类集合
+    merge(this._styleOptions, styleOptions); // 所有技术指标映射
 
-    this._technicalIndicators = createTechnicalIndicators(); // 价格精度
+    this._technicalIndicatorMapping = createTechnicalIndicatorMapping(); // 价格精度
 
     this._pricePrecision = 2; // 数量精度
 
@@ -4775,8 +4775,8 @@ var ChartData = /*#__PURE__*/function () {
 
       var calcParams = {};
 
-      for (var name in this._technicalIndicators) {
-        calcParams[name] = clone(this._technicalIndicators[name].calcParams);
+      for (var name in this._technicalIndicatorMapping) {
+        calcParams[name] = clone(this._technicalIndicatorMapping[name].calcParams);
       }
 
       return calcParams;
@@ -4789,7 +4789,7 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "technicalIndicator",
     value: function technicalIndicator(technicalIndicatorType) {
-      return this._technicalIndicators[technicalIndicatorType];
+      return this._technicalIndicatorMapping[technicalIndicatorType];
     }
     /**
      * 价格精度
@@ -4873,20 +4873,20 @@ var ChartData = /*#__PURE__*/function () {
       this._pricePrecision = pricePrecision;
       this._volumePrecision = volumePrecision;
 
-      for (var name in this._technicalIndicators) {
-        var series = this._technicalIndicators[name].series;
+      for (var name in this._technicalIndicatorMapping) {
+        var series = this._technicalIndicatorMapping[name].series;
 
         switch (series) {
           case TechnicalIndicatorSeries.PRICE:
             {
-              this._technicalIndicators[name].setPrecision(pricePrecision);
+              this._technicalIndicatorMapping[name].setPrecision(pricePrecision);
 
               break;
             }
 
           case TechnicalIndicatorSeries.VOLUME:
             {
-              this._technicalIndicators[name].setPrecision(volumePrecision);
+              this._technicalIndicatorMapping[name].setPrecision(volumePrecision);
 
               break;
             }
@@ -4907,8 +4907,8 @@ var ChartData = /*#__PURE__*/function () {
       if (technicalIndicator) {
         technicalIndicator.setPrecision(precision);
       } else {
-        for (var name in this._technicalIndicators) {
-          this._technicalIndicators[name].setPrecision(precision);
+        for (var name in this._technicalIndicatorMapping) {
+          this._technicalIndicatorMapping[name].setPrecision(precision);
         }
       }
     }
@@ -5327,7 +5327,7 @@ var ChartData = /*#__PURE__*/function () {
 
       if (technicalIndicator) {
         // 将生成的新的指标类放入集合
-        this._technicalIndicators[technicalIndicatorInfo.name] = technicalIndicator;
+        this._technicalIndicatorMapping[technicalIndicatorInfo.name] = technicalIndicator;
       }
     }
     /**

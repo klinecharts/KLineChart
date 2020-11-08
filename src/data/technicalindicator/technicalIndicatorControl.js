@@ -46,9 +46,9 @@ import { formatBigNumber, formatPrecision } from '../../utils/format'
 import { DEV } from '../../utils/env'
 
 /**
- * 创建技术指标集合
+ * 创建技术指标映射
  */
-export function createTechnicalIndicators () {
+export function createTechnicalIndicatorMapping () {
   return {
     [MA]: new MovingAverage(),
     [EMA]: new ExponentialMovingAverage(),

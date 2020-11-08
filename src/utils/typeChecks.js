@@ -17,7 +17,7 @@ export function merge (target, source) {
     return
   }
   for (const key in source) {
-    if (target.hasOwnProperty(key)) {
+    if (key in target) {
       const targetProp = target[key]
       const sourceProp = source[key]
       if (isObject(sourceProp) &&

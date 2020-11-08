@@ -16,7 +16,7 @@ import { isArray, isObject, merge, clone, isFunction, isBoolean, isValid } from 
 import { defaultStyleOptions } from './options/styleOptions'
 
 import { formatValue } from '../utils/format'
-import { createNewTechnicalIndicator, createTechnicalIndicators } from './technicalindicator/technicalIndicatorControl'
+import { createNewTechnicalIndicator, createTechnicalIndicatorMapping } from './technicalindicator/technicalIndicatorControl'
 import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './technicalindicator/TechnicalIndicator'
 import Delegate from './delegate/Delegate'
@@ -45,8 +45,8 @@ export default class ChartData {
     // 样式配置
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
-    // 所有技术指标类集合
-    this._technicalIndicators = createTechnicalIndicators()
+    // 所有技术指标映射
+    this._technicalIndicatorMapping = createTechnicalIndicatorMapping()
 
     // 价格精度
     this._pricePrecision = 2
@@ -172,8 +172,8 @@ export default class ChartData {
       return clone(technical.calcParams)
     }
     const calcParams = {}
-    for (const name in this._technicalIndicators) {
-      calcParams[name] = clone(this._technicalIndicators[name].calcParams)
+    for (const name in this._technicalIndicatorMapping) {
+      calcParams[name] = clone(this._technicalIndicatorMapping[name].calcParams)
     }
     return calcParams
   }
@@ -183,7 +183,7 @@ export default class ChartData {
    * @param technicalIndicatorType
    */
   technicalIndicator (technicalIndicatorType) {
-    return this._technicalIndicators[technicalIndicatorType]
+    return this._technicalIndicatorMapping[technicalIndicatorType]
   }
 
   /**
@@ -248,15 +248,15 @@ export default class ChartData {
   applyPrecision (pricePrecision, volumePrecision) {
     this._pricePrecision = pricePrecision
     this._volumePrecision = volumePrecision
-    for (const name in this._technicalIndicators) {
-      const series = this._technicalIndicators[name].series
+    for (const name in this._technicalIndicatorMapping) {
+      const series = this._technicalIndicatorMapping[name].series
       switch (series) {
         case TechnicalIndicatorSeries.PRICE: {
-          this._technicalIndicators[name].setPrecision(pricePrecision)
+          this._technicalIndicatorMapping[name].setPrecision(pricePrecision)
           break
         }
         case TechnicalIndicatorSeries.VOLUME: {
-          this._technicalIndicators[name].setPrecision(volumePrecision)
+          this._technicalIndicatorMapping[name].setPrecision(volumePrecision)
           break
         }
         default: { break }
@@ -274,8 +274,8 @@ export default class ChartData {
     if (technicalIndicator) {
       technicalIndicator.setPrecision(precision)
     } else {
-      for (const name in this._technicalIndicators) {
-        this._technicalIndicators[name].setPrecision(precision)
+      for (const name in this._technicalIndicatorMapping) {
+        this._technicalIndicatorMapping[name].setPrecision(precision)
       }
     }
   }
@@ -615,7 +615,7 @@ export default class ChartData {
     const technicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo || {})
     if (technicalIndicator) {
       // 将生成的新的指标类放入集合
-      this._technicalIndicators[technicalIndicatorInfo.name] = technicalIndicator
+      this._technicalIndicatorMapping[technicalIndicatorInfo.name] = technicalIndicator
     }
   }
 
