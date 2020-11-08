@@ -24,7 +24,6 @@ import SeparatorPane from './SeparatorPane'
 
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
-import { DEV } from '../utils/env'
 import { throttle } from '../utils/performance'
 
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
@@ -48,11 +47,7 @@ export default class ChartPane {
       xAxis: this._xAxisPane.xAxis(),
       tag: CANDLE_STICK_PANE_TAG
     })
-    this._chartEvent = new ChartEvent(
-      this._chartContainer, this._chartData,
-      this._xAxisPane.xAxis(),
-      this._candleStickPane.yAxis()
-    )
+    this._chartEvent = new ChartEvent(this._chartContainer, this._chartData)
     this._measurePaneHeight()
     this._measureWidthAndLayoutPane(true)
   }
@@ -135,11 +130,9 @@ export default class ChartPane {
   _calcAllPaneTechnicalIndicator () {
     Promise.resolve().then(
       _ => {
-        this._chartData.calcTechnicalIndicator(this._candleStickPane)
-        let shouldMeasureWidth = this._candleStickPane.computeAxis()
+        let shouldMeasureWidth = this._candleStickPane.calcTechnicalIndicator()
         for (const pane of this._technicalIndicatorPanes) {
-          this._chartData.calcTechnicalIndicator(pane)
-          const should = pane.computeAxis()
+          const should = pane.calcTechnicalIndicator()
           if (should) {
             shouldMeasureWidth = should
           }
@@ -283,25 +276,23 @@ export default class ChartPane {
    * @param params
    */
   applyTechnicalIndicatorParams (technicalIndicatorType, params) {
-    const info = this._chartData.technicalIndicator(technicalIndicatorType)
-    if (info.structure && isArray(params)) {
+    const technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
+    if (technicalIndicator && isArray(params)) {
       for (const v of params) {
         if (!isNumber(v) || v <= 0 || parseInt(v, 10) !== v) {
           return
         }
       }
-      info.calcParams = clone(params)
+      technicalIndicator.setCalcParams(clone(params))
       Promise.resolve().then(
         _ => {
           let shouldMeasureWidth = false
           if (this._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
-            this._chartData.calcTechnicalIndicator(this._candleStickPane)
-            shouldMeasureWidth = this._candleStickPane.computeAxis()
+            shouldMeasureWidth = this._candleStickPane.calcTechnicalIndicator()
           }
           for (const pane of this._technicalIndicatorPanes) {
             if (pane.technicalIndicator().name === technicalIndicatorType) {
-              this._chartData.calcTechnicalIndicator(pane)
-              const should = pane.computeAxis()
+              const should = pane.calcTechnicalIndicator()
               if (should) {
                 shouldMeasureWidth = should
               }
@@ -375,8 +366,7 @@ export default class ChartPane {
    * @param type
    */
   setCandleStickChartType (type) {
-    this._candleStickPane.setChartType(type)
-    const shouldMeasureWidth = this._candleStickPane.computeAxis()
+    const shouldMeasureWidth = this._candleStickPane.setChartType(type)
     this._measureWidthAndLayoutPane(shouldMeasureWidth)
   }
 
@@ -388,13 +378,6 @@ export default class ChartPane {
    * @returns {string}
    */
   createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled) {
-    const { structure: TechnicalIndicator } = this._chartData.technicalIndicator(technicalIndicatorType)
-    if (!TechnicalIndicator) {
-      if (DEV) {
-        console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!')
-      }
-      return null
-    }
     const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
     const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
     this._separatorPanes.push(
@@ -454,8 +437,7 @@ export default class ChartPane {
    */
   setTechnicalIndicatorType (tag, technicalIndicatorType) {
     if (tag === CANDLE_STICK_PANE_TAG) {
-      this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType)
-      const shouldMeasureWidth = this._candleStickPane.computeAxis()
+      const shouldMeasureWidth = this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType)
       this._measureWidthAndLayoutPane(shouldMeasureWidth)
     } else {
       let p
@@ -466,16 +448,25 @@ export default class ChartPane {
         }
       }
       if (p) {
-        const { structure: TechnicalIndicator } = this._chartData.technicalIndicator(technicalIndicatorType)
-        if (!TechnicalIndicator) {
+        const technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
+        if (!technicalIndicator) {
           this.removeTechnicalIndicator(tag)
         } else {
-          p.setTechnicalIndicatorType(technicalIndicatorType)
-          const shouldMeasureWidth = p.computeAxis()
+          const shouldMeasureWidth = p.setTechnicalIndicatorType(technicalIndicatorType)
           this._measureWidthAndLayoutPane(shouldMeasureWidth)
         }
       }
     }
+  }
+
+  /**
+   * 添加图形标记
+   * @param type
+   */
+  addGraphicMark (type) {
+    const graphicMarkMapping = this._chartData.graphicMarkMapping()
+    const GraphicMark = graphicMarkMapping[type]
+    this._chartData.addGraphicMark(new GraphicMark(this._chartData, this._xAxisPane.xAxis(), this._candleStickPane.yAxis()))
   }
 
   /**
@@ -494,10 +485,7 @@ export default class ChartPane {
    * @param type
    * @param backgroundColor
    */
-  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type = 'jpeg', backgroundColor = '#333333') {
-    if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
-      throw new Error('Picture format only supports jpeg, png and bmp!!!')
-    }
+  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type, backgroundColor) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)

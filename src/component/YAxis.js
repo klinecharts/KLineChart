@@ -141,7 +141,7 @@ export default class YAxis extends Axis {
         this._maxValue = minMaxArray[1]
         if (
           this._minValue === this._maxValue ||
-          Math.abs(this._minValue - this._maxValue) < Math.pow(10, -6)
+          Math.abs(this._minValue - this._maxValue) < Math.pow(10, -12)
         ) {
           const percentValue = this._minValue !== 0 ? Math.abs(this._minValue * 0.2) : 10
           this._minValue = this._minValue !== 0 ? this._minValue - percentValue : this._minValue
@@ -168,9 +168,12 @@ export default class YAxis extends Axis {
   }
 
   getSelfWidth () {
-    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
     const stylOptions = this._chartData.styleOptions()
     const yAxisOptions = stylOptions.yAxis
+    const width = yAxisOptions.width
+    if (isValid(width) && isNumber(+width)) {
+      return +width
+    }
     let yAxisWidth = 0
     if (yAxisOptions.display) {
       if (yAxisOptions.axisLine.display) {
@@ -195,6 +198,7 @@ export default class YAxis extends Axis {
       crossHairOptions.horizontal.display &&
       crossHairOptions.horizontal.text.display
     ) {
+      const technicalIndicator = this._additionalDataProvider.technicalIndicator()
       this._measureCtx.font = getFont(
         crossHairOptions.horizontal.text.size,
         crossHairOptions.horizontal.text.weight,

@@ -22,7 +22,7 @@ export default class Momentum extends TechnicalIndicator {
       calcParams: [6, 10],
       plots: [
         { key: 'mtm', type: 'line' },
-        { key: 'mtmMa', type: 'line' }
+        { key: 'maMtm', type: 'line' }
       ]
     })
   }
@@ -46,7 +46,7 @@ export default class Momentum extends TechnicalIndicator {
         mtm.mtm = close - agoClose
         mtmSum += mtm.mtm
         if (i >= calcParams[0] + calcParams[1] - 2) {
-          mtm.mtmMa = mtmSum / calcParams[1]
+          mtm.maMtm = mtmSum / calcParams[1]
           mtmSum -= result[i - (calcParams[1] - 1)].mtm
         }
       }

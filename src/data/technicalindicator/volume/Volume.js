@@ -50,7 +50,7 @@ export default class Volume extends TechnicalIndicator {
     return plots
   }
 
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator (dataList, calcParams, plots) {
     const volSums = []
     const result = []
     dataList.forEach((kLineData, i) => {
@@ -59,7 +59,7 @@ export default class Volume extends TechnicalIndicator {
       calcParams.forEach((param, j) => {
         volSums[j] = (volSums[j] || 0) + volume
         if (i >= param - 1) {
-          vol[this.plots[j].key] = volSums[j] / param
+          vol[plots[j].key] = volSums[j] / param
           volSums[j] -= dataList[i - (param - 1)].volume
         }
       })

@@ -22,7 +22,7 @@ export default class TripleExponentiallySmoothedAverage extends TechnicalIndicat
       calcParams: [12, 20],
       plots: [
         { key: 'trix', type: 'line' },
-        { key: 'trixMa', type: 'line' }
+        { key: 'maTrix', type: 'line' }
       ]
     })
   }
@@ -65,7 +65,7 @@ export default class TripleExponentiallySmoothedAverage extends TechnicalIndicat
         trix.trix = oldEmaClose3 === 0.0 ? 0.0 : (emaClose3 - oldEmaClose3) / oldEmaClose3 * 100
         trixSum += trix.trix
         if (i >= calcParams[1] - 1) {
-          trix.trixMa = trixSum / calcParams[1]
+          trix.maTrix = trixSum / calcParams[1]
           trixSum -= (result[i - (calcParams[1] - 1)].trix || 0)
         }
       }

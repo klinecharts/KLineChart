@@ -54,8 +54,9 @@ getStyleOptions()
 // params 技术指标计算参数，详情可参阅技术指标参数
 setTechnicalIndicatorParams(technicalIndicatorType, params)
 
-// 获取所有技术指标参数
-getTechnicalIndicatorParamOptions()
+// 获取技术指标参数
+// technicalIndicatorType 技术指标类型，可缺省，缺省则返回所有
+getTechnicalIndicatorParams(technicalIndicatorType)
 
 // 设置精度
 // pricePrecision 价格精度，影响整个图表显示的价格的数字精度，还包括指标系列是price的技术指标
@@ -72,6 +73,9 @@ setTechnicalIndicatorPrecision(precision, technicalIndicatorType)
 // 如果不设置会自动获取本机时区
 // 时区对应名字列表请自寻查找相关文档
 setTimezone(timezone)
+
+// 获取图表时区
+getTimezone()
 
 // 调整图表大小，总是会填充容器大小
 // 注意：此方法会重新计算整个图表各个模块的大小，频繁调用可能会影响到性能，调用请谨慎
@@ -153,6 +157,16 @@ addGraphicMark(graphicMarkType)
 
 // 移除所有的图形标记
 removeAllGraphicMark()
+
+// 订阅绘制事件
+// type类型是'drawCandle'和'drawTechnicalIndicator'
+// callback 是回调方法
+subscribeDrawAction(type, callback)
+
+// 取消订阅绘制事件
+// 入参同方法subscribeDrawAction
+unsubscribeDrawAction(type, callback)
+
 
 // 获取图表转换成图片后的图片url
 // includeFloatLayer 是否需要包含浮层, 可缺省
@@ -256,7 +270,7 @@ technicalIndicatorInfo格式如下：
   name: 'NAME',
   // 技术指标计算方法，必要字段
   // 该字段是一个回调方法，回调参数是当前图表的源数据和计算的参数，需要返回一个数组
-  calcTechnicalIndicator: (kLineDataList, calcParams) => { return [...] },
+  calcTechnicalIndicator: (kLineDataList, calcParams, plots) => { return [...] },
   // 精度，可缺省，默认为4
   precision: 4,
   // 技术指标系列，值为'price', 'volume'和'normal'
@@ -269,7 +283,7 @@ technicalIndicatorInfo格式如下：
   // 示例：
   // 如果calcTechnicalIndicator返回的结果形式是[{ a: 1, b: 2 }, { a: 5, b: 6 }]
   // 则plots应该是[{ key: 'a', type: 'line' }, { key: 'b', type: 'line' }]
-  // type可以是'line'，'circle'和'bar'
+  // type可以是'line'，'circle'，'bar'
   plots: [],
   // 是否需要检查计算参数，可缺省，默认为true
   // 如果为true，当设置指标参数时，如果参数个数和默认的参数个数不一致，将不能生效
@@ -283,7 +297,19 @@ technicalIndicatorInfo格式如下：
   // 指定的最小值，可缺省
   minValue: null,
   // 指定的最大值，可缺省
-  maxValue: null
+  maxValue: null,
+  // 自定义渲染，可缺省，
+  // ctx canvas上下文
+  // dataSource 数据源，包含了原始的k线数据和计算出来的指标数据以及起始绘制点位置
+  // viewport 一些绘图可能需要的一些参数
+  // xAxis x轴组件，包含值和坐标转换的一些方法
+  // yAxis y轴组件，包含值和坐标转换的一些方法
+  // isCandleStickTechnicalIndicator 是否是蜡烛图指标
+  render: (
+    ctx, dataSource, viewport,
+    styleOptions, xAxis, yAxis,
+    isCandleStickTechnicalIndicator
+  ) => {}
 }
 ```
 具体可参考[TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator)

@@ -230,6 +230,10 @@ const defaultXAxis = {
    */
   display: true,
   /**
+   * 高度
+   */
+  height: null,
+  /**
    * 轴线配置
    */
   axisLine: {
@@ -268,6 +272,10 @@ const defaultYAxis = {
    * 是否显示整个轴
    */
   display: true,
+  /**
+   * 宽度
+   */
+  width: null,
   /**
    * y轴类型
    */
@@ -406,10 +414,6 @@ const defaultFloatLayer = {
         marginRight: 8,
         marginBottom: 0,
         marginLeft: 8
-      },
-      point: {
-        display: true,
-        radius: 3
       }
     }
   }

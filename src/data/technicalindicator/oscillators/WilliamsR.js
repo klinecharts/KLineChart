@@ -37,9 +37,10 @@ export default class WilliamsR extends TechnicalIndicator {
    *
    * @param dataList
    * @param calcParams
+   * @param plots
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator (dataList, calcParams, plots) {
     const result = []
     dataList.forEach((kLineData, i) => {
       const wr = {}
@@ -51,7 +52,7 @@ export default class WilliamsR extends TechnicalIndicator {
           const hn = hln.hn
           const ln = hln.ln
           const hnSubLn = hn - ln
-          wr[this.plots[index].key] = hnSubLn === 0 ? 0 : (hn - close) / hnSubLn * 100
+          wr[plots[index].key] = hnSubLn === 0 ? 0 : (hn - close) / hnSubLn * 100
         }
       })
       result.push(wr)

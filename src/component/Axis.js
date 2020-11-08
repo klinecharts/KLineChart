@@ -43,6 +43,14 @@ export default class Axis {
     return this._maxValue
   }
 
+  width () {
+    return this._width
+  }
+
+  height () {
+    return this._height
+  }
+
   setWidth (width) {
     this._width = width
   }

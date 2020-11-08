@@ -36,9 +36,10 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
    *
    * @param dataList
    * @param calcParams
+   * @param plots
    * @returns {[]}
    */
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator (dataList, calcParams, plots) {
     const sumCloseAs = []
     const sumCloseBs = []
     const result = []
@@ -58,7 +59,7 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
         if (i >= param - 1) {
           const a = sumCloseAs[j] / param
           const b = (sumCloseAs[j] + sumCloseBs[j]) / param
-          rsi[this.plots[j].key] = (b === 0 ? 0 : a / b * 100)
+          rsi[plots[j].key] = (b === 0 ? 0 : a / b * 100)
 
           const agoData = dataList[i - (param - 1)]
           const agoOpen = agoData.open

@@ -113,15 +113,29 @@ export default class TechnicalIndicatorPane extends Pane {
    * @param technicalIndicatorType
    */
   setTechnicalIndicatorType (technicalIndicatorType) {
-    const { structure: TechnicalIndicator } = this._chartData.technicalIndicator(technicalIndicatorType)
-    if (this._technicalIndicator.name === technicalIndicatorType) {
-      return
+    const technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
+    if (this._technicalIndicator && this._technicalIndicator.name === technicalIndicatorType) {
+      return false
     }
-    if (TechnicalIndicator) {
-      this._technicalIndicator = new TechnicalIndicator()
+    if (technicalIndicator) {
+      this._technicalIndicator = Object.create(technicalIndicator)
     } else {
       this._technicalIndicator = new EmptyTechnicalIndicator({})
     }
-    this._chartData.calcTechnicalIndicator(this)
+    return this.calcTechnicalIndicator()
+  }
+
+  /**
+   * 计算指标
+   */
+  calcTechnicalIndicator () {
+    const currentTechnicalIndicator = this.technicalIndicator()
+    const technicalIndicator = this._chartData.technicalIndicator[currentTechnicalIndicator.name]
+    if (technicalIndicator) {
+      currentTechnicalIndicator.setPrecision(technicalIndicator.precision)
+      currentTechnicalIndicator.setCalcParams(technicalIndicator.calcParams)
+    }
+    currentTechnicalIndicator.result = currentTechnicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), currentTechnicalIndicator.calcParams, currentTechnicalIndicator.plots) || []
+    return this.computeAxis()
   }
 }

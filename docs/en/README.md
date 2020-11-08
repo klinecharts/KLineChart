@@ -37,10 +37,11 @@ version()
 setStyleOptions(options)
 getStyleOptions()
 setTechnicalIndicatorParams(technicalIndicatorType, params)
-getTechnicalIndicatorParamOptions()
+getTechnicalIndicatorParams(technicalIndicatorType)
 setPrecision(pricePrecision, volumePrecision)
 setTechnicalIndicatorPrecision(precision, technicalIndicatorType)
 setTimezone(timezone)
+getTimezone()
 resize()
 setOffsetRightSpace(space)
 setLeftMinVisibleBarCount(barCount)
@@ -60,6 +61,8 @@ setTechnicalIndicatorType(tag, technicalIndicatorType)
 removeTechnicalIndicator(tag)
 addGraphicMark(graphicMarkType)
 removeAllGraphicMark()
+subscribeDrawAction(type, callback)
+unsubscribeDrawAction(type, callback)
 getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor)
 ```
 
@@ -153,7 +156,7 @@ The technicalIndicatorInfo format is as follows:
 ```
 {
   name: 'NAME',
-  calcTechnicalIndicator: (kLineDataList, calcParams) => { return [...] },
+  calcTechnicalIndicator: (kLineDataList, calcParams, plots) => { return [...] },
   precision: 4,
   series: 'normal',
   calcParams: [],
@@ -163,12 +166,17 @@ The technicalIndicatorInfo format is as follows:
   shouldFormatBigNumber: false,
   baseValue: null,
   minValue: null,
-  maxValue: null
+  maxValue: null,
+  render: (
+    ctx, dataSource, viewport,
+    styleOptions, xAxis, yAxis,
+    isCandleStickTechnicalIndicator
+  ) => {}
 }
 ```
 Specific reference [TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator).
 
-## Style option
+## Style Option
 For full configuration please see [here](../style.md).
 
 

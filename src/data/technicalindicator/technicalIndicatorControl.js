@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TechnicalIndicator, { TechnicalIndicatorSeries } from './TechnicalIndicator'
+import TechnicalIndicator from './TechnicalIndicator'
 
 import MovingAverage from './directionalmovement/MovingAverage'
 import ExponentialMovingAverage from './directionalmovement/ExponentialMovingAverage'
@@ -41,125 +41,36 @@ import {
   BIAS, BRAR, CCI, DMI, CR, PSY, DMA,
   TRIX, OBV, VR, WR, MTM, EMV, SAR
 } from './defaultTechnicalIndicatorType'
-import { isArray, isFunction, isNumber, isValid } from '../../utils/typeChecks'
+import { isFunction, isValid } from '../../utils/typeChecks'
 import { formatBigNumber, formatPrecision } from '../../utils/format'
 import { DEV } from '../../utils/env'
 
 /**
- * 创建技术指标集合
+ * 创建技术指标映射
  */
-export function createTechnicalIndicators () {
+export function createTechnicalIndicatorMapping () {
   return {
-    [MA]: {
-      structure: MovingAverage,
-      series: TechnicalIndicatorSeries.PRICE,
-      precision: 2,
-      calcParams: [5, 10, 30, 60]
-    },
-    [EMA]: {
-      structure: ExponentialMovingAverage,
-      series: TechnicalIndicatorSeries.PRICE,
-      precision: 2,
-      calcParams: [6, 12, 20]
-    },
-    [VOL]: {
-      structure: Volume,
-      series: TechnicalIndicatorSeries.VOLUME,
-      precision: 0,
-      calcParams: [5, 10, 20]
-    },
-    [MACD]: {
-      structure: MovingAverageConvergenceDivergence,
-      precision: 4,
-      calcParams: [12, 26, 9]
-    },
-    [BOLL]: {
-      structure: BollingerBands,
-      series: TechnicalIndicatorSeries.PRICE,
-      precision: 2,
-      calcParams: [20]
-    },
-    [KDJ]: {
-      structure: StockIndicatorKDJ,
-      precision: 4,
-      calcParams: [9, 3, 3]
-    },
-    [RSI]: {
-      structure: RelativeStrengthIndex,
-      precision: 4,
-      calcParams: [6, 12, 24]
-    },
-    [BIAS]: {
-      structure: Bias,
-      precision: 4,
-      calcParams: [6, 12, 24]
-    },
-    [BRAR]: {
-      structure: Brar,
-      precision: 4,
-      calcParams: [26]
-    },
-    [CCI]: {
-      structure: CommodityChannelIndex,
-      precision: 4,
-      calcParams: [13]
-    },
-    [DMI]: {
-      structure: DirectionalMovementIndex,
-      precision: 4,
-      calcParams: [14, 6]
-    },
-    [CR]: {
-      structure: CurrentRatio,
-      precision: 4,
-      calcParams: [26, 10, 20, 40, 60]
-    },
-    [PSY]: {
-      structure: PsychologicalLine,
-      precision: 4,
-      calcParams: [12, 6]
-    },
-    [DMA]: {
-      structure: DifferentOfMovingAverage,
-      precision: 4,
-      calcParams: [10, 50, 10]
-    },
-    [TRIX]: {
-      structure: TripleExponentiallySmoothedAverage,
-      precision: 4,
-      calcParams: [12, 20]
-    },
-    [OBV]: {
-      structure: OnBalanceVolume,
-      precision: 4,
-      calcParams: [30]
-    },
-    [VR]: {
-      structure: VolumeRatio,
-      precision: 4,
-      calcParams: [24, 30]
-    },
-    [WR]: {
-      structure: WilliamsR,
-      precision: 4,
-      calcParams: [6, 10, 14]
-    },
-    [MTM]: {
-      structure: Momentum,
-      precision: 4,
-      calcParams: [6, 10]
-    },
-    [EMV]: {
-      structure: EaseOfMovementValue,
-      precision: 4,
-      calcParams: [14, 9]
-    },
-    [SAR]: {
-      structure: StopAndReverse,
-      series: TechnicalIndicatorSeries.PRICE,
-      precision: 2,
-      calcParams: [2, 2, 20]
-    }
+    [MA]: new MovingAverage(),
+    [EMA]: new ExponentialMovingAverage(),
+    [VOL]: new Volume(),
+    [MACD]: new MovingAverageConvergenceDivergence(),
+    [BOLL]: new BollingerBands(),
+    [KDJ]: new StockIndicatorKDJ(),
+    [RSI]: new RelativeStrengthIndex(),
+    [BIAS]: new Bias(),
+    [BRAR]: new Brar(),
+    [CCI]: new CommodityChannelIndex(),
+    [DMI]: new DirectionalMovementIndex(),
+    [CR]: new CurrentRatio(),
+    [PSY]: new PsychologicalLine(),
+    [DMA]: new DifferentOfMovingAverage(),
+    [TRIX]: new TripleExponentiallySmoothedAverage(),
+    [OBV]: new OnBalanceVolume(),
+    [VR]: new VolumeRatio(),
+    [WR]: new WilliamsR(),
+    [MTM]: new Momentum(),
+    [EMV]: new EaseOfMovementValue(),
+    [SAR]: new StopAndReverse()
   }
 }
 
@@ -178,12 +89,13 @@ export function createTechnicalIndicators () {
  * @param maxValue
  * @param calcTechnicalIndicator
  * @param regeneratePlots
- * @returns {null|{precision: (*|number), calcParams: (*|[]), structure: NewTechnicalIndicator}}
+ * @param render
+ * @returns {NewTechnicalIndicator|null}
  */
 export function createNewTechnicalIndicator ({
   name, series, calcParams, plots, precision, shouldCheckParamCount,
   shouldOhlc, shouldFormatBigNumber, baseValue, minValue, maxValue,
-  calcTechnicalIndicator, regeneratePlots
+  calcTechnicalIndicator, regeneratePlots, render
 }) {
   if (!name || !isFunction(calcTechnicalIndicator)) {
     if (DEV) {
@@ -213,17 +125,13 @@ export function createNewTechnicalIndicator ({
     }
   }
   NewTechnicalIndicator.prototype.calcTechnicalIndicator = calcTechnicalIndicator
-  if (regeneratePlots) {
+  if (regeneratePlots && isFunction(regeneratePlots)) {
     NewTechnicalIndicator.prototype.regeneratePlots = regeneratePlots
   }
-  return {
-    structure: NewTechnicalIndicator,
-    series: series || TechnicalIndicatorSeries.NORMAL,
-    precision: isValid(precision) && isNumber(precision) && precision >= 0
-      ? precision
-      : (series === TechnicalIndicatorSeries.PRICE ? 2 : (series === TechnicalIndicatorSeries.VOLUME ? 0 : 4)),
-    calcParams: isArray(calcParams) ? calcParams : []
+  if (render && isFunction(render)) {
+    NewTechnicalIndicator.prototype.render = render
   }
+  return new NewTechnicalIndicator()
 }
 
 /**

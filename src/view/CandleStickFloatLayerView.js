@@ -20,19 +20,17 @@ import { ChartType, FloatLayerPromptCandleStickTextDisplayType } from '../data/o
 import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalIndicatorControl'
 
 export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLayerView {
-  _drawPrompt (
-    kLineData, technicalIndicatorData, realDataPos, realDataPosX,
-    technicalIndicator, isDrawValueIndicator
-  ) {
+  _drawPrompt (kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
     const options = this._chartData.styleOptions()
     const floatLayerPromptCandleStick = options.floatLayer.prompt.candleStick
     const candleStickPromptData = this._getCandleStickPromptData(kLineData, options.candleStick, floatLayerPromptCandleStick)
     if (floatLayerPromptCandleStick.showType === FloatLayerPromptCandleStickTextDisplayType.STANDARD) {
       this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData)
       if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
-        this._drawTechnicalIndicatorPrompt(
-          technicalIndicatorData, realDataPos, realDataPosX,
-          technicalIndicator, isDrawValueIndicator,
+        this._drawTechnicalIndicatorPromptText(
+          technicalIndicatorData,
+          realDataPos,
+          technicalIndicator,
           floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop
         )
       }
@@ -41,13 +39,6 @@ export default class CandleStickFloatLayerView extends TechnicalIndicatorFloatLa
       this._drawCandleStickRectPromptText(
         realDataPosX, floatLayerPromptCandleStick, candleStickPromptData, data
       )
-      if (isDrawValueIndicator) {
-        const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
-        this._drawTechnicalIndicatorPromptPoint(
-          realDataPos, realDataPosX, technicalIndicator,
-          data.values, technicalIndicatorOptions.line.colors
-        )
-      }
     }
   }
 

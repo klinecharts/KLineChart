@@ -1,5 +1,17 @@
 # 版本日志
 
+## 5.6.0
+`2020-08-29`
++ 🆕 自定义技术指标新增`render`属性。
++ 🆕 自定义指标方法`calcTechnicalIndicator`，增加参数`plots`。
++ 🆕 配置项新增`xAxis.height`和`yAxis.width`。
++ 🆕 新增方法`subscribeDrawAction`和`unsubscribeDrawAction`，用于绘制监听和取消。
++ 🆕 新增方法`getTimezone`。
++ 👉 方法`getTechnicalIndicatorParamOptions`变更为`getTechnicalIndicatorParams`。
++ 👉 内置指标文字提示显示`xxxMa`变更为`maXxx`。
++ 🗑 去除配置项`floatLayer.prompt.technicalIndicator.point`。
+
+
 ## 5.5.1
 `2020-08-16`
 + 💄 优化无数据时，y轴显示。

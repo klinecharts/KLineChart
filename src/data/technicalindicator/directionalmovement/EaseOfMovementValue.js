@@ -23,7 +23,7 @@ export default class EaseOfMovementValue extends TechnicalIndicator {
       calcParams: [14, 9],
       plots: [
         { key: 'emv', type: 'line' },
-        { key: 'emvMa', type: 'line' }
+        { key: 'maEmv', type: 'line' }
       ]
     })
   }
@@ -62,7 +62,7 @@ export default class EaseOfMovementValue extends TechnicalIndicator {
           emv.emv = emSum / calcParams[0]
           emvSum += emv.emv
           if (i >= calcParams[0] + calcParams[1] - 1) {
-            emv.emvMa = emvSum / calcParams[1]
+            emv.maEmv = emvSum / calcParams[1]
             emvSum -= result[i - (calcParams[1] - 1)].emv
           }
           emSum -= emList[i - calcParams[0]]

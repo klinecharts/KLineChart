@@ -22,7 +22,7 @@ export default class OnBalanceVolume extends TechnicalIndicator {
       calcParams: [30],
       plots: [
         { key: 'obv', type: 'line' },
-        { key: 'obvMa', type: 'line' }
+        { key: 'maObv', type: 'line' }
       ]
     })
   }
@@ -50,7 +50,7 @@ export default class OnBalanceVolume extends TechnicalIndicator {
       }
       obvSum += obv.obv
       if (i >= calcParams[0] - 1) {
-        obv.obvMa = obvSum / calcParams[0]
+        obv.maObv = obvSum / calcParams[0]
         obvSum -= result[i - (calcParams[0] - 1)].obv
       }
       result.push(obv)

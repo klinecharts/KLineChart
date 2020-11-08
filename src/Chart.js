@@ -13,8 +13,8 @@
  */
 
 import ChartPane, { CANDLE_STICK_PANE_TAG } from './pane/ChartPane'
-import { isArray, clone } from './utils/typeChecks'
-import { GraphicMarkType } from './data/ChartData'
+import { clone, isNumber, isValid, isArray } from './utils/typeChecks'
+import { DEV } from './utils/env'
 
 export default class Chart {
   constructor (container, styleOptions) {
@@ -53,9 +53,11 @@ export default class Chart {
 
   /**
    * 获取技术指标参数配置
+   * @param technicalIndicatorType
+   * @returns {function(Array<string>, string, string): Promise}
    */
-  getTechnicalIndicatorParamOptions () {
-    return this._chartPane.chartData().technicalIndicatorCalcParams()
+  getTechnicalIndicatorParams (technicalIndicatorType) {
+    return this._chartPane.chartData().technicalIndicatorCalcParams(technicalIndicatorType)
   }
 
   /**
@@ -64,6 +66,18 @@ export default class Chart {
    * @param volumePrecision
    */
   setPrecision (pricePrecision, volumePrecision) {
+    if (!isValid(pricePrecision) || !isNumber(pricePrecision) || pricePrecision < 0) {
+      if (DEV) {
+        console.warn('Invalid parameter: pricePrecision!!!')
+      }
+      return
+    }
+    if (!isValid(volumePrecision) || !isNumber(volumePrecision) || volumePrecision < 0) {
+      if (DEV) {
+        console.warn('Invalid parameter: volumePrecision!!!')
+      }
+      return
+    }
     this._chartPane.chartData().applyPrecision(pricePrecision, volumePrecision)
   }
 
@@ -73,6 +87,12 @@ export default class Chart {
    * @param technicalIndicatorType
    */
   setTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
+    if (!isValid(precision) || !isNumber(precision) || precision < 0) {
+      if (DEV) {
+        console.warn('Invalid parameter: precision!!!')
+      }
+      return
+    }
     this._chartPane.chartData().applyTechnicalIndicatorPrecision(precision, technicalIndicatorType)
   }
 
@@ -82,6 +102,13 @@ export default class Chart {
    */
   setTimezone (timezone) {
     this._chartPane.setTimezone(timezone)
+  }
+
+  /**
+   * 获取当前时区
+   */
+  getTimezone () {
+    return this._chartPane.chartData().timezone()
   }
 
   /**
@@ -104,7 +131,13 @@ export default class Chart {
    * @param barCount
    */
   setLeftMinVisibleBarCount (barCount) {
-    this._chartPane.chartData().setLeftMinVisibleBarCount(barCount)
+    if (!isValid(barCount) || !isNumber(barCount) || barCount <= 0) {
+      if (DEV) {
+        console.warn('Invalid parameter: barCount!!!')
+      }
+      return
+    }
+    this._chartPane.chartData().setLeftMinVisibleBarCount(Math.ceil(barCount))
   }
 
   /**
@@ -112,7 +145,13 @@ export default class Chart {
    * @param barCount
    */
   setRightMinVisibleBarCount (barCount) {
-    this._chartPane.chartData().setRightMinVisibleBarCount(barCount)
+    if (!isValid(barCount) || !isNumber(barCount) || barCount <= 0) {
+      if (DEV) {
+        console.warn('Invalid parameter: barCount!!!')
+      }
+      return
+    }
+    this._chartPane.chartData().setRightMinVisibleBarCount(Math.ceil(barCount))
   }
 
   /**
@@ -143,6 +182,12 @@ export default class Chart {
    * @param more
    */
   applyNewData (dataList, more) {
+    if (!isArray(dataList)) {
+      if (DEV) {
+        console.warn('Invalid parameter: dataList, dataList be an array!!!')
+      }
+      return
+    }
     this._chartPane.applyNewData(dataList, more)
   }
 
@@ -152,6 +197,12 @@ export default class Chart {
    * @param more
    */
   applyMoreData (dataList, more) {
+    if (!isArray(dataList)) {
+      if (DEV) {
+        console.warn('Invalid parameter: dataList, dataList be an array!!!')
+      }
+      return
+    }
     this._chartPane.applyMoreData(dataList, more)
   }
 
@@ -184,9 +235,12 @@ export default class Chart {
    * @param technicalIndicatorType
    */
   setCandleStickTechnicalIndicatorType (technicalIndicatorType) {
-    if (technicalIndicatorType) {
-      this._chartPane.setTechnicalIndicatorType(CANDLE_STICK_PANE_TAG, technicalIndicatorType)
+    if (!technicalIndicatorType) {
+      if (DEV) {
+        console.warn('Invalid parameter: technicalIndicatorType!!!')
+      }
     }
+    this._chartPane.setTechnicalIndicatorType(CANDLE_STICK_PANE_TAG, technicalIndicatorType)
   }
 
   /**
@@ -195,9 +249,13 @@ export default class Chart {
    * @param technicalIndicatorType
    */
   setTechnicalIndicatorType (tag, technicalIndicatorType) {
-    if (tag) {
-      this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType)
+    if (!tag) {
+      if (DEV) {
+        console.warn('Invalid parameter: tag!!!')
+      }
+      return
     }
+    this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType)
   }
 
   /**
@@ -205,9 +263,16 @@ export default class Chart {
    * @param technicalIndicatorType
    * @param height
    * @param dragEnabled
-   * @returns {string}
+   * @returns {string|null}
    */
   createTechnicalIndicator (technicalIndicatorType, height, dragEnabled) {
+    const technicalIndicator = this._chartPane.chartData().technicalIndicator(technicalIndicatorType)
+    if (!technicalIndicator) {
+      if (DEV) {
+        console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!')
+      }
+      return null
+    }
     return this._chartPane.createTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
   }
 
@@ -234,33 +299,52 @@ export default class Chart {
    * @param type
    */
   addGraphicMark (type) {
-    const graphicMarkType = this._chartPane.chartData().graphicMarkType()
-    if (graphicMarkType !== type) {
-      const graphicMarkDatas = this._chartPane.chartData().graphicMarkData()
-      const graphicMarkData = graphicMarkDatas[graphicMarkType]
-      if (graphicMarkData && isArray(graphicMarkData)) {
-        graphicMarkData.splice(graphicMarkData.length - 1, 1)
-        graphicMarkDatas[graphicMarkType] = graphicMarkData
+    const graphicMarkMapping = this._chartPane.chartData().graphicMarkMapping()
+    if (!(type in graphicMarkMapping)) {
+      if (DEV) {
+        console.warn('Graphic mark type not found!!!')
       }
-      if (!graphicMarkDatas.hasOwnProperty(type)) {
-        type = GraphicMarkType.NONE
-      }
-      this._chartPane.chartData().setGraphicMarkType(type)
-      this._chartPane.chartData().setGraphicMarkData(graphicMarkDatas)
     }
+    this._chartPane.addGraphicMark(type)
   }
 
   /**
    * 移除所有标记图形
    */
   removeAllGraphicMark () {
-    const graphicMarkDatas = this._chartPane.chartData().graphicMarkData()
-    const newGraphicMarkDatas = {}
-    Object.keys(graphicMarkDatas).forEach(key => {
-      newGraphicMarkDatas[key] = []
-    })
-    this._chartPane.chartData().setGraphicMarkType(GraphicMarkType.NONE)
-    this._chartPane.chartData().setGraphicMarkData(newGraphicMarkDatas)
+    this._chartPane.chartData().clearGraphicMark()
+  }
+
+  /**
+   * 订阅绘制事件
+   * @param type
+   * @param callback
+   */
+  subscribeDrawAction (type, callback) {
+    const delegate = this._chartPane.chartData().drawActionDelegate(type)
+    if (!delegate) {
+      if (DEV) {
+        console.warn('Draw action type does not exist!!!')
+      }
+      return
+    }
+    delegate.subscribe(callback)
+  }
+
+  /**
+   * 取消订阅绘制事件
+   * @param type
+   * @param callback
+   */
+  unsubscribeDrawAction (type, callback) {
+    const delegate = this._chartPane.chartData().drawActionDelegate(type)
+    if (!delegate) {
+      if (DEV) {
+        console.warn('Draw action type does not exist!!!')
+      }
+      return
+    }
+    delegate.unsubscribe(callback)
   }
 
   /**
@@ -270,7 +354,13 @@ export default class Chart {
    * @param type
    * @param backgroundColor
    */
-  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type, backgroundColor) {
+  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type = 'jpeg', backgroundColor = '#333333') {
+    if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
+      if (DEV) {
+        console.warn('Picture format only supports jpeg, png and bmp!!!')
+      }
+      return
+    }
     return this._chartPane.getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor)
   }
 

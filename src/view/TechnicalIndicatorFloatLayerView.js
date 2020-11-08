@@ -63,23 +63,19 @@ export default class TechnicalIndicatorFloatLayerView extends View {
 
   /**
    * 绘制提示
-   * @param crossHair
    * @param kLineData
    * @param technicalIndicatorData
    * @param realDataPos
    * @param realDataPosX
    * @param technicalIndicator
-   * @param isDrawValueIndicator 是否需要绘制指示点
    * @private
    */
   _drawPrompt (
     kLineData, technicalIndicatorData,
-    realDataPos, realDataPosX, technicalIndicator,
-    isDrawValueIndicator
+    realDataPos, realDataPosX, technicalIndicator
   ) {
-    this._drawTechnicalIndicatorPrompt(
-      technicalIndicatorData, realDataPos, realDataPosX,
-      technicalIndicator, isDrawValueIndicator
+    this._drawTechnicalIndicatorPromptText(
+      technicalIndicatorData, realDataPos, technicalIndicator
     )
   }
 
@@ -137,48 +133,21 @@ export default class TechnicalIndicatorFloatLayerView extends View {
   }
 
   /**
-   * 绘制指标提示
+   * 绘制指标提示文字
    * @param technicalIndicatorData
    * @param realDataPos
-   * @param realDataPosX
    * @param technicalIndicator
-   * @param isDrawValueIndicator
    * @param offsetTop
    * @private
    */
-  _drawTechnicalIndicatorPrompt (
-    technicalIndicatorData, realDataPos, realDataPosX,
-    technicalIndicator, isDrawValueIndicator,
-    offsetTop = 0
-  ) {
+  _drawTechnicalIndicatorPromptText (technicalIndicatorData, realDataPos, technicalIndicator, offsetTop = 0) {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
     const colors = technicalIndicatorOptions.line.colors
-    this._drawTechnicalIndicatorPromptText(
-      realDataPos, technicalIndicator, data, colors, offsetTop
-    )
-    if (isDrawValueIndicator) {
-      this._drawTechnicalIndicatorPromptPoint(
-        realDataPos, realDataPosX, technicalIndicator, data.values, colors
-      )
-    }
-  }
-
-  /**
-   * 绘制指标提示文字
-   * @param dataPos
-   * @param technicalIndicator
-   * @param data
-   * @param colors
-   * @param offsetTop
-   * @private
-   */
-  _drawTechnicalIndicatorPromptText (dataPos, technicalIndicator, data, colors, offsetTop) {
     const dataList = this._chartData.dataList()
-    const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const cbData = {
-      preData: { kLineData: dataList[dataPos - 1], technicalIndicatorData: technicalIndicator.result[dataPos - 1] },
-      currentData: { kLineData: dataList[dataPos], technicalIndicatorData: technicalIndicator.result[dataPos] }
+      preData: { kLineData: dataList[realDataPos - 1], technicalIndicatorData: technicalIndicator.result[realDataPos - 1] },
+      currentData: { kLineData: dataList[realDataPos], technicalIndicatorData: technicalIndicator.result[realDataPos] }
     }
     const plots = technicalIndicator.plots
     const floatLayerPromptTechnicalIndicatorText = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.text
@@ -209,49 +178,17 @@ export default class TechnicalIndicatorFloatLayerView extends View {
           this._ctx.fillStyle = (plots[i].color && plots[i].color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
           break
         }
-        default: {
+        case PlotType.LINE: {
           this._ctx.fillStyle = colors[lineCount % colorSize] || textColor
           lineCount++
+          break
         }
+        default: { break }
       }
       const text = `${labels[i]}: ${values[i].value || 'n/a'}`
       const textWidth = calcTextWidth(this._ctx, text)
       this._ctx.fillText(text, labelX, labelY)
       labelX += (textMarginLeft + textMarginRight + textWidth)
-    }
-  }
-
-  /**
-   * 绘制指标提示点
-   * @param realDataPos
-   * @param realDataPosX
-   * @param technicalIndicator
-   * @param values
-   * @param colors
-   * @private
-   */
-  _drawTechnicalIndicatorPromptPoint (realDataPos, realDataPosX, technicalIndicator, values, colors) {
-    const floatLayerPromptTechnicalIndicatorPoint = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.point
-    if (!floatLayerPromptTechnicalIndicatorPoint.display) {
-      return
-    }
-    const plots = technicalIndicator.plots
-    const colorSize = colors.length
-    const valueSize = values.length
-    const radius = floatLayerPromptTechnicalIndicatorPoint.radius
-    let lineCount = 0
-    for (let i = 0; i < valueSize; i++) {
-      const value = values[i].value
-      if (plots[i].type === PlotType.LINE) {
-        if (isValid(value)) {
-          this._ctx.fillStyle = colors[lineCount % colorSize]
-          this._ctx.beginPath()
-          this._ctx.arc(realDataPosX, values[i].y, radius, 0, Math.PI * 2)
-          this._ctx.closePath()
-          this._ctx.fill()
-        }
-        lineCount++
-      }
     }
   }
 }

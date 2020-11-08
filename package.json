@@ -1,6 +1,6 @@
 {
   "name": "klinecharts",
-  "version": "5.5.1",
+  "version": "5.7.0",
   "description": "Lightweight k-line chart built with html5 canvas",
   "main": "index.js",
   "types": "./types/index.d.ts",
@@ -22,7 +22,7 @@
     "k-line",
     "time-line",
     "candlestick",
-    "technical-indicator",
+    "technical-indicators",
     "stocks",
     "charts",
     "canvas"
@@ -35,7 +35,7 @@
     "build": "./node_modules/.bin/rollup -c ./config/rollup.config.js",
     "test": "./node_modules/.bin/mocha --require @babel/register tests/",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d homepage"
+    "deploy": "gh-pages -d website"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",

@@ -12,13 +12,16 @@
  * limitations under the License.
  */
 
-import { isArray, isObject, merge, clone, isFunction, isBoolean, isNumber, isValid } from '../utils/typeChecks'
+import { isArray, isObject, merge, clone, isFunction, isBoolean, isValid } from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
 
 import { formatValue } from '../utils/format'
-import { createNewTechnicalIndicator, createTechnicalIndicators } from './technicalindicator/technicalIndicatorControl'
+import { createNewTechnicalIndicator, createTechnicalIndicatorMapping } from './technicalindicator/technicalIndicatorControl'
 import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './technicalindicator/TechnicalIndicator'
+import Delegate from './delegate/Delegate'
+import { createGraphicMarkMapping } from '../mark/graphicMarkControl'
+import { binarySearchNearest } from '../utils/number'
 
 export const InvalidateLevel = {
   NONE: 0,
@@ -28,24 +31,12 @@ export const InvalidateLevel = {
   FULL: 4
 }
 
-export const GraphicMarkType = {
-  NONE: 'none',
-  HORIZONTAL_STRAIGHT_LINE: 'horizontalStraightLine',
-  VERTICAL_STRAIGHT_LINE: 'verticalStraightLine',
-  STRAIGHT_LINE: 'straightLine',
-  HORIZONTAL_RAY_LINE: 'horizontalRayLine',
-  VERTICAL_RAY_LINE: 'verticalRayLine',
-  RAY_LINE: 'rayLine',
-  HORIZONTAL_SEGMENT_LINE: 'horizontalSegmentLine',
-  VERTICAL_SEGMENT_LINE: 'verticalSegmentLine',
-  SEGMENT_LINE: 'segmentLine',
-  PRICE_LINE: 'priceLine',
-  PRICE_CHANNEL_LINE: 'priceChannelLine',
-  PARALLEL_STRAIGHT_LINE: 'parallelStraightLine',
-  FIBONACCI_LINE: 'fibonacciLine'
+export const DrawActionType = {
+  DRAW_CANDLE: 'drawCandle',
+  DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator'
 }
 
-const MAX_DATA_SPACE = 30
+const MAX_DATA_SPACE = 50
 const MIN_DATA_SPACE = 3
 
 export default class ChartData {
@@ -55,8 +46,8 @@ export default class ChartData {
     // 样式配置
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
-    // 所有技术指标类集合
-    this._technicalIndicators = createTechnicalIndicators()
+    // 所有技术指标映射
+    this._technicalIndicatorMapping = createTechnicalIndicatorMapping()
 
     // 价格精度
     this._pricePrecision = 2
@@ -65,7 +56,7 @@ export default class ChartData {
 
     this._dateTimeFormat = new Intl.DateTimeFormat(
       'en', {
-        hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'
+        hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
       }
     )
 
@@ -103,40 +94,17 @@ export default class ChartData {
     // 用来记录开始拖拽时向右偏移的数量
     this._preOffsetRightBarCount = 0
 
-    // 当前绘制的标记图形的类型
-    this._graphicMarkType = GraphicMarkType.NONE
-    // 标记图形点
-    this._graphicMarkPoint = null
     // 拖拽标记图形标记
     this._dragGraphicMarkFlag = false
+    // 图形标记映射
+    this._graphicMarkMapping = createGraphicMarkMapping()
     // 绘图标记数据
-    this._graphicMarkDatas = {
-      // 水平直线
-      horizontalStraightLine: [],
-      // 垂直直线
-      verticalStraightLine: [],
-      // 直线
-      straightLine: [],
-      // 水平射线
-      horizontalRayLine: [],
-      // 垂直射线
-      verticalRayLine: [],
-      // 射线
-      rayLine: [],
-      // 水平线段
-      horizontalSegmentLine: [],
-      // 垂直线段
-      verticalSegmentLine: [],
-      // 线段
-      segmentLine: [],
-      // 价格线
-      priceLine: [],
-      // 平行直线
-      parallelStraightLine: [],
-      // 价格通道线
-      priceChannelLine: [],
-      // 斐波那契线
-      fibonacciLine: []
+    this._graphicMarks = []
+
+    // 绘制事件代理
+    this._drawActionDelegate = {
+      [DrawActionType.DRAW_CANDLE]: new Delegate(),
+      [DrawActionType.DRAW_TECHNICAL_INDICATOR]: new Delegate()
     }
   }
 
@@ -196,12 +164,17 @@ export default class ChartData {
 
   /**
    * 获取技术指标计算参数结合
+   * @param technicalIndicatorType
    * @returns {function(Array<string>, string, string): Promise}
    */
-  technicalIndicatorCalcParams () {
+  technicalIndicatorCalcParams (technicalIndicatorType) {
+    const technical = this.technicalIndicator(technicalIndicatorType)
+    if (technical) {
+      return clone(technical.calcParams)
+    }
     const calcParams = {}
-    for (const name in this._technicalIndicators) {
-      calcParams[name] = clone(this._technicalIndicators[name].calcParams)
+    for (const name in this._technicalIndicatorMapping) {
+      calcParams[name] = clone(this._technicalIndicatorMapping[name].calcParams)
     }
     return calcParams
   }
@@ -211,7 +184,7 @@ export default class ChartData {
    * @param technicalIndicatorType
    */
   technicalIndicator (technicalIndicatorType) {
-    return this._technicalIndicators[technicalIndicatorType] || {}
+    return this._technicalIndicatorMapping[technicalIndicatorType]
   }
 
   /**
@@ -247,7 +220,7 @@ export default class ChartData {
     try {
       dateTimeFormat = new Intl.DateTimeFormat(
         'en', {
-          hour12: false, timeZone: timezone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'
+          hour12: false, timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
         }
       )
     } catch (e) {
@@ -274,28 +247,20 @@ export default class ChartData {
    * @param volumePrecision
    */
   applyPrecision (pricePrecision, volumePrecision) {
-    const pricePrecisionValid = isValid(pricePrecision) && isNumber(pricePrecision) && pricePrecision >= 0
-    const volumePrecisionValid = isValid(volumePrecision) && isNumber(volumePrecision) && volumePrecision >= 0
-    if (pricePrecisionValid) {
-      this._pricePrecision = pricePrecision
-    }
-    if (volumePrecisionValid) {
-      this._volumePrecision = volumePrecision
-    }
-    if (pricePrecisionValid || volumePrecisionValid) {
-      for (const name in this._technicalIndicators) {
-        const series = this._technicalIndicators[name].series
-        switch (series) {
-          case TechnicalIndicatorSeries.PRICE: {
-            this._technicalIndicators[name].precision = pricePrecision
-            break
-          }
-          case TechnicalIndicatorSeries.VOLUME: {
-            this._technicalIndicators[name].precision = volumePrecision
-            break
-          }
-          default: { break }
+    this._pricePrecision = pricePrecision
+    this._volumePrecision = volumePrecision
+    for (const name in this._technicalIndicatorMapping) {
+      const series = this._technicalIndicatorMapping[name].series
+      switch (series) {
+        case TechnicalIndicatorSeries.PRICE: {
+          this._technicalIndicatorMapping[name].setPrecision(pricePrecision)
+          break
         }
+        case TechnicalIndicatorSeries.VOLUME: {
+          this._technicalIndicatorMapping[name].setPrecision(volumePrecision)
+          break
+        }
+        default: { break }
       }
     }
   }
@@ -308,10 +273,10 @@ export default class ChartData {
   applyTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
     const technicalIndicator = this.technicalIndicator(technicalIndicatorType)
     if (technicalIndicator) {
-      technicalIndicator.precision = precision
+      technicalIndicator.setPrecision(precision)
     } else {
-      for (const name in this._technicalIndicators) {
-        this._technicalIndicators[name].precision = precision
+      for (const name in this._technicalIndicatorMapping) {
+        this._technicalIndicatorMapping[name].setPrecision(precision)
       }
     }
   }
@@ -399,7 +364,7 @@ export default class ChartData {
   setDataSpace (dataSpace) {
     if (this._innerSetDataSpace(dataSpace)) {
       this.adjustOffsetBarCount()
-      this._invalidateHandler()
+      this.invalidate()
     }
   }
 
@@ -430,9 +395,7 @@ export default class ChartData {
    * @param barCount
    */
   setLeftMinVisibleBarCount (barCount) {
-    if (isNumber(barCount) && barCount > 0) {
-      this._leftMinVisibleBarCount = Math.ceil(barCount)
-    }
+    this._leftMinVisibleBarCount = barCount
   }
 
   /**
@@ -440,9 +403,7 @@ export default class ChartData {
    * @param barCount
    */
   setRightMinVisibleBarCount (barCount) {
-    if (isNumber(barCount) && barCount > 0) {
-      this._rightMinVisibleBarCount = Math.ceil(barCount)
-    }
+    this._rightMinVisibleBarCount = barCount
   }
 
   /**
@@ -484,7 +445,7 @@ export default class ChartData {
     if (paneTag !== undefined) {
       crossHair.paneTag = paneTag
       this._crossHair = crossHair
-      this._invalidateHandler(InvalidateLevel.FLOAT_LAYER)
+      this.invalidate(InvalidateLevel.FLOAT_LAYER)
     }
   }
 
@@ -503,7 +464,7 @@ export default class ChartData {
     const distanceBarCount = distance / this._dataSpace
     this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount
     this.adjustOffsetBarCount()
-    this._invalidateHandler()
+    this.invalidate()
   }
 
   /**
@@ -516,6 +477,30 @@ export default class ChartData {
     const deltaFromRight = (this._totalDataSpace - x) / this._dataSpace
     const index = dataSize + this._offsetRightBarCount - deltaFromRight
     return Math.round(index * 1000000) / 1000000
+  }
+
+  /**
+   * 数据索引转换成时间戳
+   * @param dataIndex
+   * @return {*}
+   */
+  dataIndexToTimestamp (dataIndex) {
+    const data = this._dataList[dataIndex]
+    if (data) {
+      return data.timestamp
+    }
+  }
+
+  /**
+   * 将时间戳转换成数据索引位置
+   * @param timestamp
+   * @return {number}
+   */
+  timestampToDataIndex (timestamp) {
+    if (this._dataList.length === 0) {
+      return 0
+    }
+    return binarySearchNearest(this._dataList, 'timestamp', timestamp)
   }
 
   /**
@@ -532,7 +517,7 @@ export default class ChartData {
     if (this._innerSetDataSpace(dataSpace)) {
       this._offsetRightBarCount += (floatIndexAtZoomPoint - this.coordinateToFloatIndex(point.x))
       this.adjustOffsetBarCount()
-      this._invalidateHandler()
+      this.invalidate()
     }
   }
 
@@ -568,19 +553,43 @@ export default class ChartData {
   }
 
   /**
-   * 获取图形标记类型
-   * @returns {string}
+   * 刷新
+   * @param invalidateLevel
    */
-  graphicMarkType () {
-    return this._graphicMarkType
+  invalidate (invalidateLevel) {
+    this._invalidateHandler(invalidateLevel)
   }
 
   /**
-   * 设置图形标记类型
-   * @param graphicMarkType
+   * 设置加载更多
+   * @param callback
    */
-  setGraphicMarkType (graphicMarkType) {
-    this._graphicMarkType = graphicMarkType
+  loadMore (callback) {
+    this._loadMoreCallback = callback
+  }
+
+  /**
+   * 清空图形标记
+   */
+  clearGraphicMark () {
+    if (this._graphicMarks.length > 0) {
+      this._graphicMarks = []
+      this.invalidate(InvalidateLevel.GRAPHIC_MARK)
+    }
+  }
+
+  /**
+   * 添加标记类型
+   * @param graphicMark
+   */
+  addGraphicMark (graphicMark) {
+    const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
+    if (lastGraphicMark && lastGraphicMark.isDrawing()) {
+      this._graphicMarks[this._graphicMarks.length - 1] = graphicMark
+    } else {
+      this._graphicMarks.push(graphicMark)
+    }
+    this.invalidate(InvalidateLevel.GRAPHIC_MARK)
   }
 
   /**
@@ -600,51 +609,19 @@ export default class ChartData {
   }
 
   /**
-   * 获取图形标记开始的点
-   * @returns {null}
+   * 获取图形标记映射
+   * @returns {{}}
    */
-  graphicMarkPoint () {
-    return this._graphicMarkPoint
-  }
-
-  /**
-   * 设置图形标记开始的点
-   * @param point
-   */
-  setGraphicMarkPoint (point) {
-    this._graphicMarkPoint = point
+  graphicMarkMapping () {
+    return this._graphicMarkMapping
   }
 
   /**
    * 获取图形标记的数据
-   * @returns {{straightLine: [], verticalRayLine: [], rayLine: [], segmentLine: [], horizontalRayLine: [], horizontalSegmentLine: [], fibonacciLine: [], verticalStraightLine: [], priceChannelLine: [], priceLine: [], verticalSegmentLine: [], horizontalStraightLine: [], parallelStraightLine: []}}
+   * @returns {{}}
    */
-  graphicMarkData () {
-    return clone(this._graphicMarkDatas)
-  }
-
-  /**
-   * 设置图形标记的数据
-   * @param datas
-   */
-  setGraphicMarkData (datas) {
-    const shouldInvalidate = this.shouldInvalidateGraphicMark()
-    this._graphicMarkDatas = clone(datas)
-    if (shouldInvalidate) {
-      this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK)
-    } else {
-      if (this.shouldInvalidateGraphicMark()) {
-        this._invalidateHandler(InvalidateLevel.GRAPHIC_MARK)
-      }
-    }
-  }
-
-  /**
-   * 设置加载更多
-   * @param callback
-   */
-  loadMore (callback) {
-    this._loadMoreCallback = callback
+  graphicMarks () {
+    return this._graphicMarks
   }
 
   /**
@@ -652,15 +629,7 @@ export default class ChartData {
    * @returns {boolean}
    */
   shouldInvalidateGraphicMark () {
-    if (this._graphicMarkType !== GraphicMarkType.NONE) {
-      return true
-    }
-    for (const graphicMarkKey in this._graphicMarkDatas) {
-      if (this._graphicMarkDatas[graphicMarkKey].length > 0) {
-        return true
-      }
-    }
-    return false
+    return this._graphicMarks.length > 0
   }
 
   /**
@@ -668,24 +637,19 @@ export default class ChartData {
    * @param technicalIndicatorInfo
    */
   addCustomTechnicalIndicator (technicalIndicatorInfo) {
-    const info = createNewTechnicalIndicator(technicalIndicatorInfo || {})
-    if (info) {
+    const technicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo || {})
+    if (technicalIndicator) {
       // 将生成的新的指标类放入集合
-      this._technicalIndicators[technicalIndicatorInfo.name] = info
+      this._technicalIndicatorMapping[technicalIndicatorInfo.name] = technicalIndicator
     }
   }
 
   /**
-   * 计算指标
-   * @param pane
+   * 获取绘制事件代理
+   * @param type
+   * @returns {Delegate}
    */
-  calcTechnicalIndicator (pane) {
-    const technicalIndicator = pane.technicalIndicator()
-    if (technicalIndicator) {
-      const { calcParams, precision } = this._technicalIndicators[technicalIndicator.name] || {}
-      technicalIndicator.setPrecision(isValid(precision) ? precision : this._pricePrecision)
-      technicalIndicator.setCalcParams(calcParams)
-      technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._dataList, technicalIndicator.calcParams) || []
-    }
+  drawActionDelegate (type) {
+    return this._drawActionDelegate[type]
   }
 }
