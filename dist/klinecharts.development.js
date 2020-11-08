@@ -3133,18 +3133,32 @@ var GraphicMark = /*#__PURE__*/function () {
     this._xAxis = xAxis;
     this._yAxis = yAxis;
     this._drawStep = GraphicMarkDrawStep.STEP_1;
-    this._points = [];
+    this._tpPoints = [];
     this._hoverType = HoverType.NONE;
     this._hoverIndex = -1;
   }
   /**
-   * 针对不同图形去检查鼠标点在哪个上面
-   * @param point
+   * 时间戳转换成x轴上点的位置
+   * @param tpPoint
+   * @return {*|number}
    * @private
    */
 
 
   _createClass(GraphicMark, [{
+    key: "_timestampOrDataIndexToPointX",
+    value: function _timestampOrDataIndexToPointX(_ref) {
+      var timestamp = _ref.timestamp,
+          dataIndex = _ref.dataIndex;
+      return timestamp ? this._xAxis.convertToPixel(this._chartData.timestampToDataIndex(timestamp)) : this._xAxis.convertToPixel(dataIndex);
+    }
+    /**
+     * 针对不同图形去检查鼠标点在哪个上面
+     * @param point
+     * @private
+     */
+
+  }, {
     key: "_checkMousePointOnDifGraphic",
     value: function _checkMousePointOnDifGraphic(point) {}
     /**
@@ -3217,11 +3231,15 @@ var GraphicMark = /*#__PURE__*/function () {
     value: function draw(ctx) {
       var _this = this;
 
-      var xyPoints = this._points.map(function (_ref) {
-        var xPos = _ref.xPos,
-            price = _ref.price;
+      var xyPoints = this._tpPoints.map(function (_ref2) {
+        var timestamp = _ref2.timestamp,
+            price = _ref2.price,
+            dataIndex = _ref2.dataIndex;
         return {
-          x: _this._xAxis.convertToPixel(xPos),
+          x: _this._timestampOrDataIndexToPointX({
+            timestamp: timestamp,
+            dataIndex: dataIndex
+          }),
           y: _this._yAxis.convertToPixel(price)
         };
       });
@@ -3233,9 +3251,9 @@ var GraphicMark = /*#__PURE__*/function () {
       }
 
       if (this._hoverType !== HoverType.NONE) {
-        xyPoints.forEach(function (_ref2, index) {
-          var x = _ref2.x,
-              y = _ref2.y;
+        xyPoints.forEach(function (_ref3, index) {
+          var x = _ref3.x,
+              y = _ref3.y;
           var radius = graphicMark.point.radius;
           var color = graphicMark.point.backgroundColor;
           var borderColor = graphicMark.point.borderColor;
@@ -3655,8 +3673,11 @@ var LineGraphicMark = /*#__PURE__*/function (_GraphicMark) {
      */
     value: function mousePressedMove(point) {
       if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
-        this._points[this._hoverIndex].xPos = this._xAxis.convertFromPixel(point.x);
-        this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y);
+        var dataIndex = this._xAxis.convertFromPixel(point.x);
+
+        this._tpPoints[this._hoverIndex].timestamp = this._chartData.dataIndexToTimestamp(dataIndex);
+        this._tpPoints[this._hoverIndex].dataIndex = dataIndex;
+        this._tpPoints[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y);
       }
     }
   }, {
@@ -3666,12 +3687,16 @@ var LineGraphicMark = /*#__PURE__*/function (_GraphicMark) {
 
       var xyPoints = [];
 
-      for (var i = 0; i < this._points.length; i++) {
-        var _this$_points$i = this._points[i],
-            xPos = _this$_points$i.xPos,
-            price = _this$_points$i.price;
+      for (var i = 0; i < this._tpPoints.length; i++) {
+        var _this$_tpPoints$i = this._tpPoints[i],
+            timestamp = _this$_tpPoints$i.timestamp,
+            price = _this$_tpPoints$i.price,
+            dataIndex = _this$_tpPoints$i.dataIndex;
         var xyPoint = {
-          x: this._xAxis.convertToPixel(xPos),
+          x: this._timestampOrDataIndexToPointX({
+            timestamp: timestamp,
+            dataIndex: dataIndex
+          }),
           y: this._yAxis.convertToPixel(price)
         };
         xyPoints.push(xyPoint);
@@ -3773,7 +3798,9 @@ var OnePointLineGraphicMark = /*#__PURE__*/function (_LineGraphicMark) {
      * @param point
      */
     value: function mouseMoveForDrawing(point) {
-      var xPos = this._xAxis.convertFromPixel(point.x);
+      var dataIndex = this._xAxis.convertFromPixel(point.x);
+
+      var timestamp = this._chartData.dataIndexToTimestamp(dataIndex);
 
       var price = this._yAxis.convertFromPixel(point.y);
 
@@ -3781,9 +3808,10 @@ var OnePointLineGraphicMark = /*#__PURE__*/function (_LineGraphicMark) {
         case GraphicMarkDrawStep.STEP_1:
         case GraphicMarkDrawStep.STEP_2:
           {
-            this._points = [{
-              xPos: xPos,
-              price: price
+            this._tpPoints = [{
+              timestamp: timestamp,
+              price: price,
+              dataIndex: dataIndex
             }];
             break;
           }
@@ -3869,30 +3897,35 @@ var TwoPointLineGraphicMark = /*#__PURE__*/function (_OnePointLineGraphicM) {
   _createClass(TwoPointLineGraphicMark, [{
     key: "mouseMoveForDrawing",
     value: function mouseMoveForDrawing(point) {
-      var xPos = this._xAxis.convertFromPixel(point.x);
+      var dataIndex = this._xAxis.convertFromPixel(point.x);
+
+      var timestamp = this._chartData.dataIndexToTimestamp(dataIndex);
 
       var price = this._yAxis.convertFromPixel(point.y);
 
       switch (this._drawStep) {
         case GraphicMarkDrawStep.STEP_1:
           {
-            this._points = [{
-              xPos: xPos,
-              price: price
+            this._tpPoints = [{
+              timestamp: timestamp,
+              price: price,
+              dataIndex: dataIndex
             }];
             break;
           }
 
         case GraphicMarkDrawStep.STEP_2:
           {
-            this._points[1] = {
-              xPos: xPos,
-              price: price
+            this._tpPoints[1] = {
+              timestamp: timestamp,
+              price: price,
+              dataIndex: dataIndex
             };
 
             this._mouseMoveForDrawingExtendFuc({
-              xPos: xPos,
-              price: price
+              timestamp: timestamp,
+              price: price,
+              dataIndex: dataIndex
             });
 
             break;
@@ -3923,7 +3956,7 @@ var TwoPointLineGraphicMark = /*#__PURE__*/function (_OnePointLineGraphicM) {
   }, {
     key: "_mouseMoveForDrawingExtendFuc",
     value: function _mouseMoveForDrawingExtendFuc(_ref) {
-      var xPos = _ref.xPos,
+      var timestamp = _ref.timestamp,
           price = _ref.price;
     }
   }]);
@@ -3981,20 +4014,22 @@ var HorizontalSegmentLine = /*#__PURE__*/function (_SegmentLine) {
     key: "mousePressedMove",
     value: function mousePressedMove(point) {
       if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
-        this._points[this._hoverIndex].xPos = this._xAxis.convertFromPixel(point.x);
+        var dataIndex = this._xAxis.convertFromPixel(point.x);
+
+        this._tpPoints[this._hoverIndex].timestamp = this._chartData.dataIndexToTimestamp(dataIndex);
+        this._tpPoints[this._hoverIndex].dataIndex = dataIndex;
 
         var price = this._yAxis.convertFromPixel(point.y);
 
-        this._points[0].price = price;
-        this._points[1].price = price;
+        this._tpPoints[0].price = price;
+        this._tpPoints[1].price = price;
       }
     }
   }, {
     key: "_mouseMoveForDrawingExtendFuc",
     value: function _mouseMoveForDrawingExtendFuc(_ref) {
-      var xPos = _ref.xPos,
-          price = _ref.price;
-      this._points[0].price = price;
+      var price = _ref.price;
+      this._tpPoints[0].price = price;
     }
   }]);
 
@@ -4084,20 +4119,22 @@ var HorizontalRayLine = /*#__PURE__*/function (_RayLine) {
     key: "mousePressedMove",
     value: function mousePressedMove(point) {
       if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
-        this._points[this._hoverIndex].xPos = this._xAxis.convertFromPixel(point.x);
+        var dataIndex = this._xAxis.convertFromPixel(point.x);
+
+        this._tpPoints[this._hoverIndex].timestamp = this._chartData.dataIndexToTimestamp(dataIndex);
+        this._tpPoints[this._hoverIndex].dataIndex = dataIndex;
 
         var price = this._yAxis.convertFromPixel(point.y);
 
-        this._points[0].price = price;
-        this._points[1].price = price;
+        this._tpPoints[0].price = price;
+        this._tpPoints[1].price = price;
       }
     }
   }, {
     key: "_mouseMoveForDrawingExtendFuc",
     value: function _mouseMoveForDrawingExtendFuc(_ref) {
-      var xPos = _ref.xPos,
-          price = _ref.price;
-      this._points[0].price = price;
+      var price = _ref.price;
+      this._tpPoints[0].price = price;
     }
   }, {
     key: "_generatedDrawLines",
@@ -4173,19 +4210,24 @@ var VerticalSegmentLine = /*#__PURE__*/function (_SegmentLine) {
     key: "mousePressedMove",
     value: function mousePressedMove(point) {
       if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
-        var xPos = this._xAxis.convertFromPixel(point.x);
+        var dataIndex = this._xAxis.convertFromPixel(point.x);
 
-        this._points[0].xPos = xPos;
-        this._points[1].xPos = xPos;
-        this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y);
+        var timestamp = this._chartData.dataIndexToTimestamp(dataIndex);
+
+        this._tpPoints[0].timestamp = timestamp;
+        this._tpPoints[0].dataIndex = dataIndex;
+        this._tpPoints[1].timestamp = timestamp;
+        this._tpPoints[1].dataIndex = dataIndex;
+        this._tpPoints[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y);
       }
     }
   }, {
     key: "_mouseMoveForDrawingExtendFuc",
     value: function _mouseMoveForDrawingExtendFuc(_ref) {
-      var xPos = _ref.xPos,
-          price = _ref.price;
-      this._points[0].xPos = xPos;
+      var timestamp = _ref.timestamp,
+          dataIndex = _ref.dataIndex;
+      this._tpPoints[0].timestamp = timestamp;
+      this._tpPoints[0].dataIndex = dataIndex;
     }
   }]);
 
@@ -4207,19 +4249,24 @@ var VerticalRayLine = /*#__PURE__*/function (_RayLine) {
     key: "mousePressedMove",
     value: function mousePressedMove(point) {
       if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
-        var xPos = this._xAxis.convertFromPixel(point.x);
+        var dataIndex = this._xAxis.convertFromPixel(point.x);
 
-        this._points[0].xPos = xPos;
-        this._points[1].xPos = xPos;
-        this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y);
+        var timestamp = this._chartData.dataIndexToTimestamp(dataIndex);
+
+        this._tpPoints[0].timestamp = timestamp;
+        this._tpPoints[0].dataIndex = dataIndex;
+        this._tpPoints[1].timestamp = timestamp;
+        this._tpPoints[1].dataIndex = dataIndex;
+        this._tpPoints[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y);
       }
     }
   }, {
     key: "_mouseMoveForDrawingExtendFuc",
     value: function _mouseMoveForDrawingExtendFuc(_ref) {
-      var xPos = _ref.xPos,
-          price = _ref.price;
-      this._points[0].xPos = xPos;
+      var timestamp = _ref.timestamp,
+          dataIndex = _ref.dataIndex;
+      this._tpPoints[0].timestamp = timestamp;
+      this._tpPoints[0].dataIndex = dataIndex;
     }
   }, {
     key: "_generatedDrawLines",
@@ -4359,34 +4406,39 @@ var ThreePointLineGraphicMark = /*#__PURE__*/function (_LineGraphicMark) {
   _createClass(ThreePointLineGraphicMark, [{
     key: "mouseMoveForDrawing",
     value: function mouseMoveForDrawing(point) {
-      var xPos = this._xAxis.convertFromPixel(point.x);
+      var dataIndex = this._xAxis.convertFromPixel(point.x);
+
+      var timestamp = this._chartData.dataIndexToTimestamp(dataIndex);
 
       var price = this._yAxis.convertFromPixel(point.y);
 
       switch (this._drawStep) {
         case GraphicMarkDrawStep.STEP_1:
           {
-            this._points = [{
-              xPos: xPos,
-              price: price
+            this._tpPoints = [{
+              timestamp: timestamp,
+              price: price,
+              dataIndex: dataIndex
             }];
             break;
           }
 
         case GraphicMarkDrawStep.STEP_2:
           {
-            this._points[1] = {
-              xPos: xPos,
-              price: price
+            this._tpPoints[1] = {
+              timestamp: timestamp,
+              price: price,
+              dataIndex: dataIndex
             };
             break;
           }
 
         case GraphicMarkDrawStep.STEP_3:
           {
-            this._points[2] = {
-              xPos: xPos,
-              price: price
+            this._tpPoints[2] = {
+              timestamp: timestamp,
+              price: price,
+              dataIndex: dataIndex
             };
             break;
           }
@@ -4611,6 +4663,54 @@ function createGraphicMarkMapping() {
   var _ref;
 
   return _ref = {}, _defineProperty(_ref, HORIZONTAL_STRAIGHT_LINE, HorizontalStraightLine), _defineProperty(_ref, VERTICAL_STRAIGHT_LINE, VerticalStraightLine), _defineProperty(_ref, STRAIGHT_LINE, StraightLine), _defineProperty(_ref, HORIZONTAL_RAY_LINE, HorizontalRayLine), _defineProperty(_ref, VERTICAL_RAY_LINE, VerticalRayLine), _defineProperty(_ref, RAY_LINE, RayLine), _defineProperty(_ref, HORIZONTAL_SEGMENT_LINE, HorizontalSegmentLine), _defineProperty(_ref, VERTICAL_SEGMENT_LINE, VerticalSegmentLine), _defineProperty(_ref, SEGMENT_LINE, SegmentLine), _defineProperty(_ref, PRICE_LINE, PriceLine), _defineProperty(_ref, PRICE_CHANNEL_LINE, PriceChannelLine), _defineProperty(_ref, PARALLEL_STRAIGHT_LINE, ParallelStraightLine), _defineProperty(_ref, FIBONACCI_LINE, FibonacciLine), _ref;
+}
+
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * 二分查找最接近的数
+ * @param dataList
+ * @param valueKey
+ * @param targetNumber
+ * @return {number}
+ */
+function binarySearchNearest(dataList, valueKey, targetNumber) {
+  var left = 0;
+  var right = 0;
+
+  for (right = dataList.length - 1; left !== right;) {
+    var midIndex = Math.floor((right + left) / 2);
+    var mid = right - left;
+    var midValue = dataList[midIndex][valueKey];
+
+    if (targetNumber === midValue) {
+      return midIndex;
+    }
+
+    if (targetNumber > midValue) {
+      left = midIndex;
+    } else {
+      right = midIndex;
+    }
+
+    if (mid <= 2) {
+      break;
+    }
+  }
+
+  return left;
 }
 
 var InvalidateLevel = {
@@ -5152,6 +5252,36 @@ var ChartData = /*#__PURE__*/function () {
       var deltaFromRight = (this._totalDataSpace - x) / this._dataSpace;
       var index = dataSize + this._offsetRightBarCount - deltaFromRight;
       return Math.round(index * 1000000) / 1000000;
+    }
+    /**
+     * 数据索引转换成时间戳
+     * @param dataIndex
+     * @return {*}
+     */
+
+  }, {
+    key: "dataIndexToTimestamp",
+    value: function dataIndexToTimestamp(dataIndex) {
+      var data = this._dataList[dataIndex];
+
+      if (data) {
+        return data.timestamp;
+      }
+    }
+    /**
+     * 将时间戳转换成数据索引位置
+     * @param timestamp
+     * @return {number}
+     */
+
+  }, {
+    key: "timestampToDataIndex",
+    value: function timestampToDataIndex(timestamp) {
+      if (this._dataList.length === 0) {
+        return 0;
+      }
+
+      return binarySearchNearest(this._dataList, 'timestamp', timestamp);
     }
     /**
      * 缩放

@@ -45,18 +45,20 @@ export default class LineGraphicMark extends GraphicMark {
    */
   mousePressedMove (point) {
     if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
-      this._points[this._hoverIndex].xPos = this._xAxis.convertFromPixel(point.x)
-      this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y)
+      const dataIndex = this._xAxis.convertFromPixel(point.x)
+      this._tpPoints[this._hoverIndex].timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
+      this._tpPoints[this._hoverIndex].dataIndex = dataIndex
+      this._tpPoints[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y)
     }
   }
 
   _checkMousePointOnDifGraphic (point) {
     const graphicMark = this._chartData.styleOptions().graphicMark
     const xyPoints = []
-    for (let i = 0; i < this._points.length; i++) {
-      const { xPos, price } = this._points[i]
+    for (let i = 0; i < this._tpPoints.length; i++) {
+      const { timestamp, price, dataIndex } = this._tpPoints[i]
       const xyPoint = {
-        x: this._xAxis.convertToPixel(xPos),
+        x: this._timestampOrDataIndexToPointX({ timestamp, dataIndex }),
         y: this._yAxis.convertToPixel(price)
       }
       xyPoints.push(xyPoint)

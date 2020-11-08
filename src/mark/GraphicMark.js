@@ -39,9 +39,21 @@ export default class GraphicMark {
     this._xAxis = xAxis
     this._yAxis = yAxis
     this._drawStep = GraphicMarkDrawStep.STEP_1
-    this._points = []
+    this._tpPoints = []
     this._hoverType = HoverType.NONE
     this._hoverIndex = -1
+  }
+
+  /**
+   * 时间戳转换成x轴上点的位置
+   * @param tpPoint
+   * @return {*|number}
+   * @private
+   */
+  _timestampOrDataIndexToPointX ({ timestamp, dataIndex }) {
+    return timestamp
+      ? this._xAxis.convertToPixel(this._chartData.timestampToDataIndex(timestamp))
+      : this._xAxis.convertToPixel(dataIndex)
   }
 
   /**
@@ -104,9 +116,9 @@ export default class GraphicMark {
    * @param ctx
    */
   draw (ctx) {
-    const xyPoints = this._points.map(({ xPos, price }) => {
+    const xyPoints = this._tpPoints.map(({ timestamp, price, dataIndex }) => {
       return {
-        x: this._xAxis.convertToPixel(xPos),
+        x: this._timestampOrDataIndexToPointX({ timestamp, dataIndex }),
         y: this._yAxis.convertToPixel(price)
       }
     })

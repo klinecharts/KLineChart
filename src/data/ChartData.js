@@ -21,6 +21,7 @@ import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './technicalindicator/TechnicalIndicator'
 import Delegate from './delegate/Delegate'
 import { createGraphicMarkMapping } from '../mark/graphicMarkControl'
+import { binarySearchNearest } from '../utils/number'
 
 export const InvalidateLevel = {
   NONE: 0,
@@ -476,6 +477,30 @@ export default class ChartData {
     const deltaFromRight = (this._totalDataSpace - x) / this._dataSpace
     const index = dataSize + this._offsetRightBarCount - deltaFromRight
     return Math.round(index * 1000000) / 1000000
+  }
+
+  /**
+   * 数据索引转换成时间戳
+   * @param dataIndex
+   * @return {*}
+   */
+  dataIndexToTimestamp (dataIndex) {
+    const data = this._dataList[dataIndex]
+    if (data) {
+      return data.timestamp
+    }
+  }
+
+  /**
+   * 将时间戳转换成数据索引位置
+   * @param timestamp
+   * @return {number}
+   */
+  timestampToDataIndex (timestamp) {
+    if (this._dataList.length === 0) {
+      return 0
+    }
+    return binarySearchNearest(this._dataList, 'timestamp', timestamp)
   }
 
   /**

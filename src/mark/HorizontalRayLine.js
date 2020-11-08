@@ -18,15 +18,17 @@ import { HoverType } from './GraphicMark'
 export default class HorizontalRayLine extends RayLine {
   mousePressedMove (point) {
     if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
-      this._points[this._hoverIndex].xPos = this._xAxis.convertFromPixel(point.x)
+      const dataIndex = this._xAxis.convertFromPixel(point.x)
+      this._tpPoints[this._hoverIndex].timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
+      this._tpPoints[this._hoverIndex].dataIndex = dataIndex
       const price = this._yAxis.convertFromPixel(point.y)
-      this._points[0].price = price
-      this._points[1].price = price
+      this._tpPoints[0].price = price
+      this._tpPoints[1].price = price
     }
   }
 
-  _mouseMoveForDrawingExtendFuc ({ xPos, price }) {
-    this._points[0].price = price
+  _mouseMoveForDrawingExtendFuc ({ price }) {
+    this._tpPoints[0].price = price
   }
 
   _generatedDrawLines (xyPoints) {

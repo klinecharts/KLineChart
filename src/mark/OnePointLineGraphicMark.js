@@ -21,12 +21,13 @@ export default class OnePointLineGraphicMark extends LineGraphicMark {
    * @param point
    */
   mouseMoveForDrawing (point) {
-    const xPos = this._xAxis.convertFromPixel(point.x)
+    const dataIndex = this._xAxis.convertFromPixel(point.x)
+    const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
     const price = this._yAxis.convertFromPixel(point.y)
     switch (this._drawStep) {
       case GraphicMarkDrawStep.STEP_1:
       case GraphicMarkDrawStep.STEP_2: {
-        this._points = [{ xPos, price }]
+        this._tpPoints = [{ timestamp, price, dataIndex }]
         break
       }
     }

@@ -18,14 +18,18 @@ import { HoverType } from './GraphicMark'
 export default class VerticalSegmentLine extends SegmentLine {
   mousePressedMove (point) {
     if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
-      const xPos = this._xAxis.convertFromPixel(point.x)
-      this._points[0].xPos = xPos
-      this._points[1].xPos = xPos
-      this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y)
+      const dataIndex = this._xAxis.convertFromPixel(point.x)
+      const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
+      this._tpPoints[0].timestamp = timestamp
+      this._tpPoints[0].dataIndex = dataIndex
+      this._tpPoints[1].timestamp = timestamp
+      this._tpPoints[1].dataIndex = dataIndex
+      this._tpPoints[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y)
     }
   }
 
-  _mouseMoveForDrawingExtendFuc ({ xPos, price }) {
-    this._points[0].xPos = xPos
+  _mouseMoveForDrawingExtendFuc ({ timestamp, dataIndex }) {
+    this._tpPoints[0].timestamp = timestamp
+    this._tpPoints[0].dataIndex = dataIndex
   }
 }

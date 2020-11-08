@@ -17,19 +17,20 @@ import { GraphicMarkDrawStep } from './GraphicMark'
 
 export default class ThreePointLineGraphicMark extends LineGraphicMark {
   mouseMoveForDrawing (point) {
-    const xPos = this._xAxis.convertFromPixel(point.x)
+    const dataIndex = this._xAxis.convertFromPixel(point.x)
+    const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
     const price = this._yAxis.convertFromPixel(point.y)
     switch (this._drawStep) {
       case GraphicMarkDrawStep.STEP_1: {
-        this._points = [{ xPos, price }]
+        this._tpPoints = [{ timestamp, price, dataIndex }]
         break
       }
       case GraphicMarkDrawStep.STEP_2: {
-        this._points[1] = { xPos, price }
+        this._tpPoints[1] = { timestamp, price, dataIndex }
         break
       }
       case GraphicMarkDrawStep.STEP_3: {
-        this._points[2] = { xPos, price }
+        this._tpPoints[2] = { timestamp, price, dataIndex }
         break
       }
     }
