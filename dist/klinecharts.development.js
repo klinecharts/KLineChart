@@ -3077,7 +3077,6 @@ var Delegate = /*#__PURE__*/function () {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var NONE = 'none';
 var HORIZONTAL_STRAIGHT_LINE = 'horizontalStraightLine';
 var VERTICAL_STRAIGHT_LINE = 'verticalStraightLine';
 var STRAIGHT_LINE = 'straightLine';
@@ -3114,9 +3113,10 @@ var GraphicMarkDrawStep = {
   STEP_1: 'step_1',
   STEP_2: 'step_2',
   STEP_3: 'step_3',
-  STEP_DONE: 'step_done'
+  STEP_4: 'step_4',
+  FINISHED: 'finished'
 };
-var MousePointOnGraphicType = {
+var HoverType = {
   LINE: 'line',
   POINT: 'point',
   NONE: 'none'
@@ -3132,10 +3132,10 @@ var GraphicMark = /*#__PURE__*/function () {
     this._chartData = chartData;
     this._xAxis = xAxis;
     this._yAxis = yAxis;
-    this._drawStep = GraphicMarkDrawStep.STEP_DONE;
+    this._drawStep = GraphicMarkDrawStep.STEP_1;
     this._points = [];
-    this._mousePointOnGraphicType = MousePointOnGraphicType.NONE;
-    this._mousePointOnGraphicIndex = -1;
+    this._hoverType = HoverType.NONE;
+    this._hoverIndex = -1;
   }
   /**
    * 针对不同图形去检查鼠标点在哪个上面
@@ -3153,19 +3153,29 @@ var GraphicMark = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "mousePointOnGraphicType",
-    value: function mousePointOnGraphicType() {
-      return this._mousePointOnGraphicType;
+    key: "hoverType",
+    value: function hoverType() {
+      return this._hoverType;
+    }
+    /**
+     * 是否在绘制中
+     * @return {boolean}
+     */
+
+  }, {
+    key: "isDrawing",
+    value: function isDrawing() {
+      return this._drawStep !== GraphicMarkDrawStep.FINISHED;
     }
     /**
      * 重置鼠标点在图形上的参数
      */
 
   }, {
-    key: "resetMousePointOnGraphicParams",
-    value: function resetMousePointOnGraphicParams() {
-      this._mousePointOnGraphicType = MousePointOnGraphicType.NONE;
-      this._mousePointOnGraphicIndex = -1;
+    key: "resetHoverParams",
+    value: function resetHoverParams() {
+      this._hoverType = HoverType.NONE;
+      this._hoverIndex = -1;
     }
     /**
      * 检查鼠标点是否在图形上
@@ -3176,15 +3186,15 @@ var GraphicMark = /*#__PURE__*/function () {
   }, {
     key: "checkMousePointOnGraphic",
     value: function checkMousePointOnGraphic(point) {
-      var mousePointOnGraphicParams = this._checkMousePointOnDifGraphic(point);
+      var hoverParams = this._checkMousePointOnDifGraphic(point);
 
-      if (mousePointOnGraphicParams) {
-        this._mousePointOnGraphicType = mousePointOnGraphicParams.mousePointOnGraphicType;
-        this._mousePointOnGraphicIndex = mousePointOnGraphicParams.mousePointOnGraphicIndex;
+      if (hoverParams) {
+        this._hoverType = hoverParams.hoverType;
+        this._hoverIndex = hoverParams.hoverIndex;
         return true;
       }
 
-      this.resetMousePointOnGraphicParams();
+      this.resetHoverParams();
     }
     /**
      * 获取图形
@@ -3222,7 +3232,7 @@ var GraphicMark = /*#__PURE__*/function () {
         this._drawGraphic(ctx, xyPoints, graphicMark);
       }
 
-      if (this._mousePointOnGraphicType !== MousePointOnGraphicType.NONE) {
+      if (this._hoverType !== HoverType.NONE) {
         xyPoints.forEach(function (_ref2, index) {
           var x = _ref2.x,
               y = _ref2.y;
@@ -3231,7 +3241,7 @@ var GraphicMark = /*#__PURE__*/function () {
           var borderColor = graphicMark.point.borderColor;
           var borderSize = graphicMark.point.borderSize;
 
-          if (_this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && index === _this._mousePointOnGraphicIndex) {
+          if (_this._hoverType === HoverType.POINT && index === _this._hoverIndex) {
             radius = graphicMark.point.activeRadius;
             color = graphicMark.point.activeBackgroundColor;
             borderColor = graphicMark.point.activeBorderColor;
@@ -3644,9 +3654,9 @@ var LineGraphicMark = /*#__PURE__*/function (_GraphicMark) {
      * @param point
      */
     value: function mousePressedMove(point) {
-      if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && this._mousePointOnGraphicIndex !== -1) {
-        this._points[this._mousePointOnGraphicIndex].xPos = this._xAxis.convertFromPixel(point.x);
-        this._points[this._mousePointOnGraphicIndex].price = this._yAxis.convertFromPixel(point.y);
+      if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
+        this._points[this._hoverIndex].xPos = this._xAxis.convertFromPixel(point.x);
+        this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y);
       }
     }
   }, {
@@ -3668,8 +3678,8 @@ var LineGraphicMark = /*#__PURE__*/function (_GraphicMark) {
 
         if (checkPointOnCircle(xyPoint, graphicMark.point.radius, point)) {
           return {
-            mousePointOnGraphicType: MousePointOnGraphicType.POINT,
-            mousePointOnGraphicIndex: i
+            hoverType: HoverType.POINT,
+            hoverIndex: i
           };
         }
       }
@@ -3768,21 +3778,13 @@ var OnePointLineGraphicMark = /*#__PURE__*/function (_LineGraphicMark) {
       var price = this._yAxis.convertFromPixel(point.y);
 
       switch (this._drawStep) {
-        case GraphicMarkDrawStep.STEP_DONE:
+        case GraphicMarkDrawStep.STEP_1:
+        case GraphicMarkDrawStep.STEP_2:
           {
             this._points = [{
               xPos: xPos,
               price: price
             }];
-            this._drawStep = GraphicMarkDrawStep.STEP_1;
-            break;
-          }
-
-        case GraphicMarkDrawStep.STEP_1:
-        case GraphicMarkDrawStep.STEP_2:
-          {
-            this._points[0].xPos = xPos;
-            this._points[0].price = price;
             break;
           }
       }
@@ -3803,10 +3805,7 @@ var OnePointLineGraphicMark = /*#__PURE__*/function (_LineGraphicMark) {
 
         case GraphicMarkDrawStep.STEP_2:
           {
-            this._drawStep = GraphicMarkDrawStep.STEP_DONE;
-
-            this._chartData.setGraphicMarkType(NONE);
-
+            this._drawStep = GraphicMarkDrawStep.FINISHED;
             break;
           }
       }
@@ -3835,8 +3834,8 @@ var HorizontalStraightLine = /*#__PURE__*/function (_OnePointLineGraphicM) {
         y: xyPoints[0].y
       }, point)) {
         return {
-          mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-          mousePointOnGraphicIndex: 0
+          hoverType: HoverType.LINE,
+          hoverIndex: 0
         };
       }
     }
@@ -3875,43 +3874,48 @@ var TwoPointLineGraphicMark = /*#__PURE__*/function (_OnePointLineGraphicM) {
       var price = this._yAxis.convertFromPixel(point.y);
 
       switch (this._drawStep) {
-        case GraphicMarkDrawStep.STEP_DONE:
+        case GraphicMarkDrawStep.STEP_1:
           {
             this._points = [{
               xPos: xPos,
               price: price
-            }, {
-              xPos: xPos,
-              price: price
             }];
-            this._drawStep = GraphicMarkDrawStep.STEP_1;
-            break;
-          }
-
-        case GraphicMarkDrawStep.STEP_1:
-          {
-            this._points[0] = {
-              xPos: xPos,
-              price: price
-            };
-            this._points[1] = {
-              xPos: xPos,
-              price: price
-            };
             break;
           }
 
         case GraphicMarkDrawStep.STEP_2:
           {
+            this._points[1] = {
+              xPos: xPos,
+              price: price
+            };
+
             this._mouseMoveForDrawingExtendFuc({
               xPos: xPos,
               price: price
             });
 
-            this._points[1] = {
-              xPos: xPos,
-              price: price
-            };
+            break;
+          }
+      }
+    }
+    /**
+     * 鼠标左边按钮点击事件
+     */
+
+  }, {
+    key: "mouseLeftButtonDownForDrawing",
+    value: function mouseLeftButtonDownForDrawing() {
+      switch (this._drawStep) {
+        case GraphicMarkDrawStep.STEP_1:
+          {
+            this._drawStep = GraphicMarkDrawStep.STEP_2;
+            break;
+          }
+
+        case GraphicMarkDrawStep.STEP_2:
+          {
+            this._drawStep = GraphicMarkDrawStep.FINISHED;
             break;
           }
       }
@@ -3943,15 +3947,19 @@ var SegmentLine = /*#__PURE__*/function (_TwoPointLineGraphicM) {
     value: function _checkMousePointOnLine(point, xyPoints) {
       if (checkPointOnSegmentLine(xyPoints[0], xyPoints[1], point)) {
         return {
-          mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-          mousePointOnGraphicIndex: 0
+          hoverType: HoverType.LINE,
+          hoverIndex: 0
         };
       }
     }
   }, {
     key: "_generatedDrawLines",
     value: function _generatedDrawLines(xyPoints) {
-      return [xyPoints];
+      if (xyPoints.length === 2) {
+        return [xyPoints];
+      }
+
+      return [];
     }
   }]);
 
@@ -3972,8 +3980,8 @@ var HorizontalSegmentLine = /*#__PURE__*/function (_SegmentLine) {
   _createClass(HorizontalSegmentLine, [{
     key: "mousePressedMove",
     value: function mousePressedMove(point) {
-      if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && this._mousePointOnGraphicIndex !== -1) {
-        this._points[this._mousePointOnGraphicIndex].xPos = this._xAxis.convertFromPixel(point.x);
+      if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
+        this._points[this._hoverIndex].xPos = this._xAxis.convertFromPixel(point.x);
 
         var price = this._yAxis.convertFromPixel(point.y);
 
@@ -4009,44 +4017,49 @@ var RayLine = /*#__PURE__*/function (_TwoPointLineGraphicM) {
     value: function _checkMousePointOnLine(point, xyPoints) {
       if (checkPointOnRayLine(xyPoints[0], xyPoints[1], point)) {
         return {
-          mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-          mousePointOnGraphicIndex: 0
+          hoverType: HoverType.LINE,
+          hoverIndex: 0
         };
       }
     }
   }, {
     key: "_generatedDrawLines",
     value: function _generatedDrawLines(xyPoints) {
-      var point;
+      var point = {
+        x: xyPoints[0].x,
+        y: 0
+      };
 
-      if (xyPoints[0].x === xyPoints[1].x && xyPoints[0].y !== xyPoints[1].y) {
-        if (xyPoints[0].y < xyPoints[1].y) {
+      if (xyPoints.length === 2) {
+        if (xyPoints[0].x === xyPoints[1].x && xyPoints[0].y !== xyPoints[1].y) {
+          if (xyPoints[0].y < xyPoints[1].y) {
+            point = {
+              x: xyPoints[0].x,
+              y: this._yAxis.height()
+            };
+          } else {
+            point = {
+              x: xyPoints[0].x,
+              y: 0
+            };
+          }
+        } else if (xyPoints[0].x > xyPoints[1].x) {
           point = {
-            x: xyPoints[0].x,
-            y: this._yAxis.height()
+            x: 0,
+            y: getLinearY(xyPoints[0], xyPoints[1], [{
+              x: 0,
+              y: xyPoints[0].y
+            }])[0]
           };
         } else {
           point = {
-            x: xyPoints[0].x,
-            y: 0
+            x: this._xAxis.width(),
+            y: getLinearY(xyPoints[0], xyPoints[1], [{
+              x: this._xAxis.width(),
+              y: xyPoints[0].y
+            }])[0]
           };
         }
-      } else if (xyPoints[0].x > xyPoints[1].x) {
-        point = {
-          x: 0,
-          y: getLinearY(xyPoints[0], xyPoints[1], [{
-            x: 0,
-            y: xyPoints[0].y
-          }])[0]
-        };
-      } else {
-        point = {
-          x: this._xAxis.width(),
-          y: getLinearY(xyPoints[0], xyPoints[1], [{
-            x: this._xAxis.width(),
-            y: xyPoints[0].y
-          }])[0]
-        };
       }
 
       return [[xyPoints[0], point]];
@@ -4070,8 +4083,8 @@ var HorizontalRayLine = /*#__PURE__*/function (_RayLine) {
   _createClass(HorizontalRayLine, [{
     key: "mousePressedMove",
     value: function mousePressedMove(point) {
-      if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && this._mousePointOnGraphicIndex !== -1) {
-        this._points[this._mousePointOnGraphicIndex].xPos = this._xAxis.convertFromPixel(point.x);
+      if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
+        this._points[this._hoverIndex].xPos = this._xAxis.convertFromPixel(point.x);
 
         var price = this._yAxis.convertFromPixel(point.y);
 
@@ -4094,7 +4107,7 @@ var HorizontalRayLine = /*#__PURE__*/function (_RayLine) {
         y: xyPoints[0].y
       };
 
-      if (xyPoints[0].x < xyPoints[1].x) {
+      if (xyPoints[1] && xyPoints[0].x < xyPoints[1].x) {
         point.x = this._xAxis.width();
       }
 
@@ -4124,8 +4137,8 @@ var VerticalStraightLine = /*#__PURE__*/function (_OnePointLineGraphicM) {
         y: this._yAxis.height()
       }, point)) {
         return {
-          mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-          mousePointOnGraphicIndex: 0
+          hoverType: HoverType.LINE,
+          hoverIndex: 0
         };
       }
     }
@@ -4159,12 +4172,12 @@ var VerticalSegmentLine = /*#__PURE__*/function (_SegmentLine) {
   _createClass(VerticalSegmentLine, [{
     key: "mousePressedMove",
     value: function mousePressedMove(point) {
-      if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && this._mousePointOnGraphicIndex !== -1) {
+      if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
         var xPos = this._xAxis.convertFromPixel(point.x);
 
         this._points[0].xPos = xPos;
         this._points[1].xPos = xPos;
-        this._points[this._mousePointOnGraphicIndex].price = this._yAxis.convertFromPixel(point.y);
+        this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y);
       }
     }
   }, {
@@ -4193,12 +4206,12 @@ var VerticalRayLine = /*#__PURE__*/function (_RayLine) {
   _createClass(VerticalRayLine, [{
     key: "mousePressedMove",
     value: function mousePressedMove(point) {
-      if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && this._mousePointOnGraphicIndex !== -1) {
+      if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
         var xPos = this._xAxis.convertFromPixel(point.x);
 
         this._points[0].xPos = xPos;
         this._points[1].xPos = xPos;
-        this._points[this._mousePointOnGraphicIndex].price = this._yAxis.convertFromPixel(point.y);
+        this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y);
       }
     }
   }, {
@@ -4216,7 +4229,7 @@ var VerticalRayLine = /*#__PURE__*/function (_RayLine) {
         y: 0
       };
 
-      if (xyPoints[0].y < xyPoints[1].y) {
+      if (xyPoints[1] && xyPoints[0].y < xyPoints[1].y) {
         point.y = this._yAxis.height();
       }
 
@@ -4243,15 +4256,15 @@ var StraightLine = /*#__PURE__*/function (_TwoPointLineGraphicM) {
     value: function _checkMousePointOnLine(point, xyPoints) {
       if (checkPointOnStraightLine(xyPoints[0], xyPoints[1], point)) {
         return {
-          mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-          mousePointOnGraphicIndex: 0
+          hoverType: HoverType.LINE,
+          hoverIndex: 0
         };
       }
     }
   }, {
     key: "_generatedDrawLines",
     value: function _generatedDrawLines(xyPoints) {
-      if (xyPoints[0].x === xyPoints[1].x) {
+      if (xyPoints.length < 2 || xyPoints[0].x === xyPoints[1].x) {
         return [[{
           x: xyPoints[0].x,
           y: 0
@@ -4300,8 +4313,8 @@ var PriceLine = /*#__PURE__*/function (_OnePointLineGraphicM) {
         y: xyPoints[0].y
       }, point)) {
         return {
-          mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-          mousePointOnGraphicIndex: 0
+          hoverType: HoverType.LINE,
+          hoverIndex: 0
         };
       }
     }
@@ -4351,29 +4364,12 @@ var ThreePointLineGraphicMark = /*#__PURE__*/function (_LineGraphicMark) {
       var price = this._yAxis.convertFromPixel(point.y);
 
       switch (this._drawStep) {
-        case GraphicMarkDrawStep.STEP_DONE:
+        case GraphicMarkDrawStep.STEP_1:
           {
             this._points = [{
               xPos: xPos,
               price: price
-            }, {
-              xPos: xPos,
-              price: price
             }];
-            this._drawStep = GraphicMarkDrawStep.STEP_1;
-            break;
-          }
-
-        case GraphicMarkDrawStep.STEP_1:
-          {
-            this._points[0] = {
-              xPos: xPos,
-              price: price
-            };
-            this._points[1] = {
-              xPos: xPos,
-              price: price
-            };
             break;
           }
 
@@ -4414,10 +4410,7 @@ var ThreePointLineGraphicMark = /*#__PURE__*/function (_LineGraphicMark) {
 
         case GraphicMarkDrawStep.STEP_3:
           {
-            this._drawStep = GraphicMarkDrawStep.STEP_DONE;
-
-            this._chartData.setGraphicMarkType(NONE);
-
+            this._drawStep = GraphicMarkDrawStep.FINISHED;
             break;
           }
       }
@@ -4448,8 +4441,8 @@ var ParallelStraightLine = /*#__PURE__*/function (_ThreePointLineGraphi) {
 
         if (checkPointOnStraightLine(points[0], points[1], point)) {
           return {
-            mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-            mousePointOnGraphicIndex: i
+            hoverType: HoverType.LINE,
+            hoverIndex: i
           };
         }
       }
@@ -4512,8 +4505,8 @@ var FibonacciLine = /*#__PURE__*/function (_TwoPointLineGraphicM) {
 
         if (checkPointOnStraightLine(points[0], points[1], point)) {
           return {
-            mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-            mousePointOnGraphicIndex: i
+            hoverType: HoverType.LINE,
+            hoverIndex: i
           };
         }
       }
@@ -4688,15 +4681,13 @@ var ChartData = /*#__PURE__*/function () {
 
     this._crossHair = {}; // 用来记录开始拖拽时向右偏移的数量
 
-    this._preOffsetRightBarCount = 0; // 当前绘制的标记图形的类型
-
-    this._graphicMarkType = NONE; // 拖拽标记图形标记
+    this._preOffsetRightBarCount = 0; // 拖拽标记图形标记
 
     this._dragGraphicMarkFlag = false; // 图形标记映射
 
     this._graphicMarkMapping = createGraphicMarkMapping(); // 绘图标记数据
 
-    this._graphicMarks = {}; // 绘制事件代理
+    this._graphicMarks = []; // 绘制事件代理
 
     this._drawActionDelegate = (_this$_drawActionDele = {}, _defineProperty(_this$_drawActionDele, DrawActionType.DRAW_CANDLE, new Delegate()), _defineProperty(_this$_drawActionDele, DrawActionType.DRAW_TECHNICAL_INDICATOR, new Delegate()), _this$_drawActionDele);
   }
@@ -5245,45 +5236,34 @@ var ChartData = /*#__PURE__*/function () {
       this._loadMoreCallback = callback;
     }
     /**
-     * 获取图形标记类型
-     * @returns {string}
-     */
-
-  }, {
-    key: "graphicMarkType",
-    value: function graphicMarkType() {
-      return this._graphicMarkType;
-    }
-    /**
      * 清空图形标记
      */
 
   }, {
     key: "clearGraphicMark",
     value: function clearGraphicMark() {
-      if (Object.keys(this._graphicMarks).length > 0) {
-        this._graphicMarks = {};
+      if (this._graphicMarks.length > 0) {
+        this._graphicMarks = [];
         this.invalidate(InvalidateLevel.GRAPHIC_MARK);
       }
     }
     /**
-     * 设置图形标记类型
-     * @param graphicMarkType
+     * 添加标记类型
      * @param graphicMark
      */
 
   }, {
-    key: "setGraphicMarkType",
-    value: function setGraphicMarkType(graphicMarkType, graphicMark) {
-      this._graphicMarkType = graphicMarkType;
+    key: "addGraphicMark",
+    value: function addGraphicMark(graphicMark) {
+      var lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1];
 
-      if (graphicMark) {
-        if (!this._graphicMarks[graphicMarkType]) {
-          this._graphicMarks[graphicMarkType] = [];
-        }
-
-        this._graphicMarks[graphicMarkType].push(graphicMark);
+      if (lastGraphicMark && lastGraphicMark.isDrawing()) {
+        this._graphicMarks[this._graphicMarks.length - 1] = graphicMark;
+      } else {
+        this._graphicMarks.push(graphicMark);
       }
+
+      this.invalidate(InvalidateLevel.GRAPHIC_MARK);
     }
     /**
      * 获取图形标记拖拽标记
@@ -5333,7 +5313,7 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "shouldInvalidateGraphicMark",
     value: function shouldInvalidateGraphicMark() {
-      return this._graphicMarkType !== NONE || Object.keys(this._graphicMarks).length > 0;
+      return this._graphicMarks.length > 0;
     }
     /**
      * 添加一个自定义指标
@@ -8482,11 +8462,9 @@ var GraphicMarkView = /*#__PURE__*/function (_View) {
 
       var graphicMarks = this._chartData.graphicMarks();
 
-      for (var key in graphicMarks) {
-        graphicMarks[key].forEach(function (graphicMark) {
-          graphicMark.draw(_this._ctx);
-        });
-      }
+      graphicMarks.forEach(function (graphicMark) {
+        graphicMark.draw(_this._ctx);
+      });
     }
   }]);
 
@@ -10191,29 +10169,22 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
       if (!this._waitingForMouseMoveAnimationFrame) {
         this._waitingForMouseMoveAnimationFrame = true;
 
-        var graphicMarkType = this._chartData.graphicMarkType();
-
         var graphicMarks = this._chartData.graphicMarks();
 
-        if (graphicMarkType === NONE) {
-          (function () {
-            var isActive = false;
+        var lastGraphicMark = graphicMarks[graphicMarks.length - 1];
 
-            for (var key in graphicMarks) {
-              graphicMarks[key].forEach(function (graphicMark) {
-                graphicMark.resetMousePointOnGraphicParams();
-
-                if (!isActive) {
-                  isActive = graphicMark.checkMousePointOnGraphic(point);
-                }
-              });
-            }
-          })();
+        if (lastGraphicMark && lastGraphicMark.isDrawing()) {
+          lastGraphicMark.mouseMoveForDrawing(point);
+          lastGraphicMark.checkMousePointOnGraphic(point);
         } else {
-          var graphicMarkArray = graphicMarks[graphicMarkType];
-          var graphicMark = graphicMarkArray[graphicMarkArray.length - 1];
-          graphicMark.mouseMoveForDrawing(point);
-          graphicMark.checkMousePointOnGraphic(point);
+          var isHover = false;
+          graphicMarks.forEach(function (graphicMark) {
+            graphicMark.resetHoverParams();
+
+            if (!isHover) {
+              isHover = graphicMark.checkMousePointOnGraphic(point);
+            }
+          });
         }
 
         this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK);
@@ -10238,32 +10209,26 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
         y: event.localY
       };
 
-      var graphicMarkType = this._chartData.graphicMarkType();
-
       var graphicMarks = this._chartData.graphicMarks();
 
-      if (graphicMarkType === NONE) {
-        for (var key in graphicMarks) {
-          var graphicMarkArray = graphicMarks[key];
+      var lastGraphicMark = graphicMarks[graphicMarks.length - 1];
 
-          for (var i = 0; i < graphicMarkArray.length; i++) {
-            if (graphicMarkArray[i].checkMousePointOnGraphic(point) && graphicMarkArray[i].mousePointOnGraphicType() === MousePointOnGraphicType.POINT) {
-              this._pressedGraphicMark = graphicMarkArray[i];
-
-              this._chartData.setDragGraphicMarkFlag(true);
-
-              this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK);
-
-              return;
-            }
-          }
-        }
-      } else {
-        var _graphicMarkArray = graphicMarks[graphicMarkType];
-
-        _graphicMarkArray[_graphicMarkArray.length - 1].mouseLeftButtonDownForDrawing(point);
+      if (lastGraphicMark && lastGraphicMark.isDrawing()) {
+        lastGraphicMark.mouseLeftButtonDownForDrawing(point);
 
         this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK);
+      } else {
+        for (var i = 0; i < graphicMarks.length; i++) {
+          if (graphicMarks[i].checkMousePointOnGraphic(point) && graphicMarks[i].hoverType() === HoverType.POINT) {
+            this._pressedGraphicMark = graphicMarks[i];
+
+            this._chartData.setDragGraphicMarkFlag(true);
+
+            this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK);
+
+            return;
+          }
+        }
       }
     }
   }, {
@@ -10276,32 +10241,24 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
 
       var graphicMarks = this._chartData.graphicMarks();
 
-      for (var key in graphicMarks) {
-        var graphicMarkArray = graphicMarks[key];
+      for (var i = 0; i < graphicMarks.length; i++) {
+        if (graphicMarks[i].checkMousePointOnGraphic(point)) {
+          graphicMarks.splice(i, 1);
 
-        for (var i = 0; i < graphicMarkArray.length; i++) {
-          if (graphicMarkArray[i].checkMousePointOnGraphic(point)) {
-            graphicMarks[key].splice(i, 1);
+          this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK);
 
-            if (graphicMarks[key].length === 0) {
-              delete graphicMarks[key];
-            }
-
-            this._chartData.setGraphicMarkType(NONE);
-
-            this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK);
-
-            return;
-          }
+          return;
         }
       }
     }
   }, {
     key: "pressedMouseMoveEvent",
     value: function pressedMouseMoveEvent(event) {
-      var graphicMarkType = this._chartData.graphicMarkType();
+      var graphicMarks = this._chartData.graphicMarks();
 
-      if (graphicMarkType === NONE && this._pressedGraphicMark) {
+      var lastGraphicMark = graphicMarks[graphicMarks.length - 1];
+
+      if ((!lastGraphicMark || !lastGraphicMark.isDrawing()) && this._pressedGraphicMark) {
         this._pressedGraphicMark.mousePressedMove({
           x: event.localX,
           y: event.localY
@@ -10536,7 +10493,10 @@ var ChartEvent = /*#__PURE__*/function () {
   }, {
     key: "_checkZoomScroll",
     value: function _checkZoomScroll() {
-      return !this._chartData.dragGraphicMarkFlag() && this._chartData.graphicMarkType() === NONE;
+      var graphicMarks = this._chartData.graphicMarks();
+
+      var graphicMarkCount = graphicMarks.length;
+      return !this._chartData.dragGraphicMarkFlag() && (graphicMarkCount === 0 || !graphicMarks[graphicMarkCount - 1].isDrawing());
     }
   }, {
     key: "setChartContentSize",
@@ -11260,27 +11220,11 @@ var ChartPane = /*#__PURE__*/function () {
   }, {
     key: "addGraphicMark",
     value: function addGraphicMark(type) {
-      var graphicMarkType = this._chartData.graphicMarkType();
-
-      if (graphicMarkType !== NONE) {
-        var graphicMarks = this._chartData.graphicMarks();
-
-        var graphicMarkArray = graphicMarks[graphicMarkType];
-
-        if (graphicMarkArray && isArray(graphicMarkArray)) {
-          graphicMarkArray.splice(graphicMarkArray.length - 1, 1);
-
-          if (graphicMarks[graphicMarkType].length === 0) {
-            delete graphicMarks[graphicMarkType];
-          }
-        }
-      }
-
       var graphicMarkMapping = this._chartData.graphicMarkMapping();
 
       var GraphicMark = graphicMarkMapping[type];
 
-      this._chartData.setGraphicMarkType(type, new GraphicMark(this._chartData, this._xAxisPane.xAxis(), this._candleStickPane.yAxis()));
+      this._chartData.addGraphicMark(new GraphicMark(this._chartData, this._xAxisPane.xAxis(), this._candleStickPane.yAxis()));
     }
     /**
      * 设置时区

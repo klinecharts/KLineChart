@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import GraphicMark, { MousePointOnGraphicType } from './GraphicMark'
+import GraphicMark, { HoverType } from './GraphicMark'
 import { drawHorizontalLine, drawLine, drawVerticalLine } from '../utils/canvas'
 import { checkPointOnCircle } from './graphicHelper'
 
@@ -44,9 +44,9 @@ export default class LineGraphicMark extends GraphicMark {
    * @param point
    */
   mousePressedMove (point) {
-    if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && this._mousePointOnGraphicIndex !== -1) {
-      this._points[this._mousePointOnGraphicIndex].xPos = this._xAxis.convertFromPixel(point.x)
-      this._points[this._mousePointOnGraphicIndex].price = this._yAxis.convertFromPixel(point.y)
+    if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
+      this._points[this._hoverIndex].xPos = this._xAxis.convertFromPixel(point.x)
+      this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y)
     }
   }
 
@@ -62,8 +62,8 @@ export default class LineGraphicMark extends GraphicMark {
       xyPoints.push(xyPoint)
       if (checkPointOnCircle(xyPoint, graphicMark.point.radius, point)) {
         return {
-          mousePointOnGraphicType: MousePointOnGraphicType.POINT,
-          mousePointOnGraphicIndex: i
+          hoverType: HoverType.POINT,
+          hoverIndex: i
         }
       }
     }

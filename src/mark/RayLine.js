@@ -14,41 +14,46 @@
 
 import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
 import { checkPointOnRayLine, getLinearY } from './graphicHelper'
-import { MousePointOnGraphicType } from './GraphicMark'
+import { HoverType } from './GraphicMark'
 
 export default class RayLine extends TwoPointLineGraphicMark {
   _checkMousePointOnLine (point, xyPoints) {
     if (checkPointOnRayLine(xyPoints[0], xyPoints[1], point)) {
       return {
-        mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-        mousePointOnGraphicIndex: 0
+        hoverType: HoverType.LINE,
+        hoverIndex: 0
       }
     }
   }
 
   _generatedDrawLines (xyPoints) {
-    let point
-    if (xyPoints[0].x === xyPoints[1].x && xyPoints[0].y !== xyPoints[1].y) {
-      if (xyPoints[0].y < xyPoints[1].y) {
+    let point = {
+      x: xyPoints[0].x,
+      y: 0
+    }
+    if (xyPoints.length === 2) {
+      if (xyPoints[0].x === xyPoints[1].x && xyPoints[0].y !== xyPoints[1].y) {
+        if (xyPoints[0].y < xyPoints[1].y) {
+          point = {
+            x: xyPoints[0].x,
+            y: this._yAxis.height()
+          }
+        } else {
+          point = {
+            x: xyPoints[0].x,
+            y: 0
+          }
+        }
+      } else if (xyPoints[0].x > xyPoints[1].x) {
         point = {
-          x: xyPoints[0].x,
-          y: this._yAxis.height()
+          x: 0,
+          y: getLinearY(xyPoints[0], xyPoints[1], [{ x: 0, y: xyPoints[0].y }])[0]
         }
       } else {
         point = {
-          x: xyPoints[0].x,
-          y: 0
+          x: this._xAxis.width(),
+          y: getLinearY(xyPoints[0], xyPoints[1], [{ x: this._xAxis.width(), y: xyPoints[0].y }])[0]
         }
-      }
-    } else if (xyPoints[0].x > xyPoints[1].x) {
-      point = {
-        x: 0,
-        y: getLinearY(xyPoints[0], xyPoints[1], [{ x: 0, y: xyPoints[0].y }])[0]
-      }
-    } else {
-      point = {
-        x: this._xAxis.width(),
-        y: getLinearY(xyPoints[0], xyPoints[1], [{ x: this._xAxis.width(), y: xyPoints[0].y }])[0]
       }
     }
     return [[xyPoints[0], point]]

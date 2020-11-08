@@ -25,7 +25,6 @@ import SeparatorPane from './SeparatorPane'
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { throttle } from '../utils/performance'
-import { NONE } from '../mark/defaultGraphicMarkType'
 
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
@@ -465,20 +464,9 @@ export default class ChartPane {
    * @param type
    */
   addGraphicMark (type) {
-    const graphicMarkType = this._chartData.graphicMarkType()
-    if (graphicMarkType !== NONE) {
-      const graphicMarks = this._chartData.graphicMarks()
-      const graphicMarkArray = graphicMarks[graphicMarkType]
-      if (graphicMarkArray && isArray(graphicMarkArray)) {
-        graphicMarkArray.splice(graphicMarkArray.length - 1, 1)
-        if (graphicMarks[graphicMarkType].length === 0) {
-          delete graphicMarks[graphicMarkType]
-        }
-      }
-    }
     const graphicMarkMapping = this._chartData.graphicMarkMapping()
     const GraphicMark = graphicMarkMapping[type]
-    this._chartData.setGraphicMarkType(type, new GraphicMark(this._chartData, this._xAxisPane.xAxis(), this._candleStickPane.yAxis()))
+    this._chartData.addGraphicMark(new GraphicMark(this._chartData, this._xAxisPane.xAxis(), this._candleStickPane.yAxis()))
   }
 
   /**

@@ -14,9 +14,8 @@
 
 import { CANDLE_STICK_PANE_TAG } from '../pane/ChartPane'
 import EventHandler from './EventHandler'
-import { NONE } from '../mark/defaultGraphicMarkType'
 import { InvalidateLevel } from '../data/ChartData'
-import { MousePointOnGraphicType } from '../mark/GraphicMark'
+import { HoverType } from '../mark/GraphicMark'
 
 export default class GraphicMarkEventHandler extends EventHandler {
   constructor (chartData) {
@@ -42,23 +41,19 @@ export default class GraphicMarkEventHandler extends EventHandler {
     const point = { x: event.localX, y: event.localY }
     if (!this._waitingForMouseMoveAnimationFrame) {
       this._waitingForMouseMoveAnimationFrame = true
-      const graphicMarkType = this._chartData.graphicMarkType()
       const graphicMarks = this._chartData.graphicMarks()
-      if (graphicMarkType === NONE) {
-        let isActive = false
-        for (const key in graphicMarks) {
-          graphicMarks[key].forEach(graphicMark => {
-            graphicMark.resetMousePointOnGraphicParams()
-            if (!isActive) {
-              isActive = graphicMark.checkMousePointOnGraphic(point)
-            }
-          })
-        }
+      const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
+      if (lastGraphicMark && lastGraphicMark.isDrawing()) {
+        lastGraphicMark.mouseMoveForDrawing(point)
+        lastGraphicMark.checkMousePointOnGraphic(point)
       } else {
-        const graphicMarkArray = graphicMarks[graphicMarkType]
-        const graphicMark = graphicMarkArray[graphicMarkArray.length - 1]
-        graphicMark.mouseMoveForDrawing(point)
-        graphicMark.checkMousePointOnGraphic(point)
+        let isHover = false
+        graphicMarks.forEach(graphicMark => {
+          graphicMark.resetHoverParams()
+          if (!isHover) {
+            isHover = graphicMark.checkMousePointOnGraphic(point)
+          }
+        })
       }
       this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK)
       this._waitingForMouseMoveAnimationFrame = false
@@ -74,39 +69,16 @@ export default class GraphicMarkEventHandler extends EventHandler {
       return
     }
     const point = { x: event.localX, y: event.localY }
-    const graphicMarkType = this._chartData.graphicMarkType()
     const graphicMarks = this._chartData.graphicMarks()
-    if (graphicMarkType === NONE) {
-      for (const key in graphicMarks) {
-        const graphicMarkArray = graphicMarks[key]
-        for (let i = 0; i < graphicMarkArray.length; i++) {
-          if (graphicMarkArray[i].checkMousePointOnGraphic(point) && graphicMarkArray[i].mousePointOnGraphicType() === MousePointOnGraphicType.POINT) {
-            this._pressedGraphicMark = graphicMarkArray[i]
-            this._chartData.setDragGraphicMarkFlag(true)
-            this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK)
-            return
-          }
-        }
-      }
-    } else {
-      const graphicMarkArray = graphicMarks[graphicMarkType]
-      graphicMarkArray[graphicMarkArray.length - 1].mouseLeftButtonDownForDrawing(point)
+    const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
+    if (lastGraphicMark && lastGraphicMark.isDrawing()) {
+      lastGraphicMark.mouseLeftButtonDownForDrawing(point)
       this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK)
-    }
-  }
-
-  mouseRightDownEvent (event) {
-    const point = { x: event.localX, y: event.localY }
-    const graphicMarks = this._chartData.graphicMarks()
-    for (const key in graphicMarks) {
-      const graphicMarkArray = graphicMarks[key]
-      for (let i = 0; i < graphicMarkArray.length; i++) {
-        if (graphicMarkArray[i].checkMousePointOnGraphic(point)) {
-          graphicMarks[key].splice(i, 1)
-          if (graphicMarks[key].length === 0) {
-            delete graphicMarks[key]
-          }
-          this._chartData.setGraphicMarkType(NONE)
+    } else {
+      for (let i = 0; i < graphicMarks.length; i++) {
+        if (graphicMarks[i].checkMousePointOnGraphic(point) && graphicMarks[i].hoverType() === HoverType.POINT) {
+          this._pressedGraphicMark = graphicMarks[i]
+          this._chartData.setDragGraphicMarkFlag(true)
           this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK)
           return
         }
@@ -114,9 +86,22 @@ export default class GraphicMarkEventHandler extends EventHandler {
     }
   }
 
+  mouseRightDownEvent (event) {
+    const point = { x: event.localX, y: event.localY }
+    const graphicMarks = this._chartData.graphicMarks()
+    for (let i = 0; i < graphicMarks.length; i++) {
+      if (graphicMarks[i].checkMousePointOnGraphic(point)) {
+        graphicMarks.splice(i, 1)
+        this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK)
+        return
+      }
+    }
+  }
+
   pressedMouseMoveEvent (event) {
-    const graphicMarkType = this._chartData.graphicMarkType()
-    if (graphicMarkType === NONE && this._pressedGraphicMark) {
+    const graphicMarks = this._chartData.graphicMarks()
+    const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
+    if ((!lastGraphicMark || !lastGraphicMark.isDrawing()) && this._pressedGraphicMark) {
       this._pressedGraphicMark.mousePressedMove({ x: event.localX, y: event.localY })
       this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK)
     }

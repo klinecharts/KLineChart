@@ -14,20 +14,20 @@
 
 import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
 import { checkPointOnStraightLine, getLinearY } from './graphicHelper'
-import { MousePointOnGraphicType } from './GraphicMark'
+import { HoverType } from './GraphicMark'
 
 export default class StraightLine extends TwoPointLineGraphicMark {
   _checkMousePointOnLine (point, xyPoints) {
     if (checkPointOnStraightLine(xyPoints[0], xyPoints[1], point)) {
       return {
-        mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-        mousePointOnGraphicIndex: 0
+        hoverType: HoverType.LINE,
+        hoverIndex: 0
       }
     }
   }
 
   _generatedDrawLines (xyPoints) {
-    if (xyPoints[0].x === xyPoints[1].x) {
+    if (xyPoints.length < 2 || xyPoints[0].x === xyPoints[1].x) {
       return [[
         {
           x: xyPoints[0].x,

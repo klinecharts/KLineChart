@@ -15,7 +15,6 @@
 import EventBase from './EventBase'
 import ZoomScrollEventHandler from './ZoomScrollEventHandler'
 import GraphicMarkEventHandler from './GraphicMarkEventHandler'
-import { NONE } from '../mark/defaultGraphicMarkType'
 import KeyBoardEventHandler from './KeyBoardEventHandler'
 
 export default class ChartEvent {
@@ -132,7 +131,9 @@ export default class ChartEvent {
   }
 
   _checkZoomScroll () {
-    return !this._chartData.dragGraphicMarkFlag() && this._chartData.graphicMarkType() === NONE
+    const graphicMarks = this._chartData.graphicMarks()
+    const graphicMarkCount = graphicMarks.length
+    return !this._chartData.dragGraphicMarkFlag() && (graphicMarkCount === 0 || !graphicMarks[graphicMarkCount - 1].isDrawing())
   }
 
   setChartContentSize (chartContentSize) {

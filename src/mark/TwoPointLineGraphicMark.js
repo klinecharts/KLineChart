@@ -20,19 +20,29 @@ export default class TwoPointLineGraphicMark extends OnePointLineGraphicMark {
     const xPos = this._xAxis.convertFromPixel(point.x)
     const price = this._yAxis.convertFromPixel(point.y)
     switch (this._drawStep) {
-      case GraphicMarkDrawStep.STEP_DONE: {
-        this._points = [{ xPos, price }, { xPos, price }]
-        this._drawStep = GraphicMarkDrawStep.STEP_1
-        break
-      }
       case GraphicMarkDrawStep.STEP_1: {
-        this._points[0] = { xPos, price }
-        this._points[1] = { xPos, price }
+        this._points = [{ xPos, price }]
         break
       }
       case GraphicMarkDrawStep.STEP_2: {
-        this._mouseMoveForDrawingExtendFuc({ xPos, price })
         this._points[1] = { xPos, price }
+        this._mouseMoveForDrawingExtendFuc({ xPos, price })
+        break
+      }
+    }
+  }
+
+  /**
+   * 鼠标左边按钮点击事件
+   */
+  mouseLeftButtonDownForDrawing () {
+    switch (this._drawStep) {
+      case GraphicMarkDrawStep.STEP_1: {
+        this._drawStep = GraphicMarkDrawStep.STEP_2
+        break
+      }
+      case GraphicMarkDrawStep.STEP_2: {
+        this._drawStep = GraphicMarkDrawStep.FINISHED
         break
       }
     }

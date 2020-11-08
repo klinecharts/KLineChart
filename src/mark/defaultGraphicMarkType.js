@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-export const NONE = 'none'
 export const HORIZONTAL_STRAIGHT_LINE = 'horizontalStraightLine'
 export const VERTICAL_STRAIGHT_LINE = 'verticalStraightLine'
 export const STRAIGHT_LINE = 'straightLine'

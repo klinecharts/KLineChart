@@ -13,15 +13,15 @@
  */
 
 import RayLine from './RayLine'
-import { MousePointOnGraphicType } from './GraphicMark'
+import { HoverType } from './GraphicMark'
 
 export default class VerticalRayLine extends RayLine {
   mousePressedMove (point) {
-    if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && this._mousePointOnGraphicIndex !== -1) {
+    if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
       const xPos = this._xAxis.convertFromPixel(point.x)
       this._points[0].xPos = xPos
       this._points[1].xPos = xPos
-      this._points[this._mousePointOnGraphicIndex].price = this._yAxis.convertFromPixel(point.y)
+      this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y)
     }
   }
 
@@ -31,7 +31,7 @@ export default class VerticalRayLine extends RayLine {
 
   _generatedDrawLines (xyPoints) {
     const point = { x: xyPoints[0].x, y: 0 }
-    if (xyPoints[0].y < xyPoints[1].y) {
+    if (xyPoints[1] && xyPoints[0].y < xyPoints[1].y) {
       point.y = this._yAxis.height()
     }
     return [[xyPoints[0], point]]

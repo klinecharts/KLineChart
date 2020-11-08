@@ -21,7 +21,6 @@ import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './technicalindicator/TechnicalIndicator'
 import Delegate from './delegate/Delegate'
 import { createGraphicMarkMapping } from '../mark/graphicMarkControl'
-import { NONE } from '../mark/defaultGraphicMarkType'
 
 export const InvalidateLevel = {
   NONE: 0,
@@ -94,14 +93,12 @@ export default class ChartData {
     // 用来记录开始拖拽时向右偏移的数量
     this._preOffsetRightBarCount = 0
 
-    // 当前绘制的标记图形的类型
-    this._graphicMarkType = NONE
     // 拖拽标记图形标记
     this._dragGraphicMarkFlag = false
     // 图形标记映射
     this._graphicMarkMapping = createGraphicMarkMapping()
     // 绘图标记数据
-    this._graphicMarks = {}
+    this._graphicMarks = []
 
     // 绘制事件代理
     this._drawActionDelegate = {
@@ -547,36 +544,27 @@ export default class ChartData {
   }
 
   /**
-   * 获取图形标记类型
-   * @returns {string}
-   */
-  graphicMarkType () {
-    return this._graphicMarkType
-  }
-
-  /**
    * 清空图形标记
    */
   clearGraphicMark () {
-    if (Object.keys(this._graphicMarks).length > 0) {
-      this._graphicMarks = {}
+    if (this._graphicMarks.length > 0) {
+      this._graphicMarks = []
       this.invalidate(InvalidateLevel.GRAPHIC_MARK)
     }
   }
 
   /**
-   * 设置图形标记类型
-   * @param graphicMarkType
+   * 添加标记类型
    * @param graphicMark
    */
-  setGraphicMarkType (graphicMarkType, graphicMark) {
-    this._graphicMarkType = graphicMarkType
-    if (graphicMark) {
-      if (!this._graphicMarks[graphicMarkType]) {
-        this._graphicMarks[graphicMarkType] = []
-      }
-      this._graphicMarks[graphicMarkType].push(graphicMark)
+  addGraphicMark (graphicMark) {
+    const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
+    if (lastGraphicMark && lastGraphicMark.isDrawing()) {
+      this._graphicMarks[this._graphicMarks.length - 1] = graphicMark
+    } else {
+      this._graphicMarks.push(graphicMark)
     }
+    this.invalidate(InvalidateLevel.GRAPHIC_MARK)
   }
 
   /**
@@ -616,7 +604,7 @@ export default class ChartData {
    * @returns {boolean}
    */
   shouldInvalidateGraphicMark () {
-    return this._graphicMarkType !== NONE || Object.keys(this._graphicMarks).length > 0
+    return this._graphicMarks.length > 0
   }
 
   /**

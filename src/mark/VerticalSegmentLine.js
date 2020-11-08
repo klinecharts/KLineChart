@@ -13,15 +13,15 @@
  */
 
 import SegmentLine from './SegmentLine'
-import { MousePointOnGraphicType } from './GraphicMark'
+import { HoverType } from './GraphicMark'
 
 export default class VerticalSegmentLine extends SegmentLine {
   mousePressedMove (point) {
-    if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && this._mousePointOnGraphicIndex !== -1) {
+    if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
       const xPos = this._xAxis.convertFromPixel(point.x)
       this._points[0].xPos = xPos
       this._points[1].xPos = xPos
-      this._points[this._mousePointOnGraphicIndex].price = this._yAxis.convertFromPixel(point.y)
+      this._points[this._hoverIndex].price = this._yAxis.convertFromPixel(point.y)
     }
   }
 

@@ -20,10 +20,11 @@ export const GraphicMarkDrawStep = {
   STEP_1: 'step_1',
   STEP_2: 'step_2',
   STEP_3: 'step_3',
-  STEP_DONE: 'step_done'
+  STEP_4: 'step_4',
+  FINISHED: 'finished'
 }
 
-export const MousePointOnGraphicType = {
+export const HoverType = {
   LINE: 'line',
   POINT: 'point',
   NONE: 'none'
@@ -37,10 +38,10 @@ export default class GraphicMark {
     this._chartData = chartData
     this._xAxis = xAxis
     this._yAxis = yAxis
-    this._drawStep = GraphicMarkDrawStep.STEP_DONE
+    this._drawStep = GraphicMarkDrawStep.STEP_1
     this._points = []
-    this._mousePointOnGraphicType = MousePointOnGraphicType.NONE
-    this._mousePointOnGraphicIndex = -1
+    this._hoverType = HoverType.NONE
+    this._hoverIndex = -1
   }
 
   /**
@@ -54,16 +55,24 @@ export default class GraphicMark {
    * 获取鼠标点在图形上的类型
    * @return {string}
    */
-  mousePointOnGraphicType () {
-    return this._mousePointOnGraphicType
+  hoverType () {
+    return this._hoverType
+  }
+
+  /**
+   * 是否在绘制中
+   * @return {boolean}
+   */
+  isDrawing () {
+    return this._drawStep !== GraphicMarkDrawStep.FINISHED
   }
 
   /**
    * 重置鼠标点在图形上的参数
    */
-  resetMousePointOnGraphicParams () {
-    this._mousePointOnGraphicType = MousePointOnGraphicType.NONE
-    this._mousePointOnGraphicIndex = -1
+  resetHoverParams () {
+    this._hoverType = HoverType.NONE
+    this._hoverIndex = -1
   }
 
   /**
@@ -72,13 +81,13 @@ export default class GraphicMark {
    * @return {boolean}
    */
   checkMousePointOnGraphic (point) {
-    const mousePointOnGraphicParams = this._checkMousePointOnDifGraphic(point)
-    if (mousePointOnGraphicParams) {
-      this._mousePointOnGraphicType = mousePointOnGraphicParams.mousePointOnGraphicType
-      this._mousePointOnGraphicIndex = mousePointOnGraphicParams.mousePointOnGraphicIndex
+    const hoverParams = this._checkMousePointOnDifGraphic(point)
+    if (hoverParams) {
+      this._hoverType = hoverParams.hoverType
+      this._hoverIndex = hoverParams.hoverIndex
       return true
     }
-    this.resetMousePointOnGraphicParams()
+    this.resetHoverParams()
   }
 
   /**
@@ -105,13 +114,13 @@ export default class GraphicMark {
     if (this._drawStep !== GraphicMarkDrawStep.STEP_1) {
       this._drawGraphic(ctx, xyPoints, graphicMark)
     }
-    if (this._mousePointOnGraphicType !== MousePointOnGraphicType.NONE) {
+    if (this._hoverType !== HoverType.NONE) {
       xyPoints.forEach(({ x, y }, index) => {
         let radius = graphicMark.point.radius
         let color = graphicMark.point.backgroundColor
         let borderColor = graphicMark.point.borderColor
         let borderSize = graphicMark.point.borderSize
-        if (this._mousePointOnGraphicType === MousePointOnGraphicType.POINT && index === this._mousePointOnGraphicIndex) {
+        if (this._hoverType === HoverType.POINT && index === this._hoverIndex) {
           radius = graphicMark.point.activeRadius
           color = graphicMark.point.activeBackgroundColor
           borderColor = graphicMark.point.activeBorderColor

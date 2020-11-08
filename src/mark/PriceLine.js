@@ -14,7 +14,7 @@
 
 import OnePointLineGraphicMark from './OnePointLineGraphicMark'
 import { checkPointOnRayLine } from './graphicHelper'
-import { MousePointOnGraphicType } from './GraphicMark'
+import { HoverType } from './GraphicMark'
 import { formatPrecision } from '../utils/format'
 import { getFont } from '../utils/canvas'
 
@@ -22,8 +22,8 @@ export default class PriceLine extends OnePointLineGraphicMark {
   _checkMousePointOnLine (point, xyPoints) {
     if (checkPointOnRayLine(xyPoints[0], { x: this._xAxis.width(), y: xyPoints[0].y }, point)) {
       return {
-        mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-        mousePointOnGraphicIndex: 0
+        hoverType: HoverType.LINE,
+        hoverIndex: 0
       }
     }
   }

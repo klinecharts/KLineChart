@@ -14,7 +14,7 @@
 
 import OnePointLineGraphicMark from './OnePointLineGraphicMark'
 import { checkPointOnStraightLine } from './graphicHelper'
-import { MousePointOnGraphicType } from './GraphicMark'
+import { HoverType } from './GraphicMark'
 
 export default class HorizontalStraightLine extends OnePointLineGraphicMark {
   _checkMousePointOnLine (point, xyPoints) {
@@ -22,8 +22,8 @@ export default class HorizontalStraightLine extends OnePointLineGraphicMark {
       xyPoints[0], { x: this._xAxis.width(), y: xyPoints[0].y }, point
     )) {
       return {
-        mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-        mousePointOnGraphicIndex: 0
+        hoverType: HoverType.LINE,
+        hoverIndex: 0
       }
     }
   }

@@ -14,19 +14,22 @@
 
 import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
 import { checkPointOnSegmentLine } from './graphicHelper'
-import { MousePointOnGraphicType } from './GraphicMark'
+import { HoverType } from './GraphicMark'
 
 export default class SegmentLine extends TwoPointLineGraphicMark {
   _checkMousePointOnLine (point, xyPoints) {
     if (checkPointOnSegmentLine(xyPoints[0], xyPoints[1], point)) {
       return {
-        mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-        mousePointOnGraphicIndex: 0
+        hoverType: HoverType.LINE,
+        hoverIndex: 0
       }
     }
   }
 
   _generatedDrawLines (xyPoints) {
-    return [xyPoints]
+    if (xyPoints.length === 2) {
+      return [xyPoints]
+    }
+    return []
   }
 }

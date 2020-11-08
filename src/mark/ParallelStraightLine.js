@@ -14,7 +14,7 @@
 
 import ThreePointLineGraphicMark from './ThreePointLineGraphicMark'
 import { checkPointOnStraightLine, getParallelLines } from './graphicHelper'
-import { MousePointOnGraphicType } from './GraphicMark'
+import { HoverType } from './GraphicMark'
 
 export default class ParallelStraightLine extends ThreePointLineGraphicMark {
   _checkMousePointOnLine (point, xyPoints) {
@@ -23,8 +23,8 @@ export default class ParallelStraightLine extends ThreePointLineGraphicMark {
       const points = lines[i]
       if (checkPointOnStraightLine(points[0], points[1], point)) {
         return {
-          mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-          mousePointOnGraphicIndex: i
+          hoverType: HoverType.LINE,
+          hoverIndex: i
         }
       }
     }

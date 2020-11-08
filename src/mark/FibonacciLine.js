@@ -14,7 +14,7 @@
 
 import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
 import { checkPointOnStraightLine } from './graphicHelper'
-import { MousePointOnGraphicType } from './GraphicMark'
+import { HoverType } from './GraphicMark'
 import { formatPrecision } from '../utils/format'
 import { getFont } from '../utils/canvas'
 
@@ -25,8 +25,8 @@ export default class FibonacciLine extends TwoPointLineGraphicMark {
       const points = lines[i]
       if (checkPointOnStraightLine(points[0], points[1], point)) {
         return {
-          mousePointOnGraphicType: MousePointOnGraphicType.LINE,
-          mousePointOnGraphicIndex: i
+          hoverType: HoverType.LINE,
+          hoverIndex: i
         }
       }
     }

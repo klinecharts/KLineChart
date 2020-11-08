@@ -17,10 +17,8 @@ import View from './View'
 export default class GraphicMarkView extends View {
   _draw () {
     const graphicMarks = this._chartData.graphicMarks()
-    for (const key in graphicMarks) {
-      graphicMarks[key].forEach(graphicMark => {
-        graphicMark.draw(this._ctx)
-      })
-    }
+    graphicMarks.forEach(graphicMark => {
+      graphicMark.draw(this._ctx)
+    })
   }
 }

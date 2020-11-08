@@ -13,7 +13,6 @@
  */
 
 import { GraphicMarkDrawStep } from './GraphicMark'
-import { NONE } from './defaultGraphicMarkType'
 import LineGraphicMark from './LineGraphicMark'
 
 export default class OnePointLineGraphicMark extends LineGraphicMark {
@@ -25,15 +24,9 @@ export default class OnePointLineGraphicMark extends LineGraphicMark {
     const xPos = this._xAxis.convertFromPixel(point.x)
     const price = this._yAxis.convertFromPixel(point.y)
     switch (this._drawStep) {
-      case GraphicMarkDrawStep.STEP_DONE: {
-        this._points = [{ xPos, price }]
-        this._drawStep = GraphicMarkDrawStep.STEP_1
-        break
-      }
       case GraphicMarkDrawStep.STEP_1:
       case GraphicMarkDrawStep.STEP_2: {
-        this._points[0].xPos = xPos
-        this._points[0].price = price
+        this._points = [{ xPos, price }]
         break
       }
     }
@@ -49,8 +42,7 @@ export default class OnePointLineGraphicMark extends LineGraphicMark {
         break
       }
       case GraphicMarkDrawStep.STEP_2: {
-        this._drawStep = GraphicMarkDrawStep.STEP_DONE
-        this._chartData.setGraphicMarkType(NONE)
+        this._drawStep = GraphicMarkDrawStep.FINISHED
         break
       }
     }
