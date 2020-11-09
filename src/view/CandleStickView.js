@@ -16,6 +16,7 @@ import TechnicalIndicatorView from './TechnicalIndicatorView'
 import { LineStyle, ChartType } from '../data/options/styleOptions'
 import { drawHorizontalLine, drawVerticalLine, getFont, drawLine } from '../utils/canvas'
 import { formatPrecision, formatValue } from '../utils/format'
+import { isArray } from '../utils/typeChecks'
 
 export default class CandleStickView extends TechnicalIndicatorView {
   _draw () {
@@ -42,6 +43,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
     const from = this._chartData.from()
     const technicalIndicator = this._additionalDataProvider.technicalIndicator()
     const technicalIndicatorResult = technicalIndicator.result
+    let minCloseY = Infinity
     const onDrawing = (x, i, kLineData, halfBarSpace) => {
       const technicalIndicatorData = technicalIndicatorResult[i] || {}
       const average = technicalIndicatorData.average || 0
@@ -56,6 +58,7 @@ export default class CandleStickView extends TechnicalIndicatorView {
       }
       timeLinePoints.push({ x: x, y: closeY })
       timeLineAreaPoints.push({ x: x, y: closeY })
+      minCloseY = Math.min(minCloseY, closeY)
     }
     const onDrawEnd = () => {
       const areaPointLength = timeLineAreaPoints.length
@@ -87,7 +90,19 @@ export default class CandleStickView extends TechnicalIndicatorView {
 
       if (timeLineAreaPoints.length > 0) {
         // 绘制分时线填充区域
-        this._ctx.fillStyle = timeLine.areaFillColor
+        const areaFillColor = timeLine.areaFillColor
+        if (isArray(areaFillColor)) {
+          const gradient = this._ctx.createLinearGradient(0, this._height, 0, minCloseY)
+          try {
+            areaFillColor.forEach(({ offset, color }) => {
+              gradient.addColorStop(offset, color)
+            })
+          } catch (e) {
+          }
+          this._ctx.fillStyle = gradient
+        } else {
+          this._ctx.fillStyle = areaFillColor
+        }
         this._ctx.beginPath()
         this._ctx.moveTo(timeLineAreaPoints[0].x, timeLineAreaPoints[0].y)
         for (let i = 1; i < timeLineAreaPoints.length; i++) {

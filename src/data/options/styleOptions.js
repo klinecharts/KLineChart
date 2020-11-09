@@ -176,7 +176,13 @@ const defaultRealTime = {
   timeLine: {
     color: '#2196F3',
     size: 1,
-    areaFillColor: 'rgba(33, 150, 243, 0.08)'
+    areaFillColor: [{
+      offset: 0,
+      color: 'rgba(33, 150, 243, 0.01)'
+    }, {
+      offset: 1,
+      color: 'rgba(33, 150, 243, 0.2)'
+    }]
   },
   /**
    * 均线

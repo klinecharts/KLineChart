@@ -569,7 +569,13 @@ var defaultRealTime = {
   timeLine: {
     color: '#2196F3',
     size: 1,
-    areaFillColor: 'rgba(33, 150, 243, 0.08)'
+    areaFillColor: [{
+      offset: 0,
+      color: 'rgba(33, 150, 243, 0.01)'
+    }, {
+      offset: 1,
+      color: 'rgba(33, 150, 243, 0.2)'
+    }]
   },
 
   /**
@@ -7953,6 +7959,7 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       var technicalIndicator = this._additionalDataProvider.technicalIndicator();
 
       var technicalIndicatorResult = technicalIndicator.result;
+      var minCloseY = Infinity;
 
       var onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
         var technicalIndicatorData = technicalIndicatorResult[i] || {};
@@ -7991,6 +7998,7 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
           x: x,
           y: closeY
         });
+        minCloseY = Math.min(minCloseY, closeY);
       };
 
       var onDrawEnd = function onDrawEnd() {
@@ -8039,7 +8047,23 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
 
         if (timeLineAreaPoints.length > 0) {
           // 绘制分时线填充区域
-          _this._ctx.fillStyle = timeLine.areaFillColor;
+          var areaFillColor = timeLine.areaFillColor;
+
+          if (isArray(areaFillColor)) {
+            var gradient = _this._ctx.createLinearGradient(0, _this._height, 0, minCloseY);
+
+            try {
+              areaFillColor.forEach(function (_ref) {
+                var offset = _ref.offset,
+                    color = _ref.color;
+                gradient.addColorStop(offset, color);
+              });
+            } catch (e) {}
+
+            _this._ctx.fillStyle = gradient;
+          } else {
+            _this._ctx.fillStyle = areaFillColor;
+          }
 
           _this._ctx.beginPath();
 

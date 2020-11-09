@@ -75,7 +75,13 @@ config = {
     timeLine: {
       color: '#1e88e5',
       size: 1,
-      areaFillColor: 'rgba(30, 136, 229, 0.08)'
+      areaFillColor: [{
+        offset: 0,
+        color: 'rgba(33, 150, 243, 0.01)'
+      }, {
+        offset: 1,
+        color: 'rgba(33, 150, 243, 0.2)'
+      }]
     },
     averageLine: {
       display: true,
