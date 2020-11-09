@@ -1,5 +1,13 @@
 # Change Log
 
+## 5.7.0
+`To be released`
++ 🛠 Refactor marking graphics module.
++ 🆕 Configuration item `realTime.timeLine.areaFillColor` supports gradient.
++ 🆕 Add `dataIndex` in the callback parameter `data` of the `subscribeDrawAction` method.
++ 💄 Optimize the chart display of the y-axis value very small.
+
+
 ## 5.6.0
 `2020-08-29`
 + 🆕 Add `render` property for custom technical indicators.

@@ -1,5 +1,13 @@
 # 版本日志
 
+## 5.7.0
+`待发布`
++ 🛠 重构标记图形模块。
++ 🆕 配置项`realTime.timeLine.areaFillColor`支持渐变。
++ 🆕 `subscribeDrawAction`方法回调参数`data`里新增`dataIndex`。
++ 💄 优化y轴数值很小时图表显示。
+
+
 ## 5.6.0
 `2020-08-29`
 + 🆕 自定义技术指标新增`render`属性。
