@@ -316,6 +316,38 @@ export default class Chart {
   }
 
   /**
+   * 设置是否可以缩放
+   * @param enabled
+   */
+  setZoomEnabled (enabled) {
+    this._chartPane.chartData().setZoomEnabled(enabled)
+  }
+
+  /**
+   * 获取是否可以缩放
+   * @return {boolean}
+   */
+  getZoomEnabled () {
+    return this._chartPane.chartData().zoomEnabled()
+  }
+
+  /**
+   * 设置是否可以拖拽滚动
+   * @param enabled
+   */
+  setScrollEnabled (enabled) {
+    this._chartPane.chartData().setScrollEnabled(enabled)
+  }
+
+  /**
+   * 获取是否可以拖拽滚动
+   * @return {boolean}
+   */
+  getScrollEnabled () {
+    return this._chartPane.chartData().scrollEnabled()
+  }
+
+  /**
    * 订阅绘制事件
    * @param type
    * @param callback

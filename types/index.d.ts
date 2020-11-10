@@ -85,6 +85,10 @@ export declare interface Chart {
   setTimezone(timezone: string): void;
   getTimezone(): string;
   resize(): void;
+  setZoomEnabled(enabled: boolean): void;
+  getZoomEnabled(): boolean;
+  setScrollEnabled(enabled: boolean): void;
+  getScrollEnabled(): boolean;
   setOffsetRightSpace(space: number): void;
   setLeftMinVisibleBarCount(barCount: number): void;
   setRightMinVisibleBarCount(barCount: number): void;

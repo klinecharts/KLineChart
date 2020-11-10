@@ -5,6 +5,7 @@
 + 🛠 重构标记图形模块。
 + 🆕 配置项`realTime.timeLine.areaFillColor`支持渐变。
 + 🆕 `subscribeDrawAction`方法回调参数`data`里新增`dataIndex`。
++ 🆕 新增方法`setZoomEnabled`、`getZoomEnabled`、`setScrollEnabled`和`getScrollEnabled`。
 + 💄 优化y轴数值很小时图表显示。
 
 

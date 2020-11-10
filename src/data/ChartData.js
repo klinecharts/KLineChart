@@ -49,6 +49,11 @@ export default class ChartData {
     // 所有技术指标映射
     this._technicalIndicatorMapping = createTechnicalIndicatorMapping()
 
+    // 是否可以缩放
+    this._zoomEnabled = true
+    // 是否可以拖拽滑动
+    this._scrollEnabled = true
+
     // 价格精度
     this._pricePrecision = 2
     // 数量精度
@@ -461,6 +466,9 @@ export default class ChartData {
    * @param distance
    */
   scroll (distance) {
+    if (!this._scrollEnabled) {
+      return
+    }
     const distanceBarCount = distance / this._dataSpace
     this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount
     this.adjustOffsetBarCount()
@@ -509,6 +517,9 @@ export default class ChartData {
    * @param point
    */
   zoom (scale, point) {
+    if (!this._zoomEnabled) {
+      return
+    }
     if (!point || isValid(point.x)) {
       point = { x: isValid(this._crossHair.x) ? this._crossHair.x : this._totalDataSpace / 2 }
     }
@@ -558,6 +569,38 @@ export default class ChartData {
    */
   invalidate (invalidateLevel) {
     this._invalidateHandler(invalidateLevel)
+  }
+
+  /**
+   * 设置是否可以缩放
+   * @param enabled
+   */
+  setZoomEnabled (enabled) {
+    this._zoomEnabled = enabled
+  }
+
+  /**
+   * 获取是否可以缩放
+   * @return {boolean}
+   */
+  zoomEnabled () {
+    return this._zoomEnabled
+  }
+
+  /**
+   * 设置是否可以拖拽滚动
+   * @param enabled
+   */
+  setScrollEnabled (enabled) {
+    this._scrollEnabled = enabled
+  }
+
+  /**
+   * 获取是否可以拖拽滚动
+   * @return {boolean}
+   */
+  scrollEnabled () {
+    return this._scrollEnabled
   }
 
   /**

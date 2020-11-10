@@ -81,6 +81,19 @@ getTimezone()
 // 注意：此方法会重新计算整个图表各个模块的大小，频繁调用可能会影响到性能，调用请谨慎
 resize()
 
+// 设置是否缩放
+setZoomEnabled(enabled)
+
+// 获取是否可以缩放
+getZoomEnabled()
+
+// 设置是否可以拖拽滚动
+setScrollEnabled(enabled)
+
+// 获取是否可以拖拽滚动
+getScrollEnabled()
+
+
 // 设置图表右边可以空出来的间隙
 setOffsetRightSpace(space)
 

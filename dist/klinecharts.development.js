@@ -4745,7 +4745,11 @@ var ChartData = /*#__PURE__*/function () {
     this._styleOptions = clone(defaultStyleOptions);
     merge(this._styleOptions, styleOptions); // 所有技术指标映射
 
-    this._technicalIndicatorMapping = createTechnicalIndicatorMapping(); // 价格精度
+    this._technicalIndicatorMapping = createTechnicalIndicatorMapping(); // 是否可以缩放
+
+    this._zoomEnabled = true; // 是否可以拖拽滑动
+
+    this._scrollEnabled = true; // 价格精度
 
     this._pricePrecision = 2; // 数量精度
 
@@ -5240,6 +5244,10 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "scroll",
     value: function scroll(distance) {
+      if (!this._scrollEnabled) {
+        return;
+      }
+
       var distanceBarCount = distance / this._dataSpace;
       this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount;
       this.adjustOffsetBarCount();
@@ -5298,6 +5306,10 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "zoom",
     value: function zoom(scale, point) {
+      if (!this._zoomEnabled) {
+        return;
+      }
+
       if (!point || isValid(point.x)) {
         point = {
           x: isValid(this._crossHair.x) ? this._crossHair.x : this._totalDataSpace / 2
@@ -5360,6 +5372,46 @@ var ChartData = /*#__PURE__*/function () {
     key: "invalidate",
     value: function invalidate(invalidateLevel) {
       this._invalidateHandler(invalidateLevel);
+    }
+    /**
+     * 设置是否可以缩放
+     * @param enabled
+     */
+
+  }, {
+    key: "setZoomEnabled",
+    value: function setZoomEnabled(enabled) {
+      this._zoomEnabled = enabled;
+    }
+    /**
+     * 获取是否可以缩放
+     * @return {boolean}
+     */
+
+  }, {
+    key: "zoomEnabled",
+    value: function zoomEnabled() {
+      return this._zoomEnabled;
+    }
+    /**
+     * 设置是否可以拖拽滚动
+     * @param enabled
+     */
+
+  }, {
+    key: "setScrollEnabled",
+    value: function setScrollEnabled(enabled) {
+      this._scrollEnabled = enabled;
+    }
+    /**
+     * 获取是否可以拖拽滚动
+     * @return {boolean}
+     */
+
+  }, {
+    key: "scrollEnabled",
+    value: function scrollEnabled() {
+      return this._scrollEnabled;
     }
     /**
      * 设置加载更多
@@ -11837,6 +11889,46 @@ var Chart = /*#__PURE__*/function () {
     key: "removeAllGraphicMark",
     value: function removeAllGraphicMark() {
       this._chartPane.chartData().clearGraphicMark();
+    }
+    /**
+     * 设置是否可以缩放
+     * @param enabled
+     */
+
+  }, {
+    key: "setZoomEnabled",
+    value: function setZoomEnabled(enabled) {
+      this._chartPane.chartData().setZoomEnabled(enabled);
+    }
+    /**
+     * 获取是否可以缩放
+     * @return {boolean}
+     */
+
+  }, {
+    key: "getZoomEnabled",
+    value: function getZoomEnabled() {
+      return this._chartPane.chartData().zoomEnabled();
+    }
+    /**
+     * 设置是否可以拖拽滚动
+     * @param enabled
+     */
+
+  }, {
+    key: "setScrollEnabled",
+    value: function setScrollEnabled(enabled) {
+      this._chartPane.chartData().setScrollEnabled(enabled);
+    }
+    /**
+     * 获取是否可以拖拽滚动
+     * @return {boolean}
+     */
+
+  }, {
+    key: "getScrollEnabled",
+    value: function getScrollEnabled() {
+      return this._chartPane.chartData().scrollEnabled();
     }
     /**
      * 订阅绘制事件
