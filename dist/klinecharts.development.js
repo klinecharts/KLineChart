@@ -568,7 +568,7 @@ var defaultCandleStick = {
 var defaultRealTime = {
   timeLine: {
     color: '#2196F3',
-    size: 1,
+    size: 2,
     areaFillColor: [{
       offset: 0,
       color: 'rgba(33, 150, 243, 0.01)'
@@ -594,17 +594,17 @@ var defaultRealTime = {
 
 var defaultTechnicalIndicator = {
   bar: {
-    upColor: '#26A69A',
-    downColor: '#EF5350',
+    upColor: 'rgba(38, 166, 154, .65)',
+    downColor: 'rgba(239, 83, 80, .65)',
     noChangeColor: '#888888'
   },
   line: {
     size: 1,
-    colors: ['#D9D9D9', '#FF9600', '#F632FF', '#2196F3', '#9157DB']
+    colors: ['#D9D9D9', '#F5A623', '#9D65C9', '#2196F3', '#E11D74']
   },
   circle: {
-    upColor: '#26A69A',
-    downColor: '#EF5350',
+    upColor: 'rgba(38, 166, 154, .65)',
+    downColor: 'rgba(239, 83, 80, .65)',
     noChangeColor: '#888888'
   },
   lastValueMark: {
@@ -836,13 +836,13 @@ var defaultGraphicMark = {
     size: 1
   },
   point: {
-    backgroundColor: '#2196F3',
-    borderColor: '#2196F3',
+    backgroundColor: '#181818',
+    borderColor: '#fff',
     borderSize: 1,
-    radius: 4,
-    activeBackgroundColor: '#2196F3',
-    activeBorderColor: '#2196F3',
-    activeBorderSize: 1,
+    radius: 5,
+    activeBackgroundColor: '#181818',
+    activeBorderColor: '#fff',
+    activeBorderSize: 2,
     activeRadius: 6
   },
   text: {
