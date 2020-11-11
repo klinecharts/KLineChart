@@ -352,12 +352,14 @@ export default class ChartPane {
       // 这里判断单个数据应该添加到哪个位置
       const timestamp = +formatValue(data, 'timestamp', 0)
       const lastDataTimestamp = +formatValue(dataList[dataSize - 1], 'timestamp', 0)
-      let pos = dataSize
-      if (timestamp === lastDataTimestamp) {
-        pos = dataSize - 1
+      if (timestamp >= lastDataTimestamp) {
+        let pos = dataSize
+        if (timestamp === lastDataTimestamp) {
+          pos = dataSize - 1
+        }
+        this._chartData.addData(data, pos)
+        this._calcAllPaneTechnicalIndicator()
       }
-      this._chartData.addData(data, pos)
-      this._calcAllPaneTechnicalIndicator()
     }
   }
 

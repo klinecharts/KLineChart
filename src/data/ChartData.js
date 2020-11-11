@@ -626,7 +626,7 @@ export default class ChartData {
    * @param graphicMark
    */
   addGraphicMark (graphicMark) {
-    const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
+    const lastGraphicMark = this._graphicMarks.last()
     if (lastGraphicMark && lastGraphicMark.isDrawing()) {
       this._graphicMarks[this._graphicMarks.length - 1] = graphicMark
     } else {

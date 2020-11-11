@@ -5443,7 +5443,7 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "addGraphicMark",
     value: function addGraphicMark(graphicMark) {
-      var lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1];
+      var lastGraphicMark = this._graphicMarks.last();
 
       if (lastGraphicMark && lastGraphicMark.isDrawing()) {
         this._graphicMarks[this._graphicMarks.length - 1] = graphicMark;
@@ -10377,7 +10377,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
 
         var graphicMarks = this._chartData.graphicMarks();
 
-        var lastGraphicMark = graphicMarks[graphicMarks.length - 1];
+        var lastGraphicMark = graphicMarks.last();
 
         if (lastGraphicMark && lastGraphicMark.isDrawing()) {
           lastGraphicMark.mouseMoveForDrawing(point);
@@ -10462,7 +10462,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
     value: function pressedMouseMoveEvent(event) {
       var graphicMarks = this._chartData.graphicMarks();
 
-      var lastGraphicMark = graphicMarks[graphicMarks.length - 1];
+      var lastGraphicMark = graphicMarks.last();
 
       if ((!lastGraphicMark || !lastGraphicMark.isDrawing()) && this._pressedGraphicMark) {
         this._pressedGraphicMark.mousePressedMove({
@@ -11276,15 +11276,18 @@ var ChartPane = /*#__PURE__*/function () {
 
         var timestamp = +formatValue(data, 'timestamp', 0);
         var lastDataTimestamp = +formatValue(dataList[dataSize - 1], 'timestamp', 0);
-        var pos = dataSize;
 
-        if (timestamp === lastDataTimestamp) {
-          pos = dataSize - 1;
+        if (timestamp >= lastDataTimestamp) {
+          var pos = dataSize;
+
+          if (timestamp === lastDataTimestamp) {
+            pos = dataSize - 1;
+          }
+
+          this._chartData.addData(data, pos);
+
+          this._calcAllPaneTechnicalIndicator();
         }
-
-        this._chartData.addData(data, pos);
-
-        this._calcAllPaneTechnicalIndicator();
       }
     }
     /**
@@ -11511,6 +11514,30 @@ var ChartPane = /*#__PURE__*/function () {
 
   return ChartPane;
 }();
+
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* eslint-disable no-extend-native */
+
+/**
+ * 数字扩展，获取数组最后一个数据
+ * @return {*}
+ */
+Array.prototype.last = function () {
+  return this[this.length - 1];
+};
 
 var Chart = /*#__PURE__*/function () {
   function Chart(container, styleOptions) {

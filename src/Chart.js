@@ -15,6 +15,7 @@
 import ChartPane, { CANDLE_STICK_PANE_TAG } from './pane/ChartPane'
 import { clone, isNumber, isValid, isArray } from './utils/typeChecks'
 import { DEV } from './utils/env'
+import './utils/extension'
 
 export default class Chart {
   constructor (container, styleOptions) {

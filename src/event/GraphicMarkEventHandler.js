@@ -42,7 +42,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
     if (!this._waitingForMouseMoveAnimationFrame) {
       this._waitingForMouseMoveAnimationFrame = true
       const graphicMarks = this._chartData.graphicMarks()
-      const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
+      const lastGraphicMark = graphicMarks.last()
       if (lastGraphicMark && lastGraphicMark.isDrawing()) {
         lastGraphicMark.mouseMoveForDrawing(point)
         lastGraphicMark.checkMousePointOnGraphic(point)
@@ -100,7 +100,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
 
   pressedMouseMoveEvent (event) {
     const graphicMarks = this._chartData.graphicMarks()
-    const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
+    const lastGraphicMark = graphicMarks.last()
     if ((!lastGraphicMark || !lastGraphicMark.isDrawing()) && this._pressedGraphicMark) {
       this._pressedGraphicMark.mousePressedMove({ x: event.localX, y: event.localY })
       this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK)
