@@ -6290,6 +6290,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
           _this3._drawActionExecute(DrawActionType.DRAW_TECHNICAL_INDICATOR, {
             ctx: _this3._ctx,
             kLineData: kLineData,
+            dataIndex: i,
             technicalIndicatorData: technicalIndicatorData,
             technicalIndicatorType: technicalIndicator.name,
             coordinate: _objectSpread2({
@@ -11928,13 +11929,13 @@ var Chart = /*#__PURE__*/function () {
       this._chartPane.chartData().setZoomEnabled(enabled);
     }
     /**
-     * 获取是否可以缩放
+     * 是否可以缩放
      * @return {boolean}
      */
 
   }, {
-    key: "getZoomEnabled",
-    value: function getZoomEnabled() {
+    key: "isZoomEnabled",
+    value: function isZoomEnabled() {
       return this._chartPane.chartData().zoomEnabled();
     }
     /**
@@ -11948,13 +11949,13 @@ var Chart = /*#__PURE__*/function () {
       this._chartPane.chartData().setScrollEnabled(enabled);
     }
     /**
-     * 获取是否可以拖拽滚动
+     * 是否可以拖拽滚动
      * @return {boolean}
      */
 
   }, {
-    key: "getScrollEnabled",
-    value: function getScrollEnabled() {
+    key: "isScrollEnabled",
+    value: function isScrollEnabled() {
       return this._chartPane.chartData().scrollEnabled();
     }
     /**

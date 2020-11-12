@@ -84,14 +84,14 @@ resize()
 // 设置是否缩放
 setZoomEnabled(enabled)
 
-// 获取是否可以缩放
-getZoomEnabled()
+// 是否可以缩放
+isZoomEnabled()
 
 // 设置是否可以拖拽滚动
 setScrollEnabled(enabled)
 
-// 获取是否可以拖拽滚动
-getScrollEnabled()
+// 是否可以拖拽滚动
+isScrollEnabled()
 
 
 // 设置图表右边可以空出来的间隙

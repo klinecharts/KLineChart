@@ -5,7 +5,7 @@
 + 🛠 Refactor marking graphics module.
 + 🆕 Configuration item `realTime.timeLine.areaFillColor` supports gradient.
 + 🆕 Add `dataIndex` in the callback parameter `data` of the `subscribeDrawAction` method.
-+ 🆕 Add api `setZoomEnabled`, `getZoomEnabled`, `setScrollEnabled` and `getScrollEnabled`.
++ 🆕 Add api `setZoomEnabled` and `isZoomEnabled`, `setScrollEnabled` and `isScrollEnabled`.
 + 💄 Optimize the chart display of the y-axis value very small.
 
 

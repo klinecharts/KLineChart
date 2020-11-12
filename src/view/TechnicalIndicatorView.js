@@ -189,6 +189,7 @@ export default class TechnicalIndicatorView extends View {
           this._drawActionExecute(DrawActionType.DRAW_TECHNICAL_INDICATOR, {
             ctx: this._ctx,
             kLineData,
+            dataIndex: i,
             technicalIndicatorData,
             technicalIndicatorType: technicalIndicator.name,
             coordinate: { x, ...coordinateY },

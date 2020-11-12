@@ -67,6 +67,7 @@ export declare type DrawActionType = 'drawCandle' | 'drawTechnicalIndicator'
 export declare interface DrawActionCallbackParams {
   ctx: CanvasRenderingContext2D;
   kLineData: KLineData;
+  dataIndex: number;
   technicalIndicatorData?: any
   technicalIndicatorType?: string
   coordinate: any;
@@ -86,9 +87,9 @@ export declare interface Chart {
   getTimezone(): string;
   resize(): void;
   setZoomEnabled(enabled: boolean): void;
-  getZoomEnabled(): boolean;
+  isZoomEnabled(): boolean;
   setScrollEnabled(enabled: boolean): void;
-  getScrollEnabled(): boolean;
+  isScrollEnabled(): boolean;
   setOffsetRightSpace(space: number): void;
   setLeftMinVisibleBarCount(barCount: number): void;
   setRightMinVisibleBarCount(barCount: number): void;

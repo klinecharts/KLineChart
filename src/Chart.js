@@ -325,10 +325,10 @@ export default class Chart {
   }
 
   /**
-   * 获取是否可以缩放
+   * 是否可以缩放
    * @return {boolean}
    */
-  getZoomEnabled () {
+  isZoomEnabled () {
     return this._chartPane.chartData().zoomEnabled()
   }
 
@@ -341,10 +341,10 @@ export default class Chart {
   }
 
   /**
-   * 获取是否可以拖拽滚动
+   * 是否可以拖拽滚动
    * @return {boolean}
    */
-  getScrollEnabled () {
+  isScrollEnabled () {
     return this._chartPane.chartData().scrollEnabled()
   }
 
