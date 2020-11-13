@@ -1,7 +1,7 @@
 # Change Log
 
 ## 5.7.0
-`To be released`
+`2020-11-13`
 + 🛠 Refactor marking graphics module.
 + 🆕 Configuration item `realTime.timeLine.areaFillColor` supports gradient.
 + 🆕 Add `dataIndex` in the callback parameter `data` of the `subscribeDrawAction` method.

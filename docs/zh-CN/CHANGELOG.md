@@ -1,7 +1,7 @@
 # 版本日志
 
 ## 5.7.0
-`待发布`
+`2020-11-13`
 + 🛠 重构标记图形模块。
 + 🆕 配置项`realTime.timeLine.areaFillColor`支持渐变。
 + 🆕 `subscribeDrawAction`方法回调参数`data`里新增`dataIndex`。
