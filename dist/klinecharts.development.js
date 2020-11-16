@@ -1,6 +1,6 @@
 /**
  * @license
- * KLineChart v5.7.0
+ * KLineChart v6.0.0
  * Copyright (c) 2019 lihu.
  * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
@@ -429,61 +429,53 @@ var YAxisType = {
   PERCENTAGE: 'percentage'
 };
 /**
- * 主图类型
- * @type {{TIME_LINE: string, CANDLE: string}}
- */
-
-var ChartType = {
-  REAL_TIME: 'real_time',
-  CANDLE_STICK: 'candle_stick'
-};
-/**
  * 蜡烛图样式
- * @type {{STROKE: string, DECREASING_STROKE: string, OHLC: string, INCREASING_STROKE: string, SOLID: string}}
+ * @type {{AREA: string, OHLC: string, CANDLE_STROKE: string, CANDLE_SOLID: string, CANDLE_DOWN_STROKE: string, CANDLE_UP_STROKE: string}}
  */
 
-var CandleStickStyle = {
-  SOLID: 'solid',
-  STROKE: 'stroke',
-  UP_STROKE: 'up_stroke',
-  DOWN_STROKE: 'down_stroke',
-  OHLC: 'ohlc'
+var CandleType = {
+  CANDLE_SOLID: 'candle_solid',
+  CANDLE_STROKE: 'candle_stroke',
+  CANDLE_UP_STROKE: 'candle_up_stroke',
+  CANDLE_DOWN_STROKE: 'candle_down_stroke',
+  OHLC: 'ohlc',
+  AREA: 'area'
 };
 /**
- * 提示文字显示规则
+ * 说明显示规则
  * @type {{FOLLOW_CROSS: string, NONE: string, ALWAYS: string}}
  */
 
-var FloatLayerPromptDisplayRule = {
+var LegendShowRule = {
   ALWAYS: 'always',
   FOLLOW_CROSS: 'follow_cross',
   NONE: 'none'
 };
 /**
  * 主图数据提示显示类型
- * @type {{FLOAT: string, FIXED: string}}
+ * @type {{RECT: string, STANDARD: string}}
  */
 
-var FloatLayerPromptCandleStickTextDisplayType = {
+var LegendCandleShowType = {
   RECT: 'rect',
   STANDARD: 'standard'
 };
 /**
  * 默认网格配置
- * @type {{horizontal: {size: number, color: string, dashValue: number[], display: boolean, style: string}, display: boolean, vertical: {size: number, color: string, dashValue: number[], display: boolean, style: string}}}
+ * @type {{horizontal: {size: number, color: string, dashValue: number[], show: boolean, style: string}, show: boolean, vertical: {size: number, color: string, dashValue: number[], show: boolean, style: string}}}
  */
 
 var defaultGrid = {
-  display: true,
+  show: true,
   horizontal: {
-    display: true,
+    show: true,
     size: 1,
     color: '#393939',
     style: LineStyle.DASH,
     dashValue: [2, 2]
   },
   vertical: {
-    display: false,
+    show: false,
     size: 1,
     color: '#393939',
     style: LineStyle.DASH,
@@ -491,17 +483,13 @@ var defaultGrid = {
   }
 };
 /**
- * 默认蜡烛柱图配置
- * @type {{bar: {upColor: string, style: string, downColor: string}}}
+ * 默认蜡烛柱图样式配置
+ * @type {{area: {fillColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number}, bar: {noChangeColor: string, upColor: string, downColor: string}, legend: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
 
-var defaultCandleStick = {
+var defaultCandle = {
+  type: CandleType.CANDLE_SOLID,
   bar: {
-    /**
-     * 蜡烛样式
-     */
-    style: CandleStickStyle.SOLID,
-
     /**
      * 上涨颜色
      */
@@ -517,10 +505,21 @@ var defaultCandleStick = {
      */
     noChangeColor: '#888888'
   },
+  area: {
+    lineSize: 2,
+    lineColor: '#2196F3',
+    fillColor: [{
+      offset: 0,
+      color: 'rgba(33, 150, 243, 0.01)'
+    }, {
+      offset: 1,
+      color: 'rgba(33, 150, 243, 0.2)'
+    }]
+  },
   priceMark: {
-    display: true,
+    show: true,
     high: {
-      display: true,
+      show: true,
       color: '#D9D9D9',
       textMargin: 5,
       textSize: 10,
@@ -528,7 +527,7 @@ var defaultCandleStick = {
       textWeight: 'normal'
     },
     low: {
-      display: true,
+      show: true,
       color: '#D9D9D9',
       textMargin: 5,
       textSize: 10,
@@ -536,18 +535,18 @@ var defaultCandleStick = {
       textWeight: 'normal'
     },
     last: {
-      display: true,
+      show: true,
       upColor: '#26A69A',
       downColor: '#EF5350',
       noChangeColor: '#888888',
       line: {
-        display: true,
+        show: true,
         style: LineStyle.DASH,
         dashValue: [4, 4],
         size: 1
       },
       text: {
-        display: true,
+        show: true,
         size: 12,
         paddingLeft: 2,
         paddingTop: 2,
@@ -558,38 +557,40 @@ var defaultCandleStick = {
         weight: 'normal'
       }
     }
-  }
-};
-/**
- * 默认的分时图配置
- * @type {{timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}}
- */
-
-var defaultRealTime = {
-  timeLine: {
-    color: '#2196F3',
-    size: 2,
-    areaFillColor: [{
-      offset: 0,
-      color: 'rgba(33, 150, 243, 0.01)'
-    }, {
-      offset: 1,
-      color: 'rgba(33, 150, 243, 0.2)'
-    }]
   },
-
-  /**
-   * 均线
-   */
-  averageLine: {
-    display: true,
-    color: '#FF9600',
-    size: 1
+  legend: {
+    showRule: LegendShowRule.ALWAYS,
+    showType: LegendCandleShowType.STANDARD,
+    labels: ['时间', '开', '收', '高', '低', '成交量'],
+    values: null,
+    rect: {
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingTop: 0,
+      paddingBottom: 6,
+      offsetLeft: 8,
+      offsetTop: 8,
+      offsetRight: 8,
+      borderRadius: 4,
+      borderSize: 1,
+      borderColor: '#3f4254',
+      fillColor: 'rgba(17, 17, 17, .3)'
+    },
+    text: {
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      color: '#D9D9D9',
+      marginLeft: 8,
+      marginTop: 6,
+      marginRight: 8,
+      marginBottom: 0
+    }
   }
 };
 /**
- * 默认的技术指标图配置
- * @type {{decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}}
+ * 默认的技术指标样式配置
+ * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, circle: {noChangeColor: string, upColor: string, downColor: string}}}
  */
 
 var defaultTechnicalIndicator = {
@@ -600,7 +601,7 @@ var defaultTechnicalIndicator = {
   },
   line: {
     size: 1,
-    colors: ['#D9D9D9', '#F5A623', '#9D65C9', '#2196F3', '#E11D74']
+    colors: ['#FF9600', '#9D65C9', '#2196F3', '#E11D74', '#01C5C4']
   },
   circle: {
     upColor: 'rgba(38, 166, 154, .65)',
@@ -608,27 +609,42 @@ var defaultTechnicalIndicator = {
     noChangeColor: '#888888'
   },
   lastValueMark: {
-    display: false,
-    textColor: '#ffffff',
-    textSize: 12,
-    textFamily: 'Helvetica Neue',
-    textWeight: 'normal',
-    textPaddingLeft: 3,
-    textPaddingTop: 2,
-    textPaddingRight: 3,
-    textPaddingBottom: 2
+    show: false,
+    color: '#ffffff',
+    size: 12,
+    family: 'Helvetica Neue',
+    weight: 'normal',
+    paddingLeft: 3,
+    paddingTop: 2,
+    paddingRight: 3,
+    paddingBottom: 2
+  },
+  legend: {
+    showRule: LegendShowRule.ALWAYS,
+    text: {
+      showName: true,
+      showParams: true,
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      color: '#D9D9D9',
+      marginTop: 6,
+      marginRight: 8,
+      marginBottom: 0,
+      marginLeft: 8
+    }
   }
 };
 /**
  * 默认x轴配置
- * @type {{minHeight: number, maxHeight: number, axisLine: {color: string, size: number, display: boolean}, display: boolean, tickText: {margin: number, color: string, size: number, display: boolean}, tickLine: {size: number, color: string, display: boolean, length: number}}}
+ * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, tickText: {paddingBottom: number, color: string, size: number, show: boolean, weight: string, paddingTop: number, family: string}, height: null, tickLine: {size: number, color: string, show: boolean, length: number}}}
  */
 
 var defaultXAxis = {
   /**
    * 是否显示整个轴
    */
-  display: true,
+  show: true,
 
   /**
    * 高度
@@ -639,7 +655,7 @@ var defaultXAxis = {
    * 轴线配置
    */
   axisLine: {
-    display: true,
+    show: true,
     color: '#888888',
     size: 1
   },
@@ -648,7 +664,7 @@ var defaultXAxis = {
    * tick文字
    */
   tickText: {
-    display: true,
+    show: true,
     color: '#D9D9D9',
     size: 12,
     family: 'Helvetica Neue',
@@ -658,7 +674,7 @@ var defaultXAxis = {
   },
   // tick线
   tickLine: {
-    display: true,
+    show: true,
     size: 1,
     length: 3,
     color: '#888888'
@@ -666,14 +682,14 @@ var defaultXAxis = {
 };
 /**
  * 默认y轴配置
- * @type {{axisLine: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tickText: {margin: number, color: string, size: number, display: boolean, position: string}, type: string, maxWidth: number, tickLine: {size: number, color: string, display: boolean, length: number}}}
+ * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, width: null, position: string, tickText: {color: string, size: number, paddingRight: number, show: boolean, weight: string, family: string, paddingLeft: number}, type: string, inside: boolean, tickLine: {size: number, color: string, show: boolean, length: number}}}
  */
 
 var defaultYAxis = {
   /**
    * 是否显示整个轴
    */
-  display: true,
+  show: true,
 
   /**
    * 宽度
@@ -699,7 +715,7 @@ var defaultYAxis = {
    * 轴线配置
    */
   axisLine: {
-    display: true,
+    show: true,
     color: '#888888',
     size: 1
   },
@@ -708,7 +724,7 @@ var defaultYAxis = {
    * tick文字
    */
   tickText: {
-    display: true,
+    show: true,
     color: '#D9D9D9',
     size: 12,
     family: 'Helvetica Neue',
@@ -718,116 +734,66 @@ var defaultYAxis = {
   },
   // tick线
   tickLine: {
-    display: true,
+    show: true,
     size: 1,
     length: 3,
     color: '#888888'
   }
 };
-/**
- * 默认浮层配置
- * @type {{display: boolean}}
- */
-
-var defaultFloatLayer = {
-  crossHair: {
-    display: true,
-    horizontal: {
-      display: true,
-      line: {
-        display: true,
-        style: LineStyle.DASH,
-        dashValue: [4, 2],
-        size: 1,
-        color: '#888888'
-      },
-      text: {
-        display: true,
-        color: '#D9D9D9',
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 2,
-        paddingBottom: 2,
-        borderSize: 1,
-        borderColor: '#505050',
-        backgroundColor: '#505050'
-      }
+var defaultCrosshair = {
+  show: true,
+  horizontal: {
+    show: true,
+    line: {
+      show: true,
+      style: LineStyle.DASH,
+      dashValue: [4, 2],
+      size: 1,
+      color: '#888888'
     },
-    vertical: {
-      display: true,
-      line: {
-        display: true,
-        style: LineStyle.DASH,
-        dashValue: [4, 2],
-        size: 1,
-        color: '#888888'
-      },
-      text: {
-        display: true,
-        color: '#D9D9D9',
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 2,
-        paddingBottom: 2,
-        borderSize: 1,
-        borderColor: '#505050',
-        backgroundColor: '#505050'
-      }
+    text: {
+      show: true,
+      color: '#D9D9D9',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 2,
+      paddingRight: 2,
+      paddingTop: 2,
+      paddingBottom: 2,
+      borderSize: 1,
+      borderColor: '#505050',
+      backgroundColor: '#505050'
     }
   },
-  prompt: {
-    displayRule: FloatLayerPromptDisplayRule.ALWAYS,
-    candleStick: {
-      showType: FloatLayerPromptCandleStickTextDisplayType.STANDARD,
-      labels: ['时间', '开', '收', '高', '低', '成交量'],
-      values: null,
-      rect: {
-        paddingLeft: 0,
-        paddingRight: 0,
-        paddingTop: 0,
-        paddingBottom: 6,
-        left: 8,
-        top: 8,
-        right: 8,
-        borderRadius: 4,
-        borderSize: 1,
-        borderColor: '#3f4254',
-        fillColor: 'rgba(17, 17, 17, .3)'
-      },
-      text: {
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        color: '#D9D9D9',
-        marginLeft: 8,
-        marginTop: 6,
-        marginRight: 8,
-        marginBottom: 0
-      }
+  vertical: {
+    show: true,
+    line: {
+      show: true,
+      style: LineStyle.DASH,
+      dashValue: [4, 2],
+      size: 1,
+      color: '#888888'
     },
-    technicalIndicator: {
-      text: {
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        color: '#D9D9D9',
-        marginTop: 6,
-        marginRight: 8,
-        marginBottom: 0,
-        marginLeft: 8
-      }
+    text: {
+      show: true,
+      color: '#D9D9D9',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 2,
+      paddingRight: 2,
+      paddingTop: 2,
+      paddingBottom: 2,
+      borderSize: 1,
+      borderColor: '#505050',
+      backgroundColor: '#505050'
     }
   }
 };
 /**
  * 默认图形标记配置
- * @type {{line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
+ * @type {{line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
  */
 
 var defaultGraphicMark = {
@@ -868,13 +834,12 @@ var defaultSeparator = {
 };
 var defaultStyleOptions = {
   grid: defaultGrid,
-  candleStick: defaultCandleStick,
-  realTime: defaultRealTime,
+  candle: defaultCandle,
   technicalIndicator: defaultTechnicalIndicator,
   xAxis: defaultXAxis,
   yAxis: defaultYAxis,
   separator: defaultSeparator,
-  floatLayer: defaultFloatLayer,
+  crosshair: defaultCrosshair,
   graphicMark: defaultGraphicMark
 };
 
@@ -3292,60 +3257,13 @@ var GraphicMark = /*#__PURE__*/function () {
 }();
 
 /**
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
-
- * http://www.apache.org/licenses/LICENSE-2.0
-
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/**
- * 获取屏幕比
- * @param canvas
- * @returns {number}
- */
-function getPixelRatio(canvas) {
-  return canvas.ownerDocument && canvas.ownerDocument.defaultView && canvas.ownerDocument.defaultView.devicePixelRatio || 1;
-}
-/**
- * 测量文字的宽度
- * @param ctx
- * @param text
- * @returns {number}
- */
-
-function calcTextWidth(ctx, text) {
-  return Math.round(ctx.measureText(text).width);
-}
-/**
- * 获取字体
- * @param fontSize
- * @param fontFamily
- * @param fontWeight
- * @returns {string}
- */
-
-function getFont() {
-  var fontSize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 12;
-  var fontWeight = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'normal';
-  var fontFamily = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'Helvetica Neue';
-  return "".concat(fontWeight, " ").concat(fontSize, "px ").concat(fontFamily);
-}
-/**
  * 绘制水平直线
  * @param ctx
  * @param y
  * @param left
  * @param right
  */
-
-function drawHorizontalLine(ctx, y, left, right) {
+function renderHorizontalLine(ctx, y, left, right) {
   ctx.beginPath();
   var correction = ctx.lineWidth % 2 ? 0.5 : 0;
   ctx.moveTo(left, y + correction);
@@ -3361,7 +3279,7 @@ function drawHorizontalLine(ctx, y, left, right) {
  * @param bottom
  */
 
-function drawVerticalLine(ctx, x, top, bottom) {
+function renderVerticalLine(ctx, x, top, bottom) {
   ctx.beginPath();
   var correction = ctx.lineWidth % 2 ? 0.5 : 0;
   ctx.moveTo(x + correction, top);
@@ -3372,17 +3290,17 @@ function drawVerticalLine(ctx, x, top, bottom) {
 /**
  * 绘制线
  * @param ctx
- * @param drawFuc
+ * @param renderFuc
  */
 
-function drawLine(ctx, drawFuc) {
+function renderLine(ctx, renderFuc) {
   ctx.save();
 
   if (ctx.lineWidth % 2) {
     ctx.translate(0.5, 0.5);
   }
 
-  drawFuc();
+  renderFuc();
   ctx.restore();
 }
 
@@ -3754,7 +3672,7 @@ var LineGraphicMark = /*#__PURE__*/function (_GraphicMark) {
         switch (lineType) {
           case LineType.COMMON:
             {
-              drawLine(ctx, function () {
+              renderLine(ctx, function () {
                 ctx.beginPath();
                 ctx.moveTo(points[0].x, points[0].y);
                 ctx.lineTo(points[1].x, points[1].y);
@@ -3766,13 +3684,13 @@ var LineGraphicMark = /*#__PURE__*/function (_GraphicMark) {
 
           case LineType.HORIZONTAL:
             {
-              drawHorizontalLine(ctx, points[0].y, points[0].x, points[1].x);
+              renderHorizontalLine(ctx, points[0].y, points[0].x, points[1].x);
               break;
             }
 
           case LineType.VERTICAL:
             {
-              drawVerticalLine(ctx, points[0].x, points[0].y, points[1].y);
+              renderVerticalLine(ctx, points[0].x, points[0].y, points[1].y);
               break;
             }
         }
@@ -4347,6 +4265,53 @@ var StraightLine = /*#__PURE__*/function (_TwoPointLineGraphicM) {
   return StraightLine;
 }(TwoPointLineGraphicMark);
 
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * 获取屏幕比
+ * @param canvas
+ * @returns {number}
+ */
+function getPixelRatio(canvas) {
+  return canvas.ownerDocument && canvas.ownerDocument.defaultView && canvas.ownerDocument.defaultView.devicePixelRatio || 1;
+}
+/**
+ * 测量文字的宽度
+ * @param ctx
+ * @param text
+ * @returns {number}
+ */
+
+function calcTextWidth(ctx, text) {
+  return Math.round(ctx.measureText(text).width);
+}
+/**
+ * 创建字体
+ * @param fontSize
+ * @param fontFamily
+ * @param fontWeight
+ * @returns {string}
+ */
+
+function createFont() {
+  var fontSize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 12;
+  var fontWeight = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'normal';
+  var fontFamily = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'Helvetica Neue';
+  return "".concat(fontWeight, " ").concat(fontSize, "px ").concat(fontFamily);
+}
+
 var PriceLine = /*#__PURE__*/function (_OnePointLineGraphicM) {
   _inherits(PriceLine, _OnePointLineGraphicM);
 
@@ -4389,7 +4354,7 @@ var PriceLine = /*#__PURE__*/function (_OnePointLineGraphicM) {
       var price = this._yAxis.convertFromPixel(point.y);
 
       var priceText = formatPrecision(price, pricePrecision);
-      ctx.font = getFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family);
+      ctx.font = createFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family);
       ctx.fillStyle = graphicMark.text.color;
       ctx.fillText(priceText, point.x + graphicMark.text.marginLeft, point.y - graphicMark.text.marginBottom);
     }
@@ -4643,7 +4608,7 @@ var FibonacciLine = /*#__PURE__*/function (_TwoPointLineGraphicM) {
 
       var pricePrecision = this._chartData.pricePrecision();
 
-      ctx.font = getFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family);
+      ctx.font = createFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family);
       ctx.fillStyle = graphicMark.text.color;
       var percentTextArray = ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)'];
       lines.forEach(function (points, index) {
@@ -4789,7 +4754,7 @@ var ChartData = /*#__PURE__*/function () {
 
     this._to = 0; // 十字光标信息
 
-    this._crossHair = {}; // 用来记录开始拖拽时向右偏移的数量
+    this._crosshair = {}; // 用来记录开始拖拽时向右偏移的数量
 
     this._preOffsetRightBarCount = 0; // 拖拽标记图形标记
 
@@ -5200,9 +5165,9 @@ var ChartData = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "crossHair",
-    value: function crossHair() {
-      return this._crossHair;
+    key: "crosshair",
+    value: function crosshair() {
+      return this._crosshair;
     }
     /**
      * 设置十字光标点所在的pane的标识
@@ -5211,19 +5176,19 @@ var ChartData = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "setCrossHairPointPaneTag",
-    value: function setCrossHairPointPaneTag(point, paneTag) {
-      var crossHair = {};
+    key: "setCrosshairPointPaneTag",
+    value: function setCrosshairPointPaneTag(point, paneTag) {
+      var crosshair = {};
 
       if (point) {
-        crossHair.x = point.x;
-        crossHair.y = point.y;
-        crossHair.paneTag = this._crossHair.paneTag;
+        crosshair.x = point.x;
+        crosshair.y = point.y;
+        crosshair.paneTag = this._crosshair.paneTag;
       }
 
       if (paneTag !== undefined) {
-        crossHair.paneTag = paneTag;
-        this._crossHair = crossHair;
+        crosshair.paneTag = paneTag;
+        this._crosshair = crosshair;
         this.invalidate(InvalidateLevel.FLOAT_LAYER);
       }
     }
@@ -5312,7 +5277,7 @@ var ChartData = /*#__PURE__*/function () {
 
       if (!point || isValid(point.x)) {
         point = {
-          x: isValid(this._crossHair.x) ? this._crossHair.x : this._totalDataSpace / 2
+          x: isValid(this._crosshair.x) ? this._crosshair.x : this._totalDataSpace / 2
         };
       }
 
@@ -5725,7 +5690,7 @@ var Widget = /*#__PURE__*/function () {
 
     this._mainView = this._createMainView(this._element, props);
     this._expandView = this._createExpandView(this._element, props);
-    this._floatLayerView = this._createFloatLayerView(this._element, props);
+    this._crosshairView = this._createCrosshairView(this._element, props);
   }
   /**
    * 初始化element
@@ -5773,8 +5738,8 @@ var Widget = /*#__PURE__*/function () {
      */
 
   }, {
-    key: "_createFloatLayerView",
-    value: function _createFloatLayerView(container, props) {}
+    key: "_createCrosshairView",
+    value: function _createCrosshairView(container, props) {}
   }, {
     key: "getElement",
     value: function getElement() {
@@ -5787,7 +5752,7 @@ var Widget = /*#__PURE__*/function () {
 
       this._mainView.setWidth(width);
 
-      this._floatLayerView.setWidth(width);
+      this._crosshairView.setWidth(width);
 
       this._expandView && this._expandView.setWidth(width);
     }
@@ -5798,7 +5763,7 @@ var Widget = /*#__PURE__*/function () {
 
       this._mainView.setHeight(height);
 
-      this._floatLayerView.setHeight(height);
+      this._crosshairView.setHeight(height);
 
       this._expandView && this._expandView.setHeight(height);
     }
@@ -5820,7 +5785,7 @@ var Widget = /*#__PURE__*/function () {
 
       this._mainView.layout();
 
-      this._floatLayerView.layout();
+      this._crosshairView.layout();
 
       this._expandView && this._expandView.layout();
     }
@@ -5841,7 +5806,7 @@ var Widget = /*#__PURE__*/function () {
 
         case InvalidateLevel.FLOAT_LAYER:
           {
-            this._floatLayerView.flush();
+            this._crosshairView.flush();
 
             break;
           }
@@ -5851,7 +5816,7 @@ var Widget = /*#__PURE__*/function () {
           {
             this._mainView.flush();
 
-            this._floatLayerView.flush();
+            this._crosshairView.flush();
 
             this._expandView && this._expandView.flush();
             break;
@@ -5860,14 +5825,14 @@ var Widget = /*#__PURE__*/function () {
     }
     /**
      * 将widget转换成图片
-     * @param includeFloatLayer
+     * @param includeCrosshair
      * @param includeGraphicMark
      * @returns {HTMLCanvasElement}
      */
 
   }, {
     key: "getImage",
-    value: function getImage(includeFloatLayer, includeGraphicMark) {
+    value: function getImage(includeCrosshair, includeGraphicMark) {
       var canvas = document.createElement('canvas');
       var ctx = canvas.getContext('2d');
       var pixelRatio = getPixelRatio(canvas);
@@ -5882,8 +5847,8 @@ var Widget = /*#__PURE__*/function () {
         ctx.drawImage(this._expandView.getImage(), 0, 0, this._width, this._height);
       }
 
-      if (includeFloatLayer) {
-        ctx.drawImage(this._floatLayerView.getImage(), 0, 0, this._width, this._height);
+      if (includeCrosshair) {
+        ctx.drawImage(this._crosshairView.getImage(), 0, 0, this._width, this._height);
       }
 
       return canvas;
@@ -5935,7 +5900,7 @@ function cancelAnimationFrame(id) {
 
 /**
  * 绘制类型
- * @type {{BAR: string, LINE: string, CUSTOM: string, CIRCLE: string}}
+ * @type {{BAR: string, LINE: string, CIRCLE: string}}
  */
 
 var PlotType = {
@@ -6108,7 +6073,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
         }
 
         this._yAxis.ticks().forEach(function (tick) {
-          drawHorizontalLine(_this2._ctx, tick.y, 0, _this2._width);
+          renderHorizontalLine(_this2._ctx, tick.y, 0, _this2._width);
         });
       }
 
@@ -6125,7 +6090,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
         }
 
         this._xAxis.ticks().forEach(function (tick) {
-          drawVerticalLine(_this2._ctx, tick.x, 0, _this2._height);
+          renderVerticalLine(_this2._ctx, tick.x, 0, _this2._height);
         });
       }
 
@@ -6165,7 +6130,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
           height: this._height,
           dataSpace: this._chartData.dataSpace(),
           barSpace: this._chartData.barSpace()
-        }, this._chartData.styleOptions(), this._xAxis, this._yAxis, this._yAxis.isCandleStickYAxis());
+        }, this._chartData.styleOptions(), this._xAxis, this._yAxis, this._yAxis.isCandleYAxis());
 
         this._ctx.restore();
       }
@@ -6178,7 +6143,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
 
       var baseValueY = this._yAxis.convertToPixel(baseValue);
 
-      var isCandleStickYAxis = this._yAxis.isCandleStickYAxis();
+      var isCandleYAxis = this._yAxis.isCandleYAxis();
 
       this._ctx.lineWidth = 1;
 
@@ -6186,8 +6151,8 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
         var technicalIndicatorData = technicalIndicatorResult[i] || {};
         var lineValueIndex = 0;
 
-        if (technicalIndicator.shouldOhlc && !isCandleStickYAxis) {
-          _this3._drawCandleStickBar(x, halfBarSpace, barSpace, i, kLineData, technicalIndicatorOptions.bar, CandleStickStyle.OHLC);
+        if (technicalIndicator.shouldOhlc && !isCandleYAxis) {
+          _this3._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, technicalIndicatorOptions.bar, CandleType.OHLC);
         }
 
         var coordinateY = {};
@@ -6302,7 +6267,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
             },
             barSpace: barSpace,
             halfBarSpace: halfBarSpace,
-            isCandleStick: isCandleStickYAxis
+            isCandle: isCandleYAxis
           });
         });
       }, function () {
@@ -6323,7 +6288,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
       var colors = technicalIndicatorOptions.line.colors;
       var colorSize = (colors || []).length;
       this._ctx.lineWidth = technicalIndicatorOptions.line.size;
-      drawLine(this._ctx, function () {
+      renderLine(this._ctx, function () {
         lines.forEach(function (lineItem, i) {
           _this4._ctx.strokeStyle = colors[i % colorSize];
 
@@ -6434,12 +6399,12 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
      */
 
   }, {
-    key: "_drawCandleStickBar",
-    value: function _drawCandleStickBar(x, halfBarSpace, barSpace, dataIndex, kLineData, barOptions, barStyle) {
-      var open = kLineData.open;
-      var close = kLineData.close;
-      var high = kLineData.high;
-      var low = kLineData.low;
+    key: "_drawCandleBar",
+    value: function _drawCandleBar(x, halfBarSpace, barSpace, dataIndex, kLineData, barOptions, barStyle) {
+      var open = kLineData.open,
+          close = kLineData.close,
+          high = kLineData.high,
+          low = kLineData.low;
 
       if (close > open) {
         this._ctx.strokeStyle = barOptions.upColor;
@@ -6470,21 +6435,21 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
       var barHeight = Math.max(1, lowStartY - highEndY);
 
       switch (barStyle) {
-        case CandleStickStyle.SOLID:
+        case CandleType.CANDLE_SOLID:
           {
             this._ctx.fillRect(x - halfBarSpace, highEndY, barSpace, barHeight);
 
             break;
           }
 
-        case CandleStickStyle.STROKE:
+        case CandleType.CANDLE_STROKE:
           {
             this._ctx.strokeRect(x - halfBarSpace + 0.5, highEndY, barSpace - 1, barHeight);
 
             break;
           }
 
-        case CandleStickStyle.UP_STROKE:
+        case CandleType.CANDLE_UP_STROKE:
           {
             if (close > open) {
               this._ctx.strokeRect(x - halfBarSpace + 0.5, highEndY, barSpace - 1, barHeight);
@@ -6495,7 +6460,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
             break;
           }
 
-        case CandleStickStyle.DOWN_STROKE:
+        case CandleType.CANDLE_DOWN_STROKE:
           {
             if (close > open) {
               this._ctx.fillRect(x - halfBarSpace, highEndY, barSpace, barHeight);
@@ -6535,7 +6500,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
         },
         barSpace: barSpace,
         halfBarSpace: halfBarSpace,
-        isCandleStick: this._yAxis.isCandleStickYAxis()
+        isCandle: this._yAxis.isCandleYAxis()
       });
     }
     /**
@@ -6564,15 +6529,28 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
   return TechnicalIndicatorView;
 }(View);
 
-var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
-  _inherits(TechnicalIndicatorFloatLayerView, _View);
+/**
+ * 绘制文字
+ * @param ctx
+ * @param color
+ * @param x
+ * @param y
+ * @param text
+ */
+function renderText(ctx, color, x, y, text) {
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y);
+}
 
-  var _super = _createSuper(TechnicalIndicatorFloatLayerView);
+var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
+  _inherits(TechnicalIndicatorCrosshairView, _View);
 
-  function TechnicalIndicatorFloatLayerView(container, chartData, xAxis, yAxis, additionalDataProvider) {
+  var _super = _createSuper(TechnicalIndicatorCrosshairView);
+
+  function TechnicalIndicatorCrosshairView(container, chartData, xAxis, yAxis, additionalDataProvider) {
     var _this;
 
-    _classCallCheck(this, TechnicalIndicatorFloatLayerView);
+    _classCallCheck(this, TechnicalIndicatorCrosshairView);
 
     _this = _super.call(this, container, chartData);
     _this._xAxis = xAxis;
@@ -6581,10 +6559,10 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
     return _this;
   }
 
-  _createClass(TechnicalIndicatorFloatLayerView, [{
+  _createClass(TechnicalIndicatorCrosshairView, [{
     key: "_draw",
     value: function _draw() {
-      var crossHair = this._chartData.crossHair();
+      var crosshair = this._chartData.crosshair();
 
       var dataList = this._chartData.dataList();
 
@@ -6593,8 +6571,8 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
       var technicalIndicatorResult = technicalIndicator.result;
       var realDataPos;
 
-      if (isValid(crossHair.x)) {
-        realDataPos = this._xAxis.convertFromPixel(crossHair.x);
+      if (isValid(crosshair.x)) {
+        realDataPos = this._xAxis.convertFromPixel(crosshair.x);
       } else {
         realDataPos = dataList.length - 1;
       }
@@ -6611,21 +6589,28 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
       var technicalIndicatorData = technicalIndicatorResult[dataPos];
 
       if (kLineData) {
+        var styleOptions = this._chartData.styleOptions();
+
+        var crosshairOptions = styleOptions.crosshair;
+
         var realDataPosX = this._xAxis.convertToPixel(realDataPos);
 
-        this._drawCrossHairHorizontalLine(crossHair);
-
-        this._drawCrossHairVerticalLine(crossHair, realDataPosX);
-
-        var displayRule = this._chartData.styleOptions().floatLayer.prompt.displayRule;
-
-        if (displayRule === FloatLayerPromptDisplayRule.ALWAYS || displayRule === FloatLayerPromptDisplayRule.FOLLOW_CROSS && crossHair.paneTag) {
-          this._drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, realDataPos >= 0 && realDataPos <= dataList.length - 1 && crossHair.paneTag);
+        if (crosshair.paneTag === this._additionalDataProvider.tag()) {
+          // 绘制十字光标水平线
+          this._drawCrosshairLine(crosshairOptions, 'horizontal', crosshair.y, 0, this._width, renderHorizontalLine);
         }
+
+        if (crosshair.paneTag) {
+          // 绘制十字光标垂直线
+          this._drawCrosshairLine(crosshairOptions, 'vertical', realDataPosX, 0, this._height, renderVerticalLine);
+        }
+
+        this._drawLegend(crosshair, kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, realDataPos >= 0 && realDataPos <= dataList.length - 1 && crosshair.paneTag);
       }
     }
     /**
-     * 绘制提示
+     * 绘制图例
+     * @param crosshair
      * @param kLineData
      * @param technicalIndicatorData
      * @param realDataPos
@@ -6635,84 +6620,47 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
      */
 
   }, {
-    key: "_drawPrompt",
-    value: function _drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
-      this._drawTechnicalIndicatorPromptText(technicalIndicatorData, realDataPos, technicalIndicator);
+    key: "_drawLegend",
+    value: function _drawLegend(crosshair, kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
+      this._drawTechnicalIndicatorLegend(crosshair, technicalIndicatorData, realDataPos, technicalIndicator);
     }
     /**
-     * 绘制十字光标水平线
-     * @param crossHair
+     * 绘制十字光标线
+     * @param crosshairOptions
+     * @param optionsKey
+     * @param fixedCoordinate
+     * @param startCoordinate
+     * @param endCoordinate
+     * @param drawLine
      * @private
      */
 
   }, {
-    key: "_drawCrossHairHorizontalLine",
-    value: function _drawCrossHairHorizontalLine(crossHair) {
-      if (crossHair.paneTag !== this._additionalDataProvider.tag()) {
-        return;
-      }
+    key: "_drawCrosshairLine",
+    value: function _drawCrosshairLine(crosshairOptions, optionsKey, fixedCoordinate, startCoordinate, endCoordinate, drawLine) {
+      var crosshairDirectionOptions = crosshairOptions[optionsKey];
+      var crosshairLineOptions = crosshairDirectionOptions.line;
 
-      var crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair;
-
-      var crossHairHorizontal = crossHairOptions.horizontal;
-      var crossHairHorizontalLine = crossHairHorizontal.line;
-
-      if (!crossHairOptions.display || !crossHairHorizontal.display || !crossHairHorizontalLine.display) {
-        return;
-      }
-
-      this._ctx.save(); // 绘制十字光标水平线
-
-
-      this._ctx.lineWidth = crossHairHorizontalLine.size;
-      this._ctx.strokeStyle = crossHairHorizontalLine.color;
-
-      if (crossHairHorizontalLine.style === LineStyle.DASH) {
-        this._ctx.setLineDash(crossHairHorizontalLine.dashValue);
-      }
-
-      drawHorizontalLine(this._ctx, crossHair.y, 0, this._width);
-
-      this._ctx.restore();
-    }
-    /**
-     * 绘制十字光标垂直线
-     * @param crossHair
-     * @param realDataPosX
-     * @private
-     */
-
-  }, {
-    key: "_drawCrossHairVerticalLine",
-    value: function _drawCrossHairVerticalLine(crossHair, realDataPosX) {
-      if (!crossHair.paneTag) {
-        return;
-      }
-
-      var crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair;
-
-      var crossHairVertical = crossHairOptions.vertical;
-      var crossHairVerticalLine = crossHairVertical.line;
-
-      if (!crossHairOptions.display || !crossHairVertical.display || !crossHairVerticalLine.display) {
+      if (!crosshairOptions.show || !crosshairDirectionOptions.show || !crosshairLineOptions.show) {
         return;
       }
 
       this._ctx.save();
 
-      this._ctx.lineWidth = crossHairVerticalLine.size;
-      this._ctx.strokeStyle = crossHairVerticalLine.color;
+      this._ctx.lineWidth = crosshairLineOptions.size;
+      this._ctx.strokeStyle = crosshairLineOptions.color;
 
-      if (crossHairVerticalLine.style === LineStyle.DASH) {
-        this._ctx.setLineDash(crossHairVerticalLine.dashValue);
+      if (crosshairLineOptions.style === LineStyle.DASH) {
+        this._ctx.setLineDash(crosshairLineOptions.dashValue);
       }
 
-      drawVerticalLine(this._ctx, realDataPosX, 0, this._height);
+      drawLine(this._ctx, fixedCoordinate, startCoordinate, endCoordinate);
 
       this._ctx.restore();
     }
     /**
-     * 绘制指标提示文字
+     * 绘制指标图例
+     * @param crosshair
      * @param technicalIndicatorData
      * @param realDataPos
      * @param technicalIndicator
@@ -6721,84 +6669,96 @@ var TechnicalIndicatorFloatLayerView = /*#__PURE__*/function (_View) {
      */
 
   }, {
-    key: "_drawTechnicalIndicatorPromptText",
-    value: function _drawTechnicalIndicatorPromptText(technicalIndicatorData, realDataPos, technicalIndicator) {
-      var offsetTop = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    key: "_drawTechnicalIndicatorLegend",
+    value: function _drawTechnicalIndicatorLegend(crosshair, technicalIndicatorData, realDataPos, technicalIndicator) {
+      var offsetTop = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
 
       var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
-      var data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
-      var colors = technicalIndicatorOptions.line.colors;
+      var technicalIndicatorLegendOptions = technicalIndicatorOptions.legend;
 
-      var dataList = this._chartData.dataList();
+      if (this._shouldDrawLegend(crosshair, technicalIndicatorLegendOptions)) {
+        var legendData = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
+        var colors = technicalIndicatorOptions.line.colors;
 
-      var cbData = {
-        preData: {
-          kLineData: dataList[realDataPos - 1],
-          technicalIndicatorData: technicalIndicator.result[realDataPos - 1]
-        },
-        currentData: {
-          kLineData: dataList[realDataPos],
-          technicalIndicatorData: technicalIndicator.result[realDataPos]
+        var dataList = this._chartData.dataList();
+
+        var cbData = {
+          preData: {
+            kLineData: dataList[realDataPos - 1],
+            technicalIndicatorData: technicalIndicator.result[realDataPos - 1]
+          },
+          currentData: {
+            kLineData: dataList[realDataPos],
+            technicalIndicatorData: technicalIndicator.result[realDataPos]
+          }
+        };
+        var plots = technicalIndicator.plots;
+        var technicalIndicatorLegendTextOptions = technicalIndicatorLegendOptions.text;
+        var nameText = legendData.name;
+        var labels = legendData.labels;
+        var values = legendData.values;
+        var textMarginLeft = technicalIndicatorLegendTextOptions.marginLeft;
+        var textMarginRight = technicalIndicatorLegendTextOptions.marginRight;
+        var labelX = textMarginLeft;
+        var labelY = technicalIndicatorLegendTextOptions.marginTop + offsetTop;
+        var textSize = technicalIndicatorLegendTextOptions.size;
+        var textColor = technicalIndicatorLegendTextOptions.color;
+        var colorSize = colors.length;
+        this._ctx.textBaseline = 'top';
+        this._ctx.font = createFont(textSize, technicalIndicatorLegendTextOptions.weight, technicalIndicatorLegendTextOptions.family);
+        var nameTextWidth = calcTextWidth(this._ctx, nameText);
+        renderText(this._ctx, textColor, labelX, labelY, nameText);
+        labelX += textMarginLeft + nameTextWidth;
+        var lineCount = 0;
+        var valueColor;
+
+        for (var i = 0; i < labels.length; i++) {
+          switch (plots[i].type) {
+            case PlotType.CIRCLE:
+              {
+                valueColor = plots[i].color && plots[i].color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.circle.noChangeColor;
+                break;
+              }
+
+            case PlotType.BAR:
+              {
+                valueColor = plots[i].color && plots[i].color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
+                break;
+              }
+
+            case PlotType.LINE:
+              {
+                valueColor = colors[lineCount % colorSize] || textColor;
+                lineCount++;
+                break;
+              }
+          }
+
+          var text = "".concat(labels[i], ": ").concat(values[i].value || 'n/a');
+          var textWidth = calcTextWidth(this._ctx, text);
+          renderText(this._ctx, valueColor, labelX, labelY, text);
+          labelX += textMarginLeft + textMarginRight + textWidth;
         }
-      };
-      var plots = technicalIndicator.plots;
-
-      var floatLayerPromptTechnicalIndicatorText = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator.text;
-
-      var nameText = data.name;
-      var labels = data.labels;
-      var values = data.values;
-      var textMarginLeft = floatLayerPromptTechnicalIndicatorText.marginLeft;
-      var textMarginRight = floatLayerPromptTechnicalIndicatorText.marginRight;
-      var labelX = textMarginLeft;
-      var labelY = floatLayerPromptTechnicalIndicatorText.marginTop + offsetTop;
-      var textSize = floatLayerPromptTechnicalIndicatorText.size;
-      var textColor = floatLayerPromptTechnicalIndicatorText.color;
-      var colorSize = colors.length;
-      this._ctx.textBaseline = 'top';
-      this._ctx.font = getFont(textSize, floatLayerPromptTechnicalIndicatorText.weight, floatLayerPromptTechnicalIndicatorText.family);
-      var nameTextWidth = calcTextWidth(this._ctx, nameText);
-      this._ctx.fillStyle = textColor;
-
-      this._ctx.fillText(nameText, labelX, labelY);
-
-      labelX += textMarginLeft + nameTextWidth;
-      var lineCount = 0;
-
-      for (var i = 0; i < labels.length; i++) {
-        switch (plots[i].type) {
-          case PlotType.CIRCLE:
-            {
-              this._ctx.fillStyle = plots[i].color && plots[i].color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.circle.noChangeColor;
-              break;
-            }
-
-          case PlotType.BAR:
-            {
-              this._ctx.fillStyle = plots[i].color && plots[i].color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
-              break;
-            }
-
-          case PlotType.LINE:
-            {
-              this._ctx.fillStyle = colors[lineCount % colorSize] || textColor;
-              lineCount++;
-              break;
-            }
-        }
-
-        var text = "".concat(labels[i], ": ").concat(values[i].value || 'n/a');
-        var textWidth = calcTextWidth(this._ctx, text);
-
-        this._ctx.fillText(text, labelX, labelY);
-
-        labelX += textMarginLeft + textMarginRight + textWidth;
       }
+    }
+    /**
+     * 是否需要绘制图例
+     * @param crosshair
+     * @param legendOptions
+     * @return {boolean|boolean|*}
+     * @private
+     */
+
+  }, {
+    key: "_shouldDrawLegend",
+    value: function _shouldDrawLegend(crosshair, legendOptions) {
+      var showRule = legendOptions.showRule;
+      return showRule === LegendShowRule.ALWAYS || showRule === LegendShowRule.FOLLOW_CROSS && crosshair.paneTag;
     }
   }]);
 
-  return TechnicalIndicatorFloatLayerView;
+  return TechnicalIndicatorCrosshairView;
 }(View);
 
 var TechnicalIndicatorWidget = /*#__PURE__*/function (_Widget) {
@@ -6818,14 +6778,113 @@ var TechnicalIndicatorWidget = /*#__PURE__*/function (_Widget) {
       return new TechnicalIndicatorView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
     }
   }, {
-    key: "_createFloatLayerView",
-    value: function _createFloatLayerView(container, props) {
-      return new TechnicalIndicatorFloatLayerView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
+    key: "_createCrosshairView",
+    value: function _createCrosshairView(container, props) {
+      return new TechnicalIndicatorCrosshairView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
     }
   }]);
 
   return TechnicalIndicatorWidget;
 }(Widget);
+
+/**
+ * 绘制带边框并填充的矩形
+ * @param ctx
+ * @param fillColor
+ * @param borderColor
+ * @param borderSize
+ * @param x
+ * @param y
+ * @param width
+ * @param height
+ */
+function renderStrokeFillRect(ctx, fillColor, borderColor, borderSize, x, y, width, height) {
+  renderFillRect(ctx, fillColor, x, y, width, height);
+  renderStrokeRect(ctx, borderColor, borderSize, x, y, width, height);
+}
+/**
+ * 绘制空心矩形
+ * @param ctx
+ * @param borderColor
+ * @param borderSize
+ * @param x
+ * @param y
+ * @param width
+ * @param height
+ */
+
+function renderStrokeRect(ctx, borderColor, borderSize, x, y, width, height) {
+  ctx.lineWidth = borderSize;
+  ctx.strokeStyle = borderColor;
+  ctx.strokeRect(x, y, width, height);
+}
+/**
+ * 绘制填充的矩形
+ * @param ctx
+ * @param color
+ * @param x
+ * @param y
+ * @param width
+ * @param height
+ */
+
+function renderFillRect(ctx, color, x, y, width, height) {
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, width, height);
+}
+/**
+ * 绘制圆角空心矩形
+ * @param ctx
+ * @param borderColor
+ * @param borderSize
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param r
+ */
+
+function renderStrokeRoundRect(ctx, borderColor, borderSize, x, y, w, h, r) {
+  ctx.lineWidth = borderSize;
+  ctx.strokeStyle = borderColor;
+  renderRoundRect(ctx, x, y, w, h, r);
+  ctx.stroke();
+}
+/**
+ * 绘制填充圆角矩形
+ * @param ctx
+ * @param color
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param r
+ */
+
+function renderFillRoundRect(ctx, color, x, y, w, h, r) {
+  ctx.fillStyle = color;
+  renderRoundRect(ctx, x, y, w, h, r);
+  ctx.fill();
+}
+/**
+ * 绘制圆角矩形
+ * @param ctx
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param r
+ */
+
+function renderRoundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
 
 var YAxisView = /*#__PURE__*/function (_View) {
   _inherits(YAxisView, _View);
@@ -6848,7 +6907,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
     value: function _draw() {
       var yAxisOptions = this._chartData.styleOptions().yAxis;
 
-      if (yAxisOptions.display) {
+      if (yAxisOptions.show) {
         this._drawAxisLine(yAxisOptions);
 
         this._drawTickLines(yAxisOptions);
@@ -6865,7 +6924,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
     value: function _drawAxisLine(yAxisOptions) {
       var axisLine = yAxisOptions.axisLine;
 
-      if (!axisLine.display) {
+      if (!axisLine.show) {
         return;
       }
 
@@ -6879,7 +6938,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
         x = this._width - 1;
       }
 
-      drawVerticalLine(this._ctx, x, 0, this._height);
+      renderVerticalLine(this._ctx, x, 0, this._height);
     }
   }, {
     key: "_drawTickLines",
@@ -6888,7 +6947,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
 
       var tickLine = yAxisOptions.tickLine;
 
-      if (!tickLine.display) {
+      if (!tickLine.show) {
         return;
       }
 
@@ -6901,7 +6960,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
       if (this._isDrawFromStart(yAxisOptions)) {
         startX = 0;
 
-        if (yAxisOptions.axisLine.display) {
+        if (yAxisOptions.axisLine.show) {
           startX += yAxisOptions.axisLine.size;
         }
 
@@ -6909,7 +6968,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
       } else {
         startX = this._width;
 
-        if (yAxisOptions.axisLine.display) {
+        if (yAxisOptions.axisLine.show) {
           startX -= yAxisOptions.axisLine.size;
         }
 
@@ -6917,7 +6976,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
       }
 
       this._yAxis.ticks().forEach(function (tick) {
-        drawHorizontalLine(_this2._ctx, tick.y, startX, endX);
+        renderHorizontalLine(_this2._ctx, tick.y, startX, endX);
       });
     }
   }, {
@@ -6927,19 +6986,19 @@ var YAxisView = /*#__PURE__*/function (_View) {
 
       var tickText = yAxisOptions.tickText;
 
-      if (!tickText.display) {
+      if (!tickText.show) {
         return;
       }
 
       var tickLine = yAxisOptions.tickLine;
-      var tickLineDisplay = tickLine.display;
+      var tickLineDisplay = tickLine.show;
       var tickLineLength = tickLine.length;
       var labelX;
 
       if (this._isDrawFromStart(yAxisOptions)) {
         labelX = tickText.paddingLeft;
 
-        if (yAxisOptions.axisLine.display) {
+        if (yAxisOptions.axisLine.show) {
           labelX += yAxisOptions.axisLine.size;
         }
 
@@ -6951,7 +7010,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
       } else {
         labelX = this._width - tickText.paddingRight;
 
-        if (yAxisOptions.axisLine.display) {
+        if (yAxisOptions.axisLine.show) {
           labelX -= yAxisOptions.axisLine.size;
         }
 
@@ -6963,7 +7022,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
       }
 
       this._ctx.textBaseline = 'middle';
-      this._ctx.font = getFont(tickText.size, tickText.weight, tickText.family);
+      this._ctx.font = createFont(tickText.size, tickText.weight, tickText.family);
       this._ctx.fillStyle = tickText.color;
 
       this._yAxis.ticks().forEach(function (tick) {
@@ -6983,9 +7042,9 @@ var YAxisView = /*#__PURE__*/function (_View) {
     value: function _drawTechnicalIndicatorLastValue(yAxisOptions) {
       var _this4 = this;
 
-      var technicalIndicatorStyleOptions = this._chartData.styleOptions().technicalIndicator;
+      var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
-      var lastValueMarkStyleOptions = technicalIndicatorStyleOptions.lastValueMark;
+      var lastValueMarkOptions = technicalIndicatorOptions.lastValueMark;
 
       var technicalIndicator = this._additionalDataProvider.technicalIndicator();
 
@@ -6993,7 +7052,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
       var dataSize = technicalIndicatorResult.length;
       var technicalIndicatorData = technicalIndicatorResult[dataSize - 1];
 
-      if (!lastValueMarkStyleOptions.display || !technicalIndicatorData) {
+      if (!lastValueMarkOptions.show || !technicalIndicatorData) {
         return;
       }
 
@@ -7011,7 +7070,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
         }
       };
       var precision = technicalIndicator.precision;
-      var colors = technicalIndicatorStyleOptions.line.colors || [];
+      var colors = technicalIndicatorOptions.line.colors || [];
       var colorSize = colors.length;
       var lineCount = 0;
       plots.forEach(function (plot) {
@@ -7021,13 +7080,13 @@ var YAxisView = /*#__PURE__*/function (_View) {
         switch (plot.type) {
           case PlotType.CIRCLE:
             {
-              backgroundColor = plot.color && plot.color(cbData, technicalIndicatorStyleOptions) || technicalIndicatorStyleOptions.circle.noChangeColor;
+              backgroundColor = plot.color && plot.color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.circle.noChangeColor;
               break;
             }
 
           case PlotType.BAR:
             {
-              backgroundColor = plot.color && plot.color(cbData, technicalIndicatorStyleOptions) || technicalIndicatorStyleOptions.bar.noChangeColor;
+              backgroundColor = plot.color && plot.color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
               break;
             }
 
@@ -7039,7 +7098,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
         }
 
         if (isValid(value)) {
-          _this4._drawMarkLabel(yAxisOptions, value, precision, lastValueMarkStyleOptions.textSize, lastValueMarkStyleOptions.textWeight, lastValueMarkStyleOptions.textFamily, lastValueMarkStyleOptions.textColor, backgroundColor, lastValueMarkStyleOptions.textPaddingLeft, lastValueMarkStyleOptions.textPaddingTop, lastValueMarkStyleOptions.textPaddingRight, lastValueMarkStyleOptions.textPaddingBottom);
+          _this4._drawMarkLabel(yAxisOptions, value, precision, lastValueMarkOptions.textSize, lastValueMarkOptions.textWeight, lastValueMarkOptions.textFamily, lastValueMarkOptions.textColor, backgroundColor, lastValueMarkOptions.textPaddingLeft, lastValueMarkOptions.textPaddingTop, lastValueMarkOptions.textPaddingRight, lastValueMarkOptions.textPaddingBottom);
         }
       });
     }
@@ -7051,38 +7110,41 @@ var YAxisView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawLastPriceLabel",
     value: function _drawLastPriceLabel(yAxisOptions) {
-      if (!this._yAxis.isCandleStickYAxis()) {
+      if (!this._yAxis.isCandleYAxis()) {
         return;
       }
 
-      var priceMark = this._chartData.styleOptions().candleStick.priceMark;
+      var priceMarkOptions = this._chartData.styleOptions().candle.priceMark;
 
-      var lastPriceMark = priceMark.last;
+      var lastPriceMarkOptions = priceMarkOptions.last;
+
+      if (!priceMarkOptions.show || !lastPriceMarkOptions.show || !lastPriceMarkOptions.text.show) {
+        return;
+      }
 
       var dataList = this._chartData.dataList();
 
-      var dataSize = dataList.length;
+      var kLineData = dataList.last();
 
-      if (!priceMark.display || !lastPriceMark.display || !lastPriceMark.text.display || dataSize === 0) {
+      if (!kLineData) {
         return;
       }
 
-      var kLineData = dataList[dataSize - 1];
       var close = kLineData.close;
       var open = kLineData.open;
       var backgroundColor;
 
       if (close > open) {
-        backgroundColor = lastPriceMark.upColor;
+        backgroundColor = lastPriceMarkOptions.upColor;
       } else if (close < open) {
-        backgroundColor = lastPriceMark.downColor;
+        backgroundColor = lastPriceMarkOptions.downColor;
       } else {
-        backgroundColor = lastPriceMark.noChangeColor;
+        backgroundColor = lastPriceMarkOptions.noChangeColor;
       }
 
-      var priceMarkText = lastPriceMark.text;
+      var priceMarkTextOptions = lastPriceMarkOptions.text;
 
-      this._drawMarkLabel(yAxisOptions, close, this._chartData.pricePrecision(), priceMarkText.size, priceMarkText.weight, priceMarkText.family, priceMarkText.color, backgroundColor, priceMarkText.paddingLeft, priceMarkText.paddingTop, priceMarkText.paddingRight, priceMarkText.paddingBottom);
+      this._drawMarkLabel(yAxisOptions, close, this._chartData.pricePrecision(), priceMarkTextOptions.size, priceMarkTextOptions.weight, priceMarkTextOptions.family, priceMarkTextOptions.color, backgroundColor, priceMarkTextOptions.paddingLeft, priceMarkTextOptions.paddingTop, priceMarkTextOptions.paddingRight, priceMarkTextOptions.paddingBottom);
     }
     /**
      * 绘制标记label
@@ -7121,7 +7183,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
         }
       }
 
-      this._ctx.font = getFont(textSize, textWeight, textFamily);
+      this._ctx.font = createFont(textSize, textWeight, textFamily);
       var rectWidth = calcTextWidth(this._ctx, text) + textPaddingLeft + textPaddingRight;
       var rectHeight = textPaddingTop + textSize + textPaddingBottom;
       var rectStartX;
@@ -7132,14 +7194,9 @@ var YAxisView = /*#__PURE__*/function (_View) {
         rectStartX = this._width - rectWidth;
       }
 
-      this._ctx.fillStyle = backgroundColor;
-
-      this._ctx.fillRect(rectStartX, valueY - textPaddingTop - textSize / 2, rectWidth, rectHeight);
-
-      this._ctx.fillStyle = textColor;
+      renderFillRect(this._ctx, backgroundColor, rectStartX, valueY - textPaddingTop - textSize / 2, rectWidth, rectHeight);
       this._ctx.textBaseline = 'middle';
-
-      this._ctx.fillText(text, rectStartX + textPaddingLeft, valueY);
+      renderText(this._ctx, textColor, rectStartX + textPaddingLeft, valueY, text);
     }
     /**
      * 判断是否从开始点绘制
@@ -7156,15 +7213,15 @@ var YAxisView = /*#__PURE__*/function (_View) {
   return YAxisView;
 }(View);
 
-var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
-  _inherits(YAxisFloatLayerView, _View);
+var YAxisCrosshairView = /*#__PURE__*/function (_View) {
+  _inherits(YAxisCrosshairView, _View);
 
-  var _super = _createSuper(YAxisFloatLayerView);
+  var _super = _createSuper(YAxisCrosshairView);
 
-  function YAxisFloatLayerView(container, chartData, yAxis, additionalDataProvider) {
+  function YAxisCrosshairView(container, chartData, yAxis, additionalDataProvider) {
     var _this;
 
-    _classCallCheck(this, YAxisFloatLayerView);
+    _classCallCheck(this, YAxisCrosshairView);
 
     _this = _super.call(this, container, chartData);
     _this._yAxis = yAxis;
@@ -7172,7 +7229,7 @@ var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
     return _this;
   }
 
-  _createClass(YAxisFloatLayerView, [{
+  _createClass(YAxisCrosshairView, [{
     key: "_draw",
     value: function _draw() {
       this._drawCrossHairLabel();
@@ -7180,53 +7237,53 @@ var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawCrossHairLabel",
     value: function _drawCrossHairLabel() {
-      var crossHair = this._chartData.crossHair();
+      var crosshair = this._chartData.crosshair();
 
-      if (crossHair.paneTag !== this._additionalDataProvider.tag() || this._chartData.dataList().length === 0) {
+      if (crosshair.paneTag !== this._additionalDataProvider.tag() || this._chartData.dataList().length === 0) {
         return;
       }
 
-      var crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair;
+      var styleOptions = this._chartData.styleOptions();
 
-      var crossHairHorizontal = crossHairOptions.horizontal;
-      var crossHairHorizontalText = crossHairHorizontal.text;
+      var crosshairOptions = styleOptions.crosshair;
+      var crosshairHorizontalOptions = crosshairOptions.horizontal;
+      var crosshairHorizontalTextOptions = crosshairHorizontalOptions.text;
 
-      if (!crossHairOptions.display || !crossHairHorizontal.display || !crossHairHorizontalText.display) {
+      if (!crosshairOptions.show || !crosshairHorizontalOptions.show || !crosshairHorizontalTextOptions.show) {
         return;
       }
 
-      var value = this._yAxis.convertFromPixel(crossHair.y);
+      var value = this._yAxis.convertFromPixel(crosshair.y);
 
-      var yAxisDataLabel;
+      var text;
 
       if (this._yAxis.isPercentageYAxis()) {
         var fromClose = this._chartData.dataList()[this._chartData.from()].close;
 
-        yAxisDataLabel = "".concat(((value - fromClose) / fromClose * 100).toFixed(2), "%");
+        text = "".concat(((value - fromClose) / fromClose * 100).toFixed(2), "%");
       } else {
         var technicalIndicator = this._additionalDataProvider.technicalIndicator();
 
-        var precision = this._yAxis.isCandleStickYAxis() ? this._chartData.pricePrecision() : technicalIndicator.precision;
-        yAxisDataLabel = formatPrecision(value, precision);
+        var precision = this._yAxis.isCandleYAxis() ? this._chartData.pricePrecision() : technicalIndicator.precision;
+        text = formatPrecision(value, precision);
 
         if (technicalIndicator.shouldFormatBigNumber) {
-          yAxisDataLabel = formatBigNumber(yAxisDataLabel);
+          text = formatBigNumber(text);
         }
       }
 
-      var textSize = crossHairHorizontalText.size;
-      this._ctx.font = getFont(textSize, crossHairHorizontalText.weight, crossHairHorizontalText.family);
-      var yAxisDataLabelWidth = calcTextWidth(this._ctx, yAxisDataLabel);
+      var textSize = crosshairHorizontalTextOptions.size;
+      this._ctx.font = createFont(textSize, crosshairHorizontalTextOptions.weight, crosshairHorizontalTextOptions.family);
+      var yAxisDataLabelWidth = calcTextWidth(this._ctx, text);
       var rectStartX;
-      var paddingLeft = crossHairHorizontalText.paddingLeft;
-      var paddingRight = crossHairHorizontalText.paddingRight;
-      var paddingTop = crossHairHorizontalText.paddingTop;
-      var paddingBottom = crossHairHorizontalText.paddingBottom;
-      var borderSize = crossHairHorizontalText.borderSize;
+      var paddingLeft = crosshairHorizontalTextOptions.paddingLeft;
+      var paddingRight = crosshairHorizontalTextOptions.paddingRight;
+      var paddingTop = crosshairHorizontalTextOptions.paddingTop;
+      var paddingBottom = crosshairHorizontalTextOptions.paddingBottom;
+      var borderSize = crosshairHorizontalTextOptions.borderSize;
       var rectWidth = yAxisDataLabelWidth + borderSize * 2 + paddingLeft + paddingRight;
       var rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom;
-
-      var yAxisOptions = this._chartData.styleOptions().yAxis;
+      var yAxisOptions = styleOptions.yAxis;
 
       if (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside || yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside) {
         rectStartX = 0;
@@ -7234,25 +7291,15 @@ var YAxisFloatLayerView = /*#__PURE__*/function (_View) {
         rectStartX = this._width - rectWidth;
       }
 
-      var rectY = crossHair.y - borderSize - paddingTop - textSize / 2; // 绘制y轴文字外的边框
+      var rectY = crosshair.y - borderSize - paddingTop - textSize / 2; // 绘制y轴文字外的边框
 
-      this._ctx.fillStyle = crossHairHorizontalText.backgroundColor;
-
-      this._ctx.fillRect(rectStartX, rectY, rectWidth, rectHeight);
-
-      this._ctx.lineWidth = borderSize;
-      this._ctx.strokeStyle = crossHairHorizontalText.borderColor;
-
-      this._ctx.strokeRect(rectStartX, rectY, rectWidth, rectHeight);
-
+      renderStrokeFillRect(this._ctx, crosshairHorizontalTextOptions.backgroundColor, crosshairHorizontalTextOptions.borderColor, borderSize, rectStartX, rectY, rectWidth, rectHeight);
       this._ctx.textBaseline = 'middle';
-      this._ctx.fillStyle = crossHairHorizontalText.color;
-
-      this._ctx.fillText(yAxisDataLabel, rectStartX + borderSize + paddingLeft, crossHair.y);
+      renderText(this._ctx, crosshairHorizontalTextOptions.color, rectStartX + borderSize + paddingLeft, crosshair.y, text);
     }
   }]);
 
-  return YAxisFloatLayerView;
+  return YAxisCrosshairView;
 }(View);
 
 var YAxisWidget = /*#__PURE__*/function (_Widget) {
@@ -7272,9 +7319,9 @@ var YAxisWidget = /*#__PURE__*/function (_Widget) {
       return new YAxisView(container, props.chartData, props.yAxis, props.additionalDataProvider);
     }
   }, {
-    key: "_createFloatLayerView",
-    value: function _createFloatLayerView(container, props) {
-      return new YAxisFloatLayerView(container, props.chartData, props.yAxis, props.additionalDataProvider);
+    key: "_createCrosshairView",
+    value: function _createCrosshairView(container, props) {
+      return new YAxisCrosshairView(container, props.chartData, props.yAxis, props.additionalDataProvider);
     }
   }]);
 
@@ -7497,13 +7544,13 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
   var _super = _createSuper(YAxis);
 
-  function YAxis(chartData, isCandleStickYAxis, additionalDataProvider) {
+  function YAxis(chartData, isCandleYAxis, additionalDataProvider) {
     var _this;
 
     _classCallCheck(this, YAxis);
 
     _this = _super.call(this, chartData);
-    _this._isCandleStickYAxis = isCandleStickYAxis;
+    _this._isCandleYAxis = isCandleYAxis;
     _this._additionalDataProvider = additionalDataProvider;
     return _this;
   }
@@ -7550,7 +7597,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
         var technicalIndicator = this._additionalDataProvider.technicalIndicator();
 
         var isPercentageAxis = this.isPercentageYAxis();
-        var precision = this._isCandleStickYAxis ? this._chartData.pricePrecision() : technicalIndicator.precision;
+        var precision = this._isCandleYAxis ? this._chartData.pricePrecision() : technicalIndicator.precision;
         var shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber;
 
         for (var i = 0; i < tickLength; i += tickCountDif) {
@@ -7593,8 +7640,6 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
       var technicalIndicator = this._additionalDataProvider.technicalIndicator();
 
-      var isTimeLine = this._additionalDataProvider.isTimeLine();
-
       var dataList = this._chartData.dataList();
 
       var technicalIndicatorResult = technicalIndicator.result;
@@ -7603,46 +7648,37 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
       var to = this._chartData.to();
 
-      var isShowAverageLine = this._chartData.styleOptions().realTime.averageLine.display;
-
       var minMaxArray = [Infinity, -Infinity];
+      var plots = technicalIndicator.plots || [];
+      var isArea = this._chartData.styleOptions().candle.type === CandleType.AREA;
+      var shouldCompareHighLow = this._isCandleYAxis && !isArea || !this._isCandleYAxis && technicalIndicator.shouldOhlc;
 
-      if (isTimeLine) {
-        for (var i = from; i < to; i++) {
-          var kLineData = dataList[i];
-          var technicalIndicatorData = technicalIndicatorResult[i] || {};
-          minMaxArray[0] = Math.min(kLineData.close, minMaxArray[0]);
-          minMaxArray[1] = Math.max(kLineData.close, minMaxArray[1]);
+      var _loop = function _loop(i) {
+        var kLineData = dataList[i];
 
-          if (isShowAverageLine && isValid(technicalIndicatorData.average)) {
-            minMaxArray[0] = Math.min(technicalIndicatorData.average, minMaxArray[0]);
-            minMaxArray[1] = Math.max(technicalIndicatorData.average, minMaxArray[1]);
-          }
+        if (shouldCompareHighLow) {
+          minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low);
+          minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high);
         }
-      } else {
-        var plots = technicalIndicator.plots || [];
 
-        var _loop = function _loop(_i) {
-          var kLineData = dataList[_i];
-          var technicalIndicatorData = technicalIndicatorResult[_i] || {};
-          plots.forEach(function (plot) {
-            var value = technicalIndicatorData[plot.key];
-
-            if (isValid(value)) {
-              minMaxArray[0] = Math.min(minMaxArray[0], value);
-              minMaxArray[1] = Math.max(minMaxArray[1], value);
-            }
-          });
-
-          if (_this2._isCandleStickYAxis || technicalIndicator.shouldOhlc) {
-            minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low);
-            minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high);
-          }
-        };
-
-        for (var _i = from; _i < to; _i++) {
-          _loop(_i);
+        if (_this2._isCandleYAxis && isArea) {
+          minMaxArray[0] = Math.min(minMaxArray[0], kLineData.close);
+          minMaxArray[1] = Math.max(minMaxArray[1], kLineData.close);
         }
+
+        var technicalIndicatorData = technicalIndicatorResult[i] || {};
+        plots.forEach(function (plot) {
+          var value = technicalIndicatorData[plot.key];
+
+          if (isValid(value)) {
+            minMaxArray[0] = Math.min(minMaxArray[0], value);
+            minMaxArray[1] = Math.max(minMaxArray[1], value);
+          }
+        });
+      };
+
+      for (var i = from; i < to; i++) {
+        _loop(i);
       }
 
       if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
@@ -7681,9 +7717,9 @@ var YAxis = /*#__PURE__*/function (_Axis) {
       return Math.round((1.0 - (value - this._minValue) / this._range) * this._height);
     }
   }, {
-    key: "isCandleStickYAxis",
-    value: function isCandleStickYAxis() {
-      return this._isCandleStickYAxis;
+    key: "isCandleYAxis",
+    value: function isCandleYAxis() {
+      return this._isCandleYAxis;
     }
     /**
      * 是否是蜡烛图y轴组件
@@ -7693,7 +7729,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
   }, {
     key: "isPercentageYAxis",
     value: function isPercentageYAxis() {
-      return this._isCandleStickYAxis && this._chartData.styleOptions().yAxis.type === YAxisType.PERCENTAGE;
+      return this._isCandleYAxis && this._chartData.styleOptions().yAxis.type === YAxisType.PERCENTAGE;
     }
   }, {
     key: "getSelfWidth",
@@ -7711,18 +7747,18 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
       var yAxisWidth = 0;
 
-      if (yAxisOptions.display) {
-        if (yAxisOptions.axisLine.display) {
+      if (yAxisOptions.show) {
+        if (yAxisOptions.axisLine.show) {
           yAxisWidth += yAxisOptions.axisLine.size;
         }
 
-        if (yAxisOptions.tickLine.display) {
+        if (yAxisOptions.tickLine.show) {
           yAxisWidth += yAxisOptions.tickLine.length;
         }
 
-        if (yAxisOptions.tickText.display) {
+        if (yAxisOptions.tickText.show) {
           var textWidth = 0;
-          this._measureCtx.font = getFont(yAxisOptions.tickText.size, yAxisOptions.tickText.weight, yAxisOptions.tickText.family);
+          this._measureCtx.font = createFont(yAxisOptions.tickText.size, yAxisOptions.tickText.weight, yAxisOptions.tickText.family);
 
           this._ticks.forEach(function (tick) {
             textWidth = Math.max(textWidth, calcTextWidth(_this3._measureCtx, tick.v));
@@ -7732,20 +7768,20 @@ var YAxis = /*#__PURE__*/function (_Axis) {
         }
       }
 
-      var crossHairOptions = stylOptions.floatLayer.crossHair;
-      var crossHairVerticalTextWidth = 0;
+      var crosshairOptions = stylOptions.crosshair;
+      var crosshairVerticalTextWidth = 0;
 
-      if (crossHairOptions.display && crossHairOptions.horizontal.display && crossHairOptions.horizontal.text.display) {
+      if (crosshairOptions.show && crosshairOptions.horizontal.show && crosshairOptions.horizontal.text.show) {
         var technicalIndicator = this._additionalDataProvider.technicalIndicator();
 
-        this._measureCtx.font = getFont(crossHairOptions.horizontal.text.size, crossHairOptions.horizontal.text.weight, crossHairOptions.horizontal.text.family);
+        this._measureCtx.font = createFont(crosshairOptions.horizontal.text.size, crosshairOptions.horizontal.text.weight, crosshairOptions.horizontal.text.family);
         var precision = 2;
 
         if (!this.isPercentageYAxis()) {
-          if (this._isCandleStickYAxis) {
+          if (this._isCandleYAxis) {
             var pricePrecision = this._chartData.pricePrecision();
 
-            if (stylOptions.technicalIndicator.lastValueMark.display) {
+            if (stylOptions.technicalIndicator.lastValueMark.show) {
               precision = Math.max(technicalIndicator.precision, pricePrecision);
             } else {
               precision = pricePrecision;
@@ -7761,10 +7797,10 @@ var YAxis = /*#__PURE__*/function (_Axis) {
           valueText = formatBigNumber(valueText);
         }
 
-        crossHairVerticalTextWidth += crossHairOptions.horizontal.text.paddingLeft + crossHairOptions.horizontal.text.paddingRight + crossHairOptions.horizontal.text.borderSize * 2 + calcTextWidth(this._measureCtx, valueText);
+        crosshairVerticalTextWidth += crosshairOptions.horizontal.text.paddingLeft + crosshairOptions.horizontal.text.paddingRight + crosshairOptions.horizontal.text.borderSize * 2 + calcTextWidth(this._measureCtx, valueText);
       }
 
-      return Math.max(yAxisWidth, crossHairVerticalTextWidth);
+      return Math.max(yAxisWidth, crosshairVerticalTextWidth);
     }
   }, {
     key: "convertFromPixel",
@@ -7963,69 +7999,66 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
   return TechnicalIndicatorPane;
 }(Pane);
 
-var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
-  _inherits(CandleStickView, _TechnicalIndicatorVi);
+var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
+  _inherits(CandleView, _TechnicalIndicatorVi);
 
-  var _super = _createSuper(CandleStickView);
+  var _super = _createSuper(CandleView);
 
-  function CandleStickView() {
-    _classCallCheck(this, CandleStickView);
+  function CandleView() {
+    _classCallCheck(this, CandleView);
 
     return _super.apply(this, arguments);
   }
 
-  _createClass(CandleStickView, [{
+  _createClass(CandleView, [{
     key: "_draw",
     value: function _draw() {
       this._drawGrid();
 
-      if (this._additionalDataProvider.chartType() === ChartType.REAL_TIME) {
-        this._drawRealTime();
+      var candleOptions = this._chartData.styleOptions().candle;
+
+      if (candleOptions.type === CandleType.AREA) {
+        this._drawArea(candleOptions);
       } else {
-        this._drawCandleStick();
+        this._drawCandle(candleOptions);
 
         this._drawTechnicalIndicator();
 
-        this._drawHighestPriceMark();
+        this._drawLowHighPrice(candleOptions.priceMark, 'high', 'high', -Infinity, [-2, -5], function (price, comparePrice) {
+          if (price < comparePrice) {
+            return price;
+          }
+        });
 
-        this._drawLowestPriceMark();
+        this._drawLowHighPrice(candleOptions.priceMark, 'low', 'low', Infinity, [2, 5], function (price, comparePrice) {
+          if (price > comparePrice) {
+            return price;
+          }
+        });
       }
 
-      this._drawLastPriceLine();
+      this._drawLastPriceLine(candleOptions.priceMark);
     }
     /**
-     * 绘制分时图
+     * 绘制面积图
+     * @param candleOptions
      * @private
      */
 
   }, {
-    key: "_drawRealTime",
-    value: function _drawRealTime() {
+    key: "_drawArea",
+    value: function _drawArea(candleOptions) {
       var _this = this;
 
       var timeLinePoints = [];
       var timeLineAreaPoints = [];
-      var averageLinePoints = [];
 
       var from = this._chartData.from();
 
-      var technicalIndicator = this._additionalDataProvider.technicalIndicator();
-
-      var technicalIndicatorResult = technicalIndicator.result;
       var minCloseY = Infinity;
 
       var onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
-        var technicalIndicatorData = technicalIndicatorResult[i] || {};
-        var average = technicalIndicatorData.average || 0;
-
         var closeY = _this._yAxis.convertToPixel(kLineData.close);
-
-        var averageY = _this._yAxis.convertToPixel(average);
-
-        averageLinePoints.push({
-          x: x,
-          y: averageY
-        });
 
         if (i === from) {
           var startX = x - halfBarSpace;
@@ -8075,15 +8108,13 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
           });
         }
 
-        var realTime = _this._chartData.styleOptions().realTime;
-
-        var timeLine = realTime.timeLine;
+        var areaOptions = candleOptions.area;
 
         if (timeLinePoints.length > 0) {
           // 绘制分时线
-          _this._ctx.lineWidth = timeLine.size;
-          _this._ctx.strokeStyle = timeLine.color;
-          drawLine(_this._ctx, function () {
+          _this._ctx.lineWidth = areaOptions.lineSize;
+          _this._ctx.strokeStyle = areaOptions.lineColor;
+          renderLine(_this._ctx, function () {
             _this._ctx.beginPath();
 
             _this._ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y);
@@ -8100,13 +8131,13 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
 
         if (timeLineAreaPoints.length > 0) {
           // 绘制分时线填充区域
-          var areaFillColor = timeLine.areaFillColor;
+          var fillColor = areaOptions.fillColor;
 
-          if (isArray(areaFillColor)) {
+          if (isArray(fillColor)) {
             var gradient = _this._ctx.createLinearGradient(0, _this._height, 0, minCloseY);
 
             try {
-              areaFillColor.forEach(function (_ref) {
+              fillColor.forEach(function (_ref) {
                 var offset = _ref.offset,
                     color = _ref.color;
                 gradient.addColorStop(offset, color);
@@ -8115,7 +8146,7 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
 
             _this._ctx.fillStyle = gradient;
           } else {
-            _this._ctx.fillStyle = areaFillColor;
+            _this._ctx.fillStyle = fillColor;
           }
 
           _this._ctx.beginPath();
@@ -8130,147 +8161,80 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
 
           _this._ctx.fill();
         }
-
-        var averageLine = realTime.averageLine;
-
-        if (averageLine.display && averageLinePoints.length > 0) {
-          // 绘制均线
-          _this._ctx.lineWidth = averageLine.size;
-          _this._ctx.strokeStyle = averageLine.color;
-          drawLine(_this._ctx, function () {
-            _this._ctx.beginPath();
-
-            _this._ctx.moveTo(averageLinePoints[0].x, averageLinePoints[0].y);
-
-            for (var _i = 1; _i < averageLinePoints.length; _i++) {
-              _this._ctx.lineTo(averageLinePoints[_i].x, averageLinePoints[_i].y);
-            }
-
-            _this._ctx.stroke();
-
-            _this._ctx.closePath();
-          });
-        }
       };
 
       this._drawGraphics(onDrawing, onDrawEnd);
     }
     /**
      * 绘制蜡烛
+     * @param candleOptions
      * @private
      */
 
   }, {
-    key: "_drawCandleStick",
-    value: function _drawCandleStick() {
+    key: "_drawCandle",
+    value: function _drawCandle(candleOptions) {
       var _this2 = this;
 
-      var candleStickOptions = this._chartData.styleOptions().candleStick;
-
       this._drawGraphics(function (x, i, kLineData, halfBarSpace, barSpace) {
-        _this2._drawCandleStickBar(x, halfBarSpace, barSpace, i, kLineData, candleStickOptions.bar, candleStickOptions.bar.style);
+        _this2._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, candleOptions.bar, candleOptions.type);
       });
     }
     /**
-     * 渲染最高价标记
-     */
-
-  }, {
-    key: "_drawHighestPriceMark",
-    value: function _drawHighestPriceMark() {
-      var priceMarkOptions = this._chartData.styleOptions().candleStick.priceMark;
-
-      var highestPriceMarkOptions = priceMarkOptions.high;
-
-      if (!priceMarkOptions.display || !highestPriceMarkOptions.display) {
-        return;
-      }
-
-      var dataList = this._chartData.dataList();
-
-      var to = this._chartData.to();
-
-      var highestPrice = -Infinity;
-      var highestPos = -1;
-
-      for (var i = this._chartData.from(); i < to; i++) {
-        var high = formatValue(dataList[i], 'high', -Infinity);
-
-        if (high > highestPrice) {
-          highestPrice = high;
-          highestPos = i;
-        }
-      }
-
-      if (highestPrice !== -Infinity) {
-        this._drawLowestHighestPriceMark(highestPriceMarkOptions, highestPos, highestPrice, true);
-      }
-    }
-    /**
-     * 绘制最低价标记
-     */
-
-  }, {
-    key: "_drawLowestPriceMark",
-    value: function _drawLowestPriceMark() {
-      var priceMarkOptions = this._chartData.styleOptions().candleStick.priceMark;
-
-      var lowestPriceMarkOptions = priceMarkOptions.low;
-
-      if (!priceMarkOptions.display || !lowestPriceMarkOptions.display) {
-        return;
-      }
-
-      var dataList = this._chartData.dataList();
-
-      var to = this._chartData.to();
-
-      var lowestPrice = Infinity;
-      var lowestPos = -1;
-
-      for (var i = this._chartData.from(); i < to; i++) {
-        var low = formatValue(dataList[i], 'low', Infinity);
-
-        if (low < lowestPrice) {
-          lowestPrice = low;
-          lowestPos = i;
-        }
-      }
-
-      if (lowestPrice !== Infinity) {
-        this._drawLowestHighestPriceMark(lowestPriceMarkOptions, lowestPos, lowestPrice);
-      }
-    }
-    /**
-     * 渲染最高最低价格标记
+     * 渲染最高最低价格
      * @param priceMarkOptions
-     * @param pricePos
-     * @param price
-     * @param isHigh
+     * @param optionKey
+     * @param priceKey
+     * @param initPriceValue
+     * @param offsets
+     * @param compare
+     * @private
      */
 
   }, {
-    key: "_drawLowestHighestPriceMark",
-    value: function _drawLowestHighestPriceMark(priceMarkOptions, pricePos, price, isHigh) {
+    key: "_drawLowHighPrice",
+    value: function _drawLowHighPrice(priceMarkOptions, optionKey, priceKey, initPriceValue, offsets, compare) {
       var _this3 = this;
+
+      var lowHighPriceMarkOptions = priceMarkOptions[optionKey];
+
+      if (!priceMarkOptions.show || !lowHighPriceMarkOptions.show) {
+        return;
+      }
+
+      var dataList = this._chartData.dataList();
+
+      var to = this._chartData.to();
+
+      var price = initPriceValue;
+      var pos = -1;
+
+      for (var i = this._chartData.from(); i < to; i++) {
+        var comparePrice = compare(formatValue(dataList[i], priceKey, initPriceValue), price);
+
+        if (comparePrice) {
+          price = comparePrice;
+          pos = i;
+        }
+      }
 
       var pricePrecision = this._chartData.pricePrecision();
 
       var priceY = this._yAxis.convertToPixel(price);
 
-      var startX = this._xAxis.convertToPixel(pricePos);
+      var startX = this._xAxis.convertToPixel(pos);
 
-      var startY = priceY + (isHigh ? -2 : 2);
+      var startY = priceY + offsets[0];
       this._ctx.textAlign = 'left';
       this._ctx.lineWidth = 1;
       this._ctx.strokeStyle = priceMarkOptions.color;
       this._ctx.fillStyle = priceMarkOptions.color;
-      drawLine(this._ctx, function () {
+      renderLine(this._ctx, function () {
         _this3._ctx.beginPath();
 
         _this3._ctx.moveTo(startX, startY);
 
-        _this3._ctx.lineTo(startX - 2, startY + (isHigh ? -2 : 2));
+        _this3._ctx.lineTo(startX - 2, startY + offsets[0]);
 
         _this3._ctx.stroke();
 
@@ -8280,17 +8244,17 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
 
         _this3._ctx.moveTo(startX, startY);
 
-        _this3._ctx.lineTo(startX + 2, startY + (isHigh ? -2 : 2));
+        _this3._ctx.lineTo(startX + 2, startY + offsets[0]);
 
         _this3._ctx.stroke();
 
         _this3._ctx.closePath();
       }); // 绘制竖线
 
-      var y = startY + (isHigh ? -5 : 5);
-      drawVerticalLine(this._ctx, startX, startY, y);
-      drawHorizontalLine(this._ctx, y, startX, startX + 5);
-      this._ctx.font = getFont(priceMarkOptions.textSize, priceMarkOptions.textWeight, priceMarkOptions.textFamily);
+      var y = startY + offsets[1];
+      renderVerticalLine(this._ctx, startX, startY, y);
+      renderHorizontalLine(this._ctx, y, startX, startX + 5);
+      this._ctx.font = createFont(priceMarkOptions.textSize, priceMarkOptions.textWeight, priceMarkOptions.textFamily);
       var text = formatPrecision(price, pricePrecision);
       this._ctx.textBaseline = 'middle';
 
@@ -8298,25 +8262,27 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
     }
     /**
      * 绘制最新价线
+     * @param priceMarkOptions
      * @private
      */
 
   }, {
     key: "_drawLastPriceLine",
-    value: function _drawLastPriceLine() {
-      var dataList = this._chartData.dataList();
+    value: function _drawLastPriceLine(priceMarkOptions) {
+      var lastPriceMarkOptions = priceMarkOptions.last;
 
-      var dataSize = dataList.length;
-
-      var priceMark = this._chartData.styleOptions().candleStick.priceMark;
-
-      var lastPriceMark = priceMark.last;
-
-      if (!priceMark.display || !lastPriceMark.display || !lastPriceMark.line.display || dataSize === 0) {
+      if (!priceMarkOptions.show || !lastPriceMarkOptions.show || !lastPriceMarkOptions.line.show) {
         return;
       }
 
-      var kLineData = dataList[dataSize - 1];
+      var dataList = this._chartData.dataList();
+
+      var kLineData = dataList.last();
+
+      if (!kLineData) {
+        return;
+      }
+
       var close = kLineData.close;
       var open = kLineData.open;
 
@@ -8326,138 +8292,164 @@ var CandleStickView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       var color;
 
       if (close > open) {
-        color = lastPriceMark.upColor;
+        color = lastPriceMarkOptions.upColor;
       } else if (close < open) {
-        color = lastPriceMark.downColor;
+        color = lastPriceMarkOptions.downColor;
       } else {
-        color = lastPriceMark.noChangeColor;
+        color = lastPriceMarkOptions.noChangeColor;
       }
-
-      var priceMarkLine = lastPriceMark.line;
 
       this._ctx.save();
 
       this._ctx.strokeStyle = color;
-      this._ctx.lineWidth = priceMarkLine.size;
+      this._ctx.lineWidth = lastPriceMarkOptions.line.size;
 
-      if (priceMarkLine.style === LineStyle.DASH) {
-        this._ctx.setLineDash(priceMarkLine.dashValue);
+      if (lastPriceMarkOptions.line.style === LineStyle.DASH) {
+        this._ctx.setLineDash(lastPriceMarkOptions.line.dashValue);
       }
 
-      drawHorizontalLine(this._ctx, priceY, 0, this._width);
+      renderHorizontalLine(this._ctx, priceY, 0, this._width);
 
       this._ctx.restore();
     }
   }]);
 
-  return CandleStickView;
+  return CandleView;
 }(TechnicalIndicatorView);
 
-var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
-  _inherits(CandleStickFloatLayerView, _TechnicalIndicatorFl);
+var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
+  _inherits(CandleCrosshairView, _TechnicalIndicatorCr);
 
-  var _super = _createSuper(CandleStickFloatLayerView);
+  var _super = _createSuper(CandleCrosshairView);
 
-  function CandleStickFloatLayerView() {
-    _classCallCheck(this, CandleStickFloatLayerView);
+  function CandleCrosshairView() {
+    _classCallCheck(this, CandleCrosshairView);
 
     return _super.apply(this, arguments);
   }
 
-  _createClass(CandleStickFloatLayerView, [{
-    key: "_drawPrompt",
-    value: function _drawPrompt(kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
-      var options = this._chartData.styleOptions();
+  _createClass(CandleCrosshairView, [{
+    key: "_drawLegend",
+    value: function _drawLegend(crosshair, kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
+      var styleOptions = this._chartData.styleOptions();
 
-      var floatLayerPromptCandleStick = options.floatLayer.prompt.candleStick;
+      var candleOptions = styleOptions.candle;
+      var candleLegendOptions = candleOptions.legend;
 
-      var candleStickPromptData = this._getCandleStickPromptData(kLineData, options.candleStick, floatLayerPromptCandleStick);
+      var isDrawCandleLegend = this._shouldDrawLegend(crosshair, candleLegendOptions);
 
-      if (floatLayerPromptCandleStick.showType === FloatLayerPromptCandleStickTextDisplayType.STANDARD) {
-        this._drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData);
+      if (candleLegendOptions.showType === LegendCandleShowType.STANDARD) {
+        var offsetTop = isDrawCandleLegend ? candleLegendOptions.text.size + candleLegendOptions.text.marginTop : 0;
 
-        if (this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK) {
-          this._drawTechnicalIndicatorPromptText(technicalIndicatorData, realDataPos, technicalIndicator, floatLayerPromptCandleStick.text.size + floatLayerPromptCandleStick.text.marginTop);
-        }
+        this._drawCandleLegendWithStandard(kLineData, candleOptions, isDrawCandleLegend);
+
+        this._drawTechnicalIndicatorLegend(crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop);
       } else {
-        var data = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
-
-        this._drawCandleStickRectPromptText(realDataPosX, floatLayerPromptCandleStick, candleStickPromptData, data);
+        this._drawCandleLegendWithRect(kLineData, technicalIndicatorData, realDataPosX, candleOptions, isDrawCandleLegend, styleOptions.technicalIndicator, this._shouldDrawLegend(crosshair, styleOptions.technicalIndicator.legend));
       }
     }
+    /**
+     * 绘制蜡烛默认的图例
+     * @param kLineData
+     * @param candleOptions
+     * @param isDrawCandleLegend
+     * @private
+     */
+
   }, {
-    key: "_drawCandleStickStandardPromptText",
-    value: function _drawCandleStickStandardPromptText(floatLayerPromptCandleStick, candleStickPromptData) {
+    key: "_drawCandleLegendWithStandard",
+    value: function _drawCandleLegendWithStandard(kLineData, candleOptions, isDrawCandleLegend) {
       var _this = this;
 
-      var values = candleStickPromptData;
-      var textMarginLeft = floatLayerPromptCandleStick.text.marginLeft;
-      var textMarginRight = floatLayerPromptCandleStick.text.marginRight;
-      var textSize = floatLayerPromptCandleStick.text.size;
-      var textColor = floatLayerPromptCandleStick.text.color;
-      var labels = floatLayerPromptCandleStick.labels;
+      if (!isDrawCandleLegend) {
+        return;
+      }
+
+      var values = this._getCandleLegendData(kLineData, candleOptions);
+
+      var candleLegendOptions = candleOptions.legend;
+      var textMarginLeft = candleLegendOptions.text.marginLeft;
+      var textMarginRight = candleLegendOptions.text.marginRight;
+      var textSize = candleLegendOptions.text.size;
+      var textColor = candleLegendOptions.text.color;
+      var labels = candleLegendOptions.labels;
       this._ctx.textBaseline = 'top';
-      this._ctx.font = getFont(textSize, floatLayerPromptCandleStick.text.weight, floatLayerPromptCandleStick.text.family);
+      this._ctx.font = createFont(textSize, candleLegendOptions.text.weight, candleLegendOptions.text.family);
       var labelX = textMarginLeft;
-      var labelY = floatLayerPromptCandleStick.text.marginTop;
+      var labelY = candleLegendOptions.text.marginTop;
       labels.forEach(function (label, i) {
         var labelText = label ? "".concat(label, ": ") : '';
         var labelWidth = calcTextWidth(_this._ctx, labelText);
-        _this._ctx.fillStyle = textColor;
-
-        _this._ctx.fillText(labelText, labelX, labelY);
-
+        renderText(_this._ctx, textColor, labelX, labelY, labelText);
         labelX += labelWidth;
         var value = values[i] || 'n/a';
         var valueText;
+        var valueColor;
 
         if (isObject(value)) {
           valueText = value.value || 'n/a';
-          _this._ctx.fillStyle = value.color || textColor;
+          valueColor = value.color || textColor;
         } else {
-          _this._ctx.fillStyle = textColor;
+          valueColor = textColor;
           valueText = value;
         }
 
         var textWidth = calcTextWidth(_this._ctx, valueText);
-
-        _this._ctx.fillText(valueText, labelX, labelY);
-
+        renderText(_this._ctx, valueColor, labelX, labelY, valueText);
         labelX += textWidth + textMarginLeft + textMarginRight;
       });
     }
+    /**
+     * 绘制蜡烛图矩形类型图例
+     * @param kLineData
+     * @param technicalIndicatorData
+     * @param technicalIndicator
+     * @param x
+     * @param candleOptions
+     * @param isDrawCandleLegend
+     * @param technicalIndicatorOptions
+     * @param isDrawTechnicalIndicatorLegend
+     * @private
+     */
+
   }, {
-    key: "_drawCandleStickRectPromptText",
-    value: function _drawCandleStickRectPromptText(x, floatLayerPromptCandleStick, candleStickPromptData, technicalIndicatorPromptData) {
+    key: "_drawCandleLegendWithRect",
+    value: function _drawCandleLegendWithRect(kLineData, technicalIndicatorData, technicalIndicator, x, candleOptions, isDrawCandleLegend, technicalIndicatorOptions, isDrawTechnicalIndicatorLegend) {
       var _this2 = this;
 
-      var baseLabels = floatLayerPromptCandleStick.labels;
-      var baseValues = candleStickPromptData;
-      var baseTextMarginLeft = floatLayerPromptCandleStick.text.marginLeft;
-      var baseTextMarginRight = floatLayerPromptCandleStick.text.marginRight;
-      var baseTextMarginTop = floatLayerPromptCandleStick.text.marginTop;
-      var baseTextMarginBottom = floatLayerPromptCandleStick.text.marginBottom;
-      var baseTextSize = floatLayerPromptCandleStick.text.size;
-      var baseTextColor = floatLayerPromptCandleStick.text.color;
-
-      this._ctx.save();
-
-      this._ctx.textBaseline = 'top';
-      this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.weight, floatLayerPromptCandleStick.text.family);
       var maxLabelWidth = 0;
-      baseLabels.forEach(function (label, i) {
-        var value = baseValues[i] || 'n/a';
-        var v = value;
+      var candleLegendOptions = candleOptions.legend;
+      var baseLabels = candleLegendOptions.labels;
 
-        if (isObject(value)) {
-          v = value.value || 'n/a';
-        }
+      var baseValues = this._getCandleLegendData(kLineData, candleOptions);
 
-        var text = "".concat(label, ": ").concat(v);
-        var labelWidth = calcTextWidth(_this2._ctx, text) + baseTextMarginLeft + baseTextMarginRight;
-        maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
-      });
-      var rect = floatLayerPromptCandleStick.rect;
+      var baseTextMarginLeft = candleLegendOptions.text.marginLeft;
+      var baseTextMarginRight = candleLegendOptions.text.marginRight;
+      var baseTextMarginTop = candleLegendOptions.text.marginTop;
+      var baseTextMarginBottom = candleLegendOptions.text.marginBottom;
+      var baseTextSize = candleLegendOptions.text.size;
+      var baseTextColor = candleLegendOptions.text.color;
+
+      if (isDrawCandleLegend) {
+        this._ctx.save();
+
+        this._ctx.textBaseline = 'top';
+        this._ctx.font = createFont(baseTextSize, candleLegendOptions.text.weight, candleLegendOptions.text.family);
+        baseLabels.forEach(function (label, i) {
+          var value = baseValues[i] || 'n/a';
+          var v = value;
+
+          if (isObject(value)) {
+            v = value.value || 'n/a';
+          }
+
+          var text = "".concat(label, ": ").concat(v);
+          var labelWidth = calcTextWidth(_this2._ctx, text) + baseTextMarginLeft + baseTextMarginRight;
+          maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
+        });
+      }
+
+      var rect = candleLegendOptions.rect;
       var rectBorderSize = rect.borderSize;
       var rectPaddingLeft = rect.paddingLeft;
       var rectPaddingRight = rect.paddingRight;
@@ -8474,12 +8466,12 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       var indicatorTextMarginTop = floatLayerPromptTechnicalIndicator.text.marginTop;
       var indicatorTextMarginBottom = floatLayerPromptTechnicalIndicator.text.marginBottom;
       var indicatorTextSize = floatLayerPromptTechnicalIndicator.text.size;
-      var isCandleStick = this._additionalDataProvider.chartType() === ChartType.CANDLE_STICK;
-      var indicatorLabels = technicalIndicatorPromptData.labels || [];
-      var indicatorValues = technicalIndicatorPromptData.values || [];
+      var indicatorLegendData = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
+      var indicatorLabels = indicatorLegendData.labels || [];
+      var indicatorValues = indicatorLegendData.values || [];
 
-      if (isCandleStick) {
-        this._ctx.font = getFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.weight, floatLayerPromptTechnicalIndicator.text.family);
+      if (isDrawTechnicalIndicatorLegend) {
+        this._ctx.font = createFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.weight, floatLayerPromptTechnicalIndicator.text.family);
         indicatorLabels.forEach(function (label, i) {
           var v = indicatorValues[i].value || 'n/a';
           var text = "".concat(label, ": ").concat(v);
@@ -8501,58 +8493,46 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
 
       var rectY = rect.top;
       var radius = rect.borderRadius;
-      this._ctx.lineWidth = rectBorderSize;
-      this._ctx.strokeStyle = rect.borderColor;
-      this._ctx.fillStyle = rect.fillColor;
-
-      this._drawRoundRect(rectX, rectY, rectWidth, rectHeight, radius);
-
-      this._ctx.stroke();
-
-      this._drawRoundRect(rectX, rectY, rectWidth, rectHeight, radius);
-
-      this._ctx.fill();
-
+      renderFillRoundRect(this._ctx, rect.fillColor, rectX, rectY, rectWidth, rectHeight, radius);
+      renderStrokeRoundRect(this._ctx, rect.borderColor, rectBorderSize, rectX, rectY, rectWidth, rectHeight, radius);
       var baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft;
-      var labelY = rectY + rectBorderSize + rectPaddingTop; // 开始渲染基础数据文字
+      var labelY = rectY + rectBorderSize + rectPaddingTop;
 
-      this._ctx.font = getFont(baseTextSize, floatLayerPromptCandleStick.text.weight, floatLayerPromptCandleStick.text.family);
-      baseLabels.forEach(function (label, i) {
-        labelY += baseTextMarginTop;
-        _this2._ctx.textAlign = 'left';
-        _this2._ctx.fillStyle = baseTextColor;
+      if (isDrawCandleLegend) {
+        // 开始渲染基础数据文字
+        this._ctx.font = createFont(baseTextSize, candleLegendOptions.text.weight, candleLegendOptions.text.family);
+        baseLabels.forEach(function (label, i) {
+          labelY += baseTextMarginTop;
+          _this2._ctx.textAlign = 'left';
+          renderText(_this2._ctx, baseTextColor, baseLabelX, labelY, "".concat(label, ": "));
+          var value = baseValues[i] || 'n/a';
+          var text;
+          _this2._ctx.fillStyle = value.color || baseTextColor;
 
-        _this2._ctx.fillText("".concat(label, ": "), baseLabelX, labelY);
+          if (isObject(value)) {
+            text = value.value || 'n/a';
+          } else {
+            text = value;
+          }
 
-        var value = baseValues[i] || 'n/a';
-        var text;
-        _this2._ctx.fillStyle = value.color || baseTextColor;
+          _this2._ctx.textAlign = 'right';
+          renderText(_this2._ctx, value.color || baseTextColor, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY, text);
+          labelY += baseTextSize + baseTextMarginBottom;
+        });
+      }
 
-        if (isObject(value)) {
-          text = value.value || 'n/a';
-        } else {
-          text = value;
-        }
-
-        _this2._ctx.textAlign = 'right';
-
-        _this2._ctx.fillText(text, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY);
-
-        labelY += baseTextSize + baseTextMarginBottom;
-      });
-
-      if (isCandleStick) {
+      if (isDrawTechnicalIndicatorLegend) {
         // 开始渲染指标数据文字
-        var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
+        var _technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
-        var colors = technicalIndicatorOptions.line.colors;
+        var colors = _technicalIndicatorOptions.line.colors;
         var indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft;
         var colorSize = colors.length;
-        this._ctx.font = getFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.weight, floatLayerPromptTechnicalIndicator.text.family);
+        this._ctx.font = createFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.weight, floatLayerPromptTechnicalIndicator.text.family);
         indicatorLabels.forEach(function (label, i) {
           labelY += indicatorTextMarginTop;
           _this2._ctx.textAlign = 'left';
-          _this2._ctx.fillStyle = colors[i % colorSize] || technicalIndicatorOptions.text.color;
+          _this2._ctx.fillStyle = colors[i % colorSize] || _technicalIndicatorOptions.text.color;
 
           _this2._ctx.fillText("".concat(label.toUpperCase(), ": "), indicatorLabelX, labelY);
 
@@ -8567,51 +8547,24 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
       this._ctx.restore();
     }
     /**
-     * 渲染圆角矩形
-     * @param x
-     * @param y
-     * @param w
-     * @param h
-     * @param r
-     */
-
-  }, {
-    key: "_drawRoundRect",
-    value: function _drawRoundRect(x, y, w, h, r) {
-      this._ctx.beginPath();
-
-      this._ctx.moveTo(x + r, y);
-
-      this._ctx.arcTo(x + w, y, x + w, y + h, r);
-
-      this._ctx.arcTo(x + w, y + h, x, y + h, r);
-
-      this._ctx.arcTo(x, y + h, x, y, r);
-
-      this._ctx.arcTo(x, y, x + w, y, r);
-
-      this._ctx.closePath();
-    }
-    /**
      * 获取蜡烛提示数据
      * @param kLineData
-     * @param candleStick
-     * @param floatLayerPromptCandleStick
+     * @param candleOptions
      * @returns {*}
      * @private
      */
 
   }, {
-    key: "_getCandleStickPromptData",
-    value: function _getCandleStickPromptData(kLineData, candleStick, floatLayerPromptCandleStick) {
+    key: "_getCandleLegendData",
+    value: function _getCandleLegendData(kLineData, candleOptions) {
       var _this3 = this;
 
-      var baseValues = floatLayerPromptCandleStick.values;
+      var baseValues = candleOptions.legend.values;
       var values = [];
 
       if (baseValues) {
         if (isFunction(baseValues)) {
-          values = baseValues(kLineData, candleStick, floatLayerPromptCandleStick) || [];
+          values = baseValues(kLineData, candleOptions) || [];
         } else if (isArray(baseValues)) {
           values = baseValues;
         }
@@ -8648,8 +8601,8 @@ var CandleStickFloatLayerView = /*#__PURE__*/function (_TechnicalIndicatorFl) {
     }
   }]);
 
-  return CandleStickFloatLayerView;
-}(TechnicalIndicatorFloatLayerView);
+  return CandleCrosshairView;
+}(TechnicalIndicatorCrosshairView);
 
 var GraphicMarkView = /*#__PURE__*/function (_View) {
   _inherits(GraphicMarkView, _View);
@@ -8678,148 +8631,72 @@ var GraphicMarkView = /*#__PURE__*/function (_View) {
   return GraphicMarkView;
 }(View);
 
-var CandleStickWidget = /*#__PURE__*/function (_TechnicalIndicatorWi) {
-  _inherits(CandleStickWidget, _TechnicalIndicatorWi);
+var CandleWidget = /*#__PURE__*/function (_TechnicalIndicatorWi) {
+  _inherits(CandleWidget, _TechnicalIndicatorWi);
 
-  var _super = _createSuper(CandleStickWidget);
+  var _super = _createSuper(CandleWidget);
 
-  function CandleStickWidget() {
-    _classCallCheck(this, CandleStickWidget);
+  function CandleWidget() {
+    _classCallCheck(this, CandleWidget);
 
     return _super.apply(this, arguments);
   }
 
-  _createClass(CandleStickWidget, [{
+  _createClass(CandleWidget, [{
     key: "_createMainView",
     value: function _createMainView(container, props) {
-      return new CandleStickView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
+      return new CandleView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
     }
   }, {
     key: "_createExpandView",
     value: function _createExpandView(container, props) {
-      return new GraphicMarkView(container, props.chartData, props.xAxis, props.yAxis);
+      return new GraphicMarkView(container, props.chartData);
     }
   }, {
-    key: "_createFloatLayerView",
-    value: function _createFloatLayerView(container, props) {
-      return new CandleStickFloatLayerView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
+    key: "_createCrosshairView",
+    value: function _createCrosshairView(container, props) {
+      return new CandleCrosshairView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider);
     }
   }]);
 
-  return CandleStickWidget;
+  return CandleWidget;
 }(TechnicalIndicatorWidget);
 
-var TransactionAveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
-  _inherits(TransactionAveragePrice, _TechnicalIndicator);
+var CandlePane = /*#__PURE__*/function (_TechnicalIndicatorPa) {
+  _inherits(CandlePane, _TechnicalIndicatorPa);
 
-  var _super = _createSuper(TransactionAveragePrice);
+  var _super = _createSuper(CandlePane);
 
-  function TransactionAveragePrice() {
-    _classCallCheck(this, TransactionAveragePrice);
+  function CandlePane() {
+    _classCallCheck(this, CandlePane);
 
-    return _super.call(this, {
-      name: 'TAP',
-      precision: 2,
-      plots: [{
-        key: 'average',
-        type: 'line'
-      }]
-    });
+    return _super.apply(this, arguments);
   }
 
-  _createClass(TransactionAveragePrice, [{
-    key: "calcTechnicalIndicator",
-    value: function calcTechnicalIndicator(dataList, calcParams) {
-      var turnoverSum = 0;
-      var volumeSum = 0;
-      var result = [];
-      dataList.forEach(function (kLineData) {
-        var average = {};
-        var turnover = kLineData.turnover || 0;
-        var volume = kLineData.volume || 0;
-        turnoverSum += turnover;
-        volumeSum += volume;
-
-        if (volume !== 0) {
-          average.average = turnoverSum / volumeSum;
-        }
-
-        result.push(average);
-      });
-      return result;
-    }
-  }]);
-
-  return TransactionAveragePrice;
-}(TechnicalIndicator);
-
-var CandleStickPane = /*#__PURE__*/function (_TechnicalIndicatorPa) {
-  _inherits(CandleStickPane, _TechnicalIndicatorPa);
-
-  var _super = _createSuper(CandleStickPane);
-
-  function CandleStickPane(props) {
-    var _this;
-
-    _classCallCheck(this, CandleStickPane);
-
-    _this = _super.call(this, props);
-    _this._chartType = ChartType.CANDLE_STICK;
-    _this._realTimeTechnicalIndicator = new TransactionAveragePrice();
-    return _this;
-  }
-
-  _createClass(CandleStickPane, [{
+  _createClass(CandlePane, [{
     key: "_createYAxis",
     value: function _createYAxis(props) {
       return new YAxis(props.chartData, true, {
-        technicalIndicator: this.technicalIndicator.bind(this),
-        isTimeLine: this._isRealTime.bind(this)
+        technicalIndicator: this.technicalIndicator.bind(this)
       });
     }
   }, {
     key: "_createMainWidget",
     value: function _createMainWidget(container, props) {
-      return new CandleStickWidget({
+      return new CandleWidget({
         container: container,
         chartData: props.chartData,
         xAxis: props.xAxis,
         yAxis: this._yAxis,
         additionalDataProvider: {
           technicalIndicator: this.technicalIndicator.bind(this),
-          chartType: this.chartType.bind(this),
           tag: this.tag.bind(this)
         }
       });
     }
-  }, {
-    key: "_isRealTime",
-    value: function _isRealTime() {
-      return this._chartType === ChartType.REAL_TIME;
-    }
-  }, {
-    key: "technicalIndicator",
-    value: function technicalIndicator() {
-      return this._isRealTime() ? this._realTimeTechnicalIndicator : this._technicalIndicator;
-    }
-  }, {
-    key: "chartType",
-    value: function chartType() {
-      return this._chartType;
-    }
-  }, {
-    key: "setChartType",
-    value: function setChartType(chartType) {
-      if (this._chartType !== chartType) {
-        this._chartType = chartType;
-        return this.calcTechnicalIndicator();
-      }
-
-      return false;
-    }
   }]);
 
-  return CandleStickPane;
+  return CandlePane;
 }(TechnicalIndicatorPane);
 
 var XAxisView = /*#__PURE__*/function (_View) {
@@ -8842,7 +8719,7 @@ var XAxisView = /*#__PURE__*/function (_View) {
     value: function _draw() {
       var xAxisOptions = this._chartData.styleOptions().xAxis;
 
-      if (xAxisOptions.display) {
+      if (xAxisOptions.show) {
         this._drawAxisLine(xAxisOptions);
 
         this._drawTickLines(xAxisOptions);
@@ -8855,13 +8732,13 @@ var XAxisView = /*#__PURE__*/function (_View) {
     value: function _drawAxisLine(xAxisOptions) {
       var xAxisLine = xAxisOptions.axisLine;
 
-      if (!xAxisLine.display) {
+      if (!xAxisLine.show) {
         return;
       }
 
       this._ctx.strokeStyle = xAxisLine.color;
       this._ctx.lineWidth = xAxisLine.size;
-      drawHorizontalLine(this._ctx, 0, 0, this._width);
+      renderHorizontalLine(this._ctx, 0, 0, this._width);
     }
   }, {
     key: "_drawTickLines",
@@ -8870,17 +8747,17 @@ var XAxisView = /*#__PURE__*/function (_View) {
 
       var tickLine = xAxisOptions.tickLine;
 
-      if (!tickLine.display) {
+      if (!tickLine.show) {
         return;
       }
 
       this._ctx.lineWidth = tickLine.size;
       this._ctx.strokeStyle = tickLine.color;
-      var startY = xAxisOptions.axisLine.display ? xAxisOptions.axisLine.size : 0;
+      var startY = xAxisOptions.axisLine.show ? xAxisOptions.axisLine.size : 0;
       var endY = startY + tickLine.length;
 
       this._xAxis.ticks().forEach(function (tick) {
-        drawVerticalLine(_this2._ctx, tick.x, startY, endY);
+        renderVerticalLine(_this2._ctx, tick.x, startY, endY);
       });
     }
   }, {
@@ -8888,22 +8765,22 @@ var XAxisView = /*#__PURE__*/function (_View) {
     value: function _drawTickLabels(xAxisOptions) {
       var tickText = xAxisOptions.tickText;
 
-      if (!tickText.display) {
+      if (!tickText.show) {
         return;
       }
 
       var tickLine = xAxisOptions.tickLine;
       this._ctx.textBaseline = 'top';
-      this._ctx.font = getFont(tickText.size, tickText.weight, tickText.family);
+      this._ctx.font = createFont(tickText.size, tickText.weight, tickText.family);
       this._ctx.textAlign = 'center';
       this._ctx.fillStyle = tickText.color;
       var labelY = tickText.paddingTop;
 
-      if (xAxisOptions.axisLine.display) {
+      if (xAxisOptions.axisLine.show) {
         labelY += xAxisOptions.axisLine.size;
       }
 
-      if (tickLine.display) {
+      if (tickLine.show) {
         labelY += tickLine.length;
       }
 
@@ -8920,22 +8797,22 @@ var XAxisView = /*#__PURE__*/function (_View) {
   return XAxisView;
 }(View);
 
-var XAxisFloatLayerView = /*#__PURE__*/function (_View) {
-  _inherits(XAxisFloatLayerView, _View);
+var XAxisCrosshairView = /*#__PURE__*/function (_View) {
+  _inherits(XAxisCrosshairView, _View);
 
-  var _super = _createSuper(XAxisFloatLayerView);
+  var _super = _createSuper(XAxisCrosshairView);
 
-  function XAxisFloatLayerView(container, chartData, xAxis) {
+  function XAxisCrosshairView(container, chartData, xAxis) {
     var _this;
 
-    _classCallCheck(this, XAxisFloatLayerView);
+    _classCallCheck(this, XAxisCrosshairView);
 
     _this = _super.call(this, container, chartData);
     _this._xAxis = xAxis;
     return _this;
   }
 
-  _createClass(XAxisFloatLayerView, [{
+  _createClass(XAxisCrosshairView, [{
     key: "_draw",
     value: function _draw() {
       this._drawCrossHairLabel();
@@ -8943,18 +8820,18 @@ var XAxisFloatLayerView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawCrossHairLabel",
     value: function _drawCrossHairLabel() {
-      var crossHair = this._chartData.crossHair();
+      var crosshair = this._chartData.crosshair();
 
-      if (!crossHair.paneTag) {
+      if (!crosshair.paneTag) {
         return;
       }
 
-      var crossHairOptions = this._chartData.styleOptions().floatLayer.crossHair;
+      var crosshairOptions = this._chartData.styleOptions().crosshair;
 
-      var crossHairVertical = crossHairOptions.vertical;
-      var crossHairVerticalText = crossHairVertical.text;
+      var crosshairVerticalOptions = crosshairOptions.vertical;
+      var crosshairVerticalTextOptions = crosshairVerticalOptions.text;
 
-      if (!crossHairOptions.display || !crossHairVertical.display || !crossHairVerticalText.display) {
+      if (!crosshairOptions.show || !crosshairVerticalOptions.show || !crosshairVerticalTextOptions.show) {
         return;
       }
 
@@ -8962,8 +8839,8 @@ var XAxisFloatLayerView = /*#__PURE__*/function (_View) {
 
       var dataPos;
 
-      if (isValid(crossHair.x)) {
-        dataPos = this._xAxis.convertFromPixel(crossHair.x);
+      if (isValid(crosshair.x)) {
+        dataPos = this._xAxis.convertFromPixel(crosshair.x);
       } else {
         dataPos = dataList.length - 1;
       }
@@ -8978,44 +8855,34 @@ var XAxisFloatLayerView = /*#__PURE__*/function (_View) {
 
       var timestamp = kLineData.timestamp;
       var text = formatDate(this._chartData.dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm');
-      var textSize = crossHairVerticalText.size;
-      this._ctx.font = getFont(textSize, crossHairVerticalText.weight, crossHairVerticalText.family);
+      var textSize = crosshairVerticalTextOptions.size;
+      this._ctx.font = createFont(textSize, crosshairVerticalTextOptions.weight, crosshairVerticalTextOptions.family);
       var labelWidth = calcTextWidth(this._ctx, text);
-      var xAxisLabelX = x - labelWidth / 2;
-      var paddingLeft = crossHairVerticalText.paddingLeft;
-      var paddingRight = crossHairVerticalText.paddingRight;
-      var paddingTop = crossHairVerticalText.paddingTop;
-      var paddingBottom = crossHairVerticalText.paddingBottom;
-      var borderSize = crossHairVerticalText.borderSize; // 保证整个x轴上的提示文字总是完全显示
+      var labelX = x - labelWidth / 2;
+      var paddingLeft = crosshairVerticalTextOptions.paddingLeft;
+      var paddingRight = crosshairVerticalTextOptions.paddingRight;
+      var paddingTop = crosshairVerticalTextOptions.paddingTop;
+      var paddingBottom = crosshairVerticalTextOptions.paddingBottom;
+      var borderSize = crosshairVerticalTextOptions.borderSize; // 保证整个x轴上的提示文字总是完全显示
 
-      if (xAxisLabelX < paddingLeft + borderSize) {
-        xAxisLabelX = paddingLeft + borderSize;
-      } else if (xAxisLabelX > this._width - labelWidth - borderSize - paddingRight) {
-        xAxisLabelX = this._width - labelWidth - borderSize - paddingRight;
+      if (labelX < paddingLeft + borderSize) {
+        labelX = paddingLeft + borderSize;
+      } else if (labelX > this._width - labelWidth - borderSize - paddingRight) {
+        labelX = this._width - labelWidth - borderSize - paddingRight;
       }
 
-      var rectLeft = xAxisLabelX - borderSize - paddingLeft;
+      var rectLeft = labelX - borderSize - paddingLeft;
       var rectTop = 0;
-      var rectRight = xAxisLabelX + labelWidth + borderSize + paddingRight;
+      var rectRight = labelX + labelWidth + borderSize + paddingRight;
       var rectBottom = rectTop + textSize + borderSize * 2 + paddingTop + paddingBottom;
-      this._ctx.fillStyle = crossHairVerticalText.backgroundColor;
-
-      this._ctx.fillRect(rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop);
-
-      this._ctx.lineWidth = borderSize;
-      this._ctx.strokeStyle = crossHairVerticalText.borderColor;
-
-      this._ctx.strokeRect(rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop); // 绘制轴上的提示文字
-
+      renderStrokeFillRect(this._ctx, crosshairVerticalTextOptions.backgroundColor, crosshairVerticalTextOptions.borderColor, borderSize, rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop); // 绘制轴上的提示文字
 
       this._ctx.textBaseline = 'top';
-      this._ctx.fillStyle = crossHairVerticalText.color;
-
-      this._ctx.fillText(text, xAxisLabelX, borderSize + paddingTop);
+      renderText(this._ctx, crosshairVerticalTextOptions.color, labelX, borderSize + paddingTop, text);
     }
   }]);
 
-  return XAxisFloatLayerView;
+  return XAxisCrosshairView;
 }(View);
 
 var XAxisWidget = /*#__PURE__*/function (_Widget) {
@@ -9035,9 +8902,9 @@ var XAxisWidget = /*#__PURE__*/function (_Widget) {
       return new XAxisView(container, props.chartData, props.xAxis);
     }
   }, {
-    key: "_createFloatLayerView",
-    value: function _createFloatLayerView(container, props) {
-      return new XAxisFloatLayerView(container, props.chartData, props.xAxis);
+    key: "_createCrosshairView",
+    value: function _createCrosshairView(container, props) {
+      return new XAxisCrosshairView(container, props.chartData, props.xAxis);
     }
   }]);
 
@@ -9081,7 +8948,7 @@ var XAxis = /*#__PURE__*/function (_Axis) {
 
         var tickText = this._chartData.styleOptions().xAxis.tickText;
 
-        this._measureCtx.font = getFont(tickText.size, tickText.weight, tickText.family);
+        this._measureCtx.font = createFont(tickText.size, tickText.weight, tickText.family);
         var defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00');
         var pos = parseInt(ticks[0].v, 10);
         var x = this.convertToPixel(pos);
@@ -9179,30 +9046,30 @@ var XAxis = /*#__PURE__*/function (_Axis) {
         return +height;
       }
 
-      var crossHairOptions = stylOptions.floatLayer.crossHair;
+      var crosshairOptions = stylOptions.crosshair;
       var xAxisHeight = 0;
 
-      if (xAxisOptions.display) {
-        if (xAxisOptions.axisLine.display) {
+      if (xAxisOptions.show) {
+        if (xAxisOptions.axisLine.show) {
           xAxisHeight += xAxisOptions.axisLine.size;
         }
 
-        if (xAxisOptions.tickLine.display) {
+        if (xAxisOptions.tickLine.show) {
           xAxisHeight += xAxisOptions.tickLine.length;
         }
 
-        if (xAxisOptions.tickText.display) {
+        if (xAxisOptions.tickText.show) {
           xAxisHeight += xAxisOptions.tickText.paddingTop + xAxisOptions.tickText.paddingBottom + xAxisOptions.tickText.size;
         }
       }
 
-      var crossHairVerticalTextHeight = 0;
+      var crosshairVerticalTextHeight = 0;
 
-      if (crossHairOptions.display && crossHairOptions.vertical.display && crossHairOptions.vertical.text.display) {
-        crossHairVerticalTextHeight += crossHairOptions.vertical.text.paddingTop + crossHairOptions.vertical.text.paddingBottom + crossHairOptions.vertical.text.borderSize * 2 + crossHairOptions.vertical.text.size;
+      if (crosshairOptions.display && crosshairOptions.vertical.display && crosshairOptions.vertical.text.display) {
+        crosshairVerticalTextHeight += crosshairOptions.vertical.text.paddingTop + crosshairOptions.vertical.text.paddingBottom + crosshairOptions.vertical.text.borderSize * 2 + crosshairOptions.vertical.text.size;
       }
 
-      return Math.max(xAxisHeight, crossHairVerticalTextHeight);
+      return Math.max(xAxisHeight, crosshairVerticalTextHeight);
     }
   }, {
     key: "convertFromPixel",
@@ -10114,7 +9981,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
     key: "mouseLeaveEvent",
     value: function mouseLeaveEvent(event) {
       if (isMouse(event)) {
-        this._chartData.setCrossHairPointPaneTag(null, null);
+        this._chartData.setCrosshairPointPaneTag(null, null);
       }
     }
   }, {
@@ -10127,12 +9994,12 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
       }
 
       this._performCross(event, false, function (cross) {
-        _this2._chartData.setCrossHairPointPaneTag({
+        _this2._chartData.setCrosshairPointPaneTag({
           x: event.localX,
           y: cross.y
         }, cross.tag);
       }, function () {
-        _this2._chartData.setCrossHairPointPaneTag(null, null);
+        _this2._chartData.setCrosshairPointPaneTag(null, null);
       });
     }
   }, {
@@ -10183,7 +10050,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
             y: event.localY
           };
 
-          _this3._chartData.setCrossHairPointPaneTag({
+          _this3._chartData.setCrosshairPointPaneTag({
             x: event.localX,
             y: cross.y
           }, cross.tag);
@@ -10220,12 +10087,12 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
               y: event.localY
             };
 
-            _this4._chartData.setCrossHairPointPaneTag(crossHairPoint, cross.tag);
+            _this4._chartData.setCrosshairPointPaneTag(crossHairPoint, cross.tag);
           } else {
             _this4._touchCancelCrossHair = true;
             _this4._touchPoint = null;
 
-            _this4._chartData.setCrossHairPointPaneTag(null, null);
+            _this4._chartData.setCrosshairPointPaneTag(null, null);
           }
         } else {
           _this4._touchCancelCrossHair = false;
@@ -10250,7 +10117,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
               y: event.localY
             };
 
-            _this5._chartData.setCrossHairPointPaneTag(crossHairPoint, cross.tag);
+            _this5._chartData.setCrosshairPointPaneTag(crossHairPoint, cross.tag);
 
             return;
           }
@@ -10258,7 +10125,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
 
         var distance = event.localX - _this5._startScrollPoint.x;
 
-        _this5._chartData.setCrossHairPointPaneTag(crossHairPoint, cross.tag);
+        _this5._chartData.setCrosshairPointPaneTag(crossHairPoint, cross.tag);
 
         _this5._chartData.scroll(distance);
       });
@@ -10274,7 +10141,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
           y: event.localY
         };
 
-        _this6._chartData.setCrossHairPointPaneTag({
+        _this6._chartData.setCrosshairPointPaneTag({
           x: event.localX,
           y: cross.y
         }, cross.tag);
@@ -10679,8 +10546,8 @@ var ChartEvent = /*#__PURE__*/function () {
         this._graphicMarkEventHandler.pressedMouseMoveEvent(event); // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
 
 
-        if (this._chartData.crossHair().paneTag) {
-          this._chartData.setCrossHairPointPaneTag(null, null);
+        if (this._chartData.crosshair().paneTag) {
+          this._chartData.setCrosshairPointPaneTag(null, null);
         }
       }
 
@@ -10782,7 +10649,7 @@ var ChartPane = /*#__PURE__*/function () {
       container: this._chartContainer,
       chartData: this._chartData
     });
-    this._candleStickPane = new CandleStickPane({
+    this._candleStickPane = new CandlePane({
       container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
@@ -11292,18 +11159,6 @@ var ChartPane = /*#__PURE__*/function () {
       }
     }
     /**
-     * 设置蜡烛图图表类型
-     * @param type
-     */
-
-  }, {
-    key: "setCandleStickChartType",
-    value: function setCandleStickChartType(type) {
-      var shouldMeasureWidth = this._candleStickPane.setChartType(type);
-
-      this._measureWidthAndLayoutPane(shouldMeasureWidth);
-    }
-    /**
      * 创建一个指标
      * @param technicalIndicatorType
      * @param height
@@ -11802,23 +11657,13 @@ var Chart = /*#__PURE__*/function () {
       this._chartPane.chartData().loadMore(cb);
     }
     /**
-     * 设置蜡烛图表类型
-     * @param type
-     */
-
-  }, {
-    key: "setCandleStickChartType",
-    value: function setCandleStickChartType(type) {
-      this._chartPane.setCandleStickChartType(type);
-    }
-    /**
      * 设置蜡烛图技术指标类型
      * @param technicalIndicatorType
      */
 
   }, {
-    key: "setCandleStickTechnicalIndicatorType",
-    value: function setCandleStickTechnicalIndicatorType(technicalIndicatorType) {
+    key: "setCandleTechnicalIndicatorType",
+    value: function setCandleTechnicalIndicatorType(technicalIndicatorType) {
       if (!technicalIndicatorType) {
         {
           console.warn('Invalid parameter: technicalIndicatorType!!!');
@@ -12060,7 +11905,7 @@ var CHART_NAME_PREFIX = 'k_line_chart_';
  */
 
 function version() {
-  return '5.7.0';
+  return '6.0.0';
 }
 /**
  * 初始化
@@ -12072,7 +11917,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 5.7.0. Root dom is null, can not initialize the chart!!!';
+  var errorMessage = 'Chart version is 6.0.0. Root dom is null, can not initialize the chart!!!';
   var container = ds;
 
   if (!container) {

@@ -12,21 +12,21 @@
  * limitations under the License.
  */
 
-import CandleStickView from '../view/CandleStickView'
-import CandleStickFloatLayerView from '../view/CandleStickFloatLayerView'
+import CandleView from '../view/CandleView'
+import CandleCrosshairView from '../view/CandleCrosshairView'
 import TechnicalIndicatorWidget from './TechnicalIndicatorWidget'
 import GraphicMarkView from '../view/GraphicMarkView'
 
-export default class CandleStickWidget extends TechnicalIndicatorWidget {
+export default class CandleWidget extends TechnicalIndicatorWidget {
   _createMainView (container, props) {
-    return new CandleStickView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
+    return new CandleView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
   }
 
   _createExpandView (container, props) {
-    return new GraphicMarkView(container, props.chartData, props.xAxis, props.yAxis)
+    return new GraphicMarkView(container, props.chartData)
   }
 
-  _createFloatLayerView (container, props) {
-    return new CandleStickFloatLayerView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
+  _createCrosshairView (container, props) {
+    return new CandleCrosshairView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
   }
 }

@@ -16,7 +16,7 @@ import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
 import { checkPointOnStraightLine } from './graphicHelper'
 import { HoverType } from './GraphicMark'
 import { formatPrecision } from '../utils/format'
-import { getFont } from '../utils/canvas'
+import { createFont } from '../utils/canvas'
 
 export default class FibonacciLine extends TwoPointLineGraphicMark {
   _checkMousePointOnLine (point, xyPoints) {
@@ -53,7 +53,7 @@ export default class FibonacciLine extends TwoPointLineGraphicMark {
 
   _drawGraphicExtend (ctx, lines, graphicMark) {
     const pricePrecision = this._chartData.pricePrecision()
-    ctx.font = getFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family)
+    ctx.font = createFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family)
     ctx.fillStyle = graphicMark.text.color
     const percentTextArray = ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']
     lines.forEach((points, index) => {

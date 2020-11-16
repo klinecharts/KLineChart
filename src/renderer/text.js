@@ -12,25 +12,15 @@
  * limitations under the License.
  */
 
-export const AVG = 'AVG'
-export const MA = 'MA'
-export const EMA = 'EMA'
-export const VOL = 'VOL'
-export const MACD = 'MACD'
-export const BOLL = 'BOLL'
-export const KDJ = 'KDJ'
-export const RSI = 'RSI'
-export const BIAS = 'BIAS'
-export const BRAR = 'BRAR'
-export const CCI = 'CCI'
-export const DMI = 'DMI'
-export const CR = 'CR'
-export const PSY = 'PSY'
-export const DMA = 'DMA'
-export const TRIX = 'TRIX'
-export const OBV = 'OBV'
-export const VR = 'VR'
-export const WR = 'WR'
-export const MTM = 'MTM'
-export const EMV = 'EMV'
-export const SAR = 'SAR'
+/**
+ * 绘制文字
+ * @param ctx
+ * @param color
+ * @param x
+ * @param y
+ * @param text
+ */
+export function renderText (ctx, color, x, y, text) {
+  ctx.fillStyle = color
+  ctx.fillText(text, x, y)
+}

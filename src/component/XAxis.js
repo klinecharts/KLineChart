@@ -13,7 +13,7 @@
  */
 
 import Axis from './Axis'
-import { calcTextWidth, getFont } from '../utils/canvas'
+import { calcTextWidth, createFont } from '../utils/canvas'
 import { formatDate } from '../utils/format'
 import { isValid, isNumber } from '../utils/typeChecks'
 
@@ -32,7 +32,7 @@ export default class XAxis extends Axis {
     if (tickLength > 0) {
       const dateTimeFormat = this._chartData.dateTimeFormat()
       const tickText = this._chartData.styleOptions().xAxis.tickText
-      this._measureCtx.font = getFont(tickText.size, tickText.weight, tickText.family)
+      this._measureCtx.font = createFont(tickText.size, tickText.weight, tickText.family)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
       const pos = parseInt(ticks[0].v, 10)
       const x = this.convertToPixel(pos)
@@ -106,33 +106,33 @@ export default class XAxis extends Axis {
     if (isValid(height) && isNumber(+height)) {
       return +height
     }
-    const crossHairOptions = stylOptions.floatLayer.crossHair
+    const crosshairOptions = stylOptions.crosshair
     let xAxisHeight = 0
-    if (xAxisOptions.display) {
-      if (xAxisOptions.axisLine.display) {
+    if (xAxisOptions.show) {
+      if (xAxisOptions.axisLine.show) {
         xAxisHeight += xAxisOptions.axisLine.size
       }
-      if (xAxisOptions.tickLine.display) {
+      if (xAxisOptions.tickLine.show) {
         xAxisHeight += xAxisOptions.tickLine.length
       }
-      if (xAxisOptions.tickText.display) {
+      if (xAxisOptions.tickText.show) {
         xAxisHeight += (xAxisOptions.tickText.paddingTop + xAxisOptions.tickText.paddingBottom + xAxisOptions.tickText.size)
       }
     }
-    let crossHairVerticalTextHeight = 0
+    let crosshairVerticalTextHeight = 0
     if (
-      crossHairOptions.display &&
-      crossHairOptions.vertical.display &&
-      crossHairOptions.vertical.text.display
+      crosshairOptions.display &&
+      crosshairOptions.vertical.display &&
+      crosshairOptions.vertical.text.display
     ) {
-      crossHairVerticalTextHeight += (
-        crossHairOptions.vertical.text.paddingTop +
-        crossHairOptions.vertical.text.paddingBottom +
-        crossHairOptions.vertical.text.borderSize * 2 +
-        crossHairOptions.vertical.text.size
+      crosshairVerticalTextHeight += (
+        crosshairOptions.vertical.text.paddingTop +
+        crosshairOptions.vertical.text.paddingBottom +
+        crosshairOptions.vertical.text.borderSize * 2 +
+        crosshairOptions.vertical.text.size
       )
     }
-    return Math.max(xAxisHeight, crossHairVerticalTextHeight)
+    return Math.max(xAxisHeight, crosshairVerticalTextHeight)
   }
 
   convertFromPixel (pixel) {

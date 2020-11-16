@@ -224,18 +224,10 @@ export default class Chart {
   }
 
   /**
-   * 设置蜡烛图表类型
-   * @param type
-   */
-  setCandleStickChartType (type) {
-    this._chartPane.setCandleStickChartType(type)
-  }
-
-  /**
    * 设置蜡烛图技术指标类型
    * @param technicalIndicatorType
    */
-  setCandleStickTechnicalIndicatorType (technicalIndicatorType) {
+  setCandleTechnicalIndicatorType (technicalIndicatorType) {
     if (!technicalIndicatorType) {
       if (DEV) {
         console.warn('Invalid parameter: technicalIndicatorType!!!')

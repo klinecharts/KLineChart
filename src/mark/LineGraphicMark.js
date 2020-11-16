@@ -13,7 +13,7 @@
  */
 
 import GraphicMark, { HoverType } from './GraphicMark'
-import { drawHorizontalLine, drawLine, drawVerticalLine } from '../utils/canvas'
+import { renderHorizontalLine, renderLine, renderVerticalLine } from '../renderer/line'
 import { checkPointOnCircle } from './graphicHelper'
 
 const LineType = {
@@ -98,7 +98,7 @@ export default class LineGraphicMark extends GraphicMark {
       const lineType = getLineType(points[0], points[1])
       switch (lineType) {
         case LineType.COMMON: {
-          drawLine(ctx, () => {
+          renderLine(ctx, () => {
             ctx.beginPath()
             ctx.moveTo(points[0].x, points[0].y)
             ctx.lineTo(points[1].x, points[1].y)
@@ -108,11 +108,11 @@ export default class LineGraphicMark extends GraphicMark {
           break
         }
         case LineType.HORIZONTAL: {
-          drawHorizontalLine(ctx, points[0].y, points[0].x, points[1].x)
+          renderHorizontalLine(ctx, points[0].y, points[0].x, points[1].x)
           break
         }
         case LineType.VERTICAL: {
-          drawVerticalLine(ctx, points[0].x, points[0].y, points[1].y)
+          renderVerticalLine(ctx, points[0].x, points[0].y, points[1].y)
           break
         }
         default: { break }

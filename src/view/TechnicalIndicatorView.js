@@ -13,8 +13,8 @@
  */
 
 import View, { PlotType } from './View'
-import { CandleStickStyle, LineStyle } from '../data/options/styleOptions'
-import { drawHorizontalLine, drawVerticalLine, drawLine } from '../utils/canvas'
+import { CandleType, LineStyle } from '../data/options/styleOptions'
+import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
 import { isValid } from '../utils/typeChecks'
 import { DrawActionType } from '../data/ChartData'
 
@@ -49,7 +49,7 @@ export default class TechnicalIndicatorView extends View {
         this._ctx.setLineDash(horizontalGrid.dashValue)
       }
       this._yAxis.ticks().forEach(tick => {
-        drawHorizontalLine(this._ctx, tick.y, 0, this._width)
+        renderHorizontalLine(this._ctx, tick.y, 0, this._width)
       })
     }
 
@@ -63,7 +63,7 @@ export default class TechnicalIndicatorView extends View {
         this._ctx.setLineDash([])
       }
       this._xAxis.ticks().forEach(tick => {
-        drawVerticalLine(this._ctx, tick.x, 0, this._height)
+        renderVerticalLine(this._ctx, tick.x, 0, this._height)
       })
     }
 
@@ -101,7 +101,7 @@ export default class TechnicalIndicatorView extends View {
         this._chartData.styleOptions(),
         this._xAxis,
         this._yAxis,
-        this._yAxis.isCandleStickYAxis()
+        this._yAxis.isCandleYAxis()
       )
       this._ctx.restore()
     }
@@ -111,14 +111,14 @@ export default class TechnicalIndicatorView extends View {
       baseValue = this._yAxis.min()
     }
     const baseValueY = this._yAxis.convertToPixel(baseValue)
-    const isCandleStickYAxis = this._yAxis.isCandleStickYAxis()
+    const isCandleYAxis = this._yAxis.isCandleYAxis()
     this._ctx.lineWidth = 1
     this._drawGraphics(
       (x, i, kLineData, halfBarSpace, barSpace) => {
         const technicalIndicatorData = technicalIndicatorResult[i] || {}
         let lineValueIndex = 0
-        if (technicalIndicator.shouldOhlc && !isCandleStickYAxis) {
-          this._drawCandleStickBar(x, halfBarSpace, barSpace, i, kLineData, technicalIndicatorOptions.bar, CandleStickStyle.OHLC)
+        if (technicalIndicator.shouldOhlc && !isCandleYAxis) {
+          this._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, technicalIndicatorOptions.bar, CandleType.OHLC)
         }
         const coordinateY = {}
         plots.forEach(plot => {
@@ -196,7 +196,7 @@ export default class TechnicalIndicatorView extends View {
             viewport: { width: this._width, height: this._height },
             barSpace,
             halfBarSpace,
-            isCandleStick: isCandleStickYAxis
+            isCandle: isCandleYAxis
           })
         })
       },
@@ -215,7 +215,7 @@ export default class TechnicalIndicatorView extends View {
     const colors = technicalIndicatorOptions.line.colors
     const colorSize = (colors || []).length
     this._ctx.lineWidth = technicalIndicatorOptions.line.size
-    drawLine(this._ctx, () => {
+    renderLine(this._ctx, () => {
       lines.forEach((lineItem, i) => {
         this._ctx.strokeStyle = colors[i % colorSize]
         this._ctx.beginPath()
@@ -300,11 +300,8 @@ export default class TechnicalIndicatorView extends View {
    * @param barStyle
    * @private
    */
-  _drawCandleStickBar (x, halfBarSpace, barSpace, dataIndex, kLineData, barOptions, barStyle) {
-    const open = kLineData.open
-    const close = kLineData.close
-    const high = kLineData.high
-    const low = kLineData.low
+  _drawCandleBar (x, halfBarSpace, barSpace, dataIndex, kLineData, barOptions, barStyle) {
+    const { open, close, high, low } = kLineData
     if (close > open) {
       this._ctx.strokeStyle = barOptions.upColor
       this._ctx.fillStyle = barOptions.upColor
@@ -327,15 +324,15 @@ export default class TechnicalIndicatorView extends View {
 
     const barHeight = Math.max(1, lowStartY - highEndY)
     switch (barStyle) {
-      case CandleStickStyle.SOLID: {
+      case CandleType.CANDLE_SOLID: {
         this._ctx.fillRect(x - halfBarSpace, highEndY, barSpace, barHeight)
         break
       }
-      case CandleStickStyle.STROKE: {
+      case CandleType.CANDLE_STROKE: {
         this._ctx.strokeRect(x - halfBarSpace + 0.5, highEndY, barSpace - 1, barHeight)
         break
       }
-      case CandleStickStyle.UP_STROKE: {
+      case CandleType.CANDLE_UP_STROKE: {
         if (close > open) {
           this._ctx.strokeRect(x - halfBarSpace + 0.5, highEndY, barSpace - 1, barHeight)
         } else {
@@ -343,7 +340,7 @@ export default class TechnicalIndicatorView extends View {
         }
         break
       }
-      case CandleStickStyle.DOWN_STROKE: {
+      case CandleType.CANDLE_DOWN_STROKE: {
         if (close > open) {
           this._ctx.fillRect(x - halfBarSpace, highEndY, barSpace, barHeight)
         } else {
@@ -366,7 +363,7 @@ export default class TechnicalIndicatorView extends View {
       viewport: { width: this._width, height: this._height },
       barSpace,
       halfBarSpace,
-      isCandleStick: this._yAxis.isCandleStickYAxis()
+      isCandle: this._yAxis.isCandleYAxis()
     })
   }
 

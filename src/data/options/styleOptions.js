@@ -40,31 +40,23 @@ export const YAxisType = {
 }
 
 /**
- * 主图类型
- * @type {{TIME_LINE: string, CANDLE: string}}
- */
-export const ChartType = {
-  REAL_TIME: 'real_time',
-  CANDLE_STICK: 'candle_stick'
-}
-
-/**
  * 蜡烛图样式
- * @type {{STROKE: string, DECREASING_STROKE: string, OHLC: string, INCREASING_STROKE: string, SOLID: string}}
+ * @type {{AREA: string, OHLC: string, CANDLE_STROKE: string, CANDLE_SOLID: string, CANDLE_DOWN_STROKE: string, CANDLE_UP_STROKE: string}}
  */
-export const CandleStickStyle = {
-  SOLID: 'solid',
-  STROKE: 'stroke',
-  UP_STROKE: 'up_stroke',
-  DOWN_STROKE: 'down_stroke',
-  OHLC: 'ohlc'
+export const CandleType = {
+  CANDLE_SOLID: 'candle_solid',
+  CANDLE_STROKE: 'candle_stroke',
+  CANDLE_UP_STROKE: 'candle_up_stroke',
+  CANDLE_DOWN_STROKE: 'candle_down_stroke',
+  OHLC: 'ohlc',
+  AREA: 'area'
 }
 
 /**
- * 提示文字显示规则
+ * 说明显示规则
  * @type {{FOLLOW_CROSS: string, NONE: string, ALWAYS: string}}
  */
-export const FloatLayerPromptDisplayRule = {
+export const LegendShowRule = {
   ALWAYS: 'always',
   FOLLOW_CROSS: 'follow_cross',
   NONE: 'none'
@@ -72,28 +64,28 @@ export const FloatLayerPromptDisplayRule = {
 
 /**
  * 主图数据提示显示类型
- * @type {{FLOAT: string, FIXED: string}}
+ * @type {{RECT: string, STANDARD: string}}
  */
-export const FloatLayerPromptCandleStickTextDisplayType = {
+export const LegendCandleShowType = {
   RECT: 'rect',
   STANDARD: 'standard'
 }
 
 /**
  * 默认网格配置
- * @type {{horizontal: {size: number, color: string, dashValue: number[], display: boolean, style: string}, display: boolean, vertical: {size: number, color: string, dashValue: number[], display: boolean, style: string}}}
+ * @type {{horizontal: {size: number, color: string, dashValue: number[], show: boolean, style: string}, show: boolean, vertical: {size: number, color: string, dashValue: number[], show: boolean, style: string}}}
  */
 const defaultGrid = {
-  display: true,
+  show: true,
   horizontal: {
-    display: true,
+    show: true,
     size: 1,
     color: '#393939',
     style: LineStyle.DASH,
     dashValue: [2, 2]
   },
   vertical: {
-    display: false,
+    show: false,
     size: 1,
     color: '#393939',
     style: LineStyle.DASH,
@@ -102,15 +94,12 @@ const defaultGrid = {
 }
 
 /**
- * 默认蜡烛柱图配置
- * @type {{bar: {upColor: string, style: string, downColor: string}}}
+ * 默认蜡烛柱图样式配置
+ * @type {{area: {fillColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number}, bar: {noChangeColor: string, upColor: string, downColor: string}, legend: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
-const defaultCandleStick = {
+const defaultCandle = {
+  type: CandleType.CANDLE_SOLID,
   bar: {
-    /**
-     * 蜡烛样式
-     */
-    style: CandleStickStyle.SOLID,
     /**
      * 上涨颜色
      */
@@ -124,10 +113,21 @@ const defaultCandleStick = {
      */
     noChangeColor: '#888888'
   },
+  area: {
+    lineSize: 2,
+    lineColor: '#2196F3',
+    fillColor: [{
+      offset: 0,
+      color: 'rgba(33, 150, 243, 0.01)'
+    }, {
+      offset: 1,
+      color: 'rgba(33, 150, 243, 0.2)'
+    }]
+  },
   priceMark: {
-    display: true,
+    show: true,
     high: {
-      display: true,
+      show: true,
       color: '#D9D9D9',
       textMargin: 5,
       textSize: 10,
@@ -135,7 +135,7 @@ const defaultCandleStick = {
       textWeight: 'normal'
     },
     low: {
-      display: true,
+      show: true,
       color: '#D9D9D9',
       textMargin: 5,
       textSize: 10,
@@ -143,18 +143,18 @@ const defaultCandleStick = {
       textWeight: 'normal'
     },
     last: {
-      display: true,
+      show: true,
       upColor: '#26A69A',
       downColor: '#EF5350',
       noChangeColor: '#888888',
       line: {
-        display: true,
+        show: true,
         style: LineStyle.DASH,
         dashValue: [4, 4],
         size: 1
       },
       text: {
-        display: true,
+        show: true,
         size: 12,
         paddingLeft: 2,
         paddingTop: 2,
@@ -165,38 +165,41 @@ const defaultCandleStick = {
         weight: 'normal'
       }
     }
-  }
-}
-
-/**
- * 默认的分时图配置
- * @type {{timeLine: {areaFillColor: string, color: string, size: number}, averageLine: {color: string, size: number, display: boolean}}}
- */
-const defaultRealTime = {
-  timeLine: {
-    color: '#2196F3',
-    size: 2,
-    areaFillColor: [{
-      offset: 0,
-      color: 'rgba(33, 150, 243, 0.01)'
-    }, {
-      offset: 1,
-      color: 'rgba(33, 150, 243, 0.2)'
-    }]
   },
-  /**
-   * 均线
-   */
-  averageLine: {
-    display: true,
-    color: '#FF9600',
-    size: 1
+  legend: {
+    showRule: LegendShowRule.ALWAYS,
+    showType: LegendCandleShowType.STANDARD,
+    labels: ['时间', '开', '收', '高', '低', '成交量'],
+    values: null,
+    rect: {
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingTop: 0,
+      paddingBottom: 6,
+      offsetLeft: 8,
+      offsetTop: 8,
+      offsetRight: 8,
+      borderRadius: 4,
+      borderSize: 1,
+      borderColor: '#3f4254',
+      fillColor: 'rgba(17, 17, 17, .3)'
+    },
+    text: {
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      color: '#D9D9D9',
+      marginLeft: 8,
+      marginTop: 6,
+      marginRight: 8,
+      marginBottom: 0
+    }
   }
 }
 
 /**
- * 默认的技术指标图配置
- * @type {{decreasingColor: string, lineColors: [string, string, string, string, string], increasingColor: string, lineSize: number}}
+ * 默认的技术指标样式配置
+ * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, circle: {noChangeColor: string, upColor: string, downColor: string}}}
  */
 const defaultTechnicalIndicator = {
   bar: {
@@ -206,7 +209,7 @@ const defaultTechnicalIndicator = {
   },
   line: {
     size: 1,
-    colors: ['#D9D9D9', '#F5A623', '#9D65C9', '#2196F3', '#E11D74']
+    colors: ['#FF9600', '#9D65C9', '#2196F3', '#E11D74', '#01C5C4']
   },
   circle: {
     upColor: 'rgba(38, 166, 154, .65)',
@@ -214,27 +217,42 @@ const defaultTechnicalIndicator = {
     noChangeColor: '#888888'
   },
   lastValueMark: {
-    display: false,
-    textColor: '#ffffff',
-    textSize: 12,
-    textFamily: 'Helvetica Neue',
-    textWeight: 'normal',
-    textPaddingLeft: 3,
-    textPaddingTop: 2,
-    textPaddingRight: 3,
-    textPaddingBottom: 2
+    show: false,
+    color: '#ffffff',
+    size: 12,
+    family: 'Helvetica Neue',
+    weight: 'normal',
+    paddingLeft: 3,
+    paddingTop: 2,
+    paddingRight: 3,
+    paddingBottom: 2
+  },
+  legend: {
+    showRule: LegendShowRule.ALWAYS,
+    text: {
+      showName: true,
+      showParams: true,
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      color: '#D9D9D9',
+      marginTop: 6,
+      marginRight: 8,
+      marginBottom: 0,
+      marginLeft: 8
+    }
   }
 }
 
 /**
  * 默认x轴配置
- * @type {{minHeight: number, maxHeight: number, axisLine: {color: string, size: number, display: boolean}, display: boolean, tickText: {margin: number, color: string, size: number, display: boolean}, tickLine: {size: number, color: string, display: boolean, length: number}}}
+ * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, tickText: {paddingBottom: number, color: string, size: number, show: boolean, weight: string, paddingTop: number, family: string}, height: null, tickLine: {size: number, color: string, show: boolean, length: number}}}
  */
 const defaultXAxis = {
   /**
    * 是否显示整个轴
    */
-  display: true,
+  show: true,
   /**
    * 高度
    */
@@ -243,7 +261,7 @@ const defaultXAxis = {
    * 轴线配置
    */
   axisLine: {
-    display: true,
+    show: true,
     color: '#888888',
     size: 1
   },
@@ -252,7 +270,7 @@ const defaultXAxis = {
    * tick文字
    */
   tickText: {
-    display: true,
+    show: true,
     color: '#D9D9D9',
     size: 12,
     family: 'Helvetica Neue',
@@ -262,7 +280,7 @@ const defaultXAxis = {
   },
   // tick线
   tickLine: {
-    display: true,
+    show: true,
     size: 1,
     length: 3,
     color: '#888888'
@@ -271,13 +289,13 @@ const defaultXAxis = {
 
 /**
  * 默认y轴配置
- * @type {{axisLine: {color: string, size: number, display: boolean}, display: boolean, minWidth: number, position: string, tickText: {margin: number, color: string, size: number, display: boolean, position: string}, type: string, maxWidth: number, tickLine: {size: number, color: string, display: boolean, length: number}}}
+ * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, width: null, position: string, tickText: {color: string, size: number, paddingRight: number, show: boolean, weight: string, family: string, paddingLeft: number}, type: string, inside: boolean, tickLine: {size: number, color: string, show: boolean, length: number}}}
  */
 const defaultYAxis = {
   /**
    * 是否显示整个轴
    */
-  display: true,
+  show: true,
   /**
    * 宽度
    */
@@ -298,7 +316,7 @@ const defaultYAxis = {
    * 轴线配置
    */
   axisLine: {
-    display: true,
+    show: true,
     color: '#888888',
     size: 1
   },
@@ -307,7 +325,7 @@ const defaultYAxis = {
    * tick文字
    */
   tickText: {
-    display: true,
+    show: true,
     color: '#D9D9D9',
     size: 12,
     family: 'Helvetica Neue',
@@ -317,117 +335,68 @@ const defaultYAxis = {
   },
   // tick线
   tickLine: {
-    display: true,
+    show: true,
     size: 1,
     length: 3,
     color: '#888888'
   }
 }
 
-/**
- * 默认浮层配置
- * @type {{display: boolean}}
- */
-const defaultFloatLayer = {
-  crossHair: {
-    display: true,
-    horizontal: {
-      display: true,
-      line: {
-        display: true,
-        style: LineStyle.DASH,
-        dashValue: [4, 2],
-        size: 1,
-        color: '#888888'
-      },
-      text: {
-        display: true,
-        color: '#D9D9D9',
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 2,
-        paddingBottom: 2,
-        borderSize: 1,
-        borderColor: '#505050',
-        backgroundColor: '#505050'
-      }
+const defaultCrosshair = {
+  show: true,
+  horizontal: {
+    show: true,
+    line: {
+      show: true,
+      style: LineStyle.DASH,
+      dashValue: [4, 2],
+      size: 1,
+      color: '#888888'
     },
-    vertical: {
-      display: true,
-      line: {
-        display: true,
-        style: LineStyle.DASH,
-        dashValue: [4, 2],
-        size: 1,
-        color: '#888888'
-      },
-      text: {
-        display: true,
-        color: '#D9D9D9',
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 2,
-        paddingBottom: 2,
-        borderSize: 1,
-        borderColor: '#505050',
-        backgroundColor: '#505050'
-      }
+    text: {
+      show: true,
+      color: '#D9D9D9',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 2,
+      paddingRight: 2,
+      paddingTop: 2,
+      paddingBottom: 2,
+      borderSize: 1,
+      borderColor: '#505050',
+      backgroundColor: '#505050'
     }
   },
-  prompt: {
-    displayRule: FloatLayerPromptDisplayRule.ALWAYS,
-    candleStick: {
-      showType: FloatLayerPromptCandleStickTextDisplayType.STANDARD,
-      labels: ['时间', '开', '收', '高', '低', '成交量'],
-      values: null,
-      rect: {
-        paddingLeft: 0,
-        paddingRight: 0,
-        paddingTop: 0,
-        paddingBottom: 6,
-        left: 8,
-        top: 8,
-        right: 8,
-        borderRadius: 4,
-        borderSize: 1,
-        borderColor: '#3f4254',
-        fillColor: 'rgba(17, 17, 17, .3)'
-      },
-      text: {
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        color: '#D9D9D9',
-        marginLeft: 8,
-        marginTop: 6,
-        marginRight: 8,
-        marginBottom: 0
-      }
+  vertical: {
+    show: true,
+    line: {
+      show: true,
+      style: LineStyle.DASH,
+      dashValue: [4, 2],
+      size: 1,
+      color: '#888888'
     },
-    technicalIndicator: {
-      text: {
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        color: '#D9D9D9',
-        marginTop: 6,
-        marginRight: 8,
-        marginBottom: 0,
-        marginLeft: 8
-      }
+    text: {
+      show: true,
+      color: '#D9D9D9',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 2,
+      paddingRight: 2,
+      paddingTop: 2,
+      paddingBottom: 2,
+      borderSize: 1,
+      borderColor: '#505050',
+      backgroundColor: '#505050'
     }
   }
 }
 
 /**
  * 默认图形标记配置
- * @type {{line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, valueFormatter: null, marginBottom: number, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
+ * @type {{line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
  */
 const defaultGraphicMark = {
   line: {
@@ -468,12 +437,11 @@ const defaultSeparator = {
 
 export const defaultStyleOptions = {
   grid: defaultGrid,
-  candleStick: defaultCandleStick,
-  realTime: defaultRealTime,
+  candle: defaultCandle,
   technicalIndicator: defaultTechnicalIndicator,
   xAxis: defaultXAxis,
   yAxis: defaultYAxis,
   separator: defaultSeparator,
-  floatLayer: defaultFloatLayer,
+  crosshair: defaultCrosshair,
   graphicMark: defaultGraphicMark
 }

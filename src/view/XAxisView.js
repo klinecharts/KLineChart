@@ -13,7 +13,8 @@
  */
 
 import View from './View'
-import { drawHorizontalLine, drawVerticalLine, getFont } from '../utils/canvas'
+import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
+import { createFont } from '../utils/canvas'
 
 export default class XAxisView extends View {
   constructor (container, chartData, xAxis) {
@@ -23,7 +24,7 @@ export default class XAxisView extends View {
 
   _draw () {
     const xAxisOptions = this._chartData.styleOptions().xAxis
-    if (xAxisOptions.display) {
+    if (xAxisOptions.show) {
       this._drawAxisLine(xAxisOptions)
       this._drawTickLines(xAxisOptions)
       this._drawTickLabels(xAxisOptions)
@@ -32,47 +33,47 @@ export default class XAxisView extends View {
 
   _drawAxisLine (xAxisOptions) {
     const xAxisLine = xAxisOptions.axisLine
-    if (!xAxisLine.display) {
+    if (!xAxisLine.show) {
       return
     }
     this._ctx.strokeStyle = xAxisLine.color
     this._ctx.lineWidth = xAxisLine.size
-    drawHorizontalLine(this._ctx, 0, 0, this._width)
+    renderHorizontalLine(this._ctx, 0, 0, this._width)
   }
 
   _drawTickLines (xAxisOptions) {
     const tickLine = xAxisOptions.tickLine
-    if (!tickLine.display) {
+    if (!tickLine.show) {
       return
     }
     this._ctx.lineWidth = tickLine.size
     this._ctx.strokeStyle = tickLine.color
 
-    const startY = xAxisOptions.axisLine.display ? xAxisOptions.axisLine.size : 0
+    const startY = xAxisOptions.axisLine.show ? xAxisOptions.axisLine.size : 0
 
     const endY = startY + tickLine.length
     this._xAxis.ticks().forEach(tick => {
-      drawVerticalLine(this._ctx, tick.x, startY, endY)
+      renderVerticalLine(this._ctx, tick.x, startY, endY)
     })
   }
 
   _drawTickLabels (xAxisOptions) {
     const tickText = xAxisOptions.tickText
-    if (!tickText.display) {
+    if (!tickText.show) {
       return
     }
     const tickLine = xAxisOptions.tickLine
 
     this._ctx.textBaseline = 'top'
-    this._ctx.font = getFont(tickText.size, tickText.weight, tickText.family)
+    this._ctx.font = createFont(tickText.size, tickText.weight, tickText.family)
     this._ctx.textAlign = 'center'
     this._ctx.fillStyle = tickText.color
 
     let labelY = tickText.paddingTop
-    if (xAxisOptions.axisLine.display) {
+    if (xAxisOptions.axisLine.show) {
       labelY += (xAxisOptions.axisLine.size)
     }
-    if (tickLine.display) {
+    if (tickLine.show) {
       labelY += (tickLine.length)
     }
     const ticks = this._xAxis.ticks()

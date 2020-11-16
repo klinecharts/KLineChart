@@ -22,7 +22,7 @@ export default class Widget {
     this._initElement(props.container)
     this._mainView = this._createMainView(this._element, props)
     this._expandView = this._createExpandView(this._element, props)
-    this._floatLayerView = this._createFloatLayerView(this._element, props)
+    this._crosshairView = this._createCrosshairView(this._element, props)
   }
 
   /**
@@ -62,7 +62,7 @@ export default class Widget {
    * @param props
    * @private
    */
-  _createFloatLayerView (container, props) {}
+  _createCrosshairView (container, props) {}
 
   getElement () {
     return this._element
@@ -71,14 +71,14 @@ export default class Widget {
   setWidth (width) {
     this._width = width
     this._mainView.setWidth(width)
-    this._floatLayerView.setWidth(width)
+    this._crosshairView.setWidth(width)
     this._expandView && this._expandView.setWidth(width)
   }
 
   setHeight (height) {
     this._height = height
     this._mainView.setHeight(height)
-    this._floatLayerView.setHeight(height)
+    this._crosshairView.setHeight(height)
     this._expandView && this._expandView.setHeight(height)
   }
 
@@ -94,7 +94,7 @@ export default class Widget {
       this._element.style.height = `${this._height}px`
     }
     this._mainView.layout()
-    this._floatLayerView.layout()
+    this._crosshairView.layout()
     this._expandView && this._expandView.layout()
   }
 
@@ -109,13 +109,13 @@ export default class Widget {
         break
       }
       case InvalidateLevel.FLOAT_LAYER: {
-        this._floatLayerView.flush()
+        this._crosshairView.flush()
         break
       }
       case InvalidateLevel.MAIN:
       case InvalidateLevel.FULL: {
         this._mainView.flush()
-        this._floatLayerView.flush()
+        this._crosshairView.flush()
         this._expandView && this._expandView.flush()
         break
       }
@@ -127,11 +127,11 @@ export default class Widget {
 
   /**
    * 将widget转换成图片
-   * @param includeFloatLayer
+   * @param includeCrosshair
    * @param includeGraphicMark
    * @returns {HTMLCanvasElement}
    */
-  getImage (includeFloatLayer, includeGraphicMark) {
+  getImage (includeCrosshair, includeGraphicMark) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)
@@ -146,8 +146,8 @@ export default class Widget {
     if (includeGraphicMark && this._expandView) {
       ctx.drawImage(this._expandView.getImage(), 0, 0, this._width, this._height)
     }
-    if (includeFloatLayer) {
-      ctx.drawImage(this._floatLayerView.getImage(), 0, 0, this._width, this._height)
+    if (includeCrosshair) {
+      ctx.drawImage(this._crosshairView.getImage(), 0, 0, this._width, this._height)
     }
     return canvas
   }

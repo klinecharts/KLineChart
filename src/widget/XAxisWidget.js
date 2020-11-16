@@ -14,14 +14,14 @@
 
 import Widget from './Widget'
 import XAxisView from '../view/XAxisView'
-import XAxisFloatLayerView from '../view/XAxisFloatLayerView'
+import XAxisCrosshairView from '../view/XAxisCrosshairView'
 
 export default class XAxisWidget extends Widget {
   _createMainView (container, props) {
     return new XAxisView(container, props.chartData, props.xAxis)
   }
 
-  _createFloatLayerView (container, props) {
-    return new XAxisFloatLayerView(container, props.chartData, props.xAxis)
+  _createCrosshairView (container, props) {
+    return new XAxisCrosshairView(container, props.chartData, props.xAxis)
   }
 }

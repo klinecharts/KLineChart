@@ -16,7 +16,7 @@ import OnePointLineGraphicMark from './OnePointLineGraphicMark'
 import { checkPointOnRayLine } from './graphicHelper'
 import { HoverType } from './GraphicMark'
 import { formatPrecision } from '../utils/format'
-import { getFont } from '../utils/canvas'
+import { createFont } from '../utils/canvas'
 
 export default class PriceLine extends OnePointLineGraphicMark {
   _checkMousePointOnLine (point, xyPoints) {
@@ -39,7 +39,7 @@ export default class PriceLine extends OnePointLineGraphicMark {
     const point = lines[0][0]
     const price = this._yAxis.convertFromPixel(point.y)
     const priceText = formatPrecision(price, pricePrecision)
-    ctx.font = getFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family)
+    ctx.font = createFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family)
     ctx.fillStyle = graphicMark.text.color
     ctx.fillText(priceText, point.x + graphicMark.text.marginLeft, point.y - graphicMark.text.marginBottom)
   }

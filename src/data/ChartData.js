@@ -95,7 +95,7 @@ export default class ChartData {
     this._to = 0
 
     // 十字光标信息
-    this._crossHair = {}
+    this._crosshair = {}
     // 用来记录开始拖拽时向右偏移的数量
     this._preOffsetRightBarCount = 0
 
@@ -431,8 +431,8 @@ export default class ChartData {
    * 获取十字光标信息
    * @returns {{}}
    */
-  crossHair () {
-    return this._crossHair
+  crosshair () {
+    return this._crosshair
   }
 
   /**
@@ -440,16 +440,16 @@ export default class ChartData {
    * @param point
    * @param paneTag
    */
-  setCrossHairPointPaneTag (point, paneTag) {
-    const crossHair = {}
+  setCrosshairPointPaneTag (point, paneTag) {
+    const crosshair = {}
     if (point) {
-      crossHair.x = point.x
-      crossHair.y = point.y
-      crossHair.paneTag = this._crossHair.paneTag
+      crosshair.x = point.x
+      crosshair.y = point.y
+      crosshair.paneTag = this._crosshair.paneTag
     }
     if (paneTag !== undefined) {
-      crossHair.paneTag = paneTag
-      this._crossHair = crossHair
+      crosshair.paneTag = paneTag
+      this._crosshair = crosshair
       this.invalidate(InvalidateLevel.FLOAT_LAYER)
     }
   }
@@ -521,7 +521,7 @@ export default class ChartData {
       return
     }
     if (!point || isValid(point.x)) {
-      point = { x: isValid(this._crossHair.x) ? this._crossHair.x : this._totalDataSpace / 2 }
+      point = { x: isValid(this._crosshair.x) ? this._crosshair.x : this._totalDataSpace / 2 }
     }
     const floatIndexAtZoomPoint = this.coordinateToFloatIndex(point.x)
     const dataSpace = this._dataSpace + scale * (this._dataSpace / 10)

@@ -12,15 +12,17 @@
  * limitations under the License.
  */
 
-import TechnicalIndicator from '../TechnicalIndicator'
+import TechnicalIndicator, { TechnicalIndicatorSeries } from '../TechnicalIndicator'
+import { AVG } from '../defaultTechnicalIndicatorType'
 
-export default class TransactionAveragePrice extends TechnicalIndicator {
+export default class DealAverage extends TechnicalIndicator {
   constructor () {
     super({
-      name: 'TAP',
+      name: AVG,
+      series: TechnicalIndicatorSeries.PRICE,
       precision: 2,
       plots: [
-        { key: 'average', type: 'line' }
+        { key: 'avg', type: 'line' }
       ]
     })
   }
@@ -30,15 +32,15 @@ export default class TransactionAveragePrice extends TechnicalIndicator {
     let volumeSum = 0
     const result = []
     dataList.forEach(kLineData => {
-      const average = {}
+      const avg = {}
       const turnover = kLineData.turnover || 0
       const volume = kLineData.volume || 0
       turnoverSum += turnover
       volumeSum += volume
-      if (volume !== 0) {
-        average.average = turnoverSum / volumeSum
+      if (volumeSum !== 0) {
+        avg.avg = turnoverSum / volumeSum
       }
-      result.push(average)
+      result.push(avg)
     })
     return result
   }

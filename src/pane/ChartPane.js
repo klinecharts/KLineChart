@@ -13,7 +13,7 @@
  */
 
 import ChartData, { InvalidateLevel } from '../data/ChartData'
-import CandleStickPane from './CandleStickPane'
+import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
 
 import { YAxisPosition } from '../data/options/styleOptions'
@@ -41,7 +41,7 @@ export default class ChartPane {
     this._separatorDragStartTechnicalIndicatorHeight = 0
     this._chartData = new ChartData(styleOptions, this._updatePane.bind(this))
     this._xAxisPane = new XAxisPane({ container: this._chartContainer, chartData: this._chartData })
-    this._candleStickPane = new CandleStickPane({
+    this._candleStickPane = new CandlePane({
       container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
@@ -361,15 +361,6 @@ export default class ChartPane {
         this._calcAllPaneTechnicalIndicator()
       }
     }
-  }
-
-  /**
-   * 设置蜡烛图图表类型
-   * @param type
-   */
-  setCandleStickChartType (type) {
-    const shouldMeasureWidth = this._candleStickPane.setChartType(type)
-    this._measureWidthAndLayoutPane(shouldMeasureWidth)
   }
 
   /**
