@@ -1053,6 +1053,7 @@ var TechnicalIndicator = /*#__PURE__*/function () {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var AVG = 'AVG';
 var MA = 'MA';
 var EMA = 'EMA';
 var VOL = 'VOL';
@@ -1074,6 +1075,51 @@ var WR = 'WR';
 var MTM = 'MTM';
 var EMV = 'EMV';
 var SAR = 'SAR';
+
+var DealAverage = /*#__PURE__*/function (_TechnicalIndicator) {
+  _inherits(DealAverage, _TechnicalIndicator);
+
+  var _super = _createSuper(DealAverage);
+
+  function DealAverage() {
+    _classCallCheck(this, DealAverage);
+
+    return _super.call(this, {
+      name: AVG,
+      series: TechnicalIndicatorSeries.PRICE,
+      precision: 2,
+      plots: [{
+        key: 'avg',
+        type: 'line'
+      }]
+    });
+  }
+
+  _createClass(DealAverage, [{
+    key: "calcTechnicalIndicator",
+    value: function calcTechnicalIndicator(dataList, calcParams) {
+      var turnoverSum = 0;
+      var volumeSum = 0;
+      var result = [];
+      dataList.forEach(function (kLineData) {
+        var avg = {};
+        var turnover = kLineData.turnover || 0;
+        var volume = kLineData.volume || 0;
+        turnoverSum += turnover;
+        volumeSum += volume;
+
+        if (volumeSum !== 0) {
+          avg.avg = turnoverSum / volumeSum;
+        }
+
+        result.push(avg);
+      });
+      return result;
+    }
+  }]);
+
+  return DealAverage;
+}(TechnicalIndicator);
 
 var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
   _inherits(MovingAverage, _TechnicalIndicator);
@@ -2845,7 +2891,7 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
 function createTechnicalIndicatorMapping() {
   var _ref;
 
-  return _ref = {}, _defineProperty(_ref, MA, new MovingAverage()), _defineProperty(_ref, EMA, new ExponentialMovingAverage()), _defineProperty(_ref, VOL, new Volume()), _defineProperty(_ref, MACD, new MovingAverageConvergenceDivergence()), _defineProperty(_ref, BOLL, new BollingerBands()), _defineProperty(_ref, KDJ, new StockIndicatorKDJ()), _defineProperty(_ref, RSI, new RelativeStrengthIndex()), _defineProperty(_ref, BIAS, new Bias()), _defineProperty(_ref, BRAR, new Brar()), _defineProperty(_ref, CCI, new CommodityChannelIndex()), _defineProperty(_ref, DMI, new DirectionalMovementIndex()), _defineProperty(_ref, CR, new CurrentRatio()), _defineProperty(_ref, PSY, new PsychologicalLine()), _defineProperty(_ref, DMA, new DifferentOfMovingAverage()), _defineProperty(_ref, TRIX, new TripleExponentiallySmoothedAverage()), _defineProperty(_ref, OBV, new OnBalanceVolume()), _defineProperty(_ref, VR, new VolumeRatio()), _defineProperty(_ref, WR, new WilliamsR()), _defineProperty(_ref, MTM, new Momentum()), _defineProperty(_ref, EMV, new EaseOfMovementValue()), _defineProperty(_ref, SAR, new StopAndReverse()), _ref;
+  return _ref = {}, _defineProperty(_ref, AVG, new DealAverage()), _defineProperty(_ref, MA, new MovingAverage()), _defineProperty(_ref, EMA, new ExponentialMovingAverage()), _defineProperty(_ref, VOL, new Volume()), _defineProperty(_ref, MACD, new MovingAverageConvergenceDivergence()), _defineProperty(_ref, BOLL, new BollingerBands()), _defineProperty(_ref, KDJ, new StockIndicatorKDJ()), _defineProperty(_ref, RSI, new RelativeStrengthIndex()), _defineProperty(_ref, BIAS, new Bias()), _defineProperty(_ref, BRAR, new Brar()), _defineProperty(_ref, CCI, new CommodityChannelIndex()), _defineProperty(_ref, DMI, new DirectionalMovementIndex()), _defineProperty(_ref, CR, new CurrentRatio()), _defineProperty(_ref, PSY, new PsychologicalLine()), _defineProperty(_ref, DMA, new DifferentOfMovingAverage()), _defineProperty(_ref, TRIX, new TripleExponentiallySmoothedAverage()), _defineProperty(_ref, OBV, new OnBalanceVolume()), _defineProperty(_ref, VR, new VolumeRatio()), _defineProperty(_ref, WR, new WilliamsR()), _defineProperty(_ref, MTM, new Momentum()), _defineProperty(_ref, EMV, new EaseOfMovementValue()), _defineProperty(_ref, SAR, new StopAndReverse()), _ref;
 }
 /**
  * 创建一个新的技术指标
@@ -3255,6 +3301,20 @@ var GraphicMark = /*#__PURE__*/function () {
 
   return GraphicMark;
 }();
+
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /**
  * 绘制水平直线
@@ -6530,6 +6590,20 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
 }(View);
 
 /**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
  * 绘制文字
  * @param ctx
  * @param color
@@ -6788,6 +6862,20 @@ var TechnicalIndicatorWidget = /*#__PURE__*/function (_Widget) {
 }(Widget);
 
 /**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
  * 绘制带边框并填充的矩形
  * @param ctx
  * @param fillColor
@@ -6991,7 +7079,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
       }
 
       var tickLine = yAxisOptions.tickLine;
-      var tickLineDisplay = tickLine.show;
+      var tickLineShow = tickLine.show;
       var tickLineLength = tickLine.length;
       var labelX;
 
@@ -7002,7 +7090,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
           labelX += yAxisOptions.axisLine.size;
         }
 
-        if (tickLineDisplay) {
+        if (tickLineShow) {
           labelX += tickLineLength;
         }
 
@@ -7014,7 +7102,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
           labelX -= yAxisOptions.axisLine.size;
         }
 
-        if (tickLineDisplay) {
+        if (tickLineShow) {
           labelX -= tickLineLength;
         }
 
@@ -8022,20 +8110,20 @@ var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       } else {
         this._drawCandle(candleOptions);
 
-        this._drawTechnicalIndicator();
-
         this._drawLowHighPrice(candleOptions.priceMark, 'high', 'high', -Infinity, [-2, -5], function (price, comparePrice) {
-          if (price < comparePrice) {
+          if (price > comparePrice) {
             return price;
           }
         });
 
         this._drawLowHighPrice(candleOptions.priceMark, 'low', 'low', Infinity, [2, 5], function (price, comparePrice) {
-          if (price > comparePrice) {
+          if (price < comparePrice) {
             return price;
           }
         });
       }
+
+      this._drawTechnicalIndicator();
 
       this._drawLastPriceLine(candleOptions.priceMark);
     }
@@ -8227,8 +8315,8 @@ var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       var startY = priceY + offsets[0];
       this._ctx.textAlign = 'left';
       this._ctx.lineWidth = 1;
-      this._ctx.strokeStyle = priceMarkOptions.color;
-      this._ctx.fillStyle = priceMarkOptions.color;
+      this._ctx.strokeStyle = lowHighPriceMarkOptions.color;
+      this._ctx.fillStyle = lowHighPriceMarkOptions.color;
       renderLine(this._ctx, function () {
         _this3._ctx.beginPath();
 
@@ -8254,11 +8342,11 @@ var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       var y = startY + offsets[1];
       renderVerticalLine(this._ctx, startX, startY, y);
       renderHorizontalLine(this._ctx, y, startX, startX + 5);
-      this._ctx.font = createFont(priceMarkOptions.textSize, priceMarkOptions.textWeight, priceMarkOptions.textFamily);
+      this._ctx.font = createFont(lowHighPriceMarkOptions.textSize, lowHighPriceMarkOptions.textWeight, lowHighPriceMarkOptions.textFamily);
       var text = formatPrecision(price, pricePrecision);
       this._ctx.textBaseline = 'middle';
 
-      this._ctx.fillText(text, startX + 5 + priceMarkOptions.textMargin, y);
+      this._ctx.fillText(text, startX + 5 + lowHighPriceMarkOptions.textMargin, y);
     }
     /**
      * 绘制最新价线

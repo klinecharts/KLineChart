@@ -27,11 +27,10 @@ export default class CandleView extends TechnicalIndicatorView {
       this._drawArea(candleOptions)
     } else {
       this._drawCandle(candleOptions)
-      this._drawTechnicalIndicator()
       this._drawLowHighPrice(
         candleOptions.priceMark, 'high', 'high', -Infinity, [-2, -5],
         (price, comparePrice) => {
-          if (price < comparePrice) {
+          if (price > comparePrice) {
             return price
           }
         }
@@ -39,12 +38,13 @@ export default class CandleView extends TechnicalIndicatorView {
       this._drawLowHighPrice(
         candleOptions.priceMark, 'low', 'low', Infinity, [2, 5],
         (price, comparePrice) => {
-          if (price > comparePrice) {
+          if (price < comparePrice) {
             return price
           }
         }
       )
     }
+    this._drawTechnicalIndicator()
     this._drawLastPriceLine(candleOptions.priceMark)
   }
 
@@ -168,8 +168,8 @@ export default class CandleView extends TechnicalIndicatorView {
     const startY = priceY + offsets[0]
     this._ctx.textAlign = 'left'
     this._ctx.lineWidth = 1
-    this._ctx.strokeStyle = priceMarkOptions.color
-    this._ctx.fillStyle = priceMarkOptions.color
+    this._ctx.strokeStyle = lowHighPriceMarkOptions.color
+    this._ctx.fillStyle = lowHighPriceMarkOptions.color
 
     renderLine(this._ctx, () => {
       this._ctx.beginPath()
@@ -190,10 +190,10 @@ export default class CandleView extends TechnicalIndicatorView {
     renderVerticalLine(this._ctx, startX, startY, y)
     renderHorizontalLine(this._ctx, y, startX, startX + 5)
 
-    this._ctx.font = createFont(priceMarkOptions.textSize, priceMarkOptions.textWeight, priceMarkOptions.textFamily)
+    this._ctx.font = createFont(lowHighPriceMarkOptions.textSize, lowHighPriceMarkOptions.textWeight, lowHighPriceMarkOptions.textFamily)
     const text = formatPrecision(price, pricePrecision)
     this._ctx.textBaseline = 'middle'
-    this._ctx.fillText(text, startX + 5 + priceMarkOptions.textMargin, y)
+    this._ctx.fillText(text, startX + 5 + lowHighPriceMarkOptions.textMargin, y)
   }
 
   /**

@@ -14,6 +14,7 @@
 
 import TechnicalIndicator from './TechnicalIndicator'
 
+import DealAverage from './directionalmovement/DealAverage'
 import MovingAverage from './directionalmovement/MovingAverage'
 import ExponentialMovingAverage from './directionalmovement/ExponentialMovingAverage'
 import Volume from './volume/Volume'
@@ -37,7 +38,7 @@ import StopAndReverse from './volatility/StopAndReverse'
 import EaseOfMovementValue from './directionalmovement/EaseOfMovementValue'
 
 import {
-  MA, EMA, VOL, MACD, KDJ, BOLL, RSI,
+  AVG, MA, EMA, VOL, MACD, KDJ, BOLL, RSI,
   BIAS, BRAR, CCI, DMI, CR, PSY, DMA,
   TRIX, OBV, VR, WR, MTM, EMV, SAR
 } from './defaultTechnicalIndicatorType'
@@ -50,6 +51,7 @@ import { DEV } from '../../utils/env'
  */
 export function createTechnicalIndicatorMapping () {
   return {
+    [AVG]: new DealAverage(),
     [MA]: new MovingAverage(),
     [EMA]: new ExponentialMovingAverage(),
     [VOL]: new Volume(),

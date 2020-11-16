@@ -91,7 +91,7 @@ export default class YAxisView extends View {
       return
     }
     const tickLine = yAxisOptions.tickLine
-    const tickLineDisplay = tickLine.show
+    const tickLineShow = tickLine.show
     const tickLineLength = tickLine.length
     let labelX
     if (this._isDrawFromStart(yAxisOptions)) {
@@ -99,7 +99,7 @@ export default class YAxisView extends View {
       if (yAxisOptions.axisLine.show) {
         labelX += yAxisOptions.axisLine.size
       }
-      if (tickLineDisplay) {
+      if (tickLineShow) {
         labelX += tickLineLength
       }
       this._ctx.textAlign = 'left'
@@ -108,7 +108,7 @@ export default class YAxisView extends View {
       if (yAxisOptions.axisLine.show) {
         labelX -= yAxisOptions.axisLine.size
       }
-      if (tickLineDisplay) {
+      if (tickLineShow) {
         labelX -= tickLineLength
       }
       this._ctx.textAlign = 'right'
