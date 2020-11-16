@@ -610,14 +610,17 @@ var defaultTechnicalIndicator = {
   },
   lastValueMark: {
     show: false,
-    color: '#ffffff',
-    size: 12,
-    family: 'Helvetica Neue',
-    weight: 'normal',
-    paddingLeft: 3,
-    paddingTop: 2,
-    paddingRight: 3,
-    paddingBottom: 2
+    text: {
+      show: false,
+      color: '#ffffff',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 3,
+      paddingTop: 2,
+      paddingRight: 3,
+      paddingBottom: 2
+    }
   },
   legend: {
     showRule: LegendShowRule.ALWAYS,
@@ -7140,7 +7143,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
       var dataSize = technicalIndicatorResult.length;
       var technicalIndicatorData = technicalIndicatorResult[dataSize - 1];
 
-      if (!lastValueMarkOptions.show || !technicalIndicatorData) {
+      if (!lastValueMarkOptions.show || !lastValueMarkOptions.text.show || !technicalIndicatorData) {
         return;
       }
 
@@ -7186,7 +7189,7 @@ var YAxisView = /*#__PURE__*/function (_View) {
         }
 
         if (isValid(value)) {
-          _this4._drawMarkLabel(yAxisOptions, value, precision, lastValueMarkOptions.textSize, lastValueMarkOptions.textWeight, lastValueMarkOptions.textFamily, lastValueMarkOptions.textColor, backgroundColor, lastValueMarkOptions.textPaddingLeft, lastValueMarkOptions.textPaddingTop, lastValueMarkOptions.textPaddingRight, lastValueMarkOptions.textPaddingBottom);
+          _this4._drawMarkLabel(yAxisOptions, value, precision, lastValueMarkOptions.text.size, lastValueMarkOptions.text.weight, lastValueMarkOptions.text.family, lastValueMarkOptions.text.color, backgroundColor, lastValueMarkOptions.text.paddingLeft, lastValueMarkOptions.text.paddingTop, lastValueMarkOptions.text.paddingRight, lastValueMarkOptions.text.paddingBottom);
         }
       });
     }
@@ -7869,7 +7872,9 @@ var YAxis = /*#__PURE__*/function (_Axis) {
           if (this._isCandleYAxis) {
             var pricePrecision = this._chartData.pricePrecision();
 
-            if (stylOptions.technicalIndicator.lastValueMark.show) {
+            var lastValueMarkOptions = stylOptions.technicalIndicator.lastValueMark;
+
+            if (lastValueMarkOptions.show && lastValueMarkOptions.text.show) {
               precision = Math.max(technicalIndicator.precision, pricePrecision);
             } else {
               precision = pricePrecision;

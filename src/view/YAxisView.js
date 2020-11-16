@@ -134,7 +134,7 @@ export default class YAxisView extends View {
     const technicalIndicatorResult = technicalIndicator.result
     const dataSize = technicalIndicatorResult.length
     const technicalIndicatorData = technicalIndicatorResult[dataSize - 1]
-    if (!lastValueMarkOptions.show || !technicalIndicatorData) {
+    if (!lastValueMarkOptions.show || !lastValueMarkOptions.text.show || !technicalIndicatorData) {
       return
     }
     const dataList = this._chartData.dataList()
@@ -167,10 +167,10 @@ export default class YAxisView extends View {
       if (isValid(value)) {
         this._drawMarkLabel(
           yAxisOptions, value, precision,
-          lastValueMarkOptions.textSize, lastValueMarkOptions.textWeight,
-          lastValueMarkOptions.textFamily, lastValueMarkOptions.textColor, backgroundColor,
-          lastValueMarkOptions.textPaddingLeft, lastValueMarkOptions.textPaddingTop,
-          lastValueMarkOptions.textPaddingRight, lastValueMarkOptions.textPaddingBottom
+          lastValueMarkOptions.text.size, lastValueMarkOptions.text.weight,
+          lastValueMarkOptions.text.family, lastValueMarkOptions.text.color, backgroundColor,
+          lastValueMarkOptions.text.paddingLeft, lastValueMarkOptions.text.paddingTop,
+          lastValueMarkOptions.text.paddingRight, lastValueMarkOptions.text.paddingBottom
         )
       }
     })

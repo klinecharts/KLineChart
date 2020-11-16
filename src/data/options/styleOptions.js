@@ -218,14 +218,17 @@ const defaultTechnicalIndicator = {
   },
   lastValueMark: {
     show: false,
-    color: '#ffffff',
-    size: 12,
-    family: 'Helvetica Neue',
-    weight: 'normal',
-    paddingLeft: 3,
-    paddingTop: 2,
-    paddingRight: 3,
-    paddingBottom: 2
+    text: {
+      show: false,
+      color: '#ffffff',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 3,
+      paddingTop: 2,
+      paddingRight: 3,
+      paddingBottom: 2
+    }
   },
   legend: {
     showRule: LegendShowRule.ALWAYS,
