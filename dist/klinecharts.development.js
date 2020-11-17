@@ -8506,7 +8506,7 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
 
         this._drawTechnicalIndicatorLegend(crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop);
       } else {
-        this._drawCandleLegendWithRect(kLineData, technicalIndicatorData, realDataPosX, candleOptions, isDrawCandleLegend, styleOptions.technicalIndicator, this._shouldDrawLegend(crosshair, styleOptions.technicalIndicator.legend));
+        this._drawCandleLegendWithRect(kLineData, technicalIndicatorData, technicalIndicator, realDataPosX, candleOptions, isDrawCandleLegend, styleOptions.technicalIndicator, this._shouldDrawLegend(crosshair, styleOptions.technicalIndicator.legend));
       }
     }
     /**
@@ -8578,7 +8578,6 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
     value: function _drawCandleLegendWithRect(kLineData, technicalIndicatorData, technicalIndicator, x, candleOptions, isDrawCandleLegend, technicalIndicatorOptions, isDrawTechnicalIndicatorLegend) {
       var _this2 = this;
 
-      var maxLabelWidth = 0;
       var candleLegendOptions = candleOptions.legend;
       var baseLabels = candleLegendOptions.labels;
 
@@ -8590,11 +8589,28 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
       var baseTextMarginBottom = candleLegendOptions.text.marginBottom;
       var baseTextSize = candleLegendOptions.text.size;
       var baseTextColor = candleLegendOptions.text.color;
+      var rectOptions = candleLegendOptions.rect;
+      var rectBorderSize = rectOptions.borderSize;
+      var rectPaddingLeft = rectOptions.paddingLeft;
+      var rectPaddingRight = rectOptions.paddingRight;
+      var rectPaddingTop = rectOptions.paddingTop;
+      var rectPaddingBottom = rectOptions.paddingBottom;
+      var rectLeft = rectOptions.offsetLeft;
+      var rectRight = rectOptions.offsetRight;
+      var maxLabelWidth = 0;
+      var rectHeight = 0;
+      var rectWidth = 0;
+
+      if (isDrawCandleLegend || isDrawTechnicalIndicatorLegend) {
+        rectWidth = rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight;
+        rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom;
+      }
+
+      this._ctx.save();
+
+      this._ctx.textBaseline = 'top';
 
       if (isDrawCandleLegend) {
-        this._ctx.save();
-
-        this._ctx.textBaseline = 'top';
         this._ctx.font = createFont(baseTextSize, candleLegendOptions.text.weight, candleLegendOptions.text.family);
         baseLabels.forEach(function (label, i) {
           var value = baseValues[i] || 'n/a';
@@ -8608,31 +8624,21 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
           var labelWidth = calcTextWidth(_this2._ctx, text) + baseTextMarginLeft + baseTextMarginRight;
           maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
         });
+        rectHeight += (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length;
       }
 
-      var rect = candleLegendOptions.rect;
-      var rectBorderSize = rect.borderSize;
-      var rectPaddingLeft = rect.paddingLeft;
-      var rectPaddingRight = rect.paddingRight;
-      var rectPaddingTop = rect.paddingTop;
-      var rectPaddingBottom = rect.paddingBottom;
-      var rectLeft = rect.left;
-      var rectRight = rect.right;
-      var rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom + (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length;
-
-      var floatLayerPromptTechnicalIndicator = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator;
-
-      var indicatorTextMarginLeft = floatLayerPromptTechnicalIndicator.text.marginLeft;
-      var indicatorTextMarginRight = floatLayerPromptTechnicalIndicator.text.marginRight;
-      var indicatorTextMarginTop = floatLayerPromptTechnicalIndicator.text.marginTop;
-      var indicatorTextMarginBottom = floatLayerPromptTechnicalIndicator.text.marginBottom;
-      var indicatorTextSize = floatLayerPromptTechnicalIndicator.text.size;
+      var technicalIndicatorLegendOptions = technicalIndicatorOptions.legend;
+      var indicatorTextMarginLeft = technicalIndicatorLegendOptions.text.marginLeft;
+      var indicatorTextMarginRight = technicalIndicatorLegendOptions.text.marginRight;
+      var indicatorTextMarginTop = technicalIndicatorLegendOptions.text.marginTop;
+      var indicatorTextMarginBottom = technicalIndicatorLegendOptions.text.marginBottom;
+      var indicatorTextSize = technicalIndicatorLegendOptions.text.size;
       var indicatorLegendData = getTechnicalIndicatorLegendData(technicalIndicatorData, technicalIndicator, this._yAxis);
       var indicatorLabels = indicatorLegendData.labels || [];
       var indicatorValues = indicatorLegendData.values || [];
 
       if (isDrawTechnicalIndicatorLegend) {
-        this._ctx.font = createFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.weight, floatLayerPromptTechnicalIndicator.text.family);
+        this._ctx.font = createFont(indicatorTextSize, technicalIndicatorLegendOptions.text.weight, technicalIndicatorLegendOptions.text.family);
         indicatorLabels.forEach(function (label, i) {
           var v = indicatorValues[i].value || 'n/a';
           var text = "".concat(label, ": ").concat(v);
@@ -8642,7 +8648,7 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
         rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length;
       }
 
-      var rectWidth = rectBorderSize * 2 + maxLabelWidth + rectPaddingLeft + rectPaddingRight;
+      rectWidth += maxLabelWidth;
       var centerX = this._width / 2;
       var rectX;
 
@@ -8652,10 +8658,10 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
         rectX = rectLeft;
       }
 
-      var rectY = rect.top;
-      var radius = rect.borderRadius;
-      renderFillRoundRect(this._ctx, rect.fillColor, rectX, rectY, rectWidth, rectHeight, radius);
-      renderStrokeRoundRect(this._ctx, rect.borderColor, rectBorderSize, rectX, rectY, rectWidth, rectHeight, radius);
+      var rectY = rectOptions.offsetTop;
+      var radius = rectOptions.borderRadius;
+      renderFillRoundRect(this._ctx, rectOptions.fillColor, rectX, rectY, rectWidth, rectHeight, radius);
+      renderStrokeRoundRect(this._ctx, rectOptions.borderColor, rectBorderSize, rectX, rectY, rectWidth, rectHeight, radius);
       var baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft;
       var labelY = rectY + rectBorderSize + rectPaddingTop;
 
@@ -8689,7 +8695,7 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
         var colors = _technicalIndicatorOptions.line.colors;
         var indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft;
         var colorSize = colors.length;
-        this._ctx.font = createFont(indicatorTextSize, floatLayerPromptTechnicalIndicator.text.weight, floatLayerPromptTechnicalIndicator.text.family);
+        this._ctx.font = createFont(indicatorTextSize, technicalIndicatorLegendOptions.text.weight, technicalIndicatorLegendOptions.text.family);
         indicatorLabels.forEach(function (label, i) {
           labelY += indicatorTextMarginTop;
           _this2._ctx.textAlign = 'left';

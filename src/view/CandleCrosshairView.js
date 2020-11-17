@@ -36,7 +36,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
       this._drawTechnicalIndicatorLegend(crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop)
     } else {
       this._drawCandleLegendWithRect(
-        kLineData, technicalIndicatorData,
+        kLineData, technicalIndicatorData, technicalIndicator,
         realDataPosX, candleOptions, isDrawCandleLegend,
         styleOptions.technicalIndicator,
         this._shouldDrawLegend(crosshair, styleOptions.technicalIndicator.legend)
@@ -105,7 +105,6 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     x, candleOptions, isDrawCandleLegend,
     technicalIndicatorOptions, isDrawTechnicalIndicatorLegend
   ) {
-    let maxLabelWidth = 0
     const candleLegendOptions = candleOptions.legend
     const baseLabels = candleLegendOptions.labels
     const baseValues = this._getCandleLegendData(kLineData, candleOptions)
@@ -115,9 +114,26 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     const baseTextMarginBottom = candleLegendOptions.text.marginBottom
     const baseTextSize = candleLegendOptions.text.size
     const baseTextColor = candleLegendOptions.text.color
+
+    const rectOptions = candleLegendOptions.rect
+    const rectBorderSize = rectOptions.borderSize
+    const rectPaddingLeft = rectOptions.paddingLeft
+    const rectPaddingRight = rectOptions.paddingRight
+    const rectPaddingTop = rectOptions.paddingTop
+    const rectPaddingBottom = rectOptions.paddingBottom
+    const rectLeft = rectOptions.offsetLeft
+    const rectRight = rectOptions.offsetRight
+
+    let maxLabelWidth = 0
+    let rectHeight = 0
+    let rectWidth = 0
+    if (isDrawCandleLegend || isDrawTechnicalIndicatorLegend) {
+      rectWidth = rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight
+      rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom
+    }
+    this._ctx.save()
+    this._ctx.textBaseline = 'top'
     if (isDrawCandleLegend) {
-      this._ctx.save()
-      this._ctx.textBaseline = 'top'
       this._ctx.font = createFont(baseTextSize, candleLegendOptions.text.weight, candleLegendOptions.text.family)
       baseLabels.forEach((label, i) => {
         const value = baseValues[i] || 'n/a'
@@ -129,26 +145,16 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         const labelWidth = calcTextWidth(this._ctx, text) + baseTextMarginLeft + baseTextMarginRight
         maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
       })
+      rectHeight += ((baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length)
     }
-    const rect = candleLegendOptions.rect
-    const rectBorderSize = rect.borderSize
-    const rectPaddingLeft = rect.paddingLeft
-    const rectPaddingRight = rect.paddingRight
-    const rectPaddingTop = rect.paddingTop
-    const rectPaddingBottom = rect.paddingBottom
-    const rectLeft = rect.left
-    const rectRight = rect.right
-    let rectHeight = rectBorderSize * 2 +
-      rectPaddingTop + rectPaddingBottom +
-      (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length
 
-    const floatLayerPromptTechnicalIndicator = this._chartData.styleOptions().floatLayer.prompt.technicalIndicator
+    const technicalIndicatorLegendOptions = technicalIndicatorOptions.legend
 
-    const indicatorTextMarginLeft = floatLayerPromptTechnicalIndicator.text.marginLeft
-    const indicatorTextMarginRight = floatLayerPromptTechnicalIndicator.text.marginRight
-    const indicatorTextMarginTop = floatLayerPromptTechnicalIndicator.text.marginTop
-    const indicatorTextMarginBottom = floatLayerPromptTechnicalIndicator.text.marginBottom
-    const indicatorTextSize = floatLayerPromptTechnicalIndicator.text.size
+    const indicatorTextMarginLeft = technicalIndicatorLegendOptions.text.marginLeft
+    const indicatorTextMarginRight = technicalIndicatorLegendOptions.text.marginRight
+    const indicatorTextMarginTop = technicalIndicatorLegendOptions.text.marginTop
+    const indicatorTextMarginBottom = technicalIndicatorLegendOptions.text.marginBottom
+    const indicatorTextSize = technicalIndicatorLegendOptions.text.size
 
     const indicatorLegendData = getTechnicalIndicatorLegendData(technicalIndicatorData, technicalIndicator, this._yAxis)
     const indicatorLabels = indicatorLegendData.labels || []
@@ -156,8 +162,8 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     if (isDrawTechnicalIndicatorLegend) {
       this._ctx.font = createFont(
         indicatorTextSize,
-        floatLayerPromptTechnicalIndicator.text.weight,
-        floatLayerPromptTechnicalIndicator.text.family
+        technicalIndicatorLegendOptions.text.weight,
+        technicalIndicatorLegendOptions.text.family
       )
       indicatorLabels.forEach((label, i) => {
         const v = indicatorValues[i].value || 'n/a'
@@ -168,7 +174,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
       rectHeight += ((indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length)
     }
 
-    const rectWidth = rectBorderSize * 2 + maxLabelWidth + rectPaddingLeft + rectPaddingRight
+    rectWidth += maxLabelWidth
 
     const centerX = this._width / 2
     let rectX
@@ -177,10 +183,10 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     } else {
       rectX = rectLeft
     }
-    const rectY = rect.top
-    const radius = rect.borderRadius
-    renderFillRoundRect(this._ctx, rect.fillColor, rectX, rectY, rectWidth, rectHeight, radius)
-    renderStrokeRoundRect(this._ctx, rect.borderColor, rectBorderSize, rectX, rectY, rectWidth, rectHeight, radius)
+    const rectY = rectOptions.offsetTop
+    const radius = rectOptions.borderRadius
+    renderFillRoundRect(this._ctx, rectOptions.fillColor, rectX, rectY, rectWidth, rectHeight, radius)
+    renderStrokeRoundRect(this._ctx, rectOptions.borderColor, rectBorderSize, rectX, rectY, rectWidth, rectHeight, radius)
     const baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
     let labelY = rectY + rectBorderSize + rectPaddingTop
     if (isDrawCandleLegend) {
@@ -222,9 +228,10 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
       const colorSize = colors.length
       this._ctx.font = createFont(
         indicatorTextSize,
-        floatLayerPromptTechnicalIndicator.text.weight,
-        floatLayerPromptTechnicalIndicator.text.family
+        technicalIndicatorLegendOptions.text.weight,
+        technicalIndicatorLegendOptions.text.family
       )
+
       indicatorLabels.forEach((label, i) => {
         labelY += indicatorTextMarginTop
         this._ctx.textAlign = 'left'
