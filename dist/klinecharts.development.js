@@ -7806,7 +7806,11 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
       var minMaxArray = [Infinity, -Infinity];
       var plots = technicalIndicator.plots || [];
-      var isArea = this._chartData.styleOptions().candle.type === CandleType.AREA;
+
+      var candleOptions = this._chartData.styleOptions().candle;
+
+      var isArea = candleOptions.type === CandleType.AREA;
+      var areaValueKey = candleOptions.area.value;
       var shouldCompareHighLow = this._isCandleYAxis && !isArea || !this._isCandleYAxis && technicalIndicator.shouldOhlc;
 
       var _loop = function _loop(i) {
@@ -7818,8 +7822,8 @@ var YAxis = /*#__PURE__*/function (_Axis) {
         }
 
         if (_this2._isCandleYAxis && isArea) {
-          minMaxArray[0] = Math.min(minMaxArray[0], kLineData.close);
-          minMaxArray[1] = Math.max(minMaxArray[1], kLineData.close);
+          minMaxArray[0] = Math.min(minMaxArray[0], kLineData[areaValueKey]);
+          minMaxArray[1] = Math.max(minMaxArray[1], kLineData[areaValueKey]);
         }
 
         var technicalIndicatorData = technicalIndicatorResult[i] || {};

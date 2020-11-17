@@ -88,8 +88,9 @@ export default class YAxis extends Axis {
     const minMaxArray = [Infinity, -Infinity]
     const plots = technicalIndicator.plots || []
 
-    const isArea = this._chartData.styleOptions().candle.type === CandleType.AREA
-
+    const candleOptions = this._chartData.styleOptions().candle
+    const isArea = candleOptions.type === CandleType.AREA
+    const areaValueKey = candleOptions.area.value
     const shouldCompareHighLow = (this._isCandleYAxis && !isArea) || (!this._isCandleYAxis && technicalIndicator.shouldOhlc)
     for (let i = from; i < to; i++) {
       const kLineData = dataList[i]
@@ -98,8 +99,8 @@ export default class YAxis extends Axis {
         minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
       }
       if (this._isCandleYAxis && isArea) {
-        minMaxArray[0] = Math.min(minMaxArray[0], kLineData.close)
-        minMaxArray[1] = Math.max(minMaxArray[1], kLineData.close)
+        minMaxArray[0] = Math.min(minMaxArray[0], kLineData[areaValueKey])
+        minMaxArray[1] = Math.max(minMaxArray[1], kLineData[areaValueKey])
       }
       const technicalIndicatorData = technicalIndicatorResult[i] || {}
       plots.forEach(plot => {
