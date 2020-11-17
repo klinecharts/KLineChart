@@ -8986,11 +8986,11 @@ var XAxisCrosshairView = /*#__PURE__*/function (_View) {
   _createClass(XAxisCrosshairView, [{
     key: "_draw",
     value: function _draw() {
-      this._drawCrossHairLabel();
+      this._drawCrosshairLabel();
     }
   }, {
-    key: "_drawCrossHairLabel",
-    value: function _drawCrossHairLabel() {
+    key: "_drawCrosshairLabel",
+    value: function _drawCrosshairLabel() {
       var crosshair = this._chartData.crosshair();
 
       if (!crosshair.paneTag) {

@@ -27,10 +27,10 @@ export default class XAxisCrosshairView extends View {
   }
 
   _draw () {
-    this._drawCrossHairLabel()
+    this._drawCrosshairLabel()
   }
 
-  _drawCrossHairLabel () {
+  _drawCrosshairLabel () {
     const crosshair = this._chartData.crosshair()
     if (!crosshair.paneTag) {
       return
