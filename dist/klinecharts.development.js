@@ -475,7 +475,7 @@ var defaultGrid = {
     dashValue: [2, 2]
   },
   vertical: {
-    show: false,
+    show: true,
     size: 1,
     color: '#393939',
     style: LineStyle.DASH,
@@ -6160,22 +6160,22 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
     value: function _drawGrid() {
       var _this2 = this;
 
-      var grid = this._chartData.styleOptions().grid;
+      var gridOptions = this._chartData.styleOptions().grid;
 
-      if (!grid.display) {
+      if (!gridOptions.show) {
         return;
       }
 
-      var horizontalGrid = grid.horizontal;
+      var gridHorizontalOptions = gridOptions.horizontal;
 
       this._ctx.save();
 
-      if (horizontalGrid.display) {
-        this._ctx.strokeStyle = horizontalGrid.color;
-        this._ctx.lineWidth = horizontalGrid.size;
+      if (gridHorizontalOptions.show) {
+        this._ctx.strokeStyle = gridHorizontalOptions.color;
+        this._ctx.lineWidth = gridHorizontalOptions.size;
 
-        if (horizontalGrid.style === LineStyle.DASH) {
-          this._ctx.setLineDash(horizontalGrid.dashValue);
+        if (gridHorizontalOptions.style === LineStyle.DASH) {
+          this._ctx.setLineDash(gridHorizontalOptions.dashValue);
         }
 
         this._yAxis.ticks().forEach(function (tick) {
@@ -6183,14 +6183,14 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
         });
       }
 
-      var verticalGrid = grid.vertical;
+      var gridVerticalOptions = gridOptions.vertical;
 
-      if (verticalGrid.display) {
-        this._ctx.strokeStyle = verticalGrid.color;
-        this._ctx.lineWidth = verticalGrid.size;
+      if (gridVerticalOptions.show) {
+        this._ctx.strokeStyle = gridVerticalOptions.color;
+        this._ctx.lineWidth = gridVerticalOptions.size;
 
-        if (verticalGrid.style === LineStyle.DASH) {
-          this._ctx.setLineDash(verticalGrid.dashValue);
+        if (gridVerticalOptions.style === LineStyle.DASH) {
+          this._ctx.setLineDash(gridVerticalOptions.dashValue);
         } else {
           this._ctx.setLineDash([]);
         }
@@ -9236,7 +9236,7 @@ var XAxis = /*#__PURE__*/function (_Axis) {
 
       var crosshairVerticalTextHeight = 0;
 
-      if (crosshairOptions.display && crosshairOptions.vertical.display && crosshairOptions.vertical.text.display) {
+      if (crosshairOptions.show && crosshairOptions.vertical.show && crosshairOptions.vertical.text.show) {
         crosshairVerticalTextHeight += crosshairOptions.vertical.text.paddingTop + crosshairOptions.vertical.text.paddingBottom + crosshairOptions.vertical.text.borderSize * 2 + crosshairOptions.vertical.text.size;
       }
 

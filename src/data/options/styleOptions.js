@@ -85,7 +85,7 @@ const defaultGrid = {
     dashValue: [2, 2]
   },
   vertical: {
-    show: false,
+    show: true,
     size: 1,
     color: '#393939',
     style: LineStyle.DASH,

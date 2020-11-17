@@ -36,29 +36,29 @@ export default class TechnicalIndicatorView extends View {
    * @private
    */
   _drawGrid () {
-    const grid = this._chartData.styleOptions().grid
-    if (!grid.display) {
+    const gridOptions = this._chartData.styleOptions().grid
+    if (!gridOptions.show) {
       return
     }
-    const horizontalGrid = grid.horizontal
+    const gridHorizontalOptions = gridOptions.horizontal
     this._ctx.save()
-    if (horizontalGrid.display) {
-      this._ctx.strokeStyle = horizontalGrid.color
-      this._ctx.lineWidth = horizontalGrid.size
-      if (horizontalGrid.style === LineStyle.DASH) {
-        this._ctx.setLineDash(horizontalGrid.dashValue)
+    if (gridHorizontalOptions.show) {
+      this._ctx.strokeStyle = gridHorizontalOptions.color
+      this._ctx.lineWidth = gridHorizontalOptions.size
+      if (gridHorizontalOptions.style === LineStyle.DASH) {
+        this._ctx.setLineDash(gridHorizontalOptions.dashValue)
       }
       this._yAxis.ticks().forEach(tick => {
         renderHorizontalLine(this._ctx, tick.y, 0, this._width)
       })
     }
 
-    const verticalGrid = grid.vertical
-    if (verticalGrid.display) {
-      this._ctx.strokeStyle = verticalGrid.color
-      this._ctx.lineWidth = verticalGrid.size
-      if (verticalGrid.style === LineStyle.DASH) {
-        this._ctx.setLineDash(verticalGrid.dashValue)
+    const gridVerticalOptions = gridOptions.vertical
+    if (gridVerticalOptions.show) {
+      this._ctx.strokeStyle = gridVerticalOptions.color
+      this._ctx.lineWidth = gridVerticalOptions.size
+      if (gridVerticalOptions.style === LineStyle.DASH) {
+        this._ctx.setLineDash(gridVerticalOptions.dashValue)
       } else {
         this._ctx.setLineDash([])
       }
@@ -66,7 +66,6 @@ export default class TechnicalIndicatorView extends View {
         renderVerticalLine(this._ctx, tick.x, 0, this._height)
       })
     }
-
     this._ctx.restore()
   }
 

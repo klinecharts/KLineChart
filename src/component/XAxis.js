@@ -121,9 +121,9 @@ export default class XAxis extends Axis {
     }
     let crosshairVerticalTextHeight = 0
     if (
-      crosshairOptions.display &&
-      crosshairOptions.vertical.display &&
-      crosshairOptions.vertical.text.display
+      crosshairOptions.show &&
+      crosshairOptions.vertical.show &&
+      crosshairOptions.vertical.text.show
     ) {
       crosshairVerticalTextHeight += (
         crosshairOptions.vertical.text.paddingTop +
