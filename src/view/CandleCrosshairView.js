@@ -17,7 +17,7 @@ import { isFunction, isObject, isArray } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { LegendCandleShowType } from '../data/options/styleOptions'
-import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalIndicatorControl'
+import { getTechnicalIndicatorLegendData } from '../data/technicalindicator/technicalIndicatorControl'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
@@ -150,7 +150,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     const indicatorTextMarginBottom = floatLayerPromptTechnicalIndicator.text.marginBottom
     const indicatorTextSize = floatLayerPromptTechnicalIndicator.text.size
 
-    const indicatorLegendData = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
+    const indicatorLegendData = getTechnicalIndicatorLegendData(technicalIndicatorData, technicalIndicator, this._yAxis)
     const indicatorLabels = indicatorLegendData.labels || []
     const indicatorValues = indicatorLegendData.values || []
     if (isDrawTechnicalIndicatorLegend) {

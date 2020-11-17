@@ -508,6 +508,7 @@ var defaultCandle = {
   area: {
     lineSize: 2,
     lineColor: '#2196F3',
+    value: 'close',
     fillColor: [{
       offset: 0,
       color: 'rgba(33, 150, 243, 0.01)'
@@ -624,9 +625,9 @@ var defaultTechnicalIndicator = {
   },
   legend: {
     showRule: LegendShowRule.ALWAYS,
+    showName: true,
+    showParams: true,
     text: {
-      showName: true,
-      showParams: true,
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
@@ -2985,7 +2986,7 @@ function createNewTechnicalIndicator(_ref2) {
  * @returns {{values: [], name: string, labels: []}}
  */
 
-function getTechnicalIndicatorInfo() {
+function getTechnicalIndicatorLegendData() {
   var technicalIndicatorData = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var technicalIndicator = arguments.length > 1 ? arguments[1] : undefined;
   var yAxis = arguments.length > 2 ? arguments[2] : undefined;
@@ -2996,13 +2997,14 @@ function getTechnicalIndicatorInfo() {
   var labels = [];
   var values = [];
   var name = '';
+  var calcParamText = '';
 
   if (plots.length > 0) {
     name = technicalIndicator.name;
   }
 
   if (calcParams.length > 0) {
-    name = "".concat(name, "(").concat(calcParams.join(','), ")");
+    calcParamText = "(".concat(calcParams.join(','), ")");
   }
 
   plots.forEach(function (plot) {
@@ -3027,7 +3029,8 @@ function getTechnicalIndicatorInfo() {
   return {
     labels: labels,
     values: values,
-    name: name
+    name: name,
+    calcParamText: calcParamText
   };
 }
 
@@ -3126,9 +3129,56 @@ var FIBONACCI_LINE = 'fibonacciLine';
  */
 
 /**
+ * 绘制带边框的填充圆
+ * @param ctx
+ * @param fillColor
+ * @param borderColor
+ * @param borderSize
+ * @param circlePoint
+ * @param radius
+ */
+function renderStrokeFillCircle(ctx, fillColor, borderColor, borderSize, circlePoint, radius) {
+  renderFillCircle(ctx, fillColor, circlePoint, radius);
+  renderStrokeCircle(ctx, borderColor, borderSize, circlePoint, radius);
+}
+/**
+ * 绘制边框圆
+ * @param ctx
+ * @param borderColor
+ * @param borderSize
+ * @param circlePoint
+ * @param radius
+ */
+
+function renderStrokeCircle(ctx, borderColor, borderSize, circlePoint, radius) {
+  ctx.lineWidth = borderSize;
+  ctx.strokeStyle = borderColor;
+  ctx.beginPath();
+  ctx.arc(circlePoint.x, circlePoint.y, radius, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.stroke();
+}
+/**
+ * 绘制实心圆
+ * @param ctx
+ * @param fillColor
+ * @param circlePoint
+ * @param radius
+ */
+
+function renderFillCircle(ctx, fillColor, circlePoint, radius) {
+  ctx.fillStyle = fillColor;
+  ctx.beginPath();
+  ctx.arc(circlePoint.x, circlePoint.y, radius, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.fill();
+}
+
+/**
  * 标记图形绘制步骤
  * @type {{STEP_3: *, STEP_DONE: *, STEP_1: *, STEP_2: *}}
  */
+
 var GraphicMarkDrawStep = {
   STEP_1: 'step_1',
   STEP_2: 'step_2',
@@ -3286,17 +3336,10 @@ var GraphicMark = /*#__PURE__*/function () {
             borderSize = graphicMark.point.activeBorderSize;
           }
 
-          ctx.fillStyle = color;
-          ctx.beginPath();
-          ctx.arc(x, y, radius, 0, Math.PI * 2);
-          ctx.closePath();
-          ctx.fill();
-          ctx.lineWidth = borderSize;
-          ctx.strokeStyle = borderColor;
-          ctx.beginPath();
-          ctx.arc(x, y, radius, 0, Math.PI * 2);
-          ctx.closePath();
-          ctx.stroke();
+          renderStrokeFillCircle(ctx, color, borderColor, borderSize, {
+            x: x,
+            y: y
+          }, radius);
         });
       }
     }
@@ -6755,7 +6798,7 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
       var technicalIndicatorLegendOptions = technicalIndicatorOptions.legend;
 
       if (this._shouldDrawLegend(crosshair, technicalIndicatorLegendOptions)) {
-        var legendData = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
+        var legendData = getTechnicalIndicatorLegendData(technicalIndicatorData, technicalIndicator, this._yAxis);
         var colors = technicalIndicatorOptions.line.colors;
 
         var dataList = this._chartData.dataList();
@@ -6772,21 +6815,42 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
         };
         var plots = technicalIndicator.plots;
         var technicalIndicatorLegendTextOptions = technicalIndicatorLegendOptions.text;
-        var nameText = legendData.name;
         var labels = legendData.labels;
         var values = legendData.values;
         var textMarginLeft = technicalIndicatorLegendTextOptions.marginLeft;
         var textMarginRight = technicalIndicatorLegendTextOptions.marginRight;
-        var labelX = textMarginLeft;
+        var labelX = 0;
         var labelY = technicalIndicatorLegendTextOptions.marginTop + offsetTop;
         var textSize = technicalIndicatorLegendTextOptions.size;
         var textColor = technicalIndicatorLegendTextOptions.color;
         var colorSize = colors.length;
         this._ctx.textBaseline = 'top';
         this._ctx.font = createFont(textSize, technicalIndicatorLegendTextOptions.weight, technicalIndicatorLegendTextOptions.family);
-        var nameTextWidth = calcTextWidth(this._ctx, nameText);
-        renderText(this._ctx, textColor, labelX, labelY, nameText);
-        labelX += textMarginLeft + nameTextWidth;
+
+        if (technicalIndicatorLegendOptions.showName) {
+          var nameText = legendData.name;
+          var nameTextWidth = calcTextWidth(this._ctx, nameText);
+          labelX += textMarginLeft;
+          renderText(this._ctx, textColor, labelX, labelY, nameText);
+          labelX += nameTextWidth;
+
+          if (!technicalIndicatorLegendOptions.showParams) {
+            labelX += textMarginRight;
+          }
+        }
+
+        if (technicalIndicatorLegendOptions.showParams) {
+          var calcParamText = legendData.calcParamText;
+          var calcParamTextWidth = calcTextWidth(this._ctx, calcParamText);
+
+          if (!technicalIndicatorLegendOptions.showName) {
+            labelX += textMarginLeft;
+          }
+
+          renderText(this._ctx, textColor, labelX, labelY, calcParamText);
+          labelX += calcParamTextWidth + textMarginRight;
+        }
+
         var lineCount = 0;
         var valueColor;
 
@@ -6812,10 +6876,11 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
               }
           }
 
+          labelX += textMarginLeft;
           var text = "".concat(labels[i], ": ").concat(values[i].value || 'n/a');
           var textWidth = calcTextWidth(this._ctx, text);
           renderText(this._ctx, valueColor, labelX, labelY, text);
-          labelX += textMarginLeft + textMarginRight + textWidth;
+          labelX += textWidth + textMarginRight;
         }
       }
     }
@@ -8143,77 +8208,80 @@ var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
     value: function _drawArea(candleOptions) {
       var _this = this;
 
-      var timeLinePoints = [];
-      var timeLineAreaPoints = [];
+      var linePoints = [];
+      var areaPoints = [];
 
       var from = this._chartData.from();
 
-      var minCloseY = Infinity;
+      var minY = Infinity;
+      var areaOptions = candleOptions.area;
 
       var onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
-        var closeY = _this._yAxis.convertToPixel(kLineData.close);
+        var value = kLineData[areaOptions.value];
 
-        if (i === from) {
-          var startX = x - halfBarSpace;
-          timeLineAreaPoints.push({
-            x: startX,
-            y: _this._height
+        if (isValid(value) && isNumber(value)) {
+          var y = _this._yAxis.convertToPixel(value);
+
+          if (i === from) {
+            var startX = x - halfBarSpace;
+            areaPoints.push({
+              x: startX,
+              y: _this._height
+            });
+            areaPoints.push({
+              x: startX,
+              y: y
+            });
+            linePoints.push({
+              x: startX,
+              y: y
+            });
+          }
+
+          linePoints.push({
+            x: x,
+            y: y
           });
-          timeLineAreaPoints.push({
-            x: startX,
-            y: closeY
+          areaPoints.push({
+            x: x,
+            y: y
           });
-          timeLinePoints.push({
-            x: startX,
-            y: closeY
-          });
+          minY = Math.min(minY, y);
         }
-
-        timeLinePoints.push({
-          x: x,
-          y: closeY
-        });
-        timeLineAreaPoints.push({
-          x: x,
-          y: closeY
-        });
-        minCloseY = Math.min(minCloseY, closeY);
       };
 
       var onDrawEnd = function onDrawEnd() {
-        var areaPointLength = timeLineAreaPoints.length;
+        var areaPointLength = areaPoints.length;
 
         if (areaPointLength > 0) {
-          var lastPoint = timeLineAreaPoints[areaPointLength - 1];
+          var lastPoint = areaPoints[areaPointLength - 1];
           var halfBarSpace = _this._chartData.barSpace() / 2;
           var endX = lastPoint.x + halfBarSpace;
-          timeLinePoints.push({
+          linePoints.push({
             x: endX,
             y: lastPoint.y
           });
-          timeLineAreaPoints.push({
+          areaPoints.push({
             x: endX,
             y: lastPoint.y
           });
-          timeLineAreaPoints.push({
+          areaPoints.push({
             x: endX,
             y: _this._height
           });
         }
 
-        var areaOptions = candleOptions.area;
-
-        if (timeLinePoints.length > 0) {
+        if (linePoints.length > 0) {
           // 绘制分时线
           _this._ctx.lineWidth = areaOptions.lineSize;
           _this._ctx.strokeStyle = areaOptions.lineColor;
           renderLine(_this._ctx, function () {
             _this._ctx.beginPath();
 
-            _this._ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y);
+            _this._ctx.moveTo(linePoints[0].x, linePoints[0].y);
 
-            for (var i = 1; i < timeLinePoints.length; i++) {
-              _this._ctx.lineTo(timeLinePoints[i].x, timeLinePoints[i].y);
+            for (var i = 1; i < linePoints.length; i++) {
+              _this._ctx.lineTo(linePoints[i].x, linePoints[i].y);
             }
 
             _this._ctx.stroke();
@@ -8222,12 +8290,12 @@ var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
           });
         }
 
-        if (timeLineAreaPoints.length > 0) {
+        if (areaPoints.length > 0) {
           // 绘制分时线填充区域
           var fillColor = areaOptions.fillColor;
 
           if (isArray(fillColor)) {
-            var gradient = _this._ctx.createLinearGradient(0, _this._height, 0, minCloseY);
+            var gradient = _this._ctx.createLinearGradient(0, _this._height, 0, minY);
 
             try {
               fillColor.forEach(function (_ref) {
@@ -8244,10 +8312,10 @@ var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
 
           _this._ctx.beginPath();
 
-          _this._ctx.moveTo(timeLineAreaPoints[0].x, timeLineAreaPoints[0].y);
+          _this._ctx.moveTo(areaPoints[0].x, areaPoints[0].y);
 
-          for (var i = 1; i < timeLineAreaPoints.length; i++) {
-            _this._ctx.lineTo(timeLineAreaPoints[i].x, timeLineAreaPoints[i].y);
+          for (var i = 1; i < areaPoints.length; i++) {
+            _this._ctx.lineTo(areaPoints[i].x, areaPoints[i].y);
           }
 
           _this._ctx.closePath();
@@ -8559,7 +8627,7 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
       var indicatorTextMarginTop = floatLayerPromptTechnicalIndicator.text.marginTop;
       var indicatorTextMarginBottom = floatLayerPromptTechnicalIndicator.text.marginBottom;
       var indicatorTextSize = floatLayerPromptTechnicalIndicator.text.size;
-      var indicatorLegendData = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis);
+      var indicatorLegendData = getTechnicalIndicatorLegendData(technicalIndicatorData, technicalIndicator, this._yAxis);
       var indicatorLabels = indicatorLegendData.labels || [];
       var indicatorValues = indicatorLegendData.values || [];
 

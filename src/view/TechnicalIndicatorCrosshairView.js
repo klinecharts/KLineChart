@@ -17,7 +17,7 @@ import { LegendShowRule, LineStyle } from '../data/options/styleOptions'
 import { isValid } from '../utils/typeChecks'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { getTechnicalIndicatorInfo } from '../data/technicalindicator/technicalIndicatorControl'
+import { getTechnicalIndicatorLegendData } from '../data/technicalindicator/technicalIndicatorControl'
 import { renderText } from '../renderer/text'
 
 export default class TechnicalIndicatorCrosshairView extends View {
@@ -126,7 +126,7 @@ export default class TechnicalIndicatorCrosshairView extends View {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const technicalIndicatorLegendOptions = technicalIndicatorOptions.legend
     if (this._shouldDrawLegend(crosshair, technicalIndicatorLegendOptions)) {
-      const legendData = getTechnicalIndicatorInfo(technicalIndicatorData, technicalIndicator, this._yAxis)
+      const legendData = getTechnicalIndicatorLegendData(technicalIndicatorData, technicalIndicator, this._yAxis)
       const colors = technicalIndicatorOptions.line.colors
       const dataList = this._chartData.dataList()
       const cbData = {
@@ -135,21 +135,37 @@ export default class TechnicalIndicatorCrosshairView extends View {
       }
       const plots = technicalIndicator.plots
       const technicalIndicatorLegendTextOptions = technicalIndicatorLegendOptions.text
-      const nameText = legendData.name
       const labels = legendData.labels
       const values = legendData.values
       const textMarginLeft = technicalIndicatorLegendTextOptions.marginLeft
       const textMarginRight = technicalIndicatorLegendTextOptions.marginRight
-      let labelX = textMarginLeft
+      let labelX = 0
       const labelY = technicalIndicatorLegendTextOptions.marginTop + offsetTop
       const textSize = technicalIndicatorLegendTextOptions.size
       const textColor = technicalIndicatorLegendTextOptions.color
       const colorSize = colors.length
       this._ctx.textBaseline = 'top'
       this._ctx.font = createFont(textSize, technicalIndicatorLegendTextOptions.weight, technicalIndicatorLegendTextOptions.family)
-      const nameTextWidth = calcTextWidth(this._ctx, nameText)
-      renderText(this._ctx, textColor, labelX, labelY, nameText)
-      labelX += (textMarginLeft + nameTextWidth)
+
+      if (technicalIndicatorLegendOptions.showName) {
+        const nameText = legendData.name
+        const nameTextWidth = calcTextWidth(this._ctx, nameText)
+        labelX += textMarginLeft
+        renderText(this._ctx, textColor, labelX, labelY, nameText)
+        labelX += nameTextWidth
+        if (!technicalIndicatorLegendOptions.showParams) {
+          labelX += textMarginRight
+        }
+      }
+      if (technicalIndicatorLegendOptions.showParams) {
+        const calcParamText = legendData.calcParamText
+        const calcParamTextWidth = calcTextWidth(this._ctx, calcParamText)
+        if (!technicalIndicatorLegendOptions.showName) {
+          labelX += textMarginLeft
+        }
+        renderText(this._ctx, textColor, labelX, labelY, calcParamText)
+        labelX += (calcParamTextWidth + textMarginRight)
+      }
       let lineCount = 0
       let valueColor
       for (let i = 0; i < labels.length; i++) {
@@ -169,10 +185,11 @@ export default class TechnicalIndicatorCrosshairView extends View {
           }
           default: { break }
         }
+        labelX += textMarginLeft
         const text = `${labels[i]}: ${values[i].value || 'n/a'}`
         const textWidth = calcTextWidth(this._ctx, text)
         renderText(this._ctx, valueColor, labelX, labelY, text)
-        labelX += (textMarginLeft + textMarginRight + textWidth)
+        labelX += (textWidth + textMarginRight)
       }
     }
   }

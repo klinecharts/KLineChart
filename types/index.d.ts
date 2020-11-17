@@ -100,8 +100,7 @@ export declare interface Chart {
   applyMoreData(dataList: KLineData[], more?: boolean): void;
   updateData(data: KLineData): void;
   loadMore(cb: (timestamp: number) => void): void;
-  setCandleStickChartType(chartType: ChartType): void;
-  setCandleStickTechnicalIndicatorType(technicalIndicatorType: string): void;
+  setCandleTechnicalIndicatorType(technicalIndicatorType: string): void;
   setTechnicalIndicatorType(tag: string, technicalIndicatorType: string): void;
   createTechnicalIndicator(technicalIndicatorType: string, height?: number, dragEnabled?: boolean): string | null;
   addCustomTechnicalIndicator(technicalIndicatorInfo: TechnicalIndicatorInfo)

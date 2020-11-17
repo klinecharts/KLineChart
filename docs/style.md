@@ -1,9 +1,9 @@
 ```js
 config = {
   grid: {
-    display: true,
+    show: true,
     horizontal: {
-      display: true,
+      show: true,
       size: 1,
       color: '#393939',
       // 'solid'|'dash'
@@ -11,7 +11,7 @@ config = {
       dashValue: [2, 2]
     },
     vertical: {
-      display: false,
+      show: false,
       size: 1,
       color: '#393939',
       // 'solid'|'dash'
@@ -19,18 +19,30 @@ config = {
       dashValue: [2, 2]
     }
   },
-  candleStick: {
+  candle: {
+    // 'candle_solid'|'candle_stroke'|'candle_up_stroke'|'candle_down_stroke'|'ohlc'|'area'
+    type: 'candle_solid',
     bar: {
-      // 'solid'|'stroke'|'up_stroke'|'down_stroke'|'ohlc'
-      style: 'solid',
       upColor: '#26A69A',
       downColor: '#EF5350',
       noChangeColor: '#888888'
     },
+    area: {
+      lineSize: 2,
+      lineColor: '#2196F3',
+      value: 'close',
+      fillColor: [{
+        offset: 0,
+        color: 'rgba(33, 150, 243, 0.01)'
+      }, {
+        offset: 1,
+        color: 'rgba(33, 150, 243, 0.2)'
+      }]
+    },
     priceMark: {
-      display: true,
+      show: true,
       high: {
-        display: true,
+        show: true,
         color: '#D9D9D9',
         textMargin: 5,
         textSize: 10,
@@ -38,7 +50,7 @@ config = {
         textWeight: 'normal'
       },
       low: {
-        display: true,
+        show: true,
         color: '#D9D9D9',
         textMargin: 5,
         textSize: 10,
@@ -46,19 +58,19 @@ config = {
         textWeight: 'normal',
       },
       last: {
-        display: true,
+        show: true,
         upColor: '#26A69A',
         downColor: '#EF5350',
         noChangeColor: '#888888',
         line: {
-          display: true,
+          show: true,
           // 'solid'|'dash'
           style: 'dash',
           dashValue: [4, 4],
           size: 1
         },
         text: {
-          display: true,
+          show: true,
           size: 12,
           paddingLeft: 2,
           paddingTop: 2,
@@ -69,24 +81,35 @@ config = {
           weight: 'normal'
         }
       }
-    }
-  },
-  realTime: {
-    timeLine: {
-      color: '#1e88e5',
-      size: 1,
-      areaFillColor: [{
-        offset: 0,
-        color: 'rgba(33, 150, 243, 0.01)'
-      }, {
-        offset: 1,
-        color: 'rgba(33, 150, 243, 0.2)'
-      }]
     },
-    averageLine: {
-      display: true,
-      color: '#FF9600',
-      size: 1
+    legend: {
+      showRule: LegendShowRule.ALWAYS,
+      showType: LegendCandleShowType.STANDARD,
+      labels: ['时间', '开', '收', '高', '低', '成交量'],
+      values: null,
+      rect: {
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingTop: 0,
+        paddingBottom: 6,
+        offsetLeft: 8,
+        offsetTop: 8,
+        offsetRight: 8,
+        borderRadius: 4,
+        borderSize: 1,
+        borderColor: '#3f4254',
+        fillColor: 'rgba(17, 17, 17, .3)'
+      },
+      text: {
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        color: '#D9D9D9',
+        marginLeft: 8,
+        marginTop: 6,
+        marginRight: 8,
+        marginBottom: 0
+      }
     }
   },
   technicalIndicator: {
@@ -105,27 +128,45 @@ config = {
       noChangeColor: '#888888'
     },
     lastValueMark: {
-      display: false,
-      textColor: '#ffffff',
-      textSize: 12,
-      textFamily: 'Helvetica Neue',
-      textWeight: 'normal',
-      textPaddingLeft: 3,
-      textPaddingTop: 2,
-      textPaddingRight: 3,
-      textPaddingBottom: 2
+      show: false,
+      text: {
+        show: false,
+        color: '#ffffff',
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        paddingLeft: 3,
+        paddingTop: 2,
+        paddingRight: 3,
+        paddingBottom: 2
+      }
+    },
+    legend: {
+      showRule: LegendShowRule.ALWAYS,
+      showName: true,
+      showParams: true,
+      text: {
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        color: '#D9D9D9',
+        marginTop: 6,
+        marginRight: 8,
+        marginBottom: 0,
+        marginLeft: 8
+      }
     }
   },
   xAxis: {
-    display: true,
+    show: true,
     height: null,
     axisLine: {
-      display: true,
+      show: true,
       color: '#888888',
       size: 1
     },
     tickText: {
-      display: true,
+      show: true,
       color: '#D9D9D9',
       family: 'Helvetica Neue',
       weight: 'normal',
@@ -134,14 +175,14 @@ config = {
       paddingBottom: 6
     },
     tickLine: {
-      display: true,
+      show: true,
       size: 1,
       length: 3,
       color: '#888888'
     }
   },
   yAxis: {
-    display: true,
+    show: true,
     width: null,
     // 'left' | 'right'
     position: 'right',
@@ -149,12 +190,12 @@ config = {
     type: 'normal',
     inside: false,
     axisLine: {
-      display: true,
+      show: true,
       color: '#888888',
       size: 1
     },
     tickText: {
-      display: true,
+      show: true,
       color: '#D9D9D9',
       family: 'Helvetica Neue',
       weight: 'normal',
@@ -163,7 +204,7 @@ config = {
       paddingRight: 6
     },
     tickLine: {
-      display: true,
+      show: true,
       size: 1,
       length: 3,
       color: '#888888'
@@ -174,103 +215,56 @@ config = {
     color: '#888888',
     fill: true
   },
-  floatLayer: {
-    crossHair: {
-      display: true,
-      horizontal: {
-        display: true,
-        line: {
-          display: true,
-          // 'solid'|'dash'
-          style: 'dash',
-          dashValue: [4, 2],
-          size: 1,
-          color: '#888888'
-        },
-        text: {
-          display: true,
-          color: '#D9D9D9',
-          size: 12,
-          family: 'Helvetica Neue',
-          weight: 'normal',
-          paddingLeft: 2,
-          paddingRight: 2,
-          paddingTop: 2,
-          paddingBottom: 2,
-          borderSize: 1,
-          borderColor: '#505050',
-          backgroundColor: '#505050'
-        }
+  crosshair: {
+    show: true,
+    horizontal: {
+      show: true,
+      line: {
+        show: true,
+        // 'solid'|'dash'
+        style: 'dash',
+        dashValue: [4, 2],
+        size: 1,
+        color: '#888888'
       },
-      vertical: {
-        display: true,
-        line: {
-          display: true,
-          // 'solid'|'dash'
-          style: 'dash',
-          dashValue: [4, 2],
-          size: 1,
-          color: '#888888'
-        },
-        text: {
-          display: true,
-          color: '#D9D9D9',
-          size: 12,
-          family: 'Helvetica Neue',
-          weight: 'normal',
-          paddingLeft: 2,
-          paddingRight: 2,
-          paddingTop: 2,
-          paddingBottom: 2,
-          borderSize: 1,
-          borderColor: '#505050',
-          backgroundColor: '#505050'
-        }
+      text: {
+        show: true,
+        color: '#D9D9D9',
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderSize: 1,
+        borderColor: '#505050',
+        backgroundColor: '#505050'
       }
     },
-    prompt: {
-      // 'always' | 'follow_cross' | 'none'
-      displayRule: 'always',
-      candleStick: {
-        // 'standard' | 'rect'
-        showType: 'standard',
-        labels: ['时间', '开', '收', '高', '低', '成交量'],
-        values: null,
-        rect: {
-          paddingLeft: 0,
-          paddingRight: 0,
-          paddingTop: 0,
-          paddingBottom: 6,
-          left: 8,
-          top: 8,
-          right: 8,
-          borderRadius: 4,
-          borderSize: 1,
-          borderColor: '#3f4254',
-          fillColor: 'rgba(17, 17, 17, .3)'
-        },
-        text: {
-          size: 12,
-          color: '#D9D9D9',
-          family: 'Helvetica Neue',
-          weight: 'normal',
-          marginLeft: 8,
-          marginTop: 6,
-          marginRight: 8,
-          marginBottom: 0
-        }
+    vertical: {
+      show: true,
+      line: {
+        show: true,
+        // 'solid'|'dash'
+        style: 'dash',
+        dashValue: [4, 2],
+        size: 1,
+        color: '#888888'
       },
-      technicalIndicator: {
-        text: {
-          size: 12,
-          family: 'Helvetica Neue',
-          weight: 'normal',
-          color: '#D9D9D9',
-          marginTop: 6,
-          marginRight: 8,
-          marginBottom: 0,
-          marginLeft: 8
-        }
+      text: {
+        show: true,
+        color: '#D9D9D9',
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderSize: 1,
+        borderColor: '#505050',
+        backgroundColor: '#505050'
       }
     }
   },

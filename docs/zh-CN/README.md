@@ -132,14 +132,10 @@ clearData()
 // cb 是一个回调方法，回调参数为第一条数据的时间戳
 loadMore(cb)
 
-// 设置蜡烛图图表类型
-// 类型为'candle_stick'和'real_time'
-setCandleStickChartType(chartType)
-
 // 设置蜡烛图上的技术指标类型
 // 理论上支持目前图表支持的所以技术指标
 // 当设置为'NO'时将不展示
-setCandleStickTechnicalIndicatorType(technicalIndicatorType)
+setCandleTechnicalIndicatorType(technicalIndicatorType)
 
 // 创建技术指标图
 // technicalIndicatorType 技术指标类型

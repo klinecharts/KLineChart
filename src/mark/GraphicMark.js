@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import { renderStrokeFillCircle } from '../renderer/circle'
+
 /**
  * 标记图形绘制步骤
  * @type {{STEP_3: *, STEP_DONE: *, STEP_1: *, STEP_2: *}}
@@ -138,17 +140,7 @@ export default class GraphicMark {
           borderColor = graphicMark.point.activeBorderColor
           borderSize = graphicMark.point.activeBorderSize
         }
-        ctx.fillStyle = color
-        ctx.beginPath()
-        ctx.arc(x, y, radius, 0, Math.PI * 2)
-        ctx.closePath()
-        ctx.fill()
-        ctx.lineWidth = borderSize
-        ctx.strokeStyle = borderColor
-        ctx.beginPath()
-        ctx.arc(x, y, radius, 0, Math.PI * 2)
-        ctx.closePath()
-        ctx.stroke()
+        renderStrokeFillCircle(ctx, color, borderColor, borderSize, { x, y }, radius)
       })
     }
   }

@@ -116,6 +116,7 @@ const defaultCandle = {
   area: {
     lineSize: 2,
     lineColor: '#2196F3',
+    value: 'close',
     fillColor: [{
       offset: 0,
       color: 'rgba(33, 150, 243, 0.01)'
@@ -232,9 +233,9 @@ const defaultTechnicalIndicator = {
   },
   legend: {
     showRule: LegendShowRule.ALWAYS,
+    showName: true,
+    showParams: true,
     text: {
-      showName: true,
-      showParams: true,
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',

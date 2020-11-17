@@ -143,7 +143,7 @@ export function createNewTechnicalIndicator ({
  * @param yAxis
  * @returns {{values: [], name: string, labels: []}}
  */
-export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technicalIndicator, yAxis) {
+export function getTechnicalIndicatorLegendData (technicalIndicatorData = {}, technicalIndicator, yAxis) {
   const calcParams = technicalIndicator.calcParams
   const plots = technicalIndicator.plots
   const precision = technicalIndicator.precision
@@ -152,11 +152,12 @@ export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technica
   const labels = []
   const values = []
   let name = ''
+  let calcParamText = ''
   if (plots.length > 0) {
     name = technicalIndicator.name
   }
   if (calcParams.length > 0) {
-    name = `${name}(${calcParams.join(',')})`
+    calcParamText = `(${calcParams.join(',')})`
   }
   plots.forEach(plot => {
     labels.push(plot.key.toUpperCase())
@@ -171,5 +172,5 @@ export function getTechnicalIndicatorInfo (technicalIndicatorData = {}, technica
     }
     values.push({ value, y })
   })
-  return { labels, values, name }
+  return { labels, values, name, calcParamText }
 }

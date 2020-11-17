@@ -17,7 +17,7 @@ import { CandleType, LineStyle } from '../data/options/styleOptions'
 import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
 import { createFont } from '../utils/canvas'
 import { formatPrecision, formatValue } from '../utils/format'
-import { isArray } from '../utils/typeChecks'
+import { isArray, isValid, isNumber } from '../utils/typeChecks'
 
 export default class CandleView extends TechnicalIndicatorView {
   _draw () {
@@ -54,54 +54,57 @@ export default class CandleView extends TechnicalIndicatorView {
    * @private
    */
   _drawArea (candleOptions) {
-    const timeLinePoints = []
-    const timeLineAreaPoints = []
+    const linePoints = []
+    const areaPoints = []
     const from = this._chartData.from()
-    let minCloseY = Infinity
+    let minY = Infinity
+    const areaOptions = candleOptions.area
     const onDrawing = (x, i, kLineData, halfBarSpace) => {
-      const closeY = this._yAxis.convertToPixel(kLineData.close)
-      if (i === from) {
-        const startX = x - halfBarSpace
-        timeLineAreaPoints.push({ x: startX, y: this._height })
-        timeLineAreaPoints.push({ x: startX, y: closeY })
-        timeLinePoints.push({ x: startX, y: closeY })
+      const value = kLineData[areaOptions.value]
+      if (isValid(value) && isNumber(value)) {
+        const y = this._yAxis.convertToPixel(value)
+        if (i === from) {
+          const startX = x - halfBarSpace
+          areaPoints.push({ x: startX, y: this._height })
+          areaPoints.push({ x: startX, y: y })
+          linePoints.push({ x: startX, y: y })
+        }
+        linePoints.push({ x: x, y: y })
+        areaPoints.push({ x: x, y: y })
+        minY = Math.min(minY, y)
       }
-      timeLinePoints.push({ x: x, y: closeY })
-      timeLineAreaPoints.push({ x: x, y: closeY })
-      minCloseY = Math.min(minCloseY, closeY)
     }
     const onDrawEnd = () => {
-      const areaPointLength = timeLineAreaPoints.length
+      const areaPointLength = areaPoints.length
       if (areaPointLength > 0) {
-        const lastPoint = timeLineAreaPoints[areaPointLength - 1]
+        const lastPoint = areaPoints[areaPointLength - 1]
         const halfBarSpace = this._chartData.barSpace() / 2
         const endX = lastPoint.x + halfBarSpace
-        timeLinePoints.push({ x: endX, y: lastPoint.y })
-        timeLineAreaPoints.push({ x: endX, y: lastPoint.y })
-        timeLineAreaPoints.push({ x: endX, y: this._height })
+        linePoints.push({ x: endX, y: lastPoint.y })
+        areaPoints.push({ x: endX, y: lastPoint.y })
+        areaPoints.push({ x: endX, y: this._height })
       }
 
-      const areaOptions = candleOptions.area
-      if (timeLinePoints.length > 0) {
+      if (linePoints.length > 0) {
         // 绘制分时线
         this._ctx.lineWidth = areaOptions.lineSize
         this._ctx.strokeStyle = areaOptions.lineColor
         renderLine(this._ctx, () => {
           this._ctx.beginPath()
-          this._ctx.moveTo(timeLinePoints[0].x, timeLinePoints[0].y)
-          for (let i = 1; i < timeLinePoints.length; i++) {
-            this._ctx.lineTo(timeLinePoints[i].x, timeLinePoints[i].y)
+          this._ctx.moveTo(linePoints[0].x, linePoints[0].y)
+          for (let i = 1; i < linePoints.length; i++) {
+            this._ctx.lineTo(linePoints[i].x, linePoints[i].y)
           }
           this._ctx.stroke()
           this._ctx.closePath()
         })
       }
 
-      if (timeLineAreaPoints.length > 0) {
+      if (areaPoints.length > 0) {
         // 绘制分时线填充区域
         const fillColor = areaOptions.fillColor
         if (isArray(fillColor)) {
-          const gradient = this._ctx.createLinearGradient(0, this._height, 0, minCloseY)
+          const gradient = this._ctx.createLinearGradient(0, this._height, 0, minY)
           try {
             fillColor.forEach(({ offset, color }) => {
               gradient.addColorStop(offset, color)
@@ -113,9 +116,9 @@ export default class CandleView extends TechnicalIndicatorView {
           this._ctx.fillStyle = fillColor
         }
         this._ctx.beginPath()
-        this._ctx.moveTo(timeLineAreaPoints[0].x, timeLineAreaPoints[0].y)
-        for (let i = 1; i < timeLineAreaPoints.length; i++) {
-          this._ctx.lineTo(timeLineAreaPoints[i].x, timeLineAreaPoints[i].y)
+        this._ctx.moveTo(areaPoints[0].x, areaPoints[0].y)
+        for (let i = 1; i < areaPoints.length; i++) {
+          this._ctx.lineTo(areaPoints[i].x, areaPoints[i].y)
         }
         this._ctx.closePath()
         this._ctx.fill()
