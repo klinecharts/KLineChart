@@ -34,7 +34,6 @@
     "lint": "./node_modules/.bin/eslint src",
     "build": "./node_modules/.bin/rollup -c ./config/rollup.config.js",
     "test": "./node_modules/.bin/mocha --require @babel/register tests/",
-    "predeploy": "npm run build",
     "deploy": "gh-pages -d website"
   },
   "devDependencies": {

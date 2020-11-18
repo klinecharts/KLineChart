@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-export const AVL = 'AVL'
+export const AVP = 'AVP'
 export const MA = 'MA'
 export const EMA = 'EMA'
 export const VOL = 'VOL'

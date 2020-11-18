@@ -1057,7 +1057,7 @@ var TechnicalIndicator = /*#__PURE__*/function () {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var AVL = 'AVL';
+var AVP = 'AVP';
 var MA = 'MA';
 var EMA = 'EMA';
 var VOL = 'VOL';
@@ -1080,41 +1080,49 @@ var MTM = 'MTM';
 var EMV = 'EMV';
 var SAR = 'SAR';
 
-var AverageLine = /*#__PURE__*/function (_TechnicalIndicator) {
-  _inherits(AverageLine, _TechnicalIndicator);
+var AveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
+  _inherits(AveragePrice, _TechnicalIndicator);
 
-  var _super = _createSuper(AverageLine);
+  var _super = _createSuper(AveragePrice);
 
-  function AverageLine() {
-    _classCallCheck(this, AverageLine);
+  function AveragePrice() {
+    _classCallCheck(this, AveragePrice);
 
     return _super.call(this, {
-      name: AVL,
+      name: AVP,
       series: TechnicalIndicatorSeries.PRICE,
       precision: 2,
       plots: [{
-        key: 'avl',
+        key: 'avp',
         type: 'line'
       }]
     });
   }
 
-  _createClass(AverageLine, [{
+  _createClass(AveragePrice, [{
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams) {
       var result = [];
+      var totalTurnover = 0;
+      var totalVolume = 0;
       dataList.forEach(function (kLineData) {
-        var avl = {};
+        var avp = {};
         var turnover = kLineData.turnover || 0;
         var volume = kLineData.volume || 0;
-        avl.avl = volume === 0 ? kLineData.close : turnover / volume;
-        result.push(avl);
+        totalTurnover += turnover;
+        totalVolume += volume;
+
+        if (totalVolume !== 0) {
+          avp.avp = totalTurnover / totalVolume;
+        }
+
+        result.push(avp);
       });
       return result;
     }
   }]);
 
-  return AverageLine;
+  return AveragePrice;
 }(TechnicalIndicator);
 
 var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
@@ -2887,7 +2895,7 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
 function createTechnicalIndicatorMapping() {
   var _ref;
 
-  return _ref = {}, _defineProperty(_ref, AVL, new AverageLine()), _defineProperty(_ref, MA, new MovingAverage()), _defineProperty(_ref, EMA, new ExponentialMovingAverage()), _defineProperty(_ref, VOL, new Volume()), _defineProperty(_ref, MACD, new MovingAverageConvergenceDivergence()), _defineProperty(_ref, BOLL, new BollingerBands()), _defineProperty(_ref, KDJ, new StockIndicatorKDJ()), _defineProperty(_ref, RSI, new RelativeStrengthIndex()), _defineProperty(_ref, BIAS, new Bias()), _defineProperty(_ref, BRAR, new Brar()), _defineProperty(_ref, CCI, new CommodityChannelIndex()), _defineProperty(_ref, DMI, new DirectionalMovementIndex()), _defineProperty(_ref, CR, new CurrentRatio()), _defineProperty(_ref, PSY, new PsychologicalLine()), _defineProperty(_ref, DMA, new DifferentOfMovingAverage()), _defineProperty(_ref, TRIX, new TripleExponentiallySmoothedAverage()), _defineProperty(_ref, OBV, new OnBalanceVolume()), _defineProperty(_ref, VR, new VolumeRatio()), _defineProperty(_ref, WR, new WilliamsR()), _defineProperty(_ref, MTM, new Momentum()), _defineProperty(_ref, EMV, new EaseOfMovementValue()), _defineProperty(_ref, SAR, new StopAndReverse()), _ref;
+  return _ref = {}, _defineProperty(_ref, AVP, new AveragePrice()), _defineProperty(_ref, MA, new MovingAverage()), _defineProperty(_ref, EMA, new ExponentialMovingAverage()), _defineProperty(_ref, VOL, new Volume()), _defineProperty(_ref, MACD, new MovingAverageConvergenceDivergence()), _defineProperty(_ref, BOLL, new BollingerBands()), _defineProperty(_ref, KDJ, new StockIndicatorKDJ()), _defineProperty(_ref, RSI, new RelativeStrengthIndex()), _defineProperty(_ref, BIAS, new Bias()), _defineProperty(_ref, BRAR, new Brar()), _defineProperty(_ref, CCI, new CommodityChannelIndex()), _defineProperty(_ref, DMI, new DirectionalMovementIndex()), _defineProperty(_ref, CR, new CurrentRatio()), _defineProperty(_ref, PSY, new PsychologicalLine()), _defineProperty(_ref, DMA, new DifferentOfMovingAverage()), _defineProperty(_ref, TRIX, new TripleExponentiallySmoothedAverage()), _defineProperty(_ref, OBV, new OnBalanceVolume()), _defineProperty(_ref, VR, new VolumeRatio()), _defineProperty(_ref, WR, new WilliamsR()), _defineProperty(_ref, MTM, new Momentum()), _defineProperty(_ref, EMV, new EaseOfMovementValue()), _defineProperty(_ref, SAR, new StopAndReverse()), _ref;
 }
 /**
  * 创建一个新的技术指标

@@ -13,28 +13,34 @@
  */
 
 import TechnicalIndicator, { TechnicalIndicatorSeries } from '../TechnicalIndicator'
-import { AVL } from '../defaultTechnicalIndicatorType'
+import { AVP } from '../defaultTechnicalIndicatorType'
 
-export default class AverageLine extends TechnicalIndicator {
+export default class AveragePrice extends TechnicalIndicator {
   constructor () {
     super({
-      name: AVL,
+      name: AVP,
       series: TechnicalIndicatorSeries.PRICE,
       precision: 2,
       plots: [
-        { key: 'avl', type: 'line' }
+        { key: 'avp', type: 'line' }
       ]
     })
   }
 
   calcTechnicalIndicator (dataList, calcParams) {
     const result = []
+    let totalTurnover = 0
+    let totalVolume = 0
     dataList.forEach(kLineData => {
-      const avl = {}
+      const avp = {}
       const turnover = kLineData.turnover || 0
       const volume = kLineData.volume || 0
-      avl.avl = volume === 0 ? kLineData.close : turnover / volume
-      result.push(avl)
+      totalTurnover += turnover
+      totalVolume += volume
+      if (totalVolume !== 0) {
+        avp.avp = totalTurnover / totalVolume
+      }
+      result.push(avp)
     })
     return result
   }
