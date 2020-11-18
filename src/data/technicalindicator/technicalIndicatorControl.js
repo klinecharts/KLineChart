@@ -14,7 +14,7 @@
 
 import TechnicalIndicator from './TechnicalIndicator'
 
-import DealAverage from './directionalmovement/DealAverage'
+import AverageLine from './directionalmovement/AverageLine'
 import MovingAverage from './directionalmovement/MovingAverage'
 import ExponentialMovingAverage from './directionalmovement/ExponentialMovingAverage'
 import Volume from './volume/Volume'
@@ -38,7 +38,7 @@ import StopAndReverse from './volatility/StopAndReverse'
 import EaseOfMovementValue from './directionalmovement/EaseOfMovementValue'
 
 import {
-  AVG, MA, EMA, VOL, MACD, KDJ, BOLL, RSI,
+  AVL, MA, EMA, VOL, MACD, KDJ, BOLL, RSI,
   BIAS, BRAR, CCI, DMI, CR, PSY, DMA,
   TRIX, OBV, VR, WR, MTM, EMV, SAR
 } from './defaultTechnicalIndicatorType'
@@ -51,7 +51,7 @@ import { DEV } from '../../utils/env'
  */
 export function createTechnicalIndicatorMapping () {
   return {
-    [AVG]: new DealAverage(),
+    [AVL]: new AverageLine(),
     [MA]: new MovingAverage(),
     [EMA]: new ExponentialMovingAverage(),
     [VOL]: new Volume(),
@@ -143,7 +143,7 @@ export function createNewTechnicalIndicator ({
  * @param yAxis
  * @returns {{values: [], name: string, labels: []}}
  */
-export function getTechnicalIndicatorLegendData (technicalIndicatorData = {}, technicalIndicator, yAxis) {
+export function getTechnicalIndicatorTooltipData (technicalIndicatorData = {}, technicalIndicator, yAxis) {
   const calcParams = technicalIndicator.calcParams
   const plots = technicalIndicator.plots
   const precision = technicalIndicator.precision

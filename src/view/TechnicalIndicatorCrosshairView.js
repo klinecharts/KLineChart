@@ -13,11 +13,11 @@
  */
 
 import View, { PlotType } from './View'
-import { LegendShowRule, LineStyle } from '../data/options/styleOptions'
+import { TooltipShowRule, LineStyle } from '../data/options/styleOptions'
 import { isValid } from '../utils/typeChecks'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { getTechnicalIndicatorLegendData } from '../data/technicalindicator/technicalIndicatorControl'
+import { getTechnicalIndicatorTooltipData } from '../data/technicalindicator/technicalIndicatorControl'
 import { renderText } from '../renderer/text'
 
 export default class TechnicalIndicatorCrosshairView extends View {
@@ -59,7 +59,7 @@ export default class TechnicalIndicatorCrosshairView extends View {
         // 绘制十字光标垂直线
         this._drawCrosshairLine(crosshairOptions, 'vertical', realDataPosX, 0, this._height, renderVerticalLine)
       }
-      this._drawLegend(
+      this._drawTooltip(
         crosshair, kLineData, technicalIndicatorData,
         realDataPos, realDataPosX, technicalIndicator,
         realDataPos >= 0 && realDataPos <= dataList.length - 1 && crosshair.paneTag
@@ -77,11 +77,11 @@ export default class TechnicalIndicatorCrosshairView extends View {
    * @param technicalIndicator
    * @private
    */
-  _drawLegend (
+  _drawTooltip (
     crosshair, kLineData, technicalIndicatorData,
     realDataPos, realDataPosX, technicalIndicator
   ) {
-    this._drawTechnicalIndicatorLegend(
+    this._drawTechnicalIndicatorTooltip(
       crosshair, technicalIndicatorData, realDataPos, technicalIndicator
     )
   }
@@ -122,11 +122,11 @@ export default class TechnicalIndicatorCrosshairView extends View {
    * @param offsetTop
    * @private
    */
-  _drawTechnicalIndicatorLegend (crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop = 0) {
+  _drawTechnicalIndicatorTooltip (crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop = 0) {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
-    const technicalIndicatorLegendOptions = technicalIndicatorOptions.legend
-    if (this._shouldDrawLegend(crosshair, technicalIndicatorLegendOptions)) {
-      const legendData = getTechnicalIndicatorLegendData(technicalIndicatorData, technicalIndicator, this._yAxis)
+    const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
+    if (this._shouldDrawTooltip(crosshair, technicalIndicatorTooltipOptions)) {
+      const tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator, this._yAxis)
       const colors = technicalIndicatorOptions.line.colors
       const dataList = this._chartData.dataList()
       const cbData = {
@@ -134,33 +134,33 @@ export default class TechnicalIndicatorCrosshairView extends View {
         currentData: { kLineData: dataList[realDataPos], technicalIndicatorData: technicalIndicator.result[realDataPos] }
       }
       const plots = technicalIndicator.plots
-      const technicalIndicatorLegendTextOptions = technicalIndicatorLegendOptions.text
-      const labels = legendData.labels
-      const values = legendData.values
-      const textMarginLeft = technicalIndicatorLegendTextOptions.marginLeft
-      const textMarginRight = technicalIndicatorLegendTextOptions.marginRight
+      const technicalIndicatorTooltipTextOptions = technicalIndicatorTooltipOptions.text
+      const labels = tooltipData.labels
+      const values = tooltipData.values
+      const textMarginLeft = technicalIndicatorTooltipTextOptions.marginLeft
+      const textMarginRight = technicalIndicatorTooltipTextOptions.marginRight
       let labelX = 0
-      const labelY = technicalIndicatorLegendTextOptions.marginTop + offsetTop
-      const textSize = technicalIndicatorLegendTextOptions.size
-      const textColor = technicalIndicatorLegendTextOptions.color
+      const labelY = technicalIndicatorTooltipTextOptions.marginTop + offsetTop
+      const textSize = technicalIndicatorTooltipTextOptions.size
+      const textColor = technicalIndicatorTooltipTextOptions.color
       const colorSize = colors.length
       this._ctx.textBaseline = 'top'
-      this._ctx.font = createFont(textSize, technicalIndicatorLegendTextOptions.weight, technicalIndicatorLegendTextOptions.family)
+      this._ctx.font = createFont(textSize, technicalIndicatorTooltipTextOptions.weight, technicalIndicatorTooltipTextOptions.family)
 
-      if (technicalIndicatorLegendOptions.showName) {
-        const nameText = legendData.name
+      if (technicalIndicatorTooltipOptions.showName) {
+        const nameText = tooltipData.name
         const nameTextWidth = calcTextWidth(this._ctx, nameText)
         labelX += textMarginLeft
         renderText(this._ctx, textColor, labelX, labelY, nameText)
         labelX += nameTextWidth
-        if (!technicalIndicatorLegendOptions.showParams) {
+        if (!technicalIndicatorTooltipOptions.showParams) {
           labelX += textMarginRight
         }
       }
-      if (technicalIndicatorLegendOptions.showParams) {
-        const calcParamText = legendData.calcParamText
+      if (technicalIndicatorTooltipOptions.showParams) {
+        const calcParamText = tooltipData.calcParamText
         const calcParamTextWidth = calcTextWidth(this._ctx, calcParamText)
-        if (!technicalIndicatorLegendOptions.showName) {
+        if (!technicalIndicatorTooltipOptions.showName) {
           labelX += textMarginLeft
         }
         renderText(this._ctx, textColor, labelX, labelY, calcParamText)
@@ -197,13 +197,13 @@ export default class TechnicalIndicatorCrosshairView extends View {
   /**
    * 是否需要绘制图例
    * @param crosshair
-   * @param legendOptions
+   * @param tooltipOptions
    * @return {boolean|boolean|*}
    * @private
    */
-  _shouldDrawLegend (crosshair, legendOptions) {
-    const showRule = legendOptions.showRule
-    return showRule === LegendShowRule.ALWAYS ||
-      (showRule === LegendShowRule.FOLLOW_CROSS && crosshair.paneTag)
+  _shouldDrawTooltip (crosshair, tooltipOptions) {
+    const showRule = tooltipOptions.showRule
+    return showRule === TooltipShowRule.ALWAYS ||
+      (showRule === TooltipShowRule.FOLLOW_CROSS && crosshair.paneTag)
   }
 }

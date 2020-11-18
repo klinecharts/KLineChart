@@ -446,7 +446,7 @@ var CandleType = {
  * @type {{FOLLOW_CROSS: string, NONE: string, ALWAYS: string}}
  */
 
-var LegendShowRule = {
+var TooltipShowRule = {
   ALWAYS: 'always',
   FOLLOW_CROSS: 'follow_cross',
   NONE: 'none'
@@ -456,7 +456,7 @@ var LegendShowRule = {
  * @type {{RECT: string, STANDARD: string}}
  */
 
-var LegendCandleShowType = {
+var TooltipCandleShowType = {
   RECT: 'rect',
   STANDARD: 'standard'
 };
@@ -484,7 +484,7 @@ var defaultGrid = {
 };
 /**
  * 默认蜡烛柱图样式配置
- * @type {{area: {fillColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number}, bar: {noChangeColor: string, upColor: string, downColor: string}, legend: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
+ * @type {{area: {fillColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number, value: string}, bar: {noChangeColor: string, upColor: string, downColor: string}, tooltip: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
 
 var defaultCandle = {
@@ -559,9 +559,9 @@ var defaultCandle = {
       }
     }
   },
-  legend: {
-    showRule: LegendShowRule.ALWAYS,
-    showType: LegendCandleShowType.STANDARD,
+  tooltip: {
+    showRule: TooltipShowRule.ALWAYS,
+    showType: TooltipCandleShowType.STANDARD,
     labels: ['时间', '开', '收', '高', '低', '成交量'],
     values: null,
     rect: {
@@ -591,7 +591,7 @@ var defaultCandle = {
 };
 /**
  * 默认的技术指标样式配置
- * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, circle: {noChangeColor: string, upColor: string, downColor: string}}}
+ * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, tooltip: {showParams: boolean, showName: boolean, showRule: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}}, circle: {noChangeColor: string, upColor: string, downColor: string}, lastValueMark: {show: boolean, text: {paddingBottom: number, color: string, size: number, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}}}}
  */
 
 var defaultTechnicalIndicator = {
@@ -623,8 +623,8 @@ var defaultTechnicalIndicator = {
       paddingBottom: 2
     }
   },
-  legend: {
-    showRule: LegendShowRule.ALWAYS,
+  tooltip: {
+    showRule: TooltipShowRule.ALWAYS,
     showName: true,
     showParams: true,
     text: {
@@ -1057,7 +1057,7 @@ var TechnicalIndicator = /*#__PURE__*/function () {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var AVG = 'AVG';
+var AVL = 'AVL';
 var MA = 'MA';
 var EMA = 'EMA';
 var VOL = 'VOL';
@@ -1080,49 +1080,41 @@ var MTM = 'MTM';
 var EMV = 'EMV';
 var SAR = 'SAR';
 
-var DealAverage = /*#__PURE__*/function (_TechnicalIndicator) {
-  _inherits(DealAverage, _TechnicalIndicator);
+var AverageLine = /*#__PURE__*/function (_TechnicalIndicator) {
+  _inherits(AverageLine, _TechnicalIndicator);
 
-  var _super = _createSuper(DealAverage);
+  var _super = _createSuper(AverageLine);
 
-  function DealAverage() {
-    _classCallCheck(this, DealAverage);
+  function AverageLine() {
+    _classCallCheck(this, AverageLine);
 
     return _super.call(this, {
-      name: AVG,
+      name: AVL,
       series: TechnicalIndicatorSeries.PRICE,
       precision: 2,
       plots: [{
-        key: 'avg',
+        key: 'avl',
         type: 'line'
       }]
     });
   }
 
-  _createClass(DealAverage, [{
+  _createClass(AverageLine, [{
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams) {
-      var turnoverSum = 0;
-      var volumeSum = 0;
       var result = [];
       dataList.forEach(function (kLineData) {
-        var avg = {};
+        var avl = {};
         var turnover = kLineData.turnover || 0;
         var volume = kLineData.volume || 0;
-        turnoverSum += turnover;
-        volumeSum += volume;
-
-        if (volumeSum !== 0) {
-          avg.avg = turnoverSum / volumeSum;
-        }
-
-        result.push(avg);
+        avl.avl = volume === 0 ? kLineData.close : turnover / volume;
+        result.push(avl);
       });
       return result;
     }
   }]);
 
-  return DealAverage;
+  return AverageLine;
 }(TechnicalIndicator);
 
 var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
@@ -2895,7 +2887,7 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
 function createTechnicalIndicatorMapping() {
   var _ref;
 
-  return _ref = {}, _defineProperty(_ref, AVG, new DealAverage()), _defineProperty(_ref, MA, new MovingAverage()), _defineProperty(_ref, EMA, new ExponentialMovingAverage()), _defineProperty(_ref, VOL, new Volume()), _defineProperty(_ref, MACD, new MovingAverageConvergenceDivergence()), _defineProperty(_ref, BOLL, new BollingerBands()), _defineProperty(_ref, KDJ, new StockIndicatorKDJ()), _defineProperty(_ref, RSI, new RelativeStrengthIndex()), _defineProperty(_ref, BIAS, new Bias()), _defineProperty(_ref, BRAR, new Brar()), _defineProperty(_ref, CCI, new CommodityChannelIndex()), _defineProperty(_ref, DMI, new DirectionalMovementIndex()), _defineProperty(_ref, CR, new CurrentRatio()), _defineProperty(_ref, PSY, new PsychologicalLine()), _defineProperty(_ref, DMA, new DifferentOfMovingAverage()), _defineProperty(_ref, TRIX, new TripleExponentiallySmoothedAverage()), _defineProperty(_ref, OBV, new OnBalanceVolume()), _defineProperty(_ref, VR, new VolumeRatio()), _defineProperty(_ref, WR, new WilliamsR()), _defineProperty(_ref, MTM, new Momentum()), _defineProperty(_ref, EMV, new EaseOfMovementValue()), _defineProperty(_ref, SAR, new StopAndReverse()), _ref;
+  return _ref = {}, _defineProperty(_ref, AVL, new AverageLine()), _defineProperty(_ref, MA, new MovingAverage()), _defineProperty(_ref, EMA, new ExponentialMovingAverage()), _defineProperty(_ref, VOL, new Volume()), _defineProperty(_ref, MACD, new MovingAverageConvergenceDivergence()), _defineProperty(_ref, BOLL, new BollingerBands()), _defineProperty(_ref, KDJ, new StockIndicatorKDJ()), _defineProperty(_ref, RSI, new RelativeStrengthIndex()), _defineProperty(_ref, BIAS, new Bias()), _defineProperty(_ref, BRAR, new Brar()), _defineProperty(_ref, CCI, new CommodityChannelIndex()), _defineProperty(_ref, DMI, new DirectionalMovementIndex()), _defineProperty(_ref, CR, new CurrentRatio()), _defineProperty(_ref, PSY, new PsychologicalLine()), _defineProperty(_ref, DMA, new DifferentOfMovingAverage()), _defineProperty(_ref, TRIX, new TripleExponentiallySmoothedAverage()), _defineProperty(_ref, OBV, new OnBalanceVolume()), _defineProperty(_ref, VR, new VolumeRatio()), _defineProperty(_ref, WR, new WilliamsR()), _defineProperty(_ref, MTM, new Momentum()), _defineProperty(_ref, EMV, new EaseOfMovementValue()), _defineProperty(_ref, SAR, new StopAndReverse()), _ref;
 }
 /**
  * 创建一个新的技术指标
@@ -2986,7 +2978,7 @@ function createNewTechnicalIndicator(_ref2) {
  * @returns {{values: [], name: string, labels: []}}
  */
 
-function getTechnicalIndicatorLegendData() {
+function getTechnicalIndicatorTooltipData() {
   var technicalIndicatorData = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var technicalIndicator = arguments.length > 1 ? arguments[1] : undefined;
   var yAxis = arguments.length > 2 ? arguments[2] : undefined;
@@ -6725,7 +6717,7 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
           this._drawCrosshairLine(crosshairOptions, 'vertical', realDataPosX, 0, this._height, renderVerticalLine);
         }
 
-        this._drawLegend(crosshair, kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, realDataPos >= 0 && realDataPos <= dataList.length - 1 && crosshair.paneTag);
+        this._drawTooltip(crosshair, kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator, realDataPos >= 0 && realDataPos <= dataList.length - 1 && crosshair.paneTag);
       }
     }
     /**
@@ -6740,9 +6732,9 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
      */
 
   }, {
-    key: "_drawLegend",
-    value: function _drawLegend(crosshair, kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
-      this._drawTechnicalIndicatorLegend(crosshair, technicalIndicatorData, realDataPos, technicalIndicator);
+    key: "_drawTooltip",
+    value: function _drawTooltip(crosshair, kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
+      this._drawTechnicalIndicatorTooltip(crosshair, technicalIndicatorData, realDataPos, technicalIndicator);
     }
     /**
      * 绘制十字光标线
@@ -6789,16 +6781,16 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
      */
 
   }, {
-    key: "_drawTechnicalIndicatorLegend",
-    value: function _drawTechnicalIndicatorLegend(crosshair, technicalIndicatorData, realDataPos, technicalIndicator) {
+    key: "_drawTechnicalIndicatorTooltip",
+    value: function _drawTechnicalIndicatorTooltip(crosshair, technicalIndicatorData, realDataPos, technicalIndicator) {
       var offsetTop = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
 
       var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
-      var technicalIndicatorLegendOptions = technicalIndicatorOptions.legend;
+      var technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip;
 
-      if (this._shouldDrawLegend(crosshair, technicalIndicatorLegendOptions)) {
-        var legendData = getTechnicalIndicatorLegendData(technicalIndicatorData, technicalIndicator, this._yAxis);
+      if (this._shouldDrawTooltip(crosshair, technicalIndicatorTooltipOptions)) {
+        var tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator, this._yAxis);
         var colors = technicalIndicatorOptions.line.colors;
 
         var dataList = this._chartData.dataList();
@@ -6814,36 +6806,36 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
           }
         };
         var plots = technicalIndicator.plots;
-        var technicalIndicatorLegendTextOptions = technicalIndicatorLegendOptions.text;
-        var labels = legendData.labels;
-        var values = legendData.values;
-        var textMarginLeft = technicalIndicatorLegendTextOptions.marginLeft;
-        var textMarginRight = technicalIndicatorLegendTextOptions.marginRight;
+        var technicalIndicatorTooltipTextOptions = technicalIndicatorTooltipOptions.text;
+        var labels = tooltipData.labels;
+        var values = tooltipData.values;
+        var textMarginLeft = technicalIndicatorTooltipTextOptions.marginLeft;
+        var textMarginRight = technicalIndicatorTooltipTextOptions.marginRight;
         var labelX = 0;
-        var labelY = technicalIndicatorLegendTextOptions.marginTop + offsetTop;
-        var textSize = technicalIndicatorLegendTextOptions.size;
-        var textColor = technicalIndicatorLegendTextOptions.color;
+        var labelY = technicalIndicatorTooltipTextOptions.marginTop + offsetTop;
+        var textSize = technicalIndicatorTooltipTextOptions.size;
+        var textColor = technicalIndicatorTooltipTextOptions.color;
         var colorSize = colors.length;
         this._ctx.textBaseline = 'top';
-        this._ctx.font = createFont(textSize, technicalIndicatorLegendTextOptions.weight, technicalIndicatorLegendTextOptions.family);
+        this._ctx.font = createFont(textSize, technicalIndicatorTooltipTextOptions.weight, technicalIndicatorTooltipTextOptions.family);
 
-        if (technicalIndicatorLegendOptions.showName) {
-          var nameText = legendData.name;
+        if (technicalIndicatorTooltipOptions.showName) {
+          var nameText = tooltipData.name;
           var nameTextWidth = calcTextWidth(this._ctx, nameText);
           labelX += textMarginLeft;
           renderText(this._ctx, textColor, labelX, labelY, nameText);
           labelX += nameTextWidth;
 
-          if (!technicalIndicatorLegendOptions.showParams) {
+          if (!technicalIndicatorTooltipOptions.showParams) {
             labelX += textMarginRight;
           }
         }
 
-        if (technicalIndicatorLegendOptions.showParams) {
-          var calcParamText = legendData.calcParamText;
+        if (technicalIndicatorTooltipOptions.showParams) {
+          var calcParamText = tooltipData.calcParamText;
           var calcParamTextWidth = calcTextWidth(this._ctx, calcParamText);
 
-          if (!technicalIndicatorLegendOptions.showName) {
+          if (!technicalIndicatorTooltipOptions.showName) {
             labelX += textMarginLeft;
           }
 
@@ -6887,16 +6879,16 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
     /**
      * 是否需要绘制图例
      * @param crosshair
-     * @param legendOptions
+     * @param tooltipOptions
      * @return {boolean|boolean|*}
      * @private
      */
 
   }, {
-    key: "_shouldDrawLegend",
-    value: function _shouldDrawLegend(crosshair, legendOptions) {
-      var showRule = legendOptions.showRule;
-      return showRule === LegendShowRule.ALWAYS || showRule === LegendShowRule.FOLLOW_CROSS && crosshair.paneTag;
+    key: "_shouldDrawTooltip",
+    value: function _shouldDrawTooltip(crosshair, tooltipOptions) {
+      var showRule = tooltipOptions.showRule;
+      return showRule === TooltipShowRule.ALWAYS || showRule === TooltipShowRule.FOLLOW_CROSS && crosshair.paneTag;
     }
   }]);
 
@@ -8494,54 +8486,54 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
   }
 
   _createClass(CandleCrosshairView, [{
-    key: "_drawLegend",
-    value: function _drawLegend(crosshair, kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
+    key: "_drawTooltip",
+    value: function _drawTooltip(crosshair, kLineData, technicalIndicatorData, realDataPos, realDataPosX, technicalIndicator) {
       var styleOptions = this._chartData.styleOptions();
 
       var candleOptions = styleOptions.candle;
-      var candleLegendOptions = candleOptions.legend;
+      var candleTooltipOptions = candleOptions.tooltip;
 
-      var isDrawCandleLegend = this._shouldDrawLegend(crosshair, candleLegendOptions);
+      var isDrawCandleTooltip = this._shouldDrawTooltip(crosshair, candleTooltipOptions);
 
-      if (candleLegendOptions.showType === LegendCandleShowType.STANDARD) {
-        var offsetTop = isDrawCandleLegend ? candleLegendOptions.text.size + candleLegendOptions.text.marginTop : 0;
+      if (candleTooltipOptions.showType === TooltipCandleShowType.STANDARD) {
+        var offsetTop = isDrawCandleTooltip ? candleTooltipOptions.text.size + candleTooltipOptions.text.marginTop : 0;
 
-        this._drawCandleLegendWithStandard(kLineData, candleOptions, isDrawCandleLegend);
+        this._drawCandleTooltipWithStandard(kLineData, candleOptions, isDrawCandleTooltip);
 
-        this._drawTechnicalIndicatorLegend(crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop);
+        this._drawTechnicalIndicatorTooltip(crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop);
       } else {
-        this._drawCandleLegendWithRect(kLineData, technicalIndicatorData, technicalIndicator, realDataPosX, candleOptions, isDrawCandleLegend, styleOptions.technicalIndicator, this._shouldDrawLegend(crosshair, styleOptions.technicalIndicator.legend));
+        this._drawCandleTooltipWithRect(kLineData, technicalIndicatorData, technicalIndicator, realDataPosX, candleOptions, isDrawCandleTooltip, styleOptions.technicalIndicator, this._shouldDrawTooltip(crosshair, styleOptions.technicalIndicator.tooltip));
       }
     }
     /**
      * 绘制蜡烛默认的图例
      * @param kLineData
      * @param candleOptions
-     * @param isDrawCandleLegend
+     * @param isDrawCandleTooltip
      * @private
      */
 
   }, {
-    key: "_drawCandleLegendWithStandard",
-    value: function _drawCandleLegendWithStandard(kLineData, candleOptions, isDrawCandleLegend) {
+    key: "_drawCandleTooltipWithStandard",
+    value: function _drawCandleTooltipWithStandard(kLineData, candleOptions, isDrawCandleTooltip) {
       var _this = this;
 
-      if (!isDrawCandleLegend) {
+      if (!isDrawCandleTooltip) {
         return;
       }
 
-      var values = this._getCandleLegendData(kLineData, candleOptions);
+      var values = this._getCandleTooltipData(kLineData, candleOptions);
 
-      var candleLegendOptions = candleOptions.legend;
-      var textMarginLeft = candleLegendOptions.text.marginLeft;
-      var textMarginRight = candleLegendOptions.text.marginRight;
-      var textSize = candleLegendOptions.text.size;
-      var textColor = candleLegendOptions.text.color;
-      var labels = candleLegendOptions.labels;
+      var candleTooltipOptions = candleOptions.tooltip;
+      var textMarginLeft = candleTooltipOptions.text.marginLeft;
+      var textMarginRight = candleTooltipOptions.text.marginRight;
+      var textSize = candleTooltipOptions.text.size;
+      var textColor = candleTooltipOptions.text.color;
+      var labels = candleTooltipOptions.labels;
       this._ctx.textBaseline = 'top';
-      this._ctx.font = createFont(textSize, candleLegendOptions.text.weight, candleLegendOptions.text.family);
+      this._ctx.font = createFont(textSize, candleTooltipOptions.text.weight, candleTooltipOptions.text.family);
       var labelX = textMarginLeft;
-      var labelY = candleLegendOptions.text.marginTop;
+      var labelY = candleTooltipOptions.text.marginTop;
       labels.forEach(function (label, i) {
         var labelText = label ? "".concat(label, ": ") : '';
         var labelWidth = calcTextWidth(_this._ctx, labelText);
@@ -8571,29 +8563,29 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
      * @param technicalIndicator
      * @param x
      * @param candleOptions
-     * @param isDrawCandleLegend
+     * @param isDrawCandleTooltip
      * @param technicalIndicatorOptions
-     * @param isDrawTechnicalIndicatorLegend
+     * @param isDrawTechnicalIndicatorTooltip
      * @private
      */
 
   }, {
-    key: "_drawCandleLegendWithRect",
-    value: function _drawCandleLegendWithRect(kLineData, technicalIndicatorData, technicalIndicator, x, candleOptions, isDrawCandleLegend, technicalIndicatorOptions, isDrawTechnicalIndicatorLegend) {
+    key: "_drawCandleTooltipWithRect",
+    value: function _drawCandleTooltipWithRect(kLineData, technicalIndicatorData, technicalIndicator, x, candleOptions, isDrawCandleTooltip, technicalIndicatorOptions, isDrawTechnicalIndicatorTooltip) {
       var _this2 = this;
 
-      var candleLegendOptions = candleOptions.legend;
-      var baseLabels = candleLegendOptions.labels;
+      var candleTooltipOptions = candleOptions.tooltip;
+      var baseLabels = candleTooltipOptions.labels;
 
-      var baseValues = this._getCandleLegendData(kLineData, candleOptions);
+      var baseValues = this._getCandleTooltipData(kLineData, candleOptions);
 
-      var baseTextMarginLeft = candleLegendOptions.text.marginLeft;
-      var baseTextMarginRight = candleLegendOptions.text.marginRight;
-      var baseTextMarginTop = candleLegendOptions.text.marginTop;
-      var baseTextMarginBottom = candleLegendOptions.text.marginBottom;
-      var baseTextSize = candleLegendOptions.text.size;
-      var baseTextColor = candleLegendOptions.text.color;
-      var rectOptions = candleLegendOptions.rect;
+      var baseTextMarginLeft = candleTooltipOptions.text.marginLeft;
+      var baseTextMarginRight = candleTooltipOptions.text.marginRight;
+      var baseTextMarginTop = candleTooltipOptions.text.marginTop;
+      var baseTextMarginBottom = candleTooltipOptions.text.marginBottom;
+      var baseTextSize = candleTooltipOptions.text.size;
+      var baseTextColor = candleTooltipOptions.text.color;
+      var rectOptions = candleTooltipOptions.rect;
       var rectBorderSize = rectOptions.borderSize;
       var rectPaddingLeft = rectOptions.paddingLeft;
       var rectPaddingRight = rectOptions.paddingRight;
@@ -8605,7 +8597,7 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
       var rectHeight = 0;
       var rectWidth = 0;
 
-      if (isDrawCandleLegend || isDrawTechnicalIndicatorLegend) {
+      if (isDrawCandleTooltip || isDrawTechnicalIndicatorTooltip) {
         rectWidth = rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight;
         rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom;
       }
@@ -8614,8 +8606,8 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
 
       this._ctx.textBaseline = 'top';
 
-      if (isDrawCandleLegend) {
-        this._ctx.font = createFont(baseTextSize, candleLegendOptions.text.weight, candleLegendOptions.text.family);
+      if (isDrawCandleTooltip) {
+        this._ctx.font = createFont(baseTextSize, candleTooltipOptions.text.weight, candleTooltipOptions.text.family);
         baseLabels.forEach(function (label, i) {
           var value = baseValues[i] || 'n/a';
           var v = value;
@@ -8631,18 +8623,18 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
         rectHeight += (baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length;
       }
 
-      var technicalIndicatorLegendOptions = technicalIndicatorOptions.legend;
-      var indicatorTextMarginLeft = technicalIndicatorLegendOptions.text.marginLeft;
-      var indicatorTextMarginRight = technicalIndicatorLegendOptions.text.marginRight;
-      var indicatorTextMarginTop = technicalIndicatorLegendOptions.text.marginTop;
-      var indicatorTextMarginBottom = technicalIndicatorLegendOptions.text.marginBottom;
-      var indicatorTextSize = technicalIndicatorLegendOptions.text.size;
-      var indicatorLegendData = getTechnicalIndicatorLegendData(technicalIndicatorData, technicalIndicator, this._yAxis);
-      var indicatorLabels = indicatorLegendData.labels || [];
-      var indicatorValues = indicatorLegendData.values || [];
+      var technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip;
+      var indicatorTextMarginLeft = technicalIndicatorTooltipOptions.text.marginLeft;
+      var indicatorTextMarginRight = technicalIndicatorTooltipOptions.text.marginRight;
+      var indicatorTextMarginTop = technicalIndicatorTooltipOptions.text.marginTop;
+      var indicatorTextMarginBottom = technicalIndicatorTooltipOptions.text.marginBottom;
+      var indicatorTextSize = technicalIndicatorTooltipOptions.text.size;
+      var indicatorTooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator, this._yAxis);
+      var indicatorLabels = indicatorTooltipData.labels || [];
+      var indicatorValues = indicatorTooltipData.values || [];
 
-      if (isDrawTechnicalIndicatorLegend) {
-        this._ctx.font = createFont(indicatorTextSize, technicalIndicatorLegendOptions.text.weight, technicalIndicatorLegendOptions.text.family);
+      if (isDrawTechnicalIndicatorTooltip) {
+        this._ctx.font = createFont(indicatorTextSize, technicalIndicatorTooltipOptions.text.weight, technicalIndicatorTooltipOptions.text.family);
         indicatorLabels.forEach(function (label, i) {
           var v = indicatorValues[i].value || 'n/a';
           var text = "".concat(label, ": ").concat(v);
@@ -8669,9 +8661,9 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
       var baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft;
       var labelY = rectY + rectBorderSize + rectPaddingTop;
 
-      if (isDrawCandleLegend) {
+      if (isDrawCandleTooltip) {
         // 开始渲染基础数据文字
-        this._ctx.font = createFont(baseTextSize, candleLegendOptions.text.weight, candleLegendOptions.text.family);
+        this._ctx.font = createFont(baseTextSize, candleTooltipOptions.text.weight, candleTooltipOptions.text.family);
         baseLabels.forEach(function (label, i) {
           labelY += baseTextMarginTop;
           _this2._ctx.textAlign = 'left';
@@ -8692,14 +8684,14 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
         });
       }
 
-      if (isDrawTechnicalIndicatorLegend) {
+      if (isDrawTechnicalIndicatorTooltip) {
         // 开始渲染指标数据文字
         var _technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
         var colors = _technicalIndicatorOptions.line.colors;
         var indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft;
         var colorSize = colors.length;
-        this._ctx.font = createFont(indicatorTextSize, technicalIndicatorLegendOptions.text.weight, technicalIndicatorLegendOptions.text.family);
+        this._ctx.font = createFont(indicatorTextSize, technicalIndicatorTooltipOptions.text.weight, technicalIndicatorTooltipOptions.text.family);
         indicatorLabels.forEach(function (label, i) {
           labelY += indicatorTextMarginTop;
           _this2._ctx.textAlign = 'left';
@@ -8726,11 +8718,11 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
      */
 
   }, {
-    key: "_getCandleLegendData",
-    value: function _getCandleLegendData(kLineData, candleOptions) {
+    key: "_getCandleTooltipData",
+    value: function _getCandleTooltipData(kLineData, candleOptions) {
       var _this3 = this;
 
-      var baseValues = candleOptions.legend.values;
+      var baseValues = candleOptions.tooltip.values;
       var values = [];
 
       if (baseValues) {

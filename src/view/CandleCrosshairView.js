@@ -16,30 +16,30 @@ import TechnicalIndicatorCrosshairView from './TechnicalIndicatorCrosshairView'
 import { isFunction, isObject, isArray } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { LegendCandleShowType } from '../data/options/styleOptions'
-import { getTechnicalIndicatorLegendData } from '../data/technicalindicator/technicalIndicatorControl'
+import { TooltipCandleShowType } from '../data/options/styleOptions'
+import { getTechnicalIndicatorTooltipData } from '../data/technicalindicator/technicalIndicatorControl'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView {
-  _drawLegend (
+  _drawTooltip (
     crosshair, kLineData, technicalIndicatorData,
     realDataPos, realDataPosX, technicalIndicator
   ) {
     const styleOptions = this._chartData.styleOptions()
     const candleOptions = styleOptions.candle
-    const candleLegendOptions = candleOptions.legend
-    const isDrawCandleLegend = this._shouldDrawLegend(crosshair, candleLegendOptions)
-    if (candleLegendOptions.showType === LegendCandleShowType.STANDARD) {
-      const offsetTop = isDrawCandleLegend ? candleLegendOptions.text.size + candleLegendOptions.text.marginTop : 0
-      this._drawCandleLegendWithStandard(kLineData, candleOptions, isDrawCandleLegend)
-      this._drawTechnicalIndicatorLegend(crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop)
+    const candleTooltipOptions = candleOptions.tooltip
+    const isDrawCandleTooltip = this._shouldDrawTooltip(crosshair, candleTooltipOptions)
+    if (candleTooltipOptions.showType === TooltipCandleShowType.STANDARD) {
+      const offsetTop = isDrawCandleTooltip ? candleTooltipOptions.text.size + candleTooltipOptions.text.marginTop : 0
+      this._drawCandleTooltipWithStandard(kLineData, candleOptions, isDrawCandleTooltip)
+      this._drawTechnicalIndicatorTooltip(crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop)
     } else {
-      this._drawCandleLegendWithRect(
+      this._drawCandleTooltipWithRect(
         kLineData, technicalIndicatorData, technicalIndicator,
-        realDataPosX, candleOptions, isDrawCandleLegend,
+        realDataPosX, candleOptions, isDrawCandleTooltip,
         styleOptions.technicalIndicator,
-        this._shouldDrawLegend(crosshair, styleOptions.technicalIndicator.legend)
+        this._shouldDrawTooltip(crosshair, styleOptions.technicalIndicator.tooltip)
       )
     }
   }
@@ -48,24 +48,24 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
    * 绘制蜡烛默认的图例
    * @param kLineData
    * @param candleOptions
-   * @param isDrawCandleLegend
+   * @param isDrawCandleTooltip
    * @private
    */
-  _drawCandleLegendWithStandard (kLineData, candleOptions, isDrawCandleLegend) {
-    if (!isDrawCandleLegend) {
+  _drawCandleTooltipWithStandard (kLineData, candleOptions, isDrawCandleTooltip) {
+    if (!isDrawCandleTooltip) {
       return
     }
-    const values = this._getCandleLegendData(kLineData, candleOptions)
-    const candleLegendOptions = candleOptions.legend
-    const textMarginLeft = candleLegendOptions.text.marginLeft
-    const textMarginRight = candleLegendOptions.text.marginRight
-    const textSize = candleLegendOptions.text.size
-    const textColor = candleLegendOptions.text.color
-    const labels = candleLegendOptions.labels
+    const values = this._getCandleTooltipData(kLineData, candleOptions)
+    const candleTooltipOptions = candleOptions.tooltip
+    const textMarginLeft = candleTooltipOptions.text.marginLeft
+    const textMarginRight = candleTooltipOptions.text.marginRight
+    const textSize = candleTooltipOptions.text.size
+    const textColor = candleTooltipOptions.text.color
+    const labels = candleTooltipOptions.labels
     this._ctx.textBaseline = 'top'
-    this._ctx.font = createFont(textSize, candleLegendOptions.text.weight, candleLegendOptions.text.family)
+    this._ctx.font = createFont(textSize, candleTooltipOptions.text.weight, candleTooltipOptions.text.family)
     let labelX = textMarginLeft
-    const labelY = candleLegendOptions.text.marginTop
+    const labelY = candleTooltipOptions.text.marginTop
     labels.forEach((label, i) => {
       const labelText = label ? `${label}: ` : ''
       const labelWidth = calcTextWidth(this._ctx, labelText)
@@ -95,27 +95,27 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
    * @param technicalIndicator
    * @param x
    * @param candleOptions
-   * @param isDrawCandleLegend
+   * @param isDrawCandleTooltip
    * @param technicalIndicatorOptions
-   * @param isDrawTechnicalIndicatorLegend
+   * @param isDrawTechnicalIndicatorTooltip
    * @private
    */
-  _drawCandleLegendWithRect (
+  _drawCandleTooltipWithRect (
     kLineData, technicalIndicatorData, technicalIndicator,
-    x, candleOptions, isDrawCandleLegend,
-    technicalIndicatorOptions, isDrawTechnicalIndicatorLegend
+    x, candleOptions, isDrawCandleTooltip,
+    technicalIndicatorOptions, isDrawTechnicalIndicatorTooltip
   ) {
-    const candleLegendOptions = candleOptions.legend
-    const baseLabels = candleLegendOptions.labels
-    const baseValues = this._getCandleLegendData(kLineData, candleOptions)
-    const baseTextMarginLeft = candleLegendOptions.text.marginLeft
-    const baseTextMarginRight = candleLegendOptions.text.marginRight
-    const baseTextMarginTop = candleLegendOptions.text.marginTop
-    const baseTextMarginBottom = candleLegendOptions.text.marginBottom
-    const baseTextSize = candleLegendOptions.text.size
-    const baseTextColor = candleLegendOptions.text.color
+    const candleTooltipOptions = candleOptions.tooltip
+    const baseLabels = candleTooltipOptions.labels
+    const baseValues = this._getCandleTooltipData(kLineData, candleOptions)
+    const baseTextMarginLeft = candleTooltipOptions.text.marginLeft
+    const baseTextMarginRight = candleTooltipOptions.text.marginRight
+    const baseTextMarginTop = candleTooltipOptions.text.marginTop
+    const baseTextMarginBottom = candleTooltipOptions.text.marginBottom
+    const baseTextSize = candleTooltipOptions.text.size
+    const baseTextColor = candleTooltipOptions.text.color
 
-    const rectOptions = candleLegendOptions.rect
+    const rectOptions = candleTooltipOptions.rect
     const rectBorderSize = rectOptions.borderSize
     const rectPaddingLeft = rectOptions.paddingLeft
     const rectPaddingRight = rectOptions.paddingRight
@@ -127,14 +127,14 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     let maxLabelWidth = 0
     let rectHeight = 0
     let rectWidth = 0
-    if (isDrawCandleLegend || isDrawTechnicalIndicatorLegend) {
+    if (isDrawCandleTooltip || isDrawTechnicalIndicatorTooltip) {
       rectWidth = rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight
       rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom
     }
     this._ctx.save()
     this._ctx.textBaseline = 'top'
-    if (isDrawCandleLegend) {
-      this._ctx.font = createFont(baseTextSize, candleLegendOptions.text.weight, candleLegendOptions.text.family)
+    if (isDrawCandleTooltip) {
+      this._ctx.font = createFont(baseTextSize, candleTooltipOptions.text.weight, candleTooltipOptions.text.family)
       baseLabels.forEach((label, i) => {
         const value = baseValues[i] || 'n/a'
         let v = value
@@ -148,22 +148,22 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
       rectHeight += ((baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length)
     }
 
-    const technicalIndicatorLegendOptions = technicalIndicatorOptions.legend
+    const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
 
-    const indicatorTextMarginLeft = technicalIndicatorLegendOptions.text.marginLeft
-    const indicatorTextMarginRight = technicalIndicatorLegendOptions.text.marginRight
-    const indicatorTextMarginTop = technicalIndicatorLegendOptions.text.marginTop
-    const indicatorTextMarginBottom = technicalIndicatorLegendOptions.text.marginBottom
-    const indicatorTextSize = technicalIndicatorLegendOptions.text.size
+    const indicatorTextMarginLeft = technicalIndicatorTooltipOptions.text.marginLeft
+    const indicatorTextMarginRight = technicalIndicatorTooltipOptions.text.marginRight
+    const indicatorTextMarginTop = technicalIndicatorTooltipOptions.text.marginTop
+    const indicatorTextMarginBottom = technicalIndicatorTooltipOptions.text.marginBottom
+    const indicatorTextSize = technicalIndicatorTooltipOptions.text.size
 
-    const indicatorLegendData = getTechnicalIndicatorLegendData(technicalIndicatorData, technicalIndicator, this._yAxis)
-    const indicatorLabels = indicatorLegendData.labels || []
-    const indicatorValues = indicatorLegendData.values || []
-    if (isDrawTechnicalIndicatorLegend) {
+    const indicatorTooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator, this._yAxis)
+    const indicatorLabels = indicatorTooltipData.labels || []
+    const indicatorValues = indicatorTooltipData.values || []
+    if (isDrawTechnicalIndicatorTooltip) {
       this._ctx.font = createFont(
         indicatorTextSize,
-        technicalIndicatorLegendOptions.text.weight,
-        technicalIndicatorLegendOptions.text.family
+        technicalIndicatorTooltipOptions.text.weight,
+        technicalIndicatorTooltipOptions.text.family
       )
       indicatorLabels.forEach((label, i) => {
         const v = indicatorValues[i].value || 'n/a'
@@ -189,12 +189,12 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     renderStrokeRoundRect(this._ctx, rectOptions.borderColor, rectBorderSize, rectX, rectY, rectWidth, rectHeight, radius)
     const baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
     let labelY = rectY + rectBorderSize + rectPaddingTop
-    if (isDrawCandleLegend) {
+    if (isDrawCandleTooltip) {
       // 开始渲染基础数据文字
       this._ctx.font = createFont(
         baseTextSize,
-        candleLegendOptions.text.weight,
-        candleLegendOptions.text.family
+        candleTooltipOptions.text.weight,
+        candleTooltipOptions.text.family
       )
       baseLabels.forEach((label, i) => {
         labelY += baseTextMarginTop
@@ -220,7 +220,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         labelY += (baseTextSize + baseTextMarginBottom)
       })
     }
-    if (isDrawTechnicalIndicatorLegend) {
+    if (isDrawTechnicalIndicatorTooltip) {
       // 开始渲染指标数据文字
       const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
       const colors = technicalIndicatorOptions.line.colors
@@ -228,8 +228,8 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
       const colorSize = colors.length
       this._ctx.font = createFont(
         indicatorTextSize,
-        technicalIndicatorLegendOptions.text.weight,
-        technicalIndicatorLegendOptions.text.family
+        technicalIndicatorTooltipOptions.text.weight,
+        technicalIndicatorTooltipOptions.text.family
       )
 
       indicatorLabels.forEach((label, i) => {
@@ -257,8 +257,8 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
    * @returns {*}
    * @private
    */
-  _getCandleLegendData (kLineData, candleOptions) {
-    const baseValues = candleOptions.legend.values
+  _getCandleTooltipData (kLineData, candleOptions) {
+    const baseValues = candleOptions.tooltip.values
     let values = []
     if (baseValues) {
       if (isFunction(baseValues)) {

@@ -56,7 +56,7 @@ export const CandleType = {
  * 说明显示规则
  * @type {{FOLLOW_CROSS: string, NONE: string, ALWAYS: string}}
  */
-export const LegendShowRule = {
+export const TooltipShowRule = {
   ALWAYS: 'always',
   FOLLOW_CROSS: 'follow_cross',
   NONE: 'none'
@@ -66,7 +66,7 @@ export const LegendShowRule = {
  * 主图数据提示显示类型
  * @type {{RECT: string, STANDARD: string}}
  */
-export const LegendCandleShowType = {
+export const TooltipCandleShowType = {
   RECT: 'rect',
   STANDARD: 'standard'
 }
@@ -95,7 +95,7 @@ const defaultGrid = {
 
 /**
  * 默认蜡烛柱图样式配置
- * @type {{area: {fillColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number}, bar: {noChangeColor: string, upColor: string, downColor: string}, legend: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
+ * @type {{area: {fillColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number, value: string}, bar: {noChangeColor: string, upColor: string, downColor: string}, tooltip: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
 const defaultCandle = {
   type: CandleType.CANDLE_SOLID,
@@ -167,9 +167,9 @@ const defaultCandle = {
       }
     }
   },
-  legend: {
-    showRule: LegendShowRule.ALWAYS,
-    showType: LegendCandleShowType.STANDARD,
+  tooltip: {
+    showRule: TooltipShowRule.ALWAYS,
+    showType: TooltipCandleShowType.STANDARD,
     labels: ['时间', '开', '收', '高', '低', '成交量'],
     values: null,
     rect: {
@@ -200,7 +200,7 @@ const defaultCandle = {
 
 /**
  * 默认的技术指标样式配置
- * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, circle: {noChangeColor: string, upColor: string, downColor: string}}}
+ * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, tooltip: {showParams: boolean, showName: boolean, showRule: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}}, circle: {noChangeColor: string, upColor: string, downColor: string}, lastValueMark: {show: boolean, text: {paddingBottom: number, color: string, size: number, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}}}}
  */
 const defaultTechnicalIndicator = {
   bar: {
@@ -231,8 +231,8 @@ const defaultTechnicalIndicator = {
       paddingBottom: 2
     }
   },
-  legend: {
-    showRule: LegendShowRule.ALWAYS,
+  tooltip: {
+    showRule: TooltipShowRule.ALWAYS,
     showName: true,
     showParams: true,
     text: {

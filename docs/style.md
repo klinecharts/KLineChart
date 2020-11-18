@@ -82,9 +82,9 @@ config = {
         }
       }
     },
-    legend: {
-      showRule: LegendShowRule.ALWAYS,
-      showType: LegendCandleShowType.STANDARD,
+    tooltip: {
+      showRule: 'always',
+      showType: 'standard',
       labels: ['时间', '开', '收', '高', '低', '成交量'],
       values: null,
       rect: {
@@ -141,8 +141,8 @@ config = {
         paddingBottom: 2
       }
     },
-    legend: {
-      showRule: LegendShowRule.ALWAYS,
+    tooltip: {
+      showRule: 'always',
       showName: true,
       showParams: true,
       text: {
