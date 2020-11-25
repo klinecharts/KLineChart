@@ -247,11 +247,11 @@ export default class ChartData {
   }
 
   /**
-   * 加载精度
+   * 加载价格和数量精度
    * @param pricePrecision
    * @param volumePrecision
    */
-  applyPrecision (pricePrecision, volumePrecision) {
+  applyPriceVolumePrecision (pricePrecision, volumePrecision) {
     this._pricePrecision = pricePrecision
     this._volumePrecision = volumePrecision
     for (const name in this._technicalIndicatorMapping) {

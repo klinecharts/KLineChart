@@ -48,10 +48,21 @@ export default class YAxisCrosshairView extends View {
       const fromClose = this._chartData.dataList()[this._chartData.from()].close
       text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {
-      const technicalIndicator = this._additionalDataProvider.technicalIndicator()
-      const precision = this._yAxis.isCandleYAxis() ? this._chartData.pricePrecision() : technicalIndicator.precision
+      const technicalIndicators = this._additionalDataProvider.technicalIndicators()
+      let precision = 0
+      let shouldFormatBigNumber = false
+      if (this._yAxis.isCandleYAxis()) {
+        precision = this._chartData.pricePrecision()
+      } else {
+        technicalIndicators.forEach(technicalIndicator => {
+          precision = Math.max(technicalIndicator.precision, precision)
+          if (!shouldFormatBigNumber) {
+            shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
+          }
+        })
+      }
       text = formatPrecision(value, precision)
-      if (technicalIndicator.shouldFormatBigNumber) {
+      if (shouldFormatBigNumber) {
         text = formatBigNumber(text)
       }
     }

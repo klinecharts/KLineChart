@@ -23,8 +23,7 @@ import { renderText } from '../renderer/text'
 
 export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView {
   _drawTooltip (
-    crosshair, kLineData, technicalIndicatorData,
-    realDataPos, realDataPosX, technicalIndicator
+    crosshair, kLineData, dataPos, realDataPosX, technicalIndicators
   ) {
     const styleOptions = this._chartData.styleOptions()
     const candleOptions = styleOptions.candle
@@ -33,10 +32,12 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     if (candleTooltipOptions.showType === TooltipCandleShowType.STANDARD) {
       const offsetTop = isDrawCandleTooltip ? candleTooltipOptions.text.size + candleTooltipOptions.text.marginTop : 0
       this._drawCandleTooltipWithStandard(kLineData, candleOptions, isDrawCandleTooltip)
-      this._drawTechnicalIndicatorTooltip(crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop)
+      this._drawBatchTechnicalIndicatorToolTip(
+        crosshair, dataPos, technicalIndicators, offsetTop
+      )
     } else {
       this._drawCandleTooltipWithRect(
-        kLineData, technicalIndicatorData, technicalIndicator,
+        kLineData, technicalIndicators, dataPos,
         realDataPosX, candleOptions, isDrawCandleTooltip,
         styleOptions.technicalIndicator,
         this._shouldDrawTooltip(crosshair, styleOptions.technicalIndicator.tooltip)
@@ -91,8 +92,8 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
   /**
    * 绘制蜡烛图矩形类型图例
    * @param kLineData
-   * @param technicalIndicatorData
-   * @param technicalIndicator
+   * @param technicalIndicators
+   * @param dataPos
    * @param x
    * @param candleOptions
    * @param isDrawCandleTooltip
@@ -101,8 +102,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
    * @private
    */
   _drawCandleTooltipWithRect (
-    kLineData, technicalIndicatorData, technicalIndicator,
-    x, candleOptions, isDrawCandleTooltip,
+    kLineData, technicalIndicators, dataPos, x, candleOptions, isDrawCandleTooltip,
     technicalIndicatorOptions, isDrawTechnicalIndicatorTooltip
   ) {
     const candleTooltipOptions = candleOptions.tooltip
@@ -156,22 +156,26 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     const indicatorTextMarginBottom = technicalIndicatorTooltipOptions.text.marginBottom
     const indicatorTextSize = technicalIndicatorTooltipOptions.text.size
 
-    const indicatorTooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator, this._yAxis)
-    const indicatorLabels = indicatorTooltipData.labels || []
-    const indicatorValues = indicatorTooltipData.values || []
+    const indicatorLabelValues = []
+    technicalIndicators.forEach(technicalIndicator => {
+      const indicatorTooltipData = getTechnicalIndicatorTooltipData(technicalIndicator.result[dataPos], technicalIndicator, this._yAxis)
+      indicatorLabelValues.push({ labels: indicatorTooltipData.labels || [], values: indicatorTooltipData.labels || [] })
+    })
     if (isDrawTechnicalIndicatorTooltip) {
       this._ctx.font = createFont(
         indicatorTextSize,
         technicalIndicatorTooltipOptions.text.weight,
         technicalIndicatorTooltipOptions.text.family
       )
-      indicatorLabels.forEach((label, i) => {
-        const v = indicatorValues[i].value || 'n/a'
-        const text = `${label}: ${v}`
-        const labelWidth = calcTextWidth(this._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
-        maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
+      indicatorLabelValues.forEach(({ labels, values }) => {
+        labels.forEach((label, i) => {
+          const v = values[i].value || 'n/a'
+          const text = `${label}: ${v}`
+          const labelWidth = calcTextWidth(this._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
+          maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
+        })
+        rectHeight += ((indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * labels.length)
       })
-      rectHeight += ((indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * indicatorLabels.length)
     }
 
     rectWidth += maxLabelWidth
@@ -232,19 +236,21 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         technicalIndicatorTooltipOptions.text.family
       )
 
-      indicatorLabels.forEach((label, i) => {
-        labelY += indicatorTextMarginTop
-        this._ctx.textAlign = 'left'
-        this._ctx.fillStyle = colors[i % colorSize] || technicalIndicatorOptions.text.color
-        this._ctx.fillText(`${label.toUpperCase()}: `, indicatorLabelX, labelY)
+      indicatorLabelValues.forEach(({ labels, values }) => {
+        labels.forEach((label, i) => {
+          labelY += indicatorTextMarginTop
+          this._ctx.textAlign = 'left'
+          this._ctx.fillStyle = colors[i % colorSize] || technicalIndicatorOptions.text.color
+          this._ctx.fillText(`${label.toUpperCase()}: `, indicatorLabelX, labelY)
 
-        this._ctx.textAlign = 'right'
-        this._ctx.fillText(
-          indicatorValues[i].value || 'n/a',
-          rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
-          labelY
-        )
-        labelY += (indicatorTextSize + indicatorTextMarginBottom)
+          this._ctx.textAlign = 'right'
+          this._ctx.fillText(
+            values[i].value || 'n/a',
+            rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
+            labelY
+          )
+          labelY += (indicatorTextSize + indicatorTextMarginBottom)
+        })
       })
     }
     this._ctx.restore()

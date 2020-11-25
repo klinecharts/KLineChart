@@ -50,10 +50,20 @@ export default class YAxis extends Axis {
           tickCountDif = Math.ceil(textHeight * 2 / yDif)
         }
       }
-      const technicalIndicator = this._additionalDataProvider.technicalIndicator()
+      const technicalIndicators = this._additionalDataProvider.technicalIndicators()
+      let precision = 0
+      let shouldFormatBigNumber = false
+      if (this._isCandleYAxis) {
+        precision = this._chartData.pricePrecision()
+      } else {
+        technicalIndicators.forEach(technicalIndicator => {
+          precision = Math.max(precision, technicalIndicator.precision)
+          if (!shouldFormatBigNumber) {
+            shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
+          }
+        })
+      }
       const isPercentageAxis = this.isPercentageYAxis()
-      const precision = this._isCandleYAxis ? this._chartData.pricePrecision() : technicalIndicator.precision
-      const shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
       for (let i = 0; i < tickLength; i += tickCountDif) {
         let v = ticks[i].v
         v = +v === 0 ? '0' : v
@@ -80,18 +90,35 @@ export default class YAxis extends Axis {
    * 计算最大最小值
    */
   calcMinMaxValue () {
-    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
+    const technicalIndicators = this._additionalDataProvider.technicalIndicators()
     const dataList = this._chartData.dataList()
-    const technicalIndicatorResult = technicalIndicator.result
     const from = this._chartData.from()
     const to = this._chartData.to()
     const minMaxArray = [Infinity, -Infinity]
-    const plots = technicalIndicator.plots || []
+    const plotsResult = []
+    let shouldOhlc = false
+    let minValue = Infinity
+    let maxValue = -Infinity
+    technicalIndicators.forEach(technicalIndicator => {
+      if (!shouldOhlc) {
+        shouldOhlc = technicalIndicator.should
+      }
+      if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
+        minValue = Math.min(minValue, technicalIndicator.minValue)
+      }
+      if (isValid(technicalIndicator.maxValue) && isNumber(technicalIndicator.maxValue)) {
+        maxValue = Math.max(maxValue, technicalIndicator.maxValue)
+      }
+      plotsResult.push({
+        plots: technicalIndicator.plots,
+        result: technicalIndicator.result
+      })
+    })
 
     const candleOptions = this._chartData.styleOptions().candle
     const isArea = candleOptions.type === CandleType.AREA
     const areaValueKey = candleOptions.area.value
-    const shouldCompareHighLow = (this._isCandleYAxis && !isArea) || (!this._isCandleYAxis && technicalIndicator.shouldOhlc)
+    const shouldCompareHighLow = (this._isCandleYAxis && !isArea) || (!this._isCandleYAxis && shouldOhlc)
     for (let i = from; i < to; i++) {
       const kLineData = dataList[i]
       if (shouldCompareHighLow) {
@@ -102,20 +129,22 @@ export default class YAxis extends Axis {
         minMaxArray[0] = Math.min(minMaxArray[0], kLineData[areaValueKey])
         minMaxArray[1] = Math.max(minMaxArray[1], kLineData[areaValueKey])
       }
-      const technicalIndicatorData = technicalIndicatorResult[i] || {}
-      plots.forEach(plot => {
-        const value = technicalIndicatorData[plot.key]
-        if (isValid(value)) {
-          minMaxArray[0] = Math.min(minMaxArray[0], value)
-          minMaxArray[1] = Math.max(minMaxArray[1], value)
-        }
+      plotsResult.forEach(({ plots, result }) => {
+        const technicalIndicatorData = result[i] || {}
+        plots.forEach(plot => {
+          const value = technicalIndicatorData[plot.key]
+          if (isValid(value)) {
+            minMaxArray[0] = Math.min(minMaxArray[0], value)
+            minMaxArray[1] = Math.max(minMaxArray[1], value)
+          }
+        })
       })
     }
-    if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
-      minMaxArray[0] = technicalIndicator.minValue
+    if (minValue !== Infinity) {
+      minMaxArray[0] = Math.min(minValue, minMaxArray[0])
     }
-    if (isValid(technicalIndicator.maxValue) && isNumber(technicalIndicator.maxValue)) {
-      minMaxArray[1] = technicalIndicator.maxValue
+    if (maxValue !== -Infinity) {
+      minMaxArray[1] = Math.max(maxValue, minMaxArray[1])
     }
     if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
       if (this.isPercentageYAxis()) {
@@ -161,8 +190,8 @@ export default class YAxis extends Axis {
   }
 
   getSelfWidth () {
-    const stylOptions = this._chartData.styleOptions()
-    const yAxisOptions = stylOptions.yAxis
+    const styleOptions = this._chartData.styleOptions()
+    const yAxisOptions = styleOptions.yAxis
     const width = yAxisOptions.width
     if (isValid(width) && isNumber(+width)) {
       return +width
@@ -184,14 +213,22 @@ export default class YAxis extends Axis {
         yAxisWidth += (yAxisOptions.tickText.paddingLeft + yAxisOptions.tickText.paddingRight + textWidth)
       }
     }
-    const crosshairOptions = stylOptions.crosshair
+    const crosshairOptions = styleOptions.crosshair
     let crosshairVerticalTextWidth = 0
     if (
       crosshairOptions.show &&
       crosshairOptions.horizontal.show &&
       crosshairOptions.horizontal.text.show
     ) {
-      const technicalIndicator = this._additionalDataProvider.technicalIndicator()
+      const technicalIndicators = this._additionalDataProvider.technicalIndicators()
+      let technicalIndicatorPrecision = 0
+      let shouldFormatBigNumber = false
+      technicalIndicators.forEach(technicalIndicator => {
+        technicalIndicatorPrecision = Math.max(technicalIndicator.precision, technicalIndicatorPrecision)
+        if (!shouldFormatBigNumber) {
+          shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
+        }
+      })
       this._measureCtx.font = createFont(
         crosshairOptions.horizontal.text.size,
         crosshairOptions.horizontal.text.weight,
@@ -201,18 +238,18 @@ export default class YAxis extends Axis {
       if (!this.isPercentageYAxis()) {
         if (this._isCandleYAxis) {
           const pricePrecision = this._chartData.pricePrecision()
-          const lastValueMarkOptions = stylOptions.technicalIndicator.lastValueMark
+          const lastValueMarkOptions = styleOptions.technicalIndicator.lastValueMark
           if (lastValueMarkOptions.show && lastValueMarkOptions.text.show) {
-            precision = Math.max(technicalIndicator.precision, pricePrecision)
+            precision = Math.max(technicalIndicatorPrecision, pricePrecision)
           } else {
             precision = pricePrecision
           }
         } else {
-          precision = technicalIndicator.precision
+          precision = technicalIndicatorPrecision
         }
       }
       let valueText = formatPrecision(this._maxValue, precision)
-      if (technicalIndicator.shouldFormatBigNumber) {
+      if (shouldFormatBigNumber) {
         valueText = formatBigNumber(valueText)
       }
       crosshairVerticalTextWidth += (

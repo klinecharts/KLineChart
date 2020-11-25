@@ -116,6 +116,12 @@ export default class Pane {
     this._mainWidget.invalidate(level)
   }
 
+  /**
+   * 将canvas转换成图片
+   * @param includeFloatLayer
+   * @param includeGraphicMark
+   * @return {HTMLCanvasElement}
+   */
   getImage (includeFloatLayer, includeGraphicMark) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')

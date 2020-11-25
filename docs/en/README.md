@@ -38,7 +38,7 @@ setStyleOptions(options)
 getStyleOptions()
 setTechnicalIndicatorParams(technicalIndicatorType, params)
 getTechnicalIndicatorParams(technicalIndicatorType)
-setPrecision(pricePrecision, volumePrecision)
+setPriceVolumePrecision(pricePrecision, volumePrecision)
 setTechnicalIndicatorPrecision(precision, technicalIndicatorType)
 setTimezone(timezone)
 getTimezone()
@@ -57,11 +57,10 @@ updateData(data)
 getDataList()
 clearData()
 loadMore(cb)
-setCandleTechnicalIndicatorType(technicalIndicatorType)
-createTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
+setTechnicalIndicatorType(technicalIndicatorType, isOverride, tag)
+createPane(type, options)
 addCustomTechnicalIndicator(technicalIndicatorInfo)
-setTechnicalIndicatorType(tag, technicalIndicatorType)
-removeTechnicalIndicator(tag)
+removeTechnicalIndicator(technicalIndicatorType, tag)
 addGraphicMark(graphicMarkType)
 removeAllGraphicMark()
 subscribeDrawAction(type, callback)
@@ -75,7 +74,7 @@ The chart data source needs a specific format, and the single data format is as 
 { open, close, high, low, volume, turnover, timestamp }
 ```
 The timestamp needs ```milliseconds```, others need the ```number``` type,
-The turnover field is not necessary, but if you need to display the ```moving average``` of the time-sharing chart and the technical indicator ```EMV```,
+The turnover field is not necessary, but if you need to display the technical indicator ```EMV``` and ```AVP```,
 you need to fill in the data for this field.
 
 ## Technical indicator
@@ -142,12 +141,14 @@ The chart supports 21 technical indicators, the following are the types and calc
             <th>MTM</th>
             <th>EMV</th>
             <th>SAR</th>
+            <th>AVP</th>
         </tr>
         <tr>
             <th>Parameters</th>
             <th>[6,10]</th>
             <th>[14,9]</th>
             <th>[2,2,20]</th>
+            <th></th>
         </tr>
     </tbody>
 </table>
@@ -173,7 +174,7 @@ The technicalIndicatorInfo format is as follows:
   render: (
     ctx, dataSource, viewport,
     styleOptions, xAxis, yAxis,
-    isCandleStickTechnicalIndicator
+    isCandleTechnicalIndicator
   ) => {}
 }
 ```

@@ -31,23 +31,24 @@ export default class TechnicalIndicatorCrosshairView extends View {
   _draw () {
     const crosshair = this._chartData.crosshair()
     const dataList = this._chartData.dataList()
-    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
-    const technicalIndicatorResult = technicalIndicator.result
     let realDataPos
+    let dataPos
     if (isValid(crosshair.x)) {
       realDataPos = this._xAxis.convertFromPixel(crosshair.x)
+      if (realDataPos < 0) {
+        dataPos = 0
+      } else if (realDataPos > dataList.length - 1) {
+        dataPos = dataList.length - 1
+      } else {
+        dataPos = realDataPos
+      }
     } else {
       realDataPos = dataList.length - 1
-    }
-    let dataPos = realDataPos
-    if (dataPos < 0) {
-      dataPos = 0
-    } else if (dataPos > dataList.length - 1) {
-      dataPos = dataList.length - 1
+      dataPos = realDataPos
     }
     const kLineData = dataList[dataPos]
-    const technicalIndicatorData = technicalIndicatorResult[dataPos]
     if (kLineData) {
+      const technicalIndicators = this._additionalDataProvider.technicalIndicators()
       const styleOptions = this._chartData.styleOptions()
       const crosshairOptions = styleOptions.crosshair
       const realDataPosX = this._xAxis.convertToPixel(realDataPos)
@@ -60,9 +61,7 @@ export default class TechnicalIndicatorCrosshairView extends View {
         this._drawCrosshairLine(crosshairOptions, 'vertical', realDataPosX, 0, this._height, renderVerticalLine)
       }
       this._drawTooltip(
-        crosshair, kLineData, technicalIndicatorData,
-        realDataPos, realDataPosX, technicalIndicator,
-        realDataPos >= 0 && realDataPos <= dataList.length - 1 && crosshair.paneTag
+        crosshair, kLineData, dataPos, realDataPosX, technicalIndicators
       )
     }
   }
@@ -71,18 +70,16 @@ export default class TechnicalIndicatorCrosshairView extends View {
    * 绘制图例
    * @param crosshair
    * @param kLineData
-   * @param technicalIndicatorData
-   * @param realDataPos
+   * @param dataPos
    * @param realDataPosX
-   * @param technicalIndicator
+   * @param technicalIndicators
    * @private
    */
   _drawTooltip (
-    crosshair, kLineData, technicalIndicatorData,
-    realDataPos, realDataPosX, technicalIndicator
+    crosshair, kLineData, dataPos, realDataPosX, technicalIndicators
   ) {
-    this._drawTechnicalIndicatorTooltip(
-      crosshair, technicalIndicatorData, realDataPos, technicalIndicator
+    this._drawBatchTechnicalIndicatorToolTip(
+      crosshair, dataPos, technicalIndicators
     )
   }
 
@@ -114,24 +111,51 @@ export default class TechnicalIndicatorCrosshairView extends View {
   }
 
   /**
-   * 绘制指标图例
+   * 批量绘制技术指标提示
    * @param crosshair
-   * @param technicalIndicatorData
-   * @param realDataPos
-   * @param technicalIndicator
+   * @param dataPos
+   * @param technicalIndicators
    * @param offsetTop
    * @private
    */
-  _drawTechnicalIndicatorTooltip (crosshair, technicalIndicatorData, realDataPos, technicalIndicator, offsetTop = 0) {
+  _drawBatchTechnicalIndicatorToolTip (
+    crosshair, dataPos, technicalIndicators, offsetTop = 0
+  ) {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
+    let top = offsetTop
+    technicalIndicators.forEach(technicalIndicator => {
+      this._drawTechnicalIndicatorTooltip(crosshair, dataPos, technicalIndicator, technicalIndicatorOptions, top)
+      top += (
+        technicalIndicatorTooltipOptions.text.marginTop +
+        technicalIndicatorTooltipOptions.text.size +
+        technicalIndicatorTooltipOptions.text.marginBottom
+      )
+    })
+  }
+
+  /**
+   * 绘制指标图例
+   * @param crosshair
+   * @param dataPos
+   * @param technicalIndicator
+   * @param technicalIndicatorOptions
+   * @param offsetTop
+   * @private
+   */
+  _drawTechnicalIndicatorTooltip (
+    crosshair, dataPos, technicalIndicator, technicalIndicatorOptions, offsetTop = 0
+  ) {
+    const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
     if (this._shouldDrawTooltip(crosshair, technicalIndicatorTooltipOptions)) {
+      const technicalIndicatorResult = technicalIndicator.result
+      const technicalIndicatorData = technicalIndicatorResult[dataPos]
       const tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator, this._yAxis)
       const colors = technicalIndicatorOptions.line.colors
       const dataList = this._chartData.dataList()
       const cbData = {
-        preData: { kLineData: dataList[realDataPos - 1], technicalIndicatorData: technicalIndicator.result[realDataPos - 1] },
-        currentData: { kLineData: dataList[realDataPos], technicalIndicatorData: technicalIndicator.result[realDataPos] }
+        preData: { kLineData: dataList[dataPos - 1], technicalIndicatorData: technicalIndicatorResult[dataPos - 1] },
+        currentData: { kLineData: dataList[dataPos], technicalIndicatorData }
       }
       const plots = technicalIndicator.plots
       const technicalIndicatorTooltipTextOptions = technicalIndicatorTooltipOptions.text

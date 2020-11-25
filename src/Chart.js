@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import ChartPane, { CANDLE_STICK_PANE_TAG } from './pane/ChartPane'
+import ChartPane from './pane/ChartPane'
 import { clone, isNumber, isValid, isArray } from './utils/typeChecks'
 import { DEV } from './utils/env'
 import './utils/extension'
@@ -62,11 +62,11 @@ export default class Chart {
   }
 
   /**
-   * 加载精度
+   * 设置价格数量精度
    * @param pricePrecision
    * @param volumePrecision
    */
-  setPrecision (pricePrecision, volumePrecision) {
+  setPriceVolumePrecision (pricePrecision, volumePrecision) {
     if (!isValid(pricePrecision) || !isNumber(pricePrecision) || pricePrecision < 0) {
       if (DEV) {
         console.warn('Invalid parameter: pricePrecision!!!')
@@ -79,7 +79,7 @@ export default class Chart {
       }
       return
     }
-    this._chartPane.chartData().applyPrecision(pricePrecision, volumePrecision)
+    this._chartPane.chartData().applyPriceVolumePrecision(pricePrecision, volumePrecision)
   }
 
   /**
@@ -224,49 +224,23 @@ export default class Chart {
   }
 
   /**
-   * 设置蜡烛图技术指标类型
-   * @param technicalIndicatorType
-   */
-  setCandleTechnicalIndicatorType (technicalIndicatorType) {
-    if (!technicalIndicatorType) {
-      if (DEV) {
-        console.warn('Invalid parameter: technicalIndicatorType!!!')
-      }
-    }
-    this._chartPane.setTechnicalIndicatorType(CANDLE_STICK_PANE_TAG, technicalIndicatorType)
-  }
-
-  /**
    * 设置技术指标类型
-   * @param tag
    * @param technicalIndicatorType
+   * @param isOverride
+   * @param tag
    */
-  setTechnicalIndicatorType (tag, technicalIndicatorType) {
-    if (!tag) {
-      if (DEV) {
-        console.warn('Invalid parameter: tag!!!')
-      }
-      return
-    }
-    this._chartPane.setTechnicalIndicatorType(tag, technicalIndicatorType)
+  setTechnicalIndicatorType (technicalIndicatorType, isOverride, tag) {
+    this._chartPane.setTechnicalIndicatorType(technicalIndicatorType, isOverride, tag)
   }
 
   /**
    * 创建一个技术指标
-   * @param technicalIndicatorType
-   * @param height
-   * @param dragEnabled
+   * @param type
+   * @param options
    * @returns {string|null}
    */
-  createTechnicalIndicator (technicalIndicatorType, height, dragEnabled) {
-    const technicalIndicator = this._chartPane.chartData().technicalIndicator(technicalIndicatorType)
-    if (!technicalIndicator) {
-      if (DEV) {
-        console.warn('The corresponding technical indicator type cannot be found and cannot be created!!!')
-      }
-      return null
-    }
-    return this._chartPane.createTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
+  createPane (type, options) {
+    return this._chartPane.createPane(type, options)
   }
 
   /**
@@ -279,12 +253,11 @@ export default class Chart {
 
   /**
    * 移除一个技术指标
+   * @param technicalIndicator
    * @param tag
    */
-  removeTechnicalIndicator (tag) {
-    if (tag) {
-      this._chartPane.removeTechnicalIndicator(tag)
-    }
+  removeTechnicalIndicator (technicalIndicator, tag) {
+    this._chartPane.removeTechnicalIndicator(technicalIndicator, tag)
   }
 
   /**
@@ -297,6 +270,7 @@ export default class Chart {
       if (DEV) {
         console.warn('Graphic mark type not found!!!')
       }
+      return
     }
     this._chartPane.addGraphicMark(type)
   }

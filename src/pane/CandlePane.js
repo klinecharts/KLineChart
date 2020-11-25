@@ -20,7 +20,7 @@ export default class CandlePane extends TechnicalIndicatorPane {
   _createYAxis (props) {
     return new YAxis(
       props.chartData, true,
-      { technicalIndicator: this.technicalIndicator.bind(this) }
+      { technicalIndicators: this.technicalIndicators.bind(this) }
     )
   }
 
@@ -31,7 +31,7 @@ export default class CandlePane extends TechnicalIndicatorPane {
       xAxis: props.xAxis,
       yAxis: this._yAxis,
       additionalDataProvider: {
-        technicalIndicator: this.technicalIndicator.bind(this),
+        technicalIndicators: this.technicalIndicators.bind(this),
         tag: this.tag.bind(this)
       }
     })

@@ -44,7 +44,7 @@ export default class CandleView extends TechnicalIndicatorView {
         }
       )
     }
-    this._drawTechnicalIndicator()
+    this._drawTechnicalIndicators()
     this._drawLastPriceLine(candleOptions.priceMark)
   }
 

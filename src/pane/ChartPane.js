@@ -30,6 +30,8 @@ const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
 const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_'
 
+const TECHNICAL_INDICATOR_PANE = 'technicalIndicator'
+
 export const CANDLE_STICK_PANE_TAG = 'candle_stick_pane_tag'
 
 export default class ChartPane {
@@ -41,7 +43,7 @@ export default class ChartPane {
     this._separatorDragStartTechnicalIndicatorHeight = 0
     this._chartData = new ChartData(styleOptions, this._updatePane.bind(this))
     this._xAxisPane = new XAxisPane({ container: this._chartContainer, chartData: this._chartData })
-    this._candleStickPane = new CandlePane({
+    this._candlePane = new CandlePane({
       container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
@@ -105,12 +107,12 @@ export default class ChartPane {
   _updatePane (invalidateLevel = InvalidateLevel.FULL) {
     if (invalidateLevel === InvalidateLevel.FLOAT_LAYER) {
       this._xAxisPane.invalidate(invalidateLevel)
-      this._candleStickPane.invalidate(invalidateLevel)
+      this._candlePane.invalidate(invalidateLevel)
       for (const pane of this._technicalIndicatorPanes) {
         pane.invalidate(invalidateLevel)
       }
     } else {
-      let shouldMeasureWidth = this._candleStickPane.computeAxis()
+      let shouldMeasureWidth = this._candlePane.computeAxis()
       if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
         for (const pane of this._technicalIndicatorPanes) {
           const should = pane.computeAxis()
@@ -130,9 +132,9 @@ export default class ChartPane {
   _calcAllPaneTechnicalIndicator () {
     Promise.resolve().then(
       _ => {
-        let shouldMeasureWidth = this._candleStickPane.calcTechnicalIndicator()
+        let shouldMeasureWidth = this._candlePane.calcAllTechnicalIndicator()
         for (const pane of this._technicalIndicatorPanes) {
-          const should = pane.calcTechnicalIndicator()
+          const should = pane.calcAllTechnicalIndicator()
           if (should) {
             shouldMeasureWidth = should
           }
@@ -152,7 +154,7 @@ export default class ChartPane {
     }
     this._xAxisPane.computeAxis()
     this._xAxisPane.layout()
-    this._candleStickPane.layout()
+    this._candlePane.layout()
     for (const pane of this._technicalIndicatorPanes) {
       pane.layout()
     }
@@ -186,7 +188,7 @@ export default class ChartPane {
     paneContentSize[CANDLE_STICK_PANE_TAG] = { contentTop: 0, contentBottom: candleStickPaneHeight }
     let contentTop = candleStickPaneHeight
     let contentBottom = candleStickPaneHeight
-    this._candleStickPane.setHeight(candleStickPaneHeight)
+    this._candlePane.setHeight(candleStickPaneHeight)
 
     for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
       const technicalIndicatorPane = this._technicalIndicatorPanes[i]
@@ -215,7 +217,7 @@ export default class ChartPane {
     let yAxisOffsetLeft
     let mainOffsetLeft
     if (isOutside) {
-      yAxisWidth = this._candleStickPane.getSelfAxisWidth()
+      yAxisWidth = this._candlePane.getSelfAxisWidth()
       for (const pane of this._technicalIndicatorPanes) {
         yAxisWidth = Math.max(yAxisWidth, pane.getSelfAxisWidth())
       }
@@ -235,8 +237,8 @@ export default class ChartPane {
     }
 
     this._chartData.setTotalDataSpace(mainWidth)
-    this._candleStickPane.setWidth(mainWidth, yAxisWidth)
-    this._candleStickPane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft)
+    this._candlePane.setWidth(mainWidth, yAxisWidth)
+    this._candlePane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft)
 
     for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
       const technicalIndicatorPane = this._technicalIndicatorPanes[i]
@@ -263,7 +265,7 @@ export default class ChartPane {
    */
   resize () {
     this._measurePaneHeight()
-    this._candleStickPane.computeAxis(true)
+    this._candlePane.computeAxis(true)
     for (const pane of this._technicalIndicatorPanes) {
       pane.computeAxis(true)
     }
@@ -287,16 +289,22 @@ export default class ChartPane {
       Promise.resolve().then(
         _ => {
           let shouldMeasureWidth = false
-          if (this._candleStickPane.technicalIndicator().name === technicalIndicatorType) {
-            shouldMeasureWidth = this._candleStickPane.calcTechnicalIndicator()
-          }
-          for (const pane of this._technicalIndicatorPanes) {
-            if (pane.technicalIndicator().name === technicalIndicatorType) {
-              const should = pane.calcTechnicalIndicator()
-              if (should) {
-                shouldMeasureWidth = should
-              }
+          const candleTechnicalIndicators = this._candlePane.technicalIndicators()
+          candleTechnicalIndicators.forEach(technicalIndicator => {
+            if (technicalIndicator.name === technicalIndicatorType) {
+              shouldMeasureWidth = this._candlePane.calcTechnicalIndicator(technicalIndicator, true)
             }
+          })
+          for (const pane of this._technicalIndicatorPanes) {
+            const technicalIndicators = pane.technicalIndicators()
+            technicalIndicators.forEach(technicalIndicator => {
+              if (technicalIndicator.name === technicalIndicatorType) {
+                const should = pane.calcTechnicalIndicator(technicalIndicator, true)
+                if (!shouldMeasureWidth) {
+                  shouldMeasureWidth = should
+                }
+              }
+            })
           }
           this._measureWidthAndLayoutPane(shouldMeasureWidth)
         }
@@ -364,75 +372,87 @@ export default class ChartPane {
   }
 
   /**
-   * 创建一个指标
-   * @param technicalIndicatorType
-   * @param height
-   * @param dragEnabled
-   * @returns {string}
+   * 创建一个窗口
+   * @param type
+   * @param options
+   * @returns {string|null}
    */
-  createTechnicalIndicator (technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled) {
-    const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
-    const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
-    this._separatorPanes.push(
-      new SeparatorPane(
-        this._chartContainer, this._chartData,
-        technicalIndicatorPaneCount, isDrag,
-        {
-          startDrag: this._separatorStartDrag.bind(this),
-          drag: throttle(this._separatorDrag.bind(this), 50)
-        }
+  createPane (type = TECHNICAL_INDICATOR_PANE, options = {}) {
+    if (type === TECHNICAL_INDICATOR_PANE) {
+      const { technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled } = options
+      const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
+      const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
+      this._separatorPanes.push(
+        new SeparatorPane(
+          this._chartContainer, this._chartData,
+          technicalIndicatorPaneCount, isDrag,
+          {
+            startDrag: this._separatorStartDrag.bind(this),
+            drag: throttle(this._separatorDrag.bind(this), 50)
+          }
+        )
       )
-    )
-    this._technicalIndicatorBaseId++
-    const tag = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
-    const technicalIndicatorPane = new TechnicalIndicatorPane({
-      container: this._chartContainer,
-      chartData: this._chartData,
-      xAxis: this._xAxisPane.xAxis(),
-      technicalIndicatorType,
-      tag,
-      height
-    })
-    this._technicalIndicatorPanes.push(technicalIndicatorPane)
-    this.resize()
-    return tag
+      this._technicalIndicatorBaseId++
+      const tag = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
+      const technicalIndicatorPane = new TechnicalIndicatorPane({
+        container: this._chartContainer,
+        chartData: this._chartData,
+        xAxis: this._xAxisPane.xAxis(),
+        technicalIndicatorType,
+        tag,
+        height
+      })
+      this._technicalIndicatorPanes.push(technicalIndicatorPane)
+      this.resize()
+      return tag
+    }
+    return null
   }
 
   /**
    * 移除一个指标
+   * @param technicalIndicatorType
    * @param tag
    */
-  removeTechnicalIndicator (tag) {
-    let panePos = -1
-    for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
-      const pane = this._technicalIndicatorPanes[i]
-      if (pane.tag() === tag) {
-        panePos = i
-        break
+  removeTechnicalIndicator (technicalIndicatorType, tag) {
+    if (tag) {
+      let panePos = -1
+      for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
+        const pane = this._technicalIndicatorPanes[i]
+        if (pane.tag() === tag) {
+          panePos = i
+          break
+        }
       }
-    }
-    if (panePos !== -1) {
-      this._technicalIndicatorPanes[panePos].destroy()
-      this._separatorPanes[panePos].destroy()
-      this._technicalIndicatorPanes.splice(panePos, 1)
-      this._separatorPanes.splice(panePos, 1)
-      for (let i = 0; i < this._separatorPanes.length; i++) {
-        this._separatorPanes[i].updatePaneIndex(i)
+      if (panePos !== -1) {
+        const shouldLayout = this._technicalIndicatorPanes[panePos].removeTechnicalIndicator(technicalIndicatorType)
+        if (this._technicalIndicatorPanes[panePos].isEmptyTechnicalIndicator() || !technicalIndicatorType) {
+          this._technicalIndicatorPanes[panePos].destroy()
+          this._separatorPanes[panePos].destroy()
+          this._technicalIndicatorPanes.splice(panePos, 1)
+          this._separatorPanes.splice(panePos, 1)
+          for (let i = 0; i < this._separatorPanes.length; i++) {
+            this._separatorPanes[i].updatePaneIndex(i)
+          }
+          this.resize()
+        } else {
+          this._measureWidthAndLayoutPane(shouldLayout)
+        }
       }
-      this.resize()
+    } else {
+      this._measureWidthAndLayoutPane(this._candlePane.removeTechnicalIndicator(technicalIndicatorType))
     }
   }
 
   /**
    * 设置指标类型
-   * @param tag
    * @param technicalIndicatorType
+   * @param isOverride
+   * @param tag
    */
-  setTechnicalIndicatorType (tag, technicalIndicatorType) {
-    if (tag === CANDLE_STICK_PANE_TAG) {
-      const shouldMeasureWidth = this._candleStickPane.setTechnicalIndicatorType(technicalIndicatorType)
-      this._measureWidthAndLayoutPane(shouldMeasureWidth)
-    } else {
+  setTechnicalIndicatorType (technicalIndicatorType, isOverride, tag) {
+    const technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
+    if (tag) {
       let p
       for (const pane of this._technicalIndicatorPanes) {
         if (pane.tag() === tag) {
@@ -441,14 +461,12 @@ export default class ChartPane {
         }
       }
       if (p) {
-        const technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
-        if (!technicalIndicator) {
-          this.removeTechnicalIndicator(tag)
-        } else {
-          const shouldMeasureWidth = p.setTechnicalIndicatorType(technicalIndicatorType)
-          this._measureWidthAndLayoutPane(shouldMeasureWidth)
-        }
+        const shouldMeasureWidth = p.setTechnicalIndicator(technicalIndicator, isOverride)
+        this._measureWidthAndLayoutPane(shouldMeasureWidth)
       }
+    } else {
+      const shouldMeasureWidth = this._candlePane.setTechnicalIndicator(technicalIndicator, isOverride)
+      this._measureWidthAndLayoutPane(shouldMeasureWidth)
     }
   }
 
@@ -459,7 +477,7 @@ export default class ChartPane {
   addGraphicMark (type) {
     const graphicMarkMapping = this._chartData.graphicMarkMapping()
     const GraphicMark = graphicMarkMapping[type]
-    this._chartData.addGraphicMark(new GraphicMark(this._chartData, this._xAxisPane.xAxis(), this._candleStickPane.yAxis()))
+    this._chartData.addGraphicMark(new GraphicMark(this._chartData, this._xAxisPane.xAxis(), this._candlePane.yAxis()))
   }
 
   /**
@@ -493,9 +511,9 @@ export default class ChartPane {
     ctx.fillStyle = backgroundColor
     ctx.fillRect(0, 0, width, height)
     let offsetTop = 0
-    const candleStickPaneHeight = this._candleStickPane.height()
+    const candleStickPaneHeight = this._candlePane.height()
     ctx.drawImage(
-      this._candleStickPane.getImage(includeFloatLayer, includeGraphicMark),
+      this._candlePane.getImage(includeFloatLayer, includeGraphicMark),
       0, offsetTop, width, candleStickPaneHeight
     )
     offsetTop += candleStickPaneHeight
@@ -524,7 +542,7 @@ export default class ChartPane {
   }
 
   destroy () {
-    this._candleStickPane.destroy()
+    this._candlePane.destroy()
     this._technicalIndicatorPanes.forEach(pane => {
       pane.destroy()
     })

@@ -130,49 +130,50 @@ export default class YAxisView extends View {
   _drawTechnicalIndicatorLastValue (yAxisOptions) {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const lastValueMarkOptions = technicalIndicatorOptions.lastValueMark
-    const technicalIndicator = this._additionalDataProvider.technicalIndicator()
-    const technicalIndicatorResult = technicalIndicator.result
-    const dataSize = technicalIndicatorResult.length
-    const technicalIndicatorData = technicalIndicatorResult[dataSize - 1]
-    if (!lastValueMarkOptions.show || !lastValueMarkOptions.text.show || !technicalIndicatorData) {
+    const technicalIndicators = this._additionalDataProvider.technicalIndicators()
+    if (!lastValueMarkOptions.show || !lastValueMarkOptions.text.show) {
       return
     }
     const dataList = this._chartData.dataList()
-    const plots = technicalIndicator.plots
-    const cbData = {
-      preData: { kLineData: dataList[dataSize - 2], technicalIndicatorData: technicalIndicatorResult[dataSize - 2] },
-      currentData: { kLineData: dataList[dataSize - 1], technicalIndicatorData }
-    }
-    const precision = technicalIndicator.precision
-    const colors = technicalIndicatorOptions.line.colors || []
-    const colorSize = colors.length
-    let lineCount = 0
-    plots.forEach(plot => {
-      const value = technicalIndicatorData[plot.key]
-      let backgroundColor
-      switch (plot.type) {
-        case PlotType.CIRCLE: {
-          backgroundColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor
-          break
-        }
-        case PlotType.BAR: {
-          backgroundColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
-          break
-        }
-        default: {
-          backgroundColor = colors[lineCount % colorSize]
-          lineCount++
-        }
+    technicalIndicators.forEach(technicalIndicator => {
+      const technicalIndicatorResult = technicalIndicator.result || []
+      const dataSize = technicalIndicatorResult.length
+      const technicalIndicatorData = technicalIndicatorResult[dataSize - 1] || {}
+      const plots = technicalIndicator.plots
+      const cbData = {
+        preData: { kLineData: dataList[dataSize - 2], technicalIndicatorData: technicalIndicatorResult[dataSize - 2] },
+        currentData: { kLineData: dataList[dataSize - 1], technicalIndicatorData }
       }
-      if (isValid(value)) {
-        this._drawMarkLabel(
-          yAxisOptions, value, precision,
-          lastValueMarkOptions.text.size, lastValueMarkOptions.text.weight,
-          lastValueMarkOptions.text.family, lastValueMarkOptions.text.color, backgroundColor,
-          lastValueMarkOptions.text.paddingLeft, lastValueMarkOptions.text.paddingTop,
-          lastValueMarkOptions.text.paddingRight, lastValueMarkOptions.text.paddingBottom
-        )
-      }
+      const precision = technicalIndicator.precision
+      const colors = technicalIndicatorOptions.line.colors || []
+      const colorSize = colors.length
+      let lineCount = 0
+      plots.forEach(plot => {
+        const value = technicalIndicatorData[plot.key]
+        let backgroundColor
+        switch (plot.type) {
+          case PlotType.CIRCLE: {
+            backgroundColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor
+            break
+          }
+          case PlotType.BAR: {
+            backgroundColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
+            break
+          }
+          default: {
+            backgroundColor = colors[lineCount % colorSize]
+            lineCount++
+          }
+        }
+        if (isValid(value)) {
+          this._drawMarkLabel(
+            yAxisOptions, value, precision, technicalIndicator.shouldFormatBigNumber,
+            {
+              ...lastValueMarkOptions.text, backgroundColor
+            }
+          )
+        }
+      })
     })
   }
 
@@ -204,13 +205,11 @@ export default class YAxisView extends View {
     } else {
       backgroundColor = lastPriceMarkOptions.noChangeColor
     }
-    const priceMarkTextOptions = lastPriceMarkOptions.text
     this._drawMarkLabel(
-      yAxisOptions, close, this._chartData.pricePrecision(),
-      priceMarkTextOptions.size, priceMarkTextOptions.weight, priceMarkTextOptions.family,
-      priceMarkTextOptions.color, backgroundColor,
-      priceMarkTextOptions.paddingLeft, priceMarkTextOptions.paddingTop,
-      priceMarkTextOptions.paddingRight, priceMarkTextOptions.paddingBottom
+      yAxisOptions, close, this._chartData.pricePrecision(), false,
+      {
+        ...lastPriceMarkOptions.text, backgroundColor
+      }
     )
   }
 
@@ -219,6 +218,7 @@ export default class YAxisView extends View {
    * @param yAxisOptions
    * @param value
    * @param precision
+   * @param shouldFormatBigNumber
    * @param textSize
    * @param textWeight
    * @param textFamily
@@ -231,8 +231,11 @@ export default class YAxisView extends View {
    * @private
    */
   _drawMarkLabel (
-    yAxisOptions, value, precision, textSize, textWeight, textFamily, textColor, backgroundColor,
-    textPaddingLeft, textPaddingTop, textPaddingRight, textPaddingBottom
+    yAxisOptions, value, precision, shouldFormatBigNumber,
+    {
+      textSize, textWeight, textFamily, textColor, backgroundColor,
+      textPaddingLeft, textPaddingTop, textPaddingRight, textPaddingBottom
+    }
   ) {
     let valueY = this._yAxis.convertToPixel(value)
     valueY = +(Math.max(this._height * 0.05, Math.min(valueY, this._height * 0.98))).toFixed(0)
@@ -242,7 +245,7 @@ export default class YAxisView extends View {
       text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {
       text = formatPrecision(value, precision)
-      if (this._additionalDataProvider.technicalIndicator().shouldFormatBigNumber) {
+      if (shouldFormatBigNumber) {
         text = formatBigNumber(text)
       }
     }

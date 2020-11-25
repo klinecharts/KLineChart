@@ -58,10 +58,10 @@ setTechnicalIndicatorParams(technicalIndicatorType, params)
 // technicalIndicatorType 技术指标类型，可缺省，缺省则返回所有
 getTechnicalIndicatorParams(technicalIndicatorType)
 
-// 设置精度
+// 设置价格和数量精度
 // pricePrecision 价格精度，影响整个图表显示的价格的数字精度，还包括指标系列是price的技术指标
 // volumePrecision 数量精度，影响整个图表显示的数量的数字精度，还包括指标系列是volume的技术指标
-setPrecision(pricePrecision, volumePrecision)
+setPriceVolumePrecision(pricePrecision, volumePrecision)
 
 // 设置技术指标精度
 // precision 精度小数位数
@@ -132,30 +132,26 @@ clearData()
 // cb 是一个回调方法，回调参数为第一条数据的时间戳
 loadMore(cb)
 
-// 设置蜡烛图上的技术指标类型
-// 理论上支持目前图表支持的所以技术指标
-// 当设置为'NO'时将不展示
-setCandleTechnicalIndicatorType(technicalIndicatorType)
+// 创建一个窗口
+// type 窗口类型，可缺省，目前仅支持'technicalIndicator'
+// options 配置信息，可缺省，格式为：{ technicalIndicatorType: 'xxx', height: 100, dragEnabled: true }
+// 返回值是一个字符串的标识，这非常重要，后续对该窗口的一些操作，都需要此标识
+createPane(type, options)
 
-// 创建技术指标图
+// 设置技术指标类型
 // technicalIndicatorType 技术指标类型
-// height 技术指标图的高度，可缺省，默认为100
-// dragEnabled 技术指标图是否可以拖拽调整高度，可缺省，默认为true
-// 返回值是一个字符串类型的技术指标图标识，这非常重要，后续对该图表的一些操作，都需要此标识
-createTechnicalIndicator(technicalIndicatorType, height, dragEnabled)
+// isOverride 是否要覆盖，图表支持设置多个不用的技术指标，可缺省
+// tag 调用createPane方法时返回的标识，如果缺省，则会将技术指标设置在主图上
+setTechnicalIndicatorType(technicalIndicatorType, isOverride, tag)
+
+// 移除技术指标
+// technicalIndicatorType 技术指标类型
+// tag 调用createPane方法时返回的标识，如果缺省，则会移除主图上的技术指标
+removeTechnicalIndicator(technicalIndicatorType, tag)
 
 // 添加一个自定义技术指标
 // technicalIndicatorInfo 技术指标信息，详细请参考自定义指标
 addCustomTechnicalIndicator(technicalIndicatorInfo)
-
-// 设置其它技术指标图的指标类型
-// technicalIndicatorType 技术指标类型，当technicalIndicatorType是不存在时，图表会移除当前技术指标图，详情类型详情可参阅技术指标
-// tag 技术指标图标识
-setTechnicalIndicatorType(tag, technicalIndicatorType)
-
-// 移除技术指标图
-// tag 技术指标图标识
-removeTechnicalIndicator(tag)
 
 // 添加图形标记
 // 入参类型：
@@ -192,7 +188,7 @@ getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColo
 ```
 分别对应开盘价、收盘价、最高价、最低价、成交量、成交额、时间戳，
 其中时间戳timestamp需要```毫秒```，其它的都需要```number```类型
-成交额turnover字段并不是必须的，但是如果你需要展示分时图的```均线```和技术指标```EMV```则需要为该字段填充数据。
+成交额turnover字段并不是必须的，但是如果你需要展示技术指标```EMV```和```AVP```则需要为该字段填充数据。
 
 
 ## 技术指标
@@ -259,12 +255,14 @@ getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColo
             <th>MTM</th>
             <th>EMV</th>
             <th>SAR</th>
+            <th>AVP</th>
         </tr>
         <tr>
             <th>默认参数</th>
             <th>[6,10]</th>
             <th>[14,9]</th>
             <th>[2,2,20]</th>
+            <th>无参数，一般结合分时图使用</th>
         </tr>
     </tbody>
 </table>
@@ -317,7 +315,7 @@ technicalIndicatorInfo格式如下：
   render: (
     ctx, dataSource, viewport,
     styleOptions, xAxis, yAxis,
-    isCandleStickTechnicalIndicator
+    isCandleTechnicalIndicator
   ) => {}
 }
 ```
