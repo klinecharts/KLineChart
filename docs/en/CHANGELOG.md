@@ -1,5 +1,24 @@
 # Change Log
 
+## 6.0.0
+`To be released`
++ 🎨 New style configuration
+    + 👉 `candelStick` is changed to `candle`.
+    + 👉 `candleStick.bar.style` is changed to `candle.type`.
+    + 👉 `realTime` is changed to `candle.area`.
+    + 👉 `floatLayer.prompt.candleStick` is changed to `candle.tooltip`.
+    + 👉 `floatLayer.prompt.technicalIndicator` is changed to `technicalIndicator.tooltip`.
+    + 👉 `floatLayer.crossHair` is changed to `crosshair`.
++ 🔧 New API
+    + 👉 `createTechnicalIndicator` is changed to `createPane`.
+    + 👉 `setPrecision` is changed to `setPriceVolumePrecision`.
+    + 💪 `setTechnicalIndicatorType` and `removeTechnicalIndicator` added new parameters and enhanced functions.
+    + 🗑 Remove `setCandleStickChartType`.
+    + 🗑 Remove `setCandleStickTechnicalIndicatorType`.
++ 🆕 The main picture and the picture support the setting of multiple technical indicator types.
++ 🐞 Fix the problem that the gap between the name and value of the technical indicator prompt is incorrect.
+
+
 ## 5.7.0
 `2020-11-13`
 + 🛠 Refactor marking graphics module.

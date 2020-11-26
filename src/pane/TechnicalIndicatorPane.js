@@ -132,15 +132,20 @@ export default class TechnicalIndicatorPane extends Pane {
    * @return {boolean}
    */
   removeTechnicalIndicator (technicalIndicatorType) {
-    let deletePos = -1
-    for (let i = 0; i < this._technicalIndicators.length; i++) {
-      if (this._technicalIndicators[i].name === technicalIndicatorType) {
-        deletePos = i
-        break
+    if (technicalIndicatorType) {
+      let deletePos = -1
+      for (let i = 0; i < this._technicalIndicators.length; i++) {
+        if (this._technicalIndicators[i].name === technicalIndicatorType) {
+          deletePos = i
+          break
+        }
       }
-    }
-    if (deletePos > -1) {
-      this._technicalIndicators.splice(deletePos, 1)
+      if (deletePos > -1) {
+        this._technicalIndicators.splice(deletePos, 1)
+        return true
+      }
+    } else {
+      this._technicalIndicators = []
       return true
     }
   }

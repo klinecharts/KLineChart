@@ -8264,18 +8264,23 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
   }, {
     key: "removeTechnicalIndicator",
     value: function removeTechnicalIndicator(technicalIndicatorType) {
-      var deletePos = -1;
+      if (technicalIndicatorType) {
+        var deletePos = -1;
 
-      for (var i = 0; i < this._technicalIndicators.length; i++) {
-        if (this._technicalIndicators[i].name === technicalIndicatorType) {
-          deletePos = i;
-          break;
+        for (var i = 0; i < this._technicalIndicators.length; i++) {
+          if (this._technicalIndicators[i].name === technicalIndicatorType) {
+            deletePos = i;
+            break;
+          }
         }
-      }
 
-      if (deletePos > -1) {
-        this._technicalIndicators.splice(deletePos, 1);
+        if (deletePos > -1) {
+          this._technicalIndicators.splice(deletePos, 1);
 
+          return true;
+        }
+      } else {
+        this._technicalIndicators = [];
         return true;
       }
     }
@@ -11608,7 +11613,7 @@ var ChartPane = /*#__PURE__*/function () {
         if (panePos !== -1) {
           var removed = this._technicalIndicatorPanes[panePos].removeTechnicalIndicator(technicalIndicatorType);
 
-          if (this._technicalIndicatorPanes[panePos].isEmptyTechnicalIndicator() || !technicalIndicatorType) {
+          if (this._technicalIndicatorPanes[panePos].isEmptyTechnicalIndicator()) {
             this._technicalIndicatorPanes[panePos].destroy();
 
             this._separatorPanes[panePos].destroy();

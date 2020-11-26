@@ -436,7 +436,7 @@ export default class ChartPane {
       }
       if (panePos !== -1) {
         const removed = this._technicalIndicatorPanes[panePos].removeTechnicalIndicator(technicalIndicatorType)
-        if (this._technicalIndicatorPanes[panePos].isEmptyTechnicalIndicator() || !technicalIndicatorType) {
+        if (this._technicalIndicatorPanes[panePos].isEmptyTechnicalIndicator()) {
           this._technicalIndicatorPanes[panePos].destroy()
           this._separatorPanes[panePos].destroy()
           this._technicalIndicatorPanes.splice(panePos, 1)

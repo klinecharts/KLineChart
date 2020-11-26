@@ -1,5 +1,24 @@
 # 版本日志
 
+## 6.0.0
+`待发布`
++ 🎨 全新的样式配置
+    + 👉 `candelStick`变更为`candle`。
+    + 👉 `candleStick.bar.style`变更为`candle.type`。
+    + 👉 `realTime`变更为`candle.area`。
+    + 👉 `floatLayer.prompt.candleStick`变更为`candle.tooltip`。
+    + 👉 `floatLayer.prompt.technicalIndicator`变更为`technicalIndicator.tooltip`。
+    + 👉 `floatLayer.crossHair`变更为`crosshair`。
++ 🔧 全新的API
+    + 👉 `createTechnicalIndicator`变更为`createPane`。
+    + 👉 `setPrecision`变更为`setPriceVolumePrecision`。
+    + 💪 `setTechnicalIndicatorType`和`removeTechnicalIndicator`新增参数，增强功能。
+    + 🗑 删除`setCandleStickChartType`。
+    + 🗑 删除`setCandleStickTechnicalIndicatorType`。
++ 🆕 主图和附图支持设置多个技术指标类型。
++ 🐞 修复技术指标提示名字和值之间的间隙不对问题。
+
+
 ## 5.7.0
 `2020-11-13`
 + 🛠 重构标记图形模块。

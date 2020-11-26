@@ -111,7 +111,7 @@ export declare interface Chart {
   setTechnicalIndicatorType(technicalIndicatorType: string, isOverride?: boolean, tag?: string): void;
   createPane(type?: PaneType, options?: PaneOptions): string | null;
   addCustomTechnicalIndicator(technicalIndicatorInfo: TechnicalIndicatorInfo)
-  removeTechnicalIndicator(technicalIndicatorType: string, tag?: string): void;
+  removeTechnicalIndicator(technicalIndicatorType?: string, tag?: string): void;
   addGraphicMark(graphicMarkType: GraphicMarkType): void;
   removeAllGraphicMark(): void;
   subscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void);

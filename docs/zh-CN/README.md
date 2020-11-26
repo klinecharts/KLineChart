@@ -145,7 +145,7 @@ createPane(type, options)
 setTechnicalIndicatorType(technicalIndicatorType, isOverride, tag)
 
 // 移除技术指标
-// technicalIndicatorType 技术指标类型
+// technicalIndicatorType 技术指标类型，如果缺省，则会移除所有
 // tag 调用createPane方法时返回的标识，如果缺省，则会移除主图上的技术指标
 removeTechnicalIndicator(technicalIndicatorType, tag)
 
