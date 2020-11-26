@@ -159,7 +159,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     const indicatorLabelValues = []
     technicalIndicators.forEach(technicalIndicator => {
       const indicatorTooltipData = getTechnicalIndicatorTooltipData(technicalIndicator.result[dataPos], technicalIndicator, this._yAxis)
-      indicatorLabelValues.push({ labels: indicatorTooltipData.labels || [], values: indicatorTooltipData.labels || [] })
+      indicatorLabelValues.push({ labels: indicatorTooltipData.labels || [], values: indicatorTooltipData.values || [] })
     })
     if (isDrawTechnicalIndicatorTooltip) {
       this._ctx.font = createFont(

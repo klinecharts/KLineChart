@@ -141,7 +141,6 @@ export default class TechnicalIndicatorPane extends Pane {
     }
     if (deletePos > -1) {
       this._technicalIndicators.splice(deletePos, 1)
-      this.computeAxis()
       return true
     }
   }
@@ -162,7 +161,8 @@ export default class TechnicalIndicatorPane extends Pane {
       } else {
         this._technicalIndicators.push(cloneInstance)
       }
-      return this.calcTechnicalIndicator(technicalIndicator, true)
+      this.calcTechnicalIndicator(technicalIndicator)
+      return true
     }
     return false
   }
@@ -170,16 +170,12 @@ export default class TechnicalIndicatorPane extends Pane {
   /**
    * 计算单个技术指标
    * @param technicalIndicator
-   * @param shouldComputeAxis
    */
-  calcTechnicalIndicator (technicalIndicator, shouldComputeAxis) {
+  calcTechnicalIndicator (technicalIndicator) {
     const technicalIndicatorInstance = this._chartData.technicalIndicator(technicalIndicator.name)
     technicalIndicator.setPrecision(technicalIndicatorInstance.precision)
     technicalIndicator.setCalcParams(technicalIndicatorInstance.calcParams)
     technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), technicalIndicator.calcParams, technicalIndicator.plots) || []
-    if (shouldComputeAxis) {
-      return this.computeAxis()
-    }
   }
 
   /**

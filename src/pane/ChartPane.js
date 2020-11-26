@@ -50,8 +50,7 @@ export default class ChartPane {
       tag: CANDLE_STICK_PANE_TAG
     })
     this._chartEvent = new ChartEvent(this._chartContainer, this._chartData)
-    this._measurePaneHeight()
-    this._measureWidthAndLayoutPane(true)
+    this.adjustPaneViewport(true, true, true)
   }
 
   /**
@@ -97,7 +96,7 @@ export default class ChartPane {
       height = 0
     }
     this._technicalIndicatorPanes[paneIndex].setHeight(height)
-    this.resize()
+    this.adjustPaneViewport(true, true, true, true, true)
   }
 
   /**
@@ -121,7 +120,8 @@ export default class ChartPane {
           }
         }
       }
-      this._measureWidthAndLayoutPane(shouldMeasureWidth)
+      // this._measureWidthAndLayoutPane(shouldMeasureWidth)
+      this.adjustPaneViewport(false, shouldMeasureWidth, true)
     }
   }
 
@@ -139,25 +139,9 @@ export default class ChartPane {
             shouldMeasureWidth = should
           }
         }
-        this._measureWidthAndLayoutPane(shouldMeasureWidth)
+        this.adjustPaneViewport(false, shouldMeasureWidth, true)
       }
     )
-  }
-
-  /**
-   * 计算宽度和重新布局
-   * @private
-   */
-  _measureWidthAndLayoutPane (shouldMeasureWidth) {
-    if (shouldMeasureWidth) {
-      this._measurePaneWidth()
-    }
-    this._xAxisPane.computeAxis()
-    this._xAxisPane.layout()
-    this._candlePane.layout()
-    for (const pane of this._technicalIndicatorPanes) {
-      pane.layout()
-    }
   }
 
   /**
@@ -253,23 +237,48 @@ export default class ChartPane {
   }
 
   /**
+   * 调整窗口尺寸
+   * @param shouldMeasureHeight
+   * @param shouldMeasureWidth
+   * @param shouldLayout
+   * @param shouldComputeAxis
+   * @param shouldForceComputeAxis
+   */
+  adjustPaneViewport (
+    shouldMeasureHeight, shouldMeasureWidth, shouldLayout, shouldComputeAxis, shouldForceComputeAxis
+  ) {
+    if (shouldMeasureHeight) {
+      this._measurePaneHeight()
+    }
+    let isAdjust = false
+    if (shouldComputeAxis) {
+      isAdjust = this._candlePane.computeAxis(shouldForceComputeAxis)
+      for (const pane of this._technicalIndicatorPanes) {
+        const adjust = pane.computeAxis(shouldForceComputeAxis)
+        if (!isAdjust) {
+          isAdjust = adjust
+        }
+      }
+    }
+    if ((!shouldComputeAxis && shouldMeasureWidth) || (shouldComputeAxis && isAdjust)) {
+      this._measurePaneWidth()
+    }
+    if (shouldLayout) {
+      this._xAxisPane.computeAxis()
+      this._xAxisPane.layout()
+      this._candlePane.layout()
+      for (const pane of this._technicalIndicatorPanes) {
+        pane.layout()
+      }
+    }
+  }
+
+  /**
    * 获取图表上的数据
    * @returns {ChartData}
    */
   chartData () {
     return this._chartData
-  }
-
-  /**
-   * 重置尺寸
-   */
-  resize () {
-    this._measurePaneHeight()
-    this._candlePane.computeAxis(true)
-    for (const pane of this._technicalIndicatorPanes) {
-      pane.computeAxis(true)
-    }
-    this._measureWidthAndLayoutPane(true)
   }
 
   /**
@@ -288,25 +297,26 @@ export default class ChartPane {
       technicalIndicator.setCalcParams(clone(params))
       Promise.resolve().then(
         _ => {
-          let shouldMeasureWidth = false
           const candleTechnicalIndicators = this._candlePane.technicalIndicators()
+          let shouldAdjust = false
           candleTechnicalIndicators.forEach(technicalIndicator => {
             if (technicalIndicator.name === technicalIndicatorType) {
-              shouldMeasureWidth = this._candlePane.calcTechnicalIndicator(technicalIndicator, true)
+              shouldAdjust = true
+              this._candlePane.calcTechnicalIndicator(technicalIndicator)
             }
           })
           for (const pane of this._technicalIndicatorPanes) {
             const technicalIndicators = pane.technicalIndicators()
             technicalIndicators.forEach(technicalIndicator => {
               if (technicalIndicator.name === technicalIndicatorType) {
-                const should = pane.calcTechnicalIndicator(technicalIndicator, true)
-                if (!shouldMeasureWidth) {
-                  shouldMeasureWidth = should
-                }
+                shouldAdjust = true
+                pane.calcTechnicalIndicator(technicalIndicator)
               }
             })
           }
-          this._measureWidthAndLayoutPane(shouldMeasureWidth)
+          if (shouldAdjust) {
+            this.adjustPaneViewport(false, true, true, true)
+          }
         }
       )
     }
@@ -403,7 +413,7 @@ export default class ChartPane {
         height
       })
       this._technicalIndicatorPanes.push(technicalIndicatorPane)
-      this.resize()
+      this.adjustPaneViewport(true, true, true, true, true)
       return tag
     }
     return null
@@ -425,7 +435,7 @@ export default class ChartPane {
         }
       }
       if (panePos !== -1) {
-        const shouldLayout = this._technicalIndicatorPanes[panePos].removeTechnicalIndicator(technicalIndicatorType)
+        const removed = this._technicalIndicatorPanes[panePos].removeTechnicalIndicator(technicalIndicatorType)
         if (this._technicalIndicatorPanes[panePos].isEmptyTechnicalIndicator() || !technicalIndicatorType) {
           this._technicalIndicatorPanes[panePos].destroy()
           this._separatorPanes[panePos].destroy()
@@ -434,13 +444,17 @@ export default class ChartPane {
           for (let i = 0; i < this._separatorPanes.length; i++) {
             this._separatorPanes[i].updatePaneIndex(i)
           }
-          this.resize()
+          this.adjustPaneViewport(true, true, true, true, true)
         } else {
-          this._measureWidthAndLayoutPane(shouldLayout)
+          if (removed) {
+            this.adjustPaneViewport(false, true, true, true)
+          }
         }
       }
     } else {
-      this._measureWidthAndLayoutPane(this._candlePane.removeTechnicalIndicator(technicalIndicatorType))
+      if (this._candlePane.removeTechnicalIndicator(technicalIndicatorType)) {
+        this.adjustPaneViewport(false, true, true, true)
+      }
     }
   }
 
@@ -461,12 +475,14 @@ export default class ChartPane {
         }
       }
       if (p) {
-        const shouldMeasureWidth = p.setTechnicalIndicator(technicalIndicator, isOverride)
-        this._measureWidthAndLayoutPane(shouldMeasureWidth)
+        if (p.setTechnicalIndicator(technicalIndicator, isOverride)) {
+          this.adjustPaneViewport(false, true, true, true)
+        }
       }
     } else {
-      const shouldMeasureWidth = this._candlePane.setTechnicalIndicator(technicalIndicator, isOverride)
-      this._measureWidthAndLayoutPane(shouldMeasureWidth)
+      if (this._candlePane.setTechnicalIndicator(technicalIndicator, isOverride)) {
+        this.adjustPaneViewport(false, true, true, true)
+      }
     }
   }
 
