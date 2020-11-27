@@ -108,20 +108,19 @@ export default class ChartPane {
     if (invalidateLevel === InvalidateLevel.FLOAT_LAYER) {
       this._xAxisPane.invalidate(invalidateLevel)
       this._candlePane.invalidate(invalidateLevel)
-      for (const pane of this._technicalIndicatorPanes) {
+      this._technicalIndicatorPanes.forEach(pane => {
         pane.invalidate(invalidateLevel)
-      }
+      })
     } else {
       let shouldMeasureWidth = this._candlePane.computeAxis()
       if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
-        for (const pane of this._technicalIndicatorPanes) {
+        this._technicalIndicatorPanes.forEach(pane => {
           const should = pane.computeAxis()
           if (should) {
             shouldMeasureWidth = should
           }
-        }
+        })
       }
-      // this._measureWidthAndLayoutPane(shouldMeasureWidth)
       this.adjustPaneViewport(false, shouldMeasureWidth, true)
     }
   }
@@ -134,12 +133,12 @@ export default class ChartPane {
     Promise.resolve().then(
       _ => {
         let shouldMeasureWidth = this._candlePane.calcAllTechnicalIndicator()
-        for (const pane of this._technicalIndicatorPanes) {
+        this._technicalIndicatorPanes.forEach(pane => {
           const should = pane.calcAllTechnicalIndicator()
           if (should) {
             shouldMeasureWidth = should
           }
-        }
+        })
         this.adjustPaneViewport(false, shouldMeasureWidth, true)
       }
     )
@@ -156,7 +155,7 @@ export default class ChartPane {
     const xAxisHeight = this._xAxisPane.getSelfAxisHeight()
     const paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorHeight
     let technicalIndicatorPaneTotalHeight = 0
-    for (const pane of this._technicalIndicatorPanes) {
+    this._technicalIndicatorPanes.forEach(pane => {
       const paneHeight = pane.height()
       technicalIndicatorPaneTotalHeight += paneHeight
       // 修复拖拽会超出容器高度问题
@@ -165,7 +164,7 @@ export default class ChartPane {
         technicalIndicatorPaneTotalHeight = paneExcludeXAxisSeparatorHeight
         pane.setHeight(paneHeight - difHeight)
       }
-    }
+    })
 
     const candleStickPaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight
 
@@ -203,9 +202,9 @@ export default class ChartPane {
     let mainOffsetLeft
     if (isOutside) {
       yAxisWidth = this._candlePane.getSelfAxisWidth()
-      for (const pane of this._technicalIndicatorPanes) {
+      this._technicalIndicatorPanes.forEach(pane => {
         yAxisWidth = Math.max(yAxisWidth, pane.getSelfAxisWidth())
-      }
+      })
       mainWidth = paneWidth - yAxisWidth
       if (isYAxisLeft) {
         yAxisOffsetLeft = 0
@@ -254,12 +253,12 @@ export default class ChartPane {
     let isAdjust = false
     if (shouldComputeAxis) {
       isAdjust = this._candlePane.computeAxis(shouldForceComputeAxis)
-      for (const pane of this._technicalIndicatorPanes) {
+      this._technicalIndicatorPanes.forEach(pane => {
         const adjust = pane.computeAxis(shouldForceComputeAxis)
         if (!isAdjust) {
           isAdjust = adjust
         }
-      }
+      })
     }
     if ((!shouldComputeAxis && shouldMeasureWidth) || (shouldComputeAxis && isAdjust)) {
       this._measurePaneWidth()
@@ -268,9 +267,9 @@ export default class ChartPane {
       this._xAxisPane.computeAxis()
       this._xAxisPane.layout()
       this._candlePane.layout()
-      for (const pane of this._technicalIndicatorPanes) {
+      this._technicalIndicatorPanes.forEach(pane => {
         pane.layout()
-      }
+      })
     }
   }
 
@@ -306,7 +305,7 @@ export default class ChartPane {
               this._candlePane.calcTechnicalIndicator(technicalIndicator)
             }
           })
-          for (const pane of this._technicalIndicatorPanes) {
+          this._technicalIndicatorPanes.forEach(pane => {
             const technicalIndicators = pane.technicalIndicators()
             technicalIndicators.forEach(technicalIndicator => {
               if (technicalIndicator.name === technicalIndicatorType) {
@@ -314,7 +313,7 @@ export default class ChartPane {
                 pane.calcTechnicalIndicator(technicalIndicator)
               }
             })
-          }
+          })
           if (shouldAdjust) {
             this.adjustPaneViewport(false, true, true, true)
           }

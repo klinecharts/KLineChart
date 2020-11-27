@@ -19,6 +19,10 @@ const instances = {}
 let chartBaseId = 1
 const CHART_NAME_PREFIX = 'k_line_chart_'
 
+function checkContainer (container) {
+  return container && (container instanceof HTMLElement) && container.appendChild && (typeof container.appendChild === 'function')
+}
+
 /**
  * 获取版本号
  * @returns {string}
@@ -34,32 +38,37 @@ function version () {
  * @returns {Chart}
  */
 function init (ds, style = {}) {
-  const errorMessage = 'Chart version is __BUILD_VERSION__. Root dom is null, can not initialize the chart!!!'
-  let container = ds
-  if (!container) {
+  const errorMessage = 'Chart version is __BUILD_VERSION__. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
+  let container
+  if (!ds) {
     if (DEV) {
-      console.warn(errorMessage)
+      console.error(errorMessage)
     }
     return null
   }
-  if (typeof container === 'string') {
-    container = document.getElementById(ds) || document.getElementsByClassName(ds)
+  if (typeof ds === 'string') {
+    container = document.getElementById(ds)
+    if (!checkContainer(container)) {
+      container = document.getElementsByClassName(ds)
+    }
+  } else {
+    container = ds
   }
-  if (!container) {
+  if (!checkContainer(container)) {
     if (DEV) {
-      console.warn(errorMessage)
+      console.error(errorMessage)
     }
     return null
   }
-  const instance = instances[container.chartId || '']
-  if (instance) {
+  let chart = instances[container.chartId || '']
+  if (chart) {
     if (DEV) {
       console.warn('The chart has been initialized on the dom！！！')
     }
-    return instance
+    return chart
   }
   const id = `${CHART_NAME_PREFIX}${chartBaseId++}`
-  const chart = new Chart(container, style)
+  chart = new Chart(container, style)
   chart.id = id
   container.chartId = id
   instances[id] = chart
@@ -73,9 +82,14 @@ function init (ds, style = {}) {
 function dispose (dcs) {
   if (dcs) {
     let id
+    let container
     if (typeof dcs === 'string') {
-      dcs = document.getElementById(dcs) || document.getElementsByClassName(dcs)
-      id = dcs.chartId
+      container = document.getElementById(dcs)
+      id = container.chartId
+      if (!id) {
+        container = document.getElementsByClassName(dcs)
+        id = container.chartId
+      }
     }
     if (!id) {
       id = dcs.chartId

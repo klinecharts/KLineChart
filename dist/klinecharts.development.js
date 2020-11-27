@@ -11098,43 +11098,21 @@ var ChartPane = /*#__PURE__*/function () {
 
         this._candlePane.invalidate(invalidateLevel);
 
-        var _iterator = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step;
-
-        try {
-          for (_iterator.s(); !(_step = _iterator.n()).done;) {
-            var pane = _step.value;
-            pane.invalidate(invalidateLevel);
-          }
-        } catch (err) {
-          _iterator.e(err);
-        } finally {
-          _iterator.f();
-        }
+        this._technicalIndicatorPanes.forEach(function (pane) {
+          pane.invalidate(invalidateLevel);
+        });
       } else {
         var shouldMeasureWidth = this._candlePane.computeAxis();
 
         if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
-          var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-              _step2;
+          this._technicalIndicatorPanes.forEach(function (pane) {
+            var should = pane.computeAxis();
 
-          try {
-            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-              var _pane = _step2.value;
-
-              var should = _pane.computeAxis();
-
-              if (should) {
-                shouldMeasureWidth = should;
-              }
+            if (should) {
+              shouldMeasureWidth = should;
             }
-          } catch (err) {
-            _iterator2.e(err);
-          } finally {
-            _iterator2.f();
-          }
-        } // this._measureWidthAndLayoutPane(shouldMeasureWidth)
-
+          });
+        }
 
         this.adjustPaneViewport(false, shouldMeasureWidth, true);
       }
@@ -11152,23 +11130,13 @@ var ChartPane = /*#__PURE__*/function () {
       Promise.resolve().then(function (_) {
         var shouldMeasureWidth = _this._candlePane.calcAllTechnicalIndicator();
 
-        var _iterator3 = _createForOfIteratorHelper(_this._technicalIndicatorPanes),
-            _step3;
+        _this._technicalIndicatorPanes.forEach(function (pane) {
+          var should = pane.calcAllTechnicalIndicator();
 
-        try {
-          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-            var pane = _step3.value;
-            var should = pane.calcAllTechnicalIndicator();
-
-            if (should) {
-              shouldMeasureWidth = should;
-            }
+          if (should) {
+            shouldMeasureWidth = should;
           }
-        } catch (err) {
-          _iterator3.e(err);
-        } finally {
-          _iterator3.f();
-        }
+        });
 
         _this.adjustPaneViewport(false, shouldMeasureWidth, true);
       });
@@ -11191,28 +11159,16 @@ var ChartPane = /*#__PURE__*/function () {
       var paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorHeight;
       var technicalIndicatorPaneTotalHeight = 0;
 
-      var _iterator4 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-          _step4;
+      this._technicalIndicatorPanes.forEach(function (pane) {
+        var paneHeight = pane.height();
+        technicalIndicatorPaneTotalHeight += paneHeight; // 修复拖拽会超出容器高度问题
 
-      try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var pane = _step4.value;
-
-          var _paneHeight = pane.height();
-
-          technicalIndicatorPaneTotalHeight += _paneHeight; // 修复拖拽会超出容器高度问题
-
-          if (technicalIndicatorPaneTotalHeight > paneExcludeXAxisSeparatorHeight) {
-            var difHeight = technicalIndicatorPaneTotalHeight - paneExcludeXAxisSeparatorHeight;
-            technicalIndicatorPaneTotalHeight = paneExcludeXAxisSeparatorHeight;
-            pane.setHeight(_paneHeight - difHeight);
-          }
+        if (technicalIndicatorPaneTotalHeight > paneExcludeXAxisSeparatorHeight) {
+          var difHeight = technicalIndicatorPaneTotalHeight - paneExcludeXAxisSeparatorHeight;
+          technicalIndicatorPaneTotalHeight = paneExcludeXAxisSeparatorHeight;
+          pane.setHeight(paneHeight - difHeight);
         }
-      } catch (err) {
-        _iterator4.e(err);
-      } finally {
-        _iterator4.f();
-      }
+      });
 
       var candleStickPaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight;
       var paneContentSize = {};
@@ -11263,19 +11219,9 @@ var ChartPane = /*#__PURE__*/function () {
       if (isOutside) {
         yAxisWidth = this._candlePane.getSelfAxisWidth();
 
-        var _iterator5 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step5;
-
-        try {
-          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-            var pane = _step5.value;
-            yAxisWidth = Math.max(yAxisWidth, pane.getSelfAxisWidth());
-          }
-        } catch (err) {
-          _iterator5.e(err);
-        } finally {
-          _iterator5.f();
-        }
+        this._technicalIndicatorPanes.forEach(function (pane) {
+          yAxisWidth = Math.max(yAxisWidth, pane.getSelfAxisWidth());
+        });
 
         mainWidth = paneWidth - yAxisWidth;
 
@@ -11337,23 +11283,13 @@ var ChartPane = /*#__PURE__*/function () {
       if (shouldComputeAxis) {
         isAdjust = this._candlePane.computeAxis(shouldForceComputeAxis);
 
-        var _iterator6 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step6;
+        this._technicalIndicatorPanes.forEach(function (pane) {
+          var adjust = pane.computeAxis(shouldForceComputeAxis);
 
-        try {
-          for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-            var pane = _step6.value;
-            var adjust = pane.computeAxis(shouldForceComputeAxis);
-
-            if (!isAdjust) {
-              isAdjust = adjust;
-            }
+          if (!isAdjust) {
+            isAdjust = adjust;
           }
-        } catch (err) {
-          _iterator6.e(err);
-        } finally {
-          _iterator6.f();
-        }
+        });
       }
 
       if (!shouldComputeAxis && shouldMeasureWidth || shouldComputeAxis && isAdjust) {
@@ -11367,20 +11303,9 @@ var ChartPane = /*#__PURE__*/function () {
 
         this._candlePane.layout();
 
-        var _iterator7 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step7;
-
-        try {
-          for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-            var _pane2 = _step7.value;
-
-            _pane2.layout();
-          }
-        } catch (err) {
-          _iterator7.e(err);
-        } finally {
-          _iterator7.f();
-        }
+        this._technicalIndicatorPanes.forEach(function (pane) {
+          pane.layout();
+        });
       }
     }
     /**
@@ -11407,21 +11332,21 @@ var ChartPane = /*#__PURE__*/function () {
       var technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType);
 
       if (technicalIndicator && isArray(params)) {
-        var _iterator8 = _createForOfIteratorHelper(params),
-            _step8;
+        var _iterator = _createForOfIteratorHelper(params),
+            _step;
 
         try {
-          for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
-            var v = _step8.value;
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var v = _step.value;
 
             if (!isNumber(v) || v <= 0 || parseInt(v, 10) !== v) {
               return;
             }
           }
         } catch (err) {
-          _iterator8.e(err);
+          _iterator.e(err);
         } finally {
-          _iterator8.f();
+          _iterator.f();
         }
 
         technicalIndicator.setCalcParams(clone(params));
@@ -11437,29 +11362,15 @@ var ChartPane = /*#__PURE__*/function () {
             }
           });
 
-          var _iterator9 = _createForOfIteratorHelper(_this2._technicalIndicatorPanes),
-              _step9;
-
-          try {
-            var _loop = function _loop() {
-              var pane = _step9.value;
-              var technicalIndicators = pane.technicalIndicators();
-              technicalIndicators.forEach(function (technicalIndicator) {
-                if (technicalIndicator.name === technicalIndicatorType) {
-                  shouldAdjust = true;
-                  pane.calcTechnicalIndicator(technicalIndicator);
-                }
-              });
-            };
-
-            for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-              _loop();
-            }
-          } catch (err) {
-            _iterator9.e(err);
-          } finally {
-            _iterator9.f();
-          }
+          _this2._technicalIndicatorPanes.forEach(function (pane) {
+            var technicalIndicators = pane.technicalIndicators();
+            technicalIndicators.forEach(function (technicalIndicator) {
+              if (technicalIndicator.name === technicalIndicatorType) {
+                shouldAdjust = true;
+                pane.calcTechnicalIndicator(technicalIndicator);
+              }
+            });
+          });
 
           if (shouldAdjust) {
             _this2.adjustPaneViewport(false, true, true, true);
@@ -11654,12 +11565,12 @@ var ChartPane = /*#__PURE__*/function () {
       if (tag) {
         var p;
 
-        var _iterator10 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step10;
+        var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+            _step2;
 
         try {
-          for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-            var pane = _step10.value;
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var pane = _step2.value;
 
             if (pane.tag() === tag) {
               p = pane;
@@ -11667,9 +11578,9 @@ var ChartPane = /*#__PURE__*/function () {
             }
           }
         } catch (err) {
-          _iterator10.e(err);
+          _iterator2.e(err);
         } finally {
-          _iterator10.f();
+          _iterator2.f();
         }
 
         if (p) {
@@ -12274,10 +12185,15 @@ var Chart = /*#__PURE__*/function () {
 var instances = {};
 var chartBaseId = 1;
 var CHART_NAME_PREFIX = 'k_line_chart_';
+
+function checkContainer(container) {
+  return container && container instanceof HTMLElement && container.appendChild && typeof container.appendChild === 'function';
+}
 /**
  * 获取版本号
  * @returns {string}
  */
+
 
 function version() {
   return '6.0.0';
@@ -12292,41 +12208,47 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 6.0.0. Root dom is null, can not initialize the chart!!!';
-  var container = ds;
+  var errorMessage = 'Chart version is 6.0.0. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
+  var container;
 
-  if (!container) {
+  if (!ds) {
     {
-      console.warn(errorMessage);
+      console.error(errorMessage);
     }
 
     return null;
   }
 
-  if (typeof container === 'string') {
-    container = document.getElementById(ds) || document.getElementsByClassName(ds);
+  if (typeof ds === 'string') {
+    container = document.getElementById(ds);
+
+    if (!checkContainer(container)) {
+      container = document.getElementsByClassName(ds);
+    }
+  } else {
+    container = ds;
   }
 
-  if (!container) {
+  if (!checkContainer(container)) {
     {
-      console.warn(errorMessage);
+      console.error(errorMessage);
     }
 
     return null;
   }
 
-  var instance = instances[container.chartId || ''];
+  var chart = instances[container.chartId || ''];
 
-  if (instance) {
+  if (chart) {
     {
       console.warn('The chart has been initialized on the dom！！！');
     }
 
-    return instance;
+    return chart;
   }
 
   var id = "".concat(CHART_NAME_PREFIX).concat(chartBaseId++);
-  var chart = new Chart(container, style);
+  chart = new Chart(container, style);
   chart.id = id;
   container.chartId = id;
   instances[id] = chart;
@@ -12341,10 +12263,16 @@ function init(ds) {
 function dispose(dcs) {
   if (dcs) {
     var id;
+    var container;
 
     if (typeof dcs === 'string') {
-      dcs = document.getElementById(dcs) || document.getElementsByClassName(dcs);
-      id = dcs.chartId;
+      container = document.getElementById(dcs);
+      id = container.chartId;
+
+      if (!id) {
+        container = document.getElementsByClassName(dcs);
+        id = container.chartId;
+      }
     }
 
     if (!id) {

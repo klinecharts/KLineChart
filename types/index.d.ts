@@ -114,8 +114,8 @@ export declare interface Chart {
   removeTechnicalIndicator(technicalIndicatorType?: string, tag?: string): void;
   addGraphicMark(graphicMarkType: GraphicMarkType): void;
   removeAllGraphicMark(): void;
-  subscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void);
-  unsubscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void);
+  subscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void): void;
+  unsubscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void): void;
   getConvertPictureUrl(includeFloatLayer?: boolean, includeGraphicMark?: boolean, type?: PictureType, backgroundColor?: string): string;
 }
 
