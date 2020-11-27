@@ -3,6 +3,7 @@
 ## 6.0.0
 `To be released`
 + 🎨 New style configuration
+    + 👉 All `display` is changed to `show`.
     + 👉 `candelStick` is changed to `candle`.
     + 👉 `candleStick.bar.style` is changed to `candle.type`.
     + 👉 `realTime` is changed to `candle.area`.

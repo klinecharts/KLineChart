@@ -3,6 +3,7 @@
 ## 6.0.0
 `待发布`
 + 🎨 全新的样式配置
+    + 👉 所有`display`变更为`show`。
     + 👉 `candelStick`变更为`candle`。
     + 👉 `candleStick.bar.style`变更为`candle.type`。
     + 👉 `realTime`变更为`candle.area`。

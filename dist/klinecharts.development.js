@@ -7344,30 +7344,30 @@ var YAxisView = /*#__PURE__*/function (_View) {
      * @param value
      * @param precision
      * @param shouldFormatBigNumber
-     * @param textSize
-     * @param textWeight
-     * @param textFamily
-     * @param textColor
+     * @param size
+     * @param weight
+     * @param family
+     * @param color
      * @param backgroundColor
-     * @param textPaddingLeft
-     * @param textPaddingTop
-     * @param textPaddingRight
-     * @param textPaddingBottom
+     * @param paddingLeft
+     * @param paddingTop
+     * @param paddingRight
+     * @param paddingBottom
      * @private
      */
 
   }, {
     key: "_drawMarkLabel",
     value: function _drawMarkLabel(yAxisOptions, value, precision, shouldFormatBigNumber, _ref) {
-      var textSize = _ref.textSize,
-          textWeight = _ref.textWeight,
-          textFamily = _ref.textFamily,
-          textColor = _ref.textColor,
+      var size = _ref.size,
+          weight = _ref.weight,
+          family = _ref.family,
+          color = _ref.color,
           backgroundColor = _ref.backgroundColor,
-          textPaddingLeft = _ref.textPaddingLeft,
-          textPaddingTop = _ref.textPaddingTop,
-          textPaddingRight = _ref.textPaddingRight,
-          textPaddingBottom = _ref.textPaddingBottom;
+          paddingLeft = _ref.paddingLeft,
+          paddingTop = _ref.paddingTop,
+          paddingRight = _ref.paddingRight,
+          paddingBottom = _ref.paddingBottom;
 
       var valueY = this._yAxis.convertToPixel(value);
 
@@ -7386,9 +7386,9 @@ var YAxisView = /*#__PURE__*/function (_View) {
         }
       }
 
-      this._ctx.font = createFont(textSize, textWeight, textFamily);
-      var rectWidth = calcTextWidth(this._ctx, text) + textPaddingLeft + textPaddingRight;
-      var rectHeight = textPaddingTop + textSize + textPaddingBottom;
+      this._ctx.font = createFont(size, weight, family);
+      var rectWidth = calcTextWidth(this._ctx, text) + paddingLeft + paddingRight;
+      var rectHeight = paddingTop + size + paddingBottom;
       var rectStartX;
 
       if (this._isDrawFromStart(yAxisOptions)) {
@@ -7397,9 +7397,9 @@ var YAxisView = /*#__PURE__*/function (_View) {
         rectStartX = this._width - rectWidth;
       }
 
-      renderFillRect(this._ctx, backgroundColor, rectStartX, valueY - textPaddingTop - textSize / 2, rectWidth, rectHeight);
+      renderFillRect(this._ctx, backgroundColor, rectStartX, valueY - paddingTop - size / 2, rectWidth, rectHeight);
       this._ctx.textBaseline = 'middle';
-      renderText(this._ctx, textColor, rectStartX + textPaddingLeft, valueY, text);
+      renderText(this._ctx, color, rectStartX + paddingLeft, valueY, text);
     }
     /**
      * 判断是否从开始点绘制
@@ -8767,6 +8767,10 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
     value: function _drawCandleTooltipWithRect(kLineData, technicalIndicators, dataPos, x, candleOptions, isDrawCandleTooltip, technicalIndicatorOptions, isDrawTechnicalIndicatorTooltip) {
       var _this2 = this;
 
+      if (!isDrawCandleTooltip && !isDrawTechnicalIndicatorTooltip) {
+        return;
+      }
+
       var candleTooltipOptions = candleOptions.tooltip;
       var baseLabels = candleTooltipOptions.labels;
 
@@ -8787,13 +8791,8 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
       var rectLeft = rectOptions.offsetLeft;
       var rectRight = rectOptions.offsetRight;
       var maxLabelWidth = 0;
-      var rectHeight = 0;
-      var rectWidth = 0;
-
-      if (isDrawCandleTooltip || isDrawTechnicalIndicatorTooltip) {
-        rectWidth = rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight;
-        rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom;
-      }
+      var rectHeight = rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight;
+      var rectWidth = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom;
 
       this._ctx.save();
 
@@ -11558,7 +11557,8 @@ var ChartPane = /*#__PURE__*/function () {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       if (type === TECHNICAL_INDICATOR_PANE) {
-        var technicalIndicatorType = options.technicalIndicatorType,
+        var _options$technicalInd = options.technicalIndicatorType,
+            technicalIndicatorType = _options$technicalInd === void 0 ? MACD : _options$technicalInd,
             _options$height = options.height,
             height = _options$height === void 0 ? DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT : _options$height,
             dragEnabled = options.dragEnabled;
@@ -11706,6 +11706,8 @@ var ChartPane = /*#__PURE__*/function () {
     key: "setTimezone",
     value: function setTimezone(timezone) {
       this._chartData.setTimezone(timezone);
+
+      this._xAxisPane.computeAxis();
 
       this._xAxisPane.invalidate(InvalidateLevel.FULL);
     }

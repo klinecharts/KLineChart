@@ -1,5 +1,7 @@
-```js
-config = {
+# 样式配置
+
+```json5
+{
   grid: {
     show: true,
     horizontal: {

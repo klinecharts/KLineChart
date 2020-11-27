@@ -105,6 +105,9 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     kLineData, technicalIndicators, dataPos, x, candleOptions, isDrawCandleTooltip,
     technicalIndicatorOptions, isDrawTechnicalIndicatorTooltip
   ) {
+    if (!isDrawCandleTooltip && !isDrawTechnicalIndicatorTooltip) {
+      return
+    }
     const candleTooltipOptions = candleOptions.tooltip
     const baseLabels = candleTooltipOptions.labels
     const baseValues = this._getCandleTooltipData(kLineData, candleOptions)
@@ -125,12 +128,8 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     const rectRight = rectOptions.offsetRight
 
     let maxLabelWidth = 0
-    let rectHeight = 0
-    let rectWidth = 0
-    if (isDrawCandleTooltip || isDrawTechnicalIndicatorTooltip) {
-      rectWidth = rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight
-      rectHeight = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom
-    }
+    let rectHeight = rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight
+    let rectWidth = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom
     this._ctx.save()
     this._ctx.textBaseline = 'top'
     if (isDrawCandleTooltip) {

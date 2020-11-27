@@ -219,22 +219,22 @@ export default class YAxisView extends View {
    * @param value
    * @param precision
    * @param shouldFormatBigNumber
-   * @param textSize
-   * @param textWeight
-   * @param textFamily
-   * @param textColor
+   * @param size
+   * @param weight
+   * @param family
+   * @param color
    * @param backgroundColor
-   * @param textPaddingLeft
-   * @param textPaddingTop
-   * @param textPaddingRight
-   * @param textPaddingBottom
+   * @param paddingLeft
+   * @param paddingTop
+   * @param paddingRight
+   * @param paddingBottom
    * @private
    */
   _drawMarkLabel (
     yAxisOptions, value, precision, shouldFormatBigNumber,
     {
-      textSize, textWeight, textFamily, textColor, backgroundColor,
-      textPaddingLeft, textPaddingTop, textPaddingRight, textPaddingBottom
+      size, weight, family, color, backgroundColor,
+      paddingLeft, paddingTop, paddingRight, paddingBottom
     }
   ) {
     let valueY = this._yAxis.convertToPixel(value)
@@ -249,9 +249,9 @@ export default class YAxisView extends View {
         text = formatBigNumber(text)
       }
     }
-    this._ctx.font = createFont(textSize, textWeight, textFamily)
-    const rectWidth = calcTextWidth(this._ctx, text) + textPaddingLeft + textPaddingRight
-    const rectHeight = textPaddingTop + textSize + textPaddingBottom
+    this._ctx.font = createFont(size, weight, family)
+    const rectWidth = calcTextWidth(this._ctx, text) + paddingLeft + paddingRight
+    const rectHeight = paddingTop + size + paddingBottom
     let rectStartX
     if (this._isDrawFromStart(yAxisOptions)) {
       rectStartX = 0
@@ -260,10 +260,10 @@ export default class YAxisView extends View {
     }
     renderFillRect(
       this._ctx, backgroundColor,
-      rectStartX, valueY - textPaddingTop - textSize / 2, rectWidth, rectHeight
+      rectStartX, valueY - paddingTop - size / 2, rectWidth, rectHeight
     )
     this._ctx.textBaseline = 'middle'
-    renderText(this._ctx, textColor, rectStartX + textPaddingLeft, valueY, text)
+    renderText(this._ctx, color, rectStartX + paddingLeft, valueY, text)
   }
 
   /**
