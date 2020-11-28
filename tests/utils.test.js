@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
-import { getFont } from '../src/utils/canvas'
+import { createFont } from '../src/utils/canvas'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../src/utils/format'
 import { clone, merge, isObject, isValid, isFunction, isNumber, isBoolean, isArray } from '../src/utils/typeChecks'
 
@@ -8,10 +8,10 @@ describe('utils', function () {
   describe('canvas', function () {
     describe('getFont', function () {
       it('should contain text size and font style', function () {
-        expect(getFont(12, 'bold', 'mono')).to.equals('bold 12px mono')
+        expect(createFont(12, 'bold', 'mono')).to.equals('bold 12px mono')
       })
       it('should contain text size and default font style', function () {
-        expect(getFont(12)).to.equals('normal 12px Helvetica Neue')
+        expect(createFont(12)).to.equals('normal 12px Helvetica Neue')
       })
     })
   })

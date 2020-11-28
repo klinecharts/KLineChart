@@ -25,7 +25,7 @@ import OnBalanceVolume from '../src/data/technicalindicator/volume/OnBalanceVolu
 import Volume from '../src/data/technicalindicator/volume/Volume'
 import {
   createNewTechnicalIndicator,
-  getTechnicalIndicatorInfo
+  getTechnicalIndicatorTooltipData
 } from '../src/data/technicalindicator/technicalIndicatorControl'
 import TechnicalIndicator from '../src/data/technicalindicator/TechnicalIndicator'
 import YAxis from '../src/component/YAxis'
@@ -241,7 +241,7 @@ describe('technicalIndicator', function () {
 
   describe('getTechnicalIndicatorInfo', function () {
     it('should return objects containing labels labels and name', function () {
-      expect(getTechnicalIndicatorInfo({}, new TechnicalIndicator({}), new YAxis(new ChartData({})))).to.have.all.keys('labels', 'labels', 'name')
+      expect(getTechnicalIndicatorTooltipData({}, new TechnicalIndicator({}), new YAxis(new ChartData({})))).to.have.all.keys('labels', 'labels', 'name')
     })
   })
 })
