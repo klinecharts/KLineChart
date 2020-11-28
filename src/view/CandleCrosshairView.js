@@ -128,8 +128,8 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     const rectRight = rectOptions.offsetRight
 
     let maxLabelWidth = 0
-    let rectHeight = rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight
-    let rectWidth = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom
+    let rectWidth = 0
+    let rectHeight = 0
     this._ctx.save()
     this._ctx.textBaseline = 'top'
     if (isDrawCandleTooltip) {
@@ -176,9 +176,12 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         rectHeight += ((indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * labels.length)
       })
     }
-
     rectWidth += maxLabelWidth
-
+    if (rectWidth === 0 || rectHeight === 0) {
+      return
+    }
+    rectWidth += (rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight)
+    rectHeight += (rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom)
     const centerX = this._width / 2
     let rectX
     if (x < centerX) {

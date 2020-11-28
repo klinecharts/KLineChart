@@ -8791,8 +8791,8 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
       var rectLeft = rectOptions.offsetLeft;
       var rectRight = rectOptions.offsetRight;
       var maxLabelWidth = 0;
-      var rectHeight = rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight;
-      var rectWidth = rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom;
+      var rectWidth = 0;
+      var rectHeight = 0;
 
       this._ctx.save();
 
@@ -8846,6 +8846,13 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
       }
 
       rectWidth += maxLabelWidth;
+
+      if (rectWidth === 0 || rectHeight === 0) {
+        return;
+      }
+
+      rectWidth += rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight;
+      rectHeight += rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom;
       var centerX = this._width / 2;
       var rectX;
 
