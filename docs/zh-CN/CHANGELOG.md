@@ -14,6 +14,7 @@
     + 👉 `createTechnicalIndicator`变更为`createPane`。
     + 👉 `setPrecision`变更为`setPriceVolumePrecision`。
     + 💪 `setTechnicalIndicatorType`和`removeTechnicalIndicator`新增参数，增强功能。
+    + 🆕 新增`getTechnicalIndicatorType`。
     + 🗑 删除`setCandleStickChartType`。
     + 🗑 删除`setCandleStickTechnicalIndicatorType`。
 + 🆕 主图和附图支持设置多个技术指标类型。

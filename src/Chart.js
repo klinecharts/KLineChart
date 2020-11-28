@@ -227,10 +227,19 @@ export default class Chart {
    * 设置技术指标类型
    * @param technicalIndicatorType
    * @param isOverride
-   * @param tag
+   * @param paneId
    */
-  setTechnicalIndicatorType (technicalIndicatorType, isOverride, tag) {
-    this._chartPane.setTechnicalIndicatorType(technicalIndicatorType, isOverride, tag)
+  setTechnicalIndicatorType (technicalIndicatorType, isOverride, paneId) {
+    this._chartPane.setTechnicalIndicatorType(technicalIndicatorType, isOverride, paneId)
+  }
+
+  /**
+   * 获取指标类型
+   * @param paneId
+   * @return {[]}
+   */
+  getTechnicalIndicatorType (paneId) {
+    return this._chartPane.getTechnicalIndicatorType(paneId)
   }
 
   /**
@@ -254,10 +263,10 @@ export default class Chart {
   /**
    * 移除一个技术指标
    * @param technicalIndicator
-   * @param tag
+   * @param paneId
    */
-  removeTechnicalIndicator (technicalIndicator, tag) {
-    this._chartPane.removeTechnicalIndicator(technicalIndicator, tag)
+  removeTechnicalIndicator (technicalIndicator, paneId) {
+    this._chartPane.removeTechnicalIndicator(technicalIndicator, paneId)
   }
 
   /**

@@ -28,7 +28,7 @@ export default class TechnicalIndicatorPane extends Pane {
   }
 
   _initBefore (props) {
-    this._tag = props.tag
+    this._id = props.id
     this._yAxis = this._createYAxis(props)
   }
 
@@ -47,7 +47,7 @@ export default class TechnicalIndicatorPane extends Pane {
       yAxis: this._yAxis,
       additionalDataProvider: {
         technicalIndicators: this.technicalIndicators.bind(this),
-        tag: this.tag.bind(this)
+        id: this.id.bind(this)
       }
     })
   }
@@ -59,7 +59,7 @@ export default class TechnicalIndicatorPane extends Pane {
       yAxis: this._yAxis,
       additionalDataProvider: {
         technicalIndicators: this.technicalIndicators.bind(this),
-        tag: this.tag.bind(this)
+        id: this.id.bind(this)
       }
     })
   }
@@ -99,11 +99,11 @@ export default class TechnicalIndicatorPane extends Pane {
   }
 
   /**
-   * 获取标识
+   * 获取id
    * @returns {string}
    */
-  tag () {
-    return this._tag
+  id () {
+    return this._id
   }
 
   yAxis () {

@@ -29,11 +29,11 @@ import { MACD } from '../data/technicalindicator/defaultTechnicalIndicatorType'
 
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
-const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_'
+const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_pane_'
 
 const TECHNICAL_INDICATOR_PANE = 'technicalIndicator'
 
-export const CANDLE_STICK_PANE_TAG = 'candle_stick_pane_tag'
+export const CANDLE_STICK_PANE_ID = 'candle_stick_pane_1'
 
 export default class ChartPane {
   constructor (container, styleOptions) {
@@ -48,7 +48,7 @@ export default class ChartPane {
       container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
-      tag: CANDLE_STICK_PANE_TAG
+      id: CANDLE_STICK_PANE_ID
     })
     this._chartEvent = new ChartEvent(this._chartContainer, this._chartData)
     this.adjustPaneViewport(true, true, true)
@@ -169,7 +169,7 @@ export default class ChartPane {
     const candleStickPaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight
 
     const paneContentSize = {}
-    paneContentSize[CANDLE_STICK_PANE_TAG] = { contentTop: 0, contentBottom: candleStickPaneHeight }
+    paneContentSize[CANDLE_STICK_PANE_ID] = { contentTop: 0, contentBottom: candleStickPaneHeight }
     let contentTop = candleStickPaneHeight
     let contentBottom = candleStickPaneHeight
     this._candlePane.setHeight(candleStickPaneHeight)
@@ -179,7 +179,7 @@ export default class ChartPane {
       const technicalIndicatorPaneHeight = technicalIndicatorPane.height()
       technicalIndicatorPane.setHeight(technicalIndicatorPaneHeight)
       contentBottom += technicalIndicatorPaneHeight
-      paneContentSize[technicalIndicatorPane.tag()] = { contentTop, contentBottom }
+      paneContentSize[technicalIndicatorPane.id()] = { contentTop, contentBottom }
       contentTop = contentBottom
     }
     this._xAxisPane.setHeight(xAxisHeight)
@@ -403,18 +403,18 @@ export default class ChartPane {
         )
       )
       this._technicalIndicatorBaseId++
-      const tag = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
+      const id = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
       const technicalIndicatorPane = new TechnicalIndicatorPane({
         container: this._chartContainer,
         chartData: this._chartData,
         xAxis: this._xAxisPane.xAxis(),
         technicalIndicatorType,
-        tag,
+        id,
         height
       })
       this._technicalIndicatorPanes.push(technicalIndicatorPane)
       this.adjustPaneViewport(true, true, true, true, true)
-      return tag
+      return id
     }
     return null
   }
@@ -422,14 +422,14 @@ export default class ChartPane {
   /**
    * 移除一个指标
    * @param technicalIndicatorType
-   * @param tag
+   * @param paneId
    */
-  removeTechnicalIndicator (technicalIndicatorType, tag) {
-    if (tag) {
+  removeTechnicalIndicator (technicalIndicatorType, paneId) {
+    if (paneId) {
       let panePos = -1
       for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
         const pane = this._technicalIndicatorPanes[i]
-        if (pane.tag() === tag) {
+        if (pane.id() === paneId) {
           panePos = i
           break
         }
@@ -462,21 +462,17 @@ export default class ChartPane {
    * 设置指标类型
    * @param technicalIndicatorType
    * @param isOverride
-   * @param tag
+   * @param paneId
    */
-  setTechnicalIndicatorType (technicalIndicatorType, isOverride, tag) {
+  setTechnicalIndicatorType (technicalIndicatorType, isOverride, paneId) {
     const technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
-    if (tag) {
-      let p
+    if (paneId) {
       for (const pane of this._technicalIndicatorPanes) {
-        if (pane.tag() === tag) {
-          p = pane
+        if (pane.id() === paneId) {
+          if (pane.setTechnicalIndicator(technicalIndicator, isOverride)) {
+            this.adjustPaneViewport(false, true, true, true)
+          }
           break
-        }
-      }
-      if (p) {
-        if (p.setTechnicalIndicator(technicalIndicator, isOverride)) {
-          this.adjustPaneViewport(false, true, true, true)
         }
       }
     } else {
@@ -484,6 +480,23 @@ export default class ChartPane {
         this.adjustPaneViewport(false, true, true, true)
       }
     }
+  }
+
+  /**
+   * 获取指标类型
+   * @param paneId
+   */
+  getTechnicalIndicatorType (paneId) {
+    if (paneId) {
+      for (const pane of this._technicalIndicatorPanes) {
+        if (pane.id() === paneId) {
+          return pane.technicalIndicators().map(technicalIndicator => technicalIndicator.name)
+        }
+      }
+    } else {
+      return this._candlePane.technicalIndicators().map(technicalIndicator => technicalIndicator.name)
+    }
+    return []
   }
 
   /**

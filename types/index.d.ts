@@ -108,10 +108,11 @@ export declare interface Chart {
   applyMoreData(dataList: KLineData[], more?: boolean): void;
   updateData(data: KLineData): void;
   loadMore(cb: (timestamp: number) => void): void;
-  setTechnicalIndicatorType(technicalIndicatorType: string, isOverride?: boolean, tag?: string): void;
+  setTechnicalIndicatorType(technicalIndicatorType: string, isOverride?: boolean, paneId?: string): void;
+  getTechnicalIndicatorType(paneId?: string): string[];
   createPane(type?: PaneType, options?: PaneOptions): string | null;
   addCustomTechnicalIndicator(technicalIndicatorInfo: TechnicalIndicatorInfo)
-  removeTechnicalIndicator(technicalIndicatorType?: string, tag?: string): void;
+  removeTechnicalIndicator(technicalIndicatorType?: string, paneId?: string): void;
   addGraphicMark(graphicMarkType: GraphicMarkType): void;
   removeAllGraphicMark(): void;
   subscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void): void;

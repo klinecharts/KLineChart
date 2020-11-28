@@ -32,7 +32,7 @@ export default class YAxisCrosshairView extends View {
 
   _drawCrossHairLabel () {
     const crosshair = this._chartData.crosshair()
-    if (crosshair.paneTag !== this._additionalDataProvider.tag() || this._chartData.dataList().length === 0) {
+    if (crosshair.paneId !== this._additionalDataProvider.id() || this._chartData.dataList().length === 0) {
       return
     }
     const styleOptions = this._chartData.styleOptions()

@@ -14,6 +14,7 @@
     + 👉 `createTechnicalIndicator` is changed to `createPane`.
     + 👉 `setPrecision` is changed to `setPriceVolumePrecision`.
     + 💪 `setTechnicalIndicatorType` and `removeTechnicalIndicator` added new parameters and enhanced functions.
+    + 🆕 Add `getTechnicalIndicatorType`.
     + 🗑 Remove `setCandleStickChartType`.
     + 🗑 Remove `setCandleStickTechnicalIndicatorType`.
 + 🆕 The main picture and the picture support the setting of multiple technical indicator types.

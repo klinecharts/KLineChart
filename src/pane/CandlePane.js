@@ -32,7 +32,7 @@ export default class CandlePane extends TechnicalIndicatorPane {
       yAxis: this._yAxis,
       additionalDataProvider: {
         technicalIndicators: this.technicalIndicators.bind(this),
-        tag: this.tag.bind(this)
+        id: this.id.bind(this)
       }
     })
   }

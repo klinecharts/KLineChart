@@ -52,11 +52,11 @@ export default class TechnicalIndicatorCrosshairView extends View {
       const styleOptions = this._chartData.styleOptions()
       const crosshairOptions = styleOptions.crosshair
       const realDataPosX = this._xAxis.convertToPixel(realDataPos)
-      if (crosshair.paneTag === this._additionalDataProvider.tag()) {
+      if (crosshair.paneId === this._additionalDataProvider.id()) {
         // 绘制十字光标水平线
         this._drawCrosshairLine(crosshairOptions, 'horizontal', crosshair.y, 0, this._width, renderHorizontalLine)
       }
-      if (crosshair.paneTag) {
+      if (crosshair.paneId) {
         // 绘制十字光标垂直线
         this._drawCrosshairLine(crosshairOptions, 'vertical', realDataPosX, 0, this._height, renderVerticalLine)
       }
@@ -228,6 +228,6 @@ export default class TechnicalIndicatorCrosshairView extends View {
   _shouldDrawTooltip (crosshair, tooltipOptions) {
     const showRule = tooltipOptions.showRule
     return showRule === TooltipShowRule.ALWAYS ||
-      (showRule === TooltipShowRule.FOLLOW_CROSS && crosshair.paneTag)
+      (showRule === TooltipShowRule.FOLLOW_CROSS && (!!crosshair.paneId))
   }
 }

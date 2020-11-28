@@ -141,13 +141,18 @@ createPane(type, options)
 // 设置技术指标类型
 // technicalIndicatorType 技术指标类型
 // isOverride 是否要覆盖，图表支持设置多个不用的技术指标，可缺省
-// tag 调用createPane方法时返回的标识，如果缺省，则会将技术指标设置在主图上
-setTechnicalIndicatorType(technicalIndicatorType, isOverride, tag)
+// paneId 调用createPane方法时返回的标识，如果缺省，则会将技术指标设置在主图上
+setTechnicalIndicatorType(technicalIndicatorType, isOverride, paneId)
+
+// 获取技术指标类型
+// paneId 调用createPane方法时返回的标识，如果缺省，则会获取主图上的技术指标类型
+// 返回技术指标类型数组
+getTechnicalIndicatorType(paneId)
 
 // 移除技术指标
 // technicalIndicatorType 技术指标类型，如果缺省，则会移除所有
-// tag 调用createPane方法时返回的标识，如果缺省，则会移除主图上的技术指标
-removeTechnicalIndicator(technicalIndicatorType, tag)
+// paneId 调用createPane方法时返回的标识，如果缺省，则会移除主图上的技术指标
+removeTechnicalIndicator(technicalIndicatorType, paneId)
 
 // 添加一个自定义技术指标
 // technicalIndicatorInfo 技术指标信息，详细请参考自定义指标

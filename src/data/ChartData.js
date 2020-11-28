@@ -438,17 +438,17 @@ export default class ChartData {
   /**
    * 设置十字光标点所在的pane的标识
    * @param point
-   * @param paneTag
+   * @param paneId
    */
-  setCrosshairPointPaneTag (point, paneTag) {
+  setCrosshairPointPaneId (point, paneId) {
     const crosshair = {}
     if (point) {
       crosshair.x = point.x
       crosshair.y = point.y
-      crosshair.paneTag = this._crosshair.paneTag
+      crosshair.paneId = this._crosshair.paneId
     }
-    if (paneTag !== undefined) {
-      crosshair.paneTag = paneTag
+    if (paneId !== undefined) {
+      crosshair.paneId = paneId
       this._crosshair = crosshair
       this.invalidate(InvalidateLevel.FLOAT_LAYER)
     }
