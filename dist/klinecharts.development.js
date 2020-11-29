@@ -10719,7 +10719,7 @@ var GraphicMarkEventHandler = /*#__PURE__*/function (_EventHandler) {
   }, {
     key: "_checkEventPointY",
     value: function _checkEventPointY(y) {
-      var size = this._paneContentSize[CANDLE_STICK_PANE_ID];
+      var size = this._paneContentSize[CANDLE_PANE_ID];
       return y > size.contentTop && y < size.contentBottom;
     }
   }]);
@@ -11008,7 +11008,7 @@ function throttle(func) {
 var DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100;
 var TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_pane_';
 var TECHNICAL_INDICATOR_PANE = 'technicalIndicator';
-var CANDLE_STICK_PANE_ID = 'candle_stick_pane_1';
+var CANDLE_PANE_ID = 'candle_pane_1';
 
 var ChartPane = /*#__PURE__*/function () {
   function ChartPane(container, styleOptions) {
@@ -11029,7 +11029,7 @@ var ChartPane = /*#__PURE__*/function () {
       container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
-      id: CANDLE_STICK_PANE_ID
+      id: CANDLE_PANE_ID
     });
     this._chartEvent = new ChartEvent(this._chartContainer, this._chartData);
     this.adjustPaneViewport(true, true, true);
@@ -11179,7 +11179,7 @@ var ChartPane = /*#__PURE__*/function () {
 
       var candleStickPaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight;
       var paneContentSize = {};
-      paneContentSize[CANDLE_STICK_PANE_ID] = {
+      paneContentSize[CANDLE_PANE_ID] = {
         contentTop: 0,
         contentBottom: candleStickPaneHeight
       };

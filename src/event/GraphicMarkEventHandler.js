@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { CANDLE_STICK_PANE_ID } from '../pane/ChartPane'
+import { CANDLE_PANE_ID } from '../pane/ChartPane'
 import EventHandler from './EventHandler'
 import { InvalidateLevel } from '../data/ChartData'
 import { HoverType } from '../mark/GraphicMark'
@@ -108,7 +108,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
   }
 
   _checkEventPointY (y) {
-    const size = this._paneContentSize[CANDLE_STICK_PANE_ID]
+    const size = this._paneContentSize[CANDLE_PANE_ID]
     return y > size.contentTop && y < size.contentBottom
   }
 }

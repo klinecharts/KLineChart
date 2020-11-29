@@ -33,7 +33,7 @@ const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_pane_'
 
 const TECHNICAL_INDICATOR_PANE = 'technicalIndicator'
 
-export const CANDLE_STICK_PANE_ID = 'candle_stick_pane_1'
+export const CANDLE_PANE_ID = 'candle_pane_1'
 
 export default class ChartPane {
   constructor (container, styleOptions) {
@@ -48,7 +48,7 @@ export default class ChartPane {
       container: this._chartContainer,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
-      id: CANDLE_STICK_PANE_ID
+      id: CANDLE_PANE_ID
     })
     this._chartEvent = new ChartEvent(this._chartContainer, this._chartData)
     this.adjustPaneViewport(true, true, true)
@@ -169,7 +169,7 @@ export default class ChartPane {
     const candleStickPaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight
 
     const paneContentSize = {}
-    paneContentSize[CANDLE_STICK_PANE_ID] = { contentTop: 0, contentBottom: candleStickPaneHeight }
+    paneContentSize[CANDLE_PANE_ID] = { contentTop: 0, contentBottom: candleStickPaneHeight }
     let contentTop = candleStickPaneHeight
     let contentBottom = candleStickPaneHeight
     this._candlePane.setHeight(candleStickPaneHeight)

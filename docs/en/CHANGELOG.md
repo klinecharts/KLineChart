@@ -1,7 +1,7 @@
 # Change Log
 
 ## 6.0.0
-`To be released`
+`2020-11-29`
 + 🎨 New style configuration
     + 👉 All `display` is changed to `show`.
     + 👉 `candelStick` is changed to `candle`.
