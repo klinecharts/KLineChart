@@ -8287,12 +8287,12 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
     /**
      * 设置技术指标类型
      * @param technicalIndicator
-     * @param isOverride
+     * @param isStack
      */
 
   }, {
     key: "setTechnicalIndicator",
-    value: function setTechnicalIndicator(technicalIndicator, isOverride) {
+    value: function setTechnicalIndicator(technicalIndicator, isStack) {
       if (technicalIndicator) {
         if (this._includeTechnicalIndicator(technicalIndicator.name)) {
           return false;
@@ -8300,10 +8300,10 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
 
         var cloneInstance = Object.create(technicalIndicator);
 
-        if (isOverride) {
-          this._technicalIndicators = [cloneInstance];
-        } else {
+        if (isStack) {
           this._technicalIndicators.push(cloneInstance);
+        } else {
+          this._technicalIndicators = [cloneInstance];
         }
 
         this.calcTechnicalIndicator(technicalIndicator);
@@ -11560,13 +11560,13 @@ var ChartPane = /*#__PURE__*/function () {
     /**
      * 设置指标类型
      * @param technicalIndicatorType
-     * @param isOverride
+     * @param isStack
      * @param paneId
      */
 
   }, {
     key: "setTechnicalIndicatorType",
-    value: function setTechnicalIndicatorType(technicalIndicatorType, isOverride, paneId) {
+    value: function setTechnicalIndicatorType(technicalIndicatorType, isStack, paneId) {
       var technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType);
 
       if (paneId) {
@@ -11578,7 +11578,7 @@ var ChartPane = /*#__PURE__*/function () {
             var pane = _step2.value;
 
             if (pane.id() === paneId) {
-              if (pane.setTechnicalIndicator(technicalIndicator, isOverride)) {
+              if (pane.setTechnicalIndicator(technicalIndicator, isStack)) {
                 this.adjustPaneViewport(false, true, true, true);
               }
 
@@ -11591,7 +11591,7 @@ var ChartPane = /*#__PURE__*/function () {
           _iterator2.f();
         }
       } else {
-        if (this._candlePane.setTechnicalIndicator(technicalIndicator, isOverride)) {
+        if (this._candlePane.setTechnicalIndicator(technicalIndicator, isStack)) {
           this.adjustPaneViewport(false, true, true, true);
         }
       }
@@ -12015,14 +12015,14 @@ var Chart = /*#__PURE__*/function () {
     /**
      * 设置技术指标类型
      * @param technicalIndicatorType
-     * @param isOverride
+     * @param isStack
      * @param paneId
      */
 
   }, {
     key: "setTechnicalIndicatorType",
-    value: function setTechnicalIndicatorType(technicalIndicatorType, isOverride, paneId) {
-      this._chartPane.setTechnicalIndicatorType(technicalIndicatorType, isOverride, paneId);
+    value: function setTechnicalIndicatorType(technicalIndicatorType, isStack, paneId) {
+      this._chartPane.setTechnicalIndicatorType(technicalIndicatorType, isStack, paneId);
     }
     /**
      * 获取指标类型

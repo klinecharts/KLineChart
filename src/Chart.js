@@ -226,11 +226,11 @@ export default class Chart {
   /**
    * 设置技术指标类型
    * @param technicalIndicatorType
-   * @param isOverride
+   * @param isStack
    * @param paneId
    */
-  setTechnicalIndicatorType (technicalIndicatorType, isOverride, paneId) {
-    this._chartPane.setTechnicalIndicatorType(technicalIndicatorType, isOverride, paneId)
+  setTechnicalIndicatorType (technicalIndicatorType, isStack, paneId) {
+    this._chartPane.setTechnicalIndicatorType(technicalIndicatorType, isStack, paneId)
   }
 
   /**

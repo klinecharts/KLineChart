@@ -153,18 +153,18 @@ export default class TechnicalIndicatorPane extends Pane {
   /**
    * 设置技术指标类型
    * @param technicalIndicator
-   * @param isOverride
+   * @param isStack
    */
-  setTechnicalIndicator (technicalIndicator, isOverride) {
+  setTechnicalIndicator (technicalIndicator, isStack) {
     if (technicalIndicator) {
       if (this._includeTechnicalIndicator(technicalIndicator.name)) {
         return false
       }
       const cloneInstance = Object.create(technicalIndicator)
-      if (isOverride) {
-        this._technicalIndicators = [cloneInstance]
-      } else {
+      if (isStack) {
         this._technicalIndicators.push(cloneInstance)
+      } else {
+        this._technicalIndicators = [cloneInstance]
       }
       this.calcTechnicalIndicator(technicalIndicator)
       return true

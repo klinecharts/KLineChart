@@ -18,6 +18,7 @@
     + 🗑 删除`setCandleStickChartType`。
     + 🗑 删除`setCandleStickTechnicalIndicatorType`。
 + 🆕 主图和附图支持设置多个技术指标类型。
++ 💄 优化初始化方法`init`错误参数提示。
 + 🐞 修复技术指标提示名字和值之间的间隙不对问题。
 
 

@@ -108,7 +108,7 @@ export declare interface Chart {
   applyMoreData(dataList: KLineData[], more?: boolean): void;
   updateData(data: KLineData): void;
   loadMore(cb: (timestamp: number) => void): void;
-  setTechnicalIndicatorType(technicalIndicatorType: string, isOverride?: boolean, paneId?: string): void;
+  setTechnicalIndicatorType(technicalIndicatorType: string, isStack?: boolean, paneId?: string): void;
   getTechnicalIndicatorType(paneId?: string): string[];
   createPane(type?: PaneType, options?: PaneOptions): string | null;
   addCustomTechnicalIndicator(technicalIndicatorInfo: TechnicalIndicatorInfo)

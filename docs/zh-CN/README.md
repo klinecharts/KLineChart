@@ -28,7 +28,7 @@ chart.applyNewData([
 ### 图表方法
 ```js
 // 初始化一个图表
-// ds 可以是div节点、节点id和节点class中的一种
+// ds 可以是dom元素、元素id和元素class中的一种
 // options 样式配置，详情可参阅样式详情
 init(ds, options)
 
@@ -140,9 +140,9 @@ createPane(type, options)
 
 // 设置技术指标类型
 // technicalIndicatorType 技术指标类型
-// isOverride 是否要覆盖，图表支持设置多个不用的技术指标，可缺省
+// isStack 是否要叠加，可缺省
 // paneId 调用createPane方法时返回的标识，如果缺省，则会将技术指标设置在主图上
-setTechnicalIndicatorType(technicalIndicatorType, isOverride, paneId)
+setTechnicalIndicatorType(technicalIndicatorType, isStack, paneId)
 
 // 获取技术指标类型
 // paneId 调用createPane方法时返回的标识，如果缺省，则会获取主图上的技术指标类型

@@ -18,6 +18,7 @@
     + 🗑 Remove `setCandleStickChartType`.
     + 🗑 Remove `setCandleStickTechnicalIndicatorType`.
 + 🆕 The main picture and the picture support the setting of multiple technical indicator types.
++ 💄 Optimize initialization method `init` error parameter prompt.
 + 🐞 Fix the problem that the gap between the name and value of the technical indicator prompt is incorrect.
 
 

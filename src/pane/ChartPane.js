@@ -461,22 +461,22 @@ export default class ChartPane {
   /**
    * 设置指标类型
    * @param technicalIndicatorType
-   * @param isOverride
+   * @param isStack
    * @param paneId
    */
-  setTechnicalIndicatorType (technicalIndicatorType, isOverride, paneId) {
+  setTechnicalIndicatorType (technicalIndicatorType, isStack, paneId) {
     const technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
     if (paneId) {
       for (const pane of this._technicalIndicatorPanes) {
         if (pane.id() === paneId) {
-          if (pane.setTechnicalIndicator(technicalIndicator, isOverride)) {
+          if (pane.setTechnicalIndicator(technicalIndicator, isStack)) {
             this.adjustPaneViewport(false, true, true, true)
           }
           break
         }
       }
     } else {
-      if (this._candlePane.setTechnicalIndicator(technicalIndicator, isOverride)) {
+      if (this._candlePane.setTechnicalIndicator(technicalIndicator, isStack)) {
         this.adjustPaneViewport(false, true, true, true)
       }
     }
