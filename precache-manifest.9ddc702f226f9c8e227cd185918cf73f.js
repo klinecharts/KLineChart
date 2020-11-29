@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "9eb6486f5f5713c2d26ea757880b8a8b",
+    "revision": "01e451e56c49ec6d67ac11e20822fb97",
     "url": "/KLineChart/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/KLineChart/static/css/2.54a50c43.chunk.css"
   },
   {
-    "revision": "b0bbeebcdf1f67aae714",
+    "revision": "3afa15d6a97b92325673",
     "url": "/KLineChart/static/css/main.0b1397b6.chunk.css"
   },
   {
@@ -20,12 +20,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/KLineChart/static/js/2.a916376e.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "b0bbeebcdf1f67aae714",
-    "url": "/KLineChart/static/js/main.da90df8c.chunk.js"
+    "revision": "3afa15d6a97b92325673",
+    "url": "/KLineChart/static/js/main.e5471da2.chunk.js"
   },
   {
     "revision": "720daaf61738ef0144c0124cfdf03a58",
-    "url": "/KLineChart/static/js/main.da90df8c.chunk.js.LICENSE.txt"
+    "url": "/KLineChart/static/js/main.e5471da2.chunk.js.LICENSE.txt"
   },
   {
     "revision": "b26f15547e6d86c22a74",
