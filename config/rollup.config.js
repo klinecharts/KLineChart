@@ -21,15 +21,10 @@ const getPlugins = (env) => {
       '__BUILD_VERSION__': version,
     }),
     env === 'production' && terser({
-      output: {
-        comments: /@license/,
-        inline_script: true,
-      },
       compress: {
         pure_getters: true,
         unsafe: true,
-        unsafe_comps: true,
-        warnings: false
+        unsafe_comps: true
       }
     })
   ]
