@@ -28,10 +28,9 @@ export default class AveragePrice extends TechnicalIndicator {
   }
 
   calcTechnicalIndicator (dataList, calcParams) {
-    const result = []
     let totalTurnover = 0
     let totalVolume = 0
-    dataList.forEach(kLineData => {
+    return dataList.map(kLineData => {
       const avp = {}
       const turnover = kLineData.turnover || 0
       const volume = kLineData.volume || 0
@@ -40,8 +39,7 @@ export default class AveragePrice extends TechnicalIndicator {
       if (totalVolume !== 0) {
         avp.avp = totalTurnover / totalVolume
       }
-      result.push(avp)
+      return avp
     })
-    return result
   }
 }

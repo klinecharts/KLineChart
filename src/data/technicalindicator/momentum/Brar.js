@@ -44,8 +44,7 @@ export default class Brar extends TechnicalIndicator {
     let cyl = 0
     let ho = 0
     let ol = 0
-    const result = []
-    dataList.forEach((kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const brar = {}
       if (i > 0) {
         const high = kLineData.high
@@ -78,8 +77,7 @@ export default class Brar extends TechnicalIndicator {
           ol -= (agoOpen - agoLow)
         }
       }
-      result.push(brar)
+      return brar
     })
-    return result
   }
 }

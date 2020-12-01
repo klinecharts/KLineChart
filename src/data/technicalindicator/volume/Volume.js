@@ -52,8 +52,7 @@ export default class Volume extends TechnicalIndicator {
 
   calcTechnicalIndicator (dataList, calcParams, plots) {
     const volSums = []
-    const result = []
-    dataList.forEach((kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const volume = kLineData.volume || 0
       const vol = { volume }
       calcParams.forEach((param, j) => {
@@ -63,8 +62,7 @@ export default class Volume extends TechnicalIndicator {
           volSums[j] -= dataList[i - (param - 1)].volume
         }
       })
-      result.push(vol)
+      return vol
     })
-    return result
   }
 }

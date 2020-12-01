@@ -42,8 +42,7 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
   calcTechnicalIndicator (dataList, calcParams, plots) {
     const sumCloseAs = []
     const sumCloseBs = []
-    const result = []
-    dataList.forEach((kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const rsi = {}
       const open = kLineData.open
       calcParams.forEach((param, j) => {
@@ -71,8 +70,7 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
           }
         }
       })
-      result.push(rsi)
+      return rsi
     })
-    return result
   }
 }

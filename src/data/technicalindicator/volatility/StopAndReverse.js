@@ -54,8 +54,7 @@ export default class StopAndReverse extends TechnicalIndicator {
     // 判断是上涨还是下跌  false：下跌
     let isIncreasing = false
     let sar = 0
-    const result = []
-    dataList.forEach((kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       // 上一个周期的sar
       const preSar = sar
       const high = kLineData.high
@@ -96,8 +95,7 @@ export default class StopAndReverse extends TechnicalIndicator {
           sar = highMax
         }
       }
-      result.push({ sar })
+      return { sar }
     })
-    return result
   }
 }

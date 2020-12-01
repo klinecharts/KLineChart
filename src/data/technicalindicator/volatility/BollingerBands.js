@@ -34,8 +34,7 @@ export default class BollingerBands extends TechnicalIndicator {
   calcTechnicalIndicator (dataList, calcParams) {
     const p = calcParams[0] - 1
     let closeSum = 0
-    const result = []
-    dataList.forEach((kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const close = kLineData.close
       const boll = {}
       closeSum += close
@@ -46,9 +45,8 @@ export default class BollingerBands extends TechnicalIndicator {
         boll.dn = boll.mid - 2 * md
         closeSum -= dataList[i - p].close
       }
-      result.push(boll)
+      return boll
     })
-    return result
   }
 
   /**

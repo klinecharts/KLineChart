@@ -1102,10 +1102,9 @@ var AveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
   _createClass(AveragePrice, [{
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams) {
-      var result = [];
       var totalTurnover = 0;
       var totalVolume = 0;
-      dataList.forEach(function (kLineData) {
+      return dataList.map(function (kLineData) {
         var avp = {};
         var turnover = kLineData.turnover || 0;
         var volume = kLineData.volume || 0;
@@ -1116,9 +1115,8 @@ var AveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
           avp.avp = totalTurnover / totalVolume;
         }
 
-        result.push(avp);
+        return avp;
       });
-      return result;
     }
   }]);
 
@@ -1162,8 +1160,7 @@ var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var closeSums = [];
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         var ma = {};
         var close = kLineData.close;
         calcParams.forEach(function (param, j) {
@@ -1174,9 +1171,8 @@ var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
             closeSums[j] -= dataList[i - (param - 1)].close;
           }
         });
-        result.push(ma);
+        return ma;
       });
-      return result;
     }
   }]);
 
@@ -1229,8 +1225,7 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var oldEmas = [];
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         var ema = {};
         var close = kLineData.close;
         calcParams.forEach(function (param, j) {
@@ -1245,9 +1240,8 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
           ema[plots[j].key] = emaValue;
           oldEmas[j] = emaValue;
         });
-        result.push(ema);
+        return ema;
       });
-      return result;
     }
   }]);
 
@@ -1310,8 +1304,7 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var volSums = [];
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         var volume = kLineData.volume || 0;
         var vol = {
           volume: volume
@@ -1324,9 +1317,8 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
             volSums[j] -= dataList[i - (param - 1)].volume;
           }
         });
-        result.push(vol);
+        return vol;
       });
-      return result;
     }
   }]);
 
@@ -1402,8 +1394,7 @@ var MovingAverageConvergenceDivergence = /*#__PURE__*/function (_TechnicalIndica
       var dea = 0;
       var oldDea = 0;
       var macd = 0;
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         var close = kLineData.close;
 
         if (i === 0) {
@@ -1420,13 +1411,12 @@ var MovingAverageConvergenceDivergence = /*#__PURE__*/function (_TechnicalIndica
         oldEmaShort = emaShort;
         oldEmaLong = emaLong;
         oldDea = dea;
-        result.push({
+        return {
           diff: diff,
           dea: dea,
           macd: macd
-        });
+        };
       });
-      return result;
     }
   }]);
 
@@ -1467,8 +1457,7 @@ var BollingerBands = /*#__PURE__*/function (_TechnicalIndicator) {
 
       var p = calcParams[0] - 1;
       var closeSum = 0;
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         var close = kLineData.close;
         var boll = {};
         closeSum += close;
@@ -1483,9 +1472,8 @@ var BollingerBands = /*#__PURE__*/function (_TechnicalIndicator) {
           closeSum -= dataList[i - p].close;
         }
 
-        result.push(boll);
+        return boll;
       });
-      return result;
     }
     /**
      * 计算布林指标中的标准差
@@ -1655,8 +1643,7 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
     value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var sumCloseAs = [];
       var sumCloseBs = [];
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         var rsi = {};
         var open = kLineData.open;
         calcParams.forEach(function (param, j) {
@@ -1685,9 +1672,8 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
             }
           }
         });
-        result.push(rsi);
+        return rsi;
       });
-      return result;
     }
   }]);
 
@@ -1738,8 +1724,7 @@ var Bias = /*#__PURE__*/function (_TechnicalIndicator) {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams, plots) {
       var closeSums = [];
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         var bias = {};
         var close = kLineData.close;
         calcParams.forEach(function (param, j) {
@@ -1751,9 +1736,8 @@ var Bias = /*#__PURE__*/function (_TechnicalIndicator) {
             closeSums[j] -= dataList[i - (param - 1)].close;
           }
         });
-        result.push(bias);
+        return bias;
       });
-      return result;
     }
   }]);
 
@@ -1801,8 +1785,7 @@ var Brar = /*#__PURE__*/function (_TechnicalIndicator) {
       var cyl = 0;
       var ho = 0;
       var ol = 0;
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         var brar = {};
 
         if (i > 0) {
@@ -1839,9 +1822,8 @@ var Brar = /*#__PURE__*/function (_TechnicalIndicator) {
           }
         }
 
-        result.push(brar);
+        return brar;
       });
-      return result;
     }
   }]);
 
@@ -1886,8 +1868,7 @@ var CommodityChannelIndex = /*#__PURE__*/function (_TechnicalIndicator) {
       var md;
       var maSubCloseSum = 0;
       var maList = [];
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         var cci = {};
         var close = kLineData.close;
         closeSum += close;
@@ -1912,9 +1893,8 @@ var CommodityChannelIndex = /*#__PURE__*/function (_TechnicalIndicator) {
           maSubCloseSum -= Math.abs(agoMa - agoClose);
         }
 
-        result.push(cci);
+        return cci;
       });
-      return result;
     }
   }]);
 
@@ -2622,8 +2602,7 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
   }, {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(dataList, calcParams, plots) {
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         var wr = {};
         var close = kLineData.close;
         calcParams.forEach(function (param, index) {
@@ -2637,9 +2616,8 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
             wr[plots[index].key] = hnSubLn === 0 ? 0 : (hn - close) / hnSubLn * 100;
           }
         });
-        result.push(wr);
+        return wr;
       });
-      return result;
     }
   }]);
 
@@ -2751,8 +2729,7 @@ var StopAndReverse = /*#__PURE__*/function (_TechnicalIndicator) {
 
       var isIncreasing = false;
       var sar = 0;
-      var result = [];
-      dataList.forEach(function (kLineData, i) {
+      return dataList.map(function (kLineData, i) {
         // 上一个周期的sar
         var preSar = sar;
         var high = kLineData.high;
@@ -2799,11 +2776,10 @@ var StopAndReverse = /*#__PURE__*/function (_TechnicalIndicator) {
           }
         }
 
-        result.push({
+        return {
           sar: sar
-        });
+        };
       });
-      return result;
     }
   }]);
 
@@ -4802,7 +4778,7 @@ var DrawActionType = {
   DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator'
 };
 var MAX_DATA_SPACE = 50;
-var MIN_DATA_SPACE = 3;
+var MIN_DATA_SPACE = 1;
 
 var ChartData = /*#__PURE__*/function () {
   function ChartData(styleOptions, invalidateHandler) {
@@ -7881,10 +7857,13 @@ var YAxis = /*#__PURE__*/function (_Axis) {
       var shouldOhlc = false;
       var minValue = Infinity;
       var maxValue = -Infinity;
+      var technicalIndicatorPrecision = -Infinity;
       technicalIndicators.forEach(function (technicalIndicator) {
         if (!shouldOhlc) {
           shouldOhlc = technicalIndicator.should;
         }
+
+        technicalIndicatorPrecision = Math.max(technicalIndicatorPrecision, technicalIndicator.precision);
 
         if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
           minValue = Math.min(minValue, technicalIndicator.minValue);
@@ -7899,6 +7878,21 @@ var YAxis = /*#__PURE__*/function (_Axis) {
           result: technicalIndicator.result
         });
       });
+      var precision = 4;
+
+      if (this._isCandleYAxis) {
+        var pricePrecision = this._chartData.pricePrecision();
+
+        if (technicalIndicatorPrecision !== -Infinity) {
+          precision = Math.max(technicalIndicatorPrecision, pricePrecision);
+        } else {
+          precision = pricePrecision;
+        }
+      } else {
+        if (technicalIndicatorPrecision !== -Infinity) {
+          precision = technicalIndicatorPrecision;
+        }
+      }
 
       var candleOptions = this._chartData.styleOptions().candle;
 
@@ -7960,7 +7954,7 @@ var YAxis = /*#__PURE__*/function (_Axis) {
           this._minValue = minMaxArray[0];
           this._maxValue = minMaxArray[1];
 
-          if (this._minValue === this._maxValue || Math.abs(this._minValue - this._maxValue) < Math.pow(10, -12)) {
+          if (this._minValue === this._maxValue || Math.abs(this._minValue - this._maxValue) < Math.pow(10, -precision)) {
             var percentValue = this._minValue !== 0 ? Math.abs(this._minValue * 0.2) : 10;
             this._minValue = this._minValue !== 0 ? this._minValue - percentValue : this._minValue;
             this._maxValue += percentValue;

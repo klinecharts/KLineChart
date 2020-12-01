@@ -43,8 +43,7 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
     let md
     let maSubCloseSum = 0
     const maList = []
-    const result = []
-    dataList.forEach((kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const cci = {}
       const close = kLineData.close
       closeSum += close
@@ -66,8 +65,7 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
         const agoMa = maList[i - p]
         maSubCloseSum -= Math.abs(agoMa - agoClose)
       }
-      result.push(cci)
+      return cci
     })
-    return result
   }
 }
