@@ -99,10 +99,12 @@ export default class YAxis extends Axis {
     let shouldOhlc = false
     let minValue = Infinity
     let maxValue = -Infinity
+    let technicalIndicatorPrecision = -Infinity
     technicalIndicators.forEach(technicalIndicator => {
       if (!shouldOhlc) {
         shouldOhlc = technicalIndicator.should
       }
+      technicalIndicatorPrecision = Math.max(technicalIndicatorPrecision, technicalIndicator.precision)
       if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
         minValue = Math.min(minValue, technicalIndicator.minValue)
       }
@@ -114,6 +116,20 @@ export default class YAxis extends Axis {
         result: technicalIndicator.result
       })
     })
+
+    let precision = 4
+    if (this._isCandleYAxis) {
+      const pricePrecision = this._chartData.pricePrecision()
+      if (technicalIndicatorPrecision !== -Infinity) {
+        precision = Math.max(technicalIndicatorPrecision, pricePrecision)
+      } else {
+        precision = pricePrecision
+      }
+    } else {
+      if (technicalIndicatorPrecision !== -Infinity) {
+        precision = technicalIndicatorPrecision
+      }
+    }
 
     const candleOptions = this._chartData.styleOptions().candle
     const isArea = candleOptions.type === CandleType.AREA
@@ -163,7 +179,7 @@ export default class YAxis extends Axis {
         this._maxValue = minMaxArray[1]
         if (
           this._minValue === this._maxValue ||
-          Math.abs(this._minValue - this._maxValue) < Math.pow(10, -12)
+          Math.abs(this._minValue - this._maxValue) < Math.pow(10, -precision)
         ) {
           const percentValue = this._minValue !== 0 ? Math.abs(this._minValue * 0.2) : 10
           this._minValue = this._minValue !== 0 ? this._minValue - percentValue : this._minValue
