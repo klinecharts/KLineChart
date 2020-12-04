@@ -114,18 +114,6 @@ export default class ChartData {
   }
 
   /**
-   * 加载更多持有者
-   * @private
-   */
-  _loadMoreHandler () {
-    // 有更多并且没有在加载则去加载更多
-    if (this._more && !this._loading && this._loadMoreCallback && isFunction(this._loadMoreCallback)) {
-      this._loading = true
-      this._loadMoreCallback(formatValue(this._dataList[0], 'timestamp'))
-    }
-  }
-
-  /**
    * 计算一条柱子的空间
    * @returns {number}
    * @private
@@ -321,7 +309,7 @@ export default class ChartData {
         if (isFirstAdd) {
           this.setOffsetRightSpace(this._offsetRightSpace)
         } else {
-          this.adjustOffsetBarCount()
+          this.adjustFromTo()
         }
       } else {
         const dataSize = this._dataList.length
@@ -330,7 +318,7 @@ export default class ChartData {
           if (this._offsetRightBarCount < 0) {
             this._offsetRightBarCount -= 1
           }
-          this.adjustOffsetBarCount()
+          this.adjustFromTo()
         } else {
           this._dataList[pos] = data
         }
@@ -368,7 +356,7 @@ export default class ChartData {
    */
   setDataSpace (dataSpace) {
     if (this._innerSetDataSpace(dataSpace)) {
-      this.adjustOffsetBarCount()
+      this.adjustFromTo()
       this.invalidate()
     }
   }
@@ -382,7 +370,7 @@ export default class ChartData {
       return
     }
     this._totalDataSpace = totalSpace
-    this.adjustOffsetBarCount()
+    this.adjustFromTo()
   }
 
   /**
@@ -392,7 +380,7 @@ export default class ChartData {
   setOffsetRightSpace (space) {
     this._offsetRightSpace = space
     this._offsetRightBarCount = space / this._dataSpace
-    this.adjustOffsetBarCount()
+    this.adjustFromTo()
   }
 
   /**
@@ -471,7 +459,7 @@ export default class ChartData {
     }
     const distanceBarCount = distance / this._dataSpace
     this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount
-    this.adjustOffsetBarCount()
+    this.adjustFromTo()
     this.invalidate()
   }
 
@@ -527,16 +515,16 @@ export default class ChartData {
     const dataSpace = this._dataSpace + scale * (this._dataSpace / 10)
     if (this._innerSetDataSpace(dataSpace)) {
       this._offsetRightBarCount += (floatIndexAtZoomPoint - this.coordinateToFloatIndex(point.x))
-      this.adjustOffsetBarCount()
+      this.adjustFromTo()
       this.invalidate()
     }
   }
 
   /**
-   * 调整向右偏移bar的个数
+   * 调整绘制起点终点位置
    * @private
    */
-  adjustOffsetBarCount () {
+  adjustFromTo () {
     const dataSize = this._dataList.length
     const barLength = this._totalDataSpace / this._dataSpace
     const difBarCount = 1 - this._barSpace / 2 / this._dataSpace
@@ -558,8 +546,10 @@ export default class ChartData {
     if (this._from < 0) {
       this._from = 0
     }
-    if (this._from === 0) {
-      this._loadMoreHandler()
+    // 有更多并且没有在加载则去加载更多
+    if (this._from === 0 && this._more && !this._loading && this._loadMoreCallback && isFunction(this._loadMoreCallback)) {
+      this._loading = true
+      this._loadMoreCallback(formatValue(this._dataList[0], 'timestamp'))
     }
   }
 

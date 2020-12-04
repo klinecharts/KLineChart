@@ -4849,28 +4849,13 @@ var ChartData = /*#__PURE__*/function () {
     this._drawActionDelegate = (_this$_drawActionDele = {}, _defineProperty(_this$_drawActionDele, DrawActionType.DRAW_CANDLE, new Delegate()), _defineProperty(_this$_drawActionDele, DrawActionType.DRAW_TECHNICAL_INDICATOR, new Delegate()), _this$_drawActionDele);
   }
   /**
-   * 加载更多持有者
+   * 计算一条柱子的空间
+   * @returns {number}
    * @private
    */
 
 
   _createClass(ChartData, [{
-    key: "_loadMoreHandler",
-    value: function _loadMoreHandler() {
-      // 有更多并且没有在加载则去加载更多
-      if (this._more && !this._loading && this._loadMoreCallback && isFunction(this._loadMoreCallback)) {
-        this._loading = true;
-
-        this._loadMoreCallback(formatValue(this._dataList[0], 'timestamp'));
-      }
-    }
-    /**
-     * 计算一条柱子的空间
-     * @returns {number}
-     * @private
-     */
-
-  }, {
     key: "_calcBarSpace",
     value: function _calcBarSpace() {
       var rateBarSpace = Math.floor(this._dataSpace * 0.8);
@@ -5112,7 +5097,7 @@ var ChartData = /*#__PURE__*/function () {
           if (isFirstAdd) {
             this.setOffsetRightSpace(this._offsetRightSpace);
           } else {
-            this.adjustOffsetBarCount();
+            this.adjustFromTo();
           }
         } else {
           var dataSize = this._dataList.length;
@@ -5124,7 +5109,7 @@ var ChartData = /*#__PURE__*/function () {
               this._offsetRightBarCount -= 1;
             }
 
-            this.adjustOffsetBarCount();
+            this.adjustFromTo();
           } else {
             this._dataList[pos] = data;
           }
@@ -5170,7 +5155,7 @@ var ChartData = /*#__PURE__*/function () {
     key: "setDataSpace",
     value: function setDataSpace(dataSpace) {
       if (this._innerSetDataSpace(dataSpace)) {
-        this.adjustOffsetBarCount();
+        this.adjustFromTo();
         this.invalidate();
       }
     }
@@ -5187,7 +5172,7 @@ var ChartData = /*#__PURE__*/function () {
       }
 
       this._totalDataSpace = totalSpace;
-      this.adjustOffsetBarCount();
+      this.adjustFromTo();
     }
     /**
      * 设置右边可以偏移的空间
@@ -5199,7 +5184,7 @@ var ChartData = /*#__PURE__*/function () {
     value: function setOffsetRightSpace(space) {
       this._offsetRightSpace = space;
       this._offsetRightBarCount = space / this._dataSpace;
-      this.adjustOffsetBarCount();
+      this.adjustFromTo();
     }
     /**
      * 设置左边可见的最小bar数量
@@ -5297,7 +5282,7 @@ var ChartData = /*#__PURE__*/function () {
 
       var distanceBarCount = distance / this._dataSpace;
       this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount;
-      this.adjustOffsetBarCount();
+      this.adjustFromTo();
       this.invalidate();
     }
     /**
@@ -5368,18 +5353,18 @@ var ChartData = /*#__PURE__*/function () {
 
       if (this._innerSetDataSpace(dataSpace)) {
         this._offsetRightBarCount += floatIndexAtZoomPoint - this.coordinateToFloatIndex(point.x);
-        this.adjustOffsetBarCount();
+        this.adjustFromTo();
         this.invalidate();
       }
     }
     /**
-     * 调整向右偏移bar的个数
+     * 调整绘制起点终点位置
      * @private
      */
 
   }, {
-    key: "adjustOffsetBarCount",
-    value: function adjustOffsetBarCount() {
+    key: "adjustFromTo",
+    value: function adjustFromTo() {
       var dataSize = this._dataList.length;
       var barLength = this._totalDataSpace / this._dataSpace;
       var difBarCount = 1 - this._barSpace / 2 / this._dataSpace;
@@ -5404,10 +5389,13 @@ var ChartData = /*#__PURE__*/function () {
 
       if (this._from < 0) {
         this._from = 0;
-      }
+      } // 有更多并且没有在加载则去加载更多
 
-      if (this._from === 0) {
-        this._loadMoreHandler();
+
+      if (this._from === 0 && this._more && !this._loading && this._loadMoreCallback && isFunction(this._loadMoreCallback)) {
+        this._loading = true;
+
+        this._loadMoreCallback(formatValue(this._dataList[0], 'timestamp'));
       }
     }
     /**
