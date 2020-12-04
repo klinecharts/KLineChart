@@ -156,13 +156,13 @@ export default class YAxis extends Axis {
         })
       })
     }
-    if (minValue !== Infinity) {
-      minMaxArray[0] = Math.min(minValue, minMaxArray[0])
-    }
-    if (maxValue !== -Infinity) {
-      minMaxArray[1] = Math.max(maxValue, minMaxArray[1])
-    }
     if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
+      if (minValue !== Infinity) {
+        minMaxArray[0] = Math.min(minValue, minMaxArray[0])
+      }
+      if (maxValue !== -Infinity) {
+        minMaxArray[1] = Math.max(maxValue, minMaxArray[1])
+      }
       if (this.isPercentageYAxis()) {
         const fromClose = dataList[from].close
         this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100
@@ -186,6 +186,9 @@ export default class YAxis extends Axis {
           this._maxValue += percentValue
         }
       }
+    } else {
+      this._minValue = 0
+      this._maxValue = 0
     }
   }
 

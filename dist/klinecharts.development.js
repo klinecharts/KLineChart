@@ -1,6 +1,6 @@
 /**
  * @license
- * KLineChart v6.0.0
+ * KLineChart v6.0.1
  * Copyright (c) 2019 lihu.
  * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
@@ -7920,15 +7920,15 @@ var YAxis = /*#__PURE__*/function (_Axis) {
         _loop(i);
       }
 
-      if (minValue !== Infinity) {
-        minMaxArray[0] = Math.min(minValue, minMaxArray[0]);
-      }
-
-      if (maxValue !== -Infinity) {
-        minMaxArray[1] = Math.max(maxValue, minMaxArray[1]);
-      }
-
       if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
+        if (minValue !== Infinity) {
+          minMaxArray[0] = Math.min(minValue, minMaxArray[0]);
+        }
+
+        if (maxValue !== -Infinity) {
+          minMaxArray[1] = Math.max(maxValue, minMaxArray[1]);
+        }
+
         if (this.isPercentageYAxis()) {
           var fromClose = dataList[from].close;
           this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100;
@@ -7948,6 +7948,9 @@ var YAxis = /*#__PURE__*/function (_Axis) {
             this._maxValue += percentValue;
           }
         }
+      } else {
+        this._minValue = 0;
+        this._maxValue = 0;
       }
     }
   }, {
@@ -12226,7 +12229,7 @@ function checkContainer(container) {
 
 
 function version() {
-  return '6.0.0';
+  return '6.0.1';
 }
 /**
  * 初始化
@@ -12238,7 +12241,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 6.0.0. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
+  var errorMessage = 'Chart version is 6.0.1. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
   var container;
 
   if (!ds) {
