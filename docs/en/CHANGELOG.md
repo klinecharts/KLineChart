@@ -1,5 +1,13 @@
 # Change Log
 
+## 6.0.1
+`2020-12-06`
++ 👉 The minimum drawing pixel of a single data is changed to 1.
++ 💄 Optimize the y-axis display of the secondary fill empty data.
++ 💄 Optimize the calculation of some built-in technical indicators.
++ 🐞 Fix the problem that the same data may cause the y-axis scale to not be calculated.
+
+
 ## 6.0.0
 `2020-11-29`
 + 🎨 New style configuration
