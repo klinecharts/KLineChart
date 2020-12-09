@@ -94,12 +94,12 @@ export default class YAxis extends Axis {
     const dataList = this._chartData.dataList()
     const from = this._chartData.from()
     const to = this._chartData.to()
-    const minMaxArray = [Infinity, -Infinity]
+    const minMaxArray = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER]
     const plotsResult = []
     let shouldOhlc = false
-    let minValue = Infinity
-    let maxValue = -Infinity
-    let technicalIndicatorPrecision = -Infinity
+    let minValue = Number.MAX_SAFE_INTEGER
+    let maxValue = Number.MIN_SAFE_INTEGER
+    let technicalIndicatorPrecision = Number.MIN_SAFE_INTEGER
     technicalIndicators.forEach(technicalIndicator => {
       if (!shouldOhlc) {
         shouldOhlc = technicalIndicator.should
@@ -120,13 +120,13 @@ export default class YAxis extends Axis {
     let precision = 4
     if (this._isCandleYAxis) {
       const pricePrecision = this._chartData.pricePrecision()
-      if (technicalIndicatorPrecision !== -Infinity) {
+      if (technicalIndicatorPrecision !== Number.MIN_SAFE_INTEGER) {
         precision = Math.max(technicalIndicatorPrecision, pricePrecision)
       } else {
         precision = pricePrecision
       }
     } else {
-      if (technicalIndicatorPrecision !== -Infinity) {
+      if (technicalIndicatorPrecision !== Number.MIN_SAFE_INTEGER) {
         precision = technicalIndicatorPrecision
       }
     }
@@ -156,11 +156,11 @@ export default class YAxis extends Axis {
         })
       })
     }
-    if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
-      if (minValue !== Infinity) {
+    if (minMaxArray[0] !== Number.MAX_SAFE_INTEGER && minMaxArray[1] !== Number.MIN_SAFE_INTEGER) {
+      if (minValue !== Number.MAX_SAFE_INTEGER) {
         minMaxArray[0] = Math.min(minValue, minMaxArray[0])
       }
-      if (maxValue !== -Infinity) {
+      if (maxValue !== Number.MIN_SAFE_INTEGER) {
         minMaxArray[1] = Math.max(maxValue, minMaxArray[1])
       }
       if (this.isPercentageYAxis()) {

@@ -14,7 +14,7 @@
 
 import TechnicalIndicatorView from './TechnicalIndicatorView'
 import { CandleType, LineStyle } from '../data/options/styleOptions'
-import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
+import { renderHorizontalLine, renderLine } from '../renderer/line'
 import { createFont } from '../utils/canvas'
 import { formatPrecision, formatValue } from '../utils/format'
 import { isArray, isValid, isNumber } from '../utils/typeChecks'
@@ -28,7 +28,7 @@ export default class CandleView extends TechnicalIndicatorView {
     } else {
       this._drawCandle(candleOptions)
       this._drawLowHighPrice(
-        candleOptions.priceMark, 'high', 'high', -Infinity, [-2, -5],
+        candleOptions.priceMark, 'high', 'high', Number.MIN_SAFE_INTEGER, [-2, -5],
         (price, comparePrice) => {
           if (price > comparePrice) {
             return price
@@ -36,7 +36,7 @@ export default class CandleView extends TechnicalIndicatorView {
         }
       )
       this._drawLowHighPrice(
-        candleOptions.priceMark, 'low', 'low', Infinity, [2, 5],
+        candleOptions.priceMark, 'low', 'low', Number.MAX_SAFE_INTEGER, [2, 5],
         (price, comparePrice) => {
           if (price < comparePrice) {
             return price
@@ -57,7 +57,7 @@ export default class CandleView extends TechnicalIndicatorView {
     const linePoints = []
     const areaPoints = []
     const from = this._chartData.from()
-    let minY = Infinity
+    let minY = Number.MAX_SAFE_INTEGER
     const areaOptions = candleOptions.area
     const onDrawing = (x, i, kLineData, halfBarSpace) => {
       const value = kLineData[areaOptions.value]
@@ -176,13 +176,8 @@ export default class CandleView extends TechnicalIndicatorView {
 
     renderLine(this._ctx, () => {
       this._ctx.beginPath()
-      this._ctx.moveTo(startX, startY)
-      this._ctx.lineTo(startX - 2, startY + offsets[0])
-      this._ctx.stroke()
-      this._ctx.closePath()
-
-      this._ctx.beginPath()
-      this._ctx.moveTo(startX, startY)
+      this._ctx.moveTo(startX - 2, startY + offsets[0])
+      this._ctx.lineTo(startX, startY)
       this._ctx.lineTo(startX + 2, startY + offsets[0])
       this._ctx.stroke()
       this._ctx.closePath()
@@ -190,8 +185,14 @@ export default class CandleView extends TechnicalIndicatorView {
 
     // 绘制竖线
     const y = startY + offsets[1]
-    renderVerticalLine(this._ctx, startX, startY, y)
-    renderHorizontalLine(this._ctx, y, startX, startX + 5)
+    renderLine(this._ctx, () => {
+      this._ctx.beginPath()
+      this._ctx.moveTo(startX, startY)
+      this._ctx.lineTo(startX, y)
+      this._ctx.lineTo(startX + 5, y)
+      this._ctx.stroke()
+      this._ctx.closePath()
+    })
 
     this._ctx.font = createFont(lowHighPriceMarkOptions.textSize, lowHighPriceMarkOptions.textWeight, lowHighPriceMarkOptions.textFamily)
     const text = formatPrecision(price, pricePrecision)

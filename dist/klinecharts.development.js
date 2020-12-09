@@ -1523,8 +1523,8 @@ var BollingerBands = /*#__PURE__*/function (_TechnicalIndicator) {
  */
 function calcHnLn() {
   var dataList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-  var hn = -Infinity;
-  var ln = Infinity;
+  var hn = Number.MIN_SAFE_INTEGER;
+  var ln = Number.MAX_SAFE_INTEGER;
   dataList.forEach(function (data) {
     hn = Math.max(data.high, hn);
     ln = Math.min(data.low, ln);
@@ -7847,12 +7847,12 @@ var YAxis = /*#__PURE__*/function (_Axis) {
 
       var to = this._chartData.to();
 
-      var minMaxArray = [Infinity, -Infinity];
+      var minMaxArray = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER];
       var plotsResult = [];
       var shouldOhlc = false;
-      var minValue = Infinity;
-      var maxValue = -Infinity;
-      var technicalIndicatorPrecision = -Infinity;
+      var minValue = Number.MAX_SAFE_INTEGER;
+      var maxValue = Number.MIN_SAFE_INTEGER;
+      var technicalIndicatorPrecision = Number.MIN_SAFE_INTEGER;
       technicalIndicators.forEach(function (technicalIndicator) {
         if (!shouldOhlc) {
           shouldOhlc = technicalIndicator.should;
@@ -7878,13 +7878,13 @@ var YAxis = /*#__PURE__*/function (_Axis) {
       if (this._isCandleYAxis) {
         var pricePrecision = this._chartData.pricePrecision();
 
-        if (technicalIndicatorPrecision !== -Infinity) {
+        if (technicalIndicatorPrecision !== Number.MIN_SAFE_INTEGER) {
           precision = Math.max(technicalIndicatorPrecision, pricePrecision);
         } else {
           precision = pricePrecision;
         }
       } else {
-        if (technicalIndicatorPrecision !== -Infinity) {
+        if (technicalIndicatorPrecision !== Number.MIN_SAFE_INTEGER) {
           precision = technicalIndicatorPrecision;
         }
       }
@@ -7927,12 +7927,12 @@ var YAxis = /*#__PURE__*/function (_Axis) {
         _loop(i);
       }
 
-      if (minMaxArray[0] !== Infinity && minMaxArray[1] !== -Infinity) {
-        if (minValue !== Infinity) {
+      if (minMaxArray[0] !== Number.MAX_SAFE_INTEGER && minMaxArray[1] !== Number.MIN_SAFE_INTEGER) {
+        if (minValue !== Number.MAX_SAFE_INTEGER) {
           minMaxArray[0] = Math.min(minValue, minMaxArray[0]);
         }
 
-        if (maxValue !== -Infinity) {
+        if (maxValue !== Number.MIN_SAFE_INTEGER) {
           minMaxArray[1] = Math.max(maxValue, minMaxArray[1]);
         }
 
@@ -8361,13 +8361,13 @@ var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       } else {
         this._drawCandle(candleOptions);
 
-        this._drawLowHighPrice(candleOptions.priceMark, 'high', 'high', -Infinity, [-2, -5], function (price, comparePrice) {
+        this._drawLowHighPrice(candleOptions.priceMark, 'high', 'high', Number.MIN_SAFE_INTEGER, [-2, -5], function (price, comparePrice) {
           if (price > comparePrice) {
             return price;
           }
         });
 
-        this._drawLowHighPrice(candleOptions.priceMark, 'low', 'low', Infinity, [2, 5], function (price, comparePrice) {
+        this._drawLowHighPrice(candleOptions.priceMark, 'low', 'low', Number.MAX_SAFE_INTEGER, [2, 5], function (price, comparePrice) {
           if (price < comparePrice) {
             return price;
           }
@@ -8394,7 +8394,7 @@ var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
 
       var from = this._chartData.from();
 
-      var minY = Infinity;
+      var minY = Number.MAX_SAFE_INTEGER;
       var areaOptions = candleOptions.area;
 
       var onDrawing = function onDrawing(x, i, kLineData, halfBarSpace) {
@@ -8574,17 +8574,9 @@ var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       renderLine(this._ctx, function () {
         _this3._ctx.beginPath();
 
-        _this3._ctx.moveTo(startX, startY);
+        _this3._ctx.moveTo(startX - 2, startY + offsets[0]);
 
-        _this3._ctx.lineTo(startX - 2, startY + offsets[0]);
-
-        _this3._ctx.stroke();
-
-        _this3._ctx.closePath();
-
-        _this3._ctx.beginPath();
-
-        _this3._ctx.moveTo(startX, startY);
+        _this3._ctx.lineTo(startX, startY);
 
         _this3._ctx.lineTo(startX + 2, startY + offsets[0]);
 
@@ -8594,8 +8586,19 @@ var CandleView = /*#__PURE__*/function (_TechnicalIndicatorVi) {
       }); // 绘制竖线
 
       var y = startY + offsets[1];
-      renderVerticalLine(this._ctx, startX, startY, y);
-      renderHorizontalLine(this._ctx, y, startX, startX + 5);
+      renderLine(this._ctx, function () {
+        _this3._ctx.beginPath();
+
+        _this3._ctx.moveTo(startX, startY);
+
+        _this3._ctx.lineTo(startX, y);
+
+        _this3._ctx.lineTo(startX + 5, y);
+
+        _this3._ctx.stroke();
+
+        _this3._ctx.closePath();
+      });
       this._ctx.font = createFont(lowHighPriceMarkOptions.textSize, lowHighPriceMarkOptions.textWeight, lowHighPriceMarkOptions.textFamily);
       var text = formatPrecision(price, pricePrecision);
       this._ctx.textBaseline = 'middle';

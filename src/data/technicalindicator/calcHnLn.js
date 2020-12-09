@@ -18,8 +18,8 @@
  * @returns {{ln: number, hn: number}}
  */
 export default function calcHnLn (dataList = []) {
-  let hn = -Infinity
-  let ln = Infinity
+  let hn = Number.MIN_SAFE_INTEGER
+  let ln = Number.MAX_SAFE_INTEGER
   dataList.forEach(data => {
     hn = Math.max(data.high, hn)
     ln = Math.min(data.low, ln)
