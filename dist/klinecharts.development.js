@@ -1,6 +1,6 @@
 /**
  * @license
- * KLineChart v6.0.1
+ * KLineChart v6.0.2
  * Copyright (c) 2019 lihu.
  * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
@@ -6296,10 +6296,10 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                       height: Math.max(1, height)
                     };
 
-                    if (valueY <= baseValueY) {
-                      bar.y = height < 1 ? baseValueY + 1 : valueY;
-                    } else {
+                    if (valueY > baseValueY) {
                       bar.y = baseValueY;
+                    } else {
+                      bar.y = height < 1 ? baseValueY - 1 : valueY;
                     }
 
                     bar.color = plot.color && plot.color(_cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
@@ -12239,7 +12239,7 @@ function checkContainer(container) {
 
 
 function version() {
-  return '6.0.1';
+  return '6.0.2';
 }
 /**
  * 初始化
@@ -12251,7 +12251,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 6.0.1. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
+  var errorMessage = 'Chart version is 6.0.2. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
   var container;
 
   if (!ds) {

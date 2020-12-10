@@ -155,10 +155,10 @@ export default class TechnicalIndicatorView extends View {
                     width: halfBarSpace * 2,
                     height: Math.max(1, height)
                   }
-                  if (valueY <= baseValueY) {
-                    bar.y = height < 1 ? baseValueY + 1 : valueY
-                  } else {
+                  if (valueY > baseValueY) {
                     bar.y = baseValueY
+                  } else {
+                    bar.y = height < 1 ? baseValueY - 1 : valueY
                   }
                   bar.color = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
                   bar.isStroke = plot.isStroke ? plot.isStroke(cbData) : false
