@@ -14,13 +14,15 @@
 
 import EventHandler, { isMouse, isTouch } from './EventHandler'
 
+const TOUCH_MIN_RADIUS = 10
+
 export default class ZoomScrollEventHandler extends EventHandler {
   constructor (chartData) {
     super(chartData)
     // 开始滚动时坐标点
     this._startScrollPoint = {}
     // 开始触摸时坐标
-    this._touchPoint = {}
+    this._touchPoint = null
     // 是否是取消了十字光标
     this._touchCancelCrossHair = false
     // 是否缩放过
@@ -104,7 +106,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
         const xDif = event.localX - this._touchPoint.x
         const yDif = event.localY - this._touchPoint.y
         const radius = Math.sqrt(xDif * xDif + yDif * yDif)
-        if (radius < 10) {
+        if (radius < TOUCH_MIN_RADIUS) {
           this._touchPoint = { x: event.localX, y: event.localY }
           this._chartData.setCrosshairPointPaneId(crossHairPoint, cross.paneId)
         } else {

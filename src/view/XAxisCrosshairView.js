@@ -74,17 +74,15 @@ export default class XAxisCrosshairView extends View {
       labelX = this._width - labelWidth - borderSize - paddingRight
     }
 
-    const rectLeft = labelX - borderSize - paddingLeft
-    const rectTop = 0
-    const rectRight = labelX + labelWidth + borderSize + paddingRight
-    const rectBottom = rectTop + textSize + borderSize * 2 + paddingTop + paddingBottom
+    const rectX = labelX - borderSize - paddingLeft
+    const rectWidth = labelWidth + borderSize * 2 + paddingRight + paddingLeft
+    const rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom
 
     renderStrokeFillRect(
       this._ctx, crosshairVerticalTextOptions.backgroundColor,
       crosshairVerticalTextOptions.borderColor, borderSize,
-      rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop
+      rectX, 0, rectWidth, rectHeight
     )
-
     // 绘制轴上的提示文字
     this._ctx.textBaseline = 'top'
     renderText(

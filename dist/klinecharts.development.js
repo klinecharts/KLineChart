@@ -9241,11 +9241,10 @@ var XAxisCrosshairView = /*#__PURE__*/function (_View) {
         labelX = this._width - labelWidth - borderSize - paddingRight;
       }
 
-      var rectLeft = labelX - borderSize - paddingLeft;
-      var rectTop = 0;
-      var rectRight = labelX + labelWidth + borderSize + paddingRight;
-      var rectBottom = rectTop + textSize + borderSize * 2 + paddingTop + paddingBottom;
-      renderStrokeFillRect(this._ctx, crosshairVerticalTextOptions.backgroundColor, crosshairVerticalTextOptions.borderColor, borderSize, rectLeft, rectTop, rectRight - rectLeft, rectBottom - rectTop); // 绘制轴上的提示文字
+      var rectX = labelX - borderSize - paddingLeft;
+      var rectWidth = labelWidth + borderSize * 2 + paddingRight + paddingLeft;
+      var rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom;
+      renderStrokeFillRect(this._ctx, crosshairVerticalTextOptions.backgroundColor, crosshairVerticalTextOptions.borderColor, borderSize, rectX, 0, rectWidth, rectHeight); // 绘制轴上的提示文字
 
       this._ctx.textBaseline = 'top';
       renderText(this._ctx, crosshairVerticalTextOptions.color, labelX, borderSize + paddingTop, text);
@@ -10309,6 +10308,8 @@ var EventHandler = /*#__PURE__*/function () {
   return EventHandler;
 }();
 
+var TOUCH_MIN_RADIUS = 10;
+
 var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
   _inherits(ZoomScrollEventHandler, _EventHandler);
 
@@ -10323,7 +10324,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
 
     _this._startScrollPoint = {}; // 开始触摸时坐标
 
-    _this._touchPoint = {}; // 是否是取消了十字光标
+    _this._touchPoint = null; // 是否是取消了十字光标
 
     _this._touchCancelCrossHair = false; // 是否缩放过
 
@@ -10451,7 +10452,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
           var yDif = event.localY - _this4._touchPoint.y;
           var radius = Math.sqrt(xDif * xDif + yDif * yDif);
 
-          if (radius < 10) {
+          if (radius < TOUCH_MIN_RADIUS) {
             _this4._touchPoint = {
               x: event.localX,
               y: event.localY
