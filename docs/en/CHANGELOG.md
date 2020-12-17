@@ -1,5 +1,13 @@
 # Change Log
 
+## 6.0.2
+`2020-12-17`
++ 💄 Optimize the time display of the x-axis cross cursor.
++ 💄 Optimize technical indicator `plot` type is `bar` aligned display.
++ 💄 Optimize the display of the highest and lowest prices of candlestick charts.
++ 🐞 Fix the problem that the cross cursor on the mobile terminal needs to be clicked twice for the first time to disappear.
+
+
 ## 6.0.1
 `2020-12-06`
 + 👉 The minimum drawing pixel of a single data is changed to 1.
