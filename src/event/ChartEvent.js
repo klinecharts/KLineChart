@@ -74,7 +74,7 @@ export default class ChartEvent {
 
   _mouseMoveEvent (event) {
     event.localX -= this._chartContentSize.contentLeft
-    if (this._chartData.shouldInvalidateGraphicMark()) {
+    if (this._chartData.graphicMarks().length > 0) {
       this._graphicMarkEventHandler.mouseMoveEvent(event)
     }
     if (this._checkZoomScroll()) {

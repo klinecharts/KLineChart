@@ -658,14 +658,6 @@ export default class ChartData {
   }
 
   /**
-   * 是否需要刷新图形标记层
-   * @returns {boolean}
-   */
-  shouldInvalidateGraphicMark () {
-    return this._graphicMarks.length > 0
-  }
-
-  /**
    * 添加一个自定义指标
    * @param technicalIndicatorInfo
    */

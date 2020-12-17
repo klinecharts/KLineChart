@@ -5536,16 +5536,6 @@ var ChartData = /*#__PURE__*/function () {
       return this._graphicMarks;
     }
     /**
-     * 是否需要刷新图形标记层
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "shouldInvalidateGraphicMark",
-    value: function shouldInvalidateGraphicMark() {
-      return this._graphicMarks.length > 0;
-    }
-    /**
      * 添加一个自定义指标
      * @param technicalIndicatorInfo
      */
@@ -10865,7 +10855,7 @@ var ChartEvent = /*#__PURE__*/function () {
     value: function _mouseMoveEvent(event) {
       event.localX -= this._chartContentSize.contentLeft;
 
-      if (this._chartData.shouldInvalidateGraphicMark()) {
+      if (this._chartData.graphicMarks().length > 0) {
         this._graphicMarkEventHandler.mouseMoveEvent(event);
       }
 
@@ -10892,7 +10882,7 @@ var ChartEvent = /*#__PURE__*/function () {
   }, {
     key: "_mouseDownEvent",
     value: function _mouseDownEvent(event) {
-      this._target.style.cursor = 'pointer';
+      // this._target.style.cursor = 'pointer'
       event.localX -= this._chartContentSize.contentLeft;
 
       this._graphicMarkEventHandler.mouseDownEvent(event);
