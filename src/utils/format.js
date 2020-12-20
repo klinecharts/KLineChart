@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { isNumber, isObject } from './typeChecks'
+import { isNumber, isObject, isValid } from './typeChecks'
 
 /**
  * 格式化值
@@ -24,7 +24,7 @@ import { isNumber, isObject } from './typeChecks'
 export function formatValue (data, key, defaultValue = '--') {
   if (data && isObject(data)) {
     const value = data[key]
-    if (value || value === 0 || value === false) {
+    if (isValid(value)) {
       return value
     }
   }
@@ -39,7 +39,7 @@ export function formatValue (data, key, defaultValue = '--') {
  * @returns {string}
  */
 export function formatDate (dateTimeFormat, timestamp, format = 'MM-DD hh:mm') {
-  if (timestamp && isNumber(timestamp)) {
+  if (isNumber(timestamp)) {
     const dateTimeString = dateTimeFormat.format(new Date(timestamp))
     const dateTimeStringArray = dateTimeString.split(', ')
     const dateStringArray = dateTimeStringArray[0].split('/')

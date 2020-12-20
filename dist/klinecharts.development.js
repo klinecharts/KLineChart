@@ -874,7 +874,7 @@ function formatValue(data, key) {
   if (data && isObject(data)) {
     var value = data[key];
 
-    if (value || value === 0 || value === false) {
+    if (isValid(value)) {
       return value;
     }
   }
@@ -892,7 +892,7 @@ function formatValue(data, key) {
 function formatDate(dateTimeFormat, timestamp) {
   var format = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'MM-DD hh:mm';
 
-  if (timestamp && isNumber(timestamp)) {
+  if (isNumber(timestamp)) {
     var dateTimeString = dateTimeFormat.format(new Date(timestamp));
     var dateTimeStringArray = dateTimeString.split(', ');
     var dateStringArray = dateTimeStringArray[0].split('/');
@@ -10882,7 +10882,7 @@ var ChartEvent = /*#__PURE__*/function () {
   }, {
     key: "_mouseDownEvent",
     value: function _mouseDownEvent(event) {
-      // this._target.style.cursor = 'pointer'
+      this._target.style.cursor = 'pointer';
       event.localX -= this._chartContentSize.contentLeft;
 
       this._graphicMarkEventHandler.mouseDownEvent(event);
