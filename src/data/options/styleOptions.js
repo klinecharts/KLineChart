@@ -172,6 +172,7 @@ const defaultCandle = {
     showType: TooltipCandleShowType.STANDARD,
     labels: ['时间', '开', '收', '高', '低', '成交量'],
     values: null,
+    defaultValue: 'n/a',
     rect: {
       paddingLeft: 0,
       paddingRight: 0,
@@ -235,6 +236,7 @@ const defaultTechnicalIndicator = {
     showRule: TooltipShowRule.ALWAYS,
     showName: true,
     showParams: true,
+    defaultValue: 'n/a',
     text: {
       size: 12,
       family: 'Helvetica Neue',

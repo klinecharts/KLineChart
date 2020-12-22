@@ -73,11 +73,11 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
       renderText(this._ctx, textColor, labelX, labelY, labelText)
       labelX += labelWidth
 
-      const value = values[i] || 'n/a'
+      const value = values[i] || candleTooltipOptions.defaultValue
       let valueText
       let valueColor
       if (isObject(value)) {
-        valueText = value.value || 'n/a'
+        valueText = value.value || candleTooltipOptions.defaultValue
         valueColor = value.color || textColor
       } else {
         valueColor = textColor
@@ -135,10 +135,12 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     if (isDrawCandleTooltip) {
       this._ctx.font = createFont(baseTextSize, candleTooltipOptions.text.weight, candleTooltipOptions.text.family)
       baseLabels.forEach((label, i) => {
-        const value = baseValues[i] || 'n/a'
-        let v = value
+        const value = baseValues[i]
+        let v
         if (isObject(value)) {
-          v = value.value || 'n/a'
+          v = value.value || candleTooltipOptions.defaultValue
+        } else {
+          v = value
         }
         const text = `${label}: ${v}`
         const labelWidth = calcTextWidth(this._ctx, text) + baseTextMarginLeft + baseTextMarginRight
@@ -168,7 +170,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
       )
       indicatorLabelValues.forEach(({ labels, values }) => {
         labels.forEach((label, i) => {
-          const v = values[i].value || 'n/a'
+          const v = values[i].value || technicalIndicatorTooltipOptions.defaultValue
           const text = `${label}: ${v}`
           const labelWidth = calcTextWidth(this._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
           maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
@@ -207,11 +209,11 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         this._ctx.textAlign = 'left'
         renderText(this._ctx, baseTextColor, baseLabelX, labelY, `${label}: `)
 
-        const value = baseValues[i] || 'n/a'
+        const value = baseValues[i]
         let text
         this._ctx.fillStyle = value.color || baseTextColor
         if (isObject(value)) {
-          text = value.value || 'n/a'
+          text = value.value || candleTooltipOptions.defaultValue
         } else {
           text = value
         }
@@ -247,7 +249,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
 
           this._ctx.textAlign = 'right'
           this._ctx.fillText(
-            values[i].value || 'n/a',
+            values[i].value || technicalIndicatorTooltipOptions.defaultValue,
             rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
             labelY
           )

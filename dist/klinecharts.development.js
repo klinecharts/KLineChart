@@ -564,6 +564,7 @@ var defaultCandle = {
     showType: TooltipCandleShowType.STANDARD,
     labels: ['时间', '开', '收', '高', '低', '成交量'],
     values: null,
+    defaultValue: 'n/a',
     rect: {
       paddingLeft: 0,
       paddingRight: 0,
@@ -627,6 +628,7 @@ var defaultTechnicalIndicator = {
     showRule: TooltipShowRule.ALWAYS,
     showName: true,
     showParams: true,
+    defaultValue: 'n/a',
     text: {
       size: 12,
       family: 'Helvetica Neue',
@@ -6871,7 +6873,7 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
           }
 
           labelX += textMarginLeft;
-          var text = "".concat(labels[i], ": ").concat(values[i].value || 'n/a');
+          var text = "".concat(labels[i], ": ").concat(values[i].value || technicalIndicatorTooltipOptions.defaultValue);
           var textWidth = calcTextWidth(this._ctx, text);
           renderText(this._ctx, valueColor, labelX, labelY, text);
           labelX += textWidth + textMarginRight;
@@ -8717,12 +8719,12 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
         var labelWidth = calcTextWidth(_this._ctx, labelText);
         renderText(_this._ctx, textColor, labelX, labelY, labelText);
         labelX += labelWidth;
-        var value = values[i] || 'n/a';
+        var value = values[i] || candleTooltipOptions.defaultValue;
         var valueText;
         var valueColor;
 
         if (isObject(value)) {
-          valueText = value.value || 'n/a';
+          valueText = value.value || candleTooltipOptions.defaultValue;
           valueColor = value.color || textColor;
         } else {
           valueColor = textColor;
@@ -8786,11 +8788,13 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
       if (isDrawCandleTooltip) {
         this._ctx.font = createFont(baseTextSize, candleTooltipOptions.text.weight, candleTooltipOptions.text.family);
         baseLabels.forEach(function (label, i) {
-          var value = baseValues[i] || 'n/a';
-          var v = value;
+          var value = baseValues[i];
+          var v;
 
           if (isObject(value)) {
-            v = value.value || 'n/a';
+            v = value.value || candleTooltipOptions.defaultValue;
+          } else {
+            v = value;
           }
 
           var text = "".concat(label, ": ").concat(v);
@@ -8821,7 +8825,7 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
           var labels = _ref.labels,
               values = _ref.values;
           labels.forEach(function (label, i) {
-            var v = values[i].value || 'n/a';
+            var v = values[i].value || technicalIndicatorTooltipOptions.defaultValue;
             var text = "".concat(label, ": ").concat(v);
             var labelWidth = calcTextWidth(_this2._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight;
             maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
@@ -8861,12 +8865,12 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
           labelY += baseTextMarginTop;
           _this2._ctx.textAlign = 'left';
           renderText(_this2._ctx, baseTextColor, baseLabelX, labelY, "".concat(label, ": "));
-          var value = baseValues[i] || 'n/a';
+          var value = baseValues[i];
           var text;
           _this2._ctx.fillStyle = value.color || baseTextColor;
 
           if (isObject(value)) {
-            text = value.value || 'n/a';
+            text = value.value || candleTooltipOptions.defaultValue;
           } else {
             text = value;
           }
@@ -8897,7 +8901,7 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
 
             _this2._ctx.textAlign = 'right';
 
-            _this2._ctx.fillText(values[i].value || 'n/a', rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight, labelY);
+            _this2._ctx.fillText(values[i].value || technicalIndicatorTooltipOptions.defaultValue, rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight, labelY);
 
             labelY += indicatorTextSize + indicatorTextMarginBottom;
           });

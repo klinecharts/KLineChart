@@ -210,7 +210,7 @@ export default class TechnicalIndicatorCrosshairView extends View {
           default: { break }
         }
         labelX += textMarginLeft
-        const text = `${labels[i]}: ${values[i].value || 'n/a'}`
+        const text = `${labels[i]}: ${values[i].value || technicalIndicatorTooltipOptions.defaultValue}`
         const textWidth = calcTextWidth(this._ctx, text)
         renderText(this._ctx, valueColor, labelX, labelY, text)
         labelX += (textWidth + textMarginRight)
