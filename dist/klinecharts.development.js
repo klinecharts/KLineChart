@@ -8867,16 +8867,18 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
           renderText(_this2._ctx, baseTextColor, baseLabelX, labelY, "".concat(label, ": "));
           var value = baseValues[i];
           var text;
-          _this2._ctx.fillStyle = value.color || baseTextColor;
+          var color;
 
           if (isObject(value)) {
+            color = value.color || baseTextColor;
             text = value.value || candleTooltipOptions.defaultValue;
           } else {
-            text = value;
+            color = baseTextColor;
+            text = value || candleTooltipOptions.defaultValue;
           }
 
           _this2._ctx.textAlign = 'right';
-          renderText(_this2._ctx, value.color || baseTextColor, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY, text);
+          renderText(_this2._ctx, color, rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight, labelY, text);
           labelY += baseTextSize + baseTextMarginBottom;
         });
       }

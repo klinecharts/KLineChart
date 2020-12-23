@@ -211,16 +211,18 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
 
         const value = baseValues[i]
         let text
-        this._ctx.fillStyle = value.color || baseTextColor
+        let color
         if (isObject(value)) {
+          color = value.color || baseTextColor
           text = value.value || candleTooltipOptions.defaultValue
         } else {
-          text = value
+          color = baseTextColor
+          text = value || candleTooltipOptions.defaultValue
         }
         this._ctx.textAlign = 'right'
         renderText(
           this._ctx,
-          value.color || baseTextColor,
+          color,
           rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight,
           labelY,
           text
