@@ -89,6 +89,7 @@
       showType: 'standard',
       labels: ['时间', '开', '收', '高', '低', '成交量'],
       values: null,
+      defaultValue: 'n/a',
       rect: {
         paddingLeft: 0,
         paddingRight: 0,
@@ -147,6 +148,7 @@
       showRule: 'always',
       showName: true,
       showParams: true,
+      defaultValue: 'n/a',
       text: {
         size: 12,
         family: 'Helvetica Neue',
@@ -215,7 +217,8 @@
   separator: {
     size: 1,
     color: '#888888',
-    fill: true
+    fill: true,
+    activeBackgroundColor: 'rgba(230, 230, 230, .15)'
   },
   crosshair: {
     show: true,

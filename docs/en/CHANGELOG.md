@@ -1,5 +1,12 @@
 # Change Log
 
+## 6.0.3
+`To be released`
++ 🆕 Add configuration `candle.tooltip.defaultValue`, `technicalIndicator.tooltip.defaultValue` and `separator.activeBackgroundColor`.
++ 💄 Optimize drag and drop to adjust chart height display.
++ 🐞 Fix the problem of custom colors in `candle.tooltip.values`.
+
+
 ## 6.0.2
 `2020-12-17`
 + 💄 Optimize the time display of the x-axis cross cursor.
