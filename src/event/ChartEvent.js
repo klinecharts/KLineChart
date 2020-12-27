@@ -115,7 +115,7 @@ export default class ChartEvent {
       this._graphicMarkEventHandler.pressedMouseMoveEvent(event)
       // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
       if (this._chartData.crosshair().paneId) {
-        this._chartData.setCrosshairPointPaneId(null, null)
+        this._chartData.setCrosshairPointPaneId()
       }
     }
     if (this._checkZoomScroll()) {
@@ -133,7 +133,7 @@ export default class ChartEvent {
   _checkZoomScroll () {
     const graphicMarks = this._chartData.graphicMarks()
     const graphicMarkCount = graphicMarks.length
-    return !this._chartData.dragGraphicMarkFlag() && (graphicMarkCount === 0 || !graphicMarks[graphicMarkCount - 1].isDrawing())
+    return !this._chartData.dragPaneFlag() && !this._chartData.dragGraphicMarkFlag() && (graphicMarkCount === 0 || !graphicMarks[graphicMarkCount - 1].isDrawing())
   }
 
   setChartContentSize (chartContentSize) {

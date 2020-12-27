@@ -106,6 +106,9 @@ export default class ChartData {
     // 绘图标记数据
     this._graphicMarks = []
 
+    // 调整pane标记
+    this._dragPaneFlag = false
+
     // 绘制事件代理
     this._drawActionDelegate = {
       [DrawActionType.DRAW_CANDLE]: new Delegate(),
@@ -147,13 +150,13 @@ export default class ChartData {
   _adjustFromTo () {
     const dataSize = this._dataList.length
     const barLength = this._totalDataSpace / this._dataSpace
-    const difBarCount = 1 - this._barSpace / 2 / this._dataSpace
-    const maxRightOffsetBarCount = barLength - Math.min(this._leftMinVisibleBarCount, dataSize) + difBarCount
+    const halfBarCount = this._barSpace / 2 / this._dataSpace
+    const maxRightOffsetBarCount = barLength - Math.min(this._leftMinVisibleBarCount, dataSize) + (1 - halfBarCount)
     if (this._offsetRightBarCount > maxRightOffsetBarCount) {
       this._offsetRightBarCount = maxRightOffsetBarCount
     }
 
-    const minRightOffsetBarCount = -dataSize + 1 + Math.min(this._rightMinVisibleBarCount, dataSize) - difBarCount
+    const minRightOffsetBarCount = -dataSize + Math.min(this._rightMinVisibleBarCount, dataSize) + halfBarCount
 
     if (this._offsetRightBarCount < minRightOffsetBarCount) {
       this._offsetRightBarCount = minRightOffsetBarCount
@@ -462,15 +465,14 @@ export default class ChartData {
    * @param paneId
    */
   setCrosshairPointPaneId (point, paneId) {
-    const crosshair = {}
-    if (point) {
-      crosshair.x = point.x
-      crosshair.y = point.y
-      crosshair.paneId = this._crosshair.paneId
-    }
-    if (paneId !== undefined) {
-      crosshair.paneId = paneId
-      this._crosshair = crosshair
+    console.log(paneId)
+    const p = point || {}
+    if (
+      this._crosshair.x !== p.x ||
+      this._crosshair.y !== p.y ||
+      this._crosshair.paneId !== paneId
+    ) {
+      this._crosshair = { ...point, paneId }
       this.invalidate(InvalidateLevel.FLOAT_LAYER)
     }
   }
@@ -639,6 +641,22 @@ export default class ChartData {
    */
   setDragGraphicMarkFlag (flag) {
     this._dragGraphicMarkFlag = flag
+  }
+
+  /**
+   * 获取拖拽Pane标记
+   * @return {boolean}
+   */
+  dragPaneFlag () {
+    return this._dragPaneFlag
+  }
+
+  /**
+   * 设置拖拽Pane标记
+   * @param flag
+   */
+  setDragPaneFlag (flag) {
+    this._dragPaneFlag = flag
   }
 
   /**

@@ -836,7 +836,8 @@ var defaultGraphicMark = {
 var defaultSeparator = {
   size: 1,
   color: '#888888',
-  fill: true
+  fill: true,
+  activeBackgroundColor: 'rgba(230, 230, 230, .15)'
 };
 var defaultStyleOptions = {
   grid: defaultGrid,
@@ -4846,7 +4847,9 @@ var ChartData = /*#__PURE__*/function () {
 
     this._graphicMarkMapping = createGraphicMarkMapping(); // 绘图标记数据
 
-    this._graphicMarks = []; // 绘制事件代理
+    this._graphicMarks = []; // 调整pane标记
+
+    this._dragPaneFlag = false; // 绘制事件代理
 
     this._drawActionDelegate = (_this$_drawActionDele = {}, _defineProperty(_this$_drawActionDele, DrawActionType.DRAW_CANDLE, new Delegate()), _defineProperty(_this$_drawActionDele, DrawActionType.DRAW_TECHNICAL_INDICATOR, new Delegate()), _this$_drawActionDele);
   }
@@ -4893,14 +4896,14 @@ var ChartData = /*#__PURE__*/function () {
     value: function _adjustFromTo() {
       var dataSize = this._dataList.length;
       var barLength = this._totalDataSpace / this._dataSpace;
-      var difBarCount = 1 - this._barSpace / 2 / this._dataSpace;
-      var maxRightOffsetBarCount = barLength - Math.min(this._leftMinVisibleBarCount, dataSize) + difBarCount;
+      var halfBarCount = this._barSpace / 2 / this._dataSpace;
+      var maxRightOffsetBarCount = barLength - Math.min(this._leftMinVisibleBarCount, dataSize) + (1 - halfBarCount);
 
       if (this._offsetRightBarCount > maxRightOffsetBarCount) {
         this._offsetRightBarCount = maxRightOffsetBarCount;
       }
 
-      var minRightOffsetBarCount = -dataSize + 1 + Math.min(this._rightMinVisibleBarCount, dataSize) - difBarCount;
+      var minRightOffsetBarCount = -dataSize + Math.min(this._rightMinVisibleBarCount, dataSize) + halfBarCount;
 
       if (this._offsetRightBarCount < minRightOffsetBarCount) {
         this._offsetRightBarCount = minRightOffsetBarCount;
@@ -5291,17 +5294,13 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "setCrosshairPointPaneId",
     value: function setCrosshairPointPaneId(point, paneId) {
-      var crosshair = {};
+      console.log(paneId);
+      var p = point || {};
 
-      if (point) {
-        crosshair.x = point.x;
-        crosshair.y = point.y;
-        crosshair.paneId = this._crosshair.paneId;
-      }
-
-      if (paneId !== undefined) {
-        crosshair.paneId = paneId;
-        this._crosshair = crosshair;
+      if (this._crosshair.x !== p.x || this._crosshair.y !== p.y || this._crosshair.paneId !== paneId) {
+        this._crosshair = _objectSpread2(_objectSpread2({}, point), {}, {
+          paneId: paneId
+        });
         this.invalidate(InvalidateLevel.FLOAT_LAYER);
       }
     }
@@ -5516,6 +5515,26 @@ var ChartData = /*#__PURE__*/function () {
     key: "setDragGraphicMarkFlag",
     value: function setDragGraphicMarkFlag(flag) {
       this._dragGraphicMarkFlag = flag;
+    }
+    /**
+     * 获取拖拽Pane标记
+     * @return {boolean}
+     */
+
+  }, {
+    key: "dragPaneFlag",
+    value: function dragPaneFlag() {
+      return this._dragPaneFlag;
+    }
+    /**
+     * 设置拖拽Pane标记
+     * @param flag
+     */
+
+  }, {
+    key: "setDragPaneFlag",
+    value: function setDragPaneFlag(flag) {
+      this._dragPaneFlag = flag;
     }
     /**
      * 获取图形标记映射
@@ -10114,6 +10133,7 @@ var SeparatorPane = /*#__PURE__*/function () {
     this._width = 0;
     this._offsetLeft = 0;
     this._dragEventHandler = dragEventHandler;
+    this._dragFlag = false;
 
     this._initElement(container, dragEnabled);
   }
@@ -10123,18 +10143,22 @@ var SeparatorPane = /*#__PURE__*/function () {
     value: function _initElement(container, dragEnabled) {
       this._container = container;
       this._wrapper = this._createElement();
-      this._wrapper.style.overflow = 'hidden';
+      this._wrapper.style.position = 'relative';
       this._element = this._createElement();
       this._element.style.width = '100%';
       this._element.style.position = 'absolute';
       this._element.style.zIndex = '20';
-      this._element.style.height = '5px';
+      this._element.style.top = '-3px';
+      this._element.style.height = '7px';
 
       if (dragEnabled) {
         this._element.style.cursor = 'ns-resize';
         this._dragEvent = new EventBase(this._element, {
           mouseDownEvent: this._mouseDownEvent.bind(this),
-          pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this)
+          mouseUpEvent: this._mouseUpEvent.bind(this),
+          pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this),
+          mouseEnterEvent: this._mouseEnterEvent.bind(this),
+          mouseLeaveEvent: this._mouseLeaveEvent.bind(this)
         }, {
           treatVertTouchDragAsPageScroll: false,
           treatHorzTouchDragAsPageScroll: true
@@ -10167,9 +10191,17 @@ var SeparatorPane = /*#__PURE__*/function () {
   }, {
     key: "_mouseDownEvent",
     value: function _mouseDownEvent(event) {
+      this._dragFlag = true;
       this._startY = event.pageY;
 
       this._dragEventHandler.startDrag(this._paneIndex);
+    }
+  }, {
+    key: "_mouseUpEvent",
+    value: function _mouseUpEvent() {
+      this._dragFlag = false;
+
+      this._chartData.setDragPaneFlag(false);
     }
   }, {
     key: "_pressedMouseMoveEvent",
@@ -10177,6 +10209,30 @@ var SeparatorPane = /*#__PURE__*/function () {
       var dragDistance = event.pageY - this._startY;
 
       this._dragEventHandler.drag(dragDistance, this._paneIndex);
+
+      this._chartData.setDragPaneFlag(true);
+
+      this._chartData.setCrosshairPointPaneId();
+    }
+  }, {
+    key: "_mouseEnterEvent",
+    value: function _mouseEnterEvent() {
+      var separatorOptions = this._chartData.styleOptions().separator;
+
+      this._element.style.background = separatorOptions.activeBackgroundColor;
+
+      this._chartData.setDragPaneFlag(true);
+
+      this._chartData.setCrosshairPointPaneId();
+    }
+  }, {
+    key: "_mouseLeaveEvent",
+    value: function _mouseLeaveEvent() {
+      if (!this._dragFlag) {
+        this._element.style.background = null;
+
+        this._chartData.setDragPaneFlag(false);
+      }
     }
     /**
      * 获取高度
@@ -10219,12 +10275,13 @@ var SeparatorPane = /*#__PURE__*/function () {
   }, {
     key: "invalidate",
     value: function invalidate() {
-      var separator = this._chartData.styleOptions().separator;
+      var separatorOptions = this._chartData.styleOptions().separator;
 
-      this._wrapper.style.backgroundColor = separator.color;
-      this._wrapper.style.height = "".concat(separator.size, "px");
-      this._wrapper.style.marginLeft = "".concat(separator.fill ? 0 : this._offsetLeft, "px");
-      this._wrapper.style.width = separator.fill ? '100%' : "".concat(this._width, "px");
+      this._element.style.top = "".concat(-Math.floor((7 - separatorOptions.size) / 2), "px");
+      this._wrapper.style.backgroundColor = separatorOptions.color;
+      this._wrapper.style.height = "".concat(separatorOptions.size, "px");
+      this._wrapper.style.marginLeft = "".concat(separatorOptions.fill ? 0 : this._offsetLeft, "px");
+      this._wrapper.style.width = separatorOptions.fill ? '100%' : "".concat(this._width, "px");
     }
     /**
      * 将图形转换成图片
@@ -10234,19 +10291,19 @@ var SeparatorPane = /*#__PURE__*/function () {
   }, {
     key: "getImage",
     value: function getImage() {
-      var separator = this._chartData.styleOptions().separator;
+      var separatorOptions = this._chartData.styleOptions().separator;
 
       var canvas = document.createElement('canvas');
       var ctx = canvas.getContext('2d');
       var pixelRatio = getPixelRatio(canvas);
       var width = this._wrapper.offsetWidth;
-      var height = separator.size;
+      var height = separatorOptions.size;
       canvas.style.width = "".concat(width, "px");
       canvas.style.height = "".concat(height, "px");
       canvas.width = width * pixelRatio;
       canvas.height = height * pixelRatio;
       ctx.scale(pixelRatio, pixelRatio);
-      ctx.fillStyle = separator.color;
+      ctx.fillStyle = separatorOptions.color;
       ctx.fillRect(this._offsetLeft, 0, width, height);
       return canvas;
     }
@@ -10348,7 +10405,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
     key: "mouseLeaveEvent",
     value: function mouseLeaveEvent(event) {
       if (isMouse(event)) {
-        this._chartData.setCrosshairPointPaneId(null, null);
+        this._chartData.setCrosshairPointPaneId();
       }
     }
   }, {
@@ -10366,7 +10423,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
           y: cross.y
         }, cross.paneId);
       }, function () {
-        _this2._chartData.setCrosshairPointPaneId(null, null);
+        _this2._chartData.setCrosshairPointPaneId();
       });
     }
   }, {
@@ -10459,7 +10516,7 @@ var ZoomScrollEventHandler = /*#__PURE__*/function (_EventHandler) {
             _this4._touchCancelCrossHair = true;
             _this4._touchPoint = null;
 
-            _this4._chartData.setCrosshairPointPaneId(null, null);
+            _this4._chartData.setCrosshairPointPaneId();
           }
         } else {
           _this4._touchCancelCrossHair = false;
@@ -10914,7 +10971,7 @@ var ChartEvent = /*#__PURE__*/function () {
 
 
         if (this._chartData.crosshair().paneId) {
-          this._chartData.setCrosshairPointPaneId(null, null);
+          this._chartData.setCrosshairPointPaneId();
         }
       }
 
@@ -10937,7 +10994,7 @@ var ChartEvent = /*#__PURE__*/function () {
       var graphicMarks = this._chartData.graphicMarks();
 
       var graphicMarkCount = graphicMarks.length;
-      return !this._chartData.dragGraphicMarkFlag() && (graphicMarkCount === 0 || !graphicMarks[graphicMarkCount - 1].isDrawing());
+      return !this._chartData.dragPaneFlag() && !this._chartData.dragGraphicMarkFlag() && (graphicMarkCount === 0 || !graphicMarks[graphicMarkCount - 1].isDrawing());
     }
   }, {
     key: "setChartContentSize",

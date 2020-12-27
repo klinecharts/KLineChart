@@ -44,7 +44,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
 
   mouseLeaveEvent (event) {
     if (isMouse(event)) {
-      this._chartData.setCrosshairPointPaneId(null, null)
+      this._chartData.setCrosshairPointPaneId()
     }
   }
 
@@ -55,7 +55,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
     this._performCross(event, false, cross => {
       this._chartData.setCrosshairPointPaneId({ x: event.localX, y: cross.y }, cross.paneId)
     }, () => {
-      this._chartData.setCrosshairPointPaneId(null, null)
+      this._chartData.setCrosshairPointPaneId()
     })
   }
 
@@ -112,7 +112,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
         } else {
           this._touchCancelCrossHair = true
           this._touchPoint = null
-          this._chartData.setCrosshairPointPaneId(null, null)
+          this._chartData.setCrosshairPointPaneId()
         }
       } else {
         this._touchCancelCrossHair = false
