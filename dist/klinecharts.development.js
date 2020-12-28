@@ -1,6 +1,6 @@
 /**
  * @license
- * KLineChart v6.0.3
+ * KLineChart v6.0.5
  * Copyright (c) 2019 lihu.
  * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
@@ -12323,7 +12323,7 @@ function checkContainer(container) {
 
 
 function version() {
-  return '6.0.3';
+  return '6.0.5';
 }
 /**
  * 初始化
@@ -12335,7 +12335,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 6.0.3. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
+  var errorMessage = 'Chart version is 6.0.5. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
   var container;
 
   if (!ds) {

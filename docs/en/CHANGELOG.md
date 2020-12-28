@@ -1,6 +1,6 @@
 # Change Log
 
-## 6.0.3
+## 6.0.5
 `2020-12-28`
 + 🆕 Add configuration `candle.margin`, `candle.tooltip.defaultValue`, `technicalIndicator.margin`, `technicalIndicator.tooltip.defaultValue` and `separator.activeBackgroundColor`.
 + 💄 Optimize drag and drop to adjust chart display.

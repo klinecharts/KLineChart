@@ -1,6 +1,6 @@
 # 版本日志
 
-## 6.0.3
+## 6.0.5
 `2020-12-28`
 + 🆕 新增配置`candle.margin`，`candle.tooltip.defaultValue`，`technicalIndicator.margin`，`technicalIndicator.tooltip.defaultValue`和`separator.activeBackgroundColor`。
 + 💄 优化拖拽调整图表显示。
