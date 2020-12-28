@@ -1,6 +1,6 @@
 /**
  * @license
- * KLineChart v6.0.2
+ * KLineChart v6.0.3
  * Copyright (c) 2019 lihu.
  * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
@@ -488,6 +488,10 @@ var defaultGrid = {
  */
 
 var defaultCandle = {
+  margin: {
+    top: 0.2,
+    bottom: 0.1
+  },
   type: CandleType.CANDLE_SOLID,
   bar: {
     /**
@@ -596,6 +600,10 @@ var defaultCandle = {
  */
 
 var defaultTechnicalIndicator = {
+  margin: {
+    top: 0.2,
+    bottom: 0.1
+  },
   bar: {
     upColor: 'rgba(38, 166, 154, .65)',
     downColor: 'rgba(239, 83, 80, .65)',
@@ -837,7 +845,7 @@ var defaultSeparator = {
   size: 1,
   color: '#888888',
   fill: true,
-  activeBackgroundColor: 'rgba(230, 230, 230, .15)'
+  activeBackgroundColor: 'rgba(120, 120, 120, .1)'
 };
 var defaultStyleOptions = {
   grid: defaultGrid,
@@ -7759,10 +7767,33 @@ var YAxis = /*#__PURE__*/function (_Axis) {
     value: function _computeMinMaxValue() {
       var min = this._minValue;
       var max = this._maxValue;
-      var range = Math.abs(max - min); // 保证每次图形绘制上下都留间隙
+      var range = Math.abs(max - min);
+      var marginOptions;
 
-      min = min - range / 100.0 * 10.0;
-      max = max + range / 100.0 * 20.0;
+      if (this._isCandleYAxis) {
+        marginOptions = this._chartData.styleOptions().candle.margin;
+      } else {
+        marginOptions = this._chartData.styleOptions().technicalIndicator.margin;
+      }
+
+      var topRate;
+      var bottomRate;
+
+      if (marginOptions.top > 1) {
+        topRate = marginOptions.top / this._height;
+      } else {
+        topRate = isNumber(marginOptions.top) ? marginOptions.top : 0.2;
+      }
+
+      if (marginOptions.bottom > 1) {
+        bottomRate = marginOptions.bottom / this._height;
+      } else {
+        bottomRate = isNumber(marginOptions.bottom) ? marginOptions.bottom : 0.1;
+      } // 保证每次图形绘制上下都留间隙
+
+
+      min = min - range * bottomRate;
+      max = max + range * topRate;
       range = Math.abs(max - min);
       return {
         min: min,
@@ -12293,7 +12324,7 @@ function checkContainer(container) {
 
 
 function version() {
-  return '6.0.2';
+  return '6.0.3';
 }
 /**
  * 初始化
@@ -12305,7 +12336,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 6.0.2. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
+  var errorMessage = 'Chart version is 6.0.3. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
   var container;
 
   if (!ds) {

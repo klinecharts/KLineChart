@@ -2,8 +2,8 @@
 
 ## 6.0.3
 `待发布`
-+ 🆕 新增配置`candle.tooltip.defaultValue`，`technicalIndicator.tooltip.defaultValue`和`separator.activeBackgroundColor`。
-+ 💄 优化拖拽调整图表高度显示。
++ 🆕 新增配置`candle.margin`，`candle.tooltip.defaultValue`，`technicalIndicator.margin`，`technicalIndicator.tooltip.defaultValue`和`separator.activeBackgroundColor`。
++ 💄 优化拖拽调整图表显示。
 + 🐞 修复`candle.tooltip.values`自定义颜色问题。
 
 

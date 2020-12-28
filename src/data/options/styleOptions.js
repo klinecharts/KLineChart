@@ -98,6 +98,10 @@ const defaultGrid = {
  * @type {{area: {fillColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number, value: string}, bar: {noChangeColor: string, upColor: string, downColor: string}, tooltip: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
 const defaultCandle = {
+  margin: {
+    top: 0.2,
+    bottom: 0.1
+  },
   type: CandleType.CANDLE_SOLID,
   bar: {
     /**
@@ -204,6 +208,10 @@ const defaultCandle = {
  * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, tooltip: {showParams: boolean, showName: boolean, showRule: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}}, circle: {noChangeColor: string, upColor: string, downColor: string}, lastValueMark: {show: boolean, text: {paddingBottom: number, color: string, size: number, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}}}}
  */
 const defaultTechnicalIndicator = {
+  margin: {
+    top: 0.2,
+    bottom: 0.1
+  },
   bar: {
     upColor: 'rgba(38, 166, 154, .65)',
     downColor: 'rgba(239, 83, 80, .65)',
@@ -439,7 +447,7 @@ const defaultSeparator = {
   size: 1,
   color: '#888888',
   fill: true,
-  activeBackgroundColor: 'rgba(230, 230, 230, .15)'
+  activeBackgroundColor: 'rgba(120, 120, 120, .1)'
 }
 
 export const defaultStyleOptions = {

@@ -29,9 +29,27 @@ export default class YAxis extends Axis {
     let min = this._minValue
     let max = this._maxValue
     let range = Math.abs(max - min)
+    let marginOptions
+    if (this._isCandleYAxis) {
+      marginOptions = this._chartData.styleOptions().candle.margin
+    } else {
+      marginOptions = this._chartData.styleOptions().technicalIndicator.margin
+    }
+    let topRate
+    let bottomRate
+    if (marginOptions.top > 1) {
+      topRate = marginOptions.top / this._height
+    } else {
+      topRate = isNumber(marginOptions.top) ? marginOptions.top : 0.2
+    }
+    if (marginOptions.bottom > 1) {
+      bottomRate = marginOptions.bottom / this._height
+    } else {
+      bottomRate = isNumber(marginOptions.bottom) ? marginOptions.bottom : 0.1
+    }
     // 保证每次图形绘制上下都留间隙
-    min = min - (range / 100.0) * 10.0
-    max = max + (range / 100.0) * 20.0
+    min = min - range * bottomRate
+    max = max + range * topRate
     range = Math.abs(max - min)
     return { min, max, range }
   }
