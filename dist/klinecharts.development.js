@@ -5302,7 +5302,6 @@ var ChartData = /*#__PURE__*/function () {
   }, {
     key: "setCrosshairPointPaneId",
     value: function setCrosshairPointPaneId(point, paneId) {
-      console.log(paneId);
       var p = point || {};
 
       if (this._crosshair.x !== p.x || this._crosshair.y !== p.y || this._crosshair.paneId !== paneId) {

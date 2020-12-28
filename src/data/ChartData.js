@@ -465,7 +465,6 @@ export default class ChartData {
    * @param paneId
    */
   setCrosshairPointPaneId (point, paneId) {
-    console.log(paneId)
     const p = point || {}
     if (
       this._crosshair.x !== p.x ||
