@@ -24,12 +24,8 @@ import StopAndReverse from '../src/data/technicalindicator/volatility/StopAndRev
 import OnBalanceVolume from '../src/data/technicalindicator/volume/OnBalanceVolume'
 import Volume from '../src/data/technicalindicator/volume/Volume'
 import {
-  createNewTechnicalIndicator,
-  getTechnicalIndicatorTooltipData
+  createNewTechnicalIndicator
 } from '../src/data/technicalindicator/technicalIndicatorControl'
-import TechnicalIndicator from '../src/data/technicalindicator/TechnicalIndicator'
-import YAxis from '../src/component/YAxis'
-import ChartData from '../src/data/ChartData'
 
 function generatedKLineDataList () {
   const dataList = []
@@ -236,12 +232,6 @@ describe('technicalIndicator', function () {
       const TechnicalIndicator = createNewTechnicalIndicator({ name: 'T', calcTechnicalIndicator: () => {} })
       const t = new TechnicalIndicator()
       expect(t.name).to.be.equals('T')
-    })
-  })
-
-  describe('getTechnicalIndicatorInfo', function () {
-    it('should return objects containing labels labels and name', function () {
-      expect(getTechnicalIndicatorTooltipData({}, new TechnicalIndicator({}), new YAxis(new ChartData({})))).to.have.all.keys('labels', 'labels', 'name')
     })
   })
 })

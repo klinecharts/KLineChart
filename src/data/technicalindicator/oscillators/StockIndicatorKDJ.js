@@ -22,9 +22,9 @@ export default class StockIndicatorKDJ extends TechnicalIndicator {
       name: KDJ,
       calcParams: [9, 3, 3],
       plots: [
-        { key: 'k', type: 'line' },
-        { key: 'd', type: 'line' },
-        { key: 'j', type: 'line' }
+        { key: 'k', title: 'K', type: 'line' },
+        { key: 'd', title: 'D', type: 'line' },
+        { key: 'j', title: 'J', type: 'line' }
       ]
     })
   }

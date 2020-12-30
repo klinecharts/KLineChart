@@ -22,7 +22,7 @@ export default class AveragePrice extends TechnicalIndicator {
       series: TechnicalIndicatorSeries.PRICE,
       precision: 2,
       plots: [
-        { key: 'avp', type: 'line' }
+        { key: 'avp', title: 'AVP', type: 'line' }
       ]
     })
   }

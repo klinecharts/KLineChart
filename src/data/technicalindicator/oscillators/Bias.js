@@ -26,7 +26,7 @@ export default class Bias extends TechnicalIndicator {
 
   regeneratePlots (params) {
     return params.map(p => {
-      return { key: `bias${p}`, type: 'line' }
+      return { key: `bias${p}`, title: `BIAS${p}`, type: 'line' }
     })
   }
 

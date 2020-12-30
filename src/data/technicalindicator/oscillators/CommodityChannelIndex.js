@@ -21,7 +21,7 @@ export default class CommodityChannelIndex extends TechnicalIndicator {
       name: CCI,
       calcParams: [13],
       plots: [
-        { key: 'cci', type: 'line' }
+        { key: 'cci', title: 'CCI', type: 'line' }
       ]
     })
   }

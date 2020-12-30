@@ -29,7 +29,7 @@ export default class MovingAverage extends TechnicalIndicator {
 
   regeneratePlots (params) {
     return params.map(p => {
-      return { key: `ma${p}`, type: 'line' }
+      return { key: `ma${p}`, title: `MA${p}`, type: 'line' }
     })
   }
 

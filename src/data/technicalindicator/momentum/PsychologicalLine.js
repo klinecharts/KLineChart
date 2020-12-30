@@ -21,8 +21,8 @@ export default class PsychologicalLine extends TechnicalIndicator {
       name: PSY,
       calcParams: [12, 6],
       plots: [
-        { key: 'psy', type: 'line' },
-        { key: 'maPsy', type: 'line' }
+        { key: 'psy', title: 'PSY', type: 'line' },
+        { key: 'maPsy', title: 'MAPSY', type: 'line' }
       ]
     })
   }

@@ -22,8 +22,8 @@ export default class EaseOfMovementValue extends TechnicalIndicator {
       name: EMV,
       calcParams: [14, 9],
       plots: [
-        { key: 'emv', type: 'line' },
-        { key: 'maEmv', type: 'line' }
+        { key: 'emv', title: 'EMV', type: 'line' },
+        { key: 'maEmv', title: 'MAEMV', type: 'line' }
       ]
     })
   }

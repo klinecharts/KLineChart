@@ -150,16 +150,16 @@ export default class TechnicalIndicatorCrosshairView extends View {
     if (this._shouldDrawTooltip(crosshair, technicalIndicatorTooltipOptions)) {
       const technicalIndicatorResult = technicalIndicator.result
       const technicalIndicatorData = technicalIndicatorResult[dataPos]
-      const tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator, this._yAxis)
+      const tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator)
       const colors = technicalIndicatorOptions.line.colors
       const dataList = this._chartData.dataList()
       const cbData = {
         preData: { kLineData: dataList[dataPos - 1], technicalIndicatorData: technicalIndicatorResult[dataPos - 1] },
-        currentData: { kLineData: dataList[dataPos], technicalIndicatorData }
+        currentData: { kLineData: dataList[dataPos], technicalIndicatorData },
+        nextData: { kLineData: dataList[dataPos + 1], technicalIndicatorData: technicalIndicatorResult[dataPos + 1] }
       }
       const plots = technicalIndicator.plots
       const technicalIndicatorTooltipTextOptions = technicalIndicatorTooltipOptions.text
-      const labels = tooltipData.labels
       const values = tooltipData.values
       const textMarginLeft = technicalIndicatorTooltipTextOptions.marginLeft
       const textMarginRight = technicalIndicatorTooltipTextOptions.marginRight
@@ -192,14 +192,14 @@ export default class TechnicalIndicatorCrosshairView extends View {
       }
       let lineCount = 0
       let valueColor
-      for (let i = 0; i < labels.length; i++) {
-        switch (plots[i].type) {
+      plots.forEach((plot, i) => {
+        switch (plot.type) {
           case PlotType.CIRCLE: {
-            valueColor = (plots[i].color && plots[i].color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor
+            valueColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor
             break
           }
           case PlotType.BAR: {
-            valueColor = (plots[i].color && plots[i].color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
+            valueColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
             break
           }
           case PlotType.LINE: {
@@ -209,12 +209,14 @@ export default class TechnicalIndicatorCrosshairView extends View {
           }
           default: { break }
         }
-        labelX += textMarginLeft
-        const text = `${labels[i]}: ${values[i].value || technicalIndicatorTooltipOptions.defaultValue}`
-        const textWidth = calcTextWidth(this._ctx, text)
-        renderText(this._ctx, valueColor, labelX, labelY, text)
-        labelX += (textWidth + textMarginRight)
-      }
+        if (isValid(values[i].title)) {
+          labelX += textMarginLeft
+          const text = `${values[i].title}: ${values[i].value || technicalIndicatorTooltipOptions.defaultValue}`
+          const textWidth = calcTextWidth(this._ctx, text)
+          renderText(this._ctx, valueColor, labelX, labelY, text)
+          labelX += (textWidth + textMarginRight)
+        }
+      })
     }
   }
 

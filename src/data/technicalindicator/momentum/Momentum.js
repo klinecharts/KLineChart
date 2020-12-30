@@ -21,8 +21,8 @@ export default class Momentum extends TechnicalIndicator {
       name: MTM,
       calcParams: [6, 10],
       plots: [
-        { key: 'mtm', type: 'line' },
-        { key: 'maMtm', type: 'line' }
+        { key: 'mtm', title: 'MTM', type: 'line' },
+        { key: 'maMtm', title: 'MAMTM', type: 'line' }
       ]
     })
   }

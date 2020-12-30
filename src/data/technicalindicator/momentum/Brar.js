@@ -21,8 +21,8 @@ export default class Brar extends TechnicalIndicator {
       name: BRAR,
       calcParams: [26],
       plots: [
-        { key: 'br', type: 'line' },
-        { key: 'ar', type: 'line' }
+        { key: 'br', title: 'BR', type: 'line' },
+        { key: 'ar', title: 'AR', type: 'line' }
       ]
     })
   }

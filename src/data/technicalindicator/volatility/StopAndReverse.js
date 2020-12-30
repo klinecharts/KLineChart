@@ -26,6 +26,7 @@ export default class StopAndReverse extends TechnicalIndicator {
       plots: [
         {
           key: 'sar',
+          title: 'SAR',
           type: 'circle',
           color: (data, options) => {
             const { currentData } = data

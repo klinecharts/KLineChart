@@ -31,7 +31,7 @@ const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
 const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_pane_'
 
-const TECHNICAL_INDICATOR_PANE = 'technicalIndicator'
+export const TECHNICAL_INDICATOR_PANE = 'technicalIndicator'
 
 export const CANDLE_PANE_ID = 'candle_pane_1'
 
@@ -387,36 +387,33 @@ export default class ChartPane {
    * @param options
    * @returns {string|null}
    */
-  createPane (type = TECHNICAL_INDICATOR_PANE, options = {}) {
-    if (type === TECHNICAL_INDICATOR_PANE) {
-      const { technicalIndicatorType = MACD, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled } = options
-      const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
-      const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
-      this._separatorPanes.push(
-        new SeparatorPane(
-          this._chartContainer, this._chartData,
-          technicalIndicatorPaneCount, isDrag,
-          {
-            startDrag: this._separatorStartDrag.bind(this),
-            drag: throttle(this._separatorDrag.bind(this), 50)
-          }
-        )
+  createPane (type, options = {}) {
+    const { technicalIndicatorType = MACD, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled } = options
+    const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
+    const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
+    this._separatorPanes.push(
+      new SeparatorPane(
+        this._chartContainer, this._chartData,
+        technicalIndicatorPaneCount, isDrag,
+        {
+          startDrag: this._separatorStartDrag.bind(this),
+          drag: throttle(this._separatorDrag.bind(this), 50)
+        }
       )
-      this._technicalIndicatorBaseId++
-      const id = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
-      const technicalIndicatorPane = new TechnicalIndicatorPane({
-        container: this._chartContainer,
-        chartData: this._chartData,
-        xAxis: this._xAxisPane.xAxis(),
-        technicalIndicatorType,
-        id,
-        height
-      })
-      this._technicalIndicatorPanes.push(technicalIndicatorPane)
-      this.adjustPaneViewport(true, true, true, true, true)
-      return id
-    }
-    return null
+    )
+    this._technicalIndicatorBaseId++
+    const id = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
+    const technicalIndicatorPane = new TechnicalIndicatorPane({
+      container: this._chartContainer,
+      chartData: this._chartData,
+      xAxis: this._xAxisPane.xAxis(),
+      technicalIndicatorType,
+      id,
+      height
+    })
+    this._technicalIndicatorPanes.push(technicalIndicatorPane)
+    this.adjustPaneViewport(true, true, true, true, true)
+    return id
   }
 
   /**

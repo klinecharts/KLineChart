@@ -137,19 +137,17 @@ export function createNewTechnicalIndicator ({
 }
 
 /**
- * 获取技术指标信息
+ * 获取技术指标提示数据
  * @param technicalIndicatorData
  * @param technicalIndicator
- * @param yAxis
- * @returns {{values: [], name: string, labels: []}}
+ * @return {{calcParamText: string, values: [], name: string}}
  */
-export function getTechnicalIndicatorTooltipData (technicalIndicatorData = {}, technicalIndicator, yAxis) {
+export function getTechnicalIndicatorTooltipData (technicalIndicatorData = {}, technicalIndicator) {
   const calcParams = technicalIndicator.calcParams
   const plots = technicalIndicator.plots
   const precision = technicalIndicator.precision
   const shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
 
-  const labels = []
   const values = []
   let name = ''
   let calcParamText = ''
@@ -160,17 +158,19 @@ export function getTechnicalIndicatorTooltipData (technicalIndicatorData = {}, t
     calcParamText = `(${calcParams.join(',')})`
   }
   plots.forEach(plot => {
-    labels.push(plot.key.toUpperCase())
-    let value = technicalIndicatorData[plot.key]
-    let y
-    if (isValid(value)) {
-      y = yAxis.convertToPixel(value)
-      value = formatPrecision(value, precision)
-      if (shouldFormatBigNumber) {
-        value = formatBigNumber(value)
+    const data = {}
+    if (isValid(plot.title)) {
+      let value = technicalIndicatorData[plot.key]
+      if (isValid(value)) {
+        value = formatPrecision(value, precision)
+        if (shouldFormatBigNumber) {
+          value = formatBigNumber(value)
+        }
       }
+      data.title = plot.title
+      data.value = value
     }
-    values.push({ value, y })
+    values.push(data)
   })
-  return { labels, values, name, calcParamText }
+  return { values, name, calcParamText }
 }

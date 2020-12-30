@@ -31,12 +31,11 @@ export default class Volume extends TechnicalIndicator {
 
   regeneratePlots (params) {
     const plots = params.map(p => {
-      return { key: `ma${p}`, type: 'line' }
+      return { key: `ma${p}`, title: `MA${p}`, type: 'line' }
     })
     plots.push({
       key: 'volume',
       type: 'bar',
-      referenceValue: 0,
       color: (data, options) => {
         const kLineData = data.currentData.kLineData || {}
         if (kLineData.close > kLineData.open) {

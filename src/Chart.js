@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import ChartPane from './pane/ChartPane'
+import ChartPane, { TECHNICAL_INDICATOR_PANE } from './pane/ChartPane'
 import { clone, isNumber, isValid, isArray } from './utils/typeChecks'
 import { DEV } from './utils/env'
 import './utils/extension'
@@ -69,13 +69,13 @@ export default class Chart {
   setPriceVolumePrecision (pricePrecision, volumePrecision) {
     if (!isValid(pricePrecision) || !isNumber(pricePrecision) || pricePrecision < 0) {
       if (DEV) {
-        console.warn('Invalid parameter: pricePrecision!!!')
+        console.warn('setPriceVolumePrecision -> Invalid parameter: pricePrecision!!!')
       }
       return
     }
     if (!isValid(volumePrecision) || !isNumber(volumePrecision) || volumePrecision < 0) {
       if (DEV) {
-        console.warn('Invalid parameter: volumePrecision!!!')
+        console.warn('setPriceVolumePrecision -> Invalid parameter: volumePrecision!!!')
       }
       return
     }
@@ -90,7 +90,7 @@ export default class Chart {
   setTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
     if (!isValid(precision) || !isNumber(precision) || precision < 0) {
       if (DEV) {
-        console.warn('Invalid parameter: precision!!!')
+        console.warn('setTechnicalIndicatorPrecision -> Invalid parameter: precision!!!')
       }
       return
     }
@@ -134,7 +134,7 @@ export default class Chart {
   setLeftMinVisibleBarCount (barCount) {
     if (!isValid(barCount) || !isNumber(barCount) || barCount <= 0) {
       if (DEV) {
-        console.warn('Invalid parameter: barCount!!!')
+        console.warn('setLeftMinVisibleBarCount -> Invalid parameter: barCount!!!')
       }
       return
     }
@@ -148,7 +148,7 @@ export default class Chart {
   setRightMinVisibleBarCount (barCount) {
     if (!isValid(barCount) || !isNumber(barCount) || barCount <= 0) {
       if (DEV) {
-        console.warn('Invalid parameter: barCount!!!')
+        console.warn('setRightMinVisibleBarCount -> Invalid parameter: barCount!!!')
       }
       return
     }
@@ -185,7 +185,7 @@ export default class Chart {
   applyNewData (dataList, more) {
     if (!isArray(dataList)) {
       if (DEV) {
-        console.warn('Invalid parameter: dataList, dataList be an array!!!')
+        console.warn('applyNewData -> Invalid parameter: dataList, dataList be an array!!!')
       }
       return
     }
@@ -200,7 +200,7 @@ export default class Chart {
   applyMoreData (dataList, more) {
     if (!isArray(dataList)) {
       if (DEV) {
-        console.warn('Invalid parameter: dataList, dataList be an array!!!')
+        console.warn('applyMoreData -> Invalid parameter:dataList, dataList be an array!!!')
       }
       return
     }
@@ -248,8 +248,14 @@ export default class Chart {
    * @param options
    * @returns {string|null}
    */
-  createPane (type, options) {
-    return this._chartPane.createPane(type, options)
+  createPane (type = TECHNICAL_INDICATOR_PANE, options) {
+    if (type === TECHNICAL_INDICATOR_PANE) {
+      return this._chartPane.createPane(type, options)
+    }
+    if (DEV) {
+      console.warn('createPane -> Invalid parameter: type, type only support technicalIndicator!!!')
+    }
+    return null
   }
 
   /**
@@ -262,11 +268,11 @@ export default class Chart {
 
   /**
    * 移除一个技术指标
-   * @param technicalIndicator
+   * @param technicalIndicatorType
    * @param paneId
    */
-  removeTechnicalIndicator (technicalIndicator, paneId) {
-    this._chartPane.removeTechnicalIndicator(technicalIndicator, paneId)
+  removeTechnicalIndicator (technicalIndicatorType, paneId) {
+    this._chartPane.removeTechnicalIndicator(technicalIndicatorType, paneId)
   }
 
   /**
@@ -277,7 +283,7 @@ export default class Chart {
     const graphicMarkMapping = this._chartPane.chartData().graphicMarkMapping()
     if (!(type in graphicMarkMapping)) {
       if (DEV) {
-        console.warn('Graphic mark type not found!!!')
+        console.warn('addGraphicMark -> Invalid parameter: type, type not found!!!')
       }
       return
     }
@@ -332,7 +338,7 @@ export default class Chart {
     const delegate = this._chartPane.chartData().drawActionDelegate(type)
     if (!delegate) {
       if (DEV) {
-        console.warn('Draw action type does not exist!!!')
+        console.warn('subscribeDrawAction -> Invalid parameter: type, type does not exist!!!')
       }
       return
     }
@@ -348,7 +354,7 @@ export default class Chart {
     const delegate = this._chartPane.chartData().drawActionDelegate(type)
     if (!delegate) {
       if (DEV) {
-        console.warn('Draw action type does not exist!!!')
+        console.warn('unsubscribeDrawAction -> Invalid parameter: type, does not exist!!!')
       }
       return
     }

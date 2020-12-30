@@ -21,8 +21,8 @@ export default class TripleExponentiallySmoothedAverage extends TechnicalIndicat
       name: TRIX,
       calcParams: [12, 20],
       plots: [
-        { key: 'trix', type: 'line' },
-        { key: 'maTrix', type: 'line' }
+        { key: 'trix', title: 'TRIX', type: 'line' },
+        { key: 'maTrix', title: 'MATRIX', type: 'line' }
       ]
     })
   }

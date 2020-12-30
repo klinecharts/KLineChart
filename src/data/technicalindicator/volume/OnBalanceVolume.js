@@ -21,8 +21,8 @@ export default class OnBalanceVolume extends TechnicalIndicator {
       name: OBV,
       calcParams: [30],
       plots: [
-        { key: 'obv', type: 'line' },
-        { key: 'maObv', type: 'line' }
+        { key: 'obv', title: 'OBV', type: 'line' },
+        { key: 'maObv', title: 'MAOBV', type: 'line' }
       ]
     })
   }

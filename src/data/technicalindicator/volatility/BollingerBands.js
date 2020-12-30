@@ -24,9 +24,9 @@ export default class BollingerBands extends TechnicalIndicator {
       precision: 2,
       shouldOhlc: true,
       plots: [
-        { key: 'up', type: 'line' },
-        { key: 'mid', type: 'line' },
-        { key: 'dn', type: 'line' }
+        { key: 'up', title: 'UP', type: 'line' },
+        { key: 'mid', title: 'MID', type: 'line' },
+        { key: 'dn', title: 'DN', type: 'line' }
       ]
     })
   }

@@ -13,13 +13,14 @@
  */
 
 import TechnicalIndicatorCrosshairView from './TechnicalIndicatorCrosshairView'
-import { isFunction, isObject, isArray } from '../utils/typeChecks'
+import { isFunction, isObject, isArray, isValid } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { TooltipCandleShowType } from '../data/options/styleOptions'
 import { getTechnicalIndicatorTooltipData } from '../data/technicalindicator/technicalIndicatorControl'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
+import { PlotType } from './View'
 
 export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView {
   _drawTooltip (
@@ -157,10 +158,18 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     const indicatorTextMarginBottom = technicalIndicatorTooltipOptions.text.marginBottom
     const indicatorTextSize = technicalIndicatorTooltipOptions.text.size
 
-    const indicatorLabelValues = []
+    const indicatorTooltipDataList = []
+    const dataList = this._chartData.dataList()
     technicalIndicators.forEach(technicalIndicator => {
-      const indicatorTooltipData = getTechnicalIndicatorTooltipData(technicalIndicator.result[dataPos], technicalIndicator, this._yAxis)
-      indicatorLabelValues.push({ labels: indicatorTooltipData.labels || [], values: indicatorTooltipData.values || [] })
+      const result = technicalIndicator.result
+      indicatorTooltipDataList.push({
+        tooltipData: getTechnicalIndicatorTooltipData(result[dataPos], technicalIndicator),
+        cbData: {
+          preData: { kLineData: dataList[dataPos - 1], technicalIndicatorData: result[dataPos - 1] },
+          currentData: { kLineData: dataList[dataPos], technicalIndicatorData: result[dataPos] },
+          nextData: { kLineData: dataList[dataPos + 1], technicalIndicatorData: result[dataPos + 1] }
+        }
+      })
     })
     if (isDrawTechnicalIndicatorTooltip) {
       this._ctx.font = createFont(
@@ -168,14 +177,16 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         technicalIndicatorTooltipOptions.text.weight,
         technicalIndicatorTooltipOptions.text.family
       )
-      indicatorLabelValues.forEach(({ labels, values }) => {
-        labels.forEach((label, i) => {
-          const v = values[i].value || technicalIndicatorTooltipOptions.defaultValue
-          const text = `${label}: ${v}`
-          const labelWidth = calcTextWidth(this._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
-          maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
+      indicatorTooltipDataList.forEach(({ tooltipData }) => {
+        tooltipData.values.forEach(({ title, value }) => {
+          if (isValid(title)) {
+            const v = value || technicalIndicatorTooltipOptions.defaultValue
+            const text = `${title}: ${v}`
+            const labelWidth = calcTextWidth(this._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
+            maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
+            rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize)
+          }
         })
-        rectHeight += ((indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * labels.length)
       })
     }
     rectWidth += maxLabelWidth
@@ -242,20 +253,42 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         technicalIndicatorTooltipOptions.text.family
       )
 
-      indicatorLabelValues.forEach(({ labels, values }) => {
-        labels.forEach((label, i) => {
-          labelY += indicatorTextMarginTop
-          this._ctx.textAlign = 'left'
-          this._ctx.fillStyle = colors[i % colorSize] || technicalIndicatorOptions.text.color
-          this._ctx.fillText(`${label.toUpperCase()}: `, indicatorLabelX, labelY)
+      indicatorTooltipDataList.forEach(({ tooltipData, cbData }, techIndex) => {
+        const plots = technicalIndicators[techIndex].plots
+        let lineCount = 0
+        let valueColor
+        plots.forEach((plot, i) => {
+          switch (plot.type) {
+            case PlotType.CIRCLE: {
+              valueColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor
+              break
+            }
+            case PlotType.BAR: {
+              valueColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
+              break
+            }
+            case PlotType.LINE: {
+              valueColor = colors[lineCount % colorSize] || technicalIndicatorOptions.text.color
+              lineCount++
+              break
+            }
+            default: { break }
+          }
+          const value = tooltipData.values[i]
+          if (isValid(value.title)) {
+            labelY += indicatorTextMarginTop
+            this._ctx.textAlign = 'left'
+            this._ctx.fillStyle = valueColor
+            this._ctx.fillText(`${value.title}: `, indicatorLabelX, labelY)
 
-          this._ctx.textAlign = 'right'
-          this._ctx.fillText(
-            values[i].value || technicalIndicatorTooltipOptions.defaultValue,
-            rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
-            labelY
-          )
-          labelY += (indicatorTextSize + indicatorTextMarginBottom)
+            this._ctx.textAlign = 'right'
+            this._ctx.fillText(
+              value.value || technicalIndicatorTooltipOptions.defaultValue,
+              rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
+              labelY
+            )
+            labelY += (indicatorTextSize + indicatorTextMarginBottom)
+          }
         })
       })
     }

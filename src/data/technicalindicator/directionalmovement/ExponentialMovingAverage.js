@@ -30,7 +30,7 @@ export default class ExponentialMovingAverage extends TechnicalIndicator {
 
   regeneratePlots (params) {
     return params.map(p => {
-      return { key: `ema${p}`, type: 'line' }
+      return { key: `ema${p}`, title: `EMA${p}`, type: 'line' }
     })
   }
 

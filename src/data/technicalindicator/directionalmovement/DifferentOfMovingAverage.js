@@ -21,8 +21,8 @@ export default class DifferentOfMovingAverage extends TechnicalIndicator {
       name: DMA,
       calcParams: [10, 50, 10],
       plots: [
-        { key: 'dma', type: 'line' },
-        { key: 'ama', type: 'line' }
+        { key: 'dma', title: 'DMA', type: 'line' },
+        { key: 'ama', title: 'AMA', type: 'line' }
       ]
     })
   }

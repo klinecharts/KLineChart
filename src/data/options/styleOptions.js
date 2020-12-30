@@ -447,7 +447,7 @@ const defaultSeparator = {
   size: 1,
   color: '#888888',
   fill: true,
-  activeBackgroundColor: 'rgba(120, 120, 120, .1)'
+  activeBackgroundColor: 'rgba(120, 120, 120, .2)'
 }
 
 export const defaultStyleOptions = {

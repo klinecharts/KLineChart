@@ -21,8 +21,8 @@ export default class VolumeRatio extends TechnicalIndicator {
       name: VR,
       calcParams: [24, 30],
       plots: [
-        { key: 'vr', type: 'line' },
-        { key: 'maVr', type: 'line' }
+        { key: 'vr', title: 'VR', type: 'line' },
+        { key: 'maVr', title: 'MAVR', type: 'line' }
       ]
     })
   }

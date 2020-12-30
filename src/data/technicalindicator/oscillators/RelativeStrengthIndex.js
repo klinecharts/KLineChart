@@ -26,7 +26,7 @@ export default class RelativeStrengthIndex extends TechnicalIndicator {
 
   regeneratePlots (params) {
     return params.map(p => {
-      return { key: `rsi${p}`, type: 'line' }
+      return { key: `rsi${p}`, title: `RSI${p}`, type: 'line' }
     })
   }
 

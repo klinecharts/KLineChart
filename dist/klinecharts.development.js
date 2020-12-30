@@ -1,6 +1,6 @@
 /**
  * @license
- * KLineChart v6.0.5
+ * KLineChart v6.1.0
  * Copyright (c) 2019 lihu.
  * Licensed under Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
@@ -845,7 +845,7 @@ var defaultSeparator = {
   size: 1,
   color: '#888888',
   fill: true,
-  activeBackgroundColor: 'rgba(120, 120, 120, .1)'
+  activeBackgroundColor: 'rgba(120, 120, 120, .2)'
 };
 var defaultStyleOptions = {
   grid: defaultGrid,
@@ -1105,6 +1105,7 @@ var AveragePrice = /*#__PURE__*/function (_TechnicalIndicator) {
       precision: 2,
       plots: [{
         key: 'avp',
+        title: 'AVP',
         type: 'line'
       }]
     });
@@ -1163,6 +1164,7 @@ var MovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
       return params.map(function (p) {
         return {
           key: "ma".concat(p),
+          title: "MA".concat(p),
           type: 'line'
         };
       });
@@ -1219,6 +1221,7 @@ var ExponentialMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
       return params.map(function (p) {
         return {
           key: "ema".concat(p),
+          title: "EMA".concat(p),
           type: 'line'
         };
       });
@@ -1290,13 +1293,13 @@ var Volume = /*#__PURE__*/function (_TechnicalIndicator) {
       var plots = params.map(function (p) {
         return {
           key: "ma".concat(p),
+          title: "MA".concat(p),
           type: 'line'
         };
       });
       plots.push({
         key: 'volume',
         type: 'bar',
-        referenceValue: 0,
         color: function color(data, options) {
           var kLineData = data.currentData.kLineData || {};
 
@@ -1350,23 +1353,26 @@ var MovingAverageConvergenceDivergence = /*#__PURE__*/function (_TechnicalIndica
       baseValue: 0,
       plots: [{
         key: 'diff',
+        title: 'DIFF',
         type: 'line'
       }, {
         key: 'dea',
+        title: 'DEA',
         type: 'line'
       }, {
         key: 'macd',
+        title: 'MACD',
         type: 'bar',
-        color: function color(data, technicalIndicatorOptions) {
+        color: function color(data, options) {
           var currentData = data.currentData;
           var macd = (currentData.technicalIndicatorData || {}).macd;
 
           if (macd > 0) {
-            return technicalIndicatorOptions.bar.upColor;
+            return options.bar.upColor;
           } else if (macd < 0) {
-            return technicalIndicatorOptions.bar.downColor;
+            return options.bar.downColor;
           } else {
-            return technicalIndicatorOptions.bar.noChangeColor;
+            return options.bar.noChangeColor;
           }
         },
         isStroke: function isStroke(data) {
@@ -1450,12 +1456,15 @@ var BollingerBands = /*#__PURE__*/function (_TechnicalIndicator) {
       shouldOhlc: true,
       plots: [{
         key: 'up',
+        title: 'UP',
         type: 'line'
       }, {
         key: 'mid',
+        title: 'MID',
         type: 'line'
       }, {
         key: 'dn',
+        title: 'DN',
         type: 'line'
       }]
     });
@@ -1559,12 +1568,15 @@ var StockIndicatorKDJ = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [9, 3, 3],
       plots: [{
         key: 'k',
+        title: 'K',
         type: 'line'
       }, {
         key: 'd',
+        title: 'D',
         type: 'line'
       }, {
         key: 'j',
+        title: 'J',
         type: 'line'
       }]
     });
@@ -1635,6 +1647,7 @@ var RelativeStrengthIndex = /*#__PURE__*/function (_TechnicalIndicator) {
       return params.map(function (p) {
         return {
           key: "rsi".concat(p),
+          title: "RSI".concat(p),
           type: 'line'
         };
       });
@@ -1717,6 +1730,7 @@ var Bias = /*#__PURE__*/function (_TechnicalIndicator) {
       return params.map(function (p) {
         return {
           key: "bias".concat(p),
+          title: "BIAS".concat(p),
           type: 'line'
         };
       });
@@ -1768,9 +1782,11 @@ var Brar = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [26],
       plots: [{
         key: 'br',
+        title: 'BR',
         type: 'line'
       }, {
         key: 'ar',
+        title: 'AR',
         type: 'line'
       }]
     });
@@ -1854,6 +1870,7 @@ var CommodityChannelIndex = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [13],
       plots: [{
         key: 'cci',
+        title: 'CCI',
         type: 'line'
       }]
     });
@@ -1925,15 +1942,19 @@ var DirectionalMovementIndex = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [14, 6],
       plots: [{
         key: 'pdi',
+        title: 'PDI',
         type: 'line'
       }, {
         key: 'mdi',
+        title: 'MDI',
         type: 'line'
       }, {
         key: 'adx',
+        title: 'ADX',
         type: 'line'
       }, {
         key: 'adxr',
+        title: 'ADXR',
         type: 'line'
       }]
     });
@@ -2064,18 +2085,23 @@ var CurrentRatio = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [26, 10, 20, 40, 60],
       plots: [{
         key: 'cr',
+        title: 'CR',
         type: 'line'
       }, {
         key: 'ma1',
+        title: 'MA1',
         type: 'line'
       }, {
         key: 'ma2',
+        title: 'MA2',
         type: 'line'
       }, {
         key: 'ma3',
+        title: 'MA3',
         type: 'line'
       }, {
         key: 'ma4',
+        title: 'MA4',
         type: 'line'
       }]
     });
@@ -2205,9 +2231,11 @@ var PsychologicalLine = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [12, 6],
       plots: [{
         key: 'psy',
+        title: 'PSY',
         type: 'line'
       }, {
         key: 'maPsy',
+        title: 'MAPSY',
         type: 'line'
       }]
     });
@@ -2269,9 +2297,11 @@ var DifferentOfMovingAverage = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [10, 50, 10],
       plots: [{
         key: 'dma',
+        title: 'DMA',
         type: 'line'
       }, {
         key: 'ama',
+        title: 'AMA',
         type: 'line'
       }]
     });
@@ -2345,9 +2375,11 @@ var TripleExponentiallySmoothedAverage = /*#__PURE__*/function (_TechnicalIndica
       calcParams: [12, 20],
       plots: [{
         key: 'trix',
+        title: 'TRIX',
         type: 'line'
       }, {
         key: 'maTrix',
+        title: 'MATRIX',
         type: 'line'
       }]
     });
@@ -2426,9 +2458,11 @@ var OnBalanceVolume = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [30],
       plots: [{
         key: 'obv',
+        title: 'OBV',
         type: 'line'
       }, {
         key: 'maObv',
+        title: 'MAOBV',
         type: 'line'
       }]
     });
@@ -2489,9 +2523,11 @@ var VolumeRatio = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [24, 30],
       plots: [{
         key: 'vr',
+        title: 'VR',
         type: 'line'
       }, {
         key: 'maVr',
+        title: 'MAVR',
         type: 'line'
       }]
     });
@@ -2596,6 +2632,7 @@ var WilliamsR = /*#__PURE__*/function (_TechnicalIndicator) {
       return params.map(function (_, i) {
         return {
           key: "wr".concat(i + 1),
+          title: "WR".concat(i + 1),
           type: 'line'
         };
       });
@@ -2648,9 +2685,11 @@ var Momentum = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [6, 10],
       plots: [{
         key: 'mtm',
+        title: 'MTM',
         type: 'line'
       }, {
         key: 'maMtm',
+        title: 'MAMTM',
         type: 'line'
       }]
     });
@@ -2710,6 +2749,7 @@ var StopAndReverse = /*#__PURE__*/function (_TechnicalIndicator) {
       shouldOhlc: true,
       plots: [{
         key: 'sar',
+        title: 'SAR',
         type: 'circle',
         color: function color(data, options) {
           var currentData = data.currentData;
@@ -2810,9 +2850,11 @@ var EaseOfMovementValue = /*#__PURE__*/function (_TechnicalIndicator) {
       calcParams: [14, 9],
       plots: [{
         key: 'emv',
+        title: 'EMV',
         type: 'line'
       }, {
         key: 'maEmv',
+        title: 'MAEMV',
         type: 'line'
       }]
     });
@@ -2966,22 +3008,19 @@ function createNewTechnicalIndicator(_ref2) {
   return new NewTechnicalIndicator();
 }
 /**
- * 获取技术指标信息
+ * 获取技术指标提示数据
  * @param technicalIndicatorData
  * @param technicalIndicator
- * @param yAxis
- * @returns {{values: [], name: string, labels: []}}
+ * @return {{calcParamText: string, values: [], name: string}}
  */
 
 function getTechnicalIndicatorTooltipData() {
   var technicalIndicatorData = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var technicalIndicator = arguments.length > 1 ? arguments[1] : undefined;
-  var yAxis = arguments.length > 2 ? arguments[2] : undefined;
   var calcParams = technicalIndicator.calcParams;
   var plots = technicalIndicator.plots;
   var precision = technicalIndicator.precision;
   var shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber;
-  var labels = [];
   var values = [];
   var name = '';
   var calcParamText = '';
@@ -2995,26 +3034,26 @@ function getTechnicalIndicatorTooltipData() {
   }
 
   plots.forEach(function (plot) {
-    labels.push(plot.key.toUpperCase());
-    var value = technicalIndicatorData[plot.key];
-    var y;
+    var data = {};
 
-    if (isValid(value)) {
-      y = yAxis.convertToPixel(value);
-      value = formatPrecision(value, precision);
+    if (isValid(plot.title)) {
+      var value = technicalIndicatorData[plot.key];
 
-      if (shouldFormatBigNumber) {
-        value = formatBigNumber(value);
+      if (isValid(value)) {
+        value = formatPrecision(value, precision);
+
+        if (shouldFormatBigNumber) {
+          value = formatBigNumber(value);
+        }
       }
+
+      data.title = plot.title;
+      data.value = value;
     }
 
-    values.push({
-      value: value,
-      y: y
-    });
+    values.push(data);
   });
   return {
-    labels: labels,
     values: values,
     name: name,
     calcParamText: calcParamText
@@ -6814,13 +6853,15 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
   }, {
     key: "_drawTechnicalIndicatorTooltip",
     value: function _drawTechnicalIndicatorTooltip(crosshair, dataPos, technicalIndicator, technicalIndicatorOptions) {
+      var _this3 = this;
+
       var offsetTop = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
       var technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip;
 
       if (this._shouldDrawTooltip(crosshair, technicalIndicatorTooltipOptions)) {
         var technicalIndicatorResult = technicalIndicator.result;
         var technicalIndicatorData = technicalIndicatorResult[dataPos];
-        var tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator, this._yAxis);
+        var tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator);
         var colors = technicalIndicatorOptions.line.colors;
 
         var dataList = this._chartData.dataList();
@@ -6833,11 +6874,14 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
           currentData: {
             kLineData: dataList[dataPos],
             technicalIndicatorData: technicalIndicatorData
+          },
+          nextData: {
+            kLineData: dataList[dataPos + 1],
+            technicalIndicatorData: technicalIndicatorResult[dataPos + 1]
           }
         };
         var plots = technicalIndicator.plots;
         var technicalIndicatorTooltipTextOptions = technicalIndicatorTooltipOptions.text;
-        var labels = tooltipData.labels;
         var values = tooltipData.values;
         var textMarginLeft = technicalIndicatorTooltipTextOptions.marginLeft;
         var textMarginRight = technicalIndicatorTooltipTextOptions.marginRight;
@@ -6875,18 +6919,17 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
 
         var lineCount = 0;
         var valueColor;
-
-        for (var i = 0; i < labels.length; i++) {
-          switch (plots[i].type) {
+        plots.forEach(function (plot, i) {
+          switch (plot.type) {
             case PlotType.CIRCLE:
               {
-                valueColor = plots[i].color && plots[i].color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.circle.noChangeColor;
+                valueColor = plot.color && plot.color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.circle.noChangeColor;
                 break;
               }
 
             case PlotType.BAR:
               {
-                valueColor = plots[i].color && plots[i].color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
+                valueColor = plot.color && plot.color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
                 break;
               }
 
@@ -6898,12 +6941,14 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
               }
           }
 
-          labelX += textMarginLeft;
-          var text = "".concat(labels[i], ": ").concat(values[i].value || technicalIndicatorTooltipOptions.defaultValue);
-          var textWidth = calcTextWidth(this._ctx, text);
-          renderText(this._ctx, valueColor, labelX, labelY, text);
-          labelX += textWidth + textMarginRight;
-        }
+          if (isValid(values[i].title)) {
+            labelX += textMarginLeft;
+            var text = "".concat(values[i].title, ": ").concat(values[i].value || technicalIndicatorTooltipOptions.defaultValue);
+            var textWidth = calcTextWidth(_this3._ctx, text);
+            renderText(_this3._ctx, valueColor, labelX, labelY, text);
+            labelX += textWidth + textMarginRight;
+          }
+        });
       }
     }
     /**
@@ -8859,27 +8904,47 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
       var indicatorTextMarginTop = technicalIndicatorTooltipOptions.text.marginTop;
       var indicatorTextMarginBottom = technicalIndicatorTooltipOptions.text.marginBottom;
       var indicatorTextSize = technicalIndicatorTooltipOptions.text.size;
-      var indicatorLabelValues = [];
+      var indicatorTooltipDataList = [];
+
+      var dataList = this._chartData.dataList();
+
       technicalIndicators.forEach(function (technicalIndicator) {
-        var indicatorTooltipData = getTechnicalIndicatorTooltipData(technicalIndicator.result[dataPos], technicalIndicator, _this2._yAxis);
-        indicatorLabelValues.push({
-          labels: indicatorTooltipData.labels || [],
-          values: indicatorTooltipData.values || []
+        var result = technicalIndicator.result;
+        indicatorTooltipDataList.push({
+          tooltipData: getTechnicalIndicatorTooltipData(result[dataPos], technicalIndicator),
+          cbData: {
+            preData: {
+              kLineData: dataList[dataPos - 1],
+              technicalIndicatorData: result[dataPos - 1]
+            },
+            currentData: {
+              kLineData: dataList[dataPos],
+              technicalIndicatorData: result[dataPos]
+            },
+            nextData: {
+              kLineData: dataList[dataPos + 1],
+              technicalIndicatorData: result[dataPos + 1]
+            }
+          }
         });
       });
 
       if (isDrawTechnicalIndicatorTooltip) {
         this._ctx.font = createFont(indicatorTextSize, technicalIndicatorTooltipOptions.text.weight, technicalIndicatorTooltipOptions.text.family);
-        indicatorLabelValues.forEach(function (_ref) {
-          var labels = _ref.labels,
-              values = _ref.values;
-          labels.forEach(function (label, i) {
-            var v = values[i].value || technicalIndicatorTooltipOptions.defaultValue;
-            var text = "".concat(label, ": ").concat(v);
-            var labelWidth = calcTextWidth(_this2._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight;
-            maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
+        indicatorTooltipDataList.forEach(function (_ref) {
+          var tooltipData = _ref.tooltipData;
+          tooltipData.values.forEach(function (_ref2) {
+            var title = _ref2.title,
+                value = _ref2.value;
+
+            if (isValid(title)) {
+              var v = value || technicalIndicatorTooltipOptions.defaultValue;
+              var text = "".concat(title, ": ").concat(v);
+              var labelWidth = calcTextWidth(_this2._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight;
+              maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
+              rectHeight += indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize;
+            }
           });
-          rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize) * labels.length;
         });
       }
 
@@ -8940,21 +9005,49 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
         var indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft;
         var colorSize = colors.length;
         this._ctx.font = createFont(indicatorTextSize, technicalIndicatorTooltipOptions.text.weight, technicalIndicatorTooltipOptions.text.family);
-        indicatorLabelValues.forEach(function (_ref2) {
-          var labels = _ref2.labels,
-              values = _ref2.values;
-          labels.forEach(function (label, i) {
-            labelY += indicatorTextMarginTop;
-            _this2._ctx.textAlign = 'left';
-            _this2._ctx.fillStyle = colors[i % colorSize] || _technicalIndicatorOptions.text.color;
+        indicatorTooltipDataList.forEach(function (_ref3, techIndex) {
+          var tooltipData = _ref3.tooltipData,
+              cbData = _ref3.cbData;
+          var plots = technicalIndicators[techIndex].plots;
+          var lineCount = 0;
+          var valueColor;
+          plots.forEach(function (plot, i) {
+            switch (plot.type) {
+              case PlotType.CIRCLE:
+                {
+                  valueColor = plot.color && plot.color(cbData, _technicalIndicatorOptions) || _technicalIndicatorOptions.circle.noChangeColor;
+                  break;
+                }
 
-            _this2._ctx.fillText("".concat(label.toUpperCase(), ": "), indicatorLabelX, labelY);
+              case PlotType.BAR:
+                {
+                  valueColor = plot.color && plot.color(cbData, _technicalIndicatorOptions) || _technicalIndicatorOptions.bar.noChangeColor;
+                  break;
+                }
 
-            _this2._ctx.textAlign = 'right';
+              case PlotType.LINE:
+                {
+                  valueColor = colors[lineCount % colorSize] || _technicalIndicatorOptions.text.color;
+                  lineCount++;
+                  break;
+                }
+            }
 
-            _this2._ctx.fillText(values[i].value || technicalIndicatorTooltipOptions.defaultValue, rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight, labelY);
+            var value = tooltipData.values[i];
 
-            labelY += indicatorTextSize + indicatorTextMarginBottom;
+            if (isValid(value.title)) {
+              labelY += indicatorTextMarginTop;
+              _this2._ctx.textAlign = 'left';
+              _this2._ctx.fillStyle = valueColor;
+
+              _this2._ctx.fillText("".concat(value.title, ": "), indicatorLabelX, labelY);
+
+              _this2._ctx.textAlign = 'right';
+
+              _this2._ctx.fillText(value.value || technicalIndicatorTooltipOptions.defaultValue, rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight, labelY);
+
+              labelY += indicatorTextSize + indicatorTextMarginBottom;
+            }
           });
         });
       }
@@ -11549,42 +11642,36 @@ var ChartPane = /*#__PURE__*/function () {
 
   }, {
     key: "createPane",
-    value: function createPane() {
-      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : TECHNICAL_INDICATOR_PANE;
+    value: function createPane(type) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var _options$technicalInd = options.technicalIndicatorType,
+          technicalIndicatorType = _options$technicalInd === void 0 ? MACD : _options$technicalInd,
+          _options$height = options.height,
+          height = _options$height === void 0 ? DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT : _options$height,
+          dragEnabled = options.dragEnabled;
+      var technicalIndicatorPaneCount = this._technicalIndicatorPanes.length;
+      var isDrag = isBoolean(dragEnabled) ? dragEnabled : true;
 
-      if (type === TECHNICAL_INDICATOR_PANE) {
-        var _options$technicalInd = options.technicalIndicatorType,
-            technicalIndicatorType = _options$technicalInd === void 0 ? MACD : _options$technicalInd,
-            _options$height = options.height,
-            height = _options$height === void 0 ? DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT : _options$height,
-            dragEnabled = options.dragEnabled;
-        var technicalIndicatorPaneCount = this._technicalIndicatorPanes.length;
-        var isDrag = isBoolean(dragEnabled) ? dragEnabled : true;
+      this._separatorPanes.push(new SeparatorPane(this._chartContainer, this._chartData, technicalIndicatorPaneCount, isDrag, {
+        startDrag: this._separatorStartDrag.bind(this),
+        drag: throttle(this._separatorDrag.bind(this), 50)
+      }));
 
-        this._separatorPanes.push(new SeparatorPane(this._chartContainer, this._chartData, technicalIndicatorPaneCount, isDrag, {
-          startDrag: this._separatorStartDrag.bind(this),
-          drag: throttle(this._separatorDrag.bind(this), 50)
-        }));
+      this._technicalIndicatorBaseId++;
+      var id = "".concat(TECHNICAL_INDICATOR_NAME_PREFIX).concat(this._technicalIndicatorBaseId);
+      var technicalIndicatorPane = new TechnicalIndicatorPane({
+        container: this._chartContainer,
+        chartData: this._chartData,
+        xAxis: this._xAxisPane.xAxis(),
+        technicalIndicatorType: technicalIndicatorType,
+        id: id,
+        height: height
+      });
 
-        this._technicalIndicatorBaseId++;
-        var id = "".concat(TECHNICAL_INDICATOR_NAME_PREFIX).concat(this._technicalIndicatorBaseId);
-        var technicalIndicatorPane = new TechnicalIndicatorPane({
-          container: this._chartContainer,
-          chartData: this._chartData,
-          xAxis: this._xAxisPane.xAxis(),
-          technicalIndicatorType: technicalIndicatorType,
-          id: id,
-          height: height
-        });
+      this._technicalIndicatorPanes.push(technicalIndicatorPane);
 
-        this._technicalIndicatorPanes.push(technicalIndicatorPane);
-
-        this.adjustPaneViewport(true, true, true, true, true);
-        return id;
-      }
-
-      return null;
+      this.adjustPaneViewport(true, true, true, true, true);
+      return id;
     }
     /**
      * 移除一个指标
@@ -11896,7 +11983,7 @@ var Chart = /*#__PURE__*/function () {
     value: function setPriceVolumePrecision(pricePrecision, volumePrecision) {
       if (!isValid(pricePrecision) || !isNumber(pricePrecision) || pricePrecision < 0) {
         {
-          console.warn('Invalid parameter: pricePrecision!!!');
+          console.warn('setPriceVolumePrecision -> Invalid parameter: pricePrecision!!!');
         }
 
         return;
@@ -11904,7 +11991,7 @@ var Chart = /*#__PURE__*/function () {
 
       if (!isValid(volumePrecision) || !isNumber(volumePrecision) || volumePrecision < 0) {
         {
-          console.warn('Invalid parameter: volumePrecision!!!');
+          console.warn('setPriceVolumePrecision -> Invalid parameter: volumePrecision!!!');
         }
 
         return;
@@ -11923,7 +12010,7 @@ var Chart = /*#__PURE__*/function () {
     value: function setTechnicalIndicatorPrecision(precision, technicalIndicatorType) {
       if (!isValid(precision) || !isNumber(precision) || precision < 0) {
         {
-          console.warn('Invalid parameter: precision!!!');
+          console.warn('setTechnicalIndicatorPrecision -> Invalid parameter: precision!!!');
         }
 
         return;
@@ -11979,7 +12066,7 @@ var Chart = /*#__PURE__*/function () {
     value: function setLeftMinVisibleBarCount(barCount) {
       if (!isValid(barCount) || !isNumber(barCount) || barCount <= 0) {
         {
-          console.warn('Invalid parameter: barCount!!!');
+          console.warn('setLeftMinVisibleBarCount -> Invalid parameter: barCount!!!');
         }
 
         return;
@@ -11997,7 +12084,7 @@ var Chart = /*#__PURE__*/function () {
     value: function setRightMinVisibleBarCount(barCount) {
       if (!isValid(barCount) || !isNumber(barCount) || barCount <= 0) {
         {
-          console.warn('Invalid parameter: barCount!!!');
+          console.warn('setRightMinVisibleBarCount -> Invalid parameter: barCount!!!');
         }
 
         return;
@@ -12044,7 +12131,7 @@ var Chart = /*#__PURE__*/function () {
     value: function applyNewData(dataList, more) {
       if (!isArray(dataList)) {
         {
-          console.warn('Invalid parameter: dataList, dataList be an array!!!');
+          console.warn('applyNewData -> Invalid parameter: dataList, dataList be an array!!!');
         }
 
         return;
@@ -12063,7 +12150,7 @@ var Chart = /*#__PURE__*/function () {
     value: function applyMoreData(dataList, more) {
       if (!isArray(dataList)) {
         {
-          console.warn('Invalid parameter: dataList, dataList be an array!!!');
+          console.warn('applyMoreData -> Invalid parameter:dataList, dataList be an array!!!');
         }
 
         return;
@@ -12123,8 +12210,19 @@ var Chart = /*#__PURE__*/function () {
 
   }, {
     key: "createPane",
-    value: function createPane(type, options) {
-      return this._chartPane.createPane(type, options);
+    value: function createPane() {
+      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : TECHNICAL_INDICATOR_PANE;
+      var options = arguments.length > 1 ? arguments[1] : undefined;
+
+      if (type === TECHNICAL_INDICATOR_PANE) {
+        return this._chartPane.createPane(type, options);
+      }
+
+      {
+        console.warn('createPane -> Invalid parameter: type, type only support technicalIndicator!!!');
+      }
+
+      return null;
     }
     /**
      * 添加自定义技术指标
@@ -12138,14 +12236,14 @@ var Chart = /*#__PURE__*/function () {
     }
     /**
      * 移除一个技术指标
-     * @param technicalIndicator
+     * @param technicalIndicatorType
      * @param paneId
      */
 
   }, {
     key: "removeTechnicalIndicator",
-    value: function removeTechnicalIndicator(technicalIndicator, paneId) {
-      this._chartPane.removeTechnicalIndicator(technicalIndicator, paneId);
+    value: function removeTechnicalIndicator(technicalIndicatorType, paneId) {
+      this._chartPane.removeTechnicalIndicator(technicalIndicatorType, paneId);
     }
     /**
      * 添加图形标记
@@ -12159,7 +12257,7 @@ var Chart = /*#__PURE__*/function () {
 
       if (!(type in graphicMarkMapping)) {
         {
-          console.warn('Graphic mark type not found!!!');
+          console.warn('addGraphicMark -> Invalid parameter: type, type not found!!!');
         }
 
         return;
@@ -12229,7 +12327,7 @@ var Chart = /*#__PURE__*/function () {
 
       if (!delegate) {
         {
-          console.warn('Draw action type does not exist!!!');
+          console.warn('subscribeDrawAction -> Invalid parameter: type, type does not exist!!!');
         }
 
         return;
@@ -12250,7 +12348,7 @@ var Chart = /*#__PURE__*/function () {
 
       if (!delegate) {
         {
-          console.warn('Draw action type does not exist!!!');
+          console.warn('unsubscribeDrawAction -> Invalid parameter: type, does not exist!!!');
         }
 
         return;
@@ -12323,7 +12421,7 @@ function checkContainer(container) {
 
 
 function version() {
-  return '6.0.5';
+  return '6.1.0';
 }
 /**
  * 初始化
@@ -12335,7 +12433,7 @@ function version() {
 
 function init(ds) {
   var style = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var errorMessage = 'Chart version is 6.0.5. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
+  var errorMessage = 'Chart version is 6.1.0. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!';
   var container;
 
   if (!ds) {

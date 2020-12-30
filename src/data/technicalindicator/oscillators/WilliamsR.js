@@ -27,7 +27,7 @@ export default class WilliamsR extends TechnicalIndicator {
 
   regeneratePlots (params) {
     return params.map((_, i) => {
-      return { key: `wr${i + 1}`, type: 'line' }
+      return { key: `wr${i + 1}`, title: `WR${i + 1}`, type: 'line' }
     })
   }
 

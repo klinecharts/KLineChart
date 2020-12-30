@@ -22,10 +22,10 @@ export default class DirectionalMovementIndex extends TechnicalIndicator {
       name: DMI,
       calcParams: [14, 6],
       plots: [
-        { key: 'pdi', type: 'line' },
-        { key: 'mdi', type: 'line' },
-        { key: 'adx', type: 'line' },
-        { key: 'adxr', type: 'line' }
+        { key: 'pdi', title: 'PDI', type: 'line' },
+        { key: 'mdi', title: 'MDI', type: 'line' },
+        { key: 'adx', title: 'ADX', type: 'line' },
+        { key: 'adxr', title: 'ADXR', type: 'line' }
       ]
     })
   }
