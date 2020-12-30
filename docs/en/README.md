@@ -36,10 +36,9 @@ version()
 ```js
 setStyleOptions(options)
 getStyleOptions()
-setTechnicalIndicatorParams(technicalIndicatorType, params)
-getTechnicalIndicatorParams(technicalIndicatorType)
+overrideTechnicalIndicator(override)
+getTechnicalIndicatorInfo(technicalIndicatorType)
 setPriceVolumePrecision(pricePrecision, volumePrecision)
-setTechnicalIndicatorPrecision(precision, technicalIndicatorType)
 setTimezone(timezone)
 getTimezone()
 setZoomEnabled(enabled)
@@ -172,6 +171,7 @@ The technicalIndicatorInfo format is as follows:
   baseValue: null,
   minValue: null,
   maxValue: null,
+  styles: null,
   render: (
     ctx, dataSource, viewport,
     styleOptions, xAxis, yAxis,

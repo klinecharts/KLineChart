@@ -192,20 +192,31 @@ export default class ChartData {
   }
 
   /**
-   * 获取技术指标计算参数结合
+   * 获取技术指标信息
    * @param technicalIndicatorType
-   * @returns {function(Array<string>, string, string): Promise}
+   * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
    */
-  technicalIndicatorCalcParams (technicalIndicatorType) {
+  technicalIndicatorInfo (technicalIndicatorType) {
     const technical = this.technicalIndicator(technicalIndicatorType)
     if (technical) {
-      return clone(technical.calcParams)
+      return {
+        name: technical.name,
+        series: technical.series,
+        calcParams: technical.calcParams,
+        precision: technical.precision
+      }
     }
-    const calcParams = {}
+    const technicals = {}
     for (const name in this._technicalIndicatorMapping) {
-      calcParams[name] = clone(this._technicalIndicatorMapping[name].calcParams)
+      const instance = this._technicalIndicatorMapping[name]
+      technicals[name] = {
+        name: instance.name,
+        series: instance.series,
+        calcParams: instance.calcParams,
+        precision: instance.precision
+      }
     }
-    return calcParams
+    return technicals
   }
 
   /**

@@ -177,9 +177,6 @@ export default class TechnicalIndicatorPane extends Pane {
    * @param technicalIndicator
    */
   calcTechnicalIndicator (technicalIndicator) {
-    const technicalIndicatorInstance = this._chartData.technicalIndicator(technicalIndicator.name)
-    technicalIndicator.setPrecision(technicalIndicatorInstance.precision)
-    technicalIndicator.setCalcParams(technicalIndicatorInstance.calcParams)
     technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), technicalIndicator.calcParams, technicalIndicator.plots) || []
   }
 

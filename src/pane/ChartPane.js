@@ -17,7 +17,7 @@ import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
 
 import { YAxisPosition } from '../data/options/styleOptions'
-import { isArray, isBoolean, isFunction, isObject, isNumber, clone } from '../utils/typeChecks'
+import { isArray, isBoolean, isFunction, isObject } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import SeparatorPane from './SeparatorPane'
@@ -282,40 +282,63 @@ export default class ChartPane {
   }
 
   /**
-   * 加载技术指标参数
-   * @param technicalIndicatorType
-   * @param params
+   * 覆盖技术指标
+   * @param name
+   * @param calcParams
+   * @param precision
+   * @param styles
    */
-  applyTechnicalIndicatorParams (technicalIndicatorType, params) {
-    const technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
-    if (technicalIndicator && isArray(params)) {
-      for (const v of params) {
-        if (!isNumber(v) || v <= 0 || parseInt(v, 10) !== v) {
-          return
-        }
-      }
-      technicalIndicator.setCalcParams(clone(params))
+  overrideTechnicalIndicator ({ name, calcParams, precision, styles }) {
+    const technicalIndicator = this._chartData.technicalIndicator(name)
+    if (technicalIndicator) {
+      const calcParamsSuccess = technicalIndicator.setCalcParams(calcParams)
+      const precisionSuccess = technicalIndicator.setPrecision(precision)
+      const styleSuccess = technicalIndicator.setStyles(styles)
       Promise.resolve().then(
         _ => {
-          const candleTechnicalIndicators = this._candlePane.technicalIndicators()
-          let shouldAdjust = false
-          candleTechnicalIndicators.forEach(technicalIndicator => {
-            if (technicalIndicator.name === technicalIndicatorType) {
-              shouldAdjust = true
-              this._candlePane.calcTechnicalIndicator(technicalIndicator)
-            }
-          })
-          this._technicalIndicatorPanes.forEach(pane => {
-            const technicalIndicators = pane.technicalIndicators()
-            technicalIndicators.forEach(technicalIndicator => {
-              if (technicalIndicator.name === technicalIndicatorType) {
-                shouldAdjust = true
-                pane.calcTechnicalIndicator(technicalIndicator)
+          if (calcParamsSuccess || precisionSuccess || styleSuccess) {
+            const candleTechnicalIndicators = this._candlePane.technicalIndicators()
+            let shouldAdjust = false
+            candleTechnicalIndicators.forEach(technicalIndicator => {
+              if (technicalIndicator.name === name) {
+                if (calcParamsSuccess) {
+                  shouldAdjust = true
+                  technicalIndicator.setCalcParams(calcParams)
+                  this._candlePane.calcTechnicalIndicator(technicalIndicator)
+                }
+                if (precisionSuccess) {
+                  shouldAdjust = true
+                  technicalIndicator.setPrecision(precision)
+                }
+                if (styleSuccess) {
+                  shouldAdjust = true
+                  technicalIndicator.setStyles(styles)
+                }
               }
             })
-          })
-          if (shouldAdjust) {
-            this.adjustPaneViewport(false, true, true, true)
+            this._technicalIndicatorPanes.forEach(pane => {
+              const technicalIndicators = pane.technicalIndicators()
+              technicalIndicators.forEach(technicalIndicator => {
+                if (technicalIndicator.name === name) {
+                  if (calcParamsSuccess) {
+                    shouldAdjust = true
+                    technicalIndicator.setCalcParams(calcParams)
+                    pane.calcTechnicalIndicator(technicalIndicator)
+                  }
+                  if (precisionSuccess) {
+                    shouldAdjust = true
+                    technicalIndicator.setPrecision(precision)
+                  }
+                  if (styleSuccess) {
+                    shouldAdjust = true
+                    technicalIndicator.setStyles(styles)
+                  }
+                }
+              })
+            })
+            if (shouldAdjust) {
+              this.adjustPaneViewport(false, true, true, true)
+            }
           }
         }
       )

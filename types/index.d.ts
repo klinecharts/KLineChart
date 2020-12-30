@@ -23,6 +23,7 @@ export declare type PlotType = 'circle' | 'bar' | 'line';
 
 export declare interface TechnicalIndicatorInfoPlot {
   key: string;
+  title?: string;
   type?: PlotType;
   color?: (data: any, options?: any) => string;
   isStroke?: (data: any) => boolean;
@@ -47,13 +48,34 @@ export declare interface Axis {
   convertToPixel: (value: number) => number;
 }
 
-export declare interface TechnicalIndicatorInfo {
+export declare interface TechnicalIndicatorCircleBarStyle {
+  upColor: string;
+  downColor: string;
+  noChangeColor: string;
+}
+
+export declare interface TechnicalIndicatorLineStyle {
+  size: number;
+  colors: string[];
+}
+
+export declare interface TechnicalIndicatorStyles {
+  bar?: TechnicalIndicatorCircleBarStyle;
+  line?: TechnicalIndicatorLineStyle;
+  circle?: TechnicalIndicatorCircleBarStyle;
+}
+
+export declare interface OverrideTechnicalIndicatorInfo {
   name: string;
+  calcParams?: number[];
+  precision?: number;
+  styles?: TechnicalIndicatorStyles;
+}
+
+export declare interface TechnicalIndicatorInfo extends OverrideTechnicalIndicatorInfo {
   calcTechnicalIndicator: (kLineDataList: KLineData[], calcParams: number[], plots: TechnicalIndicatorInfoPlot[]) => any[];
   series?: 'price' | 'volume' | 'normal'
-  calcParams?: number[];
   plots?: TechnicalIndicatorInfoPlot[];
-  precision?: number;
   shouldCheckParamCount?: boolean;
   shouldOhlc?: boolean;
   shouldFormatBigNumber?: boolean,
@@ -87,8 +109,8 @@ export declare interface DrawActionCallbackParams {
 export declare interface Chart {
   setStyleOptions(options: any): void;
   getStyleOptions(): any;
-  setTechnicalIndicatorParams(technicalIndicatorType: string, params: number[]): void;
-  getTechnicalIndicatorParams(technicalIndicatorType?: string): any;
+  overrideTechnicalIndicator(override: OverrideTechnicalIndicatorInfo): void;
+  getTechnicalIndicatorInfo(technicalIndicatorType?: string): any;
   setPriceVolumePrecision(pricePrecision: number, volumePrecision: number): void;
   setTechnicalIndicatorPrecision(precision: number, technicalIndicatorType?: string): void;
   setTimezone(timezone: string): void;

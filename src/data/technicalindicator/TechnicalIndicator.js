@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { clone, isArray, isBoolean, isNumber, isValid } from '../../utils/typeChecks'
+import { clone, isArray, isBoolean, isNumber, isValid, merge, isObject } from '../../utils/typeChecks'
 
 /**
  * 技术指标系列
@@ -29,7 +29,7 @@ export default class TechnicalIndicator {
     name, series, calcParams, plots,
     precision, shouldCheckParamCount,
     shouldOhlc, shouldFormatBigNumber,
-    baseValue, minValue, maxValue
+    baseValue, minValue, maxValue, styles
   }) {
     // 指标名
     this.name = name || ''
@@ -53,25 +53,47 @@ export default class TechnicalIndicator {
     this.minValue = minValue
     // 指定的最大值
     this.maxValue = maxValue
+    // 样式
+    this.styles = styles
     // 指标计算结果
     this.result = []
   }
 
   setPrecision (precision) {
-    if (precision >= 0 && isNumber(precision)) {
+    if (isNumber(precision) && precision >= 0) {
       this.precision = parseInt(precision, 10)
+      return true
     }
+    return false
   }
 
   setCalcParams (params = []) {
     if (this.shouldCheckParamCount && params.length !== this.calcParams.length) {
-      return
+      return false
+    }
+    for (const v of params) {
+      if (!isNumber(v) || v <= 0 || parseInt(v, 10) !== v) {
+        return false
+      }
     }
     this.calcParams = clone(params)
     const plots = this.regeneratePlots(params)
     if (plots && isArray(plots)) {
       this.plots = plots
     }
+    return true
+  }
+
+  setStyles (styles) {
+    if (!isObject(styles)) {
+      return false
+    }
+    if (this.styles) {
+      merge(this.styles, styles)
+    } else {
+      this.styles = clone(styles)
+    }
+    return true
   }
 
   /**

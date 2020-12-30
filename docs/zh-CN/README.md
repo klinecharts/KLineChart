@@ -49,24 +49,18 @@ setStyleOptions(options)
 // 获取样式配置
 getStyleOptions()
 
-// 设置技术指标参数
-// technicalIndicatorType 技术指标类型，类型详情可参阅技术指标
-// params 技术指标计算参数，详情可参阅技术指标参数
-setTechnicalIndicatorParams(technicalIndicatorType, params)
+// 覆盖技术指标信息
+// override 需要覆盖的一些参数
+overrideTechnicalIndicator(override)
 
-// 获取技术指标参数
+// 获取技术指标信息
 // technicalIndicatorType 技术指标类型，可缺省，缺省则返回所有
-getTechnicalIndicatorParams(technicalIndicatorType)
+getTechnicalIndicatorInfo(technicalIndicatorType)
 
 // 设置价格和数量精度
 // pricePrecision 价格精度，影响整个图表显示的价格的数字精度，还包括指标系列是price的技术指标
 // volumePrecision 数量精度，影响整个图表显示的数量的数字精度，还包括指标系列是volume的技术指标
 setPriceVolumePrecision(pricePrecision, volumePrecision)
-
-// 设置技术指标精度
-// precision 精度小数位数
-// technicalIndicatorType 技术指标类型，可缺省，缺省则设置所有技术指标精度
-setTechnicalIndicatorPrecision(precision, technicalIndicatorType)
 
 // 设置时区
 // timezone 时区名，如'Asia/Shanghai'
@@ -310,13 +304,15 @@ technicalIndicatorInfo格式如下：
   minValue: null,
   // 指定的最大值，可缺省
   maxValue: null,
+  // 样式，可缺省，缺省则同步样式配置
+  styles: null,
   // 自定义渲染，可缺省，
   // ctx canvas上下文
   // dataSource 数据源，包含了原始的k线数据和计算出来的指标数据以及起始绘制点位置
   // viewport 一些绘图可能需要的一些参数
   // xAxis x轴组件，包含值和坐标转换的一些方法
   // yAxis y轴组件，包含值和坐标转换的一些方法
-  // isCandleStickTechnicalIndicator 是否是蜡烛图指标
+  // isCandleTechnicalIndicator 是否是蜡烛图指标
   render: (
     ctx, dataSource, viewport,
     styleOptions, xAxis, yAxis,

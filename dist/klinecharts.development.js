@@ -982,7 +982,8 @@ var TechnicalIndicator = /*#__PURE__*/function () {
         shouldFormatBigNumber = _ref.shouldFormatBigNumber,
         baseValue = _ref.baseValue,
         minValue = _ref.minValue,
-        maxValue = _ref.maxValue;
+        maxValue = _ref.maxValue,
+        styles = _ref.styles;
 
     _classCallCheck(this, TechnicalIndicator);
 
@@ -1007,7 +1008,9 @@ var TechnicalIndicator = /*#__PURE__*/function () {
 
     this.minValue = minValue; // 指定的最大值
 
-    this.maxValue = maxValue; // 指标计算结果
+    this.maxValue = maxValue; // 样式
+
+    this.styles = styles; // 指标计算结果
 
     this.result = [];
   }
@@ -1015,9 +1018,12 @@ var TechnicalIndicator = /*#__PURE__*/function () {
   _createClass(TechnicalIndicator, [{
     key: "setPrecision",
     value: function setPrecision(precision) {
-      if (precision >= 0 && isNumber(precision)) {
+      if (isNumber(precision) && precision >= 0) {
         this.precision = parseInt(precision, 10);
+        return true;
       }
+
+      return false;
     }
   }, {
     key: "setCalcParams",
@@ -1025,7 +1031,24 @@ var TechnicalIndicator = /*#__PURE__*/function () {
       var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
       if (this.shouldCheckParamCount && params.length !== this.calcParams.length) {
-        return;
+        return false;
+      }
+
+      var _iterator = _createForOfIteratorHelper(params),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var v = _step.value;
+
+          if (!isNumber(v) || v <= 0 || parseInt(v, 10) !== v) {
+            return false;
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
       }
 
       this.calcParams = clone(params);
@@ -1034,6 +1057,23 @@ var TechnicalIndicator = /*#__PURE__*/function () {
       if (plots && isArray(plots)) {
         this.plots = plots;
       }
+
+      return true;
+    }
+  }, {
+    key: "setStyles",
+    value: function setStyles(styles) {
+      if (!isObject(styles)) {
+        return false;
+      }
+
+      if (this.styles) {
+        merge(this.styles, styles);
+      } else {
+        this.styles = clone(styles);
+      }
+
+      return true;
     }
     /**
      * 计算技术指标
@@ -4994,27 +5034,38 @@ var ChartData = /*#__PURE__*/function () {
       merge(this._styleOptions, options);
     }
     /**
-     * 获取技术指标计算参数结合
+     * 获取技术指标信息
      * @param technicalIndicatorType
-     * @returns {function(Array<string>, string, string): Promise}
+     * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
      */
 
   }, {
-    key: "technicalIndicatorCalcParams",
-    value: function technicalIndicatorCalcParams(technicalIndicatorType) {
+    key: "technicalIndicatorInfo",
+    value: function technicalIndicatorInfo(technicalIndicatorType) {
       var technical = this.technicalIndicator(technicalIndicatorType);
 
       if (technical) {
-        return clone(technical.calcParams);
+        return {
+          name: technical.name,
+          series: technical.series,
+          calcParams: technical.calcParams,
+          precision: technical.precision
+        };
       }
 
-      var calcParams = {};
+      var technicals = {};
 
       for (var name in this._technicalIndicatorMapping) {
-        calcParams[name] = clone(this._technicalIndicatorMapping[name].calcParams);
+        var instance = this._technicalIndicatorMapping[name];
+        technicals[name] = {
+          name: instance.name,
+          series: instance.series,
+          calcParams: instance.calcParams,
+          precision: instance.precision
+        };
       }
 
-      return calcParams;
+      return technicals;
     }
     /**
      * 根据指标类型获取指标类
@@ -8398,10 +8449,6 @@ var TechnicalIndicatorPane = /*#__PURE__*/function (_Pane) {
   }, {
     key: "calcTechnicalIndicator",
     value: function calcTechnicalIndicator(technicalIndicator) {
-      var technicalIndicatorInstance = this._chartData.technicalIndicator(technicalIndicator.name);
-
-      technicalIndicator.setPrecision(technicalIndicatorInstance.precision);
-      technicalIndicator.setCalcParams(technicalIndicatorInstance.calcParams);
       technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), technicalIndicator.calcParams, technicalIndicator.plots) || [];
     }
     /**
@@ -11498,61 +11545,81 @@ var ChartPane = /*#__PURE__*/function () {
       return this._chartData;
     }
     /**
-     * 加载技术指标参数
-     * @param technicalIndicatorType
-     * @param params
+     * 覆盖技术指标
+     * @param name
+     * @param calcParams
+     * @param precision
+     * @param styles
      */
 
   }, {
-    key: "applyTechnicalIndicatorParams",
-    value: function applyTechnicalIndicatorParams(technicalIndicatorType, params) {
+    key: "overrideTechnicalIndicator",
+    value: function overrideTechnicalIndicator(_ref) {
       var _this2 = this;
 
-      var technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType);
+      var name = _ref.name,
+          calcParams = _ref.calcParams,
+          precision = _ref.precision,
+          styles = _ref.styles;
 
-      if (technicalIndicator && isArray(params)) {
-        var _iterator = _createForOfIteratorHelper(params),
-            _step;
+      var technicalIndicator = this._chartData.technicalIndicator(name);
 
-        try {
-          for (_iterator.s(); !(_step = _iterator.n()).done;) {
-            var v = _step.value;
-
-            if (!isNumber(v) || v <= 0 || parseInt(v, 10) !== v) {
-              return;
-            }
-          }
-        } catch (err) {
-          _iterator.e(err);
-        } finally {
-          _iterator.f();
-        }
-
-        technicalIndicator.setCalcParams(clone(params));
+      if (technicalIndicator) {
+        var calcParamsSuccess = technicalIndicator.setCalcParams(calcParams);
+        var precisionSuccess = technicalIndicator.setPrecision(precision);
+        var styleSuccess = technicalIndicator.setStyles(styles);
         Promise.resolve().then(function (_) {
-          var candleTechnicalIndicators = _this2._candlePane.technicalIndicators();
+          if (calcParamsSuccess || precisionSuccess || styleSuccess) {
+            var candleTechnicalIndicators = _this2._candlePane.technicalIndicators();
 
-          var shouldAdjust = false;
-          candleTechnicalIndicators.forEach(function (technicalIndicator) {
-            if (technicalIndicator.name === technicalIndicatorType) {
-              shouldAdjust = true;
+            var shouldAdjust = false;
+            candleTechnicalIndicators.forEach(function (technicalIndicator) {
+              if (technicalIndicator.name === name) {
+                if (calcParamsSuccess) {
+                  shouldAdjust = true;
+                  technicalIndicator.setCalcParams(calcParams);
 
-              _this2._candlePane.calcTechnicalIndicator(technicalIndicator);
-            }
-          });
+                  _this2._candlePane.calcTechnicalIndicator(technicalIndicator);
+                }
 
-          _this2._technicalIndicatorPanes.forEach(function (pane) {
-            var technicalIndicators = pane.technicalIndicators();
-            technicalIndicators.forEach(function (technicalIndicator) {
-              if (technicalIndicator.name === technicalIndicatorType) {
-                shouldAdjust = true;
-                pane.calcTechnicalIndicator(technicalIndicator);
+                if (precisionSuccess) {
+                  shouldAdjust = true;
+                  technicalIndicator.setPrecision(precision);
+                }
+
+                if (styleSuccess) {
+                  shouldAdjust = true;
+                  technicalIndicator.setStyles(styles);
+                }
               }
             });
-          });
 
-          if (shouldAdjust) {
-            _this2.adjustPaneViewport(false, true, true, true);
+            _this2._technicalIndicatorPanes.forEach(function (pane) {
+              var technicalIndicators = pane.technicalIndicators();
+              technicalIndicators.forEach(function (technicalIndicator) {
+                if (technicalIndicator.name === name) {
+                  if (calcParamsSuccess) {
+                    shouldAdjust = true;
+                    technicalIndicator.setCalcParams(calcParams);
+                    pane.calcTechnicalIndicator(technicalIndicator);
+                  }
+
+                  if (precisionSuccess) {
+                    shouldAdjust = true;
+                    technicalIndicator.setPrecision(precision);
+                  }
+
+                  if (styleSuccess) {
+                    shouldAdjust = true;
+                    technicalIndicator.setStyles(styles);
+                  }
+                }
+              });
+            });
+
+            if (shouldAdjust) {
+              _this2.adjustPaneViewport(false, true, true, true);
+            }
           }
         });
       }
@@ -11736,12 +11803,12 @@ var ChartPane = /*#__PURE__*/function () {
       var technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType);
 
       if (paneId) {
-        var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step2;
+        var _iterator = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+            _step;
 
         try {
-          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-            var pane = _step2.value;
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var pane = _step.value;
 
             if (pane.id() === paneId) {
               if (pane.setTechnicalIndicator(technicalIndicator, isStack)) {
@@ -11752,9 +11819,9 @@ var ChartPane = /*#__PURE__*/function () {
             }
           }
         } catch (err) {
-          _iterator2.e(err);
+          _iterator.e(err);
         } finally {
-          _iterator2.f();
+          _iterator.f();
         }
       } else {
         if (this._candlePane.setTechnicalIndicator(technicalIndicator, isStack)) {
@@ -11771,12 +11838,12 @@ var ChartPane = /*#__PURE__*/function () {
     key: "getTechnicalIndicatorType",
     value: function getTechnicalIndicatorType(paneId) {
       if (paneId) {
-        var _iterator3 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
-            _step3;
+        var _iterator2 = _createForOfIteratorHelper(this._technicalIndicatorPanes),
+            _step2;
 
         try {
-          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-            var pane = _step3.value;
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var pane = _step2.value;
 
             if (pane.id() === paneId) {
               return pane.technicalIndicators().map(function (technicalIndicator) {
@@ -11785,9 +11852,9 @@ var ChartPane = /*#__PURE__*/function () {
             }
           }
         } catch (err) {
-          _iterator3.e(err);
+          _iterator2.e(err);
         } finally {
-          _iterator3.f();
+          _iterator2.f();
         }
       } else {
         return this._candlePane.technicalIndicators().map(function (technicalIndicator) {
@@ -11949,28 +12016,25 @@ var Chart = /*#__PURE__*/function () {
       return clone(this._chartPane.chartData().styleOptions());
     }
     /**
-     * 加载技术指标参数
-     * @param technicalIndicatorType
-     * @param params
+     * 覆盖技术指标
+     * @param override
      */
 
   }, {
-    key: "setTechnicalIndicatorParams",
-    value: function setTechnicalIndicatorParams(technicalIndicatorType, params) {
-      if (technicalIndicatorType) {
-        this._chartPane.applyTechnicalIndicatorParams(technicalIndicatorType, params);
-      }
+    key: "overrideTechnicalIndicator",
+    value: function overrideTechnicalIndicator(override) {
+      this._chartPane.overrideTechnicalIndicator(override);
     }
     /**
-     * 获取技术指标参数配置
+     * 获取技术指标信息
      * @param technicalIndicatorType
-     * @returns {function(Array<string>, string, string): Promise}
+     * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
      */
 
   }, {
-    key: "getTechnicalIndicatorParams",
-    value: function getTechnicalIndicatorParams(technicalIndicatorType) {
-      return this._chartPane.chartData().technicalIndicatorCalcParams(technicalIndicatorType);
+    key: "getTechnicalIndicatorInfo",
+    value: function getTechnicalIndicatorInfo(technicalIndicatorType) {
+      return this._chartPane.chartData().technicalIndicatorInfo(technicalIndicatorType);
     }
     /**
      * 设置价格数量精度
@@ -11998,25 +12062,6 @@ var Chart = /*#__PURE__*/function () {
       }
 
       this._chartPane.chartData().applyPriceVolumePrecision(pricePrecision, volumePrecision);
-    }
-    /**
-     * 设置技术指标精度
-     * @param precision
-     * @param technicalIndicatorType
-     */
-
-  }, {
-    key: "setTechnicalIndicatorPrecision",
-    value: function setTechnicalIndicatorPrecision(precision, technicalIndicatorType) {
-      if (!isValid(precision) || !isNumber(precision) || precision < 0) {
-        {
-          console.warn('setTechnicalIndicatorPrecision -> Invalid parameter: precision!!!');
-        }
-
-        return;
-      }
-
-      this._chartPane.chartData().applyTechnicalIndicatorPrecision(precision, technicalIndicatorType);
     }
     /**
      * 设置时区

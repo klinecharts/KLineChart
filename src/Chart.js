@@ -42,23 +42,20 @@ export default class Chart {
   }
 
   /**
-   * 加载技术指标参数
-   * @param technicalIndicatorType
-   * @param params
+   * 覆盖技术指标
+   * @param override
    */
-  setTechnicalIndicatorParams (technicalIndicatorType, params) {
-    if (technicalIndicatorType) {
-      this._chartPane.applyTechnicalIndicatorParams(technicalIndicatorType, params)
-    }
+  overrideTechnicalIndicator (override) {
+    this._chartPane.overrideTechnicalIndicator(override)
   }
 
   /**
-   * 获取技术指标参数配置
+   * 获取技术指标信息
    * @param technicalIndicatorType
-   * @returns {function(Array<string>, string, string): Promise}
+   * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
    */
-  getTechnicalIndicatorParams (technicalIndicatorType) {
-    return this._chartPane.chartData().technicalIndicatorCalcParams(technicalIndicatorType)
+  getTechnicalIndicatorInfo (technicalIndicatorType) {
+    return this._chartPane.chartData().technicalIndicatorInfo(technicalIndicatorType)
   }
 
   /**
@@ -80,21 +77,6 @@ export default class Chart {
       return
     }
     this._chartPane.chartData().applyPriceVolumePrecision(pricePrecision, volumePrecision)
-  }
-
-  /**
-   * 设置技术指标精度
-   * @param precision
-   * @param technicalIndicatorType
-   */
-  setTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
-    if (!isValid(precision) || !isNumber(precision) || precision < 0) {
-      if (DEV) {
-        console.warn('setTechnicalIndicatorPrecision -> Invalid parameter: precision!!!')
-      }
-      return
-    }
-    this._chartPane.chartData().applyTechnicalIndicatorPrecision(precision, technicalIndicatorType)
   }
 
   /**
