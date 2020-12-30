@@ -203,7 +203,8 @@ export default class ChartData {
         name: technical.name,
         series: technical.series,
         calcParams: technical.calcParams,
-        precision: technical.precision
+        precision: technical.precision,
+        styles: technical.styles
       }
     }
     const technicals = {}
@@ -213,7 +214,8 @@ export default class ChartData {
         name: instance.name,
         series: instance.series,
         calcParams: instance.calcParams,
-        precision: instance.precision
+        precision: instance.precision,
+        styles: instance.styles
       }
     }
     return technicals

@@ -27,7 +27,7 @@ export function merge (target, source) {
       ) {
         merge(targetProp, sourceProp)
       } else {
-        if (source[key] || source[key] === 0 || source[key] === false) {
+        if (isValid(source[key])) {
           target[key] = source[key]
         }
       }

@@ -148,10 +148,11 @@ export default class TechnicalIndicatorCrosshairView extends View {
   ) {
     const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
     if (this._shouldDrawTooltip(crosshair, technicalIndicatorTooltipOptions)) {
+      const styles = technicalIndicator.styles || technicalIndicatorOptions
       const technicalIndicatorResult = technicalIndicator.result
       const technicalIndicatorData = technicalIndicatorResult[dataPos]
       const tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator)
-      const colors = technicalIndicatorOptions.line.colors
+      const colors = styles.line.colors
       const dataList = this._chartData.dataList()
       const cbData = {
         preData: { kLineData: dataList[dataPos - 1], technicalIndicatorData: technicalIndicatorResult[dataPos - 1] },
@@ -195,11 +196,11 @@ export default class TechnicalIndicatorCrosshairView extends View {
       plots.forEach((plot, i) => {
         switch (plot.type) {
           case PlotType.CIRCLE: {
-            valueColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor
+            valueColor = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
             break
           }
           case PlotType.BAR: {
-            valueColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
+            valueColor = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
             break
           }
           case PlotType.LINE: {

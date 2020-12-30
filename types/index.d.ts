@@ -49,14 +49,14 @@ export declare interface Axis {
 }
 
 export declare interface TechnicalIndicatorCircleBarStyle {
-  upColor: string;
-  downColor: string;
-  noChangeColor: string;
+  upColor?: string;
+  downColor?: string;
+  noChangeColor?: string;
 }
 
 export declare interface TechnicalIndicatorLineStyle {
-  size: number;
-  colors: string[];
+  size?: number;
+  colors?: string[];
 }
 
 export declare interface TechnicalIndicatorStyles {

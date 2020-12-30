@@ -142,10 +142,12 @@ export default class YAxisView extends View {
       const plots = technicalIndicator.plots
       const cbData = {
         preData: { kLineData: dataList[dataSize - 2], technicalIndicatorData: technicalIndicatorResult[dataSize - 2] },
-        currentData: { kLineData: dataList[dataSize - 1], technicalIndicatorData }
+        currentData: { kLineData: dataList[dataSize - 1], technicalIndicatorData },
+        nextData: { kLineData: null, technicalIndicatorData: null }
       }
       const precision = technicalIndicator.precision
-      const colors = technicalIndicatorOptions.line.colors || []
+      const styles = technicalIndicator.styles || technicalIndicatorOptions
+      const colors = styles.line.colors || []
       const colorSize = colors.length
       let lineCount = 0
       plots.forEach(plot => {
@@ -153,17 +155,19 @@ export default class YAxisView extends View {
         let backgroundColor
         switch (plot.type) {
           case PlotType.CIRCLE: {
-            backgroundColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor
+            backgroundColor = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
             break
           }
           case PlotType.BAR: {
-            backgroundColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
+            backgroundColor = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
             break
           }
-          default: {
+          case PlotType.LINE: {
             backgroundColor = colors[lineCount % colorSize]
             lineCount++
+            break
           }
+          default: { break }
         }
         if (isValid(value)) {
           this._drawMarkLabel(

@@ -244,31 +244,31 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     if (isDrawTechnicalIndicatorTooltip) {
       // 开始渲染指标数据文字
       const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
-      const colors = technicalIndicatorOptions.line.colors
       const indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft
-      const colorSize = colors.length
       this._ctx.font = createFont(
         indicatorTextSize,
         technicalIndicatorTooltipOptions.text.weight,
         technicalIndicatorTooltipOptions.text.family
       )
-
       indicatorTooltipDataList.forEach(({ tooltipData, cbData }, techIndex) => {
+        const styles = technicalIndicators[techIndex].styles || technicalIndicatorOptions
+        const colors = styles.line.colors
+        const colorSize = colors.length
         const plots = technicalIndicators[techIndex].plots
         let lineCount = 0
         let valueColor
         plots.forEach((plot, i) => {
           switch (plot.type) {
             case PlotType.CIRCLE: {
-              valueColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor
+              valueColor = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
               break
             }
             case PlotType.BAR: {
-              valueColor = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
+              valueColor = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
               break
             }
             case PlotType.LINE: {
-              valueColor = colors[lineCount % colorSize] || technicalIndicatorOptions.text.color
+              valueColor = colors[lineCount % colorSize] || styles.text.color
               lineCount++
               break
             }

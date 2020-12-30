@@ -293,7 +293,7 @@ export default class ChartPane {
     if (technicalIndicator) {
       const calcParamsSuccess = technicalIndicator.setCalcParams(calcParams)
       const precisionSuccess = technicalIndicator.setPrecision(precision)
-      const styleSuccess = technicalIndicator.setStyles(styles)
+      const styleSuccess = technicalIndicator.setStyles(styles, this._chartData.styleOptions().technicalIndicator)
       Promise.resolve().then(
         _ => {
           if (calcParamsSuccess || precisionSuccess || styleSuccess) {

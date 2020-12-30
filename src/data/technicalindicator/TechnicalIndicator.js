@@ -67,7 +67,10 @@ export default class TechnicalIndicator {
     return false
   }
 
-  setCalcParams (params = []) {
+  setCalcParams (params) {
+    if (!isArray(params)) {
+      return false
+    }
     if (this.shouldCheckParamCount && params.length !== this.calcParams.length) {
       return false
     }
@@ -84,14 +87,19 @@ export default class TechnicalIndicator {
     return true
   }
 
-  setStyles (styles) {
+  setStyles (styles, defaultStyles) {
     if (!isObject(styles)) {
       return false
     }
     if (this.styles) {
       merge(this.styles, styles)
     } else {
-      this.styles = clone(styles)
+      this.styles = {
+        bar: clone(defaultStyles.bar),
+        line: clone(defaultStyles.line),
+        circle: clone(defaultStyles.circle)
+      }
+      merge(this.styles, clone(styles))
     }
     return true
   }

@@ -74,13 +74,14 @@ export default class TechnicalIndicatorView extends View {
    * @private
    */
   _drawTechnicalIndicators () {
+    const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const technicalIndicators = this._additionalDataProvider.technicalIndicators()
     technicalIndicators.forEach(technicalIndicator => {
       const plots = technicalIndicator.plots
       const lines = []
-      const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
       const dataList = this._chartData.dataList()
       const technicalIndicatorResult = technicalIndicator.result
+      const styles = technicalIndicator.styles || technicalIndicatorOptions
       // 技术指标自定义绘制
       if (technicalIndicator.render) {
         this._ctx.save()
@@ -118,7 +119,7 @@ export default class TechnicalIndicatorView extends View {
           const technicalIndicatorData = technicalIndicatorResult[i] || {}
           let lineValueIndex = 0
           if (technicalIndicator.shouldOhlc && !isCandleYAxis) {
-            this._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, technicalIndicatorOptions.bar, CandleType.OHLC)
+            this._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, styles.bar, CandleType.OHLC)
           }
           const coordinateY = {}
           plots.forEach(plot => {
@@ -130,13 +131,14 @@ export default class TechnicalIndicatorView extends View {
                 if (isValid(value)) {
                   const cbData = {
                     preData: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
-                    currentData: { kLineData, technicalIndicatorData }
+                    currentData: { kLineData, technicalIndicatorData },
+                    nextData: { kLineData: dataList[i + 1], technicalIndicatorData: technicalIndicatorResult[i + 1] }
                   }
                   const circle = {
                     x,
                     y: valueY,
                     radius: halfBarSpace,
-                    color: (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.circle.noChangeColor,
+                    color: (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor,
                     isStroke: plot.isStroke ? plot.isStroke(cbData) : true
                   }
                   this._drawCircle(circle)
@@ -147,7 +149,8 @@ export default class TechnicalIndicatorView extends View {
                 if (isValid(value)) {
                   const cbData = {
                     preData: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
-                    currentData: { kLineData, technicalIndicatorData }
+                    currentData: { kLineData, technicalIndicatorData },
+                    nextData: { kLineData: dataList[i + 1], technicalIndicatorData: technicalIndicatorResult[i + 1] }
                   }
                   const height = Math.abs(baseValueY - valueY)
                   const bar = {
@@ -160,26 +163,21 @@ export default class TechnicalIndicatorView extends View {
                   } else {
                     bar.y = height < 1 ? baseValueY - 1 : valueY
                   }
-                  bar.color = (plot.color && plot.color(cbData, technicalIndicatorOptions)) || technicalIndicatorOptions.bar.noChangeColor
+                  bar.color = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
                   bar.isStroke = plot.isStroke ? plot.isStroke(cbData) : false
                   this._drawBar(bar)
                 }
                 break
               }
               case PlotType.LINE: {
+                let line = null
                 if (isValid(value)) {
-                  const line = { x: x, y: valueY }
-                  if (lines[lineValueIndex]) {
-                    lines[lineValueIndex].push(line)
-                  } else {
-                    lines[lineValueIndex] = [line]
-                  }
+                  line = { x: x, y: valueY }
+                }
+                if (lines[lineValueIndex]) {
+                  lines[lineValueIndex].push(line)
                 } else {
-                  if (lines[lineValueIndex]) {
-                    lines[lineValueIndex].push(null)
-                  } else {
-                    lines[lineValueIndex] = [null]
-                  }
+                  lines[lineValueIndex] = [line]
                 }
                 lineValueIndex++
                 break
@@ -201,7 +199,7 @@ export default class TechnicalIndicatorView extends View {
           })
         },
         () => {
-          this._drawLines(lines, technicalIndicatorOptions)
+          this._drawLines(lines, styles)
         }
       )
     })
@@ -213,8 +211,8 @@ export default class TechnicalIndicatorView extends View {
    * @param technicalIndicatorOptions
    */
   _drawLines (lines, technicalIndicatorOptions) {
-    const colors = technicalIndicatorOptions.line.colors
-    const colorSize = (colors || []).length
+    const colors = technicalIndicatorOptions.line.colors || []
+    const colorSize = colors.length
     this._ctx.lineWidth = technicalIndicatorOptions.line.size
     renderLine(this._ctx, () => {
       lines.forEach((lineItem, i) => {

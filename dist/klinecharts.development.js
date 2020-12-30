@@ -304,7 +304,7 @@ function merge(target, source) {
       if (isObject(sourceProp) && isObject(targetProp) && !isArray(sourceProp) && !isArray(targetProp)) {
         merge(targetProp, sourceProp);
       } else {
-        if (source[key] || source[key] === 0 || source[key] === false) {
+        if (isValid(source[key])) {
           target[key] = source[key];
         }
       }
@@ -1027,8 +1027,10 @@ var TechnicalIndicator = /*#__PURE__*/function () {
     }
   }, {
     key: "setCalcParams",
-    value: function setCalcParams() {
-      var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    value: function setCalcParams(params) {
+      if (!isArray(params)) {
+        return false;
+      }
 
       if (this.shouldCheckParamCount && params.length !== this.calcParams.length) {
         return false;
@@ -1062,7 +1064,7 @@ var TechnicalIndicator = /*#__PURE__*/function () {
     }
   }, {
     key: "setStyles",
-    value: function setStyles(styles) {
+    value: function setStyles(styles, defaultStyles) {
       if (!isObject(styles)) {
         return false;
       }
@@ -1070,7 +1072,12 @@ var TechnicalIndicator = /*#__PURE__*/function () {
       if (this.styles) {
         merge(this.styles, styles);
       } else {
-        this.styles = clone(styles);
+        this.styles = {
+          bar: clone(defaultStyles.bar),
+          line: clone(defaultStyles.line),
+          circle: clone(defaultStyles.circle)
+        };
+        merge(this.styles, clone(styles));
       }
 
       return true;
@@ -2979,6 +2986,7 @@ function createTechnicalIndicatorMapping() {
  * @param baseValue
  * @param minValue
  * @param maxValue
+ * @param styles
  * @param calcTechnicalIndicator
  * @param regeneratePlots
  * @param render
@@ -2997,6 +3005,7 @@ function createNewTechnicalIndicator(_ref2) {
       baseValue = _ref2.baseValue,
       minValue = _ref2.minValue,
       maxValue = _ref2.maxValue,
+      styles = _ref2.styles,
       calcTechnicalIndicator = _ref2.calcTechnicalIndicator,
       regeneratePlots = _ref2.regeneratePlots,
       render = _ref2.render;
@@ -3028,7 +3037,8 @@ function createNewTechnicalIndicator(_ref2) {
         shouldFormatBigNumber: shouldFormatBigNumber,
         baseValue: baseValue,
         minValue: minValue,
-        maxValue: maxValue
+        maxValue: maxValue,
+        styles: styles
       });
     }
 
@@ -5049,7 +5059,8 @@ var ChartData = /*#__PURE__*/function () {
           name: technical.name,
           series: technical.series,
           calcParams: technical.calcParams,
-          precision: technical.precision
+          precision: technical.precision,
+          styles: technical.styles
         };
       }
 
@@ -5061,7 +5072,8 @@ var ChartData = /*#__PURE__*/function () {
           name: instance.name,
           series: instance.series,
           calcParams: instance.calcParams,
-          precision: instance.precision
+          precision: instance.precision,
+          styles: instance.styles
         };
       }
 
@@ -6298,17 +6310,18 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
     value: function _drawTechnicalIndicators() {
       var _this3 = this;
 
+      var technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
+
       var technicalIndicators = this._additionalDataProvider.technicalIndicators();
 
       technicalIndicators.forEach(function (technicalIndicator) {
         var plots = technicalIndicator.plots;
         var lines = [];
 
-        var technicalIndicatorOptions = _this3._chartData.styleOptions().technicalIndicator;
-
         var dataList = _this3._chartData.dataList();
 
-        var technicalIndicatorResult = technicalIndicator.result; // 技术指标自定义绘制
+        var technicalIndicatorResult = technicalIndicator.result;
+        var styles = technicalIndicator.styles || technicalIndicatorOptions; // 技术指标自定义绘制
 
         if (technicalIndicator.render) {
           _this3._ctx.save();
@@ -6345,7 +6358,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
           var lineValueIndex = 0;
 
           if (technicalIndicator.shouldOhlc && !isCandleYAxis) {
-            _this3._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, technicalIndicatorOptions.bar, CandleType.OHLC);
+            _this3._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, styles.bar, CandleType.OHLC);
           }
 
           var coordinateY = {};
@@ -6368,13 +6381,17 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                       currentData: {
                         kLineData: kLineData,
                         technicalIndicatorData: technicalIndicatorData
+                      },
+                      nextData: {
+                        kLineData: dataList[i + 1],
+                        technicalIndicatorData: technicalIndicatorResult[i + 1]
                       }
                     };
                     var circle = {
                       x: x,
                       y: valueY,
                       radius: halfBarSpace,
-                      color: plot.color && plot.color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.circle.noChangeColor,
+                      color: plot.color && plot.color(cbData, styles) || styles.circle.noChangeColor,
                       isStroke: plot.isStroke ? plot.isStroke(cbData) : true
                     };
 
@@ -6395,6 +6412,10 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                       currentData: {
                         kLineData: kLineData,
                         technicalIndicatorData: technicalIndicatorData
+                      },
+                      nextData: {
+                        kLineData: dataList[i + 1],
+                        technicalIndicatorData: technicalIndicatorResult[i + 1]
                       }
                     };
                     var height = Math.abs(baseValueY - valueY);
@@ -6410,7 +6431,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
                       bar.y = height < 1 ? baseValueY - 1 : valueY;
                     }
 
-                    bar.color = plot.color && plot.color(_cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
+                    bar.color = plot.color && plot.color(_cbData, styles) || styles.bar.noChangeColor;
                     bar.isStroke = plot.isStroke ? plot.isStroke(_cbData) : false;
 
                     _this3._drawBar(bar);
@@ -6421,23 +6442,19 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
 
               case PlotType.LINE:
                 {
+                  var line = null;
+
                   if (isValid(value)) {
-                    var line = {
+                    line = {
                       x: x,
                       y: valueY
                     };
+                  }
 
-                    if (lines[lineValueIndex]) {
-                      lines[lineValueIndex].push(line);
-                    } else {
-                      lines[lineValueIndex] = [line];
-                    }
+                  if (lines[lineValueIndex]) {
+                    lines[lineValueIndex].push(line);
                   } else {
-                    if (lines[lineValueIndex]) {
-                      lines[lineValueIndex].push(null);
-                    } else {
-                      lines[lineValueIndex] = [null];
-                    }
+                    lines[lineValueIndex] = [line];
                   }
 
                   lineValueIndex++;
@@ -6464,7 +6481,7 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
             });
           });
         }, function () {
-          _this3._drawLines(lines, technicalIndicatorOptions);
+          _this3._drawLines(lines, styles);
         });
       });
     }
@@ -6479,8 +6496,8 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
     value: function _drawLines(lines, technicalIndicatorOptions) {
       var _this4 = this;
 
-      var colors = technicalIndicatorOptions.line.colors;
-      var colorSize = (colors || []).length;
+      var colors = technicalIndicatorOptions.line.colors || [];
+      var colorSize = colors.length;
       this._ctx.lineWidth = technicalIndicatorOptions.line.size;
       renderLine(this._ctx, function () {
         lines.forEach(function (lineItem, i) {
@@ -6910,10 +6927,11 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
       var technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip;
 
       if (this._shouldDrawTooltip(crosshair, technicalIndicatorTooltipOptions)) {
+        var styles = technicalIndicator.styles || technicalIndicatorOptions;
         var technicalIndicatorResult = technicalIndicator.result;
         var technicalIndicatorData = technicalIndicatorResult[dataPos];
         var tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator);
-        var colors = technicalIndicatorOptions.line.colors;
+        var colors = styles.line.colors;
 
         var dataList = this._chartData.dataList();
 
@@ -6974,13 +6992,13 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
           switch (plot.type) {
             case PlotType.CIRCLE:
               {
-                valueColor = plot.color && plot.color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.circle.noChangeColor;
+                valueColor = plot.color && plot.color(cbData, styles) || styles.circle.noChangeColor;
                 break;
               }
 
             case PlotType.BAR:
               {
-                valueColor = plot.color && plot.color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
+                valueColor = plot.color && plot.color(cbData, styles) || styles.bar.noChangeColor;
                 break;
               }
 
@@ -7341,10 +7359,15 @@ var YAxisView = /*#__PURE__*/function (_View) {
           currentData: {
             kLineData: dataList[dataSize - 1],
             technicalIndicatorData: technicalIndicatorData
+          },
+          nextData: {
+            kLineData: null,
+            technicalIndicatorData: null
           }
         };
         var precision = technicalIndicator.precision;
-        var colors = technicalIndicatorOptions.line.colors || [];
+        var styles = technicalIndicator.styles || technicalIndicatorOptions;
+        var colors = styles.line.colors || [];
         var colorSize = colors.length;
         var lineCount = 0;
         plots.forEach(function (plot) {
@@ -7354,20 +7377,21 @@ var YAxisView = /*#__PURE__*/function (_View) {
           switch (plot.type) {
             case PlotType.CIRCLE:
               {
-                backgroundColor = plot.color && plot.color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.circle.noChangeColor;
+                backgroundColor = plot.color && plot.color(cbData, styles) || styles.circle.noChangeColor;
                 break;
               }
 
             case PlotType.BAR:
               {
-                backgroundColor = plot.color && plot.color(cbData, technicalIndicatorOptions) || technicalIndicatorOptions.bar.noChangeColor;
+                backgroundColor = plot.color && plot.color(cbData, styles) || styles.bar.noChangeColor;
                 break;
               }
 
-            default:
+            case PlotType.LINE:
               {
                 backgroundColor = colors[lineCount % colorSize];
                 lineCount++;
+                break;
               }
           }
 
@@ -9048,13 +9072,14 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
         // 开始渲染指标数据文字
         var _technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator;
 
-        var colors = _technicalIndicatorOptions.line.colors;
         var indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft;
-        var colorSize = colors.length;
         this._ctx.font = createFont(indicatorTextSize, technicalIndicatorTooltipOptions.text.weight, technicalIndicatorTooltipOptions.text.family);
         indicatorTooltipDataList.forEach(function (_ref3, techIndex) {
           var tooltipData = _ref3.tooltipData,
               cbData = _ref3.cbData;
+          var styles = technicalIndicators[techIndex].styles || _technicalIndicatorOptions;
+          var colors = styles.line.colors;
+          var colorSize = colors.length;
           var plots = technicalIndicators[techIndex].plots;
           var lineCount = 0;
           var valueColor;
@@ -9062,19 +9087,19 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
             switch (plot.type) {
               case PlotType.CIRCLE:
                 {
-                  valueColor = plot.color && plot.color(cbData, _technicalIndicatorOptions) || _technicalIndicatorOptions.circle.noChangeColor;
+                  valueColor = plot.color && plot.color(cbData, styles) || styles.circle.noChangeColor;
                   break;
                 }
 
               case PlotType.BAR:
                 {
-                  valueColor = plot.color && plot.color(cbData, _technicalIndicatorOptions) || _technicalIndicatorOptions.bar.noChangeColor;
+                  valueColor = plot.color && plot.color(cbData, styles) || styles.bar.noChangeColor;
                   break;
                 }
 
               case PlotType.LINE:
                 {
-                  valueColor = colors[lineCount % colorSize] || _technicalIndicatorOptions.text.color;
+                  valueColor = colors[lineCount % colorSize] || styles.text.color;
                   lineCount++;
                   break;
                 }
@@ -11567,7 +11592,7 @@ var ChartPane = /*#__PURE__*/function () {
       if (technicalIndicator) {
         var calcParamsSuccess = technicalIndicator.setCalcParams(calcParams);
         var precisionSuccess = technicalIndicator.setPrecision(precision);
-        var styleSuccess = technicalIndicator.setStyles(styles);
+        var styleSuccess = technicalIndicator.setStyles(styles, this._chartData.styleOptions().technicalIndicator);
         Promise.resolve().then(function (_) {
           if (calcParamsSuccess || precisionSuccess || styleSuccess) {
             var candleTechnicalIndicators = _this2._candlePane.technicalIndicators();

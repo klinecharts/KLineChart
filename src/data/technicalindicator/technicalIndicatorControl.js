@@ -89,6 +89,7 @@ export function createTechnicalIndicatorMapping () {
  * @param baseValue
  * @param minValue
  * @param maxValue
+ * @param styles
  * @param calcTechnicalIndicator
  * @param regeneratePlots
  * @param render
@@ -96,7 +97,7 @@ export function createTechnicalIndicatorMapping () {
  */
 export function createNewTechnicalIndicator ({
   name, series, calcParams, plots, precision, shouldCheckParamCount,
-  shouldOhlc, shouldFormatBigNumber, baseValue, minValue, maxValue,
+  shouldOhlc, shouldFormatBigNumber, baseValue, minValue, maxValue, styles,
   calcTechnicalIndicator, regeneratePlots, render
 }) {
   if (!name || !isFunction(calcTechnicalIndicator)) {
@@ -121,7 +122,8 @@ export function createNewTechnicalIndicator ({
           shouldFormatBigNumber,
           baseValue,
           minValue,
-          maxValue
+          maxValue,
+          styles
         }
       )
     }
