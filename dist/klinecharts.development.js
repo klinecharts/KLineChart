@@ -6336,7 +6336,13 @@ var TechnicalIndicatorView = /*#__PURE__*/function (_View) {
             height: _this3._height,
             dataSpace: _this3._chartData.dataSpace(),
             barSpace: _this3._chartData.barSpace()
-          }, _this3._chartData.styleOptions(), _this3._xAxis, _this3._yAxis, _this3._yAxis.isCandleYAxis());
+          }, styles, {
+            convertFromPixel: _this3._xAxis.convertFromPixel.bind(_this3._xAxis),
+            convertToPixel: _this3._xAxis.convertToPixel.bind(_this3._xAxis)
+          }, {
+            convertFromPixel: _this3._yAxis.convertFromPixel.bind(_this3._yAxis),
+            convertToPixel: _this3._yAxis.convertToPixel.bind(_this3._yAxis)
+          }, _this3._yAxis.isCandleYAxis());
 
           _this3._ctx.restore();
         }
@@ -7010,9 +7016,12 @@ var TechnicalIndicatorCrosshairView = /*#__PURE__*/function (_View) {
               }
           }
 
-          if (isValid(values[i].title)) {
+          var title = values[i].title;
+
+          if (isValid(title)) {
             labelX += textMarginLeft;
-            var text = "".concat(values[i].title, ": ").concat(values[i].value || technicalIndicatorTooltipOptions.defaultValue);
+            var titleText = "".concat(title ? "".concat(title, ":") : '');
+            var text = "".concat(titleText).concat(values[i].value || technicalIndicatorTooltipOptions.defaultValue);
             var textWidth = calcTextWidth(_this3._ctx, text);
             renderText(_this3._ctx, valueColor, labelX, labelY, text);
             labelX += textWidth + textMarginRight;
@@ -8962,7 +8971,7 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
             v = value;
           }
 
-          var text = "".concat(label, ": ").concat(v);
+          var text = label ? "".concat(label, ": ").concat(v) : "".concat(v);
           var labelWidth = calcTextWidth(_this2._ctx, text) + baseTextMarginLeft + baseTextMarginRight;
           maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
         });
@@ -9010,7 +9019,7 @@ var CandleCrosshairView = /*#__PURE__*/function (_TechnicalIndicatorCr) {
 
             if (isValid(title)) {
               var v = value || technicalIndicatorTooltipOptions.defaultValue;
-              var text = "".concat(title, ": ").concat(v);
+              var text = title ? "".concat(title, ": ").concat(v) : "".concat(v);
               var labelWidth = calcTextWidth(_this2._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight;
               maxLabelWidth = Math.max(maxLabelWidth, labelWidth);
               rectHeight += indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize;

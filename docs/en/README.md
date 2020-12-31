@@ -173,8 +173,12 @@ The technicalIndicatorInfo format is as follows:
   maxValue: null,
   styles: null,
   render: (
-    ctx, dataSource, viewport,
-    styleOptions, xAxis, yAxis,
+    ctx,
+    dataSource,
+    viewport,
+    styleOptions,
+    xAxisConvert,
+    yAxisConvert,
     isCandleTechnicalIndicator
   ) => {}
 }

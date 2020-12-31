@@ -143,7 +143,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         } else {
           v = value
         }
-        const text = `${label}: ${v}`
+        const text = label ? `${label}: ${v}` : `${v}`
         const labelWidth = calcTextWidth(this._ctx, text) + baseTextMarginLeft + baseTextMarginRight
         maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
       })
@@ -181,7 +181,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         tooltipData.values.forEach(({ title, value }) => {
           if (isValid(title)) {
             const v = value || technicalIndicatorTooltipOptions.defaultValue
-            const text = `${title}: ${v}`
+            const text = title ? `${title}: ${v}` : `${v}`
             const labelWidth = calcTextWidth(this._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
             maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
             rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize)

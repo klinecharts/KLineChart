@@ -99,9 +99,15 @@ export default class TechnicalIndicatorView extends View {
             dataSpace: this._chartData.dataSpace(),
             barSpace: this._chartData.barSpace()
           },
-          this._chartData.styleOptions(),
-          this._xAxis,
-          this._yAxis,
+          styles,
+          {
+            convertFromPixel: this._xAxis.convertFromPixel.bind(this._xAxis),
+            convertToPixel: this._xAxis.convertToPixel.bind(this._xAxis)
+          },
+          {
+            convertFromPixel: this._yAxis.convertFromPixel.bind(this._yAxis),
+            convertToPixel: this._yAxis.convertToPixel.bind(this._yAxis)
+          },
           this._yAxis.isCandleYAxis()
         )
         this._ctx.restore()

@@ -1,4 +1,3 @@
-export declare type GraphicMarkType = 'none' | 'horizontalStraightLine' | 'verticalStraightLine' | 'straightLine' | 'horizontalRayLine' | 'verticalRayLine' | 'rayLine' | 'horizontalSegmentLine' | 'verticalSegmentLine' | 'segmentLine' | 'priceLine' | 'priceChannelLine' | 'parallelStraightLine' | 'fibonacciLine';
 export declare type PaneType = 'technicalIndicator'
 
 export declare interface PaneOptions {
@@ -29,47 +28,11 @@ export declare interface TechnicalIndicatorInfoPlot {
   isStroke?: (data: any) => boolean;
 }
 
-export declare interface TechnicalIndicatorCustomRenderDataSource {
-  from: number;
-  to: number;
-  kLineDataList: KLineData[];
-  technicalIndicatorDataList: any[];
-}
-
-export declare interface TechnicalIndicatorCustomRenderViewport {
-  width: number;
-  height: number;
-  dataSpace: number;
-  barSpace: number;
-}
-
-export declare interface Axis {
-  convertFromPixel: (pixel: number) => number;
-  convertToPixel: (value: number) => number;
-}
-
-export declare interface TechnicalIndicatorCircleBarStyle {
-  upColor?: string;
-  downColor?: string;
-  noChangeColor?: string;
-}
-
-export declare interface TechnicalIndicatorLineStyle {
-  size?: number;
-  colors?: string[];
-}
-
-export declare interface TechnicalIndicatorStyles {
-  bar?: TechnicalIndicatorCircleBarStyle;
-  line?: TechnicalIndicatorLineStyle;
-  circle?: TechnicalIndicatorCircleBarStyle;
-}
-
 export declare interface OverrideTechnicalIndicatorInfo {
   name: string;
   calcParams?: number[];
   precision?: number;
-  styles?: TechnicalIndicatorStyles;
+  styles?: any;
 }
 
 export declare interface TechnicalIndicatorInfo extends OverrideTechnicalIndicatorInfo {
@@ -85,9 +48,11 @@ export declare interface TechnicalIndicatorInfo extends OverrideTechnicalIndicat
   regeneratePlots?: (calcParams: number[]) => TechnicalIndicatorInfoPlot[];
   render?: (
     ctx: CanvasRenderingContext2D,
-    dataSource: TechnicalIndicatorCustomRenderDataSource,
-    viewport: TechnicalIndicatorCustomRenderViewport,
-    styleOptions: any, xAxis: Axis, yAxis: Axis,
+    dataSource: any,
+    viewport: any,
+    styleOptions: any,
+    xAxisConvert: any,
+    yAxisConvert: any,
     isCandleTechnicalIndicator: boolean
   ) => void
 }
@@ -135,7 +100,7 @@ export declare interface Chart {
   createPane(type?: PaneType, options?: PaneOptions): string | null;
   addCustomTechnicalIndicator(technicalIndicatorInfo: TechnicalIndicatorInfo): void;
   removeTechnicalIndicator(technicalIndicatorType?: string, paneId?: string): void;
-  addGraphicMark(graphicMarkType: GraphicMarkType): void;
+  addGraphicMark(graphicMarkType: string): void;
   removeAllGraphicMark(): void;
   subscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void): void;
   unsubscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void): void;

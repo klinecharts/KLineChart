@@ -314,8 +314,12 @@ technicalIndicatorInfo格式如下：
   // yAxis y轴组件，包含值和坐标转换的一些方法
   // isCandleTechnicalIndicator 是否是蜡烛图指标
   render: (
-    ctx, dataSource, viewport,
-    styleOptions, xAxis, yAxis,
+    ctx,
+    dataSource,
+    viewport,
+    styleOptions,
+    xAxisConvert,
+    yAxisConvert,
     isCandleTechnicalIndicator
   ) => {}
 }
