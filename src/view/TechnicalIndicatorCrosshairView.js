@@ -17,7 +17,7 @@ import { TooltipShowRule, LineStyle } from '../data/options/styleOptions'
 import { isValid } from '../utils/typeChecks'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { getTechnicalIndicatorTooltipData } from '../data/technicalindicator/technicalIndicatorControl'
+import { getTechnicalIndicatorTooltipData } from '../data/base/technicalindicator/technicalIndicatorControl'
 import { renderText } from '../renderer/text'
 
 export default class TechnicalIndicatorCrosshairView extends View {

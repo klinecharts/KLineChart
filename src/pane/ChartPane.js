@@ -25,7 +25,6 @@ import SeparatorPane from './SeparatorPane'
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { throttle } from '../utils/performance'
-import { MACD } from '../data/technicalindicator/defaultTechnicalIndicatorType'
 
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
@@ -411,7 +410,7 @@ export default class ChartPane {
    * @returns {string|null}
    */
   createPane (type, options = {}) {
-    const { technicalIndicatorType = MACD, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled } = options
+    const { technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled } = options
     const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
     const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
     this._separatorPanes.push(

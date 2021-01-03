@@ -12,96 +12,48 @@
  * limitations under the License.
  */
 
-import Chart from './Chart'
-import { DEV } from './utils/env'
+import averagePrice from './extension/technicalindicator/directionalmovement/averagePrice'
+import bullAndBearIndex from './extension/technicalindicator/directionalmovement/bullAndBearIndex'
+import differentOfMovingAverage from './extension/technicalindicator/directionalmovement/differentOfMovingAverage'
+import directionalMovementIndex from './extension/technicalindicator/directionalmovement/directionalMovementIndex'
+import easeOfMovementValue from './extension/technicalindicator/directionalmovement/easeOfMovementValue'
+import exponentialMovingAverage from './extension/technicalindicator/directionalmovement/exponentialMovingAverage'
+import movingAverage from './extension/technicalindicator/directionalmovement/movingAverage'
+import movingAverageConvergenceDivergence from './extension/technicalindicator/directionalmovement/movingAverageConvergenceDivergence'
+import simpleMovingAverage from './extension/technicalindicator/directionalmovement/simpleMovingAverage'
+import tripleExponentiallySmoothedAverage from './extension/technicalindicator/directionalmovement/tripleExponentiallySmoothedAverage'
 
-const instances = {}
-let chartBaseId = 1
-const CHART_NAME_PREFIX = 'k_line_chart_'
+import brar from './extension/technicalindicator/momentum/brar'
+import currentRatio from './extension/technicalindicator/momentum/currentRatio'
+import momentum from './extension/technicalindicator/momentum/momentum'
+import psychologicalLine from './extension/technicalindicator/momentum/psychologicalLine'
+import rateOfChange from './extension/technicalindicator/momentum/rateOfChange'
+import volumeRatio from './extension/technicalindicator/momentum/volumeRatio'
 
-function checkContainer (container) {
-  return container && (container instanceof HTMLElement) && container.appendChild && (typeof container.appendChild === 'function')
-}
+import awesomeOscillator from './extension/technicalindicator/oscillators/awesomeOscillator'
+import bias from './extension/technicalindicator/oscillators/bias'
+import commodityChannelIndex from './extension/technicalindicator/oscillators/commodityChannelIndex'
+import relativeStrengthIndex from './extension/technicalindicator/oscillators/relativeStrengthIndex'
+import stockIndicatorKDJ from './extension/technicalindicator/oscillators/stockIndicatorKDJ'
+import williamsR from './extension/technicalindicator/oscillators/williamsR'
 
-/**
- * 获取版本号
- * @returns {string}
- */
-function version () {
-  return '__BUILD_VERSION__'
-}
+import bollingerBands from './extension/technicalindicator/volatility/bollingerBands'
+import stopAndReverse from './extension/technicalindicator/volatility/stopAndReverse'
 
-/**
- * 初始化
- * @param ds
- * @param style
- * @returns {Chart}
- */
-function init (ds, style = {}) {
-  const errorMessage = 'Chart version is __BUILD_VERSION__. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
-  let container
-  if (!ds) {
-    if (DEV) {
-      console.error(errorMessage)
-    }
-    return null
-  }
-  if (typeof ds === 'string') {
-    container = document.getElementById(ds)
-    if (!checkContainer(container)) {
-      container = document.getElementsByClassName(ds)
-    }
-  } else {
-    container = ds
-  }
-  if (!checkContainer(container)) {
-    if (DEV) {
-      console.error(errorMessage)
-    }
-    return null
-  }
-  let chart = instances[container.chartId || '']
-  if (chart) {
-    if (DEV) {
-      console.warn('The chart has been initialized on the dom！！！')
-    }
-    return chart
-  }
-  const id = `${CHART_NAME_PREFIX}${chartBaseId++}`
-  chart = new Chart(container, style)
-  chart.id = id
-  container.chartId = id
-  instances[id] = chart
-  return chart
-}
+import onBalanceVolume from './extension/technicalindicator/volume/onBalanceVolume'
+import priceAndVolumeTrend from './extension/technicalindicator/volume/priceAndVolumeTrend'
+import volume from './extension/technicalindicator/volume/volume'
 
-/**
- * 销毁
- * @param dcs
- */
-function dispose (dcs) {
-  if (dcs) {
-    let id
-    let container
-    if (typeof dcs === 'string') {
-      container = document.getElementById(dcs)
-      id = container.chartId
-      if (!id) {
-        container = document.getElementsByClassName(dcs)
-        id = container.chartId
-      }
-    }
-    if (!id) {
-      id = dcs.chartId
-    }
-    if (!id && dcs instanceof Chart) {
-      id = dcs.id
-    }
-    if (id) {
-      instances[id].destroy()
-      delete instances[id]
-    }
-  }
-}
+import extension from './extension/extension'
+import { version, init, dispose } from './core'
 
-export { version, init, dispose }
+extension.addTechnicalIndicator([
+  averagePrice, bullAndBearIndex, differentOfMovingAverage, directionalMovementIndex, easeOfMovementValue,
+  exponentialMovingAverage, movingAverage, movingAverageConvergenceDivergence, simpleMovingAverage, tripleExponentiallySmoothedAverage,
+  brar, currentRatio, momentum, psychologicalLine, rateOfChange, volumeRatio,
+  awesomeOscillator, bias, commodityChannelIndex, relativeStrengthIndex, stockIndicatorKDJ, williamsR,
+  bollingerBands, stopAndReverse,
+  onBalanceVolume, priceAndVolumeTrend, volume
+])
+
+export { version, init, dispose, extension }

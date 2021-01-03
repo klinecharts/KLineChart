@@ -230,8 +230,14 @@ export default class Chart {
    * @param options
    * @returns {string|null}
    */
-  createPane (type = TECHNICAL_INDICATOR_PANE, options) {
+  createPane (type = TECHNICAL_INDICATOR_PANE, options = {}) {
     if (type === TECHNICAL_INDICATOR_PANE) {
+      if (!this._chartPane.chartData().technicalIndicator(options.technicalIndicatorType)) {
+        if (DEV) {
+          console.warn('createPane -> Invalid parameter: options.technicalIndicatorType, options.technicalIndicatorType not found!!!')
+        }
+        return null
+      }
       return this._chartPane.createPane(type, options)
     }
     if (DEV) {

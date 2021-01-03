@@ -16,9 +16,12 @@ import { isArray, isObject, merge, clone, isFunction, isBoolean, isValid } from 
 import { defaultStyleOptions } from './options/styleOptions'
 
 import { formatValue } from '../utils/format'
-import { createNewTechnicalIndicator, createTechnicalIndicatorMapping } from './technicalindicator/technicalIndicatorControl'
+import {
+  createTechnicalIndicatorInstance,
+  createTechnicalIndicatorMapping
+} from './base/technicalindicator/technicalIndicatorControl'
 import { DEV } from '../utils/env'
-import { TechnicalIndicatorSeries } from './technicalindicator/TechnicalIndicator'
+import { TechnicalIndicatorSeries } from './base/technicalindicator/TechnicalIndicator'
 import Delegate from './delegate/Delegate'
 import { createGraphicMarkMapping } from '../mark/graphicMarkControl'
 import { binarySearchNearest } from '../utils/number'
@@ -48,7 +51,6 @@ export default class ChartData {
     merge(this._styleOptions, styleOptions)
     // 所有技术指标映射
     this._technicalIndicatorMapping = createTechnicalIndicatorMapping()
-
     // 是否可以缩放
     this._zoomEnabled = true
     // 是否可以拖拽滑动
@@ -692,7 +694,7 @@ export default class ChartData {
    * @param technicalIndicatorInfo
    */
   addCustomTechnicalIndicator (technicalIndicatorInfo) {
-    const technicalIndicator = createNewTechnicalIndicator(technicalIndicatorInfo || {})
+    const technicalIndicator = createTechnicalIndicatorInstance(technicalIndicatorInfo || {})
     if (technicalIndicator) {
       // 将生成的新的指标类放入集合
       this._technicalIndicatorMapping[technicalIndicatorInfo.name] = technicalIndicator

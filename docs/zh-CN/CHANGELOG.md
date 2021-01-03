@@ -1,5 +1,15 @@
 # 版本日志
 
+## 6.1.0
+`待发布`
++ 🆕 技术指标`plots`每一项新增`title`。
++ 🆕 技术指标新增`styles`。
++ 🆕 新增方法`overrideTechnicalIndicator`，取代方法`setTechnicalIndicatorParams`和`setTechnicalIndicatorPrecision`。
++ 👉 方法`getTechnicalIndicatorParams`变更为`getTechnicalIndicatorInfo`。
++ 💄 优化`tooltip`显示。
++ 🐞 修复typescript引用问题。
+
+
 ## 6.0.5
 `2020-12-28`
 + 🆕 新增配置`candle.margin`，`candle.tooltip.defaultValue`，`technicalIndicator.margin`，`technicalIndicator.tooltip.defaultValue`和`separator.activeBackgroundColor`。
