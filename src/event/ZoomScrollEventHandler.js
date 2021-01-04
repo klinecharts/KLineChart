@@ -45,7 +45,31 @@ export default class ZoomScrollEventHandler extends EventHandler {
   mouseLeaveEvent (event) {
     if (isMouse(event)) {
       this._chartData.setCrosshairPointPaneId()
+      return
     }
+
+    if (this._touchZoomed) {
+      return
+    }
+
+    this._pressed = false
+    const v0 = this._velocity // 初速度，滑动手势释放前的平均速度
+    const a = (v0 / Math.abs(v0)) * 0.006 // 反向加速度，还需要根据实际效果做调整
+    const startTime = Date.now()
+    const animate = () => {
+      if (this._pressed) {
+        return
+      }
+      const t = Date.now() - startTime
+      const v = v0 - a * t
+      if ((a > 0 && v > 0) || (a < 0 && v < 0)) {
+        const s = v0 * t - (a * t * t) / 2
+        setTimeout(() => this._chartData.scroll(this._distance + s), 0)
+        requestAnimationFrame(animate)
+      }
+    };
+    requestAnimationFrame(animate)
+    this._time = 0
   }
 
   mouseMoveEvent (event) {
@@ -130,9 +154,16 @@ export default class ZoomScrollEventHandler extends EventHandler {
           return
         }
       }
-      const distance = event.localX - this._startScrollPoint.x
+      this._distance = event.localX - this._startScrollPoint.x
+      const now = Date.now()
+      if (this._time) {
+        const time = now - this._time
+        this._velocity = (event.localX - this._x) / time
+      }
+      this._time = now
+      this._x = event.localX
       this._chartData.setCrosshairPointPaneId(crossHairPoint, cross.paneId)
-      this._chartData.scroll(distance)
+      this._chartData.scroll(this._distance)
     })
   }
 
