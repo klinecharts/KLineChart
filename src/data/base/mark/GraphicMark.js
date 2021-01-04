@@ -12,7 +12,17 @@
  * limitations under the License.
  */
 
-import { renderStrokeFillCircle } from '../renderer/circle'
+import { renderStrokeFillCircle } from '../../../renderer/circle'
+
+/**
+ * 图形标记系列
+ * @type {{TWO_POINT_LINE: string, THREE_ONE_POINT_LINE: string, ONE_POINT_LINE: string}}
+ */
+export const GraphicMarkSeries = {
+  ONE_POINT_LINE: 'onPointLine',
+  TWO_POINT_LINE: 'twoPointLine',
+  THREE_ONE_POINT_LINE: 'threePointLine'
+}
 
 /**
  * 标记图形绘制步骤
@@ -105,13 +115,13 @@ export default class GraphicMark {
   }
 
   /**
-   * 获取图形
+   * 绘制图形
    * @param ctx
    * @param xyPoints
-   * @param graphicMark
+   * @param markOptions
    * @private
    */
-  _drawGraphic (ctx, xyPoints, graphicMark) {}
+  _drawGraphic (ctx, xyPoints, markOptions) {}
 
   /**
    * 绘制
@@ -124,21 +134,21 @@ export default class GraphicMark {
         y: this._yAxis.convertToPixel(price)
       }
     })
-    const graphicMark = this._chartData.styleOptions().graphicMark
+    const markOptions = this._chartData.styleOptions().graphicMark
     if (this._drawStep !== GraphicMarkDrawStep.STEP_1) {
-      this._drawGraphic(ctx, xyPoints, graphicMark)
+      this._drawGraphic(ctx, xyPoints, markOptions)
     }
     if (this._hoverType !== HoverType.NONE) {
       xyPoints.forEach(({ x, y }, index) => {
-        let radius = graphicMark.point.radius
-        let color = graphicMark.point.backgroundColor
-        let borderColor = graphicMark.point.borderColor
-        let borderSize = graphicMark.point.borderSize
+        let radius = markOptions.point.radius
+        let color = markOptions.point.backgroundColor
+        let borderColor = markOptions.point.borderColor
+        let borderSize = markOptions.point.borderSize
         if (this._hoverType === HoverType.POINT && index === this._hoverIndex) {
-          radius = graphicMark.point.activeRadius
-          color = graphicMark.point.activeBackgroundColor
-          borderColor = graphicMark.point.activeBorderColor
-          borderSize = graphicMark.point.activeBorderSize
+          radius = markOptions.point.activeRadius
+          color = markOptions.point.activeBackgroundColor
+          borderColor = markOptions.point.activeBorderColor
+          borderSize = markOptions.point.activeBorderSize
         }
         renderStrokeFillCircle(ctx, color, borderColor, borderSize, { x, y }, radius)
       })

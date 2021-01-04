@@ -27,7 +27,7 @@ export default class TwoPointLineGraphicMark extends OnePointLineGraphicMark {
       }
       case GraphicMarkDrawStep.STEP_2: {
         this._tpPoints[1] = { timestamp, price, dataIndex }
-        this._mouseMoveForDrawingExtendFuc({ timestamp, price, dataIndex })
+        this.onMouseMoveForDrawingExtend(this._tpPoints, { timestamp, price, dataIndex })
         break
       }
     }
@@ -49,5 +49,5 @@ export default class TwoPointLineGraphicMark extends OnePointLineGraphicMark {
     }
   }
 
-  _mouseMoveForDrawingExtendFuc ({ timestamp, price }) {}
+  onMouseMoveForDrawingExtend (tpPoints, { timestamp, price, dataIndex }) {}
 }

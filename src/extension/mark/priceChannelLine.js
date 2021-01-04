@@ -12,27 +12,17 @@
  * limitations under the License.
  */
 
-import ThreePointLineGraphicMark from './ThreePointLineGraphicMark'
 import { checkPointOnStraightLine, getParallelLines } from './graphicHelper'
-import { HoverType } from './GraphicMark'
 
-export default class ParallelStraightLine extends ThreePointLineGraphicMark {
-  _checkMousePointOnLine (point, xyPoints) {
-    const lines = this._generatedDrawLines(xyPoints)
-    for (let i = 0; i < lines.length; i++) {
-      const points = lines[i]
-      if (checkPointOnStraightLine(points[0], points[1], point)) {
-        return {
-          hoverType: HoverType.LINE,
-          hoverIndex: i
-        }
-      }
-    }
-  }
-
-  _generatedDrawLines (xyPoints) {
+export default {
+  name: 'priceChannelLine',
+  series: 'threePointLine',
+  checkMousePointOnLine: (point1, point2, mousePoint) => {
+    return checkPointOnStraightLine(point1, point2, mousePoint)
+  },
+  generatedLines: (xyPoints, viewport) => {
     return getParallelLines(
-      xyPoints, { width: this._xAxis.width(), height: this._yAxis.height() }
+      xyPoints, { width: viewport.width, height: viewport.height }, 1
     )
   }
 }

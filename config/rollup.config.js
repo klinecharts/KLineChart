@@ -5,8 +5,6 @@ const replace = require('@rollup/plugin-replace')
 const progress = require('rollup-plugin-progress')
 const packageJson = require('../package.json')
 
-const inputPath = 'src/index.js'
-
 const version = packageJson.version
 
 const getPlugins = (env) => {
@@ -30,12 +28,12 @@ const getPlugins = (env) => {
   ]
 }
 
-const getOutputConfig = (fileName) => {
+const getOutputConfig = (fileName, env) => {
   return {
-    file: `dist/klinecharts.${fileName}.js`,
+    file: `dist/${fileName}.js`,
     format: 'umd',
     name: 'klinecharts',
-    sourcemap: fileName === 'development',
+    sourcemap: env === 'development',
     indent: false,
     banner: `
 /**
@@ -48,17 +46,45 @@ const getOutputConfig = (fileName) => {
 }
 
 module.exports = [
-  // umd development
+  // umd development all
   {
-    input: inputPath,
-    output: getOutputConfig('development'),
+    input: 'src/index.js',
+    output: getOutputConfig('klinecharts', 'development'),
     plugins: getPlugins('development')
   },
 
-  // umd production
+  // umd production all
   {
-    input: inputPath,
-    output: getOutputConfig('production.min'),
+    input: 'src/index.js',
+    output: getOutputConfig('klinecharts.min', 'production'),
+    plugins: getPlugins('production')
+  },
+
+  // umd development blank
+  {
+    input: 'src/index.blank.js',
+    output: getOutputConfig('klinecharts.blank', 'development'),
+    plugins: getPlugins('development')
+  },
+
+  // umd production blank
+  {
+    input: 'src/index.blank.js',
+    output: getOutputConfig('klinecharts.blank.min', 'production'),
+    plugins: getPlugins('production')
+  },
+
+  // umd development simple
+  {
+    input: 'src/index.simple.js',
+    output: getOutputConfig('klinecharts.simple', 'development'),
+    plugins: getPlugins('development')
+  },
+
+  // umd production simple
+  {
+    input: 'src/index.simple.js',
+    output: getOutputConfig('klinecharts.simple.min', 'production'),
     plugins: getPlugins('production')
   }
 ]

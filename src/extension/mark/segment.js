@@ -12,25 +12,18 @@
  * limitations under the License.
  */
 
+import { checkPointOnSegmentLine } from './graphicHelper'
+
 export default {
-  technicalIndicatorExtensions: {},
-  markExtensions: {},
-  addTechnicalIndicator (technicalIndicators) {
-    ([].concat(technicalIndicators)).forEach(
-      technicalIndicator => {
-        if (technicalIndicator.name) {
-          this.technicalIndicatorExtensions[technicalIndicator.name] = technicalIndicator
-        }
-      }
-    )
+  name: 'segment',
+  series: 'twoPointLine',
+  checkMousePointOnLine: (point1, point2, mousePoint) => {
+    return checkPointOnSegmentLine(point1, point2, mousePoint)
   },
-  addMark (marks) {
-    ([].concat(marks)).forEach(
-      mark => {
-        if (mark.name) {
-          this.markExtensions[mark.name] = mark
-        }
-      }
-    )
+  generatedLines: (xyPoints) => {
+    if (xyPoints.length === 2) {
+      return [xyPoints]
+    }
+    return []
   }
 }

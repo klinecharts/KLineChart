@@ -9,6 +9,8 @@
     "README.md",
     "docs/",
     "index.js",
+    "index.blank.js",
+    "index.simple.js",
     "types/index.d.ts",
     "dist/",
     "licenses/",

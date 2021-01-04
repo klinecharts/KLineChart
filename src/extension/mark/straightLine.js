@@ -12,21 +12,15 @@
  * limitations under the License.
  */
 
-import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
 import { checkPointOnStraightLine, getLinearY } from './graphicHelper'
-import { HoverType } from './GraphicMark'
 
-export default class StraightLine extends TwoPointLineGraphicMark {
-  _checkMousePointOnLine (point, xyPoints) {
-    if (checkPointOnStraightLine(xyPoints[0], xyPoints[1], point)) {
-      return {
-        hoverType: HoverType.LINE,
-        hoverIndex: 0
-      }
-    }
-  }
-
-  _generatedDrawLines (xyPoints) {
+export default {
+  name: 'straightLine',
+  series: 'twoPointLine',
+  checkMousePointOnLine: (point1, point2, mousePoint) => {
+    return checkPointOnStraightLine(point1, point2, mousePoint)
+  },
+  generatedLines: (xyPoints, viewport) => {
     if (xyPoints.length < 2 || xyPoints[0].x === xyPoints[1].x) {
       return [[
         {
@@ -34,7 +28,7 @@ export default class StraightLine extends TwoPointLineGraphicMark {
           y: 0
         }, {
           x: xyPoints[0].x,
-          y: this._yAxis.height()
+          y: viewport.height
         }
       ]]
     }
@@ -45,7 +39,7 @@ export default class StraightLine extends TwoPointLineGraphicMark {
           x: 0,
           y: xyPoints[0].y
         }, {
-          x: this._xAxis.width(),
+          x: viewport.width,
           y: xyPoints[0].y
         }
       ]
@@ -55,7 +49,7 @@ export default class StraightLine extends TwoPointLineGraphicMark {
         x: 0,
         y: y[0]
       }, {
-        x: this._xAxis.width(),
+        x: viewport.width,
         y: y[1]
       }
     ]]

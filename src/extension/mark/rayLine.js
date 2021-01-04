@@ -12,21 +12,15 @@
  * limitations under the License.
  */
 
-import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
 import { checkPointOnRayLine, getLinearY } from './graphicHelper'
-import { HoverType } from './GraphicMark'
 
-export default class RayLine extends TwoPointLineGraphicMark {
-  _checkMousePointOnLine (point, xyPoints) {
-    if (checkPointOnRayLine(xyPoints[0], xyPoints[1], point)) {
-      return {
-        hoverType: HoverType.LINE,
-        hoverIndex: 0
-      }
-    }
-  }
-
-  _generatedDrawLines (xyPoints) {
+export default {
+  name: 'rayLine',
+  series: 'twoPointLine',
+  checkMousePointOnLine: (point1, point2, mousePoint) => {
+    return checkPointOnRayLine(point1, point2, mousePoint)
+  },
+  generatedLines: (xyPoints, viewport) => {
     let point = {
       x: xyPoints[0].x,
       y: 0
@@ -36,7 +30,7 @@ export default class RayLine extends TwoPointLineGraphicMark {
         if (xyPoints[0].y < xyPoints[1].y) {
           point = {
             x: xyPoints[0].x,
-            y: this._yAxis.height()
+            y: viewport.height
           }
         } else {
           point = {
@@ -51,8 +45,8 @@ export default class RayLine extends TwoPointLineGraphicMark {
         }
       } else {
         point = {
-          x: this._xAxis.width(),
-          y: getLinearY(xyPoints[0], xyPoints[1], [{ x: this._xAxis.width(), y: xyPoints[0].y }])[0]
+          x: viewport.width,
+          y: getLinearY(xyPoints[0], xyPoints[1], [{ x: viewport.width, y: xyPoints[0].y }])[0]
         }
       }
     }

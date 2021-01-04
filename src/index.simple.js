@@ -12,12 +12,7 @@
  * limitations under the License.
  */
 
-/* eslint-disable no-extend-native */
+import extension from './extension/extension'
+import { version, init, dispose } from './core'
 
-/**
- * 数字扩展，获取数组最后一个数据
- * @return {*}
- */
-Array.prototype.last = function () {
-  return this[this.length - 1]
-}
+export { version, init, dispose, extension }

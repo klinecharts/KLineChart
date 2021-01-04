@@ -23,7 +23,7 @@ import {
 import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './base/technicalindicator/TechnicalIndicator'
 import Delegate from './delegate/Delegate'
-import { createGraphicMarkMapping } from '../mark/graphicMarkControl'
+import { createGraphicMarkMapping } from './base/mark/graphicMarkControl'
 import { binarySearchNearest } from '../utils/number'
 
 export const InvalidateLevel = {
@@ -632,7 +632,7 @@ export default class ChartData {
    * @param graphicMark
    */
   addGraphicMark (graphicMark) {
-    const lastGraphicMark = this._graphicMarks.last()
+    const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
     if (lastGraphicMark && lastGraphicMark.isDrawing()) {
       this._graphicMarks[this._graphicMarks.length - 1] = graphicMark
     } else {

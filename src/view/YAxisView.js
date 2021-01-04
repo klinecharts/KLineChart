@@ -195,7 +195,7 @@ export default class YAxisView extends View {
       return
     }
     const dataList = this._chartData.dataList()
-    const kLineData = dataList.last()
+    const kLineData = dataList[dataList.length - 1]
     if (!kLineData) {
       return
     }

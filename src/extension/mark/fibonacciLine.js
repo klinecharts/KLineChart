@@ -12,31 +12,21 @@
  * limitations under the License.
  */
 
-import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
 import { checkPointOnStraightLine } from './graphicHelper'
-import { HoverType } from './GraphicMark'
-import { formatPrecision } from '../utils/format'
-import { createFont } from '../utils/canvas'
+import { formatPrecision } from '../../utils/format'
+import { createFont } from '../../utils/canvas'
 
-export default class FibonacciLine extends TwoPointLineGraphicMark {
-  _checkMousePointOnLine (point, xyPoints) {
-    const lines = this._generatedDrawLines(xyPoints)
-    for (let i = 0; i < lines.length; i++) {
-      const points = lines[i]
-      if (checkPointOnStraightLine(points[0], points[1], point)) {
-        return {
-          hoverType: HoverType.LINE,
-          hoverIndex: i
-        }
-      }
-    }
-  }
-
-  _generatedDrawLines (xyPoints) {
+export default {
+  name: 'fibonacciLine',
+  series: 'twoPointLine',
+  checkMousePointOnLine: (point1, point2, mousePoint) => {
+    return checkPointOnStraightLine(point1, point2, mousePoint)
+  },
+  generatedLines: (xyPoints, viewport) => {
     const lines = []
     if (xyPoints.length > 0) {
       const startX = 0
-      const endX = this._xAxis.width()
+      const endX = viewport.width
       lines.push([{ x: startX, y: xyPoints[0].y }, { x: endX, y: xyPoints[0].y }])
       if (xyPoints.length > 1) {
         const yDistance = xyPoints[0].y - xyPoints[1].y
@@ -49,18 +39,16 @@ export default class FibonacciLine extends TwoPointLineGraphicMark {
       }
     }
     return lines
-  }
-
-  _drawGraphicExtend (ctx, lines, graphicMark) {
-    const pricePrecision = this._chartData.pricePrecision()
-    ctx.font = createFont(graphicMark.text.size, graphicMark.text.weight, graphicMark.text.family)
-    ctx.fillStyle = graphicMark.text.color
+  },
+  drawExtend: (ctx, lines, markOptions, precision, xAxis, yAxis) => {
+    ctx.font = createFont(markOptions.text.size, markOptions.text.weight, markOptions.text.family)
+    ctx.fillStyle = markOptions.text.color
     const percentTextArray = ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']
     lines.forEach((points, index) => {
       const point = points[0]
-      const price = this._yAxis.convertFromPixel(point.y)
-      const priceText = `${formatPrecision(price, pricePrecision)} ${percentTextArray[index]}`
-      ctx.fillText(priceText, point.x + graphicMark.text.marginLeft, point.y - graphicMark.text.marginBottom)
+      const price = yAxis.convertFromPixel(point.y)
+      const priceText = `${formatPrecision(price, precision.price)} ${percentTextArray[index]}`
+      ctx.fillText(priceText, point.x + markOptions.text.marginLeft, point.y - markOptions.text.marginBottom)
     })
   }
 }

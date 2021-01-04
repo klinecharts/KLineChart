@@ -12,25 +12,17 @@
  * limitations under the License.
  */
 
+import { checkPointOnStraightLine, getParallelLines } from './graphicHelper'
+
 export default {
-  technicalIndicatorExtensions: {},
-  markExtensions: {},
-  addTechnicalIndicator (technicalIndicators) {
-    ([].concat(technicalIndicators)).forEach(
-      technicalIndicator => {
-        if (technicalIndicator.name) {
-          this.technicalIndicatorExtensions[technicalIndicator.name] = technicalIndicator
-        }
-      }
-    )
+  name: 'parallelStraightLine',
+  series: 'threePointLine',
+  checkMousePointOnLine: (point1, point2, mousePoint) => {
+    return checkPointOnStraightLine(point1, point2, mousePoint)
   },
-  addMark (marks) {
-    ([].concat(marks)).forEach(
-      mark => {
-        if (mark.name) {
-          this.markExtensions[mark.name] = mark
-        }
-      }
+  generatedLines: (xyPoints, viewport) => {
+    return getParallelLines(
+      xyPoints, { width: viewport.width, height: viewport.height }
     )
   }
 }

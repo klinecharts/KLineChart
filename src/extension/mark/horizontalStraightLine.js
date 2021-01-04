@@ -12,13 +12,23 @@
  * limitations under the License.
  */
 
-import { getParallelLines } from './graphicHelper'
-import ParallelStraightLine from './ParallelStraightLine'
+import { checkPointOnStraightLine } from './graphicHelper'
 
-export default class PriceChannelLine extends ParallelStraightLine {
-  _generatedDrawLines (xyPoints) {
-    return getParallelLines(
-      xyPoints, { width: this._xAxis.width(), height: this._yAxis.height() }, 1
-    )
+export default {
+  name: 'horizontalStraightLine',
+  series: 'onePointLine',
+  checkMousePointOnLine: (point1, point2, mousePoint) => {
+    return checkPointOnStraightLine(point1, point2, mousePoint)
+  },
+  generatedDrawLines: (xyPoints, viewport) => {
+    return [[
+      {
+        x: 0,
+        y: xyPoints[0].y
+      }, {
+        x: viewport.width,
+        y: xyPoints[0].y
+      }
+    ]]
   }
 }
