@@ -14,7 +14,7 @@
 
 export default {
   technicalIndicatorExtensions: {},
-  markExtensions: {},
+  graphicMarkExtensions: {},
   addTechnicalIndicator (technicalIndicators) {
     ([].concat(technicalIndicators)).forEach(
       technicalIndicator => {
@@ -24,11 +24,11 @@ export default {
       }
     )
   },
-  addMark (marks) {
-    ([].concat(marks)).forEach(
-      mark => {
-        if (mark.name) {
-          this.markExtensions[mark.name] = mark
+  addGraphicMark (graphicMarks) {
+    ([].concat(graphicMarks)).forEach(
+      graphicMark => {
+        if (graphicMark.name) {
+          this.graphicMarkExtensions[graphicMark.name] = graphicMark
         }
       }
     )

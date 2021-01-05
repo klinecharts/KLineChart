@@ -224,7 +224,7 @@ export default class Chart {
   }
 
   /**
-   * 创建一个技术指标
+   * 创建一个窗口
    * @param type
    * @param options
    * @returns {string|null}
@@ -246,6 +246,14 @@ export default class Chart {
   }
 
   /**
+   * 移除一个窗口
+   * @param paneId
+   */
+  removePane (paneId) {
+    this._chartPane.removePane(paneId)
+  }
+
+  /**
    * 添加自定义技术指标
    * @param technicalIndicatorInfo
    */
@@ -263,18 +271,26 @@ export default class Chart {
   }
 
   /**
-   * 添加图形标记
+   * 创建图形标记
    * @param type
    */
-  addGraphicMark (type) {
+  createGraphicMark (type) {
     const graphicMarkMapping = this._chartPane.chartData().graphicMarkMapping()
     if (!(type in graphicMarkMapping)) {
       if (DEV) {
-        console.warn('addGraphicMark -> Invalid parameter: type, type not found!!!')
+        console.warn('createGraphicMark -> Invalid parameter: type, type not found!!!')
       }
-      return
+      return null
     }
-    this._chartPane.addGraphicMark(type)
+    return this._chartPane.createGraphicMark(type)
+  }
+
+  /**
+   * 添加自定义图形标记
+   * @param graphicMark
+   */
+  addCustomGraphicMark (graphicMark) {
+    this._chartPane.chartData().addCustomGraphicMark(graphicMark)
   }
 
   /**

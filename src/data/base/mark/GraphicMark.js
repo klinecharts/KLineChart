@@ -46,7 +46,10 @@ export const HoverType = {
  * 标记图形
  */
 export default class GraphicMark {
-  constructor (chartData, xAxis, yAxis) {
+  constructor (id, name, series, chartData, xAxis, yAxis) {
+    this.id = id
+    this.name = name
+    this.series = series
     this._chartData = chartData
     this._xAxis = xAxis
     this._yAxis = yAxis

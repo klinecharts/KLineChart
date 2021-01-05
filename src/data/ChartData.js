@@ -23,7 +23,7 @@ import {
 import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './base/technicalindicator/TechnicalIndicator'
 import Delegate from './delegate/Delegate'
-import { createGraphicMarkMapping } from './base/mark/graphicMarkControl'
+import { createGraphicMarkClass, createGraphicMarkMapping } from './base/mark/graphicMarkControl'
 import { binarySearchNearest } from '../utils/number'
 
 export const InvalidateLevel = {
@@ -628,10 +628,10 @@ export default class ChartData {
   }
 
   /**
-   * 添加标记类型
+   * 添加标记示例
    * @param graphicMark
    */
-  addGraphicMark (graphicMark) {
+  addGraphicMarkInstance (graphicMark) {
     const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
     if (lastGraphicMark && lastGraphicMark.isDrawing()) {
       this._graphicMarks[this._graphicMarks.length - 1] = graphicMark
@@ -639,6 +639,17 @@ export default class ChartData {
       this._graphicMarks.push(graphicMark)
     }
     this.invalidate(InvalidateLevel.GRAPHIC_MARK)
+  }
+
+  /**
+   * 添加自定义标记图形
+   * @param graphicMark
+   */
+  addCustomGraphicMark (graphicMark) {
+    const GraphicMarkClass = createGraphicMarkClass(graphicMark)
+    if (GraphicMarkClass) {
+      this._graphicMarkMapping[graphicMark.name] = GraphicMarkClass
+    }
   }
 
   /**

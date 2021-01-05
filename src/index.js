@@ -31,7 +31,7 @@ import priceChannelLine from './extension/mark/priceChannelLine'
 import priceLine from './extension/mark/priceLine'
 import fibonacciLine from './extension/mark/fibonacciLine'
 
-extension.addMark([
+extension.addGraphicMark([
   horizontalRayLine, horizontalSegment, horizontalStraightLine,
   verticalRayLine, verticalSegment, verticalStraightLine,
   rayLine, segment, straightLine,

@@ -17,7 +17,7 @@ import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
 
 import { YAxisPosition } from '../data/options/styleOptions'
-import { isArray, isBoolean, isFunction, isObject } from '../utils/typeChecks'
+import { isArray, isBoolean, isFunction, isObject, isValid } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import SeparatorPane from './SeparatorPane'
@@ -30,6 +30,8 @@ const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
 const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_pane_'
 
+const GRAPHIC_MARK_ID_PREFIX = 'graphic_mark_'
+
 export const TECHNICAL_INDICATOR_PANE = 'technicalIndicator'
 
 export const CANDLE_PANE_ID = 'candle_pane_1'
@@ -37,6 +39,7 @@ export const CANDLE_PANE_ID = 'candle_pane_1'
 export default class ChartPane {
   constructor (container, styleOptions) {
     this._initChartContainer(container)
+    this._graphicMarkBaseId = 0
     this._technicalIndicatorBaseId = 0
     this._technicalIndicatorPanes = []
     this._separatorPanes = []
@@ -439,31 +442,58 @@ export default class ChartPane {
   }
 
   /**
+   * 根据id匹配窗口
+   * @param paneId
+   * @private
+   */
+  _matchPane (paneId) {
+    for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
+      const pane = this._technicalIndicatorPanes[i]
+      if (pane.id() === paneId) {
+        return i
+      }
+    }
+  }
+
+  /**
+   * 释放窗口
+   * @param paneIndex
+   * @private
+   */
+  _destroyPane (paneIndex) {
+    this._technicalIndicatorPanes[paneIndex].destroy()
+    this._separatorPanes[paneIndex].destroy()
+    this._technicalIndicatorPanes.splice(paneIndex, 1)
+    this._separatorPanes.splice(paneIndex, 1)
+    for (let i = 0; i < this._separatorPanes.length; i++) {
+      this._separatorPanes[i].updatePaneIndex(i)
+    }
+    this.adjustPaneViewport(true, true, true, true, true)
+  }
+
+  /**
+   * 移除窗口
+   * @param paneId
+   */
+  removePane (paneId) {
+    const paneIndex = this._matchPane(paneId)
+    if (isValid(paneIndex)) {
+      this._destroyPane(paneIndex)
+    }
+  }
+
+  /**
    * 移除一个指标
    * @param technicalIndicatorType
    * @param paneId
    */
   removeTechnicalIndicator (technicalIndicatorType, paneId) {
     if (paneId) {
-      let panePos = -1
-      for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
-        const pane = this._technicalIndicatorPanes[i]
-        if (pane.id() === paneId) {
-          panePos = i
-          break
-        }
-      }
-      if (panePos !== -1) {
-        const removed = this._technicalIndicatorPanes[panePos].removeTechnicalIndicator(technicalIndicatorType)
-        if (this._technicalIndicatorPanes[panePos].isEmptyTechnicalIndicator()) {
-          this._technicalIndicatorPanes[panePos].destroy()
-          this._separatorPanes[panePos].destroy()
-          this._technicalIndicatorPanes.splice(panePos, 1)
-          this._separatorPanes.splice(panePos, 1)
-          for (let i = 0; i < this._separatorPanes.length; i++) {
-            this._separatorPanes[i].updatePaneIndex(i)
-          }
-          this.adjustPaneViewport(true, true, true, true, true)
+      const paneIndex = this._matchPane(paneId)
+      if (isValid(paneIndex)) {
+        const removed = this._technicalIndicatorPanes[paneIndex].removeTechnicalIndicator(technicalIndicatorType)
+        if (this._technicalIndicatorPanes[paneIndex].isEmptyTechnicalIndicator()) {
+          this._destroyPane(paneIndex)
         } else {
           if (removed) {
             this.adjustPaneViewport(false, true, true, true)
@@ -519,13 +549,17 @@ export default class ChartPane {
   }
 
   /**
-   * 添加图形标记
+   * 创建图形标记
    * @param type
    */
-  addGraphicMark (type) {
+  createGraphicMark (type) {
+    this._graphicMarkBaseId++
     const graphicMarkMapping = this._chartData.graphicMarkMapping()
     const GraphicMark = graphicMarkMapping[type]
-    this._chartData.addGraphicMark(new GraphicMark(this._chartData, this._xAxisPane.xAxis(), this._candlePane.yAxis()))
+    const id = `${GRAPHIC_MARK_ID_PREFIX}${this._graphicMarkBaseId}`
+    const graphicMarkInstance = new GraphicMark(id, this._chartData, this._xAxisPane.xAxis(), this._candlePane.yAxis())
+    this._chartData.addGraphicMarkInstance(graphicMarkInstance)
+    return id
   }
 
   /**

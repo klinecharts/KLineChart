@@ -28,11 +28,11 @@ import { DEV } from '../../../utils/env'
  */
 export function createGraphicMarkMapping () {
   const mapping = {}
-  const markExtensions = extension.markExtensions
-  for (const name in markExtensions) {
-    const markClass = createMarkClass(markExtensions[name])
-    if (markClass) {
-      mapping[name] = markClass
+  const graphicMarkExtensions = extension.graphicMarkExtensions
+  for (const name in graphicMarkExtensions) {
+    const graphicMarkClass = createGraphicMarkClass(graphicMarkExtensions[name])
+    if (graphicMarkClass) {
+      mapping[name] = graphicMarkClass
     }
   }
   return mapping
@@ -49,7 +49,7 @@ export function createGraphicMarkMapping () {
  * @param drawExtend
  * @return {Mark|null}
  */
-export function createMarkClass ({
+export function createGraphicMarkClass ({
   name, series, checkMousePointOnLine, generatedLines,
   performMarkPoints, onMouseMoveForDrawingExtend, drawExtend
 }) {
@@ -83,7 +83,11 @@ export function createMarkClass ({
     default: { break }
   }
   if (ExtendClass) {
-    class Mark extends ExtendClass {}
+    class Mark extends ExtendClass {
+      constructor (id, chartData, xAxis, yAxis) {
+        super(id, name, series, chartData, xAxis, yAxis)
+      }
+    }
     Mark.prototype.checkMousePointOnLine = checkMousePointOnLine
     Mark.prototype.generatedLines = generatedLines
     if (isFunction(performMarkPoints)) {
