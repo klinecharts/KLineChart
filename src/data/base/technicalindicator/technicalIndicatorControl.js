@@ -14,7 +14,7 @@
 
 import TechnicalIndicator from './TechnicalIndicator'
 
-import extension from '../../../extension/extension'
+import extension from '../../extension'
 
 import { isFunction, isValid } from '../../../utils/typeChecks'
 import { formatBigNumber, formatPrecision } from '../../../utils/format'

@@ -2,3 +2,4 @@
 /.idea
 package-lock.json
 /website
+/lib

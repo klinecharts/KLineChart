@@ -13,8 +13,6 @@
  */
 
 import { checkPointOnRayLine } from './graphicHelper'
-import { formatPrecision } from '../../utils/format'
-import { createFont } from '../../utils/canvas'
 
 export default {
   name: 'priceLine',
@@ -30,8 +28,8 @@ export default {
   drawExtend: (ctx, lines, markOptions, precision, xAxis, yAxis) => {
     const point = lines[0][0]
     const price = yAxis.convertFromPixel(point.y)
-    const priceText = formatPrecision(price, precision.price)
-    ctx.font = createFont(markOptions.text.size, markOptions.text.weight, markOptions.text.family)
+    const priceText = price.toFixed(precision.price)
+    ctx.font = `${markOptions.text.weight} ${markOptions.text.size}px ${markOptions.text.family}`
     ctx.fillStyle = markOptions.text.color
     ctx.fillText(priceText, point.x + markOptions.text.marginLeft, point.y - markOptions.text.marginBottom)
   }

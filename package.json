@@ -13,6 +13,7 @@
     "index.simple.js",
     "types/index.d.ts",
     "dist/",
+    "lib/",
     "licenses/",
     "NOTICE"
   ],
@@ -34,11 +35,14 @@
   "private": false,
   "scripts": {
     "lint": "./node_modules/.bin/eslint src",
-    "build": "./node_modules/.bin/rollup -c ./config/rollup.config.js",
+    "build-extension": "./node_modules/.bin/babel src/extension --out-dir lib",
+    "build-core": "./node_modules/.bin/rollup -c ./config/rollup.config.js",
+    "build": "npm run build-extension && npm run build-core",
     "test": "./node_modules/.bin/mocha --require @babel/register tests/",
     "deploy": "gh-pages -d website"
   },
   "devDependencies": {
+    "@babel/cli": "^7.11.5",
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
     "@babel/register": "^7.9.0",

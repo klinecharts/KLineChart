@@ -44,7 +44,7 @@ import onBalanceVolume from './extension/technicalindicator/volume/onBalanceVolu
 import priceAndVolumeTrend from './extension/technicalindicator/volume/priceAndVolumeTrend'
 import volume from './extension/technicalindicator/volume/volume'
 
-import extension from './extension/extension'
+import extension from './data/extension'
 import { version, init, dispose } from './core'
 
 extension.addTechnicalIndicator([

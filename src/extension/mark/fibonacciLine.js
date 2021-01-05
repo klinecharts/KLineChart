@@ -13,8 +13,6 @@
  */
 
 import { checkPointOnStraightLine } from './graphicHelper'
-import { formatPrecision } from '../../utils/format'
-import { createFont } from '../../utils/canvas'
 
 export default {
   name: 'fibonacciLine',
@@ -41,13 +39,13 @@ export default {
     return lines
   },
   drawExtend: (ctx, lines, markOptions, precision, xAxis, yAxis) => {
-    ctx.font = createFont(markOptions.text.size, markOptions.text.weight, markOptions.text.family)
+    ctx.font = `${markOptions.text.weight} ${markOptions.text.size}px ${markOptions.text.family}`
     ctx.fillStyle = markOptions.text.color
     const percentTextArray = ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']
     lines.forEach((points, index) => {
       const point = points[0]
       const price = yAxis.convertFromPixel(point.y)
-      const priceText = `${formatPrecision(price, precision.price)} ${percentTextArray[index]}`
+      const priceText = `${price.toFixed(precision.price)} ${percentTextArray[index]}`
       ctx.fillText(priceText, point.x + markOptions.text.marginLeft, point.y - markOptions.text.marginBottom)
     })
   }

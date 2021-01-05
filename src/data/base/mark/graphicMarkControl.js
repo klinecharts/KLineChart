@@ -13,7 +13,7 @@
  */
 
 import { isFunction } from '../../../utils/typeChecks'
-import extension from '../../../extension/extension'
+import extension from '../../extension'
 
 import { GraphicMarkSeries } from './GraphicMark'
 import OnePointLineGraphicMark from './OnePointLineGraphicMark'
