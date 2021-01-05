@@ -1413,7 +1413,7 @@ function renderFillCircle(ctx, fillColor, circlePoint, radius) {
  */
 
 var GraphicMarkSeries = {
-  ONE_POINT_LINE: 'onPointLine',
+  ONE_POINT_LINE: 'onePointLine',
   TWO_POINT_LINE: 'twoPointLine',
   THREE_ONE_POINT_LINE: 'threePointLine'
 };
@@ -1788,7 +1788,7 @@ var LineGraphicMark = /*#__PURE__*/function (_GraphicMark) {
       var lines = this.generatedLines(xyPoints, {
         width: this._xAxis.width(),
         height: this._yAxis.height()
-      });
+      }) || [];
 
       for (var _i = 0; _i < lines.length; _i++) {
         var points = lines[_i];
@@ -1845,7 +1845,7 @@ var LineGraphicMark = /*#__PURE__*/function (_GraphicMark) {
         lines = this.generatedLines(xyPoints, {
           width: this._xAxis.width(),
           height: this._yAxis.height()
-        });
+        }) || [];
       }
 
       lines.forEach(function (points) {

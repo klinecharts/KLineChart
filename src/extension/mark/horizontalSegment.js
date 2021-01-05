@@ -15,7 +15,7 @@
 import { checkPointOnSegmentLine } from './graphicHelper'
 
 export default {
-  name: 'horizontalSegmentLine',
+  name: 'horizontalSegment',
   series: 'twoPointLine',
   checkMousePointOnLine: (point1, point2, mousePoint) => {
     return checkPointOnSegmentLine(point1, point2, mousePoint)

@@ -88,7 +88,7 @@ export default class LineGraphicMark extends GraphicMark {
     const lines = this.generatedLines(xyPoints, {
       width: this._xAxis.width(),
       height: this._yAxis.height()
-    })
+    }) || []
     for (let i = 0; i < lines.length; i++) {
       const points = lines[i]
       if (this.checkMousePointOnLine(points[0], points[1], point)) {
@@ -135,7 +135,7 @@ export default class LineGraphicMark extends GraphicMark {
       lines = this.generatedLines(xyPoints, {
         width: this._xAxis.width(),
         height: this._yAxis.height()
-      })
+      }) || []
     }
     lines.forEach(points => {
       const lineType = getLineType(points[0], points[1])

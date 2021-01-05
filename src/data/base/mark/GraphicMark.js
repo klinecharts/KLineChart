@@ -19,7 +19,7 @@ import { renderStrokeFillCircle } from '../../../renderer/circle'
  * @type {{TWO_POINT_LINE: string, THREE_ONE_POINT_LINE: string, ONE_POINT_LINE: string}}
  */
 export const GraphicMarkSeries = {
-  ONE_POINT_LINE: 'onPointLine',
+  ONE_POINT_LINE: 'onePointLine',
   TWO_POINT_LINE: 'twoPointLine',
   THREE_ONE_POINT_LINE: 'threePointLine'
 }

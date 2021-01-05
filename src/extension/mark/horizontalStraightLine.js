@@ -20,7 +20,7 @@ export default {
   checkMousePointOnLine: (point1, point2, mousePoint) => {
     return checkPointOnStraightLine(point1, point2, mousePoint)
   },
-  generatedDrawLines: (xyPoints, viewport) => {
+  generatedLines: (xyPoints, viewport) => {
     return [[
       {
         x: 0,
