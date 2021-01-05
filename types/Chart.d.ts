@@ -4,9 +4,9 @@ import { PaneType, PaneOptions } from './Pane';
 import { DrawActionType, DrawActionCallbackParams } from './DrawAction'
 import { GraphicMark } from './GraphicMark'
 
-export type PictureType = 'png' | 'jpeg' | 'bmp';
+export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 
-export interface Chart {
+export declare interface Chart {
   setStyleOptions(options: any): void;
   getStyleOptions(): any;
   overrideTechnicalIndicator(override: OverrideTechnicalIndicator): void;

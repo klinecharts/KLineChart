@@ -4,6 +4,19 @@
 npm install klinecharts --save
 ```
 
+### 引入区分
+```js
+// 引入全量图表，包含全部技术指标和全部画图模型
+import { init, dispose, version, extension } from 'klinecharts'
+
+// 引入图表部分功能，只包含全部技术指标
+import { init, dispose, version, extension } from 'klinecharts/index.blank'
+
+// 引入图表基础功能，不包含技术指标和画图模型
+import { init, dispose, version, extension } from 'klinecharts/index.simple'
+```
+以上三种方式根据需要用其中一种引入方式即可。
+
 ### 创建一个图表
 ```js
 import { init } from 'klinecharts'
@@ -27,7 +40,7 @@ chart.applyNewData([
 ## API
 ### 图表方法
 ```js
-// 初始化一个图表
+// 初始化一个图表，返回图表实例
 // ds 可以是dom元素、元素id和元素class中的一种
 // options 样式配置，详情可参阅样式详情
 init(ds, options)
@@ -35,6 +48,12 @@ init(ds, options)
 // 销毁一个图表，一旦销毁，图表将不再可用。
 // dcs 可以是div节点、节点id、节点class和图表实例中的一种
 dispose(dcs)
+
+// 全局添加技术指标
+extension.addTechnicalIndicator(technicalIndicator)
+
+// 全局添加图形标记
+extension.addGraphicMark(graphicMark)
 
 // 获取图表的版本号
 version()
@@ -132,6 +151,10 @@ loadMore(cb)
 // 返回值是一个字符串的标识，这非常重要，后续对该窗口的一些操作，都需要此标识
 createPane(type, options)
 
+// 移除窗口
+// paneId 窗口id 调用createPane方法时返回的标识
+removePane(paneId)
+
 // 设置技术指标类型
 // technicalIndicatorType 技术指标类型
 // isStack 是否要叠加，可缺省
@@ -152,12 +175,15 @@ removeTechnicalIndicator(technicalIndicatorType, paneId)
 // technicalIndicatorInfo 技术指标信息，详细请参考自定义指标
 addCustomTechnicalIndicator(technicalIndicatorInfo)
 
-// 添加图形标记
+// 创建图形标记
 // 入参类型：
 // 'none'，'horizontalStraightLine'，'verticalStraightLine'，'straightLine'，'horizontalRayLine'
 // 'verticalRayLine'，'rayLine'，'horizontalSegmentLine'，'verticalSegmentLine'，'segmentLine'
 // 'priceLine'，'priceChannelLine'，'parallelStraightLine'，'fibonacciLine'
-addGraphicMark(graphicMarkType)
+createGraphicMark(graphicMarkType)
+
+// 添加自定义图形标记
+addCustomGraphicMark(graphicMark)
 
 // 移除所有的图形标记
 removeAllGraphicMark()

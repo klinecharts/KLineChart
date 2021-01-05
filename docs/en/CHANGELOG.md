@@ -1,5 +1,20 @@
 # Change Log
 
+## 6.1.0
+`To be released`
++ 🆕 Add `extension.addTechnicalIndicator` and `extension.addGraphicMark` to the chart api.
++ 🆕 Each item of the technical indicator `plots` adds `title`.
++ 🆕 Add `styles` for technical indicators.
++ 🆕 Add api `overrideTechnicalIndicator`, replace the apis `setTechnicalIndicatorParams` and `setTechnicalIndicatorPrecision`.
++ 🆕 Add api `addCustomGraphicMark` to add custom chart mark.
++ 🆕 Add api `removePane` to remove the window.
++ 👉 Api `getTechnicalIndicatorParams` is changed to `getTechnicalIndicatorInfo`.
++ 👉 Api `addGraphicMark` is changed to `createGraphicMark`.
++ 💄 Optimize the display of `tooltip`.
++ 🐞 Fix the problem that the prototype extension may not be compatible with other plugins.
++ 🐞 Fix typescript reference problem.
+
+
 ## 6.0.5
 `2020-12-28`
 + 🆕 Add configuration `candle.margin`, `candle.tooltip.defaultValue`, `technicalIndicator.margin`, `technicalIndicator.tooltip.defaultValue` and `separator.activeBackgroundColor`.

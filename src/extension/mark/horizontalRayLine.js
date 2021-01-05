@@ -16,24 +16,31 @@ import { checkPointOnRayLine } from './graphicHelper'
 
 export default {
   name: 'horizontalRayLine',
-  series: 'twoPointLine',
-  checkMousePointOnLine: (point1, point2, mousePoint) => {
-    return checkPointOnRayLine(point1, point2, mousePoint)
+  totalStep: 3,
+  checkMousePointOn: (points, mousePoint) => {
+    return checkPointOnRayLine(points[0], points[1], mousePoint)
   },
-  generatedLines: (xyPoints, viewport) => {
+  createGraphicOptions: (tpPoints, xyPoints, viewport) => {
     const point = { x: 0, y: xyPoints[0].y }
     if (xyPoints[1] && xyPoints[0].x < xyPoints[1].x) {
       point.x = viewport.width
     }
-    return [[xyPoints[0], point]]
+    return [
+      {
+        type: 'line',
+        isDraw: true,
+        isCheck: true,
+        dataSource: [[xyPoints[0], point]]
+      }
+    ]
   },
-  performMarkPoints: (tpPoints, pressedPointIndex, { dataIndex, timestamp, price }) => {
-    tpPoints[pressedPointIndex].timestamp = timestamp
-    tpPoints[pressedPointIndex].dataIndex = dataIndex
+  performMousePressedMove: (tpPoints, pressedPointIndex, { price }) => {
     tpPoints[0].price = price
     tpPoints[1].price = price
   },
-  onMouseMoveForDrawingExtend: (tpPoints, { price }) => {
-    tpPoints[0].price = price
+  performMouseMoveForDrawing: (step, tpPoints, { price }) => {
+    if (step === 2) {
+      tpPoints[0].price = price
+    }
   }
 }

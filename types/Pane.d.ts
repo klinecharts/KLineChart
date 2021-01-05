@@ -1,6 +1,6 @@
-export type PaneType = 'technicalIndicator'
+export declare type PaneType = 'technicalIndicator'
 
-export interface PaneOptions {
+export declare interface PaneOptions {
   technicalIndicatorType?: string;
   height?: number;
   dragEnabled?: boolean;

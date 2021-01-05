@@ -16,23 +16,31 @@ import { checkPointOnSegmentLine } from './graphicHelper'
 
 export default {
   name: 'horizontalSegment',
-  series: 'twoPointLine',
-  checkMousePointOnLine: (point1, point2, mousePoint) => {
-    return checkPointOnSegmentLine(point1, point2, mousePoint)
+  totalStep: 3,
+  checkMousePointOn: (points, mousePoint) => {
+    return checkPointOnSegmentLine(points[0], points[1], mousePoint)
   },
-  generatedLines: (xyPoints) => {
+  createGraphicOptions: (tpPoints, xyPoints) => {
+    let lines = []
     if (xyPoints.length === 2) {
-      return [xyPoints]
+      lines = [xyPoints]
     }
-    return []
+    return [
+      {
+        type: 'line',
+        isDraw: true,
+        isCheck: true,
+        dataSource: lines
+      }
+    ]
   },
-  performMarkPoints (tpPoints, pressedPointIndex, { dataIndex, timestamp, price }) {
-    tpPoints[pressedPointIndex].timestamp = timestamp
-    tpPoints[pressedPointIndex].dataIndex = dataIndex
+  performMousePressedMove: (tpPoints, pressedPointIndex, { price }) => {
     tpPoints[0].price = price
     tpPoints[1].price = price
   },
-  onMouseMoveForDrawingExtend (tpPoints, { price }) {
-    tpPoints[0].price = price
+  performMouseMoveForDrawing: (step, tpPoints, { price }) => {
+    if (step === 2) {
+      tpPoints[0].price = price
+    }
   }
 }

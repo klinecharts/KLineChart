@@ -16,21 +16,26 @@ import { checkPointOnRayLine } from './graphicHelper'
 
 export default {
   name: 'priceLine',
-  series: 'onePointLine',
-  checkMousePointOnLine: (point1, point2, mousePoint) => {
-    return checkPointOnRayLine(point1, point2, mousePoint)
+  totalStep: 2,
+  checkMousePointOn: (points, mousePoint) => {
+    return checkPointOnRayLine(points[0], points[1], mousePoint)
   },
-  generatedLines: (xyPoints, viewport) => {
+  createGraphicOptions: (tpPoints, xyPoints, viewport, precision, xAxis, yAxis) => {
     return [
-      [xyPoints[0], { x: viewport.width, y: xyPoints[0].y }]
+      {
+        type: 'line',
+        isDraw: true,
+        isCheck: true,
+        dataSource: [[xyPoints[0], { x: viewport.width, y: xyPoints[0].y }]]
+      },
+      {
+        type: 'text',
+        isDraw: true,
+        isCheck: false,
+        dataSource: [
+          { x: xyPoints[0].x, y: xyPoints[0].y, text: yAxis.convertFromPixel(xyPoints[0].y).toFixed(precision.price) }
+        ]
+      }
     ]
-  },
-  drawExtend: (ctx, lines, markOptions, precision, xAxis, yAxis) => {
-    const point = lines[0][0]
-    const price = yAxis.convertFromPixel(point.y)
-    const priceText = price.toFixed(precision.price)
-    ctx.font = `${markOptions.text.weight} ${markOptions.text.size}px ${markOptions.text.family}`
-    ctx.fillStyle = markOptions.text.color
-    ctx.fillText(priceText, point.x + markOptions.text.marginLeft, point.y - markOptions.text.marginBottom)
   }
 }

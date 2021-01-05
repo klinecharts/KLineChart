@@ -16,37 +16,48 @@ import { checkPointOnStraightLine } from './graphicHelper'
 
 export default {
   name: 'fibonacciLine',
-  series: 'twoPointLine',
-  checkMousePointOnLine: (point1, point2, mousePoint) => {
-    return checkPointOnStraightLine(point1, point2, mousePoint)
+  totalStep: 3,
+  checkMousePointOn: (points, mousePoint) => {
+    return checkPointOnStraightLine(points[0], points[1], mousePoint)
   },
-  generatedLines: (xyPoints, viewport) => {
+  createGraphicOptions: (tpPoints, xyPoints, viewport, precision, xAxis, yAxis) => {
     const lines = []
+    const texts = []
     if (xyPoints.length > 0) {
       const startX = 0
       const endX = viewport.width
       lines.push([{ x: startX, y: xyPoints[0].y }, { x: endX, y: xyPoints[0].y }])
+      texts.push([{
+        x: startX,
+        y: xyPoints[0].y,
+        text: `${yAxis.convertFromPixel(xyPoints[0].y).toFixed(precision.price)} (100%)`
+      }])
       if (xyPoints.length > 1) {
+        const percents = [0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDistance = xyPoints[0].y - xyPoints[1].y
-        lines.push([{ x: startX, y: xyPoints[1].y + yDistance * 0.786 }, { x: endX, y: xyPoints[1].y + yDistance * 0.786 }])
-        lines.push([{ x: startX, y: xyPoints[1].y + yDistance * 0.618 }, { x: endX, y: xyPoints[1].y + yDistance * 0.618 }])
-        lines.push([{ x: startX, y: xyPoints[1].y + yDistance * 0.5 }, { x: endX, y: xyPoints[1].y + yDistance * 0.5 }])
-        lines.push([{ x: startX, y: xyPoints[1].y + yDistance * 0.382 }, { x: endX, y: xyPoints[1].y + yDistance * 0.382 }])
-        lines.push([{ x: startX, y: xyPoints[1].y + yDistance * 0.236 }, { x: endX, y: xyPoints[1].y + yDistance * 0.236 }])
-        lines.push([{ x: startX, y: xyPoints[1].y }, { x: endX, y: xyPoints[1].y }])
+        percents.forEach(percent => {
+          const y = xyPoints[1].y + yDistance * percent
+          lines.push([{ x: startX, y }, { x: endX, y }])
+          texts.push({
+            x: startX,
+            y,
+            text: `${yAxis.convertFromPixel(y).toFixed(precision.price)} (${(percent * 100).toFixed(1)}%)`
+          })
+        })
       }
     }
-    return lines
-  },
-  drawExtend: (ctx, lines, markOptions, precision, xAxis, yAxis) => {
-    ctx.font = `${markOptions.text.weight} ${markOptions.text.size}px ${markOptions.text.family}`
-    ctx.fillStyle = markOptions.text.color
-    const percentTextArray = ['(100.0%)', '(78.6%)', '(61.8%)', '(50.0%)', '(38.2%)', '(23.6%)', '(0.0%)']
-    lines.forEach((points, index) => {
-      const point = points[0]
-      const price = yAxis.convertFromPixel(point.y)
-      const priceText = `${price.toFixed(precision.price)} ${percentTextArray[index]}`
-      ctx.fillText(priceText, point.x + markOptions.text.marginLeft, point.y - markOptions.text.marginBottom)
-    })
+    return [
+      {
+        type: 'line',
+        isDraw: true,
+        isCheck: true,
+        dataSource: lines
+      }, {
+        type: 'text',
+        isDraw: true,
+        isCheck: false,
+        dataSource: texts
+      }
+    ]
   }
 }

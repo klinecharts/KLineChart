@@ -2,11 +2,16 @@
 
 ## 6.1.0
 `待发布`
++ 🆕 图表方法新增`extension.addTechnicalIndicator`和`extension.addGraphicMark`。
 + 🆕 技术指标`plots`每一项新增`title`。
 + 🆕 技术指标新增`styles`。
 + 🆕 新增方法`overrideTechnicalIndicator`，取代方法`setTechnicalIndicatorParams`和`setTechnicalIndicatorPrecision`。
++ 🆕 新增方法`addCustomGraphicMark`，添加自定义图表标记。
++ 🆕 新增方法`removePane`，移除窗口。
 + 👉 方法`getTechnicalIndicatorParams`变更为`getTechnicalIndicatorInfo`。
++ 👉 方法`addGraphicMark`变更为`createGraphicMark`。
 + 💄 优化`tooltip`显示。
++ 🐞 修复因原型扩展可能与其它插件不兼容问题。
 + 🐞 修复typescript引用问题。
 
 

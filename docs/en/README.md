@@ -4,6 +4,19 @@
 npm install klinecharts --save
 ```
 
+### Import distinction
+```js
+// Import all charts, including all technical indicators and all drawing models
+import { init, dispose, version, extension } from 'klinecharts'
+
+// Import some functions of the chart, only including all technical indicators
+import { init, dispose, version, extension } from 'klinecharts/index.blank'
+
+// Import chart basic functions, excluding technical indicators and drawing models
+import { init, dispose, version, extension } from 'klinecharts/index.simple'
+```
+The above three methods can be introduced by one of them as needed.
+
 ### Create your first chart
 ```js
 import { init } from 'klinecharts'
@@ -30,6 +43,8 @@ chart.applyNewData([
 init(ds, options)
 dispose(dcs)
 version()
+extension.addTechnicalIndicator(technicalIndicator)
+extension.addGraphicMark(graphicMark)
 ```
 
 ### Chart instance
@@ -59,9 +74,11 @@ loadMore(cb)
 setTechnicalIndicatorType(technicalIndicatorType, isStack, paneId)
 getTechnicalIndicatorType(paneId)
 createPane(type, options)
+removePane(paneId)
 addCustomTechnicalIndicator(technicalIndicatorInfo)
 removeTechnicalIndicator(technicalIndicatorType, paneId)
-addGraphicMark(graphicMarkType)
+createGraphicMark(graphicMarkType)
+addCustomGraphicMark(graphicMark)
 removeAllGraphicMark()
 subscribeDrawAction(type, callback)
 unsubscribeDrawAction(type, callback)

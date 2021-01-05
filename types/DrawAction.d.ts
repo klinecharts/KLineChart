@@ -1,8 +1,8 @@
 import { KLineData } from './KLineData'
 
-export type DrawActionType = 'drawCandle' | 'drawTechnicalIndicator'
+export declare type DrawActionType = 'drawCandle' | 'drawTechnicalIndicator'
 
-export interface DrawActionCallbackParams {
+export declare interface DrawActionCallbackParams {
   ctx: CanvasRenderingContext2D;
   kLineData: KLineData;
   dataIndex: number;

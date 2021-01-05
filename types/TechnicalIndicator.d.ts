@@ -1,21 +1,21 @@
 import { KLineData } from './KLineData'
 
-export type TechnicalIndicatorSeries = 'price' | 'volume' | 'normal'
+export declare type TechnicalIndicatorSeries = 'price' | 'volume' | 'normal'
 
-export type TechnicalIndicatorPlotType = 'circle' | 'bar' | 'line';
+export declare type TechnicalIndicatorPlotType = 'circle' | 'bar' | 'line';
 
-export interface TechnicalIndicatorPlotCallbackDataItem {
+export declare interface TechnicalIndicatorPlotCallbackDataItem {
   kLineData?: KLineData;
   technicalIndicatorData?: any;
 }
 
-export interface TechnicalIndicatorPlotCallbackData {
+export declare interface TechnicalIndicatorPlotCallbackData {
   preData: TechnicalIndicatorPlotCallbackDataItem;
   currentData: TechnicalIndicatorPlotCallbackDataItem;
   nextData: TechnicalIndicatorPlotCallbackDataItem;
 }
 
-export interface TechnicalIndicatorPlot {
+export declare interface TechnicalIndicatorPlot {
   key: string;
   title?: string;
   type?: TechnicalIndicatorPlotType;
@@ -30,14 +30,14 @@ export declare interface OverrideTechnicalIndicator {
   styles?: any;
 }
 
-export interface TechnicalIndicatorRenderDataSource {
+export declare interface TechnicalIndicatorRenderDataSource {
   from: number;
   to: number;
   kLineDataList: KLineData[];
   technicalIndicatorDataList: any[];
 }
 
-export interface TechnicalIndicatorRenderViewport {
+export declare interface TechnicalIndicatorRenderViewport {
   width: number;
   height: number;
   dataSpace: number;

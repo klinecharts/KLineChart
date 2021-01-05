@@ -16,14 +16,22 @@ import { checkPointOnSegmentLine } from './graphicHelper'
 
 export default {
   name: 'segment',
-  series: 'twoPointLine',
-  checkMousePointOnLine: (point1, point2, mousePoint) => {
-    return checkPointOnSegmentLine(point1, point2, mousePoint)
+  totalStep: 3,
+  checkMousePointOn: (points, mousePoint) => {
+    return checkPointOnSegmentLine(points[0], points[1], mousePoint)
   },
-  generatedLines: (xyPoints) => {
+  createGraphicOptions: (tpPoints, xyPoints) => {
+    let lines = []
     if (xyPoints.length === 2) {
-      return [xyPoints]
+      lines = [xyPoints]
     }
-    return []
+    return [
+      {
+        type: 'line',
+        isDraw: true,
+        isCheck: true,
+        dataSource: lines
+      }
+    ]
   }
 }

@@ -16,21 +16,28 @@ import { checkPointOnStraightLine, getLinearY } from './graphicHelper'
 
 export default {
   name: 'straightLine',
-  series: 'twoPointLine',
-  checkMousePointOnLine: (point1, point2, mousePoint) => {
-    return checkPointOnStraightLine(point1, point2, mousePoint)
+  totalStep: 3,
+  checkMousePointOn: (points, mousePoint) => {
+    return checkPointOnStraightLine(points[0], points[1], mousePoint)
   },
-  generatedLines: (xyPoints, viewport) => {
+  createGraphicOptions: (tpPoints, xyPoints, viewport) => {
     if (xyPoints.length < 2 || xyPoints[0].x === xyPoints[1].x) {
-      return [[
+      return [
         {
-          x: xyPoints[0].x,
-          y: 0
-        }, {
-          x: xyPoints[0].x,
-          y: viewport.height
+          type: 'line',
+          isDraw: true,
+          isCheck: true,
+          dataSource: [[
+            {
+              x: xyPoints[0].x,
+              y: 0
+            }, {
+              x: xyPoints[0].x,
+              y: viewport.height
+            }
+          ]]
         }
-      ]]
+      ]
     }
     const y = getLinearY(
       xyPoints[0], xyPoints[1],
@@ -44,14 +51,21 @@ export default {
         }
       ]
     )
-    return [[
+    return [
       {
-        x: 0,
-        y: y[0]
-      }, {
-        x: viewport.width,
-        y: y[1]
+        type: 'line',
+        isDraw: true,
+        isCheck: true,
+        dataSource: [[
+          {
+            x: 0,
+            y: y[0]
+          }, {
+            x: viewport.width,
+            y: y[1]
+          }
+        ]]
       }
-    ]]
+    ]
   }
 }

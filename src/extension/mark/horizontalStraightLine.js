@@ -16,19 +16,26 @@ import { checkPointOnStraightLine } from './graphicHelper'
 
 export default {
   name: 'horizontalStraightLine',
-  series: 'onePointLine',
-  checkMousePointOnLine: (point1, point2, mousePoint) => {
-    return checkPointOnStraightLine(point1, point2, mousePoint)
+  totalStep: 2,
+  checkMousePointOn: (points, mousePoint) => {
+    return checkPointOnStraightLine(points[0], points[1], mousePoint)
   },
-  generatedLines: (xyPoints, viewport) => {
-    return [[
+  createGraphicOptions: (tpPoints, xyPoints, viewport) => {
+    return [
       {
-        x: 0,
-        y: xyPoints[0].y
-      }, {
-        x: viewport.width,
-        y: xyPoints[0].y
+        type: 'line',
+        isDraw: true,
+        isCheck: true,
+        dataSource: [[
+          {
+            x: 0,
+            y: xyPoints[0].y
+          }, {
+            x: viewport.width,
+            y: xyPoints[0].y
+          }
+        ]]
       }
-    ]]
+    ]
   }
 }

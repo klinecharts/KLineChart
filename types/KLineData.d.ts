@@ -1,4 +1,4 @@
-export interface KLineData {
+export declare interface KLineData {
   open: number;
   close: number;
   high: number;

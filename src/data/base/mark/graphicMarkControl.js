@@ -12,13 +12,10 @@
  * limitations under the License.
  */
 
-import { isFunction } from '../../../utils/typeChecks'
+import { isFunction, isNumber } from '../../../utils/typeChecks'
 import extension from '../../extension'
 
-import { GraphicMarkSeries } from './GraphicMark'
-import OnePointLineGraphicMark from './OnePointLineGraphicMark'
-import TwoPointLineGraphicMark from './TwoPointLineGraphicMark'
-import ThreePointLineGraphicMark from './ThreePointLineGraphicMark'
+import GraphicMark from './GraphicMark'
 
 import { DEV } from '../../../utils/env'
 
@@ -42,64 +39,45 @@ export function createGraphicMarkMapping () {
  * 创建图形标记类
  * @param name
  * @param series
- * @param checkMousePointOnLine
- * @param generatedLines
- * @param performMarkPoints
- * @param onMouseMoveForDrawingExtend
+ * @param checkMousePointOn
+ * @param createGraphicOptions
+ * @param performMousePressedMove
+ * @param performMouseMoveForDrawing
  * @param drawExtend
  * @return {Mark|null}
  */
 export function createGraphicMarkClass ({
-  name, series, checkMousePointOnLine, generatedLines,
-  performMarkPoints, onMouseMoveForDrawingExtend, drawExtend
+  name, totalStep, checkMousePointOn, createGraphicOptions,
+  performMousePressedMove, performMouseMoveForDrawing, drawExtend
 }) {
   if (
     !name ||
-    !series ||
-    !isFunction(checkMousePointOnLine) ||
-    !isFunction(generatedLines)
+    !isNumber(totalStep) ||
+    !isFunction(checkMousePointOn) ||
+    !isFunction(createGraphicOptions)
   ) {
     if (DEV) {
       console.warn(
-        'Required attribute "name" and "series", method "checkMousePointOnLine" and "generatedLines", new graphic mark cannot be generated!!!'
+        'Required attribute "name" and "series", method "checkMousePointOn" and "createGraphicOptions", new graphic mark cannot be generated!!!'
       )
     }
     return null
   }
-  let ExtendClass
-  switch (series) {
-    case GraphicMarkSeries.ONE_POINT_LINE: {
-      ExtendClass = OnePointLineGraphicMark
-      break
+  class Mark extends GraphicMark {
+    constructor (id, chartData, xAxis, yAxis) {
+      super(id, name, totalStep, chartData, xAxis, yAxis)
     }
-    case GraphicMarkSeries.TWO_POINT_LINE: {
-      ExtendClass = TwoPointLineGraphicMark
-      break
-    }
-    case GraphicMarkSeries.THREE_ONE_POINT_LINE: {
-      ExtendClass = ThreePointLineGraphicMark
-      break
-    }
-    default: { break }
   }
-  if (ExtendClass) {
-    class Mark extends ExtendClass {
-      constructor (id, chartData, xAxis, yAxis) {
-        super(id, name, series, chartData, xAxis, yAxis)
-      }
-    }
-    Mark.prototype.checkMousePointOnLine = checkMousePointOnLine
-    Mark.prototype.generatedLines = generatedLines
-    if (isFunction(performMarkPoints)) {
-      Mark.prototype.performMarkPoints = performMarkPoints
-    }
-    if (isFunction(onMouseMoveForDrawingExtend)) {
-      Mark.prototype.onMouseMoveForDrawingExtend = onMouseMoveForDrawingExtend
-    }
-    if (isFunction(drawExtend)) {
-      Mark.prototype.drawExtend = drawExtend
-    }
-    return Mark
+  Mark.prototype.checkMousePointOn = checkMousePointOn
+  Mark.prototype.createGraphicOptions = createGraphicOptions
+  if (isFunction(performMousePressedMove)) {
+    Mark.prototype.performMousePressedMove = performMousePressedMove
   }
-  return null
+  if (isFunction(performMouseMoveForDrawing)) {
+    Mark.prototype.performMouseMoveForDrawing = performMouseMoveForDrawing
+  }
+  if (isFunction(drawExtend)) {
+    Mark.prototype.drawExtend = drawExtend
+  }
+  return Mark
 }
