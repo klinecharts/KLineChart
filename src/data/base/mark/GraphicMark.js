@@ -17,25 +17,37 @@ import { checkPointOnCircle } from '../../../extension/mark/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../../renderer/line'
 import { isValid } from '../../../utils/typeChecks'
 
-// 标记图形绘制步骤开始
-export const GRAPHIC_MARK_DRAW_STEP_START = 1
-
-// 标记图形绘制步骤结束
-export const GRAPHIC_MARK_DRAW_STEP_FINISHED = -1
-
 export const HoverType = {
   OTHER: 'other',
   POINT: 'point',
   NONE: 'none'
 }
 
+// 标记图形绘制步骤开始
+const GRAPHIC_MARK_DRAW_STEP_START = 1
+
+// 标记图形绘制步骤结束
+const GRAPHIC_MARK_DRAW_STEP_FINISHED = -1
+
 /**
  * 绘制类型
- * @type {{LINE: string, TEXT: string}}
+ * @type {{ARC: string, POLYGON: string, LINE: string, CONTINUOUS_LINE: string, TEXT: string}}
  */
-export const GraphicMarkDrawType = {
+const GraphicMarkDrawType = {
   LINE: 'line',
-  TEXT: 'text'
+  TEXT: 'text',
+  CONTINUOUS_LINE: 'continuous_line',
+  POLYGON: 'polygon',
+  ARC: 'arc'
+}
+
+/**
+ * 绘制风格
+ * @type {{STROKE: string, FILL: string}}
+ */
+const GraphicMarkDrawStyle = {
+  STROKE: 'stroke',
+  FILL: 'fill'
 }
 
 /**
@@ -130,17 +142,107 @@ export default class GraphicMark {
   }
 
   /**
-   * 绘制文字
+   * 绘制连续线
    * @param ctx
-   * @param texts
+   * @param points
    * @param markOptions
    * @private
    */
-  _drawText (ctx, texts, markOptions) {
+  _drawContinuousLine (ctx, points, markOptions) {
+    if (points.length > 0) {
+      ctx.strokeStyle = markOptions.line.color
+      ctx.lineWidth = markOptions.line.size
+      renderLine(ctx, () => {
+        ctx.beginPath()
+        ctx.moveTo(points[0].x, points[0].y)
+        for (let i = 1; i < points.length; i++) {
+          ctx.lineTo(points[i].x, points[i].y)
+        }
+        ctx.stroke()
+        ctx.closePath()
+      })
+    }
+  }
+
+  /**
+   * 绘制多边形
+   * @param ctx
+   * @param points
+   * @param style
+   * @param markOptions
+   * @private
+   */
+  _drawPolygon (ctx, points, style, markOptions) {
+    if (points.length > 0) {
+      let fillStroke
+      if (style === GraphicMarkDrawStyle.FILL) {
+        ctx.fillStyle = markOptions.polygon.fill.color
+        fillStroke = ctx.fill
+      } else {
+        ctx.lineWidth = markOptions.polygon.stroke.size
+        ctx.strokeStyle = markOptions.polygon.stroke.color
+        fillStroke = ctx.stroke
+      }
+      renderLine(ctx, () => {
+        ctx.beginPath()
+        ctx.moveTo(points[0].x, points[0].y)
+        for (let i = 1; i < points.length; i++) {
+          ctx.lineTo(points[i].x, points[i].y)
+        }
+        ctx.closePath()
+        fillStroke.call(ctx)
+      })
+    }
+  }
+
+  /**
+   * 画圆弧
+   * @param ctx
+   * @param points
+   * @param style
+   * @param markOptions
+   * @private
+   */
+  _drawArc (ctx, points, style, markOptions) {
+    if (style === GraphicMarkDrawStyle.FILL) {
+      ctx.fillStyle = markOptions.arc.fill.color
+    } else {
+      ctx.lineWidth = markOptions.arc.stroke.size
+      ctx.strokeStyle = markOptions.arc.stroke.color
+    }
+    points.forEach(({ x, y, radius, startAngle, endAngle }) => {
+      ctx.beginPath()
+      ctx.arc(x, y, radius, startAngle, endAngle)
+      if (style === GraphicMarkDrawStyle.FILL) {
+        ctx.closePath()
+        ctx.fill()
+      } else {
+        ctx.stroke()
+        ctx.closePath()
+      }
+    })
+  }
+
+  /**
+   * 绘制文字
+   * @param ctx
+   * @param texts
+   * @param style
+   * @param markOptions
+   * @private
+   */
+  _drawText (ctx, texts, style, markOptions) {
+    let fillStroke
+    if (style === GraphicMarkDrawStyle.STROKE) {
+      ctx.strokeStyle = markOptions.text.color
+      fillStroke = ctx.strokeText
+    } else {
+      ctx.fillStyle = markOptions.text.color
+      fillStroke = ctx.fillText
+    }
     ctx.font = `${markOptions.text.weight} ${markOptions.text.size}px ${markOptions.text.family}`
-    ctx.fillStyle = markOptions.text.color
     texts.forEach(({ x, y, text }) => {
-      ctx.fillText(text, x + markOptions.text.marginLeft, y - markOptions.text.marginBottom)
+      fillStroke.call(ctx, text, x + markOptions.text.marginLeft, y - markOptions.text.marginBottom)
     })
   }
 
@@ -163,15 +265,27 @@ export default class GraphicMark {
         this._tpPoints, xyPoints, viewport,
         precision, this._xAxis, this._yAxis
       ) || []
-      graphicDataSources.forEach(({ type, isDraw, dataSource = [] }) => {
+      graphicDataSources.forEach(({ type, isDraw, style, dataSource = [] }) => {
         if (!isValid(isDraw) || isDraw) {
           switch (type) {
             case GraphicMarkDrawType.LINE: {
               this._drawLines(ctx, dataSource, markOptions)
               break
             }
+            case GraphicMarkDrawType.CONTINUOUS_LINE: {
+              this._drawContinuousLine(ctx, dataSource, markOptions)
+              break
+            }
+            case GraphicMarkDrawType.POLYGON: {
+              this._drawPolygon(ctx, dataSource, style, markOptions)
+              break
+            }
+            case GraphicMarkDrawType.ARC: {
+              this._drawArc(ctx, dataSource, style, markOptions)
+              break
+            }
             case GraphicMarkDrawType.TEXT: {
-              this._drawText(ctx, dataSource, markOptions)
+              this._drawText(ctx, dataSource, style, markOptions)
               break
             }
             default: { break }

@@ -3,6 +3,7 @@ import { DrawActionType, DrawActionCallbackParams } from './DrawAction'
 import {
   GraphicMarkViewport,
   XYPoint, TimestampPricePoint,
+  GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
   PriceVolumePrecision, GraphicMark
 } from './GraphicMark'
@@ -31,6 +32,7 @@ export {
   Chart, PictureType,
   DrawActionType, DrawActionCallbackParams,
   GraphicMarkViewport, XYPoint, TimestampPricePoint,
+  GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
   PriceVolumePrecision, GraphicMark,
   KLineData,

@@ -410,7 +410,7 @@ const defaultCrosshair = {
 
 /**
  * 默认图形标记配置
- * @type {{line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
+ * @type {{arc: {fill: {color: string}, stroke: {size: number, color: string}}, polygon: {fill: {color: string}, stroke: {size: number, color: string}}, line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
  */
 const defaultGraphicMark = {
   line: {
@@ -426,6 +426,24 @@ const defaultGraphicMark = {
     activeBorderColor: '#fff',
     activeBorderSize: 2,
     activeRadius: 6
+  },
+  polygon: {
+    stroke: {
+      size: 1,
+      color: '#2196F3'
+    },
+    fill: {
+      color: 'rgba(33, 150, 243, 0.1)'
+    }
+  },
+  arc: {
+    stroke: {
+      size: 1,
+      color: '#2196F3'
+    },
+    fill: {
+      color: 'rgba(33, 150, 243, 0.1)'
+    }
   },
   text: {
     color: '#1e88e5',

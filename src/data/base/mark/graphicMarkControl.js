@@ -58,7 +58,7 @@ export function createGraphicMarkClass ({
   ) {
     if (DEV) {
       console.warn(
-        'Required attribute "name" and "series", method "checkMousePointOn" and "createGraphicDataSource", new graphic mark cannot be generated!!!'
+        'Required attribute "name" and "totalStep", method "checkMousePointOn" and "createGraphicDataSource", new graphic mark cannot be generated!!!'
       )
     }
     return null
