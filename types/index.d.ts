@@ -1,21 +1,21 @@
-import { Chart, PictureType } from './Chart'
-import { DrawActionType, DrawActionCallbackParams } from './DrawAction'
+import { Chart, PictureType } from './Chart';
+import { DrawActionType, DrawActionCallbackParams } from './DrawAction';
 import {
   GraphicMarkViewport,
   XYPoint, TimestampPricePoint,
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
   PriceVolumePrecision, GraphicMark
-} from './GraphicMark'
-import { KLineData } from './KLineData'
-import { PaneType, PaneOptions } from './Pane'
+} from './GraphicMark';
+import { KLineData } from './KLineData';
+import { PaneType, PaneOptions } from './Pane';
 import {
   TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, OverrideTechnicalIndicator,
   TechnicalIndicatorRenderDataSource, TechnicalIndicatorRenderViewport,
   TechnicalIndicator
-} from './TechnicalIndicator'
+} from './TechnicalIndicator';
 
 export declare interface extension {
   addTechnicalIndicator: (technicalIndicators: TechnicalIndicator | TechnicalIndicator[]) => void;

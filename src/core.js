@@ -85,10 +85,14 @@ function dispose (dcs) {
     let container
     if (typeof dcs === 'string') {
       container = document.getElementById(dcs)
-      id = container.chartId
+      if (container) {
+        id = container.chartId
+      }
       if (!id) {
         container = document.getElementsByClassName(dcs)
-        id = container.chartId
+        if (container) {
+          id = container.chartId
+        }
       }
     }
     if (!id) {

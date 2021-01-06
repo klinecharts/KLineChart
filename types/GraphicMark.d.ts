@@ -19,9 +19,9 @@ export declare interface PriceVolumePrecision {
   volume: number;
 }
 
-export declare type GraphicMarkDataSourceDrawType = 'line' | 'text' | 'continuous_line' | 'polygon' | 'arc'
+export declare type GraphicMarkDataSourceDrawType = 'line' | 'text' | 'continuous_line' | 'polygon' | 'arc';
 
-export declare type GraphicMarkDataSourceDrawStyle = 'stroke' | 'fill'
+export declare type GraphicMarkDataSourceDrawStyle = 'stroke' | 'fill';
 
 export declare interface GraphicMarkDataSourceItem extends XYPoint {
   radius?: number;
@@ -31,7 +31,7 @@ export declare interface GraphicMarkDataSourceItem extends XYPoint {
 }
 
 export declare interface GraphicMarkDataSource {
-  type: GraphicMarkDataSourceDrawType,
+  type: GraphicMarkDataSourceDrawType;
   isDraw?: boolean;
   isCheck?: boolean;
   style?: GraphicMarkDataSourceDrawStyle;

@@ -1,8 +1,8 @@
 import { OverrideTechnicalIndicator, TechnicalIndicator } from './TechnicalIndicator';
 import { KLineData } from './KLineData';
 import { PaneType, PaneOptions } from './Pane';
-import { DrawActionType, DrawActionCallbackParams } from './DrawAction'
-import { GraphicMark } from './GraphicMark'
+import { DrawActionType, DrawActionCallbackParams } from './DrawAction';
+import { GraphicMark } from './GraphicMark';
 
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 

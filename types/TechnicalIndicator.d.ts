@@ -1,6 +1,6 @@
-import { KLineData } from './KLineData'
+import { KLineData } from './KLineData';
 
-export declare type TechnicalIndicatorSeries = 'price' | 'volume' | 'normal'
+export declare type TechnicalIndicatorSeries = 'price' | 'volume' | 'normal';
 
 export declare type TechnicalIndicatorPlotType = 'circle' | 'bar' | 'line';
 
@@ -63,5 +63,5 @@ export declare interface TechnicalIndicator extends OverrideTechnicalIndicator {
     xAxisConvert: any,
     yAxisConvert: any,
     isCandleTechnicalIndicator: boolean
-  ) => void
+  ) => void;
 }

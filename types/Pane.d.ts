@@ -1,4 +1,4 @@
-export declare type PaneType = 'technicalIndicator'
+export declare type PaneType = 'technicalIndicator';
 
 export declare interface PaneOptions {
   technicalIndicatorType?: string;
