@@ -17,21 +17,21 @@ import { checkPointOnStraightLine } from './graphicHelper'
 export default {
   name: 'fibonacciLine',
   totalStep: 3,
-  checkMousePointOn: (points, mousePoint) => {
+  checkMousePointOn: (type, points, mousePoint) => {
     return checkPointOnStraightLine(points[0], points[1], mousePoint)
   },
-  createGraphicOptions: (tpPoints, xyPoints, viewport, precision, xAxis, yAxis) => {
+  createGraphicDataSource: (tpPoints, xyPoints, viewport, precision, xAxis, yAxis) => {
     const lines = []
     const texts = []
     if (xyPoints.length > 0) {
       const startX = 0
       const endX = viewport.width
       lines.push([{ x: startX, y: xyPoints[0].y }, { x: endX, y: xyPoints[0].y }])
-      texts.push([{
+      texts.push({
         x: startX,
         y: xyPoints[0].y,
         text: `${yAxis.convertFromPixel(xyPoints[0].y).toFixed(precision.price)} (100%)`
-      }])
+      })
       if (xyPoints.length > 1) {
         const percents = [0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDistance = xyPoints[0].y - xyPoints[1].y

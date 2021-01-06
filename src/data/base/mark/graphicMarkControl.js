@@ -40,25 +40,25 @@ export function createGraphicMarkMapping () {
  * @param name
  * @param series
  * @param checkMousePointOn
- * @param createGraphicOptions
+ * @param createGraphicDataSource
  * @param performMousePressedMove
  * @param performMouseMoveForDrawing
  * @param drawExtend
  * @return {Mark|null}
  */
 export function createGraphicMarkClass ({
-  name, totalStep, checkMousePointOn, createGraphicOptions,
+  name, totalStep, checkMousePointOn, createGraphicDataSource,
   performMousePressedMove, performMouseMoveForDrawing, drawExtend
 }) {
   if (
     !name ||
     !isNumber(totalStep) ||
     !isFunction(checkMousePointOn) ||
-    !isFunction(createGraphicOptions)
+    !isFunction(createGraphicDataSource)
   ) {
     if (DEV) {
       console.warn(
-        'Required attribute "name" and "series", method "checkMousePointOn" and "createGraphicOptions", new graphic mark cannot be generated!!!'
+        'Required attribute "name" and "series", method "checkMousePointOn" and "createGraphicDataSource", new graphic mark cannot be generated!!!'
       )
     }
     return null
@@ -69,7 +69,7 @@ export function createGraphicMarkClass ({
     }
   }
   Mark.prototype.checkMousePointOn = checkMousePointOn
-  Mark.prototype.createGraphicOptions = createGraphicOptions
+  Mark.prototype.createGraphicDataSource = createGraphicDataSource
   if (isFunction(performMousePressedMove)) {
     Mark.prototype.performMousePressedMove = performMousePressedMove
   }

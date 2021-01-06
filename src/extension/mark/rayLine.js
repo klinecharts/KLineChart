@@ -17,10 +17,10 @@ import { checkPointOnRayLine, getLinearY } from './graphicHelper'
 export default {
   name: 'rayLine',
   totalStep: 3,
-  checkMousePointOn: (points, mousePoint) => {
+  checkMousePointOn: (type, points, mousePoint) => {
     return checkPointOnRayLine(points[0], points[1], mousePoint)
   },
-  createGraphicOptions: (tpPoints, xyPoints, viewport) => {
+  createGraphicDataSource: (tpPoints, xyPoints, viewport) => {
     let point = {
       x: xyPoints[0].x,
       y: 0

@@ -17,10 +17,10 @@ import { checkPointOnSegmentLine } from './graphicHelper'
 export default {
   name: 'verticalSegment',
   totalStep: 3,
-  checkMousePointOn: (points, mousePoint) => {
+  checkMousePointOn: (type, points, mousePoint) => {
     return checkPointOnSegmentLine(points[0], points[1], mousePoint)
   },
-  createGraphicOptions: (tpPoints, xyPoints) => {
+  createGraphicDataSource: (tpPoints, xyPoints) => {
     let lines = []
     if (xyPoints.length === 2) {
       lines = [xyPoints]

@@ -159,11 +159,11 @@ export default class GraphicMark {
     if (this._drawStep !== GRAPHIC_MARK_DRAW_STEP_START && xyPoints.length > 0) {
       const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
       const precision = { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() }
-      const graphicOptions = this.createGraphicOptions(
+      const graphicDataSources = this.createGraphicDataSource(
         this._tpPoints, xyPoints, viewport,
         precision, this._xAxis, this._yAxis
       ) || []
-      graphicOptions.forEach(({ type, isDraw, dataSource = [] }) => {
+      graphicDataSources.forEach(({ type, isDraw, dataSource = [] }) => {
         if (!isValid(isDraw) || isDraw) {
           switch (type) {
             case GraphicMarkDrawType.LINE: {
@@ -171,7 +171,7 @@ export default class GraphicMark {
               break
             }
             case GraphicMarkDrawType.TEXT: {
-              this._drawLines(ctx, dataSource, markOptions)
+              this._drawText(ctx, dataSource, markOptions)
               break
             }
             default: { break }
@@ -179,7 +179,7 @@ export default class GraphicMark {
         }
       })
       this.drawExtend(
-        ctx, graphicOptions, markOptions,
+        ctx, graphicDataSources, markOptions,
         viewport, precision, this._xAxis, this._yAxis
       )
     }
@@ -230,7 +230,7 @@ export default class GraphicMark {
    * @return {boolean}
    */
   checkMousePointOnGraphic (point) {
-    const graphicMark = this._chartData.styleOptions().graphicMark
+    const markOptions = this._chartData.styleOptions().graphicMark
     const xyPoints = []
     // 检查鼠标点是否在图形的点上
     for (let i = 0; i < this._tpPoints.length; i++) {
@@ -240,14 +240,14 @@ export default class GraphicMark {
         y: this._yAxis.convertToPixel(price)
       }
       xyPoints.push(xyPoint)
-      if (checkPointOnCircle(xyPoint, graphicMark.point.radius, point)) {
+      if (checkPointOnCircle(xyPoint, markOptions.point.radius, point)) {
         this._hoverType = HoverType.POINT
         this._hoverIndex = i
         return true
       }
     }
     // 检查鼠标点是否在点构成的其它图形上
-    const graphicOptions = this.createGraphicOptions(
+    const graphicDataSources = this.createGraphicDataSource(
       this._tpPoints,
       xyPoints,
       {
@@ -261,11 +261,11 @@ export default class GraphicMark {
       this._xAxis,
       this._yAxis
     ) || []
-    for (const { isCheck, dataSource = [] } of graphicOptions) {
+    for (const { type, isCheck, dataSource = [] } of graphicDataSources) {
       if (isCheck) {
         for (let i = 0; i < dataSource.length; i++) {
           const points = dataSource[i]
-          if (this.checkMousePointOn(points, point)) {
+          if (this.checkMousePointOn(type, points, point)) {
             this._hoverType = HoverType.OTHER
             this._hoverIndex = i
             return true
@@ -317,10 +317,11 @@ export default class GraphicMark {
 
   /**
    * 检查鼠标点在其它图形上
+   * @param type
    * @param points
    * @param mousePoint
    */
-  checkMousePointOn (points, mousePoint) {}
+  checkMousePointOn (type, points, mousePoint) {}
 
   /**
    * 创建图形配置
@@ -331,7 +332,7 @@ export default class GraphicMark {
    * @param xAxis
    * @param yAxis
    */
-  createGraphicOptions (tpPoints, xyPoints, viewport, precision, xAxis, yAxis) {}
+  createGraphicDataSource (tpPoints, xyPoints, viewport, precision, xAxis, yAxis) {}
 
   /**
    * 处理绘制过程中鼠标移动

@@ -1,3 +1,4 @@
 config/*.js
 dist/*.js
 types/
+lib/

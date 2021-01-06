@@ -17,10 +17,10 @@ import { checkPointOnStraightLine, getParallelLines } from './graphicHelper'
 export default {
   name: 'parallelStraightLine',
   totalStep: 4,
-  checkMousePointOn: (points, mousePoint) => {
+  checkMousePointOn: (type, points, mousePoint) => {
     return checkPointOnStraightLine(points[0], points[1], mousePoint)
   },
-  createGraphicOptions: (tpPoints, xyPoints, viewport) => {
+  createGraphicDataSource: (tpPoints, xyPoints, viewport) => {
     return [
       {
         type: 'line',
