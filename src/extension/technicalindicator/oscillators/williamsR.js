@@ -27,12 +27,12 @@ export default {
     { key: 'wr2', title: 'WR2', type: 'line' },
     { key: 'wr3', title: 'WR3', type: 'line' }
   ],
-  regeneratePlots (params) {
+  regeneratePlots: (params) => {
     return params.map((_, i) => {
       return { key: `wr${i + 1}`, title: `WR${i + 1}`, type: 'line' }
     })
   },
-  calcTechnicalIndicator (dataList, calcParams, plots) {
+  calcTechnicalIndicator: (dataList, calcParams, plots) => {
     return dataList.map((kLineData, i) => {
       const wr = {}
       const close = kLineData.close

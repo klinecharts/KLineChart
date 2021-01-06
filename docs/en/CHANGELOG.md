@@ -12,6 +12,7 @@
 + 👉 Api `getTechnicalIndicatorParams` is changed to `getTechnicalIndicatorInfo`.
 + 👉 Api `addGraphicMark` is changed to `createGraphicMark`.
 + 💄 Optimize the display of `tooltip`.
++ 🐞 Fix method `dispose` call may report an error problem.
 + 🐞 Fix the problem that the prototype extension may not be compatible with other plugins.
 + 🐞 Fix typescript reference problem.
 

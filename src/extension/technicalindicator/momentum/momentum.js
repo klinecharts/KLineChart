@@ -23,7 +23,7 @@ export default {
     { key: 'mtm', title: 'MTM', type: 'line' },
     { key: 'maMtm', title: 'MAMTM', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     let mtmSum = 0
     const result = []
     dataList.forEach((kLineData, i) => {

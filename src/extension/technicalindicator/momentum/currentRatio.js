@@ -37,7 +37,7 @@ export default {
     { key: 'ma3', title: 'MA3', type: 'line' },
     { key: 'ma4', title: 'MA4', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     const ma1ForwardPeriod = Math.ceil(calcParams[1] / 2.5 + 1)
     const ma2ForwardPeriod = Math.ceil(calcParams[2] / 2.5 + 1)
     const ma3ForwardPeriod = Math.ceil(calcParams[3] / 2.5 + 1)

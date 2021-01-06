@@ -28,7 +28,7 @@ export default {
     { key: 'br', title: 'BR', type: 'line' },
     { key: 'ar', title: 'AR', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     let hcy = 0
     let cyl = 0
     let ho = 0

@@ -28,12 +28,12 @@ export default {
     { key: 'ma30', title: 'MA30', type: 'line' },
     { key: 'ma60', title: 'MA60', type: 'line' }
   ],
-  regeneratePlots (params) {
+  regeneratePlots: (params) => {
     return params.map(p => {
       return { key: `ma${p}`, title: `MA${p}`, type: 'line' }
     })
   },
-  calcTechnicalIndicator (dataList, calcParams, plots) {
+  calcTechnicalIndicator: (dataList, calcParams, plots) => {
     const closeSums = []
     return dataList.map((kLineData, i) => {
       const ma = {}

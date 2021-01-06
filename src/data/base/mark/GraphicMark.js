@@ -469,12 +469,12 @@ export default class GraphicMark {
   /**
    * 扩展绘制
    * @param ctx
-   * @param graphicOptions
+   * @param graphicDataSources
    * @param markOptions
    * @param viewport
    * @param precision
    * @param xAxis
    * @param yAxis
    */
-  drawExtend (ctx, graphicOptions, markOptions, viewport, precision, xAxis, yAxis) {}
+  drawExtend (ctx, graphicDataSources, markOptions, viewport, precision, xAxis, yAxis) {}
 }

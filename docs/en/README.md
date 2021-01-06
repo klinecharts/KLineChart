@@ -40,48 +40,166 @@ chart.applyNewData([
 ## API
 ### Chart
 ```js
+// Initialize a chart and return the chart instance
+// ds can be one of dom element, element id and element class
+// options style configuration, please refer to style details for details
 init(ds, options)
+
+// Destroy a chart. Once destroyed, the chart will no longer be available.
+// dcs can be one of div node, node id, node class and chart instance
 dispose(dcs)
-version()
+
+// Add technical indicators global
 extension.addTechnicalIndicator(technicalIndicator)
+
+// Add graphic marker global
 extension.addGraphicMark(graphicMark)
+
+// Get the version of the chart
+version()
 ```
 
 ### Chart instance
 ```js
+// Set style configuration
+// options: style configuration, please refer to style details for details
 setStyleOptions(options)
+
+// Get style configuration
 getStyleOptions()
+
+// Cover technical indicator information
+// override: some parameters that need to be overridden
 overrideTechnicalIndicator(override)
+
+// Get technical indicator information
+// technicalIndicatorType: The type of technical indicator, which can be defaulted. The default is to return all
 getTechnicalIndicatorInfo(technicalIndicatorType)
+
+// Set price and quantity precision
+// pricePrecision: price precision, which affects the digital precision of the price displayed on the entire chart, and also includes the technical indicator of price
+// volumePrecision: quantity precision, which affects the numerical precision of the quantity displayed on the entire chart, and also includes the technical index of the volume where the indicator series is volume
 setPriceVolumePrecision(pricePrecision, volumePrecision)
+
+// set time zone
+// timezone: time zone name, such as'Asia/Shanghai'
+// If not set, the local time zone will be automatically obtained
+// Please search for related documents for the list of names corresponding to the time zone
 setTimezone(timezone)
+
+// Get the chart time zone
 getTimezone()
+
+// Set whether to zoom
 setZoomEnabled(enabled)
+
+// Get whether it can be zoomed
 isZoomEnabled()
+
+// Set whether to scroll
 setScrollEnabled(enabled)
+
+// Get whether it can be scrolled
 isScrollEnabled()
+
+// Resize the chart, it will always fill the container size
+// Note: This method will recalculate the size of each module of the entire chart. Frequent calls may affect performance. Please be cautious when calling
 resize()
+
+// Set the gap that can be vacated on the right side of the chart
 setOffsetRightSpace(space)
+
+// Set the minimum number of visible candles on the left
 setLeftMinVisibleBarCount(barCount)
+
+// Set the minimum number of visible candles on the right
 setRightMinVisibleBarCount(barCount)
+
+// Set the space occupied by a piece of data in the chart
 setDataSpace(space)
+
+// Add new data
+// This method will clear the chart data, no need to call the clearData method
+// dataList: is an array of KLineData, please refer to data source for details of KLineData type
+// more: tells the chart if there are more historical data, can be the default, the default is true
 applyNewData(dataList, more)
+
+// Add more history data
+// dataList: is an array of KLineData, please refer to data source for details of KLineData type
+// more: tells the chart if there are more historical data, can be the default, the default is true
 applyMoreData(dataList, more)
+
+// Update data
+// Currently only the timestamp of the current last piece of data will be matched, the same will be overwritten, and the difference will be appended
 updateData(data)
+
+// Get the current data source of the chart
 getDataList()
+
+// Clear data
+// Under normal circumstances, clearing the data is to add new data, in order to avoid repeated drawing, all here is just to clear the data, the chart will not be redrawn
 clearData()
+
+// Set to load more callback functions
+// cb: is a callback method, the callback parameter is the timestamp of the first data
 loadMore(cb)
+
+// Set the type of technical indicators
+// technicalIndicatorType: technical indicator type
+// isStack: whether to stack or not, can be the default
+// paneId: is the identifier returned when the createPane method is called. If it is defaulted, the technical indicators will be set on the main chart
 setTechnicalIndicatorType(technicalIndicatorType, isStack, paneId)
+
+// Get the type of technical indicators
+// paneId: is the identifier returned when the createPane method is called. If it is defaulted, the technical indicator type on the main chart will be obtained
+// Return an array of technical indicator types
 getTechnicalIndicatorType(paneId)
+
+// Create a window
+// type: window type, can be defaulted, currently only supports'technicalIndicator'
+// options: configuration information, can be defaulted, the format is: {technicalIndicatorType:'xxx', height: 100, dragEnabled: true}
+// The return value is a string identifier, which is very important, and some subsequent operations on the window require this identifier
 createPane(type, options)
+
+// Remove window
+// paneId: window id is the identifier returned when the createPane method is called
 removePane(paneId)
+
+// Add a custom technical indicator
+// technicalIndicatorInfo: technical indicator information, please refer to custom indicators for details
 addCustomTechnicalIndicator(technicalIndicatorInfo)
+
+// Remove technical indicators
+// technicalIndicatorType: technical indicator type, if default, all will be removed
+// paneId: is the identifier returned when the createPane method is called. If it is defaulted, the technical indicators on the main chart will be removed
 removeTechnicalIndicator(technicalIndicatorType, paneId)
+
+// Create graphic mark
+// graphicMarkType: graphic mark type
 createGraphicMark(graphicMarkType)
+
+// Add custom graphic mark
+// graphicMark: graphic mark information
 addCustomGraphicMark(graphicMark)
+
+// Remove all graphic marks
 removeAllGraphicMark()
+
+// Subscribe to drawing events
+// type: is'drawCandle' and 'drawTechnicalIndicator'
+// callback: is the callback method
 subscribeDrawAction(type, callback)
+
+// Unsubscribe to drawing events
+// type: is'drawCandle' and 'drawTechnicalIndicator'
+// callback: is the callback method
 unsubscribeDrawAction(type, callback)
+
+// Get the picture url after the chart is converted into a picture
+// includeTooltip: whether to prompt the floating layer, it can be defaulted
+// includeGraphicMark: whether you need to include the graphic mark layer, can be default
+// type: The type of the converted picture, the type is one of the three types of'png','jpeg', and'bmp', which can be defaulted, and the default is'jpeg'
+// backgroundColor: background color, can be the default, the default is'#333333'
 getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor)
 ```
 
@@ -90,117 +208,36 @@ The chart data source needs a specific format, and the single data format is as 
 ```js
 { open, close, high, low, volume, turnover, timestamp }
 ```
-The timestamp needs ```milliseconds```, others need the ```number``` type,
-The turnover field is not necessary, but if you need to display the technical indicator ```EMV``` and ```AVP```,
+The timestamp needs `milliseconds`, others need the `number` type,
+The `turnover` field is not necessary, but if you need to display the technical indicator `EMV` and `AVP`,
 you need to fill in the data for this field.
 
 ## Technical indicator
 ### Default
-The chart supports 21 technical indicators, the following are the types and calculation parameters:
-<table>
-    <tbody>
-        <tr>
-            <th>Type</th>
-            <th>MA</th>
-            <th>EMA</th>
-            <th>VOL</th>
-            <th>MACD</th>
-            <th>BOLL</th>
-            <th>KDJ</th>
-        </tr>
-        <tr>
-            <th>Parameters</th>
-            <th>[5,10,30,60]</th>
-            <th>[6,12,20]</th>
-            <th>[5,10,20]</th>
-            <th>[12,26,9]</th>
-            <th>[20]</th>
-            <th>[9,3,3]</th>
-        </tr>
-        <tr>
-           <th>Type</th>
-           <th>RSI</th>
-           <th>BIAS</th>
-           <th>BRAR</th>
-           <th>CCI</th>
-           <th>DMI</th>
-           <th>CR</th>
-        </tr>
-        <tr>
-            <th>Parameters</th>
-            <th>[6,12,24]</th>
-            <th>[6,12,24]</th>
-            <th>[26]</th>
-            <th>[13]</th>
-            <th>[14,6]</th>
-            <th>[26,10,20,40,60]</th>
-        </tr>
-        <tr>
-            <th>Type</th>
-            <th>PSY</th>
-            <th>DMA</th>
-            <th>TRIX</th>
-            <th>OBV</th>
-            <th>VR</th>
-            <th>WR</th>
-        </tr>
-        <tr>
-            <th>Parameters</th>
-            <th>[12]</th>
-            <th>[10,50,10]</th>
-            <th>[12,20]</th>
-            <th>[30]</th>
-            <th>[24,30]</th>
-            <th>[13,34,89]</th>
-        </tr>
-        <tr>
-            <th>Type</th>
-            <th>MTM</th>
-            <th>EMV</th>
-            <th>SAR</th>
-            <th>AVP</th>
-        </tr>
-        <tr>
-            <th>Parameters</th>
-            <th>[6,10]</th>
-            <th>[14,9]</th>
-            <th>[2,2,20]</th>
-            <th></th>
-        </tr>
-    </tbody>
-</table>
+The chart supports the following technical indicators by default:<br/>
+`MA`, `EMA`, `SMA`, `BBI`, `VOL`, `AVP`, `MACD`,
+`BOLL`, `KDJ`,`RSI`, `BIAS`, `BRAR`, `CCI`, `DMI`,
+`CR`, `PSY`,`DMA`, `TRIX`, `OBV`, `VR`, `WR`, `MTM`,
+`EMV`, `SAR`, `AO`, `PVT`, `ROC`
 
-### Custom
-Through the chart api ```addCustomTechnicalIndicator(technicalIndicatorInfo)```, you can add custom technical indicators.<br/>
-After adding, you can operate like the default technical indicators, such as setting calculation parameters.<br/>
-The technicalIndicatorInfo format is as follows:
-```
-{
-  name: 'NAME',
-  calcTechnicalIndicator: (kLineDataList, calcParams, plots) => { return [...] },
-  precision: 4,
-  series: 'normal',
-  calcParams: [],
-  plots: [],
-  shouldCheckParamCount: true,
-  shouldOhlc: false,
-  shouldFormatBigNumber: false,
-  baseValue: null,
-  minValue: null,
-  maxValue: null,
-  styles: null,
-  render: (
-    ctx,
-    dataSource,
-    viewport,
-    styleOptions,
-    xAxisConvert,
-    yAxisConvert,
-    isCandleTechnicalIndicator
-  ) => {}
-}
-```
-Specific reference [TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator).
+### Custom technical indicators
+You can add custom technical indicators global through `extension.addTechnicalIndicator(technicalIndicator)`,
+also add custom technical indicators to a single chart instance through the chart instance method `addCustomTechnicalIndicator(technicalIndicator)`.<br/>
+[How to customize a technical indicator](custom-technical-indicator.md)
+
+
+## Graphic mark
+### Default
+The chart supports graphic mark as follows by default:<br/>
+`horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`,
+`verticalRayLine`, `verticalSegment`, `verticalStraightLine`
+`rayLine`, `segment`, `straightLine`, `priceLine`,
+`priceChannelLine`, `parallelStraightLine`, `fibonacciLine`
+
+### Custom graphic mark
+You can add custom graphic marks global through `extension.addGraphicMark(graphicMark)`,
+also add a custom graphic mark to a single chart instance through the chart instance method `addCustomGraphicMark(graphicMark)`.<br/>
+[How to customize a graphic mark](custom-technical-indicator.md)
 
 ## Style Option
 For full configuration please see [here](../style.md).

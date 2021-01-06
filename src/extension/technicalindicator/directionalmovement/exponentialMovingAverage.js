@@ -27,12 +27,12 @@ export default {
     { key: 'ema12', title: 'EMA12', type: 'line' },
     { key: 'ema20', title: 'EMA20', type: 'line' }
   ],
-  regeneratePlots (params) {
+  regeneratePlots: (params) => {
     return params.map(p => {
       return { key: `ema${p}`, title: `EMA${p}`, type: 'line' }
     })
   },
-  calcTechnicalIndicator (dataList, calcParams, plots) {
+  calcTechnicalIndicator: (dataList, calcParams, plots) => {
     const oldEmas = []
     return dataList.map((kLineData, i) => {
       const ema = {}

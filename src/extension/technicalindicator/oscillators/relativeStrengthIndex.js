@@ -25,7 +25,7 @@ export default {
     { key: 'rsi12', title: 'RSI12', type: 'line' },
     { key: 'rsi24', title: 'RSI24', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams, plots) {
+  calcTechnicalIndicator: (dataList, calcParams, plots) => {
     const sumCloseAs = []
     const sumCloseBs = []
     return dataList.map((kLineData, i) => {

@@ -45,7 +45,7 @@ export default {
     { key: 'mid', title: 'MID', type: 'line' },
     { key: 'dn', title: 'DN', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     const p = calcParams[0] - 1
     let closeSum = 0
     return dataList.map((kLineData, i) => {

@@ -39,7 +39,7 @@ export default {
       }
     }
   ],
-  regeneratePlots (params) {
+  regeneratePlots: (params) => {
     const plots = params.map(p => {
       return { key: `ma${p}`, title: `MA${p}`, type: 'line' }
     })
@@ -58,7 +58,7 @@ export default {
     })
     return plots
   },
-  calcTechnicalIndicator (dataList, calcParams, plots) {
+  calcTechnicalIndicator: (dataList, calcParams, plots) => {
     const volSums = []
     return dataList.map((kLineData, i) => {
       const volume = kLineData.volume || 0

@@ -35,7 +35,7 @@ export default {
       }
     }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     const startAf = calcParams[0] / 100
     const step = calcParams[1] / 100
     const maxAf = calcParams[2] / 100

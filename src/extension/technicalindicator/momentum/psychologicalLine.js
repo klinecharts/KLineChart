@@ -23,7 +23,7 @@ export default {
     { key: 'psy', title: 'PSY', type: 'line' },
     { key: 'maPsy', title: 'MAPSY', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     let upCount = 0
     let psySum = 0
     const upList = []

@@ -106,7 +106,6 @@ setScrollEnabled(enabled)
 // 是否可以拖拽滚动
 isScrollEnabled()
 
-
 // 设置图表右边可以空出来的间隙
 setOffsetRightSpace(space)
 
@@ -176,13 +175,11 @@ removeTechnicalIndicator(technicalIndicatorType, paneId)
 addCustomTechnicalIndicator(technicalIndicatorInfo)
 
 // 创建图形标记
-// 入参类型：
-// 'none'，'horizontalStraightLine'，'verticalStraightLine'，'straightLine'，'horizontalRayLine'
-// 'verticalRayLine'，'rayLine'，'horizontalSegmentLine'，'verticalSegmentLine'，'segmentLine'
-// 'priceLine'，'priceChannelLine'，'parallelStraightLine'，'fibonacciLine'
+// graphicMarkType 图形标记类型
 createGraphicMark(graphicMarkType)
 
 // 添加自定义图形标记
+// graphicMark 图形标记信息
 addCustomGraphicMark(graphicMark)
 
 // 移除所有的图形标记
@@ -197,13 +194,12 @@ subscribeDrawAction(type, callback)
 // 入参同方法subscribeDrawAction
 unsubscribeDrawAction(type, callback)
 
-
 // 获取图表转换成图片后的图片url
-// includeFloatLayer 是否需要包含浮层, 可缺省
-// includeGraphicMark, 可缺省
+// includeTooltip 是否需要提示浮层，可缺省
+// includeGraphicMark, 是否需要包含图形标记层，可缺省
 // type 转换后的图片类型，类型是'png'、'jpeg'、'bmp'三种中的一种，可缺省，默认为'jpeg'
 // backgroundColor 背景色，可缺省，默认为'#333333'
-getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor)
+getConvertPictureUrl(includeTooltip, includeGraphicMark, type, backgroundColor)
 ```
 
 ## 数据源
@@ -218,139 +214,31 @@ getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColo
 
 ## 技术指标
 ### 默认技术指标
-图表默认支持21种技术指标，类型及计算参数如下：
-<table>
-    <tbody>
-        <tr>
-            <th>指标类型</th>
-            <th>MA</th>
-            <th>EMA</th>
-            <th>VOL</th>
-            <th>MACD</th>
-            <th>BOLL</th>
-            <th>KDJ</th>
-        </tr>
-        <tr>
-            <th>默认参数</th>
-            <th>[5,10,30,60]</th>
-            <th>[6,12,20]</th>
-            <th>[5,10,20]</th>
-            <th>[12,26,9]</th>
-            <th>[20]</th>
-            <th>[9,3,3]</th>
-        </tr>
-        <tr>
-           <th>指标类型</th>
-           <th>RSI</th>
-           <th>BIAS</th>
-           <th>BRAR</th>
-           <th>CCI</th>
-           <th>DMI</th>
-           <th>CR</th>
-        </tr>
-        <tr>
-            <th>默认参数</th>
-            <th>[6,12,24]</th>
-            <th>[6,12,24]</th>
-            <th>[26]</th>
-            <th>[13]</th>
-            <th>[14,6]</th>
-            <th>[26,10,20,40,60]</th>
-        </tr>
-        <tr>
-            <th>指标类型</th>
-            <th>PSY</th>
-            <th>DMA</th>
-            <th>TRIX</th>
-            <th>OBV</th>
-            <th>VR</th>
-            <th>WR</th>
-        </tr>
-        <tr>
-            <th>默认参数</th>
-            <th>[12]</th>
-            <th>[10,50,10]</th>
-            <th>[12,20]</th>
-            <th>[30]</th>
-            <th>[24,30]</th>
-            <th>[13,34,89]</th>
-        </tr>
-        <tr>
-            <th>指标类型</th>
-            <th>MTM</th>
-            <th>EMV</th>
-            <th>SAR</th>
-            <th>AVP</th>
-        </tr>
-        <tr>
-            <th>默认参数</th>
-            <th>[6,10]</th>
-            <th>[14,9]</th>
-            <th>[2,2,20]</th>
-            <th>无参数，一般结合分时图使用</th>
-        </tr>
-    </tbody>
-</table>
+图表默认支持技术指标如下：<br/>
+`MA`, `EMA`, `SMA`, `BBI`, `VOL`, `AVP`, `MACD`,
+`BOLL`, `KDJ`,`RSI`, `BIAS`, `BRAR`, `CCI`, `DMI`,
+`CR`, `PSY`,`DMA`, `TRIX`, `OBV`, `VR`, `WR`, `MTM`,
+`EMV`, `SAR`, `AO`, `PVT`, `ROC`
 
 ### 自定义技术指标
-通过图表api```addCustomTechnicalIndicator(technicalIndicatorInfo)```可以添加自定义技术指标。<br/>
-添加后，可以像操作默认的技术指标一样去操作，比如设置计算参数。<br/>
-technicalIndicatorInfo格式如下：
-```
-{
-  // 技术指标名字，必要字段，是技术指标的唯一标识
-  name: 'NAME',
-  // 技术指标计算方法，必要字段
-  // 该字段是一个回调方法，回调参数是当前图表的源数据和计算的参数，需要返回一个数组
-  calcTechnicalIndicator: (kLineDataList, calcParams, plots) => { return [...] },
-  // 精度，可缺省，默认为4
-  precision: 4,
-  // 技术指标系列，值为'price', 'volume'和'normal'
-  // 当值为price时，价格设置价格精度时会影响该技术指标的精度
-  // 当值为volume时，价格设置数量精度时会影响该技术指标的精度
-  series: 'normal',
-  // 计算参数，可缺省
-  calcParams: [],
-  // 数据信息，需要对应计算方法返回的结果里面的key值
-  // 示例：
-  // 如果calcTechnicalIndicator返回的结果形式是[{ a: 1, b: 2 }, { a: 5, b: 6 }]
-  // 则plots应该是[{ key: 'a', type: 'line' }, { key: 'b', type: 'line' }]
-  // type可以是'line'，'circle'，'bar'
-  plots: [],
-  // 是否需要检查计算参数，可缺省，默认为true
-  // 如果为true，当设置指标参数时，如果参数个数和默认的参数个数不一致，将不能生效
-  shouldCheckParamCount: true,
-  // 是否需要格式化大数据值
-  shouldFormatBigNumber: false,
-  // 是否需要辅助ohlc线
-  shouldOhlc: false,
-  // 基础比对数据，可缺省
-  baseValue: null,
-  // 指定的最小值，可缺省
-  minValue: null,
-  // 指定的最大值，可缺省
-  maxValue: null,
-  // 样式，可缺省，缺省则同步样式配置
-  styles: null,
-  // 自定义渲染，可缺省，
-  // ctx canvas上下文
-  // dataSource 数据源，包含了原始的k线数据和计算出来的指标数据以及起始绘制点位置
-  // viewport 一些绘图可能需要的一些参数
-  // xAxis x轴组件，包含值和坐标转换的一些方法
-  // yAxis y轴组件，包含值和坐标转换的一些方法
-  // isCandleTechnicalIndicator 是否是蜡烛图指标
-  render: (
-    ctx,
-    dataSource,
-    viewport,
-    styleOptions,
-    xAxisConvert,
-    yAxisConvert,
-    isCandleTechnicalIndicator
-  ) => {}
-}
-```
-具体可参考[TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator)
+可以通过`extension.addTechnicalIndicator(technicalIndicator)`全局添加自定义技术指标，
+也通过图表实例方法`addCustomTechnicalIndicator(technicalIndicator)`为单个图表实例添加自定义技术指标。<br/>
+[如何自定义一个技术指标](custom-technical-indicator.md)
+
+
+## 图形标记
+### 默认图形标记
+图表默认支持图形标记如下：<br/>
+`horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`,
+`verticalRayLine`, `verticalSegment`, `verticalStraightLine`
+`rayLine`, `segment`, `straightLine`, `priceLine`,
+`priceChannelLine`, `parallelStraightLine`, `fibonacciLine`
+
+### 自定义图形标记
+可以通过`extension.addGraphicMark(graphicMark)`全局添加自定义图形标记，
+也通过图表实例方法`addCustomGraphicMark(graphicMark)`为单个图表实例添加自定义图形标记。<br/>
+[如何自定义一个图形标记](custom-technical-indicator.md)
+
 
 ## 样式配置
 全部配置请参阅[style](../style.md)

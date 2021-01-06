@@ -22,7 +22,7 @@ export default {
   plots: [
     { key: 'avp', title: 'AVP', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList) {
+  calcTechnicalIndicator: (dataList) => {
     let totalTurnover = 0
     let totalVolume = 0
     return dataList.map(kLineData => {

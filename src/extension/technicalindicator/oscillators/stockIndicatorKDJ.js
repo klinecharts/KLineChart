@@ -30,7 +30,7 @@ export default {
     { key: 'd', title: 'D', type: 'line' },
     { key: 'j', title: 'J', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     const result = []
     dataList.forEach((kLineData, i) => {
       const kdj = {}

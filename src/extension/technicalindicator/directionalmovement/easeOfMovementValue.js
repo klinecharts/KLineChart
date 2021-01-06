@@ -31,7 +31,7 @@ export default {
     { key: 'emv', title: 'EMV', type: 'line' },
     { key: 'maEmv', title: 'MAEMV', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     let emSum = 0
     let emvSum = 0
     const emList = []

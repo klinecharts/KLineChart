@@ -46,7 +46,7 @@ export default {
     { key: 'adx', title: 'ADX', type: 'line' },
     { key: 'adxr', title: 'ADXR', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     let trSum = 0
     const trList = []
     let dmpSum = 0

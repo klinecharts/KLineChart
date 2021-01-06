@@ -26,7 +26,7 @@ export default {
   plots: [
     { key: 'cci', title: 'CCI', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     const p = calcParams[0] - 1
     let closeSum = 0
     let md

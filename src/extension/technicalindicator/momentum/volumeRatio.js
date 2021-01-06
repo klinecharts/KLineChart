@@ -27,7 +27,7 @@ export default {
     { key: 'vr', title: 'VR', type: 'line' },
     { key: 'maVr', title: 'MAVR', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     let uvs = 0
     let dvs = 0
     let pvs = 0

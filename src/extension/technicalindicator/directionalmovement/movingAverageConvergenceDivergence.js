@@ -50,7 +50,7 @@ export default {
       }
     }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     let emaShort
     let emaLong
     let oldEmaShort = 0

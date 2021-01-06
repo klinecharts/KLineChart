@@ -23,7 +23,7 @@ export default {
     { key: 'obv', title: 'OBV', type: 'line' },
     { key: 'maObv', title: 'MAOBV', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     let obvSum = 0
     const result = []
     dataList.forEach((kLineData, i) => {

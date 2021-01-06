@@ -32,7 +32,7 @@ export default {
     { key: 'trix', title: 'TRIX', type: 'line' },
     { key: 'maTrix', title: 'MATRIX', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     let emaClose1
     let emaClose2
     let emaClose3

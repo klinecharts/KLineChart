@@ -12,6 +12,7 @@
 + 👉 方法`getTechnicalIndicatorParams`变更为`getTechnicalIndicatorInfo`。
 + 👉 方法`addGraphicMark`变更为`createGraphicMark`。
 + 💄 优化`tooltip`显示。
++ 🐞 修复方法`dispose`调用可能报错问题。
 + 🐞 修复因原型扩展可能与其它插件不兼容问题。
 + 🐞 修复typescript引用问题。
 

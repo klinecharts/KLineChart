@@ -25,12 +25,12 @@ export default {
     { key: 'bias12', title: 'BIAS12', type: 'line' },
     { key: 'bias24', title: 'BIAS24', type: 'line' }
   ],
-  regeneratePlots (params) {
+  regeneratePlots: (params) => {
     return params.map(p => {
       return { key: `bias${p}`, title: `BIAS${p}`, type: 'line' }
     })
   },
-  calcTechnicalIndicator (dataList, calcParams, plots) {
+  calcTechnicalIndicator: (dataList, calcParams, plots) => {
     const closeSums = []
     return dataList.map((kLineData, i) => {
       const bias = {}

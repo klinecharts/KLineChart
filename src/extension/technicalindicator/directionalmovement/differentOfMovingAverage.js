@@ -23,7 +23,7 @@ export default {
     { key: 'dma', title: 'DMA', type: 'line' },
     { key: 'ama', title: 'AMA', type: 'line' }
   ],
-  calcTechnicalIndicator (dataList, calcParams) {
+  calcTechnicalIndicator: (dataList, calcParams) => {
     const maxParam = Math.max(calcParams[0], calcParams[1])
     let closeSum1 = 0
     let closeSum2 = 0
