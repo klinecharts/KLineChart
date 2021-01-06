@@ -20,7 +20,7 @@ export default {
   checkMousePointOn: (type, points, mousePoint) => {
     return checkPointOnSegmentLine(points[0], points[1], mousePoint)
   },
-  createGraphicDataSource: (tpPoints, xyPoints) => {
+  createGraphicDataSource: (step, tpPoints, xyPoints) => {
     let lines = []
     if (xyPoints.length === 2) {
       lines = [xyPoints]

@@ -8,6 +8,7 @@
 + 🆕 新增方法`overrideTechnicalIndicator`，取代方法`setTechnicalIndicatorParams`和`setTechnicalIndicatorPrecision`。
 + 🆕 新增方法`addCustomGraphicMark`，添加自定义图表标记。
 + 🆕 新增方法`removePane`，移除窗口。
++ 🆕 新增配置`graphicMark.polygon`和`graphicMark.arc`。
 + 👉 方法`getTechnicalIndicatorParams`变更为`getTechnicalIndicatorInfo`。
 + 👉 方法`addGraphicMark`变更为`createGraphicMark`。
 + 💄 优化`tooltip`显示。

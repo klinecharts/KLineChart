@@ -262,7 +262,7 @@ export default class GraphicMark {
       const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
       const precision = { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() }
       const graphicDataSources = this.createGraphicDataSource(
-        this._tpPoints, xyPoints, viewport,
+        this._drawStep, this._tpPoints, xyPoints, viewport,
         precision, this._xAxis, this._yAxis
       ) || []
       graphicDataSources.forEach(({ type, isDraw, style, dataSource = [] }) => {
@@ -362,6 +362,7 @@ export default class GraphicMark {
     }
     // 检查鼠标点是否在点构成的其它图形上
     const graphicDataSources = this.createGraphicDataSource(
+      this._drawStep,
       this._tpPoints,
       xyPoints,
       {
@@ -439,6 +440,7 @@ export default class GraphicMark {
 
   /**
    * 创建图形配置
+   * @param step
    * @param tpPoints
    * @param xyPoints
    * @param viewport
@@ -446,7 +448,7 @@ export default class GraphicMark {
    * @param xAxis
    * @param yAxis
    */
-  createGraphicDataSource (tpPoints, xyPoints, viewport, precision, xAxis, yAxis) {}
+  createGraphicDataSource (step, tpPoints, xyPoints, viewport, precision, xAxis, yAxis) {}
 
   /**
    * 处理绘制过程中鼠标移动

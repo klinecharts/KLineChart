@@ -296,6 +296,24 @@
       activeBorderSize: 1,
       activeRadius: 6
     },
+    polygon: {
+      stroke: {
+        size: 1,
+        color: '#2196F3'
+      },
+      fill: {
+        color: 'rgba(33, 150, 243, 0.1)'
+      }
+    },
+    arc: {
+      stroke: {
+        size: 1,
+        color: '#2196F3'
+      },
+      fill: {
+        color: 'rgba(33, 150, 243, 0.1)'
+      }
+    },
     text: {
       color: '#2196F3',
       size: 12,

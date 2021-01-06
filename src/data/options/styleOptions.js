@@ -413,10 +413,6 @@ const defaultCrosshair = {
  * @type {{arc: {fill: {color: string}, stroke: {size: number, color: string}}, polygon: {fill: {color: string}, stroke: {size: number, color: string}}, line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
  */
 const defaultGraphicMark = {
-  line: {
-    color: '#2196F3',
-    size: 1
-  },
   point: {
     backgroundColor: '#181818',
     borderColor: '#fff',
@@ -426,6 +422,10 @@ const defaultGraphicMark = {
     activeBorderColor: '#fff',
     activeBorderSize: 2,
     activeRadius: 6
+  },
+  line: {
+    color: '#2196F3',
+    size: 1
   },
   polygon: {
     stroke: {

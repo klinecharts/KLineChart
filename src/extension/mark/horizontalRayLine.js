@@ -20,7 +20,7 @@ export default {
   checkMousePointOn: (type, points, mousePoint) => {
     return checkPointOnRayLine(points[0], points[1], mousePoint)
   },
-  createGraphicDataSource: (tpPoints, xyPoints, viewport) => {
+  createGraphicDataSource: (step, tpPoints, xyPoints, viewport) => {
     const point = { x: 0, y: xyPoints[0].y }
     if (xyPoints[1] && xyPoints[0].x < xyPoints[1].x) {
       point.x = viewport.width

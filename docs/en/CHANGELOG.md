@@ -8,6 +8,7 @@
 + 🆕 Add api `overrideTechnicalIndicator`, replace the apis `setTechnicalIndicatorParams` and `setTechnicalIndicatorPrecision`.
 + 🆕 Add api `addCustomGraphicMark` to add custom chart mark.
 + 🆕 Add api `removePane` to remove the window.
++ 🆕 Add configuration `graphicMark.polygon`和`graphicMark.arc`.
 + 👉 Api `getTechnicalIndicatorParams` is changed to `getTechnicalIndicatorInfo`.
 + 👉 Api `addGraphicMark` is changed to `createGraphicMark`.
 + 💄 Optimize the display of `tooltip`.

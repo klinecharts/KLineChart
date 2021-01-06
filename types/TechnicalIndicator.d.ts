@@ -10,16 +10,16 @@ export declare interface TechnicalIndicatorPlotCallbackDataItem {
 }
 
 export declare interface TechnicalIndicatorPlotCallbackData {
-  preData: TechnicalIndicatorPlotCallbackDataItem;
-  currentData: TechnicalIndicatorPlotCallbackDataItem;
-  nextData: TechnicalIndicatorPlotCallbackDataItem;
+  preData?: TechnicalIndicatorPlotCallbackDataItem;
+  currentData?: TechnicalIndicatorPlotCallbackDataItem;
+  nextData?: TechnicalIndicatorPlotCallbackDataItem;
 }
 
 export declare interface TechnicalIndicatorPlot {
   key: string;
   title?: string;
   type?: TechnicalIndicatorPlotType;
-  color?: (data: TechnicalIndicatorPlotCallbackData, options?: any) => string;
+  color?: (data: TechnicalIndicatorPlotCallbackData, options: any) => string;
   isStroke?: (data: TechnicalIndicatorPlotCallbackData) => boolean;
 }
 
@@ -31,17 +31,17 @@ export declare interface OverrideTechnicalIndicator {
 }
 
 export declare interface TechnicalIndicatorRenderDataSource {
-  from: number;
-  to: number;
-  kLineDataList: KLineData[];
-  technicalIndicatorDataList: any[];
+  from?: number;
+  to?: number;
+  kLineDataList?: KLineData[];
+  technicalIndicatorDataList?: any[];
 }
 
 export declare interface TechnicalIndicatorRenderViewport {
-  width: number;
-  height: number;
-  dataSpace: number;
-  barSpace: number;
+  width?: number;
+  height?: number;
+  dataSpace?: number;
+  barSpace?: number;
 }
 
 export declare interface TechnicalIndicator extends OverrideTechnicalIndicator {
@@ -54,7 +54,7 @@ export declare interface TechnicalIndicator extends OverrideTechnicalIndicator {
   baseValue?: number;
   minValue?: number;
   maxValue?: number;
-  regeneratePlots?: (calcParams: number[]) => TechnicalIndicatorPlot[];
+  regeneratePlots?: (calcParams?: number[]) => TechnicalIndicatorPlot[];
   render?: (
     ctx: CanvasRenderingContext2D,
     dataSource: TechnicalIndicatorRenderDataSource,

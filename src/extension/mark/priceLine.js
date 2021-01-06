@@ -20,7 +20,7 @@ export default {
   checkMousePointOn: (type, points, mousePoint) => {
     return checkPointOnRayLine(points[0], points[1], mousePoint)
   },
-  createGraphicDataSource: (tpPoints, xyPoints, viewport, precision, xAxis, yAxis) => {
+  createGraphicDataSource: (step, tpPoints, xyPoints, viewport, precision, xAxis, yAxis) => {
     return [
       {
         type: 'line',

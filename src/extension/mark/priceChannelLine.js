@@ -20,7 +20,7 @@ export default {
   checkMousePointOn: (type, points, mousePoint) => {
     return checkPointOnStraightLine(points[0], points[1], mousePoint)
   },
-  createGraphicDataSource: (tpPoints, xyPoints, viewport) => {
+  createGraphicDataSource: (step, tpPoints, xyPoints, viewport) => {
     return [
       {
         type: 'line',
