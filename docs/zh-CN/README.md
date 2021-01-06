@@ -237,7 +237,7 @@ getConvertPictureUrl(includeTooltip, includeGraphicMark, type, backgroundColor)
 ### 自定义图形标记
 可以通过`extension.addGraphicMark(graphicMark)`全局添加自定义图形标记，
 也通过图表实例方法`addCustomGraphicMark(graphicMark)`为单个图表实例添加自定义图形标记。<br/>
-[如何自定义一个图形标记](custom-technical-indicator.md)
+[如何自定义一个图形标记](custom-graphic-mark.md)
 
 
 ## 样式配置

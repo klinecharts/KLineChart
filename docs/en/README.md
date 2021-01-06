@@ -237,7 +237,7 @@ The chart supports graphic mark as follows by default:<br/>
 ### Custom graphic mark
 You can add custom graphic marks global through `extension.addGraphicMark(graphicMark)`,
 also add a custom graphic mark to a single chart instance through the chart instance method `addCustomGraphicMark(graphicMark)`.<br/>
-[How to customize a graphic mark](custom-technical-indicator.md)
+[How to customize a graphic mark](custom-graphic-mark.md)
 
 ## Style Option
 For full configuration please see [here](../style.md).
