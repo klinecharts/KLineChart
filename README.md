@@ -6,7 +6,7 @@
 [![types](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
 [![NPM](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
 
-📈Lightweight k-line chart that can be highly customized, built with html5 canvas. Support custom technical indicators and parameter settings. Support line drawing.
+📈Lightweight k-line chart that can be highly customized, built with html5 canvas. Support custom technical indicators. Support graphic mark.
 
 ## Installing
 ### Using npm
@@ -15,7 +15,7 @@ npm install klinecharts --save
 ```
 ### CDN
 You can use [unpkg](https://unpkg.com):<br/>
-https://unpkg.com/klinecharts/dist/klinecharts.production.min.js
+https://unpkg.com/klinecharts/dist/klinecharts.min.js
 
 ## Docs
 + [中文](./docs/zh-CN/README.md)
@@ -34,11 +34,11 @@ The generated files are in the dist folder.
 
 
 ## Resources
-### Technical Indicators
-[https://github.com/liihuu/TechnicalIndicator](https://github.com/liihuu/TechnicalIndicator)
-
-### Sample Code
+### Sample code
 [https://github.com/liihuu/KLineChartSample](https://github.com/liihuu/KLineChartSample)
+
+### Sample page
+[https://liihuu.github.io/KLineChart](https://liihuu.github.io/KLineChart/)
 
 ## Screenshot
 <img width="800" src="./screenshot/screenshot.png"/>
