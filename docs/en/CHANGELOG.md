@@ -1,7 +1,7 @@
 # Change Log
 
 ## 6.1.0
-`To be released`
+`2021-01-06`
 + 🆕 Add `extension.addTechnicalIndicator` and `extension.addGraphicMark` to the chart api.
 + 🆕 Each item of the technical indicator `plots` adds `title`.
 + 🆕 Add `styles` for technical indicators.

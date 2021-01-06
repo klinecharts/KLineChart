@@ -1,7 +1,7 @@
 # 版本日志
 
 ## 6.1.0
-`待发布`
+`2021-01-06`
 + 🆕 图表方法新增`extension.addTechnicalIndicator`和`extension.addGraphicMark`。
 + 🆕 技术指标`plots`每一项新增`title`。
 + 🆕 技术指标新增`styles`。
