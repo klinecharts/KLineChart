@@ -101,10 +101,10 @@ export default class Axis {
   _computeTicks () {
     const ticks = []
     if (this._range >= 0) {
-      const interval = +this._nice(this._range / 8.0)
+      const interval = this._nice(this._range / 8.0)
       const precision = this._getIntervalPrecision(interval)
-      const first = +this._round(Math.ceil(this._minValue / interval) * interval, precision)
-      const last = +this._round(Math.floor(this._maxValue / interval) * interval, precision)
+      const first = this._round(Math.ceil(this._minValue / interval) * interval, precision)
+      const last = this._round(Math.floor(this._maxValue / interval) * interval, precision)
       let n = 0
       let f = first
 
@@ -163,6 +163,6 @@ export default class Axis {
     }
     precision = Math.min(Math.max(0, precision), 20)
     x = (+x).toFixed(precision)
-    return x
+    return +x
   }
 }

@@ -551,13 +551,21 @@ export default class ChartPane {
   /**
    * 创建图形标记
    * @param type
+   * @param options
    */
-  createGraphicMark (type) {
+  createGraphicMark (type, options = {}) {
     this._graphicMarkBaseId++
     const graphicMarkMapping = this._chartData.graphicMarkMapping()
     const GraphicMark = graphicMarkMapping[type]
     const id = `${GRAPHIC_MARK_ID_PREFIX}${this._graphicMarkBaseId}`
-    const graphicMarkInstance = new GraphicMark(id, this._chartData, this._xAxisPane.xAxis(), this._candlePane.yAxis())
+    const graphicMarkInstance = new GraphicMark({
+      id,
+      chartData: this._chartData,
+      xAxis: this._xAxisPane.xAxis(),
+      yAxis: this._candlePane.yAxis(),
+      rightClickRemove: options.rightClickRemove
+    })
+    graphicMarkInstance.setPoints(options.points)
     this._chartData.addGraphicMarkInstance(graphicMarkInstance)
     return id
   }

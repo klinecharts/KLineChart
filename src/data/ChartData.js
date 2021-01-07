@@ -39,6 +39,15 @@ export const DrawActionType = {
   DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator'
 }
 
+/**
+ * 删除图形标记实例类型
+ * @type {{ACTIVE: string, ID: string}}
+ */
+export const RemoveGraphicMarkType = {
+  ACTIVE: 'active',
+  ID: 'id'
+}
+
 const MAX_DATA_SPACE = 50
 const MIN_DATA_SPACE = 1
 
@@ -649,6 +658,33 @@ export default class ChartData {
     const GraphicMarkClass = createGraphicMarkClass(graphicMark)
     if (GraphicMarkClass) {
       this._graphicMarkMapping[graphicMark.name] = GraphicMarkClass
+    }
+  }
+
+  /**
+   * 移除图形实例
+   * @param options 参数
+   */
+  removeGraphicMarkInstance (options) {
+    const graphicMarks = this._graphicMarks
+    let removeIndex = -1
+    for (let i = 0; i < graphicMarks.length; i++) {
+      const graphicMark = graphicMarks[i]
+      if (options.type === RemoveGraphicMarkType.ID) {
+        if (options.id === graphicMark.id()) {
+          removeIndex = i
+          break
+        }
+      } else {
+        if (graphicMark.rightClickRemove() && graphicMark.isActive()) {
+          removeIndex = i
+          break
+        }
+      }
+    }
+    if (removeIndex !== -1) {
+      graphicMarks.splice(removeIndex, 1)
+      this.invalidate(InvalidateLevel.GRAPHIC_MARK)
     }
   }
 

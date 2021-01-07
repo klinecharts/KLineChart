@@ -14,7 +14,7 @@
 
 import { CANDLE_PANE_ID } from '../pane/ChartPane'
 import EventHandler from './EventHandler'
-import { InvalidateLevel } from '../data/ChartData'
+import { InvalidateLevel, RemoveGraphicMarkType } from '../data/ChartData'
 import { HoverType } from '../data/base/mark/GraphicMark'
 
 export default class GraphicMarkEventHandler extends EventHandler {
@@ -86,16 +86,8 @@ export default class GraphicMarkEventHandler extends EventHandler {
     }
   }
 
-  mouseRightDownEvent (event) {
-    const point = { x: event.localX, y: event.localY }
-    const graphicMarks = this._chartData.graphicMarks()
-    for (let i = 0; i < graphicMarks.length; i++) {
-      if (graphicMarks[i].checkMousePointOnGraphic(point)) {
-        graphicMarks.splice(i, 1)
-        this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK)
-        return
-      }
-    }
+  mouseRightDownEvent () {
+    this._chartData.removeGraphicMarkInstance({ type: RemoveGraphicMarkType.ACTIVE })
   }
 
   pressedMouseMoveEvent (event) {

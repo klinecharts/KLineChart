@@ -15,7 +15,7 @@
 import { renderStrokeFillCircle } from '../../../renderer/circle'
 import { checkPointOnCircle } from '../../../extension/mark/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../../renderer/line'
-import { isValid } from '../../../utils/typeChecks'
+import { isValid, isArray, isBoolean, clone } from '../../../utils/typeChecks'
 
 export const HoverType = {
   OTHER: 'other',
@@ -80,13 +80,18 @@ function getLineType (point1, point2) {
  * 标记图形
  */
 export default class GraphicMark {
-  constructor (id, name, totalStep, chartData, xAxis, yAxis) {
-    this.id = id
-    this.name = name
+  constructor ({
+    id, name, totalStep,
+    chartData, xAxis, yAxis,
+    rightClickRemove
+  }) {
+    this._id = id
+    this._name = name
     this._totalStep = totalStep
     this._chartData = chartData
     this._xAxis = xAxis
     this._yAxis = yAxis
+    this._rightClickRemove = isBoolean(rightClickRemove) ? rightClickRemove : true
     this._drawStep = GRAPHIC_MARK_DRAW_STEP_START
     this._tpPoints = []
     this._hoverType = HoverType.NONE
@@ -315,11 +320,61 @@ export default class GraphicMark {
   }
 
   /**
+   * 设置点
+   * @param points
+   */
+  setPoints (points) {
+    if (isArray(points) && points.length > 0) {
+      let repeatTotalStep
+      if (points.length >= this._totalStep - 1) {
+        this._drawStep = GRAPHIC_MARK_DRAW_STEP_FINISHED
+        this._tpPoints = points.slice(0, this._totalStep - 1)
+        repeatTotalStep = this._totalStep - 1
+      } else {
+        this._drawStep = points.length + 1
+        this._tpPoints = clone(points)
+        repeatTotalStep = points.length
+      }
+      // 重新演练绘制一遍，防止因为点不对而绘制出错误的图形
+      for (let i = 0; i < repeatTotalStep; i++) {
+        this.performMouseMoveForDrawing(i + 2, this._tpPoints, this._tpPoints[i])
+      }
+      if (this._drawStep === GRAPHIC_MARK_DRAW_STEP_FINISHED) {
+        this.performMousePressedMove(this._tpPoints, this._tpPoints.length - 1, this._tpPoints[this._tpPoints.length - 1])
+      }
+    }
+  }
+
+  /**
+   * 获取id
+   * @return {*}
+   */
+  id () {
+    return this._id
+  }
+
+  /**
+   * 获取右击是否删除
+   * @return {boolean}
+   */
+  rightClickRemove () {
+    return this._rightClickRemove
+  }
+
+  /**
    * 获取鼠标点在图形上的类型
    * @return {string}
    */
   hoverType () {
     return this._hoverType
+  }
+
+  /**
+   * 是否是活动状态
+   * @return {boolean}
+   */
+  isActive () {
+    return this._hoverType !== HoverType.NONE
   }
 
   /**

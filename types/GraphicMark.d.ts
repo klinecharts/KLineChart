@@ -38,6 +38,11 @@ export declare interface GraphicMarkDataSource {
   dataSource: GraphicMarkDataSourceItem[] | GraphicMarkDataSourceItem[][];
 }
 
+export declare interface CreateGraphicMarkOptions {
+  rightClickRemove?: boolean;
+  points?: TimestampPricePoint[];
+}
+
 export declare interface GraphicMark {
   name: string;
   totalStep: number;

@@ -273,8 +273,9 @@ export default class Chart {
   /**
    * 创建图形标记
    * @param type
+   * @param options
    */
-  createGraphicMark (type) {
+  createGraphicMark (type, options) {
     const graphicMarkMapping = this._chartPane.chartData().graphicMarkMapping()
     if (!(type in graphicMarkMapping)) {
       if (DEV) {
@@ -282,7 +283,7 @@ export default class Chart {
       }
       return null
     }
-    return this._chartPane.createGraphicMark(type)
+    return this._chartPane.createGraphicMark(type, options)
   }
 
   /**
@@ -291,6 +292,18 @@ export default class Chart {
    */
   addCustomGraphicMark (graphicMark) {
     this._chartPane.chartData().addCustomGraphicMark(graphicMark)
+  }
+
+  /**
+   * 移除图形标记
+   * @param graphicMarkId
+   */
+  removeGraphicMark (graphicMarkId) {
+    if (graphicMarkId) {
+      this._chartPane.chartData().removeGraphicMarkInstance({
+        type: 'id', id: graphicMarkId
+      })
+    }
   }
 
   /**

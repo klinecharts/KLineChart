@@ -64,8 +64,12 @@ export function createGraphicMarkClass ({
     return null
   }
   class Mark extends GraphicMark {
-    constructor (id, chartData, xAxis, yAxis) {
-      super(id, name, totalStep, chartData, xAxis, yAxis)
+    constructor ({
+      id, chartData, xAxis, yAxis, rightClickRemove
+    }) {
+      super({
+        id, name, totalStep, chartData, xAxis, yAxis, rightClickRemove
+      })
     }
   }
   Mark.prototype.checkMousePointOn = checkMousePointOn

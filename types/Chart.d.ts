@@ -2,7 +2,7 @@ import { OverrideTechnicalIndicator, TechnicalIndicator } from './TechnicalIndic
 import { KLineData } from './KLineData';
 import { PaneType, PaneOptions } from './Pane';
 import { DrawActionType, DrawActionCallbackParams } from './DrawAction';
-import { GraphicMark } from './GraphicMark';
+import { CreateGraphicMarkOptions, GraphicMark } from './GraphicMark';
 
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 
@@ -36,8 +36,9 @@ export declare interface Chart {
   removePane(paneId: string): void
   addCustomTechnicalIndicator(technicalIndicatorInfo: TechnicalIndicator): void;
   removeTechnicalIndicator(technicalIndicatorType?: string, paneId?: string): void;
-  createGraphicMark(graphicMarkType: string): string | null;
+  createGraphicMark(graphicMarkType: string, options?: CreateGraphicMarkOptions): string | null;
   addCustomGraphicMark(graphicMark: GraphicMark): void;
+  removeGraphicMark(graphicMarkId: string): void;
   removeAllGraphicMark(): void;
   subscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void): void;
   unsubscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void): void;
