@@ -12,29 +12,43 @@
  * limitations under the License.
  */
 
+export const DEVIATION = 2
+
 /**
- * 获取某点在两点决定的一次函数上的y值
+ * 获取一次函数斜率和截距，即 y = kx + b 中的k值和b值
  * @param point1
  * @param point2
- * @param targetPoints
  */
-export function getLinearY (point1, point2, targetPoints) {
-  const v = []
-  if (point1 && point2 && targetPoints.length > 0) {
-    const subX = (point1.x - point2.x)
-    if (subX === 0) {
-      targetPoints.forEach(point => {
-        v.push(point.y)
-      })
-    } else {
-      const k = (point1.y - point2.y) / subX
-      const b = point1.y - k * point1.x
-      targetPoints.forEach(point => {
-        v.push(point.x * k + b)
-      })
-    }
+export function getLinearSlopeIntercept (point1, point2) {
+  const difX = (point1.x - point2.x)
+  if (difX !== 0) {
+    const k = (point1.y - point2.y) / difX
+    const b = point1.y - k * point1.x
+    return { k, b }
   }
-  return v
+}
+
+/**
+ * 获取点在两点决定的一次函数上的y值
+ * @param point1
+ * @param point2
+ * @param targetPoint
+ */
+export function getLinearYFromPoints (point1, point2, targetPoint) {
+  const kb = getLinearSlopeIntercept(point1, point2)
+  return getLinearYFromSlopeIntercept(kb, targetPoint)
+}
+
+/**
+ * 获取点在斜率和截距确定的线上的y值
+ * @param kb
+ * @param targetPoint
+ */
+export function getLinearYFromSlopeIntercept (kb, targetPoint) {
+  if (kb) {
+    return targetPoint.x * kb.k + kb.b
+  }
+  return targetPoint.y
 }
 
 /**
@@ -48,12 +62,12 @@ export function checkPointOnStraightLine (point1, point2, targetPoint) {
     return false
   }
   if (point1.x === point2.x) {
-    return Math.abs(targetPoint.x - point1.x) < 1
+    return Math.abs(targetPoint.x - point1.x) < DEVIATION
   }
-  if (point1.y === point2.y) {
-    return Math.abs(targetPoint.y - point1.y) < 1
-  }
-  return Math.abs(targetPoint.y - getLinearY(point1, point2, [targetPoint])[0]) < 1
+  const kb = getLinearSlopeIntercept(point1, point2)
+  const y = getLinearYFromSlopeIntercept(kb, targetPoint)
+  const yDif = Math.abs(y - targetPoint.y)
+  return yDif * yDif / (kb.k * kb.k + 1) < DEVIATION * DEVIATION
 }
 
 /**
@@ -64,21 +78,18 @@ export function checkPointOnStraightLine (point1, point2, targetPoint) {
  * @returns {boolean}
  */
 export function checkPointOnRayLine (point1, point2, targetPoint) {
-  if (!targetPoint || !point1 || !point2) {
-    return false
-  }
   if (checkPointOnStraightLine(point1, point2, targetPoint)) {
     if (point1.x === point2.x) {
       if (point1.y < point2.y) {
-        return targetPoint.y > point1.y - 2
+        return point1.y - targetPoint.y < DEVIATION
       } else {
-        return targetPoint.y < point1.y + 2
+        return targetPoint.y - point1.y < DEVIATION
       }
     }
     if (point1.x < point2.x) {
-      return targetPoint.x > point1.x - 2
+      return point1.x - targetPoint.x < DEVIATION
     } else {
-      return targetPoint.x < point1.x + 2
+      return targetPoint.x - point1.x < DEVIATION
     }
   }
   return false
@@ -91,14 +102,11 @@ export function checkPointOnRayLine (point1, point2, targetPoint) {
  * @param targetPoint
  */
 export function checkPointOnSegmentLine (point1, point2, targetPoint) {
-  if (!targetPoint || !point1 || !point2) {
-    return false
-  }
   if (checkPointOnStraightLine(point1, point2, targetPoint)) {
-    const a = Math.sqrt(Math.pow(targetPoint.x - point1.x, 2) + Math.pow(targetPoint.y - point1.y, 2))
-    const b = Math.sqrt(Math.pow(targetPoint.x - point2.x, 2) + Math.pow(targetPoint.y - point2.y, 2))
-    const c = Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2))
-    return Math.abs(a + b - c) < 2
+    if (point1.x === point2.x) {
+      return Math.abs(point1.y - targetPoint.y) + Math.abs(point2.y - targetPoint.y) - Math.abs(point1.y - point2.y) < DEVIATION * 2
+    }
+    return Math.abs(point1.x - targetPoint.x) + Math.abs(point2.x - targetPoint.x) - Math.abs(point1.x - point2.x) < DEVIATION * 2
   }
   return false
 }
@@ -122,47 +130,39 @@ export function checkPointOnCircle (circleCenterPoint, radius, targetPoint) {
 /**
  * 获取平行线
  * @param points
- * @param size
+ * @param xyMax
  * @param extendParallelLineCount
  * @returns {Array}
  */
-export function getParallelLines (points, size, extendParallelLineCount = 0) {
+export function getParallelLines (points, xyMax, extendParallelLineCount = 0) {
   const lines = []
   if (points.length > 1) {
     if (points[0].x === points[1].x) {
       const startY = 0
-      const endY = size.height
+      const endY = xyMax.y
       lines.push([{ x: points[0].x, y: startY }, { x: points[0].x, y: endY }])
       if (points.length > 2) {
         lines.push([{ x: points[2].x, y: startY }, { x: points[2].x, y: endY }])
-        if (extendParallelLineCount > 0) {
-          const distance = points[0].x - points[2].x
-          lines.push([{ x: points[0].x + distance, y: startY }, { x: points[0].x + distance, y: endY }])
+        const distance = points[0].x - points[2].x
+        for (let i = 0; i < extendParallelLineCount; i++) {
+          const d = distance * (i + 1)
+          lines.push([{ x: points[0].x + d, y: startY }, { x: points[0].x + d, y: endY }])
         }
       }
     } else {
       const startX = 0
-      const endX = size.width
-      if (points[0].y === points[1].y) {
-        lines.push([{ x: startX, y: points[0].y }, { x: endX, y: points[0].y }])
-        if (points.length > 2) {
-          lines.push([{ x: startX, y: points[2].y }, { x: endX, y: points[2].y }])
-          if (extendParallelLineCount > 0) {
-            const distance = points[0].y - points[2].y
-            lines.push([{ x: startX, y: points[0].y + distance }, { x: endX, y: points[0].y + distance }])
-          }
-        }
-      } else {
-        const k = (points[0].y - points[1].y) / (points[0].x - points[1].x)
-        const b = points[0].y - k * points[0].x
-        lines.push([{ x: startX, y: startX * k + b }, { x: endX, y: endX * k + b }])
-        if (points.length > 2) {
-          const b1 = points[2].y - k * points[2].x
-          lines.push([{ x: startX, y: startX * k + b1 }, { x: endX, y: endX * k + b1 }])
-          if (extendParallelLineCount > 0) {
-            const b2 = b + (b - b1)
-            lines.push([{ x: startX, y: startX * k + b2 }, { x: endX, y: endX * k + b2 }])
-          }
+      const endX = xyMax.x
+      const kb = getLinearSlopeIntercept(points[0], points[1])
+      const k = kb.k
+      const b = kb.b
+      lines.push([{ x: startX, y: startX * k + b }, { x: endX, y: endX * k + b }])
+      if (points.length > 2) {
+        const b1 = points[2].y - k * points[2].x
+        lines.push([{ x: startX, y: startX * k + b1 }, { x: endX, y: endX * k + b1 }])
+        const distance = b - b1
+        for (let i = 0; i < extendParallelLineCount; i++) {
+          const b2 = b + distance * (i + 1)
+          lines.push([{ x: startX, y: startX * k + b2 }, { x: endX, y: endX * k + b2 }])
         }
       }
     }

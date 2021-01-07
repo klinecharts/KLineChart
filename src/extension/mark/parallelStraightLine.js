@@ -26,7 +26,7 @@ export default {
         type: 'line',
         isDraw: true,
         isCheck: true,
-        dataSource: getParallelLines(xyPoints, viewport)
+        dataSource: getParallelLines(xyPoints, { x: viewport.width, y: viewport.height })
       }
     ]
   }

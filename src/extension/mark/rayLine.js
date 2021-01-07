@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { checkPointOnRayLine, getLinearY } from './graphicHelper'
+import { checkPointOnRayLine, getLinearYFromPoints } from './graphicHelper'
 
 export default {
   name: 'rayLine',
@@ -41,12 +41,12 @@ export default {
       } else if (xyPoints[0].x > xyPoints[1].x) {
         point = {
           x: 0,
-          y: getLinearY(xyPoints[0], xyPoints[1], [{ x: 0, y: xyPoints[0].y }])[0]
+          y: getLinearYFromPoints(xyPoints[0], xyPoints[1], { x: 0, y: xyPoints[0].y })
         }
       } else {
         point = {
           x: viewport.width,
-          y: getLinearY(xyPoints[0], xyPoints[1], [{ x: viewport.width, y: xyPoints[0].y }])[0]
+          y: getLinearYFromPoints(xyPoints[0], xyPoints[1], { x: viewport.width, y: xyPoints[0].y })
         }
       }
     }

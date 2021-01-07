@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { checkPointOnStraightLine, getLinearY } from './graphicHelper'
+import { checkPointOnStraightLine, getLinearYFromPoints } from './graphicHelper'
 
 export default {
   name: 'straightLine',
@@ -39,18 +39,6 @@ export default {
         }
       ]
     }
-    const y = getLinearY(
-      xyPoints[0], xyPoints[1],
-      [
-        {
-          x: 0,
-          y: xyPoints[0].y
-        }, {
-          x: viewport.width,
-          y: xyPoints[0].y
-        }
-      ]
-    )
     return [
       {
         type: 'line',
@@ -59,10 +47,10 @@ export default {
         dataSource: [[
           {
             x: 0,
-            y: y[0]
+            y: getLinearYFromPoints(xyPoints[0], xyPoints[1], { x: 0, y: xyPoints[0].y })
           }, {
             x: viewport.width,
-            y: y[1]
+            y: getLinearYFromPoints(xyPoints[0], xyPoints[1], { x: viewport.width, y: xyPoints[0].y })
           }
         ]]
       }
