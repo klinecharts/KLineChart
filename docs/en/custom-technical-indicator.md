@@ -1,7 +1,7 @@
 # Custom technical indicators
 ## Start
 First explain the attributes of custom technical indicators.
-```
+```js
 {
   // The name of the technical indicator, a necessary field, is the only identifier of the technical indicator
   name: 'xxx',
@@ -76,7 +76,7 @@ First explain the attributes of custom technical indicators.
 }
 ```
 The format of each item of `plots` is as follows:
-```
+```js
 {
   // Required fields, determine the return value of the method calcTechnicalIndicator.
   key: '',
@@ -97,7 +97,7 @@ The format of each item of `plots` is as follows:
 ## Example
 Now we need to customize a technical indicator called `VOL`. This technical indicator contains two moving averages of volume, namely `ma5` and `ma10`,
 In addition, a rectangular column `volume` is needed to describe the volume, so the technical indicator configuration is as follows:
-```
+```js
 {
   name: 'VOL',
   // Specify the minimum value on the y axis.

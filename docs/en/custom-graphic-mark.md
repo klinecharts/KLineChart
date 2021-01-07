@@ -1,7 +1,7 @@
 # Custom graphic mark
 ## Start
 First explain the attributes of the custom graphic mark
-```
+```js
 {
   // Name, a required field, as the unique identifier of the graphic mark
   name: 'xxx',
@@ -51,7 +51,7 @@ First explain the attributes of the custom graphic mark
 }
 ```
 The return value of `createGraphicDataSource` is an array of graphics information, and the format of each sub-item is as follows:<br/>
-```
+```js
 {
   // Type, currently supports 'line' | 'text' | 'continuous_line' |'polygon' |'arc', which is a necessary field
   type: 'line',
@@ -71,7 +71,7 @@ The return value of `createGraphicDataSource` is an array of graphics informatio
 ```
 
 The format of the sub-items of `dataSource` is as follows:<br/>
-```
+```js
 {
   // x coordinate, required field
   x: 123,
@@ -90,7 +90,7 @@ The format of the sub-items of `dataSource` is as follows:<br/>
 
 ## Example
 Specify with a custom circle.
-```
+```js
 {
   // Name
   name: 'circle',
