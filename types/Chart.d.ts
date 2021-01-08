@@ -12,7 +12,6 @@ export declare interface Chart {
   overrideTechnicalIndicator(override: OverrideTechnicalIndicator): void;
   getTechnicalIndicatorInfo(technicalIndicatorType?: string): any;
   setPriceVolumePrecision(pricePrecision: number, volumePrecision: number): void;
-  setTechnicalIndicatorPrecision(precision: number, technicalIndicatorType?: string): void;
   setTimezone(timezone: string): void;
   getTimezone(): string;
   resize(): void;

@@ -1,3 +1,25 @@
+# Features
++ Support style modification (including various text and lines, main image type, coordinate axis type and position, etc.).
++ Support setting price and quantity precision.
++ Support time zone setting.
++ Support zoom ratio setting.
++ Support prohibiting scrolling and zooming.
++ Support segmented loading historical data and real-time update.
++ Technical indicators
+     + Built-in dozens of technical indicators.
+     + Support the main chart to set multiple technical indicator types.
+     + Support single window display (theoretically, countless windows can be created).
+     + Support setting technical indicator types for windows.
+     + Support setting precision, style and calculation parameters for a single technical indicator.
+     + Support customization and can draw by yourself.
++ Graphic mark
+     + Built-in a variety of graphics.
+     + Support drawing step by step according to mouse actions.
+     + Support to create a complete graph in one step.
+     + Support customization.
++ Support drawing candle chart and technical indicator monitoring.
++ Support chart generation and image export.
+
 ## Getting started
 ### Installation
 ```bash
