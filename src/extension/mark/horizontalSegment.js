@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import { checkPointOnSegmentLine } from './graphicHelper'
+import { checkPointOnSegment } from './graphicHelper'
 
 export default {
   name: 'horizontalSegment',
   totalStep: 3,
   checkMousePointOn: (type, points, mousePoint) => {
-    return checkPointOnSegmentLine(points[0], points[1], mousePoint)
+    return checkPointOnSegment(points[0], points[1], mousePoint)
   },
   createGraphicDataSource: (step, tpPoints, xyPoints) => {
     let lines = []

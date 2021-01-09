@@ -101,7 +101,7 @@ export function checkPointOnRayLine (point1, point2, targetPoint) {
  * @param point2
  * @param targetPoint
  */
-export function checkPointOnSegmentLine (point1, point2, targetPoint) {
+export function checkPointOnSegment (point1, point2, targetPoint) {
   if (checkPointOnStraightLine(point1, point2, targetPoint)) {
     if (point1.x === point2.x) {
       return Math.abs(point1.y - targetPoint.y) + Math.abs(point2.y - targetPoint.y) - Math.abs(point1.y - point2.y) < DEVIATION * 2
@@ -112,19 +112,35 @@ export function checkPointOnSegmentLine (point1, point2, targetPoint) {
 }
 
 /**
- * 点是否在圆上
+ * 点是否在圆内
  * @param circleCenterPoint
  * @param radius
  * @param targetPoint
  * @returns {boolean}
  */
+export function checkPointInCircle (circleCenterPoint, radius, targetPoint) {
+  if (!targetPoint) {
+    return false
+  }
+  const difX = targetPoint.x - circleCenterPoint.x
+  const difY = targetPoint.y - circleCenterPoint.y
+  return !(difX * difX + difY * difY > radius * radius)
+}
+
+/**
+ * 点是否在圆上
+ * @param circleCenterPoint
+ * @param radius
+ * @param targetPoint
+ * @return {boolean}
+ */
 export function checkPointOnCircle (circleCenterPoint, radius, targetPoint) {
   if (!targetPoint) {
     return false
   }
-  const subX = targetPoint.x - circleCenterPoint.x
-  const subY = targetPoint.y - circleCenterPoint.y
-  return !(subX * subX + subY * subY > radius * radius)
+  const difX = targetPoint.x - circleCenterPoint.x
+  const difY = targetPoint.y - circleCenterPoint.y
+  return Math.abs(difX * difX + difY * difY - radius * radius) < DEVIATION * DEVIATION
 }
 
 /**

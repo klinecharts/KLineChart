@@ -1,11 +1,11 @@
 # KLineChart
-[![npm version](https://badgen.net/npm/v/klinecharts)](https://www.npmjs.com/package/klinecharts)
+[![Version](https://badgen.net/npm/v/klinecharts)](https://www.npmjs.com/package/klinecharts)
 [![Build Status](https://travis-ci.org/liihuu/KLineChart.svg?branch=master)](https://travis-ci.org/liihuu/KLineChart)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/44d60927c56540cfb64a0f476afbc96d)](https://www.codacy.com/manual/liihuu/KLineChart?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=liihuu/KLineChart&amp;utm_campaign=Badge_Grade)
-[![](https://data.jsdelivr.com/v1/package/npm/klinecharts/badge)](https://www.jsdelivr.com/package/npm/klinecharts)
-[![size](https://badgen.net/bundlephobia/minzip/klinecharts@latest)](https://bundlephobia.com/result?p=klinecharts@latest)
-[![types](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
-[![NPM](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
+[![Download](https://data.jsdelivr.com/v1/package/npm/klinecharts/badge)](https://www.jsdelivr.com/package/npm/klinecharts)
+[![Size](https://badgen.net/bundlephobia/minzip/klinecharts@latest)](https://bundlephobia.com/result?p=klinecharts@latest)
+[![Typescript](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
+[![LICENSE](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
 
 📈Lightweight k-line chart that can be highly customized, built with html5 canvas. Support custom technical indicators. Support graphic mark.
 
@@ -28,7 +28,7 @@ https://unpkg.com/klinecharts/dist/klinecharts.min.js
 https://cdn.jsdelivr.net/npm/klinecharts
 
 ## Docs
-+ [中文](./docs/zh-CN/README.md)
++ [中文](https://www.yuque.com/liihuu/klinechart)
 + [English](./docs/en/README.md)
 
 ## Build

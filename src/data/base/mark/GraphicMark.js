@@ -13,7 +13,7 @@
  */
 
 import { renderStrokeFillCircle } from '../../../renderer/circle'
-import { checkPointOnCircle } from '../../../extension/mark/graphicHelper'
+import { checkPointInCircle } from '../../../extension/mark/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../../renderer/line'
 import { isValid, isArray, isBoolean, clone } from '../../../utils/typeChecks'
 
@@ -409,7 +409,7 @@ export default class GraphicMark {
         y: this._yAxis.convertToPixel(price)
       }
       xyPoints.push(xyPoint)
-      if (checkPointOnCircle(xyPoint, markOptions.point.radius, point)) {
+      if (checkPointInCircle(xyPoint, markOptions.point.radius, point)) {
         this._hoverType = HoverType.POINT
         this._hoverIndex = i
         return true
