@@ -448,12 +448,12 @@ export default class ChartPane {
   /**
    * 设置指标类型
    * @param technicalIndicator 技术指标实例
+   * @param isStack 是否覆盖
    * @param options 配置
    */
-  createTechnicalIndicator (technicalIndicator, options) {
-    const { isStack, paneOptions } = options
-    if (paneOptions && paneOptions.id) {
-      if (paneOptions.id === CANDLE_PANE_ID) {
+  createTechnicalIndicator (technicalIndicator, isStack, options = {}) {
+    if (options.id) {
+      if (options.id === CANDLE_PANE_ID) {
         if (this._candlePane.setTechnicalIndicator(technicalIndicator, isStack)) {
           this.adjustPaneViewport(false, true, true, true)
         }
@@ -467,9 +467,8 @@ export default class ChartPane {
           }
         }
       }
-      return paneOptions.id
+      return options.id
     } else {
-      const options = paneOptions || {}
       const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
       const isDrag = isBoolean(options.dragEnabled) ? options.dragEnabled : true
       this._separatorPanes.push(

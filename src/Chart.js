@@ -216,18 +216,19 @@ export default class Chart {
   /**
    * 创建一个技术指标
    * @param name 指标名
+   * @param isStack 是否覆盖
    * @param options
    * @returns {string|null}
    */
-  createTechnicalIndicator (name, options = {}) {
+  createTechnicalIndicator (name, isStack, options) {
     const technicalIndicator = this._chartPane.chartData().technicalIndicator(name)
     if (!technicalIndicator) {
       if (DEV) {
         console.warn('createTechnicalIndicator -> Invalid parameter: name, can not find the corresponding technical indicator!!!')
       }
-      return null
+      return (options && options.id) || null
     }
-    return this._chartPane.createTechnicalIndicator(technicalIndicator, options)
+    return this._chartPane.createTechnicalIndicator(technicalIndicator, isStack, options)
   }
 
   /**

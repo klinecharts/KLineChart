@@ -6,11 +6,6 @@ import { PaneOptions } from './Pane';
 
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 
-export declare interface CreateTechnicalIndicatorOptions {
-  isStack?: boolean;
-  paneOptions?: PaneOptions;
-}
-
 export declare interface Chart {
   setStyleOptions(options: any): void;
   getStyleOptions(): any;
@@ -31,7 +26,7 @@ export declare interface Chart {
   applyMoreData(dataList: KLineData[], more?: boolean): void;
   updateData(data: KLineData): void;
   loadMore(cb: (timestamp: number) => void): void;
-  createTechnicalIndicator(name: string, options?: CreateTechnicalIndicatorOptions): string | null;
+  createTechnicalIndicator(name: string, isStack?: boolean, options?: PaneOptions): string | null;
   addCustomTechnicalIndicator(technicalIndicator: TechnicalIndicator): void;
   overrideTechnicalIndicator(override: OverrideTechnicalIndicator): void;
   getTechnicalIndicatorByName(name?: string): any;
