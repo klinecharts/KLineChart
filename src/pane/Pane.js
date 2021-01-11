@@ -118,11 +118,11 @@ export default class Pane {
 
   /**
    * 将canvas转换成图片
-   * @param includeFloatLayer
+   * @param includeTooltip
    * @param includeGraphicMark
    * @return {HTMLCanvasElement}
    */
-  getImage (includeFloatLayer, includeGraphicMark) {
+  getImage (includeTooltip, includeGraphicMark) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)
@@ -140,7 +140,7 @@ export default class Pane {
     const mainWidgetOffsetLeft = parseInt(mainWidgetElement.style.left, 10)
 
     ctx.drawImage(
-      this._mainWidget.getImage(includeFloatLayer, includeGraphicMark),
+      this._mainWidget.getImage(includeTooltip, includeGraphicMark),
       mainWidgetOffsetLeft, 0,
       mainWidgetWidth, mainWidgetHeight
     )
@@ -150,7 +150,7 @@ export default class Pane {
       const yAxisWidgetHeight = yAxisWidgetElement.offsetHeight
       const yAxisWidgetOffsetLeft = parseInt(yAxisWidgetElement.style.left, 10)
       ctx.drawImage(
-        this._yAxisWidget.getImage(includeFloatLayer),
+        this._yAxisWidget.getImage(includeTooltip),
         yAxisWidgetOffsetLeft, 0,
         yAxisWidgetWidth, yAxisWidgetHeight
       )

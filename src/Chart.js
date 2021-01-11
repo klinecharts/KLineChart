@@ -223,7 +223,7 @@ export default class Chart {
     const technicalIndicator = this._chartPane.chartData().technicalIndicator(name)
     if (!technicalIndicator) {
       if (DEV) {
-        console.warn('createPane -> Invalid parameter: name, can not find the corresponding technical indicator!!!')
+        console.warn('createTechnicalIndicator -> Invalid parameter: name, can not find the corresponding technical indicator!!!')
       }
       return null
     }
@@ -254,13 +254,14 @@ export default class Chart {
    */
   createGraphicMark (name, options) {
     const graphicMarkMapping = this._chartPane.chartData().graphicMarkMapping()
-    if (!(name in graphicMarkMapping)) {
+    const GraphicMark = graphicMarkMapping[name]
+    if (!GraphicMark) {
       if (DEV) {
         console.warn('createGraphicMark -> Invalid parameter: name, can not find the corresponding graphic mark!!!')
       }
       return null
     }
-    return this._chartPane.createGraphicMark(name, options)
+    return this._chartPane.createGraphicMark(GraphicMark, options)
   }
 
   /**

@@ -127,11 +127,11 @@ export default class Widget {
 
   /**
    * 将widget转换成图片
-   * @param includeCrosshair
+   * @param includeTooltip
    * @param includeGraphicMark
    * @returns {HTMLCanvasElement}
    */
-  getImage (includeCrosshair, includeGraphicMark) {
+  getImage (includeTooltip, includeGraphicMark) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)
@@ -146,7 +146,7 @@ export default class Widget {
     if (includeGraphicMark && this._expandView) {
       ctx.drawImage(this._expandView.getImage(), 0, 0, this._width, this._height)
     }
-    if (includeCrosshair) {
+    if (includeTooltip) {
       ctx.drawImage(this._crosshairView.getImage(), 0, 0, this._width, this._height)
     }
     return canvas

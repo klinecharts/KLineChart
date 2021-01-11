@@ -535,13 +535,11 @@ export default class ChartPane {
 
   /**
    * 创建图形标记
-   * @param type
+   * @param GraphicMark
    * @param options
    */
-  createGraphicMark (type, options = {}) {
+  createGraphicMark (GraphicMark, options = {}) {
     this._graphicMarkBaseId++
-    const graphicMarkMapping = this._chartData.graphicMarkMapping()
-    const GraphicMark = graphicMarkMapping[type]
     const id = `${GRAPHIC_MARK_ID_PREFIX}${this._graphicMarkBaseId}`
     const graphicMarkInstance = new GraphicMark({
       id,
@@ -567,12 +565,12 @@ export default class ChartPane {
 
   /**
    * 获取图表转换为图片后url
-   * @param includeFloatLayer,
+   * @param includeTooltip,
    * @param includeGraphicMark
    * @param type
    * @param backgroundColor
    */
-  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type, backgroundColor) {
+  getConvertPictureUrl (includeTooltip, includeGraphicMark, type, backgroundColor) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)
@@ -589,7 +587,7 @@ export default class ChartPane {
     let offsetTop = 0
     const candleStickPaneHeight = this._candlePane.height()
     ctx.drawImage(
-      this._candlePane.getImage(includeFloatLayer, includeGraphicMark),
+      this._candlePane.getImage(includeTooltip, includeGraphicMark),
       0, offsetTop, width, candleStickPaneHeight
     )
     offsetTop += candleStickPaneHeight
@@ -604,14 +602,14 @@ export default class ChartPane {
       )
       offsetTop += separatorPaneHeight
       ctx.drawImage(
-        technicalIndicatorPane.getImage(includeFloatLayer),
+        technicalIndicatorPane.getImage(includeTooltip),
         0, offsetTop, width, technicalIndicatorPaneHeight
       )
       offsetTop += technicalIndicatorPaneHeight
     }
 
     ctx.drawImage(
-      this._xAxisPane.getImage(includeFloatLayer),
+      this._xAxisPane.getImage(includeTooltip),
       0, offsetTop, width, this._xAxisPane.height()
     )
     return canvas.toDataURL(`image/${type}`)
