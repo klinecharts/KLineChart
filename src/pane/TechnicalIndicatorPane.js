@@ -24,7 +24,7 @@ export default class TechnicalIndicatorPane extends Pane {
     if ('height' in props) {
       this.setHeight(props.height)
     }
-    this.setTechnicalIndicator(this._chartData.technicalIndicator(props.technicalIndicatorType))
+    this.setTechnicalIndicator(this._chartData.technicalIndicator(props.name))
   }
 
   _initBefore (props) {
@@ -66,13 +66,13 @@ export default class TechnicalIndicatorPane extends Pane {
 
   /**
    * 是否包含指标
-   * @param technicalIndicatorType
+   * @param name
    * @return {boolean}
    * @private
    */
-  _includeTechnicalIndicator (technicalIndicatorType) {
+  _includeTechnicalIndicator (name) {
     for (const technicalIndicator of this._technicalIndicators) {
-      if (technicalIndicator.name === technicalIndicatorType) {
+      if (technicalIndicator.name === name) {
         return true
       }
     }
@@ -95,7 +95,7 @@ export default class TechnicalIndicatorPane extends Pane {
   }
 
   getSelfAxisWidth () {
-    return this._yAxis.getSelfWidth(this._technicalIndicator)
+    return this._yAxis.getSelfWidth()
   }
 
   /**
@@ -128,14 +128,14 @@ export default class TechnicalIndicatorPane extends Pane {
 
   /**
    * 移除技术指标
-   * @param technicalIndicatorType
+   * @param name
    * @return {boolean}
    */
-  removeTechnicalIndicator (technicalIndicatorType) {
-    if (technicalIndicatorType) {
+  removeTechnicalIndicator (name) {
+    if (name) {
       let deletePos = -1
       for (let i = 0; i < this._technicalIndicators.length; i++) {
-        if (this._technicalIndicators[i].name === technicalIndicatorType) {
+        if (this._technicalIndicators[i].name === name) {
           deletePos = i
           break
         }
@@ -166,7 +166,7 @@ export default class TechnicalIndicatorPane extends Pane {
       } else {
         this._technicalIndicators = [cloneInstance]
       }
-      this.calcTechnicalIndicator(technicalIndicator)
+      this.calcTechnicalIndicator(cloneInstance)
       return true
     }
     return false

@@ -195,7 +195,7 @@ export default class TechnicalIndicatorView extends View {
               kLineData,
               dataIndex: i,
               technicalIndicatorData,
-              technicalIndicatorType: technicalIndicator.name,
+              technicalIndicatorName: technicalIndicator.name,
               coordinate: { x, ...coordinateY },
               viewport: { width: this._width, height: this._height },
               barSpace,

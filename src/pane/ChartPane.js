@@ -28,19 +28,19 @@ import { throttle } from '../utils/performance'
 
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
-const TECHNICAL_INDICATOR_NAME_PREFIX = 'technical_indicator_pane_'
+const TECHNICAL_INDICATOR_PANE_ID_PREFIX = 'technical_indicator_pane_'
 
 const GRAPHIC_MARK_ID_PREFIX = 'graphic_mark_'
 
 export const TECHNICAL_INDICATOR_PANE = 'technicalIndicator'
 
-export const CANDLE_PANE_ID = 'candle_pane_1'
+export const CANDLE_PANE_ID = 'candle_pane'
 
 export default class ChartPane {
   constructor (container, styleOptions) {
     this._initChartContainer(container)
     this._graphicMarkBaseId = 0
-    this._technicalIndicatorBaseId = 0
+    this._paneBaseId = 0
     this._technicalIndicatorPanes = []
     this._separatorPanes = []
     this._separatorDragStartTechnicalIndicatorHeight = 0
@@ -407,93 +407,31 @@ export default class ChartPane {
   }
 
   /**
-   * 创建一个窗口
-   * @param type
-   * @param options
-   * @returns {string|null}
-   */
-  createPane (type, options = {}) {
-    const { technicalIndicatorType, height = DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT, dragEnabled } = options
-    const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
-    const isDrag = isBoolean(dragEnabled) ? dragEnabled : true
-    this._separatorPanes.push(
-      new SeparatorPane(
-        this._chartContainer, this._chartData,
-        technicalIndicatorPaneCount, isDrag,
-        {
-          startDrag: this._separatorStartDrag.bind(this),
-          drag: throttle(this._separatorDrag.bind(this), 50)
-        }
-      )
-    )
-    this._technicalIndicatorBaseId++
-    const id = `${TECHNICAL_INDICATOR_NAME_PREFIX}${this._technicalIndicatorBaseId}`
-    const technicalIndicatorPane = new TechnicalIndicatorPane({
-      container: this._chartContainer,
-      chartData: this._chartData,
-      xAxis: this._xAxisPane.xAxis(),
-      technicalIndicatorType,
-      id,
-      height
-    })
-    this._technicalIndicatorPanes.push(technicalIndicatorPane)
-    this.adjustPaneViewport(true, true, true, true, true)
-    return id
-  }
-
-  /**
-   * 根据id匹配窗口
-   * @param paneId
-   * @private
-   */
-  _matchPane (paneId) {
-    for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
-      const pane = this._technicalIndicatorPanes[i]
-      if (pane.id() === paneId) {
-        return i
-      }
-    }
-  }
-
-  /**
-   * 释放窗口
-   * @param paneIndex
-   * @private
-   */
-  _destroyPane (paneIndex) {
-    this._technicalIndicatorPanes[paneIndex].destroy()
-    this._separatorPanes[paneIndex].destroy()
-    this._technicalIndicatorPanes.splice(paneIndex, 1)
-    this._separatorPanes.splice(paneIndex, 1)
-    for (let i = 0; i < this._separatorPanes.length; i++) {
-      this._separatorPanes[i].updatePaneIndex(i)
-    }
-    this.adjustPaneViewport(true, true, true, true, true)
-  }
-
-  /**
-   * 移除窗口
+   * 移除指标
+   * @param name
    * @param paneId
    */
-  removePane (paneId) {
-    const paneIndex = this._matchPane(paneId)
-    if (isValid(paneIndex)) {
-      this._destroyPane(paneIndex)
-    }
-  }
-
-  /**
-   * 移除一个指标
-   * @param technicalIndicatorType
-   * @param paneId
-   */
-  removeTechnicalIndicator (technicalIndicatorType, paneId) {
+  removeTechnicalIndicator (name, paneId) {
     if (paneId) {
-      const paneIndex = this._matchPane(paneId)
+      let paneIndex
+      for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
+        const pane = this._technicalIndicatorPanes[i]
+        if (pane.id() === paneId) {
+          paneIndex = i
+          break
+        }
+      }
       if (isValid(paneIndex)) {
-        const removed = this._technicalIndicatorPanes[paneIndex].removeTechnicalIndicator(technicalIndicatorType)
+        const removed = this._technicalIndicatorPanes[paneIndex].removeTechnicalIndicator(name)
         if (this._technicalIndicatorPanes[paneIndex].isEmptyTechnicalIndicator()) {
-          this._destroyPane(paneIndex)
+          this._technicalIndicatorPanes[paneIndex].destroy()
+          this._separatorPanes[paneIndex].destroy()
+          this._technicalIndicatorPanes.splice(paneIndex, 1)
+          this._separatorPanes.splice(paneIndex, 1)
+          for (let i = 0; i < this._separatorPanes.length; i++) {
+            this._separatorPanes[i].updatePaneIndex(i)
+          }
+          this.adjustPaneViewport(true, true, true, true, true)
         } else {
           if (removed) {
             this.adjustPaneViewport(false, true, true, true)
@@ -501,7 +439,7 @@ export default class ChartPane {
         }
       }
     } else {
-      if (this._candlePane.removeTechnicalIndicator(technicalIndicatorType)) {
+      if (this._candlePane.removeTechnicalIndicator(name)) {
         this.adjustPaneViewport(false, true, true, true)
       }
     }
@@ -509,41 +447,88 @@ export default class ChartPane {
 
   /**
    * 设置指标类型
-   * @param technicalIndicatorType
-   * @param isStack
-   * @param paneId
+   * @param technicalIndicator 技术指标实例
+   * @param options 配置
    */
-  setTechnicalIndicatorType (technicalIndicatorType, isStack, paneId) {
-    const technicalIndicator = this._chartData.technicalIndicator(technicalIndicatorType)
-    if (paneId) {
-      for (const pane of this._technicalIndicatorPanes) {
-        if (pane.id() === paneId) {
-          if (pane.setTechnicalIndicator(technicalIndicator, isStack)) {
-            this.adjustPaneViewport(false, true, true, true)
+  createTechnicalIndicator (technicalIndicator, options) {
+    const { isStack, paneOptions } = options
+    if (paneOptions && paneOptions.id) {
+      if (paneOptions.id === CANDLE_PANE_ID) {
+        if (this._candlePane.setTechnicalIndicator(technicalIndicator, isStack)) {
+          this.adjustPaneViewport(false, true, true, true)
+        }
+      } else {
+        for (const pane of this._technicalIndicatorPanes) {
+          if (pane.id() === pane.id) {
+            if (pane.setTechnicalIndicator(technicalIndicator, isStack)) {
+              this.adjustPaneViewport(false, true, true, true)
+            }
+            break
           }
-          break
         }
       }
+      return paneOptions.id
     } else {
-      if (this._candlePane.setTechnicalIndicator(technicalIndicator, isStack)) {
-        this.adjustPaneViewport(false, true, true, true)
-      }
+      const options = paneOptions || {}
+      const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
+      const isDrag = isBoolean(options.dragEnabled) ? options.dragEnabled : true
+      this._separatorPanes.push(
+        new SeparatorPane(
+          this._chartContainer, this._chartData,
+          technicalIndicatorPaneCount, isDrag,
+          {
+            startDrag: this._separatorStartDrag.bind(this),
+            drag: throttle(this._separatorDrag.bind(this), 50)
+          }
+        )
+      )
+      this._paneBaseId++
+      const id = `${TECHNICAL_INDICATOR_PANE_ID_PREFIX}${this._paneBaseId}`
+      const technicalIndicatorPane = new TechnicalIndicatorPane({
+        container: this._chartContainer,
+        chartData: this._chartData,
+        xAxis: this._xAxisPane.xAxis(),
+        name: technicalIndicator.name,
+        id,
+        height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
+      })
+      this._technicalIndicatorPanes.push(technicalIndicatorPane)
+      this.adjustPaneViewport(true, true, true, true, true)
+      return id
     }
   }
 
   /**
-   * 获取指标类型
+   * 获取窗口技术指标
    * @param paneId
    */
-  getTechnicalIndicatorType (paneId) {
+  getPaneTechnicalIndicator (paneId) {
     if (paneId) {
-      for (const pane of this._technicalIndicatorPanes) {
-        if (pane.id() === paneId) {
-          return pane.technicalIndicators().map(technicalIndicator => technicalIndicator.name)
+      if (paneId === CANDLE_PANE_ID) {
+        return this._candlePane.map(technicalIndicator => {
+          return {
+            name: technicalIndicator.name,
+            series: technicalIndicator.series,
+            calcParams: technicalIndicator.calcParams,
+            precision: technicalIndicator.precision,
+            styles: technicalIndicator.styles
+          }
+        })
+      } else {
+        for (const pane of this._technicalIndicatorPanes) {
+          if (pane.id() === paneId) {
+            return pane.technicalIndicators().map(technicalIndicator => {
+              return {
+                name: technicalIndicator.name,
+                series: technicalIndicator.series,
+                calcParams: technicalIndicator.calcParams,
+                precision: technicalIndicator.precision,
+                styles: technicalIndicator.styles
+              }
+            })
+          }
         }
       }
-    } else {
-      return this._candlePane.technicalIndicators().map(technicalIndicator => technicalIndicator.name)
     }
     return []
   }

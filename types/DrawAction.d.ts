@@ -7,7 +7,7 @@ export declare interface DrawActionCallbackParams {
   kLineData: KLineData;
   dataIndex: number;
   technicalIndicatorData?: any
-  technicalIndicatorType?: string
+  technicalIndicatorName?: string
   coordinate: any;
   barSpace: number;
   halfBarSpace: number;

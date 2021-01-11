@@ -3,7 +3,7 @@ export declare interface GraphicMarkViewport {
   height: number;
 }
 
-export declare interface XYPoint {
+export declare interface CoordinatePoint {
   x: number;
   y: number;
 }
@@ -23,7 +23,7 @@ export declare type GraphicMarkDataSourceDrawType = 'line' | 'text' | 'continuou
 
 export declare type GraphicMarkDataSourceDrawStyle = 'stroke' | 'fill';
 
-export declare interface GraphicMarkDataSourceItem extends XYPoint {
+export declare interface GraphicMarkDataSourceItem extends CoordinatePoint {
   radius?: number;
   startAngle?: number;
   endAngle?: number;
@@ -46,8 +46,8 @@ export declare interface CreateGraphicMarkOptions {
 export declare interface GraphicMark {
   name: string;
   totalStep: number;
-  checkMousePointOn: (type: GraphicMarkDataSourceDrawType, points: GraphicMarkDataSourceItem | GraphicMarkDataSourceItem[], mousePoint: XYPoint) => boolean;
-  createGraphicDataSource: (step: number, tpPoints: TimestampPricePoint[], xyPoints: XYPoint[], viewport: GraphicMarkViewport, precision: PriceVolumePrecision, xAxis: any, yAxis: any) => GraphicMarkDataSource[];
+  checkMousePointOn: (type: GraphicMarkDataSourceDrawType, points: GraphicMarkDataSourceItem | GraphicMarkDataSourceItem[], mousePoint: CoordinatePoint) => boolean;
+  createGraphicDataSource: (step: number, tpPoints: TimestampPricePoint[], coordinatePoints: CoordinatePoint[], viewport: GraphicMarkViewport, precision: PriceVolumePrecision, xAxis: any, yAxis: any) => GraphicMarkDataSource[];
   performMousePressedMove?: (tpPoints: TimestampPricePoint[], pressedPointIndex: number, data: TimestampPricePoint) => void;
   performMouseMoveForDrawing?: (step: number, tpPoints: TimestampPricePoint[], data: TimestampPricePoint) => void;
   drawExtend?: (ctx: CanvasRenderingContext2D, graphicMarkDataSources: GraphicMarkDataSource[], markOptions: any, viewport: GraphicMarkViewport ,precision: PriceVolumePrecision, xAxis: any, yAxis: any) => void;

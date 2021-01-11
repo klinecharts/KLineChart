@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import ChartPane, { TECHNICAL_INDICATOR_PANE } from './pane/ChartPane'
+import ChartPane from './pane/ChartPane'
 import { clone, isNumber, isValid, isArray } from './utils/typeChecks'
 import { DEV } from './utils/env'
 
@@ -49,12 +49,21 @@ export default class Chart {
   }
 
   /**
-   * 获取技术指标信息
-   * @param technicalIndicatorType
+   * 获取技术指标名字获取技术指标
+   * @param name
    * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
    */
-  getTechnicalIndicatorInfo (technicalIndicatorType) {
-    return this._chartPane.chartData().technicalIndicatorInfo(technicalIndicatorType)
+  getTechnicalIndicatorByName (name) {
+    return this._chartPane.chartData().technicalIndicatorInfo(name)
+  }
+
+  /**
+   * 获取窗口上的技术指标
+   * @param paneId
+   * @return {[]}
+   */
+  getTechnicalIndicatorByPaneId (paneId) {
+    return this._chartPane.getPaneTechnicalIndicator(paneId)
   }
 
   /**
@@ -205,52 +214,20 @@ export default class Chart {
   }
 
   /**
-   * 设置技术指标类型
-   * @param technicalIndicatorType
-   * @param isStack
-   * @param paneId
-   */
-  setTechnicalIndicatorType (technicalIndicatorType, isStack, paneId) {
-    this._chartPane.setTechnicalIndicatorType(technicalIndicatorType, isStack, paneId)
-  }
-
-  /**
-   * 获取指标类型
-   * @param paneId
-   * @return {[]}
-   */
-  getTechnicalIndicatorType (paneId) {
-    return this._chartPane.getTechnicalIndicatorType(paneId)
-  }
-
-  /**
-   * 创建一个窗口
-   * @param type
+   * 创建一个技术指标
+   * @param name 指标名
    * @param options
    * @returns {string|null}
    */
-  createPane (type = TECHNICAL_INDICATOR_PANE, options = {}) {
-    if (type === TECHNICAL_INDICATOR_PANE) {
-      if (!this._chartPane.chartData().technicalIndicator(options.technicalIndicatorType)) {
-        if (DEV) {
-          console.warn('createPane -> Invalid parameter: options.technicalIndicatorType, options.technicalIndicatorType not found!!!')
-        }
-        return null
+  createTechnicalIndicator (name, options = {}) {
+    const technicalIndicator = this._chartPane.chartData().technicalIndicator(name)
+    if (!technicalIndicator) {
+      if (DEV) {
+        console.warn('createPane -> Invalid parameter: name, can not find the corresponding technical indicator!!!')
       }
-      return this._chartPane.createPane(type, options)
+      return null
     }
-    if (DEV) {
-      console.warn('createPane -> Invalid parameter: type, type only support technicalIndicator!!!')
-    }
-    return null
-  }
-
-  /**
-   * 移除一个窗口
-   * @param paneId
-   */
-  removePane (paneId) {
-    this._chartPane.removePane(paneId)
+    return this._chartPane.createTechnicalIndicator(technicalIndicator, options)
   }
 
   /**
@@ -263,27 +240,27 @@ export default class Chart {
 
   /**
    * 移除一个技术指标
-   * @param technicalIndicatorType
+   * @param name
    * @param paneId
    */
-  removeTechnicalIndicator (technicalIndicatorType, paneId) {
-    this._chartPane.removeTechnicalIndicator(technicalIndicatorType, paneId)
+  removeTechnicalIndicator (name, paneId) {
+    this._chartPane.removeTechnicalIndicator(name, paneId)
   }
 
   /**
    * 创建图形标记
-   * @param type
+   * @param name
    * @param options
    */
-  createGraphicMark (type, options) {
+  createGraphicMark (name, options) {
     const graphicMarkMapping = this._chartPane.chartData().graphicMarkMapping()
-    if (!(type in graphicMarkMapping)) {
+    if (!(name in graphicMarkMapping)) {
       if (DEV) {
-        console.warn('createGraphicMark -> Invalid parameter: type, type not found!!!')
+        console.warn('createGraphicMark -> Invalid parameter: name, can not find the corresponding graphic mark!!!')
       }
       return null
     }
-    return this._chartPane.createGraphicMark(type, options)
+    return this._chartPane.createGraphicMark(name, options)
   }
 
   /**

@@ -1,14 +1,14 @@
-import { Chart, PictureType } from './Chart';
+import { Chart, PictureType, CreateTechnicalIndicatorOptions } from './Chart';
 import { DrawActionType, DrawActionCallbackParams } from './DrawAction';
 import {
   GraphicMarkViewport,
-  XYPoint, TimestampPricePoint,
+  CoordinatePoint, TimestampPricePoint,
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
   PriceVolumePrecision, CreateGraphicMarkOptions, GraphicMark
 } from './GraphicMark';
 import { KLineData } from './KLineData';
-import { PaneType, PaneOptions } from './Pane';
+import { PaneOptions } from './Pane';
 import {
   TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
@@ -29,14 +29,13 @@ export declare function init(ds: HTMLDivElement | string, style?: any): Chart | 
 export declare function dispose(dcs: HTMLDivElement | Chart | string): void;
 
 export {
-  Chart, PictureType,
+  Chart, PictureType, CreateTechnicalIndicatorOptions,
   DrawActionType, DrawActionCallbackParams,
-  GraphicMarkViewport, XYPoint, TimestampPricePoint,
+  GraphicMarkViewport, CoordinatePoint, TimestampPricePoint,
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
   PriceVolumePrecision, CreateGraphicMarkOptions, GraphicMark,
-  KLineData,
-  PaneType, PaneOptions,
+  KLineData, PaneOptions,
   TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, OverrideTechnicalIndicator,

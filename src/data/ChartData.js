@@ -204,11 +204,11 @@ export default class ChartData {
 
   /**
    * 获取技术指标信息
-   * @param technicalIndicatorType
+   * @param name
    * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
    */
-  technicalIndicatorInfo (technicalIndicatorType) {
-    const technical = this.technicalIndicator(technicalIndicatorType)
+  technicalIndicatorInfo (name) {
+    const technical = this.technicalIndicator(name)
     if (technical) {
       return {
         name: technical.name,
@@ -234,10 +234,10 @@ export default class ChartData {
 
   /**
    * 根据指标类型获取指标类
-   * @param technicalIndicatorType
+   * @param name
    */
-  technicalIndicator (technicalIndicatorType) {
-    return this._technicalIndicatorMapping[technicalIndicatorType]
+  technicalIndicator (name) {
+    return this._technicalIndicatorMapping[name]
   }
 
   /**
@@ -321,10 +321,10 @@ export default class ChartData {
   /**
    * 加载技术指标精度
    * @param precision
-   * @param technicalIndicatorType
+   * @param name
    */
-  applyTechnicalIndicatorPrecision (precision, technicalIndicatorType) {
-    const technicalIndicator = this.technicalIndicator(technicalIndicatorType)
+  applyTechnicalIndicatorPrecision (precision, name) {
+    const technicalIndicator = this.technicalIndicator(name)
     if (technicalIndicator) {
       technicalIndicator.setPrecision(precision)
     } else {
@@ -738,13 +738,13 @@ export default class ChartData {
 
   /**
    * 添加一个自定义指标
-   * @param technicalIndicatorInfo
+   * @param technicalIndicator
    */
-  addCustomTechnicalIndicator (technicalIndicatorInfo) {
-    const technicalIndicator = createTechnicalIndicatorInstance(technicalIndicatorInfo || {})
-    if (technicalIndicator) {
+  addCustomTechnicalIndicator (technicalIndicator) {
+    const technicalIndicatorInstance = createTechnicalIndicatorInstance(technicalIndicator || {})
+    if (technicalIndicatorInstance) {
       // 将生成的新的指标类放入集合
-      this._technicalIndicatorMapping[technicalIndicatorInfo.name] = technicalIndicator
+      this._technicalIndicatorMapping[technicalIndicatorInstance.name] = technicalIndicatorInstance
     }
   }
 
