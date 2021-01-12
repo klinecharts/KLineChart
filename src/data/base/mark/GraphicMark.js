@@ -16,12 +16,7 @@ import { renderStrokeFillCircle } from '../../../renderer/circle'
 import { checkPointInCircle } from '../../../extension/mark/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../../renderer/line'
 import { isValid, isArray, isBoolean, clone } from '../../../utils/typeChecks'
-
-export const HoverType = {
-  OTHER: 'other',
-  POINT: 'point',
-  NONE: 'none'
-}
+import { GraphicMarkMouseOperateElement } from '../../ChartData'
 
 // 标记图形绘制步骤开始
 const GRAPHIC_MARK_DRAW_STEP_START = 1
@@ -94,8 +89,6 @@ export default class GraphicMark {
     this._rightClickRemove = isBoolean(rightClickRemove) ? rightClickRemove : true
     this._drawStep = GRAPHIC_MARK_DRAW_STEP_START
     this._tpPoints = []
-    this._hoverType = HoverType.NONE
-    this._hoverIndex = -1
   }
 
   /**
@@ -302,13 +295,20 @@ export default class GraphicMark {
         viewport, precision, this._xAxis, this._yAxis
       )
     }
-    if (this._hoverType !== HoverType.NONE) {
+    const graphicMarkMouseOperate = this._chartData.graphicMarkMouseOperate()
+    if (
+      (graphicMarkMouseOperate.hover.id === this._id && graphicMarkMouseOperate.hover.element !== GraphicMarkMouseOperateElement.NONE) ||
+      (graphicMarkMouseOperate.click.id === this._id && graphicMarkMouseOperate.click.element !== GraphicMarkMouseOperateElement.NONE)
+    ) {
       xyPoints.forEach(({ x, y }, index) => {
         let radius = markOptions.point.radius
         let color = markOptions.point.backgroundColor
         let borderColor = markOptions.point.borderColor
         let borderSize = markOptions.point.borderSize
-        if (this._hoverType === HoverType.POINT && index === this._hoverIndex) {
+        if (
+          (graphicMarkMouseOperate.hover.id === this._id && graphicMarkMouseOperate.hover.element === GraphicMarkMouseOperateElement.POINT && index === graphicMarkMouseOperate.hover.elementIndex) ||
+          (graphicMarkMouseOperate.click.id === this._id && graphicMarkMouseOperate.click.element === GraphicMarkMouseOperateElement.POINT && index === graphicMarkMouseOperate.click.elementIndex)
+        ) {
           radius = markOptions.point.activeRadius
           color = markOptions.point.activeBackgroundColor
           borderColor = markOptions.point.activeBorderColor
@@ -362,22 +362,6 @@ export default class GraphicMark {
   }
 
   /**
-   * 获取鼠标点在图形上的类型
-   * @return {string}
-   */
-  hoverType () {
-    return this._hoverType
-  }
-
-  /**
-   * 是否是活动状态
-   * @return {boolean}
-   */
-  isActive () {
-    return this._hoverType !== HoverType.NONE
-  }
-
-  /**
    * 是否在绘制中
    * @return {boolean}
    */
@@ -386,19 +370,12 @@ export default class GraphicMark {
   }
 
   /**
-   * 重置鼠标点在图形上的参数
-   */
-  resetHoverParams () {
-    this._hoverType = HoverType.NONE
-    this._hoverIndex = -1
-  }
-
-  /**
    * 检查鼠标点是否在图形上
    * @param point
-   * @return {boolean}
+   * @param type
+   * @return {{id: *, elementIndex: number, element: string}}
    */
-  checkMousePointOnGraphic (point) {
+  checkMousePointOnGraphic (point, type) {
     const markOptions = this._chartData.styleOptions().graphicMark
     const xyPoints = []
     // 检查鼠标点是否在图形的点上
@@ -410,9 +387,11 @@ export default class GraphicMark {
       }
       xyPoints.push(xyPoint)
       if (checkPointInCircle(xyPoint, markOptions.point.radius, point)) {
-        this._hoverType = HoverType.POINT
-        this._hoverIndex = i
-        return true
+        return {
+          id: this._id,
+          element: GraphicMarkMouseOperateElement.POINT,
+          elementIndex: i
+        }
       }
     }
     // 检查鼠标点是否在点构成的其它图形上
@@ -436,14 +415,15 @@ export default class GraphicMark {
         for (let i = 0; i < dataSource.length; i++) {
           const points = dataSource[i]
           if (this.checkMousePointOn(type, points, point)) {
-            this._hoverType = HoverType.OTHER
-            this._hoverIndex = i
-            return true
+            return {
+              id: this._id,
+              element: GraphicMarkMouseOperateElement.OTHER,
+              elementIndex: i
+            }
           }
         }
       }
     }
-    this.resetHoverParams()
   }
 
   /**
@@ -474,14 +454,20 @@ export default class GraphicMark {
    * @param point
    */
   mousePressedMove (point) {
-    if (this._hoverType === HoverType.POINT && this._hoverIndex !== -1) {
+    const graphicMarkMouseOperate = this._chartData.graphicMarkMouseOperate()
+    const elementIndex = graphicMarkMouseOperate.click.elementIndex
+    if (
+      graphicMarkMouseOperate.click.id === this._id &&
+      graphicMarkMouseOperate.click.element === GraphicMarkMouseOperateElement.POINT &&
+      elementIndex !== -1
+    ) {
       const dataIndex = this._xAxis.convertFromPixel(point.x)
       const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
       const price = this._yAxis.convertFromPixel(point.y)
-      this._tpPoints[this._hoverIndex].timestamp = timestamp
-      this._tpPoints[this._hoverIndex].dataIndex = dataIndex
-      this._tpPoints[this._hoverIndex].price = price
-      this.performMousePressedMove(this._tpPoints, this._hoverIndex, { dataIndex, timestamp, price })
+      this._tpPoints[elementIndex].timestamp = timestamp
+      this._tpPoints[elementIndex].dataIndex = dataIndex
+      this._tpPoints[elementIndex].price = price
+      this.performMousePressedMove(this._tpPoints, elementIndex, { dataIndex, timestamp, price })
     }
   }
 

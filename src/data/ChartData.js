@@ -48,6 +48,16 @@ export const RemoveGraphicMarkType = {
   ID: 'id'
 }
 
+/**
+ * 图形标记鼠标操作元素类型
+ * @type {{OTHER: string, POINT: string, NONE: string}}
+ */
+export const GraphicMarkMouseOperateElement = {
+  OTHER: 'other',
+  POINT: 'point',
+  NONE: 'none'
+}
+
 const MAX_DATA_SPACE = 50
 const MIN_DATA_SPACE = 1
 
@@ -114,6 +124,19 @@ export default class ChartData {
     this._dragGraphicMarkFlag = false
     // 图形标记映射
     this._graphicMarkMapping = createGraphicMarkMapping()
+    // 图形标记鼠标操作信息
+    this._graphicMarkMouseOperate = {
+      click: {
+        id: '',
+        element: GraphicMarkMouseOperateElement.NONE,
+        elementIndex: -1
+      },
+      hover: {
+        id: '',
+        element: GraphicMarkMouseOperateElement.NONE,
+        elementIndex: -1
+      }
+    }
     // 绘图标记数据
     this._graphicMarks = []
 
@@ -668,6 +691,7 @@ export default class ChartData {
   removeGraphicMarkInstance (options) {
     const graphicMarks = this._graphicMarks
     let removeIndex = -1
+    const { hover, click } = this._graphicMarkMouseOperate
     for (let i = 0; i < graphicMarks.length; i++) {
       const graphicMark = graphicMarks[i]
       if (options.type === RemoveGraphicMarkType.ID) {
@@ -676,7 +700,11 @@ export default class ChartData {
           break
         }
       } else {
-        if (graphicMark.rightClickRemove() && graphicMark.isActive()) {
+        const graphicMarkId = graphicMark.id()
+        if (
+          graphicMark.rightClickRemove() &&
+          (graphicMarkId === hover.id || graphicMarkId === click.id)
+        ) {
           removeIndex = i
           break
         }
@@ -702,6 +730,40 @@ export default class ChartData {
    */
   setDragGraphicMarkFlag (flag) {
     this._dragGraphicMarkFlag = flag
+  }
+
+  /**
+   * 设置图形标记鼠标操作信息
+   * @param hoverOperate
+   * @param clickOperate
+   */
+  setGraphicMarkMouseOperate (hoverOperate, clickOperate) {
+    const { hover, click } = this._graphicMarkMouseOperate
+    const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
+    let shouldInvalidate = false
+    if (hoverOperate &&
+      (hover.id !== hoverOperate.id || hover.element !== hoverOperate.element || hover.elementIndex !== hoverOperate.elementIndex)
+    ) {
+      this._graphicMarkMouseOperate.hover = { ...hoverOperate }
+      shouldInvalidate = true
+    }
+    if (clickOperate &&
+      (click.id !== clickOperate.id || click.element !== clickOperate.element || click.elementIndex !== clickOperate.elementIndex)
+    ) {
+      this._graphicMarkMouseOperate.click = { ...clickOperate }
+      shouldInvalidate = true
+    }
+    if (shouldInvalidate || lastGraphicMark.isDrawing()) {
+      this.invalidate(InvalidateLevel.GRAPHIC_MARK)
+    }
+  }
+
+  /**
+   * 获取图形标记鼠标操作信息
+   * @return {{hover: {id: string, elementIndex: number, element: string}, click: {id: string, elementIndex: number, element: string}}}
+   */
+  graphicMarkMouseOperate () {
+    return this._graphicMarkMouseOperate
   }
 
   /**
