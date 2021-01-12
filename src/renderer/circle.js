@@ -13,20 +13,6 @@
  */
 
 /**
- * 绘制带边框的填充圆
- * @param ctx
- * @param fillColor
- * @param borderColor
- * @param borderSize
- * @param circlePoint
- * @param radius
- */
-export function renderStrokeFillCircle (ctx, fillColor, borderColor, borderSize, circlePoint, radius) {
-  renderFillCircle(ctx, fillColor, circlePoint, radius)
-  renderStrokeCircle(ctx, borderColor, borderSize, circlePoint, radius)
-}
-
-/**
  * 绘制边框圆
  * @param ctx
  * @param borderColor

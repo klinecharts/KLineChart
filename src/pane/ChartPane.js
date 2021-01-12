@@ -548,6 +548,15 @@ export default class ChartPane {
       rightClickRemove: options.rightClickRemove
     })
     graphicMarkInstance.setPoints(options.points)
+    if (isFunction(options.onClick)) {
+      graphicMarkInstance.onClick = options.onClick
+    }
+    if (isFunction(options.onRightClick)) {
+      graphicMarkInstance.onRightClick = options.onRightClick
+    }
+    if (isFunction(options.onPressedMove)) {
+      graphicMarkInstance.onPressedMove = options.onPressedMove
+    }
     this._chartData.addGraphicMarkInstance(graphicMarkInstance)
     return id
   }

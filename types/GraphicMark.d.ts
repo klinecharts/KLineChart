@@ -39,8 +39,10 @@ export declare interface GraphicMarkDataSource {
 }
 
 export declare interface CreateGraphicMarkOptions {
-  rightClickRemove?: boolean;
   points?: TimestampPricePoint[];
+  onClick?: (id: string, event: any) => void;
+  onRightClick?: (id: string, event: any) => boolean;
+  onPressedMove?: (id: string, event: any) => void;
 }
 
 export declare interface GraphicMark {

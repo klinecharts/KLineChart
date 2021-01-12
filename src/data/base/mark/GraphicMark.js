@@ -12,17 +12,26 @@
  * limitations under the License.
  */
 
-import { renderStrokeFillCircle } from '../../../renderer/circle'
+import { renderFillCircle } from '../../../renderer/circle'
 import { checkPointInCircle } from '../../../extension/mark/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../../renderer/line'
-import { isValid, isArray, isBoolean, clone } from '../../../utils/typeChecks'
-import { GraphicMarkMouseOperateElement } from '../../ChartData'
+import { isValid, isArray, clone } from '../../../utils/typeChecks'
 
 // 标记图形绘制步骤开始
 const GRAPHIC_MARK_DRAW_STEP_START = 1
 
 // 标记图形绘制步骤结束
 const GRAPHIC_MARK_DRAW_STEP_FINISHED = -1
+
+/**
+ * 图形标记鼠标操作元素类型
+ * @type {{OTHER: string, POINT: string, NONE: string}}
+ */
+export const GraphicMarkMouseOperateElement = {
+  OTHER: 'other',
+  POINT: 'point',
+  NONE: 'none'
+}
 
 /**
  * 绘制类型
@@ -77,8 +86,7 @@ function getLineType (point1, point2) {
 export default class GraphicMark {
   constructor ({
     id, name, totalStep,
-    chartData, xAxis, yAxis,
-    rightClickRemove
+    chartData, xAxis, yAxis
   }) {
     this._id = id
     this._name = name
@@ -86,7 +94,6 @@ export default class GraphicMark {
     this._chartData = chartData
     this._xAxis = xAxis
     this._yAxis = yAxis
-    this._rightClickRemove = isBoolean(rightClickRemove) ? rightClickRemove : true
     this._drawStep = GRAPHIC_MARK_DRAW_STEP_START
     this._tpPoints = []
   }
@@ -314,7 +321,8 @@ export default class GraphicMark {
           borderColor = markOptions.point.activeBorderColor
           borderSize = markOptions.point.activeBorderSize
         }
-        renderStrokeFillCircle(ctx, color, borderColor, borderSize, { x, y }, radius)
+        renderFillCircle(ctx, borderColor, { x, y }, radius + borderSize)
+        renderFillCircle(ctx, color, { x, y }, radius)
       })
     }
   }
@@ -351,14 +359,6 @@ export default class GraphicMark {
    */
   id () {
     return this._id
-  }
-
-  /**
-   * 获取右击是否删除
-   * @return {boolean}
-   */
-  rightClickRemove () {
-    return this._rightClickRemove
   }
 
   /**
@@ -452,8 +452,9 @@ export default class GraphicMark {
   /**
    * 鼠标按住移动方法
    * @param point
+   * @param event
    */
-  mousePressedMove (point) {
+  mousePressedMove (point, event) {
     const graphicMarkMouseOperate = this._chartData.graphicMarkMouseOperate()
     const elementIndex = graphicMarkMouseOperate.click.elementIndex
     if (
@@ -468,8 +469,36 @@ export default class GraphicMark {
       this._tpPoints[elementIndex].dataIndex = dataIndex
       this._tpPoints[elementIndex].price = price
       this.performMousePressedMove(this._tpPoints, elementIndex, { dataIndex, timestamp, price })
+      this.onPressedMove(graphicMarkMouseOperate.click.id, event)
     }
   }
+
+  // -------------------- 事件开始 -------------------
+
+  /**
+   * 点击事件
+   * @param id
+   * @param event
+   */
+  onClick (id, event) {}
+
+  /**
+   * 右击事件
+   * @param id
+   * @param event
+   */
+  onRightClick (id, event) {}
+
+  /**
+   * 按住移动事件
+   * @param id
+   * @param event
+   */
+  onPressedMove (id, event) {}
+
+  // -------------------- 事件结束 -------------------
+
+  // --------------------- 自定义时需要实现的一些方法开始 ----------------------
 
   /**
    * 检查鼠标点在其它图形上
@@ -518,4 +547,6 @@ export default class GraphicMark {
    * @param yAxis
    */
   drawExtend (ctx, graphicDataSources, markOptions, viewport, precision, xAxis, yAxis) {}
+
+  // --------------------- 自定义时需要实现的一些方法结束 ----------------------
 }

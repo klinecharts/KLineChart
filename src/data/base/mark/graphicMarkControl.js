@@ -65,10 +65,10 @@ export function createGraphicMarkClass ({
   }
   class Mark extends GraphicMark {
     constructor ({
-      id, chartData, xAxis, yAxis, rightClickRemove
+      id, chartData, xAxis, yAxis
     }) {
       super({
-        id, name, totalStep, chartData, xAxis, yAxis, rightClickRemove
+        id, name, totalStep, chartData, xAxis, yAxis
       })
     }
   }

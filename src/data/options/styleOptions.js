@@ -414,14 +414,14 @@ const defaultCrosshair = {
  */
 const defaultGraphicMark = {
   point: {
-    backgroundColor: '#181818',
-    borderColor: '#fff',
+    backgroundColor: '#2196F3',
+    borderColor: 'rgba(33, 150, 243, 0.35)',
     borderSize: 1,
     radius: 5,
-    activeBackgroundColor: '#181818',
-    activeBorderColor: '#fff',
-    activeBorderSize: 2,
-    activeRadius: 6
+    activeBackgroundColor: '#2196F3',
+    activeBorderColor: 'rgba(33, 150, 243, 0.35)',
+    activeBorderSize: 3,
+    activeRadius: 5
   },
   line: {
     color: '#2196F3',

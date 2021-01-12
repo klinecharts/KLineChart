@@ -14,7 +14,8 @@
 
 import { CANDLE_PANE_ID } from '../pane/ChartPane'
 import EventHandler from './EventHandler'
-import { GraphicMarkMouseOperateElement, InvalidateLevel, RemoveGraphicMarkType } from '../data/ChartData'
+import { InvalidateLevel, RemoveGraphicMarkType } from '../data/ChartData'
+import { GraphicMarkMouseOperateElement } from '../data/base/mark/GraphicMark'
 
 export default class GraphicMarkEventHandler extends EventHandler {
   constructor (chartData) {
@@ -92,6 +93,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
             this._pressedGraphicMark = graphicMarks[i]
             this._chartData.setDragGraphicMarkFlag(true)
           }
+          graphicMarks[i].onClick(graphicMarkClickOperate.id, event)
           break
         }
       }
@@ -110,15 +112,15 @@ export default class GraphicMarkEventHandler extends EventHandler {
     )
   }
 
-  mouseRightDownEvent () {
-    this._chartData.removeGraphicMarkInstance({ type: RemoveGraphicMarkType.ACTIVE })
+  mouseRightDownEvent (event) {
+    this._chartData.removeGraphicMarkInstance({ type: RemoveGraphicMarkType.ACTIVE, event })
   }
 
   pressedMouseMoveEvent (event) {
     const graphicMarks = this._chartData.graphicMarks()
     const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
     if ((!lastGraphicMark || !lastGraphicMark.isDrawing()) && this._pressedGraphicMark) {
-      this._pressedGraphicMark.mousePressedMove({ x: event.localX, y: event.localY })
+      this._pressedGraphicMark.mousePressedMove({ x: event.localX, y: event.localY }, event)
       this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK)
     }
   }

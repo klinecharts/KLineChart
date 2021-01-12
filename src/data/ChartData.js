@@ -22,6 +22,7 @@ import {
 } from './base/technicalindicator/technicalIndicatorControl'
 import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './base/technicalindicator/TechnicalIndicator'
+import { GraphicMarkMouseOperateElement } from './base/mark/GraphicMark'
 import Delegate from './delegate/Delegate'
 import { createGraphicMarkClass, createGraphicMarkMapping } from './base/mark/graphicMarkControl'
 import { binarySearchNearest } from '../utils/number'
@@ -46,16 +47,6 @@ export const DrawActionType = {
 export const RemoveGraphicMarkType = {
   ACTIVE: 'active',
   ID: 'id'
-}
-
-/**
- * 图形标记鼠标操作元素类型
- * @type {{OTHER: string, POINT: string, NONE: string}}
- */
-export const GraphicMarkMouseOperateElement = {
-  OTHER: 'other',
-  POINT: 'point',
-  NONE: 'none'
 }
 
 const MAX_DATA_SPACE = 50
@@ -701,11 +692,10 @@ export default class ChartData {
         }
       } else {
         const graphicMarkId = graphicMark.id()
-        if (
-          graphicMark.rightClickRemove() &&
-          (graphicMarkId === hover.id || graphicMarkId === click.id)
-        ) {
-          removeIndex = i
+        if (graphicMarkId === hover.id || graphicMarkId === click.id) {
+          if (!graphicMark.onRightClick(graphicMarkId, options.event)) {
+            removeIndex = i
+          }
           break
         }
       }
