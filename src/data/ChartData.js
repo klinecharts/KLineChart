@@ -743,7 +743,7 @@ export default class ChartData {
       this._graphicMarkMouseOperate.click = { ...clickOperate }
       shouldInvalidate = true
     }
-    if (shouldInvalidate || lastGraphicMark.isDrawing()) {
+    if (shouldInvalidate || (lastGraphicMark && lastGraphicMark.isDrawing())) {
       this.invalidate(InvalidateLevel.GRAPHIC_MARK)
     }
   }

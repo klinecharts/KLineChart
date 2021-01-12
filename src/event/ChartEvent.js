@@ -61,8 +61,10 @@ export default class ChartEvent {
 
   _mouseUpEvent (event) {
     this._target.style.cursor = 'crosshair'
-    event.localX -= this._chartContentSize.contentLeft
-    this._graphicMarkEventHandler.mouseUpEvent(event)
+    if (this._shouldProcessGraphicMarkEvent()) {
+      event.localX -= this._chartContentSize.contentLeft
+      this._graphicMarkEventHandler.mouseUpEvent(event)
+    }
   }
 
   _mouseLeaveEvent (event) {
@@ -74,7 +76,7 @@ export default class ChartEvent {
 
   _mouseMoveEvent (event) {
     event.localX -= this._chartContentSize.contentLeft
-    if (this._chartData.graphicMarks().length > 0) {
+    if (this._shouldProcessGraphicMarkEvent()) {
       this._graphicMarkEventHandler.mouseMoveEvent(event)
     }
     if (this._checkZoomScroll()) {
@@ -98,15 +100,19 @@ export default class ChartEvent {
   _mouseDownEvent (event) {
     this._target.style.cursor = 'pointer'
     event.localX -= this._chartContentSize.contentLeft
-    this._graphicMarkEventHandler.mouseDownEvent(event)
+    if (this._shouldProcessGraphicMarkEvent()) {
+      this._graphicMarkEventHandler.mouseDownEvent(event)
+    }
     if (this._checkZoomScroll()) {
       this._zoomScrollEventHandler.mouseDownEvent(event)
     }
   }
 
   _mouseRightDownEvent (event) {
-    event.localX -= this._chartContentSize.contentLeft
-    this._graphicMarkEventHandler.mouseRightDownEvent(event)
+    if (this._shouldProcessGraphicMarkEvent()) {
+      event.localX -= this._chartContentSize.contentLeft
+      this._graphicMarkEventHandler.mouseRightDownEvent(event)
+    }
   }
 
   _pressedMouseMoveEvent (event) {
@@ -134,6 +140,16 @@ export default class ChartEvent {
     const graphicMarks = this._chartData.graphicMarks()
     const graphicMarkCount = graphicMarks.length
     return !this._chartData.dragPaneFlag() && !this._chartData.dragGraphicMarkFlag() && (graphicMarkCount === 0 || !graphicMarks[graphicMarkCount - 1].isDrawing())
+  }
+
+  /**
+   * 是否需要处理图形标记事件
+   * @return {boolean}
+   * @private
+   */
+  _shouldProcessGraphicMarkEvent () {
+    const graphicMarks = this._chartData.graphicMarks()
+    return graphicMarks.length > 0
   }
 
   setChartContentSize (chartContentSize) {
