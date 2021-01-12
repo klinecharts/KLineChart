@@ -14,7 +14,7 @@
 
 import { CANDLE_PANE_ID } from '../pane/ChartPane'
 import EventHandler from './EventHandler'
-import { InvalidateLevel, RemoveGraphicMarkType } from '../data/ChartData'
+import { InvalidateLevel, RemoveGraphicMarkOperateType } from '../data/ChartData'
 import { GraphicMarkMouseOperateElement } from '../data/base/mark/GraphicMark'
 
 export default class GraphicMarkEventHandler extends EventHandler {
@@ -113,7 +113,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
   }
 
   mouseRightDownEvent (event) {
-    this._chartData.removeGraphicMarkInstance({ type: RemoveGraphicMarkType.ACTIVE, event })
+    this._chartData.removeGraphicMarkInstance({ type: RemoveGraphicMarkOperateType.ACTION, event })
   }
 
   pressedMouseMoveEvent (event) {

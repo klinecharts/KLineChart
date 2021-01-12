@@ -41,11 +41,11 @@ export const DrawActionType = {
 }
 
 /**
- * 删除图形标记实例类型
- * @type {{ACTIVE: string, ID: string}}
+ * 删除图形标记实例操作类型
+ * @type {{ACTION: string, ID: string}}
  */
-export const RemoveGraphicMarkType = {
-  ACTIVE: 'active',
+export const RemoveGraphicMarkOperateType = {
+  ACTION: 'action',
   ID: 'id'
 }
 
@@ -685,7 +685,7 @@ export default class ChartData {
     const { hover, click } = this._graphicMarkMouseOperate
     for (let i = 0; i < graphicMarks.length; i++) {
       const graphicMark = graphicMarks[i]
-      if (options.type === RemoveGraphicMarkType.ID) {
+      if (options.type === RemoveGraphicMarkOperateType.ID) {
         if (options.id === graphicMark.id()) {
           removeIndex = i
           break
