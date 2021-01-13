@@ -81,6 +81,11 @@ export default class GraphicMarkEventHandler extends EventHandler {
     const point = { x: event.localX, y: event.localY }
     const graphicMarks = this._chartData.graphicMarks()
     const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
+    let graphicMarkHoverOperate = {
+      id: '',
+      element: GraphicMarkMouseOperateElement.NONE,
+      elementIndex: -1
+    }
     let graphicMarkClickOperate
     if (lastGraphicMark && lastGraphicMark.isDrawing()) {
       lastGraphicMark.mouseLeftButtonDownForDrawing(point)
@@ -92,6 +97,9 @@ export default class GraphicMarkEventHandler extends EventHandler {
           if (graphicMarkClickOperate.element === GraphicMarkMouseOperateElement.POINT) {
             this._pressedGraphicMark = graphicMarks[i]
             this._chartData.setDragGraphicMarkFlag(true)
+            graphicMarkHoverOperate = {
+              ...graphicMarkClickOperate
+            }
           }
           graphicMarks[i].onClick(graphicMarkClickOperate.id, event)
           break
@@ -99,11 +107,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
       }
     }
     this._chartData.setGraphicMarkMouseOperate(
-      {
-        id: '',
-        element: GraphicMarkMouseOperateElement.NONE,
-        elementIndex: -1
-      },
+      graphicMarkHoverOperate,
       graphicMarkClickOperate || {
         id: '',
         element: GraphicMarkMouseOperateElement.NONE,
@@ -113,7 +117,15 @@ export default class GraphicMarkEventHandler extends EventHandler {
   }
 
   mouseRightDownEvent (event) {
-    this._chartData.removeGraphicMarkInstance({ type: RemoveGraphicMarkOperateType.ACTION, event })
+    const graphicMarks = this._chartData.graphicMarks()
+    for (let i = 0; i < graphicMarks.length; i++) {
+      if (graphicMarks[i].checkMousePointOnGraphic({ x: event.localX, y: event.localY })) {
+        if (!graphicMarks[i].onRightClick(graphicMarks[i].id(), event)) {
+          this._chartData.removeGraphicMarkInstance({ type: RemoveGraphicMarkOperateType.ACTION, index: i })
+          break
+        }
+      }
+    }
   }
 
   pressedMouseMoveEvent (event) {

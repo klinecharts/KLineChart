@@ -61,7 +61,7 @@ export default class ChartEvent {
 
   _mouseUpEvent (event) {
     this._target.style.cursor = 'crosshair'
-    if (this._shouldProcessGraphicMarkEvent()) {
+    if (this._shouldPerformGraphicMarkEvent()) {
       event.localX -= this._chartContentSize.contentLeft
       this._graphicMarkEventHandler.mouseUpEvent(event)
     }
@@ -76,7 +76,7 @@ export default class ChartEvent {
 
   _mouseMoveEvent (event) {
     event.localX -= this._chartContentSize.contentLeft
-    if (this._shouldProcessGraphicMarkEvent()) {
+    if (this._shouldPerformGraphicMarkEvent()) {
       this._graphicMarkEventHandler.mouseMoveEvent(event)
     }
     if (this._checkZoomScroll()) {
@@ -100,7 +100,7 @@ export default class ChartEvent {
   _mouseDownEvent (event) {
     this._target.style.cursor = 'pointer'
     event.localX -= this._chartContentSize.contentLeft
-    if (this._shouldProcessGraphicMarkEvent()) {
+    if (this._shouldPerformGraphicMarkEvent()) {
       this._graphicMarkEventHandler.mouseDownEvent(event)
     }
     if (this._checkZoomScroll()) {
@@ -109,7 +109,7 @@ export default class ChartEvent {
   }
 
   _mouseRightDownEvent (event) {
-    if (this._shouldProcessGraphicMarkEvent()) {
+    if (this._shouldPerformGraphicMarkEvent()) {
       event.localX -= this._chartContentSize.contentLeft
       this._graphicMarkEventHandler.mouseRightDownEvent(event)
     }
@@ -147,7 +147,7 @@ export default class ChartEvent {
    * @return {boolean}
    * @private
    */
-  _shouldProcessGraphicMarkEvent () {
+  _shouldPerformGraphicMarkEvent () {
     const graphicMarks = this._chartData.graphicMarks()
     return graphicMarks.length > 0
   }

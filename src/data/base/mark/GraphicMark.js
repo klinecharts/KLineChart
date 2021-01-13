@@ -313,8 +313,9 @@ export default class GraphicMark {
         let borderColor = markOptions.point.borderColor
         let borderSize = markOptions.point.borderSize
         if (
-          (graphicMarkMouseOperate.hover.id === this._id && graphicMarkMouseOperate.hover.element === GraphicMarkMouseOperateElement.POINT && index === graphicMarkMouseOperate.hover.elementIndex) ||
-          (graphicMarkMouseOperate.click.id === this._id && graphicMarkMouseOperate.click.element === GraphicMarkMouseOperateElement.POINT && index === graphicMarkMouseOperate.click.elementIndex)
+          graphicMarkMouseOperate.hover.id === this._id &&
+          graphicMarkMouseOperate.hover.element === GraphicMarkMouseOperateElement.POINT &&
+          index === graphicMarkMouseOperate.hover.elementIndex
         ) {
           radius = markOptions.point.activeRadius
           color = markOptions.point.activeBackgroundColor

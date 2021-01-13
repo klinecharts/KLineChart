@@ -682,23 +682,15 @@ export default class ChartData {
   removeGraphicMarkInstance (options) {
     const graphicMarks = this._graphicMarks
     let removeIndex = -1
-    const { hover, click } = this._graphicMarkMouseOperate
-    for (let i = 0; i < graphicMarks.length; i++) {
-      const graphicMark = graphicMarks[i]
-      if (options.type === RemoveGraphicMarkOperateType.ID) {
-        if (options.id === graphicMark.id()) {
+    if (options.type === RemoveGraphicMarkOperateType.ID) {
+      for (let i = 0; i < graphicMarks.length; i++) {
+        if (options.id === graphicMarks[i].id()) {
           removeIndex = i
           break
         }
-      } else {
-        const graphicMarkId = graphicMark.id()
-        if (graphicMarkId === hover.id || graphicMarkId === click.id) {
-          if (!graphicMark.onRightClick(graphicMarkId, options.event)) {
-            removeIndex = i
-          }
-          break
-        }
       }
+    } else {
+      removeIndex = options.index
     }
     if (removeIndex !== -1) {
       graphicMarks.splice(removeIndex, 1)
