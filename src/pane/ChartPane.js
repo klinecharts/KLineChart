@@ -153,9 +153,10 @@ export default class ChartPane {
   _measurePaneHeight () {
     const styleOptions = this._chartData.styleOptions()
     const paneHeight = this._container.offsetHeight
-    const separatorHeight = styleOptions.separator.size * this._separatorPanes.length
+    const separatorSize = styleOptions.separator.size
+    const separatorTotalHeight = separatorSize * this._separatorPanes.length
     const xAxisHeight = this._xAxisPane.getSelfAxisHeight()
-    const paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorHeight
+    const paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorTotalHeight
     let technicalIndicatorPaneTotalHeight = 0
     this._technicalIndicatorPanes.forEach(pane => {
       const paneHeight = pane.height()
@@ -180,7 +181,7 @@ export default class ChartPane {
       const technicalIndicatorPane = this._technicalIndicatorPanes[i]
       const technicalIndicatorPaneHeight = technicalIndicatorPane.height()
       technicalIndicatorPane.setHeight(technicalIndicatorPaneHeight)
-      contentBottom += technicalIndicatorPaneHeight
+      contentBottom += (technicalIndicatorPaneHeight + separatorSize)
       paneContentSize[technicalIndicatorPane.id()] = { contentTop, contentBottom }
       contentTop = contentBottom
     }
