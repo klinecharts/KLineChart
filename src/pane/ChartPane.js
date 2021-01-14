@@ -413,7 +413,11 @@ export default class ChartPane {
    * @param paneId
    */
   removeTechnicalIndicator (name, paneId) {
-    if (paneId) {
+    if (paneId === CANDLE_PANE_ID) {
+      if (this._candlePane.removeTechnicalIndicator(name)) {
+        this.adjustPaneViewport(false, true, true, true)
+      }
+    } else {
       let paneIndex
       for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
         const pane = this._technicalIndicatorPanes[i]
@@ -438,10 +442,6 @@ export default class ChartPane {
             this.adjustPaneViewport(false, true, true, true)
           }
         }
-      }
-    } else {
-      if (this._candlePane.removeTechnicalIndicator(name)) {
-        this.adjustPaneViewport(false, true, true, true)
       }
     }
   }
