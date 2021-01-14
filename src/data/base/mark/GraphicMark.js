@@ -114,12 +114,17 @@ export default class GraphicMark {
    * 绘制线
    * @param ctx
    * @param lines
+   * @param style
    * @param markOptions
    * @private
    */
-  _drawLines (ctx, lines, markOptions) {
+  _drawLines (ctx, lines, style, markOptions) {
+    ctx.save()
     ctx.strokeStyle = markOptions.line.color
     ctx.lineWidth = markOptions.line.size
+    if (style === 'dash') {
+      ctx.setLineDash(markOptions.line.dashValue)
+    }
     lines.forEach(points => {
       const lineType = getLineType(points[0], points[1])
       switch (lineType) {
@@ -144,78 +149,92 @@ export default class GraphicMark {
         default: { break }
       }
     })
+    ctx.restore()
   }
 
   /**
    * 绘制连续线
    * @param ctx
-   * @param points
+   * @param continuousLines
+   * @param style
    * @param markOptions
    * @private
    */
-  _drawContinuousLine (ctx, points, markOptions) {
-    if (points.length > 0) {
-      ctx.strokeStyle = markOptions.line.color
-      ctx.lineWidth = markOptions.line.size
-      renderLine(ctx, () => {
-        ctx.beginPath()
-        ctx.moveTo(points[0].x, points[0].y)
-        for (let i = 1; i < points.length; i++) {
-          ctx.lineTo(points[i].x, points[i].y)
-        }
-        ctx.stroke()
-        ctx.closePath()
-      })
+  _drawContinuousLines (ctx, continuousLines, style, markOptions) {
+    ctx.save()
+    ctx.strokeStyle = markOptions.line.color
+    ctx.lineWidth = markOptions.line.size
+    if (style === 'dash') {
+      ctx.setLineDash(markOptions.line.dashValue)
     }
+    continuousLines.forEach(points => {
+      if (points.length > 0) {
+        renderLine(ctx, () => {
+          ctx.beginPath()
+          ctx.moveTo(points[0].x, points[0].y)
+          for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y)
+          }
+          ctx.stroke()
+          ctx.closePath()
+        })
+      }
+    })
+    ctx.restore()
   }
 
   /**
    * 绘制多边形
    * @param ctx
-   * @param points
+   * @param polygons
    * @param style
    * @param markOptions
    * @private
    */
-  _drawPolygon (ctx, points, style, markOptions) {
-    if (points.length > 0) {
-      let fillStroke
-      if (style === GraphicMarkDrawStyle.FILL) {
-        ctx.fillStyle = markOptions.polygon.fill.color
-        fillStroke = ctx.fill
-      } else {
-        ctx.lineWidth = markOptions.polygon.stroke.size
-        ctx.strokeStyle = markOptions.polygon.stroke.color
-        fillStroke = ctx.stroke
-      }
-      renderLine(ctx, () => {
-        ctx.beginPath()
-        ctx.moveTo(points[0].x, points[0].y)
-        for (let i = 1; i < points.length; i++) {
-          ctx.lineTo(points[i].x, points[i].y)
-        }
-        ctx.closePath()
-        fillStroke.call(ctx)
-      })
+  _drawPolygons (ctx, polygons, style, markOptions) {
+    ctx.save()
+    let fillStroke
+    if (style === GraphicMarkDrawStyle.FILL) {
+      ctx.fillStyle = markOptions.polygon.fill.color
+      fillStroke = ctx.fill
+    } else {
+      ctx.lineWidth = markOptions.polygon.stroke.size
+      ctx.strokeStyle = markOptions.polygon.stroke.color
+      fillStroke = ctx.stroke
     }
+    polygons.forEach(points => {
+      if (points.length > 0) {
+        renderLine(ctx, () => {
+          ctx.beginPath()
+          ctx.moveTo(points[0].x, points[0].y)
+          for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y)
+          }
+          ctx.closePath()
+          fillStroke.call(ctx)
+        })
+      }
+    })
+    ctx.restore()
   }
 
   /**
    * 画圆弧
    * @param ctx
-   * @param points
+   * @param arcs
    * @param style
    * @param markOptions
    * @private
    */
-  _drawArc (ctx, points, style, markOptions) {
+  _drawArcs (ctx, arcs, style, markOptions) {
+    ctx.save()
     if (style === GraphicMarkDrawStyle.FILL) {
       ctx.fillStyle = markOptions.arc.fill.color
     } else {
       ctx.lineWidth = markOptions.arc.stroke.size
       ctx.strokeStyle = markOptions.arc.stroke.color
     }
-    points.forEach(({ x, y, radius, startAngle, endAngle }) => {
+    arcs.forEach(({ x, y, radius, startAngle, endAngle }) => {
       ctx.beginPath()
       ctx.arc(x, y, radius, startAngle, endAngle)
       if (style === GraphicMarkDrawStyle.FILL) {
@@ -226,6 +245,7 @@ export default class GraphicMark {
         ctx.closePath()
       }
     })
+    ctx.restore()
   }
 
   /**
@@ -237,6 +257,7 @@ export default class GraphicMark {
    * @private
    */
   _drawText (ctx, texts, style, markOptions) {
+    ctx.save()
     let fillStroke
     if (style === GraphicMarkDrawStyle.STROKE) {
       ctx.strokeStyle = markOptions.text.color
@@ -249,6 +270,7 @@ export default class GraphicMark {
     texts.forEach(({ x, y, text }) => {
       fillStroke.call(ctx, text, x + markOptions.text.marginLeft, y - markOptions.text.marginBottom)
     })
+    ctx.restore()
   }
 
   /**
@@ -274,19 +296,19 @@ export default class GraphicMark {
         if (!isValid(isDraw) || isDraw) {
           switch (type) {
             case GraphicMarkDrawType.LINE: {
-              this._drawLines(ctx, dataSource, markOptions)
+              this._drawLines(ctx, dataSource, style, markOptions)
               break
             }
             case GraphicMarkDrawType.CONTINUOUS_LINE: {
-              this._drawContinuousLine(ctx, dataSource, markOptions)
+              this._drawContinuousLines(ctx, dataSource, style, markOptions)
               break
             }
             case GraphicMarkDrawType.POLYGON: {
-              this._drawPolygon(ctx, dataSource, style, markOptions)
+              this._drawPolygons(ctx, dataSource, style, markOptions)
               break
             }
             case GraphicMarkDrawType.ARC: {
-              this._drawArc(ctx, dataSource, style, markOptions)
+              this._drawArcs(ctx, dataSource, style, markOptions)
               break
             }
             case GraphicMarkDrawType.TEXT: {

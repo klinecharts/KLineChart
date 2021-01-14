@@ -425,7 +425,8 @@ const defaultGraphicMark = {
   },
   line: {
     color: '#2196F3',
-    size: 1
+    size: 1,
+    dashValue: [2, 2]
   },
   polygon: {
     stroke: {
