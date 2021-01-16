@@ -15,6 +15,31 @@
 export const DEVIATION = 2
 
 /**
+ * 获取两点之间的距离
+ * @param point1
+ * @param point2
+ * @return {number}
+ */
+export function getDistance (point1, point2) {
+  const xDif = point1.x - point2.x
+  const yDif = point1.y - point2.y
+  return Math.sqrt(xDif * xDif + yDif * yDif)
+}
+
+/**
+ * 获取一点绕另一点旋转一定角度后新的点坐标
+ * @param point 旋转点
+ * @param targetPoint 参照点
+ * @param angle 角度
+ * @return {{x: *, y: *}}
+ */
+export function getRotatePoint (point, targetPoint, angle) {
+  const x = (point.x - targetPoint.x) * Math.cos(angle) - (point.y - targetPoint.y) * Math.sin(angle) + targetPoint.x
+  const y = (point.x - targetPoint.x) * Math.sin(angle) + (point.y - targetPoint.y) * Math.cos(angle) + targetPoint.y
+  return { x, y }
+}
+
+/**
  * 获取一次函数斜率和截距，即 y = kx + b 中的k值和b值
  * @param point1
  * @param point2
@@ -138,9 +163,69 @@ export function checkPointOnCircle (circleCenterPoint, radius, targetPoint) {
   if (!targetPoint) {
     return false
   }
-  const difX = targetPoint.x - circleCenterPoint.x
-  const difY = targetPoint.y - circleCenterPoint.y
-  return Math.abs(difX * difX + difY * difY - radius * radius) < DEVIATION * DEVIATION
+  return Math.abs(getDistance(targetPoint, circleCenterPoint) - radius) < DEVIATION
+}
+
+/**
+ * 检查点是否在圆弧上
+ * @param circleCenterPoint
+ * @param radius
+ * @param startAngle
+ * @param endAngle
+ * @param targetPoint
+ * @return {boolean}
+ */
+export function checkPointOnArc (circleCenterPoint, radius, startAngle, endAngle, targetPoint) {
+  if (checkPointOnCircle(circleCenterPoint, radius, targetPoint)) {
+    const startPointX = radius * Math.cos(startAngle) + circleCenterPoint.x
+    const startPointY = radius * Math.sin(startAngle) + circleCenterPoint.y
+    const endPointX = radius * Math.cos(endAngle) + circleCenterPoint.x
+    const endPointY = radius * Math.sin(endAngle) + circleCenterPoint.y
+    return (
+      targetPoint.x <= Math.max(startPointX, endPointX) + DEVIATION &&
+      targetPoint.x >= Math.min(startPointX, endPointX) - DEVIATION &&
+      targetPoint.y <= Math.max(startPointY, endPointY) + DEVIATION &&
+      targetPoint.y >= Math.min(startPointY, endPointY) - DEVIATION
+    )
+  }
+}
+
+/**
+ * 根据两点获取一条射线
+ * @param point1
+ * @param point2
+ * @param xyMax
+ * @return {(*|{x: *, y: *})[]|*[]}
+ */
+export function getRayLine (point1, point2, xyMax) {
+  if (point1 && point2) {
+    let point
+    if (point1.x === point2.x && point1.y !== point2.y) {
+      if (point1.y < point2.y) {
+        point = {
+          x: point1.x,
+          y: xyMax.y
+        }
+      } else {
+        point = {
+          x: point1.x,
+          y: 0
+        }
+      }
+    } else if (point1.x > point2.x) {
+      point = {
+        x: 0,
+        y: getLinearYFromPoints(point1, point2, { x: 0, y: point1.y })
+      }
+    } else {
+      point = {
+        x: xyMax.x,
+        y: getLinearYFromPoints(point1, point2, { x: xyMax.x, y: point1.y })
+      }
+    }
+    return [point1, point]
+  }
+  return []
 }
 
 /**

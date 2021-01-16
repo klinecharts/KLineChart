@@ -48,9 +48,9 @@ export declare interface CreateGraphicMarkOptions {
 export declare interface GraphicMark {
   name: string;
   totalStep: number;
-  checkMousePointOn: (type: GraphicMarkDataSourceDrawType, points: GraphicMarkDataSourceItem | GraphicMarkDataSourceItem[], mousePoint: CoordinatePoint) => boolean;
+  checkMousePointOn: (key: string, type: GraphicMarkDataSourceDrawType, points: GraphicMarkDataSourceItem | GraphicMarkDataSourceItem[], mousePoint: CoordinatePoint) => boolean;
   createGraphicDataSource: (step: number, tpPoints: TimestampPricePoint[], coordinatePoints: CoordinatePoint[], viewport: GraphicMarkViewport, precision: PriceVolumePrecision, xAxis: any, yAxis: any) => GraphicMarkDataSource[];
-  performMousePressedMove?: (tpPoints: TimestampPricePoint[], pressedPointIndex: number, data: TimestampPricePoint) => void;
-  performMouseMoveForDrawing?: (step: number, tpPoints: TimestampPricePoint[], data: TimestampPricePoint) => void;
+  performMousePressedMove?: (tpPoints: TimestampPricePoint[], pressedPointIndex: number, data: TimestampPricePoint, xAxis: any, yAxis: any) => void;
+  performMouseMoveForDrawing?: (step: number, tpPoints: TimestampPricePoint[], data: TimestampPricePoint, xAxis: any, yAxis: any) => void;
   drawExtend?: (ctx: CanvasRenderingContext2D, graphicMarkDataSources: GraphicMarkDataSource[], markOptions: any, viewport: GraphicMarkViewport ,precision: PriceVolumePrecision, xAxis: any, yAxis: any) => void;
 }

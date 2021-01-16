@@ -17,47 +17,44 @@ import { checkPointOnStraightLine } from './graphicHelper'
 export default {
   name: 'fibonacciLine',
   totalStep: 3,
-  checkMousePointOn: (type, points, mousePoint) => {
+  checkMousePointOn: (key, type, points, mousePoint) => {
     return checkPointOnStraightLine(points[0], points[1], mousePoint)
   },
-  createGraphicDataSource: (step, tpPoints, xyPoints, viewport, precision, xAxis, yAxis) => {
-    const lines = []
-    const texts = []
+  createGraphicDataSource: (step, tpPoints, xyPoints, viewport, precision) => {
     if (xyPoints.length > 0) {
+      const lines = []
+      const texts = []
       const startX = 0
       const endX = viewport.width
-      lines.push([{ x: startX, y: xyPoints[0].y }, { x: endX, y: xyPoints[0].y }])
-      texts.push({
-        x: startX,
-        y: xyPoints[0].y,
-        text: `${yAxis.convertFromPixel(xyPoints[0].y).toFixed(precision.price)} (100%)`
-      })
       if (xyPoints.length > 1) {
-        const percents = [0.786, 0.618, 0.5, 0.382, 0.236, 0]
-        const yDistance = xyPoints[0].y - xyPoints[1].y
+        const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
+        const yDif = xyPoints[0].y - xyPoints[1].y
+        const priceDif = tpPoints[0].price - tpPoints[1].price
         percents.forEach(percent => {
-          const y = xyPoints[1].y + yDistance * percent
+          const y = xyPoints[1].y + yDif * percent
+          const price = (tpPoints[1].price + priceDif * percent).toFixed(precision.price)
           lines.push([{ x: startX, y }, { x: endX, y }])
           texts.push({
             x: startX,
             y,
-            text: `${yAxis.convertFromPixel(y).toFixed(precision.price)} (${(percent * 100).toFixed(1)}%)`
+            text: `${price} (${(percent * 100).toFixed(1)}%)`
           })
         })
       }
+      return [
+        {
+          type: 'line',
+          isDraw: true,
+          isCheck: true,
+          dataSource: lines
+        }, {
+          type: 'text',
+          isDraw: true,
+          isCheck: false,
+          dataSource: texts
+        }
+      ]
     }
-    return [
-      {
-        type: 'line',
-        isDraw: true,
-        isCheck: true,
-        dataSource: lines
-      }, {
-        type: 'text',
-        isDraw: true,
-        isCheck: false,
-        dataSource: texts
-      }
-    ]
+    return []
   }
 }

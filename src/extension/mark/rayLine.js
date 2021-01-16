@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { checkPointOnRayLine, getLinearYFromPoints } from './graphicHelper'
+import { checkPointOnRayLine, getRayLine } from './graphicHelper'
 
 export default {
   name: 'rayLine',
@@ -21,41 +21,12 @@ export default {
     return checkPointOnRayLine(points[0], points[1], mousePoint)
   },
   createGraphicDataSource: (step, tpPoints, xyPoints, viewport) => {
-    let point = {
-      x: xyPoints[0].x,
-      y: 0
-    }
-    if (xyPoints.length === 2) {
-      if (xyPoints[0].x === xyPoints[1].x && xyPoints[0].y !== xyPoints[1].y) {
-        if (xyPoints[0].y < xyPoints[1].y) {
-          point = {
-            x: xyPoints[0].x,
-            y: viewport.height
-          }
-        } else {
-          point = {
-            x: xyPoints[0].x,
-            y: 0
-          }
-        }
-      } else if (xyPoints[0].x > xyPoints[1].x) {
-        point = {
-          x: 0,
-          y: getLinearYFromPoints(xyPoints[0], xyPoints[1], { x: 0, y: xyPoints[0].y })
-        }
-      } else {
-        point = {
-          x: viewport.width,
-          y: getLinearYFromPoints(xyPoints[0], xyPoints[1], { x: viewport.width, y: xyPoints[0].y })
-        }
-      }
-    }
     return [
       {
         type: 'line',
         isDraw: true,
         isCheck: true,
-        dataSource: [[xyPoints[0], point]]
+        dataSource: [getRayLine(xyPoints[0], xyPoints[1], { x: viewport.width, y: viewport.height })]
       }
     ]
   }

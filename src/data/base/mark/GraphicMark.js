@@ -368,10 +368,10 @@ export default class GraphicMark {
       }
       // 重新演练绘制一遍，防止因为点不对而绘制出错误的图形
       for (let i = 0; i < repeatTotalStep; i++) {
-        this.performMouseMoveForDrawing(i + 2, this._tpPoints, this._tpPoints[i])
+        this.performMouseMoveForDrawing(i + 2, this._tpPoints, this._tpPoints[i], this._xAxis, this._yAxis)
       }
       if (this._drawStep === GRAPHIC_MARK_DRAW_STEP_FINISHED) {
-        this.performMousePressedMove(this._tpPoints, this._tpPoints.length - 1, this._tpPoints[this._tpPoints.length - 1])
+        this.performMousePressedMove(this._tpPoints, this._tpPoints.length - 1, this._tpPoints[this._tpPoints.length - 1], this._xAxis, this._yAxis)
       }
     }
   }
@@ -433,11 +433,11 @@ export default class GraphicMark {
       this._xAxis,
       this._yAxis
     ) || []
-    for (const { type, isCheck, dataSource = [] } of graphicDataSources) {
+    for (const { key, type, isCheck, dataSource = [] } of graphicDataSources) {
       if (isCheck) {
         for (let i = 0; i < dataSource.length; i++) {
           const points = dataSource[i]
-          if (this.checkMousePointOn(type, points, point)) {
+          if (this.checkMousePointOn(key, type, points, point)) {
             return {
               id: this._id,
               element: GraphicMarkMouseOperateElement.OTHER,
@@ -458,7 +458,7 @@ export default class GraphicMark {
     const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
     const price = this._yAxis.convertFromPixel(point.y)
     this._tpPoints[this._drawStep - 1] = { timestamp, price, dataIndex }
-    this.performMouseMoveForDrawing(this._drawStep, this._tpPoints, { timestamp, price, dataIndex })
+    this.performMouseMoveForDrawing(this._drawStep, this._tpPoints, { timestamp, price, dataIndex }, this._xAxis, this._yAxis)
   }
 
   /**
@@ -491,7 +491,7 @@ export default class GraphicMark {
       this._tpPoints[elementIndex].timestamp = timestamp
       this._tpPoints[elementIndex].dataIndex = dataIndex
       this._tpPoints[elementIndex].price = price
-      this.performMousePressedMove(this._tpPoints, elementIndex, { dataIndex, timestamp, price })
+      this.performMousePressedMove(this._tpPoints, elementIndex, { dataIndex, timestamp, price }, this._xAxis, this._yAxis)
       this.onPressedMove(graphicMarkMouseOperate.click.id, event)
     }
   }
@@ -525,11 +525,12 @@ export default class GraphicMark {
 
   /**
    * 检查鼠标点在其它图形上
+   * @param key
    * @param type
    * @param points
    * @param mousePoint
    */
-  checkMousePointOn (type, points, mousePoint) {}
+  checkMousePointOn (key, type, points, mousePoint) {}
 
   /**
    * 创建图形配置
@@ -548,16 +549,20 @@ export default class GraphicMark {
    * @param step
    * @param tpPoints
    * @param tpPoint
+   * @param xAxis
+   * @param yAxis
    */
-  performMouseMoveForDrawing (step, tpPoints, tpPoint) {}
+  performMouseMoveForDrawing (step, tpPoints, tpPoint, xAxis, yAxis) {}
 
   /**
    * 处理鼠标按住移动
    * @param tpPoints
    * @param pressedPointIndex
    * @param tpPoint
+   * @param xAxis
+   * @param yAxis
    */
-  performMousePressedMove (tpPoints, pressedPointIndex, tpPoint) {}
+  performMousePressedMove (tpPoints, pressedPointIndex, tpPoint, xAxis, yAxis) {}
 
   /**
    * 扩展绘制
