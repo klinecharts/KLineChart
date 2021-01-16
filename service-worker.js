@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/KLineChart/precache-manifest.e5151b75f550be1d83d2b248c0f8351b.js"
+  "/KLineChart/precache-manifest.aecceba02c69b8e11f5993ff7e70255c.js"
 );
 
 self.addEventListener('message', (event) => {
