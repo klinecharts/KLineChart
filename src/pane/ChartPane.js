@@ -132,15 +132,17 @@ export default class ChartPane {
    * @private
    */
   _calcAllPaneTechnicalIndicator () {
-    Promise.resolve().then(
-      _ => {
-        let shouldMeasureWidth = this._candlePane.calcAllTechnicalIndicator()
-        this._technicalIndicatorPanes.forEach(pane => {
-          const should = pane.calcAllTechnicalIndicator()
-          if (should) {
-            shouldMeasureWidth = should
-          }
-        })
+    const tasks = [
+      Promise.resolve(this._candlePane.calcAllTechnicalIndicator())
+    ]
+    this._technicalIndicatorPanes.forEach(pane => {
+      tasks.push(
+        Promise.resolve(pane.calcAllTechnicalIndicator())
+      )
+    })
+    Promise.all(tasks).then(
+      result => {
+        const shouldMeasureWidth = result.indexOf(true) > -1
         this.adjustPaneViewport(false, shouldMeasureWidth, true)
       }
     )
@@ -297,54 +299,59 @@ export default class ChartPane {
       const calcParamsSuccess = technicalIndicator.setCalcParams(calcParams)
       const precisionSuccess = technicalIndicator.setPrecision(precision)
       const styleSuccess = technicalIndicator.setStyles(styles, this._chartData.styleOptions().technicalIndicator)
-      Promise.resolve().then(
-        _ => {
-          if (calcParamsSuccess || precisionSuccess || styleSuccess) {
-            const candleTechnicalIndicators = this._candlePane.technicalIndicators()
-            let shouldAdjust = false
-            candleTechnicalIndicators.forEach(technicalIndicator => {
-              if (technicalIndicator.name === name) {
-                if (calcParamsSuccess) {
-                  shouldAdjust = true
-                  technicalIndicator.setCalcParams(calcParams)
-                  this._candlePane.calcTechnicalIndicator(technicalIndicator)
-                }
-                if (precisionSuccess) {
-                  shouldAdjust = true
-                  technicalIndicator.setPrecision(precision)
-                }
-                if (styleSuccess) {
-                  shouldAdjust = true
-                  technicalIndicator.setStyles(styles)
-                }
-              }
-            })
-            this._technicalIndicatorPanes.forEach(pane => {
-              const technicalIndicators = pane.technicalIndicators()
-              technicalIndicators.forEach(technicalIndicator => {
-                if (technicalIndicator.name === name) {
-                  if (calcParamsSuccess) {
-                    shouldAdjust = true
-                    technicalIndicator.setCalcParams(calcParams)
-                    pane.calcTechnicalIndicator(technicalIndicator)
-                  }
-                  if (precisionSuccess) {
-                    shouldAdjust = true
-                    technicalIndicator.setPrecision(precision)
-                  }
-                  if (styleSuccess) {
-                    shouldAdjust = true
-                    technicalIndicator.setStyles(styles)
-                  }
-                }
-              })
-            })
-            if (shouldAdjust) {
-              this.adjustPaneViewport(false, true, true, true)
+      if (calcParamsSuccess || precisionSuccess || styleSuccess) {
+        const candleTechnicalIndicators = this._candlePane.technicalIndicators()
+        let shouldAdjust = false
+        const tasks = []
+        candleTechnicalIndicators.forEach(technicalIndicator => {
+          if (technicalIndicator.name === name) {
+            if (calcParamsSuccess) {
+              shouldAdjust = true
+              technicalIndicator.setCalcParams(calcParams)
+              tasks.push(
+                Promise.resolve(this._candlePane.calcTechnicalIndicator(technicalIndicator))
+              )
+            }
+            if (precisionSuccess) {
+              shouldAdjust = true
+              technicalIndicator.setPrecision(precision)
+            }
+            if (styleSuccess) {
+              shouldAdjust = true
+              technicalIndicator.setStyles(styles)
             }
           }
+        })
+        this._technicalIndicatorPanes.forEach(pane => {
+          const technicalIndicators = pane.technicalIndicators()
+          technicalIndicators.forEach(technicalIndicator => {
+            if (technicalIndicator.name === name) {
+              if (calcParamsSuccess) {
+                shouldAdjust = true
+                technicalIndicator.setCalcParams(calcParams)
+                tasks.push(
+                  Promise.resolve(pane.calcTechnicalIndicator(technicalIndicator))
+                )
+              }
+              if (precisionSuccess) {
+                shouldAdjust = true
+                technicalIndicator.setPrecision(precision)
+              }
+              if (styleSuccess) {
+                shouldAdjust = true
+                technicalIndicator.setStyles(styles)
+              }
+            }
+          })
+        })
+        if (shouldAdjust) {
+          Promise.all(tasks).then(
+            _ => {
+              this.adjustPaneViewport(false, true, true, true)
+            }
+          )
         }
-      )
+      }
     }
   }
 
