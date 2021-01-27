@@ -27,6 +27,7 @@ export default {
     { key: 'ma20', title: 'MA20', type: 'line' },
     {
       key: 'volume',
+      title: 'VOLUME',
       type: 'bar',
       color: (data, options) => {
         const kLineData = data.currentData.kLineData || {}
@@ -45,6 +46,7 @@ export default {
     })
     plots.push({
       key: 'volume',
+      title: 'VOLUME',
       type: 'bar',
       color: (data, options) => {
         const kLineData = data.currentData.kLineData || {}
