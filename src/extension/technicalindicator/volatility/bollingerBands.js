@@ -37,7 +37,7 @@ function getBollMd (dataList, ma) {
 export default {
   name: 'BOLL',
   series: 'price',
-  calcParams: [20],
+  calcParams: [20, 2],
   precision: 2,
   shouldOhlc: true,
   plots: [
@@ -55,8 +55,8 @@ export default {
       if (i >= p) {
         boll.mid = closeSum / calcParams[0]
         const md = getBollMd(dataList.slice(i - p, i + 1), boll.mid)
-        boll.up = boll.mid + 2 * md
-        boll.dn = boll.mid - 2 * md
+        boll.up = boll.mid + calcParams[1] * md
+        boll.dn = boll.mid - calcParams[1] * md
         closeSum -= dataList[i - p].close
       }
       return boll
