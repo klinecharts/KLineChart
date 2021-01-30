@@ -131,6 +131,7 @@ const defaultCandle = {
   },
   priceMark: {
     show: true,
+    showArrow: true,
     high: {
       show: true,
       color: '#D9D9D9',

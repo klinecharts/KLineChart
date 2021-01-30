@@ -174,25 +174,29 @@ export default class CandleView extends TechnicalIndicatorView {
     this._ctx.strokeStyle = lowHighPriceMarkOptions.color
     this._ctx.fillStyle = lowHighPriceMarkOptions.color
 
-    renderLine(this._ctx, () => {
-      this._ctx.beginPath()
-      this._ctx.moveTo(startX - 2, startY + offsets[0])
-      this._ctx.lineTo(startX, startY)
-      this._ctx.lineTo(startX + 2, startY + offsets[0])
-      this._ctx.stroke()
-      this._ctx.closePath()
-    })
 
-    // 绘制竖线
     const y = startY + offsets[1]
-    renderLine(this._ctx, () => {
-      this._ctx.beginPath()
-      this._ctx.moveTo(startX, startY)
-      this._ctx.lineTo(startX, y)
-      this._ctx.lineTo(startX + 5, y)
-      this._ctx.stroke()
-      this._ctx.closePath()
-    })
+
+    if (priceMarkOptions.showArrow) {
+      renderLine(this._ctx, () => {
+        this._ctx.beginPath()
+        this._ctx.moveTo(startX - 2, startY + offsets[0])
+        this._ctx.lineTo(startX, startY)
+        this._ctx.lineTo(startX + 2, startY + offsets[0])
+        this._ctx.stroke()
+        this._ctx.closePath()
+      })
+
+      // 绘制竖线
+      renderLine(this._ctx, () => {
+        this._ctx.beginPath()
+        this._ctx.moveTo(startX, startY)
+        this._ctx.lineTo(startX, y)
+        this._ctx.lineTo(startX + 5, y)
+        this._ctx.stroke()
+        this._ctx.closePath()
+      })
+    }
 
     this._ctx.font = createFont(lowHighPriceMarkOptions.textSize, lowHighPriceMarkOptions.textWeight, lowHighPriceMarkOptions.textFamily)
     const text = formatPrecision(price, pricePrecision)
