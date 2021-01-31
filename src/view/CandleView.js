@@ -46,6 +46,20 @@ export default class CandleView extends TechnicalIndicatorView {
     }
     this._drawTechnicalIndicators()
     this._drawLastPriceLine(candleOptions.priceMark)
+    this._drawWatermark()
+  }
+
+  _drawWatermark() {
+    const watermarkOptions = this._chartData.styleOptions().watermark
+
+    if (!watermarkOptions.show) return
+
+    this._ctx.save()
+    this._ctx.textAlign = 'center';
+    this._ctx.fillStyle = watermarkOptions.color;
+    this._ctx.font = `${watermarkOptions.weight} ${watermarkOptions.size}px ${watermarkOptions.family}`
+    this._ctx.fillText(watermarkOptions.text, this._width / 2, this._height / 2)
+    this._ctx.restore()
   }
 
   /**

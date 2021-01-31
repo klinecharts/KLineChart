@@ -470,6 +470,16 @@ const defaultSeparator = {
   activeBackgroundColor: 'rgba(33, 150, 243, 0.08)'
 }
 
+
+const defaultWatermark = {
+  show: false,
+  text: 'BTC/USDT',
+  color: 'rgba(255, 255, 255, 0.3)',
+  size: 55,
+  family: 'Helvetica',
+  weight: 'bold',
+}
+
 export const defaultStyleOptions = {
   grid: defaultGrid,
   candle: defaultCandle,
@@ -478,5 +488,6 @@ export const defaultStyleOptions = {
   yAxis: defaultYAxis,
   separator: defaultSeparator,
   crosshair: defaultCrosshair,
-  graphicMark: defaultGraphicMark
+  graphicMark: defaultGraphicMark,
+  watermark: defaultWatermark
 }
