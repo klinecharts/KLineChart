@@ -101,7 +101,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
               ...graphicMarkClickOperate
             }
           }
-          graphicMarks[i].onClick(graphicMarkClickOperate.id, event)
+          graphicMarks[i].onClick({ id: graphicMarkClickOperate.id, event })
           break
         }
       }
@@ -120,7 +120,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
     const graphicMarks = this._chartData.graphicMarks()
     for (let i = 0; i < graphicMarks.length; i++) {
       if (graphicMarks[i].checkMousePointOnGraphic({ x: event.localX, y: event.localY })) {
-        if (!graphicMarks[i].onRightClick(graphicMarks[i].id(), event)) {
+        if (!graphicMarks[i].onRightClick({ id: graphicMarks[i].id(), event })) {
           this._chartData.removeGraphicMarkInstance({ type: RemoveGraphicMarkOperateType.ACTION, index: i })
           break
         }

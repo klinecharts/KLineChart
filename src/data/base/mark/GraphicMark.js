@@ -47,11 +47,13 @@ const GraphicMarkDrawType = {
 
 /**
  * 绘制风格
- * @type {{STROKE: string, FILL: string}}
+ * @type {{STROKE: string, FILL: string, SOLID: string, DASH: string}}
  */
 const GraphicMarkDrawStyle = {
   STROKE: 'stroke',
-  FILL: 'fill'
+  FILL: 'fill',
+  SOLID: 'solid',
+  DASH: 'dash'
 }
 
 /**
@@ -122,7 +124,7 @@ export default class GraphicMark {
     ctx.save()
     ctx.strokeStyle = markOptions.line.color
     ctx.lineWidth = markOptions.line.size
-    if (style === 'dash') {
+    if (style === GraphicMarkDrawStyle.DASH) {
       ctx.setLineDash(markOptions.line.dashValue)
     }
     lines.forEach(points => {
@@ -164,7 +166,7 @@ export default class GraphicMark {
     ctx.save()
     ctx.strokeStyle = markOptions.line.color
     ctx.lineWidth = markOptions.line.size
-    if (style === 'dash') {
+    if (style === GraphicMarkDrawStyle.DASH) {
       ctx.setLineDash(markOptions.line.dashValue)
     }
     continuousLines.forEach(points => {
@@ -450,7 +452,7 @@ export default class GraphicMark {
   }
 
   /**
-   * 绘制过程总鼠标移动事件
+   * 绘制过程中鼠标移动事件
    * @param point
    */
   mouseMoveForDrawing (point) {
@@ -459,6 +461,7 @@ export default class GraphicMark {
     const price = this._yAxis.convertFromPixel(point.y)
     this._tpPoints[this._drawStep - 1] = { timestamp, price, dataIndex }
     this.performMouseMoveForDrawing(this._drawStep, this._tpPoints, { timestamp, price, dataIndex }, this._xAxis, this._yAxis)
+    this.onDrawing({ id: this._id, step: this._drawStep, points: this._tpPoints })
   }
 
   /**
@@ -467,6 +470,7 @@ export default class GraphicMark {
   mouseLeftButtonDownForDrawing () {
     if (this._drawStep === this._totalStep - 1) {
       this._drawStep = GRAPHIC_MARK_DRAW_STEP_FINISHED
+      this.onDrawEnd({ id: this._id })
     } else {
       this._drawStep++
     }
@@ -492,32 +496,58 @@ export default class GraphicMark {
       this._tpPoints[elementIndex].dataIndex = dataIndex
       this._tpPoints[elementIndex].price = price
       this.performMousePressedMove(this._tpPoints, elementIndex, { dataIndex, timestamp, price }, this._xAxis, this._yAxis)
-      this.onPressedMove(graphicMarkMouseOperate.click.id, event)
+      this.onPressedMove({ id: graphicMarkMouseOperate.click.id, event })
     }
   }
 
   // -------------------- 事件开始 -------------------
 
   /**
+   * 开始绘制事件回调
+   * @param id
+   */
+  onDrawStart ({ id }) {}
+
+  /**
+   * 绘制过程中事件回调
+   * @param id
+   * @param step
+   * @param points
+   */
+  onDrawing ({ id, step, points }) {}
+
+  /**
+   * 绘制结束事件回调
+   * @param id
+   */
+  onDrawEnd ({ id }) {}
+
+  /**
    * 点击事件
    * @param id
    * @param event
    */
-  onClick (id, event) {}
+  onClick ({ id, event }) {}
 
   /**
    * 右击事件
    * @param id
    * @param event
    */
-  onRightClick (id, event) {}
+  onRightClick ({ id, event }) {}
 
   /**
    * 按住移动事件
    * @param id
    * @param event
    */
-  onPressedMove (id, event) {}
+  onPressedMove ({ id, event }) {}
+
+  /**
+   * 移除事件回调
+   * @param id
+   */
+  onRemove ({ id }) {}
 
   // -------------------- 事件结束 -------------------
 

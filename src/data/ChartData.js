@@ -693,6 +693,7 @@ export default class ChartData {
       removeIndex = options.index
     }
     if (removeIndex !== -1) {
+      graphicMarks[removeIndex].onRemove({ id: graphicMarks[removeIndex].id() })
       graphicMarks.splice(removeIndex, 1)
       this.invalidate(InvalidateLevel.GRAPHIC_MARK)
     }
