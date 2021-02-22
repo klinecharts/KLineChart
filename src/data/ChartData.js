@@ -651,10 +651,15 @@ export default class ChartData {
   }
 
   /**
-   * 添加标记示例
+   * 添加标记实例
    * @param graphicMark
    */
   addGraphicMarkInstance (graphicMark) {
+    for (const mark of this._graphicMarks) {
+      if (mark.id() === graphicMark.id()) {
+        return false
+      }
+    }
     const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
     if (lastGraphicMark && lastGraphicMark.isDrawing()) {
       this._graphicMarks[this._graphicMarks.length - 1] = graphicMark
@@ -662,6 +667,7 @@ export default class ChartData {
       this._graphicMarks.push(graphicMark)
     }
     this.invalidate(InvalidateLevel.GRAPHIC_MARK)
+    return true
   }
 
   /**

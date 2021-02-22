@@ -262,7 +262,14 @@ export default class Chart {
       }
       return null
     }
-    return this._chartPane.createGraphicMark(GraphicMark, options)
+    const id = this._chartPane.createGraphicMark(GraphicMark, options)
+    if (id) {
+      return id
+    }
+    if (DEV) {
+      console.warn('createGraphicMark -> Check whether the parameter options specifies a duplicate id!!!')
+    }
+    return null
   }
 
   /**

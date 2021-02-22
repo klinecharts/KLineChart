@@ -35,14 +35,24 @@ export declare interface GraphicMarkDataSource {
   isDraw?: boolean;
   isCheck?: boolean;
   style?: GraphicMarkDataSourceDrawStyle;
-  dataSource: GraphicMarkDataSourceItem[] | GraphicMarkDataSourceItem[][];
+  dataSource: GraphicMarkDataSourceItem[][];
+}
+
+export declare interface GraphicMarkEvent {
+  id: string;
+  step?: number;
+  points?: TimestampPricePoint[];
+  event?: any;
 }
 
 export declare interface CreateGraphicMarkOptions {
   points?: TimestampPricePoint[];
-  onClick?: (id: string, event: any) => void;
-  onRightClick?: (id: string, event: any) => boolean;
-  onPressedMove?: (id: string, event: any) => void;
+  onDrawStart?: (event: GraphicMarkEvent) => void;
+  onDrawing?: (event: GraphicMarkEvent) => void;
+  onDrawEnd?: (event: GraphicMarkEvent) => void;
+  onClick?: (event: GraphicMarkEvent) => void;
+  onRightClick?: (event: GraphicMarkEvent) => boolean;
+  onPressedMove?: (event: GraphicMarkEvent) => void;
 }
 
 export declare interface GraphicMark {

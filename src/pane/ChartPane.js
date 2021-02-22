@@ -465,44 +465,41 @@ export default class ChartPane {
         if (this._candlePane.setTechnicalIndicator(technicalIndicator, isStack)) {
           this.adjustPaneViewport(false, true, true, true)
         }
-      } else {
-        for (const pane of this._technicalIndicatorPanes) {
-          if (pane.id() === pane.id) {
-            if (pane.setTechnicalIndicator(technicalIndicator, isStack)) {
-              this.adjustPaneViewport(false, true, true, true)
-            }
-            break
+        return options.id
+      }
+      for (const pane of this._technicalIndicatorPanes) {
+        if (options.id === pane.id()) {
+          if (pane.setTechnicalIndicator(technicalIndicator, isStack)) {
+            this.adjustPaneViewport(false, true, true, true)
           }
+          return options.id
         }
       }
-      return options.id
-    } else {
-      const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
-      const isDrag = isBoolean(options.dragEnabled) ? options.dragEnabled : true
-      this._separatorPanes.push(
-        new SeparatorPane(
-          this._chartContainer, this._chartData,
-          technicalIndicatorPaneCount, isDrag,
-          {
-            startDrag: this._separatorStartDrag.bind(this),
-            drag: throttle(this._separatorDrag.bind(this), 50)
-          }
-        )
-      )
-      this._paneBaseId++
-      const id = `${TECHNICAL_INDICATOR_PANE_ID_PREFIX}${this._paneBaseId}`
-      const technicalIndicatorPane = new TechnicalIndicatorPane({
-        container: this._chartContainer,
-        chartData: this._chartData,
-        xAxis: this._xAxisPane.xAxis(),
-        name: technicalIndicator.name,
-        id,
-        height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
-      })
-      this._technicalIndicatorPanes.push(technicalIndicatorPane)
-      this.adjustPaneViewport(true, true, true, true, true)
-      return id
     }
+    const technicalIndicatorPaneCount = this._technicalIndicatorPanes.length
+    const isDrag = isBoolean(options.dragEnabled) ? options.dragEnabled : true
+    this._separatorPanes.push(
+      new SeparatorPane(
+        this._chartContainer, this._chartData,
+        technicalIndicatorPaneCount, isDrag,
+        {
+          startDrag: this._separatorStartDrag.bind(this),
+          drag: throttle(this._separatorDrag.bind(this), 50)
+        }
+      )
+    )
+    const id = options.id || `${TECHNICAL_INDICATOR_PANE_ID_PREFIX}${++this._paneBaseId}`
+    const technicalIndicatorPane = new TechnicalIndicatorPane({
+      container: this._chartContainer,
+      chartData: this._chartData,
+      xAxis: this._xAxisPane.xAxis(),
+      name: technicalIndicator.name,
+      id,
+      height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
+    })
+    this._technicalIndicatorPanes.push(technicalIndicatorPane)
+    this.adjustPaneViewport(true, true, true, true, true)
+    return id
   }
 
   /**
@@ -546,27 +543,40 @@ export default class ChartPane {
    * @param options
    */
   createGraphicMark (GraphicMark, options = {}) {
-    this._graphicMarkBaseId++
-    const id = `${GRAPHIC_MARK_ID_PREFIX}${this._graphicMarkBaseId}`
+    const id = options.id || `${GRAPHIC_MARK_ID_PREFIX}${++this._graphicMarkBaseId}`
     const graphicMarkInstance = new GraphicMark({
       id,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
-      yAxis: this._candlePane.yAxis(),
-      rightClickRemove: options.rightClickRemove
+      yAxis: this._candlePane.yAxis()
     })
-    graphicMarkInstance.setPoints(options.points)
-    if (isFunction(options.onClick)) {
-      graphicMarkInstance.onClick = options.onClick
+    const {
+      points, onDrawStart, onDrawing,
+      onDrawEnd, onClick, onRightClick, onPressedMove
+    } = options
+    graphicMarkInstance.setPoints(points)
+    if (isFunction(onDrawStart)) {
+      graphicMarkInstance.onDrawStart = onDrawStart
+      graphicMarkInstance.onDrawStart({ id })
     }
-    if (isFunction(options.onRightClick)) {
-      graphicMarkInstance.onRightClick = options.onRightClick
+    if (isFunction(onDrawing)) {
+      graphicMarkInstance.onDrawing = onDrawing
     }
-    if (isFunction(options.onPressedMove)) {
-      graphicMarkInstance.onPressedMove = options.onPressedMove
+    if (isFunction(onDrawEnd)) {
+      graphicMarkInstance.onDrawEnd = onDrawEnd
     }
-    this._chartData.addGraphicMarkInstance(graphicMarkInstance)
-    return id
+    if (isFunction(onClick)) {
+      graphicMarkInstance.onClick = onClick
+    }
+    if (isFunction(onRightClick)) {
+      graphicMarkInstance.onRightClick = onRightClick
+    }
+    if (isFunction(onPressedMove)) {
+      graphicMarkInstance.onPressedMove = onPressedMove
+    }
+    if (this._chartData.addGraphicMarkInstance(graphicMarkInstance)) {
+      return id
+    }
   }
 
   /**
