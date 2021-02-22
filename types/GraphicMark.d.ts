@@ -35,7 +35,7 @@ export declare interface GraphicMarkDataSource {
   isDraw?: boolean;
   isCheck?: boolean;
   style?: GraphicMarkDataSourceDrawStyle;
-  dataSource: GraphicMarkDataSourceItem[][];
+  dataSource: GraphicMarkDataSourceItem[] | GraphicMarkDataSourceItem[][];
 }
 
 export declare interface GraphicMarkEvent {

@@ -128,27 +128,29 @@ export default class GraphicMark {
       ctx.setLineDash(markOptions.line.dashValue)
     }
     lines.forEach(points => {
-      const lineType = getLineType(points[0], points[1])
-      switch (lineType) {
-        case LineType.COMMON: {
-          renderLine(ctx, () => {
-            ctx.beginPath()
-            ctx.moveTo(points[0].x, points[0].y)
-            ctx.lineTo(points[1].x, points[1].y)
-            ctx.stroke()
-            ctx.closePath()
-          })
-          break
+      if (points.length > 1) {
+        const lineType = getLineType(points[0], points[1])
+        switch (lineType) {
+          case LineType.COMMON: {
+            renderLine(ctx, () => {
+              ctx.beginPath()
+              ctx.moveTo(points[0].x, points[0].y)
+              ctx.lineTo(points[1].x, points[1].y)
+              ctx.stroke()
+              ctx.closePath()
+            })
+            break
+          }
+          case LineType.HORIZONTAL: {
+            renderHorizontalLine(ctx, points[0].y, points[0].x, points[1].x)
+            break
+          }
+          case LineType.VERTICAL: {
+            renderVerticalLine(ctx, points[0].x, points[0].y, points[1].y)
+            break
+          }
+          default: { break }
         }
-        case LineType.HORIZONTAL: {
-          renderHorizontalLine(ctx, points[0].y, points[0].x, points[1].x)
-          break
-        }
-        case LineType.VERTICAL: {
-          renderVerticalLine(ctx, points[0].x, points[0].y, points[1].y)
-          break
-        }
-        default: { break }
       }
     })
     ctx.restore()
