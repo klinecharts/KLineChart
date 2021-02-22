@@ -46,6 +46,7 @@ export declare interface GraphicMarkEvent {
 }
 
 export declare interface CreateGraphicMarkOptions {
+  id?: string;
   points?: TimestampPricePoint[];
   onDrawStart?: (event: GraphicMarkEvent) => void;
   onDrawing?: (event: GraphicMarkEvent) => void;
