@@ -14,11 +14,11 @@
 
 import EventHandler from './EventHandler'
 
-const ArrowKey = {
-  UP: 'ArrowUp',
-  DOWN: 'ArrowDown',
-  LEFT: 'ArrowLeft',
-  RIGHT: 'ArrowRight'
+const KeyBoardCode = {
+  EQUAL: 'Equal',
+  MINUS: 'Minus',
+  ARROW_LEFT: 'ArrowLeft',
+  ARROW_RIGHT: 'ArrowRight'
 }
 
 export default class KeyBoardEventHandler extends EventHandler {
@@ -29,22 +29,22 @@ export default class KeyBoardEventHandler extends EventHandler {
   keyBoardDownEvent (event) {
     if (event.shiftKey) {
       switch (event.code) {
-        case ArrowKey.UP: {
-          this._chartData.zoom(-0.5)
-          break
-        }
-        case ArrowKey.DOWN: {
+        case KeyBoardCode.EQUAL: {
           this._chartData.zoom(0.5)
           break
         }
-        case ArrowKey.LEFT: {
-          this._chartData.startScroll()
-          this._chartData.scroll(-this._chartData.dataSpace())
+        case KeyBoardCode.MINUS: {
+          this._chartData.zoom(-0.5)
           break
         }
-        case ArrowKey.RIGHT: {
+        case KeyBoardCode.ARROW_LEFT: {
           this._chartData.startScroll()
-          this._chartData.scroll(this._chartData.dataSpace())
+          this._chartData.scroll(-this._chartData.dataSpace() * 3)
+          break
+        }
+        case KeyBoardCode.ARROW_RIGHT: {
+          this._chartData.startScroll()
+          this._chartData.scroll(this._chartData.dataSpace() * 3)
           break
         }
         default: {
