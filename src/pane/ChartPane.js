@@ -543,21 +543,25 @@ export default class ChartPane {
    * @param options
    */
   createGraphicMark (GraphicMark, options = {}) {
-    const id = options.id || `${GRAPHIC_MARK_ID_PREFIX}${++this._graphicMarkBaseId}`
+    const {
+      id, points, styles,
+      onDrawStart, onDrawing,
+      onDrawEnd, onClick,
+      onRightClick, onPressedMove,
+      onRemove
+    } = options
+    const graphicMarkId = id || `${GRAPHIC_MARK_ID_PREFIX}${++this._graphicMarkBaseId}`
     const graphicMarkInstance = new GraphicMark({
-      id,
+      id: graphicMarkId,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
-      yAxis: this._candlePane.yAxis()
+      yAxis: this._candlePane.yAxis(),
+      points,
+      styles
     })
-    const {
-      points, onDrawStart, onDrawing,
-      onDrawEnd, onClick, onRightClick, onPressedMove
-    } = options
-    graphicMarkInstance.setPoints(points)
     if (isFunction(onDrawStart)) {
       graphicMarkInstance.onDrawStart = onDrawStart
-      graphicMarkInstance.onDrawStart({ id })
+      graphicMarkInstance.onDrawStart({ id: graphicMarkId })
     }
     if (isFunction(onDrawing)) {
       graphicMarkInstance.onDrawing = onDrawing
@@ -574,8 +578,11 @@ export default class ChartPane {
     if (isFunction(onPressedMove)) {
       graphicMarkInstance.onPressedMove = onPressedMove
     }
+    if (isFunction(onRemove)) {
+      graphicMarkInstance.onRemove = onRemove
+    }
     if (this._chartData.addGraphicMarkInstance(graphicMarkInstance)) {
-      return id
+      return graphicMarkId
     }
   }
 

@@ -91,16 +91,14 @@ export default class TechnicalIndicator {
     if (!isObject(styles)) {
       return false
     }
-    if (this.styles) {
-      merge(this.styles, styles)
-    } else {
+    if (!this.styles) {
       this.styles = {
         bar: clone(defaultStyles.bar),
         line: clone(defaultStyles.line),
         circle: clone(defaultStyles.circle)
       }
-      merge(this.styles, clone(styles))
     }
+    merge(this.styles, styles)
     return true
   }
 

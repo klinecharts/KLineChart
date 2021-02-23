@@ -15,7 +15,7 @@
 import { renderFillCircle } from '../../../renderer/circle'
 import { checkPointInCircle } from '../../../extension/mark/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../../renderer/line'
-import { isValid, isArray, clone } from '../../../utils/typeChecks'
+import { isValid, isArray, isObject, clone, merge } from '../../../utils/typeChecks'
 
 // 标记图形绘制步骤开始
 const GRAPHIC_MARK_DRAW_STEP_START = 1
@@ -88,7 +88,8 @@ function getLineType (point1, point2) {
 export default class GraphicMark {
   constructor ({
     id, name, totalStep,
-    chartData, xAxis, yAxis
+    chartData, xAxis, yAxis,
+    points, styles
   }) {
     this._id = id
     this._name = name
@@ -96,8 +97,37 @@ export default class GraphicMark {
     this._chartData = chartData
     this._xAxis = xAxis
     this._yAxis = yAxis
+    this._styles = null
     this._drawStep = GRAPHIC_MARK_DRAW_STEP_START
     this._tpPoints = []
+    this._applyPoints(points)
+    this.setStyles(styles)
+  }
+
+  /**
+   * 加载点
+   * @param points
+   */
+  _applyPoints (points) {
+    if (isArray(points) && points.length > 0) {
+      let repeatTotalStep
+      if (points.length >= this._totalStep - 1) {
+        this._drawStep = GRAPHIC_MARK_DRAW_STEP_FINISHED
+        this._tpPoints = points.slice(0, this._totalStep - 1)
+        repeatTotalStep = this._totalStep - 1
+      } else {
+        this._drawStep = points.length + 1
+        this._tpPoints = clone(points)
+        repeatTotalStep = points.length
+      }
+      // 重新演练绘制一遍，防止因为点不对而绘制出错误的图形
+      for (let i = 0; i < repeatTotalStep; i++) {
+        this.performMouseMoveForDrawing(i + 2, this._tpPoints, this._tpPoints[i], this._xAxis, this._yAxis)
+      }
+      if (this._drawStep === GRAPHIC_MARK_DRAW_STEP_FINISHED) {
+        this.performMousePressedMove(this._tpPoints, this._tpPoints.length - 1, this._tpPoints[this._tpPoints.length - 1], this._xAxis, this._yAxis)
+      }
+    }
   }
 
   /**
@@ -288,7 +318,7 @@ export default class GraphicMark {
         y: this._yAxis.convertToPixel(price)
       }
     })
-    const markOptions = this._chartData.styleOptions().graphicMark
+    const markOptions = this._styles || this._chartData.styleOptions().graphicMark
     if (this._drawStep !== GRAPHIC_MARK_DRAW_STEP_START && xyPoints.length > 0) {
       const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
       const precision = { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() }
@@ -355,29 +385,18 @@ export default class GraphicMark {
   }
 
   /**
-   * 设置点
-   * @param points
+   * 设置样式
+   * @param styles
    */
-  setPoints (points) {
-    if (isArray(points) && points.length > 0) {
-      let repeatTotalStep
-      if (points.length >= this._totalStep - 1) {
-        this._drawStep = GRAPHIC_MARK_DRAW_STEP_FINISHED
-        this._tpPoints = points.slice(0, this._totalStep - 1)
-        repeatTotalStep = this._totalStep - 1
-      } else {
-        this._drawStep = points.length + 1
-        this._tpPoints = clone(points)
-        repeatTotalStep = points.length
-      }
-      // 重新演练绘制一遍，防止因为点不对而绘制出错误的图形
-      for (let i = 0; i < repeatTotalStep; i++) {
-        this.performMouseMoveForDrawing(i + 2, this._tpPoints, this._tpPoints[i], this._xAxis, this._yAxis)
-      }
-      if (this._drawStep === GRAPHIC_MARK_DRAW_STEP_FINISHED) {
-        this.performMousePressedMove(this._tpPoints, this._tpPoints.length - 1, this._tpPoints[this._tpPoints.length - 1], this._xAxis, this._yAxis)
-      }
+  setStyles (styles) {
+    if (!isObject(styles)) {
+      return false
     }
+    if (!this._styles) {
+      this._styles = clone(this._chartData.styleOptions().graphicMark)
+    }
+    merge(this._styles, styles)
+    return true
   }
 
   /**
@@ -403,7 +422,7 @@ export default class GraphicMark {
    * @return {{id: *, elementIndex: number, element: string}}
    */
   checkMousePointOnGraphic (point, type) {
-    const markOptions = this._chartData.styleOptions().graphicMark
+    const markOptions = this._styles || this._chartData.styleOptions().graphicMark
     const xyPoints = []
     // 检查鼠标点是否在图形的点上
     for (let i = 0; i < this._tpPoints.length; i++) {

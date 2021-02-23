@@ -48,12 +48,18 @@ export declare interface GraphicMarkEvent {
 export declare interface CreateGraphicMarkOptions {
   id?: string;
   points?: TimestampPricePoint[];
+  styles?: any;
   onDrawStart?: (event: GraphicMarkEvent) => void;
   onDrawing?: (event: GraphicMarkEvent) => void;
   onDrawEnd?: (event: GraphicMarkEvent) => void;
   onClick?: (event: GraphicMarkEvent) => void;
   onRightClick?: (event: GraphicMarkEvent) => boolean;
   onPressedMove?: (event: GraphicMarkEvent) => void;
+  onRemove?: (event: GraphicMarkEvent) => void;
+}
+
+export declare interface OverrideGraphicMarkOptions {
+  styles?: any;
 }
 
 export declare interface GraphicMark {

@@ -1,6 +1,6 @@
 import { OverrideTechnicalIndicator, TechnicalIndicator } from './TechnicalIndicator';
 import { KLineData } from './KLineData';
-import { CreateGraphicMarkOptions, GraphicMark } from './GraphicMark';
+import { CreateGraphicMarkOptions, OverrideGraphicMarkOptions, GraphicMark } from './GraphicMark';
 import { PaneOptions } from './Pane';
 
 export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll'
@@ -34,6 +34,7 @@ export declare interface Chart {
   getTechnicalIndicatorByPaneId(paneId: string): any;
   removeTechnicalIndicator(name?: string, paneId?: string): void;
   createGraphicMark(name: string, options?: CreateGraphicMarkOptions): string | null;
+  setGraphicMarkOptions(id: string, options: OverrideGraphicMarkOptions): void;
   addCustomGraphicMark(graphicMark: GraphicMark): void;
   removeGraphicMark(graphicMarkId: string): void;
   removeAllGraphicMark(): void;

@@ -4,7 +4,8 @@ import {
   CoordinatePoint, TimestampPricePoint,
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  PriceVolumePrecision, CreateGraphicMarkOptions, GraphicMark
+  PriceVolumePrecision, CreateGraphicMarkOptions,
+  OverrideGraphicMarkOptions, GraphicMark
 } from './GraphicMark';
 import { KLineData } from './KLineData';
 import { PaneOptions } from './Pane';
@@ -32,7 +33,8 @@ export {
   GraphicMarkViewport, CoordinatePoint, TimestampPricePoint,
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  PriceVolumePrecision, CreateGraphicMarkOptions, GraphicMark,
+  PriceVolumePrecision, CreateGraphicMarkOptions,
+  OverrideGraphicMarkOptions, GraphicMark,
   KLineData, PaneOptions,
   TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,

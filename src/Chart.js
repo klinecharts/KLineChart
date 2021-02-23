@@ -273,6 +273,15 @@ export default class Chart {
   }
 
   /**
+   * 设置图形标记配置
+   * @param id
+   * @param options
+   */
+  setGraphicMarkOptions (id, options) {
+    this._chartPane.chartData().setGraphicMarkOptions(id, options)
+  }
+
+  /**
    * 添加自定义图形标记
    * @param graphicMark
    */

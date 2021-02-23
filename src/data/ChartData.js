@@ -683,6 +683,23 @@ export default class ChartData {
   }
 
   /**
+   * 设置图形标记配置
+   * @param id
+   * @param options
+   */
+  setGraphicMarkOptions (id, options = {}) {
+    const { styles } = options
+    for (const graphicMark of this._graphicMarks) {
+      if (graphicMark.id() === id) {
+        if (graphicMark.setStyles(styles)) {
+          this.invalidate(InvalidateLevel.GRAPHIC_MARK)
+        }
+        break
+      }
+    }
+  }
+
+  /**
    * 移除图形实例
    * @param options 参数
    */
