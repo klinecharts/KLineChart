@@ -1,8 +1,9 @@
 import { OverrideTechnicalIndicator, TechnicalIndicator } from './TechnicalIndicator';
 import { KLineData } from './KLineData';
-import { DrawActionType, DrawActionCallbackParams } from './DrawAction';
 import { CreateGraphicMarkOptions, GraphicMark } from './GraphicMark';
 import { PaneOptions } from './Pane';
+
+export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll'
 
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 
@@ -36,8 +37,8 @@ export declare interface Chart {
   addCustomGraphicMark(graphicMark: GraphicMark): void;
   removeGraphicMark(graphicMarkId: string): void;
   removeAllGraphicMark(): void;
-  subscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void): void;
-  unsubscribeDrawAction (type: DrawActionType, callback: (params: DrawActionCallbackParams) => void): void;
+  subscribeAction (type: ChartActionType, callback: (params: any) => void): void;
+  unsubscribeAction (type: ChartActionType, callback: (params: any) => void): void;
   getConvertPictureUrl(includeTooltip?: boolean, includeGraphicMark?: boolean, type?: PictureType, backgroundColor?: string): string;
   resize(): void;
 }

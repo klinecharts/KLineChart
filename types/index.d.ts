@@ -1,5 +1,4 @@
-import { Chart, PictureType, CreateTechnicalIndicatorOptions } from './Chart';
-import { DrawActionType, DrawActionCallbackParams } from './DrawAction';
+import { Chart, PictureType, ChartActionType } from './Chart';
 import {
   GraphicMarkViewport,
   CoordinatePoint, TimestampPricePoint,
@@ -29,8 +28,7 @@ export declare function init(ds: HTMLDivElement | string, style?: any): Chart | 
 export declare function dispose(dcs: HTMLDivElement | Chart | string): void;
 
 export {
-  Chart, PictureType, CreateTechnicalIndicatorOptions,
-  DrawActionType, DrawActionCallbackParams,
+  Chart, PictureType, ChartActionType,
   GraphicMarkViewport, CoordinatePoint, TimestampPricePoint,
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,

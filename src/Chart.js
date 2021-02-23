@@ -332,35 +332,29 @@ export default class Chart {
   }
 
   /**
-   * 订阅绘制事件
+   * 订阅图表动作
    * @param type
    * @param callback
    */
-  subscribeDrawAction (type, callback) {
-    const delegate = this._chartPane.chartData().drawActionDelegate(type)
-    if (!delegate) {
+  subscribeAction (type, callback) {
+    if (!this._chartPane.chartData().subscribeAction(type, callback)) {
       if (DEV) {
-        console.warn('subscribeDrawAction -> Invalid parameter: type, type does not exist!!!')
+        console.warn('subscribeAction -> Invalid parameter: type, type does not exist!!!')
       }
-      return
     }
-    delegate.subscribe(callback)
   }
 
   /**
-   * 取消订阅绘制事件
+   * 取消订阅图表动作
    * @param type
    * @param callback
    */
-  unsubscribeDrawAction (type, callback) {
-    const delegate = this._chartPane.chartData().drawActionDelegate(type)
-    if (!delegate) {
+  unsubscribeAction (type, callback) {
+    if (!this._chartPane.chartData().unsubscribeAction(type, callback)) {
       if (DEV) {
-        console.warn('unsubscribeDrawAction -> Invalid parameter: type, does not exist!!!')
+        console.warn('unsubscribeAction -> Invalid parameter: type, does not exist!!!')
       }
-      return
     }
-    delegate.unsubscribe(callback)
   }
 
   /**

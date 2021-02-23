@@ -35,9 +35,11 @@ export const InvalidateLevel = {
   FULL: 4
 }
 
-export const DrawActionType = {
-  DRAW_CANDLE: 'drawCandle',
-  DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator'
+export const ActionType = {
+  drawCandle: 'drawCandle',
+  drawTechnicalIndicator: 'drawTechnicalIndicator',
+  zoom: 'zoom',
+  scroll: 'scroll'
 }
 
 /**
@@ -134,11 +136,8 @@ export default class ChartData {
     // 调整pane标记
     this._dragPaneFlag = false
 
-    // 绘制事件代理
-    this._drawActionDelegate = {
-      [DrawActionType.DRAW_CANDLE]: new Delegate(),
-      [DrawActionType.DRAW_TECHNICAL_INDICATOR]: new Delegate()
-    }
+    // 事件代理
+    this._actionDelegate = {}
   }
 
   /**
@@ -530,6 +529,7 @@ export default class ChartData {
       return
     }
     const distanceBarCount = distance / this._dataSpace
+    this.actionExecute(ActionType.scroll, { barCount: distanceBarCount, distance })
     this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount
     this._adjustFromTo()
     this.invalidate()
@@ -583,6 +583,7 @@ export default class ChartData {
     if (!point || isValid(point.x)) {
       point = { x: isValid(this._crosshair.x) ? this._crosshair.x : this._totalDataSpace / 2 }
     }
+    this.actionExecute(ActionType.zoom, { point, scale })
     const floatIndexAtZoomPoint = this.coordinateToFloatIndex(point.x)
     const dataSpace = this._dataSpace + scale * (this._dataSpace / 10)
     if (this._innerSetDataSpace(dataSpace)) {
@@ -800,11 +801,58 @@ export default class ChartData {
   }
 
   /**
-   * 获取绘制事件代理
+   * 事件执行
    * @param type
-   * @returns {Delegate}
+   * @param data
+   * @param executeBeforeFun
+   * @param executeAfterFun
    */
-  drawActionDelegate (type) {
-    return this._drawActionDelegate[type]
+  actionExecute (type, data, executeBeforeFun, executeAfterFun) {
+    const delegate = this._actionDelegate[type]
+    if (delegate && delegate.hasObservers()) {
+      executeBeforeFun && executeBeforeFun()
+      delegate.execute(data)
+      executeAfterFun && executeAfterFun()
+    }
+  }
+
+  /**
+   * 订阅事件
+   * @param type
+   * @param callback
+   * @return {boolean}
+   */
+  subscribeAction (type, callback) {
+    if (!(type in ActionType)) {
+      return false
+    }
+    let delegate = this._actionDelegate[type]
+    if (!delegate) {
+      delegate = new Delegate()
+      this._actionDelegate[type] = delegate
+    }
+    delegate.subscribe(callback)
+    return true
+  }
+
+  /**
+   * 取消事件订阅
+   * @param type
+   * @param callback
+   * @return {boolean}
+   */
+  unsubscribeAction (type, callback) {
+    if (!(type in ActionType)) {
+      return false
+    }
+    const delegate = this._actionDelegate[type]
+    if (delegate) {
+      delegate.unsubscribe(callback)
+      if (!delegate.hasObservers()) {
+        delete this._actionDelegate[type]
+        return true
+      }
+    }
+    return false
   }
 }

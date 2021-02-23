@@ -16,7 +16,7 @@ import View, { PlotType } from './View'
 import { CandleType, LineStyle } from '../data/options/styleOptions'
 import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
 import { isValid } from '../utils/typeChecks'
-import { DrawActionType } from '../data/ChartData'
+import { ActionType } from '../data/ChartData'
 
 export default class TechnicalIndicatorView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
@@ -190,7 +190,7 @@ export default class TechnicalIndicatorView extends View {
               }
               default: { break }
             }
-            this._drawActionExecute(DrawActionType.DRAW_TECHNICAL_INDICATOR, {
+            this._drawActionExecute(ActionType.drawTechnicalIndicator, {
               ctx: this._ctx,
               kLineData,
               dataIndex: i,
@@ -360,7 +360,7 @@ export default class TechnicalIndicatorView extends View {
         break
       }
     }
-    this._drawActionExecute(DrawActionType.DRAW_CANDLE, {
+    this._drawActionExecute(ActionType.drawCandle, {
       ctx: this._ctx,
       dataIndex,
       kLineData,
@@ -379,12 +379,15 @@ export default class TechnicalIndicatorView extends View {
    * @private
    */
   _drawActionExecute (type, data) {
-    // 绘制事件监听
-    const delegate = this._chartData.drawActionDelegate(type)
-    if (delegate.hasObservers()) {
-      this._ctx.save()
-      delegate.execute(data)
-      this._ctx.restore()
-    }
+    this._chartData.actionExecute(
+      type,
+      data,
+      () => {
+        this._ctx.save()
+      },
+      () => {
+        this._ctx.restore()
+      }
+    )
   }
 }
