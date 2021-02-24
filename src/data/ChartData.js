@@ -18,7 +18,8 @@ import { defaultStyleOptions } from './options/styleOptions'
 import { formatValue } from '../utils/format'
 import {
   createTechnicalIndicatorInstance,
-  createTechnicalIndicatorMapping
+  createTechnicalIndicatorMapping,
+  getTechnicalIndicatorInfo
 } from './base/technicalindicator/technicalIndicatorControl'
 import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './base/technicalindicator/TechnicalIndicator'
@@ -221,28 +222,20 @@ export default class ChartData {
    * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
    */
   technicalIndicatorInfo (name) {
-    const technical = this.technicalIndicator(name)
-    if (technical) {
-      return {
-        name: technical.name,
-        series: technical.series,
-        calcParams: technical.calcParams,
-        precision: technical.precision,
-        styles: technical.styles
+    if (isValid(name)) {
+      const technical = this.technicalIndicator(name)
+      if (technical) {
+        return getTechnicalIndicatorInfo(technical)
       }
-    }
-    const technicals = {}
-    for (const name in this._technicalIndicatorMapping) {
-      const instance = this._technicalIndicatorMapping[name]
-      technicals[name] = {
-        name: instance.name,
-        series: instance.series,
-        calcParams: instance.calcParams,
-        precision: instance.precision,
-        styles: instance.styles
+    } else {
+      const technicals = {}
+      for (const name in this._technicalIndicatorMapping) {
+        const instance = this._technicalIndicatorMapping[name]
+        technicals[name] = getTechnicalIndicatorInfo(instance)
       }
+      return technicals
     }
-    return technicals
+    return {}
   }
 
   /**

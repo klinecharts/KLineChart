@@ -31,6 +31,7 @@ export declare interface GraphicMarkDataSourceItem extends CoordinatePoint {
 }
 
 export declare interface GraphicMarkDataSource {
+  key?: string;
   type: GraphicMarkDataSourceDrawType;
   isDraw?: boolean;
   isCheck?: boolean;

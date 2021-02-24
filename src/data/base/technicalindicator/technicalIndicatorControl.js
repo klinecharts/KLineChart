@@ -99,6 +99,21 @@ export function createTechnicalIndicatorInstance ({
 }
 
 /**
+ * 获取技术指标信息
+ * @param technicalIndicator
+ * @return {{series, calcParams, precision, name, styles}}
+ */
+export function getTechnicalIndicatorInfo (technicalIndicator) {
+  return {
+    name: technicalIndicator.name,
+    series: technicalIndicator.series,
+    calcParams: technicalIndicator.calcParams,
+    precision: technicalIndicator.precision,
+    styles: technicalIndicator.styles
+  }
+}
+
+/**
  * 获取技术指标提示数据
  * @param technicalIndicatorData
  * @param technicalIndicator

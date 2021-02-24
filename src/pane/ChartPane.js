@@ -13,6 +13,8 @@
  */
 
 import ChartData, { InvalidateLevel } from '../data/ChartData'
+import { getTechnicalIndicatorInfo } from '../data/base/technicalindicator/technicalIndicatorControl'
+
 import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
 
@@ -416,10 +418,10 @@ export default class ChartPane {
 
   /**
    * 移除指标
-   * @param name
    * @param paneId
+   * @param name
    */
-  removeTechnicalIndicator (name, paneId) {
+  removeTechnicalIndicator (paneId, name) {
     if (paneId === CANDLE_PANE_ID) {
       if (this._candlePane.removeTechnicalIndicator(name)) {
         this.adjustPaneViewport(false, true, true, true)
@@ -505,36 +507,36 @@ export default class ChartPane {
   /**
    * 获取窗口技术指标
    * @param paneId
+   * @return {{}}
    */
   getPaneTechnicalIndicator (paneId) {
-    if (paneId) {
+    const technicalIndicatorInfo = (pane) => {
+      const technicals = {}
+      pane.technicalIndicators().forEach(technicalIndicator => {
+        technicals[technicalIndicator.name] = getTechnicalIndicatorInfo(technicalIndicator)
+      })
+      return technicals
+    }
+
+    if (isValid(paneId)) {
       if (paneId === CANDLE_PANE_ID) {
-        return this._candlePane.map(technicalIndicator => {
-          return {
-            name: technicalIndicator.name,
-            series: technicalIndicator.series,
-            calcParams: technicalIndicator.calcParams,
-            precision: technicalIndicator.precision,
-            styles: technicalIndicator.styles
-          }
-        })
+        return technicalIndicatorInfo(this._candlePane)
       } else {
         for (const pane of this._technicalIndicatorPanes) {
           if (pane.id() === paneId) {
-            return pane.technicalIndicators().map(technicalIndicator => {
-              return {
-                name: technicalIndicator.name,
-                series: technicalIndicator.series,
-                calcParams: technicalIndicator.calcParams,
-                precision: technicalIndicator.precision,
-                styles: technicalIndicator.styles
-              }
-            })
+            return technicalIndicatorInfo(pane)
           }
         }
       }
+    } else {
+      const technicals = {}
+      technicals[this._candlePane.id()] = technicalIndicatorInfo(this._candlePane)
+      for (const pane of this._technicalIndicatorPanes) {
+        technicals[pane.id()] = technicalIndicatorInfo(pane)
+      }
+      return technicals
     }
-    return []
+    return {}
   }
 
   /**

@@ -31,13 +31,12 @@ export declare interface Chart {
   addCustomTechnicalIndicator(technicalIndicator: TechnicalIndicator): void;
   overrideTechnicalIndicator(override: OverrideTechnicalIndicator): void;
   getTechnicalIndicatorByName(name?: string): any;
-  getTechnicalIndicatorByPaneId(paneId: string): any;
-  removeTechnicalIndicator(name?: string, paneId?: string): void;
+  getTechnicalIndicatorByPaneId(paneId?: string): any;
+  removeTechnicalIndicator(paneId: string, name?: string): void;
   createGraphicMark(name: string, options?: CreateGraphicMarkOptions): string | null;
   setGraphicMarkOptions(id: string, options: OverrideGraphicMarkOptions): void;
   addCustomGraphicMark(graphicMark: GraphicMark): void;
-  removeGraphicMark(graphicMarkId: string): void;
-  removeAllGraphicMark(): void;
+  removeGraphicMark(graphicMarkId?: string): void;
   subscribeAction (type: ChartActionType, callback: (params: any) => void): void;
   unsubscribeAction (type: ChartActionType, callback: (params: any) => void): void;
   getConvertPictureUrl(includeTooltip?: boolean, includeGraphicMark?: boolean, type?: PictureType, backgroundColor?: string): string;

@@ -1,4 +1,38 @@
 # Change Log
+## 7.0.0
+`2021-02-25`
++ 🆕 New features
+  + Add `removeGraphicMark`, `setGraphicMarkOptions`, and `createTechnicalIndicator` to the chart instance methods.
+  + Chart instance methods `subscribeDrawAction` and `unsubscribeDrawAction` are changed to `subscribeAction` and `unsubscribeAction`, and new types `zoom` and `scroll` are added.
+  + Add `getDistance`, `getRotatePoint`, `checkPointOnArc`, and `getRayLine` to the graphics mark auxiliary methods.
+  + When creating technical indicators, if it is a new window, you can customize the window id.
+  + Built-in technical indicator `BOLL`, new calculation parameters.
+  + When creating a graphic mark, you can customize the id and add event callbacks: `onDrawStart`, `onDrawing`, `onDrawEnd`, `onClick`, `onRightClick`, `onPressedMove`, `onRemove`.
+  + Customize graphic markers, and add batch drawing of `conntinuous_line` and `polygon`.
++ 💪 Function enhancement
+  + Chart instance method `removeTechnicalIndicator`, when there is no technical indicator in the window, the window will be automatically removed.
+  + The data source `volume` is no longer an unnecessary field.
+  + Customized graphic marking method `checkPointOn` added parameter key.
++ 💄 Optimize
+  + Optimize the sensitivity of checking whether the mouse point is on the drawing module.
+  + Optimize the rendering of graphic markers.
+  + Optimize the mouse operation of graphic marking.
+  + Optimize the display of the cross cursor.
+  + Optimize the calculation of technical indicators when data is updated.
++ 👉 Change
+  + The chart instance method `setTechnicalIndicatorType` is changed to `createTecchnicalIndicator`.
+  + The chart instance method `getTechnicalIndicatorInfo` is changed to `getTechnicalIndicatorByName`.
+  + The chart instance method `getTechnicalIndicatorType` is changed to `getTechnicalIndicatorByPaneId`.
+  + The graphics mark assist method `checkPointOnSegmentLine` is changed to `checkPointOnSegment`.
+  + Hot key zoom change to `shift` + `+`.
+  + Hot key to zoom out is changed to `shift` + `-`.
++ 🐞 Bug fix
+  + Fix the problem that the built-in technical indicator `VOL`, volume prompt does not display.
+  + Fix the problem of determining the graphic mark point.
+  + Fix the problem that an error may be reported when the comparison type of custom graphics is `line`.
+  + Fix the problem of adding graphic marks and technical indicators globally, which may report errors.
++ 🗑 Delete
+  + Delete the chart instance methods `createPane`, `removePane`, `removeAllGraphicMark`.
 
 ## 6.1.0
 `2021-01-06`

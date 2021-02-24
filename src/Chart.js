@@ -60,7 +60,7 @@ export default class Chart {
   /**
    * 获取窗口上的技术指标
    * @param paneId
-   * @return {[]}
+   * @return {{}}
    */
   getTechnicalIndicatorByPaneId (paneId) {
     return this._chartPane.getPaneTechnicalIndicator(paneId)
@@ -241,11 +241,11 @@ export default class Chart {
 
   /**
    * 移除一个技术指标
-   * @param name
    * @param paneId
+   * @param name
    */
-  removeTechnicalIndicator (name, paneId) {
-    this._chartPane.removeTechnicalIndicator(name, paneId)
+  removeTechnicalIndicator (paneId, name) {
+    this._chartPane.removeTechnicalIndicator(paneId, name)
   }
 
   /**
@@ -298,14 +298,9 @@ export default class Chart {
       this._chartPane.chartData().removeGraphicMarkInstance({
         type: 'id', id: graphicMarkId
       })
+    } else {
+      this._chartPane.chartData().clearGraphicMark()
     }
-  }
-
-  /**
-   * 移除所有标记图形
-   */
-  removeAllGraphicMark () {
-    this._chartPane.chartData().clearGraphicMark()
   }
 
   /**
