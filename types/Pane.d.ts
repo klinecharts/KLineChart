@@ -1,5 +1,5 @@
 export declare interface PaneOptions {
-  id?: string,
+  id?: string;
   height?: number;
   dragEnabled?: boolean;
 }
