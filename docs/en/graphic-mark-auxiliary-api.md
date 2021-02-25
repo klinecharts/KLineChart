@@ -76,27 +76,27 @@ Determine whether a point is on an arc.
 ### checkPointInCircle(circleCenterPoint, radius, targetPoint)
 Determine whether a point is inside the circle.
 
--`point1` the first point
--`point2` the second point
--`targetPoint` target point
+- `point1` the first point
+- `point2` the second point
+- `targetPoint` target point
 
 
 
 ### checkPointOnCircle(circleCenterPoint, radius, targetPoint)
 Determine whether a point is on the circle.
 
--`point1` the first point
--`point2` the second point
--`targetPoint` target point
+- `point1` the first point
+- `point2` the second point
+- `targetPoint` target point
 
 
 
 ### getRayLine(point1, point2, xyMax)
 Obtain the ray from two points.
 
--`point1` the first point
--`point2` the second point
--`xyMax` coordinates to the left of the extreme value
+- `point1` the first point
+- `point2` the second point
+- `xyMax` coordinates to the left of the extreme value
 
 
 

@@ -132,7 +132,7 @@
 确定其它属性
 ```javascript
 {
-	name: 'MA',
+  name: 'MA',
   calcParams: [5, 10],
   plots: [
     { key: 'ma1', title: 'MA5', type: 'line' },

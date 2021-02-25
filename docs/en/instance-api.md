@@ -106,7 +106,7 @@ Create a technical indicator, the return value is a string that identifies the w
 Example:
 ```javascript
 chart.createTechnicalIndicator('MA', false, {
-id:'pane_1',
+  id:'pane_1',
   height: 100,
   dragEnabled: true
 })
@@ -124,7 +124,7 @@ Cover technical indicator information.
 Example:
 ```javascript
 chart.overrideTechnicalIndicator({
-name:'MA',
+  name:'MA',
   calcParams: [5, 10, 30, 60, 120],
   precision: 4,
   styles: {

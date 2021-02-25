@@ -116,7 +116,7 @@ To complete a custom technical indicator, you only need to generate a technical 
 The following will customize a technical indicator named 'MA' to introduce step by step how to make a custom technical indicator.
 #### step one
 First determine the calculation parameters (calcParams) and configuration items (plots). The 'MA' technical indicator needs to display the line connecting the average closing prices of the two periods, one is 'ma1' and the other is called 'ma2'. So the plots configuration is:
-```json
+```javascript
 {
   // There are two calculation parameters, one calculates the average value of 5 cycle times, namely'ma1', and the other calculates the average value of 10 cycle times, namely'ma10'
   calcParams: [5, 10],

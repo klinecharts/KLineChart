@@ -127,7 +127,7 @@
 示例：
 ```javascript
 chart.createTechnicalIndicator('MA', false, {
-	id: 'pane_1',
+  id: 'pane_1',
   height: 100,
   dragEnabled: true
 })
@@ -146,7 +146,7 @@ chart.createTechnicalIndicator('MA', false, {
 示例：
 ```javascript
 chart.overrideTechnicalIndicator({
-	name: 'MA',
+  name: 'MA',
   calcParams: [5, 10, 30, 60, 120],
   precision: 4,
   styles: {
