@@ -103,6 +103,6 @@ Obtain the ray from two points.
 ### getParallelLines(points, xyMax, extendParalleLineCount)
 Get parallel lines.
 
--`points` The points on the determined line
--`xyMax` the left side of the extreme value on the coordinate
--`extendParalleLineCount` number of parallel lines
+- `points` The points on the determined line
+- `xyMax` the left side of the extreme value on the coordinate
+- `extendParalleLineCount` number of parallel lines

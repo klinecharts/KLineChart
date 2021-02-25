@@ -128,7 +128,7 @@ chart.overrideTechnicalIndicator({
   calcParams: [5, 10, 30, 60, 120],
   precision: 4,
   styles: {
-  bar: {
+    bar: {
       upColor:'#26A69A',
       downColor:'#EF5350',
       noChangeColor:'#888888'
