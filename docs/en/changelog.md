@@ -24,8 +24,8 @@
   + The chart instance method `getTechnicalIndicatorInfo` is changed to `getTechnicalIndicatorByName`.
   + The chart instance method `getTechnicalIndicatorType` is changed to `getTechnicalIndicatorByPaneId`.
   + The graphics mark assist method `checkPointOnSegmentLine` is changed to `checkPointOnSegment`.
-  + Hot key zoom change to `shift` + `+`.
-  + Hot key to zoom out is changed to `shift` + `-`.
+  + Hot key zoom in is changed to `shift` + `+`.
+  + Hot key zoom out is changed to `shift` + `-`.
 + 🐞 Bug fix
   + Fix the problem that the built-in technical indicator `VOL`, volume prompt does not display.
   + Fix the problem of determining the graphic mark point.

@@ -7,7 +7,7 @@
 To complete a custom graphic mark, you only need to generate a graphic mark information, and then add it globally through `extension.addGraphicMark`, or add it for a single graph instance through the chart instance method `addCustomGraphicMark`. Adding to the chart can be used like the built-in graphic markers.
 ### Property description
 #### Graphic mark information
-```json
+```js
 {
   // Name, a required field, as the unique identifier of the graphic mark
   name:'xxx',
@@ -57,7 +57,7 @@ To complete a custom graphic mark, you only need to generate a graphic mark info
 }
 ```
 #### Method createGraphicDataSource return value sub-item information
-```json
+```js
 {
   // key
   key:'key'
@@ -74,7 +74,7 @@ To complete a custom graphic mark, you only need to generate a graphic mark info
 }
 ```
 #### dataSource sub-item information
-```json
+```javascript
 {
   // x coordinate, required field
   x: 123,
@@ -94,7 +94,7 @@ To complete a custom graphic mark, you only need to generate a graphic mark info
 
 ## Example
 Use a filled circle with a border to illustrate how to configure it.
-```js
+```javascript
 {
   // name
   name:'circle',

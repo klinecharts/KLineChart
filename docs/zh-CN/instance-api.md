@@ -223,7 +223,7 @@ chart.overrideTechnicalIndicator({
 chart.createGraphicMark(
   'segment',
   {
-  	points: [
+    points: [
       { timestamp: 1614171282000, price: 18987 },
       { timestamp: 1614171202000, price: 16098 },
     ],

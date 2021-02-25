@@ -1,6 +1,6 @@
 # 样式说明
 
-```json
+```javascript
 {
   grid: {
     show: true,

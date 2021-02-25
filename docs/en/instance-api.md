@@ -162,9 +162,7 @@ Special paneId: candle_pane, the window id of the main image
 ### removeTechnicalIndicator(paneId, name)
 Remove technical indicators.
 - `paneId` window id, which is the window ID returned when the createTechnicalIndicator method is called
-
 Special paneId: candle_pane, the window id of the main image
-
 - `name` technical indicator type, if default, all will be removed
 
 
@@ -193,13 +191,13 @@ Example:
 chart.createGraphicMark(
   'segment',
   {
-  points: [
+    points: [
       {timestamp: 1614171282000, price: 18987 },
       {timestamp: 1614171202000, price: 16098 },
     ],
     styles: {
-    line: {
-      color:'#f00',
+      line: {
+        color:'#f00',
         size: 2
       }
     },

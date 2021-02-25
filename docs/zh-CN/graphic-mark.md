@@ -7,7 +7,7 @@
 想要完成一个自定义图形标记，只需要生成一个图形标记信息，然后通过`extension.addGraphicMark` 全局添加，或者通过图表实例方法`addCustomGraphicMark` 为单个图表实例添加即可。添加到图表即可和内置图形标记一样去使用。
 ### 属性说明
 #### 图形标记信息
-```json
+```javascript
 {
   // 名称，必须字段，作为图形标记的唯一标识
   name: 'xxx',
@@ -57,7 +57,7 @@
 }
 ```
 #### 方法createGraphicDataSource返回值子项信息
-```json
+```javascript
 {
   // key
   key: 'key'
@@ -74,7 +74,7 @@
 }
 ```
 #### dataSource子项信息
-```json
+```javascript
 {
   // x坐标，必要字段
   x: 123,
@@ -94,7 +94,7 @@
 
 ## 示例
 以一个填充带边框的圆来具体说明如何配置。
-```json
+```javascript
 {
   // 名称
   name: 'circle',

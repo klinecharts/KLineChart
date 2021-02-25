@@ -19,7 +19,7 @@
 To complete a custom technical indicator, you only need to generate a technical indicator information, and then add it globally through `extension.addTechnicalIndicator`, or add it for a single chart instance through the chart instance method `addCustomTechnicalIndicator`. Adding to the chart can be used like the built-in technical indicators.
 ### Property description
 #### Technical indicator information
-```json
+```javascript
 {
   // The name of the technical indicator, a necessary field, is the only identifier of the technical indicator
   name:'xxx',
@@ -94,7 +94,7 @@ To complete a custom technical indicator, you only need to generate a technical 
 }
 ```
 #### Plots sub-item information
-```json
+```javascript
 {
   // Required fields, determine the return value of the method calcTechnicalIndicator
   key:'',
@@ -130,7 +130,7 @@ First determine the calculation parameters (calcParams) and configuration items 
 ```
 #### Step two
 Determine other attributes
-```js
+```javascript
 {
   name:'MA',
   calcParams: [5, 10],

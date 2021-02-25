@@ -1,9 +1,9 @@
 # 样式说明
 
-```json
+```javascript
 {
   // 网格线
-	grid: {
+  grid: {
     show: true,
     // 网格水平线
     horizontal: {
@@ -14,7 +14,7 @@
       style: 'dash',
       dashValue: [2, 2]
     },
-   	// 网格垂直线 
+   	// 网格垂直线
     vertical: {
       show: false,
       size: 1,
@@ -24,7 +24,7 @@
       dashValue: [2, 2]
     }
   },
-  // 蜡烛图  
+  // 蜡烛图
   candle: {
     // 蜡烛图上下间距，大于1为绝对值，大于0小余1则为比例
     margin: {
@@ -54,7 +54,7 @@
     },
     priceMark: {
       show: true,
-      // 最高价标记  
+      // 最高价标记
       high: {
         show: true,
         color: '#D9D9D9',
@@ -63,7 +63,7 @@
         textFamily: 'Helvetica Neue',
         textWeight: 'normal'
       },
-      // 最低价标记  
+      // 最低价标记
       low: {
         show: true,
         color: '#D9D9D9',
@@ -72,7 +72,7 @@
         textFamily: 'Helvetica Neue',
         textWeight: 'normal',
       },
-      // 最新价标记    
+      // 最新价标记
       last: {
         show: true,
         upColor: '#26A69A',
@@ -98,7 +98,7 @@
         }
       }
     },
-    // 提示  
+    // 提示
     tooltip: {
       showRule: 'always',
       showType: 'standard',
@@ -130,7 +130,7 @@
       }
     }
   },
-  // 技术指标  
+  // 技术指标
   technicalIndicator: {
     margin: {
       top: 0.2,
@@ -150,7 +150,7 @@
       downColor: '#EF5350',
       noChangeColor: '#888888'
     },
-    // 最新值标记  
+    // 最新值标记
     lastValueMark: {
       show: false,
       text: {
@@ -165,7 +165,7 @@
         paddingBottom: 2
       }
     },
-    // 提示  
+    // 提示
     tooltip: {
       showRule: 'always',
       showName: true,
@@ -203,7 +203,7 @@
       paddingTop: 3,
       paddingBottom: 6
     },
-    // x轴分割线  
+    // x轴分割线
     tickLine: {
       show: true,
       size: 1,
@@ -211,7 +211,7 @@
       color: '#888888'
     }
   },
-  // y轴  
+  // y轴
   yAxis: {
     show: true,
     width: null,
@@ -220,13 +220,13 @@
     // 'normal' | 'percentage'
     type: 'normal',
     inside: false,
-    // y轴线  
+    // y轴线
     axisLine: {
       show: true,
       color: '#888888',
       size: 1
     },
-    // x轴分割文字  
+    // x轴分割文字
     tickText: {
       show: true,
       color: '#D9D9D9',
@@ -244,14 +244,14 @@
       color: '#888888'
     }
   },
-  // 图表之间的分割线  
+  // 图表之间的分割线
   separator: {
     size: 1,
     color: '#888888',
     fill: true,
     activeBackgroundColor: 'rgba(230, 230, 230, .15)'
   },
-  // 十字光标  
+  // 十字光标
   crosshair: {
     show: true,
     // 十字光标水平线及文字
@@ -280,7 +280,7 @@
         backgroundColor: '#505050'
       }
     },
-    // 十字光标垂直线及文字  
+    // 十字光标垂直线及文字
     vertical: {
       show: true,
       line: {
@@ -307,7 +307,7 @@
       }
     }
   },
-  // 图形标记  
+  // 图形标记
   graphicMark: {
     line: {
       color: '#2196F3',

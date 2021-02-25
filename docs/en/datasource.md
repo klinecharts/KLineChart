@@ -1,7 +1,7 @@
 # Data source
 
 The data of a single K-line must follow the following format:
-```json
+```javascript
 {
   // require
   open: 111,
@@ -18,6 +18,3 @@ The data of a single K-line must follow the following format:
   timestamp: 1610188586000
 }
 ```
-
-
-![img.png](img.png)
