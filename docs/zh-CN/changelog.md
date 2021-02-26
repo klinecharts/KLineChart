@@ -22,7 +22,7 @@
    - 优化十字光标显示。
    - 优化数据更新时技术指标计算。
 - 👉 变更
-   - 图表实例方法 `setTechnicalIndicatorType` 变更为 `createTecchnicalIndicator`。
+   - 图表实例方法 `setTechnicalIndicatorType` 变更为 `createTechnicalIndicator`。
    - 图表实例方法 `getTechnicalIndicatorInfo` 变更为 `getTechnicalIndicatorByName`。
    - 图表实例方法 `getTechnicalIndicatorType` 变更为 `getTechnicalIndicatorByPaneId`。
    - 图形标记辅助方法 `checkPointOnSegmentLine` 变更为 `checkPointOnSegment`。

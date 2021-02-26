@@ -76,8 +76,8 @@ Determine whether a point is on an arc.
 ### checkPointInCircle(circleCenterPoint, radius, targetPoint)
 Determine whether a point is inside the circle.
 
-- `point1` the first point
-- `point2` the second point
+- `circleCenterPoint` center point
+- `radius` radius
 - `targetPoint` target point
 
 
@@ -85,8 +85,8 @@ Determine whether a point is inside the circle.
 ### checkPointOnCircle(circleCenterPoint, radius, targetPoint)
 Determine whether a point is on the circle.
 
-- `point1` the first point
-- `point2` the second point
+- `circleCenterPoint` center point
+- `radius` radius
 - `targetPoint` target point
 
 

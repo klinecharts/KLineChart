@@ -20,7 +20,7 @@
   + Optimize the display of the cross cursor.
   + Optimize the calculation of technical indicators when data is updated.
 + 👉 Change
-  + The chart instance method `setTechnicalIndicatorType` is changed to `createTecchnicalIndicator`.
+  + The chart instance method `setTechnicalIndicatorType` is changed to `createTechnicalIndicator`.
   + The chart instance method `getTechnicalIndicatorInfo` is changed to `getTechnicalIndicatorByName`.
   + The chart instance method `getTechnicalIndicatorType` is changed to `getTechnicalIndicatorByPaneId`.
   + The graphics mark assist method `checkPointOnSegmentLine` is changed to `checkPointOnSegment`.

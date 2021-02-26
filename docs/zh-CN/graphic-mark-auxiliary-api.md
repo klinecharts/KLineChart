@@ -93,8 +93,8 @@ import { ... } from 'klinecharts/lib/mark/graphicHelper'
 ### checkPointInCircle(circleCenterPoint, radius, targetPoint)
 判断某点是否在圆内。
 
-- `point1` 第一个点
-- `point2 ` 第二个点
+- `circleCenterPoint` 圆心点
+- `radius` 半径
 - `targetPoint` 目标点
 
 
@@ -102,8 +102,8 @@ import { ... } from 'klinecharts/lib/mark/graphicHelper'
 ### checkPointOnCircle(circleCenterPoint, radius, targetPoint)
 判断某点是否在圆上。
 
-- `point1` 第一个点
-- `point2` 第二个点
+- `circleCenterPoint` 圆心点
+- `radius` 半径
 - `targetPoint` 目标点
 
 
