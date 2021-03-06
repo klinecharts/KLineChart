@@ -56,7 +56,7 @@ KLineChart is available under the Apache License V2.
 
 ## ❤️ Sponsor Author
 ### PayPal
-+ [paypal](http://paypal.me/liihuu)
++ [paypal](https://paypal.me/liihuu)
 
 ### Digital assets
 + BTC: [bc1qnwzukszzk5xfk0zs3sr8etzgctgnrtqts43jzp3khe6gm7xazprsp4y6n3]()

@@ -353,10 +353,14 @@ export default class GraphicMark {
           }
         }
       })
-      this.drawExtend(
-        ctx, graphicDataSources, markOptions,
-        viewport, precision, this._xAxis, this._yAxis
-      )
+      if (this.drawExtend) {
+        ctx.save()
+        this.drawExtend(
+          ctx, graphicDataSources, markOptions,
+          viewport, precision, this._xAxis, this._yAxis
+        )
+        ctx.restore()
+      }
     }
     const graphicMarkMouseOperate = this._chartData.graphicMarkMouseOperate()
     if (
@@ -614,18 +618,6 @@ export default class GraphicMark {
    * @param yAxis
    */
   performMousePressedMove (tpPoints, pressedPointIndex, tpPoint, xAxis, yAxis) {}
-
-  /**
-   * 扩展绘制
-   * @param ctx
-   * @param graphicDataSources
-   * @param markOptions
-   * @param viewport
-   * @param precision
-   * @param xAxis
-   * @param yAxis
-   */
-  drawExtend (ctx, graphicDataSources, markOptions, viewport, precision, xAxis, yAxis) {}
 
   // --------------------- 自定义时需要实现的一些方法结束 ----------------------
 }
