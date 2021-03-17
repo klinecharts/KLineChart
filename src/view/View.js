@@ -53,9 +53,7 @@ class View {
    */
   _redraw (extendFun) {
     this._ctx.clearRect(0, 0, this._canvas.offsetWidth, this._canvas.offsetHeight)
-    if (extendFun) {
-      extendFun()
-    }
+    extendFun && extendFun()
     this._draw()
   }
 
@@ -79,8 +77,8 @@ class View {
         const pixelRatio = getPixelRatio(this._canvas)
         this._canvas.style.width = `${this._width}px`
         this._canvas.style.height = `${this._height}px`
-        this._canvas.width = this._width * pixelRatio
-        this._canvas.height = this._height * pixelRatio
+        this._canvas.width = Math.floor(this._width * pixelRatio)
+        this._canvas.height = Math.floor(this._height * pixelRatio)
         this._ctx.scale(pixelRatio, pixelRatio)
       })
     } else {
@@ -94,6 +92,7 @@ class View {
   flush () {
     if (this.requestAnimationId) {
       cancelAnimationFrame(this.requestAnimationId)
+      this.requestAnimationId = null
     }
     this.requestAnimationId = requestAnimationFrame(() => {
       this._redraw()

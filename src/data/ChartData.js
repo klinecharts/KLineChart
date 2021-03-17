@@ -493,8 +493,9 @@ export default class ChartData {
    * 设置十字光标点所在的pane的标识
    * @param point
    * @param paneId
+   * @param notInvalidate
    */
-  setCrosshairPointPaneId (point, paneId) {
+  setCrosshairPointPaneId (point, paneId, notInvalidate) {
     const p = point || {}
     if (
       this._crosshair.x !== p.x ||
@@ -502,7 +503,9 @@ export default class ChartData {
       this._crosshair.paneId !== paneId
     ) {
       this._crosshair = { ...point, paneId }
-      this.invalidate(InvalidateLevel.FLOAT_LAYER)
+      if (!notInvalidate) {
+        this.invalidate(InvalidateLevel.FLOAT_LAYER)
+      }
     }
   }
 

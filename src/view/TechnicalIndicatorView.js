@@ -47,6 +47,8 @@ export default class TechnicalIndicatorView extends View {
       this._ctx.lineWidth = gridHorizontalOptions.size
       if (gridHorizontalOptions.style === LineStyle.DASH) {
         this._ctx.setLineDash(gridHorizontalOptions.dashValue)
+      } else {
+        this._ctx.setLineDash([])
       }
       this._yAxis.ticks().forEach(tick => {
         renderHorizontalLine(this._ctx, tick.y, 0, this._width)

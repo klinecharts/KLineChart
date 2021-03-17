@@ -129,9 +129,10 @@ export default class ZoomScrollEventHandler extends EventHandler {
           this._chartData.setCrosshairPointPaneId(crossHairPoint, cross.paneId)
           return
         }
+      } else {
+        this._chartData.setCrosshairPointPaneId(crossHairPoint, cross.paneId, true)
       }
       const distance = event.localX - this._startScrollPoint.x
-      this._chartData.setCrosshairPointPaneId(crossHairPoint, cross.paneId)
       this._chartData.scroll(distance)
     })
   }
