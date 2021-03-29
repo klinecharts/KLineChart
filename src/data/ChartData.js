@@ -684,9 +684,10 @@ export default class ChartData {
    * @param options
    */
   setGraphicMarkOptions (id, options = {}) {
-    const { styles } = options
+    const { styles, lock } = options
     for (const graphicMark of this._graphicMarks) {
       if (graphicMark.id() === id) {
+        graphicMark.setLock(lock)
         if (graphicMark.setStyles(styles)) {
           this.invalidate(InvalidateLevel.GRAPHIC_MARK)
         }

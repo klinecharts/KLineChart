@@ -546,7 +546,7 @@ export default class ChartPane {
    */
   createGraphicMark (GraphicMark, options = {}) {
     const {
-      id, points, styles,
+      id, points, styles, lock,
       onDrawStart, onDrawing,
       onDrawEnd, onClick,
       onRightClick, onPressedMove,
@@ -559,7 +559,8 @@ export default class ChartPane {
       xAxis: this._xAxisPane.xAxis(),
       yAxis: this._candlePane.yAxis(),
       points,
-      styles
+      styles,
+      lock
     })
     if (isFunction(onDrawStart)) {
       graphicMarkInstance.onDrawStart = onDrawStart

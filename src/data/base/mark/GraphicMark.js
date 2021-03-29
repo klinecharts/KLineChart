@@ -89,7 +89,7 @@ export default class GraphicMark {
   constructor ({
     id, name, totalStep,
     chartData, xAxis, yAxis,
-    points, styles
+    points, styles, lock
   }) {
     this._id = id
     this._name = name
@@ -98,6 +98,7 @@ export default class GraphicMark {
     this._xAxis = xAxis
     this._yAxis = yAxis
     this._styles = null
+    this._lock = lock
     this._drawStep = GRAPHIC_MARK_DRAW_STEP_START
     this._tpPoints = []
     this._applyPoints(points)
@@ -404,6 +405,14 @@ export default class GraphicMark {
   }
 
   /**
+   * 设置是否锁定
+   * @param lock
+   */
+  setLock (lock) {
+    this._lock = lock
+  }
+
+  /**
    * 获取id
    * @return {*}
    */
@@ -510,6 +519,7 @@ export default class GraphicMark {
     const graphicMarkMouseOperate = this._chartData.graphicMarkMouseOperate()
     const elementIndex = graphicMarkMouseOperate.click.elementIndex
     if (
+      !this._lock &&
       graphicMarkMouseOperate.click.id === this._id &&
       graphicMarkMouseOperate.click.element === GraphicMarkMouseOperateElement.POINT &&
       elementIndex !== -1
