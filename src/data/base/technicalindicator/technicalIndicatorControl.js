@@ -109,7 +109,8 @@ export function getTechnicalIndicatorInfo (technicalIndicator) {
     series: technicalIndicator.series,
     calcParams: technicalIndicator.calcParams,
     precision: technicalIndicator.precision,
-    styles: technicalIndicator.styles
+    styles: technicalIndicator.styles,
+    result: technicalIndicator.result || []
   }
 }
 
