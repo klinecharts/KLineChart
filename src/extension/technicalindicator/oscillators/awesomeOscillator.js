@@ -18,7 +18,7 @@ export default {
   shouldCheckParamCount: true,
   plots: [{
     key: 'ao',
-    title: 'AO',
+    title: 'AO: ',
     type: 'bar',
     color: (data, technicalIndicatorOptions) => {
       const { preData, currentData } = data

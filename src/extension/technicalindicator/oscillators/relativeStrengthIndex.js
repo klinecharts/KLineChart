@@ -21,13 +21,13 @@ export default {
   calcParams: [6, 12, 24],
   shouldCheckParamCount: false,
   plots: [
-    { key: 'rsi6', title: 'RSI6', type: 'line' },
-    { key: 'rsi12', title: 'RSI12', type: 'line' },
-    { key: 'rsi24', title: 'RSI24', type: 'line' }
+    { key: 'rsi6', title: 'RSI6: ', type: 'line' },
+    { key: 'rsi12', title: 'RSI12: ', type: 'line' },
+    { key: 'rsi24', title: 'RSI24: ', type: 'line' }
   ],
   regeneratePlots: (params) => {
     return params.map(p => {
-      return { key: `rsi${p}`, title: `RSI${p}`, type: 'line' }
+      return { key: `rsi${p}`, title: `RSI${p}: `, type: 'line' }
     })
   },
   calcTechnicalIndicator: (dataList, calcParams, plots) => {

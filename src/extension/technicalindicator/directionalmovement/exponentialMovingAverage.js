@@ -23,13 +23,13 @@ export default {
   shouldCheckParamCount: false,
   shouldOhlc: true,
   plots: [
-    { key: 'ema6', title: 'EMA6', type: 'line' },
-    { key: 'ema12', title: 'EMA12', type: 'line' },
-    { key: 'ema20', title: 'EMA20', type: 'line' }
+    { key: 'ema6', title: 'EMA6: ', type: 'line' },
+    { key: 'ema12', title: 'EMA12: ', type: 'line' },
+    { key: 'ema20', title: 'EMA20: ', type: 'line' }
   ],
   regeneratePlots: (params) => {
     return params.map(p => {
-      return { key: `ema${p}`, title: `EMA${p}`, type: 'line' }
+      return { key: `ema${p}`, title: `EMA${p}: `, type: 'line' }
     })
   },
   calcTechnicalIndicator: (dataList, calcParams, plots) => {

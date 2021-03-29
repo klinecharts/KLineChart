@@ -23,14 +23,14 @@ export default {
   shouldCheckParamCount: false,
   shouldOhlc: true,
   plots: [
-    { key: 'ma5', title: 'MA5', type: 'line' },
-    { key: 'ma10', title: 'MA10', type: 'line' },
-    { key: 'ma30', title: 'MA30', type: 'line' },
-    { key: 'ma60', title: 'MA60', type: 'line' }
+    { key: 'ma5', title: 'MA5: ', type: 'line' },
+    { key: 'ma10', title: 'MA10: ', type: 'line' },
+    { key: 'ma30', title: 'MA30: ', type: 'line' },
+    { key: 'ma60', title: 'MA60: ', type: 'line' }
   ],
   regeneratePlots: (params) => {
     return params.map(p => {
-      return { key: `ma${p}`, title: `MA${p}`, type: 'line' }
+      return { key: `ma${p}`, title: `MA${p}: `, type: 'line' }
     })
   },
   calcTechnicalIndicator: (dataList, calcParams, plots) => {

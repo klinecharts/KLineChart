@@ -21,7 +21,7 @@ export default {
   plots: [
     {
       key: 'sar',
-      title: 'SAR',
+      title: 'SAR: ',
       type: 'circle',
       color: (data, options) => {
         const { currentData } = data

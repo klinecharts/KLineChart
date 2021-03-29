@@ -29,8 +29,8 @@ export default {
   name: 'TRIX',
   calcParams: [12, 20],
   plots: [
-    { key: 'trix', title: 'TRIX', type: 'line' },
-    { key: 'maTrix', title: 'MATRIX', type: 'line' }
+    { key: 'trix', title: 'TRIX: ', type: 'line' },
+    { key: 'maTrix', title: 'MATRIX: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     let emaClose1

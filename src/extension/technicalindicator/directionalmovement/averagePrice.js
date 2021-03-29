@@ -20,7 +20,7 @@ export default {
   series: 'price',
   precision: 2,
   plots: [
-    { key: 'avp', title: 'AVP', type: 'line' }
+    { key: 'avp', title: 'AVP: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList) => {
     let totalTurnover = 0

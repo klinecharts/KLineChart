@@ -20,8 +20,8 @@ export default {
   name: 'MTM',
   calcParams: [6, 10],
   plots: [
-    { key: 'mtm', title: 'MTM', type: 'line' },
-    { key: 'maMtm', title: 'MAMTM', type: 'line' }
+    { key: 'mtm', title: 'MTM: ', type: 'line' },
+    { key: 'maMtm', title: 'MAMTM: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     let mtmSum = 0

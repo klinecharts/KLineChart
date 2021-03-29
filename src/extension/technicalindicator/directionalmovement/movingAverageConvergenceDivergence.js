@@ -25,11 +25,11 @@ export default {
   calcParams: [12, 26, 9],
   baseValue: 0,
   plots: [
-    { key: 'diff', title: 'DIFF', type: 'line' },
-    { key: 'dea', title: 'DEA', type: 'line' },
+    { key: 'dif', title: 'DIF: ', type: 'line' },
+    { key: 'dea', title: 'DEA: ', type: 'line' },
     {
       key: 'macd',
-      title: 'MACD',
+      title: 'MACD: ',
       type: 'bar',
       color: (data, options) => {
         const { currentData } = data
@@ -68,13 +68,13 @@ export default {
         emaLong = (2 * close + (calcParams[1] - 1) * oldEmaLong) / (calcParams[1] + 1)
       }
 
-      const diff = emaShort - emaLong
-      dea = (diff * 2 + oldDea * (calcParams[2] - 1)) / (calcParams[2] + 1)
-      macd = (diff - dea) * 2
+      const dif = emaShort - emaLong
+      dea = (dif * 2 + oldDea * (calcParams[2] - 1)) / (calcParams[2] + 1)
+      macd = (dif - dea) * 2
       oldEmaShort = emaShort
       oldEmaLong = emaLong
       oldDea = dea
-      return { diff, dea, macd }
+      return { dif, dea, macd }
     })
   }
 }

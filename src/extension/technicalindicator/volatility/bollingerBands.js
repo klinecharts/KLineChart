@@ -41,9 +41,9 @@ export default {
   precision: 2,
   shouldOhlc: true,
   plots: [
-    { key: 'up', title: 'UP', type: 'line' },
-    { key: 'mid', title: 'MID', type: 'line' },
-    { key: 'dn', title: 'DN', type: 'line' }
+    { key: 'up', title: 'UP: ', type: 'line' },
+    { key: 'mid', title: 'MID: ', type: 'line' },
+    { key: 'dn', title: 'DN: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     const p = calcParams[0] - 1

@@ -23,13 +23,13 @@ export default {
   calcParams: [6, 10, 14],
   shouldCheckParamCount: false,
   plots: [
-    { key: 'wr1', title: 'WR1', type: 'line' },
-    { key: 'wr2', title: 'WR2', type: 'line' },
-    { key: 'wr3', title: 'WR3', type: 'line' }
+    { key: 'wr1', title: 'WR1: ', type: 'line' },
+    { key: 'wr2', title: 'WR2: ', type: 'line' },
+    { key: 'wr3', title: 'WR3: ', type: 'line' }
   ],
   regeneratePlots: (params) => {
     return params.map((_, i) => {
-      return { key: `wr${i + 1}`, title: `WR${i + 1}`, type: 'line' }
+      return { key: `wr${i + 1}`, title: `WR${i + 1}: `, type: 'line' }
     })
   },
   calcTechnicalIndicator: (dataList, calcParams, plots) => {

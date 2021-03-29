@@ -41,10 +41,10 @@ export default {
   name: 'DMI',
   calcParams: [14, 6],
   plots: [
-    { key: 'pdi', title: 'PDI', type: 'line' },
-    { key: 'mdi', title: 'MDI', type: 'line' },
-    { key: 'adx', title: 'ADX', type: 'line' },
-    { key: 'adxr', title: 'ADXR', type: 'line' }
+    { key: 'pdi', title: 'PDI: ', type: 'line' },
+    { key: 'mdi', title: 'MDI: ', type: 'line' },
+    { key: 'adx', title: 'ADX: ', type: 'line' },
+    { key: 'adxr', title: 'ADXR: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     let trSum = 0

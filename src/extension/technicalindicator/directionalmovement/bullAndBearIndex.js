@@ -25,7 +25,7 @@ export default {
   shouldCheckParamCount: true,
   shouldOhlc: true,
   plots: [
-    { key: 'bbi', title: 'BBI', type: 'line' }
+    { key: 'bbi', title: 'BBI: ', type: 'line' }
   ],
   calcTechnicalIndicator: (kLineDataList, calcParams) => {
     const maxParam = Math.max.apply(null, calcParams)

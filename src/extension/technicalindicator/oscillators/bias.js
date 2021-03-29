@@ -21,13 +21,13 @@ export default {
   calcParams: [6, 12, 24],
   shouldCheckParamCount: false,
   plots: [
-    { key: 'bias6', title: 'BIAS6', type: 'line' },
-    { key: 'bias12', title: 'BIAS12', type: 'line' },
-    { key: 'bias24', title: 'BIAS24', type: 'line' }
+    { key: 'bias6', title: 'BIAS6: ', type: 'line' },
+    { key: 'bias12', title: 'BIAS12: ', type: 'line' },
+    { key: 'bias24', title: 'BIAS24: ', type: 'line' }
   ],
   regeneratePlots: (params) => {
     return params.map(p => {
-      return { key: `bias${p}`, title: `BIAS${p}`, type: 'line' }
+      return { key: `bias${p}`, title: `BIAS${p}: `, type: 'line' }
     })
   },
   calcTechnicalIndicator: (dataList, calcParams, plots) => {

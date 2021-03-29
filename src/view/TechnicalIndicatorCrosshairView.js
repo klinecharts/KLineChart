@@ -213,8 +213,7 @@ export default class TechnicalIndicatorCrosshairView extends View {
         const title = values[i].title
         if (isValid(title)) {
           labelX += textMarginLeft
-          const titleText = `${title ? `${title}:` : ''}`
-          const text = `${titleText}${values[i].value || technicalIndicatorTooltipOptions.defaultValue}`
+          const text = `${title}${values[i].value || technicalIndicatorTooltipOptions.defaultValue}`
           const textWidth = calcTextWidth(this._ctx, text)
           renderText(this._ctx, valueColor, labelX, labelY, text)
           labelX += (textWidth + textMarginRight)

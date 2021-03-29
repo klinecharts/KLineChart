@@ -69,9 +69,8 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     let labelX = textMarginLeft
     const labelY = candleTooltipOptions.text.marginTop
     labels.forEach((label, i) => {
-      const labelText = label ? `${label}: ` : ''
-      const labelWidth = calcTextWidth(this._ctx, labelText)
-      renderText(this._ctx, textColor, labelX, labelY, labelText)
+      const labelWidth = calcTextWidth(this._ctx, label)
+      renderText(this._ctx, textColor, labelX, labelY, label)
       labelX += labelWidth
 
       const value = values[i] || candleTooltipOptions.defaultValue
@@ -143,7 +142,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         } else {
           v = value
         }
-        const text = label ? `${label}: ${v}` : `${v}`
+        const text = `${label}${v}`
         const labelWidth = calcTextWidth(this._ctx, text) + baseTextMarginLeft + baseTextMarginRight
         maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
       })
@@ -181,7 +180,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         tooltipData.values.forEach(({ title, value }) => {
           if (isValid(title)) {
             const v = value || technicalIndicatorTooltipOptions.defaultValue
-            const text = title ? `${title}: ${v}` : `${v}`
+            const text = `${title}${v}`
             const labelWidth = calcTextWidth(this._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
             maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
             rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize)
@@ -218,7 +217,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
       baseLabels.forEach((label, i) => {
         labelY += baseTextMarginTop
         this._ctx.textAlign = 'left'
-        renderText(this._ctx, baseTextColor, baseLabelX, labelY, `${label}: `)
+        renderText(this._ctx, baseTextColor, baseLabelX, labelY, label)
 
         const value = baseValues[i]
         let text
@@ -279,7 +278,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
             labelY += indicatorTextMarginTop
             this._ctx.textAlign = 'left'
             this._ctx.fillStyle = valueColor
-            this._ctx.fillText(`${value.title}: `, indicatorLabelX, labelY)
+            this._ctx.fillText(`${value.title}`, indicatorLabelX, labelY)
 
             this._ctx.textAlign = 'right'
             this._ctx.fillText(

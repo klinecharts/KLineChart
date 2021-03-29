@@ -20,8 +20,8 @@ export default {
   name: 'PSY',
   calcParams: [12, 6],
   plots: [
-    { key: 'psy', title: 'PSY', type: 'line' },
-    { key: 'maPsy', title: 'MAPSY', type: 'line' }
+    { key: 'psy', title: 'PSY: ', type: 'line' },
+    { key: 'maPsy', title: 'MAPSY: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     let upCount = 0

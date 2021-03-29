@@ -31,11 +31,11 @@ export default {
   name: 'CR',
   calcParams: [26, 10, 20, 40, 60],
   plots: [
-    { key: 'cr', title: 'CR', type: 'line' },
-    { key: 'ma1', title: 'MA1', type: 'line' },
-    { key: 'ma2', title: 'MA2', type: 'line' },
-    { key: 'ma3', title: 'MA3', type: 'line' },
-    { key: 'ma4', title: 'MA4', type: 'line' }
+    { key: 'cr', title: 'CR: ', type: 'line' },
+    { key: 'ma1', title: 'MA1: ', type: 'line' },
+    { key: 'ma2', title: 'MA2: ', type: 'line' },
+    { key: 'ma3', title: 'MA3: ', type: 'line' },
+    { key: 'ma4', title: 'MA4: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     const ma1ForwardPeriod = Math.ceil(calcParams[1] / 2.5 + 1)

@@ -21,7 +21,7 @@ export default {
   series: 'price',
   precision: 2,
   plots: [
-    { key: 'sma', title: 'SMA', type: 'line' }
+    { key: 'sma', title: 'SMA: ', type: 'line' }
   ],
   shouldCheckParamCount: true,
   shouldOhlc: true,

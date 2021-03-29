@@ -22,7 +22,7 @@
 export default {
   name: 'PVT',
   plots: [
-    { key: 'pvt', title: 'PVT', type: 'line' }
+    { key: 'pvt', title: 'PVT: ', type: 'line' }
   ],
   calcTechnicalIndicator: (kLineDataList) => {
     let sum = 0

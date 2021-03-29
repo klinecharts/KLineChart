@@ -24,7 +24,7 @@ export default {
   name: 'CCI',
   calcParams: [13],
   plots: [
-    { key: 'cci', title: 'CCI', type: 'line' }
+    { key: 'cci', title: 'CCI: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     const p = calcParams[0] - 1

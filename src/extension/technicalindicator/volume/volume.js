@@ -22,12 +22,12 @@ export default {
   baseValue: 0,
   minValue: 0,
   plots: [
-    { key: 'ma5', title: 'MA5', type: 'line' },
-    { key: 'ma10', title: 'MA10', type: 'line' },
-    { key: 'ma20', title: 'MA20', type: 'line' },
+    { key: 'ma5', title: 'MA5: ', type: 'line' },
+    { key: 'ma10', title: 'MA10: ', type: 'line' },
+    { key: 'ma20', title: 'MA20: ', type: 'line' },
     {
       key: 'volume',
-      title: 'VOLUME',
+      title: 'VOLUME: ',
       type: 'bar',
       color: (data, options) => {
         const kLineData = data.currentData.kLineData || {}
@@ -42,11 +42,11 @@ export default {
   ],
   regeneratePlots: (params) => {
     const plots = params.map(p => {
-      return { key: `ma${p}`, title: `MA${p}`, type: 'line' }
+      return { key: `ma${p}`, title: `MA${p}: `, type: 'line' }
     })
     plots.push({
       key: 'volume',
-      title: 'VOLUME',
+      title: 'VOLUME: ',
       type: 'bar',
       color: (data, options) => {
         const kLineData = data.currentData.kLineData || {}

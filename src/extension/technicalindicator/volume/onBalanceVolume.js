@@ -20,8 +20,8 @@ export default {
   name: 'OBV',
   calcParams: [30],
   plots: [
-    { key: 'obv', title: 'OBV', type: 'line' },
-    { key: 'maObv', title: 'MAOBV', type: 'line' }
+    { key: 'obv', title: 'OBV: ', type: 'line' },
+    { key: 'maObv', title: 'MAOBV: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     let obvSum = 0

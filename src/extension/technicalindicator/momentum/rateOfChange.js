@@ -21,8 +21,8 @@ export default {
   calcParams: [12, 6],
   shouldCheckParamCount: true,
   plots: [
-    { key: 'roc', title: 'ROC', type: 'line' },
-    { key: 'maRoc', title: 'MAROC', type: 'line' }
+    { key: 'roc', title: 'ROC: ', type: 'line' },
+    { key: 'maRoc', title: 'MAROC: ', type: 'line' }
   ],
   calcTechnicalIndicator: (kLineDataList, calcParams) => {
     const result = []

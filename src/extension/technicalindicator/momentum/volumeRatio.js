@@ -22,10 +22,10 @@
  */
 export default {
   name: 'VR',
-  calcParams: [24, 30],
+  calcParams: [26, 6],
   plots: [
-    { key: 'vr', title: 'VR', type: 'line' },
-    { key: 'maVr', title: 'MAVR', type: 'line' }
+    { key: 'vr', title: 'VR: ', type: 'line' },
+    { key: 'maVr', title: 'MAVR: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     let uvs = 0
@@ -50,7 +50,7 @@ export default {
         if (dvs + halfPvs === 0) {
           vr.vr = 0
         } else {
-          vr.vr = (uvs + halfPvs) / (dvs + halfPvs)
+          vr.vr = (uvs + halfPvs) / (dvs + halfPvs) * 100
         }
         vrSum += vr.vr
         if (i >= calcParams[0] + calcParams[1] - 2) {

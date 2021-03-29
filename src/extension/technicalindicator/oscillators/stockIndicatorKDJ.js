@@ -26,9 +26,9 @@ export default {
   name: 'KDJ',
   calcParams: [9, 3, 3],
   plots: [
-    { key: 'k', title: 'K', type: 'line' },
-    { key: 'd', title: 'D', type: 'line' },
-    { key: 'j', title: 'J', type: 'line' }
+    { key: 'k', title: 'K: ', type: 'line' },
+    { key: 'd', title: 'D: ', type: 'line' },
+    { key: 'j', title: 'J: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     const result = []

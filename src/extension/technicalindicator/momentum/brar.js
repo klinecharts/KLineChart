@@ -25,8 +25,8 @@ export default {
   name: 'BRAR',
   calcParams: [26],
   plots: [
-    { key: 'br', title: 'BR', type: 'line' },
-    { key: 'ar', title: 'AR', type: 'line' }
+    { key: 'br', title: 'BR: ', type: 'line' },
+    { key: 'ar', title: 'AR: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     let hcy = 0
