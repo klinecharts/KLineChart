@@ -122,9 +122,9 @@
   calcParams: [5, 10],
   plots: [
     // 第一条线'ma5'
-    { key: 'ma1', title: 'MA5', type: 'line' },
+    { key: 'ma1', title: 'MA5: ', type: 'line' },
     // 第二条线'ma10'
-    { key: 'ma2', title: 'MA10', type: 'line' }
+    { key: 'ma2', title: 'MA10: ', type: 'line' }
   ]
 }
 ```
@@ -135,13 +135,13 @@
   name: 'MA',
   calcParams: [5, 10],
   plots: [
-    { key: 'ma1', title: 'MA5', type: 'line' },
-    { key: 'ma2', title: 'MA10', type: 'line' }
+    { key: 'ma1', title: 'MA5: ', type: 'line' },
+    { key: 'ma2', title: 'MA10: ', type: 'line' }
   ],
   // 当计算参数改变时，希望提示的和参数一样，即title的值需要改变
   regeneratePlots: (params) => {
     return params.map((p, i) => {
-      return { key: `ma${i + 1}`, title: `MA${p}`, type: 'line' }
+      return { key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }
     })
   },
   // 计算结果

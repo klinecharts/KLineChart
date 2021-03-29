@@ -122,9 +122,9 @@ First determine the calculation parameters (calcParams) and configuration items 
   calcParams: [5, 10],
   plots: [
     // the first line'ma5'
-    { key: 'ma1', title: 'MA5', type: 'line' },
+    { key: 'ma1', title: 'MA5: ', type: 'line' },
     // second line'ma10'
-    { key: 'ma2', title: 'MA10', type: 'line' }
+    { key: 'ma2', title: 'MA10: ', type: 'line' }
   ]
 }
 ```
@@ -135,13 +135,13 @@ Determine other attributes
   name:'MA',
   calcParams: [5, 10],
   plots: [
-    {key:'ma1', title:'MA5', type:'line' },
-    {key:'ma2', title:'MA10', type:'line'}
+    {key:'ma1', title:'MA5: ', type:'line' },
+    {key:'ma2', title:'MA10: ', type:'line'}
   ],
   // When the calculation parameters are changed, I hope that the prompt is the same as the parameters, that is, the value of the title needs to be changed
   regeneratePlots: (params) => {
     return params.map((p, i) => {
-      return { key: `ma${i + 1}`, title: `MA${p}`, type:'line' }
+      return { key: `ma${i + 1}`, title: `MA${p}: `, type:'line' }
     })
   },
   // Calculation results

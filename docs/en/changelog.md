@@ -1,4 +1,14 @@
 # Change Log
+## 7.0.1
+`2021-03-29`
+- 🆕 Add lock for graphic markers.
+- 💄 `getTechnicalIndicatorByPaneId` is added to return calculation results.
+- 💄 The `DIFF` of the technical indicator `MACD` is changed to `DIF`.
+- 💄 Adjust the display of `tooltip`.
+- 🐞 Fix the problem of incorrect display of the technical indicator `RSI` after adjusting the parameters.
+- 🐞 Fix the problem of incorrect calculation of the technical indicator `VR`. The default calculation parameters are changed to [26, 6].
+- 🐞 Fix the display problem of the cross cursor on the mobile.
+
 ## 7.0.0
 `2021-02-25`
 + 🆕 New features
