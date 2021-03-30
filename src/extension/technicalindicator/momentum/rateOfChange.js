@@ -31,9 +31,9 @@ export default {
       const roc = {}
       if (i >= calcParams[0] - 1) {
         const close = kLineData.close
-        const agoClose = kLineDataList[i - (calcParams[0] - 1)].close
+        const agoClose = (kLineDataList[i - calcParams[0]] || kLineDataList[i - (calcParams[0] - 1)]).close
         if (agoClose !== 0) {
-          roc.roc = (close - agoClose) / agoClose
+          roc.roc = (close - agoClose) / agoClose * 100
         } else {
           roc.roc = 0
         }

@@ -16,7 +16,7 @@ import calcHnLn from '../calcHnLn'
 
 /**
  * WR
- * 公式 WR(N) = 100 * [ HIGH(N)-C ] / [ HIGH(N)-LOW(N) ]
+ * 公式 WR(N) = 100 * [ C - HIGH(N) ] / [ HIGH(N)-LOW(N) ]
  */
 export default {
   name: 'WR',
@@ -43,7 +43,7 @@ export default {
           const hn = hln.hn
           const ln = hln.ln
           const hnSubLn = hn - ln
-          wr[plots[index].key] = hnSubLn === 0 ? 0 : (hn - close) / hnSubLn * 100
+          wr[plots[index].key] = hnSubLn === 0 ? 0 : (close - hn) / hnSubLn * 100
         }
       })
       return wr

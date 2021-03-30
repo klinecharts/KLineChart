@@ -38,23 +38,26 @@ export default {
     const result = []
     dataList.forEach((kLineData, i) => {
       const emv = {}
-      if (i > 0) {
-        const high = kLineData.high
-        const low = kLineData.low
-        const halfHl = (high + low) / 2
-        const preHalfHl = (dataList[i - 1].high + dataList[i - 1].low) / 2
-        const hl = high - low
-        const em = (halfHl - preHalfHl) * hl - (kLineData.turnover || 0)
-        emList.push(em)
-        emSum += em
-        if (i >= calcParams[0]) {
-          emv.emv = emSum / calcParams[0]
-          emvSum += emv.emv
-          if (i >= calcParams[0] + calcParams[1] - 1) {
-            emv.maEmv = emvSum / calcParams[1]
-            emvSum -= result[i - (calcParams[1] - 1)].emv
-          }
-          emSum -= emList[i - calcParams[0]]
+      const preKLineData = dataList[i - 1] || kLineData
+      const high = kLineData.high
+      const low = kLineData.low
+      const turnover = kLineData.turnover || 0
+      const halfHl = (high + low) / 2
+      const preHalfHl = (preKLineData.high + preKLineData.low) / 2
+      const hl = high - low
+      let em = 0
+      if (turnover !== 0) {
+        em = (halfHl - preHalfHl) * hl / turnover
+      }
+      emList.push(em)
+      emSum += em
+      if (i >= calcParams[0] - 1) {
+        emv.emv = emSum
+        emSum -= emList[i - (calcParams[0] - 1)]
+        emvSum += emv.emv
+        if (i >= calcParams[0] + calcParams[1] - 2) {
+          emv.maEmv = emvSum / calcParams[1]
+          emvSum -= result[i - (calcParams[1] - 1)].emv
         }
       }
       result.push(emv)

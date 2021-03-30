@@ -14,7 +14,7 @@
 
 /**
  * OBV
- * VA = V × [（C - L）- （H - C）]/（H - C）
+ * OBV = V × [(C - L) - (H - C)] /（H - L）
  */
 export default {
   name: 'OBV',
@@ -30,11 +30,12 @@ export default {
       const obv = {}
       const close = kLineData.close
       const high = kLineData.high
-      const hc = high - close
-      if (hc === 0) {
+      const low = kLineData.low
+      const hl = high - low
+      if (hl === 0) {
         obv.obv = 0
       } else {
-        obv.obv = (close - kLineData.low - hc) / hc * kLineData.volume
+        obv.obv = (2 * close - low - high) / hl * kLineData.volume
       }
       obvSum += obv.obv
       if (i >= calcParams[0] - 1) {
