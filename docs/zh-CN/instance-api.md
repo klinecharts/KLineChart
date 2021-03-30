@@ -206,10 +206,11 @@ chart.overrideTechnicalIndicator({
 创建图形标记，返回一个字符串类型的标识
 
 - `name` 图形标记类型
-- `options` 配置， `{ id, points, styles, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }` 
+- `options` 配置， `{ id, points, styles, lock, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }` 
    - `id` 可缺省，如果指定，则返回该id
    - `points` 点信息，可缺省，如果指定，则会按照点信息绘制一个图形
    - `styles` 样式，可缺省，格式同样式配置中 `graphicMark` 一致
+   - `lock` 是否锁定
    - `onDrawStart` 绘制开始回调事件，可缺省
    - `onDrawing` 绘制过程中回调事件，可缺省
    - `onDrawEnd` 绘制结束回调事件，可缺省
@@ -253,8 +254,9 @@ chart.createGraphicMark(
 设置已绘制的图形标记配置。
 
 - `id` 调用createGraphicMark方法是返回的标识
-- `options` 配置， `{ styles }`
+- `options` 配置， `{ styles, lock }`
    - `styles` 样式，格式同样式配置中 `graphicMark` 一致
+   - `lock` 是否锁定
 
 
 

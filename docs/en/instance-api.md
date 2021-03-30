@@ -174,17 +174,18 @@ Add a custom technical indicator.
 ### createGraphicMark(name, options)
 Create a graphic mark and return a string type identifier
 - `name` Graphic mark type
-- `options` configuration, `{ id, points, styles, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }`
-- `id` can be defaulted, if specified, the id will be returned
-- `points` point information, can be defaulted, if specified, a graph will be drawn according to the point information
-- `styles` style, can be defaulted, the format is the same as `graphicMark` in the configuration
-- `onDrawStart` draw start callback event, can be default
-- `onDrawing` callback event during drawing, can be default
-- `onDrawEnd` draw end callback event, can be default
-- `onClick` click callback event, default
-- `onRightClick` right-click callback event, it can be defaulted, it needs to return a boolean type value, if it returns true, the built-in right-click delete will be invalid
-- `onPressedMove` press and drag callback event
-- `onRemove` delete callback event
+- `options` configuration, `{ id, points, styles, lock, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }`
+  - `id` can be defaulted, if specified, the id will be returned
+  - `points` point information, can be defaulted, if specified, a graph will be drawn according to the point information
+  - `styles` style, can be defaulted, the format is the same as `graphicMark` in the configuration
+  - `lock` is lock
+  - `onDrawStart` draw start callback event, can be default
+  - `onDrawing` callback event during drawing, can be default
+  - `onDrawEnd` draw end callback event, can be default
+  - `onClick` click callback event, default
+  - `onRightClick` right-click callback event, it can be defaulted, it needs to return a boolean type value, if it returns true, the built-in right-click delete will be invalid
+  - `onPressedMove` press and drag callback event
+  - `onRemove` delete callback event
 
 Example:
 ```javascript
@@ -201,6 +202,7 @@ chart.createGraphicMark(
         size: 2
       }
     },
+    lock: true,
     onDrawStart: function ({ id }) {console.log(id) },
     onDrawing: function ({ id, step, points }) {console.log(id, step, points) },
     onDrawEnd: function ({ id }) {console.log(id) },
@@ -220,8 +222,9 @@ chart.createGraphicMark(
 ### setGraphicMarkOptions(id, options)
 Set the drawn graphic mark configuration.
 - `id` calls the createGraphicMark method to return the identity
-- `options` configuration, `{ styles }`
-- `styles` style, the format is the same in the configuration of `graphicMark`
+- `options` configuration, `{ styles, lock }`
+  - `styles` style, the format is the same in the configuration of `graphicMark`
+  - `lock` is lock
 
 
 ### addCustomGraphicMark(graphicMark)
