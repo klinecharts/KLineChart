@@ -35,36 +35,34 @@ export default {
     let ol = 0
     return dataList.map((kLineData, i) => {
       const brar = {}
-      if (i > 0) {
-        const high = kLineData.high
-        const low = kLineData.low
-        const open = kLineData.open
-        const preClose = dataList[i - 1].close
-        ho += (high - open)
-        ol += (open - low)
-        hcy += (high - preClose)
-        cyl += (preClose - low)
-        if (i >= calcParams[0]) {
-          if (ol !== 0) {
-            brar.ar = ho / ol * 100
-          } else {
-            brar.ar = 0
-          }
-          if (cyl !== 0) {
-            brar.br = hcy / cyl * 100
-          } else {
-            brar.br = 0
-          }
-
-          const agoHigh = dataList[i - (calcParams[0] - 1)].high
-          const agoLow = dataList[i - (calcParams[0] - 1)].low
-          const agoOpen = dataList[i - (calcParams[0] - 1)].open
-          const agoPreClose = dataList[i - calcParams[0]].close
-          hcy -= (agoHigh - agoPreClose)
-          cyl -= (agoPreClose - agoLow)
-          ho -= (agoHigh - agoOpen)
-          ol -= (agoOpen - agoLow)
+      const high = kLineData.high
+      const low = kLineData.low
+      const open = kLineData.open
+      const preClose = (dataList[i - 1] || kLineData).close
+      ho += (high - open)
+      ol += (open - low)
+      hcy += (high - preClose)
+      cyl += (preClose - low)
+      if (i >= calcParams[0] - 1) {
+        if (ol !== 0) {
+          brar.ar = ho / ol * 100
+        } else {
+          brar.ar = 0
         }
+        if (cyl !== 0) {
+          brar.br = hcy / cyl * 100
+        } else {
+          brar.br = 0
+        }
+        const agoKLineData = dataList[i - (calcParams[0] - 1)]
+        const agoHigh = agoKLineData.high
+        const agoLow = agoKLineData.low
+        const agoOpen = agoKLineData.open
+        const agoPreClose = (dataList[i - calcParams[0]] || dataList[i - (calcParams[0] - 1)]).close
+        hcy -= (agoHigh - agoPreClose)
+        cyl -= (agoPreClose - agoLow)
+        ho -= (agoHigh - agoOpen)
+        ol -= (agoOpen - agoLow)
       }
       return brar
     })

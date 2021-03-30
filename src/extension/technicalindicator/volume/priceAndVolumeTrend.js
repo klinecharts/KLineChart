@@ -28,17 +28,15 @@ export default {
     let sum = 0
     return kLineDataList.map((kLineData, i) => {
       const pvt = {}
-      if (i > 0) {
-        const close = kLineData.close
-        const volume = kLineData.volume
-        const preClose = kLineDataList[i - 1].close
-        let x = 0
-        if (preClose !== 0) {
-          x = (close - preClose) / preClose * volume
-        }
-        sum += x
-        pvt.pvt = sum
+      const close = kLineData.close
+      const volume = kLineData.volume
+      const preClose = (kLineDataList[i - 1] || kLineData).close
+      let x = 0
+      if (preClose !== 0) {
+        x = (close - preClose) / preClose * volume
       }
+      sum += x
+      pvt.pvt = sum
       return pvt
     })
   }

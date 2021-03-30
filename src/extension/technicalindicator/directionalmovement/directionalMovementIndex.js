@@ -58,58 +58,57 @@ export default {
     const result = []
     dataList.forEach((kLineData, i) => {
       const dmi = {}
-      if (i > 0) {
-        const preClose = dataList[i - 1].close
-        const high = kLineData.high
-        const low = kLineData.low
-        const hl = high - low
-        const hcy = Math.abs(high - preClose)
-        const lcy = Math.abs(low - preClose)
-        const hhy = high - dataList[i - 1].high
-        const lyl = dataList[i - 1].low - low
-        const tr = Math.max(Math.max(hl, hcy), lcy)
-        trSum += tr
-        trList.push(tr)
+      const preKLineData = dataList[i - 1] || kLineData
+      const preClose = preKLineData.close
+      const high = kLineData.high
+      const low = kLineData.low
+      const hl = high - low
+      const hcy = Math.abs(high - preClose)
+      const lcy = Math.abs(low - preClose)
+      const hhy = high - preKLineData.high
+      const lyl = preKLineData.low - low
+      const tr = Math.max(Math.max(hl, hcy), lcy)
+      trSum += tr
+      trList.push(tr)
 
-        const h = (hhy > 0.0 && hhy > lyl) ? hhy : 0.0
-        dmpSum += h
-        dmpList.push(h)
+      const h = (hhy > 0 && hhy > lyl) ? hhy : 0
+      dmpSum += h
+      dmpList.push(h)
 
-        const l = (lyl > 0 && lyl > hhy) ? lyl : 0.0
-        dmmSum += l
-        dmmList.push(l)
-        if (i >= calcParams[0]) {
-          let pdi
-          let mdi
-          if (trSum === 0) {
-            pdi = 0
-            mdi = 0
-          } else {
-            pdi = dmpSum * 100 / trSum
-            mdi = dmmSum * 100 / trSum
-          }
-          let dx
-          if (mdi + pdi === 0) {
-            dx = 0
-          } else {
-            dx = Math.abs((mdi - pdi)) / (mdi + pdi) * 100
-          }
-          dxSum += dx
-          dxList.push(dx)
-          dmi.pdi = pdi
-          dmi.mdi = mdi
-          if (i >= calcParams[0] + calcParams[1] - 1) {
-            const adx = dxSum / calcParams[1]
-            dmi.adx = adx
-            if (i >= calcParams[0] + calcParams[1] * 2 - 2) {
-              dmi.adxr = (adx + result[i - (calcParams[1] - 1)].adx) / 2
-            }
-            dxSum -= dxList[i - (calcParams[0] + calcParams[1] - 1)]
-          }
-          trSum -= trList[i - calcParams[0]]
-          dmpSum -= dmpList[i - calcParams[0]]
-          dmmSum -= dmmList[i - calcParams[0]]
+      const l = (lyl > 0 && lyl > hhy) ? lyl : 0
+      dmmSum += l
+      dmmList.push(l)
+      if (i >= calcParams[0] - 1) {
+        let pdi
+        let mdi
+        if (trSum === 0) {
+          pdi = 0
+          mdi = 0
+        } else {
+          pdi = dmpSum * 100 / trSum
+          mdi = dmmSum * 100 / trSum
         }
+        let dx
+        if (mdi + pdi === 0) {
+          dx = 0
+        } else {
+          dx = Math.abs((mdi - pdi)) / (mdi + pdi) * 100
+        }
+        dxSum += dx
+        dxList.push(dx)
+        dmi.pdi = pdi
+        dmi.mdi = mdi
+        if (i >= calcParams[0] + calcParams[1] - 2) {
+          const adx = dxSum / calcParams[1]
+          dmi.adx = adx
+          if (i >= calcParams[0] + calcParams[1] * 2 - 3) {
+            dmi.adxr = (adx + result[i - (calcParams[1] - 1)].adx) / 2
+          }
+          dxSum -= dxList[i - (calcParams[0] + calcParams[1] - 2)]
+        }
+        trSum -= trList[i - (calcParams[0] - 1)]
+        dmpSum -= dmpList[i - (calcParams[0] - 1)]
+        dmmSum -= dmmList[i - (calcParams[0] - 1)]
       }
       result.push(dmi)
     })

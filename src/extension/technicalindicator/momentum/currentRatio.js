@@ -55,61 +55,59 @@ export default {
     const result = []
     dataList.forEach((kLineData, i) => {
       const cr = {}
-      if (i > 0) {
-        const preData = dataList[i - 1]
-        const preMid = (preData.high + preData.close + preData.low + preData.open) / 4
+      const preData = dataList[i - 1] || kLineData
+      const preMid = (preData.high + preData.close + preData.low + preData.open) / 4
 
-        const highSubPreMid = Math.max(0, kLineData.high - preMid)
-        highSubPreMidSum += highSubPreMid
+      const highSubPreMid = Math.max(0, kLineData.high - preMid)
+      highSubPreMidSum += highSubPreMid
 
-        const preMidSubLow = Math.max(0, preMid - kLineData.low)
-        preMidSubLowSum += preMidSubLow
+      const preMidSubLow = Math.max(0, preMid - kLineData.low)
+      preMidSubLowSum += preMidSubLow
 
-        if (i >= calcParams[0]) {
-          if (preMidSubLow !== 0) {
-            cr.cr = highSubPreMid / preMidSubLow * 100
-          } else {
-            cr.cr = 0
+      if (i >= calcParams[0] - 1) {
+        if (preMidSubLow !== 0) {
+          cr.cr = highSubPreMid / preMidSubLow * 100
+        } else {
+          cr.cr = 0
+        }
+        const agoData = dataList[i - (calcParams[0] - 1)]
+        const agoPreData = dataList[i - calcParams[0]] || agoData
+        const agoPreMid = (agoPreData.high + agoPreData.close + agoPreData.low + agoPreData.open) / 4
+        const agoHighSubPreMid = Math.max(0, agoData.high - agoPreMid)
+        highSubPreMidSum -= agoHighSubPreMid
+        const agoPreMidSubLow = Math.max(0, agoPreMid - agoData.low)
+        preMidSubLowSum -= agoPreMidSubLow
+        ma1Sum += cr.cr
+        ma2Sum += cr.cr
+        ma3Sum += cr.cr
+        ma4Sum += cr.cr
+        if (i >= calcParams[0] + calcParams[1] - 2) {
+          ma1List.push(ma1Sum / calcParams[1])
+          if (i >= calcParams[0] + calcParams[1] + ma1ForwardPeriod - 3) {
+            cr.ma1 = ma1List[ma1List.length - 1 - ma1ForwardPeriod]
           }
-          const agoPreData = dataList[i - calcParams[0]]
-          const agoPreMid = (agoPreData.high + agoPreData.close + agoPreData.low + agoPreData.open) / 4
-          const agoData = dataList[i - (calcParams[0] - 1)]
-          const agoHighSubPreMid = Math.max(0, agoData.high - agoPreMid)
-          highSubPreMidSum -= agoHighSubPreMid
-          const agoPreMidSubLow = Math.max(0, agoPreMid - agoData.low)
-          preMidSubLowSum -= agoPreMidSubLow
-          ma1Sum += cr.cr
-          ma2Sum += cr.cr
-          ma3Sum += cr.cr
-          ma4Sum += cr.cr
-          if (i >= calcParams[0] + calcParams[1] - 1) {
-            ma1List.push(ma1Sum / calcParams[1])
-            if (i >= calcParams[0] + calcParams[1] + ma1ForwardPeriod - 2) {
-              cr.ma1 = ma1List[ma1List.length - 1 - ma1ForwardPeriod]
-            }
-            ma1Sum -= result[i - (calcParams[1] - 1)].cr
+          ma1Sum -= result[i - (calcParams[1] - 1)].cr
+        }
+        if (i >= calcParams[0] + calcParams[2] - 2) {
+          ma2List.push(ma2Sum / calcParams[2])
+          if (i >= calcParams[0] + calcParams[2] + ma2ForwardPeriod - 3) {
+            cr.ma2 = ma2List[ma2List.length - 1 - ma2ForwardPeriod]
           }
-          if (i >= calcParams[0] + calcParams[2] - 1) {
-            ma2List.push(ma2Sum / calcParams[2])
-            if (i >= calcParams[0] + calcParams[2] + ma2ForwardPeriod - 2) {
-              cr.ma2 = ma2List[ma2List.length - 1 - ma2ForwardPeriod]
-            }
-            ma2Sum -= result[i - (calcParams[2] - 1)].cr
+          ma2Sum -= result[i - (calcParams[2] - 1)].cr
+        }
+        if (i >= calcParams[0] + calcParams[3] - 2) {
+          ma3List.push(ma3Sum / calcParams[3])
+          if (i >= calcParams[0] + calcParams[3] + ma3ForwardPeriod - 3) {
+            cr.ma3 = ma3List[ma3List.length - 1 - ma3ForwardPeriod]
           }
-          if (i >= calcParams[0] + calcParams[3] - 1) {
-            ma3List.push(ma3Sum / calcParams[3])
-            if (i >= calcParams[0] + calcParams[3] + ma3ForwardPeriod - 2) {
-              cr.ma3 = ma3List[ma3List.length - 1 - ma3ForwardPeriod]
-            }
-            ma3Sum -= result[i - (calcParams[3] - 1)].cr
+          ma3Sum -= result[i - (calcParams[3] - 1)].cr
+        }
+        if (i >= calcParams[0] + calcParams[4] - 2) {
+          ma4List.push(ma4Sum / calcParams[4])
+          if (i >= calcParams[0] + calcParams[4] + ma4ForwardPeriod - 3) {
+            cr.ma4 = ma4List[ma4List.length - 1 - ma4ForwardPeriod]
           }
-          if (i >= calcParams[0] + calcParams[4] - 1) {
-            ma4List.push(ma4Sum / calcParams[4])
-            if (i >= calcParams[0] + calcParams[4] + ma4ForwardPeriod - 2) {
-              cr.ma4 = ma4List[ma4List.length - 1 - ma4ForwardPeriod]
-            }
-            ma4Sum -= result[i - (calcParams[4] - 1)].cr
-          }
+          ma4Sum -= result[i - (calcParams[4] - 1)].cr
         }
       }
       result.push(cr)
