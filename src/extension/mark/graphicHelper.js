@@ -270,3 +270,15 @@ export function getParallelLines (points, xyMax, extendParallelLineCount = 0) {
   }
   return lines
 }
+
+/**
+ * 檢查目標點是否越過線
+ * @param point1
+ * @param point2
+ * @param targetPoint
+ * @return {boolean}
+ */
+export function isCrossed(point1,point2,targetPoint)
+{
+  return (getLinearYFromPoints(point1,point2,targetPoint)>targetPoint.y)
+}
