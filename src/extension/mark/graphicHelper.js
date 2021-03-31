@@ -92,7 +92,7 @@ export function checkPointOnStraightLine (point1, point2, targetPoint) {
   const kb = getLinearSlopeIntercept(point1, point2)
   const y = getLinearYFromSlopeIntercept(kb, targetPoint)
   const yDif = Math.abs(y - targetPoint.y)
-  return yDif * yDif / (kb.k * kb.k + 1) < DEVIATION * DEVIATION
+  return yDif * yDif / (kb.k * kb.k + 10) < DEVIATION * DEVIATION
 }
 
 /**
