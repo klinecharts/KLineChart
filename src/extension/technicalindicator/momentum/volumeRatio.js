@@ -36,11 +36,11 @@ export default {
     dataList.forEach((kLineData, i) => {
       const vr = {}
       const close = kLineData.close
-      const open = kLineData.open
+      const preClose = (dataList[i - 1] || kLineData).close
       const volume = kLineData.volume
-      if (close > open) {
+      if (close > preClose) {
         uvs += volume
-      } else if (close < open) {
+      } else if (close < preClose) {
         dvs += volume
       } else {
         pvs += volume
@@ -59,12 +59,12 @@ export default {
         }
 
         const agoData = dataList[i - (calcParams[0] - 1)]
-        const agoOpen = agoData.open
+        const agoPreData = dataList[i - calcParams[0]] || agoData
         const agoClose = agoData.close
         const agoVolume = agoData.volume
-        if (agoClose > agoOpen) {
+        if (agoClose > agoPreData.close) {
           uvs -= agoVolume
-        } else if (agoClose < agoOpen) {
+        } else if (agoClose < agoPreData.close) {
           dvs -= agoVolume
         } else {
           pvs -= agoVolume

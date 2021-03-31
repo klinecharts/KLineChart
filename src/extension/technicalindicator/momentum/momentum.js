@@ -18,7 +18,7 @@
  */
 export default {
   name: 'MTM',
-  calcParams: [6, 10],
+  calcParams: [12, 6],
   plots: [
     { key: 'mtm', title: 'MTM: ', type: 'line' },
     { key: 'maMtm', title: 'MAMTM: ', type: 'line' }
@@ -28,12 +28,12 @@ export default {
     const result = []
     dataList.forEach((kLineData, i) => {
       const mtm = {}
-      if (i >= calcParams[0] - 1) {
+      if (i >= calcParams[0]) {
         const close = kLineData.close
-        const agoClose = dataList[i - (calcParams[0] - 1)].close
+        const agoClose = dataList[i - calcParams[0]].close
         mtm.mtm = close - agoClose
         mtmSum += mtm.mtm
-        if (i >= calcParams[0] + calcParams[1] - 2) {
+        if (i >= calcParams[0] + calcParams[1] - 1) {
           mtm.maMtm = mtmSum / calcParams[1]
           mtmSum -= result[i - (calcParams[1] - 1)].mtm
         }

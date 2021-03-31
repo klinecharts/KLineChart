@@ -21,13 +21,14 @@ export default {
   calcParams: [6, 12, 24],
   shouldCheckParamCount: false,
   plots: [
-    { key: 'rsi6', title: 'RSI6: ', type: 'line' },
-    { key: 'rsi12', title: 'RSI12: ', type: 'line' },
-    { key: 'rsi24', title: 'RSI24: ', type: 'line' }
+    { key: 'rsi1', title: 'RSI1: ', type: 'line' },
+    { key: 'rsi2', title: 'RSI2: ', type: 'line' },
+    { key: 'rsi3', title: 'RSI3: ', type: 'line' }
   ],
   regeneratePlots: (params) => {
-    return params.map(p => {
-      return { key: `rsi${p}`, title: `RSI${p}: `, type: 'line' }
+    return params.map((_, index) => {
+      const num = index + 1
+      return { key: `rsi${num}`, title: `RSI${num}: `, type: 'line' }
     })
   },
   calcTechnicalIndicator: (dataList, calcParams, plots) => {
@@ -35,25 +36,23 @@ export default {
     const sumCloseBs = []
     return dataList.map((kLineData, i) => {
       const rsi = {}
-      const open = kLineData.open
+      const preClose = (dataList[i - 1] || kLineData).close
       calcParams.forEach((param, j) => {
-        const tmp = (kLineData.close - open) / open
-        sumCloseAs[j] = sumCloseAs[j] || 0
-        sumCloseBs[j] = sumCloseBs[j] || 0
+        const tmp = (kLineData.close - preClose) / preClose
         if (tmp > 0) {
-          sumCloseAs[j] = sumCloseAs[j] + tmp
+          sumCloseAs[j] = (sumCloseAs[j] || 0) + tmp
         } else {
-          sumCloseBs[j] = sumCloseBs[j] + Math.abs(tmp)
+          sumCloseBs[j] = (sumCloseBs[j] || 0) + Math.abs(tmp)
         }
 
         if (i >= param - 1) {
-          const a = sumCloseAs[j] / param
-          const b = (sumCloseAs[j] + sumCloseBs[j]) / param
+          const a = sumCloseAs[j]
+          const b = sumCloseAs[j] + sumCloseBs[j]
           rsi[plots[j].key] = (b === 0 ? 0 : a / b * 100)
 
           const agoData = dataList[i - (param - 1)]
-          const agoOpen = agoData.open
-          const agoTmp = (agoData.close - agoOpen) / agoOpen
+          const agoPreData = dataList[i - param] || agoData
+          const agoTmp = (agoData.close - agoPreData.close) / agoPreData.close
           if (agoTmp > 0) {
             sumCloseAs[j] -= agoTmp
           } else {
