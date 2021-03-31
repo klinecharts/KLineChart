@@ -30,7 +30,8 @@ export default {
     const result = []
     dataList.forEach((kLineData, i) => {
       const psy = {}
-      const upFlag = kLineData.close - kLineData.open > 0 ? 1 : 0
+      const preClose = (dataList[i - 1] || kLineData).close
+      const upFlag = kLineData.close - preClose > 0 ? 1 : 0
       upList.push(upFlag)
       upCount += upFlag
       if (i >= calcParams[0] - 1) {

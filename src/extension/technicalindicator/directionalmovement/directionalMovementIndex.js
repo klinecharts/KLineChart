@@ -64,7 +64,7 @@ export default {
       const low = kLineData.low
       const hl = high - low
       const hcy = Math.abs(high - preClose)
-      const lcy = Math.abs(low - preClose)
+      const lcy = Math.abs(preClose - low)
       const hhy = high - preKLineData.high
       const lyl = preKLineData.low - low
       const tr = Math.max(Math.max(hl, hcy), lcy)

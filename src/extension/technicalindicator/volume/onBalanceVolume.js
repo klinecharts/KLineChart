@@ -14,7 +14,7 @@
 
 /**
  * OBV
- * OBV = V × [(C - L) - (H - C)] /（H - L）
+ * OBV = REF(OBV) + sign * V
  */
 export default {
   name: 'OBV',
@@ -25,19 +25,17 @@ export default {
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     let obvSum = 0
+    let oldObv = 0
     const result = []
     dataList.forEach((kLineData, i) => {
-      const obv = {}
-      const close = kLineData.close
-      const high = kLineData.high
-      const low = kLineData.low
-      const hl = high - low
-      if (hl === 0) {
-        obv.obv = 0
-      } else {
-        obv.obv = (2 * close - low - high) / hl * kLineData.volume
+      const preKLineData = dataList[i - 1] || kLineData
+      if (kLineData.close < preKLineData.close) {
+        oldObv -= kLineData.volume
+      } else if (kLineData.close > preKLineData.close) {
+        oldObv += kLineData.volume
       }
-      obvSum += obv.obv
+      const obv = { obv: oldObv }
+      obvSum += oldObv
       if (i >= calcParams[0] - 1) {
         obv.maObv = obvSum / calcParams[0]
         obvSum -= result[i - (calcParams[0] - 1)].obv
