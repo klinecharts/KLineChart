@@ -16,43 +16,36 @@
  * CCI
  * CCI（N日）=（TP－MA）÷MD÷0.015
  * 其中，TP=（最高价+最低价+收盘价）÷3
- * MA=近N日收盘价的累计之和÷N
- * MD=近N日（MA－收盘价）的累计之和÷N
+ * MA=近N日TP价的累计之和÷N
+ * MD=近N日TP - 当前MA绝对值的累计之和÷N
  *
  */
 export default {
   name: 'CCI',
-  calcParams: [13],
+  calcParams: [2],
   plots: [
     { key: 'cci', title: 'CCI: ', type: 'line' }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     const p = calcParams[0] - 1
-    let closeSum = 0
-    let md
-    let maSubCloseSum = 0
-    const maList = []
+    let tpSum = 0
+    const tpList = []
     return dataList.map((kLineData, i) => {
       const cci = {}
-      const close = kLineData.close
-      closeSum += close
-      let ma
+      const tp = (kLineData.high + kLineData.low + kLineData.close) / 3
+      tpSum += tp
+      tpList.push(tp)
       if (i >= p) {
-        ma = closeSum / calcParams[0]
-      } else {
-        ma = closeSum / (i + 1)
-      }
-      maList.push(ma)
-      maSubCloseSum += Math.abs(ma - close)
-      if (i >= p) {
-        const tp = (kLineData.high + kLineData.low + close) / 3
-        md = maSubCloseSum / calcParams[0]
-        cci.cci = md !== 0 ? (tp - ma) / md / 0.015 : 0.0
-
-        const agoClose = dataList[i - p].close
-        closeSum -= agoClose
-        const agoMa = maList[i - p]
-        maSubCloseSum -= Math.abs(agoMa - agoClose)
+        const maTp = tpSum / calcParams[0]
+        const sliceTpList = tpList.slice(i - p, i + 1)
+        let sum = 0
+        sliceTpList.forEach(tp => {
+          sum += Math.abs(tp - maTp)
+        })
+        const md = sum / calcParams[0]
+        cci.cci = md !== 0 ? (tp - maTp) / md / 0.015 : 0
+        const agoTp = (dataList[i - p].high + dataList[i - p].low + dataList[i - p].close) / 3
+        tpSum -= agoTp
       }
       return cci
     })

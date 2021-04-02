@@ -33,19 +33,21 @@ export default {
     })
   },
   calcTechnicalIndicator: (dataList, calcParams, plots) => {
-    const oldEmas = []
+    let closeSum = 0
+    const emaValues = []
     return dataList.map((kLineData, i) => {
       const ema = {}
       const close = kLineData.close
+      closeSum += close
       calcParams.forEach((param, j) => {
-        let emaValue
-        if (i === 0) {
-          emaValue = close
-        } else {
-          emaValue = (2 * close + (param - 1) * oldEmas[j]) / (param + 1)
+        if (i >= param - 1) {
+          if (i > param - 1) {
+            emaValues[j] = (2 * close + (param - 1) * emaValues[j]) / (param + 1)
+          } else {
+            emaValues[j] = closeSum / param
+          }
+          ema[plots[j].key] = emaValues[j]
         }
-        ema[plots[j].key] = emaValue
-        oldEmas[j] = emaValue
       })
       return ema
     })

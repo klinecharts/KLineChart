@@ -48,13 +48,13 @@ export default {
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
     let trSum = 0
-    const trList = []
-    let dmpSum = 0
-    const dmpList = []
-    let dmmSum = 0
-    const dmmList = []
+    let hSum = 0
+    let lSum = 0
+    let mtr = 0
+    let dmp = 0
+    let dmm = 0
     let dxSum = 0
-    const dxList = []
+    let adx = 0
     const result = []
     dataList.forEach((kLineData, i) => {
       const dmi = {}
@@ -68,47 +68,45 @@ export default {
       const hhy = high - preKLineData.high
       const lyl = preKLineData.low - low
       const tr = Math.max(Math.max(hl, hcy), lcy)
-      trSum += tr
-      trList.push(tr)
-
       const h = (hhy > 0 && hhy > lyl) ? hhy : 0
-      dmpSum += h
-      dmpList.push(h)
-
       const l = (lyl > 0 && lyl > hhy) ? lyl : 0
-      dmmSum += l
-      dmmList.push(l)
+      trSum += tr
+      hSum += h
+      lSum += l
       if (i >= calcParams[0] - 1) {
-        let pdi
-        let mdi
-        if (trSum === 0) {
-          pdi = 0
-          mdi = 0
+        if (i > calcParams[0] - 1) {
+          mtr = mtr - mtr / calcParams[0] + tr
+          dmp = dmp - dmp / calcParams[0] + h
+          dmm = dmm - dmm / calcParams[0] + l
         } else {
-          pdi = dmpSum * 100 / trSum
-          mdi = dmmSum * 100 / trSum
+          mtr = trSum
+          dmp = hSum
+          dmm = lSum
         }
-        let dx
-        if (mdi + pdi === 0) {
-          dx = 0
-        } else {
+        let pdi = 0
+        let mdi = 0
+        if (mtr !== 0) {
+          pdi = dmp * 100 / mtr
+          mdi = dmm * 100 / mtr
+        }
+        dmi.pdi = pdi
+        dmi.mdi = mdi
+        let dx = 0
+        if (mdi + pdi !== 0) {
           dx = Math.abs((mdi - pdi)) / (mdi + pdi) * 100
         }
         dxSum += dx
-        dxList.push(dx)
-        dmi.pdi = pdi
-        dmi.mdi = mdi
-        if (i >= calcParams[0] + calcParams[1] - 2) {
-          const adx = dxSum / calcParams[1]
-          dmi.adx = adx
-          if (i >= calcParams[0] + calcParams[1] * 2 - 3) {
-            dmi.adxr = (adx + result[i - (calcParams[1] - 1)].adx) / 2
+        if (i >= calcParams[0] * 2 - 2) {
+          if (i > calcParams[0] * 2 - 2) {
+            adx = (adx * (calcParams[0] - 1) + dx) / calcParams[0]
+          } else {
+            adx = dxSum / calcParams[0]
           }
-          dxSum -= dxList[i - (calcParams[0] + calcParams[1] - 2)]
+          dmi.adx = adx
+          if (i >= calcParams[0] * 2 + calcParams[1] - 3) {
+            dmi.adxr = (result[i - (calcParams[1] - 1)].adx + adx) / 2
+          }
         }
-        trSum -= trList[i - (calcParams[0] - 1)]
-        dmpSum -= dmpList[i - (calcParams[0] - 1)]
-        dmmSum -= dmmList[i - (calcParams[0] - 1)]
       }
       result.push(dmi)
     })

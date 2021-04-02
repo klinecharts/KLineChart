@@ -14,7 +14,7 @@
 
 /**
  * RSI
- * N日RSI = N日内收盘涨幅的平均值/(N日内收盘涨幅均值+N日内收盘跌幅均值) ×100%
+ * RSI = SUM(MAX(CLOSE - REF(CLOSE,1),0),N) / SUM(ABS(CLOSE - REF(CLOSE,1)),N) × 100
  */
 export default {
   name: 'RSI',
@@ -38,7 +38,7 @@ export default {
       const rsi = {}
       const preClose = (dataList[i - 1] || kLineData).close
       calcParams.forEach((param, j) => {
-        const tmp = (kLineData.close - preClose) / preClose
+        const tmp = kLineData.close - preClose
         if (tmp > 0) {
           sumCloseAs[j] = (sumCloseAs[j] || 0) + tmp
         } else {
@@ -46,13 +46,11 @@ export default {
         }
 
         if (i >= param - 1) {
-          const a = sumCloseAs[j]
-          const b = sumCloseAs[j] + sumCloseBs[j]
-          rsi[plots[j].key] = (b === 0 ? 0 : a / b * 100)
+          rsi[plots[j].key] = (sumCloseBs[j] === 0 ? 0 : sumCloseAs[j] / sumCloseBs[j] * 100)
 
           const agoData = dataList[i - (param - 1)]
           const agoPreData = dataList[i - param] || agoData
-          const agoTmp = (agoData.close - agoPreData.close) / agoPreData.close
+          const agoTmp = agoData.close - agoPreData.close
           if (agoTmp > 0) {
             sumCloseAs[j] -= agoTmp
           } else {

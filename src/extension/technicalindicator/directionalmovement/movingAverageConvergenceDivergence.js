@@ -51,30 +51,46 @@ export default {
     }
   ],
   calcTechnicalIndicator: (dataList, calcParams) => {
+    let closeSum = 0
     let emaShort
     let emaLong
-    let oldEmaShort = 0
-    let oldEmaLong = 0
+    let dif = 0
+    let difSum = 0
     let dea = 0
-    let oldDea = 0
-    let macd = 0
+    const maxPeriod = Math.max(calcParams[0], calcParams[1])
     return dataList.map((kLineData, i) => {
+      const macd = {}
       const close = kLineData.close
-      if (i === 0) {
-        emaShort = close
-        emaLong = close
-      } else {
-        emaShort = (2 * close + (calcParams[0] - 1) * oldEmaShort) / (calcParams[0] + 1)
-        emaLong = (2 * close + (calcParams[1] - 1) * oldEmaLong) / (calcParams[1] + 1)
+      closeSum += close
+      if (i >= calcParams[0] - 1) {
+        if (i > calcParams[0] - 1) {
+          emaShort = (2 * close + (calcParams[0] - 1) * emaShort) / (calcParams[0] + 1)
+        } else {
+          emaShort = closeSum / calcParams[0]
+        }
       }
-
-      const dif = emaShort - emaLong
-      dea = (dif * 2 + oldDea * (calcParams[2] - 1)) / (calcParams[2] + 1)
-      macd = (dif - dea) * 2
-      oldEmaShort = emaShort
-      oldEmaLong = emaLong
-      oldDea = dea
-      return { dif, dea, macd }
+      if (i >= calcParams[1] - 1) {
+        if (i > calcParams[1] - 1) {
+          emaLong = (2 * close + (calcParams[1] - 1) * emaLong) / (calcParams[1] + 1)
+        } else {
+          emaLong = closeSum / calcParams[1]
+        }
+      }
+      if (i >= maxPeriod - 1) {
+        dif = emaShort - emaLong
+        macd.dif = dif
+        difSum += dif
+        if (i >= maxPeriod + calcParams[2] - 2) {
+          if (i > maxPeriod + calcParams[2] - 2) {
+            dea = (dif * 2 + dea * (calcParams[2] - 1)) / (calcParams[2] + 1)
+          } else {
+            dea = difSum / calcParams[2]
+          }
+          macd.macd = (dif - dea) * 2
+          macd.dea = dea
+        }
+      }
+      return macd
     })
   }
 }

@@ -26,16 +26,20 @@ export default {
   shouldCheckParamCount: true,
   shouldOhlc: true,
   calcTechnicalIndicator: (kLineDataList, calcParams) => {
-    let oldSma = 0
+    let closeSum = 0
+    let smaValue = 0
     return kLineDataList.map((kLineData, i) => {
       const sma = {}
       const close = kLineData.close
-      if (i === 0) {
-        sma.sma = close
-      } else {
-        sma.sma = (close * calcParams[1] + oldSma * (calcParams[0] - calcParams[1] + 1)) / (calcParams[0] + 1)
+      closeSum += close
+      if (i >= calcParams[0] - 1) {
+        if (i > calcParams[0] - 1) {
+          smaValue = (close * calcParams[1] + smaValue * (calcParams[0] - calcParams[1] + 1)) / (calcParams[0] + 1)
+        } else {
+          smaValue = closeSum / calcParams[0]
+        }
+        sma.sma = smaValue
       }
-      oldSma = sma.sma
       return sma
     })
   }
