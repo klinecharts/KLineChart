@@ -46,7 +46,7 @@ export default {
         }
 
         if (i >= param - 1) {
-          rsi[plots[j].key] = (sumCloseBs[j] === 0 ? 0 : sumCloseAs[j] / sumCloseBs[j] * 100)
+          rsi[plots[j].key] = (sumCloseAs[j] === 0 ? 0 : sumCloseAs[j] / (sumCloseAs[j] + sumCloseBs[j]) * 100)
 
           const agoData = dataList[i - (param - 1)]
           const agoPreData = dataList[i - param] || agoData
