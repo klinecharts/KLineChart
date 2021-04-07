@@ -1,4 +1,9 @@
 # Change Log
+## 7.0.2
+`2021-04-07`
+- 🛠 Rewrite technical indicator calculation `EMV`, `ROC`, `WR`, `CR`, `PVT`, `DMI`, `MTM`, `PSY`, `VR`, `RSI`, `OBV`, `EMA`, `MACD`, `SMA`, `TRIX`, `CCI`。
+
+
 ## 7.0.1
 `2021-03-29`
 - 🆕 Add lock for graphic markers.
