@@ -37,17 +37,16 @@ export default {
     return dataList.map((kLineData, i) => {
       const rsi = {}
       const preClose = (dataList[i - 1] || kLineData).close
+      const tmp = kLineData.close - preClose
       calcParams.forEach((param, j) => {
-        const tmp = kLineData.close - preClose
         if (tmp > 0) {
           sumCloseAs[j] = (sumCloseAs[j] || 0) + tmp
         } else {
           sumCloseBs[j] = (sumCloseBs[j] || 0) + Math.abs(tmp)
         }
-
         if (i >= param - 1) {
-          if (sumCloseAs[j] + sumCloseBs[j] !== 0) {
-            rsi[plots[j].key] = (sumCloseAs[j] / (sumCloseAs[j] + sumCloseBs[j]) * 100)
+          if (sumCloseBs[j] !== 0) {
+            rsi[plots[j].key] = 100 - (100.0 / (1 + sumCloseAs[j] / sumCloseBs[j]))
           } else {
             rsi[plots[j].key] = 0
           }
