@@ -550,6 +550,7 @@ export default class ChartPane {
       onDrawStart, onDrawing,
       onDrawEnd, onClick,
       onRightClick, onPressedMove,
+      onMouseEnter, onMouseLeave,
       onRemove
     } = options
     const graphicMarkId = id || `${GRAPHIC_MARK_ID_PREFIX}${++this._graphicMarkBaseId}`
@@ -580,6 +581,12 @@ export default class ChartPane {
     }
     if (isFunction(onPressedMove)) {
       graphicMarkInstance.onPressedMove = onPressedMove
+    }
+    if (isFunction(onMouseEnter)) {
+      graphicMarkInstance.onMouseEnter = onMouseEnter
+    }
+    if (isFunction(onMouseLeave)) {
+      graphicMarkInstance.onMouseLeave = onMouseLeave
     }
     if (isFunction(onRemove)) {
       graphicMarkInstance.onRemove = onRemove

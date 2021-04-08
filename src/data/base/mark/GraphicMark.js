@@ -449,7 +449,8 @@ export default class GraphicMark {
         return {
           id: this._id,
           element: GraphicMarkMouseOperateElement.POINT,
-          elementIndex: i
+          elementIndex: i,
+          instance: this
         }
       }
     }
@@ -477,7 +478,8 @@ export default class GraphicMark {
             return {
               id: this._id,
               element: GraphicMarkMouseOperateElement.OTHER,
-              elementIndex: i
+              elementIndex: i,
+              instance: this
             }
           }
         }
@@ -577,6 +579,20 @@ export default class GraphicMark {
    * @param event
    */
   onPressedMove ({ id, event }) {}
+
+  /**
+   * 鼠标进入事件
+   * @param id
+   * @param event
+   */
+  onMouseEnter ({ id, event }) {}
+
+  /**
+   * 鼠标离开事件
+   * @param id
+   * @param event
+   */
+  onMouseLeave ({ id, event }) {}
 
   /**
    * 移除事件回调

@@ -648,14 +648,28 @@ export default class ChartData {
   }
 
   /**
+   * 根据id获取图形标记
+   * @param id
+   * @return {{instance: *, index: number}|null}
+   * @private
+   */
+  getGraphicMarkInstanceById (id) {
+    for (let i = 0; i < this._graphicMarks.length; i++) {
+      if (this._graphicMarks[i].id() === id) {
+        return { index: i, instance: this._graphicMarks[i] }
+      }
+    }
+    return null
+  }
+
+  /**
    * 添加标记实例
    * @param graphicMark
    */
   addGraphicMarkInstance (graphicMark) {
-    for (const mark of this._graphicMarks) {
-      if (mark.id() === graphicMark.id()) {
-        return false
-      }
+    const markInfo = this.getGraphicMarkInstanceById(graphicMark.id())
+    if (markInfo) {
+      return false
     }
     const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
     if (lastGraphicMark && lastGraphicMark.isDrawing()) {
@@ -685,13 +699,12 @@ export default class ChartData {
    */
   setGraphicMarkOptions (id, options = {}) {
     const { styles, lock } = options
-    for (const graphicMark of this._graphicMarks) {
-      if (graphicMark.id() === id) {
-        graphicMark.setLock(lock)
-        if (graphicMark.setStyles(styles)) {
-          this.invalidate(InvalidateLevel.GRAPHIC_MARK)
-        }
-        break
+    const markInfo = this.getGraphicMarkInstanceById(id)
+    if (markInfo) {
+      const graphicMark = markInfo.instance
+      graphicMark.setLock(lock)
+      if (graphicMark.setStyles(styles)) {
+        this.invalidate(InvalidateLevel.GRAPHIC_MARK)
       }
     }
   }
@@ -704,11 +717,9 @@ export default class ChartData {
     const graphicMarks = this._graphicMarks
     let removeIndex = -1
     if (options.type === RemoveGraphicMarkOperateType.ID) {
-      for (let i = 0; i < graphicMarks.length; i++) {
-        if (options.id === graphicMarks[i].id()) {
-          removeIndex = i
-          break
-        }
+      const markInfo = this.getGraphicMarkInstanceById(options.id)
+      if (markInfo) {
+        removeIndex = markInfo.index
       }
     } else {
       removeIndex = options.index

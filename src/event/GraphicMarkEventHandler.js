@@ -13,7 +13,7 @@
  */
 
 import { CANDLE_PANE_ID } from '../pane/ChartPane'
-import EventHandler from './EventHandler'
+import EventHandler, { isMouse } from './EventHandler'
 import { InvalidateLevel, RemoveGraphicMarkOperateType } from '../data/ChartData'
 import { GraphicMarkMouseOperateElement } from '../data/base/mark/GraphicMark'
 
@@ -43,6 +43,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
       this._waitingForMouseMoveAnimationFrame = true
       const graphicMarks = this._chartData.graphicMarks()
       const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
+      const { hover } = this._chartData.graphicMarkMouseOperate()
       let graphicMarkHoverOperate
       let graphicMarkClickOperate
       if (lastGraphicMark && lastGraphicMark.isDrawing()) {
@@ -58,6 +59,14 @@ export default class GraphicMarkEventHandler extends EventHandler {
           graphicMarkHoverOperate = graphicMark.checkMousePointOnGraphic(point)
           if (graphicMarkHoverOperate) {
             break
+          }
+        }
+        if (!graphicMarkHoverOperate || hover.id !== graphicMarkHoverOperate.id) {
+          if (hover.id !== -1 && hover.instance && isMouse(event)) {
+            hover.instance.onMouseLeave({ id: hover.id, event })
+          }
+          if (graphicMarkHoverOperate && graphicMarkHoverOperate.id !== hover.id && graphicMarkHoverOperate.instance && isMouse(event)) {
+            graphicMarkHoverOperate.instance.onMouseEnter({ id: graphicMarkHoverOperate.id, event })
           }
         }
       }
