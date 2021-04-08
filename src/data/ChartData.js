@@ -864,8 +864,8 @@ export default class ChartData {
       delegate.unsubscribe(callback)
       if (!delegate.hasObservers()) {
         delete this._actionDelegate[type]
-        return true
       }
+      return true
     }
     return false
   }

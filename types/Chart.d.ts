@@ -38,7 +38,7 @@ export declare interface Chart {
   addCustomGraphicMark(graphicMark: GraphicMark): void;
   removeGraphicMark(graphicMarkId?: string): void;
   subscribeAction (type: ChartActionType, callback: (params: any) => void): void;
-  unsubscribeAction (type: ChartActionType, callback: (params: any) => void): void;
+  unsubscribeAction (type: ChartActionType, callback?: (params: any) => void): void;
   getConvertPictureUrl(includeTooltip?: boolean, includeGraphicMark?: boolean, type?: PictureType, backgroundColor?: string): string;
   resize(): void;
 }
