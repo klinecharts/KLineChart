@@ -22,20 +22,31 @@ export default {
   },
   createGraphicDataSource: (step, tpPoints, xyPoints, viewport, precision) => {
     if (xyPoints.length > 0) {
-      const lines = []
+      //const lines = []
       const texts = []
-      const startX = 0
+     // const startX = 0
       const endX = viewport.width
       if (xyPoints.length > 1) {
+        var lines = [
+          [
+            {
+              x: xyPoints[0].x,
+              y: xyPoints[0].y
+            }, {
+              x: xyPoints[1].x,
+              y: xyPoints[1].y
+            }
+          ]
+         ]
         const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDif = xyPoints[0].y - xyPoints[1].y
         const priceDif = tpPoints[0].price - tpPoints[1].price
         percents.forEach(percent => {
           const y = xyPoints[1].y + yDif * percent
           const price = (tpPoints[1].price + priceDif * percent).toFixed(precision.price)
-          lines.push([{ x: startX, y }, { x: endX, y }])
+          lines.push([{  x: xyPoints[1].x, y }, { x: endX, y }])
           texts.push({
-            x: startX,
+            x: xyPoints[1].x,
             y,
             text: `${price} (${(percent * 100).toFixed(1)}%)`
           })
