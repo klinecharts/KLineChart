@@ -13,6 +13,7 @@
  */
 
 import View, { PlotType } from './View'
+
 import { CandleType, LineStyle } from '../data/options/styleOptions'
 import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
 import { isValid } from '../utils/typeChecks'
@@ -121,7 +122,9 @@ export default class TechnicalIndicatorView extends View {
       }
       const baseValueY = this._yAxis.convertToPixel(baseValue)
       const isCandleYAxis = this._yAxis.isCandleYAxis()
+
       this._ctx.lineWidth = 1
+
       this._drawGraphics(
         (x, i, kLineData, halfBarSpace, barSpace) => {
           const technicalIndicatorData = technicalIndicatorResult[i] || {}
@@ -214,6 +217,22 @@ export default class TechnicalIndicatorView extends View {
   }
 
   /**
+   * 绘制图形
+   * @param onDrawing
+   * @param onDrawEnd
+   * @private
+   */
+  _drawGraphics (onDrawing, onDrawEnd) {
+    const visibleDataList = this._chartData.visibleDataList()
+    const barSpace = this._chartData.barSpace()
+    const halfBarSpace = barSpace / 2
+    visibleDataList.forEach(({ x, index, data }, n) => {
+      onDrawing(x, index, data, halfBarSpace, barSpace, n)
+    })
+    onDrawEnd && onDrawEnd()
+  }
+
+  /**
    * 绘制线
    * @param lines
    * @param technicalIndicatorOptions
@@ -272,28 +291,6 @@ export default class TechnicalIndicatorView extends View {
       this._ctx.fill()
     }
     this._ctx.closePath()
-  }
-
-  /**
-   * 绘制图形
-   * @param onDrawing
-   * @param onDrawEnd
-   * @private
-   */
-  _drawGraphics (onDrawing, onDrawEnd) {
-    const dataList = this._chartData.dataList()
-    const dataSize = dataList.length
-    const barSpace = this._chartData.barSpace()
-    const dataSpace = this._chartData.dataSpace()
-    const halfBarSpace = barSpace / 2
-    const offsetRightBarCount = this._chartData.offsetRightBarCount()
-    const to = this._chartData.to()
-    for (let i = this._chartData.from(); i < to; i++) {
-      const deltaFromRight = dataSize + offsetRightBarCount - i
-      const x = this._width - (deltaFromRight - 0.5) * dataSpace + halfBarSpace
-      onDrawing(x, i, dataList[i], halfBarSpace, barSpace)
-    }
-    onDrawEnd && onDrawEnd()
   }
 
   /**

@@ -45,7 +45,7 @@ export default class YAxisCrosshairView extends View {
     const value = this._yAxis.convertFromPixel(crosshair.y)
     let text
     if (this._yAxis.isPercentageYAxis()) {
-      const fromClose = this._chartData.dataList()[this._chartData.from()].close
+      const fromClose = this._chartData.visibleDataList()[0].data.close
       text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {
       const technicalIndicators = this._additionalDataProvider.technicalIndicators()

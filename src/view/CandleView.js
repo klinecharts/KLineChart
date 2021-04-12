@@ -28,7 +28,11 @@ export default class CandleView extends TechnicalIndicatorView {
     } else {
       this._drawCandle(candleOptions)
       this._drawLowHighPrice(
-        candleOptions.priceMark, 'high', 'high', Number.MIN_SAFE_INTEGER, [-2, -5],
+        candleOptions.priceMark,
+        'high',
+        'high',
+        Number.MIN_SAFE_INTEGER,
+        [-2, -5],
         (price, comparePrice) => {
           if (price > comparePrice) {
             return price
@@ -36,7 +40,11 @@ export default class CandleView extends TechnicalIndicatorView {
         }
       )
       this._drawLowHighPrice(
-        candleOptions.priceMark, 'low', 'low', Number.MAX_SAFE_INTEGER, [2, 5],
+        candleOptions.priceMark,
+        'low',
+        'low',
+        Number.MAX_SAFE_INTEGER,
+        [2, 5],
         (price, comparePrice) => {
           if (price < comparePrice) {
             return price
@@ -56,21 +64,20 @@ export default class CandleView extends TechnicalIndicatorView {
   _drawArea (candleOptions) {
     const linePoints = []
     const areaPoints = []
-    const from = this._chartData.from()
     let minY = Number.MAX_SAFE_INTEGER
     const areaOptions = candleOptions.area
-    const onDrawing = (x, i, kLineData, halfBarSpace) => {
+    const onDrawing = (x, i, kLineData, halfBarSpace, n) => {
       const value = kLineData[areaOptions.value]
       if (isValid(value) && isNumber(value)) {
         const y = this._yAxis.convertToPixel(value)
-        if (i === from) {
+        if (n === 0) {
           const startX = x - halfBarSpace
           areaPoints.push({ x: startX, y: this._height })
-          areaPoints.push({ x: startX, y: y })
-          linePoints.push({ x: startX, y: y })
+          areaPoints.push({ x: startX, y })
+          linePoints.push({ x: startX, y })
         }
-        linePoints.push({ x: x, y: y })
-        areaPoints.push({ x: x, y: y })
+        linePoints.push({ x, y })
+        areaPoints.push({ x, y })
         minY = Math.min(minY, y)
       }
     }
@@ -153,18 +160,16 @@ export default class CandleView extends TechnicalIndicatorView {
     if (!priceMarkOptions.show || !lowHighPriceMarkOptions.show) {
       return
     }
-    const dataList = this._chartData.dataList()
-    const to = this._chartData.to()
+    const visibleDataList = this._chartData.visibleDataList()
     let price = initPriceValue
     let pos = -1
-    for (let i = this._chartData.from(); i < to; i++) {
-      const comparePrice = compare(formatValue(dataList[i], priceKey, initPriceValue), price)
+    visibleDataList.forEach(({ index, data }) => {
+      const comparePrice = compare(formatValue(data, priceKey, initPriceValue), price)
       if (comparePrice) {
         price = comparePrice
-        pos = i
+        pos = index
       }
-    }
-
+    })
     const pricePrecision = this._chartData.pricePrecision()
     const priceY = this._yAxis.convertToPixel(price)
     const startX = this._xAxis.convertToPixel(pos)

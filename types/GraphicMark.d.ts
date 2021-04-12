@@ -60,6 +60,8 @@ export declare interface CreateGraphicMarkOptions extends OverrideGraphicMarkOpt
   onClick?: (event: GraphicMarkEvent) => void;
   onRightClick?: (event: GraphicMarkEvent) => boolean;
   onPressedMove?: (event: GraphicMarkEvent) => void;
+  onMouseEnter?: (event: GraphicMarkEvent) => void;
+  onMouseLeave?: (event: GraphicMarkEvent) => void;
   onRemove?: (event: GraphicMarkEvent) => void;
 }
 

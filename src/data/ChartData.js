@@ -23,9 +23,9 @@ import {
 } from './base/technicalindicator/technicalIndicatorControl'
 import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './base/technicalindicator/TechnicalIndicator'
-import { GraphicMarkMouseOperateElement } from './base/mark/GraphicMark'
+import { GraphicMarkMouseOperateElement } from './base/overlay/mark/GraphicMark'
 import Delegate from './delegate/Delegate'
-import { createGraphicMarkClass, createGraphicMarkMapping } from './base/mark/graphicMarkControl'
+import { createGraphicMarkClass, createGraphicMarkMapping } from './base/overlay/mark/graphicMarkControl'
 import { binarySearchNearest } from '../utils/number'
 
 export const InvalidateLevel = {
@@ -82,6 +82,8 @@ export default class ChartData {
 
     // 数据源
     this._dataList = []
+    // 可见的数据(需要绘制的数据)
+    this._visibleDataList = []
 
     // 是否在加载中
     this._loading = true
@@ -134,6 +136,11 @@ export default class ChartData {
     // 绘图标记数据
     this._graphicMarks = []
 
+    // 注解标记
+    this._annotations = {}
+    // 可见的注解标记
+    this._visibleAnnotations = []
+
     // 调整pane标记
     this._dragPaneFlag = false
 
@@ -175,7 +182,8 @@ export default class ChartData {
   _adjustFromTo () {
     const dataSize = this._dataList.length
     const barLength = this._totalDataSpace / this._dataSpace
-    const halfBarCount = this._barSpace / 2 / this._dataSpace
+    const halfBarSpace = this._barSpace / 2
+    const halfBarCount = halfBarSpace / this._dataSpace
     const maxRightOffsetBarCount = barLength - Math.min(this._leftMinVisibleBarCount, dataSize) + (1 - halfBarCount)
     if (this._offsetRightBarCount > maxRightOffsetBarCount) {
       this._offsetRightBarCount = maxRightOffsetBarCount
@@ -194,7 +202,18 @@ export default class ChartData {
     if (this._from < 0) {
       this._from = 0
     }
-    // 有更多并且没有在加载则去加载更多
+    // 处理需要绘制的数据
+    this._visibleDataList = []
+    for (let i = this._from; i < this._to; i++) {
+      const deltaFromRight = dataSize + this._offsetRightBarCount - i
+      const x = this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace + halfBarSpace
+      this._visibleDataList.push({
+        index: i,
+        x,
+        data: this._dataList[i]
+      })
+    }
+    // 处理加载更多，有更多并且没有在加载则去加载更多
     if (this._from === 0 && this._more && !this._loading && this._loadMoreCallback && isFunction(this._loadMoreCallback)) {
       this._loading = true
       this._loadMoreCallback(formatValue(this._dataList[0], 'timestamp'))
@@ -203,6 +222,7 @@ export default class ChartData {
 
   /**
    * 获取样式配置
+   * @return {{}}
    */
   styleOptions () {
     return this._styleOptions
@@ -241,6 +261,7 @@ export default class ChartData {
   /**
    * 根据指标类型获取指标类
    * @param name
+   * @return {*}
    */
   technicalIndicator (name) {
     return this._technicalIndicatorMapping[name]
@@ -349,12 +370,21 @@ export default class ChartData {
   }
 
   /**
+   * 获取可见数据源
+   * @returns {[]|*[]}
+   */
+  visibleDataList () {
+    return this._visibleDataList
+  }
+
+  /**
    * 清空数据源
    */
   clearDataList () {
     this._more = true
     this._loading = true
     this._dataList = []
+    this._visibleDataList = []
     this._from = 0
     this._to = 0
   }
@@ -811,6 +841,14 @@ export default class ChartData {
    */
   graphicMarks () {
     return this._graphicMarks
+  }
+
+  /**
+   * 获取可见的注解
+   * @return {[]}
+   */
+  visibleAnnotations () {
+    return this._visibleAnnotations
   }
 
   /**

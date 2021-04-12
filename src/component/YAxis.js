@@ -109,9 +109,6 @@ export default class YAxis extends Axis {
    */
   calcMinMaxValue () {
     const technicalIndicators = this._additionalDataProvider.technicalIndicators()
-    const dataList = this._chartData.dataList()
-    const from = this._chartData.from()
-    const to = this._chartData.to()
     const minMaxArray = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER]
     const plotsResult = []
     let shouldOhlc = false
@@ -148,23 +145,22 @@ export default class YAxis extends Axis {
         precision = technicalIndicatorPrecision
       }
     }
-
+    const visibleDataList = this._chartData.visibleDataList()
     const candleOptions = this._chartData.styleOptions().candle
     const isArea = candleOptions.type === CandleType.AREA
     const areaValueKey = candleOptions.area.value
     const shouldCompareHighLow = (this._isCandleYAxis && !isArea) || (!this._isCandleYAxis && shouldOhlc)
-    for (let i = from; i < to; i++) {
-      const kLineData = dataList[i]
+    visibleDataList.forEach(({ index, data }) => {
       if (shouldCompareHighLow) {
-        minMaxArray[0] = Math.min(minMaxArray[0], kLineData.low)
-        minMaxArray[1] = Math.max(minMaxArray[1], kLineData.high)
+        minMaxArray[0] = Math.min(minMaxArray[0], data.low)
+        minMaxArray[1] = Math.max(minMaxArray[1], data.high)
       }
       if (this._isCandleYAxis && isArea) {
-        minMaxArray[0] = Math.min(minMaxArray[0], kLineData[areaValueKey])
-        minMaxArray[1] = Math.max(minMaxArray[1], kLineData[areaValueKey])
+        minMaxArray[0] = Math.min(minMaxArray[0], data[areaValueKey])
+        minMaxArray[1] = Math.max(minMaxArray[1], data[areaValueKey])
       }
       plotsResult.forEach(({ plots, result }) => {
-        const technicalIndicatorData = result[i] || {}
+        const technicalIndicatorData = result[index] || {}
         plots.forEach(plot => {
           const value = technicalIndicatorData[plot.key]
           if (isValid(value)) {
@@ -173,7 +169,7 @@ export default class YAxis extends Axis {
           }
         })
       })
-    }
+    })
     if (minMaxArray[0] !== Number.MAX_SAFE_INTEGER && minMaxArray[1] !== Number.MIN_SAFE_INTEGER) {
       if (minValue !== Number.MAX_SAFE_INTEGER) {
         minMaxArray[0] = Math.min(minValue, minMaxArray[0])
@@ -182,7 +178,7 @@ export default class YAxis extends Axis {
         minMaxArray[1] = Math.max(maxValue, minMaxArray[1])
       }
       if (this.isPercentageYAxis()) {
-        const fromClose = dataList[from].close
+        const fromClose = visibleDataList[0].data.close
         this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100
         this._maxValue = (minMaxArray[1] - fromClose) / fromClose * 100
         if (
@@ -302,7 +298,8 @@ export default class YAxis extends Axis {
   convertFromPixel (pixel) {
     const yAxisValue = (1.0 - pixel / this._height) * this._range + this._minValue
     if (this.isPercentageYAxis()) {
-      const fromClose = this._chartData.dataList()[this._chartData.from()].close
+      const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+      const fromClose = fromData.close
       return fromClose * yAxisValue / 100 + fromClose
     }
     return yAxisValue
@@ -311,7 +308,8 @@ export default class YAxis extends Axis {
   convertToPixel (value) {
     let realValue = value
     if (this.isPercentageYAxis()) {
-      const fromClose = (this._chartData.dataList()[this._chartData.from()] || {}).close
+      const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+      const fromClose = fromData.close
       if (isValid(fromClose)) {
         realValue = (value - fromClose) / fromClose * 100
       }

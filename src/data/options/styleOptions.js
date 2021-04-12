@@ -459,6 +459,37 @@ const defaultGraphicMark = {
 }
 
 /**
+ * 默认注解信息配置
+ * @type {{}}
+ */
+const defaultAnnotation = {
+  point: {
+    size: 4,
+    color: '#1e88e5',
+    activeSize: 6,
+    activeColor: '#1e88e5'
+  },
+  diamond: {
+    size: 4,
+    color: '#1e88e5',
+    activeSize: 6,
+    activeColor: '#1e88e5'
+  },
+  rect: {
+    size: 4,
+    color: '#1e88e5',
+    activeSize: 6,
+    activeColor: '#1e88e5'
+  },
+  text: {
+    color: '#1e88e5',
+    size: 12,
+    family: 'Helvetica Neue',
+    weight: 'normal'
+  }
+}
+
+/**
  * 图表之间默认分割配置
  * @type {{size: number, color: string}}
  */
@@ -477,5 +508,6 @@ export const defaultStyleOptions = {
   yAxis: defaultYAxis,
   separator: defaultSeparator,
   crosshair: defaultCrosshair,
-  graphicMark: defaultGraphicMark
+  graphicMark: defaultGraphicMark,
+  annotation: defaultAnnotation
 }

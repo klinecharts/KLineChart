@@ -16,9 +16,29 @@ import View from './View'
 
 export default class GraphicMarkView extends View {
   _draw () {
+    this._drawGraphicMarks()
+    this._drawAnnotations()
+  }
+
+  /**
+   * 绘制图形标记
+   * @private
+   */
+  _drawGraphicMarks () {
     const graphicMarks = this._chartData.graphicMarks()
     graphicMarks.forEach(graphicMark => {
       graphicMark.draw(this._ctx)
+    })
+  }
+
+  /**
+   * 绘制注解
+   * @private
+   */
+  _drawAnnotations () {
+    const annotations = this._chartData.visibleAnnotations()
+    annotations.forEach(annotation => {
+      annotation.draw(this._ctx)
     })
   }
 }

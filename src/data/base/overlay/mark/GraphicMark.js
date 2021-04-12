@@ -12,10 +12,10 @@
  * limitations under the License.
  */
 
-import { renderFillCircle } from '../../../renderer/circle'
-import { checkPointInCircle } from '../../../extension/mark/graphicHelper'
-import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../../renderer/line'
-import { isValid, isArray, isObject, clone, merge } from '../../../utils/typeChecks'
+import { renderFillCircle } from '../../../../renderer/circle'
+import { checkPointInCircle } from '../../../../extension/mark/graphicHelper'
+import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../../../renderer/line'
+import { isValid, isArray, isObject, clone, merge } from '../../../../utils/typeChecks'
 
 // 标记图形绘制步骤开始
 const GRAPHIC_MARK_DRAW_STEP_START = 1

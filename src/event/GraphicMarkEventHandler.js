@@ -15,7 +15,7 @@
 import { CANDLE_PANE_ID } from '../pane/ChartPane'
 import EventHandler, { isMouse } from './EventHandler'
 import { InvalidateLevel, RemoveGraphicMarkOperateType } from '../data/ChartData'
-import { GraphicMarkMouseOperateElement } from '../data/base/mark/GraphicMark'
+import { GraphicMarkMouseOperateElement } from '../data/base/overlay/mark/GraphicMark'
 
 export default class GraphicMarkEventHandler extends EventHandler {
   constructor (chartData) {

@@ -245,7 +245,8 @@ export default class YAxisView extends View {
     valueY = +(Math.max(this._height * 0.05, Math.min(valueY, this._height * 0.98))).toFixed(0)
     let text
     if (this._yAxis.isPercentageYAxis()) {
-      const fromClose = this._chartData.dataList()[this._chartData.from()].close
+      const fromData = (this._chartData.visibleDataList()[0] || {}).data
+      const fromClose = fromData.close
       text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {
       text = formatPrecision(value, precision)
