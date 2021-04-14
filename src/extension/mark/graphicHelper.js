@@ -34,11 +34,11 @@ export function getDistance (point1, point2) {
  * @return {number}
  */
 export function getTriangleSquare (point1, point2, point3) {
-  const x1 = point2.x - point1.x
-  const y1 = point2.y - point1.y
-  const x2 = point3.x - point1.x
-  const y2 = point3.y - point1.y
-  return (x1 * y2 - x2 * y1) / 2
+  const x1 = Math.abs(point2.x - point1.x)
+  const y1 = Math.abs(point2.y - point1.y)
+  const x2 = Math.abs(point3.x - point1.x)
+  const y2 = Math.abs(point3.y - point1.y)
+  return Math.abs(x1 * y2 - x2 * y1) / 2
 }
 
 /**
@@ -222,13 +222,16 @@ export function checkPointInTriangle (trianglePoints, targetPoint) {
 
 /**
  * 检查点是否在三角形菱形内部
+ * @param centerPoint
  * @param width
  * @param height
  * @param targetPoint
  * @return {boolean}
  */
-export function checkPointInDiamond (width, height, targetPoint) {
-  return Math.abs(targetPoint.x * height + targetPoint.y * width - width * height / 2) < DEVIATION
+export function checkPointInDiamond (centerPoint, width, height, targetPoint) {
+  const xDis = Math.abs(centerPoint.x - targetPoint.x)
+  const yDis = Math.abs(centerPoint.y - targetPoint.y)
+  return xDis * height + yDis * width < width * height / 2 + DEVIATION
 }
 
 /**

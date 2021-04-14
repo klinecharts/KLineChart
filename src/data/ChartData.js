@@ -200,8 +200,10 @@ export default class ChartData {
       })
       const annotation = this._annotations[kLineData.timestamp]
       if (annotation) {
-        annotation.createSymbolCoordinate(x, kLineData)
-        this._visibleAnnotations.push(annotation)
+        for (const an of annotation) {
+          an.createSymbolCoordinate(x)
+          this._visibleAnnotations.push(an)
+        }
       }
     }
   }
@@ -860,7 +862,11 @@ export default class ChartData {
    */
   addAnnotations (annotations) {
     annotations.forEach(annotation => {
-      this._annotations[annotation.id()] = annotation
+      if (this._annotations[annotation.id()]) {
+        this._annotations[annotation.id()].push(annotation)
+      } else {
+        this._annotations[annotation.id()] = [annotation]
+      }
     })
     this._adjustVisibleDataList()
     this.invalidate(InvalidateLevel.OVERLAY)

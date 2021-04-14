@@ -1,4 +1,4 @@
-import { KLineData } from './KLineData';
+import { Viewport, KLineData } from './Common';
 
 export declare type TechnicalIndicatorSeries = 'price' | 'volume' | 'normal';
 
@@ -37,13 +37,6 @@ export declare interface TechnicalIndicatorRenderDataSource {
   technicalIndicatorDataList?: any[];
 }
 
-export declare interface TechnicalIndicatorRenderViewport {
-  width?: number;
-  height?: number;
-  dataSpace?: number;
-  barSpace?: number;
-}
-
 export declare interface TechnicalIndicator extends OverrideTechnicalIndicator {
   calcTechnicalIndicator: (kLineDataList: KLineData[], calcParams: number[], plots: TechnicalIndicatorPlot[]) => any[];
   series?: TechnicalIndicatorSeries;
@@ -58,7 +51,7 @@ export declare interface TechnicalIndicator extends OverrideTechnicalIndicator {
   render?: (
     ctx: CanvasRenderingContext2D,
     dataSource: TechnicalIndicatorRenderDataSource,
-    viewport: TechnicalIndicatorRenderViewport,
+    viewport: Viewport,
     styleOptions: any,
     xAxisConvert: any,
     yAxisConvert: any,

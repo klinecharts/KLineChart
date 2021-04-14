@@ -1,9 +1,12 @@
+import {KLineData, TimestampPricePoint} from './Common';
+
 import { OverrideTechnicalIndicator, TechnicalIndicator } from './TechnicalIndicator';
-import { KLineData } from './KLineData';
 import { CreateGraphicMarkOptions, OverrideGraphicMarkOptions, GraphicMark } from './GraphicMark';
+import { Annotation } from './Annotation';
+
 import { PaneOptions } from './Pane';
 
-export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll'
+export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll';
 
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 
@@ -37,6 +40,8 @@ export declare interface Chart {
   setGraphicMarkOptions(id: string, options: OverrideGraphicMarkOptions): void;
   addCustomGraphicMark(graphicMark: GraphicMark): void;
   removeGraphicMark(graphicMarkId?: string): void;
+  createAnnotation(annotation: Annotation | Annotation[]): void;
+  removeAnnotation(point: TimestampPricePoint | TimestampPricePoint[]): void;
   subscribeAction (type: ChartActionType, callback: (params: any) => void): void;
   unsubscribeAction (type: ChartActionType, callback?: (params: any) => void): void;
   getConvertPictureUrl(includeTooltip?: boolean, includeGraphicMark?: boolean, type?: PictureType, backgroundColor?: string): string;

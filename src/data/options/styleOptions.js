@@ -72,6 +72,29 @@ export const TooltipCandleShowType = {
 }
 
 /**
+ * 注解标识类似
+ * @type {{RECT: string, TRIANGLE: string, DIAMOND: string, CUSTOM: string, NONE: string, CIRCLE: string}}
+ */
+export const AnnotationSymbolType = {
+  CIRCLE: 'circle',
+  RECT: 'rect',
+  TRIANGLE: 'triangle',
+  DIAMOND: 'diamond',
+  CUSTOM: 'custom',
+  NONE: 'none'
+}
+
+/**
+ * 注解位置
+ * @type {{TOP: string, BOTTOM: string, POINT: string}}
+ */
+export const AnnotationPosition = {
+  POINT: 'point',
+  TOP: 'top',
+  BOTTOM: 'bottom'
+}
+
+/**
  * 默认网格配置
  * @type {{horizontal: {size: number, color: string, dashValue: number[], show: boolean, style: string}, show: boolean, vertical: {size: number, color: string, dashValue: number[], show: boolean, style: string}}}
  */
@@ -464,10 +487,13 @@ const defaultGraphicMark = {
  */
 const defaultAnnotation = {
   symbol: {
-    size: 6,
+    type: AnnotationSymbolType.DIAMOND,
+    position: AnnotationPosition.TOP,
+    size: 8,
     color: '#1e88e5',
-    activeSize: 8,
-    activeColor: '#1e88e5'
+    activeSize: 10,
+    activeColor: '#FF9600',
+    offset: [0, 20]
   }
 }
 

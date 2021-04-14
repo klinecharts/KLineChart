@@ -25,43 +25,19 @@ import {
 
 import { isNumber } from '../../../../utils/typeChecks'
 
-/**
- * 注解标识样式
- * @type {{RECT: string, TRIANGLE: string, DIAMOND: string, NONE: string, CIRCLE: string}}
- */
-export const AnnotationSymbol = {
-  CIRCLE: 'circle',
-  RECT: 'rect',
-  TRIANGLE: 'triangle',
-  DIAMOND: 'diamond',
-  CUSTOM: 'custom',
-  NONE: 'none'
-}
-
-/**
- * 注释位置
- * @type {{HIGH: string, TOP: string, LOW: string, CLOSE: string, BOTTOM: string, POINT: string, OPEN: string}}
- */
-export const AnnotationPosition = {
-  OPEN: 'open',
-  LOW: 'low',
-  HIGH: 'high',
-  CLOSE: 'close',
-  POINT: 'point',
-  TOP: 'top',
-  BOTTOM: 'bottom'
-}
+import {
+  AnnotationPosition,
+  AnnotationSymbolType
+} from '../../../options/styleOptions'
 
 /**
  * 注解
  */
 export default class Annotation extends Overlay {
   constructor ({
-    id, chartData, symbol, point, position, xAxis, yAxis, styles
+    id, point, chartData, xAxis, yAxis, styles
   }) {
     super({ id, chartData, xAxis, yAxis })
-    this._symbol = symbol || AnnotationSymbol.CIRCLE
-    this._position = position || AnnotationPosition.TOP
     this._tpPoint = point
     this._symbolCoordinate = {}
     this.setStyles(styles, chartData.styleOptions().annotation)
@@ -83,12 +59,12 @@ export default class Annotation extends Overlay {
       ? (isNumber(styleActiveSize) ? styleActiveSize : barSpace)
       : (isNumber(styleSize) ? styleSize : barSpace)
     const color = isActive ? symbolOptions.activeColor : symbolOptions.color
-    switch (this._symbol) {
-      case AnnotationSymbol.CIRCLE: {
+    switch (symbolOptions.type) {
+      case AnnotationSymbolType.CIRCLE: {
         renderFillCircle(ctx, color, this._symbolCoordinate, size / 2)
         break
       }
-      case AnnotationSymbol.RECT: {
+      case AnnotationSymbolType.RECT: {
         renderFillRect(
           ctx, color,
           this._symbolCoordinate.x - size / 2,
@@ -97,21 +73,25 @@ export default class Annotation extends Overlay {
         )
         break
       }
-      case AnnotationSymbol.DIAMOND: {
+      case AnnotationSymbolType.DIAMOND: {
         renderFillDiamond(ctx, color, this._symbolCoordinate, size, size)
         break
       }
-      case AnnotationSymbol.TRIANGLE: {
+      case AnnotationSymbolType.TRIANGLE: {
         renderFillTriangle(ctx, color, this._symbolCoordinate, size, size)
         break
       }
-      case AnnotationSymbol.CUSTOM: {
+      case AnnotationSymbolType.CUSTOM: {
         this.drawCustomSymbol({
           ctx,
           point: this._tpPoint,
           coordinatePoint: this._symbolCoordinate,
+          viewport: {
+            width: this._xAxis.width(),
+            height: this._yAxis.height(),
+            barSpace
+          },
           styles: symbolOptions,
-          barSpace,
           isActive
         })
         break
@@ -132,6 +112,10 @@ export default class Annotation extends Overlay {
         ctx,
         point: this._tpPoint,
         coordinatePoint: this._symbolCoordinate,
+        viewport: {
+          width: this._xAxis.width(),
+          height: this._yAxis.height()
+        },
         styles,
         isActive
       })
@@ -142,25 +126,25 @@ export default class Annotation extends Overlay {
   checkMousePointOnGraphic (point) {
     const barSpace = this._chartData.barSpace()
     const styles = this._styles || this._chartData.styleOptions().annotation
-    const styleSize = styles.symbol.size
-    const size = isNumber(styleSize) ? styleSize : barSpace
+    const symbolOptions = styles.symbol
+    const size = isNumber(symbolOptions.size) ? symbolOptions.size : barSpace
     let isOn
-    switch (this._symbol) {
-      case AnnotationSymbol.CIRCLE: {
+    switch (symbolOptions.type) {
+      case AnnotationSymbolType.CIRCLE: {
         isOn = checkPointInCircle(this._symbolCoordinate, size / 2, point)
         break
       }
-      case AnnotationSymbol.RECT: {
+      case AnnotationSymbolType.RECT: {
         const point1 = { x: this._symbolCoordinate.x - size / 2, y: this._symbolCoordinate.y - size / 2 }
         const point2 = { x: this._symbolCoordinate.x + size / 2, y: this._symbolCoordinate.y + size / 2 }
         isOn = checkPointInRect(point1, point2, point)
         break
       }
-      case AnnotationSymbol.DIAMOND: {
-        isOn = checkPointInDiamond(size, size, point)
+      case AnnotationSymbolType.DIAMOND: {
+        isOn = checkPointInDiamond(this._symbolCoordinate, size, size, point)
         break
       }
-      case AnnotationSymbol.TRIANGLE: {
+      case AnnotationSymbolType.TRIANGLE: {
         isOn = checkPointInTriangle(
           [
             { x: this._symbolCoordinate.x - size / 2, y: this._symbolCoordinate.y + size / 2 },
@@ -171,7 +155,7 @@ export default class Annotation extends Overlay {
         )
         break
       }
-      case AnnotationSymbol.CUSTOM: {
+      case AnnotationSymbolType.CUSTOM: {
         isOn = this.checkPointInCustomSymbol({
           point: this._tpPoint,
           coordinatePoint: this._symbolCoordinate,
@@ -194,16 +178,15 @@ export default class Annotation extends Overlay {
   /**
    * 生成标识坐标
    * @param x
-   * @param kLineData
    */
-  createSymbolCoordinate (x, kLineData) {
+  createSymbolCoordinate (x) {
     let y
-    switch (this._position) {
-      case AnnotationPosition.OPEN:
-      case AnnotationPosition.LOW:
-      case AnnotationPosition.HIGH:
-      case AnnotationPosition.CLOSE: {
-        y = this._yAxis.convertToPixel(kLineData[this._position])
+    const styles = this._styles || this._chartData.styleOptions().annotation
+    const symbolOptions = styles.symbol
+    const offset = symbolOptions.offset
+    switch (symbolOptions.position) {
+      case AnnotationPosition.POINT: {
+        y = this._yAxis.convertToPixel(this._tpPoint.price)
         break
       }
       case AnnotationPosition.TOP: {
@@ -214,12 +197,8 @@ export default class Annotation extends Overlay {
         y = this._yAxis.height()
         break
       }
-      default: {
-        y = this._yAxis.convertToPixel(this._tpPoint.price)
-        break
-      }
     }
-    this._symbolCoordinate = { x, y }
+    this._symbolCoordinate = { x: x + (offset[0] || 0), y: y + (offset[1] || 0) }
   }
 
   /**
@@ -235,9 +214,9 @@ export default class Annotation extends Overlay {
    * @param ctx
    * @param point
    * @param coordinatePoint
+   * @param viewport
    * @param styles
-   * @param barSpace
    * @param isActive
    */
-  drawCustomSymbol ({ ctx, point, coordinatePoint, styles, barSpace, isActive }) {}
+  drawCustomSymbol ({ ctx, point, coordinatePoint, viewport, styles, isActive }) {}
 }
