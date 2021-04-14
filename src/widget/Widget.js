@@ -104,11 +104,11 @@ export default class Widget {
    */
   invalidate (level) {
     switch (level) {
-      case InvalidateLevel.GRAPHIC_MARK: {
+      case InvalidateLevel.OVERLAY: {
         this._expandView && this._expandView.flush()
         break
       }
-      case InvalidateLevel.FLOAT_LAYER: {
+      case InvalidateLevel.TOOLTIP: {
         this._crosshairView.flush()
         break
       }

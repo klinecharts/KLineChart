@@ -17,10 +17,38 @@ import EventHandler, { isMouse } from './EventHandler'
 import { InvalidateLevel, RemoveGraphicMarkOperateType } from '../data/ChartData'
 import { GraphicMarkMouseOperateElement } from '../data/base/overlay/mark/GraphicMark'
 
-export default class GraphicMarkEventHandler extends EventHandler {
+export default class OverlayEventHandler extends EventHandler {
   constructor (chartData) {
     super(chartData)
     this._pressedGraphicMark = null
+  }
+
+  /**
+   * 处理覆盖物鼠标hover事件
+   * @param overlays
+   * @param preHoverOperate
+   * @param point
+   * @param event
+   * @return {*}
+   * @private
+   */
+  _performOverlayMouseHover (overlays, preHoverOperate, point, event) {
+    let hoverOperate
+    for (const overlay of overlays) {
+      hoverOperate = overlay.checkMousePointOnGraphic(point)
+      if (hoverOperate) {
+        break
+      }
+    }
+    if (!hoverOperate || preHoverOperate.id !== hoverOperate.id) {
+      if (preHoverOperate.id && preHoverOperate.instance && isMouse(event)) {
+        preHoverOperate.instance.onMouseLeave({ id: preHoverOperate.id, event })
+      }
+      if (hoverOperate && hoverOperate.id !== preHoverOperate.id && hoverOperate.instance && isMouse(event)) {
+        hoverOperate.instance.onMouseEnter({ id: hoverOperate.id, event })
+      }
+    }
+    return hoverOperate
   }
 
   /**
@@ -42,10 +70,13 @@ export default class GraphicMarkEventHandler extends EventHandler {
     if (!this._waitingForMouseMoveAnimationFrame) {
       this._waitingForMouseMoveAnimationFrame = true
       const graphicMarks = this._chartData.graphicMarks()
+      const visibleAnnotations = this._chartData.visibleAnnotations()
       const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
-      const { hover } = this._chartData.graphicMarkMouseOperate()
+      const preGraphicMarkHoverOperate = this._chartData.graphicMarkMouseOperate().hover
+      const preAnnotationHoverOperate = this._chartData.annotationMouseOperate()
       let graphicMarkHoverOperate
       let graphicMarkClickOperate
+      let annotationHoverOperate
       if (lastGraphicMark && lastGraphicMark.isDrawing()) {
         lastGraphicMark.mouseMoveForDrawing(point)
         graphicMarkHoverOperate = lastGraphicMark.checkMousePointOnGraphic(point)
@@ -55,26 +86,17 @@ export default class GraphicMarkEventHandler extends EventHandler {
           elementIndex: -1
         }
       } else {
-        for (const graphicMark of graphicMarks) {
-          graphicMarkHoverOperate = graphicMark.checkMousePointOnGraphic(point)
-          if (graphicMarkHoverOperate) {
-            break
-          }
-        }
-        if (!graphicMarkHoverOperate || hover.id !== graphicMarkHoverOperate.id) {
-          if (hover.id !== -1 && hover.instance && isMouse(event)) {
-            hover.instance.onMouseLeave({ id: hover.id, event })
-          }
-          if (graphicMarkHoverOperate && graphicMarkHoverOperate.id !== hover.id && graphicMarkHoverOperate.instance && isMouse(event)) {
-            graphicMarkHoverOperate.instance.onMouseEnter({ id: graphicMarkHoverOperate.id, event })
-          }
-        }
+        graphicMarkHoverOperate = this._performOverlayMouseHover(graphicMarks, preGraphicMarkHoverOperate, point, event)
+        annotationHoverOperate = this._performOverlayMouseHover(visibleAnnotations, preAnnotationHoverOperate, point, event)
       }
-      this._chartData.setGraphicMarkMouseOperate(graphicMarkHoverOperate || {
-        id: '',
-        element: GraphicMarkMouseOperateElement.NONE,
-        elementIndex: -1
-      }, graphicMarkClickOperate)
+      this._chartData.setOverlayMouseOperate({
+        hover: graphicMarkHoverOperate || {
+          id: '',
+          element: GraphicMarkMouseOperateElement.NONE,
+          elementIndex: -1
+        },
+        click: graphicMarkClickOperate
+      }, annotationHoverOperate || { id: '' })
       this._waitingForMouseMoveAnimationFrame = false
     }
   }
@@ -100,29 +122,37 @@ export default class GraphicMarkEventHandler extends EventHandler {
       lastGraphicMark.mouseLeftButtonDownForDrawing(point)
       graphicMarkClickOperate = lastGraphicMark.checkMousePointOnGraphic(point)
     } else {
-      for (let i = 0; i < graphicMarks.length; i++) {
-        graphicMarkClickOperate = graphicMarks[i].checkMousePointOnGraphic(point)
+      for (const graphicMark of graphicMarks) {
+        graphicMarkClickOperate = graphicMark.checkMousePointOnGraphic(point)
         if (graphicMarkClickOperate) {
           if (graphicMarkClickOperate.element === GraphicMarkMouseOperateElement.POINT) {
-            this._pressedGraphicMark = graphicMarks[i]
+            this._pressedGraphicMark = graphicMark
             this._chartData.setDragGraphicMarkFlag(true)
             graphicMarkHoverOperate = {
               ...graphicMarkClickOperate
             }
           }
-          graphicMarks[i].onClick({ id: graphicMarkClickOperate.id, event })
+          graphicMark.onClick({ id: graphicMarkClickOperate.id, event })
+          break
+        }
+      }
+      const visibleAnnotations = this._chartData.visibleAnnotations()
+      for (const annotation of visibleAnnotations) {
+        const annotationOperate = annotation.checkMousePointOnGraphic(point)
+        if (annotationOperate) {
+          annotation.onClick({ id: annotationOperate.id, event })
           break
         }
       }
     }
-    this._chartData.setGraphicMarkMouseOperate(
-      graphicMarkHoverOperate,
-      graphicMarkClickOperate || {
+    this._chartData.setOverlayMouseOperate({
+      hover: graphicMarkHoverOperate,
+      click: graphicMarkClickOperate || {
         id: '',
         element: GraphicMarkMouseOperateElement.NONE,
         elementIndex: -1
       }
-    )
+    })
   }
 
   mouseRightDownEvent (event) {
@@ -135,6 +165,12 @@ export default class GraphicMarkEventHandler extends EventHandler {
         }
       }
     }
+    const visibleAnnotations = this._chartData.visibleAnnotations()
+    for (const annotation of visibleAnnotations) {
+      if (annotation.checkMousePointOnGraphic({ x: event.localX, y: event.localY })) {
+        annotation.onRightClick({ id: annotation.id(), event })
+      }
+    }
   }
 
   pressedMouseMoveEvent (event) {
@@ -142,7 +178,7 @@ export default class GraphicMarkEventHandler extends EventHandler {
     const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
     if ((!lastGraphicMark || !lastGraphicMark.isDrawing()) && this._pressedGraphicMark) {
       this._pressedGraphicMark.mousePressedMove({ x: event.localX, y: event.localY }, event)
-      this._chartData.invalidate(InvalidateLevel.GRAPHIC_MARK)
+      this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 

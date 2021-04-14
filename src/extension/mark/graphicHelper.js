@@ -27,6 +27,21 @@ export function getDistance (point1, point2) {
 }
 
 /**
+ * 根据三角形三个点获取三角形面积
+ * @param point1
+ * @param point2
+ * @param point3
+ * @return {number}
+ */
+export function getTriangleSquare (point1, point2, point3) {
+  const x1 = point2.x - point1.x
+  const y1 = point2.y - point1.y
+  const x2 = point3.x - point1.x
+  const y2 = point3.y - point1.y
+  return (x1 * y2 - x2 * y1) / 2
+}
+
+/**
  * 获取一点绕另一点旋转一定角度后新的点坐标
  * @param point 旋转点
  * @param targetPoint 参照点
@@ -188,6 +203,43 @@ export function checkPointOnArc (circleCenterPoint, radius, startAngle, endAngle
       targetPoint.y >= Math.min(startPointY, endPointY) - DEVIATION
     )
   }
+}
+
+/**
+ * 检查点是否在三角形内部
+ * @param trianglePoints
+ * @param targetPoint
+ * @return {boolean}
+ */
+export function checkPointInTriangle (trianglePoints, targetPoint) {
+  const square = getTriangleSquare(trianglePoints[0], trianglePoints[1], trianglePoints[2])
+  const compareSquare =
+    getTriangleSquare(trianglePoints[0], trianglePoints[1], targetPoint) +
+    getTriangleSquare(trianglePoints[0], trianglePoints[2], targetPoint) +
+    getTriangleSquare(trianglePoints[1], trianglePoints[2], targetPoint)
+  return Math.abs(square - compareSquare) < DEVIATION
+}
+
+/**
+ * 检查点是否在三角形菱形内部
+ * @param width
+ * @param height
+ * @param targetPoint
+ * @return {boolean}
+ */
+export function checkPointInDiamond (width, height, targetPoint) {
+  return Math.abs(targetPoint.x * height + targetPoint.y * width - width * height / 2) < DEVIATION
+}
+
+/**
+ * 检查点是否在矩形内部
+ * @param point1
+ * @param point2
+ * @param targetPoint
+ * @return {boolean}
+ */
+export function checkPointInRect (point1, point2, targetPoint) {
+  return targetPoint.x >= point1.x && targetPoint.x <= point2.x && targetPoint.y >= point1.y && targetPoint.y <= point2.y
 }
 
 /**

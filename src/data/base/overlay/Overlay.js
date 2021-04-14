@@ -12,21 +12,20 @@
  * limitations under the License.
  */
 
+import { isObject, clone, merge } from '../../../utils/typeChecks'
+
 /**
  * 覆盖物
  */
 export default class Overlay {
   constructor ({
-    id, chartData, xAxis, yAxis,
-    points, styles
+    id, chartData, xAxis, yAxis
   }) {
     this._id = id
     this._chartData = chartData
     this._xAxis = xAxis
     this._yAxis = yAxis
     this._styles = null
-    this._tpPoints = []
-    this.setStyles(styles)
   }
 
   /**
@@ -38,13 +37,14 @@ export default class Overlay {
   /**
    * 设置样式
    * @param styles
+   * @param defaultStyles
    */
-  setStyles (styles) {
+  setStyles (styles, defaultStyles) {
     if (!isObject(styles)) {
       return false
     }
     if (!this._styles) {
-      this._styles = clone(this._chartData.styleOptions().graphicMark)
+      this._styles = clone(defaultStyles)
     }
     merge(this._styles, styles)
     return true
@@ -61,11 +61,8 @@ export default class Overlay {
   /**
    * 检查鼠标点是否在图形上
    * @param point
-   * @param type
-   * @return {{id: *, elementIndex: number, element: string}}
    */
-  checkMousePointOnGraphic (point, type) {
-  }
+  checkMousePointOnGraphic (point) {}
 
   // -------------------- 事件开始 -------------------
 
@@ -98,29 +95,4 @@ export default class Overlay {
   onMouseLeave ({ id, event }) {}
 
   // -------------------- 事件结束 -------------------
-
-  // --------------------- 自定义时需要实现的一些方法开始 ----------------------
-
-  /**
-   * 检查鼠标点在其它图形上
-   * @param key
-   * @param type
-   * @param points
-   * @param mousePoint
-   */
-  checkMousePointOn (key, type, points, mousePoint) {}
-
-  /**
-   * 创建图形配置
-   * @param step
-   * @param tpPoints
-   * @param xyPoints
-   * @param viewport
-   * @param precision
-   * @param xAxis
-   * @param yAxis
-   */
-  createGraphicDataSource (step, tpPoints, xyPoints, viewport, precision, xAxis, yAxis) {}
-
-  // --------------------- 自定义时需要实现的一些方法结束 ----------------------
 }

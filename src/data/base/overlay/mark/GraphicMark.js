@@ -12,10 +12,12 @@
  * limitations under the License.
  */
 
+import Overlay from '../Overlay'
+
 import { renderFillCircle } from '../../../../renderer/circle'
 import { checkPointInCircle } from '../../../../extension/mark/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../../../renderer/line'
-import { isValid, isArray, isObject, clone, merge } from '../../../../utils/typeChecks'
+import { isValid, isArray, clone } from '../../../../utils/typeChecks'
 
 // 标记图形绘制步骤开始
 const GRAPHIC_MARK_DRAW_STEP_START = 1
@@ -85,24 +87,20 @@ function getLineType (point1, point2) {
 /**
  * 标记图形
  */
-export default class GraphicMark {
+export default class GraphicMark extends Overlay {
   constructor ({
     id, name, totalStep,
     chartData, xAxis, yAxis,
     points, styles, lock
   }) {
-    this._id = id
+    super({ id, chartData, xAxis, yAxis })
     this._name = name
     this._totalStep = totalStep
-    this._chartData = chartData
-    this._xAxis = xAxis
-    this._yAxis = yAxis
-    this._styles = null
     this._lock = lock
     this._drawStep = GRAPHIC_MARK_DRAW_STEP_START
     this._tpPoints = []
     this._applyPoints(points)
-    this.setStyles(styles)
+    this.setStyles(styles, chartData.styleOptions().graphicMark)
   }
 
   /**
@@ -390,21 +388,6 @@ export default class GraphicMark {
   }
 
   /**
-   * 设置样式
-   * @param styles
-   */
-  setStyles (styles) {
-    if (!isObject(styles)) {
-      return false
-    }
-    if (!this._styles) {
-      this._styles = clone(this._chartData.styleOptions().graphicMark)
-    }
-    merge(this._styles, styles)
-    return true
-  }
-
-  /**
    * 设置是否锁定
    * @param lock
    */
@@ -431,10 +414,9 @@ export default class GraphicMark {
   /**
    * 检查鼠标点是否在图形上
    * @param point
-   * @param type
    * @return {{id: *, elementIndex: number, element: string}}
    */
-  checkMousePointOnGraphic (point, type) {
+  checkMousePointOnGraphic (point) {
     const markOptions = this._styles || this._chartData.styleOptions().graphicMark
     const xyPoints = []
     // 检查鼠标点是否在图形的点上
@@ -560,39 +542,11 @@ export default class GraphicMark {
   onDrawEnd ({ id }) {}
 
   /**
-   * 点击事件
-   * @param id
-   * @param event
-   */
-  onClick ({ id, event }) {}
-
-  /**
-   * 右击事件
-   * @param id
-   * @param event
-   */
-  onRightClick ({ id, event }) {}
-
-  /**
    * 按住移动事件
    * @param id
    * @param event
    */
   onPressedMove ({ id, event }) {}
-
-  /**
-   * 鼠标进入事件
-   * @param id
-   * @param event
-   */
-  onMouseEnter ({ id, event }) {}
-
-  /**
-   * 鼠标离开事件
-   * @param id
-   * @param event
-   */
-  onMouseLeave ({ id, event }) {}
 
   /**
    * 移除事件回调

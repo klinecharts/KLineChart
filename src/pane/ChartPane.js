@@ -27,6 +27,7 @@ import SeparatorPane from './SeparatorPane'
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { throttle } from '../utils/performance'
+import Annotation from '../data/base/overlay/annotation/Annotation'
 
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
@@ -109,7 +110,7 @@ export default class ChartPane {
    * @private
    */
   _updatePane (invalidateLevel = InvalidateLevel.FULL) {
-    if (invalidateLevel === InvalidateLevel.FLOAT_LAYER) {
+    if (invalidateLevel === InvalidateLevel.TOOLTIP) {
       this._xAxisPane.invalidate(invalidateLevel)
       this._candlePane.invalidate(invalidateLevel)
       this._technicalIndicatorPanes.forEach(pane => {
@@ -117,7 +118,7 @@ export default class ChartPane {
       })
     } else {
       let shouldMeasureWidth = this._candlePane.computeAxis()
-      if (invalidateLevel !== InvalidateLevel.GRAPHIC_MARK) {
+      if (invalidateLevel !== InvalidateLevel.OVERLAY) {
         this._technicalIndicatorPanes.forEach(pane => {
           const should = pane.computeAxis()
           if (should) {
@@ -300,7 +301,8 @@ export default class ChartPane {
     if (technicalIndicator) {
       const calcParamsSuccess = technicalIndicator.setCalcParams(calcParams)
       const precisionSuccess = technicalIndicator.setPrecision(precision)
-      const styleSuccess = technicalIndicator.setStyles(styles, this._chartData.styleOptions().technicalIndicator)
+      const defaultTechnicalStyleOptions = this._chartData.styleOptions().technicalIndicator
+      const styleSuccess = technicalIndicator.setStyles(styles, defaultTechnicalStyleOptions)
       if (calcParamsSuccess || precisionSuccess || styleSuccess) {
         const candleTechnicalIndicators = this._candlePane.technicalIndicators()
         let shouldAdjust = false
@@ -320,7 +322,7 @@ export default class ChartPane {
             }
             if (styleSuccess) {
               shouldAdjust = true
-              technicalIndicator.setStyles(styles)
+              technicalIndicator.setStyles(styles, defaultTechnicalStyleOptions)
             }
           }
         })
@@ -341,7 +343,7 @@ export default class ChartPane {
               }
               if (styleSuccess) {
                 shouldAdjust = true
-                technicalIndicator.setStyles(styles)
+                technicalIndicator.setStyles(styles, defaultTechnicalStyleOptions)
               }
             }
           })
@@ -593,6 +595,38 @@ export default class ChartPane {
     }
     if (this._chartData.addGraphicMarkInstance(graphicMarkInstance)) {
       return graphicMarkId
+    }
+  }
+
+  /**
+   * 创建注解
+   * @param annotation
+   */
+  createAnnotation (annotation) {
+    if (annotation) {
+      const instances = []
+      const annotations = [].concat(annotation)
+      annotations.forEach(({
+        point, symbol, position, styles, drawExtend
+      }) => {
+        if (point && point.timestamp) {
+          const annotationInstance = new Annotation({
+            id: point.timestamp,
+            chartData: this._chartData,
+            symbol,
+            point,
+            position,
+            xAxis: this._xAxisPane.xAxis(),
+            yAxis: this._candlePane.yAxis(),
+            styles
+          })
+          if (isFunction(drawExtend)) {
+            annotationInstance.drawExtend = drawExtend
+          }
+          instances.push(annotationInstance)
+        }
+      })
+      this._chartData.addAnnotations(instances)
     }
   }
 

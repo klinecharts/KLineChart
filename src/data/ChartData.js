@@ -30,8 +30,8 @@ import { binarySearchNearest } from '../utils/number'
 
 export const InvalidateLevel = {
   NONE: 0,
-  GRAPHIC_MARK: 1,
-  FLOAT_LAYER: 2,
+  OVERLAY: 1,
+  TOOLTIP: 2,
   MAIN: 3,
   FULL: 4
 }
@@ -140,6 +140,10 @@ export default class ChartData {
     this._annotations = {}
     // 可见的注解标记
     this._visibleAnnotations = []
+    // 注解鼠标操作信息
+    this._annotationMouseOperate = {
+      id: ''
+    }
 
     // 调整pane标记
     this._dragPaneFlag = false
@@ -176,6 +180,33 @@ export default class ChartData {
   }
 
   /**
+   * 调整可见数据
+   * @private
+   */
+  _adjustVisibleDataList () {
+    // 处理需要绘制的数据
+    const dataSize = this._dataList.length
+    const halfBarSpace = this._barSpace / 2
+    this._visibleDataList = []
+    this._visibleAnnotations = []
+    for (let i = this._from; i < this._to; i++) {
+      const kLineData = this._dataList[i]
+      const deltaFromRight = dataSize + this._offsetRightBarCount - i
+      const x = this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace + halfBarSpace
+      this._visibleDataList.push({
+        index: i,
+        x,
+        data: kLineData
+      })
+      const annotation = this._annotations[kLineData.timestamp]
+      if (annotation) {
+        annotation.createSymbolCoordinate(x, kLineData)
+        this._visibleAnnotations.push(annotation)
+      }
+    }
+  }
+
+  /**
    * 调整绘制起点终点位置
    * @private
    */
@@ -202,17 +233,7 @@ export default class ChartData {
     if (this._from < 0) {
       this._from = 0
     }
-    // 处理需要绘制的数据
-    this._visibleDataList = []
-    for (let i = this._from; i < this._to; i++) {
-      const deltaFromRight = dataSize + this._offsetRightBarCount - i
-      const x = this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace + halfBarSpace
-      this._visibleDataList.push({
-        index: i,
-        x,
-        data: this._dataList[i]
-      })
-    }
+    this._adjustVisibleDataList()
     // 处理加载更多，有更多并且没有在加载则去加载更多
     if (this._from === 0 && this._more && !this._loading && this._loadMoreCallback && isFunction(this._loadMoreCallback)) {
       this._loading = true
@@ -534,7 +555,7 @@ export default class ChartData {
     ) {
       this._crosshair = { ...point, paneId }
       if (!notInvalidate) {
-        this.invalidate(InvalidateLevel.FLOAT_LAYER)
+        this.invalidate(InvalidateLevel.TOOLTIP)
       }
     }
   }
@@ -673,7 +694,7 @@ export default class ChartData {
   clearGraphicMark () {
     if (this._graphicMarks.length > 0) {
       this._graphicMarks = []
-      this.invalidate(InvalidateLevel.GRAPHIC_MARK)
+      this.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 
@@ -707,7 +728,7 @@ export default class ChartData {
     } else {
       this._graphicMarks.push(graphicMark)
     }
-    this.invalidate(InvalidateLevel.GRAPHIC_MARK)
+    this.invalidate(InvalidateLevel.OVERLAY)
     return true
   }
 
@@ -733,8 +754,8 @@ export default class ChartData {
     if (markInfo) {
       const graphicMark = markInfo.instance
       graphicMark.setLock(lock)
-      if (graphicMark.setStyles(styles)) {
-        this.invalidate(InvalidateLevel.GRAPHIC_MARK)
+      if (graphicMark.setStyles(styles, this._styleOptions.graphicMark)) {
+        this.invalidate(InvalidateLevel.OVERLAY)
       }
     }
   }
@@ -757,7 +778,7 @@ export default class ChartData {
     if (removeIndex !== -1) {
       graphicMarks[removeIndex].onRemove({ id: graphicMarks[removeIndex].id() })
       graphicMarks.splice(removeIndex, 1)
-      this.invalidate(InvalidateLevel.GRAPHIC_MARK)
+      this.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 
@@ -775,32 +796,6 @@ export default class ChartData {
    */
   setDragGraphicMarkFlag (flag) {
     this._dragGraphicMarkFlag = flag
-  }
-
-  /**
-   * 设置图形标记鼠标操作信息
-   * @param hoverOperate
-   * @param clickOperate
-   */
-  setGraphicMarkMouseOperate (hoverOperate, clickOperate) {
-    const { hover, click } = this._graphicMarkMouseOperate
-    const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
-    let shouldInvalidate = false
-    if (hoverOperate &&
-      (hover.id !== hoverOperate.id || hover.element !== hoverOperate.element || hover.elementIndex !== hoverOperate.elementIndex)
-    ) {
-      this._graphicMarkMouseOperate.hover = { ...hoverOperate }
-      shouldInvalidate = true
-    }
-    if (clickOperate &&
-      (click.id !== clickOperate.id || click.element !== clickOperate.element || click.elementIndex !== clickOperate.elementIndex)
-    ) {
-      this._graphicMarkMouseOperate.click = { ...clickOperate }
-      shouldInvalidate = true
-    }
-    if (shouldInvalidate || (lastGraphicMark && lastGraphicMark.isDrawing())) {
-      this.invalidate(InvalidateLevel.GRAPHIC_MARK)
-    }
   }
 
   /**
@@ -849,6 +844,76 @@ export default class ChartData {
    */
   visibleAnnotations () {
     return this._visibleAnnotations
+  }
+
+  /**
+   * 获取注解鼠标操作信息
+   * @return {null}
+   */
+  annotationMouseOperate () {
+    return this._annotationMouseOperate
+  }
+
+  /**
+   * 创建注解
+   * @param annotations
+   */
+  addAnnotations (annotations) {
+    annotations.forEach(annotation => {
+      this._annotations[annotation.id()] = annotation
+    })
+    this._adjustVisibleDataList()
+    this.invalidate(InvalidateLevel.OVERLAY)
+  }
+
+  /**
+   * 移除注解
+   * @param points
+   */
+  removeAnnotation (points) {
+    if (points) {
+      ([].concat(points)).forEach(({ timestamp }) => {
+        if (this._annotations[timestamp]) {
+          delete this._annotations[timestamp]
+        }
+      })
+      this._adjustVisibleDataList()
+    } else {
+      this._annotations = {}
+      this._visibleAnnotations = []
+    }
+    this.invalidate(InvalidateLevel.OVERLAY)
+  }
+
+  /**
+   * 设置覆盖物鼠标操作信息
+   * @param graphicMarkOperate
+   * @param annotationOperate
+   */
+  setOverlayMouseOperate (graphicMarkOperate, annotationOperate) {
+    const { hover, click } = this._graphicMarkMouseOperate
+    const { id } = this._annotationMouseOperate
+    const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
+    let shouldInvalidate = false
+    if (graphicMarkOperate.hover &&
+      (hover.id !== graphicMarkOperate.hover.id || hover.element !== graphicMarkOperate.hover.element || hover.elementIndex !== graphicMarkOperate.hover.elementIndex)
+    ) {
+      this._graphicMarkMouseOperate.hover = { ...graphicMarkOperate.hover }
+      shouldInvalidate = true
+    }
+    if (graphicMarkOperate.click &&
+      (click.id !== graphicMarkOperate.click.id || click.element !== graphicMarkOperate.click.element || click.elementIndex !== graphicMarkOperate.click.elementIndex)
+    ) {
+      this._graphicMarkMouseOperate.click = { ...graphicMarkOperate.click }
+      shouldInvalidate = true
+    }
+    if (annotationOperate && id !== annotationOperate.id) {
+      this._annotationMouseOperate = { ...annotationOperate }
+      shouldInvalidate = true
+    }
+    if (shouldInvalidate || (lastGraphicMark && lastGraphicMark.isDrawing())) {
+      this.invalidate(InvalidateLevel.OVERLAY)
+    }
   }
 
   /**

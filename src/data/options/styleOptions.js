@@ -463,29 +463,11 @@ const defaultGraphicMark = {
  * @type {{}}
  */
 const defaultAnnotation = {
-  point: {
-    size: 4,
+  symbol: {
+    size: 6,
     color: '#1e88e5',
-    activeSize: 6,
+    activeSize: 8,
     activeColor: '#1e88e5'
-  },
-  diamond: {
-    size: 4,
-    color: '#1e88e5',
-    activeSize: 6,
-    activeColor: '#1e88e5'
-  },
-  rect: {
-    size: 4,
-    color: '#1e88e5',
-    activeSize: 6,
-    activeColor: '#1e88e5'
-  },
-  text: {
-    color: '#1e88e5',
-    size: 12,
-    family: 'Helvetica Neue',
-    weight: 'normal'
   }
 }
 

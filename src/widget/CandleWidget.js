@@ -15,7 +15,7 @@
 import CandleView from '../view/CandleView'
 import CandleCrosshairView from '../view/CandleCrosshairView'
 import TechnicalIndicatorWidget from './TechnicalIndicatorWidget'
-import GraphicMarkView from '../view/GraphicMarkView'
+import OverlayView from '../view/OverlayView'
 
 export default class CandleWidget extends TechnicalIndicatorWidget {
   _createMainView (container, props) {
@@ -23,7 +23,7 @@ export default class CandleWidget extends TechnicalIndicatorWidget {
   }
 
   _createExpandView (container, props) {
-    return new GraphicMarkView(container, props.chartData)
+    return new OverlayView(container, props.chartData)
   }
 
   _createCrosshairView (container, props) {

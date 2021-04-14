@@ -14,7 +14,7 @@
 
 import View from './View'
 
-export default class GraphicMarkView extends View {
+export default class OverlayView extends View {
   _draw () {
     this._drawGraphicMarks()
     this._drawAnnotations()

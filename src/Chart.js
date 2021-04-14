@@ -304,6 +304,21 @@ export default class Chart {
   }
 
   /**
+   * 创建注解
+   * @param annotations
+   */
+  createAnnotation (annotations) {
+    this._chartPane.createAnnotation(annotations)
+  }
+
+  /**
+   * 移除注解
+   */
+  removeAnnotation (points) {
+    this._chartPane.chartData().removeAnnotation(points)
+  }
+
+  /**
    * 设置是否可以缩放
    * @param enabled
    */
