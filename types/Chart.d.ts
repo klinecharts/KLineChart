@@ -44,6 +44,6 @@ export declare interface Chart {
   removeAnnotation(point: TimestampPricePoint | TimestampPricePoint[]): void;
   subscribeAction (type: ChartActionType, callback: (params: any) => void): void;
   unsubscribeAction (type: ChartActionType, callback?: (params: any) => void): void;
-  getConvertPictureUrl(includeTooltip?: boolean, includeGraphicMark?: boolean, type?: PictureType, backgroundColor?: string): string;
+  getConvertPictureUrl(includeTooltip?: boolean, includeOverlay?: boolean, type?: PictureType, backgroundColor?: string): string;
   resize(): void;
 }

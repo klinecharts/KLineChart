@@ -356,6 +356,11 @@ export default class Chart {
    * @param callback
    */
   subscribeAction (type, callback) {
+    if (type === 'drawCandle' || type === 'drawTechnicalIndicator') {
+      if (DEV) {
+        console.warn('The types drawCandle and drawTechnicalIndicator have been deprecated, please use createAnnotation instead!!!')
+      }
+    }
     if (!this._chartPane.chartData().subscribeAction(type, callback)) {
       if (DEV) {
         console.warn('subscribeAction -> Invalid parameter: type, type does not exist!!!')
@@ -378,19 +383,19 @@ export default class Chart {
 
   /**
    * 获取将图表装换成图片后的url
-   * @param includeFloatLayer
-   * @param includeGraphicMark
+   * @param includeTooltip
+   * @param includeOverlay
    * @param type
    * @param backgroundColor
    */
-  getConvertPictureUrl (includeFloatLayer, includeGraphicMark, type = 'jpeg', backgroundColor = '#333333') {
+  getConvertPictureUrl (includeTooltip, includeOverlay, type = 'jpeg', backgroundColor = '#333333') {
     if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
       if (DEV) {
         console.warn('Picture format only supports jpeg, png and bmp!!!')
       }
       return
     }
-    return this._chartPane.getConvertPictureUrl(includeFloatLayer, includeGraphicMark, type, backgroundColor)
+    return this._chartPane.getConvertPictureUrl(includeTooltip, includeOverlay, type, backgroundColor)
   }
 
   /**

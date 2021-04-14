@@ -440,6 +440,7 @@ export default class ChartData {
           this._adjustFromTo()
         } else {
           this._dataList[pos] = data
+          this._adjustVisibleDataList()
         }
       }
     }

@@ -643,11 +643,11 @@ export default class ChartPane {
   /**
    * 获取图表转换为图片后url
    * @param includeTooltip,
-   * @param includeGraphicMark
+   * @param includeOverlay
    * @param type
    * @param backgroundColor
    */
-  getConvertPictureUrl (includeTooltip, includeGraphicMark, type, backgroundColor) {
+  getConvertPictureUrl (includeTooltip, includeOverlay, type, backgroundColor) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)
@@ -664,7 +664,7 @@ export default class ChartPane {
     let offsetTop = 0
     const candleStickPaneHeight = this._candlePane.height()
     ctx.drawImage(
-      this._candlePane.getImage(includeTooltip, includeGraphicMark),
+      this._candlePane.getImage(includeTooltip, includeOverlay),
       0, offsetTop, width, candleStickPaneHeight
     )
     offsetTop += candleStickPaneHeight
