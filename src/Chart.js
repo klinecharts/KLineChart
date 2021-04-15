@@ -351,6 +351,24 @@ export default class Chart {
   }
 
   /**
+   * 将值装换成像素
+   * @param value
+   * @param finder
+   */
+  convertToPixel (value, finder) {
+    return this._chartPane.convertToPixel(value, finder)
+  }
+
+  /**
+   * 将像素转换成值
+   * @param coordinate
+   * @param finder
+   */
+  convertFromPixel (coordinate, finder) {
+    return this._chartPane.convertFromPixel(coordinate, finder)
+  }
+
+  /**
    * 订阅图表动作
    * @param type
    * @param callback

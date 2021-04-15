@@ -493,7 +493,7 @@ const defaultAnnotation = {
     color: '#1e88e5',
     activeSize: 10,
     activeColor: '#FF9600',
-    offset: [20, 0]
+    offset: [0, 20]
   }
 }
 

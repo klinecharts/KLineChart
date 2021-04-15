@@ -1,4 +1,4 @@
-import {KLineData, TimestampPricePoint} from './Common';
+import {CoordinatePoint, KLineData, TimestampPricePoint} from './Common';
 
 import { OverrideTechnicalIndicator, TechnicalIndicator } from './TechnicalIndicator';
 import { CreateGraphicMarkOptions, OverrideGraphicMarkOptions, GraphicMark } from './GraphicMark';
@@ -7,6 +7,17 @@ import { Annotation } from './Annotation';
 import { PaneOptions } from './Pane';
 
 export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll';
+
+export declare interface ConvertValue {
+  xAxisValue?: number;
+  yAxisValue?: number;
+}
+
+export declare interface ConvertFinder {
+  paneId: string;
+  dataIndexXAxis?: boolean;
+  absoluteYAxis?: boolean;
+}
 
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 
@@ -42,6 +53,8 @@ export declare interface Chart {
   removeGraphicMark(graphicMarkId?: string): void;
   createAnnotation(annotation: Annotation | Annotation[]): void;
   removeAnnotation(point: TimestampPricePoint | TimestampPricePoint[]): void;
+  convertFromPixel(coordinate: CoordinatePoint | CoordinatePoint[], finder: ConvertFinder): ConvertValue | ConvertValue[];
+  convertToPixel(value: ConvertValue | ConvertValue[], finder: ConvertFinder): CoordinatePoint | CoordinatePoint[];
   subscribeAction (type: ChartActionType, callback: (params: any) => void): void;
   unsubscribeAction (type: ChartActionType, callback?: (params: any) => void): void;
   getConvertPictureUrl(includeTooltip?: boolean, includeOverlay?: boolean, type?: PictureType, backgroundColor?: string): string;

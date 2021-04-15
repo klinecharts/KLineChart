@@ -641,6 +641,90 @@ export default class ChartPane {
   }
 
   /**
+   * 将值装换成像素
+   * @param timestamp
+   * @param value
+   * @param paneId
+   * @param dataIndexXAxis
+   * @param absoluteYAxis
+   */
+  convertToPixel (value, { paneId, dataIndexXAxis, absoluteYAxis }) {
+    const values = [].concat(value)
+    let coordinates
+    const convert = (pane, absoluteTop) => {
+      return values.map(({ xAxisValue, yAxisValue }) => {
+        const coordinate = {}
+        if (xAxisValue) {
+          const dataIndex = dataIndexXAxis ? xAxisValue : this._chartData.timestampToDataIndex(xAxisValue)
+          coordinate.x = this._xAxisPane.xAxis().convertToPixel(dataIndex)
+        }
+        if (yAxisValue) {
+          const y = pane.yAxis().convertToPixel(yAxisValue)
+          coordinate.y = absoluteYAxis ? absoluteTop + y : y
+        }
+        return coordinate
+      })
+    }
+    if (paneId) {
+      if (paneId === this._candlePane.id()) {
+        coordinates = convert(this._candlePane, 0)
+      } else {
+        let absoluteTop = this._candlePane.height()
+        for (const pane of this._technicalIndicatorPanes) {
+          if (paneId === pane.id()) {
+            coordinates = convert(pane, absoluteTop)
+            break
+          }
+          absoluteTop += pane.height()
+        }
+      }
+    }
+    return isArray(value) ? (coordinates || []) : (coordinates[0] || {})
+  }
+
+  /**
+   * 将像素转换成值
+   * @param coordinate
+   * @param paneId
+   * @param dataIndexXAxis
+   * @param absoluteYAxis
+   * @return {{}[]|*[]}
+   */
+  convertFromPixel (coordinate, { paneId, dataIndexXAxis, absoluteYAxis }) {
+    const coordinates = [].concat(coordinate)
+    let values
+    const convert = (pane, absoluteTop) => {
+      return coordinates.map(({ x, y }) => {
+        const value = {}
+        if (x) {
+          const v = this._xAxisPane.xAxis().convertFromPixel(x)
+          value.xAxisValue = dataIndexXAxis ? v : this._chartData.dataIndexToTimestamp(v)
+        }
+        if (y) {
+          const ry = absoluteYAxis ? y - absoluteTop : y
+          value.yAxisValue = pane.yAxis().convertFromPixel(ry)
+        }
+        return value
+      })
+    }
+    if (paneId) {
+      if (paneId === this._candlePane.id()) {
+        values = convert(this._candlePane)
+      } else {
+        let absoluteTop = this._candlePane.height()
+        for (const pane of this._technicalIndicatorPanes) {
+          if (paneId === pane.id()) {
+            values = convert(pane, absoluteTop)
+            break
+          }
+          absoluteTop += pane.height()
+        }
+      }
+    }
+    return isArray(coordinate) ? (values || []) : (values[0] || {})
+  }
+
+  /**
    * 获取图表转换为图片后url
    * @param includeTooltip,
    * @param includeOverlay
