@@ -40,7 +40,8 @@ export const ActionType = {
   drawCandle: 'drawCandle',
   drawTechnicalIndicator: 'drawTechnicalIndicator',
   zoom: 'zoom',
-  scroll: 'scroll'
+  scroll: 'scroll',
+  crosshair: 'crosshair'
 }
 
 /**
@@ -463,14 +464,6 @@ export default class ChartData {
   }
 
   /**
-   * 获取向右偏移的bar的数量
-   * @returns {number}
-   */
-  offsetRightBarCount () {
-    return this._offsetRightBarCount
-  }
-
-  /**
    * 设置一条数据的空间
    * @param dataSpace
    */
@@ -619,6 +612,24 @@ export default class ChartData {
       return 0
     }
     return binarySearchNearest(this._dataList, 'timestamp', timestamp)
+  }
+
+  /**
+   * 数据索引转换成位置
+   * @param dataIndex
+   */
+  dataIndexToPosition (dataIndex) {
+    const dataSize = this._dataList.length
+    const deltaFromRight = dataSize + this._offsetRightBarCount - dataIndex
+    return this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace + this._barSpace / 2
+  }
+
+  /**
+   * 位置换成数据索引转
+   * @param pixel
+   */
+  positionToDataIndex (pixel) {
+    return Math.round(this.coordinateToFloatIndex(pixel)) - 1
   }
 
   /**

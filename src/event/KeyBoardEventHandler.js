@@ -39,12 +39,12 @@ export default class KeyBoardEventHandler extends EventHandler {
         }
         case KeyBoardCode.ARROW_LEFT: {
           this._chartData.startScroll()
-          this._chartData.scroll(-this._chartData.dataSpace() * 3)
+          this._chartData.scroll(-3 * this._chartData.dataSpace())
           break
         }
         case KeyBoardCode.ARROW_RIGHT: {
           this._chartData.startScroll()
-          this._chartData.scroll(this._chartData.dataSpace() * 3)
+          this._chartData.scroll(3 * this._chartData.dataSpace())
           break
         }
         default: {
