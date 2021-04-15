@@ -198,7 +198,7 @@ export default class Annotation extends Overlay {
         break
       }
     }
-    this._symbolCoordinate = { x: x + (offset[0] || 0), y: y + (offset[1] || 0) }
+    this._symbolCoordinate = { x: x + (offset[1] || 0), y: y + (offset[0] || 0) }
   }
 
   /**
