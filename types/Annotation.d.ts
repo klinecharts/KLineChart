@@ -6,7 +6,7 @@ export declare interface AnnotationCheckParams {
   size: number;
 }
 
-export declare interface AnnotationDrawExtendParams {
+export declare interface AnnotationDrawParams {
   ctx: CanvasRenderingContext2D;
   point: TimestampPricePoint;
   coordinatePoint: CoordinatePoint;
@@ -18,7 +18,8 @@ export declare interface AnnotationDrawExtendParams {
 export declare interface Annotation {
   point: TimestampPricePoint;
   checkPointInCustomSymbol?: (params: AnnotationCheckParams) => void;
-  drawCustomSymbol?: (params: AnnotationDrawExtendParams) => void;
+  drawCustomSymbol?: (params: AnnotationDrawParams) => void;
+  drawExtend?: (params: AnnotationDrawParams) => void;
   onClick?: (event: OverlayEvent) => void;
   onRightClick?: (event: OverlayEvent) => void;
   onMouseEnter?: (event: OverlayEvent) => void;

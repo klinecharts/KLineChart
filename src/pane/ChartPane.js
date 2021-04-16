@@ -612,7 +612,11 @@ export default class ChartPane {
       const instances = []
       const annotations = [].concat(annotation)
       annotations.forEach(({
-        point, symbol, position, styles, drawExtend
+        point, symbol, position, styles,
+        checkPointInCustomSymbol,
+        drawCustomSymbol, drawExtend,
+        onClick, onRightClick,
+        onMouseEnter, onMouseLeave
       }) => {
         if (point && point.timestamp) {
           const annotationInstance = new Annotation({
@@ -627,6 +631,24 @@ export default class ChartPane {
           })
           if (isFunction(drawExtend)) {
             annotationInstance.drawExtend = drawExtend
+          }
+          if (isFunction(checkPointInCustomSymbol)) {
+            annotationInstance.checkPointInCustomSymbol = checkPointInCustomSymbol
+          }
+          if (isFunction(drawCustomSymbol)) {
+            annotationInstance.drawCustomSymbol = drawCustomSymbol
+          }
+          if (isFunction(onClick)) {
+            annotationInstance.onClick = onClick
+          }
+          if (isFunction(onRightClick)) {
+            annotationInstance.onRightClick = onRightClick
+          }
+          if (isFunction(onMouseEnter)) {
+            annotationInstance.onMouseEnter = onMouseEnter
+          }
+          if (isFunction(onMouseLeave)) {
+            annotationInstance.onMouseLeave = onMouseLeave
           }
           instances.push(annotationInstance)
         }
