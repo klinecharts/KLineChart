@@ -22,6 +22,8 @@ export declare interface ConvertFinder {
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 
 export declare interface Chart {
+  getWidth(): any;
+  getHeight(): any;
   setStyleOptions(options: any): void;
   getStyleOptions(): any;
   setPriceVolumePrecision(pricePrecision: number, volumePrecision: number): void;

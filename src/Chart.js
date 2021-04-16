@@ -22,6 +22,22 @@ export default class Chart {
   }
 
   /**
+   * 获取宽尺寸
+   * @return {*|{}}
+   */
+  getWidth () {
+    return this._chartPane.chartWidth()
+  }
+
+  /**
+   * 获取高度尺寸
+   * @return {*|{}}
+   */
+  getHeight () {
+    return this._chartPane.chartHeight()
+  }
+
+  /**
    * 设置样式配置
    * @param options
    */

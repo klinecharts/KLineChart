@@ -55,6 +55,8 @@ export default class ChartPane {
       xAxis: this._xAxisPane.xAxis(),
       id: CANDLE_PANE_ID
     })
+    this._chartWidth = {}
+    this._chartHeight = {}
     this._chartEvent = new ChartEvent(this._chartContainer, this._chartData)
     this.adjustPaneViewport(true, true, true)
   }
@@ -181,16 +183,18 @@ export default class ChartPane {
     let contentTop = candleStickPaneHeight
     let contentBottom = candleStickPaneHeight
     this._candlePane.setHeight(candleStickPaneHeight)
-
-    for (let i = 0; i < this._technicalIndicatorPanes.length; i++) {
-      const technicalIndicatorPane = this._technicalIndicatorPanes[i]
-      const technicalIndicatorPaneHeight = technicalIndicatorPane.height()
-      technicalIndicatorPane.setHeight(technicalIndicatorPaneHeight)
+    this._chartHeight[this._candlePane.id()] = candleStickPaneHeight
+    this._technicalIndicatorPanes.forEach(pane => {
+      const technicalIndicatorPaneHeight = pane.height()
+      pane.setHeight(technicalIndicatorPaneHeight)
       contentBottom += (technicalIndicatorPaneHeight + separatorSize)
-      paneContentSize[technicalIndicatorPane.id()] = { contentTop, contentBottom }
+      paneContentSize[pane.id()] = { contentTop, contentBottom }
+      this._chartHeight[pane.id()] = technicalIndicatorPaneHeight
       contentTop = contentBottom
-    }
+    })
     this._xAxisPane.setHeight(xAxisHeight)
+    this._chartHeight.xAxis = xAxisHeight
+    this._chartHeight.total = paneHeight
     this._chartEvent.setPaneContentSize(paneContentSize)
   }
 
@@ -239,6 +243,7 @@ export default class ChartPane {
       technicalIndicatorPane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft)
       separatorPane.setSize(mainOffsetLeft, mainWidth)
     }
+    this._chartWidth = { content: mainWidth, yAxis: yAxisWidth, total: paneWidth }
     this._xAxisPane.setWidth(mainWidth, yAxisWidth)
     this._xAxisPane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft)
     this._chartEvent.setChartContentSize({ contentLeft: mainOffsetLeft, contentRight: mainOffsetLeft + mainWidth })
@@ -722,6 +727,22 @@ export default class ChartPane {
       }
     }
     return isArray(coordinate) ? (values || []) : (values[0] || {})
+  }
+
+  /**
+   * 图表宽度
+   * @return {*|{}}
+   */
+  chartWidth () {
+    return this._chartWidth
+  }
+
+  /**
+   * 图表高度
+   * @return {*|{}}
+   */
+  chartHeight () {
+    return this._chartHeight
   }
 
   /**
