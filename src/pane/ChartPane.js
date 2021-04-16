@@ -655,15 +655,15 @@ export default class ChartPane {
    */
   convertToPixel (value, { paneId, dataIndexXAxis, absoluteYAxis }) {
     const values = [].concat(value)
-    let coordinates
+    let coordinates = []
     const convert = (pane, absoluteTop) => {
       return values.map(({ xAxisValue, yAxisValue }) => {
         const coordinate = {}
-        if (xAxisValue) {
+        if (isValid(xAxisValue)) {
           const dataIndex = dataIndexXAxis ? xAxisValue : this._chartData.timestampToDataIndex(xAxisValue)
           coordinate.x = this._xAxisPane.xAxis().convertToPixel(dataIndex)
         }
-        if (yAxisValue) {
+        if (isValid(yAxisValue)) {
           const y = pane.yAxis().convertToPixel(yAxisValue)
           coordinate.y = absoluteYAxis ? absoluteTop + y : y
         }
@@ -684,7 +684,7 @@ export default class ChartPane {
         }
       }
     }
-    return isArray(value) ? (coordinates || []) : (coordinates[0] || {})
+    return isArray(value) ? coordinates : (coordinates[0] || {})
   }
 
   /**
@@ -697,15 +697,15 @@ export default class ChartPane {
    */
   convertFromPixel (coordinate, { paneId, dataIndexXAxis, absoluteYAxis }) {
     const coordinates = [].concat(coordinate)
-    let values
+    let values = []
     const convert = (pane, absoluteTop) => {
       return coordinates.map(({ x, y }) => {
         const value = {}
-        if (x) {
+        if (isValid(x)) {
           const v = this._xAxisPane.xAxis().convertFromPixel(x)
           value.xAxisValue = dataIndexXAxis ? v : this._chartData.dataIndexToTimestamp(v)
         }
-        if (y) {
+        if (isValid(y)) {
           const ry = absoluteYAxis ? y - absoluteTop : y
           value.yAxisValue = pane.yAxis().convertFromPixel(ry)
         }
@@ -714,7 +714,7 @@ export default class ChartPane {
     }
     if (paneId) {
       if (paneId === this._candlePane.id()) {
-        values = convert(this._candlePane)
+        values = convert(this._candlePane, 0)
       } else {
         let absoluteTop = this._candlePane.height()
         for (const pane of this._technicalIndicatorPanes) {
@@ -726,7 +726,7 @@ export default class ChartPane {
         }
       }
     }
-    return isArray(coordinate) ? (values || []) : (values[0] || {})
+    return isArray(coordinate) ? values : (values[0] || {})
   }
 
   /**
