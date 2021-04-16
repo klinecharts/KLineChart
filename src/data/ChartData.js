@@ -751,10 +751,13 @@ export default class ChartData {
    * @param graphicMark
    */
   addCustomGraphicMark (graphicMark) {
-    const GraphicMarkClass = createGraphicMarkClass(graphicMark)
-    if (GraphicMarkClass) {
-      this._graphicMarkMapping[graphicMark.name] = GraphicMarkClass
-    }
+    const marks = [].concat(graphicMark)
+    marks.forEach(mark => {
+      const GraphicMarkClass = createGraphicMarkClass(mark)
+      if (GraphicMarkClass) {
+        this._graphicMarkMapping[mark.name] = GraphicMarkClass
+      }
+    })
   }
 
   /**
@@ -939,11 +942,14 @@ export default class ChartData {
    * @param technicalIndicator
    */
   addCustomTechnicalIndicator (technicalIndicator) {
-    const technicalIndicatorInstance = createTechnicalIndicatorInstance(technicalIndicator || {})
-    if (technicalIndicatorInstance) {
-      // 将生成的新的指标类放入集合
-      this._technicalIndicatorMapping[technicalIndicatorInstance.name] = technicalIndicatorInstance
-    }
+    const techs = [].concat(technicalIndicator)
+    techs.forEach(tech => {
+      const technicalIndicatorInstance = createTechnicalIndicatorInstance(tech || {})
+      if (technicalIndicatorInstance) {
+        // 将生成的新的指标类放入集合
+        this._technicalIndicatorMapping[technicalIndicatorInstance.name] = technicalIndicatorInstance
+      }
+    })
   }
 
   /**

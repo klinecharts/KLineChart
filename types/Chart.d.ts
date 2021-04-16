@@ -44,14 +44,14 @@ export declare interface Chart {
   updateData(data: KLineData): void;
   loadMore(cb: (timestamp: number) => void): void;
   createTechnicalIndicator(name: string, isStack?: boolean, options?: PaneOptions): string | null;
-  addCustomTechnicalIndicator(technicalIndicator: TechnicalIndicator): void;
+  addCustomTechnicalIndicator(technicalIndicator: TechnicalIndicator | TechnicalIndicator[]): void;
   overrideTechnicalIndicator(override: OverrideTechnicalIndicator): void;
   getTechnicalIndicatorByName(name?: string): any;
   getTechnicalIndicatorByPaneId(paneId?: string): any;
   removeTechnicalIndicator(paneId: string, name?: string): void;
   createGraphicMark(name: string, options?: CreateGraphicMarkOptions): string | null;
   setGraphicMarkOptions(id: string, options: OverrideGraphicMarkOptions): void;
-  addCustomGraphicMark(graphicMark: GraphicMark): void;
+  addCustomGraphicMark(graphicMark: GraphicMark | GraphicMark[]): void;
   removeGraphicMark(graphicMarkId?: string): void;
   createAnnotation(annotation: Annotation | Annotation[]): void;
   removeAnnotation(point: TimestampPricePoint | TimestampPricePoint[]): void;
