@@ -149,6 +149,8 @@ export default class ChartData {
     // 调整pane标记
     this._dragPaneFlag = false
 
+    // 内部十字光标代理
+    this._crosshairDelegate = new Delegate()
     // 事件代理
     this._actionDelegate = {}
   }
@@ -953,6 +955,14 @@ export default class ChartData {
   }
 
   /**
+   * 获取十字光标事件代理
+   * @return {Delegate}
+   */
+  crosshairDelegate () {
+    return this._crosshairDelegate
+  }
+
+  /**
    * 事件执行
    * @param type
    * @param data
@@ -960,12 +970,21 @@ export default class ChartData {
    * @param executeAfterFun
    */
   actionExecute (type, data, executeBeforeFun, executeAfterFun) {
-    const delegate = this._actionDelegate[type]
-    if (delegate && delegate.hasObservers()) {
+    if (this.hasAction(type)) {
       executeBeforeFun && executeBeforeFun()
-      delegate.execute(data)
+      this._actionDelegate[type].execute(data)
       executeAfterFun && executeAfterFun()
     }
+  }
+
+  /**
+   * 是否有事件监听
+   * @param type
+   * @return {boolean}
+   */
+  hasAction (type) {
+    const delegate = this._actionDelegate[type]
+    return (delegate && delegate.hasObservers())
   }
 
   /**

@@ -44,6 +44,14 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         this._shouldDrawTooltip(crosshair, styleOptions.technicalIndicator.tooltip)
       )
     }
+    if (crosshair.paneId) {
+      this._chartData.crosshairDelegate().execute({
+        dataIndex,
+        kLineData,
+        x: crosshair.x,
+        y: crosshair.y
+      })
+    }
   }
 
   /**

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import ChartData, { InvalidateLevel } from '../data/ChartData'
+import ChartData, { ActionType, InvalidateLevel } from '../data/ChartData'
 import { getTechnicalIndicatorInfo } from '../data/base/technicalindicator/technicalIndicatorControl'
 
 import CandlePane from './CandlePane'
@@ -58,6 +58,7 @@ export default class ChartPane {
     this._chartWidth = {}
     this._chartHeight = {}
     this._chartEvent = new ChartEvent(this._chartContainer, this._chartData)
+    this._chartData.crosshairDelegate().subscribe(this._crosshairObserver.bind(this))
     this.adjustPaneViewport(true, true, true)
   }
 
@@ -81,6 +82,35 @@ export default class ChartPane {
     this._chartContainer.style.cursor = 'crosshair'
     this._chartContainer.tabIndex = 1
     container.appendChild(this._chartContainer)
+  }
+
+  /**
+   * 十字光标观察者
+   * @private
+   */
+  _crosshairObserver ({ dataIndex, kLineData, x, y }) {
+    if (this.chartData().hasAction(ActionType.crosshair)) {
+      const getData = (pane) => {
+        const data = {}
+        pane.technicalIndicators().forEach(tech => {
+          const result = tech.result
+          data[tech.name] = result[dataIndex]
+        })
+        return data
+      }
+      const technicalIndicatorData = {
+        [this._candlePane.id()]: getData(this._candlePane)
+      }
+      this._technicalIndicatorPanes.forEach(pane => {
+        technicalIndicatorData[pane.id()] = getData(pane)
+      })
+      this._chartData.actionExecute(ActionType.crosshair, {
+        coordinate: { x, y },
+        dataIndex,
+        kLineData,
+        technicalIndicatorData
+      })
+    }
   }
 
   /**
