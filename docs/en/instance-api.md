@@ -1,9 +1,16 @@
 # Instance API
 
+### getWidth()
+Get chart width.
+
+
+### getHeight()
+Get chart height.
+
+
 ### setStyleOptions(options)
 Set the style configuration.
 - `options` style configuration, please refer to [style details](styles.md)
-
 
 
 ### getStyleOptions()
@@ -184,6 +191,8 @@ Create a graphic mark and return a string type identifier
   - `onDrawEnd` draw end callback event, can be default
   - `onClick` click callback event, default
   - `onRightClick` right-click callback event, it can be defaulted, it needs to return a boolean type value, if it returns true, the built-in right-click delete will be invalid
+  - `onMouseEnter` mouse enter event, default
+  - `onMouseLeave` mouse leave event, default
   - `onPressedMove` press and drag callback event
   - `onRemove` delete callback event
 
@@ -211,12 +220,13 @@ chart.createGraphicMark(
       console.log(id, event)
       return false
     },
+    onMouseEnter: function ({ id, event }) { console.log(id, event) },
+    onMouseLeave: function ({ id, event }) { console.log(id, event) },
     onPressedMove: function ({ id, event }) {console.log(id, event) },
     onRemove: function ({ id }) {console.log(id)}
   }
 )
 ```
-
 
 
 ### setGraphicMarkOptions(id, options)
@@ -237,22 +247,82 @@ Remove all graphic marks.
 - `id` call the createGraphicMark method is the returned mark, if the default is, all marks will be removed
 
 
+### createAnnotation(annotation)
+Create annotation. It can be a single or a collection.
+- `annotation` annotation information, `{ point, styles, checkPointInCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
+  - `point` point `{ timestamp, price }`
+  - `styles` style, the format is the same in the configuration of `annotation`
+  - `checkPointInCustomSymbol` Triggered when the style `annotation.symbol.type` is `custom`
+  - `drawCustomSymbol` Triggered when the style `annotation.symbol.type` is `custom`
+  - `drawExtend` Extend drawing method
+  - `onClick` click callback event, default
+  - `onRightClick` right-click callback event, default
+  - `onMouseEnter` mouse enter event, default
+  - `onMouseLeave` mouse leave event, default
+Example:
+```javascript
+chart.createAnnotation({
+  point: { timestamp: 1614171282000, price: 18987 },
+  styles: {
+    type: 'diamond',
+    position: 'top',
+    size: 8,
+    color: '#1e88e5',
+    activeSize: 10,
+    activeColor: '#FF9600',
+    offset: [0, 20]
+  },
+  checkPointInCustomSymbol: function ({ point, coordinate, size }) {
+    console.log(point, coordinate, size)
+    return true
+  },
+  drawCustomSymbol: function ({ ctx, point, coordinate, viewport, isActive, styles }) {
+    console.log(point, coordinate, viewport, isActive, styles)
+  },
+  drawExtend: function ({ ctx, point, coordinate, viewport, isActive, styles }) {
+    console.log(point, coordinate, viewport, isActive, styles)
+  },
+  onClick: function ({ id, event }) { console.log(id, event) },
+  onRightClick: function ({ id, event }) { console.log(id, event) },
+  onMouseEnter: function ({ id, event }) { console.log(id, event) },
+  onMouseLeave: function ({ id, event }) { console.log(id, event) },
+})
+```
+
+
+### removeAnnotation(points)
+Remove annotation. It can be a single or a collection.
+- `points` single point or collection, `{ timestamp }`
+
+
 ### subscribeAction(type, callback)
 Subscribe to chart actions.
-- `type` The type is 'drawCandle', 'drawTechnicalIndicator', 'zoom' and 'scroll'
+- `type` The type is 'drawCandle', 'drawTechnicalIndicator', 'zoom', 'scroll' and 'crosshair'
 - `callback` is a callback method
 
 
 ### unsubscribeAction(type, callback)
 Unsubscribe from chart actions.
-- `type` type is 'drawCandle', 'drawTechnicalIndicator', 'zoom' and 'scroll'
+- `type` type is 'drawCandle', 'drawTechnicalIndicator', 'zoom', 'scroll' and 'crosshair'
 - `callback` callback method when subscribing
 
 
-### getConvertPictureUrl(includeTooltip, includeGraphicMark, type, backgroundColor)
+### convertToPixel(value, finder)
+Convert value to coordinate value.
+- `value` value, `{ xAxisValue, yAxisValue }`
+- `finder` finder value, `{ paneId, dataIndexXAxis, absoluteYAxis }`
+
+
+### convertFromPixel(coordinate, finder)
+Convert coordinate value to value.
+- `coordinate` coordinate, `{ x, y }`
+- `finder` finder value, `{ paneId, dataIndexXAxis, absoluteYAxis }`
+
+
+### getConvertPictureUrl(includeTooltip, includeOverlay, type, backgroundColor)
 Get the picture url after the chart is converted into a picture.
 - `includeTooltip` Whether to prompt the floating layer, it can be defaulted
-- `includeGraphicMark` Whether to include the graphic mark layer, it can be defaulted
+- `includeOverlay` Whether to include overlay, it can be defaulted
 - `type` The converted picture type. The type is one of three types: 'png', 'jpeg', and 'bmp', which can be defaulted, and the default is 'jpeg'
 - `backgroundColor` background color, can be the default, the default is '#333333'
 

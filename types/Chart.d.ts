@@ -1,4 +1,4 @@
-import {CoordinatePoint, KLineData, TimestampPricePoint} from './Common';
+import { CoordinatePoint, KLineData, TimestampPricePoint } from './Common';
 
 import { OverrideTechnicalIndicator, TechnicalIndicator } from './TechnicalIndicator';
 import { CreateGraphicMarkOptions, OverrideGraphicMarkOptions, GraphicMark } from './GraphicMark';
@@ -6,7 +6,7 @@ import { Annotation } from './Annotation';
 
 import { PaneOptions } from './Pane';
 
-export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll';
+export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll' | 'crosshair';
 
 export declare interface ConvertValue {
   xAxisValue?: number;

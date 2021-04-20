@@ -1,4 +1,16 @@
 # Change Log
+`To be released`
++ 🆕 Add annotation feature
+  + `createAnnotation` is used to add annotations
+  + `removeAnnotation` is used to delete annotations
+  + Add `annotation` configuration for styles
++ 🆕 Add api, `getWidth`, `getHeight`, `convertToPixel` and `convertFromPixel`.
++ 🆕 Add `onMouseEnter` and `onMouseLeave` events to graphic markers.
++ 🆕 `suscribeAction` adds the new type `crosshair`.
++ 💪 Enhanced `unsubscribeAction` to cancel events in batches.
++ 💪 Enhanced `addCustomTechnicalIndicator` and `addCustomGraphicMark`, which can be added in batches.
+
+
 ## 7.0.2
 `2021-04-07`
 - 🛠 Rewrite technical indicator calculation `EMV`, `ROC`, `WR`, `CR`, `PVT`, `DMI`, `MTM`, `PSY`, `VR`, `RSI`, `OBV`, `EMA`, `MACD`, `SMA`, `TRIX`, `CCI`。

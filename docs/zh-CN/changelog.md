@@ -1,4 +1,17 @@
 # 更新日志
+## 7.1.0
+`待发布`
++ 🆕 新增注解功能
+  + `createAnnotation`用于添加注解
+  + `removeAnnotation`用于删除注解
+  + 样式新增`annotation`配置
++ 🆕 新增api，`getWidth`，`getHeight`，`convertToPixel`和`convertFromPixel`。
++ 🆕 图形标记新增`onMouseEnter`和`onMouseLeave`事件。
++ 🆕 `suscribeAction`新增类型`crosshair`。
++ 💪 增强`unsubscribeAction`，可批量取消事件。
++ 💪 增强`addCustomTechnicalIndicator`和`addCustomGraphicMark`，可批量添加。
+
+
 ## 7.0.2
 `2021-04-07`
 - 🛠 重写技术指标计算`EMV`, `ROC`, `WR`, `CR`, `PVT`, `DMI`, `MTM`, `PSY`, `VR`, `RSI`, `OBV`, `EMA`, `MACD`, `SMA`, `TRIX`, `CCI`。

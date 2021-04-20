@@ -85,7 +85,7 @@ export default class Annotation extends Overlay {
         this.drawCustomSymbol({
           ctx,
           point: this._tpPoint,
-          coordinatePoint: this._symbolCoordinate,
+          coordinate: this._symbolCoordinate,
           viewport: {
             width: this._xAxis.width(),
             height: this._yAxis.height(),
@@ -111,7 +111,7 @@ export default class Annotation extends Overlay {
       this.drawExtend({
         ctx,
         point: this._tpPoint,
-        coordinatePoint: this._symbolCoordinate,
+        coordinate: this._symbolCoordinate,
         viewport: {
           width: this._xAxis.width(),
           height: this._yAxis.height()
@@ -158,7 +158,7 @@ export default class Annotation extends Overlay {
       case AnnotationSymbolType.CUSTOM: {
         isOn = this.checkPointInCustomSymbol({
           point: this._tpPoint,
-          coordinatePoint: this._symbolCoordinate,
+          coordinate: this._symbolCoordinate,
           size
         })
         break
@@ -204,19 +204,19 @@ export default class Annotation extends Overlay {
   /**
    * 检查鼠标点是否在自定义标识内
    * @param point
-   * @param coordinatePoint
+   * @param coordinate
    * @param size
    */
-  checkPointInCustomSymbol ({ point, coordinatePoint, size }) {}
+  checkPointInCustomSymbol ({ point, coordinate, size }) {}
 
   /**
    * 绘制自定义标识
    * @param ctx
    * @param point
-   * @param coordinatePoint
+   * @param coordinate
    * @param viewport
    * @param styles
    * @param isActive
    */
-  drawCustomSymbol ({ ctx, point, coordinatePoint, viewport, styles, isActive }) {}
+  drawCustomSymbol ({ ctx, point, coordinate, viewport, styles, isActive }) {}
 }

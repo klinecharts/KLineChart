@@ -1,18 +1,24 @@
 # 实例API
 
+### getWidth()
+获取图表宽度。
+
+
+### getHeight()
+获取图表高度。
+
+
 ### setStyleOptions(options)
 设置样式配置。
-
 - `options` 样式配置，详情可参阅[样式说明](styles.md)
-
 
 
 ### getStyleOptions()
 获取样式配置。
 
+
 ### setPriceVolumePrecision(pricePrecision, volumePrecision)
 设置价格和数量精度。
-
 - `pricePrecision` 价格精度，影响整个图表显示的价格的数字精度，还包括指标系列是price的技术指标
 - `volumePrecision` 数量精度，影响整个图表显示的数量的数字精度，还包括指标系列是volume的技术指标
 
@@ -20,7 +26,6 @@
 
 ### setTimezone(timezone)
 设置时区。
-
 - `timezone` 时区名，如'Asia/Shanghai'，如果不设置会自动获取本机时区，时区对应名字列表请自寻查找相关文档
 
 
@@ -28,80 +33,65 @@
 ### getTimezone()
 获取图表时区。
 
+
 ### setZoomEnabled(enabled)
 设置是否缩放。
-
 - `enabled` true 或 false
-
 
 
 ### isZoomEnabled()
 是否可以缩放。
 
+
 ### setScrollEnabled(enabled)
 设置是否可以拖拽滚动。
-
 - `enabled` true 或 false
-
 
 
 ### isScrollEnabled()
 是否可以拖拽滚动。
 
+
 ### setOffsetRightSpace(space)
 设置图表右边可以空出来的间隙。
-
 - `space` 距离大小，number类型
-
 
 
 ### setLeftMinVisibleBarCount(barCount)
 设置左边最小可见的蜡烛数量。
-
 - `barCount` 数量，number类型
-
 
 
 ### setRightMinVisibleBarCount(barCount)
 设置右边最小可见的蜡烛数量。
-
 - `barCount` 数量，number类型
-
 
 
 ### setDataSpace(space)
 设置图表一条数据所占用的空间，即单根蜡烛柱的宽度。
-
 - `space` 宽度，number类型
-
-
 
 
 ### applyNewData(dataList, more)
 添加新数据，此方法会清空图表数据，不需要额外调用clearData方法。
-
 - `dataList` 是一个KLineData数组，KLineData类型详情可参阅数据源
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
-
 
 
 ### applyMoreData(dataList, more)
 添加历史更多数据。
-
 - `dataList` 是一个KLineData数组，KLineData类型详情可参阅数据源
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 
 
-
 ### updateData(data)
 更新数据，目前只会匹配当前最后一条数据的时间戳，相同则覆盖，不同则追加。
-
 - `data` 单条k线数据
-
 
 
 ### getDataList()
 获取图表目前的数据源。
+
 
 ### clearData()
 清空图表数据，一般情况下清空数据是为了添加新的数据，为了避免重复绘制，所有这里只是清除数据，图表不会重绘
@@ -109,14 +99,11 @@
 
 ### loadMore(cb)
 设置加载更多回调函数。
-
 - `cb` 是一个回调方法，回调参数为第一条数据的时间戳
-
 
 
 ### createTechnicalIndicator(name, isStack, paneOptions)
 创建一个技术指标，返回值是一个标识窗口的字符串，这非常重要，后续对该窗口的一些操作，都需要此标识。
-
 - `name` 技术指标名
 - `isStack` 是否覆盖
 - `paneOptions` 窗口配置信息，可缺省， `{ id, height, dragEnabled }`
@@ -136,7 +123,6 @@ chart.createTechnicalIndicator('MA', false, {
 
 ### overrideTechnicalIndicator(override)
 覆盖技术指标信息。
-
 - `override` 需要覆盖的一些参数， `{ name, calcParams, precision, styles }`
    - `name` 技术指标名，必填字段
    - `calcParams` 计算参数，可缺省
@@ -171,40 +157,29 @@ chart.overrideTechnicalIndicator({
 
 ### getTechnicalIndicatorByName(name)
 根据技术指标名获取技术指标信息。
-
 - `name` 技术指标名，可缺省，缺省则返回所有
-
 
 
 ### getTechnicalIndicatorByPaneId(paneId)
 根据窗口id获取技术指标信息。
-
 - `paneId` 窗口id，可缺省，缺省则返回所有。
-
 特殊的paneId: candle_pane，主图的窗口id
+
 
 ### removeTechnicalIndicator(paneId, name)
 移除技术指标。
-
 - `paneId` 窗口id，即调用createTechnicalIndicator方法时返回的窗口标识
-
 特殊的paneId: candle_pane，主图的窗口id
-
-
 - `name` 技术指标类型，如果缺省，则会移除所有
-
 
 
 ### addCustomTechnicalIndicator(technicalIndicator)
 添加一个自定义技术指标。
-
 - `technicalIndicator` 技术指标信息，详细请参考[技术指标](technical-indicator.md)
-
 
 
 ### createGraphicMark(name, options)
 创建图形标记，返回一个字符串类型的标识
-
 - `name` 图形标记类型
 - `options` 配置， `{ id, points, styles, lock, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }` 
    - `id` 可缺省，如果指定，则返回该id
@@ -216,8 +191,10 @@ chart.overrideTechnicalIndicator({
    - `onDrawEnd` 绘制结束回调事件，可缺省
    - `onClick` 点击回调事件，可缺省
    - `onRightClick` 右击回调事件，可缺省，需要返回一个boolean类型的值，如果返回true，内置的右击删除将无效
-   - `onPressedMove` 按住拖动回调事件
-   - `onRemove` 删除回调事件
+   - `onMouseEnter` 鼠标移入事件，可缺省
+   - `onMouseLeave` 鼠标移出事件，可缺省
+   - `onPressedMove` 按住拖动回调事件，可缺省
+   - `onRemove` 删除回调事件，可缺省
 
 示例：
 ```javascript
@@ -242,6 +219,8 @@ chart.createGraphicMark(
       console.log(id, event)
       return false
     },
+    onMouseEnter: function ({ id, event }) { console.log(id, event) },
+    onMouseLeave: function ({ id, event }) { console.log(id, event) },
     onPressedMove: function ({ id, event }) { console.log(id, event) },
     onRemove: function ({ id }) { console.log(id) }
   }
@@ -249,55 +228,103 @@ chart.createGraphicMark(
 ```
 
 
-
 ### setGraphicMarkOptions(id, options)
 设置已绘制的图形标记配置。
-
 - `id` 调用createGraphicMark方法是返回的标识
 - `options` 配置， `{ styles, lock }`
    - `styles` 样式，格式同样式配置中 `graphicMark` 一致
    - `lock` 是否锁定
 
 
-
 ### addCustomGraphicMark(graphicMark)
 添加自定义图形标记。
-
 - `graphicMark` 图形标记信息，详细请参考[详情](graphic-mark.md)
-
 
 
 ### removeGraphicMark(id)
 移除所有的图形标记。
-
 - `id` 调用createGraphicMark方法是返回的标识，如果缺省，则会移除所有标记
 
+
+### createAnnotation(annotation)
+创建注解
+- `annotation` 注解信息, `{ point, styles, checkPointInCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
+  - `point` 点 `{ timestamp, price }`
+  - `styles` 样式，格式和配置里的`annotation`一致
+  - `checkPointInCustomSymbol` 检查鼠标点是否在symbol上，当样式`annotation.symbol.type`是`custom`的时候触发
+  - `drawCustomSymbol` 绘制自定义symbol，当样式`annotation.symbol.type`是`custom`的时候触发
+  - `drawExtend` 扩展绘制，可缺省
+  - `onClick` 点击事件，可缺省
+  - `onRightClick` 右击事件，可缺省
+  - `onMouseEnter` 右击移入事件，可缺省
+  - `onMouseLeave` 右击移出事件，可缺省
+
+示例:
+```javascript
+chart.createAnnotation({
+  point: { timestamp: 1614171282000, price: 18987 },
+  styles: {
+    type: 'diamond',
+    position: 'top',
+    size: 8,
+    color: '#1e88e5',
+    activeSize: 10,
+    activeColor: '#FF9600',
+    offset: [0, 20]
+  },
+  checkPointInCustomSymbol: function ({ point, coordinate, size }) {
+    console.log(point, coordinate, size)
+    return true
+  },
+  drawCustomSymbol: function ({ ctx, point, coordinate, viewport, isActive, styles }) {
+    console.log(point, coordinate, viewport, isActive, styles)
+  },
+  drawExtend: function ({ ctx, point, coordinate, viewport, isActive, styles }) {
+    console.log(point, coordinate, viewport, isActive, styles)
+  },
+  onClick: function ({ id, event }) { console.log(id, event) },
+  onRightClick: function ({ id, event }) { console.log(id, event) },
+  onMouseEnter: function ({ id, event }) { console.log(id, event) },
+  onMouseLeave: function ({ id, event }) { console.log(id, event) },
+})
+```
+
+
+### removeAnnotation(points)
+移除注解
+- `points` 点, `{ timestamp }`
 
 
 ### subscribeAction(type, callback)
 订阅图表动作。
-
-- `type` 类型是'drawCandle'，'drawTechnicalIndicator'，'zoom'和'scroll'
+- `type` 类型是'drawCandle'，'drawTechnicalIndicator'，'zoom'，'scroll'和'crosshair'
 - `callback` 是一个回调方法
-
 
 
 ### unsubscribeAction(type, callback)
 取消订阅图表动作。
-
-- `type` 类型是'drawCandle'，'drawTechnicalIndicator'，'zoom'和'scroll'
+- `type` 类型是'drawCandle'，'drawTechnicalIndicator'，'zoom'，'scroll'和'crosshair'
 - `callback` 订阅时的回调方法
 
 
+### convertToPixel(value, finder)
+将值转换成坐标.
+- `value` 值，`{ xAxisValue, yAxisValue }`
+- `finder` 过滤条件，`{ paneId, dataIndexXAxis, absoluteYAxis }`
 
-### getConvertPictureUrl(includeTooltip, includeGraphicMark, type, backgroundColor)
+
+### convertFromPixel(coordinate, finder)
+将坐标转换成值.
+- `coordinate` 坐标，`{ x, y }`
+- `finder` 过滤条件，`{ paneId, dataIndexXAxis, absoluteYAxis }`
+
+
+### getConvertPictureUrl(includeTooltip, includeOverlay, type, backgroundColor)
 获取图表转换成图片后的图片url。
-
 - `includeTooltip` 是否需要提示浮层，可缺省
-- `includeGraphicMark` 是否需要包含图形标记层，可缺省
+- `includeOverlay` 是否需要包含覆盖物层，可缺省
 - `type` 转换后的图片类型，类型是'png'、'jpeg'、'bmp'三种中的一种，可缺省，默认为'jpeg'
 - `backgroundColor` 背景色，可缺省，默认为'#333333'
-
 
 
 ### resize()
