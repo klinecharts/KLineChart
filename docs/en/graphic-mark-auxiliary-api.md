@@ -36,7 +36,7 @@ Get the y value on the linear function determined by two points according to the
 - `targetPoint` target point
 
 
-### getLinearYFromPoints(kb, targetPoint)
+### getLinearYFromSlopeIntercept(kb, targetPoint)
 Get the y value based on the x coordinate and slope intercept of a point.
 - `kb` slope and intercept
 - `targetPoint` target point

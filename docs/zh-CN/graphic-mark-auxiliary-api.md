@@ -44,7 +44,7 @@ import { ... } from 'klinecharts/lib/mark/graphicHelper'
 
 
 
-### getLinearYFromPoints(kb, targetPoint)
+### getLinearYFromSlopeIntercept(kb, targetPoint)
 根据某点的x坐标和斜率截距获取y值。
 
 - `kb` 斜率和截距

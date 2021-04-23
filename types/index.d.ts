@@ -12,7 +12,7 @@ import {
 } from './GraphicMark';
 import {
   AnnotationCheckParams,
-  AnnotationDrawExtendParams,
+  AnnotationDrawParams,
   Annotation
 } from './Annotation';
 
@@ -43,7 +43,7 @@ export {
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
   CreateGraphicMarkOptions, OverrideGraphicMarkOptions, GraphicMark,
-  AnnotationCheckParams, AnnotationDrawExtendParams, Annotation,
+  AnnotationCheckParams, AnnotationDrawParams, Annotation,
   TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, OverrideTechnicalIndicator,

@@ -722,18 +722,17 @@ export default class ChartPane {
         return coordinate
       })
     }
-    if (paneId) {
-      if (paneId === this._candlePane.id()) {
-        coordinates = convert(this._candlePane, 0)
-      } else {
-        let absoluteTop = this._candlePane.height()
-        for (const pane of this._technicalIndicatorPanes) {
-          if (paneId === pane.id()) {
-            coordinates = convert(pane, absoluteTop)
-            break
-          }
-          absoluteTop += pane.height()
+    if (!paneId || paneId === this._candlePane.id()) {
+      coordinates = convert(this._candlePane, 0)
+    } else {
+      const separatorSize = this._chartData.styleOptions().separator.size
+      let absoluteTop = this._candlePane.height() + separatorSize
+      for (const pane of this._technicalIndicatorPanes) {
+        if (paneId === pane.id()) {
+          coordinates = convert(pane, absoluteTop)
+          break
         }
+        absoluteTop += (pane.height() + separatorSize)
       }
     }
     return isArray(value) ? coordinates : (coordinates[0] || {})
@@ -764,18 +763,17 @@ export default class ChartPane {
         return value
       })
     }
-    if (paneId) {
-      if (paneId === this._candlePane.id()) {
-        values = convert(this._candlePane, 0)
-      } else {
-        let absoluteTop = this._candlePane.height()
-        for (const pane of this._technicalIndicatorPanes) {
-          if (paneId === pane.id()) {
-            values = convert(pane, absoluteTop)
-            break
-          }
-          absoluteTop += pane.height()
+    if (!paneId || paneId === this._candlePane.id()) {
+      values = convert(this._candlePane, 0)
+    } else {
+      const separatorSize = this._chartData.styleOptions().separator.size
+      let absoluteTop = this._candlePane.height() + separatorSize
+      for (const pane of this._technicalIndicatorPanes) {
+        if (paneId === pane.id()) {
+          values = convert(pane, absoluteTop)
+          break
         }
+        absoluteTop += (pane.height() + separatorSize)
       }
     }
     return isArray(coordinate) ? values : (values[0] || {})

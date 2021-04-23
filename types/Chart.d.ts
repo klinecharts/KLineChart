@@ -14,7 +14,7 @@ export declare interface ConvertValue {
 }
 
 export declare interface ConvertFinder {
-  paneId: string;
+  paneId?: string;
   dataIndexXAxis?: boolean;
   absoluteYAxis?: boolean;
 }
