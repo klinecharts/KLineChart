@@ -33,6 +33,7 @@ export declare interface TimestampPricePoint {
 
 export declare interface OverlayEvent {
   id: number | string;
+  points?: TimestampPricePoint | TimestampPricePoint[];
   event?: any;
 }
 

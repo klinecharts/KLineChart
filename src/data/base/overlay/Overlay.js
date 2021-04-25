@@ -69,30 +69,34 @@ export default class Overlay {
   /**
    * 点击事件
    * @param id
+   * @param points
    * @param event
    */
-  onClick ({ id, event }) {}
+  onClick ({ id, points, event }) {}
 
   /**
    * 右击事件
    * @param id
+   * @param points
    * @param event
    */
-  onRightClick ({ id, event }) {}
+  onRightClick ({ id, points, event }) {}
 
   /**
    * 鼠标进入事件
    * @param id
+   * @param points
    * @param event
    */
-  onMouseEnter ({ id, event }) {}
+  onMouseEnter ({ id, points, event }) {}
 
   /**
    * 鼠标离开事件
    * @param id
+   * @param points
    * @param event
    */
-  onMouseLeave ({ id, event }) {}
+  onMouseLeave ({ id, points, event }) {}
 
   // -------------------- 事件结束 -------------------
 }

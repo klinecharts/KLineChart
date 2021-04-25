@@ -404,6 +404,14 @@ export default class GraphicMark extends Overlay {
   }
 
   /**
+   * 获取点
+   * @return {[]}
+   */
+  tpPoints () {
+    return this._tpPoints
+  }
+
+  /**
    * 是否在绘制中
    * @return {boolean}
    */
@@ -488,7 +496,7 @@ export default class GraphicMark extends Overlay {
   mouseLeftButtonDownForDrawing () {
     if (this._drawStep === this._totalStep - 1) {
       this._drawStep = GRAPHIC_MARK_DRAW_STEP_FINISHED
-      this.onDrawEnd({ id: this._id })
+      this.onDrawEnd({ id: this._id, points: this._tpPoints })
     } else {
       this._drawStep++
     }
@@ -515,7 +523,11 @@ export default class GraphicMark extends Overlay {
       this._tpPoints[elementIndex].dataIndex = dataIndex
       this._tpPoints[elementIndex].price = price
       this.performMousePressedMove(this._tpPoints, elementIndex, { dataIndex, timestamp, price }, this._xAxis, this._yAxis)
-      this.onPressedMove({ id: graphicMarkMouseOperate.click.id, event })
+      this.onPressedMove({
+        id: graphicMarkMouseOperate.click.id,
+        points: this._tpPoints,
+        event
+      })
     }
   }
 
@@ -538,15 +550,17 @@ export default class GraphicMark extends Overlay {
   /**
    * 绘制结束事件回调
    * @param id
+   * @param points
    */
-  onDrawEnd ({ id }) {}
+  onDrawEnd ({ id, points }) {}
 
   /**
    * 按住移动事件
    * @param id
+   * @param points
    * @param event
    */
-  onPressedMove ({ id, event }) {}
+  onPressedMove ({ id, points, event }) {}
 
   /**
    * 移除事件回调

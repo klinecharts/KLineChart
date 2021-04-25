@@ -202,6 +202,14 @@ export default class Annotation extends Overlay {
   }
 
   /**
+   * 获取点
+   * @return {*}
+   */
+  tpPoints () {
+    return this._tpPoint
+  }
+
+  /**
    * 检查鼠标点是否在自定义标识内
    * @param point
    * @param coordinate

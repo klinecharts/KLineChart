@@ -22,7 +22,6 @@ export declare interface GraphicMarkDataSource {
 
 export declare interface GraphicMarkEvent extends OverlayEvent {
   step?: number;
-  points?: TimestampPricePoint[];
 }
 
 export declare interface OverrideGraphicMarkOptions {
