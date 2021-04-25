@@ -12,9 +12,10 @@
  * limitations under the License.
  */
 
-import View, { PlotType } from './View'
+import View from './View'
 
 import { CandleType, LineStyle } from '../data/options/styleOptions'
+import { TechnicalIndicatorPlotType } from '../data/base/technicalindicator/TechnicalIndicator'
 import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
 import { isValid } from '../utils/typeChecks'
 import { ActionType } from '../data/ChartData'
@@ -138,7 +139,7 @@ export default class TechnicalIndicatorView extends View {
             const valueY = this._yAxis.convertToPixel(value)
             coordinateY[plot.key] = valueY
             switch (plot.type) {
-              case PlotType.CIRCLE: {
+              case TechnicalIndicatorPlotType.CIRCLE: {
                 if (isValid(value)) {
                   const cbData = {
                     preData: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
@@ -156,7 +157,7 @@ export default class TechnicalIndicatorView extends View {
                 }
                 break
               }
-              case PlotType.BAR: {
+              case TechnicalIndicatorPlotType.BAR: {
                 if (isValid(value)) {
                   const cbData = {
                     preData: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
@@ -180,7 +181,7 @@ export default class TechnicalIndicatorView extends View {
                 }
                 break
               }
-              case PlotType.LINE: {
+              case TechnicalIndicatorPlotType.LINE: {
                 let line = null
                 if (isValid(value)) {
                   line = { x: x, y: valueY }

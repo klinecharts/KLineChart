@@ -18,9 +18,9 @@ import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../ut
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { TooltipCandleShowType } from '../data/options/styleOptions'
 import { getTechnicalIndicatorTooltipData } from '../data/base/technicalindicator/technicalIndicatorControl'
+import { TechnicalIndicatorPlotType } from '../data/base/technicalindicator/TechnicalIndicator'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
-import { PlotType } from './View'
 
 export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView {
   _drawTooltip (
@@ -266,15 +266,15 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         let valueColor
         plots.forEach((plot, i) => {
           switch (plot.type) {
-            case PlotType.CIRCLE: {
+            case TechnicalIndicatorPlotType.CIRCLE: {
               valueColor = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
               break
             }
-            case PlotType.BAR: {
+            case TechnicalIndicatorPlotType.BAR: {
               valueColor = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
               break
             }
-            case PlotType.LINE: {
+            case TechnicalIndicatorPlotType.LINE: {
               valueColor = colors[lineCount % colorSize] || styles.text.color
               lineCount++
               break

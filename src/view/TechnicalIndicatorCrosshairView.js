@@ -12,8 +12,9 @@
  * limitations under the License.
  */
 
-import View, { PlotType } from './View'
+import View from './View'
 import { TooltipShowRule, LineStyle } from '../data/options/styleOptions'
+import { TechnicalIndicatorPlotType } from '../data/base/technicalindicator/TechnicalIndicator'
 import { isValid } from '../utils/typeChecks'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { calcTextWidth, createFont } from '../utils/canvas'
@@ -195,15 +196,15 @@ export default class TechnicalIndicatorCrosshairView extends View {
       let valueColor
       plots.forEach((plot, i) => {
         switch (plot.type) {
-          case PlotType.CIRCLE: {
+          case TechnicalIndicatorPlotType.CIRCLE: {
             valueColor = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
             break
           }
-          case PlotType.BAR: {
+          case TechnicalIndicatorPlotType.BAR: {
             valueColor = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
             break
           }
-          case PlotType.LINE: {
+          case TechnicalIndicatorPlotType.LINE: {
             valueColor = colors[lineCount % colorSize] || textColor
             lineCount++
             break

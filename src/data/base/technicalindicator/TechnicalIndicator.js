@@ -24,6 +24,16 @@ export const TechnicalIndicatorSeries = {
   NORMAL: 'normal'
 }
 
+/**
+ * 绘制类型
+ * @type {{BAR: string, LINE: string, CIRCLE: string}}
+ */
+export const TechnicalIndicatorPlotType = {
+  LINE: 'line',
+  BAR: 'bar',
+  CIRCLE: 'circle'
+}
+
 export default class TechnicalIndicator {
   constructor ({
     name, series, calcParams, plots,

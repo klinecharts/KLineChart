@@ -12,8 +12,9 @@
  * limitations under the License.
  */
 
-import View, { PlotType } from './View'
+import View from './View'
 import { YAxisPosition } from '../data/options/styleOptions'
+import { TechnicalIndicatorPlotType } from '../data/base/technicalindicator/TechnicalIndicator'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { formatBigNumber, formatPrecision } from '../utils/format'
@@ -154,15 +155,15 @@ export default class YAxisView extends View {
         const value = technicalIndicatorData[plot.key]
         let backgroundColor
         switch (plot.type) {
-          case PlotType.CIRCLE: {
+          case TechnicalIndicatorPlotType.CIRCLE: {
             backgroundColor = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
             break
           }
-          case PlotType.BAR: {
+          case TechnicalIndicatorPlotType.BAR: {
             backgroundColor = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
             break
           }
-          case PlotType.LINE: {
+          case TechnicalIndicatorPlotType.LINE: {
             backgroundColor = colors[lineCount % colorSize]
             lineCount++
             break

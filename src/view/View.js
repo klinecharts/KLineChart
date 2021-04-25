@@ -15,16 +15,6 @@
 import { getPixelRatio } from '../utils/canvas'
 import { cancelAnimationFrame, requestAnimationFrame } from '../utils/compatible'
 
-/**
- * 绘制类型
- * @type {{BAR: string, LINE: string, CIRCLE: string}}
- */
-export const PlotType = {
-  LINE: 'line',
-  BAR: 'bar',
-  CIRCLE: 'circle'
-}
-
 class View {
   constructor (container, chartData) {
     this._chartData = chartData
