@@ -894,18 +894,25 @@ export default class ChartData {
    * @param points
    */
   removeAnnotation (points) {
+    let shouldAdjust = false
     if (points) {
       ([].concat(points)).forEach(({ timestamp }) => {
         if (this._annotations[timestamp]) {
+          shouldAdjust = true
           delete this._annotations[timestamp]
         }
       })
-      this._adjustVisibleDataList()
+      if (shouldAdjust) {
+        this._adjustVisibleDataList()
+      }
     } else {
+      shouldAdjust = true
       this._annotations = {}
       this._visibleAnnotations = []
     }
-    this.invalidate(InvalidateLevel.OVERLAY)
+    if (shouldAdjust) {
+      this.invalidate(InvalidateLevel.OVERLAY)
+    }
   }
 
   /**
