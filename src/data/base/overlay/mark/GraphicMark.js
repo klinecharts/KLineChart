@@ -396,11 +396,27 @@ export default class GraphicMark extends Overlay {
   }
 
   /**
-   * 获取id
+   * 获取名字
    * @return {*}
    */
-  id () {
-    return this._id
+  name () {
+    return this._name
+  }
+
+  /**
+   * 是否锁定
+   * @return {*}
+   */
+  lock () {
+    return this._lock
+  }
+
+  /**
+   * 总步骤数
+   * @return {*}
+   */
+  totalStep () {
+    return this._totalStep
   }
 
   /**

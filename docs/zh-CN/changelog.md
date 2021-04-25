@@ -5,7 +5,7 @@
   + `createAnnotation`用于添加注解
   + `removeAnnotation`用于删除注解
   + 样式新增`annotation`配置
-+ 🆕 新增api，`getWidth`，`getHeight`，`convertToPixel`和`convertFromPixel`。
++ 🆕 新增api，`getGraphicMark`，`getWidth`和`getHeight`，`convertToPixel`和`convertFromPixel`。
 + 🆕 图形标记新增`onMouseEnter`和`onMouseLeave`事件。
 + 🆕 `suscribeAction`新增类型`crosshair`。
 + 💪 增强`unsubscribeAction`，可批量取消事件。

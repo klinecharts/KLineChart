@@ -59,6 +59,14 @@ export default class Overlay {
   }
 
   /**
+   * 获取样式
+   * @return {null}
+   */
+  styles () {
+    return this._styles
+  }
+
+  /**
    * 检查鼠标点是否在图形上
    * @param point
    */

@@ -289,6 +289,15 @@ export default class Chart {
   }
 
   /**
+   * 获取图形标记
+   * @param id
+   * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
+   */
+  getGraphicMark (id) {
+    return this._chartPane.chartData().getGraphicMark(id)
+  }
+
+  /**
    * 设置图形标记配置
    * @param id
    * @param options

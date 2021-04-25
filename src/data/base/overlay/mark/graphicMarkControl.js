@@ -85,3 +85,19 @@ export function createGraphicMarkClass ({
   }
   return Mark
 }
+
+/**
+ * 获取图形标记信息
+ * @param graphicMark
+ * @return {{name, lock: *, styles, id, points: (*|*[])}}
+ */
+export function getGraphicMarkInfo (graphicMark) {
+  return {
+    name: graphicMark.name(),
+    id: graphicMark.id(),
+    totalStep: graphicMark.totalStep(),
+    lock: graphicMark.lock(),
+    points: graphicMark.tpPoints(),
+    styles: graphicMark.styles()
+  }
+}

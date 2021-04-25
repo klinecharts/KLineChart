@@ -50,6 +50,7 @@ export declare interface Chart {
   getTechnicalIndicatorByPaneId(paneId?: string): any;
   removeTechnicalIndicator(paneId: string, name?: string): void;
   createGraphicMark(name: string, options?: CreateGraphicMarkOptions): string | null;
+  getGraphicMark(graphicMarkId?: string): any;
   setGraphicMarkOptions(id: string, options: OverrideGraphicMarkOptions): void;
   addCustomGraphicMark(graphicMark: GraphicMark | GraphicMark[]): void;
   removeGraphicMark(graphicMarkId?: string): void;

@@ -229,6 +229,11 @@ chart.createGraphicMark(
 ```
 
 
+### getGraphicMark(id)
+Get graphic mark information。
+- `id` calls the createGraphicMark method to return the identity
+
+
 ### setGraphicMarkOptions(id, options)
 Set the drawn graphic mark configuration.
 - `id` calls the createGraphicMark method to return the identity

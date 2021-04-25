@@ -4,7 +4,7 @@
   + `createAnnotation` is used to add annotations
   + `removeAnnotation` is used to delete annotations
   + Add `annotation` configuration for styles
-+ 🆕 Add api, `getWidth`, `getHeight`, `convertToPixel` and `convertFromPixel`.
++ 🆕 Add api, `getGraphicMark`, `getWidth`, `getHeight`, `convertToPixel` and `convertFromPixel`.
 + 🆕 Add `onMouseEnter` and `onMouseLeave` events to graphic markers.
 + 🆕 `suscribeAction` adds the new type `crosshair`.
 + 💪 Enhanced `unsubscribeAction` to cancel events in batches.

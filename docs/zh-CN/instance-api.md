@@ -228,6 +228,11 @@ chart.createGraphicMark(
 ```
 
 
+### getGraphicMark(id)
+获取图形标记信息。
+- `id` 调用createGraphicMark方法是返回的标识
+
+
 ### setGraphicMarkOptions(id, options)
 设置已绘制的图形标记配置。
 - `id` 调用createGraphicMark方法是返回的标识

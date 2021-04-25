@@ -25,7 +25,11 @@ import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from './base/technicalindicator/TechnicalIndicator'
 import { GraphicMarkMouseOperateElement } from './base/overlay/mark/GraphicMark'
 import Delegate from './delegate/Delegate'
-import { createGraphicMarkClass, createGraphicMarkMapping } from './base/overlay/mark/graphicMarkControl'
+import {
+  createGraphicMarkClass,
+  createGraphicMarkMapping,
+  getGraphicMarkInfo
+} from './base/overlay/mark/graphicMarkControl'
 import { binarySearchNearest } from '../utils/number'
 
 export const InvalidateLevel = {
@@ -777,6 +781,26 @@ export default class ChartData {
         this.invalidate(InvalidateLevel.OVERLAY)
       }
     }
+  }
+
+  /**
+   * 获取图形标记信息
+   * @param id
+   * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
+   */
+  getGraphicMark (id) {
+    if (id) {
+      for (const graphicMark of this._graphicMarks) {
+        if (graphicMark.id() === id) {
+          return getGraphicMarkInfo(graphicMark)
+        }
+      }
+    } else {
+      return this._graphicMarks.map(graphicMark => {
+        return getGraphicMarkInfo(graphicMark)
+      })
+    }
+    return null
   }
 
   /**
