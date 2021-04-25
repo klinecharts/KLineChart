@@ -112,7 +112,7 @@ export default class TechnicalIndicatorPane extends Pane {
 
   /**
    * 获取技术指标
-   * @returns {TechnicalIndicator}
+   * @return {[]}
    */
   technicalIndicators () {
     return this._technicalIndicators
@@ -184,8 +184,7 @@ export default class TechnicalIndicatorPane extends Pane {
    * 计算所有技术指标
    */
   calcAllTechnicalIndicator () {
-    const technicalIndicators = this.technicalIndicators()
-    technicalIndicators.forEach(technicalIndicator => {
+    this._technicalIndicators.forEach(technicalIndicator => {
       this.calcTechnicalIndicator(technicalIndicator)
     })
     return this.computeAxis()

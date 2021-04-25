@@ -339,10 +339,9 @@ export default class ChartPane {
       const defaultTechnicalStyleOptions = this._chartData.styleOptions().technicalIndicator
       const styleSuccess = technicalIndicator.setStyles(styles, defaultTechnicalStyleOptions)
       if (calcParamsSuccess || precisionSuccess || styleSuccess) {
-        const candleTechnicalIndicators = this._candlePane.technicalIndicators()
         let shouldAdjust = false
         const tasks = []
-        candleTechnicalIndicators.forEach(technicalIndicator => {
+        this._candlePane.technicalIndicators().forEach(technicalIndicator => {
           if (technicalIndicator.name === name) {
             if (calcParamsSuccess) {
               shouldAdjust = true
@@ -362,8 +361,7 @@ export default class ChartPane {
           }
         })
         this._technicalIndicatorPanes.forEach(pane => {
-          const technicalIndicators = pane.technicalIndicators()
-          technicalIndicators.forEach(technicalIndicator => {
+          pane.technicalIndicators().forEach(technicalIndicator => {
             if (technicalIndicator.name === name) {
               if (calcParamsSuccess) {
                 shouldAdjust = true
@@ -642,7 +640,7 @@ export default class ChartPane {
       const instances = []
       const annotations = [].concat(annotation)
       annotations.forEach(({
-        point, symbol, position, styles,
+        point, styles,
         checkPointInCustomSymbol,
         drawCustomSymbol, drawExtend,
         onClick, onRightClick,
@@ -652,9 +650,7 @@ export default class ChartPane {
           const annotationInstance = new Annotation({
             id: point.timestamp,
             chartData: this._chartData,
-            symbol,
             point,
-            position,
             xAxis: this._xAxisPane.xAxis(),
             yAxis: this._candlePane.yAxis(),
             styles
