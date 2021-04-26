@@ -324,6 +324,19 @@
       marginTop: 2,
       marginBottom: 6
     }
+  },
+  annotation: {
+    symbol: {
+      // 'diamond' | 'circle' | 'rect' | 'triangle' | 'custom' | 'none'
+      type: 'diamond',
+      // 'top' | 'bottom' | 'point'
+      position: 'top',
+      size: 8,
+      color: '#1e88e5',
+      activeSize: 10,
+      activeColor: '#FF9600',
+      offset: [0, 20]
+    }
   }
 }
 ```
