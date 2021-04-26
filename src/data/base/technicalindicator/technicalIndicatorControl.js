@@ -43,6 +43,7 @@ export function createTechnicalIndicatorMapping () {
  * @param calcParams
  * @param plots
  * @param precision
+ * @param calcParamsAllowDecimal
  * @param shouldCheckParamCount
  * @param shouldOhlc
  * @param shouldFormatBigNumber
@@ -56,7 +57,8 @@ export function createTechnicalIndicatorMapping () {
  * @returns {TechnicalIndicatorClass|null}
  */
 export function createTechnicalIndicatorInstance ({
-  name, series, calcParams, plots, precision, shouldCheckParamCount,
+  name, series, calcParams, plots, precision,
+  calcParamsAllowDecimal, shouldCheckParamCount,
   shouldOhlc, shouldFormatBigNumber, baseValue, minValue, maxValue, styles,
   calcTechnicalIndicator, regeneratePlots, render
 }) {
@@ -77,6 +79,7 @@ export function createTechnicalIndicatorInstance ({
           calcParams,
           plots,
           precision,
+          calcParamsAllowDecimal,
           shouldCheckParamCount,
           shouldOhlc,
           shouldFormatBigNumber,
@@ -108,6 +111,10 @@ export function getTechnicalIndicatorInfo (technicalIndicator) {
     name: technicalIndicator.name,
     series: technicalIndicator.series,
     calcParams: technicalIndicator.calcParams,
+    calcParamsAllowDecimal: technicalIndicator.calcParamsAllowDecimal,
+    shouldCheckParamCount: technicalIndicator.shouldCheckParamCount,
+    shouldOhlc: technicalIndicator.shouldOhlc,
+    shouldFormatBigNumber: technicalIndicator.shouldFormatBigNumber,
     precision: technicalIndicator.precision,
     styles: technicalIndicator.styles,
     result: technicalIndicator.result || []

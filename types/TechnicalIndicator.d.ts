@@ -26,6 +26,7 @@ export declare interface TechnicalIndicatorPlot {
 export declare interface OverrideTechnicalIndicator {
   name: string;
   calcParams?: number[];
+  calcParamsAllowDecimal?: any;
   precision?: number;
   styles?: any;
 }

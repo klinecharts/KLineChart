@@ -328,12 +328,14 @@ export default class ChartPane {
    * 覆盖技术指标
    * @param name
    * @param calcParams
+   * @param calcParamsAllowDecimal
    * @param precision
    * @param styles
    */
-  overrideTechnicalIndicator ({ name, calcParams, precision, styles }) {
+  overrideTechnicalIndicator ({ name, calcParams, calcParamsAllowDecimal, precision, styles }) {
     const technicalIndicator = this._chartData.technicalIndicator(name)
     if (technicalIndicator) {
+      technicalIndicator.setCalcParamsAllowDecimal(calcParamsAllowDecimal)
       const calcParamsSuccess = technicalIndicator.setCalcParams(calcParams)
       const precisionSuccess = technicalIndicator.setPrecision(precision)
       const defaultTechnicalStyleOptions = this._chartData.styleOptions().technicalIndicator
@@ -341,42 +343,44 @@ export default class ChartPane {
       if (calcParamsSuccess || precisionSuccess || styleSuccess) {
         let shouldAdjust = false
         const tasks = []
-        this._candlePane.technicalIndicators().forEach(technicalIndicator => {
-          if (technicalIndicator.name === name) {
+        this._candlePane.technicalIndicators().forEach(tech => {
+          if (tech.name === name) {
+            tech.setCalcParamsAllowDecimal(calcParamsAllowDecimal)
             if (calcParamsSuccess) {
               shouldAdjust = true
-              technicalIndicator.setCalcParams(calcParams)
+              tech.setCalcParams(calcParams)
               tasks.push(
-                Promise.resolve(this._candlePane.calcTechnicalIndicator(technicalIndicator))
+                Promise.resolve(this._candlePane.calcTechnicalIndicator(tech))
               )
             }
             if (precisionSuccess) {
               shouldAdjust = true
-              technicalIndicator.setPrecision(precision)
+              tech.setPrecision(precision)
             }
             if (styleSuccess) {
               shouldAdjust = true
-              technicalIndicator.setStyles(styles, defaultTechnicalStyleOptions)
+              tech.setStyles(styles, defaultTechnicalStyleOptions)
             }
           }
         })
         this._technicalIndicatorPanes.forEach(pane => {
-          pane.technicalIndicators().forEach(technicalIndicator => {
-            if (technicalIndicator.name === name) {
+          pane.technicalIndicators().forEach(tech => {
+            if (tech.name === name) {
+              tech.setCalcParamsAllowDecimal(calcParamsAllowDecimal)
               if (calcParamsSuccess) {
                 shouldAdjust = true
-                technicalIndicator.setCalcParams(calcParams)
+                tech.setCalcParams(calcParams)
                 tasks.push(
-                  Promise.resolve(pane.calcTechnicalIndicator(technicalIndicator))
+                  Promise.resolve(pane.calcTechnicalIndicator(tech))
                 )
               }
               if (precisionSuccess) {
                 shouldAdjust = true
-                technicalIndicator.setPrecision(precision)
+                tech.setPrecision(precision)
               }
               if (styleSuccess) {
                 shouldAdjust = true
-                technicalIndicator.setStyles(styles, defaultTechnicalStyleOptions)
+                tech.setStyles(styles, defaultTechnicalStyleOptions)
               }
             }
           })

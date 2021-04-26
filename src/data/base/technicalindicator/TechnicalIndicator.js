@@ -36,8 +36,8 @@ export const TechnicalIndicatorPlotType = {
 
 export default class TechnicalIndicator {
   constructor ({
-    name, series, calcParams, plots,
-    precision, shouldCheckParamCount,
+    name, series, calcParams, plots, precision,
+    calcParamsAllowDecimal, shouldCheckParamCount,
     shouldOhlc, shouldFormatBigNumber,
     baseValue, minValue, maxValue, styles
   }) {
@@ -51,6 +51,8 @@ export default class TechnicalIndicator {
     this.calcParams = isArray(calcParams) ? calcParams : []
     // 数据信息
     this.plots = isArray(plots) ? plots : []
+    // 计算参数是否允许小数
+    this.calcParamsAllowDecimal = isObject(calcParamsAllowDecimal) ? calcParamsAllowDecimal : {}
     // 是否需要检查参数
     this.shouldCheckParamCount = isBoolean(shouldCheckParamCount) ? shouldCheckParamCount : true
     // 是否需要ohlc
@@ -77,6 +79,16 @@ export default class TechnicalIndicator {
     return false
   }
 
+  /**
+   * 设置计算参数是否允许小数
+   * @param calcParamsAllowDecimal
+   */
+  setCalcParamsAllowDecimal (calcParamsAllowDecimal) {
+    if (isObject(calcParamsAllowDecimal)) {
+      this.calcParamsAllowDecimal = calcParamsAllowDecimal
+    }
+  }
+
   setCalcParams (params) {
     if (!isArray(params)) {
       return false
@@ -84,8 +96,9 @@ export default class TechnicalIndicator {
     if (this.shouldCheckParamCount && params.length !== this.calcParams.length) {
       return false
     }
-    for (const v of params) {
-      if (!isNumber(v) || v <= 0 || parseInt(v, 10) !== v) {
+    for (let i = 0; i < params.length; i++) {
+      const v = params[i]
+      if (!isNumber(v) || v <= 0 || (!this.calcParamsAllowDecimal[i] && parseInt(v, 10) !== v)) {
         return false
       }
     }
