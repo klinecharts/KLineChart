@@ -38,6 +38,7 @@ export default {
   name: 'BOLL',
   series: 'price',
   calcParams: [20, 2],
+  calcParamsAllowDecimal: { 1: true },
   precision: 2,
   shouldOhlc: true,
   plots: [
