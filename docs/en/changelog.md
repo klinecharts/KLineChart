@@ -1,5 +1,5 @@
 # Change Log
-`To be released`
+`2021-04-26`
 + 🆕 Add annotation feature
   + `createAnnotation` is used to add annotations
   + `removeAnnotation` is used to delete annotations

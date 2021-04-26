@@ -1,4 +1,4 @@
-import {Precision, Viewport, CoordinatePoint, TimestampPricePoint, OverlayEvent} from './Common';
+import { Precision, Viewport, CoordinatePoint, TimestampPricePoint, OverlayEvent } from './Common';
 
 export declare type GraphicMarkDataSourceDrawType = 'line' | 'text' | 'continuous_line' | 'polygon' | 'arc';
 

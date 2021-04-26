@@ -123,17 +123,19 @@ chart.createTechnicalIndicator('MA', false, {
 
 ### overrideTechnicalIndicator(override)
 覆盖技术指标信息。
-- `override` 需要覆盖的一些参数， `{ name, calcParams, precision, styles }`
+- `override` 需要覆盖的一些参数， `{ name, calcParams, calcParamsAllowDecimal, precision, styles }`
    - `name` 技术指标名，必填字段
    - `calcParams` 计算参数，可缺省
+   - `calcParamsAllowDecimal` 计算参数允许小数配置，可缺省
    - `precision` 精度，可缺省
    - `styles` 样式，可缺省，格式同样式配置中 `technicalIndicator` 一致
 
 示例：
 ```javascript
 chart.overrideTechnicalIndicator({
-  name: 'MA',
-  calcParams: [5, 10, 30, 60, 120],
+  name: 'BOLL',
+  calcParams: [20, 5.5],
+  calcParamsAllowDecimal: { 1: true },
   precision: 4,
   styles: {
   	bar: {

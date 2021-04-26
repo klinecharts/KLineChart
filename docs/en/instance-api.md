@@ -122,17 +122,19 @@ chart.createTechnicalIndicator('MA', false, {
 
 ### overrideTechnicalIndicator(override)
 Cover technical indicator information.
-- `override` some parameters that need to be overridden, `{ name, calcParams, precision, styles }`
+- `override` some parameters that need to be overridden, `{ name, calcParams, calcParamsAllowDecimal, precision, styles }`
   - `name` technical indicator name, required field
   - `calcParams` calculation parameters, default
+  - `calcParamsAllowDecimal` calculation parameters allow decimals
   - `precision` precision, default
   - `styles` style, which can be defaulted, and the `technicalIndicator` in the same style configuration is consistent
 
 Example:
 ```javascript
 chart.overrideTechnicalIndicator({
-  name:'MA',
-  calcParams: [5, 10, 30, 60, 120],
+  name:'BOLL',
+  calcParams: [20, 5.5],
+  calcParamsAllowDecimal: { 1: true },
   precision: 4,
   styles: {
     bar: {
