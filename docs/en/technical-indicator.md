@@ -42,6 +42,10 @@ To complete a custom technical indicator, you only need to generate a technical 
   // The calculation parameter is an array, which can be defaulted
   calcParams: [],
 
+  // calculation parameter allow decimal
+  // { 0: true, 1: true }, key is param index
+  calcParamsAllowDecimal: {},
+
   // The data configuration item is an array
   plots: [],
 

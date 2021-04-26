@@ -45,6 +45,10 @@
   // 数据配置项，是一个数组
   plots: [],
 
+  // 计算参数是否允许小数
+  // 格式是{ 0: true, 1: true }, key是参数索引
+  calcParamsAllowDecimal: {},
+
   // 是否需要检查计算参数，可缺省，默认为true
   // 如果为true，当设置指标参数时，如果参数个数和默认的参数个数不一致，将不能生效
   shouldCheckParamCount: true,

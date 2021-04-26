@@ -8,6 +8,7 @@
 + 🆕 新增api，`getGraphicMark`，`getWidth`和`getHeight`，`convertToPixel`和`convertFromPixel`。
 + 🆕 图形标记新增`onMouseEnter`和`onMouseLeave`事件。
 + 🆕 `suscribeAction`新增类型`crosshair`。
++ 🆕 自定义指标技术计算参数支持小数。
 + 💪 增强`unsubscribeAction`，可批量取消事件。
 + 💪 增强`addCustomTechnicalIndicator`和`addCustomGraphicMark`，可批量添加。
 

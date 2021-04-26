@@ -7,6 +7,7 @@
 + 🆕 Add api, `getGraphicMark`, `getWidth`, `getHeight`, `convertToPixel` and `convertFromPixel`.
 + 🆕 Add `onMouseEnter` and `onMouseLeave` events to graphic markers.
 + 🆕 `suscribeAction` adds the new type `crosshair`.
++ 🆕 Custom indicator technical calculation parameters support decimals.
 + 💪 Enhanced `unsubscribeAction` to cancel events in batches.
 + 💪 Enhanced `addCustomTechnicalIndicator` and `addCustomGraphicMark`, which can be added in batches.
 
