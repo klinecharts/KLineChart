@@ -271,13 +271,15 @@ chart.createGraphicMark(
 chart.createAnnotation({
   point: { timestamp: 1614171282000, price: 18987 },
   styles: {
-    type: 'diamond',
-    position: 'top',
-    size: 8,
-    color: '#1e88e5',
-    activeSize: 10,
-    activeColor: '#FF9600',
-    offset: [0, 20]
+    symbol: {
+      type: 'diamond',
+      position: 'top',
+      size: 8,
+      color: '#1e88e5',
+      activeSize: 10,
+      activeColor: '#FF9600',
+      offset: [0, 20]
+    }
   },
   checkPointInCustomSymbol: function ({ point, coordinate, size }) {
     console.log(point, coordinate, size)
