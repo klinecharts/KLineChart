@@ -157,7 +157,7 @@ export default class Annotation extends Overlay {
       }
       case AnnotationSymbolType.CUSTOM: {
         isOn = this.checkPointInCustomSymbol({
-          point: this._tpPoint,
+          point,
           coordinate: this._symbolCoordinate,
           size
         })

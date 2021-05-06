@@ -177,14 +177,15 @@ export default class OverlayEventHandler extends EventHandler {
       if (graphicMarks[i].checkMousePointOnGraphic({ x: event.localX, y: event.localY })) {
         if (!graphicMarks[i].onRightClick({ id: graphicMarks[i].id(), points: graphicMarks[i].tpPoints(), event })) {
           this._chartData.removeGraphicMarkInstance({ type: RemoveGraphicMarkOperateType.ACTION, index: i })
-          break
         }
+        break
       }
     }
     const visibleAnnotations = this._chartData.visibleAnnotations()
     for (const annotation of visibleAnnotations) {
       if (annotation.checkMousePointOnGraphic({ x: event.localX, y: event.localY })) {
         annotation.onRightClick({ id: annotation.id(), points: annotation.tpPoints(), event })
+        break
       }
     }
   }

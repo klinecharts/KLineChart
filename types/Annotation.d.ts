@@ -1,7 +1,7 @@
 import { OverlayEvent, TimestampPricePoint, CoordinatePoint, Viewport } from './Common';
 
 export declare interface AnnotationCheckParams {
-  point: TimestampPricePoint;
+  point: CoordinatePoint;
   coordinate: CoordinatePoint;
   size: number;
 }
