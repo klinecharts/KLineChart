@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import { isFunction, isNumber } from '../../../../utils/typeChecks'
-import extension from '../../../extension'
+import { isFunction, isNumber } from '../../../utils/typeChecks'
+import extension from '../../../data/extension'
 
 import GraphicMark from './GraphicMark'
 
-import { DEV } from '../../../../utils/env'
+import { DEV } from '../../../utils/env'
 
 /**
  * 创建图形标记映射

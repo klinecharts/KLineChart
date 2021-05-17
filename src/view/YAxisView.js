@@ -14,7 +14,7 @@
 
 import View from './View'
 import { YAxisPosition } from '../data/options/styleOptions'
-import { TechnicalIndicatorPlotType } from '../data/base/technicalindicator/TechnicalIndicator'
+import { TechnicalIndicatorPlotType } from '../base/technicalindicator/TechnicalIndicator'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { formatBigNumber, formatPrecision } from '../utils/format'

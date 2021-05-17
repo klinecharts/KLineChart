@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { clone, isArray, isBoolean, isNumber, isValid, merge, isObject } from '../../../utils/typeChecks'
+import { clone, isArray, isBoolean, isNumber, isValid, merge, isObject } from '../../utils/typeChecks'
 
 /**
  * 技术指标系列

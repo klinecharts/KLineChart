@@ -14,11 +14,11 @@
 
 import TechnicalIndicator from './TechnicalIndicator'
 
-import extension from '../../extension'
+import extension from '../../data/extension'
 
-import { isFunction, isValid } from '../../../utils/typeChecks'
-import { formatBigNumber, formatPrecision } from '../../../utils/format'
-import { DEV } from '../../../utils/env'
+import { isFunction, isValid } from '../../utils/typeChecks'
+import { formatBigNumber, formatPrecision } from '../../utils/format'
+import { DEV } from '../../utils/env'
 
 /**
  * 创建技术指标映射

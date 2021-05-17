@@ -13,7 +13,7 @@
  */
 
 import ChartData, { ActionType, InvalidateLevel } from '../data/ChartData'
-import { getTechnicalIndicatorInfo } from '../data/base/technicalindicator/technicalIndicatorControl'
+import { getTechnicalIndicatorInfo } from '../base/technicalindicator/technicalIndicatorControl'
 
 import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
@@ -27,7 +27,7 @@ import SeparatorPane from './SeparatorPane'
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { throttle } from '../utils/performance'
-import Annotation from '../data/base/overlay/annotation/Annotation'
+import Annotation from '../base/overlay/annotation/Annotation'
 
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 

@@ -20,16 +20,16 @@ import {
   createTechnicalIndicatorInstance,
   createTechnicalIndicatorMapping,
   getTechnicalIndicatorInfo
-} from './base/technicalindicator/technicalIndicatorControl'
+} from '../base/technicalindicator/technicalIndicatorControl'
 import { DEV } from '../utils/env'
-import { TechnicalIndicatorSeries } from './base/technicalindicator/TechnicalIndicator'
-import { GraphicMarkMouseOperateElement } from './base/overlay/mark/GraphicMark'
+import { TechnicalIndicatorSeries } from '../base/technicalindicator/TechnicalIndicator'
+import { GraphicMarkMouseOperateElement } from '../base/overlay/mark/GraphicMark'
 import Delegate from './delegate/Delegate'
 import {
   createGraphicMarkClass,
   createGraphicMarkMapping,
   getGraphicMarkInfo
-} from './base/overlay/mark/graphicMarkControl'
+} from '../base/overlay/mark/graphicMarkControl'
 import { binarySearchNearest } from '../utils/number'
 
 export const InvalidateLevel = {

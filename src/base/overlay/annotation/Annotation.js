@@ -14,21 +14,21 @@
 
 import Overlay from '../Overlay'
 
-import { renderFillCircle } from '../../../../renderer/circle'
-import { renderFillRect } from '../../../../renderer/rect'
-import { renderFillDiamond } from '../../../../renderer/diamond'
-import { renderFillTriangle } from '../../../../renderer/triangle'
+import { renderFillCircle } from '../../../renderer/circle'
+import { renderFillRect } from '../../../renderer/rect'
+import { renderFillDiamond } from '../../../renderer/diamond'
+import { renderFillTriangle } from '../../../renderer/triangle'
 import {
   checkPointInCircle, checkPointInDiamond,
   checkPointInRect, checkPointInTriangle
-} from '../../../../extension/mark/graphicHelper'
+} from '../../../extension/mark/graphicHelper'
 
-import { isNumber } from '../../../../utils/typeChecks'
+import { isNumber } from '../../../utils/typeChecks'
 
 import {
   AnnotationPosition,
   AnnotationSymbolType
-} from '../../../options/styleOptions'
+} from '../../../data/options/styleOptions'
 
 /**
  * 注解

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { isObject, clone, merge } from '../../../utils/typeChecks'
+import { isObject, clone, merge } from '../../utils/typeChecks'
 
 /**
  * 覆盖物
