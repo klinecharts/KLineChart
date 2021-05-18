@@ -142,13 +142,11 @@ export default class ChartData {
     this._graphicMarks = []
 
     // 注解标记
-    this._annotations = {}
+    this._annotations = new Map()
     // 可见的注解标记
     this._visibleAnnotations = []
     // 注解鼠标操作信息
-    this._annotationMouseOperate = {
-      id: ''
-    }
+    this._annotationMouseOperate = { id: '' }
 
     // 调整pane标记
     this._dragPaneFlag = false
@@ -156,7 +154,7 @@ export default class ChartData {
     // 内部十字光标代理
     this._crosshairDelegate = new Delegate()
     // 事件代理
-    this._actionDelegate = {}
+    this._actionDelegate = new Map()
   }
 
   /**
@@ -205,12 +203,10 @@ export default class ChartData {
         x,
         data: kLineData
       })
-      const annotation = this._annotations[kLineData.timestamp]
-      if (annotation) {
-        for (const an of annotation) {
-          an.createSymbolCoordinate(x)
-          this._visibleAnnotations.push(an)
-        }
+      const annotation = this._annotations.get(kLineData.timestamp) || []
+      for (const an of annotation) {
+        an.createSymbolCoordinate(x)
+        this._visibleAnnotations.push(an)
       }
     }
   }
@@ -903,10 +899,10 @@ export default class ChartData {
    */
   addAnnotations (annotations) {
     annotations.forEach(annotation => {
-      if (this._annotations[annotation.id()]) {
-        this._annotations[annotation.id()].push(annotation)
+      if (this._annotations.has(annotation.id())) {
+        this._annotations.get(annotation.id()).push(annotation)
       } else {
-        this._annotations[annotation.id()] = [annotation]
+        this._annotations.set(annotation.id(), [annotation])
       }
     })
     this._adjustVisibleDataList()
@@ -921,9 +917,9 @@ export default class ChartData {
     let shouldAdjust = false
     if (points) {
       ([].concat(points)).forEach(({ timestamp }) => {
-        if (this._annotations[timestamp]) {
+        if (this._annotations.has(timestamp)) {
           shouldAdjust = true
-          delete this._annotations[timestamp]
+          this._annotations.delete(timestamp)
         }
       })
       if (shouldAdjust) {
@@ -931,7 +927,7 @@ export default class ChartData {
       }
     } else {
       shouldAdjust = true
-      this._annotations = {}
+      this._annotations.clear()
       this._visibleAnnotations = []
     }
     if (shouldAdjust) {
@@ -1003,7 +999,7 @@ export default class ChartData {
   actionExecute (type, data, executeBeforeFun, executeAfterFun) {
     if (this.hasAction(type)) {
       executeBeforeFun && executeBeforeFun()
-      this._actionDelegate[type].execute(data)
+      this._actionDelegate.get(type).execute(data)
       executeAfterFun && executeAfterFun()
     }
   }
@@ -1014,8 +1010,7 @@ export default class ChartData {
    * @return {boolean}
    */
   hasAction (type) {
-    const delegate = this._actionDelegate[type]
-    return (delegate && delegate.hasObservers())
+    return this._actionDelegate.has(type) && this._actionDelegate.get(type).hasObservers()
   }
 
   /**
@@ -1028,12 +1023,10 @@ export default class ChartData {
     if (!(type in ActionType)) {
       return false
     }
-    let delegate = this._actionDelegate[type]
-    if (!delegate) {
-      delegate = new Delegate()
-      this._actionDelegate[type] = delegate
+    if (!this._actionDelegate.has(type)) {
+      this._actionDelegate.set(type, new Delegate())
     }
-    delegate.subscribe(callback)
+    this._actionDelegate.get(type).subscribe(callback)
     return true
   }
 
@@ -1047,11 +1040,11 @@ export default class ChartData {
     if (!(type in ActionType)) {
       return false
     }
-    const delegate = this._actionDelegate[type]
-    if (delegate) {
+    if (this._actionDelegate.has(type)) {
+      const delegate = this._actionDelegate.get(type)
       delegate.unsubscribe(callback)
       if (!delegate.hasObservers()) {
-        delete this._actionDelegate[type]
+        this._actionDelegate.delete(type)
       }
       return true
     }
