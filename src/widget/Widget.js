@@ -128,10 +128,10 @@ export default class Widget {
   /**
    * 将widget转换成图片
    * @param includeTooltip
-   * @param includeGraphicMark
+   * @param includeOverlay
    * @returns {HTMLCanvasElement}
    */
-  getImage (includeTooltip, includeGraphicMark) {
+  getImage (includeTooltip, includeOverlay) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)
@@ -143,10 +143,10 @@ export default class Widget {
 
     ctx.drawImage(this._mainView.getImage(), 0, 0, this._width, this._height)
 
-    if (includeGraphicMark && this._expandView) {
+    if (includeOverlay && this._expandView) {
       ctx.drawImage(this._expandView.getImage(), 0, 0, this._width, this._height)
     }
-    if (includeTooltip) {
+    if (includeTooltip && this._crosshairView) {
       ctx.drawImage(this._crosshairView.getImage(), 0, 0, this._width, this._height)
     }
     return canvas

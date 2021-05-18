@@ -163,6 +163,5 @@ export default class Pane {
    */
   destroy () {
     this._container.removeChild(this._element)
-    delete this
   }
 }

@@ -446,6 +446,5 @@ export default class Chart {
    */
   destroy () {
     this._chartPane.destroy()
-    delete this
   }
 }

@@ -14,11 +14,13 @@
 
 import EventBase from '../event/EventBase'
 import { getPixelRatio } from '../utils/canvas'
+import { isValid } from '../utils/typeChecks'
 
 export default class SeparatorPane {
-  constructor (container, chartData, paneIndex, dragEnabled, dragEventHandler) {
+  constructor (container, chartData, topPaneId, bottomPaneId, dragEnabled, dragEventHandler) {
     this._chartData = chartData
-    this._paneIndex = paneIndex
+    this._topPaneId = topPaneId
+    this._bottomPaneId = bottomPaneId
     this._width = 0
     this._offsetLeft = 0
     this._dragEventHandler = dragEventHandler
@@ -72,7 +74,7 @@ export default class SeparatorPane {
   _mouseDownEvent (event) {
     this._dragFlag = true
     this._startY = event.pageY
-    this._dragEventHandler.startDrag(this._paneIndex)
+    this._dragEventHandler.startDrag(this._topPaneId, this._bottomPaneId)
   }
 
   _mouseUpEvent () {
@@ -82,7 +84,7 @@ export default class SeparatorPane {
 
   _pressedMouseMoveEvent (event) {
     const dragDistance = event.pageY - this._startY
-    this._dragEventHandler.drag(dragDistance, this._paneIndex)
+    this._dragEventHandler.drag(dragDistance, this._topPaneId, this._bottomPaneId)
     this._chartData.setDragPaneFlag(true)
     this._chartData.setCrosshairPointPaneId()
   }
@@ -122,11 +124,33 @@ export default class SeparatorPane {
   }
 
   /**
-   * 更新上下两个图表的索引
-   * @param paneIndex
+   * 顶部paneId
+   * @return {*}
    */
-  updatePaneIndex (paneIndex) {
-    this._paneIndex = paneIndex
+  topPaneId () {
+    return this._topPaneId
+  }
+
+  /**
+   * 底部paneId
+   * @return {*}
+   */
+  bottomPaneId () {
+    return this._bottomPaneId
+  }
+
+  /**
+   * 更新上下两个图表的索引
+   * @param topPaneId
+   * @param bottomPaneId
+   */
+  updatePaneId (topPaneId, bottomPaneId) {
+    if (isValid(topPaneId)) {
+      this._topPaneId = topPaneId
+    }
+    if (isValid(bottomPaneId)) {
+      this._bottomPaneId = bottomPaneId
+    }
   }
 
   /**
@@ -170,6 +194,5 @@ export default class SeparatorPane {
       this._dragEvent.destroy()
     }
     this._container.removeChild(this._wrapper)
-    delete this
   }
 }
