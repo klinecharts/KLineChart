@@ -66,7 +66,7 @@ export default class CandleView extends TechnicalIndicatorView {
     const areaPoints = []
     let minY = Number.MAX_SAFE_INTEGER
     const areaOptions = candleOptions.area
-    const onDrawing = (x, i, kLineData, halfBarSpace, n) => {
+    const onDrawing = (x, i, kLineData, halfBarSpace, barSpace, n) => {
       const value = kLineData[areaOptions.value]
       if (isValid(value) && isNumber(value)) {
         const y = this._yAxis.convertToPixel(value)
