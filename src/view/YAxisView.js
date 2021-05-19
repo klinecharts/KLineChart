@@ -243,7 +243,7 @@ export default class YAxisView extends View {
     }
   ) {
     let valueY = this._yAxis.convertToPixel(value)
-    valueY = +(Math.max(this._height * 0.05, Math.min(valueY, this._height * 0.98))).toFixed(0)
+    valueY = Math.round(Math.max(this._height * 0.05, Math.min(valueY, this._height * 0.98)))
     let text
     if (this._yAxis.isPercentageYAxis()) {
       const fromData = (this._chartData.visibleDataList()[0] || {}).data

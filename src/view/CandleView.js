@@ -223,7 +223,7 @@ export default class CandleView extends TechnicalIndicatorView {
     const close = kLineData.close
     const open = kLineData.open
     let priceY = this._yAxis.convertToPixel(close)
-    priceY = +(Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98))).toFixed(0)
+    priceY = Math.round(Math.max(this._height * 0.05, Math.min(priceY, this._height * 0.98)))
     let color
     if (close > open) {
       color = lastPriceMarkOptions.upColor
