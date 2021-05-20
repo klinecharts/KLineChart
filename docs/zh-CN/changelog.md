@@ -1,6 +1,9 @@
 # 更新日志
 ## 7.2.0
-`待发布`
+`2021-05-20`
+
+❤️️ 520
+
 + 🆕 新增样式配置`technicalIndicator.tooltip.showType`。
 + 🆕 Api `subscribeAction`新增类型`pane_drag`。
 + 💄 优化窗口拖拽高度调整规则。

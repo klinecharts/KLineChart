@@ -1,6 +1,9 @@
 # Change Log
 ## 7.2.0
-`To be released`
+`2021-05-20`
+
+❤️️ 520
+
 + 🆕 Add style configuration `technicalIndicator.tooltip.showType`.
 + 🆕 Api `subscribeAction` adds the new type `pane_drag`.
 + 💄 Optimize window drag height adjustment rules.
