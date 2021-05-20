@@ -54,8 +54,13 @@ export default class TechnicalIndicatorCrosshairView extends View {
    * @private
    */
   _drawTooltip (crosshair, technicalIndicators) {
+    const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     this._drawBatchTechnicalIndicatorToolTip(
-      crosshair, technicalIndicators
+      crosshair,
+      technicalIndicators,
+      technicalIndicatorOptions,
+      0,
+      this._shouldDrawTooltip(crosshair, technicalIndicatorOptions.tooltip)
     )
   }
 
@@ -90,13 +95,15 @@ export default class TechnicalIndicatorCrosshairView extends View {
    * 批量绘制技术指标提示
    * @param crosshair
    * @param technicalIndicators
+   * @param technicalIndicatorOptions
    * @param offsetTop
+   * @param isDrawTechnicalIndicatorTooltip
    * @private
    */
-  _drawBatchTechnicalIndicatorToolTip (
-    crosshair, technicalIndicators, offsetTop = 0
-  ) {
-    const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
+  _drawBatchTechnicalIndicatorToolTip (crosshair, technicalIndicators, technicalIndicatorOptions, offsetTop = 0, isDrawTechnicalIndicatorTooltip) {
+    if (!isDrawTechnicalIndicatorTooltip) {
+      return
+    }
     const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
     let top = offsetTop
     technicalIndicators.forEach(technicalIndicator => {
@@ -117,83 +124,79 @@ export default class TechnicalIndicatorCrosshairView extends View {
    * @param offsetTop
    * @private
    */
-  _drawTechnicalIndicatorTooltip (
-    crosshair, technicalIndicator, technicalIndicatorOptions, offsetTop = 0
-  ) {
+  _drawTechnicalIndicatorTooltip (crosshair, technicalIndicator, technicalIndicatorOptions, offsetTop = 0) {
     const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
-    if (this._shouldDrawTooltip(crosshair, technicalIndicatorTooltipOptions)) {
-      const styles = technicalIndicator.styles || technicalIndicatorOptions
-      const technicalIndicatorResult = technicalIndicator.result
-      const technicalIndicatorData = technicalIndicatorResult[crosshair.dataIndex]
-      const tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator)
-      const colors = styles.line.colors
-      const dataList = this._chartData.dataList()
-      const cbData = {
-        preData: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: technicalIndicatorResult[crosshair.dataIndex - 1] },
-        currentData: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData },
-        nextData: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: technicalIndicatorResult[crosshair.dataIndex + 1] }
-      }
-      const plots = technicalIndicator.plots
-      const technicalIndicatorTooltipTextOptions = technicalIndicatorTooltipOptions.text
-      const values = tooltipData.values
-      const textMarginLeft = technicalIndicatorTooltipTextOptions.marginLeft
-      const textMarginRight = technicalIndicatorTooltipTextOptions.marginRight
-      let labelX = 0
-      const labelY = technicalIndicatorTooltipTextOptions.marginTop + offsetTop
-      const textSize = technicalIndicatorTooltipTextOptions.size
-      const textColor = technicalIndicatorTooltipTextOptions.color
-      const colorSize = colors.length
-      this._ctx.textBaseline = 'top'
-      this._ctx.font = createFont(textSize, technicalIndicatorTooltipTextOptions.weight, technicalIndicatorTooltipTextOptions.family)
-
-      if (technicalIndicatorTooltipOptions.showName) {
-        const nameText = tooltipData.name
-        const nameTextWidth = calcTextWidth(this._ctx, nameText)
-        labelX += textMarginLeft
-        renderText(this._ctx, textColor, labelX, labelY, nameText)
-        labelX += nameTextWidth
-        if (!technicalIndicatorTooltipOptions.showParams) {
-          labelX += textMarginRight
-        }
-      }
-      if (technicalIndicatorTooltipOptions.showParams) {
-        const calcParamText = tooltipData.calcParamText
-        const calcParamTextWidth = calcTextWidth(this._ctx, calcParamText)
-        if (!technicalIndicatorTooltipOptions.showName) {
-          labelX += textMarginLeft
-        }
-        renderText(this._ctx, textColor, labelX, labelY, calcParamText)
-        labelX += (calcParamTextWidth + textMarginRight)
-      }
-      let lineCount = 0
-      let valueColor
-      plots.forEach((plot, i) => {
-        switch (plot.type) {
-          case TechnicalIndicatorPlotType.CIRCLE: {
-            valueColor = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
-            break
-          }
-          case TechnicalIndicatorPlotType.BAR: {
-            valueColor = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
-            break
-          }
-          case TechnicalIndicatorPlotType.LINE: {
-            valueColor = colors[lineCount % colorSize] || textColor
-            lineCount++
-            break
-          }
-          default: { break }
-        }
-        const title = values[i].title
-        if (isValid(title)) {
-          labelX += textMarginLeft
-          const text = `${title}${values[i].value || technicalIndicatorTooltipOptions.defaultValue}`
-          const textWidth = calcTextWidth(this._ctx, text)
-          renderText(this._ctx, valueColor, labelX, labelY, text)
-          labelX += (textWidth + textMarginRight)
-        }
-      })
+    const styles = technicalIndicator.styles || technicalIndicatorOptions
+    const technicalIndicatorResult = technicalIndicator.result
+    const technicalIndicatorData = technicalIndicatorResult[crosshair.dataIndex]
+    const tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator)
+    const colors = styles.line.colors
+    const dataList = this._chartData.dataList()
+    const cbData = {
+      preData: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: technicalIndicatorResult[crosshair.dataIndex - 1] },
+      currentData: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData },
+      nextData: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: technicalIndicatorResult[crosshair.dataIndex + 1] }
     }
+    const plots = technicalIndicator.plots
+    const technicalIndicatorTooltipTextOptions = technicalIndicatorTooltipOptions.text
+    const values = tooltipData.values
+    const textMarginLeft = technicalIndicatorTooltipTextOptions.marginLeft
+    const textMarginRight = technicalIndicatorTooltipTextOptions.marginRight
+    let labelX = 0
+    const labelY = technicalIndicatorTooltipTextOptions.marginTop + offsetTop
+    const textSize = technicalIndicatorTooltipTextOptions.size
+    const textColor = technicalIndicatorTooltipTextOptions.color
+    const colorSize = colors.length
+    this._ctx.textBaseline = 'top'
+    this._ctx.font = createFont(textSize, technicalIndicatorTooltipTextOptions.weight, technicalIndicatorTooltipTextOptions.family)
+
+    if (technicalIndicatorTooltipOptions.showName) {
+      const nameText = tooltipData.name
+      const nameTextWidth = calcTextWidth(this._ctx, nameText)
+      labelX += textMarginLeft
+      renderText(this._ctx, textColor, labelX, labelY, nameText)
+      labelX += nameTextWidth
+      if (!technicalIndicatorTooltipOptions.showParams) {
+        labelX += textMarginRight
+      }
+    }
+    if (technicalIndicatorTooltipOptions.showParams) {
+      const calcParamText = tooltipData.calcParamText
+      const calcParamTextWidth = calcTextWidth(this._ctx, calcParamText)
+      if (!technicalIndicatorTooltipOptions.showName) {
+        labelX += textMarginLeft
+      }
+      renderText(this._ctx, textColor, labelX, labelY, calcParamText)
+      labelX += (calcParamTextWidth + textMarginRight)
+    }
+    let lineCount = 0
+    let valueColor
+    plots.forEach((plot, i) => {
+      switch (plot.type) {
+        case TechnicalIndicatorPlotType.CIRCLE: {
+          valueColor = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
+          break
+        }
+        case TechnicalIndicatorPlotType.BAR: {
+          valueColor = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
+          break
+        }
+        case TechnicalIndicatorPlotType.LINE: {
+          valueColor = colors[lineCount % colorSize] || textColor
+          lineCount++
+          break
+        }
+        default: { break }
+      }
+      const title = values[i].title
+      if (isValid(title)) {
+        labelX += textMarginLeft
+        const text = `${title}${values[i].value || technicalIndicatorTooltipOptions.defaultValue}`
+        const textWidth = calcTextWidth(this._ctx, text)
+        renderText(this._ctx, valueColor, labelX, labelY, text)
+        labelX += (textWidth + textMarginRight)
+      }
+    })
   }
 
   /**

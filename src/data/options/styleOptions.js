@@ -63,10 +63,10 @@ export const TooltipShowRule = {
 }
 
 /**
- * 主图数据提示显示类型
+ * 数据提示显示类型
  * @type {{RECT: string, STANDARD: string}}
  */
-export const TooltipCandleShowType = {
+export const TooltipShowType = {
   RECT: 'rect',
   STANDARD: 'standard'
 }
@@ -196,7 +196,7 @@ const defaultCandle = {
   },
   tooltip: {
     showRule: TooltipShowRule.ALWAYS,
-    showType: TooltipCandleShowType.STANDARD,
+    showType: TooltipShowType.STANDARD,
     labels: ['时间: ', '开: ', '收: ', '高: ', '低: ', '成交量: '],
     values: null,
     defaultValue: 'n/a',
@@ -265,6 +265,7 @@ const defaultTechnicalIndicator = {
   },
   tooltip: {
     showRule: TooltipShowRule.ALWAYS,
+    showType: TooltipShowType.STANDARD,
     showName: true,
     showParams: true,
     defaultValue: 'n/a',

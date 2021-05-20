@@ -16,7 +16,7 @@ import TechnicalIndicatorCrosshairView from './TechnicalIndicatorCrosshairView'
 import { isFunction, isObject, isArray, isValid } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { TooltipCandleShowType } from '../data/options/styleOptions'
+import { TooltipShowType } from '../data/options/styleOptions'
 import { getTechnicalIndicatorTooltipData } from '../base/technicalindicator/technicalIndicatorControl'
 import { TechnicalIndicatorPlotType } from '../base/technicalindicator/TechnicalIndicator'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
@@ -27,18 +27,61 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     const styleOptions = this._chartData.styleOptions()
     const candleOptions = styleOptions.candle
     const candleTooltipOptions = candleOptions.tooltip
+    const technicalIndicatorOptions = styleOptions.technicalIndicator
+    const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
     const isDrawCandleTooltip = this._shouldDrawTooltip(crosshair, candleTooltipOptions)
-    if (candleTooltipOptions.showType === TooltipCandleShowType.STANDARD) {
-      const offsetTop = isDrawCandleTooltip ? candleTooltipOptions.text.size + candleTooltipOptions.text.marginTop : 0
-      this._drawCandleTooltipWithStandard(crosshair.kLineData, candleOptions, isDrawCandleTooltip)
-      this._drawBatchTechnicalIndicatorToolTip(crosshair, technicalIndicators, offsetTop)
-    } else {
+    const isDrawTechnicalIndicatorTooltip = this._shouldDrawTooltip(crosshair, technicalIndicatorTooltipOptions)
+    if (
+      candleTooltipOptions.showType === TooltipShowType.RECT &&
+      technicalIndicatorTooltipOptions.showType === TooltipShowType.RECT
+    ) {
       this._drawCandleTooltipWithRect(
-        crosshair, technicalIndicators,
-        candleOptions, isDrawCandleTooltip,
-        styleOptions.technicalIndicator,
-        this._shouldDrawTooltip(crosshair, styleOptions.technicalIndicator.tooltip)
+        crosshair,
+        technicalIndicators,
+        candleOptions,
+        isDrawCandleTooltip,
+        technicalIndicatorOptions,
+        isDrawTechnicalIndicatorTooltip
       )
+    } else {
+      if (candleTooltipOptions.showType === TooltipShowType.STANDARD) {
+        this._drawCandleTooltipWithStandard(crosshair.kLineData, candleOptions, isDrawCandleTooltip)
+        if (technicalIndicatorTooltipOptions.showType === TooltipShowType.STANDARD) {
+          const offsetTop = isDrawCandleTooltip ? candleTooltipOptions.text.size + candleTooltipOptions.text.marginTop : 0
+          this._drawBatchTechnicalIndicatorToolTip(
+            crosshair,
+            technicalIndicators,
+            technicalIndicatorOptions,
+            offsetTop,
+            isDrawTechnicalIndicatorTooltip
+          )
+        } else {
+          this._drawCandleTooltipWithRect(
+            crosshair,
+            technicalIndicators,
+            candleOptions,
+            false,
+            technicalIndicatorOptions,
+            isDrawTechnicalIndicatorTooltip
+          )
+        }
+      } else {
+        this._drawCandleTooltipWithRect(
+          crosshair,
+          technicalIndicators,
+          candleOptions,
+          isDrawCandleTooltip,
+          technicalIndicatorOptions,
+          false
+        )
+        this._drawBatchTechnicalIndicatorToolTip(
+          crosshair,
+          technicalIndicators,
+          technicalIndicatorOptions,
+          0,
+          isDrawTechnicalIndicatorTooltip
+        )
+      }
     }
   }
 
