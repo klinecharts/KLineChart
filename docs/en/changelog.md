@@ -1,4 +1,14 @@
 # Change Log
+## 7.2.0
+`To be released`
++ 🆕 Add style configuration `technicalIndicator.tooltip.showType`.
++ 🆕 Api `subscribeAction` adds the new type `pane_drag`.
++ 💄 Optimize window drag height adjustment rules.
++ 🐞 Fix area chart display problem.
++ 🐞 Fix the problem of incorrect callback parameters for annotation custom markers.
+
+
+## 7.1.0
 `2021-04-26`
 + 🆕 Add annotation feature
   + `createAnnotation` is used to add annotations

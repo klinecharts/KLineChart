@@ -100,7 +100,9 @@
     },
     // 提示
     tooltip: {
+      // 'always' | 'follow_cross' | 'none'
       showRule: 'always',
+      // 'standard' | 'rect'
       showType: 'standard',
       labels: ['时间', '开', '收', '高', '低', '成交量'],
       values: null,
@@ -167,7 +169,10 @@
     },
     // 提示
     tooltip: {
+      // 'always' | 'follow_cross' | 'none'
       showRule: 'always',
+      // 'standard' | 'rect'
+      showType: 'standard',
       showName: true,
       showParams: true,
       defaultValue: 'n/a',
