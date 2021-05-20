@@ -23,34 +23,22 @@ import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView {
-  _drawTooltip (
-    crosshair, kLineData, dataIndex, realX, technicalIndicators
-  ) {
+  _drawTooltip (crosshair, technicalIndicators) {
     const styleOptions = this._chartData.styleOptions()
     const candleOptions = styleOptions.candle
     const candleTooltipOptions = candleOptions.tooltip
     const isDrawCandleTooltip = this._shouldDrawTooltip(crosshair, candleTooltipOptions)
     if (candleTooltipOptions.showType === TooltipCandleShowType.STANDARD) {
       const offsetTop = isDrawCandleTooltip ? candleTooltipOptions.text.size + candleTooltipOptions.text.marginTop : 0
-      this._drawCandleTooltipWithStandard(kLineData, candleOptions, isDrawCandleTooltip)
-      this._drawBatchTechnicalIndicatorToolTip(
-        crosshair, dataIndex, technicalIndicators, offsetTop
-      )
+      this._drawCandleTooltipWithStandard(crosshair.kLineData, candleOptions, isDrawCandleTooltip)
+      this._drawBatchTechnicalIndicatorToolTip(crosshair, technicalIndicators, offsetTop)
     } else {
       this._drawCandleTooltipWithRect(
-        kLineData, technicalIndicators, dataIndex,
-        realX, candleOptions, isDrawCandleTooltip,
+        crosshair, technicalIndicators,
+        candleOptions, isDrawCandleTooltip,
         styleOptions.technicalIndicator,
         this._shouldDrawTooltip(crosshair, styleOptions.technicalIndicator.tooltip)
       )
-    }
-    if (crosshair.paneId) {
-      this._chartData.crosshairDelegate().execute({
-        dataIndex,
-        kLineData,
-        x: crosshair.x,
-        y: crosshair.y
-      })
     }
   }
 
@@ -99,10 +87,8 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
 
   /**
    * 绘制蜡烛图矩形类型图例
-   * @param kLineData
+   * @param crosshair
    * @param technicalIndicators
-   * @param dataIndex
-   * @param x
    * @param candleOptions
    * @param isDrawCandleTooltip
    * @param technicalIndicatorOptions
@@ -110,7 +96,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
    * @private
    */
   _drawCandleTooltipWithRect (
-    kLineData, technicalIndicators, dataIndex, x, candleOptions, isDrawCandleTooltip,
+    crosshair, technicalIndicators, candleOptions, isDrawCandleTooltip,
     technicalIndicatorOptions, isDrawTechnicalIndicatorTooltip
   ) {
     if (!isDrawCandleTooltip && !isDrawTechnicalIndicatorTooltip) {
@@ -118,7 +104,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     }
     const candleTooltipOptions = candleOptions.tooltip
     const baseLabels = candleTooltipOptions.labels
-    const baseValues = this._getCandleTooltipData(kLineData, candleOptions)
+    const baseValues = this._getCandleTooltipData(crosshair.kLineData, candleOptions)
     const baseTextMarginLeft = candleTooltipOptions.text.marginLeft
     const baseTextMarginRight = candleTooltipOptions.text.marginRight
     const baseTextMarginTop = candleTooltipOptions.text.marginTop
@@ -170,11 +156,11 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     technicalIndicators.forEach(technicalIndicator => {
       const result = technicalIndicator.result
       indicatorTooltipDataList.push({
-        tooltipData: getTechnicalIndicatorTooltipData(result[dataIndex], technicalIndicator),
+        tooltipData: getTechnicalIndicatorTooltipData(result[crosshair.dataIndex], technicalIndicator),
         cbData: {
-          preData: { kLineData: dataList[dataIndex - 1], technicalIndicatorData: result[dataIndex - 1] },
-          currentData: { kLineData: dataList[dataIndex], technicalIndicatorData: result[dataIndex] },
-          nextData: { kLineData: dataList[dataIndex + 1], technicalIndicatorData: result[dataIndex + 1] }
+          preData: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: result[crosshair.dataIndex - 1] },
+          currentData: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData: result[crosshair.dataIndex] },
+          nextData: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: result[crosshair.dataIndex + 1] }
         }
       })
     })
@@ -204,7 +190,7 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
     rectHeight += (rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom)
     const centerX = this._width / 2
     let rectX
-    if (x < centerX) {
+    if (crosshair.realX < centerX) {
       rectX = this._width - rectRight - rectWidth
     } else {
       rectX = rectLeft

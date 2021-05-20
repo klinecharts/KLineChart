@@ -61,9 +61,9 @@ const MAX_DATA_SPACE = 50
 const MIN_DATA_SPACE = 1
 
 export default class ChartData {
-  constructor (styleOptions, invalidateHandler) {
-    // 刷新持有者
-    this._invalidateHandler = invalidateHandler
+  constructor (styleOptions, handler) {
+    // 持有者
+    this._handler = handler
     // 样式配置
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
@@ -151,8 +151,6 @@ export default class ChartData {
     // 调整pane标记
     this._dragPaneFlag = false
 
-    // 内部十字光标代理
-    this._crosshairDelegate = new Delegate()
     // 事件代理
     this._actionDelegate = new Map()
   }
@@ -446,6 +444,7 @@ export default class ChartData {
           this._adjustVisibleDataList()
         }
       }
+      this.setCrosshairPointPaneId({ x: this._crosshair.x, y: this._crosshair.y }, this._crosshair.paneId, true)
     }
   }
 
@@ -546,15 +545,37 @@ export default class ChartData {
    */
   setCrosshairPointPaneId (point, paneId, notInvalidate) {
     const p = point || {}
-    if (
-      this._crosshair.x !== p.x ||
-      this._crosshair.y !== p.y ||
-      this._crosshair.paneId !== paneId
-    ) {
-      this._crosshair = { ...point, paneId }
-      if (!notInvalidate) {
-        this.invalidate(InvalidateLevel.TOOLTIP)
+    let realDataIndex
+    let dataIndex
+    if (isValid(p.x)) {
+      realDataIndex = this.positionToDataIndex(p.x)
+      if (realDataIndex < 0) {
+        dataIndex = 0
+      } else if (realDataIndex > this._dataList.length - 1) {
+        dataIndex = this._dataList.length - 1
+      } else {
+        dataIndex = realDataIndex
       }
+    } else {
+      realDataIndex = this._dataList.length - 1
+      dataIndex = realDataIndex
+    }
+    const kLineData = this._dataList[dataIndex]
+    const realX = this.dataIndexToPosition(realDataIndex)
+    const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
+    this._crosshair = { ...point, realX, paneId, kLineData, realDataIndex, dataIndex }
+    if (paneId && kLineData) {
+      this._handler.crosshair({
+        dataIndex,
+        kLineData,
+        x: point.x,
+        y: point.y
+      })
+    }
+    if (
+      (prevCrosshair.x !== p.x || prevCrosshair.y !== p.y || prevCrosshair.paneId !== paneId) && !notInvalidate
+    ) {
+      this.invalidate(InvalidateLevel.TOOLTIP)
     }
   }
 
@@ -661,7 +682,7 @@ export default class ChartData {
    * @param invalidateLevel
    */
   invalidate (invalidateLevel) {
-    this._invalidateHandler(invalidateLevel)
+    this._handler.invalidate(invalidateLevel)
   }
 
   /**
@@ -979,14 +1000,6 @@ export default class ChartData {
         this._technicalIndicatorMapping[technicalIndicatorInstance.name] = technicalIndicatorInstance
       }
     })
-  }
-
-  /**
-   * 获取十字光标事件代理
-   * @return {Delegate}
-   */
-  crosshairDelegate () {
-    return this._crosshairDelegate
   }
 
   /**

@@ -46,7 +46,10 @@ export default class ChartPane {
     this._paneBaseId = 0
     this._separatorDragStartTopPaneHeight = 0
     this._separatorDragStartBottomPaneHeight = 0
-    this._chartData = new ChartData(styleOptions, this._updatePane.bind(this))
+    this._chartData = new ChartData(styleOptions, {
+      invalidate: this._invalidatePane.bind(this),
+      crosshair: this._crosshairObserver.bind(this)
+    })
     this._xAxisPane = new XAxisPane({ container: this._chartContainer, chartData: this._chartData })
     this._panes = new Map([[CANDLE_PANE_ID, new CandlePane({
       container: this._chartContainer,
@@ -58,7 +61,6 @@ export default class ChartPane {
     this._chartWidth = {}
     this._chartHeight = {}
     this._chartEvent = new ChartEvent(this._chartContainer, this._chartData)
-    this._chartData.crosshairDelegate().subscribe(this._crosshairObserver.bind(this))
     this.adjustPaneViewport(true, true, true)
   }
 
@@ -146,7 +148,7 @@ export default class ChartPane {
    * 更新所有pane
    * @private
    */
-  _updatePane (invalidateLevel = InvalidateLevel.FULL) {
+  _invalidatePane (invalidateLevel = InvalidateLevel.FULL) {
     if (invalidateLevel === InvalidateLevel.TOOLTIP) {
       this._xAxisPane.invalidate(invalidateLevel)
       this._panes.forEach((pane) => {
