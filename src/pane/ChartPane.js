@@ -91,7 +91,7 @@ export default class ChartPane {
    * @private
    */
   _crosshairObserver ({ dataIndex, kLineData, x, y }) {
-    if (this.chartData().hasAction(ActionType.crosshair)) {
+    if (this.chartData().hasAction(ActionType.CROSSHAIR)) {
       const technicalIndicatorData = {}
       this._panes.forEach((pane, id) => {
         const data = {}
@@ -101,7 +101,7 @@ export default class ChartPane {
         })
         technicalIndicatorData[id] = data
       })
-      this._chartData.actionExecute(ActionType.crosshair, {
+      this._chartData.actionExecute(ActionType.CROSSHAIR, {
         coordinate: { x, y },
         dataIndex,
         kLineData,
@@ -141,6 +141,7 @@ export default class ChartPane {
     }
     this._panes.get(topPaneId).setHeight(topPaneHeight)
     this._panes.get(bottomPaneId).setHeight(bottomPaneHeight)
+    this._chartData.actionExecute(ActionType.PANE_DRAG, { topPaneId, bottomPaneId, topPaneHeight, bottomPaneHeight })
     this.adjustPaneViewport(true, true, true, true, true)
   }
 
@@ -204,7 +205,12 @@ export default class ChartPane {
     this._panes.forEach(pane => {
       if (pane.id() !== CANDLE_PANE_ID) {
         const paneHeight = pane.height()
-        technicalIndicatorPaneTotalHeight += paneHeight
+        if (technicalIndicatorPaneTotalHeight + paneHeight > paneExcludeXAxisSeparatorHeight) {
+          pane.setHeight(paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight)
+          technicalIndicatorPaneTotalHeight = paneExcludeXAxisSeparatorHeight
+        } else {
+          technicalIndicatorPaneTotalHeight += paneHeight
+        }
       }
     })
 

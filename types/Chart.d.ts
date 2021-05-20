@@ -6,7 +6,7 @@ import { Annotation } from './Annotation';
 
 import { PaneOptions } from './Pane';
 
-export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll' | 'crosshair';
+export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll' | 'crosshair' | 'pane_drag';
 
 export declare interface ConvertValue {
   xAxisValue?: number;

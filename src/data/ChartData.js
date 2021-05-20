@@ -41,11 +41,12 @@ export const InvalidateLevel = {
 }
 
 export const ActionType = {
-  drawCandle: 'drawCandle',
-  drawTechnicalIndicator: 'drawTechnicalIndicator',
-  zoom: 'zoom',
-  scroll: 'scroll',
-  crosshair: 'crosshair'
+  DRAW_CANDLE: 'drawCandle',
+  DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator',
+  ZOOM: 'zoom',
+  SCROLL: 'scroll',
+  CROSSHAIR: 'crosshair',
+  PANE_DRAG: 'pane_drag'
 }
 
 /**
@@ -595,7 +596,7 @@ export default class ChartData {
       return
     }
     const distanceBarCount = distance / this._dataSpace
-    this.actionExecute(ActionType.scroll, { barCount: distanceBarCount, distance })
+    this.actionExecute(ActionType.SCROLL, { barCount: distanceBarCount, distance })
     this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount
     this._adjustFromTo()
     this.invalidate()
@@ -667,7 +668,7 @@ export default class ChartData {
     if (!point || isValid(point.x)) {
       point = { x: isValid(this._crosshair.x) ? this._crosshair.x : this._totalDataSpace / 2 }
     }
-    this.actionExecute(ActionType.zoom, { point, scale })
+    this.actionExecute(ActionType.ZOOM, { point, scale })
     const floatIndexAtZoomPoint = this.coordinateToFloatIndex(point.x)
     const dataSpace = this._dataSpace + scale * (this._dataSpace / 10)
     if (this._innerSetDataSpace(dataSpace)) {
@@ -1033,7 +1034,7 @@ export default class ChartData {
    * @return {boolean}
    */
   subscribeAction (type, callback) {
-    if (!(type in ActionType)) {
+    if (Object.values(ActionType).indexOf(type) < 0) {
       return false
     }
     if (!this._actionDelegate.has(type)) {
@@ -1050,7 +1051,7 @@ export default class ChartData {
    * @return {boolean}
    */
   unsubscribeAction (type, callback) {
-    if (!(type in ActionType)) {
+    if (Object.values(ActionType).indexOf(type) < 0) {
       return false
     }
     if (this._actionDelegate.has(type)) {

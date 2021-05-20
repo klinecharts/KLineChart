@@ -196,7 +196,7 @@ export default class TechnicalIndicatorView extends View {
               }
               default: { break }
             }
-            this._drawActionExecute(ActionType.drawTechnicalIndicator, {
+            this._drawActionExecute(ActionType.DRAW_TECHNICAL_INDICATOR, {
               ctx: this._ctx,
               kLineData,
               dataIndex: i,
@@ -360,7 +360,7 @@ export default class TechnicalIndicatorView extends View {
         break
       }
     }
-    this._drawActionExecute(ActionType.drawCandle, {
+    this._drawActionExecute(ActionType.DRAW_CANDLE, {
       ctx: this._ctx,
       dataIndex,
       kLineData,
