@@ -21,11 +21,13 @@ export default class SeparatorPane {
     this._chartData = chartData
     this._topPaneId = topPaneId
     this._bottomPaneId = bottomPaneId
+    this._dragEnabled = dragEnabled
     this._width = 0
     this._offsetLeft = 0
     this._dragEventHandler = dragEventHandler
     this._dragFlag = false
-    this._initElement(container, dragEnabled)
+    this._initElement(container)
+    this._initEvent(dragEnabled)
   }
 
   _initElement (container, dragEnabled) {
@@ -38,6 +40,21 @@ export default class SeparatorPane {
     this._element.style.zIndex = '20'
     this._element.style.top = '-3px'
     this._element.style.height = '7px'
+    this._wrapper.appendChild(this._element)
+    const lastElement = container.lastChild
+    if (lastElement) {
+      container.insertBefore(this._wrapper, lastElement)
+    } else {
+      container.appendChild(this._wrapper)
+    }
+  }
+
+  /**
+   * 初始化事件
+   * @param dragEnabled
+   * @private
+   */
+  _initEvent (dragEnabled) {
     if (dragEnabled) {
       this._element.style.cursor = 'ns-resize'
       this._dragEvent = new EventBase(this._element, {
@@ -50,13 +67,6 @@ export default class SeparatorPane {
         treatVertTouchDragAsPageScroll: false,
         treatHorzTouchDragAsPageScroll: true
       })
-    }
-    this._wrapper.appendChild(this._element)
-    const lastElement = container.lastChild
-    if (lastElement) {
-      container.insertBefore(this._wrapper, lastElement)
-    } else {
-      container.appendChild(this._wrapper)
     }
   }
 
@@ -121,6 +131,23 @@ export default class SeparatorPane {
     this._offsetLeft = offsetLeft
     this._width = width
     this.invalidate()
+  }
+
+  /**
+   * 设置是否可以拖拽
+   * @param dragEnabled
+   */
+  setDragEnabled (dragEnabled) {
+    if (dragEnabled !== this._dragEnabled) {
+      this._dragEnabled = dragEnabled
+      if (dragEnabled) {
+        !this._dragEvent && this._initEvent(dragEnabled)
+      } else {
+        this._element.style.cursor = 'default'
+        this._dragEvent && this._dragEvent.destroy()
+        this._dragEvent = null
+      }
+    }
   }
 
   /**

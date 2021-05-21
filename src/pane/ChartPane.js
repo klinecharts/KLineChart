@@ -19,7 +19,7 @@ import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
 
 import { YAxisPosition } from '../data/options/styleOptions'
-import { isArray, isBoolean, isFunction, isObject, isValid } from '../utils/typeChecks'
+import { isArray, isBoolean, isFunction, isObject, isValid, isNumber } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import SeparatorPane from './SeparatorPane'
@@ -482,19 +482,30 @@ export default class ChartPane {
    */
   createTechnicalIndicator (technicalIndicator, isStack, options = {}) {
     if (this._panes.has(options.id)) {
-      if (this._panes.get(options.id).setTechnicalIndicator(technicalIndicator, isStack)) {
-        this.adjustPaneViewport(false, true, true, true)
+      const pane = this._panes.get(options.id)
+      if (pane.setTechnicalIndicator(technicalIndicator, isStack)) {
+        let shouldMeasureHeight = false
+        if (options.id !== CANDLE_PANE_ID) {
+          if (isNumber(options.height) && pane.height() !== options.height) {
+            pane.setHeight(options.height)
+            shouldMeasureHeight = true
+          }
+          if (isBoolean(options.dragEnabled)) {
+            this._separators.get(options.id).setDragEnabled(options.dragEnabled)
+          }
+        }
+        this.adjustPaneViewport(shouldMeasureHeight, true, true, true)
       }
       return options.id
     }
     const id = options.id || `${TECHNICAL_INDICATOR_PANE_ID_PREFIX}${++this._paneBaseId}`
-    const isDrag = isBoolean(options.dragEnabled) ? options.dragEnabled : true
+    const dragEnabled = isBoolean(options.dragEnabled) ? options.dragEnabled : true
     this._separators.set(id, new SeparatorPane(
       this._chartContainer,
       this._chartData,
       Array.from(this._panes.keys()).pop(),
       id,
-      isDrag,
+      dragEnabled,
       {
         startDrag: this._separatorStartDrag.bind(this),
         drag: throttle(this._separatorDrag.bind(this), 50)
