@@ -344,6 +344,14 @@ export default class Chart {
   }
 
   /**
+   * 设置窗口属性
+   * @param options
+   */
+  setPaneOptions (options = {}) {
+    this._chartPane.setPaneOptions(options, true)
+  }
+
+  /**
    * 设置是否可以缩放
    * @param enabled
    */

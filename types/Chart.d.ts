@@ -56,6 +56,7 @@ export declare interface Chart {
   removeGraphicMark(graphicMarkId?: string): void;
   createAnnotation(annotation: Annotation | Annotation[]): void;
   removeAnnotation(point: TimestampPricePoint | TimestampPricePoint[]): void;
+  setPaneOptions(options: PaneOptions): void;
   convertFromPixel(coordinate: CoordinatePoint | CoordinatePoint[], finder: ConvertFinder): ConvertValue | ConvertValue[];
   convertToPixel(value: ConvertValue | ConvertValue[], finder: ConvertFinder): CoordinatePoint | CoordinatePoint[];
   subscribeAction (type: ChartActionType, callback: (params: any) => void): void;

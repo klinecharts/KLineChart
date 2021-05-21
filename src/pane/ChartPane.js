@@ -482,20 +482,7 @@ export default class ChartPane {
    */
   createTechnicalIndicator (technicalIndicator, isStack, options = {}) {
     if (this._panes.has(options.id)) {
-      const pane = this._panes.get(options.id)
-      if (pane.setTechnicalIndicator(technicalIndicator, isStack)) {
-        let shouldMeasureHeight = false
-        if (options.id !== CANDLE_PANE_ID) {
-          if (isNumber(options.height) && pane.height() !== options.height) {
-            pane.setHeight(options.height)
-            shouldMeasureHeight = true
-          }
-          if (isBoolean(options.dragEnabled)) {
-            this._separators.get(options.id).setDragEnabled(options.dragEnabled)
-          }
-        }
-        this.adjustPaneViewport(shouldMeasureHeight, true, true, true)
-      }
+      this.setPaneOptions(options, this._panes.get(options.id).setTechnicalIndicator(technicalIndicator, isStack))
       return options.id
     }
     const id = options.id || `${TECHNICAL_INDICATOR_PANE_ID_PREFIX}${++this._paneBaseId}`
@@ -662,6 +649,30 @@ export default class ChartPane {
         }
       })
       this._chartData.addAnnotations(instances)
+    }
+  }
+
+  /**
+   * 设置窗体参数
+   * @param options
+   * @param shouldAdjust
+   */
+  setPaneOptions (options, shouldAdjust) {
+    if (shouldAdjust) {
+      let shouldMeasureHeight = false
+      if (options.id !== CANDLE_PANE_ID) {
+        const pane = this._panes.get(options.id)
+        if (pane) {
+          if (isNumber(options.height) && options.height > 0 && pane.height() !== options.height) {
+            pane.setHeight(options.height)
+            shouldMeasureHeight = true
+          }
+          if (isBoolean(options.dragEnabled)) {
+            this._separators.get(options.id).setDragEnabled(options.dragEnabled)
+          }
+        }
+      }
+      this.adjustPaneViewport(shouldMeasureHeight, true, true, true)
     }
   }
 
