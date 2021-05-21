@@ -304,6 +304,23 @@ chart.createAnnotation({
 - `points` 点, `{ timestamp }`
 
 
+### setPaneOptions(options)
+设置窗口配置
+- `options` 窗口配置 `{ id, height, dragEnabled }`
+  - `id` 窗口id
+  - `height` 窗口高度，可缺省
+  - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
+
+示例：
+```javascript
+chart.setPaneOptions({
+  id: 'pane_1',
+  height: 100,
+  dragEnabled: true
+})
+```
+
+
 ### subscribeAction(type, callback)
 订阅图表动作。
 - `type` 类型是'drawCandle'，'drawTechnicalIndicator'，'zoom'，'scroll'和'crosshair'

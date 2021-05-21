@@ -177,7 +177,7 @@ Special paneId: candle_pane, the window id of the main image
 
 ### addCustomTechnicalIndicator(technicalIndicator)
 Add a custom technical indicator.
-- `technicalIndicator` technical indicator information, please refer to [Technical Indicators](./n50w7#mSzvS)
+- `technicalIndicator` technical indicator information, please refer to [Technical Indicators](technical-indicator.md)
 
 
 ### createGraphicMark(name, options)
@@ -302,6 +302,22 @@ chart.createAnnotation({
 ### removeAnnotation(points)
 Remove annotation. It can be a single or a collection.
 - `points` single point or collection, `{ timestamp }`
+
+
+### setPaneOptions(options)
+Set pane options
+- `options` pane options `{ id, height, dragEnabled }`
+  - `id` pane id
+  - `height` The height of the window
+  - `dragEnbaled` window can be adjusted by dragging
+Example:
+```javascript
+chart.setPaneOptions({
+  id: 'pane_1',
+  height: 100,
+  dragEnabled: true
+})
+```
 
 
 ### subscribeAction(type, callback)
