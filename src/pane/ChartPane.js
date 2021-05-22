@@ -35,8 +35,6 @@ const TECHNICAL_INDICATOR_PANE_ID_PREFIX = 'technical_indicator_pane_'
 
 const GRAPHIC_MARK_ID_PREFIX = 'graphic_mark_'
 
-export const TECHNICAL_INDICATOR_PANE = 'technicalIndicator'
-
 export const CANDLE_PANE_ID = 'candle_pane'
 
 export default class ChartPane {

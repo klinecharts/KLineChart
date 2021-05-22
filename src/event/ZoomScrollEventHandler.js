@@ -63,27 +63,36 @@ export default class ZoomScrollEventHandler extends EventHandler {
     if (!this._checkEventPointX(event.localX)) {
       return
     }
-    let deltaY = -(event.deltaY / 100)
-    if (deltaY === 0) {
-      return
-    }
-    if (event.cancelable) {
-      event.preventDefault()
-    }
+    if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+      event.preventDefault && event.preventDefault()
+      if (Math.abs(event.deltaX) === 0) {
+        return
+      }
+      this._chartData.startScroll()
+      this._chartData.scroll(-event.deltaX)
+    } else {
+      let deltaY = -(event.deltaY / 100)
+      if (deltaY === 0) {
+        return
+      }
+      if (event.cancelable) {
+        event.preventDefault()
+      }
 
-    switch (event.deltaMode) {
-      case event.DOM_DELTA_PAGE:
-        deltaY *= 120
-        break
+      switch (event.deltaMode) {
+        case event.DOM_DELTA_PAGE:
+          deltaY *= 120
+          break
 
-      case event.DOM_DELTA_LINE:
-        deltaY *= 32
-        break
-    }
+        case event.DOM_DELTA_LINE:
+          deltaY *= 32
+          break
+      }
 
-    if (deltaY !== 0) {
-      const scale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY))
-      this._chartData.zoom(scale, { x: event.localX, y: event.localY })
+      if (deltaY !== 0) {
+        const scale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY))
+        this._chartData.zoom(scale, { x: event.localX, y: event.localY })
+      }
     }
   }
 
