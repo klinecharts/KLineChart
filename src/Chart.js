@@ -348,7 +348,7 @@ export default class Chart {
    * @param options
    */
   setPaneOptions (options = {}) {
-    this._chartPane.setPaneOptions(options, true)
+    this._chartPane.setPaneOptions(options, false)
   }
 
   /**

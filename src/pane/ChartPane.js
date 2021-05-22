@@ -655,23 +655,25 @@ export default class ChartPane {
   /**
    * 设置窗体参数
    * @param options
-   * @param shouldAdjust
+   * @param forceShouldAdjust
    */
-  setPaneOptions (options, shouldAdjust) {
-    if (shouldAdjust) {
-      let shouldMeasureHeight = false
-      if (options.id !== CANDLE_PANE_ID) {
-        const pane = this._panes.get(options.id)
-        if (pane) {
-          if (isNumber(options.height) && options.height > 0 && pane.height() !== options.height) {
-            pane.setHeight(options.height)
-            shouldMeasureHeight = true
-          }
-          if (isBoolean(options.dragEnabled)) {
-            this._separators.get(options.id).setDragEnabled(options.dragEnabled)
-          }
+  setPaneOptions (options, forceShouldAdjust) {
+    let shouldAdjust = forceShouldAdjust
+    let shouldMeasureHeight = false
+    if (options.id !== CANDLE_PANE_ID) {
+      const pane = this._panes.get(options.id)
+      if (pane) {
+        if (isNumber(options.height) && options.height > 0 && pane.height() !== options.height) {
+          shouldAdjust = true
+          pane.setHeight(options.height)
+          shouldMeasureHeight = true
+        }
+        if (isBoolean(options.dragEnabled)) {
+          this._separators.get(options.id).setDragEnabled(options.dragEnabled)
         }
       }
+    }
+    if (shouldAdjust) {
       this.adjustPaneViewport(shouldMeasureHeight, true, true, true)
     }
   }
