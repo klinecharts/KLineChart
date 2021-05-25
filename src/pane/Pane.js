@@ -59,12 +59,6 @@ export default class Pane {
   _createYAxisWidget (container, props) {}
 
   /**
-   * 计算轴
-   * @private
-   */
-  computeAxis () {}
-
-  /**
    * 获取宽度
    * @returns {number}
    */

@@ -154,11 +154,11 @@ export default class ChartPane {
         pane.invalidate(invalidateLevel)
       })
     } else {
-      let shouldMeasureWidth = this._panes.get(CANDLE_PANE_ID).computeAxis()
+      let shouldMeasureWidth = this._panes.get(CANDLE_PANE_ID).yAxis().computeAxis()
       if (invalidateLevel !== InvalidateLevel.OVERLAY) {
         this._panes.forEach((pane, paneId) => {
           if (paneId !== CANDLE_PANE_ID) {
-            const should = pane.computeAxis()
+            const should = pane.yAxis().computeAxis()
             if (should) {
               shouldMeasureWidth = should
             }
@@ -197,7 +197,7 @@ export default class ChartPane {
     const paneHeight = this._container.offsetHeight
     const separatorSize = styleOptions.separator.size
     const separatorTotalHeight = separatorSize * this._separators.size
-    const xAxisHeight = this._xAxisPane.getSelfAxisHeight()
+    const xAxisHeight = this._xAxisPane.xAxis().getSelfHeight()
     const paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorTotalHeight
     let technicalIndicatorPaneTotalHeight = 0
     this._panes.forEach(pane => {
@@ -251,7 +251,7 @@ export default class ChartPane {
     let mainOffsetLeft
     if (isOutside) {
       this._panes.forEach(pane => {
-        yAxisWidth = Math.max(yAxisWidth, pane.getSelfAxisWidth())
+        yAxisWidth = Math.max(yAxisWidth, pane.yAxis().getSelfWidth())
       })
       mainWidth = paneWidth - yAxisWidth
       if (isYAxisLeft) {
@@ -299,7 +299,7 @@ export default class ChartPane {
     let isAdjust = false
     if (shouldComputeAxis) {
       this._panes.forEach(pane => {
-        const adjust = pane.computeAxis(shouldForceComputeAxis)
+        const adjust = pane.yAxis().computeAxis(shouldForceComputeAxis)
         if (!isAdjust) {
           isAdjust = adjust
         }
@@ -309,7 +309,7 @@ export default class ChartPane {
       this._measurePaneWidth()
     }
     if (shouldLayout) {
-      this._xAxisPane.computeAxis()
+      this._xAxisPane.xAxis().computeAxis(true)
       this._xAxisPane.layout()
       this._panes.forEach(pane => {
         pane.layout()
@@ -345,26 +345,26 @@ export default class ChartPane {
         let shouldAdjust = false
         const tasks = []
         this._panes.forEach(pane => {
-          pane.technicalIndicators().forEach(tech => {
-            if (tech.name === name) {
-              tech.setCalcParamsAllowDecimal(calcParamsAllowDecimal)
-              if (calcParamsSuccess) {
-                shouldAdjust = true
-                tech.setCalcParams(calcParams)
-                tasks.push(
-                  Promise.resolve(pane.calcTechnicalIndicator(tech))
-                )
-              }
-              if (precisionSuccess) {
-                shouldAdjust = true
-                tech.setPrecision(precision)
-              }
-              if (styleSuccess) {
-                shouldAdjust = true
-                tech.setStyles(styles, defaultTechnicalStyleOptions)
-              }
+          const technicalIndicators = pane.technicalIndicators()
+          if (technicalIndicators.has(name)) {
+            const tech = technicalIndicators.get(name)
+            tech.setCalcParamsAllowDecimal(calcParamsAllowDecimal)
+            if (calcParamsSuccess) {
+              shouldAdjust = true
+              tech.setCalcParams(calcParams)
+              tasks.push(
+                Promise.resolve(pane.calcTechnicalIndicator(tech))
+              )
             }
-          })
+            if (precisionSuccess) {
+              shouldAdjust = true
+              tech.setPrecision(precision)
+            }
+            if (styleSuccess) {
+              shouldAdjust = true
+              tech.setStyles(styles, defaultTechnicalStyleOptions)
+            }
+          }
         })
         if (shouldAdjust) {
           Promise.all(tasks).then(
@@ -682,7 +682,7 @@ export default class ChartPane {
    */
   setTimezone (timezone) {
     this._chartData.setTimezone(timezone)
-    this._xAxisPane.computeAxis()
+    this._xAxisPane.xAxis().computeAxis(true)
     this._xAxisPane.invalidate(InvalidateLevel.FULL)
   }
 

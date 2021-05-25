@@ -18,14 +18,19 @@ import { formatDate } from '../utils/format'
 import { isValid, isNumber } from '../utils/typeChecks'
 
 export default class XAxis extends Axis {
-  _computeMinMaxValue () {
-    const min = this._chartData.from()
-    const max = this._chartData.to() - 1
-    const range = max - min + 1
-    return { min, max, range }
+  _computeMinMax () {
+    return { min: this._chartData.from(), max: this._chartData.to() - 1 }
   }
 
-  _computeOptimalTicks (ticks) {
+  _optimalMinMax ({ min, max }) {
+    return {
+      min,
+      max,
+      range: max - min + 1
+    }
+  }
+
+  _optimalTicks (ticks) {
     const optimalTicks = []
     const tickLength = ticks.length
     const dataList = this._chartData.dataList()

@@ -203,7 +203,7 @@
     width: null,
     // 'left' | 'right'
     position: 'right',
-    // 'normal' | 'percentage'
+    // 'normal' | 'percentage' | 'log'
     type: 'normal',
     inside: false,
     axisLine: {

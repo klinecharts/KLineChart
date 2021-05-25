@@ -36,7 +36,8 @@ export const YAxisPosition = {
  */
 export const YAxisType = {
   NORMAL: 'normal',
-  PERCENTAGE: 'percentage'
+  PERCENTAGE: 'percentage',
+  LOG: 'log'
 }
 
 /**

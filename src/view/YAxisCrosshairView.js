@@ -15,7 +15,7 @@
 import View from './View'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
-import { YAxisPosition } from '../data/options/styleOptions'
+import { YAxisPosition, YAxisType } from '../data/options/styleOptions'
 import { renderStrokeFillRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
@@ -44,9 +44,9 @@ export default class YAxisCrosshairView extends View {
     }
     const value = this._yAxis.convertFromPixel(crosshair.y)
     let text
-    if (this._yAxis.isPercentageYAxis()) {
-      const fromClose = this._chartData.visibleDataList()[0].data.close
-      text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
+    if (this._yAxis.yAxisType() === YAxisType.PERCENTAGE) {
+      const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+      text = `${((value - fromData.close) / fromData.close * 100).toFixed(2)}%`
     } else {
       const technicalIndicators = this._additionalDataProvider.technicalIndicators()
       let precision = 0

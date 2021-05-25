@@ -17,118 +17,38 @@ import { CandleType, YAxisType } from '../data/options/styleOptions'
 import { isNumber, isValid } from '../utils/typeChecks'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
+import { round, log10, index10 } from '../utils/number'
 
 export default class YAxis extends Axis {
   constructor (chartData, isCandleYAxis, additionalDataProvider) {
     super(chartData)
+    this._realRange = 0
     this._isCandleYAxis = isCandleYAxis
     this._additionalDataProvider = additionalDataProvider
   }
 
-  _computeMinMaxValue () {
-    let min = this._minValue
-    let max = this._maxValue
-    let range = Math.abs(max - min)
-    let marginOptions
-    if (this._isCandleYAxis) {
-      marginOptions = this._chartData.styleOptions().candle.margin
-    } else {
-      marginOptions = this._chartData.styleOptions().technicalIndicator.margin
-    }
-    let topRate
-    let bottomRate
-    if (marginOptions.top > 1) {
-      topRate = marginOptions.top / this._height
-    } else {
-      topRate = isNumber(marginOptions.top) ? marginOptions.top : 0.2
-    }
-    if (marginOptions.bottom > 1) {
-      bottomRate = marginOptions.bottom / this._height
-    } else {
-      bottomRate = isNumber(marginOptions.bottom) ? marginOptions.bottom : 0.1
-    }
-    // 保证每次图形绘制上下都留间隙
-    min = min - range * bottomRate
-    max = max + range * topRate
-    range = Math.abs(max - min)
-    return { min, max, range }
-  }
-
-  _computeOptimalTicks (ticks) {
-    const optimalTicks = []
-    const tickLength = ticks.length
-    if (tickLength > 0) {
-      const textHeight = this._chartData.styleOptions().xAxis.tickText.size
-      const y = this._innerConvertToPixel(+ticks[0].v)
-      let tickCountDif = 1
-      if (tickLength > 1) {
-        const nextY = this._innerConvertToPixel(+ticks[1].v)
-        const yDif = Math.abs(nextY - y)
-        if (yDif < textHeight * 2) {
-          tickCountDif = Math.ceil(textHeight * 2 / yDif)
-        }
-      }
-      const technicalIndicators = this._additionalDataProvider.technicalIndicators()
-      let precision = 0
-      let shouldFormatBigNumber = false
-      if (this._isCandleYAxis) {
-        precision = this._chartData.pricePrecision()
-      } else {
-        technicalIndicators.forEach(technicalIndicator => {
-          precision = Math.max(precision, technicalIndicator.precision)
-          if (!shouldFormatBigNumber) {
-            shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
-          }
-        })
-      }
-      const isPercentageAxis = this.isPercentageYAxis()
-      for (let i = 0; i < tickLength; i += tickCountDif) {
-        let v = ticks[i].v
-        v = +v === 0 ? '0' : v
-        const y = this._innerConvertToPixel(+v)
-        let value = ''
-        if (isPercentageAxis) {
-          value = `${formatPrecision(v, 2)}%`
-        } else {
-          value = formatPrecision(v, precision)
-          if (shouldFormatBigNumber) {
-            value = formatBigNumber(value)
-          }
-        }
-        if (y > textHeight &&
-          y < this._height - textHeight) {
-          optimalTicks.push({ v: value, y })
-        }
-      }
-    }
-    return optimalTicks
-  }
-
-  /**
-   * 计算最大最小值
-   */
-  calcMinMaxValue () {
-    const technicalIndicators = this._additionalDataProvider.technicalIndicators()
+  _computeMinMax () {
     const minMaxArray = [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER]
     const plotsResult = []
     let shouldOhlc = false
     let minValue = Number.MAX_SAFE_INTEGER
     let maxValue = Number.MIN_SAFE_INTEGER
     let technicalIndicatorPrecision = Number.MIN_SAFE_INTEGER
-    technicalIndicators.forEach(technicalIndicator => {
+    const technicalIndicators = this._additionalDataProvider.technicalIndicators()
+    technicalIndicators.forEach(tech => {
       if (!shouldOhlc) {
-        shouldOhlc = technicalIndicator.should
+        shouldOhlc = tech.should
       }
-      technicalIndicatorPrecision = Math.max(technicalIndicatorPrecision, technicalIndicator.precision)
-      if (isValid(technicalIndicator.minValue) && isNumber(technicalIndicator.minValue)) {
-        minValue = Math.min(minValue, technicalIndicator.minValue)
+      technicalIndicatorPrecision = Math.max(technicalIndicatorPrecision, tech.precision)
+      if (isValid(tech.minValue) && isNumber(tech.minValue)) {
+        minValue = Math.min(minValue, tech.minValue)
       }
-      if (isValid(technicalIndicator.maxValue) && isNumber(technicalIndicator.maxValue)) {
-        maxValue = Math.max(maxValue, technicalIndicator.maxValue)
+      if (isValid(tech.maxValue) && isNumber(tech.maxValue)) {
+        maxValue = Math.max(maxValue, tech.maxValue)
       }
       plotsResult.push({
-        plots: technicalIndicator.plots,
-        result: technicalIndicator.result
+        plots: tech.plots,
+        result: tech.result
       })
     })
 
@@ -177,51 +97,162 @@ export default class YAxis extends Axis {
       if (maxValue !== Number.MIN_SAFE_INTEGER) {
         minMaxArray[1] = Math.max(maxValue, minMaxArray[1])
       }
-      if (this.isPercentageYAxis()) {
-        const fromClose = visibleDataList[0].data.close
-        this._minValue = (minMaxArray[0] - fromClose) / fromClose * 100
-        this._maxValue = (minMaxArray[1] - fromClose) / fromClose * 100
-        if (
-          this._minValue === this._maxValue ||
-          Math.abs(this._minValue - this._maxValue) < Math.pow(10, -2)
-        ) {
-          this._minValue -= 10
-          this._maxValue += 10
-        }
-      } else {
-        this._minValue = minMaxArray[0]
-        this._maxValue = minMaxArray[1]
-        if (
-          this._minValue === this._maxValue ||
-          Math.abs(this._minValue - this._maxValue) < Math.pow(10, -precision)
-        ) {
-          const percentValue = this._minValue !== 0 ? Math.abs(this._minValue * 0.2) : 10
-          this._minValue = this._minValue !== 0 ? this._minValue - percentValue : this._minValue
-          this._maxValue += percentValue
-        }
+    } else {
+      minMaxArray[0] = 0
+      minMaxArray[1] = 0
+    }
+    return { min: minMaxArray[0], max: minMaxArray[1], precision }
+  }
+
+  _optimalMinMax ({ min, max, precision }) {
+    let minValue = 0
+    let maxValue = 0
+    const yAxisType = this.yAxisType()
+    if (yAxisType === YAxisType.PERCENTAGE) {
+      const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+      if (isValid(fromData.close)) {
+        minValue = (min - fromData.close) / fromData.close * 100
+        maxValue = (max - fromData.close) / fromData.close * 100
+      }
+      if (
+        minValue === maxValue ||
+        Math.abs(minValue - maxValue) < Math.pow(10, -2)
+      ) {
+        minValue -= 10
+        minValue += 10
       }
     } else {
-      this._minValue = 0
-      this._maxValue = 0
+      minValue = min
+      maxValue = max
+      if (
+        minValue === maxValue ||
+        Math.abs(minValue - maxValue) < Math.pow(10, -precision)
+      ) {
+        const percentValue = minValue !== 0 ? Math.abs(minValue * 0.2) : 10
+        minValue = minValue !== 0 ? minValue - percentValue : minValue
+        maxValue += percentValue
+      }
+    }
+    let range = Math.abs(maxValue - minValue)
+    let marginOptions
+    if (this._isCandleYAxis) {
+      marginOptions = this._chartData.styleOptions().candle.margin
+    } else {
+      marginOptions = this._chartData.styleOptions().technicalIndicator.margin
+    }
+    let topRate
+    let bottomRate
+    if (marginOptions.top > 1) {
+      topRate = marginOptions.top / this._height
+    } else {
+      topRate = isNumber(marginOptions.top) ? marginOptions.top : 0.2
+    }
+    if (marginOptions.bottom > 1) {
+      bottomRate = marginOptions.bottom / this._height
+    } else {
+      bottomRate = isNumber(marginOptions.bottom) ? marginOptions.bottom : 0.1
+    }
+    // 保证每次图形绘制上下都留间隙
+    minValue = minValue - range * bottomRate
+    maxValue = maxValue + range * topRate
+    this._realRange = maxValue - minValue
+    if (yAxisType === YAxisType.LOG) {
+      minValue = log10(minValue)
+      maxValue = log10(maxValue)
+    }
+    range = Math.abs(maxValue - minValue)
+    return {
+      min: minValue,
+      max: maxValue,
+      range
     }
   }
 
+  _optimalTicks (ticks) {
+    const optimalTicks = []
+    const yAxisType = this.yAxisType()
+    const technicalIndicators = this._additionalDataProvider.technicalIndicators()
+    let precision = 0
+    let shouldFormatBigNumber = false
+    if (this._isCandleYAxis) {
+      precision = this._chartData.pricePrecision()
+    } else {
+      technicalIndicators.forEach(technicalIndicator => {
+        precision = Math.max(precision, technicalIndicator.precision)
+        if (!shouldFormatBigNumber) {
+          shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
+        }
+      })
+    }
+    const textHeight = this._chartData.styleOptions().xAxis.tickText.size
+    let intervalPrecision
+    if (yAxisType === YAxisType.LOG) {
+      intervalPrecision = this._computeInterval(this._realRange)
+    }
+    ticks.forEach(({ v }) => {
+      let value
+      let validY
+      let y = this._innerConvertToPixel(+v)
+      switch (yAxisType) {
+        case YAxisType.PERCENTAGE: {
+          value = `${formatPrecision(v, 2)}%`
+          break
+        }
+        case YAxisType.LOG: {
+          value = round(index10(v, true), intervalPrecision.precision)
+          y = this._innerConvertToPixel(log10(value))
+          value = formatPrecision(value, precision)
+          break
+        }
+        default: {
+          value = formatPrecision(v, precision)
+          if (shouldFormatBigNumber) {
+            value = formatBigNumber(value)
+          }
+          break
+        }
+      }
+      if (y > textHeight && y < this._height - textHeight && ((validY && validY - y > textHeight * 2) || !validY)) {
+        optimalTicks.push({ v: value, y })
+        validY = y
+      }
+    })
+    return optimalTicks
+  }
+
+  /**
+   * 内部值转换成坐标
+   * @param value
+   * @return {number}
+   * @private
+   */
   _innerConvertToPixel (value) {
     return Math.round((1.0 - (value - this._minValue) / this._range) * this._height)
   }
 
+  /**
+   * 是否是蜡烛图轴
+   * @return {*}
+   */
   isCandleYAxis () {
     return this._isCandleYAxis
   }
 
   /**
-   * 是否是蜡烛图y轴组件
-   * @returns {boolean}
+   * y轴类型
+   * @return {string|*}
    */
-  isPercentageYAxis () {
-    return this._isCandleYAxis && this._chartData.styleOptions().yAxis.type === YAxisType.PERCENTAGE
+  yAxisType () {
+    if (this._isCandleYAxis) {
+      return this._chartData.styleOptions().yAxis.type
+    }
+    return YAxisType.NORMAL
   }
 
+  /**
+   * 获取自身宽度
+   * @return {number}
+   */
   getSelfWidth () {
     const styleOptions = this._chartData.styleOptions()
     const yAxisOptions = styleOptions.yAxis
@@ -268,7 +299,7 @@ export default class YAxis extends Axis {
         crosshairOptions.horizontal.text.family
       )
       let precision = 2
-      if (!this.isPercentageYAxis()) {
+      if (this.yAxisType() !== YAxisType.PERCENTAGE) {
         if (this._isCandleYAxis) {
           const pricePrecision = this._chartData.pricePrecision()
           const lastValueMarkOptions = styleOptions.technicalIndicator.lastValueMark
@@ -296,24 +327,42 @@ export default class YAxis extends Axis {
   }
 
   convertFromPixel (pixel) {
-    const yAxisValue = (1.0 - pixel / this._height) * this._range + this._minValue
-    if (this.isPercentageYAxis()) {
-      const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
-      const fromClose = fromData.close
-      return fromClose * yAxisValue / 100 + fromClose
+    const value = (1.0 - pixel / this._height) * this._range + this._minValue
+    switch (this.yAxisType()) {
+      case YAxisType.PERCENTAGE: {
+        const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+        if (isValid(fromData.close)) {
+          return fromData.close * value / 100 + fromData.close
+        }
+        break
+      }
+      case YAxisType.LOG: {
+        return index10(value, true)
+      }
+      default: {
+        return value
+      }
     }
-    return yAxisValue
   }
 
   convertToPixel (value) {
-    let realValue = value
-    if (this.isPercentageYAxis()) {
-      const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
-      const fromClose = fromData.close
-      if (isValid(fromClose)) {
-        realValue = (value - fromClose) / fromClose * 100
+    let v
+    switch (this.yAxisType()) {
+      case YAxisType.PERCENTAGE: {
+        const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+        if (isValid(fromData.close)) {
+          v = (value - fromData.close) / fromData.close * 100
+        }
+        break
+      }
+      case YAxisType.LOG: {
+        v = log10(value)
+        break
+      }
+      default: {
+        v = value
       }
     }
-    return this._innerConvertToPixel(realValue)
+    return this._innerConvertToPixel(v)
   }
 }

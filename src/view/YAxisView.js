@@ -13,7 +13,7 @@
  */
 
 import View from './View'
-import { YAxisPosition } from '../data/options/styleOptions'
+import { YAxisPosition, YAxisType } from '../data/options/styleOptions'
 import { TechnicalIndicatorPlotType } from '../base/technicalindicator/TechnicalIndicator'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
@@ -245,8 +245,8 @@ export default class YAxisView extends View {
     let valueY = this._yAxis.convertToPixel(value)
     valueY = Math.round(Math.max(this._height * 0.05, Math.min(valueY, this._height * 0.98)))
     let text
-    if (this._yAxis.isPercentageYAxis()) {
-      const fromData = (this._chartData.visibleDataList()[0] || {}).data
+    if (this._yAxis.yAxisType() === YAxisType.PERCENTAGE) {
+      const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
       const fromClose = fromData.close
       text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {

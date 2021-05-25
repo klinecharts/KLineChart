@@ -20,7 +20,7 @@ import YAxis from '../component/YAxis'
 export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
     super(props)
-    this._technicalIndicators = []
+    this._technicalIndicators = new Map()
     if ('height' in props) {
       this.setHeight(props.height)
     }
@@ -64,21 +64,6 @@ export default class TechnicalIndicatorPane extends Pane {
     })
   }
 
-  /**
-   * 是否包含指标
-   * @param name
-   * @return {boolean}
-   * @private
-   */
-  _includeTechnicalIndicator (name) {
-    for (const technicalIndicator of this._technicalIndicators) {
-      if (technicalIndicator.name === name) {
-        return true
-      }
-    }
-    return false
-  }
-
   setHeight (height) {
     super.setHeight(height)
     this._yAxis.setHeight(height)
@@ -87,15 +72,6 @@ export default class TechnicalIndicatorPane extends Pane {
   setWidth (mainWidgetWidth, yAxisWidgetWidth) {
     super.setWidth(mainWidgetWidth, yAxisWidgetWidth)
     this._yAxis.setWidth(yAxisWidgetWidth)
-  }
-
-  computeAxis (forceCompute) {
-    this._yAxis.calcMinMaxValue()
-    return this._yAxis.computeAxis(forceCompute)
-  }
-
-  getSelfAxisWidth () {
-    return this._yAxis.getSelfWidth()
   }
 
   /**
@@ -112,7 +88,7 @@ export default class TechnicalIndicatorPane extends Pane {
 
   /**
    * 获取技术指标
-   * @return {[]}
+   * @return {Map<any, any>}
    */
   technicalIndicators () {
     return this._technicalIndicators
@@ -123,7 +99,7 @@ export default class TechnicalIndicatorPane extends Pane {
    * @return {boolean}
    */
   isEmptyTechnicalIndicator () {
-    return this._technicalIndicators.length === 0
+    return this._technicalIndicators.size === 0
   }
 
   /**
@@ -133,21 +109,15 @@ export default class TechnicalIndicatorPane extends Pane {
    */
   removeTechnicalIndicator (name) {
     if (name) {
-      let deletePos = -1
-      for (let i = 0; i < this._technicalIndicators.length; i++) {
-        if (this._technicalIndicators[i].name === name) {
-          deletePos = i
-          break
-        }
-      }
-      if (deletePos > -1) {
-        this._technicalIndicators.splice(deletePos, 1)
+      if (this._technicalIndicators.has(name)) {
+        this._technicalIndicators.delete(name)
         return true
       }
     } else {
-      this._technicalIndicators = []
+      this._technicalIndicators.clear()
       return true
     }
+    return false
   }
 
   /**
@@ -157,14 +127,14 @@ export default class TechnicalIndicatorPane extends Pane {
    */
   setTechnicalIndicator (technicalIndicator, isStack) {
     if (technicalIndicator) {
-      if (this._includeTechnicalIndicator(technicalIndicator.name)) {
+      if (this._technicalIndicators.has(technicalIndicator.name)) {
         return false
       }
       const cloneInstance = Object.create(technicalIndicator)
       if (isStack) {
-        this._technicalIndicators.push(cloneInstance)
+        this._technicalIndicators = this._technicalIndicators.set(cloneInstance.name, cloneInstance)
       } else {
-        this._technicalIndicators = [cloneInstance]
+        this._technicalIndicators = new Map([[cloneInstance.name, cloneInstance]])
       }
       this.calcTechnicalIndicator(cloneInstance)
       return true
@@ -187,6 +157,6 @@ export default class TechnicalIndicatorPane extends Pane {
     this._technicalIndicators.forEach(technicalIndicator => {
       this.calcTechnicalIndicator(technicalIndicator)
     })
-    return this.computeAxis()
+    return this._yAxis.computeAxis()
   }
 }
