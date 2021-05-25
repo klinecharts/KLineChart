@@ -567,6 +567,7 @@ export default class ChartData {
     this._crosshair = { ...point, realX, paneId, kLineData, realDataIndex, dataIndex }
     if (paneId && kLineData) {
       this._handler.crosshair({
+        realDataIndex,
         dataIndex,
         kLineData,
         x: point.x,
@@ -590,8 +591,9 @@ export default class ChartData {
   /**
    * 滚动
    * @param distance
+   * @param extendFun
    */
-  scroll (distance) {
+  scroll (distance, extendFun) {
     if (!this._scrollEnabled) {
       return
     }
@@ -599,6 +601,7 @@ export default class ChartData {
     this.actionExecute(ActionType.SCROLL, { barCount: distanceBarCount, distance })
     this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount
     this._adjustFromTo()
+    extendFun && extendFun()
     this.invalidate()
   }
 

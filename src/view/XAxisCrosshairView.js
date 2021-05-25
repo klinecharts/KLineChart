@@ -16,7 +16,6 @@ import View from './View'
 
 import { formatDate } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { isValid } from '../utils/typeChecks'
 import { renderStrokeFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
@@ -38,22 +37,16 @@ export default class XAxisCrosshairView extends View {
     const crosshairOptions = this._chartData.styleOptions().crosshair
     const crosshairVerticalOptions = crosshairOptions.vertical
     const crosshairVerticalTextOptions = crosshairVerticalOptions.text
-    if (!crosshairOptions.show || !crosshairVerticalOptions.show || !crosshairVerticalTextOptions.show) {
+    if (
+      !crosshairOptions.show ||
+      !crosshairVerticalOptions.show ||
+      !crosshairVerticalTextOptions.show ||
+      crosshair.dataIndex !== crosshair.realDataIndex
+    ) {
       return
     }
-    const dataList = this._chartData.dataList()
-    let dataPos
-    if (isValid(crosshair.x)) {
-      dataPos = this._xAxis.convertFromPixel(crosshair.x)
-    } else {
-      dataPos = dataList.length - 1
-    }
-    const kLineData = dataList[dataPos]
-    if (!kLineData) {
-      return
-    }
-    const x = this._xAxis.convertToPixel(dataPos)
-    const timestamp = kLineData.timestamp
+    const x = crosshair.realX
+    const timestamp = crosshair.kLineData.timestamp
     const text = formatDate(this._chartData.dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
 
     const textSize = crosshairVerticalTextOptions.size

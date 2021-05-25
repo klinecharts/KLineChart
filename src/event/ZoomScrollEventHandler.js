@@ -69,7 +69,10 @@ export default class ZoomScrollEventHandler extends EventHandler {
         return
       }
       this._chartData.startScroll()
-      this._chartData.scroll(-event.deltaX)
+      this._chartData.scroll(-event.deltaX, () => {
+        const crosshair = this._chartData.crosshair()
+        this._chartData.setCrosshairPointPaneId({ x: crosshair.x, y: crosshair.y }, crosshair.paneId, true)
+      })
     } else {
       let deltaY = -(event.deltaY / 100)
       if (deltaY === 0) {
@@ -138,11 +141,11 @@ export default class ZoomScrollEventHandler extends EventHandler {
           this._chartData.setCrosshairPointPaneId(crosshairPoint, cross.paneId)
           return
         }
-      } else {
-        this._chartData.setCrosshairPointPaneId(crosshairPoint, cross.paneId, true)
       }
       const distance = event.localX - this._startScrollPoint.x
-      this._chartData.scroll(distance)
+      this._chartData.scroll(distance, () => {
+        this._chartData.setCrosshairPointPaneId(crosshairPoint, cross.paneId, true)
+      })
     })
   }
 
