@@ -189,9 +189,9 @@ export default class YAxis extends Axis {
     if (yAxisType === YAxisType.LOG) {
       intervalPrecision = this._computeInterval(this._realRange)
     }
+    let validY
     ticks.forEach(({ v }) => {
       let value
-      let validY
       let y = this._innerConvertToPixel(+v)
       switch (yAxisType) {
         case YAxisType.PERCENTAGE: {
@@ -212,7 +212,7 @@ export default class YAxis extends Axis {
           break
         }
       }
-      if (y > textHeight && y < this._height - textHeight && ((validY && validY - y > textHeight * 2) || !validY)) {
+      if (y > textHeight && y < this._height - textHeight && ((validY && (validY - y > textHeight * 2)) || !validY)) {
         optimalTicks.push({ v: value, y })
         validY = y
       }

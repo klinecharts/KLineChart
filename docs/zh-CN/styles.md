@@ -94,7 +94,8 @@
           paddingBottom: 2,
           color: '#FFFFFF',
           family: 'Helvetica Neue',
-          weight: 'normal'
+          weight: 'normal',
+          borderRadius: 2
         }
       }
     },
@@ -164,7 +165,8 @@
         paddingLeft: 3,
         paddingTop: 2,
         paddingRight: 3,
-        paddingBottom: 2
+        paddingBottom: 2,
+        borderRadius: 2
       }
     },
     // 提示
@@ -282,6 +284,7 @@
         paddingBottom: 2,
         borderSize: 1,
         borderColor: '#505050',
+        borderRadius: 2,
         backgroundColor: '#505050'
       }
     },
@@ -308,6 +311,7 @@
         paddingBottom: 2,
         borderSize: 1,
         borderColor: '#505050',
+        borderRadius: 2,
         backgroundColor: '#505050'
       }
     }

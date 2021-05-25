@@ -19,7 +19,7 @@ import { calcTextWidth, createFont } from '../utils/canvas'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { formatBigNumber, formatPrecision } from '../utils/format'
 import { isValid } from '../utils/typeChecks'
-import { renderFillRect } from '../renderer/rect'
+import { renderFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class YAxisView extends View {
@@ -229,6 +229,7 @@ export default class YAxisView extends View {
    * @param family
    * @param color
    * @param backgroundColor
+   * @param borderRadius
    * @param paddingLeft
    * @param paddingTop
    * @param paddingRight
@@ -238,7 +239,7 @@ export default class YAxisView extends View {
   _drawMarkLabel (
     yAxisOptions, value, precision, shouldFormatBigNumber,
     {
-      size, weight, family, color, backgroundColor,
+      size, weight, family, color, backgroundColor, borderRadius,
       paddingLeft, paddingTop, paddingRight, paddingBottom
     }
   ) {
@@ -264,9 +265,9 @@ export default class YAxisView extends View {
     } else {
       rectStartX = this._width - rectWidth
     }
-    renderFillRect(
+    renderFillRoundRect(
       this._ctx, backgroundColor,
-      rectStartX, valueY - paddingTop - size / 2, rectWidth, rectHeight
+      rectStartX, valueY - paddingTop - size / 2, rectWidth, rectHeight, borderRadius
     )
     this._ctx.textBaseline = 'middle'
     renderText(this._ctx, color, rectStartX + paddingLeft, valueY, text)

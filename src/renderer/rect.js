@@ -13,7 +13,7 @@
  */
 
 /**
- * 绘制带边框并填充的矩形
+ * 绘制带边框的圆角填充矩形
  * @param ctx
  * @param fillColor
  * @param borderColor
@@ -22,29 +22,14 @@
  * @param y
  * @param width
  * @param height
+ * @param borderRadius
  */
-export function renderStrokeFillRect (
+export function renderStrokeFillRoundRect (
   ctx, fillColor, borderColor, borderSize,
-  x, y, width, height
+  x, y, width, height, borderRadius
 ) {
-  renderFillRect(ctx, fillColor, x, y, width, height)
-  renderStrokeRect(ctx, borderColor, borderSize, x, y, width, height)
-}
-
-/**
- * 绘制空心矩形
- * @param ctx
- * @param borderColor
- * @param borderSize
- * @param x
- * @param y
- * @param width
- * @param height
- */
-export function renderStrokeRect (ctx, borderColor, borderSize, x, y, width, height) {
-  ctx.lineWidth = borderSize
-  ctx.strokeStyle = borderColor
-  ctx.strokeRect(x, y, width, height)
+  renderFillRoundRect(ctx, fillColor, x, y, width, height, borderRadius)
+  renderStrokeRoundRect(ctx, borderColor, borderSize, x, y, width, height, borderRadius)
 }
 
 /**

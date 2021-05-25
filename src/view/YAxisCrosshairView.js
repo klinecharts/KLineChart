@@ -16,7 +16,7 @@ import View from './View'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
 import { YAxisPosition, YAxisType } from '../data/options/styleOptions'
-import { renderStrokeFillRect } from '../renderer/rect'
+import { renderStrokeFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class YAxisCrosshairView extends View {
@@ -91,10 +91,10 @@ export default class YAxisCrosshairView extends View {
 
     const rectY = crosshair.y - borderSize - paddingTop - textSize / 2
     // 绘制y轴文字外的边框
-    renderStrokeFillRect(
+    renderStrokeFillRoundRect(
       this._ctx, crosshairHorizontalTextOptions.backgroundColor,
       crosshairHorizontalTextOptions.borderColor, borderSize,
-      rectStartX, rectY, rectWidth, rectHeight
+      rectStartX, rectY, rectWidth, rectHeight, crosshairHorizontalTextOptions.borderRadius
     )
 
     this._ctx.textBaseline = 'middle'

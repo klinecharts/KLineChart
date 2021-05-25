@@ -17,7 +17,7 @@ import View from './View'
 import { formatDate } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { isValid } from '../utils/typeChecks'
-import { renderStrokeFillRect } from '../renderer/rect'
+import { renderStrokeFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class XAxisCrosshairView extends View {
@@ -78,10 +78,10 @@ export default class XAxisCrosshairView extends View {
     const rectWidth = labelWidth + borderSize * 2 + paddingRight + paddingLeft
     const rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom
 
-    renderStrokeFillRect(
+    renderStrokeFillRoundRect(
       this._ctx, crosshairVerticalTextOptions.backgroundColor,
       crosshairVerticalTextOptions.borderColor, borderSize,
-      rectX, 0, rectWidth, rectHeight
+      rectX, 0, rectWidth, rectHeight, crosshairVerticalTextOptions.borderRadius
     )
     // 绘制轴上的提示文字
     this._ctx.textBaseline = 'top'

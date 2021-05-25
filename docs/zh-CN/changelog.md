@@ -1,4 +1,14 @@
 # 更新日志
+## 7.3.0
+`待发布`
++ 🆕 新增api `setPaneOptions`，用于设置窗口。
++ 🆕 坐标轴新增对数坐标，`yAxis.type: log`。
++ 🆕 新增配置，`candle.priceMark.last.text.borderRadius`、`technicalIndicator.lastValueMark.text.borderRadius`、
+  `crosshair.horizontal.text.borderRadius`、`crosshair.vertical.text.borderRadius`。
++ 🆕 新增触摸板滚动支持。
++ 💪 Api `creatTechnicalIndicator`，窗口参数可以实时生效。
+
+
 ## 7.2.0
 `2021-05-20`
 
