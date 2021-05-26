@@ -320,9 +320,7 @@ export default class Chart {
    */
   removeGraphicMark (graphicMarkId) {
     if (graphicMarkId) {
-      this._chartPane.chartData().removeGraphicMarkInstance({
-        type: 'id', id: graphicMarkId
-      })
+      this._chartPane.chartData().removeGraphicMarkInstance(graphicMarkId)
     } else {
       this._chartPane.chartData().clearGraphicMark()
     }

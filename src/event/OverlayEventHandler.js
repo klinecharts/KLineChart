@@ -14,7 +14,7 @@
 
 import { CANDLE_PANE_ID } from '../pane/ChartPane'
 import EventHandler, { isMouse } from './EventHandler'
-import { InvalidateLevel, RemoveGraphicMarkOperateType } from '../data/ChartData'
+import { InvalidateLevel } from '../data/ChartData'
 import { GraphicMarkMouseOperateElement } from '../base/overlay/mark/GraphicMark'
 
 export default class OverlayEventHandler extends EventHandler {
@@ -172,21 +172,13 @@ export default class OverlayEventHandler extends EventHandler {
   }
 
   mouseRightDownEvent (event) {
-    const graphicMarks = this._chartData.graphicMarks()
-    for (let i = 0; i < graphicMarks.length; i++) {
-      if (graphicMarks[i].checkMousePointOnGraphic({ x: event.localX, y: event.localY })) {
-        if (!graphicMarks[i].onRightClick({ id: graphicMarks[i].id(), points: graphicMarks[i].tpPoints(), event })) {
-          this._chartData.removeGraphicMarkInstance({ type: RemoveGraphicMarkOperateType.ACTION, index: i })
-        }
-        break
-      }
+    const graphicMark = this._chartData.graphicMarks().find(gm => gm.checkMousePointOnGraphic({ x: event.localX, y: event.localY }))
+    if (graphicMark && !graphicMark.onRightClick({ id: graphicMark.id(), points: graphicMark.tpPoints(), event })) {
+      this._chartData.removeGraphicMarkInstance(graphicMark.id())
     }
-    const visibleAnnotations = this._chartData.visibleAnnotations()
-    for (const annotation of visibleAnnotations) {
-      if (annotation.checkMousePointOnGraphic({ x: event.localX, y: event.localY })) {
-        annotation.onRightClick({ id: annotation.id(), points: annotation.tpPoints(), event })
-        break
-      }
+    const annotation = this._chartData.visibleAnnotations().find(an => an.checkMousePointOnGraphic({ x: event.localX, y: event.localY }))
+    if (annotation) {
+      annotation.onRightClick({ id: annotation.id(), points: annotation.tpPoints(), event })
     }
   }
 

@@ -49,15 +49,6 @@ export const ActionType = {
   PANE_DRAG: 'pane_drag'
 }
 
-/**
- * 删除图形标记实例操作类型
- * @type {{ACTION: string, ID: string}}
- */
-export const RemoveGraphicMarkOperateType = {
-  ACTION: 'action',
-  ID: 'id'
-}
-
 const MAX_DATA_SPACE = 50
 const MIN_DATA_SPACE = 1
 
@@ -740,27 +731,11 @@ export default class ChartData {
   }
 
   /**
-   * 根据id获取图形标记
-   * @param id
-   * @return {{instance: *, index: number}|null}
-   * @private
-   */
-  getGraphicMarkInstanceById (id) {
-    for (let i = 0; i < this._graphicMarks.length; i++) {
-      if (this._graphicMarks[i].id() === id) {
-        return { index: i, instance: this._graphicMarks[i] }
-      }
-    }
-    return null
-  }
-
-  /**
    * 添加标记实例
    * @param graphicMark
    */
   addGraphicMarkInstance (graphicMark) {
-    const markInfo = this.getGraphicMarkInstanceById(graphicMark.id())
-    if (markInfo) {
+    if (this._graphicMarks.find(gm => gm.id() === graphicMark.id())) {
       return false
     }
     const lastGraphicMark = this._graphicMarks[this._graphicMarks.length - 1]
@@ -794,9 +769,8 @@ export default class ChartData {
    */
   setGraphicMarkOptions (id, options = {}) {
     const { styles, lock } = options
-    const markInfo = this.getGraphicMarkInstanceById(id)
-    if (markInfo) {
-      const graphicMark = markInfo.instance
+    const graphicMark = this._graphicMarks.find(gm => gm.id() === id)
+    if (graphicMark) {
       graphicMark.setLock(lock)
       if (graphicMark.setStyles(styles, this._styleOptions.graphicMark)) {
         this.invalidate(InvalidateLevel.OVERLAY)
@@ -811,10 +785,9 @@ export default class ChartData {
    */
   getGraphicMark (id) {
     if (id) {
-      for (const graphicMark of this._graphicMarks) {
-        if (graphicMark.id() === id) {
-          return getGraphicMarkInfo(graphicMark)
-        }
+      const graphicMark = this._graphicMarks.find(gm => gm.id() === id)
+      if (graphicMark) {
+        return getGraphicMarkInfo(graphicMark)
       }
     } else {
       return this._graphicMarks.map(graphicMark => {
@@ -826,20 +799,12 @@ export default class ChartData {
 
   /**
    * 移除图形实例
-   * @param options 参数
+   * @param id 参数
    */
-  removeGraphicMarkInstance (options) {
+  removeGraphicMarkInstance (id) {
     const graphicMarks = this._graphicMarks
-    let removeIndex = -1
-    if (options.type === RemoveGraphicMarkOperateType.ID) {
-      const markInfo = this.getGraphicMarkInstanceById(options.id)
-      if (markInfo) {
-        removeIndex = markInfo.index
-      }
-    } else {
-      removeIndex = options.index
-    }
-    if (removeIndex !== -1) {
+    const removeIndex = graphicMarks.findIndex(gm => gm.id() === id)
+    if (removeIndex > -1) {
       graphicMarks[removeIndex].onRemove({ id: graphicMarks[removeIndex].id() })
       graphicMarks.splice(removeIndex, 1)
       this.invalidate(InvalidateLevel.OVERLAY)

@@ -148,9 +148,7 @@ export default class ChartEvent {
    * @private
    */
   _shouldPerformOverlayEvent () {
-    const graphicMarks = this._chartData.graphicMarks()
-    const visibleAnnotations = this._chartData.visibleAnnotations()
-    return graphicMarks.length > 0 || visibleAnnotations.length > 0
+    return this._chartData.graphicMarks().length > 0 || this._chartData.visibleAnnotations().length > 0
   }
 
   setChartContentSize (chartContentSize) {
