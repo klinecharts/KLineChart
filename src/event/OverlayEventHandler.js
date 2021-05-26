@@ -71,42 +71,40 @@ export default class OverlayEventHandler extends EventHandler {
   }
 
   mouseMoveEvent (event) {
-    if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY)) {
+    if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY) || this._waitingForMouseMoveAnimationFrame) {
       return
     }
+    this._waitingForMouseMoveAnimationFrame = true
     const point = { x: event.localX, y: event.localY }
-    if (!this._waitingForMouseMoveAnimationFrame) {
-      this._waitingForMouseMoveAnimationFrame = true
-      const graphicMarks = this._chartData.graphicMarks()
-      const visibleAnnotations = this._chartData.visibleAnnotations()
-      const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
-      const preGraphicMarkHoverOperate = this._chartData.graphicMarkMouseOperate().hover
-      const preAnnotationHoverOperate = this._chartData.annotationMouseOperate()
-      let graphicMarkHoverOperate
-      let graphicMarkClickOperate
-      let annotationHoverOperate
-      if (lastGraphicMark && lastGraphicMark.isDrawing()) {
-        lastGraphicMark.mouseMoveForDrawing(point)
-        graphicMarkHoverOperate = lastGraphicMark.checkMousePointOnGraphic(point)
-        graphicMarkClickOperate = {
-          id: '',
-          element: GraphicMarkMouseOperateElement.NONE,
-          elementIndex: -1
-        }
-      } else {
-        graphicMarkHoverOperate = this._performOverlayMouseHover(graphicMarks, preGraphicMarkHoverOperate, point, event)
-        annotationHoverOperate = this._performOverlayMouseHover(visibleAnnotations, preAnnotationHoverOperate, point, event)
+    const graphicMarks = this._chartData.graphicMarks()
+    const visibleAnnotations = this._chartData.visibleAnnotations()
+    const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
+    const preGraphicMarkHoverOperate = this._chartData.graphicMarkMouseOperate().hover
+    const preAnnotationHoverOperate = this._chartData.annotationMouseOperate()
+    let graphicMarkHoverOperate
+    let graphicMarkClickOperate
+    let annotationHoverOperate
+    if (lastGraphicMark && lastGraphicMark.isDrawing()) {
+      lastGraphicMark.mouseMoveForDrawing(point)
+      graphicMarkHoverOperate = lastGraphicMark.checkMousePointOnGraphic(point)
+      graphicMarkClickOperate = {
+        id: '',
+        element: GraphicMarkMouseOperateElement.NONE,
+        elementIndex: -1
       }
-      this._chartData.setOverlayMouseOperate({
-        hover: graphicMarkHoverOperate || {
-          id: '',
-          element: GraphicMarkMouseOperateElement.NONE,
-          elementIndex: -1
-        },
-        click: graphicMarkClickOperate
-      }, annotationHoverOperate || { id: '' })
-      this._waitingForMouseMoveAnimationFrame = false
+    } else {
+      graphicMarkHoverOperate = this._performOverlayMouseHover(graphicMarks, preGraphicMarkHoverOperate, point, event)
+      annotationHoverOperate = this._performOverlayMouseHover(visibleAnnotations, preAnnotationHoverOperate, point, event)
     }
+    this._chartData.setOverlayMouseOperate({
+      hover: graphicMarkHoverOperate || {
+        id: '',
+        element: GraphicMarkMouseOperateElement.NONE,
+        elementIndex: -1
+      },
+      click: graphicMarkClickOperate
+    }, annotationHoverOperate || { id: '' })
+    this._waitingForMouseMoveAnimationFrame = false
   }
 
   /**
