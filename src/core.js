@@ -13,7 +13,7 @@
  */
 
 import Chart from './Chart'
-import { logError, logWarn } from './utils/logger'
+import { logError, logTag, logWarn } from './utils/logger'
 
 const instances = {}
 let chartBaseId = 1
@@ -38,7 +38,8 @@ function version () {
  * @returns {Chart}
  */
 function init (ds, style = {}) {
-  const errorMessage = 'Chart version is __BUILD_VERSION__. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
+  logTag()
+  const errorMessage = 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
   let container
   if (!ds) {
     logError('', '', errorMessage)
