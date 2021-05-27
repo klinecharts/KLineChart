@@ -121,7 +121,7 @@ export default class ChartEvent {
       this._overlayEventHandler.pressedMouseMoveEvent(event)
       // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
       if (this._chartData.crosshair().paneId) {
-        this._chartData.setCrosshairPointPaneId()
+        this._chartData.setCrosshair()
       }
     }
     if (this._checkZoomScroll()) {

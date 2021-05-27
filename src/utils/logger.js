@@ -12,24 +12,16 @@
  * limitations under the License.
  */
 
-/**
- * requestAnimationFrame兼容
- * @param fn
- */
-export function requestAnimationFrame (fn) {
-  if (!window.requestAnimationFrame) {
-    return window.setTimeout(fn, 20)
-  }
-  return window.requestAnimationFrame(fn)
-}
+import { DEV } from './env'
 
 /**
- * cancelAnimationFrame兼容
- * @param id
+ * 打印警告日志
+ * @param api
+ * @param invalidParam
+ * @param append
  */
-export function cancelAnimationFrame (id) {
-  if (!window.cancelAnimationFrame) {
-    clearTimeout(id)
+export function logWarn (api, invalidParam, append) {
+  if (DEV) {
+    console.warn(`Call chart api ${api}${invalidParam ? `, invalid parameter ${invalidParam}` : ''}${append ? `, ${append}` : ''}`)
   }
-  window.cancelAnimationFrame(id)
 }

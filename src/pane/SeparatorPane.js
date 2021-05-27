@@ -30,7 +30,12 @@ export default class SeparatorPane {
     this._initEvent(dragEnabled)
   }
 
-  _initElement (container, dragEnabled) {
+  /**
+   * 初始化dom元素
+   * @param container
+   * @private
+   */
+  _initElement (container) {
     this._container = container
     this._wrapper = this._createElement()
     this._wrapper.style.position = 'relative'
@@ -72,6 +77,7 @@ export default class SeparatorPane {
 
   /**
    * 创建div节点
+   * @return {HTMLDivElement}
    * @private
    */
   _createElement () {
@@ -96,14 +102,14 @@ export default class SeparatorPane {
     const dragDistance = event.pageY - this._startY
     this._dragEventHandler.drag(dragDistance, this._topPaneId, this._bottomPaneId)
     this._chartData.setDragPaneFlag(true)
-    this._chartData.setCrosshairPointPaneId()
+    this._chartData.setCrosshair()
   }
 
   _mouseEnterEvent () {
     const separatorOptions = this._chartData.styleOptions().separator
     this._element.style.background = separatorOptions.activeBackgroundColor
     this._chartData.setDragPaneFlag(true)
-    this._chartData.setCrosshairPointPaneId()
+    this._chartData.setCrosshair()
   }
 
   _mouseLeaveEvent () {

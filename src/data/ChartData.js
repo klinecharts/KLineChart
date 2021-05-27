@@ -12,10 +12,15 @@
  * limitations under the License.
  */
 
-import { isArray, isObject, merge, clone, isFunction, isBoolean, isValid } from '../utils/typeChecks'
+import {
+  isArray, isObject,
+  isFunction, isBoolean,
+  isValid, merge, clone
+} from '../utils/typeChecks'
 import { defaultStyleOptions } from './options/styleOptions'
 
 import { formatValue } from '../utils/format'
+import { requestAnimationFrame } from '../utils/compatible'
 import {
   createTechnicalIndicatorInstance,
   createTechnicalIndicatorMapping,
@@ -157,21 +162,6 @@ export default class ChartData {
     const floorBarSpace = Math.floor(this._dataSpace)
     const optimalBarSpace = Math.min(rateBarSpace, floorBarSpace - 1)
     return Math.max(1, optimalBarSpace)
-  }
-
-  /**
-   * 内部用来设置一条数据的空间
-   * @param dataSpace
-   * @returns {boolean}
-   * @private
-   */
-  _innerSetDataSpace (dataSpace) {
-    if (!dataSpace || dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE || this._dataSpace === dataSpace) {
-      return false
-    }
-    this._dataSpace = dataSpace
-    this._barSpace = this._calcBarSpace()
-    return true
   }
 
   /**
@@ -436,7 +426,7 @@ export default class ChartData {
           this._adjustVisibleDataList()
         }
       }
-      this.setCrosshairPointPaneId({ x: this._crosshair.x, y: this._crosshair.y }, this._crosshair.paneId, true)
+      this.setCrosshair(this._crosshair, true)
     }
   }
 
@@ -459,12 +449,17 @@ export default class ChartData {
   /**
    * 设置一条数据的空间
    * @param dataSpace
+   * @param adjustBeforeFuc
    */
-  setDataSpace (dataSpace) {
-    if (this._innerSetDataSpace(dataSpace)) {
-      this._adjustFromTo()
-      this.invalidate()
+  setDataSpace (dataSpace, adjustBeforeFuc) {
+    if (!dataSpace || dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE || this._dataSpace === dataSpace) {
+      return
     }
+    this._dataSpace = dataSpace
+    this._barSpace = this._calcBarSpace()
+    adjustBeforeFuc && adjustBeforeFuc()
+    this._adjustFromTo()
+    this.invalidate()
   }
 
   /**
@@ -530,17 +525,16 @@ export default class ChartData {
   }
 
   /**
-   * 设置十字光标点所在的pane的标识
-   * @param point
-   * @param paneId
+   * 设置十字光标点信息
+   * @param crosshair
    * @param notInvalidate
    */
-  setCrosshairPointPaneId (point, paneId, notInvalidate) {
-    const p = point || {}
+  setCrosshair (crosshair, notInvalidate) {
+    const cr = crosshair || {}
     let realDataIndex
     let dataIndex
-    if (isValid(p.x)) {
-      realDataIndex = this.positionToDataIndex(p.x)
+    if (isValid(cr.x)) {
+      realDataIndex = this.positionToDataIndex(cr.x)
       if (realDataIndex < 0) {
         dataIndex = 0
       } else if (realDataIndex > this._dataList.length - 1) {
@@ -555,18 +549,18 @@ export default class ChartData {
     const kLineData = this._dataList[dataIndex]
     const realX = this.dataIndexToPosition(realDataIndex)
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
-    this._crosshair = { ...point, realX, paneId, kLineData, realDataIndex, dataIndex }
-    if (paneId && kLineData) {
+    this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex }
+    if (cr.paneId && kLineData) {
       this._handler.crosshair({
         realDataIndex,
         dataIndex,
         kLineData,
-        x: point.x,
-        y: point.y
+        x: cr.x,
+        y: cr.y
       })
     }
     if (
-      (prevCrosshair.x !== p.x || prevCrosshair.y !== p.y || prevCrosshair.paneId !== paneId) && !notInvalidate
+      (prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId) && !notInvalidate
     ) {
       this.invalidate(InvalidateLevel.TOOLTIP)
     }
@@ -582,9 +576,9 @@ export default class ChartData {
   /**
    * 滚动
    * @param distance
-   * @param extendFun
+   * @param crosshair
    */
-  scroll (distance, extendFun) {
+  scroll (distance, crosshair) {
     if (!this._scrollEnabled) {
       return
     }
@@ -592,8 +586,29 @@ export default class ChartData {
     this.actionExecute(ActionType.SCROLL, { barCount: distanceBarCount, distance })
     this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount
     this._adjustFromTo()
-    extendFun && extendFun()
+    const cross = crosshair || this._crosshair
+    this.setCrosshair(cross, true)
     this.invalidate()
+  }
+
+  /**
+   * 滚动带动画
+   * @param distance
+   * @param animationDuration
+   */
+  scrollAnimated (distance, animationDuration) {
+    this.startScroll()
+    const startTime = new Date().getTime()
+    const animationFn = () => {
+      const progress = (new Date().getTime() - startTime) / animationDuration
+      const finished = progress >= 1
+      const dis = finished ? distance : distance * progress
+      this.scroll(dis)
+      if (!finished) {
+        requestAnimationFrame(animationFn)
+      }
+    }
+    animationFn()
   }
 
   /**
@@ -663,13 +678,11 @@ export default class ChartData {
       point = { x: isValid(this._crosshair.x) ? this._crosshair.x : this._totalDataSpace / 2 }
     }
     this.actionExecute(ActionType.ZOOM, { point, scale })
-    const floatIndexAtZoomPoint = this.coordinateToFloatIndex(point.x)
+    const floatIndex = this.coordinateToFloatIndex(point.x)
     const dataSpace = this._dataSpace + scale * (this._dataSpace / 10)
-    if (this._innerSetDataSpace(dataSpace)) {
-      this._offsetRightBarCount += (floatIndexAtZoomPoint - this.coordinateToFloatIndex(point.x))
-      this._adjustFromTo()
-      this.invalidate()
-    }
+    this.setDataSpace(dataSpace, () => {
+      this._offsetRightBarCount += (floatIndex - this.coordinateToFloatIndex(point.x))
+    })
   }
 
   /**
