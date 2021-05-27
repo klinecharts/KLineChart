@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { DEV } from './env'
+const DEV = '__BUILD_ENV__' === 'development'
 
 /**
  * 打印警告日志
@@ -22,6 +22,18 @@ import { DEV } from './env'
  */
 export function logWarn (api, invalidParam, append) {
   if (DEV) {
-    console.warn(`Call chart api ${api}${invalidParam ? `, invalid parameter ${invalidParam}` : ''}${append ? `, ${append}` : ''}`)
+    console.warn(`${api ? `Call api ${api}` : ''}${invalidParam ? `, invalid parameter ${invalidParam}` : ''}${append ? `, ${append}` : ''}`)
+  }
+}
+
+/**
+ * 打印错误日志
+ * @param api
+ * @param invalidParam
+ * @param append
+ */
+export function logError (api, invalidParam, append) {
+  if (DEV) {
+    console.error(`${api ? `Call api ${api}` : ''}${invalidParam ? `, invalid parameter ${invalidParam}` : ''}${append ? `, ${append}` : ''}`)
   }
 }

@@ -18,7 +18,7 @@ import extension from '../../data/extension'
 
 import { isFunction, isValid } from '../../utils/typeChecks'
 import { formatBigNumber, formatPrecision } from '../../utils/format'
-import { DEV } from '../../utils/env'
+import { logWarn } from '../../utils/logger'
 
 /**
  * 创建技术指标映射
@@ -63,11 +63,7 @@ export function createTechnicalIndicatorInstance ({
   calcTechnicalIndicator, regeneratePlots, render
 }) {
   if (!name || !isFunction(calcTechnicalIndicator)) {
-    if (DEV) {
-      console.warn(
-        'The required attribute "name" and method "calcTechnicalIndicator" are missing, and new technical indicator cannot be generated!!!'
-      )
-    }
+    logWarn('', '', 'The required attribute "name" and method "calcTechnicalIndicator" are missing, and new technical indicator cannot be generated!!!')
     return null
   }
   class TechnicalIndicatorClass extends TechnicalIndicator {

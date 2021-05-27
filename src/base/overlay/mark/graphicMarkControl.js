@@ -13,11 +13,11 @@
  */
 
 import { isFunction, isNumber } from '../../../utils/typeChecks'
+import { logWarn } from '../../../utils/logger'
+
 import extension from '../../../data/extension'
 
 import GraphicMark from './GraphicMark'
-
-import { DEV } from '../../../utils/env'
 
 /**
  * 创建图形标记映射
@@ -56,11 +56,7 @@ export function createGraphicMarkClass ({
     !isFunction(checkMousePointOn) ||
     !isFunction(createGraphicDataSource)
   ) {
-    if (DEV) {
-      console.warn(
-        'Required attribute "name" and "totalStep", method "checkMousePointOn" and "createGraphicDataSource", new graphic mark cannot be generated!!!'
-      )
-    }
+    logWarn('', '', 'Required attribute "name" and "totalStep", method "checkMousePointOn" and "createGraphicDataSource", new graphic mark cannot be generated!!!')
     return null
   }
   class Mark extends GraphicMark {

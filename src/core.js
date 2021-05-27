@@ -13,7 +13,7 @@
  */
 
 import Chart from './Chart'
-import { DEV } from './utils/env'
+import { logError, logWarn } from './utils/logger'
 
 const instances = {}
 let chartBaseId = 1
@@ -41,9 +41,7 @@ function init (ds, style = {}) {
   const errorMessage = 'Chart version is __BUILD_VERSION__. The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
   let container
   if (!ds) {
-    if (DEV) {
-      console.error(errorMessage)
-    }
+    logError('', '', errorMessage)
     return null
   }
   if (typeof ds === 'string') {
@@ -55,16 +53,12 @@ function init (ds, style = {}) {
     container = ds
   }
   if (!checkContainer(container)) {
-    if (DEV) {
-      console.error(errorMessage)
-    }
+    logError('', '', errorMessage)
     return null
   }
   let chart = instances[container.chartId || '']
   if (chart) {
-    if (DEV) {
-      console.warn('The chart has been initialized on the dom！！！')
-    }
+    logWarn('', '', 'The chart has been initialized on the dom！！！')
     return chart
   }
   const id = `${CHART_NAME_PREFIX}${chartBaseId++}`

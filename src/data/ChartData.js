@@ -20,12 +20,14 @@ import {
 import { defaultStyleOptions } from './options/styleOptions'
 
 import { formatValue } from '../utils/format'
+import { binarySearchNearest } from '../utils/number'
+import { logWarn } from '../utils/logger'
+
 import {
   createTechnicalIndicatorInstance,
   createTechnicalIndicatorMapping,
   getTechnicalIndicatorInfo
 } from '../base/technicalindicator/technicalIndicatorControl'
-import { DEV } from '../utils/env'
 import { TechnicalIndicatorSeries } from '../base/technicalindicator/TechnicalIndicator'
 import { GraphicMarkMouseOperateElement } from '../base/overlay/mark/GraphicMark'
 import Delegate from './delegate/Delegate'
@@ -34,7 +36,6 @@ import {
   createGraphicMarkMapping,
   getGraphicMarkInfo
 } from '../base/overlay/mark/graphicMarkControl'
-import { binarySearchNearest } from '../utils/number'
 
 export const InvalidateLevel = {
   NONE: 0,
@@ -309,9 +310,7 @@ export default class ChartData {
         }
       )
     } catch (e) {
-      if (DEV) {
-        console.warn(e.message)
-      }
+      logWarn('', '', 'Timezone is error!!!')
     }
     if (dateTimeFormat) {
       this._dateTimeFormat = dateTimeFormat
@@ -450,7 +449,7 @@ export default class ChartData {
    * @param adjustBeforeFuc
    */
   setDataSpace (dataSpace, adjustBeforeFuc) {
-    if (!dataSpace || dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE || this._dataSpace === dataSpace) {
+    if (dataSpace < MIN_DATA_SPACE || dataSpace > MAX_DATA_SPACE || this._dataSpace === dataSpace) {
       return
     }
     this._dataSpace = dataSpace

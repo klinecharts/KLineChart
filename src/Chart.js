@@ -127,6 +127,10 @@ export default class Chart {
    * @param space
    */
   setOffsetRightSpace (space) {
+    if (!isNumber(space)) {
+      logWarn('setOffsetRightSpace', 'space', 'space must be a number!!!')
+      return
+    }
     this._chartPane.chartData().setOffsetRightSpace(space, true)
   }
 
@@ -159,6 +163,10 @@ export default class Chart {
    * @param space
    */
   setDataSpace (space) {
+    if (!isNumber(space)) {
+      logWarn('setDataSpace', 'space', 'space must be a number!!!')
+      return
+    }
     this._chartPane.chartData().setDataSpace(space)
   }
 
