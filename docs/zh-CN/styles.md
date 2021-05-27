@@ -368,7 +368,7 @@
       // 'top' | 'bottom' | 'point'
       position: 'top',
       size: 8,
-      color: '#1e88e5',
+      color: '#2196F3',
       activeSize: 10,
       activeColor: '#FF9600',
       offset: [0, 20]

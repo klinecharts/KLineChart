@@ -24,7 +24,7 @@ export function logWarn (api, invalidParam, append = '') {
   if (DEV) {
     console.log(
       '%cklinecharts warning: \n%s%s%s',
-      'color:#f58220;font-weight:bold',
+      'color:#fcaf17;font-weight:bold',
       api ? `Call api ${api}${invalidParam || append ? ', ' : '.'}` : '',
       invalidParam ? `invalid parameter ${invalidParam}${append ? ', ' : '.'}` : '',
       append ? `${append}` : ''
@@ -55,6 +55,9 @@ export function logError (api, invalidParam, append = '') {
  */
 export function logTag () {
   if (DEV) {
-    console.log('%cKLINECHARTS __BUILD_VERSION__', 'font-size: 26px;color: #fff;text-shadow: #1e88e5 0px 2px,#1e88e5 2px 0px,#1e88e5 -2px 0px,#1e88e5 0px -2px,#1e88e5 -2px -2px,#1e88e5 2px 1.4px,#1e88e5 2px -2px,#1e88e5 -2px 2px')
+    console.log(
+      '%c😄 Welcome to klinecharts. Version is __BUILD_VERSION__',
+      'border-radius:2px;border:dashed 1px #2196F3;padding:26px 20px;font-size:14px;color:#2196F3'
+    )
   }
 }
