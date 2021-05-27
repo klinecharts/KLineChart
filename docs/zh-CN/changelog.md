@@ -1,6 +1,7 @@
 # 更新日志
 ## 7.3.0
 `待发布`
++ 🆕 新增api `scrollByDistance`，`scrollToRealTime`和`scrollToPosition`。
 + 🆕 新增api `setPaneOptions`，用于设置窗口。
 + 🆕 坐标轴新增对数坐标，`yAxis.type: log`。
 + 🆕 新增配置，`candle.priceMark.last.text.borderRadius`、`technicalIndicator.lastValueMark.text.borderRadius`、

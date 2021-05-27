@@ -304,6 +304,23 @@ chart.createAnnotation({
 - `points` 点, `{ timestamp }`
 
 
+### scrollByDistance(distance, animationDuration)
+滚动一定的距离
+- `distance` 距离
+- `animationDuration` 动画时间，可以缺省
+
+
+### scrollToRealTime(animationDuration)
+滚动到最初的位置
+- `animationDuration` 动画时间，可以缺省
+
+
+### scrollToPosition(position, animationDuration)
+滚动到指定的位置
+- `position` 位置
+- `animationDuration` 动画时间，可以缺省
+
+
 ### setPaneOptions(options)
 设置窗口配置
 - `options` 窗口配置 `{ id, height, dragEnabled }`

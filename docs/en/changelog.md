@@ -1,6 +1,7 @@
 # Change Log
 ## 7.3.0
 `To be released`
++ 🆕 Add api `scrollByDistance`, `scrollToRealTime` and `scrollToPosition`.
 + 🆕 Add api `setPaneOptions` for setting windows.
 + 🆕 Add logarithmic coordinates for the axis, `yAxis.type: log`.
 + 🆕 Add style configuration, `candle.priceMark.last.text.borderRadius`, `technicalIndicator.lastValueMark.text.borderRadius`,

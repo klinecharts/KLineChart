@@ -304,6 +304,23 @@ Remove annotation. It can be a single or a collection.
 - `points` single point or collection, `{ timestamp }`
 
 
+### scrollByDistance(distance, animationDuration)
+Roll a certain distance
+-`distance` distance
+-`animationDuration` animation time, can be default
+
+
+### scrollToRealTime(animationDuration)
+Scroll to the original position
+-`animationDuration` animation time, can be default
+
+
+### scrollToPosition(position, animationDuration)
+Scroll to the specified position
+-`position` position
+-`animationDuration` animation time, can be default
+
+
 ### setPaneOptions(options)
 Set pane options
 - `options` pane options `{ id, height, dragEnabled }`
