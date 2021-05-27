@@ -20,7 +20,6 @@ import {
 import { defaultStyleOptions } from './options/styleOptions'
 
 import { formatValue } from '../utils/format'
-import { requestAnimationFrame } from '../utils/compatible'
 import {
   createTechnicalIndicatorInstance,
   createTechnicalIndicatorMapping,
@@ -410,9 +409,8 @@ export default class ChartData {
         this._dataList = data.concat(this._dataList)
         if (isFirstAdd) {
           this.setOffsetRightSpace(this._offsetRightSpace)
-        } else {
-          this._adjustFromTo()
         }
+        this._adjustFromTo()
       } else {
         const dataSize = this._dataList.length
         if (pos >= dataSize) {
@@ -459,6 +457,7 @@ export default class ChartData {
     this._barSpace = this._calcBarSpace()
     adjustBeforeFuc && adjustBeforeFuc()
     this._adjustFromTo()
+    this.setCrosshair(this._crosshair, true)
     this.invalidate()
   }
 
@@ -472,16 +471,38 @@ export default class ChartData {
     }
     this._totalDataSpace = totalSpace
     this._adjustFromTo()
+    this.setCrosshair(this._crosshair, true)
   }
 
   /**
    * 设置右边可以偏移的空间
    * @param space
+   * @param invalidate
    */
-  setOffsetRightSpace (space) {
+  setOffsetRightSpace (space, invalidate) {
     this._offsetRightSpace = space
     this._offsetRightBarCount = space / this._dataSpace
-    this._adjustFromTo()
+    if (invalidate) {
+      this._adjustFromTo()
+      this.setCrosshair(this._crosshair, true)
+      this.invalidate()
+    }
+  }
+
+  /**
+   * 右偏移距离
+   * @return {number}
+   */
+  offsetRightSpace () {
+    return this._offsetRightSpace
+  }
+
+  /**
+   * 右偏移bar数量
+   * @return {*|number}
+   */
+  offsetRightBarCount () {
+    return this._offsetRightBarCount
   }
 
   /**
@@ -589,26 +610,6 @@ export default class ChartData {
     const cross = crosshair || this._crosshair
     this.setCrosshair(cross, true)
     this.invalidate()
-  }
-
-  /**
-   * 滚动带动画
-   * @param distance
-   * @param animationDuration
-   */
-  scrollAnimated (distance, animationDuration) {
-    this.startScroll()
-    const startTime = new Date().getTime()
-    const animationFn = () => {
-      const progress = (new Date().getTime() - startTime) / animationDuration
-      const finished = progress >= 1
-      const dis = finished ? distance : distance * progress
-      this.scroll(dis)
-      if (!finished) {
-        requestAnimationFrame(animationFn)
-      }
-    }
-    animationFn()
   }
 
   /**

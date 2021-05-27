@@ -15,6 +15,7 @@
 import ChartPane from './pane/ChartPane'
 import { clone, isNumber, isValid, isArray } from './utils/typeChecks'
 import { logWarn } from './utils/logger'
+import { requestAnimationFrame } from './utils/compatible'
 
 export default class Chart {
   constructor (container, styleOptions) {
@@ -126,7 +127,7 @@ export default class Chart {
    * @param space
    */
   setOffsetRightSpace (space) {
-    this._chartPane.chartData().setOffsetRightSpace(space)
+    this._chartPane.chartData().setOffsetRightSpace(space, true)
   }
 
   /**
@@ -373,7 +374,18 @@ export default class Chart {
       return
     }
     if (isNumber(animationDuration) && animationDuration > 0) {
-      this._chartPane.chartData().scrollAnimated(distance, animationDuration)
+      this._chartPane.chartData().startScroll()
+      const startTime = new Date().getTime()
+      const animation = () => {
+        const progress = (new Date().getTime() - startTime) / animationDuration
+        const finished = progress >= 1
+        const dis = finished ? distance : distance * progress
+        this._chartPane.chartData().scroll(dis)
+        if (!finished) {
+          requestAnimationFrame(animation)
+        }
+      }
+      animation()
     } else {
       this._chartPane.chartData().startScroll()
       this._chartPane.chartData().scroll(distance)
@@ -381,10 +393,27 @@ export default class Chart {
   }
 
   /**
-   *
+   * 滚动到实时位置
+   * @param animationDuration
    */
   scrollToRealTime (animationDuration) {
+    const difBarCount = this._chartPane.chartData().offsetRightBarCount() - this._chartPane.chartData().offsetRightSpace() / this._chartPane.chartData().dataSpace()
+    const distance = difBarCount * this._chartPane.chartData().dataSpace()
+    this.scrollByDistance(distance, animationDuration)
+  }
 
+  /**
+   * 滚动到指定位置
+   * @param position
+   * @param animationDuration
+   */
+  scrollToPosition (position, animationDuration) {
+    if (!isNumber(position)) {
+      logWarn('scrollToPosition', 'position', 'position must be a number!!!')
+      return
+    }
+    const distance = (this._chartPane.chartData().dataList().length - 1 - position) * this._chartPane.chartData().dataSpace()
+    this.scrollByDistance(distance, animationDuration)
   }
 
   /**
