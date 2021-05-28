@@ -1,6 +1,6 @@
 # 更新日志
 ## 7.3.0
-`待发布`
+`2021-05-28`
 + 🆕 新增api `scrollByDistance`、`scrollToRealTime`、`scrollToPosition`、`zoomAtCoordinate`和`zoomAtPosition`。
 + 🆕 新增api `setPaneOptions`，用于设置窗口。
 + 🆕 坐标轴新增对数坐标，`yAxis.type: log`。

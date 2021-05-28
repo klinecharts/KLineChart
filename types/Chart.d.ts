@@ -64,8 +64,8 @@ export declare interface Chart {
   setPaneOptions(options: PaneOptions): void;
   convertFromPixel(coordinate: CoordinatePoint | CoordinatePoint[], finder: ConvertFinder): ConvertValue | ConvertValue[];
   convertToPixel(value: ConvertValue | ConvertValue[], finder: ConvertFinder): CoordinatePoint | CoordinatePoint[];
-  subscribeAction (type: ChartActionType, callback: (params: any) => void): void;
-  unsubscribeAction (type: ChartActionType, callback?: (params: any) => void): void;
+  subscribeAction(type: ChartActionType, callback: (params: any) => void): void;
+  unsubscribeAction(type: ChartActionType, callback?: (params: any) => void): void;
   getConvertPictureUrl(includeTooltip?: boolean, includeOverlay?: boolean, type?: PictureType, backgroundColor?: string): string;
   resize(): void;
 }

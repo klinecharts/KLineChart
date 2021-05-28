@@ -1,6 +1,6 @@
 # Change Log
 ## 7.3.0
-`To be released`
+`2021-05-28`
 + 🆕 Add api `scrollByDistance`, `scrollToRealTime`, `scrollToPosition`, `zoomAtCoordinate` and `zoomAtPosition`.
 + 🆕 Add api `setPaneOptions` for setting windows.
 + 🆕 Add logarithmic coordinates for the axis, `yAxis.type: log`.
