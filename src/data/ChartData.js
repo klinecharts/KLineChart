@@ -674,7 +674,7 @@ export default class ChartData {
     if (!this._zoomEnabled) {
       return
     }
-    if (!point || isValid(point.x)) {
+    if (!point || !isValid(point.x)) {
       point = { x: isValid(this._crosshair.x) ? this._crosshair.x : this._totalDataSpace / 2 }
     }
     this.actionExecute(ActionType.ZOOM, { point, scale })
