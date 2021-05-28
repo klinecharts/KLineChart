@@ -8,6 +8,7 @@
   `crosshair.horizontal.text.borderRadius`、`crosshair.vertical.text.borderRadius`。
 + 🆕 新增触摸板滚动支持。
 + 💪 Api `creatTechnicalIndicator`，窗口参数可以实时生效。
++ 💪 Api `setDataSpace`和`setOffsetRightSpace`能够实时重绘。
 
 
 ## 7.2.0

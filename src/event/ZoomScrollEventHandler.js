@@ -64,7 +64,9 @@ export default class ZoomScrollEventHandler extends EventHandler {
       return
     }
     if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
-      event.preventDefault && event.preventDefault()
+      if (event.cancelable) {
+        event.preventDefault()
+      }
       if (Math.abs(event.deltaX) === 0) {
         return
       }

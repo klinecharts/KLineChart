@@ -8,6 +8,7 @@
     `crosshair.horizontal.text.borderRadius`, `crosshair.vertical.text.borderRadius`。
 + 🆕 Add touchpad scrolling support.
 + 💪 Api `creatTechnicalIndicator`, window parameters can take effect in real time.
++ 💪 Api `setDataSpace` and `setOffsetRightSpace` able to refresh in real time.
 
 
 ## 7.2.0
