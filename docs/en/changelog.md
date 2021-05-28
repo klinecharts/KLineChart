@@ -1,11 +1,11 @@
 # Change Log
 ## 7.3.0
 `To be released`
-+ 🆕 Add api `scrollByDistance`, `scrollToRealTime` and `scrollToPosition`.
++ 🆕 Add api `scrollByDistance`, `scrollToRealTime`, `scrollToPosition`, `zoomAtCoordinate` and `zoomAtPosition`.
 + 🆕 Add api `setPaneOptions` for setting windows.
 + 🆕 Add logarithmic coordinates for the axis, `yAxis.type: log`.
 + 🆕 Add style configuration, `candle.priceMark.last.text.borderRadius`, `technicalIndicator.lastValueMark.text.borderRadius`,
-    `crosshair.horizontal.text.borderRadius`, `crosshair.vertical.text.borderRadius`。
+    `crosshair.horizontal.text.borderRadius`, `crosshair.vertical.text.borderRadius`.
 + 🆕 Add touchpad scrolling support.
 + 💪 Api `creatTechnicalIndicator`, window parameters can take effect in real time.
 + 💪 Api `setDataSpace` and `setOffsetRightSpace` able to refresh in real time.

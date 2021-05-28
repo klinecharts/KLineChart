@@ -307,18 +307,32 @@ chart.createAnnotation({
 ### scrollByDistance(distance, animationDuration)
 滚动一定的距离
 - `distance` 距离
-- `animationDuration` 动画时间，可以缺省
+- `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
 ### scrollToRealTime(animationDuration)
 滚动到最初的位置
-- `animationDuration` 动画时间，可以缺省
+- `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
 ### scrollToPosition(position, animationDuration)
 滚动到指定的位置
 - `position` 位置
-- `animationDuration` 动画时间，可以缺省
+- `animationDuration` 动画时间，可以缺省，缺省则无动画
+
+
+### zoomAtCoordinate(scale, coordinate, animationDuration)
+在某个坐标点缩放
+- `scale` 缩放比例
+- `coordinate` 坐标点，`{ x }` 可缺省，缺省则在图表中间位置缩放
+- `animationDuration` 动画时间，可以缺省，缺省则无动画
+
+
+### zoomAtPosition(scale, position, animationDuration)
+在某个位置缩放
+- `scale` 缩放比例
+- `position` 位置，即数据的索引
+- `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
 ### setPaneOptions(options)

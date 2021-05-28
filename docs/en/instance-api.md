@@ -317,8 +317,22 @@ Scroll to the original position
 
 ### scrollToPosition(position, animationDuration)
 Scroll to the specified position
--`position` position
+-`position` position, which is the index of the data
 -`animationDuration` animation time, can be default
+
+
+### zoomAtCoordinate(scale, coordinate, animationDuration)
+Zoom at coordinate
+-`scale` scaling ratio
+-`coordinate` coordinate point, `{ x }` can be defaulted, the default is to zoom in the middle of the chart
+-`animationDuration` animation time, can be defaulted, the default is no animation
+
+
+### zoomAtPosition(scale, position, animationDuration)
+Zoom at position
+-`scale` scaling ratio
+-`position` position, which is the index of the data
+-`animationDuration` animation time, can be defaulted, the default is no animation
 
 
 ### setPaneOptions(options)

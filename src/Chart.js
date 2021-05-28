@@ -425,6 +425,56 @@ export default class Chart {
   }
 
   /**
+   * 在某个坐标点缩放
+   * @param scale
+   * @param coordinate
+   * @param animationDuration
+   */
+  zoomAtCoordinate (scale, coordinate, animationDuration) {
+    if (!isNumber(scale)) {
+      logWarn('zoomAtCoordinate', 'scale', 'scale must be a number!!!')
+      return
+    }
+    if (isNumber(animationDuration) && animationDuration > 0) {
+      const dataSpace = this._chartPane.chartData().dataSpace()
+      const scaleDataSpace = dataSpace * scale
+      const difSpace = scaleDataSpace - dataSpace
+      const startTime = new Date().getTime()
+      const animation = () => {
+        const progress = (new Date().getTime() - startTime) / animationDuration
+        const finished = progress >= 1
+        const progressDataSpace = finished ? difSpace : difSpace * progress
+        this._chartPane.chartData().zoom(progressDataSpace / dataSpace, coordinate)
+        if (!finished) {
+          requestAnimationFrame(animation)
+        }
+      }
+      animation()
+    } else {
+      this._chartPane.chartData().zoom(scale, coordinate)
+    }
+  }
+
+  /**
+   * 在某个位置缩放
+   * @param scale
+   * @param position
+   * @param animationDuration
+   */
+  zoomAtPosition (scale, position, animationDuration) {
+    if (!isNumber(scale)) {
+      logWarn('zoomAtPosition', 'scale', 'scale must be a number!!!')
+      return
+    }
+    if (!isNumber(position)) {
+      logWarn('zoomAtPosition', 'position', 'position must be a number!!!')
+      return
+    }
+    const x = this._chartPane.chartData().dataIndexToPosition(position)
+    this.zoomAtCoordinate(scale, { x }, animationDuration)
+  }
+
+  /**
    * 将值装换成像素
    * @param value
    * @param finder
