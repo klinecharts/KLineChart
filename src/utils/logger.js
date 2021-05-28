@@ -23,7 +23,7 @@ const DEV = '__BUILD_ENV__' === 'development'
 export function logWarn (api, invalidParam, append = '') {
   if (DEV) {
     console.log(
-      '%cklinecharts warning: \n%s%s%s',
+      '%c😑 klinecharts warning: \n%s%s%s',
       'color:#fcaf17;font-weight:bold',
       api ? `Call api ${api}${invalidParam || append ? ', ' : '.'}` : '',
       invalidParam ? `invalid parameter ${invalidParam}${append ? ', ' : '.'}` : '',
@@ -41,7 +41,7 @@ export function logWarn (api, invalidParam, append = '') {
 export function logError (api, invalidParam, append = '') {
   if (DEV) {
     console.log(
-      '%cklinecharts error: \n%s%s%s',
+      '%c☹️ klinecharts error: \n%s%s%s',
       'color:#ed1941;font-weight:bold',
       api ? `Call api ${api}${invalidParam || append ? ', ' : '.'},` : '',
       invalidParam ? `invalid parameter ${invalidParam}${append ? ', ' : '.'}` : '',
@@ -56,7 +56,7 @@ export function logError (api, invalidParam, append = '') {
 export function logTag () {
   if (DEV) {
     console.log(
-      '%c😄 Welcome to klinecharts. Version is __BUILD_VERSION__',
+      '%c❤️ Welcome to klinecharts. Version is __BUILD_VERSION__',
       'border-radius:2px;border:dashed 1px #2196F3;padding:26px 20px;font-size:14px;color:#2196F3'
     )
   }
