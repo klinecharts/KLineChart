@@ -1,5 +1,5 @@
 # Change Log
-#7.3.1
+## 7.3.1
 `2021-05-31`
 💄 Optimize the display of `yAxis.type:log`.
 
