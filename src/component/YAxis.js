@@ -105,62 +105,66 @@ export default class YAxis extends Axis {
   }
 
   _optimalMinMax ({ min, max, precision }) {
-    let minValue = 0
-    let maxValue = 0
+    let minValue = min
+    let maxValue = max
     const yAxisType = this.yAxisType()
-    if (yAxisType === YAxisType.PERCENTAGE) {
-      const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
-      if (isValid(fromData.close)) {
-        minValue = (min - fromData.close) / fromData.close * 100
-        maxValue = (max - fromData.close) / fromData.close * 100
+    let dif
+    switch (yAxisType) {
+      case YAxisType.PERCENTAGE: {
+        const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+        if (isValid(fromData.close)) {
+          minValue = (minValue - fromData.close) / fromData.close * 100
+          maxValue = (maxValue - fromData.close) / fromData.close * 100
+        }
+        dif = Math.pow(10, -2)
+        break
       }
-      if (
-        minValue === maxValue ||
-        Math.abs(minValue - maxValue) < Math.pow(10, -2)
-      ) {
-        minValue -= 10
-        minValue += 10
+      case YAxisType.LOG: {
+        minValue = log10(minValue)
+        maxValue = log10(maxValue)
+        dif = 0.05 * index10(-precision)
+        break
       }
-    } else {
-      minValue = min
-      maxValue = max
-      if (
-        minValue === maxValue ||
-        Math.abs(minValue - maxValue) < Math.pow(10, -precision)
-      ) {
-        const percentValue = minValue !== 0 ? Math.abs(minValue * 0.2) : 10
-        minValue = minValue !== 0 ? minValue - percentValue : minValue
-        maxValue += percentValue
+      default: {
+        dif = index10(-precision)
       }
     }
-    let range = Math.abs(maxValue - minValue)
-    let marginOptions
-    if (this._isCandleYAxis) {
-      marginOptions = this._chartData.styleOptions().candle.margin
+    if (
+      minValue === maxValue ||
+      Math.abs(minValue - maxValue) < dif
+    ) {
+      minValue -= 5 * dif
+      maxValue += 5 * dif
     } else {
-      marginOptions = this._chartData.styleOptions().technicalIndicator.margin
+      let marginOptions
+      if (this._isCandleYAxis) {
+        marginOptions = this._chartData.styleOptions().candle.margin
+      } else {
+        marginOptions = this._chartData.styleOptions().technicalIndicator.margin
+      }
+      let topRate
+      let bottomRate
+      if (marginOptions.top > 1) {
+        topRate = marginOptions.top / this._height
+      } else {
+        topRate = isNumber(marginOptions.top) ? marginOptions.top : 0.2
+      }
+      if (marginOptions.bottom > 1) {
+        bottomRate = marginOptions.bottom / this._height
+      } else {
+        bottomRate = isNumber(marginOptions.bottom) ? marginOptions.bottom : 0.1
+      }
+      const range = Math.abs(maxValue - minValue)
+      // 保证每次图形绘制上下都留间隙
+      minValue = minValue - range * bottomRate
+      maxValue = maxValue + range * topRate
     }
-    let topRate
-    let bottomRate
-    if (marginOptions.top > 1) {
-      topRate = marginOptions.top / this._height
-    } else {
-      topRate = isNumber(marginOptions.top) ? marginOptions.top : 0.2
-    }
-    if (marginOptions.bottom > 1) {
-      bottomRate = marginOptions.bottom / this._height
-    } else {
-      bottomRate = isNumber(marginOptions.bottom) ? marginOptions.bottom : 0.1
-    }
-    // 保证每次图形绘制上下都留间隙
-    minValue = minValue - range * bottomRate
-    maxValue = maxValue + range * topRate
-    this._realRange = maxValue - minValue
+    const range = Math.abs(maxValue - minValue)
     if (yAxisType === YAxisType.LOG) {
-      minValue = log10(minValue)
-      maxValue = log10(maxValue)
+      this._realRange = Math.abs(index10(maxValue) - index10(minValue))
+    } else {
+      this._realRange = range
     }
-    range = Math.abs(maxValue - minValue)
     return {
       min: minValue,
       max: maxValue,
@@ -199,7 +203,7 @@ export default class YAxis extends Axis {
           break
         }
         case YAxisType.LOG: {
-          value = round(index10(v, true), intervalPrecision.precision)
+          value = round(index10(v), intervalPrecision.precision)
           y = this._innerConvertToPixel(log10(value))
           value = formatPrecision(value, precision)
           break

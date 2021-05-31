@@ -55,8 +55,8 @@ export function binarySearchNearest (dataList, valueKey, targetNumber) {
  * @return {number|number}
  */
 export function nice (value) {
-  const exponent = Math.floor(Math.log(value) / Math.log(10))
-  const exp10 = Math.pow(10.0, exponent)
+  const exponent = Math.floor(log10(value))
+  const exp10 = index10(exponent)
   const f = value / exp10 // 1 <= f < 10
   let nf = 0
   if (f < 1.5) {
@@ -116,29 +116,14 @@ export function getPrecision (value) {
  * @return {number}
  */
 export function log10 (value) {
-  if (value === 0) {
-    return 0
-  }
-  if (value < 0) {
-    return -Math.log(-value) / Math.log(10)
-  }
   return Math.log(value) / Math.log(10)
 }
 
 /**
  * 10的指数函数
  * @param value
- * @param isInverse
  * @return {number}
  */
-export function index10 (value, isInverse) {
-  if (isInverse) {
-    if (value === 0) {
-      return 0
-    }
-    if (value < 0) {
-      return -Math.pow(10, -value)
-    }
-  }
+export function index10 (value) {
   return Math.pow(10, value)
 }
