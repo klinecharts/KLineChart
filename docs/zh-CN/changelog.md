@@ -1,4 +1,9 @@
 # 更新日志
+#7.3.1
+`2021-05-31`
+💄 优化`yAxis.type:log`显示。
+
+
 ## 7.3.0
 `2021-05-28`
 + 🆕 新增api `scrollByDistance`、`scrollToRealTime`、`scrollToPosition`、`zoomAtCoordinate`和`zoomAtPosition`。
@@ -7,7 +12,7 @@
 + 🆕 新增配置，`candle.priceMark.last.text.borderRadius`、`technicalIndicator.lastValueMark.text.borderRadius`、
   `crosshair.horizontal.text.borderRadius`、`crosshair.vertical.text.borderRadius`。
 + 🆕 新增触摸板滚动支持。
-+ 💪 Api `creatTechnicalIndicator`，窗口参数可以实时生效。
++ 💪 Api `createTechnicalIndicator`，窗口参数可以实时生效。
 + 💪 Api `setDataSpace`和`setOffsetRightSpace`能够实时重绘。
 
 

@@ -341,7 +341,7 @@ export default class YAxis extends Axis {
         break
       }
       case YAxisType.LOG: {
-        return index10(value, true)
+        return index10(value)
       }
       default: {
         return value

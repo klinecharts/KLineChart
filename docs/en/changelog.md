@@ -1,4 +1,9 @@
 # Change Log
+#7.3.1
+`2021-05-31`
+💄 Optimize the display of `yAxis.type:log`.
+
+
 ## 7.3.0
 `2021-05-28`
 + 🆕 Add api `scrollByDistance`, `scrollToRealTime`, `scrollToPosition`, `zoomAtCoordinate` and `zoomAtPosition`.
@@ -7,7 +12,7 @@
 + 🆕 Add style configuration, `candle.priceMark.last.text.borderRadius`, `technicalIndicator.lastValueMark.text.borderRadius`,
     `crosshair.horizontal.text.borderRadius`, `crosshair.vertical.text.borderRadius`.
 + 🆕 Add touchpad scrolling support.
-+ 💪 Api `creatTechnicalIndicator`, window parameters can take effect in real time.
++ 💪 Api `createTechnicalIndicator`, window parameters can take effect in real time.
 + 💪 Api `setDataSpace` and `setOffsetRightSpace` able to refresh in real time.
 
 
