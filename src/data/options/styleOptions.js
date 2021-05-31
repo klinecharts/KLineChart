@@ -104,14 +104,14 @@ const defaultGrid = {
   horizontal: {
     show: true,
     size: 1,
-    color: '#393939',
+    color: '#EDEDED',
     style: LineStyle.DASH,
     dashValue: [2, 2]
   },
   vertical: {
     show: true,
     size: 1,
-    color: '#393939',
+    color: '#EDEDED',
     style: LineStyle.DASH,
     dashValue: [2, 2]
   }
@@ -139,7 +139,7 @@ const defaultCandle = {
     /**
      * 无变化时颜色
      */
-    noChangeColor: '#888888'
+    noChangeColor: '#999999'
   },
   area: {
     lineSize: 2,
@@ -157,7 +157,7 @@ const defaultCandle = {
     show: true,
     high: {
       show: true,
-      color: '#D9D9D9',
+      color: '#76808F',
       textMargin: 5,
       textSize: 10,
       textFamily: 'Helvetica Neue',
@@ -165,7 +165,7 @@ const defaultCandle = {
     },
     low: {
       show: true,
-      color: '#D9D9D9',
+      color: '#76808F',
       textMargin: 5,
       textSize: 10,
       textFamily: 'Helvetica Neue',
@@ -212,14 +212,14 @@ const defaultCandle = {
       offsetRight: 8,
       borderRadius: 4,
       borderSize: 1,
-      borderColor: '#3f4254',
-      fillColor: 'rgba(17, 17, 17, .3)'
+      borderColor: '#F2F3F5',
+      fillColor: '#FEFEFE'
     },
     text: {
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
-      color: '#D9D9D9',
+      color: '#76808F',
       marginLeft: 8,
       marginTop: 6,
       marginRight: 8,
@@ -255,7 +255,7 @@ const defaultTechnicalIndicator = {
     show: false,
     text: {
       show: false,
-      color: '#ffffff',
+      color: '#FFFFFF',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
@@ -276,7 +276,7 @@ const defaultTechnicalIndicator = {
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
-      color: '#D9D9D9',
+      color: '#76808F',
       marginTop: 6,
       marginRight: 8,
       marginBottom: 0,
@@ -303,7 +303,7 @@ const defaultXAxis = {
    */
   axisLine: {
     show: true,
-    color: '#888888',
+    color: '#DDDDDD',
     size: 1
   },
 
@@ -312,7 +312,7 @@ const defaultXAxis = {
    */
   tickText: {
     show: true,
-    color: '#D9D9D9',
+    color: '#76808F',
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
@@ -324,7 +324,7 @@ const defaultXAxis = {
     show: true,
     size: 1,
     length: 3,
-    color: '#888888'
+    color: '#DDDDDD'
   }
 }
 
@@ -358,7 +358,7 @@ const defaultYAxis = {
    */
   axisLine: {
     show: true,
-    color: '#888888',
+    color: '#DDDDDD',
     size: 1
   },
 
@@ -367,7 +367,7 @@ const defaultYAxis = {
    */
   tickText: {
     show: true,
-    color: '#D9D9D9',
+    color: '#76808F',
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
@@ -379,7 +379,7 @@ const defaultYAxis = {
     show: true,
     size: 1,
     length: 3,
-    color: '#888888'
+    color: '#DDDDDD'
   }
 }
 
@@ -392,11 +392,11 @@ const defaultCrosshair = {
       style: LineStyle.DASH,
       dashValue: [4, 2],
       size: 1,
-      color: '#888888'
+      color: '#76808F'
     },
     text: {
       show: true,
-      color: '#D9D9D9',
+      color: '#FFFFFF',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
@@ -405,9 +405,9 @@ const defaultCrosshair = {
       paddingTop: 2,
       paddingBottom: 2,
       borderSize: 1,
-      borderColor: '#505050',
+      borderColor: '#686D76',
       borderRadius: 2,
-      backgroundColor: '#505050'
+      backgroundColor: '#686D76'
     }
   },
   vertical: {
@@ -417,11 +417,11 @@ const defaultCrosshair = {
       style: LineStyle.DASH,
       dashValue: [4, 2],
       size: 1,
-      color: '#888888'
+      color: '#76808F'
     },
     text: {
       show: true,
-      color: '#D9D9D9',
+      color: '#FFFFFF',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
@@ -431,8 +431,8 @@ const defaultCrosshair = {
       paddingBottom: 2,
       borderSize: 1,
       borderRadius: 2,
-      borderColor: '#505050',
-      backgroundColor: '#505050'
+      borderColor: '#686D76',
+      backgroundColor: '#686D76'
     }
   }
 }
@@ -509,7 +509,7 @@ const defaultAnnotation = {
  */
 const defaultSeparator = {
   size: 1,
-  color: '#888888',
+  color: '#DDDDDD',
   fill: true,
   activeBackgroundColor: 'rgba(33, 150, 243, 0.08)'
 }

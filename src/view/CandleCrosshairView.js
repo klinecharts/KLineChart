@@ -196,10 +196,11 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
 
     const indicatorTooltipDataList = []
     const dataList = this._chartData.dataList()
-    technicalIndicators.forEach(technicalIndicator => {
-      const result = technicalIndicator.result
+    technicalIndicators.forEach(tech => {
+      const result = tech.result
       indicatorTooltipDataList.push({
-        tooltipData: getTechnicalIndicatorTooltipData(result[crosshair.dataIndex], technicalIndicator),
+        name: tech.name,
+        tooltipData: getTechnicalIndicatorTooltipData(result[crosshair.dataIndex], tech),
         cbData: {
           preData: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: result[crosshair.dataIndex - 1] },
           currentData: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData: result[crosshair.dataIndex] },
@@ -286,11 +287,12 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         technicalIndicatorTooltipOptions.text.weight,
         technicalIndicatorTooltipOptions.text.family
       )
-      indicatorTooltipDataList.forEach(({ tooltipData, cbData }, techIndex) => {
-        const styles = technicalIndicators[techIndex].styles || technicalIndicatorOptions
+      indicatorTooltipDataList.forEach(({ name, tooltipData, cbData }) => {
+        const tech = technicalIndicators.get(name)
+        const styles = tech.styles || technicalIndicatorOptions
         const colors = styles.line.colors
         const colorSize = colors.length
-        const plots = technicalIndicators[techIndex].plots
+        const plots = tech.plots
         let lineCount = 0
         let valueColor
         plots.forEach((plot, i) => {
