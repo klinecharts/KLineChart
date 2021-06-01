@@ -1,8 +1,8 @@
 # Change Log
 ## 7.3.2
 `2021-06-01`
-👉 默认样式更改为适用于浅色主题。
-🐞 修复`technicalIndicator.tooltip.showType: rect`会出错问题。
+👉 The default style is changed to be suitable for light theme.
+🐞 Fix the problem of `technicalIndicator.tooltip.showType: rect`.
 
 
 ## 7.3.1
