@@ -1,4 +1,10 @@
 # 更新日志
+## 7.3.2
+`2021-06-01`
+👉 The default style is changed to be suitable for light theme.
+🐞 Fix the problem of `technicalIndicator.tooltip.showType: rect`.
+
+
 ## 7.3.1
 `2021-05-31`
 💄 优化`yAxis.type:log`显示。
