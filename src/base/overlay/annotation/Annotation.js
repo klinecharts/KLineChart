@@ -104,6 +104,24 @@ export default class Annotation extends Overlay {
 
   draw (ctx) {
     const styles = this._styles || this._chartData.styleOptions().annotation
+    const symbolOptions = styles.symbol
+    const offset = symbolOptions.offset || []
+    let y = 0
+    switch (symbolOptions.position) {
+      case AnnotationPosition.POINT: {
+        y = this._yAxis.convertToPixel(this._tpPoint.price)
+        break
+      }
+      case AnnotationPosition.TOP: {
+        y = 0
+        break
+      }
+      case AnnotationPosition.BOTTOM: {
+        y = this._yAxis.height()
+        break
+      }
+    }
+    this._symbolCoordinate.y = y + (offset[1] || 0)
     const isActive = this._id === this._chartData.annotationMouseOperate().id
     this._drawSymbol(ctx, isActive, styles)
     if (this.drawExtend) {
@@ -180,25 +198,10 @@ export default class Annotation extends Overlay {
    * @param x
    */
   createSymbolCoordinate (x) {
-    let y
     const styles = this._styles || this._chartData.styleOptions().annotation
     const symbolOptions = styles.symbol
-    const offset = symbolOptions.offset
-    switch (symbolOptions.position) {
-      case AnnotationPosition.POINT: {
-        y = this._yAxis.convertToPixel(this._tpPoint.price)
-        break
-      }
-      case AnnotationPosition.TOP: {
-        y = 0
-        break
-      }
-      case AnnotationPosition.BOTTOM: {
-        y = this._yAxis.height()
-        break
-      }
-    }
-    this._symbolCoordinate = { x: x + (offset[0] || 0), y: y + (offset[1] || 0) }
+    const offset = symbolOptions.offset || []
+    this._symbolCoordinate = { x: x + (offset[0] || 0) }
   }
 
   /**
