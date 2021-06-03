@@ -101,10 +101,10 @@ export default class YAxis extends Axis {
       minMaxArray[0] = 0
       minMaxArray[1] = 0
     }
-    return { min: minMaxArray[0], max: minMaxArray[1], precision }
+    return { min: minMaxArray[0], max: minMaxArray[1], precision, specifyMin: minValue, specifyMax: maxValue }
   }
 
-  _optimalMinMax ({ min, max, precision }) {
+  _optimalMinMax ({ min, max, precision, specifyMin, specifyMax }) {
     let minValue = min
     let maxValue = max
     const yAxisType = this.yAxisType()
@@ -133,33 +133,35 @@ export default class YAxis extends Axis {
       minValue === maxValue ||
       Math.abs(minValue - maxValue) < dif
     ) {
-      minValue -= 5 * dif
-      maxValue += 5 * dif
-    } else {
-      let marginOptions
-      if (this._isCandleYAxis) {
-        marginOptions = this._chartData.styleOptions().candle.margin
-      } else {
-        marginOptions = this._chartData.styleOptions().technicalIndicator.margin
-      }
-      let topRate
-      let bottomRate
-      if (marginOptions.top > 1) {
-        topRate = marginOptions.top / this._height
-      } else {
-        topRate = isNumber(marginOptions.top) ? marginOptions.top : 0.2
-      }
-      if (marginOptions.bottom > 1) {
-        bottomRate = marginOptions.bottom / this._height
-      } else {
-        bottomRate = isNumber(marginOptions.bottom) ? marginOptions.bottom : 0.1
-      }
-      const range = Math.abs(maxValue - minValue)
-      // 保证每次图形绘制上下都留间隙
-      minValue = minValue - range * bottomRate
-      maxValue = maxValue + range * topRate
+      const minCheck = specifyMin === minValue
+      const maxCheck = specifyMax === maxValue
+      minValue = minCheck ? minValue : (maxCheck ? minValue - 8 * dif : minValue - 4 * dif)
+      maxValue = maxCheck ? maxValue : (minCheck ? maxValue + 8 * dif : maxValue + 4 * dif)
     }
-    const range = Math.abs(maxValue - minValue)
+    let marginOptions
+    if (this._isCandleYAxis) {
+      marginOptions = this._chartData.styleOptions().candle.margin
+    } else {
+      marginOptions = this._chartData.styleOptions().technicalIndicator.margin
+    }
+    let topRate
+    let bottomRate
+    if (marginOptions.top > 1) {
+      topRate = marginOptions.top / this._height
+    } else {
+      topRate = isNumber(marginOptions.top) ? marginOptions.top : 0.2
+    }
+    if (marginOptions.bottom > 1) {
+      bottomRate = marginOptions.bottom / this._height
+    } else {
+      bottomRate = isNumber(marginOptions.bottom) ? marginOptions.bottom : 0.1
+    }
+    let range = Math.abs(maxValue - minValue)
+    // 保证每次图形绘制上下都留间隙
+    minValue = minValue - range * bottomRate
+    maxValue = maxValue + range * topRate
+
+    range = Math.abs(maxValue - minValue)
     if (yAxisType === YAxisType.LOG) {
       this._realRange = Math.abs(index10(maxValue) - index10(minValue))
     } else {
