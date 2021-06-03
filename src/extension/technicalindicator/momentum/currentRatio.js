@@ -50,8 +50,6 @@ export default {
     const ma3List = []
     let ma4Sum = 0
     const ma4List = []
-    let highSubPreMidSum = 0
-    let preMidSubLowSum = 0
     const result = []
     dataList.forEach((kLineData, i) => {
       const cr = {}
@@ -59,10 +57,8 @@ export default {
       const preMid = (preData.high + preData.close + preData.low + preData.open) / 4
 
       const highSubPreMid = Math.max(0, kLineData.high - preMid)
-      highSubPreMidSum += highSubPreMid
 
       const preMidSubLow = Math.max(0, preMid - kLineData.low)
-      preMidSubLowSum += preMidSubLow
 
       if (i >= calcParams[0] - 1) {
         if (preMidSubLow !== 0) {
@@ -70,13 +66,6 @@ export default {
         } else {
           cr.cr = 0
         }
-        const agoData = dataList[i - (calcParams[0] - 1)]
-        const agoPreData = dataList[i - calcParams[0]] || agoData
-        const agoPreMid = (agoPreData.high + agoPreData.close + agoPreData.low + agoPreData.open) / 4
-        const agoHighSubPreMid = Math.max(0, agoData.high - agoPreMid)
-        highSubPreMidSum -= agoHighSubPreMid
-        const agoPreMidSubLow = Math.max(0, agoPreMid - agoData.low)
-        preMidSubLowSum -= agoPreMidSubLow
         ma1Sum += cr.cr
         ma2Sum += cr.cr
         ma3Sum += cr.cr

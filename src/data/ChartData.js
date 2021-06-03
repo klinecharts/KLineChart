@@ -350,22 +350,6 @@ export default class ChartData {
   }
 
   /**
-   * 加载技术指标精度
-   * @param precision
-   * @param name
-   */
-  applyTechnicalIndicatorPrecision (precision, name) {
-    const technicalIndicator = this.technicalIndicator(name)
-    if (technicalIndicator) {
-      technicalIndicator.setPrecision(precision)
-    } else {
-      for (const name in this._technicalIndicatorMapping) {
-        this._technicalIndicatorMapping[name].setPrecision(precision)
-      }
-    }
-  }
-
-  /**
    * 获取数据源
    * @returns {[]|*[]}
    */

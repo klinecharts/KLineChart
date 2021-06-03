@@ -347,22 +347,12 @@ export default class ChartPane {
         this._panes.forEach(pane => {
           const technicalIndicators = pane.technicalIndicators()
           if (technicalIndicators.has(name)) {
+            shouldAdjust = true
             const tech = technicalIndicators.get(name)
-            tech.setCalcParamsAllowDecimal(calcParamsAllowDecimal)
             if (calcParamsSuccess) {
-              shouldAdjust = true
-              tech.setCalcParams(calcParams)
               tasks.push(
                 Promise.resolve(pane.calcTechnicalIndicator(tech))
               )
-            }
-            if (precisionSuccess) {
-              shouldAdjust = true
-              tech.setPrecision(precision)
-            }
-            if (styleSuccess) {
-              shouldAdjust = true
-              tech.setStyles(styles, defaultTechnicalStyleOptions)
             }
           }
         })
@@ -423,8 +413,8 @@ export default class ChartPane {
       const dataList = this._chartData.dataList()
       const dataSize = dataList.length
       // 这里判断单个数据应该添加到哪个位置
-      const timestamp = +formatValue(data, 'timestamp', 0)
-      const lastDataTimestamp = +formatValue(dataList[dataSize - 1], 'timestamp', 0)
+      const timestamp = formatValue(data, 'timestamp', 0)
+      const lastDataTimestamp = formatValue(dataList[dataSize - 1], 'timestamp', 0)
       if (timestamp >= lastDataTimestamp) {
         let pos = dataSize
         if (timestamp === lastDataTimestamp) {

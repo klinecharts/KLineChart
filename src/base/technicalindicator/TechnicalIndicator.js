@@ -67,8 +67,6 @@ export default class TechnicalIndicator {
     this.maxValue = maxValue
     // 样式
     this.styles = styles
-    // 指标计算结果
-    this.result = []
   }
 
   setPrecision (precision) {
