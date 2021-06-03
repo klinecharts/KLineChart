@@ -33,13 +33,13 @@ export default class YAxis extends Axis {
     let shouldOhlc = false
     let minValue = Number.MAX_SAFE_INTEGER
     let maxValue = Number.MIN_SAFE_INTEGER
-    let technicalIndicatorPrecision = Number.MIN_SAFE_INTEGER
+    let technicalIndicatorPrecision = Number.MAX_SAFE_INTEGER
     const technicalIndicators = this._additionalDataProvider.technicalIndicators()
     technicalIndicators.forEach(tech => {
       if (!shouldOhlc) {
         shouldOhlc = tech.should
       }
-      technicalIndicatorPrecision = Math.max(technicalIndicatorPrecision, tech.precision)
+      technicalIndicatorPrecision = Math.min(technicalIndicatorPrecision, tech.precision)
       if (isValid(tech.minValue) && isNumber(tech.minValue)) {
         minValue = Math.min(minValue, tech.minValue)
       }
@@ -55,13 +55,13 @@ export default class YAxis extends Axis {
     let precision = 4
     if (this._isCandleYAxis) {
       const pricePrecision = this._chartData.pricePrecision()
-      if (technicalIndicatorPrecision !== Number.MIN_SAFE_INTEGER) {
-        precision = Math.max(technicalIndicatorPrecision, pricePrecision)
+      if (technicalIndicatorPrecision !== Number.MAX_SAFE_INTEGER) {
+        precision = Math.min(technicalIndicatorPrecision, pricePrecision)
       } else {
         precision = pricePrecision
       }
     } else {
-      if (technicalIndicatorPrecision !== Number.MIN_SAFE_INTEGER) {
+      if (technicalIndicatorPrecision !== Number.MAX_SAFE_INTEGER) {
         precision = technicalIndicatorPrecision
       }
     }
