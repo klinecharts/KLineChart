@@ -1,4 +1,10 @@
 # Change Log
+## 7.3.3
+`2021-06-03`
+🐞 Fix the inaccurate calculation of the coordinate point parameters of the annotation callback method.
+💄 Optimize the y-axis display.
+
+
 ## 7.3.2
 `2021-06-01`
 👉 The default style is changed to be suitable for light theme.
