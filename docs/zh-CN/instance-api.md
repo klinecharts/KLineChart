@@ -376,10 +376,9 @@ chart.setPaneOptions({
 - `finder` 过滤条件，`{ paneId, dataIndexXAxis, absoluteYAxis }`
 
 
-### getConvertPictureUrl(includeTooltip, includeOverlay, type, backgroundColor)
+### getConvertPictureUrl(includeOverlay, type, backgroundColor)
 获取图表转换成图片后的图片url。
-- `includeTooltip` 是否需要提示浮层，可缺省
-- `includeOverlay` 是否需要包含覆盖物层，可缺省
+- `includeOverlay` 是否需要包含覆盖层，可缺省
 - `type` 转换后的图片类型，类型是'png'、'jpeg'、'bmp'三种中的一种，可缺省，默认为'jpeg'
 - `backgroundColor` 背景色，可缺省，默认为'#333333'
 

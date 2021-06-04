@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import { CANDLE_PANE_ID } from '../pane/ChartPane'
 import EventHandler, { isMouse } from './EventHandler'
-import { InvalidateLevel } from '../data/ChartData'
+import { CANDLE_PANE_ID, InvalidateLevel } from '../data/constants'
 import { GraphicMarkMouseOperateElement } from '../base/overlay/mark/GraphicMark'
 
 export default class OverlayEventHandler extends EventHandler {

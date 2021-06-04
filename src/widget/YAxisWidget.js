@@ -14,14 +14,14 @@
 
 import Widget from './Widget'
 import YAxisView from '../view/YAxisView'
-import YAxisCrosshairView from '../view/YAxisCrosshairView'
+import YAxisOverlayView from '../view/YAxisOverlayView'
 
 export default class YAxisWidget extends Widget {
   _createMainView (container, props) {
     return new YAxisView(container, props.chartData, props.yAxis, props.additionalDataProvider)
   }
 
-  _createCrosshairView (container, props) {
-    return new YAxisCrosshairView(container, props.chartData, props.yAxis, props.additionalDataProvider)
+  _createOverlayView (container, props) {
+    return new YAxisOverlayView(container, props.chartData, props.yAxis, props.additionalDataProvider)
   }
 }

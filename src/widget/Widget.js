@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { InvalidateLevel } from '../data/ChartData'
+import { InvalidateLevel } from '../data/constants'
 import { getPixelRatio } from '../utils/canvas'
 
 export default class Widget {
@@ -21,8 +21,7 @@ export default class Widget {
     this._height = 0
     this._initElement(props.container)
     this._mainView = this._createMainView(this._element, props)
-    this._expandView = this._createExpandView(this._element, props)
-    this._crosshairView = this._createCrosshairView(this._element, props)
+    this._overlayView = this._createOverlayView(this._element, props)
   }
 
   /**
@@ -49,20 +48,12 @@ export default class Widget {
   _createMainView (container, props) {}
 
   /**
-   * 创建拓展的view
-   * @param container
-   * @param props
-   * @private
-   */
-  _createExpandView (container, props) {}
-
-  /**
    * 创建浮层view
    * @param container
    * @param props
    * @private
    */
-  _createCrosshairView (container, props) {}
+  _createOverlayView (container, props) {}
 
   getElement () {
     return this._element
@@ -71,15 +62,13 @@ export default class Widget {
   setWidth (width) {
     this._width = width
     this._mainView.setWidth(width)
-    this._crosshairView.setWidth(width)
-    this._expandView && this._expandView.setWidth(width)
+    this._overlayView.setWidth(width)
   }
 
   setHeight (height) {
     this._height = height
     this._mainView.setHeight(height)
-    this._crosshairView.setHeight(height)
-    this._expandView && this._expandView.setHeight(height)
+    this._overlayView.setHeight(height)
   }
 
   setOffsetLeft (offsetLeft) {
@@ -94,8 +83,7 @@ export default class Widget {
       this._element.style.height = `${this._height}px`
     }
     this._mainView.layout()
-    this._crosshairView.layout()
-    this._expandView && this._expandView.layout()
+    this._overlayView.layout()
   }
 
   /**
@@ -105,18 +93,13 @@ export default class Widget {
   invalidate (level) {
     switch (level) {
       case InvalidateLevel.OVERLAY: {
-        this._expandView && this._expandView.flush()
-        break
-      }
-      case InvalidateLevel.TOOLTIP: {
-        this._crosshairView.flush()
+        this._overlayView.flush()
         break
       }
       case InvalidateLevel.MAIN:
       case InvalidateLevel.FULL: {
         this._mainView.flush()
-        this._crosshairView.flush()
-        this._expandView && this._expandView.flush()
+        this._overlayView.flush()
         break
       }
       default: {
@@ -127,11 +110,10 @@ export default class Widget {
 
   /**
    * 将widget转换成图片
-   * @param includeTooltip
    * @param includeOverlay
    * @returns {HTMLCanvasElement}
    */
-  getImage (includeTooltip, includeOverlay) {
+  getImage (includeOverlay) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)
@@ -143,11 +125,8 @@ export default class Widget {
 
     ctx.drawImage(this._mainView.getImage(), 0, 0, this._width, this._height)
 
-    if (includeOverlay && this._expandView) {
-      ctx.drawImage(this._expandView.getImage(), 0, 0, this._width, this._height)
-    }
-    if (includeTooltip && this._crosshairView) {
-      ctx.drawImage(this._crosshairView.getImage(), 0, 0, this._width, this._height)
+    if (includeOverlay && this._overlayView) {
+      ctx.drawImage(this._overlayView.getImage(), 0, 0, this._width, this._height)
     }
     return canvas
   }

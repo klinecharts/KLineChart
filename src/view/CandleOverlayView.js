@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TechnicalIndicatorCrosshairView from './TechnicalIndicatorCrosshairView'
+import TechnicalIndicatorOverlayView from './TechnicalIndicatorOverlayView'
 import { isFunction, isObject, isArray, isValid } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
@@ -22,7 +22,21 @@ import { TechnicalIndicatorPlotType } from '../base/technicalindicator/Technical
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
-export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView {
+export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
+  _drawCover () {
+    this._ctx.textBaseline = 'alphabetic'
+    // 绘制图形标记
+    const graphicMarks = this._chartData.graphicMarks()
+    graphicMarks.forEach(graphicMark => {
+      graphicMark.draw(this._ctx)
+    })
+    // 绘制注解
+    const annotations = this._chartData.visibleAnnotations()
+    annotations.forEach(annotation => {
+      annotation.draw(this._ctx)
+    })
+  }
+
   _drawTooltip (crosshair, technicalIndicators) {
     const styleOptions = this._chartData.styleOptions()
     const candleOptions = styleOptions.candle

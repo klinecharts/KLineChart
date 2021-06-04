@@ -519,17 +519,16 @@ export default class Chart {
 
   /**
    * 获取将图表装换成图片后的url
-   * @param includeTooltip
    * @param includeOverlay
    * @param type
    * @param backgroundColor
    */
-  getConvertPictureUrl (includeTooltip, includeOverlay, type = 'jpeg', backgroundColor = '#333333') {
+  getConvertPictureUrl (includeOverlay, type = 'jpeg', backgroundColor = '#333333') {
     if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
       logWarn('getConvertPictureUrl', 'type', 'type only supports jpeg, png and bmp!!!')
       return
     }
-    return this._chartPane.getConvertPictureUrl(includeTooltip, includeOverlay, type, backgroundColor)
+    return this._chartPane.getConvertPictureUrl(includeOverlay, type, backgroundColor)
   }
 
   /**

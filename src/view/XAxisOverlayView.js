@@ -19,7 +19,7 @@ import { calcTextWidth, createFont } from '../utils/canvas'
 import { renderStrokeFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
-export default class XAxisCrosshairView extends View {
+export default class XAxisOverlayView extends View {
   constructor (container, chartData, xAxis) {
     super(container, chartData)
     this._xAxis = xAxis

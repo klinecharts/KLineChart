@@ -21,7 +21,7 @@ import { calcTextWidth, createFont } from '../utils/canvas'
 import { getTechnicalIndicatorTooltipData } from '../base/technicalindicator/technicalIndicatorControl'
 import { renderText } from '../renderer/text'
 
-export default class TechnicalIndicatorCrosshairView extends View {
+export default class TechnicalIndicatorOverlayView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
     super(container, chartData)
     this._xAxis = xAxis
@@ -30,6 +30,7 @@ export default class TechnicalIndicatorCrosshairView extends View {
   }
 
   _draw () {
+    this._drawCover()
     const crosshair = this._chartData.crosshair()
     if (crosshair.kLineData) {
       const technicalIndicators = this._additionalDataProvider.technicalIndicators()
@@ -46,6 +47,12 @@ export default class TechnicalIndicatorCrosshairView extends View {
       this._drawTooltip(crosshair, technicalIndicators)
     }
   }
+
+  /**
+   * 绘制覆盖物
+   * @private
+   */
+  _drawCover () {}
 
   /**
    * 绘制图例

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import ChartData, { ActionType, InvalidateLevel } from '../data/ChartData'
+import ChartData from '../data/ChartData'
 import { getTechnicalIndicatorInfo } from '../base/technicalindicator/technicalIndicatorControl'
 
 import CandlePane from './CandlePane'
@@ -29,13 +29,13 @@ import { getPixelRatio } from '../utils/canvas'
 import { throttle } from '../utils/performance'
 import Annotation from '../base/overlay/annotation/Annotation'
 
-const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
-
-const TECHNICAL_INDICATOR_PANE_ID_PREFIX = 'technical_indicator_pane_'
-
-const GRAPHIC_MARK_ID_PREFIX = 'graphic_mark_'
-
-export const CANDLE_PANE_ID = 'candle_pane'
+import {
+  CANDLE_PANE_ID,
+  DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT,
+  TECHNICAL_INDICATOR_PANE_ID_PREFIX,
+  GRAPHIC_MARK_ID_PREFIX,
+  ActionType, InvalidateLevel
+} from '../data/constants'
 
 export default class ChartPane {
   constructor (container, styleOptions) {
@@ -148,23 +148,19 @@ export default class ChartPane {
    * @private
    */
   _invalidatePane (invalidateLevel = InvalidateLevel.FULL) {
-    if (invalidateLevel === InvalidateLevel.TOOLTIP) {
+    if (invalidateLevel === InvalidateLevel.OVERLAY) {
       this._xAxisPane.invalidate(invalidateLevel)
       this._panes.forEach((pane) => {
         pane.invalidate(invalidateLevel)
       })
     } else {
-      let shouldMeasureWidth = this._panes.get(CANDLE_PANE_ID).yAxis().computeAxis()
-      if (invalidateLevel !== InvalidateLevel.OVERLAY) {
-        this._panes.forEach((pane, paneId) => {
-          if (paneId !== CANDLE_PANE_ID) {
-            const should = pane.yAxis().computeAxis()
-            if (should) {
-              shouldMeasureWidth = should
-            }
-          }
-        })
-      }
+      let shouldMeasureWidth = false
+      this._panes.forEach((pane, paneId) => {
+        const should = pane.yAxis().computeAxis()
+        if (should) {
+          shouldMeasureWidth = should
+        }
+      })
       this.adjustPaneViewport(false, shouldMeasureWidth, true)
     }
   }
@@ -764,12 +760,11 @@ export default class ChartPane {
 
   /**
    * 获取图表转换为图片后url
-   * @param includeTooltip,
-   * @param includeOverlay
+   * @param includeOverlay,
    * @param type
    * @param backgroundColor
    */
-  getConvertPictureUrl (includeTooltip, includeOverlay, type, backgroundColor) {
+  getConvertPictureUrl (includeOverlay, type, backgroundColor) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)
@@ -795,13 +790,13 @@ export default class ChartPane {
         offsetTop += separator.height()
       }
       ctx.drawImage(
-        pane.getImage(includeTooltip, includeOverlay),
+        pane.getImage(includeOverlay),
         0, offsetTop, width, pane.height()
       )
     })
 
     ctx.drawImage(
-      this._xAxisPane.getImage(includeTooltip),
+      this._xAxisPane.getImage(includeOverlay),
       0, offsetTop, width, this._xAxisPane.height()
     )
     return canvas.toDataURL(`image/${type}`)

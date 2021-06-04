@@ -112,11 +112,10 @@ export default class Pane {
 
   /**
    * 将canvas转换成图片
-   * @param includeTooltip
-   * @param includeGraphicMark
+   * @param includeOverlay
    * @return {HTMLCanvasElement}
    */
-  getImage (includeTooltip, includeGraphicMark) {
+  getImage (includeOverlay) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)
@@ -134,7 +133,7 @@ export default class Pane {
     const mainWidgetOffsetLeft = parseInt(mainWidgetElement.style.left, 10)
 
     ctx.drawImage(
-      this._mainWidget.getImage(includeTooltip, includeGraphicMark),
+      this._mainWidget.getImage(includeOverlay),
       mainWidgetOffsetLeft, 0,
       mainWidgetWidth, mainWidgetHeight
     )

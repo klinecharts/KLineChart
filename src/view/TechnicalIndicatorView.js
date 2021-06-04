@@ -18,7 +18,7 @@ import { CandleType, LineStyle } from '../data/options/styleOptions'
 import { TechnicalIndicatorPlotType } from '../base/technicalindicator/TechnicalIndicator'
 import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
 import { isValid } from '../utils/typeChecks'
-import { ActionType } from '../data/ChartData'
+import { ActionType } from '../data/constants'
 
 export default class TechnicalIndicatorView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {

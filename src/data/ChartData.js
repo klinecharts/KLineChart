@@ -37,25 +37,7 @@ import {
   getGraphicMarkInfo
 } from '../base/overlay/mark/graphicMarkControl'
 
-export const InvalidateLevel = {
-  NONE: 0,
-  OVERLAY: 1,
-  TOOLTIP: 2,
-  MAIN: 3,
-  FULL: 4
-}
-
-export const ActionType = {
-  DRAW_CANDLE: 'drawCandle',
-  DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator',
-  ZOOM: 'zoom',
-  SCROLL: 'scroll',
-  CROSSHAIR: 'crosshair',
-  PANE_DRAG: 'pane_drag'
-}
-
-const MAX_DATA_SPACE = 50
-const MIN_DATA_SPACE = 1
+import { MIN_DATA_SPACE, MAX_DATA_SPACE, InvalidateLevel, ActionType } from './constants'
 
 export default class ChartData {
   constructor (styleOptions, handler) {
@@ -566,7 +548,7 @@ export default class ChartData {
     if (
       (prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId) && !notInvalidate
     ) {
-      this.invalidate(InvalidateLevel.TOOLTIP)
+      this.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 

@@ -19,7 +19,7 @@ import { YAxisPosition, YAxisType } from '../data/options/styleOptions'
 import { renderStrokeFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
-export default class YAxisCrosshairView extends View {
+export default class YAxisOverlayView extends View {
   constructor (container, chartData, yAxis, additionalDataProvider) {
     super(container, chartData)
     this._yAxis = yAxis

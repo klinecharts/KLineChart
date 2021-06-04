@@ -13,20 +13,15 @@
  */
 
 import CandleView from '../view/CandleView'
-import CandleCrosshairView from '../view/CandleCrosshairView'
+import CandleOverlayView from '../view/CandleOverlayView'
 import TechnicalIndicatorWidget from './TechnicalIndicatorWidget'
-import OverlayView from '../view/OverlayView'
 
 export default class CandleWidget extends TechnicalIndicatorWidget {
   _createMainView (container, props) {
     return new CandleView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
   }
 
-  _createExpandView (container, props) {
-    return new OverlayView(container, props.chartData)
-  }
-
-  _createCrosshairView (container, props) {
-    return new CandleCrosshairView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
+  _createOverlayView (container, props) {
+    return new CandleOverlayView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
   }
 }
