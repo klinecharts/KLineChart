@@ -358,7 +358,8 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
         formatValue(kLineData, 'close'),
         formatValue(kLineData, 'high'),
         formatValue(kLineData, 'low'),
-        formatValue(kLineData, 'volume')
+        formatValue(kLineData, 'volume'),
+        formatValue(kLineData, 'changePercentage')
       ]
       values.forEach((value, index) => {
         switch (index) {
@@ -366,8 +367,12 @@ export default class CandleCrosshairView extends TechnicalIndicatorCrosshairView
             values[index] = formatDate(this._chartData.dateTimeFormat(), value, 'YYYY-MM-DD hh:mm')
             break
           }
-          case values.length - 1: {
+          case 5: {
             values[index] = formatBigNumber(formatPrecision(value, volumePrecision))
+            break
+          }
+          case 6: {
+            values[index] = formatPrecision(value, pricePrecision) + "%"
             break
           }
           default: {

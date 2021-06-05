@@ -389,6 +389,20 @@ export default class ChartData {
         this._loading = false
         this._more = isBoolean(more) ? more : true
         const isFirstAdd = this._dataList.length === 0
+
+        // 处理涨跌幅
+        for (var i = 0; i < data.length; i++) {
+          if (i === 0) {
+            if (isFirstAdd) {
+              data[i]['changePercentage'] = 0
+            } else {
+              data[i]['changePercentage'] = (data[i]['close'] - this._dataList[this._dataList.length - 1]['close']) / this._dataList[this._dataList.length - 1]['close'] * 100
+            }
+          } else {
+            data[i]['changePercentage'] = (data[i]['close'] - data[i - 1]['close']) / data[i - 1]['close'] * 100
+          }
+        }
+
         this._dataList = data.concat(this._dataList)
         if (isFirstAdd) {
           this.setOffsetRightSpace(this._offsetRightSpace)
@@ -397,12 +411,25 @@ export default class ChartData {
       } else {
         const dataSize = this._dataList.length
         if (pos >= dataSize) {
+
+          // 处理涨跌幅
+          data['changePercentage'] = (data['close'] - this._dataList[pos - 1]['close']) / this._dataList[pos - 1]['close'] * 100
+
           this._dataList.push(data)
           if (this._offsetRightBarCount < 0) {
             this._offsetRightBarCount -= 1
           }
           this._adjustFromTo()
         } else {
+          // 处理涨跌幅
+          if (pos === 0) {
+            this._dataList[pos]['changePercentage'] = 0
+          } else {
+            this._dataList[pos]['changePercentage'] = (data['close'] - this._dataList[pos - 1]['close']) / this._dataList[pos - 1]['close'] * 100
+            if (this._dataList[pos + 1]) {
+              this._dataList[pos + 1]['changePercentage'] = (this._dataList[pos + 1]['close'] - this._dataList[pos]['close']) / this._dataList[pos]['close'] * 100
+            }
+          }
           this._dataList[pos] = data
           this._adjustVisibleDataList()
         }
