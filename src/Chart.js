@@ -332,6 +332,22 @@ export default class Chart {
   }
 
   /**
+   * 创建标签
+   * @param tags
+   */
+  createTag (tags) {
+    this._chartPane.createTag(tags)
+  }
+
+  /**
+   * 移除标签
+   * @param id
+   */
+  removeTag (id) {
+    this._chartPane.chartData().removeTag(id)
+  }
+
+  /**
    * 设置窗口属性
    * @param options
    */

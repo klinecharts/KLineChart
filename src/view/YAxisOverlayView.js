@@ -15,7 +15,7 @@
 import View from './View'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
-import { YAxisPosition, YAxisType } from '../data/options/styleOptions'
+import { YAxisType } from '../data/options/styleOptions'
 import { renderStrokeFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
@@ -27,6 +27,14 @@ export default class YAxisOverlayView extends View {
   }
 
   _draw () {
+    this._ctx.textBaseline = 'middle'
+    if (this._yAxis.isCandleYAxis()) {
+      // 绘制标签
+      const tags = this._chartData.tags()
+      tags.forEach(tag => {
+        tag.drawValue(this._ctx)
+      })
+    }
     this._drawCrossHairLabel()
   }
 
@@ -79,11 +87,7 @@ export default class YAxisOverlayView extends View {
 
     const rectWidth = yAxisDataLabelWidth + borderSize * 2 + paddingLeft + paddingRight
     const rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom
-    const yAxisOptions = styleOptions.yAxis
-    if (
-      (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside) ||
-      (yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside)
-    ) {
+    if (this._yAxis.isFromYAxisZero()) {
       rectStartX = 0
     } else {
       rectStartX = this._width - rectWidth
@@ -96,8 +100,6 @@ export default class YAxisOverlayView extends View {
       crosshairHorizontalTextOptions.borderColor, borderSize,
       rectStartX, rectY, rectWidth, rectHeight, crosshairHorizontalTextOptions.borderRadius
     )
-
-    this._ctx.textBaseline = 'middle'
     renderText(
       this._ctx,
       crosshairHorizontalTextOptions.color,

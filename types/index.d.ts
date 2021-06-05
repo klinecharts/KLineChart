@@ -16,6 +16,8 @@ import {
   Annotation
 } from './Annotation';
 
+import { Tag } from './Tag';
+
 import { PaneOptions } from './Pane';
 import {
   TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
@@ -44,6 +46,7 @@ export {
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
   CreateGraphicMarkOptions, OverrideGraphicMarkOptions, GraphicMark,
   AnnotationCheckParams, AnnotationDrawParams, Annotation,
+  Tag,
   TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, OverrideTechnicalIndicator,

@@ -127,6 +127,9 @@ export default class ChartData {
     // 注解鼠标操作信息
     this._annotationMouseOperate = { id: '' }
 
+    // 标签
+    this._tags = new Map()
+
     // 调整pane标记
     this._dragPaneFlag = false
 
@@ -884,7 +887,7 @@ export default class ChartData {
    */
   removeAnnotation (points) {
     let shouldAdjust = false
-    if (points) {
+    if (isValid(points)) {
       ([].concat(points)).forEach(({ timestamp }) => {
         if (this._annotations.has(timestamp)) {
           shouldAdjust = true
@@ -900,6 +903,48 @@ export default class ChartData {
       this._visibleAnnotations = []
     }
     if (shouldAdjust) {
+      this.invalidate(InvalidateLevel.OVERLAY)
+    }
+  }
+
+  /**
+   * 获取标签
+   * @return {Map<any, any>}
+   */
+  tags () {
+    return this._tags
+  }
+
+  /**
+   * 添加标签
+   * @param tags
+   */
+  addTags (tags) {
+    tags.forEach(tag => {
+      this._tags.set(tag.id(), tag)
+    })
+    this.invalidate(InvalidateLevel.OVERLAY)
+  }
+
+  /**
+   * 移除标签
+   * @param id
+   */
+  removeTag (id) {
+    let shouldInvalidate = false
+    if (isValid(id)) {
+      const ids = [].concat(id)
+      ids.forEach(id => {
+        if (this._tags.has(id)) {
+          shouldInvalidate = true
+          this._tags.delete(id)
+        }
+      })
+    } else {
+      shouldInvalidate = true
+      this._tags.clear()
+    }
+    if (shouldInvalidate) {
       this.invalidate(InvalidateLevel.OVERLAY)
     }
   }

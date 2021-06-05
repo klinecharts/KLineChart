@@ -3,6 +3,7 @@ import { CoordinatePoint, KLineData, TimestampPricePoint } from './Common';
 import { OverrideTechnicalIndicator, TechnicalIndicator } from './TechnicalIndicator';
 import { CreateGraphicMarkOptions, OverrideGraphicMarkOptions, GraphicMark } from './GraphicMark';
 import { Annotation } from './Annotation';
+import { Tag } from './Tag';
 
 import { PaneOptions } from './Pane';
 
@@ -55,7 +56,9 @@ export declare interface Chart {
   addCustomGraphicMark(graphicMark: GraphicMark | GraphicMark[]): void;
   removeGraphicMark(graphicMarkId?: string): void;
   createAnnotation(annotation: Annotation | Annotation[]): void;
-  removeAnnotation(point: TimestampPricePoint | TimestampPricePoint[]): void;
+  removeAnnotation(point?: TimestampPricePoint | TimestampPricePoint[]): void;
+  createTag(tag: Tag | Tag[]): void;
+  removeTag(id?: string): void;
   scrollByDistance(distance: number, animationDuration?: number): void;
   scrollToRealTime(animationDuration?: number): void;
   scrollToPosition(position: number, animationDuration?: number): void;

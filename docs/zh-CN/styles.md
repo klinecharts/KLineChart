@@ -373,6 +373,45 @@
       activeColor: '#FF9600',
       offset: [0, 20]
     }
+  },
+  tag: {
+    offset: 0,
+    line: {
+      show: true,
+      style: LineStyle.DASH,
+      dashValue: [4, 2],
+      size: 1,
+      color: '#2196F3'
+    },
+    text: {
+      show: true,
+      value: {
+        show: true,
+        color: '#FFFFFF',
+        backgroundColor: '#2196F3',
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderRadius: 2
+      },
+      mark: {
+        show: true,
+        color: '#FFFFFF',
+        backgroundColor: '#2196F3',
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderRadius: 2
+      }
+    }
   }
 }
 ```

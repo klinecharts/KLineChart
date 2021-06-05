@@ -13,7 +13,7 @@
  */
 
 import Axis from './Axis'
-import { CandleType, YAxisType } from '../data/options/styleOptions'
+import { CandleType, YAxisPosition, YAxisType } from '../data/options/styleOptions'
 import { isNumber, isValid } from '../utils/typeChecks'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
@@ -37,7 +37,7 @@ export default class YAxis extends Axis {
     const technicalIndicators = this._additionalDataProvider.technicalIndicators()
     technicalIndicators.forEach(tech => {
       if (!shouldOhlc) {
-        shouldOhlc = tech.should
+        shouldOhlc = tech.shouldOhlc
       }
       technicalIndicatorPrecision = Math.min(technicalIndicatorPrecision, tech.precision)
       if (isValid(tech.minValue) && isNumber(tech.minValue)) {
@@ -91,12 +91,8 @@ export default class YAxis extends Axis {
       })
     })
     if (minMaxArray[0] !== Number.MAX_SAFE_INTEGER && minMaxArray[1] !== Number.MIN_SAFE_INTEGER) {
-      if (minValue !== Number.MAX_SAFE_INTEGER) {
-        minMaxArray[0] = Math.min(minValue, minMaxArray[0])
-      }
-      if (maxValue !== Number.MIN_SAFE_INTEGER) {
-        minMaxArray[1] = Math.max(maxValue, minMaxArray[1])
-      }
+      minMaxArray[0] = Math.min(minValue, minMaxArray[0])
+      minMaxArray[1] = Math.max(maxValue, minMaxArray[1])
     } else {
       minMaxArray[0] = 0
       minMaxArray[1] = 0
@@ -256,6 +252,18 @@ export default class YAxis extends Axis {
   }
 
   /**
+   * 是否从y轴0开始
+   * @return {boolean|*|boolean}
+   */
+  isFromYAxisZero () {
+    const yAxisOptions = this._chartData.styleOptions().yAxis
+    return (
+      (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside) ||
+      (yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside)
+    )
+  }
+
+  /**
    * 获取自身宽度
    * @return {number}
    */
@@ -370,5 +378,15 @@ export default class YAxis extends Axis {
       }
     }
     return this._innerConvertToPixel(v)
+  }
+
+  /**
+   * 将值转换成坐标，即使坐标不在范围内，也会显示在顶部或者底部
+   * @param value
+   * @return {number}
+   */
+  convertToNicePixel (value) {
+    const y = this.convertToPixel(value)
+    return Math.round(Math.max(this._height * 0.05, Math.min(y, this._height * 0.98)))
   }
 }

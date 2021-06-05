@@ -176,7 +176,7 @@ Special paneId: candle_pane, the window id of the main image
 
 
 ### addCustomTechnicalIndicator(technicalIndicator)
-Add a custom technical indicator.
+Add a custom technical indicator. Can be created in batches, just pass in the array in batches.
 - `technicalIndicator` technical indicator information, please refer to [Technical Indicators](technical-indicator.md)
 
 
@@ -232,7 +232,7 @@ chart.createGraphicMark(
 
 
 ### getGraphicMark(id)
-Get graphic mark information。
+Get graphic mark information.
 - `id` calls the createGraphicMark method to return the identity
 
 
@@ -245,7 +245,7 @@ Set the drawn graphic mark configuration.
 
 
 ### addCustomGraphicMark(graphicMark)
-Add custom graphic markers.
+Add custom graphic markers. Can be created in batches, just pass in the array in batches.
 - `graphicMark` graphic mark information, please refer to [details](graphic-mark.md)
 
 
@@ -255,7 +255,7 @@ Remove all graphic marks.
 
 
 ### createAnnotation(annotation)
-Create annotation. It can be a single or a collection.
+Create annotation. Can be created in batches, just pass in the array in batches.
 - `annotation` annotation information, `{ point, styles, checkPointInCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
   - `point` point `{ timestamp, price }`
   - `styles` style, the format is the same in the configuration of `annotation`
@@ -300,43 +300,105 @@ chart.createAnnotation({
 
 
 ### removeAnnotation(points)
-Remove annotation. It can be a single or a collection.
+Remove annotation. Can be removed in batches, just pass in the array in batches, if default, remove all.
 - `points` single point or collection, `{ timestamp }`
 
 
+### createTag(tag)
+Create tags, you can create them in batches, just pass in an array in batches.
+- `tag` tag，`{ id, value, mark, coordinate, styles }`
+  - `id` unique identifier, if there are duplicates, it will be overwritten
+  - `value` value, default
+  - `mark` mark, default
+  - `coordinate` coordinate, if default, the coordinates will be determined according to the value of value
+  - `styles` style, default, the format is the same as the `tag` in the configuration
+Example:
+```javascript
+chart.createTag({
+  id: 'bid_price',
+  value: '16908.00',
+  coordinate: 20,
+  styles: {
+    offset: 0,
+    line: {
+      show: true,
+      style: LineStyle.DASH,
+      dashValue: [4, 2],
+      size: 1,
+      color: '#2196F3'
+    },
+    text: {
+      show: true,
+      value: {
+        show: true,
+        color: '#FFFFFF',
+        backgroundColor: '#2196F3',
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderRadius: 2
+      },
+      mark: {
+        show: true,
+        color: '#FFFFFF',
+        backgroundColor: '#2196F3',
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderRadius: 2
+      }
+    }
+  }
+})
+```
+
+### removeTag(id)
+Remove tags, you can remove them in batches, just pass in the array in batches, if default, remove all.
+- `id` Unique identification of the tag
+
+
+
 ### scrollByDistance(distance, animationDuration)
-Roll a certain distance
+Roll a certain distance.
 -`distance` distance
 -`animationDuration` animation time, can be default
 
 
 ### scrollToRealTime(animationDuration)
-Scroll to the original position
+Scroll to the original position.
 -`animationDuration` animation time, can be default
 
 
 ### scrollToPosition(position, animationDuration)
-Scroll to the specified position
+Scroll to the specified position.
 -`position` position, which is the index of the data
 -`animationDuration` animation time, can be default
 
 
 ### zoomAtCoordinate(scale, coordinate, animationDuration)
-Zoom at coordinate
+Zoom at coordinate.
 -`scale` scaling ratio
 -`coordinate` coordinate point, `{ x }` can be defaulted, the default is to zoom in the middle of the chart
 -`animationDuration` animation time, can be defaulted, the default is no animation
 
 
 ### zoomAtPosition(scale, position, animationDuration)
-Zoom at position
+Zoom at position.
 -`scale` scaling ratio
 -`position` position, which is the index of the data
 -`animationDuration` animation time, can be defaulted, the default is no animation
 
 
 ### setPaneOptions(options)
-Set pane options
+Set pane options.
 - `options` pane options `{ id, height, dragEnabled }`
   - `id` pane id
   - `height` The height of the window

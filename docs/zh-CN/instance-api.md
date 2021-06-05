@@ -176,12 +176,12 @@ chart.overrideTechnicalIndicator({
 
 
 ### addCustomTechnicalIndicator(technicalIndicator)
-添加一个自定义技术指标。
+添加一个自定义技术指标，可批量创建，批量传入数组即可。
 - `technicalIndicator` 技术指标信息，详细请参考[技术指标](technical-indicator.md)
 
 
 ### createGraphicMark(name, options)
-创建图形标记，返回一个字符串类型的标识
+创建图形标记，返回一个字符串类型的标识。
 - `name` 图形标记类型
 - `options` 配置， `{ id, points, styles, lock, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }` 
    - `id` 可缺省，如果指定，则返回该id
@@ -244,17 +244,17 @@ chart.createGraphicMark(
 
 
 ### addCustomGraphicMark(graphicMark)
-添加自定义图形标记。
+添加自定义图形标记，可批量创建，批量传入数组即可。
 - `graphicMark` 图形标记信息，详细请参考[详情](graphic-mark.md)
 
 
 ### removeGraphicMark(id)
-移除所有的图形标记。
+移除图形标记。
 - `id` 调用createGraphicMark方法是返回的标识，如果缺省，则会移除所有标记
 
 
 ### createAnnotation(annotation)
-创建注解
+创建注解，可批量创建，批量传入数组即可。
 - `annotation` 注解信息, `{ point, styles, checkPointInCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
   - `point` 点 `{ timestamp, price }`
   - `styles` 样式，格式和配置里的`annotation`一致
@@ -300,43 +300,104 @@ chart.createAnnotation({
 
 
 ### removeAnnotation(points)
-移除注解
+移除注解，可批量移除，批量传入数组即可，如果缺省，则移除所有。
 - `points` 点, `{ timestamp }`
 
 
+### createTag(tag)
+创建标签，可批量创建，批量传入数组即可。
+- `tag` 标签，`{ id, value, mark, coordinate, styles }`
+  - `id` 唯一标识，如果有重复的，则会覆盖
+  - `value` 值，可缺省
+  - `mark` 标记，可缺省
+  - `coordinate` 坐标，如果缺省，会根据value的值来确定坐标
+  - `styles` 样式，可缺省，格式和配置里的`tag`一致
+示例:
+```javascript
+chart.createTag({
+  id: 'bid_price',
+  value: '16908.00',
+  coordinate: 20,
+  styles: {
+    offset: 0,
+    line: {
+      show: true,
+      style: LineStyle.DASH,
+      dashValue: [4, 2],
+      size: 1,
+      color: '#2196F3'
+    },
+    text: {
+      show: true,
+      value: {
+        show: true,
+        color: '#FFFFFF',
+        backgroundColor: '#2196F3',
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderRadius: 2
+      },
+      mark: {
+        show: true,
+        color: '#FFFFFF',
+        backgroundColor: '#2196F3',
+        size: 12,
+        family: 'Helvetica Neue',
+        weight: 'normal',
+        paddingLeft: 2,
+        paddingRight: 2,
+        paddingTop: 2,
+        paddingBottom: 2,
+        borderRadius: 2
+      }
+    }
+  }
+})
+```
+
+### removeTag(id)
+移除标签，可批量移除，批量传入数组即可，如果缺省，则移除所有。
+- `id` 标签的唯一标识
+
+
 ### scrollByDistance(distance, animationDuration)
-滚动一定的距离
+滚动一定的距离。
 - `distance` 距离
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
 ### scrollToRealTime(animationDuration)
-滚动到最初的位置
+滚动到最初的位置。
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
 ### scrollToPosition(position, animationDuration)
-滚动到指定的位置
+滚动到指定的位置。
 - `position` 位置
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
 ### zoomAtCoordinate(scale, coordinate, animationDuration)
-在某个坐标点缩放
+在某个坐标点缩放。
 - `scale` 缩放比例
 - `coordinate` 坐标点，`{ x }` 可缺省，缺省则在图表中间位置缩放
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
 ### zoomAtPosition(scale, position, animationDuration)
-在某个位置缩放
+在某个位置缩放。
 - `scale` 缩放比例
 - `position` 位置，即数据的索引
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
 ### setPaneOptions(options)
-设置窗口配置
+设置窗口配置。
 - `options` 窗口配置 `{ id, height, dragEnabled }`
   - `id` 窗口id
   - `height` 窗口高度，可缺省
@@ -365,13 +426,13 @@ chart.setPaneOptions({
 
 
 ### convertToPixel(value, finder)
-将值转换成坐标.
+将值转换成坐标。
 - `value` 值，`{ xAxisValue, yAxisValue }`
 - `finder` 过滤条件，`{ paneId, dataIndexXAxis, absoluteYAxis }`
 
 
 ### convertFromPixel(coordinate, finder)
-将坐标转换成值.
+将坐标转换成值。
 - `coordinate` 坐标，`{ x, y }`
 - `finder` 过滤条件，`{ paneId, dataIndexXAxis, absoluteYAxis }`
 

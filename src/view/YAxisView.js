@@ -13,7 +13,7 @@
  */
 
 import View from './View'
-import { YAxisPosition, YAxisType } from '../data/options/styleOptions'
+import { YAxisType } from '../data/options/styleOptions'
 import { TechnicalIndicatorPlotType } from '../base/technicalindicator/TechnicalIndicator'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
@@ -48,7 +48,7 @@ export default class YAxisView extends View {
     this._ctx.strokeStyle = axisLine.color
     this._ctx.lineWidth = axisLine.size
     let x
-    if (this._isDrawFromStart(yAxisOptions)) {
+    if (this._yAxis.isFromYAxisZero()) {
       x = 0
     } else {
       x = this._width - 1
@@ -68,7 +68,7 @@ export default class YAxisView extends View {
 
     let startX
     let endX
-    if (this._isDrawFromStart(yAxisOptions)) {
+    if (this._yAxis.isFromYAxisZero()) {
       startX = 0
       if (yAxisOptions.axisLine.show) {
         startX += yAxisOptions.axisLine.size
@@ -95,7 +95,7 @@ export default class YAxisView extends View {
     const tickLineShow = tickLine.show
     const tickLineLength = tickLine.length
     let labelX
-    if (this._isDrawFromStart(yAxisOptions)) {
+    if (this._yAxis.isFromYAxisZero()) {
       labelX = tickText.paddingLeft
       if (yAxisOptions.axisLine.show) {
         labelX += yAxisOptions.axisLine.size
@@ -243,8 +243,7 @@ export default class YAxisView extends View {
       paddingLeft, paddingTop, paddingRight, paddingBottom
     }
   ) {
-    let valueY = this._yAxis.convertToPixel(value)
-    valueY = Math.round(Math.max(this._height * 0.05, Math.min(valueY, this._height * 0.98)))
+    const valueY = this._yAxis.convertToNicePixel(value)
     let text
     if (this._yAxis.yAxisType() === YAxisType.PERCENTAGE) {
       const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
@@ -260,7 +259,7 @@ export default class YAxisView extends View {
     const rectWidth = calcTextWidth(this._ctx, text) + paddingLeft + paddingRight
     const rectHeight = paddingTop + size + paddingBottom
     let rectStartX
-    if (this._isDrawFromStart(yAxisOptions)) {
+    if (this._yAxis.isFromYAxisZero()) {
       rectStartX = 0
     } else {
       rectStartX = this._width - rectWidth
@@ -271,14 +270,5 @@ export default class YAxisView extends View {
     )
     this._ctx.textBaseline = 'middle'
     renderText(this._ctx, color, rectStartX + paddingLeft, valueY, text)
-  }
-
-  /**
-   * 判断是否从开始点绘制
-   * @private
-   */
-  _isDrawFromStart (yAxisOptions) {
-    return ((yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside) ||
-      (yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside))
   }
 }

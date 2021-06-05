@@ -503,6 +503,46 @@ const defaultAnnotation = {
   }
 }
 
+const defaultTag = {
+  offset: 0,
+  line: {
+    show: true,
+    style: LineStyle.DASH,
+    dashValue: [4, 2],
+    size: 1,
+    color: '#2196F3'
+  },
+  text: {
+    show: true,
+    value: {
+      show: true,
+      color: '#FFFFFF',
+      backgroundColor: '#2196F3',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 2,
+      paddingRight: 2,
+      paddingTop: 2,
+      paddingBottom: 2,
+      borderRadius: 2
+    },
+    mark: {
+      show: true,
+      color: '#FFFFFF',
+      backgroundColor: '#2196F3',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 2,
+      paddingRight: 2,
+      paddingTop: 2,
+      paddingBottom: 2,
+      borderRadius: 2
+    }
+  }
+}
+
 /**
  * 图表之间默认分割配置
  * @type {{size: number, color: string}}
@@ -523,5 +563,6 @@ export const defaultStyleOptions = {
   separator: defaultSeparator,
   crosshair: defaultCrosshair,
   graphicMark: defaultGraphicMark,
-  annotation: defaultAnnotation
+  annotation: defaultAnnotation,
+  tag: defaultTag
 }

@@ -28,6 +28,7 @@ import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { throttle } from '../utils/performance'
 import Annotation from '../base/overlay/annotation/Annotation'
+import Tag from '../base/overlay/tag/Tag'
 
 import {
   CANDLE_PANE_ID,
@@ -634,6 +635,30 @@ export default class ChartPane {
       })
       this._chartData.addAnnotations(instances)
     }
+  }
+
+  /**
+   * 创建标签
+   * @param tag
+   */
+  createTag (tag) {
+    const tags = [].concat(tag)
+    const instances = []
+    tags.forEach(({ id, value, mark, coordinate, styles }) => {
+      if (isValid(id)) {
+        instances.push(new Tag({
+          id,
+          value,
+          mark,
+          coordinate,
+          styles,
+          chartData: this._chartData,
+          xAxis: this._xAxisPane.xAxis(),
+          yAxis: this._panes.get(CANDLE_PANE_ID).yAxis()
+        }))
+      }
+    })
+    this._chartData.addTags(instances)
   }
 
   /**
