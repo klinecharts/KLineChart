@@ -26,7 +26,7 @@ import {
 import { isNumber } from '../../../utils/typeChecks'
 
 import {
-  AnnotationPosition,
+  OverlayPosition,
   AnnotationSymbolType
 } from '../../../data/options/styleOptions'
 
@@ -108,15 +108,15 @@ export default class Annotation extends Overlay {
     const offset = symbolOptions.offset || []
     let y = 0
     switch (symbolOptions.position) {
-      case AnnotationPosition.POINT: {
+      case OverlayPosition.POINT: {
         y = this._yAxis.convertToPixel(this._tpPoint.price)
         break
       }
-      case AnnotationPosition.TOP: {
+      case OverlayPosition.TOP: {
         y = 0
         break
       }
-      case AnnotationPosition.BOTTOM: {
+      case OverlayPosition.BOTTOM: {
         y = this._yAxis.height()
         break
       }

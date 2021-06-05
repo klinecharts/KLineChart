@@ -86,10 +86,10 @@ export const AnnotationSymbolType = {
 }
 
 /**
- * 注解位置
+ * 覆盖物位置
  * @type {{TOP: string, BOTTOM: string, POINT: string}}
  */
-export const AnnotationPosition = {
+export const OverlayPosition = {
   POINT: 'point',
   TOP: 'top',
   BOTTOM: 'bottom'
@@ -494,7 +494,7 @@ const defaultGraphicMark = {
 const defaultAnnotation = {
   symbol: {
     type: AnnotationSymbolType.DIAMOND,
-    position: AnnotationPosition.TOP,
+    position: OverlayPosition.TOP,
     size: 8,
     color: '#2196F3',
     activeSize: 10,
@@ -504,6 +504,7 @@ const defaultAnnotation = {
 }
 
 const defaultTag = {
+  position: OverlayPosition.POINT,
   offset: 0,
   line: {
     show: true,
@@ -513,33 +514,28 @@ const defaultTag = {
     color: '#2196F3'
   },
   text: {
-    show: true,
-    value: {
-      show: true,
-      color: '#FFFFFF',
-      backgroundColor: '#2196F3',
-      size: 12,
-      family: 'Helvetica Neue',
-      weight: 'normal',
-      paddingLeft: 2,
-      paddingRight: 2,
-      paddingTop: 2,
-      paddingBottom: 2,
-      borderRadius: 2
-    },
-    mark: {
-      show: true,
-      color: '#FFFFFF',
-      backgroundColor: '#2196F3',
-      size: 12,
-      family: 'Helvetica Neue',
-      weight: 'normal',
-      paddingLeft: 2,
-      paddingRight: 2,
-      paddingTop: 2,
-      paddingBottom: 2,
-      borderRadius: 2
-    }
+    color: '#FFFFFF',
+    backgroundColor: '#2196F3',
+    size: 12,
+    family: 'Helvetica Neue',
+    weight: 'normal',
+    paddingLeft: 2,
+    paddingRight: 2,
+    paddingTop: 2,
+    paddingBottom: 2,
+    borderRadius: 2
+  },
+  mark: {
+    color: '#FFFFFF',
+    backgroundColor: '#2196F3',
+    size: 12,
+    family: 'Helvetica Neue',
+    weight: 'normal',
+    paddingLeft: 2,
+    paddingRight: 2,
+    paddingTop: 2,
+    paddingBottom: 2,
+    borderRadius: 2
   }
 }
 

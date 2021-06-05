@@ -32,7 +32,7 @@ export default class YAxisOverlayView extends View {
       // 绘制标签
       const tags = this._chartData.tags()
       tags.forEach(tag => {
-        tag.drawValue(this._ctx)
+        tag.drawText(this._ctx)
       })
     }
     this._drawCrossHairLabel()

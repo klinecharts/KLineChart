@@ -306,19 +306,21 @@ chart.createAnnotation({
 
 ### createTag(tag)
 创建标签，可批量创建，批量传入数组即可。
-- `tag` 标签，`{ id, value, mark, coordinate, styles }`
+- `tag` 标签，`{ id, point, text, mark, styles }`
   - `id` 唯一标识，如果有重复的，则会覆盖
-  - `value` 值，可缺省
+  - `point` 点信息，可缺省
   - `mark` 标记，可缺省
-  - `coordinate` 坐标，如果缺省，会根据value的值来确定坐标
+  - `text` 文字，可缺省
   - `styles` 样式，可缺省，格式和配置里的`tag`一致
 示例:
 ```javascript
 chart.createTag({
   id: 'bid_price',
-  value: '16908.00',
-  coordinate: 20,
+  point: { price: 16908 },
+  text: '16908.00',
+  mark: 'bid',
   styles: {
+    position: 'point',
     offset: 0,
     line: {
       show: true,
@@ -328,33 +330,28 @@ chart.createTag({
       color: '#2196F3'
     },
     text: {
-      show: true,
-      value: {
-        show: true,
-        color: '#FFFFFF',
-        backgroundColor: '#2196F3',
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 2,
-        paddingBottom: 2,
-        borderRadius: 2
-      },
-      mark: {
-        show: true,
-        color: '#FFFFFF',
-        backgroundColor: '#2196F3',
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 2,
-        paddingBottom: 2,
-        borderRadius: 2
-      }
+      color: '#FFFFFF',
+      backgroundColor: '#2196F3',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 2,
+      paddingRight: 2,
+      paddingTop: 2,
+      paddingBottom: 2,
+      borderRadius: 2
+    },
+    mark: {
+      color: '#FFFFFF',
+      backgroundColor: '#2196F3',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 2,
+      paddingRight: 2,
+      paddingTop: 2,
+      paddingBottom: 2,
+      borderRadius: 2
     }
   }
 })

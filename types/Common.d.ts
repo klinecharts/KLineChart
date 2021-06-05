@@ -36,5 +36,3 @@ export declare interface OverlayEvent {
   points?: TimestampPricePoint | TimestampPricePoint[];
   event?: any;
 }
-
-

@@ -13,7 +13,7 @@
  */
 
 import Overlay from '../Overlay'
-import { LineStyle, YAxisPosition } from '../../../data/options/styleOptions'
+import { LineStyle, OverlayPosition, YAxisPosition } from '../../../data/options/styleOptions'
 import { renderHorizontalLine } from '../../../renderer/line'
 import { isValid } from '../../../utils/typeChecks'
 import { calcTextWidth, createFont } from '../../../utils/canvas'
@@ -22,12 +22,12 @@ import { renderText } from '../../../renderer/text'
 
 export default class Tag extends Overlay {
   constructor ({
-    id, value, mark, coordinate, chartData, xAxis, yAxis, styles
+    id, point, text, mark, chartData, xAxis, yAxis, styles
   }) {
     super({ id, chartData, xAxis, yAxis })
-    this._value = value
+    this._tpPoint = point || {}
+    this._text = text
     this._mark = mark
-    this._coordinate = coordinate
     this.setStyles(styles, chartData.styleOptions().tag)
   }
 
@@ -39,43 +39,43 @@ export default class Tag extends Overlay {
     const options = this._chartData.styleOptions()
     const yAxisOptions = options.yAxis
     const tagOptions = this._styles || options.tag
-    const y = this._getY(tagOptions.offset)
+    const y = this._getY(tagOptions)
     ctx.save()
     this._drawLine(ctx, y, tagOptions.line)
-    this._drawMark(ctx, y, tagOptions.text, yAxisOptions)
+    this._drawMark(ctx, y, tagOptions, yAxisOptions)
     ctx.restore()
   }
 
   /**
    * 绘制值
    */
-  drawValue (ctx) {
-    const options = this._chartData.styleOptions()
-    const tagOptions = this._styles || options.tag
-    if (!tagOptions.text.show || !tagOptions.text.value.show || !isValid(this._value)) {
+  drawText (ctx) {
+    if (!isValid(this._text)) {
       return
     }
-    const tagTextValueOptions = tagOptions.text.value
-    ctx.font = createFont(tagTextValueOptions.size, tagTextValueOptions.weight, tagTextValueOptions.family)
-    const rectWidth = this._getValueRectWidth(ctx, tagTextValueOptions)
-    const rectHeight = tagTextValueOptions.paddingTop + tagTextValueOptions.paddingBottom + tagTextValueOptions.size
+    const options = this._chartData.styleOptions()
+    const tagOptions = this._styles || options.tag
+    const tagTextOptions = tagOptions.text
+    ctx.font = createFont(tagTextOptions.size, tagTextOptions.weight, tagTextOptions.family)
+    const rectWidth = this._getTextRectWidth(ctx, tagTextOptions)
+    const rectHeight = tagTextOptions.paddingTop + tagTextOptions.paddingBottom + tagTextOptions.size
     let x
     if (this._yAxis.isFromYAxisZero()) {
       x = 0
     } else {
       x = this._yAxis.width() - rectWidth
     }
-    const y = this._getY(tagOptions.offset)
+    const y = this._getY(tagOptions)
     renderFillRoundRect(
       ctx,
-      tagTextValueOptions.backgroundColor,
+      tagTextOptions.backgroundColor,
       x,
       y - rectHeight / 2,
       rectWidth,
       rectHeight,
-      tagTextValueOptions.borderRadius
+      tagTextOptions.borderRadius
     )
-    renderText(ctx, tagTextValueOptions.color, x + tagTextValueOptions.paddingLeft, y, this._value)
+    renderText(ctx, tagTextOptions.color, x + tagTextOptions.paddingLeft, y, this._text)
   }
 
   /**
@@ -101,23 +101,23 @@ export default class Tag extends Overlay {
    * 绘制标记
    * @param ctx
    * @param y
-   * @param tagTextOptions
+   * @param tagOptions
    * @param yAxisOptions
    * @private
    */
-  _drawMark (ctx, y, tagTextOptions, yAxisOptions) {
-    if (!tagTextOptions.show || !tagTextOptions.mark.show || !isValid(this._mark)) {
+  _drawMark (ctx, y, tagOptions, yAxisOptions) {
+    if (!isValid(this._mark)) {
       return
     }
-    const tagTextMarkOptions = tagTextOptions.mark
-    ctx.font = createFont(tagTextMarkOptions.size, tagTextMarkOptions.weight, tagTextMarkOptions.family)
-    const rectWidth = tagTextMarkOptions.paddingLeft + tagTextMarkOptions.paddingRight + calcTextWidth(ctx, this._mark)
-    const rectHeight = tagTextMarkOptions.paddingTop + tagTextMarkOptions.paddingBottom + tagTextMarkOptions.size
+    const tagMarkOptions = tagOptions.mark
+    ctx.font = createFont(tagMarkOptions.size, tagMarkOptions.weight, tagMarkOptions.family)
+    const rectWidth = tagMarkOptions.paddingLeft + tagMarkOptions.paddingRight + calcTextWidth(ctx, this._mark)
+    const rectHeight = tagMarkOptions.paddingTop + tagMarkOptions.paddingBottom + tagMarkOptions.size
     let x
     if (yAxisOptions.inside) {
       let valueRectWidth = 0
-      if (isValid(this._value) && tagTextOptions.value.show) {
-        valueRectWidth = this._getValueRectWidth(ctx, tagTextOptions.value)
+      if (isValid(this._text)) {
+        valueRectWidth = this._getTextRectWidth(ctx, tagOptions.text)
       }
       if (yAxisOptions.position === YAxisPosition.LEFT) {
         x = valueRectWidth
@@ -133,40 +133,48 @@ export default class Tag extends Overlay {
     }
     renderFillRoundRect(
       ctx,
-      tagTextMarkOptions.backgroundColor,
+      tagMarkOptions.backgroundColor,
       x,
       y - rectHeight / 2,
       rectWidth,
       rectHeight,
-      tagTextMarkOptions.borderRadius
+      tagMarkOptions.borderRadius
     )
     ctx.textBaseline = 'middle'
-    ctx.font = createFont(tagTextMarkOptions.size, tagTextMarkOptions.weight, tagTextMarkOptions.family)
-    renderText(ctx, tagTextMarkOptions.color, x + tagTextMarkOptions.paddingLeft, y, this._mark)
+    ctx.font = createFont(tagMarkOptions.size, tagMarkOptions.weight, tagMarkOptions.family)
+    renderText(ctx, tagMarkOptions.color, x + tagMarkOptions.paddingLeft, y, this._mark)
   }
 
   /**
    * 获取坐标y值
-   * @param offset
+   * @param tagOptions
    * @return {*}
    * @private
    */
-  _getY (offset = 0) {
-    if (isValid(this._coordinate)) {
-      return this._coordinate
+  _getY (tagOptions) {
+    const offset = tagOptions.offset
+    switch (tagOptions.position) {
+      case OverlayPosition.TOP: {
+        return offset
+      }
+      case OverlayPosition.BOTTOM: {
+        return this._yAxis.height() + offset
+      }
+      default: {
+        return this._yAxis.convertToNicePixel(this._tpPoint.price) + offset
+      }
     }
-    return this._yAxis.convertToNicePixel(+this._value) + offset
   }
 
   /**
    * 获取值的矩形宽度
    * @param ctx
-   * @param valueOptions
+   * @param textOptions
    * @return {*}
    * @private
    */
-  _getValueRectWidth (ctx, valueOptions) {
-    ctx.font = createFont(valueOptions.size, valueOptions.weight, valueOptions.family)
-    return valueOptions.paddingLeft + valueOptions.paddingRight + calcTextWidth(ctx, this._value)
+  _getTextRectWidth (ctx, textOptions) {
+    ctx.font = createFont(textOptions.size, textOptions.weight, textOptions.family)
+    return textOptions.paddingLeft + textOptions.paddingRight + calcTextWidth(ctx, this._text)
   }
 }

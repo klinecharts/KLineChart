@@ -644,13 +644,13 @@ export default class ChartPane {
   createTag (tag) {
     const tags = [].concat(tag)
     const instances = []
-    tags.forEach(({ id, value, mark, coordinate, styles }) => {
+    tags.forEach(({ id, point, text, mark, styles }) => {
       if (isValid(id)) {
         instances.push(new Tag({
           id,
-          value,
+          point,
+          text,
           mark,
-          coordinate,
           styles,
           chartData: this._chartData,
           xAxis: this._xAxisPane.xAxis(),

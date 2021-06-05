@@ -348,6 +348,8 @@
     }
   },
   tag: {
+    // 'top' | 'bottom' | 'point'
+    position: 'point',
     offset: 0,
     line: {
       show: true,
@@ -357,33 +359,28 @@
       color: '#2196F3'
     },
     text: {
-      show: true,
-      value: {
-        show: true,
-        color: '#FFFFFF',
-        backgroundColor: '#2196F3',
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 2,
-        paddingBottom: 2,
-        borderRadius: 2
-      },
-      mark: {
-        show: true,
-        color: '#FFFFFF',
-        backgroundColor: '#2196F3',
-        size: 12,
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 2,
-        paddingBottom: 2,
-        borderRadius: 2
-      }
+      color: '#FFFFFF',
+      backgroundColor: '#2196F3',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 2,
+      paddingRight: 2,
+      paddingTop: 2,
+      paddingBottom: 2,
+      borderRadius: 2
+    },
+    mark: {
+      color: '#FFFFFF',
+      backgroundColor: '#2196F3',
+      size: 12,
+      family: 'Helvetica Neue',
+      weight: 'normal',
+      paddingLeft: 2,
+      paddingRight: 2,
+      paddingTop: 2,
+      paddingBottom: 2,
+      borderRadius: 2
     }
   }
 }
