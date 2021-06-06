@@ -18,32 +18,32 @@
   // 检查鼠标点是否在图形上，是一个回调方法，必须字段
   // key 创建数据源的时候给的key
   // type 图形类型
-  // points 图形点信息
-  // mousePoint 当前鼠标点
+  // coordinates 图形坐标信息
+  // mouseCoordinate 当前鼠标坐标
   // 需要返回boolean值
-  checkMousePointOn: (key, type, points, mousePoint) => {},
+  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {},
 
   // 创建图形数据源，是一个回调方法，必须字段，需要返回图形数据
   // step 当前步骤
-  // tpPoints 时间价格点信息
-  // xyPoints 时间价格点对应的坐标轴信息
+  // points 时间价格点信息
+  // coordinates 时间价格点对应的坐标轴信息
   // viewport 尺寸
   // precision 精度信息，包含价格和数量精度
   // xAxis x轴组件
   // yAxis y轴组件
-  createGraphicDataSource: (step, tpPoints, xyPoints, viewport, precision, xAxis, yAxis) => {},
+  createGraphicDataSource: (step, points, coordinates, viewport, precision, xAxis, yAxis) => {},
 
   // 处理在绘制过程中鼠标移动操作，可缺省，鼠标操作绘制过程中触发
   // step 当前步骤
-  // tpPoints 图形时间价格点信息
-  // tpPoint 鼠标点对应的时间价格信息
-  performMouseMoveForDrawing: (step, tpPoints, tpPoint) => {},
+  // points 图形时间价格点信息
+  // point 鼠标坐标对应的时间价格信息
+  performMouseMoveForDrawing: (step, points, point) => {},
 
   // 处理鼠标按住移动操作，可缺省，鼠标按住某个操作点移动过程中触发
-  // tpPoints 图形时间价格点信息
+  // points 图形时间价格点信息
   // pressedPointIndex 按住点的索引
-  // tpPoint 鼠标点对应的时间价格信息
-  performMousePressedMove: (tpPoints, pressedPointIndex, tpPoint) => {},
+  // point 鼠标坐标对应的时间价格信息
+  performMousePressedMove: (points, pressedPointIndex, tpPoint) => {},
 
   // 扩展绘制，可缺省
   // ctx 画布上下文
@@ -103,18 +103,18 @@
   totalStep: 3,
 
   // 检查鼠标点是否在圆边框上
-  checkMousePointOn: (key, type, points, mousePoint) => {
-    const xDis = Math.abs(points.x - mousePoint.x)
-    const yDis = Math.abs(points.y - mousePoint.y)
+  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
+    const xDis = Math.abs(coordinates.x - mouseCoordinate.x)
+    const yDis = Math.abs(coordinates.y - mouseCoordinate.y)
     const r = Math.sqrt(xDis * xDis + yDis * yDis)
     return Math.abs(r - points.radius) < 2;
   },
 
   // 创建图形信息
-  createGraphicDataSource: (step, tpPoint, xyPoints) => {
-    if (xyPoints.length === 2) {
-      const xDis = Math.abs(xyPoints[0].x - xyPoints[1].x)
-      const yDis = Math.abs(xyPoints[0].y - xyPoints[1].y)
+  createGraphicDataSource: (step, points, coordinates) => {
+    if (coordinates.length === 2) {
+      const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
+      const yDis = Math.abs(coordinates[0].y - coordinates[1].y)
       const radius = Math.sqrt(xDis * xDis + yDis * yDis)
       // 通过一个空心圆和一个实心圆来组成一个填充带边框的圆
       return [
@@ -128,7 +128,7 @@
           style: 'fill',
           // 点信息
           dataSource: [
-            { ...xyPoints[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
+            { ...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
           ]
         },
         // 空心圆
@@ -139,7 +139,7 @@
           isCheck: true,
           // 点信息
           dataSource: [
-            { ...xyPoints[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
+            { ...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
           ]
         }
       ]

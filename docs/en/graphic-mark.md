@@ -18,32 +18,32 @@ To complete a custom graphic mark, you only need to generate a graphic mark info
   // Check whether the mouse point is on the graph, it is a callback method, a required field
   // key The key given when creating the data source
   // type graphics type
-  // points graphic point information
-  // mousePoint current mouse point
+  // coordinates graphic coordinate information
+  // mouseCoordinate current mouse coordinate
   // Need to return boolean value
-  checkMousePointOn: (key, type, points, mousePoint) => {},
+  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {},
 
   // Creating a graphic data source is a callback method. It must be a field and needs to return graphic data
   // step current step
-  // tpPoints time price point information
-  // xyPoints time price point corresponding axis information
+  // points time price point information
+  // coordinates time price point corresponding axis information
   // viewport size
   // precision precision information, including price and quantity precision
   // xAxis x-axis component
   // yAxis y axis component
-  createGraphicDataSource: (step, tpPoints, xyPoints, viewport, precision, xAxis, yAxis) => {},
+  createGraphicDataSource: (step, points, coordinates, viewport, precision, xAxis, yAxis) => {},
 
   // Process the mouse movement operation during the drawing process, it can be defaulted, and the mouse operation is triggered during the drawing process
   // step current step
-  // tpPoints graph time price point information
-  // tpPoint time and price information corresponding to the mouse point
-  performMouseMoveForDrawing: (step, tpPoints, tpPoint) => {},
+  // points graph time price point information
+  // point time and price information corresponding to the mouse point
+  performMouseMoveForDrawing: (step, points, point) => {},
 
   // Handle the mouse hold and move operation, it can be defaulted, the mouse is triggered during the movement process of holding down an operating point
-  // tpPoints graph time price point information
+  // points graph time price point information
   // pressedPointIndex The index of the pressed point
-  // tpPoint time and price information corresponding to the mouse point
-  performMousePressedMove: (tpPoints, pressedPointIndex, tpPoint) => {},
+  // point time and price information corresponding to the mouse point
+  performMousePressedMove: (points, pressedPointIndex, point) => {},
 
   // Extended drawing, default
   // ctx canvas context
@@ -103,18 +103,18 @@ Use a filled circle with a border to illustrate how to configure it.
   totalStep: 3,
 
   // Check if the mouse point is on the circle border
-  checkMousePointOn: (key, type, points, mousePoint) => {
-    const xDis = Math.abs(points.x-mousePoint.x)
-    const yDis = Math.abs(points.y-mousePoint.y)
+  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
+    const xDis = Math.abs(coordinates.x - mouseCoordinate.x)
+    const yDis = Math.abs(coordinates.y - mouseCoordinate.y)
     const r = Math.sqrt(xDis * xDis + yDis * yDis)
-    return Math.abs(r - points.radius) <2;
+    return Math.abs(r - coordinates.radius) < 2;
   },
 
   // Create graphic information
-  createGraphicDataSource: (step, tpPoint, xyPoints) => {
-    if (xyPoints.length === 2) {
-      const xDis = Math.abs(xyPoints[0].x-xyPoints[1].x)
-      const yDis = Math.abs(xyPoints[0].y-xyPoints[1].y)
+  createGraphicDataSource: (step, points, coordinates) => {
+    if (coordinates.length === 2) {
+      const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
+      const yDis = Math.abs(coordinates[0].y - coordinates[1].y)
       const radius = Math.sqrt(xDis * xDis + yDis * yDis)
       // A circle filled with a border is formed by a hollow circle and a solid circle
       return [
@@ -128,7 +128,7 @@ Use a filled circle with a border to illustrate how to configure it.
           style: 'fill',
           // point information
           dataSource: [
-            {...xyPoints[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
+            {...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
           ]
         },
         // hollow circle
@@ -139,7 +139,7 @@ Use a filled circle with a border to illustrate how to configure it.
           isCheck: true,
           // point information
           dataSource: [
-            {...xyPoints[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
+            {...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
           ]
         }
       ]
