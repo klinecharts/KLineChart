@@ -13,7 +13,7 @@
  */
 
 import ChartPane from './pane/ChartPane'
-import { clone, isNumber, isValid, isArray } from './utils/typeChecks'
+import { clone, isNumber, isValid, isObject, isArray, isFunction } from './utils/typeChecks'
 import { logWarn } from './utils/logger'
 import { requestAnimationFrame } from './utils/compatible'
 
@@ -43,10 +43,12 @@ export default class Chart {
    * @param options
    */
   setStyleOptions (options) {
-    if (options) {
-      this._chartPane.chartData().applyStyleOptions(options)
-      this._chartPane.adjustPaneViewport(true, true, true, true, true)
+    if (!isObject(options)) {
+      logWarn('setStyleOptions', 'options')
+      return
     }
+    this._chartPane.chartData().applyStyleOptions(options)
+    this._chartPane.adjustPaneViewport(true, true, true, true, true)
   }
 
   /**
@@ -215,6 +217,10 @@ export default class Chart {
    * @param data
    */
   updateData (data) {
+    if (!isObject(data)) {
+      logWarn('updateData', 'data')
+      return
+    }
     this._chartPane.updateData(data)
   }
 
@@ -223,7 +229,11 @@ export default class Chart {
    * @param cb
    */
   loadMore (cb) {
-    this._chartPane.chartData().loadMore(cb)
+    if (!isFunction(cb)) {
+      logWarn('loadMore', 'cb', 'cb must be a method!!!')
+      return
+    }
+    this._chartPane.chartData().setLoadMoreCallback(cb)
   }
 
   /**
@@ -244,10 +254,15 @@ export default class Chart {
 
   /**
    * 添加自定义技术指标
-   * @param technicalIndicatorInfo
+   * @param technicalIndicator
    */
-  addCustomTechnicalIndicator (technicalIndicatorInfo) {
-    this._chartPane.chartData().addCustomTechnicalIndicator(technicalIndicatorInfo)
+  addCustomTechnicalIndicator (technicalIndicator) {
+    if (!isObject(technicalIndicator) || !isArray(technicalIndicator)) {
+      logWarn('addCustomTechnicalIndicator', 'technicalIndicator', 'technicalIndicator must be an object or array!!!')
+      return
+    }
+    const technicalIndicators = [].concat(technicalIndicator)
+    this._chartPane.chartData().addCustomTechnicalIndicator(technicalIndicators)
   }
 
   /**
@@ -301,7 +316,12 @@ export default class Chart {
    * @param graphicMark
    */
   addCustomGraphicMark (graphicMark) {
-    this._chartPane.chartData().addCustomGraphicMark(graphicMark)
+    if (!isObject(graphicMark) || !isArray(graphicMark)) {
+      logWarn('addCustomGraphicMark', 'graphicMark', 'graphicMark must be an object or array!!!')
+      return
+    }
+    const graphicMarks = [].concat(graphicMark)
+    this._chartPane.chartData().addCustomGraphicMark(graphicMarks)
   }
 
   /**
@@ -309,18 +329,19 @@ export default class Chart {
    * @param graphicMarkId
    */
   removeGraphicMark (graphicMarkId) {
-    if (graphicMarkId) {
-      this._chartPane.chartData().removeGraphicMarkInstance(graphicMarkId)
-    } else {
-      this._chartPane.chartData().clearGraphicMark()
-    }
+    this._chartPane.chartData().removeGraphicMarkInstance(graphicMarkId)
   }
 
   /**
    * 创建注解
-   * @param annotations
+   * @param annotation
    */
-  createAnnotation (annotations) {
+  createAnnotation (annotation) {
+    if (!isObject(annotation) || !isArray(annotation)) {
+      logWarn('createAnnotation', 'annotation', 'annotation must be an object or array!!!')
+      return
+    }
+    const annotations = [].concat(annotation)
     this._chartPane.createAnnotation(annotations)
   }
 
@@ -333,9 +354,14 @@ export default class Chart {
 
   /**
    * 创建标签
-   * @param tags
+   * @param tag
    */
-  createTag (tags) {
+  createTag (tag) {
+    if (!isObject(tag) || !isArray(tag)) {
+      logWarn('createTag', 'tag', 'tag must be an object or array!!!')
+      return
+    }
+    const tags = [].concat(tag)
     this._chartPane.createTag(tags)
   }
 

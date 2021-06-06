@@ -587,62 +587,64 @@ export default class ChartPane {
 
   /**
    * 创建注解
-   * @param annotation
+   * @param annotations
    */
-  createAnnotation (annotation) {
-    if (annotation) {
-      const instances = []
-      const annotations = [].concat(annotation)
-      annotations.forEach(({
-        point, styles,
-        checkPointInCustomSymbol,
-        drawCustomSymbol, drawExtend,
-        onClick, onRightClick,
-        onMouseEnter, onMouseLeave
-      }) => {
-        if (point && point.timestamp) {
-          const annotationInstance = new Annotation({
-            id: point.timestamp,
-            chartData: this._chartData,
-            point,
-            xAxis: this._xAxisPane.xAxis(),
-            yAxis: this._panes.get(CANDLE_PANE_ID).yAxis(),
-            styles
-          })
-          if (isFunction(drawExtend)) {
-            annotationInstance.drawExtend = drawExtend
-          }
-          if (isFunction(checkPointInCustomSymbol)) {
-            annotationInstance.checkPointInCustomSymbol = checkPointInCustomSymbol
-          }
-          if (isFunction(drawCustomSymbol)) {
-            annotationInstance.drawCustomSymbol = drawCustomSymbol
-          }
-          if (isFunction(onClick)) {
-            annotationInstance.onClick = onClick
-          }
-          if (isFunction(onRightClick)) {
-            annotationInstance.onRightClick = onRightClick
-          }
-          if (isFunction(onMouseEnter)) {
-            annotationInstance.onMouseEnter = onMouseEnter
-          }
-          if (isFunction(onMouseLeave)) {
-            annotationInstance.onMouseLeave = onMouseLeave
-          }
-          instances.push(annotationInstance)
+  createAnnotation (annotations) {
+    const instances = []
+    annotations.forEach(({
+      point,
+      styles,
+      checkPointInCustomSymbol,
+      drawCustomSymbol,
+      drawExtend,
+      onClick,
+      onRightClick,
+      onMouseEnter,
+      onMouseLeave
+    }) => {
+      if (point && point.timestamp) {
+        const annotationInstance = new Annotation({
+          id: point.timestamp,
+          chartData: this._chartData,
+          point,
+          xAxis: this._xAxisPane.xAxis(),
+          yAxis: this._panes.get(CANDLE_PANE_ID).yAxis(),
+          styles
+        })
+        if (isFunction(drawExtend)) {
+          annotationInstance.drawExtend = drawExtend
         }
-      })
+        if (isFunction(checkPointInCustomSymbol)) {
+          annotationInstance.checkPointInCustomSymbol = checkPointInCustomSymbol
+        }
+        if (isFunction(drawCustomSymbol)) {
+          annotationInstance.drawCustomSymbol = drawCustomSymbol
+        }
+        if (isFunction(onClick)) {
+          annotationInstance.onClick = onClick
+        }
+        if (isFunction(onRightClick)) {
+          annotationInstance.onRightClick = onRightClick
+        }
+        if (isFunction(onMouseEnter)) {
+          annotationInstance.onMouseEnter = onMouseEnter
+        }
+        if (isFunction(onMouseLeave)) {
+          annotationInstance.onMouseLeave = onMouseLeave
+        }
+        instances.push(annotationInstance)
+      }
+    })
+    if (instances.length > 0) {
       this._chartData.addAnnotations(instances)
     }
   }
 
   /**
    * 创建标签
-   * @param tag
+   * @param tags
    */
-  createTag (tag) {
-    const tags = [].concat(tag)
+  createTag (tags) {
     const instances = []
     tags.forEach(({ id, point, text, mark, styles }) => {
       if (isValid(id)) {
@@ -658,7 +660,9 @@ export default class ChartPane {
         }))
       }
     })
-    this._chartData.addTags(instances)
+    if (instances.length > 0) {
+      this._chartData.addTags(instances)
+    }
   }
 
   /**

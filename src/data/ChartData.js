@@ -698,18 +698,8 @@ export default class ChartData {
    * 设置加载更多
    * @param callback
    */
-  loadMore (callback) {
+  setLoadMoreCallback (callback) {
     this._loadMoreCallback = callback
-  }
-
-  /**
-   * 清空图形标记
-   */
-  clearGraphicMark () {
-    if (this._graphicMarks.length > 0) {
-      this._graphicMarks = []
-      this.invalidate(InvalidateLevel.OVERLAY)
-    }
   }
 
   /**
@@ -732,11 +722,10 @@ export default class ChartData {
 
   /**
    * 添加自定义标记图形
-   * @param graphicMark
+   * @param graphicMarks
    */
-  addCustomGraphicMark (graphicMark) {
-    const marks = [].concat(graphicMark)
-    marks.forEach(mark => {
+  addCustomGraphicMark (graphicMarks) {
+    graphicMarks.forEach(mark => {
       const GraphicMarkClass = createGraphicMarkClass(mark)
       if (GraphicMarkClass) {
         this._graphicMarkMapping[mark.name] = GraphicMarkClass
@@ -785,11 +774,21 @@ export default class ChartData {
    */
   removeGraphicMarkInstance (id) {
     const graphicMarks = this._graphicMarks
-    const removeIndex = graphicMarks.findIndex(gm => gm.id() === id)
-    if (removeIndex > -1) {
-      graphicMarks[removeIndex].onRemove({ id: graphicMarks[removeIndex].id() })
-      graphicMarks.splice(removeIndex, 1)
-      this.invalidate(InvalidateLevel.OVERLAY)
+    if (isValid(id)) {
+      const removeIndex = graphicMarks.findIndex(gm => gm.id() === id)
+      if (removeIndex > -1) {
+        graphicMarks[removeIndex].onRemove({ id: graphicMarks[removeIndex].id() })
+        graphicMarks.splice(removeIndex, 1)
+        this.invalidate(InvalidateLevel.OVERLAY)
+      }
+    } else {
+      if (graphicMarks.length > 0) {
+        graphicMarks.forEach(gm => {
+          gm.onRemove({ id: gm.id() })
+        })
+        this._graphicMarks = []
+        this.invalidate(InvalidateLevel.OVERLAY)
+      }
     }
   }
 
@@ -982,11 +981,10 @@ export default class ChartData {
 
   /**
    * 添加一个自定义指标
-   * @param technicalIndicator
+   * @param technicalIndicators
    */
-  addCustomTechnicalIndicator (technicalIndicator) {
-    const techs = [].concat(technicalIndicator)
-    techs.forEach(tech => {
+  addCustomTechnicalIndicator (technicalIndicators) {
+    technicalIndicators.forEach(tech => {
       const technicalIndicatorInstance = createTechnicalIndicatorInstance(tech || {})
       if (technicalIndicatorInstance) {
         // 将生成的新的指标类放入集合
