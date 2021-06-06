@@ -26,15 +26,15 @@ export default class OverlayEventHandler extends EventHandler {
    * 处理覆盖物鼠标hover事件
    * @param overlays
    * @param preHoverOperate
-   * @param point
+   * @param coordinate
    * @param event
    * @return {*}
    * @private
    */
-  _performOverlayMouseHover (overlays, preHoverOperate, point, event) {
+  _performOverlayMouseHover (overlays, preHoverOperate, coordinate, event) {
     let hoverOperate
     for (const overlay of overlays) {
-      hoverOperate = overlay.checkMousePointOnGraphic(point)
+      hoverOperate = overlay.checkMousePointOnGraphic(coordinate)
       if (hoverOperate) {
         break
       }
@@ -43,14 +43,14 @@ export default class OverlayEventHandler extends EventHandler {
       if (preHoverOperate.id && preHoverOperate.instance && isMouse(event)) {
         preHoverOperate.instance.onMouseLeave({
           id: preHoverOperate.id,
-          points: preHoverOperate.instance.tpPoints(),
+          points: preHoverOperate.instance.points(),
           event
         })
       }
       if (hoverOperate && hoverOperate.id !== preHoverOperate.id && hoverOperate.instance && isMouse(event)) {
         hoverOperate.instance.onMouseEnter({
           id: hoverOperate.id,
-          points: hoverOperate.instance.tpPoints(),
+          points: hoverOperate.instance.points(),
           event
         })
       }
@@ -74,7 +74,7 @@ export default class OverlayEventHandler extends EventHandler {
       return
     }
     this._waitingForMouseMoveAnimationFrame = true
-    const point = { x: event.localX, y: event.localY }
+    const coordinate = { x: event.localX, y: event.localY }
     const graphicMarks = this._chartData.graphicMarks()
     const visibleAnnotations = this._chartData.visibleAnnotations()
     const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
@@ -84,16 +84,16 @@ export default class OverlayEventHandler extends EventHandler {
     let graphicMarkClickOperate
     let annotationHoverOperate
     if (lastGraphicMark && lastGraphicMark.isDrawing()) {
-      lastGraphicMark.mouseMoveForDrawing(point)
-      graphicMarkHoverOperate = lastGraphicMark.checkMousePointOnGraphic(point)
+      lastGraphicMark.mouseMoveForDrawing(coordinate)
+      graphicMarkHoverOperate = lastGraphicMark.checkMousePointOnGraphic(coordinate)
       graphicMarkClickOperate = {
         id: '',
         element: GraphicMarkMouseOperateElement.NONE,
         elementIndex: -1
       }
     } else {
-      graphicMarkHoverOperate = this._performOverlayMouseHover(graphicMarks, preGraphicMarkHoverOperate, point, event)
-      annotationHoverOperate = this._performOverlayMouseHover(visibleAnnotations, preAnnotationHoverOperate, point, event)
+      graphicMarkHoverOperate = this._performOverlayMouseHover(graphicMarks, preGraphicMarkHoverOperate, coordinate, event)
+      annotationHoverOperate = this._performOverlayMouseHover(visibleAnnotations, preAnnotationHoverOperate, coordinate, event)
     }
     this._chartData.setOverlayMouseOperate({
       hover: graphicMarkHoverOperate || {
@@ -114,7 +114,7 @@ export default class OverlayEventHandler extends EventHandler {
     if (!this._checkEventPointX(event.localX) || !this._checkEventPointY(event.localY)) {
       return
     }
-    const point = { x: event.localX, y: event.localY }
+    const coordinate = { x: event.localX, y: event.localY }
     const graphicMarks = this._chartData.graphicMarks()
     const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
     let graphicMarkHoverOperate = {
@@ -124,11 +124,11 @@ export default class OverlayEventHandler extends EventHandler {
     }
     let graphicMarkClickOperate
     if (lastGraphicMark && lastGraphicMark.isDrawing()) {
-      lastGraphicMark.mouseLeftButtonDownForDrawing(point)
-      graphicMarkClickOperate = lastGraphicMark.checkMousePointOnGraphic(point)
+      lastGraphicMark.mouseLeftButtonDownForDrawing(coordinate)
+      graphicMarkClickOperate = lastGraphicMark.checkMousePointOnGraphic(coordinate)
     } else {
       for (const graphicMark of graphicMarks) {
-        graphicMarkClickOperate = graphicMark.checkMousePointOnGraphic(point)
+        graphicMarkClickOperate = graphicMark.checkMousePointOnGraphic(coordinate)
         if (graphicMarkClickOperate) {
           if (graphicMarkClickOperate.element === GraphicMarkMouseOperateElement.POINT) {
             this._pressedGraphicMark = graphicMark
@@ -139,7 +139,7 @@ export default class OverlayEventHandler extends EventHandler {
           }
           graphicMark.onClick({
             id: graphicMarkClickOperate.id,
-            points: graphicMark.tpPoints(),
+            points: graphicMark.points(),
             event
           })
           break
@@ -147,11 +147,11 @@ export default class OverlayEventHandler extends EventHandler {
       }
       const visibleAnnotations = this._chartData.visibleAnnotations()
       for (const annotation of visibleAnnotations) {
-        const annotationOperate = annotation.checkMousePointOnGraphic(point)
+        const annotationOperate = annotation.checkMousePointOnGraphic(coordinate)
         if (annotationOperate) {
           annotation.onClick({
             id: annotationOperate.id,
-            points: annotation.tpPoints(),
+            points: annotation.points(),
             event
           })
           break
@@ -170,12 +170,12 @@ export default class OverlayEventHandler extends EventHandler {
 
   mouseRightDownEvent (event) {
     const graphicMark = this._chartData.graphicMarks().find(gm => gm.checkMousePointOnGraphic({ x: event.localX, y: event.localY }))
-    if (graphicMark && !graphicMark.onRightClick({ id: graphicMark.id(), points: graphicMark.tpPoints(), event })) {
+    if (graphicMark && !graphicMark.onRightClick({ id: graphicMark.id(), points: graphicMark.points(), event })) {
       this._chartData.removeGraphicMarkInstance(graphicMark.id())
     }
     const annotation = this._chartData.visibleAnnotations().find(an => an.checkMousePointOnGraphic({ x: event.localX, y: event.localY }))
     if (annotation) {
-      annotation.onRightClick({ id: annotation.id(), points: annotation.tpPoints(), event })
+      annotation.onRightClick({ id: annotation.id(), points: annotation.points(), event })
     }
   }
 

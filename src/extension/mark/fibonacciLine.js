@@ -17,22 +17,22 @@ import { checkPointOnStraightLine } from './graphicHelper'
 export default {
   name: 'fibonacciLine',
   totalStep: 3,
-  checkMousePointOn: (key, type, points, mousePoint) => {
-    return checkPointOnStraightLine(points[0], points[1], mousePoint)
+  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
+    return checkPointOnStraightLine(coordinates[0], coordinates[1], mouseCoordinate)
   },
-  createGraphicDataSource: (step, tpPoints, xyPoints, viewport, precision) => {
-    if (xyPoints.length > 0) {
+  createGraphicDataSource: (step, points, coordinates, viewport, precision) => {
+    if (coordinates.length > 0) {
       const lines = []
       const texts = []
       const startX = 0
       const endX = viewport.width
-      if (xyPoints.length > 1) {
+      if (coordinates.length > 1) {
         const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
-        const yDif = xyPoints[0].y - xyPoints[1].y
-        const priceDif = tpPoints[0].price - tpPoints[1].price
+        const yDif = coordinates[0].y - coordinates[1].y
+        const priceDif = points[0].price - points[1].price
         percents.forEach(percent => {
-          const y = xyPoints[1].y + yDif * percent
-          const price = (tpPoints[1].price + priceDif * percent).toFixed(precision.price)
+          const y = coordinates[1].y + yDif * percent
+          const price = (points[1].price + priceDif * percent).toFixed(precision.price)
           lines.push([{ x: startX, y }, { x: endX, y }])
           texts.push({
             x: startX,

@@ -38,7 +38,7 @@ export default class Annotation extends Overlay {
     id, point, chartData, xAxis, yAxis, styles
   }) {
     super({ id, chartData, xAxis, yAxis })
-    this._tpPoint = point
+    this._point = point
     this._symbolCoordinate = {}
     this.setStyles(styles, chartData.styleOptions().annotation)
   }
@@ -84,7 +84,7 @@ export default class Annotation extends Overlay {
       case AnnotationSymbolType.CUSTOM: {
         this.drawCustomSymbol({
           ctx,
-          point: this._tpPoint,
+          point: this._point,
           coordinate: this._symbolCoordinate,
           viewport: {
             width: this._xAxis.width(),
@@ -109,7 +109,7 @@ export default class Annotation extends Overlay {
     let y = 0
     switch (symbolOptions.position) {
       case OverlayPosition.POINT: {
-        y = this._yAxis.convertToPixel(this._tpPoint.price)
+        y = this._yAxis.convertToPixel(this._point.price)
         break
       }
       case OverlayPosition.TOP: {
@@ -128,7 +128,7 @@ export default class Annotation extends Overlay {
       ctx.save()
       this.drawExtend({
         ctx,
-        point: this._tpPoint,
+        point: this._point,
         coordinate: this._symbolCoordinate,
         viewport: {
           width: this._xAxis.width(),
@@ -153,9 +153,9 @@ export default class Annotation extends Overlay {
         break
       }
       case AnnotationSymbolType.RECT: {
-        const point1 = { x: this._symbolCoordinate.x - size / 2, y: this._symbolCoordinate.y - size / 2 }
-        const point2 = { x: this._symbolCoordinate.x + size / 2, y: this._symbolCoordinate.y + size / 2 }
-        isOn = checkPointInRect(point1, point2, point)
+        const coordinate1 = { x: this._symbolCoordinate.x - size / 2, y: this._symbolCoordinate.y - size / 2 }
+        const coordinate2 = { x: this._symbolCoordinate.x + size / 2, y: this._symbolCoordinate.y + size / 2 }
+        isOn = checkPointInRect(coordinate1, coordinate2, point)
         break
       }
       case AnnotationSymbolType.DIAMOND: {
@@ -208,8 +208,8 @@ export default class Annotation extends Overlay {
    * 获取点
    * @return {*}
    */
-  tpPoints () {
-    return this._tpPoint
+  points () {
+    return this._point
   }
 
   /**

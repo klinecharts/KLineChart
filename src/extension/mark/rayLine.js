@@ -17,16 +17,16 @@ import { checkPointOnRayLine, getRayLine } from './graphicHelper'
 export default {
   name: 'rayLine',
   totalStep: 3,
-  checkMousePointOn: (key, type, points, mousePoint) => {
-    return checkPointOnRayLine(points[0], points[1], mousePoint)
+  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
+    return checkPointOnRayLine(coordinates[0], coordinates[1], mouseCoordinate)
   },
-  createGraphicDataSource: (step, tpPoints, xyPoints, viewport) => {
+  createGraphicDataSource: (step, points, coordinates, viewport) => {
     return [
       {
         type: 'line',
         isDraw: true,
         isCheck: true,
-        dataSource: [getRayLine(xyPoints[0], xyPoints[1], { x: viewport.width, y: viewport.height })]
+        dataSource: [getRayLine(coordinates[0], coordinates[1], { x: viewport.width, y: viewport.height })]
       }
     ]
   }

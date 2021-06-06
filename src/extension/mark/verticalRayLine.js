@@ -17,12 +17,12 @@ import { checkPointOnRayLine } from './graphicHelper'
 export default {
   name: 'verticalRayLine',
   totalStep: 3,
-  checkMousePointOn: (key, type, points, mousePoint) => {
-    return checkPointOnRayLine(points[0], points[1], mousePoint)
+  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
+    return checkPointOnRayLine(coordinates[0], coordinates[1], mouseCoordinate)
   },
-  createGraphicDataSource: (step, tpPoints, xyPoints, viewport) => {
-    const point = { x: xyPoints[0].x, y: 0 }
-    if (xyPoints[1] && xyPoints[0].y < xyPoints[1].y) {
+  createGraphicDataSource: (step, points, coordinates, viewport) => {
+    const point = { x: coordinates[0].x, y: 0 }
+    if (coordinates[1] && coordinates[0].y < coordinates[1].y) {
       point.y = viewport.height
     }
     return [
@@ -30,20 +30,20 @@ export default {
         type: 'line',
         isDraw: true,
         isCheck: true,
-        dataSource: [[xyPoints[0], point]]
+        dataSource: [[coordinates[0], point]]
       }
     ]
   },
-  performMousePressedMove: (tpPoints, pressedPointIndex, { dataIndex, timestamp }) => {
-    tpPoints[0].timestamp = timestamp
-    tpPoints[0].dataIndex = dataIndex
-    tpPoints[1].timestamp = timestamp
-    tpPoints[1].dataIndex = dataIndex
+  performMousePressedMove: (points, pressedPointIndex, { dataIndex, timestamp }) => {
+    points[0].timestamp = timestamp
+    points[0].dataIndex = dataIndex
+    points[1].timestamp = timestamp
+    points[1].dataIndex = dataIndex
   },
-  performMouseMoveForDrawing: (step, tpPoints, { timestamp, dataIndex }) => {
+  performMouseMoveForDrawing: (step, points, { timestamp, dataIndex }) => {
     if (step === 2) {
-      tpPoints[0].timestamp = timestamp
-      tpPoints[0].dataIndex = dataIndex
+      points[0].timestamp = timestamp
+      points[0].dataIndex = dataIndex
     }
   }
 }

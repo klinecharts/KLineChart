@@ -17,13 +17,13 @@ import { checkPointOnSegment } from './graphicHelper'
 export default {
   name: 'verticalSegment',
   totalStep: 3,
-  checkMousePointOn: (key, type, points, mousePoint) => {
-    return checkPointOnSegment(points[0], points[1], mousePoint)
+  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
+    return checkPointOnSegment(coordinates[0], coordinates[1], mouseCoordinate)
   },
-  createGraphicDataSource: (step, tpPoints, xyPoints) => {
+  createGraphicDataSource: (step, points, coordinates) => {
     let lines = []
-    if (xyPoints.length === 2) {
-      lines = [xyPoints]
+    if (coordinates.length === 2) {
+      lines = [coordinates]
     }
     return [
       {
@@ -34,16 +34,16 @@ export default {
       }
     ]
   },
-  performMousePressedMove: (tpPoints, pressedPointIndex, { dataIndex, timestamp }) => {
-    tpPoints[0].timestamp = timestamp
-    tpPoints[0].dataIndex = dataIndex
-    tpPoints[1].timestamp = timestamp
-    tpPoints[1].dataIndex = dataIndex
+  performMousePressedMove: (points, pressedPointIndex, { dataIndex, timestamp }) => {
+    points[0].timestamp = timestamp
+    points[0].dataIndex = dataIndex
+    points[1].timestamp = timestamp
+    points[1].dataIndex = dataIndex
   },
-  performMouseMoveForDrawing: (step, tpPoints, { timestamp, dataIndex }) => {
+  performMouseMoveForDrawing: (step, points, { timestamp, dataIndex }) => {
     if (step === 2) {
-      tpPoints[0].timestamp = timestamp
-      tpPoints[0].dataIndex = dataIndex
+      points[0].timestamp = timestamp
+      points[0].dataIndex = dataIndex
     }
   }
 }

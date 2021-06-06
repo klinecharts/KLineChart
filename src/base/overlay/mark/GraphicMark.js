@@ -98,8 +98,8 @@ export default class GraphicMark extends Overlay {
     this._totalStep = totalStep
     this._lock = lock
     this._drawStep = GRAPHIC_MARK_DRAW_STEP_START
-    this._tpPoints = []
-    this._applyPoints(points)
+    this._points = []
+    this.setPoints(points)
     this.setStyles(styles, chartData.styleOptions().graphicMark)
   }
 
@@ -107,31 +107,31 @@ export default class GraphicMark extends Overlay {
    * 加载点
    * @param points
    */
-  _applyPoints (points) {
+  setPoints (points) {
     if (isArray(points) && points.length > 0) {
       let repeatTotalStep
       if (points.length >= this._totalStep - 1) {
         this._drawStep = GRAPHIC_MARK_DRAW_STEP_FINISHED
-        this._tpPoints = points.slice(0, this._totalStep - 1)
+        this._points = points.slice(0, this._totalStep - 1)
         repeatTotalStep = this._totalStep - 1
       } else {
         this._drawStep = points.length + 1
-        this._tpPoints = clone(points)
+        this._points = clone(points)
         repeatTotalStep = points.length
       }
       // 重新演练绘制一遍，防止因为点不对而绘制出错误的图形
       for (let i = 0; i < repeatTotalStep; i++) {
-        this.performMouseMoveForDrawing(i + 2, this._tpPoints, this._tpPoints[i], this._xAxis, this._yAxis)
+        this.performMouseMoveForDrawing(i + 2, this.points, this._points[i], this._xAxis, this._yAxis)
       }
       if (this._drawStep === GRAPHIC_MARK_DRAW_STEP_FINISHED) {
-        this.performMousePressedMove(this._tpPoints, this._tpPoints.length - 1, this._tpPoints[this._tpPoints.length - 1], this._xAxis, this._yAxis)
+        this.performMousePressedMove(this._points, this._points.length - 1, this._points[this._points.length - 1], this._xAxis, this._yAxis)
       }
     }
   }
 
   /**
    * 时间戳转换成x轴上点的位置
-   * @param tpPoint
+   * @param point
    * @return {*|number}
    * @private
    */
@@ -311,18 +311,18 @@ export default class GraphicMark extends Overlay {
    * @param ctx
    */
   draw (ctx) {
-    const xyPoints = this._tpPoints.map(({ timestamp, price, dataIndex }) => {
+    const coordinates = this._points.map(({ timestamp, price, dataIndex }) => {
       return {
         x: this._timestampOrDataIndexToPointX({ timestamp, dataIndex }),
         y: this._yAxis.convertToPixel(price)
       }
     })
     const markOptions = this._styles || this._chartData.styleOptions().graphicMark
-    if (this._drawStep !== GRAPHIC_MARK_DRAW_STEP_START && xyPoints.length > 0) {
+    if (this._drawStep !== GRAPHIC_MARK_DRAW_STEP_START && coordinates.length > 0) {
       const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
       const precision = { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() }
       const graphicDataSources = this.createGraphicDataSource(
-        this._drawStep, this._tpPoints, xyPoints, viewport,
+        this._drawStep, this._points, coordinates, viewport,
         precision, this._xAxis, this._yAxis
       ) || []
       graphicDataSources.forEach(({ type, isDraw, style, dataSource = [] }) => {
@@ -366,7 +366,7 @@ export default class GraphicMark extends Overlay {
       (graphicMarkMouseOperate.hover.id === this._id && graphicMarkMouseOperate.hover.element !== GraphicMarkMouseOperateElement.NONE) ||
       (graphicMarkMouseOperate.click.id === this._id && graphicMarkMouseOperate.click.element !== GraphicMarkMouseOperateElement.NONE)
     ) {
-      xyPoints.forEach(({ x, y }, index) => {
+      coordinates.forEach(({ x, y }, index) => {
         let radius = markOptions.point.radius
         let color = markOptions.point.backgroundColor
         let borderColor = markOptions.point.borderColor
@@ -423,8 +423,8 @@ export default class GraphicMark extends Overlay {
    * 获取点
    * @return {[]}
    */
-  tpPoints () {
-    return this._tpPoints
+  points () {
+    return this._points
   }
 
   /**
@@ -437,21 +437,21 @@ export default class GraphicMark extends Overlay {
 
   /**
    * 检查鼠标点是否在图形上
-   * @param point
+   * @param mouseCoordinate
    * @return {{id: *, elementIndex: number, element: string}}
    */
-  checkMousePointOnGraphic (point) {
+  checkMousePointOnGraphic (mouseCoordinate) {
     const markOptions = this._styles || this._chartData.styleOptions().graphicMark
-    const xyPoints = []
+    const coordinates = []
     // 检查鼠标点是否在图形的点上
-    for (let i = 0; i < this._tpPoints.length; i++) {
-      const { timestamp, price, dataIndex } = this._tpPoints[i]
-      const xyPoint = {
+    for (let i = 0; i < this._points.length; i++) {
+      const { timestamp, price, dataIndex } = this._points[i]
+      const coordinate = {
         x: this._timestampOrDataIndexToPointX({ timestamp, dataIndex }),
         y: this._yAxis.convertToPixel(price)
       }
-      xyPoints.push(xyPoint)
-      if (checkPointInCircle(xyPoint, markOptions.point.radius, point)) {
+      coordinates.push(coordinate)
+      if (checkPointInCircle(coordinate, markOptions.point.radius, mouseCoordinate)) {
         return {
           id: this._id,
           element: GraphicMarkMouseOperateElement.POINT,
@@ -463,8 +463,8 @@ export default class GraphicMark extends Overlay {
     // 检查鼠标点是否在点构成的其它图形上
     const graphicDataSources = this.createGraphicDataSource(
       this._drawStep,
-      this._tpPoints,
-      xyPoints,
+      this._points,
+      coordinates,
       {
         width: this._xAxis.width(),
         height: this._yAxis.height()
@@ -479,8 +479,8 @@ export default class GraphicMark extends Overlay {
     for (const { key, type, isCheck, dataSource = [] } of graphicDataSources) {
       if (isCheck) {
         for (let i = 0; i < dataSource.length; i++) {
-          const points = dataSource[i]
-          if (this.checkMousePointOn(key, type, points, point)) {
+          const sources = dataSource[i]
+          if (this.checkMousePointOn(key, type, sources, mouseCoordinate)) {
             return {
               id: this._id,
               element: GraphicMarkMouseOperateElement.OTHER,
@@ -501,9 +501,9 @@ export default class GraphicMark extends Overlay {
     const dataIndex = this._xAxis.convertFromPixel(point.x)
     const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
     const price = this._yAxis.convertFromPixel(point.y)
-    this._tpPoints[this._drawStep - 1] = { timestamp, price, dataIndex }
-    this.performMouseMoveForDrawing(this._drawStep, this._tpPoints, { timestamp, price, dataIndex }, this._xAxis, this._yAxis)
-    this.onDrawing({ id: this._id, step: this._drawStep, points: this._tpPoints })
+    this._points[this._drawStep - 1] = { timestamp, price, dataIndex }
+    this.performMouseMoveForDrawing(this._drawStep, this._points, { timestamp, price, dataIndex }, this._xAxis, this._yAxis)
+    this.onDrawing({ id: this._id, step: this._drawStep, points: this._points })
   }
 
   /**
@@ -512,7 +512,7 @@ export default class GraphicMark extends Overlay {
   mouseLeftButtonDownForDrawing () {
     if (this._drawStep === this._totalStep - 1) {
       this._drawStep = GRAPHIC_MARK_DRAW_STEP_FINISHED
-      this.onDrawEnd({ id: this._id, points: this._tpPoints })
+      this.onDrawEnd({ id: this._id, points: this._points })
     } else {
       this._drawStep++
     }
@@ -535,13 +535,13 @@ export default class GraphicMark extends Overlay {
       const dataIndex = this._xAxis.convertFromPixel(point.x)
       const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
       const price = this._yAxis.convertFromPixel(point.y)
-      this._tpPoints[elementIndex].timestamp = timestamp
-      this._tpPoints[elementIndex].dataIndex = dataIndex
-      this._tpPoints[elementIndex].price = price
-      this.performMousePressedMove(this._tpPoints, elementIndex, { dataIndex, timestamp, price }, this._xAxis, this._yAxis)
+      this._points[elementIndex].timestamp = timestamp
+      this._points[elementIndex].dataIndex = dataIndex
+      this._points[elementIndex].price = price
+      this.performMousePressedMove(this._points, elementIndex, { dataIndex, timestamp, price }, this._xAxis, this._yAxis)
       this.onPressedMove({
         id: graphicMarkMouseOperate.click.id,
-        points: this._tpPoints,
+        points: this._points,
         event
       })
     }
@@ -600,34 +600,34 @@ export default class GraphicMark extends Overlay {
   /**
    * 创建图形配置
    * @param step
-   * @param tpPoints
-   * @param xyPoints
+   * @param points
+   * @param coordinates
    * @param viewport
    * @param precision
    * @param xAxis
    * @param yAxis
    */
-  createGraphicDataSource (step, tpPoints, xyPoints, viewport, precision, xAxis, yAxis) {}
+  createGraphicDataSource (step, points, coordinates, viewport, precision, xAxis, yAxis) {}
 
   /**
    * 处理绘制过程中鼠标移动
    * @param step
-   * @param tpPoints
-   * @param tpPoint
+   * @param points
+   * @param point
    * @param xAxis
    * @param yAxis
    */
-  performMouseMoveForDrawing (step, tpPoints, tpPoint, xAxis, yAxis) {}
+  performMouseMoveForDrawing (step, points, point, xAxis, yAxis) {}
 
   /**
    * 处理鼠标按住移动
-   * @param tpPoints
+   * @param points
    * @param pressedPointIndex
-   * @param tpPoint
+   * @param point
    * @param xAxis
    * @param yAxis
    */
-  performMousePressedMove (tpPoints, pressedPointIndex, tpPoint, xAxis, yAxis) {}
+  performMousePressedMove (points, pressedPointIndex, point, xAxis, yAxis) {}
 
   // --------------------- 自定义时需要实现的一些方法结束 ----------------------
 }

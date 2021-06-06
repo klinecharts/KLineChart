@@ -17,11 +17,11 @@ import { checkPointOnStraightLine, getLinearYFromPoints } from './graphicHelper'
 export default {
   name: 'straightLine',
   totalStep: 3,
-  checkMousePointOn: (key, type, points, mousePoint) => {
-    return checkPointOnStraightLine(points[0], points[1], mousePoint)
+  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
+    return checkPointOnStraightLine(coordinates[0], coordinates[1], mouseCoordinate)
   },
-  createGraphicDataSource: (step, tpPoints, xyPoints, viewport) => {
-    if (xyPoints.length < 2 || xyPoints[0].x === xyPoints[1].x) {
+  createGraphicDataSource: (step, points, coordinates, viewport) => {
+    if (coordinates.length < 2 || coordinates[0].x === coordinates[1].x) {
       return [
         {
           type: 'line',
@@ -29,10 +29,10 @@ export default {
           isCheck: true,
           dataSource: [[
             {
-              x: xyPoints[0].x,
+              x: coordinates[0].x,
               y: 0
             }, {
-              x: xyPoints[0].x,
+              x: coordinates[0].x,
               y: viewport.height
             }
           ]]
@@ -47,10 +47,10 @@ export default {
         dataSource: [[
           {
             x: 0,
-            y: getLinearYFromPoints(xyPoints[0], xyPoints[1], { x: 0, y: xyPoints[0].y })
+            y: getLinearYFromPoints(coordinates[0], coordinates[1], { x: 0, y: coordinates[0].y })
           }, {
             x: viewport.width,
-            y: getLinearYFromPoints(xyPoints[0], xyPoints[1], { x: viewport.width, y: xyPoints[0].y })
+            y: getLinearYFromPoints(coordinates[0], coordinates[1], { x: viewport.width, y: coordinates[0].y })
           }
         ]]
       }
