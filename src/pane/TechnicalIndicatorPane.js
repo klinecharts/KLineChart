@@ -20,7 +20,7 @@ import YAxis from '../component/YAxis'
 export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
     super(props)
-    this._technicalIndicators = new Map()
+    this._techs = new Map()
     if ('height' in props) {
       this.setHeight(props.height)
     }
@@ -91,7 +91,7 @@ export default class TechnicalIndicatorPane extends Pane {
    * @return {Map<any, any>}
    */
   technicalIndicators () {
-    return this._technicalIndicators
+    return this._techs
   }
 
   /**
@@ -99,7 +99,7 @@ export default class TechnicalIndicatorPane extends Pane {
    * @return {boolean}
    */
   isEmptyTechnicalIndicator () {
-    return this._technicalIndicators.size === 0
+    return this._techs.size === 0
   }
 
   /**
@@ -109,12 +109,12 @@ export default class TechnicalIndicatorPane extends Pane {
    */
   removeTechnicalIndicator (name) {
     if (name) {
-      if (this._technicalIndicators.has(name)) {
-        this._technicalIndicators.delete(name)
+      if (this._techs.has(name)) {
+        this._techs.delete(name)
         return true
       }
     } else {
-      this._technicalIndicators.clear()
+      this._techs.clear()
       return true
     }
     return false
@@ -127,14 +127,14 @@ export default class TechnicalIndicatorPane extends Pane {
    */
   setTechnicalIndicator (technicalIndicator, isStack) {
     if (technicalIndicator) {
-      if (this._technicalIndicators.has(technicalIndicator.name)) {
+      if (this._techs.has(technicalIndicator.name)) {
         return false
       }
       const cloneInstance = Object.create(technicalIndicator)
       if (isStack) {
-        this._technicalIndicators = this._technicalIndicators.set(cloneInstance.name, cloneInstance)
+        this._techs.set(cloneInstance.name, cloneInstance)
       } else {
-        this._technicalIndicators = new Map([[cloneInstance.name, cloneInstance]])
+        this._techs = new Map([[cloneInstance.name, cloneInstance]])
       }
       this.calcTechnicalIndicator(cloneInstance)
       return true
@@ -154,7 +154,7 @@ export default class TechnicalIndicatorPane extends Pane {
    * 计算所有技术指标
    */
   calcAllTechnicalIndicator () {
-    this._technicalIndicators.forEach(technicalIndicator => {
+    this._techs.forEach(technicalIndicator => {
       this.calcTechnicalIndicator(technicalIndicator)
     })
     return this._yAxis.computeAxis()

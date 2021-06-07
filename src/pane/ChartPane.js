@@ -196,20 +196,20 @@ export default class ChartPane {
     const separatorTotalHeight = separatorSize * this._separators.size
     const xAxisHeight = this._xAxisPane.xAxis().getSelfHeight()
     const paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorTotalHeight
-    let technicalIndicatorPaneTotalHeight = 0
+    let techPaneTotalHeight = 0
     this._panes.forEach(pane => {
       if (pane.id() !== CANDLE_PANE_ID) {
         const paneHeight = pane.height()
-        if (technicalIndicatorPaneTotalHeight + paneHeight > paneExcludeXAxisSeparatorHeight) {
-          pane.setHeight(paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight)
-          technicalIndicatorPaneTotalHeight = paneExcludeXAxisSeparatorHeight
+        if (techPaneTotalHeight + paneHeight > paneExcludeXAxisSeparatorHeight) {
+          pane.setHeight(paneExcludeXAxisSeparatorHeight - techPaneTotalHeight)
+          techPaneTotalHeight = paneExcludeXAxisSeparatorHeight
         } else {
-          technicalIndicatorPaneTotalHeight += paneHeight
+          techPaneTotalHeight += paneHeight
         }
       }
     })
 
-    const candlePaneHeight = paneExcludeXAxisSeparatorHeight - technicalIndicatorPaneTotalHeight
+    const candlePaneHeight = paneExcludeXAxisSeparatorHeight - techPaneTotalHeight
 
     const paneContentSize = {}
     paneContentSize[CANDLE_PANE_ID] = { contentTop: 0, contentBottom: candlePaneHeight }
@@ -324,42 +324,40 @@ export default class ChartPane {
 
   /**
    * 覆盖技术指标
+   * @param techInstance
    * @param name
    * @param calcParams
    * @param calcParamsAllowDecimal
    * @param precision
    * @param styles
    */
-  overrideTechnicalIndicator ({ name, calcParams, calcParamsAllowDecimal, precision, styles }) {
-    const technicalIndicator = this._chartData.getTechnicalIndicatorInstance(name)
-    if (technicalIndicator) {
-      technicalIndicator.setCalcParamsAllowDecimal(calcParamsAllowDecimal)
-      const calcParamsSuccess = technicalIndicator.setCalcParams(calcParams)
-      const precisionSuccess = technicalIndicator.setPrecision(precision)
-      const defaultTechnicalStyleOptions = this._chartData.styleOptions().technicalIndicator
-      const styleSuccess = technicalIndicator.setStyles(styles, defaultTechnicalStyleOptions)
-      if (calcParamsSuccess || precisionSuccess || styleSuccess) {
-        let shouldAdjust = false
-        const tasks = []
-        this._panes.forEach(pane => {
-          const technicalIndicators = pane.technicalIndicators()
-          if (technicalIndicators.has(name)) {
-            shouldAdjust = true
-            const tech = technicalIndicators.get(name)
-            if (calcParamsSuccess) {
-              tasks.push(
-                Promise.resolve(pane.calcTechnicalIndicator(tech))
-              )
-            }
+  overrideTechnicalIndicator (techInstance, { name, calcParams, calcParamsAllowDecimal, precision, styles }) {
+    techInstance.setCalcParamsAllowDecimal(calcParamsAllowDecimal)
+    const calcParamsSuccess = techInstance.setCalcParams(calcParams)
+    const precisionSuccess = techInstance.setPrecision(precision)
+    const defaultTechnicalStyleOptions = this._chartData.styleOptions().technicalIndicator
+    const styleSuccess = techInstance.setStyles(styles, defaultTechnicalStyleOptions)
+    if (calcParamsSuccess || precisionSuccess || styleSuccess) {
+      let shouldAdjust = false
+      const tasks = []
+      this._panes.forEach(pane => {
+        const techs = pane.technicalIndicators()
+        if (techs.has(name)) {
+          shouldAdjust = true
+          const tech = techs.get(name)
+          if (calcParamsSuccess) {
+            tasks.push(
+              Promise.resolve(pane.calcTechnicalIndicator(tech))
+            )
           }
-        })
-        if (shouldAdjust) {
-          Promise.all(tasks).then(
-            _ => {
-              this.adjustPaneViewport(false, true, true, true)
-            }
-          )
         }
+      })
+      if (shouldAdjust) {
+        Promise.all(tasks).then(
+          _ => {
+            this.adjustPaneViewport(false, true, true, true)
+          }
+        )
       }
     }
   }
@@ -459,13 +457,13 @@ export default class ChartPane {
 
   /**
    * 设置指标类型
-   * @param technicalIndicator 技术指标实例
+   * @param tech 技术指标实例
    * @param isStack 是否覆盖
    * @param options 配置
    */
-  createTechnicalIndicator (technicalIndicator, isStack, options = {}) {
+  createTechnicalIndicator (tech, isStack, options = {}) {
     if (this._panes.has(options.id)) {
-      this.setPaneOptions(options, this._panes.get(options.id).setTechnicalIndicator(technicalIndicator, isStack))
+      this.setPaneOptions(options, this._panes.get(options.id).setTechnicalIndicator(tech, isStack))
       return options.id
     }
     const id = options.id || `${TECHNICAL_INDICATOR_PANE_ID_PREFIX}${++this._paneBaseId}`
@@ -486,7 +484,7 @@ export default class ChartPane {
         container: this._chartContainer,
         chartData: this._chartData,
         xAxis: this._xAxisPane.xAxis(),
-        name: technicalIndicator.name,
+        name: tech.name,
         id,
         height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
       })
@@ -502,26 +500,23 @@ export default class ChartPane {
    */
   getPaneTechnicalIndicator (paneId) {
     const technicalIndicatorInfo = (pane) => {
-      const technicals = {}
-      pane.technicalIndicators().forEach(technicalIndicator => {
-        technicals[technicalIndicator.name] = createTechnicalIndicatorInfo(technicalIndicator)
+      const paneTechs = {}
+      pane.technicalIndicators().forEach(tech => {
+        paneTechs[tech.name] = createTechnicalIndicatorInfo(tech)
       })
-      return technicals
+      return paneTechs
     }
 
-    const panes = this._panes.values()
     if (isValid(paneId)) {
-      for (const pane of panes) {
-        if (pane.id() === paneId) {
-          return technicalIndicatorInfo(pane)
-        }
+      if (this._panes.has(paneId)) {
+        return technicalIndicatorInfo(this._panes.get(paneId))
       }
     } else {
-      const technicals = {}
-      for (const pane of panes) {
-        technicals[pane.id()] = technicalIndicatorInfo(pane)
-      }
-      return technicals
+      const techs = {}
+      this._panes.forEach(pane => {
+        techs[pane.id()] = technicalIndicatorInfo(pane)
+      })
+      return techs
     }
     return {}
   }

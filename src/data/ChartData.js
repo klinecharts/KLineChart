@@ -990,14 +990,14 @@ export default class ChartData {
 
   /**
    * 添加一个自定义指标
-   * @param technicalIndicators
+   * @param techs
    */
-  addCustomTechnicalIndicator (technicalIndicators) {
-    technicalIndicators.forEach(tech => {
-      const technicalIndicatorInstance = createTechnicalIndicatorInstance(tech || {})
-      if (technicalIndicatorInstance) {
+  addCustomTechnicalIndicator (techs) {
+    techs.forEach(tech => {
+      const instance = createTechnicalIndicatorInstance(tech || {})
+      if (instance) {
         // 将生成的新的指标类放入集合
-        this._technicalIndicatorMapping[technicalIndicatorInstance.name] = technicalIndicatorInstance
+        this._technicalIndicatorMapping[instance.name] = instance
       }
     })
   }

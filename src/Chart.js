@@ -64,7 +64,16 @@ export default class Chart {
    * @param override
    */
   overrideTechnicalIndicator (override) {
-    this._chartPane.overrideTechnicalIndicator(override)
+    if (!isObject(override)) {
+      logWarn('overrideTechnicalIndicator', 'override', 'override must be an object!!!')
+      return
+    }
+    const tech = this._chartPane.chartData().getTechnicalIndicatorInstance(override.name)
+    if (!tech) {
+      logWarn('overrideTechnicalIndicator', 'override.name', 'can not find the corresponding technical indicator!!!')
+      return
+    }
+    this._chartPane.overrideTechnicalIndicator(tech, override)
   }
 
   /**
@@ -244,25 +253,25 @@ export default class Chart {
    * @returns {string|null}
    */
   createTechnicalIndicator (name, isStack, paneOptions) {
-    const technicalIndicator = this._chartPane.chartData().getTechnicalIndicatorInstance(name)
-    if (!technicalIndicator) {
+    const tech = this._chartPane.chartData().getTechnicalIndicatorInstance(name)
+    if (!tech) {
       logWarn('createTechnicalIndicator', 'name', 'can not find the corresponding technical indicator!!!')
       return null
     }
-    return this._chartPane.createTechnicalIndicator(technicalIndicator, isStack, paneOptions)
+    return this._chartPane.createTechnicalIndicator(tech, isStack, paneOptions)
   }
 
   /**
    * 添加自定义技术指标
-   * @param technicalIndicator
+   * @param tech
    */
-  addCustomTechnicalIndicator (technicalIndicator) {
-    if (!isObject(technicalIndicator)) {
+  addCustomTechnicalIndicator (tech) {
+    if (!isObject(tech)) {
       logWarn('addCustomTechnicalIndicator', 'technicalIndicator', 'technicalIndicator must be an object or array!!!')
       return
     }
-    const technicalIndicators = [].concat(technicalIndicator)
-    this._chartPane.chartData().addCustomTechnicalIndicator(technicalIndicators)
+    const techs = [].concat(tech)
+    this._chartPane.chartData().addCustomTechnicalIndicator(techs)
   }
 
   /**
