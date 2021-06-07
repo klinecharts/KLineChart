@@ -13,7 +13,7 @@
  */
 
 import ChartPane from './pane/ChartPane'
-import { clone, isNumber, isValid, isObject, isArray, isFunction } from './utils/typeChecks'
+import { clone, isNumber, isObject, isArray, isFunction } from './utils/typeChecks'
 import { logWarn } from './utils/logger'
 import { requestAnimationFrame } from './utils/compatible'
 
@@ -91,11 +91,11 @@ export default class Chart {
    * @param volumePrecision
    */
   setPriceVolumePrecision (pricePrecision, volumePrecision) {
-    if (!isValid(pricePrecision) || !isNumber(pricePrecision) || pricePrecision < 0) {
+    if (!isNumber(pricePrecision) || pricePrecision < 0) {
       logWarn('setPriceVolumePrecision', 'pricePrecision', 'pricePrecision must be a number and greater than zero!!!')
       return
     }
-    if (!isValid(volumePrecision) || !isNumber(volumePrecision) || volumePrecision < 0) {
+    if (!isNumber(volumePrecision) || volumePrecision < 0) {
       logWarn('setPriceVolumePrecision', 'volumePrecision', 'volumePrecision must be a number and greater than zero!!!')
       return
     }
@@ -141,7 +141,7 @@ export default class Chart {
    * @param barCount
    */
   setLeftMinVisibleBarCount (barCount) {
-    if (!isValid(barCount) || !isNumber(barCount) || barCount <= 0) {
+    if (!isNumber(barCount) || barCount <= 0) {
       logWarn('setLeftMinVisibleBarCount', 'barCount', 'barCount must be a number and greater than zero!!!')
       return
     }
@@ -153,7 +153,7 @@ export default class Chart {
    * @param barCount
    */
   setRightMinVisibleBarCount (barCount) {
-    if (!isValid(barCount) || !isNumber(barCount) || barCount <= 0) {
+    if (!isNumber(barCount) || barCount <= 0) {
       logWarn('setRightMinVisibleBarCount', 'barCount', 'barCount must be a number and greater than zero!!!')
       return
     }
@@ -217,7 +217,7 @@ export default class Chart {
    * @param data
    */
   updateData (data) {
-    if (!isObject(data)) {
+    if (!isObject(data) || isArray(data)) {
       logWarn('updateData', 'data')
       return
     }
@@ -257,7 +257,7 @@ export default class Chart {
    * @param technicalIndicator
    */
   addCustomTechnicalIndicator (technicalIndicator) {
-    if (!isObject(technicalIndicator) || !isArray(technicalIndicator)) {
+    if (!isObject(technicalIndicator)) {
       logWarn('addCustomTechnicalIndicator', 'technicalIndicator', 'technicalIndicator must be an object or array!!!')
       return
     }
@@ -316,7 +316,7 @@ export default class Chart {
    * @param graphicMark
    */
   addCustomGraphicMark (graphicMark) {
-    if (!isObject(graphicMark) || !isArray(graphicMark)) {
+    if (!isObject(graphicMark)) {
       logWarn('addCustomGraphicMark', 'graphicMark', 'graphicMark must be an object or array!!!')
       return
     }
@@ -337,7 +337,7 @@ export default class Chart {
    * @param annotation
    */
   createAnnotation (annotation) {
-    if (!isObject(annotation) || !isArray(annotation)) {
+    if (!isObject(annotation)) {
       logWarn('createAnnotation', 'annotation', 'annotation must be an object or array!!!')
       return
     }
@@ -357,7 +357,7 @@ export default class Chart {
    * @param tag
    */
   createTag (tag) {
-    if (!isObject(tag) || !isArray(tag)) {
+    if (!isObject(tag)) {
       logWarn('createTag', 'tag', 'tag must be an object or array!!!')
       return
     }

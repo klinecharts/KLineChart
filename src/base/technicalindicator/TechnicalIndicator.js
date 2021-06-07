@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { clone, isArray, isBoolean, isNumber, isValid, merge, isObject } from '../../utils/typeChecks'
+import { clone, isArray, isBoolean, isNumber, merge, isObject } from '../../utils/typeChecks'
 
 /**
  * 技术指标系列
@@ -46,7 +46,7 @@ export default class TechnicalIndicator {
     // 指标系列，值有 'price', 'volume', 'normal
     this.series = series || 'normal'
     // 精度
-    this.precision = isValid(precision) && isNumber(precision) && precision >= 0 ? precision : 4
+    this.precision = isNumber(precision) && precision >= 0 ? precision : 4
     // 计算参数
     this.calcParams = isArray(calcParams) ? calcParams : []
     // 数据信息

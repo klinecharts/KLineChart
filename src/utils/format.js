@@ -22,7 +22,7 @@ import { isNumber, isObject, isValid } from './typeChecks'
  * @returns {string|*}
  */
 export function formatValue (data, key, defaultValue = '--') {
-  if (data && isObject(data)) {
+  if (isObject(data)) {
     const value = data[key]
     if (isValid(value)) {
       return value

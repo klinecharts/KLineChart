@@ -915,6 +915,15 @@ export default class ChartData {
   }
 
   /**
+   * 根据id获取标签实例
+   * @param id
+   * @return
+   */
+  getTag (id) {
+    return this._tags.get(id)
+  }
+
+  /**
    * 添加标签
    * @param tags
    */

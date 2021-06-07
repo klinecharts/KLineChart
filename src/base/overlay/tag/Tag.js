@@ -15,7 +15,7 @@
 import Overlay from '../Overlay'
 import { LineStyle, OverlayPosition, YAxisPosition } from '../../../data/options/styleOptions'
 import { renderHorizontalLine } from '../../../renderer/line'
-import { isValid } from '../../../utils/typeChecks'
+import { isValid, isObject } from '../../../utils/typeChecks'
 import { calcTextWidth, createFont } from '../../../utils/canvas'
 import { renderFillRoundRect } from '../../../renderer/rect'
 import { renderText } from '../../../renderer/text'
@@ -25,10 +25,38 @@ export default class Tag extends Overlay {
     id, point, text, mark, chartData, xAxis, yAxis, styles
   }) {
     super({ id, chartData, xAxis, yAxis })
-    this._tpPoint = point || {}
+    this._point = point || {}
     this._text = text
     this._mark = mark
     this.setStyles(styles, chartData.styleOptions().tag)
+  }
+
+  /**
+   * 更新
+   * @param point
+   * @param text
+   * @param mark
+   * @param styles
+   * @return {boolean}
+   */
+  update ({ point, text, mark, styles }) {
+    let success = false
+    if (isObject(point)) {
+      this._point = point
+      success = true
+    }
+    if (isValid(text)) {
+      this._text = text
+      success = true
+    }
+    if (isValid(mark)) {
+      this._mark = mark
+      success = true
+    }
+    if (this.setStyles(styles, this._chartData.styleOptions().tag)) {
+      success = true
+    }
+    return success
   }
 
   /**
@@ -161,7 +189,7 @@ export default class Tag extends Overlay {
         return this._yAxis.height() + offset
       }
       default: {
-        return this._yAxis.convertToNicePixel(this._tpPoint.price) + offset
+        return this._yAxis.convertToNicePixel(this._point.price) + offset
       }
     }
   }

@@ -17,7 +17,7 @@ import { CandleType, LineStyle } from '../data/options/styleOptions'
 import { renderHorizontalLine, renderLine } from '../renderer/line'
 import { createFont } from '../utils/canvas'
 import { formatPrecision, formatValue } from '../utils/format'
-import { isArray, isValid, isNumber } from '../utils/typeChecks'
+import { isArray, isNumber } from '../utils/typeChecks'
 
 export default class CandleView extends TechnicalIndicatorView {
   _draw () {
@@ -68,7 +68,7 @@ export default class CandleView extends TechnicalIndicatorView {
     const areaOptions = candleOptions.area
     const onDrawing = (x, i, kLineData, halfBarSpace, barSpace, n) => {
       const value = kLineData[areaOptions.value]
-      if (isValid(value) && isNumber(value)) {
+      if (isNumber(value)) {
         const y = this._yAxis.convertToPixel(value)
         if (n === 0) {
           const startX = x - halfBarSpace

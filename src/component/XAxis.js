@@ -15,7 +15,7 @@
 import Axis from './Axis'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { formatDate } from '../utils/format'
-import { isValid, isNumber } from '../utils/typeChecks'
+import { isNumber } from '../utils/typeChecks'
 
 export default class XAxis extends Axis {
   _computeMinMax () {
@@ -108,8 +108,8 @@ export default class XAxis extends Axis {
     const stylOptions = this._chartData.styleOptions()
     const xAxisOptions = stylOptions.xAxis
     const height = xAxisOptions.height
-    if (isValid(height) && isNumber(+height)) {
-      return +height
+    if (isNumber(height)) {
+      return height
     }
     const crosshairOptions = stylOptions.crosshair
     let xAxisHeight = 0

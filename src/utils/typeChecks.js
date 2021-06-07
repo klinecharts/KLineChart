@@ -36,7 +36,7 @@ export function merge (target, source) {
 }
 
 export function clone (target) {
-  if (!target || !isObject(target)) {
+  if (!isObject(target)) {
     return target
   }
 
@@ -51,7 +51,7 @@ export function clone (target) {
   for (p in target) {
     if (target.hasOwnProperty(p)) {
       v = target[p]
-      if (v && isObject(v)) {
+      if (isObject(v)) {
         copy[p] = clone(v)
       } else {
         copy[p] = v

@@ -19,7 +19,7 @@ import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
 
 import { YAxisPosition } from '../data/options/styleOptions'
-import { isArray, isBoolean, isFunction, isObject, isValid, isNumber } from '../utils/typeChecks'
+import { isArray, isBoolean, isFunction, isValid, isNumber } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import SeparatorPane from './SeparatorPane'
@@ -406,20 +406,18 @@ export default class ChartPane {
    * @param data
    */
   updateData (data) {
-    if (isObject(data) && !isArray(data)) {
-      const dataList = this._chartData.dataList()
-      const dataSize = dataList.length
-      // 这里判断单个数据应该添加到哪个位置
-      const timestamp = formatValue(data, 'timestamp', 0)
-      const lastDataTimestamp = formatValue(dataList[dataSize - 1], 'timestamp', 0)
-      if (timestamp >= lastDataTimestamp) {
-        let pos = dataSize
-        if (timestamp === lastDataTimestamp) {
-          pos = dataSize - 1
-        }
-        this._chartData.addData(data, pos)
-        this._calcAllPaneTechnicalIndicator()
+    const dataList = this._chartData.dataList()
+    const dataSize = dataList.length
+    // 这里判断单个数据应该添加到哪个位置
+    const timestamp = formatValue(data, 'timestamp', 0)
+    const lastDataTimestamp = formatValue(dataList[dataSize - 1], 'timestamp', 0)
+    if (timestamp >= lastDataTimestamp) {
+      let pos = dataSize
+      if (timestamp === lastDataTimestamp) {
+        pos = dataSize - 1
       }
+      this._chartData.addData(data, pos)
+      this._calcAllPaneTechnicalIndicator()
     }
   }
 
@@ -646,22 +644,37 @@ export default class ChartPane {
    */
   createTag (tags) {
     const instances = []
+    let shouldUpdate = false
+    let shouldAdd = false
     tags.forEach(({ id, point, text, mark, styles }) => {
       if (isValid(id)) {
-        instances.push(new Tag({
-          id,
-          point,
-          text,
-          mark,
-          styles,
-          chartData: this._chartData,
-          xAxis: this._xAxisPane.xAxis(),
-          yAxis: this._panes.get(CANDLE_PANE_ID).yAxis()
-        }))
+        const tag = this._chartData.getTag(id)
+        if (tag) {
+          const updateSuccess = tag.update({ point, text, mark, styles })
+          if (!shouldUpdate) {
+            shouldUpdate = updateSuccess
+          }
+        } else {
+          shouldAdd = true
+          instances.push(new Tag({
+            id,
+            point,
+            text,
+            mark,
+            styles,
+            chartData: this._chartData,
+            xAxis: this._xAxisPane.xAxis(),
+            yAxis: this._panes.get(CANDLE_PANE_ID).yAxis()
+          }))
+        }
       }
     })
-    if (instances.length > 0) {
+    if (shouldAdd) {
       this._chartData.addTags(instances)
+    } else {
+      if (shouldUpdate) {
+        this._invalidatePane(InvalidateLevel.OVERLAY)
+      }
     }
   }
 

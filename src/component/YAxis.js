@@ -40,10 +40,10 @@ export default class YAxis extends Axis {
         shouldOhlc = tech.shouldOhlc
       }
       technicalIndicatorPrecision = Math.min(technicalIndicatorPrecision, tech.precision)
-      if (isValid(tech.minValue) && isNumber(tech.minValue)) {
+      if (isNumber(tech.minValue)) {
         minValue = Math.min(minValue, tech.minValue)
       }
-      if (isValid(tech.maxValue) && isNumber(tech.maxValue)) {
+      if (isNumber(tech.maxValue)) {
         maxValue = Math.max(maxValue, tech.maxValue)
       }
       plotsResult.push({
@@ -108,7 +108,7 @@ export default class YAxis extends Axis {
     switch (yAxisType) {
       case YAxisType.PERCENTAGE: {
         const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
-        if (isValid(fromData.close)) {
+        if (isNumber(fromData.close)) {
           minValue = (minValue - fromData.close) / fromData.close * 100
           maxValue = (maxValue - fromData.close) / fromData.close * 100
         }
@@ -271,8 +271,8 @@ export default class YAxis extends Axis {
     const styleOptions = this._chartData.styleOptions()
     const yAxisOptions = styleOptions.yAxis
     const width = yAxisOptions.width
-    if (isValid(width) && isNumber(+width)) {
-      return +width
+    if (isNumber(width)) {
+      return width
     }
     let yAxisWidth = 0
     if (yAxisOptions.show) {
@@ -345,7 +345,7 @@ export default class YAxis extends Axis {
     switch (this.yAxisType()) {
       case YAxisType.PERCENTAGE: {
         const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
-        if (isValid(fromData.close)) {
+        if (isNumber(fromData.close)) {
           return fromData.close * value / 100 + fromData.close
         }
         break
@@ -364,7 +364,7 @@ export default class YAxis extends Axis {
     switch (this.yAxisType()) {
       case YAxisType.PERCENTAGE: {
         const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
-        if (isValid(fromData.close)) {
+        if (isNumber(fromData.close)) {
           v = (value - fromData.close) / fromData.close * 100
         }
         break
