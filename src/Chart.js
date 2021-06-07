@@ -73,7 +73,7 @@ export default class Chart {
    * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
    */
   getTechnicalIndicatorByName (name) {
-    return this._chartPane.chartData().technicalIndicatorInfo(name)
+    return this._chartPane.chartData().getTechnicalIndicatorInfo(name)
   }
 
   /**
@@ -99,7 +99,7 @@ export default class Chart {
       logWarn('setPriceVolumePrecision', 'volumePrecision', 'volumePrecision must be a number and greater than zero!!!')
       return
     }
-    this._chartPane.chartData().applyPriceVolumePrecision(pricePrecision, volumePrecision)
+    this._chartPane.chartData().setPriceVolumePrecision(pricePrecision, volumePrecision)
   }
 
   /**
@@ -244,7 +244,7 @@ export default class Chart {
    * @returns {string|null}
    */
   createTechnicalIndicator (name, isStack, paneOptions) {
-    const technicalIndicator = this._chartPane.chartData().technicalIndicator(name)
+    const technicalIndicator = this._chartPane.chartData().getTechnicalIndicatorInstance(name)
     if (!technicalIndicator) {
       logWarn('createTechnicalIndicator', 'name', 'can not find the corresponding technical indicator!!!')
       return null

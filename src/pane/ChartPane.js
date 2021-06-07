@@ -13,7 +13,7 @@
  */
 
 import ChartData from '../data/ChartData'
-import { getTechnicalIndicatorInfo } from '../base/technicalindicator/technicalIndicatorControl'
+import { createTechnicalIndicatorInfo } from '../base/technicalindicator/technicalIndicatorControl'
 
 import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
@@ -156,7 +156,7 @@ export default class ChartPane {
       })
     } else {
       let shouldMeasureWidth = false
-      this._panes.forEach((pane, paneId) => {
+      this._panes.forEach((pane) => {
         const should = pane.yAxis().computeAxis()
         if (should) {
           shouldMeasureWidth = should
@@ -331,7 +331,7 @@ export default class ChartPane {
    * @param styles
    */
   overrideTechnicalIndicator ({ name, calcParams, calcParamsAllowDecimal, precision, styles }) {
-    const technicalIndicator = this._chartData.technicalIndicator(name)
+    const technicalIndicator = this._chartData.getTechnicalIndicatorInstance(name)
     if (technicalIndicator) {
       technicalIndicator.setCalcParamsAllowDecimal(calcParamsAllowDecimal)
       const calcParamsSuccess = technicalIndicator.setCalcParams(calcParams)
@@ -506,7 +506,7 @@ export default class ChartPane {
     const technicalIndicatorInfo = (pane) => {
       const technicals = {}
       pane.technicalIndicators().forEach(technicalIndicator => {
-        technicals[technicalIndicator.name] = getTechnicalIndicatorInfo(technicalIndicator)
+        technicals[technicalIndicator.name] = createTechnicalIndicatorInfo(technicalIndicator)
       })
       return technicals
     }

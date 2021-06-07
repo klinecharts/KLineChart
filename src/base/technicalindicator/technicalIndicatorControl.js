@@ -102,7 +102,7 @@ export function createTechnicalIndicatorInstance ({
  * @param technicalIndicator
  * @return {{series, calcParams, precision, name, styles}}
  */
-export function getTechnicalIndicatorInfo (technicalIndicator) {
+export function createTechnicalIndicatorInfo (technicalIndicator) {
   return {
     name: technicalIndicator.name,
     series: technicalIndicator.series,

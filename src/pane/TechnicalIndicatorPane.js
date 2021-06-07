@@ -24,7 +24,7 @@ export default class TechnicalIndicatorPane extends Pane {
     if ('height' in props) {
       this.setHeight(props.height)
     }
-    this.setTechnicalIndicator(this._chartData.technicalIndicator(props.name))
+    this.setTechnicalIndicator(this._chartData.getTechnicalIndicatorInstance(props.name))
   }
 
   _initBefore (props) {

@@ -26,7 +26,7 @@ import { logWarn } from '../utils/logger'
 import {
   createTechnicalIndicatorInstance,
   createTechnicalIndicatorMapping,
-  getTechnicalIndicatorInfo
+  createTechnicalIndicatorInfo
 } from '../base/technicalindicator/technicalIndicatorControl'
 import { TechnicalIndicatorSeries } from '../base/technicalindicator/TechnicalIndicator'
 import { GraphicMarkMouseOperateElement } from '../base/overlay/mark/GraphicMark'
@@ -232,19 +232,19 @@ export default class ChartData {
    * @param name
    * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
    */
-  technicalIndicatorInfo (name) {
+  getTechnicalIndicatorInfo (name) {
     if (isValid(name)) {
-      const technical = this.technicalIndicator(name)
-      if (technical) {
-        return getTechnicalIndicatorInfo(technical)
+      const tech = this.getTechnicalIndicatorInstance(name)
+      if (tech) {
+        return createTechnicalIndicatorInfo(tech)
       }
     } else {
-      const technicals = {}
+      const techs = {}
       for (const name in this._technicalIndicatorMapping) {
         const instance = this._technicalIndicatorMapping[name]
-        technicals[name] = getTechnicalIndicatorInfo(instance)
+        techs[name] = createTechnicalIndicatorInfo(instance)
       }
-      return technicals
+      return techs
     }
     return {}
   }
@@ -254,7 +254,7 @@ export default class ChartData {
    * @param name
    * @return {*}
    */
-  technicalIndicator (name) {
+  getTechnicalIndicatorInstance (name) {
     return this._technicalIndicatorMapping[name]
   }
 
@@ -311,11 +311,11 @@ export default class ChartData {
   }
 
   /**
-   * 加载价格和数量精度
+   * 设置价格和数量精度
    * @param pricePrecision
    * @param volumePrecision
    */
-  applyPriceVolumePrecision (pricePrecision, volumePrecision) {
+  setPriceVolumePrecision (pricePrecision, volumePrecision) {
     this._pricePrecision = pricePrecision
     this._volumePrecision = volumePrecision
     for (const name in this._technicalIndicatorMapping) {
