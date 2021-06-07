@@ -14,14 +14,11 @@
 
 import Chart from './Chart'
 import { logError, logTag, logWarn } from './utils/logger'
+import { isString, isContainerDom } from './utils/typeChecks'
 
 const instances = {}
 let chartBaseId = 1
 const CHART_NAME_PREFIX = 'k_line_chart_'
-
-function checkContainer (container) {
-  return container && (container instanceof HTMLElement) && container.appendChild && (typeof container.appendChild === 'function')
-}
 
 /**
  * 获取版本号
@@ -40,32 +37,29 @@ function version () {
 function init (ds, style = {}) {
   logTag()
   const errorMessage = 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
-  let container
+  let dom
   if (!ds) {
     logError('', '', errorMessage)
     return null
   }
-  if (typeof ds === 'string') {
-    container = document.getElementById(ds)
-    if (!checkContainer(container)) {
-      container = document.getElementsByClassName(ds)
-    }
+  if (isString(ds)) {
+    dom = document.getElementById(ds)
   } else {
-    container = ds
+    dom = ds
   }
-  if (!checkContainer(container)) {
+  if (!isContainerDom(dom)) {
     logError('', '', errorMessage)
     return null
   }
-  let chart = instances[container.chartId || '']
+  let chart = instances[dom.chartId || '']
   if (chart) {
     logWarn('', '', 'The chart has been initialized on the dom！！！')
     return chart
   }
   const id = `${CHART_NAME_PREFIX}${chartBaseId++}`
-  chart = new Chart(container, style)
+  chart = new Chart(dom, style)
   chart.id = id
-  container.chartId = id
+  dom.chartId = id
   instances[id] = chart
   return chart
 }
@@ -77,23 +71,12 @@ function init (ds, style = {}) {
 function dispose (dcs) {
   if (dcs) {
     let id
-    let container
-    if (typeof dcs === 'string') {
-      container = document.getElementById(dcs)
-      if (container) {
-        id = container.chartId
-      }
-      if (!id) {
-        container = document.getElementsByClassName(dcs)
-        if (container) {
-          id = container.chartId
-        }
-      }
-    }
-    if (!id) {
+    if (isString(dcs)) {
+      const dom = document.getElementById(dcs)
+      id = dom && dom.chartId
+    } else if (isContainerDom(dcs)) {
       id = dcs.chartId
-    }
-    if (!id && dcs instanceof Chart) {
+    } else if (dcs instanceof Chart) {
       id = dcs.id
     }
     if (id) {

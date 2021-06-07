@@ -108,3 +108,21 @@ export function isValid (value) {
 export function isBoolean (value) {
   return typeof value === 'boolean'
 }
+
+/**
+ * 是否是字符串
+ * @param value
+ * @return {boolean}
+ */
+export function isString (value) {
+  return typeof value === 'string'
+}
+
+/**
+ * 是否是容器元素
+ * @param dom
+ * @return {boolean}
+ */
+export function isContainerDom (dom) {
+  return dom && (dom instanceof HTMLElement) && dom.appendChild && (typeof dom.appendChild === 'function')
+}

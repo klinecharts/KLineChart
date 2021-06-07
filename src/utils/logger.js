@@ -41,7 +41,7 @@ export function logWarn (api, invalidParam, append = '') {
 export function logError (api, invalidParam, append = '') {
   if (DEV) {
     console.log(
-      '%c☹️ klinecharts error: \n%s%s%s',
+      '%c😟 klinecharts error: \n%s%s%s',
       'color:#ed1941;font-weight:bold',
       api ? `Call api ${api}${invalidParam || append ? ', ' : '.'},` : '',
       invalidParam ? `invalid parameter ${invalidParam}${append ? ', ' : '.'}` : '',

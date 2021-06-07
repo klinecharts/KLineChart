@@ -3,7 +3,7 @@
 ### init(ds, options)
 Initialize a chart and return the chart instance.
 
-- `ds` can be one of dom element, element id and element class
+- `ds` can be one of dom element and element id
 - `options` style configuration, please refer to [style details](styles.md)
 
 
@@ -11,7 +11,7 @@ Initialize a chart and return the chart instance.
 ### dispose(dcs)
 Destroy a chart. Once destroyed, the chart will no longer be usable.
 
-- `dcs` can be one of div node, node id, node class and chart instance
+- `dcs` can be one of div node, node id and chart instance
 
 
 
