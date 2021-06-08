@@ -12,6 +12,11 @@
  * limitations under the License.
  */
 
+/**
+ * 合并
+ * @param target
+ * @param source
+ */
 export function merge (target, source) {
   if (!isObject(target) || !isObject(source)) {
     return
@@ -20,7 +25,8 @@ export function merge (target, source) {
     if (key in target) {
       const targetProp = target[key]
       const sourceProp = source[key]
-      if (isObject(sourceProp) &&
+      if (
+        isObject(sourceProp) &&
         isObject(targetProp) &&
         !isArray(sourceProp) &&
         !isArray(targetProp)
@@ -35,6 +41,11 @@ export function merge (target, source) {
   }
 }
 
+/**
+ * 克隆
+ * @param target
+ * @return {{}|*}
+ */
 export function clone (target) {
   if (!isObject(target)) {
     return target
@@ -46,27 +57,28 @@ export function clone (target) {
   } else {
     copy = {}
   }
-  let p
-  let v
-  for (p in target) {
-    if (target.hasOwnProperty(p)) {
-      v = target[p]
-      if (isObject(v)) {
-        copy[p] = clone(v)
-      } else {
-        copy[p] = v
-      }
+  for (const key in target) {
+    const v = target[key]
+    if (isObject(v)) {
+      copy[key] = clone(v)
+    } else {
+      copy[key] = v
     }
   }
-
   return copy
 }
 
+/**
+ * 是否是数组
+ * @param value
+ * @return {boolean}
+ */
 export function isArray (value) {
   return Object.prototype.toString.call(value) === '[object Array]'
 }
 
 /**
+ * 是否是方法
  * @param {*} value
  * @return {boolean}
  */
@@ -75,6 +87,7 @@ export function isFunction (value) {
 }
 
 /**
+ * 是否是对象
  * @param {*} value
  * @return {boolean}
  */

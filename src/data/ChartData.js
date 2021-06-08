@@ -523,7 +523,7 @@ export default class ChartData {
     let realDataIndex
     let dataIndex
     if (isValid(cr.x)) {
-      realDataIndex = this.positionToDataIndex(cr.x)
+      realDataIndex = this.coordinateToDataIndex(cr.x)
       if (realDataIndex < 0) {
         dataIndex = 0
       } else if (realDataIndex > this._dataList.length - 1) {
@@ -536,7 +536,7 @@ export default class ChartData {
       dataIndex = realDataIndex
     }
     const kLineData = this._dataList[dataIndex]
-    const realX = this.dataIndexToPosition(realDataIndex)
+    const realX = this.dataIndexToCoordinate(realDataIndex)
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
     this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex }
     if (cr.paneId && kLineData) {
@@ -617,20 +617,20 @@ export default class ChartData {
   }
 
   /**
-   * 数据索引转换成位置
+   * 数据索引转换成坐标
    * @param dataIndex
    */
-  dataIndexToPosition (dataIndex) {
+  dataIndexToCoordinate (dataIndex) {
     const dataSize = this._dataList.length
     const deltaFromRight = dataSize + this._offsetRightBarCount - dataIndex
     return this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace + this._barSpace / 2
   }
 
   /**
-   * 位置换成数据索引转
+   * 坐标换成数据索引转
    * @param pixel
    */
-  positionToDataIndex (pixel) {
+  coordinateToDataIndex (pixel) {
     return Math.round(this.coordinateToFloatIndex(pixel)) - 1
   }
 

@@ -308,7 +308,7 @@ Remove annotation. Can be removed in batches, just pass in the array in batches,
 Create tags, you can create them in batches, just pass in an array in batches.
 - `tag` tag，`{ id, point, text, mark, styles }`
   - `id` unique identifier, if there are duplicates, it will be overwritten
-  - `point` text, default
+  - `point` point, default
   - `text` text, default
   - `mark` mark, default
   - `styles` style, default, the format is the same as the `tag` in the configuration

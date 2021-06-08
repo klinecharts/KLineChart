@@ -141,10 +141,10 @@ export default class XAxis extends Axis {
   }
 
   convertFromPixel (pixel) {
-    return this._chartData.positionToDataIndex(pixel)
+    return this._chartData.coordinateToDataIndex(pixel)
   }
 
   convertToPixel (value) {
-    return this._chartData.dataIndexToPosition(value)
+    return this._chartData.dataIndexToCoordinate(value)
   }
 }

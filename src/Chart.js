@@ -521,7 +521,7 @@ export default class Chart {
       logWarn('zoomAtPosition', 'position', 'position must be a number!!!')
       return
     }
-    const x = this._chartPane.chartData().dataIndexToPosition(position)
+    const x = this._chartPane.chartData().dataIndexToCoordinate(position)
     this.zoomAtCoordinate(scale, { x }, animationDuration)
   }
 
