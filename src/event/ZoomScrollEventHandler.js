@@ -111,7 +111,6 @@ export default class ZoomScrollEventHandler extends EventHandler {
     this._startScrollPoint = { x: event.localX, y: event.localY }
     this._chartData.startScroll()
     this._performCross(event, true, cross => {
-      const crosshair = { x: event.localX, y: cross.y, paneId: cross.paneId }
       this._touchZoomed = false
       if (this._touchPoint) {
         const xDif = event.localX - this._touchPoint.x
@@ -119,7 +118,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
         const radius = Math.sqrt(xDif * xDif + yDif * yDif)
         if (radius < TOUCH_MIN_RADIUS) {
           this._touchPoint = { x: event.localX, y: event.localY }
-          this._chartData.setCrosshair(crosshair)
+          this._chartData.setCrosshair({ x: event.localX, y: cross.y, paneId: cross.paneId })
         } else {
           this._touchCancelCrossHair = true
           this._touchPoint = null
@@ -133,12 +132,14 @@ export default class ZoomScrollEventHandler extends EventHandler {
 
   pressedMouseMoveEvent (event) {
     this._performCross(event, false, cross => {
-      const crosshair = { x: event.localX, y: cross.y, paneId: cross.paneId }
+      let crosshair = { x: event.localX, y: cross.y, paneId: cross.paneId }
       if (isTouch(event)) {
         if (this._touchPoint) {
           this._touchPoint = { x: event.localX, y: event.localY }
           this._chartData.setCrosshair(crosshair)
           return
+        } else {
+          crosshair = null
         }
       }
       const distance = event.localX - this._startScrollPoint.x
