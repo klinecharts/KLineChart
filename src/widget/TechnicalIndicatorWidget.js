@@ -12,16 +12,17 @@
  * limitations under the License.
  */
 
-import Widget from './Widget'
-import TechnicalIndicatorView from '../view/TechnicalIndicatorView'
-import TechnicalIndicatorOverlayView from '../view/TechnicalIndicatorOverlayView'
-
-export default class TechnicalIndicatorWidget extends Widget {
-  _createMainView (container, props) {
-    return new TechnicalIndicatorView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
-  }
-
-  _createOverlayView (container, props) {
-    return new TechnicalIndicatorOverlayView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
-  }
-}
+ import Widget from './Widget'
+ import TechnicalIndicatorView from '../view/TechnicalIndicatorView'
+ import TechnicalIndicatorCrosshairView from '../view/TechnicalIndicatorCrosshairView'
+ 
+ export default class TechnicalIndicatorWidget extends Widget {
+   _createMainView (container, props) {
+     return new TechnicalIndicatorView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
+   }
+ 
+   _createCrosshairView (container, props) {
+     return new TechnicalIndicatorCrosshairView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
+   }
+ }
+ 

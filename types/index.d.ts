@@ -1,29 +1,19 @@
-import {
-  KLineData, Precision, Viewport, OverlayEvent,
-  CoordinatePoint, TimestampPricePoint
-} from './Common';
-
 import { Chart, PictureType, ChartActionType } from './Chart';
 import {
+  GraphicMarkViewport,
+  CoordinatePoint, TimestampPricePoint,
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  CreateGraphicMarkOptions,
+  PriceVolumePrecision, CreateGraphicMarkOptions,
   OverrideGraphicMarkOptions, GraphicMark
 } from './GraphicMark';
-import {
-  AnnotationCheckParams,
-  AnnotationDrawParams,
-  Annotation
-} from './Annotation';
-
-import { Tag } from './Tag';
-
+import { KLineData } from './KLineData';
 import { PaneOptions } from './Pane';
 import {
   TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, OverrideTechnicalIndicator,
-  TechnicalIndicatorRenderDataSource,
+  TechnicalIndicatorRenderDataSource, TechnicalIndicatorRenderViewport,
   TechnicalIndicator
 } from './TechnicalIndicator';
 
@@ -40,16 +30,15 @@ export declare function dispose(dcs: HTMLDivElement | Chart | string): void;
 
 export {
   Chart, PictureType, ChartActionType,
-  KLineData, Precision, Viewport, OverlayEvent, PaneOptions,
-  CoordinatePoint, TimestampPricePoint,
+  GraphicMarkViewport, CoordinatePoint, TimestampPricePoint,
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  CreateGraphicMarkOptions, OverrideGraphicMarkOptions, GraphicMark,
-  AnnotationCheckParams, AnnotationDrawParams, Annotation,
-  Tag,
+  PriceVolumePrecision, CreateGraphicMarkOptions,
+  OverrideGraphicMarkOptions, GraphicMark,
+  KLineData, PaneOptions,
   TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, OverrideTechnicalIndicator,
-  TechnicalIndicatorRenderDataSource,
+  TechnicalIndicatorRenderDataSource, TechnicalIndicatorRenderViewport,
   TechnicalIndicator
 }

@@ -12,16 +12,27 @@
  * limitations under the License.
  */
 
-import CandleView from '../view/CandleView'
-import CandleOverlayView from '../view/CandleOverlayView'
-import TechnicalIndicatorWidget from './TechnicalIndicatorWidget'
-
-export default class CandleWidget extends TechnicalIndicatorWidget {
-  _createMainView (container, props) {
-    return new CandleView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
-  }
-
-  _createOverlayView (container, props) {
-    return new CandleOverlayView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
-  }
-}
+ import CandleView from '../view/CandleView'
+ import CandleCrosshairView from '../view/CandleCrosshairView'
+ import TechnicalIndicatorWidget from './TechnicalIndicatorWidget'
+ import GraphicMarkView from '../view/GraphicMarkView'
+ import BinanyView from '../view/BinanyView'
+ 
+ export default class CandleWidget extends TechnicalIndicatorWidget {
+   _createMainView (container, props) {
+     return new CandleView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
+   }
+ 
+   _createExpandView (container, props) {
+     return new GraphicMarkView(container, props.chartData)
+   }
+ 
+   _createBinanyView (container, props) {
+     return new BinanyView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
+   }
+ 
+   _createCrosshairView (container, props) {
+     return new CandleCrosshairView(container, props.chartData, props.xAxis, props.yAxis, props.additionalDataProvider)
+   }
+ }
+ 

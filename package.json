@@ -1,7 +1,7 @@
 {
-  "name": "klinecharts",
-  "version": "7.5.0",
-  "description": "Lightweight k-line chart built with html5 canvas",
+  "name": "@binany/klinecharts",
+  "version": "6.2.10",
+  "description": "Lightweight trading chart based on k-line and tradingview chart libs",
   "main": "index.js",
   "types": "./types/index.d.ts",
   "files": [
@@ -19,9 +19,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/liihuu/KLineChart"
+    "url": "https://git.ohmygodsummer.com/binany/chart-demo"
   },
   "keywords": [
+    "binany",
     "k-line",
     "time-line",
     "candlestick",
@@ -33,16 +34,14 @@
     "chart",
     "canvas"
   ],
-  "author": "liihuu",
+  "author": "xfo",
   "license": "Apache-2.0",
-  "private": false,
   "scripts": {
     "lint": "./node_modules/.bin/eslint src",
-    "build-extension": "./node_modules/.bin/babel src/extension --out-dir lib",
     "build-core": "./node_modules/.bin/rollup -c ./config/rollup.config.js",
-    "build": "npm run build-extension && npm run build-core",
-    "test": "./node_modules/.bin/mocha --require @babel/register tests/",
-    "deploy": "gh-pages -d website"
+    "build": "npm run build-core",
+    "prepublishOnly": "npm version patch",
+    "test": "./node_modules/.bin/mocha --require @babel/register tests/"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.5",
@@ -66,5 +65,8 @@
     "rollup-plugin-progress": "^1.1.2",
     "rollup-plugin-terser": "^7.0.2",
     "typescript": "^3.6.4"
+  },
+  "publishConfig": {
+    "@binany:registry": "https://git.ohmygodsummer.com/api/v4/projects/18/packages/npm/"
   }
 }

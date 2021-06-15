@@ -16,9 +16,9 @@
  * requestAnimationFrame兼容
  * @param fn
  */
-export function requestAnimationFrame (fn) {
+ export function requestAnimationFrame (fn) {
   if (!window.requestAnimationFrame) {
-    return window.setTimeout(fn, 20)
+    return window.setTimeout(() => { fn() }, 1000 / 60)
   }
   return window.requestAnimationFrame(fn)
 }

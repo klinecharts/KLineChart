@@ -1,0 +1,1 @@
+cp -r ./src ../binany-frontend/node_modules/@binany/klinecharts

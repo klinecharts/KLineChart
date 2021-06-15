@@ -12,12 +12,7 @@
  * limitations under the License.
  */
 
-/**
- * 合并
- * @param target
- * @param source
- */
-export function merge (target, source) {
+ export function merge (target, source) {
   if (!isObject(target) || !isObject(source)) {
     return
   }
@@ -25,15 +20,14 @@ export function merge (target, source) {
     if (key in target) {
       const targetProp = target[key]
       const sourceProp = source[key]
-      if (
-        isObject(sourceProp) &&
+      if (isObject(sourceProp) &&
         isObject(targetProp) &&
         !isArray(sourceProp) &&
         !isArray(targetProp)
       ) {
         merge(targetProp, sourceProp)
       } else {
-        if (isValid(source[key])) {
+        if (source[key] || source[key] === 0 || source[key] === false) {
           target[key] = source[key]
         }
       }
@@ -41,13 +35,8 @@ export function merge (target, source) {
   }
 }
 
-/**
- * 克隆
- * @param target
- * @return {{}|*}
- */
 export function clone (target) {
-  if (!isObject(target)) {
+  if (!target || !isObject(target)) {
     return target
   }
 
@@ -57,28 +46,27 @@ export function clone (target) {
   } else {
     copy = {}
   }
-  for (const key in target) {
-    const v = target[key]
-    if (isObject(v)) {
-      copy[key] = clone(v)
-    } else {
-      copy[key] = v
+  let p
+  let v
+  for (p in target) {
+    if (target.hasOwnProperty(p)) {
+      v = target[p]
+      if (v && isObject(v)) {
+        copy[p] = clone(v)
+      } else {
+        copy[p] = v
+      }
     }
   }
+
   return copy
 }
 
-/**
- * 是否是数组
- * @param value
- * @return {boolean}
- */
 export function isArray (value) {
   return Object.prototype.toString.call(value) === '[object Array]'
 }
 
 /**
- * 是否是方法
  * @param {*} value
  * @return {boolean}
  */
@@ -87,7 +75,6 @@ export function isFunction (value) {
 }
 
 /**
- * 是否是对象
  * @param {*} value
  * @return {boolean}
  */
@@ -120,22 +107,4 @@ export function isValid (value) {
  */
 export function isBoolean (value) {
   return typeof value === 'boolean'
-}
-
-/**
- * 是否是字符串
- * @param value
- * @return {boolean}
- */
-export function isString (value) {
-  return typeof value === 'string'
-}
-
-/**
- * 是否是容器元素
- * @param dom
- * @return {boolean}
- */
-export function isContainerDom (dom) {
-  return dom && (dom instanceof HTMLElement) && dom.appendChild && (typeof dom.appendChild === 'function')
 }

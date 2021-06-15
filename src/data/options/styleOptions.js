@@ -16,7 +16,7 @@
  * 线的样式
  * @type {{DASH: string, SOLID: string}}
  */
-export const LineStyle = {
+ export const LineStyle = {
   DASH: 'dash',
   SOLID: 'solid'
 }
@@ -36,8 +36,7 @@ export const YAxisPosition = {
  */
 export const YAxisType = {
   NORMAL: 'normal',
-  PERCENTAGE: 'percentage',
-  LOG: 'log'
+  PERCENTAGE: 'percentage'
 }
 
 /**
@@ -64,35 +63,12 @@ export const TooltipShowRule = {
 }
 
 /**
- * 数据提示显示类型
+ * 主图数据提示显示类型
  * @type {{RECT: string, STANDARD: string}}
  */
-export const TooltipShowType = {
+export const TooltipCandleShowType = {
   RECT: 'rect',
   STANDARD: 'standard'
-}
-
-/**
- * 注解标识类似
- * @type {{RECT: string, TRIANGLE: string, DIAMOND: string, CUSTOM: string, NONE: string, CIRCLE: string}}
- */
-export const AnnotationSymbolType = {
-  CIRCLE: 'circle',
-  RECT: 'rect',
-  TRIANGLE: 'triangle',
-  DIAMOND: 'diamond',
-  CUSTOM: 'custom',
-  NONE: 'none'
-}
-
-/**
- * 覆盖物位置
- * @type {{TOP: string, BOTTOM: string, POINT: string}}
- */
-export const OverlayPosition = {
-  POINT: 'point',
-  TOP: 'top',
-  BOTTOM: 'bottom'
 }
 
 /**
@@ -104,16 +80,16 @@ const defaultGrid = {
   horizontal: {
     show: true,
     size: 1,
-    color: '#EDEDED',
-    style: LineStyle.DASH,
-    dashValue: [2, 2]
+    color: 'rgba(255, 255, 255, 0.03)',
+    style: LineStyle.SOLID,
+    // dashValue: [2, 2]
   },
   vertical: {
     show: true,
     size: 1,
-    color: '#EDEDED',
-    style: LineStyle.DASH,
-    dashValue: [2, 2]
+    color: 'rgba(255, 255, 255, 0.03)',
+    style: LineStyle.SOLID,
+    // dashValue: [2, 2]
   }
 }
 
@@ -123,83 +99,88 @@ const defaultGrid = {
  */
 const defaultCandle = {
   margin: {
-    top: 0.2,
-    bottom: 0.1
+    top: 0.15,
+    bottom: 0.3
   },
   type: CandleType.CANDLE_SOLID,
   bar: {
     /**
      * 上涨颜色
      */
-    upColor: '#26A69A',
+    upColor: '#3aa057',
     /**
      * 下跌颜色
      */
-    downColor: '#EF5350',
+    downColor: '#a73a47',
     /**
      * 无变化时颜色
      */
-    noChangeColor: '#999999'
+    noChangeColor: '#888888',
+    upColorOffline: 'rgba(120, 120, 120, 1)',
+    downColorOffline: 'rgba(92, 92, 92, 1)',
   },
   area: {
     lineSize: 2,
     lineColor: '#2196F3',
+    lineColorOffline: 'rgba(109, 109, 109, 1)',
     value: 'close',
     fillColor: [{
       offset: 0,
-      color: 'rgba(33, 150, 243, 0.01)'
+      color: 'rgba(33, 150, 243, 0.01)',
+      offlineColor: 'rgba(109, 109, 109, 0.01)',
     }, {
       offset: 1,
-      color: 'rgba(33, 150, 243, 0.2)'
+      color: 'rgba(33, 150, 243, 0.2)',
+      offlineColor: 'rgba(109, 109, 109, 0.2)',
     }]
   },
   priceMark: {
     show: true,
     high: {
-      show: true,
-      color: '#76808F',
+      show: false,
+      color: '#D9D9D9',
       textMargin: 5,
       textSize: 10,
-      textFamily: 'Helvetica Neue',
+      textFamily: 'Open Sans, sans-serif',
       textWeight: 'normal'
     },
     low: {
-      show: true,
-      color: '#76808F',
+      show: false,
+      color: '#D9D9D9',
       textMargin: 5,
       textSize: 10,
-      textFamily: 'Helvetica Neue',
+      textFamily: 'Open Sans, sans-serif',
       textWeight: 'normal'
     },
     last: {
       show: true,
-      upColor: '#26A69A',
-      downColor: '#EF5350',
-      noChangeColor: '#888888',
+      upColor: '#5E68A3',
+      downColor: '#5E68A3',
+      noChangeColor: '#5E68A3',
       line: {
         show: true,
-        style: LineStyle.DASH,
+        style: LineStyle.SOLID,
         dashValue: [4, 4],
         size: 1
       },
       text: {
         show: true,
-        size: 12,
-        paddingLeft: 2,
-        paddingTop: 2,
-        paddingRight: 2,
-        paddingBottom: 2,
+        size: 13,
+        cornerWidth: 10,
+        paddingLeft: 3,
+        paddingTop: 4,
+        paddingRight: 0,
+        paddingBottom: 4,
         color: '#FFFFFF',
-        family: 'Helvetica Neue',
-        weight: 'normal',
-        borderRadius: 2
+        family: 'Open Sans, sans-serif',
+        weight: 'normal'
       }
     }
   },
   tooltip: {
-    showRule: TooltipShowRule.ALWAYS,
-    showType: TooltipShowType.STANDARD,
-    labels: ['时间: ', '开: ', '收: ', '高: ', '低: ', '成交量: '],
+    showRule: TooltipShowRule.NONE,
+    showType: TooltipCandleShowType.STANDARD,
+    labels: ['时间', '开', '收', '高', '低', '成交量'],
     values: null,
     defaultValue: 'n/a',
     rect: {
@@ -212,14 +193,14 @@ const defaultCandle = {
       offsetRight: 8,
       borderRadius: 4,
       borderSize: 1,
-      borderColor: '#F2F3F5',
-      fillColor: '#FEFEFE'
+      borderColor: '#3f4254',
+      fillColor: 'rgba(17, 17, 17, .3)'
     },
     text: {
       size: 12,
-      family: 'Helvetica Neue',
+      family: 'Open Sans, sans-serif',
       weight: 'normal',
-      color: '#76808F',
+      color: '#D9D9D9',
       marginLeft: 8,
       marginTop: 6,
       marginRight: 8,
@@ -255,28 +236,26 @@ const defaultTechnicalIndicator = {
     show: false,
     text: {
       show: false,
-      color: '#FFFFFF',
+      color: '#ffffff',
       size: 12,
-      family: 'Helvetica Neue',
+      family: 'Open Sans, sans-serif',
       weight: 'normal',
       paddingLeft: 3,
       paddingTop: 2,
       paddingRight: 3,
-      paddingBottom: 2,
-      borderRadius: 2
+      paddingBottom: 2
     }
   },
   tooltip: {
-    showRule: TooltipShowRule.ALWAYS,
-    showType: TooltipShowType.STANDARD,
+    showRule: TooltipShowRule.NONE,
     showName: true,
     showParams: true,
     defaultValue: 'n/a',
     text: {
       size: 12,
-      family: 'Helvetica Neue',
+      family: 'Open Sans, sans-serif',
       weight: 'normal',
-      color: '#76808F',
+      color: '#D9D9D9',
       marginTop: 6,
       marginRight: 8,
       marginBottom: 0,
@@ -302,8 +281,8 @@ const defaultXAxis = {
    * 轴线配置
    */
   axisLine: {
-    show: true,
-    color: '#DDDDDD',
+    show: false,
+    color: '#888888',
     size: 1
   },
 
@@ -312,19 +291,19 @@ const defaultXAxis = {
    */
   tickText: {
     show: true,
-    color: '#76808F',
+    color: '#D9D9D9',
     size: 12,
-    family: 'Helvetica Neue',
+    family: 'Open Sans, sans-serif',
     weight: 'normal',
     paddingTop: 3,
     paddingBottom: 6
   },
   // tick线
   tickLine: {
-    show: true,
+    show: false,
     size: 1,
     length: 3,
-    color: '#DDDDDD'
+    color: '#888888'
   }
 }
 
@@ -357,8 +336,8 @@ const defaultYAxis = {
    * 轴线配置
    */
   axisLine: {
-    show: true,
-    color: '#DDDDDD',
+    show: false,
+    color: '#888888',
     size: 1
   },
 
@@ -367,9 +346,9 @@ const defaultYAxis = {
    */
   tickText: {
     show: true,
-    color: '#76808F',
-    size: 12,
-    family: 'Helvetica Neue',
+    color: '#ffffff',
+    size: 14,
+    family: 'Open Sans, sans-serif',
     weight: 'normal',
     paddingLeft: 3,
     paddingRight: 6
@@ -378,8 +357,8 @@ const defaultYAxis = {
   tickLine: {
     show: true,
     size: 1,
-    length: 3,
-    color: '#DDDDDD'
+    length: 10,
+    color: 'rgba(0, 0, 0, 0)'
   }
 }
 
@@ -389,96 +368,76 @@ const defaultCrosshair = {
     show: true,
     line: {
       show: true,
-      style: LineStyle.DASH,
+      style: LineStyle.SOLID,
       dashValue: [4, 2],
       size: 1,
-      color: '#76808F'
+      color: 'rgba(255, 255, 255, 0.1)'
     },
     text: {
       show: true,
-      color: '#FFFFFF',
-      size: 12,
-      family: 'Helvetica Neue',
+      color: '#ffffff',
+      size: 13,
+      family: 'Open Sans, sans-serif',
       weight: 'normal',
-      paddingLeft: 2,
-      paddingRight: 2,
-      paddingTop: 2,
-      paddingBottom: 2,
-      borderSize: 1,
-      borderColor: '#686D76',
-      borderRadius: 2,
-      backgroundColor: '#686D76'
+      cornerWidth: 10,
+      paddingLeft: 3,
+      paddingRight: 4,
+      paddingTop: 4,
+      paddingBottom: 4,
+      borderSize: 0,
+      borderColor: '#505050',
+      backgroundColor: '#232848'
     }
   },
   vertical: {
     show: true,
     line: {
       show: true,
-      style: LineStyle.DASH,
+      style: LineStyle.SOLID,
       dashValue: [4, 2],
       size: 1,
-      color: '#76808F'
+      color: 'rgba(255, 255, 255, 0.1)'
     },
     text: {
       show: true,
-      color: '#FFFFFF',
-      size: 12,
-      family: 'Helvetica Neue',
+      color: '#D9D9D9',
+      size: 13,
+      family: 'Open Sans, sans-serif',
       weight: 'normal',
-      paddingLeft: 2,
-      paddingRight: 2,
+      paddingLeft: 6,
+      paddingRight: 6,
       paddingTop: 2,
       paddingBottom: 2,
-      borderSize: 1,
-      borderRadius: 2,
-      borderColor: '#686D76',
-      backgroundColor: '#686D76'
+      borderSize: 0,
+      borderColor: '#232848',
+      backgroundColor: '#5E68A3'
     }
   }
 }
 
 /**
  * 默认图形标记配置
- * @type {{arc: {fill: {color: string}, stroke: {size: number, color: string}}, polygon: {fill: {color: string}, stroke: {size: number, color: string}}, line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
+ * @type {{line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
  */
 const defaultGraphicMark = {
-  point: {
-    backgroundColor: '#2196F3',
-    borderColor: 'rgba(33, 150, 243, 0.35)',
-    borderSize: 1,
-    radius: 5,
-    activeBackgroundColor: '#2196F3',
-    activeBorderColor: 'rgba(33, 150, 243, 0.35)',
-    activeBorderSize: 3,
-    activeRadius: 5
-  },
   line: {
     color: '#2196F3',
-    size: 1,
-    dashValue: [2, 2]
+    size: 1
   },
-  polygon: {
-    stroke: {
-      size: 1,
-      color: '#2196F3'
-    },
-    fill: {
-      color: 'rgba(33, 150, 243, 0.1)'
-    }
-  },
-  arc: {
-    stroke: {
-      size: 1,
-      color: '#2196F3'
-    },
-    fill: {
-      color: 'rgba(33, 150, 243, 0.1)'
-    }
+  point: {
+    backgroundColor: '#181818',
+    borderColor: '#fff',
+    borderSize: 1,
+    radius: 5,
+    activeBackgroundColor: '#181818',
+    activeBorderColor: '#fff',
+    activeBorderSize: 2,
+    activeRadius: 6
   },
   text: {
-    color: '#2196F3',
+    color: '#1e88e5',
     size: 12,
-    family: 'Helvetica Neue',
+    family: 'Open Sans, sans-serif',
     weight: 'normal',
     marginLeft: 2,
     marginRight: 2,
@@ -488,66 +447,56 @@ const defaultGraphicMark = {
 }
 
 /**
- * 默认注解信息配置
- * @type {{}}
- */
-const defaultAnnotation = {
-  symbol: {
-    type: AnnotationSymbolType.DIAMOND,
-    position: OverlayPosition.TOP,
-    size: 8,
-    color: '#2196F3',
-    activeSize: 10,
-    activeColor: '#FF9600',
-    offset: [0, 20]
-  }
-}
-
-const defaultTag = {
-  position: OverlayPosition.POINT,
-  offset: 0,
-  line: {
-    show: true,
-    style: LineStyle.DASH,
-    dashValue: [4, 2],
-    size: 1,
-    color: '#2196F3'
-  },
-  text: {
-    color: '#FFFFFF',
-    backgroundColor: '#2196F3',
-    size: 12,
-    family: 'Helvetica Neue',
-    weight: 'normal',
-    paddingLeft: 2,
-    paddingRight: 2,
-    paddingTop: 2,
-    paddingBottom: 2,
-    borderRadius: 2
-  },
-  mark: {
-    color: '#FFFFFF',
-    backgroundColor: '#2196F3',
-    size: 12,
-    family: 'Helvetica Neue',
-    weight: 'normal',
-    paddingLeft: 2,
-    paddingRight: 2,
-    paddingTop: 2,
-    paddingBottom: 2,
-    borderRadius: 2
-  }
-}
-
-/**
  * 图表之间默认分割配置
  * @type {{size: number, color: string}}
  */
 const defaultSeparator = {
   size: 1,
-  color: '#DDDDDD',
+  color: 'rgb(49, 56, 100)',
   fill: true,
-  activeBackgroundColor: 'rgba(33, 150, 243, 0.08)'
+  activeBackgroundColor: 'rgb(49, 56, 100)'
+}
+
+const defaultBinany = {
+  lastPriceMark: {
+    color: "#FF9C00",
+    offlineColor: 'rgba(92, 92, 92, 1)',
+  },
+  tradeDuration: {
+    color: "#5A5B9A",
+    text: {
+      show: true,
+      color: "#5A5B9A",
+      size: 14
+    }
+  }
+}
+
+const defaultZoomSettings = {
+  area: {
+    min: 0.021,
+    max: 2.5,
+    initial: {
+      mobile: 0.17,
+      desktop: 1
+    }
+  },
+  candle_solid: {
+    min: 3,
+    max: 50,
+    initial: {
+     mobile: 3,
+     desktop: 8
+    }
+  },
+  ohlc: {
+   min: 3,
+   max: 50,
+   initial: {
+    mobile: 3,
+    desktop: 8
+   }
+  }
 }
 
 export const defaultStyleOptions = {
@@ -559,6 +508,6 @@ export const defaultStyleOptions = {
   separator: defaultSeparator,
   crosshair: defaultCrosshair,
   graphicMark: defaultGraphicMark,
-  annotation: defaultAnnotation,
-  tag: defaultTag
+  binany: defaultBinany,
+  zoomSettings: defaultZoomSettings
 }

@@ -27,8 +27,6 @@ export default class Delegate {
     const index = this._observers.indexOf(observer)
     if (index > -1) {
       this._observers.splice(index, 1)
-    } else {
-      this._observers = []
     }
   }
 

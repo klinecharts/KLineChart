@@ -14,7 +14,7 @@
 
 import EventBase from './EventBase'
 import ZoomScrollEventHandler from './ZoomScrollEventHandler'
-import OverlayEventHandler from './OverlayEventHandler'
+import GraphicMarkEventHandler from './GraphicMarkEventHandler'
 import KeyBoardEventHandler from './KeyBoardEventHandler'
 
 export default class ChartEvent {
@@ -43,7 +43,7 @@ export default class ChartEvent {
     this._boundContextMenuEvent = (e) => { e.preventDefault() }
     this._target.addEventListener('contextmenu', this._boundContextMenuEvent, false)
     this._zoomScrollEventHandler = new ZoomScrollEventHandler(chartData)
-    this._overlayEventHandler = new OverlayEventHandler(chartData)
+    this._graphicMarkEventHandler = new GraphicMarkEventHandler(chartData)
     this._keyBoardEventHandler = new KeyBoardEventHandler(chartData)
   }
 
@@ -61,10 +61,8 @@ export default class ChartEvent {
 
   _mouseUpEvent (event) {
     this._target.style.cursor = 'crosshair'
-    if (this._shouldPerformOverlayEvent()) {
-      event.localX -= this._chartContentSize.contentLeft
-      this._overlayEventHandler.mouseUpEvent(event)
-    }
+    event.localX -= this._chartContentSize.contentLeft
+    this._graphicMarkEventHandler.mouseUpEvent(event)
   }
 
   _mouseLeaveEvent (event) {
@@ -76,8 +74,8 @@ export default class ChartEvent {
 
   _mouseMoveEvent (event) {
     event.localX -= this._chartContentSize.contentLeft
-    if (this._shouldPerformOverlayEvent()) {
-      this._overlayEventHandler.mouseMoveEvent(event)
+    if (this._chartData.graphicMarks().length > 0) {
+      this._graphicMarkEventHandler.mouseMoveEvent(event)
     }
     if (this._checkZoomScroll()) {
       this._zoomScrollEventHandler.mouseMoveEvent(event)
@@ -100,28 +98,24 @@ export default class ChartEvent {
   _mouseDownEvent (event) {
     this._target.style.cursor = 'pointer'
     event.localX -= this._chartContentSize.contentLeft
-    if (this._shouldPerformOverlayEvent()) {
-      this._overlayEventHandler.mouseDownEvent(event)
-    }
+    this._graphicMarkEventHandler.mouseDownEvent(event)
     if (this._checkZoomScroll()) {
       this._zoomScrollEventHandler.mouseDownEvent(event)
     }
   }
 
   _mouseRightDownEvent (event) {
-    if (this._shouldPerformOverlayEvent()) {
-      event.localX -= this._chartContentSize.contentLeft
-      this._overlayEventHandler.mouseRightDownEvent(event)
-    }
+    event.localX -= this._chartContentSize.contentLeft
+    this._graphicMarkEventHandler.mouseRightDownEvent(event)
   }
 
   _pressedMouseMoveEvent (event) {
     event.localX -= this._chartContentSize.contentLeft
     if (this._chartData.dragGraphicMarkFlag()) {
-      this._overlayEventHandler.pressedMouseMoveEvent(event)
+      this._graphicMarkEventHandler.pressedMouseMoveEvent(event)
       // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
       if (this._chartData.crosshair().paneId) {
-        this._chartData.setCrosshair()
+        this._chartData.setCrosshairPointPaneId()
       }
     }
     if (this._checkZoomScroll()) {
@@ -142,24 +136,15 @@ export default class ChartEvent {
     return !this._chartData.dragPaneFlag() && !this._chartData.dragGraphicMarkFlag() && (graphicMarkCount === 0 || !graphicMarks[graphicMarkCount - 1].isDrawing())
   }
 
-  /**
-   * 是否需要处理图形标记事件
-   * @return {boolean}
-   * @private
-   */
-  _shouldPerformOverlayEvent () {
-    return this._chartData.graphicMarks().length > 0 || this._chartData.visibleAnnotations().length > 0
-  }
-
   setChartContentSize (chartContentSize) {
     this._chartContentSize = chartContentSize
     this._zoomScrollEventHandler.setChartContentSize(chartContentSize)
-    this._overlayEventHandler.setChartContentSize(chartContentSize)
+    this._graphicMarkEventHandler.setChartContentSize(chartContentSize)
   }
 
   setPaneContentSize (paneContentSize) {
     this._zoomScrollEventHandler.setPaneContentSize(paneContentSize)
-    this._overlayEventHandler.setPaneContentSize(paneContentSize)
+    this._graphicMarkEventHandler.setPaneContentSize(paneContentSize)
   }
 
   destroy () {

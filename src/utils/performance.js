@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-export function throttle (func, wait = 20) {
+export function throttle (func, wait = 16) {
   let previous = 0
   return function () {
     const now = Date.now()

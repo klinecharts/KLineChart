@@ -1,3 +1,5 @@
+import { getPixelRatio } from '../utils/canvas'
+
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { getPixelRatio } from '../utils/canvas'
-import { getPrecision, nice, round } from '../utils/number'
 
 export default class Axis {
   constructor (chartData) {
@@ -70,17 +69,16 @@ export default class Axis {
 
   /**
    * 计算轴
-   * @param forceCompute
    */
   computeAxis (forceCompute) {
-    const minMax = this._optimalMinMax(this._computeMinMax())
-    this._minValue = minMax.min
-    this._maxValue = minMax.max
-    this._range = minMax.range
-    if (this._cacheMinValue !== minMax.min || this._cacheMaxValue !== minMax.max || forceCompute) {
-      this._cacheMinValue = minMax.min
-      this._cacheMaxValue = minMax.max
-      this._ticks = this._optimalTicks(this._computeTicks())
+    const { min, max, range } = this._computeMinMaxValue()
+    this._minValue = min
+    this._maxValue = max
+    if (this._cacheMinValue !== min || this._cacheMaxValue !== max || forceCompute) {
+      this._cacheMinValue = min
+      this._cacheMaxValue = max
+      this._range = range
+      this._ticks = this._computeOptimalTicks(this._computeTicks())
       return true
     }
     return false
@@ -88,18 +86,14 @@ export default class Axis {
 
   /**
    * 计算最大最小值
-   * @private
    */
-  _computeMinMax () {}
+  _computeMinMaxValue () {}
 
   /**
-   * 优化最大最小值
-   * @param min
-   * @param max
-   * @param precision
-   * @private
+   * 计算最佳的tick
+   * @param ticks
    */
-  _optimalMinMax ({ min, max, precision }) {}
+  _computeOptimalTicks (ticks) {}
 
   /**
    * 计算轴上的tick值
@@ -107,11 +101,10 @@ export default class Axis {
   _computeTicks () {
     const ticks = []
     if (this._range >= 0) {
-      const intervalPrecision = this._computeInterval(this._range)
-      const interval = intervalPrecision.interval
-      const precision = intervalPrecision.precision
-      const first = round(Math.ceil(this._minValue / interval) * interval, precision)
-      const last = round(Math.floor(this._maxValue / interval) * interval, precision)
+      const interval = +this._nice(this._range / 8.0)
+      const precision = this._getIntervalPrecision(interval)
+      const first = +this._round(Math.ceil(this._minValue / interval) * interval, precision)
+      const last = +this._round(Math.floor(this._maxValue / interval) * interval, precision)
       let n = 0
       let f = first
 
@@ -126,21 +119,50 @@ export default class Axis {
     return ticks
   }
 
-  /**
-   * 计算最佳的tick
-   * @param ticks
-   */
-  _optimalTicks (ticks) {}
-
-  /**
-   * 计算间隔
-   * @private
-   */
-  _computeInterval (range) {
-    const interval = nice(range / 8.0)
-    const precision = getPrecision(interval)
-    return {
-      interval, precision
+  _nice (value) {
+    const exponent = Math.floor(Math.log(value) / Math.LN10)
+    const exp10 = Math.pow(10.0, exponent)
+    const f = value / exp10 // 1 <= f < 10
+    let nf = 0
+    if (f < 1.5) {
+      nf = 1
+    } else if (f < 2.5) {
+      nf = 2
+    } else if (f < 3.5) {
+      nf = 3
+    } else if (f < 4.5) {
+      nf = 4
+    } else if (f < 5.5) {
+      nf = 5
+    } else if (f < 6.5) {
+      nf = 6
+    } else {
+      nf = 8
     }
+    value = nf * exp10
+    return exponent >= -20 ? +value.toFixed(exponent < 0 ? -exponent : 0) : value
+  }
+
+  _getIntervalPrecision (value) {
+    const str = value.toString()
+
+    // Consider scientific notation: '3.4e-12' '3.4e+12'
+    const eIndex = str.indexOf('e')
+    if (eIndex > 0) {
+      const precision = +str.slice(eIndex + 1)
+      return precision < 0 ? -precision : 0
+    } else {
+      const dotIndex = str.indexOf('.')
+      return dotIndex < 0 ? 0 : str.length - 1 - dotIndex
+    }
+  }
+
+  _round (x, precision) {
+    if (precision == null) {
+      precision = 10
+    }
+    precision = Math.min(Math.max(0, precision), 20)
+    x = (+x).toFixed(precision)
+    return x
   }
 }

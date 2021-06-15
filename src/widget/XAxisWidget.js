@@ -12,16 +12,17 @@
  * limitations under the License.
  */
 
-import Widget from './Widget'
-import XAxisView from '../view/XAxisView'
-import XAxisOverlayView from '../view/XAxisOverlayView'
-
-export default class XAxisWidget extends Widget {
-  _createMainView (container, props) {
-    return new XAxisView(container, props.chartData, props.xAxis)
-  }
-
-  _createOverlayView (container, props) {
-    return new XAxisOverlayView(container, props.chartData, props.xAxis)
-  }
-}
+ import Widget from './Widget'
+ import XAxisView from '../view/XAxisView'
+ import XAxisCrosshairView from '../view/XAxisCrosshairView'
+ 
+ export default class XAxisWidget extends Widget {
+   _createMainView (container, props) {
+     return new XAxisView(container, props.chartData, props.xAxis)
+   }
+ 
+   _createCrosshairView (container, props) {
+     return new XAxisCrosshairView(container, props.chartData, props.xAxis)
+   }
+ }
+ 
