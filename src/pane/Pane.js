@@ -143,7 +143,7 @@ export default class Pane {
       const yAxisWidgetHeight = yAxisWidgetElement.offsetHeight
       const yAxisWidgetOffsetLeft = parseInt(yAxisWidgetElement.style.left, 10)
       ctx.drawImage(
-        this._yAxisWidget.getImage(includeTooltip),
+        this._yAxisWidget.getImage(includeOverlay),
         yAxisWidgetOffsetLeft, 0,
         yAxisWidgetWidth, yAxisWidgetHeight
       )

@@ -818,7 +818,6 @@ export default class ChartPane {
     let offsetTop = 0
     this._panes.forEach((pane, paneId) => {
       if (paneId !== CANDLE_PANE_ID) {
-        offsetTop += pane.height()
         const separator = this._separators.get(paneId)
         ctx.drawImage(
           separator.getImage(),
@@ -830,8 +829,8 @@ export default class ChartPane {
         pane.getImage(includeOverlay),
         0, offsetTop, width, pane.height()
       )
+      offsetTop += pane.height()
     })
-
     ctx.drawImage(
       this._xAxisPane.getImage(includeOverlay),
       0, offsetTop, width, this._xAxisPane.height()
