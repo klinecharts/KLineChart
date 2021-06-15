@@ -434,9 +434,10 @@ Convert coordinate value to value.
 - `finder` finder value, `{ paneId, dataIndexXAxis, absoluteYAxis }`
 
 
-### getConvertPictureUrl(includeOverlay, type, backgroundColor)
+### getConvertPictureUrl(includeTooltip, includeGraphicMark, type, backgroundColor)
 Get the picture url after the chart is converted into a picture.
-- `includeOverlay` Whether to include overlay, it can be defaulted
+- `includeTooltip` Whether to include tooltip, it can be defaulted
+- `includeGraphicMark` Whether to include graphic mark, it can be defaulted
 - `type` The converted picture type. The type is one of three types: 'png', 'jpeg', and 'bmp', which can be defaulted, and the default is 'jpeg'
 - `backgroundColor` background color, can be the default, the default is '#333333'
 
