@@ -141,7 +141,7 @@ export default class Annotation extends Overlay {
     }
   }
 
-  checkMousePointOnGraphic (point) {
+  checkMousePointOnGraphic (mouseCoordinate) {
     const barSpace = this._chartData.barSpace()
     const styles = this._styles || this._chartData.styleOptions().annotation
     const symbolOptions = styles.symbol
@@ -149,17 +149,17 @@ export default class Annotation extends Overlay {
     let isOn
     switch (symbolOptions.type) {
       case AnnotationSymbolType.CIRCLE: {
-        isOn = checkPointInCircle(this._symbolCoordinate, size / 2, point)
+        isOn = checkPointInCircle(this._symbolCoordinate, size / 2, mouseCoordinate)
         break
       }
       case AnnotationSymbolType.RECT: {
         const coordinate1 = { x: this._symbolCoordinate.x - size / 2, y: this._symbolCoordinate.y - size / 2 }
         const coordinate2 = { x: this._symbolCoordinate.x + size / 2, y: this._symbolCoordinate.y + size / 2 }
-        isOn = checkPointInRect(coordinate1, coordinate2, point)
+        isOn = checkPointInRect(coordinate1, coordinate2, mouseCoordinate)
         break
       }
       case AnnotationSymbolType.DIAMOND: {
-        isOn = checkPointInDiamond(this._symbolCoordinate, size, size, point)
+        isOn = checkPointInDiamond(this._symbolCoordinate, size, size, mouseCoordinate)
         break
       }
       case AnnotationSymbolType.TRIANGLE: {
@@ -169,13 +169,13 @@ export default class Annotation extends Overlay {
             { x: this._symbolCoordinate.x, y: this._symbolCoordinate.y - size / 2 },
             { x: this._symbolCoordinate.x + size / 2, y: this._symbolCoordinate.y + size / 2 }
           ],
-          point
+          mouseCoordinate
         )
         break
       }
       case AnnotationSymbolType.CUSTOM: {
         isOn = this.checkPointInCustomSymbol({
-          point,
+          mouseCoordinate,
           coordinate: this._symbolCoordinate,
           size
         })
@@ -214,11 +214,11 @@ export default class Annotation extends Overlay {
 
   /**
    * 检查鼠标点是否在自定义标识内
-   * @param point
+   * @param mouseCoordinate
    * @param coordinate
    * @param size
    */
-  checkPointInCustomSymbol ({ point, coordinate, size }) {}
+  checkPointInCustomSymbol ({ mouseCoordinate, coordinate, size }) {}
 
   /**
    * 绘制自定义标识

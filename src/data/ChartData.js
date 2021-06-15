@@ -156,13 +156,12 @@ export default class ChartData {
   _adjustVisibleDataList () {
     // 处理需要绘制的数据
     const dataSize = this._dataList.length
-    const halfBarSpace = this._barSpace / 2
     this._visibleDataList = []
     this._visibleAnnotations = []
     for (let i = this._from; i < this._to; i++) {
       const kLineData = this._dataList[i]
       const deltaFromRight = dataSize + this._offsetRightBarCount - i
-      const x = this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace + halfBarSpace
+      const x = this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace
       this._visibleDataList.push({
         index: i,
         x,
@@ -183,23 +182,21 @@ export default class ChartData {
   _adjustFromTo () {
     const dataSize = this._dataList.length
     const barLength = this._totalDataSpace / this._dataSpace
-    const halfBarSpace = this._barSpace / 2
-    const halfBarCount = halfBarSpace / this._dataSpace
-    const maxRightOffsetBarCount = barLength - Math.min(this._leftMinVisibleBarCount, dataSize) + (1 - halfBarCount)
+    const maxRightOffsetBarCount = barLength - Math.min(this._leftMinVisibleBarCount, dataSize)
     if (this._offsetRightBarCount > maxRightOffsetBarCount) {
       this._offsetRightBarCount = maxRightOffsetBarCount
     }
 
-    const minRightOffsetBarCount = -dataSize + Math.min(this._rightMinVisibleBarCount, dataSize) + halfBarCount
+    const minRightOffsetBarCount = -dataSize + Math.min(this._rightMinVisibleBarCount, dataSize)
 
     if (this._offsetRightBarCount < minRightOffsetBarCount) {
       this._offsetRightBarCount = minRightOffsetBarCount
     }
-    this._to = Math.round(this._offsetRightBarCount + dataSize)
-    this._from = Math.floor(this._to - barLength) - 1
+    this._to = Math.round(this._offsetRightBarCount + dataSize + 0.5)
     if (this._to > dataSize) {
       this._to = dataSize
     }
+    this._from = Math.round(this._to - barLength) - 1
     if (this._from < 0) {
       this._from = 0
     }
@@ -623,7 +620,8 @@ export default class ChartData {
   dataIndexToCoordinate (dataIndex) {
     const dataSize = this._dataList.length
     const deltaFromRight = dataSize + this._offsetRightBarCount - dataIndex
-    return this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace + this._barSpace / 2
+    // return this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace + this._barSpace / 2
+    return this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace
   }
 
   /**
@@ -631,7 +629,7 @@ export default class ChartData {
    * @param pixel
    */
   coordinateToDataIndex (pixel) {
-    return Math.round(this.coordinateToFloatIndex(pixel)) - 1
+    return Math.ceil(this.coordinateToFloatIndex(pixel)) - 1
   }
 
   /**

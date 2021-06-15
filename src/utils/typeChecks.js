@@ -58,11 +58,13 @@ export function clone (target) {
     copy = {}
   }
   for (const key in target) {
-    const v = target[key]
-    if (isObject(v)) {
-      copy[key] = clone(v)
-    } else {
-      copy[key] = v
+    if (target.hasOwnProperty(key)) {
+      const v = target[key]
+      if (isObject(v)) {
+        copy[key] = clone(v)
+      } else {
+        copy[key] = v
+      }
     }
   }
   return copy
