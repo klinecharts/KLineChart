@@ -95,7 +95,7 @@ export default class YAxis extends Axis {
       minMaxArray[1] = Math.max(maxValue, minMaxArray[1])
     } else {
       minMaxArray[0] = 0
-      minMaxArray[1] = 0
+      minMaxArray[1] = 10
     }
     return { min: minMaxArray[0], max: minMaxArray[1], precision, specifyMin: minValue, specifyMax: maxValue }
   }
