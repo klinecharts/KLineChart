@@ -1,19 +1,29 @@
 # Change Log
+## 7.5.0
+`2021-06-16`
++ 🆕 Add tag, new api `createTag` and `removeTag`.
++ 🐞 Fix the problem that the `onRemove` method does not trigger when deleting all graphic marks.
++ 🐞 Fix the problem of incorrect return of `getConvertPictureUrl`.
++ 💄 Combine `overlay` and `tooltip`.
++ 💄 Optimize the y-axis display when there is no data.
++ 💄 Optimize the interaction of the cross cursor on the mobile.
+
+
 ## 7.3.3
 `2021-06-03`
-🐞 Fix the inaccurate calculation of the coordinate point parameters of the annotation callback method.
-💄 Optimize the y-axis display.
++ 🐞 Fix the inaccurate calculation of the coordinate point parameters of the annotation callback method.
++ 💄 Optimize the y-axis display.
 
 
 ## 7.3.2
 `2021-06-01`
-👉 The default style is changed to be suitable for light theme.
-🐞 Fix the problem of `technicalIndicator.tooltip.showType: rect`.
++ 👉 The default style is changed to be suitable for light theme.
++ 🐞 Fix the problem of `technicalIndicator.tooltip.showType: rect`.
 
 
 ## 7.3.1
 `2021-05-31`
-💄 Optimize the display of `yAxis.type:log`.
++ 💄 Optimize the display of `yAxis.type:log`.
 
 
 ## 7.3.0

@@ -439,7 +439,7 @@ Get the picture url after the chart is converted into a picture.
 - `includeTooltip` Whether to include tooltip, it can be defaulted
 - `includeGraphicMark` Whether to include graphic mark, it can be defaulted
 - `type` The converted picture type. The type is one of three types: 'png', 'jpeg', and 'bmp', which can be defaulted, and the default is 'jpeg'
-- `backgroundColor` background color, can be the default, the default is '#333333'
+- `backgroundColor` background color, can be the default, the default is '#FFFFFF'
 
 
 ### resize()

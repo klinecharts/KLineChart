@@ -1,19 +1,29 @@
 # 更新日志
+## 7.5.0
+`2021-06-16`
++ 🆕 新增标签功能，api新增`createTag`和`removeTag`。
++ 🐞 修复删除所有图形标记时，`onRemove`方法不触发问题。
++ 🐞 修复`getConvertPictureUrl`，返回不对问题。
++ 💄 合并`overlay`和`tooltip`。
++ 💄 优化无数据时，y轴显示。
++ 💄 优化移动端十字光标交互。
+
+
 ## 7.3.3
 `2021-06-03`
-🐞 修复注解回调方法坐标点参数计算不准确问题。
-💄 优化y轴显示。
++ 🐞 修复注解回调方法坐标点参数计算不准确问题。
++ 💄 优化y轴显示。
 
 
 ## 7.3.2
 `2021-06-01`
-👉 默认样式更改为适用于浅色主题。
-🐞 修复`technicalIndicator.tooltip.showType: rect`会出错问题。
++ 👉 默认样式更改为适用于浅色主题。
++ 🐞 修复`technicalIndicator.tooltip.showType: rect`会出错问题。
 
 
 ## 7.3.1
 `2021-05-31`
-💄 优化`yAxis.type:log`显示。
++ 💄 优化`yAxis.type:log`显示。
 
 
 ## 7.3.0

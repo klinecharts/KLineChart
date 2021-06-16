@@ -168,9 +168,11 @@ export default class ChartData {
         data: kLineData
       })
       const annotation = this._annotations.get(kLineData.timestamp) || []
-      for (const an of annotation) {
-        an.createSymbolCoordinate(x)
-        this._visibleAnnotations.push(an)
+      if (annotation.length > 0) {
+        for (const an of annotation) {
+          an.createSymbolCoordinate(x)
+          this._visibleAnnotations.push(an)
+        }
       }
     }
   }
@@ -193,10 +195,10 @@ export default class ChartData {
       this._offsetRightBarCount = minRightOffsetBarCount
     }
     this._to = Math.round(this._offsetRightBarCount + dataSize + 0.5)
+    this._from = Math.round(this._to - barLength) - 1
     if (this._to > dataSize) {
       this._to = dataSize
     }
-    this._from = Math.round(this._to - barLength) - 1
     if (this._from < 0) {
       this._from = 0
     }

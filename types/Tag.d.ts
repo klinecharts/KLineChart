@@ -1,6 +1,9 @@
+import { TimestampPricePoint } from './Common';
+
 export declare interface Tag {
   id: string;
-  value?: string | number;
+  point: TimestampPricePoint;
+  text?: string | number;
   mark?: string;
   coordinate?: number;
   styles?: any;
