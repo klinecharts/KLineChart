@@ -143,7 +143,7 @@ export default class ChartData {
    * @private
    */
   _calcBarSpace () {
-    const rateBarSpace = Math.floor(this._dataSpace * 0.8)
+    const rateBarSpace = Math.floor(this._dataSpace * 0.82)
     const floorBarSpace = Math.floor(this._dataSpace)
     const optimalBarSpace = Math.min(rateBarSpace, floorBarSpace - 1)
     return Math.max(1, optimalBarSpace)

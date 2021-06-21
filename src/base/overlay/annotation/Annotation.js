@@ -82,6 +82,7 @@ export default class Annotation extends Overlay {
         break
       }
       case AnnotationSymbolType.CUSTOM: {
+        ctx.save()
         this.drawCustomSymbol({
           ctx,
           point: this._point,
@@ -94,6 +95,7 @@ export default class Annotation extends Overlay {
           styles: symbolOptions,
           isActive
         })
+        ctx.restore()
         break
       }
       default: {

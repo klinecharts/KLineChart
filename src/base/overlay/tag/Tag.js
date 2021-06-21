@@ -84,6 +84,7 @@ export default class Tag extends Overlay {
     const options = this._chartData.styleOptions()
     const tagOptions = this._styles || options.tag
     const tagTextOptions = tagOptions.text
+    ctx.save()
     ctx.font = createFont(tagTextOptions.size, tagTextOptions.weight, tagTextOptions.family)
     const rectWidth = this._getTextRectWidth(ctx, tagTextOptions)
     const rectHeight = tagTextOptions.paddingTop + tagTextOptions.paddingBottom + tagTextOptions.size
@@ -104,6 +105,7 @@ export default class Tag extends Overlay {
       tagTextOptions.borderRadius
     )
     renderText(ctx, tagTextOptions.color, x + tagTextOptions.paddingLeft, y, this._text)
+    ctx.restore()
   }
 
   /**
