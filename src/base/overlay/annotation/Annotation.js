@@ -106,10 +106,9 @@ export default class Annotation extends Overlay {
 
   draw (ctx) {
     const styles = this._styles || this._chartData.styleOptions().annotation
-    const symbolOptions = styles.symbol
-    const offset = symbolOptions.offset || []
+    const offset = styles.offset || []
     let y = 0
-    switch (symbolOptions.position) {
+    switch (styles.position) {
       case OverlayPosition.POINT: {
         y = this._yAxis.convertToPixel(this._point.price)
         break

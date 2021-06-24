@@ -260,7 +260,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     }
     const rectY = rectOptions.offsetTop
     const radius = rectOptions.borderRadius
-    renderFillRoundRect(this._ctx, rectOptions.fillColor, rectX, rectY, rectWidth, rectHeight, radius)
+    renderFillRoundRect(this._ctx, rectOptions.backgroundColor, rectX, rectY, rectWidth, rectHeight, radius)
     renderStrokeRoundRect(this._ctx, rectOptions.borderColor, rectBorderSize, rectX, rectY, rectWidth, rectHeight, radius)
     const baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
     let labelY = rectY + rectBorderSize + rectPaddingTop

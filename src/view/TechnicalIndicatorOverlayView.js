@@ -105,7 +105,6 @@ export default class TechnicalIndicatorOverlayView extends View {
    * @param technicalIndicatorOptions
    * @param offsetTop
    * @param isDrawTechnicalIndicatorTooltip
-   * @private
    */
   _drawBatchTechnicalIndicatorToolTip (crosshair, technicalIndicators, technicalIndicatorOptions, offsetTop = 0, isDrawTechnicalIndicatorTooltip) {
     if (!isDrawTechnicalIndicatorTooltip) {
@@ -211,7 +210,6 @@ export default class TechnicalIndicatorOverlayView extends View {
    * @param crosshair
    * @param tooltipOptions
    * @return {boolean|boolean|*}
-   * @private
    */
   _shouldDrawTooltip (crosshair, tooltipOptions) {
     const showRule = tooltipOptions.showRule

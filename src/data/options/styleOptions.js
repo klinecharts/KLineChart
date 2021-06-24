@@ -213,7 +213,7 @@ const defaultCandle = {
       borderRadius: 4,
       borderSize: 1,
       borderColor: '#F2F3F5',
-      fillColor: '#FEFEFE'
+      backgroundColor: '#FEFEFE'
     },
     text: {
       size: 12,
@@ -492,14 +492,14 @@ const defaultGraphicMark = {
  * @type {{}}
  */
 const defaultAnnotation = {
+  position: OverlayPosition.TOP,
+  offset: [0, 20],
   symbol: {
     type: AnnotationSymbolType.DIAMOND,
-    position: OverlayPosition.TOP,
     size: 8,
     color: '#2196F3',
     activeSize: 10,
-    activeColor: '#FF9600',
-    offset: [0, 20]
+    activeColor: '#FF9600'
   }
 }
 
