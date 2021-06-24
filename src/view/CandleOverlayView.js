@@ -23,22 +23,10 @@ import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
-  _drawCover () {
-    this._ctx.textBaseline = 'alphabetic'
-    // 绘制标签
-    const tags = this._chartData.tags()
-    tags.forEach(tag => {
-      tag.drawMarkLine(this._ctx)
-    })
-    // 绘制图形标记
+  _drawGraphicMark () {
     const graphicMarks = this._chartData.graphicMarks()
     graphicMarks.forEach(graphicMark => {
       graphicMark.draw(this._ctx)
-    })
-    // 绘制注解
-    const annotations = this._chartData.visibleAnnotations()
-    annotations.forEach(annotation => {
-      annotation.draw(this._ctx)
     })
   }
 

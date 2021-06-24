@@ -122,7 +122,7 @@ export default class ChartData {
     // 注解标记
     this._annotations = new Map()
     // 可见的注解标记
-    this._visibleAnnotations = []
+    this._visibleAnnotations = new Map()
     // 注解鼠标操作信息
     this._annotationMouseOperate = { id: '' }
 
@@ -156,7 +156,7 @@ export default class ChartData {
     // 处理需要绘制的数据
     const dataSize = this._dataList.length
     this._visibleDataList = []
-    this._visibleAnnotations = []
+    this._visibleAnnotations.clear()
     for (let i = this._from; i < this._to; i++) {
       const kLineData = this._dataList[i]
       const deltaFromRight = dataSize + this._offsetRightBarCount - i
@@ -166,12 +166,22 @@ export default class ChartData {
         x,
         data: kLineData
       })
-      const annotation = this._annotations.get(kLineData.timestamp) || []
-      if (annotation.length > 0) {
-        for (const an of annotation) {
-          an.createSymbolCoordinate(x)
-          this._visibleAnnotations.push(an)
-        }
+      if (this._annotations.size > 0) {
+        this._annotations.forEach((annotations, paneId) => {
+          if (annotations.size > 0) {
+            const annotation = annotations.get(kLineData.timestamp) || []
+            if (annotation.length > 0) {
+              for (const an of annotation) {
+                an.createSymbolCoordinate(x)
+                if (this._visibleAnnotations.has(paneId)) {
+                  this._visibleAnnotations.get(paneId).push(an)
+                } else {
+                  this._visibleAnnotations.set(paneId, [an])
+                }
+              }
+            }
+          }
+        })
       }
     }
   }
@@ -835,7 +845,7 @@ export default class ChartData {
 
   /**
    * 获取可见的注解
-   * @return {[]}
+   * @return {Map<any, any>}
    */
   visibleAnnotations () {
     return this._visibleAnnotations
@@ -852,13 +862,18 @@ export default class ChartData {
   /**
    * 创建注解
    * @param annotations
+   * @param paneId
    */
-  addAnnotations (annotations) {
+  addAnnotations (annotations, paneId) {
     annotations.forEach(annotation => {
-      if (this._annotations.has(annotation.id())) {
-        this._annotations.get(annotation.id()).push(annotation)
+      if (!this._annotations.has(paneId)) {
+        this._annotations.set(paneId, new Map())
+      }
+      const idAnnotations = this._annotations.get(paneId)
+      if (idAnnotations.has(annotation.id())) {
+        idAnnotations.get(annotation.id()).push(annotation)
       } else {
-        this._annotations.set(annotation.id(), [annotation])
+        idAnnotations.set(annotation.id(), [annotation])
       }
     })
     this._adjustVisibleDataList()
@@ -867,24 +882,34 @@ export default class ChartData {
 
   /**
    * 移除注解
-   * @param points
+   * @param paneId
+   * @param point
    */
-  removeAnnotation (points) {
+  removeAnnotation (paneId, point) {
     let shouldAdjust = false
-    if (isValid(points)) {
-      ([].concat(points)).forEach(({ timestamp }) => {
-        if (this._annotations.has(timestamp)) {
+    if (isValid(paneId)) {
+      if (this._annotations.has(paneId)) {
+        if (isValid(point)) {
+          const idAnnotations = this._annotations.get(paneId)
+          const points = [].concat(point)
+          points.forEach(({ timestamp }) => {
+            if (idAnnotations.has(timestamp)) {
+              shouldAdjust = true
+              idAnnotations.delete(timestamp)
+            }
+          })
+        } else {
           shouldAdjust = true
-          this._annotations.delete(timestamp)
+          this._annotations.delete(paneId)
         }
-      })
-      if (shouldAdjust) {
-        this._adjustVisibleDataList()
+        if (shouldAdjust) {
+          this._adjustVisibleDataList()
+        }
       }
     } else {
       shouldAdjust = true
       this._annotations.clear()
-      this._visibleAnnotations = []
+      this._visibleAnnotations.clear()
     }
     if (shouldAdjust) {
       this.invalidate(InvalidateLevel.OVERLAY)
@@ -911,28 +936,42 @@ export default class ChartData {
   /**
    * 添加标签
    * @param tags
+   * @param paneId
    */
-  addTags (tags) {
+  addTags (tags, paneId) {
     tags.forEach(tag => {
-      this._tags.set(tag.id(), tag)
+      if (!this._tags.has(paneId)) {
+        this._tags.set(paneId, new Map([[tag.id(), tag]]))
+      } else {
+        this._tags.get(paneId).set(tag.id(), tag)
+      }
     })
     this.invalidate(InvalidateLevel.OVERLAY)
   }
 
   /**
    * 移除标签
-   * @param id
+   * @param paneId
+   * @param tagId
    */
-  removeTag (id) {
+  removeTag (paneId, tagId) {
     let shouldInvalidate = false
-    if (isValid(id)) {
-      const ids = [].concat(id)
-      ids.forEach(id => {
-        if (this._tags.has(id)) {
+    if (isValid(paneId)) {
+      if (this._tags.has(paneId)) {
+        if (isValid(tagId)) {
+          const idTags = this._tags.get(paneId)
+          const ids = [].concat(tagId)
+          ids.forEach(id => {
+            if (idTags.has(id)) {
+              shouldInvalidate = true
+              idTags.delete(id)
+            }
+          })
+        } else {
           shouldInvalidate = true
-          this._tags.delete(id)
+          this._tags.delete(paneId)
         }
-      })
+      }
     } else {
       shouldInvalidate = true
       this._tags.clear()

@@ -138,11 +138,10 @@ export default class TechnicalIndicatorPane extends Pane {
         cloneInstance.setCalcParams(calcParams)
         cloneInstance.setPrecision(precision)
         cloneInstance.setStyles(styles, this._chartData.styleOptions().technicalIndicator)
-        if (isStack) {
-          this._techs.set(cloneInstance.name, cloneInstance)
-        } else {
-          this._techs = new Map([[cloneInstance.name, cloneInstance]])
+        if (!isStack) {
+          this._techs.clear()
         }
+        this._techs.set(name, cloneInstance)
         this.calcTechnicalIndicator(cloneInstance)
         return true
       }

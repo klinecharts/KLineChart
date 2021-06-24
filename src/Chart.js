@@ -13,9 +13,10 @@
  */
 
 import ChartPane from './pane/ChartPane'
-import { clone, isNumber, isObject, isArray, isFunction } from './utils/typeChecks'
+import { clone, isNumber, isObject, isArray, isFunction, isValid } from './utils/typeChecks'
 import { logWarn } from './utils/logger'
 import { requestAnimationFrame } from './utils/compatible'
+import { CANDLE_PANE_ID } from './data/constants'
 
 export default class Chart {
   constructor (container, styleOptions) {
@@ -280,6 +281,10 @@ export default class Chart {
    * @param name
    */
   removeTechnicalIndicator (paneId, name) {
+    if (!this._chartPane.hasPane(paneId)) {
+      logWarn('removeTechnicalIndicator', 'paneId', 'can not find the corresponding pane!!!')
+      return null
+    }
     this._chartPane.removeTechnicalIndicator(paneId, name)
   }
 
@@ -349,34 +354,54 @@ export default class Chart {
   /**
    * 创建注解
    * @param annotation
+   * @param paneId
    */
-  createAnnotation (annotation) {
+  createAnnotation (annotation, paneId) {
     if (!isObject(annotation)) {
       logWarn('createAnnotation', 'annotation', 'annotation must be an object or array!!!')
       return
     }
+    if (isValid(paneId)) {
+      if (!this._chartPane.hasPane(paneId)) {
+        logWarn('createAnnotation', 'paneId', 'can not find the corresponding pane!!!')
+        return
+      }
+    } else {
+      paneId = CANDLE_PANE_ID
+    }
     const annotations = [].concat(annotation)
-    this._chartPane.createAnnotation(annotations)
+    this._chartPane.createAnnotation(annotations, paneId)
   }
 
   /**
    * 移除注解
+   * @param paneId
+   * @param points
    */
-  removeAnnotation (points) {
-    this._chartPane.chartData().removeAnnotation(points)
+  removeAnnotation (paneId, points) {
+    this._chartPane.chartData().removeAnnotation(paneId, points)
   }
 
   /**
    * 创建标签
    * @param tag
+   * @param paneId
    */
-  createTag (tag) {
+  createTag (tag, paneId) {
     if (!isObject(tag)) {
       logWarn('createTag', 'tag', 'tag must be an object or array!!!')
       return
     }
+    if (isValid(paneId)) {
+      if (!this._chartPane.hasPane(paneId)) {
+        logWarn('createTag', 'paneId', 'can not find the corresponding pane!!!')
+        return
+      }
+    } else {
+      paneId = CANDLE_PANE_ID
+    }
     const tags = [].concat(tag)
-    this._chartPane.createTag(tags)
+    this._chartPane.createTag(tags, paneId)
   }
 
   /**
@@ -391,7 +416,11 @@ export default class Chart {
    * 设置窗口属性
    * @param options
    */
-  setPaneOptions (options = {}) {
+  setPaneOptions (options) {
+    if (!isObject(options)) {
+      logWarn('setPaneOptions', 'options', 'options must be an object!!!')
+      return
+    }
     this._chartPane.setPaneOptions(options, false)
   }
 

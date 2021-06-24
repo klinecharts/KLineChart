@@ -28,14 +28,21 @@ export default class YAxisOverlayView extends View {
 
   _draw () {
     this._ctx.textBaseline = 'middle'
-    if (this._yAxis.isCandleYAxis()) {
-      // 绘制标签
-      const tags = this._chartData.tags()
+    this._drawTag()
+    this._drawCrossHairLabel()
+  }
+
+  /**
+   * 绘制标签
+   * @private
+   */
+  _drawTag () {
+    const tags = this._chartData.tags().get(this._additionalDataProvider.id())
+    if (tags) {
       tags.forEach(tag => {
         tag.drawText(this._ctx)
       })
     }
-    this._drawCrossHairLabel()
   }
 
   _drawCrossHairLabel () {

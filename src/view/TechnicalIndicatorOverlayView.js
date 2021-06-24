@@ -30,7 +30,10 @@ export default class TechnicalIndicatorOverlayView extends View {
   }
 
   _draw () {
-    this._drawCover()
+    this._ctx.textBaseline = 'alphabetic'
+    this._drawTag()
+    this._drawGraphicMark()
+    this._drawAnnotation()
     const crosshair = this._chartData.crosshair()
     if (crosshair.kLineData) {
       const technicalIndicators = this._additionalDataProvider.technicalIndicators()
@@ -49,10 +52,32 @@ export default class TechnicalIndicatorOverlayView extends View {
   }
 
   /**
-   * 绘制覆盖物
+   * 绘制注解
+   */
+  _drawAnnotation () {
+    const annotations = this._chartData.visibleAnnotations().get(this._additionalDataProvider.id()) || []
+    annotations.forEach(annotation => {
+      annotation.draw(this._ctx)
+    })
+  }
+
+  /**
+   * 绘制标签
+   */
+  _drawTag () {
+    const tags = this._chartData.tags().get(this._additionalDataProvider.id())
+    if (tags) {
+      tags.forEach(tag => {
+        tag.drawMarkLine(this._ctx)
+      })
+    }
+  }
+
+  /**
+   * 绘制图形标记
    * @private
    */
-  _drawCover () {}
+  _drawGraphicMark () {}
 
   /**
    * 绘制图例

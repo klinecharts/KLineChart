@@ -93,7 +93,7 @@ export function getGraphicMarkInfo (graphicMark) {
     id: graphicMark.id(),
     totalStep: graphicMark.totalStep(),
     lock: graphicMark.lock(),
-    points: graphicMark.tpPoints(),
+    points: graphicMark.points(),
     styles: graphicMark.styles()
   }
 }

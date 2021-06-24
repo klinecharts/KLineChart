@@ -319,6 +319,15 @@ export default class ChartPane {
   }
 
   /**
+   * 窗口是否存在
+   * @param paneId
+   * @return {boolean}
+   */
+  hasPane (paneId) {
+    return this._panes.has(paneId)
+  }
+
+  /**
    * 获取图表上的数据
    * @returns {ChartData}
    */
@@ -438,31 +447,29 @@ export default class ChartPane {
    * @param name
    */
   removeTechnicalIndicator (paneId, name) {
-    if (this._panes.has(paneId)) {
-      if (paneId === CANDLE_PANE_ID) {
-        if (this._panes.get(CANDLE_PANE_ID).removeTechnicalIndicator(name)) {
-          this.adjustPaneViewport(false, true, true, true)
-        }
-      } else {
-        const pane = this._panes.get(paneId)
-        const removed = pane.removeTechnicalIndicator(name)
-        if (pane.isEmptyTechnicalIndicator()) {
-          pane.destroy()
-          const deleteSeparatorTopPaneId = this._separators.get(paneId).topPaneId()
-          this._separators.get(paneId).destroy()
-          this._panes.delete(paneId)
-          this._separators.delete(paneId)
-          this._separators.forEach(separator => {
-            const topPaneId = separator.topPaneId()
-            if (!this._separators.has(topPaneId)) {
-              separator.updatePaneId(deleteSeparatorTopPaneId)
-            }
-          })
-          this.adjustPaneViewport(true, true, true, true, true)
-        } else {
-          if (removed) {
-            this.adjustPaneViewport(false, true, true, true)
+    if (paneId === CANDLE_PANE_ID) {
+      if (this._panes.get(CANDLE_PANE_ID).removeTechnicalIndicator(name)) {
+        this.adjustPaneViewport(false, true, true, true)
+      }
+    } else {
+      const pane = this._panes.get(paneId)
+      const removed = pane.removeTechnicalIndicator(name)
+      if (pane.isEmptyTechnicalIndicator()) {
+        pane.destroy()
+        const deleteSeparatorTopPaneId = this._separators.get(paneId).topPaneId()
+        this._separators.get(paneId).destroy()
+        this._panes.delete(paneId)
+        this._separators.delete(paneId)
+        this._separators.forEach(separator => {
+          const topPaneId = separator.topPaneId()
+          if (!this._separators.has(topPaneId)) {
+            separator.updatePaneId(deleteSeparatorTopPaneId)
           }
+        })
+        this.adjustPaneViewport(true, true, true, true, true)
+      } else {
+        if (removed) {
+          this.adjustPaneViewport(false, true, true, true)
         }
       }
     }
@@ -594,8 +601,9 @@ export default class ChartPane {
   /**
    * 创建注解
    * @param annotations
+   * @param paneId
    */
-  createAnnotation (annotations) {
+  createAnnotation (annotations, paneId) {
     const instances = []
     annotations.forEach(({
       point,
@@ -614,7 +622,7 @@ export default class ChartPane {
           chartData: this._chartData,
           point,
           xAxis: this._xAxisPane.xAxis(),
-          yAxis: this._panes.get(CANDLE_PANE_ID).yAxis(),
+          yAxis: this._panes.get(paneId).yAxis(),
           styles
         })
         if (isFunction(drawExtend)) {
@@ -642,15 +650,16 @@ export default class ChartPane {
       }
     })
     if (instances.length > 0) {
-      this._chartData.addAnnotations(instances)
+      this._chartData.addAnnotations(instances, paneId)
     }
   }
 
   /**
    * 创建标签
    * @param tags
+   * @param paneId
    */
-  createTag (tags) {
+  createTag (tags, paneId) {
     const instances = []
     let shouldUpdate = false
     let shouldAdd = false
@@ -672,13 +681,13 @@ export default class ChartPane {
             styles,
             chartData: this._chartData,
             xAxis: this._xAxisPane.xAxis(),
-            yAxis: this._panes.get(CANDLE_PANE_ID).yAxis()
+            yAxis: this._panes.get(paneId).yAxis()
           }))
         }
       }
     })
     if (shouldAdd) {
-      this._chartData.addTags(instances)
+      this._chartData.addTags(instances, paneId)
     } else {
       if (shouldUpdate) {
         this._invalidatePane(InvalidateLevel.OVERLAY)
