@@ -62,18 +62,19 @@ export default class Chart {
   /**
    * 覆盖技术指标
    * @param override
+   * @param paneId
    */
-  overrideTechnicalIndicator (override) {
+  overrideTechnicalIndicator (override, paneId) {
     if (!isObject(override)) {
       logWarn('overrideTechnicalIndicator', 'override', 'override must be an object!!!')
       return
     }
-    const tech = this._chartPane.chartData().getTechnicalIndicatorInstance(override.name)
-    if (!tech) {
+    const templateInstance = this._chartPane.chartData().getTechnicalIndicatorTemplateInstance(override.name)
+    if (!templateInstance) {
       logWarn('overrideTechnicalIndicator', 'override.name', 'can not find the corresponding technical indicator!!!')
       return
     }
-    this._chartPane.overrideTechnicalIndicator(tech, override)
+    this._chartPane.overrideTechnicalIndicator(templateInstance, override, paneId)
   }
 
   /**
@@ -247,15 +248,14 @@ export default class Chart {
 
   /**
    * 创建一个技术指标
-   * @param name 指标名
+   * @param tech 指标
    * @param isStack 是否覆盖
    * @param paneOptions
    * @returns {string|null}
    */
-  createTechnicalIndicator (name, isStack, paneOptions) {
-    const tech = this._chartPane.chartData().getTechnicalIndicatorInstance(name)
-    if (!tech) {
-      logWarn('createTechnicalIndicator', 'name', 'can not find the corresponding technical indicator!!!')
+  createTechnicalIndicator (tech, isStack, paneOptions) {
+    if (!isObject(tech)) {
+      logWarn('createTechnicalIndicator', 'tech', 'tech must be an object!!!')
       return null
     }
     return this._chartPane.createTechnicalIndicator(tech, isStack, paneOptions)
@@ -263,14 +263,14 @@ export default class Chart {
 
   /**
    * 添加自定义技术指标
-   * @param tech
+   * @param customTech
    */
-  addCustomTechnicalIndicator (tech) {
-    if (!isObject(tech)) {
+  addCustomTechnicalIndicator (customTech) {
+    if (!isObject(customTech)) {
       logWarn('addCustomTechnicalIndicator', 'technicalIndicator', 'technicalIndicator must be an object or array!!!')
       return
     }
-    const techs = [].concat(tech)
+    const techs = [].concat(customTech)
     this._chartPane.chartData().addCustomTechnicalIndicator(techs)
   }
 
@@ -285,17 +285,19 @@ export default class Chart {
 
   /**
    * 创建图形标记
-   * @param name
-   * @param options
+   * @param graphicMark
    */
-  createGraphicMark (name, options) {
-    const graphicMarkMapping = this._chartPane.chartData().graphicMarkMapping()
-    const GraphicMark = graphicMarkMapping[name]
+  createGraphicMark (graphicMark) {
+    if (!isObject(graphicMark)) {
+      logWarn('createGraphicMark', 'graphicMark', 'graphicMark must be an object!!!')
+      return null
+    }
+    const GraphicMark = this._chartPane.chartData().getGraphicMarkTemplateClass(graphicMark.name)
     if (!GraphicMark) {
       logWarn('createGraphicMark', 'name', 'can not find the corresponding graphic mark!!!')
       return null
     }
-    const id = this._chartPane.createGraphicMark(GraphicMark, options)
+    const id = this._chartPane.createGraphicMark(GraphicMark, graphicMark)
     if (!id) {
       logWarn('createGraphicMark', 'options.id', 'duplicate id!!!')
     }
@@ -313,11 +315,14 @@ export default class Chart {
 
   /**
    * 设置图形标记配置
-   * @param id
    * @param options
    */
-  setGraphicMarkOptions (id, options) {
-    this._chartPane.chartData().setGraphicMarkOptions(id, options)
+  setGraphicMarkOptions (options) {
+    if (!isObject(options)) {
+      logWarn('setGraphicMarkOptions', 'options', 'options must be an object!!!')
+      return
+    }
+    this._chartPane.chartData().setGraphicMarkOptions(options)
   }
 
   /**
@@ -549,9 +554,6 @@ export default class Chart {
    * @param callback
    */
   subscribeAction (type, callback) {
-    if (type === 'drawCandle' || type === 'drawTechnicalIndicator') {
-      logWarn('subscribeAction', '', 'the types drawCandle and drawTechnicalIndicator have been deprecated, please use createAnnotation instead!!!')
-    }
     if (!this._chartPane.chartData().subscribeAction(type, callback)) {
       logWarn('subscribeAction', 'type', 'type does not exist!!!')
     }

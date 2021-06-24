@@ -13,6 +13,7 @@
  */
 
 import { getPixelRatio } from '../utils/canvas'
+import { createElement } from '../utils/element'
 
 export default class Pane {
   constructor (props) {
@@ -28,12 +29,13 @@ export default class Pane {
   _initBefore (props) {}
 
   _initElement () {
-    this._element = document.createElement('div')
-    this._element.style.margin = '0'
-    this._element.style.padding = '0'
-    this._element.style.position = 'relative'
-    this._element.style.overflow = 'hidden'
-    this._element.style.width = '100%'
+    this._element = createElement('div', {
+      width: '100%',
+      margin: '0',
+      padding: '0',
+      position: 'relative',
+      overflow: 'hidden'
+    })
     const lastElement = this._container.lastChild
     if (lastElement) {
       this._container.insertBefore(this._element, lastElement)
@@ -116,13 +118,14 @@ export default class Pane {
    * @return {HTMLCanvasElement}
    */
   getImage (includeOverlay) {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    const pixelRatio = getPixelRatio(canvas)
     const width = this._element.offsetWidth
     const height = this._element.offsetHeight
-    canvas.style.width = `${width}px`
-    canvas.style.height = `${height}px`
+    const canvas = createElement('canvas', {
+      width: `${width}px`,
+      height: `${height}px`
+    })
+    const ctx = canvas.getContext('2d')
+    const pixelRatio = getPixelRatio(canvas)
     canvas.width = width * pixelRatio
     canvas.height = height * pixelRatio
     ctx.scale(pixelRatio, pixelRatio)

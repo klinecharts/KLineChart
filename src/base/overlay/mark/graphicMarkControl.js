@@ -23,13 +23,13 @@ import GraphicMark from './GraphicMark'
  * 创建图形标记映射
  * @return {{}}
  */
-export function createGraphicMarkMapping () {
+export function createGraphicMarkTemplateMapping () {
   const mapping = {}
-  const graphicMarkExtensions = extension.graphicMarkExtensions
-  for (const name in graphicMarkExtensions) {
-    const graphicMarkClass = createGraphicMarkClass(graphicMarkExtensions[name])
-    if (graphicMarkClass) {
-      mapping[name] = graphicMarkClass
+  const extensions = extension.graphicMarkExtensions
+  for (const name in extensions) {
+    const templateClass = createGraphicMarkTemplateClass(extensions[name])
+    if (templateClass) {
+      mapping[name] = templateClass
     }
   }
   return mapping
@@ -46,7 +46,7 @@ export function createGraphicMarkMapping () {
  * @param drawExtend
  * @return {Mark|null}
  */
-export function createGraphicMarkClass ({
+export function createGraphicMarkTemplateClass ({
   name, totalStep, checkMousePointOn, createGraphicDataSource,
   performMousePressedMove, performMouseMoveForDrawing, drawExtend
 }) {

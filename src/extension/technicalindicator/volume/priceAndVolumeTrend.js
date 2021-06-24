@@ -24,13 +24,13 @@ export default {
   plots: [
     { key: 'pvt', title: 'PVT: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (kLineDataList) => {
+  calcTechnicalIndicator: (dataList) => {
     let sum = 0
-    return kLineDataList.map((kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const pvt = {}
       const close = kLineData.close
       const volume = kLineData.volume
-      const preClose = (kLineDataList[i - 1] || kLineData).close
+      const preClose = (dataList[i - 1] || kLineData).close
       let x = 0
       if (preClose !== 0) {
         x = (close - preClose) / preClose * volume

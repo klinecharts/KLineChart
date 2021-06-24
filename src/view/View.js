@@ -13,6 +13,7 @@
  */
 
 import { getPixelRatio } from '../utils/canvas'
+import { createElement } from '../utils/element'
 import { cancelAnimationFrame, requestAnimationFrame } from '../utils/compatible'
 
 class View {
@@ -27,11 +28,12 @@ class View {
    * @private
    */
   _initCanvas (container) {
-    this._canvas = document.createElement('canvas')
-    this._canvas.style.position = 'absolute'
-    this._canvas.style.top = '0'
-    this._canvas.style.left = '0'
-    this._canvas.style.zIndex = '2'
+    this._canvas = createElement('canvas', {
+      position: 'absolute',
+      top: '0',
+      left: '0',
+      zIndex: '2'
+    })
     this._ctx = this._canvas.getContext('2d')
     container.appendChild(this._canvas)
   }

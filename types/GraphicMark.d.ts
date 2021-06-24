@@ -1,10 +1,10 @@
-import { Precision, Viewport, CoordinatePoint, TimestampPricePoint, OverlayEvent } from './Common';
+import { Precision, Viewport, Coordinate, Point, OverlayEvent } from './Common';
 
 export declare type GraphicMarkDataSourceDrawType = 'line' | 'text' | 'continuous_line' | 'polygon' | 'arc';
 
 export declare type GraphicMarkDataSourceDrawStyle = 'stroke' | 'fill' | 'dash' | 'solid';
 
-export declare interface GraphicMarkDataSourceItem extends CoordinatePoint {
+export declare interface GraphicMarkDataSourceItem extends Coordinate {
   radius?: number;
   startAngle?: number;
   endAngle?: number;
@@ -24,14 +24,15 @@ export declare interface GraphicMarkEvent extends OverlayEvent {
   step?: number;
 }
 
-export declare interface OverrideGraphicMarkOptions {
+export declare interface OverrideGraphicMark {
+  id?: string;
   styles?: any;
   lock?: boolean;
 }
 
-export declare interface CreateGraphicMarkOptions extends OverrideGraphicMarkOptions {
-  id?: string;
-  points?: TimestampPricePoint[];
+export declare interface GraphicMark extends OverrideGraphicMark {
+  name: string;
+  points?: Point[];
   onDrawStart?: (event: GraphicMarkEvent) => void;
   onDrawing?: (event: GraphicMarkEvent) => void;
   onDrawEnd?: (event: GraphicMarkEvent) => void;
@@ -43,12 +44,12 @@ export declare interface CreateGraphicMarkOptions extends OverrideGraphicMarkOpt
   onRemove?: (event: GraphicMarkEvent) => void;
 }
 
-export declare interface GraphicMark {
+export declare interface CustomGraphicMark {
   name: string;
   totalStep: number;
-  checkMousePointOn: (key: string, type: GraphicMarkDataSourceDrawType, points: GraphicMarkDataSourceItem | GraphicMarkDataSourceItem[], mousePoint: CoordinatePoint) => boolean;
-  createGraphicDataSource: (step: number, tpPoints: TimestampPricePoint[], coordinatePoints: CoordinatePoint[], viewport: Viewport, precision: Precision, xAxis: any, yAxis: any) => GraphicMarkDataSource[];
-  performMousePressedMove?: (tpPoints: TimestampPricePoint[], pressedPointIndex: number, data: TimestampPricePoint, xAxis: any, yAxis: any) => void;
-  performMouseMoveForDrawing?: (step: number, tpPoints: TimestampPricePoint[], data: TimestampPricePoint, xAxis: any, yAxis: any) => void;
+  checkMousePointOn: (key: string, type: GraphicMarkDataSourceDrawType, points: GraphicMarkDataSourceItem | GraphicMarkDataSourceItem[], mouseCoordinate: Coordinate) => boolean;
+  createGraphicDataSource: (step: number, points: Point[], coordinates: Coordinate[], viewport: Viewport, precision: Precision, xAxis: any, yAxis: any) => GraphicMarkDataSource[];
+  performMousePressedMove?: (points: Point[], pressedPointIndex: number, point: Point, xAxis: any, yAxis: any) => void;
+  performMouseMoveForDrawing?: (step: number, points: Point[], point: Point, xAxis: any, yAxis: any) => void;
   drawExtend?: (ctx: CanvasRenderingContext2D, graphicMarkDataSources: GraphicMarkDataSource[], markOptions: any, viewport: Viewport ,precision: Precision, xAxis: any, yAxis: any) => void;
 }

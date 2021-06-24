@@ -26,8 +26,8 @@ export default {
   plots: [
     { key: 'cci', title: 'CCI: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
-    const p = calcParams[0] - 1
+  calcTechnicalIndicator: (dataList, { params }) => {
+    const p = params[0] - 1
     let tpSum = 0
     const tpList = []
     return dataList.map((kLineData, i) => {
@@ -36,13 +36,13 @@ export default {
       tpSum += tp
       tpList.push(tp)
       if (i >= p) {
-        const maTp = tpSum / calcParams[0]
+        const maTp = tpSum / params[0]
         const sliceTpList = tpList.slice(i - p, i + 1)
         let sum = 0
         sliceTpList.forEach(tp => {
           sum += Math.abs(tp - maTp)
         })
-        const md = sum / calcParams[0]
+        const md = sum / params[0]
         cci.cci = md !== 0 ? (tp - maTp) / md / 0.015 : 0
         const agoTp = (dataList[i - p].high + dataList[i - p].low + dataList[i - p].close) / 3
         tpSum -= agoTp

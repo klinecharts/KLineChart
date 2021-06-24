@@ -14,6 +14,7 @@
 
 import { InvalidateLevel } from '../data/constants'
 import { getPixelRatio } from '../utils/canvas'
+import { createElement } from '../utils/element'
 
 export default class Widget {
   constructor (props) {
@@ -30,12 +31,13 @@ export default class Widget {
    * @private
    */
   _initElement (container) {
-    this._element = document.createElement('div')
-    this._element.style.top = '0'
-    this._element.style.margin = '0'
-    this._element.style.padding = '0'
-    this._element.style.position = 'absolute'
-    this._element.style.overflow = 'hidden'
+    this._element = createElement('div', {
+      margin: '0',
+      padding: '0',
+      position: 'absolute',
+      top: '0',
+      overflow: 'hidden'
+    })
     container.appendChild(this._element)
   }
 
@@ -114,11 +116,12 @@ export default class Widget {
    * @returns {HTMLCanvasElement}
    */
   getImage (includeOverlay) {
-    const canvas = document.createElement('canvas')
+    const canvas = createElement('canvas', {
+      width: `${this._width}px`,
+      height: `${this._height}px`
+    })
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)
-    canvas.style.width = `${this._width}px`
-    canvas.style.height = `${this._height}px`
     canvas.width = this._width * pixelRatio
     canvas.height = this._height * pixelRatio
     ctx.scale(pixelRatio, pixelRatio)

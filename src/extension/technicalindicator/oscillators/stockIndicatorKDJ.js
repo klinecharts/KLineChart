@@ -30,19 +30,19 @@ export default {
     { key: 'd', title: 'D: ', type: 'line' },
     { key: 'j', title: 'J: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
+  calcTechnicalIndicator: (dataList, { params }) => {
     const result = []
     dataList.forEach((kLineData, i) => {
       const kdj = {}
       const close = kLineData.close
-      if (i >= calcParams[0] - 1) {
-        const lhn = calcHnLn(dataList.slice(i - (calcParams[0] - 1), i + 1))
+      if (i >= params[0] - 1) {
+        const lhn = calcHnLn(dataList.slice(i - (params[0] - 1), i + 1))
         const ln = lhn.ln
         const hn = lhn.hn
         const hnSubLn = hn - ln
         const rsv = (close - ln) / (hnSubLn === 0 ? 1 : hnSubLn) * 100
-        kdj.k = ((calcParams[1] - 1) * (result[i - 1].k || 50) + rsv) / calcParams[1]
-        kdj.d = ((calcParams[2] - 1) * (result[i - 1].d || 50) + kdj.k) / calcParams[2]
+        kdj.k = ((params[1] - 1) * (result[i - 1].k || 50) + rsv) / params[1]
+        kdj.d = ((params[2] - 1) * (result[i - 1].d || 50) + kdj.k) / params[2]
         kdj.j = 3.0 * kdj.k - 2.0 * kdj.d
       }
       result.push(kdj)

@@ -27,7 +27,7 @@ export default {
     { key: 'vr', title: 'VR: ', type: 'line' },
     { key: 'maVr', title: 'MAVR: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
+  calcTechnicalIndicator: (dataList, { params }) => {
     let uvs = 0
     let dvs = 0
     let pvs = 0
@@ -45,7 +45,7 @@ export default {
       } else {
         pvs += volume
       }
-      if (i >= calcParams[0] - 1) {
+      if (i >= params[0] - 1) {
         const halfPvs = pvs / 2
         if (dvs + halfPvs === 0) {
           vr.vr = 0
@@ -53,13 +53,13 @@ export default {
           vr.vr = (uvs + halfPvs) / (dvs + halfPvs) * 100
         }
         vrSum += vr.vr
-        if (i >= calcParams[0] + calcParams[1] - 2) {
-          vr.maVr = vrSum / calcParams[1]
-          vrSum -= result[i - (calcParams[1] - 1)].vr
+        if (i >= params[0] + params[1] - 2) {
+          vr.maVr = vrSum / params[1]
+          vrSum -= result[i - (params[1] - 1)].vr
         }
 
-        const agoData = dataList[i - (calcParams[0] - 1)]
-        const agoPreData = dataList[i - calcParams[0]] || agoData
+        const agoData = dataList[i - (params[0] - 1)]
+        const agoPreData = dataList[i - params[0]] || agoData
         const agoClose = agoData.close
         const agoVolume = agoData.volume
         if (agoClose > agoPreData.close) {

@@ -31,7 +31,7 @@ export default {
     { key: 'emv', title: 'EMV: ', type: 'line' },
     { key: 'maEmv', title: 'MAEMV: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
+  calcTechnicalIndicator: (dataList, { params }) => {
     let emSum = 0
     let emvSum = 0
     const emList = []
@@ -51,13 +51,13 @@ export default {
       }
       emList.push(em)
       emSum += em
-      if (i >= calcParams[0] - 1) {
+      if (i >= params[0] - 1) {
         emv.emv = emSum
-        emSum -= emList[i - (calcParams[0] - 1)]
+        emSum -= emList[i - (params[0] - 1)]
         emvSum += emv.emv
-        if (i >= calcParams[0] + calcParams[1] - 2) {
-          emv.maEmv = emvSum / calcParams[1]
-          emvSum -= result[i - (calcParams[1] - 1)].emv
+        if (i >= params[0] + params[1] - 2) {
+          emv.maEmv = emvSum / params[1]
+          emvSum -= result[i - (params[1] - 1)].emv
         }
       }
       result.push(emv)

@@ -1,7 +1,7 @@
-import { CoordinatePoint, KLineData, TimestampPricePoint } from './Common';
+import { KLineData, Coordinate, Point } from './Common';
 
-import { OverrideTechnicalIndicator, TechnicalIndicator } from './TechnicalIndicator';
-import { CreateGraphicMarkOptions, OverrideGraphicMarkOptions, GraphicMark } from './GraphicMark';
+import { CustomTechnicalIndicator, TechnicalIndicator } from './TechnicalIndicator';
+import { GraphicMark, OverrideGraphicMark, CustomGraphicMark } from './GraphicMark';
 import { Annotation } from './Annotation';
 import { Tag } from './Tag';
 
@@ -44,31 +44,31 @@ export declare interface Chart {
   applyMoreData(dataList: KLineData[], more?: boolean): void;
   updateData(data: KLineData): void;
   loadMore(cb: (timestamp: number) => void): void;
-  createTechnicalIndicator(name: string, isStack?: boolean, options?: PaneOptions): string | null;
-  addCustomTechnicalIndicator(technicalIndicator: TechnicalIndicator | TechnicalIndicator[]): void;
-  overrideTechnicalIndicator(override: OverrideTechnicalIndicator): void;
+  createTechnicalIndicator(tech: TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string | null;
+  addCustomTechnicalIndicator(customTech: CustomTechnicalIndicator | CustomTechnicalIndicator[]): void;
+  overrideTechnicalIndicator(tech: TechnicalIndicator, paneId?: string): void;
   getTechnicalIndicatorByName(name?: string): any;
   getTechnicalIndicatorByPaneId(paneId?: string): any;
   removeTechnicalIndicator(paneId: string, name?: string): void;
-  createGraphicMark(name: string, options?: CreateGraphicMarkOptions): string | null;
+  createGraphicMark(graphicMark: GraphicMark): string | null;
   getGraphicMark(graphicMarkId?: string): any;
-  setGraphicMarkOptions(id: string, options: OverrideGraphicMarkOptions): void;
-  addCustomGraphicMark(graphicMark: GraphicMark | GraphicMark[]): void;
+  setGraphicMarkOptions(options: OverrideGraphicMark): void;
+  addCustomGraphicMark(customGraphicMark: CustomGraphicMark | CustomGraphicMark[]): void;
   removeGraphicMark(graphicMarkId?: string): void;
   createAnnotation(annotation: Annotation | Annotation[]): void;
-  removeAnnotation(point?: TimestampPricePoint | TimestampPricePoint[]): void;
+  removeAnnotation(point?: Point | Point[]): void;
   createTag(tag: Tag | Tag[]): void;
   removeTag(id?: string): void;
   scrollByDistance(distance: number, animationDuration?: number): void;
   scrollToRealTime(animationDuration?: number): void;
   scrollToPosition(position: number, animationDuration?: number): void;
-  zoomAtCoordinate(scale: number, coordinate?: CoordinatePoint, animationDuration?: number): void;
+  zoomAtCoordinate(scale: number, coordinate?: Coordinate, animationDuration?: number): void;
   zoomAtPosition(scale: number, position: number, animationDuration?: number): void;
   setPaneOptions(options: PaneOptions): void;
-  convertFromPixel(coordinate: CoordinatePoint | CoordinatePoint[], finder: ConvertFinder): ConvertValue | ConvertValue[];
-  convertToPixel(value: ConvertValue | ConvertValue[], finder: ConvertFinder): CoordinatePoint | CoordinatePoint[];
+  convertFromPixel(coordinate: Coordinate | Coordinate[], finder: ConvertFinder): ConvertValue | ConvertValue[];
+  convertToPixel(value: ConvertValue | ConvertValue[], finder: ConvertFinder): Coordinate | Coordinate[];
   subscribeAction(type: ChartActionType, callback: (params: any) => void): void;
   unsubscribeAction(type: ChartActionType, callback?: (params: any) => void): void;
-  getConvertPictureUrl(includeTooltip?: boolean, includeGraphicMark?: boolean, type?: PictureType, backgroundColor?: string): string;
+  getConvertPictureUrl(includeOverlay?: boolean, type?: PictureType, backgroundColor?: string): string;
   resize(): void;
 }

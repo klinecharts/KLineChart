@@ -37,11 +37,11 @@ export default {
     { key: 'ma3', title: 'MA3: ', type: 'line' },
     { key: 'ma4', title: 'MA4: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
-    const ma1ForwardPeriod = Math.ceil(calcParams[1] / 2.5 + 1)
-    const ma2ForwardPeriod = Math.ceil(calcParams[2] / 2.5 + 1)
-    const ma3ForwardPeriod = Math.ceil(calcParams[3] / 2.5 + 1)
-    const ma4ForwardPeriod = Math.ceil(calcParams[4] / 2.5 + 1)
+  calcTechnicalIndicator: (dataList, { params }) => {
+    const ma1ForwardPeriod = Math.ceil(params[1] / 2.5 + 1)
+    const ma2ForwardPeriod = Math.ceil(params[2] / 2.5 + 1)
+    const ma3ForwardPeriod = Math.ceil(params[3] / 2.5 + 1)
+    const ma4ForwardPeriod = Math.ceil(params[4] / 2.5 + 1)
     let ma1Sum = 0
     const ma1List = []
     let ma2Sum = 0
@@ -60,7 +60,7 @@ export default {
 
       const preMidSubLow = Math.max(0, preMid - kLineData.low)
 
-      if (i >= calcParams[0] - 1) {
+      if (i >= params[0] - 1) {
         if (preMidSubLow !== 0) {
           cr.cr = highSubPreMid / preMidSubLow * 100
         } else {
@@ -70,33 +70,33 @@ export default {
         ma2Sum += cr.cr
         ma3Sum += cr.cr
         ma4Sum += cr.cr
-        if (i >= calcParams[0] + calcParams[1] - 2) {
-          ma1List.push(ma1Sum / calcParams[1])
-          if (i >= calcParams[0] + calcParams[1] + ma1ForwardPeriod - 3) {
+        if (i >= params[0] + params[1] - 2) {
+          ma1List.push(ma1Sum / params[1])
+          if (i >= params[0] + params[1] + ma1ForwardPeriod - 3) {
             cr.ma1 = ma1List[ma1List.length - 1 - ma1ForwardPeriod]
           }
-          ma1Sum -= result[i - (calcParams[1] - 1)].cr
+          ma1Sum -= result[i - (params[1] - 1)].cr
         }
-        if (i >= calcParams[0] + calcParams[2] - 2) {
-          ma2List.push(ma2Sum / calcParams[2])
-          if (i >= calcParams[0] + calcParams[2] + ma2ForwardPeriod - 3) {
+        if (i >= params[0] + params[2] - 2) {
+          ma2List.push(ma2Sum / params[2])
+          if (i >= params[0] + params[2] + ma2ForwardPeriod - 3) {
             cr.ma2 = ma2List[ma2List.length - 1 - ma2ForwardPeriod]
           }
-          ma2Sum -= result[i - (calcParams[2] - 1)].cr
+          ma2Sum -= result[i - (params[2] - 1)].cr
         }
-        if (i >= calcParams[0] + calcParams[3] - 2) {
-          ma3List.push(ma3Sum / calcParams[3])
-          if (i >= calcParams[0] + calcParams[3] + ma3ForwardPeriod - 3) {
+        if (i >= params[0] + params[3] - 2) {
+          ma3List.push(ma3Sum / params[3])
+          if (i >= params[0] + params[3] + ma3ForwardPeriod - 3) {
             cr.ma3 = ma3List[ma3List.length - 1 - ma3ForwardPeriod]
           }
-          ma3Sum -= result[i - (calcParams[3] - 1)].cr
+          ma3Sum -= result[i - (params[3] - 1)].cr
         }
-        if (i >= calcParams[0] + calcParams[4] - 2) {
-          ma4List.push(ma4Sum / calcParams[4])
-          if (i >= calcParams[0] + calcParams[4] + ma4ForwardPeriod - 3) {
+        if (i >= params[0] + params[4] - 2) {
+          ma4List.push(ma4Sum / params[4])
+          if (i >= params[0] + params[4] + ma4ForwardPeriod - 3) {
             cr.ma4 = ma4List[ma4List.length - 1 - ma4ForwardPeriod]
           }
-          ma4Sum -= result[i - (calcParams[4] - 1)].cr
+          ma4Sum -= result[i - (params[4] - 1)].cr
         }
       }
       result.push(cr)

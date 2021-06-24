@@ -1,22 +1,22 @@
-import { OverlayEvent, TimestampPricePoint, CoordinatePoint, Viewport } from './Common';
+import { OverlayEvent, Point, Coordinate, Viewport } from './Common';
 
 export declare interface AnnotationCheckParams {
-  point: CoordinatePoint;
-  coordinate: CoordinatePoint;
+  point: Coordinate;
+  coordinate: Coordinate;
   size: number;
 }
 
 export declare interface AnnotationDrawParams {
   ctx: CanvasRenderingContext2D;
-  point: TimestampPricePoint;
-  coordinate: CoordinatePoint;
+  point: Point;
+  coordinate: Coordinate;
   viewport: Viewport;
   isActive: boolean;
   styles: any;
 }
 
 export declare interface Annotation {
-  point: TimestampPricePoint;
+  point: Point;
   styles?: any;
   checkPointInCustomSymbol?: (params: AnnotationCheckParams) => void;
   drawCustomSymbol?: (params: AnnotationDrawParams) => void;

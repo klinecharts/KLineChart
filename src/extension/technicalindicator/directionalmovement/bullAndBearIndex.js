@@ -20,28 +20,27 @@
 export default {
   name: 'BBI',
   series: 'price',
-  precision: 2,
   calcParams: [3, 6, 12, 24],
   shouldCheckParamCount: true,
   shouldOhlc: true,
   plots: [
     { key: 'bbi', title: 'BBI: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (kLineDataList, calcParams) => {
-    const maxParam = Math.max.apply(null, calcParams)
+  calcTechnicalIndicator: (dataList, { params }) => {
+    const maxPeriod = Math.max.apply(null, params)
     const closeSums = []
     const mas = []
-    return kLineDataList.map((kLineData, i) => {
+    return dataList.map((kLineData, i) => {
       const bbi = {}
       const close = kLineData.close
-      calcParams.forEach((param, index) => {
+      params.forEach((p, index) => {
         closeSums[index] = (closeSums[index] || 0) + close
-        if (i >= param - 1) {
-          mas[index] = closeSums[index] / param
-          closeSums[index] -= kLineDataList[i - (param - 1)].close
+        if (i >= p - 1) {
+          mas[index] = closeSums[index] / p
+          closeSums[index] -= dataList[i - (p - 1)].close
         }
       })
-      if (i >= maxParam - 1) {
+      if (i >= maxPeriod - 1) {
         let maSum = 0
         mas.forEach(ma => {
           maSum += ma

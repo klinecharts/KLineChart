@@ -1,14 +1,13 @@
 import {
   KLineData, Precision, Viewport, OverlayEvent,
-  CoordinatePoint, TimestampPricePoint
+  Coordinate, Point
 } from './Common';
 
 import { Chart, PictureType, ChartActionType } from './Chart';
 import {
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  CreateGraphicMarkOptions,
-  OverrideGraphicMarkOptions, GraphicMark
+  OverrideGraphicMark, GraphicMark, CustomGraphicMark
 } from './GraphicMark';
 import {
   AnnotationCheckParams,
@@ -20,16 +19,15 @@ import { Tag } from './Tag';
 
 import { PaneOptions } from './Pane';
 import {
-  TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
+  TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
-  TechnicalIndicatorPlot, OverrideTechnicalIndicator,
-  TechnicalIndicatorRenderDataSource,
-  TechnicalIndicator
+  TechnicalIndicatorPlot, TechnicalIndicatorRenderDataSource,
+  TechnicalIndicator, CustomTechnicalIndicator
 } from './TechnicalIndicator';
 
 export declare interface extension {
-  addTechnicalIndicator: (technicalIndicators: TechnicalIndicator | TechnicalIndicator[]) => void;
-  addGraphicMark: (graphicMarks: GraphicMark | GraphicMark[]) => void;
+  addTechnicalIndicator: (technicalIndicators: CustomTechnicalIndicator | CustomTechnicalIndicator[]) => void;
+  addGraphicMark: (graphicMarks: CustomTechnicalIndicator | CustomTechnicalIndicator[]) => void;
 }
 
 export declare function version(): string;
@@ -41,15 +39,14 @@ export declare function dispose(dcs: HTMLDivElement | Chart | string): void;
 export {
   Chart, PictureType, ChartActionType,
   KLineData, Precision, Viewport, OverlayEvent, PaneOptions,
-  CoordinatePoint, TimestampPricePoint,
+  Coordinate, Point,
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  CreateGraphicMarkOptions, OverrideGraphicMarkOptions, GraphicMark,
+  OverrideGraphicMark, GraphicMark, CustomGraphicMark,
   AnnotationCheckParams, AnnotationDrawParams, Annotation,
   Tag,
-  TechnicalIndicatorSeries, TechnicalIndicatorPlotType,
+  TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
-  TechnicalIndicatorPlot, OverrideTechnicalIndicator,
-  TechnicalIndicatorRenderDataSource,
-  TechnicalIndicator
+  TechnicalIndicatorPlot, TechnicalIndicatorRenderDataSource,
+  TechnicalIndicator, CustomTechnicalIndicator
 }

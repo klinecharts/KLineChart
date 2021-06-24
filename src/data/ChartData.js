@@ -24,16 +24,15 @@ import { binarySearchNearest } from '../utils/number'
 import { logWarn } from '../utils/logger'
 
 import {
-  createTechnicalIndicatorInstance,
-  createTechnicalIndicatorMapping,
+  createTechnicalIndicatorTemplateInstance,
+  createTechnicalIndicatorTemplateMapping,
   createTechnicalIndicatorInfo
 } from '../base/technicalindicator/technicalIndicatorControl'
-import { TechnicalIndicatorSeries } from '../base/technicalindicator/TechnicalIndicator'
 import { GraphicMarkMouseOperateElement } from '../base/overlay/mark/GraphicMark'
 import Delegate from './delegate/Delegate'
 import {
-  createGraphicMarkClass,
-  createGraphicMarkMapping,
+  createGraphicMarkTemplateClass,
+  createGraphicMarkTemplateMapping,
   getGraphicMarkInfo
 } from '../base/overlay/mark/graphicMarkControl'
 
@@ -46,8 +45,8 @@ export default class ChartData {
     // 样式配置
     this._styleOptions = clone(defaultStyleOptions)
     merge(this._styleOptions, styleOptions)
-    // 所有技术指标映射
-    this._technicalIndicatorMapping = createTechnicalIndicatorMapping()
+    // 所有技术指标模板映射
+    this._technicalIndicatorTemplateMapping = createTechnicalIndicatorTemplateMapping()
     // 是否可以缩放
     this._zoomEnabled = true
     // 是否可以拖拽滑动
@@ -103,7 +102,7 @@ export default class ChartData {
     // 拖拽标记图形标记
     this._dragGraphicMarkFlag = false
     // 图形标记映射
-    this._graphicMarkMapping = createGraphicMarkMapping()
+    this._graphicMarkTemplateMapping = createGraphicMarkTemplateMapping()
     // 图形标记鼠标操作信息
     this._graphicMarkMouseOperate = {
       click: {
@@ -204,7 +203,7 @@ export default class ChartData {
     }
     this._adjustVisibleDataList()
     // 处理加载更多，有更多并且没有在加载则去加载更多
-    if (this._from === 0 && this._more && !this._loading && this._loadMoreCallback && isFunction(this._loadMoreCallback)) {
+    if (this._from === 0 && this._more && !this._loading && isFunction(this._loadMoreCallback)) {
       this._loading = true
       this._loadMoreCallback(formatValue(this._dataList[0], 'timestamp'))
     }
@@ -233,14 +232,14 @@ export default class ChartData {
    */
   getTechnicalIndicatorInfo (name) {
     if (isValid(name)) {
-      const tech = this.getTechnicalIndicatorInstance(name)
+      const tech = this.getTechnicalIndicatorTemplateInstance(name)
       if (tech) {
         return createTechnicalIndicatorInfo(tech)
       }
     } else {
       const techs = {}
-      for (const name in this._technicalIndicatorMapping) {
-        const instance = this._technicalIndicatorMapping[name]
+      for (const name in this._technicalIndicatorTemplateMapping) {
+        const instance = this._technicalIndicatorTemplateMapping[name]
         techs[name] = createTechnicalIndicatorInfo(instance)
       }
       return techs
@@ -253,8 +252,8 @@ export default class ChartData {
    * @param name
    * @return {*}
    */
-  getTechnicalIndicatorInstance (name) {
-    return this._technicalIndicatorMapping[name]
+  getTechnicalIndicatorTemplateInstance (name) {
+    return this._technicalIndicatorTemplateMapping[name]
   }
 
   /**
@@ -317,20 +316,6 @@ export default class ChartData {
   setPriceVolumePrecision (pricePrecision, volumePrecision) {
     this._pricePrecision = pricePrecision
     this._volumePrecision = volumePrecision
-    for (const name in this._technicalIndicatorMapping) {
-      const series = this._technicalIndicatorMapping[name].series
-      switch (series) {
-        case TechnicalIndicatorSeries.PRICE: {
-          this._technicalIndicatorMapping[name].setPrecision(pricePrecision)
-          break
-        }
-        case TechnicalIndicatorSeries.VOLUME: {
-          this._technicalIndicatorMapping[name].setPrecision(volumePrecision)
-          break
-        }
-        default: { break }
-      }
-    }
   }
 
   /**
@@ -726,20 +711,19 @@ export default class ChartData {
    */
   addCustomGraphicMark (graphicMarks) {
     graphicMarks.forEach(mark => {
-      const GraphicMarkClass = createGraphicMarkClass(mark)
+      const GraphicMarkClass = createGraphicMarkTemplateClass(mark)
       if (GraphicMarkClass) {
-        this._graphicMarkMapping[mark.name] = GraphicMarkClass
+        this._graphicMarkTemplateMapping[mark.name] = GraphicMarkClass
       }
     })
   }
 
   /**
    * 设置图形标记配置
-   * @param id
    * @param options
    */
-  setGraphicMarkOptions (id, options = {}) {
-    const { styles, lock } = options
+  setGraphicMarkOptions (options = {}) {
+    const { id, styles, lock } = options
     const graphicMark = this._graphicMarks.find(gm => gm.id() === id)
     if (graphicMark) {
       graphicMark.setLock(lock)
@@ -833,11 +817,12 @@ export default class ChartData {
   }
 
   /**
-   * 获取图形标记映射
-   * @returns {{}}
+   * 获取图形标记模板类
+   * @param name
+   * @return {*}
    */
-  graphicMarkMapping () {
-    return this._graphicMarkMapping
+  getGraphicMarkTemplateClass (name) {
+    return this._graphicMarkTemplateMapping[name]
   }
 
   /**
@@ -994,10 +979,10 @@ export default class ChartData {
    */
   addCustomTechnicalIndicator (techs) {
     techs.forEach(tech => {
-      const instance = createTechnicalIndicatorInstance(tech || {})
+      const instance = createTechnicalIndicatorTemplateInstance(tech || {})
       if (instance) {
         // 将生成的新的指标类放入集合
-        this._technicalIndicatorMapping[instance.name] = instance
+        this._technicalIndicatorTemplateMapping[instance.name] = instance
       }
     })
   }

@@ -20,12 +20,12 @@ export declare interface Viewport {
   barSpace?: number;
 }
 
-export declare interface CoordinatePoint {
+export declare interface Coordinate {
   x?: number;
   y?: number;
 }
 
-export declare interface TimestampPricePoint {
+export declare interface Point {
   timestamp?: number;
   dataIndex?: number;
   price?: number;
@@ -33,6 +33,6 @@ export declare interface TimestampPricePoint {
 
 export declare interface OverlayEvent {
   id: number | string;
-  points?: TimestampPricePoint | TimestampPricePoint[];
+  points?: Point | Point[];
   event?: any;
 }

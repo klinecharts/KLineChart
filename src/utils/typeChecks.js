@@ -22,7 +22,7 @@ export function merge (target, source) {
     return
   }
   for (const key in source) {
-    if (key in target) {
+    if (Object.prototype.hasOwnProperty.call(source, key) && (key in target)) {
       const targetProp = target[key]
       const sourceProp = source[key]
       if (
@@ -58,7 +58,7 @@ export function clone (target) {
     copy = {}
   }
   for (const key in target) {
-    if (target.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(target, key)) {
       const v = target[key]
       if (isObject(v)) {
         copy[key] = clone(v)
@@ -85,7 +85,7 @@ export function isArray (value) {
  * @return {boolean}
  */
 export function isFunction (value) {
-  return typeof value === 'function'
+  return value && typeof value === 'function'
 }
 
 /**
@@ -131,13 +131,4 @@ export function isBoolean (value) {
  */
 export function isString (value) {
   return typeof value === 'string'
-}
-
-/**
- * 是否是容器元素
- * @param dom
- * @return {boolean}
- */
-export function isContainerDom (dom) {
-  return dom && (dom instanceof HTMLElement) && dom.appendChild && (typeof dom.appendChild === 'function')
 }

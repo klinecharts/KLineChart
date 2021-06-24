@@ -14,12 +14,10 @@
 
 export default {
   name: 'VOL',
-  series: 'volume',
   calcParams: [5, 10, 20],
   shouldCheckParamCount: false,
   shouldFormatBigNumber: true,
   precision: 0,
-  baseValue: 0,
   minValue: 0,
   plots: [
     { key: 'ma5', title: 'MA5: ', type: 'line' },
@@ -29,6 +27,7 @@ export default {
       key: 'volume',
       title: 'VOLUME: ',
       type: 'bar',
+      baseValue: 0,
       color: (data, options) => {
         const kLineData = data.currentData.kLineData || {}
         if (kLineData.close > kLineData.open) {
@@ -48,6 +47,7 @@ export default {
       key: 'volume',
       title: 'VOLUME: ',
       type: 'bar',
+      baseValue: 0,
       color: (data, options) => {
         const kLineData = data.currentData.kLineData || {}
         if (kLineData.close > kLineData.open) {
@@ -60,16 +60,16 @@ export default {
     })
     return plots
   },
-  calcTechnicalIndicator: (dataList, calcParams, plots) => {
+  calcTechnicalIndicator: (dataList, { params, plots }) => {
     const volSums = []
     return dataList.map((kLineData, i) => {
       const volume = kLineData.volume || 0
       const vol = { volume }
-      calcParams.forEach((param, j) => {
-        volSums[j] = (volSums[j] || 0) + volume
-        if (i >= param - 1) {
-          vol[plots[j].key] = volSums[j] / param
-          volSums[j] -= dataList[i - (param - 1)].volume
+      params.forEach((p, index) => {
+        volSums[index] = (volSums[index] || 0) + volume
+        if (i >= p - 1) {
+          vol[plots[index].key] = volSums[index] / p
+          volSums[index] -= dataList[i - (p - 1)].volume
         }
       })
       return vol

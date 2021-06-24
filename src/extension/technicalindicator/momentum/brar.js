@@ -28,7 +28,7 @@ export default {
     { key: 'br', title: 'BR: ', type: 'line' },
     { key: 'ar', title: 'AR: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
+  calcTechnicalIndicator: (dataList, { params }) => {
     let hcy = 0
     let cyl = 0
     let ho = 0
@@ -43,7 +43,7 @@ export default {
       ol += (open - low)
       hcy += (high - preClose)
       cyl += (preClose - low)
-      if (i >= calcParams[0] - 1) {
+      if (i >= params[0] - 1) {
         if (ol !== 0) {
           brar.ar = ho / ol * 100
         } else {
@@ -54,11 +54,11 @@ export default {
         } else {
           brar.br = 0
         }
-        const agoKLineData = dataList[i - (calcParams[0] - 1)]
+        const agoKLineData = dataList[i - (params[0] - 1)]
         const agoHigh = agoKLineData.high
         const agoLow = agoKLineData.low
         const agoOpen = agoKLineData.open
-        const agoPreClose = (dataList[i - calcParams[0]] || dataList[i - (calcParams[0] - 1)]).close
+        const agoPreClose = (dataList[i - params[0]] || dataList[i - (params[0] - 1)]).close
         hcy -= (agoHigh - agoPreClose)
         cyl -= (agoPreClose - agoLow)
         ho -= (agoHigh - agoOpen)

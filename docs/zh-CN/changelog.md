@@ -1,4 +1,13 @@
 # 更新日志
+## 8.0.0-alpha
+`待发布`
++ 🗑 废弃
+  + API `subscribeAction`和`unsubscribeAction`，移除类型`drawCandle`和`drawTechnicalIndicator`。
++ TypeScript
+  + `CoordinatePoint`变更为`Coordinate`。
+  + `TimestampPricePoint`变更为`Point`。
+
+
 ## 7.5.0
 `2021-06-16`
 + 🆕 新增标签功能，api新增`createTag`和`removeTag`。

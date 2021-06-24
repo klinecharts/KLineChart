@@ -46,8 +46,6 @@ export const InvalidateLevel = {
  * @type {{DRAW_CANDLE: string, SCROLL: string, PANE_DRAG: string, ZOOM: string, CROSSHAIR: string, DRAW_TECHNICAL_INDICATOR: string}}
  */
 export const ActionType = {
-  DRAW_CANDLE: 'drawCandle',
-  DRAW_TECHNICAL_INDICATOR: 'drawTechnicalIndicator',
   ZOOM: 'zoom',
   SCROLL: 'scroll',
   CROSSHAIR: 'crosshair',

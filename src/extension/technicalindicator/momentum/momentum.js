@@ -23,19 +23,19 @@ export default {
     { key: 'mtm', title: 'MTM: ', type: 'line' },
     { key: 'maMtm', title: 'MAMTM: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
+  calcTechnicalIndicator: (dataList, { params }) => {
     let mtmSum = 0
     const result = []
     dataList.forEach((kLineData, i) => {
       const mtm = {}
-      if (i >= calcParams[0]) {
+      if (i >= params[0]) {
         const close = kLineData.close
-        const agoClose = dataList[i - calcParams[0]].close
+        const agoClose = dataList[i - params[0]].close
         mtm.mtm = close - agoClose
         mtmSum += mtm.mtm
-        if (i >= calcParams[0] + calcParams[1] - 1) {
-          mtm.maMtm = mtmSum / calcParams[1]
-          mtmSum -= result[i - (calcParams[1] - 1)].mtm
+        if (i >= params[0] + params[1] - 1) {
+          mtm.maMtm = mtmSum / params[1]
+          mtmSum -= result[i - (params[1] - 1)].mtm
         }
       }
       result.push(mtm)

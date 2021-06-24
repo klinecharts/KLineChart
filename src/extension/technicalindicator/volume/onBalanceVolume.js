@@ -23,7 +23,7 @@ export default {
     { key: 'obv', title: 'OBV: ', type: 'line' },
     { key: 'maObv', title: 'MAOBV: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
+  calcTechnicalIndicator: (dataList, { params }) => {
     let obvSum = 0
     let oldObv = 0
     const result = []
@@ -36,9 +36,9 @@ export default {
       }
       const obv = { obv: oldObv }
       obvSum += oldObv
-      if (i >= calcParams[0] - 1) {
-        obv.maObv = obvSum / calcParams[0]
-        obvSum -= result[i - (calcParams[0] - 1)].obv
+      if (i >= params[0] - 1) {
+        obv.maObv = obvSum / params[0]
+        obvSum -= result[i - (params[0] - 1)].obv
       }
       result.push(obv)
     })

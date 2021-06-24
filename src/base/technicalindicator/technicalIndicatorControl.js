@@ -16,21 +16,21 @@ import TechnicalIndicator from './TechnicalIndicator'
 
 import extension from '../../data/extension'
 
-import { isFunction, isValid } from '../../utils/typeChecks'
+import { isFunction, isObject, isValid } from '../../utils/typeChecks'
 import { formatBigNumber, formatPrecision } from '../../utils/format'
 import { logWarn } from '../../utils/logger'
 
 /**
- * 创建技术指标映射
+ * 创建技术指标模板映射
  * @return {{}}
  */
-export function createTechnicalIndicatorMapping () {
+export function createTechnicalIndicatorTemplateMapping () {
   const mapping = {}
-  const technicalIndicatorExtensions = extension.technicalIndicatorExtensions
-  for (const name in technicalIndicatorExtensions) {
-    const technicalIndicatorInstance = createTechnicalIndicatorInstance(technicalIndicatorExtensions[name])
-    if (technicalIndicatorInstance) {
-      mapping[name] = technicalIndicatorInstance
+  const extensions = extension.technicalIndicatorExtensions
+  for (const name in extensions) {
+    const templateInstance = createTechnicalIndicatorTemplateInstance(extensions[name])
+    if (templateInstance) {
+      mapping[name] = templateInstance
     }
   }
   return mapping
@@ -43,43 +43,38 @@ export function createTechnicalIndicatorMapping () {
  * @param calcParams
  * @param plots
  * @param precision
- * @param calcParamsAllowDecimal
  * @param shouldCheckParamCount
  * @param shouldOhlc
  * @param shouldFormatBigNumber
- * @param baseValue
  * @param minValue
  * @param maxValue
  * @param styles
  * @param calcTechnicalIndicator
  * @param regeneratePlots
  * @param render
- * @returns {TechnicalIndicatorClass|null}
+ * @returns {TechnicalIndicatorTemplate|null}
  */
-export function createTechnicalIndicatorInstance ({
-  name, series, calcParams, plots, precision,
-  calcParamsAllowDecimal, shouldCheckParamCount,
-  shouldOhlc, shouldFormatBigNumber, baseValue, minValue, maxValue, styles,
+export function createTechnicalIndicatorTemplateInstance ({
+  name, calcParams, plots, precision,
+  shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber,
+  minValue, maxValue, styles,
   calcTechnicalIndicator, regeneratePlots, render
 }) {
   if (!name || !isFunction(calcTechnicalIndicator)) {
     logWarn('', '', 'The required attribute "name" and method "calcTechnicalIndicator" are missing, and new technical indicator cannot be generated!!!')
     return null
   }
-  class TechnicalIndicatorClass extends TechnicalIndicator {
+  class TechnicalIndicatorTemplate extends TechnicalIndicator {
     constructor () {
       super(
         {
           name,
-          series,
           calcParams,
           plots,
           precision,
-          calcParamsAllowDecimal,
           shouldCheckParamCount,
           shouldOhlc,
           shouldFormatBigNumber,
-          baseValue,
           minValue,
           maxValue,
           styles
@@ -87,33 +82,46 @@ export function createTechnicalIndicatorInstance ({
       )
     }
   }
-  TechnicalIndicatorClass.prototype.calcTechnicalIndicator = calcTechnicalIndicator
-  if (regeneratePlots && isFunction(regeneratePlots)) {
-    TechnicalIndicatorClass.prototype.regeneratePlots = regeneratePlots
+  TechnicalIndicatorTemplate.prototype.calcTechnicalIndicator = calcTechnicalIndicator
+  if (isFunction(regeneratePlots)) {
+    TechnicalIndicatorTemplate.prototype.regeneratePlots = regeneratePlots
   }
-  if (render && isFunction(render)) {
-    TechnicalIndicatorClass.prototype.render = render
+  if (isFunction(render)) {
+    TechnicalIndicatorTemplate.prototype.render = render
   }
-  return new TechnicalIndicatorClass()
+  return new TechnicalIndicatorTemplate()
+}
+
+/**
+ * 复制一个技术指标
+ * @param tech
+ * @return {any}
+ */
+export function cloneTechnicalIndicator (tech) {
+  const cloneInstance = Object.create(Object.getPrototypeOf(tech))
+  for (const key in tech) {
+    if (Object.prototype.hasOwnProperty.call(tech, key)) {
+      cloneInstance[key] = tech[key]
+    }
+  }
+  return cloneInstance
 }
 
 /**
  * 获取技术指标信息
- * @param technicalIndicator
+ * @param tech
  * @return {{series, calcParams, precision, name, styles}}
  */
-export function createTechnicalIndicatorInfo (technicalIndicator) {
+export function createTechnicalIndicatorInfo (tech) {
   return {
-    name: technicalIndicator.name,
-    series: technicalIndicator.series,
-    calcParams: technicalIndicator.calcParams,
-    calcParamsAllowDecimal: technicalIndicator.calcParamsAllowDecimal,
-    shouldCheckParamCount: technicalIndicator.shouldCheckParamCount,
-    shouldOhlc: technicalIndicator.shouldOhlc,
-    shouldFormatBigNumber: technicalIndicator.shouldFormatBigNumber,
-    precision: technicalIndicator.precision,
-    styles: technicalIndicator.styles,
-    result: technicalIndicator.result || []
+    name: tech.name,
+    calcParams: tech.calcParams,
+    shouldCheckParamCount: tech.shouldCheckParamCount,
+    shouldOhlc: tech.shouldOhlc,
+    shouldFormatBigNumber: tech.shouldFormatBigNumber,
+    precision: tech.precision,
+    styles: tech.styles,
+    result: tech.result || []
   }
 }
 
@@ -136,7 +144,13 @@ export function getTechnicalIndicatorTooltipData (technicalIndicatorData = {}, t
     name = technicalIndicator.name
   }
   if (calcParams.length > 0) {
-    calcParamText = `(${calcParams.join(',')})`
+    const params = calcParams.map(param => {
+      if (isObject(param)) {
+        return param.value
+      }
+      return param
+    })
+    calcParamText = `(${params.join(',')})`
   }
   plots.forEach(plot => {
     const data = {}

@@ -14,7 +14,7 @@
 
 import Chart from './Chart'
 import { logError, logTag, logWarn } from './utils/logger'
-import { isString, isContainerDom } from './utils/typeChecks'
+import { isString } from './utils/typeChecks'
 
 const instances = {}
 let chartBaseId = 1
@@ -47,7 +47,7 @@ function init (ds, style = {}) {
   } else {
     dom = ds
   }
-  if (!isContainerDom(dom)) {
+  if (!dom) {
     logError('', '', errorMessage)
     return null
   }
@@ -74,10 +74,10 @@ function dispose (dcs) {
     if (isString(dcs)) {
       const dom = document.getElementById(dcs)
       id = dom && dom.chartId
-    } else if (isContainerDom(dcs)) {
-      id = dcs.chartId
     } else if (dcs instanceof Chart) {
       id = dcs.id
+    } else {
+      id = dcs && dcs.chartId
     }
     if (id) {
       instances[id].destroy()

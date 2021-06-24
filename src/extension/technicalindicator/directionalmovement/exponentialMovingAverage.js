@@ -17,7 +17,6 @@
  */
 export default {
   name: 'EMA',
-  series: 'price',
   calcParams: [6, 12, 20],
   precision: 2,
   shouldCheckParamCount: false,
@@ -32,21 +31,21 @@ export default {
       return { key: `ema${p}`, title: `EMA${p}: `, type: 'line' }
     })
   },
-  calcTechnicalIndicator: (dataList, calcParams, plots) => {
+  calcTechnicalIndicator: (dataList, { params, plots }) => {
     let closeSum = 0
     const emaValues = []
     return dataList.map((kLineData, i) => {
       const ema = {}
       const close = kLineData.close
       closeSum += close
-      calcParams.forEach((param, j) => {
-        if (i >= param - 1) {
-          if (i > param - 1) {
-            emaValues[j] = (2 * close + (param - 1) * emaValues[j]) / (param + 1)
+      params.forEach((p, index) => {
+        if (i >= p - 1) {
+          if (i > p - 1) {
+            emaValues[index] = (2 * close + (p - 1) * emaValues[index]) / (p + 1)
           } else {
-            emaValues[j] = closeSum / param
+            emaValues[index] = closeSum / p
           }
-          ema[plots[j].key] = emaValues[j]
+          ema[plots[index].key] = emaValues[index]
         }
       })
       return ema

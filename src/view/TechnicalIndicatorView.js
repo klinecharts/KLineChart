@@ -18,7 +18,6 @@ import { CandleType, LineStyle } from '../data/options/styleOptions'
 import { TechnicalIndicatorPlotType } from '../base/technicalindicator/TechnicalIndicator'
 import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
 import { isValid } from '../utils/typeChecks'
-import { ActionType } from '../data/constants'
 
 export default class TechnicalIndicatorView extends View {
   constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
@@ -35,7 +34,6 @@ export default class TechnicalIndicatorView extends View {
 
   /**
    * 绘制网格
-   * @private
    */
   _drawGrid () {
     const gridOptions = this._chartData.styleOptions().grid
@@ -75,7 +73,6 @@ export default class TechnicalIndicatorView extends View {
 
   /**
    * 绘制指标
-   * @private
    */
   _drawTechnicalIndicators () {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
@@ -104,28 +101,14 @@ export default class TechnicalIndicatorView extends View {
             barSpace: this._chartData.barSpace()
           },
           styles,
-          {
-            convertFromPixel: this._xAxis.convertFromPixel.bind(this._xAxis),
-            convertToPixel: this._xAxis.convertToPixel.bind(this._xAxis)
-          },
-          {
-            convertFromPixel: this._yAxis.convertFromPixel.bind(this._yAxis),
-            convertToPixel: this._yAxis.convertToPixel.bind(this._yAxis)
-          },
-          this._yAxis.isCandleYAxis()
+          this._xAxis,
+          this._yAxis
         )
         this._ctx.restore()
       }
-
-      let baseValue = technicalIndicator.baseValue
-      if (!isValid(baseValue)) {
-        baseValue = this._yAxis.min()
-      }
-      const baseValueY = this._yAxis.convertToPixel(baseValue)
       const isCandleYAxis = this._yAxis.isCandleYAxis()
 
       this._ctx.lineWidth = 1
-
       this._drawGraphics(
         (x, i, kLineData, halfBarSpace, barSpace) => {
           const technicalIndicatorData = technicalIndicatorResult[i] || {}
@@ -133,11 +116,9 @@ export default class TechnicalIndicatorView extends View {
           if (technicalIndicator.shouldOhlc && !isCandleYAxis) {
             this._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, styles.bar, CandleType.OHLC)
           }
-          const coordinateY = {}
           plots.forEach(plot => {
             const value = technicalIndicatorData[plot.key]
             const valueY = this._yAxis.convertToPixel(value)
-            coordinateY[plot.key] = valueY
             switch (plot.type) {
               case TechnicalIndicatorPlotType.CIRCLE: {
                 if (isValid(value)) {
@@ -146,14 +127,13 @@ export default class TechnicalIndicatorView extends View {
                     currentData: { kLineData, technicalIndicatorData },
                     nextData: { kLineData: dataList[i + 1], technicalIndicatorData: technicalIndicatorResult[i + 1] }
                   }
-                  const circle = {
+                  this._drawCircle({
                     x,
                     y: valueY,
                     radius: halfBarSpace,
                     color: (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor,
                     isStroke: plot.isStroke ? plot.isStroke(cbData) : true
-                  }
-                  this._drawCircle(circle)
+                  })
                 }
                 break
               }
@@ -164,6 +144,13 @@ export default class TechnicalIndicatorView extends View {
                     currentData: { kLineData, technicalIndicatorData },
                     nextData: { kLineData: dataList[i + 1], technicalIndicatorData: technicalIndicatorResult[i + 1] }
                   }
+                  let baseValue
+                  if (isValid(plot.baseValue)) {
+                    baseValue = plot.baseValue
+                  } else {
+                    baseValue = this._yAxis.min()
+                  }
+                  const baseValueY = this._yAxis.convertToPixel(baseValue)
                   const height = Math.abs(baseValueY - valueY)
                   const bar = {
                     x: x - halfBarSpace,
@@ -196,18 +183,6 @@ export default class TechnicalIndicatorView extends View {
               }
               default: { break }
             }
-            this._drawActionExecute(ActionType.DRAW_TECHNICAL_INDICATOR, {
-              ctx: this._ctx,
-              kLineData,
-              dataIndex: i,
-              technicalIndicatorData,
-              technicalIndicatorName: technicalIndicator.name,
-              coordinate: { x, ...coordinateY },
-              viewport: { width: this._width, height: this._height },
-              barSpace,
-              halfBarSpace,
-              isCandle: isCandleYAxis
-            })
           })
         },
         () => {
@@ -221,7 +196,6 @@ export default class TechnicalIndicatorView extends View {
    * 绘制图形
    * @param onDrawing
    * @param onDrawEnd
-   * @private
    */
   _drawGraphics (onDrawing, onDrawEnd) {
     const visibleDataList = this._chartData.visibleDataList()
@@ -303,7 +277,6 @@ export default class TechnicalIndicatorView extends View {
    * @param kLineData
    * @param barOptions
    * @param barStyle
-   * @private
    */
   _drawCandleBar (x, halfBarSpace, barSpace, dataIndex, kLineData, barOptions, barStyle) {
     const { open, close, high, low } = kLineData
@@ -360,34 +333,5 @@ export default class TechnicalIndicatorView extends View {
         break
       }
     }
-    this._drawActionExecute(ActionType.DRAW_CANDLE, {
-      ctx: this._ctx,
-      dataIndex,
-      kLineData,
-      coordinate: { x, open: openY, close: closeY, high: highY, low: lowY },
-      viewport: { width: this._width, height: this._height },
-      barSpace,
-      halfBarSpace,
-      isCandle: this._yAxis.isCandleYAxis()
-    })
-  }
-
-  /**
-   * 执行绘制事件监听
-   * @param type
-   * @param data
-   * @private
-   */
-  _drawActionExecute (type, data) {
-    this._chartData.actionExecute(
-      type,
-      data,
-      () => {
-        this._ctx.save()
-      },
-      () => {
-        this._ctx.restore()
-      }
-    )
   }
 }

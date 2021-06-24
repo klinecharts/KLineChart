@@ -16,6 +16,7 @@ import Pane from './Pane'
 import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 import YAxis from '../component/YAxis'
+import { cloneTechnicalIndicator } from '../base/technicalindicator/technicalIndicatorControl'
 
 export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
@@ -24,7 +25,7 @@ export default class TechnicalIndicatorPane extends Pane {
     if ('height' in props) {
       this.setHeight(props.height)
     }
-    this.setTechnicalIndicator(this._chartData.getTechnicalIndicatorInstance(props.name))
+    this.setTechnicalIndicator({ name: props.technicalIndicatorName })
   }
 
   _initBefore (props) {
@@ -122,22 +123,29 @@ export default class TechnicalIndicatorPane extends Pane {
 
   /**
    * 设置技术指标类型
-   * @param technicalIndicator
+   * @param tech
    * @param isStack
    */
-  setTechnicalIndicator (technicalIndicator, isStack) {
-    if (technicalIndicator) {
-      if (this._techs.has(technicalIndicator.name)) {
+  setTechnicalIndicator (tech, isStack) {
+    if (tech) {
+      const { name, calcParams, precision, styles } = tech
+      if (this._techs.has(name)) {
         return false
       }
-      const cloneInstance = Object.create(technicalIndicator)
-      if (isStack) {
-        this._techs.set(cloneInstance.name, cloneInstance)
-      } else {
-        this._techs = new Map([[cloneInstance.name, cloneInstance]])
+      const templateInstance = this._chartData.getTechnicalIndicatorTemplateInstance(name)
+      if (templateInstance) {
+        const cloneInstance = cloneTechnicalIndicator(templateInstance)
+        cloneInstance.setCalcParams(calcParams)
+        cloneInstance.setPrecision(precision)
+        cloneInstance.setStyles(styles, this._chartData.styleOptions().technicalIndicator)
+        if (isStack) {
+          this._techs.set(cloneInstance.name, cloneInstance)
+        } else {
+          this._techs = new Map([[cloneInstance.name, cloneInstance]])
+        }
+        this.calcTechnicalIndicator(cloneInstance)
+        return true
       }
-      this.calcTechnicalIndicator(cloneInstance)
-      return true
     }
     return false
   }
@@ -147,7 +155,7 @@ export default class TechnicalIndicatorPane extends Pane {
    * @param technicalIndicator
    */
   calcTechnicalIndicator (technicalIndicator) {
-    technicalIndicator.result = technicalIndicator.calcTechnicalIndicator(this._chartData.dataList(), technicalIndicator.calcParams, technicalIndicator.plots) || []
+    technicalIndicator.calc(this._chartData.dataList())
   }
 
   /**

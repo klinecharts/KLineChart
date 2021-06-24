@@ -13,27 +13,15 @@
  */
 
 /**
- * 成交均线
+ * 创建一个元素
+ * @param name
+ * @param styles
+ * @return {*}
  */
-export default {
-  name: 'AVP',
-  series: 'price',
-  plots: [
-    { key: 'avp', title: 'AVP: ', type: 'line' }
-  ],
-  calcTechnicalIndicator: (dataList) => {
-    let totalTurnover = 0
-    let totalVolume = 0
-    return dataList.map(kLineData => {
-      const avp = {}
-      const turnover = kLineData.turnover || 0
-      const volume = kLineData.volume || 0
-      totalTurnover += turnover
-      totalVolume += volume
-      if (totalVolume !== 0) {
-        avp.avp = totalTurnover / totalVolume
-      }
-      return avp
-    })
+export function createElement (name, styles = {}) {
+  const element = document.createElement(name)
+  for (const key in styles) {
+    (element.style)[key] = styles[key]
   }
+  return element
 }

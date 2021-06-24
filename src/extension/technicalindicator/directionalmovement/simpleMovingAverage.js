@@ -18,25 +18,24 @@
 export default {
   name: 'SMA',
   calcParams: [12, 2],
-  series: 'price',
   precision: 2,
   plots: [
     { key: 'sma', title: 'SMA: ', type: 'line' }
   ],
   shouldCheckParamCount: true,
   shouldOhlc: true,
-  calcTechnicalIndicator: (kLineDataList, calcParams) => {
+  calcTechnicalIndicator: (kLineDataList, { params }) => {
     let closeSum = 0
     let smaValue = 0
     return kLineDataList.map((kLineData, i) => {
       const sma = {}
       const close = kLineData.close
       closeSum += close
-      if (i >= calcParams[0] - 1) {
-        if (i > calcParams[0] - 1) {
-          smaValue = (close * calcParams[1] + smaValue * (calcParams[0] - calcParams[1] + 1)) / (calcParams[0] + 1)
+      if (i >= params[0] - 1) {
+        if (i > params[0] - 1) {
+          smaValue = (close * params[1] + smaValue * (params[0] - params[1] + 1)) / (params[0] + 1)
         } else {
-          smaValue = closeSum / calcParams[0]
+          smaValue = closeSum / params[0]
         }
         sma.sma = smaValue
       }

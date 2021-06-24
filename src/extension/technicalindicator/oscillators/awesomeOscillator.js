@@ -20,14 +20,15 @@ export default {
     key: 'ao',
     title: 'AO: ',
     type: 'bar',
-    color: (data, technicalIndicatorOptions) => {
+    baseValue: 0,
+    color: (data, options) => {
       const { preData, currentData } = data
       const preAo = (preData.technicalIndicatorData || {}).ao
       const ao = (currentData.technicalIndicatorData || {}).ao
       if (ao > preAo) {
-        return technicalIndicatorOptions.bar.upColor
+        return options.bar.upColor
       } else {
-        return technicalIndicatorOptions.bar.downColor
+        return options.bar.downColor
       }
     },
     isStroke: (data) => {
@@ -37,9 +38,8 @@ export default {
       return ao > preAo
     }
   }],
-  baseValue: 0,
-  calcTechnicalIndicator: (kLineDataList, calcParams) => {
-    const maxParam = Math.max(calcParams[0], calcParams[1])
+  calcTechnicalIndicator: (kLineDataList, { params }) => {
+    const maxPeriod = Math.max(params[0], params[1])
     let shortSum = 0
     let longSum = 0
     let short = 0
@@ -49,17 +49,17 @@ export default {
       const middle = (kLineData.low + kLineData.high) / 2
       shortSum += middle
       longSum += middle
-      if (i >= calcParams[0] - 1) {
-        short = shortSum / calcParams[0]
-        const agoKLineData = kLineDataList[i - (calcParams[0] - 1)]
+      if (i >= params[0] - 1) {
+        short = shortSum / params[0]
+        const agoKLineData = kLineDataList[i - (params[0] - 1)]
         shortSum -= ((agoKLineData.low + agoKLineData.high) / 2)
       }
-      if (i >= calcParams[1] - 1) {
-        long = longSum / calcParams[1]
-        const agoKLineData = kLineDataList[i - (calcParams[1] - 1)]
+      if (i >= params[1] - 1) {
+        long = longSum / params[1]
+        const agoKLineData = kLineDataList[i - (params[1] - 1)]
         longSum -= ((agoKLineData.low + agoKLineData.high) / 2)
       }
-      if (i >= maxParam - 1) {
+      if (i >= maxPeriod - 1) {
         ao.ao = short - long
       }
       return ao

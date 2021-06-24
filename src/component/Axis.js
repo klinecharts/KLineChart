@@ -14,6 +14,7 @@
 
 import { getPixelRatio } from '../utils/canvas'
 import { getPrecision, nice, round } from '../utils/number'
+import { createElement } from '../utils/element'
 
 export default class Axis {
   constructor (chartData) {
@@ -30,7 +31,7 @@ export default class Axis {
   }
 
   _initMeasureCanvas () {
-    const measureCanvas = document.createElement('canvas')
+    const measureCanvas = createElement('canvas')
     const pixelRatio = getPixelRatio(measureCanvas)
     this._measureCtx = measureCanvas.getContext('2d')
     this._measureCtx.scale(pixelRatio, pixelRatio)

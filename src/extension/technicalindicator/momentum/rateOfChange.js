@@ -24,23 +24,23 @@ export default {
     { key: 'roc', title: 'ROC: ', type: 'line' },
     { key: 'maRoc', title: 'MAROC: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (kLineDataList, calcParams) => {
+  calcTechnicalIndicator: (kLineDataList, { params }) => {
     const result = []
     let rocSum = 0
     kLineDataList.forEach((kLineData, i) => {
       const roc = {}
-      if (i >= calcParams[0] - 1) {
+      if (i >= params[0] - 1) {
         const close = kLineData.close
-        const agoClose = (kLineDataList[i - calcParams[0]] || kLineDataList[i - (calcParams[0] - 1)]).close
+        const agoClose = (kLineDataList[i - params[0]] || kLineDataList[i - (params[0] - 1)]).close
         if (agoClose !== 0) {
           roc.roc = (close - agoClose) / agoClose * 100
         } else {
           roc.roc = 0
         }
         rocSum += roc.roc
-        if (i >= calcParams[0] - 1 + calcParams[1] - 1) {
-          roc.maRoc = rocSum / calcParams[1]
-          rocSum -= result[i - (calcParams[1] - 1)].roc
+        if (i >= params[0] - 1 + params[1] - 1) {
+          roc.maRoc = rocSum / params[1]
+          rocSum -= result[i - (params[1] - 1)].roc
         }
       }
       result.push(roc)

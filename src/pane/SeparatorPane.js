@@ -15,6 +15,7 @@
 import EventBase from '../event/EventBase'
 import { getPixelRatio } from '../utils/canvas'
 import { isValid } from '../utils/typeChecks'
+import { createElement } from '../utils/element'
 
 export default class SeparatorPane {
   constructor (container, chartData, topPaneId, bottomPaneId, dragEnabled, dragEventHandler) {
@@ -37,14 +38,18 @@ export default class SeparatorPane {
    */
   _initElement (container) {
     this._container = container
-    this._wrapper = this._createElement()
-    this._wrapper.style.position = 'relative'
-    this._element = this._createElement()
-    this._element.style.width = '100%'
-    this._element.style.position = 'absolute'
-    this._element.style.zIndex = '20'
-    this._element.style.top = '-3px'
-    this._element.style.height = '7px'
+    this._wrapper = createElement('div', {
+      margin: '0', padding: '0', position: 'relative'
+    })
+    this._element = createElement('div', {
+      width: '100%',
+      height: '7px',
+      margin: '0',
+      padding: '0',
+      position: 'absolute',
+      top: '-3px',
+      zIndex: '20'
+    })
     this._wrapper.appendChild(this._element)
     const lastElement = container.lastChild
     if (lastElement) {
@@ -73,18 +78,6 @@ export default class SeparatorPane {
         treatHorzTouchDragAsPageScroll: true
       })
     }
-  }
-
-  /**
-   * 创建div节点
-   * @return {HTMLDivElement}
-   * @private
-   */
-  _createElement () {
-    const element = document.createElement('div')
-    element.style.margin = '0'
-    element.style.padding = '0'
-    return element
   }
 
   _mouseDownEvent (event) {
@@ -204,13 +197,14 @@ export default class SeparatorPane {
    */
   getImage () {
     const separatorOptions = this._chartData.styleOptions().separator
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    const pixelRatio = getPixelRatio(canvas)
     const width = this._wrapper.offsetWidth
     const height = separatorOptions.size
-    canvas.style.width = `${width}px`
-    canvas.style.height = `${height}px`
+    const canvas = createElement('canvas', {
+      width: `${width}px`,
+      height: `${height}px`
+    })
+    const ctx = canvas.getContext('2d')
+    const pixelRatio = getPixelRatio(canvas)
     canvas.width = width * pixelRatio
     canvas.height = height * pixelRatio
     ctx.scale(pixelRatio, pixelRatio)

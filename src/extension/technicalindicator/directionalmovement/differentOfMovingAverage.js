@@ -23,8 +23,8 @@ export default {
     { key: 'dma', title: 'DMA: ', type: 'line' },
     { key: 'ama', title: 'AMA: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
-    const maxParam = Math.max(calcParams[0], calcParams[1])
+  calcTechnicalIndicator: (dataList, { params }) => {
+    const maxPeriod = Math.max(params[0], params[1])
     let closeSum1 = 0
     let closeSum2 = 0
     let dmaSum = 0
@@ -36,22 +36,22 @@ export default {
       closeSum2 += close
       let ma1
       let ma2
-      if (i >= calcParams[0] - 1) {
-        ma1 = closeSum1 / calcParams[0]
-        closeSum1 -= dataList[i - (calcParams[0] - 1)].close
+      if (i >= params[0] - 1) {
+        ma1 = closeSum1 / params[0]
+        closeSum1 -= dataList[i - (params[0] - 1)].close
       }
-      if (i >= calcParams[1] - 1) {
-        ma2 = closeSum2 / calcParams[1]
-        closeSum2 -= dataList[i - (calcParams[1] - 1)].close
+      if (i >= params[1] - 1) {
+        ma2 = closeSum2 / params[1]
+        closeSum2 -= dataList[i - (params[1] - 1)].close
       }
 
-      if (i >= maxParam - 1) {
+      if (i >= maxPeriod - 1) {
         const dif = ma1 - ma2
         dma.dma = dif
         dmaSum += dif
-        if (i >= maxParam + calcParams[2] - 2) {
-          dma.ama = dmaSum / calcParams[2]
-          dmaSum -= result[i - (calcParams[2] - 1)].dma
+        if (i >= maxPeriod + params[2] - 2) {
+          dma.ama = dmaSum / params[2]
+          dmaSum -= result[i - (params[2] - 1)].dma
         }
       }
       result.push(dma)

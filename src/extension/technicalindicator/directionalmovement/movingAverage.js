@@ -17,7 +17,6 @@
  */
 export default {
   name: 'MA',
-  series: 'price',
   calcParams: [5, 10, 30, 60],
   precision: 2,
   shouldCheckParamCount: false,
@@ -33,16 +32,16 @@ export default {
       return { key: `ma${p}`, title: `MA${p}: `, type: 'line' }
     })
   },
-  calcTechnicalIndicator: (dataList, calcParams, plots) => {
+  calcTechnicalIndicator: (dataList, { params, plots }) => {
     const closeSums = []
     return dataList.map((kLineData, i) => {
       const ma = {}
       const close = kLineData.close
-      calcParams.forEach((param, j) => {
-        closeSums[j] = (closeSums[j] || 0) + close
-        if (i >= param - 1) {
-          ma[plots[j].key] = closeSums[j] / param
-          closeSums[j] -= dataList[i - (param - 1)].close
+      params.forEach((p, index) => {
+        closeSums[index] = (closeSums[index] || 0) + close
+        if (i >= p - 1) {
+          ma[plots[index].key] = closeSums[index] / p
+          closeSums[index] -= dataList[i - (p - 1)].close
         }
       })
       return ma

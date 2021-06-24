@@ -13,7 +13,9 @@
  */
 
 import ChartData from '../data/ChartData'
-import { createTechnicalIndicatorInfo } from '../base/technicalindicator/technicalIndicatorControl'
+import {
+  createTechnicalIndicatorInfo
+} from '../base/technicalindicator/technicalIndicatorControl'
 
 import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
@@ -27,6 +29,7 @@ import SeparatorPane from './SeparatorPane'
 import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { throttle } from '../utils/performance'
+import { createElement } from '../utils/element'
 import Annotation from '../base/overlay/annotation/Annotation'
 import Tag from '../base/overlay/tag/Tag'
 
@@ -70,17 +73,18 @@ export default class ChartPane {
    */
   _initChartContainer (container) {
     this._container = container
-    this._chartContainer = document.createElement('div')
-    this._chartContainer.style.userSelect = 'none'
-    this._chartContainer.style.webkitUserSelect = 'none'
-    this._chartContainer.style.msUserSelect = 'none'
-    this._chartContainer.style.MozUserSelect = 'none'
-    this._chartContainer.style.webkitTapHighlightColor = 'transparent'
-    this._chartContainer.style.position = 'relative'
-    this._chartContainer.style.outline = 'none'
-    this._chartContainer.style.borderStyle = 'none'
-    this._chartContainer.style.width = '100%'
-    this._chartContainer.style.cursor = 'crosshair'
+    this._chartContainer = createElement('div', {
+      userSelect: 'none',
+      webkitUserSelect: 'none',
+      msUserSelect: 'none',
+      MozUserSelect: 'none',
+      webkitTapHighlightColor: 'transparent',
+      position: 'relative',
+      outline: 'none',
+      borderStyle: 'none',
+      width: '100%',
+      cursor: 'crosshair'
+    })
     this._chartContainer.tabIndex = 1
     container.appendChild(this._chartContainer)
   }
@@ -324,28 +328,37 @@ export default class ChartPane {
 
   /**
    * 覆盖技术指标
-   * @param techInstance
+   * @param templateInstance
    * @param name
    * @param calcParams
-   * @param calcParamsAllowDecimal
    * @param precision
    * @param styles
+   * @param paneId
    */
-  overrideTechnicalIndicator (techInstance, { name, calcParams, calcParamsAllowDecimal, precision, styles }) {
-    techInstance.setCalcParamsAllowDecimal(calcParamsAllowDecimal)
-    const calcParamsSuccess = techInstance.setCalcParams(calcParams)
-    const precisionSuccess = techInstance.setPrecision(precision)
-    const defaultTechnicalStyleOptions = this._chartData.styleOptions().technicalIndicator
-    const styleSuccess = techInstance.setStyles(styles, defaultTechnicalStyleOptions)
-    if (calcParamsSuccess || precisionSuccess || styleSuccess) {
-      let shouldAdjust = false
+  overrideTechnicalIndicator (templateInstance, { name, calcParams, precision, styles }, paneId) {
+    const defaultTechStyleOptions = this._chartData.styleOptions().technicalIndicator
+    let shouldAdjust = false
+    let panes = new Map()
+    if (isValid(paneId)) {
+      if (this._panes.has(paneId)) {
+        panes.set(paneId, this._panes.get(paneId))
+      }
+    } else {
+      templateInstance.setCalcParams(calcParams)
+      templateInstance.setPrecision(precision)
+      templateInstance.setStyles(styles, defaultTechStyleOptions)
+      panes = this._panes
+    }
+    if (panes.size > 0) {
       const tasks = []
-      this._panes.forEach(pane => {
+      panes.forEach(pane => {
         const techs = pane.technicalIndicators()
         if (techs.has(name)) {
           shouldAdjust = true
           const tech = techs.get(name)
-          if (calcParamsSuccess) {
+          tech.setPrecision(precision)
+          tech.setStyles(styles, defaultTechStyleOptions)
+          if (tech.setCalcParams(calcParams)) {
             tasks.push(
               Promise.resolve(pane.calcTechnicalIndicator(tech))
             )
@@ -458,7 +471,7 @@ export default class ChartPane {
   /**
    * 设置指标类型
    * @param tech 技术指标实例
-   * @param isStack 是否覆盖
+   * @param isStack 是否叠加
    * @param options 配置
    */
   createTechnicalIndicator (tech, isStack, options = {}) {
@@ -484,7 +497,7 @@ export default class ChartPane {
         container: this._chartContainer,
         chartData: this._chartData,
         xAxis: this._xAxisPane.xAxis(),
-        name: tech.name,
+        technicalIndicatorName: tech.name,
         id,
         height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
       })
@@ -523,10 +536,10 @@ export default class ChartPane {
 
   /**
    * 创建图形标记
-   * @param GraphicMark
-   * @param options
+   * @param GraphicMarkTemplateClass
+   * @param graphicMark
    */
-  createGraphicMark (GraphicMark, options = {}) {
+  createGraphicMark (GraphicMarkTemplateClass, graphicMark) {
     const {
       id, points, styles, lock,
       onDrawStart, onDrawing,
@@ -534,9 +547,9 @@ export default class ChartPane {
       onRightClick, onPressedMove,
       onMouseEnter, onMouseLeave,
       onRemove
-    } = options
+    } = graphicMark
     const graphicMarkId = id || `${GRAPHIC_MARK_ID_PREFIX}${++this._graphicMarkBaseId}`
-    const graphicMarkInstance = new GraphicMark({
+    const graphicMarkInstance = new GraphicMarkTemplateClass({
       id: graphicMarkId,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
@@ -802,13 +815,14 @@ export default class ChartPane {
    * @param backgroundColor
    */
   getConvertPictureUrl (includeOverlay, type, backgroundColor) {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    const pixelRatio = getPixelRatio(canvas)
     const width = this._chartContainer.offsetWidth
     const height = this._chartContainer.offsetHeight
-    canvas.style.width = `${width}px`
-    canvas.style.height = `${height}px`
+    const canvas = createElement('canvas', {
+      width: `${width}px`,
+      height: `${height}px`
+    })
+    const ctx = canvas.getContext('2d')
+    const pixelRatio = getPixelRatio(canvas)
     canvas.width = width * pixelRatio
     canvas.height = height * pixelRatio
     ctx.scale(pixelRatio, pixelRatio)

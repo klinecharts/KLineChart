@@ -32,7 +32,7 @@ export default {
     { key: 'trix', title: 'TRIX: ', type: 'line' },
     { key: 'maTrix', title: 'MATRIX: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
+  calcTechnicalIndicator: (dataList, { params }) => {
     let closeSum = 0
     let ema1
     let ema2
@@ -45,35 +45,35 @@ export default {
       const trix = {}
       const close = kLineData.close
       closeSum += close
-      if (i >= calcParams[0] - 1) {
-        if (i > calcParams[0] - 1) {
-          ema1 = (2 * close + (calcParams[0] - 1) * ema1) / (calcParams[0] + 1)
+      if (i >= params[0] - 1) {
+        if (i > params[0] - 1) {
+          ema1 = (2 * close + (params[0] - 1) * ema1) / (params[0] + 1)
         } else {
-          ema1 = closeSum / calcParams[0]
+          ema1 = closeSum / params[0]
         }
         ema1Sum += ema1
-        if (i >= calcParams[0] * 2 - 2) {
-          if (i > calcParams[0] * 2 - 2) {
-            ema2 = (2 * ema1 + (calcParams[0] - 1) * ema2) / (calcParams[0] + 1)
+        if (i >= params[0] * 2 - 2) {
+          if (i > params[0] * 2 - 2) {
+            ema2 = (2 * ema1 + (params[0] - 1) * ema2) / (params[0] + 1)
           } else {
-            ema2 = ema1Sum / calcParams[0]
+            ema2 = ema1Sum / params[0]
           }
           ema2Sum += ema2
-          if (i >= calcParams[0] * 3 - 3) {
+          if (i >= params[0] * 3 - 3) {
             let tr
             let trixValue = 0
-            if (i > calcParams[0] * 3 - 3) {
-              tr = (2 * ema2 + (calcParams[0] - 1) * oldTr) / (calcParams[0] + 1)
+            if (i > params[0] * 3 - 3) {
+              tr = (2 * ema2 + (params[0] - 1) * oldTr) / (params[0] + 1)
               trixValue = (tr - oldTr) / oldTr * 100
             } else {
-              tr = ema2Sum / calcParams[0]
+              tr = ema2Sum / params[0]
             }
             oldTr = tr
             trix.trix = trixValue
             trixSum += trixValue
-            if (i >= calcParams[0] * 3 + calcParams[1] - 4) {
-              trix.maTrix = trixSum / calcParams[1]
-              trixSum -= result[i - (calcParams[1] - 1)].trix
+            if (i >= params[0] * 3 + params[1] - 4) {
+              trix.maTrix = trixSum / params[1]
+              trixSum -= result[i - (params[1] - 1)].trix
             }
           }
         }

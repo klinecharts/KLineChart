@@ -1,7 +1,5 @@
 import { Viewport, KLineData } from './Common';
 
-export declare type TechnicalIndicatorSeries = 'price' | 'volume' | 'normal';
-
 export declare type TechnicalIndicatorPlotType = 'circle' | 'bar' | 'line';
 
 export declare interface TechnicalIndicatorPlotCallbackDataItem {
@@ -19,14 +17,14 @@ export declare interface TechnicalIndicatorPlot {
   key: string;
   title?: string;
   type?: TechnicalIndicatorPlotType;
+  baseValue?: number;
   color?: (data: TechnicalIndicatorPlotCallbackData, options: any) => string;
   isStroke?: (data: TechnicalIndicatorPlotCallbackData) => boolean;
 }
 
-export declare interface OverrideTechnicalIndicator {
+export declare interface TechnicalIndicator {
   name: string;
-  calcParams?: number[];
-  calcParamsAllowDecimal?: any;
+  calcParams?: any[];
   precision?: number;
   styles?: any;
 }
@@ -38,24 +36,21 @@ export declare interface TechnicalIndicatorRenderDataSource {
   technicalIndicatorDataList?: any[];
 }
 
-export declare interface TechnicalIndicator extends OverrideTechnicalIndicator {
-  calcTechnicalIndicator: (kLineDataList: KLineData[], calcParams: number[], plots: TechnicalIndicatorPlot[]) => any[];
-  series?: TechnicalIndicatorSeries;
+export declare interface CustomTechnicalIndicator extends TechnicalIndicator {
+  calcTechnicalIndicator: (kLineDataList: KLineData[], options?: any) => any[];
   plots?: TechnicalIndicatorPlot[];
   shouldCheckParamCount?: boolean;
   shouldOhlc?: boolean;
-  shouldFormatBigNumber?: boolean,
-  baseValue?: number;
+  shouldFormatBigNumber?: boolean;
   minValue?: number;
   maxValue?: number;
-  regeneratePlots?: (calcParams?: number[]) => TechnicalIndicatorPlot[];
+  regeneratePlots?: (params?: number[]) => TechnicalIndicatorPlot[];
   render?: (
     ctx: CanvasRenderingContext2D,
     dataSource: TechnicalIndicatorRenderDataSource,
     viewport: Viewport,
     styleOptions: any,
-    xAxisConvert: any,
-    yAxisConvert: any,
-    isCandleTechnicalIndicator: boolean
+    xAxis: any,
+    yAxis: any
   ) => void;
 }

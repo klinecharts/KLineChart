@@ -14,7 +14,6 @@
 
 export default {
   name: 'SAR',
-  series: 'price',
   calcParams: [2, 2, 20],
   precision: 2,
   shouldOhlc: true,
@@ -35,10 +34,10 @@ export default {
       }
     }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
-    const startAf = calcParams[0] / 100
-    const step = calcParams[1] / 100
-    const maxAf = calcParams[2] / 100
+  calcTechnicalIndicator: (dataList, { params }) => {
+    const startAf = params[0] / 100
+    const step = params[1] / 100
+    const maxAf = params[2] / 100
 
     // 加速因子
     let af = startAf

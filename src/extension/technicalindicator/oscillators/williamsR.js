@@ -32,11 +32,11 @@ export default {
       return { key: `wr${i + 1}`, title: `WR${i + 1}: `, type: 'line' }
     })
   },
-  calcTechnicalIndicator: (dataList, calcParams, plots) => {
+  calcTechnicalIndicator: (dataList, { params, plots }) => {
     return dataList.map((kLineData, i) => {
       const wr = {}
       const close = kLineData.close
-      calcParams.forEach((param, index) => {
+      params.forEach((param, index) => {
         const p = param - 1
         if (i >= p) {
           const hln = calcHnLn(dataList.slice(i - p, i + 1))

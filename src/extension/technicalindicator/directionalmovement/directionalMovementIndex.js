@@ -46,7 +46,7 @@ export default {
     { key: 'adx', title: 'ADX: ', type: 'line' },
     { key: 'adxr', title: 'ADXR: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
+  calcTechnicalIndicator: (dataList, { params }) => {
     let trSum = 0
     let hSum = 0
     let lSum = 0
@@ -73,11 +73,11 @@ export default {
       trSum += tr
       hSum += h
       lSum += l
-      if (i >= calcParams[0] - 1) {
-        if (i > calcParams[0] - 1) {
-          mtr = mtr - mtr / calcParams[0] + tr
-          dmp = dmp - dmp / calcParams[0] + h
-          dmm = dmm - dmm / calcParams[0] + l
+      if (i >= params[0] - 1) {
+        if (i > params[0] - 1) {
+          mtr = mtr - mtr / params[0] + tr
+          dmp = dmp - dmp / params[0] + h
+          dmm = dmm - dmm / params[0] + l
         } else {
           mtr = trSum
           dmp = hSum
@@ -96,15 +96,15 @@ export default {
           dx = Math.abs((mdi - pdi)) / (mdi + pdi) * 100
         }
         dxSum += dx
-        if (i >= calcParams[0] * 2 - 2) {
-          if (i > calcParams[0] * 2 - 2) {
-            adx = (adx * (calcParams[0] - 1) + dx) / calcParams[0]
+        if (i >= params[0] * 2 - 2) {
+          if (i > params[0] * 2 - 2) {
+            adx = (adx * (params[0] - 1) + dx) / params[0]
           } else {
-            adx = dxSum / calcParams[0]
+            adx = dxSum / params[0]
           }
           dmi.adx = adx
-          if (i >= calcParams[0] * 2 + calcParams[1] - 3) {
-            dmi.adxr = (result[i - (calcParams[1] - 1)].adx + adx) / 2
+          if (i >= params[0] * 2 + params[1] - 3) {
+            dmi.adxr = (result[i - (params[1] - 1)].adx + adx) / 2
           }
         }
       }

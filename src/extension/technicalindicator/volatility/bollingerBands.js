@@ -36,9 +36,7 @@ function getBollMd (dataList, ma) {
  */
 export default {
   name: 'BOLL',
-  series: 'price',
-  calcParams: [20, 2],
-  calcParamsAllowDecimal: { 1: true },
+  calcParams: [{ value: 20, allowDecimal: true }, 2],
   precision: 2,
   shouldOhlc: true,
   plots: [
@@ -46,18 +44,18 @@ export default {
     { key: 'mid', title: 'MID: ', type: 'line' },
     { key: 'dn', title: 'DN: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
-    const p = calcParams[0] - 1
+  calcTechnicalIndicator: (dataList, { params }) => {
+    const p = params[0] - 1
     let closeSum = 0
     return dataList.map((kLineData, i) => {
       const close = kLineData.close
       const boll = {}
       closeSum += close
       if (i >= p) {
-        boll.mid = closeSum / calcParams[0]
+        boll.mid = closeSum / params[0]
         const md = getBollMd(dataList.slice(i - p, i + 1), boll.mid)
-        boll.up = boll.mid + calcParams[1] * md
-        boll.dn = boll.mid - calcParams[1] * md
+        boll.up = boll.mid + params[1] * md
+        boll.dn = boll.mid - params[1] * md
         closeSum -= dataList[i - p].close
       }
       return boll

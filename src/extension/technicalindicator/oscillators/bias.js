@@ -30,18 +30,18 @@ export default {
       return { key: `bias${p}`, title: `BIAS${p}: `, type: 'line' }
     })
   },
-  calcTechnicalIndicator: (dataList, calcParams, plots) => {
+  calcTechnicalIndicator: (dataList, { params, plots }) => {
     const closeSums = []
     return dataList.map((kLineData, i) => {
       const bias = {}
       const close = kLineData.close
-      calcParams.forEach((param, j) => {
-        closeSums[j] = (closeSums[j] || 0) + close
-        if (i >= param - 1) {
-          const mean = closeSums[j] / calcParams[j]
-          bias[plots[j].key] = (close - mean) / mean * 100
+      params.forEach((p, index) => {
+        closeSums[index] = (closeSums[index] || 0) + close
+        if (i >= p - 1) {
+          const mean = closeSums[index] / params[index]
+          bias[plots[index].key] = (close - mean) / mean * 100
 
-          closeSums[j] -= dataList[i - (param - 1)].close
+          closeSums[index] -= dataList[i - (p - 1)].close
         }
       })
       return bias

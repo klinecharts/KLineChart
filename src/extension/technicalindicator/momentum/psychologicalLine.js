@@ -23,7 +23,7 @@ export default {
     { key: 'psy', title: 'PSY: ', type: 'line' },
     { key: 'maPsy', title: 'MAPSY: ', type: 'line' }
   ],
-  calcTechnicalIndicator: (dataList, calcParams) => {
+  calcTechnicalIndicator: (dataList, { params }) => {
     let upCount = 0
     let psySum = 0
     const upList = []
@@ -34,14 +34,14 @@ export default {
       const upFlag = kLineData.close - preClose > 0 ? 1 : 0
       upList.push(upFlag)
       upCount += upFlag
-      if (i >= calcParams[0] - 1) {
-        psy.psy = upCount / calcParams[0] * 100
+      if (i >= params[0] - 1) {
+        psy.psy = upCount / params[0] * 100
         psySum += psy.psy
-        if (i >= calcParams[0] + calcParams[1] - 2) {
-          psy.maPsy = psySum / calcParams[1]
-          psySum -= result[i - (calcParams[1] - 1)].psy
+        if (i >= params[0] + params[1] - 2) {
+          psy.maPsy = psySum / params[1]
+          psySum -= result[i - (params[1] - 1)].psy
         }
-        upCount -= upList[i - (calcParams[0] - 1)]
+        upCount -= upList[i - (params[0] - 1)]
       }
       result.push(psy)
     })
