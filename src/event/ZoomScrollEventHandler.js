@@ -174,11 +174,11 @@ export default class ZoomScrollEventHandler extends EventHandler {
       return
     }
     let isPerform = false
-    const paneId = this._getEventPaneId(event)
+    const { paneId, y } = this._getEventPaneIdRealY(event)
     if (isValid(paneId)) {
       isPerform = true
       if (performFuc) {
-        performFuc({ paneId, y: event.localY - this._paneContentSize[paneId].contentTop })
+        performFuc({ paneId, y })
       }
     }
     if (!isPerform && extendFun) {

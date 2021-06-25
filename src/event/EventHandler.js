@@ -34,19 +34,20 @@ export default class EventHandler {
   }
 
   /**
-   * 获取事件所在的窗口id
+   * 获取事件所在的窗口id和真实y坐标
    * @param event
-   * @return {string}
+   * @return {{}|{y: number, paneId: string}}
    */
-  _getEventPaneId (event) {
+  _getEventPaneIdRealY (event) {
     for (const paneId in this._paneContentSize) {
       if (Object.prototype.hasOwnProperty.call(this._paneContentSize, paneId)) {
         const size = this._paneContentSize[paneId]
         if (event.localY > size.contentTop && event.localY < size.contentBottom) {
-          return paneId
+          return { paneId, y: event.localY - size.contentTop }
         }
       }
     }
+    return {}
   }
 
   /**

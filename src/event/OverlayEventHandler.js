@@ -73,12 +73,12 @@ export default class OverlayEventHandler extends EventHandler {
   }
 
   mouseMoveEvent (event) {
-    const paneId = this._getEventPaneId(event)
+    const { paneId, y } = this._getEventPaneIdRealY(event)
     if (!this._checkEventPointX(event.localX) || !isValid(paneId) || this._waitingForMouseMoveAnimationFrame) {
       return
     }
     this._waitingForMouseMoveAnimationFrame = true
-    const coordinate = { x: event.localX, y: event.localY }
+    const coordinate = { x: event.localX, y }
     const graphicMarks = this._chartData.graphicMarks()
     const visibleAnnotations = this._chartData.visibleAnnotations().get(paneId)
     const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
@@ -115,11 +115,11 @@ export default class OverlayEventHandler extends EventHandler {
    * @param event
    */
   mouseDownEvent (event) {
-    const paneId = this._getEventPaneId(event)
+    const { paneId, y } = this._getEventPaneIdRealY(event)
     if (!this._checkEventPointX(event.localX) || !isValid(paneId)) {
       return
     }
-    const coordinate = { x: event.localX, y: event.localY }
+    const coordinate = { x: event.localX, y }
     const graphicMarks = this._chartData.graphicMarks()
     const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
     let graphicMarkHoverOperate = {
@@ -176,15 +176,15 @@ export default class OverlayEventHandler extends EventHandler {
   }
 
   mouseRightDownEvent (event) {
-    const paneId = this._getEventPaneId(event)
+    const { paneId, y } = this._getEventPaneIdRealY(event)
     if (isValid(paneId)) {
       if (paneId === CANDLE_PANE_ID) {
-        const graphicMark = this._chartData.graphicMarks().find(gm => gm.checkMousePointOnGraphic({ x: event.localX, y: event.localY }))
+        const graphicMark = this._chartData.graphicMarks().find(gm => gm.checkMousePointOnGraphic({ x: event.localX, y }))
         if (graphicMark && !graphicMark.onRightClick({ id: graphicMark.id(), points: graphicMark.points(), event })) {
           this._chartData.removeGraphicMarkInstance(graphicMark.id())
         }
       }
-      const annotation = this._chartData.visibleAnnotations().get(paneId).find(an => an.checkMousePointOnGraphic({ x: event.localX, y: event.localY }))
+      const annotation = this._chartData.visibleAnnotations().get(paneId).find(an => an.checkMousePointOnGraphic({ x: event.localX, y }))
       if (annotation) {
         annotation.onRightClick({ id: annotation.id(), points: annotation.points(), event })
       }
