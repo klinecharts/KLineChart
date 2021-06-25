@@ -33,10 +33,34 @@ export default class EventHandler {
     return x > 0 && x < this._chartContentSize.contentRight - this._chartContentSize.contentLeft
   }
 
+  /**
+   * 获取事件所在的窗口id
+   * @param event
+   * @return {string}
+   */
+  _getEventPaneId (event) {
+    for (const paneId in this._paneContentSize) {
+      if (Object.prototype.hasOwnProperty.call(this._paneContentSize, paneId)) {
+        const size = this._paneContentSize[paneId]
+        if (event.localY > size.contentTop && event.localY < size.contentBottom) {
+          return paneId
+        }
+      }
+    }
+  }
+
+  /**
+   * 设置图表尺寸
+   * @param chartContentSize
+   */
   setChartContentSize (chartContentSize) {
     this._chartContentSize = chartContentSize
   }
 
+  /**
+   * 设置窗口尺寸
+   * @param paneContentSize
+   */
   setPaneContentSize (paneContentSize) {
     this._paneContentSize = paneContentSize
   }

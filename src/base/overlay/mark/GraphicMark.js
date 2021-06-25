@@ -311,10 +311,10 @@ export default class GraphicMark extends Overlay {
    * @param ctx
    */
   draw (ctx) {
-    const coordinates = this._points.map(({ timestamp, price, dataIndex }) => {
+    const coordinates = this._points.map(({ timestamp, value, dataIndex }) => {
       return {
         x: this._timestampOrDataIndexToPointX({ timestamp, dataIndex }),
-        y: this._yAxis.convertToPixel(price)
+        y: this._yAxis.convertToPixel(value)
       }
     })
     const markOptions = this._styles || this._chartData.styleOptions().graphicMark
@@ -445,10 +445,10 @@ export default class GraphicMark extends Overlay {
     const coordinates = []
     // 检查鼠标点是否在图形的点上
     for (let i = 0; i < this._points.length; i++) {
-      const { timestamp, price, dataIndex } = this._points[i]
+      const { timestamp, value, dataIndex } = this._points[i]
       const coordinate = {
         x: this._timestampOrDataIndexToPointX({ timestamp, dataIndex }),
-        y: this._yAxis.convertToPixel(price)
+        y: this._yAxis.convertToPixel(value)
       }
       coordinates.push(coordinate)
       if (checkPointInCircle(coordinate, markOptions.point.radius, mouseCoordinate)) {
@@ -500,9 +500,9 @@ export default class GraphicMark extends Overlay {
   mouseMoveForDrawing (point) {
     const dataIndex = this._xAxis.convertFromPixel(point.x)
     const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
-    const price = this._yAxis.convertFromPixel(point.y)
-    this._points[this._drawStep - 1] = { timestamp, price, dataIndex }
-    this.performMouseMoveForDrawing(this._drawStep, this._points, { timestamp, price, dataIndex }, this._xAxis, this._yAxis)
+    const value = this._yAxis.convertFromPixel(point.y)
+    this._points[this._drawStep - 1] = { timestamp, value, dataIndex }
+    this.performMouseMoveForDrawing(this._drawStep, this._points, { timestamp, value, dataIndex }, this._xAxis, this._yAxis)
     this.onDrawing({ id: this._id, step: this._drawStep, points: this._points })
   }
 
@@ -534,11 +534,11 @@ export default class GraphicMark extends Overlay {
     ) {
       const dataIndex = this._xAxis.convertFromPixel(point.x)
       const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
-      const price = this._yAxis.convertFromPixel(point.y)
+      const value = this._yAxis.convertFromPixel(point.y)
       this._points[elementIndex].timestamp = timestamp
       this._points[elementIndex].dataIndex = dataIndex
-      this._points[elementIndex].price = price
-      this.performMousePressedMove(this._points, elementIndex, { dataIndex, timestamp, price }, this._xAxis, this._yAxis)
+      this._points[elementIndex].value = value
+      this.performMousePressedMove(this._points, elementIndex, { dataIndex, timestamp, value }, this._xAxis, this._yAxis)
       this.onPressedMove({
         id: graphicMarkMouseOperate.click.id,
         points: this._points,

@@ -29,15 +29,15 @@ export default {
       if (coordinates.length > 1) {
         const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDif = coordinates[0].y - coordinates[1].y
-        const priceDif = points[0].price - points[1].price
+        const valueDif = points[0].value - points[1].value
         percents.forEach(percent => {
           const y = coordinates[1].y + yDif * percent
-          const price = (points[1].price + priceDif * percent).toFixed(precision.price)
+          const value = (points[1].value + valueDif * percent).toFixed(precision.price)
           lines.push([{ x: startX, y }, { x: endX, y }])
           texts.push({
             x: startX,
             y,
-            text: `${price} (${(percent * 100).toFixed(1)}%)`
+            text: `${value} (${(percent * 100).toFixed(1)}%)`
           })
         })
       }

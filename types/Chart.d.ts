@@ -9,14 +9,8 @@ import { PaneOptions } from './Pane';
 
 export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll' | 'crosshair' | 'pane_drag';
 
-export declare interface ConvertValue {
-  xAxisValue?: number;
-  yAxisValue?: number;
-}
-
 export declare interface ConvertFinder {
   paneId?: string;
-  dataIndexXAxis?: boolean;
   absoluteYAxis?: boolean;
 }
 
@@ -55,18 +49,18 @@ export declare interface Chart {
   setGraphicMarkOptions(options: OverrideGraphicMark): void;
   addCustomGraphicMark(customGraphicMark: CustomGraphicMark | CustomGraphicMark[]): void;
   removeGraphicMark(graphicMarkId?: string): void;
-  createAnnotation(annotation: Annotation | Annotation[]): void;
-  removeAnnotation(point?: Point | Point[]): void;
-  createTag(tag: Tag | Tag[]): void;
-  removeTag(id?: string): void;
+  createAnnotation(annotation: Annotation | Annotation[], paneId?: string): void;
+  removeAnnotation(paneId?: string, point?: Point | Point[]): void;
+  createTag(tag: Tag | Tag[], paneId?: string): void;
+  removeTag(paneId?: string, tagId?: string | string[]): void;
   scrollByDistance(distance: number, animationDuration?: number): void;
   scrollToRealTime(animationDuration?: number): void;
   scrollToPosition(position: number, animationDuration?: number): void;
   zoomAtCoordinate(scale: number, coordinate?: Coordinate, animationDuration?: number): void;
   zoomAtPosition(scale: number, position: number, animationDuration?: number): void;
   setPaneOptions(options: PaneOptions): void;
-  convertFromPixel(coordinate: Coordinate | Coordinate[], finder: ConvertFinder): ConvertValue | ConvertValue[];
-  convertToPixel(value: ConvertValue | ConvertValue[], finder: ConvertFinder): Coordinate | Coordinate[];
+  convertFromPixel(coordinate: Coordinate | Coordinate[], finder: ConvertFinder): Point | Point[];
+  convertToPixel(point: Point | Point[], finder: ConvertFinder): Coordinate | Coordinate[];
   subscribeAction(type: ChartActionType, callback: (params: any) => void): void;
   unsubscribeAction(type: ChartActionType, callback?: (params: any) => void): void;
   getConvertPictureUrl(includeOverlay?: boolean, type?: PictureType, backgroundColor?: string): string;

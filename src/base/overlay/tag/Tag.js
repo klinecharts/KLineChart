@@ -191,7 +191,7 @@ export default class Tag extends Overlay {
         return this._yAxis.height() + offset
       }
       default: {
-        return this._yAxis.convertToNicePixel(this._point.price) + offset
+        return this._yAxis.convertToNicePixel(this._point.value) + offset
       }
     }
   }

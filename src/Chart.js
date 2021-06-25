@@ -561,11 +561,11 @@ export default class Chart {
 
   /**
    * 将值装换成像素
-   * @param value
+   * @param point
    * @param finder
    */
-  convertToPixel (value, finder) {
-    return this._chartPane.convertToPixel(value, finder)
+  convertToPixel (point, finder) {
+    return this._chartPane.convertToPixel(point, finder)
   }
 
   /**

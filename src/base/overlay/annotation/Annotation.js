@@ -110,7 +110,7 @@ export default class Annotation extends Overlay {
     let y = 0
     switch (styles.position) {
       case OverlayPosition.POINT: {
-        y = this._yAxis.convertToPixel(this._point.price)
+        y = this._yAxis.convertToPixel(this._point.value)
         break
       }
       case OverlayPosition.TOP: {

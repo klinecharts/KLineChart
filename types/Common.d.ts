@@ -28,7 +28,7 @@ export declare interface Coordinate {
 export declare interface Point {
   timestamp?: number;
   dataIndex?: number;
-  price?: number;
+  value?: number;
 }
 
 export declare interface OverlayEvent {

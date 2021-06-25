@@ -34,13 +34,13 @@ export default {
       }
     ]
   },
-  performMousePressedMove: (points, pressedPointIndex, { price }) => {
-    points[0].price = price
-    points[1].price = price
+  performMousePressedMove: (points, pressedPointIndex, { value }) => {
+    points[0].value = value
+    points[1].value = value
   },
-  performMouseMoveForDrawing: (step, points, { price }) => {
+  performMouseMoveForDrawing: (step, points, { value }) => {
     if (step === 2) {
-      points[0].price = price
+      points[0].value = value
     }
   }
 }

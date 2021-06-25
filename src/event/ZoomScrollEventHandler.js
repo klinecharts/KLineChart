@@ -13,6 +13,7 @@
  */
 
 import EventHandler, { isMouse, isTouch } from './EventHandler'
+import { isValid } from '../utils/typeChecks'
 
 const TOUCH_MIN_RADIUS = 10
 
@@ -173,14 +174,11 @@ export default class ZoomScrollEventHandler extends EventHandler {
       return
     }
     let isPerform = false
-    for (const paneId in this._paneContentSize) {
-      const size = this._paneContentSize[paneId]
-      if (event.localY > size.contentTop && event.localY < size.contentBottom) {
-        isPerform = true
-        if (performFuc) {
-          performFuc({ paneId, y: event.localY - size.contentTop })
-        }
-        break
+    const paneId = this._getEventPaneId(event)
+    if (isValid(paneId)) {
+      isPerform = true
+      if (performFuc) {
+        performFuc({ paneId, y: event.localY - this._paneContentSize[paneId].contentTop })
       }
     }
     if (!isPerform && extendFun) {

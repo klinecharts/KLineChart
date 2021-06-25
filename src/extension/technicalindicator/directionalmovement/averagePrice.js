@@ -17,7 +17,6 @@
  */
 export default {
   name: 'AVP',
-  series: 'price',
   plots: [
     { key: 'avp', title: 'AVP: ', type: 'line' }
   ],

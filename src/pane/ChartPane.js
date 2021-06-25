@@ -734,27 +734,29 @@ export default class ChartPane {
   /**
    * 将值装换成像素
    * @param timestamp
-   * @param value
+   * @param point
    * @param paneId
-   * @param dataIndexXAxis
    * @param absoluteYAxis
    */
-  convertToPixel (value, { paneId = CANDLE_PANE_ID, dataIndexXAxis, absoluteYAxis }) {
-    const values = [].concat(value)
+  convertToPixel (point, { paneId = CANDLE_PANE_ID, absoluteYAxis }) {
+    const points = [].concat(point)
     let coordinates = []
     const separatorSize = this._chartData.styleOptions().separator.size
     let absoluteTop = 0
     const panes = this._panes.values()
     for (const pane of panes) {
       if (pane.id() === paneId) {
-        coordinates = values.map(({ xAxisValue, yAxisValue }) => {
+        coordinates = points.map(({ timestamp, dataIndex, value }) => {
           const coordinate = {}
-          if (isValid(xAxisValue)) {
-            const dataIndex = dataIndexXAxis ? xAxisValue : this._chartData.timestampToDataIndex(xAxisValue)
-            coordinate.x = this._xAxisPane.xAxis().convertToPixel(dataIndex)
+          let index = dataIndex
+          if (isValid(timestamp)) {
+            index = this._chartData.timestampToDataIndex(timestamp)
           }
-          if (isValid(yAxisValue)) {
-            const y = pane.yAxis().convertToPixel(yAxisValue)
+          if (isValid(index)) {
+            coordinate.x = this._xAxisPane.xAxis().convertToPixel(index)
+          }
+          if (isValid(value)) {
+            const y = pane.yAxis().convertToPixel(value)
             coordinate.y = absoluteYAxis ? absoluteTop + y : y
           }
           return coordinate
@@ -763,7 +765,7 @@ export default class ChartPane {
       }
       absoluteTop += (pane.height() + separatorSize)
     }
-    return isArray(value) ? coordinates : (coordinates[0] || {})
+    return isArray(point) ? coordinates : (coordinates[0] || {})
   }
 
   /**
@@ -774,31 +776,31 @@ export default class ChartPane {
    * @param absoluteYAxis
    * @return {{}[]|*[]}
    */
-  convertFromPixel (coordinate, { paneId = CANDLE_PANE_ID, dataIndexXAxis, absoluteYAxis }) {
+  convertFromPixel (coordinate, { paneId = CANDLE_PANE_ID, absoluteYAxis }) {
     const coordinates = [].concat(coordinate)
-    let values = []
+    let points = []
     const separatorSize = this._chartData.styleOptions().separator.size
     let absoluteTop = 0
     const panes = this._panes.values()
     for (const pane of panes) {
       if (pane.id() === paneId) {
-        values = coordinates.map(({ x, y }) => {
-          const value = {}
+        points = coordinates.map(({ x, y }) => {
+          const point = {}
           if (isValid(x)) {
-            const v = this._xAxisPane.xAxis().convertFromPixel(x)
-            value.xAxisValue = dataIndexXAxis ? v : this._chartData.dataIndexToTimestamp(v)
+            point.dataIndex = this._xAxisPane.xAxis().convertFromPixel(x)
+            point.timestamp = this._chartData.dataIndexToTimestamp(point.dataIndex)
           }
           if (isValid(y)) {
             const ry = absoluteYAxis ? y - absoluteTop : y
-            value.yAxisValue = pane.yAxis().convertFromPixel(ry)
+            point.value = pane.yAxis().convertFromPixel(ry)
           }
-          return value
+          return point
         })
         break
       }
       absoluteTop += pane.height() + separatorSize
     }
-    return isArray(coordinate) ? values : (values[0] || {})
+    return isArray(coordinate) ? points : (points[0] || {})
   }
 
   /**
