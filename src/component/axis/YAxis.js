@@ -13,11 +13,11 @@
  */
 
 import Axis from './Axis'
-import { CandleType, YAxisPosition, YAxisType } from '../data/options/styleOptions'
-import { isNumber, isValid } from '../utils/typeChecks'
-import { calcTextWidth, createFont } from '../utils/canvas'
-import { formatBigNumber, formatPrecision } from '../utils/format'
-import { round, log10, index10 } from '../utils/number'
+import { CandleType, YAxisPosition, YAxisType } from '../../data/options/styleOptions'
+import { isNumber, isValid } from '../../utils/typeChecks'
+import { calcTextWidth, createFont } from '../../utils/canvas'
+import { formatBigNumber, formatPrecision } from '../../utils/format'
+import { round, log10, index10 } from '../../utils/number'
 
 export default class YAxis extends Axis {
   constructor (chartData, isCandleYAxis, additionalDataProvider) {

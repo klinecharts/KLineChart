@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import { getPixelRatio } from '../utils/canvas'
-import { getPrecision, nice, round } from '../utils/number'
-import { createElement } from '../utils/element'
+import { getPixelRatio } from '../../utils/canvas'
+import { getPrecision, nice, round } from '../../utils/number'
+import { createElement } from '../../utils/element'
 
 export default class Axis {
   constructor (chartData) {

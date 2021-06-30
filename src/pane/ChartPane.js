@@ -15,7 +15,7 @@
 import ChartData from '../data/ChartData'
 import {
   createTechnicalIndicatorInfo
-} from '../base/technicalindicator/technicalIndicatorControl'
+} from '../component/tech/technicalIndicatorControl'
 
 import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
@@ -30,8 +30,8 @@ import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { throttle } from '../utils/performance'
 import { createElement } from '../utils/element'
-import Annotation from '../base/overlay/annotation/Annotation'
-import Tag from '../base/overlay/tag/Tag'
+import Annotation from '../component/overlay/annotation/Annotation'
+import Tag from '../component/overlay/tag/Tag'
 
 import {
   CANDLE_PANE_ID,
@@ -665,7 +665,7 @@ export default class ChartPane {
     let shouldAdd = false
     tags.forEach(({ id, point, text, mark, styles }) => {
       if (isValid(id)) {
-        const tag = this._chartData.getTag(id)
+        const tag = this._chartData.getTag(id, paneId)
         if (tag) {
           const updateSuccess = tag.update({ point, text, mark, styles })
           if (!shouldUpdate) {

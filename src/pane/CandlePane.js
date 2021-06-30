@@ -14,7 +14,7 @@
 
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import CandleWidget from '../widget/CandleWidget'
-import YAxis from '../component/YAxis'
+import YAxis from '../component/axis/YAxis'
 
 export default class CandlePane extends TechnicalIndicatorPane {
   _createYAxis (props) {

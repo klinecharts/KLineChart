@@ -14,7 +14,7 @@
 
 import EventHandler, { isMouse } from './EventHandler'
 import { CANDLE_PANE_ID, InvalidateLevel } from '../data/constants'
-import { GraphicMarkMouseOperateElement } from '../base/overlay/mark/GraphicMark'
+import { GraphicMarkMouseOperateElement } from '../component/overlay/mark/GraphicMark'
 import { isValid } from '../utils/typeChecks'
 
 export default class OverlayEventHandler extends EventHandler {

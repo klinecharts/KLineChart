@@ -14,7 +14,7 @@
 
 import View from './View'
 import { YAxisType } from '../data/options/styleOptions'
-import { TechnicalIndicatorPlotType } from '../base/technicalindicator/TechnicalIndicator'
+import { TechnicalIndicatorPlotType } from '../component/tech/TechnicalIndicator'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { formatBigNumber, formatPrecision } from '../utils/format'
@@ -131,23 +131,23 @@ export default class YAxisView extends View {
   _drawTechnicalIndicatorLastValue (yAxisOptions) {
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const lastValueMarkOptions = technicalIndicatorOptions.lastValueMark
-    const technicalIndicators = this._additionalDataProvider.technicalIndicators()
     if (!lastValueMarkOptions.show || !lastValueMarkOptions.text.show) {
       return
     }
+    const techs = this._additionalDataProvider.technicalIndicators()
     const dataList = this._chartData.dataList()
-    technicalIndicators.forEach(technicalIndicator => {
-      const technicalIndicatorResult = technicalIndicator.result || []
-      const dataSize = technicalIndicatorResult.length
-      const technicalIndicatorData = technicalIndicatorResult[dataSize - 1] || {}
-      const plots = technicalIndicator.plots
+    techs.forEach(tech => {
+      const techResult = tech.result || []
+      const dataSize = techResult.length
+      const technicalIndicatorData = techResult[dataSize - 1] || {}
+      const plots = tech.plots
       const cbData = {
-        preData: { kLineData: dataList[dataSize - 2], technicalIndicatorData: technicalIndicatorResult[dataSize - 2] },
+        preData: { kLineData: dataList[dataSize - 2], technicalIndicatorData: techResult[dataSize - 2] },
         currentData: { kLineData: dataList[dataSize - 1], technicalIndicatorData },
         nextData: { kLineData: null, technicalIndicatorData: null }
       }
-      const precision = technicalIndicator.precision
-      const styles = technicalIndicator.styles || technicalIndicatorOptions
+      const precision = tech.precision
+      const styles = tech.styles || technicalIndicatorOptions
       const colors = styles.line.colors || []
       const colorSize = colors.length
       let lineCount = 0
@@ -172,7 +172,7 @@ export default class YAxisView extends View {
         }
         if (isValid(value)) {
           this._drawMarkLabel(
-            yAxisOptions, value, precision, technicalIndicator.shouldFormatBigNumber,
+            yAxisOptions, value, precision, tech.shouldFormatBigNumber,
             {
               ...lastValueMarkOptions.text, backgroundColor
             }

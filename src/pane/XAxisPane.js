@@ -14,7 +14,7 @@
 
 import Pane from './Pane'
 import XAxisWidget from '../widget/XAxisWidget'
-import XAxis from '../component/XAxis'
+import XAxis from '../component/axis/XAxis'
 
 export default class XAxisPane extends Pane {
   _initBefore () {

@@ -27,14 +27,14 @@ import {
   createTechnicalIndicatorTemplateInstance,
   createTechnicalIndicatorTemplateMapping,
   createTechnicalIndicatorInfo
-} from '../base/technicalindicator/technicalIndicatorControl'
-import { GraphicMarkMouseOperateElement } from '../base/overlay/mark/GraphicMark'
+} from '../component/tech/technicalIndicatorControl'
+import { GraphicMarkMouseOperateElement } from '../component/overlay/mark/GraphicMark'
 import Delegate from './delegate/Delegate'
 import {
   createGraphicMarkTemplateClass,
   createGraphicMarkTemplateMapping,
   getGraphicMarkInfo
-} from '../base/overlay/mark/graphicMarkControl'
+} from '../component/overlay/mark/graphicMarkControl'
 
 import { MIN_DATA_SPACE, MAX_DATA_SPACE, InvalidateLevel, ActionType } from './constants'
 
@@ -926,11 +926,15 @@ export default class ChartData {
 
   /**
    * 根据id获取标签实例
-   * @param id
+   * @param tagId
+   * @param paneId
    * @return
    */
-  getTag (id) {
-    return this._tags.get(id)
+  getTag (tagId, paneId) {
+    if (this._tags.has(paneId)) {
+      return this._tags.get(paneId).get(tagId)
+    }
+    return null
   }
 
   /**

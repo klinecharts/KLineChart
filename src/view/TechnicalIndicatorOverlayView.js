@@ -14,11 +14,11 @@
 
 import View from './View'
 import { TooltipShowRule, LineStyle } from '../data/options/styleOptions'
-import { TechnicalIndicatorPlotType } from '../base/technicalindicator/TechnicalIndicator'
+import { TechnicalIndicatorPlotType } from '../component/tech/TechnicalIndicator'
 import { isValid } from '../utils/typeChecks'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { getTechnicalIndicatorTooltipData } from '../base/technicalindicator/technicalIndicatorControl'
+import { getTechnicalIndicatorTooltipData } from '../component/tech/technicalIndicatorControl'
 import { renderText } from '../renderer/text'
 
 export default class TechnicalIndicatorOverlayView extends View {

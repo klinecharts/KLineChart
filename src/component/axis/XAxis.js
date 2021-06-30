@@ -13,9 +13,9 @@
  */
 
 import Axis from './Axis'
-import { calcTextWidth, createFont } from '../utils/canvas'
-import { formatDate } from '../utils/format'
-import { isNumber } from '../utils/typeChecks'
+import { calcTextWidth, createFont } from '../../utils/canvas'
+import { formatDate } from '../../utils/format'
+import { isNumber } from '../../utils/typeChecks'
 
 export default class XAxis extends Axis {
   _computeMinMax () {

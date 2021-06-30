@@ -121,7 +121,7 @@ export default class GraphicMark extends Overlay {
       }
       // 重新演练绘制一遍，防止因为点不对而绘制出错误的图形
       for (let i = 0; i < repeatTotalStep; i++) {
-        this.performMouseMoveForDrawing(i + 2, this.points, this._points[i], this._xAxis, this._yAxis)
+        this.performMouseMoveForDrawing(i + 2, this._points, this._points[i], this._xAxis, this._yAxis)
       }
       if (this._drawStep === GRAPHIC_MARK_DRAW_STEP_FINISHED) {
         this.performMousePressedMove(this._points, this._points.length - 1, this._points[this._points.length - 1], this._xAxis, this._yAxis)
