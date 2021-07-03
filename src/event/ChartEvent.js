@@ -21,7 +21,9 @@ export default class ChartEvent {
   constructor (target, chartData) {
     this._target = target
     this._chartData = chartData
-    this._chartContentSize = {}
+    this._chartContentLeftRight = {}
+    this._chartContentTopBottom = {}
+    this._paneContentSize = {}
     this._event = new EventBase(this._target, {
       pinchStartEvent: this._pinchStartEvent.bind(this),
       pinchEvent: this._pinchEvent.bind(this),
@@ -62,77 +64,87 @@ export default class ChartEvent {
   _mouseUpEvent (event) {
     this._target.style.cursor = 'crosshair'
     if (this._shouldPerformOverlayEvent()) {
-      event.localX -= this._chartContentSize.contentLeft
       this._overlayEventHandler.mouseUpEvent(event)
     }
   }
 
   _mouseLeaveEvent (event) {
     if (this._checkZoomScroll()) {
-      event.localX -= this._chartContentSize.contentLeft
       this._zoomScrollEventHandler.mouseLeaveEvent(event)
     }
   }
 
   _mouseMoveEvent (event) {
-    event.localX -= this._chartContentSize.contentLeft
-    if (this._shouldPerformOverlayEvent()) {
-      this._overlayEventHandler.mouseMoveEvent(event)
-    }
-    if (this._checkZoomScroll()) {
-      this._zoomScrollEventHandler.mouseMoveEvent(event)
+    const zoomScroll = this._checkZoomScroll()
+    if (this._checkEventInChartContent(event)) {
+      const compatEvent = this._compatChartEvent(event, true)
+      if (this._shouldPerformOverlayEvent()) {
+        this._overlayEventHandler.mouseMoveEvent(compatEvent)
+      }
+      if (zoomScroll) {
+        this._zoomScrollEventHandler.mouseMoveEvent(compatEvent)
+      }
+    } else {
+      if (zoomScroll) {
+        this._zoomScrollEventHandler.mouseLeaveEvent(event)
+      }
     }
   }
 
   _mouseWheelEvent (event) {
-    if (this._checkZoomScroll()) {
-      this._zoomScrollEventHandler.mouseWheelEvent(event)
+    if (this._checkZoomScroll() && this._checkEventInChartContent(event)) {
+      this._zoomScrollEventHandler.mouseWheelEvent(this._compatChartEvent(event))
     }
   }
 
   _mouseClickEvent (event) {
-    if (this._checkZoomScroll()) {
-      event.localX -= this._chartContentSize.contentLeft
-      this._zoomScrollEventHandler.mouseClickEvent(event)
+    if (this._checkZoomScroll() && this._checkEventInChartContent(event)) {
+      this._zoomScrollEventHandler.mouseClickEvent(this._compatChartEvent(event, true))
     }
   }
 
   _mouseDownEvent (event) {
-    this._target.style.cursor = 'pointer'
-    event.localX -= this._chartContentSize.contentLeft
-    if (this._shouldPerformOverlayEvent()) {
-      this._overlayEventHandler.mouseDownEvent(event)
-    }
-    if (this._checkZoomScroll()) {
-      this._zoomScrollEventHandler.mouseDownEvent(event)
+    if (this._checkEventInChartContent(event)) {
+      this._target.style.cursor = 'pointer'
+      const compatEvent = this._compatChartEvent(event, true)
+      if (this._shouldPerformOverlayEvent()) {
+        this._overlayEventHandler.mouseDownEvent(compatEvent)
+      }
+      if (this._checkZoomScroll()) {
+        this._zoomScrollEventHandler.mouseDownEvent(compatEvent)
+      }
     }
   }
 
   _mouseRightDownEvent (event) {
-    if (this._shouldPerformOverlayEvent()) {
-      event.localX -= this._chartContentSize.contentLeft
-      this._overlayEventHandler.mouseRightDownEvent(event)
+    if (this._shouldPerformOverlayEvent() && this._checkEventInChartContent(event)) {
+      this._overlayEventHandler.mouseRightDownEvent(this._checkEventInChartContent(event, true))
     }
   }
 
   _pressedMouseMoveEvent (event) {
-    event.localX -= this._chartContentSize.contentLeft
-    if (this._chartData.dragGraphicMarkFlag()) {
-      this._overlayEventHandler.pressedMouseMoveEvent(event)
-      // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
-      if (this._chartData.crosshair().paneId) {
-        this._chartData.setCrosshair()
+    if (this._checkEventInChartContent(event)) {
+      const markDragFlag = this._chartData.dragGraphicMarkFlag()
+      const zoomScroll = this._checkZoomScroll()
+      if (markDragFlag || zoomScroll) {
+        const compatEvent = this._compatChartEvent(event, true)
+        if (markDragFlag) {
+          this._overlayEventHandler.pressedMouseMoveEvent(compatEvent)
+          // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
+          if (this._chartData.crosshair().paneId) {
+            this._chartData.setCrosshair()
+          }
+        }
+        if (zoomScroll) {
+          this._zoomScrollEventHandler.pressedMouseMoveEvent(compatEvent)
+        }
       }
-    }
-    if (this._checkZoomScroll()) {
-      this._zoomScrollEventHandler.pressedMouseMoveEvent(event)
     }
   }
 
   _longTapEvent (event) {
-    if (this._checkZoomScroll()) {
-      event.localX -= this._chartContentSize.contentLeft
-      this._zoomScrollEventHandler.longTapEvent(event)
+    if (this._checkZoomScroll() && this._checkEventInChartContent(event)) {
+      this._zoomScrollEventHandler.longTapEvent(this._compatChartEvent(event, true))
     }
   }
 
@@ -151,15 +163,53 @@ export default class ChartEvent {
     return this._chartData.graphicMarks().length > 0 || this._chartData.visibleAnnotations().size > 0
   }
 
-  setChartContentSize (chartContentSize) {
-    this._chartContentSize = chartContentSize
-    this._zoomScrollEventHandler.setChartContentSize(chartContentSize)
-    this._overlayEventHandler.setChartContentSize(chartContentSize)
+  /**
+   * 事件信息兼容
+   * @param {*} event
+   * @param {*} compatY
+   * @returns
+   */
+  _compatChartEvent (event, compatY) {
+    if (compatY) {
+      let paneY
+      let paneId
+      for (const id in this._paneContentSize) {
+        if (Object.prototype.hasOwnProperty.call(this._paneContentSize, id)) {
+          const size = this._paneContentSize[id]
+          if (event.localY > size.contentTop && event.localY < size.contentBottom) {
+            paneY -= event.localY - size.contentTop
+            paneId = id
+            break
+          }
+        }
+      }
+      event.paneY = paneY
+      event.paneId = paneId
+    }
+    event.localX -= this._chartContentSize.contentLeft
+    return event
+  }
+
+  /**
+   * 检查事件是否在图表内容内
+   * @param {*} event
+   * @returns
+   */
+  _checkEventInChartContent (event) {
+    return (event.localX > this._chartContentLeftRight.contentLeft && event.localX > this._chartContentLeftRight.contentRight) &&
+      (event.localY > this._chartContentTopBottom.contentTop && event.localY > this._chartContentTopBottom.contentBottom)
+  }
+
+  setChartContentLeftRight (chartContentLeftRight) {
+    this._chartContentLeftRight = chartContentLeftRight
+  }
+
+  setChartContentTopBottom (chartContentTopBottom) {
+    this._chartContentTopBottom = chartContentTopBottom
   }
 
   setPaneContentSize (paneContentSize) {
-    this._zoomScrollEventHandler.setPaneContentSize(paneContentSize)
-    this._overlayEventHandler.setPaneContentSize(paneContentSize)
+    this._paneContentSize = paneContentSize
   }
 
   destroy () {

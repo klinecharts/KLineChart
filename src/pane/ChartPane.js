@@ -234,6 +234,7 @@ export default class ChartPane {
     this._chartHeight.xAxis = xAxisHeight
     this._chartHeight.total = paneHeight
     this._chartEvent.setPaneContentSize(paneContentSize)
+    this._chartEvent.setChartContentTopBottom({ contentTop: 0, contentBottom })
   }
 
   /**
@@ -280,7 +281,7 @@ export default class ChartPane {
     this._chartWidth = { content: mainWidth, yAxis: yAxisWidth, total: paneWidth }
     this._xAxisPane.setWidth(mainWidth, yAxisWidth)
     this._xAxisPane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft)
-    this._chartEvent.setChartContentSize({ contentLeft: mainOffsetLeft, contentRight: mainOffsetLeft + mainWidth })
+    this._chartEvent.setChartContentLeftRight({ contentLeft: mainOffsetLeft, contentRight: mainOffsetLeft + mainWidth })
   }
 
   /**

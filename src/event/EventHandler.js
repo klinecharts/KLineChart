@@ -25,44 +25,5 @@ export function isMouse (event) {
 export default class EventHandler {
   constructor (chartData) {
     this._chartData = chartData
-    this._chartContentSize = {}
-    this._paneContentSize = {}
-  }
-
-  _checkEventPointX (x) {
-    return x > 0 && x < this._chartContentSize.contentRight - this._chartContentSize.contentLeft
-  }
-
-  /**
-   * 获取事件所在的窗口id和真实y坐标
-   * @param event
-   * @return {{}|{y: number, paneId: string}}
-   */
-  _getEventPaneIdRealY (event) {
-    for (const paneId in this._paneContentSize) {
-      if (Object.prototype.hasOwnProperty.call(this._paneContentSize, paneId)) {
-        const size = this._paneContentSize[paneId]
-        if (event.localY > size.contentTop && event.localY < size.contentBottom) {
-          return { paneId, y: event.localY - size.contentTop }
-        }
-      }
-    }
-    return {}
-  }
-
-  /**
-   * 设置图表尺寸
-   * @param chartContentSize
-   */
-  setChartContentSize (chartContentSize) {
-    this._chartContentSize = chartContentSize
-  }
-
-  /**
-   * 设置窗口尺寸
-   * @param paneContentSize
-   */
-  setPaneContentSize (paneContentSize) {
-    this._paneContentSize = paneContentSize
   }
 }

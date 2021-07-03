@@ -13,7 +13,6 @@
  */
 
 import EventHandler, { isMouse, isTouch } from './EventHandler'
-import { isValid } from '../utils/typeChecks'
 
 const TOUCH_MIN_RADIUS = 10
 
@@ -53,17 +52,10 @@ export default class ZoomScrollEventHandler extends EventHandler {
     if (!isMouse(event)) {
       return
     }
-    this._performCross(event, false, cross => {
-      this._chartData.setCrosshair({ x: event.localX, y: cross.y, paneId: cross.paneId })
-    }, () => {
-      this._chartData.setCrosshair()
-    })
+    this._chartData.setCrosshair({ x: event.localX, y: event.paneY, paneId: event.paneId })
   }
 
   mouseWheelEvent (event) {
-    if (!this._checkEventPointX(event.localX)) {
-      return
-    }
     if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
       if (event.cancelable) {
         event.preventDefault()
@@ -100,89 +92,59 @@ export default class ZoomScrollEventHandler extends EventHandler {
   }
 
   mouseClickEvent (event) {
-    this._performCross(event, true, cross => {
-      if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
-        this._touchPoint = { x: event.localX, y: event.localY }
-        this._chartData.setCrosshair({ x: event.localX, y: cross.y, paneId: cross.paneId })
-      }
-    })
+    if (!isTouch(event)) {
+      return
+    }
+    if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
+      this._touchPoint = { x: event.localX, y: event.localY }
+      this._chartData.setCrosshair({ x: event.localX, y: event.paneY, paneId: event.paneId })
+    }
   }
 
   mouseDownEvent (event) {
+    if (!isTouch(event)) {
+      return
+    }
     this._startScrollPoint = { x: event.localX, y: event.localY }
     this._chartData.startScroll()
-    this._performCross(event, true, cross => {
-      this._touchZoomed = false
-      if (this._touchPoint) {
-        const xDif = event.localX - this._touchPoint.x
-        const yDif = event.localY - this._touchPoint.y
-        const radius = Math.sqrt(xDif * xDif + yDif * yDif)
-        if (radius < TOUCH_MIN_RADIUS) {
-          this._touchPoint = { x: event.localX, y: event.localY }
-          this._chartData.setCrosshair({ x: event.localX, y: cross.y, paneId: cross.paneId })
-        } else {
-          this._touchCancelCrossHair = true
-          this._touchPoint = null
-          this._chartData.setCrosshair()
-        }
+    this._touchZoomed = false
+    if (this._touchPoint) {
+      const xDif = event.localX - this._touchPoint.x
+      const yDif = event.localY - this._touchPoint.y
+      const radius = Math.sqrt(xDif * xDif + yDif * yDif)
+      if (radius < TOUCH_MIN_RADIUS) {
+        this._touchPoint = { x: event.localX, y: event.localY }
+        this._chartData.setCrosshair({ x: event.localX, y: event.paneY, paneId: event.paneId })
       } else {
-        this._touchCancelCrossHair = false
+        this._touchCancelCrossHair = true
+        this._touchPoint = null
+        this._chartData.setCrosshair()
       }
-    })
+    } else {
+      this._touchCancelCrossHair = false
+    }
   }
 
   pressedMouseMoveEvent (event) {
-    this._performCross(event, false, cross => {
-      let crosshair = { x: event.localX, y: cross.y, paneId: cross.paneId }
-      if (isTouch(event)) {
-        if (this._touchPoint) {
-          this._touchPoint = { x: event.localX, y: event.localY }
-          this._chartData.setCrosshair(crosshair)
-          return
-        } else {
-          crosshair = null
-        }
+    let crosshair = { x: event.localX, y: event.paneY, paneId: event.paneId }
+    if (isTouch(event)) {
+      if (this._touchPoint) {
+        this._touchPoint = { x: event.localX, y: event.localY }
+        this._chartData.setCrosshair(crosshair)
+        return
+      } else {
+        crosshair = null
       }
-      const distance = event.localX - this._startScrollPoint.x
-      this._chartData.scroll(distance, crosshair)
-    })
+    }
+    const distance = event.localX - this._startScrollPoint.x
+    this._chartData.scroll(distance, crosshair)
   }
 
   longTapEvent (event) {
-    this._performCross(event, true, cross => {
-      this._touchPoint = { x: event.localX, y: event.localY }
-      this._chartData.setCrosshair({ x: event.localX, y: cross.y, paneId: cross.paneId })
-    })
-  }
-
-  /**
-   * 处理十字光标
-   * @param event
-   * @param checkTouchEvent
-   * @param performFuc
-   * @param extendFun
-   * @private
-   */
-  _performCross (event, checkTouchEvent, performFuc, extendFun) {
-    if (checkTouchEvent && !isTouch(event)) {
+    if (!isTouch(event)) {
       return
     }
-    if (!this._checkEventPointX(event.localX)) {
-      if (extendFun) {
-        extendFun()
-      }
-      return
-    }
-    let isPerform = false
-    const { paneId, y } = this._getEventPaneIdRealY(event)
-    if (isValid(paneId)) {
-      isPerform = true
-      if (performFuc) {
-        performFuc({ paneId, y })
-      }
-    }
-    if (!isPerform && extendFun) {
-      extendFun()
-    }
+    this._touchPoint = { x: event.localX, y: event.localY }
+    this._chartData.setCrosshair({ x: event.localX, y: event.paneY, paneId: event.paneId })
   }
 }
