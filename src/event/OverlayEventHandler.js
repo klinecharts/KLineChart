@@ -144,14 +144,15 @@ export default class OverlayEventHandler extends EventHandler {
           break
         }
       }
-      const visibleAnnotations = this._chartData.visibleAnnotations().get(event.paneId)
-      if (visibleAnnotations) {
-        for (const annotation of visibleAnnotations) {
-          const annotationOperate = annotation.checkMousePointOnGraphic(coordinate)
+      const visibleAnnotations = this._chartData.visibleAnnotations()
+      if (visibleAnnotations.has(event.paneId)) {
+        const annotations = visibleAnnotations.get(event.paneId)
+        for (const an of annotations) {
+          const annotationOperate = an.checkMousePointOnGraphic(coordinate)
           if (annotationOperate) {
-            annotation.onClick({
+            an.onClick({
               id: annotationOperate.id,
-              points: annotation.points(),
+              points: an.points(),
               event
             })
             break
@@ -171,14 +172,20 @@ export default class OverlayEventHandler extends EventHandler {
 
   mouseRightDownEvent (event) {
     if (event.paneId === CANDLE_PANE_ID) {
-      const graphicMark = this._chartData.graphicMarks().find(gm => gm.checkMousePointOnGraphic({ x: event.localX, y: event.paneY }))
-      if (graphicMark && !graphicMark.onRightClick({ id: graphicMark.id(), points: graphicMark.points(), event })) {
-        this._chartData.removeGraphicMarkInstance(graphicMark.id())
+      const graphicMarks = this._chartData.graphicMarks()
+      if (graphicMarks) {
+        const graphicMark = graphicMarks.find(gm => gm.checkMousePointOnGraphic({ x: event.localX, y: event.paneY }))
+        if (graphicMark && !graphicMark.onRightClick({ id: graphicMark.id(), points: graphicMark.points(), event })) {
+          this._chartData.removeGraphicMarkInstance(graphicMark.id())
+        }
       }
     }
-    const annotation = this._chartData.visibleAnnotations().get(event.paneId).find(an => an.checkMousePointOnGraphic({ x: event.localX, y: event.paneY }))
-    if (annotation) {
-      annotation.onRightClick({ id: annotation.id(), points: annotation.points(), event })
+    const visibleAnnotations = this._chartData.visibleAnnotations()
+    if (visibleAnnotations.has(event.paneId)) {
+      const annotation = visibleAnnotations.get(event.paneId).find(an => an.checkMousePointOnGraphic({ x: event.localX, y: event.paneY }))
+      if (annotation) {
+        annotation.onRightClick({ id: annotation.id(), points: annotation.points(), event })
+      }
     }
   }
 

@@ -102,26 +102,25 @@ export default class ZoomScrollEventHandler extends EventHandler {
   }
 
   mouseDownEvent (event) {
-    if (!isTouch(event)) {
-      return
-    }
     this._startScrollPoint = { x: event.localX, y: event.localY }
     this._chartData.startScroll()
-    this._touchZoomed = false
-    if (this._touchPoint) {
-      const xDif = event.localX - this._touchPoint.x
-      const yDif = event.localY - this._touchPoint.y
-      const radius = Math.sqrt(xDif * xDif + yDif * yDif)
-      if (radius < TOUCH_MIN_RADIUS) {
-        this._touchPoint = { x: event.localX, y: event.localY }
-        this._chartData.setCrosshair({ x: event.localX, y: event.paneY, paneId: event.paneId })
+    if (isTouch(event)) {
+      this._touchZoomed = false
+      if (this._touchPoint) {
+        const xDif = event.localX - this._touchPoint.x
+        const yDif = event.localY - this._touchPoint.y
+        const radius = Math.sqrt(xDif * xDif + yDif * yDif)
+        if (radius < TOUCH_MIN_RADIUS) {
+          this._touchPoint = { x: event.localX, y: event.localY }
+          this._chartData.setCrosshair({ x: event.localX, y: event.paneY, paneId: event.paneId })
+        } else {
+          this._touchCancelCrossHair = true
+          this._touchPoint = null
+          this._chartData.setCrosshair()
+        }
       } else {
-        this._touchCancelCrossHair = true
-        this._touchPoint = null
-        this._chartData.setCrosshair()
+        this._touchCancelCrossHair = false
       }
-    } else {
-      this._touchCancelCrossHair = false
     }
   }
 

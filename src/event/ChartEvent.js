@@ -62,7 +62,9 @@ export default class ChartEvent {
   }
 
   _mouseUpEvent (event) {
-    this._target.style.cursor = 'crosshair'
+    if (this._checkEventInChartContent(event)) {
+      this._target.style.cursor = 'crosshair'
+    }
     if (this._shouldPerformOverlayEvent()) {
       this._overlayEventHandler.mouseUpEvent(event)
     }
@@ -77,6 +79,7 @@ export default class ChartEvent {
   _mouseMoveEvent (event) {
     const zoomScroll = this._checkZoomScroll()
     if (this._checkEventInChartContent(event)) {
+      this._target.style.cursor = 'crosshair'
       const compatEvent = this._compatChartEvent(event, true)
       if (this._shouldPerformOverlayEvent()) {
         this._overlayEventHandler.mouseMoveEvent(compatEvent)
@@ -85,6 +88,7 @@ export default class ChartEvent {
         this._zoomScrollEventHandler.mouseMoveEvent(compatEvent)
       }
     } else {
+      this._target.style.cursor = 'default'
       if (zoomScroll) {
         this._zoomScrollEventHandler.mouseLeaveEvent(event)
       }
@@ -118,7 +122,7 @@ export default class ChartEvent {
 
   _mouseRightDownEvent (event) {
     if (this._shouldPerformOverlayEvent() && this._checkEventInChartContent(event)) {
-      this._overlayEventHandler.mouseRightDownEvent(this._checkEventInChartContent(event, true))
+      this._overlayEventHandler.mouseRightDownEvent(this._compatChartEvent(event, true))
     }
   }
 
@@ -177,7 +181,7 @@ export default class ChartEvent {
         if (Object.prototype.hasOwnProperty.call(this._paneContentSize, id)) {
           const size = this._paneContentSize[id]
           if (event.localY > size.contentTop && event.localY < size.contentBottom) {
-            paneY -= event.localY - size.contentTop
+            paneY = event.localY - size.contentTop
             paneId = id
             break
           }
@@ -186,7 +190,7 @@ export default class ChartEvent {
       event.paneY = paneY
       event.paneId = paneId
     }
-    event.localX -= this._chartContentSize.contentLeft
+    event.localX -= this._chartContentLeftRight.contentLeft
     return event
   }
 
@@ -196,8 +200,8 @@ export default class ChartEvent {
    * @returns
    */
   _checkEventInChartContent (event) {
-    return (event.localX > this._chartContentLeftRight.contentLeft && event.localX > this._chartContentLeftRight.contentRight) &&
-      (event.localY > this._chartContentTopBottom.contentTop && event.localY > this._chartContentTopBottom.contentBottom)
+    return (event.localX > this._chartContentLeftRight.contentLeft && event.localX < this._chartContentLeftRight.contentRight) &&
+      (event.localY > this._chartContentTopBottom.contentTop && event.localY < this._chartContentTopBottom.contentBottom)
   }
 
   setChartContentLeftRight (chartContentLeftRight) {
