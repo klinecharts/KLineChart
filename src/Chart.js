@@ -13,7 +13,7 @@
  */
 
 import ChartPane from './pane/ChartPane'
-import { clone, isNumber, isObject, isArray, isFunction, isValid } from './utils/typeChecks'
+import { clone, isNumber, isObject, isArray, isFunction } from './utils/typeChecks'
 import { logWarn } from './utils/logger'
 import { requestAnimationFrame } from './utils/compatible'
 import { CANDLE_PANE_ID } from './data/constants'
@@ -66,7 +66,7 @@ export default class Chart {
    * @param paneId
    */
   overrideTechnicalIndicator (override, paneId) {
-    if (!isObject(override)) {
+    if (!isObject(override) || isArray(override)) {
       logWarn('overrideTechnicalIndicator', 'override', 'override must be an object!!!')
       return
     }
@@ -81,7 +81,7 @@ export default class Chart {
   /**
    * 获取技术指标名字获取技术指标
    * @param name
-   * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
+   * @return {{}}
    */
   getTechnicalIndicatorByName (name) {
     return this._chartPane.chartData().getTechnicalIndicatorInfo(name)
@@ -229,7 +229,7 @@ export default class Chart {
    */
   updateData (data) {
     if (!isObject(data) || isArray(data)) {
-      logWarn('updateData', 'data')
+      logWarn('updateData', 'data', 'data must be an object!!!')
       return
     }
     this._chartPane.updateData(data)
@@ -255,7 +255,7 @@ export default class Chart {
    * @returns {string|null}
    */
   createTechnicalIndicator (tech, isStack, paneOptions) {
-    if (!isObject(tech)) {
+    if (!isObject(tech) || isArray(tech)) {
       logWarn('createTechnicalIndicator', 'tech', 'tech must be an object!!!')
       return null
     }
@@ -283,7 +283,7 @@ export default class Chart {
   removeTechnicalIndicator (paneId, name) {
     if (!this._chartPane.hasPane(paneId)) {
       logWarn('removeTechnicalIndicator', 'paneId', 'can not find the corresponding pane!!!')
-      return null
+      return
     }
     this._chartPane.removeTechnicalIndicator(paneId, name)
   }
@@ -356,18 +356,14 @@ export default class Chart {
    * @param annotation
    * @param paneId
    */
-  createAnnotation (annotation, paneId) {
+  createAnnotation (annotation, paneId = CANDLE_PANE_ID) {
     if (!isObject(annotation)) {
       logWarn('createAnnotation', 'annotation', 'annotation must be an object or array!!!')
       return
     }
-    if (isValid(paneId)) {
-      if (!this._chartPane.hasPane(paneId)) {
-        logWarn('createAnnotation', 'paneId', 'can not find the corresponding pane!!!')
-        return
-      }
-    } else {
-      paneId = CANDLE_PANE_ID
+    if (!this._chartPane.hasPane(paneId)) {
+      logWarn('createAnnotation', 'paneId', 'can not find the corresponding pane!!!')
+      return
     }
     const annotations = [].concat(annotation)
     this._chartPane.createAnnotation(annotations, paneId)
@@ -387,18 +383,14 @@ export default class Chart {
    * @param tag
    * @param paneId
    */
-  createTag (tag, paneId) {
+  createTag (tag, paneId = CANDLE_PANE_ID) {
     if (!isObject(tag)) {
       logWarn('createTag', 'tag', 'tag must be an object or array!!!')
       return
     }
-    if (isValid(paneId)) {
-      if (!this._chartPane.hasPane(paneId)) {
-        logWarn('createTag', 'paneId', 'can not find the corresponding pane!!!')
-        return
-      }
-    } else {
-      paneId = CANDLE_PANE_ID
+    if (!this._chartPane.hasPane(paneId)) {
+      logWarn('createTag', 'paneId', 'can not find the corresponding pane!!!')
+      return
     }
     const tags = [].concat(tag)
     this._chartPane.createTag(tags, paneId)

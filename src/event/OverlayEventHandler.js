@@ -77,8 +77,8 @@ export default class OverlayEventHandler extends EventHandler {
     }
     this._waitingForMouseMoveAnimationFrame = true
     const coordinate = { x: event.localX, y: event.paneY }
+    const annotations = this._chartData.visibleAnnotations().get(event.paneId)
     const graphicMarks = this._chartData.graphicMarks()
-    const visibleAnnotations = this._chartData.visibleAnnotations().get(event.paneId)
     const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
     const preGraphicMarkHoverOperate = this._chartData.graphicMarkMouseOperate().hover
     const preAnnotationHoverOperate = this._chartData.annotationMouseOperate()
@@ -95,7 +95,7 @@ export default class OverlayEventHandler extends EventHandler {
       }
     } else {
       graphicMarkHoverOperate = this._performOverlayMouseHover(graphicMarks, preGraphicMarkHoverOperate, coordinate, event)
-      annotationHoverOperate = this._performOverlayMouseHover(visibleAnnotations, preAnnotationHoverOperate, coordinate, event)
+      annotationHoverOperate = this._performOverlayMouseHover(annotations, preAnnotationHoverOperate, coordinate, event)
     }
     this._chartData.setOverlayMouseOperate({
       hover: graphicMarkHoverOperate || {

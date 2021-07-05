@@ -39,7 +39,6 @@ export function createTechnicalIndicatorTemplateMapping () {
 /**
  * 创建一个新的技术指标
  * @param name
- * @param series
  * @param calcParams
  * @param plots
  * @param precision
@@ -110,7 +109,7 @@ export function cloneTechnicalIndicator (tech) {
 /**
  * 获取技术指标信息
  * @param tech
- * @return {{series, calcParams, precision, name, styles}}
+ * @return {{ calcParams, precision, name, shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber, styles }}
  */
 export function createTechnicalIndicatorInfo (tech) {
   return {

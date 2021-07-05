@@ -38,7 +38,7 @@ export function createGraphicMarkTemplateMapping () {
 /**
  * 创建图形标记类
  * @param name
- * @param series
+ * @param totalStep
  * @param checkMousePointOn
  * @param createGraphicDataSource
  * @param performMousePressedMove

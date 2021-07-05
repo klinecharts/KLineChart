@@ -26,6 +26,8 @@ export declare interface TechnicalIndicator {
   name: string;
   calcParams?: any[];
   precision?: number;
+  shouldOhlc?: boolean;
+  shouldFormatBigNumber?: boolean;
   styles?: any;
 }
 
@@ -40,8 +42,6 @@ export declare interface CustomTechnicalIndicator extends TechnicalIndicator {
   calcTechnicalIndicator: (kLineDataList: KLineData[], options?: any) => any[];
   plots?: TechnicalIndicatorPlot[];
   shouldCheckParamCount?: boolean;
-  shouldOhlc?: boolean;
-  shouldFormatBigNumber?: boolean;
   minValue?: number;
   maxValue?: number;
   regeneratePlots?: (params?: number[]) => TechnicalIndicatorPlot[];

@@ -238,7 +238,7 @@ export default class ChartData {
   /**
    * 获取技术指标信息
    * @param name
-   * @return {{}|{series: *, calcParams: *, precision: *, name: *}}
+   * @return {{}|{calcParams: *, precision: *, name: *}}
    */
   getTechnicalIndicatorInfo (name) {
     if (isValid(name)) {

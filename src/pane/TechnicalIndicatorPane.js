@@ -128,7 +128,7 @@ export default class TechnicalIndicatorPane extends Pane {
    */
   setTechnicalIndicator (tech, isStack) {
     if (tech) {
-      const { name, calcParams, precision, styles } = tech
+      const { name, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles } = tech
       if (this._techs.has(name)) {
         return false
       }
@@ -137,6 +137,8 @@ export default class TechnicalIndicatorPane extends Pane {
         const cloneInstance = cloneTechnicalIndicator(templateInstance)
         cloneInstance.setCalcParams(calcParams)
         cloneInstance.setPrecision(precision)
+        cloneInstance.setShouldOhlc(shouldOhlc)
+        cloneInstance.setShouldFormatBigNumber(shouldFormatBigNumber)
         cloneInstance.setStyles(styles, this._chartData.styleOptions().technicalIndicator)
         if (!isStack) {
           this._techs.clear()

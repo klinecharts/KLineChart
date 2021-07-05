@@ -342,12 +342,13 @@ export default class ChartPane {
    * @param name
    * @param calcParams
    * @param precision
+   * @param shouldOhlc
+   * @param shouldFormatBigNumber
    * @param styles
    * @param paneId
    */
-  overrideTechnicalIndicator (templateInstance, { name, calcParams, precision, styles }, paneId) {
+  overrideTechnicalIndicator (templateInstance, { name, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles }, paneId) {
     const defaultTechStyleOptions = this._chartData.styleOptions().technicalIndicator
-    let shouldAdjust = false
     let panes = new Map()
     if (isValid(paneId)) {
       if (this._panes.has(paneId)) {
@@ -356,19 +357,27 @@ export default class ChartPane {
     } else {
       templateInstance.setCalcParams(calcParams)
       templateInstance.setPrecision(precision)
+      templateInstance.setShouldOhlc(shouldOhlc)
+      templateInstance.setShouldFormatBigNumber(shouldFormatBigNumber)
       templateInstance.setStyles(styles, defaultTechStyleOptions)
       panes = this._panes
     }
     if (panes.size > 0) {
+      let shouldAdjust = false
       const tasks = []
       panes.forEach(pane => {
         const techs = pane.technicalIndicators()
         if (techs.has(name)) {
-          shouldAdjust = true
           const tech = techs.get(name)
-          tech.setPrecision(precision)
-          tech.setStyles(styles, defaultTechStyleOptions)
-          if (tech.setCalcParams(calcParams)) {
+          const calcParamsSuccess = tech.setCalcParams(calcParams)
+          const precisionSuccess = tech.setPrecision(precision)
+          const shouldOhlcSuccess = tech.setShouldOhlc(shouldOhlc)
+          const shouldFormatBigNumberSuccess = tech.setShouldFormatBigNumber(shouldFormatBigNumber)
+          const styleSuccess = tech.setStyles(styles, defaultTechStyleOptions)
+          if (calcParamsSuccess || precisionSuccess || shouldOhlcSuccess || shouldFormatBigNumberSuccess || styleSuccess) {
+            shouldAdjust = true
+          }
+          if (calcParamsSuccess) {
             tasks.push(
               Promise.resolve(pane.calcTechnicalIndicator(tech))
             )

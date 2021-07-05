@@ -111,6 +111,22 @@ export default class TechnicalIndicator {
     return true
   }
 
+  setShouldOhlc (shouldOhlc) {
+    if ((!!this.shouldOhlc) !== (!!shouldOhlc)) {
+      this.shouldOhlc = shouldOhlc
+      return true
+    }
+    return false
+  }
+
+  setShouldFormatBigNumber (shouldFormatBigNumber) {
+    if ((!!this.shouldFormatBigNumber) !== (!!shouldFormatBigNumber)) {
+      this.shouldFormatBigNumber = shouldFormatBigNumber
+      return true
+    }
+    return false
+  }
+
   setStyles (styles, defaultStyles) {
     if (!isObject(styles)) {
       return false
