@@ -727,7 +727,7 @@ export default class ChartPane {
       }
     }
     if (shouldAdjust) {
-      this.adjustPaneViewport(shouldMeasureHeight, true, true, true)
+      this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
     }
   }
 
