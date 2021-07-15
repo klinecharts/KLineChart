@@ -444,7 +444,8 @@ export default class GraphicMark extends Overlay {
     const markOptions = this._styles || this._chartData.styleOptions().graphicMark
     const coordinates = []
     // 检查鼠标点是否在图形的点上
-    for (let i = 0; i < this._points.length; i++) {
+    const start = this._points.length - 1
+    for (let i = start; i > -1; i--) {
       const { timestamp, value, dataIndex } = this._points[i]
       const coordinate = {
         x: this._timestampOrDataIndexToPointX({ timestamp, dataIndex }),
