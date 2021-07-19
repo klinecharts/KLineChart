@@ -576,8 +576,7 @@ export default class ChartPane {
       lock
     })
     if (isFunction(onDrawStart)) {
-      graphicMarkInstance.onDrawStart = onDrawStart
-      graphicMarkInstance.onDrawStart({ id: graphicMarkId })
+      onDrawStart({ id: graphicMarkId })
     }
     if (isFunction(onDrawing)) {
       graphicMarkInstance.onDrawing = onDrawing

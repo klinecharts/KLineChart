@@ -13,7 +13,7 @@
  */
 
 import ChartPane from './pane/ChartPane'
-import { clone, isNumber, isObject, isArray, isFunction } from './utils/typeChecks'
+import { clone, isNumber, isObject, isArray, isFunction, isValid } from './utils/typeChecks'
 import { logWarn } from './utils/logger'
 import { requestAnimationFrame } from './utils/compatible'
 import { CANDLE_PANE_ID } from './data/constants'
@@ -41,7 +41,7 @@ export default class Chart {
 
   /**
    * 设置样式配置
-   * @param options
+   * @param options 配置
    */
   setStyleOptions (options) {
     if (!isObject(options)) {
@@ -62,8 +62,8 @@ export default class Chart {
 
   /**
    * 覆盖技术指标
-   * @param override
-   * @param paneId
+   * @param override 覆盖参数
+   * @param paneId 窗口id
    */
   overrideTechnicalIndicator (override, paneId) {
     if (!isObject(override) || isArray(override)) {
@@ -80,7 +80,7 @@ export default class Chart {
 
   /**
    * 获取技术指标名字获取技术指标
-   * @param name
+   * @param name 指标名
    * @return {{}}
    */
   getTechnicalIndicatorByName (name) {
@@ -89,7 +89,7 @@ export default class Chart {
 
   /**
    * 获取窗口上的技术指标
-   * @param paneId
+   * @param paneId 窗口id
    * @return {{}}
    */
   getTechnicalIndicatorByPaneId (paneId) {
@@ -98,8 +98,8 @@ export default class Chart {
 
   /**
    * 设置价格数量精度
-   * @param pricePrecision
-   * @param volumePrecision
+   * @param pricePrecision 价格精度
+   * @param volumePrecision 数量精度
    */
   setPriceVolumePrecision (pricePrecision, volumePrecision) {
     if (!isNumber(pricePrecision) || pricePrecision < 0) {
@@ -115,7 +115,7 @@ export default class Chart {
 
   /**
    * 设置时区
-   * @param timezone
+   * @param timezone 时区
    */
   setTimezone (timezone) {
     this._chartPane.setTimezone(timezone)
@@ -137,7 +137,7 @@ export default class Chart {
 
   /**
    * 设置右边间距
-   * @param space
+   * @param space 空间大小
    */
   setOffsetRightSpace (space) {
     if (!isNumber(space)) {
@@ -149,7 +149,7 @@ export default class Chart {
 
   /**
    * 设置左边可见的最小bar数量
-   * @param barCount
+   * @param barCount bar数量
    */
   setLeftMinVisibleBarCount (barCount) {
     if (!isNumber(barCount) || barCount <= 0) {
@@ -161,7 +161,7 @@ export default class Chart {
 
   /**
    * 设置右边可见的最小bar数量
-   * @param barCount
+   * @param barCount bar数量
    */
   setRightMinVisibleBarCount (barCount) {
     if (!isNumber(barCount) || barCount <= 0) {
@@ -173,7 +173,7 @@ export default class Chart {
 
   /**
    * 设置一条数据的空间
-   * @param space
+   * @param space 空间大小
    */
   setDataSpace (space) {
     if (!isNumber(space)) {
@@ -199,8 +199,8 @@ export default class Chart {
 
   /**
    * 添加新数据
-   * @param dataList
-   * @param more
+   * @param dataList k线数据数组
+   * @param more 是否还有更多标识
    */
   applyNewData (dataList, more) {
     if (!isArray(dataList)) {
@@ -212,8 +212,8 @@ export default class Chart {
 
   /**
    * 添加历史更多数据
-   * @param dataList
-   * @param more
+   * @param dataList k线数据数组
+   * @param more 是否还有更多标识
    */
   applyMoreData (dataList, more) {
     if (!isArray(dataList)) {
@@ -225,7 +225,7 @@ export default class Chart {
 
   /**
    * 更新数据
-   * @param data
+   * @param data 新的k线数据
    */
   updateData (data) {
     if (!isObject(data) || isArray(data)) {
@@ -237,11 +237,11 @@ export default class Chart {
 
   /**
    * 设置加载更多回调
-   * @param cb
+   * @param cb 回调方法
    */
   loadMore (cb) {
     if (!isFunction(cb)) {
-      logWarn('loadMore', 'cb', 'cb must be a method!!!')
+      logWarn('loadMore', 'cb', 'cb must be a function!!!')
       return
     }
     this._chartPane.chartData().setLoadMoreCallback(cb)
@@ -249,14 +249,19 @@ export default class Chart {
 
   /**
    * 创建一个技术指标
-   * @param tech 指标
+   * @param value 指标名或者指标
    * @param isStack 是否覆盖
-   * @param paneOptions
+   * @param paneOptions 窗口配置
    * @returns {string|null}
    */
-  createTechnicalIndicator (tech, isStack, paneOptions) {
-    if (!isObject(tech) || isArray(tech)) {
-      logWarn('createTechnicalIndicator', 'tech', 'tech must be an object!!!')
+  createTechnicalIndicator (value, isStack, paneOptions) {
+    if (!isValid(value)) {
+      logWarn('createTechnicalIndicator', 'value', 'value is invalid!!!')
+      return null
+    }
+    const tech = isObject(value) && !isArray(value) ? value : { name: value }
+    if (!this._chartPane.chartData().getTechnicalIndicatorTemplateInstance(tech.name)) {
+      logWarn('createTechnicalIndicator', 'value', 'can not find the corresponding technical indicator!!!')
       return null
     }
     return this._chartPane.createTechnicalIndicator(tech, isStack, paneOptions)
@@ -264,7 +269,7 @@ export default class Chart {
 
   /**
    * 添加自定义技术指标
-   * @param customTech
+   * @param customTech 自定义指标参数
    */
   addCustomTechnicalIndicator (customTech) {
     if (!isObject(customTech)) {
@@ -277,8 +282,8 @@ export default class Chart {
 
   /**
    * 移除一个技术指标
-   * @param paneId
-   * @param name
+   * @param paneId 窗口id
+   * @param name 指标名
    */
   removeTechnicalIndicator (paneId, name) {
     if (!this._chartPane.hasPane(paneId)) {
@@ -290,16 +295,17 @@ export default class Chart {
 
   /**
    * 创建图形标记
-   * @param graphicMark
+   * @param value 图形标记名或者图形标记配置
    */
-  createGraphicMark (graphicMark) {
-    if (!isObject(graphicMark)) {
-      logWarn('createGraphicMark', 'graphicMark', 'graphicMark must be an object!!!')
+  createGraphicMark (value) {
+    if (!isValid(value)) {
+      logWarn('createGraphicMark', 'value', 'value is invalid!!!')
       return null
     }
+    const graphicMark = isObject(value) && !isArray(value) ? value : { name: value }
     const GraphicMark = this._chartPane.chartData().getGraphicMarkTemplateClass(graphicMark.name)
     if (!GraphicMark) {
-      logWarn('createGraphicMark', 'name', 'can not find the corresponding graphic mark!!!')
+      logWarn('createGraphicMark', 'value', 'can not find the corresponding graphic mark!!!')
       return null
     }
     const id = this._chartPane.createGraphicMark(GraphicMark, graphicMark)
@@ -311,7 +317,7 @@ export default class Chart {
 
   /**
    * 获取图形标记
-   * @param id
+   * @param id 图形标记id
    * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
    */
   getGraphicMark (id) {
@@ -320,7 +326,7 @@ export default class Chart {
 
   /**
    * 设置图形标记配置
-   * @param options
+   * @param options 图形标记配置
    */
   setGraphicMarkOptions (options) {
     if (!isObject(options)) {
@@ -332,7 +338,7 @@ export default class Chart {
 
   /**
    * 添加自定义图形标记
-   * @param graphicMark
+   * @param graphicMark 自定义图形标记参数
    */
   addCustomGraphicMark (graphicMark) {
     if (!isObject(graphicMark)) {
@@ -345,16 +351,16 @@ export default class Chart {
 
   /**
    * 移除图形标记
-   * @param graphicMarkId
+   * @param id 图形标记id
    */
-  removeGraphicMark (graphicMarkId) {
-    this._chartPane.chartData().removeGraphicMarkInstance(graphicMarkId)
+  removeGraphicMark (id) {
+    this._chartPane.chartData().removeGraphicMarkInstance(id)
   }
 
   /**
    * 创建注解
-   * @param annotation
-   * @param paneId
+   * @param annotation 单个注解或者注解数组
+   * @param paneId 窗口id
    */
   createAnnotation (annotation, paneId = CANDLE_PANE_ID) {
     if (!isObject(annotation)) {
@@ -371,8 +377,8 @@ export default class Chart {
 
   /**
    * 移除注解
-   * @param paneId
-   * @param points
+   * @param paneId 窗口id
+   * @param points 单个点或者点数组
    */
   removeAnnotation (paneId, points) {
     this._chartPane.chartData().removeAnnotation(paneId, points)
@@ -380,8 +386,8 @@ export default class Chart {
 
   /**
    * 创建标签
-   * @param tag
-   * @param paneId
+   * @param tag 单个标签或者标签数组
+   * @param paneId 窗口id
    */
   createTag (tag, paneId = CANDLE_PANE_ID) {
     if (!isObject(tag)) {
@@ -398,7 +404,7 @@ export default class Chart {
 
   /**
    * 移除标签
-   * @param id
+   * @param id 标签id
    */
   removeTag (id) {
     this._chartPane.chartData().removeTag(id)
@@ -406,7 +412,7 @@ export default class Chart {
 
   /**
    * 设置窗口属性
-   * @param options
+   * @param options 窗口配置
    */
   setPaneOptions (options) {
     if (!isObject(options)) {
@@ -418,7 +424,7 @@ export default class Chart {
 
   /**
    * 设置是否可以缩放
-   * @param enabled
+   * @param enabled 标识
    */
   setZoomEnabled (enabled) {
     this._chartPane.chartData().setZoomEnabled(enabled)
@@ -434,7 +440,7 @@ export default class Chart {
 
   /**
    * 设置是否可以拖拽滚动
-   * @param enabled
+   * @param enabled 标识
    */
   setScrollEnabled (enabled) {
     this._chartPane.chartData().setScrollEnabled(enabled)
@@ -450,8 +456,8 @@ export default class Chart {
 
   /**
    * 按距离滚动
-   * @param distance
-   * @param animationDuration
+   * @param distance 距离
+   * @param animationDuration 动画持续时间
    */
   scrollByDistance (distance, animationDuration) {
     if (!isNumber(distance)) {
@@ -479,7 +485,7 @@ export default class Chart {
 
   /**
    * 滚动到实时位置
-   * @param animationDuration
+   * @param animationDuration 动画持续时间
    */
   scrollToRealTime (animationDuration) {
     const difBarCount = this._chartPane.chartData().offsetRightBarCount() - this._chartPane.chartData().offsetRightSpace() / this._chartPane.chartData().dataSpace()
@@ -489,8 +495,8 @@ export default class Chart {
 
   /**
    * 滚动到指定位置
-   * @param position
-   * @param animationDuration
+   * @param position 位置
+   * @param animationDuration 动画持续时间
    */
   scrollToPosition (position, animationDuration) {
     if (!isNumber(position)) {
@@ -503,9 +509,9 @@ export default class Chart {
 
   /**
    * 在某个坐标点缩放
-   * @param scale
-   * @param coordinate
-   * @param animationDuration
+   * @param scale 缩放比例
+   * @param coordinate 坐标点
+   * @param animationDuration 动画持续时间
    */
   zoomAtCoordinate (scale, coordinate, animationDuration) {
     if (!isNumber(scale)) {
@@ -534,9 +540,9 @@ export default class Chart {
 
   /**
    * 在某个位置缩放
-   * @param scale
-   * @param position
-   * @param animationDuration
+   * @param scale 缩放比例
+   * @param position 位置
+   * @param animationDuration 动画持续时间
    */
   zoomAtPosition (scale, position, animationDuration) {
     if (!isNumber(scale)) {
@@ -553,8 +559,8 @@ export default class Chart {
 
   /**
    * 将值装换成像素
-   * @param point
-   * @param finder
+   * @param point 单个点或者点集合
+   * @param finder 过滤条件
    */
   convertToPixel (point, finder) {
     return this._chartPane.convertToPixel(point, finder)
@@ -562,8 +568,8 @@ export default class Chart {
 
   /**
    * 将像素转换成值
-   * @param coordinate
-   * @param finder
+   * @param coordinate 单个坐标或者坐标集合
+   * @param finder 过滤条件
    */
   convertFromPixel (coordinate, finder) {
     return this._chartPane.convertFromPixel(coordinate, finder)
@@ -571,8 +577,8 @@ export default class Chart {
 
   /**
    * 订阅图表动作
-   * @param type
-   * @param callback
+   * @param type 动作类型
+   * @param callback 回调方法
    */
   subscribeAction (type, callback) {
     if (!this._chartPane.chartData().subscribeAction(type, callback)) {
@@ -582,8 +588,8 @@ export default class Chart {
 
   /**
    * 取消订阅图表动作
-   * @param type
-   * @param callback
+   * @param type 动作类型
+   * @param callback 回调方法
    */
   unsubscribeAction (type, callback) {
     if (!this._chartPane.chartData().unsubscribeAction(type, callback)) {
@@ -593,9 +599,9 @@ export default class Chart {
 
   /**
    * 获取将图表装换成图片后的url
-   * @param includeOverlay
-   * @param type
-   * @param backgroundColor
+   * @param includeOverlay 是否包含覆盖层
+   * @param type 图片类型
+   * @param backgroundColor 背景色
    */
   getConvertPictureUrl (includeOverlay, type = 'jpeg', backgroundColor = '#FFFFFF') {
     if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {

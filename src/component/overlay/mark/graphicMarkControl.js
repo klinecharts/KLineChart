@@ -27,9 +27,9 @@ export function createGraphicMarkTemplateMapping () {
   const mapping = {}
   const extensions = extension.graphicMarkExtensions
   for (const name in extensions) {
-    const templateClass = createGraphicMarkTemplateClass(extensions[name])
-    if (templateClass) {
-      mapping[name] = templateClass
+    const TemplateClass = createGraphicMarkTemplateClass(extensions[name])
+    if (TemplateClass) {
+      mapping[name] = TemplateClass
     }
   }
   return mapping

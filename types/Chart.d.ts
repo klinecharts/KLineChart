@@ -7,7 +7,7 @@ import { Tag } from './Tag';
 
 import { PaneOptions } from './Pane';
 
-export declare type ChartActionType = 'drawCandle' | 'drawTechnicalIndicator' | 'zoom' | 'scroll' | 'crosshair' | 'pane_drag';
+export declare type ChartActionType = 'zoom' | 'scroll' | 'crosshair' | 'pane_drag';
 
 export declare interface ConvertFinder {
   paneId?: string;
@@ -38,13 +38,13 @@ export declare interface Chart {
   applyMoreData(dataList: KLineData[], more?: boolean): void;
   updateData(data: KLineData): void;
   loadMore(cb: (timestamp: number) => void): void;
-  createTechnicalIndicator(tech: TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string | null;
+  createTechnicalIndicator(value: string | TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string | null;
   addCustomTechnicalIndicator(customTech: CustomTechnicalIndicator | CustomTechnicalIndicator[]): void;
   overrideTechnicalIndicator(tech: TechnicalIndicator, paneId?: string): void;
   getTechnicalIndicatorByName(name?: string): any;
   getTechnicalIndicatorByPaneId(paneId?: string): any;
   removeTechnicalIndicator(paneId: string, name?: string): void;
-  createGraphicMark(graphicMark: GraphicMark): string | null;
+  createGraphicMark(value: string | GraphicMark): string | null;
   getGraphicMark(graphicMarkId?: string): any;
   setGraphicMarkOptions(options: OverrideGraphicMark): void;
   addCustomGraphicMark(customGraphicMark: CustomGraphicMark | CustomGraphicMark[]): void;
