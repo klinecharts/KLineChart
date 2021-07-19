@@ -12,7 +12,20 @@
  * limitations under the License.
  */
 
-import { isObject, clone, merge } from '../../utils/typeChecks'
+import { isFunction, isObject, clone, merge } from '../../utils/typeChecks'
+
+/**
+ * 完善覆盖物实例
+ * @param overlay 覆盖物实例
+ * @param options 参数
+ */
+export function perfectOverlayFunc (overlay, funcs) {
+  funcs.forEach(fn => {
+    if (isFunction(fn)) {
+      overlay[fn] = fn
+    }
+  })
+}
 
 /**
  * 覆盖物

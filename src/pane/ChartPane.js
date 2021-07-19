@@ -32,6 +32,7 @@ import { throttle } from '../utils/performance'
 import { createElement } from '../utils/element'
 import Annotation from '../component/overlay/annotation/Annotation'
 import Tag from '../component/overlay/tag/Tag'
+import { perfectOverlayFunc } from '../component/overlay/Overlay'
 
 import {
   CANDLE_PANE_ID,
@@ -578,30 +579,10 @@ export default class ChartPane {
     if (isFunction(onDrawStart)) {
       onDrawStart({ id: graphicMarkId })
     }
-    if (isFunction(onDrawing)) {
-      graphicMarkInstance.onDrawing = onDrawing
-    }
-    if (isFunction(onDrawEnd)) {
-      graphicMarkInstance.onDrawEnd = onDrawEnd
-    }
-    if (isFunction(onClick)) {
-      graphicMarkInstance.onClick = onClick
-    }
-    if (isFunction(onRightClick)) {
-      graphicMarkInstance.onRightClick = onRightClick
-    }
-    if (isFunction(onPressedMove)) {
-      graphicMarkInstance.onPressedMove = onPressedMove
-    }
-    if (isFunction(onMouseEnter)) {
-      graphicMarkInstance.onMouseEnter = onMouseEnter
-    }
-    if (isFunction(onMouseLeave)) {
-      graphicMarkInstance.onMouseLeave = onMouseLeave
-    }
-    if (isFunction(onRemove)) {
-      graphicMarkInstance.onRemove = onRemove
-    }
+    perfectOverlayFunc(graphicMarkInstance, [
+      onDrawing, onDrawEnd, onClick, onRightClick,
+      onPressedMove, onMouseEnter, onMouseLeave, onRemove
+    ])
     if (this._chartData.addGraphicMarkInstance(graphicMarkInstance)) {
       return graphicMarkId
     }
@@ -634,27 +615,11 @@ export default class ChartPane {
           yAxis: this._panes.get(paneId).yAxis(),
           styles
         })
-        if (isFunction(drawExtend)) {
-          annotationInstance.drawExtend = drawExtend
-        }
-        if (isFunction(checkPointInCustomSymbol)) {
-          annotationInstance.checkPointInCustomSymbol = checkPointInCustomSymbol
-        }
-        if (isFunction(drawCustomSymbol)) {
-          annotationInstance.drawCustomSymbol = drawCustomSymbol
-        }
-        if (isFunction(onClick)) {
-          annotationInstance.onClick = onClick
-        }
-        if (isFunction(onRightClick)) {
-          annotationInstance.onRightClick = onRightClick
-        }
-        if (isFunction(onMouseEnter)) {
-          annotationInstance.onMouseEnter = onMouseEnter
-        }
-        if (isFunction(onMouseLeave)) {
-          annotationInstance.onMouseLeave = onMouseLeave
-        }
+
+        perfectOverlayFunc(annotationInstance, [
+          drawExtend, drawCustomSymbol, checkPointInCustomSymbol,
+          onClick, onRightClick, onMouseEnter, onMouseLeave
+        ])
         instances.push(annotationInstance)
       }
     })
