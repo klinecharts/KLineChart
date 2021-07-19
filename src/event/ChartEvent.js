@@ -175,20 +175,16 @@ export default class ChartEvent {
    */
   _compatChartEvent (event, compatY) {
     if (compatY) {
-      let paneY
-      let paneId
       for (const id in this._paneContentSize) {
         if (Object.prototype.hasOwnProperty.call(this._paneContentSize, id)) {
           const size = this._paneContentSize[id]
           if (event.localY > size.contentTop && event.localY < size.contentBottom) {
-            paneY = event.localY - size.contentTop
-            paneId = id
+            event.paneY = event.localY - size.contentTop
+            event.paneId = id
             break
           }
         }
       }
-      event.paneY = paneY
-      event.paneId = paneId
     }
     event.localX -= this._chartContentLeftRight.contentLeft
     return event
