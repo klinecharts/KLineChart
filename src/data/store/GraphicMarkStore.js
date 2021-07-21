@@ -73,13 +73,17 @@ export default class GraphicMarkStore {
    * @return
    */
   _createTemplateClass ({
-    name, totalStep, checkMousePointOn, createGraphicDataSource,
-    performMousePressedMove, performMouseMoveForDrawing, drawExtend
+    name, totalStep,
+    checkEventCoordinateOnGraphic,
+    createGraphicDataSource,
+    performEventPressedMove,
+    performEventMoveForDrawing,
+    drawExtend
   }) {
     if (
       !name ||
       !isNumber(totalStep) ||
-      !isFunction(checkMousePointOn) ||
+      !isFunction(checkEventCoordinateOnGraphic) ||
       !isFunction(createGraphicDataSource)
     ) {
       logWarn('', '', 'Required attribute "name" and "totalStep", method "checkMousePointOn" and "createGraphicDataSource", new graphic mark cannot be generated!!!')
@@ -94,13 +98,13 @@ export default class GraphicMarkStore {
         })
       }
     }
-    Mark.prototype.checkMousePointOn = checkMousePointOn
+    Mark.prototype.checkEventCoordinateOnGraphic = checkEventCoordinateOnGraphic
     Mark.prototype.createGraphicDataSource = createGraphicDataSource
-    if (isFunction(performMousePressedMove)) {
-      Mark.prototype.performMousePressedMove = performMousePressedMove
+    if (isFunction(performEventPressedMove)) {
+      Mark.prototype.performEventPressedMove = performEventPressedMove
     }
-    if (isFunction(performMouseMoveForDrawing)) {
-      Mark.prototype.performMouseMoveForDrawing = performMouseMoveForDrawing
+    if (isFunction(performEventMoveForDrawing)) {
+      Mark.prototype.performEventMoveForDrawing = performEventMoveForDrawing
     }
     if (isFunction(drawExtend)) {
       Mark.prototype.drawExtend = drawExtend

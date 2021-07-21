@@ -81,9 +81,9 @@ export default class Overlay {
 
   /**
    * 检查鼠标点是否在图形上
-   * @param point
+   * @param coordinate
    */
-  checkMousePointOnGraphic (point) {}
+  checkEventCoordinateOn (coordinate) {}
 
   // -------------------- 事件开始 -------------------
 

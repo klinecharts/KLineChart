@@ -35,7 +35,7 @@ export default class OverlayEventHandler extends EventHandler {
     let hoverOperate
     if (overlays) {
       for (const overlay of overlays) {
-        hoverOperate = overlay.checkMousePointOnGraphic(coordinate)
+        hoverOperate = overlay.checkEventCoordinateOn(coordinate)
         if (hoverOperate) {
           break
         }
@@ -62,9 +62,8 @@ export default class OverlayEventHandler extends EventHandler {
 
   /**
    * 鼠标抬起事件
-   * @param event
    */
-  mouseUpEvent (event) {
+  mouseUpEvent () {
     if (this._pressedGraphicMark) {
       this._pressedGraphicMark = null
       this._chartData.graphicMarkStore().setDragFlag(false)
@@ -87,7 +86,7 @@ export default class OverlayEventHandler extends EventHandler {
     let annotationHoverOperate
     if (lastGraphicMark && lastGraphicMark.isDrawing()) {
       lastGraphicMark.mouseMoveForDrawing(coordinate)
-      graphicMarkHoverOperate = lastGraphicMark.checkMousePointOnGraphic(coordinate)
+      graphicMarkHoverOperate = lastGraphicMark.checkEventCoordinateOn(coordinate)
       graphicMarkClickOperate = {
         id: '',
         element: GraphicMarkMouseOperateElement.NONE,
@@ -128,10 +127,10 @@ export default class OverlayEventHandler extends EventHandler {
     let graphicMarkClickOperate
     if (lastGraphicMark && lastGraphicMark.isDrawing()) {
       lastGraphicMark.mouseLeftButtonDownForDrawing(coordinate)
-      graphicMarkClickOperate = lastGraphicMark.checkMousePointOnGraphic(coordinate)
+      graphicMarkClickOperate = lastGraphicMark.checkEventCoordinateOn(coordinate)
     } else {
       for (const graphicMark of graphicMarks) {
-        graphicMarkClickOperate = graphicMark.checkMousePointOnGraphic(coordinate)
+        graphicMarkClickOperate = graphicMark.checkEventCoordinateOn(coordinate)
         if (graphicMarkClickOperate) {
           if (graphicMarkClickOperate.element === GraphicMarkMouseOperateElement.POINT) {
             this._pressedGraphicMark = graphicMark
@@ -151,7 +150,7 @@ export default class OverlayEventHandler extends EventHandler {
       const visibleAnnotations = this._chartData.annotationStore().get(event.paneId)
       if (visibleAnnotations) {
         for (const an of visibleAnnotations) {
-          const annotationOperate = an.checkMousePointOnGraphic(coordinate)
+          const annotationOperate = an.checkEventCoordinateOn(coordinate)
           if (annotationOperate) {
             an.onClick({
               id: annotationOperate.id,
@@ -180,7 +179,7 @@ export default class OverlayEventHandler extends EventHandler {
     if (event.paneId === CANDLE_PANE_ID) {
       const graphicMarks = this._chartData.graphicMarkStore().instances()
       if (graphicMarks) {
-        const graphicMark = graphicMarks.find(gm => gm.checkMousePointOnGraphic({ x: event.localX, y: event.paneY }))
+        const graphicMark = graphicMarks.find(gm => gm.checkEventCoordinateOn({ x: event.localX, y: event.paneY }))
         if (graphicMark && !graphicMark.onRightClick({ id: graphicMark.id(), points: graphicMark.points(), event })) {
           this._chartData.graphicMarkStore().removeInstance(graphicMark.id())
         }
@@ -188,7 +187,7 @@ export default class OverlayEventHandler extends EventHandler {
     }
     const visibleAnnotations = this._chartData.annotationStore().get(event.paneId)
     if (visibleAnnotations) {
-      const annotation = visibleAnnotations.get(event.paneId).find(an => an.checkMousePointOnGraphic({ x: event.localX, y: event.paneY }))
+      const annotation = visibleAnnotations.get(event.paneId).find(an => an.checkEventCoordinateOn({ x: event.localX, y: event.paneY }))
       if (annotation) {
         annotation.onRightClick({ id: annotation.id(), points: annotation.points(), event })
       }

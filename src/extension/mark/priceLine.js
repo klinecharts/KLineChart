@@ -17,10 +17,10 @@ import { checkPointOnRayLine } from './graphicHelper'
 export default {
   name: 'priceLine',
   totalStep: 2,
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
-    return checkPointOnRayLine(coordinates[0], coordinates[1], mouseCoordinate)
+  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+    return checkPointOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: (step, points, coordinates, viewport, precision, xAxis, yAxis) => {
+  createGraphicDataSource: ({ coordinates, viewport, precision, yAxis }) => {
     return [
       {
         type: 'line',

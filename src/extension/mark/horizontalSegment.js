@@ -17,10 +17,10 @@ import { checkPointOnSegment } from './graphicHelper'
 export default {
   name: 'horizontalSegment',
   totalStep: 3,
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
-    return checkPointOnSegment(coordinates[0], coordinates[1], mouseCoordinate)
+  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+    return checkPointOnSegment(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: (step, points, coordinates) => {
+  createGraphicDataSource: ({ coordinates }) => {
     let lines = []
     if (coordinates.length === 2) {
       lines = [coordinates]
@@ -34,13 +34,13 @@ export default {
       }
     ]
   },
-  performMousePressedMove: (points, pressedPointIndex, { value }) => {
-    points[0].value = value
-    points[1].value = value
+  performEventPressedMove: ({ points, pressPoint }) => {
+    points[0].value = pressPoint.value
+    points[1].value = pressPoint.value
   },
-  performMouseMoveForDrawing: (step, points, { value }) => {
+  performEventMoveForDrawing: ({ step, points, movePoint }) => {
     if (step === 2) {
-      points[0].value = value
+      points[0].value = movePoint.value
     }
   }
 }

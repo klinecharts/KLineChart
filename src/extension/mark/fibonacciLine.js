@@ -17,10 +17,10 @@ import { checkPointOnStraightLine } from './graphicHelper'
 export default {
   name: 'fibonacciLine',
   totalStep: 3,
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
-    return checkPointOnStraightLine(coordinates[0], coordinates[1], mouseCoordinate)
+  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+    return checkPointOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: (step, points, coordinates, viewport, precision) => {
+  createGraphicDataSource: ({ points, coordinates, viewport, precision }) => {
     if (coordinates.length > 0) {
       const lines = []
       const texts = []

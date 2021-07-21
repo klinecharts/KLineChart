@@ -17,10 +17,10 @@ import { checkPointOnStraightLine, getParallelLines } from './graphicHelper'
 export default {
   name: 'priceChannelLine',
   totalStep: 4,
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
-    return checkPointOnStraightLine(coordinates[0], coordinates[1], mouseCoordinate)
+  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+    return checkPointOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: (step, points, coordinates, viewport) => {
+  createGraphicDataSource: ({ coordinates, viewport }) => {
     return [
       {
         type: 'line',

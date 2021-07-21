@@ -121,10 +121,22 @@ export default class GraphicMark extends Overlay {
       }
       // 重新演练绘制一遍，防止因为点不对而绘制出错误的图形
       for (let i = 0; i < repeatTotalStep; i++) {
-        this.performMouseMoveForDrawing(i + 2, this._points, this._points[i], this._xAxis, this._yAxis)
+        this.performEventMoveForDrawing({
+          step: i + 2,
+          points: this._points,
+          movePoint: this._points[i],
+          xAxis: this._xAxis,
+          yAxis: this._yAxis
+        })
       }
       if (this._drawStep === GRAPHIC_MARK_DRAW_STEP_FINISHED) {
-        this.performMousePressedMove(this._points, this._points.length - 1, this._points[this._points.length - 1], this._xAxis, this._yAxis)
+        this.performEventPressedMove({
+          points: this._points,
+          pressedPointIndex: this._points.length - 1,
+          pressPoint: this._points[this._points.length - 1],
+          xAxis: this._xAxis,
+          yAxis: this._yAxis
+        })
       }
     }
   }
@@ -321,10 +333,15 @@ export default class GraphicMark extends Overlay {
     if (this._drawStep !== GRAPHIC_MARK_DRAW_STEP_START && coordinates.length > 0) {
       const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
       const precision = { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() }
-      const graphicDataSources = this.createGraphicDataSource(
-        this._drawStep, this._points, coordinates, viewport,
-        precision, this._xAxis, this._yAxis
-      ) || []
+      const graphicDataSources = this.createGraphicDataSource({
+        step: this._drawStep,
+        points: this._points,
+        coordinates,
+        viewport: { width: this._xAxis.width(), height: this._yAxis.height() },
+        precision: { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() },
+        xAxis: this._xAxis,
+        yAxis: this._yAxis
+      }) || []
       graphicDataSources.forEach(({ type, isDraw, style, dataSource = [] }) => {
         if (!isValid(isDraw) || isDraw) {
           switch (type) {
@@ -440,7 +457,7 @@ export default class GraphicMark extends Overlay {
    * @param mouseCoordinate
    * @return {{id: *, elementIndex: number, element: string}}
    */
-  checkMousePointOnGraphic (mouseCoordinate) {
+  checkEventCoordinateOn (eventCoordinate) {
     const markOptions = this._styles || this._chartData.styleOptions().graphicMark
     const coordinates = []
     // 检查鼠标点是否在图形的点上
@@ -452,7 +469,7 @@ export default class GraphicMark extends Overlay {
         y: this._yAxis.convertToPixel(value)
       }
       coordinates.push(coordinate)
-      if (checkPointInCircle(coordinate, markOptions.point.radius, mouseCoordinate)) {
+      if (checkPointInCircle(coordinate, markOptions.point.radius, eventCoordinate)) {
         return {
           id: this._id,
           element: GraphicMarkMouseOperateElement.POINT,
@@ -462,26 +479,20 @@ export default class GraphicMark extends Overlay {
       }
     }
     // 检查鼠标点是否在点构成的其它图形上
-    const graphicDataSources = this.createGraphicDataSource(
-      this._drawStep,
-      this._points,
+    const graphicDataSources = this.createGraphicDataSource({
+      step: this._drawStep,
+      points: this._points,
       coordinates,
-      {
-        width: this._xAxis.width(),
-        height: this._yAxis.height()
-      },
-      {
-        price: this._chartData.pricePrecision(),
-        volume: this._chartData.volumePrecision()
-      },
-      this._xAxis,
-      this._yAxis
-    ) || []
+      viewport: { width: this._xAxis.width(), height: this._yAxis.height() },
+      precision: { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() },
+      xAxis: this._xAxis,
+      yAxis: this._yAxis
+    }) || []
     for (const { key, type, isCheck, dataSource = [] } of graphicDataSources) {
       if (isCheck) {
         for (let i = 0; i < dataSource.length; i++) {
           const sources = dataSource[i]
-          if (this.checkMousePointOn(key, type, sources, mouseCoordinate)) {
+          if (this.checkEventCoordinateOnGraphic({ key, type, dataSource: sources, eventCoordinate })) {
             return {
               id: this._id,
               element: GraphicMarkMouseOperateElement.OTHER,
@@ -503,7 +514,13 @@ export default class GraphicMark extends Overlay {
     const timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
     const value = this._yAxis.convertFromPixel(point.y)
     this._points[this._drawStep - 1] = { timestamp, value, dataIndex }
-    this.performMouseMoveForDrawing(this._drawStep, this._points, { timestamp, value, dataIndex }, this._xAxis, this._yAxis)
+    this.performEventMoveForDrawing({
+      step: this._drawStep,
+      points: this._points,
+      movePoint: { timestamp, value, dataIndex },
+      xAxis: this._xAxis,
+      yAxis: this._yAxis
+    })
     this.onDrawing({ id: this._id, step: this._drawStep, points: this._points })
   }
 
@@ -539,7 +556,13 @@ export default class GraphicMark extends Overlay {
       this._points[elementIndex].timestamp = timestamp
       this._points[elementIndex].dataIndex = dataIndex
       this._points[elementIndex].value = value
-      this.performMousePressedMove(this._points, elementIndex, { dataIndex, timestamp, value }, this._xAxis, this._yAxis)
+      this.performEventPressedMove({
+        points: this._points,
+        pressedPointIndex: elementIndex,
+        pressPoint: { dataIndex, timestamp, value },
+        xAxis: this._xAxis,
+        yAxis: this._yAxis
+      })
       this.onPressedMove({
         id: graphicMarkMouseOperate.click.id,
         points: this._points,
@@ -590,13 +613,13 @@ export default class GraphicMark extends Overlay {
   // --------------------- 自定义时需要实现的一些方法开始 ----------------------
 
   /**
-   * 检查鼠标点在其它图形上
+   * 检查事件坐标是否在图形上
    * @param key
    * @param type
    * @param points
    * @param mousePoint
    */
-  checkMousePointOn (key, type, points, mousePoint) {}
+  checkEventCoordinateOnGraphic ({ key, type, dataSource, eventCoordinate }) {}
 
   /**
    * 创建图形配置
@@ -608,7 +631,7 @@ export default class GraphicMark extends Overlay {
    * @param xAxis
    * @param yAxis
    */
-  createGraphicDataSource (step, points, coordinates, viewport, precision, xAxis, yAxis) {}
+  createGraphicDataSource ({ step, points, coordinates, viewport, precision, xAxis, yAxis }) {}
 
   /**
    * 处理绘制过程中鼠标移动
@@ -618,7 +641,7 @@ export default class GraphicMark extends Overlay {
    * @param xAxis
    * @param yAxis
    */
-  performMouseMoveForDrawing (step, points, point, xAxis, yAxis) {}
+  performEventMoveForDrawing ({ step, points, movePoint, xAxis, yAxis }) {}
 
   /**
    * 处理鼠标按住移动
@@ -628,7 +651,7 @@ export default class GraphicMark extends Overlay {
    * @param xAxis
    * @param yAxis
    */
-  performMousePressedMove (points, pressedPointIndex, point, xAxis, yAxis) {}
+  performEventPressedMove ({ points, pressedPointIndex, pressPoint, xAxis, yAxis }) {}
 
   // --------------------- 自定义时需要实现的一些方法结束 ----------------------
 }

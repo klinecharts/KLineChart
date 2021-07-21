@@ -596,7 +596,7 @@ export default class ChartPane {
     annotations.forEach(({
       point,
       styles,
-      checkPointInCustomSymbol,
+      checkEventCoordinateOnCustomSymbol,
       drawCustomSymbol,
       drawExtend,
       onClick,
@@ -615,7 +615,7 @@ export default class ChartPane {
         })
 
         perfectOverlayFunc(annotationInstance, [
-          drawExtend, drawCustomSymbol, checkPointInCustomSymbol,
+          drawExtend, drawCustomSymbol, checkEventCoordinateOnCustomSymbol,
           onClick, onRightClick, onMouseEnter, onMouseLeave
         ])
         instances.push(annotationInstance)

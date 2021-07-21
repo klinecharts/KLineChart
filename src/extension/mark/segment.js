@@ -17,10 +17,10 @@ import { checkPointOnSegment } from './graphicHelper'
 export default {
   name: 'segment',
   totalStep: 3,
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
-    return checkPointOnSegment(coordinates[0], coordinates[1], mouseCoordinate)
+  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+    return checkPointOnSegment(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: (step, points, coordinates) => {
+  createGraphicDataSource: ({ coordinates }) => {
     let lines = []
     if (coordinates.length === 2) {
       lines = [coordinates]

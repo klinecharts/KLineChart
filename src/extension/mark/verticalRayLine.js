@@ -17,10 +17,10 @@ import { checkPointOnRayLine } from './graphicHelper'
 export default {
   name: 'verticalRayLine',
   totalStep: 3,
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
-    return checkPointOnRayLine(coordinates[0], coordinates[1], mouseCoordinate)
+  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+    return checkPointOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: (step, points, coordinates, viewport) => {
+  createGraphicDataSource: ({ coordinates, viewport }) => {
     const point = { x: coordinates[0].x, y: 0 }
     if (coordinates[1] && coordinates[0].y < coordinates[1].y) {
       point.y = viewport.height
@@ -34,16 +34,16 @@ export default {
       }
     ]
   },
-  performMousePressedMove: (points, pressedPointIndex, { dataIndex, timestamp }) => {
-    points[0].timestamp = timestamp
-    points[0].dataIndex = dataIndex
-    points[1].timestamp = timestamp
-    points[1].dataIndex = dataIndex
+  performEventPressedMove: ({ points, pressPoint }) => {
+    points[0].timestamp = pressPoint.timestamp
+    points[0].dataIndex = pressPoint.dataIndex
+    points[1].timestamp = pressPoint.timestamp
+    points[1].dataIndex = pressPoint.dataIndex
   },
-  performMouseMoveForDrawing: (step, points, { timestamp, dataIndex }) => {
+  performEventMoveForDrawing: ({ step, points, movePoint }) => {
     if (step === 2) {
-      points[0].timestamp = timestamp
-      points[0].dataIndex = dataIndex
+      points[0].timestamp = movePoint.timestamp
+      points[0].dataIndex = movePoint.dataIndex
     }
   }
 }

@@ -17,10 +17,10 @@ import { checkPointOnStraightLine, getLinearYFromPoints } from './graphicHelper'
 export default {
   name: 'straightLine',
   totalStep: 3,
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
-    return checkPointOnStraightLine(coordinates[0], coordinates[1], mouseCoordinate)
+  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+    return checkPointOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: (step, points, coordinates, viewport) => {
+  createGraphicDataSource: ({ coordinates, viewport }) => {
     if (coordinates.length < 2 || coordinates[0].x === coordinates[1].x) {
       return [
         {

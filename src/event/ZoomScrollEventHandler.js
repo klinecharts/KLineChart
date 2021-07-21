@@ -63,8 +63,8 @@ export default class ZoomScrollEventHandler extends EventHandler {
       if (Math.abs(event.deltaX) === 0) {
         return
       }
-      this._chartData.startScroll()
-      this._chartData.scroll(-event.deltaX)
+      this._chartData.timeScaleStore().startScroll()
+      this._chartData.timeScaleStore().scroll(-event.deltaX)
     } else {
       let deltaY = -(event.deltaY / 100)
       if (deltaY === 0) {

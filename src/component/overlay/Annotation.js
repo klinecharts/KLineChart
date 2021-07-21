@@ -142,7 +142,7 @@ export default class Annotation extends Overlay {
     }
   }
 
-  checkMousePointOnGraphic (mouseCoordinate) {
+  checkEventCoordinateOn (eventCoordinate) {
     const barSpace = this._chartData.timeScaleStore().barSpace()
     const styles = this._styles || this._chartData.styleOptions().annotation
     const symbolOptions = styles.symbol
@@ -150,17 +150,17 @@ export default class Annotation extends Overlay {
     let isOn
     switch (symbolOptions.type) {
       case AnnotationSymbolType.CIRCLE: {
-        isOn = checkPointInCircle(this._symbolCoordinate, size / 2, mouseCoordinate)
+        isOn = checkPointInCircle(this._symbolCoordinate, size / 2, eventCoordinate)
         break
       }
       case AnnotationSymbolType.RECT: {
         const coordinate1 = { x: this._symbolCoordinate.x - size / 2, y: this._symbolCoordinate.y - size / 2 }
         const coordinate2 = { x: this._symbolCoordinate.x + size / 2, y: this._symbolCoordinate.y + size / 2 }
-        isOn = checkPointInRect(coordinate1, coordinate2, mouseCoordinate)
+        isOn = checkPointInRect(coordinate1, coordinate2, eventCoordinate)
         break
       }
       case AnnotationSymbolType.DIAMOND: {
-        isOn = checkPointInDiamond(this._symbolCoordinate, size, size, mouseCoordinate)
+        isOn = checkPointInDiamond(this._symbolCoordinate, size, size, eventCoordinate)
         break
       }
       case AnnotationSymbolType.TRIANGLE: {
@@ -170,13 +170,13 @@ export default class Annotation extends Overlay {
             { x: this._symbolCoordinate.x, y: this._symbolCoordinate.y - size / 2 },
             { x: this._symbolCoordinate.x + size / 2, y: this._symbolCoordinate.y + size / 2 }
           ],
-          mouseCoordinate
+          eventCoordinate
         )
         break
       }
       case AnnotationSymbolType.CUSTOM: {
-        isOn = this.checkPointInCustomSymbol({
-          mouseCoordinate,
+        isOn = this.checkEventCoordinateOnCustomSymbol({
+          eventCoordinate,
           coordinate: this._symbolCoordinate,
           size
         })
@@ -219,7 +219,7 @@ export default class Annotation extends Overlay {
    * @param coordinate
    * @param size
    */
-  checkPointInCustomSymbol ({ mouseCoordinate, coordinate, size }) {}
+  checkEventCoordinateOnCustomSymbol ({ eventCoordinate, coordinate, size }) {}
 
   /**
    * 绘制自定义标识

@@ -17,10 +17,10 @@ import { checkPointOnRayLine } from './graphicHelper'
 export default {
   name: 'horizontalRayLine',
   totalStep: 3,
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
-    return checkPointOnRayLine(coordinates[0], coordinates[1], mouseCoordinate)
+  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+    return checkPointOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: (step, points, coordinates, viewport) => {
+  createGraphicDataSource: ({ coordinates, viewport }) => {
     const point = { x: 0, y: coordinates[0].y }
     if (coordinates[1] && coordinates[0].x < coordinates[1].x) {
       point.x = viewport.width
@@ -34,13 +34,13 @@ export default {
       }
     ]
   },
-  performMousePressedMove: (points, pressedPointIndex, { value }) => {
-    points[0].value = value
-    points[1].value = value
+  performEventPressedMove: ({ points, pressPoint }) => {
+    points[0].value = pressPoint.value
+    points[1].value = pressPoint.value
   },
-  performMouseMoveForDrawing: (step, points, { value }) => {
+  performEventMoveForDrawing: ({ step, points, movePoint }) => {
     if (step === 2) {
-      points[0].value = value
+      points[0].value = movePoint.value
     }
   }
 }
