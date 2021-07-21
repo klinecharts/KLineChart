@@ -18,7 +18,7 @@ import { TechnicalIndicatorPlotType } from '../component/tech/TechnicalIndicator
 import { isValid } from '../utils/typeChecks'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { getTechnicalIndicatorTooltipData } from '../component/tech/technicalIndicatorControl'
+import { getTechnicalIndicatorTooltipData } from '../data/store/TechnicalIndicatorStore'
 import { renderText } from '../renderer/text'
 
 export default class TechnicalIndicatorOverlayView extends View {
@@ -34,7 +34,7 @@ export default class TechnicalIndicatorOverlayView extends View {
     this._drawTag()
     this._drawGraphicMark()
     this._drawAnnotation()
-    const crosshair = this._chartData.crosshair()
+    const crosshair = this._chartData.crosshairStore().get()
     if (crosshair.kLineData) {
       const technicalIndicators = this._additionalDataProvider.technicalIndicators()
       const styleOptions = this._chartData.styleOptions()
@@ -55,17 +55,19 @@ export default class TechnicalIndicatorOverlayView extends View {
    * 绘制注解
    */
   _drawAnnotation () {
-    const annotations = this._chartData.visibleAnnotations().get(this._additionalDataProvider.id()) || []
-    annotations.forEach(annotation => {
-      annotation.draw(this._ctx)
-    })
+    const annotations = this._chartData.annotationStore().get(this._additionalDataProvider.id())
+    if (annotations) {
+      annotations.forEach(annotation => {
+        annotation.draw(this._ctx)
+      })
+    }
   }
 
   /**
    * 绘制标签
    */
   _drawTag () {
-    const tags = this._chartData.tags().get(this._additionalDataProvider.id())
+    const tags = this._chartData.tagStore().get(this._additionalDataProvider.id())
     if (tags) {
       tags.forEach(tag => {
         tag.drawMarkLine(this._ctx)

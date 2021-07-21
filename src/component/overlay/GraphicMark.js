@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import Overlay from '../Overlay'
+import Overlay from './Overlay'
 
-import { renderFillCircle } from '../../../renderer/circle'
-import { checkPointInCircle } from '../../../extension/mark/graphicHelper'
-import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../../renderer/line'
-import { isValid, isArray, clone } from '../../../utils/typeChecks'
+import { renderFillCircle } from '../../renderer/circle'
+import { checkPointInCircle } from '../../extension/mark/graphicHelper'
+import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../renderer/line'
+import { isValid, isArray, clone } from '../../utils/typeChecks'
 
 // 标记图形绘制步骤开始
 const GRAPHIC_MARK_DRAW_STEP_START = 1
@@ -525,7 +525,7 @@ export default class GraphicMark extends Overlay {
    * @param event
    */
   mousePressedMove (point, event) {
-    const graphicMarkMouseOperate = this._chartData.graphicMarkMouseOperate()
+    const graphicMarkMouseOperate = this._chartData.graphicMarkStore().mouseOperate()
     const elementIndex = graphicMarkMouseOperate.click.elementIndex
     if (
       !this._lock &&

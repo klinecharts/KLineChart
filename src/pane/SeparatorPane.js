@@ -95,14 +95,14 @@ export default class SeparatorPane {
     const dragDistance = event.pageY - this._startY
     this._dragEventHandler.drag(dragDistance, this._topPaneId, this._bottomPaneId)
     this._chartData.setDragPaneFlag(true)
-    this._chartData.setCrosshair()
+    this._chartData.crosshairStore().set()
   }
 
   _mouseEnterEvent () {
     const separatorOptions = this._chartData.styleOptions().separator
     this._element.style.background = separatorOptions.activeBackgroundColor
     this._chartData.setDragPaneFlag(true)
-    this._chartData.setCrosshair()
+    this._chartData.crosshairStore().set()
   }
 
   _mouseLeaveEvent () {

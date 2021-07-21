@@ -37,7 +37,7 @@ export default class YAxisOverlayView extends View {
    * @private
    */
   _drawTag () {
-    const tags = this._chartData.tags().get(this._additionalDataProvider.id())
+    const tags = this._chartData.tagStore().get(this._additionalDataProvider.id())
     if (tags) {
       tags.forEach(tag => {
         tag.drawText(this._ctx)
@@ -46,7 +46,7 @@ export default class YAxisOverlayView extends View {
   }
 
   _drawCrossHairLabel () {
-    const crosshair = this._chartData.crosshair()
+    const crosshair = this._chartData.crosshairStore().get()
     if (crosshair.paneId !== this._additionalDataProvider.id() || this._chartData.dataList().length === 0) {
       return
     }

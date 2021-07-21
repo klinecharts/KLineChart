@@ -30,7 +30,7 @@ export default class XAxisOverlayView extends View {
   }
 
   _drawCrosshairLabel () {
-    const crosshair = this._chartData.crosshair()
+    const crosshair = this._chartData.crosshairStore().get()
     if (!crosshair.paneId) {
       return
     }
@@ -47,7 +47,7 @@ export default class XAxisOverlayView extends View {
     }
     const x = crosshair.realX
     const timestamp = crosshair.kLineData.timestamp
-    const text = formatDate(this._chartData.dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
+    const text = formatDate(this._chartData.timeScaleStore().dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
 
     const textSize = crosshairVerticalTextOptions.size
     this._ctx.font = createFont(textSize, crosshairVerticalTextOptions.weight, crosshairVerticalTextOptions.family)

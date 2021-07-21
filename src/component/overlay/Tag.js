@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import Overlay from '../Overlay'
-import { LineStyle, OverlayPosition, YAxisPosition } from '../../../data/options/styleOptions'
-import { renderHorizontalLine } from '../../../renderer/line'
-import { isValid, isObject } from '../../../utils/typeChecks'
-import { calcTextWidth, createFont } from '../../../utils/canvas'
-import { renderFillRoundRect } from '../../../renderer/rect'
-import { renderText } from '../../../renderer/text'
+import Overlay from './Overlay'
+import { LineStyle, OverlayPosition, YAxisPosition } from '../../data/options/styleOptions'
+import { renderHorizontalLine } from '../../renderer/line'
+import { isValid, isObject } from '../../utils/typeChecks'
+import { calcTextWidth, createFont } from '../../utils/canvas'
+import { renderFillRoundRect } from '../../renderer/rect'
+import { renderText } from '../../renderer/text'
 
 export default class Tag extends Overlay {
   constructor ({

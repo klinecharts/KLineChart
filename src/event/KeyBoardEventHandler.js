@@ -30,21 +30,21 @@ export default class KeyBoardEventHandler extends EventHandler {
     if (event.shiftKey) {
       switch (event.code) {
         case KeyBoardCode.EQUAL: {
-          this._chartData.zoom(0.5)
+          this._chartData.timeScaleStore().zoom(0.5)
           break
         }
         case KeyBoardCode.MINUS: {
-          this._chartData.zoom(-0.5)
+          this._chartData.timeScaleStore().zoom(-0.5)
           break
         }
         case KeyBoardCode.ARROW_LEFT: {
-          this._chartData.startScroll()
-          this._chartData.scroll(-3 * this._chartData.dataSpace())
+          this._chartData.timeScaleStore().startScroll()
+          this._chartData.timeScaleStore().scroll(-3 * this._chartData.timeScaleStore().dataSpace())
           break
         }
         case KeyBoardCode.ARROW_RIGHT: {
-          this._chartData.startScroll()
-          this._chartData.scroll(3 * this._chartData.dataSpace())
+          this._chartData.timeScaleStore().startScroll()
+          this._chartData.timeScaleStore().scroll(3 * this._chartData.timeScaleStore().dataSpace())
           break
         }
         default: {

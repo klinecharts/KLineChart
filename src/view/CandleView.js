@@ -85,7 +85,7 @@ export default class CandleView extends TechnicalIndicatorView {
       const areaPointLength = areaPoints.length
       if (areaPointLength > 0) {
         const lastPoint = areaPoints[areaPointLength - 1]
-        const halfBarSpace = this._chartData.barSpace() / 2
+        const halfBarSpace = this._chartData.timeScaleStore().halfBarSpace()
         const endX = lastPoint.x + halfBarSpace
         linePoints.push({ x: endX, y: lastPoint.y })
         areaPoints.push({ x: endX, y: lastPoint.y })

@@ -97,8 +97,8 @@ export default class TechnicalIndicatorView extends View {
           {
             width: this._width,
             height: this._height,
-            dataSpace: this._chartData.dataSpace(),
-            barSpace: this._chartData.barSpace()
+            dataSpace: this._chartData.timeScaleStore().dataSpace(),
+            barSpace: this._chartData.timeScaleStore().barSpace()
           },
           styles,
           this._xAxis,
@@ -199,8 +199,8 @@ export default class TechnicalIndicatorView extends View {
    */
   _drawGraphics (onDrawing, onDrawEnd) {
     const visibleDataList = this._chartData.visibleDataList()
-    const barSpace = this._chartData.barSpace()
-    const halfBarSpace = barSpace / 2
+    const barSpace = this._chartData.timeScaleStore().barSpace()
+    const halfBarSpace = this._chartData.timeScaleStore().halfBarSpace()
     visibleDataList.forEach(({ x, index, data }, n) => {
       onDrawing(x, index, data, halfBarSpace, barSpace, n)
     })

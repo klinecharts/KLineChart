@@ -128,15 +128,15 @@ export default class ChartEvent {
 
   _pressedMouseMoveEvent (event) {
     if (this._checkEventInChartContent(event)) {
-      const markDragFlag = this._chartData.dragGraphicMarkFlag()
+      const markDragFlag = this._chartData.graphicMarkStore().dragFlag()
       const zoomScroll = this._checkZoomScroll()
       if (markDragFlag || zoomScroll) {
         const compatEvent = this._compatChartEvent(event, true)
         if (markDragFlag) {
           this._overlayEventHandler.pressedMouseMoveEvent(compatEvent)
           // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
-          if (this._chartData.crosshair().paneId) {
-            this._chartData.setCrosshair()
+          if (this._chartData.crosshairStore().get().paneId) {
+            this._chartData.crosshairStore().set()
           }
         }
         if (zoomScroll) {
@@ -153,9 +153,7 @@ export default class ChartEvent {
   }
 
   _checkZoomScroll () {
-    const graphicMarks = this._chartData.graphicMarks()
-    const graphicMarkCount = graphicMarks.length
-    return !this._chartData.dragPaneFlag() && !this._chartData.dragGraphicMarkFlag() && (graphicMarkCount === 0 || !graphicMarks[graphicMarkCount - 1].isDrawing())
+    return !this._chartData.dragPaneFlag() && !this._chartData.graphicMarkStore().dragFlag() && (this._chartData.graphicMarkStore().isEmpty() || !this._chartData.graphicMarkStore().isDrawing())
   }
 
   /**
@@ -164,7 +162,7 @@ export default class ChartEvent {
    * @private
    */
   _shouldPerformOverlayEvent () {
-    return this._chartData.graphicMarks().length > 0 || this._chartData.visibleAnnotations().size > 0
+    return !this._chartData.graphicMarkStore().isEmpty() || !this._chartData.annotationStore().isEmpty()
   }
 
   /**

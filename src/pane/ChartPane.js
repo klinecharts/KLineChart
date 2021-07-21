@@ -13,9 +13,7 @@
  */
 
 import ChartData from '../data/ChartData'
-import {
-  createTechnicalIndicatorInfo
-} from '../component/tech/technicalIndicatorControl'
+import { createTechnicalIndicatorInfo } from '../data/store/TechnicalIndicatorStore'
 
 import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
@@ -30,8 +28,8 @@ import ChartEvent from '../event/ChartEvent'
 import { getPixelRatio } from '../utils/canvas'
 import { throttle } from '../utils/performance'
 import { createElement } from '../utils/element'
-import Annotation from '../component/overlay/annotation/Annotation'
-import Tag from '../component/overlay/tag/Tag'
+import Annotation from '../component/overlay/Annotation'
+import Tag from '../component/overlay/Tag'
 import { perfectOverlayFunc } from '../component/overlay/Overlay'
 
 import {
@@ -95,7 +93,7 @@ export default class ChartPane {
    * @private
    */
   _crosshairObserver ({ dataIndex, kLineData, x, y }) {
-    if (this.chartData().hasAction(ActionType.CROSSHAIR)) {
+    if (this.chartData().actionStore().has(ActionType.CROSSHAIR)) {
       const technicalIndicatorData = {}
       this._panes.forEach((pane, id) => {
         const data = {}
@@ -105,7 +103,7 @@ export default class ChartPane {
         })
         technicalIndicatorData[id] = data
       })
-      this._chartData.actionExecute(ActionType.CROSSHAIR, {
+      this._chartData.actionStore().execute(ActionType.CROSSHAIR, {
         coordinate: { x, y },
         dataIndex,
         kLineData,
@@ -145,7 +143,7 @@ export default class ChartPane {
     }
     this._panes.get(topPaneId).setHeight(topPaneHeight)
     this._panes.get(bottomPaneId).setHeight(bottomPaneHeight)
-    this._chartData.actionExecute(ActionType.PANE_DRAG, { topPaneId, bottomPaneId, topPaneHeight, bottomPaneHeight })
+    this._chartData.actionStore().execute(ActionType.PANE_DRAG, { topPaneId, bottomPaneId, topPaneHeight, bottomPaneHeight })
     this.adjustPaneViewport(true, true, true, true, true)
   }
 
@@ -271,7 +269,7 @@ export default class ChartPane {
       mainOffsetLeft = 0
     }
 
-    this._chartData.setTotalDataSpace(mainWidth)
+    this._chartData.timeScaleStore().setTotalDataSpace(mainWidth)
 
     this._panes.forEach((pane, paneId) => {
       pane.setWidth(mainWidth, yAxisWidth)
@@ -583,7 +581,7 @@ export default class ChartPane {
       onDrawing, onDrawEnd, onClick, onRightClick,
       onPressedMove, onMouseEnter, onMouseLeave, onRemove
     ])
-    if (this._chartData.addGraphicMarkInstance(graphicMarkInstance)) {
+    if (this._chartData.graphicMarkStore().addInstance(graphicMarkInstance)) {
       return graphicMarkId
     }
   }
@@ -624,7 +622,7 @@ export default class ChartPane {
       }
     })
     if (instances.length > 0) {
-      this._chartData.addAnnotations(instances, paneId)
+      this._chartData.annotationStore().add(instances, paneId)
     }
   }
 
@@ -639,9 +637,8 @@ export default class ChartPane {
     let shouldAdd = false
     tags.forEach(({ id, point, text, mark, styles }) => {
       if (isValid(id)) {
-        const tag = this._chartData.getTag(id, paneId)
-        if (tag) {
-          const updateSuccess = tag.update({ point, text, mark, styles })
+        if (this._chartData.tagStore().has(id, paneId)) {
+          const updateSuccess = this._chartData.tagStore().update(id, paneId, { point, text, mark, styles })
           if (!shouldUpdate) {
             shouldUpdate = updateSuccess
           }
@@ -661,7 +658,7 @@ export default class ChartPane {
       }
     })
     if (shouldAdd) {
-      this._chartData.addTags(instances, paneId)
+      this._chartData.tagStore().add(instances, paneId)
     } else {
       if (shouldUpdate) {
         this._invalidatePane(InvalidateLevel.OVERLAY)
@@ -700,7 +697,7 @@ export default class ChartPane {
    * @param timezone
    */
   setTimezone (timezone) {
-    this._chartData.setTimezone(timezone)
+    this._chartData.timeScaleStore.setTimezone(timezone)
     this._xAxisPane.xAxis().computeAxis(true)
     this._xAxisPane.invalidate(InvalidateLevel.FULL)
   }
@@ -724,7 +721,7 @@ export default class ChartPane {
           const coordinate = {}
           let index = dataIndex
           if (isValid(timestamp)) {
-            index = this._chartData.timestampToDataIndex(timestamp)
+            index = this._chartData.timeScaleStore().timestampToDataIndex(timestamp)
           }
           if (isValid(index)) {
             coordinate.x = this._xAxisPane.xAxis().convertToPixel(index)
@@ -762,7 +759,7 @@ export default class ChartPane {
           const point = {}
           if (isValid(x)) {
             point.dataIndex = this._xAxisPane.xAxis().convertFromPixel(x)
-            point.timestamp = this._chartData.dataIndexToTimestamp(point.dataIndex)
+            point.timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(point.dataIndex)
           }
           if (isValid(y)) {
             const ry = absoluteYAxis ? y - absoluteTop : y

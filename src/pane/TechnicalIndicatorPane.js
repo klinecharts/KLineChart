@@ -16,7 +16,6 @@ import Pane from './Pane'
 import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 import YAxis from '../component/axis/YAxis'
-import { cloneTechnicalIndicator } from '../component/tech/technicalIndicatorControl'
 
 export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
@@ -132,9 +131,8 @@ export default class TechnicalIndicatorPane extends Pane {
       if (this._techs.has(name)) {
         return false
       }
-      const templateInstance = this._chartData.getTechnicalIndicatorTemplateInstance(name)
-      if (templateInstance) {
-        const cloneInstance = cloneTechnicalIndicator(templateInstance)
+      const cloneInstance = this._chartData.technicalIndicatorStore().cloneTemplate(name)
+      if (cloneInstance) {
         cloneInstance.setCalcParams(calcParams)
         cloneInstance.setPrecision(precision)
         cloneInstance.setShouldOhlc(shouldOhlc)

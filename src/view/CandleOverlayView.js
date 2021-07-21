@@ -17,15 +17,14 @@ import { isFunction, isObject, isArray, isValid } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { TooltipShowType } from '../data/options/styleOptions'
-import { getTechnicalIndicatorTooltipData } from '../component/tech/technicalIndicatorControl'
+import { getTechnicalIndicatorTooltipData } from '../data/store/TechnicalIndicatorStore'
 import { TechnicalIndicatorPlotType } from '../component/tech/TechnicalIndicator'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
   _drawGraphicMark () {
-    const graphicMarks = this._chartData.graphicMarks()
-    graphicMarks.forEach(graphicMark => {
+    this._chartData.graphicMarkStore().instances().forEach(graphicMark => {
       graphicMark.draw(this._ctx)
     })
   }
@@ -370,7 +369,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
       values.forEach((value, index) => {
         switch (index) {
           case 0: {
-            values[index] = formatDate(this._chartData.dateTimeFormat(), value, 'YYYY-MM-DD hh:mm')
+            values[index] = formatDate(this._chartData.timeScaleStore().dateTimeFormat(), value, 'YYYY-MM-DD hh:mm')
             break
           }
           case values.length - 1: {

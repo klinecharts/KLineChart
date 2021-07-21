@@ -12,23 +12,23 @@
  * limitations under the License.
  */
 
-import Overlay from '../Overlay'
+import Overlay from './Overlay'
 
-import { renderFillCircle } from '../../../renderer/circle'
-import { renderFillRect } from '../../../renderer/rect'
-import { renderFillDiamond } from '../../../renderer/diamond'
-import { renderFillTriangle } from '../../../renderer/triangle'
+import { renderFillCircle } from '../../renderer/circle'
+import { renderFillRect } from '../../renderer/rect'
+import { renderFillDiamond } from '../../renderer/diamond'
+import { renderFillTriangle } from '../../renderer/triangle'
 import {
   checkPointInCircle, checkPointInDiamond,
   checkPointInRect, checkPointInTriangle
-} from '../../../extension/mark/graphicHelper'
+} from '../../extension/mark/graphicHelper'
 
-import { isNumber } from '../../../utils/typeChecks'
+import { isNumber } from '../../utils/typeChecks'
 
 import {
   OverlayPosition,
   AnnotationSymbolType
-} from '../../../data/options/styleOptions'
+} from '../../data/options/styleOptions'
 
 /**
  * 注解
@@ -51,7 +51,7 @@ export default class Annotation extends Overlay {
    * @private
    */
   _drawSymbol (ctx, isActive, styles) {
-    const barSpace = this._chartData.barSpace()
+    const barSpace = this._chartData.timeScaleStore().barSpace()
     const symbolOptions = styles.symbol
     const styleSize = symbolOptions.size
     const styleActiveSize = symbolOptions.activeSize
@@ -123,7 +123,7 @@ export default class Annotation extends Overlay {
       }
     }
     this._symbolCoordinate.y = y + (offset[1] || 0)
-    const isActive = this._id === this._chartData.annotationMouseOperate().id
+    const isActive = this._id === this._chartData.annotationStore().mouseOperate().id
     this._drawSymbol(ctx, isActive, styles)
     if (this.drawExtend) {
       ctx.save()
@@ -143,7 +143,7 @@ export default class Annotation extends Overlay {
   }
 
   checkMousePointOnGraphic (mouseCoordinate) {
-    const barSpace = this._chartData.barSpace()
+    const barSpace = this._chartData.timeScaleStore().barSpace()
     const styles = this._styles || this._chartData.styleOptions().annotation
     const symbolOptions = styles.symbol
     const size = isNumber(symbolOptions.size) ? symbolOptions.size : barSpace
