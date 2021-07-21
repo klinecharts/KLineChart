@@ -72,10 +72,10 @@ export default class OverlayEventHandler extends EventHandler {
   }
 
   mouseMoveEvent (event) {
-    if (this._waitingForMouseMoveAnimationFrame) {
+    if (this._waitingForMouseMove) {
       return
     }
-    this._waitingForMouseMoveAnimationFrame = true
+    this._waitingForMouseMove = true
     const coordinate = { x: event.localX, y: event.paneY }
     const annotations = this._chartData.annotationStore().get(event.paneId)
     const graphicMarks = this._chartData.graphicMarkStore().instances()
@@ -106,10 +106,10 @@ export default class OverlayEventHandler extends EventHandler {
       click: graphicMarkClickOperate
     })
     const annotationOperateValid = this._chartData.annotationStore().setMouseOperate(annotationHoverOperate || { id: '' })
-    if (graphicMarkOperateValid || annotationOperateValid) {
+    if (graphicMarkOperateValid || annotationOperateValid || lastGraphicMark.isDrawing()) {
       this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }
-    this._waitingForMouseMoveAnimationFrame = false
+    this._waitingForMouseMove = false
   }
 
   /**
@@ -196,7 +196,7 @@ export default class OverlayEventHandler extends EventHandler {
   }
 
   pressedMouseMoveEvent (event) {
-    if ((!this._chartData.graphicMarkStore().isDrawing()) && this._pressedGraphicMark) {
+    if (!this._chartData.graphicMarkStore().isDrawing() && this._pressedGraphicMark) {
       this._pressedGraphicMark.mousePressedMove({ x: event.localX, y: event.paneY }, event)
       this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }

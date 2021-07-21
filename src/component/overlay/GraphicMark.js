@@ -137,7 +137,7 @@ export default class GraphicMark extends Overlay {
    */
   _timestampOrDataIndexToPointX ({ timestamp, dataIndex }) {
     return timestamp
-      ? this._xAxis.convertToPixel(this._chartData.timestampToDataIndex(timestamp))
+      ? this._xAxis.convertToPixel(this._chartData.timeScaleStore().timestampToDataIndex(timestamp))
       : this._xAxis.convertToPixel(dataIndex)
   }
 
@@ -361,7 +361,7 @@ export default class GraphicMark extends Overlay {
         ctx.restore()
       }
     }
-    const graphicMarkMouseOperate = this._chartData.graphicMarkMouseOperate()
+    const graphicMarkMouseOperate = this._chartData.graphicMarkStore().mouseOperate()
     if (
       (graphicMarkMouseOperate.hover.id === this._id && graphicMarkMouseOperate.hover.element !== GraphicMarkMouseOperateElement.NONE) ||
       (graphicMarkMouseOperate.click.id === this._id && graphicMarkMouseOperate.click.element !== GraphicMarkMouseOperateElement.NONE)
@@ -500,7 +500,7 @@ export default class GraphicMark extends Overlay {
    */
   mouseMoveForDrawing (point) {
     const dataIndex = this._xAxis.convertFromPixel(point.x)
-    const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
+    const timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
     const value = this._yAxis.convertFromPixel(point.y)
     this._points[this._drawStep - 1] = { timestamp, value, dataIndex }
     this.performMouseMoveForDrawing(this._drawStep, this._points, { timestamp, value, dataIndex }, this._xAxis, this._yAxis)
@@ -534,7 +534,7 @@ export default class GraphicMark extends Overlay {
       elementIndex !== -1
     ) {
       const dataIndex = this._xAxis.convertFromPixel(point.x)
-      const timestamp = this._chartData.dataIndexToTimestamp(dataIndex)
+      const timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
       const value = this._yAxis.convertFromPixel(point.y)
       this._points[elementIndex].timestamp = timestamp
       this._points[elementIndex].dataIndex = dataIndex
