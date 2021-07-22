@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import { checkPointOnStraightLine, getLinearYFromPoints } from './graphicHelper'
+import { checkCoordinateOnStraightLine, getLinearYFromCoordinates } from './graphicHelper'
 
 export default {
   name: 'straightLine',
   totalStep: 3,
   checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
-    return checkPointOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
+    return checkCoordinateOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
   },
   createGraphicDataSource: ({ coordinates, viewport }) => {
     if (coordinates.length < 2 || coordinates[0].x === coordinates[1].x) {
@@ -47,10 +47,10 @@ export default {
         dataSource: [[
           {
             x: 0,
-            y: getLinearYFromPoints(coordinates[0], coordinates[1], { x: 0, y: coordinates[0].y })
+            y: getLinearYFromCoordinates(coordinates[0], coordinates[1], { x: 0, y: coordinates[0].y })
           }, {
             x: viewport.width,
-            y: getLinearYFromPoints(coordinates[0], coordinates[1], { x: viewport.width, y: coordinates[0].y })
+            y: getLinearYFromCoordinates(coordinates[0], coordinates[1], { x: viewport.width, y: coordinates[0].y })
           }
         ]]
       }

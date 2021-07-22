@@ -142,9 +142,9 @@ export default class YAxisView extends View {
       const technicalIndicatorData = techResult[dataSize - 1] || {}
       const plots = tech.plots
       const cbData = {
-        preData: { kLineData: dataList[dataSize - 2], technicalIndicatorData: techResult[dataSize - 2] },
-        currentData: { kLineData: dataList[dataSize - 1], technicalIndicatorData },
-        nextData: { kLineData: null, technicalIndicatorData: null }
+        prev: { kLineData: dataList[dataSize - 2], technicalIndicatorData: techResult[dataSize - 2] },
+        current: { kLineData: dataList[dataSize - 1], technicalIndicatorData },
+        next: { kLineData: null, technicalIndicatorData: null }
       }
       const precision = tech.precision
       const styles = tech.styles || technicalIndicatorOptions

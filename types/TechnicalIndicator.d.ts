@@ -8,9 +8,9 @@ export declare interface TechnicalIndicatorPlotCallbackDataItem {
 }
 
 export declare interface TechnicalIndicatorPlotCallbackData {
-  preData?: TechnicalIndicatorPlotCallbackDataItem;
-  currentData?: TechnicalIndicatorPlotCallbackDataItem;
-  nextData?: TechnicalIndicatorPlotCallbackDataItem;
+  prev?: TechnicalIndicatorPlotCallbackDataItem;
+  current?: TechnicalIndicatorPlotCallbackDataItem;
+  next?: TechnicalIndicatorPlotCallbackDataItem;
 }
 
 export declare interface TechnicalIndicatorPlot {
@@ -38,6 +38,15 @@ export declare interface TechnicalIndicatorRenderDataSource {
   technicalIndicatorDataList?: any[];
 }
 
+export declare interface CustomTechnicalIndicatorRenderParams {
+  ctx: CanvasRenderingContext2D;
+  dataSource: TechnicalIndicatorRenderDataSource;
+  viewport: Viewport;
+  styles: any;
+  xAxis: any;
+  yAxis: any;
+}
+
 export declare interface CustomTechnicalIndicator extends TechnicalIndicator {
   calcTechnicalIndicator: (kLineDataList: KLineData[], options?: any) => any[];
   plots?: TechnicalIndicatorPlot[];
@@ -45,12 +54,5 @@ export declare interface CustomTechnicalIndicator extends TechnicalIndicator {
   minValue?: number;
   maxValue?: number;
   regeneratePlots?: (params?: number[]) => TechnicalIndicatorPlot[];
-  render?: (
-    ctx: CanvasRenderingContext2D,
-    dataSource: TechnicalIndicatorRenderDataSource,
-    viewport: Viewport,
-    styleOptions: any,
-    xAxis: any,
-    yAxis: any
-  ) => void;
+  render?: (params: CustomTechnicalIndicatorRenderParams) => void;
 }

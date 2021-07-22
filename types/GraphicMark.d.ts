@@ -44,12 +44,55 @@ export declare interface GraphicMark extends OverrideGraphicMark {
   onRemove?: (event: GraphicMarkEvent) => void;
 }
 
+export declare interface GraphicMarkCheckOnParams {
+  key: string;
+  type: GraphicMarkDataSourceDrawType;
+  dataSource: GraphicMarkDataSourceItem | GraphicMarkDataSourceItem[];
+  eventCoordinate: Coordinate;
+}
+
+export declare interface GraphicMarkCreateDataSourceParams {
+  step: number;
+  points: Point[];
+  coordinates: Coordinate[];
+  viewport: Viewport;
+  precision: Precision;
+  xAxis: any;
+  yAxis: any;
+}
+
+export declare interface GraphicMarkEventPressMoveParams {
+  points: Point[];
+  pressedPointIndex: number;
+  pressPoint: Point;
+  xAxis: any;
+  yAxis: any;
+}
+
+export declare interface GraphicMarkEventMoveDrawingParams {
+  step: number;
+  points: Point[];
+  movePoint: Point;
+  xAxis: any;
+  yAxis: any;
+}
+
+export declare interface GraphicMarkDrawExtendParams {
+  ctx: CanvasRenderingContext2D;
+  dataSource: GraphicMarkDataSource[];
+  styles: any;
+  viewport: Viewport;
+  precision: Precision;
+  xAxis: any;
+  yAxis: any;
+}
+
 export declare interface CustomGraphicMark {
   name: string;
   totalStep: number;
-  checkMousePointOn: (key: string, type: GraphicMarkDataSourceDrawType, points: GraphicMarkDataSourceItem | GraphicMarkDataSourceItem[], mouseCoordinate: Coordinate) => boolean;
-  createGraphicDataSource: (step: number, points: Point[], coordinates: Coordinate[], viewport: Viewport, precision: Precision, xAxis: any, yAxis: any) => GraphicMarkDataSource[];
-  performMousePressedMove?: (points: Point[], pressedPointIndex: number, point: Point, xAxis: any, yAxis: any) => void;
-  performMouseMoveForDrawing?: (step: number, points: Point[], point: Point, xAxis: any, yAxis: any) => void;
-  drawExtend?: (ctx: CanvasRenderingContext2D, graphicMarkDataSources: GraphicMarkDataSource[], markOptions: any, viewport: Viewport ,precision: Precision, xAxis: any, yAxis: any) => void;
+  checkEventCoordinateOnGraphic: (params: GraphicMarkCheckOnParams) => boolean;
+  createGraphicDataSource: (params: GraphicMarkCreateDataSourceParams) => GraphicMarkDataSource[];
+  performEventPressedMove?: (params: GraphicMarkEventPressMoveParams) => void;
+  performEventMoveForDrawing?: (params: GraphicMarkEventMoveDrawingParams) => void;
+  drawExtend?: (params: GraphicMarkDrawExtendParams) => void;
 }

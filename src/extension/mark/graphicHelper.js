@@ -16,120 +16,120 @@ export const DEVIATION = 2
 
 /**
  * 获取两点之间的距离
- * @param point1
- * @param point2
+ * @param coordinate
+ * @param coordinate2
  * @return {number}
  */
-export function getDistance (point1, point2) {
-  const xDif = point1.x - point2.x
-  const yDif = point1.y - point2.y
+export function getDistance (coordinate1, coordinate2) {
+  const xDif = coordinate1.x - coordinate2.x
+  const yDif = coordinate1.y - coordinate2.y
   return Math.sqrt(xDif * xDif + yDif * yDif)
 }
 
 /**
  * 根据三角形三个点获取三角形面积
- * @param point1
- * @param point2
- * @param point3
+ * @param coordinate1
+ * @param coordinate2
+ * @param coordinate3
  * @return {number}
  */
-export function getTriangleSquare (point1, point2, point3) {
-  const x1 = Math.abs(point2.x - point1.x)
-  const y1 = Math.abs(point2.y - point1.y)
-  const x2 = Math.abs(point3.x - point1.x)
-  const y2 = Math.abs(point3.y - point1.y)
+export function getTriangleSquare (coordinate1, coordinate2, coordinate3) {
+  const x1 = Math.abs(coordinate2.x - coordinate1.x)
+  const y1 = Math.abs(coordinate2.y - coordinate1.y)
+  const x2 = Math.abs(coordinate3.x - coordinate1.x)
+  const y2 = Math.abs(coordinate3.y - coordinate1.y)
   return Math.abs(x1 * y2 - x2 * y1) / 2
 }
 
 /**
  * 获取一点绕另一点旋转一定角度后新的点坐标
- * @param point 旋转点
- * @param targetPoint 参照点
+ * @param coordinate 旋转点
+ * @param targetCoordinate 参照点
  * @param angle 角度
  * @return {{x: *, y: *}}
  */
-export function getRotatePoint (point, targetPoint, angle) {
-  const x = (point.x - targetPoint.x) * Math.cos(angle) - (point.y - targetPoint.y) * Math.sin(angle) + targetPoint.x
-  const y = (point.x - targetPoint.x) * Math.sin(angle) + (point.y - targetPoint.y) * Math.cos(angle) + targetPoint.y
+export function getRotateCoordinate (coordinate, targetCoordinate, angle) {
+  const x = (coordinate.x - targetCoordinate.x) * Math.cos(angle) - (coordinate.y - targetCoordinate.y) * Math.sin(angle) + targetCoordinate.x
+  const y = (coordinate.x - targetCoordinate.x) * Math.sin(angle) + (coordinate.y - targetCoordinate.y) * Math.cos(angle) + targetCoordinate.y
   return { x, y }
 }
 
 /**
  * 获取一次函数斜率和截距，即 y = kx + b 中的k值和b值
- * @param point1
- * @param point2
+ * @param coordinate1
+ * @param coordinate2
  */
-export function getLinearSlopeIntercept (point1, point2) {
-  const difX = (point1.x - point2.x)
+export function getLinearSlopeIntercept (coordinate1, coordinate2) {
+  const difX = (coordinate1.x - coordinate2.x)
   if (difX !== 0) {
-    const k = (point1.y - point2.y) / difX
-    const b = point1.y - k * point1.x
+    const k = (coordinate1.y - coordinate2.y) / difX
+    const b = coordinate1.y - k * coordinate1.x
     return { k, b }
   }
 }
 
 /**
  * 获取点在两点决定的一次函数上的y值
- * @param point1
- * @param point2
- * @param targetPoint
+ * @param coordinate1
+ * @param coordinate2
+ * @param targetCoordinate
  */
-export function getLinearYFromPoints (point1, point2, targetPoint) {
-  const kb = getLinearSlopeIntercept(point1, point2)
-  return getLinearYFromSlopeIntercept(kb, targetPoint)
+export function getLinearYFromCoordinates (coordinate1, coordinate2, targetCoordinate) {
+  const kb = getLinearSlopeIntercept(coordinate1, coordinate2)
+  return getLinearYFromSlopeIntercept(kb, targetCoordinate)
 }
 
 /**
  * 获取点在斜率和截距确定的线上的y值
  * @param kb
- * @param targetPoint
+ * @param targetCoordinate
  */
-export function getLinearYFromSlopeIntercept (kb, targetPoint) {
+export function getLinearYFromSlopeIntercept (kb, targetCoordinate) {
   if (kb) {
-    return targetPoint.x * kb.k + kb.b
+    return targetCoordinate.x * kb.k + kb.b
   }
-  return targetPoint.y
+  return targetCoordinate.y
 }
 
 /**
  * 点是否在线上
- * @param point1
- * @param point2
- * @param targetPoint
+ * @param coordinate1
+ * @param coordinate2
+ * @param targetCoordinate
  */
-export function checkPointOnStraightLine (point1, point2, targetPoint) {
-  if (!targetPoint || !point1 || !point2) {
+export function checkCoordinateOnStraightLine (coordinate1, coordinate2, targetCoordinate) {
+  if (!targetCoordinate || !coordinate1 || !coordinate2) {
     return false
   }
-  if (point1.x === point2.x) {
-    return Math.abs(targetPoint.x - point1.x) < DEVIATION
+  if (coordinate1.x === coordinate2.x) {
+    return Math.abs(targetCoordinate.x - coordinate1.x) < DEVIATION
   }
-  const kb = getLinearSlopeIntercept(point1, point2)
-  const y = getLinearYFromSlopeIntercept(kb, targetPoint)
-  const yDif = Math.abs(y - targetPoint.y)
+  const kb = getLinearSlopeIntercept(coordinate1, coordinate2)
+  const y = getLinearYFromSlopeIntercept(kb, targetCoordinate)
+  const yDif = Math.abs(y - targetCoordinate.y)
   return yDif * yDif / (kb.k * kb.k + 1) < DEVIATION * DEVIATION
 }
 
 /**
  * 点是否在线段上
- * @param point1
- * @param point2
- * @param targetPoint
+ * @param coordinate1
+ * @param coordinate2
+ * @param targetCoordinate
  * @returns {boolean}
  */
-export function checkPointOnRayLine (point1, point2, targetPoint) {
-  if (checkPointOnStraightLine(point1, point2, targetPoint)) {
-    if (point1.x === point2.x) {
-      if (point1.y < point2.y) {
-        return point1.y - targetPoint.y < DEVIATION
+export function checkCoordinateOnRayLine (coordinate1, coordinate2, targetCoordinate) {
+  if (checkCoordinateOnStraightLine(coordinate1, coordinate2, targetCoordinate)) {
+    if (coordinate1.x === coordinate2.x) {
+      if (coordinate1.y < coordinate2.y) {
+        return coordinate1.y - targetCoordinate.y < DEVIATION
       } else {
-        return targetPoint.y - point1.y < DEVIATION
+        return targetCoordinate.y - coordinate1.y < DEVIATION
       }
     }
-    if (point1.x < point2.x) {
-      return point1.x - targetPoint.x < DEVIATION
+    if (coordinate1.x < coordinate2.x) {
+      return coordinate1.x - targetCoordinate.x < DEVIATION
     } else {
-      return targetPoint.x - point1.x < DEVIATION
+      return targetCoordinate.x - coordinate1.x < DEVIATION
     }
   }
   return false
@@ -137,183 +137,183 @@ export function checkPointOnRayLine (point1, point2, targetPoint) {
 
 /**
  * 判断点是否在线段上面
- * @param point1
- * @param point2
- * @param targetPoint
+ * @param coordinate1
+ * @param coordinate2
+ * @param targetCoordinate
  */
-export function checkPointOnSegment (point1, point2, targetPoint) {
-  if (checkPointOnStraightLine(point1, point2, targetPoint)) {
-    if (point1.x === point2.x) {
-      return Math.abs(point1.y - targetPoint.y) + Math.abs(point2.y - targetPoint.y) - Math.abs(point1.y - point2.y) < DEVIATION * 2
+export function checkCoordinateOnSegment (coordinate1, coordinate2, targetCoordinate) {
+  if (checkCoordinateOnStraightLine(coordinate1, coordinate2, targetCoordinate)) {
+    if (coordinate1.x === coordinate2.x) {
+      return Math.abs(coordinate1.y - targetCoordinate.y) + Math.abs(coordinate2.y - targetCoordinate.y) - Math.abs(coordinate1.y - coordinate2.y) < DEVIATION * 2
     }
-    return Math.abs(point1.x - targetPoint.x) + Math.abs(point2.x - targetPoint.x) - Math.abs(point1.x - point2.x) < DEVIATION * 2
+    return Math.abs(coordinate1.x - targetCoordinate.x) + Math.abs(coordinate2.x - targetCoordinate.x) - Math.abs(coordinate1.x - coordinate2.x) < DEVIATION * 2
   }
   return false
 }
 
 /**
  * 点是否在圆内
- * @param circleCenterPoint
+ * @param circleCenterCoordinate
  * @param radius
- * @param targetPoint
+ * @param targetCoordinate
  * @returns {boolean}
  */
-export function checkPointInCircle (circleCenterPoint, radius, targetPoint) {
-  if (!targetPoint) {
+export function checkCoordinateInCircle (circleCenterCoordinate, radius, targetCoordinate) {
+  if (!targetCoordinate) {
     return false
   }
-  const difX = targetPoint.x - circleCenterPoint.x
-  const difY = targetPoint.y - circleCenterPoint.y
+  const difX = targetCoordinate.x - circleCenterCoordinate.x
+  const difY = targetCoordinate.y - circleCenterCoordinate.y
   return !(difX * difX + difY * difY > radius * radius)
 }
 
 /**
  * 点是否在圆上
- * @param circleCenterPoint
+ * @param circleCenterCoordinate
  * @param radius
- * @param targetPoint
+ * @param targetCoordinate
  * @return {boolean}
  */
-export function checkPointOnCircle (circleCenterPoint, radius, targetPoint) {
-  if (!targetPoint) {
+export function checkCoordinateOnCircle (circleCenterCoordinate, radius, targetCoordinate) {
+  if (!targetCoordinate) {
     return false
   }
-  return Math.abs(getDistance(targetPoint, circleCenterPoint) - radius) < DEVIATION
+  return Math.abs(getDistance(targetCoordinate, circleCenterCoordinate) - radius) < DEVIATION
 }
 
 /**
  * 检查点是否在圆弧上
- * @param circleCenterPoint
+ * @param circleCenterCoordinate
  * @param radius
  * @param startAngle
  * @param endAngle
- * @param targetPoint
+ * @param targetCoordinate
  * @return {boolean}
  */
-export function checkPointOnArc (circleCenterPoint, radius, startAngle, endAngle, targetPoint) {
-  if (checkPointOnCircle(circleCenterPoint, radius, targetPoint)) {
-    const startPointX = radius * Math.cos(startAngle) + circleCenterPoint.x
-    const startPointY = radius * Math.sin(startAngle) + circleCenterPoint.y
-    const endPointX = radius * Math.cos(endAngle) + circleCenterPoint.x
-    const endPointY = radius * Math.sin(endAngle) + circleCenterPoint.y
+export function checkCoordinateOnArc (circleCenterCoordinate, radius, startAngle, endAngle, targetCoordinate) {
+  if (checkCoordinateOnCircle(circleCenterCoordinate, radius, targetCoordinate)) {
+    const startPointX = radius * Math.cos(startAngle) + circleCenterCoordinate.x
+    const startPointY = radius * Math.sin(startAngle) + circleCenterCoordinate.y
+    const endPointX = radius * Math.cos(endAngle) + circleCenterCoordinate.x
+    const endPointY = radius * Math.sin(endAngle) + circleCenterCoordinate.y
     return (
-      targetPoint.x <= Math.max(startPointX, endPointX) + DEVIATION &&
-      targetPoint.x >= Math.min(startPointX, endPointX) - DEVIATION &&
-      targetPoint.y <= Math.max(startPointY, endPointY) + DEVIATION &&
-      targetPoint.y >= Math.min(startPointY, endPointY) - DEVIATION
+      targetCoordinate.x <= Math.max(startPointX, endPointX) + DEVIATION &&
+      targetCoordinate.x >= Math.min(startPointX, endPointX) - DEVIATION &&
+      targetCoordinate.y <= Math.max(startPointY, endPointY) + DEVIATION &&
+      targetCoordinate.y >= Math.min(startPointY, endPointY) - DEVIATION
     )
   }
 }
 
 /**
  * 检查点是否在三角形内部
- * @param trianglePoints
- * @param targetPoint
+ * @param triangleCoordinates
+ * @param targetCoordinate
  * @return {boolean}
  */
-export function checkPointInTriangle (trianglePoints, targetPoint) {
-  const square = getTriangleSquare(trianglePoints[0], trianglePoints[1], trianglePoints[2])
+export function checkCoordinateInTriangle (triangleCoordinates, targetCoordinate) {
+  const square = getTriangleSquare(triangleCoordinates[0], triangleCoordinates[1], triangleCoordinates[2])
   const compareSquare =
-    getTriangleSquare(trianglePoints[0], trianglePoints[1], targetPoint) +
-    getTriangleSquare(trianglePoints[0], trianglePoints[2], targetPoint) +
-    getTriangleSquare(trianglePoints[1], trianglePoints[2], targetPoint)
+    getTriangleSquare(triangleCoordinates[0], triangleCoordinates[1], targetCoordinate) +
+    getTriangleSquare(triangleCoordinates[0], triangleCoordinates[2], targetCoordinate) +
+    getTriangleSquare(triangleCoordinates[1], triangleCoordinates[2], targetCoordinate)
   return Math.abs(square - compareSquare) < DEVIATION
 }
 
 /**
  * 检查点是否在三角形菱形内部
- * @param centerPoint
+ * @param centerCoordinate
  * @param width
  * @param height
- * @param targetPoint
+ * @param targetCoordinate
  * @return {boolean}
  */
-export function checkPointInDiamond (centerPoint, width, height, targetPoint) {
-  const xDis = Math.abs(centerPoint.x - targetPoint.x)
-  const yDis = Math.abs(centerPoint.y - targetPoint.y)
+export function checkCoordinateInDiamond (centerCoordinate, width, height, targetCoordinate) {
+  const xDis = Math.abs(centerCoordinate.x - targetCoordinate.x)
+  const yDis = Math.abs(centerCoordinate.y - targetCoordinate.y)
   return xDis * height + yDis * width < width * height / 2 + DEVIATION
 }
 
 /**
  * 检查点是否在矩形内部
- * @param point1
- * @param point2
- * @param targetPoint
+ * @param coordinate1
+ * @param coordinate2
+ * @param targetCoordinate
  * @return {boolean}
  */
-export function checkPointInRect (point1, point2, targetPoint) {
-  return targetPoint.x >= point1.x && targetPoint.x <= point2.x && targetPoint.y >= point1.y && targetPoint.y <= point2.y
+export function checkCoordinateInRect (coordinate1, coordinate2, targetCoordinate) {
+  return targetCoordinate.x >= coordinate1.x && targetCoordinate.x <= coordinate2.x && targetCoordinate.y >= coordinate1.y && targetCoordinate.y <= coordinate2.y
 }
 
 /**
  * 根据两点获取一条射线
- * @param point1
- * @param point2
+ * @param coordinate1
+ * @param coordinate2
  * @param xyMax
  * @return {(*|{x: *, y: *})[]|*[]}
  */
-export function getRayLine (point1, point2, xyMax) {
-  if (point1 && point2) {
+export function getRayLine (coordinate1, coordinate2, xyMax) {
+  if (coordinate1 && coordinate2) {
     let point
-    if (point1.x === point2.x && point1.y !== point2.y) {
-      if (point1.y < point2.y) {
+    if (coordinate1.x === coordinate2.x && coordinate1.y !== coordinate2.y) {
+      if (coordinate1.y < coordinate2.y) {
         point = {
-          x: point1.x,
+          x: coordinate1.x,
           y: xyMax.y
         }
       } else {
         point = {
-          x: point1.x,
+          x: coordinate1.x,
           y: 0
         }
       }
-    } else if (point1.x > point2.x) {
+    } else if (coordinate1.x > coordinate2.x) {
       point = {
         x: 0,
-        y: getLinearYFromPoints(point1, point2, { x: 0, y: point1.y })
+        y: getLinearYFromCoordinates(coordinate1, coordinate2, { x: 0, y: coordinate1.y })
       }
     } else {
       point = {
         x: xyMax.x,
-        y: getLinearYFromPoints(point1, point2, { x: xyMax.x, y: point1.y })
+        y: getLinearYFromCoordinates(coordinate1, coordinate2, { x: xyMax.x, y: coordinate1.y })
       }
     }
-    return [point1, point]
+    return [coordinate1, point]
   }
   return []
 }
 
 /**
  * 获取平行线
- * @param points
+ * @param coordinates
  * @param xyMax
  * @param extendParallelLineCount
  * @returns {Array}
  */
-export function getParallelLines (points, xyMax, extendParallelLineCount = 0) {
+export function getParallelLines (coordinates, xyMax, extendParallelLineCount = 0) {
   const lines = []
-  if (points.length > 1) {
-    if (points[0].x === points[1].x) {
+  if (coordinates.length > 1) {
+    if (coordinates[0].x === coordinates[1].x) {
       const startY = 0
       const endY = xyMax.y
-      lines.push([{ x: points[0].x, y: startY }, { x: points[0].x, y: endY }])
-      if (points.length > 2) {
-        lines.push([{ x: points[2].x, y: startY }, { x: points[2].x, y: endY }])
-        const distance = points[0].x - points[2].x
+      lines.push([{ x: coordinates[0].x, y: startY }, { x: coordinates[0].x, y: endY }])
+      if (coordinates.length > 2) {
+        lines.push([{ x: coordinates[2].x, y: startY }, { x: coordinates[2].x, y: endY }])
+        const distance = coordinates[0].x - coordinates[2].x
         for (let i = 0; i < extendParallelLineCount; i++) {
           const d = distance * (i + 1)
-          lines.push([{ x: points[0].x + d, y: startY }, { x: points[0].x + d, y: endY }])
+          lines.push([{ x: coordinates[0].x + d, y: startY }, { x: coordinates[0].x + d, y: endY }])
         }
       }
     } else {
       const startX = 0
       const endX = xyMax.x
-      const kb = getLinearSlopeIntercept(points[0], points[1])
+      const kb = getLinearSlopeIntercept(coordinates[0], coordinates[1])
       const k = kb.k
       const b = kb.b
       lines.push([{ x: startX, y: startX * k + b }, { x: endX, y: endX * k + b }])
-      if (points.length > 2) {
-        const b1 = points[2].y - k * points[2].x
+      if (coordinates.length > 2) {
+        const b1 = coordinates[2].y - k * coordinates[2].x
         lines.push([{ x: startX, y: startX * k + b1 }, { x: endX, y: endX * k + b1 }])
         const distance = b - b1
         for (let i = 0; i < extendParallelLineCount; i++) {

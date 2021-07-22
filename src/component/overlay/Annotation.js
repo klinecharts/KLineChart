@@ -19,8 +19,8 @@ import { renderFillRect } from '../../renderer/rect'
 import { renderFillDiamond } from '../../renderer/diamond'
 import { renderFillTriangle } from '../../renderer/triangle'
 import {
-  checkPointInCircle, checkPointInDiamond,
-  checkPointInRect, checkPointInTriangle
+  checkCoordinateInCircle, checkCoordinateInDiamond,
+  checkCoordinateInRect, checkCoordinateInTriangle
 } from '../../extension/mark/graphicHelper'
 
 import { isNumber } from '../../utils/typeChecks'
@@ -150,21 +150,21 @@ export default class Annotation extends Overlay {
     let isOn
     switch (symbolOptions.type) {
       case AnnotationSymbolType.CIRCLE: {
-        isOn = checkPointInCircle(this._symbolCoordinate, size / 2, eventCoordinate)
+        isOn = checkCoordinateInCircle(this._symbolCoordinate, size / 2, eventCoordinate)
         break
       }
       case AnnotationSymbolType.RECT: {
         const coordinate1 = { x: this._symbolCoordinate.x - size / 2, y: this._symbolCoordinate.y - size / 2 }
         const coordinate2 = { x: this._symbolCoordinate.x + size / 2, y: this._symbolCoordinate.y + size / 2 }
-        isOn = checkPointInRect(coordinate1, coordinate2, eventCoordinate)
+        isOn = checkCoordinateInRect(coordinate1, coordinate2, eventCoordinate)
         break
       }
       case AnnotationSymbolType.DIAMOND: {
-        isOn = checkPointInDiamond(this._symbolCoordinate, size, size, eventCoordinate)
+        isOn = checkCoordinateInDiamond(this._symbolCoordinate, size, size, eventCoordinate)
         break
       }
       case AnnotationSymbolType.TRIANGLE: {
-        isOn = checkPointInTriangle(
+        isOn = checkCoordinateInTriangle(
           [
             { x: this._symbolCoordinate.x - size / 2, y: this._symbolCoordinate.y + size / 2 },
             { x: this._symbolCoordinate.x, y: this._symbolCoordinate.y - size / 2 },

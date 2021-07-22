@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import { checkPointOnRayLine, getRayLine } from './graphicHelper'
+import { checkCoordinateOnRayLine, getRayLine } from './graphicHelper'
 
 export default {
   name: 'rayLine',
   totalStep: 3,
   checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
-    return checkPointOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
+    return checkCoordinateOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
   },
   createGraphicDataSource: ({ coordinates, viewport }) => {
     return [

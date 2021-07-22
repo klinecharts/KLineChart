@@ -7,7 +7,10 @@ import { Chart, PictureType, ChartActionType } from './Chart';
 import {
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  OverrideGraphicMark, GraphicMark, CustomGraphicMark
+  OverrideGraphicMark, GraphicMark, CustomGraphicMark,
+  GraphicMarkCheckOnParams, GraphicMarkCreateDataSourceParams,
+  GraphicMarkEventPressMoveParams, GraphicMarkEventMoveDrawingParams,
+  GraphicMarkDrawExtendParams
 } from './GraphicMark';
 import {
   AnnotationCheckParams,
@@ -22,7 +25,7 @@ import {
   TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, TechnicalIndicatorRenderDataSource,
-  TechnicalIndicator, CustomTechnicalIndicator
+  TechnicalIndicator, CustomTechnicalIndicatorRenderParams, CustomTechnicalIndicator
 } from './TechnicalIndicator';
 
 export declare interface extension {
@@ -43,10 +46,13 @@ export {
   GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
   OverrideGraphicMark, GraphicMark, CustomGraphicMark,
+  GraphicMarkCheckOnParams, GraphicMarkCreateDataSourceParams,
+  GraphicMarkEventPressMoveParams, GraphicMarkEventMoveDrawingParams,
+  GraphicMarkDrawExtendParams,
   AnnotationCheckParams, AnnotationDrawParams, Annotation,
   Tag,
   TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, TechnicalIndicatorRenderDataSource,
-  TechnicalIndicator, CustomTechnicalIndicator
+  TechnicalIndicator, CustomTechnicalIndicatorRenderParams, CustomTechnicalIndicator
 }

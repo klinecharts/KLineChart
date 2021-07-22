@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import { checkPointOnStraightLine, getParallelLines } from './graphicHelper'
+import { checkCoordinateOnStraightLine, getParallelLines } from './graphicHelper'
 
 export default {
   name: 'priceChannelLine',
   totalStep: 4,
   checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
-    return checkPointOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
+    return checkCoordinateOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
   },
   createGraphicDataSource: ({ coordinates, viewport }) => {
     return [

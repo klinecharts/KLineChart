@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import { checkPointOnRayLine } from './graphicHelper'
+import { checkCoordinateOnRayLine } from './graphicHelper'
 
 export default {
   name: 'verticalRayLine',
   totalStep: 3,
   checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
-    return checkPointOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
+    return checkCoordinateOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
   },
   createGraphicDataSource: ({ coordinates, viewport }) => {
     const point = { x: coordinates[0].x, y: 0 }

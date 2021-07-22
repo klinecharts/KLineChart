@@ -86,24 +86,24 @@ export default class TechnicalIndicatorView extends View {
       // 技术指标自定义绘制
       if (technicalIndicator.render) {
         this._ctx.save()
-        technicalIndicator.render(
-          this._ctx,
-          {
+        technicalIndicator.render({
+          ctx: this._ctx,
+          dataSource: {
             from: this._chartData.from(),
             to: this._chartData.to(),
             kLineDataList: this._chartData.dataList(),
             technicalIndicatorDataList: technicalIndicatorResult
           },
-          {
+          viewport: {
             width: this._width,
             height: this._height,
             dataSpace: this._chartData.timeScaleStore().dataSpace(),
             barSpace: this._chartData.timeScaleStore().barSpace()
           },
           styles,
-          this._xAxis,
-          this._yAxis
-        )
+          xAxis: this._xAxis,
+          yAxis: this._yAxis
+        })
         this._ctx.restore()
       }
       const isCandleYAxis = this._yAxis.isCandleYAxis()
@@ -123,9 +123,9 @@ export default class TechnicalIndicatorView extends View {
               case TechnicalIndicatorPlotType.CIRCLE: {
                 if (isValid(value)) {
                   const cbData = {
-                    preData: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
-                    currentData: { kLineData, technicalIndicatorData },
-                    nextData: { kLineData: dataList[i + 1], technicalIndicatorData: technicalIndicatorResult[i + 1] }
+                    prev: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
+                    current: { kLineData, technicalIndicatorData },
+                    next: { kLineData: dataList[i + 1], technicalIndicatorData: technicalIndicatorResult[i + 1] }
                   }
                   this._drawCircle({
                     x,
@@ -140,9 +140,9 @@ export default class TechnicalIndicatorView extends View {
               case TechnicalIndicatorPlotType.BAR: {
                 if (isValid(value)) {
                   const cbData = {
-                    preData: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
-                    currentData: { kLineData, technicalIndicatorData },
-                    nextData: { kLineData: dataList[i + 1], technicalIndicatorData: technicalIndicatorResult[i + 1] }
+                    prev: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
+                    current: { kLineData, technicalIndicatorData },
+                    next: { kLineData: dataList[i + 1], technicalIndicatorData: technicalIndicatorResult[i + 1] }
                   }
                   let baseValue
                   if (isValid(plot.baseValue)) {

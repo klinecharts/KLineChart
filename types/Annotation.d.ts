@@ -1,7 +1,7 @@
 import { OverlayEvent, Point, Coordinate, Viewport } from './Common';
 
 export declare interface AnnotationCheckParams {
-  point?: Coordinate;
+  eventCoordinate?: Coordinate;
   coordinate?: Coordinate;
   size?: number;
 }
@@ -18,7 +18,7 @@ export declare interface AnnotationDrawParams {
 export declare interface Annotation {
   point: Point;
   styles?: any;
-  checkPointInCustomSymbol?: (params: AnnotationCheckParams) => void;
+  checkEventCoordinateOnCustomSymbol?: (params: AnnotationCheckParams) => void;
   drawCustomSymbol?: (params: AnnotationDrawParams) => void;
   drawExtend?: (params: AnnotationDrawParams) => void;
   onClick?: (event: OverlayEvent) => void;

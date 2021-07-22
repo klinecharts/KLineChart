@@ -29,7 +29,7 @@ export default {
       type: 'bar',
       baseValue: 0,
       color: (data, options) => {
-        const kLineData = data.currentData.kLineData || {}
+        const kLineData = data.current.kLineData || {}
         if (kLineData.close > kLineData.open) {
           return options.bar.upColor
         } else if (kLineData.close < kLineData.open) {
@@ -49,7 +49,7 @@ export default {
       type: 'bar',
       baseValue: 0,
       color: (data, options) => {
-        const kLineData = data.currentData.kLineData || {}
+        const kLineData = data.current.kLineData || {}
         if (kLineData.close > kLineData.open) {
           return options.bar.upColor
         } else if (kLineData.close < kLineData.open) {

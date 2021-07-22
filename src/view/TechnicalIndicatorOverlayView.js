@@ -166,9 +166,9 @@ export default class TechnicalIndicatorOverlayView extends View {
     const colors = styles.line.colors
     const dataList = this._chartData.dataList()
     const cbData = {
-      preData: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: technicalIndicatorResult[crosshair.dataIndex - 1] },
-      currentData: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData },
-      nextData: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: technicalIndicatorResult[crosshair.dataIndex + 1] }
+      prev: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: technicalIndicatorResult[crosshair.dataIndex - 1] },
+      current: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData },
+      next: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: technicalIndicatorResult[crosshair.dataIndex + 1] }
     }
     const plots = technicalIndicator.plots
     const technicalIndicatorTooltipTextOptions = technicalIndicatorTooltipOptions.text

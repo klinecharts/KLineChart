@@ -32,8 +32,8 @@ export default {
       type: 'bar',
       baseValue: 0,
       color: (data, options) => {
-        const { currentData } = data
-        const macd = (currentData.technicalIndicatorData || {}).macd
+        const { current } = data
+        const macd = (current.technicalIndicatorData || {}).macd
         if (macd > 0) {
           return options.bar.upColor
         } else if (macd < 0) {
@@ -43,9 +43,9 @@ export default {
         }
       },
       isStroke: (data) => {
-        const { preData, currentData } = data
-        const macd = (currentData.technicalIndicatorData || {}).macd
-        const preMacd = (preData.technicalIndicatorData || {}).macd
+        const { prev, current } = data
+        const macd = (current.technicalIndicatorData || {}).macd
+        const preMacd = (prev.technicalIndicatorData || {}).macd
         return preMacd < macd
       }
     }

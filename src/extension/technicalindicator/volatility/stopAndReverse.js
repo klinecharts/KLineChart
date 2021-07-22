@@ -23,9 +23,9 @@ export default {
       title: 'SAR: ',
       type: 'circle',
       color: (data, options) => {
-        const { currentData } = data
-        const kLineData = currentData.kLineData || {}
-        const technicalIndicatorData = currentData.technicalIndicatorData || {}
+        const { current } = data
+        const kLineData = current.kLineData || {}
+        const technicalIndicatorData = current.technicalIndicatorData || {}
         const halfHL = (kLineData.high + kLineData.low) / 2
         if (technicalIndicatorData.sar < halfHL) {
           return options.circle.upColor

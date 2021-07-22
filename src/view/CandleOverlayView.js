@@ -208,9 +208,9 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
         name: tech.name,
         tooltipData: getTechnicalIndicatorTooltipData(result[crosshair.dataIndex], tech),
         cbData: {
-          preData: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: result[crosshair.dataIndex - 1] },
-          currentData: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData: result[crosshair.dataIndex] },
-          nextData: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: result[crosshair.dataIndex + 1] }
+          prev: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: result[crosshair.dataIndex - 1] },
+          current: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData: result[crosshair.dataIndex] },
+          next: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: result[crosshair.dataIndex + 1] }
         }
       })
     })

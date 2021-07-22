@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import { checkPointOnSegment } from './graphicHelper'
+import { checkCoordinateOnSegment } from './graphicHelper'
 
 export default {
   name: 'segment',
   totalStep: 3,
   checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
-    return checkPointOnSegment(dataSource[0], dataSource[1], eventCoordinate)
+    return checkCoordinateOnSegment(dataSource[0], dataSource[1], eventCoordinate)
   },
   createGraphicDataSource: ({ coordinates }) => {
     let lines = []

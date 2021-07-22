@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import { checkPointOnStraightLine } from './graphicHelper'
+import { checkCoordinateOnStraightLine } from './graphicHelper'
 
 export default {
   name: 'verticalStraightLine',
   totalStep: 2,
   checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
-    return checkPointOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
+    return checkCoordinateOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
   },
   createGraphicDataSource: ({ coordinates, viewport }) => {
     return [

@@ -22,9 +22,9 @@ export default {
     type: 'bar',
     baseValue: 0,
     color: (data, options) => {
-      const { preData, currentData } = data
-      const preAo = (preData.technicalIndicatorData || {}).ao
-      const ao = (currentData.technicalIndicatorData || {}).ao
+      const { prev, current } = data
+      const preAo = (prev.technicalIndicatorData || {}).ao
+      const ao = (current.technicalIndicatorData || {}).ao
       if (ao > preAo) {
         return options.bar.upColor
       } else {
@@ -32,9 +32,9 @@ export default {
       }
     },
     isStroke: (data) => {
-      const { preData, currentData } = data
-      const preAo = (preData.technicalIndicatorData || {}).ao
-      const ao = (currentData.technicalIndicatorData || {}).ao
+      const { prev, current } = data
+      const preAo = (prev.technicalIndicatorData || {}).ao
+      const ao = (current.technicalIndicatorData || {}).ao
       return ao > preAo
     }
   }],
