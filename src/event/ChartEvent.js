@@ -86,6 +86,11 @@ export default class ChartEvent {
       }
       if (zoomScroll) {
         this._zoomScrollEventHandler.mouseMoveEvent(compatEvent)
+      } else {
+        // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
+        if (this._chartData.crosshairStore().get().paneId) {
+          this._chartData.crosshairStore().set()
+        }
       }
     } else {
       this._target.style.cursor = 'default'
@@ -134,13 +139,14 @@ export default class ChartEvent {
         const compatEvent = this._compatChartEvent(event, true)
         if (markDragFlag) {
           this._overlayEventHandler.pressedMouseMoveEvent(compatEvent)
+        }
+        if (zoomScroll) {
+          this._zoomScrollEventHandler.pressedMouseMoveEvent(compatEvent)
+        } else {
           // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
           if (this._chartData.crosshairStore().get().paneId) {
             this._chartData.crosshairStore().set()
           }
-        }
-        if (zoomScroll) {
-          this._zoomScrollEventHandler.pressedMouseMoveEvent(compatEvent)
         }
       }
     }
@@ -153,7 +159,7 @@ export default class ChartEvent {
   }
 
   _checkZoomScroll () {
-    return !this._chartData.dragPaneFlag() && !this._chartData.graphicMarkStore().dragFlag() && (this._chartData.graphicMarkStore().isEmpty() || !this._chartData.graphicMarkStore().isDrawing())
+    return !this._chartData.dragPaneFlag() && !this._chartData.graphicMarkStore().dragFlag() && !this._chartData.graphicMarkStore().isDrawing()
   }
 
   /**

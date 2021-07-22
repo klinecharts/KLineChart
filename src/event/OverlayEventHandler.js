@@ -132,12 +132,14 @@ export default class OverlayEventHandler extends EventHandler {
       for (const graphicMark of graphicMarks) {
         graphicMarkClickOperate = graphicMark.checkEventCoordinateOn(coordinate)
         if (graphicMarkClickOperate) {
+          this._chartData.graphicMarkStore().setDragFlag(true)
+          this._pressedGraphicMark = { instance: graphicMark, element: graphicMarkClickOperate.element }
           if (graphicMarkClickOperate.element === GraphicMarkMouseOperateElement.POINT) {
-            this._pressedGraphicMark = graphicMark
-            this._chartData.graphicMarkStore().setDragFlag(true)
             graphicMarkHoverOperate = {
               ...graphicMarkClickOperate
             }
+          } else {
+            graphicMark.startPressedOtherMove(coordinate)
           }
           graphicMark.onClick({
             id: graphicMarkClickOperate.id,
@@ -196,7 +198,12 @@ export default class OverlayEventHandler extends EventHandler {
 
   pressedMouseMoveEvent (event) {
     if (!this._chartData.graphicMarkStore().isDrawing() && this._pressedGraphicMark) {
-      this._pressedGraphicMark.mousePressedMove({ x: event.localX, y: event.paneY }, event)
+      const coordinate = { x: event.localX, y: event.paneY }
+      if (this._pressedGraphicMark.element === GraphicMarkMouseOperateElement.POINT) {
+        this._pressedGraphicMark.instance.mousePressedPointMove(coordinate, event)
+      } else {
+        this._pressedGraphicMark.instance.mousePressedOtherMove(coordinate)
+      }
       this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }
   }

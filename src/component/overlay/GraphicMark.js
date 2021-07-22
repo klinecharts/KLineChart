@@ -15,7 +15,7 @@
 import Overlay from './Overlay'
 
 import { renderFillCircle } from '../../renderer/circle'
-import { checkPointInCircle } from '../../extension/mark/graphicHelper'
+import { checkCoordinateInCircle } from '../../extension/mark/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../renderer/line'
 import { isValid, isArray, clone } from '../../utils/typeChecks'
 
@@ -101,6 +101,8 @@ export default class GraphicMark extends Overlay {
     this._points = []
     this.setPoints(points)
     this.setStyles(styles, chartData.styleOptions().graphicMark)
+    this._prePressPoint = null
+    this._prePoints = null
   }
 
   /**
@@ -323,26 +325,26 @@ export default class GraphicMark extends Overlay {
    * @param ctx
    */
   draw (ctx) {
-    const coordinates = this._points.map(({ timestamp, value, dataIndex }) => {
+    this._coordinates = this._points.map(({ timestamp, value, dataIndex }) => {
       return {
         x: this._timestampOrDataIndexToPointX({ timestamp, dataIndex }),
         y: this._yAxis.convertToPixel(value)
       }
     })
     const markOptions = this._styles || this._chartData.styleOptions().graphicMark
-    if (this._drawStep !== GRAPHIC_MARK_DRAW_STEP_START && coordinates.length > 0) {
+    if (this._drawStep !== GRAPHIC_MARK_DRAW_STEP_START && this._coordinates.length > 0) {
       const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
       const precision = { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() }
-      const graphicDataSources = this.createGraphicDataSource({
+      this._graphicDataSources = this.createGraphicDataSource({
         step: this._drawStep,
         points: this._points,
-        coordinates,
+        coordinates: this._coordinates,
         viewport: { width: this._xAxis.width(), height: this._yAxis.height() },
         precision: { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() },
         xAxis: this._xAxis,
         yAxis: this._yAxis
       }) || []
-      graphicDataSources.forEach(({ type, isDraw, style, dataSource = [] }) => {
+      this._graphicDataSources.forEach(({ type, isDraw, style, dataSource = [] }) => {
         if (!isValid(isDraw) || isDraw) {
           switch (type) {
             case GraphicMarkDrawType.LINE: {
@@ -371,10 +373,15 @@ export default class GraphicMark extends Overlay {
       })
       if (this.drawExtend) {
         ctx.save()
-        this.drawExtend(
-          ctx, graphicDataSources, markOptions,
-          viewport, precision, this._xAxis, this._yAxis
-        )
+        this.drawExtend({
+          ctx,
+          dataSource: this._graphicDataSources,
+          styles: markOptions,
+          viewport,
+          precision,
+          xAxis: this._xAxis,
+          yAxis: this._yAxis
+        })
         ctx.restore()
       }
     }
@@ -383,7 +390,7 @@ export default class GraphicMark extends Overlay {
       (graphicMarkMouseOperate.hover.id === this._id && graphicMarkMouseOperate.hover.element !== GraphicMarkMouseOperateElement.NONE) ||
       (graphicMarkMouseOperate.click.id === this._id && graphicMarkMouseOperate.click.element !== GraphicMarkMouseOperateElement.NONE)
     ) {
-      coordinates.forEach(({ x, y }, index) => {
+      this._coordinates.forEach(({ x, y }, index) => {
         let radius = markOptions.point.radius
         let color = markOptions.point.backgroundColor
         let borderColor = markOptions.point.borderColor
@@ -459,17 +466,10 @@ export default class GraphicMark extends Overlay {
    */
   checkEventCoordinateOn (eventCoordinate) {
     const markOptions = this._styles || this._chartData.styleOptions().graphicMark
-    const coordinates = []
     // 检查鼠标点是否在图形的点上
-    const start = this._points.length - 1
+    const start = this._coordinates.length - 1
     for (let i = start; i > -1; i--) {
-      const { timestamp, value, dataIndex } = this._points[i]
-      const coordinate = {
-        x: this._timestampOrDataIndexToPointX({ timestamp, dataIndex }),
-        y: this._yAxis.convertToPixel(value)
-      }
-      coordinates.push(coordinate)
-      if (checkPointInCircle(coordinate, markOptions.point.radius, eventCoordinate)) {
+      if (checkCoordinateInCircle(this._coordinates[i], markOptions.point.radius, eventCoordinate)) {
         return {
           id: this._id,
           element: GraphicMarkMouseOperateElement.POINT,
@@ -479,25 +479,18 @@ export default class GraphicMark extends Overlay {
       }
     }
     // 检查鼠标点是否在点构成的其它图形上
-    const graphicDataSources = this.createGraphicDataSource({
-      step: this._drawStep,
-      points: this._points,
-      coordinates,
-      viewport: { width: this._xAxis.width(), height: this._yAxis.height() },
-      precision: { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() },
-      xAxis: this._xAxis,
-      yAxis: this._yAxis
-    }) || []
-    for (const { key, type, isCheck, dataSource = [] } of graphicDataSources) {
-      if (isCheck) {
-        for (let i = 0; i < dataSource.length; i++) {
-          const sources = dataSource[i]
-          if (this.checkEventCoordinateOnGraphic({ key, type, dataSource: sources, eventCoordinate })) {
-            return {
-              id: this._id,
-              element: GraphicMarkMouseOperateElement.OTHER,
-              elementIndex: i,
-              instance: this
+    if (this._graphicDataSources) {
+      for (const { key, type, isCheck, dataSource = [] } of this._graphicDataSources) {
+        if (isCheck) {
+          for (let i = 0; i < dataSource.length; i++) {
+            const sources = dataSource[i]
+            if (this.checkEventCoordinateOnGraphic({ key, type, dataSource: sources, eventCoordinate })) {
+              return {
+                id: this._id,
+                element: GraphicMarkMouseOperateElement.OTHER,
+                elementIndex: i,
+                instance: this
+              }
             }
           }
         }
@@ -538,10 +531,10 @@ export default class GraphicMark extends Overlay {
 
   /**
    * 鼠标按住移动方法
-   * @param point
+   * @param coordinate
    * @param event
    */
-  mousePressedMove (point, event) {
+  mousePressedPointMove (coordinate, event) {
     const graphicMarkMouseOperate = this._chartData.graphicMarkStore().mouseOperate()
     const elementIndex = graphicMarkMouseOperate.click.elementIndex
     if (
@@ -550,9 +543,9 @@ export default class GraphicMark extends Overlay {
       graphicMarkMouseOperate.click.element === GraphicMarkMouseOperateElement.POINT &&
       elementIndex !== -1
     ) {
-      const dataIndex = this._xAxis.convertFromPixel(point.x)
+      const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
       const timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
-      const value = this._yAxis.convertFromPixel(point.y)
+      const value = this._yAxis.convertFromPixel(coordinate.y)
       this._points[elementIndex].timestamp = timestamp
       this._points[elementIndex].dataIndex = dataIndex
       this._points[elementIndex].value = value
@@ -567,6 +560,39 @@ export default class GraphicMark extends Overlay {
         id: graphicMarkMouseOperate.click.id,
         points: this._points,
         event
+      })
+    }
+  }
+
+  /**
+   * 按住非点拖动开始事件
+   * @param coordinate
+   */
+  startPressedOtherMove (coordinate) {
+    const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
+    const value = this._yAxis.convertFromPixel(coordinate.y)
+    this._prePressPoint = { dataIndex, value }
+    this._prePoints = clone(this._points)
+  }
+
+  /**
+   * 按住非点拖动时事件
+   * @param coordinate
+   */
+  mousePressedOtherMove (coordinate) {
+    if (this._prePressPoint) {
+      const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
+      const value = this._yAxis.convertFromPixel(coordinate.y)
+      const difDataIndex = dataIndex - this._prePressPoint.dataIndex
+      const difValue = value - this._prePressPoint.value
+      this._points = this._prePoints.map(point => {
+        const dataIndex = point.dataIndex + difDataIndex
+        const value = point.value + difValue
+        return {
+          dataIndex,
+          value,
+          timestamp: this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
+        }
       })
     }
   }
