@@ -18,9 +18,9 @@ Get the style configuration.
 
 
 ### setPriceVolumePrecision(pricePrecision, volumePrecision)
-Set the price and quantity precision.
-- `pricePrecision` price accuracy, which affects the numerical accuracy of the price displayed on the entire chart, and also includes the technical indicator whose indicator series is price
-- `volumePrecision` quantity accuracy, which affects the numerical accuracy of the quantity displayed on the entire chart, and also includes the technical index of the volume where the indicator series is
+Set the price and volume precision.
+- `pricePrecision` price precision
+- `volumePrecision` volume precision
 
 
 ### setTimezone(timezone)
@@ -82,7 +82,6 @@ Add more historical data.
 - `more` tells the chart if there is more historical data, it can be the default, the default is true
 
 
-
 ### updateData(data)
 Update data. Currently, only the current time stamp of the last data will be matched. If it is the same, it will be overwritten, and if it is different, it will be added.
 - `data` Single bar data
@@ -101,9 +100,9 @@ Set to load more callback functions.
 - `cb` is a callback method, the callback parameter is the timestamp of the first data
 
 
-### createTechnicalIndicator(name, isStack, paneOptions)
+### createTechnicalIndicator(value, isStack, paneOptions)
 Create a technical indicator, the return value is a string that identifies the window, which is very important, and some subsequent operations on the window require this identification.
-- `name` Technical indicator name
+- `value` name or object, when it is an object, the type is the same as the input parameter of `overrideTechnicalIndicator`
 - `isStack` is covered
 - `paneOptions` window configuration information, which can be defaulted, `{ id, height, dragEnabled }`
   - `id` window id, default. Special paneId: candle_pane, the window id of the main image
@@ -120,22 +119,25 @@ chart.createTechnicalIndicator('MA', false, {
 ```
 
 
-### overrideTechnicalIndicator(override)
+### overrideTechnicalIndicator(override, paneId)
 Cover technical indicator information.
 - `override` some parameters that need to be overridden, `{ name, calcParams, calcParamsAllowDecimal, precision, styles }`
   - `name` technical indicator name, required field
-  - `calcParams` calculation parameters, default
-  - `calcParamsAllowDecimal` calculation parameters allow decimals
+  - `calcParams` calculation parameters, it can be defaulted
+  - `shouldOhlc` Whether ohlc auxiliary line is needed, it can be defaulted
+  - `shouldFormatBigNimber` Whether you need to format large numbers, it can be defaulted
   - `precision` precision, default
-  - `styles` style, which can be defaulted, and the `technicalIndicator` in the same style configuration is consistent
+  - `styles` style, it can be defaulted, and the `technicalIndicator` in the same style configuration is consistent
+- `paneId` pane id, all are set by default
 
 Example:
 ```javascript
 chart.overrideTechnicalIndicator({
   name:'BOLL',
-  calcParams: [20, 5.5],
-  calcParamsAllowDecimal: { 1: true },
+  calcParams: [20, { value: 5.5, allowDecimal: true }],
   precision: 4,
+  shouldOhlc: true,
+  shouldFormatBigNimber: false,
   styles: {
     bar: {
       upColor:'#26A69A',
@@ -152,7 +154,7 @@ chart.overrideTechnicalIndicator({
       noChangeColor:'#888888'
     }
   }
-})
+}, 'candle_pane')
 ```
 
 
@@ -180,14 +182,15 @@ Add a custom technical indicator. Can be created in batches, just pass in the ar
 - `technicalIndicator` technical indicator information, please refer to [Technical Indicators](technical-indicator.md)
 
 
-### createGraphicMark(name, options)
+### createGraphicMark(value)
 Create a graphic mark and return a string type identifier
-- `name` Graphic mark type
-- `options` configuration, `{ id, points, styles, lock, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }`
+- `value` name or object, when is object, `{ name, id, points, styles, lock, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }`
+  - `name` graphic mark name
   - `id` can be defaulted, if specified, the id will be returned
   - `points` point information, can be defaulted, if specified, a graph will be drawn according to the point information
   - `styles` style, can be defaulted, the format is the same as `graphicMark` in the configuration
   - `lock` is lock
+  - `mode` mode type, 'normal' | 'weak_magnet' | 'strong_magnet'
   - `onDrawStart` draw start callback event, can be default
   - `onDrawing` callback event during drawing, can be default
   - `onDrawEnd` draw end callback event, can be default
@@ -200,48 +203,48 @@ Create a graphic mark and return a string type identifier
 
 Example:
 ```javascript
-chart.createGraphicMark(
-  'segment',
-  {
-    points: [
-      {timestamp: 1614171282000, price: 18987 },
-      {timestamp: 1614171202000, price: 16098 },
-    ],
-    styles: {
-      line: {
-        color:'#f00',
-        size: 2
-      }
-    },
-    lock: true,
-    onDrawStart: function ({ id }) {console.log(id) },
-    onDrawing: function ({ id, step, points }) {console.log(id, step, points) },
-    onDrawEnd: function ({ id }) {console.log(id) },
-    onClick: function ({ id, event }) {console.log(id, event) },
-    onRightClick: function ({ id, event }) {
-      console.log(id, event)
-      return false
-    },
-    onMouseEnter: function ({ id, event }) { console.log(id, event) },
-    onMouseLeave: function ({ id, event }) { console.log(id, event) },
-    onPressedMove: function ({ id, event }) {console.log(id, event) },
-    onRemove: function ({ id }) {console.log(id)}
-  }
-)
+chart.createGraphicMark({
+  name: 'segment',
+  points: [
+    {timestamp: 1614171282000, price: 18987 },
+    {timestamp: 1614171202000, price: 16098 },
+  ],
+  styles: {
+    line: {
+      color:'#f00',
+      size: 2
+    }
+  },
+  lock: true,
+  mode: 'weak_magnet',
+  onDrawStart: function ({ id }) {console.log(id) },
+  onDrawing: function ({ id, step, points }) {console.log(id, step, points) },
+  onDrawEnd: function ({ id }) {console.log(id) },
+  onClick: function ({ id, event }) {console.log(id, event) },
+  onRightClick: function ({ id, event }) {
+    console.log(id, event)
+    return false
+  },
+  onMouseEnter: function ({ id, event }) { console.log(id, event) },
+  onMouseLeave: function ({ id, event }) { console.log(id, event) },
+  onPressedMove: function ({ id, event }) {console.log(id, event) },
+  onRemove: function ({ id }) {console.log(id)}
+})
 ```
 
 
 ### getGraphicMark(id)
 Get graphic mark information.
-- `id` calls the createGraphicMark method to return the identity
+- `id` calls the createGraphicMark method to return the identity, by default it returns all
 
 
-### setGraphicMarkOptions(id, options)
+### setGraphicMarkOptions(options)
 Set the drawn graphic mark configuration.
-- `id` calls the createGraphicMark method to return the identity
-- `options` configuration, `{ styles, lock }`
+- `options` configuration, `{ id, styles, lock, mode }`
+  - `id` calls the createGraphicMark method to return the identity, by default it set all
   - `styles` style, the format is the same in the configuration of `graphicMark`
   - `lock` is lock
+  - `mode` mode type, 'normal' | 'weak_magnet' | 'strong_magnet'
 
 
 ### addCustomGraphicMark(graphicMark)
@@ -299,8 +302,9 @@ chart.createAnnotation({
 ```
 
 
-### removeAnnotation(points)
+### removeAnnotation(paneId, points)
 Remove annotation. Can be removed in batches, just pass in the array in batches, if default, remove all.
+- `paneId` pane id, Remove all by default
 - `points` single point or collection, `{ timestamp }`
 
 
@@ -357,10 +361,11 @@ chart.createTag({
 })
 ```
 
-### removeTag(id)
-Remove tags, you can remove them in batches, just pass in the array in batches, if default, remove all.
-- `id` Unique identification of the tag
 
+### removeTag(paneId, tagId)
+Remove tags, you can remove them in batches, just pass in the array in batches, if default, remove all.
+- `paneId` pane id, Remove all by default
+- `tagId` Unique identification of the tag
 
 
 ### scrollByDistance(distance, animationDuration)
@@ -374,9 +379,9 @@ Scroll to the original position.
 -`animationDuration` animation time, can be default
 
 
-### scrollToPosition(position, animationDuration)
-Scroll to the specified position.
--`position` position, which is the index of the data
+### scrollToDataIndex(dataIndex, animationDuration)
+Scroll to data index.
+-`dataIndex` the index of the data
 -`animationDuration` animation time, can be default
 
 
@@ -387,10 +392,10 @@ Zoom at coordinate.
 -`animationDuration` animation time, can be defaulted, the default is no animation
 
 
-### zoomAtPosition(scale, position, animationDuration)
-Zoom at position.
+### zoomAtDataIndex(scale, dataIndex, animationDuration)
+Zoom at data index.
 -`scale` scaling ratio
--`position` position, which is the index of the data
+-`dataIndex` the index of the data
 -`animationDuration` animation time, can be defaulted, the default is no animation
 
 
@@ -412,32 +417,31 @@ chart.setPaneOptions({
 
 ### subscribeAction(type, callback)
 Subscribe to chart actions.
-- `type` The type is 'drawCandle', 'drawTechnicalIndicator', 'zoom', 'scroll' and 'crosshair'
+- `type` The type is 'zoom', 'scroll', 'crosshair' and 'pane_drag'
 - `callback` is a callback method
 
 
 ### unsubscribeAction(type, callback)
 Unsubscribe from chart actions.
-- `type` type is 'drawCandle', 'drawTechnicalIndicator', 'zoom', 'scroll' and 'crosshair'
+- `type` type is 'zoom', 'scroll', 'crosshair' and 'pane_drag'
 - `callback` callback method when subscribing
 
 
 ### convertToPixel(value, finder)
 Convert value to coordinate value.
-- `value` value, `{ xAxisValue, yAxisValue }`
-- `finder` finder value, `{ paneId, dataIndexXAxis, absoluteYAxis }`
+- `value` value, `{ timestamp, dataIndex, value }`
+- `finder` finder value, `{ paneId, absoluteYAxis }`
 
 
 ### convertFromPixel(coordinate, finder)
 Convert coordinate value to value.
 - `coordinate` coordinate, `{ x, y }`
-- `finder` finder value, `{ paneId, dataIndexXAxis, absoluteYAxis }`
+- `finder` finder value, `{ timestamp, dataIndex, value }`
 
 
-### getConvertPictureUrl(includeTooltip, includeGraphicMark, type, backgroundColor)
+### getConvertPictureUrl(includeOverlay, type, backgroundColor)
 Get the picture url after the chart is converted into a picture.
-- `includeTooltip` Whether to include tooltip, it can be defaulted
-- `includeGraphicMark` Whether to include graphic mark, it can be defaulted
+- `includeOverlay` Whether to include overlay, it can be defaulted
 - `type` The converted picture type. The type is one of three types: 'png', 'jpeg', and 'bmp', which can be defaulted, and the default is 'jpeg'
 - `backgroundColor` background color, can be the default, the default is '#FFFFFF'
 

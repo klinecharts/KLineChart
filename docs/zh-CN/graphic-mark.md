@@ -18,10 +18,10 @@
   // 检查鼠标点是否在图形上，是一个回调方法，必须字段
   // key 创建数据源的时候给的key
   // type 图形类型
-  // coordinates 图形坐标信息
-  // mouseCoordinate 当前鼠标坐标
+  // dataSource 图形信息
+  // eventCoordinate 当前事件坐标
   // 需要返回boolean值
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {},
+  checkEventCoordinateOnGraphic: ({ key, type, dataSource, eventCoordinate }) => {},
 
   // 创建图形数据源，是一个回调方法，必须字段，需要返回图形数据
   // step 当前步骤
@@ -31,29 +31,33 @@
   // precision 精度信息，包含价格和数量精度
   // xAxis x轴组件
   // yAxis y轴组件
-  createGraphicDataSource: (step, points, coordinates, viewport, precision, xAxis, yAxis) => {},
+  createGraphicDataSource: ({ step, points, coordinates, viewport, precision, xAxis, yAxis }) => {},
 
   // 处理在绘制过程中鼠标移动操作，可缺省，鼠标操作绘制过程中触发
   // step 当前步骤
   // points 图形时间价格点信息
-  // point 鼠标坐标对应的时间价格信息
-  performMouseMoveForDrawing: (step, points, point) => {},
+  // movePoint 移动对应的点
+  // xAxis x轴组件
+  // yAxis y轴组件
+  performEventMoveForDrawing: ({ step, points, movePoint, xAxis, yAxis }) => {},
 
   // 处理鼠标按住移动操作，可缺省，鼠标按住某个操作点移动过程中触发
   // points 图形时间价格点信息
-  // pressedPointIndex 按住点的索引
-  // point 鼠标坐标对应的时间价格信息
-  performMousePressedMove: (points, pressedPointIndex, tpPoint) => {},
+  // pressPointIndex 按住点的索引
+  // pressPoint 按住对应的点
+  // xAxis x轴组件
+  // yAxis y轴组件
+  performEventPressedMove: ({ points, pressPointIndex, pressPoint, xAxis, yAxis }) => {},
 
   // 扩展绘制，可缺省
   // ctx 画布上下文
-  // graphicDataSources 图形数据信息
-  // markOptions 图表样式配置
+  // dataSource 图形数据信息
+  // styles 图表样式配置
   // viewport 尺寸
   // precision 精度信息，包含价格和数量精度
   // xAxis x轴组件
   // yAxis y轴组件
-  drawExtend: (ctx, graphicDataSources, markOptions, viewport, precision, xAxis, yAxis) => {}
+  drawExtend: ({ ctx, dataSource, styles, viewport, precision, xAxis, yAxis }) => {}
 }
 ```
 #### 方法createGraphicDataSource返回值子项信息
@@ -102,16 +106,16 @@
   // 完成一个圆的绘制需要三个步骤
   totalStep: 3,
 
-  // 检查鼠标点是否在圆边框上
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
-    const xDis = Math.abs(coordinates.x - mouseCoordinate.x)
-    const yDis = Math.abs(coordinates.y - mouseCoordinate.y)
+  // 检查事件坐标是否在圆边框上
+  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+    const xDis = Math.abs(dataSource.x - eventCoordinate.x)
+    const yDis = Math.abs(dataSource.y - eventCoordinate.y)
     const r = Math.sqrt(xDis * xDis + yDis * yDis)
     return Math.abs(r - points.radius) < 2;
   },
 
   // 创建图形信息
-  createGraphicDataSource: (step, points, coordinates) => {
+  createGraphicDataSource: ({ step, points, coordinates }) => {
     if (coordinates.length === 2) {
       const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
       const yDis = Math.abs(coordinates[0].y - coordinates[1].y)

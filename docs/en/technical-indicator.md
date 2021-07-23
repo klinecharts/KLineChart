@@ -27,24 +27,15 @@ To complete a custom technical indicator, you only need to generate a technical 
   // Technical indicator calculation method, necessary fields
   // This field is a callback method, the callback parameters are the source data and calculated parameters of the current chart, and an array needs to be returned
   // kLineDataList chart raw data
-  // calcParams calculation parameters
+  // params calculation parameters
   // plots technical indicator data configuration item
-  calcTechnicalIndicator: (kLineDataList, calcParams, plots) => {return [] },
+  calcTechnicalIndicator: (kLineDataList, { params, plots }) => {return [] },
 
   // Precision, can be the default, the default is 4
   precision: 4,
 
-  // Technical indicator series, values are'price','volume' and'normal'
-  // When the value is price, the price setting price accuracy will affect the accuracy of the technical indicator
-  // When the value is volume, the price setting quantity accuracy will affect the accuracy of the technical indicator
-  series:'normal',
-
-  // The calculation parameter is an array, which can be defaulted
+  // The calculation parameter is an array, which can be defaulted, number or { value, allowDecimal }
   calcParams: [],
-
-  // calculation parameter allow decimal
-  // { 0: true, 1: true }, key is param index
-  calcParamsAllowDecimal: {},
 
   // The data configuration item is an array
   plots: [],
@@ -58,10 +49,6 @@ To complete a custom technical indicator, you only need to generate a technical 
 
   // Do you need auxiliary ohlc line
   shouldOhlc: false,
-
-  // Basic comparison data, default
-  // If set, when the graph is bar, it will be drawn above and below this value, such as: the macd value of the MACD indicator
-  baseValue: null,
 
   // The specified minimum value, which can be defaulted
   // If set, this will prevail when calculating the minimum value on the y-axis
@@ -83,17 +70,16 @@ To complete a custom technical indicator, you only need to generate a technical 
   // ctx canvas context
   // dataSource data source, including the original bar data and calculated indicator data as well as the starting point of drawing
   // viewport some parameters that may be required for drawing
-  // xAxisConvert x-axis value and coordinate conversion method
-  // yAxisConvert y-axis value and coordinate conversion method
-  // IsCandleTechnicalIndicator indicator is on candlestick chart
+  // styles style
+  // xAxis x-axis component
+  // yAxis y-axis component
   render: (
     ctx,
     dataSource,
     viewport,
-    styleOptions,
-    xAxisConvert,
-    yAxisConvert,
-    isCandleTechnicalIndicator
+    styles,
+    xAxis,
+    yAxis
   ) => {}
 }
 ```
@@ -106,6 +92,9 @@ To complete a custom technical indicator, you only need to generate a technical 
   title:'',
   // Default, drawing type, currently supports'line','circle' and'bar'
   type:'',
+  // Basic comparison data, default
+  // If set, when the graph is bar, it will be drawn above and below this value, such as: the macd value of the MACD indicator
+  baseValue: null,
   // It can be defaulted. It is a callback method. The color can be set according to the callback parameters. It will only take effect when the type is'circle' and'bar'
   // Return a string of color values
   color: (data, options) => {},
@@ -149,14 +138,14 @@ Determine other attributes
     })
   },
   // Calculation results
-  calcTechnicalIndicator: (kLineDataList, calcParams, plots) => {
+  calcTechnicalIndicator: (kLineDataList, { params, plots }) => {
     // Note: The number of returned data needs to be consistent with the number of data in kLineDataList. If there is no value, just use {} instead.
     // The calculation parameter is best to take the callback parameter calcParams, if not, when the subsequent calculation parameters change, the calculation here cannot respond in time
     const closeSums = []
     return kLineDataList.map((kLineData, i) => {
       const ma = {}
       const close = kLineData.close
-      calcParams.forEach((param, j) => {
+      params.forEach((param, j) => {
         closeSums[j] = (closeSums[j] || 0) + close
         if (i >= param-1) {
           ma[plots[j].key] = closeSums[j] / param

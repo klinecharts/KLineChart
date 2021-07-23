@@ -18,10 +18,10 @@ To complete a custom graphic mark, you only need to generate a graphic mark info
   // Check whether the mouse point is on the graph, it is a callback method, a required field
   // key The key given when creating the data source
   // type graphics type
-  // coordinates graphic coordinate information
-  // mouseCoordinate current mouse coordinate
+  // dataSource graphic information
+  // eventCoordinate current mouse coordinate
   // Need to return boolean value
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {},
+  checkEventCoordinateOnGraphic: ({ key, type, dataSource, eventCoordinate }) => {},
 
   // Creating a graphic data source is a callback method. It must be a field and needs to return graphic data
   // step current step
@@ -31,29 +31,33 @@ To complete a custom graphic mark, you only need to generate a graphic mark info
   // precision precision information, including price and quantity precision
   // xAxis x-axis component
   // yAxis y axis component
-  createGraphicDataSource: (step, points, coordinates, viewport, precision, xAxis, yAxis) => {},
+  createGraphicDataSource: ({ step, points, coordinates, viewport, precision, xAxis, yAxis }) => {},
 
   // Process the mouse movement operation during the drawing process, it can be defaulted, and the mouse operation is triggered during the drawing process
   // step current step
   // points graph time price point information
-  // point time and price information corresponding to the mouse point
-  performMouseMoveForDrawing: (step, points, point) => {},
+  // movePoint time and price information corresponding to the move point
+  // xAxis x-axis component
+  // yAxis y axis component
+  performEventMoveForDrawing: ({ step, points, movePoint, xAxis, yAxis }) => {},
 
   // Handle the mouse hold and move operation, it can be defaulted, the mouse is triggered during the movement process of holding down an operating point
   // points graph time price point information
-  // pressedPointIndex The index of the pressed point
-  // point time and price information corresponding to the mouse point
-  performMousePressedMove: (points, pressedPointIndex, point) => {},
+  // pressPointIndex The index of the pressed point
+  // pressPoint time and price information corresponding to the press point
+  // xAxis x-axis component
+  // yAxis y axis component
+  performEventPressedMove: ({ points, pressPointIndex, pressPoint, xAxis, yAxis }) => {},
 
   // Extended drawing, default
   // ctx canvas context
-  // graphicDataSources graphic data information
-  // markOptions chart style configuration
+  // dataSource graphic data information
+  // styles chart style configuration
   // viewport size
   // precision precision information, including price and quantity precision
   // xAxis x-axis component
   // yAxis y axis component
-  drawExtend: (ctx, graphicDataSources, markOptions, viewport, precision, xAxis, yAxis) => {}
+  drawExtend: ({ ctx, dataSource, styles, viewport, precision, xAxis, yAxis }) => {}
 }
 ```
 #### Method createGraphicDataSource return value sub-item information
@@ -102,16 +106,16 @@ Use a filled circle with a border to illustrate how to configure it.
   // It takes three steps to complete the drawing of a circle
   totalStep: 3,
 
-  // Check if the mouse point is on the circle border
-  checkMousePointOn: (key, type, coordinates, mouseCoordinate) => {
-    const xDis = Math.abs(coordinates.x - mouseCoordinate.x)
-    const yDis = Math.abs(coordinates.y - mouseCoordinate.y)
+  // Check if the event coordinate is on the circle border
+  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+    const xDis = Math.abs(dataSource.x - eventCoordinate.x)
+    const yDis = Math.abs(dataSource.y - eventCoordinate.y)
     const r = Math.sqrt(xDis * xDis + yDis * yDis)
-    return Math.abs(r - coordinates.radius) < 2;
+    return Math.abs(r - points.radius) < 2;
   },
 
   // Create graphic information
-  createGraphicDataSource: (step, points, coordinates) => {
+  createGraphicDataSource: ({ step, points, coordinates }) => {
     if (coordinates.length === 2) {
       const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
       const yDis = Math.abs(coordinates[0].y - coordinates[1].y)

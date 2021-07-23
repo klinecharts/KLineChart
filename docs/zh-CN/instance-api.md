@@ -19,8 +19,8 @@
 
 ### setPriceVolumePrecision(pricePrecision, volumePrecision)
 设置价格和数量精度。
-- `pricePrecision` 价格精度，影响整个图表显示的价格的数字精度，还包括指标系列是price的技术指标
-- `volumePrecision` 数量精度，影响整个图表显示的数量的数字精度，还包括指标系列是volume的技术指标
+- `pricePrecision` 价格精度
+- `volumePrecision` 数量精度
 
 
 
@@ -102,9 +102,9 @@
 - `cb` 是一个回调方法，回调参数为第一条数据的时间戳
 
 
-### createTechnicalIndicator(name, isStack, paneOptions)
+### createTechnicalIndicator(value, isStack, paneOptions)
 创建一个技术指标，返回值是一个标识窗口的字符串，这非常重要，后续对该窗口的一些操作，都需要此标识。
-- `name` 技术指标名
+- `value` 技术指标名或者技术指标对象，当是对象时，类型和`overrideTechnicalIndicator`的入参一致
 - `isStack` 是否覆盖
 - `paneOptions` 窗口配置信息，可缺省， `{ id, height, dragEnabled }`
    - `id` 窗口id，可缺省。特殊的paneId: candle_pane，主图的窗口id
@@ -121,22 +121,25 @@ chart.createTechnicalIndicator('MA', false, {
 ```
 
 
-### overrideTechnicalIndicator(override)
+### overrideTechnicalIndicator(override, paneId)
 覆盖技术指标信息。
-- `override` 需要覆盖的一些参数， `{ name, calcParams, calcParamsAllowDecimal, precision, styles }`
+- `override` 需要覆盖的一些参数， `{ name, calcParams, precision, styles }`
    - `name` 技术指标名，必填字段
    - `calcParams` 计算参数，可缺省
-   - `calcParamsAllowDecimal` 计算参数允许小数配置，可缺省
+   - `shouldOhlc` 是否需要ohlc辅助线，可缺省
+   - `shouldFormatBigNumber` 是否需要格式化大数字，可缺省
    - `precision` 精度，可缺省
    - `styles` 样式，可缺省，格式同样式配置中 `technicalIndicator` 一致
+- `paneId` 窗口id，缺省则设置所有
 
 示例：
 ```javascript
 chart.overrideTechnicalIndicator({
   name: 'BOLL',
-  calcParams: [20, 5.5],
-  calcParamsAllowDecimal: { 1: true },
+  calcParams: [20, { value: 5.5, allowDecimal: true }],
   precision: 4,
+  shouldOhlc: true,
+  shouldFormatBigNumber: false,
   styles: {
   	bar: {
       upColor: '#26A69A',
@@ -153,7 +156,7 @@ chart.overrideTechnicalIndicator({
       noChangeColor: '#888888'
     }
   }
-})
+}, 'candle_pane')
 ```
 
 
@@ -180,14 +183,15 @@ chart.overrideTechnicalIndicator({
 - `technicalIndicator` 技术指标信息，详细请参考[技术指标](technical-indicator.md)
 
 
-### createGraphicMark(name, options)
+### createGraphicMark(value)
 创建图形标记，返回一个字符串类型的标识。
-- `name` 图形标记类型
-- `options` 配置， `{ id, points, styles, lock, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }` 
+- `value` 图形标记名或者对象，当是对象时，参数为`{ name, id, points, styles, lock, mode, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }` 
+   - `name` 技术指标名
    - `id` 可缺省，如果指定，则返回该id
    - `points` 点信息，可缺省，如果指定，则会按照点信息绘制一个图形
    - `styles` 样式，可缺省，格式同样式配置中 `graphicMark` 一致
    - `lock` 是否锁定
+   - `mode` 模式类型，类型为'normal' | 'weak_magnet' | 'strong_magnet'
    - `onDrawStart` 绘制开始回调事件，可缺省
    - `onDrawing` 绘制过程中回调事件，可缺省
    - `onDrawEnd` 绘制结束回调事件，可缺省
@@ -200,47 +204,48 @@ chart.overrideTechnicalIndicator({
 
 示例：
 ```javascript
-chart.createGraphicMark(
-  'segment',
-  {
-    points: [
-      { timestamp: 1614171282000, price: 18987 },
-      { timestamp: 1614171202000, price: 16098 },
-    ],
-    styles: {
-    	line: {
-      	color: '#f00',
-        size: 2
-      }
-    },
-    onDrawStart: function ({ id }) { console.log(id) },
-    onDrawing: function ({ id, step, points }) { console.log(id, step, points) },
-    onDrawEnd: function ({ id }) { console.log(id) },
-    onClick: function ({ id, event }) { console.log(id, event) },
-    onRightClick: function ({ id, event }) {
-      console.log(id, event)
-      return false
-    },
-    onMouseEnter: function ({ id, event }) { console.log(id, event) },
-    onMouseLeave: function ({ id, event }) { console.log(id, event) },
-    onPressedMove: function ({ id, event }) { console.log(id, event) },
-    onRemove: function ({ id }) { console.log(id) }
-  }
-)
+chart.createGraphicMark({
+  name: 'segment',
+  points: [
+    { timestamp: 1614171282000, price: 18987 },
+    { timestamp: 1614171202000, price: 16098 },
+  ],
+  styles: {
+    line: {
+      color: '#f00',
+      size: 2
+    }
+  },
+  lock: false,
+  mode: 'weak_magnet',
+  onDrawStart: function ({ id }) { console.log(id) },
+  onDrawing: function ({ id, step, points }) { console.log(id, step, points) },
+  onDrawEnd: function ({ id }) { console.log(id) },
+  onClick: function ({ id, event }) { console.log(id, event) },
+  onRightClick: function ({ id, event }) {
+    console.log(id, event)
+    return false
+  },
+  onMouseEnter: function ({ id, event }) { console.log(id, event) },
+  onMouseLeave: function ({ id, event }) { console.log(id, event) },
+  onPressedMove: function ({ id, event }) { console.log(id, event) },
+  onRemove: function ({ id }) { console.log(id) }
+})
 ```
 
 
 ### getGraphicMark(id)
 获取图形标记信息。
-- `id` 调用createGraphicMark方法是返回的标识
+- `id` 调用createGraphicMark方法是返回的标识，缺省则返回所有
 
 
-### setGraphicMarkOptions(id, options)
+### setGraphicMarkOptions(options)
 设置已绘制的图形标记配置。
-- `id` 调用createGraphicMark方法是返回的标识
-- `options` 配置， `{ styles, lock }`
-   - `styles` 样式，格式同样式配置中 `graphicMark` 一致
-   - `lock` 是否锁定
+- `options` 配置， `{ id, styles, lock, mode }`
+   - `id` 图形标记标识，缺省则设置所有的
+   - `styles` 样式，可缺省，格式同样式配置中 `graphicMark` 一致
+   - `lock` 是否锁定，可缺省
+   - `mode` 模式类型，可缺省，类型为'normal' | 'weak_magnet' | 'strong_magnet'
 
 
 ### addCustomGraphicMark(graphicMark)
@@ -299,9 +304,10 @@ chart.createAnnotation({
 ```
 
 
-### removeAnnotation(points)
+### removeAnnotation(paneId, points)
 移除注解，可批量移除，批量传入数组即可，如果缺省，则移除所有。
-- `points` 点, `{ timestamp }`
+- `paneId` 窗口id，缺省则移除所有
+- `points` 点，`{ timestamp }`，缺省则移除对应窗口上的所有
 
 
 ### createTag(tag)
@@ -357,9 +363,10 @@ chart.createTag({
 })
 ```
 
-### removeTag(id)
+### removeTag(paneId, tagId)
 移除标签，可批量移除，批量传入数组即可，如果缺省，则移除所有。
-- `id` 标签的唯一标识
+- `paneId` 窗口id，缺省则移除所有
+- `tagId` 标签的唯一标识，缺省则移除窗口上所有
 
 
 ### scrollByDistance(distance, animationDuration)
@@ -373,9 +380,9 @@ chart.createTag({
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
-### scrollToPosition(position, animationDuration)
+### scrollToDataIndex(dataIndex, animationDuration)
 滚动到指定的位置。
-- `position` 位置
+- `dataIndex` 数据的索引
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
@@ -386,10 +393,10 @@ chart.createTag({
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
-### zoomAtPosition(scale, position, animationDuration)
+### zoomAtDataIndex(scale, dataIndex, animationDuration)
 在某个位置缩放。
 - `scale` 缩放比例
-- `position` 位置，即数据的索引
+- `dataIndex` 数据的索引
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
@@ -412,32 +419,31 @@ chart.setPaneOptions({
 
 ### subscribeAction(type, callback)
 订阅图表动作。
-- `type` 类型是'drawCandle'，'drawTechnicalIndicator'，'zoom'，'scroll'和'crosshair'
+- `type` 类型是'zoom'，'scroll'，'crosshair'和'pane_drag'
 - `callback` 是一个回调方法
 
 
 ### unsubscribeAction(type, callback)
 取消订阅图表动作。
-- `type` 类型是'drawCandle'，'drawTechnicalIndicator'，'zoom'，'scroll'和'crosshair'
-- `callback` 订阅时的回调方法
+- `type` 类型是'zoom'，'scroll'，'crosshair'和'pane_drag'
+- `callback` 订阅时的回调方法，缺省则取消当前类型所有
 
 
 ### convertToPixel(value, finder)
 将值转换成坐标。
-- `value` 值，`{ xAxisValue, yAxisValue }`
-- `finder` 过滤条件，`{ paneId, dataIndexXAxis, absoluteYAxis }`
+- `value` 值，`{ timestamp, dataIndex, value }`
+- `finder` 过滤条件，`{ paneId, absoluteYAxis }`
 
 
 ### convertFromPixel(coordinate, finder)
 将坐标转换成值。
 - `coordinate` 坐标，`{ x, y }`
-- `finder` 过滤条件，`{ paneId, dataIndexXAxis, absoluteYAxis }`
+- `finder` 过滤条件，`{ paneId, absoluteYAxis }`
 
 
-### getConvertPictureUrl(includeTooltip, includeGraphicMark, type, backgroundColor)
+### getConvertPictureUrl(includeOverlay, type, backgroundColor)
 获取图表转换成图片后的图片url。
-- `includeTooltip` 是否需要包含提示层，可缺省
-- `includeGraphicMark` 是否需要包含图形标记层，可缺省
+- `includeTooltip` 是否需要包含浮层，可缺省
 - `type` 转换后的图片类型，类型是'png'、'jpeg'、'bmp'三种中的一种，可缺省，默认为'jpeg'
 - `backgroundColor` 背景色，可缺省，默认为'#FFFFFF'
 

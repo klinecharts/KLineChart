@@ -1,11 +1,46 @@
 # 更新日志
 ## 8.0.0-alpha
 `待发布`
-+ 🗑 废弃
-  + API `subscribeAction`和`unsubscribeAction`，移除类型`drawCandle`和`drawTechnicalIndicator`。
-+ TypeScript
-  + `CoordinatePoint`变更为`Coordinate`。
-  + `TimestampPricePoint`变更为`Point`。
++ 🆕 功能新增
+   + `createTechnicalIndicator`支持在创建的时候，覆盖内置属性。
+   + `overrideTechnicalIndicator`支持在覆盖某个窗口上的指标属性。
+   + `getGraphicMark`支持获取所有实例。
+   + `setGraphicMarkOptions`支持设置所有标记图形实例属性。
+   + 注解和标签支持在任意一个窗口上创建。
+   + 图形标记支持整体拖动，支持弱磁铁和强磁铁模式。
++ 👉 变更
+   + 图表实例
+      + `createGraphicMark`合并参数。
+      + `removeAnnotation`新增参数`paneId`。
+      + `removeTag`新增参数`paneId`。
+      + `scrollToPosition`变更为`scrollToDataIndex`。
+      + `zoomAtPosition`变更为`zoomAtDataIndex`。
+      + `getConvertPictureUrl`参数`includeTooltip`和`includeGraphicMark`合并为`includeOverlay`。
+      + `subscribeAction`和`unsubscribeAction`，去除`drawCandle`和`drawTechnicalIndicator`类型。
+      + `convertToPixel`和`convertFromPixel`，入参变更为`{ timestamp, dataIndex, value }`和`{ paneId, absoluteYAxis }`。
+   + 图形标记
+      + `checkMousePointOn`变更为`checkEventCoordinateOnGraphic`，参数变更为`object`。
+      + `createGraphicDataSource`参数变更为`object`。
+      + `performMouseMoveForDrawing`变更为`performEventMoveForDrawing`，参数变更为`object`。
+      + `performMousePressedMove`变更为`performEventPressedMove`，参数变更为`object`。
+      + `drawExtend`参数变更为`object`。
+   + 技术指标
+      + 属性`calcParamsAllowDecimal`合并到`calcParams`。
+      + 属性`baseValue`合并到`plots`。
+      + 属性`plots`，`color`回调参数变更为`{ prev, current, next }`。
+      + `calcTechnicalIndicator`参数变更为`object`。
+      + `render`参数变更为`object`。
+   + 样式配置
+      + `candle.tooltip.rect.fillColor`变更为`candle.tooltip.rect.backgroundColor`。
+      + `candle.area.fillColor`变更为`candle.area.backgroundColor`。
+      + `annotation.symbol.position`变更为`annotation.position`。 
+      + `annotation.symbol.offset`变更为`annotation.offset`。
++ 💄 优化
+   + 优化图形标记鼠标事件响应。
+   + 优化图形标记绘制效率。
++ 🐞 Bug修复
+   + 修复调用`setPaneOptions` y轴不刷新问题。
+   + 修复调用`createGraphicMark`，在特定情况下，可能出错问题。
 
 
 ## 7.5.0

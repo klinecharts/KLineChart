@@ -27,27 +27,18 @@
   // 技术指标计算方法，必要字段
   // 该字段是一个回调方法，回调参数是当前图表的源数据和计算的参数，需要返回一个数组
   // kLineDataList 图表的原始数据
-  // calcParams 计算参数
+  // params 计算参数
   // plots 技术指标数据配置项
-  calcTechnicalIndicator: (kLineDataList, calcParams, plots) => { return [] },
+  calcTechnicalIndicator: (kLineDataList, { params, plots }) => { return [] },
 
   // 精度，可缺省，默认为4
   precision: 4,
 
-  // 技术指标系列，值为'price', 'volume'和'normal'
-  // 当值为price时，价格设置价格精度时会影响该技术指标的精度
-  // 当值为volume时，价格设置数量精度时会影响该技术指标的精度
-  series: 'normal',
-
-  // 计算参数，是一个数组，可缺省
+  // 计算参数，是一个数组，可缺省，可以是数字也可以是`{ value, allowDecimal }`
   calcParams: [],
 
   // 数据配置项，是一个数组
   plots: [],
-
-  // 计算参数是否允许小数
-  // 格式是{ 0: true, 1: true }, key是参数索引
-  calcParamsAllowDecimal: {},
 
   // 是否需要检查计算参数，可缺省，默认为true
   // 如果为true，当设置指标参数时，如果参数个数和默认的参数个数不一致，将不能生效
@@ -58,10 +49,6 @@
 
   // 是否需要辅助ohlc线
   shouldOhlc: false,
-
-  // 基础比对数据，可缺省
-  // 如果设置，当图形是bar时，将在此值上下绘制，如：MACD指标的macd值
-  baseValue: null,
 
   // 指定的最小值，可缺省
   // 如果设置，在计算y轴上最小值时将以此为准
@@ -83,18 +70,17 @@
   // ctx canvas上下文
   // dataSource 数据源，包含了原始的k线数据和计算出来的指标数据以及起始绘制点位置
   // viewport 一些绘图可能需要的一些参数
-  // xAxisConvert x轴上值和坐标转换的方法
-  // yAxisConvert y轴上值和坐标转换的方法
-  // isCandleTechnicalIndicator 指标是否是在蜡烛图上
-  render: (
+  // styles 样式
+  // xAxis x轴
+  // yAxis y轴
+  render: ({
     ctx,
     dataSource,
     viewport,
-    styleOptions,
-    xAxisConvert,
-    yAxisConvert,
-    isCandleTechnicalIndicator
-  ) => {}
+    styles,
+    xAxis,
+    yAxis
+  }) => {}
 }
 ```
 #### Plots子项信息
@@ -106,6 +92,9 @@
   title: '',
   // 可缺省，绘制类型，目前支持'line', 'circle'和'bar'
   type: '',
+  // 基础比对数据，可缺省
+  // 如果设置，当图形是bar时，将在此值上下绘制，如：MACD指标的macd值
+  baseValue: null,
   // 可缺省，是个一个回调方法，可以根据回调参数来设置颜色，只有当type是'circle'和'bar'才会生效
   // 返回一个颜色值的字符串
   color: (data, options) => {},
@@ -149,14 +138,14 @@
     })
   },
   // 计算结果
-  calcTechnicalIndicator: (kLineDataList, calcParams, plots) => {
+  calcTechnicalIndicator: (kLineDataList, { params, plots }) => {
     // 注意：返回数据个数需要和kLineDataList的数据个数一致，如果无值，用{}代替即可。
-    // 计算参数最好取回调参数calcParams，如果不是，后续计算参数发生变化的时候，这里计算不能及时响应
+    // 计算参数最好取回调参数params，如果不是，后续计算参数发生变化的时候，这里计算不能及时响应
     const closeSums = []
     return kLineDataList.map((kLineData, i) => {
       const ma = {}
       const close = kLineData.close
-      calcParams.forEach((param, j) => {
+      params.forEach((param, j) => {
         closeSums[j] = (closeSums[j] || 0) + close
         if (i >= param - 1) {
           ma[plots[j].key] = closeSums[j] / param
