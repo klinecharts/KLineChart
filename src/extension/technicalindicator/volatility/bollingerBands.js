@@ -36,7 +36,7 @@ function getBollMd (dataList, ma) {
  */
 export default {
   name: 'BOLL',
-  calcParams: [{ value: 20, allowDecimal: true }, 2],
+  calcParams: [20, { value: 2, allowDecimal: true }],
   precision: 2,
   shouldOhlc: true,
   plots: [

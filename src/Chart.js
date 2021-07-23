@@ -494,16 +494,16 @@ export default class Chart {
   }
 
   /**
-   * 滚动到指定位置
-   * @param position 位置
+   * 滚动到指定的数据索引
+   * @param dataIndex 数据索引
    * @param animationDuration 动画持续时间
    */
-  scrollToPosition (position, animationDuration) {
-    if (!isNumber(position)) {
-      logWarn('scrollToPosition', 'position', 'position must be a number!!!')
+  scrollToDataIndex (dataIndex, animationDuration) {
+    if (!isNumber(dataIndex)) {
+      logWarn('scrollToDataIndex', 'dataIndex', 'dataIndex must be a number!!!')
       return
     }
-    const distance = (this._chartPane.chartData().dataList().length - 1 - position) * this._chartPane.chartData().timeScaleStore().dataSpace()
+    const distance = (this._chartPane.chartData().dataList().length - 1 - dataIndex) * this._chartPane.chartData().timeScaleStore().dataSpace()
     this.scrollByDistance(distance, animationDuration)
   }
 
@@ -539,21 +539,21 @@ export default class Chart {
   }
 
   /**
-   * 在某个位置缩放
+   * 在某个数据索引缩放
    * @param scale 缩放比例
-   * @param position 位置
+   * @param dataIndex 索引位置
    * @param animationDuration 动画持续时间
    */
-  zoomAtPosition (scale, position, animationDuration) {
+  zoomAtDataIndex (scale, dataIndex, animationDuration) {
     if (!isNumber(scale)) {
-      logWarn('zoomAtPosition', 'scale', 'scale must be a number!!!')
+      logWarn('zoomAtDataIndex', 'scale', 'scale must be a number!!!')
       return
     }
-    if (!isNumber(position)) {
-      logWarn('zoomAtPosition', 'position', 'position must be a number!!!')
+    if (!isNumber(dataIndex)) {
+      logWarn('zoomAtDataIndex', 'dataIndex', 'dataIndex must be a number!!!')
       return
     }
-    const x = this._chartPane.chartData().timeScaleStore().dataIndexToCoordinate(position)
+    const x = this._chartPane.chartData().timeScaleStore().dataIndexToCoordinate(dataIndex)
     this.zoomAtCoordinate(scale, { x }, animationDuration)
   }
 

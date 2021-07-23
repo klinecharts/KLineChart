@@ -113,21 +113,6 @@ export default class GraphicMarkStore {
   }
 
   /**
-   * 创建实例信息
-   * @param instance 实例
-   */
-  _createInstanceInfo (instance) {
-    return {
-      name: instance.name(),
-      id: instance.id(),
-      totalStep: instance.totalStep(),
-      lock: instance.lock(),
-      points: instance.points(),
-      styles: instance.styles()
-    }
-  }
-
-  /**
    * 添加自定义标记图形
    * @param graphicMarks
    */
@@ -188,11 +173,27 @@ export default class GraphicMarkStore {
    * @param options
    */
   setInstanceOptions (options = {}) {
-    const { id, styles, lock } = options
-    const graphicMark = this._graphicMarks.find(gm => gm.id() === id)
-    if (graphicMark) {
-      graphicMark.setLock(lock)
-      if (graphicMark.setStyles(styles, this._chartData.styleOptions().graphicMark)) {
+    const { id, styles, lock, mode } = options
+    const defaultStyles = this._chartData.styleOptions().graphicMark
+    if (isValid(id)) {
+      const instance = this._instances.find(gm => gm.id() === id)
+      if (instance) {
+        instance.setLock(lock)
+        instance.setMode(mode)
+        if (instance.setStyles(styles, defaultStyles)) {
+          this._chartData.invalidate(InvalidateLevel.OVERLAY)
+        }
+      }
+    } else {
+      let shouldInvalidate = false
+      this._instances.forEach(instance => {
+        instance.setLock(lock)
+        instance.setMode(mode)
+        if (instance.setStyles(styles, defaultStyles)) {
+          shouldInvalidate = true
+        }
+      })
+      if (shouldInvalidate) {
         this._chartData.invalidate(InvalidateLevel.OVERLAY)
       }
     }
@@ -204,14 +205,25 @@ export default class GraphicMarkStore {
    * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
    */
   getInstanceInfo (id) {
+    const create = (instance) => {
+      return {
+        name: instance.name(),
+        id: instance.id(),
+        totalStep: instance.totalStep(),
+        lock: instance.lock(),
+        mode: instance.mode(),
+        points: instance.points(),
+        styles: instance.styles()
+      }
+    }
     if (id) {
-      const graphicMark = this._instances.find(gm => gm.id() === id)
-      if (graphicMark) {
-        return this._createInstanceInfo(graphicMark)
+      const instance = this._instances.find(gm => gm.id() === id)
+      if (instance) {
+        return create(instance)
       }
     } else {
-      return this._instances.map(graphicMark => {
-        return this._createInstanceInfo(graphicMark)
+      return this._instances.map(instance => {
+        return create(instance)
       })
     }
     return null

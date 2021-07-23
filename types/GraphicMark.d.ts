@@ -1,5 +1,7 @@
 import { Precision, Viewport, Coordinate, Point, OverlayEvent } from './Common';
 
+export declare type GraphicMarkMode = 'normal' | 'weak_magnet' | 'strong_magnet';
+
 export declare type GraphicMarkDataSourceDrawType = 'line' | 'text' | 'continuous_line' | 'polygon' | 'arc';
 
 export declare type GraphicMarkDataSourceDrawStyle = 'stroke' | 'fill' | 'dash' | 'solid';
@@ -28,6 +30,7 @@ export declare interface OverrideGraphicMark {
   id?: string;
   styles?: any;
   lock?: boolean;
+  mode?: GraphicMarkMode;
 }
 
 export declare interface GraphicMark extends OverrideGraphicMark {
@@ -63,7 +66,7 @@ export declare interface GraphicMarkCreateDataSourceParams {
 
 export declare interface GraphicMarkEventPressMoveParams {
   points: Point[];
-  pressedPointIndex: number;
+  pressPointIndex: number;
   pressPoint: Point;
   xAxis: any;
   yAxis: any;

@@ -303,6 +303,14 @@ export default class TimeScaleStore {
   }
 
   /**
+   * 根据索引获取数据
+   * @param dataIndex
+   */
+  getDataByDataIndex (dataIndex) {
+    return this._chartData.dataList()[dataIndex]
+  }
+
+  /**
    * x转换成浮点数的位置
    * @param x
    * @returns {number}
@@ -320,7 +328,7 @@ export default class TimeScaleStore {
    * @return {*}
    */
   dataIndexToTimestamp (dataIndex) {
-    const data = this._chartData.dataList()[dataIndex]
+    const data = this.getDataByDataIndex(dataIndex)
     if (data) {
       return data.timestamp
     }

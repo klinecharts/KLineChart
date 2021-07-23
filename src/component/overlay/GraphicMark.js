@@ -69,6 +69,15 @@ const LineType = {
 }
 
 /**
+ * 图形标记模式
+ */
+const GraphicMarkMode = {
+  NORMAL: 'normal',
+  WEAK_MAGNET: 'weak_magnet',
+  STRONG_MAGNET: 'strong_magnet'
+}
+
+/**
  * 获取绘制线类型
  * @param point1
  * @param point2
@@ -97,6 +106,7 @@ export default class GraphicMark extends Overlay {
     this._name = name
     this._totalStep = totalStep
     this._lock = lock
+    this._mode = GraphicMarkMode.NORMAL
     this._drawStep = GRAPHIC_MARK_DRAW_STEP_START
     this._points = []
     this.setPoints(points)
@@ -125,6 +135,7 @@ export default class GraphicMark extends Overlay {
       for (let i = 0; i < repeatTotalStep; i++) {
         this.performEventMoveForDrawing({
           step: i + 2,
+          mode: this._mode,
           points: this._points,
           movePoint: this._points[i],
           xAxis: this._xAxis,
@@ -133,8 +144,9 @@ export default class GraphicMark extends Overlay {
       }
       if (this._drawStep === GRAPHIC_MARK_DRAW_STEP_FINISHED) {
         this.performEventPressedMove({
+          mode: this._mode,
           points: this._points,
-          pressedPointIndex: this._points.length - 1,
+          pressPointIndex: this._points.length - 1,
           pressPoint: this._points[this._points.length - 1],
           xAxis: this._xAxis,
           yAxis: this._yAxis
@@ -388,7 +400,8 @@ export default class GraphicMark extends Overlay {
     const graphicMarkMouseOperate = this._chartData.graphicMarkStore().mouseOperate()
     if (
       (graphicMarkMouseOperate.hover.id === this._id && graphicMarkMouseOperate.hover.element !== GraphicMarkMouseOperateElement.NONE) ||
-      (graphicMarkMouseOperate.click.id === this._id && graphicMarkMouseOperate.click.element !== GraphicMarkMouseOperateElement.NONE)
+      (graphicMarkMouseOperate.click.id === this._id && graphicMarkMouseOperate.click.element !== GraphicMarkMouseOperateElement.NONE) ||
+      this.isDrawing()
     ) {
       this._coordinates.forEach(({ x, y }, index) => {
         let radius = markOptions.point.radius
@@ -441,6 +454,24 @@ export default class GraphicMark extends Overlay {
    */
   totalStep () {
     return this._totalStep
+  }
+
+  /**
+   * 获取模式类型
+   * @returns
+   */
+  mode () {
+    return this._mode
+  }
+
+  /**
+   * 设置模式
+   * @param mode
+   */
+  setMode (mode) {
+    if (Object.values(GraphicMarkMode).indexOf > -1) {
+      this._mode = mode
+    }
   }
 
   /**
@@ -499,16 +530,72 @@ export default class GraphicMark extends Overlay {
   }
 
   /**
-   * 绘制过程中鼠标移动事件
-   * @param point
+   * 不同的模式下处理值
+   * @param value
    */
-  mouseMoveForDrawing (point) {
-    const dataIndex = this._xAxis.convertFromPixel(point.x)
+  _performValue (y, dataIndex) {
+    const value = this._yAxis.convertFromPixel(y)
+    if (this._mode === GraphicMarkMode.NORMAL) {
+      return value
+    }
+    const kLineData = this._chartData.timeScaleStore().getDataByDataIndex(dataIndex)
+    if (!kLineData) {
+      return value
+    }
+    if (value > kLineData.high) {
+      if (this._mode === GraphicMarkMode.WEAK_MAGNET) {
+        const highY = this._yAxis.convertToPixel(kLineData.high)
+        const buffValue = this._yAxis.convertFromPixel(highY - 8)
+        if (value < buffValue) {
+          return kLineData.high
+        }
+        return value
+      }
+      return kLineData.high
+    }
+    if (value < kLineData.low) {
+      if (this._mode === GraphicMarkMode.WEAK_MAGNET) {
+        const lowY = this._yAxis.convertToPixel(kLineData.low)
+        const buffValue = this._yAxis.convertFromPixel(lowY - 8)
+        if (value > buffValue) {
+          return kLineData.low
+        }
+        return value
+      }
+      return kLineData.low
+    }
+    const max = Math.max(kLineData.open, kLineData.close)
+    if (value > max) {
+      if (value - max < kLineData.high - value) {
+        return max
+      }
+      return kLineData.high
+    }
+    const min = Math.min(kLineData.open, kLineData.close)
+    if (value < min) {
+      if (value - kLineData.low < min - value) {
+        return kLineData.low
+      }
+      return min
+    }
+    if (max - value < value - min) {
+      return max
+    }
+    return min
+  }
+
+  /**
+   * 绘制过程中鼠标移动事件
+   * @param coordinate
+   */
+  mouseMoveForDrawing (coordinate) {
+    const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
     const timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
-    const value = this._yAxis.convertFromPixel(point.y)
+    const value = this._performValue(coordinate.y, dataIndex)
     this._points[this._drawStep - 1] = { timestamp, value, dataIndex }
     this.performEventMoveForDrawing({
       step: this._drawStep,
+      mode: this._mode,
       points: this._points,
       movePoint: { timestamp, value, dataIndex },
       xAxis: this._xAxis,
@@ -545,13 +632,14 @@ export default class GraphicMark extends Overlay {
     ) {
       const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
       const timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
-      const value = this._yAxis.convertFromPixel(coordinate.y)
+      const value = this._performValue(coordinate.y, dataIndex)
       this._points[elementIndex].timestamp = timestamp
       this._points[elementIndex].dataIndex = dataIndex
       this._points[elementIndex].value = value
       this.performEventPressedMove({
         points: this._points,
-        pressedPointIndex: elementIndex,
+        mode: this._mode,
+        pressPointIndex: elementIndex,
         pressPoint: { dataIndex, timestamp, value },
         xAxis: this._xAxis,
         yAxis: this._yAxis
@@ -662,22 +750,24 @@ export default class GraphicMark extends Overlay {
   /**
    * 处理绘制过程中鼠标移动
    * @param step
+   * @param mode
    * @param points
    * @param point
    * @param xAxis
    * @param yAxis
    */
-  performEventMoveForDrawing ({ step, points, movePoint, xAxis, yAxis }) {}
+  performEventMoveForDrawing ({ step, mode, points, movePoint, xAxis, yAxis }) {}
 
   /**
    * 处理鼠标按住移动
+   * @param mode
    * @param points
-   * @param pressedPointIndex
+   * @param pressPointIndex
    * @param point
    * @param xAxis
    * @param yAxis
    */
-  performEventPressedMove ({ points, pressedPointIndex, pressPoint, xAxis, yAxis }) {}
+  performEventPressedMove ({ mode, points, pressPointIndex, pressPoint, xAxis, yAxis }) {}
 
   // --------------------- 自定义时需要实现的一些方法结束 ----------------------
 }

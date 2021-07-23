@@ -55,9 +55,9 @@ export declare interface Chart {
   removeTag(paneId?: string, tagId?: string | string[]): void;
   scrollByDistance(distance: number, animationDuration?: number): void;
   scrollToRealTime(animationDuration?: number): void;
-  scrollToPosition(position: number, animationDuration?: number): void;
+  scrollToDataIndex(dataIndex: number, animationDuration?: number): void;
   zoomAtCoordinate(scale: number, coordinate?: Coordinate, animationDuration?: number): void;
-  zoomAtPosition(scale: number, position: number, animationDuration?: number): void;
+  zoomAtDataIndex(scale: number, dataIndex: number, animationDuration?: number): void;
   setPaneOptions(options: PaneOptions): void;
   convertFromPixel(coordinate: Coordinate | Coordinate[], finder: ConvertFinder): Point | Point[];
   convertToPixel(point: Point | Point[], finder: ConvertFinder): Coordinate | Coordinate[];

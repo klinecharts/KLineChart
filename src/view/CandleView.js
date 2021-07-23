@@ -109,18 +109,18 @@ export default class CandleView extends TechnicalIndicatorView {
 
       if (areaPoints.length > 0) {
         // 绘制分时线填充区域
-        const fillColor = areaOptions.fillColor
-        if (isArray(fillColor)) {
+        const backgroundColor = areaOptions.backgroundColor
+        if (isArray(backgroundColor)) {
           const gradient = this._ctx.createLinearGradient(0, this._height, 0, minY)
           try {
-            fillColor.forEach(({ offset, color }) => {
+            backgroundColor.forEach(({ offset, color }) => {
               gradient.addColorStop(offset, color)
             })
           } catch (e) {
           }
           this._ctx.fillStyle = gradient
         } else {
-          this._ctx.fillStyle = fillColor
+          this._ctx.fillStyle = backgroundColor
         }
         this._ctx.beginPath()
         this._ctx.moveTo(areaPoints[0].x, areaPoints[0].y)
