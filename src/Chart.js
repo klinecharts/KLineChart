@@ -61,42 +61,6 @@ export default class Chart {
   }
 
   /**
-   * 覆盖技术指标
-   * @param override 覆盖参数
-   * @param paneId 窗口id
-   */
-  overrideTechnicalIndicator (override, paneId) {
-    if (!isObject(override) || isArray(override)) {
-      logWarn('overrideTechnicalIndicator', 'override', 'override must be an object!!!')
-      return
-    }
-    const templateInstance = this._chartPane.chartData().getTechnicalIndicatorTemplateInstance(override.name)
-    if (!templateInstance) {
-      logWarn('overrideTechnicalIndicator', 'override.name', 'can not find the corresponding technical indicator!!!')
-      return
-    }
-    this._chartPane.overrideTechnicalIndicator(templateInstance, override, paneId)
-  }
-
-  /**
-   * 获取技术指标名字获取技术指标
-   * @param name 指标名
-   * @return {{}}
-   */
-  getTechnicalIndicatorByName (name) {
-    return this._chartPane.chartData().technicalIndicatorStore().getInfo(name)
-  }
-
-  /**
-   * 获取窗口上的技术指标
-   * @param paneId 窗口id
-   * @return {{}}
-   */
-  getTechnicalIndicatorByPaneId (paneId) {
-    return this._chartPane.getPaneTechnicalIndicator(paneId)
-  }
-
-  /**
    * 设置价格数量精度
    * @param pricePrecision 价格精度
    * @param volumePrecision 数量精度
@@ -268,16 +232,53 @@ export default class Chart {
   }
 
   /**
-   * 添加自定义技术指标
-   * @param customTech 自定义指标参数
+   * 添加技术指标模板
+   * @param template 指标模板
    */
-  addCustomTechnicalIndicator (customTech) {
-    if (!isObject(customTech)) {
-      logWarn('addCustomTechnicalIndicator', 'technicalIndicator', 'technicalIndicator must be an object or array!!!')
+  addTechnicalIndicatorTemplate (template) {
+    if (!isObject(template)) {
+      logWarn('addTechnicalIndicatorTemplate', 'techTemplate', 'techTemplate must be an object or array!!!')
       return
     }
-    const techs = [].concat(customTech)
-    this._chartPane.chartData().technicalIndicatorStore().addTemplate(techs)
+    const templates = [].concat(template)
+    this._chartPane.chartData().technicalIndicatorStore().addTemplate(templates)
+  }
+
+  /**
+   * 覆盖技术指标
+   * @param override 覆盖参数
+   * @param paneId 窗口id
+   */
+  overrideTechnicalIndicator (override, paneId) {
+    if (!isObject(override) || isArray(override)) {
+      logWarn('overrideTechnicalIndicator', 'override', 'override must be an object!!!')
+      return
+    }
+    const templateInstance = this._chartPane.chartData().technicalIndicatorStore().getTemplate(override.name)
+    if (!templateInstance) {
+      logWarn('overrideTechnicalIndicator', 'override.name', 'can not find the corresponding technical indicator!!!')
+      return
+    }
+    this._chartPane.overrideTechnicalIndicator(templateInstance, override, paneId)
+  }
+
+  /**
+   * 获取技术指标名字获取技术指标
+   * @param name 指标名
+   * @return {{}}
+   */
+  getTechnicalIndicatorTemplate (name) {
+    return this._chartPane.chartData().technicalIndicatorStore().getInfo(name)
+  }
+
+  /**
+    * 获取窗口上的技术指标
+    * @param paneId 窗口id
+    * @param name 指标名
+    * @return {{}}
+    */
+  getTechnicalIndicatorByPaneId (paneId, name) {
+    return this._chartPane.getPaneTechnicalIndicator(paneId, name)
   }
 
   /**
@@ -291,6 +292,19 @@ export default class Chart {
       return
     }
     this._chartPane.removeTechnicalIndicator(paneId, name)
+  }
+
+  /**
+   * 添加图形标记模板
+   * @param template 图形标记模板
+   */
+  addGraphicMarkTemplate (template) {
+    if (!isObject(template)) {
+      logWarn('addCustomGraphicMark', 'graphicMark', 'graphicMark must be an object or array!!!')
+      return
+    }
+    const templates = [].concat(template)
+    this._chartPane.chartData().graphicMarkStore().addTemplate(templates)
   }
 
   /**
@@ -334,19 +348,6 @@ export default class Chart {
       return
     }
     this._chartPane.chartData().graphicMarkStore().setInstanceOptions(options)
-  }
-
-  /**
-   * 添加自定义图形标记
-   * @param graphicMark 自定义图形标记参数
-   */
-  addCustomGraphicMark (graphicMark) {
-    if (!isObject(graphicMark)) {
-      logWarn('addCustomGraphicMark', 'graphicMark', 'graphicMark must be an object or array!!!')
-      return
-    }
-    const graphicMarks = [].concat(graphicMark)
-    this._chartPane.chartData().graphicMarkStore().addTemplate(graphicMarks)
   }
 
   /**

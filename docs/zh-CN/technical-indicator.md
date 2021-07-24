@@ -15,8 +15,8 @@
 
 
 
-## 自定义技术指标
-想要完成一个自定义技术指标，只需要生成一个技术指标信息，然后通过`extension.addTechnicalIndicator`全局添加，或者通过图表实例方法  `addCustomTechnicalIndicator`为单个图表实例添加即可。添加到图表即可和内置技术指标一样去使用。
+## 技术指标模板
+想要完成一个自定义技术指标，只需要生成一个技术指标信息，然后通过`extension.addTechnicalIndicatorTemplate`全局添加，或者通过图表实例方法  `addCustomTechnicalIndicatorTemplate`为单个图表实例添加即可。添加到图表即可和内置技术指标一样去使用。
 ### 属性说明
 #### 技术指标信息
 ```javascript
@@ -106,7 +106,7 @@
 
 
 ### 示例
-以下将以自定义一个名为'MA'技术指标，一步步的介绍如何去做一个自定义技术指标。
+以下将以一个名为'MA'技术指标，一步步的介绍如何去做技术指标模板。
 #### 步骤一
 首先确定计算参数(calcParams)和配置项(plots)，'MA'技术指标需要展示两个周期的收盘价平均值连起来的线，一条为'ma1'，一条名为'ma2'。因此plots配置为：
 ```javascript

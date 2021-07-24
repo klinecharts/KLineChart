@@ -15,23 +15,23 @@
 export default {
   technicalIndicatorExtensions: {},
   graphicMarkExtensions: {},
-  addTechnicalIndicator (technicalIndicators) {
-    if (technicalIndicators) {
-      ([].concat(technicalIndicators)).forEach(
-        technicalIndicator => {
-          if (technicalIndicator.name) {
-            this.technicalIndicatorExtensions[technicalIndicator.name] = technicalIndicator
+  addTechnicalIndicatorTemplate (template) {
+    if (template) {
+      ([].concat(template)).forEach(
+        tmp => {
+          if (tmp.name) {
+            this.technicalIndicatorExtensions[tmp.name] = tmp
           }
         }
       )
     }
   },
-  addGraphicMark (graphicMarks) {
-    if (graphicMarks) {
-      ([].concat(graphicMarks)).forEach(
-        graphicMark => {
-          if (graphicMark.name) {
-            this.graphicMarkExtensions[graphicMark.name] = graphicMark
+  addGraphicMarkTemplate (template) {
+    if (template) {
+      ([].concat(template)).forEach(
+        tmp => {
+          if (tmp.name) {
+            this.graphicMarkExtensions[tmp.name] = tmp
           }
         }
       )

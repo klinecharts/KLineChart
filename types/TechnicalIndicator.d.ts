@@ -38,7 +38,7 @@ export declare interface TechnicalIndicatorRenderDataSource {
   technicalIndicatorDataList?: any[];
 }
 
-export declare interface CustomTechnicalIndicatorRenderParams {
+export declare interface TechnicalIndicatorRenderParams {
   ctx: CanvasRenderingContext2D;
   dataSource: TechnicalIndicatorRenderDataSource;
   viewport: Viewport;
@@ -47,12 +47,12 @@ export declare interface CustomTechnicalIndicatorRenderParams {
   yAxis: any;
 }
 
-export declare interface CustomTechnicalIndicator extends TechnicalIndicator {
+export declare interface TechnicalIndicatorTemplate extends TechnicalIndicator {
   calcTechnicalIndicator: (kLineDataList: KLineData[], options?: any) => any[];
   plots?: TechnicalIndicatorPlot[];
   shouldCheckParamCount?: boolean;
   minValue?: number;
   maxValue?: number;
   regeneratePlots?: (params?: number[]) => TechnicalIndicatorPlot[];
-  render?: (params: CustomTechnicalIndicatorRenderParams) => void;
+  render?: (params: TechnicalIndicatorRenderParams) => void;
 }

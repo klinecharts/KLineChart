@@ -7,7 +7,7 @@ import { Chart, PictureType, ChartActionType } from './Chart';
 import {
   GraphicMarkMode, GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  OverrideGraphicMark, GraphicMark, CustomGraphicMark,
+  OverrideGraphicMark, GraphicMark, GraphicMarkTemplate,
   GraphicMarkCheckOnParams, GraphicMarkCreateDataSourceParams,
   GraphicMarkEventPressMoveParams, GraphicMarkEventMoveDrawingParams,
   GraphicMarkDrawExtendParams
@@ -25,12 +25,12 @@ import {
   TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, TechnicalIndicatorRenderDataSource,
-  TechnicalIndicator, CustomTechnicalIndicatorRenderParams, CustomTechnicalIndicator
+  TechnicalIndicator, TechnicalIndicatorRenderParams, TechnicalIndicatorTemplate
 } from './TechnicalIndicator';
 
 export declare interface extension {
-  addTechnicalIndicator: (technicalIndicators: CustomTechnicalIndicator | CustomTechnicalIndicator[]) => void;
-  addGraphicMark: (graphicMarks: CustomTechnicalIndicator | CustomTechnicalIndicator[]) => void;
+  addTechnicalIndicatorTemplate: (template: TechnicalIndicatorTemplate | TechnicalIndicatorTemplate[]) => void;
+  addGraphicMarkTemplate: (template: GraphicMarkTemplate | GraphicMarkTemplate[]) => void;
 }
 
 export declare function version(): string;
@@ -45,7 +45,7 @@ export {
   Coordinate, Point,
   GraphicMarkMode, GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  OverrideGraphicMark, GraphicMark, CustomGraphicMark,
+  OverrideGraphicMark, GraphicMark, GraphicMarkTemplate,
   GraphicMarkCheckOnParams, GraphicMarkCreateDataSourceParams,
   GraphicMarkEventPressMoveParams, GraphicMarkEventMoveDrawingParams,
   GraphicMarkDrawExtendParams,
@@ -54,5 +54,5 @@ export {
   TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, TechnicalIndicatorRenderDataSource,
-  TechnicalIndicator, CustomTechnicalIndicatorRenderParams, CustomTechnicalIndicator
+  TechnicalIndicator, TechnicalIndicatorRenderParams, TechnicalIndicatorTemplate
 }

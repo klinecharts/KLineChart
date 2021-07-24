@@ -6,11 +6,17 @@
    + `overrideTechnicalIndicator`支持在覆盖某个窗口上的指标属性。
    + `getGraphicMark`支持获取所有实例。
    + `setGraphicMarkOptions`支持设置所有标记图形实例属性。
+   + `getTechnicalIndicatorByPaneId`支持获取单个技术指标信息。
    + 注解和标签支持在任意一个窗口上创建。
    + 图形标记支持整体拖动，支持弱磁铁和强磁铁模式。
 + 👉 变更
+   + `extension.addTechnicalIndicator`变更为`extension.addTechnicalIndicatorTemplate`。
+   + `extension.addGraphicMark`变更为`extension.addGraphicMarkTemplate`。
    + 图表实例
       + `createGraphicMark`合并参数。
+      + `addCustomTechnialIndicator`变更为`addTechnicalIndicatorTemplate`。
+      + `addCustomGraphicMark`变更为`addGraphicMarkTemplate`。
+      + `getTechnicalIndicatorByName`变更为`getTechnicalIndicatorTemplate`。
       + `removeAnnotation`新增参数`paneId`。
       + `removeTag`新增参数`paneId`。
       + `scrollToPosition`变更为`scrollToDataIndex`。

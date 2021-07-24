@@ -160,14 +160,15 @@ chart.overrideTechnicalIndicator({
 ```
 
 
-### getTechnicalIndicatorByName(name)
+### getTechnicalIndicatorTemplate(name)
 根据技术指标名获取技术指标信息。
 - `name` 技术指标名，可缺省，缺省则返回所有
 
 
-### getTechnicalIndicatorByPaneId(paneId)
+### getTechnicalIndicatorByPaneId(paneId, name)
 根据窗口id获取技术指标信息。
 - `paneId` 窗口id，可缺省，缺省则返回所有。
+- `name` 技术指标名
 特殊的paneId: candle_pane，主图的窗口id
 
 
@@ -178,9 +179,9 @@ chart.overrideTechnicalIndicator({
 - `name` 技术指标类型，如果缺省，则会移除所有
 
 
-### addCustomTechnicalIndicator(technicalIndicator)
+### addTechnicalIndicatorTemplate(template)
 添加一个自定义技术指标，可批量创建，批量传入数组即可。
-- `technicalIndicator` 技术指标信息，详细请参考[技术指标](technical-indicator.md)
+- `template` 技术指标模板，详细请参考[技术指标](technical-indicator.md)
 
 
 ### createGraphicMark(value)
@@ -248,9 +249,9 @@ chart.createGraphicMark({
    - `mode` 模式类型，可缺省，类型为'normal' | 'weak_magnet' | 'strong_magnet'
 
 
-### addCustomGraphicMark(graphicMark)
-添加自定义图形标记，可批量创建，批量传入数组即可。
-- `graphicMark` 图形标记信息，详细请参考[详情](graphic-mark.md)
+### addGraphicMarkTemplate(template)
+添加图形标记模板，可批量创建，批量传入数组即可。
+- `template` 图形标记模板，详细请参考[详情](graphic-mark.md)
 
 
 ### removeGraphicMark(id)

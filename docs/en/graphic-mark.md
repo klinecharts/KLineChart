@@ -3,8 +3,8 @@
 ## Default graphic mark
 `horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `horizontalSegment`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`
 
-## Custom graphic mark
-To complete a custom graphic mark, you only need to generate a graphic mark information, and then add it globally through `extension.addGraphicMark`, or add it for a single graph instance through the chart instance method `addCustomGraphicMark`. Adding to the chart can be used like the built-in graphic markers.
+## Graphic mark template
+Create a graphic mark template, and then add it globally through `extension.addGraphicMarkTemplate`, or add it for a single graph instance through the chart instance method `addCustomGraphicMarkTemplate`. Adding to the chart can be used like the built-in graphic markers.
 ### Property description
 #### Graphic mark information
 ```js

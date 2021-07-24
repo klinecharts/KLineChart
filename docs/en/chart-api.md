@@ -10,22 +10,19 @@ Initialize a chart and return the chart instance.
 
 ### dispose(dcs)
 Destroy a chart. Once destroyed, the chart will no longer be usable.
-
 - `dcs` can be one of div node, node id and chart instance
 
 
 
-### extension.addTechnicalIndicator(technicalIndicator)
-Add a technical indicator globally.
-
-- `technicalIndicator` technical indicator information, please refer to [technical indicator](technical-indicator.md)
-
+### extension.addTechnicalIndicatorTemplate(template)
+Add a technical indicator template globally.
+- `template` technical indicator template, please refer to [technical indicator](technical-indicator.md)
 
 
-### extension.addGraphicMark(graphicMark)
-Add a graphic mark globally.
 
-- `graphicMark` graphic mark information, please refer to [graphic mark](graphic-mark.md)
+### extension.addGraphicMarkTemplate(template)
+Add a graphic mark template globally.
+- `template` graphic mark template, please refer to [graphic mark](graphic-mark.md)
 
 
 

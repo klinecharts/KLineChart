@@ -15,8 +15,8 @@
 
 
 
-## Custom technical indicator
-To complete a custom technical indicator, you only need to generate a technical indicator information, and then add it globally through `extension.addTechnicalIndicator`, or add it for a single chart instance through the chart instance method `addCustomTechnicalIndicator`. Adding to the chart can be used like the built-in technical indicators.
+## Technical indicator template
+To complete a technical indicator template, you only need to generate a technical indicator information, and then add it globally through `extension.addTechnicalIndicatorTemplate`, or add it for a single chart instance through the chart instance method `addTechnicalIndicatorTemplate`. Adding to the chart can be used like the built-in technical indicators.
 ### Property description
 #### Technical indicator information
 ```javascript
@@ -73,14 +73,14 @@ To complete a custom technical indicator, you only need to generate a technical 
   // styles style
   // xAxis x-axis component
   // yAxis y-axis component
-  render: (
+  render: ({
     ctx,
     dataSource,
     viewport,
     styles,
     xAxis,
     yAxis
-  ) => {}
+  }) => {}
 }
 ```
 #### Plots sub-item information
@@ -106,7 +106,7 @@ To complete a custom technical indicator, you only need to generate a technical 
 
 
 ### Example
-The following will customize a technical indicator named 'MA' to introduce step by step how to make a custom technical indicator.
+The following a technical indicator named 'MA' to introduce step by step how to make a technical indicator template.
 #### step one
 First determine the calculation parameters (calcParams) and configuration items (plots). The 'MA' technical indicator needs to display the line connecting the average closing prices of the two periods, one is 'ma1' and the other is called 'ma2'. So the plots configuration is:
 ```javascript

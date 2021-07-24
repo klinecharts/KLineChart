@@ -90,7 +90,7 @@ export declare interface GraphicMarkDrawExtendParams {
   yAxis: any;
 }
 
-export declare interface CustomGraphicMark {
+export declare interface GraphicMarkTemplate {
   name: string;
   totalStep: number;
   checkEventCoordinateOnGraphic: (params: GraphicMarkCheckOnParams) => boolean;

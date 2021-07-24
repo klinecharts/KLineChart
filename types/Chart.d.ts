@@ -1,7 +1,7 @@
 import { KLineData, Coordinate, Point } from './Common';
 
-import { CustomTechnicalIndicator, TechnicalIndicator } from './TechnicalIndicator';
-import { GraphicMark, OverrideGraphicMark, CustomGraphicMark } from './GraphicMark';
+import { TechnicalIndicatorTemplate, TechnicalIndicator } from './TechnicalIndicator';
+import { GraphicMark, OverrideGraphicMark, GraphicMarkTemplate } from './GraphicMark';
 import { Annotation } from './Annotation';
 import { Tag } from './Tag';
 
@@ -39,15 +39,15 @@ export declare interface Chart {
   updateData(data: KLineData): void;
   loadMore(cb: (timestamp: number) => void): void;
   createTechnicalIndicator(value: string | TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string | null;
-  addCustomTechnicalIndicator(customTech: CustomTechnicalIndicator | CustomTechnicalIndicator[]): void;
+  addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate | TechnicalIndicatorTemplate[]): void;
   overrideTechnicalIndicator(tech: TechnicalIndicator, paneId?: string): void;
-  getTechnicalIndicatorByName(name?: string): any;
-  getTechnicalIndicatorByPaneId(paneId?: string): any;
+  getTechnicalIndicatorTemplate(name?: string): any;
+  getTechnicalIndicatorByPaneId(paneId?: string, name?: string): any;
   removeTechnicalIndicator(paneId: string, name?: string): void;
   createGraphicMark(value: string | GraphicMark): string | null;
   getGraphicMark(graphicMarkId?: string): any;
   setGraphicMarkOptions(options: OverrideGraphicMark): void;
-  addCustomGraphicMark(customGraphicMark: CustomGraphicMark | CustomGraphicMark[]): void;
+  addGraphicMarkTemplate(template: GraphicMarkTemplate | GraphicMarkTemplate[]): void;
   removeGraphicMark(graphicMarkId?: string): void;
   createAnnotation(annotation: Annotation | Annotation[], paneId?: string): void;
   removeAnnotation(paneId?: string, point?: Point | Point[]): void;

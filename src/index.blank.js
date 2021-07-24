@@ -47,7 +47,7 @@ import volume from './extension/technicalindicator/volume/volume'
 import extension from './data/extension'
 import { version, init, dispose } from './core'
 
-extension.addTechnicalIndicator([
+extension.addTechnicalIndicatorTemplate([
   averagePrice, bullAndBearIndex, differentOfMovingAverage, directionalMovementIndex, easeOfMovementValue,
   exponentialMovingAverage, movingAverage, movingAverageConvergenceDivergence, simpleMovingAverage, tripleExponentiallySmoothedAverage,
   brar, currentRatio, momentum, psychologicalLine, rateOfChange, volumeRatio,

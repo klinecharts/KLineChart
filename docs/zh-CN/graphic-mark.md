@@ -3,8 +3,8 @@
 ## 默认图形标记
 `horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `horizontalSegment`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`
 
-## 自定义图形标记
-想要完成一个自定义图形标记，只需要生成一个图形标记信息，然后通过`extension.addGraphicMark` 全局添加，或者通过图表实例方法`addCustomGraphicMark` 为单个图表实例添加即可。添加到图表即可和内置图形标记一样去使用。
+## 图形标记模板
+创建一个模板，然后通过`extension.addGraphicMarkTemplate` 全局添加，或者通过图表实例方法`addCustomGraphicMarkTemplate` 为单个图表实例添加即可。添加到图表即可和内置图形标记一样去使用。
 ### 属性说明
 #### 图形标记信息
 ```javascript

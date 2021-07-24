@@ -158,14 +158,15 @@ chart.overrideTechnicalIndicator({
 ```
 
 
-### getTechnicalIndicatorByName(name)
+### getTechnicalIndicatorTemplate(name)
 Obtain technical indicator information according to the technical indicator name.
 - `name` technical indicator name, can be the default, the default returns all
 
 
-### getTechnicalIndicatorByPaneId(paneId)
+### getTechnicalIndicatorByPaneId(paneId, name)
 Obtain technical indicator information according to the window id.
 - `paneId` window id, which can be defaulted, and all are returned by default.
+- `name` technical indicator name
 
 Special paneId: candle_pane, the window id of the main image
 
@@ -177,9 +178,9 @@ Special paneId: candle_pane, the window id of the main image
 - `name` technical indicator type, if default, all will be removed
 
 
-### addCustomTechnicalIndicator(technicalIndicator)
-Add a custom technical indicator. Can be created in batches, just pass in the array in batches.
-- `technicalIndicator` technical indicator information, please refer to [Technical Indicators](technical-indicator.md)
+### addTechnicalIndicatorTemplate(template)
+Add a technical indicator template. Can be created in batches, just pass in the array in batches.
+- `template` technical indicator template, please refer to [Technical Indicators](technical-indicator.md)
 
 
 ### createGraphicMark(value)
@@ -247,9 +248,9 @@ Set the drawn graphic mark configuration.
   - `mode` mode type, 'normal' | 'weak_magnet' | 'strong_magnet'
 
 
-### addCustomGraphicMark(graphicMark)
-Add custom graphic markers. Can be created in batches, just pass in the array in batches.
-- `graphicMark` graphic mark information, please refer to [details](graphic-mark.md)
+### addGraphicMarkTemplate(template)
+Add a graphic marker template. Can be created in batches, just pass in the array in batches.
+- `template` graphic mark information, please refer to [details](graphic-mark.md)
 
 
 ### removeGraphicMark(id)

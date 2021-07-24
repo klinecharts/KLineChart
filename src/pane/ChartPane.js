@@ -525,14 +525,20 @@ export default class ChartPane {
   /**
    * 获取窗口技术指标
    * @param paneId
+   * @param name
    * @return {{}}
    */
-  getPaneTechnicalIndicator (paneId) {
+  getPaneTechnicalIndicator (paneId, name) {
     const technicalIndicatorInfo = (pane) => {
       const paneTechs = {}
-      pane.technicalIndicators().forEach(tech => {
-        paneTechs[tech.name] = createTechnicalIndicatorInfo(tech)
-      })
+      const techs = pane.technicalIndicators()
+      for (const tech of techs) {
+        const techInfo = createTechnicalIndicatorInfo(tech)
+        if (tech.name === name) {
+          return techInfo
+        }
+        paneTechs[tech.name] = techInfo
+      }
       return paneTechs
     }
 
