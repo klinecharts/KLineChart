@@ -80,10 +80,10 @@ export default class AnnotationStore {
    * @param paneId
    */
   add (annotations, paneId) {
+    if (!this._annotations.has(paneId)) {
+      this._annotations.set(paneId, new Map())
+    }
     annotations.forEach(annotation => {
-      if (!this._annotations.has(paneId)) {
-        this._annotations.set(paneId, new Map())
-      }
       const idAnnotations = this._annotations.get(paneId)
       if (idAnnotations.has(annotation.id())) {
         idAnnotations.get(annotation.id()).push(annotation)
@@ -122,11 +122,14 @@ export default class AnnotationStore {
               idAnnotations.delete(timestamp)
             }
           })
+          if (shouldAdjust) {
+            this.createVisibleAnnotations()
+          }
         } else {
           shouldAdjust = true
           this._annotations.delete(paneId)
+          this._visibleAnnotations.delete(paneId)
         }
-        this.createVisibleAnnotations()
       }
     } else {
       shouldAdjust = true

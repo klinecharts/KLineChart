@@ -78,12 +78,12 @@ export default class TagStore {
   * @param paneId
   */
   add (tags, paneId) {
+    if (!this._tags.has(paneId)) {
+      this._tags.set(paneId, new Map())
+    }
+    const idTags = this._tags.get(paneId)
     tags.forEach(tag => {
-      if (!this._tags.has(paneId)) {
-        this._tags.set(paneId, new Map([[tag.id(), tag]]))
-      } else {
-        this._tags.get(paneId).set(tag.id(), tag)
-      }
+      idTags.set(tag.id(), tag)
     })
     this._chartData.invalidate(InvalidateLevel.OVERLAY)
   }

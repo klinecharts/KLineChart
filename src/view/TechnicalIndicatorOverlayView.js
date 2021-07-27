@@ -102,13 +102,13 @@ export default class TechnicalIndicatorOverlayView extends View {
    * 绘制十字光标线
    * @param crosshairOptions
    * @param optionsKey
-   * @param fixedCoordinate
-   * @param startCoordinate
-   * @param endCoordinate
+   * @param fixed
+   * @param start
+   * @param end
    * @param drawLine
    * @private
    */
-  _drawCrosshairLine (crosshairOptions, optionsKey, fixedCoordinate, startCoordinate, endCoordinate, drawLine) {
+  _drawCrosshairLine (crosshairOptions, optionsKey, fixed, start, end, drawLine) {
     const crosshairDirectionOptions = crosshairOptions[optionsKey]
     const crosshairLineOptions = crosshairDirectionOptions.line
     if (!crosshairOptions.show || !crosshairDirectionOptions.show || !crosshairLineOptions.show) {
@@ -121,7 +121,7 @@ export default class TechnicalIndicatorOverlayView extends View {
     if (crosshairLineOptions.style === LineStyle.DASH) {
       this._ctx.setLineDash(crosshairLineOptions.dashValue)
     }
-    drawLine(this._ctx, fixedCoordinate, startCoordinate, endCoordinate)
+    drawLine(this._ctx, fixed, start, end)
     this._ctx.restore()
   }
 
