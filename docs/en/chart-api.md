@@ -2,10 +2,8 @@
 
 ### init(ds, options)
 Initialize a chart and return the chart instance.
-
 - `ds` can be one of dom element and element id
 - `options` style configuration, please refer to [style details](styles.md)
-
 
 
 ### dispose(dcs)
@@ -13,17 +11,14 @@ Destroy a chart. Once destroyed, the chart will no longer be usable.
 - `dcs` can be one of div node, node id and chart instance
 
 
-
 ### extension.addTechnicalIndicatorTemplate(template)
 Add a technical indicator template globally.
 - `template` technical indicator template, please refer to [technical indicator](technical-indicator.md)
 
 
-
 ### extension.addGraphicMarkTemplate(template)
 Add a graphic mark template globally.
 - `template` graphic mark template, please refer to [graphic mark](graphic-mark.md)
-
 
 
 ### version()

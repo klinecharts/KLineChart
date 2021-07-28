@@ -118,11 +118,11 @@ Check if the coordinates are inside the rectangle
 Obtain the ray from two coordinates.
 - `coordinate1` the first coordinate
 - `coordinate2` the second coordinate
-- `xyMax` coordinates to the left of the extreme value
+- `xyMax` the extreme value on the coordinate
 
 
 ### getParallelLines(coordinates, xyMax, extendParalleLineCount)
 Get parallel lines.
 - `coordinates` The coordinates on the determined line
-- `xyMax` the left side of the extreme value on the coordinate
+- `xyMax` the extreme value on the coordinate
 - `extendParalleLineCount` number of parallel lines

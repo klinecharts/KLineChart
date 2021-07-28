@@ -101,7 +101,7 @@ import { ... } from 'klinecharts/lib/mark/graphicHelper'
 
 ### checkCoordinateInDiamond(centerCoordinate, width, height, targetCoordinate)
 检查坐标是否在三角形菱形内部
-- `centerCoordinate` 菱形中间坐标
+- `centerCoordinate` 菱形中心坐标
 - `width` 菱形宽
 - `height` 菱形高
 - `targetCoordinate` 目标坐标
@@ -118,11 +118,11 @@ import { ... } from 'klinecharts/lib/mark/graphicHelper'
 根据两坐标获取射线。
 - `coordinate1` 第一个坐标
 - `coordinate2` 第二个坐标
-- `xyMax` 坐标上的极值左边
+- `xyMax` 坐标上的极值坐标
 
 
 ### getParallelLines(coordinates, xyMax, extendParalleLineCount)
 获取平行线。
 - `coordinates` 已确定的线上的坐标
-- `xyMax` 坐标上的极值左边
+- `xyMax` 坐标上的极值坐标
 - `extendParalleLineCount` 平行线条数
