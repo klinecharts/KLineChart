@@ -456,30 +456,24 @@ export default class ChartPane {
    * @param name
    */
   removeTechnicalIndicator (paneId, name) {
-    if (paneId === CANDLE_PANE_ID) {
-      if (this._panes.get(CANDLE_PANE_ID).removeTechnicalIndicator(name)) {
-        this.adjustPaneViewport(false, true, true, true)
-      }
-    } else {
-      const pane = this._panes.get(paneId)
-      const removed = pane.removeTechnicalIndicator(name)
-      if (pane.isEmptyTechnicalIndicator()) {
-        pane.destroy()
-        const deleteSeparatorTopPaneId = this._separators.get(paneId).topPaneId()
-        this._separators.get(paneId).destroy()
-        this._panes.delete(paneId)
-        this._separators.delete(paneId)
-        this._separators.forEach(separator => {
-          const topPaneId = separator.topPaneId()
-          if (!this._separators.has(topPaneId)) {
-            separator.updatePaneId(deleteSeparatorTopPaneId)
-          }
-        })
-        this.adjustPaneViewport(true, true, true, true, true)
-      } else {
-        if (removed) {
-          this.adjustPaneViewport(false, true, true, true)
+    const pane = this._panes.get(paneId)
+    const removed = pane.removeTechnicalIndicator(name)
+    if (pane.isEmptyTechnicalIndicator() && paneId !== CANDLE_PANE_ID) {
+      pane.destroy()
+      const deleteSeparatorTopPaneId = this._separators.get(paneId).topPaneId()
+      this._separators.get(paneId).destroy()
+      this._panes.delete(paneId)
+      this._separators.delete(paneId)
+      this._separators.forEach(separator => {
+        const topPaneId = separator.topPaneId()
+        if (!this._separators.has(topPaneId)) {
+          separator.updatePaneId(deleteSeparatorTopPaneId)
         }
+      })
+      this.adjustPaneViewport(true, true, true, true, true)
+    } else {
+      if (removed) {
+        this.adjustPaneViewport(false, true, true, true)
       }
     }
   }

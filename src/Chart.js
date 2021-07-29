@@ -237,7 +237,7 @@ export default class Chart {
    */
   addTechnicalIndicatorTemplate (template) {
     if (!isObject(template)) {
-      logWarn('addTechnicalIndicatorTemplate', 'techTemplate', 'techTemplate must be an object or array!!!')
+      logWarn('addTechnicalIndicatorTemplate', 'template', 'template must be an object or array!!!')
       return
     }
     const templates = [].concat(template)
@@ -300,7 +300,7 @@ export default class Chart {
    */
   addGraphicMarkTemplate (template) {
     if (!isObject(template)) {
-      logWarn('addCustomGraphicMark', 'graphicMark', 'graphicMark must be an object or array!!!')
+      logWarn('addCustomGraphicMark', 'template', 'template must be an object or array!!!')
       return
     }
     const templates = [].concat(template)
