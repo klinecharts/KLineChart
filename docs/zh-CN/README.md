@@ -17,3 +17,4 @@
 + [快捷键](hot-key.md)
 + [环境要求](environment.md)
 + [变更日志](changelog.md)
++ [从v7到v8](v7-to-v8.md)

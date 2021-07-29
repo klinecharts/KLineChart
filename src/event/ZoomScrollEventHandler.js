@@ -24,7 +24,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
     // 开始触摸时坐标
     this._touchPoint = null
     // 是否是取消了十字光标
-    this._touchCancelCrossHair = false
+    this._touchCancelCrosshair = false
     // 是否缩放过
     this._touchZoomed = false
     // 用来记录捏合缩放的尺寸
@@ -95,7 +95,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
     if (!isTouch(event)) {
       return
     }
-    if (!this._touchPoint && !this._touchCancelCrossHair && !this._touchZoomed) {
+    if (!this._touchPoint && !this._touchCancelCrosshair && !this._touchZoomed) {
       this._touchPoint = { x: event.localX, y: event.localY }
       this._chartData.crosshairStore().set({ x: event.localX, y: event.paneY, paneId: event.paneId })
     }
@@ -114,12 +114,12 @@ export default class ZoomScrollEventHandler extends EventHandler {
           this._touchPoint = { x: event.localX, y: event.localY }
           this._chartData.crosshairStore().set({ x: event.localX, y: event.paneY, paneId: event.paneId })
         } else {
-          this._touchCancelCrossHair = true
+          this._touchCancelCrosshair = true
           this._touchPoint = null
           this._chartData.crosshairStore().set()
         }
       } else {
-        this._touchCancelCrossHair = false
+        this._touchCancelCrosshair = false
       }
     }
   }

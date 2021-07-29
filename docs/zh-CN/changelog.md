@@ -1,7 +1,7 @@
 # 更新日志
 ## 8.0.0-alpha
 `待发布`
-+ 🆕 功能新增
++ 🆕 新特性
    + `createTechnicalIndicator`支持在创建的时候，覆盖内置属性。
    + `overrideTechnicalIndicator`支持在覆盖某个窗口上的指标属性。
    + `getGraphicMark`支持获取所有实例。
