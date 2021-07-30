@@ -17,7 +17,10 @@ import Overlay from './Overlay'
 import { renderFillCircle } from '../../renderer/circle'
 import { checkCoordinateInCircle } from '../../extension/mark/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../renderer/line'
-import { isValid, isArray, clone } from '../../utils/typeChecks'
+import { isArray, clone } from '../../utils/typeChecks'
+import { createFont } from '../../utils/canvas'
+
+import { StrokeFillStyle, LineStyle } from '../../options/styleOptions'
 
 // 标记图形绘制步骤开始
 const GRAPHIC_MARK_DRAW_STEP_START = 1
@@ -45,17 +48,6 @@ const GraphicMarkDrawType = {
   CONTINUOUS_LINE: 'continuous_line',
   POLYGON: 'polygon',
   ARC: 'arc'
-}
-
-/**
- * 绘制风格
- * @type {{STROKE: string, FILL: string, SOLID: string, DASH: string}}
- */
-const GraphicMarkDrawStyle = {
-  STROKE: 'stroke',
-  FILL: 'fill',
-  SOLID: 'solid',
-  DASH: 'dash'
 }
 
 /**
@@ -171,16 +163,15 @@ export default class GraphicMark extends Overlay {
    * 绘制线
    * @param ctx
    * @param lines
-   * @param style
-   * @param markOptions
+   * @param styles
    * @private
    */
-  _drawLines (ctx, lines, style, markOptions) {
+  _drawLines (ctx, lines, styles) {
     ctx.save()
-    ctx.strokeStyle = markOptions.line.color
-    ctx.lineWidth = markOptions.line.size
-    if (style === GraphicMarkDrawStyle.DASH) {
-      ctx.setLineDash(markOptions.line.dashValue)
+    ctx.strokeStyle = styles.color
+    ctx.lineWidth = styles.size
+    if (styles.style === LineStyle.DASH) {
+      ctx.setLineDash(styles.dashValue)
     }
     lines.forEach(points => {
       if (points.length > 1) {
@@ -215,16 +206,15 @@ export default class GraphicMark extends Overlay {
    * 绘制连续线
    * @param ctx
    * @param continuousLines
-   * @param style
-   * @param markOptions
+   * @param styles
    * @private
    */
-  _drawContinuousLines (ctx, continuousLines, style, markOptions) {
+  _drawContinuousLines (ctx, continuousLines, styles) {
     ctx.save()
-    ctx.strokeStyle = markOptions.line.color
-    ctx.lineWidth = markOptions.line.size
-    if (style === GraphicMarkDrawStyle.DASH) {
-      ctx.setLineDash(markOptions.line.dashValue)
+    ctx.strokeStyle = styles.color
+    ctx.lineWidth = styles.size
+    if (styles.style === LineStyle.DASH) {
+      ctx.setLineDash(styles.dashValue)
     }
     continuousLines.forEach(points => {
       if (points.length > 0) {
@@ -246,19 +236,18 @@ export default class GraphicMark extends Overlay {
    * 绘制多边形
    * @param ctx
    * @param polygons
-   * @param style
-   * @param markOptions
+   * @param styles
    * @private
    */
-  _drawPolygons (ctx, polygons, style, markOptions) {
+  _drawPolygons (ctx, polygons, styles) {
     ctx.save()
     let fillStroke
-    if (style === GraphicMarkDrawStyle.FILL) {
-      ctx.fillStyle = markOptions.polygon.fill.color
+    if (styles.style === StrokeFillStyle.FILL) {
+      ctx.fillStyle = styles.color
       fillStroke = ctx.fill
     } else {
-      ctx.lineWidth = markOptions.polygon.stroke.size
-      ctx.strokeStyle = markOptions.polygon.stroke.color
+      ctx.lineWidth = styles.size
+      ctx.strokeStyle = styles.color
       fillStroke = ctx.stroke
     }
     polygons.forEach(points => {
@@ -281,22 +270,21 @@ export default class GraphicMark extends Overlay {
    * 画圆弧
    * @param ctx
    * @param arcs
-   * @param style
-   * @param markOptions
+   * @param styles
    * @private
    */
-  _drawArcs (ctx, arcs, style, markOptions) {
+  _drawArcs (ctx, arcs, styles) {
     ctx.save()
-    if (style === GraphicMarkDrawStyle.FILL) {
-      ctx.fillStyle = markOptions.arc.fill.color
+    if (styles.style === StrokeFillStyle.FILL) {
+      ctx.fillStyle = styles.color
     } else {
-      ctx.lineWidth = markOptions.arc.stroke.size
-      ctx.strokeStyle = markOptions.arc.stroke.color
+      ctx.lineWidth = styles.size
+      ctx.strokeStyle = styles.color
     }
     arcs.forEach(({ x, y, radius, startAngle, endAngle }) => {
       ctx.beginPath()
       ctx.arc(x, y, radius, startAngle, endAngle)
-      if (style === GraphicMarkDrawStyle.FILL) {
+      if (styles.style === StrokeFillStyle.FILL) {
         ctx.closePath()
         ctx.fill()
       } else {
@@ -311,23 +299,22 @@ export default class GraphicMark extends Overlay {
    * 绘制文字
    * @param ctx
    * @param texts
-   * @param style
-   * @param markOptions
+   * @param styles
    * @private
    */
-  _drawText (ctx, texts, style, markOptions) {
+  _drawText (ctx, texts, styles) {
     ctx.save()
     let fillStroke
-    if (style === GraphicMarkDrawStyle.STROKE) {
-      ctx.strokeStyle = markOptions.text.color
+    if (styles.style === StrokeFillStyle.STROKE) {
+      ctx.strokeStyle = styles.color
       fillStroke = ctx.strokeText
     } else {
-      ctx.fillStyle = markOptions.text.color
+      ctx.fillStyle = styles.color
       fillStroke = ctx.fillText
     }
-    ctx.font = `${markOptions.text.weight} ${markOptions.text.size}px ${markOptions.text.family}`
+    ctx.font = createFont(styles.size, styles.family, styles.weight)
     texts.forEach(({ x, y, text }) => {
-      fillStroke.call(ctx, text, x + markOptions.text.marginLeft, y - markOptions.text.marginBottom)
+      fillStroke.call(ctx, text, x + styles.marginLeft, y - styles.marginBottom)
     })
     ctx.restore()
   }
@@ -349,34 +336,36 @@ export default class GraphicMark extends Overlay {
       const precision = { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() }
       this._graphicDataSources = this.createGraphicDataSource({
         step: this._drawStep,
+        mode: this._mode,
         points: this._points,
         coordinates: this._coordinates,
         viewport: { width: this._xAxis.width(), height: this._yAxis.height() },
         precision: { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() },
+        styles: markOptions,
         xAxis: this._xAxis,
         yAxis: this._yAxis
       }) || []
-      this._graphicDataSources.forEach(({ type, isDraw, style, dataSource = [] }) => {
-        if (!isValid(isDraw) || isDraw) {
+      this._graphicDataSources.forEach(({ type, isDraw, styles, dataSource = [] }) => {
+        if (isDraw) {
           switch (type) {
             case GraphicMarkDrawType.LINE: {
-              this._drawLines(ctx, dataSource, style, markOptions)
+              this._drawLines(ctx, dataSource, styles || markOptions.line)
               break
             }
             case GraphicMarkDrawType.CONTINUOUS_LINE: {
-              this._drawContinuousLines(ctx, dataSource, style, markOptions)
+              this._drawContinuousLines(ctx, dataSource, styles || markOptions.line)
               break
             }
             case GraphicMarkDrawType.POLYGON: {
-              this._drawPolygons(ctx, dataSource, style, markOptions)
+              this._drawPolygons(ctx, dataSource, styles || markOptions.polygon)
               break
             }
             case GraphicMarkDrawType.ARC: {
-              this._drawArcs(ctx, dataSource, style, markOptions)
+              this._drawArcs(ctx, dataSource, styles || markOptions.arc)
               break
             }
             case GraphicMarkDrawType.TEXT: {
-              this._drawText(ctx, dataSource, style, markOptions)
+              this._drawText(ctx, dataSource, styles || markOptions.text)
               break
             }
             default: { break }
@@ -391,6 +380,7 @@ export default class GraphicMark extends Overlay {
           styles: markOptions,
           viewport,
           precision,
+          mode: this._mode,
           xAxis: this._xAxis,
           yAxis: this._yAxis
         })
@@ -745,7 +735,7 @@ export default class GraphicMark extends Overlay {
    * @param xAxis
    * @param yAxis
    */
-  createGraphicDataSource ({ step, points, coordinates, viewport, precision, xAxis, yAxis }) {}
+  createGraphicDataSource ({ step, mode, points, coordinates, viewport, precision, styles, xAxis, yAxis }) {}
 
   /**
    * 处理绘制过程中鼠标移动

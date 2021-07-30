@@ -13,6 +13,14 @@
  */
 
 /**
+ * 填充空心样式类型
+ */
+export const StrokeFillStyle = {
+  STROKE: 'stroke',
+  FILL: 'fill'
+}
+
+/**
  * 线的样式
  * @type {{DASH: string, SOLID: string}}
  */
@@ -439,7 +447,7 @@ const defaultCrosshair = {
 
 /**
  * 默认图形标记配置
- * @type {{arc: {fill: {color: string}, stroke: {size: number, color: string}}, polygon: {fill: {color: string}, stroke: {size: number, color: string}}, line: {color: string, size: number}, text: {marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
+ * @type {{arc: {style: string, color: string, size: number}, polygon: {style: string, color: string, size: number}, line: {style: string, color: string, size: number, dashValue: number[]}, text: {style: string, marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
  */
 const defaultGraphicMark = {
   point: {
@@ -453,29 +461,23 @@ const defaultGraphicMark = {
     activeRadius: 5
   },
   line: {
+    style: LineStyle.SOLID,
     color: '#2196F3',
     size: 1,
     dashValue: [2, 2]
   },
   polygon: {
-    stroke: {
-      size: 1,
-      color: '#2196F3'
-    },
-    fill: {
-      color: 'rgba(33, 150, 243, 0.1)'
-    }
+    style: StrokeFillStyle.STROKE,
+    size: 1,
+    color: '#2196F3'
   },
   arc: {
-    stroke: {
-      size: 1,
-      color: '#2196F3'
-    },
-    fill: {
-      color: 'rgba(33, 150, 243, 0.1)'
-    }
+    style: StrokeFillStyle.STROKE,
+    size: 1,
+    color: '#2196F3'
   },
   text: {
+    style: StrokeFillStyle.STROKE,
     color: '#2196F3',
     size: 12,
     family: 'Helvetica Neue',

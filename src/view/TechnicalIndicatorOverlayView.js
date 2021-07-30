@@ -13,7 +13,7 @@
  */
 
 import View from './View'
-import { TooltipShowRule, LineStyle } from '../data/options/styleOptions'
+import { TooltipShowRule, LineStyle } from '../options/styleOptions'
 import { TechnicalIndicatorPlotType } from '../component/tech/TechnicalIndicator'
 import { isValid } from '../utils/typeChecks'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'

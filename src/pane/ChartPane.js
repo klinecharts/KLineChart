@@ -18,7 +18,7 @@ import { createTechnicalIndicatorInfo } from '../data/store/TechnicalIndicatorSt
 import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
 
-import { YAxisPosition } from '../data/options/styleOptions'
+import { YAxisPosition } from '../options/styleOptions'
 import { isArray, isBoolean, isFunction, isValid, isNumber } from '../utils/typeChecks'
 import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'

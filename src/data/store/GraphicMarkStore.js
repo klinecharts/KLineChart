@@ -114,13 +114,13 @@ export default class GraphicMarkStore {
 
   /**
    * 添加自定义标记图形
-   * @param graphicMarks
+   * @param templates
    */
-  addTemplate (graphicMarks) {
-    graphicMarks.forEach(mark => {
-      const GraphicMarkClass = this._createTemplateClass(mark)
+  addTemplate (templates) {
+    templates.forEach(tmp => {
+      const GraphicMarkClass = this._createTemplateClass(tmp)
       if (GraphicMarkClass) {
-        this._templates[mark.name] = GraphicMarkClass
+        this._templates[tmp.name] = GraphicMarkClass
       }
     })
   }

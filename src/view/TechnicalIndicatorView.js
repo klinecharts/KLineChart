@@ -14,7 +14,7 @@
 
 import View from './View'
 
-import { CandleType, LineStyle } from '../data/options/styleOptions'
+import { CandleType, LineStyle } from '../options/styleOptions'
 import { TechnicalIndicatorPlotType } from '../component/tech/TechnicalIndicator'
 import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
 import { isValid } from '../utils/typeChecks'

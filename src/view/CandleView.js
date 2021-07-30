@@ -13,7 +13,7 @@
  */
 
 import TechnicalIndicatorView from './TechnicalIndicatorView'
-import { CandleType, LineStyle } from '../data/options/styleOptions'
+import { CandleType, LineStyle } from '../options/styleOptions'
 import { renderHorizontalLine, renderLine } from '../renderer/line'
 import { createFont } from '../utils/canvas'
 import { formatPrecision, formatValue } from '../utils/format'

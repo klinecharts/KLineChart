@@ -13,7 +13,7 @@
  */
 
 import View from './View'
-import { YAxisType } from '../data/options/styleOptions'
+import { YAxisType } from '../options/styleOptions'
 import { TechnicalIndicatorPlotType } from '../component/tech/TechnicalIndicator'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
@@ -172,7 +172,7 @@ export default class YAxisView extends View {
         }
         if (isValid(value)) {
           this._drawMarkLabel(
-            yAxisOptions, value, precision, tech.shouldFormatBigNumber,
+            value, precision, tech.shouldFormatBigNumber,
             {
               ...lastValueMarkOptions.text, backgroundColor
             }
@@ -211,7 +211,7 @@ export default class YAxisView extends View {
       backgroundColor = lastPriceMarkOptions.noChangeColor
     }
     this._drawMarkLabel(
-      yAxisOptions, close, this._chartData.pricePrecision(), false,
+      close, this._chartData.pricePrecision(), false,
       {
         ...lastPriceMarkOptions.text, backgroundColor
       }
@@ -220,7 +220,6 @@ export default class YAxisView extends View {
 
   /**
    * 绘制标记label
-   * @param yAxisOptions
    * @param value
    * @param precision
    * @param shouldFormatBigNumber
@@ -237,7 +236,7 @@ export default class YAxisView extends View {
    * @private
    */
   _drawMarkLabel (
-    yAxisOptions, value, precision, shouldFormatBigNumber,
+    value, precision, shouldFormatBigNumber,
     {
       size, weight, family, color, backgroundColor, borderRadius,
       paddingLeft, paddingTop, paddingRight, paddingBottom

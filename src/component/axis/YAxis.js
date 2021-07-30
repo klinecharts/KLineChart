@@ -13,7 +13,7 @@
  */
 
 import Axis from './Axis'
-import { CandleType, YAxisPosition, YAxisType } from '../../data/options/styleOptions'
+import { CandleType, YAxisPosition, YAxisType } from '../../options/styleOptions'
 import { isNumber, isValid } from '../../utils/typeChecks'
 import { calcTextWidth, createFont } from '../../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../../utils/format'

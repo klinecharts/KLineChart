@@ -15,7 +15,7 @@
 import View from './View'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
-import { YAxisType } from '../data/options/styleOptions'
+import { YAxisType } from '../options/styleOptions'
 import { renderStrokeFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 

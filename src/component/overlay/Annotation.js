@@ -28,7 +28,7 @@ import { isNumber } from '../../utils/typeChecks'
 import {
   OverlayPosition,
   AnnotationSymbolType
-} from '../../data/options/styleOptions'
+} from '../../options/styleOptions'
 
 /**
  * 注解

@@ -13,7 +13,7 @@
  */
 
 import Overlay from './Overlay'
-import { LineStyle, OverlayPosition, YAxisPosition } from '../../data/options/styleOptions'
+import { LineStyle, OverlayPosition, YAxisPosition } from '../../options/styleOptions'
 import { renderHorizontalLine } from '../../renderer/line'
 import { isValid, isObject } from '../../utils/typeChecks'
 import { calcTextWidth, createFont } from '../../utils/canvas'

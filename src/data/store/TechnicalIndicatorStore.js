@@ -163,11 +163,11 @@ export default class TechnicalIndicatorStore {
 
   /**
    * 添加指标模板
-   * @param techs
+   * @param templates
    */
-  addTemplate (techs) {
-    techs.forEach(tech => {
-      const instance = this._createTemplateInstance(tech || {})
+  addTemplate (templates) {
+    templates.forEach(tmp => {
+      const instance = this._createTemplateInstance(tmp || {})
       if (instance) {
         // 将生成的新的指标类放入集合
         this._templates[instance.name] = instance
