@@ -164,14 +164,15 @@ export default class GraphicMark extends Overlay {
    * @param ctx
    * @param lines
    * @param styles
+   * @param defaultStyles
    * @private
    */
-  _drawLines (ctx, lines, styles) {
+  _drawLines (ctx, lines, styles, defaultStyles) {
     ctx.save()
-    ctx.strokeStyle = styles.color
-    ctx.lineWidth = styles.size
+    ctx.strokeStyle = styles.color || defaultStyles.color
+    ctx.lineWidth = styles.size || defaultStyles.size
     if (styles.style === LineStyle.DASH) {
-      ctx.setLineDash(styles.dashValue)
+      ctx.setLineDash(styles.dashValue || defaultStyles.dashValue)
     }
     lines.forEach(points => {
       if (points.length > 1) {
@@ -207,14 +208,15 @@ export default class GraphicMark extends Overlay {
    * @param ctx
    * @param continuousLines
    * @param styles
+   * @param styles
    * @private
    */
-  _drawContinuousLines (ctx, continuousLines, styles) {
+  _drawContinuousLines (ctx, continuousLines, styles, defaultStyles) {
     ctx.save()
-    ctx.strokeStyle = styles.color
-    ctx.lineWidth = styles.size
+    ctx.strokeStyle = styles.color || defaultStyles.color
+    ctx.lineWidth = styles.size || defaultStyles.size
     if (styles.style === LineStyle.DASH) {
-      ctx.setLineDash(styles.dashValue)
+      ctx.setLineDash(styles.dashValue || defaultStyles.dashValue)
     }
     continuousLines.forEach(points => {
       if (points.length > 0) {
@@ -237,17 +239,22 @@ export default class GraphicMark extends Overlay {
    * @param ctx
    * @param polygons
    * @param styles
+   * @param defaultStyles
    * @private
    */
-  _drawPolygons (ctx, polygons, styles) {
+  _drawPolygons (ctx, polygons, styles, defaultStyles) {
     ctx.save()
     let fillStroke
     if (styles.style === StrokeFillStyle.FILL) {
-      ctx.fillStyle = styles.color
+      ctx.fillStyle = (styles.fill || defaultStyles.fill).color
       fillStroke = ctx.fill
     } else {
-      ctx.lineWidth = styles.size
-      ctx.strokeStyle = styles.color
+      const strokeStyles = styles.stroke || defaultStyles.stroke
+      if (strokeStyles.style === LineStyle.DASH) {
+        ctx.setLineDash(strokeStyles.dashValue)
+      }
+      ctx.lineWidth = strokeStyles.size
+      ctx.strokeStyle = strokeStyles.color
       fillStroke = ctx.stroke
     }
     polygons.forEach(points => {
@@ -271,15 +278,20 @@ export default class GraphicMark extends Overlay {
    * @param ctx
    * @param arcs
    * @param styles
+   * @param defaultStyles
    * @private
    */
-  _drawArcs (ctx, arcs, styles) {
+  _drawArcs (ctx, arcs, styles, defaultStyles) {
     ctx.save()
     if (styles.style === StrokeFillStyle.FILL) {
-      ctx.fillStyle = styles.color
+      ctx.fillStyle = (styles.fill || defaultStyles.fill).color
     } else {
-      ctx.lineWidth = styles.size
-      ctx.strokeStyle = styles.color
+      const strokeStyles = styles.stroke || defaultStyles.stroke
+      if (strokeStyles.style === LineStyle.DASH) {
+        ctx.setLineDash(strokeStyles.dashValue)
+      }
+      ctx.lineWidth = strokeStyles.size
+      ctx.strokeStyle = strokeStyles.color
     }
     arcs.forEach(({ x, y, radius, startAngle, endAngle }) => {
       ctx.beginPath()
@@ -300,21 +312,32 @@ export default class GraphicMark extends Overlay {
    * @param ctx
    * @param texts
    * @param styles
+   * @param defaultStyles
    * @private
    */
-  _drawText (ctx, texts, styles) {
+  _drawText (ctx, texts, styles, defaultStyles) {
     ctx.save()
     let fillStroke
     if (styles.style === StrokeFillStyle.STROKE) {
-      ctx.strokeStyle = styles.color
+      ctx.strokeStyle = styles.color || defaultStyles.color
       fillStroke = ctx.strokeText
     } else {
-      ctx.fillStyle = styles.color
+      ctx.fillStyle = styles.color || defaultStyles.color
       fillStroke = ctx.fillText
     }
-    ctx.font = createFont(styles.size, styles.family, styles.weight)
+    ctx.font = createFont(
+      styles.size || defaultStyles.size,
+      styles.family || defaultStyles.family,
+      styles.weight || defaultStyles.weight
+    )
+    const offset = styles.offset || defaultStyles.offset || [0, 0]
     texts.forEach(({ x, y, text }) => {
-      fillStroke.call(ctx, text, x + styles.marginLeft, y - styles.marginBottom)
+      fillStroke.call(
+        ctx,
+        text,
+        x + offset[1],
+        y + offset[0]
+      )
     })
     ctx.restore()
   }
@@ -349,23 +372,23 @@ export default class GraphicMark extends Overlay {
         if (isDraw) {
           switch (type) {
             case GraphicMarkDrawType.LINE: {
-              this._drawLines(ctx, dataSource, styles || markOptions.line)
+              this._drawLines(ctx, dataSource, styles || markOptions.line, markOptions.line)
               break
             }
             case GraphicMarkDrawType.CONTINUOUS_LINE: {
-              this._drawContinuousLines(ctx, dataSource, styles || markOptions.line)
+              this._drawContinuousLines(ctx, dataSource, styles || markOptions.line, markOptions.line)
               break
             }
             case GraphicMarkDrawType.POLYGON: {
-              this._drawPolygons(ctx, dataSource, styles || markOptions.polygon)
+              this._drawPolygons(ctx, dataSource, styles || markOptions.polygon, markOptions.polygon)
               break
             }
             case GraphicMarkDrawType.ARC: {
-              this._drawArcs(ctx, dataSource, styles || markOptions.arc)
+              this._drawArcs(ctx, dataSource, styles || markOptions.arc, markOptions.arc)
               break
             }
             case GraphicMarkDrawType.TEXT: {
-              this._drawText(ctx, dataSource, styles || markOptions.text)
+              this._drawText(ctx, dataSource, styles || markOptions.text, markOptions.text)
               break
             }
             default: { break }

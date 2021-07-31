@@ -106,7 +106,7 @@ export default class Annotation extends Overlay {
 
   draw (ctx) {
     const styles = this._styles || this._chartData.styleOptions().annotation
-    const offset = styles.offset || []
+    const offset = styles.offset || [0, 0]
     let y = 0
     switch (styles.position) {
       case OverlayPosition.POINT: {
@@ -122,7 +122,7 @@ export default class Annotation extends Overlay {
         break
       }
     }
-    this._symbolCoordinate.y = y + (offset[1] || 0)
+    this._symbolCoordinate.y = y + offset[0]
     const isActive = this._id === this._chartData.annotationStore().mouseOperate().id
     this._drawSymbol(ctx, isActive, styles)
     if (this.drawExtend) {
@@ -201,8 +201,8 @@ export default class Annotation extends Overlay {
   createSymbolCoordinate (x) {
     const styles = this._styles || this._chartData.styleOptions().annotation
     const symbolOptions = styles.symbol
-    const offset = symbolOptions.offset || []
-    this._symbolCoordinate = { x: x + (offset[0] || 0) }
+    const offset = symbolOptions.offset || [0, 0]
+    this._symbolCoordinate = { x: x + offset[1] }
   }
 
   /**
@@ -215,7 +215,7 @@ export default class Annotation extends Overlay {
 
   /**
    * 检查鼠标点是否在自定义标识内
-   * @param mouseCoordinate
+   * @param eventCoordinate
    * @param coordinate
    * @param size
    */

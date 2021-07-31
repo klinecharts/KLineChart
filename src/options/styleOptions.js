@@ -468,24 +468,35 @@ const defaultGraphicMark = {
   },
   polygon: {
     style: StrokeFillStyle.STROKE,
-    size: 1,
-    color: '#2196F3'
+    stroke: {
+      style: LineStyle.SOLID,
+      size: 1,
+      color: '#2196F3',
+      dashValue: [2, 2]
+    },
+    fill: {
+      color: '#2196F3'
+    }
   },
   arc: {
     style: StrokeFillStyle.STROKE,
-    size: 1,
-    color: '#2196F3'
+    stroke: {
+      style: LineStyle.SOLID,
+      size: 1,
+      color: '#2196F3',
+      dashValue: [2, 2]
+    },
+    fill: {
+      color: '#2196F3'
+    }
   },
   text: {
-    style: StrokeFillStyle.STROKE,
+    style: StrokeFillStyle.FILL,
     color: '#2196F3',
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
-    marginLeft: 2,
-    marginRight: 2,
-    marginTop: 2,
-    marginBottom: 6
+    offset: [0, 0]
   }
 }
 
@@ -495,7 +506,7 @@ const defaultGraphicMark = {
  */
 const defaultAnnotation = {
   position: OverlayPosition.TOP,
-  offset: [0, 20],
+  offset: [20, 0],
   symbol: {
     type: AnnotationSymbolType.DIAMOND,
     size: 8,
