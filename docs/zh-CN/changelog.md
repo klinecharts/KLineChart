@@ -41,6 +41,18 @@
       + `candle.area.fillColor`变更为`candle.area.backgroundColor`。
       + `annotation.symbol.position`变更为`annotation.position`。 
       + `annotation.symbol.offset`变更为`annotation.offset`。
+   + 图形辅助API
+      + `getRotatePoint`变更为`getRotateCoordinate`。
+      + `getLinearYFromPoints`变更为`getLinearYFromCoordinates`。
+      + `checkPointOnStraightLine`变更为`checkCoordinateOnStraightLine`。
+      + `checkPointOnRayLine`变更为`checkCoordinateOnRayLine`。
+      + `checkPointOnSegment`变更为`checkCoordinateOnSegment`。
+      + `checkPointOnArc`变更为`checkCoordinateOnArc`。
+      + `checkPointInCircle`变更为`checkCoordinateInCircle`。
+      + `checkPointOnCircle`变更为`checkCoordinateOnCircle`。
+      + `checkPointInTriangle`变更为`checkCoordinateInTriangle`。
+      + `checkPointInDiamond`变更为`。checkCoordinateInDiamond`。
+      + `checkPointInRect`变更为`。checkCoordinateInRect`。
 + 💄 优化
    + 优化图形标记鼠标事件响应。
    + 优化图形标记绘制效率。

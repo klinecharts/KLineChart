@@ -44,7 +44,7 @@
       lineSize: 2,
       lineColor: '#2196F3',
       value: 'close',
-      fillColor: [{
+      backgroundColor: [{
         offset: 0,
         color: 'rgba(33, 150, 243, 0.01)'
       }, {
@@ -119,7 +119,7 @@
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#3f4254',
-        fillColor: 'rgba(17, 17, 17, .3)'
+        backgroundColor: 'rgba(17, 17, 17, .3)'
       },
       text: {
         size: 12,
@@ -318,10 +318,6 @@
   },
   // 图形标记
   graphicMark: {
-    line: {
-      color: '#2196F3',
-      size: 1
-    },
     point: {
       backgroundColor: '#2196F3',
       borderColor: '#2196F3',
@@ -332,46 +328,61 @@
       activeBorderSize: 1,
       activeRadius: 6
     },
+    line: {
+      // 'solid'|'dash'
+      style: 'solid'
+      color: '#2196F3',
+      size: 1,
+      dashValue: [2, 2]
+    },
     polygon: {
+      // 'stroke'|'fill'
+      style: 'stroke',
       stroke: {
+        // 'solid'|'dash'
+        style: 'solid',
         size: 1,
-        color: '#2196F3'
+        color: '#2196F3',
+        dashValue: [2, 2]
       },
       fill: {
         color: 'rgba(33, 150, 243, 0.1)'
       }
     },
     arc: {
+      // 'stroke'|'fill'
+      style: 'stroke',
       stroke: {
+        // 'solid'|'dash'
+        style: 'solid',
         size: 1,
-        color: '#2196F3'
+        color: '#2196F3',
+        dashValue: [2, 2]
       },
       fill: {
-        color: 'rgba(33, 150, 243, 0.1)'
+        color: '#2196F3'
       }
     },
     text: {
+      style: 'fill',
       color: '#2196F3',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
-      marginLeft: 2,
-      marginRight: 2,
-      marginTop: 2,
-      marginBottom: 6
+      offset: [0, 0]
     }
   },
   annotation: {
+    // 'top' | 'bottom' | 'point'
+    position: 'top',
+    offset: [20, 0]
     symbol: {
       // 'diamond' | 'circle' | 'rect' | 'triangle' | 'custom' | 'none'
       type: 'diamond',
-      // 'top' | 'bottom' | 'point'
-      position: 'top',
       size: 8,
       color: '#2196F3',
       activeSize: 10,
-      activeColor: '#FF9600',
-      offset: [0, 20]
+      activeColor: '#FF9600'
     }
   },
   tag: {

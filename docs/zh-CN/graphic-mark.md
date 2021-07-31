@@ -29,9 +29,10 @@
   // coordinates 时间价格点对应的坐标轴信息
   // viewport 尺寸
   // precision 精度信息，包含价格和数量精度
+  // styles 样式
   // xAxis x轴组件
   // yAxis y轴组件
-  createGraphicDataSource: ({ step, points, coordinates, viewport, precision, xAxis, yAxis }) => {},
+  createGraphicDataSource: ({ step, points, coordinates, viewport, precision, styles, xAxis, yAxis }) => {},
 
   // 处理在绘制过程中鼠标移动操作，可缺省，鼠标操作绘制过程中触发
   // step 当前步骤
@@ -71,8 +72,8 @@
   isDraw: true,
   // 是否要检查是否在图形上，可缺省，默认不检查
   isCheck: true,
-  // 样式，type为'line'和'continuous_line'无效, 仅支持'fill'和'stroke'，可缺省，type为'text'时，默认为'fill'，其它默认为'stroke'
-  style: 'stroke',
+  // 样式
+  styles: {},
   // 数据数组，当type是'line'时是二维数组
   dataSource: []
 }
@@ -129,7 +130,7 @@
           // 实心圆，不用去检查鼠标点是否在图形上
           isCheck: false,
           // 填充
-          style: 'fill',
+          styles: { style: 'fill'  },
           // 点信息
           dataSource: [
             { ...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 },

@@ -5,7 +5,7 @@ import {
 
 import { Chart, PictureType, ChartActionType } from './Chart';
 import {
-  GraphicMarkMode, GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
+  GraphicMarkMode, GraphicMarkDataSourceDrawType,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
   OverrideGraphicMark, GraphicMark, GraphicMarkTemplate,
   GraphicMarkCheckOnParams, GraphicMarkCreateDataSourceParams,
@@ -43,7 +43,7 @@ export {
   Chart, PictureType, ChartActionType,
   KLineData, Precision, Viewport, OverlayEvent, PaneOptions,
   Coordinate, Point,
-  GraphicMarkMode, GraphicMarkDataSourceDrawType, GraphicMarkDataSourceDrawStyle,
+  GraphicMarkMode, GraphicMarkDataSourceDrawType,
   GraphicMarkDataSource, GraphicMarkDataSourceItem,
   OverrideGraphicMark, GraphicMark, GraphicMarkTemplate,
   GraphicMarkCheckOnParams, GraphicMarkCreateDataSourceParams,

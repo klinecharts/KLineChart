@@ -4,8 +4,6 @@ export declare type GraphicMarkMode = 'normal' | 'weak_magnet' | 'strong_magnet'
 
 export declare type GraphicMarkDataSourceDrawType = 'line' | 'text' | 'continuous_line' | 'polygon' | 'arc';
 
-export declare type GraphicMarkDataSourceDrawStyle = 'stroke' | 'fill' | 'dash' | 'solid';
-
 export declare interface GraphicMarkDataSourceItem extends Coordinate {
   radius?: number;
   startAngle?: number;
@@ -18,7 +16,7 @@ export declare interface GraphicMarkDataSource {
   type: GraphicMarkDataSourceDrawType;
   isDraw?: boolean;
   isCheck?: boolean;
-  style?: GraphicMarkDataSourceDrawStyle;
+  styles?: any;
   dataSource: GraphicMarkDataSourceItem[] | GraphicMarkDataSourceItem[][];
 }
 
@@ -56,15 +54,18 @@ export declare interface GraphicMarkCheckOnParams {
 
 export declare interface GraphicMarkCreateDataSourceParams {
   step: number;
+  mode: GraphicMarkMode;
   points: Point[];
   coordinates: Coordinate[];
   viewport: Viewport;
   precision: Precision;
+  styles: any;
   xAxis: any;
   yAxis: any;
 }
 
 export declare interface GraphicMarkEventPressMoveParams {
+  mode: GraphicMarkMode;
   points: Point[];
   pressPointIndex: number;
   pressPoint: Point;
@@ -74,6 +75,7 @@ export declare interface GraphicMarkEventPressMoveParams {
 
 export declare interface GraphicMarkEventMoveDrawingParams {
   step: number;
+  mode: GraphicMarkMode;
   points: Point[];
   movePoint: Point;
   xAxis: any;
@@ -86,6 +88,7 @@ export declare interface GraphicMarkDrawExtendParams {
   styles: any;
   viewport: Viewport;
   precision: Precision;
+  mode: GraphicMarkMode;
   xAxis: any;
   yAxis: any;
 }

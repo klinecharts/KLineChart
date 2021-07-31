@@ -29,9 +29,10 @@ Create a graphic mark template, and then add it globally through `extension.addG
   // coordinates time price point corresponding axis information
   // viewport size
   // precision precision information, including price and quantity precision
+  // styles style
   // xAxis x-axis component
   // yAxis y axis component
-  createGraphicDataSource: ({ step, points, coordinates, viewport, precision, xAxis, yAxis }) => {},
+  createGraphicDataSource: ({ step, points, coordinates, viewport, precision, styles, xAxis, yAxis }) => {},
 
   // Process the mouse movement operation during the drawing process, it can be defaulted, and the mouse operation is triggered during the drawing process
   // step current step
@@ -71,8 +72,8 @@ Create a graphic mark template, and then add it globally through `extension.addG
   isDraw: true,
   // Whether to check whether it is on the graph, it can be defaulted, not checked by default
   isCheck: true,
-  // Style, type is 'line' and 'continuous_line' are invalid, only supports'fill' and'stroke', which can be defaulted, when type is 'text', the default is 'fill', others default to 'stroke'
-  style:'stroke',
+  // Style
+  styles: {},
   // Data array, when type is 'line', it is a two-dimensional array
   dataSource: []
 }
@@ -129,7 +130,7 @@ Use a filled circle with a border to illustrate how to configure it.
           // Filled circle, no need to check whether the mouse point is on the graph
           isCheck: false,
           // fill
-          style: 'fill',
+          styles: { style: 'fill' },
           // point information
           dataSource: [
             {...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 },

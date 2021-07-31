@@ -114,15 +114,15 @@ import { ... } from 'klinecharts/lib/mark/graphicHelper'
 - `targetCoordinate` 目标坐标
 
 
-### getRayLine(coordinate1, coordinate2, xyMax)
+### getRayLine(coordinate1, coordinate2, maxCoordinate)
 根据两坐标获取射线。
 - `coordinate1` 第一个坐标
 - `coordinate2` 第二个坐标
-- `xyMax` 坐标上的极值坐标
+- `maxCoordinate` 极值坐标
 
 
-### getParallelLines(coordinates, xyMax, extendParalleLineCount)
+### getParallelLines(coordinates, maxCoordinate, extendParalleLineCount)
 获取平行线。
 - `coordinates` 已确定的线上的坐标
-- `xyMax` 坐标上的极值坐标
+- `maxCoordinate` 极值坐标
 - `extendParalleLineCount` 平行线条数
