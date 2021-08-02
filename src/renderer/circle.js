@@ -17,14 +17,14 @@
  * @param ctx
  * @param borderColor
  * @param borderSize
- * @param circlePoint
+ * @param circleCoordinate
  * @param radius
  */
-export function renderStrokeCircle (ctx, borderColor, borderSize, circlePoint, radius) {
+export function renderStrokeCircle (ctx, borderColor, borderSize, circleCoordinate, radius) {
   ctx.lineWidth = borderSize
   ctx.strokeStyle = borderColor
   ctx.beginPath()
-  ctx.arc(circlePoint.x, circlePoint.y, radius, 0, Math.PI * 2)
+  ctx.arc(circleCoordinate.x, circleCoordinate.y, radius, 0, Math.PI * 2)
   ctx.closePath()
   ctx.stroke()
 }
@@ -33,13 +33,13 @@ export function renderStrokeCircle (ctx, borderColor, borderSize, circlePoint, r
  * 绘制实心圆
  * @param ctx
  * @param fillColor
- * @param circlePoint
+ * @param circleCoordinate
  * @param radius
  */
-export function renderFillCircle (ctx, fillColor, circlePoint, radius) {
+export function renderFillCircle (ctx, fillColor, circleCoordinate, radius) {
   ctx.fillStyle = fillColor
   ctx.beginPath()
-  ctx.arc(circlePoint.x, circlePoint.y, radius, 0, Math.PI * 2)
+  ctx.arc(circleCoordinate.x, circleCoordinate.y, radius, 0, Math.PI * 2)
   ctx.closePath()
   ctx.fill()
 }

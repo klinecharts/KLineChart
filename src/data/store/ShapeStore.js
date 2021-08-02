@@ -17,11 +17,11 @@ import extension from '../extension'
 import { isNumber, isFunction, isValid } from '../../utils/typeChecks'
 import { logWarn } from '../../utils/logger'
 
-import GraphicMark, { GraphicMarkMouseOperateElement } from '../../component/overlay/GraphicMark'
+import Shape, { ShapeMouseOperateElement } from '../../component/overlay/Shape'
 
 import { InvalidateLevel } from '../constants'
 
-export default class GraphicMarkStore {
+export default class ShapeStore {
   constructor (chartData) {
     this._chartData = chartData
     // 拖拽标记图形标记
@@ -32,12 +32,12 @@ export default class GraphicMarkStore {
     this._mouseOperate = {
       click: {
         id: '',
-        element: GraphicMarkMouseOperateElement.NONE,
+        element: ShapeMouseOperateElement.NONE,
         elementIndex: -1
       },
       hover: {
         id: '',
-        element: GraphicMarkMouseOperateElement.NONE,
+        element: ShapeMouseOperateElement.NONE,
         elementIndex: -1
       }
     }
@@ -51,7 +51,7 @@ export default class GraphicMarkStore {
    */
   _createTemplates () {
     const templates = {}
-    const extensions = extension.graphicMarkExtensions
+    const extensions = extension.shapeExtensions
     for (const name in extensions) {
       const TemplateClass = this._createTemplateClass(extensions[name])
       if (TemplateClass) {
@@ -65,17 +65,17 @@ export default class GraphicMarkStore {
    * 创建模板类
    * @param name
    * @param totalStep
-   * @param checkMousePointOn
-   * @param createGraphicDataSource
-   * @param performMousePressedMove
-   * @param performMouseMoveForDrawing
+   * @param checkEventCoordinateOnShape
+   * @param createShapeDataSource
+   * @param performEventPressedMove
+   * @param performEventMoveForDrawing
    * @param drawExtend
    * @return
    */
   _createTemplateClass ({
     name, totalStep,
-    checkEventCoordinateOnGraphic,
-    createGraphicDataSource,
+    checkEventCoordinateOnShape,
+    createShapeDataSource,
     performEventPressedMove,
     performEventMoveForDrawing,
     drawExtend
@@ -83,13 +83,13 @@ export default class GraphicMarkStore {
     if (
       !name ||
       !isNumber(totalStep) ||
-      !isFunction(checkEventCoordinateOnGraphic) ||
-      !isFunction(createGraphicDataSource)
+      !isFunction(checkEventCoordinateOnShape) ||
+      !isFunction(createShapeDataSource)
     ) {
-      logWarn('', '', 'Required attribute "name" and "totalStep", method "checkMousePointOn" and "createGraphicDataSource", new graphic mark cannot be generated!!!')
+      logWarn('', '', 'Required attribute "name" and "totalStep", method "checkEventCoordinateOnShape" and "createShapeDataSource", new shape cannot be generated!!!')
       return null
     }
-    class Mark extends GraphicMark {
+    class Template extends Shape {
       constructor ({
         id, chartData, xAxis, yAxis, points, styles, lock
       }) {
@@ -98,18 +98,18 @@ export default class GraphicMarkStore {
         })
       }
     }
-    Mark.prototype.checkEventCoordinateOnGraphic = checkEventCoordinateOnGraphic
-    Mark.prototype.createGraphicDataSource = createGraphicDataSource
+    Template.prototype.checkEventCoordinateOnShape = checkEventCoordinateOnShape
+    Template.prototype.createShapeDataSource = createShapeDataSource
     if (isFunction(performEventPressedMove)) {
-      Mark.prototype.performEventPressedMove = performEventPressedMove
+      Template.prototype.performEventPressedMove = performEventPressedMove
     }
     if (isFunction(performEventMoveForDrawing)) {
-      Mark.prototype.performEventMoveForDrawing = performEventMoveForDrawing
+      Template.prototype.performEventMoveForDrawing = performEventMoveForDrawing
     }
     if (isFunction(drawExtend)) {
-      Mark.prototype.drawExtend = drawExtend
+      Template.prototype.drawExtend = drawExtend
     }
-    return Mark
+    return Template
   }
 
   /**
@@ -118,9 +118,9 @@ export default class GraphicMarkStore {
    */
   addTemplate (templates) {
     templates.forEach(tmp => {
-      const GraphicMarkClass = this._createTemplateClass(tmp)
-      if (GraphicMarkClass) {
-        this._templates[tmp.name] = GraphicMarkClass
+      const Template = this._createTemplateClass(tmp)
+      if (Template) {
+        this._templates[tmp.name] = Template
       }
     })
   }
@@ -174,7 +174,7 @@ export default class GraphicMarkStore {
    */
   setInstanceOptions (options = {}) {
     const { id, styles, lock, mode } = options
-    const defaultStyles = this._chartData.styleOptions().graphicMark
+    const defaultStyles = this._chartData.styleOptions().shape
     if (isValid(id)) {
       const instance = this._instances.find(gm => gm.id() === id)
       if (instance) {

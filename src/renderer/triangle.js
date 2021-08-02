@@ -16,16 +16,16 @@
  * 渲染填充菱形
  * @param ctx
  * @param color
- * @param centerPoint
+ * @param centerCoordinate
  * @param width
  * @param height
  */
-export function renderFillTriangle (ctx, color, centerPoint, width, height) {
+export function renderFillTriangle (ctx, color, centerCoordinate, width, height) {
   ctx.fillStyle = color
   ctx.beginPath()
-  ctx.moveTo(centerPoint.x - width / 2, centerPoint.y + height / 2)
-  ctx.lineTo(centerPoint.x, centerPoint.y - height / 2)
-  ctx.lineTo(centerPoint.x + width / 2, centerPoint.y + height / 2)
+  ctx.moveTo(centerCoordinate.x - width / 2, centerCoordinate.y + height / 2)
+  ctx.lineTo(centerCoordinate.x, centerCoordinate.y - height / 2)
+  ctx.lineTo(centerCoordinate.x + width / 2, centerCoordinate.y + height / 2)
   ctx.closePath()
   ctx.fill()
 }

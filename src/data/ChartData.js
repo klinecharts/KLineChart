@@ -13,11 +13,11 @@
  */
 
 import { isArray, isObject, isBoolean, merge, clone } from '../utils/typeChecks'
-import { defaultStyleOptions } from './options/styleOptions'
+import { defaultStyleOptions } from '../options/styleOptions'
 
 import TimeScaleStore from './store/TimeScaleStore'
 import TechnicalIndicatorStore from './store/TechnicalIndicatorStore'
-import GraphicMarkStore from './store/GraphicMarkStore'
+import ShapeStore from './store/ShapeStore'
 import AnnotationStore from './store/AnnotationStore'
 import TagStore from './store/TagStore'
 import CrosshairStore from './store/CrosshairStore'
@@ -48,8 +48,8 @@ export default class ChartData {
     this._timeScaleStore = new TimeScaleStore(this)
     // 技术指标数据存储
     this._technicalIndicatorStore = new TechnicalIndicatorStore(this)
-    // 图形标记数据存储
-    this._graphicMarkStore = new GraphicMarkStore(this)
+    // 图形数据存储
+    this._shapeStore = new ShapeStore(this)
     // 注解数据存储
     this._annotationStore = new AnnotationStore(this)
     // 标签数据存储
@@ -199,11 +199,11 @@ export default class ChartData {
   }
 
   /**
-   * 获取图形标记存储
+   * 获取图形存储
    * @returns
    */
-  graphicMarkStore () {
-    return this._graphicMarkStore
+  shapeStore () {
+    return this._shapeStore
   }
 
   /**

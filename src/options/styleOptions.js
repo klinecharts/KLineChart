@@ -446,10 +446,10 @@ const defaultCrosshair = {
 }
 
 /**
- * 默认图形标记配置
+ * 默认图形配置
  * @type {{arc: {style: string, color: string, size: number}, polygon: {style: string, color: string, size: number}, line: {style: string, color: string, size: number, dashValue: number[]}, text: {style: string, marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
  */
-const defaultGraphicMark = {
+const defaultShape = {
   point: {
     backgroundColor: '#2196F3',
     borderColor: 'rgba(33, 150, 243, 0.35)',
@@ -571,7 +571,7 @@ export const defaultStyleOptions = {
   yAxis: defaultYAxis,
   separator: defaultSeparator,
   crosshair: defaultCrosshair,
-  graphicMark: defaultGraphicMark,
+  shape: defaultShape,
   annotation: defaultAnnotation,
   tag: defaultTag
 }

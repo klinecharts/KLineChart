@@ -5,13 +5,13 @@ import {
 
 import { Chart, PictureType, ChartActionType } from './Chart';
 import {
-  GraphicMarkMode, GraphicMarkDataSourceDrawType,
-  GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  OverrideGraphicMark, GraphicMark, GraphicMarkTemplate,
-  GraphicMarkCheckOnParams, GraphicMarkCreateDataSourceParams,
-  GraphicMarkEventPressMoveParams, GraphicMarkEventMoveDrawingParams,
-  GraphicMarkDrawExtendParams
-} from './GraphicMark';
+  ShapeMode, ShapeElementType,
+  ShapeDataSource, ShapeDataSourceItem,
+  OverrideShape, Shape, ShapeTemplate,
+  ShapeCheckOnParams, ShapeCreateDataSourceParams,
+  ShapeEventPressMoveParams, ShapeEventMoveDrawingParams,
+  ShapeDrawExtendParams
+} from './Shape';
 import {
   AnnotationCheckParams,
   AnnotationDrawParams,
@@ -30,7 +30,7 @@ import {
 
 export declare interface extension {
   addTechnicalIndicatorTemplate: (template: TechnicalIndicatorTemplate | TechnicalIndicatorTemplate[]) => void;
-  addGraphicMarkTemplate: (template: GraphicMarkTemplate | GraphicMarkTemplate[]) => void;
+  addShapeTemplate: (template: ShapeTemplate | ShapeTemplate[]) => void;
 }
 
 export declare function version(): string;
@@ -43,12 +43,12 @@ export {
   Chart, PictureType, ChartActionType,
   KLineData, Precision, Viewport, OverlayEvent, PaneOptions,
   Coordinate, Point,
-  GraphicMarkMode, GraphicMarkDataSourceDrawType,
-  GraphicMarkDataSource, GraphicMarkDataSourceItem,
-  OverrideGraphicMark, GraphicMark, GraphicMarkTemplate,
-  GraphicMarkCheckOnParams, GraphicMarkCreateDataSourceParams,
-  GraphicMarkEventPressMoveParams, GraphicMarkEventMoveDrawingParams,
-  GraphicMarkDrawExtendParams,
+  ShapeMode, ShapeElementType,
+  ShapeDataSource, ShapeDataSourceItem,
+  OverrideShape, Shape, ShapeTemplate,
+  ShapeCheckOnParams, ShapeCreateDataSourceParams,
+  ShapeEventPressMoveParams, ShapeEventMoveDrawingParams,
+  ShapeDrawExtendParams,
   AnnotationCheckParams, AnnotationDrawParams, Annotation,
   Tag,
   TechnicalIndicatorPlotType,

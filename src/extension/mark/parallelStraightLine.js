@@ -17,10 +17,10 @@ import { checkCoordinateOnStraightLine, getParallelLines } from './graphicHelper
 export default {
   name: 'parallelStraightLine',
   totalStep: 4,
-  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
     return checkCoordinateOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: ({ coordinates, viewport }) => {
+  createShapeDataSource: ({ coordinates, viewport }) => {
     return [
       {
         type: 'line',

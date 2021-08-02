@@ -23,9 +23,9 @@ import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
-  _drawGraphicMark () {
-    this._chartData.graphicMarkStore().instances().forEach(graphicMark => {
-      graphicMark.draw(this._ctx)
+  _drawShape () {
+    this._chartData.shapeStore().instances().forEach(shape => {
+      shape.draw(this._ctx)
     })
   }
 

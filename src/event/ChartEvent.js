@@ -57,8 +57,8 @@ export default class ChartEvent {
     this._zoomScrollEventHandler.pinchStartEvent()
   }
 
-  _pinchEvent (middlePoint, scale) {
-    this._zoomScrollEventHandler.pinchEvent(middlePoint, scale)
+  _pinchEvent (middleCoordinate, scale) {
+    this._zoomScrollEventHandler.pinchEvent(middleCoordinate, scale)
   }
 
   _mouseUpEvent (event) {
@@ -133,11 +133,11 @@ export default class ChartEvent {
 
   _pressedMouseMoveEvent (event) {
     if (this._checkEventInChartContent(event)) {
-      const markDragFlag = this._chartData.graphicMarkStore().dragFlag()
+      const shapeDragFlag = this._chartData.shapeStore().dragFlag()
       const zoomScroll = this._checkZoomScroll()
-      if (markDragFlag || zoomScroll) {
+      if (shapeDragFlag || zoomScroll) {
         const compatEvent = this._compatChartEvent(event, true)
-        if (markDragFlag) {
+        if (shapeDragFlag) {
           this._overlayEventHandler.pressedMouseMoveEvent(compatEvent)
         }
         if (zoomScroll) {
@@ -159,7 +159,7 @@ export default class ChartEvent {
   }
 
   _checkZoomScroll () {
-    return !this._chartData.dragPaneFlag() && !this._chartData.graphicMarkStore().dragFlag() && !this._chartData.graphicMarkStore().isDrawing()
+    return !this._chartData.dragPaneFlag() && !this._chartData.shapeStore().dragFlag() && !this._chartData.shapeStore().isDrawing()
   }
 
   /**
@@ -168,7 +168,7 @@ export default class ChartEvent {
    * @private
    */
   _shouldPerformOverlayEvent () {
-    return !this._chartData.graphicMarkStore().isEmpty() || !this._chartData.annotationStore().isEmpty()
+    return !this._chartData.shapeStore().isEmpty() || !this._chartData.annotationStore().isEmpty()
   }
 
   /**

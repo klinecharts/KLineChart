@@ -36,14 +36,14 @@ import {
   CANDLE_PANE_ID,
   DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT,
   TECHNICAL_INDICATOR_PANE_ID_PREFIX,
-  GRAPHIC_MARK_ID_PREFIX,
+  SHAPE_ID_PREFIX,
   ActionType, InvalidateLevel
 } from '../data/constants'
 
 export default class ChartPane {
   constructor (container, styleOptions) {
     this._initChartContainer(container)
-    this._graphicMarkBaseId = 0
+    this._shapeBaseId = 0
     this._paneBaseId = 0
     this._separatorDragStartTopPaneHeight = 0
     this._separatorDragStartBottomPaneHeight = 0
@@ -551,11 +551,11 @@ export default class ChartPane {
   }
 
   /**
-   * 创建图形标记
-   * @param GraphicMarkTemplateClass
-   * @param graphicMark
+   * 创建图形
+   * @param ShapeTemplateClass
+   * @param shape
    */
-  createGraphicMark (GraphicMarkTemplateClass, graphicMark) {
+  createShape (ShapeTemplateClass, shape) {
     const {
       id, points, styles, lock,
       onDrawStart, onDrawing,
@@ -563,10 +563,10 @@ export default class ChartPane {
       onRightClick, onPressedMove,
       onMouseEnter, onMouseLeave,
       onRemove
-    } = graphicMark
-    const graphicMarkId = id || `${GRAPHIC_MARK_ID_PREFIX}${++this._graphicMarkBaseId}`
-    const graphicMarkInstance = new GraphicMarkTemplateClass({
-      id: graphicMarkId,
+    } = shape
+    const shapeId = id || `${SHAPE_ID_PREFIX}${++this._shapeBaseId}`
+    const shapeInstance = new ShapeTemplateClass({
+      id: shapeId,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
       yAxis: this._panes.get(CANDLE_PANE_ID).yAxis(),
@@ -575,14 +575,14 @@ export default class ChartPane {
       lock
     })
     if (isFunction(onDrawStart)) {
-      onDrawStart({ id: graphicMarkId })
+      onDrawStart({ id: shapeId })
     }
-    perfectOverlayFunc(graphicMarkInstance, [
+    perfectOverlayFunc(shapeInstance, [
       onDrawing, onDrawEnd, onClick, onRightClick,
       onPressedMove, onMouseEnter, onMouseLeave, onRemove
     ])
-    if (this._chartData.graphicMarkStore().addInstance(graphicMarkInstance)) {
-      return graphicMarkId
+    if (this._chartData.shapeStore().addInstance(shapeInstance)) {
+      return shapeId
     }
   }
 

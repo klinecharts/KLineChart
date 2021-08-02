@@ -15,6 +15,7 @@
 import TechnicalIndicatorView from './TechnicalIndicatorView'
 import { CandleType, LineStyle } from '../options/styleOptions'
 import { renderHorizontalLine, renderLine } from '../renderer/line'
+import { renderFillPath } from '../renderer/path'
 import { createFont } from '../utils/canvas'
 import { formatPrecision, formatValue } from '../utils/format'
 import { isArray, isNumber } from '../utils/typeChecks'
@@ -62,8 +63,8 @@ export default class CandleView extends TechnicalIndicatorView {
    * @private
    */
   _drawArea (candleOptions) {
-    const linePoints = []
-    const areaPoints = []
+    const lineCoordinates = []
+    const areaCoordinates = []
     let minY = Number.MAX_SAFE_INTEGER
     const areaOptions = candleOptions.area
     const onDrawing = (x, i, kLineData, halfBarSpace, barSpace, n) => {
@@ -72,42 +73,34 @@ export default class CandleView extends TechnicalIndicatorView {
         const y = this._yAxis.convertToPixel(value)
         if (n === 0) {
           const startX = x - halfBarSpace
-          areaPoints.push({ x: startX, y: this._height })
-          areaPoints.push({ x: startX, y })
-          linePoints.push({ x: startX, y })
+          areaCoordinates.push({ x: startX, y: this._height })
+          areaCoordinates.push({ x: startX, y })
+          lineCoordinates.push({ x: startX, y })
         }
-        linePoints.push({ x, y })
-        areaPoints.push({ x, y })
+        lineCoordinates.push({ x, y })
+        areaCoordinates.push({ x, y })
         minY = Math.min(minY, y)
       }
     }
     const onDrawEnd = () => {
-      const areaPointLength = areaPoints.length
-      if (areaPointLength > 0) {
-        const lastPoint = areaPoints[areaPointLength - 1]
+      const areaCoordinateLength = areaCoordinates.length
+      if (areaCoordinateLength > 0) {
+        const lastCoordinate = areaCoordinates[areaCoordinateLength - 1]
         const halfBarSpace = this._chartData.timeScaleStore().halfBarSpace()
-        const endX = lastPoint.x + halfBarSpace
-        linePoints.push({ x: endX, y: lastPoint.y })
-        areaPoints.push({ x: endX, y: lastPoint.y })
-        areaPoints.push({ x: endX, y: this._height })
+        const endX = lastCoordinate.x + halfBarSpace
+        lineCoordinates.push({ x: endX, y: lastCoordinate.y })
+        areaCoordinates.push({ x: endX, y: lastCoordinate.y })
+        areaCoordinates.push({ x: endX, y: this._height })
       }
 
-      if (linePoints.length > 0) {
+      if (lineCoordinates.length > 0) {
         // 绘制分时线
         this._ctx.lineWidth = areaOptions.lineSize
         this._ctx.strokeStyle = areaOptions.lineColor
-        renderLine(this._ctx, () => {
-          this._ctx.beginPath()
-          this._ctx.moveTo(linePoints[0].x, linePoints[0].y)
-          for (let i = 1; i < linePoints.length; i++) {
-            this._ctx.lineTo(linePoints[i].x, linePoints[i].y)
-          }
-          this._ctx.stroke()
-          this._ctx.closePath()
-        })
+        renderLine(this._ctx, lineCoordinates)
       }
 
-      if (areaPoints.length > 0) {
+      if (areaCoordinates.length > 0) {
         // 绘制分时线填充区域
         const backgroundColor = areaOptions.backgroundColor
         if (isArray(backgroundColor)) {
@@ -122,13 +115,7 @@ export default class CandleView extends TechnicalIndicatorView {
         } else {
           this._ctx.fillStyle = backgroundColor
         }
-        this._ctx.beginPath()
-        this._ctx.moveTo(areaPoints[0].x, areaPoints[0].y)
-        for (let i = 1; i < areaPoints.length; i++) {
-          this._ctx.lineTo(areaPoints[i].x, areaPoints[i].y)
-        }
-        this._ctx.closePath()
-        this._ctx.fill()
+        renderFillPath(this._ctx, areaCoordinates)
       }
     }
     this._drawGraphics(onDrawing, onDrawEnd)
@@ -179,25 +166,25 @@ export default class CandleView extends TechnicalIndicatorView {
     this._ctx.strokeStyle = lowHighPriceMarkOptions.color
     this._ctx.fillStyle = lowHighPriceMarkOptions.color
 
-    renderLine(this._ctx, () => {
-      this._ctx.beginPath()
-      this._ctx.moveTo(startX - 2, startY + offsets[0])
-      this._ctx.lineTo(startX, startY)
-      this._ctx.lineTo(startX + 2, startY + offsets[0])
-      this._ctx.stroke()
-      this._ctx.closePath()
-    })
+    renderLine(
+      this._ctx,
+      [
+        { x: startX - 2, y: startY + offsets[0] },
+        { x: startX, y: startY },
+        { x: startX + 2, y: startY + offsets[0] }
+      ]
+    )
 
     // 绘制竖线
     const y = startY + offsets[1]
-    renderLine(this._ctx, () => {
-      this._ctx.beginPath()
-      this._ctx.moveTo(startX, startY)
-      this._ctx.lineTo(startX, y)
-      this._ctx.lineTo(startX + 5, y)
-      this._ctx.stroke()
-      this._ctx.closePath()
-    })
+    renderLine(
+      this._ctx,
+      [
+        { x: startX, y: startY },
+        { x: startX, y },
+        { x: startX + 5, y }
+      ]
+    )
 
     this._ctx.font = createFont(lowHighPriceMarkOptions.textSize, lowHighPriceMarkOptions.textWeight, lowHighPriceMarkOptions.textFamily)
     const text = formatPrecision(price, pricePrecision)

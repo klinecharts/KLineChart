@@ -367,21 +367,21 @@ export default class TimeScaleStore {
   /**
    * 缩放
    * @param scale
-   * @param point
+   * @param coordinate
    */
-  zoom (scale, point) {
+  zoom (scale, coordinate) {
     if (!this._zoomEnabled) {
       return
     }
-    if (!point || !isValid(point.x)) {
+    if (!coordinate || !isValid(coordinate.x)) {
       const crosshair = this._chartData.crosshairStore().get()
-      point = { x: isValid(crosshair.x) ? crosshair.x : this._totalDataSpace / 2 }
+      coordinate = { x: isValid(crosshair.x) ? crosshair.x : this._totalDataSpace / 2 }
     }
-    this._chartData.actionStore().execute(ActionType.ZOOM, { point, scale })
-    const floatIndex = this.coordinateToFloatIndex(point.x)
+    this._chartData.actionStore().execute(ActionType.ZOOM, { coordinate, scale })
+    const floatIndex = this.coordinateToFloatIndex(coordinate.x)
     const dataSpace = this._dataSpace + scale * (this._dataSpace / 10)
     this.setDataSpace(dataSpace, () => {
-      this._offsetRightBarCount += (floatIndex - this.coordinateToFloatIndex(point.x))
+      this._offsetRightBarCount += (floatIndex - this.coordinateToFloatIndex(coordinate.x))
     })
   }
 

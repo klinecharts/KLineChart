@@ -17,22 +17,23 @@ import Overlay from './Overlay'
 import { renderFillCircle } from '../../renderer/circle'
 import { checkCoordinateInCircle } from '../../extension/mark/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../renderer/line'
+import { renderStrokePath, renderFillPath } from '../../renderer/path'
 import { isArray, clone } from '../../utils/typeChecks'
 import { createFont } from '../../utils/canvas'
 
 import { StrokeFillStyle, LineStyle } from '../../options/styleOptions'
 
 // 标记图形绘制步骤开始
-const GRAPHIC_MARK_DRAW_STEP_START = 1
+const SHAPE_DRAW_STEP_START = 1
 
 // 标记图形绘制步骤结束
-const GRAPHIC_MARK_DRAW_STEP_FINISHED = -1
+const SHAPE_DRAW_STEP_FINISHED = -1
 
 /**
  * 图形标记鼠标操作元素类型
  * @type {{OTHER: string, POINT: string, NONE: string}}
  */
-export const GraphicMarkMouseOperateElement = {
+export const ShapeMouseOperateElement = {
   OTHER: 'other',
   POINT: 'point',
   NONE: 'none'
@@ -42,7 +43,7 @@ export const GraphicMarkMouseOperateElement = {
  * 绘制类型
  * @type {{ARC: string, POLYGON: string, LINE: string, CONTINUOUS_LINE: string, TEXT: string}}
  */
-const GraphicMarkDrawType = {
+const ShapeElementType = {
   LINE: 'line',
   TEXT: 'text',
   CONTINUOUS_LINE: 'continuous_line',
@@ -61,9 +62,9 @@ const LineType = {
 }
 
 /**
- * 图形标记模式
+ * 图形模式
  */
-const GraphicMarkMode = {
+const ShapeMode = {
   NORMAL: 'normal',
   WEAK_MAGNET: 'weak_magnet',
   STRONG_MAGNET: 'strong_magnet'
@@ -71,15 +72,15 @@ const GraphicMarkMode = {
 
 /**
  * 获取绘制线类型
- * @param point1
- * @param point2
+ * @param coordinate1
+ * @param coordinate2
  * @private
  */
-function getLineType (point1, point2) {
-  if (point1.x === point2.x) {
+function getLineType (coordinate1, coordinate2) {
+  if (coordinate1.x === coordinate2.x) {
     return LineType.VERTICAL
   }
-  if (point1.y === point2.y) {
+  if (coordinate1.y === coordinate2.y) {
     return LineType.HORIZONTAL
   }
   return LineType.COMMON
@@ -88,7 +89,7 @@ function getLineType (point1, point2) {
 /**
  * 标记图形
  */
-export default class GraphicMark extends Overlay {
+export default class Shape extends Overlay {
   constructor ({
     id, name, totalStep,
     chartData, xAxis, yAxis,
@@ -98,13 +99,13 @@ export default class GraphicMark extends Overlay {
     this._name = name
     this._totalStep = totalStep
     this._lock = lock
-    this._mode = GraphicMarkMode.NORMAL
-    this._drawStep = GRAPHIC_MARK_DRAW_STEP_START
+    this._mode = ShapeMode.NORMAL
+    this._drawStep = SHAPE_DRAW_STEP_START
     this._points = []
     this.setPoints(points)
-    this.setStyles(styles, chartData.styleOptions().graphicMark)
-    this._prePressPoint = null
-    this._prePoints = null
+    this.setStyles(styles, chartData.styleOptions().shape)
+    this._prevPressPoint = null
+    this._prevPoints = null
   }
 
   /**
@@ -115,7 +116,7 @@ export default class GraphicMark extends Overlay {
     if (isArray(points) && points.length > 0) {
       let repeatTotalStep
       if (points.length >= this._totalStep - 1) {
-        this._drawStep = GRAPHIC_MARK_DRAW_STEP_FINISHED
+        this._drawStep = SHAPE_DRAW_STEP_FINISHED
         this._points = points.slice(0, this._totalStep - 1)
         repeatTotalStep = this._totalStep - 1
       } else {
@@ -134,7 +135,7 @@ export default class GraphicMark extends Overlay {
           yAxis: this._yAxis
         })
       }
-      if (this._drawStep === GRAPHIC_MARK_DRAW_STEP_FINISHED) {
+      if (this._drawStep === SHAPE_DRAW_STEP_FINISHED) {
         this.performEventPressedMove({
           mode: this._mode,
           points: this._points,
@@ -153,10 +154,11 @@ export default class GraphicMark extends Overlay {
    * @return {*|number}
    * @private
    */
-  _timestampOrDataIndexToPointX ({ timestamp, dataIndex }) {
-    return timestamp
-      ? this._xAxis.convertToPixel(this._chartData.timeScaleStore().timestampToDataIndex(timestamp))
-      : this._xAxis.convertToPixel(dataIndex)
+  _timestampOrDataIndexToCoordinateX ({ timestamp, dataIndex }) {
+    if (timestamp) {
+      dataIndex = this._chartData.timeScaleStore().timestampToDataIndex(timestamp)
+    }
+    return this._xAxis.convertToPixel(dataIndex)
   }
 
   /**
@@ -174,26 +176,20 @@ export default class GraphicMark extends Overlay {
     if (styles.style === LineStyle.DASH) {
       ctx.setLineDash(styles.dashValue || defaultStyles.dashValue)
     }
-    lines.forEach(points => {
-      if (points.length > 1) {
-        const lineType = getLineType(points[0], points[1])
+    lines.forEach(coordinates => {
+      if (coordinates.length > 1) {
+        const lineType = getLineType(coordinates[0], coordinates[1])
         switch (lineType) {
           case LineType.COMMON: {
-            renderLine(ctx, () => {
-              ctx.beginPath()
-              ctx.moveTo(points[0].x, points[0].y)
-              ctx.lineTo(points[1].x, points[1].y)
-              ctx.stroke()
-              ctx.closePath()
-            })
+            renderLine(ctx, coordinates)
             break
           }
           case LineType.HORIZONTAL: {
-            renderHorizontalLine(ctx, points[0].y, points[0].x, points[1].x)
+            renderHorizontalLine(ctx, coordinates[0].y, coordinates[0].x, coordinates[1].x)
             break
           }
           case LineType.VERTICAL: {
-            renderVerticalLine(ctx, points[0].x, points[0].y, points[1].y)
+            renderVerticalLine(ctx, coordinates[0].x, coordinates[0].y, coordinates[1].y)
             break
           }
           default: { break }
@@ -218,17 +214,9 @@ export default class GraphicMark extends Overlay {
     if (styles.style === LineStyle.DASH) {
       ctx.setLineDash(styles.dashValue || defaultStyles.dashValue)
     }
-    continuousLines.forEach(points => {
-      if (points.length > 0) {
-        renderLine(ctx, () => {
-          ctx.beginPath()
-          ctx.moveTo(points[0].x, points[0].y)
-          for (let i = 1; i < points.length; i++) {
-            ctx.lineTo(points[i].x, points[i].y)
-          }
-          ctx.stroke()
-          ctx.closePath()
-        })
+    continuousLines.forEach(coordinates => {
+      if (coordinates.length > 0) {
+        renderLine(ctx, coordinates)
       }
     })
     ctx.restore()
@@ -244,10 +232,10 @@ export default class GraphicMark extends Overlay {
    */
   _drawPolygons (ctx, polygons, styles, defaultStyles) {
     ctx.save()
-    let fillStroke
+    let strokeFill
     if (styles.style === StrokeFillStyle.FILL) {
       ctx.fillStyle = (styles.fill || defaultStyles.fill).color
-      fillStroke = ctx.fill
+      strokeFill = renderFillPath
     } else {
       const strokeStyles = styles.stroke || defaultStyles.stroke
       if (strokeStyles.style === LineStyle.DASH) {
@@ -255,19 +243,11 @@ export default class GraphicMark extends Overlay {
       }
       ctx.lineWidth = strokeStyles.size
       ctx.strokeStyle = strokeStyles.color
-      fillStroke = ctx.stroke
+      strokeFill = renderStrokePath
     }
-    polygons.forEach(points => {
-      if (points.length > 0) {
-        renderLine(ctx, () => {
-          ctx.beginPath()
-          ctx.moveTo(points[0].x, points[0].y)
-          for (let i = 1; i < points.length; i++) {
-            ctx.lineTo(points[i].x, points[i].y)
-          }
-          ctx.closePath()
-          fillStroke.call(ctx)
-        })
+    polygons.forEach(coordinates => {
+      if (coordinates.length > 0) {
+        strokeFill(ctx, coordinates)
       }
     })
     ctx.restore()
@@ -349,46 +329,46 @@ export default class GraphicMark extends Overlay {
   draw (ctx) {
     this._coordinates = this._points.map(({ timestamp, value, dataIndex }) => {
       return {
-        x: this._timestampOrDataIndexToPointX({ timestamp, dataIndex }),
+        x: this._timestampOrDataIndexToCoordinateX({ timestamp, dataIndex }),
         y: this._yAxis.convertToPixel(value)
       }
     })
-    const markOptions = this._styles || this._chartData.styleOptions().graphicMark
-    if (this._drawStep !== GRAPHIC_MARK_DRAW_STEP_START && this._coordinates.length > 0) {
+    const shapeOptions = this._styles || this._chartData.styleOptions().shape
+    if (this._drawStep !== SHAPE_DRAW_STEP_START && this._coordinates.length > 0) {
       const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
       const precision = { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() }
-      this._graphicDataSources = this.createGraphicDataSource({
+      this._shapeDataSources = this.createShapeDataSource({
         step: this._drawStep,
         mode: this._mode,
         points: this._points,
         coordinates: this._coordinates,
         viewport: { width: this._xAxis.width(), height: this._yAxis.height() },
         precision: { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() },
-        styles: markOptions,
+        styles: shapeOptions,
         xAxis: this._xAxis,
         yAxis: this._yAxis
       }) || []
-      this._graphicDataSources.forEach(({ type, isDraw, styles, dataSource = [] }) => {
+      this._shapeDataSources.forEach(({ type, isDraw, styles, dataSource = [] }) => {
         if (isDraw) {
           switch (type) {
-            case GraphicMarkDrawType.LINE: {
-              this._drawLines(ctx, dataSource, styles || markOptions.line, markOptions.line)
+            case ShapeElementType.LINE: {
+              this._drawLines(ctx, dataSource, styles || shapeOptions.line, shapeOptions.line)
               break
             }
-            case GraphicMarkDrawType.CONTINUOUS_LINE: {
-              this._drawContinuousLines(ctx, dataSource, styles || markOptions.line, markOptions.line)
+            case ShapeElementType.CONTINUOUS_LINE: {
+              this._drawContinuousLines(ctx, dataSource, styles || shapeOptions.line, shapeOptions.line)
               break
             }
-            case GraphicMarkDrawType.POLYGON: {
-              this._drawPolygons(ctx, dataSource, styles || markOptions.polygon, markOptions.polygon)
+            case ShapeElementType.POLYGON: {
+              this._drawPolygons(ctx, dataSource, styles || shapeOptions.polygon, shapeOptions.polygon)
               break
             }
-            case GraphicMarkDrawType.ARC: {
-              this._drawArcs(ctx, dataSource, styles || markOptions.arc, markOptions.arc)
+            case ShapeElementType.ARC: {
+              this._drawArcs(ctx, dataSource, styles || shapeOptions.arc, shapeOptions.arc)
               break
             }
-            case GraphicMarkDrawType.TEXT: {
-              this._drawText(ctx, dataSource, styles || markOptions.text, markOptions.text)
+            case ShapeElementType.TEXT: {
+              this._drawText(ctx, dataSource, styles || shapeOptions.text, shapeOptions.text)
               break
             }
             default: { break }
@@ -399,8 +379,8 @@ export default class GraphicMark extends Overlay {
         ctx.save()
         this.drawExtend({
           ctx,
-          dataSource: this._graphicDataSources,
-          styles: markOptions,
+          dataSource: this._shapeDataSources,
+          styles: shapeOptions,
           viewport,
           precision,
           mode: this._mode,
@@ -410,26 +390,26 @@ export default class GraphicMark extends Overlay {
         ctx.restore()
       }
     }
-    const graphicMarkMouseOperate = this._chartData.graphicMarkStore().mouseOperate()
+    const shapeMouseOperate = this._chartData.shapeStore().mouseOperate()
     if (
-      (graphicMarkMouseOperate.hover.id === this._id && graphicMarkMouseOperate.hover.element !== GraphicMarkMouseOperateElement.NONE) ||
-      (graphicMarkMouseOperate.click.id === this._id && graphicMarkMouseOperate.click.element !== GraphicMarkMouseOperateElement.NONE) ||
+      (shapeMouseOperate.hover.id === this._id && shapeMouseOperate.hover.element !== ShapeMouseOperateElement.NONE) ||
+      (shapeMouseOperate.click.id === this._id && shapeMouseOperate.click.element !== ShapeMouseOperateElement.NONE) ||
       this.isDrawing()
     ) {
       this._coordinates.forEach(({ x, y }, index) => {
-        let radius = markOptions.point.radius
-        let color = markOptions.point.backgroundColor
-        let borderColor = markOptions.point.borderColor
-        let borderSize = markOptions.point.borderSize
+        let radius = shapeOptions.point.radius
+        let color = shapeOptions.point.backgroundColor
+        let borderColor = shapeOptions.point.borderColor
+        let borderSize = shapeOptions.point.borderSize
         if (
-          graphicMarkMouseOperate.hover.id === this._id &&
-          graphicMarkMouseOperate.hover.element === GraphicMarkMouseOperateElement.POINT &&
-          index === graphicMarkMouseOperate.hover.elementIndex
+          shapeMouseOperate.hover.id === this._id &&
+          shapeMouseOperate.hover.element === ShapeMouseOperateElement.POINT &&
+          index === shapeMouseOperate.hover.elementIndex
         ) {
-          radius = markOptions.point.activeRadius
-          color = markOptions.point.activeBackgroundColor
-          borderColor = markOptions.point.activeBorderColor
-          borderSize = markOptions.point.activeBorderSize
+          radius = shapeOptions.point.activeRadius
+          color = shapeOptions.point.activeBackgroundColor
+          borderColor = shapeOptions.point.activeBorderColor
+          borderSize = shapeOptions.point.activeBorderSize
         }
         renderFillCircle(ctx, borderColor, { x, y }, radius + borderSize)
         renderFillCircle(ctx, color, { x, y }, radius)
@@ -482,7 +462,7 @@ export default class GraphicMark extends Overlay {
    * @param mode
    */
   setMode (mode) {
-    if (Object.values(GraphicMarkMode).indexOf > -1) {
+    if (Object.values(ShapeMode).indexOf > -1) {
       this._mode = mode
     }
   }
@@ -500,7 +480,7 @@ export default class GraphicMark extends Overlay {
    * @return {boolean}
    */
   isDrawing () {
-    return this._drawStep !== GRAPHIC_MARK_DRAW_STEP_FINISHED
+    return this._drawStep !== SHAPE_DRAW_STEP_FINISHED
   }
 
   /**
@@ -509,29 +489,29 @@ export default class GraphicMark extends Overlay {
    * @return {{id: *, elementIndex: number, element: string}}
    */
   checkEventCoordinateOn (eventCoordinate) {
-    const markOptions = this._styles || this._chartData.styleOptions().graphicMark
+    const shapeOptions = this._styles || this._chartData.styleOptions().shape
     // 检查鼠标点是否在图形的点上
     const start = this._coordinates.length - 1
     for (let i = start; i > -1; i--) {
-      if (checkCoordinateInCircle(this._coordinates[i], markOptions.point.radius, eventCoordinate)) {
+      if (checkCoordinateInCircle(this._coordinates[i], shapeOptions.point.radius, eventCoordinate)) {
         return {
           id: this._id,
-          element: GraphicMarkMouseOperateElement.POINT,
+          element: ShapeMouseOperateElement.POINT,
           elementIndex: i,
           instance: this
         }
       }
     }
     // 检查鼠标点是否在点构成的其它图形上
-    if (this._graphicDataSources) {
-      for (const { key, type, isCheck, dataSource = [] } of this._graphicDataSources) {
+    if (this._shapeDataSources) {
+      for (const { key, type, isCheck, dataSource = [] } of this._shapeDataSources) {
         if (isCheck) {
           for (let i = 0; i < dataSource.length; i++) {
             const sources = dataSource[i]
-            if (this.checkEventCoordinateOnGraphic({ key, type, dataSource: sources, eventCoordinate })) {
+            if (this.checkEventCoordinateOnShape({ key, type, dataSource: sources, eventCoordinate })) {
               return {
                 id: this._id,
-                element: GraphicMarkMouseOperateElement.OTHER,
+                element: ShapeMouseOperateElement.OTHER,
                 elementIndex: i,
                 instance: this
               }
@@ -548,7 +528,7 @@ export default class GraphicMark extends Overlay {
    */
   _performValue (y, dataIndex) {
     const value = this._yAxis.convertFromPixel(y)
-    if (this._mode === GraphicMarkMode.NORMAL) {
+    if (this._mode === ShapeMode.NORMAL) {
       return value
     }
     const kLineData = this._chartData.timeScaleStore().getDataByDataIndex(dataIndex)
@@ -556,7 +536,7 @@ export default class GraphicMark extends Overlay {
       return value
     }
     if (value > kLineData.high) {
-      if (this._mode === GraphicMarkMode.WEAK_MAGNET) {
+      if (this._mode === ShapeMode.WEAK_MAGNET) {
         const highY = this._yAxis.convertToPixel(kLineData.high)
         const buffValue = this._yAxis.convertFromPixel(highY - 8)
         if (value < buffValue) {
@@ -567,7 +547,7 @@ export default class GraphicMark extends Overlay {
       return kLineData.high
     }
     if (value < kLineData.low) {
-      if (this._mode === GraphicMarkMode.WEAK_MAGNET) {
+      if (this._mode === ShapeMode.WEAK_MAGNET) {
         const lowY = this._yAxis.convertToPixel(kLineData.low)
         const buffValue = this._yAxis.convertFromPixel(lowY - 8)
         if (value > buffValue) {
@@ -622,7 +602,7 @@ export default class GraphicMark extends Overlay {
    */
   mouseLeftButtonDownForDrawing () {
     if (this._drawStep === this._totalStep - 1) {
-      this._drawStep = GRAPHIC_MARK_DRAW_STEP_FINISHED
+      this._drawStep = SHAPE_DRAW_STEP_FINISHED
       this.onDrawEnd({ id: this._id, points: this._points })
     } else {
       this._drawStep++
@@ -635,12 +615,12 @@ export default class GraphicMark extends Overlay {
    * @param event
    */
   mousePressedPointMove (coordinate, event) {
-    const graphicMarkMouseOperate = this._chartData.graphicMarkStore().mouseOperate()
-    const elementIndex = graphicMarkMouseOperate.click.elementIndex
+    const shapeMouseOperate = this._chartData.shapeStore().mouseOperate()
+    const elementIndex = shapeMouseOperate.click.elementIndex
     if (
       !this._lock &&
-      graphicMarkMouseOperate.click.id === this._id &&
-      graphicMarkMouseOperate.click.element === GraphicMarkMouseOperateElement.POINT &&
+      shapeMouseOperate.click.id === this._id &&
+      shapeMouseOperate.click.element === ShapeMouseOperateElement.POINT &&
       elementIndex !== -1
     ) {
       const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
@@ -658,7 +638,7 @@ export default class GraphicMark extends Overlay {
         yAxis: this._yAxis
       })
       this.onPressedMove({
-        id: graphicMarkMouseOperate.click.id,
+        id: shapeMouseOperate.click.id,
         points: this._points,
         event
       })
@@ -672,8 +652,8 @@ export default class GraphicMark extends Overlay {
   startPressedOtherMove (coordinate) {
     const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
     const value = this._yAxis.convertFromPixel(coordinate.y)
-    this._prePressPoint = { dataIndex, value }
-    this._prePoints = clone(this._points)
+    this._prevPressPoint = { dataIndex, value }
+    this._prevPoints = clone(this._points)
   }
 
   /**
@@ -681,12 +661,12 @@ export default class GraphicMark extends Overlay {
    * @param coordinate
    */
   mousePressedOtherMove (coordinate) {
-    if (this._prePressPoint) {
+    if (this._prevPressPoint) {
       const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
       const value = this._yAxis.convertFromPixel(coordinate.y)
-      const difDataIndex = dataIndex - this._prePressPoint.dataIndex
-      const difValue = value - this._prePressPoint.value
-      this._points = this._prePoints.map(point => {
+      const difDataIndex = dataIndex - this._prevPressPoint.dataIndex
+      const difValue = value - this._prevPressPoint.value
+      this._points = this._prevPoints.map(point => {
         const dataIndex = point.dataIndex + difDataIndex
         const value = point.value + difValue
         return {
@@ -746,7 +726,7 @@ export default class GraphicMark extends Overlay {
    * @param points
    * @param mousePoint
    */
-  checkEventCoordinateOnGraphic ({ key, type, dataSource, eventCoordinate }) {}
+  checkEventCoordinateOnShape ({ key, type, dataSource, eventCoordinate }) {}
 
   /**
    * 创建图形配置
@@ -758,7 +738,7 @@ export default class GraphicMark extends Overlay {
    * @param xAxis
    * @param yAxis
    */
-  createGraphicDataSource ({ step, mode, points, coordinates, viewport, precision, styles, xAxis, yAxis }) {}
+  createShapeDataSource ({ step, mode, points, coordinates, viewport, precision, styles, xAxis, yAxis }) {}
 
   /**
    * 处理绘制过程中鼠标移动

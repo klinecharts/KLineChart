@@ -83,7 +83,7 @@ export default class EventBase {
     this._unsubscribeMousemove = null
     this._unsubscribeRoot = null
 
-    this._startPinchMiddlePoint = null
+    this._startPinchMiddleCoordinate = null
     this._startPinchDistance = 0
     this._pinchPrevented = false
     this._preventDragProcess = false
@@ -167,7 +167,7 @@ export default class EventBase {
       return
     }
 
-    if (this._startPinchMiddlePoint !== null) {
+    if (this._startPinchMiddleCoordinate !== null) {
       return
     }
 
@@ -406,14 +406,14 @@ export default class EventBase {
     this._target.addEventListener(
       'touchmove',
       (event) => {
-        if (event.touches.length !== 2 || this._startPinchMiddlePoint === null) {
+        if (event.touches.length !== 2 || this._startPinchMiddleCoordinate === null) {
           return
         }
 
         if (this._handler.pinchEvent !== undefined) {
           const currentDistance = getDistance(event.touches[0], event.touches[1])
           const scale = currentDistance / this._startPinchDistance
-          this._handler.pinchEvent(this._startPinchMiddlePoint, scale)
+          this._handler.pinchEvent(this._startPinchMiddleCoordinate, scale)
           preventDefault(event)
         }
       },
@@ -439,7 +439,7 @@ export default class EventBase {
 
   _startPinch (touches) {
     const box = getBoundingClientRect(this._target)
-    this._startPinchMiddlePoint = {
+    this._startPinchMiddleCoordinate = {
       x: ((touches[0].clientX - box.left) + (touches[1].clientX - box.left)) / 2,
       y: ((touches[0].clientY - box.top) + (touches[1].clientY - box.top)) / 2
     }
@@ -454,11 +454,11 @@ export default class EventBase {
   }
 
   _stopPinch () {
-    if (this._startPinchMiddlePoint === null) {
+    if (this._startPinchMiddleCoordinate === null) {
       return
     }
 
-    this._startPinchMiddlePoint = null
+    this._startPinchMiddleCoordinate = null
 
     if (this._handler.pinchEndEvent !== undefined) {
       this._handler.pinchEndEvent()

@@ -18,8 +18,8 @@ export const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 // 技术指标窗口id前缀
 export const TECHNICAL_INDICATOR_PANE_ID_PREFIX = 'technical_indicator_pane_'
 
-// 图形标记id前缀
-export const GRAPHIC_MARK_ID_PREFIX = 'graphic_mark_'
+// 图形id前缀
+export const SHAPE_ID_PREFIX = 'shape_'
 
 // 蜡烛图窗口id
 export const CANDLE_PANE_ID = 'candle_pane'

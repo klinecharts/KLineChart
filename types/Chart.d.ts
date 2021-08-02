@@ -1,7 +1,7 @@
 import { KLineData, Coordinate, Point } from './Common';
 
 import { TechnicalIndicatorTemplate, TechnicalIndicator } from './TechnicalIndicator';
-import { GraphicMark, OverrideGraphicMark, GraphicMarkTemplate } from './GraphicMark';
+import { Shape, OverrideShape, ShapeTemplate } from './Shape';
 import { Annotation } from './Annotation';
 import { Tag } from './Tag';
 
@@ -44,11 +44,11 @@ export declare interface Chart {
   getTechnicalIndicatorTemplate(name?: string): any;
   getTechnicalIndicatorByPaneId(paneId?: string, name?: string): any;
   removeTechnicalIndicator(paneId: string, name?: string): void;
-  createGraphicMark(value: string | GraphicMark): string | null;
-  getGraphicMark(graphicMarkId?: string): any;
-  setGraphicMarkOptions(options: OverrideGraphicMark): void;
-  addGraphicMarkTemplate(template: GraphicMarkTemplate | GraphicMarkTemplate[]): void;
-  removeGraphicMark(graphicMarkId?: string): void;
+  createShape(value: string | Shape): string | null;
+  getShape(shapeId?: string): any;
+  setShapeOptions(options: OverrideShape): void;
+  addShapeTemplate(template: ShapeTemplate | ShapeTemplate[]): void;
+  removeShape(shapeId?: string): void;
   createAnnotation(annotation: Annotation | Annotation[], paneId?: string): void;
   removeAnnotation(paneId?: string, point?: Point | Point[]): void;
   createTag(tag: Tag | Tag[], paneId?: string): void;

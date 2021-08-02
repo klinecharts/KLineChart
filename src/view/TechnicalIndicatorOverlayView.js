@@ -32,7 +32,7 @@ export default class TechnicalIndicatorOverlayView extends View {
   _draw () {
     this._ctx.textBaseline = 'alphabetic'
     this._drawTag()
-    this._drawGraphicMark()
+    this._drawShape()
     this._drawAnnotation()
     const crosshair = this._chartData.crosshairStore().get()
     if (crosshair.kLineData) {
@@ -79,7 +79,7 @@ export default class TechnicalIndicatorOverlayView extends View {
    * 绘制图形标记
    * @private
    */
-  _drawGraphicMark () {}
+  _drawShape () {}
 
   /**
    * 绘制图例

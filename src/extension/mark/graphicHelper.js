@@ -192,15 +192,15 @@ export function checkCoordinateOnCircle (circleCenterCoordinate, radius, targetC
  */
 export function checkCoordinateOnArc (circleCenterCoordinate, radius, startAngle, endAngle, targetCoordinate) {
   if (checkCoordinateOnCircle(circleCenterCoordinate, radius, targetCoordinate)) {
-    const startPointX = radius * Math.cos(startAngle) + circleCenterCoordinate.x
-    const startPointY = radius * Math.sin(startAngle) + circleCenterCoordinate.y
-    const endPointX = radius * Math.cos(endAngle) + circleCenterCoordinate.x
-    const endPointY = radius * Math.sin(endAngle) + circleCenterCoordinate.y
+    const startCoordinateX = radius * Math.cos(startAngle) + circleCenterCoordinate.x
+    const startCoordinateY = radius * Math.sin(startAngle) + circleCenterCoordinate.y
+    const endCoordinateX = radius * Math.cos(endAngle) + circleCenterCoordinate.x
+    const endCoordinateY = radius * Math.sin(endAngle) + circleCenterCoordinate.y
     return (
-      targetCoordinate.x <= Math.max(startPointX, endPointX) + DEVIATION &&
-      targetCoordinate.x >= Math.min(startPointX, endPointX) - DEVIATION &&
-      targetCoordinate.y <= Math.max(startPointY, endPointY) + DEVIATION &&
-      targetCoordinate.y >= Math.min(startPointY, endPointY) - DEVIATION
+      targetCoordinate.x <= Math.max(startCoordinateX, endCoordinateX) + DEVIATION &&
+      targetCoordinate.x >= Math.min(startCoordinateX, endCoordinateX) - DEVIATION &&
+      targetCoordinate.y <= Math.max(startCoordinateY, endCoordinateY) + DEVIATION &&
+      targetCoordinate.y >= Math.min(startCoordinateY, endCoordinateY) - DEVIATION
     )
   }
 }
@@ -254,31 +254,31 @@ export function checkCoordinateInRect (coordinate1, coordinate2, targetCoordinat
  */
 export function getRayLine (coordinate1, coordinate2, xyMax) {
   if (coordinate1 && coordinate2) {
-    let point
+    let coordinate
     if (coordinate1.x === coordinate2.x && coordinate1.y !== coordinate2.y) {
       if (coordinate1.y < coordinate2.y) {
-        point = {
+        coordinate = {
           x: coordinate1.x,
           y: xyMax.y
         }
       } else {
-        point = {
+        coordinate = {
           x: coordinate1.x,
           y: 0
         }
       }
     } else if (coordinate1.x > coordinate2.x) {
-      point = {
+      coordinate = {
         x: 0,
         y: getLinearYFromCoordinates(coordinate1, coordinate2, { x: 0, y: coordinate1.y })
       }
     } else {
-      point = {
+      coordinate = {
         x: xyMax.x,
         y: getLinearYFromCoordinates(coordinate1, coordinate2, { x: xyMax.x, y: coordinate1.y })
       }
     }
-    return [coordinate1, point]
+    return [coordinate1, coordinate]
   }
   return []
 }

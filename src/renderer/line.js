@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import { renderStrokePath } from './path'
+
 /**
  * 绘制水平直线
  * @param ctx
@@ -47,13 +49,8 @@ export function renderVerticalLine (ctx, x, top, bottom) {
 /**
  * 绘制线
  * @param ctx
- * @param renderFuc
+ * @param coordinates
  */
-export function renderLine (ctx, renderFuc) {
-  ctx.save()
-  if (ctx.lineWidth % 2) {
-    ctx.translate(0.5, 0.5)
-  }
-  renderFuc()
-  ctx.restore()
+export function renderLine (ctx, coordinates) {
+  renderStrokePath(ctx, coordinates)
 }

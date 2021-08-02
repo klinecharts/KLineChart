@@ -17,20 +17,20 @@ import { checkCoordinateOnRayLine } from './graphicHelper'
 export default {
   name: 'verticalRayLine',
   totalStep: 3,
-  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
     return checkCoordinateOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: ({ coordinates, viewport }) => {
-    const point = { x: coordinates[0].x, y: 0 }
+  createShapeDataSource: ({ coordinates, viewport }) => {
+    const coordinate = { x: coordinates[0].x, y: 0 }
     if (coordinates[1] && coordinates[0].y < coordinates[1].y) {
-      point.y = viewport.height
+      coordinate.y = viewport.height
     }
     return [
       {
         type: 'line',
         isDraw: true,
         isCheck: true,
-        dataSource: [[coordinates[0], point]]
+        dataSource: [[coordinates[0], coordinate]]
       }
     ]
   },

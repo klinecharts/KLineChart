@@ -216,24 +216,10 @@ export default class TechnicalIndicatorView extends View {
     const colors = technicalIndicatorOptions.line.colors || []
     const colorSize = colors.length
     this._ctx.lineWidth = technicalIndicatorOptions.line.size
-    renderLine(this._ctx, () => {
-      lines.forEach((lineItem, i) => {
-        this._ctx.strokeStyle = colors[i % colorSize]
-        this._ctx.beginPath()
-        let isStart = true
-        lineItem.forEach(line => {
-          if (isValid(line)) {
-            if (isStart) {
-              this._ctx.moveTo(line.x, line.y)
-              isStart = false
-            } else {
-              this._ctx.lineTo(line.x, line.y)
-            }
-          }
-        })
-        this._ctx.stroke()
-        this._ctx.closePath()
-      })
+
+    lines.forEach((coordinates, i) => {
+      this._ctx.strokeStyle = colors[i % colorSize]
+      renderLine(this._ctx, coordinates)
     })
   }
 

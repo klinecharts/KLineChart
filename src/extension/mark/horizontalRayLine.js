@@ -21,16 +21,16 @@ export default {
     return checkCoordinateOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
   },
   createGraphicDataSource: ({ coordinates, viewport }) => {
-    const point = { x: 0, y: coordinates[0].y }
+    const coordinate = { x: 0, y: coordinates[0].y }
     if (coordinates[1] && coordinates[0].x < coordinates[1].x) {
-      point.x = viewport.width
+      coordinate.x = viewport.width
     }
     return [
       {
         type: 'line',
         isDraw: true,
         isCheck: true,
-        dataSource: [[coordinates[0], point]]
+        dataSource: [[coordinates[0], coordinate]]
       }
     ]
   },

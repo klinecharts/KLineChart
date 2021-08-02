@@ -14,7 +14,7 @@
 
 export default {
   technicalIndicatorExtensions: {},
-  graphicMarkExtensions: {},
+  shapeExtensions: {},
   addTechnicalIndicatorTemplate (template) {
     if (template) {
       ([].concat(template)).forEach(
@@ -26,12 +26,12 @@ export default {
       )
     }
   },
-  addGraphicMarkTemplate (template) {
+  addShapeTemplate (template) {
     if (template) {
       ([].concat(template)).forEach(
         tmp => {
           if (tmp.name) {
-            this.graphicMarkExtensions[tmp.name] = tmp
+            this.shapeExtensions[tmp.name] = tmp
           }
         }
       )

@@ -14,12 +14,12 @@
 
 import EventHandler, { isMouse } from './EventHandler'
 import { CANDLE_PANE_ID, InvalidateLevel } from '../data/constants'
-import { GraphicMarkMouseOperateElement } from '../component/overlay/GraphicMark'
+import { ShapeMouseOperateElement } from '../component/overlay/Shape'
 
 export default class OverlayEventHandler extends EventHandler {
   constructor (chartData) {
     super(chartData)
-    this._pressedGraphicMark = null
+    this._pressedShape = null
   }
 
   /**
@@ -64,9 +64,9 @@ export default class OverlayEventHandler extends EventHandler {
    * 鼠标抬起事件
    */
   mouseUpEvent () {
-    if (this._pressedGraphicMark) {
-      this._pressedGraphicMark = null
-      this._chartData.graphicMarkStore().setDragFlag(false)
+    if (this._pressedShape) {
+      this._pressedShape = null
+      this._chartData.shapeStore().setDragFlag(false)
     }
   }
 
@@ -77,35 +77,35 @@ export default class OverlayEventHandler extends EventHandler {
     this._waitingForMouseMove = true
     const coordinate = { x: event.localX, y: event.paneY }
     const annotations = this._chartData.annotationStore().get(event.paneId)
-    const graphicMarks = this._chartData.graphicMarkStore().instances()
-    const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
-    const preGraphicMarkHoverOperate = this._chartData.graphicMarkStore().mouseOperate().hover
-    const preAnnotationHoverOperate = this._chartData.annotationStore().mouseOperate()
-    let graphicMarkHoverOperate
-    let graphicMarkClickOperate
+    const shapes = this._chartData.shapeStore().instances()
+    const lastShape = shapes[shapes.length - 1]
+    const prevShapeHoverOperate = this._chartData.shapeStore().mouseOperate().hover
+    const prevAnnotationHoverOperate = this._chartData.annotationStore().mouseOperate()
+    let shapeHoverOperate
+    let shapeClickOperate
     let annotationHoverOperate
-    if (lastGraphicMark && lastGraphicMark.isDrawing()) {
-      lastGraphicMark.mouseMoveForDrawing(coordinate)
-      graphicMarkHoverOperate = lastGraphicMark.checkEventCoordinateOn(coordinate)
-      graphicMarkClickOperate = {
+    if (lastShape && lastShape.isDrawing()) {
+      lastShape.mouseMoveForDrawing(coordinate)
+      shapeHoverOperate = lastShape.checkEventCoordinateOn(coordinate)
+      shapeClickOperate = {
         id: '',
-        element: GraphicMarkMouseOperateElement.NONE,
+        element: ShapeMouseOperateElement.NONE,
         elementIndex: -1
       }
     } else {
-      graphicMarkHoverOperate = this._performOverlayMouseHover(graphicMarks, preGraphicMarkHoverOperate, coordinate, event)
-      annotationHoverOperate = this._performOverlayMouseHover(annotations, preAnnotationHoverOperate, coordinate, event)
+      shapeHoverOperate = this._performOverlayMouseHover(shapes, prevShapeHoverOperate, coordinate, event)
+      annotationHoverOperate = this._performOverlayMouseHover(annotations, prevAnnotationHoverOperate, coordinate, event)
     }
-    const graphicMarkOperateValid = this._chartData.graphicMarkStore().setMouseOperate({
-      hover: graphicMarkHoverOperate || {
+    const shapeOperateValid = this._chartData.shapeStore().setMouseOperate({
+      hover: shapeHoverOperate || {
         id: '',
-        element: GraphicMarkMouseOperateElement.NONE,
+        element: ShapeMouseOperateElement.NONE,
         elementIndex: -1
       },
-      click: graphicMarkClickOperate
+      click: shapeClickOperate
     })
     const annotationOperateValid = this._chartData.annotationStore().setMouseOperate(annotationHoverOperate || { id: '' })
-    if (graphicMarkOperateValid || annotationOperateValid || lastGraphicMark.isDrawing()) {
+    if (shapeOperateValid || annotationOperateValid || lastShape.isDrawing()) {
       this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }
     this._waitingForMouseMove = false
@@ -117,33 +117,33 @@ export default class OverlayEventHandler extends EventHandler {
    */
   mouseDownEvent (event) {
     const coordinate = { x: event.localX, y: event.paneY }
-    const graphicMarks = this._chartData.graphicMarkStore().instances()
-    const lastGraphicMark = graphicMarks[graphicMarks.length - 1]
-    let graphicMarkHoverOperate = {
+    const shapes = this._chartData.shapeStore().instances()
+    const lastShape = shapes[shapes.length - 1]
+    let shapeHoverOperate = {
       id: '',
-      element: GraphicMarkMouseOperateElement.NONE,
+      element: ShapeMouseOperateElement.NONE,
       elementIndex: -1
     }
-    let graphicMarkClickOperate
-    if (lastGraphicMark && lastGraphicMark.isDrawing()) {
-      lastGraphicMark.mouseLeftButtonDownForDrawing(coordinate)
-      graphicMarkClickOperate = lastGraphicMark.checkEventCoordinateOn(coordinate)
+    let shapeClickOperate
+    if (lastShape && lastShape.isDrawing()) {
+      lastShape.mouseLeftButtonDownForDrawing(coordinate)
+      shapeClickOperate = lastShape.checkEventCoordinateOn(coordinate)
     } else {
-      for (const graphicMark of graphicMarks) {
-        graphicMarkClickOperate = graphicMark.checkEventCoordinateOn(coordinate)
-        if (graphicMarkClickOperate) {
-          this._chartData.graphicMarkStore().setDragFlag(true)
-          this._pressedGraphicMark = { instance: graphicMark, element: graphicMarkClickOperate.element }
-          if (graphicMarkClickOperate.element === GraphicMarkMouseOperateElement.POINT) {
-            graphicMarkHoverOperate = {
-              ...graphicMarkClickOperate
+      for (const shape of shapes) {
+        shapeClickOperate = shape.checkEventCoordinateOn(coordinate)
+        if (shapeClickOperate) {
+          this._chartData.shapeStore().setDragFlag(true)
+          this._pressedShape = { instance: shape, element: shapeClickOperate.element }
+          if (shapeClickOperate.element === ShapeMouseOperateElement.POINT) {
+            shapeHoverOperate = {
+              ...shapeClickOperate
             }
           } else {
-            graphicMark.startPressedOtherMove(coordinate)
+            shape.startPressedOtherMove(coordinate)
           }
-          graphicMark.onClick({
-            id: graphicMarkClickOperate.id,
-            points: graphicMark.points(),
+          shape.onClick({
+            id: shapeClickOperate.id,
+            points: shape.points(),
             event
           })
           break
@@ -164,26 +164,26 @@ export default class OverlayEventHandler extends EventHandler {
         }
       }
     }
-    const graphicMarkOperateValid = this._chartData.graphicMarkStore().setMouseOperate({
-      hover: graphicMarkHoverOperate,
-      click: graphicMarkClickOperate || {
+    const shapeOperateValid = this._chartData.shapeStore().setMouseOperate({
+      hover: shapeHoverOperate,
+      click: shapeClickOperate || {
         id: '',
-        element: GraphicMarkMouseOperateElement.NONE,
+        element: ShapeMouseOperateElement.NONE,
         elementIndex: -1
       }
     })
-    if (graphicMarkOperateValid) {
+    if (shapeOperateValid) {
       this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 
   mouseRightDownEvent (event) {
     if (event.paneId === CANDLE_PANE_ID) {
-      const graphicMarks = this._chartData.graphicMarkStore().instances()
-      if (graphicMarks) {
-        const graphicMark = graphicMarks.find(gm => gm.checkEventCoordinateOn({ x: event.localX, y: event.paneY }))
-        if (graphicMark && !graphicMark.onRightClick({ id: graphicMark.id(), points: graphicMark.points(), event })) {
-          this._chartData.graphicMarkStore().removeInstance(graphicMark.id())
+      const shapes = this._chartData.shapeStore().instances()
+      if (shapes) {
+        const shape = shapes.find(gm => gm.checkEventCoordinateOn({ x: event.localX, y: event.paneY }))
+        if (shape && !shape.onRightClick({ id: shape.id(), points: shape.points(), event })) {
+          this._chartData.shapeStore().removeInstance(shape.id())
         }
       }
     }
@@ -197,12 +197,12 @@ export default class OverlayEventHandler extends EventHandler {
   }
 
   pressedMouseMoveEvent (event) {
-    if (!this._chartData.graphicMarkStore().isDrawing() && this._pressedGraphicMark) {
+    if (!this._chartData.shapeStore().isDrawing() && this._pressedShape) {
       const coordinate = { x: event.localX, y: event.paneY }
-      if (this._pressedGraphicMark.element === GraphicMarkMouseOperateElement.POINT) {
-        this._pressedGraphicMark.instance.mousePressedPointMove(coordinate, event)
+      if (this._pressedShape.element === ShapeMouseOperateElement.POINT) {
+        this._pressedShape.instance.mousePressedPointMove(coordinate, event)
       } else {
-        this._pressedGraphicMark.instance.mousePressedOtherMove(coordinate)
+        this._pressedShape.instance.mousePressedOtherMove(coordinate)
       }
       this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }

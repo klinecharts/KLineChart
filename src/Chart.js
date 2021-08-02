@@ -295,36 +295,36 @@ export default class Chart {
   }
 
   /**
-   * 添加图形标记模板
-   * @param template 图形标记模板
+   * 添加图形模板
+   * @param template 图形模板
    */
-  addGraphicMarkTemplate (template) {
+  addShapeTemplate (template) {
     if (!isObject(template)) {
-      logWarn('addCustomGraphicMark', 'template', 'template must be an object or array!!!')
+      logWarn('addShapeTemplate', 'template', 'template must be an object or array!!!')
       return
     }
     const templates = [].concat(template)
-    this._chartPane.chartData().graphicMarkStore().addTemplate(templates)
+    this._chartPane.chartData().shapeStore().addTemplate(templates)
   }
 
   /**
-   * 创建图形标记
-   * @param value 图形标记名或者图形标记配置
+   * 创建图形
+   * @param value 图形名或者图形配置
    */
-  createGraphicMark (value) {
+  createShape (value) {
     if (!isValid(value)) {
-      logWarn('createGraphicMark', 'value', 'value is invalid!!!')
+      logWarn('createShape', 'value', 'value is invalid!!!')
       return null
     }
-    const graphicMark = isObject(value) && !isArray(value) ? value : { name: value }
-    const GraphicMark = this._chartPane.chartData().graphicMarkStore().getTemplate(graphicMark.name)
-    if (!GraphicMark) {
-      logWarn('createGraphicMark', 'value', 'can not find the corresponding graphic mark!!!')
+    const shape = isObject(value) && !isArray(value) ? value : { name: value }
+    const Shape = this._chartPane.chartData().shapeStore().getTemplate(shape.name)
+    if (!Shape) {
+      logWarn('createShape', 'value', 'can not find the corresponding shape!!!')
       return null
     }
-    const id = this._chartPane.createGraphicMark(GraphicMark, graphicMark)
+    const id = this._chartPane.createShape(Shape, shape)
     if (!id) {
-      logWarn('createGraphicMark', 'options.id', 'duplicate id!!!')
+      logWarn('createShape', 'options.id', 'duplicate id!!!')
     }
     return id
   }
@@ -334,28 +334,28 @@ export default class Chart {
    * @param id 图形标记id
    * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
    */
-  getGraphicMark (id) {
-    return this._chartPane.chartData().graphicMarkStore().getInstanceInfo(id)
+  getShape (id) {
+    return this._chartPane.chartData().shapeStore().getInstanceInfo(id)
   }
 
   /**
    * 设置图形标记配置
    * @param options 图形标记配置
    */
-  setGraphicMarkOptions (options) {
+  setShapeOptions (options) {
     if (!isObject(options)) {
-      logWarn('setGraphicMarkOptions', 'options', 'options must be an object!!!')
+      logWarn('setShapeOptions', 'options', 'options must be an object!!!')
       return
     }
-    this._chartPane.chartData().graphicMarkStore().setInstanceOptions(options)
+    this._chartPane.chartData().shapeStore().setInstanceOptions(options)
   }
 
   /**
-   * 移除图形标记
-   * @param id 图形标记id
+   * 移除图形
+   * @param id 图形id
    */
-  removeGraphicMark (id) {
-    this._chartPane.chartData().graphicMarkStore().removeInstance(id)
+  removeShape (id) {
+    this._chartPane.chartData().shapeStore().removeInstance(id)
   }
 
   /**

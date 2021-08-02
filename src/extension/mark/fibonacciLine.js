@@ -17,10 +17,10 @@ import { checkCoordinateOnStraightLine } from './graphicHelper'
 export default {
   name: 'fibonacciLine',
   totalStep: 3,
-  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
     return checkCoordinateOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: ({ points, coordinates, viewport, precision }) => {
+  createShapeDataSource: ({ points, coordinates, viewport, precision }) => {
     if (coordinates.length > 0) {
       const lines = []
       const texts = []
