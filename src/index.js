@@ -14,22 +14,22 @@
 
 import { version, init, dispose, extension } from './index.blank'
 
-import horizontalRayLine from './extension/mark/horizontalRayLine'
-import horizontalSegment from './extension/mark/horizontalSegment'
-import horizontalStraightLine from './extension/mark/horizontalStraightLine'
+import horizontalRayLine from './extension/shape/horizontalRayLine'
+import horizontalSegment from './extension/shape/horizontalSegment'
+import horizontalStraightLine from './extension/shape/horizontalStraightLine'
 
-import verticalRayLine from './extension/mark/verticalRayLine'
-import verticalSegment from './extension/mark/verticalSegment'
-import verticalStraightLine from './extension/mark/verticalStraightLine'
+import verticalRayLine from './extension/shape/verticalRayLine'
+import verticalSegment from './extension/shape/verticalSegment'
+import verticalStraightLine from './extension/shape/verticalStraightLine'
 
-import rayLine from './extension/mark/rayLine'
-import segment from './extension/mark/segment'
-import straightLine from './extension/mark/straightLine'
+import rayLine from './extension/shape/rayLine'
+import segment from './extension/shape/segment'
+import straightLine from './extension/shape/straightLine'
 
-import parallelStraightLine from './extension/mark/parallelStraightLine'
-import priceChannelLine from './extension/mark/priceChannelLine'
-import priceLine from './extension/mark/priceLine'
-import fibonacciLine from './extension/mark/fibonacciLine'
+import parallelStraightLine from './extension/shape/parallelStraightLine'
+import priceChannelLine from './extension/shape/priceChannelLine'
+import priceLine from './extension/shape/priceLine'
+import fibonacciLine from './extension/shape/fibonacciLine'
 
 extension.addShapeTemplate([
   horizontalRayLine, horizontalSegment, horizontalStraightLine,
