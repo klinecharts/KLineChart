@@ -21,7 +21,7 @@ import { renderFillTriangle } from '../../renderer/triangle'
 import {
   checkCoordinateInCircle, checkCoordinateInDiamond,
   checkCoordinateInRect, checkCoordinateInTriangle
-} from '../../extension/mark/graphicHelper'
+} from '../../extension/shape/graphicHelper'
 
 import { isNumber } from '../../utils/typeChecks'
 

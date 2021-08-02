@@ -15,7 +15,7 @@
 import Overlay from './Overlay'
 
 import { renderFillCircle } from '../../renderer/circle'
-import { checkCoordinateInCircle } from '../../extension/mark/graphicHelper'
+import { checkCoordinateInCircle } from '../../extension/shape/graphicHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../renderer/line'
 import { renderStrokePath, renderFillPath } from '../../renderer/path'
 import { isArray, clone } from '../../utils/typeChecks'

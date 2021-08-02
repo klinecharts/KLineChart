@@ -17,10 +17,10 @@ import { checkCoordinateOnRayLine } from './graphicHelper'
 export default {
   name: 'horizontalRayLine',
   totalStep: 3,
-  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
     return checkCoordinateOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: ({ coordinates, viewport }) => {
+  createShapeDataSource: ({ coordinates, viewport }) => {
     const coordinate = { x: 0, y: coordinates[0].y }
     if (coordinates[1] && coordinates[0].x < coordinates[1].x) {
       coordinate.x = viewport.width
