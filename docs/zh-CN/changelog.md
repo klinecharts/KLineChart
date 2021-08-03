@@ -13,9 +13,11 @@
    + `extension.addTechnicalIndicator`变更为`extension.addTechnicalIndicatorTemplate`。
    + `extension.addGraphicMark`变更为`extension.addGraphicMarkTemplate`。
    + 图表实例
-      + `createGraphicMark`合并参数。
+      + `createGraphicMark`变更为`createShape`，参数合并。
+      + `addCustomGraphicMark`变更为`addShapeTemplate`。
+      + `getGraphicMark`变更为`getShape`。
+      + `setGraphicMarkOptions`变更为`setShapeOptions`。
       + `addCustomTechnialIndicator`变更为`addTechnicalIndicatorTemplate`。
-      + `addCustomGraphicMark`变更为`addGraphicMarkTemplate`。
       + `getTechnicalIndicatorByName`变更为`getTechnicalIndicatorTemplate`。
       + `removeAnnotation`新增参数`paneId`。
       + `removeTag`新增参数`paneId`。
@@ -25,8 +27,8 @@
       + `subscribeAction`和`unsubscribeAction`，去除`drawCandle`和`drawTechnicalIndicator`类型。
       + `convertToPixel`和`convertFromPixel`，入参变更为`{ timestamp, dataIndex, value }`和`{ paneId, absoluteYAxis }`。
    + 图形标记
-      + `checkMousePointOn`变更为`checkEventCoordinateOnGraphic`，参数变更为`object`。
-      + `createGraphicDataSource`参数变更为`object`。
+      + `checkMousePointOn`变更为`checkEventCoordinateOnShape`，参数变更为`object`。
+      + `createShapeDataSource`参数变更为`object`。
       + `performMouseMoveForDrawing`变更为`performEventMoveForDrawing`，参数变更为`object`。
       + `performMousePressedMove`变更为`performEventPressedMove`，参数变更为`object`。
       + `drawExtend`参数变更为`object`。

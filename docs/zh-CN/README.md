@@ -9,7 +9,7 @@
   + [快速开始](quick-start.md)
 + 进阶
   + [技术指标](technical-indicator.md)
-  + [图形标记](graphic-mark.md)
+  + [图形](shape.md)
 + API
   + [图表API](chart-api.md)
   + [图表实例API](instance-api.md)

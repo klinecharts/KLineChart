@@ -10,12 +10,14 @@
 
 ### 图表API
 + `extension.addTechnicalIndicator(tech)`变更为`extension.addTechnicalIndicatorTemplate(template)`。
-+ `extension.addGraphicMark(graphicMark)`变更为`extension.addGraphicMarkTemplate(template)`。
++ `extension.addGraphicMark(graphicMark)`变更为`extension.addShapeTemplate(template)`。
 
 ### 实例API
-+ `createGraphicMark(name, options)`变更为`createGraphicMark(value)`，参数`name`和`options`合并为一个参数，同时支持参数为字符串。
++ `createGraphicMark(name, options)`变更为`createShape(value)`，参数`name`和`options`合并为一个参数，同时支持参数为字符串。
++ `addCustomGraphicMark(graphicMark)`变更为`addShapeTemplate(template)`。
++ `getGraphicMark(id)`变更为`getShape(id)`。
++ `setGraphicMarkOptions(options)`变更为`setShapeOptions(options)`。
 + `addCustomTechnialIndicator(tech)`变更为`addTechnicalIndicatorTemplate(template)`。
-+ `addCustomGraphicMark(graphicMark)`变更为`addGraphicMarkTemplate(template)`。
 + `getTechnicalIndicatorByName(name)`变更为`getTechnicalIndicatorTemplate(name)`。
 + `removeAnnotation(points)`变更为`removeAnnotation(paneId, points)`。
 + `removeTag(tagId)`变更为`removeTag(paneId, tagId)`。
@@ -46,13 +48,13 @@
 + 属性`baseValue`合并到`plots`。
 + 属性`plots`里面的`color({ preData, currentData, nextData })`变更为`color({ prev current, next })`。
 + 方法`calcTechnicalIndicator(kLineDataList, calcParams, plots)`参数变更为`calcTechnicalIndicator(kLineDataList, { params, plots })`。
-+ 方法`render(ctx, dataSource, viewport, styleOptions, xAxisConvert, yAxisConvert, isCandleTechnicalIndicator)`变更为`render({ ctx, dataSource, viewport, styles, xAxis, yAxis})`。
++ 方法`render(ctx, dataSource, viewport, styleOptions, xAxisConvert, yAxisConvert, isCandleTechnicalIndicator)`变更为`render({ ctx, dataSource, viewport, styles, xAxis, yAxis })`。
 
 
-## 图形标记不兼容
-自定义图形标记更名为图形标记模板。
-+ 方法`checkMousePointOn(key, type, points, mousePoint)`变更为`checkEventCoordinateOnGraphic({ key, type, dataSource, eventCoordinnate})`。
-+ 方法`createGraphicDataSource(step, tpPoints, xyPoints, viewport, precision, xAxis, yAxis)`变更为`createGraphicDataSource({ step, mode, points, coordinates, viewport, precision, styles, xAxis, yAxis })`，返回结果`style`变更为`styles`，类型变为`object`。
+## 图形不兼容
+自定义图形标记更名为图形模板。
++ 方法`checkMousePointOn(key, type, points, mousePoint)`变更为`checkEventCoordinateOnShape({ key, type, dataSource, eventCoordinnate})`。
++ 方法`createGraphicDataSource(step, tpPoints, xyPoints, viewport, precision, xAxis, yAxis)`变更为`createShapeDataSource({ step, mode, points, coordinates, viewport, precision, styles, xAxis, yAxis })`，返回结果`style`变更为`styles`，类型变为`object`。
 + 方法`performMouseMoveForDrawing(step, tpPoints, tpPoint, xAxis, yAxis)`变更为`performEventMoveForDrawing({ step, mode, points, movePoint, xAxis, yAxis })`。
 + 方法`performMousePressedMove(step, tpPoints, tpPoint, xAxis, yAxis)`变更为`performEventPressedMove({ step, mode, points, pressPointIndex, pressPoint, xAxis, yAxis })`。
 + 方法`drawExtend(ctx, graphicDataSources, markOptions, viewport, precision, xAxis, yAxis)`变更为`drawExtend({ ctx, dataSource, styles, mode, viewport, precision, xAxis, yAxis })`。

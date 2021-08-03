@@ -1,15 +1,15 @@
-# Graphic mark
+# Shape
 
-## Default graphic mark
+## Default shape
 `horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `horizontalSegment`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`
 
-## Graphic mark template
-Create a graphic mark template, and then add it globally through `extension.addGraphicMarkTemplate`, or add it for a single graph instance through the chart instance method `addCustomGraphicMarkTemplate`. Adding to the chart can be used like the built-in graphic markers.
+## Shape template
+Create a shape template, and then add it globally through `extension.addShapeTemplate`, or add it for a single graph instance through the chart instance method `addShapeTemplate`. Adding to the chart can be used like the built-in shape.
 ### Property description
-#### Graphic mark information
+#### Shape information
 ```js
 {
-  // Name, a required field, as the unique identifier of the graphic mark
+  // Name, a required field, as the unique identifier of the shape
   name:'xxx',
 
   // How many steps are required to complete the drawing, the required fields
@@ -17,13 +17,13 @@ Create a graphic mark template, and then add it globally through `extension.addG
 
   // Check whether the mouse point is on the graph, it is a callback method, a required field
   // key The key given when creating the data source
-  // type graphics type
-  // dataSource graphic information
+  // type shape element type
+  // dataSource shape information
   // eventCoordinate current mouse coordinate
   // Need to return boolean value
-  checkEventCoordinateOnGraphic: ({ key, type, dataSource, eventCoordinate }) => {},
+  checkEventCoordinateOnShape: ({ key, type, dataSource, eventCoordinate }) => {},
 
-  // Creating a graphic data source is a callback method. It must be a field and needs to return graphic data
+  // Creating a shape data source is a callback method. It must be a field and needs to return shape data
   // step current step
   // points time price point information
   // coordinates time price point corresponding axis information
@@ -32,7 +32,7 @@ Create a graphic mark template, and then add it globally through `extension.addG
   // styles style
   // xAxis x-axis component
   // yAxis y axis component
-  createGraphicDataSource: ({ step, points, coordinates, viewport, precision, styles, xAxis, yAxis }) => {},
+  createShapeDataSource: ({ step, points, coordinates, viewport, precision, styles, xAxis, yAxis }) => {},
 
   // Process the mouse movement operation during the drawing process, it can be defaulted, and the mouse operation is triggered during the drawing process
   // step current step
@@ -52,7 +52,7 @@ Create a graphic mark template, and then add it globally through `extension.addG
 
   // Extended drawing, default
   // ctx canvas context
-  // dataSource graphic data information
+  // dataSource shape data information
   // styles chart style configuration
   // viewport size
   // precision precision information, including price and quantity precision
@@ -61,7 +61,7 @@ Create a graphic mark template, and then add it globally through `extension.addG
   drawExtend: ({ ctx, dataSource, styles, viewport, precision, xAxis, yAxis }) => {}
 }
 ```
-#### Method createGraphicDataSource return value sub-item information
+#### Method createShapeDataSource return value sub-item information
 ```js
 {
   // key
@@ -108,15 +108,15 @@ Use a filled circle with a border to illustrate how to configure it.
   totalStep: 3,
 
   // Check if the event coordinate is on the circle border
-  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
     const xDis = Math.abs(dataSource.x - eventCoordinate.x)
     const yDis = Math.abs(dataSource.y - eventCoordinate.y)
     const r = Math.sqrt(xDis * xDis + yDis * yDis)
-    return Math.abs(r - points.radius) < 2;
+    return Math.abs(r - dataSource.radius) < 2;
   },
 
-  // Create graphic information
-  createGraphicDataSource: ({ step, points, coordinates }) => {
+  // Create shape information
+  createShapeDataSource: ({ step, points, coordinates }) => {
     if (coordinates.length === 2) {
       const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
       const yDis = Math.abs(coordinates[0].y - coordinates[1].y)
@@ -133,7 +133,7 @@ Use a filled circle with a border to illustrate how to configure it.
           styles: { style: 'fill' },
           // point information
           dataSource: [
-            {...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
+            { ...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
           ]
         },
         // hollow circle
@@ -144,7 +144,7 @@ Use a filled circle with a border to illustrate how to configure it.
           isCheck: true,
           // point information
           dataSource: [
-            {...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
+            { ...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 },
           ]
         }
       ]

@@ -1,12 +1,12 @@
-# 图形标记
+# 图形
 
-## 默认图形标记
+## 默认图形类型
 `horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `horizontalSegment`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`
 
-## 图形标记模板
-创建一个模板，然后通过`extension.addGraphicMarkTemplate` 全局添加，或者通过图表实例方法`addCustomGraphicMarkTemplate` 为单个图表实例添加即可。添加到图表即可和内置图形标记一样去使用。
+## 图形模板
+创建一个模板，然后通过`extension.addShapeTemplate` 全局添加，或者通过图表实例方法`addShapeTemplate` 为单个图表实例添加即可。添加到图表即可和内置图形一样去使用。
 ### 属性说明
-#### 图形标记信息
+#### 图形信息
 ```javascript
 {
   // 名称，必须字段，作为图形标记的唯一标识
@@ -21,7 +21,7 @@
   // dataSource 图形信息
   // eventCoordinate 当前事件坐标
   // 需要返回boolean值
-  checkEventCoordinateOnGraphic: ({ key, type, dataSource, eventCoordinate }) => {},
+  checkEventCoordinateOnShape: ({ key, type, dataSource, eventCoordinate }) => {},
 
   // 创建图形数据源，是一个回调方法，必须字段，需要返回图形数据
   // step 当前步骤
@@ -32,7 +32,7 @@
   // styles 样式
   // xAxis x轴组件
   // yAxis y轴组件
-  createGraphicDataSource: ({ step, points, coordinates, viewport, precision, styles, xAxis, yAxis }) => {},
+  createShapeDataSource: ({ step, points, coordinates, viewport, precision, styles, xAxis, yAxis }) => {},
 
   // 处理在绘制过程中鼠标移动操作，可缺省，鼠标操作绘制过程中触发
   // step 当前步骤
@@ -61,7 +61,7 @@
   drawExtend: ({ ctx, dataSource, styles, viewport, precision, xAxis, yAxis }) => {}
 }
 ```
-#### 方法createGraphicDataSource返回值子项信息
+#### 方法createShapeDataSource返回值子项信息
 ```javascript
 {
   // key
@@ -108,15 +108,15 @@
   totalStep: 3,
 
   // 检查事件坐标是否在圆边框上
-  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
     const xDis = Math.abs(dataSource.x - eventCoordinate.x)
     const yDis = Math.abs(dataSource.y - eventCoordinate.y)
     const r = Math.sqrt(xDis * xDis + yDis * yDis)
-    return Math.abs(r - points.radius) < 2;
+    return Math.abs(r - dataSource.radius) < 2;
   },
 
   // 创建图形信息
-  createGraphicDataSource: ({ step, points, coordinates }) => {
+  createShapeDataSource: ({ step, points, coordinates }) => {
     if (coordinates.length === 2) {
       const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
       const yDis = Math.abs(coordinates[0].y - coordinates[1].y)
