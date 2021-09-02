@@ -91,10 +91,10 @@ export default class ShapeStore {
     }
     class Template extends Shape {
       constructor ({
-        id, chartData, xAxis, yAxis, points, styles, lock
+        id, chartData, xAxis, yAxis, points, styles, lock, data
       }) {
         super({
-          id, name, totalStep, chartData, xAxis, yAxis, points, styles, lock
+          id, name, totalStep, chartData, xAxis, yAxis, points, styles, lock, data
         })
       }
     }
@@ -173,14 +173,14 @@ export default class ShapeStore {
    * @param options
    */
   setInstanceOptions (options = {}) {
-    const { id, styles, lock, mode } = options
+    const { id, styles, lock, mode, data } = options
     const defaultStyles = this._chartData.styleOptions().shape
     if (isValid(id)) {
       const instance = this._instances.find(gm => gm.id() === id)
       if (instance) {
         instance.setLock(lock)
         instance.setMode(mode)
-        if (instance.setStyles(styles, defaultStyles)) {
+        if (instance.setStyles(styles, defaultStyles) || instance.setData(data)) {
           this._chartData.invalidate(InvalidateLevel.OVERLAY)
         }
       }
@@ -189,7 +189,7 @@ export default class ShapeStore {
       this._instances.forEach(instance => {
         instance.setLock(lock)
         instance.setMode(mode)
-        if (instance.setStyles(styles, defaultStyles)) {
+        if (instance.setStyles(styles, defaultStyles) || instance.setData(data)) {
           shouldInvalidate = true
         }
       })
@@ -213,7 +213,8 @@ export default class ShapeStore {
         lock: instance.lock(),
         mode: instance.mode(),
         points: instance.points(),
-        styles: instance.styles()
+        styles: instance.styles(),
+        data: instance.data()
       }
     }
     if (id) {

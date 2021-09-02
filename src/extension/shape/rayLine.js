@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { checkCoordinateOnRayLine, getRayLine } from './graphicHelper'
+import { checkCoordinateOnRayLine, getRayLine } from './shapeHelper'
 
 export default {
   name: 'rayLine',

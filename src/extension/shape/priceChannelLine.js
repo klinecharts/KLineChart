@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { checkCoordinateOnStraightLine, getParallelLines } from './graphicHelper'
+import { checkCoordinateOnStraightLine, getParallelLines } from './shapeHelper'
 
 export default {
   name: 'priceChannelLine',

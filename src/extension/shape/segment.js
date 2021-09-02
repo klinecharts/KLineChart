@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { checkCoordinateOnSegment } from './graphicHelper'
+import { checkCoordinateOnSegment } from './shapeHelper'
 
 export default {
   name: 'segment',

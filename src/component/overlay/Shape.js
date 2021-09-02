@@ -15,7 +15,7 @@
 import Overlay from './Overlay'
 
 import { renderFillCircle } from '../../renderer/circle'
-import { checkCoordinateInCircle } from '../../extension/shape/graphicHelper'
+import { checkCoordinateInCircle } from '../../extension/shape/shapeHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../renderer/line'
 import { renderStrokePath, renderFillPath } from '../../renderer/path'
 import { isArray, clone } from '../../utils/typeChecks'
@@ -93,13 +93,14 @@ export default class Shape extends Overlay {
   constructor ({
     id, name, totalStep,
     chartData, xAxis, yAxis,
-    points, styles, lock
+    points, styles, lock, data
   }) {
     super({ id, chartData, xAxis, yAxis })
     this._name = name
     this._totalStep = totalStep
     this._lock = lock
     this._mode = ShapeMode.NORMAL
+    this._data = data
     this._drawStep = SHAPE_DRAW_STEP_START
     this._points = []
     this.setPoints(points)
@@ -346,7 +347,8 @@ export default class Shape extends Overlay {
         precision: { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() },
         styles: shapeOptions,
         xAxis: this._xAxis,
-        yAxis: this._yAxis
+        yAxis: this._yAxis,
+        data: this._data
       }) || []
       this._shapeDataSources.forEach(({ type, isDraw, styles, dataSource = [] }) => {
         if (isDraw) {
@@ -385,7 +387,8 @@ export default class Shape extends Overlay {
           precision,
           mode: this._mode,
           xAxis: this._xAxis,
-          yAxis: this._yAxis
+          yAxis: this._yAxis,
+          data: this._data
         })
         ctx.restore()
       }
@@ -465,6 +468,26 @@ export default class Shape extends Overlay {
     if (Object.values(ShapeMode).indexOf > -1) {
       this._mode = mode
     }
+  }
+
+  /**
+   * 设置数据
+   * @param data
+   */
+  setData (data) {
+    if (data !== this._data) {
+      this._data = data
+      return true
+    }
+    return false
+  }
+
+  /**
+   * 获取数据
+   * @returns
+   */
+  data () {
+    return this._data
   }
 
   /**
@@ -738,7 +761,7 @@ export default class Shape extends Overlay {
    * @param xAxis
    * @param yAxis
    */
-  createShapeDataSource ({ step, mode, points, coordinates, viewport, precision, styles, xAxis, yAxis }) {}
+  createShapeDataSource ({ step, mode, points, coordinates, viewport, precision, styles, xAxis, yAxis, data }) {}
 
   /**
    * 处理绘制过程中鼠标移动

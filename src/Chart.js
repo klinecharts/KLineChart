@@ -148,6 +148,22 @@ export default class Chart {
   }
 
   /**
+   * 获取单条数据的空间
+   * @returns
+   */
+  getDataSpace () {
+    return this._chartPane.chartData().timeScaleStore().dataSpace()
+  }
+
+  /**
+   * 获取单条数据绘制的空间
+   * @returns
+   */
+  getBarSpace () {
+    return this._chartPane.chartData().timeScaleStore().barSpace()
+  }
+
+  /**
    * 清空数据
    */
   clearData () {
@@ -405,10 +421,11 @@ export default class Chart {
 
   /**
    * 移除标签
-   * @param id 标签id
+   * @param paneId 窗口id
+   * @param tagId 标签id
    */
-  removeTag (id) {
-    this._chartPane.chartData().tagStore().remove(id)
+  removeTag (paneId, tagId) {
+    this._chartPane.chartData().tagStore().remove(paneId, tagId)
   }
 
   /**

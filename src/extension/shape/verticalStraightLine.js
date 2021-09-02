@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { checkCoordinateOnStraightLine } from './graphicHelper'
+import { checkCoordinateOnStraightLine } from './shapeHelper'
 
 export default {
   name: 'verticalStraightLine',

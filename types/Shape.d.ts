@@ -62,6 +62,7 @@ export declare interface ShapeCreateDataSourceParams {
   styles: any;
   xAxis: any;
   yAxis: any;
+  data: any;
 }
 
 export declare interface ShapeEventPressMoveParams {
@@ -91,6 +92,7 @@ export declare interface ShapeDrawExtendParams {
   mode: ShapeMode;
   xAxis: any;
   yAxis: any;
+  data: any;
 }
 
 export declare interface ShapeTemplate {

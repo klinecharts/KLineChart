@@ -38,16 +38,16 @@ export declare interface Chart {
   applyMoreData(dataList: KLineData[], more?: boolean): void;
   updateData(data: KLineData): void;
   loadMore(cb: (timestamp: number) => void): void;
-  createTechnicalIndicator(value: string | TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string | null;
   addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate | TechnicalIndicatorTemplate[]): void;
+  createTechnicalIndicator(value: string | TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string | null;
   overrideTechnicalIndicator(tech: TechnicalIndicator, paneId?: string): void;
   getTechnicalIndicatorTemplate(name?: string): any;
   getTechnicalIndicatorByPaneId(paneId?: string, name?: string): any;
   removeTechnicalIndicator(paneId: string, name?: string): void;
+  addShapeTemplate(template: ShapeTemplate | ShapeTemplate[]): void;
   createShape(value: string | Shape): string | null;
   getShape(shapeId?: string): any;
   setShapeOptions(options: OverrideShape): void;
-  addShapeTemplate(template: ShapeTemplate | ShapeTemplate[]): void;
   removeShape(shapeId?: string): void;
   createAnnotation(annotation: Annotation | Annotation[], paneId?: string): void;
   removeAnnotation(paneId?: string, point?: Point | Point[]): void;
