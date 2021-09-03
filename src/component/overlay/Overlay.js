@@ -80,6 +80,16 @@ export default class Overlay {
   }
 
   /**
+   * 设置y轴
+   * @param yAxis
+   */
+  setYAxis (yAxis) {
+    if (yAxis) {
+      this._yAxis = yAxis
+    }
+  }
+
+  /**
    * 检查鼠标点是否在图形上
    * @param coordinate
    */

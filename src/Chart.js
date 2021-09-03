@@ -332,13 +332,13 @@ export default class Chart {
       logWarn('createShape', 'value', 'value is invalid!!!')
       return null
     }
-    const shape = isObject(value) && !isArray(value) ? value : { name: value }
-    const Shape = this._chartPane.chartData().shapeStore().getTemplate(shape.name)
+    const shapeOptions = isObject(value) && !isArray(value) ? value : { name: value }
+    const Shape = this._chartPane.chartData().shapeStore().getTemplate(shapeOptions.name)
     if (!Shape) {
       logWarn('createShape', 'value', 'can not find the corresponding shape!!!')
       return null
     }
-    const id = this._chartPane.createShape(Shape, shape)
+    const id = this._chartPane.createShape(Shape, shapeOptions)
     if (!id) {
       logWarn('createShape', 'options.id', 'duplicate id!!!')
     }
@@ -368,10 +368,11 @@ export default class Chart {
 
   /**
    * 移除图形
-   * @param id 图形id
+   * @param paneId 窗口id
+   * @param shapeId 图形id
    */
-  removeShape (id) {
-    this._chartPane.chartData().shapeStore().removeInstance(id)
+  removeShape (paneId, shapeId) {
+    this._chartPane.chartData().shapeStore().removeInstance(paneId, shapeId)
   }
 
   /**

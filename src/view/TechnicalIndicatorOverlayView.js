@@ -14,7 +14,7 @@
 
 import View from './View'
 import { TooltipShowRule, LineStyle } from '../options/styleOptions'
-import { TechnicalIndicatorPlotType } from '../component/tech/TechnicalIndicator'
+import { TechnicalIndicatorPlotType } from '../component/technicalindicator/TechnicalIndicator'
 import { isValid } from '../utils/typeChecks'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { calcTextWidth, createFont } from '../utils/canvas'

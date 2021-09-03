@@ -507,6 +507,14 @@ export default class Shape extends Overlay {
   }
 
   /**
+   * 是否开始
+   * @returns
+   */
+  isStart () {
+    return this._drawStep === SHAPE_DRAW_STEP_START
+  }
+
+  /**
    * 检查鼠标点是否在图形上
    * @param mouseCoordinate
    * @return {{id: *, elementIndex: number, element: string}}

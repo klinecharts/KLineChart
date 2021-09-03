@@ -61,7 +61,11 @@ export default class ChartPane {
     this._separators = new Map()
     this._chartWidth = {}
     this._chartHeight = {}
-    this._chartEvent = new ChartEvent(this._chartContainer, this._chartData)
+    this._chartEvent = new ChartEvent(
+      this._chartContainer,
+      this._chartData,
+      this.getPaneYAxis.bind(this)
+    )
     this.adjustPaneViewport(true, true, true)
   }
 
@@ -328,6 +332,14 @@ export default class ChartPane {
   }
 
   /**
+   * 获取窗口y轴
+   * @param paneId
+   */
+  getPaneYAxis (paneId) {
+    return this._panes.get(paneId).yAxis()
+  }
+
+  /**
    * 获取图表上的数据
    * @returns {ChartData}
    */
@@ -553,17 +565,18 @@ export default class ChartPane {
   /**
    * 创建图形
    * @param ShapeTemplateClass
-   * @param shape
+   * @param shapeOptions
+   * @param paneId
    */
-  createShape (ShapeTemplateClass, shape) {
+  createShape (ShapeTemplateClass, shapeOptions, paneId) {
     const {
-      id, points, styles, lock,
+      id, points, styles, lock, data,
       onDrawStart, onDrawing,
       onDrawEnd, onClick,
       onRightClick, onPressedMove,
       onMouseEnter, onMouseLeave,
       onRemove
-    } = shape
+    } = shapeOptions
     const shapeId = id || `${SHAPE_ID_PREFIX}${++this._shapeBaseId}`
     const shapeInstance = new ShapeTemplateClass({
       id: shapeId,
@@ -572,7 +585,8 @@ export default class ChartPane {
       yAxis: this._panes.get(CANDLE_PANE_ID).yAxis(),
       points,
       styles,
-      lock
+      lock,
+      data
     })
     if (isFunction(onDrawStart)) {
       onDrawStart({ id: shapeId })
@@ -581,7 +595,7 @@ export default class ChartPane {
       onDrawing, onDrawEnd, onClick, onRightClick,
       onPressedMove, onMouseEnter, onMouseLeave, onRemove
     ])
-    if (this._chartData.shapeStore().addInstance(shapeInstance)) {
+    if (this._chartData.shapeStore().addInstance(shapeInstance, paneId)) {
       return shapeId
     }
   }

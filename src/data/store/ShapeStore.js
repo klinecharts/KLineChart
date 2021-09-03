@@ -41,8 +41,10 @@ export default class ShapeStore {
         elementIndex: -1
       }
     }
-    // 绘图标记实例
-    this._instances = []
+    // 进行中的实例
+    this._progressInstance = {}
+    // 图形实例
+    this._instances = new Map()
   }
 
   /**
@@ -145,27 +147,68 @@ export default class ShapeStore {
 
   /**
    * 添加标记实例
-   * @param instacne
+   * @param instance
+   * @param paneId
    */
-  addInstance (instacne) {
-    if (this._instances.find(gm => gm.id() === instacne.id())) {
+  addInstance (instance, paneId) {
+    const paneInstances = this.instances(paneId)
+    if (paneInstances.find(shape => shape.id() === instance.id())) {
       return false
     }
-    if (this.isDrawing()) {
-      this._instances[this._instances.length - 1] = instacne
+    if (instance.isDrawing()) {
+      this._progressInstance = { paneId, instance, fixed: isValid(paneId) }
     } else {
-      this._instances.push(instacne)
+      if (!this._instances.has(paneId)) {
+        this._instances.set(paneId, [])
+      }
+      this._instances.get(paneId).push(instance)
     }
     this._chartData.invalidate(InvalidateLevel.OVERLAY)
     return true
   }
 
   /**
+   * 获取进行中的实例
+   * @returns
+   */
+  progressInstance () {
+    return this._progressInstance
+  }
+
+  /**
+   * 进行中的实例完成
+   */
+  progressInstanceComplete () {
+    const instance = this._progressInstance.instance
+    if (instance && !instance.isDrawing()) {
+      if (!this._instances.has(this._progressInstance.paneId)) {
+        this._instances.set(this._progressInstance.paneId, [])
+      }
+      this._instances.get(this._progressInstance.paneId).push(instance)
+      this._progressInstance = {}
+    }
+  }
+
+  /**
+   * 更新进行中的实例
+   * @param yAxis
+   * @param paneId
+   */
+  updateProgressInstance (yAxis, paneId) {
+    const { instance, fixed } = this._progressInstance
+    if (instance && !fixed) {
+      instance.setYAxis(yAxis)
+      this._progressInstance.paneId = paneId
+    }
+  }
+
+  /**
    * 获取图形标记的数据
+   * @param paneId
    * @returns {{}}
    */
-  instances () {
-    return this._instances
+  instances (paneId) {
+    return this._instances.get(paneId) || []
   }
 
   /**
@@ -232,25 +275,50 @@ export default class ShapeStore {
 
   /**
    * 移除图形实例
-   * @param id 参数
+   * @param shapeId 参数
+   * @param isProgress
    */
-  removeInstance (id) {
-    const instances = this._instances
-    if (isValid(id)) {
-      const removeIndex = instances.findIndex(gm => gm.id() === id)
-      if (removeIndex > -1) {
-        instances[removeIndex].onRemove({ id: instances[removeIndex].id() })
-        instances.splice(removeIndex, 1)
-        this._chartData.invalidate(InvalidateLevel.OVERLAY)
-      }
+  removeInstance (paneId, shapeId) {
+    let shouldInvalidate = false
+    const progressInstance = this._progressInstance.instance
+    if (progressInstance && progressInstance.id() === shapeId) {
+      progressInstance.onRemove({ id: progressInstance.id() })
+      this._progressInstance = {}
+      shouldInvalidate = true
     } else {
-      if (instances.length > 0) {
-        instances.forEach(gm => {
-          gm.onRemove({ id: gm.id() })
+      if (isValid(paneId)) {
+        const shapes = this.instances(paneId)
+        if (isValid(shapeId)) {
+          const removeIndex = shapes.findIndex(shape => shape.id() === shapeId)
+          if (removeIndex > -1) {
+            shapes[removeIndex].onRemove({ id: shapes[removeIndex].id() })
+            shapes.splice(removeIndex, 1)
+            if (shapes.length === 0) {
+              this._instances.delete(paneId)
+            }
+            shouldInvalidate = true
+          }
+        } else {
+          if (shapes.length > 0) {
+            shapes.forEach(shape => {
+              shape.onRemove({ id: shape.id() })
+            })
+            this._instances.delete(paneId)
+            shouldInvalidate = true
+          }
+        }
+      } else {
+        this._instances.forEach(shapes => {
+          shapes.forEach(shape => {
+            shape.onRemove({ id: shape.id() })
+          })
         })
-        this._instances = []
-        this._chartData.invalidate(InvalidateLevel.OVERLAY)
+        this._instances.clear()
+        shouldInvalidate = true
       }
+    }
+    if (shouldInvalidate) {
+      this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 
@@ -314,7 +382,6 @@ export default class ShapeStore {
    * @return
    */
   isDrawing () {
-    const last = this._instances[this._instances.length - 1]
-    return last && last.isDrawing()
+    return this._progressInstance && this._progressInstance.instacne.isDrawing()
   }
 }

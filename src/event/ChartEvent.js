@@ -18,7 +18,7 @@ import OverlayEventHandler from './OverlayEventHandler'
 import KeyBoardEventHandler from './KeyBoardEventHandler'
 
 export default class ChartEvent {
-  constructor (target, chartData) {
+  constructor (target, chartData, yAxis) {
     this._target = target
     this._chartData = chartData
     this._chartContentLeftRight = {}
@@ -45,7 +45,7 @@ export default class ChartEvent {
     this._boundContextMenuEvent = (e) => { e.preventDefault() }
     this._target.addEventListener('contextmenu', this._boundContextMenuEvent, false)
     this._zoomScrollEventHandler = new ZoomScrollEventHandler(chartData)
-    this._overlayEventHandler = new OverlayEventHandler(chartData)
+    this._overlayEventHandler = new OverlayEventHandler(chartData, yAxis)
     this._keyBoardEventHandler = new KeyBoardEventHandler(chartData)
   }
 

@@ -13,12 +13,13 @@
  */
 
 import EventHandler, { isMouse } from './EventHandler'
-import { CANDLE_PANE_ID, InvalidateLevel } from '../data/constants'
+import { InvalidateLevel } from '../data/constants'
 import { ShapeMouseOperateElement } from '../component/overlay/Shape'
 
 export default class OverlayEventHandler extends EventHandler {
-  constructor (chartData) {
+  constructor (chartData, yAxis) {
     super(chartData)
+    this._yAxis = yAxis
     this._pressedShape = null
   }
 
@@ -76,23 +77,29 @@ export default class OverlayEventHandler extends EventHandler {
     }
     this._waitingForMouseMove = true
     const coordinate = { x: event.localX, y: event.paneY }
-    const annotations = this._chartData.annotationStore().get(event.paneId)
-    const shapes = this._chartData.shapeStore().instances()
-    const lastShape = shapes[shapes.length - 1]
-    const prevShapeHoverOperate = this._chartData.shapeStore().mouseOperate().hover
-    const prevAnnotationHoverOperate = this._chartData.annotationStore().mouseOperate()
+    const { paneId, instance } = this._chartData.shapeStore().progressInstance()
     let shapeHoverOperate
     let shapeClickOperate
     let annotationHoverOperate
-    if (lastShape && lastShape.isDrawing()) {
-      lastShape.mouseMoveForDrawing(coordinate)
-      shapeHoverOperate = lastShape.checkEventCoordinateOn(coordinate)
+    if (instance && instance.isDrawing()) {
+      const comparePaneId = paneId === event.paneId
+      if (instance.isStart() && comparePaneId) {
+        this._chartData.shapeStore().updateProgressInstance(this._yAxis(event.paneId), event.paneId)
+      }
+      if (comparePaneId) {
+        instance.mouseMoveForDrawing(coordinate)
+      }
+      shapeHoverOperate = instance.checkEventCoordinateOn(coordinate)
       shapeClickOperate = {
         id: '',
         element: ShapeMouseOperateElement.NONE,
         elementIndex: -1
       }
     } else {
+      const annotations = this._chartData.annotationStore().get(event.paneId)
+      const shapes = this._chartData.shapeStore().instances(event.paneId)
+      const prevShapeHoverOperate = this._chartData.shapeStore().mouseOperate().hover
+      const prevAnnotationHoverOperate = this._chartData.annotationStore().mouseOperate()
       shapeHoverOperate = this._performOverlayMouseHover(shapes, prevShapeHoverOperate, coordinate, event)
       annotationHoverOperate = this._performOverlayMouseHover(annotations, prevAnnotationHoverOperate, coordinate, event)
     }
@@ -105,7 +112,7 @@ export default class OverlayEventHandler extends EventHandler {
       click: shapeClickOperate
     })
     const annotationOperateValid = this._chartData.annotationStore().setMouseOperate(annotationHoverOperate || { id: '' })
-    if (shapeOperateValid || annotationOperateValid || lastShape.isDrawing()) {
+    if (shapeOperateValid || annotationOperateValid || instance.isDrawing()) {
       this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }
     this._waitingForMouseMove = false
@@ -117,18 +124,19 @@ export default class OverlayEventHandler extends EventHandler {
    */
   mouseDownEvent (event) {
     const coordinate = { x: event.localX, y: event.paneY }
-    const shapes = this._chartData.shapeStore().instances()
-    const lastShape = shapes[shapes.length - 1]
+    const { instance, paneId } = this._chartData.shapeStore().progressInstance()
     let shapeHoverOperate = {
       id: '',
       element: ShapeMouseOperateElement.NONE,
       elementIndex: -1
     }
     let shapeClickOperate
-    if (lastShape && lastShape.isDrawing()) {
-      lastShape.mouseLeftButtonDownForDrawing(coordinate)
-      shapeClickOperate = lastShape.checkEventCoordinateOn(coordinate)
+    if (instance && instance.isDrawing() && paneId === event.paneId) {
+      instance.mouseLeftButtonDownForDrawing(coordinate)
+      shapeClickOperate = instance.checkEventCoordinateOn(coordinate)
+      this._chartData.shapeStore().progressInstanceComplete()
     } else {
+      const shapes = this._chartData.shapeStore().instances(event.paneId)
       for (const shape of shapes) {
         shapeClickOperate = shape.checkEventCoordinateOn(coordinate)
         if (shapeClickOperate) {
@@ -178,14 +186,16 @@ export default class OverlayEventHandler extends EventHandler {
   }
 
   mouseRightDownEvent (event) {
-    if (event.paneId === CANDLE_PANE_ID) {
-      const shapes = this._chartData.shapeStore().instances()
-      if (shapes) {
-        const shape = shapes.find(gm => gm.checkEventCoordinateOn({ x: event.localX, y: event.paneY }))
-        if (shape && !shape.onRightClick({ id: shape.id(), points: shape.points(), event })) {
-          this._chartData.shapeStore().removeInstance(shape.id())
-        }
-      }
+    const { instance } = this._chartData.shapeStore().progressInstance()
+    let removeShape
+    if (instance) {
+      removeShape = instance
+    } else {
+      const shapes = this._chartData.shapeStore().instances(event.paneId)
+      removeShape = shapes.find(s => s.checkEventCoordinateOn({ x: event.localX, y: event.paneY }))
+    }
+    if (removeShape && !removeShape.onRightClick({ id: removeShape.id(), points: removeShape.points(), event })) {
+      this._chartData.shapeStore().removeInstance(event.paneId, removeShape.id())
     }
     const visibleAnnotations = this._chartData.annotationStore().get(event.paneId)
     if (visibleAnnotations) {

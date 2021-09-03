@@ -19,7 +19,7 @@ import { formatPrecision, formatBigNumber } from '../../utils/format'
 
 import { logWarn } from '../../utils/logger'
 
-import TechnicalIndicator from '../../component/tech/TechnicalIndicator'
+import TechnicalIndicator from '../../component/technicalindicator/TechnicalIndicator'
 
 /**
  * 获取技术指标信息

@@ -18,7 +18,7 @@ import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../ut
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { TooltipShowType } from '../options/styleOptions'
 import { getTechnicalIndicatorTooltipData } from '../data/store/TechnicalIndicatorStore'
-import { TechnicalIndicatorPlotType } from '../component/tech/TechnicalIndicator'
+import { TechnicalIndicatorPlotType } from '../component/technicalindicator/TechnicalIndicator'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
