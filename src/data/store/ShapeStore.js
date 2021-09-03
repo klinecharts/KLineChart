@@ -214,31 +214,42 @@ export default class ShapeStore {
   /**
    * 设置图形标记实例配置
    * @param options
+   * @param paneId
    */
-  setInstanceOptions (options = {}) {
+  setInstanceOptions (options = {}, paneId) {
     const { id, styles, lock, mode, data } = options
     const defaultStyles = this._chartData.styleOptions().shape
+    let shouldInvalidate = false
     if (isValid(id)) {
-      const instance = this._instances.find(gm => gm.id() === id)
-      if (instance) {
-        instance.setLock(lock)
-        instance.setMode(mode)
-        if (instance.setStyles(styles, defaultStyles) || instance.setData(data)) {
-          this._chartData.invalidate(InvalidateLevel.OVERLAY)
-        }
-      }
-    } else {
-      let shouldInvalidate = false
-      this._instances.forEach(instance => {
+      const update = (shapes) => {
+        const instance = shapes.find(s => s.id() === id)
         instance.setLock(lock)
         instance.setMode(mode)
         if (instance.setStyles(styles, defaultStyles) || instance.setData(data)) {
           shouldInvalidate = true
         }
-      })
-      if (shouldInvalidate) {
-        this._chartData.invalidate(InvalidateLevel.OVERLAY)
       }
+      if (isValid(paneId)) {
+        const shapes = this.instances(paneId)
+        update(shapes)
+      } else {
+        this._instances.forEach(shapes => {
+          update(shapes)
+        })
+      }
+    } else {
+      this._instances.forEach(shapes => {
+        shapes.forEach(instance => {
+          instance.setLock(lock)
+          instance.setMode(mode)
+          if (instance.setStyles(styles, defaultStyles) || instance.setData(data)) {
+            shouldInvalidate = true
+          }
+        })
+      })
+    }
+    if (shouldInvalidate) {
+      this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 
@@ -247,7 +258,7 @@ export default class ShapeStore {
    * @param id
    * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
    */
-  getInstanceInfo (id) {
+  getInstanceInfo (paneId, shapeId) {
     const create = (instance) => {
       return {
         name: instance.name(),
@@ -260,15 +271,22 @@ export default class ShapeStore {
         data: instance.data()
       }
     }
-    if (id) {
-      const instance = this._instances.find(gm => gm.id() === id)
-      if (instance) {
-        return create(instance)
+    if (isValid(paneId)) {
+      const shapes = this.instances(paneId)
+      if (isValid(shapeId)) {
+        const shape = shapes.find(s => s.id() === shapeId)
+        if (shape) {
+          return create(shape)
+        }
+      } else {
+        return shapes.map(shape => create(shape))
       }
     } else {
-      return this._instances.map(instance => {
-        return create(instance)
+      const infos = {}
+      this._instances.forEach((shapes, paneId) => {
+        infos[paneId] = shapes.map(shape => create(shape))
       })
+      return infos
     }
     return null
   }

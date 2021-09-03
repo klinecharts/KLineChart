@@ -326,8 +326,9 @@ export default class Chart {
   /**
    * 创建图形
    * @param value 图形名或者图形配置
+   * @param paneId 窗口id
    */
-  createShape (value) {
+  createShape (value, paneId) {
     if (!isValid(value)) {
       logWarn('createShape', 'value', 'value is invalid!!!')
       return null
@@ -338,7 +339,7 @@ export default class Chart {
       logWarn('createShape', 'value', 'can not find the corresponding shape!!!')
       return null
     }
-    const id = this._chartPane.createShape(Shape, shapeOptions)
+    const id = this._chartPane.createShape(Shape, shapeOptions, paneId)
     if (!id) {
       logWarn('createShape', 'options.id', 'duplicate id!!!')
     }
@@ -347,23 +348,25 @@ export default class Chart {
 
   /**
    * 获取图形标记
-   * @param id 图形标记id
+   * @param paneId 窗口id
+   * @param shapeId 图形标记id
    * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
    */
-  getShape (id) {
-    return this._chartPane.chartData().shapeStore().getInstanceInfo(id)
+  getShape (paneId, shapeId) {
+    return this._chartPane.chartData().shapeStore().getInstanceInfo(paneId, shapeId)
   }
 
   /**
    * 设置图形标记配置
    * @param options 图形标记配置
+   * @param paneId 窗口id
    */
-  setShapeOptions (options) {
+  setShapeOptions (options, paneId) {
     if (!isObject(options)) {
       logWarn('setShapeOptions', 'options', 'options must be an object!!!')
       return
     }
-    this._chartPane.chartData().shapeStore().setInstanceOptions(options)
+    this._chartPane.chartData().shapeStore().setInstanceOptions(options, paneId)
   }
 
   /**
