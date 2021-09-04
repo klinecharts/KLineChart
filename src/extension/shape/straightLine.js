@@ -17,10 +17,10 @@ import { checkCoordinateOnStraightLine, getLinearYFromCoordinates } from './shap
 export default {
   name: 'straightLine',
   totalStep: 3,
-  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
     return checkCoordinateOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: ({ coordinates, viewport }) => {
+  createShapeDataSource: ({ coordinates, viewport }) => {
     if (coordinates.length < 2 || coordinates[0].x === coordinates[1].x) {
       return [
         {

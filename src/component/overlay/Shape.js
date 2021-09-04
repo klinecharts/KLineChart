@@ -107,6 +107,7 @@ export default class Shape extends Overlay {
     this.setStyles(styles, chartData.styleOptions().shape)
     this._prevPressPoint = null
     this._prevPoints = null
+    this._coordinates = []
   }
 
   /**

@@ -400,6 +400,6 @@ export default class ShapeStore {
    * @return
    */
   isDrawing () {
-    return this._progressInstance && this._progressInstance.instacne.isDrawing()
+    return this._progressInstance && this._progressInstance.instacne && this._progressInstance.instacne.isDrawing()
   }
 }

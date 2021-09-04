@@ -31,9 +31,10 @@ export default class TechnicalIndicatorOverlayView extends View {
 
   _draw () {
     this._ctx.textBaseline = 'alphabetic'
-    this._drawTag()
-    this._drawShape()
-    this._drawAnnotation()
+    const paneId = this._additionalDataProvider.id()
+    this._drawTag(paneId)
+    this._drawShape(paneId)
+    this._drawAnnotation(paneId)
     const crosshair = this._chartData.crosshairStore().get()
     if (crosshair.kLineData) {
       const technicalIndicators = this._additionalDataProvider.technicalIndicators()
@@ -53,9 +54,10 @@ export default class TechnicalIndicatorOverlayView extends View {
 
   /**
    * 绘制注解
+   * @param paneId
    */
-  _drawAnnotation () {
-    const annotations = this._chartData.annotationStore().get(this._additionalDataProvider.id())
+  _drawAnnotation (paneId) {
+    const annotations = this._chartData.annotationStore().get(paneId)
     if (annotations) {
       annotations.forEach(annotation => {
         annotation.draw(this._ctx)
@@ -65,9 +67,10 @@ export default class TechnicalIndicatorOverlayView extends View {
 
   /**
    * 绘制标签
+   * @param paneId
    */
-  _drawTag () {
-    const tags = this._chartData.tagStore().get(this._additionalDataProvider.id())
+  _drawTag (paneId) {
+    const tags = this._chartData.tagStore().get(paneId)
     if (tags) {
       tags.forEach(tag => {
         tag.drawMarkLine(this._ctx)
@@ -77,9 +80,18 @@ export default class TechnicalIndicatorOverlayView extends View {
 
   /**
    * 绘制图形标记
+   * @param paneId
    * @private
    */
-  _drawShape () {}
+  _drawShape (paneId) {
+    this._chartData.shapeStore().instances(paneId).forEach(shape => {
+      shape.draw(this._ctx)
+    })
+    const progressShape = this._chartData.shapeStore().progressInstance()
+    if (progressShape.paneId === paneId) {
+      progressShape.instance.draw(this._ctx)
+    }
+  }
 
   /**
    * 绘制图例

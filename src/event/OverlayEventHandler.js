@@ -81,15 +81,18 @@ export default class OverlayEventHandler extends EventHandler {
     let shapeHoverOperate
     let shapeClickOperate
     let annotationHoverOperate
+    let drawing = false
     if (instance && instance.isDrawing()) {
-      const comparePaneId = paneId === event.paneId
-      if (instance.isStart() && comparePaneId) {
-        this._chartData.shapeStore().updateProgressInstance(this._yAxis(event.paneId), event.paneId)
+      if (event.paneId) {
+        if (instance.isStart()) {
+          this._chartData.shapeStore().updateProgressInstance(this._yAxis(event.paneId), event.paneId)
+        }
+        if (paneId === event.paneId) {
+          instance.mouseMoveForDrawing(coordinate)
+        }
+        shapeHoverOperate = instance.checkEventCoordinateOn(coordinate)
+        drawing = true
       }
-      if (comparePaneId) {
-        instance.mouseMoveForDrawing(coordinate)
-      }
-      shapeHoverOperate = instance.checkEventCoordinateOn(coordinate)
       shapeClickOperate = {
         id: '',
         element: ShapeMouseOperateElement.NONE,
@@ -112,7 +115,7 @@ export default class OverlayEventHandler extends EventHandler {
       click: shapeClickOperate
     })
     const annotationOperateValid = this._chartData.annotationStore().setMouseOperate(annotationHoverOperate || { id: '' })
-    if (shapeOperateValid || annotationOperateValid || instance.isDrawing()) {
+    if (shapeOperateValid || annotationOperateValid || drawing) {
       this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }
     this._waitingForMouseMove = false

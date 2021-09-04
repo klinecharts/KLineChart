@@ -17,10 +17,10 @@ import { checkCoordinateOnRayLine } from './shapeHelper'
 export default {
   name: 'priceLine',
   totalStep: 2,
-  checkEventCoordinateOnGraphic: ({ dataSource, eventCoordinate }) => {
+  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
     return checkCoordinateOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createGraphicDataSource: ({ coordinates, viewport, precision, yAxis }) => {
+  createShapeDataSource: ({ coordinates, viewport, precision, yAxis }) => {
     return [
       {
         type: 'line',

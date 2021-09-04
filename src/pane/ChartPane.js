@@ -64,7 +64,7 @@ export default class ChartPane {
     this._chartEvent = new ChartEvent(
       this._chartContainer,
       this._chartData,
-      this.getPaneYAxis.bind(this)
+      (paneId) => this._panes.get(paneId).yAxis()
     )
     this.adjustPaneViewport(true, true, true)
   }
@@ -332,14 +332,6 @@ export default class ChartPane {
   }
 
   /**
-   * 获取窗口y轴
-   * @param paneId
-   */
-  getPaneYAxis (paneId) {
-    return this._panes.get(paneId).yAxis()
-  }
-
-  /**
    * 获取图表上的数据
    * @returns {ChartData}
    */
@@ -582,7 +574,7 @@ export default class ChartPane {
       id: shapeId,
       chartData: this._chartData,
       xAxis: this._xAxisPane.xAxis(),
-      yAxis: this._panes.get(CANDLE_PANE_ID).yAxis(),
+      yAxis: this.hasPane(paneId) ? this._panes.get(paneId).yAxis() : null,
       points,
       styles,
       lock,

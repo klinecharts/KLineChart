@@ -23,12 +23,6 @@ import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
-  _drawShape () {
-    this._chartData.shapeStore().instances().forEach(shape => {
-      shape.draw(this._ctx)
-    })
-  }
-
   _drawTooltip (crosshair, technicalIndicators) {
     const styleOptions = this._chartData.styleOptions()
     const candleOptions = styleOptions.candle
