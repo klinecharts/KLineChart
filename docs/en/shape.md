@@ -30,9 +30,10 @@ Create a shape template, and then add it globally through `extension.addShapeTem
   // viewport size
   // precision precision information, including price and quantity precision
   // styles style
-  // xAxis x-axis component
+  // xAxis x axis component
   // yAxis y axis component
-  createShapeDataSource: ({ step, points, coordinates, viewport, precision, styles, xAxis, yAxis }) => {},
+  // data data
+  createShapeDataSource: ({ step, points, coordinates, viewport, precision, styles, xAxis, yAxis, data }) => {},
 
   // Process the mouse movement operation during the drawing process, it can be defaulted, and the mouse operation is triggered during the drawing process
   // step current step
@@ -46,7 +47,7 @@ Create a shape template, and then add it globally through `extension.addShapeTem
   // points graph time price point information
   // pressPointIndex The index of the pressed point
   // pressPoint time and price information corresponding to the press point
-  // xAxis x-axis component
+  // xAxis x axis component
   // yAxis y axis component
   performEventPressedMove: ({ points, pressPointIndex, pressPoint, xAxis, yAxis }) => {},
 
@@ -56,9 +57,10 @@ Create a shape template, and then add it globally through `extension.addShapeTem
   // styles chart style configuration
   // viewport size
   // precision precision information, including price and quantity precision
-  // xAxis x-axis component
+  // xAxis x axis component
   // yAxis y axis component
-  drawExtend: ({ ctx, dataSource, styles, viewport, precision, xAxis, yAxis }) => {}
+  // data data
+  drawExtend: ({ ctx, dataSource, styles, viewport, precision, xAxis, yAxis, data }) => {}
 }
 ```
 #### Method createShapeDataSource return value sub-item information

@@ -1,21 +1,21 @@
 # 更新日志
-## 8.0.0-alpha
+## 8.0.0-alpha1
 `待发布`
 + 🆕 新特性
+   + 新增`getDataSpace`和`getBarSpace`。
    + `createTechnicalIndicator`支持在创建的时候，覆盖内置属性。
    + `overrideTechnicalIndicator`支持在覆盖某个窗口上的指标属性。
-   + `getGraphicMark`支持获取所有实例。
-   + `setGraphicMarkOptions`支持设置所有标记图形实例属性。
    + `getTechnicalIndicatorByPaneId`支持获取单个技术指标信息。
-   + 注解和标签支持在任意一个窗口上创建。
-   + 图形标记支持整体拖动，支持弱磁铁和强磁铁模式。
+   + 图形，注解，标签支持在任意一个窗口上创建。
+   + 图形支持整体拖动，支持弱磁铁和强磁铁模式，支持自定义数据。
 + 👉 变更
    + `extension.addTechnicalIndicator`变更为`extension.addTechnicalIndicatorTemplate`。
-   + `extension.addGraphicMark`变更为`extension.addGraphicMarkTemplate`。
+   + `extension.addGraphicMark`变更为`extension.addShapeTemplate`。
    + 图表实例
       + `createGraphicMark`变更为`createShape`，参数合并。
       + `addCustomGraphicMark`变更为`addShapeTemplate`。
       + `getGraphicMark`变更为`getShape`。
+      + `removeGraphicMark`变更为`removeShape`。
       + `setGraphicMarkOptions`变更为`setShapeOptions`。
       + `addCustomTechnialIndicator`变更为`addTechnicalIndicatorTemplate`。
       + `getTechnicalIndicatorByName`变更为`getTechnicalIndicatorTemplate`。
@@ -60,7 +60,6 @@
    + 优化图形标记绘制效率。
 + 🐞 Bug修复
    + 修复调用`setPaneOptions` y轴不刷新问题。
-   + 修复调用`createGraphicMark`，在特定情况下，可能出错问题。
 
 
 ## 7.5.0

@@ -1,4 +1,66 @@
 # Change Log
+## 8.0.0-alpha1
+`To be released`
++ 🆕 New features
+   + Added `getDataSpace` and `getBarSpace`.
+   + `createTechnicalIndicator` supports overwriting built-in attributes when creating.
+   + `overrideTechnicalIndicator` supports overriding indicator properties on a certain window.
+   + `getTechnicalIndicatorByPaneId` supports obtaining individual technical indicator information.
+   + Shapes, annotations, and labels can be created on any window.
+   + Shapes support overall drag, support weak magnet and strong magnet mode, support custom data.
++ 👉 Change
+   + `extension.addTechnicalIndicator` changed to `extension.addTechnicalIndicatorTemplate`.
+   + `extension.addGraphicMark` changed to `extension.addShapeTemplate`.
+   + Chart instance
+      + `createGraphicMark` is changed to `createShape`, and the parameters are merged.
+      + `addCustomGraphicMark` changed to `addShapeTemplate`.
+      + `getGraphicMark` changed to `getShape`.
+      + `removeGraphicMark` changed to `removeShape`.
+      + `setGraphicMarkOptions` changed to `setShapeOptions`.
+      + `addCustomTechnialIndicator` changed to `addTechnicalIndicatorTemplate`.
+      + `getTechnicalIndicatorByName` changed to `getTechnicalIndicatorTemplate`.
+      + Added parameter `paneId` in `removeAnnotation`.
+      + Added parameter `paneId` to `removeTag`.
+      + `scrollToPosition` changed to `scrollToDataIndex`.
+      + `zoomAtPosition` changed to `zoomAtDataIndex`.
+      + `getConvertPictureUrl` parameters `includeTooltip` and `includeGraphicMark` are merged into `includeOverlay`.
+      + `subscribeAction` and `unsubscribeAction`, remove the `drawCandle` and `drawTechnicalIndicator` types.
+      + `convertToPixel` and `convertFromPixel`, the input parameters are changed to `{ timestamp, dataIndex, value }` and `{ paneId, absoluteYAxis }`.
+   + Shape
+      + `checkMousePointOn` is changed to `checkEventCoordinateOnShape`, and the parameter is changed to `object`.
+      + The `createShapeDataSource` parameter is changed to `object`.
+      + `performMouseMoveForDrawing` is changed to `performEventMoveForDrawing`, and the parameter is changed to `object`.
+      + `performMousePressedMove` is changed to `performEventPressedMove`, and the parameter is changed to `object`.
+      + The `drawExtend` parameter is changed to `object`.
+   + Technical indicators
+      + The property `calcParamsAllowDecimal` is merged into `calcParams`.
+      + The attribute `baseValue` is merged into `plots`.
+      + Property `plots`, `color` callback parameters are changed to `{ prev, current, next }`.
+      + The `calcTechnicalIndicator` parameter is changed to `object`.
+      + The `render` parameter is changed to `object`.
+   + Style configuration
+      + `candle.tooltip.rect.fillColor` changed to `candle.tooltip.rect.backgroundColor`.
+      + `candle.area.fillColor` changed to `candle.area.backgroundColor`.
+      + `annotation.symbol.position` changed to `annotation.position`.
+      + `annotation.symbol.offset` changed to `annotation.offset`.
+   + Shape assistance API
+      + `getRotatePoint` changed to `getRotateCoordinate`.
+      + `getLinearYFromPoints` changed to `getLinearYFromCoordinates`.
+      + `checkPointOnStraightLine` changed to `checkCoordinateOnStraightLine`.
+      + `checkPointOnRayLine` changed to `checkCoordinateOnRayLine`.
+      + `checkPointOnSegment` changed to `checkCoordinateOnSegment`.
+      + `checkPointOnArc` changed to `checkCoordinateOnArc`.
+      + `checkPointInCircle` changed to `checkCoordinateInCircle`.
+      + `checkPointOnCircle` changed to `checkCoordinateOnCircle`.
+      + `checkPointInTriangle` changed to `checkCoordinateInTriangle`.
+      + `checkPointInDiamond` changed to `. checkCoordinateInDiamond`.
+      + `checkPointInRect` is changed to `. checkCoordinateInRect`.
++ 💄 optimization
+   + Optimize the response to mouse events of shapes.
+   + Optimize the drawing efficiency of shapes.
++ 🐞 Bug fix
+   + Fixed the problem that the y-axis does not refresh when calling `setPaneOptions`.
+
 ## 7.5.0
 `2021-06-16`
 + 🆕 Add tag, new api `createTag` and `removeTag`.

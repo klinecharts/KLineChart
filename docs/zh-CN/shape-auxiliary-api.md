@@ -5,7 +5,7 @@
 
 ## 引入
 ```javascript
-import { ... } from 'klinecharts/lib/mark/graphicHelper'
+import { ... } from 'klinecharts/lib/mark/shapeHelper'
 ```
 
 

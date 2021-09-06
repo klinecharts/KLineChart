@@ -29,7 +29,6 @@
 - `timezone` 时区名，如'Asia/Shanghai'，如果不设置会自动获取本机时区，时区对应名字列表请自寻查找相关文档
 
 
-
 ### getTimezone()
 获取图表时区。
 
@@ -70,6 +69,14 @@
 ### setDataSpace(space)
 设置图表一条数据所占用的空间，即单根蜡烛柱的宽度。
 - `space` 宽度，number类型
+
+
+### getDataSpace()
+获取图表一条数据所占用的空间。
+
+
+### getBarSpace()
+获取图表一条数据绘制所占用的空间。
 
 
 ### applyNewData(dataList, more)
@@ -184,15 +191,16 @@ chart.overrideTechnicalIndicator({
 - `template` 技术指标模板，详细请参考[技术指标](technical-indicator.md)
 
 
-### createGraphicMark(value)
+### createShape(value, paneId)
 创建图形标记，返回一个字符串类型的标识。
-- `value` 图形标记名或者对象，当是对象时，参数为`{ name, id, points, styles, lock, mode, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }` 
+- `value` 图形标记名或者对象，当是对象时，参数为`{ name, id, points, styles, lock, mode, data, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }` 
    - `name` 技术指标名
    - `id` 可缺省，如果指定，则返回该id
    - `points` 点信息，可缺省，如果指定，则会按照点信息绘制一个图形
-   - `styles` 样式，可缺省，格式同样式配置中 `graphicMark` 一致
+   - `styles` 样式，可缺省，格式同样式配置中 `shape` 一致
    - `lock` 是否锁定
    - `mode` 模式类型，类型为'normal' | 'weak_magnet' | 'strong_magnet'
+   - `data` 数据
    - `onDrawStart` 绘制开始回调事件，可缺省
    - `onDrawing` 绘制过程中回调事件，可缺省
    - `onDrawEnd` 绘制结束回调事件，可缺省
@@ -205,7 +213,7 @@ chart.overrideTechnicalIndicator({
 
 示例：
 ```javascript
-chart.createGraphicMark({
+chart.createShape({
   name: 'segment',
   points: [
     { timestamp: 1614171282000, price: 18987 },
@@ -219,6 +227,7 @@ chart.createGraphicMark({
   },
   lock: false,
   mode: 'weak_magnet',
+  data: 'xxxxxxxx',
   onDrawStart: function ({ id }) { console.log(id) },
   onDrawing: function ({ id, step, points }) { console.log(id, step, points) },
   onDrawEnd: function ({ id }) { console.log(id) },
@@ -235,31 +244,33 @@ chart.createGraphicMark({
 ```
 
 
-### getGraphicMark(id)
+### getShape(shapeId)
 获取图形标记信息。
-- `id` 调用createGraphicMark方法是返回的标识，缺省则返回所有
+- `paneId` 窗口id，调用createShape方法是返回的标识
+- `shapeId` 调用createShape方法是返回的标识，缺省则返回所有
 
 
-### setGraphicMarkOptions(options)
+### setShapeOptions(options)
 设置已绘制的图形标记配置。
-- `options` 配置， `{ id, styles, lock, mode }`
+- `options` 配置， `{ id, styles, lock, mode, data }`
    - `id` 图形标记标识，缺省则设置所有的
-   - `styles` 样式，可缺省，格式同样式配置中 `graphicMark` 一致
+   - `styles` 样式，可缺省，格式同样式配置中 `shape` 一致
    - `lock` 是否锁定，可缺省
    - `mode` 模式类型，可缺省，类型为'normal' | 'weak_magnet' | 'strong_magnet'
+   - `data` 外部数据
 
 
-### addGraphicMarkTemplate(template)
-添加图形标记模板，可批量创建，批量传入数组即可。
-- `template` 图形标记模板，详细请参考[详情](graphic-mark.md)
+### addShapeTemplate(template)
+添加图形模板，可批量创建，批量传入数组即可。
+- `template` 图形模板，详细请参考[详情](shape.md)
 
 
-### removeGraphicMark(id)
-移除图形标记。
-- `id` 调用createGraphicMark方法是返回的标识，如果缺省，则会移除所有标记
+### removeShape(shapeId)
+移除图形。
+- `shapeId` 调用createShape方法是返回的标识，如果缺省，则会移除所有标记
 
 
-### createAnnotation(annotation)
+### createAnnotation(annotation, paneId)
 创建注解，可批量创建，批量传入数组即可。
 - `annotation` 注解信息, `{ point, styles, checkPointInCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
   - `point` 点 `{ timestamp, price }`
@@ -271,6 +282,7 @@ chart.createGraphicMark({
   - `onRightClick` 右击事件，可缺省
   - `onMouseEnter` 右击移入事件，可缺省
   - `onMouseLeave` 右击移出事件，可缺省
+- `paneId` 窗口id
 
 示例:
 ```javascript
@@ -311,7 +323,7 @@ chart.createAnnotation({
 - `points` 点，`{ timestamp }`，缺省则移除对应窗口上的所有
 
 
-### createTag(tag)
+### createTag(tag, paneId)
 创建标签，可批量创建，批量传入数组即可。
 - `tag` 标签，`{ id, point, text, mark, styles }`
   - `id` 唯一标识，如果有重复的，则会覆盖
@@ -319,6 +331,7 @@ chart.createAnnotation({
   - `mark` 标记，可缺省
   - `text` 文字，可缺省
   - `styles` 样式，可缺省，格式和配置里的`tag`一致
+- `paneId` 窗口id
 示例:
 ```javascript
 chart.createTag({

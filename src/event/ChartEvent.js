@@ -71,32 +71,22 @@ export default class ChartEvent {
   }
 
   _mouseLeaveEvent (event) {
-    if (this._checkZoomScroll()) {
-      this._zoomScrollEventHandler.mouseLeaveEvent(event)
-    }
+    this._zoomScrollEventHandler.mouseLeaveEvent(event)
   }
 
   _mouseMoveEvent (event) {
-    const zoomScroll = this._checkZoomScroll()
     if (this._checkEventInChartContent(event)) {
       this._target.style.cursor = 'crosshair'
       const compatEvent = this._compatChartEvent(event, true)
       if (this._shouldPerformOverlayEvent()) {
         this._overlayEventHandler.mouseMoveEvent(compatEvent)
       }
-      if (zoomScroll) {
+      if (!this._chartData.dragPaneFlag()) {
         this._zoomScrollEventHandler.mouseMoveEvent(compatEvent)
-      } else {
-        // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
-        if (this._chartData.crosshairStore().get().paneId) {
-          this._chartData.crosshairStore().set()
-        }
       }
     } else {
       this._target.style.cursor = 'default'
-      if (zoomScroll) {
-        this._zoomScrollEventHandler.mouseLeaveEvent(event)
-      }
+      this._zoomScrollEventHandler.mouseLeaveEvent(event)
     }
   }
 
@@ -133,21 +123,11 @@ export default class ChartEvent {
 
   _pressedMouseMoveEvent (event) {
     if (this._checkEventInChartContent(event)) {
-      const shapeDragFlag = this._chartData.shapeStore().dragFlag()
-      const zoomScroll = this._checkZoomScroll()
-      if (shapeDragFlag || zoomScroll) {
-        const compatEvent = this._compatChartEvent(event, true)
-        if (shapeDragFlag) {
-          this._overlayEventHandler.pressedMouseMoveEvent(compatEvent)
-        }
-        if (zoomScroll) {
-          this._zoomScrollEventHandler.pressedMouseMoveEvent(compatEvent)
-        } else {
-          // 这里判断一下，如果是在拖拽图形标记，让十字光标不显示
-          if (this._chartData.crosshairStore().get().paneId) {
-            this._chartData.crosshairStore().set()
-          }
-        }
+      const compatEvent = this._compatChartEvent(event, true)
+      if (this._checkZoomScroll()) {
+        this._zoomScrollEventHandler.pressedMouseMoveEvent(compatEvent)
+      } else {
+        this._overlayEventHandler.pressedMouseMoveEvent(compatEvent)
       }
     }
   }
@@ -159,7 +139,7 @@ export default class ChartEvent {
   }
 
   _checkZoomScroll () {
-    return !this._chartData.dragPaneFlag() && !this._chartData.shapeStore().dragFlag() && !this._chartData.shapeStore().isDrawing()
+    return !this._chartData.dragPaneFlag() && !this._chartData.shapeStore().isPressed() && !this._chartData.shapeStore().isDrawing()
   }
 
   /**

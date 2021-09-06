@@ -13,7 +13,7 @@
 + API
   + [图表API](chart-api.md)
   + [图表实例API](instance-api.md)
-  + [图形标记辅助API](graphic-mark-auxiliary-api.md)
+  + [图形标记辅助API](shape-auxiliary-api.md)
 + [快捷键](hot-key.md)
 + [环境要求](environment.md)
 + [变更日志](changelog.md)

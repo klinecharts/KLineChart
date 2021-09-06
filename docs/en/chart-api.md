@@ -16,9 +16,9 @@ Add a technical indicator template globally.
 - `template` technical indicator template, please refer to [technical indicator](technical-indicator.md)
 
 
-### extension.addGraphicMarkTemplate(template)
-Add a graphic mark template globally.
-- `template` graphic mark template, please refer to [graphic mark](graphic-mark.md)
+### extension.addShapeTemplate(template)
+Add a shape template globally.
+- `template` shape template, please refer to [shape](shape.md)
 
 
 ### version()

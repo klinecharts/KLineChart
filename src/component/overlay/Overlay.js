@@ -20,9 +20,9 @@ import { isFunction, isObject, clone, merge } from '../../utils/typeChecks'
  * @param options 参数
  */
 export function perfectOverlayFunc (overlay, funcs) {
-  funcs.forEach(fn => {
+  funcs.forEach(({ key, fn }) => {
     if (isFunction(fn)) {
-      overlay[fn] = fn
+      overlay[key] = fn
     }
   })
 }

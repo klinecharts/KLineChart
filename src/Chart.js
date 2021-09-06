@@ -348,34 +348,31 @@ export default class Chart {
 
   /**
    * 获取图形标记
-   * @param paneId 窗口id
    * @param shapeId 图形标记id
    * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
    */
-  getShape (paneId, shapeId) {
-    return this._chartPane.chartData().shapeStore().getInstanceInfo(paneId, shapeId)
+  getShape (shapeId) {
+    return this._chartPane.chartData().shapeStore().getInstanceInfo(shapeId)
   }
 
   /**
    * 设置图形标记配置
    * @param options 图形标记配置
-   * @param paneId 窗口id
    */
-  setShapeOptions (options, paneId) {
-    if (!isObject(options)) {
+  setShapeOptions (options) {
+    if (!isObject(options) || isArray(options)) {
       logWarn('setShapeOptions', 'options', 'options must be an object!!!')
       return
     }
-    this._chartPane.chartData().shapeStore().setInstanceOptions(options, paneId)
+    this._chartPane.chartData().shapeStore().setInstanceOptions(options)
   }
 
   /**
    * 移除图形
-   * @param paneId 窗口id
    * @param shapeId 图形id
    */
-  removeShape (paneId, shapeId) {
-    this._chartPane.chartData().shapeStore().removeInstance(paneId, shapeId)
+  removeShape (shapeId) {
+    this._chartPane.chartData().shapeStore().removeInstance(shapeId)
   }
 
   /**

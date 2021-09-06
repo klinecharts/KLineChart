@@ -1,11 +1,11 @@
-# Graphic mark auxiliary API
+# Shape auxiliary API
 
-Such apis are generally only used when customizing graphic marks.
+Such apis are generally only used when customizing shapes.
 
 
 ## Introduction
 ```javascript
-import { ... } from 'klinecharts/lib/mark/graphicHelper'
+import { ... } from 'klinecharts/lib/mark/shapeHelper'
 ```
 
 

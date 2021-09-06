@@ -316,8 +316,8 @@
       }
     }
   },
-  // 图形标记
-  graphicMark: {
+  // 图形
+  shape: {
     point: {
       backgroundColor: '#2196F3',
       borderColor: '#2196F3',

@@ -570,26 +570,34 @@ export default class ChartPane {
       onRemove
     } = shapeOptions
     const shapeId = id || `${SHAPE_ID_PREFIX}${++this._shapeBaseId}`
-    const shapeInstance = new ShapeTemplateClass({
-      id: shapeId,
-      chartData: this._chartData,
-      xAxis: this._xAxisPane.xAxis(),
-      yAxis: this.hasPane(paneId) ? this._panes.get(paneId).yAxis() : null,
-      points,
-      styles,
-      lock,
-      data
-    })
-    if (isFunction(onDrawStart)) {
-      onDrawStart({ id: shapeId })
-    }
-    perfectOverlayFunc(shapeInstance, [
-      onDrawing, onDrawEnd, onClick, onRightClick,
-      onPressedMove, onMouseEnter, onMouseLeave, onRemove
-    ])
-    if (this._chartData.shapeStore().addInstance(shapeInstance, paneId)) {
+    if (!this._chartData.shapeStore().hasInstance(shapeId)) {
+      const shapeInstance = new ShapeTemplateClass({
+        id: shapeId,
+        chartData: this._chartData,
+        xAxis: this._xAxisPane.xAxis(),
+        yAxis: this.hasPane(paneId) ? this._panes.get(paneId).yAxis() : null,
+        points,
+        styles,
+        lock,
+        data
+      })
+      if (isFunction(onDrawStart)) {
+        onDrawStart({ id: shapeId })
+      }
+      perfectOverlayFunc(shapeInstance, [
+        { key: 'onDrawing', fn: onDrawing },
+        { key: 'onDrawEnd', fn: onDrawEnd },
+        { key: 'onClick', fn: onClick },
+        { key: 'onRightClick', fn: onRightClick },
+        { key: 'onPressedMove', fn: onPressedMove },
+        { key: 'onMouseEnter', fn: onMouseEnter },
+        { key: 'onMouseLeave', fn: onMouseLeave },
+        { key: 'onRemove', fn: onRemove }
+      ])
+      this._chartData.shapeStore().addInstance(shapeInstance, paneId)
       return shapeId
     }
+    return null
   }
 
   /**
@@ -621,8 +629,13 @@ export default class ChartPane {
         })
 
         perfectOverlayFunc(annotationInstance, [
-          drawExtend, drawCustomSymbol, checkEventCoordinateOnCustomSymbol,
-          onClick, onRightClick, onMouseEnter, onMouseLeave
+          { key: 'drawExtend', fn: drawExtend },
+          { key: 'drawCustomSymbol', fn: drawCustomSymbol },
+          { key: 'checkEventCoordinateOnCustomSymbol', fn: checkEventCoordinateOnCustomSymbol },
+          { key: 'onClick', fn: onClick },
+          { key: 'onRightClick', fn: onRightClick },
+          { key: 'onMouseEnter', fn: onMouseEnter },
+          { key: 'onMouseLeave', fn: onMouseLeave }
         ])
         instances.push(annotationInstance)
       }

@@ -24,8 +24,6 @@ import { InvalidateLevel } from '../constants'
 export default class ShapeStore {
   constructor (chartData) {
     this._chartData = chartData
-    // 拖拽标记图形标记
-    this._dragFlag = false
     // 图形标记映射
     this._templates = this._createTemplates()
     // 图形标记鼠标操作信息
@@ -42,7 +40,9 @@ export default class ShapeStore {
       }
     }
     // 进行中的实例
-    this._progressInstance = {}
+    this._progressInstance = null
+    // 事件按住的示例
+    this._pressedInstance = null
     // 图形实例
     this._instances = new Map()
   }
@@ -146,15 +146,35 @@ export default class ShapeStore {
   }
 
   /**
+   * 获取实例
+   * @param shapeId
+   * @returns
+   */
+  getInstance (shapeId) {
+    for (const entry of this._instances) {
+      const shape = (entry[1] || []).find(s => s.id() === shapeId)
+      if (shape) {
+        return shape
+      }
+    }
+    return null
+  }
+
+  /**
+   * 是否有实例
+   * @param shapeId
+   * @returns
+   */
+  hasInstance (shapeId) {
+    return !!this.getInstance(shapeId)
+  }
+
+  /**
    * 添加标记实例
    * @param instance
    * @param paneId
    */
   addInstance (instance, paneId) {
-    const paneInstances = this.instances(paneId)
-    if (paneInstances.find(shape => shape.id() === instance.id())) {
-      return false
-    }
     if (instance.isDrawing()) {
       this._progressInstance = { paneId, instance, fixed: isValid(paneId) }
     } else {
@@ -164,7 +184,6 @@ export default class ShapeStore {
       this._instances.get(paneId).push(instance)
     }
     this._chartData.invalidate(InvalidateLevel.OVERLAY)
-    return true
   }
 
   /**
@@ -172,20 +191,20 @@ export default class ShapeStore {
    * @returns
    */
   progressInstance () {
-    return this._progressInstance
+    return this._progressInstance || {}
   }
 
   /**
    * 进行中的实例完成
    */
   progressInstanceComplete () {
-    const instance = this._progressInstance.instance
+    const { instance, paneId } = this.progressInstance()
     if (instance && !instance.isDrawing()) {
-      if (!this._instances.has(this._progressInstance.paneId)) {
-        this._instances.set(this._progressInstance.paneId, [])
+      if (!this._instances.has(paneId)) {
+        this._instances.set(paneId, [])
       }
-      this._instances.get(this._progressInstance.paneId).push(instance)
-      this._progressInstance = {}
+      this._instances.get(paneId).push(instance)
+      this._progressInstance = null
     }
   }
 
@@ -195,10 +214,32 @@ export default class ShapeStore {
    * @param paneId
    */
   updateProgressInstance (yAxis, paneId) {
-    const { instance, fixed } = this._progressInstance
+    const { instance, fixed } = this.progressInstance()
     if (instance && !fixed) {
       instance.setYAxis(yAxis)
       this._progressInstance.paneId = paneId
+    }
+  }
+
+  /**
+   * 获取按住的实例
+   * @returns
+   */
+  pressedInstance () {
+    return this._pressedInstance || {}
+  }
+
+  /**
+   * 更新事件按住的实例
+   * @param instance
+   * @param paneId
+   * @param element
+   */
+  updatePressedInstance (instance, paneId, element) {
+    if (instance) {
+      this._pressedInstance = { instance, paneId, element }
+    } else {
+      this._pressedInstance = null
     }
   }
 
@@ -214,28 +255,19 @@ export default class ShapeStore {
   /**
    * 设置图形标记实例配置
    * @param options
-   * @param paneId
    */
-  setInstanceOptions (options = {}, paneId) {
+  setInstanceOptions (options = {}) {
     const { id, styles, lock, mode, data } = options
     const defaultStyles = this._chartData.styleOptions().shape
     let shouldInvalidate = false
     if (isValid(id)) {
-      const update = (shapes) => {
-        const instance = shapes.find(s => s.id() === id)
+      const instance = this.getInstance(id)
+      if (instance) {
         instance.setLock(lock)
         instance.setMode(mode)
         if (instance.setStyles(styles, defaultStyles) || instance.setData(data)) {
           shouldInvalidate = true
         }
-      }
-      if (isValid(paneId)) {
-        const shapes = this.instances(paneId)
-        update(shapes)
-      } else {
-        this._instances.forEach(shapes => {
-          update(shapes)
-        })
       }
     } else {
       this._instances.forEach(shapes => {
@@ -258,7 +290,7 @@ export default class ShapeStore {
    * @param id
    * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
    */
-  getInstanceInfo (paneId, shapeId) {
+  getInstanceInfo (shapeId) {
     const create = (instance) => {
       return {
         name: instance.name(),
@@ -271,20 +303,22 @@ export default class ShapeStore {
         data: instance.data()
       }
     }
-    if (isValid(paneId)) {
-      const shapes = this.instances(paneId)
-      if (isValid(shapeId)) {
-        const shape = shapes.find(s => s.id() === shapeId)
-        if (shape) {
-          return create(shape)
-        }
-      } else {
-        return shapes.map(shape => create(shape))
+    const progressInstance = this.progressInstance()
+    if (isValid(shapeId)) {
+      if (progressInstance.instance && progressInstance.instance.id() === shapeId) {
+        return create(progressInstance.instance)
+      }
+      const shape = this.getInstance(shapeId)
+      if (shape) {
+        return create(shape)
       }
     } else {
       const infos = {}
       this._instances.forEach((shapes, paneId) => {
         infos[paneId] = shapes.map(shape => create(shape))
+        if (progressInstance.paneId === paneId && progressInstance.instance) {
+          infos[paneId].push(create(progressInstance.instance))
+        }
       })
       return infos
     }
@@ -296,64 +330,42 @@ export default class ShapeStore {
    * @param shapeId 参数
    * @param isProgress
    */
-  removeInstance (paneId, shapeId) {
+  removeInstance (shapeId) {
     let shouldInvalidate = false
-    const progressInstance = this._progressInstance.instance
-    if (progressInstance && progressInstance.id() === shapeId) {
+    const progressInstance = this.progressInstance().instance
+    if (!isValid(shapeId) || (progressInstance && progressInstance.id() === shapeId)) {
       progressInstance.onRemove({ id: progressInstance.id() })
-      this._progressInstance = {}
+      this._progressInstance = null
       shouldInvalidate = true
-    } else {
-      if (isValid(paneId)) {
-        const shapes = this.instances(paneId)
-        if (isValid(shapeId)) {
-          const removeIndex = shapes.findIndex(shape => shape.id() === shapeId)
-          if (removeIndex > -1) {
-            shapes[removeIndex].onRemove({ id: shapes[removeIndex].id() })
-            shapes.splice(removeIndex, 1)
-            if (shapes.length === 0) {
-              this._instances.delete(paneId)
-            }
-            shouldInvalidate = true
+    }
+    if (isValid(shapeId)) {
+      for (const entry of this._instances) {
+        const shapes = entry[1] || []
+        const removeIndex = shapes.findIndex(shape => shape.id() === shapeId)
+        if (removeIndex > -1) {
+          shapes[removeIndex].onRemove({ id: shapes[removeIndex].id() })
+          shapes.splice(removeIndex, 1)
+          if (shapes.length === 0) {
+            this._instances.delete(entry[0])
           }
-        } else {
-          if (shapes.length > 0) {
-            shapes.forEach(shape => {
-              shape.onRemove({ id: shape.id() })
-            })
-            this._instances.delete(paneId)
-            shouldInvalidate = true
-          }
+          shouldInvalidate = true
+          break
         }
-      } else {
-        this._instances.forEach(shapes => {
+      }
+    } else {
+      this._instances.forEach(shapes => {
+        if (shapes.length > 0) {
           shapes.forEach(shape => {
             shape.onRemove({ id: shape.id() })
           })
-        })
-        this._instances.clear()
-        shouldInvalidate = true
-      }
+        }
+      })
+      this._instances.clear()
+      shouldInvalidate = true
     }
     if (shouldInvalidate) {
       this._chartData.invalidate(InvalidateLevel.OVERLAY)
     }
-  }
-
-  /**
-   * 获取图形标记拖拽标记
-   * @returns {boolean}
-   */
-  dragFlag () {
-    return this._dragFlag
-  }
-
-  /**
-   * 设置图形标记拖拽标记
-   * @param flag
-   */
-  setDragFlag (flag) {
-    this._dragFlag = flag
   }
 
   /**
@@ -371,20 +383,16 @@ export default class ShapeStore {
    */
   setMouseOperate (mouseOperate) {
     const { hover, click } = this._mouseOperate
-    let shouldInvalidate = false
     if (mouseOperate.hover &&
       (hover.id !== mouseOperate.hover.id || hover.element !== mouseOperate.hover.element || hover.elementIndex !== mouseOperate.hover.elementIndex)
     ) {
       this._mouseOperate.hover = { ...mouseOperate.hover }
-      shouldInvalidate = true
     }
     if (mouseOperate.click &&
       (click.id !== mouseOperate.click.id || click.element !== mouseOperate.click.element || click.elementIndex !== mouseOperate.click.elementIndex)
     ) {
       this._mouseOperate.click = { ...mouseOperate.click }
-      shouldInvalidate = true
     }
-    return shouldInvalidate
   }
 
   /**
@@ -392,7 +400,7 @@ export default class ShapeStore {
    * @returns
    */
   isEmpty () {
-    return this._instances.length === 0
+    return this._instances.size === 0 && !this.progressInstance().instance
   }
 
   /**
@@ -400,6 +408,15 @@ export default class ShapeStore {
    * @return
    */
   isDrawing () {
-    return this._progressInstance && this._progressInstance.instacne && this._progressInstance.instacne.isDrawing()
+    const instance = this.progressInstance().instance
+    return instance && instance.isDrawing()
+  }
+
+  /**
+   * 是否按住
+   * @returns
+   */
+  isPressed () {
+    return !!this.pressedInstance().instance
   }
 }

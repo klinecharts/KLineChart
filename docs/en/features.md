@@ -12,8 +12,8 @@
   - Support setting technical indicator types for windows.
   - Support setting precision, style and calculation parameters for a single technical indicator.
   - Support customization and be able to draw by yourself.
-- Graphic mark
-  - Built-in multiple graphics.
+- Shape
+  - Built-in shapes.
   - Support drawing step by step according to mouse actions.
   - Support creating a complete graph in one step.
   - Support separate style setting.

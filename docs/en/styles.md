@@ -290,7 +290,7 @@
       }
     }
   },
-  graphicMark: {
+  shape: {
     point: {
       backgroundColor: '#2196F3',
       borderColor: '#2196F3',

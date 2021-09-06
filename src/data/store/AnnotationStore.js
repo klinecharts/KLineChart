@@ -43,9 +43,7 @@ export default class AnnotationStore {
     const { id } = this._mouseOperate
     if (operate && id !== operate.id) {
       this._mouseOperate = { ...operate }
-      return true
     }
-    return false
   }
 
   /**

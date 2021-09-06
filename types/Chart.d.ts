@@ -32,6 +32,8 @@ export declare interface Chart {
   setLeftMinVisibleBarCount(barCount: number): void;
   setRightMinVisibleBarCount(barCount: number): void;
   setDataSpace(space: number): void;
+  getDataSpace(): number;
+  getBarSpace(): number;
   clearData(): void;
   getDataList(): KLineData[];
   applyNewData(dataList: KLineData[], more?: boolean): void;
@@ -46,9 +48,9 @@ export declare interface Chart {
   removeTechnicalIndicator(paneId: string, name?: string): void;
   addShapeTemplate(template: ShapeTemplate | ShapeTemplate[]): void;
   createShape(value: string | Shape, paneId?: string): string | null;
-  getShape(paneId?: string, shapeId?: string): any;
-  setShapeOptions(options: OverrideShape, paneId?: string): void;
-  removeShape(paneId?: string, shapeId?: string): void;
+  getShape(shapeId?: string): any;
+  setShapeOptions(options: OverrideShape): void;
+  removeShape(shapeId?: string): void;
   createAnnotation(annotation: Annotation | Annotation[], paneId?: string): void;
   removeAnnotation(paneId?: string, point?: Point | Point[]): void;
   createTag(tag: Tag | Tag[], paneId?: string): void;

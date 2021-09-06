@@ -29,6 +29,7 @@ export declare interface OverrideShape {
   styles?: any;
   lock?: boolean;
   mode?: ShapeMode;
+  data?: any;
 }
 
 export declare interface Shape extends OverrideShape {

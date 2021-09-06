@@ -32,7 +32,8 @@
   // styles 样式
   // xAxis x轴组件
   // yAxis y轴组件
-  createShapeDataSource: ({ step, points, coordinates, viewport, precision, styles, xAxis, yAxis }) => {},
+  // data 外部数据
+  createShapeDataSource: ({ step, points, coordinates, viewport, precision, styles, xAxis, yAxis, data }) => {},
 
   // 处理在绘制过程中鼠标移动操作，可缺省，鼠标操作绘制过程中触发
   // step 当前步骤
@@ -58,7 +59,8 @@
   // precision 精度信息，包含价格和数量精度
   // xAxis x轴组件
   // yAxis y轴组件
-  drawExtend: ({ ctx, dataSource, styles, viewport, precision, xAxis, yAxis }) => {}
+  // data 外部数据
+  drawExtend: ({ ctx, dataSource, styles, viewport, precision, xAxis, yAxis, data }) => {}
 }
 ```
 #### 方法createShapeDataSource返回值子项信息

@@ -16,9 +16,9 @@
 - `template` 技术指标信息，详情参阅[技术指标](technical-indicator.md)
 
 
-### extension.addGraphicMarkTemplate(template)
-全局添加一个图形标记模板。
-- `template` 图形标记模板，详情参阅[图形标记](graphic-mark.md)
+### extension.addShapeTemplate(template)
+全局添加一个图形模板。
+- `template` 图形模板，详情参阅[图形标记](shape.md)
 
 
 ### version()

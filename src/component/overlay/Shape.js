@@ -557,10 +557,12 @@ export default class Shape extends Overlay {
   /**
    * 不同的模式下处理值
    * @param value
+   * @param dataIndex
+   * @param paneId
    */
-  _performValue (y, dataIndex) {
+  _performValue (y, dataIndex, paneId) {
     const value = this._yAxis.convertFromPixel(y)
-    if (this._mode === ShapeMode.NORMAL) {
+    if (this._mode === ShapeMode.NORMAL || paneId !== 'candle_pane') {
       return value
     }
     const kLineData = this._chartData.timeScaleStore().getDataByDataIndex(dataIndex)
@@ -612,11 +614,12 @@ export default class Shape extends Overlay {
   /**
    * 绘制过程中鼠标移动事件
    * @param coordinate
+   * @param event
    */
-  mouseMoveForDrawing (coordinate) {
+  mouseMoveForDrawing (coordinate, event) {
     const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
     const timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
-    const value = this._performValue(coordinate.y, dataIndex)
+    const value = this._performValue(coordinate.y, dataIndex, event.paneId)
     this._points[this._drawStep - 1] = { timestamp, value, dataIndex }
     this.performEventMoveForDrawing({
       step: this._drawStep,
@@ -635,6 +638,7 @@ export default class Shape extends Overlay {
   mouseLeftButtonDownForDrawing () {
     if (this._drawStep === this._totalStep - 1) {
       this._drawStep = SHAPE_DRAW_STEP_FINISHED
+      this._chartData.shapeStore().progressInstanceComplete()
       this.onDrawEnd({ id: this._id, points: this._points })
     } else {
       this._drawStep++
@@ -657,7 +661,7 @@ export default class Shape extends Overlay {
     ) {
       const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
       const timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
-      const value = this._performValue(coordinate.y, dataIndex)
+      const value = this._performValue(coordinate.y, dataIndex, event.paneId)
       this._points[elementIndex].timestamp = timestamp
       this._points[elementIndex].dataIndex = dataIndex
       this._points[elementIndex].value = value

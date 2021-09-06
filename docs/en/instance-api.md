@@ -70,6 +70,14 @@ Set the space occupied by a piece of chart data, that is, the width of a single 
 - `space` width, number type
 
 
+### getDataSpace()
+Get the space occupied by a single piece of data on a chart.
+
+
+### getBarSpace()
+Get the space taken up by drawing a piece of data on a chart.
+
+
 ### applyNewData(dataList, more)
 Add new data, this method will clear the chart data, no need to call the clearData method.
 - `dataList` is a KLineData array. For details of KLineData type, please refer to the data source
@@ -173,7 +181,7 @@ Special paneId: candle_pane, the window id of the main image
 
 ### removeTechnicalIndicator(paneId, name)
 Remove technical indicators.
-- `paneId` window id, which is the window ID returned when the createTechnicalIndicator method is called
+- `paneId` pane id, which is the pane id returned when the createTechnicalIndicator method is called
 Special paneId: candle_pane, the window id of the main image
 - `name` technical indicator type, if default, all will be removed
 
@@ -183,15 +191,16 @@ Add a technical indicator template. Can be created in batches, just pass in the 
 - `template` technical indicator template, please refer to [Technical Indicators](technical-indicator.md)
 
 
-### createGraphicMark(value)
-Create a graphic mark and return a string type identifier
-- `value` name or object, when is object, `{ name, id, points, styles, lock, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }`
-  - `name` graphic mark name
+### createShape(value, paneId)
+Create a shape and return a string type identifier
+- `value` name or object, when is object, `{ name, id, points, styles, lock, data, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMove, onRemove }`
+  - `name` shape name
   - `id` can be defaulted, if specified, the id will be returned
   - `points` point information, can be defaulted, if specified, a graph will be drawn according to the point information
-  - `styles` style, can be defaulted, the format is the same as `graphicMark` in the configuration
+  - `styles` style, can be defaulted, the format is the same as `shape` in the configuration
   - `lock` is lock
   - `mode` mode type, 'normal' | 'weak_magnet' | 'strong_magnet'
+  - `data` data
   - `onDrawStart` draw start callback event, can be default
   - `onDrawing` callback event during drawing, can be default
   - `onDrawEnd` draw end callback event, can be default
@@ -201,10 +210,11 @@ Create a graphic mark and return a string type identifier
   - `onMouseLeave` mouse leave event, default
   - `onPressedMove` press and drag callback event
   - `onRemove` delete callback event
+- `paneId` pane id
 
 Example:
 ```javascript
-chart.createGraphicMark({
+chart.createShape({
   name: 'segment',
   points: [
     {timestamp: 1614171282000, price: 18987 },
@@ -230,35 +240,37 @@ chart.createGraphicMark({
   onMouseLeave: function ({ id, event }) { console.log(id, event) },
   onPressedMove: function ({ id, event }) {console.log(id, event) },
   onRemove: function ({ id }) {console.log(id)}
-})
+}, 'candle_pane')
 ```
 
 
-### getGraphicMark(id)
-Get graphic mark information.
-- `id` calls the createGraphicMark method to return the identity, by default it returns all
+### getShape(shapeId)
+Get shape information.
+- `paneId` pane id
+- `shapeId` calls the createShape method to return the identity, by default it returns all
 
 
-### setGraphicMarkOptions(options)
-Set the drawn graphic mark configuration.
+### setShapeOptions(options)
+Set the drawn shape configuration.
 - `options` configuration, `{ id, styles, lock, mode }`
-  - `id` calls the createGraphicMark method to return the identity, by default it set all
-  - `styles` style, the format is the same in the configuration of `graphicMark`
+  - `id` calls the createShape method to return the identity, by default it set all
+  - `styles` style, the format is the same in the configuration of `shape`
   - `lock` is lock
   - `mode` mode type, 'normal' | 'weak_magnet' | 'strong_magnet'
+  - `data` data
 
 
-### addGraphicMarkTemplate(template)
-Add a graphic marker template. Can be created in batches, just pass in the array in batches.
-- `template` graphic mark information, please refer to [details](graphic-mark.md)
+### addShapeTemplate(template)
+Add a shape template. Can be created in batches, just pass in the array in batches.
+- `template` shape information, please refer to [details](shape.md)
 
 
-### removeGraphicMark(id)
-Remove all graphic marks.
-- `id` call the createGraphicMark method is the returned mark, if the default is, all marks will be removed
+### removeShape(shapeId)
+Remove shape.
+- `shapeId` call the createShape method is the returned mark, if the default is, all marks will be removed
 
 
-### createAnnotation(annotation)
+### createAnnotation(annotation, paneId)
 Create annotation. Can be created in batches, just pass in the array in batches.
 - `annotation` annotation information, `{ point, styles, checkPointInCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
   - `point` point `{ timestamp, price }`
@@ -270,6 +282,7 @@ Create annotation. Can be created in batches, just pass in the array in batches.
   - `onRightClick` right-click callback event, default
   - `onMouseEnter` mouse enter event, default
   - `onMouseLeave` mouse leave event, default
+- `paneId` pane id
 Example:
 ```javascript
 chart.createAnnotation({
@@ -309,7 +322,7 @@ Remove annotation. Can be removed in batches, just pass in the array in batches,
 - `points` single point or collection, `{ timestamp }`
 
 
-### createTag(tag)
+### createTag(tag, paneId)
 Create tags, you can create them in batches, just pass in an array in batches.
 - `tag` tag，`{ id, point, text, mark, styles }`
   - `id` unique identifier, if there are duplicates, it will be overwritten
@@ -317,6 +330,7 @@ Create tags, you can create them in batches, just pass in an array in batches.
   - `text` text, default
   - `mark` mark, default
   - `styles` style, default, the format is the same as the `tag` in the configuration
+- `paneId` pane id
 Example:
 ```javascript
 chart.createTag({
