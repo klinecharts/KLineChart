@@ -18,7 +18,7 @@ import { renderFillCircle } from '../../renderer/circle'
 import { checkCoordinateInCircle } from '../../extension/shape/shapeHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../renderer/line'
 import { renderStrokePath, renderFillPath } from '../../renderer/path'
-import { isArray, clone } from '../../utils/typeChecks'
+import { isArray, isValid, clone } from '../../utils/typeChecks'
 import { createFont } from '../../utils/canvas'
 
 import { StrokeFillStyle, LineStyle } from '../../options/styleOptions'
@@ -703,6 +703,10 @@ export default class Shape extends Overlay {
       const difDataIndex = dataIndex - this._prevPressPoint.dataIndex
       const difValue = value - this._prevPressPoint.value
       this._points = this._prevPoints.map(point => {
+        // 防止因为创建时传入进来的point没有dataIndex，导致无法计算时间戳问题
+        if (!isValid(point.dataIndex)) {
+          point.dataIndex = this._chartData.timeScaleStore().timestampToDataIndex(point.timestamp)
+        }
         const dataIndex = point.dataIndex + difDataIndex
         const value = point.value + difValue
         return {
