@@ -511,7 +511,7 @@ export default class ChartPane {
         container: this._chartContainer,
         chartData: this._chartData,
         xAxis: this._xAxisPane.xAxis(),
-        technicalIndicatorName: tech.name,
+        technicalIndicator: tech,
         id,
         height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
       })
@@ -571,11 +571,20 @@ export default class ChartPane {
     } = shapeOptions
     const shapeId = id || `${SHAPE_ID_PREFIX}${++this._shapeBaseId}`
     if (!this._chartData.shapeStore().hasInstance(shapeId)) {
+      let yAxis = null
+      if (this.hasPane(paneId)) {
+        yAxis = this._panes.get(paneId).yAxis()
+      } else {
+        if (points && points.length > 0) {
+          paneId = CANDLE_PANE_ID
+          yAxis = this._panes.get(CANDLE_PANE_ID).yAxis()
+        }
+      }
       const shapeInstance = new ShapeTemplateClass({
         id: shapeId,
         chartData: this._chartData,
         xAxis: this._xAxisPane.xAxis(),
-        yAxis: this.hasPane(paneId) ? this._panes.get(paneId).yAxis() : null,
+        yAxis,
         points,
         styles,
         lock,
