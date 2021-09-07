@@ -191,7 +191,7 @@ export default class OverlayEventHandler extends EventHandler {
     }
     const visibleAnnotations = this._chartData.annotationStore().get(event.paneId)
     if (visibleAnnotations) {
-      const annotation = visibleAnnotations.get(event.paneId).find(an => an.checkEventCoordinateOn({ x: event.localX, y: event.paneY }))
+      const annotation = visibleAnnotations.find(an => an.checkEventCoordinateOn({ x: event.localX, y: event.paneY }))
       if (annotation) {
         annotation.onRightClick({ id: annotation.id(), points: annotation.points(), event })
       }
