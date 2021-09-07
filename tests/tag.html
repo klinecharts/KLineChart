@@ -1,0 +1,96 @@
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!DOCTYPE html>
+<html lang="en" >
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
+    <meta name="description" content="shape test"/>
+    <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="./js/dataSource.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
+    <title>标签</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="chart"></div>
+    <script>
+      window.onload = function () {
+        var chart = klinecharts.init('chart')
+        var kdjPaneId = chart.createTechnicalIndicator('KDJ')
+        var dataList = generated()
+        chart.applyNewData(dataList)
+        
+        // 创建
+        chart.createTag({
+          id: 'tag1',
+          mark: 'tag1',
+          text: 'TAG1',
+          point: { value: 13590 }
+        })
+
+        // 创建在指定窗口
+        chart.createTag({
+          id: 'tag2',
+          mark: 'kdj',
+          text: '88.8888',
+          point: { value: 88.8888 }
+        }, kdjPaneId)
+
+        // 批量创建
+        chart.createTag([
+          {
+            id: 'tag3',
+            mark: 'tag3',
+            text: '13600.00',
+            point: { value: 13600 },
+            styles: {
+              line: { show: false },
+              mark: { backgroundColor: '#f0f' },
+              text: { backgroundColor: '#00f' }
+            }
+          }, {
+            id: 'tag5',
+            text: '13620.00',
+            point: { value: 13620 },
+            styles: {
+              line: { color: '#98cc12' },
+              text: { backgroundColor: '#123499' }
+            }
+          }
+        ])
+
+        // 更新
+        var prices = [13650, 13640, 13630, 13620, 13610]
+        function updateTag () {
+          var index = Math.floor(Math.random() * 5)
+          var price = prices[index]
+          chart.createTag({
+            id: 'tag1',
+            mark: 'tag1',
+            text: price.toFixed(2),
+            point: { value: price }
+          })
+          setTimeout(function () {
+            updateTag()
+          }, 1000)
+        }
+        updateTag()
+      }
+    </script>
+  </body>
+</html>
