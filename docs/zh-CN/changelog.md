@@ -1,6 +1,6 @@
 # 更新日志
 ## 8.0.0-alpha1
-`待发布`
+`2021-09-07`
 + 🆕 新特性
    + 新增`getDataSpace`和`getBarSpace`。
    + `createTechnicalIndicator`支持在创建的时候，覆盖内置属性。

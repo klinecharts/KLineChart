@@ -1,6 +1,6 @@
 # Change Log
 ## 8.0.0-alpha1
-`To be released`
+`2021-09-07`
 + 🆕 New features
    + Added `getDataSpace` and `getBarSpace`.
    + `createTechnicalIndicator` supports overwriting built-in attributes when creating.
