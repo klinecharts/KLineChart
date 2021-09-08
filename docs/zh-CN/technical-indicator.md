@@ -16,7 +16,7 @@
 
 
 ## 技术指标模板
-想要完成一个自定义技术指标，只需要生成一个技术指标信息，然后通过`extension.addTechnicalIndicatorTemplate`全局添加，或者通过图表实例方法  `addCustomTechnicalIndicatorTemplate`为单个图表实例添加即可。添加到图表即可和内置技术指标一样去使用。
+想要完成一个自定义技术指标，只需要生成一个技术指标信息，然后通过`extension.addTechnicalIndicatorTemplate`全局添加，或者通过图表实例方法  `addTechnicalIndicatorTemplate`为单个图表实例添加即可。添加到图表即可和内置技术指标一样去使用。
 ### 属性说明
 #### 技术指标信息
 ```javascript

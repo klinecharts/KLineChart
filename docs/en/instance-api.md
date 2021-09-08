@@ -272,10 +272,10 @@ Remove shape.
 
 ### createAnnotation(annotation, paneId)
 Create annotation. Can be created in batches, just pass in the array in batches.
-- `annotation` annotation information, `{ point, styles, checkPointInCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
+- `annotation` annotation information, `{ point, styles, checkEventCoordinateOnCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
   - `point` point `{ timestamp, price }`
   - `styles` style, the format is the same in the configuration of `annotation`
-  - `checkPointInCustomSymbol` Triggered when the style `annotation.symbol.type` is `custom`
+  - `checkEventCoordinateOnCustomSymbol` Triggered when the style `annotation.symbol.type` is `custom`
   - `drawCustomSymbol` Triggered when the style `annotation.symbol.type` is `custom`
   - `drawExtend` Extend drawing method
   - `onClick` click callback event, default

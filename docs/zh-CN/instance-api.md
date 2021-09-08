@@ -168,7 +168,7 @@ chart.overrideTechnicalIndicator({
 
 
 ### getTechnicalIndicatorTemplate(name)
-根据技术指标名获取技术指标信息。
+根据技术指标模板信息。
 - `name` 技术指标名，可缺省，缺省则返回所有
 
 
@@ -272,10 +272,10 @@ chart.createShape({
 
 ### createAnnotation(annotation, paneId)
 创建注解，可批量创建，批量传入数组即可。
-- `annotation` 注解信息, `{ point, styles, checkPointInCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
+- `annotation` 注解信息, `{ point, styles, checkEventCoordinateOnCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
   - `point` 点 `{ timestamp, price }`
   - `styles` 样式，格式和配置里的`annotation`一致
-  - `checkPointInCustomSymbol` 检查鼠标点是否在symbol上，当样式`annotation.symbol.type`是`custom`的时候触发
+  - `checkEventCoordinateOnCustomSymbol` 检查鼠标点是否在symbol上，当样式`annotation.symbol.type`是`custom`的时候触发
   - `drawCustomSymbol` 绘制自定义symbol，当样式`annotation.symbol.type`是`custom`的时候触发
   - `drawExtend` 扩展绘制，可缺省
   - `onClick` 点击事件，可缺省
