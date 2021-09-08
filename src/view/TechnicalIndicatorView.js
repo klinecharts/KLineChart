@@ -89,8 +89,8 @@ export default class TechnicalIndicatorView extends View {
         technicalIndicator.render({
           ctx: this._ctx,
           dataSource: {
-            from: this._chartData.from(),
-            to: this._chartData.to(),
+            from: this._chartData.timeScaleStore().from(),
+            to: this._chartData.timeScaleStore().to(),
             kLineDataList: this._chartData.dataList(),
             technicalIndicatorDataList: technicalIndicatorResult
           },
