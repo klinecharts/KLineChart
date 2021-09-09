@@ -28,8 +28,13 @@ export default class TechnicalIndicatorView extends View {
   }
 
   _draw () {
-    this._drawGrid()
+    this._ctx.globalCompositeOperation = 'destination-over'
+    this._drawContent()
+  }
+
+  _drawContent () {
     this._drawTechnicalIndicators()
+    this._drawGrid()
   }
 
   /**
@@ -75,6 +80,7 @@ export default class TechnicalIndicatorView extends View {
    * 绘制指标
    */
   _drawTechnicalIndicators () {
+    this._ctx.globalCompositeOperation = 'source-over'
     const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
     const technicalIndicators = this._additionalDataProvider.technicalIndicators()
     technicalIndicators.forEach(technicalIndicator => {
@@ -190,6 +196,7 @@ export default class TechnicalIndicatorView extends View {
         }
       )
     })
+    this._ctx.globalCompositeOperation = 'destination-over'
   }
 
   /**
