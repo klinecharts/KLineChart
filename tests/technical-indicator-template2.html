@@ -1,0 +1,68 @@
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!DOCTYPE html>
+<html lang="en" >
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
+    <meta name="description" content="shape test"/>
+    <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="./js/dataSource.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
+    <title>技术指标模板自定义绘制</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="chart"></div>
+    <script>
+      window.onload = function () {
+        var chart = klinecharts.init('chart')
+        // 添加一个指标模板
+        chart.addTechnicalIndicatorTemplate({
+          name: 'TEST-Render',
+          precision: 2,
+          calcTechnicalIndicator: function (kLineDataList, { params, plots }) {
+            return kLineDataList.map(kLineData => ({ volume: kLineData.volume }))
+          },
+          render: function ({ ctx, dataSource, viewport }) {
+            let max = 0
+            const result = dataSource.technicalIndicatorDataList
+            for (let i = dataSource.from; i < dataSource.to; i++) {
+              max = Math.max(max, result[i].volume)
+            }
+            const length = dataSource.to - dataSource.from
+            const barHeight = (viewport.height) / length
+            const realBarHeight = barHeight * 0.8
+
+            ctx.globalCompositeOperation = 'destination-over'
+            ctx.fillStyle = 'rgba(65, 20, 69, .35)'
+            let startY = (barHeight - realBarHeight) / 2
+            for (let i = dataSource.from; i < dataSource.to; i++) {
+              const barWidth = Math.floor(result[i].volume / max * 150)
+              ctx.fillRect(viewport.width - barWidth, startY, barWidth, realBarHeight)
+              startY += barHeight
+            }
+          }
+        })
+        chart.createTechnicalIndicator('MA', false, { id: 'candle_pane' })
+        chart.createTechnicalIndicator('TEST-Render', true, { id: 'candle_pane' })
+        chart.createTechnicalIndicator('KDJ')
+        chart.applyNewData(generated())
+      }
+    </script>
+  </body>
+</html>
