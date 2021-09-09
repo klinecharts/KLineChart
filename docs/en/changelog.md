@@ -1,4 +1,8 @@
 # Change Log
+## 8.0.0-alpha2
+`2021-09-09`
++ 🐞 Fix the problem that the custom rendering callback parameters of the technical indicator template are not correct.
++ 💄 Optimize the rendering level.
 ## 8.0.0-alpha1
 `2021-09-07`
 + 🆕 New features
