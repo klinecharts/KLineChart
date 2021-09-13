@@ -23,10 +23,10 @@ import { isArray, isNumber } from '../utils/typeChecks'
 export default class CandleView extends TechnicalIndicatorView {
   _drawContent () {
     const candleOptions = this._chartData.styleOptions().candle
+    this._drawLastPriceLine(candleOptions.priceMark)
     if (candleOptions.type === CandleType.AREA) {
       this._drawArea(candleOptions)
     } else {
-      this._drawLastPriceLine(candleOptions.priceMark)
       this._drawLowHighPrice(
         candleOptions.priceMark,
         'high',
@@ -51,8 +51,8 @@ export default class CandleView extends TechnicalIndicatorView {
           }
         }
       )
+      this._drawCandle(candleOptions)
     }
-    this._drawCandle(candleOptions)
     this._drawTechnicalIndicators()
     this._drawGrid()
   }

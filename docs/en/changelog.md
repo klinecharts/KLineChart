@@ -1,8 +1,14 @@
 # Change Log
+## 8.0.0-alpha3
+`2021-09-13`
++ 🐞 Fix the problem of incorrect display of area chart.
++ 🐞 Fix the problem that the latest price line of area chart is not displayed.
+
 ## 8.0.0-alpha2
 `2021-09-10`
 + 🐞 Fix the problem that the custom rendering callback parameters of the technical indicator template are not correct.
 + 💄 Optimize the rendering level.
+
 ## 8.0.0-alpha1
 `2021-09-07`
 + 🆕 New features
