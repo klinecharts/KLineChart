@@ -147,8 +147,8 @@ export default class ChartData {
   addData (data, pos, more) {
     if (isObject(data)) {
       if (isArray(data)) {
-        this._loading = false
-        this._more = isBoolean(more) ? more : true
+        this._timeScaleStore.setLoading(false)
+        this._timeScaleStore.setMore(isBoolean(more) ? more : true)
         const isFirstAdd = this._dataList.length === 0
         this._dataList = data.concat(this._dataList)
         if (isFirstAdd) {

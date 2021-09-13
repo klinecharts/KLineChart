@@ -725,7 +725,7 @@ export default class ChartPane {
    * @param timezone
    */
   setTimezone (timezone) {
-    this._chartData.timeScaleStore.setTimezone(timezone)
+    this._chartData.timeScaleStore().setTimezone(timezone)
     this._xAxisPane.xAxis().computeAxis(true)
     this._xAxisPane.invalidate(InvalidateLevel.FULL)
   }

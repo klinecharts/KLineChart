@@ -1,4 +1,9 @@
 # Change Log
+## 8.0.0-alpha4
+`2021-09-13`
++ 🐞 Fix the problem that loading more does not take effect.
++ 🐞 Fix the problem that the time zone setting does not take effect.
+
 ## 8.0.0-alpha3
 `2021-09-13`
 + 🐞 Fix the problem of incorrect display of area chart.

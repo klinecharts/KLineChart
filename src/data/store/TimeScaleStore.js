@@ -110,6 +110,21 @@ export default class TimeScaleStore {
   }
 
   /**
+   * 设置是否有更多
+   * @param more
+   */
+  setMore (more) {
+    this._more = more
+  }
+
+  /**
+   * 设置是否在加载
+   */
+  setLoading (loading) {
+    this._loading = loading
+  }
+
+  /**
    * 获取时间格式化
    * @returns {Intl.DateTimeFormat | Intl.DateTimeFormat}
    */
