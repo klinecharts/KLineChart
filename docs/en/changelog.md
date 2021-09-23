@@ -1,4 +1,7 @@
 # Change Log
+## 8.0.0-alpha5
++ 🐞 Fix the typescript declaration problem.
+
 ## 8.0.0-alpha4
 `2021-09-13`
 + 🐞 Fix the problem that loading more does not take effect.
