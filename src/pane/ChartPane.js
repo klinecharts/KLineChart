@@ -528,14 +528,17 @@ export default class ChartPane {
    */
   getPaneTechnicalIndicator (paneId, name) {
     const technicalIndicatorInfo = (pane) => {
-      const paneTechs = {}
+      const paneTechs = []
       const techs = pane.technicalIndicators()
-      for (const tech of techs) {
-        const techInfo = createTechnicalIndicatorInfo(tech)
-        if (tech.name === name) {
-          return techInfo
+      for (const entry of techs) {
+        const tech = entry[1]
+        if (tech) {
+          const techInfo = createTechnicalIndicatorInfo(tech)
+          if (tech.name === name) {
+            return techInfo
+          }
+          paneTechs.push(techInfo)
         }
-        paneTechs[tech.name] = techInfo
       }
       return paneTechs
     }

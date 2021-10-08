@@ -41,9 +41,9 @@ export default class TechnicalIndicator {
     // 是否需要检查参数
     this.shouldCheckParamCount = isBoolean(shouldCheckParamCount) ? shouldCheckParamCount : true
     // 是否需要ohlc
-    this.shouldOhlc = shouldOhlc
+    this.shouldOhlc = isBoolean(shouldOhlc) ? shouldOhlc : false
     // 是否需要格式化大数据值，从1000开始格式化，比如100000是否需要格式化100K
-    this.shouldFormatBigNumber = shouldFormatBigNumber
+    this.shouldFormatBigNumber = isBoolean(shouldFormatBigNumber) ? shouldFormatBigNumber : false
     // 指定的最小值
     this.minValue = minValue
     // 指定的最大值
@@ -112,7 +112,7 @@ export default class TechnicalIndicator {
   }
 
   setShouldOhlc (shouldOhlc) {
-    if ((!!this.shouldOhlc) !== (!!shouldOhlc)) {
+    if (isBoolean(shouldOhlc) && this.shouldOhlc !== shouldOhlc) {
       this.shouldOhlc = shouldOhlc
       return true
     }
@@ -120,7 +120,7 @@ export default class TechnicalIndicator {
   }
 
   setShouldFormatBigNumber (shouldFormatBigNumber) {
-    if ((!!this.shouldFormatBigNumber) !== (!!shouldFormatBigNumber)) {
+    if (isBoolean(shouldFormatBigNumber) && this.shouldFormatBigNumber !== shouldFormatBigNumber) {
       this.shouldFormatBigNumber = shouldFormatBigNumber
       return true
     }
