@@ -216,8 +216,8 @@ chart.overrideTechnicalIndicator({
 chart.createShape({
   name: 'segment',
   points: [
-    { timestamp: 1614171282000, price: 18987 },
-    { timestamp: 1614171202000, price: 16098 },
+    { timestamp: 1614171282000, value: 18987 },
+    { timestamp: 1614171202000, value: 16098 },
   ],
   styles: {
     line: {
@@ -273,7 +273,7 @@ chart.createShape({
 ### createAnnotation(annotation, paneId)
 创建注解，可批量创建，批量传入数组即可。
 - `annotation` 注解信息, `{ point, styles, checkEventCoordinateOnCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
-  - `point` 点 `{ timestamp, price }`
+  - `point` 点 `{ timestamp, value }`
   - `styles` 样式，格式和配置里的`annotation`一致
   - `checkEventCoordinateOnCustomSymbol` 检查鼠标点是否在symbol上，当样式`annotation.symbol.type`是`custom`的时候触发
   - `drawCustomSymbol` 绘制自定义symbol，当样式`annotation.symbol.type`是`custom`的时候触发
@@ -287,7 +287,7 @@ chart.createShape({
 示例:
 ```javascript
 chart.createAnnotation({
-  point: { timestamp: 1614171282000, price: 18987 },
+  point: { timestamp: 1614171282000, value: 18987 },
   styles: {
     symbol: {
       type: 'diamond',
@@ -336,7 +336,7 @@ chart.createAnnotation({
 ```javascript
 chart.createTag({
   id: 'bid_price',
-  point: { price: 16908 },
+  point: { value: 16908 },
   text: '16908.00',
   mark: 'bid',
   styles: {

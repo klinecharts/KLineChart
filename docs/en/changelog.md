@@ -1,4 +1,9 @@
 # Change Log
+## 8.0.0-alpha6
+`2021-10-08`
++ 🐞 Fix the problem that all `shape` cannot be removed.
++ 🐞 Fix the problem of incorrect acquisition of technical indicators.
+
 ## 8.0.0-alpha5
 `2021-09-23`
 + 🐞 Fix the typescript declaration problem.

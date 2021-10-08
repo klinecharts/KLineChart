@@ -217,8 +217,8 @@ Example:
 chart.createShape({
   name: 'segment',
   points: [
-    {timestamp: 1614171282000, price: 18987 },
-    {timestamp: 1614171202000, price: 16098 },
+    {timestamp: 1614171282000, value: 18987 },
+    {timestamp: 1614171202000, value: 16098 },
   ],
   styles: {
     line: {
@@ -273,7 +273,7 @@ Remove shape.
 ### createAnnotation(annotation, paneId)
 Create annotation. Can be created in batches, just pass in the array in batches.
 - `annotation` annotation information, `{ point, styles, checkEventCoordinateOnCustomSymbol, drawCustomSymbol, drawExtend, onClick, onRightClick onMouseEnter, onMouseLeave }`
-  - `point` point `{ timestamp, price }`
+  - `point` point `{ timestamp, value }`
   - `styles` style, the format is the same in the configuration of `annotation`
   - `checkEventCoordinateOnCustomSymbol` Triggered when the style `annotation.symbol.type` is `custom`
   - `drawCustomSymbol` Triggered when the style `annotation.symbol.type` is `custom`
@@ -286,7 +286,7 @@ Create annotation. Can be created in batches, just pass in the array in batches.
 Example:
 ```javascript
 chart.createAnnotation({
-  point: { timestamp: 1614171282000, price: 18987 },
+  point: { timestamp: 1614171282000, value: 18987 },
   styles: {
     symbol: {
       type: 'diamond',
@@ -335,7 +335,7 @@ Example:
 ```javascript
 chart.createTag({
   id: 'bid_price',
-  point: { price: 16908 },
+  point: { value: 16908 },
   text: '16908.00',
   mark: 'bid',
   styles: {
