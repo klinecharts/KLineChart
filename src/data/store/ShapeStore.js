@@ -333,7 +333,7 @@ export default class ShapeStore {
   removeInstance (shapeId) {
     let shouldInvalidate = false
     const progressInstance = this.progressInstance().instance
-    if (!isValid(shapeId) || (progressInstance && progressInstance.id() === shapeId)) {
+    if (progressInstance && (!isValid(shapeId) || progressInstance.id() === shapeId)) {
       progressInstance.onRemove({ id: progressInstance.id() })
       this._progressInstance = null
       shouldInvalidate = true
