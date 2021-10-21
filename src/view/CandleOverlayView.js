@@ -23,63 +23,63 @@ import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
-  _drawTooltip (crosshair, technicalIndicators) {
+  _drawTooltip (crosshair, techs) {
     const styleOptions = this._chartData.styleOptions()
     const candleOptions = styleOptions.candle
     const candleTooltipOptions = candleOptions.tooltip
-    const technicalIndicatorOptions = styleOptions.technicalIndicator
-    const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
+    const techOptions = styleOptions.technicalIndicator
+    const techTooltipOptions = techOptions.tooltip
     const isDrawCandleTooltip = this._shouldDrawTooltip(crosshair, candleTooltipOptions)
-    const isDrawTechnicalIndicatorTooltip = this._shouldDrawTooltip(crosshair, technicalIndicatorTooltipOptions)
+    const isDrawTechTooltip = this._shouldDrawTooltip(crosshair, techTooltipOptions)
     if (
       candleTooltipOptions.showType === TooltipShowType.RECT &&
-      technicalIndicatorTooltipOptions.showType === TooltipShowType.RECT
+      techTooltipOptions.showType === TooltipShowType.RECT
     ) {
       this._drawCandleTooltipWithRect(
         crosshair,
-        technicalIndicators,
+        techs,
         candleOptions,
         isDrawCandleTooltip,
-        technicalIndicatorOptions,
-        isDrawTechnicalIndicatorTooltip
+        techOptions,
+        isDrawTechTooltip
       )
     } else {
       if (candleTooltipOptions.showType === TooltipShowType.STANDARD) {
         this._drawCandleTooltipWithStandard(crosshair.kLineData, candleOptions, isDrawCandleTooltip)
-        if (technicalIndicatorTooltipOptions.showType === TooltipShowType.STANDARD) {
+        if (techTooltipOptions.showType === TooltipShowType.STANDARD) {
           const offsetTop = isDrawCandleTooltip ? candleTooltipOptions.text.size + candleTooltipOptions.text.marginTop : 0
-          this._drawBatchTechnicalIndicatorToolTip(
+          this._drawBatchTechToolTip(
             crosshair,
-            technicalIndicators,
-            technicalIndicatorOptions,
+            techs,
+            techOptions,
             offsetTop,
-            isDrawTechnicalIndicatorTooltip
+            isDrawTechTooltip
           )
         } else {
           this._drawCandleTooltipWithRect(
             crosshair,
-            technicalIndicators,
+            techs,
             candleOptions,
             false,
-            technicalIndicatorOptions,
-            isDrawTechnicalIndicatorTooltip
+            techOptions,
+            isDrawTechTooltip
           )
         }
       } else {
         this._drawCandleTooltipWithRect(
           crosshair,
-          technicalIndicators,
+          techs,
           candleOptions,
           isDrawCandleTooltip,
-          technicalIndicatorOptions,
+          techOptions,
           false
         )
         this._drawBatchTechnicalIndicatorToolTip(
           crosshair,
-          technicalIndicators,
-          technicalIndicatorOptions,
+          techs,
+          techOptions,
           0,
-          isDrawTechnicalIndicatorTooltip
+          isDrawTechTooltip
         )
       }
     }
@@ -131,18 +131,18 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
   /**
    * 绘制蜡烛图矩形类型图例
    * @param crosshair
-   * @param technicalIndicators
+   * @param techs
    * @param candleOptions
    * @param isDrawCandleTooltip
-   * @param technicalIndicatorOptions
-   * @param isDrawTechnicalIndicatorTooltip
+   * @param techOptions
+   * @param isDrawTechTooltip
    * @private
    */
   _drawCandleTooltipWithRect (
-    crosshair, technicalIndicators, candleOptions, isDrawCandleTooltip,
-    technicalIndicatorOptions, isDrawTechnicalIndicatorTooltip
+    crosshair, techs, candleOptions, isDrawCandleTooltip,
+    techOptions, isDrawTechTooltip
   ) {
-    if (!isDrawCandleTooltip && !isDrawTechnicalIndicatorTooltip) {
+    if (!isDrawCandleTooltip && !isDrawTechTooltip) {
       return
     }
     const candleTooltipOptions = candleOptions.tooltip
@@ -186,19 +186,19 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
       rectHeight += ((baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseLabels.length)
     }
 
-    const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
+    const techTooltipOptions = techOptions.tooltip
 
-    const indicatorTextMarginLeft = technicalIndicatorTooltipOptions.text.marginLeft
-    const indicatorTextMarginRight = technicalIndicatorTooltipOptions.text.marginRight
-    const indicatorTextMarginTop = technicalIndicatorTooltipOptions.text.marginTop
-    const indicatorTextMarginBottom = technicalIndicatorTooltipOptions.text.marginBottom
-    const indicatorTextSize = technicalIndicatorTooltipOptions.text.size
+    const techTooltipTextMarginLeft = techTooltipOptions.text.marginLeft
+    const techTooltipTextMarginRight = techTooltipOptions.text.marginRight
+    const techTooltipTextMarginTop = techTooltipOptions.text.marginTop
+    const techTooltipTextMarginBottom = techTooltipOptions.text.marginBottom
+    const techTooltipTextSize = techTooltipOptions.text.size
 
-    const indicatorTooltipDataList = []
+    const techTooltipDataList = []
     const dataList = this._chartData.dataList()
-    technicalIndicators.forEach(tech => {
+    techs.forEach(tech => {
       const result = tech.result
-      indicatorTooltipDataList.push({
+      techTooltipDataList.push({
         name: tech.name,
         tooltipData: getTechnicalIndicatorTooltipData(result[crosshair.dataIndex], tech),
         cbData: {
@@ -208,20 +208,20 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
         }
       })
     })
-    if (isDrawTechnicalIndicatorTooltip) {
+    if (isDrawTechTooltip) {
       this._ctx.font = createFont(
-        indicatorTextSize,
-        technicalIndicatorTooltipOptions.text.weight,
-        technicalIndicatorTooltipOptions.text.family
+        techTooltipTextSize,
+        techTooltipOptions.text.weight,
+        techTooltipOptions.text.family
       )
-      indicatorTooltipDataList.forEach(({ tooltipData }) => {
+      techTooltipDataList.forEach(({ tooltipData }) => {
         tooltipData.values.forEach(({ title, value }) => {
           if (isValid(title)) {
-            const v = value || technicalIndicatorTooltipOptions.defaultValue
+            const v = value || techTooltipOptions.defaultValue
             const text = `${title}${v}`
-            const labelWidth = calcTextWidth(this._ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
+            const labelWidth = calcTextWidth(this._ctx, text) + techTooltipTextMarginLeft + techTooltipTextMarginRight
             maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
-            rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize)
+            rectHeight += (techTooltipTextMarginTop + techTooltipTextMarginBottom + techTooltipTextSize)
           }
         })
       })
@@ -278,18 +278,18 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
         labelY += (baseTextSize + baseTextMarginBottom)
       })
     }
-    if (isDrawTechnicalIndicatorTooltip) {
+    if (isDrawTechTooltip) {
       // 开始渲染指标数据文字
-      const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
-      const indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft
+      const techOptions = this._chartData.styleOptions().technicalIndicator
+      const indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + techTooltipTextMarginLeft
       this._ctx.font = createFont(
-        indicatorTextSize,
-        technicalIndicatorTooltipOptions.text.weight,
-        technicalIndicatorTooltipOptions.text.family
+        techTooltipTextSize,
+        techTooltipOptions.text.weight,
+        techTooltipOptions.text.family
       )
-      indicatorTooltipDataList.forEach(({ name, tooltipData, cbData }) => {
-        const tech = technicalIndicators.get(name)
-        const styles = tech.styles || technicalIndicatorOptions
+      techTooltipDataList.forEach(({ name, tooltipData, cbData }) => {
+        const tech = techs.get(name)
+        const styles = tech.styles || techOptions
         const colors = styles.line.colors
         const colorSize = colors.length
         const plots = tech.plots
@@ -314,18 +314,18 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
           }
           const value = tooltipData.values[i]
           if (isValid(value.title)) {
-            labelY += indicatorTextMarginTop
+            labelY += techTooltipTextMarginTop
             this._ctx.textAlign = 'left'
             this._ctx.fillStyle = valueColor
             this._ctx.fillText(`${value.title}`, indicatorLabelX, labelY)
 
             this._ctx.textAlign = 'right'
             this._ctx.fillText(
-              value.value || technicalIndicatorTooltipOptions.defaultValue,
-              rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
+              value.value || techTooltipOptions.defaultValue,
+              rectX + rectWidth - rectBorderSize - techTooltipTextMarginRight - rectPaddingRight,
               labelY
             )
-            labelY += (indicatorTextSize + indicatorTextMarginBottom)
+            labelY += (techTooltipTextSize + techTooltipTextMarginBottom)
           }
         })
       })

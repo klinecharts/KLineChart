@@ -16,6 +16,7 @@ import ChartPane from './pane/ChartPane'
 import { clone, isNumber, isObject, isArray, isFunction, isValid } from './utils/typeChecks'
 import { logWarn } from './utils/logger'
 import { requestAnimationFrame } from './utils/compatible'
+import { formatValue } from './utils/format'
 import { CANDLE_PANE_ID } from './data/constants'
 
 export default class Chart {
@@ -187,7 +188,16 @@ export default class Chart {
       logWarn('applyNewData', 'dataList', 'dataList must be an array!!!')
       return
     }
-    this._chartPane.applyNewData(dataList, more)
+    const chartData = this._chartPane.chartData()
+    chartData.clearDataList()
+    chartData.addData(dataList, 0, more)
+    Promise.resolve(chartData.technicalIndicatorStore().calcInstance()).then(
+      result => {
+        if (result) {
+          this._chartPane.adjustPaneViewport(false, true, true, true)
+        }
+      }
+    )
   }
 
   /**
@@ -200,7 +210,15 @@ export default class Chart {
       logWarn('applyMoreData', 'dataList', 'dataList must be an array!!!')
       return
     }
-    this._chartPane.applyMoreData(dataList, more)
+    const chartData = this._chartPane.chartData()
+    chartData.addData(dataList, 0, more)
+    Promise.resolve(chartData.technicalIndicatorStore().calcInstance()).then(
+      result => {
+        if (result) {
+          this._chartPane.adjustPaneViewport(false, true, true, true)
+        }
+      }
+    )
   }
 
   /**
@@ -212,7 +230,26 @@ export default class Chart {
       logWarn('updateData', 'data', 'data must be an object!!!')
       return
     }
-    this._chartPane.updateData(data)
+    const chartData = this._chartPane.chartData()
+    const dataList = chartData.dataList()
+    const dataSize = dataList.length
+    // 这里判断单个数据应该添加到哪个位置
+    const timestamp = formatValue(data, 'timestamp', 0)
+    const lastDataTimestamp = formatValue(dataList[dataSize - 1], 'timestamp', 0)
+    if (timestamp >= lastDataTimestamp) {
+      let pos = dataSize
+      if (timestamp === lastDataTimestamp) {
+        pos = dataSize - 1
+      }
+      chartData.addData(data, pos)
+      Promise.resolve(chartData.technicalIndicatorStore().calcInstance()).then(
+        result => {
+          if (result) {
+            this._chartPane.adjustPaneViewport(false, true, true, true)
+          }
+        }
+      )
+    }
   }
 
   /**
@@ -240,7 +277,7 @@ export default class Chart {
       return null
     }
     const tech = isObject(value) && !isArray(value) ? value : { name: value }
-    if (!this._chartPane.chartData().technicalIndicatorStore().getTemplate(tech.name)) {
+    if (!this._chartPane.chartData().technicalIndicatorStore().hasTemplate(tech.name)) {
       logWarn('createTechnicalIndicator', 'value', 'can not find the corresponding technical indicator!!!')
       return null
     }
@@ -265,17 +302,19 @@ export default class Chart {
    * @param override 覆盖参数
    * @param paneId 窗口id
    */
-  overrideTechnicalIndicator (override, paneId) {
-    if (!isObject(override) || isArray(override)) {
-      logWarn('overrideTechnicalIndicator', 'override', 'override must be an object!!!')
+  overrideTechnicalIndicator (techOverride, paneId) {
+    if (!isObject(techOverride) || isArray(techOverride)) {
+      logWarn('overrideTechnicalIndicator', 'overrideTech', 'overrideTech must be an object!!!')
       return
     }
-    const templateInstance = this._chartPane.chartData().technicalIndicatorStore().getTemplate(override.name)
-    if (!templateInstance) {
-      logWarn('overrideTechnicalIndicator', 'override.name', 'can not find the corresponding technical indicator!!!')
-      return
+    const promise = this._chartPane.chartData().technicalIndicatorStore().override(techOverride, paneId)
+    if (promise) {
+      promise.then(
+        _ => {
+          this._chartPane.adjustPaneViewport(false, true, true, true)
+        }
+      )
     }
-    this._chartPane.overrideTechnicalIndicator(templateInstance, override, paneId)
   }
 
   /**
@@ -284,7 +323,7 @@ export default class Chart {
    * @return {{}}
    */
   getTechnicalIndicatorTemplate (name) {
-    return this._chartPane.chartData().technicalIndicatorStore().getInfo(name)
+    return this._chartPane.chartData().technicalIndicatorStore().getTemplateInfo(name)
   }
 
   /**
@@ -294,7 +333,7 @@ export default class Chart {
     * @return {{}}
     */
   getTechnicalIndicatorByPaneId (paneId, name) {
-    return this._chartPane.getPaneTechnicalIndicator(paneId, name)
+    return this._chartPane.chartData().technicalIndicatorStore().getInstanceInfo(paneId, name)
   }
 
   /**
@@ -303,10 +342,6 @@ export default class Chart {
    * @param name 指标名
    */
   removeTechnicalIndicator (paneId, name) {
-    if (!this._chartPane.hasPane(paneId)) {
-      logWarn('removeTechnicalIndicator', 'paneId', 'can not find the corresponding pane!!!')
-      return
-    }
     this._chartPane.removeTechnicalIndicator(paneId, name)
   }
 

@@ -22,25 +22,23 @@ import { getTechnicalIndicatorTooltipData } from '../data/store/TechnicalIndicat
 import { renderText } from '../renderer/text'
 
 export default class TechnicalIndicatorOverlayView extends View {
-  constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
+  constructor (container, chartData, xAxis, yAxis, paneId) {
     super(container, chartData)
     this._xAxis = xAxis
     this._yAxis = yAxis
-    this._additionalDataProvider = additionalDataProvider
+    this._paneId = paneId
   }
 
   _draw () {
     this._ctx.textBaseline = 'alphabetic'
-    const paneId = this._additionalDataProvider.id()
-    this._drawTag(paneId)
-    this._drawShape(paneId)
-    this._drawAnnotation(paneId)
+    this._drawTag()
+    this._drawShape()
+    this._drawAnnotation()
     const crosshair = this._chartData.crosshairStore().get()
     if (crosshair.kLineData) {
-      const technicalIndicators = this._additionalDataProvider.technicalIndicators()
       const styleOptions = this._chartData.styleOptions()
       const crosshairOptions = styleOptions.crosshair
-      if (crosshair.paneId === this._additionalDataProvider.id()) {
+      if (crosshair.paneId === this._paneId) {
         // 绘制十字光标水平线
         this._drawCrosshairLine(crosshairOptions, 'horizontal', crosshair.y, 0, this._width, renderHorizontalLine)
       }
@@ -48,16 +46,15 @@ export default class TechnicalIndicatorOverlayView extends View {
         // 绘制十字光标垂直线
         this._drawCrosshairLine(crosshairOptions, 'vertical', crosshair.realX, 0, this._height, renderVerticalLine)
       }
-      this._drawTooltip(crosshair, technicalIndicators)
+      this._drawTooltip(crosshair, this._chartData.technicalIndicatorStore().instances(this._paneId))
     }
   }
 
   /**
    * 绘制注解
-   * @param paneId
    */
-  _drawAnnotation (paneId) {
-    const annotations = this._chartData.annotationStore().get(paneId)
+  _drawAnnotation () {
+    const annotations = this._chartData.annotationStore().get(this._paneId)
     if (annotations) {
       annotations.forEach(annotation => {
         annotation.draw(this._ctx)
@@ -67,10 +64,9 @@ export default class TechnicalIndicatorOverlayView extends View {
 
   /**
    * 绘制标签
-   * @param paneId
    */
-  _drawTag (paneId) {
-    const tags = this._chartData.tagStore().get(paneId)
+  _drawTag () {
+    const tags = this._chartData.tagStore().get(this._paneId)
     if (tags) {
       tags.forEach(tag => {
         tag.drawMarkLine(this._ctx)
@@ -80,15 +76,14 @@ export default class TechnicalIndicatorOverlayView extends View {
 
   /**
    * 绘制图形标记
-   * @param paneId
    * @private
    */
-  _drawShape (paneId) {
-    this._chartData.shapeStore().instances(paneId).forEach(shape => {
+  _drawShape () {
+    this._chartData.shapeStore().instances(this._paneId).forEach(shape => {
       shape.draw(this._ctx)
     })
     const progressShape = this._chartData.shapeStore().progressInstance()
-    if (progressShape.paneId === paneId) {
+    if (progressShape.paneId === this._paneId) {
       progressShape.instance.draw(this._ctx)
     }
   }
@@ -96,17 +91,17 @@ export default class TechnicalIndicatorOverlayView extends View {
   /**
    * 绘制图例
    * @param crosshair
-   * @param technicalIndicators
+   * @param techs
    * @private
    */
-  _drawTooltip (crosshair, technicalIndicators) {
-    const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
-    this._drawBatchTechnicalIndicatorToolTip(
+  _drawTooltip (crosshair, techs) {
+    const techOptions = this._chartData.styleOptions().technicalIndicator
+    this._drawBatchTechToolTip(
       crosshair,
-      technicalIndicators,
-      technicalIndicatorOptions,
+      techs,
+      techOptions,
       0,
-      this._shouldDrawTooltip(crosshair, technicalIndicatorOptions.tooltip)
+      this._shouldDrawTooltip(crosshair, techOptions.tooltip)
     )
   }
 
@@ -140,23 +135,23 @@ export default class TechnicalIndicatorOverlayView extends View {
   /**
    * 批量绘制技术指标提示
    * @param crosshair
-   * @param technicalIndicators
-   * @param technicalIndicatorOptions
+   * @param techs
+   * @param techOptions
    * @param offsetTop
-   * @param isDrawTechnicalIndicatorTooltip
+   * @param isDrawTechTooltip
    */
-  _drawBatchTechnicalIndicatorToolTip (crosshair, technicalIndicators, technicalIndicatorOptions, offsetTop = 0, isDrawTechnicalIndicatorTooltip) {
-    if (!isDrawTechnicalIndicatorTooltip) {
+  _drawBatchTechToolTip (crosshair, techs, techOptions, offsetTop = 0, isDrawTechTooltip) {
+    if (!isDrawTechTooltip) {
       return
     }
-    const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
+    const techTooltipOptions = techOptions.tooltip
     let top = offsetTop
-    technicalIndicators.forEach(technicalIndicator => {
-      this._drawTechnicalIndicatorTooltip(crosshair, technicalIndicator, technicalIndicatorOptions, top)
+    techs.forEach(tech => {
+      this._drawTechTooltip(crosshair, tech, techOptions, top)
       top += (
-        technicalIndicatorTooltipOptions.text.marginTop +
-        technicalIndicatorTooltipOptions.text.size +
-        technicalIndicatorTooltipOptions.text.marginBottom
+        techTooltipOptions.text.marginTop +
+        techTooltipOptions.text.size +
+        techTooltipOptions.text.marginBottom
       )
     })
   }
@@ -164,51 +159,51 @@ export default class TechnicalIndicatorOverlayView extends View {
   /**
    * 绘制指标图例
    * @param crosshair
-   * @param technicalIndicator
-   * @param technicalIndicatorOptions
+   * @param tech
+   * @param techOptions
    * @param offsetTop
    * @private
    */
-  _drawTechnicalIndicatorTooltip (crosshair, technicalIndicator, technicalIndicatorOptions, offsetTop = 0) {
-    const technicalIndicatorTooltipOptions = technicalIndicatorOptions.tooltip
-    const styles = technicalIndicator.styles || technicalIndicatorOptions
-    const technicalIndicatorResult = technicalIndicator.result
-    const technicalIndicatorData = technicalIndicatorResult[crosshair.dataIndex]
-    const tooltipData = getTechnicalIndicatorTooltipData(technicalIndicatorData, technicalIndicator)
+  _drawTechTooltip (crosshair, tech, techOptions, offsetTop = 0) {
+    const techTooltipOptions = techOptions.tooltip
+    const styles = tech.styles || techOptions
+    const techResult = tech.result
+    const techData = techResult[crosshair.dataIndex]
+    const tooltipData = getTechnicalIndicatorTooltipData(techData, tech)
     const colors = styles.line.colors
     const dataList = this._chartData.dataList()
     const cbData = {
-      prev: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: technicalIndicatorResult[crosshair.dataIndex - 1] },
-      current: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData },
-      next: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: technicalIndicatorResult[crosshair.dataIndex + 1] }
+      prev: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: techResult[crosshair.dataIndex - 1] },
+      current: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData: techData },
+      next: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: techResult[crosshair.dataIndex + 1] }
     }
-    const plots = technicalIndicator.plots
-    const technicalIndicatorTooltipTextOptions = technicalIndicatorTooltipOptions.text
+    const plots = tech.plots
+    const techTooltipTextOptions = techTooltipOptions.text
     const values = tooltipData.values
-    const textMarginLeft = technicalIndicatorTooltipTextOptions.marginLeft
-    const textMarginRight = technicalIndicatorTooltipTextOptions.marginRight
+    const textMarginLeft = techTooltipTextOptions.marginLeft
+    const textMarginRight = techTooltipTextOptions.marginRight
     let labelX = 0
-    const labelY = technicalIndicatorTooltipTextOptions.marginTop + offsetTop
-    const textSize = technicalIndicatorTooltipTextOptions.size
-    const textColor = technicalIndicatorTooltipTextOptions.color
+    const labelY = techTooltipTextOptions.marginTop + offsetTop
+    const textSize = techTooltipTextOptions.size
+    const textColor = techTooltipTextOptions.color
     const colorSize = colors.length
     this._ctx.textBaseline = 'top'
-    this._ctx.font = createFont(textSize, technicalIndicatorTooltipTextOptions.weight, technicalIndicatorTooltipTextOptions.family)
+    this._ctx.font = createFont(textSize, techTooltipTextOptions.weight, techTooltipTextOptions.family)
 
-    if (technicalIndicatorTooltipOptions.showName) {
+    if (techTooltipOptions.showName) {
       const nameText = tooltipData.name
       const nameTextWidth = calcTextWidth(this._ctx, nameText)
       labelX += textMarginLeft
       renderText(this._ctx, textColor, labelX, labelY, nameText)
       labelX += nameTextWidth
-      if (!technicalIndicatorTooltipOptions.showParams) {
+      if (!techTooltipOptions.showParams) {
         labelX += textMarginRight
       }
     }
-    if (technicalIndicatorTooltipOptions.showParams) {
+    if (techTooltipOptions.showParams) {
       const calcParamText = tooltipData.calcParamText
       const calcParamTextWidth = calcTextWidth(this._ctx, calcParamText)
-      if (!technicalIndicatorTooltipOptions.showName) {
+      if (!techTooltipOptions.showName) {
         labelX += textMarginLeft
       }
       renderText(this._ctx, textColor, labelX, labelY, calcParamText)
@@ -236,7 +231,7 @@ export default class TechnicalIndicatorOverlayView extends View {
       const title = values[i].title
       if (isValid(title)) {
         labelX += textMarginLeft
-        const text = `${title}${values[i].value || technicalIndicatorTooltipOptions.defaultValue}`
+        const text = `${title}${values[i].value || techTooltipTextOptions.defaultValue}`
         const textWidth = calcTextWidth(this._ctx, text)
         renderText(this._ctx, valueColor, labelX, labelY, text)
         labelX += (textWidth + textMarginRight)

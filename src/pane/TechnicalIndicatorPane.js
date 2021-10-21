@@ -20,11 +20,9 @@ import YAxis from '../component/axis/YAxis'
 export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
     super(props)
-    this._techs = new Map()
     if ('height' in props) {
       this.setHeight(props.height)
     }
-    this.setTechnicalIndicator(props.technicalIndicator)
   }
 
   _initBefore (props) {
@@ -36,7 +34,8 @@ export default class TechnicalIndicatorPane extends Pane {
     return new YAxis(
       props.chartData,
       false,
-      { technicalIndicators: this.technicalIndicators.bind(this) })
+      props.id
+    )
   }
 
   _createMainWidget (container, props) {
@@ -45,10 +44,7 @@ export default class TechnicalIndicatorPane extends Pane {
       chartData: props.chartData,
       xAxis: props.xAxis,
       yAxis: this._yAxis,
-      additionalDataProvider: {
-        technicalIndicators: this.technicalIndicators.bind(this),
-        id: this.id.bind(this)
-      }
+      paneId: props.id
     })
   }
 
@@ -57,10 +53,7 @@ export default class TechnicalIndicatorPane extends Pane {
       container,
       chartData: props.chartData,
       yAxis: this._yAxis,
-      additionalDataProvider: {
-        technicalIndicators: this.technicalIndicators.bind(this),
-        id: this.id.bind(this)
-      }
+      paneId: props.id
     })
   }
 
@@ -84,86 +77,5 @@ export default class TechnicalIndicatorPane extends Pane {
 
   yAxis () {
     return this._yAxis
-  }
-
-  /**
-   * 获取技术指标
-   * @return {Map<any, any>}
-   */
-  technicalIndicators () {
-    return this._techs
-  }
-
-  /**
-   * 是否无指标
-   * @return {boolean}
-   */
-  isEmptyTechnicalIndicator () {
-    return this._techs.size === 0
-  }
-
-  /**
-   * 移除技术指标
-   * @param name
-   * @return {boolean}
-   */
-  removeTechnicalIndicator (name) {
-    if (name) {
-      if (this._techs.has(name)) {
-        this._techs.delete(name)
-        return true
-      }
-    } else {
-      this._techs.clear()
-      return true
-    }
-    return false
-  }
-
-  /**
-   * 设置技术指标类型
-   * @param tech
-   * @param isStack
-   */
-  setTechnicalIndicator (tech, isStack) {
-    if (tech) {
-      const { name, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles } = tech
-      if (this._techs.has(name)) {
-        return false
-      }
-      const cloneInstance = this._chartData.technicalIndicatorStore().cloneTemplate(name)
-      if (cloneInstance) {
-        cloneInstance.setCalcParams(calcParams)
-        cloneInstance.setPrecision(precision)
-        cloneInstance.setShouldOhlc(shouldOhlc)
-        cloneInstance.setShouldFormatBigNumber(shouldFormatBigNumber)
-        cloneInstance.setStyles(styles, this._chartData.styleOptions().technicalIndicator)
-        if (!isStack) {
-          this._techs.clear()
-        }
-        this._techs.set(name, cloneInstance)
-        this.calcTechnicalIndicator(cloneInstance)
-        return true
-      }
-    }
-    return false
-  }
-
-  /**
-   * 计算单个技术指标
-   * @param technicalIndicator
-   */
-  calcTechnicalIndicator (technicalIndicator) {
-    technicalIndicator.calc(this._chartData.dataList())
-  }
-
-  /**
-   * 计算所有技术指标
-   */
-  calcAllTechnicalIndicator () {
-    this._techs.forEach(technicalIndicator => {
-      this.calcTechnicalIndicator(technicalIndicator)
-    })
-    return this._yAxis.computeAxis()
   }
 }

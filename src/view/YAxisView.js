@@ -23,10 +23,10 @@ import { renderFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class YAxisView extends View {
-  constructor (container, chartData, yAxis, additionalDataProvider) {
+  constructor (container, chartData, yAxis, paneId) {
     super(container, chartData)
     this._yAxis = yAxis
-    this._additionalDataProvider = additionalDataProvider
+    this._paneId = paneId
   }
 
   _draw () {
@@ -35,8 +35,8 @@ export default class YAxisView extends View {
       this._drawAxisLine(yAxisOptions)
       this._drawTickLines(yAxisOptions)
       this._drawTickLabels(yAxisOptions)
-      this._drawTechnicalIndicatorLastValue(yAxisOptions)
-      this._drawLastPriceLabel(yAxisOptions)
+      this._drawTechLastValue()
+      this._drawLastPriceLabel()
     }
   }
 
@@ -125,34 +125,33 @@ export default class YAxisView extends View {
 
   /**
    * 绘制技术指标最后值
-   * @param yAxisOptions
    * @private
    */
-  _drawTechnicalIndicatorLastValue (yAxisOptions) {
-    const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
-    const lastValueMarkOptions = technicalIndicatorOptions.lastValueMark
+  _drawTechLastValue () {
+    const techOptions = this._chartData.styleOptions().technicalIndicator
+    const lastValueMarkOptions = techOptions.lastValueMark
     if (!lastValueMarkOptions.show || !lastValueMarkOptions.text.show) {
       return
     }
-    const techs = this._additionalDataProvider.technicalIndicators()
+    const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
     const dataList = this._chartData.dataList()
     techs.forEach(tech => {
       const techResult = tech.result || []
       const dataSize = techResult.length
-      const technicalIndicatorData = techResult[dataSize - 1] || {}
+      const techData = techResult[dataSize - 1] || {}
       const plots = tech.plots
       const cbData = {
         prev: { kLineData: dataList[dataSize - 2], technicalIndicatorData: techResult[dataSize - 2] },
-        current: { kLineData: dataList[dataSize - 1], technicalIndicatorData },
+        current: { kLineData: dataList[dataSize - 1], technicalIndicatorData: techData },
         next: { kLineData: null, technicalIndicatorData: null }
       }
       const precision = tech.precision
-      const styles = tech.styles || technicalIndicatorOptions
+      const styles = tech.styles || techOptions
       const colors = styles.line.colors || []
       const colorSize = colors.length
       let lineCount = 0
       plots.forEach(plot => {
-        const value = technicalIndicatorData[plot.key]
+        const value = techData[plot.key]
         let backgroundColor
         switch (plot.type) {
           case TechnicalIndicatorPlotType.CIRCLE: {
@@ -186,7 +185,7 @@ export default class YAxisView extends View {
    * 绘制最新价文字
    * @private
    */
-  _drawLastPriceLabel (yAxisOptions) {
+  _drawLastPriceLabel () {
     if (!this._yAxis.isCandleYAxis()) {
       return
     }

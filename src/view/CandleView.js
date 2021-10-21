@@ -53,7 +53,7 @@ export default class CandleView extends TechnicalIndicatorView {
       )
       this._drawCandle(candleOptions)
     }
-    this._drawTechnicalIndicators()
+    this._drawTechs()
     this._drawGrid()
   }
 

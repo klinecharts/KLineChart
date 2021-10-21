@@ -18,10 +18,7 @@ import YAxis from '../component/axis/YAxis'
 
 export default class CandlePane extends TechnicalIndicatorPane {
   _createYAxis (props) {
-    return new YAxis(
-      props.chartData, true,
-      { technicalIndicators: this.technicalIndicators.bind(this) }
-    )
+    return new YAxis(props.chartData, true, props.id)
   }
 
   _createMainWidget (container, props) {
@@ -30,10 +27,7 @@ export default class CandlePane extends TechnicalIndicatorPane {
       chartData: props.chartData,
       xAxis: props.xAxis,
       yAxis: this._yAxis,
-      additionalDataProvider: {
-        technicalIndicators: this.technicalIndicators.bind(this),
-        id: this.id.bind(this)
-      }
+      paneId: props.id
     })
   }
 }

@@ -20,11 +20,11 @@ import { renderHorizontalLine, renderVerticalLine, renderLine } from '../rendere
 import { isValid } from '../utils/typeChecks'
 
 export default class TechnicalIndicatorView extends View {
-  constructor (container, chartData, xAxis, yAxis, additionalDataProvider) {
+  constructor (container, chartData, xAxis, yAxis, paneId) {
     super(container, chartData)
     this._xAxis = xAxis
     this._yAxis = yAxis
-    this._additionalDataProvider = additionalDataProvider
+    this._paneId = paneId
   }
 
   _draw () {
@@ -33,7 +33,7 @@ export default class TechnicalIndicatorView extends View {
   }
 
   _drawContent () {
-    this._drawTechnicalIndicators()
+    this._drawTechs()
     this._drawGrid()
   }
 
@@ -79,26 +79,26 @@ export default class TechnicalIndicatorView extends View {
   /**
    * 绘制指标
    */
-  _drawTechnicalIndicators () {
+  _drawTechs () {
     this._ctx.globalCompositeOperation = 'source-over'
-    const technicalIndicatorOptions = this._chartData.styleOptions().technicalIndicator
-    const technicalIndicators = this._additionalDataProvider.technicalIndicators()
-    technicalIndicators.forEach(technicalIndicator => {
-      const plots = technicalIndicator.plots
+    const techOptions = this._chartData.styleOptions().technicalIndicator
+    const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
+    techs.forEach(tech => {
+      const plots = tech.plots
       const lines = []
       const dataList = this._chartData.dataList()
-      const technicalIndicatorResult = technicalIndicator.result
-      const styles = technicalIndicator.styles || technicalIndicatorOptions
+      const techResult = tech.result
+      const styles = tech.styles || techOptions
       // 技术指标自定义绘制
-      if (technicalIndicator.render) {
+      if (tech.render) {
         this._ctx.save()
-        technicalIndicator.render({
+        tech.render({
           ctx: this._ctx,
           dataSource: {
             from: this._chartData.timeScaleStore().from(),
             to: this._chartData.timeScaleStore().to(),
             kLineDataList: this._chartData.dataList(),
-            technicalIndicatorDataList: technicalIndicatorResult
+            technicalIndicatorDataList: techResult
           },
           viewport: {
             width: this._width,
@@ -117,21 +117,21 @@ export default class TechnicalIndicatorView extends View {
       this._ctx.lineWidth = 1
       this._drawGraphics(
         (x, i, kLineData, halfBarSpace, barSpace) => {
-          const technicalIndicatorData = technicalIndicatorResult[i] || {}
+          const techData = techResult[i] || {}
           let lineValueIndex = 0
-          if (technicalIndicator.shouldOhlc && !isCandleYAxis) {
+          if (tech.shouldOhlc && !isCandleYAxis) {
             this._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, styles.bar, CandleType.OHLC)
           }
           plots.forEach(plot => {
-            const value = technicalIndicatorData[plot.key]
+            const value = techData[plot.key]
             const valueY = this._yAxis.convertToPixel(value)
             switch (plot.type) {
               case TechnicalIndicatorPlotType.CIRCLE: {
                 if (isValid(value)) {
                   const cbData = {
-                    prev: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
-                    current: { kLineData, technicalIndicatorData },
-                    next: { kLineData: dataList[i + 1], technicalIndicatorData: technicalIndicatorResult[i + 1] }
+                    prev: { kLineData: dataList[i - 1], technicalIndicatorData: techResult[i - 1] },
+                    current: { kLineData, technicalIndicatorData: techData },
+                    next: { kLineData: dataList[i + 1], technicalIndicatorData: techResult[i + 1] }
                   }
                   this._drawCircle({
                     x,
@@ -146,9 +146,9 @@ export default class TechnicalIndicatorView extends View {
               case TechnicalIndicatorPlotType.BAR: {
                 if (isValid(value)) {
                   const cbData = {
-                    prev: { kLineData: dataList[i - 1], technicalIndicatorData: technicalIndicatorResult[i - 1] },
-                    current: { kLineData, technicalIndicatorData },
-                    next: { kLineData: dataList[i + 1], technicalIndicatorData: technicalIndicatorResult[i + 1] }
+                    prev: { kLineData: dataList[i - 1], technicalIndicatorData: techResult[i - 1] },
+                    current: { kLineData, technicalIndicatorData: techData },
+                    next: { kLineData: dataList[i + 1], technicalIndicatorData: techResult[i + 1] }
                   }
                   let baseValue
                   if (isValid(plot.baseValue)) {
@@ -217,12 +217,12 @@ export default class TechnicalIndicatorView extends View {
   /**
    * 绘制线
    * @param lines
-   * @param technicalIndicatorOptions
+   * @param techOptions
    */
-  _drawLines (lines, technicalIndicatorOptions) {
-    const colors = technicalIndicatorOptions.line.colors || []
+  _drawLines (lines, techOptions) {
+    const colors = techOptions.line.colors || []
     const colorSize = colors.length
-    this._ctx.lineWidth = technicalIndicatorOptions.line.size
+    this._ctx.lineWidth = techOptions.line.size
 
     lines.forEach((coordinates, i) => {
       this._ctx.strokeStyle = colors[i % colorSize]

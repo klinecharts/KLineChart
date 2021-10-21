@@ -137,15 +137,6 @@ export default class ShapeStore {
   }
 
   /**
-    * 是否有模板
-    * @param name
-    * @return
-    */
-  hasTemplate (name) {
-    return !!this._templates[name]
-  }
-
-  /**
    * 获取实例
    * @param shapeId
    * @returns

@@ -20,11 +20,11 @@ import { formatBigNumber, formatPrecision } from '../../utils/format'
 import { round, log10, index10 } from '../../utils/number'
 
 export default class YAxis extends Axis {
-  constructor (chartData, isCandleYAxis, additionalDataProvider) {
+  constructor (chartData, isCandleYAxis, paneId) {
     super(chartData)
     this._realRange = 0
     this._isCandleYAxis = isCandleYAxis
-    this._additionalDataProvider = additionalDataProvider
+    this._paneId = paneId
   }
 
   _computeMinMax () {
@@ -33,13 +33,13 @@ export default class YAxis extends Axis {
     let shouldOhlc = false
     let minValue = Number.MAX_SAFE_INTEGER
     let maxValue = Number.MIN_SAFE_INTEGER
-    let technicalIndicatorPrecision = Number.MAX_SAFE_INTEGER
-    const technicalIndicators = this._additionalDataProvider.technicalIndicators()
-    technicalIndicators.forEach(tech => {
+    let techPrecision = Number.MAX_SAFE_INTEGER
+    const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
+    techs.forEach(tech => {
       if (!shouldOhlc) {
         shouldOhlc = tech.shouldOhlc
       }
-      technicalIndicatorPrecision = Math.min(technicalIndicatorPrecision, tech.precision)
+      techPrecision = Math.min(techPrecision, tech.precision)
       if (isNumber(tech.minValue)) {
         minValue = Math.min(minValue, tech.minValue)
       }
@@ -55,14 +55,14 @@ export default class YAxis extends Axis {
     let precision = 4
     if (this._isCandleYAxis) {
       const pricePrecision = this._chartData.pricePrecision()
-      if (technicalIndicatorPrecision !== Number.MAX_SAFE_INTEGER) {
-        precision = Math.min(technicalIndicatorPrecision, pricePrecision)
+      if (techPrecision !== Number.MAX_SAFE_INTEGER) {
+        precision = Math.min(techPrecision, pricePrecision)
       } else {
         precision = pricePrecision
       }
     } else {
-      if (technicalIndicatorPrecision !== Number.MAX_SAFE_INTEGER) {
-        precision = technicalIndicatorPrecision
+      if (techPrecision !== Number.MAX_SAFE_INTEGER) {
+        precision = techPrecision
       }
     }
     const visibleDataList = this._chartData.visibleDataList()
@@ -173,16 +173,16 @@ export default class YAxis extends Axis {
   _optimalTicks (ticks) {
     const optimalTicks = []
     const yAxisType = this.yAxisType()
-    const technicalIndicators = this._additionalDataProvider.technicalIndicators()
+    const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
     let precision = 0
     let shouldFormatBigNumber = false
     if (this._isCandleYAxis) {
       precision = this._chartData.pricePrecision()
     } else {
-      technicalIndicators.forEach(technicalIndicator => {
-        precision = Math.max(precision, technicalIndicator.precision)
+      techs.forEach(tech => {
+        precision = Math.max(precision, tech.precision)
         if (!shouldFormatBigNumber) {
-          shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
+          shouldFormatBigNumber = tech.shouldFormatBigNumber
         }
       })
     }
@@ -298,13 +298,13 @@ export default class YAxis extends Axis {
       crosshairOptions.horizontal.show &&
       crosshairOptions.horizontal.text.show
     ) {
-      const technicalIndicators = this._additionalDataProvider.technicalIndicators()
-      let technicalIndicatorPrecision = 0
+      const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
+      let techPrecision = 0
       let shouldFormatBigNumber = false
-      technicalIndicators.forEach(technicalIndicator => {
-        technicalIndicatorPrecision = Math.max(technicalIndicator.precision, technicalIndicatorPrecision)
+      techs.forEach(tech => {
+        techPrecision = Math.max(tech.precision, techPrecision)
         if (!shouldFormatBigNumber) {
-          shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
+          shouldFormatBigNumber = tech.shouldFormatBigNumber
         }
       })
       this._measureCtx.font = createFont(
@@ -318,12 +318,12 @@ export default class YAxis extends Axis {
           const pricePrecision = this._chartData.pricePrecision()
           const lastValueMarkOptions = styleOptions.technicalIndicator.lastValueMark
           if (lastValueMarkOptions.show && lastValueMarkOptions.text.show) {
-            precision = Math.max(technicalIndicatorPrecision, pricePrecision)
+            precision = Math.max(techPrecision, pricePrecision)
           } else {
             precision = pricePrecision
           }
         } else {
-          precision = technicalIndicatorPrecision
+          precision = techPrecision
         }
       }
       let valueText = formatPrecision(this._maxValue, precision)

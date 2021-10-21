@@ -1,5 +1,7 @@
 import { Viewport, KLineData } from './Common';
 
+export declare type TechnicalIndicatorSeries = 'price' | 'volume' | 'normal';
+
 export declare type TechnicalIndicatorPlotType = 'circle' | 'bar' | 'line';
 
 export declare interface TechnicalIndicatorPlotCallbackDataItem {
@@ -49,6 +51,7 @@ export declare interface TechnicalIndicatorRenderParams {
 
 export declare interface TechnicalIndicatorTemplate extends TechnicalIndicator {
   calcTechnicalIndicator: (kLineDataList: KLineData[], options?: any) => any[];
+  series?: TechnicalIndicatorSeries;
   plots?: TechnicalIndicatorPlot[];
   shouldCheckParamCount?: boolean;
   minValue?: number;

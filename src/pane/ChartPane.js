@@ -13,14 +13,12 @@
  */
 
 import ChartData from '../data/ChartData'
-import { createTechnicalIndicatorInfo } from '../data/store/TechnicalIndicatorStore'
 
 import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
 
 import { YAxisPosition } from '../options/styleOptions'
 import { isArray, isBoolean, isFunction, isValid, isNumber } from '../utils/typeChecks'
-import { formatValue } from '../utils/format'
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import SeparatorPane from './SeparatorPane'
 
@@ -98,20 +96,21 @@ export default class ChartPane {
    */
   _crosshairObserver ({ dataIndex, kLineData, x, y }) {
     if (this.chartData().actionStore().has(ActionType.CROSSHAIR)) {
-      const technicalIndicatorData = {}
-      this._panes.forEach((pane, id) => {
+      const techDatas = {}
+      this._panes.forEach((_, id) => {
         const data = {}
-        pane.technicalIndicators().forEach(tech => {
+        const techs = this.chartData().technicalIndicatorStore().instances(id)
+        techs.forEach(tech => {
           const result = tech.result
           data[tech.name] = result[dataIndex]
         })
-        technicalIndicatorData[id] = data
+        techDatas[id] = data
       })
       this._chartData.actionStore().execute(ActionType.CROSSHAIR, {
         coordinate: { x, y },
         dataIndex,
         kLineData,
-        technicalIndicatorData
+        technicalIndicatorData: techDatas
       })
     }
   }
@@ -171,25 +170,6 @@ export default class ChartPane {
       })
       this.adjustPaneViewport(false, shouldMeasureWidth, true)
     }
-  }
-
-  /**
-   * 计算所有pane的指标
-   * @private
-   */
-  _calcAllPaneTechnicalIndicator () {
-    const tasks = []
-    this._panes.forEach(pane => {
-      tasks.push(
-        Promise.resolve(pane.calcAllTechnicalIndicator())
-      )
-    })
-    Promise.all(tasks).then(
-      result => {
-        const shouldMeasureWidth = result.indexOf(true) > -1
-        this.adjustPaneViewport(false, shouldMeasureWidth, true)
-      }
-    )
   }
 
   /**
@@ -340,145 +320,31 @@ export default class ChartPane {
   }
 
   /**
-   * 覆盖技术指标
-   * @param templateInstance
-   * @param name
-   * @param calcParams
-   * @param precision
-   * @param shouldOhlc
-   * @param shouldFormatBigNumber
-   * @param styles
-   * @param paneId
-   */
-  overrideTechnicalIndicator (templateInstance, { name, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles }, paneId) {
-    const defaultTechStyleOptions = this._chartData.styleOptions().technicalIndicator
-    let panes = new Map()
-    if (isValid(paneId)) {
-      if (this._panes.has(paneId)) {
-        panes.set(paneId, this._panes.get(paneId))
-      }
-    } else {
-      templateInstance.setCalcParams(calcParams)
-      templateInstance.setPrecision(precision)
-      templateInstance.setShouldOhlc(shouldOhlc)
-      templateInstance.setShouldFormatBigNumber(shouldFormatBigNumber)
-      templateInstance.setStyles(styles, defaultTechStyleOptions)
-      panes = this._panes
-    }
-    if (panes.size > 0) {
-      let shouldAdjust = false
-      const tasks = []
-      panes.forEach(pane => {
-        const techs = pane.technicalIndicators()
-        if (techs.has(name)) {
-          const tech = techs.get(name)
-          const calcParamsSuccess = tech.setCalcParams(calcParams)
-          const precisionSuccess = tech.setPrecision(precision)
-          const shouldOhlcSuccess = tech.setShouldOhlc(shouldOhlc)
-          const shouldFormatBigNumberSuccess = tech.setShouldFormatBigNumber(shouldFormatBigNumber)
-          const styleSuccess = tech.setStyles(styles, defaultTechStyleOptions)
-          if (calcParamsSuccess || precisionSuccess || shouldOhlcSuccess || shouldFormatBigNumberSuccess || styleSuccess) {
-            shouldAdjust = true
-          }
-          if (calcParamsSuccess) {
-            tasks.push(
-              Promise.resolve(pane.calcTechnicalIndicator(tech))
-            )
-          }
-        }
-      })
-      if (shouldAdjust) {
-        Promise.all(tasks).then(
-          _ => {
-            this.adjustPaneViewport(false, true, true, true)
-          }
-        )
-      }
-    }
-  }
-
-  /**
-   * 处理数组数据
-   * @param dataList
-   * @param more
-   * @param extendFun
-   * @private
-   */
-  _applyDataList (dataList, more, extendFun) {
-    if (isArray(dataList)) {
-      if (isFunction(extendFun)) {
-        extendFun()
-      }
-      this._chartData.addData(dataList, 0, more)
-      this._calcAllPaneTechnicalIndicator()
-    }
-  }
-
-  /**
-   * 添加新数据
-   * @param dataList
-   * @param more
-   */
-  applyNewData (dataList, more) {
-    this._applyDataList(dataList, more, () => {
-      this._chartData.clearDataList()
-    })
-  }
-
-  /**
-   * 添加更多数据
-   * @param dataList
-   * @param more
-   */
-  applyMoreData (dataList, more) {
-    this._applyDataList(dataList, more)
-  }
-
-  /**
-   * 更新数据
-   * @param data
-   */
-  updateData (data) {
-    const dataList = this._chartData.dataList()
-    const dataSize = dataList.length
-    // 这里判断单个数据应该添加到哪个位置
-    const timestamp = formatValue(data, 'timestamp', 0)
-    const lastDataTimestamp = formatValue(dataList[dataSize - 1], 'timestamp', 0)
-    if (timestamp >= lastDataTimestamp) {
-      let pos = dataSize
-      if (timestamp === lastDataTimestamp) {
-        pos = dataSize - 1
-      }
-      this._chartData.addData(data, pos)
-      this._calcAllPaneTechnicalIndicator()
-    }
-  }
-
-  /**
    * 移除指标
    * @param paneId
    * @param name
    */
   removeTechnicalIndicator (paneId, name) {
-    const pane = this._panes.get(paneId)
-    const removed = pane.removeTechnicalIndicator(name)
-    if (pane.isEmptyTechnicalIndicator() && paneId !== CANDLE_PANE_ID) {
-      pane.destroy()
-      const deleteSeparatorTopPaneId = this._separators.get(paneId).topPaneId()
-      this._separators.get(paneId).destroy()
-      this._panes.delete(paneId)
-      this._separators.delete(paneId)
-      this._separators.forEach(separator => {
-        const topPaneId = separator.topPaneId()
-        if (!this._separators.has(topPaneId)) {
-          separator.updatePaneId(deleteSeparatorTopPaneId)
+    const removed = this._chartData.technicalIndicatorStore().removeInstance(paneId, name)
+    if (removed) {
+      let shouldMeasureHeight = false
+      if (paneId !== CANDLE_PANE_ID) {
+        if (!this._chartData.technicalIndicatorStore().hasInstance(paneId)) {
+          shouldMeasureHeight = true
+          this._panes.get(paneId).destroy()
+          const deleteSeparatorTopPaneId = this._separators.get(paneId).topPaneId()
+          this._separators.get(paneId).destroy()
+          this._panes.delete(paneId)
+          this._separators.delete(paneId)
+          this._separators.forEach(separator => {
+            const topPaneId = separator.topPaneId()
+            if (!this._separators.has(topPaneId)) {
+              separator.updatePaneId(deleteSeparatorTopPaneId)
+            }
+          })
         }
-      })
-      this.adjustPaneViewport(true, true, true, true, true)
-    } else {
-      if (removed) {
-        this.adjustPaneViewport(false, true, true, true)
       }
+      this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
     }
   }
 
@@ -490,7 +356,11 @@ export default class ChartPane {
    */
   createTechnicalIndicator (tech, isStack, options = {}) {
     if (this._panes.has(options.id)) {
-      this.setPaneOptions(options, this._panes.get(options.id).setTechnicalIndicator(tech, isStack))
+      let shouldAdjust = false
+      if (this._chartData.technicalIndicatorStore().addInstance(options.id, tech, isStack)) {
+        shouldAdjust = this._panes.get(options.id).yAxis().computeAxis()
+      }
+      this.setPaneOptions(options, shouldAdjust)
       return options.id
     }
     const id = options.id || `${TECHNICAL_INDICATOR_PANE_ID_PREFIX}${++this._paneBaseId}`
@@ -506,55 +376,17 @@ export default class ChartPane {
         drag: throttle(this._separatorDrag.bind(this), 50)
       }
     ))
-    this._panes.set(id,
-      new TechnicalIndicatorPane({
-        container: this._chartContainer,
-        chartData: this._chartData,
-        xAxis: this._xAxisPane.xAxis(),
-        technicalIndicator: tech,
-        id,
-        height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
-      })
-    )
+    const pane = new TechnicalIndicatorPane({
+      container: this._chartContainer,
+      chartData: this._chartData,
+      xAxis: this._xAxisPane.xAxis(),
+      id,
+      height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
+    })
+    this._panes.set(id, pane)
+    this._chartData.technicalIndicatorStore().addInstance(id, tech, isStack)
     this.adjustPaneViewport(true, true, true, true, true)
     return id
-  }
-
-  /**
-   * 获取窗口技术指标
-   * @param paneId
-   * @param name
-   * @return {{}}
-   */
-  getPaneTechnicalIndicator (paneId, name) {
-    const technicalIndicatorInfo = (pane) => {
-      const paneTechs = []
-      const techs = pane.technicalIndicators()
-      for (const entry of techs) {
-        const tech = entry[1]
-        if (tech) {
-          const techInfo = createTechnicalIndicatorInfo(tech)
-          if (tech.name === name) {
-            return techInfo
-          }
-          paneTechs.push(techInfo)
-        }
-      }
-      return paneTechs
-    }
-
-    if (isValid(paneId)) {
-      if (this._panes.has(paneId)) {
-        return technicalIndicatorInfo(this._panes.get(paneId))
-      }
-    } else {
-      const techs = {}
-      this._panes.forEach(pane => {
-        techs[pane.id()] = technicalIndicatorInfo(pane)
-      })
-      return techs
-    }
-    return {}
   }
 
   /**
@@ -865,6 +697,9 @@ export default class ChartPane {
     return canvas.toDataURL(`image/${type}`)
   }
 
+  /**
+   * 销毁
+   */
   destroy () {
     this._panes.forEach(pane => {
       pane.destroy()

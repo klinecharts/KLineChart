@@ -20,10 +20,10 @@ import { renderStrokeFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class YAxisOverlayView extends View {
-  constructor (container, chartData, yAxis, additionalDataProvider) {
+  constructor (container, chartData, yAxis, paneId) {
     super(container, chartData)
     this._yAxis = yAxis
-    this._additionalDataProvider = additionalDataProvider
+    this._paneId = paneId
   }
 
   _draw () {
@@ -37,7 +37,7 @@ export default class YAxisOverlayView extends View {
    * @private
    */
   _drawTag () {
-    const tags = this._chartData.tagStore().get(this._additionalDataProvider.id())
+    const tags = this._chartData.tagStore().get(this._paneId)
     if (tags) {
       tags.forEach(tag => {
         tag.drawText(this._ctx)
@@ -47,7 +47,7 @@ export default class YAxisOverlayView extends View {
 
   _drawCrossHairLabel () {
     const crosshair = this._chartData.crosshairStore().get()
-    if (crosshair.paneId !== this._additionalDataProvider.id() || this._chartData.dataList().length === 0) {
+    if (crosshair.paneId !== this._paneId || this._chartData.dataList().length === 0) {
       return
     }
     const styleOptions = this._chartData.styleOptions()
@@ -63,16 +63,16 @@ export default class YAxisOverlayView extends View {
       const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
       text = `${((value - fromData.close) / fromData.close * 100).toFixed(2)}%`
     } else {
-      const technicalIndicators = this._additionalDataProvider.technicalIndicators()
+      const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
       let precision = 0
       let shouldFormatBigNumber = false
       if (this._yAxis.isCandleYAxis()) {
         precision = this._chartData.pricePrecision()
       } else {
-        technicalIndicators.forEach(technicalIndicator => {
-          precision = Math.max(technicalIndicator.precision, precision)
+        techs.forEach(tech => {
+          precision = Math.max(tech.precision, precision)
           if (!shouldFormatBigNumber) {
-            shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
+            shouldFormatBigNumber = tech.shouldFormatBigNumber
           }
         })
       }
