@@ -14,6 +14,7 @@
 
 export default {
   name: 'SAR',
+  series: 'price',
   calcParams: [2, 2, 20],
   precision: 2,
   shouldOhlc: true,

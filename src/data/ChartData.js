@@ -120,6 +120,7 @@ export default class ChartData {
   setPriceVolumePrecision (pricePrecision, volumePrecision) {
     this._pricePrecision = pricePrecision
     this._volumePrecision = volumePrecision
+    this._technicalIndicatorStore.setSeriesPrecision(pricePrecision, volumePrecision)
   }
 
   /**

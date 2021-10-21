@@ -77,11 +77,12 @@ export default class TechnicalIndicatorStore {
   /**
    * 获取指标信息
    * @param tech
-   * @return {{ calcParams, precision, name, shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber, styles }}
+   * @return {{ calcParams, series, precision, name, shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber, styles }}
    */
   _createTechInfo (tech) {
     return {
       name: tech.name,
+      series: tech.series,
       calcParams: tech.calcParams,
       shouldCheckParamCount: tech.shouldCheckParamCount,
       shouldOhlc: tech.shouldOhlc,
@@ -111,6 +112,7 @@ export default class TechnicalIndicatorStore {
   /**
    * 创建一个新的技术指标
    * @param name
+   * @param series
    * @param calcParams
    * @param plots
    * @param precision

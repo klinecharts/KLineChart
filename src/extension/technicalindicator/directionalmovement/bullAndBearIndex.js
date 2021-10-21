@@ -19,6 +19,8 @@
  */
 export default {
   name: 'BBI',
+  series: 'price',
+  precision: 2,
   calcParams: [3, 6, 12, 24],
   shouldCheckParamCount: true,
   shouldOhlc: true,

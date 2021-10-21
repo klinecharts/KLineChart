@@ -24,16 +24,29 @@ export const TechnicalIndicatorPlotType = {
   CIRCLE: 'circle'
 }
 
+/**
+ * 系列
+ */
+export const TechnicalIndicatorSeries = {
+  PRICE: 'price',
+  VOLUME: 'volume',
+  NORMAL: 'normal'
+}
+
 export default class TechnicalIndicator {
   constructor ({
-    name, calcParams, plots, precision,
+    name, series, calcParams, plots, precision,
     shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber,
     minValue, maxValue, styles
   }) {
     // 指标名
     this.name = name || ''
+    // 系列
+    this.series = Object.values(TechnicalIndicatorSeries).indexOf(series) !== -1 ? series : TechnicalIndicatorSeries.NORMAL
     // 精度
     this.precision = isNumber(precision) && precision >= 0 ? precision : 4
+    // 精度设置标识
+    this._precisionFlag = false
     // 计算参数
     this.calcParams = isArray(calcParams) ? calcParams : []
     // 数据信息
@@ -63,14 +76,28 @@ export default class TechnicalIndicator {
     })
   }
 
-  setPrecision (precision) {
-    if (isNumber(precision) && precision >= 0) {
+  /**
+   * 设置精度
+   * @param precision
+   * @param flag
+   * @returns
+   */
+  setPrecision (precision, flag) {
+    if (isNumber(precision) && precision >= 0 && (!flag || (flag && !this._precisionFlag))) {
       this.precision = parseInt(precision, 10)
+      if (!flag) {
+        this._precisionFlag = true
+      }
       return true
     }
     return false
   }
 
+  /**
+   * 设置计算参数
+   * @param params
+   * @returns
+   */
   setCalcParams (params) {
     if (!isArray(params)) {
       return false
