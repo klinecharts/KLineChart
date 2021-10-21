@@ -18,7 +18,7 @@ Get the style configuration.
 
 
 ### setPriceVolumePrecision(pricePrecision, volumePrecision)
-Set the price and volume precision.
+Set the price and volume precision. Set the price and quantity accuracy, and the technical indicator series is'price' or'volume' will also be affected.
 - `pricePrecision` price precision
 - `volumePrecision` volume precision
 

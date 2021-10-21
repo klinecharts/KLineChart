@@ -18,7 +18,7 @@
 
 
 ### setPriceVolumePrecision(pricePrecision, volumePrecision)
-设置价格和数量精度。
+设置价格和数量精度，同时技术指标系列是'price'或者'volume'也会受影响
 - `pricePrecision` 价格精度
 - `volumePrecision` 数量精度
 

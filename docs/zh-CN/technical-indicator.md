@@ -31,6 +31,9 @@
   // plots 技术指标数据配置项
   calcTechnicalIndicator: (kLineDataList, { params, plots }) => { return [] },
 
+  // 系列
+  series: 'normal',
+
   // 精度，可缺省，默认为4
   precision: 4,
 

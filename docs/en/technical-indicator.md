@@ -31,6 +31,9 @@ To complete a technical indicator template, you only need to generate a technica
   // plots technical indicator data configuration item
   calcTechnicalIndicator: (kLineDataList, { params, plots }) => {return [] },
 
+  // Series, can be the default
+  series: 'normal',
+
   // Precision, can be the default, the default is 4
   precision: 4,
 
