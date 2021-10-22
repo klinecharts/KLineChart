@@ -274,16 +274,17 @@ export default class TechnicalIndicatorStore {
   removeInstance (paneId, name) {
     let removed = false
     if (this._instances.has(paneId)) {
+      const paneInstances = this._instances.get(paneId)
       if (isValid(name)) {
-        if (this._instances.get(paneId).has(name)) {
-          this._instances.get(paneId).delete(name)
+        if (paneInstances.has(name)) {
+          paneInstances.delete(name)
           removed = true
         }
       } else {
-        this._instances.get(paneId).clear()
+        paneInstances.clear()
         removed = true
       }
-      if (this._instances.get(paneId).size() === 0) {
+      if (paneInstances.size === 0) {
         this._instances.delete(paneId)
       }
     }
