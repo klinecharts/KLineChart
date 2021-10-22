@@ -1,6 +1,6 @@
 # Change Log
 ## 8.0.0-alpha7
-`2021-10-21`
+`2021-10-22`
 + 🆕 The technical indicators are added back to the attribute `series`.
 + 💄 Optimize data storage of technical indicators.
 
