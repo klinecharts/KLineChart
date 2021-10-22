@@ -98,14 +98,17 @@ export default class TagStore {
     if (isValid(paneId)) {
       if (this._tags.has(paneId)) {
         if (isValid(tagId)) {
-          const idTags = this._tags.get(paneId)
+          const paneTags = this._tags.get(paneId)
           const ids = [].concat(tagId)
           ids.forEach(id => {
-            if (idTags.has(id)) {
+            if (paneTags.has(id)) {
               shouldInvalidate = true
-              idTags.delete(id)
+              paneTags.delete(id)
             }
           })
+          if (paneTags.size === 0) {
+            this._tags.delete(paneId)
+          }
         } else {
           shouldInvalidate = true
           this._tags.delete(paneId)

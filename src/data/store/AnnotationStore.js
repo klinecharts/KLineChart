@@ -112,14 +112,17 @@ export default class AnnotationStore {
     if (isValid(paneId)) {
       if (this._annotations.has(paneId)) {
         if (isValid(point)) {
-          const idAnnotations = this._annotations.get(paneId)
+          const paneAnnotations = this._annotations.get(paneId)
           const points = [].concat(point)
           points.forEach(({ timestamp }) => {
-            if (idAnnotations.has(timestamp)) {
+            if (paneAnnotations.has(timestamp)) {
               shouldAdjust = true
-              idAnnotations.delete(timestamp)
+              paneAnnotations.delete(timestamp)
             }
           })
+          if (paneAnnotations.size === 0) {
+            this._annotations.delete(paneId)
+          }
           if (shouldAdjust) {
             this.createVisibleAnnotations()
           }
