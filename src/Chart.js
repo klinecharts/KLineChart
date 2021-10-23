@@ -100,6 +100,10 @@ export default class Chart {
     this._chartPane.adjustPaneViewport(true, true, true, true, true)
   }
 
+  setIntervalMs (intervalMs) {
+    this._chartPane.chartData().setIntervalMs(intervalMs)
+  }
+
   /**
    * 设置右边间距
    * @param space 空间大小
@@ -205,13 +209,22 @@ export default class Chart {
    * @param dataList k线数据数组
    * @param more 是否还有更多标识
    */
-  applyMoreData (dataList, more) {
-    if (!isArray(dataList)) {
-      logWarn('applyMoreData', 'dataList', 'dataList must be an array!!!')
+  applyMoreData (data, more) {
+    const isAnArray = isArray(data)
+    const isObjectAndHaveGoodFormat = isObject(data) && data.timestamp && data.price
+    if (!isAnArray && !isObjectAndHaveGoodFormat) {
+      logWarn('applyMoreData', 'data', 'data must be an array of an object with `timestamp` and `price` properties.')
       return
     }
+
     const chartData = this._chartPane.chartData()
-    chartData.addData(dataList, 0, more)
+    if (isAnArray) {
+      chartData.addData(data, 0, more)
+    } else {
+      chartData.addTick(data)
+      this._chartPane.adjustPaneViewport(false, false, true)
+    }
+
     Promise.resolve(chartData.technicalIndicatorStore().calcInstance()).then(
       result => {
         if (result) {
