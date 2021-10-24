@@ -156,7 +156,7 @@ export default class ChartData {
       return logWarn(null, null, 'You must define the timeframe to add ticks !')
     }
 
-    const now = tickData.t
+    const now = tickData.timestamp || (new Date()).getTime()
     if (!last) last = [now - (now % tf)]
     const tNext = last.timestamp + tf
     const t = now >= tNext ? now - (now % tf) : last.timestamp
