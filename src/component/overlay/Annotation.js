@@ -200,8 +200,7 @@ export default class Annotation extends Overlay {
    */
   createSymbolCoordinate (x) {
     const styles = this._styles || this._chartData.styleOptions().annotation
-    const symbolOptions = styles.symbol
-    const offset = symbolOptions.offset || [0, 0]
+    const offset = styles.offset || [0, 0]
     this._symbolCoordinate = { x: x + offset[1] }
   }
 

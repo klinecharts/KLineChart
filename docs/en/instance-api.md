@@ -288,14 +288,14 @@ Example:
 chart.createAnnotation({
   point: { timestamp: 1614171282000, value: 18987 },
   styles: {
+    offset: [0, 20]
+    position: 'top',
     symbol: {
       type: 'diamond',
-      position: 'top',
       size: 8,
       color: '#2196F3',
       activeSize: 10,
       activeColor: '#FF9600',
-      offset: [0, 20]
     }
   },
   checkPointInCustomSymbol: function ({ point, coordinate, size }) {
