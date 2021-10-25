@@ -147,7 +147,8 @@ export default class ChartData {
   }
 
   addTick (tickData) {
-    let last = this._dataList[this._dataList.length - 1]
+    const dataSize = this._dataList.length
+    let last = this._dataList[dataSize - 1]
     const tickPrice = tickData.price
     const volume = tickData.volume || 0
 
@@ -161,17 +162,15 @@ export default class ChartData {
     const tNext = last.timestamp + tf
     const t = now >= tNext ? now - (now % tf) : last.timestamp
 
-    if ((t >= tNext || !this._dataList.length) && tickPrice !== undefined) {
-      this.addData([
-        {
+    if ((t >= tNext || !dataSize) && tickPrice !== undefined) {
+      this.addData({
           timestamp: t,
           open: tickPrice,
           high: tickPrice,
           low: tickPrice,
           close: tickPrice,
           volume: volume
-        }
-      ])
+        }, dataSize)
     } else if (tickPrice !== undefined) {
       last.high = Math.max(tickPrice, last.high)
       last.low = Math.min(tickPrice, last.low)
