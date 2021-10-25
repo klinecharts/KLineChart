@@ -298,8 +298,8 @@ chart.createAnnotation({
       activeColor: '#FF9600',
     }
   },
-  checkPointInCustomSymbol: function ({ point, coordinate, size }) {
-    console.log(point, coordinate, size)
+  checkEventCoordinateOnCustomSymbol: function ({ eventCoordinate, coordinate, size }) {
+    console.log(eventCoordinate, coordinate, size)
     return true
   },
   drawCustomSymbol: function ({ ctx, point, coordinate, viewport, isActive, styles }) {
