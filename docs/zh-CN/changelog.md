@@ -1,4 +1,69 @@
 # 更新日志
+## 8.0.0
+`2021-10-29`
++ 🆕 新特性
+   + 新增`getDataSpace`和`getBarSpace`。
+   + `createTechnicalIndicator`支持在创建的时候，覆盖内置属性。
+   + `overrideTechnicalIndicator`支持在覆盖某个窗口上的指标属性。
+   + `getTechnicalIndicatorByPaneId`支持获取单个技术指标信息。
+   + 图形，注解，标签支持在任意一个窗口上创建。
+   + 图形支持整体拖动，支持弱磁铁和强磁铁模式，支持自定义数据。
++ 👉 变更
+   + `extension.addTechnicalIndicator`变更为`extension.addTechnicalIndicatorTemplate`。
+   + `extension.addGraphicMark`变更为`extension.addShapeTemplate`。
+   + 图表实例
+      + `createGraphicMark`变更为`createShape`，参数合并。
+      + `addCustomGraphicMark`变更为`addShapeTemplate`。
+      + `getGraphicMark`变更为`getShape`。
+      + `removeGraphicMark`变更为`removeShape`。
+      + `setGraphicMarkOptions`变更为`setShapeOptions`。
+      + `addCustomTechnialIndicator`变更为`addTechnicalIndicatorTemplate`。
+      + `getTechnicalIndicatorByName`变更为`getTechnicalIndicatorTemplate`。
+      + `removeAnnotation`新增参数`paneId`。
+      + `removeTag`新增参数`paneId`。
+      + `scrollToPosition`变更为`scrollToDataIndex`。
+      + `zoomAtPosition`变更为`zoomAtDataIndex`。
+      + `getConvertPictureUrl`参数`includeTooltip`和`includeGraphicMark`合并为`includeOverlay`。
+      + `subscribeAction`和`unsubscribeAction`，去除`drawCandle`和`drawTechnicalIndicator`类型。
+      + `convertToPixel`和`convertFromPixel`，入参变更为`{ timestamp, dataIndex, value }`和`{ paneId, absoluteYAxis }`。
+   + 图形标记
+      + `checkMousePointOn`变更为`checkEventCoordinateOnShape`，参数变更为`object`。
+      + `createShapeDataSource`参数变更为`object`。
+      + `performMouseMoveForDrawing`变更为`performEventMoveForDrawing`，参数变更为`object`。
+      + `performMousePressedMove`变更为`performEventPressedMove`，参数变更为`object`。
+      + `drawExtend`参数变更为`object`。
+   + 技术指标
+      + 属性`calcParamsAllowDecimal`合并到`calcParams`。
+      + 属性`baseValue`合并到`plots`。
+      + 属性`plots`，`color`回调参数变更为`{ prev, current, next }`。
+      + `calcTechnicalIndicator`参数变更为`object`。
+      + `render`参数变更为`object`。
+   + 样式配置
+      + `candle.tooltip.rect.fillColor`变更为`candle.tooltip.rect.backgroundColor`。
+      + `candle.area.fillColor`变更为`candle.area.backgroundColor`。
+      + `annotation.symbol.position`变更为`annotation.position`。 
+      + `annotation.symbol.offset`变更为`annotation.offset`。
+   + 图形辅助API
+      + `getRotatePoint`变更为`getRotateCoordinate`。
+      + `getLinearYFromPoints`变更为`getLinearYFromCoordinates`。
+      + `checkPointOnStraightLine`变更为`checkCoordinateOnStraightLine`。
+      + `checkPointOnRayLine`变更为`checkCoordinateOnRayLine`。
+      + `checkPointOnSegment`变更为`checkCoordinateOnSegment`。
+      + `checkPointOnArc`变更为`checkCoordinateOnArc`。
+      + `checkPointInCircle`变更为`checkCoordinateInCircle`。
+      + `checkPointOnCircle`变更为`checkCoordinateOnCircle`。
+      + `checkPointInTriangle`变更为`checkCoordinateInTriangle`。
+      + `checkPointInDiamond`变更为`。checkCoordinateInDiamond`。
+      + `checkPointInRect`变更为`。checkCoordinateInRect`。
++ 💄 优化
+   + 优化技术指标数据存储。
+   + 优化渲染层级。
+   + 优化图形标记鼠标事件响应。
+   + 优化图形标记绘制效率。
++ 🐞 Bug修复
+   + 修复调用`setPaneOptions` y轴不刷新问题。
+
+
 ## 8.0.0-alpha7
 `2021-10-22`
 + 🆕 技术指标重新加回属性`series`。

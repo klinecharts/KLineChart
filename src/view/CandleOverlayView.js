@@ -74,7 +74,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
           techOptions,
           false
         )
-        this._drawBatchTechnicalIndicatorToolTip(
+        this._drawBatchTechToolTip(
           crosshair,
           techs,
           techOptions,

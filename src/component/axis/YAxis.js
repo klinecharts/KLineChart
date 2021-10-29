@@ -80,9 +80,9 @@ export default class YAxis extends Axis {
         minMaxArray[1] = Math.max(minMaxArray[1], data[areaValueKey])
       }
       plotsResult.forEach(({ plots, result }) => {
-        const technicalIndicatorData = result[index] || {}
+        const techData = result[index] || {}
         plots.forEach(plot => {
-          const value = technicalIndicatorData[plot.key]
+          const value = techData[plot.key]
           if (isValid(value)) {
             minMaxArray[0] = Math.min(minMaxArray[0], value)
             minMaxArray[1] = Math.max(minMaxArray[1], value)
