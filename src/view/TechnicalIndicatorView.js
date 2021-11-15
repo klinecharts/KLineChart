@@ -20,8 +20,8 @@ import { renderHorizontalLine, renderVerticalLine, renderLine } from '../rendere
 import { isValid } from '../utils/typeChecks'
 
 export default class TechnicalIndicatorView extends View {
-  constructor (container, chartData, xAxis, yAxis, paneId) {
-    super(container, chartData)
+  constructor (container, chartStore, xAxis, yAxis, paneId) {
+    super(container, chartStore)
     this._xAxis = xAxis
     this._yAxis = yAxis
     this._paneId = paneId
@@ -41,7 +41,7 @@ export default class TechnicalIndicatorView extends View {
    * 绘制网格
    */
   _drawGrid () {
-    const gridOptions = this._chartData.styleOptions().grid
+    const gridOptions = this._chartStore.styleOptions().grid
     if (!gridOptions.show) {
       return
     }
@@ -81,12 +81,12 @@ export default class TechnicalIndicatorView extends View {
    */
   _drawTechs () {
     this._ctx.globalCompositeOperation = 'source-over'
-    const techOptions = this._chartData.styleOptions().technicalIndicator
-    const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
+    const techOptions = this._chartStore.styleOptions().technicalIndicator
+    const techs = this._chartStore.technicalIndicatorStore().instances(this._paneId)
     techs.forEach(tech => {
       const plots = tech.plots
       const lines = []
-      const dataList = this._chartData.dataList()
+      const dataList = this._chartStore.dataList()
       const techResult = tech.result
       const styles = tech.styles || techOptions
       // 技术指标自定义绘制
@@ -95,16 +95,16 @@ export default class TechnicalIndicatorView extends View {
         tech.render({
           ctx: this._ctx,
           dataSource: {
-            from: this._chartData.timeScaleStore().from(),
-            to: this._chartData.timeScaleStore().to(),
-            kLineDataList: this._chartData.dataList(),
+            from: this._chartStore.timeScaleStore().from(),
+            to: this._chartStore.timeScaleStore().to(),
+            kLineDataList: this._chartStore.dataList(),
             technicalIndicatorDataList: techResult
           },
           viewport: {
             width: this._width,
             height: this._height,
-            dataSpace: this._chartData.timeScaleStore().dataSpace(),
-            barSpace: this._chartData.timeScaleStore().barSpace()
+            dataSpace: this._chartStore.timeScaleStore().dataSpace(),
+            barSpace: this._chartStore.timeScaleStore().barSpace()
           },
           styles,
           xAxis: this._xAxis,
@@ -205,9 +205,9 @@ export default class TechnicalIndicatorView extends View {
    * @param onDrawEnd
    */
   _drawGraphics (onDrawing, onDrawEnd) {
-    const visibleDataList = this._chartData.visibleDataList()
-    const barSpace = this._chartData.timeScaleStore().barSpace()
-    const halfBarSpace = this._chartData.timeScaleStore().halfBarSpace()
+    const visibleDataList = this._chartStore.visibleDataList()
+    const barSpace = this._chartStore.timeScaleStore().barSpace()
+    const halfBarSpace = this._chartStore.timeScaleStore().halfBarSpace()
     visibleDataList.forEach(({ x, index, data }, n) => {
       onDrawing(x, index, data, halfBarSpace, barSpace, n)
     })

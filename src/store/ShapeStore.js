@@ -12,18 +12,18 @@
  * limitations under the License.
  */
 
-import extension from '../extension'
+import extension from './extension'
 
-import { isNumber, isFunction, isValid } from '../../utils/typeChecks'
-import { logWarn } from '../../utils/logger'
+import { isNumber, isFunction, isValid } from '../utils/typeChecks'
+import { logWarn } from '../utils/logger'
 
-import Shape, { ShapeMouseOperateElement } from '../../component/overlay/Shape'
+import Shape, { ShapeMouseOperateElement } from '../component/overlay/Shape'
 
-import { InvalidateLevel } from '../constants'
+import InvalidateLevel from '../enum/InvalidateLevel'
 
 export default class ShapeStore {
-  constructor (chartData) {
-    this._chartData = chartData
+  constructor (chartStore) {
+    this._chartStore = chartStore
     // 图形标记映射
     this._templates = this._createTemplates()
     // 图形标记鼠标操作信息
@@ -93,10 +93,10 @@ export default class ShapeStore {
     }
     class Template extends Shape {
       constructor ({
-        id, chartData, xAxis, yAxis, points, styles, lock, data
+        id, chartStore, xAxis, yAxis, points, styles, lock, data
       }) {
         super({
-          id, name, totalStep, chartData, xAxis, yAxis, points, styles, lock, data
+          id, name, totalStep, chartStore, xAxis, yAxis, points, styles, lock, data
         })
       }
     }
@@ -174,7 +174,7 @@ export default class ShapeStore {
       }
       this._instances.get(paneId).push(instance)
     }
-    this._chartData.invalidate(InvalidateLevel.OVERLAY)
+    this._chartStore.invalidate(InvalidateLevel.OVERLAY)
   }
 
   /**
@@ -249,7 +249,7 @@ export default class ShapeStore {
    */
   setInstanceOptions (options = {}) {
     const { id, styles, lock, mode, data } = options
-    const defaultStyles = this._chartData.styleOptions().shape
+    const defaultStyles = this._chartStore.styleOptions().shape
     let shouldInvalidate = false
     if (isValid(id)) {
       const instance = this.getInstance(id)
@@ -272,7 +272,7 @@ export default class ShapeStore {
       })
     }
     if (shouldInvalidate) {
-      this._chartData.invalidate(InvalidateLevel.OVERLAY)
+      this._chartStore.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 
@@ -355,7 +355,7 @@ export default class ShapeStore {
       shouldInvalidate = true
     }
     if (shouldInvalidate) {
-      this._chartData.invalidate(InvalidateLevel.OVERLAY)
+      this._chartStore.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 

@@ -12,17 +12,22 @@
  * limitations under the License.
  */
 
-import { isFunction, isValid } from '../../utils/typeChecks'
-import { formatValue } from '../../utils/format'
-import { logWarn } from '../../utils/logger'
+import { isFunction, isValid } from '../utils/typeChecks'
+import { formatValue } from '../utils/format'
+import { logWarn } from '../utils/logger'
+import { binarySearchNearest } from '../utils/number'
 
-import { binarySearchNearest } from '../../utils/number'
+import ActionType from '../enum/ActionType'
 
-import { MIN_DATA_SPACE, MAX_DATA_SPACE, ActionType } from '../constants'
+// 最小单条数据宽度
+const MIN_DATA_SPACE = 1
+
+// 最大单条数据宽度
+const MAX_DATA_SPACE = 50
 
 export default class TimeScaleStore {
-  constructor (chartData) {
-    this._chartData = chartData
+  constructor (chartStore) {
+    this._chartStore = chartStore
     this._dateTimeFormat = new Intl.DateTimeFormat(
       'en', {
         hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
@@ -81,7 +86,7 @@ export default class TimeScaleStore {
    * @private
    */
   adjustFromTo () {
-    const dataSize = this._chartData.dataList().length
+    const dataSize = this._chartStore.dataList().length
     const barLength = this._totalDataSpace / this._dataSpace
     const maxRightOffsetBarCount = barLength - Math.min(this._leftMinVisibleBarCount, dataSize)
     if (this._offsetRightBarCount > maxRightOffsetBarCount) {
@@ -101,11 +106,11 @@ export default class TimeScaleStore {
     if (this._from < 0) {
       this._from = 0
     }
-    this._chartData.adjustVisibleDataList()
+    this._chartStore.adjustVisibleDataList()
     // 处理加载更多，有更多并且没有在加载则去加载更多
     if (this._from === 0 && this._more && !this._loading && isFunction(this._loadMoreCallback)) {
       this._loading = true
-      this._loadMoreCallback(formatValue(this._chartData.dataList()[0], 'timestamp'))
+      this._loadMoreCallback(formatValue(this._chartStore.dataList()[0], 'timestamp'))
     }
   }
 
@@ -197,8 +202,8 @@ export default class TimeScaleStore {
     this._barSpace = this._calcBarSpace()
     adjustBeforeFuc && adjustBeforeFuc()
     this.adjustFromTo()
-    this._chartData.crosshairStore().recalculate(true)
-    this._chartData.invalidate()
+    this._chartStore.crosshairStore().recalculate(true)
+    this._chartStore.invalidate()
   }
 
   /**
@@ -211,7 +216,7 @@ export default class TimeScaleStore {
     }
     this._totalDataSpace = totalSpace
     this.adjustFromTo()
-    this._chartData.crosshairStore().recalculate(true)
+    this._chartStore.crosshairStore().recalculate(true)
   }
 
   /**
@@ -224,8 +229,8 @@ export default class TimeScaleStore {
     this._offsetRightBarCount = space / this._dataSpace
     if (invalidate) {
       this.adjustFromTo()
-      this._chartData.crosshairStore().recalculate(true)
-      this._chartData.invalidate()
+      this._chartStore.crosshairStore().recalculate(true)
+      this._chartStore.invalidate()
     }
   }
 
@@ -309,12 +314,12 @@ export default class TimeScaleStore {
       return
     }
     const distanceBarCount = distance / this._dataSpace
-    this._chartData.actionStore().execute(ActionType.SCROLL, { barCount: distanceBarCount, distance })
+    this._chartStore.actionStore().execute(ActionType.SCROLL, { barCount: distanceBarCount, distance })
     this._offsetRightBarCount = this._preOffsetRightBarCount - distanceBarCount
     this.adjustFromTo()
-    const cross = crosshair || this._chartData.crosshairStore().get()
-    this._chartData.crosshairStore().set(cross, true)
-    this._chartData.invalidate()
+    const cross = crosshair || this._chartStore.crosshairStore().get()
+    this._chartStore.crosshairStore().set(cross, true)
+    this._chartStore.invalidate()
   }
 
   /**
@@ -322,7 +327,7 @@ export default class TimeScaleStore {
    * @param dataIndex
    */
   getDataByDataIndex (dataIndex) {
-    return this._chartData.dataList()[dataIndex]
+    return this._chartStore.dataList()[dataIndex]
   }
 
   /**
@@ -331,7 +336,7 @@ export default class TimeScaleStore {
    * @returns {number}
    */
   coordinateToFloatIndex (x) {
-    const dataSize = this._chartData.dataList().length
+    const dataSize = this._chartStore.dataList().length
     const deltaFromRight = (this._totalDataSpace - x) / this._dataSpace
     const index = dataSize + this._offsetRightBarCount - deltaFromRight
     return Math.round(index * 1000000) / 1000000
@@ -355,10 +360,10 @@ export default class TimeScaleStore {
    * @return {number}
    */
   timestampToDataIndex (timestamp) {
-    if (this._chartData.dataList().length === 0) {
+    if (this._chartStore.dataList().length === 0) {
       return 0
     }
-    return binarySearchNearest(this._chartData.dataList(), 'timestamp', timestamp)
+    return binarySearchNearest(this._chartStore.dataList(), 'timestamp', timestamp)
   }
 
   /**
@@ -366,7 +371,7 @@ export default class TimeScaleStore {
    * @param dataIndex
    */
   dataIndexToCoordinate (dataIndex) {
-    const dataSize = this._chartData.dataList().length
+    const dataSize = this._chartStore.dataList().length
     const deltaFromRight = dataSize + this._offsetRightBarCount - dataIndex
     return this._totalDataSpace - (deltaFromRight - 0.5) * this._dataSpace
   }
@@ -389,10 +394,10 @@ export default class TimeScaleStore {
       return
     }
     if (!coordinate || !isValid(coordinate.x)) {
-      const crosshair = this._chartData.crosshairStore().get()
+      const crosshair = this._chartStore.crosshairStore().get()
       coordinate = { x: isValid(crosshair.x) ? crosshair.x : this._totalDataSpace / 2 }
     }
-    this._chartData.actionStore().execute(ActionType.ZOOM, { coordinate, scale })
+    this._chartStore.actionStore().execute(ActionType.ZOOM, { coordinate, scale })
     const floatIndex = this.coordinateToFloatIndex(coordinate.x)
     const dataSpace = this._dataSpace + scale * (this._dataSpace / 10)
     this.setDataSpace(dataSpace, () => {

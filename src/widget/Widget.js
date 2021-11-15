@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { InvalidateLevel } from '../data/constants'
+import InvalidateLevel from '../enum/InvalidateLevel'
 import { getPixelRatio } from '../utils/canvas'
 import { createElement } from '../utils/element'
 

@@ -17,8 +17,8 @@ import { getPrecision, nice, round } from '../../utils/number'
 import { createElement } from '../../utils/element'
 
 export default class Axis {
-  constructor (chartData) {
-    this._chartData = chartData
+  constructor (chartStore) {
+    this._chartStore = chartStore
     this._width = 0
     this._height = 0
     this._cacheMinValue = 0

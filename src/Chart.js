@@ -12,12 +12,11 @@
  * limitations under the License.
  */
 
-import ChartPane from './pane/ChartPane'
+import ChartPane, { CANDLE_PANE_ID } from './pane/ChartPane'
 import { clone, isNumber, isObject, isArray, isFunction, isValid } from './utils/typeChecks'
 import { logWarn } from './utils/logger'
 import { requestAnimationFrame } from './utils/compatible'
 import { formatValue } from './utils/format'
-import { CANDLE_PANE_ID } from './data/constants'
 
 export default class Chart {
   constructor (container, styleOptions) {
@@ -49,7 +48,7 @@ export default class Chart {
       logWarn('setStyleOptions', 'options')
       return
     }
-    this._chartPane.chartData().applyStyleOptions(options)
+    this._chartPane.chartStore().applyStyleOptions(options)
     this._chartPane.adjustPaneViewport(true, true, true, true, true)
   }
 
@@ -58,7 +57,7 @@ export default class Chart {
    * @returns {[]|*[]}
    */
   getStyleOptions () {
-    return clone(this._chartPane.chartData().styleOptions())
+    return clone(this._chartPane.chartStore().styleOptions())
   }
 
   /**
@@ -75,7 +74,7 @@ export default class Chart {
       logWarn('setPriceVolumePrecision', 'volumePrecision', 'volumePrecision must be a number and greater than zero!!!')
       return
     }
-    this._chartPane.chartData().setPriceVolumePrecision(pricePrecision, volumePrecision)
+    this._chartPane.chartStore().setPriceVolumePrecision(pricePrecision, volumePrecision)
   }
 
   /**
@@ -90,7 +89,7 @@ export default class Chart {
    * 获取当前时区
    */
   getTimezone () {
-    return this._chartPane.chartData().timeScaleStore().timezone()
+    return this._chartPane.chartStore().timeScaleStore().timezone()
   }
 
   /**
@@ -109,7 +108,7 @@ export default class Chart {
       logWarn('setOffsetRightSpace', 'space', 'space must be a number!!!')
       return
     }
-    this._chartPane.chartData().timeScaleStore().setOffsetRightSpace(space, true)
+    this._chartPane.chartStore().timeScaleStore().setOffsetRightSpace(space, true)
   }
 
   /**
@@ -121,7 +120,7 @@ export default class Chart {
       logWarn('setLeftMinVisibleBarCount', 'barCount', 'barCount must be a number and greater than zero!!!')
       return
     }
-    this._chartPane.chartData().timeScaleStore().setLeftMinVisibleBarCount(Math.ceil(barCount))
+    this._chartPane.chartStore().timeScaleStore().setLeftMinVisibleBarCount(Math.ceil(barCount))
   }
 
   /**
@@ -133,7 +132,7 @@ export default class Chart {
       logWarn('setRightMinVisibleBarCount', 'barCount', 'barCount must be a number and greater than zero!!!')
       return
     }
-    this._chartPane.chartData().timeScaleStore().setRightMinVisibleBarCount(Math.ceil(barCount))
+    this._chartPane.chartStore().timeScaleStore().setRightMinVisibleBarCount(Math.ceil(barCount))
   }
 
   /**
@@ -145,7 +144,7 @@ export default class Chart {
       logWarn('setDataSpace', 'space', 'space must be a number!!!')
       return
     }
-    this._chartPane.chartData().timeScaleStore().setDataSpace(space)
+    this._chartPane.chartStore().timeScaleStore().setDataSpace(space)
   }
 
   /**
@@ -153,7 +152,7 @@ export default class Chart {
    * @returns
    */
   getDataSpace () {
-    return this._chartPane.chartData().timeScaleStore().dataSpace()
+    return this._chartPane.chartStore().timeScaleStore().dataSpace()
   }
 
   /**
@@ -161,21 +160,21 @@ export default class Chart {
    * @returns
    */
   getBarSpace () {
-    return this._chartPane.chartData().timeScaleStore().barSpace()
+    return this._chartPane.chartStore().timeScaleStore().barSpace()
   }
 
   /**
    * 清空数据
    */
   clearData () {
-    this._chartPane.chartData().clearDataList()
+    this._chartPane.chartStore().clearDataList()
   }
 
   /**
    * 获取数据源
    */
   getDataList () {
-    return this._chartPane.chartData().dataList()
+    return this._chartPane.chartStore().dataList()
   }
 
   /**
@@ -188,10 +187,10 @@ export default class Chart {
       logWarn('applyNewData', 'dataList', 'dataList must be an array!!!')
       return
     }
-    const chartData = this._chartPane.chartData()
-    chartData.clearDataList()
-    chartData.addData(dataList, 0, more)
-    Promise.resolve(chartData.technicalIndicatorStore().calcInstance()).then(
+    const chartStore = this._chartPane.chartStore()
+    chartStore.clearDataList()
+    chartStore.addData(dataList, 0, more)
+    Promise.resolve(chartStore.technicalIndicatorStore().calcInstance()).then(
       result => {
         if (result) {
           this._chartPane.adjustPaneViewport(false, true, true, true)
@@ -210,9 +209,9 @@ export default class Chart {
       logWarn('applyMoreData', 'dataList', 'dataList must be an array!!!')
       return
     }
-    const chartData = this._chartPane.chartData()
-    chartData.addData(dataList, 0, more)
-    Promise.resolve(chartData.technicalIndicatorStore().calcInstance()).then(
+    const chartStore = this._chartPane.chartStore()
+    chartStore.addData(dataList, 0, more)
+    Promise.resolve(chartStore.technicalIndicatorStore().calcInstance()).then(
       result => {
         if (result) {
           this._chartPane.adjustPaneViewport(false, true, true, true)
@@ -230,8 +229,8 @@ export default class Chart {
       logWarn('updateData', 'data', 'data must be an object!!!')
       return
     }
-    const chartData = this._chartPane.chartData()
-    const dataList = chartData.dataList()
+    const chartStore = this._chartPane.chartStore()
+    const dataList = chartStore.dataList()
     const dataSize = dataList.length
     // 这里判断单个数据应该添加到哪个位置
     const timestamp = formatValue(data, 'timestamp', 0)
@@ -241,8 +240,8 @@ export default class Chart {
       if (timestamp === lastDataTimestamp) {
         pos = dataSize - 1
       }
-      chartData.addData(data, pos)
-      Promise.resolve(chartData.technicalIndicatorStore().calcInstance()).then(
+      chartStore.addData(data, pos)
+      Promise.resolve(chartStore.technicalIndicatorStore().calcInstance()).then(
         result => {
           if (result) {
             this._chartPane.adjustPaneViewport(false, true, true, true)
@@ -261,7 +260,7 @@ export default class Chart {
       logWarn('loadMore', 'cb', 'cb must be a function!!!')
       return
     }
-    this._chartPane.chartData().timeScaleStore().setLoadMoreCallback(cb)
+    this._chartPane.chartStore().timeScaleStore().setLoadMoreCallback(cb)
   }
 
   /**
@@ -277,7 +276,7 @@ export default class Chart {
       return null
     }
     const tech = isObject(value) && !isArray(value) ? value : { name: value }
-    if (!this._chartPane.chartData().technicalIndicatorStore().hasTemplate(tech.name)) {
+    if (!this._chartPane.chartStore().technicalIndicatorStore().hasTemplate(tech.name)) {
       logWarn('createTechnicalIndicator', 'value', 'can not find the corresponding technical indicator!!!')
       return null
     }
@@ -294,7 +293,7 @@ export default class Chart {
       return
     }
     const templates = [].concat(template)
-    this._chartPane.chartData().technicalIndicatorStore().addTemplate(templates)
+    this._chartPane.chartStore().technicalIndicatorStore().addTemplate(templates)
   }
 
   /**
@@ -307,7 +306,7 @@ export default class Chart {
       logWarn('overrideTechnicalIndicator', 'overrideTech', 'overrideTech must be an object!!!')
       return
     }
-    const promise = this._chartPane.chartData().technicalIndicatorStore().override(techOverride, paneId)
+    const promise = this._chartPane.chartStore().technicalIndicatorStore().override(techOverride, paneId)
     if (promise) {
       promise.then(
         _ => {
@@ -323,7 +322,7 @@ export default class Chart {
    * @return {{}}
    */
   getTechnicalIndicatorTemplate (name) {
-    return this._chartPane.chartData().technicalIndicatorStore().getTemplateInfo(name)
+    return this._chartPane.chartStore().technicalIndicatorStore().getTemplateInfo(name)
   }
 
   /**
@@ -333,7 +332,7 @@ export default class Chart {
     * @return {{}}
     */
   getTechnicalIndicatorByPaneId (paneId, name) {
-    return this._chartPane.chartData().technicalIndicatorStore().getInstanceInfo(paneId, name)
+    return this._chartPane.chartStore().technicalIndicatorStore().getInstanceInfo(paneId, name)
   }
 
   /**
@@ -355,7 +354,7 @@ export default class Chart {
       return
     }
     const templates = [].concat(template)
-    this._chartPane.chartData().shapeStore().addTemplate(templates)
+    this._chartPane.chartStore().shapeStore().addTemplate(templates)
   }
 
   /**
@@ -369,7 +368,7 @@ export default class Chart {
       return null
     }
     const shapeOptions = isObject(value) && !isArray(value) ? value : { name: value }
-    const Shape = this._chartPane.chartData().shapeStore().getTemplate(shapeOptions.name)
+    const Shape = this._chartPane.chartStore().shapeStore().getTemplate(shapeOptions.name)
     if (!Shape) {
       logWarn('createShape', 'value', 'can not find the corresponding shape!!!')
       return null
@@ -387,7 +386,7 @@ export default class Chart {
    * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
    */
   getShape (shapeId) {
-    return this._chartPane.chartData().shapeStore().getInstanceInfo(shapeId)
+    return this._chartPane.chartStore().shapeStore().getInstanceInfo(shapeId)
   }
 
   /**
@@ -399,7 +398,7 @@ export default class Chart {
       logWarn('setShapeOptions', 'options', 'options must be an object!!!')
       return
     }
-    this._chartPane.chartData().shapeStore().setInstanceOptions(options)
+    this._chartPane.chartStore().shapeStore().setInstanceOptions(options)
   }
 
   /**
@@ -407,7 +406,7 @@ export default class Chart {
    * @param shapeId 图形id
    */
   removeShape (shapeId) {
-    this._chartPane.chartData().shapeStore().removeInstance(shapeId)
+    this._chartPane.chartStore().shapeStore().removeInstance(shapeId)
   }
 
   /**
@@ -434,7 +433,7 @@ export default class Chart {
    * @param points 单个点或者点数组
    */
   removeAnnotation (paneId, points) {
-    this._chartPane.chartData().annotationStore().remove(paneId, points)
+    this._chartPane.chartStore().annotationStore().remove(paneId, points)
   }
 
   /**
@@ -461,7 +460,7 @@ export default class Chart {
    * @param tagId 标签id
    */
   removeTag (paneId, tagId) {
-    this._chartPane.chartData().tagStore().remove(paneId, tagId)
+    this._chartPane.chartStore().tagStore().remove(paneId, tagId)
   }
 
   /**
@@ -481,7 +480,7 @@ export default class Chart {
    * @param enabled 标识
    */
   setZoomEnabled (enabled) {
-    this._chartPane.chartData().timeScaleStore().setZoomEnabled(enabled)
+    this._chartPane.chartStore().timeScaleStore().setZoomEnabled(enabled)
   }
 
   /**
@@ -489,7 +488,7 @@ export default class Chart {
    * @return {boolean}
    */
   isZoomEnabled () {
-    return this._chartPane.chartData().timeScaleStore().zoomEnabled()
+    return this._chartPane.chartStore().timeScaleStore().zoomEnabled()
   }
 
   /**
@@ -497,7 +496,7 @@ export default class Chart {
    * @param enabled 标识
    */
   setScrollEnabled (enabled) {
-    this._chartPane.chartData().timeScaleStore().setScrollEnabled(enabled)
+    this._chartPane.chartStore().timeScaleStore().setScrollEnabled(enabled)
   }
 
   /**
@@ -505,7 +504,7 @@ export default class Chart {
    * @return {boolean}
    */
   isScrollEnabled () {
-    return this._chartPane.chartData().timeScaleStore().scrollEnabled()
+    return this._chartPane.chartStore().timeScaleStore().scrollEnabled()
   }
 
   /**
@@ -519,21 +518,21 @@ export default class Chart {
       return
     }
     if (isNumber(animationDuration) && animationDuration > 0) {
-      this._chartPane.chartData().timeScaleStore().startScroll()
+      this._chartPane.chartStore().timeScaleStore().startScroll()
       const startTime = new Date().getTime()
       const animation = () => {
         const progress = (new Date().getTime() - startTime) / animationDuration
         const finished = progress >= 1
         const dis = finished ? distance : distance * progress
-        this._chartPane.chartData().timeScaleStore().scroll(dis)
+        this._chartPane.chartStore().timeScaleStore().scroll(dis)
         if (!finished) {
           requestAnimationFrame(animation)
         }
       }
       animation()
     } else {
-      this._chartPane.chartData().timeScaleStore().startScroll()
-      this._chartPane.chartData().timeScaleStore().scroll(distance)
+      this._chartPane.chartStore().timeScaleStore().startScroll()
+      this._chartPane.chartStore().timeScaleStore().scroll(distance)
     }
   }
 
@@ -542,8 +541,8 @@ export default class Chart {
    * @param animationDuration 动画持续时间
    */
   scrollToRealTime (animationDuration) {
-    const difBarCount = this._chartPane.chartData().timeScaleStore().offsetRightBarCount() - this._chartPane.chartData().timeScaleStore().offsetRightSpace() / this._chartPane.chartData().timeScaleStore().dataSpace()
-    const distance = difBarCount * this._chartPane.chartData().timeScaleStore().dataSpace()
+    const difBarCount = this._chartPane.chartStore().timeScaleStore().offsetRightBarCount() - this._chartPane.chartStore().timeScaleStore().offsetRightSpace() / this._chartPane.chartStore().timeScaleStore().dataSpace()
+    const distance = difBarCount * this._chartPane.chartStore().timeScaleStore().dataSpace()
     this.scrollByDistance(distance, animationDuration)
   }
 
@@ -557,7 +556,7 @@ export default class Chart {
       logWarn('scrollToDataIndex', 'dataIndex', 'dataIndex must be a number!!!')
       return
     }
-    const distance = (this._chartPane.chartData().dataList().length - 1 - dataIndex) * this._chartPane.chartData().timeScaleStore().dataSpace()
+    const distance = (this._chartPane.chartStore().dataList().length - 1 - dataIndex) * this._chartPane.chartStore().timeScaleStore().dataSpace()
     this.scrollByDistance(distance, animationDuration)
   }
 
@@ -573,7 +572,7 @@ export default class Chart {
       return
     }
     if (isNumber(animationDuration) && animationDuration > 0) {
-      const dataSpace = this._chartPane.chartData().timeScaleStore().dataSpace()
+      const dataSpace = this._chartPane.chartStore().timeScaleStore().dataSpace()
       const scaleDataSpace = dataSpace * scale
       const difSpace = scaleDataSpace - dataSpace
       const startTime = new Date().getTime()
@@ -581,14 +580,14 @@ export default class Chart {
         const progress = (new Date().getTime() - startTime) / animationDuration
         const finished = progress >= 1
         const progressDataSpace = finished ? difSpace : difSpace * progress
-        this._chartPane.chartData().timeScaleStore().zoom(progressDataSpace / dataSpace, coordinate)
+        this._chartPane.chartStore().timeScaleStore().zoom(progressDataSpace / dataSpace, coordinate)
         if (!finished) {
           requestAnimationFrame(animation)
         }
       }
       animation()
     } else {
-      this._chartPane.chartData().timeScaleStore().zoom(scale, coordinate)
+      this._chartPane.chartStore().timeScaleStore().zoom(scale, coordinate)
     }
   }
 
@@ -607,7 +606,7 @@ export default class Chart {
       logWarn('zoomAtDataIndex', 'dataIndex', 'dataIndex must be a number!!!')
       return
     }
-    const x = this._chartPane.chartData().timeScaleStore().dataIndexToCoordinate(dataIndex)
+    const x = this._chartPane.chartStore().timeScaleStore().dataIndexToCoordinate(dataIndex)
     this.zoomAtCoordinate(scale, { x }, animationDuration)
   }
 
@@ -635,7 +634,7 @@ export default class Chart {
    * @param callback 回调方法
    */
   subscribeAction (type, callback) {
-    if (!this._chartPane.chartData().actionStore().subscribe(type, callback)) {
+    if (!this._chartPane.chartStore().actionStore().subscribe(type, callback)) {
       logWarn('subscribeAction', 'type', 'type does not exist!!!')
     }
   }
@@ -646,7 +645,7 @@ export default class Chart {
    * @param callback 回调方法
    */
   unsubscribeAction (type, callback) {
-    if (!this._chartPane.chartData().actionStore().unsubscribe(type, callback)) {
+    if (!this._chartPane.chartStore().actionStore().unsubscribe(type, callback)) {
       logWarn('unsubscribeAction', 'type', 'type does not exist!!!')
     }
   }

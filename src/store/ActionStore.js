@@ -12,9 +12,38 @@
  * limitations under the License.
  */
 
-import { ActionType } from '../constants'
+import { hasAction } from '../enum/ActionType'
 
-import Delegate from '../delegate/Delegate'
+class Delegate {
+  constructor () {
+    this._observers = []
+  }
+
+  subscribe (observer) {
+    if (this._observers.indexOf(observer) < 0) {
+      this._observers.push(observer)
+    }
+  }
+
+  unsubscribe (observer) {
+    const index = this._observers.indexOf(observer)
+    if (index > -1) {
+      this._observers.splice(index, 1)
+    } else {
+      this._observers = []
+    }
+  }
+
+  execute (data) {
+    this._observers.forEach(observer => {
+      observer(data)
+    })
+  }
+
+  hasObservers () {
+    return this._observers.length > 0
+  }
+}
 
 export default class ActionStore {
   constructor () {
@@ -49,14 +78,14 @@ export default class ActionStore {
    * @return {boolean}
    */
   subscribe (type, callback) {
-    if (Object.values(ActionType).indexOf(type) < 0) {
-      return false
+    if (hasAction(type)) {
+      if (!this._delegates.has(type)) {
+        this._delegates.set(type, new Delegate())
+      }
+      this._delegates.get(type).subscribe(callback)
+      return true
     }
-    if (!this._delegates.has(type)) {
-      this._delegates.set(type, new Delegate())
-    }
-    this._delegates.get(type).subscribe(callback)
-    return true
+    return false
   }
 
   /**
@@ -66,10 +95,7 @@ export default class ActionStore {
    * @return {boolean}
    */
   unsubscribe (type, callback) {
-    if (Object.values(ActionType).indexOf(type) < 0) {
-      return false
-    }
-    if (this._delegates.has(type)) {
+    if (hasAction(type)) {
       const delegate = this._delegates.get(type)
       delegate.unsubscribe(callback)
       if (!delegate.hasObservers()) {

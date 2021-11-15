@@ -19,7 +19,7 @@ import { isNumber } from '../../utils/typeChecks'
 
 export default class XAxis extends Axis {
   _computeMinMax () {
-    return { min: this._chartData.timeScaleStore().from(), max: this._chartData.timeScaleStore().to() - 1 }
+    return { min: this._chartStore.timeScaleStore().from(), max: this._chartStore.timeScaleStore().to() - 1 }
   }
 
   _optimalMinMax ({ min, max }) {
@@ -33,10 +33,10 @@ export default class XAxis extends Axis {
   _optimalTicks (ticks) {
     const optimalTicks = []
     const tickLength = ticks.length
-    const dataList = this._chartData.dataList()
+    const dataList = this._chartStore.dataList()
     if (tickLength > 0) {
-      const dateTimeFormat = this._chartData.timeScaleStore().dateTimeFormat()
-      const tickText = this._chartData.styleOptions().xAxis.tickText
+      const dateTimeFormat = this._chartStore.timeScaleStore().dateTimeFormat()
+      const tickText = this._chartStore.styleOptions().xAxis.tickText
       this._measureCtx.font = createFont(tickText.size, tickText.weight, tickText.family)
       const defaultLabelWidth = calcTextWidth(this._measureCtx, '00-00 00:00')
       const pos = parseInt(ticks[0].v, 10)
@@ -105,7 +105,7 @@ export default class XAxis extends Axis {
    * 获取自身高度
    */
   getSelfHeight () {
-    const stylOptions = this._chartData.styleOptions()
+    const stylOptions = this._chartStore.styleOptions()
     const xAxisOptions = stylOptions.xAxis
     const height = xAxisOptions.height
     if (isNumber(height)) {
@@ -141,10 +141,10 @@ export default class XAxis extends Axis {
   }
 
   convertFromPixel (pixel) {
-    return this._chartData.timeScaleStore().coordinateToDataIndex(pixel)
+    return this._chartStore.timeScaleStore().coordinateToDataIndex(pixel)
   }
 
   convertToPixel (value) {
-    return this._chartData.timeScaleStore().dataIndexToCoordinate(value)
+    return this._chartStore.timeScaleStore().dataIndexToCoordinate(value)
   }
 }

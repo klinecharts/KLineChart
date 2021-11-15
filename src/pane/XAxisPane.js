@@ -18,11 +18,11 @@ import XAxis from '../component/axis/XAxis'
 
 export default class XAxisPane extends Pane {
   _initBefore () {
-    this._xAxis = new XAxis(this._chartData)
+    this._xAxis = new XAxis(this._chartStore)
   }
 
   _createMainWidget (container, props) {
-    return new XAxisWidget({ container, chartData: props.chartData, xAxis: this._xAxis })
+    return new XAxisWidget({ container, chartStore: props.chartStore, xAxis: this._xAxis })
   }
 
   xAxis () {

@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import { isValid } from '../../utils/typeChecks'
+import { isValid } from '../utils/typeChecks'
 
-import { InvalidateLevel } from '../constants'
+import InvalidateLevel from '../enum/InvalidateLevel'
 
 export default class AnnotationStore {
-  constructor (chartData) {
-    this._chartData = chartData
+  constructor (chartStore) {
+    this._chartStore = chartStore
     // 注解标记
     this._annotations = new Map()
     // 注解标记
@@ -52,7 +52,7 @@ export default class AnnotationStore {
   createVisibleAnnotations () {
     this._visibleAnnotations.clear()
     if (this._annotations.size > 0) {
-      this._chartData.visibleDataList().forEach(({ data, x }) => {
+      this._chartStore.visibleDataList().forEach(({ data, x }) => {
         this._annotations.forEach((annotations, paneId) => {
           if (annotations.size > 0) {
             const annotation = annotations.get(data.timestamp) || []
@@ -90,7 +90,7 @@ export default class AnnotationStore {
       }
     })
     this.createVisibleAnnotations()
-    this._chartData.invalidate(InvalidateLevel.OVERLAY)
+    this._chartStore.invalidate(InvalidateLevel.OVERLAY)
   }
 
   /**
@@ -138,7 +138,7 @@ export default class AnnotationStore {
       this._visibleAnnotations.clear()
     }
     if (shouldAdjust) {
-      this._chartData.invalidate(InvalidateLevel.OVERLAY)
+      this._chartStore.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 

@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import { isValid } from '../../utils/typeChecks'
+import { isValid } from '../utils/typeChecks'
 
-import { InvalidateLevel } from '../constants'
+import InvalidateLevel from '../enum/InvalidateLevel'
 
 export default class CrosshairStore {
-  constructor (chartData) {
-    this._chartData = chartData
+  constructor (chartStore) {
+    this._chartStore = chartStore
     // 十字光标信息
     this._crosshair = {}
   }
@@ -29,12 +29,12 @@ export default class CrosshairStore {
      * @param notInvalidate
      */
   set (crosshair, notInvalidate) {
-    const dataList = this._chartData.dataList()
+    const dataList = this._chartStore.dataList()
     const cr = crosshair || {}
     let realDataIndex
     let dataIndex
     if (isValid(cr.x)) {
-      realDataIndex = this._chartData.timeScaleStore().coordinateToDataIndex(cr.x)
+      realDataIndex = this._chartStore.timeScaleStore().coordinateToDataIndex(cr.x)
       if (realDataIndex < 0) {
         dataIndex = 0
       } else if (realDataIndex > dataList.length - 1) {
@@ -47,11 +47,11 @@ export default class CrosshairStore {
       dataIndex = realDataIndex
     }
     const kLineData = dataList[dataIndex]
-    const realX = this._chartData.timeScaleStore().dataIndexToCoordinate(realDataIndex)
+    const realX = this._chartStore.timeScaleStore().dataIndexToCoordinate(realDataIndex)
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
     this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex }
     if (cr.paneId && kLineData) {
-      this._chartData.crosshairChange({
+      this._chartStore.crosshairChange({
         realDataIndex,
         dataIndex,
         kLineData,
@@ -62,7 +62,7 @@ export default class CrosshairStore {
     if (
       (prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId) && !notInvalidate
     ) {
-      this._chartData.invalidate(InvalidateLevel.OVERLAY)
+      this._chartStore.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 

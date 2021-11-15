@@ -32,7 +32,7 @@ export default class TechnicalIndicatorPane extends Pane {
 
   _createYAxis (props) {
     return new YAxis(
-      props.chartData,
+      props.chartStore,
       false,
       props.id
     )
@@ -41,7 +41,7 @@ export default class TechnicalIndicatorPane extends Pane {
   _createMainWidget (container, props) {
     return new TechnicalIndicatorWidget({
       container,
-      chartData: props.chartData,
+      chartStore: props.chartStore,
       xAxis: props.xAxis,
       yAxis: this._yAxis,
       paneId: props.id
@@ -51,7 +51,7 @@ export default class TechnicalIndicatorPane extends Pane {
   _createYAxisWidget (container, props) {
     return new YAxisWidget({
       container,
-      chartData: props.chartData,
+      chartStore: props.chartStore,
       yAxis: this._yAxis,
       paneId: props.id
     })

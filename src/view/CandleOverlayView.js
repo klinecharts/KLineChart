@@ -17,14 +17,14 @@ import { isFunction, isObject, isArray, isValid } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { TooltipShowType } from '../options/styleOptions'
-import { getTechnicalIndicatorTooltipData } from '../data/store/TechnicalIndicatorStore'
+import { getTechnicalIndicatorTooltipData } from '../store/TechnicalIndicatorStore'
 import { TechnicalIndicatorPlotType } from '../component/technicalindicator/TechnicalIndicator'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
   _drawTooltip (crosshair, techs) {
-    const styleOptions = this._chartData.styleOptions()
+    const styleOptions = this._chartStore.styleOptions()
     const candleOptions = styleOptions.candle
     const candleTooltipOptions = candleOptions.tooltip
     const techOptions = styleOptions.technicalIndicator
@@ -195,7 +195,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     const techTooltipTextSize = techTooltipOptions.text.size
 
     const techTooltipDataList = []
-    const dataList = this._chartData.dataList()
+    const dataList = this._chartStore.dataList()
     techs.forEach(tech => {
       const result = tech.result
       techTooltipDataList.push({
@@ -280,7 +280,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     }
     if (isDrawTechTooltip) {
       // 开始渲染指标数据文字
-      const techOptions = this._chartData.styleOptions().technicalIndicator
+      const techOptions = this._chartStore.styleOptions().technicalIndicator
       const indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + techTooltipTextMarginLeft
       this._ctx.font = createFont(
         techTooltipTextSize,
@@ -350,8 +350,8 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
         values = baseValues
       }
     } else {
-      const pricePrecision = this._chartData.pricePrecision()
-      const volumePrecision = this._chartData.volumePrecision()
+      const pricePrecision = this._chartStore.pricePrecision()
+      const volumePrecision = this._chartStore.volumePrecision()
       values = [
         formatValue(kLineData, 'timestamp'),
         formatValue(kLineData, 'open'),
@@ -363,7 +363,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
       values.forEach((value, index) => {
         switch (index) {
           case 0: {
-            values[index] = formatDate(this._chartData.timeScaleStore().dateTimeFormat(), value, 'YYYY-MM-DD hh:mm')
+            values[index] = formatDate(this._chartStore.timeScaleStore().dateTimeFormat(), value, 'YYYY-MM-DD hh:mm')
             break
           }
           case values.length - 1: {

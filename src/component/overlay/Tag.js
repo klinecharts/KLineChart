@@ -22,13 +22,13 @@ import { renderText } from '../../renderer/text'
 
 export default class Tag extends Overlay {
   constructor ({
-    id, point, text, mark, chartData, xAxis, yAxis, styles
+    id, point, text, mark, chartStore, xAxis, yAxis, styles
   }) {
-    super({ id, chartData, xAxis, yAxis })
+    super({ id, chartStore, xAxis, yAxis })
     this._point = point || {}
     this._text = text
     this._mark = mark
-    this.setStyles(styles, chartData.styleOptions().tag)
+    this.setStyles(styles, chartStore.styleOptions().tag)
   }
 
   /**
@@ -53,7 +53,7 @@ export default class Tag extends Overlay {
       this._mark = mark
       success = true
     }
-    if (this.setStyles(styles, this._chartData.styleOptions().tag)) {
+    if (this.setStyles(styles, this._chartStore.styleOptions().tag)) {
       success = true
     }
     return success
@@ -64,7 +64,7 @@ export default class Tag extends Overlay {
    * @param ctx
    */
   drawMarkLine (ctx) {
-    const options = this._chartData.styleOptions()
+    const options = this._chartStore.styleOptions()
     const yAxisOptions = options.yAxis
     const tagOptions = this._styles || options.tag
     const y = this._getY(tagOptions)
@@ -81,7 +81,7 @@ export default class Tag extends Overlay {
     if (!isValid(this._text)) {
       return
     }
-    const options = this._chartData.styleOptions()
+    const options = this._chartStore.styleOptions()
     const tagOptions = this._styles || options.tag
     const tagTextOptions = tagOptions.text
     ctx.save()

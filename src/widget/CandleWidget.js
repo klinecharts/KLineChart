@@ -18,10 +18,10 @@ import TechnicalIndicatorWidget from './TechnicalIndicatorWidget'
 
 export default class CandleWidget extends TechnicalIndicatorWidget {
   _createMainView (container, props) {
-    return new CandleView(container, props.chartData, props.xAxis, props.yAxis, props.paneId)
+    return new CandleView(container, props.chartStore, props.xAxis, props.yAxis, props.paneId)
   }
 
   _createOverlayView (container, props) {
-    return new CandleOverlayView(container, props.chartData, props.xAxis, props.yAxis, props.paneId)
+    return new CandleOverlayView(container, props.chartStore, props.xAxis, props.yAxis, props.paneId)
   }
 }

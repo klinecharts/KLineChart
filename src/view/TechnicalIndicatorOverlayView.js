@@ -18,12 +18,12 @@ import { TechnicalIndicatorPlotType } from '../component/technicalindicator/Tech
 import { isValid } from '../utils/typeChecks'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { getTechnicalIndicatorTooltipData } from '../data/store/TechnicalIndicatorStore'
+import { getTechnicalIndicatorTooltipData } from '../store/TechnicalIndicatorStore'
 import { renderText } from '../renderer/text'
 
 export default class TechnicalIndicatorOverlayView extends View {
-  constructor (container, chartData, xAxis, yAxis, paneId) {
-    super(container, chartData)
+  constructor (container, chartStore, xAxis, yAxis, paneId) {
+    super(container, chartStore)
     this._xAxis = xAxis
     this._yAxis = yAxis
     this._paneId = paneId
@@ -34,9 +34,9 @@ export default class TechnicalIndicatorOverlayView extends View {
     this._drawTag()
     this._drawShape()
     this._drawAnnotation()
-    const crosshair = this._chartData.crosshairStore().get()
+    const crosshair = this._chartStore.crosshairStore().get()
     if (crosshair.kLineData) {
-      const styleOptions = this._chartData.styleOptions()
+      const styleOptions = this._chartStore.styleOptions()
       const crosshairOptions = styleOptions.crosshair
       if (crosshair.paneId === this._paneId) {
         // 绘制十字光标水平线
@@ -46,7 +46,7 @@ export default class TechnicalIndicatorOverlayView extends View {
         // 绘制十字光标垂直线
         this._drawCrosshairLine(crosshairOptions, 'vertical', crosshair.realX, 0, this._height, renderVerticalLine)
       }
-      this._drawTooltip(crosshair, this._chartData.technicalIndicatorStore().instances(this._paneId))
+      this._drawTooltip(crosshair, this._chartStore.technicalIndicatorStore().instances(this._paneId))
     }
   }
 
@@ -54,7 +54,7 @@ export default class TechnicalIndicatorOverlayView extends View {
    * 绘制注解
    */
   _drawAnnotation () {
-    const annotations = this._chartData.annotationStore().get(this._paneId)
+    const annotations = this._chartStore.annotationStore().get(this._paneId)
     if (annotations) {
       annotations.forEach(annotation => {
         annotation.draw(this._ctx)
@@ -66,7 +66,7 @@ export default class TechnicalIndicatorOverlayView extends View {
    * 绘制标签
    */
   _drawTag () {
-    const tags = this._chartData.tagStore().get(this._paneId)
+    const tags = this._chartStore.tagStore().get(this._paneId)
     if (tags) {
       tags.forEach(tag => {
         tag.drawMarkLine(this._ctx)
@@ -79,10 +79,10 @@ export default class TechnicalIndicatorOverlayView extends View {
    * @private
    */
   _drawShape () {
-    this._chartData.shapeStore().instances(this._paneId).forEach(shape => {
+    this._chartStore.shapeStore().instances(this._paneId).forEach(shape => {
       shape.draw(this._ctx)
     })
-    const progressShape = this._chartData.shapeStore().progressInstance()
+    const progressShape = this._chartStore.shapeStore().progressInstance()
     if (progressShape.paneId === this._paneId) {
       progressShape.instance.draw(this._ctx)
     }
@@ -95,7 +95,7 @@ export default class TechnicalIndicatorOverlayView extends View {
    * @private
    */
   _drawTooltip (crosshair, techs) {
-    const techOptions = this._chartData.styleOptions().technicalIndicator
+    const techOptions = this._chartStore.styleOptions().technicalIndicator
     this._drawBatchTechToolTip(
       crosshair,
       techs,
@@ -171,7 +171,7 @@ export default class TechnicalIndicatorOverlayView extends View {
     const techData = techResult[crosshair.dataIndex]
     const tooltipData = getTechnicalIndicatorTooltipData(techData, tech)
     const colors = styles.line.colors
-    const dataList = this._chartData.dataList()
+    const dataList = this._chartStore.dataList()
     const cbData = {
       prev: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: techResult[crosshair.dataIndex - 1] },
       current: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData: techData },

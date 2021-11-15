@@ -23,7 +23,7 @@ export function isMouse (event) {
 }
 
 export default class EventHandler {
-  constructor (chartData) {
-    this._chartData = chartData
+  constructor (chartStore) {
+    this._chartStore = chartStore
   }
 }

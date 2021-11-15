@@ -17,13 +17,13 @@ import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { createFont } from '../utils/canvas'
 
 export default class XAxisView extends View {
-  constructor (container, chartData, xAxis) {
-    super(container, chartData)
+  constructor (container, chartStore, xAxis) {
+    super(container, chartStore)
     this._xAxis = xAxis
   }
 
   _draw () {
-    const xAxisOptions = this._chartData.styleOptions().xAxis
+    const xAxisOptions = this._chartStore.styleOptions().xAxis
     if (xAxisOptions.show) {
       this._drawAxisLine(xAxisOptions)
       this._drawTickLines(xAxisOptions)

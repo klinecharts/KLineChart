@@ -12,14 +12,14 @@
  * limitations under the License.
  */
 
-import { isValid } from '../../utils/typeChecks'
+import { isValid } from '../utils/typeChecks'
 
-import { InvalidateLevel } from '../constants'
+import InvalidateLevel from '../enum/InvalidateLevel'
 
 export default class TagStore {
-  constructor (chartData) {
+  constructor (chartStore) {
     // 刷新回调
-    this._chartData = chartData
+    this._chartStore = chartStore
     // 标签
     this._tags = new Map()
   }
@@ -85,7 +85,7 @@ export default class TagStore {
     tags.forEach(tag => {
       idTags.set(tag.id(), tag)
     })
-    this._chartData.invalidate(InvalidateLevel.OVERLAY)
+    this._chartStore.invalidate(InvalidateLevel.OVERLAY)
   }
 
   /**
@@ -119,7 +119,7 @@ export default class TagStore {
       this._tags.clear()
     }
     if (shouldInvalidate) {
-      this._chartData.invalidate(InvalidateLevel.OVERLAY)
+      this._chartStore.invalidate(InvalidateLevel.OVERLAY)
     }
   }
 }

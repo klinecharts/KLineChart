@@ -17,8 +17,8 @@ import { createElement } from '../utils/element'
 import { cancelAnimationFrame, requestAnimationFrame } from '../utils/compatible'
 
 class View {
-  constructor (container, chartData) {
-    this._chartData = chartData
+  constructor (container, chartStore) {
+    this._chartStore = chartStore
     this._initCanvas(container)
   }
 

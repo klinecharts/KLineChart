@@ -22,7 +22,7 @@ import { isArray, isNumber } from '../utils/typeChecks'
 
 export default class CandleView extends TechnicalIndicatorView {
   _drawContent () {
-    const candleOptions = this._chartData.styleOptions().candle
+    const candleOptions = this._chartStore.styleOptions().candle
     this._drawLastPriceLine(candleOptions.priceMark)
     if (candleOptions.type === CandleType.AREA) {
       this._drawArea(candleOptions)
@@ -86,7 +86,7 @@ export default class CandleView extends TechnicalIndicatorView {
       const areaCoordinateLength = areaCoordinates.length
       if (areaCoordinateLength > 0) {
         const lastCoordinate = areaCoordinates[areaCoordinateLength - 1]
-        const halfBarSpace = this._chartData.timeScaleStore().halfBarSpace()
+        const halfBarSpace = this._chartStore.timeScaleStore().halfBarSpace()
         const endX = lastCoordinate.x + halfBarSpace
         lineCoordinates.push({ x: endX, y: lastCoordinate.y })
         areaCoordinates.push({ x: endX, y: lastCoordinate.y })
@@ -147,7 +147,7 @@ export default class CandleView extends TechnicalIndicatorView {
     if (!priceMarkOptions.show || !lowHighPriceMarkOptions.show) {
       return
     }
-    const visibleDataList = this._chartData.visibleDataList()
+    const visibleDataList = this._chartStore.visibleDataList()
     let price = initPriceValue
     let pos = -1
     visibleDataList.forEach(({ index, data }) => {
@@ -157,7 +157,7 @@ export default class CandleView extends TechnicalIndicatorView {
         pos = index
       }
     })
-    const pricePrecision = this._chartData.pricePrecision()
+    const pricePrecision = this._chartStore.pricePrecision()
     const priceY = this._yAxis.convertToPixel(price)
     const startX = this._xAxis.convertToPixel(pos)
     const startY = priceY + offsets[0]
@@ -202,7 +202,7 @@ export default class CandleView extends TechnicalIndicatorView {
     if (!priceMarkOptions.show || !lastPriceMarkOptions.show || !lastPriceMarkOptions.line.show) {
       return
     }
-    const dataList = this._chartData.dataList()
+    const dataList = this._chartStore.dataList()
     const kLineData = dataList[dataList.length - 1]
     if (!kLineData) {
       return

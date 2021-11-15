@@ -23,14 +23,14 @@ import { renderFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class YAxisView extends View {
-  constructor (container, chartData, yAxis, paneId) {
-    super(container, chartData)
+  constructor (container, chartStore, yAxis, paneId) {
+    super(container, chartStore)
     this._yAxis = yAxis
     this._paneId = paneId
   }
 
   _draw () {
-    const yAxisOptions = this._chartData.styleOptions().yAxis
+    const yAxisOptions = this._chartStore.styleOptions().yAxis
     if (yAxisOptions.show) {
       this._drawAxisLine(yAxisOptions)
       this._drawTickLines(yAxisOptions)
@@ -128,13 +128,13 @@ export default class YAxisView extends View {
    * @private
    */
   _drawTechLastValue () {
-    const techOptions = this._chartData.styleOptions().technicalIndicator
+    const techOptions = this._chartStore.styleOptions().technicalIndicator
     const lastValueMarkOptions = techOptions.lastValueMark
     if (!lastValueMarkOptions.show || !lastValueMarkOptions.text.show) {
       return
     }
-    const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
-    const dataList = this._chartData.dataList()
+    const techs = this._chartStore.technicalIndicatorStore().instances(this._paneId)
+    const dataList = this._chartStore.dataList()
     techs.forEach(tech => {
       const techResult = tech.result || []
       const dataSize = techResult.length
@@ -189,12 +189,12 @@ export default class YAxisView extends View {
     if (!this._yAxis.isCandleYAxis()) {
       return
     }
-    const priceMarkOptions = this._chartData.styleOptions().candle.priceMark
+    const priceMarkOptions = this._chartStore.styleOptions().candle.priceMark
     const lastPriceMarkOptions = priceMarkOptions.last
     if (!priceMarkOptions.show || !lastPriceMarkOptions.show || !lastPriceMarkOptions.text.show) {
       return
     }
-    const dataList = this._chartData.dataList()
+    const dataList = this._chartStore.dataList()
     const kLineData = dataList[dataList.length - 1]
     if (!kLineData) {
       return
@@ -210,7 +210,7 @@ export default class YAxisView extends View {
       backgroundColor = lastPriceMarkOptions.noChangeColor
     }
     this._drawMarkLabel(
-      close, this._chartData.pricePrecision(), false,
+      close, this._chartStore.pricePrecision(), false,
       {
         ...lastPriceMarkOptions.text, backgroundColor
       }
@@ -244,7 +244,7 @@ export default class YAxisView extends View {
     const valueY = this._yAxis.convertToNicePixel(value)
     let text
     if (this._yAxis.yAxisType() === YAxisType.PERCENTAGE) {
-      const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+      const fromData = (this._chartStore.visibleDataList()[0] || {}).data || {}
       const fromClose = fromData.close
       text = `${((value - fromClose) / fromClose * 100).toFixed(2)}%`
     } else {

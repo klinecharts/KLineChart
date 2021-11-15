@@ -18,8 +18,8 @@ import { isValid } from '../utils/typeChecks'
 import { createElement } from '../utils/element'
 
 export default class SeparatorPane {
-  constructor (container, chartData, topPaneId, bottomPaneId, dragEnabled, dragEventHandler) {
-    this._chartData = chartData
+  constructor (container, chartStore, topPaneId, bottomPaneId, dragEnabled, dragEventHandler) {
+    this._chartStore = chartStore
     this._topPaneId = topPaneId
     this._bottomPaneId = bottomPaneId
     this._dragEnabled = dragEnabled
@@ -88,27 +88,27 @@ export default class SeparatorPane {
 
   _mouseUpEvent () {
     this._dragFlag = false
-    this._chartData.setDragPaneFlag(false)
+    this._chartStore.setDragPaneFlag(false)
   }
 
   _pressedMouseMoveEvent (event) {
     const dragDistance = event.pageY - this._startY
     this._dragEventHandler.drag(dragDistance, this._topPaneId, this._bottomPaneId)
-    this._chartData.setDragPaneFlag(true)
-    this._chartData.crosshairStore().set()
+    this._chartStore.setDragPaneFlag(true)
+    this._chartStore.crosshairStore().set()
   }
 
   _mouseEnterEvent () {
-    const separatorOptions = this._chartData.styleOptions().separator
+    const separatorOptions = this._chartStore.styleOptions().separator
     this._element.style.background = separatorOptions.activeBackgroundColor
-    this._chartData.setDragPaneFlag(true)
-    this._chartData.crosshairStore().set()
+    this._chartStore.setDragPaneFlag(true)
+    this._chartStore.crosshairStore().set()
   }
 
   _mouseLeaveEvent () {
     if (!this._dragFlag) {
       this._element.style.background = null
-      this._chartData.setDragPaneFlag(false)
+      this._chartStore.setDragPaneFlag(false)
     }
   }
 
@@ -183,7 +183,7 @@ export default class SeparatorPane {
    * 刷新
    */
   invalidate () {
-    const separatorOptions = this._chartData.styleOptions().separator
+    const separatorOptions = this._chartStore.styleOptions().separator
     this._element.style.top = `${-Math.floor((7 - separatorOptions.size) / 2)}px`
     this._wrapper.style.backgroundColor = separatorOptions.color
     this._wrapper.style.height = `${separatorOptions.size}px`
@@ -196,7 +196,7 @@ export default class SeparatorPane {
    * @returns {HTMLCanvasElement}
    */
   getImage () {
-    const separatorOptions = this._chartData.styleOptions().separator
+    const separatorOptions = this._chartStore.styleOptions().separator
     const width = this._wrapper.offsetWidth
     const height = separatorOptions.size
     const canvas = createElement('canvas', {

@@ -35,12 +35,12 @@ import {
  */
 export default class Annotation extends Overlay {
   constructor ({
-    id, point, chartData, xAxis, yAxis, styles
+    id, point, chartStore, xAxis, yAxis, styles
   }) {
-    super({ id, chartData, xAxis, yAxis })
+    super({ id, chartStore, xAxis, yAxis })
     this._point = point
     this._symbolCoordinate = {}
-    this.setStyles(styles, chartData.styleOptions().annotation)
+    this.setStyles(styles, chartStore.styleOptions().annotation)
   }
 
   /**
@@ -51,7 +51,7 @@ export default class Annotation extends Overlay {
    * @private
    */
   _drawSymbol (ctx, isActive, styles) {
-    const barSpace = this._chartData.timeScaleStore().barSpace()
+    const barSpace = this._chartStore.timeScaleStore().barSpace()
     const symbolOptions = styles.symbol
     const styleSize = symbolOptions.size
     const styleActiveSize = symbolOptions.activeSize
@@ -105,7 +105,7 @@ export default class Annotation extends Overlay {
   }
 
   draw (ctx) {
-    const styles = this._styles || this._chartData.styleOptions().annotation
+    const styles = this._styles || this._chartStore.styleOptions().annotation
     const offset = styles.offset || [0, 0]
     let y = 0
     switch (styles.position) {
@@ -123,7 +123,7 @@ export default class Annotation extends Overlay {
       }
     }
     this._symbolCoordinate.y = y + offset[0]
-    const isActive = this._id === this._chartData.annotationStore().mouseOperate().id
+    const isActive = this._id === this._chartStore.annotationStore().mouseOperate().id
     this._drawSymbol(ctx, isActive, styles)
     if (this.drawExtend) {
       ctx.save()
@@ -143,8 +143,8 @@ export default class Annotation extends Overlay {
   }
 
   checkEventCoordinateOn (eventCoordinate) {
-    const barSpace = this._chartData.timeScaleStore().barSpace()
-    const styles = this._styles || this._chartData.styleOptions().annotation
+    const barSpace = this._chartStore.timeScaleStore().barSpace()
+    const styles = this._styles || this._chartStore.styleOptions().annotation
     const symbolOptions = styles.symbol
     const size = isNumber(symbolOptions.size) ? symbolOptions.size : barSpace
     let isOn
@@ -199,7 +199,7 @@ export default class Annotation extends Overlay {
    * @param x
    */
   createSymbolCoordinate (x) {
-    const styles = this._styles || this._chartData.styleOptions().annotation
+    const styles = this._styles || this._chartStore.styleOptions().annotation
     const offset = styles.offset || [0, 0]
     this._symbolCoordinate = { x: x + offset[1] }
   }

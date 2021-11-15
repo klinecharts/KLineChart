@@ -19,7 +19,7 @@ export default class Pane {
   constructor (props) {
     this._height = -1
     this._container = props.container
-    this._chartData = props.chartData
+    this._chartStore = props.chartStore
     this._initBefore(props)
     this._initElement()
     this._mainWidget = this._createMainWidget(this._element, props)

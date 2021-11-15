@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import extension from './data/extension'
+import extension from './store/extension'
 import { version, init, dispose } from './core'
 
 export { version, init, dispose, extension }

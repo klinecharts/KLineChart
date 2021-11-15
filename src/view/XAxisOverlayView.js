@@ -20,8 +20,8 @@ import { renderStrokeFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
 export default class XAxisOverlayView extends View {
-  constructor (container, chartData, xAxis) {
-    super(container, chartData)
+  constructor (container, chartStore, xAxis) {
+    super(container, chartStore)
     this._xAxis = xAxis
   }
 
@@ -30,11 +30,11 @@ export default class XAxisOverlayView extends View {
   }
 
   _drawCrosshairLabel () {
-    const crosshair = this._chartData.crosshairStore().get()
+    const crosshair = this._chartStore.crosshairStore().get()
     if (!crosshair.paneId) {
       return
     }
-    const crosshairOptions = this._chartData.styleOptions().crosshair
+    const crosshairOptions = this._chartStore.styleOptions().crosshair
     const crosshairVerticalOptions = crosshairOptions.vertical
     const crosshairVerticalTextOptions = crosshairVerticalOptions.text
     if (
@@ -47,7 +47,7 @@ export default class XAxisOverlayView extends View {
     }
     const x = crosshair.realX
     const timestamp = crosshair.kLineData.timestamp
-    const text = formatDate(this._chartData.timeScaleStore().dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
+    const text = formatDate(this._chartStore.timeScaleStore().dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
 
     const textSize = crosshairVerticalTextOptions.size
     this._ctx.font = createFont(textSize, crosshairVerticalTextOptions.weight, crosshairVerticalTextOptions.family)

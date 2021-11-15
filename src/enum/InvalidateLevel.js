@@ -12,33 +12,15 @@
  * limitations under the License.
  */
 
-export default class Delegate {
-  constructor () {
-    this._observers = []
-  }
-
-  subscribe (observer) {
-    if (this._observers.indexOf(observer) < 0) {
-      this._observers.push(observer)
-    }
-  }
-
-  unsubscribe (observer) {
-    const index = this._observers.indexOf(observer)
-    if (index > -1) {
-      this._observers.splice(index, 1)
-    } else {
-      this._observers = []
-    }
-  }
-
-  execute (data) {
-    this._observers.forEach(observer => {
-      observer(data)
-    })
-  }
-
-  hasObservers () {
-    return this._observers.length > 0
-  }
+/**
+ * 刷新层级
+ * @type {{OVERLAY: number, MAIN: number, NONE: number, FULL: number}}
+ */
+const InvalidateLevel = {
+  NONE: 0,
+  OVERLAY: 1,
+  MAIN: 2,
+  FULL: 3
 }
+
+export default InvalidateLevel

@@ -12,42 +12,19 @@
  * limitations under the License.
  */
 
-// 默认技术指标窗口高度
-export const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
-
-// 技术指标窗口id前缀
-export const TECHNICAL_INDICATOR_PANE_ID_PREFIX = 'technical_indicator_pane_'
-
-// 图形id前缀
-export const SHAPE_ID_PREFIX = 'shape_'
-
-// 蜡烛图窗口id
-export const CANDLE_PANE_ID = 'candle_pane'
-
-// 最小单条数据宽度
-export const MIN_DATA_SPACE = 1
-
-// 最大单条数据宽度
-export const MAX_DATA_SPACE = 50
-
-/**
- * 刷新层级
- * @type {{OVERLAY: number, MAIN: number, NONE: number, FULL: number}}
- */
-export const InvalidateLevel = {
-  NONE: 0,
-  OVERLAY: 1,
-  MAIN: 2,
-  FULL: 3
-}
-
 /**
  * 图表动作
  * @type {{DRAW_CANDLE: string, SCROLL: string, PANE_DRAG: string, ZOOM: string, CROSSHAIR: string, DRAW_TECHNICAL_INDICATOR: string}}
  */
-export const ActionType = {
+const ActionType = {
   ZOOM: 'zoom',
   SCROLL: 'scroll',
   CROSSHAIR: 'crosshair',
   PANE_DRAG: 'pane_drag'
 }
+
+export function hasAction (type) {
+  return Object.values(ActionType).indexOf(type) > -1
+}
+
+export default ActionType

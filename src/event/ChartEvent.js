@@ -18,9 +18,9 @@ import OverlayEventHandler from './OverlayEventHandler'
 import KeyBoardEventHandler from './KeyBoardEventHandler'
 
 export default class ChartEvent {
-  constructor (target, chartData, yAxis) {
+  constructor (target, chartStore, yAxis) {
     this._target = target
-    this._chartData = chartData
+    this._chartStore = chartStore
     this._chartContentLeftRight = {}
     this._chartContentTopBottom = {}
     this._paneContentSize = {}
@@ -44,9 +44,9 @@ export default class ChartEvent {
     this._target.addEventListener('keydown', this._boundKeyBoardDownEvent)
     this._boundContextMenuEvent = (e) => { e.preventDefault() }
     this._target.addEventListener('contextmenu', this._boundContextMenuEvent, false)
-    this._zoomScrollEventHandler = new ZoomScrollEventHandler(chartData)
-    this._overlayEventHandler = new OverlayEventHandler(chartData, yAxis)
-    this._keyBoardEventHandler = new KeyBoardEventHandler(chartData)
+    this._zoomScrollEventHandler = new ZoomScrollEventHandler(chartStore)
+    this._overlayEventHandler = new OverlayEventHandler(chartStore, yAxis)
+    this._keyBoardEventHandler = new KeyBoardEventHandler(chartStore)
   }
 
   _keyBoardDownEvent (event) {
@@ -81,7 +81,7 @@ export default class ChartEvent {
       if (this._shouldPerformOverlayEvent()) {
         this._overlayEventHandler.mouseMoveEvent(compatEvent)
       }
-      if (!this._chartData.dragPaneFlag()) {
+      if (!this._chartStore.dragPaneFlag()) {
         this._zoomScrollEventHandler.mouseMoveEvent(compatEvent)
       }
     } else {
@@ -139,7 +139,7 @@ export default class ChartEvent {
   }
 
   _checkZoomScroll () {
-    return !this._chartData.dragPaneFlag() && !this._chartData.shapeStore().isPressed() && !this._chartData.shapeStore().isDrawing()
+    return !this._chartStore.dragPaneFlag() && !this._chartStore.shapeStore().isPressed() && !this._chartStore.shapeStore().isDrawing()
   }
 
   /**
@@ -148,7 +148,7 @@ export default class ChartEvent {
    * @private
    */
   _shouldPerformOverlayEvent () {
-    return !this._chartData.shapeStore().isEmpty() || !this._chartData.annotationStore().isEmpty()
+    return !this._chartStore.shapeStore().isEmpty() || !this._chartStore.annotationStore().isEmpty()
   }
 
   /**

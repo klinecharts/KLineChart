@@ -92,10 +92,10 @@ function getLineType (coordinate1, coordinate2) {
 export default class Shape extends Overlay {
   constructor ({
     id, name, totalStep,
-    chartData, xAxis, yAxis,
+    chartStore, xAxis, yAxis,
     points, styles, lock, data
   }) {
-    super({ id, chartData, xAxis, yAxis })
+    super({ id, chartStore, xAxis, yAxis })
     this._name = name
     this._totalStep = totalStep
     this._lock = lock
@@ -104,7 +104,7 @@ export default class Shape extends Overlay {
     this._drawStep = SHAPE_DRAW_STEP_START
     this._points = []
     this.setPoints(points)
-    this.setStyles(styles, chartData.styleOptions().shape)
+    this.setStyles(styles, chartStore.styleOptions().shape)
     this._prevPressPoint = null
     this._prevPoints = null
     this._coordinates = []
@@ -158,7 +158,7 @@ export default class Shape extends Overlay {
    */
   _timestampOrDataIndexToCoordinateX ({ timestamp, dataIndex }) {
     if (timestamp) {
-      dataIndex = this._chartData.timeScaleStore().timestampToDataIndex(timestamp)
+      dataIndex = this._chartStore.timeScaleStore().timestampToDataIndex(timestamp)
     }
     return this._xAxis.convertToPixel(dataIndex)
   }
@@ -335,17 +335,17 @@ export default class Shape extends Overlay {
         y: this._yAxis.convertToPixel(value)
       }
     })
-    const shapeOptions = this._styles || this._chartData.styleOptions().shape
+    const shapeOptions = this._styles || this._chartStore.styleOptions().shape
     if (this._drawStep !== SHAPE_DRAW_STEP_START && this._coordinates.length > 0) {
       const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
-      const precision = { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() }
+      const precision = { price: this._chartStore.pricePrecision(), volume: this._chartStore.volumePrecision() }
       this._shapeDataSources = this.createShapeDataSource({
         step: this._drawStep,
         mode: this._mode,
         points: this._points,
         coordinates: this._coordinates,
         viewport: { width: this._xAxis.width(), height: this._yAxis.height() },
-        precision: { price: this._chartData.pricePrecision(), volume: this._chartData.volumePrecision() },
+        precision: { price: this._chartStore.pricePrecision(), volume: this._chartStore.volumePrecision() },
         styles: shapeOptions,
         xAxis: this._xAxis,
         yAxis: this._yAxis,
@@ -394,7 +394,7 @@ export default class Shape extends Overlay {
         ctx.restore()
       }
     }
-    const shapeMouseOperate = this._chartData.shapeStore().mouseOperate()
+    const shapeMouseOperate = this._chartStore.shapeStore().mouseOperate()
     if (
       (shapeMouseOperate.hover.id === this._id && shapeMouseOperate.hover.element !== ShapeMouseOperateElement.NONE) ||
       (shapeMouseOperate.click.id === this._id && shapeMouseOperate.click.element !== ShapeMouseOperateElement.NONE) ||
@@ -521,7 +521,7 @@ export default class Shape extends Overlay {
    * @return {{id: *, elementIndex: number, element: string}}
    */
   checkEventCoordinateOn (eventCoordinate) {
-    const shapeOptions = this._styles || this._chartData.styleOptions().shape
+    const shapeOptions = this._styles || this._chartStore.styleOptions().shape
     // 检查鼠标点是否在图形的点上
     const start = this._coordinates.length - 1
     for (let i = start; i > -1; i--) {
@@ -565,7 +565,7 @@ export default class Shape extends Overlay {
     if (this._mode === ShapeMode.NORMAL || paneId !== 'candle_pane') {
       return value
     }
-    const kLineData = this._chartData.timeScaleStore().getDataByDataIndex(dataIndex)
+    const kLineData = this._chartStore.timeScaleStore().getDataByDataIndex(dataIndex)
     if (!kLineData) {
       return value
     }
@@ -618,7 +618,7 @@ export default class Shape extends Overlay {
    */
   mouseMoveForDrawing (coordinate, event) {
     const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
-    const timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
+    const timestamp = this._chartStore.timeScaleStore().dataIndexToTimestamp(dataIndex)
     const value = this._performValue(coordinate.y, dataIndex, event.paneId)
     this._points[this._drawStep - 1] = { timestamp, value, dataIndex }
     this.performEventMoveForDrawing({
@@ -638,7 +638,7 @@ export default class Shape extends Overlay {
   mouseLeftButtonDownForDrawing () {
     if (this._drawStep === this._totalStep - 1) {
       this._drawStep = SHAPE_DRAW_STEP_FINISHED
-      this._chartData.shapeStore().progressInstanceComplete()
+      this._chartStore.shapeStore().progressInstanceComplete()
       this.onDrawEnd({ id: this._id, points: this._points })
     } else {
       this._drawStep++
@@ -651,7 +651,7 @@ export default class Shape extends Overlay {
    * @param event
    */
   mousePressedPointMove (coordinate, event) {
-    const shapeMouseOperate = this._chartData.shapeStore().mouseOperate()
+    const shapeMouseOperate = this._chartStore.shapeStore().mouseOperate()
     const elementIndex = shapeMouseOperate.click.elementIndex
     if (
       !this._lock &&
@@ -660,7 +660,7 @@ export default class Shape extends Overlay {
       elementIndex !== -1
     ) {
       const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
-      const timestamp = this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
+      const timestamp = this._chartStore.timeScaleStore().dataIndexToTimestamp(dataIndex)
       const value = this._performValue(coordinate.y, dataIndex, event.paneId)
       this._points[elementIndex].timestamp = timestamp
       this._points[elementIndex].dataIndex = dataIndex
@@ -705,14 +705,14 @@ export default class Shape extends Overlay {
       this._points = this._prevPoints.map(point => {
         // 防止因为创建时传入进来的point没有dataIndex，导致无法计算时间戳问题
         if (!isValid(point.dataIndex)) {
-          point.dataIndex = this._chartData.timeScaleStore().timestampToDataIndex(point.timestamp)
+          point.dataIndex = this._chartStore.timeScaleStore().timestampToDataIndex(point.timestamp)
         }
         const dataIndex = point.dataIndex + difDataIndex
         const value = point.value + difValue
         return {
           dataIndex,
           value,
-          timestamp: this._chartData.timeScaleStore().dataIndexToTimestamp(dataIndex)
+          timestamp: this._chartStore.timeScaleStore().dataIndexToTimestamp(dataIndex)
         }
       })
     }

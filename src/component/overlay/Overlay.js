@@ -32,10 +32,10 @@ export function perfectOverlayFunc (overlay, funcs) {
  */
 export default class Overlay {
   constructor ({
-    id, chartData, xAxis, yAxis
+    id, chartStore, xAxis, yAxis
   }) {
     this._id = id
-    this._chartData = chartData
+    this._chartStore = chartStore
     this._xAxis = xAxis
     this._yAxis = yAxis
     this._styles = null

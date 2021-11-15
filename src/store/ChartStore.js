@@ -15,15 +15,15 @@
 import { isArray, isObject, isBoolean, merge, clone } from '../utils/typeChecks'
 import { defaultStyleOptions } from '../options/styleOptions'
 
-import TimeScaleStore from './store/TimeScaleStore'
-import TechnicalIndicatorStore from './store/TechnicalIndicatorStore'
-import ShapeStore from './store/ShapeStore'
-import AnnotationStore from './store/AnnotationStore'
-import TagStore from './store/TagStore'
-import CrosshairStore from './store/CrosshairStore'
-import ActionStore from './store/ActionStore'
+import TimeScaleStore from './TimeScaleStore'
+import TechnicalIndicatorStore from './TechnicalIndicatorStore'
+import ShapeStore from './ShapeStore'
+import AnnotationStore from './AnnotationStore'
+import TagStore from './TagStore'
+import CrosshairStore from './CrosshairStore'
+import ActionStore from './ActionStore'
 
-export default class ChartData {
+export default class ChartStore {
   constructor (styleOptions, handler) {
     // 持有者
     this._handler = handler

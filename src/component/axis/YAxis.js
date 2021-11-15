@@ -20,8 +20,8 @@ import { formatBigNumber, formatPrecision } from '../../utils/format'
 import { round, log10, index10 } from '../../utils/number'
 
 export default class YAxis extends Axis {
-  constructor (chartData, isCandleYAxis, paneId) {
-    super(chartData)
+  constructor (chartStore, isCandleYAxis, paneId) {
+    super(chartStore)
     this._realRange = 0
     this._isCandleYAxis = isCandleYAxis
     this._paneId = paneId
@@ -34,7 +34,7 @@ export default class YAxis extends Axis {
     let minValue = Number.MAX_SAFE_INTEGER
     let maxValue = Number.MIN_SAFE_INTEGER
     let techPrecision = Number.MAX_SAFE_INTEGER
-    const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
+    const techs = this._chartStore.technicalIndicatorStore().instances(this._paneId)
     techs.forEach(tech => {
       if (!shouldOhlc) {
         shouldOhlc = tech.shouldOhlc
@@ -54,7 +54,7 @@ export default class YAxis extends Axis {
 
     let precision = 4
     if (this._isCandleYAxis) {
-      const pricePrecision = this._chartData.pricePrecision()
+      const pricePrecision = this._chartStore.pricePrecision()
       if (techPrecision !== Number.MAX_SAFE_INTEGER) {
         precision = Math.min(techPrecision, pricePrecision)
       } else {
@@ -65,8 +65,8 @@ export default class YAxis extends Axis {
         precision = techPrecision
       }
     }
-    const visibleDataList = this._chartData.visibleDataList()
-    const candleOptions = this._chartData.styleOptions().candle
+    const visibleDataList = this._chartStore.visibleDataList()
+    const candleOptions = this._chartStore.styleOptions().candle
     const isArea = candleOptions.type === CandleType.AREA
     const areaValueKey = candleOptions.area.value
     const shouldCompareHighLow = (this._isCandleYAxis && !isArea) || (!this._isCandleYAxis && shouldOhlc)
@@ -107,7 +107,7 @@ export default class YAxis extends Axis {
     let dif
     switch (yAxisType) {
       case YAxisType.PERCENTAGE: {
-        const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+        const fromData = (this._chartStore.visibleDataList()[0] || {}).data || {}
         if (isNumber(fromData.close)) {
           minValue = (minValue - fromData.close) / fromData.close * 100
           maxValue = (maxValue - fromData.close) / fromData.close * 100
@@ -136,9 +136,9 @@ export default class YAxis extends Axis {
     }
     let marginOptions
     if (this._isCandleYAxis) {
-      marginOptions = this._chartData.styleOptions().candle.margin
+      marginOptions = this._chartStore.styleOptions().candle.margin
     } else {
-      marginOptions = this._chartData.styleOptions().technicalIndicator.margin
+      marginOptions = this._chartStore.styleOptions().technicalIndicator.margin
     }
     let topRate
     let bottomRate
@@ -173,11 +173,11 @@ export default class YAxis extends Axis {
   _optimalTicks (ticks) {
     const optimalTicks = []
     const yAxisType = this.yAxisType()
-    const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
+    const techs = this._chartStore.technicalIndicatorStore().instances(this._paneId)
     let precision = 0
     let shouldFormatBigNumber = false
     if (this._isCandleYAxis) {
-      precision = this._chartData.pricePrecision()
+      precision = this._chartStore.pricePrecision()
     } else {
       techs.forEach(tech => {
         precision = Math.max(precision, tech.precision)
@@ -186,7 +186,7 @@ export default class YAxis extends Axis {
         }
       })
     }
-    const textHeight = this._chartData.styleOptions().xAxis.tickText.size
+    const textHeight = this._chartStore.styleOptions().xAxis.tickText.size
     let intervalPrecision
     if (yAxisType === YAxisType.LOG) {
       intervalPrecision = this._computeInterval(this._realRange)
@@ -246,7 +246,7 @@ export default class YAxis extends Axis {
    */
   yAxisType () {
     if (this._isCandleYAxis) {
-      return this._chartData.styleOptions().yAxis.type
+      return this._chartStore.styleOptions().yAxis.type
     }
     return YAxisType.NORMAL
   }
@@ -256,7 +256,7 @@ export default class YAxis extends Axis {
    * @return {boolean|*|boolean}
    */
   isFromYAxisZero () {
-    const yAxisOptions = this._chartData.styleOptions().yAxis
+    const yAxisOptions = this._chartStore.styleOptions().yAxis
     return (
       (yAxisOptions.position === YAxisPosition.LEFT && yAxisOptions.inside) ||
       (yAxisOptions.position === YAxisPosition.RIGHT && !yAxisOptions.inside)
@@ -268,7 +268,7 @@ export default class YAxis extends Axis {
    * @return {number}
    */
   getSelfWidth () {
-    const styleOptions = this._chartData.styleOptions()
+    const styleOptions = this._chartStore.styleOptions()
     const yAxisOptions = styleOptions.yAxis
     const width = yAxisOptions.width
     if (isNumber(width)) {
@@ -298,7 +298,7 @@ export default class YAxis extends Axis {
       crosshairOptions.horizontal.show &&
       crosshairOptions.horizontal.text.show
     ) {
-      const techs = this._chartData.technicalIndicatorStore().instances(this._paneId)
+      const techs = this._chartStore.technicalIndicatorStore().instances(this._paneId)
       let techPrecision = 0
       let shouldFormatBigNumber = false
       techs.forEach(tech => {
@@ -315,7 +315,7 @@ export default class YAxis extends Axis {
       let precision = 2
       if (this.yAxisType() !== YAxisType.PERCENTAGE) {
         if (this._isCandleYAxis) {
-          const pricePrecision = this._chartData.pricePrecision()
+          const pricePrecision = this._chartStore.pricePrecision()
           const lastValueMarkOptions = styleOptions.technicalIndicator.lastValueMark
           if (lastValueMarkOptions.show && lastValueMarkOptions.text.show) {
             precision = Math.max(techPrecision, pricePrecision)
@@ -344,7 +344,7 @@ export default class YAxis extends Axis {
     const value = (1.0 - pixel / this._height) * this._range + this._minValue
     switch (this.yAxisType()) {
       case YAxisType.PERCENTAGE: {
-        const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+        const fromData = (this._chartStore.visibleDataList()[0] || {}).data || {}
         if (isNumber(fromData.close)) {
           return fromData.close * value / 100 + fromData.close
         }
@@ -363,7 +363,7 @@ export default class YAxis extends Axis {
     let v
     switch (this.yAxisType()) {
       case YAxisType.PERCENTAGE: {
-        const fromData = (this._chartData.visibleDataList()[0] || {}).data || {}
+        const fromData = (this._chartStore.visibleDataList()[0] || {}).data || {}
         if (isNumber(fromData.close)) {
           v = (value - fromData.close) / fromData.close * 100
         }

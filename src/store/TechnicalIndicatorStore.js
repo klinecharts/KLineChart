@@ -12,14 +12,13 @@
  * limitations under the License.
  */
 
-import extension from '../extension'
+import extension from './extension'
 
-import { isFunction, isValid, isObject } from '../../utils/typeChecks'
-import { formatPrecision, formatBigNumber } from '../../utils/format'
+import { isFunction, isValid, isObject } from '../utils/typeChecks'
+import { formatPrecision, formatBigNumber } from '../utils/format'
+import { logWarn } from '../utils/logger'
 
-import { logWarn } from '../../utils/logger'
-
-import TechnicalIndicator, { TechnicalIndicatorSeries } from '../../component/technicalindicator/TechnicalIndicator'
+import TechnicalIndicator, { TechnicalIndicatorSeries } from '../component/technicalindicator/TechnicalIndicator'
 
 /**
  * 获取技术指标提示数据
@@ -67,8 +66,8 @@ export function getTechnicalIndicatorTooltipData (technicalIndicatorData = {}, t
 }
 
 export default class TechnicalIndicatorStore {
-  constructor (chartData) {
-    this._chartData = chartData
+  constructor (chartStore) {
+    this._chartStore = chartStore
     // 指标模板
     this._templates = this._createTemplates()
     this._instances = new Map()
@@ -244,12 +243,12 @@ export default class TechnicalIndicatorStore {
         instance.setPrecision(precision)
         instance.setShouldOhlc(shouldOhlc)
         instance.setShouldFormatBigNumber(shouldFormatBigNumber)
-        instance.setStyles(styles, this._chartData.styleOptions().technicalIndicator)
+        instance.setStyles(styles, this._chartStore.styleOptions().technicalIndicator)
         if (!isStack) {
           paneInstances.clear()
         }
         paneInstances.set(name, instance)
-        instance.calc(this._chartData.dataList())
+        instance.calc(this._chartStore.dataList())
         return true
       }
     }
@@ -311,13 +310,13 @@ export default class TechnicalIndicatorStore {
       if (isValid(paneId)) {
         const paneInstances = this._instances.get(paneId)
         if (paneInstances && paneInstances.has(name)) {
-          paneInstances.get(name).calc(this._chartData.dataList())
+          paneInstances.get(name).calc(this._chartStore.dataList())
           calcSuccess = true
         }
       } else {
         this._instances.forEach(paneInstances => {
           if (paneInstances.has(name)) {
-            paneInstances.get(name).calc(this._chartData.dataList())
+            paneInstances.get(name).calc(this._chartStore.dataList())
             calcSuccess = true
           }
         })
@@ -325,7 +324,7 @@ export default class TechnicalIndicatorStore {
     } else {
       this._instances.forEach(paneInstances => {
         paneInstances.forEach(instance => {
-          instance.calc(this._chartData.dataList())
+          instance.calc(this._chartStore.dataList())
           calcSuccess = true
         })
       })
@@ -401,7 +400,7 @@ export default class TechnicalIndicatorStore {
    */
   override (techOverride, paneId) {
     const { name, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles } = techOverride
-    const defaultTechStyleOptions = this._chartData.styleOptions().technicalIndicator
+    const defaultTechStyleOptions = this._chartStore.styleOptions().technicalIndicator
     let instances = new Map()
     if (isValid(paneId)) {
       if (this._instances.has(paneId)) {
@@ -433,7 +432,7 @@ export default class TechnicalIndicatorStore {
         }
         if (calcParamsSuccess) {
           tasks.push(
-            Promise.resolve(tech.calc(this._chartData.dataList()))
+            Promise.resolve(tech.calc(this._chartStore.dataList()))
           )
         }
       }
