@@ -15,7 +15,7 @@
 import View from './View'
 
 import { formatDate } from '../utils/format'
-import { calcTextWidth, createFont } from '../utils/canvas'
+import { getTextRectWidth, getTextRectHeight } from '../utils/canvas'
 import { renderStrokeFillRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
@@ -45,20 +45,20 @@ export default class XAxisOverlayView extends View {
     ) {
       return
     }
-    const x = crosshair.realX
+
     const timestamp = crosshair.kLineData.timestamp
     const text = formatDate(this._chartStore.timeScaleStore().dateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
-
-    const textSize = crosshairVerticalTextOptions.size
-    this._ctx.font = createFont(textSize, crosshairVerticalTextOptions.weight, crosshairVerticalTextOptions.family)
-    const labelWidth = calcTextWidth(this._ctx, text)
-    let labelX = x - labelWidth / 2
 
     const paddingLeft = crosshairVerticalTextOptions.paddingLeft
     const paddingRight = crosshairVerticalTextOptions.paddingRight
     const paddingTop = crosshairVerticalTextOptions.paddingTop
-    const paddingBottom = crosshairVerticalTextOptions.paddingBottom
     const borderSize = crosshairVerticalTextOptions.borderSize
+
+    const rectWidth = getTextRectWidth(this._ctx, text, crosshairVerticalTextOptions)
+    const rectHeight = getTextRectHeight(crosshairVerticalTextOptions)
+    const labelWidth = rectWidth - borderSize * 2 - paddingLeft - paddingRight
+
+    let labelX = crosshair.realX - labelWidth / 2
 
     // 保证整个x轴上的提示文字总是完全显示
     if (labelX < paddingLeft + borderSize) {
@@ -68,13 +68,17 @@ export default class XAxisOverlayView extends View {
     }
 
     const rectX = labelX - borderSize - paddingLeft
-    const rectWidth = labelWidth + borderSize * 2 + paddingRight + paddingLeft
-    const rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom
 
     renderStrokeFillRoundRect(
-      this._ctx, crosshairVerticalTextOptions.backgroundColor,
-      crosshairVerticalTextOptions.borderColor, borderSize,
-      rectX, 0, rectWidth, rectHeight, crosshairVerticalTextOptions.borderRadius
+      this._ctx,
+      crosshairVerticalTextOptions.backgroundColor,
+      crosshairVerticalTextOptions.borderColor,
+      borderSize,
+      rectX,
+      0,
+      rectWidth,
+      rectHeight,
+      crosshairVerticalTextOptions.borderRadius
     )
     // 绘制轴上的提示文字
     this._ctx.textBaseline = 'top'

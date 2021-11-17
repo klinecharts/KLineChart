@@ -13,7 +13,7 @@
  */
 
 import View from './View'
-import { calcTextWidth, createFont } from '../utils/canvas'
+import { getTextRectWidth, getTextRectHeight } from '../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../utils/format'
 import { YAxisType } from '../options/styleOptions'
 import { renderStrokeFillRoundRect } from '../renderer/rect'
@@ -81,36 +81,34 @@ export default class YAxisOverlayView extends View {
         text = formatBigNumber(text)
       }
     }
-    const textSize = crosshairHorizontalTextOptions.size
-    this._ctx.font = createFont(textSize, crosshairHorizontalTextOptions.weight, crosshairHorizontalTextOptions.family)
-    const yAxisDataLabelWidth = calcTextWidth(this._ctx, text)
     let rectStartX
-
-    const paddingLeft = crosshairHorizontalTextOptions.paddingLeft
-    const paddingRight = crosshairHorizontalTextOptions.paddingRight
-    const paddingTop = crosshairHorizontalTextOptions.paddingTop
-    const paddingBottom = crosshairHorizontalTextOptions.paddingBottom
     const borderSize = crosshairHorizontalTextOptions.borderSize
 
-    const rectWidth = yAxisDataLabelWidth + borderSize * 2 + paddingLeft + paddingRight
-    const rectHeight = textSize + borderSize * 2 + paddingTop + paddingBottom
+    const rectWidth = getTextRectWidth(this._ctx, text, crosshairHorizontalTextOptions)
+    const rectHeight = getTextRectHeight(crosshairHorizontalTextOptions)
     if (this._yAxis.isFromYAxisZero()) {
       rectStartX = 0
     } else {
       rectStartX = this._width - rectWidth
     }
 
-    const rectY = crosshair.y - borderSize - paddingTop - textSize / 2
+    const rectY = crosshair.y - borderSize - crosshairHorizontalTextOptions.paddingTop - crosshairHorizontalTextOptions.size / 2
     // 绘制y轴文字外的边框
     renderStrokeFillRoundRect(
-      this._ctx, crosshairHorizontalTextOptions.backgroundColor,
-      crosshairHorizontalTextOptions.borderColor, borderSize,
-      rectStartX, rectY, rectWidth, rectHeight, crosshairHorizontalTextOptions.borderRadius
+      this._ctx,
+      crosshairHorizontalTextOptions.backgroundColor,
+      crosshairHorizontalTextOptions.borderColor,
+      borderSize,
+      rectStartX,
+      rectY,
+      rectWidth,
+      rectHeight,
+      crosshairHorizontalTextOptions.borderRadius
     )
     renderText(
       this._ctx,
       crosshairHorizontalTextOptions.color,
-      rectStartX + borderSize + paddingLeft,
+      rectStartX + borderSize + crosshairHorizontalTextOptions.paddingLeft,
       crosshair.y,
       text
     )

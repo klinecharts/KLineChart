@@ -41,3 +41,25 @@ export function calcTextWidth (ctx, text) {
 export function createFont (fontSize = 12, fontWeight = 'normal', fontFamily = 'Helvetica Neue') {
   return `${fontWeight} ${fontSize}px ${fontFamily}`
 }
+
+/**
+ * 获取文字框宽度
+ * @param ctx
+ * @param text
+ * @param options
+ * @returns {number}
+ */
+export function getTextRectWidth (ctx, text, options) {
+  ctx.font = createFont(options.size, options.weight, options.family)
+  const textWidth = calcTextWidth(ctx, text)
+  return options.paddingLeft + options.paddingRight + textWidth + (options.borderSize || 0) * 2
+}
+
+/**
+ * 获取文字框高度
+ * @param options
+ * @returns {number}
+ */
+export function getTextRectHeight (options) {
+  return options.paddingTop + options.paddingBottom + options.size + (options.borderSize || 0) * 2
+}

@@ -16,8 +16,8 @@ import Overlay from './Overlay'
 import { LineStyle, OverlayPosition, YAxisPosition } from '../../options/styleOptions'
 import { renderHorizontalLine } from '../../renderer/line'
 import { isValid, isObject } from '../../utils/typeChecks'
-import { calcTextWidth, createFont } from '../../utils/canvas'
-import { renderFillRoundRect } from '../../renderer/rect'
+import { createFont, getTextRectWidth, getTextRectHeight } from '../../utils/canvas'
+import { renderStrokeFillRoundRect } from '../../renderer/rect'
 import { renderText } from '../../renderer/text'
 
 export default class Tag extends Overlay {
@@ -69,7 +69,7 @@ export default class Tag extends Overlay {
     const tagOptions = this._styles || options.tag
     const y = this._getY(tagOptions)
     ctx.save()
-    this._drawLine(ctx, y, tagOptions.line)
+    this._drawLine(ctx, y, tagOptions, yAxisOptions)
     this._drawMark(ctx, y, tagOptions, yAxisOptions)
     ctx.restore()
   }
@@ -85,9 +85,8 @@ export default class Tag extends Overlay {
     const tagOptions = this._styles || options.tag
     const tagTextOptions = tagOptions.text
     ctx.save()
-    ctx.font = createFont(tagTextOptions.size, tagTextOptions.weight, tagTextOptions.family)
-    const rectWidth = this._getTextRectWidth(ctx, tagTextOptions)
-    const rectHeight = tagTextOptions.paddingTop + tagTextOptions.paddingBottom + tagTextOptions.size
+    const rectWidth = getTextRectWidth(ctx, this._text, tagTextOptions)
+    const rectHeight = getTextRectHeight(tagTextOptions)
     let x
     if (this._yAxis.isFromYAxisZero()) {
       x = 0
@@ -95,9 +94,11 @@ export default class Tag extends Overlay {
       x = this._yAxis.width() - rectWidth
     }
     const y = this._getY(tagOptions)
-    renderFillRoundRect(
+    renderStrokeFillRoundRect(
       ctx,
       tagTextOptions.backgroundColor,
+      tagTextOptions.borderColor,
+      tagTextOptions.borderSize,
       x,
       y - rectHeight / 2,
       rectWidth,
@@ -112,19 +113,125 @@ export default class Tag extends Overlay {
    * 绘制线
    * @param ctx
    * @param y
-   * @param tagLineOptions
+   * @param tagOptions
    * @private
    */
-  _drawLine (ctx, y, tagLineOptions) {
+  _drawLine (ctx, y, tagOptions, yAxisOptions) {
+    const tagLineOptions = tagOptions.line
     if (!tagLineOptions.show) {
       return
     }
+    ctx.save()
+    const textRectWidth = getTextRectWidth(ctx, this._text, tagOptions.text)
+    const markRectWidth = getTextRectWidth(ctx, this._mark, tagOptions.mark)
     ctx.strokeStyle = tagLineOptions.color
     ctx.lineWidth = tagLineOptions.size
     if (tagLineOptions.style === LineStyle.DASH) {
       ctx.setLineDash(tagLineOptions.dashValue)
     }
-    renderHorizontalLine(ctx, y, 0, this._xAxis.width())
+    const markOffset = tagOptions.mark.offset
+    const lines = []
+    const textValid = isValid(this._text)
+    const markValid = isValid(this._mark)
+    if (yAxisOptions.inside) {
+      if (yAxisOptions.position === YAxisPosition.LEFT) {
+        if (textValid && markValid) {
+          if (markOffset > 0) {
+            lines.push([textRectWidth, textRectWidth + markOffset])
+            lines.push([textRectWidth + markOffset + markRectWidth, this._xAxis.width()])
+          } else {
+            if (Math.abs(markOffset) < Math.min(textRectWidth, markRectWidth)) {
+              lines.push([textRectWidth + markOffset + markRectWidth, this._xAxis.width()])
+            } else {
+              lines.push([Math.max(textRectWidth, markRectWidth), this._xAxis.width()])
+            }
+          }
+        } else {
+          if (textValid) {
+            lines.push([textRectWidth, this._xAxis.width()])
+          } else if (markValid) {
+            if (markOffset > 0) {
+              lines.push([0, markOffset])
+              lines.push([markOffset + markRectWidth, this._xAxis.width()])
+            } else {
+              if (Math.abs(markOffset) < markRectWidth) {
+                lines.push([markOffset + markRectWidth, this._xAxis.width()])
+              } else {
+                lines.push([0, this._xAxis.width()])
+              }
+            }
+          } else {
+            lines.push([0, this._xAxis.width()])
+          }
+        }
+      } else {
+        if (textValid && markValid) {
+          if (markOffset < 0) {
+            lines.push([0, this._xAxis.width() - textRectWidth + markOffset - markRectWidth])
+            lines.push([this._xAxis.width() - textRectWidth + markOffset, this._xAxis.width() - textRectWidth])
+          } else {
+            if (markOffset < Math.min(textRectWidth, markRectWidth)) {
+              lines.push([0, this._xAxis.width() - textRectWidth - markRectWidth + markOffset])
+            } else {
+              lines.push([0, this._xAxis.width() - Math.max(textRectWidth, markRectWidth)])
+            }
+          }
+        } else {
+          if (textValid) {
+            lines.push([0, this._xAxis.width() - textRectWidth])
+          } else if (markValid) {
+            if (markOffset < 0) {
+              lines.push([0, this._xAxis.width() + markOffset - markRectWidth])
+              lines.push([this._xAxis.width() + markOffset, this._xAxis.width()])
+            } else {
+              if (markOffset < markRectWidth) {
+                lines.push([0, this._xAxis.width() - markRectWidth + markOffset])
+              } else {
+                lines.push([0, this._xAxis.width()])
+              }
+            }
+          } else {
+            lines.push([0, this._xAxis.width()])
+          }
+        }
+      }
+    } else {
+      if (yAxisOptions.position === YAxisPosition.LEFT) {
+        if (markValid) {
+          if (markOffset > 0) {
+            lines.push([0, markOffset])
+            lines.push([markOffset + markRectWidth, this._xAxis.width()])
+          } else {
+            if (Math.abs(markOffset) < markRectWidth) {
+              lines.push([markRectWidth + markOffset, this._xAxis.width()])
+            } else {
+              lines.push([0, this._xAxis.width()])
+            }
+          }
+        } else {
+          lines.push([0, this._xAxis.width()])
+        }
+      } else {
+        if (markValid) {
+          if (markOffset < 0) {
+            lines.push([0, this._xAxis.width() - markRectWidth + markOffset])
+            lines.push([this._xAxis.width() + markOffset, this._xAxis.width()])
+          } else {
+            if (markOffset < markRectWidth) {
+              lines.push([0, this._xAxis.width() - markRectWidth + markOffset])
+            } else {
+              lines.push([0, this._xAxis.width()])
+            }
+          }
+        } else {
+          lines.push([0, this._xAxis.width()])
+        }
+      }
+    }
+    lines.forEach(line => {
+      renderHorizontalLine(ctx, y, line[0], line[1])
+    })
+    ctx.restore()
   }
 
   /**
@@ -140,19 +247,18 @@ export default class Tag extends Overlay {
       return
     }
     const tagMarkOptions = tagOptions.mark
-    ctx.font = createFont(tagMarkOptions.size, tagMarkOptions.weight, tagMarkOptions.family)
-    const rectWidth = tagMarkOptions.paddingLeft + tagMarkOptions.paddingRight + calcTextWidth(ctx, this._mark)
-    const rectHeight = tagMarkOptions.paddingTop + tagMarkOptions.paddingBottom + tagMarkOptions.size
+    const rectWidth = getTextRectWidth(ctx, this._mark, tagMarkOptions)
+    const rectHeight = getTextRectHeight(tagMarkOptions)
     let x
     if (yAxisOptions.inside) {
-      let valueRectWidth = 0
+      let textRectWidth = 0
       if (isValid(this._text)) {
-        valueRectWidth = this._getTextRectWidth(ctx, tagOptions.text)
+        textRectWidth = getTextRectWidth(ctx, this._text, tagOptions.text)
       }
       if (yAxisOptions.position === YAxisPosition.LEFT) {
-        x = valueRectWidth
+        x = textRectWidth
       } else {
-        x = this._xAxis.width() - valueRectWidth - rectWidth
+        x = this._xAxis.width() - textRectWidth - rectWidth
       }
     } else {
       if (yAxisOptions.position === YAxisPosition.LEFT) {
@@ -161,9 +267,12 @@ export default class Tag extends Overlay {
         x = this._xAxis.width() - rectWidth
       }
     }
-    renderFillRoundRect(
+    x += tagMarkOptions.offset
+    renderStrokeFillRoundRect(
       ctx,
       tagMarkOptions.backgroundColor,
+      tagMarkOptions.borderColor,
+      tagMarkOptions.borderSize,
       x,
       y - rectHeight / 2,
       rectWidth,
@@ -194,17 +303,5 @@ export default class Tag extends Overlay {
         return this._yAxis.convertToNicePixel(this._point.value) + offset
       }
     }
-  }
-
-  /**
-   * 获取值的矩形宽度
-   * @param ctx
-   * @param textOptions
-   * @return {*}
-   * @private
-   */
-  _getTextRectWidth (ctx, textOptions) {
-    ctx.font = createFont(textOptions.size, textOptions.weight, textOptions.family)
-    return textOptions.paddingLeft + textOptions.paddingRight + calcTextWidth(ctx, this._text)
   }
 }
