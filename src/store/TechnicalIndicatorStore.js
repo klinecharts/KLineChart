@@ -305,19 +305,16 @@ export default class TechnicalIndicatorStore {
    * @param name
    */
   calcInstance (name, paneId) {
-    let calcSuccess = false
     if (isValid(name)) {
       if (isValid(paneId)) {
         const paneInstances = this._instances.get(paneId)
         if (paneInstances && paneInstances.has(name)) {
           paneInstances.get(name).calc(this._chartStore.dataList())
-          calcSuccess = true
         }
       } else {
         this._instances.forEach(paneInstances => {
           if (paneInstances.has(name)) {
             paneInstances.get(name).calc(this._chartStore.dataList())
-            calcSuccess = true
           }
         })
       }
@@ -325,11 +322,9 @@ export default class TechnicalIndicatorStore {
       this._instances.forEach(paneInstances => {
         paneInstances.forEach(instance => {
           instance.calc(this._chartStore.dataList())
-          calcSuccess = true
         })
       })
     }
-    return calcSuccess
   }
 
   /**

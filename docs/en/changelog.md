@@ -1,4 +1,8 @@
 # Change Log
+## 8.0.1
+`2021-11-26`
++ 🐞 Fix the data loading page refresh problem.
+
 ## 8.0.0
 `2021-10-29`
 + 🆕 New features
