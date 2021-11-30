@@ -1,6 +1,7 @@
 # 更新日志
 ## 8.0.1
 `2021-11-26`
++ 🆕 样式配置新增`tag.mark.offset`，`tag.mark.borderColor`，`tag.mark.borderSize`，`tag.text.borderColor`，`tag.text.borderSize`。
 + 🐞 修复数据加载页面刷新问题。
 
 ## 8.0.0

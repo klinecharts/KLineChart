@@ -1,6 +1,7 @@
 # Change Log
 ## 8.0.1
 `2021-11-26`
++ 🆕 Style configuration adds `tag.mark.offset`, `tag.mark.borderColor`, `tag.mark.borderSize`, `tag.text.borderColor`, `tag.text.borderSize`.
 + 🐞 Fix the data loading page refresh problem.
 
 ## 8.0.0

@@ -406,9 +406,12 @@
       paddingRight: 2,
       paddingTop: 2,
       paddingBottom: 2,
-      borderRadius: 2
+      borderRadius: 2,
+      borderSize: 1,
+      borderColor: '#2196F3'
     },
     mark: {
+      offset: 0,
       color: '#FFFFFF',
       backgroundColor: '#2196F3',
       size: 12,
@@ -418,7 +421,9 @@
       paddingRight: 2,
       paddingTop: 2,
       paddingBottom: 2,
-      borderRadius: 2
+      borderRadius: 2,
+      borderSize: 1,
+      borderColor: '#2196F3'
     }
   }
 }
