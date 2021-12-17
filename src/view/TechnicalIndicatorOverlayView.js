@@ -189,7 +189,6 @@ export default class TechnicalIndicatorOverlayView extends View {
     const colorSize = colors.length
     this._ctx.textBaseline = 'top'
     this._ctx.font = createFont(textSize, techTooltipTextOptions.weight, techTooltipTextOptions.family)
-
     if (techTooltipOptions.showName) {
       const nameText = tooltipData.name
       const nameTextWidth = calcTextWidth(this._ctx, nameText)
@@ -231,7 +230,7 @@ export default class TechnicalIndicatorOverlayView extends View {
       const title = values[i].title
       if (isValid(title)) {
         labelX += textMarginLeft
-        const text = `${title}${values[i].value || techTooltipTextOptions.defaultValue}`
+        const text = `${title}${values[i].value || techTooltipOptions.defaultValue}`
         const textWidth = calcTextWidth(this._ctx, text)
         renderText(this._ctx, valueColor, labelX, labelY, text)
         labelX += (textWidth + textMarginRight)
