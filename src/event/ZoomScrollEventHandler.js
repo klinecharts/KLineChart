@@ -20,7 +20,7 @@ export default class ZoomScrollEventHandler extends EventHandler {
   constructor (chartStore) {
     super(chartStore)
     // 开始滚动时坐标点
-    this._startScrollCoordinate = {}
+    this._startScrollCoordinate = null
     // 开始触摸时坐标
     this._touchCoordinate = null
     // 是否是取消了十字光标
@@ -42,7 +42,12 @@ export default class ZoomScrollEventHandler extends EventHandler {
     this._chartStore.timeScaleStore().zoom(zoomScale, middleCoordinate)
   }
 
+  mouseUpEvent () {
+    this._startScrollCoordinate = null
+  }
+
   mouseLeaveEvent (event) {
+    this._startScrollCoordinate = null
     if (isMouse(event)) {
       this._chartStore.crosshairStore().set()
     }
@@ -135,8 +140,10 @@ export default class ZoomScrollEventHandler extends EventHandler {
         crosshair = null
       }
     }
-    const distance = event.localX - this._startScrollCoordinate.x
-    this._chartStore.timeScaleStore().scroll(distance, crosshair)
+    if (this._startScrollCoordinate) {
+      const distance = event.localX - this._startScrollCoordinate.x
+      this._chartStore.timeScaleStore().scroll(distance, crosshair)
+    }
   }
 
   longTapEvent (event) {

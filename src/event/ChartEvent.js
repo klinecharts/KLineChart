@@ -65,6 +65,7 @@ export default class ChartEvent {
     if (this._checkEventInChartContent(event)) {
       this._target.style.cursor = 'crosshair'
     }
+    this._zoomScrollEventHandler.mouseUpEvent(event)
     if (this._shouldPerformOverlayEvent()) {
       this._overlayEventHandler.mouseUpEvent(event)
     }
