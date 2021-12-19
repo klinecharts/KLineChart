@@ -1,6 +1,12 @@
 # Change Log
-## 8.0.1
-`2021-11-26`
+## 8.1.1
+`2021-12-19`
++ 🐞 Fix the problem that the style technicalIndicator.tooltip.defaultValue does not take effect.
++ 🐞 Fix the problem that dragging on the axis may cause the chart to display abnormally.
++ 💄 Optimize shape, `onPressedMove` event.
+
+## 8.1.0
+`2021-11-30`
 + 🆕 Style configuration adds `tag.mark.offset`, `tag.mark.borderColor`, `tag.mark.borderSize`, `tag.text.borderColor`, `tag.text.borderSize`.
 + 🐞 Fix the data loading page refresh problem.
 

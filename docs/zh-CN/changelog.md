@@ -1,6 +1,11 @@
 # 更新日志
-## 8.0.1
-`2021-11-26`
+## 8.1.1
++ 🐞 修改样式technicalIndicator.tooltip.defaultValue不生效问题。
++ 🐞 修复在轴上拖动可能导致图表显示异常问题。
++ 💄 优化shape，`onPressedMove`事件
+
+## 8.1.0
+`2021-11-30`
 + 🆕 样式配置新增`tag.mark.offset`，`tag.mark.borderColor`，`tag.mark.borderSize`，`tag.text.borderColor`，`tag.text.borderSize`。
 + 🐞 修复数据加载页面刷新问题。
 
