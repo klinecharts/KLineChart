@@ -674,7 +674,8 @@ export default class Shape extends Overlay {
         yAxis: this._yAxis
       })
       this.onPressedMove({
-        id: shapeMouseOperate.click.id,
+        id: this._id,
+        element: ShapeMouseOperateElement.POINT,
         points: this._points,
         event
       })
@@ -696,7 +697,7 @@ export default class Shape extends Overlay {
    * 按住非点拖动时事件
    * @param coordinate
    */
-  mousePressedOtherMove (coordinate) {
+  mousePressedOtherMove (coordinate, event) {
     if (this._prevPressPoint) {
       const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
       const value = this._yAxis.convertFromPixel(coordinate.y)
@@ -714,6 +715,12 @@ export default class Shape extends Overlay {
           value,
           timestamp: this._chartStore.timeScaleStore().dataIndexToTimestamp(dataIndex)
         }
+      })
+      this.onPressedMove({
+        id: this._id,
+        element: ShapeMouseOperateElement.OTHER,
+        points: this._points,
+        event
       })
     }
   }

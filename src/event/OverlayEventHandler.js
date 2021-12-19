@@ -205,7 +205,7 @@ export default class OverlayEventHandler extends EventHandler {
       if (element === ShapeMouseOperateElement.POINT) {
         instance.mousePressedPointMove(coordinate, event)
       } else {
-        instance.mousePressedOtherMove(coordinate)
+        instance.mousePressedOtherMove(coordinate, event)
       }
       this._chartStore.crosshairStore().set({ x: event.localX, y: event.paneY, paneId: event.paneId })
     }
