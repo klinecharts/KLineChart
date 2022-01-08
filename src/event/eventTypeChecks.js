@@ -12,8 +12,15 @@
  * limitations under the License.
  */
 
-export default class EventHandler {
-  constructor (chartStore) {
-    this._chartStore = chartStore
-  }
+export const EventType = {
+  MOUSE: 'mouse',
+  TOUCH: 'touch'
+}
+
+export function isTouch (event) {
+  return event.type === EventType.TOUCH
+}
+
+export function isMouse (event) {
+  return event.type === EventType.MOUSE
 }

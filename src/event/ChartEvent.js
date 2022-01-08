@@ -17,6 +17,8 @@ import ZoomScrollEventHandler from './ZoomScrollEventHandler'
 import OverlayEventHandler from './OverlayEventHandler'
 import KeyBoardEventHandler from './KeyBoardEventHandler'
 
+import { isTouch } from './eventTypeChecks'
+
 export default class ChartEvent {
   constructor (target, chartStore, yAxis) {
     this._target = target
@@ -37,7 +39,7 @@ export default class ChartEvent {
       pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this),
       longTapEvent: this._longTapEvent.bind(this)
     }, {
-      treatVertTouchDragAsPageScroll: false,
+      treatVertTouchDragAsPageScroll: true,
       treatHorzTouchDragAsPageScroll: false
     })
     this._boundKeyBoardDownEvent = this._keyBoardDownEvent.bind(this)
@@ -107,6 +109,7 @@ export default class ChartEvent {
   _mouseClickEvent (event) {
     if (this._checkZoomScroll() && this._checkEventInChartContent(event)) {
       this._zoomScrollEventHandler.mouseClickEvent(this._compatChartEvent(event, true))
+      this._modifyEventOptions(event)
     }
   }
 
@@ -119,6 +122,7 @@ export default class ChartEvent {
       }
       if (this._checkZoomScroll()) {
         this._zoomScrollEventHandler.mouseDownEvent(compatEvent)
+        this._modifyEventOptions(event)
       }
     }
   }
@@ -134,6 +138,7 @@ export default class ChartEvent {
       const compatEvent = this._compatChartEvent(event, true)
       if (this._checkZoomScroll()) {
         this._zoomScrollEventHandler.pressedMouseMoveEvent(compatEvent)
+        this._modifyEventOptions(event)
       } else {
         this._overlayEventHandler.pressedMouseMoveEvent(compatEvent)
       }
@@ -143,6 +148,7 @@ export default class ChartEvent {
   _longTapEvent (event) {
     if (this._checkZoomScroll() && this._checkEventInChartContent(event)) {
       this._zoomScrollEventHandler.longTapEvent(this._compatChartEvent(event, true))
+      this._modifyEventOptions(event)
     }
   }
 
@@ -157,6 +163,18 @@ export default class ChartEvent {
    */
   _shouldPerformOverlayEvent () {
     return !this._chartStore.shapeStore().isEmpty() || !this._chartStore.annotationStore().isEmpty()
+  }
+
+  /**
+   * 修改事件配置
+   * @param event
+   */
+  _modifyEventOptions (event) {
+    if (isTouch(event) && this._chartStore.crosshairStore().get().paneId) {
+      this._event.setOptions({ treatVertTouchDragAsPageScroll: false })
+    } else {
+      this._event.setOptions({ treatVertTouchDragAsPageScroll: true })
+    }
   }
 
   /**

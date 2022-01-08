@@ -12,7 +12,9 @@
  * limitations under the License.
  */
 
-import EventHandler, { isMouse } from './EventHandler'
+import EventHandler from './EventHandler'
+import { isMouse } from './eventTypeChecks'
+
 import InvalidateLevel from '../enum/InvalidateLevel'
 import { ShapeMouseOperateElement } from '../component/overlay/Shape'
 

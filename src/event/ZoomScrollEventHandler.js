@@ -12,7 +12,9 @@
  * limitations under the License.
  */
 
-import EventHandler, { isMouse, isTouch } from './EventHandler'
+import EventHandler from './EventHandler'
+
+import { isMouse, isTouch } from './eventTypeChecks'
 
 const TOUCH_MIN_RADIUS = 10
 

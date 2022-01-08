@@ -22,6 +22,8 @@
  * </licenses/LICENSE-lightweight-charts>).
  */
 
+import { EventType } from './eventTypeChecks'
+
 const MouseEventButton = {
   LEFT: 0,
   RIGHT: 2
@@ -44,26 +46,20 @@ function preventDefault (event) {
   }
 }
 
-function checkTouchEvents () {
+function mobileTouch () {
+  let touchEvent
   if ('ontouchstart' in window) {
-    return true
+    touchEvent = true
+  } else {
+    touchEvent = Boolean(window.DocumentTouch && document instanceof window.DocumentTouch)
   }
-
-  return Boolean(window.DocumentTouch && document instanceof window.DocumentTouch)
+  return ('onorientationchange' in window) && (!!navigator.maxTouchPoints || !!navigator.msMaxTouchPoints || touchEvent)
 }
-
-const touch = !!navigator.maxTouchPoints || !!navigator.msMaxTouchPoints || checkTouchEvents()
-const mobileTouch = 'onorientationchange' in window && touch
 
 function getDistance (p1, p2) {
   const xDiff = p1.clientX - p2.clientX
   const yDiff = p1.clientY - p2.clientY
   return Math.sqrt(xDiff * xDiff + yDiff * yDiff)
-}
-
-export const EventType = {
-  MOUSE: 'mouse',
-  TOUCH: 'touch'
 }
 
 export default class EventBase {
@@ -91,6 +87,10 @@ export default class EventBase {
     this._mousePressed = false
 
     this._init()
+  }
+
+  setOptions (options = {}) {
+    this._options = { ...this.options, ...options }
   }
 
   destroy () {
@@ -375,7 +375,7 @@ export default class EventBase {
     this._target.addEventListener('mouseleave', this._mouseLeaveHandler.bind(this))
 
     this._target.addEventListener('touchstart', this._mouseDownHandler.bind(this), { passive: true })
-    if (!mobileTouch) {
+    if (!mobileTouch()) {
       this._target.addEventListener('mousedown', this._mouseDownHandler.bind(this))
     }
 
