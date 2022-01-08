@@ -32,7 +32,8 @@ class View {
       position: 'absolute',
       top: '0',
       left: '0',
-      zIndex: '2'
+      zIndex: '2',
+      boxSizing: 'border-box'
     })
     this._ctx = this._canvas.getContext('2d')
     container.appendChild(this._canvas)

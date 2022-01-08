@@ -20,6 +20,7 @@ const ActionType = {
   ZOOM: 'zoom',
   SCROLL: 'scroll',
   CROSSHAIR: 'crosshair',
+  TOOLTIP: 'tooltip',
   PANE_DRAG: 'pane_drag'
 }
 

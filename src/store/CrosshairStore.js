@@ -50,8 +50,9 @@ export default class CrosshairStore {
     const realX = this._chartStore.timeScaleStore().dataIndexToCoordinate(realDataIndex)
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
     this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex }
-    if (cr.paneId && kLineData) {
+    if (kLineData) {
       this._chartStore.crosshairChange({
+        crosshair: cr,
         realDataIndex,
         dataIndex,
         kLineData,

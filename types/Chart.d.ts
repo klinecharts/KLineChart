@@ -7,7 +7,7 @@ import { Tag } from './Tag';
 
 import { PaneOptions } from './Pane';
 
-export declare type ChartActionType = 'zoom' | 'scroll' | 'crosshair' | 'pane_drag';
+export declare type ChartActionType = 'zoom' | 'scroll' | 'crosshair' | 'tooltip' | 'pane_drag';
 
 export declare interface ConvertFinder {
   paneId?: string;
