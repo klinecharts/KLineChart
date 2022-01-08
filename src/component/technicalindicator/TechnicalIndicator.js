@@ -35,12 +35,14 @@ export const TechnicalIndicatorSeries = {
 
 export default class TechnicalIndicator {
   constructor ({
-    name, series, calcParams, plots, precision,
+    name, shortName, series, calcParams, plots, precision,
     shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber,
     minValue, maxValue, styles
   }) {
     // 指标名
     this.name = name || ''
+    // 指标简短名称，用于显示
+    this.shortName = shortName || name || ''
     // 系列
     this.series = Object.values(TechnicalIndicatorSeries).indexOf(series) !== -1 ? series : TechnicalIndicatorSeries.NORMAL
     // 精度
@@ -74,6 +76,19 @@ export default class TechnicalIndicator {
       }
       return param
     })
+  }
+
+  /**
+   * 设置简短名称
+   * @param shortName
+   * @returns
+   */
+  setShortName (shortName) {
+    if (this.shortName !== shortName) {
+      this.shortName = shortName
+      return true
+    }
+    return false
   }
 
   /**

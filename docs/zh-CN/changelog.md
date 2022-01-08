@@ -1,8 +1,9 @@
 # 更新日志
 ## 8.1.1
+`2021-12-19`
 + 🐞 修改样式technicalIndicator.tooltip.defaultValue不生效问题。
 + 🐞 修复在轴上拖动可能导致图表显示异常问题。
-+ 💄 优化shape，`onPressedMove`事件
++ 💄 优化shape，`onPressedMove`事件。
 
 ## 8.1.0
 `2021-11-30`

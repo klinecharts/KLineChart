@@ -26,6 +26,7 @@ export declare interface TechnicalIndicatorPlot {
 
 export declare interface TechnicalIndicator {
   name: string;
+  shortName?: string;
   calcParams?: any[];
   precision?: number;
   shouldOhlc?: boolean;

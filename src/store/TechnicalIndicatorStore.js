@@ -76,11 +76,12 @@ export default class TechnicalIndicatorStore {
   /**
    * 获取指标信息
    * @param tech
-   * @return {{ calcParams, series, precision, name, shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber, styles }}
+   * @return {{ calcParams, series, precision, name, shortName, shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber, styles }}
    */
   _createTechInfo (tech) {
     return {
       name: tech.name,
+      shortName: tech.shortName,
       series: tech.series,
       calcParams: tech.calcParams,
       shouldCheckParamCount: tech.shouldCheckParamCount,
@@ -88,6 +89,7 @@ export default class TechnicalIndicatorStore {
       shouldFormatBigNumber: tech.shouldFormatBigNumber,
       precision: tech.precision,
       styles: tech.styles,
+      plots: tech.plots,
       result: tech.result || []
     }
   }
@@ -111,6 +113,7 @@ export default class TechnicalIndicatorStore {
   /**
    * 创建一个新的技术指标
    * @param name
+   * @param shortName
    * @param series
    * @param calcParams
    * @param plots
@@ -127,7 +130,7 @@ export default class TechnicalIndicatorStore {
    * @returns {templateInstance|null}
    */
   _createTemplateInstance ({
-    name, series, calcParams, plots, precision,
+    name, shortName, series, calcParams, plots, precision,
     shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber,
     minValue, maxValue, styles,
     calcTechnicalIndicator, regeneratePlots, render
@@ -141,6 +144,7 @@ export default class TechnicalIndicatorStore {
         super(
           {
             name,
+            shortName,
             series,
             calcParams,
             plots,
@@ -394,7 +398,7 @@ export default class TechnicalIndicatorStore {
    * @returns
    */
   override (techOverride, paneId) {
-    const { name, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles } = techOverride
+    const { name, shortName, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles } = techOverride
     const defaultTechStyleOptions = this._chartStore.styleOptions().technicalIndicator
     let instances = new Map()
     if (isValid(paneId)) {
@@ -406,6 +410,7 @@ export default class TechnicalIndicatorStore {
       const template = this._templates[name]
       if (template) {
         template.setCalcParams(calcParams)
+        template.setShortName(shortName)
         template.setPrecision(precision)
         template.setShouldOhlc(shouldOhlc)
         template.setShouldFormatBigNumber(shouldFormatBigNumber)
@@ -417,12 +422,13 @@ export default class TechnicalIndicatorStore {
     instances.forEach(paneInstances => {
       if (paneInstances.has(name)) {
         const tech = paneInstances.get(name)
+        const shortNameSuccess = tech.setShortName(shortName)
         const calcParamsSuccess = tech.setCalcParams(calcParams)
         const precisionSuccess = tech.setPrecision(precision)
         const shouldOhlcSuccess = tech.setShouldOhlc(shouldOhlc)
         const shouldFormatBigNumberSuccess = tech.setShouldFormatBigNumber(shouldFormatBigNumber)
         const styleSuccess = tech.setStyles(styles, defaultTechStyleOptions)
-        if (calcParamsSuccess || precisionSuccess || shouldOhlcSuccess || shouldFormatBigNumberSuccess || styleSuccess) {
+        if (shortNameSuccess || calcParamsSuccess || precisionSuccess || shouldOhlcSuccess || shouldFormatBigNumberSuccess || styleSuccess) {
           overiderSuccss = true
         }
         if (calcParamsSuccess) {
