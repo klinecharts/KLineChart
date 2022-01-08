@@ -93,6 +93,7 @@ export default class ChartEvent {
         this._zoomScrollEventHandler.mouseLeaveEvent(event)
       }
     } else {
+      this._target.style.cursor = 'default'
       this._chartStore.crosshairStore().set()
     }
   }
