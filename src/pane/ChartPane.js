@@ -33,9 +33,6 @@ import { perfectOverlayFunc } from '../component/overlay/Overlay'
 import ActionType from '../enum/ActionType'
 import InvalidateLevel from '../enum/InvalidateLevel'
 
-// 蜡烛图窗口id
-export const CANDLE_PANE_ID = 'candle_pane'
-
 // 默认技术指标窗口高度
 const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
 
@@ -44,6 +41,12 @@ const TECHNICAL_INDICATOR_PANE_ID_PREFIX = 'technical_indicator_pane_'
 
 // 图形id前缀
 const SHAPE_ID_PREFIX = 'shape_'
+
+// 蜡烛图窗口id
+export const CANDLE_PANE_ID = 'candle_pane'
+
+// x轴窗口id
+const XAXIS_PANE_ID = 'x_axis_pane'
 
 export default class ChartPane {
   constructor (container, styleOptions) {
@@ -56,7 +59,7 @@ export default class ChartPane {
       invalidate: this._invalidatePane.bind(this),
       crosshair: this._crosshairObserver.bind(this)
     })
-    this._xAxisPane = new XAxisPane({ container: this._chartContainer, chartStore: this._chartStore })
+    this._xAxisPane = new XAxisPane({ id: XAXIS_PANE_ID, container: this._chartContainer, chartStore: this._chartStore })
     this._panes = new Map([[CANDLE_PANE_ID, new CandlePane({
       container: this._chartContainer,
       chartStore: this._chartStore,
@@ -91,7 +94,8 @@ export default class ChartPane {
       outline: 'none',
       borderStyle: 'none',
       width: '100%',
-      cursor: 'crosshair'
+      cursor: 'crosshair',
+      boxSizing: 'border-box'
     })
     this._chartContainer.tabIndex = 1
     container.appendChild(this._chartContainer)
@@ -101,24 +105,45 @@ export default class ChartPane {
    * 十字光标观察者
    * @private
    */
-  _crosshairObserver ({ dataIndex, kLineData, x, y }) {
-    if (this.chartStore().actionStore().has(ActionType.CROSSHAIR)) {
+  _crosshairObserver ({ crosshair, dataIndex, kLineData, x, y }) {
+    if (
+      this._chartStore.actionStore().has(ActionType.CROSSHAIR) ||
+      this._chartStore.actionStore().has(ActionType.TOOLTIP)
+    ) {
+      this._chartStore.actionStore().execute(ActionType.TOOLTIP, {
+        type: 'candle',
+        dataIndex,
+        data: kLineData
+      })
       const techDatas = {}
       this._panes.forEach((_, id) => {
         const data = {}
+        const techDataList = []
         const techs = this.chartStore().technicalIndicatorStore().instances(id)
         techs.forEach(tech => {
           const result = tech.result
-          data[tech.name] = result[dataIndex]
+          const techData = result[dataIndex]
+          data[tech.name] = techData
+          techDataList.push({ name: tech.name, data: techData })
         })
         techDatas[id] = data
+        if (techDataList.length > 0) {
+          this._chartStore.actionStore().execute(ActionType.TOOLTIP, {
+            type: 'technicalIndicator',
+            paneId: id,
+            dataIndex,
+            data: techDataList
+          })
+        }
       })
-      this._chartStore.actionStore().execute(ActionType.CROSSHAIR, {
-        coordinate: { x, y },
-        dataIndex,
-        kLineData,
-        technicalIndicatorData: techDatas
-      })
+      if (crosshair.paneId) {
+        this._chartStore.actionStore().execute(ActionType.CROSSHAIR, {
+          coordinate: { x, y },
+          dataIndex,
+          kLineData,
+          technicalIndicatorData: techDatas
+        })
+      }
     }
   }
 
@@ -316,6 +341,15 @@ export default class ChartPane {
    */
   hasPane (paneId) {
     return this._panes.has(paneId)
+  }
+
+  /**
+   * 获取窗口
+   * @param paneId
+   * @returns
+   */
+  getPane (paneId) {
+    return this._panes.get(paneId)
   }
 
   /**
@@ -537,6 +571,14 @@ export default class ChartPane {
   }
 
   /**
+   * 移除所有html元素
+   */
+  removeAllHtml () {
+    this._panes.forEach(pane => { pane.removeHtml() })
+    this._xAxisPane.removeHtml()
+  }
+
+  /**
    * 设置窗体参数
    * @param options
    * @param forceShouldAdjust
@@ -671,7 +713,8 @@ export default class ChartPane {
     const height = this._chartContainer.offsetHeight
     const canvas = createElement('canvas', {
       width: `${width}px`,
-      height: `${height}px`
+      height: `${height}px`,
+      boxSizing: 'border-box'
     })
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)

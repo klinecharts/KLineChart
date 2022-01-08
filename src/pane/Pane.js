@@ -34,7 +34,8 @@ export default class Pane {
       margin: '0',
       padding: '0',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      boxSizing: 'border-box'
     })
     const lastElement = this._container.lastChild
     if (lastElement) {
@@ -113,6 +114,26 @@ export default class Pane {
   }
 
   /**
+   * 创建html元素
+   */
+  createHtml ({ id, content, style, position }) {
+    if (position === 'yAxis') {
+      this._yAxisWidget && this._yAxisWidget.createHtml({ id, content, style })
+    } else {
+      this._mainWidget.createHtml({ id, content, style })
+    }
+  }
+
+  /**
+   * 移除html元素
+   * @param id
+   */
+  removeHtml (id) {
+    this._yAxisWidget && this._yAxisWidget.removeHtml(id)
+    this._mainWidget.removeHtml(id)
+  }
+
+  /**
    * 将canvas转换成图片
    * @param includeOverlay
    * @return {HTMLCanvasElement}
@@ -122,7 +143,8 @@ export default class Pane {
     const height = this._element.offsetHeight
     const canvas = createElement('canvas', {
       width: `${width}px`,
-      height: `${height}px`
+      height: `${height}px`,
+      boxSizing: 'border-box'
     })
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)

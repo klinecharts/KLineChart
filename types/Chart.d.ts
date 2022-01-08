@@ -14,6 +14,13 @@ export declare interface ConvertFinder {
   absoluteYAxis?: boolean;
 }
 
+export declare interface HTML {
+  id?: string,
+  position?: 'content' | 'yAxis';
+  style?: any;
+  content: string | HtmlElement;
+}
+
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
 
 export declare interface Chart {
@@ -55,6 +62,8 @@ export declare interface Chart {
   removeAnnotation(paneId?: string, point?: Point | Point[]): void;
   createTag(tag: Tag | Tag[], paneId?: string): void;
   removeTag(paneId?: string, tagId?: string | string[]): void;
+  createHtml(html: HTML, paneId?: string): string | null;
+  removeHtml(paneId?: string, tagId?: string | string[]): void;
   scrollByDistance(distance: number, animationDuration?: number): void;
   scrollToRealTime(animationDuration?: number): void;
   scrollToDataIndex(dataIndex: number, animationDuration?: number): void;

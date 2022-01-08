@@ -76,18 +76,24 @@ export default class ChartEvent {
   }
 
   _mouseMoveEvent (event) {
-    if (this._checkEventInChartContent(event)) {
-      this._target.style.cursor = 'crosshair'
-      const compatEvent = this._compatChartEvent(event, true)
-      if (this._shouldPerformOverlayEvent()) {
-        this._overlayEventHandler.mouseMoveEvent(compatEvent)
-      }
-      if (!this._chartStore.dragPaneFlag()) {
-        this._zoomScrollEventHandler.mouseMoveEvent(compatEvent)
+    // 当事件目标是在容器内部元素时，不出来move事件
+    // 等待寻找最优解
+    if (event.target instanceof HTMLCanvasElement) {
+      if (this._checkEventInChartContent(event)) {
+        this._target.style.cursor = 'crosshair'
+        const compatEvent = this._compatChartEvent(event, true)
+        if (this._shouldPerformOverlayEvent()) {
+          this._overlayEventHandler.mouseMoveEvent(compatEvent)
+        }
+        if (!this._chartStore.dragPaneFlag()) {
+          this._zoomScrollEventHandler.mouseMoveEvent(compatEvent)
+        }
+      } else {
+        this._target.style.cursor = 'default'
+        this._zoomScrollEventHandler.mouseLeaveEvent(event)
       }
     } else {
-      this._target.style.cursor = 'default'
-      this._zoomScrollEventHandler.mouseLeaveEvent(event)
+      this._chartStore.crosshairStore().set()
     }
   }
 

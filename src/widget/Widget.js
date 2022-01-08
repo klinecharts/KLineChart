@@ -15,6 +15,7 @@
 import InvalidateLevel from '../enum/InvalidateLevel'
 import { getPixelRatio } from '../utils/canvas'
 import { createElement } from '../utils/element'
+import { isString } from '../utils/typeChecks'
 
 export default class Widget {
   constructor (props) {
@@ -23,6 +24,8 @@ export default class Widget {
     this._initElement(props.container)
     this._mainView = this._createMainView(this._element, props)
     this._overlayView = this._createOverlayView(this._element, props)
+    this._htmlBaseId = 0
+    this._htmls = new Map()
   }
 
   /**
@@ -36,7 +39,8 @@ export default class Widget {
       padding: '0',
       position: 'absolute',
       top: '0',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      boxSizing: 'border-box'
     })
     container.appendChild(this._element)
   }
@@ -56,6 +60,49 @@ export default class Widget {
    * @private
    */
   _createOverlayView (container, props) {}
+
+  /**
+   * 创建html元素
+   * @param id 标识
+   * @param content 内容
+   * @param style 样式
+   */
+  createHtml ({ id, content, style = {} }) {
+    const html = createElement('div', { boxSizing: 'border-box', position: 'absolute', zIndex: 12, ...style })
+    if (isString(content)) {
+      const str = content.replace(/(^\s*)|(\s*$)/g, '')
+      html.innerHTML = str
+    } else {
+      html.appendChild(content)
+    }
+    const htmlId = id || `html_${++this._htmlBaseId}`
+    if (this._htmls.has(htmlId)) {
+      this._element.replaceChild(html, this._htmls.get(htmlId))
+    } else {
+      this._element.appendChild(html)
+    }
+    this._htmls.set(htmlId, html)
+    return htmlId
+  }
+
+  /**
+   * 移除html元素
+   * @param id
+   */
+  removeHtml (id) {
+    if (id) {
+      const html = this._htmls.get(id)
+      if (html) {
+        this._element.removeChild(html)
+        this._htmls.delete(id)
+      }
+    } else {
+      this._htmls.forEach(html => {
+        this._element.removeChild(html)
+      })
+      this._htmls.clear()
+    }
+  }
 
   getElement () {
     return this._element
@@ -118,7 +165,8 @@ export default class Widget {
   getImage (includeOverlay) {
     const canvas = createElement('canvas', {
       width: `${this._width}px`,
-      height: `${this._height}px`
+      height: `${this._height}px`,
+      boxSizing: 'border-box'
     })
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)

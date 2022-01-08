@@ -13,7 +13,7 @@
  */
 
 import ChartPane, { CANDLE_PANE_ID } from './pane/ChartPane'
-import { clone, isNumber, isObject, isArray, isFunction, isValid } from './utils/typeChecks'
+import { clone, isNumber, isObject, isArray, isFunction, isValid, isString } from './utils/typeChecks'
 import { logWarn } from './utils/logger'
 import { requestAnimationFrame } from './utils/compatible'
 import { formatValue } from './utils/format'
@@ -455,6 +455,43 @@ export default class Chart {
    */
   removeTag (paneId, tagId) {
     this._chartPane.chartStore().tagStore().remove(paneId, tagId)
+  }
+
+  /**
+   * 创建html元素
+   * @param html
+   * @param paneId
+   * @returns
+   */
+  createHtml (html, paneId = CANDLE_PANE_ID) {
+    if (!isObject(html)) {
+      logWarn('createHtml', 'html', 'options must be an object!!!')
+      return null
+    }
+    if (!isString(html.content) && !(html.content instanceof HTMLElement)) {
+      logWarn('createHtml', 'html.content', 'invalid html.content!!!')
+      return null
+    }
+    const pane = this._chartPane.getPane(paneId)
+    if (!pane) {
+      logWarn('createHtml', 'paneId', 'can not find the corresponding pane!!!')
+      return null
+    }
+    return pane.createHtml(html)
+  }
+
+  /**
+   * 移除html元素
+   * @param paneId
+   * @param htmlId
+   */
+  removeHtml (paneId, htmlId) {
+    if (paneId) {
+      const pane = this._chartPane.getPane(paneId)
+      pane && pane.removeHtml(htmlId)
+    } else {
+      this._chartPane.removeAllHtml()
+    }
   }
 
   /**

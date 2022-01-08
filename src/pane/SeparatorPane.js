@@ -39,7 +39,7 @@ export default class SeparatorPane {
   _initElement (container) {
     this._container = container
     this._wrapper = createElement('div', {
-      margin: '0', padding: '0', position: 'relative'
+      margin: '0', padding: '0', position: 'relative', boxSizing: 'border-box'
     })
     this._element = createElement('div', {
       width: '100%',
@@ -48,7 +48,8 @@ export default class SeparatorPane {
       padding: '0',
       position: 'absolute',
       top: '-3px',
-      zIndex: '20'
+      zIndex: '20',
+      boxSizing: 'border-box'
     })
     this._wrapper.appendChild(this._element)
     const lastElement = container.lastChild
@@ -101,7 +102,7 @@ export default class SeparatorPane {
   _mouseEnterEvent () {
     const separatorOptions = this._chartStore.styleOptions().separator
     this._element.style.background = separatorOptions.activeBackgroundColor
-    this._chartStore.setDragPaneFlag(true)
+    // this._chartStore.setDragPaneFlag(true)
     this._chartStore.crosshairStore().set()
   }
 
@@ -201,7 +202,8 @@ export default class SeparatorPane {
     const height = separatorOptions.size
     const canvas = createElement('canvas', {
       width: `${width}px`,
-      height: `${height}px`
+      height: `${height}px`,
+      boxSizing: 'border-box'
     })
     const ctx = canvas.getContext('2d')
     const pixelRatio = getPixelRatio(canvas)

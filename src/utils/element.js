@@ -21,7 +21,9 @@
 export function createElement (name, styles = {}) {
   const element = document.createElement(name)
   for (const key in styles) {
-    (element.style)[key] = styles[key]
+    if (Object.prototype.hasOwnProperty.call(styles, key)) {
+      (element.style)[key] = styles[key]
+    }
   }
   return element
 }
