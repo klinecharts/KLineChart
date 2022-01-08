@@ -352,29 +352,28 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     } else {
       const pricePrecision = this._chartStore.pricePrecision()
       const volumePrecision = this._chartStore.volumePrecision()
-      values = [
-        formatValue(kLineData, 'timestamp'),
-        formatValue(kLineData, 'open'),
-        formatValue(kLineData, 'close'),
-        formatValue(kLineData, 'high'),
-        formatValue(kLineData, 'low'),
-        formatValue(kLineData, 'volume')
-      ]
-      values.forEach((value, index) => {
-        switch (index) {
-          case 0: {
-            values[index] = formatDate(this._chartStore.timeScaleStore().dateTimeFormat(), value, 'YYYY-MM-DD hh:mm')
+      var labels = candleOptions.tooltip.labels
+      const map = {
+        时间: 'timestamp',
+        开: 'open',
+        收: 'close',
+        高: 'high',
+        低: 'low',
+        成交量: 'volume'
+      }
+      values = labels.map((key) => {
+        let value = formatValue(kLineData, map[key])
+        switch (key) {
+          case '时间':
+            value = formatDate(this._chartStore.timeScaleStore().dateTimeFormat(), value, 'YYYY-MM-DD hh:mm')
             break
-          }
-          case values.length - 1: {
-            values[index] = formatBigNumber(formatPrecision(value, volumePrecision))
+          case '成交量':
+            value = formatBigNumber(formatPrecision(value, volumePrecision))
             break
-          }
-          default: {
-            values[index] = formatPrecision(value, pricePrecision)
-            break
-          }
+          default:
+            value = formatPrecision(value, pricePrecision)
         }
+        return value
       })
     }
     return values
