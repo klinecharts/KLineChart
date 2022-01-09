@@ -14,56 +14,10 @@
 
 import extension from './extension'
 
-import { isFunction, isValid, isObject } from '../utils/typeChecks'
-import { formatPrecision, formatBigNumber } from '../utils/format'
+import { isFunction, isValid } from '../utils/typeChecks'
 import { logWarn } from '../utils/logger'
 
 import TechnicalIndicator, { TechnicalIndicatorSeries } from '../component/technicalindicator/TechnicalIndicator'
-
-/**
- * 获取技术指标提示数据
- * @param technicalIndicatorData
- * @param technicalIndicator
- * @return {{calcParamText: string, values: [], name: string}}
- */
-export function getTechnicalIndicatorTooltipData (technicalIndicatorData = {}, technicalIndicator) {
-  const calcParams = technicalIndicator.calcParams
-  const plots = technicalIndicator.plots
-  const precision = technicalIndicator.precision
-  const shouldFormatBigNumber = technicalIndicator.shouldFormatBigNumber
-
-  const values = []
-  let name = ''
-  let calcParamText = ''
-  if (plots.length > 0) {
-    name = technicalIndicator.name
-  }
-  if (calcParams.length > 0) {
-    const params = calcParams.map(param => {
-      if (isObject(param)) {
-        return param.value
-      }
-      return param
-    })
-    calcParamText = `(${params.join(',')})`
-  }
-  plots.forEach(plot => {
-    const data = {}
-    if (isValid(plot.title)) {
-      let value = technicalIndicatorData[plot.key]
-      if (isValid(value)) {
-        value = formatPrecision(value, precision)
-        if (shouldFormatBigNumber) {
-          value = formatBigNumber(value)
-        }
-      }
-      data.title = plot.title
-      data.value = value
-    }
-    values.push(data)
-  })
-  return { values, name, calcParamText }
-}
 
 export default class TechnicalIndicatorStore {
   constructor (chartStore) {

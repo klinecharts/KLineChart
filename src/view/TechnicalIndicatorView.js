@@ -15,7 +15,7 @@
 import View from './View'
 
 import { CandleType, LineStyle } from '../options/styleOptions'
-import { TechnicalIndicatorPlotType } from '../component/technicalindicator/TechnicalIndicator'
+import { TechnicalIndicatorPlotType, getTechnicalIndicatorPlotStyle } from '../component/technicalindicator/TechnicalIndicator'
 import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
 import { isValid } from '../utils/typeChecks'
 
@@ -112,13 +112,14 @@ export default class TechnicalIndicatorView extends View {
         })
         this._ctx.restore()
       }
+      const lineColors = techOptions.line.colors || []
+      const lineColorSize = lineColors.length
       const isCandleYAxis = this._yAxis.isCandleYAxis()
-
       this._ctx.lineWidth = 1
       this._drawGraphics(
         (x, i, kLineData, halfBarSpace, barSpace) => {
           const techData = techResult[i] || {}
-          let lineValueIndex = 0
+          let lineCount = 0
           if (tech.shouldOhlc && !isCandleYAxis) {
             this._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, styles.bar, CandleType.OHLC)
           }
@@ -128,28 +129,21 @@ export default class TechnicalIndicatorView extends View {
             switch (plot.type) {
               case TechnicalIndicatorPlotType.CIRCLE: {
                 if (isValid(value)) {
-                  const cbData = {
-                    prev: { kLineData: dataList[i - 1], technicalIndicatorData: techResult[i - 1] },
-                    current: { kLineData, technicalIndicatorData: techData },
-                    next: { kLineData: dataList[i + 1], technicalIndicatorData: techResult[i + 1] }
-                  }
+                  const plotStyle = getTechnicalIndicatorPlotStyle(
+                    dataList, techResult, i, plot, styles, { color: styles.circle.noChangeColor, isStroke: true }
+                  )
                   this._drawCircle({
                     x,
                     y: valueY,
                     radius: halfBarSpace,
-                    color: (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor,
-                    isStroke: plot.isStroke ? plot.isStroke(cbData) : true
+                    color: plotStyle.color,
+                    isStroke: plotStyle.isStroke
                   })
                 }
                 break
               }
               case TechnicalIndicatorPlotType.BAR: {
                 if (isValid(value)) {
-                  const cbData = {
-                    prev: { kLineData: dataList[i - 1], technicalIndicatorData: techResult[i - 1] },
-                    current: { kLineData, technicalIndicatorData: techData },
-                    next: { kLineData: dataList[i + 1], technicalIndicatorData: techResult[i + 1] }
-                  }
                   let baseValue
                   if (isValid(plot.baseValue)) {
                     baseValue = plot.baseValue
@@ -168,23 +162,29 @@ export default class TechnicalIndicatorView extends View {
                   } else {
                     bar.y = height < 1 ? baseValueY - 1 : valueY
                   }
-                  bar.color = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
-                  bar.isStroke = plot.isStroke ? plot.isStroke(cbData) : false
+                  const plotStyle = getTechnicalIndicatorPlotStyle(
+                    dataList, techResult, i, plot, styles, { color: styles.bar.noChangeColor }
+                  )
+                  bar.color = plotStyle.color
+                  bar.isStroke = plotStyle.isStroke
                   this._drawBar(bar)
                 }
                 break
               }
               case TechnicalIndicatorPlotType.LINE: {
-                let line = null
+                let coordinate = null
                 if (isValid(value)) {
-                  line = { x: x, y: valueY }
+                  coordinate = { x: x, y: valueY }
                 }
-                if (lines[lineValueIndex]) {
-                  lines[lineValueIndex].push(line)
+                if (lines[lineCount]) {
+                  lines[lineCount].coordinates.push(coordinate)
                 } else {
-                  lines[lineValueIndex] = [line]
+                  const plotStyle = getTechnicalIndicatorPlotStyle(
+                    dataList, techResult, i, plot, styles, { color: lineColors[lineCount % lineColorSize] }
+                  )
+                  lines[lineCount] = { color: plotStyle.color, coordinates: [coordinate] }
                 }
-                lineValueIndex++
+                lineCount++
                 break
               }
               default: { break }
@@ -220,13 +220,10 @@ export default class TechnicalIndicatorView extends View {
    * @param techOptions
    */
   _drawLines (lines, techOptions) {
-    const colors = techOptions.line.colors || []
-    const colorSize = colors.length
     this._ctx.lineWidth = techOptions.line.size
-
-    lines.forEach((coordinates, i) => {
-      this._ctx.strokeStyle = colors[i % colorSize]
-      renderLine(this._ctx, coordinates)
+    lines.forEach(line => {
+      this._ctx.strokeStyle = line.color
+      renderLine(this._ctx, line.coordinates)
     })
   }
 
