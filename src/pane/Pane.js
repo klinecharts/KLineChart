@@ -117,11 +117,13 @@ export default class Pane {
    * 创建html元素
    */
   createHtml ({ id, content, style, position }) {
+    let htmlId
     if (position === 'yAxis') {
-      this._yAxisWidget && this._yAxisWidget.createHtml({ id, content, style })
+      htmlId = this._yAxisWidget && this._yAxisWidget.createHtml({ id, content, style })
     } else {
-      this._mainWidget.createHtml({ id, content, style })
+      htmlId = this._mainWidget.createHtml({ id, content, style })
     }
+    return htmlId
   }
 
   /**
