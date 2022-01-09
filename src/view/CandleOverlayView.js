@@ -17,8 +17,6 @@ import { isFunction, isObject, isArray, isValid } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
 import { TooltipShowType } from '../options/styleOptions'
-import { getTechnicalIndicatorTooltipData } from '../store/TechnicalIndicatorStore'
-import { TechnicalIndicatorPlotType } from '../component/technicalindicator/TechnicalIndicator'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
@@ -193,32 +191,17 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     const techTooltipTextMarginTop = techTooltipOptions.text.marginTop
     const techTooltipTextMarginBottom = techTooltipOptions.text.marginBottom
     const techTooltipTextSize = techTooltipOptions.text.size
-
-    const techTooltipDataList = []
-    const dataList = this._chartStore.dataList()
-    techs.forEach(tech => {
-      const result = tech.result
-      techTooltipDataList.push({
-        name: tech.name,
-        tooltipData: getTechnicalIndicatorTooltipData(result[crosshair.dataIndex], tech),
-        cbData: {
-          prev: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: result[crosshair.dataIndex - 1] },
-          current: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData: result[crosshair.dataIndex] },
-          next: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: result[crosshair.dataIndex + 1] }
-        }
-      })
-    })
+    const techTooltipDataList = techs.map(tech => this._getTechTooltipData(crosshair, tech, techOptions))
     if (isDrawTechTooltip) {
       this._ctx.font = createFont(
         techTooltipTextSize,
         techTooltipOptions.text.weight,
         techTooltipOptions.text.family
       )
-      techTooltipDataList.forEach(({ tooltipData }) => {
+      techTooltipDataList.forEach(tooltipData => {
         tooltipData.values.forEach(({ title, value }) => {
           if (isValid(title)) {
-            const v = value || techTooltipOptions.defaultValue
-            const text = `${title}${v}`
+            const text = `${title}${value}`
             const labelWidth = calcTextWidth(this._ctx, text) + techTooltipTextMarginLeft + techTooltipTextMarginRight
             maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
             rectHeight += (techTooltipTextMarginTop + techTooltipTextMarginBottom + techTooltipTextSize)
@@ -280,53 +263,25 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     }
     if (isDrawTechTooltip) {
       // 开始渲染指标数据文字
-      const techOptions = this._chartStore.styleOptions().technicalIndicator
       const indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + techTooltipTextMarginLeft
       this._ctx.font = createFont(
         techTooltipTextSize,
         techTooltipOptions.text.weight,
         techTooltipOptions.text.family
       )
-      techTooltipDataList.forEach(({ name, tooltipData, cbData }) => {
-        const tech = techs.get(name)
-        const styles = tech.styles || techOptions
-        const colors = styles.line.colors
-        const colorSize = colors.length
-        const plots = tech.plots
-        let lineCount = 0
-        let valueColor
-        plots.forEach((plot, i) => {
-          switch (plot.type) {
-            case TechnicalIndicatorPlotType.CIRCLE: {
-              valueColor = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
-              break
-            }
-            case TechnicalIndicatorPlotType.BAR: {
-              valueColor = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
-              break
-            }
-            case TechnicalIndicatorPlotType.LINE: {
-              valueColor = colors[lineCount % colorSize] || styles.text.color
-              lineCount++
-              break
-            }
-            default: { break }
-          }
-          const value = tooltipData.values[i]
-          if (isValid(value.title)) {
-            labelY += techTooltipTextMarginTop
-            this._ctx.textAlign = 'left'
-            this._ctx.fillStyle = valueColor
-            this._ctx.fillText(`${value.title}`, indicatorLabelX, labelY)
-
-            this._ctx.textAlign = 'right'
-            this._ctx.fillText(
-              value.value || techTooltipOptions.defaultValue,
-              rectX + rectWidth - rectBorderSize - techTooltipTextMarginRight - rectPaddingRight,
-              labelY
-            )
-            labelY += (techTooltipTextSize + techTooltipTextMarginBottom)
-          }
+      techTooltipDataList.forEach(tooltipData => {
+        tooltipData.values.forEach(v => {
+          labelY += techTooltipTextMarginTop
+          this._ctx.textAlign = 'left'
+          this._ctx.fillStyle = v.color
+          this._ctx.fillText(v.title, indicatorLabelX, labelY)
+          this._ctx.textAlign = 'right'
+          this._ctx.fillText(
+            v.value,
+            rectX + rectWidth - rectBorderSize - techTooltipTextMarginRight - rectPaddingRight,
+            labelY
+          )
+          labelY += (techTooltipTextSize + techTooltipTextMarginBottom)
         })
       })
     }

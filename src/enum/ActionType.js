@@ -14,7 +14,6 @@
 
 /**
  * 图表动作
- * @type {{DRAW_CANDLE: string, SCROLL: string, PANE_DRAG: string, ZOOM: string, CROSSHAIR: string, DRAW_TECHNICAL_INDICATOR: string}}
  */
 const ActionType = {
   ZOOM: 'zoom',

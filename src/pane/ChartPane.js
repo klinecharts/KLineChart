@@ -110,11 +110,6 @@ export default class ChartPane {
       this._chartStore.actionStore().has(ActionType.CROSSHAIR) ||
       this._chartStore.actionStore().has(ActionType.TOOLTIP)
     ) {
-      this._chartStore.actionStore().execute(ActionType.TOOLTIP, {
-        type: 'candle',
-        dataIndex,
-        data: kLineData
-      })
       const techDatas = {}
       this._panes.forEach((_, id) => {
         const data = {}
@@ -127,14 +122,12 @@ export default class ChartPane {
           techDataList.push({ name: tech.name, data: techData })
         })
         techDatas[id] = data
-        if (techDataList.length > 0) {
-          this._chartStore.actionStore().execute(ActionType.TOOLTIP, {
-            type: 'technicalIndicator',
-            paneId: id,
-            dataIndex,
-            data: techDataList
-          })
-        }
+        this._chartStore.actionStore().execute(ActionType.TOOLTIP, {
+          paneId: id,
+          dataIndex,
+          kLineData,
+          technicalIndicatorData: techDataList
+        })
       })
       if (crosshair.paneId) {
         this._chartStore.actionStore().execute(ActionType.CROSSHAIR, {

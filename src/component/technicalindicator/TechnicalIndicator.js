@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { clone, isArray, isBoolean, isNumber, merge, isObject } from '../../utils/typeChecks'
+import { clone, isArray, isBoolean, isNumber, merge, isObject, isFunction, isValid } from '../../utils/typeChecks'
 
 /**
  * 绘制类型
@@ -31,6 +31,43 @@ export const TechnicalIndicatorSeries = {
   PRICE: 'price',
   VOLUME: 'volume',
   NORMAL: 'normal'
+}
+
+/**
+ * 获取指标配置项样式
+ * @param kLineDataList
+ * @param techDataList
+ * @param dataIndex
+ * @param plot
+ * @param techStyles
+ * @param defaultStyle
+ * @returns
+ */
+export function getTechnicalIndicatorPlotStyle (
+  kLineDataList, techDataList, dataIndex, plot, techStyles, defaultStyle
+) {
+  let color = defaultStyle.color
+  let isStroke = defaultStyle.isStroke
+  const cbData = {
+    prev: { kLineData: kLineDataList[dataIndex - 1], technicalIndicatorData: techDataList[dataIndex - 1] },
+    current: { kLineData: kLineDataList[dataIndex], technicalIndicatorData: techDataList[dataIndex] },
+    next: { kLineData: kLineDataList[dataIndex + 1], technicalIndicatorData: techDataList[dataIndex + 1] }
+  }
+  if (isValid(plot.color)) {
+    if (isFunction(plot.color)) {
+      color = plot.color(cbData, techStyles) || defaultStyle.color
+    } else {
+      color = plot.color || defaultStyle.color
+    }
+  }
+  if (isValid(plot.isStroke)) {
+    if (isFunction(plot.isStroke)) {
+      isStroke = plot.isStroke(cbData)
+    } else {
+      isStroke = plot.isStroke
+    }
+  }
+  return { color, isStroke }
 }
 
 export default class TechnicalIndicator {

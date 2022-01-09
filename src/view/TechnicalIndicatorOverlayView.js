@@ -15,10 +15,10 @@
 import View from './View'
 import { TooltipShowRule, LineStyle } from '../options/styleOptions'
 import { TechnicalIndicatorPlotType } from '../component/technicalindicator/TechnicalIndicator'
-import { isValid } from '../utils/typeChecks'
+import { isValid, isObject } from '../utils/typeChecks'
+import { formatPrecision, formatBigNumber } from '../utils/format'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { getTechnicalIndicatorTooltipData } from '../store/TechnicalIndicatorStore'
 import { renderText } from '../renderer/text'
 
 export default class TechnicalIndicatorOverlayView extends View {
@@ -166,27 +166,14 @@ export default class TechnicalIndicatorOverlayView extends View {
    */
   _drawTechTooltip (crosshair, tech, techOptions, offsetTop = 0) {
     const techTooltipOptions = techOptions.tooltip
-    const styles = tech.styles || techOptions
-    const techResult = tech.result
-    const techData = techResult[crosshair.dataIndex]
-    const tooltipData = getTechnicalIndicatorTooltipData(techData, tech)
-    const colors = styles.line.colors
-    const dataList = this._chartStore.dataList()
-    const cbData = {
-      prev: { kLineData: dataList[crosshair.dataIndex - 1], technicalIndicatorData: techResult[crosshair.dataIndex - 1] },
-      current: { kLineData: dataList[crosshair.dataIndex], technicalIndicatorData: techData },
-      next: { kLineData: dataList[crosshair.dataIndex + 1], technicalIndicatorData: techResult[crosshair.dataIndex + 1] }
-    }
-    const plots = tech.plots
     const techTooltipTextOptions = techTooltipOptions.text
-    const values = tooltipData.values
     const textMarginLeft = techTooltipTextOptions.marginLeft
     const textMarginRight = techTooltipTextOptions.marginRight
-    let labelX = 0
-    const labelY = techTooltipTextOptions.marginTop + offsetTop
     const textSize = techTooltipTextOptions.size
     const textColor = techTooltipTextOptions.color
-    const colorSize = colors.length
+    let labelX = 0
+    const labelY = techTooltipTextOptions.marginTop + offsetTop
+    const tooltipData = this._getTechTooltipData(crosshair, tech, techOptions)
     this._ctx.textBaseline = 'top'
     this._ctx.font = createFont(textSize, techTooltipTextOptions.weight, techTooltipTextOptions.family)
     if (techTooltipOptions.showName) {
@@ -208,33 +195,12 @@ export default class TechnicalIndicatorOverlayView extends View {
       renderText(this._ctx, textColor, labelX, labelY, calcParamText)
       labelX += (calcParamTextWidth + textMarginRight)
     }
-    let lineCount = 0
-    let valueColor
-    plots.forEach((plot, i) => {
-      switch (plot.type) {
-        case TechnicalIndicatorPlotType.CIRCLE: {
-          valueColor = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
-          break
-        }
-        case TechnicalIndicatorPlotType.BAR: {
-          valueColor = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
-          break
-        }
-        case TechnicalIndicatorPlotType.LINE: {
-          valueColor = colors[lineCount % colorSize] || textColor
-          lineCount++
-          break
-        }
-        default: { break }
-      }
-      const title = values[i].title
-      if (isValid(title)) {
-        labelX += textMarginLeft
-        const text = `${title}${values[i].value || techTooltipOptions.defaultValue}`
-        const textWidth = calcTextWidth(this._ctx, text)
-        renderText(this._ctx, valueColor, labelX, labelY, text)
-        labelX += (textWidth + textMarginRight)
-      }
+    tooltipData.values.forEach(v => {
+      labelX += textMarginLeft
+      const text = `${v.title}${v.value}`
+      const textWidth = calcTextWidth(this._ctx, text)
+      renderText(this._ctx, v.color, labelX, labelY, text)
+      labelX += (textWidth + textMarginRight)
     })
   }
 
@@ -248,5 +214,82 @@ export default class TechnicalIndicatorOverlayView extends View {
     const showRule = tooltipOptions.showRule
     return showRule === TooltipShowRule.ALWAYS ||
       (showRule === TooltipShowRule.FOLLOW_CROSS && (!!crosshair.paneId))
+  }
+
+  /**
+   * 获取技术指标提示数据
+   * @param techData
+   * @param tech
+   * @returns
+   */
+  _getTechTooltipData (crosshair, tech, techOptions) {
+    const dataIndex = crosshair.dataIndex
+    const styles = tech.styles || techOptions
+    const techResult = tech.result
+    const techData = techResult[dataIndex]
+    const dataList = this._chartStore.dataList()
+    const cbData = {
+      prev: { kLineData: dataList[dataIndex - 1], technicalIndicatorData: techResult[dataIndex - 1] },
+      current: { kLineData: dataList[dataIndex], technicalIndicatorData: techData },
+      next: { kLineData: dataList[dataIndex + 1], technicalIndicatorData: techResult[dataIndex + 1] }
+    }
+
+    const calcParams = tech.calcParams
+    const plots = tech.plots
+    const precision = tech.precision
+    const shouldFormatBigNumber = tech.shouldFormatBigNumber
+
+    let name = ''
+    let calcParamText = ''
+    if (plots.length > 0) {
+      name = tech.name
+    }
+    if (calcParams.length > 0) {
+      const params = calcParams.map(param => {
+        if (isObject(param)) {
+          return param.value
+        }
+        return param
+      })
+      calcParamText = `(${params.join(',')})`
+    }
+    const lineColors = styles.line.colors || []
+    const colorSize = lineColors.length
+    let lineCount = 0
+    const values = []
+    plots.forEach(plot => {
+      let color
+      switch (plot.type) {
+        case TechnicalIndicatorPlotType.CIRCLE: {
+          color = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
+          break
+        }
+        case TechnicalIndicatorPlotType.BAR: {
+          color = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
+          break
+        }
+        case TechnicalIndicatorPlotType.LINE: {
+          color = lineColors[lineCount % colorSize] || techOptions.tooltip.text.color
+          lineCount++
+          break
+        }
+        default: { break }
+      }
+      const data = {}
+      if (isValid(plot.title)) {
+        let value = (techData || {})[plot.key]
+        if (isValid(value)) {
+          value = formatPrecision(value, precision)
+          if (shouldFormatBigNumber) {
+            value = formatBigNumber(value)
+          }
+        }
+        data.title = plot.title
+        data.value = value || techOptions.tooltip.defaultValue
+        data.color = color
+      }
+      values.push(data)
+    })
+    return { values, name, calcParamText }
   }
 }
