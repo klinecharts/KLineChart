@@ -24,6 +24,9 @@
   // 技术指标名字，必要字段，是技术指标的唯一标识
   name: 'xxx',
 
+  // 用于提示显示
+  shortName: 'xxx',
+
   // 技术指标计算方法，必要字段
   // 该字段是一个回调方法，回调参数是当前图表的源数据和计算的参数，需要返回一个数组
   // kLineDataList 图表的原始数据
@@ -98,11 +101,11 @@
   // 基础比对数据，可缺省
   // 如果设置，当图形是bar时，将在此值上下绘制，如：MACD指标的macd值
   baseValue: null,
-  // 可缺省，是个一个回调方法，可以根据回调参数来设置颜色，只有当type是'circle'和'bar'才会生效
-  // 返回一个颜色值的字符串
+  // 可缺省
+  // 可以是一个固定的值，也可以是一个方法，如果是方法，需要返回一个颜色值的字符串
   color: (data, options) => {},
-  // 可缺省，是个一个回调方法，可以根据回调参数来设置是否是空心，只有当type是'circle'和'bar'才会生效
-  // 返回一个boolean值
+  // 可缺省，只有当type是'circle'和'bar'才会生效
+  // 可以是一个固定的boolean值，也可以是一个方法，如果是方法，需要返回一个boolean值
   isStroke: (data, options) => {}
 }
 ```
@@ -129,6 +132,7 @@
 ```javascript
 {
   name: 'MA',
+  shortName: 'MA',
   calcParams: [5, 10],
   plots: [
     { key: 'ma1', title: 'MA5: ', type: 'line' },

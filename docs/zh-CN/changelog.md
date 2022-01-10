@@ -1,4 +1,13 @@
 # 更新日志
+## 8.2.0
+`2022-01-10`
++ 🆕 新增实例方法 `createHtml`和`removeHtml`。
++ 🆕 实例方法 `subscribeAction`和`unsubscribeAction`新增类型`tooltip`。
++ 🆕 技术指标模板新增属性`shortName`。
++ 🆕 技术指标模板属性`plot.color`支持`line`。
++ 🆕 技术指标模板属性`styles`支持`margin`。
++ 💄 优化移动端滚动事件响应。
+
 ## 8.1.1
 `2021-12-19`
 + 🐞 修改样式technicalIndicator.tooltip.defaultValue不生效问题。

@@ -1,4 +1,13 @@
 # Change Log
+## 8.2.0
+`2022-01-10`
++ 🆕 Add instance methods `createHtml` and `removeHtml`.
++ 🆕 Instance methods `subscribeAction` and `unsubscribeAction` add type `tooltip`.
++ 🆕 Technical indicator template add attribute `shortName`.
++ 🆕 Technical indicator template attribute `plot.color` supports `line`.
++ 🆕 Technical indicator template attribute `styles` supports `margin`.
++ 💄 Optimize mobile scroll event response.
+
 ## 8.1.1
 `2021-12-19`
 + 🐞 Fix the problem that the style technicalIndicator.tooltip.defaultValue does not take effect.

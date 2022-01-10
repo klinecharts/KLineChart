@@ -148,6 +148,10 @@ chart.overrideTechnicalIndicator({
   shouldOhlc: true,
   shouldFormatBigNumber: false,
   styles: {
+    margin: {
+      top: 0.2,
+      bottom: 0.1
+    },
   	bar: {
       upColor: '#26A69A',
       downColor: '#EF5350',
@@ -383,6 +387,31 @@ chart.createTag({
 - `tagId` 标签的唯一标识，缺省则移除窗口上所有
 
 
+### createHtml(html, paneId)
+创建一个html元素，返回一个id。
+- `html` 元素 `{ id, position, content, style }`
+  - `id` id
+  - `position` 位置，类型为`yAxis`和`content`，默认为`content`
+  - `style` html元素容器的样式，内联css样式
+  - `content`  内容，可以是dom元素，也可以是dom元素组成的字符串
+- `paneId` 窗口id，默认为'candle_pane'
+示例:
+```javascript
+chart.createHtml({
+  id: 'html_1',
+  position: 'content',
+  style: { zIndex: 12 },
+  content: '<div>8888888</div>'
+}, 'candle_pane')
+```
+
+
+### removeHtml(paneId, htmlId)
+删除一个html元素
+- `paneId` 窗口id，缺省则删除所有
+- `htmlId` 创建时候的id，可以是单个id，也可以是id组成的数组，缺省则删除对应窗口上所有的
+
+
 ### scrollByDistance(distance, animationDuration)
 滚动一定的距离。
 - `distance` 距离
@@ -433,13 +462,13 @@ chart.setPaneOptions({
 
 ### subscribeAction(type, callback)
 订阅图表动作。
-- `type` 类型是'zoom'，'scroll'，'crosshair'和'pane_drag'
+- `type` 类型是'zoom'，'scroll'，'crosshair', 'tooltip'和'pane_drag'
 - `callback` 是一个回调方法
 
 
 ### unsubscribeAction(type, callback)
 取消订阅图表动作。
-- `type` 类型是'zoom'，'scroll'，'crosshair'和'pane_drag'
+- `type` 类型是'zoom'，'scroll'，'crosshair', 'tooltip'和'pane_drag'
 - `callback` 订阅时的回调方法，缺省则取消当前类型所有
 
 

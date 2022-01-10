@@ -147,6 +147,10 @@ chart.overrideTechnicalIndicator({
   shouldOhlc: true,
   shouldFormatBigNimber: false,
   styles: {
+    margin: {
+      top: 0.2,
+      bottom: 0.1
+    },
     bar: {
       upColor:'#26A69A',
       downColor:'#EF5350',
@@ -383,6 +387,36 @@ Remove tags, you can remove them in batches, just pass in the array in batches, 
 - `tagId` Unique identification of the tag
 
 
+### removeTag(paneId, tagId)
+To remove tags, you can remove them in batches. You can pass in an array in batches. If the default is used, all of them will be removed.
+- `paneId` pane id, default removes all
+- `tagId` The unique identifier of the tag, by default removes all tags on the pane
+
+
+### createHtml(html, paneId)
+Create an html element that returns an id.
+- `html` element `{ id, position, content, style }`
+  - `id` id
+  - `position` position, type is `yAxis` and `content`, default is `content`
+  - `style` html element container style, inline css style
+  - `content` content, which can be a dom element or a string composed of dom elements
+- `paneId` window id, default is 'candle_pane'
+Example:
+```javascript
+chart.createHtml({
+  id: 'html_1',
+  position: 'content',
+  style: { zIndex: 12 },
+  content: '<div>8888888</div>'
+}, 'candle_pane')
+```
+
+### removeHtml(paneId, htmlId)
+Remove an html element.
+- `paneId` pane id, by default delete all
+- `htmlId` element id, which can be a single id or an array of ids. By default, all items on the corresponding pane are deleted.
+
+
 ### scrollByDistance(distance, animationDuration)
 Roll a certain distance.
 -`distance` distance
@@ -432,13 +466,13 @@ chart.setPaneOptions({
 
 ### subscribeAction(type, callback)
 Subscribe to chart actions.
-- `type` The type is 'zoom', 'scroll', 'crosshair' and 'pane_drag'
+- `type` The type is 'zoom', 'scroll', 'crosshair', 'tooltip' and 'pane_drag'
 - `callback` is a callback method
 
 
 ### unsubscribeAction(type, callback)
 Unsubscribe from chart actions.
-- `type` type is 'zoom', 'scroll', 'crosshair' and 'pane_drag'
+- `type` type is 'zoom', 'scroll', 'crosshair', 'tooltip' and 'pane_drag'
 - `callback` callback method when subscribing
 
 

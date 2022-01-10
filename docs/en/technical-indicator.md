@@ -24,6 +24,9 @@ To complete a technical indicator template, you only need to generate a technica
   // The name of the technical indicator, a necessary field, is the only identifier of the technical indicator
   name:'xxx',
 
+  // For tooltip display
+  shortName: 'xxx',
+
   // Technical indicator calculation method, necessary fields
   // This field is a callback method, the callback parameters are the source data and calculated parameters of the current chart, and an array needs to be returned
   // kLineDataList chart raw data
@@ -90,19 +93,19 @@ To complete a technical indicator template, you only need to generate a technica
 ```javascript
 {
   // Required fields, determine the return value of the method calcTechnicalIndicator
-  key:'',
-  // Can be defaulted, mainly for prompt
-  title:'',
-  // Default, drawing type, currently supports'line','circle' and'bar'
-  type:'',
-  // Basic comparison data, default
+  key: '',
+  // By default, mainly for prompt
+  title: '',
+  // By default, drawing type, currently supports'line','circle' and'bar'
+  type: '',
+  // By default, basic comparison data
   // If set, when the graph is bar, it will be drawn above and below this value, such as: the macd value of the MACD indicator
   baseValue: null,
-  // It can be defaulted. It is a callback method. The color can be set according to the callback parameters. It will only take effect when the type is'circle' and'bar'
-  // Return a string of color values
+  // By default
+  // Can be value or method, if it is a method, it needs to return a string of color values
   color: (data, options) => {},
-  // It can be defaulted, it is a callback method, you can set whether it is hollow according to the callback parameters, and it will take effect only when the type is'circle' and'bar'
-  // return a boolean value
+  // By default, it only takes effect when type is 'circle' and 'bar'
+  // Can be a fixed boolean value or a method, if it is a method, it needs to return a boolean value
   isStroke: (data, options) => {}
 }
 ```
