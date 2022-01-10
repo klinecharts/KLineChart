@@ -91,11 +91,14 @@ export default class Widget {
    */
   removeHtml (id) {
     if (id) {
-      const html = this._htmls.get(id)
-      if (html) {
-        this._element.removeChild(html)
-        this._htmls.delete(id)
-      }
+      const ids = [].concat(id)
+      ids.forEach(htmlId => {
+        const html = this._htmls.get(htmlId)
+        if (html) {
+          this._element.removeChild(html)
+          this._htmls.delete(htmlId)
+        }
+      })
     } else {
       this._htmls.forEach(html => {
         this._element.removeChild(html)

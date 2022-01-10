@@ -63,7 +63,7 @@ export declare interface Chart {
   createTag(tag: Tag | Tag[], paneId?: string): void;
   removeTag(paneId?: string, tagId?: string | string[]): void;
   createHtml(html: HTML, paneId?: string): string | null;
-  removeHtml(paneId?: string, tagId?: string | string[]): void;
+  removeHtml(paneId?: string, htmlId?: string | string[]): void;
   scrollByDistance(distance: number, animationDuration?: number): void;
   scrollToRealTime(animationDuration?: number): void;
   scrollToDataIndex(dataIndex: number, animationDuration?: number): void;
