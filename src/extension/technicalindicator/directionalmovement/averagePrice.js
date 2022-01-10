@@ -17,6 +17,7 @@
  */
 export default {
   name: 'AVP',
+  shortName: 'AVP',
   series: 'price',
   precision: 2,
   plots: [

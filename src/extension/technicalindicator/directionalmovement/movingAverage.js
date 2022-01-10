@@ -17,6 +17,7 @@
  */
 export default {
   name: 'MA',
+  shortName: 'MA',
   series: 'price',
   calcParams: [5, 10, 30, 60],
   precision: 2,

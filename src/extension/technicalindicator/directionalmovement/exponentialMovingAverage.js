@@ -17,6 +17,7 @@
  */
 export default {
   name: 'EMA',
+  shortName: 'EMA',
   series: 'price',
   calcParams: [6, 12, 20],
   precision: 2,

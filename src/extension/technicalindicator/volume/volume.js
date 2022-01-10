@@ -14,6 +14,7 @@
 
 export default {
   name: 'VOL',
+  shortName: 'VOL',
   series: 'volume',
   calcParams: [5, 10, 20],
   shouldCheckParamCount: false,

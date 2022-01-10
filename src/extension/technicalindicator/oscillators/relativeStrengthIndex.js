@@ -18,6 +18,7 @@
  */
 export default {
   name: 'RSI',
+  shortName: 'RSI',
   calcParams: [6, 12, 24],
   shouldCheckParamCount: false,
   plots: [

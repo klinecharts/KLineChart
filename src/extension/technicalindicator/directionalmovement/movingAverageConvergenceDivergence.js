@@ -22,6 +22,7 @@
  */
 export default {
   name: 'MACD',
+  shortName: 'MACD',
   calcParams: [12, 26, 9],
   plots: [
     { key: 'dif', title: 'DIF: ', type: 'line' },

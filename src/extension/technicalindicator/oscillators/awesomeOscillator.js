@@ -14,6 +14,7 @@
 
 export default {
   name: 'AO',
+  shortName: 'AO',
   calcParams: [5, 34],
   shouldCheckParamCount: true,
   plots: [{

@@ -18,6 +18,7 @@
  */
 export default {
   name: 'PSY',
+  shortName: 'PSY',
   calcParams: [12, 6],
   plots: [
     { key: 'psy', title: 'PSY: ', type: 'line' },

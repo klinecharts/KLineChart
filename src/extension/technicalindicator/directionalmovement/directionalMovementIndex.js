@@ -39,6 +39,7 @@
  */
 export default {
   name: 'DMI',
+  shortName: 'DMI',
   calcParams: [14, 6],
   plots: [
     { key: 'pdi', title: 'PDI: ', type: 'line' },

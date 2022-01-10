@@ -21,6 +21,7 @@
  */
 export default {
   name: 'PVT',
+  shortName: 'PVT',
   plots: [
     { key: 'pvt', title: 'PVT: ', type: 'line' }
   ],

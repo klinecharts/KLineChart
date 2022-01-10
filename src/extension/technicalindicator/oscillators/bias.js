@@ -18,6 +18,7 @@
  */
 export default {
   name: 'BIAS',
+  shortName: 'BIAS',
   calcParams: [6, 12, 24],
   shouldCheckParamCount: false,
   plots: [

@@ -19,6 +19,7 @@
  */
 export default {
   name: 'BBI',
+  shortName: 'BBI',
   series: 'price',
   precision: 2,
   calcParams: [3, 6, 12, 24],

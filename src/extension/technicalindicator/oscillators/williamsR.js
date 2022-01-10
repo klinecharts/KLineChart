@@ -20,6 +20,7 @@ import calcHnLn from '../calcHnLn'
  */
 export default {
   name: 'WR',
+  shortName: 'WR',
   calcParams: [6, 10, 14],
   shouldCheckParamCount: false,
   plots: [

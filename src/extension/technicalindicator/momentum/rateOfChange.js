@@ -18,6 +18,7 @@
  */
 export default {
   name: 'ROC',
+  shortName: 'ROC',
   calcParams: [12, 6],
   shouldCheckParamCount: true,
   plots: [

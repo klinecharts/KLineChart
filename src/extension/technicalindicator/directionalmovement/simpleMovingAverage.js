@@ -17,6 +17,7 @@
  */
 export default {
   name: 'SMA',
+  shortName: 'SMA',
   series: 'price',
   calcParams: [12, 2],
   precision: 2,

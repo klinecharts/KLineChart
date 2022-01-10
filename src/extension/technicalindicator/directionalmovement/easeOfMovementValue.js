@@ -26,6 +26,7 @@
  */
 export default {
   name: 'EMV',
+  shortName: 'EMV',
   calcParams: [14, 9],
   plots: [
     { key: 'emv', title: 'EMV: ', type: 'line' },

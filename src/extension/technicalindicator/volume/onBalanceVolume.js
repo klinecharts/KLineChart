@@ -18,6 +18,7 @@
  */
 export default {
   name: 'OBV',
+  shortName: 'OBV',
   calcParams: [30],
   plots: [
     { key: 'obv', title: 'OBV: ', type: 'line' },

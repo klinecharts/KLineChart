@@ -27,6 +27,7 @@
  */
 export default {
   name: 'TRIX',
+  shortName: 'TRIX',
   calcParams: [12, 9],
   plots: [
     { key: 'trix', title: 'TRIX: ', type: 'line' },

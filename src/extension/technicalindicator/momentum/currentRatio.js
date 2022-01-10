@@ -29,6 +29,7 @@
  */
 export default {
   name: 'CR',
+  shortName: 'CR',
   calcParams: [26, 10, 20, 40, 60],
   plots: [
     { key: 'cr', title: 'CR: ', type: 'line' },

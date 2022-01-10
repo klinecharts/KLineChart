@@ -23,6 +23,7 @@
  */
 export default {
   name: 'BRAR',
+  shortName: 'BRAR',
   calcParams: [26],
   plots: [
     { key: 'br', title: 'BR: ', type: 'line' },

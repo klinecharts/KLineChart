@@ -24,6 +24,7 @@ import calcHnLn from '../calcHnLn'
  */
 export default {
   name: 'KDJ',
+  shortName: 'KDJ',
   calcParams: [9, 3, 3],
   plots: [
     { key: 'k', title: 'K: ', type: 'line' },

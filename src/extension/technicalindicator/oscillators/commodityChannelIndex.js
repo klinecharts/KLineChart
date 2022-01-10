@@ -22,6 +22,7 @@
  */
 export default {
   name: 'CCI',
+  shortName: 'CCI',
   calcParams: [20],
   plots: [
     { key: 'cci', title: 'CCI: ', type: 'line' }

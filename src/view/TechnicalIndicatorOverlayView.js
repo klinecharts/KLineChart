@@ -237,7 +237,7 @@ export default class TechnicalIndicatorOverlayView extends View {
     let name = ''
     let calcParamText = ''
     if (plots.length > 0) {
-      name = tech.name
+      name = tech.shortName || tech.name
     }
     if (calcParams.length > 0) {
       const params = calcParams.map(param => {

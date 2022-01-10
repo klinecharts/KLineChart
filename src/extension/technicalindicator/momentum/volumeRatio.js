@@ -22,6 +22,7 @@
  */
 export default {
   name: 'VR',
+  shortName: 'VR',
   calcParams: [26, 6],
   plots: [
     { key: 'vr', title: 'VR: ', type: 'line' },

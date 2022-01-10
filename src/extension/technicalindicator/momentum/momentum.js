@@ -18,6 +18,7 @@
  */
 export default {
   name: 'MTM',
+  shortName: 'MTM',
   calcParams: [12, 6],
   plots: [
     { key: 'mtm', title: 'MTM: ', type: 'line' },
