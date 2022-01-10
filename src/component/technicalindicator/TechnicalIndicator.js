@@ -212,6 +212,7 @@ export default class TechnicalIndicator {
     }
     if (!this.styles) {
       this.styles = {
+        margin: clone(defaultStyles.margin),
         bar: clone(defaultStyles.bar),
         line: clone(defaultStyles.line),
         circle: clone(defaultStyles.circle)

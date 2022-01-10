@@ -14,7 +14,7 @@
 
 import View from './View'
 import { TooltipShowRule, LineStyle } from '../options/styleOptions'
-import { TechnicalIndicatorPlotType } from '../component/technicalindicator/TechnicalIndicator'
+import { TechnicalIndicatorPlotType, getTechnicalIndicatorPlotStyle } from '../component/technicalindicator/TechnicalIndicator'
 import { isValid, isObject } from '../utils/typeChecks'
 import { formatPrecision, formatBigNumber } from '../utils/format'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
@@ -228,11 +228,6 @@ export default class TechnicalIndicatorOverlayView extends View {
     const techResult = tech.result
     const techData = techResult[dataIndex]
     const dataList = this._chartStore.dataList()
-    const cbData = {
-      prev: { kLineData: dataList[dataIndex - 1], technicalIndicatorData: techResult[dataIndex - 1] },
-      current: { kLineData: dataList[dataIndex], technicalIndicatorData: techData },
-      next: { kLineData: dataList[dataIndex + 1], technicalIndicatorData: techResult[dataIndex + 1] }
-    }
 
     const calcParams = tech.calcParams
     const plots = tech.plots
@@ -258,23 +253,26 @@ export default class TechnicalIndicatorOverlayView extends View {
     let lineCount = 0
     const values = []
     plots.forEach(plot => {
-      let color
+      let defaultStyle = {}
       switch (plot.type) {
         case TechnicalIndicatorPlotType.CIRCLE: {
-          color = (plot.color && plot.color(cbData, styles)) || styles.circle.noChangeColor
+          defaultStyle = { color: styles.circle.noChangeColor }
           break
         }
         case TechnicalIndicatorPlotType.BAR: {
-          color = (plot.color && plot.color(cbData, styles)) || styles.bar.noChangeColor
+          defaultStyle = { color: styles.bar.noChangeColor }
           break
         }
         case TechnicalIndicatorPlotType.LINE: {
-          color = lineColors[lineCount % colorSize] || techOptions.tooltip.text.color
+          defaultStyle = { color: lineColors[lineCount % colorSize] || techOptions.tooltip.text.color }
           lineCount++
           break
         }
         default: { break }
       }
+      const plotStyle = getTechnicalIndicatorPlotStyle(
+        dataList, techResult, crosshair.dataIndex, plot, styles, defaultStyle
+      )
       const data = {}
       if (isValid(plot.title)) {
         let value = (techData || {})[plot.key]
@@ -286,7 +284,7 @@ export default class TechnicalIndicatorOverlayView extends View {
         }
         data.title = plot.title
         data.value = value || techOptions.tooltip.defaultValue
-        data.color = color
+        data.color = plotStyle.color
       }
       values.push(data)
     })

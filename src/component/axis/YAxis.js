@@ -35,6 +35,7 @@ export default class YAxis extends Axis {
     let maxValue = Number.MIN_SAFE_INTEGER
     let techPrecision = Number.MAX_SAFE_INTEGER
     const techs = this._chartStore.technicalIndicatorStore().instances(this._paneId)
+    let techGap
     techs.forEach(tech => {
       if (!shouldOhlc) {
         shouldOhlc = tech.shouldOhlc
@@ -45,6 +46,26 @@ export default class YAxis extends Axis {
       }
       if (isNumber(tech.maxValue)) {
         maxValue = Math.max(maxValue, tech.maxValue)
+      }
+      if (tech.styles) {
+        if (!techGap) {
+          techGap = { top: 0, bottom: 0 }
+        }
+        const margin = tech.styles.margin
+        if (isNumber(margin.top)) {
+          if (margin.top < 1) {
+            techGap.top = Math.max(margin.top, techGap.top)
+          } else {
+            techGap.top = Math.max(margin.top / this._height, techGap.top)
+          }
+        }
+        if (isNumber(margin.bottom)) {
+          if (margin.bottom < 1) {
+            techGap.bottom = Math.max(margin.bottom, techGap.bottom)
+          } else {
+            techGap.bottom = Math.max(margin.bottom / this._height, techGap.bottom)
+          }
+        }
       }
       plotsResult.push({
         plots: tech.plots,
@@ -97,10 +118,10 @@ export default class YAxis extends Axis {
       minMaxArray[0] = 0
       minMaxArray[1] = 10
     }
-    return { min: minMaxArray[0], max: minMaxArray[1], precision, specifyMin: minValue, specifyMax: maxValue }
+    return { min: minMaxArray[0], max: minMaxArray[1], precision, specifyMin: minValue, specifyMax: maxValue, techGap }
   }
 
-  _optimalMinMax ({ min, max, precision, specifyMin, specifyMax }) {
+  _optimalMinMax ({ min, max, precision, specifyMin, specifyMax, techGap }) {
     let minValue = min
     let maxValue = max
     const yAxisType = this.yAxisType()
@@ -138,19 +159,28 @@ export default class YAxis extends Axis {
     if (this._isCandleYAxis) {
       marginOptions = this._chartStore.styleOptions().candle.margin
     } else {
-      marginOptions = this._chartStore.styleOptions().technicalIndicator.margin
+      // 如果是副图，直接取指标的样式配置
+      marginOptions = techGap ? { top: 0, bottom: 0 } : this._chartStore.styleOptions().technicalIndicator.margin
     }
-    let topRate
-    let bottomRate
-    if (marginOptions.top > 1) {
-      topRate = marginOptions.top / this._height
-    } else {
-      topRate = isNumber(marginOptions.top) ? marginOptions.top : 0.2
+    let topRate = 0.2
+    if (isNumber(marginOptions.top)) {
+      let rate
+      if (marginOptions.top < 1) {
+        rate = marginOptions.top
+      } else {
+        rate = marginOptions.top / this._height
+      }
+      topRate = techGap ? Math.max(techGap.top, rate) : rate
     }
-    if (marginOptions.bottom > 1) {
-      bottomRate = marginOptions.bottom / this._height
-    } else {
-      bottomRate = isNumber(marginOptions.bottom) ? marginOptions.bottom : 0.1
+    let bottomRate = 0.1
+    if (isNumber(marginOptions.bottom)) {
+      let rate
+      if (marginOptions.bottom < 1) {
+        rate = marginOptions.bottom
+      } else {
+        rate = marginOptions.bottom / this._height
+      }
+      bottomRate = techGap ? Math.max(techGap.bottom, rate) : rate
     }
     let range = Math.abs(maxValue - minValue)
     // 保证每次图形绘制上下都留间隙

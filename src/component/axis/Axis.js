@@ -95,12 +95,10 @@ export default class Axis {
 
   /**
    * 优化最大最小值
-   * @param min
-   * @param max
-   * @param precision
+   * @param minMax
    * @private
    */
-  _optimalMinMax ({ min, max, precision }) {}
+  _optimalMinMax (minMax) {}
 
   /**
    * 计算轴上的tick值
