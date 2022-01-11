@@ -14,7 +14,11 @@
 
 import Chart from './Chart'
 import { logError, logTag, logWarn } from './utils/logger'
-import { isString } from './utils/typeChecks'
+import {
+  clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
+} from './utils/typeChecks'
+
+import { formatValue, formatPrecision, formatBigNumber } from './utils/format'
 
 const instances = {}
 let chartBaseId = 1
@@ -86,4 +90,19 @@ function dispose (dcs) {
   }
 }
 
-export { version, init, dispose }
+const utils = {
+  clone,
+  merge,
+  isString,
+  isNumber,
+  isValid,
+  isObject,
+  isArray,
+  isFunction,
+  isBoolean,
+  formatValue,
+  formatPrecision,
+  formatBigNumber
+}
+
+export { version, init, dispose, utils }

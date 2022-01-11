@@ -17,7 +17,7 @@ import Overlay from './Overlay'
 import { renderFillCircle } from '../../renderer/circle'
 import { checkCoordinateInCircle } from '../../extension/shape/shapeHelper'
 import { renderHorizontalLine, renderLine, renderVerticalLine } from '../../renderer/line'
-import { renderStrokePath, renderFillPath } from '../../renderer/path'
+import { renderCloseStrokePath, renderCloseFillPath } from '../../renderer/path'
 import { isArray, isValid, clone } from '../../utils/typeChecks'
 import { createFont } from '../../utils/canvas'
 
@@ -237,7 +237,7 @@ export default class Shape extends Overlay {
     let strokeFill
     if (styles.style === StrokeFillStyle.FILL) {
       ctx.fillStyle = (styles.fill || defaultStyles.fill).color
-      strokeFill = renderFillPath
+      strokeFill = renderCloseFillPath
     } else {
       const strokeStyles = styles.stroke || defaultStyles.stroke
       if (strokeStyles.style === LineStyle.DASH) {
@@ -245,7 +245,7 @@ export default class Shape extends Overlay {
       }
       ctx.lineWidth = strokeStyles.size
       ctx.strokeStyle = strokeStyles.color
-      strokeFill = renderStrokePath
+      strokeFill = renderCloseStrokePath
     }
     polygons.forEach(coordinates => {
       if (coordinates.length > 0) {

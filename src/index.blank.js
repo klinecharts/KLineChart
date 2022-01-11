@@ -45,7 +45,7 @@ import priceAndVolumeTrend from './extension/technicalindicator/volume/priceAndV
 import volume from './extension/technicalindicator/volume/volume'
 
 import extension from './store/extension'
-import { version, init, dispose } from './core'
+import { version, init, dispose, utils } from './core'
 
 extension.addTechnicalIndicatorTemplate([
   averagePrice, bullAndBearIndex, differentOfMovingAverage, directionalMovementIndex, easeOfMovementValue,
@@ -56,4 +56,4 @@ extension.addTechnicalIndicatorTemplate([
   onBalanceVolume, priceAndVolumeTrend, volume
 ])
 
-export { version, init, dispose, extension }
+export { version, init, dispose, utils, extension }

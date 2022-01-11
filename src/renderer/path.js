@@ -18,7 +18,7 @@
  * @param coordinates
  * @param strokeFill
  */
-function renderPath (ctx, coordinates, strokeFill) {
+export function renderPath (ctx, coordinates, strokeFill) {
   ctx.save()
   if (ctx.lineWidth % 2) {
     ctx.translate(0.5, 0.5)
@@ -39,15 +39,10 @@ function renderPath (ctx, coordinates, strokeFill) {
   ctx.restore()
 }
 
-/**
- * 渲染边框路径
- * @param ctx
- * @param coordinates
- */
-export function renderStrokePath (ctx, coordinates) {
+export function renderCloseStrokePath (ctx, coordinates) {
   renderPath(ctx, coordinates, () => {
-    ctx.stroke()
     ctx.closePath()
+    ctx.stroke()
   })
 }
 
@@ -56,7 +51,7 @@ export function renderStrokePath (ctx, coordinates) {
  * @param ctx
  * @param coordinates
  */
-export function renderFillPath (ctx, coordinates) {
+export function renderCloseFillPath (ctx, coordinates) {
   renderPath(ctx, coordinates, () => {
     ctx.closePath()
     ctx.fill()
