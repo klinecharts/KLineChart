@@ -15,7 +15,7 @@
 import TechnicalIndicatorView from './TechnicalIndicatorView'
 import { CandleType, LineStyle } from '../options/styleOptions'
 import { renderHorizontalLine, renderLine } from '../renderer/line'
-import { renderFillPath } from '../renderer/path'
+import { renderCloseFillPath } from '../renderer/path'
 import { createFont } from '../utils/canvas'
 import { formatPrecision, formatValue } from '../utils/format'
 import { isArray, isNumber } from '../utils/typeChecks'
@@ -115,7 +115,7 @@ export default class CandleView extends TechnicalIndicatorView {
         } else {
           this._ctx.fillStyle = backgroundColor
         }
-        renderFillPath(this._ctx, areaCoordinates)
+        renderCloseFillPath(this._ctx, areaCoordinates)
       }
     }
     this._drawGraphics(onDrawing, onDrawEnd)

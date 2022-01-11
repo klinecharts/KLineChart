@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { renderStrokePath } from './path'
+import { renderPath } from './path'
 
 /**
  * 绘制水平直线
@@ -52,5 +52,8 @@ export function renderVerticalLine (ctx, x, top, bottom) {
  * @param coordinates
  */
 export function renderLine (ctx, coordinates) {
-  renderStrokePath(ctx, coordinates)
+  renderPath(ctx, coordinates, () => {
+    ctx.stroke()
+    ctx.closePath()
+  })
 }
