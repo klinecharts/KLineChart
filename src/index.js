@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { version, init, dispose, extension } from './index.blank'
+import { version, init, dispose, extension, utils } from './index.blank'
 
 import horizontalRayLine from './extension/shape/horizontalRayLine'
 import horizontalSegment from './extension/shape/horizontalSegment'
@@ -38,4 +38,4 @@ extension.addShapeTemplate([
   parallelStraightLine, priceChannelLine, priceLine, fibonacciLine
 ])
 
-export { version, init, dispose, extension }
+export { version, init, dispose, extension, utils }

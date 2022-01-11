@@ -13,6 +13,6 @@
  */
 
 import extension from './store/extension'
-import { version, init, dispose } from './core'
+import { version, init, dispose, utils } from './core'
 
-export { version, init, dispose, extension }
+export { version, init, dispose, utils, extension }
