@@ -51,7 +51,7 @@ export declare interface TechnicalIndicatorRenderParams {
 }
 
 export declare interface TechnicalIndicatorTemplate extends TechnicalIndicator {
-  calcTechnicalIndicator: (kLineDataList: KLineData[], options?: any) => any[];
+  calcTechnicalIndicator: (kLineDataList: KLineData[], options?: any) => any[] | Promise<any[]>;
   series?: TechnicalIndicatorSeries;
   plots?: TechnicalIndicatorPlot[];
   shouldCheckParamCount?: boolean;

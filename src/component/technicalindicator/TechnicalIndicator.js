@@ -227,8 +227,8 @@ export default class TechnicalIndicator {
    * @param dataList
    * @return {*}
    */
-  calc (dataList) {
-    this.result = this.calcTechnicalIndicator(dataList, {
+  async calc (dataList) {
+    this.result = await this.calcTechnicalIndicator(dataList, {
       params: this._createParams(this.calcParams),
       plots: this.plots
     }) || []
