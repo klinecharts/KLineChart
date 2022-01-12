@@ -176,41 +176,32 @@ export default class TechnicalIndicatorStore {
    * @returns
    */
   addInstance (paneId, tech, isStack) {
-    if (tech) {
-      const { name, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles } = tech
-      let paneInstances = this._instances.get(paneId)
-      if (paneInstances && paneInstances.has(name)) {
-        return false
-      }
-      if (!paneInstances) {
-        paneInstances = new Map()
-        this._instances.set(paneId, paneInstances)
-      }
-      const template = this._templates[name]
-      let instance
-      if (template) {
-        instance = Object.create(Object.getPrototypeOf(template))
-        for (const key in template) {
-          if (Object.prototype.hasOwnProperty.call(template, key)) {
-            instance[key] = template[key]
-          }
-        }
-      }
-      if (instance) {
-        instance.setCalcParams(calcParams)
-        instance.setPrecision(precision)
-        instance.setShouldOhlc(shouldOhlc)
-        instance.setShouldFormatBigNumber(shouldFormatBigNumber)
-        instance.setStyles(styles, this._chartStore.styleOptions().technicalIndicator)
-        if (!isStack) {
-          paneInstances.clear()
-        }
-        paneInstances.set(name, instance)
-        instance.calc(this._chartStore.dataList())
-        return true
+    const { name, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles } = tech
+    let paneInstances = this._instances.get(paneId)
+    if (paneInstances && paneInstances.has(name)) {
+      return
+    }
+    if (!paneInstances) {
+      paneInstances = new Map()
+      this._instances.set(paneId, paneInstances)
+    }
+    const template = this._templates[name]
+    const instance = Object.create(Object.getPrototypeOf(template))
+    for (const key in template) {
+      if (Object.prototype.hasOwnProperty.call(template, key)) {
+        instance[key] = template[key]
       }
     }
-    return false
+    instance.setCalcParams(calcParams)
+    instance.setPrecision(precision)
+    instance.setShouldOhlc(shouldOhlc)
+    instance.setShouldFormatBigNumber(shouldFormatBigNumber)
+    instance.setStyles(styles, this._chartStore.styleOptions().technicalIndicator)
+    if (!isStack) {
+      paneInstances.clear()
+    }
+    paneInstances.set(name, instance)
+    return instance.calc(this._chartStore.dataList())
   }
 
   /**
@@ -263,26 +254,28 @@ export default class TechnicalIndicatorStore {
    * @param name
    */
   calcInstance (name, paneId) {
+    const tasks = []
     if (isValid(name)) {
       if (isValid(paneId)) {
         const paneInstances = this._instances.get(paneId)
         if (paneInstances && paneInstances.has(name)) {
-          paneInstances.get(name).calc(this._chartStore.dataList())
+          tasks.push(paneInstances.get(name).calc(this._chartStore.dataList()))
         }
       } else {
         this._instances.forEach(paneInstances => {
           if (paneInstances.has(name)) {
-            paneInstances.get(name).calc(this._chartStore.dataList())
+            tasks.push(paneInstances.get(name).calc(this._chartStore.dataList()))
           }
         })
       }
     } else {
       this._instances.forEach(paneInstances => {
         paneInstances.forEach(instance => {
-          instance.calc(this._chartStore.dataList())
+          tasks.push(instance.calc(this._chartStore.dataList()))
         })
       })
     }
+    return Promise.all(tasks)
   }
 
   /**
@@ -386,9 +379,7 @@ export default class TechnicalIndicatorStore {
           overiderSuccss = true
         }
         if (calcParamsSuccess) {
-          tasks.push(
-            Promise.resolve(tech.calc(this._chartStore.dataList()))
-          )
+          tasks.push(tech.calc(this._chartStore.dataList()))
         }
       }
     })

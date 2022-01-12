@@ -190,7 +190,7 @@ export default class Chart {
     const chartStore = this._chartPane.chartStore()
     chartStore.clearDataList()
     chartStore.addData(dataList, 0, more)
-    Promise.resolve(chartStore.technicalIndicatorStore().calcInstance()).finally(
+    chartStore.technicalIndicatorStore().calcInstance().finally(
       _ => {
         this._chartPane.adjustPaneViewport(false, true, true, true)
       }
@@ -209,7 +209,7 @@ export default class Chart {
     }
     const chartStore = this._chartPane.chartStore()
     chartStore.addData(dataList, 0, more)
-    Promise.resolve(chartStore.technicalIndicatorStore().calcInstance()).finally(
+    chartStore.technicalIndicatorStore().calcInstance().finally(
       _ => {
         this._chartPane.adjustPaneViewport(false, true, true, true)
       }
@@ -237,7 +237,7 @@ export default class Chart {
         pos = dataSize - 1
       }
       chartStore.addData(data, pos)
-      Promise.resolve(chartStore.technicalIndicatorStore().calcInstance()).finally(
+      chartStore.technicalIndicatorStore().calcInstance().finally(
         _ => {
           this._chartPane.adjustPaneViewport(false, true, true, true)
         }

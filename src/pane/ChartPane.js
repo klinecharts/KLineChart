@@ -390,11 +390,12 @@ export default class ChartPane {
    */
   createTechnicalIndicator (tech, isStack, options = {}) {
     if (this._panes.has(options.id)) {
-      let shouldAdjust = false
-      if (this._chartStore.technicalIndicatorStore().addInstance(options.id, tech, isStack)) {
-        shouldAdjust = this._panes.get(options.id).yAxis().computeAxis()
+      const task = this._chartStore.technicalIndicatorStore().addInstance(options.id, tech, isStack)
+      if (task) {
+        task.finally(_ => {
+          this.setPaneOptions(options, this._panes.get(options.id).yAxis().computeAxis())
+        })
       }
-      this.setPaneOptions(options, shouldAdjust)
       return options.id
     }
     const id = options.id || `${TECHNICAL_INDICATOR_PANE_ID_PREFIX}${++this._paneBaseId}`
@@ -418,8 +419,12 @@ export default class ChartPane {
       height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
     })
     this._panes.set(id, pane)
-    this._chartStore.technicalIndicatorStore().addInstance(id, tech, isStack)
-    this.adjustPaneViewport(true, true, true, true, true)
+    const task = this._chartStore.technicalIndicatorStore().addInstance(id, tech, isStack)
+    if (task) {
+      task.finally(_ => {
+        this.adjustPaneViewport(true, true, true, true, true)
+      })
+    }
     return id
   }
 
