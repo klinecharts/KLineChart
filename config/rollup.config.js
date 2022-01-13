@@ -3,6 +3,8 @@ const fileSize = require('rollup-plugin-filesize')
 const { terser } = require('rollup-plugin-terser')
 const replace = require('@rollup/plugin-replace')
 const progress = require('rollup-plugin-progress')
+const { nodeResolve } = require('@rollup/plugin-node-resolve')
+const commonjs = require('@rollup/plugin-commonjs')
 const packageJson = require('../package.json')
 
 const version = packageJson.version
@@ -10,8 +12,11 @@ const version = packageJson.version
 const getPlugins = (env) => {
   return [
     babel({
-      babelHelpers: 'bundled'
+      babelHelpers: 'runtime',
+      exclude: '**/node_modules/**'
     }),
+    nodeResolve(),
+    commonjs(),
     progress(),
     fileSize(),
     replace({
