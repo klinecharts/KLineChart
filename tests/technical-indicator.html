@@ -36,7 +36,7 @@ limitations under the License.
         // 创建一个主图指标叠加
         chart.createTechnicalIndicator('BOLL', true, { id: 'candle_pane' })
         // 创建一个副图指标
-        chart.createTechnicalIndicator('VOL')
+        chart.createTechnicalIndicator({ name: 'VOL', calcParams: [10], styles: { margin: { top: 0.2, bottom: 2 } } })
         // 创建一个副图指标
         chart.createTechnicalIndicator('MACD')
         chart.applyNewData(generated())
