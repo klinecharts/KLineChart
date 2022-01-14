@@ -38,7 +38,7 @@ limitations under the License.
           precision: 2,
           plots: [{ key: 'price', title: 'price: ', type: 'line' }],
           calcTechnicalIndicator: function (kLineDataList, { params, plots }) {
-            return kLineDataList.map(kLineData => ({ price: kLineData.close / params[0] }))
+            return Promise.resolve(kLineDataList.map(kLineData => ({ price: kLineData.close / params[0] })))
           }
         })
         chart.createTechnicalIndicator('TEST')
