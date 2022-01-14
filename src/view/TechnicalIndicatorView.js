@@ -112,7 +112,7 @@ export default class TechnicalIndicatorView extends View {
         })
         this._ctx.restore()
       }
-      const lineColors = techOptions.line.colors || []
+      const lineColors = styles.line.colors || []
       const lineColorSize = lineColors.length
       const isCandleYAxis = this._yAxis.isCandleYAxis()
       this._ctx.lineWidth = 1
