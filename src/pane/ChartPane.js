@@ -105,7 +105,7 @@ export default class ChartPane {
    * 十字光标观察者
    * @private
    */
-  _crosshairObserver ({ crosshair, dataIndex, kLineData, x, y }) {
+  _crosshairObserver ({ paneId, dataIndex, kLineData, x, y }) {
     if (
       this._chartStore.actionStore().has(ActionType.CROSSHAIR) ||
       this._chartStore.actionStore().has(ActionType.TOOLTIP)
@@ -129,8 +129,9 @@ export default class ChartPane {
           technicalIndicatorData: techDataList
         })
       })
-      if (crosshair.paneId) {
+      if (paneId) {
         this._chartStore.actionStore().execute(ActionType.CROSSHAIR, {
+          paneId,
           coordinate: { x, y },
           dataIndex,
           kLineData,
