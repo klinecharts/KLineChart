@@ -15,7 +15,7 @@
 import View from './View'
 import { TooltipShowRule, LineStyle } from '../options/styleOptions'
 import { TechnicalIndicatorPlotType, getTechnicalIndicatorPlotStyle } from '../component/technicalindicator/TechnicalIndicator'
-import { isValid, isObject } from '../utils/typeChecks'
+import { isValid, isObject, isFunction } from '../utils/typeChecks'
 import { formatPrecision, formatBigNumber } from '../utils/format'
 import { renderHorizontalLine, renderVerticalLine } from '../renderer/line'
 import { calcTextWidth, createFont } from '../utils/canvas'
@@ -199,7 +199,7 @@ export default class TechnicalIndicatorOverlayView extends View {
       labelX += textMarginLeft
       const text = `${v.title}${v.value}`
       const textWidth = calcTextWidth(this._ctx, text)
-      renderText(this._ctx, v.color, labelX, labelY, text)
+      renderText(this._ctx, v.color || techTooltipTextOptions.color, labelX, labelY, text)
       labelX += (textWidth + textMarginRight)
     })
   }
@@ -223,22 +223,10 @@ export default class TechnicalIndicatorOverlayView extends View {
    * @returns
    */
   _getTechTooltipData (crosshair, tech, techOptions) {
-    const dataIndex = crosshair.dataIndex
-    const styles = tech.styles || techOptions
-    const techResult = tech.result
-    const techData = techResult[dataIndex]
     const dataList = this._chartStore.dataList()
-
+    const techResult = tech.result
     const calcParams = tech.calcParams
-    const plots = tech.plots
-    const precision = tech.precision
-    const shouldFormatBigNumber = tech.shouldFormatBigNumber
-
-    let name = ''
     let calcParamText = ''
-    if (plots.length > 0) {
-      name = tech.shortName || tech.name
-    }
     if (calcParams.length > 0) {
       const params = calcParams.map(param => {
         if (isObject(param)) {
@@ -248,46 +236,79 @@ export default class TechnicalIndicatorOverlayView extends View {
       })
       calcParamText = `(${params.join(',')})`
     }
-    const lineColors = styles.line.colors || []
-    const colorSize = lineColors.length
-    let lineCount = 0
-    const values = []
-    plots.forEach(plot => {
-      let defaultStyle = {}
-      switch (plot.type) {
-        case TechnicalIndicatorPlotType.CIRCLE: {
-          defaultStyle = { color: styles.circle.noChangeColor }
-          break
-        }
-        case TechnicalIndicatorPlotType.BAR: {
-          defaultStyle = { color: styles.bar.noChangeColor }
-          break
-        }
-        case TechnicalIndicatorPlotType.LINE: {
-          defaultStyle = { color: lineColors[lineCount % colorSize] || techOptions.tooltip.text.color }
-          lineCount++
-          break
-        }
-        default: { break }
-      }
-      const plotStyle = getTechnicalIndicatorPlotStyle(
-        dataList, techResult, crosshair.dataIndex, plot, styles, defaultStyle
-      )
-      const data = {}
-      if (isValid(plot.title)) {
-        let value = (techData || {})[plot.key]
-        if (isValid(value)) {
-          value = formatPrecision(value, precision)
-          if (shouldFormatBigNumber) {
-            value = formatBigNumber(value)
+    let values = []
+    if (isFunction(tech.createToolTipDataSource)) {
+      values = tech.createToolTipDataSource({
+        dataSource: {
+          from: this._chartStore.timeScaleStore().from(),
+          to: this._chartStore.timeScaleStore().to(),
+          kLineDataList: this._chartStore.dataList(),
+          technicalIndicatorDataList: techResult
+        },
+        viewport: {
+          width: this._width,
+          height: this._height,
+          dataSpace: this._chartStore.timeScaleStore().dataSpace(),
+          barSpace: this._chartStore.timeScaleStore().barSpace()
+        },
+        crosshair,
+        technicalIndicator: tech,
+        xAxis: this._xAxis,
+        yAxis: this._yAxis,
+        defaultStyles: techOptions
+      }) || []
+    } else {
+      const dataIndex = crosshair.dataIndex
+      const styles = tech.styles || techOptions
+      const techData = techResult[dataIndex]
+
+      const plots = tech.plots
+      const precision = tech.precision
+      const shouldFormatBigNumber = tech.shouldFormatBigNumber
+      const lineColors = styles.line.colors || []
+      const colorSize = lineColors.length
+      let lineCount = 0
+      plots.forEach(plot => {
+        let defaultStyle = {}
+        switch (plot.type) {
+          case TechnicalIndicatorPlotType.CIRCLE: {
+            defaultStyle = { color: styles.circle.noChangeColor }
+            break
           }
+          case TechnicalIndicatorPlotType.BAR: {
+            defaultStyle = { color: styles.bar.noChangeColor }
+            break
+          }
+          case TechnicalIndicatorPlotType.LINE: {
+            defaultStyle = { color: lineColors[lineCount % colorSize] || techOptions.tooltip.text.color }
+            lineCount++
+            break
+          }
+          default: { break }
         }
-        data.title = plot.title
-        data.value = value || techOptions.tooltip.defaultValue
-        data.color = plotStyle.color
-      }
-      values.push(data)
-    })
+        const plotStyle = getTechnicalIndicatorPlotStyle(
+          dataList, techResult, crosshair.dataIndex, plot, styles, defaultStyle
+        )
+        const data = {}
+        if (isValid(plot.title)) {
+          let value = (techData || {})[plot.key]
+          if (isValid(value)) {
+            value = formatPrecision(value, precision)
+            if (shouldFormatBigNumber) {
+              value = formatBigNumber(value)
+            }
+          }
+          data.title = plot.title
+          data.value = value || techOptions.tooltip.defaultValue
+          data.color = plotStyle.color
+        }
+        values.push(data)
+      })
+    }
+    let name = ''
+    if (values.length > 0) {
+      name = tech.shortName || tech.name
+    }
     return { values, name, calcParamText }
   }
 }

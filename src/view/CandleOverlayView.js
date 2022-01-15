@@ -273,7 +273,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
         tooltipData.values.forEach(v => {
           labelY += techTooltipTextMarginTop
           this._ctx.textAlign = 'left'
-          this._ctx.fillStyle = v.color
+          this._ctx.fillStyle = v.color || techTooltipOptions.text.color
           this._ctx.fillText(v.title, indicatorLabelX, labelY)
           this._ctx.textAlign = 'right'
           this._ctx.fillText(

@@ -1,4 +1,4 @@
-import { Viewport, KLineData } from './Common';
+import { Viewport, KLineData, DataSource, Crosshair } from './Common';
 
 export declare type TechnicalIndicatorSeries = 'price' | 'volume' | 'normal';
 
@@ -34,12 +34,7 @@ export declare interface TechnicalIndicator {
   styles?: any;
 }
 
-export declare interface TechnicalIndicatorRenderDataSource {
-  from?: number;
-  to?: number;
-  kLineDataList?: KLineData[];
-  technicalIndicatorDataList?: any[];
-}
+export declare interface TechnicalIndicatorRenderDataSource extends DataSource {}
 
 export declare interface TechnicalIndicatorRenderParams {
   ctx: CanvasRenderingContext2D;
@@ -50,6 +45,22 @@ export declare interface TechnicalIndicatorRenderParams {
   yAxis: any;
 }
 
+export declare interface TechnicalIndicatorCreateTooltipParams {
+  dataSource: DataSource;
+  viewport: Viewport;
+  crosshair: Crosshair;
+  technicalIndicator: TechnicalIndicatorTemplate;
+  xAxis: any;
+  yAxis: any;
+  defaultStyles: any;
+}
+
+export declare interface TechnicalIndicatorTooltipDataItem {
+  title: string;
+  value: any;
+  color?: string;
+}
+
 export declare interface TechnicalIndicatorTemplate extends TechnicalIndicator {
   calcTechnicalIndicator: (kLineDataList: KLineData[], options?: any) => any[] | Promise<any[]>;
   series?: TechnicalIndicatorSeries;
@@ -58,5 +69,6 @@ export declare interface TechnicalIndicatorTemplate extends TechnicalIndicator {
   minValue?: number;
   maxValue?: number;
   regeneratePlots?: (params?: number[]) => TechnicalIndicatorPlot[];
+  createToolTipDataSource?: (params: TechnicalIndicatorCreateTooltipParams) => TechnicalIndicatorTooltipDataItem[];
   render?: (params: TechnicalIndicatorRenderParams) => void;
 }

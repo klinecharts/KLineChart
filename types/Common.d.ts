@@ -20,6 +20,18 @@ export declare interface Viewport {
   barSpace?: number;
 }
 
+export declare interface DataSource {
+  from?: number;
+  to?: number;
+  kLineDataList?: KLineData[];
+  technicalIndicatorDataList?: any[];
+}
+
+export declare interface Crosshair extends Coordinate {
+  paneId?: string;
+  dataIndex?: number;
+}
+
 export declare interface Coordinate {
   x?: number;
   y?: number;

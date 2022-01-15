@@ -38,6 +38,9 @@ limitations under the License.
           calcTechnicalIndicator: function (kLineDataList, { params, plots }) {
             return kLineDataList.map(kLineData => ({ volume: kLineData.volume }))
           },
+          createToolTipDataSource: function (data) {
+            return [{ title: 'VALUE: ', value: data.crosshair.kLineData.volume, color: 'rgb(65, 20, 69)' }]
+          },
           render: function ({ ctx, dataSource, viewport }) {
             let max = 0
             const result = dataSource.technicalIndicatorDataList

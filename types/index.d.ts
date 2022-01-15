@@ -1,8 +1,8 @@
 import { extension } from './Extension';
 
 import {
-  KLineData, Precision, Viewport, OverlayEvent,
-  Coordinate, Point
+  KLineData, Precision, Viewport, Crosshair, OverlayEvent,
+  Coordinate, Point, DataSource
 } from './Common';
 
 import { Chart, PictureType, ChartActionType } from './Chart';
@@ -30,7 +30,8 @@ import {
   TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, TechnicalIndicatorRenderDataSource,
-  TechnicalIndicator, TechnicalIndicatorRenderParams, TechnicalIndicatorTemplate
+  TechnicalIndicator, TechnicalIndicatorRenderParams, TechnicalIndicatorTemplate,
+  TechnicalIndicatorCreateTooltipParams, TechnicalIndicatorTooltipDataItem
 } from './TechnicalIndicator';
 
 export declare function version(): string;
@@ -41,8 +42,8 @@ export declare function dispose(dcs: HTMLDivElement | Chart | string): void;
 
 export {
   extension,
-  Chart, PictureType, ChartActionType,
-  KLineData, Precision, Viewport, OverlayEvent, PaneOptions,
+  Chart, PictureType, ChartActionType, KLineData, DataSource,
+  Precision, Viewport, Crosshair, OverlayEvent, PaneOptions,
   Coordinate, Point,
   ShapeMode, ShapeElementType,
   ShapeDataSource, ShapeDataSourceItem,
@@ -55,5 +56,6 @@ export {
   TechnicalIndicatorPlotType,
   TechnicalIndicatorPlotCallbackDataItem, TechnicalIndicatorPlotCallbackData,
   TechnicalIndicatorPlot, TechnicalIndicatorRenderDataSource,
-  TechnicalIndicator, TechnicalIndicatorRenderParams, TechnicalIndicatorTemplate
+  TechnicalIndicator, TechnicalIndicatorRenderParams, TechnicalIndicatorTemplate,
+  TechnicalIndicatorCreateTooltipParams, TechnicalIndicatorTooltipDataItem
 }

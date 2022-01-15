@@ -87,7 +87,7 @@ export default class TechnicalIndicatorStore {
     name, shortName, series, calcParams, plots, precision,
     shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber,
     minValue, maxValue, styles,
-    calcTechnicalIndicator, regeneratePlots, render
+    calcTechnicalIndicator, regeneratePlots, createToolTipDataSource, render
   }) {
     if (!name || !isFunction(calcTechnicalIndicator)) {
       logWarn('', '', 'The required attribute "name" and method "calcTechnicalIndicator" are missing, and new technical indicator cannot be generated!!!')
@@ -116,6 +116,9 @@ export default class TechnicalIndicatorStore {
     Template.prototype.calcTechnicalIndicator = calcTechnicalIndicator
     if (isFunction(regeneratePlots)) {
       Template.prototype.regeneratePlots = regeneratePlots
+    }
+    if (isFunction(createToolTipDataSource)) {
+      Template.prototype.createToolTipDataSource = createToolTipDataSource
     }
     if (isFunction(render)) {
       Template.prototype.render = render
