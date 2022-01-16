@@ -191,7 +191,8 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     const techTooltipTextMarginTop = techTooltipOptions.text.marginTop
     const techTooltipTextMarginBottom = techTooltipOptions.text.marginBottom
     const techTooltipTextSize = techTooltipOptions.text.size
-    const techTooltipDataList = techs.map(tech => this._getTechTooltipData(crosshair, tech, techOptions))
+    const techTooltipDataList = []
+    techs.forEach(tech => { techTooltipDataList.push(this._getTechTooltipData(crosshair, tech, techOptions)) })
     if (isDrawTechTooltip) {
       this._ctx.font = createFont(
         techTooltipTextSize,
