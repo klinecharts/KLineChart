@@ -1,4 +1,16 @@
 # Change Log
+## 8.3.0
+`2022-01-16`
++ 🆕 Export some basic chart methods.
++ 🆕 Technical indicator template calculation supports asynchronous.
++ 🆕 Add method `createTooltipDataSource` for technical template.
++ 🆕 Add callback parameter `paneId` for chart action type `crosshair`.
++ 🐞 Fix the problem that the independent style `line.colors` of technical indicators does not take effect.
++ 🐞 Fix the problem of drawing error when the shape type is `polygon`.
++ 🐞 Fix shape `mode` setting not taking effect.
++ 🐞 Fix style configuration `candle.tooltip.showType` and `technicalIndicator.tooltip.showType` for 'rect' chart error.
++ 🐞 Fix wrong typescript declaration.
+
 ## 8.2.0
 `2022-01-10`
 + 🆕 Add instance methods `createHtml` and `removeHtml`.

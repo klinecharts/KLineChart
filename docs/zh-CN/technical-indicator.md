@@ -72,10 +72,28 @@
   // 返回值需要一个plots
   regeneratePlots: (params) => { return [] },
 
+  // 生成tooltip显示的数据，返回格式`{ title: 'xxx', value: 'xxx', color: 'xxx' }`的数组，可缺省
+  // dataSource 数据源
+  // viewport 尺寸信息
+  // crosshair 十字光标信息
+  // technicalIndicator 技术指标信息
+  // xAxis x轴
+  // yAxis y轴
+  // defaultStyles 默认样式
+  createTooltipDataSource: ({
+    dataSource,
+    viewport,
+    crosshair,
+    technicalIndicator,
+    xAxis,
+    yAxis,
+    defaultStyles
+  }) => { return [] }
+
   // 自定义渲染，可缺省，
   // ctx canvas上下文
   // dataSource 数据源，包含了原始的k线数据和计算出来的指标数据以及起始绘制点位置
-  // viewport 一些绘图可能需要的一些参数
+  // viewport 尺寸信息
   // styles 样式
   // xAxis x轴
   // yAxis y轴

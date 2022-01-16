@@ -21,6 +21,9 @@ Add a shape template globally.
 - `template` shape template, please refer to [shape](shape.md)
 
 
+### utils
+Collection of basic methods.
+
 ### version()
 Get the current version number of the chart.
 

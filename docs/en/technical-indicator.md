@@ -28,11 +28,11 @@ To complete a technical indicator template, you only need to generate a technica
   shortName: 'xxx',
 
   // Technical indicator calculation method, necessary fields
-  // This field is a callback method, the callback parameters are the source data and calculated parameters of the current chart, and an array needs to be returned
+  // This field is a callback method, the callback parameters are the source data and calculated parameters of the current chart, and an array or promise needs to be returned
   // kLineDataList chart raw data
   // params calculation parameters
   // plots technical indicator data configuration item
-  calcTechnicalIndicator: (kLineDataList, { params, plots }) => {return [] },
+  calcTechnicalIndicator: (kLineDataList, { params, plots }) => { return [] },
 
   // Series, can be the default
   series: 'normal',
@@ -72,10 +72,28 @@ To complete a technical indicator template, you only need to generate a technica
   // The return value needs a plots
   regeneratePlots: (params) => {return [] },
 
+  // Generate the data displayed by the tooltip and return an array in the format `{ title: 'xxx', value: 'xxx', color: 'xxx' }`, which can be defaulted
+   // dataSource data source
+   // viewport size information
+   // crosshair crosshair information
+   // technicalIndicator technical indicator information
+   // xAxis x axis
+   // yAxis y axis
+   // defaultStyles default styles
+  createTooltipDataSource: ({
+    dataSource,
+    viewport,
+    crosshair,
+    technicalIndicator,
+    xAxis,
+    yAxis,
+    defaultStyles
+  }) => { return [] }
+
   // Custom rendering, can be defaulted,
   // ctx canvas context
   // dataSource data source, including the original bar data and calculated indicator data as well as the starting point of drawing
-  // viewport some parameters that may be required for drawing
+  // viewport size information
   // styles style
   // xAxis x-axis component
   // yAxis y-axis component

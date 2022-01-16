@@ -1,4 +1,16 @@
 # 更新日志
+## 8.3.0
+`2022-01-16`
++ 🆕 导出一些图表基础方法。
++ 🆕 技术指标模板计算支持异步。
++ 🆕 技术模板新增方法`createTooltipDataSource`。
++ 🆕 图表动作类型`crosshair`新增回调参数`paneId`。
++ 🐞 修复技术指标独立样式`line.colors`不生效问题。
++ 🐞 修复图形类型为`polygon`时，绘制错误问题。
++ 🐞 修复图形`mode`设置不生效问题。
++ 🐞 修复样式配置`candle.tooltip.showType`和`technicalIndicator.tooltip.showType`为'rect'图表出错问题。
++ 🐞 修复typescript声明不对问题。
+
 ## 8.2.0
 `2022-01-10`
 + 🆕 新增实例方法 `createHtml`和`removeHtml`。
