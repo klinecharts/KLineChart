@@ -18,7 +18,7 @@ export declare interface HTML {
   id?: string,
   position?: 'content' | 'yAxis';
   style?: any;
-  content: string | HtmlElement;
+  content: string | HTMLElement;
 }
 
 export declare type PictureType = 'png' | 'jpeg' | 'bmp';
