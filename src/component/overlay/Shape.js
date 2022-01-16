@@ -466,7 +466,7 @@ export default class Shape extends Overlay {
    * @param mode
    */
   setMode (mode) {
-    if (Object.values(ShapeMode).indexOf > -1) {
+    if (Object.values(ShapeMode).indexOf(mode) > -1) {
       this._mode = mode
     }
   }
