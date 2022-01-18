@@ -437,7 +437,7 @@ export default class ChartPane {
    */
   createShape (ShapeTemplateClass, shapeOptions, paneId) {
     const {
-      id, points, styles, lock, data,
+      id, points, styles, lock, mode, data,
       onDrawStart, onDrawing,
       onDrawEnd, onClick,
       onRightClick, onPressedMove,
@@ -463,6 +463,7 @@ export default class ChartPane {
         points,
         styles,
         lock,
+        mode,
         data
       })
       if (isFunction(onDrawStart)) {

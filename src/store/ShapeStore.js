@@ -93,10 +93,10 @@ export default class ShapeStore {
     }
     class Template extends Shape {
       constructor ({
-        id, chartStore, xAxis, yAxis, points, styles, lock, data
+        id, chartStore, xAxis, yAxis, points, styles, lock, mode, data
       }) {
         super({
-          id, name, totalStep, chartStore, xAxis, yAxis, points, styles, lock, data
+          id, name, totalStep, chartStore, xAxis, yAxis, points, styles, lock, mode, data
         })
       }
     }

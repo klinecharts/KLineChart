@@ -93,13 +93,14 @@ export default class Shape extends Overlay {
   constructor ({
     id, name, totalStep,
     chartStore, xAxis, yAxis,
-    points, styles, lock, data
+    points, styles, lock, mode, data
   }) {
     super({ id, chartStore, xAxis, yAxis })
     this._name = name
     this._totalStep = totalStep
     this._lock = lock
     this._mode = ShapeMode.NORMAL
+    this.setMode(mode)
     this._data = data
     this._drawStep = SHAPE_DRAW_STEP_START
     this._points = []
