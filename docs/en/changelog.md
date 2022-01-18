@@ -1,4 +1,8 @@
 # Change Log
+## 8.3.1
+`2022-01-18`
++ 🐞 Fix `createShape` attribute `mode` does not take effect.
+
 ## 8.3.0
 `2022-01-16`
 + 🆕 Export some basic chart methods.
