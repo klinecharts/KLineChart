@@ -225,8 +225,9 @@ export default class TechnicalIndicatorOverlayView extends View {
   _getTechTooltipData (crosshair, tech, techOptions) {
     const dataList = this._chartStore.dataList()
     const techResult = tech.result
-    const calcParams = tech.calcParams
+
     let calcParamText = ''
+    const calcParams = tech.calcParams
     if (calcParams.length > 0) {
       const params = calcParams.map(param => {
         if (isObject(param)) {
@@ -236,6 +237,7 @@ export default class TechnicalIndicatorOverlayView extends View {
       })
       calcParamText = `(${params.join(',')})`
     }
+
     let values = []
     if (isFunction(tech.createToolTipDataSource)) {
       values = tech.createToolTipDataSource({
@@ -301,14 +303,10 @@ export default class TechnicalIndicatorOverlayView extends View {
           data.title = plot.title
           data.value = value || techOptions.tooltip.defaultValue
           data.color = plotStyle.color
+          values.push(data)
         }
-        values.push(data)
       })
     }
-    let name = ''
-    if (values.length > 0) {
-      name = tech.shortName || tech.name
-    }
-    return { values, name, calcParamText }
+    return { values, name: tech.shortName || tech.name, calcParamText }
   }
 }
