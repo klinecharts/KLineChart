@@ -1,4 +1,8 @@
 # Change Log
+## 8.3.2
+`2022-01-31`
++ 🐞 Fix the problem that the technical indicator prompts are displayed incorrectly.
+
 ## 8.3.1
 `2022-01-18`
 + 🐞 Fix `createShape` attribute `mode` does not take effect.
