@@ -699,7 +699,7 @@ export default class Shape extends Overlay {
    * @param coordinate
    */
   mousePressedOtherMove (coordinate, event) {
-    if (this._prevPressPoint) {
+    if (!this._lock && this._prevPressPoint) {
       const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
       const value = this._yAxis.convertFromPixel(coordinate.y)
       const difDataIndex = dataIndex - this._prevPressPoint.dataIndex
