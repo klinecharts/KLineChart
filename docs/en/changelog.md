@@ -1,4 +1,9 @@
 # Change Log
+## 8.3.3
+`2022-02-21`
++ 🐞 Fix the problem that the shape attribute lock does not take effect.
++ 💄 Optimize the display of technical indicator names.
+
 ## 8.3.2
 `2022-01-31`
 + 🐞 Fix the problem that the technical indicator prompts are displayed incorrectly.
