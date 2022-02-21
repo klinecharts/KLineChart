@@ -307,6 +307,6 @@ export default class TechnicalIndicatorOverlayView extends View {
         }
       })
     }
-    return { values, name: tech.shortName || tech.name, calcParamText }
+    return { values, name: tech.shortName, calcParamText }
   }
 }

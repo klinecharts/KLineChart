@@ -79,7 +79,7 @@ export default class TechnicalIndicator {
     // 指标名
     this.name = name || ''
     // 指标简短名称，用于显示
-    this.shortName = shortName || name || ''
+    this.shortName = isValid(shortName) ? shortName : name
     // 系列
     this.series = Object.values(TechnicalIndicatorSeries).indexOf(series) !== -1 ? series : TechnicalIndicatorSeries.NORMAL
     // 精度
@@ -121,7 +121,7 @@ export default class TechnicalIndicator {
    * @returns
    */
   setShortName (shortName) {
-    if (this.shortName !== shortName) {
+    if (isValid(shortName) && this.shortName !== shortName) {
       this.shortName = shortName
       return true
     }
