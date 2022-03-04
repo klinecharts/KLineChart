@@ -175,7 +175,6 @@ export default class TechnicalIndicator {
       }
       if (
         !isNumber(v) ||
-        v <= 0 ||
         (!allowDecimal && parseInt(v, 10) !== v)
       ) {
         return false
