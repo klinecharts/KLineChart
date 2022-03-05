@@ -1,7 +1,7 @@
 <p align="center">
-  <img style="width: 120px" src="./image/logo.svg"/>
+  <img style="width: 160px" src="./image/logo.svg"/>
 </p>
-<h1 align="center">KLineChart</h1>
+<h1 align="center" style="margin-top: -16px">KLineChart</h1>
 <p align="center">💹📈Lightweight k-line chart built with html5 canvas.</p>
 <div align="center">
 
