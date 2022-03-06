@@ -1,5 +1,7 @@
 <p align="center">
-  <img style="width: 160px" src="./image/logo.svg"/>
+  <a href="https://github.com/liihuu/KLineChart">
+    <img style="width: 160px" src="https://cdn.nlark.com/yuque/0/2022/png/8403091/1646569899391-assets/web-upload/30b99615-f01c-4d55-ac05-1c481fdc9a04.png"/>
+  </a>
 </p>
 <h1 align="center" style="margin-top: -16px">KLineChart</h1>
 <p align="center">💹📈Lightweight k-line chart built with html5 canvas.</p>
@@ -14,7 +16,7 @@
 
 </div>
 
-[![](./image/screenshot.png)](https://github.com/liihuu/KLineChart)
+[![](https://cdn.nlark.com/yuque/0/2022/png/8403091/1646569986673-assets/web-upload/56a9e87d-8028-4875-97dd-bcfda0eb131a.png)](https://github.com/liihuu/KLineChart)
 
 ## 📦 Install
 ### Using npm
