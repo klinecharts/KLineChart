@@ -1,4 +1,10 @@
 # Change Log
+
+## 8.3.5
+`2022-03-17`
++ 🐞 Fix the issue that indicator stacking may not refresh in real time.
++ 💄 Indicator parameters can be set to negative values.
+
 ## 8.3.3
 `2022-02-21`
 + 🐞 Fix the problem that the shape attribute lock does not take effect.
