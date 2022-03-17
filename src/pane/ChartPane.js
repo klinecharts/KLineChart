@@ -394,7 +394,7 @@ export default class ChartPane {
       const task = this._chartStore.technicalIndicatorStore().addInstance(options.id, tech, isStack)
       if (task) {
         task.finally(_ => {
-          this.setPaneOptions(options, this._panes.get(options.id).yAxis().computeAxis())
+          this.setPaneOptions(options, this._panes.get(options.id).yAxis().computeAxis(true))
         })
       }
       return options.id
