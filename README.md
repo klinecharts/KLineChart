@@ -37,8 +37,8 @@ https://unpkg.com/klinecharts/dist/klinecharts.min.js
 https://cdn.jsdelivr.net/npm/klinecharts/dist/klinecharts.min.js
 
 ## 📄 Docs
-+ [中文](https://www.yuque.com/liihuu/klinechart)
-+ [English](./docs/en/README.md)
++ [中文](https://www.klinecharts.com/zh-CN)
++ [English](https://www.klinecharts.com)
 
 ## 🛠️ Build
 Execute command in root directory. [Node.js](https://nodejs.org) is required.
@@ -52,7 +52,7 @@ npm run build
 The generated files are in the dist folder.
 
 ## 🔗 Links
-+ [Sample page](https://liihuu.github.io/KLineChart/)
++ [Sample page](https://www.klinecharts.com/sample)
 + [Sample code](https://github.com/liihuu/KLineChartSample)
 
 ## ©️ License
