@@ -17,7 +17,7 @@ import extension from './extension'
 import { isNumber, isFunction, isValid } from '../utils/typeChecks'
 import { logWarn } from '../utils/logger'
 
-import Shape, { ShapeMouseOperateElement } from '../component/overlay/Shape'
+import Shape, { ShapeEventOperateElement } from '../component/overlay/Shape'
 
 import InvalidateLevel from '../enum/InvalidateLevel'
 
@@ -27,15 +27,15 @@ export default class ShapeStore {
     // 图形标记映射
     this._templates = this._createTemplates()
     // 图形标记鼠标操作信息
-    this._mouseOperate = {
+    this._eventOperate = {
       click: {
         id: '',
-        element: ShapeMouseOperateElement.NONE,
+        element: ShapeEventOperateElement.NONE,
         elementIndex: -1
       },
       hover: {
         id: '',
-        element: ShapeMouseOperateElement.NONE,
+        element: ShapeEventOperateElement.NONE,
         elementIndex: -1
       }
     }
@@ -360,30 +360,35 @@ export default class ShapeStore {
   }
 
   /**
-   * 获取图形标记鼠标操作信息
+   * 获取图形标记操作信息
    * @return {{hover: {id: string, elementIndex: number, element: string}, click: {id: string, elementIndex: number, element: string}}}
    */
-  mouseOperate () {
-    return this._mouseOperate
+  eventOperate () {
+    return this._eventOperate
   }
 
   /**
-   * 设置鼠标操作信息
-   * @param mouseOperate
+   * 设置事件操作信息
+   * @param operate
    * @return
    */
-  setMouseOperate (mouseOperate) {
-    const { hover, click } = this._mouseOperate
-    if (mouseOperate.hover &&
-      (hover.id !== mouseOperate.hover.id || hover.element !== mouseOperate.hover.element || hover.elementIndex !== mouseOperate.hover.elementIndex)
+  setEventOperate (operate) {
+    const { hover, click } = this._eventOperate
+    let hoverSuccess
+    if (operate.hover &&
+      (hover.id !== operate.hover.id || hover.element !== operate.hover.element || hover.elementIndex !== operate.hover.elementIndex)
     ) {
-      this._mouseOperate.hover = { ...mouseOperate.hover }
+      this._eventOperate.hover = { ...operate.hover }
+      hoverSuccess = true
     }
-    if (mouseOperate.click &&
-      (click.id !== mouseOperate.click.id || click.element !== mouseOperate.click.element || click.elementIndex !== mouseOperate.click.elementIndex)
+    let clickSuccess
+    if (operate.click &&
+      (click.id !== operate.click.id || click.element !== operate.click.element || click.elementIndex !== operate.click.elementIndex)
     ) {
-      this._mouseOperate.click = { ...mouseOperate.click }
+      this._eventOperate.click = { ...operate.click }
+      clickSuccess = true
     }
+    return hoverSuccess || clickSuccess
   }
 
   /**

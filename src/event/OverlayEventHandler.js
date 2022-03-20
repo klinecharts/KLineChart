@@ -13,10 +13,10 @@
  */
 
 import EventHandler from './EventHandler'
-import { isMouse } from './eventTypeChecks'
+import { isMouse, isTouch } from './eventTypeChecks'
 
 import InvalidateLevel from '../enum/InvalidateLevel'
-import { ShapeMouseOperateElement } from '../component/overlay/Shape'
+import { ShapeEventOperateElement } from '../component/overlay/Shape'
 
 export default class OverlayEventHandler extends EventHandler {
   constructor (chartStore, yAxis) {
@@ -70,48 +70,54 @@ export default class OverlayEventHandler extends EventHandler {
   }
 
   mouseMoveEvent (event) {
-    if (this._waitingForMouseMove) {
-      return false
-    }
-    this._waitingForMouseMove = true
-    const coordinate = { x: event.localX, y: event.paneY }
-    const { paneId, instance } = this._chartStore.shapeStore().progressInstance()
-    let shapeHoverOperate
-    let shapeClickOperate
-    let annotationHoverOperate
-    if (instance && instance.isDrawing()) {
-      if (event.paneId) {
-        if (instance.isStart()) {
-          this._chartStore.shapeStore().updateProgressInstance(this._yAxis(event.paneId), event.paneId)
-        }
-        if (paneId === event.paneId) {
-          instance.mouseMoveForDrawing(coordinate, event)
-        }
-        shapeHoverOperate = instance.checkEventCoordinateOn(coordinate)
+    if (isMouse(event)) {
+      if (this._waitingForMouseMove) {
+        return false
       }
-      shapeClickOperate = {
-        id: '',
-        element: ShapeMouseOperateElement.NONE,
-        elementIndex: -1
+      this._waitingForMouseMove = true
+      const coordinate = { x: event.localX, y: event.paneY }
+      const { instance, paneId } = this._chartStore.shapeStore().progressInstance()
+      let shapeHoverOperate
+      let shapeClickOperate
+      let annotationHoverOperate
+      if (instance && instance.isDrawing()) {
+        if (event.paneId) {
+          if (instance.isStart()) {
+            this._chartStore.shapeStore().updateProgressInstance(this._yAxis(event.paneId), event.paneId)
+          }
+          if (paneId === event.paneId) {
+            instance.mouseMoveForDrawing(coordinate, event)
+          }
+          shapeHoverOperate = {
+            id: instance.id(),
+            element: ShapeEventOperateElement.POINT,
+            elementIndex: instance.points().length - 1
+          }
+        }
+        shapeClickOperate = {
+          id: '',
+          element: ShapeEventOperateElement.NONE,
+          elementIndex: -1
+        }
+      } else {
+        const annotations = this._chartStore.annotationStore().get(event.paneId)
+        const shapes = this._chartStore.shapeStore().instances(event.paneId)
+        const prevShapeHoverOperate = this._chartStore.shapeStore().eventOperate().hover
+        const prevAnnotationHoverOperate = this._chartStore.annotationStore().eventOperate()
+        shapeHoverOperate = this._performOverlayMouseHover(shapes, prevShapeHoverOperate, coordinate, event)
+        annotationHoverOperate = this._performOverlayMouseHover(annotations, prevAnnotationHoverOperate, coordinate, event)
       }
-    } else {
-      const annotations = this._chartStore.annotationStore().get(event.paneId)
-      const shapes = this._chartStore.shapeStore().instances(event.paneId)
-      const prevShapeHoverOperate = this._chartStore.shapeStore().mouseOperate().hover
-      const prevAnnotationHoverOperate = this._chartStore.annotationStore().mouseOperate()
-      shapeHoverOperate = this._performOverlayMouseHover(shapes, prevShapeHoverOperate, coordinate, event)
-      annotationHoverOperate = this._performOverlayMouseHover(annotations, prevAnnotationHoverOperate, coordinate, event)
+      this._chartStore.shapeStore().setEventOperate({
+        hover: shapeHoverOperate || {
+          id: '',
+          element: ShapeEventOperateElement.NONE,
+          elementIndex: -1
+        },
+        click: shapeClickOperate
+      })
+      this._chartStore.annotationStore().setEventOperate(annotationHoverOperate || { id: '' })
+      this._waitingForMouseMove = false
     }
-    this._chartStore.shapeStore().setMouseOperate({
-      hover: shapeHoverOperate || {
-        id: '',
-        element: ShapeMouseOperateElement.NONE,
-        elementIndex: -1
-      },
-      click: shapeClickOperate
-    })
-    this._chartStore.annotationStore().setMouseOperate(annotationHoverOperate || { id: '' })
-    this._waitingForMouseMove = false
   }
 
   /**
@@ -123,20 +129,42 @@ export default class OverlayEventHandler extends EventHandler {
     const { instance, paneId } = this._chartStore.shapeStore().progressInstance()
     let shapeHoverOperate = {
       id: '',
-      element: ShapeMouseOperateElement.NONE,
+      element: ShapeEventOperateElement.NONE,
       elementIndex: -1
     }
-    let shapeClickOperate
-    if (instance && instance.isDrawing() && paneId === event.paneId) {
-      instance.mouseLeftButtonDownForDrawing()
-      shapeClickOperate = instance.checkEventCoordinateOn(coordinate)
+    let progressShapePaneId = paneId
+    let shapeClickOperate = {}
+    if (instance && instance.isDrawing()) {
+      if (isTouch(event)) {
+        if (instance.isStart()) {
+          this._chartStore.shapeStore().updateProgressInstance(this._yAxis(event.paneId), event.paneId)
+          progressShapePaneId = event.paneId
+        }
+        if (progressShapePaneId === event.paneId) {
+          // 移动端添加点数据到实例
+          instance.mouseMoveForDrawing(coordinate, event)
+        }
+      }
+      if (progressShapePaneId === event.paneId) {
+        instance.mouseLeftButtonDownForDrawing()
+        shapeClickOperate = {
+          id: instance.id(),
+          element: ShapeEventOperateElement.POINT,
+          elementIndex: instance.points().length - 1
+        }
+        shapeHoverOperate = {
+          id: instance.id(),
+          element: ShapeEventOperateElement.POINT,
+          elementIndex: instance.points().length - 1
+        }
+      }
     } else {
       const shapes = this._chartStore.shapeStore().instances(event.paneId)
       for (const shape of shapes) {
         shapeClickOperate = shape.checkEventCoordinateOn(coordinate)
         if (shapeClickOperate) {
           this._chartStore.shapeStore().updatePressedInstance(shape, event.paneId, shapeClickOperate.element)
-          if (shapeClickOperate.element === ShapeMouseOperateElement.POINT) {
+          if (shapeClickOperate.element === ShapeEventOperateElement.POINT) {
             shapeHoverOperate = {
               ...shapeClickOperate
             }
@@ -166,11 +194,11 @@ export default class OverlayEventHandler extends EventHandler {
         }
       }
     }
-    const shapeOperateValid = this._chartStore.shapeStore().setMouseOperate({
+    const shapeOperateValid = this._chartStore.shapeStore().setEventOperate({
       hover: shapeHoverOperate,
       click: shapeClickOperate || {
         id: '',
-        element: ShapeMouseOperateElement.NONE,
+        element: ShapeEventOperateElement.NONE,
         elementIndex: -1
       }
     })
@@ -204,7 +232,7 @@ export default class OverlayEventHandler extends EventHandler {
     const { instance, paneId, element } = this._chartStore.shapeStore().pressedInstance()
     if (instance && paneId === event.paneId) {
       const coordinate = { x: event.localX, y: event.paneY }
-      if (element === ShapeMouseOperateElement.POINT) {
+      if (element === ShapeEventOperateElement.POINT) {
         instance.mousePressedPointMove(coordinate, event)
       } else {
         instance.mousePressedOtherMove(coordinate, event)

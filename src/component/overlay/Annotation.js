@@ -123,7 +123,7 @@ export default class Annotation extends Overlay {
       }
     }
     this._symbolCoordinate.y = y + offset[0]
-    const isActive = this._id === this._chartStore.annotationStore().mouseOperate().id
+    const isActive = this._id === this._chartStore.annotationStore().eventOperate().id
     this._drawSymbol(ctx, isActive, styles)
     if (this.drawExtend) {
       ctx.save()

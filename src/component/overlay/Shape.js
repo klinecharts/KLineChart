@@ -30,10 +30,10 @@ const SHAPE_DRAW_STEP_START = 1
 const SHAPE_DRAW_STEP_FINISHED = -1
 
 /**
- * 图形标记鼠标操作元素类型
+ * 事件操作元素类型
  * @type {{OTHER: string, POINT: string, NONE: string}}
  */
-export const ShapeMouseOperateElement = {
+export const ShapeEventOperateElement = {
   OTHER: 'other',
   POINT: 'point',
   NONE: 'none'
@@ -395,10 +395,10 @@ export default class Shape extends Overlay {
         ctx.restore()
       }
     }
-    const shapeMouseOperate = this._chartStore.shapeStore().mouseOperate()
+    const shapeEventOperate = this._chartStore.shapeStore().eventOperate()
     if (
-      (shapeMouseOperate.hover.id === this._id && shapeMouseOperate.hover.element !== ShapeMouseOperateElement.NONE) ||
-      (shapeMouseOperate.click.id === this._id && shapeMouseOperate.click.element !== ShapeMouseOperateElement.NONE) ||
+      (shapeEventOperate.hover.id === this._id && shapeEventOperate.hover.element !== ShapeEventOperateElement.NONE) ||
+      (shapeEventOperate.click.id === this._id && shapeEventOperate.click.element !== ShapeEventOperateElement.NONE) ||
       this.isDrawing()
     ) {
       this._coordinates.forEach(({ x, y }, index) => {
@@ -407,9 +407,9 @@ export default class Shape extends Overlay {
         let borderColor = shapeOptions.point.borderColor
         let borderSize = shapeOptions.point.borderSize
         if (
-          shapeMouseOperate.hover.id === this._id &&
-          shapeMouseOperate.hover.element === ShapeMouseOperateElement.POINT &&
-          index === shapeMouseOperate.hover.elementIndex
+          shapeEventOperate.hover.id === this._id &&
+          shapeEventOperate.hover.element === ShapeEventOperateElement.POINT &&
+          index === shapeEventOperate.hover.elementIndex
         ) {
           radius = shapeOptions.point.activeRadius
           color = shapeOptions.point.activeBackgroundColor
@@ -517,8 +517,8 @@ export default class Shape extends Overlay {
   }
 
   /**
-   * 检查鼠标点是否在图形上
-   * @param mouseCoordinate
+   * 检查事件点是否在图形上
+   * @param eventCoordinate
    * @return {{id: *, elementIndex: number, element: string}}
    */
   checkEventCoordinateOn (eventCoordinate) {
@@ -529,7 +529,7 @@ export default class Shape extends Overlay {
       if (checkCoordinateInCircle(this._coordinates[i], shapeOptions.point.radius, eventCoordinate)) {
         return {
           id: this._id,
-          element: ShapeMouseOperateElement.POINT,
+          element: ShapeEventOperateElement.POINT,
           elementIndex: i,
           instance: this
         }
@@ -544,7 +544,7 @@ export default class Shape extends Overlay {
             if (this.checkEventCoordinateOnShape({ key, type, dataSource: sources, eventCoordinate })) {
               return {
                 id: this._id,
-                element: ShapeMouseOperateElement.OTHER,
+                element: ShapeEventOperateElement.OTHER,
                 elementIndex: i,
                 instance: this
               }
@@ -652,12 +652,12 @@ export default class Shape extends Overlay {
    * @param event
    */
   mousePressedPointMove (coordinate, event) {
-    const shapeMouseOperate = this._chartStore.shapeStore().mouseOperate()
-    const elementIndex = shapeMouseOperate.click.elementIndex
+    const shapeEventOperate = this._chartStore.shapeStore().eventOperate()
+    const elementIndex = shapeEventOperate.click.elementIndex
     if (
       !this._lock &&
-      shapeMouseOperate.click.id === this._id &&
-      shapeMouseOperate.click.element === ShapeMouseOperateElement.POINT &&
+      shapeEventOperate.click.id === this._id &&
+      shapeEventOperate.click.element === ShapeEventOperateElement.POINT &&
       elementIndex !== -1
     ) {
       const dataIndex = this._xAxis.convertFromPixel(coordinate.x)
@@ -676,7 +676,7 @@ export default class Shape extends Overlay {
       })
       this.onPressedMove({
         id: this._id,
-        element: ShapeMouseOperateElement.POINT,
+        element: ShapeEventOperateElement.POINT,
         points: this._points,
         event
       })
@@ -719,7 +719,7 @@ export default class Shape extends Overlay {
       })
       this.onPressedMove({
         id: this._id,
-        element: ShapeMouseOperateElement.OTHER,
+        element: ShapeEventOperateElement.OTHER,
         points: this._points,
         event
       })

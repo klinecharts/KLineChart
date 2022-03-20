@@ -23,26 +23,26 @@ export default class AnnotationStore {
     this._annotations = new Map()
     // 注解标记
     this._visibleAnnotations = new Map()
-    // 注解鼠标操作信息
-    this._mouseOperate = { id: '' }
+    // 注解事件操作信息
+    this._eventOperate = { id: '' }
   }
 
   /**
-   * 获取注解鼠标操作信息
+   * 获取注解事件操作信息
    * @return {null}
    */
-  mouseOperate () {
-    return this._mouseOperate
+  eventOperate () {
+    return this._eventOperate
   }
 
   /**
-   * 设置鼠标操作
+   * 设置事件操作信息
    * @param operate
    */
-  setMouseOperate (operate) {
-    const { id } = this._mouseOperate
+  setEventOperate (operate) {
+    const { id } = this._eventOperate
     if (operate && id !== operate.id) {
-      this._mouseOperate = { ...operate }
+      this._eventOperate = { ...operate }
     }
   }
 
