@@ -1,5 +1,9 @@
 # Change Log
 
+## 8.3.6
+`2022-03-23`
++ 🐞 Fix shape issues on the mobile.
+
 ## 8.3.5
 `2022-03-17`
 + 🐞 Fix the issue that indicator stacking may not refresh in real time.

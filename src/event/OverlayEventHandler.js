@@ -133,7 +133,7 @@ export default class OverlayEventHandler extends EventHandler {
       elementIndex: -1
     }
     let progressShapePaneId = paneId
-    let shapeClickOperate = {}
+    let shapeClickOperate
     if (instance && instance.isDrawing()) {
       if (isTouch(event)) {
         if (instance.isStart()) {
