@@ -121,7 +121,7 @@ export default class TechnicalIndicatorView extends View {
           const techData = techResult[i] || {}
           let lineCount = 0
           if (tech.shouldOhlc && !isCandleYAxis) {
-            this._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, styles.bar, CandleType.OHLC)
+            this._drawCandleBar(x, halfBarSpace, barSpace, kLineData, styles.bar, CandleType.OHLC)
           }
           plots.forEach(plot => {
             const value = techData[plot.key]
@@ -263,12 +263,11 @@ export default class TechnicalIndicatorView extends View {
    * @param x
    * @param halfBarSpace
    * @param barSpace
-   * @param dataIndex
    * @param kLineData
    * @param barOptions
    * @param barStyle
    */
-  _drawCandleBar (x, halfBarSpace, barSpace, dataIndex, kLineData, barOptions, barStyle) {
+  _drawCandleBar (x, halfBarSpace, barSpace, kLineData, barOptions, barStyle) {
     const { open, close, high, low } = kLineData
     if (close > open) {
       this._ctx.strokeStyle = barOptions.upColor
@@ -282,44 +281,45 @@ export default class TechnicalIndicatorView extends View {
     }
     const openY = this._yAxis.convertToPixel(open)
     const closeY = this._yAxis.convertToPixel(close)
-    const highY = this._yAxis.convertToPixel(high)
-    const lowY = this._yAxis.convertToPixel(low)
+    const priceY = [
+      openY, closeY,
+      this._yAxis.convertToPixel(high),
+      this._yAxis.convertToPixel(low)
+    ]
+    priceY.sort((a, b) => a - b)
+    this._ctx.fillRect(x - 0.5, priceY[0], 1, priceY[1] - priceY[0])
+    this._ctx.fillRect(x - 0.5, priceY[2], 1, priceY[3] - priceY[2])
 
-    const highEndY = Math.min(openY, closeY)
-    const lowStartY = Math.max(openY, closeY)
-    this._ctx.fillRect(x - 0.5, highY, 1, highEndY - highY)
-    this._ctx.fillRect(x - 0.5, lowStartY, 1, lowY - lowStartY)
-
-    const barHeight = Math.max(1, lowStartY - highEndY)
+    const barHeight = Math.max(1, priceY[2] - priceY[1])
     switch (barStyle) {
       case CandleType.CANDLE_SOLID: {
-        this._ctx.fillRect(x - halfBarSpace, highEndY, barSpace, barHeight)
+        this._ctx.fillRect(x - halfBarSpace, priceY[1], barSpace, barHeight)
         break
       }
       case CandleType.CANDLE_STROKE: {
-        this._ctx.strokeRect(x - halfBarSpace + 0.5, highEndY, barSpace - 1, barHeight)
+        this._ctx.strokeRect(x - halfBarSpace + 0.5, priceY[1], barSpace - 1, barHeight)
         break
       }
       case CandleType.CANDLE_UP_STROKE: {
         if (close > open) {
-          this._ctx.strokeRect(x - halfBarSpace + 0.5, highEndY, barSpace - 1, barHeight)
+          this._ctx.strokeRect(x - halfBarSpace + 0.5, priceY[1], barSpace - 1, barHeight)
         } else {
-          this._ctx.fillRect(x - halfBarSpace, highEndY, barSpace, barHeight)
+          this._ctx.fillRect(x - halfBarSpace, priceY[1], barSpace, barHeight)
         }
         break
       }
       case CandleType.CANDLE_DOWN_STROKE: {
         if (close > open) {
-          this._ctx.fillRect(x - halfBarSpace, highEndY, barSpace, barHeight)
+          this._ctx.fillRect(x - halfBarSpace, priceY[1], barSpace, barHeight)
         } else {
-          this._ctx.strokeRect(x - halfBarSpace + 0.5, highEndY, barSpace - 1, barHeight)
+          this._ctx.strokeRect(x - halfBarSpace + 0.5, priceY[1], barSpace - 1, barHeight)
         }
         break
       }
       default: {
-        this._ctx.fillRect(x - 0.5, highY, 1, lowY - highY)
-        this._ctx.fillRect(x - halfBarSpace, openY - 0.5, halfBarSpace, 1)
-        this._ctx.fillRect(x, closeY - 0.5, halfBarSpace, 1)
+        this._ctx.fillRect(x - 0.5, priceY[0], 1, priceY[3] - priceY[0])
+        this._ctx.fillRect(x - halfBarSpace, openY, halfBarSpace, 1)
+        this._ctx.fillRect(x, closeY, halfBarSpace, 1)
         break
       }
     }

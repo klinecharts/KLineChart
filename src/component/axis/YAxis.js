@@ -244,7 +244,7 @@ export default class YAxis extends Axis {
           break
         }
       }
-      if (y > textHeight && y < this._height - textHeight && ((validY && (validY - y > textHeight * 2)) || !validY)) {
+      if (y > textHeight && y < this._height - textHeight && ((validY && (Math.abs(validY - y) > textHeight * 2)) || !validY)) {
         optimalTicks.push({ v: value, y })
         validY = y
       }
@@ -259,7 +259,11 @@ export default class YAxis extends Axis {
    * @private
    */
   _innerConvertToPixel (value) {
-    return Math.round((1.0 - (value - this._minValue) / this._range) * this._height)
+    const rate = (value - this._minValue) / this._range
+    if (!this.isReverse()) {
+      return Math.round((1.0 - rate) * this._height)
+    }
+    return Math.round(rate * this._height)
   }
 
   /**
@@ -279,6 +283,17 @@ export default class YAxis extends Axis {
       return this._chartStore.styleOptions().yAxis.type
     }
     return YAxisType.NORMAL
+  }
+
+  /**
+   * 是否反转
+   * @returns
+   */
+  isReverse () {
+    if (this._isCandleYAxis) {
+      return this._chartStore.styleOptions().yAxis.reverse
+    }
+    return false
   }
 
   /**
@@ -371,7 +386,11 @@ export default class YAxis extends Axis {
   }
 
   convertFromPixel (pixel) {
-    const value = (1.0 - pixel / this._height) * this._range + this._minValue
+    let rate = pixel / this._height
+    if (!this.isReverse()) {
+      rate = (1 - rate)
+    }
+    const value = rate * this._range + this._minValue
     switch (this.yAxisType()) {
       case YAxisType.PERCENTAGE: {
         const fromData = (this._chartStore.visibleDataList()[0] || {}).data || {}
