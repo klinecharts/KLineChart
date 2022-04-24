@@ -1,7 +1,7 @@
 # 图形
 
 ## 默认图形类型
-`horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `horizontalSegment`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`
+`horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `straightLine`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`
 
 ## 图形模板
 创建一个模板，然后通过`extension.addShapeTemplate` 全局添加，或者通过图表实例方法`addShapeTemplate` 为单个图表实例添加即可。添加到图表即可和内置图形一样去使用。
