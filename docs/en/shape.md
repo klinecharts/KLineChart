@@ -1,7 +1,7 @@
 # Shape
 
 ## Default shape
-`horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `horizontalSegment`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`
+`horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `straightLine`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`
 
 ## Shape template
 Create a shape template, and then add it globally through `extension.addShapeTemplate`, or add it for a single graph instance through the chart instance method `addShapeTemplate`. Adding to the chart can be used like the built-in shape.
