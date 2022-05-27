@@ -40,7 +40,7 @@ export const YAxisPosition = {
 
 /**
  * y轴类型
- * @type {{PERCENTAGE: string, NORMAL: string}}
+ * @type {{PERCENTAGE: string, LOG: string, NORMAL: string}}
  */
 export const YAxisType = {
   NORMAL: 'normal',
@@ -361,6 +361,10 @@ const defaultYAxis = {
    * 轴是否在内部
    */
   inside: false,
+  /**
+   * 轴是否反转
+   */
+  reverse: false,
   /**
    * 轴线配置
    */

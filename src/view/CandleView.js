@@ -27,30 +27,7 @@ export default class CandleView extends TechnicalIndicatorView {
     if (candleOptions.type === CandleType.AREA) {
       this._drawArea(candleOptions)
     } else {
-      this._drawLowHighPrice(
-        candleOptions.priceMark,
-        'high',
-        'high',
-        Number.MIN_SAFE_INTEGER,
-        [-2, -5],
-        (price, comparePrice) => {
-          if (price > comparePrice) {
-            return price
-          }
-        }
-      )
-      this._drawLowHighPrice(
-        candleOptions.priceMark,
-        'low',
-        'low',
-        Number.MAX_SAFE_INTEGER,
-        [2, 5],
-        (price, comparePrice) => {
-          if (price < comparePrice) {
-            return price
-          }
-        }
-      )
+      this._drawHighLowPrice(candleOptions.priceMark)
       this._drawCandle(candleOptions)
     }
     this._drawTechs()
@@ -128,55 +105,85 @@ export default class CandleView extends TechnicalIndicatorView {
    */
   _drawCandle (candleOptions) {
     this._drawGraphics((x, i, kLineData, halfBarSpace, barSpace) => {
-      this._drawCandleBar(x, halfBarSpace, barSpace, i, kLineData, candleOptions.bar, candleOptions.type)
+      this._drawCandleBar(x, halfBarSpace, barSpace, kLineData, candleOptions.bar, candleOptions.type)
     })
   }
 
   /**
    * 渲染最高最低价格
    * @param priceMarkOptions
-   * @param optionKey
-   * @param priceKey
-   * @param initPriceValue
-   * @param offsets
-   * @param compare
    * @private
    */
-  _drawLowHighPrice (priceMarkOptions, optionKey, priceKey, initPriceValue, offsets, compare) {
-    const lowHighPriceMarkOptions = priceMarkOptions[optionKey]
-    if (!priceMarkOptions.show || !lowHighPriceMarkOptions.show) {
+  _drawHighLowPrice (priceMarkOptions) {
+    if (!priceMarkOptions.show || (!priceMarkOptions.high.show && !priceMarkOptions.low.show)) {
       return
     }
+    const highest = { price: Number.MIN_SAFE_INTEGER, pos: -1 }
+    const lowest = { price: Number.MAX_SAFE_INTEGER, pos: -1 }
     const visibleDataList = this._chartStore.visibleDataList()
-    let price = initPriceValue
-    let pos = -1
     visibleDataList.forEach(({ index, data }) => {
-      const comparePrice = compare(formatValue(data, priceKey, initPriceValue), price)
-      if (comparePrice) {
-        price = comparePrice
-        pos = index
+      const high = formatValue(data, 'high', Number.MIN_SAFE_INTEGER)
+      if (high > highest.price) {
+        highest.price = high
+        highest.pos = index
+      }
+      const low = formatValue(data, 'low', Number.MAX_SAFE_INTEGER)
+      if (low < lowest.price) {
+        lowest.price = low
+        lowest.pos = index
       }
     })
+    const highY = this._yAxis.convertToPixel(highest.price)
+    highest.y = highY
+    const lowY = this._yAxis.convertToPixel(lowest.price)
+    lowest.y = lowY
+    let highOffset = []
+    let lowOffset = []
+    if (highY < lowY) {
+      highOffset = [-2, -5]
+      lowOffset = [2, 5]
+    } else {
+      highOffset = [2, 5]
+      lowOffset = [-2, -5]
+    }
+
     const pricePrecision = this._chartStore.pricePrecision()
-    const priceY = this._yAxis.convertToPixel(price)
-    const startX = this._xAxis.convertToPixel(pos)
-    const startY = priceY + offsets[0]
     this._ctx.textAlign = 'left'
     this._ctx.lineWidth = 1
-    this._ctx.strokeStyle = lowHighPriceMarkOptions.color
-    this._ctx.fillStyle = lowHighPriceMarkOptions.color
+    this._ctx.textBaseline = 'middle'
+    this._drawRealHighLowPrice(priceMarkOptions.high, highOffset, pricePrecision, highest)
+    this._drawRealHighLowPrice(priceMarkOptions.low, lowOffset, pricePrecision, lowest)
+  }
+
+  /**
+   * 真实绘制最高最低价
+   * @param options
+   * @param offset
+   * @param precision
+   * @param data
+   * @returns
+   */
+  _drawRealHighLowPrice (options, offset, precision, data) {
+    if (!options.show) {
+      return
+    }
+    const { price, pos, y: priceY } = data
+    const startX = this._xAxis.convertToPixel(pos)
+    const startY = priceY + offset[0]
+    this._ctx.strokeStyle = options.color
+    this._ctx.fillStyle = options.color
 
     renderLine(
       this._ctx,
       [
-        { x: startX - 2, y: startY + offsets[0] },
+        { x: startX - 2, y: startY + offset[0] },
         { x: startX, y: startY },
-        { x: startX + 2, y: startY + offsets[0] }
+        { x: startX + 2, y: startY + offset[0] }
       ]
     )
 
     // 绘制竖线
-    const y = startY + offsets[1]
+    const y = startY + offset[1]
     renderLine(
       this._ctx,
       [
@@ -186,10 +193,9 @@ export default class CandleView extends TechnicalIndicatorView {
       ]
     )
 
-    this._ctx.font = createFont(lowHighPriceMarkOptions.textSize, lowHighPriceMarkOptions.textWeight, lowHighPriceMarkOptions.textFamily)
-    const text = formatPrecision(price, pricePrecision)
-    this._ctx.textBaseline = 'middle'
-    this._ctx.fillText(text, startX + 5 + lowHighPriceMarkOptions.textMargin, y)
+    this._ctx.font = createFont(options.textSize, options.textWeight, options.textFamily)
+    const text = formatPrecision(price, precision)
+    this._ctx.fillText(text, startX + 5 + options.textMargin, y)
   }
 
   /**

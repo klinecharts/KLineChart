@@ -244,7 +244,7 @@ export default class YAxis extends Axis {
           break
         }
       }
-      if (y > textHeight && y < this._height - textHeight && ((validY && (validY - y > textHeight * 2)) || !validY)) {
+      if (y > textHeight && y < this._height - textHeight && ((validY && (Math.abs(validY - y) > textHeight * 2)) || !validY)) {
         optimalTicks.push({ v: value, y })
         validY = y
       }
@@ -259,12 +259,13 @@ export default class YAxis extends Axis {
    * @private
    */
   _innerConvertToPixel (value) {
-    return Math.round((1.0 - (value - this._minValue) / this._range) * this._height)
+    const rate = (value - this._minValue) / this._range
+    return this.isReverse() ? Math.round(rate * this._height) : Math.round((1.0 - rate) * this._height)
   }
 
   /**
    * 是否是蜡烛图轴
-   * @return {*}
+   * @return {boolean}
    */
   isCandleYAxis () {
     return this._isCandleYAxis
@@ -272,18 +273,23 @@ export default class YAxis extends Axis {
 
   /**
    * y轴类型
-   * @return {string|*}
+   * @return {string}
    */
   yAxisType () {
-    if (this._isCandleYAxis) {
-      return this._chartStore.styleOptions().yAxis.type
-    }
-    return YAxisType.NORMAL
+    return this._isCandleYAxis ? this._chartStore.styleOptions().yAxis.type : YAxisType.NORMAL
+  }
+
+  /**
+   * 是否反转
+   * @return {boolean}
+   */
+  isReverse () {
+    return this._isCandleYAxis && this._chartStore.styleOptions().yAxis.reverse
   }
 
   /**
    * 是否从y轴0开始
-   * @return {boolean|*|boolean}
+   * @return {boolean}
    */
   isFromYAxisZero () {
     const yAxisOptions = this._chartStore.styleOptions().yAxis
@@ -371,7 +377,8 @@ export default class YAxis extends Axis {
   }
 
   convertFromPixel (pixel) {
-    const value = (1.0 - pixel / this._height) * this._range + this._minValue
+    const rate = this.isReverse() ? pixel / this._height : 1 - pixel / this._height
+    const value = rate * this._range + this._minValue
     switch (this.yAxisType()) {
       case YAxisType.PERCENTAGE: {
         const fromData = (this._chartStore.visibleDataList()[0] || {}).data || {}

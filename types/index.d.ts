@@ -1,5 +1,7 @@
 import { extension } from './Extension';
 
+import { utils } from './Utils';
+
 import {
   KLineData, Precision, Viewport, Crosshair, OverlayEvent,
   Coordinate, Point, DataSource
@@ -41,7 +43,7 @@ export declare function init(ds: HTMLDivElement | string, style?: any): Chart | 
 export declare function dispose(dcs: HTMLDivElement | Chart | string): void;
 
 export {
-  extension,
+  extension, utils,
   Chart, PictureType, ChartActionType, KLineData, DataSource,
   Precision, Viewport, Crosshair, OverlayEvent, PaneOptions,
   Coordinate, Point,

@@ -17,6 +17,7 @@ import { clone, isNumber, isObject, isArray, isFunction, isValid, isString } fro
 import { logWarn } from './utils/logger'
 import { requestAnimationFrame } from './utils/compatible'
 import { formatValue } from './utils/format'
+import { binarySearchNearest } from './utils/number'
 
 export default class Chart {
   constructor (container, styleOptions) {
@@ -592,6 +593,20 @@ export default class Chart {
   }
 
   /**
+   * 滚动到指定时间戳
+   * @param timestamp 时间戳
+   * @param animationDuration 动画持续时间
+   */
+  scrollToTimestamp (timestamp, animationDuration) {
+    if (!isNumber(timestamp)) {
+      logWarn('scrollToTimestamp', 'timestamp', 'timestamp must be a number!!!')
+      return
+    }
+    const dataIndex = binarySearchNearest(this._chartPane.chartStore().dataList(), 'timestamp', timestamp)
+    this.scrollToDataIndex(dataIndex, animationDuration)
+  }
+
+  /**
    * 在某个坐标点缩放
    * @param scale 缩放比例
    * @param coordinate 坐标点
@@ -639,6 +654,25 @@ export default class Chart {
     }
     const x = this._chartPane.chartStore().timeScaleStore().dataIndexToCoordinate(dataIndex)
     this.zoomAtCoordinate(scale, { x }, animationDuration)
+  }
+
+  /**
+   * 在某个时间戳缩放
+   * @param scale 缩放比例
+   * @param timestamp 时间戳
+   * @param animationDuration 动画持续时间
+   */
+  zoomAtTimestamp (scale, timestamp, animationDuration) {
+    if (!isNumber(scale)) {
+      logWarn('zoomAtTimestamp', 'scale', 'scale must be a number!!!')
+      return
+    }
+    if (!isNumber(timestamp)) {
+      logWarn('zoomAtTimestamp', 'timestamp', 'timestamp must be a number!!!')
+      return
+    }
+    const dataIndex = binarySearchNearest(this._chartPane.chartStore().dataList(), 'timestamp', timestamp)
+    this.zoomAtDataIndex(scale, dataIndex, animationDuration)
   }
 
   /**
