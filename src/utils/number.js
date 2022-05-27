@@ -16,27 +16,27 @@
  * 二分查找最接近的数
  * @param dataList
  * @param valueKey
- * @param targetNumber
+ * @param targetValue
  * @return {number}
  */
-export function binarySearchNearest (dataList, valueKey, targetNumber) {
+export function binarySearchNearest (dataList, valueKey, targetValue) {
   let left = 0
   let right = 0
   for (right = dataList.length - 1; left !== right;) {
     const midIndex = Math.floor((right + left) / 2)
     const mid = right - left
     const midValue = dataList[midIndex][valueKey]
-    if (targetNumber === dataList[left][valueKey]) {
+    if (targetValue === dataList[left][valueKey]) {
       return left
     }
-    if (targetNumber === dataList[right][valueKey]) {
+    if (targetValue === dataList[right][valueKey]) {
       return right
     }
-    if (targetNumber === midValue) {
+    if (targetValue === midValue) {
       return midIndex
     }
 
-    if (targetNumber > midValue) {
+    if (targetValue > midValue) {
       left = midIndex
     } else {
       right = midIndex

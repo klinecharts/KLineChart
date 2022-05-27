@@ -260,15 +260,12 @@ export default class YAxis extends Axis {
    */
   _innerConvertToPixel (value) {
     const rate = (value - this._minValue) / this._range
-    if (!this.isReverse()) {
-      return Math.round((1.0 - rate) * this._height)
-    }
-    return Math.round(rate * this._height)
+    return this.isReverse() ? Math.round(rate * this._height) : Math.round((1.0 - rate) * this._height)
   }
 
   /**
    * 是否是蜡烛图轴
-   * @return {*}
+   * @return {boolean}
    */
   isCandleYAxis () {
     return this._isCandleYAxis
@@ -276,29 +273,23 @@ export default class YAxis extends Axis {
 
   /**
    * y轴类型
-   * @return {string|*}
+   * @return {string}
    */
   yAxisType () {
-    if (this._isCandleYAxis) {
-      return this._chartStore.styleOptions().yAxis.type
-    }
-    return YAxisType.NORMAL
+    return this._isCandleYAxis ? this._chartStore.styleOptions().yAxis.type : YAxisType.NORMAL
   }
 
   /**
    * 是否反转
-   * @returns
+   * @return {boolean}
    */
   isReverse () {
-    if (this._isCandleYAxis) {
-      return this._chartStore.styleOptions().yAxis.reverse
-    }
-    return false
+    return this._isCandleYAxis && this._chartStore.styleOptions().yAxis.reverse
   }
 
   /**
    * 是否从y轴0开始
-   * @return {boolean|*|boolean}
+   * @return {boolean}
    */
   isFromYAxisZero () {
     const yAxisOptions = this._chartStore.styleOptions().yAxis
@@ -386,10 +377,7 @@ export default class YAxis extends Axis {
   }
 
   convertFromPixel (pixel) {
-    let rate = pixel / this._height
-    if (!this.isReverse()) {
-      rate = (1 - rate)
-    }
+    const rate = this.isReverse() ? pixel / this._height : 1 - pixel / this._height
     const value = rate * this._range + this._minValue
     switch (this.yAxisType()) {
       case YAxisType.PERCENTAGE: {
