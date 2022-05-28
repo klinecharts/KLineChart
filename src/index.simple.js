@@ -15,4 +15,8 @@
 import extension from './store/extension'
 import { version, init, dispose, utils } from './core'
 
-export { version, init, dispose, utils, extension }
+const klinecharts = {
+  version, init, dispose, utils, extension
+}
+
+export default klinecharts

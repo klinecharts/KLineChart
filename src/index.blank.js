@@ -44,10 +44,9 @@ import onBalanceVolume from './extension/technicalindicator/volume/onBalanceVolu
 import priceAndVolumeTrend from './extension/technicalindicator/volume/priceAndVolumeTrend'
 import volume from './extension/technicalindicator/volume/volume'
 
-import extension from './store/extension'
-import { version, init, dispose, utils } from './core'
+import klinecharts from './index.simple'
 
-extension.addTechnicalIndicatorTemplate([
+klinecharts.extension.addTechnicalIndicatorTemplate([
   averagePrice, bullAndBearIndex, differentOfMovingAverage, directionalMovementIndex, easeOfMovementValue,
   exponentialMovingAverage, movingAverage, movingAverageConvergenceDivergence, simpleMovingAverage, tripleExponentiallySmoothedAverage,
   brar, currentRatio, momentum, psychologicalLine, rateOfChange, volumeRatio,
@@ -56,4 +55,4 @@ extension.addTechnicalIndicatorTemplate([
   onBalanceVolume, priceAndVolumeTrend, volume
 ])
 
-export { version, init, dispose, utils, extension }
+export default klinecharts

@@ -105,4 +105,6 @@ const utils = {
   formatBigNumber
 }
 
-export { version, init, dispose, utils }
+export {
+  version, init, dispose, utils
+}

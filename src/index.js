@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { version, init, dispose, extension, utils } from './index.blank'
+import klinecharts from './index.blank'
 
 import horizontalRayLine from './extension/shape/horizontalRayLine'
 import horizontalSegment from './extension/shape/horizontalSegment'
@@ -31,11 +31,11 @@ import priceChannelLine from './extension/shape/priceChannelLine'
 import priceLine from './extension/shape/priceLine'
 import fibonacciLine from './extension/shape/fibonacciLine'
 
-extension.addShapeTemplate([
+klinecharts.extension.addShapeTemplate([
   horizontalRayLine, horizontalSegment, horizontalStraightLine,
   verticalRayLine, verticalSegment, verticalStraightLine,
   rayLine, segment, straightLine,
   parallelStraightLine, priceChannelLine, priceLine, fibonacciLine
 ])
 
-export { version, init, dispose, extension, utils }
+export default klinecharts
