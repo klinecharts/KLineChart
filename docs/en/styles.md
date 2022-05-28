@@ -208,6 +208,7 @@
     // 'normal' | 'percentage' | 'log'
     type: 'normal',
     inside: false,
+     reverse: false,
     axisLine: {
       show: true,
       color: '#888888',

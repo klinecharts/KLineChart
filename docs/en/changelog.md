@@ -1,5 +1,11 @@
 # Change Log
 
+## 8.5.0
+`2022-05-29`
++ 🆕 Instance api add `getDom`, `scrollToTimestamp` and `zoomAtTimestamp`.
++ 🆕 Style configuration add `yAxis.reverse`.
++ 🐞 Fix typescript reference issue.
+
 ## 8.3.6
 `2022-03-23`
 + 🐞 Fix shape issues on the mobile.

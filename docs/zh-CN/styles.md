@@ -227,6 +227,7 @@
     // 'normal' | 'percentage' | 'log'
     type: 'normal',
     inside: false,
+    reverse: false,
     // y轴线
     axisLine: {
       show: true,

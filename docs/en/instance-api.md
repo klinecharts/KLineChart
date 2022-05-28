@@ -1,5 +1,12 @@
 # Instance API
 
+### getDom(finder)
+Get container dom.
+- `finder` returns the root container by default, `{ paneId, position }`
+  - `pandId` pane id
+  - `position` optional parameters 'root', 'content' and 'yAxis'
+
+
 ### getWidth()
 Get chart width.
 
@@ -433,6 +440,11 @@ Scroll to data index.
 -`dataIndex` the index of the data
 -`animationDuration` animation time, can be default
 
+### scrollToTimestamp(timestamp, animationDuration)
+Scroll to timestamp.
+-`timestamp` timestamp
+-`animationDuration` animation time, can be default
+
 
 ### zoomAtCoordinate(scale, coordinate, animationDuration)
 Zoom at coordinate.
@@ -445,6 +457,13 @@ Zoom at coordinate.
 Zoom at data index.
 -`scale` scaling ratio
 -`dataIndex` the index of the data
+-`animationDuration` animation time, can be defaulted, the default is no animation
+
+
+### zoomAtTimestamp(scale, timestamp, animationDuration)
+Zoom at timestamp.
+-`scale` scaling ratio
+-`timestamp` timestamp
 -`animationDuration` animation time, can be defaulted, the default is no animation
 
 

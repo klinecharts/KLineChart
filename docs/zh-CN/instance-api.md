@@ -1,5 +1,12 @@
 # 实例API
 
+### getDom(finder)
+获取dom容器
+- `finder` 过滤条件，缺省返回根容器，`{ paneId, position }`
+  - `pandId` 窗口id
+  - `position` 位置，可选参数'root'，'content'和'yAxis'
+
+
 ### getWidth()
 获取图表宽度。
 
@@ -428,6 +435,11 @@ chart.createHtml({
 - `dataIndex` 数据的索引
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
+### scrollToTimestamp(timestamp, animationDuration)
+滚动到指定时间戳。
+- `timestamp` 时间戳
+- `animationDuration` 动画时间，可以缺省，缺省则无动画
+
 
 ### zoomAtCoordinate(scale, coordinate, animationDuration)
 在某个坐标点缩放。
@@ -440,6 +452,13 @@ chart.createHtml({
 在某个位置缩放。
 - `scale` 缩放比例
 - `dataIndex` 数据的索引
+- `animationDuration` 动画时间，可以缺省，缺省则无动画
+
+
+### zoomAtTimestamp(scale, timestamp, animationDuration)
+在指定时间戳上缩放。
+- `scale` 缩放比例
+- `timestamp` 时间戳
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
