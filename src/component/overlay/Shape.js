@@ -310,8 +310,8 @@ export default class Shape extends Overlay {
     }
     ctx.font = createFont(
       styles.size || defaultStyles.size,
-      styles.family || defaultStyles.family,
-      styles.weight || defaultStyles.weight
+      styles.weight || defaultStyles.weight,
+      styles.family || defaultStyles.family
     )
     const offset = styles.offset || defaultStyles.offset || [0, 0]
     texts.forEach(({ x, y, text }) => {
