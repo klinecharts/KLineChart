@@ -62,6 +62,14 @@ export default class Widget {
   _createOverlayView (container, props) {}
 
   /**
+   * 获取容器
+   * @returns
+   */
+  container () {
+    return this._element
+  }
+
+  /**
    * 创建html元素
    * @param id 标识
    * @param content 内容

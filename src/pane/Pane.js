@@ -15,6 +15,8 @@
 import { getPixelRatio } from '../utils/canvas'
 import { createElement } from '../utils/element'
 
+import ContainerPosition from '../enum/ContainerPosition'
+
 export default class Pane {
   constructor (props) {
     this._height = -1
@@ -60,6 +62,23 @@ export default class Pane {
    * @private
    */
   _createYAxisWidget (container, props) {}
+
+  /**
+   * 获取容器
+   * @param position
+   * @returns
+   */
+  container (position) {
+    switch (position) {
+      case ContainerPosition.CONTENT: {
+        return this._mainWidget.container()
+      }
+      case ContainerPosition.YAXIS: {
+        return this._yAxisWidget.container()
+      }
+      default: return this._element
+    }
+  }
 
   /**
    * 获取宽度
@@ -118,7 +137,7 @@ export default class Pane {
    */
   createHtml ({ id, content, style, position }) {
     let htmlId
-    if (position === 'yAxis') {
+    if (position === ContainerPosition.YAXIS) {
       htmlId = this._yAxisWidget && this._yAxisWidget.createHtml({ id, content, style })
     } else {
       htmlId = this._mainWidget.createHtml({ id, content, style })

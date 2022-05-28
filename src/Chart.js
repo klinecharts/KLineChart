@@ -25,6 +25,28 @@ export default class Chart {
   }
 
   /**
+   * 获取dom
+   * @param finder
+   * @returns
+   */
+  getDom (finder) {
+    if (finder) {
+      if (!isObject(finder)) {
+        logWarn('getDom', 'options', 'options must be an object!!!')
+        return null
+      }
+      const { paneId, position } = finder
+      const pane = this._chartPane.getPane(paneId)
+      if (!pane) {
+        logWarn('getDom', 'options.paneId', 'can not find the corresponding pane!!!')
+        return null
+      }
+      return pane.container(position) || null
+    }
+    return this._chartPane.getContainer()
+  }
+
+  /**
    * 获取宽尺寸
    * @return {*|{}}
    */

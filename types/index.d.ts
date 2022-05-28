@@ -273,6 +273,11 @@ declare namespace klinecharts {
 
   type ChartActionType = 'zoom' | 'scroll' | 'crosshair' | 'tooltip' | 'pane_drag';
 
+  interface DomFinder {
+    paneId: string;
+    position?: 'root' | 'content' | 'yAxis';
+  }
+
   interface ConvertFinder {
     paneId?: string;
     absoluteYAxis?: boolean;
@@ -286,8 +291,9 @@ declare namespace klinecharts {
   }
   
   type PictureType = 'png' | 'jpeg' | 'bmp';
-  
+
   interface Chart {
+    getDom(finder?: DomFinder): HTMLDivElement | null;
     getWidth(): any;
     getHeight(): any;
     setStyleOptions(options: any): void;

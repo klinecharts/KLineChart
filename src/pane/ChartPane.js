@@ -294,6 +294,12 @@ export default class ChartPane {
   }
 
   /**
+   * 获取容器
+   * @returns
+   */
+  getContainer () { return this._container }
+
+  /**
    * 调整窗口尺寸
    * @param shouldMeasureHeight
    * @param shouldMeasureWidth
