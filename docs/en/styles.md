@@ -21,6 +21,9 @@
       dashValue: [2, 2]
     }
   },
+  pane: {
+    heightMin: 30
+  },
   candle: {
     margin: {
       top: 0.2,
