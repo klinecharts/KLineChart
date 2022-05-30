@@ -127,10 +127,10 @@ const defaultGrid = {
 
 /**
  * 默认窗格配置
- * @type {{heightMin: number}
+ * @type {{minDragHeight : number}}
  */
 const defaultPane = {
-    heightMin: 30
+  minDragHeight: 30
 }
 
 /**

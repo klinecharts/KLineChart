@@ -22,7 +22,7 @@
     }
   },
   pane: {
-    heightMin: 30
+    minDragHeight: 30
   },
   candle: {
     margin: {

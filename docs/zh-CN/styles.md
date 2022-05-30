@@ -26,8 +26,8 @@
   },
   // 窗格
   pane: {
-    // 最小高度
-    heightMin: 30
+    // 最小拖动高度
+    minDragHeight: 30
   },
   // 蜡烛图
   candle: {
