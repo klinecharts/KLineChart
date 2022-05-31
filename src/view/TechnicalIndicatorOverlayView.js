@@ -139,13 +139,15 @@ export default class TechnicalIndicatorOverlayView extends View {
    * @param techOptions
    * @param offsetTop
    * @param isDrawTechTooltip
+   * @returns {number}
    */
   _drawBatchTechToolTip (crosshair, techs, techOptions, offsetTop = 0, isDrawTechTooltip) {
     if (!isDrawTechTooltip) {
-      return
+      return 0
     }
     const techTooltipOptions = techOptions.tooltip
     let top = offsetTop
+    let startTop = top;
     techs.forEach(tech => {
       top += (
         techTooltipOptions.text.marginTop +
@@ -153,6 +155,7 @@ export default class TechnicalIndicatorOverlayView extends View {
         techTooltipOptions.text.marginBottom
       )
     })
+    return top - startTop
   }
 
   /**
@@ -161,6 +164,7 @@ export default class TechnicalIndicatorOverlayView extends View {
    * @param tech
    * @param techOptions
    * @param offsetTop
+   * @returns {number}
    * @private
    */
   _drawTechTooltip (crosshair, tech, techOptions, offsetTop = 0) {
@@ -172,7 +176,7 @@ export default class TechnicalIndicatorOverlayView extends View {
     const textColor = techTooltipTextOptions.color
     let labelX = 0
     let labelY = techTooltipTextOptions.marginTop + offsetTop
-    let textHeight = textSize;
+    let tooltipHeight = textSize;
     const tooltipData = this._getTechTooltipData(crosshair, tech, techOptions)
     this._ctx.textBaseline = 'top'
     this._ctx.font = createFont(textSize, techTooltipTextOptions.weight, techTooltipTextOptions.family)
@@ -201,13 +205,13 @@ export default class TechnicalIndicatorOverlayView extends View {
       const textWidth = calcTextWidth(this._ctx, text)
       if (labelX + textWidth > this._width) {
         labelX = textMarginLeft
-        textHeight += (textSize + 1)
+        tooltipHeight += (textSize + 1)
         labelY += (textSize + 1)
       }
       renderText(this._ctx, v.color || techTooltipTextOptions.color, labelX, labelY, text)
       labelX += (textWidth + textMarginRight)
     })
-    return textHeight;
+    return tooltipHeight;
   }
 
   /**

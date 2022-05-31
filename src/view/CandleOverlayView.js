@@ -39,13 +39,14 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
         candleOptions,
         isDrawCandleTooltip,
         techOptions,
+        0,
         isDrawTechTooltip
       )
     } else {
       if (candleTooltipOptions.showType === TooltipShowType.STANDARD) {
-        this._drawCandleTooltipWithStandard(crosshair.kLineData, candleOptions, isDrawCandleTooltip)
+        let tooltipHeight = this._drawCandleTooltipWithStandard(crosshair.kLineData, candleOptions, isDrawCandleTooltip)
         if (techTooltipOptions.showType === TooltipShowType.STANDARD) {
-          const offsetTop = isDrawCandleTooltip ? candleTooltipOptions.text.size + candleTooltipOptions.text.marginTop : 0
+          const offsetTop = isDrawCandleTooltip ? tooltipHeight + candleTooltipOptions.text.marginTop : 0
           this._drawBatchTechToolTip(
             crosshair,
             techs,
@@ -60,24 +61,26 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
             candleOptions,
             false,
             techOptions,
+            tooltipHeight,
             isDrawTechTooltip
           )
         }
       } else {
+        let tooltipHeight = this._drawBatchTechToolTip(
+          crosshair,
+          techs,
+          techOptions,
+          0,
+          isDrawTechTooltip
+        )
         this._drawCandleTooltipWithRect(
           crosshair,
           techs,
           candleOptions,
           isDrawCandleTooltip,
           techOptions,
+          tooltipHeight,
           false
-        )
-        this._drawBatchTechToolTip(
-          crosshair,
-          techs,
-          techOptions,
-          0,
-          isDrawTechTooltip
         )
       }
     }
@@ -88,11 +91,12 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
    * @param kLineData
    * @param candleOptions
    * @param isDrawCandleTooltip
+   * @returns {number}
    * @private
    */
   _drawCandleTooltipWithStandard (kLineData, candleOptions, isDrawCandleTooltip) {
     if (!isDrawCandleTooltip) {
-      return
+      return 0
     }
     const values = this._getCandleTooltipData(kLineData, candleOptions)
     const candleTooltipOptions = candleOptions.tooltip
@@ -104,12 +108,10 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     this._ctx.textBaseline = 'top'
     this._ctx.font = createFont(textSize, candleTooltipOptions.text.weight, candleTooltipOptions.text.family)
     let labelX = textMarginLeft
-    const labelY = candleTooltipOptions.text.marginTop
+    let labelY = candleTooltipOptions.text.marginTop
+    let tooltipHeight = textSize
     labels.forEach((label, i) => {
       const labelWidth = calcTextWidth(this._ctx, label)
-      renderText(this._ctx, textColor, labelX, labelY, label)
-      labelX += labelWidth
-
       const value = values[i] || candleTooltipOptions.defaultValue
       let valueText
       let valueColor
@@ -121,9 +123,16 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
         valueText = value
       }
       const textWidth = calcTextWidth(this._ctx, valueText)
-      renderText(this._ctx, valueColor, labelX, labelY, valueText)
-      labelX += (textWidth + textMarginLeft + textMarginRight)
+      if (labelX + labelWidth + textWidth > this._width) {
+        labelX = textMarginLeft
+        tooltipHeight += (textSize + 1)
+        labelY += (textSize + 1)
+      }
+      renderText(this._ctx, textColor, labelX, labelY, label)
+      renderText(this._ctx, valueColor, labelX + labelWidth, labelY, valueText)
+      labelX += (labelWidth + textWidth + textMarginLeft + textMarginRight)
     })
+    return tooltipHeight
   }
 
   /**
@@ -133,12 +142,13 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
    * @param candleOptions
    * @param isDrawCandleTooltip
    * @param techOptions
+   * @param offsetTop
    * @param isDrawTechTooltip
    * @private
    */
   _drawCandleTooltipWithRect (
     crosshair, techs, candleOptions, isDrawCandleTooltip,
-    techOptions, isDrawTechTooltip
+    techOptions, offsetTop, isDrawTechTooltip
   ) {
     if (!isDrawCandleTooltip && !isDrawTechTooltip) {
       return
@@ -223,7 +233,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     } else {
       rectX = rectLeft
     }
-    const rectY = rectOptions.offsetTop
+    const rectY = offsetTop + rectOptions.offsetTop
     const radius = rectOptions.borderRadius
     renderFillRoundRect(this._ctx, rectOptions.backgroundColor, rectX, rectY, rectWidth, rectHeight, radius)
     renderStrokeRoundRect(this._ctx, rectOptions.borderColor, rectBorderSize, rectX, rectY, rectWidth, rectHeight, radius)
