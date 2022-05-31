@@ -226,15 +226,19 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     }
     rectWidth += (rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight)
     rectHeight += (rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom)
+    const styleOptions = this._chartStore.styleOptions()
     const centerX = this._width / 2
     let rectX
     if (crosshair.realX < centerX) {
       rectX = this._width - rectRight - rectWidth
-      if (true === this._chartStore.styleOptions().yAxis.inside) {
+      if (true === styleOptions.yAxis.inside && 'right' === styleOptions.yAxis.position) {
         rectX -= this._yAxis.getSelfWidth()
       }
     } else {
       rectX = rectLeft
+      if (true === styleOptions.yAxis.inside && 'left' === styleOptions.yAxis.position) {
+        rectX += this._yAxis.getSelfWidth()
+      }
     }
     const rectY = offsetTop + rectOptions.offsetTop
     const radius = rectOptions.borderRadius
