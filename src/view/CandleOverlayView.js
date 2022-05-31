@@ -230,6 +230,9 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     let rectX
     if (crosshair.realX < centerX) {
       rectX = this._width - rectRight - rectWidth
+      if (true === this._chartStore.styleOptions().yAxis.inside) {
+        rectX -= this._yAxis.getSelfWidth()
+      }
     } else {
       rectX = rectLeft
     }
