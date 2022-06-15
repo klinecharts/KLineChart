@@ -19,6 +19,8 @@ import { requestAnimationFrame } from './utils/compatible'
 import { formatValue } from './utils/format'
 import { binarySearchNearest } from './utils/number'
 
+import { hasAction } from './enum/ActionType'
+
 export default class Chart {
   constructor (container, styleOptions) {
     this._chartPane = new ChartPane(container, styleOptions)
@@ -721,9 +723,15 @@ export default class Chart {
    * @param callback 回调方法
    */
   subscribeAction (type, callback) {
-    if (!this._chartPane.chartStore().actionStore().subscribe(type, callback)) {
+    if (!hasAction(type)) {
       logWarn('subscribeAction', 'type', 'type does not exist!!!')
+      return
     }
+    if (!isFunction(callback)) {
+      logWarn('subscribeAction', 'callback', 'callback must be a function!!!')
+      return
+    }
+    this._chartPane.chartStore().actionStore().subscribe(type, callback)
   }
 
   /**
@@ -732,9 +740,11 @@ export default class Chart {
    * @param callback 回调方法
    */
   unsubscribeAction (type, callback) {
-    if (!this._chartPane.chartStore().actionStore().unsubscribe(type, callback)) {
+    if (!hasAction(type)) {
       logWarn('unsubscribeAction', 'type', 'type does not exist!!!')
+      return
     }
+    this._chartPane.chartStore().actionStore().unsubscribe(type, callback)
   }
 
   /**

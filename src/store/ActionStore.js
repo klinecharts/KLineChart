@@ -78,14 +78,10 @@ export default class ActionStore {
    * @return {boolean}
    */
   subscribe (type, callback) {
-    if (hasAction(type)) {
-      if (!this._delegates.has(type)) {
-        this._delegates.set(type, new Delegate())
-      }
-      this._delegates.get(type).subscribe(callback)
-      return true
+    if (!this._delegates.has(type)) {
+      this._delegates.set(type, new Delegate())
     }
-    return false
+    this._delegates.get(type).subscribe(callback)
   }
 
   /**
