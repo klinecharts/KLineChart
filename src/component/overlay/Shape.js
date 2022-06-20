@@ -181,6 +181,10 @@ export default class Shape extends Overlay {
     }
     lines.forEach(coordinates => {
       if (coordinates.length > 1) {
+		  if (coordinates.length >= 3) {
+			ctx.strokeStyle = coordinates[2].color || defaultStyles.color
+		  }
+
         const lineType = getLineType(coordinates[0], coordinates[1])
         switch (lineType) {
           case LineType.COMMON: {
@@ -310,8 +314,8 @@ export default class Shape extends Overlay {
     }
     ctx.font = createFont(
       styles.size || defaultStyles.size,
-      styles.weight || defaultStyles.weight,
-      styles.family || defaultStyles.family
+      styles.family || defaultStyles.family,
+      styles.weight || defaultStyles.weight
     )
     const offset = styles.offset || defaultStyles.offset || [0, 0]
     texts.forEach(({ x, y, text }) => {
