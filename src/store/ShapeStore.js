@@ -248,28 +248,21 @@ export default class ShapeStore {
    * @param options
    */
   setInstanceOptions (options = {}) {
-    const { id, styles, lock, mode, data } = options
+    const { id, styles, lock, mode, data, points } = options
     const defaultStyles = this._chartStore.styleOptions().shape
     let shouldInvalidate = false
+    const apply = instance => {
+      instance.setLock(lock)
+      instance.setMode(mode)
+      if (instance.setStyles(styles, defaultStyles) || instance.setData(data) || instance.setPoints(points)) {
+        shouldInvalidate = true
+      }
+    }
     if (isValid(id)) {
       const instance = this.getInstance(id)
-      if (instance) {
-        instance.setLock(lock)
-        instance.setMode(mode)
-        if (instance.setStyles(styles, defaultStyles) || instance.setData(data)) {
-          shouldInvalidate = true
-        }
-      }
+      instance && apply(instance)
     } else {
-      this._instances.forEach(shapes => {
-        shapes.forEach(instance => {
-          instance.setLock(lock)
-          instance.setMode(mode)
-          if (instance.setStyles(styles, defaultStyles) || instance.setData(data)) {
-            shouldInvalidate = true
-          }
-        })
-      })
+      this._instances.forEach(shapes =>shapes.forEach(apply))
     }
     if (shouldInvalidate) {
       this._chartStore.invalidate(InvalidateLevel.OVERLAY)
