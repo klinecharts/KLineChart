@@ -262,7 +262,7 @@ export default class ShapeStore {
       const instance = this.getInstance(id)
       instance && apply(instance)
     } else {
-      this._instances.forEach(shapes =>shapes.forEach(apply))
+      this._instances.forEach(instance => instance.forEach(apply))
     }
     if (shouldInvalidate) {
       this._chartStore.invalidate(InvalidateLevel.OVERLAY)
