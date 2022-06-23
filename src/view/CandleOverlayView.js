@@ -16,7 +16,7 @@ import TechnicalIndicatorOverlayView from './TechnicalIndicatorOverlayView'
 import { isFunction, isObject, isArray, isValid } from '../utils/typeChecks'
 import { formatBigNumber, formatDate, formatPrecision, formatValue } from '../utils/format'
 import { calcTextWidth, createFont } from '../utils/canvas'
-import { TooltipShowType } from '../options/styleOptions'
+import { TooltipShowType, YAxisPosition } from '../options/styleOptions'
 import { renderFillRoundRect, renderStrokeRoundRect } from '../renderer/rect'
 import { renderText } from '../renderer/text'
 
@@ -44,7 +44,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
       )
     } else {
       if (candleTooltipOptions.showType === TooltipShowType.STANDARD) {
-        let tooltipHeight = this._drawCandleTooltipWithStandard(crosshair.kLineData, candleOptions, isDrawCandleTooltip)
+        const tooltipHeight = this._drawCandleTooltipWithStandard(crosshair.kLineData, candleOptions, isDrawCandleTooltip)
         if (techTooltipOptions.showType === TooltipShowType.STANDARD) {
           const offsetTop = isDrawCandleTooltip ? tooltipHeight + candleTooltipOptions.text.marginTop : 0
           this._drawBatchTechToolTip(
@@ -66,7 +66,7 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
           )
         }
       } else {
-        let tooltipHeight = this._drawBatchTechToolTip(
+        const tooltipHeight = this._drawBatchTechToolTip(
           crosshair,
           techs,
           techOptions,
@@ -231,13 +231,13 @@ export default class CandleOverlayView extends TechnicalIndicatorOverlayView {
     let rectX
     if (crosshair.realX < centerX) {
       rectX = this._width - rectRight - rectWidth
-      if (true === styleOptions.yAxis.inside && 'right' === styleOptions.yAxis.position) {
-        rectX -= this._yAxis.getSelfWidth()
+      if (styleOptions.yAxis.inside && styleOptions.yAxis.position === YAxisPosition.RIGHT) {
+        rectX -= this._yAxis.width()
       }
     } else {
       rectX = rectLeft
-      if (true === styleOptions.yAxis.inside && 'left' === styleOptions.yAxis.position) {
-        rectX += this._yAxis.getSelfWidth()
+      if (styleOptions.yAxis.inside && styleOptions.yAxis.position === YAxisPosition.LEFT) {
+        rectX += this._yAxis.width()
       }
     }
     const rectY = offsetTop + rectOptions.offsetTop

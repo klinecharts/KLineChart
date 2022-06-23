@@ -147,7 +147,7 @@ export default class TechnicalIndicatorOverlayView extends View {
     }
     const techTooltipOptions = techOptions.tooltip
     let top = offsetTop
-    let startTop = top;
+    const startTop = top
     techs.forEach(tech => {
       top += (
         techTooltipOptions.text.marginTop +
@@ -176,7 +176,7 @@ export default class TechnicalIndicatorOverlayView extends View {
     const textColor = techTooltipTextOptions.color
     let labelX = 0
     let labelY = techTooltipTextOptions.marginTop + offsetTop
-    let tooltipHeight = textSize;
+    let tooltipHeight = textSize
     const tooltipData = this._getTechTooltipData(crosshair, tech, techOptions)
     this._ctx.textBaseline = 'top'
     this._ctx.font = createFont(textSize, techTooltipTextOptions.weight, techTooltipTextOptions.family)
@@ -211,7 +211,7 @@ export default class TechnicalIndicatorOverlayView extends View {
       renderText(this._ctx, v.color || techTooltipTextOptions.color, labelX, labelY, text)
       labelX += (textWidth + textMarginRight)
     })
-    return tooltipHeight;
+    return tooltipHeight
   }
 
   /**
