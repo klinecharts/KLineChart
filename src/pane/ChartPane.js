@@ -148,8 +148,10 @@ export default class ChartPane {
    * @private
    */
   _separatorStartDrag (topPaneId, bottomPaneId) {
+    const styleOptions = this._chartStore.styleOptions()
     this._separatorDragStartTopPaneHeight = this._panes.get(topPaneId).height()
     this._separatorDragStartBottomPaneHeight = this._panes.get(bottomPaneId).height()
+    this._separatorDragMinDragHeight = styleOptions.pane.minDragHeight;
   }
 
   /**
@@ -169,6 +171,14 @@ export default class ChartPane {
     if (topPaneHeight < 0) {
       topPaneHeight = 0
       bottomPaneHeight = this._separatorDragStartTopPaneHeight + this._separatorDragStartBottomPaneHeight
+    }
+    if (topPaneHeight < this._separatorDragMinDragHeight) {
+      bottomPaneHeight -= this._separatorDragMinDragHeight - topPaneHeight;
+      topPaneHeight = this._separatorDragMinDragHeight;
+    }
+    if (bottomPaneHeight < this._separatorDragMinDragHeight) {
+        topPaneHeight -= this._separatorDragMinDragHeight - bottomPaneHeight;
+        bottomPaneHeight = this._separatorDragMinDragHeight;
     }
     this._panes.get(topPaneId).setHeight(topPaneHeight)
     this._panes.get(bottomPaneId).setHeight(bottomPaneHeight)

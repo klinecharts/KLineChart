@@ -126,6 +126,14 @@ const defaultGrid = {
 }
 
 /**
+ * 默认窗格配置
+ * @type {{minDragHeight : number}}
+ */
+const defaultPane = {
+  minDragHeight: 30
+}
+
+/**
  * 默认蜡烛柱图样式配置
  * @type {{area: {backgroundColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number, value: string}, bar: {noChangeColor: string, upColor: string, downColor: string}, tooltip: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
@@ -574,6 +582,7 @@ const defaultSeparator = {
 
 export const defaultStyleOptions = {
   grid: defaultGrid,
+  pane: defaultPane,
   candle: defaultCandle,
   technicalIndicator: defaultTechnicalIndicator,
   xAxis: defaultXAxis,

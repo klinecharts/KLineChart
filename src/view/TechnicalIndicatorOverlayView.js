@@ -139,21 +139,23 @@ export default class TechnicalIndicatorOverlayView extends View {
    * @param techOptions
    * @param offsetTop
    * @param isDrawTechTooltip
+   * @returns {number}
    */
   _drawBatchTechToolTip (crosshair, techs, techOptions, offsetTop = 0, isDrawTechTooltip) {
     if (!isDrawTechTooltip) {
-      return
+      return 0
     }
     const techTooltipOptions = techOptions.tooltip
     let top = offsetTop
+    let startTop = top;
     techs.forEach(tech => {
-      this._drawTechTooltip(crosshair, tech, techOptions, top)
       top += (
         techTooltipOptions.text.marginTop +
-        techTooltipOptions.text.size +
+        this._drawTechTooltip(crosshair, tech, techOptions, top) +
         techTooltipOptions.text.marginBottom
       )
     })
+    return top - startTop
   }
 
   /**
@@ -162,6 +164,7 @@ export default class TechnicalIndicatorOverlayView extends View {
    * @param tech
    * @param techOptions
    * @param offsetTop
+   * @returns {number}
    * @private
    */
   _drawTechTooltip (crosshair, tech, techOptions, offsetTop = 0) {
@@ -172,7 +175,8 @@ export default class TechnicalIndicatorOverlayView extends View {
     const textSize = techTooltipTextOptions.size
     const textColor = techTooltipTextOptions.color
     let labelX = 0
-    const labelY = techTooltipTextOptions.marginTop + offsetTop
+    let labelY = techTooltipTextOptions.marginTop + offsetTop
+    let tooltipHeight = textSize;
     const tooltipData = this._getTechTooltipData(crosshair, tech, techOptions)
     this._ctx.textBaseline = 'top'
     this._ctx.font = createFont(textSize, techTooltipTextOptions.weight, techTooltipTextOptions.family)
@@ -199,9 +203,15 @@ export default class TechnicalIndicatorOverlayView extends View {
       labelX += textMarginLeft
       const text = `${v.title}${v.value}`
       const textWidth = calcTextWidth(this._ctx, text)
+      if (labelX + textWidth > this._width) {
+        labelX = textMarginLeft
+        tooltipHeight += (textSize + 1)
+        labelY += (textSize + 1)
+      }
       renderText(this._ctx, v.color || techTooltipTextOptions.color, labelX, labelY, text)
       labelX += (textWidth + textMarginRight)
     })
+    return tooltipHeight;
   }
 
   /**
