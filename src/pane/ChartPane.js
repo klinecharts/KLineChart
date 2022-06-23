@@ -148,10 +148,8 @@ export default class ChartPane {
    * @private
    */
   _separatorStartDrag (topPaneId, bottomPaneId) {
-    const styleOptions = this._chartStore.styleOptions()
     this._separatorDragStartTopPaneHeight = this._panes.get(topPaneId).height()
     this._separatorDragStartBottomPaneHeight = this._panes.get(bottomPaneId).height()
-    this._separatorDragMinDragHeight = styleOptions.pane.minDragHeight;
   }
 
   /**
@@ -162,6 +160,10 @@ export default class ChartPane {
    * @private
    */
   _separatorDrag (dragDistance, topPaneId, bottomPaneId) {
+    const topPane = this._panes.get(topPaneId)
+    const bottomPane = this._panes.get(bottomPaneId)
+    const topPaneMinHeight = topPane.minHeight()
+    const bottomPaneMinHeight = bottomPane.minHeight()
     let topPaneHeight = this._separatorDragStartTopPaneHeight + dragDistance
     let bottomPaneHeight = this._separatorDragStartBottomPaneHeight - dragDistance
     if (topPaneHeight > this._separatorDragStartTopPaneHeight + this._separatorDragStartBottomPaneHeight) {
@@ -172,16 +174,16 @@ export default class ChartPane {
       topPaneHeight = 0
       bottomPaneHeight = this._separatorDragStartTopPaneHeight + this._separatorDragStartBottomPaneHeight
     }
-    if (topPaneHeight < this._separatorDragMinDragHeight) {
-      bottomPaneHeight -= this._separatorDragMinDragHeight - topPaneHeight;
-      topPaneHeight = this._separatorDragMinDragHeight;
+    if (topPaneHeight < topPaneMinHeight) {
+      bottomPaneHeight -= bottomPaneMinHeight - topPaneHeight
+      topPaneHeight = topPaneMinHeight
     }
-    if (bottomPaneHeight < this._separatorDragMinDragHeight) {
-        topPaneHeight -= this._separatorDragMinDragHeight - bottomPaneHeight;
-        bottomPaneHeight = this._separatorDragMinDragHeight;
+    if (bottomPaneHeight < bottomPaneMinHeight) {
+      topPaneHeight -= topPaneMinHeight - bottomPaneHeight
+      bottomPaneHeight = bottomPaneMinHeight
     }
-    this._panes.get(topPaneId).setHeight(topPaneHeight)
-    this._panes.get(bottomPaneId).setHeight(bottomPaneHeight)
+    topPane.setHeight(topPaneHeight)
+    bottomPane.setHeight(bottomPaneHeight)
     this._chartStore.actionStore().execute(ActionType.PANE_DRAG, { topPaneId, bottomPaneId, topPaneHeight, bottomPaneHeight })
     this.adjustPaneViewport(true, true, true, true, true)
   }
@@ -433,7 +435,8 @@ export default class ChartPane {
       chartStore: this._chartStore,
       xAxis: this._xAxisPane.xAxis(),
       id,
-      height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT
+      height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT,
+      minHeight: options.minHeight
     })
     this._panes.set(id, pane)
     const task = this._chartStore.technicalIndicatorStore().addInstance(id, tech, isStack)
@@ -605,10 +608,17 @@ export default class ChartPane {
     if (options.id !== CANDLE_PANE_ID) {
       const pane = this._panes.get(options.id)
       if (pane) {
-        if (isNumber(options.height) && options.height > 0 && pane.height() !== options.height) {
-          shouldAdjust = true
-          pane.setHeight(options.height)
-          shouldMeasureHeight = true
+        if (isNumber(options.minHeight) && options.minHeight > 0) {
+          pane.setMinHeight(options.minHeight)
+        }
+        if (isNumber(options.height) && options.height > 0) {
+          const minHeight = pane.minHeight()
+          const height = options.height < pane.minHeight ? minHeight : options.height
+          if (pane.height() !== height) {
+            shouldAdjust = true
+            pane.setHeight(options.height)
+            shouldMeasureHeight = true
+          }
         }
         if (isBoolean(options.dragEnabled)) {
           this._separators.get(options.id).setDragEnabled(options.dragEnabled)

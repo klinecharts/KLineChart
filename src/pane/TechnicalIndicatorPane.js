@@ -17,17 +17,31 @@ import TechnicalIndicatorWidget from '../widget/TechnicalIndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 import YAxis from '../component/axis/YAxis'
 
+import { isValid } from '../utils/typeChecks'
+
 export default class TechnicalIndicatorPane extends Pane {
   constructor (props) {
     super(props)
-    if ('height' in props) {
-      this.setHeight(props.height)
-    }
+    this._minHeight = 30
+    this._initHeight(props)
   }
 
   _initBefore (props) {
     this._id = props.id
     this._yAxis = this._createYAxis(props)
+  }
+
+  _initHeight (props) {
+    const height = props.height
+    const minHeight = props.minHeight
+    if (isValid(minHeight)) {
+      this.setMinHeight(minHeight)
+    }
+    if (isValid(height)) {
+      const mh = this.minHeight()
+      const h = height < mh ? mh : height
+      this.setHeight(h)
+    }
   }
 
   _createYAxis (props) {
@@ -55,6 +69,22 @@ export default class TechnicalIndicatorPane extends Pane {
       yAxis: this._yAxis,
       paneId: props.id
     })
+  }
+
+  /**
+   * 获取最小高度
+   * @returns
+   */
+  minHeight () {
+    return this._minHeight
+  }
+
+  /**
+   * 设置最小高度
+   * @param minHeight
+   */
+  setMinHeight (minHeight) {
+    this._minHeight = minHeight
   }
 
   setHeight (height) {
