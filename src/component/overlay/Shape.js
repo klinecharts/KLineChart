@@ -114,6 +114,7 @@ export default class Shape extends Overlay {
   /**
    * 加载点
    * @param points
+   * @return {undefined|boolean}
    */
   setPoints (points) {
     if (isArray(points) && points.length > 0) {
@@ -148,6 +149,8 @@ export default class Shape extends Overlay {
           yAxis: this._yAxis
         })
       }
+      // 设置点后需要重绘，返回重绘标识
+      return true
     }
   }
 

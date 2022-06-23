@@ -254,8 +254,7 @@ export default class ShapeStore {
     const apply = instance => {
       instance.setLock(lock)
       instance.setMode(mode)
-      instance.setPoints(points)
-      if (instance.setStyles(styles, defaultStyles) || instance.setData(data)) {
+      if (instance.setStyles(styles, defaultStyles) || instance.setData(data) || instance.setPoints(points)) {
         shouldInvalidate = true
       }
     }
