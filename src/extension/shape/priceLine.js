@@ -20,7 +20,8 @@ export default {
   checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
     return checkCoordinateOnRayLine(dataSource[0], dataSource[1], eventCoordinate)
   },
-  createShapeDataSource: ({ points, coordinates, viewport, precision, yAxis }) => {
+  createShapeDataSource: ({ coordinates, viewport, precision, points }) => {
+    const { value } = points[0]
     return [
       {
         type: 'line',
@@ -33,7 +34,7 @@ export default {
         isDraw: true,
         isCheck: false,
         dataSource: [
-          { x: coordinates[0].x, y: coordinates[0].y, text: points[0].value.toFixed(precision.price) }
+          { x: coordinates[0].x, y: coordinates[0].y, text: value.toFixed(precision.price) }
         ]
       }
     ]
