@@ -21,9 +21,6 @@
       dashValue: [2, 2]
     }
   },
-  pane: {
-    minDragHeight: 30
-  },
   candle: {
     margin: {
       top: 0.2,

@@ -268,6 +268,7 @@ declare namespace klinecharts {
   interface PaneOptions {
     id?: string;
     height?: number;
+    minHeihgt?: number;
     dragEnabled?: boolean;
   }
 
