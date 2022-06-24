@@ -4,6 +4,7 @@ title: "[Bug] "
 labels: []
 body:
 - type: markdown
+  id: desc
   attributes:
     value: |
       问题列表仅仅用来报告bug。
