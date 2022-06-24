@@ -1,0 +1,82 @@
+name: Bug Report
+description: Report a bug to KLineChart
+title: "[Bug] "
+labels: ""
+body:
+- type: markdown
+  attributes:
+    value: |
+      The issue list is just for report bugs.
+
+      For usage questions, please use the following resources:
+
+      - Read the [docs](https://klinecharts.com)
+      - Find in [examples](https://github.com/liihuu/KLineChartSample)
+      - Discussions(https://github.com/liihuu/KLineChart/discussions)
+
+- type: input
+  attributes:
+    label: Version
+    description: |
+      Please provide the version used. Note: if it is not the latest version, you can try to upgrade to the latest version and check if the problem still exists.
+    placeholder: |
+      e.g. 8.5.0
+
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Steps to Reproduce
+    description: |
+      Need to provide reproduction steps to help us quickly find the problem. Note: you can use [Markdown](https://guides.github.com/features/mastering-markdown/) to format lists and code.
+
+    placeholder: |
+      1. How do you create the chart.
+      2. What's the chart style option.
+      3. What's the api called.
+      4. User interactions before the error happens.
+
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Current Behavior
+    description: A concise description of what you're experiencing.
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Expected Behavior
+    description: A concise description of what you expected to happen.
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Environment
+    description: |
+      e.g.
+        - **OS**: macOS Monterey
+        - **Browser**: Chrome 102.0.5005.115
+        - **Framework** React@18
+    value: |
+        - OS:
+        - Browser:
+        - Framework:
+    render: markdown
+
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: Any additional comments?
+    description: |
+      e.g. some background/context of how you ran into this bug.
+
+  validations:
+    required: false
+
