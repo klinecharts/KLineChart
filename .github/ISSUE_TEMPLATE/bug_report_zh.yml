@@ -1,0 +1,81 @@
+name: Bug报告
+description: 报告一个bug给KLineChart
+title: "[Bug] "
+labels: []
+body:
+- type: markdown
+  attributes:
+    value: |
+      问题列表仅仅用来报告bug。
+
+      使用上的问题，可以查看以下资源：
+      - 阅读[文档](https://klinecharts.com)
+      - 查看[示例](https://github.com/liihuu/KLineChartSample)
+      - [Discussions](https://github.com/liihuu/KLineChart/discussions)
+
+- type: input
+  attributes:
+    label: 版本
+    description: |
+      请提供当前使用版本。注意：如果不是使用的最新版本，可以尝试升级到最新版本，看问题是否还存在。
+    placeholder: |
+      8.5.0
+
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: 复现步骤
+    description: |
+      需要提供复现步骤帮助我们快速定位问题。注意：可以用[Markdown](https://guides.github.com/features/mastering-markdown/)来描述。
+
+    placeholder: |
+      1. 怎么初始化图表的
+      2. 样式配置是什么样的
+      3. 调用的什么api
+      4. 做什么操作发生错误的
+
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: 当前效果
+    description: 当前所表现出的效果。
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: 预期效果
+    description: 想达到的预期效果。
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: 环境
+    description: |
+      e.g.
+        - **系统**: macOS Monterey
+        - **浏览器**: Chrome 102.0.5005.115
+        - **框架** React@18
+    value: |
+        - 系统:
+        - 浏览器:
+        - 框架:
+    render: markdown
+
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: 补充说明
+    description: |
+      您如何遇到此错误的一些补充信息。
+
+  validations:
+    required: false
+
