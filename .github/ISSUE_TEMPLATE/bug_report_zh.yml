@@ -15,7 +15,7 @@ body:
 
 - type: input
   attributes:
-    label: 版本
+    label: "版本"
     description: |
       请提供当前使用版本。注意：如果不是使用的最新版本，可以尝试升级到最新版本，看问题是否还存在。
     placeholder: |
@@ -26,7 +26,7 @@ body:
 
 - type: textarea
   attributes:
-    label: 复现步骤
+    label: "复现步骤"
     description: |
       需要提供复现步骤帮助我们快速定位问题。注意：可以用[Markdown](https://guides.github.com/features/mastering-markdown/)来描述。
 
@@ -41,21 +41,21 @@ body:
 
 - type: textarea
   attributes:
-    label: 当前效果
+    label: "当前效果"
     description: 当前所表现出的效果。
   validations:
     required: true
 
 - type: textarea
   attributes:
-    label: 预期效果
+    label: "预期效果"
     description: 想达到的预期效果。
   validations:
     required: true
 
 - type: textarea
   attributes:
-    label: 环境
+    label: "环境"
     description: |
       e.g.
         - **系统**: macOS Monterey
@@ -72,10 +72,9 @@ body:
 
 - type: textarea
   attributes:
-    label: 补充说明
+    label: "补充说明"
     description: |
       您如何遇到此错误的一些补充信息。
 
   validations:
     required: false
-
