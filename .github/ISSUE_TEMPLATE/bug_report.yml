@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report a bug to KLineChart
 title: "[Bug] "
-labels: ""
+labels: []
 body:
 - type: markdown
   attributes:
