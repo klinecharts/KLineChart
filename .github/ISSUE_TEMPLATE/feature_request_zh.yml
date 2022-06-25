@@ -1,0 +1,38 @@
+name: 新需求
+description: 提出一个新的需求给KLineChart
+title: "[Feature] "
+labels: []
+body:
+- type: markdown
+  id: note
+  attributes:
+    value: |
+      在提新需求之前，请认真阅读文档，看是否已实现。
+      
+      如果是报告bug，请选择[bug模版](https://github.com/liihuu/KLineChart/issues/new?assignees=&labels=&template=bug_report_zh.yml&title=%5BBug%5D+)进行提交。
+
+- type: textarea
+  id: description
+  attributes:
+    label: "需求描述"
+    description: |
+      描述一下需要实现什么样的功能。
+
+  validations:
+    required: true
+
+- type: textarea
+  id: implement
+  attributes:
+    label: "具体实现"
+    description: |
+      具体怎么实现。注意：可以用[Markdown](https://guides.github.com/features/mastering-markdown/)来描述。
+
+    placeholder: |
+      1. 新增什么样式配置
+      2. 新增什么api
+      3. 核心逻辑
+
+  validations:
+    required: true
+

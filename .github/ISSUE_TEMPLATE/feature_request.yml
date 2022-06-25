@@ -1,0 +1,37 @@
+name: Feature Request
+description: Submit a feature request to KLineChart
+title: "[Feature] "
+labels: []
+body:
+- type: markdown
+  id: note
+  attributes:
+    value: |
+      Before making a feature request, please read the documentation carefully to see if it has been implemented.
+      
+      If report bugs, please select[bug template](https://github.com/liihuu/KLineChart/issues/new?assignees=&labels=&template=bug_report.yml&title=%5BBug%5D+).
+
+- type: textarea
+  id: description
+  attributes:
+    label: Feature Description
+    description: |
+      Describe what features need to be implemented.
+
+  validations:
+    required: true
+
+- type: textarea
+  id: implement
+  attributes:
+    label: To Do
+    description: |
+      How to do it. Note: you can use [Markdown](https://guides.github.com/features/mastering-markdown/) to format lists and code.
+    placeholder: |
+      1. What style configuration to add
+      2. What api to add
+      3. Core logic
+
+  validations:
+    required: true
+
