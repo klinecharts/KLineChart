@@ -9,7 +9,7 @@ body:
     value: |
       Before making a feature request, please read the documentation carefully to see if it has been implemented.
       
-      If report bugs, please select[bug template](https://github.com/liihuu/KLineChart/issues/new?assignees=&labels=&template=bug_report.yml&title=%5BBug%5D+).
+      If report bugs, please select [bug template](https://github.com/liihuu/KLineChart/issues/new?assignees=&labels=&template=bug_report.yml&title=%5BBug%5D+).
 
 - type: textarea
   id: description
