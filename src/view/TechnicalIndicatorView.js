@@ -81,6 +81,7 @@ export default class TechnicalIndicatorView extends View {
    */
   _drawTechs () {
     this._ctx.globalCompositeOperation = 'source-over'
+    const to = this._chartStore.timeScaleStore().to()
     const techOptions = this._chartStore.styleOptions().technicalIndicator
     const techs = this._chartStore.technicalIndicatorStore().instances(this._paneId)
     techs.forEach(tech => {
@@ -96,7 +97,7 @@ export default class TechnicalIndicatorView extends View {
           ctx: this._ctx,
           dataSource: {
             from: this._chartStore.timeScaleStore().from(),
-            to: this._chartStore.timeScaleStore().to(),
+            to,
             kLineDataList: this._chartStore.dataList(),
             technicalIndicatorDataList: techResult
           },
@@ -114,7 +115,10 @@ export default class TechnicalIndicatorView extends View {
       }
       const lineColors = styles.line.colors || []
       const lineColorSize = lineColors.length
+      const linePlotStyles = []
+      const lineCoordinates = []
       const isCandleYAxis = this._yAxis.isCandleYAxis()
+
       this._ctx.lineWidth = 1
       this._drawGraphics(
         (x, i, kLineData, halfBarSpace, barSpace) => {
@@ -172,18 +176,33 @@ export default class TechnicalIndicatorView extends View {
                 break
               }
               case TechnicalIndicatorPlotType.LINE: {
-                let coordinate = null
+                let plotStyle = null
                 if (isValid(value)) {
-                  coordinate = { x: x, y: valueY }
-                }
-                if (lines[lineCount]) {
-                  lines[lineCount].coordinates.push(coordinate)
-                } else {
-                  const plotStyle = getTechnicalIndicatorPlotStyle(
+                  plotStyle = getTechnicalIndicatorPlotStyle(
                     dataList, techResult, i, plot, styles, { color: lineColors[lineCount % lineColorSize] }
                   )
-                  lines[lineCount] = { color: plotStyle.color, coordinates: [coordinate] }
+                  const coordinate = { x: x, y: valueY }
+                  const prePlotStyle = linePlotStyles[lineCount]
+                  if (!lineCoordinates[lineCount]) {
+                    lineCoordinates[lineCount] = []
+                  }
+                  lineCoordinates[lineCount].push(coordinate)
+                  if (prePlotStyle) {
+                    if (prePlotStyle.color !== plotStyle.color) {
+                      lines.push({ color: prePlotStyle.color, isDash: prePlotStyle.isDash, coordinates: lineCoordinates[lineCount] })
+                      lineCoordinates[lineCount] = [coordinate]
+                    } else {
+                      if (prePlotStyle.isDash !== plotStyle.isDash) {
+                        lines.push({ color: prePlotStyle.color, isDash: prePlotStyle.isDash, coordinates: lineCoordinates[lineCount] })
+                        lineCoordinates[lineCount] = [coordinate]
+                      }
+                    }
+                  }
+                  if (i === to - 1) {
+                    lines.push({ color: plotStyle.color, isDash: plotStyle.isDash, coordinates: lineCoordinates[lineCount] })
+                  }
                 }
+                linePlotStyles[lineCount] = plotStyle
                 lineCount++
                 break
               }
@@ -223,6 +242,11 @@ export default class TechnicalIndicatorView extends View {
     this._ctx.lineWidth = techOptions.line.size
     lines.forEach(line => {
       this._ctx.strokeStyle = line.color
+      if (line.isDash) {
+        this._ctx.setLineDash(techOptions.line.dashValue)
+      } else {
+        this._ctx.setLineDash([])
+      }
       renderLine(this._ctx, line.coordinates)
     })
   }

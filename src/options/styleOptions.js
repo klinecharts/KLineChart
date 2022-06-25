@@ -252,6 +252,7 @@ const defaultTechnicalIndicator = {
   },
   line: {
     size: 1,
+    dashValue: [2, 2],
     colors: ['#FF9600', '#9D65C9', '#2196F3', '#E11D74', '#01C5C4']
   },
   circle: {
