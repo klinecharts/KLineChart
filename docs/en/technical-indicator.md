@@ -124,7 +124,10 @@ To complete a technical indicator template, you only need to generate a technica
   color: (data, options) => {},
   // By default, it only takes effect when type is 'circle' and 'bar'
   // Can be a fixed boolean value or a method, if it is a method, it needs to return a boolean value
-  isStroke: (data, options) => {}
+  isStroke: (data, options) => {},
+  // By default, it only takes effect when type is 'line'
+  // Can be a fixed boolean value or a method, if it is a method, it needs to return a boolean value
+  isDashed: (data, options) => {}
 }
 ```
 

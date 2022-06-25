@@ -189,17 +189,17 @@ export default class TechnicalIndicatorView extends View {
                   lineCoordinates[lineCount].push(coordinate)
                   if (prePlotStyle) {
                     if (prePlotStyle.color !== plotStyle.color) {
-                      lines.push({ color: prePlotStyle.color, isDash: prePlotStyle.isDash, coordinates: lineCoordinates[lineCount] })
+                      lines.push({ color: prePlotStyle.color, isDashed: prePlotStyle.isDashed, coordinates: lineCoordinates[lineCount] })
                       lineCoordinates[lineCount] = [coordinate]
                     } else {
-                      if (prePlotStyle.isDash !== plotStyle.isDash) {
-                        lines.push({ color: prePlotStyle.color, isDash: prePlotStyle.isDash, coordinates: lineCoordinates[lineCount] })
+                      if (prePlotStyle.isDashed !== plotStyle.isDashed) {
+                        lines.push({ color: prePlotStyle.color, isDashed: prePlotStyle.isDashed, coordinates: lineCoordinates[lineCount] })
                         lineCoordinates[lineCount] = [coordinate]
                       }
                     }
                   }
                   if (i === to - 1) {
-                    lines.push({ color: plotStyle.color, isDash: plotStyle.isDash, coordinates: lineCoordinates[lineCount] })
+                    lines.push({ color: plotStyle.color, isDashed: plotStyle.isDashed, coordinates: lineCoordinates[lineCount] })
                   }
                 }
                 linePlotStyles[lineCount] = plotStyle
@@ -242,7 +242,7 @@ export default class TechnicalIndicatorView extends View {
     this._ctx.lineWidth = techOptions.line.size
     lines.forEach(line => {
       this._ctx.strokeStyle = line.color
-      if (line.isDash) {
+      if (line.isDashed) {
         this._ctx.setLineDash(techOptions.line.dashValue)
       } else {
         this._ctx.setLineDash([])

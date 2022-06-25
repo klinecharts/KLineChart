@@ -34,7 +34,7 @@
   // plots 技术指标数据配置项
   calcTechnicalIndicator: (kLineDataList, { params, plots }) => { return [] },
 
-  // 系列
+  // 系列，可选参数'normal'、'price'和'volume'
   series: 'normal',
 
   // 精度，可缺省，默认为4
@@ -124,7 +124,10 @@
   color: (data, options) => {},
   // 可缺省，只有当type是'circle'和'bar'才会生效
   // 可以是一个固定的boolean值，也可以是一个方法，如果是方法，需要返回一个boolean值
-  isStroke: (data, options) => {}
+  isStroke: (data, options) => {},
+  // 可缺省，只有当type是'line'才会生效
+  // 可以是一个固定的boolean值，也可以是一个方法，如果是方法，需要返回一个boolean值
+  isDashed: (data, options) => {}
 }
 ```
 

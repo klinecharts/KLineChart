@@ -48,7 +48,7 @@ export function getTechnicalIndicatorPlotStyle (
 ) {
   let color = defaultStyle.color
   let isStroke = defaultStyle.isStroke
-  let isDash = defaultStyle.isDash
+  let isDashed = defaultStyle.isDashed
   const cbData = {
     prev: { kLineData: kLineDataList[dataIndex - 1], technicalIndicatorData: techDataList[dataIndex - 1] },
     current: { kLineData: kLineDataList[dataIndex], technicalIndicatorData: techDataList[dataIndex] },
@@ -68,14 +68,14 @@ export function getTechnicalIndicatorPlotStyle (
       isStroke = plot.isStroke
     }
   }
-  if (isValid(plot.isDash)) {
-    if (isFunction(plot.isDash)) {
-      isDash = plot.isDash(cbData)
+  if (isValid(plot.isDashed)) {
+    if (isFunction(plot.isDashed)) {
+      isDashed = plot.isDashed(cbData)
     } else {
-      isDash = plot.isDash
+      isDashed = plot.isDashed
     }
   }
-  return { color, isStroke, isDash }
+  return { color, isStroke, isDashed }
 }
 
 export default class TechnicalIndicator {
