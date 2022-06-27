@@ -122,6 +122,7 @@ Create a technical indicator, the return value is a string that identifies the w
 - `paneOptions` window configuration information, which can be defaulted, `{ id, height, dragEnabled }`
   - `id` window id, default. Special paneId: candle_pane, the window id of the main image
   - `height` The height of the window
+  - `minHeight` The min height of the window
   - `dragEnbaled` window can be adjusted by dragging
 
 Example:
@@ -129,6 +130,7 @@ Example:
 chart.createTechnicalIndicator('MA', false, {
   id:'pane_1',
   height: 100,
+  minHeihgt: 50
   dragEnabled: true
 })
 ```
@@ -263,8 +265,9 @@ Get shape information.
 
 ### setShapeOptions(options)
 Set the drawn shape configuration.
-- `options` configuration, `{ id, styles, lock, mode }`
+- `options` configuration, `{ id, points, styles, lock, mode, data }`
   - `id` calls the createShape method to return the identity, by default it set all
+  - `points` point
   - `styles` style, the format is the same in the configuration of `shape`
   - `lock` is lock
   - `mode` mode type, 'normal' | 'weak_magnet' | 'strong_magnet'
@@ -472,12 +475,14 @@ Set pane options.
 - `options` pane options `{ id, height, dragEnabled }`
   - `id` pane id
   - `height` The height of the window
+  - `minHeight` The min height of the window
   - `dragEnbaled` window can be adjusted by dragging
 Example:
 ```javascript
 chart.setPaneOptions({
   id: 'pane_1',
   height: 100,
+  minHeight: 50,
   dragEnabled: true
 })
 ```

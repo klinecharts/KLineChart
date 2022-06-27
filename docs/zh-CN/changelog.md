@@ -1,6 +1,6 @@
 # 更新日志
 ## 8.6.0
-`待发布`
+`2022-06-28`
 + 🆕 Api `setShapeOptions`新增`points`参数。
 + 🆕 窗口参数新增`minHeight`。
 + 🆕 技术指标模版`plot.type`是`line`时，新增属性`isDashed`和分段。

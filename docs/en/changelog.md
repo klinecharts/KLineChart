@@ -1,6 +1,6 @@
 # Change Log
 ## 8.6.0
-`To be released`
+`2022-06-28`
 + 🆕 Api `setShapeOptions` add `points` parameter.
 + 🆕 Add `minHeight` for pane.
 + 🆕 When the technical indicator template `plot.type` is `line`, add the property `isDashed` and segment.
