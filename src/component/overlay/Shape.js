@@ -480,7 +480,7 @@ export default class Shape extends Overlay {
    * @param data
    */
   setData (data) {
-    if (data !== this._data) {
+    if (data !== undefined && data !== this._data) {
       this._data = data
       return true
     }

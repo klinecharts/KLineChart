@@ -272,23 +272,26 @@ export default class ChartPane {
     let yAxisWidth = Number.MIN_SAFE_INTEGER
     let yAxisOffsetLeft
     let mainOffsetLeft
+    this._panes.forEach(pane => {
+      yAxisWidth = Math.max(yAxisWidth, pane.yAxis().getSelfWidth())
+    })
     if (isOutside) {
-      this._panes.forEach(pane => {
-        yAxisWidth = Math.max(yAxisWidth, pane.yAxis().getSelfWidth())
-      })
       mainWidth = paneWidth - yAxisWidth
       if (isYAxisLeft) {
         yAxisOffsetLeft = 0
         mainOffsetLeft = yAxisWidth
       } else {
-        mainOffsetLeft = 0
         yAxisOffsetLeft = paneWidth - yAxisWidth
+        mainOffsetLeft = 0
       }
     } else {
       mainWidth = paneWidth
-      yAxisWidth = paneWidth
-      yAxisOffsetLeft = 0
       mainOffsetLeft = 0
+      if (isYAxisLeft) {
+        yAxisOffsetLeft = 0
+      } else {
+        yAxisOffsetLeft = paneWidth - yAxisWidth
+      }
     }
 
     this._chartStore.timeScaleStore().setTotalDataSpace(mainWidth)
