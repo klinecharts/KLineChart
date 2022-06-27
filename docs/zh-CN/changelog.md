@@ -1,4 +1,15 @@
 # 更新日志
+## 8.6.0
+`待发布`
++ 🆕 api `setShapeOptions`新增`points`参数。
++ 🆕 窗口参数新增`minHeight`。
++ 🆕 技术指标模版`plot.type`是`line`时，新增属性`isDashed`和分段。
++ 🆕 技术指标新增属性`extendData`。
++ 🆕 移动端新增惯性滚动。
++ 🐞 修复shape文字样式不生效问题。
++ 🐞 修复内置画线模型`priceLine`显示问题。
++ 💄 优化tooltip显示自动换行。
+
 ## 8.5.0
 `2022-05-29`
 + 🆕 图表实例新增方法`getDom`，`scrollToTimestamp`和`zoomAtTimestamp`。

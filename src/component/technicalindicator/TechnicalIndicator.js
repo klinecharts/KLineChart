@@ -82,7 +82,7 @@ export default class TechnicalIndicator {
   constructor ({
     name, shortName, series, calcParams, plots, precision,
     shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber,
-    minValue, maxValue, styles
+    minValue, maxValue, styles, extendData
   }) {
     // 指标名
     this.name = name || ''
@@ -110,6 +110,8 @@ export default class TechnicalIndicator {
     this.maxValue = maxValue
     // 样式
     this.styles = styles
+    // 扩展数据
+    this.extendData = extendData
     // 结果
     this.result = []
   }
@@ -229,6 +231,14 @@ export default class TechnicalIndicator {
     return true
   }
 
+  setExtendData (extendData) {
+    if (extendData !== undefined && this.extendData !== extendData) {
+      this.extendData = extendData
+      return true
+    }
+    return false
+  }
+
   /**
    * 计算
    * @param dataList
@@ -237,7 +247,8 @@ export default class TechnicalIndicator {
   async calc (dataList) {
     this.result = await this.calcTechnicalIndicator(dataList, {
       params: this._createParams(this.calcParams),
-      plots: this.plots
+      plots: this.plots,
+      extendData: this.extendData
     }) || []
   }
 

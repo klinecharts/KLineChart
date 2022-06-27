@@ -1,4 +1,14 @@
 # Change Log
+## 8.6.0
+`To be released`
++ 🆕 Api `setShapeOptions` add `points` parameter.
++ 🆕 Add `minHeight` for pane.
++ 🆕 When the technical indicator template `plot.type` is `line`, add the property `isDashed` and segment.
++ 🆕 Add inertial scrolling on mobile.
++ 🆕 Add new attribute `extendData` for technical indicators.
++ 🐞 Fix shape text style not working.
++ 🐞 Fix built-in line drawing model `priceLine` display problem.
++ 💄 Optimize tooltip to display automatic line wrapping.
 
 ## 8.5.0
 `2022-05-29`

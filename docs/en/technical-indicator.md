@@ -32,7 +32,8 @@ To complete a technical indicator template, you only need to generate a technica
   // kLineDataList chart raw data
   // params calculation parameters
   // plots technical indicator data configuration item
-  calcTechnicalIndicator: (kLineDataList, { params, plots }) => { return [] },
+  // extendData
+  calcTechnicalIndicator: (kLineDataList, { params, plots, extendData }) => { return [] },
 
   // Series, can be the default
   series: 'normal',
@@ -66,6 +67,10 @@ To complete a technical indicator template, you only need to generate a technica
 
   // Style, can be the default, the default is to synchronize the style configuration
   styles: null,
+
+  // Extend data can be defaulted
+  // can be a method or data
+  extendData: (params) => { return }
 
   // Regenerate plots, which is a callback method, which can be defaulted
   // trigger when the calculation parameter changes

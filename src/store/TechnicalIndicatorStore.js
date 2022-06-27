@@ -14,7 +14,7 @@
 
 import extension from './extension'
 
-import { isFunction, isValid } from '../utils/typeChecks'
+import { isFunction, isValid, isObject, clone, merge } from '../utils/typeChecks'
 import { logWarn } from '../utils/logger'
 
 import TechnicalIndicator, { TechnicalIndicatorSeries } from '../component/technicalindicator/TechnicalIndicator'
@@ -86,12 +86,23 @@ export default class TechnicalIndicatorStore {
   _createTemplateInstance ({
     name, shortName, series, calcParams, plots, precision,
     shouldCheckParamCount, shouldOhlc, shouldFormatBigNumber,
-    minValue, maxValue, styles,
+    minValue, maxValue, styles, extendData,
     calcTechnicalIndicator, regeneratePlots, createToolTipDataSource, render
   }) {
     if (!name || !isFunction(calcTechnicalIndicator)) {
       logWarn('', '', 'The required attribute "name" and method "calcTechnicalIndicator" are missing, and new technical indicator cannot be generated!!!')
       return null
+    }
+    let defaultStyles
+    if (isObject(styles)) {
+      const techOptions = this._chartStore.styleOptions().technicalIndicator
+      defaultStyles = {
+        margin: clone(techOptions.margin),
+        bar: clone(techOptions.bar),
+        line: clone(techOptions.line),
+        circle: clone(techOptions.circle)
+      }
+      merge(defaultStyles, styles)
     }
     class Template extends TechnicalIndicator {
       constructor () {
@@ -108,7 +119,8 @@ export default class TechnicalIndicatorStore {
             shouldFormatBigNumber,
             minValue,
             maxValue,
-            styles
+            defaultStyles,
+            extendData
           }
         )
       }
@@ -179,7 +191,7 @@ export default class TechnicalIndicatorStore {
    * @returns
    */
   addInstance (paneId, tech, isStack) {
-    const { name, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles } = tech
+    const { name, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles, extendData } = tech
     let paneInstances = this._instances.get(paneId)
     if (paneInstances && paneInstances.has(name)) {
       return
@@ -200,6 +212,7 @@ export default class TechnicalIndicatorStore {
     instance.setShouldOhlc(shouldOhlc)
     instance.setShouldFormatBigNumber(shouldFormatBigNumber)
     instance.setStyles(styles, this._chartStore.styleOptions().technicalIndicator)
+    instance.setExtendData(extendData)
     if (!isStack) {
       paneInstances.clear()
     }
@@ -348,7 +361,7 @@ export default class TechnicalIndicatorStore {
    * @returns
    */
   override (techOverride, paneId) {
-    const { name, shortName, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles } = techOverride
+    const { name, shortName, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles, extendData } = techOverride
     const defaultTechStyleOptions = this._chartStore.styleOptions().technicalIndicator
     let instances = new Map()
     if (isValid(paneId)) {
@@ -365,6 +378,7 @@ export default class TechnicalIndicatorStore {
         template.setShouldOhlc(shouldOhlc)
         template.setShouldFormatBigNumber(shouldFormatBigNumber)
         template.setStyles(styles, defaultTechStyleOptions)
+        template.setExtendData(extendData)
       }
     }
     let overiderSuccss = false
@@ -378,7 +392,8 @@ export default class TechnicalIndicatorStore {
         const shouldOhlcSuccess = tech.setShouldOhlc(shouldOhlc)
         const shouldFormatBigNumberSuccess = tech.setShouldFormatBigNumber(shouldFormatBigNumber)
         const styleSuccess = tech.setStyles(styles, defaultTechStyleOptions)
-        if (shortNameSuccess || calcParamsSuccess || precisionSuccess || shouldOhlcSuccess || shouldFormatBigNumberSuccess || styleSuccess) {
+        const extendDataSuccess = this.setExtendData(extendData)
+        if (shortNameSuccess || calcParamsSuccess || precisionSuccess || shouldOhlcSuccess || shouldFormatBigNumberSuccess || styleSuccess || extendDataSuccess) {
           overiderSuccss = true
         }
         if (calcParamsSuccess) {

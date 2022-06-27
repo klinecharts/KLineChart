@@ -32,7 +32,8 @@
   // kLineDataList 图表的原始数据
   // params 计算参数
   // plots 技术指标数据配置项
-  calcTechnicalIndicator: (kLineDataList, { params, plots }) => { return [] },
+  // extendData 拓展数据
+  calcTechnicalIndicator: (kLineDataList, { params, plots, extendData }) => { return [] },
 
   // 系列，可选参数'normal'、'price'和'volume'
   series: 'normal',
@@ -66,6 +67,10 @@
 
   // 样式，可缺省，缺省则同步样式配置
   styles: null,
+
+  // 拓展数据 可缺省
+  // 可以是一个方法，也可以是普通数据
+  extendData: (params) => { return }
 
   // 重新生成plots，是一个回调方法，可缺省
   // 当计算参数发生改变时触发

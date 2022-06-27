@@ -72,6 +72,7 @@ declare namespace klinecharts {
     baseValue?: number;
     color?: (data: TechnicalIndicatorPlotCallbackData, options: any) => string;
     isStroke?: (data: TechnicalIndicatorPlotCallbackData) => boolean;
+    isDashed?: (data: TechnicalIndicatorPlotCallbackData) => boolean;
   }
   
   interface TechnicalIndicator {
@@ -82,6 +83,7 @@ declare namespace klinecharts {
     shouldOhlc?: boolean;
     shouldFormatBigNumber?: boolean;
     styles?: any;
+    extendData: (params?: any) => any | any | null;
   }
   
   interface TechnicalIndicatorRenderDataSource extends DataSource {}
