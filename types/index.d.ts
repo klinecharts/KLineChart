@@ -155,7 +155,7 @@ declare namespace klinecharts {
     styles?: any;
     lock?: boolean;
     mode?: ShapeMode;
-    data?: (params?: any) => any | any | null;
+    data?: any | ((params?: any) => any) | null;
   }
   
   interface Shape extends OverrideShape {
