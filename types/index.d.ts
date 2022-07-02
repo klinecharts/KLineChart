@@ -83,7 +83,7 @@ declare namespace klinecharts {
     shouldOhlc?: boolean;
     shouldFormatBigNumber?: boolean;
     styles?: any;
-    extendData: (params?: any) => any | any | null;
+    extendData?: (params?: any) => any;
   }
   
   interface TechnicalIndicatorRenderDataSource extends DataSource {}
@@ -270,7 +270,7 @@ declare namespace klinecharts {
   interface PaneOptions {
     id?: string;
     height?: number;
-    minHeihgt?: number;
+    minHeight?: number;
     dragEnabled?: boolean;
   }
 

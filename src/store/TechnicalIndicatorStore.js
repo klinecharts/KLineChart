@@ -392,7 +392,7 @@ export default class TechnicalIndicatorStore {
         const shouldOhlcSuccess = tech.setShouldOhlc(shouldOhlc)
         const shouldFormatBigNumberSuccess = tech.setShouldFormatBigNumber(shouldFormatBigNumber)
         const styleSuccess = tech.setStyles(styles, defaultTechStyleOptions)
-        const extendDataSuccess = this.setExtendData(extendData)
+        const extendDataSuccess = tech.setExtendData(extendData)
         if (shortNameSuccess || calcParamsSuccess || precisionSuccess || shouldOhlcSuccess || shouldFormatBigNumberSuccess || styleSuccess || extendDataSuccess) {
           overiderSuccss = true
         }
