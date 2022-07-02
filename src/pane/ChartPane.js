@@ -228,9 +228,9 @@ export default class ChartPane {
     this._panes.forEach(pane => {
       if (pane.id() !== CANDLE_PANE_ID) {
         let paneHeight = pane.height()
-        const _paneMinHeight = pane.minHeight()
-        if (_paneHeight < _paneMinHeight) {
-          _paneHeight = _paneMinHeight
+        const paneMinHeight = pane.minHeight()
+        if (paneHeight < paneMinHeight) {
+          paneHeight = paneMinHeight
         }
         if (techPaneTotalHeight + paneHeight > paneExcludeXAxisSeparatorHeight) {
           techPaneTotalHeight = paneExcludeXAxisSeparatorHeight
@@ -239,7 +239,7 @@ export default class ChartPane {
         } else {
           techPaneTotalHeight += paneHeight
         }
-        pane.setHeight(_paneHeight)
+        pane.setHeight(paneHeight)
       }
     })
 
