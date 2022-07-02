@@ -220,17 +220,26 @@ export default class ChartPane {
     const separatorSize = styleOptions.separator.size
     const separatorTotalHeight = separatorSize * this._separators.size
     const xAxisHeight = this._xAxisPane.xAxis().getSelfHeight()
-    const paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorTotalHeight
+    let paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorTotalHeight
+    if (paneExcludeXAxisSeparatorHeight < 0) {
+      paneExcludeXAxisSeparatorHeight = 0
+    }
     let techPaneTotalHeight = 0
     this._panes.forEach(pane => {
       if (pane.id() !== CANDLE_PANE_ID) {
-        const paneHeight = pane.height()
+        let paneHeight = pane.height()
+        const _paneMinHeight = pane.minHeight()
+        if (_paneHeight < _paneMinHeight) {
+          _paneHeight = _paneMinHeight
+        }
         if (techPaneTotalHeight + paneHeight > paneExcludeXAxisSeparatorHeight) {
-          pane.setHeight(paneExcludeXAxisSeparatorHeight - techPaneTotalHeight)
           techPaneTotalHeight = paneExcludeXAxisSeparatorHeight
+          paneHeight = paneExcludeXAxisSeparatorHeight - techPaneTotalHeight
+          if (paneHeight < 0) paneHeight = 0
         } else {
           techPaneTotalHeight += paneHeight
         }
+        pane.setHeight(_paneHeight)
       }
     })
 
