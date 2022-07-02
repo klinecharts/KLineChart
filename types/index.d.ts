@@ -83,7 +83,7 @@ declare namespace klinecharts {
     shouldOhlc?: boolean;
     shouldFormatBigNumber?: boolean;
     styles?: any;
-    extendData?: (params?: any) => any;
+    extendData?: ((params?: any) => any) | any;
   }
   
   interface TechnicalIndicatorRenderDataSource extends DataSource {}
@@ -155,7 +155,7 @@ declare namespace klinecharts {
     styles?: any;
     lock?: boolean;
     mode?: ShapeMode;
-    data?: any | ((params?: any) => any) | null;
+    data?: ((params?: any) => any) | any;
   }
   
   interface Shape extends OverrideShape {
