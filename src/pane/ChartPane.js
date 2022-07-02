@@ -284,6 +284,9 @@ export default class ChartPane {
     this._panes.forEach(pane => {
       yAxisWidth = Math.max(yAxisWidth, pane.yAxis().getSelfWidth())
     })
+    if (yAxisWidth > paneWidth) {
+      yAxisWidth = paneWidth;
+    }
     if (isOutside) {
       mainWidth = paneWidth - yAxisWidth
       if (isYAxisLeft) {
@@ -303,7 +306,11 @@ export default class ChartPane {
       }
     }
 
-    this._chartStore.timeScaleStore().setTotalDataSpace(mainWidth)
+    let totalDataSpace = mainWidth
+    if (totalDataSpace < this._chartStore.timeScaleStore().dataSpace()) {
+      totalDataSpace = this._chartStore.timeScaleStore().dataSpace()
+    }
+    this._chartStore.timeScaleStore().setTotalDataSpace(totalDataSpace)
 
     this._panes.forEach((pane, paneId) => {
       pane.setWidth(mainWidth, yAxisWidth)
