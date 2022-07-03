@@ -25,11 +25,11 @@ const plugins = (env) => [
   nodeResolve(),
   commonjs(),
   progress(),
-  fileSize(),
   replace({
     '__BUILD_ENV__': env,
     '__BUILD_VERSION__': version,
   }),
+  fileSize(),
   env === 'production' && terser({
     compress: {
       pure_getters: true,
