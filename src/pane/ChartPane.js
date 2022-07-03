@@ -285,7 +285,7 @@ export default class ChartPane {
       yAxisWidth = Math.max(yAxisWidth, pane.yAxis().getSelfWidth())
     })
     if (yAxisWidth > paneWidth) {
-      yAxisWidth = paneWidth;
+      yAxisWidth = paneWidth
     }
     if (isOutside) {
       mainWidth = paneWidth - yAxisWidth

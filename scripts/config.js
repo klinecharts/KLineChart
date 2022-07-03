@@ -1,12 +1,13 @@
 'use strict';
 
 const { babel } = require('@rollup/plugin-babel');
-const fileSize = require('rollup-plugin-filesize');
-const { terser } = require('rollup-plugin-terser');
-const replace = require('@rollup/plugin-replace');
-const progress = require('rollup-plugin-progress');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
+const eslint = require('@rollup/plugin-eslint');
+const replace = require('@rollup/plugin-replace');
 const commonjs = require('@rollup/plugin-commonjs');
+const { terser } = require('rollup-plugin-terser');
+const fileSize = require('rollup-plugin-filesize');
+const progress = require('rollup-plugin-progress');
 const paths = require('./paths');
 
 const packageJson = require(paths.packageJson);
@@ -14,6 +15,9 @@ const packageJson = require(paths.packageJson);
 const version = packageJson.version;
 
 const plugins = (env) => [
+  eslint({
+    throwOnError: true
+  }),
   babel({
     babelHelpers: 'runtime',
     exclude: '**/node_modules/**'
