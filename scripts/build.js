@@ -26,6 +26,7 @@ async function build() {
   } catch (err) {
     console.log(`\n\n${chalk.red(err)}\n`);
     console.log(chalk.red(`Failed to compile ${type} ${env}.\n`));
+    process.exit(1);
   }
 }
 
