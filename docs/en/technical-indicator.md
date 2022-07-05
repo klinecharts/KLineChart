@@ -70,7 +70,7 @@ To complete a technical indicator template, you only need to generate a technica
 
   // Extend data can be defaulted
   // can be a method or data
-  extendData: (params) => { return }
+  extendData: (params) => { return },
 
   // Regenerate plots, which is a callback method, which can be defaulted
   // trigger when the calculation parameter changes

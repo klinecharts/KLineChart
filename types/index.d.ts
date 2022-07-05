@@ -155,7 +155,7 @@ declare namespace klinecharts {
     styles?: any;
     lock?: boolean;
     mode?: ShapeMode;
-    data?: any | ((params?: any) => any) | null;
+    data?: ((params?: any) => any) | any;
   }
   
   interface Shape extends OverrideShape {
@@ -270,7 +270,7 @@ declare namespace klinecharts {
   interface PaneOptions {
     id?: string;
     height?: number;
-    minHeihgt?: number;
+    minHeight?: number;
     dragEnabled?: boolean;
   }
 
