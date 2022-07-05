@@ -20,7 +20,7 @@ export default {
   shortName: 'AVP',
   series: 'price',
   precision: 2,
-  calcParams: 1,
+  calcParams: [1],
   plots: [
     { key: 'avp', title: 'AVP: ', type: 'line' }
   ],
@@ -30,7 +30,7 @@ export default {
     return dataList.map(kLineData => {
       const avp = {}
       const turnover = kLineData.turnover || 0
-      const volume = kLineData.volume * params || 0
+      const volume = kLineData.volume * params[0] || 0
       totalTurnover += turnover
       totalVolume += volume
       if (totalVolume !== 0) {
