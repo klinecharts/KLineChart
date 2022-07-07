@@ -10,7 +10,6 @@
 [![Version](https://badgen.net/npm/v/klinecharts)](https://www.npmjs.com/package/klinecharts)
 [![Build Status](https://travis-ci.org/liihuu/KLineChart.svg?branch=master)](https://travis-ci.org/liihuu/KLineChart)
 [![Size](https://badgen.net/bundlephobia/minzip/klinecharts@latest)](https://bundlephobia.com/result?p=klinecharts@latest)
-[![Dependencies](https://status.david-dm.org/gh/liihuu/KLineChart.svg)](https://github.com/liihuu/KLineChart)
 [![Typescript](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
 [![LICENSE](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
 
