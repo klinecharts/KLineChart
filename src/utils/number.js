@@ -79,7 +79,7 @@ export function nice (value) {
 }
 
 /**
- * 四和五入
+ * 四舍五入
  * @param value
  * @param precision
  * @return {number}
@@ -111,7 +111,7 @@ export function getPrecision (value) {
 }
 
 /**
- * 10为低的对数函数
+ * 10为底的对数函数
  * @param value
  * @return {number}
  */

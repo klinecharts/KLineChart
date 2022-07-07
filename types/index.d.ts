@@ -83,7 +83,7 @@ declare namespace klinecharts {
     shouldOhlc?: boolean;
     shouldFormatBigNumber?: boolean;
     styles?: any;
-    extendData?: ((params?: any) => any) | any;
+    extendData?: ((params?: any) => any) | any | null;
   }
   
   interface TechnicalIndicatorRenderDataSource extends DataSource {}
