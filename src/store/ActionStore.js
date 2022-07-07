@@ -93,14 +93,12 @@ export default class ActionStore {
   unsubscribe (type, callback) {
     if (hasAction(type)) {
       const delegate = this._delegates.get(type)
-      if(delegate){
+      if (delegate) {
         delegate.unsubscribe(callback)
         if (!delegate.hasObservers()) {
           this._delegates.delete(type)
         }
-        return true
       }
     }
-    return false
   }
 }
