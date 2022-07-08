@@ -345,8 +345,10 @@ declare namespace klinecharts {
     zoomAtDataIndex(scale: number, dataIndex: number, animationDuration?: number): void;
     zoomAtTimestamp(scale: number, Timestamp: number, animationDuration?: number): void;
     setPaneOptions(options: PaneOptions): void;
-    convertFromPixel(coordinate: Coordinate | Coordinate[], finder: ConvertFinder): Point | Point[];
-    convertToPixel(point: Point | Point[], finder: ConvertFinder): Coordinate | Coordinate[];
+    convertFromPixel(coordinate: Coordinate[], finder: ConvertFinder): Point[];
+    convertFromPixel(coordinate: Coordinate , finder: ConvertFinder): Point;
+    convertToPixel(point: Point[], finder?: ConvertFinder): Coordinate[];
+    convertToPixel(point: Point , finder?: ConvertFinder): Coordinate;
     subscribeAction(type: ChartActionType, callback: (params: any) => void): void;
     unsubscribeAction(type: ChartActionType, callback?: (params: any) => void): void;
     getConvertPictureUrl(includeOverlay?: boolean, type?: PictureType, backgroundColor?: string): string;
