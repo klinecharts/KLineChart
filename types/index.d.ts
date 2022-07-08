@@ -1,4 +1,6 @@
-declare namespace klinecharts {
+/// <reference path="lib/shape/shapeHelper.d.ts" />
+
+declare module "klinecharts" {
   interface KLineData {
     timestamp: number;
     open: number;
@@ -32,7 +34,7 @@ declare namespace klinecharts {
     paneId?: string;
     dataIndex?: number;
   }
-  
+
   export interface Coordinate {
     x?: number;
     y?: number;
@@ -171,10 +173,10 @@ declare namespace klinecharts {
     onRemove?: (event: ShapeEvent) => void;
   }
   
-  interface ShapeCheckOnParams {
+  interface ShapeCheckOnParams<T extends ShapeDataSourceItem | ShapeDataSourceItem[]> {
     key: string;
     type: ShapeElementType;
-    dataSource: ShapeDataSourceItem | ShapeDataSourceItem[];
+    dataSource: T;
     eventCoordinate: Coordinate;
   }
   
@@ -221,10 +223,10 @@ declare namespace klinecharts {
     data: any;
   }
   
-  interface ShapeTemplate {
+  interface ShapeTemplate<T> {
     name: string;
     totalStep: number;
-    checkEventCoordinateOnShape: (params: ShapeCheckOnParams) => boolean;
+    checkEventCoordinateOnShape: (params: ShapeCheckOnParams<T>) => boolean;
     createShapeDataSource: (params: ShapeCreateDataSourceParams) => ShapeDataSource[];
     performEventPressedMove?: (params: ShapeEventPressMoveParams) => void;
     performEventMoveForDrawing?: (params: ShapeEventMoveDrawingParams) => void;
@@ -320,13 +322,18 @@ declare namespace klinecharts {
     applyMoreData(dataList: KLineData[], more?: boolean): void;
     updateData(data: KLineData): void;
     loadMore(cb: (timestamp: number) => void): void;
-    addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate | TechnicalIndicatorTemplate[]): void;
-    createTechnicalIndicator(value: string | TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string | null;
+    addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate): void;
+    addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate[]): void;
+    createTechnicalIndicator(value: string, isStack?: boolean, options?: PaneOptions): string | null;
+    createTechnicalIndicator(value: TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string | null;
     overrideTechnicalIndicator(tech: TechnicalIndicator, paneId?: string): void;
     getTechnicalIndicatorTemplate(name?: string): any;
     getTechnicalIndicatorByPaneId(paneId?: string, name?: string): any;
     removeTechnicalIndicator(paneId: string, name?: string): void;
-    addShapeTemplate(template: ShapeTemplate | ShapeTemplate[]): void;
+    addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem[]>): void;
+    addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem[]>[]): void;
+    addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem>): void;
+    addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem>[]): void;
     createShape(value: string | Shape, paneId?: string): string | null;
     getShape(shapeId?: string): any;
     setShapeOptions(options: OverrideShape): void;
@@ -371,8 +378,12 @@ declare namespace klinecharts {
   }
 
   interface Extension {
-    addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate | TechnicalIndicatorTemplate[]): void;
-    addShapeTemplate(template: ShapeTemplate | ShapeTemplate[]): void;
+    addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate): void;
+    addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate[]): void;
+    addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem[]>): void;
+    addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem[]>[]): void;
+    addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem>): void;
+    addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem>[]): void;
   }
 
   const extension: Extension;
@@ -384,7 +395,3 @@ declare namespace klinecharts {
   
   function dispose(dcs: HTMLDivElement | Chart | string): void;
 }
-
-export = klinecharts;
-
-export as namespace klinecharts;
