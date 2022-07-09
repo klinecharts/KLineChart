@@ -15,7 +15,7 @@
 import { getPixelRatio } from '../../utils/canvas'
 import { getPrecision, nice, round } from '../../utils/number'
 import { createElement } from '../../utils/element'
-
+import ActionType from '../../enum/ActionType'
 export default class Axis {
   constructor (chartStore) {
     this._chartStore = chartStore
@@ -82,6 +82,7 @@ export default class Axis {
       this._cacheMinValue = minMax.min
       this._cacheMaxValue = minMax.max
       this._ticks = this._optimalTicks(this._computeTicks())
+      this._chartStore.actionStore().execute(ActionType.AXIS, { axis: this })
       return true
     }
     return false

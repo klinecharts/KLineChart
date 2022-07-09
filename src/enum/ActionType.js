@@ -20,7 +20,8 @@ const ActionType = {
   SCROLL: 'scroll',
   CROSSHAIR: 'crosshair',
   TOOLTIP: 'tooltip',
-  PANE_DRAG: 'pane_drag'
+  PANE_DRAG: 'pane_drag',
+  AXIS:'axis'
 }
 
 export function hasAction (type) {
