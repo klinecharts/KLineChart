@@ -98,9 +98,7 @@ export default class ActionStore {
         if (!delegate.hasObservers()) {
           this._delegates.delete(type)
         }
-        return true
       }
     }
-    return false
   }
 }
