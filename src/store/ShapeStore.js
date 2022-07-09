@@ -248,13 +248,13 @@ export default class ShapeStore {
    * @param options
    */
   setInstanceOptions (options = {}) {
-    const { id, styles, lock, mode, data, points } = options
+    const { id, styles, lock, mode, data, points, visible } = options
     const defaultStyles = this._chartStore.styleOptions().shape
     let shouldInvalidate = false
     const apply = instance => {
       instance.setLock(lock)
       instance.setMode(mode)
-      if (instance.setStyles(styles, defaultStyles) || instance.setData(data) || instance.setPoints(points)) {
+      if (instance.setStyles(styles, defaultStyles) || instance.setData(data) || instance.setPoints(points) || instance.setVisible(visible)) {
         shouldInvalidate = true
       }
     }

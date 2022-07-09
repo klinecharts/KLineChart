@@ -157,6 +157,7 @@ declare module "klinecharts" {
     styles?: any;
     lock?: boolean;
     mode?: ShapeMode;
+    visible?: boolean;
     data?: any;
   }
   

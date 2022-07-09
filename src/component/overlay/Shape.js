@@ -93,7 +93,7 @@ export default class Shape extends Overlay {
   constructor ({
     id, name, totalStep,
     chartStore, xAxis, yAxis,
-    points, styles, lock, mode, data
+    points, styles, lock, mode, data, visible = true
   }) {
     super({ id, chartStore, xAxis, yAxis })
     this._name = name
@@ -102,6 +102,7 @@ export default class Shape extends Overlay {
     this._mode = ShapeMode.NORMAL
     this.setMode(mode)
     this._data = data
+    this._visible = visible
     this._drawStep = SHAPE_DRAW_STEP_START
     this._points = []
     this.setPoints(points)
@@ -333,6 +334,7 @@ export default class Shape extends Overlay {
    * @param ctx
    */
   draw (ctx) {
+    if (!this._visible) return
     this._coordinates = this._points.map(({ timestamp, value, dataIndex }) => {
       return {
         x: this._timestampOrDataIndexToCoordinateX({ timestamp, dataIndex }),
@@ -485,6 +487,14 @@ export default class Shape extends Overlay {
       return true
     }
     return false
+  }
+
+  /**
+   * 设置可见性
+   * @param visible
+   */
+  setVisible (visible = true) {
+    return this._visible === visible ? false : (this._visible = visible,true)
   }
 
   /**
