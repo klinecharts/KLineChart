@@ -51,7 +51,8 @@
     "build-extension": "./node_modules/.bin/babel src/extension --out-dir lib",
     "build": "npm run build-extension && npm run build-core",
     "test": "./node_modules/.bin/mocha --require @babel/register tests/",
-    "deploy": "gh-pages -d website"
+    "deploy": "gh-pages -d website",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.5",
@@ -75,6 +76,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "fs-extra": "^10.1.0",
     "gh-pages": "^2.2.0",
+    "husky": "^8.0.1",
     "rollup": "^2.63.0",
     "rollup-plugin-filesize": "^9.0.2",
     "rollup-plugin-progress": "^1.1.2",

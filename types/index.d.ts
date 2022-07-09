@@ -85,7 +85,7 @@ declare module "klinecharts" {
     shouldOhlc?: boolean;
     shouldFormatBigNumber?: boolean;
     styles?: any;
-    extendData?: ((params?: any) => any) | any | null;
+    extendData?: any;
   }
   
   interface TechnicalIndicatorRenderDataSource extends DataSource {}
@@ -157,7 +157,7 @@ declare module "klinecharts" {
     styles?: any;
     lock?: boolean;
     mode?: ShapeMode;
-    data?: ((params?: any) => any) | any;
+    data?: any;
   }
   
   interface Shape extends OverrideShape {
@@ -298,7 +298,7 @@ declare module "klinecharts" {
   type PictureType = 'png' | 'jpeg' | 'bmp';
 
   interface Chart {
-    getDom(finder?: DomFinder): HTMLDivElement | null;
+    getDom(finder?: DomFinder): HTMLDivElement;
     getWidth(): any;
     getHeight(): any;
     setStyleOptions(options: any): void;
@@ -325,7 +325,7 @@ declare module "klinecharts" {
     addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate): void;
     addTechnicalIndicatorTemplate(template: TechnicalIndicatorTemplate[]): void;
     createTechnicalIndicator(value: string, isStack?: boolean, options?: PaneOptions): string | null;
-    createTechnicalIndicator(value: TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string | null;
+    createTechnicalIndicator(value: TechnicalIndicator, isStack?: boolean, options?: PaneOptions): string;
     overrideTechnicalIndicator(tech: TechnicalIndicator, paneId?: string): void;
     getTechnicalIndicatorTemplate(name?: string): any;
     getTechnicalIndicatorByPaneId(paneId?: string, name?: string): any;
@@ -334,7 +334,8 @@ declare module "klinecharts" {
     addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem[]>[]): void;
     addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem>): void;
     addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem>[]): void;
-    createShape(value: string | Shape, paneId?: string): string | null;
+    createShape(value: string, paneId?: string): string;
+    createShape(value: Shape, paneId?: string): string;
     getShape(shapeId?: string): any;
     setShapeOptions(options: OverrideShape): void;
     removeShape(shapeId?: string): void;
@@ -342,7 +343,7 @@ declare module "klinecharts" {
     removeAnnotation(paneId?: string, point?: Point | Point[]): void;
     createTag(tag: Tag | Tag[], paneId?: string): void;
     removeTag(paneId?: string, tagId?: string | string[]): void;
-    createHtml(html: HTML, paneId?: string): string | null;
+    createHtml(html: HTML, paneId?: string): string;
     removeHtml(paneId?: string, htmlId?: string | string[]): void;
     scrollByDistance(distance: number, animationDuration?: number): void;
     scrollToRealTime(animationDuration?: number): void;
@@ -396,7 +397,7 @@ declare module "klinecharts" {
   
   function version(): string;
 
-  function init(ds: HTMLDivElement | string, style?: any): Chart | null;
+  function init(ds: HTMLDivElement | string, style?: any): Chart;
   
   function dispose(dcs: HTMLDivElement | Chart | string): void;
 }
