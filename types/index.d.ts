@@ -276,7 +276,7 @@ declare module "klinecharts" {
     dragEnabled?: boolean;
   }
 
-  type ChartActionType = 'zoom' | 'scroll' | 'crosshair' | 'tooltip' | 'pane_drag';
+  type ChartActionType = 'zoom' | 'scroll' | 'crosshair' | 'tooltip' | 'pane_drag' | 'axis';
 
   interface DomFinder {
     paneId: string;
@@ -386,8 +386,13 @@ declare module "klinecharts" {
     addShapeTemplate(template: ShapeTemplate<ShapeDataSourceItem>[]): void;
   }
 
-  const extension: Extension;
-  const utils: Utils;
+  interface ShapeHelper{
+    checkCoordinateOnSegment(coordinate1: Coordinate, coordinate2: Coordinate, targetCoordinate: Coordinate): boolean
+  }
+
+  const extension: Extension
+  const utils: Utils
+  const shapeHelper:ShapeHelper
   
   function version(): string;
 

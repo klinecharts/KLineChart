@@ -12,11 +12,7 @@
  * limitations under the License.
  */
 
-import extension from './store/extension'
-import { version, init, dispose, utils } from './core'
-
-const klinecharts = {
-  version, init, dispose, utils, extension
-}
-
-export default klinecharts
+import extension from "./store/extension";
+import { version, init, dispose, utils } from "./core";
+import * as shapeHelper from "./extension/shape/shapeHelper";
+export default { version, init, dispose, utils, extension, shapeHelper };
