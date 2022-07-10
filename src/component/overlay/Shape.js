@@ -343,6 +343,33 @@ export default class Shape extends Overlay {
       }
     })
     const shapeOptions = this._styles || this._chartStore.styleOptions().shape
+    const apply = ({ type, isDraw, styles, dataSource = [] }) => {
+      if (isDraw) {
+        switch (type) {
+          case ShapeElementType.LINE: {
+            this._drawLines(ctx, dataSource, styles || shapeOptions.line, shapeOptions.line)
+            break
+          }
+          case ShapeElementType.CONTINUOUS_LINE: {
+            this._drawContinuousLines(ctx, dataSource, styles || shapeOptions.line, shapeOptions.line)
+            break
+          }
+          case ShapeElementType.POLYGON: {
+            this._drawPolygons(ctx, dataSource, styles || shapeOptions.polygon, shapeOptions.polygon)
+            break
+          }
+          case ShapeElementType.ARC: {
+            this._drawArcs(ctx, dataSource, styles || shapeOptions.arc, shapeOptions.arc)
+            break
+          }
+          case ShapeElementType.TEXT: {
+            this._drawText(ctx, dataSource, styles || shapeOptions.text, shapeOptions.text)
+            break
+          }
+          default: { break }
+        }
+      }
+    }
     const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
     const precision = { price: this._chartStore.pricePrecision(), volume: this._chartStore.volumePrecision() }
     if (this._drawStep !== SHAPE_DRAW_STEP_START && this._coordinates.length > 0) {
@@ -358,43 +385,20 @@ export default class Shape extends Overlay {
         yAxis: this._yAxis,
         data: this._data
       }) || []
-      this._shapeDataSources.forEach(({ type, isDraw, styles, dataSource = [] }) => {
-        if (isDraw) {
-          switch (type) {
-            case ShapeElementType.LINE: {
-              this._drawLines(ctx, dataSource, styles || shapeOptions.line, shapeOptions.line)
-              break
-            }
-            case ShapeElementType.CONTINUOUS_LINE: {
-              this._drawContinuousLines(ctx, dataSource, styles || shapeOptions.line, shapeOptions.line)
-              break
-            }
-            case ShapeElementType.POLYGON: {
-              this._drawPolygons(ctx, dataSource, styles || shapeOptions.polygon, shapeOptions.polygon)
-              break
-            }
-            case ShapeElementType.ARC: {
-              this._drawArcs(ctx, dataSource, styles || shapeOptions.arc, shapeOptions.arc)
-              break
-            }
-            case ShapeElementType.TEXT: {
-              this._drawText(ctx, dataSource, styles || shapeOptions.text, shapeOptions.text)
-              break
-            }
-            default: { break }
-          }
-        }
-      })
+      this._shapeDataSources.forEach(apply)
     }
+    const shapeEventOperate = this.eventOperate()
     const drawExtend = ()=>{
       if (this.drawExtend) {
         ctx.save()
         try{
-          return this.drawExtend({
+          const ret = this.drawExtend({
             ctx,
+            id: this._id,
             drawStep: this._drawStep,
             coordinates: this._coordinates,
             dataSource: this._shapeDataSources,
+            eventOperate: shapeEventOperate,
             styles: shapeOptions,
             viewport,
             precision,
@@ -403,12 +407,12 @@ export default class Shape extends Overlay {
             yAxis: this._yAxis,
             data: this._data
           })
+          return isArray(ret) ? ret.forEach(apply) : ret
         } finally {
           ctx.restore()
         }
       }
     }
-    const shapeEventOperate = this.eventOperate()
     if (
       drawExtend() ||
       (shapeEventOperate.hover.id === this._id && shapeEventOperate.hover.element !== ShapeEventOperateElement.NONE) ||

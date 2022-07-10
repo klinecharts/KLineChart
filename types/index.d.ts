@@ -168,7 +168,8 @@ declare module "klinecharts" {
     id: string,
     element: ShapeEventOperateElement,
     elementIndex: number,
-    instance: Shape
+    instance: Shape,
+    hover: EventOperate
   }
 
   interface Shape extends OverrideShape {
@@ -226,7 +227,10 @@ declare module "klinecharts" {
   
   interface ShapeDrawExtendParams {
     ctx: CanvasRenderingContext2D;
+    id: string;
     dataSource: ShapeDataSource[];
+    coordinates: Coordinate[];
+    eventOperate: EventOperate;
     styles: any;
     viewport: Viewport;
     precision: Precision;
