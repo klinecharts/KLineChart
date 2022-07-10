@@ -560,6 +560,19 @@ export default class Shape extends Overlay {
    * @return {{id: *, elementIndex: number, element: string}}
    */
   checkEventCoordinateOn (eventCoordinate) {
+    const shapeOptions = this._styles || this._chartStore.styleOptions().shape
+    // 检查鼠标点是否在图形的点上
+    const start = this._coordinates.length - 1
+    for (let i = start; i > -1; i--) {
+      if (checkCoordinateInCircle(this._coordinates[i], shapeOptions.point.radius, eventCoordinate)) {
+        return {
+          id: this._id,
+          element: ShapeEventOperateElement.POINT,
+          elementIndex: i,
+          instance: this
+        }
+      }
+    }
     // 检查鼠标点是否在点构成的其它图形上
     if (this._shapeDataSources) {
       for (const { key, type, isCheck, dataSource = [] } of this._shapeDataSources) {
@@ -575,19 +588,6 @@ export default class Shape extends Overlay {
               }
             }
           }
-        }
-      }
-    }
-    const shapeOptions = this._styles || this._chartStore.styleOptions().shape
-    // 检查鼠标点是否在图形的点上
-    const start = this._coordinates.length - 1
-    for (let i = start; i > -1; i--) {
-      if (checkCoordinateInCircle(this._coordinates[i], shapeOptions.point.radius, eventCoordinate)) {
-        return {
-          id: this._id,
-          element: ShapeEventOperateElement.POINT,
-          elementIndex: i,
-          instance: this
         }
       }
     }
