@@ -173,7 +173,7 @@ export default class OverlayEventHandler extends EventHandler {
           }
           shape.onClick({
             id: shapeClickOperate.id,
-            points: shape.points(),
+            points: shape.points(), //非必须，可以通过function的this对象获取
             event
           })
           break
@@ -186,7 +186,7 @@ export default class OverlayEventHandler extends EventHandler {
           if (annotationOperate) {
             an.onClick({
               id: annotationOperate.id,
-              points: an.points(),
+              points: an.points(), //非必须，可以通过function的this对象获取
               event
             })
             break
@@ -223,7 +223,11 @@ export default class OverlayEventHandler extends EventHandler {
     if (visibleAnnotations) {
       const annotation = visibleAnnotations.find(an => an.checkEventCoordinateOn({ x: event.localX, y: event.paneY }))
       if (annotation) {
-        annotation.onRightClick({ id: annotation.id(), points: annotation.points(), event })
+        annotation.onRightClick({ 
+          id: annotation.id(), //非必须，可以通过function的this对象获取
+          points: annotation.points(), //非必须，可以通过function的this对象获取
+          event 
+        })
       }
     }
   }

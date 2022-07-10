@@ -93,7 +93,8 @@ export default class Shape extends Overlay {
   constructor ({
     id, name, totalStep,
     chartStore, xAxis, yAxis,
-    points, styles, lock, mode, data, visible = true
+    points, styles, lock, mode, data, 
+    visible = true
   }) {
     super({ id, chartStore, xAxis, yAxis })
     this._name = name
@@ -342,16 +343,16 @@ export default class Shape extends Overlay {
       }
     })
     const shapeOptions = this._styles || this._chartStore.styleOptions().shape
+    const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
+    const precision = { price: this._chartStore.pricePrecision(), volume: this._chartStore.volumePrecision() }
     if (this._drawStep !== SHAPE_DRAW_STEP_START && this._coordinates.length > 0) {
-      const viewport = { width: this._xAxis.width(), height: this._yAxis.height() }
-      const precision = { price: this._chartStore.pricePrecision(), volume: this._chartStore.volumePrecision() }
       this._shapeDataSources = this.createShapeDataSource({
         step: this._drawStep,
         mode: this._mode,
         points: this._points,
         coordinates: this._coordinates,
-        viewport: { width: this._xAxis.width(), height: this._yAxis.height() },
-        precision: { price: this._chartStore.pricePrecision(), volume: this._chartStore.volumePrecision() },
+        viewport: viewport,
+        precision: precision,
         styles: shapeOptions,
         xAxis: this._xAxis,
         yAxis: this._yAxis,
@@ -384,24 +385,32 @@ export default class Shape extends Overlay {
           }
         }
       })
+    }
+    const drawExtend = ()=>{
       if (this.drawExtend) {
         ctx.save()
-        this.drawExtend({
-          ctx,
-          dataSource: this._shapeDataSources,
-          styles: shapeOptions,
-          viewport,
-          precision,
-          mode: this._mode,
-          xAxis: this._xAxis,
-          yAxis: this._yAxis,
-          data: this._data
-        })
-        ctx.restore()
+        try{
+          return this.drawExtend({
+            ctx,
+            drawStep: this._drawStep,
+            coordinates: this._coordinates,
+            dataSource: this._shapeDataSources,
+            styles: shapeOptions,
+            viewport,
+            precision,
+            mode: this._mode,
+            xAxis: this._xAxis,
+            yAxis: this._yAxis,
+            data: this._data
+          })
+        } finally {
+          ctx.restore()
+        }
       }
     }
-    const shapeEventOperate = this._chartStore.shapeStore().eventOperate()
+    const shapeEventOperate = this.eventOperate()
     if (
+      drawExtend() ||
       (shapeEventOperate.hover.id === this._id && shapeEventOperate.hover.element !== ShapeEventOperateElement.NONE) ||
       (shapeEventOperate.click.id === this._id && shapeEventOperate.click.element !== ShapeEventOperateElement.NONE) ||
       this.isDrawing()
@@ -499,10 +508,26 @@ export default class Shape extends Overlay {
 
   /**
    * 获取数据
-   * @returns
+   * @returns data
    */
   data () {
     return this._data
+  }
+
+  /**
+   * 获取数据源
+   * @returns shapeDataSources
+   */
+  dataSource (){
+    return this._shapeDataSources
+  }
+
+  /**
+   * 获取事件操作的对象
+   * @returns eventOperate
+   */
+  eventOperate(){
+    return this._chartStore.shapeStore().eventOperate()
   }
 
   /**
@@ -535,19 +560,6 @@ export default class Shape extends Overlay {
    * @return {{id: *, elementIndex: number, element: string}}
    */
   checkEventCoordinateOn (eventCoordinate) {
-    const shapeOptions = this._styles || this._chartStore.styleOptions().shape
-    // 检查鼠标点是否在图形的点上
-    const start = this._coordinates.length - 1
-    for (let i = start; i > -1; i--) {
-      if (checkCoordinateInCircle(this._coordinates[i], shapeOptions.point.radius, eventCoordinate)) {
-        return {
-          id: this._id,
-          element: ShapeEventOperateElement.POINT,
-          elementIndex: i,
-          instance: this
-        }
-      }
-    }
     // 检查鼠标点是否在点构成的其它图形上
     if (this._shapeDataSources) {
       for (const { key, type, isCheck, dataSource = [] } of this._shapeDataSources) {
@@ -563,6 +575,19 @@ export default class Shape extends Overlay {
               }
             }
           }
+        }
+      }
+    }
+    const shapeOptions = this._styles || this._chartStore.styleOptions().shape
+    // 检查鼠标点是否在图形的点上
+    const start = this._coordinates.length - 1
+    for (let i = start; i > -1; i--) {
+      if (checkCoordinateInCircle(this._coordinates[i], shapeOptions.point.radius, eventCoordinate)) {
+        return {
+          id: this._id,
+          element: ShapeEventOperateElement.POINT,
+          elementIndex: i,
+          instance: this
         }
       }
     }
@@ -665,7 +690,7 @@ export default class Shape extends Overlay {
    * @param event
    */
   mousePressedPointMove (coordinate, event) {
-    const shapeEventOperate = this._chartStore.shapeStore().eventOperate()
+    const shapeEventOperate = this.eventOperate()
     const elementIndex = shapeEventOperate.click.elementIndex
     if (
       !this._lock &&

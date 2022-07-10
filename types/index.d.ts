@@ -159,10 +159,22 @@ declare module "klinecharts" {
     mode?: ShapeMode;
     visible?: boolean;
     data?: any;
+
   }
-  
+
+  type ShapeEventOperateElement = 'other' | 'point' | 'none'
+
+  type EventOperate = {
+    id: string,
+    element: ShapeEventOperateElement,
+    elementIndex: number,
+    instance: Shape
+  }
+
   interface Shape extends OverrideShape {
     name: string;
+    dataSource?: () => ShapeDataSourceItem[];
+    eventOperate?: () => EventOperate;
     onDrawStart?: (event: ShapeEvent) => void;
     onDrawing?: (event: ShapeEvent) => void;
     onDrawEnd?: (event: ShapeEvent) => void;
@@ -231,7 +243,7 @@ declare module "klinecharts" {
     createShapeDataSource: (params: ShapeCreateDataSourceParams) => ShapeDataSource[];
     performEventPressedMove?: (params: ShapeEventPressMoveParams) => void;
     performEventMoveForDrawing?: (params: ShapeEventMoveDrawingParams) => void;
-    drawExtend?: (params: ShapeDrawExtendParams) => void;
+    drawExtend?: (params: ShapeDrawExtendParams) => void | boolean;
   }
 
   interface AnnotationCheckParams {
@@ -390,6 +402,7 @@ declare module "klinecharts" {
 
   interface ShapeHelper{
     checkCoordinateOnSegment(coordinate1: Coordinate, coordinate2: Coordinate, targetCoordinate: Coordinate): boolean
+    checkCoordinateInRect(coordinate1: Coordinate, coordinate2: Coordinate, eventCoordinate: Coordinate): boolean
   }
 
   const extension: Extension
