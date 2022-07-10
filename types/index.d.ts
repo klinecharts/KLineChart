@@ -169,7 +169,8 @@ declare module "klinecharts" {
     element: ShapeEventOperateElement,
     elementIndex: number,
     instance: Shape,
-    hover: EventOperate
+    hover: EventOperate,
+    click: EventOperate,
   }
 
   interface Shape extends OverrideShape {
@@ -186,7 +187,11 @@ declare module "klinecharts" {
     onMouseLeave?: (event: ShapeEvent) => void;
     onRemove?: (event: ShapeEvent) => void;
   }
-  
+
+  interface ShapeInstance extends Shape {
+    isDrawing: () => boolean
+  }
+
   interface ShapeCheckOnParams<T extends ShapeDataSourceItem | ShapeDataSourceItem[]> {
     key: string;
     type: ShapeElementType;
