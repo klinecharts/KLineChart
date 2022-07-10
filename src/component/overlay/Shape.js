@@ -414,10 +414,10 @@ export default class Shape extends Overlay {
       }
     }
     if (
-      drawExtend() ||
-      (shapeEventOperate.hover.id === this._id && shapeEventOperate.hover.element !== ShapeEventOperateElement.NONE) ||
+      !drawExtend() &&
+      ((shapeEventOperate.hover.id === this._id && shapeEventOperate.hover.element !== ShapeEventOperateElement.NONE) ||
       (shapeEventOperate.click.id === this._id && shapeEventOperate.click.element !== ShapeEventOperateElement.NONE) ||
-      this.isDrawing()
+      this.isDrawing()) 
     ) {
       this._coordinates.forEach(({ x, y }, index) => {
         let radius = shapeOptions.point.radius
