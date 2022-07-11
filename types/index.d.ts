@@ -175,21 +175,21 @@ declare module "klinecharts" {
 
   interface Shape extends OverrideShape {
     name: string;
-    dataSource?: () => ShapeDataSourceItem[];
-    eventOperate?: () => EventOperate;
-    onDrawStart?: (event: ShapeEvent) => void;
-    onDrawing?: (event: ShapeEvent) => void;
-    onDrawEnd?: (event: ShapeEvent) => void;
-    onClick?: (event: ShapeEvent) => void;
-    onRightClick?: (event: ShapeEvent) => boolean;
-    onPressedMove?: (event: ShapeEvent) => void;
-    onMouseEnter?: (event: ShapeEvent) => void;
-    onMouseLeave?: (event: ShapeEvent) => void;
-    onRemove?: (event: ShapeEvent) => void;
+    onDrawStart?: (this:ShapeInstance, event: ShapeEvent) => void;
+    onDrawing?: (this:ShapeInstance, event: ShapeEvent) => void;
+    onDrawEnd?: (this:ShapeInstance, event: ShapeEvent) => void;
+    onClick?: (this:ShapeInstance, event: ShapeEvent) => void;
+    onRightClick?: (this:ShapeInstance, event: ShapeEvent) => boolean;
+    onPressedMove?: (this:ShapeInstance, event: ShapeEvent) => void;
+    onMouseEnter?: (this:ShapeInstance, event: ShapeEvent) => void;
+    onMouseLeave?: (this:ShapeInstance, event: ShapeEvent) => void;
+    onRemove?: (this:ShapeInstance, event: ShapeEvent) => void;
   }
 
   interface ShapeInstance extends Shape {
     isDrawing: () => boolean
+    dataSource: () => ShapeDataSourceItem[]
+    eventOperate: () => EventOperate
   }
 
   interface ShapeCheckOnParams<T extends ShapeDataSourceItem | ShapeDataSourceItem[]> {
@@ -248,11 +248,11 @@ declare module "klinecharts" {
   interface ShapeTemplate<T> {
     name: string;
     totalStep: number;
-    checkEventCoordinateOnShape: (params: ShapeCheckOnParams<T>) => boolean;
-    createShapeDataSource: (params: ShapeCreateDataSourceParams) => ShapeDataSource[];
-    performEventPressedMove?: (params: ShapeEventPressMoveParams) => void;
-    performEventMoveForDrawing?: (params: ShapeEventMoveDrawingParams) => void;
-    drawExtend?: (params: ShapeDrawExtendParams) => void | boolean;
+    checkEventCoordinateOnShape: (this:ShapeInstance, params: ShapeCheckOnParams<T>) => boolean;
+    createShapeDataSource: (this:ShapeInstance, params: ShapeCreateDataSourceParams) => ShapeDataSource[];
+    performEventPressedMove?: (this:ShapeInstance, params: ShapeEventPressMoveParams) => void;
+    performEventMoveForDrawing?: (this:ShapeInstance, params: ShapeEventMoveDrawingParams) => void;
+    drawExtend?: (this:ShapeInstance, params: ShapeDrawExtendParams) => void | boolean;
   }
 
   interface AnnotationCheckParams {
