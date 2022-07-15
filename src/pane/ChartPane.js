@@ -481,10 +481,11 @@ export default class ChartPane {
       onRemove
     } = shapeOptions
     // 产生一个唯一ID
+    let shapeId = id
     if( id && this._chartStore.shapeStore().hasInstance(shapeId)){
       return null
     }
-    let shapeId = id || nanoid(5,SHAPE_ID_PREFIX)
+    shapeId = id || nanoid(5,SHAPE_ID_PREFIX)
     let yAxis = null
     if (this.hasPane(paneId)) {
       yAxis = this._panes.get(paneId).yAxis()
