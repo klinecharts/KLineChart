@@ -186,10 +186,17 @@ declare module "klinecharts" {
     onRemove?: (this:ShapeInstance, event: ShapeEvent) => void;
   }
 
-  interface ShapeInstance extends Shape {
-    isDrawing: () => boolean
-    dataSource: () => ShapeDataSourceItem[]
-    eventOperate: () => EventOperate
+  interface ShapeInstance {
+    isDrawing(): boolean
+    dataSource(): ShapeDataSourceItem[]
+    eventOperate(): EventOperate
+    lock(): boolean
+    data(): any
+    onClick(event: ShapeEvent): void
+    onDrawEnd(event: ShapeEvent): void
+    onPressedMove(event: ShapeEvent): void
+    onRemove(event: ShapeEvent): void
+    points(): Point[]
   }
 
   interface ShapeCheckOnParams<T extends ShapeDataSourceItem | ShapeDataSourceItem[]> {

@@ -482,45 +482,47 @@ export default class ChartPane {
       onMouseEnter, onMouseLeave,
       onRemove
     } = shapeOptions
-    const shapeId = id || `${SHAPE_ID_PREFIX}${++this._shapeBaseId}`
-    if (!this._chartStore.shapeStore().hasInstance(shapeId)) {
-      let yAxis = null
-      if (this.hasPane(paneId)) {
-        yAxis = this._panes.get(paneId).yAxis()
-      } else {
-        if (points && points.length > 0) {
-          paneId = CANDLE_PANE_ID
-          yAxis = this._panes.get(CANDLE_PANE_ID).yAxis()
-        }
+    // 产生一个唯一ID
+    let shapeId
+    do{
+      shapeId = id || `${SHAPE_ID_PREFIX}${++this._shapeBaseId}`
+    } while (!this._chartStore.shapeStore().hasInstance(shapeId))
+
+    let yAxis = null
+    if (this.hasPane(paneId)) {
+      yAxis = this._panes.get(paneId).yAxis()
+    } else {
+      if (points && points.length > 0) {
+        paneId = CANDLE_PANE_ID
+        yAxis = this._panes.get(CANDLE_PANE_ID).yAxis()
       }
-      const shapeInstance = new ShapeTemplateClass({
-        id: shapeId,
-        chartStore: this._chartStore,
-        xAxis: this._xAxisPane.xAxis(),
-        yAxis,
-        points,
-        styles,
-        lock,
-        mode,
-        data
-      })
-      if (isFunction(onDrawStart)) {
-        onDrawStart({ id: shapeId })
-      }
-      perfectOverlayFunc(shapeInstance, [
-        { key: 'onDrawing', fn: onDrawing },
-        { key: 'onDrawEnd', fn: onDrawEnd },
-        { key: 'onClick', fn: onClick },
-        { key: 'onRightClick', fn: onRightClick },
-        { key: 'onPressedMove', fn: onPressedMove },
-        { key: 'onMouseEnter', fn: onMouseEnter },
-        { key: 'onMouseLeave', fn: onMouseLeave },
-        { key: 'onRemove', fn: onRemove }
-      ])
-      this._chartStore.shapeStore().addInstance(shapeInstance, paneId)
-      return shapeId
     }
-    return null
+    const shapeInstance = new ShapeTemplateClass({
+      id: shapeId,
+      chartStore: this._chartStore,
+      xAxis: this._xAxisPane.xAxis(),
+      yAxis,
+      points,
+      styles,
+      lock,
+      mode,
+      data
+    })
+    if (isFunction(onDrawStart)) {
+      onDrawStart({ id: shapeId })
+    }
+    perfectOverlayFunc(shapeInstance, [
+      { key: 'onDrawing', fn: onDrawing },
+      { key: 'onDrawEnd', fn: onDrawEnd },
+      { key: 'onClick', fn: onClick },
+      { key: 'onRightClick', fn: onRightClick },
+      { key: 'onPressedMove', fn: onPressedMove },
+      { key: 'onMouseEnter', fn: onMouseEnter },
+      { key: 'onMouseLeave', fn: onMouseLeave },
+      { key: 'onRemove', fn: onRemove }
+    ])
+    this._chartStore.shapeStore().addInstance(shapeInstance, paneId)
+    return shapeId
   }
 
   /**
