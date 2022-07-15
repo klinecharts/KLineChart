@@ -29,7 +29,7 @@ import { createElement } from '../utils/element'
 import Annotation from '../component/overlay/Annotation'
 import Tag from '../component/overlay/Tag'
 import { perfectOverlayFunc } from '../component/overlay/Overlay'
-
+import nanoid from '../utils/nanoid'
 import ActionType from '../enum/ActionType'
 import InvalidateLevel from '../enum/InvalidateLevel'
 
@@ -51,8 +51,6 @@ const XAXIS_PANE_ID = 'x_axis_pane'
 export default class ChartPane {
   constructor (container, styleOptions) {
     this._initChartContainer(container)
-    this._shapeBaseId = 0
-    this._paneBaseId = 0
     this._separatorDragStartTopPaneHeight = 0
     this._separatorDragStartBottomPaneHeight = 0
     this._chartStore = new ChartStore(styleOptions, {
@@ -436,7 +434,7 @@ export default class ChartPane {
       }
       return options.id
     }
-    const id = options.id || `${TECHNICAL_INDICATOR_PANE_ID_PREFIX}${++this._paneBaseId}`
+    const id = options.id || nanoid(5, TECHNICAL_INDICATOR_PANE_ID_PREFIX)
     const dragEnabled = isBoolean(options.dragEnabled) ? options.dragEnabled : true
     this._separators.set(id, new SeparatorPane(
       this._chartContainer,
@@ -483,11 +481,10 @@ export default class ChartPane {
       onRemove
     } = shapeOptions
     // 产生一个唯一ID
-    let shapeId
-    do{
-      shapeId = id || `${SHAPE_ID_PREFIX}${++this._shapeBaseId}`
-    } while (!this._chartStore.shapeStore().hasInstance(shapeId))
-
+    if( id && this._chartStore.shapeStore().hasInstance(shapeId)){
+      return null
+    }
+    let shapeId = id || nanoid(5,SHAPE_ID_PREFIX)
     let yAxis = null
     if (this.hasPane(paneId)) {
       yAxis = this._panes.get(paneId).yAxis()
