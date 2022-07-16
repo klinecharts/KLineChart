@@ -183,6 +183,7 @@ declare module "klinecharts" {
     onPressedMove?: (this:ShapeInstance, event: ShapeEvent) => void;
     onMouseEnter?: (this:ShapeInstance, event: ShapeEvent) => void;
     onMouseLeave?: (this:ShapeInstance, event: ShapeEvent) => void;
+    onMouseUp?: (this:ShapeInstance, event: ShapeEvent) => void;
     onRemove?: (this:ShapeInstance, event: ShapeEvent) => void;
   }
 

@@ -65,7 +65,27 @@ export default class OverlayEventHandler extends EventHandler {
   /**
    * 鼠标抬起事件
    */
-  mouseUpEvent () {
+  mouseUpEvent (event) {
+    const shapes = this._chartStore.shapeStore().instances(event.paneId)
+    const coordinate = { x: event.localX, y: event.paneY }
+    let shapeClickOperate
+    let shapeHoverOperate
+    for (const shape of shapes) {
+      shapeClickOperate = shape.checkEventCoordinateOn(coordinate)
+      if (shapeClickOperate) {
+        if (shapeClickOperate.element === ShapeEventOperateElement.POINT) {
+          shapeHoverOperate = {
+            ...shapeClickOperate
+          }
+        }
+        shape.onMouseUp({
+          id: shapeClickOperate.id,
+          points: shape.points(), //非必须，可以通过function的this对象获取
+          event
+        })
+        break
+      }
+    }
     this._chartStore.shapeStore().updatePressedInstance()
   }
 

@@ -478,7 +478,7 @@ export default class ChartPane {
       onDrawEnd, onClick,
       onRightClick, onPressedMove,
       onMouseEnter, onMouseLeave,
-      onRemove
+      onMouseUp, onRemove
     } = shapeOptions
     // 产生一个唯一ID
     let shapeId = id
@@ -517,6 +517,7 @@ export default class ChartPane {
       { key: 'onPressedMove', fn: onPressedMove },
       { key: 'onMouseEnter', fn: onMouseEnter },
       { key: 'onMouseLeave', fn: onMouseLeave },
+      { key: 'onMouseUp', fn: onMouseUp },
       { key: 'onRemove', fn: onRemove }
     ])
     this._chartStore.shapeStore().addInstance(shapeInstance, paneId)

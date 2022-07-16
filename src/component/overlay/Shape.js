@@ -800,6 +800,14 @@ export default class Shape extends Overlay {
   onPressedMove ({ id, points, event }) {}
 
   /**
+   * 鼠标弹起事件
+   * @param id
+   * @param points
+   * @param event
+   */
+   onMouseUp ({ id, points, event }) {}
+   
+  /**
    * 移除事件回调
    * @param id
    */

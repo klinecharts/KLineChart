@@ -69,7 +69,8 @@ export default class ChartEvent {
     }
     this._zoomScrollEventHandler.mouseUpEvent(event)
     if (this._shouldPerformOverlayEvent()) {
-      this._overlayEventHandler.mouseUpEvent(event)
+      const compatEvent = this._compatChartEvent(event, true)
+      this._overlayEventHandler.mouseUpEvent(compatEvent)
     }
   }
 
