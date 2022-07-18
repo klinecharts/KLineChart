@@ -1,6 +1,6 @@
 # Change Log
 ## 8.6.1
-`2022-07-18`
+`2022-07-19`
 + 🐞 Fix `overrideTechnicalIndicator` bug.
 + 🐞 Fix `unsubscribeAction` bug.
 + 🐞 Fix the problem that the chart style may be wrong.

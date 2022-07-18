@@ -1,6 +1,6 @@
 # 更新日志
 ## 8.6.1
-`2022-07-18`
+`2022-07-19`
 + 🐞 修复`overrideTechnicalIndicator`错误。
 + 🐞 修复`unsubscribeAction`错误。
 + 🐞 修复图表样式可能出现错误问题。
