@@ -6,8 +6,9 @@ const chalk = require('chalk');
 
 const { inputConfig, outputConfig } = require('./config');
 
+const env = process.env.NODE_ENV;
+
 const type = process.argv[2] !== 'simple' && process.argv[2] !== 'blank' ? 'full' : process.argv[2];
-const env = process.argv[3] !== 'development' ? 'production' : 'development';
 
 async function build() {
   console.log(`Creating an optimized ${chalk.blue(`${type} ${env}`)} build...\n`);
