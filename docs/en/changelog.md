@@ -1,4 +1,12 @@
 # Change Log
+## 8.6.1
+`2022-07-18`
++ 🐞 Fix `overrideTechnicalIndicator` bug.
++ 🐞 Fix `unsubscribeAction` bug.
++ 🐞 Fix the problem that the chart style may be wrong.
++ 💄 Optimize typescript declarations.
++ 🔧 Rewrite packaging script.
+
 ## 8.6.0
 `2022-06-28`
 + 🆕 Api `setShapeOptions` add `points` parameter.
