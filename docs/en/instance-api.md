@@ -392,12 +392,6 @@ chart.createTag({
 
 
 ### removeTag(paneId, tagId)
-Remove tags, you can remove them in batches, just pass in the array in batches, if default, remove all.
-- `paneId` pane id, Remove all by default
-- `tagId` Unique identification of the tag
-
-
-### removeTag(paneId, tagId)
 To remove tags, you can remove them in batches. You can pass in an array in batches. If the default is used, all of them will be removed.
 - `paneId` pane id, default removes all
 - `tagId` The unique identifier of the tag, by default removes all tags on the pane
