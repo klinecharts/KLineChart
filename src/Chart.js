@@ -597,8 +597,9 @@ export default class Chart {
    * @param animationDuration 动画持续时间
    */
   scrollToRealTime (animationDuration) {
-    const difBarCount = this._chartPane.chartStore().timeScaleStore().offsetRightBarCount() - this._chartPane.chartStore().timeScaleStore().offsetRightSpace() / this._chartPane.chartStore().timeScaleStore().dataSpace()
-    const distance = difBarCount * this._chartPane.chartStore().timeScaleStore().dataSpace()
+    const dataSpace = this._chartPane.chartStore().timeScaleStore().dataSpace()
+    const difBarCount = this._chartPane.chartStore().timeScaleStore().offsetRightBarCount() - this._chartPane.chartStore().timeScaleStore().offsetRightSpace() / dataSpace
+    const distance = difBarCount * dataSpace
     this.scrollByDistance(distance, animationDuration)
   }
 
@@ -612,7 +613,9 @@ export default class Chart {
       logWarn('scrollToDataIndex', 'dataIndex', 'dataIndex must be a number!!!')
       return
     }
-    const distance = (this._chartPane.chartStore().dataList().length - 1 - dataIndex) * this._chartPane.chartStore().timeScaleStore().dataSpace()
+    const distance = (
+      this._chartPane.chartStore().timeScaleStore().offsetRightBarCount() + (this.getDataList().length - 1 - dataIndex)
+    ) * this._chartPane.chartStore().timeScaleStore().dataSpace()
     this.scrollByDistance(distance, animationDuration)
   }
 
@@ -626,7 +629,7 @@ export default class Chart {
       logWarn('scrollToTimestamp', 'timestamp', 'timestamp must be a number!!!')
       return
     }
-    const dataIndex = binarySearchNearest(this._chartPane.chartStore().dataList(), 'timestamp', timestamp)
+    const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
     this.scrollToDataIndex(dataIndex, animationDuration)
   }
 
@@ -695,7 +698,7 @@ export default class Chart {
       logWarn('zoomAtTimestamp', 'timestamp', 'timestamp must be a number!!!')
       return
     }
-    const dataIndex = binarySearchNearest(this._chartPane.chartStore().dataList(), 'timestamp', timestamp)
+    const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
     this.zoomAtDataIndex(scale, dataIndex, animationDuration)
   }
 
