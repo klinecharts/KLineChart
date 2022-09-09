@@ -82,11 +82,12 @@ export default class AnnotationStore {
       this._annotations.set(paneId, new Map())
     }
     annotations.forEach(annotation => {
-      const idAnnotations = this._annotations.get(paneId)
-      if (idAnnotations.has(annotation.id())) {
-        idAnnotations.get(annotation.id()).push(annotation)
+      const timestampAnnotations = this._annotations.get(paneId)
+      const timestamp = annotation.points().timestamp
+      if (timestampAnnotations.has(timestamp)) {
+        timestampAnnotations.get(timestamp).push(annotation)
       } else {
-        idAnnotations.set(annotation.id(), [annotation])
+        timestampAnnotations.set(timestamp, [annotation])
       }
     })
     this.createVisibleAnnotations()

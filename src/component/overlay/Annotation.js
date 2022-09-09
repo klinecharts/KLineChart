@@ -35,10 +35,9 @@ import {
  */
 export default class Annotation extends Overlay {
   constructor ({
-    id, point, chartStore, xAxis, yAxis, styles
+    id, point = {}, chartStore, xAxis, yAxis, styles
   }) {
-    super({ id, chartStore, xAxis, yAxis })
-    this._point = point
+    super({ id, chartStore, points: point, xAxis, yAxis })
     this._symbolCoordinate = {}
     this.setStyles(styles, chartStore.styleOptions().annotation)
   }
@@ -85,7 +84,7 @@ export default class Annotation extends Overlay {
         ctx.save()
         this.drawCustomSymbol({
           ctx,
-          point: this._point,
+          point: this._points,
           coordinate: this._symbolCoordinate,
           viewport: {
             width: this._xAxis.width(),
@@ -110,7 +109,7 @@ export default class Annotation extends Overlay {
     let y = 0
     switch (styles.position) {
       case OverlayPosition.POINT: {
-        y = this._yAxis.convertToPixel(this._point.value)
+        y = this._yAxis.convertToPixel(this._points.value)
         break
       }
       case OverlayPosition.TOP: {
@@ -129,7 +128,7 @@ export default class Annotation extends Overlay {
       ctx.save()
       this.drawExtend({
         ctx,
-        point: this._point,
+        point: this._points,
         coordinate: this._symbolCoordinate,
         viewport: {
           width: this._xAxis.width(),
@@ -202,14 +201,6 @@ export default class Annotation extends Overlay {
     const styles = this._styles || this._chartStore.styleOptions().annotation
     const offset = styles.offset || [0, 0]
     this._symbolCoordinate = { x: x + offset[1] }
-  }
-
-  /**
-   * 获取点
-   * @return {*}
-   */
-  points () {
-    return this._point
   }
 
   /**

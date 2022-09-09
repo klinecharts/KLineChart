@@ -22,10 +22,9 @@ import { renderText } from '../../renderer/text'
 
 export default class Tag extends Overlay {
   constructor ({
-    id, point, text, mark, chartStore, xAxis, yAxis, styles
+    id, point = {}, text, mark, chartStore, xAxis, yAxis, styles
   }) {
-    super({ id, chartStore, xAxis, yAxis })
-    this._point = point || {}
+    super({ id, chartStore, points: point, xAxis, yAxis })
     this._text = text
     this._mark = mark
     this.setStyles(styles, chartStore.styleOptions().tag)
@@ -42,7 +41,7 @@ export default class Tag extends Overlay {
   update ({ point, text, mark, styles }) {
     let success = false
     if (isObject(point)) {
-      this._point = point
+      this._points = point
       success = true
     }
     if (isValid(text)) {
@@ -300,7 +299,7 @@ export default class Tag extends Overlay {
         return this._yAxis.height() + offset
       }
       default: {
-        return this._yAxis.convertToNicePixel(this._point.value) + offset
+        return this._yAxis.convertToNicePixel(this._points.value) + offset
       }
     }
   }

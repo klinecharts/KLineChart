@@ -18,7 +18,10 @@ import CandlePane from './CandlePane'
 import XAxisPane from './XAxisPane'
 
 import { YAxisPosition } from '../options/styleOptions'
+
 import { isArray, isBoolean, isFunction, isValid, isNumber } from '../utils/typeChecks'
+import { createId } from '../utils/id'
+
 import TechnicalIndicatorPane from './TechnicalIndicatorPane'
 import SeparatorPane from './SeparatorPane'
 
@@ -34,13 +37,16 @@ import ActionType from '../enum/ActionType'
 import InvalidateLevel from '../enum/InvalidateLevel'
 
 // 默认技术指标窗口高度
-const DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT = 100
+const DEFAULT_TECH_PANE_HEIGHT = 100
 
 // 技术指标窗口id前缀
-const TECHNICAL_INDICATOR_PANE_ID_PREFIX = 'technical_indicator_pane_'
+const TECH_PANE_ID_PREFIX = 'tech_pane_'
 
 // 图形id前缀
 const SHAPE_ID_PREFIX = 'shape_'
+
+// 注解id前缀
+const ANNOTATION_ID_PREFIX = 'an_'
 
 // 蜡烛图窗口id
 export const CANDLE_PANE_ID = 'candle_pane'
@@ -51,8 +57,6 @@ const XAXIS_PANE_ID = 'x_axis_pane'
 export default class ChartPane {
   constructor (container, styleOptions) {
     this._initChartContainer(container)
-    this._shapeBaseId = 0
-    this._paneBaseId = 0
     this._separatorDragStartTopPaneHeight = 0
     this._separatorDragStartBottomPaneHeight = 0
     this._chartStore = new ChartStore(styleOptions, {
@@ -436,7 +440,7 @@ export default class ChartPane {
       }
       return options.id
     }
-    const id = options.id || `${TECHNICAL_INDICATOR_PANE_ID_PREFIX}${++this._paneBaseId}`
+    const id = options.id || createId(TECH_PANE_ID_PREFIX)
     const dragEnabled = isBoolean(options.dragEnabled) ? options.dragEnabled : true
     this._separators.set(id, new SeparatorPane(
       this._chartContainer,
@@ -454,7 +458,7 @@ export default class ChartPane {
       chartStore: this._chartStore,
       xAxis: this._xAxisPane.xAxis(),
       id,
-      height: options.height || DEFAULT_TECHNICAL_INDICATOR_PANE_HEIGHT,
+      height: options.height || DEFAULT_TECH_PANE_HEIGHT,
       minHeight: options.minHeight
     })
     this._panes.set(id, pane)
@@ -482,7 +486,7 @@ export default class ChartPane {
       onMouseEnter, onMouseLeave,
       onRemove
     } = shapeOptions
-    const shapeId = id || `${SHAPE_ID_PREFIX}${++this._shapeBaseId}`
+    const shapeId = id || createId(SHAPE_ID_PREFIX)
     if (!this._chartStore.shapeStore().hasInstance(shapeId)) {
       let yAxis = null
       if (this.hasPane(paneId)) {
@@ -543,7 +547,7 @@ export default class ChartPane {
     }) => {
       if (point && point.timestamp) {
         const annotationInstance = new Annotation({
-          id: point.timestamp,
+          id: createId(ANNOTATION_ID_PREFIX),
           chartStore: this._chartStore,
           point,
           xAxis: this._xAxisPane.xAxis(),

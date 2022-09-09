@@ -93,9 +93,9 @@ export default class Shape extends Overlay {
   constructor ({
     id, name, totalStep,
     chartStore, xAxis, yAxis,
-    points, styles, lock, mode, data
+    points = [], styles, lock, mode, data
   }) {
-    super({ id, chartStore, xAxis, yAxis })
+    super({ id, chartStore, points, xAxis, yAxis })
     this._name = name
     this._totalStep = totalStep
     this._lock = lock
@@ -103,7 +103,6 @@ export default class Shape extends Overlay {
     this.setMode(mode)
     this._data = data
     this._drawStep = SHAPE_DRAW_STEP_START
-    this._points = []
     this.setPoints(points)
     this.setStyles(styles, chartStore.styleOptions().shape)
     this._prevPressPoint = null
@@ -493,14 +492,6 @@ export default class Shape extends Overlay {
    */
   data () {
     return this._data
-  }
-
-  /**
-   * 获取点
-   * @return {[]}
-   */
-  points () {
-    return this._points
   }
 
   /**
