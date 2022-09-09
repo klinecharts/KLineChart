@@ -23,10 +23,9 @@ export default class XAxis extends Axis {
   }
 
   _optimalMinMax ({ min, max }) {
+    const range = max - min + 1
     return {
-      min,
-      max,
-      range: max - min + 1
+      min, max, range, realMin: min, realMax: max, realRange: range
     }
   }
 

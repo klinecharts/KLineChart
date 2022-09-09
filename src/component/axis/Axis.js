@@ -26,6 +26,9 @@ export default class Axis {
     this._minValue = 0
     this._maxValue = 0
     this._range = 0
+    this._realMinValue = 0
+    this._realMaxValue = 0
+    this._realRange = 0
     this._ticks = []
     this._initMeasureCanvas()
   }
@@ -78,6 +81,9 @@ export default class Axis {
     this._minValue = minMax.min
     this._maxValue = minMax.max
     this._range = minMax.range
+    this._realMinValue = minMax.realMin
+    this._realMaxValue = minMax.realMax
+    this._realRange = minMax.realRange
     if (this._cacheMinValue !== minMax.min || this._cacheMaxValue !== minMax.max || forceCompute) {
       this._cacheMinValue = minMax.min
       this._cacheMaxValue = minMax.max
@@ -106,11 +112,11 @@ export default class Axis {
   _computeTicks () {
     const ticks = []
     if (this._range >= 0) {
-      const intervalPrecision = this._computeInterval(this._range)
+      const intervalPrecision = this._computeInterval(this._realRange)
       const interval = intervalPrecision.interval
       const precision = intervalPrecision.precision
-      const first = round(Math.ceil(this._minValue / interval) * interval, precision)
-      const last = round(Math.floor(this._maxValue / interval) * interval, precision)
+      const first = round(Math.ceil(this._realMinValue / interval) * interval, precision)
+      const last = round(Math.floor(this._realMaxValue / interval) * interval, precision)
       let n = 0
       let f = first
 

@@ -17,12 +17,11 @@ import { CandleType, YAxisPosition, YAxisType } from '../../options/styleOptions
 import { isNumber, isValid } from '../../utils/typeChecks'
 import { calcTextWidth, createFont } from '../../utils/canvas'
 import { formatBigNumber, formatPrecision } from '../../utils/format'
-import { round, log10, index10 } from '../../utils/number'
+import { log10, index10 } from '../../utils/number'
 
 export default class YAxis extends Axis {
   constructor (chartStore, isCandleYAxis, paneId) {
     super(chartStore)
-    this._realRange = 0
     this._isCandleYAxis = isCandleYAxis
     this._paneId = paneId
   }
@@ -186,17 +185,26 @@ export default class YAxis extends Axis {
     // 保证每次图形绘制上下都留间隙
     minValue = minValue - range * bottomRate
     maxValue = maxValue + range * topRate
-
     range = Math.abs(maxValue - minValue)
+    let realMinValue
+    let realMaxValue
+    let realRange
     if (yAxisType === YAxisType.LOG) {
-      this._realRange = Math.abs(index10(maxValue) - index10(minValue))
+      realMinValue = index10(minValue)
+      realMaxValue = index10(maxValue)
+      realRange = Math.abs(realMaxValue - realMinValue)
     } else {
-      this._realRange = range
+      realMinValue = minValue
+      realMaxValue = maxValue
+      realRange = range
     }
     return {
       min: minValue,
       max: maxValue,
-      range
+      range,
+      realMin: realMinValue,
+      realMax: realMaxValue,
+      realRange
     }
   }
 
@@ -217,10 +225,6 @@ export default class YAxis extends Axis {
       })
     }
     const textHeight = this._chartStore.styleOptions().xAxis.tickText.size
-    let intervalPrecision
-    if (yAxisType === YAxisType.LOG) {
-      intervalPrecision = this._computeInterval(this._realRange)
-    }
     let validY
     ticks.forEach(({ v }) => {
       let value
@@ -231,9 +235,8 @@ export default class YAxis extends Axis {
           break
         }
         case YAxisType.LOG: {
-          value = round(index10(v), intervalPrecision.precision)
-          y = this._innerConvertToPixel(log10(value))
-          value = formatPrecision(value, precision)
+          y = this._innerConvertToPixel(log10(v))
+          value = formatPrecision(v, precision)
           break
         }
         default: {
