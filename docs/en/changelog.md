@@ -1,4 +1,11 @@
 # Change Log
+
+## 8.6.2
+`2022-09-18`
++ 🐞 Fix `scrollToXxx` related bugs.
++ 💄 Optimize id generation rules.
++ 💄 Optimize logarithmic coordinate display.
+
 ## 8.6.1
 `2022-07-19`
 + 🐞 Fix `overrideTechnicalIndicator` bug.
