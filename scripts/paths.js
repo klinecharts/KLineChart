@@ -8,8 +8,8 @@ const resolvePath = relativePath => path.resolve(rootDirectory, relativePath);
 
 module.exports = {
   build: resolvePath('dist'),
-  simpleIndexJs: resolvePath('src/index.simple.js'),
-  blankIndexJs: resolvePath('src/index.blank.js'),
-  fullIndexJs: resolvePath('src/index.js'),
+  simpleIndexJs: resolvePath('src/index.simple.ts'),
+  blankIndexJs: resolvePath('src/index.blank.ts'),
+  fullIndexJs: resolvePath('src/index.ts'),
   packageJson: resolvePath('package.json')
 };

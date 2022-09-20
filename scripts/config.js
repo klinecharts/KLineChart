@@ -6,6 +6,7 @@ const eslint = require('@rollup/plugin-eslint');
 const replace = require('@rollup/plugin-replace');
 const commonjs = require('@rollup/plugin-commonjs');
 const { terser } = require('rollup-plugin-terser');
+const typescript = require('rollup-plugin-typescript2')
 const fileSize = require('rollup-plugin-filesize');
 const progress = require('rollup-plugin-progress');
 const paths = require('./paths');
@@ -24,10 +25,14 @@ const plugins = (env) => [
   }),
   nodeResolve(),
   commonjs(),
+  typescript(),
   progress(),
   replace({
-    '__BUILD_ENV__': env,
-    '__BUILD_VERSION__': version,
+    preventAssignment: true,
+    values: {
+      '__BUILD_ENV__': env,
+      '__BUILD_VERSION__': version
+    }
   }),
   fileSize(),
   env === 'production' && terser({
