@@ -1,6 +1,11 @@
 {
   "compilerOptions": {
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "target": "ES5",
+    "declaration": true,
+    "declarationMap": false,
+    "declarationDir": "./types",
+    
   },
   "include": [
     "src/**/*.ts"
