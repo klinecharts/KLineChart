@@ -3,3 +3,4 @@ dist/*.js
 types/
 lib/
 scripts/
+index.js

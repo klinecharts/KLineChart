@@ -2,6 +2,7 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "target": "ES5",
+    "downlevelIteration": true,
     "declaration": true,
     "declarationMap": false,
     "declarationDir": "./types",

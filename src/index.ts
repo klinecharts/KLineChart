@@ -12,30 +12,96 @@
  * limitations under the License.
  */
 
-import klinecharts from './index.blank'
+import Chart from './Chart'
+import { logError, logTag, logWarn } from './utils/logger'
+import {
+  clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
+} from './utils/typeChecks'
 
-import horizontalRayLine from './extension/shape/horizontalRayLine'
-import horizontalSegment from './extension/shape/horizontalSegment'
-import horizontalStraightLine from './extension/shape/horizontalStraightLine'
+import { formatValue, formatPrecision, formatBigNumber } from './utils/format'
 
-import verticalRayLine from './extension/shape/verticalRayLine'
-import verticalSegment from './extension/shape/verticalSegment'
-import verticalStraightLine from './extension/shape/verticalStraightLine'
+const instances: {[id: string]: Chart} = {}
+let chartBaseId = 1
 
-import rayLine from './extension/shape/rayLine'
-import segment from './extension/shape/segment'
-import straightLine from './extension/shape/straightLine'
+/**
+ * 获取版本号
+ * @returns {string}
+ */
+function version (): string {
+  return '__BUILD_VERSION__'
+}
 
-import parallelStraightLine from './extension/shape/parallelStraightLine'
-import priceChannelLine from './extension/shape/priceChannelLine'
-import priceLine from './extension/shape/priceLine'
-import fibonacciLine from './extension/shape/fibonacciLine'
+/**
+ * 初始化
+ * @param ds
+ * @param styles
+ * @returns {Chart}
+ */
+function init (ds: HTMLElement | string, styles?: any): Chart | null {
+  logTag()
+  const errorMessage = 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
+  let dom
+  if (isString(ds)) {
+    dom = document.getElementById(ds as string)
+  } else {
+    dom = ds
+  }
+  if (dom === null) {
+    logError('', '', errorMessage)
+    return null
+  }
+  let chart = instances[dom.chartId ?? '']
+  if (chart === undefined) {
+    logWarn('', '', 'The chart has been initialized on the dom！！！')
+    return chart
+  }
+  const id = `k_line_chart_${chartBaseId++}`
+  chart = new Chart(dom, styles)
+  // @ts-expect-error
+  chart.id = id
+  dom.chartId = id
+  instances[id] = chart
+  return chart
+}
 
-klinecharts.extension.addShapeTemplate([
-  horizontalRayLine, horizontalSegment, horizontalStraightLine,
-  verticalRayLine, verticalSegment, verticalStraightLine,
-  rayLine, segment, straightLine,
-  parallelStraightLine, priceChannelLine, priceLine, fibonacciLine
-])
+/**
+ * 销毁
+ * @param dcs
+ */
+function dispose (dcs: HTMLElement | Chart | string): void {
+  let id: string | null
+  if (isString(dcs)) {
+    const dom = document.getElementById(dcs as string)
+    id = dom?.getAttribute('chartId') ?? null
+  } else if (dcs instanceof Chart) {
+    // @ts-expect-error
+    id = dcs.id
+  } else {
+    // @ts-expect-error
+    id = dcs ?? dcs.chartId
+  }
+  if (id !== null) {
+    instances[id].destroy()
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete instances[id]
+  }
+}
 
-export default klinecharts
+const utils = {
+  clone,
+  merge,
+  isString,
+  isNumber,
+  isValid,
+  isObject,
+  isArray,
+  isFunction,
+  isBoolean,
+  formatValue,
+  formatPrecision,
+  formatBigNumber
+}
+
+export {
+  version, init, dispose, utils
+}

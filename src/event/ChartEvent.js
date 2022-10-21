@@ -17,8 +17,6 @@ import ZoomScrollEventHandler from './ZoomScrollEventHandler'
 import OverlayEventHandler from './OverlayEventHandler'
 import KeyBoardEventHandler from './KeyBoardEventHandler'
 
-import { isTouch } from './eventTypeChecks'
-
 export default class ChartEvent {
   constructor (target, chartStore, yAxis) {
     this._target = target
@@ -170,7 +168,7 @@ export default class ChartEvent {
    * @param event
    */
   _modifyEventOptions (event) {
-    if (isTouch(event) && this._chartStore.crosshairStore().get().paneId) {
+    if (event.isTouch && this._chartStore.crosshairStore().get().paneId) {
       this._event.setOptions({ treatVertTouchDragAsPageScroll: false })
     } else {
       this._event.setOptions({ treatVertTouchDragAsPageScroll: true })

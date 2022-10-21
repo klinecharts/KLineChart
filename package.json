@@ -9,8 +9,6 @@
     "README.md",
     "docs/",
     "index.js",
-    "index.blank.js",
-    "index.simple.js",
     "types/",
     "dist/",
     "lib/",
@@ -38,18 +36,9 @@
   "private": false,
   "scripts": {
     "lint": "eslint src",
-    "build-core:simple:dev": "cross-env NODE_ENV=development node scripts/build.js simple",
-    "build-core:simple:prod": "cross-env NODE_ENV=production node scripts/build.js simple",
-    "build-core:simple": "npm run build-core:simple:dev && npm run build-core:simple:prod",
-    "build-core:blank:dev": "cross-env NODE_ENV=development node scripts/build.js blank",
-    "build-core:blank:prod": "cross-env NODE_ENV=production node scripts/build.js blank",
-    "build-core:blank": "npm run build-core:blank:dev && npm run build-core:blank:prod",
-    "build-core:full:dev": "cross-env NODE_ENV=development node scripts/build.js full",
-    "build-core:full:prod": "cross-env NODE_ENV=production node scripts/build.js full",
-    "build-core:full": "npm run build-core:full:dev && npm run build-core:full:prod",
-    "build-core": "npm run build-core:simple && npm run build-core:blank && npm run build-core:full",
-    "build-extension": "babel src/extension --out-dir lib",
-    "build": "npm run build-extension && npm run build-core",
+    "build:dev": "cross-env NODE_ENV=development node scripts/build.js",
+    "build:prod": "cross-env NODE_ENV=production node scripts/build.js",
+    "build": "npm run build:dev && npm run build:prod",
     "deploy": "gh-pages -d website",
     "prepare": "husky install"
   },
@@ -79,6 +68,7 @@
     "rollup-plugin-progress": "^1.1.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.33.0",
+    "rollup-plugin-require-context": "^1.0.1",
     "typescript": "^4.8.3"
   }
 }
