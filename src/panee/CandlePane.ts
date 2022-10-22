@@ -12,17 +12,19 @@
  * limitations under the License.
  */
 
+import YAxis from '../componentl/YAxis'
+
 import DrawWidget from '../widget/DrawWidget'
 import CandleWidget from '../widget/CandleWidget'
 
 import IndicatorPane from './IndicatorPane'
 
 export default class CandlePane extends IndicatorPane {
-  protected getName (): string {
+  getName (): string {
     return 'candle'
   }
 
-  protected createMainWidget (container: HTMLElement): DrawWidget {
+  protected createMainWidget (container: HTMLElement): DrawWidget<YAxis> {
     return new CandleWidget(container, this)
   }
 }

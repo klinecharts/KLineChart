@@ -14,13 +14,15 @@
 
 import ElementGroup from '../common/ElementGroup'
 
+import Axis from '../componentl/Axis'
+
 import FigureTemplate from '../template/figure/Figure'
 
 import Widget from '../widget/Widget'
 
-export default abstract class View extends ElementGroup<FigureTemplate> {
+export default abstract class View<C extends Axis> extends ElementGroup<FigureTemplate> {
   /**
    * 绘制
    */
-  abstract draw (ctx: CanvasRenderingContext2D, widget: Widget): void
+  abstract draw (ctx: CanvasRenderingContext2D, widget: Widget<C>): void
 }

@@ -12,8 +12,29 @@
  * limitations under the License.
  */
 
-import View from './View'
+import TypeOrNull from '../common/TypeOrNull'
+import ElementGroup from '../common/ElementGroup'
+import KLineData from '../common/KLineData'
 
-export default class IndicatorView extends View {
-  
+import ChartStore, { VisibleData } from '../store/ChartStore'
+import { BarSpace } from '../store/TimeScaleStore'
+
+import YAxis from '../componentl/YAxis'
+
+import Widget from '../widget/Widget'
+
+import CandleBarView, { CandleBarOptions } from './CandleBarView'
+
+export default class IndicatorView extends CandleBarView {
+  protected getCandleBarOptions (chartStore: ChartStore): TypeOrNull<CandleBarOptions> {
+    const candleStyles = chartStore.getStyleOptions().candle
+    return {
+      type: candleStyles.type,
+      styles: candleStyles.bar
+    }
+  }
+
+  protected drawChild (ctx: CanvasRenderingContext2D, data: VisibleData, barSpace: BarSpace, index: number, totalCount: number, axis: YAxis): void {
+    super.drawChild(ctx, data, barSpace, index, totalCount, axis)
+  }
 }

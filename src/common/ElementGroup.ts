@@ -37,6 +37,10 @@ export default class ElementGroup<E extends Element> extends Element {
     return this
   }
 
+  clear (): void {
+    this._elements = []
+  }
+
   checkEventOn (coordinate: Coordinate): boolean {
     const intercept = this.interceptEvent()
     let on = false

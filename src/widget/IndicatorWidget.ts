@@ -13,9 +13,12 @@
  */
 
 import Bounding from '../common/Bounding'
+
+import YAxis from '../componentl/YAxis'
+
 import DrawWidget from './DrawWidget'
 
-export default class IndicatorWidget extends DrawWidget {
+export default class IndicatorWidget extends DrawWidget<YAxis> {
   protected updateMain (ctx: CanvasRenderingContext2D, bounding: Bounding): void {
     throw new Error('Method not implemented.')
   }

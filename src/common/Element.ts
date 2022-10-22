@@ -23,7 +23,7 @@ export interface ElementEventMap {
 }
 
 export default abstract class Element {
-  private readonly _events = new WeakMap<any, ElementEvent>()
+  private readonly _events = new Map<keyof ElementEventMap, ElementEvent>()
 
   registerEvent (type: keyof ElementEventMap, event: ElementEvent): Element {
     this._events.set(type, event)
@@ -31,6 +31,9 @@ export default abstract class Element {
   }
 
   onEvent (type: keyof ElementEventMap, coordinate: Coordinate): void {
+    if (this._events.size === 0) {
+      return
+    }
     if (this.checkEventOn(coordinate)) {
       this._events.get(type)?.(coordinate)
     }

@@ -12,95 +12,153 @@
  * limitations under the License.
  */
 
+import KLineData from '../common/KLineData'
+
 /**
  * 填充空心样式类型
  */
-export const StrokeFillStyle = {
-  STROKE: 'stroke',
-  FILL: 'fill'
+export const enum StrokeFillType {
+  STROKE = 'stroke',
+  FILL = 'fill'
 }
 
 /**
  * 线的样式
- * @type {{DASH: string, SOLID: string}}
+ * @type {{DASHED: string, SOLID: string}}
  */
-export const LineStyle = {
-  DASH: 'dash',
-  SOLID: 'solid'
+export const enum LineType {
+  DASHED = 'dashed',
+  SOLID = 'solid'
 }
 
 /**
  * y轴位置
  * @type {{LEFT: string, RIGHT: string}}
  */
-export const YAxisPosition = {
-  LEFT: 'left',
-  RIGHT: 'right'
+export const enum YAxisPosition {
+  LEFT = 'left',
+  RIGHT = 'right'
 }
 
 /**
  * y轴类型
  * @type {{PERCENTAGE: string, LOG: string, NORMAL: string}}
  */
-export const YAxisType = {
-  NORMAL: 'normal',
-  PERCENTAGE: 'percentage',
-  LOG: 'log'
+export const enum YAxisType {
+  NORMAL = 'normal',
+  PERCENTAGE = 'percentage',
+  LOG = 'log'
 }
 
 /**
  * 蜡烛图样式
  * @type {{AREA: string, OHLC: string, CANDLE_STROKE: string, CANDLE_SOLID: string, CANDLE_DOWN_STROKE: string, CANDLE_UP_STROKE: string}}
  */
-export const CandleType = {
-  CANDLE_SOLID: 'candle_solid',
-  CANDLE_STROKE: 'candle_stroke',
-  CANDLE_UP_STROKE: 'candle_up_stroke',
-  CANDLE_DOWN_STROKE: 'candle_down_stroke',
-  OHLC: 'ohlc',
-  AREA: 'area'
+export const enum CandleType {
+  CANDLE_SOLID = 'candle_solid',
+  CANDLE_STROKE = 'candle_stroke',
+  CANDLE_UP_STROKE = 'candle_up_stroke',
+  CANDLE_DOWN_STROKE = 'candle_down_stroke',
+  OHLC = 'ohlc',
+  AREA = 'area'
 }
 
 /**
  * 说明显示规则
  * @type {{FOLLOW_CROSS: string, NONE: string, ALWAYS: string}}
  */
-export const TooltipShowRule = {
-  ALWAYS: 'always',
-  FOLLOW_CROSS: 'follow_cross',
-  NONE: 'none'
+export const enum TooltipShowRule {
+  ALWAYS = 'always',
+  FOLLOW_CROSS = 'follow_cross',
+  NONE = 'none'
 }
 
 /**
  * 数据提示显示类型
  * @type {{RECT: string, STANDARD: string}}
  */
-export const TooltipShowType = {
-  RECT: 'rect',
-  STANDARD: 'standard'
+export const enum TooltipShowType {
+  RECT = 'rect',
+  STANDARD = 'standard'
 }
 
 /**
  * 注解标识类似
  * @type {{RECT: string, TRIANGLE: string, DIAMOND: string, CUSTOM: string, NONE: string, CIRCLE: string}}
  */
-export const AnnotationSymbolType = {
-  CIRCLE: 'circle',
-  RECT: 'rect',
-  TRIANGLE: 'triangle',
-  DIAMOND: 'diamond',
-  CUSTOM: 'custom',
-  NONE: 'none'
+export const enum AnnotationSymbolType {
+  CIRCLE = 'circle',
+  RECT = 'rect',
+  TRIANGLE = 'triangle',
+  DIAMOND = 'diamond',
+  CUSTOM = 'custom',
+  NONE = 'none'
 }
 
 /**
  * 覆盖物位置
  * @type {{TOP: string, BOTTOM: string, POINT: string}}
  */
-export const OverlayPosition = {
-  POINT: 'point',
-  TOP: 'top',
-  BOTTOM: 'bottom'
+export const enum OverlayPosition {
+  POINT = 'point',
+  TOP = 'top',
+  BOTTOM = 'bottom'
+}
+
+export interface ChangeColor {
+  upColor?: string
+  downColor?: string
+  noChangeColor?: string
+}
+
+export interface GradientColor {
+  offset: number
+  color: string
+}
+
+export interface LineStyle {
+  show?: boolean
+  style?: LineType
+  size?: number
+  color?: string
+  dashedValue?: [2, 2]
+}
+
+export interface TextStyle {
+  show?: boolean
+  size?: number
+  color?: string
+  family?: string
+  weight?: string
+}
+
+export interface PaddingTextStyle extends TextStyle {
+  paddingLeft?: number
+  paddingTop?: number
+  paddingRight?: number
+  paddingBottom?: number
+  borderRadius?: number
+  backgroundColor?: string
+}
+
+export interface MarginTextStyle extends TextStyle {
+  marginLeft?: number
+  marginTop?: number
+  marginRight?: number
+  marginBottom?: number
+}
+
+export interface GridStyle {
+  show?: boolean
+  horizontal?: LineStyle
+  vertical?: LineStyle
+}
+
+export interface TooltipStyle {
+  showRule?: TooltipShowRule
+  showType?: TooltipShowType
+  defaultValue?: 'n/a'
+  text?: Omit<MarginTextStyle, 'show'>
 }
 
 /**
@@ -113,16 +171,75 @@ const defaultGrid = {
     show: true,
     size: 1,
     color: '#EDEDED',
-    style: LineStyle.DASH,
-    dashValue: [2, 2]
+    style: LineType.DASHED,
+    dashedValue: [2, 2]
   },
   vertical: {
     show: true,
     size: 1,
     color: '#EDEDED',
-    style: LineStyle.DASH,
-    dashValue: [2, 2]
+    style: LineType.DASHED,
+    dashedValue: [2, 2]
   }
+}
+
+export interface CandleAreaStyle {
+  lineSize?: number
+  lineColor?: string
+  value?: string
+  backgroundColor?: string | GradientColor[]
+}
+
+export interface CandleHighLowPriceMarkStyle {
+  show?: boolean
+  color?: string
+  textOffset?: number
+  textSize?: number
+  textFamily?: string
+  textWeight?: string
+}
+
+export interface CandleLastPriceMarkStyle extends ChangeColor {
+  show?: boolean
+  line?: Omit<LineStyle, 'color'>
+  text?: Omit<PaddingTextStyle, 'backgroundColor'>
+}
+
+export interface CandlePriceMarkStyle {
+  show?: boolean
+  high?: CandleHighLowPriceMarkStyle
+  low?: CandleHighLowPriceMarkStyle
+  last?: CandleLastPriceMarkStyle
+}
+
+export interface CandleTooltipRectStyle {
+  paddingLeft?: number
+  paddingRight?: number
+  paddingTop?: number
+  paddingBottom?: number
+  offsetLeft?: number
+  offsetTop?: number
+  offsetRight?: number
+  borderRadius?: number
+  borderSize?: number
+  borderColor?: string
+  backgroundColor?: string
+}
+
+export type CandleTooltipValuesCallback = (kLineData: KLineData) => string[]
+
+export interface CandleTooltipStyle extends TooltipStyle {
+  labels?: string[]
+  values?: CandleTooltipValuesCallback | string[]
+  rect?: CandleTooltipRectStyle
+}
+
+export interface CandleStyle {
+  type?: CandleType
+  bar?: ChangeColor
+  area?: CandleAreaStyle
+  priceMark?: CandlePriceMarkStyle
+  tooltip?: CandleTooltipStyle
 }
 
 /**
@@ -130,10 +247,6 @@ const defaultGrid = {
  * @type {{area: {backgroundColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number, value: string}, bar: {noChangeColor: string, upColor: string, downColor: string}, tooltip: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
 const defaultCandle = {
-  margin: {
-    top: 0.2,
-    bottom: 0.1
-  },
   type: CandleType.CANDLE_SOLID,
   bar: {
     /**
@@ -166,7 +279,7 @@ const defaultCandle = {
     high: {
       show: true,
       color: '#76808F',
-      textMargin: 5,
+      textOffset: 5,
       textSize: 10,
       textFamily: 'Helvetica Neue',
       textWeight: 'normal'
@@ -174,7 +287,7 @@ const defaultCandle = {
     low: {
       show: true,
       color: '#76808F',
-      textMargin: 5,
+      textOffset: 5,
       textSize: 10,
       textFamily: 'Helvetica Neue',
       textWeight: 'normal'
@@ -186,8 +299,8 @@ const defaultCandle = {
       noChangeColor: '#888888',
       line: {
         show: true,
-        style: LineStyle.DASH,
-        dashValue: [4, 4],
+        style: LineType.DASHED,
+        dashedValue: [4, 4],
         size: 1
       },
       text: {
@@ -236,30 +349,73 @@ const defaultCandle = {
   }
 }
 
+export interface IndicatorBarCirleStyle extends ChangeColor {
+  style?: StrokeFillType
+}
+
+export interface IndicatorLastValueMarkStyle {
+  show?: boolean
+  text?: Omit<MarginTextStyle, 'show'>
+}
+
+export interface IndicatorTooltipStyle extends TooltipStyle {
+  showName?: boolean
+  showParams?: boolean
+}
+
+export interface IndicatorStyle {
+  bars?: IndicatorBarCirleStyle[]
+  lines?: Array<Omit<LineStyle, 'show'>>
+  circles?: IndicatorBarCirleStyle[]
+  lastValueMark?: IndicatorLastValueMarkStyle
+  tooltip?: IndicatorTooltipStyle
+}
+
 /**
  * 默认的技术指标样式配置
  * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, tooltip: {showParams: boolean, showName: boolean, showRule: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}}, circle: {noChangeColor: string, upColor: string, downColor: string}, lastValueMark: {show: boolean, text: {paddingBottom: number, color: string, size: number, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}}}}
  */
-const defaultTechnicalIndicator = {
-  margin: {
-    top: 0.2,
-    bottom: 0.1
-  },
-  bar: {
+const defaultIndicator = {
+  bars: [{
+    style: StrokeFillType.FILL,
     upColor: 'rgba(38, 166, 154, .65)',
     downColor: 'rgba(239, 83, 80, .65)',
     noChangeColor: '#888888'
-  },
-  line: {
-    size: 1,
-    dashValue: [2, 2],
-    colors: ['#FF9600', '#9D65C9', '#2196F3', '#E11D74', '#01C5C4']
-  },
-  circle: {
+  }],
+  lines: [
+    {
+      style: LineType.SOLID,
+      size: 1,
+      dashedValue: [2, 2],
+      color: '#FF9600'
+    }, {
+      style: LineType.SOLID,
+      size: 1,
+      dashedValue: [2, 2],
+      color: '#9D65C9'
+    }, {
+      style: LineType.SOLID,
+      size: 1,
+      dashedValue: [2, 2],
+      color: '#2196F3'
+    }, {
+      style: LineType.SOLID,
+      size: 1,
+      dashedValue: [2, 2],
+      color: '#E11D74'
+    }, {
+      style: LineType.SOLID,
+      size: 1,
+      dashedValue: [2, 2],
+      color: '#01C5C4'
+    }
+  ],
+  circles: [{
+    style: StrokeFillType.FILL,
     upColor: 'rgba(38, 166, 154, .65)',
     downColor: 'rgba(239, 83, 80, .65)',
     noChangeColor: '#888888'
-  },
+  }],
   lastValueMark: {
     show: false,
     text: {
@@ -294,6 +450,23 @@ const defaultTechnicalIndicator = {
   }
 }
 
+export interface AxisTickLineStyle extends Omit<LineStyle, 'style' | 'dashedValue'> {
+  length?: number
+}
+
+export interface AxisTickTextStyle extends TextStyle {
+  marginStart?: number
+  marginEnd?: number
+}
+
+export interface XAxisStyle {
+  show?: boolean
+  size?: number | 'auto'
+  axisLine?: Omit<LineStyle, 'style' | 'dashedValue'>
+  tickLine?: AxisTickLineStyle
+  tickText?: AxisTickTextStyle
+}
+
 /**
  * 默认x轴配置
  * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, tickText: {paddingBottom: number, color: string, size: number, show: boolean, weight: string, paddingTop: number, family: string}, height: null, tickLine: {size: number, color: string, show: boolean, length: number}}}
@@ -306,7 +479,7 @@ const defaultXAxis = {
   /**
    * 高度
    */
-  height: null,
+  size: 'auto',
   /**
    * 轴线配置
    */
@@ -325,8 +498,8 @@ const defaultXAxis = {
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
-    paddingTop: 3,
-    paddingBottom: 6
+    paddingStart: 4,
+    paddingEnd: 4
   },
   // tick线
   tickLine: {
@@ -335,6 +508,13 @@ const defaultXAxis = {
     length: 3,
     color: '#DDDDDD'
   }
+}
+
+export interface YAxisStyle extends XAxisStyle {
+  type?: YAxisType
+  position?: YAxisPosition
+  inside?: boolean
+  reverse?: boolean
 }
 
 /**
@@ -349,7 +529,7 @@ const defaultYAxis = {
   /**
    * 宽度
    */
-  width: null,
+  size: 'auto',
   /**
    * y轴类型
    */
@@ -384,8 +564,8 @@ const defaultYAxis = {
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
-    paddingLeft: 3,
-    paddingRight: 6
+    paddingStart: 4,
+    paddingEnd: 4
   },
   // tick线
   tickLine: {
@@ -396,13 +576,25 @@ const defaultYAxis = {
   }
 }
 
+export interface CrosshairDirectionStyle {
+  show?: boolean
+  line?: LineStyle
+  text?: PaddingTextStyle
+}
+
+export interface CrosshairStyle {
+  show?: boolean
+  horizontal?: CrosshairDirectionStyle
+  vertical?: CrosshairDirectionStyle
+}
+
 const defaultCrosshair = {
   show: true,
   horizontal: {
     show: true,
     line: {
       show: true,
-      style: LineStyle.DASH,
+      style: LineType.DASHED,
       dashValue: [4, 2],
       size: 1,
       color: '#76808F'
@@ -427,7 +619,7 @@ const defaultCrosshair = {
     show: true,
     line: {
       show: true,
-      style: LineStyle.DASH,
+      style: LineType.DASHED,
       dashValue: [4, 2],
       size: 1,
       color: '#76808F'
@@ -466,15 +658,15 @@ const defaultShape = {
     activeRadius: 5
   },
   line: {
-    style: LineStyle.SOLID,
+    style: LineType.SOLID,
     color: '#2196F3',
     size: 1,
     dashValue: [2, 2]
   },
   polygon: {
-    style: StrokeFillStyle.STROKE,
+    style: StrokeFillType.STROKE,
     stroke: {
-      style: LineStyle.SOLID,
+      style: LineType.SOLID,
       size: 1,
       color: '#2196F3',
       dashValue: [2, 2]
@@ -484,9 +676,9 @@ const defaultShape = {
     }
   },
   arc: {
-    style: StrokeFillStyle.STROKE,
+    style: StrokeFillType.STROKE,
     stroke: {
-      style: LineStyle.SOLID,
+      style: LineType.SOLID,
       size: 1,
       color: '#2196F3',
       dashValue: [2, 2]
@@ -496,7 +688,7 @@ const defaultShape = {
     }
   },
   text: {
-    style: StrokeFillStyle.FILL,
+    style: StrokeFillType.FILL,
     color: '#2196F3',
     size: 12,
     family: 'Helvetica Neue',
@@ -526,7 +718,7 @@ const defaultTag = {
   offset: 0,
   line: {
     show: true,
-    style: LineStyle.DASH,
+    style: LineType.DASHED,
     dashValue: [4, 2],
     size: 1,
     color: '#2196F3'
@@ -573,10 +765,10 @@ const defaultSeparator = {
   activeBackgroundColor: 'rgba(33, 150, 243, 0.08)'
 }
 
-export const defaultStyleOptions = {
+export const defaultStyles = {
   grid: defaultGrid,
   candle: defaultCandle,
-  technicalIndicator: defaultTechnicalIndicator,
+  indicator: defaultIndicator,
   xAxis: defaultXAxis,
   yAxis: defaultYAxis,
   separator: defaultSeparator,

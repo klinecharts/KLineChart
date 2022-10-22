@@ -20,7 +20,7 @@ import XAxis from '../componentl/XAxis'
 import Pane from './Pane'
 
 export default class XAxisPane extends Pane<XAxis> {
-  protected getName (): string {
+  getName (): string {
     return 'xAxis'
   }
 
@@ -28,7 +28,7 @@ export default class XAxisPane extends Pane<XAxis> {
     return new XAxis(this)
   }
 
-  protected createMainWidget (container: HTMLElement): DrawWidget {
+  protected createMainWidget (container: HTMLElement): DrawWidget<XAxis> {
     return new XAxisWidget(container, this)
   }
 }

@@ -13,8 +13,11 @@
  */
 
 import Bounding from '../common/Bounding'
-import Widget from './Widget'
 import { UpdateLevel } from '../common/Updater'
+
+import Axis from '../componentl/Axis'
+
+import Widget from './Widget'
 
 import { createDom } from '../utils/dom'
 import { getPixelRatio } from '../utils/canvas'
@@ -22,7 +25,7 @@ import { requestAnimationFrame, cancelAnimationFrame } from '../utils/compatible
 
 const DEFAULT_REQUEST_ID = -1
 
-export default abstract class DrawWidget extends Widget {
+export default abstract class DrawWidget<C extends Axis> extends Widget<C> {
   private _mainCanvas: HTMLCanvasElement
   private _mainCtx: CanvasRenderingContext2D
   private _overlayCanvas: HTMLCanvasElement

@@ -13,10 +13,13 @@
  */
 
 import Bounding from '../common/Bounding'
+
+import XAxis from '../componentl/XAxis'
+
 import DrawWidget from './DrawWidget'
 
 import XAxisView from '../viewv/XAxisView'
-export default class XAxisWidget extends DrawWidget {
+export default class XAxisWidget extends DrawWidget<XAxis> {
   private readonly _xAxisView = new XAxisView()
 
   protected updateMain (ctx: CanvasRenderingContext2D, bounding: Bounding): void {

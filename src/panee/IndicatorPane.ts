@@ -24,7 +24,7 @@ import YAxis from '../componentl/YAxis'
 import Pane from './Pane'
 
 export default class IndicatorPane extends Pane<YAxis> {
-  protected getName (): string {
+  getName (): string {
     return 'indicator'
   }
 
@@ -32,7 +32,7 @@ export default class IndicatorPane extends Pane<YAxis> {
     return new YAxis(this)
   }
 
-  protected createMainWidget (container: HTMLElement): DrawWidget {
+  protected createMainWidget (container: HTMLElement): DrawWidget<YAxis> {
     return new IndicatorWidget(container, this)
   }
 

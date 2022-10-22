@@ -16,6 +16,8 @@ import TypeOrNull from '../common/TypeOrNull'
 import Updater, { UpdateLevel } from '../common/Updater'
 import Bounding, { BoundingLike } from '../common/Bounding'
 
+import Axis from '../componentl/Axis'
+
 import Widget from '../widget/Widget'
 import DrawWidget from '../widget/DrawWidget'
 import SeparatorWidget from '../widget/SeparatorWidget'
@@ -36,10 +38,10 @@ export interface PaneOptions {
   }
 }
 
-export default abstract class Pane<C = any> implements Updater {
+export default abstract class Pane<C extends Axis> implements Updater {
   private readonly _id: string
   private readonly _chart: ChartInternal
-  private _mainWidget: DrawWidget
+  private _mainWidget: DrawWidget<C>
   private _yAxisWidget: TypeOrNull<YAxisWidget> = null
   private _separatorWidget: TypeOrNull<SeparatorWidget> = null
   private readonly _axis: C
@@ -79,20 +81,20 @@ export default abstract class Pane<C = any> implements Updater {
     return this._chart
   }
 
-  getYAxisComponent (): C {
+  getAxisComponent (): C {
     return this._axis
   }
 
-  setBounding (rootBounding: BoundingLike, mainBounding: BoundingLike, yAxisBounding: BoundingLike): Pane {
+  setBounding (rootBounding: BoundingLike, mainBounding: BoundingLike, yAxisBounding: BoundingLike): Pane<C> {
     this._bounding.merge(rootBounding)
     return this
   }
 
-  getMainWidget (): Widget { return this._mainWidget }
+  getMainWidget (): Widget<C> { return this._mainWidget }
 
-  getYAxisWidget (): TypeOrNull<Widget> { return this._yAxisWidget }
+  getYAxisWidget (): TypeOrNull<YAxisWidget> { return this._yAxisWidget }
 
-  getSeparatorWidget (): TypeOrNull<Widget> { return this._separatorWidget }
+  getSeparatorWidget (): TypeOrNull<SeparatorWidget> { return this._separatorWidget }
 
   update (level: UpdateLevel): void {
     this._mainWidget.update(level)
@@ -108,5 +110,5 @@ export default abstract class Pane<C = any> implements Updater {
 
   protected creatYAxisWidget (container: HTMLElement): TypeOrNull<YAxisWidget> { return null }
 
-  protected abstract createMainWidget (container: HTMLDivElement): DrawWidget
+  protected abstract createMainWidget (container: HTMLDivElement): DrawWidget<C>
 }

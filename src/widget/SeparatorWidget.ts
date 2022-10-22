@@ -14,11 +14,13 @@
 
 import Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
+
+import YAxis from '../componentl/YAxis'
 import Widget from './Widget'
 
 import { createDom } from '../utils/dom'
 
-export default class SeparatorWidget extends Widget {
+export default class SeparatorWidget extends Widget<YAxis> {
   private _moveDom: HTMLDivElement
 
   protected getContainerStyle (): Partial<CSSStyleDeclaration> {

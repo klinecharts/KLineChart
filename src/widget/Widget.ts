@@ -15,18 +15,20 @@
 import Bounding, { BoundingLike } from '../common/Bounding'
 import Updater, { UpdateLevel } from '../common/Updater'
 
+import Axis from '../componentl/Axis'
+
 import Pane from '../panee/Pane'
 
 import { createDom } from '../utils/dom'
 
-export default abstract class Widget implements Updater {
-  private readonly _pane: Pane
+export default abstract class Widget<C extends Axis> implements Updater {
+  private readonly _pane: Pane<C>
 
   private _container: HTMLDivElement
 
   private readonly _bounding: Bounding = new Bounding()
 
-  constructor (rootContainer: HTMLElement, pane: Pane) {
+  constructor (rootContainer: HTMLElement, pane: Pane<C>) {
     this._pane = pane
     this._init(rootContainer)
   }
@@ -37,7 +39,7 @@ export default abstract class Widget implements Updater {
     this.initDom(this._container)
   }
 
-  setBounding (bounding: BoundingLike): Widget {
+  setBounding (bounding: BoundingLike): Widget<C> {
     this._bounding.merge(bounding)
     return this
   }
@@ -46,7 +48,7 @@ export default abstract class Widget implements Updater {
     return this._bounding
   }
 
-  getPane (): Pane {
+  getPane (): Pane<C> {
     return this._pane
   }
 

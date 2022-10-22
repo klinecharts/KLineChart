@@ -16,7 +16,7 @@ import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 
 import { isArray, isObject, merge, clone } from '../utils/typeChecks'
-import { defaultStyleOptions } from '../options/styleOptions'
+import { defaultStyles } from './styles'
 
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
@@ -67,7 +67,7 @@ export default class ChartStore {
 
   constructor (chart: ChartInternal, styleOptions: any) {
     this._chart = chart
-    this._styleOptions = clone(defaultStyleOptions)
+    this._styleOptions = clone(defaultStyles)
     merge(this._styleOptions, styleOptions)
   }
 

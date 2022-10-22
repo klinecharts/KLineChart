@@ -31,6 +31,13 @@ export interface VisibleRange {
   to: number
 }
 
+export interface BarSpace {
+  bar: number
+  halfBar: number
+  gapBar: number
+  halfGapBar: number
+}
+
 export interface MinVisibleBarCount {
   left: number
   right: number
@@ -185,16 +192,13 @@ export default class TimeScaleStore {
    * 获取一条数据的空间
    * @returns {number}
    */
-  getBarSpace (): number {
-    return this._barSpace
-  }
-
-  /**
-   * 获取绘制一条数据的空间（不包括bar之间的间隙）
-   * @returns {*}
-   */
-  getGapBarSpace (): number {
-    return this._gapBarSpace
+  getBarSpace (): BarSpace {
+    return {
+      bar: this._barSpace,
+      halfBar: this._barSpace / 2,
+      gapBar: this._gapBarSpace,
+      halfGapBar: this._gapBarSpace / 2
+    }
   }
 
   /**
