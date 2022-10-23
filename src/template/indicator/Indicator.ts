@@ -12,9 +12,15 @@
  * limitations under the License.
  */
 
-import Required from '../../common/Required'
-
+import CustomRequired from '../../common/Required'
 import KLineData from '../../common/KLineData'
+import Bounding from '../../common/Bounding'
+
+import { VisibleRange } from '../../store/TimeScaleStore'
+import { IndicatorStyle } from '../../store/styles'
+
+import XAxis from '../../componentl/XAxis'
+import YAxis from '../../componentl/YAxis'
 
 export const enum IndicatorSeries {
   NORMAL = 'normal',
@@ -22,8 +28,8 @@ export const enum IndicatorSeries {
   VOLUME = 'volume'
 }
 
-export interface IndicatorPlotStyles {
-  style?: 'fill' | 'stroke' | 'stroke-fill'
+export interface IndicatorPlotStyle {
+  style?: 'fill' | 'stroke' | 'stroke-fill' | 'solid' | 'dashed'
   color?: string
 }
 
@@ -38,7 +44,7 @@ export interface IndicatorPlotStylesData<D> {
   next: IndicatorPlotStylesDataChild<D>
 }
 
-export type IndicatorPlotStylesCallback<D> = (data: IndicatorPlotStylesData<D>, defaultStyles: any) => IndicatorPlotStyles
+export type IndicatorPlotStylesCallback<D> = (data: IndicatorPlotStylesData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorPlotStyle
 
 export interface IndicatorPlot<D> {
   key: string
@@ -50,8 +56,23 @@ export interface IndicatorPlot<D> {
 
 export type IndicatorRegeneratePlotsCallback<D> = (calcParms: any[]) => Array<IndicatorPlot<D>>
 export type IndicatorCreateToolTipDataSourceCallback = () => any
-export type IndicatorDrawCallback = () => boolean
 
+export interface IndicatorDrawDataSource<D> {
+  kLineDataList: KLineData[]
+  indicatorDataList: D[]
+}
+export interface IndicatorDrawParams<D = any> {
+  ctx: CanvasRenderingContext2D
+  kLineDataList: KLineData[]
+  indicator: Indicator<D>
+  visibleRange: VisibleRange
+  bounding: Bounding
+  defaultStyles: IndicatorStyle
+  xAxis: XAxis
+  yAxis: YAxis
+}
+
+export type IndicatorDrawCallback<D> = (params: IndicatorDrawParams<D>) => boolean
 export type IndicatorCalcOptions<D> = Pick<Indicator<D>, 'plots' | 'calcParams' | 'extendData'>
 export type IndicatorCalcCallback<D> = (dataList: KLineData[], options: IndicatorCalcOptions<D>) => Promise<D[]> | D[]
 
@@ -69,7 +90,7 @@ export interface Indicator<D = any> {
   // 是否需要格式化大数据值，从1000开始格式化，比如100000是否需要格式化100K
   shouldFormatBigNumber?: boolean
   // 样式
-  styles?: any
+  styles?: IndicatorStyle
   // 扩展数据
   extendData?: any
   // 系列
@@ -87,21 +108,44 @@ export interface Indicator<D = any> {
   // 创建自定义提示文字
   createToolTipDataSource?: IndicatorCreateToolTipDataSourceCallback
   // 自定义绘制
-  draw?: IndicatorDrawCallback
+  draw?: IndicatorDrawCallback<D>
   // 结果
   result?: D[]
 }
 
 export type IndicatorConstructor<D = any> = new () => IndicatorTemplate<D>
 
-export default abstract class IndicatorTemplate<D = any> implements Required<Indicator<D>, 'calc'> {
+export function getIndicatorPlotStyles<D> (
+  kLineDataList: KLineData[],
+  indicatorDataList: D[],
+  dataIndex: number,
+  plot: IndicatorPlot<D>,
+  indicator: Indicator<D>,
+  defaultIndicatorStyles: IndicatorStyle,
+  defaultPlotStyles: Required<IndicatorPlotStyle>
+): Required<IndicatorPlotStyle> {
+  const style = defaultPlotStyles.style
+  const color = defaultPlotStyles.color
+  const cbData = {
+    prev: { kLineData: kLineDataList[dataIndex - 1], indicatorData: indicatorDataList[dataIndex - 1] },
+    current: { kLineData: kLineDataList[dataIndex], indicatorData: indicatorDataList[dataIndex] },
+    next: { kLineData: kLineDataList[dataIndex + 1], indicatorData: indicatorDataList[dataIndex + 1] }
+  }
+  const plotStyles = plot.styles?.(cbData, indicator, defaultIndicatorStyles) ?? { style, color }
+  return {
+    style: plotStyles.style ?? style,
+    color: plotStyles.color ?? color
+  }
+}
+
+export default abstract class IndicatorTemplate<D = any> implements CustomRequired<Indicator<D>, 'calc'> {
   name: string
   shortName?: string
   precision?: number
   calcParams?: any[]
   shouldOhlc?: boolean
   shouldFormatBigNumber?: boolean
-  styles?: any
+  styles?: IndicatorStyle
   extendData?: any
   series?: IndicatorSeries
   plots?: Array<IndicatorPlot<D>>
@@ -109,7 +153,7 @@ export default abstract class IndicatorTemplate<D = any> implements Required<Ind
   maxValue?: number
   regeneratePlots?: IndicatorRegeneratePlotsCallback<D>
   createToolTipDataSource?: IndicatorCreateToolTipDataSourceCallback
-  draw?: IndicatorDrawCallback
+  draw?: IndicatorDrawCallback<D>
 
   result?: D[] = []
 
@@ -196,7 +240,7 @@ export default abstract class IndicatorTemplate<D = any> implements Required<Ind
     return false
   }
 
-  setStyles (styles: any): boolean {
+  setStyles (styles: IndicatorStyle): boolean {
     if (this.styles !== styles) {
       this.styles = styles
       return true
@@ -232,7 +276,7 @@ export default abstract class IndicatorTemplate<D = any> implements Required<Ind
 
   abstract calc (dataList: KLineData[], options: IndicatorCalcOptions<D>): D[] | Promise<D[]>
 
-  static extend<D> (indicator: Required<Indicator<D>, 'calc'>): IndicatorConstructor<D> {
+  static extend<D> (indicator: CustomRequired<Indicator<D>, 'calc'>): IndicatorConstructor<D> {
     class Custom extends IndicatorTemplate<D> {
       constructor () {
         super(indicator)

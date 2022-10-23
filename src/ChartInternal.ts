@@ -12,8 +12,11 @@
  * limitations under the License.
  */
 
+import TypeOrNull from './common/TypeOrNull'
+
 import ChartStore from './store/ChartStore'
 
+import Pane from './panee/Pane'
 import CandlePane from './panee/CandlePane'
 import IndicatorPane from './panee/IndicatorPane'
 import XAxisPane from './panee/XAxisPane'
@@ -50,7 +53,7 @@ const ANNOTATION_ID_PREFIX = 'an_'
 export const CANDLE_PANE_ID = 'candle_pane'
 
 // x轴窗口id
-const XAXIS_PANE_ID = 'x_axis_pane'
+export const XAXIS_PANE_ID = 'x_axis_pane'
 
 export default class ChartInternal {
   private _container: HTMLElement
@@ -377,8 +380,11 @@ export default class ChartInternal {
    * @param paneId
    * @returns
    */
-  getPane (paneId) {
-    return this._panes.get(paneId)
+  getPaneById (paneId: string): TypeOrNull<Pane> {
+    if (paneId === XAXIS_PANE_ID) {
+      return this._xAxisPane
+    }
+    return this._panes.get(paneId) ?? null
   }
 
   /**

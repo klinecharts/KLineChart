@@ -13,8 +13,6 @@
  */
 
 import TypeOrNull from '../common/TypeOrNull'
-import ElementGroup from '../common/ElementGroup'
-import KLineData from '../common/KLineData'
 
 import ChartStore, { VisibleData } from '../store/ChartStore'
 import { CandleType, ChangeColor } from '../store/styles'
@@ -22,22 +20,24 @@ import { BarSpace } from '../store/TimeScaleStore'
 
 import YAxis from '../componentl/YAxis'
 
-import Widget from '../widget/Widget'
-
 import ChildrenView from './ChildrenView'
 
 export interface CandleBarOptions {
   type: CandleType
-  styles: ChangeColor
+  styles: Required<ChangeColor>
 }
 
 export default class CandleBarView extends ChildrenView {
-  private _candleBarOptions: TypeOrNull<CandleBarOptions> = null
-
-  protected drawStart (ctx: CanvasRenderingContext2D, widget: Widget<YAxis>): void {
-    super.drawStart(ctx, widget)
-    const chartStore = widget.getPane().getChart().getChartStore()
-    this._candleBarOptions = this.getCandleBarOptions(chartStore)
+  protected drawImp (ctx: CanvasRenderingContext2D): void {
+    const pane = this.getWidget().getPane()
+    const chartStore = pane.getChart().getChartStore()
+    const candleBarOptions = this.getCandleBarOptions(chartStore)
+    if (candleBarOptions !== null) {
+      const yAxis = pane.getAxisComponent()
+      this.drawChildren((data: VisibleData, barSpace: BarSpace) => {
+        this._drawCandleBar(ctx, yAxis, data, barSpace, candleBarOptions)
+      })
+    }
   }
 
   protected getCandleBarOptions (chartStore: ChartStore): TypeOrNull<CandleBarOptions> {
@@ -48,27 +48,21 @@ export default class CandleBarView extends ChildrenView {
     }
   }
 
-  protected drawChild (ctx: CanvasRenderingContext2D, data: VisibleData, barSpace: BarSpace, index: number, totalCount: number, axis: YAxis): void {
-    if (this._candleBarOptions !== null) {
-      const { data: kLineData, x } = data
-      this._drawCandleBar(ctx, axis, kLineData, x, barSpace)
-    }
-  }
-
-  private _drawCandleBar (ctx: CanvasRenderingContext2D, axis: YAxis, kLineData: KLineData, x: number, barSpace: BarSpace): void {
+  private _drawCandleBar (ctx: CanvasRenderingContext2D, axis: YAxis, data: VisibleData, barSpace: BarSpace, candleBarOptions: CandleBarOptions): void {
+    const { data: kLineData, x } = data
     const { open, high, low, close } = kLineData
     const { halfGapBar, gapBar } = barSpace
-    const { type, styles } = this._candleBarOptions as CandleBarOptions
+    const { type, styles } = candleBarOptions
     if (close > open) {
-      const upColor = styles.upColor as string
+      const upColor = styles.upColor
       ctx.strokeStyle = upColor
       ctx.fillStyle = upColor
     } else if (close < open) {
-      const downColor = styles.downColor as string
+      const downColor = styles.downColor
       ctx.strokeStyle = downColor
       ctx.fillStyle = downColor
     } else {
-      const noChangeColor = styles.noChangeColor as string
+      const noChangeColor = styles.noChangeColor
       ctx.strokeStyle = noChangeColor
       ctx.fillStyle = noChangeColor
     }

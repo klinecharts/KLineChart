@@ -29,7 +29,7 @@ import ActionStore from './ActionStore'
 import ChartInternal from '../ChartInternal'
 
 export interface VisibleData {
-  index: number
+  dataIndex: number
   x: number
   data: KLineData
 }
@@ -82,7 +82,7 @@ export default class ChartStore {
       const kLineData = this._dataList[i]
       const x = this._timeScaleStore.dataIndexToCoordinate(i)
       this._visibleDataList.push({
-        index: i,
+        dataIndex: i,
         x,
         data: kLineData
       })

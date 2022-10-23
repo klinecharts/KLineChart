@@ -364,6 +364,7 @@ export interface IndicatorTooltipStyle extends TooltipStyle {
 }
 
 export interface IndicatorStyle {
+  ohlc?: ChangeColor
   bars?: IndicatorBarCirleStyle[]
   lines?: Array<Omit<LineStyle, 'show'>>
   circles?: IndicatorBarCirleStyle[]
@@ -376,6 +377,11 @@ export interface IndicatorStyle {
  * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, tooltip: {showParams: boolean, showName: boolean, showRule: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}}, circle: {noChangeColor: string, upColor: string, downColor: string}, lastValueMark: {show: boolean, text: {paddingBottom: number, color: string, size: number, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}}}}
  */
 const defaultIndicator = {
+  ohlc: {
+    upColor: 'rgba(38, 166, 154, .65)',
+    downColor: 'rgba(239, 83, 80, .65)',
+    noChangeColor: '#888888'
+  },
   bars: [{
     style: StrokeFillType.FILL,
     upColor: 'rgba(38, 166, 154, .65)',

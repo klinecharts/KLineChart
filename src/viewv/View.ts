@@ -21,8 +21,22 @@ import FigureTemplate from '../template/figure/Figure'
 import Widget from '../widget/Widget'
 
 export default abstract class View<C extends Axis> extends ElementGroup<FigureTemplate> {
+  private readonly _widget: Widget<C>
+
+  constructor (widget: Widget<C>) {
+    super()
+    this._widget = widget
+  }
+
+  getWidget (): Widget<C> { return this._widget }
+
   /**
    * 绘制
    */
-  abstract draw (ctx: CanvasRenderingContext2D, widget: Widget<C>): void
+  draw (ctx: CanvasRenderingContext2D): void {
+    this.clear()
+    this.drawImp(ctx)
+  }
+
+  protected abstract drawImp (ctx: CanvasRenderingContext2D): void
 }

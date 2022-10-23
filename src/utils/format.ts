@@ -12,7 +12,19 @@
  * limitations under the License.
  */
 
-import { isNumber, isObject, isValid } from './typeChecks'
+import TypeOrNull from '../common/TypeOrNull'
+
+import { isNumber, isValid } from './typeChecks'
+
+const reEscapeChar = /\\(\\)?/g
+const rePropName = RegExp(
+  '[^.[\\]]+' + '|' +
+  '\\[(?:' +
+    '([^"\'][^[]*)' + '|' +
+    '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
+  ')\\]' + '|' +
+  '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))'
+  , 'g')
 
 /**
  * 格式化值
@@ -21,12 +33,26 @@ import { isNumber, isObject, isValid } from './typeChecks'
  * @param defaultValue
  * @returns {string|*}
  */
-export function formatValue<D> (data: D, key: keyof D, defaultValue?: any): any {
-  if (isObject(data)) {
-    const value = data[key]
-    if (isValid(value)) {
-      return value
+export function formatValue (data: TypeOrNull<object>, key: string, defaultValue?: any): any {
+  if (isValid(data)) {
+    const path: string[] = []
+    key.replace(rePropName, (subString: string, ...args: any[]) => {
+      let k = subString
+      if (isValid(args[1])) {
+        k = args[2].replace(reEscapeChar, '$1')
+      } else if (isValid(args[0])) {
+        k = args[0].trim()
+      }
+      path.push(k)
+      return ''
+    })
+    let value = data
+    let index = 0
+    const length = path.length
+    while (isValid(value) && index < length) {
+      value = value?.[path[index++]]
     }
+    return isValid(value) ? value : (defaultValue ?? '--')
   }
   return defaultValue ?? '--'
 }

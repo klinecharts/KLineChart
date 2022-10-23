@@ -14,33 +14,28 @@
 
 import YAxis from '../componentl/YAxis'
 
-import Widget from '../widget/Widget'
-
 import View from './View'
 
 import { VisibleData } from '../store/ChartStore'
 import { BarSpace } from '../store/TimeScaleStore'
 
+export type DrawChildCallback = (
+  data: VisibleData,
+  barSpace: BarSpace,
+  index: number
+) => void
+
+export type DrawEndCallback = () => void
+
 export default abstract class ChildrenView extends View<YAxis> {
-  draw (ctx: CanvasRenderingContext2D, widget: Widget<YAxis>): void {
-    this.drawStart(ctx, widget)
-    const pane = widget.getPane()
+  protected drawChildren (drawChildCallback: DrawChildCallback, drawEndCallback?: DrawEndCallback): void {
+    const pane = this.getWidget().getPane()
     const chartStore = pane.getChart().getChartStore()
     const visibleDataList = chartStore.getVisibleDataList()
     const barSpace = chartStore.getTimeScaleStore().getBarSpace()
-    const dataCount = visibleDataList.length
-    const axis = pane.getAxisComponent()
     visibleDataList.forEach((data: VisibleData, index: number) => {
-      this.drawChild(ctx, data, barSpace, index, dataCount, axis)
+      drawChildCallback(data, barSpace, index)
     })
-    this.drawEnd(ctx, widget)
+    drawEndCallback?.()
   }
-
-  protected drawStart (ctx: CanvasRenderingContext2D, widget: Widget<YAxis>): void {
-    this.clear()
-  }
-
-  protected drawEnd (ctx: CanvasRenderingContext2D, widget: Widget<YAxis>): void {}
-
-  protected abstract drawChild (ctx: CanvasRenderingContext2D, data: VisibleData, barSpace: BarSpace, index: number, totalCount: number, axis: YAxis): void
 }

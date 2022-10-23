@@ -13,6 +13,7 @@
  */
 
 import Bounding from '../common/Bounding'
+
 import YAxis from '../componentl/YAxis'
 
 import DrawWidget from './DrawWidget'

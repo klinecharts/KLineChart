@@ -38,7 +38,7 @@ export interface PaneOptions {
   }
 }
 
-export default abstract class Pane<C extends Axis> implements Updater {
+export default abstract class Pane<C extends Axis = Axis> implements Updater {
   private readonly _id: string
   private readonly _chart: ChartInternal
   private _mainWidget: DrawWidget<C>
