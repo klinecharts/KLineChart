@@ -19,8 +19,7 @@ import Bounding from '../../common/Bounding'
 import { VisibleRange } from '../../store/TimeScaleStore'
 import { IndicatorStyle } from '../../store/styles'
 
-import XAxis from '../../componentl/XAxis'
-import YAxis from '../../componentl/YAxis'
+import Axis from '../../componentl/Axis'
 
 export const enum IndicatorSeries {
   NORMAL = 'normal',
@@ -46,7 +45,7 @@ export interface IndicatorPlotStylesData<D> {
 
 export type IndicatorPlotStylesCallback<D> = (data: IndicatorPlotStylesData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorPlotStyle
 
-export interface IndicatorPlot<D> {
+export interface IndicatorPlot<D = any> {
   key: string
   title?: string
   type?: string
@@ -68,8 +67,8 @@ export interface IndicatorDrawParams<D = any> {
   visibleRange: VisibleRange
   bounding: Bounding
   defaultStyles: IndicatorStyle
-  xAxis: XAxis
-  yAxis: YAxis
+  xAxis: Axis
+  yAxis: Axis
 }
 
 export type IndicatorDrawCallback<D> = (params: IndicatorDrawParams<D>) => boolean

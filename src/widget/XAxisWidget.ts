@@ -12,21 +12,18 @@
  * limitations under the License.
  */
 
-import Bounding from '../common/Bounding'
+import DrawWidget from './DrawWidget'
 
 import XAxis from '../componentl/XAxis'
 
-import DrawWidget from './DrawWidget'
-
 import XAxisView from '../viewv/XAxisView'
 export default class XAxisWidget extends DrawWidget<XAxis> {
-  private readonly _xAxisView = new XAxisView()
+  private readonly _xAxisView = new XAxisView(this)
 
-  protected updateMain (ctx: CanvasRenderingContext2D, bounding: Bounding): void {
-    throw new Error('Method not implemented.')
+  protected updateMain (ctx: CanvasRenderingContext2D): void {
+    this._xAxisView.draw(ctx)
   }
 
-  protected updateOverlay (ctx: CanvasRenderingContext2D, bounding: Bounding): void {
-    throw new Error('Method not implemented.')
+  protected updateOverlay (ctx: CanvasRenderingContext2D): void {
   }
 }

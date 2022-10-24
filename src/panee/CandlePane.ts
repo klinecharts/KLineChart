@@ -12,12 +12,11 @@
  * limitations under the License.
  */
 
-import YAxis from '../componentl/YAxis'
-
 import DrawWidget from '../widget/DrawWidget'
 import CandleWidget from '../widget/CandleWidget'
 
 import IndicatorPane from './IndicatorPane'
+import YAxis from '../componentl/YAxis'
 
 export default class CandlePane extends IndicatorPane {
   getName (): string {

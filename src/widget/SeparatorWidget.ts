@@ -16,6 +16,7 @@ import Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
 
 import YAxis from '../componentl/YAxis'
+
 import Widget from './Widget'
 
 import { createDom } from '../utils/dom'
@@ -48,11 +49,13 @@ export default class SeparatorWidget extends Widget<YAxis> {
 
   protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
     if (level === UpdateLevel.ALL || level === UpdateLevel.SEPARATOR) {
-      this._moveDom.style.top = `${-Math.floor((7 - separatorOptions.size) / 2)}px`
-      container.style.backgroundColor = separatorOptions.color
-      container.style.height = `${separatorOptions.size}px`
-      container.style.marginLeft = `${separatorOptions.fill ? 0 : this._offsetLeft}px`
-      container.style.width = separatorOptions.fill ? '100%' : `${bounding.width}px`
+      const separatorStyles = this.getPane().getChart().getChartStore().getStyleOptions().separator
+      this._moveDom.style.top = `${-Math.floor((7 - separatorStyles.size) / 2)}px`
+      const fill = separatorStyles.fill as boolean
+      container.style.backgroundColor = separatorStyles.color
+      container.style.height = `${separatorStyles.size as number}px`
+      container.style.marginLeft = `${fill ? 0 : bounding.left}px`
+      container.style.width = fill ? '100%' : `${bounding.width}px`
     }
   }
 }

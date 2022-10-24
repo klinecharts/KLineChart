@@ -12,18 +12,25 @@
  * limitations under the License.
  */
 
-import Bounding from '../common/Bounding'
+import DrawWidget from './DrawWidget'
 
 import YAxis from '../componentl/YAxis'
 
-import DrawWidget from './DrawWidget'
+import YAxisView from '../viewv/YAxisView'
+import CandleLastPriceLabelView from '../viewv/CandleLastPriceLabelView'
+import IndicatorLastValueView from '../viewv/IndicatorLastValueView'
 
 export default class YAxisWidget extends DrawWidget<YAxis> {
-  protected updateMain (ctx: CanvasRenderingContext2D, bounding: Bounding): void {
-    throw new Error('Method not implemented.')
+  private readonly _yAxisView = new YAxisView(this)
+  private readonly _candleLastPriceLabelView = new CandleLastPriceLabelView(this)
+  private readonly _indicatorLastValueView = new IndicatorLastValueView(this)
+
+  protected updateMain (ctx: CanvasRenderingContext2D): void {
+    this._yAxisView.draw(ctx)
+    this._candleLastPriceLabelView.draw(ctx)
+    this._indicatorLastValueView.draw(ctx)
   }
 
-  protected updateOverlay (ctx: CanvasRenderingContext2D, bounding: Bounding): void {
-    throw new Error('Method not implemented.')
+  protected updateOverlay (ctx: CanvasRenderingContext2D): void {
   }
 }

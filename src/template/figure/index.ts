@@ -16,7 +16,9 @@ import TypeOrNull from '../../common/TypeOrNull'
 
 import FigureTemplate, { Figure, FigureConstructor } from './Figure'
 
-const figures = {}
+interface Figures { [key: string]: FigureConstructor }
+
+const figures: Figures = {}
 
 // @ts-expect-error
 const files = require.context('./', false)
@@ -27,12 +29,20 @@ files.keys().forEach((key: string) => {
   }
 })
 
-function reisterFigure<A> (figure: Figure<A>): void {
+function reisterFigure<A = any> (figure: Figure<A>): void {
   figures[figure.name] = FigureTemplate.extend(figure)
 }
 
-function getFigureClass<A> (name: string): TypeOrNull<FigureConstructor<A>> {
+function getFigureClass<A = any> (name: string): TypeOrNull<FigureConstructor<A>> {
   return figures[name] ?? null
 }
 
-export { getFigureClass, reisterFigure }
+function createFigure<A = any> (name: string, attrs: A): TypeOrNull<FigureTemplate<A>> {
+  const FigureClazz = getFigureClass<A>(name)
+  if (FigureClazz !== null) {
+    return new FigureClazz(attrs)
+  }
+  return null
+}
+
+export { getFigureClass, reisterFigure, createFigure }

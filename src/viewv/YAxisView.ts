@@ -12,25 +12,119 @@
  * limitations under the License.
  */
 
-import GraphTemplate from '../template/figure/Figure'
+import Bounding from '../common/Bounding'
+
 import { LineAttrs } from '../template/figure/line'
 import { TextAttrs } from '../template/figure/text'
 
 import { Tick } from '../componentl/Axis'
-import AxisView, { AxisStyle } from './AxisView'
+import YAxis from '../componentl/YAxis'
 
-export type YAxisStyle = AxisStyle & { width: number | 'auto', type: 'normal' | 'percentage' | 'log', position: 'left' | 'right', inside: boolean, reverse: boolean }
+import AxisView from './AxisView'
+import { AxisStyle, AxisLineStyle, AxisTickLineStyle, AxisTickTextStyle } from '../store/styles'
 
-export default class YAxisView extends AxisView {
-  protected createAxisLine (styles: AxisStyle): GraphTemplate<LineAttrs> {
-    throw new Error('Method not implemented.')
+export default class YxisView extends AxisView<YAxis> {
+  protected getAxisStyles (styles: any): AxisStyle {
+    return styles.xAxis
   }
 
-  protected createTickLine (tick: Tick, styles: AxisStyle): GraphTemplate<LineAttrs> {
-    throw new Error('Method not implemented.')
+  protected createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs {
+    const yAxis = this.getWidget().getPane().getAxisComponent()
+    const axisLineStyles = styles.axisLine as Required<AxisLineStyle>
+    let x: number
+    if (yAxis.isFromZero()) {
+      x = 0
+    } else {
+      x = bounding.width - 1
+    }
+    return {
+      coordinates: [
+        { x, y: 0 },
+        { x, y: bounding.height }
+      ],
+      styles: {
+        style: 'solid',
+        size: axisLineStyles.size,
+        color: axisLineStyles.color,
+        dashedValue: []
+      }
+    }
   }
 
-  protected createTickText (tick: Tick, styles: AxisStyle): GraphTemplate<TextAttrs> {
-    throw new Error('Method not implemented.')
+  protected createTickLines (ticks: Tick[], bounding: Bounding, styles: AxisStyle): LineAttrs[] {
+    const yAxis = this.getWidget().getPane().getAxisComponent()
+    const axisLineStyles = styles.axisLine as Required<AxisLineStyle>
+    const tickLineStyles = styles.tickLine as Required<AxisTickLineStyle>
+
+    let startX = 0
+    let endX = 0
+    if (yAxis.isFromZero()) {
+      startX = 0
+      if (axisLineStyles.show) {
+        startX += axisLineStyles.size
+      }
+      endX = startX + tickLineStyles.length
+    } else {
+      startX = bounding.width
+      if (axisLineStyles.show) {
+        startX -= axisLineStyles.size
+      }
+      endX = startX - tickLineStyles.length
+    }
+    return ticks.map(tick => ({
+      coordinates: [
+        { x: startX, y: tick.coord },
+        { x: endX, y: tick.coord }
+      ],
+      styles: {
+        style: 'solid',
+        size: tickLineStyles.size,
+        color: tickLineStyles.color,
+        dashedValue: []
+      }
+    }))
+  }
+
+  protected createTickTexts (ticks: Tick[], bounding: Bounding, styles: AxisStyle): TextAttrs[] {
+    const yAxis = this.getWidget().getPane().getAxisComponent()
+    const axisLineStyles = styles.axisLine as Required<AxisLineStyle>
+    const tickLineStyles = styles.tickLine as Required<AxisTickLineStyle>
+    const tickTextStyles = styles.tickText as Required<AxisTickTextStyle>
+
+    let x = 0
+    let align
+    if (yAxis.isFromZero()) {
+      x = tickTextStyles.marginStart
+      if (axisLineStyles.show) {
+        x += axisLineStyles.size
+      }
+      if (tickLineStyles.show) {
+        x += tickLineStyles.length
+      }
+      align = 'left'
+    } else {
+      x = bounding.width - tickTextStyles.marginEnd
+      if (axisLineStyles.show) {
+        x -= axisLineStyles.size
+      }
+      if (tickLineStyles.show) {
+        x -= tickLineStyles.length
+      }
+      align = 'right'
+    }
+    return ticks.map(tick => ({
+      x,
+      y: tick.coord,
+      text: tick.text,
+      styles: {
+        style: 'fill',
+        color: tickTextStyles.color,
+        size: tickTextStyles.size,
+        family: tickTextStyles.family,
+        weight: tickTextStyles.weight,
+        align,
+        baseline: 'middle'
+      }
+    }))
   }
 }

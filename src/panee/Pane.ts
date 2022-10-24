@@ -18,7 +18,6 @@ import Bounding, { BoundingLike } from '../common/Bounding'
 
 import Axis from '../componentl/Axis'
 
-import Widget from '../widget/Widget'
 import DrawWidget from '../widget/DrawWidget'
 import SeparatorWidget from '../widget/SeparatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
@@ -38,7 +37,7 @@ export interface PaneOptions {
   }
 }
 
-export default abstract class Pane<C extends Axis = Axis> implements Updater {
+export default abstract class Pane<C extends Axis> implements Updater {
   private readonly _id: string
   private readonly _chart: ChartInternal
   private _mainWidget: DrawWidget<C>
@@ -90,7 +89,7 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
     return this
   }
 
-  getMainWidget (): Widget<C> { return this._mainWidget }
+  getMainWidget (): DrawWidget<C> { return this._mainWidget }
 
   getYAxisWidget (): TypeOrNull<YAxisWidget> { return this._yAxisWidget }
 

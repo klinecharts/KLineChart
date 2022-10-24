@@ -41,7 +41,7 @@ function drawRect (ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 }
 
 export interface RectStyle {
-  fillColor: string
+  fillColor: string | CanvasGradient
   stokeColor: string
   strokeSize: number
   style: 'fill' | 'stroke' | 'stroke-fill'

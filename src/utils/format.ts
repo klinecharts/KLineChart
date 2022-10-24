@@ -89,7 +89,7 @@ export function formatDate (dateTimeFormat: Intl.DateTimeFormat, timestamp: numb
 export function formatPrecision (value: string | number, precision?: number): string {
   const v = +value
   if (isNumber(v)) {
-    return v.toFixed(precision)
+    return v.toFixed(precision ?? 2)
   }
   return `${v}`
 }

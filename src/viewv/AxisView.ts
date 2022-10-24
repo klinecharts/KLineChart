@@ -12,47 +12,48 @@
  * limitations under the License.
  */
 
-import GraphTemplate from '../template/figure/Figure'
-import { LineAttrs, LineStyle } from '../template/figure/line'
-import { TextAttrs, TextStyle } from '../template/figure/text'
+import Bounding from '../common/Bounding'
 
-import { Tick } from '../componentl/Axis'
+import { LineAttrs } from '../template/figure/line'
+import { TextAttrs } from '../template/figure/text'
+
+import { AxisStyle } from '../store/styles'
+
+import Axis, { Tick } from '../componentl/Axis'
 
 import View from './View'
 
-export type AxisStyle = TickStyle & { show: boolean, axisLine: AxisLineStyle }
-
-export interface AxisLineStyle {
-  show: boolean
-  color: string
-  size: number
-}
-
-export interface TickStyle {
-  tickLine: LineStyle & { show: boolean, length: number }
-  tickText: Omit<TextStyle, 'align' | 'baseline'> & { show: boolean, paddingStart: number, paddingEnd: number }
-}
-
-export default abstract class AxisView extends View<Tick[], AxisStyle> {
-  draw (ctx: CanvasRenderingContext2D, data: Tick[], styles: AxisStyle): void {
-    if (styles.show) {
-      if (styles.axisLine.show) {
-        this.createAxisLine(styles).draw(ctx)
+export default abstract class AxisView<C extends Axis> extends View<C> {
+  drawImp (ctx: CanvasRenderingContext2D): void {
+    const widget = this.getWidget()
+    const pane = widget.getPane()
+    const bounding = widget.getBounding()
+    const axis = pane.getAxisComponent()
+    const chartStore = pane.getChart().getChartStore()
+    const styles: AxisStyle = this.getAxisStyles(chartStore.getStyleOptions())
+    if (styles.show ?? false) {
+      if (styles.axisLine?.show ?? false) {
+        this.createFigure('line', this.createAxisLine(bounding, styles))?.draw(ctx)
       }
-      if (styles.tickLine.show) {
-        data.forEach(tick => {
-          this.createTickLine(tick, styles).draw(ctx)
+      const ticks = axis.getTicks()
+      if (styles.tickLine?.show ?? false) {
+        const lines = this.createTickLines(ticks, bounding, styles)
+        lines.forEach(line => {
+          this.createFigure('line', line)?.draw(ctx)
         })
       }
-      if (styles.tickText.show) {
-        data.forEach(tick => {
-          this.createTickText(tick, styles).draw(ctx)
+      if (styles.tickText?.show ?? false) {
+        const texts = this.createTickTexts(ticks, bounding, styles)
+        texts.forEach(text => {
+          this.createFigure('text', text)?.draw(ctx)
         })
       }
     }
   }
 
-  protected abstract createAxisLine (styles: AxisStyle): GraphTemplate<LineAttrs>
-  protected abstract createTickLine (tick: Tick, styles: AxisStyle): GraphTemplate<LineAttrs>
-  protected abstract createTickText (tick: Tick, styles: AxisStyle): GraphTemplate<TextAttrs>
+  protected abstract getAxisStyles (styles: any): AxisStyle
+
+  protected abstract createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs
+  protected abstract createTickLines (ticks: Tick[], bounding: Bounding, styles: AxisStyle): LineAttrs[]
+  protected abstract createTickTexts (tick: Tick[], bounding: Bounding, styles: AxisStyle): TextAttrs[]
 }

@@ -18,12 +18,14 @@ import ChartStore, { VisibleData } from '../store/ChartStore'
 import { CandleType, ChangeColor } from '../store/styles'
 import { BarSpace } from '../store/TimeScaleStore'
 
-import YAxis from '../componentl/YAxis'
+import Axis from '../componentl/Axis'
+
+import { RectAttrs } from '../template/figure/rect'
 
 import ChildrenView from './ChildrenView'
 
 export interface CandleBarOptions {
-  type: CandleType
+  type: Exclude<CandleType, 'area'>
   styles: Required<ChangeColor>
 }
 
@@ -48,23 +50,18 @@ export default class CandleBarView extends ChildrenView {
     }
   }
 
-  private _drawCandleBar (ctx: CanvasRenderingContext2D, axis: YAxis, data: VisibleData, barSpace: BarSpace, candleBarOptions: CandleBarOptions): void {
+  private _drawCandleBar (ctx: CanvasRenderingContext2D, axis: Axis, data: VisibleData, barSpace: BarSpace, candleBarOptions: CandleBarOptions): void {
     const { data: kLineData, x } = data
     const { open, high, low, close } = kLineData
     const { halfGapBar, gapBar } = barSpace
     const { type, styles } = candleBarOptions
+    let color: string
     if (close > open) {
-      const upColor = styles.upColor
-      ctx.strokeStyle = upColor
-      ctx.fillStyle = upColor
+      color = styles.upColor
     } else if (close < open) {
-      const downColor = styles.downColor
-      ctx.strokeStyle = downColor
-      ctx.fillStyle = downColor
+      color = styles.downColor
     } else {
-      const noChangeColor = styles.noChangeColor
-      ctx.strokeStyle = noChangeColor
-      ctx.fillStyle = noChangeColor
+      color = styles.noChangeColor
     }
     const openY = axis.convertToPixel(open)
     const closeY = axis.convertToPixel(close)
@@ -74,41 +71,113 @@ export default class CandleBarView extends ChildrenView {
       axis.convertToPixel(low)
     ]
     priceY.sort((a, b) => a - b)
-    ctx.fillRect(x - 0.5, priceY[0], 1, priceY[1] - priceY[0])
-    ctx.fillRect(x - 0.5, priceY[2], 1, priceY[3] - priceY[2])
 
     const barHeight = Math.max(1, priceY[2] - priceY[1])
-    switch (type) {
-      case CandleType.CANDLE_SOLID: {
-        ctx.fillRect(x - halfGapBar, priceY[1], gapBar, barHeight)
-        break
-      }
-      case CandleType.CANDLE_STROKE: {
-        ctx.strokeRect(x - halfGapBar + 0.5, priceY[1], gapBar - 1, barHeight)
-        break
-      }
-      case CandleType.CANDLE_UP_STROKE: {
-        if (close > open) {
-          ctx.strokeRect(x - halfGapBar + 0.5, priceY[1], gapBar - 1, barHeight)
-        } else {
-          ctx.fillRect(x - halfGapBar, priceY[1], gapBar, barHeight)
+
+    let rects: RectAttrs[] = []
+    if (type !== CandleType.OHLC) {
+      rects.push({
+        x: x - 0.5,
+        y: priceY[0],
+        width: 1,
+        height: priceY[1] - priceY[0],
+        styles: {
+          style: 'fill',
+          fillColor: color,
+          stokeColor: color,
+          strokeSize: 1,
+          radius: 0
         }
-        break
+      })
+      if (
+        type === CandleType.CANDLE_STROKE ||
+        (type === CandleType.CANDLE_UP_STROKE && open < close) ||
+        (type === CandleType.CANDLE_DOWN_STROKE && open > close)
+      ) {
+        rects.push({
+          x: x - halfGapBar + 0.5,
+          y: priceY[1],
+          width: gapBar - 1,
+          height: barHeight,
+          styles: {
+            style: 'stroke',
+            fillColor: color,
+            stokeColor: color,
+            strokeSize: 1,
+            radius: 0
+          }
+        })
+      } else {
+        rects.push({
+          x: x - halfGapBar,
+          y: priceY[1],
+          width: gapBar,
+          height: barHeight,
+          styles: {
+            style: 'fill',
+            fillColor: color,
+            stokeColor: color,
+            strokeSize: 1,
+            radius: 0
+          }
+        })
       }
-      case CandleType.CANDLE_DOWN_STROKE: {
-        if (close > open) {
-          ctx.fillRect(x - halfGapBar, priceY[1], gapBar, barHeight)
-        } else {
-          ctx.strokeRect(x - halfGapBar + 0.5, priceY[1], gapBar - 1, barHeight)
+      rects.push({
+        x: x - 0.5,
+        y: priceY[2],
+        width: 1,
+        height: priceY[3] - priceY[2],
+        styles: {
+          style: 'fill',
+          fillColor: color,
+          stokeColor: color,
+          strokeSize: 1,
+          radius: 0
         }
-        break
-      }
-      default: {
-        ctx.fillRect(x - 0.5, priceY[0], 1, priceY[3] - priceY[0])
-        ctx.fillRect(x - halfGapBar, openY, halfGapBar, 1)
-        ctx.fillRect(x, closeY, halfGapBar, 1)
-        break
-      }
+      })
+    } else {
+      rects = [
+        {
+          x: x - 0.5,
+          y: priceY[0],
+          width: 1,
+          height: priceY[3] - priceY[0],
+          styles: {
+            style: 'fill',
+            fillColor: color,
+            stokeColor: color,
+            strokeSize: 1,
+            radius: 0
+          }
+        }, {
+          x: x - halfGapBar,
+          y: openY,
+          width: halfGapBar,
+          height: 1,
+          styles: {
+            style: 'fill',
+            fillColor: color,
+            stokeColor: color,
+            strokeSize: 1,
+            radius: 0
+          }
+        }, {
+          x,
+          y: closeY,
+          width: halfGapBar,
+          height: 1,
+          styles: {
+            style: 'fill',
+            fillColor: color,
+            stokeColor: color,
+            strokeSize: 1,
+            radius: 0
+          }
+        }
+      ]
     }
+    rects.forEach(rect => {
+      this.createFigure('rect', rect)?.draw(ctx)
+    })
   }
 }

@@ -12,8 +12,6 @@
  * limitations under the License.
  */
 
-import YAxis from '../componentl/YAxis'
-
 import View from './View'
 
 import { VisibleData } from '../store/ChartStore'
@@ -25,10 +23,8 @@ export type DrawChildCallback = (
   index: number
 ) => void
 
-export type DrawEndCallback = () => void
-
-export default abstract class ChildrenView extends View<YAxis> {
-  protected drawChildren (drawChildCallback: DrawChildCallback, drawEndCallback?: DrawEndCallback): void {
+export default abstract class ChildrenView extends View {
+  protected drawChildren (drawChildCallback: DrawChildCallback): void {
     const pane = this.getWidget().getPane()
     const chartStore = pane.getChart().getChartStore()
     const visibleDataList = chartStore.getVisibleDataList()
@@ -36,6 +32,5 @@ export default abstract class ChildrenView extends View<YAxis> {
     visibleDataList.forEach((data: VisibleData, index: number) => {
       drawChildCallback(data, barSpace, index)
     })
-    drawEndCallback?.()
   }
 }

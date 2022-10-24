@@ -21,13 +21,9 @@ import ChartStore, { VisibleData } from '../store/ChartStore'
 import { BarSpace } from '../store/TimeScaleStore'
 import { CandleType, IndicatorStyle } from '../store/styles'
 
-import XAxis from '../componentl/XAxis'
+import Axis from '../componentl/Axis'
 
-import { getFigureClass } from '../template/figure'
-import { CircleAttrs } from '../template/figure/circle'
-import { RectAttrs } from '../template/figure/rect'
 import { LineAttrs } from '../template/figure/line'
-import { FigureConstructor } from '../template/figure/Figure'
 import { IndicatorPlotStyle, getIndicatorPlotStyles } from '../template/indicator/Indicator'
 
 import CandleBarView, { CandleBarOptions } from './CandleBarView'
@@ -63,7 +59,7 @@ export default class IndicatorView extends CandleBarView {
     const pane = widget.getPane()
     const chart = pane.getChart()
     const bounding = widget.getBounding()
-    const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as XAxis
+    const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as Axis
     const yAxis = pane.getAxisComponent()
     const chartStore = chart.getChartStore()
     const dataList = chartStore.getDataList()
@@ -72,10 +68,10 @@ export default class IndicatorView extends CandleBarView {
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     const defaultStyles = chartStore.getStyleOptions().indicator as IndicatorStyle
     indicators.forEach(indicator => {
-      let isExtend = false
+      let isCover = false
       if (isValid(indicator.draw)) {
         ctx.save()
-        isExtend = indicator.draw?.({
+        isCover = indicator.draw?.({
           ctx,
           kLineDataList: dataList,
           indicator,
@@ -87,7 +83,7 @@ export default class IndicatorView extends CandleBarView {
         }) ?? false
         ctx.restore()
       }
-      if (isExtend) {
+      if (!isCover) {
         const plots = indicator.plots ?? []
         const result = indicator.result ?? []
         const styles = indicator.styles ?? null
@@ -105,107 +101,112 @@ export default class IndicatorView extends CandleBarView {
 
         const lines: LineAttrs[] = []
 
-        this.drawChildren(
-          (data: VisibleData, barSpace: BarSpace) => {
-            const { halfGapBar, gapBar } = barSpace
-            const { dataIndex, x } = data
-            const indicatorData = result[dataIndex] ?? {}
-            let circleCount = 0
-            let barCount = 0
-            let lineCount = 0
-            plots.forEach(plot => {
-              const value = indicatorData[plot.key]
-              const valueY = yAxis.convertToPixel(value)
-              switch (plot.type ?? '') {
-                case 'circle': {
-                  if (isValid(value)) {
-                    const circleStyle = circleStyles[circleCount % circleStyleCount]
-                    const plotStyle = getIndicatorPlotStyles(
-                      dataList, result, dataIndex,
-                      plot, indicator, defaultStyles,
-                      {
-                        style: circleStyle.style,
-                        color: circleStyle.noChangeColor
-                      }
-                    )
-                    const FigureClass = getFigureClass<CircleAttrs>('circle') as FigureConstructor<CircleAttrs>
-                    if (isValid(FigureClass)) {
-                      new FigureClass({
-                        x,
-                        y: valueY,
-                        r: halfGapBar,
-                        styles: {
-                          style: plotStyle.style as 'fill' | 'stroke' | 'stroke-fill',
-                          fillColor: plotStyle.color,
-                          stokeColor: plotStyle.color,
-                          strokeSize: 1
-                        }
-                      }).draw(ctx)
+        this.drawChildren((data: VisibleData, barSpace: BarSpace) => {
+          const { halfGapBar, gapBar } = barSpace
+          const { dataIndex, x } = data
+          const indicatorData = result[dataIndex] ?? {}
+          let circleCount = 0
+          let barCount = 0
+          let lineCount = 0
+          plots.forEach(plot => {
+            const value = indicatorData[plot.key]
+            const valueY = yAxis.convertToPixel(value)
+            switch (plot.type) {
+              case 'circle': {
+                if (isValid(value)) {
+                  const circleStyle = circleStyles[circleCount % circleStyleCount]
+                  const plotStyle = getIndicatorPlotStyles(
+                    dataList, result, dataIndex,
+                    plot, indicator, defaultStyles,
+                    {
+                      style: circleStyle.style,
+                      color: circleStyle.noChangeColor
                     }
-                  }
-                  circleCount++
-                  break
+                  )
+                  this.createFigure('circle', {
+                    x,
+                    y: valueY,
+                    r: halfGapBar,
+                    styles: {
+                      style: plotStyle.style as 'fill' | 'stroke' | 'stroke-fill',
+                      fillColor: plotStyle.color,
+                      stokeColor: plotStyle.color,
+                      strokeSize: 1
+                    }
+                  })?.draw(ctx)
                 }
-                case 'bar': {
-                  if (isValid(value)) {
-                    const barStyle = barStyles[barCount % barStyleCount]
-                    const plotStyle = getIndicatorPlotStyles(
-                      dataList, result, dataIndex,
-                      plot, indicator, defaultStyles,
-                      {
-                        style: barStyle.style,
-                        color: barStyle.noChangeColor
-                      }
-                    )
-                    const baseValue = plot.baseValue ?? yAxis.getExtremum().min
-                    const baseValueY = yAxis.convertToPixel(baseValue)
-                    const height = Math.abs(baseValueY - valueY)
-                    let y: number
-                    if (valueY > baseValueY) {
-                      y = baseValueY
+                circleCount++
+                break
+              }
+              case 'bar': {
+                if (isValid(value)) {
+                  const barStyle = barStyles[barCount % barStyleCount]
+                  const plotStyle = getIndicatorPlotStyles(
+                    dataList, result, dataIndex,
+                    plot, indicator, defaultStyles,
+                    {
+                      style: barStyle.style,
+                      color: barStyle.noChangeColor
+                    }
+                  )
+                  const baseValue = plot.baseValue ?? yAxis.getExtremum().min
+                  const baseValueY = yAxis.convertToPixel(baseValue)
+                  const height = Math.abs(baseValueY - valueY)
+                  let y: number
+                  if (valueY > baseValueY) {
+                    y = baseValueY
+                  } else {
+                    y = height < 1 ? baseValueY - 1 : valueY
+                  }
+                  this.createFigure('rect', {
+                    x: x - halfGapBar,
+                    y,
+                    width: gapBar,
+                    height,
+                    styles: {
+                      style: plotStyle.style as 'fill' | 'stroke' | 'stroke-fill',
+                      fillColor: plotStyle.color,
+                      stokeColor: plotStyle.color,
+                      strokeSize: 1,
+                      radius: 0
+                    }
+                  })?.draw(ctx)
+                }
+                barCount++
+                break
+              }
+              case 'line': {
+                let plotStyle: TypeOrNull<IndicatorPlotStyle> = null
+                if (isValid(value)) {
+                  const lineStyle = lineStyles[lineCount % lineStyleCount]
+                  plotStyle = getIndicatorPlotStyles(
+                    dataList, result, dataIndex,
+                    plot, indicator, defaultStyles,
+                    {
+                      style: lineStyle.style,
+                      color: lineStyle.color
+                    }
+                  )
+                  const coordinate = { x, y: valueY }
+                  const prevPlotStyle = linePlotStyles[lineCount]
+                  if (!isValid(lineCoordinates[lineCount])) {
+                    lineCoordinates[lineCount] = []
+                  }
+                  lineCoordinates[lineCount].push(coordinate)
+                  if (isValid(prevPlotStyle)) {
+                    if (prevPlotStyle?.color !== plotStyle.color) {
+                      lines.push({
+                        coordinates: lineCoordinates[lineCount],
+                        styles: {
+                          style: plotStyle.style as 'solid' | 'dashed',
+                          color: plotStyle?.color as string,
+                          size: lineStyle.size,
+                          dashedValue: lineStyle.dashedValue
+                        }
+                      })
+                      lineCoordinates[lineCount] = [coordinate]
                     } else {
-                      y = height < 1 ? baseValueY - 1 : valueY
-                    }
-                    const FigureClass = getFigureClass<RectAttrs>('rect') as FigureConstructor<RectAttrs>
-                    if (isValid(FigureClass)) {
-                      new FigureClass({
-                        x: x - halfGapBar,
-                        y,
-                        width: gapBar,
-                        height,
-                        styles: {
-                          style: plotStyle.style as 'fill' | 'stroke' | 'stroke-fill',
-                          fillColor: plotStyle.color,
-                          stokeColor: plotStyle.color,
-                          strokeSize: 1,
-                          radius: 0
-                        }
-                      }).draw(ctx)
-                    }
-                  }
-                  barCount++
-                  break
-                }
-                case 'line': {
-                  let plotStyle: TypeOrNull<IndicatorPlotStyle> = null
-                  if (isValid(value)) {
-                    const lineStyle = lineStyles[lineCount % lineStyleCount]
-                    plotStyle = getIndicatorPlotStyles(
-                      dataList, result, dataIndex,
-                      plot, indicator, defaultStyles,
-                      {
-                        style: lineStyle.style,
-                        color: lineStyle.color
-                      }
-                    )
-                    const coordinate = { x, y: valueY }
-                    const prevPlotStyle = linePlotStyles[lineCount]
-                    if (!isValid(lineCoordinates[lineCount])) {
-                      lineCoordinates[lineCount] = []
-                    }
-                    lineCoordinates[lineCount].push(coordinate)
-                    if (isValid(prevPlotStyle)) {
-                      if (prevPlotStyle?.color !== plotStyle.color) {
+                      if (prevPlotStyle?.style !== plotStyle.style) {
                         lines.push({
                           coordinates: lineCoordinates[lineCount],
                           styles: {
@@ -216,50 +217,32 @@ export default class IndicatorView extends CandleBarView {
                           }
                         })
                         lineCoordinates[lineCount] = [coordinate]
-                      } else {
-                        if (prevPlotStyle?.style !== plotStyle.style) {
-                          lines.push({
-                            coordinates: lineCoordinates[lineCount],
-                            styles: {
-                              style: plotStyle.style as 'solid' | 'dashed',
-                              color: plotStyle?.color as string,
-                              size: lineStyle.size,
-                              dashedValue: lineStyle.dashedValue
-                            }
-                          })
-                          lineCoordinates[lineCount] = [coordinate]
-                        }
                       }
                     }
-                    if (dataIndex === visibleRange.to - 1) {
-                      lines.push({
-                        coordinates: lineCoordinates[lineCount],
-                        styles: {
-                          style: plotStyle.style as 'solid' | 'dashed',
-                          color: plotStyle?.color as string,
-                          size: lineStyle.size,
-                          dashedValue: lineStyle.dashedValue
-                        }
-                      })
-                    }
                   }
-                  linePlotStyles[lineCount] = plotStyle
-                  lineCount++
-                  break
+                  if (dataIndex === visibleRange.to - 1) {
+                    lines.push({
+                      coordinates: lineCoordinates[lineCount],
+                      styles: {
+                        style: plotStyle.style as 'solid' | 'dashed',
+                        color: plotStyle?.color as string,
+                        size: lineStyle.size,
+                        dashedValue: lineStyle.dashedValue
+                      }
+                    })
+                  }
                 }
-                default: { break }
+                linePlotStyles[lineCount] = plotStyle
+                lineCount++
+                break
               }
-            })
-          },
-          () => {
-            const FigureClass = getFigureClass<LineAttrs>('line') as FigureConstructor<LineAttrs>
-            if (isValid(FigureClass)) {
-              lines.forEach(line => {
-                new FigureClass(line).draw(ctx)
-              })
+              default: { break }
             }
-          }
-        )
+          })
+        })
+        lines.forEach(line => {
+          this.createFigure('line', line)?.draw(ctx)
+        })
       }
     })
   }

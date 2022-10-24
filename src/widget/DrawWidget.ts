@@ -25,7 +25,7 @@ import { requestAnimationFrame, cancelAnimationFrame } from '../utils/compatible
 
 const DEFAULT_REQUEST_ID = -1
 
-export default abstract class DrawWidget<C extends Axis> extends Widget<C> {
+export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C> {
   private _mainCanvas: HTMLCanvasElement
   private _mainCtx: CanvasRenderingContext2D
   private _overlayCanvas: HTMLCanvasElement
@@ -120,27 +120,27 @@ export default abstract class DrawWidget<C extends Axis> extends Widget<C> {
     switch (l) {
       case UpdateLevel.MAIN: {
         this._optimalUpdate(() => {
-          this.updateMain(this._mainCtx, bounding)
+          this.updateMain(this._mainCtx)
         })
         break
       }
       case UpdateLevel.OVERLAY: {
         this._optimalUpdate(() => {
-          this.updateMain(this._overlayCtx, bounding)
+          this.updateMain(this._overlayCtx)
         })
         break
       }
       case UpdateLevel.DRAWER:
       case UpdateLevel.ALL: {
         this._optimalUpdate(() => {
-          this.updateMain(this._mainCtx, bounding)
-          this.updateMain(this._overlayCtx, bounding)
+          this.updateMain(this._mainCtx)
+          this.updateMain(this._overlayCtx)
         })
         break
       }
     }
   }
 
-  protected abstract updateMain (ctx: CanvasRenderingContext2D, bounding: Bounding): void
-  protected abstract updateOverlay (ctx: CanvasRenderingContext2D, bounding: Bounding): void
+  protected abstract updateMain (ctx: CanvasRenderingContext2D): void
+  protected abstract updateOverlay (ctx: CanvasRenderingContext2D): void
 }

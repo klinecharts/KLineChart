@@ -456,6 +456,8 @@ const defaultIndicator = {
   }
 }
 
+export type AxisLineStyle = Omit<LineStyle, 'style' | 'dashedValue'>
+
 export interface AxisTickLineStyle extends Omit<LineStyle, 'style' | 'dashedValue'> {
   length?: number
 }
@@ -465,14 +467,15 @@ export interface AxisTickTextStyle extends TextStyle {
   marginEnd?: number
 }
 
-export interface XAxisStyle {
+export interface AxisStyle {
   show?: boolean
   size?: number | 'auto'
-  axisLine?: Omit<LineStyle, 'style' | 'dashedValue'>
+  axisLine?: AxisLineStyle
   tickLine?: AxisTickLineStyle
   tickText?: AxisTickTextStyle
 }
 
+export type XAxisStyle = AxisStyle
 /**
  * 默认x轴配置
  * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, tickText: {paddingBottom: number, color: string, size: number, show: boolean, weight: string, paddingTop: number, family: string}, height: null, tickLine: {size: number, color: string, show: boolean, length: number}}}
@@ -516,7 +519,7 @@ const defaultXAxis = {
   }
 }
 
-export interface YAxisStyle extends XAxisStyle {
+export interface YAxisStyle extends AxisStyle {
   type?: YAxisType
   position?: YAxisPosition
   inside?: boolean

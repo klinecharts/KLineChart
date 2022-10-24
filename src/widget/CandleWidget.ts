@@ -12,15 +12,32 @@
  * limitations under the License.
  */
 
-import Bounding from '../common/Bounding'
-import TechWidget from './IndicatorWidget'
+import IndicatorWidget from './IndicatorWidget'
 
-export default class CandleWidget extends TechWidget {
-  protected updateMain (ctx: CanvasRenderingContext2D, bounding: Bounding): void {
-    throw new Error('Method not implemented.')
+import CandleBarView from '../viewv/CandleBarView'
+import CandleAreaView from '../viewv/CandleAreaView'
+import CandleHighLowPriceView from '../viewv/CandleHighLowPriceView'
+import CandleLastPriceLineView from '../viewv/CandleLastPriceLineView'
+
+import { CandleType } from '../store/styles'
+
+export default class CandleWidget extends IndicatorWidget {
+  private readonly _candleBarView = new CandleBarView(this)
+  private readonly _candleAreaView = new CandleAreaView(this)
+  private readonly _candleHighLowPriceView = new CandleHighLowPriceView(this)
+  private readonly _candleLastPriceLineView = new CandleLastPriceLineView(this)
+
+  protected updateMainContent (ctx: CanvasRenderingContext2D): void {
+    const candleStyles = this.getPane().getChart().getChartStore().getStyleOptions().candle
+    if (candleStyles.type !== CandleType.AREA) {
+      this._candleBarView.draw(ctx)
+      this._candleHighLowPriceView.draw(ctx)
+      this._candleLastPriceLineView.draw(ctx)
+    } else {
+      this._candleAreaView.draw(ctx)
+    }
   }
 
-  protected updateOverlay (ctx: CanvasRenderingContext2D, bounding: Bounding): void {
-    throw new Error('Method not implemented.')
+  protected updateOverlay (ctx: CanvasRenderingContext2D): void {
   }
 }

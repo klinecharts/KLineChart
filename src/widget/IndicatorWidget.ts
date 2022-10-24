@@ -12,18 +12,25 @@
  * limitations under the License.
  */
 
-import Bounding from '../common/Bounding'
+import DrawWidget from './DrawWidget'
 
 import YAxis from '../componentl/YAxis'
 
-import DrawWidget from './DrawWidget'
+import IndicatorView from '../viewv/IndicatorView'
+import GridView from '../viewv/GridView'
 
 export default class IndicatorWidget extends DrawWidget<YAxis> {
-  protected updateMain (ctx: CanvasRenderingContext2D, bounding: Bounding): void {
-    throw new Error('Method not implemented.')
+  private readonly _gridView = new GridView(this)
+  private readonly _indicatorView = new IndicatorView(this)
+
+  protected updateMain (ctx: CanvasRenderingContext2D): void {
+    this._gridView.draw(ctx)
+    this.updateMainContent(ctx)
+    this._indicatorView.draw(ctx)
   }
 
-  protected updateOverlay (ctx: CanvasRenderingContext2D, bounding: Bounding): void {
-    throw new Error('Method not implemented.')
+  protected updateMainContent (ctx: CanvasRenderingContext2D): void {}
+
+  protected updateOverlay (ctx: CanvasRenderingContext2D): void {
   }
 }

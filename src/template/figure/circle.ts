@@ -34,7 +34,7 @@ function drawCircle (ctx: CanvasRenderingContext2D, x: number, y: number, r: num
 }
 
 export interface CircleStyle {
-  fillColor: string
+  fillColor: string | CanvasGradient
   stokeColor: string
   strokeSize: number
   style: 'fill' | 'stroke' | 'stroke-fill'

@@ -12,15 +12,17 @@
  * limitations under the License.
  */
 
+import TypeOrNull from '../common/TypeOrNull'
 import ElementGroup from '../common/ElementGroup'
+
+import FigureTemplate from '../template/figure/Figure'
+import { createFigure as create } from '../template/figure'
 
 import Axis from '../componentl/Axis'
 
-import FigureTemplate from '../template/figure/Figure'
-
 import Widget from '../widget/Widget'
 
-export default abstract class View<C extends Axis> extends ElementGroup<FigureTemplate> {
+export default abstract class View<C extends Axis = Axis> extends ElementGroup<FigureTemplate> {
   private readonly _widget: Widget<C>
 
   constructor (widget: Widget<C>) {
@@ -29,6 +31,14 @@ export default abstract class View<C extends Axis> extends ElementGroup<FigureTe
   }
 
   getWidget (): Widget<C> { return this._widget }
+
+  protected createFigure (name: string, attrs: any, flag?: boolean): TypeOrNull<FigureTemplate> {
+    const figure = create(name, attrs)
+    if (figure !== null && (flag ?? false)) {
+      this.addElement(figure)
+    }
+    return figure
+  }
 
   /**
    * 绘制
