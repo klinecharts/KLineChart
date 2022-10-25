@@ -17,6 +17,8 @@ import Coordinate from '../common/Coordinate'
 import { VisibleData } from '../store/ChartStore'
 import { BarSpace } from '../store/TimeScaleStore'
 
+import { GradientColor } from '../store/styles'
+
 import ChildrenView from './ChildrenView'
 
 import { isNumber, isArray } from '../utils/typeChecks'
@@ -33,7 +35,7 @@ export default class CandleAreaView extends ChildrenView {
     const lineCoordinates: Coordinate[] = []
     const areaCoordinates: Coordinate[] = []
     let minY = Number.MAX_SAFE_INTEGER
-    this.drawChildren((data: VisibleData, barSpace: BarSpace, i: number) => {
+    this.eachChildren((data: VisibleData, barSpace: BarSpace, i: number) => {
       const { data: kLineData, x } = data
       const { halfGapBar } = barSpace
       const value = kLineData[candleAreaStyles.value]
@@ -78,14 +80,14 @@ export default class CandleAreaView extends ChildrenView {
       if (isArray(backgroundColor)) {
         const gradient = ctx.createLinearGradient(0, bounding.height, 0, minY)
         try {
-          backgroundColor.forEach(({ offset, color }) => {
+          (backgroundColor as GradientColor[]).forEach(({ offset, color }) => {
             gradient.addColorStop(offset, color)
           })
         } catch (e) {
         }
         color = gradient
       } else {
-        color = backgroundColor
+        color = backgroundColor as string
       }
       this.createFigure('polygon', {
         coordinates: areaCoordinates,

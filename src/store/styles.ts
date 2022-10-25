@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import RequiredDeep from '../common/RequiredDeep'
 import KLineData from '../common/KLineData'
 
 /**
@@ -121,7 +122,7 @@ export interface LineStyle {
   style?: LineType
   size?: number
   color?: string
-  dashedValue?: [2, 2]
+  dashedValue?: number[]
 }
 
 export interface TextStyle {
@@ -137,6 +138,8 @@ export interface PaddingTextStyle extends TextStyle {
   paddingTop?: number
   paddingRight?: number
   paddingBottom?: number
+  borderSize?: number
+  borderColor?: string
   borderRadius?: number
   backgroundColor?: string
 }
@@ -165,7 +168,7 @@ export interface TooltipStyle {
  * 默认网格配置
  * @type {{horizontal: {size: number, color: string, dashValue: number[], show: boolean, style: string}, show: boolean, vertical: {size: number, color: string, dashValue: number[], show: boolean, style: string}}}
  */
-const defaultGrid = {
+const defaultGrid: RequiredDeep<GridStyle> = {
   show: true,
   horizontal: {
     show: true,
@@ -202,7 +205,7 @@ export interface CandleHighLowPriceMarkStyle {
 export interface CandleLastPriceMarkStyle extends ChangeColor {
   show?: boolean
   line?: Omit<LineStyle, 'color'>
-  text?: Omit<PaddingTextStyle, 'backgroundColor'>
+  text?: Omit<PaddingTextStyle, 'backgroundColor' | 'borderSize' | 'borderColor'>
 }
 
 export interface CandlePriceMarkStyle {
@@ -230,7 +233,7 @@ export type CandleTooltipValuesCallback = (kLineData: KLineData) => string[]
 
 export interface CandleTooltipStyle extends TooltipStyle {
   labels?: string[]
-  values?: CandleTooltipValuesCallback | string[]
+  values?: CandleTooltipValuesCallback | string[] | null
   rect?: CandleTooltipRectStyle
 }
 
@@ -246,7 +249,7 @@ export interface CandleStyle {
  * 默认蜡烛柱图样式配置
  * @type {{area: {backgroundColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number, value: string}, bar: {noChangeColor: string, upColor: string, downColor: string}, tooltip: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
-const defaultCandle = {
+const defaultCandle: RequiredDeep<CandleStyle> = {
   type: CandleType.CANDLE_SOLID,
   bar: {
     /**
@@ -355,7 +358,7 @@ export interface IndicatorBarCirleStyle extends ChangeColor {
 
 export interface IndicatorLastValueMarkStyle {
   show?: boolean
-  text?: Omit<MarginTextStyle, 'show'>
+  text?: Omit<PaddingTextStyle, 'backgroundColor' | 'borderSize' | 'borderColor'>
 }
 
 export interface IndicatorTooltipStyle extends TooltipStyle {
@@ -376,7 +379,7 @@ export interface IndicatorStyle {
  * 默认的技术指标样式配置
  * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, tooltip: {showParams: boolean, showName: boolean, showRule: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}}, circle: {noChangeColor: string, upColor: string, downColor: string}, lastValueMark: {show: boolean, text: {paddingBottom: number, color: string, size: number, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}}}}
  */
-const defaultIndicator = {
+const defaultIndicator: RequiredDeep<IndicatorStyle> = {
   ohlc: {
     upColor: 'rgba(38, 166, 154, .65)',
     downColor: 'rgba(239, 83, 80, .65)',
@@ -480,7 +483,7 @@ export type XAxisStyle = AxisStyle
  * 默认x轴配置
  * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, tickText: {paddingBottom: number, color: string, size: number, show: boolean, weight: string, paddingTop: number, family: string}, height: null, tickLine: {size: number, color: string, show: boolean, length: number}}}
  */
-const defaultXAxis = {
+const defaultXAxis: RequiredDeep<XAxisStyle> = {
   /**
    * 是否显示整个轴
    */
@@ -507,8 +510,8 @@ const defaultXAxis = {
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
-    paddingStart: 4,
-    paddingEnd: 4
+    marginStart: 4,
+    marginEnd: 4
   },
   // tick线
   tickLine: {
@@ -530,7 +533,7 @@ export interface YAxisStyle extends AxisStyle {
  * 默认y轴配置
  * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, width: null, position: string, tickText: {color: string, size: number, paddingRight: number, show: boolean, weight: string, family: string, paddingLeft: number}, type: string, inside: boolean, tickLine: {size: number, color: string, show: boolean, length: number}}}
  */
-const defaultYAxis = {
+const defaultYAxis: RequiredDeep<YAxisStyle> = {
   /**
    * 是否显示整个轴
    */
@@ -573,8 +576,8 @@ const defaultYAxis = {
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal',
-    paddingStart: 4,
-    paddingEnd: 4
+    marginStart: 4,
+    marginEnd: 4
   },
   // tick线
   tickLine: {
@@ -597,14 +600,14 @@ export interface CrosshairStyle {
   vertical?: CrosshairDirectionStyle
 }
 
-const defaultCrosshair = {
+const defaultCrosshair: RequiredDeep<CrosshairStyle> = {
   show: true,
   horizontal: {
     show: true,
     line: {
       show: true,
       style: LineType.DASHED,
-      dashValue: [4, 2],
+      dashedValue: [4, 2],
       size: 1,
       color: '#76808F'
     },
@@ -629,7 +632,7 @@ const defaultCrosshair = {
     line: {
       show: true,
       style: LineType.DASHED,
-      dashValue: [4, 2],
+      dashedValue: [4, 2],
       size: 1,
       color: '#76808F'
     },
@@ -655,134 +658,151 @@ const defaultCrosshair = {
  * 默认图形配置
  * @type {{arc: {style: string, color: string, size: number}, polygon: {style: string, color: string, size: number}, line: {style: string, color: string, size: number, dashValue: number[]}, text: {style: string, marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
  */
-const defaultShape = {
-  point: {
-    backgroundColor: '#2196F3',
-    borderColor: 'rgba(33, 150, 243, 0.35)',
-    borderSize: 1,
-    radius: 5,
-    activeBackgroundColor: '#2196F3',
-    activeBorderColor: 'rgba(33, 150, 243, 0.35)',
-    activeBorderSize: 3,
-    activeRadius: 5
-  },
-  line: {
-    style: LineType.SOLID,
-    color: '#2196F3',
-    size: 1,
-    dashValue: [2, 2]
-  },
-  polygon: {
-    style: StrokeFillType.STROKE,
-    stroke: {
-      style: LineType.SOLID,
-      size: 1,
-      color: '#2196F3',
-      dashValue: [2, 2]
-    },
-    fill: {
-      color: '#2196F3'
-    }
-  },
-  arc: {
-    style: StrokeFillType.STROKE,
-    stroke: {
-      style: LineType.SOLID,
-      size: 1,
-      color: '#2196F3',
-      dashValue: [2, 2]
-    },
-    fill: {
-      color: '#2196F3'
-    }
-  },
-  text: {
-    style: StrokeFillType.FILL,
-    color: '#2196F3',
-    size: 12,
-    family: 'Helvetica Neue',
-    weight: 'normal',
-    offset: [0, 0]
-  }
-}
+// const defaultShape = {
+//   point: {
+//     backgroundColor: '#2196F3',
+//     borderColor: 'rgba(33, 150, 243, 0.35)',
+//     borderSize: 1,
+//     radius: 5,
+//     activeBackgroundColor: '#2196F3',
+//     activeBorderColor: 'rgba(33, 150, 243, 0.35)',
+//     activeBorderSize: 3,
+//     activeRadius: 5
+//   },
+//   line: {
+//     style: LineType.SOLID,
+//     color: '#2196F3',
+//     size: 1,
+//     dashValue: [2, 2]
+//   },
+//   polygon: {
+//     style: StrokeFillType.STROKE,
+//     stroke: {
+//       style: LineType.SOLID,
+//       size: 1,
+//       color: '#2196F3',
+//       dashValue: [2, 2]
+//     },
+//     fill: {
+//       color: '#2196F3'
+//     }
+//   },
+//   arc: {
+//     style: StrokeFillType.STROKE,
+//     stroke: {
+//       style: LineType.SOLID,
+//       size: 1,
+//       color: '#2196F3',
+//       dashValue: [2, 2]
+//     },
+//     fill: {
+//       color: '#2196F3'
+//     }
+//   },
+//   text: {
+//     style: StrokeFillType.FILL,
+//     color: '#2196F3',
+//     size: 12,
+//     family: 'Helvetica Neue',
+//     weight: 'normal',
+//     offset: [0, 0]
+//   }
+// }
 
 /**
  * 默认注解信息配置
  * @type {{}}
  */
-const defaultAnnotation = {
-  position: OverlayPosition.TOP,
-  offset: [20, 0],
-  symbol: {
-    type: AnnotationSymbolType.DIAMOND,
-    size: 8,
-    color: '#2196F3',
-    activeSize: 10,
-    activeColor: '#FF9600'
-  }
-}
+// const defaultAnnotation = {
+//   position: OverlayPosition.TOP,
+//   offset: [20, 0],
+//   symbol: {
+//     type: AnnotationSymbolType.DIAMOND,
+//     size: 8,
+//     color: '#2196F3',
+//     activeSize: 10,
+//     activeColor: '#FF9600'
+//   }
+// }
 
-const defaultTag = {
-  position: OverlayPosition.POINT,
-  offset: 0,
-  line: {
-    show: true,
-    style: LineType.DASHED,
-    dashValue: [4, 2],
-    size: 1,
-    color: '#2196F3'
-  },
-  text: {
-    color: '#FFFFFF',
-    backgroundColor: '#2196F3',
-    size: 12,
-    family: 'Helvetica Neue',
-    weight: 'normal',
-    paddingLeft: 2,
-    paddingRight: 2,
-    paddingTop: 2,
-    paddingBottom: 2,
-    borderRadius: 2,
-    borderSize: 1,
-    borderColor: '#2196F3'
-  },
-  mark: {
-    offset: 0,
-    color: '#FFFFFF',
-    backgroundColor: '#2196F3',
-    size: 12,
-    family: 'Helvetica Neue',
-    weight: 'normal',
-    paddingLeft: 2,
-    paddingRight: 2,
-    paddingTop: 2,
-    paddingBottom: 2,
-    borderRadius: 2,
-    borderSize: 1,
-    borderColor: '#2196F3'
-  }
+// const defaultTag = {
+//   position: OverlayPosition.POINT,
+//   offset: 0,
+//   line: {
+//     show: true,
+//     style: LineType.DASHED,
+//     dashValue: [4, 2],
+//     size: 1,
+//     color: '#2196F3'
+//   },
+//   text: {
+//     color: '#FFFFFF',
+//     backgroundColor: '#2196F3',
+//     size: 12,
+//     family: 'Helvetica Neue',
+//     weight: 'normal',
+//     paddingLeft: 2,
+//     paddingRight: 2,
+//     paddingTop: 2,
+//     paddingBottom: 2,
+//     borderRadius: 2,
+//     borderSize: 1,
+//     borderColor: '#2196F3'
+//   },
+//   mark: {
+//     offset: 0,
+//     color: '#FFFFFF',
+//     backgroundColor: '#2196F3',
+//     size: 12,
+//     family: 'Helvetica Neue',
+//     weight: 'normal',
+//     paddingLeft: 2,
+//     paddingRight: 2,
+//     paddingTop: 2,
+//     paddingBottom: 2,
+//     borderRadius: 2,
+//     borderSize: 1,
+//     borderColor: '#2196F3'
+//   }
+// }
+
+export interface SeparatorStyle {
+  size?: number
+  color?: string
+  fill?: boolean
+  activeBackgroundColor?: string
 }
 
 /**
  * 图表之间默认分割配置
  * @type {{size: number, color: string}}
  */
-const defaultSeparator = {
+const defaultSeparator: RequiredDeep<SeparatorStyle> = {
   size: 1,
   color: '#DDDDDD',
   fill: true,
   activeBackgroundColor: 'rgba(33, 150, 243, 0.08)'
 }
 
-export const defaultStyles = {
+export interface Styles {
+  grid?: GridStyle
+  candle?: CandleStyle
+  indicator?: IndicatorStyle
+  xAxis?: XAxisStyle
+  yAxis?: YAxisStyle
+  separator?: SeparatorStyle
+  crosshair?: CrosshairStyle
+}
+
+export const defaultStyles: RequiredDeep<Styles> = {
   grid: defaultGrid,
   candle: defaultCandle,
   indicator: defaultIndicator,
   xAxis: defaultXAxis,
   yAxis: defaultYAxis,
   separator: defaultSeparator,
-  crosshair: defaultCrosshair,
-  shape: defaultShape,
-  annotation: defaultAnnotation,
-  tag: defaultTag
+  crosshair: defaultCrosshair
+  // shape: defaultShape,
+  // annotation: defaultAnnotation,
+  // tag: defaultTag
 }

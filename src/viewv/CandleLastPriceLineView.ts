@@ -27,7 +27,7 @@ export default class CandleLastPriceView extends View {
     const priceMarkStyles = chartStore.getStyleOptions().candle.priceMark
     const lastPriceMarkStyles = priceMarkStyles.last
     const lastPriceMarkLineStyles = lastPriceMarkStyles.line
-    if (Boolean(priceMarkStyles.show) && Boolean(lastPriceMarkStyles.show) && Boolean(lastPriceMarkLineStyles.show)) {
+    if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkLineStyles.show) {
       const yAxis = pane.getAxisComponent() as YAxis
       const visibleDataList = chartStore.getVisibleDataList()
       const data = visibleDataList[visibleDataList.length - 1]

@@ -17,13 +17,17 @@ import DrawWidget from './DrawWidget'
 import XAxis from '../componentl/XAxis'
 
 import XAxisView from '../viewv/XAxisView'
+import CrosshairVerticalLabelView from '../viewv/CrosshairVerticalLabelView'
+
 export default class XAxisWidget extends DrawWidget<XAxis> {
   private readonly _xAxisView = new XAxisView(this)
+  private readonly _crosshairVerticalLabelView = new CrosshairVerticalLabelView(this)
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
     this._xAxisView.draw(ctx)
   }
 
   protected updateOverlay (ctx: CanvasRenderingContext2D): void {
+    this._crosshairVerticalLabelView.draw(ctx)
   }
 }

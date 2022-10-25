@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import CustomRequired from '../../common/Required'
+import CustomRequired from '../../common/RequiredPick'
 import KLineData from '../../common/KLineData'
 import Bounding from '../../common/Bounding'
 
@@ -20,6 +20,9 @@ import { VisibleRange } from '../../store/TimeScaleStore'
 import { IndicatorStyle } from '../../store/styles'
 
 import Axis from '../../componentl/Axis'
+
+import { formatValue } from '../../utils/format'
+import { isValid } from '../../utils/typeChecks'
 
 export const enum IndicatorSeries {
   NORMAL = 'normal',
@@ -114,27 +117,73 @@ export interface Indicator<D = any> {
 
 export type IndicatorConstructor<D = any> = new () => IndicatorTemplate<D>
 
-export function getIndicatorPlotStyles<D> (
+export type EachPlotCallback = (plot: IndicatorPlot, plotStyles: Required<IndicatorPlotStyle>, defaultPlotStyles: any) => void
+
+export function eachPlots<D> (
   kLineDataList: KLineData[],
-  indicatorDataList: D[],
-  dataIndex: number,
-  plot: IndicatorPlot<D>,
   indicator: Indicator<D>,
-  defaultIndicatorStyles: IndicatorStyle,
-  defaultPlotStyles: Required<IndicatorPlotStyle>
-): Required<IndicatorPlotStyle> {
-  const style = defaultPlotStyles.style
-  const color = defaultPlotStyles.color
-  const cbData = {
-    prev: { kLineData: kLineDataList[dataIndex - 1], indicatorData: indicatorDataList[dataIndex - 1] },
-    current: { kLineData: kLineDataList[dataIndex], indicatorData: indicatorDataList[dataIndex] },
-    next: { kLineData: kLineDataList[dataIndex + 1], indicatorData: indicatorDataList[dataIndex + 1] }
-  }
-  const plotStyles = plot.styles?.(cbData, indicator, defaultIndicatorStyles) ?? { style, color }
-  return {
-    style: plotStyles.style ?? style,
-    color: plotStyles.color ?? color
-  }
+  dataIndex: number,
+  defaultStyles: IndicatorStyle,
+  eachPlotCallback: EachPlotCallback
+): void {
+  const result = indicator.result ?? []
+  const plots = indicator.plots ?? []
+  const styles = indicator.styles ?? null
+
+  const circleStyles = formatValue(styles, 'circles', defaultStyles.circles)
+  const circleStyleCount = circleStyles.length
+
+  const barStyles = formatValue(styles, 'bars', defaultStyles.bars)
+  const barStyleCount = barStyles.length
+
+  const lineStyles = formatValue(styles, 'lines', defaultStyles.lines)
+  const lineStyleCount = lineStyles.length
+
+  let circleCount = 0
+  let barCount = 0
+  let lineCount = 0
+
+  let defaultPlotStyles
+  let defaultPlotStyle
+  let defaultPlotColor
+  plots.forEach(plot => {
+    switch (plot.type) {
+      case 'circle': {
+        defaultPlotStyles = circleStyles[circleCount % circleStyleCount]
+        defaultPlotStyle = defaultPlotStyles.style
+        defaultPlotColor = defaultPlotStyles.noChangeColor
+        circleCount++
+        break
+      }
+      case 'bar': {
+        defaultPlotStyles = barStyles[barCount % barStyleCount]
+        defaultPlotStyle = defaultPlotStyles.style
+        defaultPlotColor = defaultPlotStyles.noChangeColor
+        barCount++
+        break
+      }
+      case 'line': {
+        defaultPlotStyles = lineStyles[lineCount % lineStyleCount]
+        defaultPlotStyle = defaultPlotStyles.style
+        defaultPlotColor = defaultPlotStyles.color
+        lineCount++
+        break
+      }
+      default: { break }
+    }
+    if (isValid(defaultPlotStyles)) {
+      const cbData = {
+        prev: { kLineData: kLineDataList[dataIndex - 1], indicatorData: result[dataIndex - 1] },
+        current: { kLineData: kLineDataList[dataIndex], indicatorData: result[dataIndex] },
+        next: { kLineData: kLineDataList[dataIndex + 1], indicatorData: result[dataIndex + 1] }
+      }
+      const plotStyles = plot.styles?.(cbData, indicator, defaultStyles) ?? { style: defaultPlotStyle, color: defaultPlotColor }
+      eachPlotCallback(plot, {
+        style: plotStyles.style ?? defaultPlotStyle,
+        color: plotStyles.color ?? defaultPlotColor
+      }, defaultPlotStyles)
+    }
+  })
 }
 
 export default abstract class IndicatorTemplate<D = any> implements CustomRequired<Indicator<D>, 'calc'> {

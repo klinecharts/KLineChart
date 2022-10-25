@@ -40,7 +40,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
       let highX = 0
       let low = Number.MAX_SAFE_INTEGER
       let lowX = 0
-      this.drawChildren((data: VisibleData, barSpace: BarSpace, i: number) => {
+      this.eachChildren((data: VisibleData, barSpace: BarSpace, i: number) => {
         const { data: kLineData, x } = data
         if (high < kLineData.high) {
           high = kLineData.high

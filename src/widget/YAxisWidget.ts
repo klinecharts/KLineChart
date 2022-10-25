@@ -19,11 +19,13 @@ import YAxis from '../componentl/YAxis'
 import YAxisView from '../viewv/YAxisView'
 import CandleLastPriceLabelView from '../viewv/CandleLastPriceLabelView'
 import IndicatorLastValueView from '../viewv/IndicatorLastValueView'
+import CrosshairHorizontalLabelView from '../viewv/CrosshairHorizontalLabelView'
 
 export default class YAxisWidget extends DrawWidget<YAxis> {
   private readonly _yAxisView = new YAxisView(this)
   private readonly _candleLastPriceLabelView = new CandleLastPriceLabelView(this)
   private readonly _indicatorLastValueView = new IndicatorLastValueView(this)
+  private readonly _crosshairHorizontalLabelView = new CrosshairHorizontalLabelView(this)
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
     this._yAxisView.draw(ctx)
@@ -32,5 +34,6 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
   }
 
   protected updateOverlay (ctx: CanvasRenderingContext2D): void {
+    this._crosshairHorizontalLabelView.draw(ctx)
   }
 }

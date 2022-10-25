@@ -12,11 +12,12 @@
  * limitations under the License.
  */
 
+import RequiredDeep from '../common/RequiredDeep'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 
 import { isArray, isObject, merge, clone } from '../utils/typeChecks'
-import { defaultStyles } from './styles'
+import { defaultStyles, Styles } from './styles'
 
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
@@ -38,15 +39,15 @@ export default class ChartStore {
   //
   private readonly _chart: ChartInternal
   // 样式配置
-  private readonly _styleOptions: any
+  private readonly _styleOptions: RequiredDeep<Styles>
 
-  private _precision: Precision = { price: 2, volume: 0 }
+  private _precision = { price: 2, volume: 0 }
 
   // 数据源
   private _dataList: KLineData[] = []
 
   // 调整pane标记
-  private _dragPaneFlag: boolean = false
+  private _dragPaneFlag = false
 
   // 时间轴缩放数据存储
   private readonly _timeScaleStore = new TimeScaleStore(this)
@@ -94,7 +95,7 @@ export default class ChartStore {
    * 获取样式配置
    * @return {{}}
    */
-  getStyleOptions (): any {
+  getStyleOptions (): RequiredDeep<Styles> {
     return this._styleOptions
   }
 
@@ -102,7 +103,7 @@ export default class ChartStore {
    * 设置样式配置
    * @param options
    */
-  applyStyleOptions (options: any): ChartStore {
+  applyStyleOptions (options: Styles): ChartStore {
     merge(this._styleOptions, options)
     return this
   }

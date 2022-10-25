@@ -12,17 +12,19 @@
  * limitations under the License.
  */
 
+import TypeOrNull from '../common/TypeOrNull'
+
 import YAxis from '../componentl/YAxis'
 
 import { eachPlots, IndicatorPlot, IndicatorPlotStyle } from '../template/indicator/Indicator'
 
 import View from './View'
 
-import { formatPrecision, formatBigNumber } from '../utils/format'
+import { formatPrecision, formatValue, formatBigNumber } from '../utils/format'
 import { isValid } from '../utils/typeChecks'
 import { createFont, calcTextWidth } from '../utils/canvas'
 
-export default class IndicatorLastValueView extends View<YAxis> {
+export default class IndicatorTooltipView extends View {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
@@ -31,8 +33,9 @@ export default class IndicatorLastValueView extends View<YAxis> {
     const defaultStyles = chartStore.getStyleOptions().indicator
     const lastValueMarkStyles = defaultStyles.lastValueMark
     const lastValueMarkTextStyles = lastValueMarkStyles.text
-    if (lastValueMarkStyles.show) {
-      const yAxis = pane.getAxisComponent()
+    const show = lastValueMarkStyles.show as boolean
+    if (show) {
+      const yAxis = pane.getAxisComponent() as YAxis
       const dataList = chartStore.getDataList()
       const dataIndex = dataList.length - 1
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
@@ -41,7 +44,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
         const indicatorData = result[dataIndex]
         if (isValid(indicatorData)) {
           const precision = indicator.precision as number
-          eachPlots(dataList, indicator, dataIndex, defaultStyles, (plot: IndicatorPlot, plotStyle: Required<IndicatorPlotStyle>) => {
+          eachPlots(dataList, indicator, dataIndex, defaultStyles, (plot: IndicatorPlot, plotStyles: IndicatorPlotStyle, defaultPlotStyles: any) => {
             const value = indicatorData[plot.key]
             if (isValid(value)) {
               const y = yAxis.convertToNicePixel(value)
@@ -51,11 +54,11 @@ export default class IndicatorLastValueView extends View<YAxis> {
               }
 
               ctx.font = createFont(lastValueMarkTextStyles.size, lastValueMarkTextStyles.weight, lastValueMarkTextStyles.family)
-              const paddingLeft = lastValueMarkTextStyles.paddingLeft
-              const paddingRight = lastValueMarkTextStyles.paddingRight
-              const paddingTop = lastValueMarkTextStyles.paddingTop
-              const paddingBottom = lastValueMarkTextStyles.paddingBottom
-              const textSize = lastValueMarkTextStyles.size
+              const paddingLeft = lastValueMarkTextStyles.paddingLeft as number
+              const paddingRight = lastValueMarkTextStyles.paddingRight as number
+              const paddingTop = lastValueMarkTextStyles.paddingTop as number
+              const paddingBottom = lastValueMarkTextStyles.paddingBottom as number
+              const textSize = lastValueMarkTextStyles.size as number
 
               const rectWidth = calcTextWidth(ctx, text) + paddingLeft + paddingRight
               const rectHeight = paddingTop + textSize + paddingBottom
@@ -67,7 +70,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
                 rectStartX = bounding.width - rectWidth
               }
 
-              const backgroundColor = plotStyle.color
+              const backgroundColor = plotStyles.color
               this.createFigure('rect', {
                 x: rectStartX,
                 y: y - paddingTop - textSize / 2,

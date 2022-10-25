@@ -36,7 +36,7 @@ export default class CandleBarView extends ChildrenView {
     const candleBarOptions = this.getCandleBarOptions(chartStore)
     if (candleBarOptions !== null) {
       const yAxis = pane.getAxisComponent()
-      this.drawChildren((data: VisibleData, barSpace: BarSpace) => {
+      this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
         this._drawCandleBar(ctx, yAxis, data, barSpace, candleBarOptions)
       })
     }
@@ -45,7 +45,7 @@ export default class CandleBarView extends ChildrenView {
   protected getCandleBarOptions (chartStore: ChartStore): TypeOrNull<CandleBarOptions> {
     const candleStyles = chartStore.getStyleOptions().candle
     return {
-      type: candleStyles.type,
+      type: candleStyles.type as Exclude<CandleType, 'area'>,
       styles: candleStyles.bar
     }
   }

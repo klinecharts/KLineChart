@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import Required from '../../common/Required'
+import RequiredPick from '../../common/RequiredPick'
 import IndicatorTemplate, { Indicator } from './Indicator'
 
 const indicators = {}
@@ -26,7 +26,7 @@ files.keys().forEach((key: string) => {
   }
 })
 
-function reisterIndicator<D> (indicator: Required<Indicator<D>, 'calc'>): void {
+function reisterIndicator<D> (indicator: RequiredPick<Indicator<D>, 'calc'>): void {
   indicators[indicator.name] = IndicatorTemplate.extend(indicator)
 }
 

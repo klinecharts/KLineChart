@@ -31,7 +31,7 @@ export default class CandleLastPriceLabelView extends View {
     const priceMarkStyles = chartStore.getStyleOptions().candle.priceMark
     const lastPriceMarkStyles = priceMarkStyles.last
     const lastPriceMarkTextStyles = lastPriceMarkStyles.text
-    if (Boolean(priceMarkStyles.show) && Boolean(lastPriceMarkStyles.show) && Boolean(lastPriceMarkTextStyles.show)) {
+    if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkTextStyles.show) {
       const precision = chartStore.getPrecision()
       const yAxis = pane.getAxisComponent() as YAxis
       const visibleDataList = chartStore.getVisibleDataList()
@@ -57,24 +57,24 @@ export default class CandleLastPriceLabelView extends View {
         }
 
         ctx.font = createFont(lastPriceMarkTextStyles.size, lastPriceMarkTextStyles.weight, lastPriceMarkTextStyles.family)
-        const paddingLeft = lastPriceMarkTextStyles.paddingLeft as number
-        const paddingRight = lastPriceMarkTextStyles.paddingRight as number
-        const paddingTop = lastPriceMarkTextStyles.paddingTop as number
-        const paddingBottom = lastPriceMarkTextStyles.paddingBottom as number
-        const textSize = lastPriceMarkTextStyles.size as number
+        const paddingLeft = lastPriceMarkTextStyles.paddingLeft
+        const paddingRight = lastPriceMarkTextStyles.paddingRight
+        const paddingTop = lastPriceMarkTextStyles.paddingTop
+        const paddingBottom = lastPriceMarkTextStyles.paddingBottom
+        const textSize = lastPriceMarkTextStyles.size
 
         const rectWidth = calcTextWidth(ctx, text) + paddingLeft + paddingRight
         const rectHeight = paddingTop + textSize + paddingBottom
 
-        let rectStartX: number
+        let rectX: number
         if (yAxis.isFromZero()) {
-          rectStartX = 0
+          rectX = 0
         } else {
-          rectStartX = bounding.width - rectWidth
+          rectX = bounding.width - rectWidth
         }
 
         this.createFigure('rect', {
-          x: rectStartX,
+          x: rectX,
           y: priceY - paddingTop - textSize / 2,
           width: rectWidth,
           height: rectHeight,
@@ -88,7 +88,7 @@ export default class CandleLastPriceLabelView extends View {
         })?.draw(ctx)
 
         this.createFigure('text', {
-          x: rectStartX + paddingLeft,
+          x: rectX + paddingLeft,
           y: priceY,
           text,
           styles: {

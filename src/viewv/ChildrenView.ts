@@ -17,20 +17,20 @@ import View from './View'
 import { VisibleData } from '../store/ChartStore'
 import { BarSpace } from '../store/TimeScaleStore'
 
-export type DrawChildCallback = (
+export type EachChildCallback = (
   data: VisibleData,
   barSpace: BarSpace,
   index: number
 ) => void
 
 export default abstract class ChildrenView extends View {
-  protected drawChildren (drawChildCallback: DrawChildCallback): void {
+  protected eachChildren (childCallback: EachChildCallback): void {
     const pane = this.getWidget().getPane()
     const chartStore = pane.getChart().getChartStore()
     const visibleDataList = chartStore.getVisibleDataList()
     const barSpace = chartStore.getTimeScaleStore().getBarSpace()
     visibleDataList.forEach((data: VisibleData, index: number) => {
-      drawChildCallback(data, barSpace, index)
+      childCallback(data, barSpace, index)
     })
   }
 }
