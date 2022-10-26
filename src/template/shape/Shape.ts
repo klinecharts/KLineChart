@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import RequiredPick from '../../common/RequiredPick'
+import RequiredPick from '../../common/PickPartial'
 import Point from '../../common/Point'
 import Coordinate from '../../common/Coordinate'
 import Bounding from '../../common/Bounding'

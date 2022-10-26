@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import RequiredDeep from '../common/RequiredDeep'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 
@@ -39,7 +38,7 @@ export default class ChartStore {
   //
   private readonly _chart: ChartInternal
   // 样式配置
-  private readonly _styleOptions: RequiredDeep<Styles>
+  private readonly _styleOptions: Styles
 
   private _precision = { price: 2, volume: 0 }
 
@@ -95,7 +94,7 @@ export default class ChartStore {
    * 获取样式配置
    * @return {{}}
    */
-  getStyleOptions (): RequiredDeep<Styles> {
+  getStyleOptions (): Styles {
     return this._styleOptions
   }
 

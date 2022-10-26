@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import RequiredDeep from '../common/RequiredDeep'
 import KLineData from '../common/KLineData'
 
 /**
@@ -107,9 +106,9 @@ export const enum OverlayPosition {
 }
 
 export interface ChangeColor {
-  upColor?: string
-  downColor?: string
-  noChangeColor?: string
+  upColor: string
+  downColor: string
+  noChangeColor: string
 }
 
 export interface GradientColor {
@@ -118,57 +117,57 @@ export interface GradientColor {
 }
 
 export interface LineStyle {
-  show?: boolean
-  style?: LineType
-  size?: number
-  color?: string
-  dashedValue?: number[]
+  show: boolean
+  style: LineType
+  size: number
+  color: string
+  dashedValue: number[]
 }
 
 export interface TextStyle {
-  show?: boolean
-  size?: number
-  color?: string
-  family?: string
-  weight?: string
+  show: boolean
+  size: number
+  color: string
+  family: string
+  weight: string
 }
 
 export interface PaddingTextStyle extends TextStyle {
-  paddingLeft?: number
-  paddingTop?: number
-  paddingRight?: number
-  paddingBottom?: number
-  borderSize?: number
-  borderColor?: string
-  borderRadius?: number
-  backgroundColor?: string
+  paddingLeft: number
+  paddingTop: number
+  paddingRight: number
+  paddingBottom: number
+  borderSize: number
+  borderColor: string
+  borderRadius: number
+  backgroundColor: string
 }
 
 export interface MarginTextStyle extends TextStyle {
-  marginLeft?: number
-  marginTop?: number
-  marginRight?: number
-  marginBottom?: number
+  marginLeft: number
+  marginTop: number
+  marginRight: number
+  marginBottom: number
 }
 
 export interface GridStyle {
-  show?: boolean
-  horizontal?: LineStyle
-  vertical?: LineStyle
+  show: boolean
+  horizontal: LineStyle
+  vertical: LineStyle
 }
 
 export interface TooltipStyle {
-  showRule?: TooltipShowRule
-  showType?: TooltipShowType
-  defaultValue?: 'n/a'
-  text?: Omit<MarginTextStyle, 'show'>
+  showRule: TooltipShowRule
+  showType: TooltipShowType
+  defaultValue: 'n/a'
+  text: Omit<MarginTextStyle, 'show'>
 }
 
 /**
  * 默认网格配置
  * @type {{horizontal: {size: number, color: string, dashValue: number[], show: boolean, style: string}, show: boolean, vertical: {size: number, color: string, dashValue: number[], show: boolean, style: string}}}
  */
-const defaultGrid: RequiredDeep<GridStyle> = {
+const defaultGrid: GridStyle = {
   show: true,
   horizontal: {
     show: true,
@@ -187,69 +186,69 @@ const defaultGrid: RequiredDeep<GridStyle> = {
 }
 
 export interface CandleAreaStyle {
-  lineSize?: number
-  lineColor?: string
-  value?: string
-  backgroundColor?: string | GradientColor[]
+  lineSize: number
+  lineColor: string
+  value: string
+  backgroundColor: string | GradientColor[]
 }
 
 export interface CandleHighLowPriceMarkStyle {
-  show?: boolean
-  color?: string
-  textOffset?: number
-  textSize?: number
-  textFamily?: string
-  textWeight?: string
+  show: boolean
+  color: string
+  textOffset: number
+  textSize: number
+  textFamily: string
+  textWeight: string
 }
 
 export interface CandleLastPriceMarkStyle extends ChangeColor {
-  show?: boolean
-  line?: Omit<LineStyle, 'color'>
-  text?: Omit<PaddingTextStyle, 'backgroundColor' | 'borderSize' | 'borderColor'>
+  show: boolean
+  line: Omit<LineStyle, 'color'>
+  text: Omit<PaddingTextStyle, 'backgroundColor' | 'borderSize' | 'borderColor'>
 }
 
 export interface CandlePriceMarkStyle {
-  show?: boolean
-  high?: CandleHighLowPriceMarkStyle
-  low?: CandleHighLowPriceMarkStyle
-  last?: CandleLastPriceMarkStyle
+  show: boolean
+  high: CandleHighLowPriceMarkStyle
+  low: CandleHighLowPriceMarkStyle
+  last: CandleLastPriceMarkStyle
 }
 
 export interface CandleTooltipRectStyle {
-  paddingLeft?: number
-  paddingRight?: number
-  paddingTop?: number
-  paddingBottom?: number
-  offsetLeft?: number
-  offsetTop?: number
-  offsetRight?: number
-  borderRadius?: number
-  borderSize?: number
-  borderColor?: string
-  backgroundColor?: string
+  paddingLeft: number
+  paddingRight: number
+  paddingTop: number
+  paddingBottom: number
+  offsetLeft: number
+  offsetTop: number
+  offsetRight: number
+  borderRadius: number
+  borderSize: number
+  borderColor: string
+  backgroundColor: string
 }
 
 export type CandleTooltipValuesCallback = (kLineData: KLineData) => string[]
 
 export interface CandleTooltipStyle extends TooltipStyle {
-  labels?: string[]
-  values?: CandleTooltipValuesCallback | string[] | null
-  rect?: CandleTooltipRectStyle
+  labels: string[]
+  values: CandleTooltipValuesCallback | string[] | null
+  rect: CandleTooltipRectStyle
 }
 
 export interface CandleStyle {
-  type?: CandleType
-  bar?: ChangeColor
-  area?: CandleAreaStyle
-  priceMark?: CandlePriceMarkStyle
-  tooltip?: CandleTooltipStyle
+  type: CandleType
+  bar: ChangeColor
+  area: CandleAreaStyle
+  priceMark: CandlePriceMarkStyle
+  tooltip: CandleTooltipStyle
 }
 
 /**
  * 默认蜡烛柱图样式配置
  * @type {{area: {backgroundColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number, value: string}, bar: {noChangeColor: string, upColor: string, downColor: string}, tooltip: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
-const defaultCandle: RequiredDeep<CandleStyle> = {
+const defaultCandle: CandleStyle = {
   type: CandleType.CANDLE_SOLID,
   bar: {
     /**
@@ -353,33 +352,33 @@ const defaultCandle: RequiredDeep<CandleStyle> = {
 }
 
 export interface IndicatorBarCirleStyle extends ChangeColor {
-  style?: StrokeFillType
+  style: StrokeFillType
 }
 
 export interface IndicatorLastValueMarkStyle {
-  show?: boolean
-  text?: Omit<PaddingTextStyle, 'backgroundColor' | 'borderSize' | 'borderColor'>
+  show: boolean
+  text: Omit<PaddingTextStyle, 'backgroundColor' | 'borderSize' | 'borderColor'>
 }
 
 export interface IndicatorTooltipStyle extends TooltipStyle {
-  showName?: boolean
-  showParams?: boolean
+  showName: boolean
+  showParams: boolean
 }
 
 export interface IndicatorStyle {
-  ohlc?: ChangeColor
-  bars?: IndicatorBarCirleStyle[]
-  lines?: Array<Omit<LineStyle, 'show'>>
-  circles?: IndicatorBarCirleStyle[]
-  lastValueMark?: IndicatorLastValueMarkStyle
-  tooltip?: IndicatorTooltipStyle
+  ohlc: ChangeColor
+  bars: IndicatorBarCirleStyle[]
+  lines: Array<Omit<LineStyle, 'show'>>
+  circles: IndicatorBarCirleStyle[]
+  lastValueMark: IndicatorLastValueMarkStyle
+  tooltip: IndicatorTooltipStyle
 }
 
 /**
  * 默认的技术指标样式配置
  * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, tooltip: {showParams: boolean, showName: boolean, showRule: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}}, circle: {noChangeColor: string, upColor: string, downColor: string}, lastValueMark: {show: boolean, text: {paddingBottom: number, color: string, size: number, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}}}}
  */
-const defaultIndicator: RequiredDeep<IndicatorStyle> = {
+const defaultIndicator: IndicatorStyle = {
   ohlc: {
     upColor: 'rgba(38, 166, 154, .65)',
     downColor: 'rgba(239, 83, 80, .65)',
@@ -462,20 +461,20 @@ const defaultIndicator: RequiredDeep<IndicatorStyle> = {
 export type AxisLineStyle = Omit<LineStyle, 'style' | 'dashedValue'>
 
 export interface AxisTickLineStyle extends Omit<LineStyle, 'style' | 'dashedValue'> {
-  length?: number
+  length: number
 }
 
 export interface AxisTickTextStyle extends TextStyle {
-  marginStart?: number
-  marginEnd?: number
+  marginStart: number
+  marginEnd: number
 }
 
 export interface AxisStyle {
-  show?: boolean
-  size?: number | 'auto'
-  axisLine?: AxisLineStyle
-  tickLine?: AxisTickLineStyle
-  tickText?: AxisTickTextStyle
+  show: boolean
+  size: number | 'auto'
+  axisLine: AxisLineStyle
+  tickLine: AxisTickLineStyle
+  tickText: AxisTickTextStyle
 }
 
 export type XAxisStyle = AxisStyle
@@ -483,7 +482,7 @@ export type XAxisStyle = AxisStyle
  * 默认x轴配置
  * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, tickText: {paddingBottom: number, color: string, size: number, show: boolean, weight: string, paddingTop: number, family: string}, height: null, tickLine: {size: number, color: string, show: boolean, length: number}}}
  */
-const defaultXAxis: RequiredDeep<XAxisStyle> = {
+const defaultXAxis: XAxisStyle = {
   /**
    * 是否显示整个轴
    */
@@ -523,17 +522,17 @@ const defaultXAxis: RequiredDeep<XAxisStyle> = {
 }
 
 export interface YAxisStyle extends AxisStyle {
-  type?: YAxisType
-  position?: YAxisPosition
-  inside?: boolean
-  reverse?: boolean
+  type: YAxisType
+  position: YAxisPosition
+  inside: boolean
+  reverse: boolean
 }
 
 /**
  * 默认y轴配置
  * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, width: null, position: string, tickText: {color: string, size: number, paddingRight: number, show: boolean, weight: string, family: string, paddingLeft: number}, type: string, inside: boolean, tickLine: {size: number, color: string, show: boolean, length: number}}}
  */
-const defaultYAxis: RequiredDeep<YAxisStyle> = {
+const defaultYAxis: YAxisStyle = {
   /**
    * 是否显示整个轴
    */
@@ -589,18 +588,18 @@ const defaultYAxis: RequiredDeep<YAxisStyle> = {
 }
 
 export interface CrosshairDirectionStyle {
-  show?: boolean
-  line?: LineStyle
-  text?: PaddingTextStyle
+  show: boolean
+  line: LineStyle
+  text: PaddingTextStyle
 }
 
 export interface CrosshairStyle {
-  show?: boolean
-  horizontal?: CrosshairDirectionStyle
-  vertical?: CrosshairDirectionStyle
+  show: boolean
+  horizontal: CrosshairDirectionStyle
+  vertical: CrosshairDirectionStyle
 }
 
-const defaultCrosshair: RequiredDeep<CrosshairStyle> = {
+const defaultCrosshair: CrosshairStyle = {
   show: true,
   horizontal: {
     show: true,
@@ -767,17 +766,17 @@ const defaultCrosshair: RequiredDeep<CrosshairStyle> = {
 // }
 
 export interface SeparatorStyle {
-  size?: number
-  color?: string
-  fill?: boolean
-  activeBackgroundColor?: string
+  size: number
+  color: string
+  fill: boolean
+  activeBackgroundColor: string
 }
 
 /**
  * 图表之间默认分割配置
  * @type {{size: number, color: string}}
  */
-const defaultSeparator: RequiredDeep<SeparatorStyle> = {
+const defaultSeparator: SeparatorStyle = {
   size: 1,
   color: '#DDDDDD',
   fill: true,
@@ -785,16 +784,16 @@ const defaultSeparator: RequiredDeep<SeparatorStyle> = {
 }
 
 export interface Styles {
-  grid?: GridStyle
-  candle?: CandleStyle
-  indicator?: IndicatorStyle
-  xAxis?: XAxisStyle
-  yAxis?: YAxisStyle
-  separator?: SeparatorStyle
-  crosshair?: CrosshairStyle
+  grid: GridStyle
+  candle: CandleStyle
+  indicator: IndicatorStyle
+  xAxis: XAxisStyle
+  yAxis: YAxisStyle
+  separator: SeparatorStyle
+  crosshair: CrosshairStyle
 }
 
-export const defaultStyles: RequiredDeep<Styles> = {
+export const defaultStyles: Styles = {
   grid: defaultGrid,
   candle: defaultCandle,
   indicator: defaultIndicator,

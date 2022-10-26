@@ -12,6 +12,12 @@
  * limitations under the License.
  */
 
-type RequiredDeep<T> = Required<{[P in keyof T]: RequiredDeep<T[P]>}>
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends Array<infer U>
+    ? Array<DeepPartial<U>>
+    : T[P] extends ReadonlyArray<infer X>
+      ? ReadonlyArray<DeepPartial<X>>
+      : DeepPartial<T[P]>
+}
 
-export default RequiredDeep
+export default DeepPartial

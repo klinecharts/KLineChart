@@ -12,14 +12,12 @@
  * limitations under the License.
  */
 
-export function throttle (func, wait = 20) {
+export function throttle (func: (...args: any[]) => any, wait?: number): () => void {
   let previous = 0
   return function () {
     const now = Date.now()
-    const context = this
-    const args = arguments
-    if (now - previous > wait) {
-      func.apply(context, args)
+    if (now - previous > (wait ?? 20)) {
+      func.apply(this, arguments)
       previous = now
     }
   }

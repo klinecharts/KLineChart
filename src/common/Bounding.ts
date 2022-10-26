@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-export interface BoundingLike {
+export interface Bounding {
   width?: number
   height?: number
   left?: number
@@ -21,7 +21,7 @@ export interface BoundingLike {
   bottom?: number
 }
 
-export default class Bounding implements Required<BoundingLike> {
+export default class BoundingImp implements Required<Bounding> {
   width: number
   height: number
   left: number
@@ -29,13 +29,13 @@ export default class Bounding implements Required<BoundingLike> {
   top: number
   bottom: number
 
-  constructor (bounding?: BoundingLike) {
+  constructor (bounding?: Bounding) {
     if (bounding !== undefined) {
       this.merge(bounding)
     }
   }
 
-  merge (bounding: BoundingLike): void {
+  merge (bounding: Bounding): void {
     const { width, height, left, right, top, bottom } = bounding
     if (width !== undefined) {
       this.width = width

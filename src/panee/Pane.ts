@@ -13,8 +13,8 @@
  */
 
 import TypeOrNull from '../common/TypeOrNull'
-import Updater, { UpdateLevel } from '../common/Updater'
-import Bounding, { BoundingLike } from '../common/Bounding'
+import IUpdater, { UpdateLevel } from '../common/Updater'
+import BoundingImp, { Bounding } from '../common/Bounding'
 
 import Axis from '../componentl/Axis'
 
@@ -37,7 +37,9 @@ export interface PaneOptions {
   }
 }
 
-export default abstract class Pane<C extends Axis> implements Updater {
+export default abstract class Pane<C extends Axis> implements IUpdater {
+  private _container: HTMLElement
+  private _seriesContiainer: HTMLElement
   private readonly _id: string
   private readonly _chart: ChartInternal
   private _mainWidget: DrawWidget<C>
@@ -45,18 +47,24 @@ export default abstract class Pane<C extends Axis> implements Updater {
   private _separatorWidget: TypeOrNull<SeparatorWidget> = null
   private readonly _axis: C
 
-  private readonly _bounding: Bounding = new Bounding()
+  private readonly _bounding: BoundingImp = new BoundingImp()
+
+  private _topPane: TypeOrNull<Pane<Axis>>
+  private _bottomPane: TypeOrNull<Pane<Axis>>
 
   private readonly _options: Omit<PaneOptions, 'id' | 'height'> = { dragEnabled: true, gap: { top: 0.2, bottom: 0.1 } }
 
-  constructor (rootContainer: HTMLElement, chart: ChartInternal, id: string) {
-    this._id = id
+  constructor (rootContainer: HTMLElement, chart: ChartInternal, id: string, topPane?: Pane<Axis>, bottomPane?: Pane<Axis>) {
     this._chart = chart
+    this._id = id
+    this._topPane = topPane ?? null
+    this._bottomPane = bottomPane ?? null
     this._init(rootContainer)
   }
 
   private _init (rootContainer: HTMLElement): void {
-    const seriesContainer = createDom('div', {
+    this._container = rootContainer
+    this._seriesContiainer = createDom('div', {
       width: '100%',
       margin: '0',
       padding: '0',
@@ -64,10 +72,10 @@ export default abstract class Pane<C extends Axis> implements Updater {
       overflow: 'hidden',
       boxSizing: 'border-box'
     })
-    rootContainer.appendChild(seriesContainer)
+    rootContainer.appendChild(this._seriesContiainer)
     this._separatorWidget = this.createSeparatorWidget(rootContainer)
-    this._mainWidget = this.createMainWidget(seriesContainer)
-    this._yAxisWidget = this.creatYAxisWidget(seriesContainer)
+    this._mainWidget = this.createMainWidget(this._seriesContiainer)
+    this._yAxisWidget = this.creatYAxisWidget(this._seriesContiainer)
   }
 
   getId (): string {
@@ -84,8 +92,26 @@ export default abstract class Pane<C extends Axis> implements Updater {
     return this._axis
   }
 
-  setBounding (rootBounding: BoundingLike, mainBounding: BoundingLike, yAxisBounding: BoundingLike): Pane<C> {
+  setBounding (rootBounding: Bounding, mainBounding: Bounding, yAxisBounding: Bounding): Pane<C> {
     this._bounding.merge(rootBounding)
+    return this
+  }
+
+  getTopPane (): TypeOrNull<Pane<Axis>> {
+    return this._topPane
+  }
+
+  setTopPane (pane: TypeOrNull<Pane<Axis>>): Pane<C> {
+    this._topPane = pane
+    return this
+  }
+
+  getBottomPane (): TypeOrNull<Pane<Axis>> {
+    return this._bottomPane
+  }
+
+  setBottomPane (pane: TypeOrNull<Pane<Axis>>): Pane<C> {
+    this._bottomPane = pane
     return this
   }
 
@@ -95,10 +121,18 @@ export default abstract class Pane<C extends Axis> implements Updater {
 
   getSeparatorWidget (): TypeOrNull<SeparatorWidget> { return this._separatorWidget }
 
-  update (level: UpdateLevel): void {
-    this._mainWidget.update(level)
-    this._yAxisWidget?.update(level)
-    this._separatorWidget?.update(level)
+  update (level?: UpdateLevel): void {
+    const l = level ?? UpdateLevel.DRAWER
+    this._mainWidget.update(l)
+    this._yAxisWidget?.update(l)
+    this._separatorWidget?.update(l)
+  }
+
+  destroy (): void {
+    this._container.removeChild(this._seriesContiainer)
+    if (this._separatorWidget !== null) {
+      this._container.removeChild(this._separatorWidget.getContainer())
+    }
   }
 
   abstract getName (): string
@@ -109,5 +143,5 @@ export default abstract class Pane<C extends Axis> implements Updater {
 
   protected creatYAxisWidget (container: HTMLElement): TypeOrNull<YAxisWidget> { return null }
 
-  protected abstract createMainWidget (container: HTMLDivElement): DrawWidget<C>
+  protected abstract createMainWidget (container: HTMLElement): DrawWidget<C>
 }

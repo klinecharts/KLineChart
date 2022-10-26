@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import Bounding, { BoundingLike } from '../common/Bounding'
+import BoundingImp, { Bounding } from '../common/Bounding'
 import Updater, { UpdateLevel } from '../common/Updater'
 
 import Axis from '../componentl/Axis'
@@ -24,9 +24,9 @@ import { createDom } from '../utils/dom'
 export default abstract class Widget<C extends Axis> implements Updater {
   private readonly _pane: Pane<C>
 
-  private _container: HTMLDivElement
+  private _container: HTMLElement
 
-  private readonly _bounding: Bounding = new Bounding()
+  private readonly _bounding: BoundingImp = new BoundingImp()
 
   constructor (rootContainer: HTMLElement, pane: Pane<C>) {
     this._pane = pane
@@ -39,10 +39,12 @@ export default abstract class Widget<C extends Axis> implements Updater {
     this.initDom(this._container)
   }
 
-  setBounding (bounding: BoundingLike): Widget<C> {
+  setBounding (bounding: Bounding): Widget<C> {
     this._bounding.merge(bounding)
     return this
   }
+
+  getContainer (): HTMLElement { return this._container }
 
   getBounding (): Bounding {
     return this._bounding

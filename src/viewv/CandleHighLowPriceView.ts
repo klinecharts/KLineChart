@@ -30,10 +30,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
     const priceMarkStyles = chartStore.getStyleOptions().candle.priceMark
     const highPriceMarkStyles = priceMarkStyles.high
     const lowPriceMarkStyles = priceMarkStyles.low
-    const show = Boolean(priceMarkStyles.show)
-    const showHigh = Boolean(highPriceMarkStyles.show)
-    const showLow = Boolean(lowPriceMarkStyles.show)
-    if (show && (showHigh || showLow)) {
+    if (priceMarkStyles.show && (highPriceMarkStyles.show || lowPriceMarkStyles.show)) {
       const precision = chartStore.getPrecision()
       const yAxis = pane.getAxisComponent()
       let high = Number.MIN_SAFE_INTEGER
@@ -53,7 +50,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
       })
       const highY = yAxis.convertToPixel(high)
       const lowY = yAxis.convertToPixel(low)
-      if (showHigh && high !== Number.MIN_SAFE_INTEGER) {
+      if (highPriceMarkStyles.show && high !== Number.MIN_SAFE_INTEGER) {
         this._drawMark(
           ctx,
           formatPrecision(high, precision.price),
@@ -62,7 +59,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
           highPriceMarkStyles
         )
       }
-      if (showLow && low !== Number.MAX_SAFE_INTEGER) {
+      if (lowPriceMarkStyles.show && low !== Number.MAX_SAFE_INTEGER) {
         this._drawMark(
           ctx,
           formatPrecision(low, precision.price),

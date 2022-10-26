@@ -12,8 +12,6 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
-
 import { isNumber, isValid } from './typeChecks'
 
 const reEscapeChar = /\\(\\)?/g
@@ -33,7 +31,7 @@ const rePropName = RegExp(
  * @param defaultValue
  * @returns {string|*}
  */
-export function formatValue (data: TypeOrNull<object>, key: string, defaultValue?: any): any {
+export function formatValue (data: unknown, key: string, defaultValue?: unknown): unknown {
   if (isValid(data)) {
     const path: string[] = []
     key.replace(rePropName, (subString: string, ...args: any[]) => {

@@ -39,7 +39,7 @@ export interface Extremum {
 }
 
 export default abstract class AxisImp implements Axis {
-  private readonly _parent: Pane
+  private readonly _parent: Pane<AxisImp>
 
   private _extremum: Extremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
   private _prevExtremum: Extremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
@@ -47,7 +47,7 @@ export default abstract class AxisImp implements Axis {
 
   private readonly _measureCtx: CanvasRenderingContext2D
 
-  constructor (parent: Pane) {
+  constructor (parent: Pane<AxisImp>) {
     this._parent = parent
     const canvas = createDom('canvas')
     const pixelRatio = getPixelRatio(canvas)
@@ -55,7 +55,7 @@ export default abstract class AxisImp implements Axis {
     this._measureCtx.scale(pixelRatio, pixelRatio)
   }
 
-  getParent (): Pane { return this._parent }
+  getParent (): Pane<AxisImp> { return this._parent }
 
   getMeasureCtx (): CanvasRenderingContext2D { return this._measureCtx }
 

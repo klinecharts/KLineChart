@@ -12,6 +12,6 @@
  * limitations under the License.
  */
 
-type RequiredPick<T, K extends keyof T> = { [P in keyof T]: T[P] } & { [P in K]-?: T[P] }
+type PickRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
 
-export default RequiredPick
+export default PickRequired

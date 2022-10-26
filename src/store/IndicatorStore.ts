@@ -15,91 +15,74 @@
 import TypeOrNull from '../common/TypeOrNull'
 import Precision from '../common/Precision'
 
-import extension from './extension'
-
 import ChartStore from './ChartStore'
 
 import IndicatorTemplate, { IndicatorConstructor, Indicator, IndicatorSeries } from '../template/indicator/Indicator'
 
-export default class TechStore {
+export default class IndicatorStore {
   private readonly _chartStore: ChartStore
   private readonly _templates: Map<string, IndicatorConstructor> = new Map()
   private readonly _instances: Map<string, Map<string, IndicatorTemplate>> = new Map()
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
-    // 指标模板
-    this.buildTemplates(extension.getTechExtensions())
   }
 
-  private _overrideInstance (instance: IndicatorTemplate, indicator: Indicator): boolean[] {
+  private _overrideInstance (instance: IndicatorTemplate, indicator: Omit<Indicator, 'result'>): boolean[] {
     const {
-      shortName, calcParams, precision, shouldOhlc, shouldFormatBigNumber, styles, extendData
+      shortName, series, calcParams, precision, plots, minValue, maxValue,
+      shouldOhlc, shouldFormatBigNumber, styles, extendData,
+      regeneratePlots, createToolTipDataSource, draw, calc
     } = indicator
-    let shortNameSuccess = false
+    let overrideSuccess = false
+    if (shortName !== undefined && instance.setShortName(shortName)) {
+      overrideSuccess = true
+    }
+    if (series !== undefined && instance.setSeries(series)) {
+      overrideSuccess = true
+    }
     let calcParamsSuccess = false
-    let precisionSuccess = false
-    let shouldOhlcSuccess = false
-    let shouldFormatBigNumberSuccess = false
-    let styleSuccess = false
-    let extendDataSuccess = false
-    if (shortName !== undefined) {
-      shortNameSuccess = instance.setShortName(shortName)
+    if (calcParams !== undefined && instance.setCalcParams(calcParams)) {
+      overrideSuccess = true
+      calcParamsSuccess = true
     }
-    if (calcParams !== undefined) {
-      calcParamsSuccess = instance.setCalcParams(calcParams)
+    if (plots !== undefined && instance.setPlots(plots)) {
+      overrideSuccess = true
     }
-    if (precision !== undefined) {
-      precisionSuccess = instance.setPrecision(precision)
+    if (minValue !== undefined && instance.setMinValue(minValue)) {
+      overrideSuccess = true
     }
-    if (shouldOhlc !== undefined) {
-      shouldOhlcSuccess = instance.setShouldOhlc(shouldOhlc)
+    if (maxValue !== undefined && instance.setMinValue(maxValue)) {
+      overrideSuccess = true
     }
-    if (shouldFormatBigNumber !== undefined) {
-      shouldFormatBigNumberSuccess = instance.setShouldFormatBigNumber(shouldFormatBigNumber)
+    if (precision !== undefined && instance.setPrecision(precision)) {
+      overrideSuccess = true
     }
-    if (styles !== undefined) {
-      styleSuccess = instance.setStyles(styles)
+    if (shouldOhlc !== undefined && instance.setShouldOhlc(shouldOhlc)) {
+      overrideSuccess = true
     }
-    if (extendData !== undefined) {
-      extendDataSuccess = instance.setExtendData(extendData)
+    if (shouldFormatBigNumber !== undefined && instance.setShouldFormatBigNumber(shouldFormatBigNumber)) {
+      overrideSuccess = true
     }
-    const overrideSuccess = shortNameSuccess || calcParamsSuccess || precisionSuccess || shouldOhlcSuccess || shouldFormatBigNumberSuccess || styleSuccess || extendDataSuccess
+    if (styles !== undefined && styles !== null && instance.setStyles(styles)) {
+      overrideSuccess = true
+    }
+    if (extendData !== undefined && instance.setExtendData(extendData)) {
+      overrideSuccess = true
+    }
+    if (regeneratePlots !== undefined && regeneratePlots !== null && instance.setRegeneratePlots(regeneratePlots)) {
+      overrideSuccess = true
+    }
+    if (createToolTipDataSource !== undefined && createToolTipDataSource !== null && instance.setCreateToolTipDataSource(createToolTipDataSource)) {
+      overrideSuccess = true
+    }
+    if (draw !== undefined && draw !== null && instance.setDraw(draw)) {
+      overrideSuccess = true
+    }
+    if (calc !== undefined) {
+      instance.calc = calc
+    }
     return [overrideSuccess, calcParamsSuccess]
-  }
-
-  /**
-   * 创建技术指标模板
-   * @return {{}}
-   */
-  buildTemplates (templates: Indicator[]): void {
-    templates.forEach((template: Indicator) => {
-      const Clz = IndicatorTemplate.extend(template)
-      this._templates.set(template.name, Clz)
-    })
-  }
-
-  /**
-   * 模板是否存在
-   * @param {*} name
-   * @returns
-   */
-  hasTemplate (name: string): boolean {
-    return this._templates.get(name) !== undefined
-  }
-
-  /**
-   * 获取技术指标模板信息
-   * @param name
-   * @return {{}|{calcParams: *, precision: *, name: *}}
-   */
-  getTemplate (name?: string): TypeOrNull<Indicator> | Indicator[] {
-    const templates = extension.getTechExtensions()
-    if (name !== undefined) {
-      const template = templates.find(t => t.name === name)
-      return template ?? null
-    }
-    return templates
   }
 
   /**

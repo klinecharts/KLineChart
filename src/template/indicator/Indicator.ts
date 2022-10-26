@@ -12,12 +12,13 @@
  * limitations under the License.
  */
 
-import CustomRequired from '../../common/RequiredPick'
+import TypeOrNull from '../../common/TypeOrNull'
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import Bounding from '../../common/Bounding'
 
 import { VisibleRange } from '../../store/TimeScaleStore'
-import { IndicatorStyle } from '../../store/styles'
+import { IndicatorStyle, IndicatorBarCirleStyle, LineStyle } from '../../store/styles'
 
 import Axis from '../../componentl/Axis'
 
@@ -56,7 +57,7 @@ export interface IndicatorPlot<D = any> {
   styles?: IndicatorPlotStylesCallback<D>
 }
 
-export type IndicatorRegeneratePlotsCallback<D> = (calcParms: any[]) => Array<IndicatorPlot<D>>
+export type IndicatorRegeneratePlotsCallback<D = any> = (calcParms: any[]) => Array<IndicatorPlot<D>>
 export type IndicatorCreateToolTipDataSourceCallback = () => any
 
 export interface IndicatorDrawDataSource<D> {
@@ -74,7 +75,7 @@ export interface IndicatorDrawParams<D = any> {
   yAxis: Axis
 }
 
-export type IndicatorDrawCallback<D> = (params: IndicatorDrawParams<D>) => boolean
+export type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParams<D>) => boolean
 export type IndicatorCalcOptions<D> = Pick<Indicator<D>, 'plots' | 'calcParams' | 'extendData'>
 export type IndicatorCalcCallback<D> = (dataList: KLineData[], options: IndicatorCalcOptions<D>) => Promise<D[]> | D[]
 
@@ -91,8 +92,6 @@ export interface Indicator<D = any> {
   shouldOhlc?: boolean
   // 是否需要格式化大数据值，从1000开始格式化，比如100000是否需要格式化100K
   shouldFormatBigNumber?: boolean
-  // 样式
-  styles?: IndicatorStyle
   // 扩展数据
   extendData?: any
   // 系列
@@ -100,17 +99,19 @@ export interface Indicator<D = any> {
   // 数据信息
   plots?: Array<IndicatorPlot<D>>
   // 指定的最小值
-  minValue?: number
+  minValue?: TypeOrNull<number>
   // 指定的最大值
-  maxValue?: number
+  maxValue?: TypeOrNull<number>
+  // 样式
+  styles?: TypeOrNull<Partial<IndicatorStyle>>
   // 计算
   calc?: IndicatorCalcCallback<D>
   // 重新生成数据配置
-  regeneratePlots?: IndicatorRegeneratePlotsCallback<D>
+  regeneratePlots?: TypeOrNull<IndicatorRegeneratePlotsCallback<D>>
   // 创建自定义提示文字
-  createToolTipDataSource?: IndicatorCreateToolTipDataSourceCallback
+  createToolTipDataSource?: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>
   // 自定义绘制
-  draw?: IndicatorDrawCallback<D>
+  draw?: TypeOrNull<IndicatorDrawCallback<D>>
   // 结果
   result?: D[]
 }
@@ -130,13 +131,13 @@ export function eachPlots<D> (
   const plots = indicator.plots ?? []
   const styles = indicator.styles ?? null
 
-  const circleStyles = formatValue(styles, 'circles', defaultStyles.circles)
+  const circleStyles = formatValue(styles, 'circles', defaultStyles.circles) as IndicatorBarCirleStyle[]
   const circleStyleCount = circleStyles.length
 
-  const barStyles = formatValue(styles, 'bars', defaultStyles.bars)
+  const barStyles = formatValue(styles, 'bars', defaultStyles.bars) as IndicatorBarCirleStyle[]
   const barStyleCount = barStyles.length
 
-  const lineStyles = formatValue(styles, 'lines', defaultStyles.lines)
+  const lineStyles = formatValue(styles, 'lines', defaultStyles.lines) as Array<Omit<LineStyle, 'show'>>
   const lineStyleCount = lineStyles.length
 
   let circleCount = 0
@@ -186,24 +187,24 @@ export function eachPlots<D> (
   })
 }
 
-export default abstract class IndicatorTemplate<D = any> implements CustomRequired<Indicator<D>, 'calc'> {
+export default abstract class IndicatorTemplate<D = any> implements Required<Indicator<D>> {
   name: string
-  shortName?: string
-  precision?: number
-  calcParams?: any[]
-  shouldOhlc?: boolean
-  shouldFormatBigNumber?: boolean
-  styles?: IndicatorStyle
-  extendData?: any
-  series?: IndicatorSeries
-  plots?: Array<IndicatorPlot<D>>
-  minValue?: number
-  maxValue?: number
-  regeneratePlots?: IndicatorRegeneratePlotsCallback<D>
-  createToolTipDataSource?: IndicatorCreateToolTipDataSourceCallback
-  draw?: IndicatorDrawCallback<D>
+  shortName: string
+  precision: number
+  calcParams: any[]
+  shouldOhlc: boolean
+  shouldFormatBigNumber: boolean
+  extendData: any
+  series: IndicatorSeries
+  plots: Array<IndicatorPlot<D>>
+  minValue: TypeOrNull<number>
+  maxValue: TypeOrNull<number>
+  styles: TypeOrNull<Partial<IndicatorStyle>>
+  regeneratePlots: TypeOrNull<IndicatorRegeneratePlotsCallback<D>>
+  createToolTipDataSource: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>
+  draw: TypeOrNull<IndicatorDrawCallback<D>>
 
-  result?: D[] = []
+  result: D[] = []
 
   private _precisionFlag: boolean = false
 
@@ -211,7 +212,8 @@ export default abstract class IndicatorTemplate<D = any> implements CustomRequir
     const {
       name, shortName, series, calcParams, plots, precision,
       shouldOhlc, shouldFormatBigNumber,
-      minValue, maxValue, styles, extendData
+      minValue, maxValue, styles, extendData,
+      regeneratePlots, createToolTipDataSource, draw
     } = indicator
     this.name = name
     this.shortName = shortName ?? name
@@ -221,10 +223,13 @@ export default abstract class IndicatorTemplate<D = any> implements CustomRequir
     this.plots = plots ?? []
     this.shouldOhlc = shouldOhlc ?? false
     this.shouldFormatBigNumber = shouldFormatBigNumber ?? false
-    this.minValue = minValue
-    this.maxValue = maxValue
-    this.styles = styles
+    this.minValue = minValue ?? null
+    this.maxValue = maxValue ?? null
+    this.styles = styles ?? null
     this.extendData = extendData
+    this.regeneratePlots = regeneratePlots ?? null
+    this.createToolTipDataSource = createToolTipDataSource ?? null
+    this.draw = draw ?? null
   }
 
   /**
@@ -235,6 +240,14 @@ export default abstract class IndicatorTemplate<D = any> implements CustomRequir
   setShortName (shortName: string): boolean {
     if (this.shortName !== shortName) {
       this.shortName = shortName
+      return true
+    }
+    return false
+  }
+
+  setSeries (series: IndicatorSeries): boolean {
+    if (this.series !== series) {
+      this.series = series
       return true
     }
     return false
@@ -266,9 +279,7 @@ export default abstract class IndicatorTemplate<D = any> implements CustomRequir
    */
   setCalcParams (params: any[]): boolean {
     this.calcParams = params
-    if (this.regeneratePlots !== undefined) {
-      this.plots = this.regeneratePlots(params)
-    }
+    this.plots = this.regeneratePlots?.(params) ?? this.plots
     return true
   }
 
@@ -288,7 +299,7 @@ export default abstract class IndicatorTemplate<D = any> implements CustomRequir
     return false
   }
 
-  setStyles (styles: IndicatorStyle): boolean {
+  setStyles (styles: Partial<IndicatorStyle>): boolean {
     if (this.styles !== styles) {
       this.styles = styles
       return true
@@ -304,9 +315,49 @@ export default abstract class IndicatorTemplate<D = any> implements CustomRequir
     return false
   }
 
-  setPlots (plots: any): boolean {
+  setPlots (plots: IndicatorPlot[]): boolean {
     if (this.plots !== plots) {
       this.plots = plots
+      return true
+    }
+    return false
+  }
+
+  setMinValue (value: TypeOrNull<number>): boolean {
+    if (this.minValue !== value) {
+      this.minValue = value
+      return true
+    }
+    return false
+  }
+
+  setMaxValue (value: TypeOrNull<number>): boolean {
+    if (this.maxValue !== value) {
+      this.maxValue = value
+      return true
+    }
+    return false
+  }
+
+  setRegeneratePlots (callback: IndicatorRegeneratePlotsCallback): boolean {
+    if (this.regeneratePlots !== callback) {
+      this.regeneratePlots = callback
+      return true
+    }
+    return false
+  }
+
+  setCreateToolTipDataSource (callback: IndicatorCreateToolTipDataSourceCallback): boolean {
+    if (this.createToolTipDataSource !== callback) {
+      this.regeneratePlots = callback
+      return true
+    }
+    return false
+  }
+
+  setDraw (callback: IndicatorDrawCallback): boolean {
+    if (this.draw !== callback) {
+      this.draw = callback
       return true
     }
     return false
@@ -324,7 +375,7 @@ export default abstract class IndicatorTemplate<D = any> implements CustomRequir
 
   abstract calc (dataList: KLineData[], options: IndicatorCalcOptions<D>): D[] | Promise<D[]>
 
-  static extend<D> (indicator: CustomRequired<Indicator<D>, 'calc'>): IndicatorConstructor<D> {
+  static extend<D> (indicator: PickRequired<Omit<Indicator<D>, 'result'>, 'calc'>): IndicatorConstructor<D> {
     class Custom extends IndicatorTemplate<D> {
       constructor () {
         super(indicator)
@@ -334,9 +385,6 @@ export default abstract class IndicatorTemplate<D = any> implements CustomRequir
         return indicator.calc(dataList, options)
       }
     }
-    Custom.prototype.regeneratePlots = indicator.regeneratePlots
-    Custom.prototype.createToolTipDataSource = indicator.createToolTipDataSource
-    Custom.prototype.draw = indicator.draw
     return Custom
   }
 }

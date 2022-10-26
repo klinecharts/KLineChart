@@ -72,7 +72,7 @@ export default class YAxis extends AxisImp {
     const isArea = candleOptions.type === 'area'
     const areaValueKey = candleOptions.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
-    visibleDataList.forEach(({ index, data }) => {
+    visibleDataList.forEach(({ dataIndex, data }) => {
       if (shouldCompareHighLow) {
         min = Math.min(min, data.low)
         max = Math.max(max, data.high)
@@ -82,7 +82,7 @@ export default class YAxis extends AxisImp {
         max = Math.max(max, data[areaValueKey])
       }
       plotsResultList.forEach(({ plots, result }) => {
-        const indicatorData = result[index] ?? {}
+        const indicatorData = result[dataIndex] ?? {}
         plots.forEach(plot => {
           const value = indicatorData[plot.key]
           if (isValid(value)) {
