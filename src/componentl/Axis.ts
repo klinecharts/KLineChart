@@ -14,9 +14,9 @@
 
 import Pane from '../panee/Pane'
 
-import { getPrecision, nice, round } from '../utils/number'
-import { createDom } from '../utils/dom'
-import { getPixelRatio } from '../utils/canvas'
+import { getPrecision, nice, round } from '../common/utils/number'
+import { createDom } from '../common/utils/dom'
+import { getPixelRatio } from '../common/utils/canvas'
 
 export interface Tick {
   coord: number

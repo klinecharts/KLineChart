@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { isValid } from '../utils/typeChecks'
+import { isValid } from '../common/utils/typeChecks'
 
 import InvalidateLevel from '../enum/InvalidateLevel'
 

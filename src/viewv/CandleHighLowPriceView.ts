@@ -20,7 +20,7 @@ import { CandleHighLowPriceMarkStyle } from '../store/styles'
 
 import ChildrenView from './ChildrenView'
 
-import { formatPrecision } from '../utils/format'
+import { formatPrecision } from '../common/utils/format'
 
 export default class CandleHighLowPriceView extends ChildrenView {
   protected drawImp (ctx: CanvasRenderingContext2D): void {

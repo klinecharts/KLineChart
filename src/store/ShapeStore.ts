@@ -14,8 +14,8 @@
 
 import extension from './extension'
 
-import { isNumber, isFunction, isValid } from '../utils/typeChecks'
-import { logWarn } from '../utils/logger'
+import { isNumber, isFunction, isValid } from '../common/utils/typeChecks'
+import { logWarn } from '../common/utils/logger'
 
 import Shape, { ShapeEventOperateElement } from '../component/overlay/Shape'
 

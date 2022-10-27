@@ -17,10 +17,10 @@ import { UpdateLevel } from './common/Updater'
 
 import ChartStore from './store/ChartStore'
 
-import Pane, { PaneOptions } from './panee/Pane'
-import CandlePane from './panee/CandlePane'
-import IndicatorPane from './panee/IndicatorPane'
-import XAxisPane from './panee/XAxisPane'
+import Pane, { PaneOptions, PANE_DEFAULT_HEIGHT } from './panee/Pane'
+import CandlePane, { CANDLE_PANE_ID } from './panee/CandlePane'
+import IndicatorPane, { INDICATOR_PANE_ID_PREFIX } from './panee/IndicatorPane'
+import XAxisPane, { XAXIS_PANE_ID } from './panee/XAxisPane'
 
 import Axis from './componentl/Axis'
 
@@ -28,13 +28,13 @@ import { YAxisPosition } from './store/styles'
 
 import { Indicator } from './template/indicator/Indicator'
 
-import { isArray, isBoolean, isFunction, isValid, isNumber } from './utils/typeChecks'
-import { createId } from './utils/id'
+import { isArray, isBoolean, isFunction, isValid, isNumber } from './common/utils/typeChecks'
+import { createId } from './common/utils/id'
 
 import ChartEvent from './event/ChartEvent'
-import { getPixelRatio } from './utils/canvas'
-import { throttle } from './utils/performance'
-import { createDom } from './utils/dom'
+import { getPixelRatio } from './common/utils/canvas'
+import { throttle } from './common/utils/performance'
+import { createDom } from './common/utils/dom'
 import Annotation from './component/overlay/Annotation'
 import Tag from './component/overlay/Tag'
 import { perfectOverlayFunc } from './component/overlay/Overlay'
@@ -42,23 +42,11 @@ import { perfectOverlayFunc } from './component/overlay/Overlay'
 import ActionType from './enum/ActionType'
 import InvalidateLevel from './enum/InvalidateLevel'
 
-// 默认技术指标窗口高度
-const DEFAULT_TECH_PANE_HEIGHT = 100
-
-// 技术指标窗口id前缀
-const TECH_PANE_ID_PREFIX = 'tech_pane_'
-
 // 图形id前缀
 const SHAPE_ID_PREFIX = 'shape_'
 
 // 注解id前缀
 const ANNOTATION_ID_PREFIX = 'an_'
-
-// 蜡烛图窗口id
-export const CANDLE_PANE_ID = 'candle_pane'
-
-// x轴窗口id
-export const XAXIS_PANE_ID = 'x_axis_pane'
 
 export default class ChartInternal {
   private _container: HTMLElement
@@ -69,12 +57,9 @@ export default class ChartInternal {
 
   constructor (container: HTMLElement, styleOptions: any) {
     this._initChartContainer(container)
-    this._separatorDragStartTopPaneHeight = 0
-    this._separatorDragStartBottomPaneHeight = 0
     this._chartStore = new ChartStore(styleOptions, this)
     this._xAxisPane = new XAxisPane(this._chartContainer, this, XAXIS_PANE_ID)
     this._panes.set(CANDLE_PANE_ID, new CandlePane(this._chartContainer, this, CANDLE_PANE_ID))
-    this._separators = new Map()
     this._chartWidth = {}
     this._chartHeight = {}
     this._chartEvent = new ChartEvent(
@@ -146,53 +131,6 @@ export default class ChartInternal {
   }
 
   /**
-   * 分割线拖拽开始
-   * @param topPaneId
-   * @param bottomPaneId
-   * @private
-   */
-  _separatorStartDrag (topPaneId, bottomPaneId) {
-    this._separatorDragStartTopPaneHeight = this._panes.get(topPaneId).height()
-    this._separatorDragStartBottomPaneHeight = this._panes.get(bottomPaneId).height()
-  }
-
-  /**
-   * 分割线拖拽
-   * @param dragDistance
-   * @param topPaneId
-   * @param bottomPaneId
-   * @private
-   */
-  _separatorDrag (dragDistance, topPaneId, bottomPaneId) {
-    const topPane = this._panes.get(topPaneId)
-    const bottomPane = this._panes.get(bottomPaneId)
-    const topPaneMinHeight = topPane.minHeight()
-    const bottomPaneMinHeight = bottomPane.minHeight()
-    let topPaneHeight = this._separatorDragStartTopPaneHeight + dragDistance
-    let bottomPaneHeight = this._separatorDragStartBottomPaneHeight - dragDistance
-    if (topPaneHeight > this._separatorDragStartTopPaneHeight + this._separatorDragStartBottomPaneHeight) {
-      topPaneHeight = this._separatorDragStartTopPaneHeight + this._separatorDragStartBottomPaneHeight
-      bottomPaneHeight = 0
-    }
-    if (topPaneHeight < 0) {
-      topPaneHeight = 0
-      bottomPaneHeight = this._separatorDragStartTopPaneHeight + this._separatorDragStartBottomPaneHeight
-    }
-    if (topPaneHeight < topPaneMinHeight) {
-      bottomPaneHeight -= bottomPaneMinHeight - topPaneHeight
-      topPaneHeight = topPaneMinHeight
-    }
-    if (bottomPaneHeight < bottomPaneMinHeight) {
-      topPaneHeight -= topPaneMinHeight - bottomPaneHeight
-      bottomPaneHeight = bottomPaneMinHeight
-    }
-    topPane.setHeight(topPaneHeight)
-    bottomPane.setHeight(bottomPaneHeight)
-    this._chartStore.actionStore().execute(ActionType.PANE_DRAG, { topPaneId, bottomPaneId, topPaneHeight, bottomPaneHeight })
-    this.adjustPaneViewport(true, true, true, true, true)
-  }
-
-  /**
    * 更新所有pane
    * @private
    */
@@ -219,56 +157,40 @@ export default class ChartInternal {
    * @private
    */
   private _measurePaneHeight (): void {
-    const styleOptions = this._chartStore.styleOptions()
-    const paneHeight = this._container.offsetHeight
-    const separatorSize = styleOptions.separator.size
-    const separatorTotalHeight = separatorSize * this._separators.size
-    const xAxisHeight = this._xAxisPane.xAxis().getSelfHeight()
-    let paneExcludeXAxisSeparatorHeight = paneHeight - xAxisHeight - separatorTotalHeight
-    if (paneExcludeXAxisSeparatorHeight < 0) {
-      paneExcludeXAxisSeparatorHeight = 0
+    const totalHeight = this._container.offsetHeight
+    const xAxisHeight = this._xAxisPane.getAxisComponent().getAutoSize()
+    let paneExcludeXAxisHeight = totalHeight - xAxisHeight
+    if (paneExcludeXAxisHeight < 0) {
+      paneExcludeXAxisHeight = 0
     }
-    let techPaneTotalHeight = 0
+    let indicatorPaneTotalHeight = 0
     this._panes.forEach(pane => {
-      if (pane.id() !== CANDLE_PANE_ID) {
-        let paneHeight = pane.height()
-        const paneMinHeight = pane.minHeight()
+      if (pane.getId() !== CANDLE_PANE_ID) {
+        let paneHeight = pane.getBounding().height
+        const paneMinHeight = pane.getOptions().minHeight
         if (paneHeight < paneMinHeight) {
           paneHeight = paneMinHeight
         }
-        if (techPaneTotalHeight + paneHeight > paneExcludeXAxisSeparatorHeight) {
-          techPaneTotalHeight = paneExcludeXAxisSeparatorHeight
-          paneHeight = paneExcludeXAxisSeparatorHeight - techPaneTotalHeight
-          if (paneHeight < 0) paneHeight = 0
+        if (indicatorPaneTotalHeight + paneHeight > paneExcludeXAxisHeight) {
+          indicatorPaneTotalHeight = paneExcludeXAxisHeight
+          paneHeight = paneExcludeXAxisHeight - indicatorPaneTotalHeight
+          if (paneHeight < 0) { paneHeight = 0 }
         } else {
-          techPaneTotalHeight += paneHeight
+          indicatorPaneTotalHeight += paneHeight
         }
-        pane.setHeight(paneHeight)
+        pane.setBounding({ height: paneHeight })
       }
     })
 
-    const candlePaneHeight = paneExcludeXAxisSeparatorHeight - techPaneTotalHeight
+    const candlePaneHeight = paneExcludeXAxisHeight - indicatorPaneTotalHeight
+    this._panes.get(CANDLE_PANE_ID)?.setBounding({ height: candlePaneHeight })
 
-    const paneContentSize = {}
-    paneContentSize[CANDLE_PANE_ID] = { contentTop: 0, contentBottom: candlePaneHeight }
-    let contentTop = candlePaneHeight
-    let contentBottom = candlePaneHeight
-    this._panes.get(CANDLE_PANE_ID).setHeight(candlePaneHeight)
-    this._chartHeight[CANDLE_PANE_ID] = candlePaneHeight
+    let top = 0
     this._panes.forEach(pane => {
-      if (pane.id() !== CANDLE_PANE_ID) {
-        const paneHeight = pane.height()
-        contentBottom += (paneHeight + separatorSize)
-        paneContentSize[pane.id()] = { contentTop, contentBottom }
-        this._chartHeight[pane.id()] = paneHeight
-        contentTop = contentBottom
-      }
+      pane.setBounding({ top })
+      top += pane.getBounding().height
     })
-    this._xAxisPane.setHeight(xAxisHeight)
-    this._chartHeight.xAxis = xAxisHeight
-    this._chartHeight.total = paneHeight
-    this._chartEvent.setPaneContentSize(paneContentSize)
-    this._chartEvent.setChartContentTopBottom({ contentTop: 0, contentBottom })
+    this._xAxisPane.setBounding({ height: xAxisHeight, top })
   }
 
   /**
@@ -276,56 +198,49 @@ export default class ChartInternal {
    * @private
    */
   private _measurePaneWidth (): void {
-    const styleOptions = this._chartStore.styleOptions()
-    const yAxisOptions = styleOptions.yAxis
-    const isYAxisLeft = yAxisOptions.position === YAxisPosition.LEFT
-    const isOutside = !yAxisOptions.inside
-    const paneWidth = this._container.offsetWidth
-    let mainWidth
+    const styles = this._chartStore.getStyleOptions()
+    const yAxisStyles = styles.yAxis
+    const isYAxisLeft = yAxisStyles.position === YAxisPosition.LEFT
+    const isOutside = !yAxisStyles.inside
+    const totolWidth = this._container.offsetWidth
+    let mainWidth = 0
     let yAxisWidth = Number.MIN_SAFE_INTEGER
-    let yAxisOffsetLeft
-    let mainOffsetLeft
+    let yAxisLeft = 0
+    let mainLeft = 0
     this._panes.forEach(pane => {
-      yAxisWidth = Math.max(yAxisWidth, pane.yAxis().getSelfWidth())
+      yAxisWidth = Math.max(yAxisWidth, pane.getAxisComponent().getAutoSize())
     })
-    if (yAxisWidth > paneWidth) {
-      yAxisWidth = paneWidth
+    if (yAxisWidth > totolWidth) {
+      yAxisWidth = totolWidth
     }
     if (isOutside) {
-      mainWidth = paneWidth - yAxisWidth
+      mainWidth = totolWidth - yAxisWidth
       if (isYAxisLeft) {
-        yAxisOffsetLeft = 0
-        mainOffsetLeft = yAxisWidth
+        yAxisLeft = 0
+        mainLeft = yAxisWidth
       } else {
-        yAxisOffsetLeft = paneWidth - yAxisWidth
-        mainOffsetLeft = 0
+        yAxisLeft = totolWidth - yAxisWidth
+        mainLeft = 0
       }
     } else {
-      mainWidth = paneWidth
-      mainOffsetLeft = 0
+      mainWidth = totolWidth
+      mainLeft = 0
       if (isYAxisLeft) {
-        yAxisOffsetLeft = 0
+        yAxisLeft = 0
       } else {
-        yAxisOffsetLeft = paneWidth - yAxisWidth
+        yAxisLeft = totolWidth - yAxisWidth
       }
     }
 
-    let totalDataSpace = mainWidth
-    if (totalDataSpace < this._chartStore.timeScaleStore().dataSpace()) {
-      totalDataSpace = this._chartStore.timeScaleStore().dataSpace()
-    }
-    this._chartStore.timeScaleStore().setTotalDataSpace(totalDataSpace)
+    this._chartStore.getTimeScaleStore().setTotalBarSpace(mainWidth)
 
-    this._panes.forEach((pane, paneId) => {
-      pane.setWidth(mainWidth, yAxisWidth)
-      pane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft)
-      const separator = this._separators.get(paneId)
-      separator && separator.setSize(mainOffsetLeft, mainWidth)
+    const paneBounding = { width: totolWidth }
+    const mainBounding = { width: mainWidth, left: mainLeft }
+    const yAxisBounding = { width: yAxisWidth, left: yAxisLeft }
+    this._panes.forEach((pane) => {
+      pane.setBounding(paneBounding, mainBounding, yAxisBounding)
     })
-    this._chartWidth = { content: mainWidth, yAxis: yAxisWidth, total: paneWidth }
-    this._xAxisPane.setWidth(mainWidth, yAxisWidth)
-    this._xAxisPane.setOffsetLeft(mainOffsetLeft, yAxisOffsetLeft)
-    this._chartEvent.setChartContentLeftRight({ contentLeft: mainOffsetLeft, contentRight: mainOffsetLeft + mainWidth })
+    this._xAxisPane.setBounding(paneBounding, mainBounding, yAxisBounding)
   }
 
   /**
@@ -375,8 +290,8 @@ export default class ChartInternal {
   }
 
   updatePane (level: UpdateLevel, paneId?: string): void {
-    if (isValid(paneId)) {
-      this.getPaneById(paneId as string)?.update(level)
+    if (paneId !== undefined) {
+      this.getPaneById(paneId)?.update(level)
     } else {
       this._xAxisPane.update(level)
       this._panes.forEach(pane => {
@@ -439,20 +354,13 @@ export default class ChartInternal {
         this.setPaneOptions(paneOptions, this._panes.get(paneId)?.getAxisComponent().buildTicks(true))
       })
     } else {
-      paneId = paneOptions?.id ?? createId(TECH_PANE_ID_PREFIX)
-      // const dragEnabled = isBoolean(options.dragEnabled) ? options.dragEnabled : true
-      // this._separators.set(id, new SeparatorPane(
-      //   this._chartContainer,
-      //   this._chartStore,
-      //   Array.from(this._panes.keys()).pop(),
-      //   id,
-      //   dragEnabled,
-      //   {
-      //     startDrag: this._separatorStartDrag.bind(this),
-      //     drag: throttle(this._separatorDrag.bind(this), 50)
-      //   }
-      // ))
+      paneId = paneOptions?.id ?? createId(INDICATOR_PANE_ID_PREFIX)
       const pane = new IndicatorPane(this._chartContainer, this, paneId, Array.from(this._panes.keys()).pop() as unknown as Pane<Axis>)
+      const height = paneOptions?.height ?? PANE_DEFAULT_HEIGHT
+      pane.setBounding({ height })
+      if (paneOptions !== undefined) {
+        pane.setOptions(paneOptions)
+      }
       this._panes.set(paneId, pane)
       this._chartStore.getIndicatorStore().addInstance(paneId, indicator, isStack).finally(() => {
         this.adjustPaneViewport(true, true, true, true, true)

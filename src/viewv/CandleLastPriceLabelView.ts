@@ -18,9 +18,9 @@ import View from './View'
 
 import YAxis from '../componentl/YAxis'
 
-import { formatPrecision } from '../utils/format'
-import { isValid } from '../utils/typeChecks'
-import { createFont, calcTextWidth } from '../utils/canvas'
+import { formatPrecision } from '../common/utils/format'
+import { isValid } from '../common/utils/typeChecks'
+import { createFont, calcTextWidth } from '../common/utils/canvas'
 
 export default class CandleLastPriceLabelView extends View {
   protected drawImp (ctx: CanvasRenderingContext2D): void {

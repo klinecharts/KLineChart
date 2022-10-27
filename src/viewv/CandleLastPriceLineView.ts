@@ -16,7 +16,7 @@ import YAxis from '../componentl/YAxis'
 
 import View from './View'
 
-import { isValid } from '../utils/typeChecks'
+import { isValid } from '../common/utils/typeChecks'
 
 export default class CandleLastPriceView extends View {
   protected drawImp (ctx: CanvasRenderingContext2D): void {

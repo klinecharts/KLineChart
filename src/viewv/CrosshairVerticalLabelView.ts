@@ -22,8 +22,8 @@ import ChartStore from '../store/ChartStore'
 import { Crosshair } from '../store/CrosshairStore'
 import { CrosshairStyle, CrosshairDirectionStyle } from '../store/styles'
 
-import { formatDate } from '../utils/format'
-import { isValid } from '../utils/typeChecks'
+import { formatDate } from '../common/utils/format'
+import { isValid } from '../common/utils/typeChecks'
 
 import CrosshairHorizontalLabelView from './CrosshairHorizontalLabelView'
 

@@ -14,7 +14,7 @@
 
 import Coordinate from '../../common/Coordinate'
 
-import { createFont } from '../../utils/canvas'
+import { createFont } from '../../common/utils/canvas'
 
 import { Figure } from './Figure'
 

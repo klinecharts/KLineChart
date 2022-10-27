@@ -12,7 +12,9 @@
  * limitations under the License.
  */
 
-export interface Bounding {
+import { merge } from './utils/typeChecks'
+
+export default interface Bounding {
   width?: number
   height?: number
   left?: number
@@ -21,39 +23,17 @@ export interface Bounding {
   bottom?: number
 }
 
-export default class BoundingImp implements Required<Bounding> {
-  width: number
-  height: number
-  left: number
-  right: number
-  top: number
-  bottom: number
-
-  constructor (bounding?: Bounding) {
-    if (bounding !== undefined) {
-      this.merge(bounding)
-    }
+export function getDefaultBounding (bounding?: Bounding): Required<Bounding> {
+  const defaultBounding: Required<Bounding> = {
+    width: 0,
+    height: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
   }
-
-  merge (bounding: Bounding): void {
-    const { width, height, left, right, top, bottom } = bounding
-    if (width !== undefined) {
-      this.width = width
-    }
-    if (height !== undefined) {
-      this.height = height
-    }
-    if (left !== undefined) {
-      this.left = left
-    }
-    if (right !== undefined) {
-      this.right = right
-    }
-    if (top !== undefined) {
-      this.top = top
-    }
-    if (bottom !== undefined) {
-      this.bottom = bottom
-    }
+  if (bounding !== undefined) {
+    merge(defaultBounding, bounding)
   }
+  return defaultBounding
 }

@@ -18,6 +18,9 @@ import CandleWidget from '../widget/CandleWidget'
 import IndicatorPane from './IndicatorPane'
 import YAxis from '../componentl/YAxis'
 
+// 蜡烛图窗口id
+export const CANDLE_PANE_ID = 'candle_pane'
+
 export default class CandlePane extends IndicatorPane {
   getName (): string {
     return 'candle'

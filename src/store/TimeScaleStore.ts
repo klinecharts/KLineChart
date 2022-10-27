@@ -18,9 +18,9 @@ import KLineData from '../common/KLineData'
 
 import { Crosshair } from './CrosshairStore'
 
-import { formatValue } from '../utils/format'
-import { logWarn } from '../utils/logger'
-import { binarySearchNearest } from '../utils/number'
+import { formatValue } from '../common/utils/format'
+import { logWarn } from '../common/utils/logger'
+import { binarySearchNearest } from '../common/utils/number'
 
 import ActionType from '../enum/ActionType'
 

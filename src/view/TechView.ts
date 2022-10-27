@@ -17,7 +17,7 @@ import View from './View'
 import { CandleType, LineStyle } from '../options/styleOptions'
 import { TechnicalIndicatorPlotType, getTechnicalIndicatorPlotStyle } from '../component/technicalindicator/TechnicalIndicator'
 import { renderHorizontalLine, renderVerticalLine, renderLine } from '../renderer/line'
-import { isValid } from '../utils/typeChecks'
+import { isValid } from '../common/utils/typeChecks'
 
 export default class TechView extends View {
   constructor (container, chartStore, xAxis, yAxis, paneId) {

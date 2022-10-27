@@ -15,7 +15,7 @@
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 
-import { isArray, isObject, merge, clone } from '../utils/typeChecks'
+import { isArray, isObject, merge, clone } from '../common/utils/typeChecks'
 import { defaultStyles, Styles } from './styles'
 
 import TimeScaleStore from './TimeScaleStore'

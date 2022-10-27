@@ -13,12 +13,12 @@
  */
 
 import Chart from './Chart'
-import { logError, logTag, logWarn } from './utils/logger'
+import { logError, logTag, logWarn } from './common/utils/logger'
 import {
   clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
-} from './utils/typeChecks'
+} from './common/utils/typeChecks'
 
-import { formatValue, formatPrecision, formatBigNumber } from './utils/format'
+import { formatValue, formatPrecision, formatBigNumber } from './common/utils/format'
 
 const instances: {[id: string]: Chart} = {}
 let chartBaseId = 1

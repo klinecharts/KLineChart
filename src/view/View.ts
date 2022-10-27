@@ -15,9 +15,9 @@
 import Element from '../common/Element'
 import ElementGroup from '../common/ElementGroup'
 
-import { getPixelRatio } from '../utils/canvas'
-import { createDom } from '../utils/dom'
-import { cancelAnimationFrame, requestAnimationFrame } from '../utils/compatible'
+import { getPixelRatio } from '../common/utils/canvas'
+import { createDom } from '../common/utils/dom'
+import { cancelAnimationFrame, requestAnimationFrame } from '../common/utils/compatible'
 
 export default abstract class View<E extends Element> extends ElementGroup<E> {
   private _canvas: HTMLCanvasElement

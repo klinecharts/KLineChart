@@ -12,21 +12,22 @@
  * limitations under the License.
  */
 
-import BoundingImp, { Bounding } from '../common/Bounding'
+import Bounding, { getDefaultBounding } from '../common/Bounding'
 import Updater, { UpdateLevel } from '../common/Updater'
 
 import Axis from '../componentl/Axis'
 
 import Pane from '../panee/Pane'
 
-import { createDom } from '../utils/dom'
+import { createDom } from '../common/utils/dom'
+import { merge } from '../common/utils/typeChecks'
 
 export default abstract class Widget<C extends Axis> implements Updater {
   private readonly _pane: Pane<C>
 
   private _container: HTMLElement
 
-  private readonly _bounding: BoundingImp = new BoundingImp()
+  private readonly _bounding: Required<Bounding> = getDefaultBounding()
 
   constructor (rootContainer: HTMLElement, pane: Pane<C>) {
     this._pane = pane
@@ -40,13 +41,13 @@ export default abstract class Widget<C extends Axis> implements Updater {
   }
 
   setBounding (bounding: Bounding): Widget<C> {
-    this._bounding.merge(bounding)
+    merge(this._bounding, bounding)
     return this
   }
 
   getContainer (): HTMLElement { return this._container }
 
-  getBounding (): Bounding {
+  getBounding (): Required<Bounding> {
     return this._bounding
   }
 
@@ -62,5 +63,5 @@ export default abstract class Widget<C extends Axis> implements Updater {
 
   protected abstract initDom (container: HTMLElement): void
 
-  protected abstract updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void
+  protected abstract updateImp (level: UpdateLevel, container: HTMLElement, bounding: Required<Bounding>): void
 }

@@ -28,8 +28,8 @@ import { eachPlots, IndicatorPlot, IndicatorPlotStyle } from '../template/indica
 
 import CandleBarView, { CandleBarOptions } from './CandleBarView'
 
-import { formatValue } from '../utils/format'
-import { isValid } from '../utils/typeChecks'
+import { formatValue } from '../common/utils/format'
+import { isValid } from '../common/utils/typeChecks'
 
 export default class IndicatorView extends CandleBarView {
   protected getCandleBarOptions (chartStore: ChartStore): TypeOrNull<CandleBarOptions> {

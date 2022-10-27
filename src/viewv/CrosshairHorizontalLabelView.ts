@@ -23,9 +23,9 @@ import ChartStore from '../store/ChartStore'
 import { Crosshair } from '../store/CrosshairStore'
 import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, PaddingTextStyle } from '../store/styles'
 
-import { isValid } from '../utils/typeChecks'
-import { formatBigNumber, formatPrecision } from '../utils/format'
-import { createFont, calcTextWidth } from '../utils/canvas'
+import { isValid } from '../common/utils/typeChecks'
+import { formatBigNumber, formatPrecision } from '../common/utils/format'
+import { createFont, calcTextWidth } from '../common/utils/canvas'
 
 import View from './View'
 

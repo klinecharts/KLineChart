@@ -12,26 +12,12 @@
  * limitations under the License.
  */
 
-import DrawWidget from '../widget/DrawWidget'
-import XAxisWidget from '../widget/XAxisWidget'
-
-import XAxis from '../componentl/XAxis'
-
-import Pane from './Pane'
-
-// x轴窗口id
-export const XAXIS_PANE_ID = 'x_axis_pane'
-
-export default class XAxisPane extends Pane<XAxis> {
-  getName (): string {
-    return 'xAxis'
-  }
-
-  protected createAxisComponent (): XAxis {
-    return new XAxis(this)
-  }
-
-  protected createMainWidget (container: HTMLElement): DrawWidget<XAxis> {
-    return new XAxisWidget(container, this)
-  }
+type DeepRequired<T> = {
+  [P in keyof T]-?: T[P] extends Array<infer U>
+    ? Array<DeepRequired<U>>
+    : T[P] extends ReadonlyArray<infer X>
+      ? ReadonlyArray<DeepRequired<X>>
+      : DeepRequired<T[P]>
 }
+
+export default DeepRequired

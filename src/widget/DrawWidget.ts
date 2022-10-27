@@ -19,9 +19,9 @@ import Axis from '../componentl/Axis'
 
 import Widget from './Widget'
 
-import { createDom } from '../utils/dom'
-import { getPixelRatio } from '../utils/canvas'
-import { requestAnimationFrame, cancelAnimationFrame } from '../utils/compatible'
+import { createDom } from '../common/utils/dom'
+import { getPixelRatio } from '../common/utils/canvas'
+import { requestAnimationFrame, cancelAnimationFrame } from '../common/utils/compatible'
 
 const DEFAULT_REQUEST_ID = -1
 
@@ -75,7 +75,7 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     })
   }
 
-  protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
+  protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Required<Bounding>): void {
     const { width, height, left } = bounding
     container.style.left = `${left}px`
 

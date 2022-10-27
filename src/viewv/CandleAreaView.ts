@@ -21,7 +21,7 @@ import { GradientColor } from '../store/styles'
 
 import ChildrenView from './ChildrenView'
 
-import { isNumber, isArray } from '../utils/typeChecks'
+import { isNumber, isArray } from '../common/utils/typeChecks'
 
 export default class CandleAreaView extends ChildrenView {
   protected drawImp (ctx: CanvasRenderingContext2D): void {

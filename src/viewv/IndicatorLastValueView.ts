@@ -18,9 +18,9 @@ import { eachPlots, IndicatorPlot, IndicatorPlotStyle } from '../template/indica
 
 import View from './View'
 
-import { formatPrecision, formatBigNumber } from '../utils/format'
-import { isValid } from '../utils/typeChecks'
-import { createFont, calcTextWidth } from '../utils/canvas'
+import { formatPrecision, formatBigNumber } from '../common/utils/format'
+import { isValid } from '../common/utils/typeChecks'
+import { createFont, calcTextWidth } from '../common/utils/canvas'
 
 export default class IndicatorLastValueView extends View<YAxis> {
   protected drawImp (ctx: CanvasRenderingContext2D): void {

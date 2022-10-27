@@ -20,9 +20,9 @@ import { eachPlots, IndicatorPlot, IndicatorPlotStyle } from '../template/indica
 
 import View from './View'
 
-import { formatPrecision, formatValue, formatBigNumber } from '../utils/format'
-import { isValid } from '../utils/typeChecks'
-import { createFont, calcTextWidth } from '../utils/canvas'
+import { formatPrecision, formatValue, formatBigNumber } from '../common/utils/format'
+import { isValid } from '../common/utils/typeChecks'
+import { createFont, calcTextWidth } from '../common/utils/canvas'
 
 export default class IndicatorTooltipView extends View {
   protected drawImp (ctx: CanvasRenderingContext2D): void {

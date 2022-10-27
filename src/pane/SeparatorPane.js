@@ -13,9 +13,9 @@
  */
 
 import EventBase from '../event/EventBase'
-import { getPixelRatio } from '../utils/canvas'
-import { isValid } from '../utils/typeChecks'
-import { createElement } from '../utils/element'
+import { getPixelRatio } from '../common/utils/canvas'
+import { isValid } from '../common/utils/typeChecks'
+import { createElement } from '../common/utils/element'
 
 export default class SeparatorPane {
   constructor (container, chartStore, topPaneId, bottomPaneId, dragEnabled, dragEventHandler) {
@@ -28,7 +28,7 @@ export default class SeparatorPane {
     this._dragEventHandler = dragEventHandler
     this._dragFlag = false
     this._initElement(container)
-    this._initEvent(dragEnabled)
+    this._initEvent(dragEnabled) 
   }
 
   /**

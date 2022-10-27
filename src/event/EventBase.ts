@@ -25,7 +25,7 @@ import Coordinate from '../common/Coordinate'
 
 import TypeOrNull from '../common/TypeOrNull'
 
-import { isFF, isIOS, isChrome } from '../utils/platform'
+import { isFF, isIOS, isChrome } from '../common/utils/platform'
 
 export type MouseTouchEventCallback = (event: MouseTouchEvent) => void
 export type EmptyCallback = () => void
@@ -98,11 +98,11 @@ const enum Delay {
   PreventFiresTouchEvents = 500,
 }
 
-const enum Constants {
-  CancelClickManhattanDistance = 5,
-  CancelTapManhattanDistance = 5,
-  DoubleClickManhattanDistance = 5,
-  DoubleTapManhattanDistance = 30,
+const enum ManhattanDistance {
+  CancelClick = 5,
+  CancelTap = 5,
+  DoubleClick = 5,
+  DoubleTap = 30,
 }
 
 const enum MouseEventButton {
@@ -120,7 +120,7 @@ interface MouseTouchMoveWithDownInfo {
 }
 
 // TODO: get rid of a lot of boolean flags, probably we should replace it with some enum
-export class EventBase {
+export default class EventBase {
   private readonly _target: HTMLElement
   private readonly _handler: EventHandlers
 
@@ -292,7 +292,7 @@ export class EventBase {
     const moveInfo = this._mouseTouchMoveWithDownInfo(getPosition(touch), this._touchMoveStartCoordinate as Coordinate)
     const { xOffset, yOffset, manhattanDistance } = moveInfo
 
-    if (!this._touchMoveExceededManhattanDistance && manhattanDistance < Constants.CancelTapManhattanDistance) {
+    if (!this._touchMoveExceededManhattanDistance && manhattanDistance < ManhattanDistance.CancelTap) {
       return
     }
 
@@ -339,7 +339,7 @@ export class EventBase {
     const moveInfo = this._mouseTouchMoveWithDownInfo(getPosition(moveEvent), this._mouseMoveStartCoordinate as Coordinate)
     const { manhattanDistance } = moveInfo
 
-    if (manhattanDistance >= Constants.CancelClickManhattanDistance) {
+    if (manhattanDistance >= ManhattanDistance.CancelClick) {
       // if manhattan distance is more that 5 - we should cancel click event
       this._cancelClick = true
       this._resetClickTimeout()
@@ -384,7 +384,7 @@ export class EventBase {
 
       if (this._tapTimeoutId !== null && this._tapCount > 1) {
         const { manhattanDistance } = this._mouseTouchMoveWithDownInfo(getPosition(dblClickEvent), this._tapCoordinate)
-        if (manhattanDistance < Constants.DoubleTapManhattanDistance && !this._cancelTap) {
+        if (manhattanDistance < ManhattanDistance.DoubleTap && !this._cancelTap) {
           this._processTouchEvent(compatEvent as unknown as MouseTouchEvent, this._handler.doubleTapEvent)
         }
         this._resetTapTimeout()
@@ -395,7 +395,7 @@ export class EventBase {
 
       if (this._clickTimeoutId !== null && this._clickCount > 1) {
         const { manhattanDistance } = this._mouseTouchMoveWithDownInfo(getPosition(dblClickEvent), this._clickCoordinate)
-        if (manhattanDistance < Constants.DoubleClickManhattanDistance && !this._cancelClick) {
+        if (manhattanDistance < ManhattanDistance.DoubleClick && !this._cancelClick) {
           this._processMouseEvent(compatEvent, this._handler.mouseDoubleClickEvent)
         }
         this._resetClickTimeout()
@@ -433,7 +433,7 @@ export class EventBase {
     if (this._tapTimeoutId !== null && this._tapCount > 1) {
       // check that both clicks are near enough
       const { manhattanDistance } = this._mouseTouchMoveWithDownInfo(getPosition(touch), this._tapCoordinate)
-      if (manhattanDistance < Constants.DoubleTapManhattanDistance && !this._cancelTap) {
+      if (manhattanDistance < ManhattanDistance.DoubleTap && !this._cancelTap) {
         this._processTouchEvent(compatEvent, this._handler.doubleTapEvent)
       }
       this._resetTapTimeout()
@@ -494,7 +494,7 @@ export class EventBase {
     if (this._clickTimeoutId !== null && this._clickCount > 1) {
       // check that both clicks are near enough
       const { manhattanDistance } = this._mouseTouchMoveWithDownInfo(getPosition(mouseUpEvent), this._clickCoordinate)
-      if (manhattanDistance < Constants.DoubleClickManhattanDistance && !this._cancelClick) {
+      if (manhattanDistance < ManhattanDistance.DoubleClick && !this._cancelClick) {
         this._processMouseEvent(compatEvent, this._handler.mouseDoubleClickEvent)
       }
       this._resetClickTimeout()

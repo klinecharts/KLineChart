@@ -16,8 +16,8 @@ import TypeOrNull from '../common/TypeOrNull'
 
 import AxisImp, { Extremum, Tick } from './Axis'
 
-import { createFont, calcTextWidth } from '../utils/canvas'
-import { formatDate } from '../utils/format'
+import { createFont, calcTextWidth } from '../common/utils/canvas'
+import { formatDate } from '../common/utils/format'
 
 export default class XAxis extends AxisImp {
   protected calcExtremum (): Extremum {
@@ -102,6 +102,43 @@ export default class XAxis extends AxisImp {
       return day
     }
     return null
+  }
+
+  getAutoSize (): number {
+    const chartStore = this.getParent().getChart().getChartStore()
+    const styles = chartStore.getStyleOptions()
+    const xAxisStyles = styles.xAxis
+    const height = xAxisStyles.size
+    if (height !== 'auto') {
+      return height
+    }
+    const crosshairStyles = styles.crosshair
+    let xAxisHeight = 0
+    if (xAxisStyles.show) {
+      if (xAxisStyles.axisLine.show) {
+        xAxisHeight += xAxisStyles.axisLine.size
+      }
+      if (xAxisStyles.tickLine.show) {
+        xAxisHeight += xAxisStyles.tickLine.length
+      }
+      if (xAxisStyles.tickText.show) {
+        xAxisHeight += (xAxisStyles.tickText.marginStart + xAxisStyles.tickText.marginEnd + xAxisStyles.tickText.size)
+      }
+    }
+    let crosshairVerticalTextHeight = 0
+    if (
+      crosshairStyles.show &&
+      crosshairStyles.vertical.show &&
+      crosshairStyles.vertical.text.show
+    ) {
+      crosshairVerticalTextHeight += (
+        crosshairStyles.vertical.text.paddingTop +
+        crosshairStyles.vertical.text.paddingBottom +
+        crosshairStyles.vertical.text.borderSize * 2 +
+        crosshairStyles.vertical.text.size
+      )
+    }
+    return Math.max(xAxisHeight, crosshairVerticalTextHeight)
   }
 
   convertFromPixel (pixel: number): number {

@@ -16,8 +16,12 @@ import AxisImp, { Extremum, Tick } from './Axis'
 
 import { IndicatorPlot } from '../template/indicator/Indicator'
 
-import { isValid } from '../utils/typeChecks'
-import { index10, log10 } from '../utils/number'
+import { YAxisType } from '../store/styles'
+
+import { isValid } from '../common/utils/typeChecks'
+import { index10, log10 } from '../common/utils/number'
+import { createFont, calcTextWidth } from '../common/utils/canvas'
+import { formatPrecision, formatBigNumber } from '../common/utils/format'
 
 interface PlotsResult {
   plots: Array<IndicatorPlot<any>>
@@ -40,11 +44,11 @@ export default class YAxis extends AxisImp {
       if (!shouldOhlc) {
         shouldOhlc = indicator.shouldOhlc ?? false
       }
-      indicatorPrecision = Math.min(indicatorPrecision, indicator.precision as number)
-      if (indicator.minValue !== undefined) {
+      indicatorPrecision = Math.min(indicatorPrecision, indicator.precision)
+      if (indicator.minValue !== null) {
         specifyMin = Math.min(specifyMin, indicator.minValue)
       }
-      if (indicator.maxValue !== undefined) {
+      if (indicator.maxValue !== null) {
         specifyMax = Math.max(specifyMax, indicator.maxValue)
       }
       plotsResultList.push({
@@ -68,9 +72,9 @@ export default class YAxis extends AxisImp {
       }
     }
     const visibleDataList = chartStore.getVisibleDataList()
-    const candleOptions = chartStore.getStyleOptions().candle
-    const isArea = candleOptions.type === 'area'
-    const areaValueKey = candleOptions.area.value
+    const candleStyles = chartStore.getStyleOptions().candle
+    const isArea = candleStyles.type === 'area'
+    const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
     visibleDataList.forEach(({ dataIndex, data }) => {
       if (shouldCompareHighLow) {
@@ -105,7 +109,7 @@ export default class YAxis extends AxisImp {
     switch (type) {
       case 'percentage': {
         const fromData = visibleDataList[0]?.data
-        if (isValid(fromData?.close)) {
+        if (fromData?.close !== undefined) {
           min = (min - fromData.close) / fromData.close * 100
           max = (max - fromData.close) / fromData.close * 100
         }
@@ -214,7 +218,7 @@ export default class YAxis extends AxisImp {
   isFromZero (): boolean {
     const chartStore = this.getParent().getChart().getChartStore()
     const yAxisStyles = chartStore.getStyleOptions().yAxis
-    const inside = yAxisStyles.inside as boolean
+    const inside = yAxisStyles.inside
     return (
       (yAxisStyles.position === 'left' && inside) ||
       (yAxisStyles.position === 'right' && !inside)
@@ -223,6 +227,82 @@ export default class YAxis extends AxisImp {
 
   protected optimalTicks (ticks: Tick[]): Tick[] {
     throw new Error('Method not implemented.')
+  }
+
+  getAutoSize (): number {
+    const pane = this.getParent()
+    const chartStore = pane.getChart().getChartStore()
+    const styles = chartStore.getStyleOptions()
+    const yAxisStyles = styles.yAxis
+    const width = yAxisStyles.size
+    if (width !== 'auto') {
+      return width
+    }
+    const measureCtx = this.getMeasureCtx()
+    let yAxisWidth = 0
+    if (yAxisStyles.show) {
+      if (yAxisStyles.axisLine.show) {
+        yAxisWidth += yAxisStyles.axisLine.size
+      }
+      if (yAxisStyles.tickLine.show) {
+        yAxisWidth += yAxisStyles.tickLine.length
+      }
+      if (yAxisStyles.tickText.show) {
+        let textWidth = 0
+        measureCtx.font = createFont(yAxisStyles.tickText.size, yAxisStyles.tickText.weight, yAxisStyles.tickText.family)
+        this.getTicks().forEach(tick => {
+          textWidth = Math.max(textWidth, calcTextWidth(measureCtx, tick.text))
+        })
+        yAxisWidth += (yAxisStyles.tickText.marginStart + yAxisStyles.tickText.marginEnd + textWidth)
+      }
+    }
+    const crosshairStyles = styles.crosshair
+    let crosshairVerticalTextWidth = 0
+    if (
+      crosshairStyles.show &&
+      crosshairStyles.horizontal.show &&
+      crosshairStyles.horizontal.text.show
+    ) {
+      const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+      let techPrecision = 0
+      let shouldFormatBigNumber = false
+      indicators.forEach(tech => {
+        techPrecision = Math.max(tech.precision, techPrecision)
+        if (!shouldFormatBigNumber) {
+          shouldFormatBigNumber = tech.shouldFormatBigNumber
+        }
+      })
+      measureCtx.font = createFont(
+        crosshairStyles.horizontal.text.size,
+        crosshairStyles.horizontal.text.weight,
+        crosshairStyles.horizontal.text.family
+      )
+      let precision = 2
+      if (this.getType() !== YAxisType.PERCENTAGE) {
+        if (this.isInCandle()) {
+          const { price: pricePrecision } = chartStore.getPrecision()
+          const lastValueMarkStyles = styles.indicator.lastValueMark
+          if (lastValueMarkStyles.show && lastValueMarkStyles.text.show) {
+            precision = Math.max(techPrecision, pricePrecision)
+          } else {
+            precision = pricePrecision
+          }
+        } else {
+          precision = techPrecision
+        }
+      }
+      let valueText = formatPrecision(this.getExtremum().max, precision)
+      if (shouldFormatBigNumber) {
+        valueText = formatBigNumber(valueText)
+      }
+      crosshairVerticalTextWidth += (
+        crosshairStyles.horizontal.text.paddingLeft +
+        crosshairStyles.horizontal.text.paddingRight +
+        crosshairStyles.horizontal.text.borderSize * 2 +
+        calcTextWidth(measureCtx, valueText)
+      )
+    }
+    return Math.max(yAxisWidth, crosshairVerticalTextWidth)
   }
 
   convertFromPixel (pixel: number): number {
@@ -234,7 +314,7 @@ export default class YAxis extends AxisImp {
         const chartStore = this.getParent().getChart().getChartStore()
         const visibleDataList = chartStore.getVisibleDataList()
         const fromData = visibleDataList[0]?.data
-        if (isValid(fromData?.close)) {
+        if (fromData?.close !== undefined) {
           return fromData.close * value / 100 + fromData.close
         }
         return 0
@@ -255,7 +335,7 @@ export default class YAxis extends AxisImp {
         const chartStore = this.getParent().getChart().getChartStore()
         const visibleDataList = chartStore.getVisibleDataList()
         const fromData = visibleDataList[0]?.data
-        if (isValid(fromData?.close)) {
+        if (fromData?.close !== undefined) {
           v = (value - fromData.close) / fromData.close * 100
         }
         break

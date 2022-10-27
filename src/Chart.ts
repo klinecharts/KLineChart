@@ -13,11 +13,11 @@
  */
 
 import ChartInternal, { CANDLE_PANE_ID } from './ChartInternal'
-import { clone, isNumber, isObject, isArray, isFunction, isValid, isString } from './utils/typeChecks'
-import { logWarn } from './utils/logger'
-import { requestAnimationFrame } from './utils/compatible'
-import { formatValue } from './utils/format'
-import { binarySearchNearest } from './utils/number'
+import { clone, isNumber, isObject, isArray, isFunction, isValid, isString } from './common/utils/typeChecks'
+import { logWarn } from './common/utils/logger'
+import { requestAnimationFrame } from './common/utils/compatible'
+import { formatValue } from './common/utils/format'
+import { binarySearchNearest } from './common/utils/number'
 
 import { hasAction } from './enum/ActionType'
 

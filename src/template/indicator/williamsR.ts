@@ -15,7 +15,7 @@
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from './Indicator'
 
-import { getMaxMin } from '../../utils/number'
+import { getMaxMin } from '../../common/utils/number'
 
 interface Wr {
   wr1?: number

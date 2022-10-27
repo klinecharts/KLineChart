@@ -12,9 +12,10 @@
  * limitations under the License.
  */
 
+import DeepRequired from '../common/DeepRequired'
 import TypeOrNull from '../common/TypeOrNull'
 import IUpdater, { UpdateLevel } from '../common/Updater'
-import BoundingImp, { Bounding } from '../common/Bounding'
+import Bounding, { getDefaultBounding } from '../common/Bounding'
 
 import Axis from '../componentl/Axis'
 
@@ -24,18 +25,24 @@ import YAxisWidget from '../widget/YAxisWidget'
 
 import ChartInternal from '../ChartInternal'
 
-import { createDom } from '../utils/dom'
+import { createDom } from '../common/utils/dom'
+import { merge } from '../common/utils/typeChecks'
 
+export interface PaneGap {
+  top?: number
+  bottom?: number
+}
 export interface PaneOptions {
   id: string
   height?: number
   minHeight?: number
   dragEnabled?: boolean
-  gap?: {
-    top?: number
-    bottom?: number
-  }
+  gap?: PaneGap
 }
+
+export const PANE_MIN_HEIGHT = 30
+
+export const PANE_DEFAULT_HEIGHT = 100
 
 export default abstract class Pane<C extends Axis> implements IUpdater {
   private _container: HTMLElement
@@ -47,12 +54,12 @@ export default abstract class Pane<C extends Axis> implements IUpdater {
   private _separatorWidget: TypeOrNull<SeparatorWidget> = null
   private readonly _axis: C
 
-  private readonly _bounding: BoundingImp = new BoundingImp()
+  private readonly _bounding: Required<Bounding> = getDefaultBounding()
 
   private _topPane: TypeOrNull<Pane<Axis>>
   private _bottomPane: TypeOrNull<Pane<Axis>>
 
-  private readonly _options: Omit<PaneOptions, 'id' | 'height'> = { dragEnabled: true, gap: { top: 0.2, bottom: 0.1 } }
+  private readonly _options: DeepRequired<Omit<PaneOptions, 'id' | 'height'>> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 } }
 
   constructor (rootContainer: HTMLElement, chart: ChartInternal, id: string, topPane?: Pane<Axis>, bottomPane?: Pane<Axis>) {
     this._chart = chart
@@ -82,7 +89,12 @@ export default abstract class Pane<C extends Axis> implements IUpdater {
     return this._id
   }
 
-  getOptions (): Omit<PaneOptions, 'id' | 'height'> { return this._options }
+  setOptions (options: Omit<PaneOptions, 'id' | 'height'>): Pane<C> {
+    merge(this._options, options)
+    return this
+  }
+
+  getOptions (): DeepRequired<Omit<PaneOptions, 'id' | 'height'>> { return this._options }
 
   getChart (): ChartInternal {
     return this._chart
@@ -92,8 +104,21 @@ export default abstract class Pane<C extends Axis> implements IUpdater {
     return this._axis
   }
 
-  setBounding (rootBounding: Bounding, mainBounding: Bounding, yAxisBounding: Bounding): Pane<C> {
-    this._bounding.merge(rootBounding)
+  setBounding (rootBounding: Bounding, mainBounding?: Bounding, yAxisBounding?: Bounding): Pane<C> {
+    merge(this._bounding, rootBounding)
+    if (rootBounding.height !== undefined) {
+      const separatorSize = this.getChart().getChartStore().getStyleOptions().separator.size
+      const contentBounding: Bounding = { height: rootBounding.height - separatorSize }
+      this._mainWidget.setBounding(contentBounding)
+      this._yAxisWidget?.setBounding(contentBounding)
+    }
+    if (mainBounding !== undefined) {
+      this._mainWidget.setBounding(mainBounding)
+      this._separatorWidget?.setBounding(mainBounding)
+    }
+    if (yAxisBounding !== undefined) {
+      this._yAxisWidget?.setBounding(yAxisBounding)
+    }
     return this
   }
 
@@ -113,6 +138,10 @@ export default abstract class Pane<C extends Axis> implements IUpdater {
   setBottomPane (pane: TypeOrNull<Pane<Axis>>): Pane<C> {
     this._bottomPane = pane
     return this
+  }
+
+  getBounding (): Required<Bounding> {
+    return this._bounding
   }
 
   getMainWidget (): DrawWidget<C> { return this._mainWidget }

@@ -22,8 +22,8 @@ import { IndicatorStyle, IndicatorBarCirleStyle, LineStyle } from '../../store/s
 
 import Axis from '../../componentl/Axis'
 
-import { formatValue } from '../../utils/format'
-import { isValid } from '../../utils/typeChecks'
+import { formatValue } from '../../common/utils/format'
+import { isValid } from '../../common/utils/typeChecks'
 
 export const enum IndicatorSeries {
   NORMAL = 'normal',

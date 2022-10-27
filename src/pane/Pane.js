@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import { getPixelRatio } from '../utils/canvas'
-import { createElement } from '../utils/element'
+import { getPixelRatio } from '../common/utils/canvas'
+import { createElement } from '../common/utils/element'
 
 import ContainerPosition from '../enum/ContainerPosition'
 
