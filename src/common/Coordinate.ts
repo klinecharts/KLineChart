@@ -13,6 +13,6 @@
  */
 
 export default interface Coordinate {
-  x: number
-  y: number
+  readonly x: number
+  readonly y: number
 }

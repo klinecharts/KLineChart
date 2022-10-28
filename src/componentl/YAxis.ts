@@ -136,14 +136,15 @@ export default class YAxis extends AxisImp {
       max = maxCheck ? max : (minCheck ? max + 8 * dif : max + 4 * dif)
     }
 
+    const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
     const { gap: paneGap } = parent.getOptions()
     let topRate = paneGap?.top ?? 0.2
     if (topRate >= 1) {
-      topRate = topRate / this._height
+      topRate = topRate / height
     }
     let bottomRate = paneGap?.top ?? 0.1
     if (bottomRate >= 1) {
-      bottomRate = bottomRate / this._height
+      bottomRate = bottomRate / height
     }
     let range = Math.abs(max - min)
     // 保证每次图形绘制上下都留间隙
@@ -174,9 +175,10 @@ export default class YAxis extends AxisImp {
    * @private
    */
   _innerConvertToPixel (value: number): number {
+    const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
     const { min, range } = this.getExtremum()
     const rate = (value - min) / range
-    return this.isReverse() ? Math.round(rate * this._height) : Math.round((1.0 - rate) * this._height)
+    return this.isReverse() ? Math.round(rate * height) : Math.round((1.0 - rate) * height)
   }
 
   /**
@@ -226,7 +228,53 @@ export default class YAxis extends AxisImp {
   }
 
   protected optimalTicks (ticks: Tick[]): Tick[] {
-    throw new Error('Method not implemented.')
+    const pane = this.getParent()
+    const height = pane.getYAxisWidget()?.getBounding().height ?? 0
+    const chartStore = pane.getChart().getChartStore()
+    const optimalTicks: Tick[] = []
+    const type = this.getType()
+    const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+    let precision = 0
+    let shouldFormatBigNumber = false
+    if (this.isInCandle()) {
+      precision = chartStore.getPrecision().price
+    } else {
+      indicators.forEach(tech => {
+        precision = Math.max(precision, tech.precision)
+        if (!shouldFormatBigNumber) {
+          shouldFormatBigNumber = tech.shouldFormatBigNumber
+        }
+      })
+    }
+    const textHeight = chartStore.getStyleOptions().xAxis.tickText.size
+    let validY: number
+    ticks.forEach(({ value }) => {
+      let v: string
+      let y = this._innerConvertToPixel(+value)
+      switch (type) {
+        case YAxisType.PERCENTAGE: {
+          v = `${formatPrecision(value, 2)}%`
+          break
+        }
+        case YAxisType.LOG: {
+          y = this._innerConvertToPixel(log10(+value))
+          v = formatPrecision(value, precision)
+          break
+        }
+        default: {
+          v = formatPrecision(value, precision)
+          if (shouldFormatBigNumber) {
+            v = formatBigNumber(value)
+          }
+          break
+        }
+      }
+      if (y > textHeight && y < height - textHeight && ((validY !== undefined && (Math.abs(validY - y) > textHeight * 2)) || validY === undefined)) {
+        optimalTicks.push({ text: v, coord: y, value })
+        validY = y
+      }
+    })
+    return optimalTicks
   }
 
   getAutoSize (): number {
@@ -306,8 +354,9 @@ export default class YAxis extends AxisImp {
   }
 
   convertFromPixel (pixel: number): number {
+    const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
     const { min, range } = this.getExtremum()
-    const rate = this.isReverse() ? pixel / this._height : 1 - pixel / this._height
+    const rate = this.isReverse() ? pixel / height : 1 - pixel / height
     const value = rate * range + min
     switch (this.getType()) {
       case 'percentage': {
@@ -357,7 +406,8 @@ export default class YAxis extends AxisImp {
    * @return {number}
    */
   convertToNicePixel (value: number): number {
+    const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
     const pixel = this.convertToPixel(value)
-    return Math.round(Math.max(this._height * 0.05, Math.min(pixel, this._height * 0.98)))
+    return Math.round(Math.max(height * 0.05, Math.min(pixel, height * 0.98)))
   }
 }

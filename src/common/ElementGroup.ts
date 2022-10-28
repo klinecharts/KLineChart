@@ -15,47 +15,33 @@
 import Coordinate from './Coordinate'
 import Element from './Element'
 
-export default class ElementGroup<E extends Element> extends Element {
-  private _elements: E[] = []
+export default abstract class ElementGroup extends Element {
+  private _elements: Element[] = []
 
-  constructor (elements?: E[]) {
-    super()
-    this._elements = elements ?? []
+  checkEventOn (coordinate: Coordinate): boolean {
+    for (const element of this._elements) {
+      if (element.checkEventOn(coordinate)) {
+        return true
+      }
+    }
+    return false
   }
 
-  getElements (): E[] {
-    return this._elements
+  dispatchEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
+    for (const element of this._elements) {
+      if (element.dispatchEvent(type, coordinate, ...others)) {
+        return true
+      }
+    }
+    return super.dispatchEvent(type, coordinate, ...others)
   }
 
-  setElements (elements: E[]): ElementGroup<E> {
-    this._elements = elements
-    return this
-  }
-
-  addElement (element: E): ElementGroup<E> {
+  addElement (element: Element): ElementGroup {
     this._elements.push(element)
     return this
   }
 
   clear (): void {
     this._elements = []
-  }
-
-  checkEventOn (coordinate: Coordinate): boolean {
-    const intercept = this.interceptEvent()
-    let on = false
-    for (const el of this._elements) {
-      if (el.checkEventOn(coordinate)) {
-        on = true
-        if (intercept) {
-          break
-        }
-      }
-    }
-    return on
-  }
-
-  interceptEvent (): boolean {
-    return true
   }
 }

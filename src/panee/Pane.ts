@@ -14,8 +14,10 @@
 
 import DeepRequired from '../common/DeepRequired'
 import TypeOrNull from '../common/TypeOrNull'
-import IUpdater, { UpdateLevel } from '../common/Updater'
+import Updater, { UpdateLevel } from '../common/Updater'
 import Bounding, { getDefaultBounding } from '../common/Bounding'
+import Coordinate from '../common/Coordinate'
+import Element from '../common/Element'
 
 import Axis from '../componentl/Axis'
 
@@ -44,7 +46,7 @@ export const PANE_MIN_HEIGHT = 30
 
 export const PANE_DEFAULT_HEIGHT = 100
 
-export default abstract class Pane<C extends Axis> implements IUpdater {
+export default abstract class Pane<C extends Axis> extends Element implements Updater {
   private _container: HTMLElement
   private _seriesContiainer: HTMLElement
   private readonly _id: string
@@ -62,6 +64,7 @@ export default abstract class Pane<C extends Axis> implements IUpdater {
   private readonly _options: DeepRequired<Omit<PaneOptions, 'id' | 'height'>> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 } }
 
   constructor (rootContainer: HTMLElement, chart: ChartInternal, id: string, topPane?: Pane<Axis>, bottomPane?: Pane<Axis>) {
+    super()
     this._chart = chart
     this._id = id
     this._topPane = topPane ?? null
@@ -155,6 +158,25 @@ export default abstract class Pane<C extends Axis> implements IUpdater {
     this._mainWidget.update(l)
     this._yAxisWidget?.update(l)
     this._separatorWidget?.update(l)
+  }
+
+  dispatchEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
+    const { x, y } = coordinate
+    let consumed = false
+    const yAxisBounding = this._yAxisWidget?.getBounding()
+    if (
+      yAxisBounding !== undefined &&
+      (x >= yAxisBounding.left && x <= yAxisBounding.left + yAxisBounding.width)
+    ) {
+      consumed = this._yAxisWidget?.dispatchEvent(type, { x: x - yAxisBounding.left, y }, ...others) ?? false
+    }
+    if (!consumed) {
+      const mainBounding = this._mainWidget.getBounding()
+      if (x >= mainBounding.left && x <= mainBounding.left + mainBounding.width) {
+        consumed = this._mainWidget.dispatchEvent(type, { x: x - mainBounding.left, y }, ...others)
+      }
+    }
+    return consumed
   }
 
   destroy (): void {

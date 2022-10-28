@@ -21,14 +21,14 @@ import YAxis from '../componentl/YAxis'
 import Widget from './Widget'
 import Pane from '../panee/Pane'
 
-import EventBase, { MouseTouchEvent } from '../event/EventBase'
+import MouseTouchEventHandler, { MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
 import { createDom } from '../common/utils/dom'
 
 export default class SeparatorWidget extends Widget<YAxis> {
   private _moveDom: HTMLElement
 
-  private readonly _event: EventBase
+  private readonly _event: MouseTouchEventHandler
 
   private _dragFlag = false
   private _dragStartY = 0
@@ -38,7 +38,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
 
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
     super(rootContainer, pane)
-    this._event = new EventBase(
+    this._event = new MouseTouchEventHandler(
       this._moveDom,
       {
         mouseDownEvent: this._mouseDownEvent.bind(this),

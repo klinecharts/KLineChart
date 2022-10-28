@@ -14,6 +14,7 @@
 
 import Bounding, { getDefaultBounding } from '../common/Bounding'
 import Updater, { UpdateLevel } from '../common/Updater'
+import ElementGroup from '../common/ElementGroup'
 
 import Axis from '../componentl/Axis'
 
@@ -22,7 +23,7 @@ import Pane from '../panee/Pane'
 import { createDom } from '../common/utils/dom'
 import { merge } from '../common/utils/typeChecks'
 
-export default abstract class Widget<C extends Axis> implements Updater {
+export default abstract class Widget<C extends Axis> extends ElementGroup implements Updater {
   private readonly _pane: Pane<C>
 
   private _container: HTMLElement
@@ -30,6 +31,7 @@ export default abstract class Widget<C extends Axis> implements Updater {
   private readonly _bounding: Required<Bounding> = getDefaultBounding()
 
   constructor (rootContainer: HTMLElement, pane: Pane<C>) {
+    super()
     this._pane = pane
     this._init(rootContainer)
   }

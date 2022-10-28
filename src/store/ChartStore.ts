@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import DeepPartial from '../common/DeepPartial'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 
@@ -65,7 +66,7 @@ export default class ChartStore {
 
   private _visibleDataList: VisibleData[] = []
 
-  constructor (chart: ChartInternal, styleOptions: any) {
+  constructor (chart: ChartInternal, styleOptions: DeepPartial<Styles>) {
     this._chart = chart
     this._styleOptions = clone(defaultStyles)
     merge(this._styleOptions, styleOptions)

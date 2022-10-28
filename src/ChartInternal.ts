@@ -13,9 +13,14 @@
  */
 
 import TypeOrNull from './common/TypeOrNull'
+import DeepPartial from './common/DeepPartial'
 import { UpdateLevel } from './common/Updater'
+import MouseTouchEventHandler, { MouseTouchEventCallback } from './common/MouseTouchEventHandler'
+import Element from './common/Element'
+import Coordinate from './common/Coordinate'
 
 import ChartStore from './store/ChartStore'
+import { Styles, YAxisPosition } from './store/styles'
 
 import Pane, { PaneOptions, PANE_DEFAULT_HEIGHT } from './panee/Pane'
 import CandlePane, { CANDLE_PANE_ID } from './panee/CandlePane'
@@ -24,23 +29,16 @@ import XAxisPane, { XAXIS_PANE_ID } from './panee/XAxisPane'
 
 import Axis from './componentl/Axis'
 
-import { YAxisPosition } from './store/styles'
-
 import { Indicator } from './template/indicator/Indicator'
 
 import { isArray, isBoolean, isFunction, isValid, isNumber } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
-
-import ChartEvent from './event/ChartEvent'
 import { getPixelRatio } from './common/utils/canvas'
-import { throttle } from './common/utils/performance'
 import { createDom } from './common/utils/dom'
+
 import Annotation from './component/overlay/Annotation'
 import Tag from './component/overlay/Tag'
 import { perfectOverlayFunc } from './component/overlay/Overlay'
-
-import ActionType from './enum/ActionType'
-import InvalidateLevel from './enum/InvalidateLevel'
 
 // 图形id前缀
 const SHAPE_ID_PREFIX = 'shape_'
@@ -55,18 +53,19 @@ export default class ChartInternal {
   private readonly _xAxisPane: XAxisPane
   private readonly _panes: Map<string, IndicatorPane> = new Map()
 
-  constructor (container: HTMLElement, styleOptions: any) {
+  private _chartEvent: MouseTouchEventHandler
+
+  constructor (container: HTMLElement, styleOptions: DeepPartial<Styles>) {
     this._initChartContainer(container)
-    this._chartStore = new ChartStore(styleOptions, this)
+    this._chartStore = new ChartStore(this, styleOptions)
     this._xAxisPane = new XAxisPane(this._chartContainer, this, XAXIS_PANE_ID)
     this._panes.set(CANDLE_PANE_ID, new CandlePane(this._chartContainer, this, CANDLE_PANE_ID))
-    this._chartWidth = {}
-    this._chartHeight = {}
-    this._chartEvent = new ChartEvent(
-      this._chartContainer,
-      this._chartStore,
-      (paneId) => this._panes.get(paneId).yAxis()
-    )
+    this._initEvent()
+    // this._chartEvent = new ChartEvent(
+    //   this._chartContainer,
+    //   this._chartStore,
+    //   (paneId) => this._panes.get(paneId).yAxis()
+    // )
     this.adjustPaneViewport(true, true, true)
   }
 
@@ -75,7 +74,7 @@ export default class ChartInternal {
    * @param container
    * @private
    */
-  _initChartContainer (container: HTMLElement): void {
+  private _initChartContainer (container: HTMLElement): void {
     this._container = container
     this._chartContainer = createDom('div', {
       userSelect: 'none',
@@ -90,67 +89,106 @@ export default class ChartInternal {
     container.appendChild(this._chartContainer)
   }
 
-  /**
-   * 十字光标观察者
-   * @private
-   */
-  _crosshairObserver ({ paneId, dataIndex, kLineData, x, y }) {
-    if (
-      this._chartStore.actionStore().has(ActionType.CROSSHAIR) ||
-      this._chartStore.actionStore().has(ActionType.TOOLTIP)
-    ) {
-      const techDatas = {}
-      this._panes.forEach((_, id) => {
-        const data = {}
-        const techDataList = []
-        const techs = this.chartStore().technicalIndicatorStore().instances(id)
-        techs.forEach(tech => {
-          const result = tech.result
-          const techData = result[dataIndex]
-          data[tech.name] = techData
-          techDataList.push({ name: tech.name, data: techData })
-        })
-        techDatas[id] = data
-        this._chartStore.actionStore().execute(ActionType.TOOLTIP, {
-          paneId: id,
-          dataIndex,
-          kLineData,
-          technicalIndicatorData: techDataList
-        })
-      })
-      if (paneId) {
-        this._chartStore.actionStore().execute(ActionType.CROSSHAIR, {
-          paneId,
-          coordinate: { x, y },
-          dataIndex,
-          kLineData,
-          technicalIndicatorData: techDatas
-        })
+  _initEvent (): void {
+    const dispatch: ((pane: Pane<Axis>, type: string, coordinate: Coordinate, ...others: any[]) => boolean) = (pane: Pane<Axis>, type: string, coordinate: Coordinate, ...others: any[]) => {
+      const bounding = pane.getBounding()
+      if (coordinate.y > bounding.top && coordinate.y < bounding.top + bounding.height) {
+        pane.dispatchEvent(type, { x: coordinate.x, y: coordinate.y - bounding.top })
+        return true
       }
+      return false
     }
+
+    const chartEventCallback: ((type: string) => MouseTouchEventCallback) = (type: string) => (coordinate: Coordinate, ...others: any[]) => {
+      for (const entry of this._panes) {
+        if (dispatch(entry[1], type, coordinate, ...others)) {
+          return true
+        }
+      }
+      dispatch(this._xAxisPane, type, coordinate, ...others)
+    }
+
+    this._chartEvent = new MouseTouchEventHandler(
+      this._chartContainer,
+      {
+        pinchStartEvent: chartEventCallback('pinchStartEvent'),
+        pinchEvent: chartEventCallback('pinchEvent'),
+        mouseUpEvent: chartEventCallback('mouseUpEvent'),
+        mouseClickEvent: chartEventCallback('mouseClickEvent'),
+        mouseDownEvent: chartEventCallback('mouseDownEvent'),
+        mouseLeaveEvent: chartEventCallback('mouseLeaveEvent'),
+        mouseMoveEvent: chartEventCallback('mouseMoveEvent'),
+        pressedMouseMoveEvent: chartEventCallback('pressedMouseMoveEvent'),
+        longTapEvent: chartEventCallback('longTapEvent')
+      },
+      {
+        treatVertTouchDragAsPageScroll: () => true,
+        treatHorzTouchDragAsPageScroll: () => false
+      }
+    )
   }
 
-  /**
-   * 更新所有pane
-   * @private
-   */
-  _invalidatePane (invalidateLevel = InvalidateLevel.FULL) {
-    if (invalidateLevel === InvalidateLevel.OVERLAY) {
-      this._xAxisPane.invalidate(invalidateLevel)
-      this._panes.forEach((pane) => {
-        pane.invalidate(invalidateLevel)
-      })
-    } else {
-      let shouldMeasureWidth = false
-      this._panes.forEach((pane) => {
-        const should = pane.yAxis().computeAxis()
-        if (should) {
-          shouldMeasureWidth = should
-        }
-      })
-      this.adjustPaneViewport(false, shouldMeasureWidth, true)
-    }
-  }
+  // /**
+  //  * 十字光标观察者
+  //  * @private
+  //  */
+  // _crosshairObserver ({ paneId, dataIndex, kLineData, x, y }) {
+  //   if (
+  //     this._chartStore.actionStore().has(ActionType.CROSSHAIR) ||
+  //     this._chartStore.actionStore().has(ActionType.TOOLTIP)
+  //   ) {
+  //     const techDatas = {}
+  //     this._panes.forEach((_, id) => {
+  //       const data = {}
+  //       const techDataList = []
+  //       const techs = this.chartStore().technicalIndicatorStore().instances(id)
+  //       techs.forEach(tech => {
+  //         const result = tech.result
+  //         const techData = result[dataIndex]
+  //         data[tech.name] = techData
+  //         techDataList.push({ name: tech.name, data: techData })
+  //       })
+  //       techDatas[id] = data
+  //       this._chartStore.actionStore().execute(ActionType.TOOLTIP, {
+  //         paneId: id,
+  //         dataIndex,
+  //         kLineData,
+  //         technicalIndicatorData: techDataList
+  //       })
+  //     })
+  //     if (paneId) {
+  //       this._chartStore.actionStore().execute(ActionType.CROSSHAIR, {
+  //         paneId,
+  //         coordinate: { x, y },
+  //         dataIndex,
+  //         kLineData,
+  //         technicalIndicatorData: techDatas
+  //       })
+  //     }
+  //   }
+  // }
+
+  // /**
+  //  * 更新所有pane
+  //  * @private
+  //  */
+  // _invalidatePane (invalidateLevel = InvalidateLevel.FULL) {
+  //   if (invalidateLevel === InvalidateLevel.OVERLAY) {
+  //     this._xAxisPane.invalidate(invalidateLevel)
+  //     this._panes.forEach((pane) => {
+  //       pane.invalidate(invalidateLevel)
+  //     })
+  //   } else {
+  //     let shouldMeasureWidth = false
+  //     this._panes.forEach((pane) => {
+  //       const should = pane.yAxis().computeAxis()
+  //       if (should) {
+  //         shouldMeasureWidth = should
+  //       }
+  //     })
+  //     this.adjustPaneViewport(false, shouldMeasureWidth, true)
+  //   }
+  // }
 
   /**
    * 测量pane高度
@@ -697,15 +735,11 @@ export default class ChartInternal {
   /**
    * 销毁
    */
-  destroy () {
+  destroy (): void {
     this._panes.forEach(pane => {
       pane.destroy()
     })
-    this._separators.forEach(pane => {
-      pane.destroy()
-    })
     this._panes.clear()
-    this._separators.clear()
     this._xAxisPane.destroy()
     this._container.removeChild(this._chartContainer)
     this._chartEvent.destroy()

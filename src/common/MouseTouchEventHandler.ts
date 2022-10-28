@@ -21,20 +21,19 @@
  * </licenses/LICENSE-lightweight-charts>).
  */
 
-import Coordinate from '../common/Coordinate'
+import Coordinate from './Coordinate'
 
-import TypeOrNull from '../common/TypeOrNull'
+import TypeOrNull from './TypeOrNull'
 
-import { isFF, isIOS, isChrome } from '../common/utils/platform'
+import { isFF, isIOS, isChrome } from './utils/platform'
 
-export type MouseTouchEventCallback = (event: MouseTouchEvent) => void
+export type MouseTouchEventCallback = (coordinate: Coordinate, ...others: any[]) => void
 export type EmptyCallback = () => void
-export type PinchEventCallback = (middleCoordinate: Coordinate, scale: number) => void
 
-export interface EventHandlers {
-  pinchStartEvent?: EmptyCallback
-  pinchEvent?: PinchEventCallback
-  pinchEndEvent?: EmptyCallback
+export interface EventHandler {
+  pinchStartEvent?: MouseTouchEventCallback
+  pinchEvent?: MouseTouchEventCallback
+  pinchEndEvent?: MouseTouchEventCallback
 
   mouseClickEvent?: MouseTouchEventCallback
   tapEvent?: MouseTouchEventCallback
@@ -61,15 +60,15 @@ export interface EventHandlers {
   longTapEvent?: MouseTouchEventCallback
 }
 
-export interface MouseTouchEvent {
+export interface MouseTouchEvent extends Coordinate {
   readonly clientX: number
   readonly clientY: number
   readonly pageX: number
   readonly pageY: number
   readonly screenX: number
   readonly screenY: number
-  readonly localX: number
-  readonly localY: number
+  readonly x: number
+  readonly y: number
 
   readonly ctrlKey: boolean
   readonly altKey: boolean
@@ -85,7 +84,7 @@ export interface MouseTouchEvent {
   preventDefault: EmptyCallback
 }
 
-export interface EventHandlerOptions {
+export interface EventOptions {
   treatVertTouchDragAsPageScroll: () => boolean
   treatHorzTouchDragAsPageScroll: () => boolean
 }
@@ -120,11 +119,11 @@ interface MouseTouchMoveWithDownInfo {
 }
 
 // TODO: get rid of a lot of boolean flags, probably we should replace it with some enum
-export default class EventBase {
+export default class MouseTouchEventHandler {
   private readonly _target: HTMLElement
-  private readonly _handler: EventHandlers
+  private readonly _handler: EventHandler
 
-  private readonly _options: EventHandlerOptions
+  private readonly _options: EventOptions
 
   private _clickCount: number = 0
   private _clickTimeoutId: TypeOrNull<TimerId> = null
@@ -173,8 +172,8 @@ export default class EventBase {
 
   constructor (
     target: HTMLElement,
-    handler: EventHandlers,
-    options: EventHandlerOptions
+    handler: EventHandler,
+    options: EventOptions
   ) {
     this._target = target
     this._handler = handler
@@ -443,7 +442,7 @@ export default class EventBase {
 
         // do not fire mouse events if tap handler was executed
         // prevent click event on new dom element (who appeared after tap)
-        if (this._handler.tapEvent != null) {
+        if (this._handler.tapEvent !== undefined) {
           preventDefault(touchEndEvent)
         }
       }
@@ -628,7 +627,7 @@ export default class EventBase {
           return
         }
 
-        if ((event.target != null) && this._target.contains(event.target as Element)) {
+        if ((event.target !== null) && this._target.contains(event.target as Element)) {
           return
         }
 
@@ -671,9 +670,9 @@ export default class EventBase {
   }
 
   private _initPinch (): void {
-    if (this._handler.pinchStartEvent == null &&
-      this._handler.pinchEvent == null &&
-      this._handler.pinchEndEvent == null
+    if (this._handler.pinchStartEvent === undefined &&
+      this._handler.pinchEvent === undefined &&
+      this._handler.pinchEndEvent === undefined
     ) {
       return
     }
@@ -728,7 +727,7 @@ export default class EventBase {
     this._startPinchDistance = getDistance(touches[0], touches[1])
 
     if (this._handler.pinchStartEvent !== undefined) {
-      this._handler.pinchStartEvent()
+      this._handler.pinchStartEvent({ ...this._startPinchMiddleCoordinate })
     }
 
     this._clearLongTapTimeout()
@@ -742,7 +741,8 @@ export default class EventBase {
     this._startPinchMiddleCoordinate = null
 
     if (this._handler.pinchEndEvent !== undefined) {
-      this._handler.pinchEndEvent()
+      const coordinate = this._startPinchMiddleCoordinate ?? { x: 0, y: 0 }
+      this._handler.pinchEndEvent({ ...coordinate })
     }
   }
 
@@ -811,8 +811,8 @@ export default class EventBase {
       pageY: eventLike.pageY,
       screenX: eventLike.screenX,
       screenY: eventLike.screenY,
-      localX: eventLike.clientX - box.left,
-      localY: eventLike.clientY - box.top,
+      x: eventLike.clientX - box.left,
+      y: eventLike.clientY - box.top,
 
       ctrlKey: event.ctrlKey,
       altKey: event.altKey,

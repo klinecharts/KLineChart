@@ -22,7 +22,7 @@ import Axis from '../componentl/Axis'
 
 import Widget from '../widget/Widget'
 
-export default abstract class View<C extends Axis = Axis> extends ElementGroup<FigureTemplate> {
+export default abstract class View<C extends Axis = Axis> extends ElementGroup {
   private readonly _widget: Widget<C>
 
   constructor (widget: Widget<C>) {

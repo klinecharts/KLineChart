@@ -14,30 +14,26 @@
 
 import Coordinate from './Coordinate'
 
-export type ElementEvent = (coordinate: Coordinate) => void
-
-export interface ElementEventMap {
-  onClick: ElementEvent
-  onMouseEnter: ElementEvent
-  onMouseLeave: ElementEvent
-}
+export type ElementEvent = (coordinate: Coordinate, ...others: any[]) => void
 
 export default abstract class Element {
-  private readonly _events = new Map<keyof ElementEventMap, ElementEvent>()
+  private readonly _events = new Map<string, ElementEvent>()
 
-  registerEvent (type: keyof ElementEventMap, event: ElementEvent): Element {
+  registerEvent (type: string, event: ElementEvent): Element {
     this._events.set(type, event)
     return this
   }
 
-  onEvent (type: keyof ElementEventMap, coordinate: Coordinate): void {
-    if (this._events.size === 0) {
-      return
+  dispatchEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
+    const event = this._events.get(type)
+    if (event !== undefined) {
+      if (this.checkEventOn(coordinate)) {
+        event(coordinate, ...others)
+        return true
+      }
     }
-    if (this.checkEventOn(coordinate)) {
-      this._events.get(type)?.(coordinate)
-    }
+    return false
   }
 
-  abstract checkEventOn (coordinate: Coordinate): boolean
+  checkEventOn (coordinate: Coordinate): boolean { return false }
 }

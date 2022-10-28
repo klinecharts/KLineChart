@@ -18,6 +18,7 @@ import { UpdateLevel } from '../common/Updater'
 import Axis from '../componentl/Axis'
 
 import Widget from './Widget'
+import View from '../viewv/View'
 
 import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
@@ -26,6 +27,8 @@ import { requestAnimationFrame, cancelAnimationFrame } from '../common/utils/com
 const DEFAULT_REQUEST_ID = -1
 
 export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C> {
+  private readonly _views: View[] = []
+
   private _mainCanvas: HTMLCanvasElement
   private _mainCtx: CanvasRenderingContext2D
   private _overlayCanvas: HTMLCanvasElement
@@ -73,6 +76,11 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     this._requestAnimationId = requestAnimationFrame(() => {
       update()
     })
+  }
+
+  protected addView (view: View): Widget<C> {
+    this._views.push(view)
+    return this
   }
 
   protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Required<Bounding>): void {
