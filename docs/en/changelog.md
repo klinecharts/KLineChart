@@ -1,5 +1,9 @@
 # Change Log
 
+## 8.6.3
+`2022-10-29`
++ 💄 Optimize the display of high and low prices.
+
 ## 8.6.2
 `2022-09-18`
 + 🐞 Fix `scrollToXxx` related bugs.

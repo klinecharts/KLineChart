@@ -182,6 +182,18 @@ export default class CandleView extends TechnicalIndicatorView {
       ]
     )
 
+    let lineEndX
+    let textStartX
+    if (startX > this._width / 2) {
+      lineEndX = startX - 5
+      textStartX = lineEndX - options.textMargin
+      this._ctx.textAlign = 'right'
+    } else {
+      lineEndX = startX + 5
+      this._ctx.textAlign = 'left'
+      textStartX = lineEndX + options.textMargin
+    }
+
     // 绘制竖线
     const y = startY + offset[1]
     renderLine(
@@ -189,13 +201,12 @@ export default class CandleView extends TechnicalIndicatorView {
       [
         { x: startX, y: startY },
         { x: startX, y },
-        { x: startX + 5, y }
+        { x: lineEndX, y }
       ]
     )
-
     this._ctx.font = createFont(options.textSize, options.textWeight, options.textFamily)
     const text = formatPrecision(price, precision)
-    this._ctx.fillText(text, startX + 5 + options.textMargin, y)
+    this._ctx.fillText(text, textStartX, y)
   }
 
   /**
