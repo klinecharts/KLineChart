@@ -16,7 +16,6 @@ import TypeOrNull from './common/TypeOrNull'
 import DeepPartial from './common/DeepPartial'
 import { UpdateLevel } from './common/Updater'
 import MouseTouchEventHandler, { MouseTouchEventCallback } from './common/MouseTouchEventHandler'
-import Element from './common/Element'
 import Coordinate from './common/Coordinate'
 
 import ChartStore from './store/ChartStore'
@@ -31,20 +30,21 @@ import Axis from './componentl/Axis'
 
 import { Indicator } from './template/indicator/Indicator'
 
-import { isArray, isBoolean, isFunction, isValid, isNumber } from './common/utils/typeChecks'
 import { createId } from './common/utils/id'
-import { getPixelRatio } from './common/utils/canvas'
 import { createDom } from './common/utils/dom'
+// import { isArray, isBoolean, isFunction, isValid, isNumber } from './common/utils/typeChecks'
 
-import Annotation from './component/overlay/Annotation'
-import Tag from './component/overlay/Tag'
-import { perfectOverlayFunc } from './component/overlay/Overlay'
+// import { getPixelRatio } from './common/utils/canvas'
 
-// 图形id前缀
-const SHAPE_ID_PREFIX = 'shape_'
+// import Annotation from './component/overlay/Annotation'
+// import Tag from './component/overlay/Tag'
+// import { perfectOverlayFunc } from './component/overlay/Overlay'
 
-// 注解id前缀
-const ANNOTATION_ID_PREFIX = 'an_'
+// // 图形id前缀
+// const SHAPE_ID_PREFIX = 'shape_'
+
+// // 注解id前缀
+// const ANNOTATION_ID_PREFIX = 'an_'
 
 export default class ChartInternal {
   private _container: HTMLElement
@@ -55,17 +55,12 @@ export default class ChartInternal {
 
   private _chartEvent: MouseTouchEventHandler
 
-  constructor (container: HTMLElement, styleOptions: DeepPartial<Styles>) {
+  constructor (container: HTMLElement, styleOptions?: DeepPartial<Styles>) {
     this._initChartContainer(container)
     this._chartStore = new ChartStore(this, styleOptions)
     this._xAxisPane = new XAxisPane(this._chartContainer, this, XAXIS_PANE_ID)
     this._panes.set(CANDLE_PANE_ID, new CandlePane(this._chartContainer, this, CANDLE_PANE_ID))
     this._initEvent()
-    // this._chartEvent = new ChartEvent(
-    //   this._chartContainer,
-    //   this._chartStore,
-    //   (paneId) => this._panes.get(paneId).yAxis()
-    // )
     this.adjustPaneViewport(true, true, true)
   }
 
@@ -211,8 +206,7 @@ export default class ChartInternal {
         }
         if (indicatorPaneTotalHeight + paneHeight > paneExcludeXAxisHeight) {
           indicatorPaneTotalHeight = paneExcludeXAxisHeight
-          paneHeight = paneExcludeXAxisHeight - indicatorPaneTotalHeight
-          if (paneHeight < 0) { paneHeight = 0 }
+          paneHeight = Math.max(paneExcludeXAxisHeight - indicatorPaneTotalHeight, 0)
         } else {
           indicatorPaneTotalHeight += paneHeight
         }
@@ -355,7 +349,7 @@ export default class ChartInternal {
    * @param paneId
    * @param name
    */
-  removeIndicator (paneId: string, name: string): void {
+  removeIndicator (paneId: string, name?: string): void {
     const indicatorStore = this._chartStore.getIndicatorStore()
     const removed = indicatorStore.removeInstance(paneId, name)
     if (removed) {
@@ -407,330 +401,323 @@ export default class ChartInternal {
     return paneId
   }
 
-  /**
-   * 创建图形
-   * @param ShapeTemplateClass
-   * @param shapeOptions
-   * @param paneId
-   */
-  createShape (ShapeTemplateClass, shapeOptions, paneId) {
-    const {
-      id, points, styles, lock, mode, data,
-      onDrawStart, onDrawing,
-      onDrawEnd, onClick,
-      onRightClick, onPressedMove,
-      onMouseEnter, onMouseLeave,
-      onRemove
-    } = shapeOptions
-    const shapeId = id || createId(SHAPE_ID_PREFIX)
-    if (!this._chartStore.shapeStore().hasInstance(shapeId)) {
-      let yAxis = null
-      if (this.hasPane(paneId)) {
-        yAxis = this._panes.get(paneId).yAxis()
-      } else {
-        if (points && points.length > 0) {
-          paneId = CANDLE_PANE_ID
-          yAxis = this._panes.get(CANDLE_PANE_ID).yAxis()
-        }
-      }
-      const shapeInstance = new ShapeTemplateClass({
-        id: shapeId,
-        chartStore: this._chartStore,
-        xAxis: this._xAxisPane.xAxis(),
-        yAxis,
-        points,
-        styles,
-        lock,
-        mode,
-        data
-      })
-      if (isFunction(onDrawStart)) {
-        onDrawStart({ id: shapeId })
-      }
-      perfectOverlayFunc(shapeInstance, [
-        { key: 'onDrawing', fn: onDrawing },
-        { key: 'onDrawEnd', fn: onDrawEnd },
-        { key: 'onClick', fn: onClick },
-        { key: 'onRightClick', fn: onRightClick },
-        { key: 'onPressedMove', fn: onPressedMove },
-        { key: 'onMouseEnter', fn: onMouseEnter },
-        { key: 'onMouseLeave', fn: onMouseLeave },
-        { key: 'onRemove', fn: onRemove }
-      ])
-      this._chartStore.shapeStore().addInstance(shapeInstance, paneId)
-      return shapeId
-    }
-    return null
-  }
+  // /**
+  //  * 创建图形
+  //  * @param ShapeTemplateClass
+  //  * @param shapeOptions
+  //  * @param paneId
+  //  */
+  // createShape (ShapeTemplateClass, shapeOptions, paneId) {
+  //   const {
+  //     id, points, styles, lock, mode, data,
+  //     onDrawStart, onDrawing,
+  //     onDrawEnd, onClick,
+  //     onRightClick, onPressedMove,
+  //     onMouseEnter, onMouseLeave,
+  //     onRemove
+  //   } = shapeOptions
+  //   const shapeId = id || createId(SHAPE_ID_PREFIX)
+  //   if (!this._chartStore.shapeStore().hasInstance(shapeId)) {
+  //     let yAxis = null
+  //     if (this.hasPane(paneId)) {
+  //       yAxis = this._panes.get(paneId).yAxis()
+  //     } else {
+  //       if (points && points.length > 0) {
+  //         paneId = CANDLE_PANE_ID
+  //         yAxis = this._panes.get(CANDLE_PANE_ID).yAxis()
+  //       }
+  //     }
+  //     const shapeInstance = new ShapeTemplateClass({
+  //       id: shapeId,
+  //       chartStore: this._chartStore,
+  //       xAxis: this._xAxisPane.xAxis(),
+  //       yAxis,
+  //       points,
+  //       styles,
+  //       lock,
+  //       mode,
+  //       data
+  //     })
+  //     if (isFunction(onDrawStart)) {
+  //       onDrawStart({ id: shapeId })
+  //     }
+  //     perfectOverlayFunc(shapeInstance, [
+  //       { key: 'onDrawing', fn: onDrawing },
+  //       { key: 'onDrawEnd', fn: onDrawEnd },
+  //       { key: 'onClick', fn: onClick },
+  //       { key: 'onRightClick', fn: onRightClick },
+  //       { key: 'onPressedMove', fn: onPressedMove },
+  //       { key: 'onMouseEnter', fn: onMouseEnter },
+  //       { key: 'onMouseLeave', fn: onMouseLeave },
+  //       { key: 'onRemove', fn: onRemove }
+  //     ])
+  //     this._chartStore.shapeStore().addInstance(shapeInstance, paneId)
+  //     return shapeId
+  //   }
+  //   return null
+  // }
 
-  /**
-   * 创建注解
-   * @param annotations
-   * @param paneId
-   */
-  createAnnotation (annotations, paneId) {
-    const instances = []
-    annotations.forEach(({
-      point,
-      styles,
-      checkEventCoordinateOnCustomSymbol,
-      drawCustomSymbol,
-      drawExtend,
-      onClick,
-      onRightClick,
-      onMouseEnter,
-      onMouseLeave
-    }) => {
-      if (point && point.timestamp) {
-        const annotationInstance = new Annotation({
-          id: createId(ANNOTATION_ID_PREFIX),
-          chartStore: this._chartStore,
-          point,
-          xAxis: this._xAxisPane.xAxis(),
-          yAxis: this._panes.get(paneId).yAxis(),
-          styles
-        })
+  // /**
+  //  * 创建注解
+  //  * @param annotations
+  //  * @param paneId
+  //  */
+  // createAnnotation (annotations, paneId) {
+  //   const instances = []
+  //   annotations.forEach(({
+  //     point,
+  //     styles,
+  //     checkEventCoordinateOnCustomSymbol,
+  //     drawCustomSymbol,
+  //     drawExtend,
+  //     onClick,
+  //     onRightClick,
+  //     onMouseEnter,
+  //     onMouseLeave
+  //   }) => {
+  //     if (point && point.timestamp) {
+  //       const annotationInstance = new Annotation({
+  //         id: createId(ANNOTATION_ID_PREFIX),
+  //         chartStore: this._chartStore,
+  //         point,
+  //         xAxis: this._xAxisPane.xAxis(),
+  //         yAxis: this._panes.get(paneId).yAxis(),
+  //         styles
+  //       })
 
-        perfectOverlayFunc(annotationInstance, [
-          { key: 'drawExtend', fn: drawExtend },
-          { key: 'drawCustomSymbol', fn: drawCustomSymbol },
-          { key: 'checkEventCoordinateOnCustomSymbol', fn: checkEventCoordinateOnCustomSymbol },
-          { key: 'onClick', fn: onClick },
-          { key: 'onRightClick', fn: onRightClick },
-          { key: 'onMouseEnter', fn: onMouseEnter },
-          { key: 'onMouseLeave', fn: onMouseLeave }
-        ])
-        instances.push(annotationInstance)
-      }
-    })
-    if (instances.length > 0) {
-      this._chartStore.annotationStore().add(instances, paneId)
-    }
-  }
+  //       perfectOverlayFunc(annotationInstance, [
+  //         { key: 'drawExtend', fn: drawExtend },
+  //         { key: 'drawCustomSymbol', fn: drawCustomSymbol },
+  //         { key: 'checkEventCoordinateOnCustomSymbol', fn: checkEventCoordinateOnCustomSymbol },
+  //         { key: 'onClick', fn: onClick },
+  //         { key: 'onRightClick', fn: onRightClick },
+  //         { key: 'onMouseEnter', fn: onMouseEnter },
+  //         { key: 'onMouseLeave', fn: onMouseLeave }
+  //       ])
+  //       instances.push(annotationInstance)
+  //     }
+  //   })
+  //   if (instances.length > 0) {
+  //     this._chartStore.annotationStore().add(instances, paneId)
+  //   }
+  // }
 
-  /**
-   * 创建标签
-   * @param tags
-   * @param paneId
-   */
-  createTag (tags, paneId) {
-    const instances = []
-    let shouldUpdate = false
-    let shouldAdd = false
-    tags.forEach(({ id, point, text, mark, styles }) => {
-      if (isValid(id)) {
-        if (this._chartStore.tagStore().has(id, paneId)) {
-          const updateSuccess = this._chartStore.tagStore().update(id, paneId, { point, text, mark, styles })
-          if (!shouldUpdate) {
-            shouldUpdate = updateSuccess
-          }
-        } else {
-          shouldAdd = true
-          instances.push(new Tag({
-            id,
-            point,
-            text,
-            mark,
-            styles,
-            chartStore: this._chartStore,
-            xAxis: this._xAxisPane.xAxis(),
-            yAxis: this._panes.get(paneId).yAxis()
-          }))
-        }
-      }
-    })
-    if (shouldAdd) {
-      this._chartStore.tagStore().add(instances, paneId)
-    } else {
-      if (shouldUpdate) {
-        this._invalidatePane(InvalidateLevel.OVERLAY)
-      }
-    }
-  }
+  // /**
+  //  * 创建标签
+  //  * @param tags
+  //  * @param paneId
+  //  */
+  // createTag (tags, paneId) {
+  //   const instances = []
+  //   let shouldUpdate = false
+  //   let shouldAdd = false
+  //   tags.forEach(({ id, point, text, mark, styles }) => {
+  //     if (isValid(id)) {
+  //       if (this._chartStore.tagStore().has(id, paneId)) {
+  //         const updateSuccess = this._chartStore.tagStore().update(id, paneId, { point, text, mark, styles })
+  //         if (!shouldUpdate) {
+  //           shouldUpdate = updateSuccess
+  //         }
+  //       } else {
+  //         shouldAdd = true
+  //         instances.push(new Tag({
+  //           id,
+  //           point,
+  //           text,
+  //           mark,
+  //           styles,
+  //           chartStore: this._chartStore,
+  //           xAxis: this._xAxisPane.xAxis(),
+  //           yAxis: this._panes.get(paneId).yAxis()
+  //         }))
+  //       }
+  //     }
+  //   })
+  //   if (shouldAdd) {
+  //     this._chartStore.tagStore().add(instances, paneId)
+  //   } else {
+  //     if (shouldUpdate) {
+  //       this._invalidatePane(InvalidateLevel.OVERLAY)
+  //     }
+  //   }
+  // }
 
-  /**
-   * 移除所有html元素
-   */
-  removeAllHtml () {
-    this._panes.forEach(pane => { pane.removeHtml() })
-    this._xAxisPane.removeHtml()
-  }
+  // /**
+  //  * 移除所有html元素
+  //  */
+  // removeAllHtml () {
+  //   this._panes.forEach(pane => { pane.removeHtml() })
+  //   this._xAxisPane.removeHtml()
+  // }
 
   /**
    * 设置窗体参数
    * @param options
    * @param forceShouldAdjust
    */
-  setPaneOptions (options, forceShouldAdjust) {
-    let shouldAdjust = forceShouldAdjust
-    let shouldMeasureHeight = false
+  setPaneOptions (options: PaneOptions, forceShouldAdjust?: boolean): void {
     if (options.id !== CANDLE_PANE_ID) {
       const pane = this._panes.get(options.id)
-      if (pane) {
-        if (isNumber(options.minHeight) && options.minHeight > 0) {
-          pane.setMinHeight(options.minHeight)
+      if (pane !== undefined) {
+        let shouldAdjust = forceShouldAdjust ?? false
+        let shouldMeasureHeight = false
+        if (options.height !== undefined && options.height > 0) {
+          const minHeight = Math.max(options.minHeight ?? pane.getOptions().minHeight, 0)
+          const height = Math.min(minHeight, options.height)
+          options.height = height
+          shouldAdjust = true
+          shouldMeasureHeight = true
         }
-        if (isNumber(options.height) && options.height > 0) {
-          const minHeight = pane.minHeight()
-          const height = options.height < pane.minHeight ? minHeight : options.height
-          if (pane.height() !== height) {
-            shouldAdjust = true
-            pane.setHeight(options.height)
-            shouldMeasureHeight = true
-          }
-        }
-        if (isBoolean(options.dragEnabled)) {
-          this._separators.get(options.id).setDragEnabled(options.dragEnabled)
+        pane.setOptions(options)
+        if (shouldAdjust) {
+          this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
         }
       }
     }
-    if (shouldAdjust) {
-      this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
-    }
   }
 
-  /**
-   * 设置时区
-   * @param timezone
-   */
-  setTimezone (timezone) {
-    this._chartStore.timeScaleStore().setTimezone(timezone)
-    this._xAxisPane.xAxis().computeAxis(true)
-    this._xAxisPane.invalidate(InvalidateLevel.FULL)
-  }
+  // /**
+  //  * 设置时区
+  //  * @param timezone
+  //  */
+  // setTimezone (timezone) {
+  //   this._chartStore.timeScaleStore().setTimezone(timezone)
+  //   this._xAxisPane.xAxis().computeAxis(true)
+  //   this._xAxisPane.invalidate(InvalidateLevel.FULL)
+  // }
 
-  /**
-   * 将值装换成像素
-   * @param timestamp
-   * @param point
-   * @param paneId
-   * @param absoluteYAxis
-   */
-  convertToPixel (point, { paneId = CANDLE_PANE_ID, absoluteYAxis }) {
-    const points = [].concat(point)
-    let coordinates = []
-    const separatorSize = this._chartStore.styleOptions().separator.size
-    let absoluteTop = 0
-    const panes = this._panes.values()
-    for (const pane of panes) {
-      if (pane.id() === paneId) {
-        coordinates = points.map(({ timestamp, dataIndex, value }) => {
-          const coordinate = {}
-          let index = dataIndex
-          if (isValid(timestamp)) {
-            index = this._chartStore.timeScaleStore().timestampToDataIndex(timestamp)
-          }
-          if (isValid(index)) {
-            coordinate.x = this._xAxisPane.xAxis().convertToPixel(index)
-          }
-          if (isValid(value)) {
-            const y = pane.yAxis().convertToPixel(value)
-            coordinate.y = absoluteYAxis ? absoluteTop + y : y
-          }
-          return coordinate
-        })
-        break
-      }
-      absoluteTop += (pane.height() + separatorSize)
-    }
-    return isArray(point) ? coordinates : (coordinates[0] || {})
-  }
+  // /**
+  //  * 将值装换成像素
+  //  * @param timestamp
+  //  * @param point
+  //  * @param paneId
+  //  * @param absoluteYAxis
+  //  */
+  // convertToPixel (point, { paneId = CANDLE_PANE_ID, absoluteYAxis }) {
+  //   const points = [].concat(point)
+  //   let coordinates = []
+  //   const separatorSize = this._chartStore.styleOptions().separator.size
+  //   let absoluteTop = 0
+  //   const panes = this._panes.values()
+  //   for (const pane of panes) {
+  //     if (pane.id() === paneId) {
+  //       coordinates = points.map(({ timestamp, dataIndex, value }) => {
+  //         const coordinate = {}
+  //         let index = dataIndex
+  //         if (isValid(timestamp)) {
+  //           index = this._chartStore.timeScaleStore().timestampToDataIndex(timestamp)
+  //         }
+  //         if (isValid(index)) {
+  //           coordinate.x = this._xAxisPane.xAxis().convertToPixel(index)
+  //         }
+  //         if (isValid(value)) {
+  //           const y = pane.yAxis().convertToPixel(value)
+  //           coordinate.y = absoluteYAxis ? absoluteTop + y : y
+  //         }
+  //         return coordinate
+  //       })
+  //       break
+  //     }
+  //     absoluteTop += (pane.height() + separatorSize)
+  //   }
+  //   return isArray(point) ? coordinates : (coordinates[0] || {})
+  // }
 
-  /**
-   * 将像素转换成值
-   * @param coordinate
-   * @param paneId
-   * @param dataIndexXAxis
-   * @param absoluteYAxis
-   * @return {{}[]|*[]}
-   */
-  convertFromPixel (coordinate, { paneId = CANDLE_PANE_ID, absoluteYAxis }) {
-    const coordinates = [].concat(coordinate)
-    let points = []
-    const separatorSize = this._chartStore.styleOptions().separator.size
-    let absoluteTop = 0
-    const panes = this._panes.values()
-    for (const pane of panes) {
-      if (pane.id() === paneId) {
-        points = coordinates.map(({ x, y }) => {
-          const point = {}
-          if (isValid(x)) {
-            point.dataIndex = this._xAxisPane.xAxis().convertFromPixel(x)
-            point.timestamp = this._chartStore.timeScaleStore().dataIndexToTimestamp(point.dataIndex)
-          }
-          if (isValid(y)) {
-            const ry = absoluteYAxis ? y - absoluteTop : y
-            point.value = pane.yAxis().convertFromPixel(ry)
-          }
-          return point
-        })
-        break
-      }
-      absoluteTop += pane.height() + separatorSize
-    }
-    return isArray(coordinate) ? points : (points[0] || {})
-  }
+  // /**
+  //  * 将像素转换成值
+  //  * @param coordinate
+  //  * @param paneId
+  //  * @param dataIndexXAxis
+  //  * @param absoluteYAxis
+  //  * @return {{}[]|*[]}
+  //  */
+  // convertFromPixel (coordinate, { paneId = CANDLE_PANE_ID, absoluteYAxis }) {
+  //   const coordinates = [].concat(coordinate)
+  //   let points = []
+  //   const separatorSize = this._chartStore.styleOptions().separator.size
+  //   let absoluteTop = 0
+  //   const panes = this._panes.values()
+  //   for (const pane of panes) {
+  //     if (pane.id() === paneId) {
+  //       points = coordinates.map(({ x, y }) => {
+  //         const point = {}
+  //         if (isValid(x)) {
+  //           point.dataIndex = this._xAxisPane.xAxis().convertFromPixel(x)
+  //           point.timestamp = this._chartStore.timeScaleStore().dataIndexToTimestamp(point.dataIndex)
+  //         }
+  //         if (isValid(y)) {
+  //           const ry = absoluteYAxis ? y - absoluteTop : y
+  //           point.value = pane.yAxis().convertFromPixel(ry)
+  //         }
+  //         return point
+  //       })
+  //       break
+  //     }
+  //     absoluteTop += pane.height() + separatorSize
+  //   }
+  //   return isArray(coordinate) ? points : (points[0] || {})
+  // }
 
-  /**
-   * 图表宽度
-   * @return {*|{}}
-   */
-  chartWidth () {
-    return this._chartWidth
-  }
+  // /**
+  //  * 图表宽度
+  //  * @return {*|{}}
+  //  */
+  // chartWidth () {
+  //   return this._chartWidth
+  // }
 
-  /**
-   * 图表高度
-   * @return {*|{}}
-   */
-  chartHeight () {
-    return this._chartHeight
-  }
+  // /**
+  //  * 图表高度
+  //  * @return {*|{}}
+  //  */
+  // chartHeight () {
+  //   return this._chartHeight
+  // }
 
-  /**
-   * 获取图表转换为图片后url
-   * @param includeOverlay,
-   * @param type
-   * @param backgroundColor
-   */
-  getConvertPictureUrl (includeOverlay, type, backgroundColor) {
-    const width = this._chartContainer.offsetWidth
-    const height = this._chartContainer.offsetHeight
-    const canvas = createElement('canvas', {
-      width: `${width}px`,
-      height: `${height}px`,
-      boxSizing: 'border-box'
-    })
-    const ctx = canvas.getContext('2d')
-    const pixelRatio = getPixelRatio(canvas)
-    canvas.width = width * pixelRatio
-    canvas.height = height * pixelRatio
-    ctx.scale(pixelRatio, pixelRatio)
+  // /**
+  //  * 获取图表转换为图片后url
+  //  * @param includeOverlay,
+  //  * @param type
+  //  * @param backgroundColor
+  //  */
+  // getConvertPictureUrl (includeOverlay, type, backgroundColor) {
+  //   const width = this._chartContainer.offsetWidth
+  //   const height = this._chartContainer.offsetHeight
+  //   const canvas = createElement('canvas', {
+  //     width: `${width}px`,
+  //     height: `${height}px`,
+  //     boxSizing: 'border-box'
+  //   })
+  //   const ctx = canvas.getContext('2d')
+  //   const pixelRatio = getPixelRatio(canvas)
+  //   canvas.width = width * pixelRatio
+  //   canvas.height = height * pixelRatio
+  //   ctx.scale(pixelRatio, pixelRatio)
 
-    ctx.fillStyle = backgroundColor
-    ctx.fillRect(0, 0, width, height)
-    let offsetTop = 0
-    this._panes.forEach((pane, paneId) => {
-      if (paneId !== CANDLE_PANE_ID) {
-        const separator = this._separators.get(paneId)
-        ctx.drawImage(
-          separator.getImage(),
-          0, offsetTop, width, separator.height()
-        )
-        offsetTop += separator.height()
-      }
-      ctx.drawImage(
-        pane.getImage(includeOverlay),
-        0, offsetTop, width, pane.height()
-      )
-      offsetTop += pane.height()
-    })
-    ctx.drawImage(
-      this._xAxisPane.getImage(includeOverlay),
-      0, offsetTop, width, this._xAxisPane.height()
-    )
-    return canvas.toDataURL(`image/${type}`)
-  }
+  //   ctx.fillStyle = backgroundColor
+  //   ctx.fillRect(0, 0, width, height)
+  //   let offsetTop = 0
+  //   this._panes.forEach((pane, paneId) => {
+  //     if (paneId !== CANDLE_PANE_ID) {
+  //       const separator = this._separators.get(paneId)
+  //       ctx.drawImage(
+  //         separator.getImage(),
+  //         0, offsetTop, width, separator.height()
+  //       )
+  //       offsetTop += separator.height()
+  //     }
+  //     ctx.drawImage(
+  //       pane.getImage(includeOverlay),
+  //       0, offsetTop, width, pane.height()
+  //     )
+  //     offsetTop += pane.height()
+  //   })
+  //   ctx.drawImage(
+  //     this._xAxisPane.getImage(includeOverlay),
+  //     0, offsetTop, width, this._xAxisPane.height()
+  //   )
+  //   return canvas.toDataURL(`image/${type}`)
+  // }
 
   /**
    * 销毁

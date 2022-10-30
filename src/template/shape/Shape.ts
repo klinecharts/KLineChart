@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import RequiredPick from '../../common/PickPartial'
+import PickRequired from '../../common/PickRequired'
 import Point from '../../common/Point'
 import Coordinate from '../../common/Coordinate'
 import Bounding from '../../common/Bounding'
 import Precision from '../../common/Precision'
 
-import { Axis } from '../../componentl/Axis'
+import Axis from '../../componentl/Axis'
 
 export const enum ShapeMode {
   NORMAL = 'normal',
@@ -97,7 +97,7 @@ export interface Shape {
 const SHAPE_DRAW_STEP_START = 1
 const SHAPE_DRAW_STEP_FINISHED = -1
 
-export default abstract class ShapeTemplate implements RequiredPick<Shape, 'name' | 'totalStep' | 'createDataSource'> {
+export default abstract class ShapeTemplate implements PickRequired<Shape, 'name' | 'totalStep' | 'createDataSource'> {
   name: string
   totalStep: number
   lock?: boolean
@@ -113,7 +113,7 @@ export default abstract class ShapeTemplate implements RequiredPick<Shape, 'name
   id: string
   currentStep: number = SHAPE_DRAW_STEP_START
 
-  constructor (shape: RequiredPick<Shape, 'name' | 'totalStep' | 'createDataSource'>) {
+  constructor (shape: PickRequired<Shape, 'name' | 'totalStep' | 'createDataSource'>) {
     const { name, totalStep, lock, mode, points, extendData, styles } = shape
     this.name = name
     this.totalStep = totalStep
@@ -227,7 +227,7 @@ export default abstract class ShapeTemplate implements RequiredPick<Shape, 'name
 
   abstract createDataSource (params: ShapeCreateDataSourceParams): ShapeDataSource[]
 
-  static extend (shape: RequiredPick<Shape, 'name' | 'totalStep' | 'createDataSource'>): ShapeConstructor {
+  static extend (shape: PickRequired<Shape, 'name' | 'totalStep' | 'createDataSource'>): ShapeConstructor {
     class Custom extends ShapeTemplate {
       constructor () {
         super(shape)
@@ -238,7 +238,7 @@ export default abstract class ShapeTemplate implements RequiredPick<Shape, 'name
       }
     }
     Custom.prototype.checkEventOn = shape.checkEventOn
-    Custom.prototype.createDataSource = shape.createDataSource
+    // Custom.prototype.createDataSource = shape.createDataSource
 
     Custom.prototype.performEventPressedMove = shape.performEventPressedMove
     Custom.prototype.performEventMoveForDrawing = shape.performEventMoveForDrawing

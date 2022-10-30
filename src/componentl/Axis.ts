@@ -24,11 +24,6 @@ export interface Tick {
   text: string
 }
 
-export interface Axis {
-  convertToPixel: (value: number) => number
-  convertFromPixel: (px: number) => number
-}
-
 export interface Extremum {
   min: number
   max: number
@@ -38,8 +33,8 @@ export interface Extremum {
   realRange: number
 }
 
-export default abstract class AxisImp implements Axis {
-  private readonly _parent: Pane<AxisImp>
+export default abstract class Axis {
+  private readonly _parent: Pane<Axis>
 
   private _extremum: Extremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
   private _prevExtremum: Extremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
@@ -47,7 +42,7 @@ export default abstract class AxisImp implements Axis {
 
   private readonly _measureCtx: CanvasRenderingContext2D
 
-  constructor (parent: Pane<AxisImp>) {
+  constructor (parent: Pane<Axis>) {
     this._parent = parent
     const canvas = createDom('canvas')
     const pixelRatio = getPixelRatio(canvas)
@@ -55,7 +50,7 @@ export default abstract class AxisImp implements Axis {
     this._measureCtx.scale(pixelRatio, pixelRatio)
   }
 
-  getParent (): Pane<AxisImp> { return this._parent }
+  getParent (): Pane<Axis> { return this._parent }
 
   getMeasureCtx (): CanvasRenderingContext2D { return this._measureCtx }
 

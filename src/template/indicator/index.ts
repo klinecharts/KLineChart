@@ -13,9 +13,11 @@
  */
 
 import PickRequired from '../../common/PickRequired'
-import IndicatorTemplate, { Indicator } from './Indicator'
+import TypeOrNull from '../../common/TypeOrNull'
 
-const indicators = {}
+import IndicatorTemplate, { Indicator, IndicatorConstructor } from './Indicator'
+
+const indicators: { [key: string]: IndicatorConstructor } = {}
 
 // @ts-expect-error
 const files = require.context('./', false)
@@ -30,4 +32,8 @@ function reisterIndicator<D> (indicator: PickRequired<Omit<Indicator<D>, 'result
   indicators[indicator.name] = IndicatorTemplate.extend(indicator)
 }
 
-export { reisterIndicator }
+function getIndicatorClass (name: string): TypeOrNull<IndicatorConstructor> {
+  return indicators[name] ?? null
+}
+
+export { reisterIndicator, getIndicatorClass }

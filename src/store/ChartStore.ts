@@ -66,7 +66,7 @@ export default class ChartStore {
 
   private _visibleDataList: VisibleData[] = []
 
-  constructor (chart: ChartInternal, styleOptions: DeepPartial<Styles>) {
+  constructor (chart: ChartInternal, styleOptions?: DeepPartial<Styles>) {
     this._chart = chart
     this._styleOptions = clone(defaultStyles)
     merge(this._styleOptions, styleOptions)
@@ -103,7 +103,7 @@ export default class ChartStore {
    * 设置样式配置
    * @param options
    */
-  applyStyleOptions (options: Styles): ChartStore {
+  applyStyleOptions (options: DeepPartial<Styles>): ChartStore {
     merge(this._styleOptions, options)
     return this
   }
@@ -250,9 +250,9 @@ export default class ChartStore {
    * 十字光标变化
    * @param data
    */
-  crosshairChange (data: any): void {
-    this._handler.crosshair(data)
-  }
+  // crosshairChange (data: any): void {
+  //   this._handler.crosshair(data)
+  // }
 
   /**
    * 获取拖拽Pane标记

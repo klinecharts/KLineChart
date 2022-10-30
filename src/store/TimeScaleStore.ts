@@ -18,7 +18,6 @@ import KLineData from '../common/KLineData'
 
 import { Crosshair } from './CrosshairStore'
 
-import { formatValue } from '../common/utils/format'
 import { logWarn } from '../common/utils/logger'
 import { binarySearchNearest } from '../common/utils/number'
 
@@ -43,7 +42,7 @@ export interface MinVisibleBarCount {
   right: number
 }
 
-export type LoadMoreCallback = (timestamp: number) => void
+export type LoadMoreCallback = (timestamp: TypeOrNull<number>) => void
 
 const BarSpaceLimitContants = {
   MIN: 1,
@@ -131,7 +130,8 @@ export default class TimeScaleStore {
     // 处理加载更多，有更多并且没有在加载则去加载更多
     if (from === 0 && this._more && !this._loading && this._loadMoreCallback !== null) {
       this._loading = true
-      this._loadMoreCallback(formatValue(dataList[0], 'timestamp'))
+      const firstData = dataList[0]
+      this._loadMoreCallback(firstData?.timestamp ?? null)
     }
   }
 
@@ -215,7 +215,7 @@ export default class TimeScaleStore {
     adjustBeforeFunc?.()
     this.adjustVisibleRange()
     this._chartStore.getCrosshairStore().recalculate(true)
-    this._chartStore.getUpdater().update()
+    this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 
   /**
@@ -242,7 +242,7 @@ export default class TimeScaleStore {
     if (isUpdate ?? false) {
       this.adjustVisibleRange()
       this._chartStore.getCrosshairStore().recalculate(true)
-      this._chartStore.getUpdater().update()
+      this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
     }
     return this
   }
@@ -323,7 +323,7 @@ export default class TimeScaleStore {
     this.adjustVisibleRange()
     const cross = crosshair ?? this._chartStore.getCrosshairStore().get()
     this._chartStore.getCrosshairStore().set(cross, true)
-    this._chartStore.getUpdater().update()
+    this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 
   /**
