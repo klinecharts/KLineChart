@@ -14,7 +14,7 @@
 
 import YAxis from '../componentl/YAxis'
 
-import { eachPlots, IndicatorPlot, IndicatorPlotStyle } from '../template/indicator/Indicator'
+import { eachPlots, IndicatorPlot, IndicatorPlotStyle, Indicator } from '../template/indicator/Indicator'
 
 import View from './View'
 
@@ -36,17 +36,17 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const dataList = chartStore.getDataList()
       const dataIndex = dataList.length - 1
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-      indicators.forEach(indicator => {
-        const result = indicator.result ?? []
+      indicators.forEach((indicator: Required<Indicator>) => {
+        const result = indicator.result
         const indicatorData = result[dataIndex]
-        if (isValid(indicatorData)) {
-          const precision = indicator.precision as number
+        if (indicatorData !== undefined) {
+          const precision = indicator.precision
           eachPlots(dataList, indicator, dataIndex, defaultStyles, (plot: IndicatorPlot, plotStyle: Required<IndicatorPlotStyle>) => {
             const value = indicatorData[plot.key]
             if (isValid(value)) {
               const y = yAxis.convertToNicePixel(value)
               let text = formatPrecision(value, precision)
-              if (indicator.shouldFormatBigNumber ?? false) {
+              if (indicator.shouldFormatBigNumber) {
                 text = formatBigNumber(text)
               }
 

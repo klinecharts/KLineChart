@@ -17,7 +17,8 @@ import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import Bounding from '../../common/Bounding'
 
-import { VisibleRange } from '../../store/TimeScaleStore'
+import { VisibleRange, BarSpace } from '../../store/TimeScaleStore'
+import { Crosshair } from '../../store/CrosshairStore'
 import { IndicatorStyle, IndicatorBarCirleStyle, LineStyle } from '../../store/styles'
 
 import Axis from '../../componentl/Axis'
@@ -58,18 +59,38 @@ export interface IndicatorPlot<D = any> {
 }
 
 export type IndicatorRegeneratePlotsCallback<D = any> = (calcParms: any[]) => Array<IndicatorPlot<D>>
-export type IndicatorCreateToolTipDataSourceCallback = () => any
 
-export interface IndicatorDrawDataSource<D> {
-  kLineDataList: KLineData[]
-  indicatorDataList: D[]
+export interface IndicatorTooltipDataChild {
+  title: string
+  value: string
+  color: string
 }
+export interface IndicatorTooltipData {
+  name?: string
+  calcParamText?: string
+  values?: IndicatorTooltipDataChild[]
+}
+
+export interface IndicatorCreateToolTipDataSourceParams<D = any> {
+  kLineDataList: KLineData[]
+  indicator: Indicator<D>
+  visibleRange: VisibleRange
+  bounding: Bounding
+  crosshair: Crosshair
+  defaultStyles: IndicatorStyle
+  xAxis: Axis
+  yAxis: Axis
+}
+
+export type IndicatorCreateToolTipDataSourceCallback<D = any> = (params: IndicatorCreateToolTipDataSourceParams<D>) => IndicatorTooltipData
+
 export interface IndicatorDrawParams<D = any> {
   ctx: CanvasRenderingContext2D
   kLineDataList: KLineData[]
   indicator: Indicator<D>
   visibleRange: VisibleRange
   bounding: Bounding
+  barSpace: BarSpace
   defaultStyles: IndicatorStyle
   xAxis: Axis
   yAxis: Axis
@@ -122,14 +143,14 @@ export type EachPlotCallback = (plot: IndicatorPlot, plotStyles: Required<Indica
 
 export function eachPlots<D> (
   kLineDataList: KLineData[],
-  indicator: Indicator<D>,
+  indicator: Required<Indicator<D>>,
   dataIndex: number,
   defaultStyles: IndicatorStyle,
   eachPlotCallback: EachPlotCallback
 ): void {
-  const result = indicator.result ?? []
-  const plots = indicator.plots ?? []
-  const styles = indicator.styles ?? null
+  const result = indicator.result
+  const plots = indicator.plots
+  const styles = indicator.styles
 
   const circleStyles = formatValue(styles, 'circles', defaultStyles.circles) as IndicatorBarCirleStyle[]
   const circleStyleCount = circleStyles.length
@@ -349,7 +370,7 @@ export default abstract class IndicatorTemplate<D = any> implements Required<Ind
 
   setCreateToolTipDataSource (callback: IndicatorCreateToolTipDataSourceCallback): boolean {
     if (this.createToolTipDataSource !== callback) {
-      this.regeneratePlots = callback
+      this.createToolTipDataSource = callback
       return true
     }
     return false

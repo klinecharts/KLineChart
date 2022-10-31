@@ -12,15 +12,21 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Bounding from '../common/Bounding'
+import KLineData from '../common/KLineData'
 
-import YAxis from '../componentl/YAxis'
+import Axis from '../componentl/Axis'
 
-import { eachPlots, IndicatorPlot, IndicatorPlotStyle } from '../template/indicator/Indicator'
+import IndicatorTemplate, { eachPlots, Indicator, IndicatorPlot, IndicatorPlotStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../template/indicator/Indicator'
+
+import { IndicatorStyle, TooltipShowRule, TooltipStyle } from '../store/styles'
+import { Crosshair } from '../store/CrosshairStore'
+
+import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 
 import View from './View'
 
-import { formatPrecision, formatValue, formatBigNumber } from '../common/utils/format'
+import { formatPrecision, formatBigNumber } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 import { createFont, calcTextWidth } from '../common/utils/canvas'
 
@@ -30,79 +36,150 @@ export default class IndicatorTooltipView extends View {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
+    const crosshair = chartStore.getCrosshairStore().get()
+    const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     const defaultStyles = chartStore.getStyleOptions().indicator
-    const lastValueMarkStyles = defaultStyles.lastValueMark
-    const lastValueMarkTextStyles = lastValueMarkStyles.text
-    const show = lastValueMarkStyles.show as boolean
-    if (show) {
-      const yAxis = pane.getAxisComponent() as YAxis
-      const dataList = chartStore.getDataList()
-      const dataIndex = dataList.length - 1
-      const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-      indicators.forEach(indicator => {
-        const result = indicator.result ?? []
-        const indicatorData = result[dataIndex]
-        if (isValid(indicatorData)) {
-          const precision = indicator.precision as number
-          eachPlots(dataList, indicator, dataIndex, defaultStyles, (plot: IndicatorPlot, plotStyles: IndicatorPlotStyle, defaultPlotStyles: any) => {
-            const value = indicatorData[plot.key]
-            if (isValid(value)) {
-              const y = yAxis.convertToNicePixel(value)
-              let text = formatPrecision(value, precision)
-              if (indicator.shouldFormatBigNumber ?? false) {
-                text = formatBigNumber(text)
+    this.drawIndicatorTooltip(ctx, chartStore.getDataList(), crosshair, indicators, bounding, defaultStyles)
+  }
+
+  protected drawIndicatorTooltip (
+    ctx: CanvasRenderingContext2D,
+    dataList: KLineData[],
+    crosshair: Crosshair,
+    indicators: Map<string, IndicatorTemplate>,
+    bounding: Required<Bounding>,
+    styles: IndicatorStyle,
+    top?: number
+  ): void {
+    const tooltipStyles = styles.tooltip
+    if (this.isDrawTooltip(crosshair, tooltipStyles)) {
+      const tooltipTextStyles = tooltipStyles.text
+      const textMarginTop = tooltipTextStyles.marginTop
+      const textMarginBottom = tooltipTextStyles.marginBottom
+      const textMarginLeft = tooltipTextStyles.marginLeft
+      const textMarginRight = tooltipTextStyles.marginRight
+      const textSize = tooltipTextStyles.size
+      const textColor = tooltipTextStyles.color
+      const textWeight = tooltipTextStyles.weight
+      const textFamily = tooltipTextStyles.family
+      let labelX = 0
+      let labelY = top ?? 0
+      ctx.font = createFont(textSize, textWeight, textFamily)
+      indicators.forEach((indicator: Required<Indicator>) => {
+        const { name, calcParamText, values } = this.getIndicatorTooltipData(dataList, crosshair, indicator, styles)
+        const nameValid = name !== undefined && name.length > 0
+        const valuesValid = values !== undefined && values.length > 0
+        if (nameValid || valuesValid) {
+          labelY += tooltipTextStyles.marginTop
+          // height += (textSize + textMarginTop + textMarginBottom)
+          if (nameValid && tooltipStyles.showName) {
+            labelX += textMarginLeft
+            let text = name
+            if (calcParamText !== undefined && calcParamText.length > 0 && tooltipStyles.showParams) {
+              text = `${text}${calcParamText}`
+            }
+            this.createFigure('text', {
+              x: labelX,
+              y: labelY,
+              text,
+              styles: {
+                style: 'fill',
+                color: textColor,
+                size: textSize,
+                family: textFamily,
+                weight: textWeight,
+                align: 'left',
+                baseline: 'top'
               }
-
-              ctx.font = createFont(lastValueMarkTextStyles.size, lastValueMarkTextStyles.weight, lastValueMarkTextStyles.family)
-              const paddingLeft = lastValueMarkTextStyles.paddingLeft as number
-              const paddingRight = lastValueMarkTextStyles.paddingRight as number
-              const paddingTop = lastValueMarkTextStyles.paddingTop as number
-              const paddingBottom = lastValueMarkTextStyles.paddingBottom as number
-              const textSize = lastValueMarkTextStyles.size as number
-
-              const rectWidth = calcTextWidth(ctx, text) + paddingLeft + paddingRight
-              const rectHeight = paddingTop + textSize + paddingBottom
-
-              let rectStartX: number
-              if (yAxis.isFromZero()) {
-                rectStartX = 0
-              } else {
-                rectStartX = bounding.width - rectWidth
+            })
+            labelX += (calcTextWidth(ctx, text) + textMarginRight)
+          }
+          if (valuesValid) {
+            values.forEach(({ title, value, color }) => {
+              labelX += textMarginLeft
+              const text = `${title}${value}`
+              const textWidth = calcTextWidth(ctx, text)
+              if (labelX + textMarginLeft + textWidth + textMarginRight > bounding.width) {
+                labelX = textMarginLeft
+                // height += (textMarginLeft + textWidth + textMarginRight)
+                labelY += (textSize + textMarginTop + textMarginBottom)
               }
-
-              const backgroundColor = plotStyles.color
-              this.createFigure('rect', {
-                x: rectStartX,
-                y: y - paddingTop - textSize / 2,
-                width: rectWidth,
-                height: rectHeight,
-                styles: {
-                  style: 'fill',
-                  fillColor: backgroundColor,
-                  stokeColor: backgroundColor,
-                  strokeSize: 1,
-                  radius: lastValueMarkTextStyles.borderRadius
-                }
-              })?.draw(ctx)
-
               this.createFigure('text', {
-                x: rectStartX + paddingLeft,
-                y,
+                x: labelX,
+                y: labelY,
                 text,
                 styles: {
                   style: 'fill',
-                  color: lastValueMarkTextStyles.color,
+                  color,
                   size: textSize,
-                  family: lastValueMarkTextStyles.family,
-                  weight: lastValueMarkTextStyles.weight,
+                  family: textFamily,
+                  weight: textWeight,
                   align: 'left',
-                  baseline: 'middle'
+                  baseline: 'top'
                 }
-              })?.draw(ctx)
-            }
-          })
+              })
+              labelX += (textWidth + textMarginRight)
+            })
+          }
         }
       })
     }
+  }
+
+  protected drawStandardTooltip (): void {
+  }
+
+  protected isDrawTooltip (crosshair: Crosshair, styles: TooltipStyle): boolean {
+    const showRule = styles.showRule
+    return showRule === TooltipShowRule.ALWAYS ||
+      (showRule === TooltipShowRule.FOLLOW_CROSS && (crosshair.paneId !== undefined))
+  }
+
+  protected getIndicatorTooltipData (
+    dataList: KLineData[],
+    crosshair: Crosshair,
+    indicator: Required<Indicator>,
+    styles: IndicatorStyle
+  ): IndicatorTooltipData {
+    if (indicator.createToolTipDataSource !== null) {
+      const widget = this.getWidget()
+      const pane = widget.getPane()
+      const chartStore = pane.getChart().getChartStore()
+      return indicator.createToolTipDataSource({
+        kLineDataList: dataList,
+        indicator,
+        visibleRange: chartStore.getTimeScaleStore().getVisibleRange(),
+        bounding: widget.getBounding(),
+        crosshair,
+        defaultStyles: styles,
+        xAxis: pane.getChart().getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as Axis,
+        yAxis: pane.getAxisComponent()
+      })
+    }
+
+    const dataIndex = crosshair.dataIndex as number
+    const result = indicator.result ?? []
+
+    let calcParamText
+    const calcParams = indicator.calcParams
+    if (calcParams.length > 0) {
+      calcParamText = `(${calcParams.join(',')})`
+    }
+
+    const indicatorData = result[dataIndex] ?? {}
+    const values: IndicatorTooltipDataChild[] = []
+    eachPlots(dataList, indicator, dataIndex, styles, (plot: IndicatorPlot, plotStyle: Required<IndicatorPlotStyle>) => {
+      if (plot.title !== undefined) {
+        let value = indicatorData[plot.key]
+        if (isValid(value)) {
+          value = formatPrecision(value, indicator.precision)
+          if (indicator.shouldFormatBigNumber) {
+            value = formatBigNumber(value)
+          }
+        }
+        values.push({ title: plot.title, value: value ?? styles.tooltip.defaultValue, color: plotStyle.color })
+      }
+    })
+    return { name: indicator.shortName, calcParamText, values }
   }
 }

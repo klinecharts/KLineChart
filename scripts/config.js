@@ -5,8 +5,8 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const eslint = require('@rollup/plugin-eslint');
 const replace = require('@rollup/plugin-replace');
 const commonjs = require('@rollup/plugin-commonjs');
-const { terser } = require('rollup-plugin-terser');
-const typescript = require('rollup-plugin-typescript2')
+const typescript = require('@rollup/plugin-typescript');
+const terser = require('@rollup/plugin-terser');
 const fileSize = require('rollup-plugin-filesize');
 const progress = require('rollup-plugin-progress');
 const requireContext = require('rollup-plugin-require-context');
@@ -38,13 +38,7 @@ const plugins = (env) => [
     }
   }),
   fileSize(),
-  env === 'production' && terser({
-    compress: {
-      pure_getters: true,
-      unsafe: true,
-      unsafe_comps: true
-    }
-  })
+  env === 'production' && terser()
 ];
 
 function inputConfig (env) {

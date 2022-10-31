@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import RequiredDeep from '../common/RequiredDeep'
 import Coordinate from '../common/Coordinate'
 
 import { CrosshairDirectionStyle } from '../store/styles'
@@ -51,7 +50,7 @@ export default class CrosshairLineView extends View {
     }
   }
 
-  private _drawLine (ctx: CanvasRenderingContext2D, coordinates: Coordinate[], styles: RequiredDeep<CrosshairDirectionStyle>): void {
+  private _drawLine (ctx: CanvasRenderingContext2D, coordinates: Coordinate[], styles: CrosshairDirectionStyle): void {
     if (styles.show) {
       const lineStyles = styles.line
       if (lineStyles.show) {

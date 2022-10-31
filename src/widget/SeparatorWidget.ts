@@ -19,7 +19,7 @@ import Axis from '../componentl/Axis'
 import YAxis from '../componentl/YAxis'
 
 import Widget from './Widget'
-import Pane from '../panee/Pane'
+import Pane from '../pane/Pane'
 
 import MouseTouchEventHandler, { MouseTouchEvent } from '../common/MouseTouchEventHandler'
 

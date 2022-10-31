@@ -17,7 +17,7 @@ import Bounding from '../common/Bounding'
 import { LineAttrs } from '../template/figure/line'
 import { TextAttrs } from '../template/figure/text'
 
-import { AxisStyle } from '../store/styles'
+import { AxisStyle, Styles } from '../store/styles'
 
 import Axis, { Tick } from '../componentl/Axis'
 
@@ -31,18 +31,18 @@ export default abstract class AxisView<C extends Axis> extends View<C> {
     const axis = pane.getAxisComponent()
     const chartStore = pane.getChart().getChartStore()
     const styles: AxisStyle = this.getAxisStyles(chartStore.getStyleOptions())
-    if (styles.show ?? false) {
-      if (styles.axisLine?.show ?? false) {
+    if (styles.show) {
+      if (styles.axisLine.show) {
         this.createFigure('line', this.createAxisLine(bounding, styles))?.draw(ctx)
       }
       const ticks = axis.getTicks()
-      if (styles.tickLine?.show ?? false) {
+      if (styles.tickLine.show) {
         const lines = this.createTickLines(ticks, bounding, styles)
         lines.forEach(line => {
           this.createFigure('line', line)?.draw(ctx)
         })
       }
-      if (styles.tickText?.show ?? false) {
+      if (styles.tickText.show) {
         const texts = this.createTickTexts(ticks, bounding, styles)
         texts.forEach(text => {
           this.createFigure('text', text)?.draw(ctx)
@@ -51,9 +51,9 @@ export default abstract class AxisView<C extends Axis> extends View<C> {
     }
   }
 
-  protected abstract getAxisStyles (styles: any): AxisStyle
+  protected abstract getAxisStyles (styles: Styles): AxisStyle
 
-  protected abstract createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs
-  protected abstract createTickLines (ticks: Tick[], bounding: Bounding, styles: AxisStyle): LineAttrs[]
-  protected abstract createTickTexts (tick: Tick[], bounding: Bounding, styles: AxisStyle): TextAttrs[]
+  protected abstract createAxisLine (bounding: Required<Bounding>, styles: AxisStyle): LineAttrs
+  protected abstract createTickLines (ticks: Tick[], bounding: Required<Bounding>, styles: AxisStyle): LineAttrs[]
+  protected abstract createTickTexts (tick: Tick[], bounding: Required<Bounding>, styles: AxisStyle): TextAttrs[]
 }

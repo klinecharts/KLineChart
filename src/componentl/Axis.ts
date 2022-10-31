@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import Pane from '../panee/Pane'
+import Pane from '../pane/Pane'
 
 import { getPrecision, nice, round } from '../common/utils/number'
 import { createDom } from '../common/utils/dom'

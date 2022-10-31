@@ -15,7 +15,7 @@
 import XAxis from '../componentl/XAxis'
 import YAxis from '../componentl/YAxis'
 
-import { XAXIS_PANE_ID } from '../ChartInternal'
+import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 
 import View from './View'
 
@@ -27,11 +27,11 @@ export default class GridView extends View<YAxis> {
     const bounding = widget.getBounding()
 
     const gridStyles = chart.getChartStore().getStyleOptions().grid
-    const show = gridStyles.show as boolean
+    const show = gridStyles.show
 
     if (show) {
       const horizontalStyles = gridStyles.horizontal
-      const horizontalShow = horizontalStyles.show as boolean
+      const horizontalShow = horizontalStyles.show
       if (horizontalShow) {
         const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as XAxis
         xAxis.getTicks().forEach(tick => {
@@ -50,7 +50,7 @@ export default class GridView extends View<YAxis> {
         })
       }
       const verticalStyles = gridStyles.vertical
-      const verticalShow = verticalStyles.show as boolean
+      const verticalShow = verticalStyles.show
       if (verticalShow) {
         const yAxis = pane.getAxisComponent()
         yAxis.getTicks().forEach(tick => {

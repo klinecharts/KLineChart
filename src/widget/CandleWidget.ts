@@ -19,6 +19,9 @@ import CandleAreaView from '../viewv/CandleAreaView'
 import CandleHighLowPriceView from '../viewv/CandleHighLowPriceView'
 import CandleLastPriceLineView from '../viewv/CandleLastPriceLineView'
 
+import IndicatorTooltipView from '../viewv/IndicatorTooltipView'
+import CandleTooltipView from '../viewv/CandleTooltipView'
+
 import { CandleType } from '../store/styles'
 
 export default class CandleWidget extends IndicatorWidget {
@@ -38,6 +41,7 @@ export default class CandleWidget extends IndicatorWidget {
     }
   }
 
-  protected updateOverlay (ctx: CanvasRenderingContext2D): void {
+  protected createTooltipView (): IndicatorTooltipView {
+    return new CandleTooltipView(this)
   }
 }

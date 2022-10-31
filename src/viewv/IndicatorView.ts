@@ -15,7 +15,7 @@
 import TypeOrNull from '../common/TypeOrNull'
 import Coordinate from '../common/Coordinate'
 
-import { XAXIS_PANE_ID } from '../ChartInternal'
+import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 
 import ChartStore, { VisibleData } from '../store/ChartStore'
 import { BarSpace } from '../store/TimeScaleStore'
@@ -24,7 +24,7 @@ import { CandleType } from '../store/styles'
 import Axis from '../componentl/Axis'
 
 import { LineAttrs } from '../template/figure/line'
-import { eachPlots, IndicatorPlot, IndicatorPlotStyle } from '../template/indicator/Indicator'
+import { eachPlots, IndicatorPlot, IndicatorPlotStyle, Indicator } from '../template/indicator/Indicator'
 
 import CandleBarView, { CandleBarOptions } from './CandleBarView'
 
@@ -37,15 +37,15 @@ export default class IndicatorView extends CandleBarView {
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     for (const entries of indicators) {
       const indicator = entries[1]
-      if (indicator.shouldOhlc ?? false) {
-        const indicatorStyles = indicator.styles ?? null
+      if (indicator.shouldOhlc) {
+        const indicatorStyles = indicator.styles
         const defaultStyles = chartStore.getStyleOptions().indicator
         return {
           type: CandleType.OHLC,
           styles: {
-            upColor: formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor),
-            downColor: formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor),
-            noChangeColor: formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor)
+            upColor: formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string,
+            downColor: formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string,
+            noChangeColor: formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
           }
         }
       }
@@ -67,7 +67,7 @@ export default class IndicatorView extends CandleBarView {
     const visibleRange = timeScaleStore.getVisibleRange()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     const defaultStyles = chartStore.getStyleOptions().indicator
-    indicators.forEach(indicator => {
+    indicators.forEach((indicator: Required<Indicator>) => {
       let isCover = false
       if (isValid(indicator.draw)) {
         ctx.save()
@@ -77,6 +77,7 @@ export default class IndicatorView extends CandleBarView {
           indicator,
           visibleRange,
           bounding,
+          barSpace: timeScaleStore.getBarSpace(),
           defaultStyles,
           xAxis,
           yAxis

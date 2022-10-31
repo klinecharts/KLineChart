@@ -194,7 +194,7 @@ export default class IndicatorStore {
    * @param name
    * @returns
    */
-  getInstance (paneId?: string, name?: string): TypeOrNull<Indicator> | TypeOrNull<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
+  getInstance (paneId?: string, name?: string): TypeOrNull<Required<Indicator>> | TypeOrNull<Map<string, Required<Indicator>>> | Map<string, Map<string, Required<Indicator>>> {
     if (paneId !== undefined) {
       const paneInstances = this._instances.get(paneId)
       if (name !== undefined) {

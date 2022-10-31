@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import RequiredDeep from '../common/RequiredDeep'
 import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 
@@ -92,7 +91,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     return crosshair.paneId === paneId
   }
 
-  protected getDirectionStyles (styels: RequiredDeep<CrosshairStyle>): RequiredDeep<CrosshairDirectionStyle> {
+  protected getDirectionStyles (styels: CrosshairStyle): CrosshairDirectionStyle {
     return styels.horizontal
   }
 
@@ -112,9 +111,9 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
         precision = chartStore.getPrecision().price
       } else {
         indicators.forEach(indicator => {
-          precision = Math.max(indicator.precision as number, precision)
+          precision = Math.max(indicator.precision, precision)
           if (!shouldFormatBigNumber) {
-            shouldFormatBigNumber = indicator.shouldFormatBigNumber as boolean
+            shouldFormatBigNumber = indicator.shouldFormatBigNumber
           }
         })
       }
@@ -134,7 +133,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     return 'middle'
   }
 
-  protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Bounding, axis: C, styles: Required<PaddingTextStyle>): Coordinate {
+  protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Required<Bounding>, axis: C, styles: Required<PaddingTextStyle>): Coordinate {
     const yAxis = axis as unknown as YAxis
     let rectX: number
     if (yAxis.isFromZero()) {

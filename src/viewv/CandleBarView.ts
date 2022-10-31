@@ -26,7 +26,7 @@ import ChildrenView from './ChildrenView'
 
 export interface CandleBarOptions {
   type: Exclude<CandleType, 'area'>
-  styles: Required<ChangeColor>
+  styles: ChangeColor
 }
 
 export default class CandleBarView extends ChildrenView {

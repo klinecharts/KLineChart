@@ -18,7 +18,7 @@ import ElementGroup from '../common/ElementGroup'
 
 import Axis from '../componentl/Axis'
 
-import Pane from '../panee/Pane'
+import Pane from '../pane/Pane'
 
 import { createDom } from '../common/utils/dom'
 import { merge } from '../common/utils/typeChecks'

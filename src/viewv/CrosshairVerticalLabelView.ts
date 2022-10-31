@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import RequiredDeep from '../common/RequiredDeep'
 import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 
@@ -32,7 +31,7 @@ export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabel
     return crosshair.dataIndex !== crosshair.realDataIndex && isValid(crosshair.kLineData)
   }
 
-  protected getDirectionStyles (styels: RequiredDeep<CrosshairStyle>): RequiredDeep<CrosshairDirectionStyle> {
+  protected getDirectionStyles (styels: CrosshairStyle): CrosshairDirectionStyle {
     return styels.vertical
   }
 
@@ -45,7 +44,7 @@ export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabel
     return 'top'
   }
 
-  protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Bounding): Coordinate {
+  protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Required<Bounding>): Coordinate {
     const x = crosshair.realX as number
     let rectX: number
     if (x - rectWidth / 2 < 0) {

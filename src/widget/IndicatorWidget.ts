@@ -19,10 +19,13 @@ import YAxis from '../componentl/YAxis'
 import GridView from '../viewv/GridView'
 import IndicatorView from '../viewv/IndicatorView'
 import CrosshairLineView from '../viewv/CrosshairLineView'
+import IndicatorTooltipView from '../viewv/IndicatorTooltipView'
+
 export default class IndicatorWidget extends DrawWidget<YAxis> {
   private readonly _gridView = new GridView(this)
   private readonly _indicatorView = new IndicatorView(this)
   private readonly _crosshairLineView = new CrosshairLineView(this)
+  private readonly _tooltipView = this.createTooltipView()
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
     this._gridView.draw(ctx)
@@ -30,9 +33,14 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
     this._indicatorView.draw(ctx)
   }
 
+  protected createTooltipView (): IndicatorTooltipView {
+    return new IndicatorTooltipView(this)
+  }
+
   protected updateMainContent (ctx: CanvasRenderingContext2D): void {}
 
   protected updateOverlay (ctx: CanvasRenderingContext2D): void {
     this._crosshairLineView.draw(ctx)
+    this._tooltipView.draw(ctx)
   }
 }

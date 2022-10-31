@@ -19,13 +19,13 @@ import KLineData from './common/KLineData'
 
 import { getIndicatorClass } from './template/indicator'
 import { Indicator } from './template/indicator/Indicator'
-import { PaneOptions } from './panee/Pane'
+import { PaneOptions } from './pane/Pane'
 
 import { LoadMoreCallback } from './store/TimeScaleStore'
 import { Styles } from './store/styles'
 
 import ChartInternal from './ChartInternal'
-import { XAXIS_PANE_ID } from './panee/XAxisPane'
+import { XAXIS_PANE_ID } from './pane/XAxisPane'
 
 import { clone, isString } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'

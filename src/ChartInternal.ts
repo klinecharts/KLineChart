@@ -21,10 +21,10 @@ import Coordinate from './common/Coordinate'
 import ChartStore from './store/ChartStore'
 import { Styles, YAxisPosition } from './store/styles'
 
-import Pane, { PaneOptions, PANE_DEFAULT_HEIGHT } from './panee/Pane'
-import CandlePane, { CANDLE_PANE_ID } from './panee/CandlePane'
-import IndicatorPane, { INDICATOR_PANE_ID_PREFIX } from './panee/IndicatorPane'
-import XAxisPane, { XAXIS_PANE_ID } from './panee/XAxisPane'
+import Pane, { PaneOptions, PANE_DEFAULT_HEIGHT } from './pane/Pane'
+import CandlePane, { CANDLE_PANE_ID } from './pane/CandlePane'
+import IndicatorPane, { INDICATOR_PANE_ID_PREFIX } from './pane/IndicatorPane'
+import XAxisPane, { XAXIS_PANE_ID } from './pane/XAxisPane'
 
 import Axis from './componentl/Axis'
 

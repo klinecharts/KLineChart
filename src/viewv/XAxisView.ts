@@ -21,15 +21,15 @@ import { Tick } from '../componentl/Axis'
 import XAxis from '../componentl/XAxis'
 
 import AxisView from './AxisView'
-import { AxisStyle, AxisLineStyle, AxisTickLineStyle, AxisTickTextStyle } from '../store/styles'
+import { AxisStyle, Styles } from '../store/styles'
 
 export default class XAxisView extends AxisView<XAxis> {
-  protected getAxisStyles (styles: any): AxisStyle {
+  protected getAxisStyles (styles: Styles): AxisStyle {
     return styles.xAxis
   }
 
-  protected createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs {
-    const axisLineStyles = styles.axisLine as Required<AxisLineStyle>
+  protected createAxisLine (bounding: Required<Bounding>, styles: AxisStyle): LineAttrs {
+    const axisLineStyles = styles.axisLine
     return {
       coordinates: [
         { x: 0, y: 0 },
@@ -44,9 +44,9 @@ export default class XAxisView extends AxisView<XAxis> {
     }
   }
 
-  protected createTickLines (ticks: Tick[], bounding: Bounding, styles: AxisStyle): LineAttrs[] {
-    const tickLineStyles = styles.tickLine as Required<AxisTickLineStyle>
-    const axisLineSize = styles.axisLine?.size as number
+  protected createTickLines (ticks: Tick[], bounding: Required<Bounding>, styles: AxisStyle): LineAttrs[] {
+    const tickLineStyles = styles.tickLine
+    const axisLineSize = styles.axisLine.size
     return ticks.map(tick => ({
       coordinates: [
         { x: tick.coord, y: 0 },
@@ -61,10 +61,10 @@ export default class XAxisView extends AxisView<XAxis> {
     }))
   }
 
-  protected createTickTexts (ticks: Tick[], bounding: Bounding, styles: AxisStyle): TextAttrs[] {
-    const tickTickStyles = styles.tickText as Required<AxisTickTextStyle>
-    const axisLineSize = styles.axisLine?.size as number
-    const tickLineLength = styles.tickLine?.length as number
+  protected createTickTexts (ticks: Tick[], bounding: Required<Bounding>, styles: AxisStyle): TextAttrs[] {
+    const tickTickStyles = styles.tickText
+    const axisLineSize = styles.axisLine.size
+    const tickLineLength = styles.tickLine.length
     return ticks.map(tick => ({
       x: tick.coord,
       y: axisLineSize + tickLineLength + tickTickStyles.marginStart,

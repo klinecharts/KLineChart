@@ -21,16 +21,16 @@ import { Tick } from '../componentl/Axis'
 import YAxis from '../componentl/YAxis'
 
 import AxisView from './AxisView'
-import { AxisStyle, AxisLineStyle, AxisTickLineStyle, AxisTickTextStyle } from '../store/styles'
+import { AxisStyle, Styles } from '../store/styles'
 
 export default class YxisView extends AxisView<YAxis> {
-  protected getAxisStyles (styles: any): AxisStyle {
+  protected getAxisStyles (styles: Styles): AxisStyle {
     return styles.xAxis
   }
 
-  protected createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs {
+  protected createAxisLine (bounding: Required<Bounding>, styles: AxisStyle): LineAttrs {
     const yAxis = this.getWidget().getPane().getAxisComponent()
-    const axisLineStyles = styles.axisLine as Required<AxisLineStyle>
+    const axisLineStyles = styles.axisLine
     let x: number
     if (yAxis.isFromZero()) {
       x = 0
@@ -51,10 +51,10 @@ export default class YxisView extends AxisView<YAxis> {
     }
   }
 
-  protected createTickLines (ticks: Tick[], bounding: Bounding, styles: AxisStyle): LineAttrs[] {
+  protected createTickLines (ticks: Tick[], bounding: Required<Bounding>, styles: AxisStyle): LineAttrs[] {
     const yAxis = this.getWidget().getPane().getAxisComponent()
-    const axisLineStyles = styles.axisLine as Required<AxisLineStyle>
-    const tickLineStyles = styles.tickLine as Required<AxisTickLineStyle>
+    const axisLineStyles = styles.axisLine
+    const tickLineStyles = styles.tickLine
 
     let startX = 0
     let endX = 0
@@ -85,11 +85,11 @@ export default class YxisView extends AxisView<YAxis> {
     }))
   }
 
-  protected createTickTexts (ticks: Tick[], bounding: Bounding, styles: AxisStyle): TextAttrs[] {
+  protected createTickTexts (ticks: Tick[], bounding: Required<Bounding>, styles: AxisStyle): TextAttrs[] {
     const yAxis = this.getWidget().getPane().getAxisComponent()
-    const axisLineStyles = styles.axisLine as Required<AxisLineStyle>
-    const tickLineStyles = styles.tickLine as Required<AxisTickLineStyle>
-    const tickTextStyles = styles.tickText as Required<AxisTickTextStyle>
+    const axisLineStyles = styles.axisLine
+    const tickLineStyles = styles.tickLine
+    const tickTextStyles = styles.tickText
 
     let x = 0
     let align
