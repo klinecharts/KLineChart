@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
     "strictNullChecks": true,
-    "target": "ES5",
-    "downlevelIteration": true,
-    "declaration": true,
+    "target": "es2018",
+    "declaration": false,
     "declarationMap": false,
-    "declarationDir": "./types",
-    
+    // "declarationDir": "./types",
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts", "/src/**/*.d.ts"
   ]
 }

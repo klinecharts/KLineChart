@@ -16,10 +16,10 @@ import DrawWidget from './DrawWidget'
 
 import YAxis from '../componentl/YAxis'
 
-import YAxisView from '../viewv/YAxisView'
-import CandleLastPriceLabelView from '../viewv/CandleLastPriceLabelView'
-import IndicatorLastValueView from '../viewv/IndicatorLastValueView'
-import CrosshairHorizontalLabelView from '../viewv/CrosshairHorizontalLabelView'
+import YAxisView from '../view/YAxisView'
+import CandleLastPriceLabelView from '../view/CandleLastPriceLabelView'
+import IndicatorLastValueView from '../view/IndicatorLastValueView'
+import CrosshairHorizontalLabelView from '../view/CrosshairHorizontalLabelView'
 
 export default class YAxisWidget extends DrawWidget<YAxis> {
   private readonly _yAxisView = new YAxisView(this)

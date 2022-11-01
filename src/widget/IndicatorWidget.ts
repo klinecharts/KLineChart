@@ -16,10 +16,10 @@ import DrawWidget from './DrawWidget'
 
 import YAxis from '../componentl/YAxis'
 
-import GridView from '../viewv/GridView'
-import IndicatorView from '../viewv/IndicatorView'
-import CrosshairLineView from '../viewv/CrosshairLineView'
-import IndicatorTooltipView from '../viewv/IndicatorTooltipView'
+import GridView from '../view/GridView'
+import IndicatorView from '../view/IndicatorView'
+import CrosshairLineView from '../view/CrosshairLineView'
+import IndicatorTooltipView from '../view/IndicatorTooltipView'
 
 export default class IndicatorWidget extends DrawWidget<YAxis> {
   private readonly _gridView = new GridView(this)

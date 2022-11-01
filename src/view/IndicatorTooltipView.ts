@@ -19,7 +19,7 @@ import Axis from '../componentl/Axis'
 
 import IndicatorTemplate, { eachPlots, Indicator, IndicatorPlot, IndicatorPlotStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../template/indicator/Indicator'
 
-import { IndicatorStyle, TooltipShowRule, TooltipStyle } from '../store/styles'
+import { IndicatorStyle, TooltipShowRule, TooltipStyle, MarginTextStyle } from '../store/styles'
 import { Crosshair } from '../store/CrosshairStore'
 
 import { XAXIS_PANE_ID } from '../pane/XAxisPane'
@@ -29,6 +29,8 @@ import View from './View'
 import { formatPrecision, formatBigNumber } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 import { createFont, calcTextWidth } from '../common/utils/canvas'
+
+export type TooltipData = IndicatorTooltipDataChild
 
 export default class IndicatorTooltipView extends View {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
@@ -50,16 +52,14 @@ export default class IndicatorTooltipView extends View {
     bounding: Required<Bounding>,
     styles: IndicatorStyle,
     top?: number
-  ): void {
+  ): number {
     const tooltipStyles = styles.tooltip
+    let height = 0
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
       const tooltipTextStyles = tooltipStyles.text
-      const textMarginTop = tooltipTextStyles.marginTop
-      const textMarginBottom = tooltipTextStyles.marginBottom
       const textMarginLeft = tooltipTextStyles.marginLeft
       const textMarginRight = tooltipTextStyles.marginRight
       const textSize = tooltipTextStyles.size
-      const textColor = tooltipTextStyles.color
       const textWeight = tooltipTextStyles.weight
       const textFamily = tooltipTextStyles.family
       let labelX = 0
@@ -71,7 +71,7 @@ export default class IndicatorTooltipView extends View {
         const valuesValid = values !== undefined && values.length > 0
         if (nameValid || valuesValid) {
           labelY += tooltipTextStyles.marginTop
-          // height += (textSize + textMarginTop + textMarginBottom)
+          height += (tooltipTextStyles.marginTop + textSize + tooltipTextStyles.marginBottom)
           if (nameValid && tooltipStyles.showName) {
             labelX += textMarginLeft
             let text = name
@@ -84,7 +84,7 @@ export default class IndicatorTooltipView extends View {
               text,
               styles: {
                 style: 'fill',
-                color: textColor,
+                color: tooltipTextStyles.color,
                 size: textSize,
                 family: textFamily,
                 weight: textWeight,
@@ -95,38 +95,53 @@ export default class IndicatorTooltipView extends View {
             labelX += (calcTextWidth(ctx, text) + textMarginRight)
           }
           if (valuesValid) {
-            values.forEach(({ title, value, color }) => {
-              labelX += textMarginLeft
-              const text = `${title}${value}`
-              const textWidth = calcTextWidth(ctx, text)
-              if (labelX + textMarginLeft + textWidth + textMarginRight > bounding.width) {
-                labelX = textMarginLeft
-                // height += (textMarginLeft + textWidth + textMarginRight)
-                labelY += (textSize + textMarginTop + textMarginBottom)
-              }
-              this.createFigure('text', {
-                x: labelX,
-                y: labelY,
-                text,
-                styles: {
-                  style: 'fill',
-                  color,
-                  size: textSize,
-                  family: textFamily,
-                  weight: textWeight,
-                  align: 'left',
-                  baseline: 'top'
-                }
-              })
-              labelX += (textWidth + textMarginRight)
-            })
+            height += this.drawStandardTooltip(ctx, bounding, values, labelX, labelY, tooltipTextStyles)
           }
         }
       })
     }
+    return height
   }
 
-  protected drawStandardTooltip (): void {
+  protected drawStandardTooltip (
+    ctx: CanvasRenderingContext2D,
+    bounding: Required<Bounding>,
+    values: TooltipData[],
+    startX: number,
+    startY: number,
+    styles: Omit<MarginTextStyle, 'show'>
+  ): number {
+    let labelX = startX
+    let labelY = startY
+    let height = 0
+    const { marginLeft, marginTop, marginRight, marginBottom, size, family, weight } = styles
+    values.forEach(({ title, value, color }) => {
+      const text = `${title}${value}`
+      const textWidth = calcTextWidth(ctx, text)
+      if (labelX + marginLeft + textWidth + marginRight > bounding.width) {
+        labelX = marginLeft
+        height += (size + marginTop + marginBottom)
+        labelY += (size + marginTop + marginBottom)
+      } else {
+        labelX += marginLeft
+      }
+      this.createFigure('text', {
+        x: labelX,
+        y: labelY,
+        text,
+        styles: {
+          style: 'fill',
+          color,
+          size,
+          family,
+          weight,
+          align: 'left',
+          baseline: 'top'
+        }
+      })
+      labelX += (textWidth + marginRight)
+    })
+    return height
   }
 
   protected isDrawTooltip (crosshair: Crosshair, styles: TooltipStyle): boolean {

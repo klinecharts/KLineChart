@@ -21,7 +21,7 @@ import { Crosshair } from './CrosshairStore'
 import { logWarn } from '../common/utils/logger'
 import { binarySearchNearest } from '../common/utils/number'
 
-import ActionType from '../enum/ActionType'
+// import ActionType from '../enum/ActionType'
 
 import ChartStore from './ChartStore'
 
@@ -318,7 +318,7 @@ export default class TimeScaleStore {
       return
     }
     const distanceBarCount = distance / this._barSpace
-    this._chartStore.getActionStore().execute(ActionType.SCROLL, { barCount: distanceBarCount, distance })
+    // this._chartStore.getActionStore().execute(ActionType.SCROLL, { barCount: distanceBarCount, distance })
     this._offsetRightBarCount = this._startScrollOffsetRightBarCount - distanceBarCount
     this.adjustVisibleRange()
     const cross = crosshair ?? this._chartStore.getCrosshairStore().get()
@@ -400,7 +400,7 @@ export default class TimeScaleStore {
       const crosshair = this._chartStore.getCrosshairStore().get()
       coordinate = { x: crosshair?.x !== undefined ? crosshair.x : this._totalBarSpace / 2 }
     }
-    this._chartStore.getActionStore().execute(ActionType.ZOOM, { coordinate, scale })
+    // this._chartStore.getActionStore().execute(ActionType.ZOOM, { coordinate, scale })
     const floatIndex = this.coordinateToFloatIndex(coordinate.x as number)
     const barSpace = this._barSpace + scale * (this._barSpace / 10)
     this.setBarSpace(barSpace, () => {

@@ -14,13 +14,13 @@
 
 import IndicatorWidget from './IndicatorWidget'
 
-import CandleBarView from '../viewv/CandleBarView'
-import CandleAreaView from '../viewv/CandleAreaView'
-import CandleHighLowPriceView from '../viewv/CandleHighLowPriceView'
-import CandleLastPriceLineView from '../viewv/CandleLastPriceLineView'
+import CandleBarView from '../view/CandleBarView'
+import CandleAreaView from '../view/CandleAreaView'
+import CandleHighLowPriceView from '../view/CandleHighLowPriceView'
+import CandleLastPriceLineView from '../view/CandleLastPriceLineView'
 
-import IndicatorTooltipView from '../viewv/IndicatorTooltipView'
-import CandleTooltipView from '../viewv/CandleTooltipView'
+import IndicatorTooltipView from '../view/IndicatorTooltipView'
+import CandleTooltipView from '../view/CandleTooltipView'
 
 import { CandleType } from '../store/styles'
 

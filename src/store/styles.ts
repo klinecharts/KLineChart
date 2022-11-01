@@ -228,7 +228,12 @@ export interface CandleTooltipRectStyle {
   backgroundColor: string
 }
 
-export type CandleTooltipValuesCallback = (kLineData: KLineData) => string[]
+export interface CandleTooltipValuesChild {
+  color: string
+  value: string
+}
+
+export type CandleTooltipValuesCallback = (kLineData: KLineData, styles: CandleStyle) => string[] | CandleTooltipValuesChild[]
 
 export interface CandleTooltipStyle extends TooltipStyle {
   labels: string[]

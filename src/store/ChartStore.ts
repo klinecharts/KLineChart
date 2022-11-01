@@ -21,11 +21,11 @@ import { defaultStyles, Styles } from './styles'
 
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
-import ShapeStore from './ShapeStore'
-import AnnotationStore from './AnnotationStore'
-import TagStore from './TagStore'
 import CrosshairStore from './CrosshairStore'
-import ActionStore from './ActionStore'
+// import ShapeStore from './ShapeStore'
+// import AnnotationStore from './AnnotationStore'
+// import TagStore from './TagStore'
+// import ActionStore from './ActionStore'
 
 import ChartInternal from '../ChartInternal'
 
@@ -54,15 +54,15 @@ export default class ChartStore {
   // 技术指标数据存储
   private readonly _indicatorStore = new IndicatorStore(this)
   // 图形数据存储
-  private readonly _shapeStore = new ShapeStore(this)
-  // 注解数据存储
-  private readonly _annotationStore = new AnnotationStore(this)
+  // private readonly _shapeStore = new ShapeStore(this)
+  // // 注解数据存储
+  // private readonly _annotationStore = new AnnotationStore(this)
   // 标签数据存储
-  private readonly _tagStore = new TagStore(this)
+  // private readonly _tagStore = new TagStore(this)
   // 十字光标数据存储
   private readonly _crosshairStore = new CrosshairStore(this)
   // 事件存储
-  private readonly _actionStore = new ActionStore()
+  // private readonly _actionStore = new ActionStore()
 
   private _visibleDataList: VisibleData[] = []
 
@@ -88,7 +88,7 @@ export default class ChartStore {
         data: kLineData
       })
     }
-    this._annotationStore.createVisibleAnnotations()
+    // this._annotationStore.createVisibleAnnotations()
   }
 
   /**
@@ -202,29 +202,29 @@ export default class ChartStore {
     return this._indicatorStore
   }
 
-  /**
-   * 获取图形存储
-   * @returns
-   */
-  getShapeStore (): ShapeStore {
-    return this._shapeStore
-  }
+  // /**
+  //  * 获取图形存储
+  //  * @returns
+  //  */
+  // getShapeStore (): ShapeStore {
+  //   return this._shapeStore
+  // }
 
-  /**
-   * 获取注解存储
-   * @returns
-   */
-  getAnnotationStore (): AnnotationStore {
-    return this._annotationStore
-  }
+  // /**
+  //  * 获取注解存储
+  //  * @returns
+  //  */
+  // getAnnotationStore (): AnnotationStore {
+  //   return this._annotationStore
+  // }
 
-  /**
-   * 获取标签数据存储
-   * @returns
-   */
-  getTagStore (): TagStore {
-    return this._tagStore
-  }
+  // /**
+  //  * 获取标签数据存储
+  //  * @returns
+  //  */
+  // getTagStore (): TagStore {
+  //   return this._tagStore
+  // }
 
   /**
    * 获取十字光标数据存储
@@ -234,13 +234,13 @@ export default class ChartStore {
     return this._crosshairStore
   }
 
-  /**
-   * 获取事件数据存储
-   * @returns
-   */
-  getActionStore (): ActionStore {
-    return this._actionStore
-  }
+  // /**
+  //  * 获取事件数据存储
+  //  * @returns
+  //  */
+  // getActionStore (): ActionStore {
+  //   return this._actionStore
+  // }
 
   getChart (): ChartInternal {
     return this._chart

@@ -7,7 +7,10 @@ const rootDirectory = fs.realpathSync(process.cwd());
 const resolvePath = relativePath => path.resolve(rootDirectory, relativePath);
 
 module.exports = {
-  build: resolvePath('dist'),
-  index: resolvePath('src/index.ts'),
+  buildDeclaration: resolvePath('types/index.d.ts'),
+  declarationIndex: resolvePath('src/typings.d.ts'),
+  buildCore: resolvePath('dist'),
+  coreIndex: resolvePath('src/index.ts'),
+  context: resolvePath('src'),
   packageJson: resolvePath('package.json')
 };

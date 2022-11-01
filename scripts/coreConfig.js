@@ -1,4 +1,4 @@
-'use strict';
+// 'use strict';
 
 const { babel } = require('@rollup/plugin-babel');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
@@ -9,7 +9,7 @@ const typescript = require('@rollup/plugin-typescript');
 const terser = require('@rollup/plugin-terser');
 const fileSize = require('rollup-plugin-filesize');
 const progress = require('rollup-plugin-progress');
-const requireContext = require('rollup-plugin-require-context');
+const requireContext = require('rollup-plugin-glob-import');
 
 const paths = require('./paths');
 
@@ -18,6 +18,8 @@ const packageJson = require(paths.packageJson);
 const version = packageJson.version;
 
 const plugins = (env) => [
+  typescript(),
+  requireContext(),
   eslint({
     throwOnError: true
   }),
@@ -25,10 +27,8 @@ const plugins = (env) => [
     babelHelpers: 'runtime',
     exclude: '**/node_modules/**'
   }),
-  requireContext(),
   nodeResolve(),
   commonjs(),
-  typescript(),
   progress(),
   replace({
     preventAssignment: true,
@@ -42,13 +42,13 @@ const plugins = (env) => [
 ];
 
 function inputConfig (env) {
-  return { input: paths.index, plugins: plugins(env) };
+  return { input: paths.coreIndex, plugins: plugins(env) };
 }
 
 function outputConfig (env) {
   const isDevelopment = env === 'development';
   return {
-    file: `${paths.build}/${isDevelopment ? 'klinecharts' : 'klinecharts.min'}.js`,
+    file: `${paths.buildCore}/${isDevelopment ? 'klinecharts' : 'klinecharts.min'}.js`,
     format: 'umd',
     name: 'klinecharts',
     sourcemap: isDevelopment,

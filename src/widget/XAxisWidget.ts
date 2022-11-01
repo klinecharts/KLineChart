@@ -16,8 +16,8 @@ import DrawWidget from './DrawWidget'
 
 import XAxis from '../componentl/XAxis'
 
-import XAxisView from '../viewv/XAxisView'
-import CrosshairVerticalLabelView from '../viewv/CrosshairVerticalLabelView'
+import XAxisView from '../view/XAxisView'
+import CrosshairVerticalLabelView from '../view/CrosshairVerticalLabelView'
 
 export default class XAxisWidget extends DrawWidget<XAxis> {
   private readonly _xAxisView = new XAxisView(this)

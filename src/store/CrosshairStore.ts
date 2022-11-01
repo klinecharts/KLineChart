@@ -63,12 +63,12 @@ export default class CrosshairStore {
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
     this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex }
     if (kLineData !== null) {
-      this._chartStore.crosshairChange(this._crosshair)
+      // this._chartStore.crosshairChange(this._crosshair)
     }
     if (
       (prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId) && !(notInvalidate ?? false)
     ) {
-      this._chartStore.getUpdater().update(UpdateLevel.OVERLAY)
+      this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY)
     }
     return this
   }

@@ -16,15 +16,17 @@ import TypeOrNull from '../../common/TypeOrNull'
 
 import FigureTemplate, { Figure, FigureConstructor } from './Figure'
 
+import circle from './circle'
+import line from './line'
+import polygon from './polygon'
+import rect from './rect'
+import text from './text'
+
 const figures: { [key: string]: FigureConstructor } = {}
 
-// @ts-expect-error
-const files = require.context('./', false)
-files.keys().forEach((key: string) => {
-  const figure = files[key].default
-  if (figure.name !== undefined) {
-    figures[figure.name] = FigureTemplate.extend(figure)
-  }
+const templates = [circle, line, polygon, rect, text]
+templates.forEach((template: Figure) => {
+  figures[template.name] = FigureTemplate.extend(template)
 })
 
 function getSupportFigures (): string[] {

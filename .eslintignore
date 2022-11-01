@@ -1,6 +1,7 @@
-config/*.js
-dist/*.js
+config/
+dist/
 types/
 lib/
 scripts/
+.eslintrc.js
 index.js

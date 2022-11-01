@@ -18,7 +18,7 @@ import { UpdateLevel } from '../common/Updater'
 import Axis from '../componentl/Axis'
 
 import Widget from './Widget'
-import View from '../viewv/View'
+import View from '../view/View'
 
 import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'

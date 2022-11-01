@@ -12,142 +12,142 @@
  * limitations under the License.
  */
 
-import { isValid } from '../common/utils/typeChecks'
+// import { isValid } from '../common/utils/typeChecks'
 
-import InvalidateLevel from '../enum/InvalidateLevel'
+// import InvalidateLevel from '../enum/InvalidateLevel'
 
-export default class AnnotationStore {
-  constructor (chartStore) {
-    this._chartStore = chartStore
-    // 注解标记
-    this._annotations = new Map()
-    // 注解标记
-    this._visibleAnnotations = new Map()
-    // 注解事件操作信息
-    this._eventOperate = { id: '' }
-  }
+// export default class AnnotationStore {
+//   constructor (chartStore) {
+//     this._chartStore = chartStore
+//     // 注解标记
+//     this._annotations = new Map()
+//     // 注解标记
+//     this._visibleAnnotations = new Map()
+//     // 注解事件操作信息
+//     this._eventOperate = { id: '' }
+//   }
 
-  /**
-   * 获取注解事件操作信息
-   * @return {null}
-   */
-  eventOperate () {
-    return this._eventOperate
-  }
+//   /**
+//    * 获取注解事件操作信息
+//    * @return {null}
+//    */
+//   eventOperate () {
+//     return this._eventOperate
+//   }
 
-  /**
-   * 设置事件操作信息
-   * @param operate
-   */
-  setEventOperate (operate) {
-    const { id } = this._eventOperate
-    if (operate && id !== operate.id) {
-      this._eventOperate = { ...operate }
-    }
-  }
+//   /**
+//    * 设置事件操作信息
+//    * @param operate
+//    */
+//   setEventOperate (operate) {
+//     const { id } = this._eventOperate
+//     if (operate && id !== operate.id) {
+//       this._eventOperate = { ...operate }
+//     }
+//   }
 
-  /**
-   * 创建可见的注解数据
-   */
-  createVisibleAnnotations () {
-    this._visibleAnnotations.clear()
-    if (this._annotations.size > 0) {
-      this._chartStore.visibleDataList().forEach(({ data, x }) => {
-        this._annotations.forEach((annotations, paneId) => {
-          if (annotations.size > 0) {
-            const annotation = annotations.get(data.timestamp) || []
-            if (annotation.length > 0) {
-              for (const an of annotation) {
-                an.createSymbolCoordinate(x)
-                if (this._visibleAnnotations.has(paneId)) {
-                  this._visibleAnnotations.get(paneId).push(an)
-                } else {
-                  this._visibleAnnotations.set(paneId, [an])
-                }
-              }
-            }
-          }
-        })
-      })
-    }
-  }
+//   /**
+//    * 创建可见的注解数据
+//    */
+//   createVisibleAnnotations () {
+//     this._visibleAnnotations.clear()
+//     if (this._annotations.size > 0) {
+//       this._chartStore.visibleDataList().forEach(({ data, x }) => {
+//         this._annotations.forEach((annotations, paneId) => {
+//           if (annotations.size > 0) {
+//             const annotation = annotations.get(data.timestamp) || []
+//             if (annotation.length > 0) {
+//               for (const an of annotation) {
+//                 an.createSymbolCoordinate(x)
+//                 if (this._visibleAnnotations.has(paneId)) {
+//                   this._visibleAnnotations.get(paneId).push(an)
+//                 } else {
+//                   this._visibleAnnotations.set(paneId, [an])
+//                 }
+//               }
+//             }
+//           }
+//         })
+//       })
+//     }
+//   }
 
-  /**
-   * 创建注解
-   * @param annotations
-   * @param paneId
-   */
-  add (annotations, paneId) {
-    if (!this._annotations.has(paneId)) {
-      this._annotations.set(paneId, new Map())
-    }
-    annotations.forEach(annotation => {
-      const timestampAnnotations = this._annotations.get(paneId)
-      const timestamp = annotation.points().timestamp
-      if (timestampAnnotations.has(timestamp)) {
-        timestampAnnotations.get(timestamp).push(annotation)
-      } else {
-        timestampAnnotations.set(timestamp, [annotation])
-      }
-    })
-    this.createVisibleAnnotations()
-    this._chartStore.invalidate(InvalidateLevel.OVERLAY)
-  }
+//   /**
+//    * 创建注解
+//    * @param annotations
+//    * @param paneId
+//    */
+//   add (annotations, paneId) {
+//     if (!this._annotations.has(paneId)) {
+//       this._annotations.set(paneId, new Map())
+//     }
+//     annotations.forEach(annotation => {
+//       const timestampAnnotations = this._annotations.get(paneId)
+//       const timestamp = annotation.points().timestamp
+//       if (timestampAnnotations.has(timestamp)) {
+//         timestampAnnotations.get(timestamp).push(annotation)
+//       } else {
+//         timestampAnnotations.set(timestamp, [annotation])
+//       }
+//     })
+//     this.createVisibleAnnotations()
+//     this._chartStore.invalidate(InvalidateLevel.OVERLAY)
+//   }
 
-  /**
-   * 获取注解
-   * @param paneId
-   * @returns
-   */
-  get (paneId) {
-    return this._visibleAnnotations.get(paneId)
-  }
+//   /**
+//    * 获取注解
+//    * @param paneId
+//    * @returns
+//    */
+//   get (paneId) {
+//     return this._visibleAnnotations.get(paneId)
+//   }
 
-  /**
-   * 移除注解
-   * @param paneId
-   * @param point
-   */
-  remove (paneId, point) {
-    let shouldAdjust = false
-    if (isValid(paneId)) {
-      if (this._annotations.has(paneId)) {
-        if (isValid(point)) {
-          const paneAnnotations = this._annotations.get(paneId)
-          const points = [].concat(point)
-          points.forEach(({ timestamp }) => {
-            if (paneAnnotations.has(timestamp)) {
-              shouldAdjust = true
-              paneAnnotations.delete(timestamp)
-            }
-          })
-          if (paneAnnotations.size === 0) {
-            this._annotations.delete(paneId)
-          }
-          if (shouldAdjust) {
-            this.createVisibleAnnotations()
-          }
-        } else {
-          shouldAdjust = true
-          this._annotations.delete(paneId)
-          this._visibleAnnotations.delete(paneId)
-        }
-      }
-    } else {
-      shouldAdjust = true
-      this._annotations.clear()
-      this._visibleAnnotations.clear()
-    }
-    if (shouldAdjust) {
-      this._chartStore.invalidate(InvalidateLevel.OVERLAY)
-    }
-  }
+//   /**
+//    * 移除注解
+//    * @param paneId
+//    * @param point
+//    */
+//   remove (paneId, point) {
+//     let shouldAdjust = false
+//     if (isValid(paneId)) {
+//       if (this._annotations.has(paneId)) {
+//         if (isValid(point)) {
+//           const paneAnnotations = this._annotations.get(paneId)
+//           const points = [].concat(point)
+//           points.forEach(({ timestamp }) => {
+//             if (paneAnnotations.has(timestamp)) {
+//               shouldAdjust = true
+//               paneAnnotations.delete(timestamp)
+//             }
+//           })
+//           if (paneAnnotations.size === 0) {
+//             this._annotations.delete(paneId)
+//           }
+//           if (shouldAdjust) {
+//             this.createVisibleAnnotations()
+//           }
+//         } else {
+//           shouldAdjust = true
+//           this._annotations.delete(paneId)
+//           this._visibleAnnotations.delete(paneId)
+//         }
+//       }
+//     } else {
+//       shouldAdjust = true
+//       this._annotations.clear()
+//       this._visibleAnnotations.clear()
+//     }
+//     if (shouldAdjust) {
+//       this._chartStore.invalidate(InvalidateLevel.OVERLAY)
+//     }
+//   }
 
-  /**
-   * 是否为空
-   * @returns
-   */
-  isEmpty () {
-    return this._visibleAnnotations.size === 0
-  }
-}
+//   /**
+//    * 是否为空
+//    * @returns
+//    */
+//   isEmpty () {
+//     return this._visibleAnnotations.size === 0
+//   }
+// }
