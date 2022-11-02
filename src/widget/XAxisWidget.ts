@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import Pane from '../pane/Pane'
+
 import DrawWidget from './DrawWidget'
 
 import XAxis from '../componentl/XAxis'
@@ -22,6 +24,17 @@ import CrosshairVerticalLabelView from '../view/CrosshairVerticalLabelView'
 export default class XAxisWidget extends DrawWidget<XAxis> {
   private readonly _xAxisView = new XAxisView(this)
   private readonly _crosshairVerticalLabelView = new CrosshairVerticalLabelView(this)
+
+  constructor (rootContainer: HTMLElement, pane: Pane<XAxis>) {
+    super(rootContainer, pane)
+    this.registerEvent('mouseMoveEvent', () => {
+      const chart = pane.getChart()
+      chart.getChartContainer().style.cursor = 'ew-resize'
+      chart.getChartStore().getCrosshairStore().set()
+    })
+    this.registerEvent('pressedMouseMoveEvent', () => {
+    })
+  }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
     this._xAxisView.draw(ctx)

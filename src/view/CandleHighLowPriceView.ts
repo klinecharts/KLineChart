@@ -63,7 +63,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
         this._drawMark(
           ctx,
           formatPrecision(low, precision.price),
-          { x: lowX, y: lowX },
+          { x: lowX, y: lowY },
           highY < lowY ? [2, 5] : [-2, -5],
           lowPriceMarkStyles
         )

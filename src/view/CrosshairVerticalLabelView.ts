@@ -22,26 +22,22 @@ import { Crosshair } from '../store/CrosshairStore'
 import { CrosshairStyle, CrosshairDirectionStyle } from '../store/styles'
 
 import { formatDate } from '../common/utils/format'
-import { isValid } from '../common/utils/typeChecks'
+// import { isValid } from '../common/utils/typeChecks'
 
 import CrosshairHorizontalLabelView from './CrosshairHorizontalLabelView'
 
 export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabelView<XAxis> {
   protected checkPaneId (crosshair: Crosshair): boolean {
-    return crosshair.dataIndex !== crosshair.realDataIndex && isValid(crosshair.kLineData)
+    return crosshair.dataIndex === crosshair.realDataIndex
   }
 
-  protected getDirectionStyles (styels: CrosshairStyle): CrosshairDirectionStyle {
-    return styels.vertical
+  protected getDirectionStyles (styles: CrosshairStyle): CrosshairDirectionStyle {
+    return styles.vertical
   }
 
   protected getText (crosshair: Crosshair, chartStore: ChartStore, axis: XAxis): string {
     const timestamp = crosshair.kLineData?.timestamp as number
     return formatDate(chartStore.getTimeScaleStore().getDateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
-  }
-
-  protected getBaseline (): string {
-    return 'top'
   }
 
   protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Required<Bounding>): Coordinate {
@@ -52,9 +48,8 @@ export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabel
     } else if (x + rectWidth / 2 > bounding.width) {
       rectX = bounding.width - rectWidth
     } else {
-      rectX = x - rectWidth
+      rectX = x - rectWidth / 2
     }
-
     return { x: rectX, y: 0 }
   }
 }

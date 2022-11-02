@@ -16,7 +16,7 @@ import TypeOrNull from '../common/TypeOrNull'
 import ElementGroup from '../common/ElementGroup'
 
 import FigureTemplate from '../template/figure/Figure'
-import { createFigure as create } from '../template/figure'
+import { createFigure as create } from '../template/figure/index'
 
 import Axis from '../componentl/Axis'
 

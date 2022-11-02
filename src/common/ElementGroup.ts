@@ -19,21 +19,22 @@ export default abstract class ElementGroup extends Element {
   private _elements: Element[] = []
 
   checkEventOn (coordinate: Coordinate): boolean {
-    for (const element of this._elements) {
-      if (element.checkEventOn(coordinate)) {
-        return true
-      }
-    }
-    return false
+    // for (const element of this._elements) {
+    //   if (element.checkEventOn(coordinate)) {
+    //     return true
+    //   }
+    // }
+    // return false
+    return true
   }
 
   dispatchEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
     for (const element of this._elements) {
-      if (element.dispatchEvent(type, coordinate, ...others)) {
+      if (element.onEvent(type, coordinate, ...others)) {
         return true
       }
     }
-    return super.dispatchEvent(type, coordinate, ...others)
+    return this.onEvent(type, coordinate, ...others)
   }
 
   addElement (element: Element): ElementGroup {

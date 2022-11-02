@@ -22,7 +22,6 @@ import ChartStore from '../store/ChartStore'
 import { Crosshair } from '../store/CrosshairStore'
 import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, PaddingTextStyle } from '../store/styles'
 
-import { isValid } from '../common/utils/typeChecks'
 import { formatBigNumber, formatPrecision } from '../common/utils/format'
 import { createFont, calcTextWidth } from '../common/utils/canvas'
 
@@ -36,7 +35,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getCrosshairStore().get()
     const styles = chartStore.getStyleOptions().crosshair
-    if (isValid(crosshair.kLineData) && this.checkPaneId(crosshair, pane.getId())) {
+    if (crosshair.paneId !== undefined && crosshair.kLineData !== undefined && this.checkPaneId(crosshair, pane.getId())) {
       if (styles.show) {
         const directionStyles = this.getDirectionStyles(styles)
         const textStyles = directionStyles.text
@@ -70,7 +69,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
 
           this.createFigure('text', {
             x: rectX + textStyles.paddingLeft,
-            y: crosshair.y as number,
+            y: rectY + rectHeight / 2,
             text,
             styles: {
               style: 'fill',
@@ -78,7 +77,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
               size: textStyles.size,
               family: textStyles.family,
               weight: textStyles.weight,
-              align: this.getTextAlign(),
+              align: 'left',
               baseline: 'middle'
             }
           })?.draw(ctx)
@@ -123,14 +122,6 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
       }
     }
     return text
-  }
-
-  protected getTextAlign (): string {
-    return 'left'
-  }
-
-  protected getBaseline (): string {
-    return 'middle'
   }
 
   protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Required<Bounding>, axis: C, styles: Required<PaddingTextStyle>): Coordinate {

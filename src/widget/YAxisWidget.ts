@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import Pane from '../pane/Pane'
+
 import DrawWidget from './DrawWidget'
 
 import YAxis from '../componentl/YAxis'
@@ -26,6 +28,15 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
   private readonly _candleLastPriceLabelView = new CandleLastPriceLabelView(this)
   private readonly _indicatorLastValueView = new IndicatorLastValueView(this)
   private readonly _crosshairHorizontalLabelView = new CrosshairHorizontalLabelView(this)
+
+  constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
+    super(rootContainer, pane)
+    this.registerEvent('mouseMoveEvent', () => {
+      const chart = pane.getChart()
+      chart.getChartContainer().style.cursor = 'ns-resize'
+      chart.getChartStore().getCrosshairStore().set()
+    })
+  }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
     this._yAxisView.draw(ctx)

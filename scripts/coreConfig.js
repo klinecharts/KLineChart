@@ -1,4 +1,4 @@
-// 'use strict';
+'use strict';
 
 const { babel } = require('@rollup/plugin-babel');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
@@ -9,7 +9,6 @@ const typescript = require('@rollup/plugin-typescript');
 const terser = require('@rollup/plugin-terser');
 const fileSize = require('rollup-plugin-filesize');
 const progress = require('rollup-plugin-progress');
-const requireContext = require('rollup-plugin-glob-import');
 
 const paths = require('./paths');
 
@@ -19,7 +18,6 @@ const version = packageJson.version;
 
 const plugins = (env) => [
   typescript(),
-  requireContext(),
   eslint({
     throwOnError: true
   }),

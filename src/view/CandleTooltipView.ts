@@ -87,7 +87,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const values = this._getCandleTooltipData(crosshair.kLineData as KLineData, precision, dateTimeFormat, styles)
       if (values.length > 0) {
         height += (tooltipTextStyles.marginTop + tooltipTextStyles.size + tooltipTextStyles.marginBottom)
-        height += this.drawStandardTooltip(ctx, bounding, values, tooltipTextStyles.marginLeft, tooltipTextStyles.marginTop, tooltipTextStyles)
+        height += this.drawStandardTooltip(ctx, bounding, values, 0, tooltipTextStyles.marginTop, tooltipTextStyles)
       }
     }
     return height

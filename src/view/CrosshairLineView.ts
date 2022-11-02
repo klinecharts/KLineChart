@@ -26,7 +26,7 @@ export default class CrosshairLineView extends View {
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getCrosshairStore().get()
     const styles = chartStore.getStyleOptions().crosshair
-    if (styles.show) {
+    if (crosshair.paneId !== undefined && styles.show) {
       if (crosshair.paneId === pane.getId()) {
         const y = crosshair.y as number
         this._drawLine(
@@ -38,7 +38,7 @@ export default class CrosshairLineView extends View {
           styles.horizontal
         )
       }
-      const x = crosshair.x as number
+      const x = crosshair.realX as number
       this._drawLine(
         ctx,
         [

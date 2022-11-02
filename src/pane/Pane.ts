@@ -17,7 +17,7 @@ import TypeOrNull from '../common/TypeOrNull'
 import Updater, { UpdateLevel } from '../common/Updater'
 import Bounding, { getDefaultBounding } from '../common/Bounding'
 import Coordinate from '../common/Coordinate'
-import Element from '../common/Element'
+import ElementGroup from '../common/ElementGroup'
 
 import Axis from '../componentl/Axis'
 
@@ -46,7 +46,7 @@ export const PANE_MIN_HEIGHT = 30
 
 export const PANE_DEFAULT_HEIGHT = 100
 
-export default abstract class Pane<C extends Axis> extends Element implements Updater {
+export default abstract class Pane<C extends Axis> extends ElementGroup implements Updater {
   private _container: HTMLElement
   private _seriesContiainer: HTMLElement
   private readonly _id: string
@@ -54,7 +54,7 @@ export default abstract class Pane<C extends Axis> extends Element implements Up
   private _mainWidget: DrawWidget<C>
   private _yAxisWidget: TypeOrNull<YAxisWidget> = null
   private _separatorWidget: TypeOrNull<SeparatorWidget> = null
-  private readonly _axis: C
+  private readonly _axis: C = this.createAxisComponent()
 
   private readonly _bounding: Required<Bounding> = getDefaultBounding()
 
@@ -82,8 +82,17 @@ export default abstract class Pane<C extends Axis> extends Element implements Up
       overflow: 'hidden',
       boxSizing: 'border-box'
     })
-    rootContainer.appendChild(this._seriesContiainer)
     this._separatorWidget = this.createSeparatorWidget(rootContainer)
+    if (this.insertBefore()) {
+      const lastElement = rootContainer.lastChild
+      if (lastElement !== null) {
+        rootContainer.insertBefore(this._seriesContiainer, lastElement)
+      } else {
+        rootContainer.appendChild(this._seriesContiainer)
+      }
+    } else {
+      rootContainer.appendChild(this._seriesContiainer)
+    }
     this._mainWidget = this.createMainWidget(this._seriesContiainer)
     this._yAxisWidget = this.creatYAxisWidget(this._seriesContiainer)
   }
@@ -154,6 +163,13 @@ export default abstract class Pane<C extends Axis> extends Element implements Up
   getSeparatorWidget (): TypeOrNull<SeparatorWidget> { return this._separatorWidget }
 
   update (level?: UpdateLevel): void {
+    if (this._bounding.width !== this._seriesContiainer.offsetWidth) {
+      this._seriesContiainer.style.width = `${this._bounding.width}px`
+    }
+    const seriesHeight = this._mainWidget.getBounding().height
+    if (seriesHeight !== this._seriesContiainer.offsetHeight) {
+      this._seriesContiainer.style.height = `${seriesHeight}px`
+    }
     const l = level ?? UpdateLevel.DRAWER
     this._mainWidget.update(l)
     this._yAxisWidget?.update(l)
@@ -176,7 +192,14 @@ export default abstract class Pane<C extends Axis> extends Element implements Up
         consumed = this._mainWidget.dispatchEvent(type, { x: x - mainBounding.left, y }, ...others)
       }
     }
+    if (!consumed) {
+      consumed = this.onEvent(type, coordinate, ...others)
+    }
     return consumed
+  }
+
+  protected insertBefore (): boolean {
+    return true
   }
 
   destroy (): void {

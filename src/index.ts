@@ -51,7 +51,7 @@ function init (ds: HTMLElement | string, styles?: any): Chart | null {
     return null
   }
   let chart = instances[dom.chartId ?? '']
-  if (chart === undefined) {
+  if (chart !== undefined) {
     logWarn('', '', 'The chart has been initialized on the dom！！！')
     return chart
   }

@@ -90,8 +90,8 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     const sizeFlag = width !== container.offsetWidth || height !== container.offsetHeight
     let l = level
     if (sizeFlag) {
-      this._mainCtx.clearRect(0, 0, container.offsetWidth, container.offsetHeight)
-      this._overlayCtx.clearRect(0, 0, container.offsetWidth, container.offsetHeight)
+      this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
+      this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
 
       const domWidth = `${width}px`
       const domHeight = `${height}px`
@@ -113,16 +113,15 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
       this._overlayCanvas.style.height = domHeight
       this._overlayCanvas.width = scaleWidth
       this._overlayCanvas.height = scaleHeight
-      this._mainCtx.scale(pixelRatio, pixelRatio)
+      this._overlayCtx.scale(pixelRatio, pixelRatio)
 
       l = UpdateLevel.DRAWER
-    }
-    if (!sizeFlag) {
+    } else {
       if (l === UpdateLevel.ALL || l === UpdateLevel.DRAWER || l === UpdateLevel.MAIN) {
-        this._mainCtx.clearRect(0, 0, width, height)
+        this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
       }
       if (l === UpdateLevel.ALL || l === UpdateLevel.DRAWER || l === UpdateLevel.OVERLAY) {
-        this._overlayCtx.clearRect(0, 0, width, height)
+        this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
       }
     }
     switch (l) {
@@ -134,7 +133,7 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
       }
       case UpdateLevel.OVERLAY: {
         this._optimalUpdate(() => {
-          this.updateMain(this._overlayCtx)
+          this.updateOverlay(this._overlayCtx)
         })
         break
       }
@@ -142,7 +141,7 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
       case UpdateLevel.ALL: {
         this._optimalUpdate(() => {
           this.updateMain(this._mainCtx)
-          this.updateMain(this._overlayCtx)
+          this.updateOverlay(this._overlayCtx)
         })
         break
       }

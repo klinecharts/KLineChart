@@ -56,28 +56,16 @@ function getLinearSlopeIntercept (coordinate1: Coordinate, coordinate2: Coordina
   return null
 }
 
-function drawLine (ctx: CanvasRenderingContext2D, coordinates: Coordinate[], lineWidth: number): void {
+function drawLine (ctx: CanvasRenderingContext2D, coordinates: Coordinate[]): void {
+  ctx.save()
   ctx.beginPath()
-  if (coordinates.length === 2) {
-    const correction = (lineWidth % 2) !== 0 ? 0.5 : 0
-    if (coordinates[0].x === coordinates[1].x) {
-      ctx.moveTo(coordinates[0].x, coordinates[0].y + correction)
-      ctx.lineTo(coordinates[1].x, coordinates[1].y + correction)
-    } else if (coordinates[0].y === coordinates[1].y) {
-      ctx.moveTo(coordinates[0].x + correction, coordinates[0].y)
-      ctx.lineTo(coordinates[1].x + correction, coordinates[1].y)
-    }
-  } else {
-    if ((lineWidth % 2) !== 0) {
-      ctx.translate(0.5, 0.5)
-    }
-    ctx.moveTo(coordinates[0].x, coordinates[0].y)
-    for (let i = 1; i < coordinates.length; i++) {
-      ctx.lineTo(coordinates[i].x, coordinates[i].y)
-    }
+  ctx.moveTo(coordinates[0].x, coordinates[0].y)
+  for (let i = 1; i < coordinates.length; i++) {
+    ctx.lineTo(coordinates[i].x, coordinates[i].y)
   }
   ctx.stroke()
   ctx.closePath()
+  ctx.restore()
 }
 
 export interface LineStyle {
@@ -105,7 +93,7 @@ const line: Figure<LineAttrs> = {
       } else {
         ctx.setLineDash([])
       }
-      drawLine(ctx, coordinates, styles.size)
+      drawLine(ctx, coordinates)
     }
   }
 }

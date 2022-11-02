@@ -126,6 +126,7 @@ export default class TimeScaleStore {
     if (from < 0) {
       from = 0
     }
+    this._visibleRange = { from, to }
     this._chartStore.adjustVisibleDataList()
     // 处理加载更多，有更多并且没有在加载则去加载更多
     if (from === 0 && this._more && !this._loading && this._loadMoreCallback !== null) {

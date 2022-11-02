@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import Pane from '../pane/Pane'
+
 import DrawWidget from './DrawWidget'
 
 import YAxis from '../componentl/YAxis'
@@ -26,6 +28,15 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   private readonly _indicatorView = new IndicatorView(this)
   private readonly _crosshairLineView = new CrosshairLineView(this)
   private readonly _tooltipView = this.createTooltipView()
+
+  constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
+    super(rootContainer, pane)
+    this.registerEvent('mouseMoveEvent', (coordinate) => {
+      const chart = pane.getChart()
+      chart.getChartContainer().style.cursor = 'crosshair'
+      chart.getChartStore().getCrosshairStore().set({ ...coordinate, paneId: pane.getId() })
+    })
+  }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
     this._gridView.draw(ctx)

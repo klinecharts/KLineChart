@@ -24,11 +24,11 @@ export default abstract class Element {
     return this
   }
 
-  dispatchEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
-    const event = this._events.get(type)
-    if (event !== undefined) {
+  onEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
+    const callback = this._events.get(type)
+    if (callback !== undefined) {
       if (this.checkEventOn(coordinate)) {
-        event(coordinate, ...others)
+        callback(coordinate, ...others)
         return true
       }
     }

@@ -12,8 +12,11 @@
  * limitations under the License.
  */
 
+import TypeOrNull from '../common/TypeOrNull'
+
 import DrawWidget from '../widget/DrawWidget'
 import CandleWidget from '../widget/CandleWidget'
+import SeparatorWidget from '../widget/SeparatorWidget'
 
 import IndicatorPane from './IndicatorPane'
 import YAxis from '../componentl/YAxis'
@@ -28,5 +31,9 @@ export default class CandlePane extends IndicatorPane {
 
   protected createMainWidget (container: HTMLElement): DrawWidget<YAxis> {
     return new CandleWidget(container, this)
+  }
+
+  protected createSeparatorWidget (container: HTMLElement): TypeOrNull<SeparatorWidget> {
+    return null
   }
 }

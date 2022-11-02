@@ -138,7 +138,7 @@ export default class IndicatorTooltipView extends View {
           align: 'left',
           baseline: 'top'
         }
-      })
+      })?.draw(ctx)
       labelX += (textWidth + marginRight)
     })
     return height

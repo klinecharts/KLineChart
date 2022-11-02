@@ -16,7 +16,7 @@ import DeepPartial from '../common/DeepPartial'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 
-import { isArray, isObject, merge, clone } from '../common/utils/typeChecks'
+import { isArray, merge, clone } from '../common/utils/typeChecks'
 import { defaultStyles, Styles } from './styles'
 
 import TimeScaleStore from './TimeScaleStore'
@@ -149,32 +149,30 @@ export default class ChartStore {
    * @param more
    */
   addData (data: KLineData | KLineData[], pos: number, more?: boolean): void {
-    if (isObject(data)) {
-      if (isArray(data)) {
-        this._timeScaleStore.setLoading(false)
-        this._timeScaleStore.setMore(more ?? true)
-        const isFirstAdd = this._dataList.length === 0
-        this._dataList = (data as KLineData[]).concat(this._dataList)
-        if (isFirstAdd) {
-          this._timeScaleStore.resetOffsetRightDistance()
+    if (isArray(data)) {
+      this._timeScaleStore.setLoading(false)
+      this._timeScaleStore.setMore(more ?? true)
+      const isFirstAdd = this._dataList.length === 0
+      this._dataList = (data as KLineData[]).concat(this._dataList)
+      if (isFirstAdd) {
+        this._timeScaleStore.resetOffsetRightDistance()
+      }
+      this._timeScaleStore.adjustVisibleRange()
+    } else {
+      const dataSize = this._dataList.length
+      if (pos >= dataSize) {
+        this._dataList.push(data as KLineData)
+        let offsetRightBarCount = this._timeScaleStore.getOffsetRightBarCount()
+        if (offsetRightBarCount < 0) {
+          this._timeScaleStore.setOffsetRightBarCount(--offsetRightBarCount)
         }
         this._timeScaleStore.adjustVisibleRange()
       } else {
-        const dataSize = this._dataList.length
-        if (pos >= dataSize) {
-          this._dataList.push(data as KLineData)
-          let offsetRightBarCount = this._timeScaleStore.getOffsetRightBarCount()
-          if (offsetRightBarCount < 0) {
-            this._timeScaleStore.setOffsetRightBarCount(--offsetRightBarCount)
-          }
-          this._timeScaleStore.adjustVisibleRange()
-        } else {
-          this._dataList[pos] = data as KLineData
-          this.adjustVisibleDataList()
-        }
+        this._dataList[pos] = data as KLineData
+        this.adjustVisibleDataList()
       }
-      this._crosshairStore.recalculate(true)
     }
+    this._crosshairStore.recalculate(true)
   }
 
   /**

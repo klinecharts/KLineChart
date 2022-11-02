@@ -14,6 +14,7 @@
 
 import TypeOrNull from './common/TypeOrNull'
 import DeepPartial from './common/DeepPartial'
+import ElementGroup from './common/ElementGroup'
 import { UpdateLevel } from './common/Updater'
 import MouseTouchEventHandler, { MouseTouchEventCallback } from './common/MouseTouchEventHandler'
 import Coordinate from './common/Coordinate'
@@ -46,9 +47,10 @@ import { createDom } from './common/utils/dom'
 // // 注解id前缀
 // const ANNOTATION_ID_PREFIX = 'an_'
 
-export default class ChartInternal {
+export default class ChartInternal extends ElementGroup {
   private _container: HTMLElement
   private _chartContainer: HTMLElement
+  private _eventContainer: HTMLElement
   private readonly _chartStore: ChartStore
   private readonly _xAxisPane: XAxisPane
   private readonly _panes: Map<string, IndicatorPane> = new Map()
@@ -56,7 +58,8 @@ export default class ChartInternal {
   private _chartEvent: MouseTouchEventHandler
 
   constructor (container: HTMLElement, styleOptions?: DeepPartial<Styles>) {
-    this._initChartContainer(container)
+    super()
+    this._initContainer(container)
     this._chartStore = new ChartStore(this, styleOptions)
     this._xAxisPane = new XAxisPane(this._chartContainer, this, XAXIS_PANE_ID)
     this._panes.set(CANDLE_PANE_ID, new CandlePane(this._chartContainer, this, CANDLE_PANE_ID))
@@ -69,48 +72,47 @@ export default class ChartInternal {
    * @param container
    * @private
    */
-  private _initChartContainer (container: HTMLElement): void {
+  private _initContainer (container: HTMLElement): void {
     this._container = container
     this._chartContainer = createDom('div', {
-      userSelect: 'none',
       position: 'relative',
+      width: '100%',
+      boxSizing: 'border-box'
+    })
+    this._eventContainer = createDom('div', {
+      top: '0',
+      userSelect: 'none',
+      position: 'absolute',
       outline: 'none',
       borderStyle: 'none',
-      width: '100%',
       cursor: 'crosshair',
       boxSizing: 'border-box'
     })
-    this._chartContainer.tabIndex = 1
+    this._eventContainer.tabIndex = 1
+    this._chartContainer.appendChild(this._eventContainer)
     container.appendChild(this._chartContainer)
   }
 
   _initEvent (): void {
-    const dispatch: ((pane: Pane<Axis>, type: string, coordinate: Coordinate, ...others: any[]) => boolean) = (pane: Pane<Axis>, type: string, coordinate: Coordinate, ...others: any[]) => {
-      const bounding = pane.getBounding()
-      if (coordinate.y > bounding.top && coordinate.y < bounding.top + bounding.height) {
-        pane.dispatchEvent(type, { x: coordinate.x, y: coordinate.y - bounding.top })
-        return true
-      }
-      return false
-    }
+    this.registerEvent('mouseLeaveEvent', () => {
+      this._chartStore.getCrosshairStore().set()
+    })
+    this.registerEvent('pressedMouseMoveEvent', (coordinate) => {
+    })
 
     const chartEventCallback: ((type: string) => MouseTouchEventCallback) = (type: string) => (coordinate: Coordinate, ...others: any[]) => {
-      for (const entry of this._panes) {
-        if (dispatch(entry[1], type, coordinate, ...others)) {
-          return true
-        }
-      }
-      dispatch(this._xAxisPane, type, coordinate, ...others)
+      this.dispatchEvent(type, coordinate, ...others)
     }
 
     this._chartEvent = new MouseTouchEventHandler(
-      this._chartContainer,
+      this._eventContainer,
       {
         pinchStartEvent: chartEventCallback('pinchStartEvent'),
         pinchEvent: chartEventCallback('pinchEvent'),
         mouseUpEvent: chartEventCallback('mouseUpEvent'),
         mouseClickEvent: chartEventCallback('mouseClickEvent'),
         mouseDownEvent: chartEventCallback('mouseDownEvent'),
+        mouseEnterEvent: chartEventCallback('mouseEnterEvent'),
         mouseLeaveEvent: chartEventCallback('mouseLeaveEvent'),
         mouseMoveEvent: chartEventCallback('mouseMoveEvent'),
         pressedMouseMoveEvent: chartEventCallback('pressedMouseMoveEvent'),
@@ -121,6 +123,26 @@ export default class ChartInternal {
         treatHorzTouchDragAsPageScroll: () => false
       }
     )
+  }
+
+  private _dispatch (pane: Pane<Axis>, type: string, coordinate: Coordinate, ...others: any[]): boolean {
+    const bounding = pane.getBounding()
+    if (coordinate.y > bounding.top && coordinate.y < bounding.top + bounding.height) {
+      return pane.dispatchEvent(type, { x: coordinate.x, y: coordinate.y - bounding.top }, ...others)
+    }
+    return false
+  }
+
+  dispatchEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
+    for (const entry of this._panes) {
+      if (this._dispatch(entry[1], type, coordinate, ...others)) {
+        return true
+      }
+    }
+    if (!this._dispatch(this._xAxisPane, type, coordinate, ...others)) {
+      return this.onEvent(type, coordinate, ...others)
+    }
+    return false
   }
 
   // /**
@@ -223,6 +245,7 @@ export default class ChartInternal {
       top += pane.getBounding().height
     })
     this._xAxisPane.setBounding({ height: xAxisHeight, top })
+    this._eventContainer.style.height = `${paneExcludeXAxisHeight}px`
   }
 
   /**
@@ -273,6 +296,9 @@ export default class ChartInternal {
       pane.setBounding(paneBounding, mainBounding, yAxisBounding)
     })
     this._xAxisPane.setBounding(paneBounding, mainBounding, yAxisBounding)
+
+    this._eventContainer.style.width = `${mainWidth}px`
+    this._eventContainer.style.left = `${mainLeft}px`
   }
 
   /**
@@ -280,6 +306,8 @@ export default class ChartInternal {
    * @returns
    */
   getContainer (): HTMLElement { return this._container }
+
+  getChartContainer (): HTMLElement { return this._chartContainer }
 
   getChartStore (): ChartStore { return this._chartStore }
 
