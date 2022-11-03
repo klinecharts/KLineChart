@@ -91,7 +91,7 @@ export default class IndicatorTooltipView extends View {
                 align: 'left',
                 baseline: 'top'
               }
-            })
+            })?.draw(ctx)
             labelX += (calcTextWidth(ctx, text) + textMarginRight)
           }
           if (valuesValid) {
@@ -175,7 +175,7 @@ export default class IndicatorTooltipView extends View {
     const dataIndex = crosshair.dataIndex as number
     const result = indicator.result ?? []
 
-    let calcParamText
+    let calcParamText = ''
     const calcParams = indicator.calcParams
     if (calcParams.length > 0) {
       calcParamText = `(${calcParams.join(',')})`

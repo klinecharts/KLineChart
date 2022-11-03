@@ -19,7 +19,6 @@ import View from './View'
 import YAxis from '../componentl/YAxis'
 
 import { formatPrecision } from '../common/utils/format'
-import { isValid } from '../common/utils/typeChecks'
 import { createFont, calcTextWidth } from '../common/utils/canvas'
 
 export default class CandleLastPriceLabelView extends View {
@@ -34,10 +33,11 @@ export default class CandleLastPriceLabelView extends View {
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkTextStyles.show) {
       const precision = chartStore.getPrecision()
       const yAxis = pane.getAxisComponent() as YAxis
+      const dataList = chartStore.getDataList()
       const visibleDataList = chartStore.getVisibleDataList()
-      const data = visibleDataList[visibleDataList.length - 1]
-      if (isValid(data)) {
-        const { close, open } = data.data
+      const data = dataList[dataList.length - 1]
+      if (data !== undefined) {
+        const { close, open } = data
         const priceY = yAxis.convertToNicePixel(close)
         let backgroundColor: string
         if (close > open) {

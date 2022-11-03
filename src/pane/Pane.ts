@@ -16,8 +16,6 @@ import DeepRequired from '../common/DeepRequired'
 import TypeOrNull from '../common/TypeOrNull'
 import Updater, { UpdateLevel } from '../common/Updater'
 import Bounding, { getDefaultBounding } from '../common/Bounding'
-import Coordinate from '../common/Coordinate'
-import ElementGroup from '../common/ElementGroup'
 
 import Axis from '../componentl/Axis'
 
@@ -46,7 +44,7 @@ export const PANE_MIN_HEIGHT = 30
 
 export const PANE_DEFAULT_HEIGHT = 100
 
-export default abstract class Pane<C extends Axis> extends ElementGroup implements Updater {
+export default abstract class Pane<C extends Axis> implements Updater {
   private _container: HTMLElement
   private _seriesContiainer: HTMLElement
   private readonly _id: string
@@ -64,7 +62,6 @@ export default abstract class Pane<C extends Axis> extends ElementGroup implemen
   private readonly _options: DeepRequired<Omit<PaneOptions, 'id' | 'height'>> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 } }
 
   constructor (rootContainer: HTMLElement, chart: ChartInternal, id: string, topPane?: Pane<Axis>, bottomPane?: Pane<Axis>) {
-    super()
     this._chart = chart
     this._id = id
     this._topPane = topPane ?? null
@@ -83,13 +80,9 @@ export default abstract class Pane<C extends Axis> extends ElementGroup implemen
       boxSizing: 'border-box'
     })
     this._separatorWidget = this.createSeparatorWidget(rootContainer)
-    if (this.insertBefore()) {
-      const lastElement = rootContainer.lastChild
-      if (lastElement !== null) {
-        rootContainer.insertBefore(this._seriesContiainer, lastElement)
-      } else {
-        rootContainer.appendChild(this._seriesContiainer)
-      }
+    const lastElement = rootContainer.lastChild
+    if (lastElement !== null) {
+      rootContainer.insertBefore(this._seriesContiainer, lastElement)
     } else {
       rootContainer.appendChild(this._seriesContiainer)
     }
@@ -174,32 +167,6 @@ export default abstract class Pane<C extends Axis> extends ElementGroup implemen
     this._mainWidget.update(l)
     this._yAxisWidget?.update(l)
     this._separatorWidget?.update(l)
-  }
-
-  dispatchEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
-    const { x, y } = coordinate
-    let consumed = false
-    const yAxisBounding = this._yAxisWidget?.getBounding()
-    if (
-      yAxisBounding !== undefined &&
-      (x >= yAxisBounding.left && x <= yAxisBounding.left + yAxisBounding.width)
-    ) {
-      consumed = this._yAxisWidget?.dispatchEvent(type, { x: x - yAxisBounding.left, y }, ...others) ?? false
-    }
-    if (!consumed) {
-      const mainBounding = this._mainWidget.getBounding()
-      if (x >= mainBounding.left && x <= mainBounding.left + mainBounding.width) {
-        consumed = this._mainWidget.dispatchEvent(type, { x: x - mainBounding.left, y }, ...others)
-      }
-    }
-    if (!consumed) {
-      consumed = this.onEvent(type, coordinate, ...others)
-    }
-    return consumed
-  }
-
-  protected insertBefore (): boolean {
-    return true
   }
 
   destroy (): void {

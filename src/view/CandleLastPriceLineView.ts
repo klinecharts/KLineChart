@@ -16,8 +16,6 @@ import YAxis from '../componentl/YAxis'
 
 import View from './View'
 
-import { isValid } from '../common/utils/typeChecks'
-
 export default class CandleLastPriceView extends View {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
@@ -29,10 +27,10 @@ export default class CandleLastPriceView extends View {
     const lastPriceMarkLineStyles = lastPriceMarkStyles.line
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkLineStyles.show) {
       const yAxis = pane.getAxisComponent() as YAxis
-      const visibleDataList = chartStore.getVisibleDataList()
-      const data = visibleDataList[visibleDataList.length - 1]
-      if (isValid(data)) {
-        const { close, open } = data.data
+      const dataList = chartStore.getDataList()
+      const data = dataList[dataList.length - 1]
+      if (data != null) {
+        const { close, open } = data
         const priceY = yAxis.convertToNicePixel(close)
         let color: string
         if (close > open) {

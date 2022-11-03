@@ -27,13 +27,20 @@ import TypeOrNull from './TypeOrNull'
 
 import { isFF, isIOS, isChrome } from './utils/platform'
 
-export type MouseTouchEventCallback = (coordinate: Coordinate, ...others: any[]) => void
+export type MouseTouchEventCallback = (event: MouseTouchEvent, ...others: any[]) => void
 export type EmptyCallback = () => void
+export type PinchEventCallback = (coordinate: Coordinate, scale: number) => void
+
+export type MouseWheelHorizontalEventCallback = (distance: number) => void
+export type MouseWheelVerticalEventCallback = PinchEventCallback
 
 export interface EventHandler {
-  pinchStartEvent?: MouseTouchEventCallback
-  pinchEvent?: MouseTouchEventCallback
-  pinchEndEvent?: MouseTouchEventCallback
+  pinchStartEvent?: EmptyCallback
+  pinchEvent?: PinchEventCallback
+  pinchEndEvent?: EmptyCallback
+
+  mouseWheelHorizontalEvent?: MouseWheelHorizontalEventCallback
+  mouseWheelVerticalEvent?: MouseWheelVerticalEventCallback
 
   mouseClickEvent?: MouseTouchEventCallback
   tapEvent?: MouseTouchEventCallback
@@ -60,7 +67,7 @@ export interface EventHandler {
   longTapEvent?: MouseTouchEventCallback
 }
 
-export interface MouseTouchEvent extends Coordinate {
+export interface MouseTouchEvent {
   readonly clientX: number
   readonly clientY: number
   readonly pageX: number
@@ -110,6 +117,8 @@ const enum MouseEventButton {
   Right = 2,
 }
 
+export const TOUCH_MIN_RADIUS = 10
+
 type TimerId = ReturnType<typeof setTimeout>
 
 interface MouseTouchMoveWithDownInfo {
@@ -149,6 +158,8 @@ export default class MouseTouchEventHandler {
   private _unsubscribeMobileSafariEvents: TypeOrNull<EmptyCallback> = null
 
   private _unsubscribeMousemove: TypeOrNull<EmptyCallback> = null
+
+  private _unsubscribeMouseWheel: TypeOrNull<EmptyCallback> = null
 
   private _unsubscribeRootMouseEvents: TypeOrNull<EmptyCallback> = null
   private _unsubscribeRootTouchEvents: TypeOrNull<EmptyCallback> = null
@@ -198,6 +209,11 @@ export default class MouseTouchEventHandler {
       this._unsubscribeMousemove = null
     }
 
+    if (this._unsubscribeMouseWheel !== null) {
+      this._unsubscribeMouseWheel()
+      this._unsubscribeMouseWheel = null
+    }
+
     if (this._unsubscribeRootMouseEvents !== null) {
       this._unsubscribeRootMouseEvents()
       this._unsubscribeRootMouseEvents = null
@@ -219,12 +235,19 @@ export default class MouseTouchEventHandler {
 
   private _mouseEnterHandler (enterEvent: MouseEvent): void {
     this._unsubscribeMousemove?.()
+    this._unsubscribeMouseWheel?.()
 
     const boundMouseMoveHandler = this._mouseMoveHandler.bind(this)
     this._unsubscribeMousemove = () => {
       this._target.removeEventListener('mousemove', boundMouseMoveHandler)
     }
     this._target.addEventListener('mousemove', boundMouseMoveHandler)
+
+    const boundMouseWheel = this._mouseWheelHandler.bind(this)
+    this._unsubscribeMouseWheel = () => {
+      this._target.removeEventListener('wheel', boundMouseWheel)
+    }
+    this._target.addEventListener('wheel', boundMouseWheel, { passive: false })
 
     if (this._firesTouchEvents(enterEvent)) {
       return
@@ -267,6 +290,44 @@ export default class MouseTouchEventHandler {
     const compatEvent = this._makeCompatEvent(moveEvent)
     this._processMouseEvent(compatEvent, this._handler.mouseMoveEvent)
     this._acceptMouseLeave = true
+  }
+
+  private _mouseWheelHandler (wheelEvent: WheelEvent): void {
+    if (Math.abs(wheelEvent.deltaX) > Math.abs(wheelEvent.deltaY)) {
+      if (this._handler.mouseWheelHorizontalEvent === undefined) {
+        return
+      }
+      preventDefault(wheelEvent)
+      if (Math.abs(wheelEvent.deltaX) === 0) {
+        return
+      }
+      this._handler.mouseWheelHorizontalEvent(-wheelEvent.deltaX)
+    } else {
+      if (this._handler.mouseWheelVerticalEvent === undefined) {
+        return
+      }
+      let deltaY = -(wheelEvent.deltaY / 100)
+      if (deltaY === 0) {
+        return
+      }
+      preventDefault(wheelEvent)
+
+      switch (wheelEvent.deltaMode) {
+        case wheelEvent.DOM_DELTA_PAGE:
+          deltaY *= 120
+          break
+
+        case wheelEvent.DOM_DELTA_LINE:
+          deltaY *= 32
+          break
+      }
+
+      if (deltaY !== 0) {
+        const scale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY))
+        const compatEvent = this._makeCompatEvent(wheelEvent)
+        this._handler.mouseWheelVerticalEvent({ x: compatEvent.x, y: compatEvent.y }, scale)
+      }
+    }
   }
 
   private _touchMoveHandler (moveEvent: TouchEvent): void {
@@ -689,7 +750,6 @@ export default class MouseTouchEventHandler {
         if (event.touches.length !== 2 || this._startPinchMiddleCoordinate === null) {
           return
         }
-
         if (this._handler.pinchEvent !== undefined) {
           const currentDistance = getDistance(event.touches[0], event.touches[1])
           const scale = currentDistance / this._startPinchDistance
@@ -727,7 +787,7 @@ export default class MouseTouchEventHandler {
     this._startPinchDistance = getDistance(touches[0], touches[1])
 
     if (this._handler.pinchStartEvent !== undefined) {
-      this._handler.pinchStartEvent({ ...this._startPinchMiddleCoordinate })
+      this._handler.pinchStartEvent()
     }
 
     this._clearLongTapTimeout()
@@ -741,13 +801,13 @@ export default class MouseTouchEventHandler {
     this._startPinchMiddleCoordinate = null
 
     if (this._handler.pinchEndEvent !== undefined) {
-      const coordinate = this._startPinchMiddleCoordinate ?? { x: 0, y: 0 }
-      this._handler.pinchEndEvent({ ...coordinate })
+      this._handler.pinchEndEvent()
     }
   }
 
   private _mouseLeaveHandler (event: MouseEvent): void {
     this._unsubscribeMousemove?.()
+    this._unsubscribeMouseWheel?.()
 
     if (this._firesTouchEvents(event)) {
       return

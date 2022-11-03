@@ -18,6 +18,7 @@ import Precision from '../common/Precision'
 import ChartStore from './ChartStore'
 
 import IndicatorTemplate, { IndicatorConstructor, Indicator, IndicatorSeries } from '../template/indicator/Indicator'
+import { getIndicatorClass } from '../template/indicator/index'
 
 export default class IndicatorStore {
   private readonly _chartStore: ChartStore
@@ -102,7 +103,7 @@ export default class IndicatorStore {
       paneInstances = new Map()
       this._instances.set(paneId, paneInstances)
     }
-    const Template = this._templates.get(name) as IndicatorConstructor
+    const Template = getIndicatorClass(name) as IndicatorConstructor
     const instance = new Template()
     this._overrideInstance(instance, indicator)
     if (!isStack) {

@@ -14,6 +14,7 @@
 
 import Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
+import { EventOptions, MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
 import Axis from '../componentl/Axis'
 import YAxis from '../componentl/YAxis'
@@ -21,14 +22,11 @@ import YAxis from '../componentl/YAxis'
 import Widget from './Widget'
 import Pane from '../pane/Pane'
 
-import MouseTouchEventHandler, { MouseTouchEvent } from '../common/MouseTouchEventHandler'
-
 import { createDom } from '../common/utils/dom'
+import { throttle } from '../common/utils/performance'
 
 export default class SeparatorWidget extends Widget<YAxis> {
   private _moveDom: HTMLElement
-
-  private readonly _event: MouseTouchEventHandler
 
   private _dragFlag = false
   private _dragStartY = 0
@@ -36,28 +34,18 @@ export default class SeparatorWidget extends Widget<YAxis> {
   private _topPaneHeight = 0
   private _currentPaneHeight = 0
 
-  constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
-    super(rootContainer, pane)
-    this._event = new MouseTouchEventHandler(
-      this._moveDom,
-      {
-        mouseDownEvent: this._mouseDownEvent.bind(this),
-        touchStartEvent: this._mouseDownEvent.bind(this),
-        pressedMouseMoveEvent: this._pressedMouseMoveEvent.bind(this),
-        touchMoveEvent: this._pressedMouseMoveEvent.bind(this),
-        mouseUpEvent: this._mouseUpEvent.bind(this),
-        touchEndEvent: this._mouseUpEvent.bind(this),
-        mouseEnterEvent: this._mouseEnterEvent.bind(this),
-        mouseLeaveEvent: this._mouseLeaveEvent.bind(this)
-      },
-      {
-        treatVertTouchDragAsPageScroll: () => false,
-        treatHorzTouchDragAsPageScroll: () => true
-      }
-    )
+  protected getEventContainer (): HTMLElement {
+    return this._moveDom
   }
 
-  private _mouseDownEvent (event: MouseTouchEvent): void {
+  protected getEventOptions (): EventOptions {
+    return {
+      treatVertTouchDragAsPageScroll: () => false,
+      treatHorzTouchDragAsPageScroll: () => true
+    }
+  }
+
+  mouseDownEvent (event: MouseTouchEvent): void {
     this._dragFlag = true
     this._dragStartY = event.pageY
     const pane = this.getPane()
@@ -65,17 +53,16 @@ export default class SeparatorWidget extends Widget<YAxis> {
     this._currentPaneHeight = pane.getBounding().height
   }
 
-  private _mouseUpEvent (): void {
+  mouseUpEvent (): void {
+    this.mouseLeaveEvent()
     this._dragFlag = false
-    // this.getPane().getChart().getChartStore().setDragPaneFlag(false)
   }
 
-  private _pressedMouseMoveEvent (event: MouseTouchEvent): void {
-    // event.preventDefault()
+  pressedMouseMoveEvent = throttle((event: MouseTouchEvent) => {
     const dragDistance = event.pageY - this._dragStartY
     const currentPane = this.getPane()
     const topPane = currentPane.getTopPane()
-    const isUpDrag = dragDistance > 0
+    const isUpDrag = dragDistance < 0
     if (topPane !== null) {
       let reducedPane: Pane<Axis>
       let increasedPane: Pane<Axis>
@@ -99,23 +86,23 @@ export default class SeparatorWidget extends Widget<YAxis> {
         reducedPane.setBounding({ height: reducedPaneHeight })
         increasedPane.setBounding({ height: startDragIncreasedPaneHeight + diffHeight })
         const chart = currentPane.getChart()
-        chart.getChartStore().getCrosshairStore().set({}, true)
+        // chart.getChartStore().getCrosshairStore().set({}, true)
         chart.adjustPaneViewport(false, true, true, true, true)
       }
     }
-  }
+  }, 20)
 
-  private _mouseEnterEvent (): void {
+  mouseEnterEvent (): void {
     const separatorOptions = this.getPane().getChart().getChartStore().getStyleOptions().separator
     this._moveDom.style.background = separatorOptions.activeBackgroundColor
-    // this._chartStore.setDragPaneFlag(true)
+    this.getPane().getChart().getChartStore().setDragPaneFlag(true)
     this.getPane().getChart().getChartStore().getCrosshairStore().set()
   }
 
-  private _mouseLeaveEvent (): void {
+  mouseLeaveEvent (): void {
     if (!this._dragFlag) {
       this._moveDom.style.background = ''
-      // this._chartStore.setDragPaneFlag(false)
+      this.getPane().getChart().getChartStore().setDragPaneFlag(false)
     }
   }
 
@@ -128,6 +115,8 @@ export default class SeparatorWidget extends Widget<YAxis> {
     }
   }
 
+  protected insertBefore (): boolean { return true }
+
   protected initDom (container: HTMLElement): void {
     this._moveDom = createDom('div', {
       width: '100%',
@@ -137,7 +126,8 @@ export default class SeparatorWidget extends Widget<YAxis> {
       position: 'absolute',
       top: '-3px',
       zIndex: '20',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      cursor: 'ns-resize'
     })
     container.appendChild(this._moveDom)
   }

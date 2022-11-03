@@ -34,8 +34,4 @@ export default class XAxisPane extends Pane<XAxis> {
   protected createMainWidget (container: HTMLElement): DrawWidget<XAxis> {
     return new XAxisWidget(container, this)
   }
-
-  protected insertBefore (): boolean {
-    return false
-  }
 }

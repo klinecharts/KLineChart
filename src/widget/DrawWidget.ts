@@ -34,7 +34,8 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
   private _overlayCanvas: HTMLCanvasElement
   private _overlayCtx: CanvasRenderingContext2D
 
-  private _requestAnimationId: number = DEFAULT_REQUEST_ID
+  private _mainRequestAnimationId: number = DEFAULT_REQUEST_ID
+  private _overlayRequestAnimationId: number = DEFAULT_REQUEST_ID
 
   protected getContainerStyle (): Partial<CSSStyleDeclaration> {
     return {
@@ -68,13 +69,23 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     container.appendChild(this._overlayCanvas)
   }
 
-  private _optimalUpdate (update: () => void): void {
-    if (this._requestAnimationId !== DEFAULT_REQUEST_ID) {
-      cancelAnimationFrame(this._requestAnimationId)
-      this._requestAnimationId = DEFAULT_REQUEST_ID
+  private _optimalUpdateMain (): void {
+    if (this._mainRequestAnimationId !== DEFAULT_REQUEST_ID) {
+      cancelAnimationFrame(this._mainRequestAnimationId)
+      this._mainRequestAnimationId = DEFAULT_REQUEST_ID
     }
-    this._requestAnimationId = requestAnimationFrame(() => {
-      update()
+    this._mainRequestAnimationId = requestAnimationFrame(() => {
+      this.updateMain(this._mainCtx)
+    })
+  }
+
+  private _optimalUpdateOverlay (): void {
+    if (this._overlayRequestAnimationId !== DEFAULT_REQUEST_ID) {
+      cancelAnimationFrame(this._overlayRequestAnimationId)
+      this._overlayRequestAnimationId = DEFAULT_REQUEST_ID
+    }
+    this._overlayRequestAnimationId = requestAnimationFrame(() => {
+      this.updateOverlay(this._overlayCtx)
     })
   }
 
@@ -126,23 +137,17 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     }
     switch (l) {
       case UpdateLevel.MAIN: {
-        this._optimalUpdate(() => {
-          this.updateMain(this._mainCtx)
-        })
+        this._optimalUpdateMain()
         break
       }
       case UpdateLevel.OVERLAY: {
-        this._optimalUpdate(() => {
-          this.updateOverlay(this._overlayCtx)
-        })
+        this._optimalUpdateOverlay()
         break
       }
       case UpdateLevel.DRAWER:
       case UpdateLevel.ALL: {
-        this._optimalUpdate(() => {
-          this.updateMain(this._mainCtx)
-          this.updateOverlay(this._overlayCtx)
-        })
+        this._optimalUpdateMain()
+        this._optimalUpdateOverlay()
         break
       }
     }

@@ -97,7 +97,7 @@ export default class IndicatorView extends CandleBarView {
           const { dataIndex, x } = data
           const indicatorData = result[dataIndex] ?? {}
 
-          eachPlots(dataList, indicator, dataIndex, defaultStyles, (plot: IndicatorPlot, plotStyles: Required<IndicatorPlotStyle>, defaultPlotStyles: any) => {
+          eachPlots(dataList, indicator, dataIndex, defaultStyles, (plot: IndicatorPlot, plotStyles: Required<IndicatorPlotStyle>, defaultPlotStyles: any, count: number) => {
             const value = indicatorData[plot.key]
             const valueY = yAxis.convertToPixel(value)
             switch (plot.type) {
@@ -146,7 +146,6 @@ export default class IndicatorView extends CandleBarView {
               }
               case 'line': {
                 let innerPlotStyle: TypeOrNull<IndicatorPlotStyle> = null
-                const count = linePlotStyles.length
                 if (isValid(value)) {
                   innerPlotStyle = plotStyles
                   const coordinate = { x, y: valueY }

@@ -76,7 +76,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
     text: string,
     coordinate: Coordinate,
     offsets: number[],
-    styles: Required<CandleHighLowPriceMarkStyle>
+    styles: CandleHighLowPriceMarkStyle
   ): void {
     const startX = coordinate.x
     const startY = coordinate.y + offsets[0]
@@ -94,13 +94,27 @@ export default class CandleHighLowPriceView extends ChildrenView {
       }
     })?.draw(ctx)
 
+    let lineEndX: number
+    let textStartX: number
+    let textAlign: string
+    const { width } = this.getWidget().getBounding()
+    if (startX > width / 2) {
+      lineEndX = startX - 5
+      textStartX = lineEndX - styles.textOffset
+      textAlign = 'right'
+    } else {
+      lineEndX = startX + 5
+      textAlign = 'left'
+      textStartX = lineEndX + styles.textOffset
+    }
+
     // 绘制竖线
     const y = startY + offsets[1]
     this.createFigure('line', {
       coordinates: [
         { x: startX, y: startY },
         { x: startX, y },
-        { x: startX + 5, y }
+        { x: lineEndX, y }
       ],
       styles: {
         style: 'solid',
@@ -111,7 +125,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
     })?.draw(ctx)
 
     this.createFigure('text', {
-      x: startX + 5 + styles.textOffset,
+      x: textStartX,
       y,
       text,
       styles: {
@@ -120,7 +134,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
         size: styles.textSize,
         family: styles.textWeight,
         weight: styles.textWeight,
-        align: 'left',
+        align: textAlign,
         baseline: 'middle'
       }
     })?.draw(ctx)

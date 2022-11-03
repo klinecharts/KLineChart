@@ -15,6 +15,7 @@
 import Bounding, { getDefaultBounding } from '../common/Bounding'
 import Updater, { UpdateLevel } from '../common/Updater'
 import ElementGroup from '../common/ElementGroup'
+import MouseTouchEventHandler, { EventOptions, EventHandler } from '../common/MouseTouchEventHandler'
 
 import Axis from '../componentl/Axis'
 
@@ -28,6 +29,8 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
 
   private _container: HTMLElement
 
+  private _event: MouseTouchEventHandler
+
   private readonly _bounding: Required<Bounding> = getDefaultBounding()
 
   constructor (rootContainer: HTMLElement, pane: Pane<C>) {
@@ -38,8 +41,18 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
 
   private _init (rootContainer: HTMLElement): void {
     this._container = createDom('div', this.getContainerStyle())
-    rootContainer.appendChild(this._container)
+    if (this.insertBefore()) {
+      const lastElement = rootContainer.lastChild
+      if (lastElement !== null) {
+        rootContainer.insertBefore(this._container, lastElement)
+      } else {
+        rootContainer.appendChild(this._container)
+      }
+    } else {
+      rootContainer.appendChild(this._container)
+    }
     this.initDom(this._container)
+    this._event = new MouseTouchEventHandler(this.getEventContainer(), this as EventHandler, this.getEventOptions())
   }
 
   setBounding (bounding: Bounding): Widget<C> {
@@ -48,6 +61,15 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
   }
 
   getContainer (): HTMLElement { return this._container }
+
+  protected getEventContainer (): HTMLElement { return this._container }
+
+  protected getEventOptions (): EventOptions {
+    return {
+      treatVertTouchDragAsPageScroll: () => false,
+      treatHorzTouchDragAsPageScroll: () => false
+    }
+  }
 
   getBounding (): Required<Bounding> {
     return this._bounding
@@ -60,6 +82,8 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
   update (level: UpdateLevel): void {
     this.updateImp(level, this._container, this._bounding)
   }
+
+  protected insertBefore (): boolean { return false }
 
   protected abstract getContainerStyle (): Partial<CSSStyleDeclaration>
 

@@ -12,6 +12,9 @@
  * limitations under the License.
  */
 
+import Coordinate from '../common/Coordinate'
+import { EventOptions } from '../common/MouseTouchEventHandler'
+
 import Pane from '../pane/Pane'
 
 import DrawWidget from './DrawWidget'
@@ -27,13 +30,17 @@ export default class XAxisWidget extends DrawWidget<XAxis> {
 
   constructor (rootContainer: HTMLElement, pane: Pane<XAxis>) {
     super(rootContainer, pane)
-    this.registerEvent('mouseMoveEvent', () => {
-      const chart = pane.getChart()
-      chart.getChartContainer().style.cursor = 'ew-resize'
-      chart.getChartStore().getCrosshairStore().set()
-    })
-    this.registerEvent('pressedMouseMoveEvent', () => {
-    })
+    this.getEventContainer().style.cursor = 'ew-resize'
+  }
+
+  mouseMoveEvent (coordinate: Coordinate): void {
+  }
+
+  protected getEventOptions (): EventOptions {
+    return {
+      treatVertTouchDragAsPageScroll: () => true,
+      treatHorzTouchDragAsPageScroll: () => false
+    }
   }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {

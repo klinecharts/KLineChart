@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import { EventOptions } from '../common/MouseTouchEventHandler'
+
 import Pane from '../pane/Pane'
 
 import DrawWidget from './DrawWidget'
@@ -31,16 +33,21 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
 
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
     super(rootContainer, pane)
-    this.registerEvent('mouseMoveEvent', () => {
-      const chart = pane.getChart()
-      chart.getChartContainer().style.cursor = 'ns-resize'
-      chart.getChartStore().getCrosshairStore().set()
-    })
+    this.getEventContainer().style.cursor = 'ns-resize'
+  }
+
+  protected getEventOptions (): EventOptions {
+    return {
+      treatVertTouchDragAsPageScroll: () => false,
+      treatHorzTouchDragAsPageScroll: () => true
+    }
   }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
     this._yAxisView.draw(ctx)
-    this._candleLastPriceLabelView.draw(ctx)
+    if (this.getPane().getAxisComponent().isInCandle()) {
+      this._candleLastPriceLabelView.draw(ctx)
+    }
     this._indicatorLastValueView.draw(ctx)
   }
 

@@ -139,7 +139,7 @@ export interface Indicator<D = any> {
 
 export type IndicatorConstructor<D = any> = new () => IndicatorTemplate<D>
 
-export type EachPlotCallback = (plot: IndicatorPlot, plotStyles: Required<IndicatorPlotStyle>, defaultPlotStyles: any) => void
+export type EachPlotCallback = (plot: IndicatorPlot, plotStyles: Required<IndicatorPlotStyle>, defaultPlotStyles: any, count: number) => void
 
 export function eachPlots<D> (
   kLineDataList: KLineData[],
@@ -165,6 +165,8 @@ export function eachPlots<D> (
   let barCount = 0
   let lineCount = 0
 
+  let typeCount = 0
+
   let defaultPlotStyles
   let defaultPlotStyle
   let defaultPlotColor
@@ -174,6 +176,7 @@ export function eachPlots<D> (
         defaultPlotStyles = circleStyles[circleCount % circleStyleCount]
         defaultPlotStyle = defaultPlotStyles.style
         defaultPlotColor = defaultPlotStyles.noChangeColor
+        typeCount = circleCount
         circleCount++
         break
       }
@@ -181,6 +184,7 @@ export function eachPlots<D> (
         defaultPlotStyles = barStyles[barCount % barStyleCount]
         defaultPlotStyle = defaultPlotStyles.style
         defaultPlotColor = defaultPlotStyles.noChangeColor
+        typeCount = barCount
         barCount++
         break
       }
@@ -188,6 +192,7 @@ export function eachPlots<D> (
         defaultPlotStyles = lineStyles[lineCount % lineStyleCount]
         defaultPlotStyle = defaultPlotStyles.style
         defaultPlotColor = defaultPlotStyles.color
+        typeCount = lineCount
         lineCount++
         break
       }
@@ -203,7 +208,7 @@ export function eachPlots<D> (
       eachPlotCallback(plot, {
         style: plotStyles.style ?? defaultPlotStyle,
         color: plotStyles.color ?? defaultPlotColor
-      }, defaultPlotStyles)
+      }, defaultPlotStyles, typeCount)
     }
   })
 }
