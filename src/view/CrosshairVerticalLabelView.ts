@@ -14,12 +14,12 @@
 
 import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
+import Crosshair from '../common/Crosshair'
+import { CrosshairStyle, CrosshairDirectionStyle } from '../common/Styles'
 
 import XAxis from '../componentl/XAxis'
 
 import ChartStore from '../store/ChartStore'
-import { Crosshair } from '../store/CrosshairStore'
-import { CrosshairStyle, CrosshairDirectionStyle } from '../store/styles'
 
 import { formatDate } from '../common/utils/format'
 // import { isValid } from '../common/utils/typeChecks'

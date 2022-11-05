@@ -13,11 +13,10 @@
  */
 
 import Bounding from '../common/Bounding'
+import { AxisStyle, Styles } from '../common/Styles'
 
-import { LineAttrs } from '../template/figure/line'
-import { TextAttrs } from '../template/figure/text'
-
-import { AxisStyle, Styles } from '../store/styles'
+import { LineAttrs } from '../extension/figure/line'
+import { TextAttrs } from '../extension/figure/text'
 
 import Axis, { Tick } from '../componentl/Axis'
 

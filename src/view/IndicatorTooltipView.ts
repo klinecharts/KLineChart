@@ -14,13 +14,12 @@
 
 import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
+import Crosshair from '../common/Crosshair'
+import { IndicatorStyle, TooltipShowRule, TooltipStyle, MarginTextStyle } from '../common/Styles'
 
 import Axis from '../componentl/Axis'
 
-import IndicatorTemplate, { eachPlots, Indicator, IndicatorPlot, IndicatorPlotStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../template/indicator/Indicator'
-
-import { IndicatorStyle, TooltipShowRule, TooltipStyle, MarginTextStyle } from '../store/styles'
-import { Crosshair } from '../store/CrosshairStore'
+import IndicatorTemplate, { eachPlots, Indicator, IndicatorPlot, IndicatorPlotStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../componentl/Indicator'
 
 import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 

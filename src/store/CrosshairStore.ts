@@ -13,19 +13,11 @@
  */
 
 import TypeOrNull from '../common/TypeOrNull'
-import Coordinate from '../common/Coordinate'
-import { UpdateLevel } from '../common/Updater'
 import KLineData from '../common/KLineData'
+import Crosshair from '../common/Crosshair'
+import { UpdateLevel } from '../common/Updater'
 
 import ChartStore from './ChartStore'
-
-export interface Crosshair extends Partial<Coordinate> {
-  paneId?: string
-  realX?: number
-  kLineData?: KLineData
-  dataIndex?: number
-  realDataIndex?: number
-}
 
 export default class CrosshairStore {
   private readonly _chartStore: ChartStore

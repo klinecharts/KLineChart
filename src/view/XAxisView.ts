@@ -13,15 +13,15 @@
  */
 
 import Bounding from '../common/Bounding'
+import { AxisStyle, Styles } from '../common/Styles'
 
-import { LineAttrs } from '../template/figure/line'
-import { TextAttrs } from '../template/figure/text'
+import { LineAttrs } from '../extension/figure/line'
+import { TextAttrs } from '../extension/figure/text'
 
 import { Tick } from '../componentl/Axis'
 import XAxis from '../componentl/XAxis'
 
 import AxisView from './AxisView'
-import { AxisStyle, Styles } from '../store/styles'
 
 export default class XAxisView extends AxisView<XAxis> {
   protected getAxisStyles (styles: Styles): AxisStyle {

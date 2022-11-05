@@ -15,9 +15,9 @@
 import TypeOrNull from './common/TypeOrNull'
 import DeepPartial from './common/DeepPartial'
 import { UpdateLevel } from './common/Updater'
+import { Styles, YAxisPosition } from './common/Styles'
 
 import ChartStore from './store/ChartStore'
-import { Styles, YAxisPosition } from './store/styles'
 
 import Pane, { PaneOptions, PANE_DEFAULT_HEIGHT } from './pane/Pane'
 import CandlePane, { CANDLE_PANE_ID } from './pane/CandlePane'
@@ -26,7 +26,7 @@ import XAxisPane, { XAXIS_PANE_ID } from './pane/XAxisPane'
 
 import Axis from './componentl/Axis'
 
-import { Indicator } from './template/indicator/Indicator'
+import { Indicator } from './componentl/Indicator'
 
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'

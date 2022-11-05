@@ -14,7 +14,7 @@
 
 import YAxis from '../componentl/YAxis'
 
-import { eachPlots, IndicatorPlot, IndicatorPlotStyle, Indicator } from '../template/indicator/Indicator'
+import { eachPlots, IndicatorPlot, IndicatorPlotStyle, Indicator } from '../componentl/Indicator'
 
 import View from './View'
 

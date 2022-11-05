@@ -13,11 +13,9 @@
  */
 
 import Coordinate from '../common/Coordinate'
-
-import { VisibleData } from '../store/ChartStore'
-import { BarSpace } from '../store/TimeScaleStore'
-
-import { GradientColor } from '../store/styles'
+import VisibleData from '../common/VisibleData'
+import BarSpace from '../common/BarSpace'
+import { GradientColor } from '../common/Styles'
 
 import ChildrenView from './ChildrenView'
 

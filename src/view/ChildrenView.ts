@@ -13,9 +13,8 @@
  */
 
 import View from './View'
-
-import { VisibleData } from '../store/ChartStore'
-import { BarSpace } from '../store/TimeScaleStore'
+import VisibleData from '../common/VisibleData'
+import BarSpace from '../common/BarSpace'
 
 export type EachChildCallback = (
   data: VisibleData,

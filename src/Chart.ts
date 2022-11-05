@@ -17,8 +17,8 @@ import DeepPartial from './common/DeepPartial'
 import { UpdateLevel } from './common/Updater'
 import KLineData from './common/KLineData'
 
-import { getIndicatorClass } from './template/indicator'
-import { Indicator } from './template/indicator/Indicator'
+import { getIndicatorClass } from './extension/indicator'
+import { Indicator } from './componentl/Indicator'
 import { PaneOptions } from './pane/Pane'
 
 import { LoadMoreCallback } from './store/TimeScaleStore'

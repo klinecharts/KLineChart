@@ -13,10 +13,9 @@
  */
 
 import Coordinate from '../common/Coordinate'
-
-import { VisibleData } from '../store/ChartStore'
-import { BarSpace } from '../store/TimeScaleStore'
-import { CandleHighLowPriceMarkStyle } from '../store/styles'
+import VisibleData from '../common/VisibleData'
+import BarSpace from '../common/BarSpace'
+import { CandleHighLowPriceMarkStyle } from '../common/Styles'
 
 import ChildrenView from './ChildrenView'
 

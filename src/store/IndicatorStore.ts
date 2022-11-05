@@ -17,12 +17,11 @@ import Precision from '../common/Precision'
 
 import ChartStore from './ChartStore'
 
-import IndicatorTemplate, { IndicatorConstructor, Indicator, IndicatorSeries } from '../template/indicator/Indicator'
-import { getIndicatorClass } from '../template/indicator/index'
+import IndicatorTemplate, { IndicatorConstructor, Indicator, IndicatorSeries } from '../componentl/Indicator'
+import { getIndicatorClass } from '../extension/indicator/index'
 
 export default class IndicatorStore {
   private readonly _chartStore: ChartStore
-  private readonly _templates: Map<string, IndicatorConstructor> = new Map()
   private readonly _instances: Map<string, Map<string, IndicatorTemplate>> = new Map()
 
   constructor (chartStore: ChartStore) {

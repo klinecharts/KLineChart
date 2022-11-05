@@ -14,9 +14,9 @@
 
 import AxisImp, { Extremum, Tick } from './Axis'
 
-import { IndicatorPlot } from '../template/indicator/Indicator'
+import { IndicatorPlot } from './Indicator'
 
-import { YAxisType } from '../store/styles'
+import { YAxisType } from '../common/Styles'
 
 import { isValid } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'

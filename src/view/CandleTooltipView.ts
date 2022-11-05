@@ -15,11 +15,10 @@
 import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
+import Crosshair from '../common/Crosshair'
+import { Styles, CandleStyle, CandleTooltipValuesChild, CandleTooltipValuesCallback, TooltipShowType, YAxisPosition } from '../common/Styles'
 
-import IndicatorTemplate, { Indicator } from '../template/indicator/Indicator'
-
-import { Styles, CandleStyle, CandleTooltipValuesChild, CandleTooltipValuesCallback, TooltipShowType, YAxisPosition } from '../store/styles'
-import { Crosshair } from '../store/CrosshairStore'
+import IndicatorTemplate, { Indicator } from '../componentl/Indicator'
 
 import IndicatorTooltipView, { TooltipData } from './IndicatorTooltipView'
 

@@ -15,8 +15,10 @@
 import TypeOrNull from '../common/TypeOrNull'
 import Coordinate from '../common/Coordinate'
 import KLineData from '../common/KLineData'
-
-import { Crosshair } from './CrosshairStore'
+import Crosshair from '../common/Crosshair'
+import BarSpace from '../common/BarSpace'
+import VisibleRange from '../common/VisibleRange'
+import LoadMoreCallback from '../common/LoadMoreCallback'
 
 import { logWarn } from '../common/utils/logger'
 import { binarySearchNearest } from '../common/utils/number'
@@ -25,24 +27,10 @@ import { binarySearchNearest } from '../common/utils/number'
 
 import ChartStore from './ChartStore'
 
-export interface VisibleRange {
-  from: number
-  to: number
-}
-
-export interface BarSpace {
-  bar: number
-  halfBar: number
-  gapBar: number
-  halfGapBar: number
-}
-
-export interface MinVisibleBarCount {
+interface MinVisibleBarCount {
   left: number
   right: number
 }
-
-export type LoadMoreCallback = (timestamp: TypeOrNull<number>) => void
 
 const BarSpaceLimitContants = {
   MIN: 1,
@@ -75,7 +63,7 @@ export default class TimeScaleStore {
 
   private _minVisibleBarCount: MinVisibleBarCount = { left: 2, right: 2 }
 
-  private _visibleRange = { from: 0, to: 0 }
+  private _visibleRange: VisibleRange = { from: 0, to: 0 }
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore

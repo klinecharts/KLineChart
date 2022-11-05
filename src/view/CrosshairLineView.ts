@@ -13,8 +13,7 @@
  */
 
 import Coordinate from '../common/Coordinate'
-
-import { CrosshairDirectionStyle } from '../store/styles'
+import { CrosshairDirectionStyle } from '../common/Styles'
 
 import View from './View'
 

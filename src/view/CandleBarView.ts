@@ -13,14 +13,15 @@
  */
 
 import TypeOrNull from '../common/TypeOrNull'
+import VisibleData from '../common/VisibleData'
+import BarSpace from '../common/BarSpace'
+import { CandleType, ChangeColor } from '../common/Styles'
 
-import ChartStore, { VisibleData } from '../store/ChartStore'
-import { CandleType, ChangeColor } from '../store/styles'
-import { BarSpace } from '../store/TimeScaleStore'
+import ChartStore from '../store/ChartStore'
 
 import Axis from '../componentl/Axis'
 
-import { RectAttrs } from '../template/figure/rect'
+import { RectAttrs } from '../extension/figure/rect'
 
 import ChildrenView from './ChildrenView'
 

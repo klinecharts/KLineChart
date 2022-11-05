@@ -14,17 +14,18 @@
 
 import TypeOrNull from '../common/TypeOrNull'
 import Coordinate from '../common/Coordinate'
+import VisibleData from '../common/VisibleData'
+import BarSpace from '../common/BarSpace'
+import { CandleType } from '../common/Styles'
 
 import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 
-import ChartStore, { VisibleData } from '../store/ChartStore'
-import { BarSpace } from '../store/TimeScaleStore'
-import { CandleType } from '../store/styles'
+import ChartStore from '../store/ChartStore'
 
 import Axis from '../componentl/Axis'
 
-import { LineAttrs } from '../template/figure/line'
-import { eachPlots, IndicatorPlot, IndicatorPlotStyle, Indicator } from '../template/indicator/Indicator'
+import { LineAttrs } from '../extension/figure/line'
+import { eachPlots, IndicatorPlot, IndicatorPlotStyle, Indicator } from '../componentl/Indicator'
 
 import CandleBarView, { CandleBarOptions } from './CandleBarView'
 

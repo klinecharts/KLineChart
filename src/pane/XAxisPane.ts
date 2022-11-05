@@ -19,7 +19,6 @@ import XAxis from '../componentl/XAxis'
 
 import Pane from './Pane'
 
-// x轴窗口id
 export const XAXIS_PANE_ID = 'x_axis_pane'
 
 export default class XAxisPane extends Pane<XAxis> {

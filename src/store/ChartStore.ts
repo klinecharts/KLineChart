@@ -15,9 +15,10 @@
 import DeepPartial from '../common/DeepPartial'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
+import VisibleData from '../common/VisibleData'
+import { defaultStyles, Styles } from '../common/Styles'
 
 import { isArray, merge, clone } from '../common/utils/typeChecks'
-import { defaultStyles, Styles } from './styles'
 
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
@@ -29,19 +30,13 @@ import CrosshairStore from './CrosshairStore'
 
 import ChartInternal from '../ChartInternal'
 
-export interface VisibleData {
-  dataIndex: number
-  x: number
-  data: KLineData
-}
-
 export default class ChartStore {
   //
   private readonly _chart: ChartInternal
   // 样式配置
   private readonly _styleOptions: Styles
 
-  private _precision = { price: 2, volume: 0 }
+  private _precision: Precision = { price: 2, volume: 0 }
 
   // 数据源
   private _dataList: KLineData[] = []
