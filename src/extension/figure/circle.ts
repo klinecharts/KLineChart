@@ -13,54 +13,60 @@
  */
 
 import Coordinate from '../../common/Coordinate'
+import { PolygonStyle, PolygonType, LineType } from '../../common/Styles'
+
 import { Figure } from '../../componentl/Figure'
 
-function checkCoordinateOnCircle (coordinate: Coordinate, circle: Omit<CircleAttrs, 'styles'>): boolean {
+export function checkCoordinateOnCircle (coordinate: Coordinate, circle: CircleAttrs): boolean {
   const difX = coordinate.x - circle.x
   const difY = coordinate.y - circle.y
   const r = circle.r
   return !(difX * difX + difY * difY > r * r)
 }
 
-function drawCircle (ctx: CanvasRenderingContext2D, x: number, y: number, r: number, isFill?: boolean): void {
-  ctx.beginPath()
-  ctx.arc(x, y, r, 0, Math.PI * 2)
-  ctx.closePath()
-  if (isFill ?? false) {
+export function drawCircle (ctx: CanvasRenderingContext2D, attrs: CircleAttrs, styles: Partial<PolygonStyle>): void {
+  const { x, y, r } = attrs
+  const {
+    style = PolygonType.FILL,
+    color = 'currentColor',
+    borderSize = 1,
+    borderColor = 'currentColor',
+    borderStyle = LineType.SOLID,
+    borderDashedValue = [2, 2]
+  } = styles
+  if (style === PolygonType.FILL || styles.style === PolygonType.STROKE_FILL) {
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.arc(x, y, r, 0, Math.PI * 2)
+    ctx.closePath()
     ctx.fill()
-  } else {
+  }
+  if (style === PolygonType.STROKE || styles.style === PolygonType.STROKE_FILL) {
+    ctx.strokeStyle = borderColor
+    ctx.lineWidth = borderSize
+    if (borderStyle === LineType.DASHED) {
+      ctx.setLineDash(borderDashedValue)
+    } else {
+      ctx.setLineDash([])
+    }
+    ctx.beginPath()
+    ctx.arc(x, y, r, 0, Math.PI * 2)
+    ctx.closePath()
     ctx.stroke()
   }
-}
-
-export interface CircleStyle {
-  fillColor: string | CanvasGradient
-  stokeColor: string
-  strokeSize: number
-  style: 'fill' | 'stroke' | 'stroke-fill'
 }
 
 export interface CircleAttrs {
   x: number
   y: number
   r: number
-  styles: CircleStyle
 }
 
-const circle: Figure<CircleAttrs> = {
+const circle: Figure<CircleAttrs, Partial<PolygonStyle>> = {
   name: 'circle',
   checkEventOn: checkCoordinateOnCircle,
-  draw: (ctx: CanvasRenderingContext2D, attrs: CircleAttrs) => {
-    const { x, y, r, styles } = attrs
-    ctx.strokeStyle = styles.stokeColor
-    ctx.fillStyle = styles.fillColor
-    ctx.lineWidth = styles.strokeSize
-    if (styles.style === 'fill' || styles.style === 'stroke-fill') {
-      drawCircle(ctx, x, y, r, true)
-    }
-    if (styles.style === 'stroke' || styles.style === 'stroke-fill') {
-      drawCircle(ctx, x, y, r)
-    }
+  draw: (ctx: CanvasRenderingContext2D, attrs: CircleAttrs, styles: Partial<PolygonStyle>) => {
+    drawCircle(ctx, attrs, styles)
   }
 }
 

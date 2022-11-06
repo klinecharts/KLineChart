@@ -13,9 +13,11 @@
  */
 
 import Coordinate from '../../common/Coordinate'
+import { PolygonStyle, PolygonType, LineType } from '../../common/Styles'
+
 import { Figure } from '../../componentl/Figure'
 
-function checkCoordinateOnPolygon (coordinate: Coordinate, polygon: Omit<PolygonAttrs, 'styles'>): boolean {
+function checkCoordinateOnPolygon (coordinate: Coordinate, polygon: PolygonAttrs): boolean {
   let on = false
   const coordinates = polygon.coordinates
   for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
@@ -29,46 +31,53 @@ function checkCoordinateOnPolygon (coordinate: Coordinate, polygon: Omit<Polygon
   return on
 }
 
-function drawPolygon (ctx: CanvasRenderingContext2D, coordinates: Coordinate[], isFill?: boolean): void {
-  ctx.beginPath()
-  ctx.moveTo(coordinates[0].x, coordinates[0].y)
-  for (let i = 1; i < coordinates.length; i++) {
-    ctx.lineTo(coordinates[i].x, coordinates[i].y)
-  }
-  ctx.closePath()
-  if (isFill ?? false) {
+function drawPolygon (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs, styles: Partial<PolygonStyle>): void {
+  const { coordinates } = attrs
+  const {
+    style = PolygonType.FILL,
+    color = 'currentColor',
+    borderSize = 1,
+    borderColor = 'currentColor',
+    borderStyle = LineType.SOLID,
+    borderDashedValue = [2, 2]
+  } = styles
+  if (style === PolygonType.FILL || styles.style === PolygonType.STROKE_FILL) {
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.moveTo(coordinates[0].x, coordinates[0].y)
+    for (let i = 1; i < coordinates.length; i++) {
+      ctx.lineTo(coordinates[i].x, coordinates[i].y)
+    }
+    ctx.closePath()
     ctx.fill()
-  } else {
+  }
+  if (style === PolygonType.STROKE || styles.style === PolygonType.STROKE_FILL) {
+    ctx.strokeStyle = borderColor
+    ctx.lineWidth = borderSize
+    if (borderStyle === LineType.DASHED) {
+      ctx.setLineDash(borderDashedValue)
+    } else {
+      ctx.setLineDash([])
+    }
+    ctx.beginPath()
+    ctx.moveTo(coordinates[0].x, coordinates[0].y)
+    for (let i = 1; i < coordinates.length; i++) {
+      ctx.lineTo(coordinates[i].x, coordinates[i].y)
+    }
+    ctx.closePath()
     ctx.stroke()
   }
 }
 
-export interface PolygonStyle {
-  style: 'fill' | 'stroke' | 'stroke-fill'
-  fillColor: string | CanvasGradient
-  stokeColor: string
-  strokeSize: number
-}
-
 export interface PolygonAttrs {
   coordinates: Coordinate[]
-  styles: PolygonStyle
 }
 
-const polygon: Figure<PolygonAttrs> = {
+const polygon: Figure<PolygonAttrs, Partial<PolygonStyle>> = {
   name: 'polygon',
   checkEventOn: checkCoordinateOnPolygon,
-  draw: (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs) => {
-    const { coordinates, styles } = attrs
-    ctx.strokeStyle = styles.stokeColor
-    ctx.fillStyle = styles.fillColor
-    ctx.lineWidth = styles.strokeSize
-    if (styles.style === 'fill' || styles.style === 'stroke-fill') {
-      drawPolygon(ctx, coordinates, true)
-    }
-    if (styles.style === 'stroke' || styles.style === 'stroke-fill') {
-      drawPolygon(ctx, coordinates)
-    }
+  draw: (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs, styles: Partial<PolygonStyle>) => {
+    drawPolygon(ctx, attrs, styles)
   }
 }
 

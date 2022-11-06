@@ -13,10 +13,11 @@
  */
 
 import Coordinate from '../../common/Coordinate'
+import { RectStyle, PolygonType, LineType } from '../../common/Styles'
 
 import { Figure } from '../../componentl/Figure'
 
-function checkCoordinateOnRect (coordinate: Coordinate, rect: Omit<RectAttrs, 'styles'>): boolean {
+function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolean {
   return (
     coordinate.x >= rect.x &&
     coordinate.x <= rect.x + rect.width &&
@@ -25,27 +26,45 @@ function checkCoordinateOnRect (coordinate: Coordinate, rect: Omit<RectAttrs, 's
   )
 }
 
-function drawRect (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number, isFill?: boolean): void {
-  ctx.beginPath()
-  ctx.moveTo(x + r, y)
-  ctx.arcTo(x + w, y, x + w, y + h, r)
-  ctx.arcTo(x + w, y + h, x, y + h, r)
-  ctx.arcTo(x, y + h, x, y, r)
-  ctx.arcTo(x, y, x + w, y, r)
-  ctx.closePath()
-  if (isFill ?? false) {
+function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs, styles: Partial<RectStyle>): void {
+  const { x, y, width: w, height: h } = attrs
+  const {
+    style = PolygonType.FILL,
+    color = 'currentColor',
+    borderSize = 1,
+    borderColor = 'currentColor',
+    borderStyle = LineType.SOLID,
+    borderRadius: r = 0,
+    borderDashedValue = [2, 2]
+  } = styles
+  if (style === PolygonType.FILL || styles.style === PolygonType.STROKE_FILL) {
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.moveTo(x + r, y)
+    ctx.arcTo(x + w, y, x + w, y + h, r)
+    ctx.arcTo(x + w, y + h, x, y + h, r)
+    ctx.arcTo(x, y + h, x, y, r)
+    ctx.arcTo(x, y, x + w, y, r)
+    ctx.closePath()
     ctx.fill()
-  } else {
+  }
+  if (style === PolygonType.STROKE || styles.style === PolygonType.STROKE_FILL) {
+    ctx.strokeStyle = borderColor
+    ctx.lineWidth = borderSize
+    if (borderStyle === LineType.DASHED) {
+      ctx.setLineDash(borderDashedValue)
+    } else {
+      ctx.setLineDash([])
+    }
+    ctx.beginPath()
+    ctx.moveTo(x + r, y)
+    ctx.arcTo(x + w, y, x + w, y + h, r)
+    ctx.arcTo(x + w, y + h, x, y + h, r)
+    ctx.arcTo(x, y + h, x, y, r)
+    ctx.arcTo(x, y, x + w, y, r)
+    ctx.closePath()
     ctx.stroke()
   }
-}
-
-export interface RectStyle {
-  fillColor: string | CanvasGradient
-  stokeColor: string
-  strokeSize: number
-  style: 'fill' | 'stroke' | 'stroke-fill'
-  radius: number
 }
 
 export interface RectAttrs {
@@ -53,25 +72,13 @@ export interface RectAttrs {
   y: number
   width: number
   height: number
-  styles: RectStyle
 }
 
-const rect: Figure<RectAttrs> = {
+const rect: Figure<RectAttrs, Partial<RectStyle>> = {
   name: 'rect',
   checkEventOn: checkCoordinateOnRect,
-  draw: (ctx: CanvasRenderingContext2D, attrs: RectAttrs) => {
-    const { x, y, width, height, styles } = attrs
-    ctx.strokeStyle = styles.stokeColor
-    ctx.fillStyle = styles.fillColor
-    ctx.lineWidth = styles.strokeSize
-    const r = styles.radius
-    if (styles.style === 'fill' || styles.style === 'stroke-fill') {
-      drawRect(ctx, x, y, width, height, r, true)
-      ctx.fill()
-    }
-    if (styles.style === 'stroke' || styles.style === 'stroke-fill') {
-      drawRect(ctx, x, y, width, height, r)
-    }
+  draw: (ctx: CanvasRenderingContext2D, attrs: RectAttrs, styles: Partial<RectStyle>) => {
+    drawRect(ctx, attrs, styles)
   }
 }
 

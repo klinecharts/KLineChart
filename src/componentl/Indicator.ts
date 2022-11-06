@@ -19,7 +19,7 @@ import Bounding from '../common/Bounding'
 import VisibleRange from '../common/VisibleRange'
 import BarSpace from '../common/BarSpace'
 import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, IndicatorBarCirleStyle, LineStyle } from '../common/Styles'
+import { IndicatorStyle, IndicatorPolygonStyle, LineStyle, LineType, PolygonType } from '../common/Styles'
 
 import Axis from './Axis'
 
@@ -33,7 +33,7 @@ export const enum IndicatorSeries {
 }
 
 export interface IndicatorPlotStyle {
-  style?: 'fill' | 'stroke' | 'stroke-fill' | 'solid' | 'dashed'
+  style?: LineType | PolygonType
   color?: string
 }
 
@@ -152,13 +152,13 @@ export function eachPlots<D> (
   const plots = indicator.plots
   const styles = indicator.styles
 
-  const circleStyles = formatValue(styles, 'circles', defaultStyles.circles) as IndicatorBarCirleStyle[]
+  const circleStyles = formatValue(styles, 'circles', defaultStyles.circles) as IndicatorPolygonStyle[]
   const circleStyleCount = circleStyles.length
 
-  const barStyles = formatValue(styles, 'bars', defaultStyles.bars) as IndicatorBarCirleStyle[]
+  const barStyles = formatValue(styles, 'bars', defaultStyles.bars) as IndicatorPolygonStyle[]
   const barStyleCount = barStyles.length
 
-  const lineStyles = formatValue(styles, 'lines', defaultStyles.lines) as Array<Omit<LineStyle, 'show'>>
+  const lineStyles = formatValue(styles, 'lines', defaultStyles.lines) as LineStyle[]
   const lineStyleCount = lineStyles.length
 
   let circleCount = 0

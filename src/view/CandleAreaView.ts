@@ -60,15 +60,14 @@ export default class CandleAreaView extends ChildrenView {
     }
 
     if (lineCoordinates.length > 0) {
-      this.createFigure('line', {
-        coordinates: lineCoordinates,
-        styles: {
-          style: 'solid',
+      this.createFigure(
+        'line',
+        { coordinates: lineCoordinates },
+        {
           color: candleAreaStyles.lineColor,
-          size: candleAreaStyles.lineSize,
-          dashedValue: []
+          size: candleAreaStyles.lineSize
         }
-      })?.draw(ctx)
+      )?.draw(ctx)
     }
 
     if (areaCoordinates.length > 0) {
@@ -87,15 +86,11 @@ export default class CandleAreaView extends ChildrenView {
       } else {
         color = backgroundColor as string
       }
-      this.createFigure('polygon', {
-        coordinates: areaCoordinates,
-        styles: {
-          style: 'fill',
-          fillColor: color,
-          stokeColor: '',
-          strokeSize: 1
-        }
-      })?.draw(ctx)
+      this.createFigure(
+        'polygon',
+        { coordinates: areaCoordinates },
+        { color }
+      )?.draw(ctx)
     }
   }
 }

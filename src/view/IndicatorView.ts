@@ -16,7 +16,7 @@ import TypeOrNull from '../common/TypeOrNull'
 import Coordinate from '../common/Coordinate'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
-import { CandleType } from '../common/Styles'
+import { CandleType, LineStyle, LineType } from '../common/Styles'
 
 import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 
@@ -24,6 +24,7 @@ import ChartStore from '../store/ChartStore'
 
 import Axis from '../componentl/Axis'
 
+import { FigureAttrsStyles } from '../componentl/Figure'
 import { LineAttrs } from '../extension/figure/line'
 import { eachPlots, IndicatorPlot, IndicatorPlotStyle, Indicator } from '../componentl/Indicator'
 
@@ -91,7 +92,7 @@ export default class IndicatorView extends CandleBarView {
         const linePlotStyles: Array<TypeOrNull<IndicatorPlotStyle>> = []
         const lineCoordinates: Coordinate[][] = []
 
-        const lines: LineAttrs[] = []
+        const lines: Array<FigureAttrsStyles<LineAttrs, Partial<LineStyle>>> = []
 
         this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
           const { halfGapBar, gapBar } = barSpace
@@ -104,17 +105,19 @@ export default class IndicatorView extends CandleBarView {
             switch (plot.type) {
               case 'circle': {
                 if (isValid(value)) {
-                  this.createFigure('circle', {
-                    x,
-                    y: valueY,
-                    r: halfGapBar,
-                    styles: {
-                      style: plotStyles.style as 'fill' | 'stroke' | 'stroke-fill',
-                      fillColor: plotStyles.color,
-                      stokeColor: plotStyles.color,
-                      strokeSize: 1
+                  this.createFigure(
+                    'circle',
+                    {
+                      x,
+                      y: valueY,
+                      r: halfGapBar
+                    },
+                    {
+                      style: plotStyles.style,
+                      color: plotStyles.color,
+                      borderColor: plotStyles.color
                     }
-                  })?.draw(ctx)
+                  )?.draw(ctx)
                 }
                 break
               }
@@ -129,19 +132,20 @@ export default class IndicatorView extends CandleBarView {
                   } else {
                     y = height < 1 ? baseValueY - 1 : valueY
                   }
-                  this.createFigure('rect', {
-                    x: x - halfGapBar,
-                    y,
-                    width: gapBar,
-                    height,
-                    styles: {
-                      style: plotStyles.style as 'fill' | 'stroke' | 'stroke-fill',
-                      fillColor: plotStyles.color,
-                      stokeColor: plotStyles.color,
-                      strokeSize: 1,
-                      radius: 0
+                  this.createFigure(
+                    'rect',
+                    {
+                      x: x - halfGapBar,
+                      y,
+                      width: gapBar,
+                      height
+                    },
+                    {
+                      style: plotStyles.style,
+                      color: plotStyles.color,
+                      borderColor: plotStyles.color
                     }
-                  })?.draw(ctx)
+                  )?.draw(ctx)
                 }
                 break
               }
@@ -158,9 +162,9 @@ export default class IndicatorView extends CandleBarView {
                   if (isValid(prevPlotStyles)) {
                     if (prevPlotStyles?.color !== plotStyles.color) {
                       lines.push({
-                        coordinates: lineCoordinates[count],
+                        attrs: { coordinates: lineCoordinates[count] },
                         styles: {
-                          style: plotStyles.style as 'solid' | 'dashed',
+                          style: plotStyles.style as LineType,
                           color: plotStyles.color,
                           size: defaultPlotStyles.size,
                           dashedValue: defaultPlotStyles.dashedValue
@@ -170,9 +174,9 @@ export default class IndicatorView extends CandleBarView {
                     } else {
                       if (prevPlotStyles?.style !== plotStyles.style) {
                         lines.push({
-                          coordinates: lineCoordinates[count],
+                          attrs: { coordinates: lineCoordinates[count] },
                           styles: {
-                            style: plotStyles.style as 'solid' | 'dashed',
+                            style: plotStyles.style as LineType,
                             color: plotStyles.color,
                             size: defaultPlotStyles.size,
                             dashedValue: defaultPlotStyles.dashedValue
@@ -184,9 +188,9 @@ export default class IndicatorView extends CandleBarView {
                   }
                   if (dataIndex === visibleRange.to - 1) {
                     lines.push({
-                      coordinates: lineCoordinates[count],
+                      attrs: { coordinates: lineCoordinates[count] },
                       styles: {
-                        style: plotStyles.style as 'solid' | 'dashed',
+                        style: plotStyles.style as LineType,
                         color: plotStyles?.color,
                         size: defaultPlotStyles.size,
                         dashedValue: defaultPlotStyles.dashedValue
@@ -201,8 +205,8 @@ export default class IndicatorView extends CandleBarView {
             }
           })
         })
-        lines.forEach(line => {
-          this.createFigure('line', line)?.draw(ctx)
+        lines.forEach(({ attrs, styles }) => {
+          this.createFigure('line', attrs, styles)?.draw(ctx)
         })
       }
     })

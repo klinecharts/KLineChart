@@ -133,7 +133,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         borderSize: rectBorderSize,
         borderRadius: rectBorderRadius,
         borderColor: rectBorderColor,
-        backgroundColor: rectBackgroundColor
+        color: rectBackgroundColor
       } = candleTooltipStyles.rect
 
       let maxLabelWidth = 0
@@ -190,53 +190,56 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           }
         }
         const rectY = top + rectOffsetTop
-        this.createFigure('rect', {
-          x: rectX,
-          y: rectY,
-          width: rectWidth,
-          height: rectHeight,
-          styles: {
-            style: 'fill',
-            fillColor: rectBackgroundColor,
-            stokeColor: rectBorderColor,
-            strokeSize: rectBorderSize,
-            radius: rectBorderRadius
+        this.createFigure(
+          'rect',
+          {
+            x: rectX,
+            y: rectY,
+            width: rectWidth,
+            height: rectHeight
+          },
+          {
+            color: rectBackgroundColor,
+            borderColor: rectBorderColor,
+            borderSize: rectBorderSize,
+            borderRadius: rectBorderRadius
           }
-        })
+        )?.draw(ctx)
         const baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
         let labelY = rectY + rectBorderSize + rectPaddingTop
         if (isDrawCandleTooltip) {
           // 开始渲染基础数据文字
           baseValues.forEach(value => {
             labelY += baseTextMarginTop
-            this.createFigure('text', {
-              x: baseLabelX,
-              y: labelY,
-              text: value.title,
-              styles: {
-                style: 'fill',
+            this.createFigure(
+              'text',
+              {
+                x: baseLabelX,
+                y: labelY,
+                text: value.title
+              },
+              {
+                color: value.color,
+                size: baseTextSize,
+                family: baseTextFamily,
+                weight: baseTextWeight
+              }
+            )?.draw(ctx)
+            this.createFigure(
+              'text',
+              {
+                x: rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight,
+                y: labelY,
+                text: value.value
+              },
+              {
                 color: value.color,
                 size: baseTextSize,
                 family: baseTextFamily,
                 weight: baseTextWeight,
-                align: 'left',
-                baseline: 'top'
+                align: 'right'
               }
-            })
-            this.createFigure('text', {
-              x: rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight,
-              y: labelY,
-              text: value.value,
-              styles: {
-                style: 'fill',
-                color: value.color,
-                size: baseTextSize,
-                family: baseTextFamily,
-                weight: baseTextWeight,
-                align: 'right',
-                baseline: 'top'
-              }
-            })
+            )?.draw(ctx)
             labelY += (baseTextSize + baseTextMarginBottom)
           })
         }
@@ -246,35 +249,36 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           indicatorValues.forEach(values => {
             values.forEach(value => {
               labelY += indicatorTextMarginTop
-              this.createFigure('text', {
-                x: indicatorLabelX,
-                y: labelY,
-                text: value.title,
-                styles: {
-                  style: 'fill',
+              this.createFigure(
+                'text',
+                {
+                  x: indicatorLabelX,
+                  y: labelY,
+                  text: value.title
+                },
+                {
                   color: value.color,
                   size: indicatorTextSize,
                   family: indicatorTextFamily,
-                  weight: indicatorTextWeight,
-                  align: 'left',
-                  baseline: 'top'
+                  weight: indicatorTextWeight
                 }
-              })
+              )?.draw(ctx)
 
-              this.createFigure('text', {
-                x: rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
-                y: labelY,
-                text: value.value,
-                styles: {
-                  style: 'fill',
+              this.createFigure(
+                'text',
+                {
+                  x: rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
+                  y: labelY,
+                  text: value.value
+                },
+                {
                   color: value.color,
                   size: indicatorTextSize,
                   family: indicatorTextFamily,
                   weight: indicatorTextWeight,
-                  align: 'right',
-                  baseline: 'top'
+                  align: 'right'
                 }
-              })
+              )?.draw(ctx)
               labelY += (indicatorTextSize + indicatorTextMarginBottom)
             })
           })

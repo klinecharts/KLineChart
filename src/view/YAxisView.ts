@@ -28,9 +28,8 @@ export default class YxisView extends AxisView<YAxis> {
     return styles.xAxis
   }
 
-  protected createAxisLine (bounding: Required<Bounding>, styles: AxisStyle): LineAttrs {
+  protected createAxisLine (bounding: Required<Bounding>): LineAttrs {
     const yAxis = this.getWidget().getPane().getAxisComponent()
-    const axisLineStyles = styles.axisLine
     let x: number
     if (yAxis.isFromZero()) {
       x = 0
@@ -41,13 +40,7 @@ export default class YxisView extends AxisView<YAxis> {
       coordinates: [
         { x, y: 0 },
         { x, y: bounding.height }
-      ],
-      styles: {
-        style: 'solid',
-        size: axisLineStyles.size,
-        color: axisLineStyles.color,
-        dashedValue: []
-      }
+      ]
     }
   }
 
@@ -75,13 +68,7 @@ export default class YxisView extends AxisView<YAxis> {
       coordinates: [
         { x: startX, y: tick.coord },
         { x: endX, y: tick.coord }
-      ],
-      styles: {
-        style: 'solid',
-        size: tickLineStyles.size,
-        color: tickLineStyles.color,
-        dashedValue: []
-      }
+      ]
     }))
   }
 
@@ -92,7 +79,6 @@ export default class YxisView extends AxisView<YAxis> {
     const tickTextStyles = styles.tickText
 
     let x = 0
-    let align
     if (yAxis.isFromZero()) {
       x = tickTextStyles.marginStart
       if (axisLineStyles.show) {
@@ -101,7 +87,6 @@ export default class YxisView extends AxisView<YAxis> {
       if (tickLineStyles.show) {
         x += tickLineStyles.length
       }
-      align = 'left'
     } else {
       x = bounding.width - tickTextStyles.marginEnd
       if (axisLineStyles.show) {
@@ -110,21 +95,23 @@ export default class YxisView extends AxisView<YAxis> {
       if (tickLineStyles.show) {
         x -= tickLineStyles.length
       }
-      align = 'right'
     }
     return ticks.map(tick => ({
       x,
       y: tick.coord,
-      text: tick.text,
-      styles: {
-        style: 'fill',
-        color: tickTextStyles.color,
-        size: tickTextStyles.size,
-        family: tickTextStyles.family,
-        weight: tickTextStyles.weight,
-        align,
-        baseline: 'middle'
-      }
+      text: tick.text
     }))
+  }
+
+  protected getTickTextAlign (): CanvasTextAlign {
+    const yAxis = this.getWidget().getPane().getAxisComponent()
+    if (yAxis.isFromZero()) {
+      return 'left'
+    }
+    return 'right'
+  }
+
+  protected getTickTextBaseline (): CanvasTextBaseline {
+    return 'middle'
   }
 }

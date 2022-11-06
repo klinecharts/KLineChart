@@ -14,9 +14,11 @@
 
 import TypeOrNull from '../../common/TypeOrNull'
 import Coordinate from '../../common/Coordinate'
+import { LineStyle, LineType } from '../../common/Styles'
+
 import { Figure } from '../../componentl/Figure'
 
-function checkCoordinateOnLine (coordinate: Coordinate, line: Omit<LineAttrs, 'styles'>): boolean {
+function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs): boolean {
   let on = false
   const coordinates = line.coordinates
   if (coordinates.length > 1) {
@@ -56,45 +58,36 @@ function getLinearSlopeIntercept (coordinate1: Coordinate, coordinate2: Coordina
   return null
 }
 
-function drawLine (ctx: CanvasRenderingContext2D, coordinates: Coordinate[]): void {
-  ctx.save()
-  ctx.beginPath()
-  ctx.moveTo(coordinates[0].x, coordinates[0].y)
-  for (let i = 1; i < coordinates.length; i++) {
-    ctx.lineTo(coordinates[i].x, coordinates[i].y)
+function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<LineStyle>): void {
+  const { coordinates } = attrs
+  if (coordinates.length > 1) {
+    const { style = LineType.SOLID, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
+    ctx.lineWidth = size
+    ctx.strokeStyle = color
+    if (style === LineType.DASHED) {
+      ctx.setLineDash(dashedValue)
+    } else {
+      ctx.setLineDash([])
+    }
+    ctx.beginPath()
+    ctx.moveTo(coordinates[0].x, coordinates[0].y)
+    for (let i = 1; i < coordinates.length; i++) {
+      ctx.lineTo(coordinates[i].x, coordinates[i].y)
+    }
+    ctx.stroke()
+    ctx.closePath()
   }
-  ctx.stroke()
-  ctx.closePath()
-  ctx.restore()
-}
-
-export interface LineStyle {
-  size: number
-  color: string
-  style: 'solid' | 'dashed'
-  dashedValue: number[]
 }
 
 export interface LineAttrs {
   coordinates: Coordinate[]
-  styles: LineStyle
 }
 
-const line: Figure<LineAttrs> = {
+const line: Figure<LineAttrs, Partial<LineStyle>> = {
   name: 'line',
   checkEventOn: checkCoordinateOnLine,
-  draw: (ctx: CanvasRenderingContext2D, attrs: LineAttrs) => {
-    const { coordinates, styles } = attrs
-    if (coordinates.length > 1) {
-      ctx.lineWidth = styles.size
-      ctx.strokeStyle = styles.color
-      if (styles.style === 'dashed') {
-        ctx.setLineDash(styles.dashedValue)
-      } else {
-        ctx.setLineDash([])
-      }
-      drawLine(ctx, coordinates)
-    }
+  draw: (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<LineStyle>) => {
+    drawLine(ctx, attrs, styles)
   }
 }
 

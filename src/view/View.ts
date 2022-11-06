@@ -32,8 +32,8 @@ export default abstract class View<C extends Axis = Axis> extends ElementGroup {
 
   getWidget (): Widget<C> { return this._widget }
 
-  protected createFigure (name: string, attrs: any, flag?: boolean): TypeOrNull<FigureTemplate> {
-    const figure = create(name, attrs)
+  protected createFigure (name: string, attrs: any, styles: any, flag?: boolean): TypeOrNull<FigureTemplate> {
+    const figure = create(name, attrs, styles)
     if (figure !== null && (flag ?? false)) {
       this.addElement(figure)
     }

@@ -68,34 +68,35 @@ export default class IndicatorLastValueView extends View<YAxis> {
               }
 
               const backgroundColor = plotStyle.color
-              this.createFigure('rect', {
-                x: rectStartX,
-                y: y - paddingTop - textSize / 2,
-                width: rectWidth,
-                height: rectHeight,
-                styles: {
-                  style: 'fill',
-                  fillColor: backgroundColor,
-                  stokeColor: backgroundColor,
-                  strokeSize: 1,
-                  radius: lastValueMarkTextStyles.borderRadius
+              this.createFigure(
+                'rect',
+                {
+                  x: rectStartX,
+                  y: y - paddingTop - textSize / 2,
+                  width: rectWidth,
+                  height: rectHeight
+                },
+                {
+                  color: backgroundColor,
+                  borderRadius: lastValueMarkTextStyles.borderRadius
                 }
-              })?.draw(ctx)
+              )?.draw(ctx)
 
-              this.createFigure('text', {
-                x: rectStartX + paddingLeft,
-                y,
-                text,
-                styles: {
-                  style: 'fill',
+              this.createFigure(
+                'text',
+                {
+                  x: rectStartX + paddingLeft,
+                  y,
+                  text
+                },
+                {
                   color: lastValueMarkTextStyles.color,
                   size: textSize,
                   family: lastValueMarkTextStyles.family,
                   weight: lastValueMarkTextStyles.weight,
-                  align: 'left',
                   baseline: 'middle'
                 }
-              })?.draw(ctx)
+              )?.draw(ctx)
             }
           })
         }

@@ -77,20 +77,20 @@ export default class IndicatorTooltipView extends View {
             if (calcParamText !== undefined && calcParamText.length > 0 && tooltipStyles.showParams) {
               text = `${text}${calcParamText}`
             }
-            this.createFigure('text', {
-              x: labelX,
-              y: labelY,
-              text,
-              styles: {
-                style: 'fill',
+            this.createFigure(
+              'text',
+              {
+                x: labelX,
+                y: labelY,
+                text
+              },
+              {
                 color: tooltipTextStyles.color,
                 size: textSize,
                 family: textFamily,
-                weight: textWeight,
-                align: 'left',
-                baseline: 'top'
+                weight: textWeight
               }
-            })?.draw(ctx)
+            )?.draw(ctx)
             labelX += (calcTextWidth(ctx, text) + textMarginRight)
           }
           if (valuesValid) {
@@ -124,20 +124,15 @@ export default class IndicatorTooltipView extends View {
       } else {
         labelX += marginLeft
       }
-      this.createFigure('text', {
-        x: labelX,
-        y: labelY,
-        text,
-        styles: {
-          style: 'fill',
-          color,
-          size,
-          family,
-          weight,
-          align: 'left',
-          baseline: 'top'
-        }
-      })?.draw(ctx)
+      this.createFigure(
+        'text',
+        {
+          x: labelX,
+          y: labelY,
+          text
+        },
+        { color, size, family, weight }
+      )?.draw(ctx)
       labelX += (textWidth + marginRight)
     })
     return height

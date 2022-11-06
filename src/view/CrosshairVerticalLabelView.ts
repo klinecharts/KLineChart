@@ -22,7 +22,6 @@ import XAxis from '../componentl/XAxis'
 import ChartStore from '../store/ChartStore'
 
 import { formatDate } from '../common/utils/format'
-// import { isValid } from '../common/utils/typeChecks'
 
 import CrosshairHorizontalLabelView from './CrosshairHorizontalLabelView'
 

@@ -15,12 +15,13 @@
 import TypeOrNull from '../common/TypeOrNull'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
-import { CandleType, ChangeColor } from '../common/Styles'
+import { CandleType, ChangeColor, RectStyle, PolygonType } from '../common/Styles'
 
 import ChartStore from '../store/ChartStore'
 
 import Axis from '../componentl/Axis'
 
+import { FigureAttrsStyles } from '../componentl/Figure'
 import { RectAttrs } from '../extension/figure/rect'
 
 import ChildrenView from './ChildrenView'
@@ -75,20 +76,16 @@ export default class CandleBarView extends ChildrenView {
 
     const barHeight = Math.max(1, priceY[2] - priceY[1])
 
-    let rects: RectAttrs[] = []
+    let rects: Array<FigureAttrsStyles<RectAttrs, Partial<RectStyle>>> = []
     if (type !== CandleType.OHLC) {
       rects.push({
-        x: x - 0.5,
-        y: priceY[0],
-        width: 1,
-        height: priceY[1] - priceY[0],
-        styles: {
-          style: 'fill',
-          fillColor: color,
-          stokeColor: color,
-          strokeSize: 1,
-          radius: 0
-        }
+        attrs: {
+          x: x - 0.5,
+          y: priceY[0],
+          width: 1,
+          height: priceY[1] - priceY[0]
+        },
+        styles: { color }
       })
       if (
         type === CandleType.CANDLE_STROKE ||
@@ -96,89 +93,68 @@ export default class CandleBarView extends ChildrenView {
         (type === CandleType.CANDLE_DOWN_STROKE && open > close)
       ) {
         rects.push({
-          x: x - halfGapBar + 0.5,
-          y: priceY[1],
-          width: gapBar - 1,
-          height: barHeight,
+          attrs: {
+            x: x - halfGapBar + 0.5,
+            y: priceY[1],
+            width: gapBar - 1,
+            height: barHeight
+          },
           styles: {
-            style: 'stroke',
-            fillColor: color,
-            stokeColor: color,
-            strokeSize: 1,
-            radius: 0
+            style: PolygonType.STROKE,
+            borderColor: color
           }
         })
       } else {
         rects.push({
-          x: x - halfGapBar,
-          y: priceY[1],
-          width: gapBar,
-          height: barHeight,
-          styles: {
-            style: 'fill',
-            fillColor: color,
-            stokeColor: color,
-            strokeSize: 1,
-            radius: 0
-          }
+          attrs: {
+            x: x - halfGapBar,
+            y: priceY[1],
+            width: gapBar,
+            height: barHeight
+          },
+          styles: { color }
         })
       }
       rects.push({
-        x: x - 0.5,
-        y: priceY[2],
-        width: 1,
-        height: priceY[3] - priceY[2],
-        styles: {
-          style: 'fill',
-          fillColor: color,
-          stokeColor: color,
-          strokeSize: 1,
-          radius: 0
-        }
+        attrs: {
+          x: x - 0.5,
+          y: priceY[2],
+          width: 1,
+          height: priceY[3] - priceY[2]
+        },
+        styles: { color }
       })
     } else {
       rects = [
         {
-          x: x - 0.5,
-          y: priceY[0],
-          width: 1,
-          height: priceY[3] - priceY[0],
-          styles: {
-            style: 'fill',
-            fillColor: color,
-            stokeColor: color,
-            strokeSize: 1,
-            radius: 0
-          }
+          attrs: {
+            x: x - 0.5,
+            y: priceY[0],
+            width: 1,
+            height: priceY[3] - priceY[0]
+          },
+          styles: { color }
         }, {
-          x: x - halfGapBar,
-          y: openY,
-          width: halfGapBar,
-          height: 1,
-          styles: {
-            style: 'fill',
-            fillColor: color,
-            stokeColor: color,
-            strokeSize: 1,
-            radius: 0
-          }
+          attrs: {
+            x: x - halfGapBar,
+            y: openY,
+            width: halfGapBar,
+            height: 1
+          },
+          styles: { color }
         }, {
-          x,
-          y: closeY,
-          width: halfGapBar,
-          height: 1,
-          styles: {
-            style: 'fill',
-            fillColor: color,
-            stokeColor: color,
-            strokeSize: 1,
-            radius: 0
-          }
+          attrs: {
+            x,
+            y: closeY,
+            width: halfGapBar,
+            height: 1
+          },
+          styles: { color }
         }
       ]
     }
-    rects.forEach(rect => {
-      this.createFigure('rect', rect)?.draw(ctx)
+    rects.forEach(({ attrs, styles }) => {
+      this.createFigure('rect', attrs, styles)?.draw(ctx)
     })
   }
 }

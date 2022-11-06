@@ -13,17 +13,19 @@
  */
 
 import Coordinate from '../../common/Coordinate'
+import { AlignTextStyle } from '../../common/Styles'
 
 import { createFont } from '../../common/utils/canvas'
 
 import { Figure } from '../../componentl/Figure'
 
-export function checkCoordinateOnText (coordinate: Coordinate, text: Omit<TextAttrs, 'styles'> & Pick<TextStyle, 'size' | 'align' | 'baseline'>): boolean {
+export function checkCoordinateOnText (coordinate: Coordinate, text: TextAttrs, styles: Partial<AlignTextStyle>): boolean {
+  const { size = 12, align = 'left', baseline = 'top' } = styles
   const length = text.text.toString().length
-  const width = text.size * length
-  const height = text.size
+  const width = size * length
+  const height = size
   let startX: number
-  switch (text.align) {
+  switch (align) {
     case 'left':
     case 'start': {
       startX = coordinate.x
@@ -40,7 +42,7 @@ export function checkCoordinateOnText (coordinate: Coordinate, text: Omit<TextAt
     }
   }
   let startY: number
-  switch (text.baseline) {
+  switch (baseline) {
     case 'top':
     case 'hanging': {
       startY = coordinate.y
@@ -65,44 +67,36 @@ export function checkCoordinateOnText (coordinate: Coordinate, text: Omit<TextAt
   )
 }
 
-export function drawText (ctx: CanvasRenderingContext2D, text: any, x: number, y: number, isFill?: boolean): void {
-  if (isFill ?? false) {
-    ctx.fillText(text, x, y)
-  } else {
-    ctx.strokeText(text, x, y)
-  }
-}
+export function drawText (ctx: CanvasRenderingContext2D, attrs: TextAttrs, styles: Partial<AlignTextStyle>): void {
+  const { x, y, text } = attrs
+  const {
+    color = 'currentColor',
+    size = 12,
+    family, weight,
+    align = 'left',
+    baseline = 'top'
+  } = styles
+  ctx.textAlign = align
+  ctx.textBaseline = baseline
+  ctx.font = createFont(size, weight, family)
 
-export interface TextStyle {
-  style: 'fill' | 'stroke'
-  color: string
-  size: number
-  family: string
-  weight: number | string
-  align: CanvasTextAlign
-  baseline: CanvasTextBaseline
+  ctx.strokeStyle = color
+  ctx.fillText(text, x, y)
 }
 
 export interface TextAttrs {
   x: number
   y: number
   text: any
-  styles: TextStyle
 }
 
-const text: Figure<TextAttrs> = {
+const text: Figure<TextAttrs, Partial<AlignTextStyle>> = {
   name: 'text',
-  checkEventOn: (coordinate: Coordinate, attrs: TextAttrs) => {
-    return checkCoordinateOnText(coordinate, { x: attrs.x, y: attrs.y, text: attrs.text, size: attrs.styles.size, align: attrs.styles.align, baseline: attrs.styles.baseline })
+  checkEventOn: (coordinate: Coordinate, attrs: TextAttrs, styles: Partial<AlignTextStyle>) => {
+    return checkCoordinateOnText(coordinate, attrs, styles)
   },
-  draw: (ctx: CanvasRenderingContext2D, attrs: TextAttrs) => {
-    const { x, y, text, styles } = attrs
-    ctx.textAlign = styles.align
-    ctx.textBaseline = styles.baseline
-    ctx.font = createFont(styles.size, styles.weight, styles.family)
-    ctx.strokeStyle = styles.color
-    ctx.fillStyle = styles.color
-    drawText(ctx, text, x, y, styles.style === 'fill')
+  draw: (ctx: CanvasRenderingContext2D, attrs: TextAttrs, styles: Partial<AlignTextStyle>) => {
+    drawText(ctx, attrs, styles)
   }
 }
 

@@ -15,42 +15,51 @@
 import Coordinate from '../common/Coordinate'
 import Element from '../common/Element'
 
-export interface Figure<A = any> {
-  name: string
-  draw: (ctx: CanvasRenderingContext2D, attrs: A) => void
-  checkEventOn: (coordinate: Coordinate, attrs: A) => boolean
+export const DEVIATION = 2
+
+export interface FigureAttrsStyles<A, S> {
+  attrs: A
+  styles: S
 }
 
-export type FigureConstructor<A = any> = new (attrs: A) => FigureTemplate<A>
+export interface Figure<A = any, S = any> {
+  name: string
+  draw: (ctx: CanvasRenderingContext2D, attrs: A, styles: S) => void
+  checkEventOn: (coordinate: Coordinate, attrs: A, styles: S) => boolean
+}
 
-export default abstract class FigureTemplate<A = any> extends Element implements Omit<Figure<A>, 'name'> {
-  readonly attrs: A
+export type FigureConstructor<A = any, S = any> = new (attrs: A, styles: S) => FigureTemplate<A, S>
 
-  constructor (attrs: A) {
+export default abstract class FigureTemplate<A = any, S = any> extends Element implements Omit<Figure<A, S>, 'name'> {
+  private readonly _attrs: A
+  private readonly _styles: S
+
+  constructor (attrs: A, styles: S) {
     super()
-    this.attrs = attrs
+    this._attrs = attrs
+    this._styles = styles
   }
 
   checkEventOn (coordinate: Coordinate): boolean {
-    return this.checkEventOnImp(coordinate, this.attrs)
+    return this.checkEventOnImp(coordinate, this._attrs, this._styles)
   }
 
   draw (ctx: CanvasRenderingContext2D): void {
-    this.drawImp(ctx, this.attrs)
+    this.drawImp(ctx, this._attrs, this._styles)
   }
 
-  abstract checkEventOnImp (coordinate: Coordinate, attrs: A): boolean
+  abstract checkEventOnImp (coordinate: Coordinate, attrs: A, styles: S): boolean
 
-  abstract drawImp (ctx: CanvasRenderingContext2D, attrs: A): void
+  abstract drawImp (ctx: CanvasRenderingContext2D, attrs: A, styles: S): void
 
-  static extend<A> (figure: Omit<Figure<A>, 'name'>): new (attrs: A) => FigureTemplate<A> {
-    class Custom extends FigureTemplate<A> {
-      checkEventOnImp (coordinate: Coordinate, attrs: A): boolean {
-        return figure.checkEventOn(coordinate, attrs)
+  static extend<A, S> (figure: Omit<Figure<A, S>, 'name'>): new (attrs: A, styles: S) => FigureTemplate<A, S> {
+    class Custom extends FigureTemplate<A, S> {
+      checkEventOnImp (coordinate: Coordinate, attrs: A, styles: S): boolean {
+        return figure.checkEventOn(coordinate, attrs, styles)
       }
 
-      drawImp (ctx: CanvasRenderingContext2D, attrs: A): void {
-        figure.draw(ctx, attrs)
+      drawImp (ctx: CanvasRenderingContext2D, attrs: A, styles: S): void {
+        figure.draw(ctx, attrs, styles)
       }
     }
     return Custom

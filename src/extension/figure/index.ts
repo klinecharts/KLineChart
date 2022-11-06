@@ -33,18 +33,18 @@ function getSupportFigures (): string[] {
   return Object.keys(figures)
 }
 
-function reisterFigure<A = any> (figure: Figure<A>): void {
+function reisterFigure<A = any, S = any> (figure: Figure<A, S>): void {
   figures[figure.name] = FigureTemplate.extend(figure)
 }
 
-function getFigureClass<A = any> (name: string): TypeOrNull<FigureConstructor<A>> {
+function getFigureClass<A = any, S = any> (name: string): TypeOrNull<FigureConstructor<A, S>> {
   return figures[name] ?? null
 }
 
-function createFigure<A = any> (name: string, attrs: A): TypeOrNull<FigureTemplate<A>> {
-  const FigureClazz = getFigureClass<A>(name)
+function createFigure<A = any, S = any> (name: string, attrs: A, styles: S): TypeOrNull<FigureTemplate<A, S>> {
+  const FigureClazz = getFigureClass<A, S>(name)
   if (FigureClazz !== null) {
-    return new FigureClazz(attrs)
+    return new FigureClazz(attrs, styles)
   }
   return null
 }

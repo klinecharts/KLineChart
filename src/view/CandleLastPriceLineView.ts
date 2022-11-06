@@ -40,18 +40,21 @@ export default class CandleLastPriceView extends View {
         } else {
           color = lastPriceMarkStyles.noChangeColor
         }
-        this.createFigure('line', {
-          coordinates: [
-            { x: 0, y: priceY },
-            { x: bounding.width, y: priceY }
-          ],
-          styles: {
+        this.createFigure(
+          'line',
+          {
+            coordinates: [
+              { x: 0, y: priceY },
+              { x: bounding.width, y: priceY }
+            ]
+          },
+          {
             style: lastPriceMarkLineStyles.style,
             color,
             size: lastPriceMarkLineStyles.size,
             dashedValue: lastPriceMarkLineStyles.dashedValue
           }
-        })?.draw(ctx)
+        )?.draw(ctx)
       }
     }
   }

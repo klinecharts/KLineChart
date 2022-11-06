@@ -15,15 +15,7 @@
 import KLineData from '../common/KLineData'
 
 /**
- * 填充空心样式类型
- */
-export const enum StrokeFillType {
-  STROKE = 'stroke',
-  FILL = 'fill'
-}
-
-/**
- * 线的样式
+ * line type
  * @type {{DASHED: string, SOLID: string}}
  */
 export const enum LineType {
@@ -31,37 +23,75 @@ export const enum LineType {
   SOLID = 'solid'
 }
 
-/**
- * y轴位置
- * @type {{LEFT: string, RIGHT: string}}
- */
-export const enum YAxisPosition {
-  LEFT = 'left',
-  RIGHT = 'right'
+export interface LineStyle {
+  style: LineType
+  size: number
+  color: string
+  dashedValue: number[]
 }
 
-/**
- * y轴类型
- * @type {{PERCENTAGE: string, LOG: string, NORMAL: string}}
- */
-export const enum YAxisType {
-  NORMAL = 'normal',
-  PERCENTAGE = 'percentage',
-  LOG = 'log'
+export interface StateLineStyle extends LineStyle {
+  show: boolean
 }
 
-/**
- * 蜡烛图样式
- * @type {{AREA: string, OHLC: string, CANDLE_STROKE: string, CANDLE_SOLID: string, CANDLE_DOWN_STROKE: string, CANDLE_UP_STROKE: string}}
- */
-export const enum CandleType {
-  CANDLE_SOLID = 'candle_solid',
-  CANDLE_STROKE = 'candle_stroke',
-  CANDLE_UP_STROKE = 'candle_up_stroke',
-  CANDLE_DOWN_STROKE = 'candle_down_stroke',
-  OHLC = 'ohlc',
-  AREA = 'area'
+export const enum PolygonType {
+  STROKE = 'stroke',
+  FILL = 'fill',
+  STROKE_FILL = 'stroke_fill'
 }
+
+export interface PolygonStyle {
+  style: PolygonType
+  color: string | CanvasGradient
+  borderColor: string
+  borderSize: number
+  borderStyle: LineType
+  borderDashedValue: number[]
+}
+
+export interface RectStyle extends PolygonStyle {
+  borderRadius: number
+}
+
+export interface TextStyle {
+  color: string
+  size: number
+  family: string
+  weight: number | string
+}
+
+export interface AlignTextStyle extends TextStyle {
+  align: CanvasTextAlign
+  baseline: CanvasTextBaseline
+}
+
+export interface OffsetTextStyle extends TextStyle {
+  offset: number[]
+}
+
+export interface StateTextStyle extends TextStyle {
+  show: boolean
+}
+
+export interface PaddingTextStyle extends StateTextStyle {
+  paddingLeft: number
+  paddingTop: number
+  paddingRight: number
+  paddingBottom: number
+  borderSize: number
+  borderColor: string
+  borderRadius: number
+  backgroundColor: string
+}
+
+export interface MarginTextStyle extends StateTextStyle {
+  marginLeft: number
+  marginTop: number
+  marginRight: number
+  marginBottom: number
+}
+
+export type LastValueMarkTextStyle = Omit<PaddingTextStyle, 'backgroundColor' | 'borderSize' | 'borderColor'>
 
 /**
  * 说明显示规则
@@ -82,29 +112,6 @@ export const enum TooltipShowType {
   STANDARD = 'standard'
 }
 
-/**
- * 注解标识类似
- * @type {{RECT: string, TRIANGLE: string, DIAMOND: string, CUSTOM: string, NONE: string, CIRCLE: string}}
- */
-export const enum AnnotationSymbolType {
-  CIRCLE = 'circle',
-  RECT = 'rect',
-  TRIANGLE = 'triangle',
-  DIAMOND = 'diamond',
-  CUSTOM = 'custom',
-  NONE = 'none'
-}
-
-/**
- * 覆盖物位置
- * @type {{TOP: string, BOTTOM: string, POINT: string}}
- */
-export const enum OverlayPosition {
-  POINT = 'point',
-  TOP = 'top',
-  BOTTOM = 'bottom'
-}
-
 export interface ChangeColor {
   upColor: string
   downColor: string
@@ -116,51 +123,19 @@ export interface GradientColor {
   color: string
 }
 
-export interface LineStyle {
-  show: boolean
-  size: number
-  color: string
-  style: LineType
-  dashedValue: number[]
-}
-
-export interface TextStyle {
-  show: boolean
-  size: number
-  color: string
-  family: string
-  weight: string
-}
-
-export interface PaddingTextStyle extends TextStyle {
-  paddingLeft: number
-  paddingTop: number
-  paddingRight: number
-  paddingBottom: number
-  borderSize: number
-  borderColor: string
-  borderRadius: number
-  backgroundColor: string
-}
-
-export interface MarginTextStyle extends TextStyle {
-  marginLeft: number
-  marginTop: number
-  marginRight: number
-  marginBottom: number
-}
-
 export interface GridStyle {
   show: boolean
-  horizontal: LineStyle
-  vertical: LineStyle
+  horizontal: StateLineStyle
+  vertical: StateLineStyle
 }
+
+export type TooltipTextStyle = Omit<MarginTextStyle, 'show'>
 
 export interface TooltipStyle {
   showRule: TooltipShowRule
   showType: TooltipShowType
-  defaultValue: 'n/a'
-  text: Omit<MarginTextStyle, 'show'>
+  defaultValue: string
+  text: TooltipTextStyle
 }
 
 /**
@@ -201,10 +176,11 @@ export interface CandleHighLowPriceMarkStyle {
   textWeight: string
 }
 
+export type CandleLastPriceMarkLineStyle = Omit<StateLineStyle, 'color'>
 export interface CandleLastPriceMarkStyle extends ChangeColor {
   show: boolean
-  line: Omit<LineStyle, 'color'>
-  text: Omit<PaddingTextStyle, 'backgroundColor' | 'borderSize' | 'borderColor'>
+  line: CandleLastPriceMarkLineStyle
+  text: LastValueMarkTextStyle
 }
 
 export interface CandlePriceMarkStyle {
@@ -214,7 +190,7 @@ export interface CandlePriceMarkStyle {
   last: CandleLastPriceMarkStyle
 }
 
-export interface CandleTooltipRectStyle {
+export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borderDashedValue' | 'borderStyle'> {
   paddingLeft: number
   paddingRight: number
   paddingTop: number
@@ -222,10 +198,6 @@ export interface CandleTooltipRectStyle {
   offsetLeft: number
   offsetTop: number
   offsetRight: number
-  borderRadius: number
-  borderSize: number
-  borderColor: string
-  backgroundColor: string
 }
 
 export interface CandleTooltipValuesChild {
@@ -239,6 +211,19 @@ export interface CandleTooltipStyle extends TooltipStyle {
   labels: string[]
   values: CandleTooltipValuesCallback | string[] | null
   rect: CandleTooltipRectStyle
+}
+
+/**
+ * 蜡烛图样式
+ * @type {{AREA: string, OHLC: string, CANDLE_STROKE: string, CANDLE_SOLID: string, CANDLE_DOWN_STROKE: string, CANDLE_UP_STROKE: string}}
+ */
+export const enum CandleType {
+  CANDLE_SOLID = 'candle_solid',
+  CANDLE_STROKE = 'candle_stroke',
+  CANDLE_UP_STROKE = 'candle_up_stroke',
+  CANDLE_DOWN_STROKE = 'candle_down_stroke',
+  OHLC = 'ohlc',
+  AREA = 'area'
 }
 
 export interface CandleStyle {
@@ -341,7 +326,7 @@ const defaultCandle: CandleStyle = {
       borderRadius: 4,
       borderSize: 1,
       borderColor: '#F2F3F5',
-      backgroundColor: '#FEFEFE'
+      color: '#FEFEFE'
     },
     text: {
       size: 12,
@@ -356,13 +341,11 @@ const defaultCandle: CandleStyle = {
   }
 }
 
-export interface IndicatorBarCirleStyle extends ChangeColor {
-  style: StrokeFillType
-}
+export type IndicatorPolygonStyle = Omit<PolygonStyle, 'color' | 'borderColor'> & ChangeColor
 
 export interface IndicatorLastValueMarkStyle {
   show: boolean
-  text: Omit<PaddingTextStyle, 'backgroundColor' | 'borderSize' | 'borderColor'>
+  text: LastValueMarkTextStyle
 }
 
 export interface IndicatorTooltipStyle extends TooltipStyle {
@@ -372,9 +355,9 @@ export interface IndicatorTooltipStyle extends TooltipStyle {
 
 export interface IndicatorStyle {
   ohlc: ChangeColor
-  bars: IndicatorBarCirleStyle[]
-  lines: Array<Omit<LineStyle, 'show'>>
-  circles: IndicatorBarCirleStyle[]
+  bars: IndicatorPolygonStyle[]
+  lines: LineStyle[]
+  circles: IndicatorPolygonStyle[]
   lastValueMark: IndicatorLastValueMarkStyle
   tooltip: IndicatorTooltipStyle
 }
@@ -390,7 +373,10 @@ const defaultIndicator: IndicatorStyle = {
     noChangeColor: '#888888'
   },
   bars: [{
-    style: StrokeFillType.FILL,
+    style: PolygonType.FILL,
+    borderStyle: LineType.SOLID,
+    borderSize: 1,
+    borderDashedValue: [2, 2],
     upColor: 'rgba(38, 166, 154, .65)',
     downColor: 'rgba(239, 83, 80, .65)',
     noChangeColor: '#888888'
@@ -424,7 +410,10 @@ const defaultIndicator: IndicatorStyle = {
     }
   ],
   circles: [{
-    style: StrokeFillType.FILL,
+    style: PolygonType.FILL,
+    borderStyle: LineType.SOLID,
+    borderSize: 1,
+    borderDashedValue: [2, 2],
     upColor: 'rgba(38, 166, 154, .65)',
     downColor: 'rgba(239, 83, 80, .65)',
     noChangeColor: '#888888'
@@ -463,13 +452,13 @@ const defaultIndicator: IndicatorStyle = {
   }
 }
 
-export type AxisLineStyle = Omit<LineStyle, 'style' | 'dashedValue'>
+export type AxisLineStyle = Omit<StateLineStyle, 'style' | 'dashedValue'>
 
-export interface AxisTickLineStyle extends Omit<LineStyle, 'style' | 'dashedValue'> {
+export interface AxisTickLineStyle extends AxisLineStyle {
   length: number
 }
 
-export interface AxisTickTextStyle extends TextStyle {
+export interface AxisTickTextStyle extends StateTextStyle {
   marginStart: number
   marginEnd: number
 }
@@ -524,6 +513,25 @@ const defaultXAxis: XAxisStyle = {
     length: 3,
     color: '#DDDDDD'
   }
+}
+
+/**
+ * y轴位置
+ * @type {{LEFT: string, RIGHT: string}}
+ */
+export const enum YAxisPosition {
+  LEFT = 'left',
+  RIGHT = 'right'
+}
+
+/**
+ * y轴类型
+ * @type {{PERCENTAGE: string, LOG: string, NORMAL: string}}
+ */
+export const enum YAxisType {
+  NORMAL = 'normal',
+  PERCENTAGE = 'percentage',
+  LOG = 'log'
 }
 
 export interface YAxisStyle extends AxisStyle {
@@ -594,7 +602,7 @@ const defaultYAxis: YAxisStyle = {
 
 export interface CrosshairDirectionStyle {
   show: boolean
-  line: LineStyle
+  line: StateLineStyle
   text: PaddingTextStyle
 }
 
@@ -673,14 +681,15 @@ export interface ShapeStyle {
   point: ShapePointStyle
   line: LineStyle
   polygon: PolygonStyle
-  text: TextStyle
+  arc: LineStyle
+  text: OffsetTextStyle
 }
 
 /**
  * 默认图形配置
  * @type {{arc: {style: string, color: string, size: number}, polygon: {style: string, color: string, size: number}, line: {style: string, color: string, size: number, dashValue: number[]}, text: {style: string, marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
  */
-const defaultShape = {
+const defaultShape: ShapeStyle = {
   point: {
     backgroundColor: '#2196F3',
     borderColor: 'rgba(33, 150, 243, 0.35)',
@@ -695,34 +704,23 @@ const defaultShape = {
     style: LineType.SOLID,
     color: '#2196F3',
     size: 1,
-    dashValue: [2, 2]
+    dashedValue: [2, 2]
   },
   polygon: {
-    style: StrokeFillType.STROKE,
-    stroke: {
-      style: LineType.SOLID,
-      size: 1,
-      color: '#2196F3',
-      dashValue: [2, 2]
-    },
-    fill: {
-      color: '#2196F3'
-    }
+    style: PolygonType.FILL,
+    color: '#2196F3',
+    borderColor: '#2196F3',
+    borderSize: 1,
+    borderStyle: LineType.SOLID,
+    borderDashedValue: [2, 2]
   },
   arc: {
-    style: StrokeFillType.STROKE,
-    stroke: {
-      style: LineType.SOLID,
-      size: 1,
-      color: '#2196F3',
-      dashValue: [2, 2]
-    },
-    fill: {
-      color: '#2196F3'
-    }
+    style: LineType.SOLID,
+    color: '#2196F3',
+    size: 1,
+    dashedValue: [2, 2]
   },
   text: {
-    style: StrokeFillType.FILL,
     color: '#2196F3',
     size: 12,
     family: 'Helvetica Neue',
@@ -814,6 +812,7 @@ export interface Styles {
   yAxis: YAxisStyle
   separator: SeparatorStyle
   crosshair: CrosshairStyle
+  shape: ShapeStyle
 }
 
 export const defaultStyles: Styles = {
@@ -823,8 +822,8 @@ export const defaultStyles: Styles = {
   xAxis: defaultXAxis,
   yAxis: defaultYAxis,
   separator: defaultSeparator,
-  crosshair: defaultCrosshair
-  // shape: defaultShape,
+  crosshair: defaultCrosshair,
+  shape: defaultShape
   // annotation: defaultAnnotation,
   // tag: defaultTag
 }

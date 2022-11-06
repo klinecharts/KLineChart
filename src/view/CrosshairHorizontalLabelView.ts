@@ -53,34 +53,37 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
             rectWidth, rectHeight, crosshair, bounding, axis, textStyles
           )
 
-          this.createFigure('rect', {
-            x: rectX,
-            y: rectY,
-            width: rectWidth,
-            height: rectHeight,
-            styles: {
-              style: 'stroke-fill',
-              fillColor: textStyles.backgroundColor,
-              stokeColor: textStyles.borderColor,
-              strokeSize: textStyles.borderSize,
-              radius: textStyles.borderRadius
+          this.createFigure(
+            'rect',
+            {
+              x: rectX,
+              y: rectY,
+              width: rectWidth,
+              height: rectHeight
+            },
+            {
+              color: textStyles.backgroundColor,
+              borderColor: textStyles.borderColor,
+              borderSize: textStyles.borderSize,
+              borderRadius: textStyles.borderRadius
             }
-          })?.draw(ctx)
+          )?.draw(ctx)
 
-          this.createFigure('text', {
-            x: rectX + textStyles.paddingLeft,
-            y: rectY + rectHeight / 2,
-            text,
-            styles: {
-              style: 'fill',
+          this.createFigure(
+            'text',
+            {
+              x: rectX + textStyles.paddingLeft,
+              y: rectY + rectHeight / 2,
+              text
+            },
+            {
               color: textStyles.color,
               size: textStyles.size,
               family: textStyles.family,
               weight: textStyles.weight,
-              align: 'left',
               baseline: 'middle'
             }
-          })?.draw(ctx)
+          )?.draw(ctx)
         }
       }
     }

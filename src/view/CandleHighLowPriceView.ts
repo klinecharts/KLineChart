@@ -79,19 +79,17 @@ export default class CandleHighLowPriceView extends ChildrenView {
   ): void {
     const startX = coordinate.x
     const startY = coordinate.y + offsets[0]
-    this.createFigure('line', {
-      coordinates: [
-        { x: startX - 2, y: startY + offsets[0] },
-        { x: startX, y: startY },
-        { x: startX + 2, y: startY + offsets[0] }
-      ],
-      styles: {
-        style: 'solid',
-        color: styles.color,
-        size: 1,
-        dashedValue: []
-      }
-    })?.draw(ctx)
+    this.createFigure(
+      'line',
+      {
+        coordinates: [
+          { x: startX - 2, y: startY + offsets[0] },
+          { x: startX, y: startY },
+          { x: startX + 2, y: startY + offsets[0] }
+        ]
+      },
+      { color: styles.color }
+    )?.draw(ctx)
 
     let lineEndX: number
     let textStartX: number
@@ -109,26 +107,25 @@ export default class CandleHighLowPriceView extends ChildrenView {
 
     // 绘制竖线
     const y = startY + offsets[1]
-    this.createFigure('line', {
-      coordinates: [
-        { x: startX, y: startY },
-        { x: startX, y },
-        { x: lineEndX, y }
-      ],
-      styles: {
-        style: 'solid',
-        color: styles.color,
-        size: 1,
-        dashedValue: []
-      }
-    })?.draw(ctx)
-
-    this.createFigure('text', {
-      x: textStartX,
-      y,
-      text,
-      styles: {
-        style: 'fill',
+    this.createFigure(
+      'line',
+      {
+        coordinates: [
+          { x: startX, y: startY },
+          { x: startX, y },
+          { x: lineEndX, y }
+        ]
+      },
+      { color: styles.color }
+    )?.draw(ctx)
+    this.createFigure(
+      'text',
+      {
+        x: textStartX,
+        y,
+        text
+      },
+      {
         color: styles.color,
         size: styles.textSize,
         family: styles.textWeight,
@@ -136,6 +133,6 @@ export default class CandleHighLowPriceView extends ChildrenView {
         align: textAlign,
         baseline: 'middle'
       }
-    })?.draw(ctx)
+    )?.draw(ctx)
   }
 }

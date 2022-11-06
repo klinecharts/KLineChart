@@ -28,19 +28,12 @@ export default class XAxisView extends AxisView<XAxis> {
     return styles.xAxis
   }
 
-  protected createAxisLine (bounding: Required<Bounding>, styles: AxisStyle): LineAttrs {
-    const axisLineStyles = styles.axisLine
+  protected createAxisLine (bounding: Required<Bounding>): LineAttrs {
     return {
       coordinates: [
         { x: 0, y: 0 },
         { x: bounding.width, y: 0 }
-      ],
-      styles: {
-        style: 'solid',
-        size: axisLineStyles.size,
-        color: axisLineStyles.color,
-        dashedValue: []
-      }
+      ]
     }
   }
 
@@ -51,13 +44,7 @@ export default class XAxisView extends AxisView<XAxis> {
       coordinates: [
         { x: tick.coord, y: 0 },
         { x: tick.coord, y: axisLineSize + tickLineStyles.length }
-      ],
-      styles: {
-        style: 'solid',
-        size: tickLineStyles.size,
-        color: tickLineStyles.color,
-        dashedValue: []
-      }
+      ]
     }))
   }
 
@@ -68,16 +55,15 @@ export default class XAxisView extends AxisView<XAxis> {
     return ticks.map(tick => ({
       x: tick.coord,
       y: axisLineSize + tickLineLength + tickTickStyles.marginStart,
-      text: tick.text,
-      styles: {
-        style: 'fill',
-        color: tickTickStyles.color,
-        size: tickTickStyles.size,
-        family: tickTickStyles.family,
-        weight: tickTickStyles.weight,
-        align: 'center',
-        baseline: 'top'
-      }
+      text: tick.text
     }))
+  }
+
+  protected getTickTextAlign (): CanvasTextAlign {
+    return 'center'
+  }
+
+  protected getTickTextBaseline (): CanvasTextBaseline {
+    return 'top'
   }
 }

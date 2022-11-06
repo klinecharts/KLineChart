@@ -79,11 +79,8 @@ export default class CandleLastPriceLabelView extends View {
           width: rectWidth,
           height: rectHeight,
           styles: {
-            style: 'fill',
-            fillColor: backgroundColor,
-            stokeColor: backgroundColor,
-            strokeSize: 1,
-            radius: lastPriceMarkTextStyles.borderRadius
+            color: backgroundColor,
+            borderRadius: lastPriceMarkTextStyles.borderRadius
           }
         })?.draw(ctx)
 
@@ -92,12 +89,10 @@ export default class CandleLastPriceLabelView extends View {
           y: priceY,
           text,
           styles: {
-            style: 'fill',
             color: lastPriceMarkTextStyles.color,
             size: textSize,
             family: lastPriceMarkTextStyles.family,
             weight: lastPriceMarkTextStyles.weight,
-            align: 'left',
             baseline: 'middle'
           }
         })?.draw(ctx)

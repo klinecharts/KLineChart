@@ -35,18 +35,16 @@ export default class GridView extends View<YAxis> {
       if (horizontalShow) {
         const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as XAxis
         xAxis.getTicks().forEach(tick => {
-          this.createFigure('line', {
-            coordinates: [
-              { x: tick.coord, y: 0 },
-              { x: tick.coord, y: bounding.height }
-            ],
-            styles: {
-              style: horizontalStyles.style,
-              size: horizontalStyles.size,
-              color: horizontalStyles.color,
-              dashedValue: horizontalStyles.dashedValue
-            }
-          })?.draw(ctx)
+          this.createFigure(
+            'line',
+            {
+              coordinates: [
+                { x: tick.coord, y: 0 },
+                { x: tick.coord, y: bounding.height }
+              ]
+            },
+            horizontalStyles
+          )?.draw(ctx)
         })
       }
       const verticalStyles = gridStyles.vertical
@@ -54,18 +52,16 @@ export default class GridView extends View<YAxis> {
       if (verticalShow) {
         const yAxis = pane.getAxisComponent()
         yAxis.getTicks().forEach(tick => {
-          this.createFigure('line', {
-            coordinates: [
-              { x: 0, y: tick.coord },
-              { x: bounding.width, y: tick.coord }
-            ],
-            styles: {
-              style: verticalStyles.style,
-              size: verticalStyles.size,
-              color: verticalStyles.color,
-              dashedValue: verticalStyles.dashedValue
-            }
-          })?.draw(ctx)
+          this.createFigure(
+            'line',
+            {
+              coordinates: [
+                { x: 0, y: tick.coord },
+                { x: bounding.width, y: tick.coord }
+              ]
+            },
+            verticalStyles
+          )?.draw(ctx)
         })
       }
     }
