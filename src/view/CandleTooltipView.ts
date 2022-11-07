@@ -18,7 +18,7 @@ import Precision from '../common/Precision'
 import Crosshair from '../common/Crosshair'
 import { Styles, CandleStyle, CandleTooltipValuesChild, CandleTooltipValuesCallback, TooltipShowType, YAxisPosition } from '../common/Styles'
 
-import IndicatorTemplate, { Indicator } from '../componentl/Indicator'
+import IndicatorTemplate from '../componentl/Indicator'
 
 import IndicatorTooltipView, { TooltipData } from './IndicatorTooltipView'
 
@@ -31,7 +31,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const bounding = widget.getBounding()
-    const yAxisBounding = pane.getYAxisWidget()?.getBounding() as Required<Bounding>
+    const yAxisBounding = pane.getYAxisWidget()?.getBounding() as Bounding
     const chartStore = pane.getChart().getChartStore()
     const dataList = chartStore.getDataList()
     const precision = chartStore.getPrecision()
@@ -73,7 +73,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
 
   private _drawCandleStandardTooltip (
     ctx: CanvasRenderingContext2D,
-    bounding: Required<Bounding>,
+    bounding: Bounding,
     crosshair: Crosshair,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
@@ -96,8 +96,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     ctx: CanvasRenderingContext2D,
     dataList: KLineData[],
     indicators: Map<string, IndicatorTemplate>,
-    bounding: Required<Bounding>,
-    yAxisBounding: Required<Bounding>,
+    bounding: Bounding,
+    yAxisBounding: Bounding,
     crosshair: Crosshair,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
@@ -161,7 +161,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const indicatorValues: TooltipData[][] = []
       if (isDrawIndicatorTooltip) {
         ctx.font = createFont(indicatorTextSize, indicatorTextWeight, indicatorTextFamily)
-        indicators.forEach((indicator: Required<Indicator>) => {
+        indicators.forEach(indicator => {
           const values = this.getIndicatorTooltipData(dataList, crosshair, indicator, indicatorStyles).values ?? []
           indicatorValues.push(values)
           values.forEach(value => {

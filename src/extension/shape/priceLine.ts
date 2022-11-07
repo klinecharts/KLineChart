@@ -12,30 +12,27 @@
  * limitations under the License.
  */
 
-import { checkCoordinateOnStraightLine } from './shapeHelper'
+import PickRequired from '../../common/PickRequired'
 
-export default {
-  name: 'horizontalStraightLine',
+import { Shape } from '../../componentl/Shape'
+
+const priceLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+  name: 'priceLine',
   totalStep: 2,
-  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
-    return checkCoordinateOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
-  },
-  createShapeDataSource: ({ coordinates, viewport }) => {
+  createDataSource: ({ coordinates, bounding, precision, shape }) => {
+    const { value } = (shape.points)[0]
     return [
       {
         type: 'line',
-        isDraw: true,
-        isCheck: true,
-        dataSource: [[
-          {
-            x: 0,
-            y: coordinates[0].y
-          }, {
-            x: viewport.width,
-            y: coordinates[0].y
-          }
-        ]]
+        attrs: { coordinates: [coordinates[0], { x: bounding.width, y: coordinates[0].y }] }
+      },
+      {
+        type: 'text',
+        isCheck: false,
+        attrs: { x: coordinates[0].x, y: coordinates[0].y, text: value.toFixed(precision.price) }
       }
     ]
   }
 }
+
+export default priceLine

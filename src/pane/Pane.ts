@@ -54,7 +54,7 @@ export default abstract class Pane<C extends Axis> implements Updater {
   private _separatorWidget: TypeOrNull<SeparatorWidget> = null
   private readonly _axis: C = this.createAxisComponent()
 
-  private readonly _bounding: Required<Bounding> = getDefaultBounding()
+  private readonly _bounding: Bounding = getDefaultBounding()
 
   private _topPane: TypeOrNull<Pane<Axis>>
   private _bottomPane: TypeOrNull<Pane<Axis>>
@@ -109,11 +109,11 @@ export default abstract class Pane<C extends Axis> implements Updater {
     return this._axis
   }
 
-  setBounding (rootBounding: Bounding, mainBounding?: Bounding, yAxisBounding?: Bounding): Pane<C> {
+  setBounding (rootBounding: Partial<Bounding>, mainBounding?: Partial<Bounding>, yAxisBounding?: Partial<Bounding>): Pane<C> {
     merge(this._bounding, rootBounding)
     if (rootBounding.height !== undefined) {
       const separatorSize = this.getChart().getChartStore().getStyleOptions().separator.size
-      const contentBounding: Bounding = { height: rootBounding.height - separatorSize }
+      const contentBounding: Partial<Bounding> = { height: rootBounding.height - separatorSize }
       this._mainWidget.setBounding(contentBounding)
       this._yAxisWidget?.setBounding(contentBounding)
     }
@@ -145,7 +145,7 @@ export default abstract class Pane<C extends Axis> implements Updater {
     return this
   }
 
-  getBounding (): Required<Bounding> {
+  getBounding (): Bounding {
     return this._bounding
   }
 

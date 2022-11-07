@@ -15,17 +15,16 @@
 import Coordinate from './Coordinate'
 import Element from './Element'
 
-export default abstract class ElementGroup extends Element {
+export default class ElementGroup extends Element {
   private _elements: Element[] = []
 
   checkEventOn (coordinate: Coordinate): boolean {
-    // for (const element of this._elements) {
-    //   if (element.checkEventOn(coordinate)) {
-    //     return true
-    //   }
-    // }
-    // return false
-    return true
+    for (const element of this._elements) {
+      if (element.checkEventOn(coordinate)) {
+        return true
+      }
+    }
+    return false
   }
 
   dispatchEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {

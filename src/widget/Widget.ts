@@ -31,7 +31,7 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
 
   private _event: MouseTouchEventHandler
 
-  private readonly _bounding: Required<Bounding> = getDefaultBounding()
+  private readonly _bounding: Bounding = getDefaultBounding()
 
   constructor (rootContainer: HTMLElement, pane: Pane<C>) {
     super()
@@ -55,7 +55,7 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
     this._event = new MouseTouchEventHandler(this.getEventContainer(), this as EventHandler, this.getEventOptions())
   }
 
-  setBounding (bounding: Bounding): Widget<C> {
+  setBounding (bounding: Partial<Bounding>): Widget<C> {
     merge(this._bounding, bounding)
     return this
   }
@@ -71,7 +71,7 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
     }
   }
 
-  getBounding (): Required<Bounding> {
+  getBounding (): Bounding {
     return this._bounding
   }
 
@@ -89,5 +89,5 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
 
   protected abstract initDom (container: HTMLElement): void
 
-  protected abstract updateImp (level: UpdateLevel, container: HTMLElement, bounding: Required<Bounding>): void
+  protected abstract updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void
 }

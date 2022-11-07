@@ -12,20 +12,23 @@
  * limitations under the License.
  */
 
-import { checkCoordinateOnStraightLine } from './shapeHelper'
+import PickRequired from '../../common/PickRequired'
 
-export default {
+import { Shape } from '../../componentl/Shape'
+
+import { LineAttrs } from '../figure/line'
+import { TextAttrs } from '../figure/text'
+
+const fibonacciLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
   name: 'fibonacciLine',
   totalStep: 3,
-  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
-    return checkCoordinateOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
-  },
-  createShapeDataSource: ({ points, coordinates, viewport, precision }) => {
+  createDataSource: ({ coordinates, bounding, shape, precision }) => {
+    const points = shape.points
     if (coordinates.length > 0) {
-      const lines = []
-      const texts = []
+      const lines: LineAttrs[] = []
+      const texts: TextAttrs[] = []
       const startX = 0
-      const endX = viewport.width
+      const endX = bounding.width
       if (coordinates.length > 1) {
         const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDif = coordinates[0].y - coordinates[1].y
@@ -33,7 +36,7 @@ export default {
         percents.forEach(percent => {
           const y = coordinates[1].y + yDif * percent
           const value = (points[1].value + valueDif * percent).toFixed(precision.price)
-          lines.push([{ x: startX, y }, { x: endX, y }])
+          lines.push({ coordinates: [{ x: startX, y }, { x: endX, y }] })
           texts.push({
             x: startX,
             y,
@@ -44,17 +47,17 @@ export default {
       return [
         {
           type: 'line',
-          isDraw: true,
           isCheck: true,
-          dataSource: lines
+          attrs: lines
         }, {
           type: 'text',
-          isDraw: true,
           isCheck: false,
-          dataSource: texts
+          attrs: texts
         }
       ]
     }
     return []
   }
 }
+
+export default fibonacciLine

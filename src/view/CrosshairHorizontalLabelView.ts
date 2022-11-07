@@ -127,7 +127,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     return text
   }
 
-  protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Required<Bounding>, axis: C, styles: Required<PaddingTextStyle>): Coordinate {
+  protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Bounding, axis: C, styles: Required<PaddingTextStyle>): Coordinate {
     const yAxis = axis as unknown as YAxis
     let rectX: number
     if (yAxis.isFromZero()) {

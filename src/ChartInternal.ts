@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from './common/PickRequired'
 import TypeOrNull from './common/TypeOrNull'
 import DeepPartial from './common/DeepPartial'
 import { UpdateLevel } from './common/Updater'
@@ -37,9 +38,6 @@ import { createDom } from './common/utils/dom'
 // import Annotation from './component/overlay/Annotation'
 // import Tag from './component/overlay/Tag'
 // import { perfectOverlayFunc } from './component/overlay/Overlay'
-
-// // 图形id前缀
-// const SHAPE_ID_PREFIX = 'shape_'
 
 // // 注解id前缀
 // const ANNOTATION_ID_PREFIX = 'an_'
@@ -336,7 +334,7 @@ export default class ChartInternal {
    * @param isStack 是否叠加
    * @param paneOptions 配置
    */
-  createIndicator (indicator: Omit<Indicator, 'result'>, isStack: boolean, paneOptions?: PaneOptions): string {
+  createIndicator (indicator: PickRequired<Partial<Indicator>, 'name'>, isStack: boolean, paneOptions?: PaneOptions): string {
     let paneId: string
     if (paneOptions !== undefined && this._panes.has(paneOptions.id)) {
       paneId = paneOptions.id
@@ -358,62 +356,6 @@ export default class ChartInternal {
     }
     return paneId
   }
-
-  // /**
-  //  * 创建图形
-  //  * @param ShapeTemplateClass
-  //  * @param shapeOptions
-  //  * @param paneId
-  //  */
-  // createShape (ShapeTemplateClass, shapeOptions, paneId) {
-  //   const {
-  //     id, points, styles, lock, mode, data,
-  //     onDrawStart, onDrawing,
-  //     onDrawEnd, onClick,
-  //     onRightClick, onPressedMove,
-  //     onMouseEnter, onMouseLeave,
-  //     onRemove
-  //   } = shapeOptions
-  //   const shapeId = id || createId(SHAPE_ID_PREFIX)
-  //   if (!this._chartStore.shapeStore().hasInstance(shapeId)) {
-  //     let yAxis = null
-  //     if (this.hasPane(paneId)) {
-  //       yAxis = this._panes.get(paneId).yAxis()
-  //     } else {
-  //       if (points && points.length > 0) {
-  //         paneId = CANDLE_PANE_ID
-  //         yAxis = this._panes.get(CANDLE_PANE_ID).yAxis()
-  //       }
-  //     }
-  //     const shapeInstance = new ShapeTemplateClass({
-  //       id: shapeId,
-  //       chartStore: this._chartStore,
-  //       xAxis: this._xAxisPane.xAxis(),
-  //       yAxis,
-  //       points,
-  //       styles,
-  //       lock,
-  //       mode,
-  //       data
-  //     })
-  //     if (isFunction(onDrawStart)) {
-  //       onDrawStart({ id: shapeId })
-  //     }
-  //     perfectOverlayFunc(shapeInstance, [
-  //       { key: 'onDrawing', fn: onDrawing },
-  //       { key: 'onDrawEnd', fn: onDrawEnd },
-  //       { key: 'onClick', fn: onClick },
-  //       { key: 'onRightClick', fn: onRightClick },
-  //       { key: 'onPressedMove', fn: onPressedMove },
-  //       { key: 'onMouseEnter', fn: onMouseEnter },
-  //       { key: 'onMouseLeave', fn: onMouseLeave },
-  //       { key: 'onRemove', fn: onRemove }
-  //     ])
-  //     this._chartStore.shapeStore().addInstance(shapeInstance, paneId)
-  //     return shapeId
-  //   }
-  //   return null
-  // }
 
   // /**
   //  * 创建注解

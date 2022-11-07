@@ -667,11 +667,11 @@ const defaultCrosshair: CrosshairStyle = {
 }
 
 export interface ShapePointStyle {
-  backgroundColor: string
+  color: string
   borderColor: string
   borderSize: number
   radius: number
-  activeBackgroundColor: string
+  activeColor: string
   activeBorderColor: string
   activeBorderSize: number
   activeRadius: number
@@ -691,11 +691,11 @@ export interface ShapeStyle {
  */
 const defaultShape: ShapeStyle = {
   point: {
-    backgroundColor: '#2196F3',
+    color: '#2196F3',
     borderColor: 'rgba(33, 150, 243, 0.35)',
     borderSize: 1,
     radius: 5,
-    activeBackgroundColor: '#2196F3',
+    activeColor: '#2196F3',
     activeBorderColor: 'rgba(33, 150, 243, 0.35)',
     activeBorderSize: 3,
     activeRadius: 5

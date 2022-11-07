@@ -94,7 +94,7 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     return this
   }
 
-  protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Required<Bounding>): void {
+  protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
     const { width, height, left } = bounding
     container.style.left = `${left}px`
 

@@ -23,7 +23,7 @@ import { isArray, merge, clone } from '../common/utils/typeChecks'
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
 import CrosshairStore from './CrosshairStore'
-// import ShapeStore from './ShapeStore'
+import ShapeStore from './ShapeStore'
 // import AnnotationStore from './AnnotationStore'
 // import TagStore from './TagStore'
 // import ActionStore from './ActionStore'
@@ -49,7 +49,7 @@ export default class ChartStore {
   // 技术指标数据存储
   private readonly _indicatorStore = new IndicatorStore(this)
   // 图形数据存储
-  // private readonly _shapeStore = new ShapeStore(this)
+  private readonly _shapeStore = new ShapeStore(this)
   // // 注解数据存储
   // private readonly _annotationStore = new AnnotationStore(this)
   // 标签数据存储
@@ -195,13 +195,13 @@ export default class ChartStore {
     return this._indicatorStore
   }
 
-  // /**
-  //  * 获取图形存储
-  //  * @returns
-  //  */
-  // getShapeStore (): ShapeStore {
-  //   return this._shapeStore
-  // }
+  /**
+   * 获取图形存储
+   * @returns
+   */
+  getShapeStore (): ShapeStore {
+    return this._shapeStore
+  }
 
   // /**
   //  * 获取注解存储

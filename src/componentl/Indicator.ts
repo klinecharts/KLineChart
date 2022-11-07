@@ -104,37 +104,37 @@ export interface Indicator<D = any> {
   // 指标名
   name: string
   // 指标简短名称，用于显示
-  shortName?: string
+  shortName: string
   // 精度
-  precision?: number
+  precision: number
   // 计算参数
-  calcParams?: any[]
+  calcParams: any[]
   // 是否需要ohlc
-  shouldOhlc?: boolean
+  shouldOhlc: boolean
   // 是否需要格式化大数据值，从1000开始格式化，比如100000是否需要格式化100K
-  shouldFormatBigNumber?: boolean
+  shouldFormatBigNumber: boolean
   // 扩展数据
-  extendData?: any
+  extendData: any
   // 系列
-  series?: IndicatorSeries
+  series: IndicatorSeries
   // 数据信息
-  plots?: Array<IndicatorPlot<D>>
+  plots: Array<IndicatorPlot<D>>
   // 指定的最小值
-  minValue?: TypeOrNull<number>
+  minValue: TypeOrNull<number>
   // 指定的最大值
-  maxValue?: TypeOrNull<number>
+  maxValue: TypeOrNull<number>
   // 样式
-  styles?: TypeOrNull<Partial<IndicatorStyle>>
+  styles: TypeOrNull<Partial<IndicatorStyle>>
   // 计算
-  calc?: IndicatorCalcCallback<D>
+  calc: IndicatorCalcCallback<D>
   // 重新生成数据配置
-  regeneratePlots?: TypeOrNull<IndicatorRegeneratePlotsCallback<D>>
+  regeneratePlots: TypeOrNull<IndicatorRegeneratePlotsCallback<D>>
   // 创建自定义提示文字
-  createToolTipDataSource?: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>
+  createToolTipDataSource: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>
   // 自定义绘制
-  draw?: TypeOrNull<IndicatorDrawCallback<D>>
+  draw: TypeOrNull<IndicatorDrawCallback<D>>
   // 结果
-  result?: D[]
+  result: D[]
 }
 
 export type IndicatorConstructor<D = any> = new () => IndicatorTemplate<D>
@@ -143,7 +143,7 @@ export type EachPlotCallback = (plot: IndicatorPlot, plotStyles: Required<Indica
 
 export function eachPlots<D> (
   kLineDataList: KLineData[],
-  indicator: Required<Indicator<D>>,
+  indicator: Indicator<D>,
   dataIndex: number,
   defaultStyles: IndicatorStyle,
   eachPlotCallback: EachPlotCallback
@@ -213,7 +213,7 @@ export function eachPlots<D> (
   })
 }
 
-export default abstract class IndicatorTemplate<D = any> implements Required<Indicator<D>> {
+export default abstract class IndicatorTemplate<D = any> implements Indicator<D> {
   name: string
   shortName: string
   precision: number
@@ -234,7 +234,7 @@ export default abstract class IndicatorTemplate<D = any> implements Required<Ind
 
   private _precisionFlag: boolean = false
 
-  constructor (indicator: Indicator<D>) {
+  constructor (indicator: PickRequired<Partial<Indicator<D>>, 'name'>) {
     const {
       name, shortName, series, calcParams, plots, precision,
       shouldOhlc, shouldFormatBigNumber,
@@ -325,7 +325,7 @@ export default abstract class IndicatorTemplate<D = any> implements Required<Ind
     return false
   }
 
-  setStyles (styles: Partial<IndicatorStyle>): boolean {
+  setStyles (styles: TypeOrNull<Partial<IndicatorStyle>>): boolean {
     if (this.styles !== styles) {
       this.styles = styles
       return true
@@ -365,7 +365,7 @@ export default abstract class IndicatorTemplate<D = any> implements Required<Ind
     return false
   }
 
-  setRegeneratePlots (callback: IndicatorRegeneratePlotsCallback): boolean {
+  setRegeneratePlots (callback: TypeOrNull<IndicatorRegeneratePlotsCallback>): boolean {
     if (this.regeneratePlots !== callback) {
       this.regeneratePlots = callback
       return true
@@ -373,7 +373,7 @@ export default abstract class IndicatorTemplate<D = any> implements Required<Ind
     return false
   }
 
-  setCreateToolTipDataSource (callback: IndicatorCreateToolTipDataSourceCallback): boolean {
+  setCreateToolTipDataSource (callback: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>): boolean {
     if (this.createToolTipDataSource !== callback) {
       this.createToolTipDataSource = callback
       return true
@@ -381,7 +381,7 @@ export default abstract class IndicatorTemplate<D = any> implements Required<Ind
     return false
   }
 
-  setDraw (callback: IndicatorDrawCallback): boolean {
+  setDraw (callback: TypeOrNull<IndicatorDrawCallback>): boolean {
     if (this.draw !== callback) {
       this.draw = callback
       return true
@@ -401,7 +401,7 @@ export default abstract class IndicatorTemplate<D = any> implements Required<Ind
 
   abstract calc (dataList: KLineData[], options: IndicatorCalcOptions<D>): D[] | Promise<D[]>
 
-  static extend<D> (indicator: PickRequired<Omit<Indicator<D>, 'result'>, 'calc'>): IndicatorConstructor<D> {
+  static extend<D> (indicator: PickRequired<Partial<Indicator<D>>, 'name' | 'calc'>): IndicatorConstructor<D> {
     class Custom extends IndicatorTemplate<D> {
       constructor () {
         super(indicator)

@@ -28,7 +28,7 @@ export default class XAxisView extends AxisView<XAxis> {
     return styles.xAxis
   }
 
-  protected createAxisLine (bounding: Required<Bounding>): LineAttrs {
+  protected createAxisLine (bounding: Bounding): LineAttrs {
     return {
       coordinates: [
         { x: 0, y: 0 },
@@ -37,7 +37,7 @@ export default class XAxisView extends AxisView<XAxis> {
     }
   }
 
-  protected createTickLines (ticks: Tick[], bounding: Required<Bounding>, styles: AxisStyle): LineAttrs[] {
+  protected createTickLines (ticks: Tick[], bounding: Bounding, styles: AxisStyle): LineAttrs[] {
     const tickLineStyles = styles.tickLine
     const axisLineSize = styles.axisLine.size
     return ticks.map(tick => ({
@@ -48,7 +48,7 @@ export default class XAxisView extends AxisView<XAxis> {
     }))
   }
 
-  protected createTickTexts (ticks: Tick[], bounding: Required<Bounding>, styles: AxisStyle): TextAttrs[] {
+  protected createTickTexts (ticks: Tick[], bounding: Bounding, styles: AxisStyle): TextAttrs[] {
     const tickTickStyles = styles.tickText
     const axisLineSize = styles.axisLine.size
     const tickLineLength = styles.tickLine.length

@@ -56,11 +56,11 @@ const templates = [
   stoch, stopAndReverse, tripleExponentiallySmoothedAverage, volume, volumeRatio, williamsR
 ]
 
-templates.forEach((template: PickRequired<Omit<Indicator, 'result'>, 'calc'>) => {
+templates.forEach((template: PickRequired<Partial<Indicator>, 'name' | 'calc'>) => {
   indicators[template.name] = IndicatorTemplate.extend(template)
 })
 
-function reisterIndicator<D> (indicator: PickRequired<Omit<Indicator<D>, 'result'>, 'calc'>): void {
+function registerIndicator<D> (indicator: PickRequired<Partial<Indicator<D>>, 'name' | 'calc'>): void {
   indicators[indicator.name] = IndicatorTemplate.extend(indicator)
 }
 
@@ -68,4 +68,4 @@ function getIndicatorClass (name: string): TypeOrNull<IndicatorConstructor> {
   return indicators[name] ?? null
 }
 
-export { reisterIndicator, getIndicatorClass }
+export { registerIndicator, getIndicatorClass }

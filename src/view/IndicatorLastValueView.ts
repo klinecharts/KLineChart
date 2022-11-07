@@ -14,7 +14,7 @@
 
 import YAxis from '../componentl/YAxis'
 
-import { eachPlots, IndicatorPlot, IndicatorPlotStyle, Indicator } from '../componentl/Indicator'
+import { eachPlots, IndicatorPlot, IndicatorPlotStyle } from '../componentl/Indicator'
 
 import View from './View'
 
@@ -36,7 +36,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const dataList = chartStore.getDataList()
       const dataIndex = dataList.length - 1
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-      indicators.forEach((indicator: Required<Indicator>) => {
+      indicators.forEach(indicator => {
         const result = indicator.result
         const indicatorData = result[dataIndex]
         if (indicatorData !== undefined) {

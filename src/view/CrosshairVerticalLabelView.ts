@@ -39,7 +39,7 @@ export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabel
     return formatDate(chartStore.getTimeScaleStore().getDateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
   }
 
-  protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Required<Bounding>): Coordinate {
+  protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Bounding): Coordinate {
     const x = crosshair.realX as number
     let rectX: number
     if (x - rectWidth / 2 < 0) {

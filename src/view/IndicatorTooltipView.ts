@@ -48,7 +48,7 @@ export default class IndicatorTooltipView extends View {
     dataList: KLineData[],
     crosshair: Crosshair,
     indicators: Map<string, IndicatorTemplate>,
-    bounding: Required<Bounding>,
+    bounding: Bounding,
     styles: IndicatorStyle,
     top?: number
   ): number {
@@ -64,7 +64,7 @@ export default class IndicatorTooltipView extends View {
       let labelX = 0
       let labelY = top ?? 0
       ctx.font = createFont(textSize, textWeight, textFamily)
-      indicators.forEach((indicator: Required<Indicator>) => {
+      indicators.forEach(indicator => {
         const { name, calcParamText, values } = this.getIndicatorTooltipData(dataList, crosshair, indicator, styles)
         const nameValid = name !== undefined && name.length > 0
         const valuesValid = values !== undefined && values.length > 0
@@ -104,7 +104,7 @@ export default class IndicatorTooltipView extends View {
 
   protected drawStandardTooltip (
     ctx: CanvasRenderingContext2D,
-    bounding: Required<Bounding>,
+    bounding: Bounding,
     values: TooltipData[],
     startX: number,
     startY: number,
@@ -147,7 +147,7 @@ export default class IndicatorTooltipView extends View {
   protected getIndicatorTooltipData (
     dataList: KLineData[],
     crosshair: Crosshair,
-    indicator: Required<Indicator>,
+    indicator: Indicator,
     styles: IndicatorStyle
   ): IndicatorTooltipData {
     if (indicator.createToolTipDataSource !== null) {

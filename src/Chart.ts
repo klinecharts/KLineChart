@@ -12,19 +12,22 @@
  * limitations under the License.
  */
 
+import PickRequired from './common/PickRequired'
 import TypeOrNull from './common/TypeOrNull'
 import DeepPartial from './common/DeepPartial'
 import { UpdateLevel } from './common/Updater'
 import KLineData from './common/KLineData'
+import LoadMoreCallback from './common/LoadMoreCallback'
+import { Styles } from './common/Styles'
 
-import { getIndicatorClass } from './extension/indicator'
+import { getIndicatorClass } from './extension/indicator/index'
 import { Indicator } from './componentl/Indicator'
+import { getShapeClass } from './extension/shape/index'
+import { Shape } from './componentl/Shape'
 import { PaneOptions } from './pane/Pane'
 
-import { LoadMoreCallback } from './store/TimeScaleStore'
-import { Styles } from './store/styles'
-
 import ChartInternal from './ChartInternal'
+import { CANDLE_PANE_ID } from './pane/CandlePane'
 import { XAXIS_PANE_ID } from './pane/XAxisPane'
 
 import { clone, isString } from './common/utils/typeChecks'
@@ -260,8 +263,8 @@ export default class Chart {
    * @param paneOptions 窗口配置
    * @returns {string|null}
    */
-  createIndicator (value: string | Omit<Indicator, 'result'>, isStack?: boolean, paneOptions?: PaneOptions): TypeOrNull<string> {
-    const indicator: Omit<Indicator, 'result'> = isString(value) ? { name: value as string } : value as Omit<Indicator, 'result'>
+  createIndicator (value: string | PickRequired<Partial<Indicator>, 'name'>, isStack?: boolean, paneOptions?: PaneOptions): TypeOrNull<string> {
+    const indicator: PickRequired<Partial<Indicator>, 'name'> = isString(value) ? { name: value as string } : value as Omit<Indicator, 'result'>
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
@@ -274,7 +277,7 @@ export default class Chart {
    * @param override 覆盖参数
    * @param paneId 窗口id
    */
-  overrideIndicator (override: Omit<Indicator, 'result'>, paneId?: string): void {
+  overrideIndicator (override: PickRequired<Partial<Indicator>, 'name'>, paneId?: string): void {
     this._internal.getChartStore().getIndicatorStore().override(override, paneId).then(
       result => {
         if (result.length > 0) {
@@ -291,7 +294,7 @@ export default class Chart {
     * @return {{}}
     */
   getIndicatorByPaneId (paneId?: string, name?: string): TypeOrNull<Indicator> | TypeOrNull<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
-    return this._internal.getChartStore().getIndicatorStore().getInstance(paneId, name)
+    return this._internal.getChartStore().getIndicatorStore().getInstanceByPaneId(paneId, name)
   }
 
   /**
@@ -303,28 +306,28 @@ export default class Chart {
     this._internal.removeIndicator(paneId, name)
   }
 
-  // /**
-  //  * 创建图形
-  //  * @param value 图形名或者图形配置
-  //  * @param paneId 窗口id
-  //  */
-  // createShape (value, paneId) {
-  //   if (!isValid(value)) {
-  //     logWarn('createShape', 'value', 'value is invalid!!!')
-  //     return null
-  //   }
-  //   const shapeOptions = isObject(value) && !isArray(value) ? value : { name: value }
-  //   const Shape = this._chartPane.chartStore().shapeStore().getTemplate(shapeOptions.name)
-  //   if (!Shape) {
-  //     logWarn('createShape', 'value', 'can not find the corresponding shape!!!')
-  //     return null
-  //   }
-  //   const id = this._chartPane.createShape(Shape, shapeOptions, paneId)
-  //   if (!id) {
-  //     logWarn('createShape', 'options.id', 'duplicate id!!!')
-  //   }
-  //   return id
-  // }
+  /**
+   * 创建图形
+   * @param value 图形名或者图形配置
+   * @param paneId 窗口id
+   */
+  createShape (value: string | PickRequired<Partial<Shape>, 'name'>, paneId?: string): TypeOrNull<string> {
+    const shape: PickRequired<Partial<Shape>, 'name'> = isString(value) ? { name: value as string } : value as PickRequired<Partial<Shape>, 'name'>
+    if (getShapeClass(shape.name) === null) {
+      logWarn('createShape', 'value', 'can not find the corresponding shape!!!')
+      return null
+    }
+    let appointPaneFlag = true
+    if (paneId === undefined || this._internal.getPaneById(paneId) === null) {
+      paneId = CANDLE_PANE_ID
+      appointPaneFlag = false
+    }
+    const id = this._internal.getChartStore().getShapeStore().addInstance(shape, paneId, appointPaneFlag)
+    if (id === null) {
+      logWarn('createShape', 'options.id', 'duplicate id!!!')
+    }
+    return id
+  }
 
   // /**
   //  * 获取图形标记

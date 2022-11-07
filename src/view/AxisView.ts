@@ -53,9 +53,9 @@ export default abstract class AxisView<C extends Axis> extends View<C> {
 
   protected abstract getAxisStyles (styles: Styles): AxisStyle
 
-  protected abstract createAxisLine (bounding: Required<Bounding>): LineAttrs
-  protected abstract createTickLines (ticks: Tick[], bounding: Required<Bounding>, styles: AxisStyle): LineAttrs[]
-  protected abstract createTickTexts (tick: Tick[], bounding: Required<Bounding>, styles: AxisStyle): TextAttrs[]
+  protected abstract createAxisLine (bounding: Bounding): LineAttrs
+  protected abstract createTickLines (ticks: Tick[], bounding: Bounding, styles: AxisStyle): LineAttrs[]
+  protected abstract createTickTexts (tick: Tick[], bounding: Bounding, styles: AxisStyle): TextAttrs[]
 
   protected abstract getTickTextAlign (): CanvasTextAlign
   protected abstract getTickTextBaseline (): CanvasTextBaseline

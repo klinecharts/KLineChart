@@ -12,35 +12,36 @@
  * limitations under the License.
  */
 
-import { checkCoordinateOnSegment } from './shapeHelper'
+import PickRequired from '../../common/PickRequired'
 
-export default {
+import { Shape } from '../../componentl/Shape'
+
+import { LineAttrs } from '../figure/line'
+
+const horizontalSegment: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
   name: 'horizontalSegment',
   totalStep: 3,
-  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
-    return checkCoordinateOnSegment(dataSource[0], dataSource[1], eventCoordinate)
-  },
-  createShapeDataSource: ({ coordinates }) => {
-    let lines = []
+  createDataSource: ({ coordinates }) => {
+    const lines: LineAttrs[] = []
     if (coordinates.length === 2) {
-      lines = [coordinates]
+      lines.push({ coordinates })
     }
     return [
       {
         type: 'line',
-        isDraw: true,
-        isCheck: true,
-        dataSource: lines
+        attrs: lines
       }
     ]
   },
-  performEventPressedMove: ({ points, pressPoint }) => {
-    points[0].value = pressPoint.value
-    points[1].value = pressPoint.value
+  performEventPressedMove: ({ points, performPoint }) => {
+    points[0].value = performPoint.value
+    points[1].value = performPoint.value
   },
-  performEventMoveForDrawing: ({ step, points, movePoint }) => {
-    if (step === 2) {
-      points[0].value = movePoint.value
+  performEventMoveForDrawing: ({ currentStep, points, performPoint }) => {
+    if (currentStep === 2) {
+      points[0].value = performPoint.value
     }
   }
 }
+
+export default horizontalSegment

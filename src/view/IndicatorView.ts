@@ -26,7 +26,7 @@ import Axis from '../componentl/Axis'
 
 import { FigureAttrsStyles } from '../componentl/Figure'
 import { LineAttrs } from '../extension/figure/line'
-import { eachPlots, IndicatorPlot, IndicatorPlotStyle, Indicator } from '../componentl/Indicator'
+import { eachPlots, IndicatorPlot, IndicatorPlotStyle } from '../componentl/Indicator'
 
 import CandleBarView, { CandleBarOptions } from './CandleBarView'
 
@@ -69,11 +69,11 @@ export default class IndicatorView extends CandleBarView {
     const visibleRange = timeScaleStore.getVisibleRange()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     const defaultStyles = chartStore.getStyleOptions().indicator
-    indicators.forEach((indicator: Required<Indicator>) => {
+    indicators.forEach(indicator => {
       let isCover = false
-      if (isValid(indicator.draw)) {
+      if (indicator.draw !== null) {
         ctx.save()
-        isCover = indicator.draw?.({
+        isCover = indicator.draw({
           ctx,
           kLineDataList: dataList,
           indicator,

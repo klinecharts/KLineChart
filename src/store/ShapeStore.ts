@@ -12,205 +12,203 @@
  * limitations under the License.
  */
 
-import { isNumber, isFunction, isValid } from '../common/utils/typeChecks'
-import { logWarn } from '../common/utils/logger'
+import TypeOrNull from '../common/TypeOrNull'
+import PickRequired from '../common/PickRequired'
+import { UpdateLevel } from '../common/Updater'
 
-import Shape, { ShapeEventOperateElement } from '../component/overlay/Shape'
+import { createId } from '../common/utils/id'
 
-import InvalidateLevel from '../enum/InvalidateLevel'
+import ShapeTemplate, { Shape, ShapeConstructor } from '../componentl/Shape'
+
+import { getShapeClass } from '../extension/shape/index'
 
 import ChartStore from './ChartStore'
+
+const SHAPE_ID_PREFIX = 'shape_'
+
+export interface ProgressShapeInfo {
+  paneId: string
+  instance: ShapeTemplate
+  appointPaneFlag: boolean
+}
+
+export interface PressedMoveShapeInfo {
+  paneId: string
+  instance: ShapeTemplate
+  element: string
+}
+
+export const enum EventShapeInfoElementType {
+  NONE = 'none',
+  POINT = 'poine',
+  OTHER = 'other'
+}
+
+export interface EventShapeInfo {
+  paneId: string
+  instanceId: string
+  elementType: EventShapeInfoElementType
+  elementIndex: number
+}
 
 export default class ShapeStore {
   private readonly _chartStore: ChartStore
 
+  private readonly _instances = new Map<string, ShapeTemplate[]>()
+  private _progressInstanceInfo: TypeOrNull<ProgressShapeInfo> = null
+
+  private _hoverInstanceInfo: EventShapeInfo = {
+    paneId: '', instanceId: '', elementType: EventShapeInfoElementType.NONE, elementIndex: -1
+  }
+
+  private _clickInstanceInfo: EventShapeInfo = {
+    paneId: '', instanceId: '', elementType: EventShapeInfoElementType.NONE, elementIndex: -1
+  }
+
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
-    // 图形标记映射
-    this._templates = this._createTemplates()
-    // 图形标记鼠标操作信息
-    this._eventOperate = {
-      click: {
-        id: '',
-        element: ShapeEventOperateElement.NONE,
-        elementIndex: -1
-      },
-      hover: {
-        id: '',
-        element: ShapeEventOperateElement.NONE,
-        elementIndex: -1
-      }
-    }
-    // 进行中的实例
-    this._progressInstance = null
     // 事件按住的示例
     this._pressedInstance = null
-    // 图形实例
-    this._instances = new Map()
   }
 
-  /**
-   * 创建模板
-   * @returns
-   */
-  _createTemplates () {
-    const templates = {}
-    const extensions = extension.shapeExtensions
-    for (const name in extensions) {
-      const TemplateClass = this._createTemplateClass(extensions[name])
-      if (TemplateClass) {
-        templates[name] = TemplateClass
-      }
+  private _overrideInstance (instance: ShapeTemplate, shape: Partial<Shape>): boolean {
+    const {
+      id, points, styles, lock, mode, extendData,
+      onDrawStart, onDrawing,
+      onDrawEnd, onClick,
+      onRightClick, onPressedMove,
+      onMouseEnter, onMouseLeave,
+      onRemove
+    } = shape
+    let updateFlag = false
+    if (id !== undefined) {
+      instance.setId(id)
     }
-    return templates
-  }
-
-  /**
-   * 创建模板类
-   * @param name
-   * @param totalStep
-   * @param checkEventCoordinateOnShape
-   * @param createShapeDataSource
-   * @param performEventPressedMove
-   * @param performEventMoveForDrawing
-   * @param drawExtend
-   * @return
-   */
-  _createTemplateClass ({
-    name, totalStep,
-    checkEventCoordinateOnShape,
-    createShapeDataSource,
-    performEventPressedMove,
-    performEventMoveForDrawing,
-    drawExtend
-  }) {
-    if (
-      !name ||
-      !isNumber(totalStep) ||
-      !isFunction(checkEventCoordinateOnShape) ||
-      !isFunction(createShapeDataSource)
-    ) {
-      logWarn('', '', 'Required attribute "name" and "totalStep", method "checkEventCoordinateOnShape" and "createShapeDataSource", new shape cannot be generated!!!')
-      return null
+    if (points !== undefined && instance.setPoints(points)) {
+      updateFlag = true
     }
-    class Template extends Shape {
-      constructor ({
-        id, chartStore, xAxis, yAxis, points, styles, lock, mode, data
-      }) {
-        super({
-          id, name, totalStep, chartStore, xAxis, yAxis, points, styles, lock, mode, data
-        })
-      }
+    if (styles !== undefined && instance.setStyles(styles)) {
+      updateFlag = true
     }
-    Template.prototype.checkEventCoordinateOnShape = checkEventCoordinateOnShape
-    Template.prototype.createShapeDataSource = createShapeDataSource
-    if (isFunction(performEventPressedMove)) {
-      Template.prototype.performEventPressedMove = performEventPressedMove
+    if (lock !== undefined) {
+      instance.setLock(lock)
     }
-    if (isFunction(performEventMoveForDrawing)) {
-      Template.prototype.performEventMoveForDrawing = performEventMoveForDrawing
+    if (mode !== undefined) {
+      instance.setMode(mode)
     }
-    if (isFunction(drawExtend)) {
-      Template.prototype.drawExtend = drawExtend
+    if (extendData !== undefined && instance.setExtendData(extendData)) {
+      updateFlag = true
     }
-    return Template
-  }
-
-  /**
-   * 添加自定义标记图形
-   * @param templates
-   */
-  addTemplate (templates) {
-    templates.forEach(tmp => {
-      const Template = this._createTemplateClass(tmp)
-      if (Template) {
-        this._templates[tmp.name] = Template
-      }
-    })
-  }
-
-  /**
-   * 获取图形标记模板类
-   * @param name
-   * @return {*}
-   */
-  getTemplate (name) {
-    return this._templates[name]
+    if (onDrawStart !== undefined) {
+      instance.setOnDrawStartCallback(onDrawStart)
+    }
+    if (onDrawing !== undefined) {
+      instance.setOnDrawingCallback(onDrawing)
+    }
+    if (onDrawEnd !== undefined) {
+      instance.setOnDrawEndCallback(onDrawEnd)
+    }
+    if (onClick !== undefined) {
+      instance.setOnClickCallback(onClick)
+    }
+    if (onRightClick !== undefined) {
+      instance.setOnRightClickCallback(onRightClick)
+    }
+    if (onPressedMove !== undefined) {
+      instance.setOnPressedMoveCallback(onPressedMove)
+    }
+    if (onMouseEnter !== undefined) {
+      instance.setOnMouseEnterCallback(onMouseEnter)
+    }
+    if (onMouseLeave !== undefined) {
+      instance.setOnMouseLeaveCallback(onMouseLeave)
+    }
+    if (onRemove !== undefined) {
+      instance.setOnRemoveCallback(onRemove)
+    }
+    return updateFlag
   }
 
   /**
    * 获取实例
-   * @param shapeId
+   * @param id
    * @returns
    */
-  getInstance (shapeId) {
+  getInstanceById (id: string): TypeOrNull<ShapeTemplate> {
     for (const entry of this._instances) {
-      const shape = (entry[1] || []).find(s => s.id() === shapeId)
-      if (shape) {
+      const paneShapes = entry[1]
+      const shape = paneShapes.find(s => s.id === id)
+      if (shape !== undefined) {
         return shape
+      }
+    }
+    if (this._progressInstanceInfo !== null) {
+      if (this._progressInstanceInfo.instance.id === id) {
+        return this._progressInstanceInfo.instance
       }
     }
     return null
   }
 
   /**
-   * 是否有实例
-   * @param shapeId
-   * @returns
-   */
-  hasInstance (shapeId) {
-    return !!this.getInstance(shapeId)
-  }
-
-  /**
    * 添加标记实例
-   * @param instance
+   * @param shape
    * @param paneId
    */
-  addInstance (instance, paneId) {
-    if (instance.isDrawing()) {
-      this._progressInstance = { paneId, instance, fixed: isValid(paneId) }
-    } else {
-      if (!this._instances.has(paneId)) {
-        this._instances.set(paneId, [])
+  addInstance (shape: PickRequired<Partial<Shape>, 'name'>, paneId: string, appointPaneFlag: boolean): TypeOrNull<string> {
+    const id = shape.id ?? createId(SHAPE_ID_PREFIX)
+    if (this.getInstanceById(id) === null) {
+      const ShapeClazz = getShapeClass(shape.name) as ShapeConstructor
+      const instance = new ShapeClazz()
+      this._overrideInstance(instance, shape)
+      if (instance.isDrawing()) {
+        this._progressInstanceInfo = { paneId, instance, appointPaneFlag }
+      } else {
+        if (!this._instances.has(paneId)) {
+          this._instances.set(paneId, [])
+        }
+        this._instances.get(paneId)?.push(instance)
       }
-      this._instances.get(paneId).push(instance)
+      this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
+      return id
     }
-    this._chartStore.invalidate(InvalidateLevel.OVERLAY)
+    return null
   }
 
   /**
    * 获取进行中的实例
    * @returns
    */
-  progressInstance () {
-    return this._progressInstance || {}
+  getProgressInstanceInfo (): TypeOrNull<ProgressShapeInfo> {
+    return this._progressInstanceInfo
   }
 
   /**
    * 进行中的实例完成
    */
-  progressInstanceComplete () {
-    const { instance, paneId } = this.progressInstance()
-    if (instance && !instance.isDrawing()) {
-      if (!this._instances.has(paneId)) {
-        this._instances.set(paneId, [])
+  progressInstanceComplete (): void {
+    if (this._progressInstanceInfo !== null) {
+      const { instance, paneId } = this._progressInstanceInfo
+      if (!instance.isDrawing()) {
+        if (!this._instances.has(paneId)) {
+          this._instances.set(paneId, [])
+        }
+        this._instances.get(paneId)?.push(instance)
+        this._progressInstanceInfo = null
       }
-      this._instances.get(paneId).push(instance)
-      this._progressInstance = null
     }
   }
 
   /**
    * 更新进行中的实例
-   * @param yAxis
    * @param paneId
    */
-  updateProgressInstance (yAxis, paneId) {
-    const { instance, fixed } = this.progressInstance()
-    if (instance && !fixed) {
-      instance.setYAxis(yAxis)
-      this._progressInstance.paneId = paneId
+  updateProgressInstancePaneId (paneId: string): void {
+    if (this._progressInstanceInfo !== null) {
+      const { appointPaneFlag } = this._progressInstanceInfo
+      if (!appointPaneFlag) {
+        this._progressInstanceInfo.paneId = paneId
+      }
     }
   }
 
@@ -241,173 +239,133 @@ export default class ShapeStore {
    * @param paneId
    * @returns {{}}
    */
-  instances (paneId) {
-    return this._instances.get(paneId) || []
+  getInstances (paneId: string): ShapeTemplate[] {
+    return this._instances.get(paneId) ?? []
   }
 
   /**
    * 设置图形标记实例配置
-   * @param options
+   * @param shape
    */
-  setInstanceOptions (options = {}) {
-    const { id, styles, lock, mode, data, points } = options
-    const defaultStyles = this._chartStore.styleOptions().shape
-    let shouldInvalidate = false
-    const apply = instance => {
-      instance.setLock(lock)
-      instance.setMode(mode)
-      if (instance.setStyles(styles, defaultStyles) || instance.setData(data) || instance.setPoints(points)) {
-        shouldInvalidate = true
-      }
-    }
-    if (isValid(id)) {
-      const instance = this.getInstance(id)
-      instance && apply(instance)
-    } else {
-      this._instances.forEach(instance => instance.forEach(apply))
-    }
-    if (shouldInvalidate) {
-      this._chartStore.invalidate(InvalidateLevel.OVERLAY)
-    }
-  }
-
-  /**
-   * 获取图形标记信息
-   * @param id
-   * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
-   */
-  getInstanceInfo (shapeId) {
-    const create = (instance) => {
-      return {
-        name: instance.name(),
-        id: instance.id(),
-        totalStep: instance.totalStep(),
-        lock: instance.lock(),
-        mode: instance.mode(),
-        points: instance.points(),
-        styles: instance.styles(),
-        data: instance.data()
-      }
-    }
-    const progressInstance = this.progressInstance()
-    if (isValid(shapeId)) {
-      if (progressInstance.instance && progressInstance.instance.id() === shapeId) {
-        return create(progressInstance.instance)
-      }
-      const shape = this.getInstance(shapeId)
-      if (shape) {
-        return create(shape)
+  override (shape: Partial<Shape>): void {
+    const { id, name } = shape
+    let updateFlag = false
+    if (id !== undefined) {
+      const instance = this.getInstanceById(id)
+      if (instance !== null && this._overrideInstance(instance, shape)) {
+        updateFlag = true
       }
     } else {
-      const infos = {}
-      this._instances.forEach((shapes, paneId) => {
-        infos[paneId] = shapes.map(shape => create(shape))
-        if (progressInstance.paneId === paneId && progressInstance.instance) {
-          infos[paneId].push(create(progressInstance.instance))
-        }
+      this._instances.forEach(paneInstances => {
+        paneInstances.forEach(instance => {
+          if ((name === undefined || instance.name === name) && this._overrideInstance(instance, shape)) {
+            updateFlag = true
+          }
+        })
       })
-      return infos
+      if (this._progressInstanceInfo !== null) {
+        if ((name === undefined || this._progressInstanceInfo.instance.name === name) && this._overrideInstance(this._progressInstanceInfo.instance, shape)) {
+          updateFlag = true
+        }
+      }
     }
-    return null
+    if (updateFlag) {
+      this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY)
+    }
   }
 
   /**
    * 移除图形实例
-   * @param shapeId 参数
-   * @param isProgress
+   * @param id
    */
-  removeInstance (shapeId) {
-    let shouldInvalidate = false
-    const progressInstance = this.progressInstance().instance
-    if (progressInstance && (!isValid(shapeId) || progressInstance.id() === shapeId)) {
-      progressInstance.onRemove({ id: progressInstance.id() })
-      this._progressInstance = null
-      shouldInvalidate = true
+  removeInstance (id?: string): void {
+    const updatePaneIds: string[] = []
+    if (this._progressInstanceInfo !== null) {
+      const instance = this._progressInstanceInfo.instance
+      if ((id === undefined || instance.id === id)) {
+        updatePaneIds.push(this._progressInstanceInfo.paneId)
+        instance.onRemove?.(instance)
+        this._progressInstanceInfo = null
+      }
     }
-    if (isValid(shapeId)) {
+    if (id !== undefined) {
       for (const entry of this._instances) {
-        const shapes = entry[1] || []
-        const removeIndex = shapes.findIndex(shape => shape.id() === shapeId)
+        const paneInstances = entry[1]
+        const removeIndex = paneInstances.findIndex(instance => instance.id === id)
         if (removeIndex > -1) {
-          shapes[removeIndex].onRemove({ id: shapes[removeIndex].id() })
-          shapes.splice(removeIndex, 1)
-          if (shapes.length === 0) {
+          updatePaneIds.push(entry[0])
+          paneInstances[removeIndex].onRemove?.(paneInstances[removeIndex])
+          paneInstances.splice(removeIndex, 1)
+          if (paneInstances.length === 0) {
             this._instances.delete(entry[0])
           }
-          shouldInvalidate = true
           break
         }
       }
     } else {
-      this._instances.forEach(shapes => {
-        if (shapes.length > 0) {
-          shapes.forEach(shape => {
-            shape.onRemove({ id: shape.id() })
-          })
-        }
+      this._instances.forEach((paneInstances, paneId) => {
+        updatePaneIds.push(paneId)
+        paneInstances.forEach(instance => {
+          instance.onRemove?.(instance)
+        })
       })
       this._instances.clear()
-      shouldInvalidate = true
     }
-    if (shouldInvalidate) {
-      this._chartStore.invalidate(InvalidateLevel.OVERLAY)
+    if (updatePaneIds.length > 0) {
+      const update = this._chartStore.getChart().updatePane
+      updatePaneIds.forEach(paneId => {
+        update(UpdateLevel.OVERLAY, paneId)
+      })
     }
   }
 
-  /**
-   * 获取图形标记操作信息
-   * @return {{hover: {id: string, elementIndex: number, element: string}, click: {id: string, elementIndex: number, element: string}}}
-   */
-  eventOperate () {
-    return this._eventOperate
+  setHoverInstanceInfo (info: EventShapeInfo): void {
+    const { instanceId, elementType, elementIndex } = this._hoverInstanceInfo
+    if (instanceId !== info.instanceId || elementType !== info.elementType || elementIndex !== info.elementIndex) {
+      this._hoverInstanceInfo = info
+      this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, info.paneId)
+    }
   }
 
-  /**
-   * 设置事件操作信息
-   * @param operate
-   * @return
-   */
-  setEventOperate (operate) {
-    const { hover, click } = this._eventOperate
-    let hoverSuccess
-    if (operate.hover &&
-      (hover.id !== operate.hover.id || hover.element !== operate.hover.element || hover.elementIndex !== operate.hover.elementIndex)
-    ) {
-      this._eventOperate.hover = { ...operate.hover }
-      hoverSuccess = true
+  getHoverInstanceInfo (): EventShapeInfo {
+    return this._hoverInstanceInfo
+  }
+
+  setClickInstanceInfo (info: EventShapeInfo): void {
+    const { paneId, instanceId, elementType, elementIndex } = this._clickInstanceInfo
+    if (instanceId !== info.instanceId || elementType !== info.elementType || elementIndex !== info.elementIndex) {
+      this._clickInstanceInfo = info
+      const update = this._chartStore.getChart().updatePane
+      update(UpdateLevel.OVERLAY, paneId)
+      update(UpdateLevel.OVERLAY, info.paneId)
     }
-    let clickSuccess
-    if (operate.click &&
-      (click.id !== operate.click.id || click.element !== operate.click.element || click.elementIndex !== operate.click.elementIndex)
-    ) {
-      this._eventOperate.click = { ...operate.click }
-      clickSuccess = true
-    }
-    return hoverSuccess || clickSuccess
+  }
+
+  getClickInstanceInfo (): EventShapeInfo {
+    return this._clickInstanceInfo
   }
 
   /**
    * 是否为空
    * @returns
    */
-  isEmpty () {
-    return this._instances.size === 0 && !this.progressInstance().instance
+  isEmpty (): boolean {
+    return this._instances.size === 0 && this._progressInstanceInfo === null
   }
 
   /**
    * 是否正在绘制
    * @return
    */
-  isDrawing () {
-    const instance = this.progressInstance().instance
-    return instance && instance.isDrawing()
+  isDrawing (): boolean {
+    return this._progressInstanceInfo !== null && this._progressInstanceInfo.instance.isDrawing()
   }
 
   /**
    * 是否按住
    * @returns
    */
-  isPressed () {
+  isPressed (): boolean {
     return !!this.pressedInstance().instance
   }
 }

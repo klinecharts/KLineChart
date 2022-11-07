@@ -15,16 +15,16 @@
 import { merge } from './utils/typeChecks'
 
 export default interface Bounding {
-  width?: number
-  height?: number
-  left?: number
-  right?: number
-  top?: number
-  bottom?: number
+  width: number
+  height: number
+  left: number
+  right: number
+  top: number
+  bottom: number
 }
 
-export function getDefaultBounding (bounding?: Bounding): Required<Bounding> {
-  const defaultBounding: Required<Bounding> = {
+export function getDefaultBounding (bounding?: Partial<Bounding>): Bounding {
+  const defaultBounding: Bounding = {
     width: 0,
     height: 0,
     left: 0,

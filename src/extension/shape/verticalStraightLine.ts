@@ -12,26 +12,31 @@
  * limitations under the License.
  */
 
-import { checkCoordinateOnSegment } from './shapeHelper'
+import PickRequired from '../../common/PickRequired'
 
-export default {
-  name: 'segment',
-  totalStep: 3,
-  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
-    return checkCoordinateOnSegment(dataSource[0], dataSource[1], eventCoordinate)
-  },
-  createShapeDataSource: ({ coordinates }) => {
-    let lines = []
-    if (coordinates.length === 2) {
-      lines = [coordinates]
-    }
+import { Shape } from '../../componentl/Shape'
+
+const verticalStraightLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+  name: 'verticalStraightLine',
+  totalStep: 2,
+  createDataSource: ({ coordinates, bounding }) => {
     return [
       {
         type: 'line',
-        isDraw: true,
-        isCheck: true,
-        dataSource: lines
+        attrs: {
+          coordinates: [
+            {
+              x: coordinates[0].x,
+              y: 0
+            }, {
+              x: coordinates[0].x,
+              y: bounding.height
+            }
+          ]
+        }
       }
     ]
   }
 }
+
+export default verticalStraightLine

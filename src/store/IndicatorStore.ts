@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../common/PickRequired'
 import TypeOrNull from '../common/TypeOrNull'
 import Precision from '../common/Precision'
 
@@ -28,61 +29,61 @@ export default class IndicatorStore {
     this._chartStore = chartStore
   }
 
-  private _overrideInstance (instance: IndicatorTemplate, indicator: Omit<Indicator, 'result'>): boolean[] {
+  private _overrideInstance (instance: IndicatorTemplate, indicator: Partial<Indicator>): boolean[] {
     const {
       shortName, series, calcParams, precision, plots, minValue, maxValue,
       shouldOhlc, shouldFormatBigNumber, styles, extendData,
       regeneratePlots, createToolTipDataSource, draw, calc
     } = indicator
-    let overrideSuccess = false
+    let updateFlag = false
     if (shortName !== undefined && instance.setShortName(shortName)) {
-      overrideSuccess = true
+      updateFlag = true
     }
     if (series !== undefined && instance.setSeries(series)) {
-      overrideSuccess = true
+      updateFlag = true
     }
-    let calcParamsSuccess = false
+    let calcFlag = false
     if (calcParams !== undefined && instance.setCalcParams(calcParams)) {
-      overrideSuccess = true
-      calcParamsSuccess = true
+      updateFlag = true
+      calcFlag = true
     }
     if (plots !== undefined && instance.setPlots(plots)) {
-      overrideSuccess = true
+      updateFlag = true
     }
     if (minValue !== undefined && instance.setMinValue(minValue)) {
-      overrideSuccess = true
+      updateFlag = true
     }
     if (maxValue !== undefined && instance.setMinValue(maxValue)) {
-      overrideSuccess = true
+      updateFlag = true
     }
     if (precision !== undefined && instance.setPrecision(precision)) {
-      overrideSuccess = true
+      updateFlag = true
     }
     if (shouldOhlc !== undefined && instance.setShouldOhlc(shouldOhlc)) {
-      overrideSuccess = true
+      updateFlag = true
     }
     if (shouldFormatBigNumber !== undefined && instance.setShouldFormatBigNumber(shouldFormatBigNumber)) {
-      overrideSuccess = true
+      updateFlag = true
     }
-    if (styles !== undefined && styles !== null && instance.setStyles(styles)) {
-      overrideSuccess = true
+    if (styles !== undefined && instance.setStyles(styles)) {
+      updateFlag = true
     }
     if (extendData !== undefined && instance.setExtendData(extendData)) {
-      overrideSuccess = true
+      updateFlag = true
     }
-    if (regeneratePlots !== undefined && regeneratePlots !== null && instance.setRegeneratePlots(regeneratePlots)) {
-      overrideSuccess = true
+    if (regeneratePlots !== undefined && instance.setRegeneratePlots(regeneratePlots)) {
+      updateFlag = true
     }
-    if (createToolTipDataSource !== undefined && createToolTipDataSource !== null && instance.setCreateToolTipDataSource(createToolTipDataSource)) {
-      overrideSuccess = true
+    if (createToolTipDataSource !== undefined && instance.setCreateToolTipDataSource(createToolTipDataSource)) {
+      updateFlag = true
     }
-    if (draw !== undefined && draw !== null && instance.setDraw(draw)) {
-      overrideSuccess = true
+    if (draw !== undefined && instance.setDraw(draw)) {
+      updateFlag = true
     }
     if (calc !== undefined) {
       instance.calc = calc
     }
-    return [overrideSuccess, calcParamsSuccess]
+    return [updateFlag, calcFlag]
   }
 
   /**
@@ -92,7 +93,7 @@ export default class IndicatorStore {
    * @param isStack
    * @returns
    */
-  async addInstance (paneId: string, indicator: Indicator, isStack: boolean): Promise<boolean> {
+  async addInstance (paneId: string, indicator: PickRequired<Partial<Indicator>, 'name'>, isStack: boolean): Promise<boolean> {
     const { name } = indicator
     let paneInstances = this._instances.get(paneId)
     if (paneInstances?.has(name) !== undefined) {
@@ -194,7 +195,7 @@ export default class IndicatorStore {
    * @param name
    * @returns
    */
-  getInstance (paneId?: string, name?: string): TypeOrNull<Required<Indicator>> | TypeOrNull<Map<string, Required<Indicator>>> | Map<string, Map<string, Required<Indicator>>> {
+  getInstanceByPaneId (paneId?: string, name?: string): TypeOrNull<Indicator> | TypeOrNull<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
     if (paneId !== undefined) {
       const paneInstances = this._instances.get(paneId)
       if (name !== undefined) {
@@ -228,7 +229,7 @@ export default class IndicatorStore {
    * @param paneId
    * @returns
    */
-  async override (indicator: Indicator, paneId?: string): Promise<boolean[]> {
+  async override (indicator: PickRequired<Partial<Indicator>, 'name'>, paneId?: string): Promise<boolean[]> {
     const { name } = indicator
     let instances: Map<string, Map<string, IndicatorTemplate>> = new Map()
     if (paneId !== undefined) {

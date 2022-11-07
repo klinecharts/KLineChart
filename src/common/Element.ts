@@ -14,7 +14,7 @@
 
 import Coordinate from './Coordinate'
 
-export type ElementEvent = (coordinate: Coordinate, ...others: any[]) => void
+export type ElementEvent = (coordinate: Coordinate, element: Element) => void
 
 export default abstract class Element {
   private readonly _events = new Map<string, ElementEvent>()
@@ -28,7 +28,7 @@ export default abstract class Element {
     const callback = this._events.get(type)
     if (callback !== undefined) {
       if (this.checkEventOn(coordinate)) {
-        callback(coordinate, ...others)
+        callback(coordinate, this)
         return true
       }
     }

@@ -12,22 +12,24 @@
  * limitations under the License.
  */
 
-import { checkCoordinateOnStraightLine, getParallelLines } from './shapeHelper'
+import PickRequired from '../../common/PickRequired'
 
-export default {
-  name: 'priceChannelLine',
-  totalStep: 4,
-  checkEventCoordinateOnShape: ({ dataSource, eventCoordinate }) => {
-    return checkCoordinateOnStraightLine(dataSource[0], dataSource[1], eventCoordinate)
-  },
-  createShapeDataSource: ({ coordinates, viewport }) => {
-    return [
-      {
-        type: 'line',
-        isDraw: true,
-        isCheck: true,
-        dataSource: getParallelLines(coordinates, { x: viewport.width, y: viewport.height }, 1)
-      }
-    ]
+import { Shape } from '../../componentl/Shape'
+
+const segment: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+  name: 'segment',
+  totalStep: 3,
+  createDataSource: ({ coordinates }) => {
+    if (coordinates.length === 2) {
+      return [
+        {
+          type: 'line',
+          attrs: { coordinates }
+        }
+      ]
+    }
+    return []
   }
 }
+
+export default segment

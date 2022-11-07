@@ -14,9 +14,8 @@
 
 import TypeOrNull from '../common/TypeOrNull'
 import Coordinate from '../common/Coordinate'
+import Crosshair from '../common/Crosshair'
 import { MouseTouchEvent, TOUCH_MIN_RADIUS } from '../common/MouseTouchEventHandler'
-
-import { Crosshair } from '../store/CrosshairStore'
 
 import Pane from '../pane/Pane'
 

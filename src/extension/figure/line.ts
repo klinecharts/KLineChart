@@ -41,14 +41,25 @@ function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs): boolea
   return on
 }
 
-function getLinearYFromSlopeIntercept (kb: TypeOrNull<number[]>, coordinate: Coordinate): number {
+export function getLinearYFromSlopeIntercept (kb: TypeOrNull<number[]>, coordinate: Coordinate): number {
   if (kb != null) {
     return coordinate.x * kb[0] + kb[1]
   }
   return coordinate.y
 }
 
-function getLinearSlopeIntercept (coordinate1: Coordinate, coordinate2: Coordinate): TypeOrNull<number[]> {
+/**
+ * 获取点在两点决定的一次函数上的y值
+ * @param coordinate1
+ * @param coordinate2
+ * @param targetCoordinate
+ */
+export function getLinearYFromCoordinates (coordinate1: Coordinate, coordinate2: Coordinate, targetCoordinate: Coordinate): number {
+  const kb = getLinearSlopeIntercept(coordinate1, coordinate2)
+  return getLinearYFromSlopeIntercept(kb, targetCoordinate)
+}
+
+export function getLinearSlopeIntercept (coordinate1: Coordinate, coordinate2: Coordinate): TypeOrNull<number[]> {
   const difX = coordinate1.x - coordinate2.x
   if (difX !== 0) {
     const k = (coordinate1.y - coordinate2.y) / difX
