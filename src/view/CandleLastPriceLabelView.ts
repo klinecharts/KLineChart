@@ -73,29 +73,35 @@ export default class CandleLastPriceLabelView extends View {
           rectX = bounding.width - rectWidth
         }
 
-        this.createFigure('rect', {
-          x: rectX,
-          y: priceY - paddingTop - textSize / 2,
-          width: rectWidth,
-          height: rectHeight,
-          styles: {
+        this.createFigure(
+          'rect',
+          {
+            x: rectX,
+            y: priceY - paddingTop - textSize / 2,
+            width: rectWidth,
+            height: rectHeight
+          },
+          {
             color: backgroundColor,
             borderRadius: lastPriceMarkTextStyles.borderRadius
           }
-        })?.draw(ctx)
+        )?.draw(ctx)
 
-        this.createFigure('text', {
-          x: rectX + paddingLeft,
-          y: priceY,
-          text,
-          styles: {
+        this.createFigure(
+          'text',
+          {
+            x: rectX + paddingLeft,
+            y: priceY,
+            text
+          },
+          {
             color: lastPriceMarkTextStyles.color,
             size: textSize,
             family: lastPriceMarkTextStyles.family,
             weight: lastPriceMarkTextStyles.weight,
             baseline: 'middle'
           }
-        })?.draw(ctx)
+        )?.draw(ctx)
       }
     }
   }

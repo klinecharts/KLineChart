@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -47,7 +48,7 @@ interface Dmi {
  * 输出ADXR:ADX的MM日指数平滑移动平均
  *
  */
-const directionalMovementIndex: Indicator<Dmi> = {
+const directionalMovementIndex: PickRequired<Partial<Indicator<Dmi>>, 'name' | 'calc'> = {
   name: 'DMI',
   shortName: 'DMI',
   calcParams: [14, 6],

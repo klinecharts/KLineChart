@@ -22,7 +22,7 @@ import CandleLastPriceLineView from '../view/CandleLastPriceLineView'
 import IndicatorTooltipView from '../view/IndicatorTooltipView'
 import CandleTooltipView from '../view/CandleTooltipView'
 
-import { CandleType } from '../store/styles'
+import { CandleType } from '../common/Styles'
 
 export default class CandleWidget extends IndicatorWidget {
   private readonly _candleBarView = new CandleBarView(this)

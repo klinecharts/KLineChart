@@ -12,7 +12,12 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
+import { IndicatorStyle } from '../../common/Styles'
+
+import { formatValue } from '../../common/utils/format'
+
 import { Indicator, IndicatorCalcOptions, IndicatorPlotStylesData } from '../../componentl/Indicator'
 
 interface Macd {
@@ -29,7 +34,7 @@ interface Macd {
  * ⒊再计算DIFF的M日的平均的指数平滑移动平均线，记为DEA。
  * ⒋最后用DIFF减DEA，得MACD。MACD通常绘制成围绕零轴线波动的柱形图。MACD柱状大于0涨颜色，小于0跌颜色。
  */
-const movingAverageConvergenceDivergence: Indicator<Macd> = {
+const movingAverageConvergenceDivergence: PickRequired<Partial<Indicator<Macd>>, 'name' | 'calc'> = {
   name: 'MACD',
   shortName: 'MACD',
   calcParams: [12, 26, 9],
@@ -41,17 +46,17 @@ const movingAverageConvergenceDivergence: Indicator<Macd> = {
       title: 'MACD: ',
       type: 'bar',
       baseValue: 0,
-      styles: (data: IndicatorPlotStylesData<Macd>, defaultStyles: any) => {
+      styles: (data: IndicatorPlotStylesData<Macd>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
         const { prev, current } = data
         const prevMacd = prev.indicatorData?.macd ?? Number.MIN_SAFE_INTEGER
         const currentMacd = current.indicatorData?.macd ?? Number.MIN_SAFE_INTEGER
         let color: string
         if (currentMacd > 0) {
-          color = defaultStyles.bar.upColor
+          color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles.bars)[0].upColor) as string
         } else if (currentMacd < 0) {
-          color = defaultStyles.bar.downColor
+          color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles.bars)[0].downColor) as string
         } else {
-          color = defaultStyles.bar.noChangeColor
+          color = formatValue(indicator.styles, 'bars[0].noChangeColor', (defaultStyles.bars)[0].noChangeColor) as string
         }
         const style = prevMacd < currentMacd ? 'stroke' : 'fill'
         return { style, color }

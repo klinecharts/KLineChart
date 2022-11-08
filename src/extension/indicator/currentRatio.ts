@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -38,7 +39,7 @@ interface Cr {
  * 输出MA4:M4/2.5+1日前的CR的M4日简单移动平均
  *
  */
-const currentRatio: Indicator<Cr> = {
+const currentRatio: PickRequired<Partial<Indicator<Cr>>, 'name' | 'calc'> = {
   name: 'CR',
   shortName: 'CR',
   calcParams: [26, 10, 20, 40, 60],

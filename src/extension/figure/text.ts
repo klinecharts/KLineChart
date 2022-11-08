@@ -80,7 +80,7 @@ export function drawText (ctx: CanvasRenderingContext2D, attrs: TextAttrs, style
   ctx.textBaseline = baseline
   ctx.font = createFont(size, weight, family)
 
-  ctx.strokeStyle = color
+  ctx.fillStyle = color
   ctx.fillText(text, x, y)
 }
 

@@ -14,7 +14,9 @@
 
 import Coordinate from './Coordinate'
 
-export type ElementEvent = (coordinate: Coordinate, element: Element) => void
+export type ElementEvent = (coordinate: Coordinate) => boolean
+
+export interface ElementEventHandler { [key: string]: ElementEvent }
 
 export default abstract class Element {
   private readonly _events = new Map<string, ElementEvent>()
@@ -24,12 +26,11 @@ export default abstract class Element {
     return this
   }
 
-  onEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
+  onEvent (type: string, coordinate: Coordinate): boolean {
     const callback = this._events.get(type)
     if (callback !== undefined) {
       if (this.checkEventOn(coordinate)) {
-        callback(coordinate, this)
-        return true
+        return callback(coordinate)
       }
     }
     return false

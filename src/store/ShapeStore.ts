@@ -46,7 +46,7 @@ export const enum EventShapeInfoElementType {
 
 export interface EventShapeInfo {
   paneId: string
-  instanceId: string
+  instance: TypeOrNull<ShapeTemplate>
   elementType: EventShapeInfoElementType
   elementIndex: number
 }
@@ -58,17 +58,21 @@ export default class ShapeStore {
   private _progressInstanceInfo: TypeOrNull<ProgressShapeInfo> = null
 
   private _hoverInstanceInfo: EventShapeInfo = {
-    paneId: '', instanceId: '', elementType: EventShapeInfoElementType.NONE, elementIndex: -1
+    paneId: '',
+    instance: null,
+    elementType: EventShapeInfoElementType.NONE,
+    elementIndex: -1
   }
 
   private _clickInstanceInfo: EventShapeInfo = {
-    paneId: '', instanceId: '', elementType: EventShapeInfoElementType.NONE, elementIndex: -1
+    paneId: '',
+    instance: null,
+    elementType: EventShapeInfoElementType.NONE,
+    elementIndex: -1
   }
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
-    // 事件按住的示例
-    this._pressedInstance = null
   }
 
   private _overrideInstance (instance: ShapeTemplate, shape: Partial<Shape>): boolean {
@@ -78,7 +82,7 @@ export default class ShapeStore {
       onDrawEnd, onClick,
       onRightClick, onPressedMove,
       onMouseEnter, onMouseLeave,
-      onRemove
+      onRemoved, onSelected, onDeselected
     } = shape
     let updateFlag = false
     if (id !== undefined) {
@@ -123,8 +127,14 @@ export default class ShapeStore {
     if (onMouseLeave !== undefined) {
       instance.setOnMouseLeaveCallback(onMouseLeave)
     }
-    if (onRemove !== undefined) {
-      instance.setOnRemoveCallback(onRemove)
+    if (onRemoved !== undefined) {
+      instance.setOnRemovedCallback(onRemoved)
+    }
+    if (onSelected !== undefined) {
+      instance.setOnSelectedCallback(onSelected)
+    }
+    if (onDeselected !== undefined) {
+      instance.setOnDeselectedCallback(onDeselected)
     }
     return updateFlag
   }
@@ -203,34 +213,14 @@ export default class ShapeStore {
    * 更新进行中的实例
    * @param paneId
    */
-  updateProgressInstancePaneId (paneId: string): void {
+  updateProgressInstanceInfo (paneId: string, appointPaneFlag?: boolean): void {
     if (this._progressInstanceInfo !== null) {
-      const { appointPaneFlag } = this._progressInstanceInfo
-      if (!appointPaneFlag) {
+      if (appointPaneFlag !== undefined && appointPaneFlag) {
+        this._progressInstanceInfo.appointPaneFlag = appointPaneFlag
+      }
+      if (!this._progressInstanceInfo.appointPaneFlag) {
         this._progressInstanceInfo.paneId = paneId
       }
-    }
-  }
-
-  /**
-   * 获取按住的实例
-   * @returns
-   */
-  pressedInstance () {
-    return this._pressedInstance || {}
-  }
-
-  /**
-   * 更新事件按住的实例
-   * @param instance
-   * @param paneId
-   * @param element
-   */
-  updatePressedInstance (instance, paneId, element) {
-    if (instance) {
-      this._pressedInstance = { instance, paneId, element }
-    } else {
-      this._pressedInstance = null
     }
   }
 
@@ -284,7 +274,7 @@ export default class ShapeStore {
       const instance = this._progressInstanceInfo.instance
       if ((id === undefined || instance.id === id)) {
         updatePaneIds.push(this._progressInstanceInfo.paneId)
-        instance.onRemove?.(instance)
+        instance.onRemoved?.(instance)
         this._progressInstanceInfo = null
       }
     }
@@ -294,7 +284,7 @@ export default class ShapeStore {
         const removeIndex = paneInstances.findIndex(instance => instance.id === id)
         if (removeIndex > -1) {
           updatePaneIds.push(entry[0])
-          paneInstances[removeIndex].onRemove?.(paneInstances[removeIndex])
+          paneInstances[removeIndex].onRemoved?.(paneInstances[removeIndex])
           paneInstances.splice(removeIndex, 1)
           if (paneInstances.length === 0) {
             this._instances.delete(entry[0])
@@ -306,7 +296,7 @@ export default class ShapeStore {
       this._instances.forEach((paneInstances, paneId) => {
         updatePaneIds.push(paneId)
         paneInstances.forEach(instance => {
-          instance.onRemove?.(instance)
+          instance.onRemoved?.(instance)
         })
       })
       this._instances.clear()
@@ -320,10 +310,21 @@ export default class ShapeStore {
   }
 
   setHoverInstanceInfo (info: EventShapeInfo): void {
-    const { instanceId, elementType, elementIndex } = this._hoverInstanceInfo
-    if (instanceId !== info.instanceId || elementType !== info.elementType || elementIndex !== info.elementIndex) {
+    const { instance, elementType, elementIndex } = this._hoverInstanceInfo
+    if (
+      instance?.id !== info.instance?.id ||
+      elementType !== info.elementType ||
+      elementIndex !== info.elementIndex
+    ) {
       this._hoverInstanceInfo = info
-      this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, info.paneId)
+      if (instance?.id !== info.instance?.id) {
+        instance?.onMouseLeave?.(instance)
+        info.instance?.onMouseEnter?.(info.instance)
+      }
+      // if (paneId !== info.paneId) {
+      //   this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
+      // }
+      // this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, info.paneId)
     }
   }
 
@@ -332,12 +333,21 @@ export default class ShapeStore {
   }
 
   setClickInstanceInfo (info: EventShapeInfo): void {
-    const { paneId, instanceId, elementType, elementIndex } = this._clickInstanceInfo
-    if (instanceId !== info.instanceId || elementType !== info.elementType || elementIndex !== info.elementIndex) {
+    const { instance, elementType, elementIndex } = this._clickInstanceInfo
+    if (instance?.id !== info.instance?.id || elementType !== info.elementType || elementIndex !== info.elementIndex) {
       this._clickInstanceInfo = info
-      const update = this._chartStore.getChart().updatePane
-      update(UpdateLevel.OVERLAY, paneId)
-      update(UpdateLevel.OVERLAY, info.paneId)
+      if (info.instance?.isDrawing() ?? false) {
+        info.instance?.onClick?.(info.instance)
+      }
+      if (instance?.id !== info.instance?.id) {
+        instance?.onDeselected?.(instance)
+        info.instance?.onSelected?.(info.instance)
+      }
+      // const update = this._chartStore.getChart().updatePane
+      // if (paneId !== info.paneId) {
+      //   update(UpdateLevel.OVERLAY, paneId)
+      // }
+      // update(UpdateLevel.OVERLAY, info.paneId)
     }
   }
 
@@ -358,14 +368,14 @@ export default class ShapeStore {
    * @return
    */
   isDrawing (): boolean {
-    return this._progressInstanceInfo !== null && this._progressInstanceInfo.instance.isDrawing()
+    return this._progressInstanceInfo !== null && (this._progressInstanceInfo?.instance.isDrawing() ?? false)
   }
 
-  /**
-   * 是否按住
-   * @returns
-   */
-  isPressed (): boolean {
-    return !!this.pressedInstance().instance
-  }
+  // /**
+  //  * 是否按住
+  //  * @returns
+  //  */
+  // isPressed (): boolean {
+  //   return this._pressedInstanceInfo.instance !== null
+  // }
 }

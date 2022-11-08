@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -27,7 +28,7 @@ interface Wr {
  * WR
  * 公式 WR(N) = 100 * [ C - HIGH(N) ] / [ HIGH(N)-LOW(N) ]
  */
-const williamsR: Indicator<Wr> = {
+const williamsR: PickRequired<Partial<Indicator<Wr>>, 'name' | 'calc'> = {
   name: 'WR',
   shortName: 'WR',
   calcParams: [6, 10, 14],

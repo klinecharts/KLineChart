@@ -12,8 +12,10 @@
  * limitations under the License.
  */
 
+import TypeOrNull from './TypeOrNull'
+
 export default interface Point {
   dataIndex: number
-  timestamp: number
+  timestamp: TypeOrNull<number>
   value: number
 }

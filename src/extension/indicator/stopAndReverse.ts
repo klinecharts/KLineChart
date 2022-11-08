@@ -12,14 +12,18 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
+import { IndicatorStyle } from '../../common/Styles'
+import { formatValue } from '../../common/utils/format'
+
 import { Indicator, IndicatorCalcOptions, IndicatorSeries, IndicatorPlotStylesData } from '../../componentl/Indicator'
 
 interface Sar {
   sar?: number
 }
 
-const stopAndReverse: Indicator<Sar> = {
+const stopAndReverse: PickRequired<Partial<Indicator<Sar>>, 'name' | 'calc'> = {
   name: 'SAR',
   shortName: 'SAR',
   series: IndicatorSeries.PRICE,
@@ -31,12 +35,14 @@ const stopAndReverse: Indicator<Sar> = {
       key: 'sar',
       title: 'SAR: ',
       type: 'circle',
-      styles: (data: IndicatorPlotStylesData<Sar>, defayltStyles: any) => {
+      styles: (data: IndicatorPlotStylesData<Sar>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
         const { current } = data
         const sar = current.indicatorData?.sar ?? Number.MIN_SAFE_INTEGER
         const kLineData = current.kLineData as KLineData
         const halfHL = (kLineData?.high + kLineData?.low) / 2
-        const color = sar < halfHL ? defayltStyles.circle.upColor : defayltStyles.circle.downColor
+        const color = sar < halfHL
+          ? formatValue(indicator.styles, 'circles[0].upColor', (defaultStyles.circles)[0].upColor) as string
+          : formatValue(indicator.styles, 'circles[0].downColor', (defaultStyles.circles)[0].downColor) as string
         return { color }
       }
     }

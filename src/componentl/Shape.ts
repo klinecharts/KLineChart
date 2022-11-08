@@ -21,8 +21,11 @@ import Bounding from '../common/Bounding'
 import Precision from '../common/Precision'
 import BarSpace from '../common/BarSpace'
 import { ShapeStyle } from '../common/Styles'
+import { clone } from '../common/utils/typeChecks'
 
 import Axis from './Axis'
+
+import TimeScaleStore from '../store/TimeScaleStore'
 
 export const enum ShapeMode {
   NORMAL = 'normal',
@@ -82,7 +85,9 @@ export interface Shape {
   onPressedMove: TypeOrNull<ShapeEventCllback>
   onMouseEnter: TypeOrNull<ShapeEventCllback>
   onMouseLeave: TypeOrNull<ShapeEventCllback>
-  onRemove: TypeOrNull<ShapeEventCllback>
+  onRemoved: TypeOrNull<ShapeEventCllback>
+  onSelected: TypeOrNull<ShapeEventCllback>
+  onDeselected: TypeOrNull<ShapeEventCllback>
 }
 
 const SHAPE_DRAW_STEP_START = 1
@@ -107,10 +112,15 @@ export default abstract class ShapeTemplate implements Shape {
   onPressedMove: TypeOrNull<ShapeEventCllback>
   onMouseEnter: TypeOrNull<ShapeEventCllback>
   onMouseLeave: TypeOrNull<ShapeEventCllback>
-  onRemove: TypeOrNull<ShapeEventCllback>
+  onRemoved: TypeOrNull<ShapeEventCllback>
+  onSelected: TypeOrNull<ShapeEventCllback>
+  onDeselected: TypeOrNull<ShapeEventCllback>
 
   id: string
   currentStep: number = SHAPE_DRAW_STEP_START
+
+  private _prevPressedPoint: TypeOrNull<Point> = null
+  private _prevPressedPoints: Point[] = []
 
   constructor (shape: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'>) {
     const {
@@ -118,7 +128,8 @@ export default abstract class ShapeTemplate implements Shape {
       performEventPressedMove, performEventMoveForDrawing,
       onDrawStart, onDrawing, onDrawEnd,
       onClick, onRightClick, onPressedMove,
-      onMouseEnter, onMouseLeave, onRemove
+      onMouseEnter, onMouseLeave, onRemoved,
+      onSelected, onDeselected
     } = shape
     this.name = name
     this.totalStep = totalStep
@@ -137,7 +148,9 @@ export default abstract class ShapeTemplate implements Shape {
     this.onPressedMove = onPressedMove ?? null
     this.onMouseEnter = onMouseEnter ?? null
     this.onMouseLeave = onMouseLeave ?? null
-    this.onRemove = onRemove ?? null
+    this.onRemoved = onRemoved ?? null
+    this.onSelected = onSelected ?? null
+    this.onDeselected = onDeselected ?? null
   }
 
   setId (id: string): boolean {
@@ -295,9 +308,25 @@ export default abstract class ShapeTemplate implements Shape {
     return false
   }
 
-  setOnRemoveCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
-    if (this.onRemove !== callback) {
-      this.onRemove = callback
+  setOnRemovedCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+    if (this.onRemoved !== callback) {
+      this.onRemoved = callback
+      return true
+    }
+    return false
+  }
+
+  setOnSelectedCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+    if (this.onSelected !== callback) {
+      this.onSelected = callback
+      return true
+    }
+    return false
+  }
+
+  setOnDeselectedCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+    if (this.onDeselected !== callback) {
+      this.onDeselected = callback
       return true
     }
     return false
@@ -307,7 +336,7 @@ export default abstract class ShapeTemplate implements Shape {
     if (this.currentStep === this.totalStep - 1) {
       this.currentStep = SHAPE_DRAW_STEP_FINISHED
       // this._chartStore.shapeStore().progressInstanceComplete()
-      // this.onDrawEnd({ id: this.id, points: this.points })
+      this.onDrawEnd?.(this)
     } else {
       this.currentStep++
     }
@@ -327,6 +356,68 @@ export default abstract class ShapeTemplate implements Shape {
    */
   isStart (): boolean {
     return this.currentStep === SHAPE_DRAW_STEP_START
+  }
+
+  mouseMoveForDrawing (point: Point): void {
+    const pointIndex = this.currentStep - 1
+    this.points[pointIndex] = point
+    this.performEventMoveForDrawing?.({
+      currentStep: this.currentStep,
+      mode: this.mode,
+      points: this.points,
+      performPointIndex: pointIndex,
+      performPoint: point
+    })
+    this.onDrawing?.(this)
+  }
+
+  /**
+   * 鼠标按住移动方法
+   * @param point
+   * @param elementIndex
+   */
+  mousePressedPointMove (point: Point, elementIndex: number): void {
+    this.points[elementIndex].timestamp = point.timestamp
+    this.points[elementIndex].dataIndex = point.dataIndex
+    this.points[elementIndex].value = point.value
+    this.performEventPressedMove?.({
+      currentStep: this.currentStep,
+      points: this.points,
+      mode: this.mode,
+      performPointIndex: elementIndex,
+      performPoint: point
+    })
+    this.onPressedMove?.(this)
+  }
+
+  /**
+   * 按住非点拖动开始事件
+   * @param point
+   */
+  startPressedOtherMove (point: Point): void {
+    this._prevPressedPoint = { ...point }
+    this._prevPressedPoints = clone(this.points)
+  }
+
+  /**
+   * 按住非点拖动时事件
+   * @param point
+   */
+  mousePressedOtherMove (point: Point, timeScaleStore: TimeScaleStore): void {
+    if (!this.lock && this._prevPressedPoint !== null) {
+      const difDataIndex = point.dataIndex - this._prevPressedPoint.dataIndex
+      const difValue = point.value - this._prevPressedPoint.value
+      this.points = this._prevPressedPoints.map(p => {
+        const dataIndex = point.dataIndex + difDataIndex
+        const value = point.value + difValue
+        return {
+          dataIndex,
+          value,
+          timestamp: timeScaleStore.dataIndexToTimestamp(dataIndex)
+        }
+      })
+      this.onPressedMove?.(this)
+    }
   }
 
   abstract createDataSource (params: ShapeCreateDataSourceParams): ShapeDataSource[]

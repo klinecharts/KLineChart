@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -32,7 +33,7 @@ interface Emv {
  * MAEMV=EMV的M日的简单移动平均
  *
  */
-const easeOfMovementValue: Indicator<Emv> = {
+const easeOfMovementValue: PickRequired<Partial<Indicator<Emv>>, 'name' | 'calc'> = {
   name: 'EMV',
   shortName: 'EMV',
   calcParams: [14, 9],

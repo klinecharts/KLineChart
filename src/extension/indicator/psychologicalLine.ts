@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -24,7 +25,7 @@ interface Psy {
  * PSY
  * 公式：PSY=N日内的上涨天数/N×100%。
  */
-const psychologicalLine: Indicator<Psy> = {
+const psychologicalLine: PickRequired<Partial<Indicator<Psy>>, 'name' | 'calc'> = {
   name: 'PSY',
   shortName: 'PSY',
   calcParams: [12, 6],

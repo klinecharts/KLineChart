@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorSeries, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -41,7 +42,7 @@ function getBollMd (dataList: KLineData[], ma: number): number {
 /**
  * BOLL
  */
-const bollingerBands: Indicator<Boll> = {
+const bollingerBands: PickRequired<Partial<Indicator<Boll>>, 'name' | 'calc'> = {
   name: 'BOLL',
   shortName: 'BOLL',
   series: IndicatorSeries.PRICE,

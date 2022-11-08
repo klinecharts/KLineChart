@@ -33,7 +33,7 @@ export const enum IndicatorSeries {
 }
 
 export interface IndicatorPlotStyle {
-  style?: LineType | PolygonType
+  style?: LineType[keyof LineType] | PolygonType[keyof PolygonType]
   color?: string
 }
 
@@ -206,7 +206,7 @@ export function eachPlots<D> (
       }
       const plotStyles = plot.styles?.(cbData, indicator, defaultStyles) ?? { style: defaultPlotStyle, color: defaultPlotColor }
       eachPlotCallback(plot, {
-        style: plotStyles.style ?? defaultPlotStyle,
+        style: (plotStyles.style ?? defaultPlotStyle) as (LineType & PolygonType),
         color: plotStyles.color ?? defaultPlotColor
       }, defaultPlotStyles, typeCount)
     }

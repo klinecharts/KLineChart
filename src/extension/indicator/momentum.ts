@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -24,7 +25,7 @@ interface Mtm {
  * mtm
  * 公式 MTM（N日）=C－CN
  */
-const momentum: Indicator<Mtm> = {
+const momentum: PickRequired<Partial<Indicator<Mtm>>, 'name' | 'calc'> = {
   name: 'MTM',
   shortName: 'MTM',
   calcParams: [12, 6],

@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorSeries, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -24,7 +25,7 @@ interface Ema {
 /**
  * EMA 指数移动平均
  */
-const exponentialMovingAverage: Indicator<Ema> = {
+const exponentialMovingAverage: PickRequired<Partial<Indicator<Ema>>, 'name' | 'calc'> = {
   name: 'EMA',
   shortName: 'EMA',
   series: IndicatorSeries.PRICE,

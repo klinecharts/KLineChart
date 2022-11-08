@@ -27,6 +27,7 @@ import GridView from '../view/GridView'
 import IndicatorView from '../view/IndicatorView'
 import CrosshairLineView from '../view/CrosshairLineView'
 import IndicatorTooltipView from '../view/IndicatorTooltipView'
+import ShapeView from '../view/ShapeView'
 
 import { cancelAnimationFrame, requestAnimationFrame } from '../common/utils/compatible'
 
@@ -35,6 +36,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   private readonly _indicatorView = new IndicatorView(this)
   private readonly _crosshairLineView = new CrosshairLineView(this)
   private readonly _tooltipView = this.createTooltipView()
+  private readonly _shapeView = new ShapeView(this)
 
   // 惯性滚动开始时间
   private _flingStartTime = new Date().getTime()
@@ -86,21 +88,23 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   pressedMouseMoveEvent (event: MouseTouchEvent): void {
-    const pane = this.getPane()
-    const chartStore = pane.getChart().getChartStore()
-    let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane.getId() }
-    if (event.isTouch) {
-      if (this._touchCoordinate !== null) {
-        this._touchCoordinate = { x: event.x, y: event.y }
-        chartStore.getCrosshairStore().set(crosshair)
-        return
-      } else {
-        crosshair = undefined
+    if (!this.dispatchEvent('pressedMouseMoveEvent', event)) {
+      const pane = this.getPane()
+      const chartStore = pane.getChart().getChartStore()
+      let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane.getId() }
+      if (event.isTouch) {
+        if (this._touchCoordinate !== null) {
+          this._touchCoordinate = { x: event.x, y: event.y }
+          chartStore.getCrosshairStore().set(crosshair)
+          return
+        } else {
+          crosshair = undefined
+        }
       }
-    }
-    if (this._startScrollCoordinate !== null) {
-      const distance = event.x - this._startScrollCoordinate.x
-      chartStore.getTimeScaleStore().scroll(distance, crosshair)
+      if (this._startScrollCoordinate !== null) {
+        const distance = event.x - this._startScrollCoordinate.x
+        chartStore.getTimeScaleStore().scroll(distance, crosshair)
+      }
     }
   }
 
@@ -109,6 +113,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   mouseDownEvent (event: MouseTouchEvent): void {
+    this.dispatchEvent('mouseDownEvent', event)
     if (this._flingScrollTimerId !== null) {
       cancelAnimationFrame(this._flingScrollTimerId)
       this._flingScrollTimerId = null
@@ -140,6 +145,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   mouseMoveEvent (event: MouseTouchEvent): void {
+    this.dispatchEvent('mouseMoveEvent', event)
     const pane = this.getPane()
     const chartStore = pane.getChart().getChartStore()
     if (!chartStore.getDragPaneFlag()) {
@@ -187,6 +193,10 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
     }
   }
 
+  dispatchEvent (type: string, coordinate: Coordinate): boolean {
+    return this._shapeView.dispatchEvent(type, coordinate)
+  }
+
   protected updateMain (ctx: CanvasRenderingContext2D): void {
     this._gridView.draw(ctx)
     this.updateMainContent(ctx)
@@ -200,6 +210,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   protected updateMainContent (ctx: CanvasRenderingContext2D): void {}
 
   protected updateOverlay (ctx: CanvasRenderingContext2D): void {
+    this._shapeView.draw(ctx)
     this._crosshairLineView.draw(ctx)
     this._tooltipView.draw(ctx)
   }

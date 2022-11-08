@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -24,7 +25,7 @@ interface Obv {
  * OBV
  * OBV = REF(OBV) + sign * V
  */
-const onBalanceVolume: Indicator<Obv> = {
+const onBalanceVolume: PickRequired<Partial<Indicator<Obv>>, 'name' | 'calc'> = {
   name: 'OBV',
   shortName: 'OBV',
   calcParams: [30],

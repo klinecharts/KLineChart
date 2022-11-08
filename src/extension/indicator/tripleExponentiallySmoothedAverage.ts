@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -33,7 +34,7 @@ interface Trix {
  * TRMA:MA(TRIX,M)
  *
  */
-const tripleExponentiallySmoothedAverage: Indicator<Trix> = {
+const tripleExponentiallySmoothedAverage: PickRequired<Partial<Indicator<Trix>>, 'name' | 'calc'> = {
   name: 'TRIX',
   shortName: 'TRIX',
   calcParams: [12, 9],

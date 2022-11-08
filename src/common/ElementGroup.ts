@@ -27,13 +27,13 @@ export default class ElementGroup extends Element {
     return false
   }
 
-  dispatchEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
+  dispatchEvent (type: string, coordinate: Coordinate): boolean {
     for (const element of this._elements) {
-      if (element.onEvent(type, coordinate, ...others)) {
+      if (element.onEvent(type, coordinate)) {
         return true
       }
     }
-    return this.onEvent(type, coordinate, ...others)
+    return this.onEvent(type, coordinate)
   }
 
   addElement (element: Element): ElementGroup {

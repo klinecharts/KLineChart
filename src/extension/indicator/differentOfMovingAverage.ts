@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -24,7 +25,7 @@ interface Dma {
  * DMA
  * 公式：DIF:MA(CLOSE,N1)-MA(CLOSE,N2);DIFMA:MA(DIF,M)
  */
-const differentOfMovingAverage: Indicator<Dma> = {
+const differentOfMovingAverage: PickRequired<Partial<Indicator<Dma>>, 'name' | 'calc'> = {
   name: 'DMA',
   shortName: 'DMA',
   calcParams: [10, 50, 10],

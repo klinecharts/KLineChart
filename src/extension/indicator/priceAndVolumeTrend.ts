@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -26,7 +27,7 @@ interface Pvt {
  * PVT = SUM(X)
  *
  */
-const priceAndVolumeTrend: Indicator<Pvt> = {
+const priceAndVolumeTrend: PickRequired<Partial<Indicator<Pvt>>, 'name' | 'calc'> = {
   name: 'PVT',
   shortName: 'PVT',
   plots: [

@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -27,7 +28,7 @@ interface Cci {
  * MD=近N日TP - 当前MA绝对值的累计之和÷N
  *
  */
-const commodityChannelIndex: Indicator<Cci> = {
+const commodityChannelIndex: PickRequired<Partial<Indicator<Cci>>, 'name' | 'calc'> = {
   name: 'CCI',
   shortName: 'CCI',
   calcParams: [20],

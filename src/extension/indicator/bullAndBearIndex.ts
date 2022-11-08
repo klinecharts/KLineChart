@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorSeries, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -24,7 +24,7 @@ interface Bbi {
  * 公式: BBI = (MA(CLOSE, M) + MA(CLOSE, N) + MA(CLOSE, O) + MA(CLOSE, P)) / 4
  *
  */
-const bullAndBearIndex: Indicator<Bbi> = {
+const bullAndBearIndex: PickRequired<Partial<Indicator<Bbi>>, 'name' | 'calc'> = {
   name: 'BBI',
   shortName: 'BBI',
   series: IndicatorSeries.PRICE,

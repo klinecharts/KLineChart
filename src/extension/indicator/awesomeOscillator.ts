@@ -12,14 +12,18 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
+import { IndicatorStyle } from '../../common/Styles'
+import { formatValue } from '../../common/utils/format'
+
 import { Indicator, IndicatorPlotStylesData, IndicatorCalcOptions } from '../../componentl/Indicator'
 
 interface Ao {
   ao?: number
 }
 
-const awesomeOscillator: Indicator<Ao> = {
+const awesomeOscillator: PickRequired<Partial<Indicator<Ao>>, 'name' | 'calc'> = {
   name: 'AO',
   shortName: 'AO',
   calcParams: [5, 34],
@@ -28,15 +32,15 @@ const awesomeOscillator: Indicator<Ao> = {
     title: 'AO: ',
     type: 'bar',
     baseValue: 0,
-    styles: (data: IndicatorPlotStylesData<Ao>, defayltStyles: any) => {
+    styles: (data: IndicatorPlotStylesData<Ao>, indicator: Indicator<Ao>, defaultStyles: IndicatorStyle) => {
       const { prev, current } = data
       const prevAo = prev.indicatorData?.ao ?? Number.MIN_SAFE_INTEGER
       const currentAo = current.indicatorData?.ao ?? Number.MIN_SAFE_INTEGER
       let color: string
       if (currentAo > prevAo) {
-        color = defayltStyles.bar.upColor
+        color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles.bars)[0].upColor) as string
       } else {
-        color = defayltStyles.bar.downColor
+        color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles.bars)[0].downColor) as string
       }
       const style = currentAo > prevAo ? 'stroke' : 'fill'
       return { color, style }

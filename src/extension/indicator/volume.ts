@@ -12,7 +12,11 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
+import { IndicatorStyle } from '../../common/Styles'
+import { formatValue } from '../../common/utils/format'
+
 import { Indicator, IndicatorCalcOptions, IndicatorPlotStylesData, IndicatorSeries, IndicatorPlot } from '../../componentl/Indicator'
 
 interface Vol {
@@ -22,7 +26,7 @@ interface Vol {
   ma3?: number
 }
 
-const volume: Indicator<Vol> = {
+const volume: PickRequired<Partial<Indicator<Vol>>, 'name' | 'calc'> = {
   name: 'VOL',
   shortName: 'VOL',
   series: IndicatorSeries.VOLUME,
@@ -39,15 +43,16 @@ const volume: Indicator<Vol> = {
       title: 'VOLUME: ',
       type: 'bar',
       baseValue: 0,
-      styles: (data: IndicatorPlotStylesData<Vol>, defayltStyles: any) => {
+      styles: (data: IndicatorPlotStylesData<Vol>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
         const kLineData = data.current.kLineData as KLineData
         let color: string
         if (kLineData.close > kLineData.open) {
-          color = defayltStyles.bar.upColor
+          color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles.bars)[0].upColor) as string
         } else if (kLineData.close < kLineData.open) {
-          color = defayltStyles.bar.downColor
+          color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles.bars)[0].downColor) as string
+        } else {
+          color = formatValue(indicator.styles, 'bars[0].noChangeColor', (defaultStyles.bars)[0].noChangeColor) as string
         }
-        color = defayltStyles.bar.noChangeColor
         return { color }
       }
     }

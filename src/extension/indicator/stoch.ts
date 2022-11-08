@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -31,7 +32,7 @@ interface Kdj {
  * 若无前一日K 值与D值，则可分别用50来代替。
  * J值=3*当日K值-2*当日D值
  */
-const stoch: Indicator<Kdj> = {
+const stoch: PickRequired<Partial<Indicator<Kdj>>, 'name' | 'calc'> = {
   name: 'KDJ',
   shortName: 'KDJ',
   calcParams: [9, 3, 3],

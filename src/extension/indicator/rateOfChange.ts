@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -24,7 +25,7 @@ interface Roc {
  * 变动率指标
  * 公式：ROC = (CLOSE - REF(CLOSE, N)) / REF(CLOSE, N)
  */
-const rateOfChange: Indicator<Roc> = {
+const rateOfChange: PickRequired<Partial<Indicator<Roc>>, 'name' | 'calc'> = {
   name: 'ROC',
   shortName: 'ROC',
   calcParams: [12, 6],

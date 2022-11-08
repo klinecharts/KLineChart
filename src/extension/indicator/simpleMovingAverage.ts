@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions, IndicatorSeries } from '../../componentl/Indicator'
 
@@ -22,7 +23,7 @@ interface Sma {
 /**
  * sma
  */
-const simpleMovingAverage: Indicator<Sma> = {
+const simpleMovingAverage: PickRequired<Partial<Indicator<Sma>>, 'name' | 'calc'> = {
   name: 'SMA',
   shortName: 'SMA',
   series: IndicatorSeries.PRICE,

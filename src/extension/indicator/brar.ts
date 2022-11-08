@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -29,7 +30,7 @@ interface Brar {
  * 其中，H为当日最高价，L为当日最低价，O为当日开盘价，N为设定的时间参数
  *
  */
-const brar: Indicator<Brar> = {
+const brar: PickRequired<Partial<Indicator<Brar>>, 'name' | 'calc'> = {
   name: 'BRAR',
   shortName: 'BRAR',
   calcParams: [26],

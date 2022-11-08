@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -25,7 +26,7 @@ interface Bias {
  * BIAS
  * 乖离率=[(当日收盘价-N日平均价)/N日平均价]*100%
  */
-const bias: Indicator<Bias> = {
+const bias: PickRequired<Partial<Indicator<Bias>>, 'name' | 'calc'> = {
   name: 'BIAS',
   shortName: 'BIAS',
   calcParams: [6, 12, 24],

@@ -12,59 +12,201 @@
  * limitations under the License.
  */
 
+import Coordinate from '../common/Coordinate'
+import Point from '../common/Point'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { ShapeStyle } from '../common/Styles'
-import Element from '../common/Element'
-import ElementGroup from '../common/ElementGroup'
+import { ElementEventHandler } from '../common/Element'
+
 import { isArray } from '../common/utils/typeChecks'
 import { formatValue } from '../common/utils/format'
 
 import Axis from '../componentl/Axis'
 import YAxis from '../componentl/YAxis'
-import Shape from '../componentl/Shape'
+import Shape, { ShapeMode } from '../componentl/Shape'
 
 import { EventShapeInfo, EventShapeInfoElementType } from '../store/ShapeStore'
+import TimeScaleStore from '../store/TimeScaleStore'
+
+import { CANDLE_PANE_ID } from '../pane/CandlePane'
+import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 
 import Widget from '../widget/Widget'
 
 import View from './View'
-import Coordinate from '../common/Coordinate'
 
 export default class ShapeView extends View<YAxis> {
-  private readonly _shapeElements = new Map<Element, Shape>()
-
   constructor (widget: Widget<YAxis>) {
     super(widget)
     this._initEvent()
   }
 
   private _initEvent (): void {
-    this.registerEvent('mouseMoveEvent', (coordinate, element) => {
-      const shape = this._shapeElements.get(element)
-      if (shape !== undefined) {
-
+    const pane = this.getWidget().getPane()
+    const paneId = pane.getId()
+    const shapeStore = pane.getChart().getChartStore().getShapeStore()
+    this.registerEvent('mouseMoveEvent', (coordinate: Coordinate) => {
+      const progressInstanceInfo = shapeStore.getProgressInstanceInfo()
+      if (progressInstanceInfo !== null) {
+        if (progressInstanceInfo.instance.isStart()) {
+          this._elementMouseMoveEvent(progressInstanceInfo.instance, EventShapeInfoElementType.POINT, 0)(coordinate)
+        }
+      } else {
+        // shapeStore.setHoverInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
       }
+      return false
+    }).registerEvent('mouseClickEvent', () => {
+      shapeStore.setClickInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
+      return false
     })
+  }
+
+  private _elementEvents (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number): ElementEventHandler {
+    return {
+      mouseMoveEvent: this._elementMouseMoveEvent(shape, elementType, elementIndex),
+      mouseDownEvent: this._elementMouseDownEvent(shape, elementType, elementIndex),
+      pressedMouseMoveEvent: this._elementPressedMouseMoveEvent(shape, elementType, elementIndex)
+    }
+  }
+
+  private _elementMouseMoveEvent (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number) {
+    return (coordinate: Coordinate) => {
+      const pane = this.getWidget().getPane()
+      const paneId = pane.getId()
+      const shapeStore = pane.getChart().getChartStore().getShapeStore()
+      if (shape.isStart()) {
+        shapeStore.updateProgressInstanceInfo(paneId)
+      }
+      if (shape.isDrawing()) {
+        shape.mouseMoveForDrawing(this._coordinateToPoint(shape, coordinate))
+      }
+      shapeStore.setHoverInstanceInfo({ paneId: pane.getId(), instance: shape, elementType, elementIndex })
+      return true
+    }
+  }
+
+  private _elementMouseDownEvent (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number) {
+    return () => {
+      const pane = this.getWidget().getPane()
+      const paneId = pane.getId()
+      const shapeStore = pane.getChart().getChartStore().getShapeStore()
+      if (shape.isStart()) {
+        shapeStore.updateProgressInstanceInfo(paneId, true)
+      }
+      if (shape.isDrawing()) {
+        shape.nextStep()
+        if (!shape.isDrawing()) {
+          shapeStore.progressInstanceComplete()
+        }
+      }
+      shapeStore.setClickInstanceInfo({ paneId: pane.getId(), instance: shape, elementType, elementIndex })
+      return true
+    }
+  }
+
+  _elementPressedMouseMoveEvent (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number) {
+    return (coordinate: Coordinate) => {
+      if (!shape.isDrawing()) {
+        const point = this._coordinateToPoint(shape, coordinate)
+        if (elementType === EventShapeInfoElementType.POINT) {
+          shape.mousePressedPointMove(point, elementIndex)
+        } else {
+          shape.mousePressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore().getTimeScaleStore())
+        }
+      }
+      return true
+    }
+  }
+
+  private _coordinateToPoint (shape: Shape, coordinate: Coordinate): Point {
+    const pane = this.getWidget().getPane()
+    const chart = pane.getChart()
+    const paneId = pane.getId()
+    const yAxis = pane.getAxisComponent()
+    const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as Axis
+    const dataIndex = xAxis.convertFromPixel(coordinate.x)
+    const timeScaleStore = chart.getChartStore().getTimeScaleStore()
+    const timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex)
+
+    let value = yAxis.convertFromPixel(coordinate.y)
+    if (shape.mode !== ShapeMode.NORMAL && paneId === CANDLE_PANE_ID) {
+      const kLineData = timeScaleStore.getDataByDataIndex(dataIndex)
+      if (kLineData !== null) {
+        if (value > kLineData.high) {
+          if (shape.mode === ShapeMode.WEAK_MAGNET) {
+            const highY = yAxis.convertToPixel(kLineData.high)
+            const buffValue = yAxis.convertFromPixel(highY - 8)
+            if (value < buffValue) {
+              value = kLineData.high
+            }
+          } else {
+            value = kLineData.high
+          }
+        } else if (value < kLineData.low) {
+          if (shape.mode === ShapeMode.WEAK_MAGNET) {
+            const lowY = yAxis.convertToPixel(kLineData.low)
+            const buffValue = yAxis.convertFromPixel(lowY - 8)
+            if (value > buffValue) {
+              value = kLineData.low
+            }
+          } else {
+            value = kLineData.low
+          }
+        } else {
+          const max = Math.max(kLineData.open, kLineData.close)
+          const min = Math.min(kLineData.open, kLineData.close)
+          if (value > max) {
+            if (value - max < kLineData.high - value) {
+              value = max
+            } else {
+              value = kLineData.high
+            }
+          } else if (value < min) {
+            if (value - kLineData.low < min - value) {
+              value = kLineData.low
+            } else {
+              value = min
+            }
+          } else if (max - value < value - min) {
+            value = max
+          } else {
+            value = min
+          }
+        }
+      }
+    }
+    return { dataIndex, timestamp, value }
   }
 
   checkEventOn (coordinate: Coordinate): boolean {
     return true
   }
 
-  dispatchEvent (type: string, coordinate: Coordinate, ...others: any[]): boolean {
-    
-  }
-
   protected drawImp (ctx: CanvasRenderingContext2D): void {
-    this._shapeElements.clear()
     const widget = this.getWidget()
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()
+    const yAxis = pane.getAxisComponent()
+    const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as Axis
     const bounding = widget.getBounding()
-    const shapeStore = chart.getChartStore().getShapeStore()
+    const chartStore = chart.getChartStore()
+    const timeScaleStore = chartStore.getTimeScaleStore()
+    const barSpace = timeScaleStore.getBarSpace()
+    const precision = chartStore.getPrecision()
+    const defaultStyles = chartStore.getStyleOptions().shape
+    const shapeStore = chartStore.getShapeStore()
+    const hoverInstanceInfo = shapeStore.getHoverInstanceInfo()
+    const clickInstanceInfo = shapeStore.getClickInstanceInfo()
     const shapes = shapeStore.getInstances(pane.getId())
+    shapes.forEach(shape => {
+      this._drawShape(ctx, shape, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverInstanceInfo, clickInstanceInfo, timeScaleStore)
+    })
+    const progressInstanceInfo = shapeStore.getProgressInstanceInfo()
+    if (progressInstanceInfo !== null && progressInstanceInfo.paneId === pane.getId()) {
+      this._drawShape(ctx, progressInstanceInfo.instance, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverInstanceInfo, clickInstanceInfo, timeScaleStore)
+    }
   }
 
   private _drawShape (
@@ -77,29 +219,35 @@ export default class ShapeView extends View<YAxis> {
     xAxis: Axis,
     yAxis: Axis,
     hoverInstanceInfo: EventShapeInfo,
-    clickInstanceInfo: EventShapeInfo
+    clickInstanceInfo: EventShapeInfo,
+    timeScaleStore: TimeScaleStore
   ): void {
     const { points } = shape
     const coordinates = points.map(point => {
-      return { x: xAxis.convertToPixel(point.timestamp), y: yAxis.convertToPixel(point.value) }
+      let dataIndex = point.dataIndex
+      if (point.timestamp !== null) {
+        dataIndex = timeScaleStore.timestampToDataIndex(point.timestamp)
+      }
+      return {
+        x: xAxis.convertToPixel(dataIndex),
+        y: yAxis.convertToPixel(point.value)
+      }
     })
-    const elements = new ElementGroup()
     if (!shape.isStart() && coordinates.length > 0) {
       const dataSource = shape.createDataSource({ shape, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis })
       dataSource.forEach(({ type, styles, attrs }) => {
         const attrsArray = isArray(attrs) ? [].concat(attrs) : [attrs]
-        attrsArray.forEach(ats => {
-          const element = this.createFigure(type, ats, styles ?? defaultStyles[type])
-          if (element !== null) {
-            elements.addElement(element)
-            element.draw(ctx)
-          }
+        attrsArray.forEach((ats, index) => {
+          this.createFigure(
+            type, ats, styles ?? defaultStyles[type],
+            this._elementEvents(shape, EventShapeInfoElementType.OTHER, index)
+          )?.draw(ctx)
         })
       })
     }
     if (
-      (hoverInstanceInfo.instanceId === shape.id && hoverInstanceInfo.elementType !== EventShapeInfoElementType.NONE) ||
-      (clickInstanceInfo.instanceId === shape.id && clickInstanceInfo.elementType !== EventShapeInfoElementType.NONE) ||
+      (hoverInstanceInfo.instance?.id === shape.id && hoverInstanceInfo.elementType !== EventShapeInfoElementType.NONE) ||
+      (clickInstanceInfo.instance?.id === shape.id && clickInstanceInfo.elementType !== EventShapeInfoElementType.NONE) ||
       shape.isDrawing()
     ) {
       const styles = shape.styles
@@ -109,6 +257,7 @@ export default class ShapeView extends View<YAxis> {
         let borderColor = formatValue(styles, 'point.borderColor', defaultStyles.point.borderColor)
         let borderSize = formatValue(styles, 'point.borderSize', defaultStyles.point.borderSize) as number
         if (
+          hoverInstanceInfo.instance?.id === shape.id &&
           hoverInstanceInfo.elementType === EventShapeInfoElementType.POINT &&
           index === hoverInstanceInfo.elementIndex
         ) {
@@ -117,27 +266,18 @@ export default class ShapeView extends View<YAxis> {
           borderColor = formatValue(styles, 'point.activeBorderColor', defaultStyles.point.activeBorderColor)
           borderSize = formatValue(styles, 'point.activeBorderSize', defaultStyles.point.activeBorderSize) as number
         }
-        const outerCircle = this.createFigure(
+        this.createFigure(
           'circle',
           { x, y, r: radius + borderSize },
-          { color: borderColor }
-        )
-        if (outerCircle !== null) {
-          elements.addElement(outerCircle)
-          outerCircle.draw(ctx)
-        }
-        const innerCircle = this.createFigure(
+          { color: borderColor },
+          this._elementEvents(shape, EventShapeInfoElementType.POINT, index)
+        )?.draw(ctx)
+        this.createFigure(
           'circle',
           { x, y, r: radius },
           { color }
-        )
-        if (innerCircle !== null) {
-          elements.addElement(innerCircle)
-          innerCircle.draw(ctx)
-        }
+        )?.draw(ctx)
       })
     }
-    this.addElement(elements)
-    this._shapeElements.set(elements, shape)
   }
 }

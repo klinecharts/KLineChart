@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
 
@@ -25,7 +26,7 @@ interface Rsi {
  * RSI
  * RSI = SUM(MAX(CLOSE - REF(CLOSE,1),0),N) / SUM(ABS(CLOSE - REF(CLOSE,1)),N) × 100
  */
-const relativeStrengthIndex: Indicator<Rsi> = {
+const relativeStrengthIndex: PickRequired<Partial<Indicator<Rsi>>, 'name' | 'calc'> = {
   name: 'RSI',
   shortName: 'RSI',
   calcParams: [6, 12, 24],
