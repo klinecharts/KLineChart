@@ -51,10 +51,10 @@ export function getRayLine (coordinates: Coordinate[], bounding: Bounding): Line
   return []
 }
 
-const rayLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const rayLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'rayLine',
   totalStep: 3,
-  createDataSource: ({ coordinates, bounding }) => {
+  createFigures: ({ coordinates, bounding }) => {
     return [
       {
         type: 'line',

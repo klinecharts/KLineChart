@@ -245,8 +245,8 @@ export default class ShapeView extends View<YAxis> {
       }
     })
     if (!shape.isStart() && coordinates.length > 0) {
-      const dataSource = shape.createDataSource({ shape, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis })
-      dataSource.forEach(({ type, styles, attrs }) => {
+      const figures = shape.createFigures({ shape, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis })
+      figures.forEach(({ type, styles, attrs }) => {
         const attrsArray = isArray(attrs) ? [].concat(attrs) : [attrs]
         attrsArray.forEach((ats, index) => {
           this.createFigure(

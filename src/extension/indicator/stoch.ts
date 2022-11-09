@@ -36,7 +36,7 @@ const stoch: PickRequired<Partial<Indicator<Kdj>>, 'name' | 'calc'> = {
   name: 'KDJ',
   shortName: 'KDJ',
   calcParams: [9, 3, 3],
-  plots: [
+  figures: [
     { key: 'k', title: 'K: ', type: 'line' },
     { key: 'd', title: 'D: ', type: 'line' },
     { key: 'j', title: 'J: ', type: 'line' }

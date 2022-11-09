@@ -34,7 +34,7 @@ const brar: PickRequired<Partial<Indicator<Brar>>, 'name' | 'calc'> = {
   name: 'BRAR',
   shortName: 'BRAR',
   calcParams: [26],
-  plots: [
+  figures: [
     { key: 'br', title: 'BR: ', type: 'line' },
     { key: 'ar', title: 'AR: ', type: 'line' }
   ],

@@ -31,7 +31,7 @@ const bullAndBearIndex: PickRequired<Partial<Indicator<Bbi>>, 'name' | 'calc'> =
   precision: 2,
   calcParams: [3, 6, 12, 24],
   shouldOhlc: true,
-  plots: [
+  figures: [
     { key: 'bbi', title: 'BBI: ', type: 'line' }
   ],
   calc: (dataList: KLineData[], options: IndicatorCalcOptions<Bbi>) => {

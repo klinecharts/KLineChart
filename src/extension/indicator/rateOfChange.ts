@@ -29,7 +29,7 @@ const rateOfChange: PickRequired<Partial<Indicator<Roc>>, 'name' | 'calc'> = {
   name: 'ROC',
   shortName: 'ROC',
   calcParams: [12, 6],
-  plots: [
+  figures: [
     { key: 'roc', title: 'ROC: ', type: 'line' },
     { key: 'maRoc', title: 'MAROC: ', type: 'line' }
   ],

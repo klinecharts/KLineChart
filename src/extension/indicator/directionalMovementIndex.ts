@@ -52,7 +52,7 @@ const directionalMovementIndex: PickRequired<Partial<Indicator<Dmi>>, 'name' | '
   name: 'DMI',
   shortName: 'DMI',
   calcParams: [14, 6],
-  plots: [
+  figures: [
     { key: 'pdi', title: 'PDI: ', type: 'line' },
     { key: 'mdi', title: 'MDI: ', type: 'line' },
     { key: 'adx', title: 'ADX: ', type: 'line' },

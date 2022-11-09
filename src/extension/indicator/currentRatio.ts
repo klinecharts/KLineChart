@@ -43,7 +43,7 @@ const currentRatio: PickRequired<Partial<Indicator<Cr>>, 'name' | 'calc'> = {
   name: 'CR',
   shortName: 'CR',
   calcParams: [26, 10, 20, 40, 60],
-  plots: [
+  figures: [
     { key: 'cr', title: 'CR: ', type: 'line' },
     { key: 'ma1', title: 'MA1: ', type: 'line' },
     { key: 'ma2', title: 'MA2: ', type: 'line' },

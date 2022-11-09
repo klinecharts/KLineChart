@@ -16,10 +16,10 @@ import PickRequired from '../../common/PickRequired'
 
 import { Shape } from '../../componentl/Shape'
 
-const horizontalRayLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const horizontalRayLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'horizontalRayLine',
   totalStep: 3,
-  createDataSource: ({ coordinates, bounding }) => {
+  createFigures: ({ coordinates, bounding }) => {
     const coordinate = { x: 0, y: coordinates[0].y }
     if (coordinates[1] !== undefined && coordinates[0].x < coordinates[1].x) {
       coordinate.x = bounding.width

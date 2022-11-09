@@ -29,7 +29,7 @@ const onBalanceVolume: PickRequired<Partial<Indicator<Obv>>, 'name' | 'calc'> = 
   name: 'OBV',
   shortName: 'OBV',
   calcParams: [30],
-  plots: [
+  figures: [
     { key: 'obv', title: 'OBV: ', type: 'line' },
     { key: 'maObv', title: 'MAOBV: ', type: 'line' }
   ],

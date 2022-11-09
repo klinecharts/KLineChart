@@ -32,18 +32,18 @@ const exponentialMovingAverage: PickRequired<Partial<Indicator<Ema>>, 'name' | '
   calcParams: [6, 12, 20],
   precision: 2,
   shouldOhlc: true,
-  plots: [
+  figures: [
     { key: 'ema1', title: 'EMA6: ', type: 'line' },
     { key: 'ema2', title: 'EMA12: ', type: 'line' },
     { key: 'ema3', title: 'EMA20: ', type: 'line' }
   ],
-  regeneratePlots: (params: any[]) => {
+  regenerateFigures: (params: any[]) => {
     return params.map((p: number, i: number) => {
       return { key: `ema${i + 1}`, title: `EMA${p}: `, type: 'line' }
     })
   },
   calc: (dataList: KLineData[], options: IndicatorCalcOptions<Ema>) => {
-    const { calcParams: params = [], plots = [] } = options
+    const { calcParams: params = [], figures = [] } = options
     let closeSum = 0
     const emaValues: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {
@@ -57,7 +57,7 @@ const exponentialMovingAverage: PickRequired<Partial<Indicator<Ema>>, 'name' | '
           } else {
             emaValues[index] = closeSum / p
           }
-          ema[plots[index].key] = emaValues[index]
+          ema[figures[index].key] = emaValues[index]
         }
       })
       return ema

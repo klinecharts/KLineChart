@@ -19,10 +19,10 @@ import { Shape } from '../../componentl/Shape'
 import { LineAttrs } from '../figure/line'
 import { TextAttrs } from '../figure/text'
 
-const fibonacciLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const fibonacciLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'fibonacciLine',
   totalStep: 3,
-  createDataSource: ({ coordinates, bounding, shape, precision }) => {
+  createFigures: ({ coordinates, bounding, shape, precision }) => {
     const points = shape.points
     if (coordinates.length > 0) {
       const lines: LineAttrs[] = []

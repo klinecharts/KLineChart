@@ -32,33 +32,33 @@ export const enum IndicatorSeries {
   VOLUME = 'volume'
 }
 
-export interface IndicatorPlotStyle {
+export interface IndicatorFigureStyle {
   style?: LineType[keyof LineType] | PolygonType[keyof PolygonType]
   color?: string
 }
 
-export interface IndicatorPlotStylesDataChild<D> {
+export interface IndicatorFigureStylesCallbackDataChild<D> {
   kLineData?: KLineData
   indicatorData?: D
 }
 
-export interface IndicatorPlotStylesData<D> {
-  prev: IndicatorPlotStylesDataChild<D>
-  current: IndicatorPlotStylesDataChild<D>
-  next: IndicatorPlotStylesDataChild<D>
+export interface IndicatorFigureStylesCallbackData<D> {
+  prev: IndicatorFigureStylesCallbackDataChild<D>
+  current: IndicatorFigureStylesCallbackDataChild<D>
+  next: IndicatorFigureStylesCallbackDataChild<D>
 }
 
-export type IndicatorPlotStylesCallback<D> = (data: IndicatorPlotStylesData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorPlotStyle
+export type IndicatorFigureStyleCallback<D> = (data: IndicatorFigureStylesCallbackData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorFigureStyle
 
-export interface IndicatorPlot<D = any> {
+export interface IndicatorFigure<D = any> {
   key: string
   title?: string
   type?: string
   baseValue?: number
-  styles?: IndicatorPlotStylesCallback<D>
+  styles?: IndicatorFigureStyleCallback<D>
 }
 
-export type IndicatorRegeneratePlotsCallback<D = any> = (calcParms: any[]) => Array<IndicatorPlot<D>>
+export type IndicatorRegenerateFiguresCallback<D = any> = (calcParms: any[]) => Array<IndicatorFigure<D>>
 
 export interface IndicatorTooltipDataChild {
   title: string
@@ -97,7 +97,7 @@ export interface IndicatorDrawParams<D = any> {
 }
 
 export type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParams<D>) => boolean
-export type IndicatorCalcOptions<D> = Pick<Indicator<D>, 'plots' | 'calcParams' | 'extendData'>
+export type IndicatorCalcOptions<D> = Pick<Indicator<D>, 'figures' | 'calcParams' | 'extendData'>
 export type IndicatorCalcCallback<D> = (dataList: KLineData[], options: IndicatorCalcOptions<D>) => Promise<D[]> | D[]
 
 export interface Indicator<D = any> {
@@ -118,7 +118,7 @@ export interface Indicator<D = any> {
   // 系列
   series: IndicatorSeries
   // 数据信息
-  plots: Array<IndicatorPlot<D>>
+  figures: Array<IndicatorFigure<D>>
   // 指定的最小值
   minValue: TypeOrNull<number>
   // 指定的最大值
@@ -127,8 +127,8 @@ export interface Indicator<D = any> {
   styles: TypeOrNull<Partial<IndicatorStyle>>
   // 计算
   calc: IndicatorCalcCallback<D>
-  // 重新生成数据配置
-  regeneratePlots: TypeOrNull<IndicatorRegeneratePlotsCallback<D>>
+  // 重新生成数图形配置
+  regenerateFigures: TypeOrNull<IndicatorRegenerateFiguresCallback<D>>
   // 创建自定义提示文字
   createToolTipDataSource: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>
   // 自定义绘制
@@ -139,17 +139,17 @@ export interface Indicator<D = any> {
 
 export type IndicatorConstructor<D = any> = new () => IndicatorTemplate<D>
 
-export type EachPlotCallback = (plot: IndicatorPlot, plotStyles: Required<IndicatorPlotStyle>, defaultPlotStyles: any, count: number) => void
+export type EachFigureCallback = (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>, defaultFigureStyles: any, count: number) => void
 
-export function eachPlots<D> (
+export function eachFigures<D> (
   kLineDataList: KLineData[],
   indicator: Indicator<D>,
   dataIndex: number,
   defaultStyles: IndicatorStyle,
-  eachPlotCallback: EachPlotCallback
+  eachFigureCallback: EachFigureCallback
 ): void {
   const result = indicator.result
-  const plots = indicator.plots
+  const figures = indicator.figures
   const styles = indicator.styles
 
   const circleStyles = formatValue(styles, 'circles', defaultStyles.circles) as IndicatorPolygonStyle[]
@@ -167,48 +167,48 @@ export function eachPlots<D> (
 
   let typeCount = 0
 
-  let defaultPlotStyles
-  let defaultPlotStyle
-  let defaultPlotColor
-  plots.forEach(plot => {
-    switch (plot.type) {
+  let defaultFigureStyles
+  let defaultFigureStyle
+  let defaultFigureColor
+  figures.forEach(figure => {
+    switch (figure.type) {
       case 'circle': {
-        defaultPlotStyles = circleStyles[circleCount % circleStyleCount]
-        defaultPlotStyle = defaultPlotStyles.style
-        defaultPlotColor = defaultPlotStyles.noChangeColor
+        defaultFigureStyles = circleStyles[circleCount % circleStyleCount]
+        defaultFigureStyle = defaultFigureStyles.style
+        defaultFigureColor = defaultFigureStyles.noChangeColor
         typeCount = circleCount
         circleCount++
         break
       }
       case 'bar': {
-        defaultPlotStyles = barStyles[barCount % barStyleCount]
-        defaultPlotStyle = defaultPlotStyles.style
-        defaultPlotColor = defaultPlotStyles.noChangeColor
+        defaultFigureStyles = barStyles[barCount % barStyleCount]
+        defaultFigureStyle = defaultFigureStyles.style
+        defaultFigureColor = defaultFigureStyles.noChangeColor
         typeCount = barCount
         barCount++
         break
       }
       case 'line': {
-        defaultPlotStyles = lineStyles[lineCount % lineStyleCount]
-        defaultPlotStyle = defaultPlotStyles.style
-        defaultPlotColor = defaultPlotStyles.color
+        defaultFigureStyles = lineStyles[lineCount % lineStyleCount]
+        defaultFigureStyle = defaultFigureStyles.style
+        defaultFigureColor = defaultFigureStyles.color
         typeCount = lineCount
         lineCount++
         break
       }
       default: { break }
     }
-    if (isValid(defaultPlotStyles)) {
+    if (isValid(defaultFigureStyles)) {
       const cbData = {
         prev: { kLineData: kLineDataList[dataIndex - 1], indicatorData: result[dataIndex - 1] },
         current: { kLineData: kLineDataList[dataIndex], indicatorData: result[dataIndex] },
         next: { kLineData: kLineDataList[dataIndex + 1], indicatorData: result[dataIndex + 1] }
       }
-      const plotStyles = plot.styles?.(cbData, indicator, defaultStyles) ?? { style: defaultPlotStyle, color: defaultPlotColor }
-      eachPlotCallback(plot, {
-        style: (plotStyles.style ?? defaultPlotStyle) as (LineType & PolygonType),
-        color: plotStyles.color ?? defaultPlotColor
-      }, defaultPlotStyles, typeCount)
+      const figureStyles = figure.styles?.(cbData, indicator, defaultStyles) ?? { style: defaultFigureStyle, color: defaultFigureColor }
+      eachFigureCallback(figure, {
+        style: (figureStyles.style ?? defaultFigureStyle) as (LineType & PolygonType),
+        color: figureStyles.color ?? defaultFigureColor
+      }, defaultFigureStyles, typeCount)
     }
   })
 }
@@ -222,11 +222,11 @@ export default abstract class IndicatorTemplate<D = any> implements Indicator<D>
   shouldFormatBigNumber: boolean
   extendData: any
   series: IndicatorSeries
-  plots: Array<IndicatorPlot<D>>
+  figures: Array<IndicatorFigure<D>>
   minValue: TypeOrNull<number>
   maxValue: TypeOrNull<number>
   styles: TypeOrNull<Partial<IndicatorStyle>>
-  regeneratePlots: TypeOrNull<IndicatorRegeneratePlotsCallback<D>>
+  regenerateFigures: TypeOrNull<IndicatorRegenerateFiguresCallback<D>>
   createToolTipDataSource: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>
   draw: TypeOrNull<IndicatorDrawCallback<D>>
 
@@ -236,24 +236,24 @@ export default abstract class IndicatorTemplate<D = any> implements Indicator<D>
 
   constructor (indicator: PickRequired<Partial<Indicator<D>>, 'name'>) {
     const {
-      name, shortName, series, calcParams, plots, precision,
+      name, shortName, series, calcParams, figures, precision,
       shouldOhlc, shouldFormatBigNumber,
       minValue, maxValue, styles, extendData,
-      regeneratePlots, createToolTipDataSource, draw
+      regenerateFigures, createToolTipDataSource, draw
     } = indicator
     this.name = name
     this.shortName = shortName ?? name
     this.series = series ?? IndicatorSeries.NORMAL
     this.precision = precision ?? 4
     this.calcParams = calcParams ?? []
-    this.plots = plots ?? []
+    this.figures = figures ?? []
     this.shouldOhlc = shouldOhlc ?? false
     this.shouldFormatBigNumber = shouldFormatBigNumber ?? false
     this.minValue = minValue ?? null
     this.maxValue = maxValue ?? null
     this.styles = styles ?? null
     this.extendData = extendData
-    this.regeneratePlots = regeneratePlots ?? null
+    this.regenerateFigures = regenerateFigures ?? null
     this.createToolTipDataSource = createToolTipDataSource ?? null
     this.draw = draw ?? null
   }
@@ -305,7 +305,7 @@ export default abstract class IndicatorTemplate<D = any> implements Indicator<D>
    */
   setCalcParams (params: any[]): boolean {
     this.calcParams = params
-    this.plots = this.regeneratePlots?.(params) ?? this.plots
+    this.figures = this.regenerateFigures?.(params) ?? this.figures
     return true
   }
 
@@ -341,9 +341,9 @@ export default abstract class IndicatorTemplate<D = any> implements Indicator<D>
     return false
   }
 
-  setPlots (plots: IndicatorPlot[]): boolean {
-    if (this.plots !== plots) {
-      this.plots = plots
+  setFigures (figures: IndicatorFigure[]): boolean {
+    if (this.figures !== figures) {
+      this.figures = figures
       return true
     }
     return false
@@ -365,9 +365,9 @@ export default abstract class IndicatorTemplate<D = any> implements Indicator<D>
     return false
   }
 
-  setRegeneratePlots (callback: TypeOrNull<IndicatorRegeneratePlotsCallback>): boolean {
-    if (this.regeneratePlots !== callback) {
-      this.regeneratePlots = callback
+  setRegenerateFigures (callback: TypeOrNull<IndicatorRegenerateFiguresCallback>): boolean {
+    if (this.regenerateFigures !== callback) {
+      this.regenerateFigures = callback
       return true
     }
     return false
@@ -391,7 +391,7 @@ export default abstract class IndicatorTemplate<D = any> implements Indicator<D>
 
   async calcIndicator (dataList: KLineData[]): Promise<boolean> {
     try {
-      const result = await this.calc(dataList, { plots: this.plots, calcParams: this.calcParams, extendData: this.extendData })
+      const result = await this.calc(dataList, { figures: this.figures, calcParams: this.calcParams, extendData: this.extendData })
       this.result = result
       return true
     } catch (e) {

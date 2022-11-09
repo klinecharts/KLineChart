@@ -37,7 +37,7 @@ const easeOfMovementValue: PickRequired<Partial<Indicator<Emv>>, 'name' | 'calc'
   name: 'EMV',
   shortName: 'EMV',
   calcParams: [14, 9],
-  plots: [
+  figures: [
     { key: 'emv', title: 'EMV: ', type: 'line' },
     { key: 'maEmv', title: 'MAEMV: ', type: 'line' }
   ],

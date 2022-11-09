@@ -14,7 +14,7 @@
 
 import AxisImp, { Extremum, Tick } from './Axis'
 
-import { IndicatorPlot } from './Indicator'
+import { IndicatorFigure } from './Indicator'
 
 import { YAxisType } from '../common/Styles'
 
@@ -23,8 +23,8 @@ import { index10, log10 } from '../common/utils/number'
 import { createFont, calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision, formatBigNumber } from '../common/utils/format'
 
-interface PlotsResult {
-  plots: Array<IndicatorPlot<any>>
+interface FiguresResult {
+  figures: IndicatorFigure[]
   result: any[]
 }
 
@@ -34,7 +34,7 @@ export default class YAxis extends AxisImp {
     const chartStore = parent.getChart().getChartStore()
     let min = Number.MAX_SAFE_INTEGER
     let max = Number.MIN_SAFE_INTEGER
-    const plotsResultList: PlotsResult[] = []
+    const figuresResultList: FiguresResult[] = []
     let shouldOhlc = false
     let specifyMin = Number.MAX_SAFE_INTEGER
     let specifyMax = Number.MIN_SAFE_INTEGER
@@ -51,8 +51,8 @@ export default class YAxis extends AxisImp {
       if (indicator.maxValue !== null) {
         specifyMax = Math.max(specifyMax, indicator.maxValue)
       }
-      plotsResultList.push({
-        plots: indicator.plots ?? [],
+      figuresResultList.push({
+        figures: indicator.figures ?? [],
         result: indicator.result ?? []
       })
     })
@@ -85,10 +85,10 @@ export default class YAxis extends AxisImp {
         min = Math.min(min, data[areaValueKey])
         max = Math.max(max, data[areaValueKey])
       }
-      plotsResultList.forEach(({ plots, result }) => {
+      figuresResultList.forEach(({ figures, result }) => {
         const indicatorData = result[dataIndex] ?? {}
-        plots.forEach(plot => {
-          const value = indicatorData[plot.key]
+        figures.forEach(figure => {
+          const value = indicatorData[figure.key]
           if (isValid(value)) {
             min = Math.min(min, value)
             max = Math.max(max, value)

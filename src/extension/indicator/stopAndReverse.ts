@@ -17,7 +17,7 @@ import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorCalcOptions, IndicatorSeries, IndicatorPlotStylesData } from '../../componentl/Indicator'
+import { Indicator, IndicatorCalcOptions, IndicatorSeries, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
 
 interface Sar {
   sar?: number
@@ -30,12 +30,12 @@ const stopAndReverse: PickRequired<Partial<Indicator<Sar>>, 'name' | 'calc'> = {
   calcParams: [2, 2, 20],
   precision: 2,
   shouldOhlc: true,
-  plots: [
+  figures: [
     {
       key: 'sar',
       title: 'SAR: ',
       type: 'circle',
-      styles: (data: IndicatorPlotStylesData<Sar>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
+      styles: (data: IndicatorFigureStylesCallbackData<Sar>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
         const { current } = data
         const sar = current.indicatorData?.sar ?? Number.MIN_SAFE_INTEGER
         const kLineData = current.kLineData as KLineData

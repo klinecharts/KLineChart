@@ -29,7 +29,7 @@ const psychologicalLine: PickRequired<Partial<Indicator<Psy>>, 'name' | 'calc'> 
   name: 'PSY',
   shortName: 'PSY',
   calcParams: [12, 6],
-  plots: [
+  figures: [
     { key: 'psy', title: 'PSY: ', type: 'line' },
     { key: 'maPsy', title: 'MAPSY: ', type: 'line' }
   ],

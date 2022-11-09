@@ -16,10 +16,10 @@ import PickRequired from '../../common/PickRequired'
 
 import { Shape } from '../../componentl/Shape'
 
-const segment: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const segment: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'segment',
   totalStep: 3,
-  createDataSource: ({ coordinates }) => {
+  createFigures: ({ coordinates }) => {
     if (coordinates.length === 2) {
       return [
         {

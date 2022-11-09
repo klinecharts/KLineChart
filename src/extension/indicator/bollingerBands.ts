@@ -49,7 +49,7 @@ const bollingerBands: PickRequired<Partial<Indicator<Boll>>, 'name' | 'calc'> = 
   calcParams: [20, { value: 2, allowDecimal: true }],
   precision: 2,
   shouldOhlc: true,
-  plots: [
+  figures: [
     { key: 'up', title: 'UP: ', type: 'line' },
     { key: 'mid', title: 'MID: ', type: 'line' },
     { key: 'dn', title: 'DN: ', type: 'line' }

@@ -16,10 +16,10 @@ import PickRequired from '../../common/PickRequired'
 
 import { Shape } from '../../componentl/Shape'
 
-const verticalStraightLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const verticalStraightLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'verticalStraightLine',
   totalStep: 2,
-  createDataSource: ({ coordinates, bounding }) => {
+  createFigures: ({ coordinates, bounding }) => {
     return [
       {
         type: 'line',

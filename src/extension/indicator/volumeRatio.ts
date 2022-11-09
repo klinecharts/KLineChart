@@ -33,7 +33,7 @@ const volumeRatio: PickRequired<Partial<Indicator<Vr>>, 'name' | 'calc'> = {
   name: 'VR',
   shortName: 'VR',
   calcParams: [26, 6],
-  plots: [
+  figures: [
     { key: 'vr', title: 'VR: ', type: 'line' },
     { key: 'maVr', title: 'MAVR: ', type: 'line' }
   ],

@@ -29,7 +29,7 @@ const differentOfMovingAverage: PickRequired<Partial<Indicator<Dma>>, 'name' | '
   name: 'DMA',
   shortName: 'DMA',
   calcParams: [10, 50, 10],
-  plots: [
+  figures: [
     { key: 'dma', title: 'DMA: ', type: 'line' },
     { key: 'ama', title: 'AMA: ', type: 'line' }
   ],

@@ -32,18 +32,18 @@ const williamsR: PickRequired<Partial<Indicator<Wr>>, 'name' | 'calc'> = {
   name: 'WR',
   shortName: 'WR',
   calcParams: [6, 10, 14],
-  plots: [
+  figures: [
     { key: 'wr1', title: 'WR1: ', type: 'line' },
     { key: 'wr2', title: 'WR2: ', type: 'line' },
     { key: 'wr3', title: 'WR3: ', type: 'line' }
   ],
-  regeneratePlots: (params: any[]) => {
+  regenerateFigures: (params: any[]) => {
     return params.map((_, i: number) => {
       return { key: `wr${i + 1}`, title: `WR${i + 1}: `, type: 'line' }
     })
   },
   calc: (dataList: KLineData[], options: IndicatorCalcOptions<Wr>) => {
-    const { calcParams: params = [], plots = [] } = options
+    const { calcParams: params = [], figures = [] } = options
     return dataList.map((kLineData, i) => {
       const wr: Wr = {}
       const close = kLineData.close
@@ -54,7 +54,7 @@ const williamsR: PickRequired<Partial<Indicator<Wr>>, 'name' | 'calc'> = {
           const hn = hln[0]
           const ln = hln[1]
           const hnSubLn = hn - ln
-          wr[plots[index].key] = hnSubLn === 0 ? 0 : (close - hn) / hnSubLn * 100
+          wr[figures[index].key] = hnSubLn === 0 ? 0 : (close - hn) / hnSubLn * 100
         }
       })
       return wr

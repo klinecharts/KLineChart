@@ -28,10 +28,10 @@ const averagePrice: PickRequired<Partial<Indicator<Avp>>, 'name' | 'calc'> = {
   shortName: 'AVP',
   series: IndicatorSeries.PRICE,
   precision: 2,
-  plots: [
+  figures: [
     { key: 'avp', title: 'AVP: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: Pick<Indicator<Avp>, 'plots' | 'calcParams' | 'extendData'>) => {
+  calc: (dataList: KLineData[]) => {
     let totalTurnover = 0
     let totalVolume = 0
     return dataList.map((kLineData: KLineData) => {

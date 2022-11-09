@@ -18,10 +18,10 @@ import { getLinearYFromCoordinates } from '../figure/line'
 
 import { Shape } from '../../componentl/Shape'
 
-const straightLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const straightLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'straightLine',
   totalStep: 3,
-  createDataSource: ({ coordinates, bounding }) => {
+  createFigures: ({ coordinates, bounding }) => {
     if (coordinates.length === 2) {
       if (coordinates[0].x === coordinates[1].x) {
         return [

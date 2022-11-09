@@ -38,7 +38,7 @@ const tripleExponentiallySmoothedAverage: PickRequired<Partial<Indicator<Trix>>,
   name: 'TRIX',
   shortName: 'TRIX',
   calcParams: [12, 9],
-  plots: [
+  figures: [
     { key: 'trix', title: 'TRIX: ', type: 'line' },
     { key: 'maTrix', title: 'MATRIX: ', type: 'line' }
   ],

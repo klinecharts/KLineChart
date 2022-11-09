@@ -16,10 +16,10 @@ import PickRequired from '../../common/PickRequired'
 
 import { Shape } from '../../componentl/Shape'
 
-const priceLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const priceLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'priceLine',
   totalStep: 2,
-  createDataSource: ({ coordinates, bounding, precision, shape }) => {
+  createFigures: ({ coordinates, bounding, precision, shape }) => {
     const { value } = (shape.points)[0]
     return [
       {

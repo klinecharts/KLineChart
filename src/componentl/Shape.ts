@@ -41,14 +41,14 @@ export interface ShapePerformEventParams {
   performPoint: Point
 }
 
-export interface ShapeDataSource {
+export interface ShapeFigure {
   isCheck?: boolean
   type: string
   attrs: any | any[]
   styles?: any
 }
 
-export interface ShapeCreateDataSourceParams {
+export interface ShapeCreateFiguresParams {
   shape: Shape
   coordinates: Coordinate[]
   bounding: Bounding
@@ -73,8 +73,8 @@ export interface Shape {
   points: Point[]
   extendData: any
   styles: TypeOrNull<DeepPartial<ShapeStyle>>
-  dataSource: ShapeDataSource[]
-  createDataSource: (params: ShapeCreateDataSourceParams) => ShapeDataSource[]
+  figures: ShapeFigure[]
+  createFigures: (params: ShapeCreateFiguresParams) => ShapeFigure[]
   performEventPressedMove: TypeOrNull<(params: ShapePerformEventParams) => void>
   performEventMoveForDrawing: TypeOrNull<(params: ShapePerformEventParams) => void>
   onDrawStart: TypeOrNull<ShapeEventCllback>
@@ -100,7 +100,7 @@ export default abstract class ShapeTemplate implements Shape {
   mode: ShapeMode
   points: Point[] = []
   extendData: any
-  dataSource: ShapeDataSource[]
+  figures: ShapeFigure[] = []
   styles: TypeOrNull<DeepPartial<ShapeStyle>>
   performEventPressedMove: TypeOrNull<(params: ShapePerformEventParams) => void>
   performEventMoveForDrawing: TypeOrNull<(params: ShapePerformEventParams) => void>
@@ -122,7 +122,7 @@ export default abstract class ShapeTemplate implements Shape {
   private _prevPressedPoint: TypeOrNull<Point> = null
   private _prevPressedPoints: Point[] = []
 
-  constructor (shape: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'>) {
+  constructor (shape: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'>) {
     const {
       name, totalStep, lock, mode, points, extendData, styles,
       performEventPressedMove, performEventMoveForDrawing,
@@ -335,7 +335,6 @@ export default abstract class ShapeTemplate implements Shape {
   nextStep (): void {
     if (this.currentStep === this.totalStep - 1) {
       this.currentStep = SHAPE_DRAW_STEP_FINISHED
-      // this._chartStore.shapeStore().progressInstanceComplete()
       this.onDrawEnd?.(this)
     } else {
       this.currentStep++
@@ -420,18 +419,18 @@ export default abstract class ShapeTemplate implements Shape {
     }
   }
 
-  abstract createDataSource (params: ShapeCreateDataSourceParams): ShapeDataSource[]
+  abstract createFigures (params: ShapeCreateFiguresParams): ShapeFigure[]
 
   static extend (
-    shape: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'>
+    shape: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'>
   ): ShapeConstructor {
     class Custom extends ShapeTemplate {
       constructor () {
         super(shape)
       }
 
-      createDataSource (params: ShapeCreateDataSourceParams): ShapeDataSource[] {
-        return shape.createDataSource(params)
+      createFigures (params: ShapeCreateFiguresParams): ShapeFigure[] {
+        return shape.createFigures(params)
       }
     }
     return Custom

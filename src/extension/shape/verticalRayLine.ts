@@ -16,10 +16,10 @@ import PickRequired from '../../common/PickRequired'
 
 import { Shape } from '../../componentl/Shape'
 
-const verticalRayLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const verticalRayLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'verticalRayLine',
   totalStep: 3,
-  createDataSource: ({ coordinates, bounding }) => {
+  createFigures: ({ coordinates, bounding }) => {
     if (coordinates.length === 2) {
       const coordinate = { x: coordinates[0].x, y: 0 }
       if (coordinates[0].y < coordinates[1].y) {

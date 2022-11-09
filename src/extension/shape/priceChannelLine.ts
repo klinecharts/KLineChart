@@ -18,10 +18,10 @@ import { Shape } from '../../componentl/Shape'
 
 import { getParallelLines } from './parallelStraightLine'
 
-const priceChannelLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const priceChannelLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'priceChannelLine',
   totalStep: 4,
-  createDataSource: ({ coordinates, bounding }) => {
+  createFigures: ({ coordinates, bounding }) => {
     return [
       {
         type: 'line',

@@ -32,7 +32,7 @@ const commodityChannelIndex: PickRequired<Partial<Indicator<Cci>>, 'name' | 'cal
   name: 'CCI',
   shortName: 'CCI',
   calcParams: [20],
-  plots: [
+  figures: [
     { key: 'cci', title: 'CCI: ', type: 'line' }
   ],
   calc: (dataList: KLineData[], options: IndicatorCalcOptions<Cci>) => {

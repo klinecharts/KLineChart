@@ -17,7 +17,7 @@ import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorPlotStylesData, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator, IndicatorFigureStylesCallbackData, IndicatorCalcOptions } from '../../componentl/Indicator'
 
 interface Ao {
   ao?: number
@@ -27,12 +27,12 @@ const awesomeOscillator: PickRequired<Partial<Indicator<Ao>>, 'name' | 'calc'> =
   name: 'AO',
   shortName: 'AO',
   calcParams: [5, 34],
-  plots: [{
+  figures: [{
     key: 'ao',
     title: 'AO: ',
     type: 'bar',
     baseValue: 0,
-    styles: (data: IndicatorPlotStylesData<Ao>, indicator: Indicator<Ao>, defaultStyles: IndicatorStyle) => {
+    styles: (data: IndicatorFigureStylesCallbackData<Ao>, indicator: Indicator<Ao>, defaultStyles: IndicatorStyle) => {
       const { prev, current } = data
       const prevAo = prev.indicatorData?.ao ?? Number.MIN_SAFE_INTEGER
       const currentAo = current.indicatorData?.ao ?? Number.MIN_SAFE_INTEGER

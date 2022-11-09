@@ -14,7 +14,7 @@
 
 import PickRequired from '../../common/PickRequired'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Pvt {
   pvt?: number
@@ -30,10 +30,10 @@ interface Pvt {
 const priceAndVolumeTrend: PickRequired<Partial<Indicator<Pvt>>, 'name' | 'calc'> = {
   name: 'PVT',
   shortName: 'PVT',
-  plots: [
+  figures: [
     { key: 'pvt', title: 'PVT: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Pvt>) => {
+  calc: (dataList: KLineData[]) => {
     let sum = 0
     return dataList.map((kLineData, i) => {
       const pvt: Pvt = {}

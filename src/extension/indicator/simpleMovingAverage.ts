@@ -29,7 +29,7 @@ const simpleMovingAverage: PickRequired<Partial<Indicator<Sma>>, 'name' | 'calc'
   series: IndicatorSeries.PRICE,
   calcParams: [12, 2],
   precision: 2,
-  plots: [
+  figures: [
     { key: 'sma', title: 'SMA: ', type: 'line' }
   ],
   shouldOhlc: true,

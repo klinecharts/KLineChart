@@ -30,19 +30,19 @@ const relativeStrengthIndex: PickRequired<Partial<Indicator<Rsi>>, 'name' | 'cal
   name: 'RSI',
   shortName: 'RSI',
   calcParams: [6, 12, 24],
-  plots: [
+  figures: [
     { key: 'rsi1', title: 'RSI1: ', type: 'line' },
     { key: 'rsi2', title: 'RSI2: ', type: 'line' },
     { key: 'rsi3', title: 'RSI3: ', type: 'line' }
   ],
-  regeneratePlots: (params: any[]) => {
+  regenerateFigures: (params: any[]) => {
     return params.map((_: any, index: number) => {
       const num = index + 1
       return { key: `rsi${num}`, title: `RSI${num}: `, type: 'line' }
     })
   },
   calc: (dataList: KLineData[], options: IndicatorCalcOptions<Rsi>) => {
-    const { calcParams: params = [], plots = [] } = options
+    const { calcParams: params = [], figures = [] } = options
     const sumCloseAs: number[] = []
     const sumCloseBs: number[] = []
     return dataList.map((kLineData, i) => {
@@ -57,9 +57,9 @@ const relativeStrengthIndex: PickRequired<Partial<Indicator<Rsi>>, 'name' | 'cal
         }
         if (i >= p - 1) {
           if (sumCloseBs[index] !== 0) {
-            rsi[plots[index].key] = 100 - (100.0 / (1 + sumCloseAs[index] / sumCloseBs[index]))
+            rsi[figures[index].key] = 100 - (100.0 / (1 + sumCloseAs[index] / sumCloseBs[index]))
           } else {
-            rsi[plots[index].key] = 0
+            rsi[figures[index].key] = 0
           }
           const agoData = dataList[i - (p - 1)]
           const agoPreData = dataList[i - p] ?? agoData

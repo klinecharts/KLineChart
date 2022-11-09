@@ -19,7 +19,7 @@ import { IndicatorStyle, TooltipShowRule, TooltipStyle, MarginTextStyle } from '
 
 import Axis from '../componentl/Axis'
 
-import IndicatorTemplate, { eachPlots, Indicator, IndicatorPlot, IndicatorPlotStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../componentl/Indicator'
+import IndicatorTemplate, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../componentl/Indicator'
 
 import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 
@@ -177,16 +177,16 @@ export default class IndicatorTooltipView extends View {
 
     const indicatorData = result[dataIndex] ?? {}
     const values: IndicatorTooltipDataChild[] = []
-    eachPlots(dataList, indicator, dataIndex, styles, (plot: IndicatorPlot, plotStyle: Required<IndicatorPlotStyle>) => {
-      if (plot.title !== undefined) {
-        let value = indicatorData[plot.key]
+    eachFigures(dataList, indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+      if (figure.title !== undefined) {
+        let value = indicatorData[figure.key]
         if (isValid(value)) {
           value = formatPrecision(value, indicator.precision)
           if (indicator.shouldFormatBigNumber) {
             value = formatBigNumber(value)
           }
         }
-        values.push({ title: plot.title, value: value ?? styles.tooltip.defaultValue, color: plotStyle.color })
+        values.push({ title: figure.title, value: value ?? styles.tooltip.defaultValue, color: figureStyles.color })
       }
     })
     return { name: indicator.shortName, calcParamText, values }

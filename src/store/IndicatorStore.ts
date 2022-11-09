@@ -31,9 +31,9 @@ export default class IndicatorStore {
 
   private _overrideInstance (instance: IndicatorTemplate, indicator: Partial<Indicator>): boolean[] {
     const {
-      shortName, series, calcParams, precision, plots, minValue, maxValue,
+      shortName, series, calcParams, precision, figures, minValue, maxValue,
       shouldOhlc, shouldFormatBigNumber, styles, extendData,
-      regeneratePlots, createToolTipDataSource, draw, calc
+      regenerateFigures, createToolTipDataSource, draw, calc
     } = indicator
     let updateFlag = false
     if (shortName !== undefined && instance.setShortName(shortName)) {
@@ -47,7 +47,7 @@ export default class IndicatorStore {
       updateFlag = true
       calcFlag = true
     }
-    if (plots !== undefined && instance.setPlots(plots)) {
+    if (figures !== undefined && instance.setFigures(figures)) {
       updateFlag = true
     }
     if (minValue !== undefined && instance.setMinValue(minValue)) {
@@ -71,7 +71,7 @@ export default class IndicatorStore {
     if (extendData !== undefined && instance.setExtendData(extendData)) {
       updateFlag = true
     }
-    if (regeneratePlots !== undefined && instance.setRegeneratePlots(regeneratePlots)) {
+    if (regenerateFigures !== undefined && instance.setRegenerateFigures(regenerateFigures)) {
       updateFlag = true
     }
     if (createToolTipDataSource !== undefined && instance.setCreateToolTipDataSource(createToolTipDataSource)) {

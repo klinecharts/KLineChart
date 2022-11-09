@@ -30,18 +30,18 @@ const bias: PickRequired<Partial<Indicator<Bias>>, 'name' | 'calc'> = {
   name: 'BIAS',
   shortName: 'BIAS',
   calcParams: [6, 12, 24],
-  plots: [
+  figures: [
     { key: 'bias1', title: 'BIAS6: ', type: 'line' },
     { key: 'bias2', title: 'BIAS12: ', type: 'line' },
     { key: 'bias3', title: 'BIAS24: ', type: 'line' }
   ],
-  regeneratePlots: (params: any[]) => {
+  regenerateFigures: (params: any[]) => {
     return params.map((p: number, i: number) => {
       return { key: `bias${i + 1}`, title: `BIAS${p}: `, type: 'line' }
     })
   },
   calc: (dataList: KLineData[], options: IndicatorCalcOptions<Bias>) => {
-    const { calcParams: params = [], plots = [] } = options
+    const { calcParams: params = [], figures = [] } = options
     const closeSums: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {
       const bias: Bias = {}
@@ -50,7 +50,7 @@ const bias: PickRequired<Partial<Indicator<Bias>>, 'name' | 'calc'> = {
         closeSums[index] = (closeSums[index] ?? 0) + close
         if (i >= p - 1) {
           const mean = closeSums[index] / params[index]
-          bias[plots[index].key] = (close - mean) / mean * 100
+          bias[figures[index].key] = (close - mean) / mean * 100
 
           closeSums[index] -= dataList[i - (p - 1)].close
         }

@@ -17,7 +17,7 @@ import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorCalcOptions, IndicatorPlotStylesData, IndicatorSeries, IndicatorPlot } from '../../componentl/Indicator'
+import { Indicator, IndicatorCalcOptions, IndicatorFigureStylesCallbackData, IndicatorSeries, IndicatorFigure } from '../../componentl/Indicator'
 
 interface Vol {
   volume?: number
@@ -34,7 +34,7 @@ const volume: PickRequired<Partial<Indicator<Vol>>, 'name' | 'calc'> = {
   shouldFormatBigNumber: true,
   precision: 0,
   minValue: 0,
-  plots: [
+  figures: [
     { key: 'ma1', title: 'MA5: ', type: 'line' },
     { key: 'ma2', title: 'MA10: ', type: 'line' },
     { key: 'ma3', title: 'MA20: ', type: 'line' },
@@ -43,7 +43,7 @@ const volume: PickRequired<Partial<Indicator<Vol>>, 'name' | 'calc'> = {
       title: 'VOLUME: ',
       type: 'bar',
       baseValue: 0,
-      styles: (data: IndicatorPlotStylesData<Vol>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
+      styles: (data: IndicatorFigureStylesCallbackData<Vol>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
         const kLineData = data.current.kLineData as KLineData
         let color: string
         if (kLineData.close > kLineData.open) {
@@ -57,16 +57,16 @@ const volume: PickRequired<Partial<Indicator<Vol>>, 'name' | 'calc'> = {
       }
     }
   ],
-  regeneratePlots: (params: any[]) => {
-    const plots: Array<IndicatorPlot<Vol>> = params.map((p: number, i: number) => {
+  regenerateFigures: (params: any[]) => {
+    const figures: Array<IndicatorFigure<Vol>> = params.map((p: number, i: number) => {
       return { key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }
     })
-    plots.push({
+    figures.push({
       key: 'volume',
       title: 'VOLUME: ',
       type: 'bar',
       baseValue: 0,
-      styles: (data: IndicatorPlotStylesData<Vol>, defayltStyles: any) => {
+      styles: (data: IndicatorFigureStylesCallbackData<Vol>, defayltStyles: any) => {
         const kLineData = data.current.kLineData as KLineData
         let color: string
         if (kLineData.close > kLineData.open) {
@@ -78,10 +78,10 @@ const volume: PickRequired<Partial<Indicator<Vol>>, 'name' | 'calc'> = {
         return { color }
       }
     })
-    return plots
+    return figures
   },
   calc: (dataList: KLineData[], options: IndicatorCalcOptions<Vol>) => {
-    const { calcParams: params = [], plots = [] } = options
+    const { calcParams: params = [], figures = [] } = options
     const volSums: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {
       const volume = kLineData.volume ?? 0
@@ -89,7 +89,7 @@ const volume: PickRequired<Partial<Indicator<Vol>>, 'name' | 'calc'> = {
       params.forEach((p, index) => {
         volSums[index] = (volSums[index] ?? 0) + volume
         if (i >= p - 1) {
-          vol[plots[index].key] = volSums[index] / p
+          vol[figures[index].key] = volSums[index] / p
           volSums[index] -= (dataList[i - (p - 1)].volume ?? 0)
         }
       })

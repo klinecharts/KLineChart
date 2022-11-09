@@ -18,7 +18,7 @@ import { IndicatorStyle } from '../../common/Styles'
 
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorCalcOptions, IndicatorPlotStylesData } from '../../componentl/Indicator'
+import { Indicator, IndicatorCalcOptions, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
 
 interface Macd {
   dif?: number
@@ -38,7 +38,7 @@ const movingAverageConvergenceDivergence: PickRequired<Partial<Indicator<Macd>>,
   name: 'MACD',
   shortName: 'MACD',
   calcParams: [12, 26, 9],
-  plots: [
+  figures: [
     { key: 'dif', title: 'DIF: ', type: 'line' },
     { key: 'dea', title: 'DEA: ', type: 'line' },
     {
@@ -46,7 +46,7 @@ const movingAverageConvergenceDivergence: PickRequired<Partial<Indicator<Macd>>,
       title: 'MACD: ',
       type: 'bar',
       baseValue: 0,
-      styles: (data: IndicatorPlotStylesData<Macd>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
+      styles: (data: IndicatorFigureStylesCallbackData<Macd>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
         const { prev, current } = data
         const prevMacd = prev.indicatorData?.macd ?? Number.MIN_SAFE_INTEGER
         const currentMacd = current.indicatorData?.macd ?? Number.MIN_SAFE_INTEGER

@@ -29,7 +29,7 @@ const momentum: PickRequired<Partial<Indicator<Mtm>>, 'name' | 'calc'> = {
   name: 'MTM',
   shortName: 'MTM',
   calcParams: [12, 6],
-  plots: [
+  figures: [
     { key: 'mtm', title: 'MTM: ', type: 'line' },
     { key: 'maMtm', title: 'MAMTM: ', type: 'line' }
   ],

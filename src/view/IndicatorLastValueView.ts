@@ -14,7 +14,7 @@
 
 import YAxis from '../componentl/YAxis'
 
-import { eachPlots, IndicatorPlot, IndicatorPlotStyle } from '../componentl/Indicator'
+import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../componentl/Indicator'
 
 import View from './View'
 
@@ -41,8 +41,8 @@ export default class IndicatorLastValueView extends View<YAxis> {
         const indicatorData = result[dataIndex]
         if (indicatorData !== undefined) {
           const precision = indicator.precision
-          eachPlots(dataList, indicator, dataIndex, defaultStyles, (plot: IndicatorPlot, plotStyle: Required<IndicatorPlotStyle>) => {
-            const value = indicatorData[plot.key]
+          eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+            const value = indicatorData[figure.key]
             if (isValid(value)) {
               const y = yAxis.convertToNicePixel(value)
               let text = formatPrecision(value, precision)
@@ -67,7 +67,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
                 rectStartX = bounding.width - rectWidth
               }
 
-              const backgroundColor = plotStyle.color
+              const backgroundColor = figureStyles.color
               this.createFigure(
                 'rect',
                 {

@@ -64,10 +64,10 @@ export function getParallelLines (coordinates: Coordinate[], bounding: Bounding,
   return lines
 }
 
-const parallelStraightLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const parallelStraightLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'parallelStraightLine',
   totalStep: 4,
-  createDataSource: ({ coordinates, bounding }) => {
+  createFigures: ({ coordinates, bounding }) => {
     return [
       {
         type: 'line',

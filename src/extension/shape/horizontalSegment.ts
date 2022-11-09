@@ -18,10 +18,10 @@ import { Shape } from '../../componentl/Shape'
 
 import { LineAttrs } from '../figure/line'
 
-const horizontalSegment: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'> = {
+const horizontalSegment: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'horizontalSegment',
   totalStep: 3,
-  createDataSource: ({ coordinates }) => {
+  createFigures: ({ coordinates }) => {
     const lines: LineAttrs[] = []
     if (coordinates.length === 2) {
       lines.push({ coordinates })
