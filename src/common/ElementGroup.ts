@@ -28,8 +28,9 @@ export default class ElementGroup extends Element {
   }
 
   dispatchEvent (type: string, coordinate: Coordinate): boolean {
-    for (const element of this._elements) {
-      if (element.onEvent(type, coordinate)) {
+    const count = this._elements.length
+    for (let i = count - 1; i >= 0; i--) {
+      if (this._elements[i].onEvent(type, coordinate)) {
         return true
       }
     }

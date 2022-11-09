@@ -51,71 +51,75 @@ export default class ShapeView extends View<YAxis> {
       const progressInstanceInfo = shapeStore.getProgressInstanceInfo()
       if (progressInstanceInfo !== null) {
         if (progressInstanceInfo.instance.isStart()) {
-          this._elementMouseMoveEvent(progressInstanceInfo.instance, EventShapeInfoElementType.POINT, 0)(coordinate)
+          shapeStore.updateProgressInstanceInfo(paneId)
         }
-      } else {
-        // shapeStore.setHoverInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
+        if (progressInstanceInfo.instance.isDrawing()) {
+          progressInstanceInfo.instance.mouseMoveForDrawing(this._coordinateToPoint(progressInstanceInfo.instance, coordinate))
+        }
+        return this._elementMouseMoveEvent(progressInstanceInfo.instance, EventShapeInfoElementType.POINT, progressInstanceInfo.instance.points.length - 1)(coordinate)
       }
+      shapeStore.setHoverInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
       return false
-    }).registerEvent('mouseClickEvent', () => {
+    }).registerEvent('mouseDownEvent', (coordinate: Coordinate) => {
+      const progressInstanceInfo = shapeStore.getProgressInstanceInfo()
+      if (progressInstanceInfo !== null) {
+        if (progressInstanceInfo.instance.isStart()) {
+          shapeStore.updateProgressInstanceInfo(paneId, true)
+        }
+        if (progressInstanceInfo.instance.isDrawing()) {
+          progressInstanceInfo.instance.nextStep()
+          if (!progressInstanceInfo.instance.isDrawing()) {
+            shapeStore.progressInstanceComplete()
+          }
+        }
+        return this._elementMouseDownEvent(progressInstanceInfo.instance, EventShapeInfoElementType.POINT, progressInstanceInfo.instance.points.length - 1)(coordinate)
+      }
       shapeStore.setClickInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
+      return false
+    }).registerEvent('mouseUpEvent', (coordinate: Coordinate) => {
+      shapeStore.setPressedInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
+      return false
+    }).registerEvent('pressedMouseMoveEvent', (coordinate: Coordinate) => {
+      const { instance, elementType, elementIndex } = shapeStore.getPressedInstanceInfo()
+      if (instance !== null) {
+        const point = this._coordinateToPoint(instance, coordinate)
+        if (elementType === EventShapeInfoElementType.POINT) {
+          instance.mousePressedPointMove(point, elementIndex)
+        } else {
+          instance.mousePressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore().getTimeScaleStore())
+        }
+        return true
+      }
       return false
     })
   }
 
-  private _elementEvents (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number): ElementEventHandler {
-    return {
-      mouseMoveEvent: this._elementMouseMoveEvent(shape, elementType, elementIndex),
-      mouseDownEvent: this._elementMouseDownEvent(shape, elementType, elementIndex),
-      pressedMouseMoveEvent: this._elementPressedMouseMoveEvent(shape, elementType, elementIndex)
+  private _elementEvents (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number): ElementEventHandler | undefined {
+    if (!shape.isDrawing()) {
+      return {
+        mouseMoveEvent: this._elementMouseMoveEvent(shape, elementType, elementIndex),
+        mouseDownEvent: this._elementMouseDownEvent(shape, elementType, elementIndex)
+      }
     }
   }
 
   private _elementMouseMoveEvent (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number) {
     return (coordinate: Coordinate) => {
       const pane = this.getWidget().getPane()
-      const paneId = pane.getId()
       const shapeStore = pane.getChart().getChartStore().getShapeStore()
-      if (shape.isStart()) {
-        shapeStore.updateProgressInstanceInfo(paneId)
-      }
-      if (shape.isDrawing()) {
-        shape.mouseMoveForDrawing(this._coordinateToPoint(shape, coordinate))
-      }
       shapeStore.setHoverInstanceInfo({ paneId: pane.getId(), instance: shape, elementType, elementIndex })
       return true
     }
   }
 
   private _elementMouseDownEvent (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number) {
-    return () => {
+    return (coordinate: Coordinate) => {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
       const shapeStore = pane.getChart().getChartStore().getShapeStore()
-      if (shape.isStart()) {
-        shapeStore.updateProgressInstanceInfo(paneId, true)
-      }
-      if (shape.isDrawing()) {
-        shape.nextStep()
-        if (!shape.isDrawing()) {
-          shapeStore.progressInstanceComplete()
-        }
-      }
-      shapeStore.setClickInstanceInfo({ paneId: pane.getId(), instance: shape, elementType, elementIndex })
-      return true
-    }
-  }
-
-  _elementPressedMouseMoveEvent (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number) {
-    return (coordinate: Coordinate) => {
-      if (!shape.isDrawing()) {
-        const point = this._coordinateToPoint(shape, coordinate)
-        if (elementType === EventShapeInfoElementType.POINT) {
-          shape.mousePressedPointMove(point, elementIndex)
-        } else {
-          shape.mousePressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore().getTimeScaleStore())
-        }
-      }
+      shape.startPressedOtherMove(this._coordinateToPoint(shape, coordinate))
+      shapeStore.setPressedInstanceInfo({ paneId, instance: shape, elementType, elementIndex })
+      shapeStore.setClickInstanceInfo({ paneId, instance: shape, elementType, elementIndex })
       return true
     }
   }
@@ -178,6 +182,13 @@ export default class ShapeView extends View<YAxis> {
       }
     }
     return { dataIndex, timestamp, value }
+  }
+
+  dispatchEvent (type: string, coordinate: Coordinate): boolean {
+    if (this.getWidget().getPane().getChart().getChartStore().getShapeStore().isDrawing()) {
+      return this.onEvent(type, coordinate)
+    }
+    return super.dispatchEvent(type, coordinate)
   }
 
   checkEventOn (coordinate: Coordinate): boolean {
@@ -247,8 +258,7 @@ export default class ShapeView extends View<YAxis> {
     }
     if (
       (hoverInstanceInfo.instance?.id === shape.id && hoverInstanceInfo.elementType !== EventShapeInfoElementType.NONE) ||
-      (clickInstanceInfo.instance?.id === shape.id && clickInstanceInfo.elementType !== EventShapeInfoElementType.NONE) ||
-      shape.isDrawing()
+      (clickInstanceInfo.instance?.id === shape.id && clickInstanceInfo.elementType !== EventShapeInfoElementType.NONE)
     ) {
       const styles = shape.styles
       coordinates.forEach(({ x, y }, index) => {
@@ -259,7 +269,7 @@ export default class ShapeView extends View<YAxis> {
         if (
           hoverInstanceInfo.instance?.id === shape.id &&
           hoverInstanceInfo.elementType === EventShapeInfoElementType.POINT &&
-          index === hoverInstanceInfo.elementIndex
+          hoverInstanceInfo.elementIndex === index
         ) {
           radius = formatValue(styles, 'point.activeRadius', defaultStyles.point.activeRadius) as number
           color = formatValue(styles, 'point.activeRadius', defaultStyles.point.activeColor)

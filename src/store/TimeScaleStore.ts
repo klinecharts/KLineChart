@@ -15,7 +15,6 @@
 import TypeOrNull from '../common/TypeOrNull'
 import Coordinate from '../common/Coordinate'
 import KLineData from '../common/KLineData'
-import Crosshair from '../common/Crosshair'
 import BarSpace from '../common/BarSpace'
 import VisibleRange from '../common/VisibleRange'
 import LoadMoreCallback from '../common/LoadMoreCallback'
@@ -302,7 +301,7 @@ export default class TimeScaleStore {
    * @param distance
    * @param crosshair
    */
-  scroll (distance: number, crosshair?: Crosshair): void {
+  scroll (distance: number): void {
     if (!this._scrollEnabled) {
       return
     }
@@ -310,8 +309,7 @@ export default class TimeScaleStore {
     // this._chartStore.getActionStore().execute(ActionType.SCROLL, { barCount: distanceBarCount, distance })
     this._offsetRightBarCount = this._startScrollOffsetRightBarCount - distanceBarCount
     this.adjustVisibleRange()
-    const cross = crosshair ?? this._chartStore.getCrosshairStore().get()
-    this._chartStore.getCrosshairStore().set(cross, true)
+    this._chartStore.getCrosshairStore().recalculate(true)
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 

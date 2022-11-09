@@ -408,8 +408,8 @@ export default abstract class ShapeTemplate implements Shape {
       const difDataIndex = point.dataIndex - this._prevPressedPoint.dataIndex
       const difValue = point.value - this._prevPressedPoint.value
       this.points = this._prevPressedPoints.map(p => {
-        const dataIndex = point.dataIndex + difDataIndex
-        const value = point.value + difValue
+        const dataIndex = p.dataIndex + difDataIndex
+        const value = p.value + difValue
         return {
           dataIndex,
           value,

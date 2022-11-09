@@ -57,6 +57,13 @@ export default class ShapeStore {
   private readonly _instances = new Map<string, ShapeTemplate[]>()
   private _progressInstanceInfo: TypeOrNull<ProgressShapeInfo> = null
 
+  private _pressedInstanceInfo: EventShapeInfo = {
+    paneId: '',
+    instance: null,
+    elementType: EventShapeInfoElementType.NONE,
+    elementIndex: -1
+  }
+
   private _hoverInstanceInfo: EventShapeInfo = {
     paneId: '',
     instance: null,
@@ -170,6 +177,7 @@ export default class ShapeStore {
     if (this.getInstanceById(id) === null) {
       const ShapeClazz = getShapeClass(shape.name) as ShapeConstructor
       const instance = new ShapeClazz()
+      shape.id = id
       this._overrideInstance(instance, shape)
       if (instance.isDrawing()) {
         this._progressInstanceInfo = { paneId, instance, appointPaneFlag }
@@ -309,6 +317,14 @@ export default class ShapeStore {
     }
   }
 
+  setPressedInstanceInfo (info: EventShapeInfo): void {
+    this._pressedInstanceInfo = info
+  }
+
+  getPressedInstanceInfo (): EventShapeInfo {
+    return this._pressedInstanceInfo
+  }
+
   setHoverInstanceInfo (info: EventShapeInfo): void {
     const { instance, elementType, elementIndex } = this._hoverInstanceInfo
     if (
@@ -321,10 +337,6 @@ export default class ShapeStore {
         instance?.onMouseLeave?.(instance)
         info.instance?.onMouseEnter?.(info.instance)
       }
-      // if (paneId !== info.paneId) {
-      //   this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
-      // }
-      // this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, info.paneId)
     }
   }
 
@@ -343,11 +355,6 @@ export default class ShapeStore {
         instance?.onDeselected?.(instance)
         info.instance?.onSelected?.(info.instance)
       }
-      // const update = this._chartStore.getChart().updatePane
-      // if (paneId !== info.paneId) {
-      //   update(UpdateLevel.OVERLAY, paneId)
-      // }
-      // update(UpdateLevel.OVERLAY, info.paneId)
     }
   }
 

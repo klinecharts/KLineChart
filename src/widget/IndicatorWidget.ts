@@ -88,14 +88,16 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   pressedMouseMoveEvent (event: MouseTouchEvent): void {
+    const pane = this.getPane()
+    const paneId = pane.getId()
+    const chartStore = pane.getChart().getChartStore()
+    const crosshairStore = chartStore.getCrosshairStore()
     if (!this.dispatchEvent('pressedMouseMoveEvent', event)) {
-      const pane = this.getPane()
-      const chartStore = pane.getChart().getChartStore()
-      let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane.getId() }
+      let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId }
       if (event.isTouch) {
         if (this._touchCoordinate !== null) {
           this._touchCoordinate = { x: event.x, y: event.y }
-          chartStore.getCrosshairStore().set(crosshair)
+          crosshairStore.set(crosshair)
           return
         } else {
           crosshair = undefined
@@ -103,12 +105,17 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
       }
       if (this._startScrollCoordinate !== null) {
         const distance = event.x - this._startScrollCoordinate.x
-        chartStore.getTimeScaleStore().scroll(distance, crosshair)
+        chartStore.getTimeScaleStore().scroll(distance)
       }
+    }
+    const { height, width } = this.getBounding()
+    if (event.x > 0 && event.x < width && event.y > 0 && event.y < height) {
+      crosshairStore.set({ x: event.x, y: event.y, paneId })
     }
   }
 
-  mouseUpEvent (): void {
+  mouseUpEvent (event: MouseTouchEvent): void {
+    this.dispatchEvent('mouseUpEvent', event)
     this._startScrollCoordinate = null
   }
 
@@ -180,7 +187,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
         }
       }
     } else {
-      this._startScrollCoordinate = null
+      // this._startScrollCoordinate = null
       this.getPane().getChart().getChartStore().getCrosshairStore().set()
     }
   }
