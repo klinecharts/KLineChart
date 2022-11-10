@@ -18,7 +18,7 @@ import Precision from '../common/Precision'
 import Crosshair from '../common/Crosshair'
 import { Styles, CandleStyle, CandleTooltipValuesChild, CandleTooltipValuesCallback, TooltipShowType, YAxisPosition } from '../common/Styles'
 
-import IndicatorTemplate from '../componentl/Indicator'
+import Indicator from '../componentl/Indicator'
 
 import IndicatorTooltipView, { TooltipData } from './IndicatorTooltipView'
 
@@ -95,7 +95,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
   private _drawRectTooltip (
     ctx: CanvasRenderingContext2D,
     dataList: KLineData[],
-    indicators: Map<string, IndicatorTemplate>,
+    indicators: Map<string, Indicator>,
     bounding: Bounding,
     yAxisBounding: Bounding,
     crosshair: Crosshair,

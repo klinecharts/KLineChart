@@ -16,7 +16,7 @@ import TypeOrNull from '../common/TypeOrNull'
 import { ElementEventHandler } from '../common/Element'
 import ElementGroup from '../common/ElementGroup'
 
-import FigureTemplate from '../componentl/Figure'
+import Figure from '../componentl/Figure'
 import { createFigure as create } from '../extension/figure/index'
 
 import Axis from '../componentl/Axis'
@@ -33,7 +33,7 @@ export default abstract class View<C extends Axis = Axis> extends ElementGroup {
 
   getWidget (): Widget<C> { return this._widget }
 
-  protected createFigure (name: string, attrs: any, styles: any, eventHandler?: ElementEventHandler): TypeOrNull<FigureTemplate> {
+  protected createFigure (name: string, attrs: any, styles: any, eventHandler?: ElementEventHandler): TypeOrNull<Figure> {
     const figure = create(name, attrs, styles)
     if (figure !== null && eventHandler !== undefined) {
       for (const key in eventHandler) {

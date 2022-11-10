@@ -14,7 +14,8 @@
 
 import TypeOrNull from '../common/TypeOrNull'
 import DeepPartial from '../common/DeepPartial'
-import PickRequired from '../common/PickRequired'
+import PickPartial from '../common/PickPartial'
+import ExcludePickPartial from '../common/ExcludePickPartial'
 import Point from '../common/Point'
 import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
@@ -36,9 +37,9 @@ export const enum ShapeMode {
 export interface ShapePerformEventParams {
   currentStep: number
   mode: ShapeMode
-  points: Point[]
+  points: Array<PickPartial<Point, 'timestamp'>>
   performPointIndex: number
-  performPoint: Point
+  performPoint: PickPartial<Point, 'timestamp'>
 }
 
 export interface ShapeFigure {
@@ -59,7 +60,7 @@ export interface ShapeCreateFiguresParams {
   yAxis: Axis
 }
 
-export type ShapeConstructor = new () => ShapeTemplate
+export type ShapeConstructor = new () => ShapeImp
 
 export type ShapeEventCllback = (shape: Shape) => boolean
 
@@ -70,10 +71,9 @@ export interface Shape {
   currentStep: number
   lock: boolean
   mode: ShapeMode
-  points: Point[]
+  points: Array<PickPartial<Point, 'timestamp'>>
   extendData: any
   styles: TypeOrNull<DeepPartial<ShapeStyle>>
-  figures: ShapeFigure[]
   createFigures: (params: ShapeCreateFiguresParams) => ShapeFigure[]
   performEventPressedMove: TypeOrNull<(params: ShapePerformEventParams) => void>
   performEventMoveForDrawing: TypeOrNull<(params: ShapePerformEventParams) => void>
@@ -93,14 +93,13 @@ export interface Shape {
 const SHAPE_DRAW_STEP_START = 1
 const SHAPE_DRAW_STEP_FINISHED = -1
 
-export default abstract class ShapeTemplate implements Shape {
+export default abstract class ShapeImp implements Shape {
   name: string
   totalStep: number
   lock: boolean
   mode: ShapeMode
-  points: Point[] = []
+  points: Array<PickPartial<Point, 'timestamp'>> = []
   extendData: any
-  figures: ShapeFigure[] = []
   styles: TypeOrNull<DeepPartial<ShapeStyle>>
   performEventPressedMove: TypeOrNull<(params: ShapePerformEventParams) => void>
   performEventMoveForDrawing: TypeOrNull<(params: ShapePerformEventParams) => void>
@@ -119,10 +118,10 @@ export default abstract class ShapeTemplate implements Shape {
   id: string
   currentStep: number = SHAPE_DRAW_STEP_START
 
-  private _prevPressedPoint: TypeOrNull<Point> = null
-  private _prevPressedPoints: Point[] = []
+  private _prevPressedPoint: TypeOrNull<PickPartial<Point, 'timestamp'>> = null
+  private _prevPressedPoints: Array<PickPartial<Point, 'timestamp'>> = []
 
-  constructor (shape: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'>) {
+  constructor (shape: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'>) {
     const {
       name, totalStep, lock, mode, points, extendData, styles,
       performEventPressedMove, performEventMoveForDrawing,
@@ -166,7 +165,7 @@ export default abstract class ShapeTemplate implements Shape {
    * @param points
    * @return {boolean}
    */
-  setPoints (points: Point[]): boolean {
+  setPoints (points: Array<PickPartial<Point, 'timestamp'>>): boolean {
     if (points.length > 0) {
       let repeatTotalStep: number
       if (points.length >= this.totalStep - 1) {
@@ -357,7 +356,7 @@ export default abstract class ShapeTemplate implements Shape {
     return this.currentStep === SHAPE_DRAW_STEP_START
   }
 
-  mouseMoveForDrawing (point: Point): void {
+  mouseMoveForDrawing (point: PickPartial<Point, 'timestamp'>): void {
     const pointIndex = this.currentStep - 1
     this.points[pointIndex] = point
     this.performEventMoveForDrawing?.({
@@ -375,7 +374,7 @@ export default abstract class ShapeTemplate implements Shape {
    * @param point
    * @param elementIndex
    */
-  mousePressedPointMove (point: Point, elementIndex: number): void {
+  mousePressedPointMove (point: PickPartial<Point, 'timestamp'>, elementIndex: number): void {
     this.points[elementIndex].timestamp = point.timestamp
     this.points[elementIndex].dataIndex = point.dataIndex
     this.points[elementIndex].value = point.value
@@ -393,7 +392,7 @@ export default abstract class ShapeTemplate implements Shape {
    * 按住非点拖动开始事件
    * @param point
    */
-  startPressedOtherMove (point: Point): void {
+  startPressedOtherMove (point: PickPartial<Point, 'timestamp'>): void {
     this._prevPressedPoint = { ...point }
     this._prevPressedPoints = clone(this.points)
   }
@@ -402,7 +401,7 @@ export default abstract class ShapeTemplate implements Shape {
    * 按住非点拖动时事件
    * @param point
    */
-  mousePressedOtherMove (point: Point, timeScaleStore: TimeScaleStore): void {
+  mousePressedOtherMove (point: PickPartial<Point, 'timestamp'>, timeScaleStore: TimeScaleStore): void {
     if (!this.lock && this._prevPressedPoint !== null) {
       const difDataIndex = point.dataIndex - this._prevPressedPoint.dataIndex
       const difValue = point.value - this._prevPressedPoint.value
@@ -412,7 +411,7 @@ export default abstract class ShapeTemplate implements Shape {
         return {
           dataIndex,
           value,
-          timestamp: timeScaleStore.dataIndexToTimestamp(dataIndex)
+          timestamp: timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
         }
       })
       this.onPressedMove?.(this)
@@ -422,9 +421,9 @@ export default abstract class ShapeTemplate implements Shape {
   abstract createFigures (params: ShapeCreateFiguresParams): ShapeFigure[]
 
   static extend (
-    shape: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'>
+    shape: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'>
   ): ShapeConstructor {
-    class Custom extends ShapeTemplate {
+    class Custom extends ShapeImp {
       constructor () {
         super(shape)
       }

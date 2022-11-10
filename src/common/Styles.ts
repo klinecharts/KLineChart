@@ -65,10 +65,6 @@ export interface AlignTextStyle extends TextStyle {
   baseline: CanvasTextBaseline
 }
 
-export interface OffsetTextStyle extends TextStyle {
-  offset: number[]
-}
-
 export interface StateTextStyle extends TextStyle {
   show: boolean
 }
@@ -682,7 +678,7 @@ export interface ShapeStyle {
   line: LineStyle
   polygon: PolygonStyle
   arc: LineStyle
-  text: OffsetTextStyle
+  text: TextStyle
 }
 
 /**
@@ -724,26 +720,49 @@ const defaultShape: ShapeStyle = {
     color: '#2196F3',
     size: 12,
     family: 'Helvetica Neue',
-    weight: 'normal',
-    offset: [0, 0]
+    weight: 'normal'
   }
+}
+
+export interface AnnotationStyle {
+  line: LineStyle
+  polygon: PolygonStyle
+  arc: LineStyle
+  text: TextStyle
 }
 
 /**
  * 默认注解信息配置
  * @type {{}}
  */
-// const defaultAnnotation = {
-//   position: OverlayPosition.TOP,
-//   offset: [20, 0],
-//   symbol: {
-//     type: AnnotationSymbolType.DIAMOND,
-//     size: 8,
-//     color: '#2196F3',
-//     activeSize: 10,
-//     activeColor: '#FF9600'
-//   }
-// }
+const defaultAnnotation: AnnotationStyle = {
+  line: {
+    style: LineType.SOLID,
+    color: '#2196F3',
+    size: 1,
+    dashedValue: [2, 2]
+  },
+  polygon: {
+    style: PolygonType.FILL,
+    color: '#2196F3',
+    borderColor: '#2196F3',
+    borderSize: 1,
+    borderStyle: LineType.SOLID,
+    borderDashedValue: [2, 2]
+  },
+  arc: {
+    style: LineType.SOLID,
+    color: '#2196F3',
+    size: 1,
+    dashedValue: [2, 2]
+  },
+  text: {
+    color: '#2196F3',
+    size: 12,
+    family: 'Helvetica Neue',
+    weight: 'normal'
+  }
+}
 
 // const defaultTag = {
 //   position: OverlayPosition.POINT,
@@ -813,6 +832,7 @@ export interface Styles {
   separator: SeparatorStyle
   crosshair: CrosshairStyle
   shape: ShapeStyle
+  annotation: AnnotationStyle
 }
 
 export const defaultStyles: Styles = {
@@ -823,7 +843,7 @@ export const defaultStyles: Styles = {
   yAxis: defaultYAxis,
   separator: defaultSeparator,
   crosshair: defaultCrosshair,
-  shape: defaultShape
-  // annotation: defaultAnnotation,
+  shape: defaultShape,
+  annotation: defaultAnnotation
   // tag: defaultTag
 }

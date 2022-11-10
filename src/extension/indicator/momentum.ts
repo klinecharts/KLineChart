@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Mtm {
   mtm?: number
@@ -25,7 +25,7 @@ interface Mtm {
  * mtm
  * 公式 MTM（N日）=C－CN
  */
-const momentum: PickRequired<Partial<Indicator<Mtm>>, 'name' | 'calc'> = {
+const momentum: ExcludePickPartial<Indicator<Mtm>, 'name' | 'calc'> = {
   name: 'MTM',
   shortName: 'MTM',
   calcParams: [12, 6],
@@ -33,8 +33,8 @@ const momentum: PickRequired<Partial<Indicator<Mtm>>, 'name' | 'calc'> = {
     { key: 'mtm', title: 'MTM: ', type: 'line' },
     { key: 'maMtm', title: 'MAMTM: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Mtm>) => {
-    const params = (options.calcParams ?? []) as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Mtm>) => {
+    const params = indicator.calcParams as number[]
     let mtmSum = 0
     const result: Mtm[] = []
     dataList.forEach((kLineData: KLineData, i: number) => {

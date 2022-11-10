@@ -13,7 +13,7 @@
  */
 
 import Coordinate from '../../common/Coordinate'
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import Bounding from '../../common/Bounding'
 
 import { Shape } from '../../componentl/Shape'
@@ -51,7 +51,7 @@ export function getRayLine (coordinates: Coordinate[], bounding: Bounding): Line
   return []
 }
 
-const rayLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
+const rayLine: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'rayLine',
   totalStep: 3,
   createFigures: ({ coordinates, bounding }) => {

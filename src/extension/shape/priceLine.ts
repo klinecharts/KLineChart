@@ -12,11 +12,11 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 
 import { Shape } from '../../componentl/Shape'
 
-const priceLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
+const priceLine: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'priceLine',
   totalStep: 2,
   createFigures: ({ coordinates, bounding, precision, shape }) => {

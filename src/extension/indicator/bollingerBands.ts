@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorSeries, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator, IndicatorSeries } from '../../componentl/Indicator'
 
 interface Boll {
   up?: number
@@ -42,7 +42,7 @@ function getBollMd (dataList: KLineData[], ma: number): number {
 /**
  * BOLL
  */
-const bollingerBands: PickRequired<Partial<Indicator<Boll>>, 'name' | 'calc'> = {
+const bollingerBands: ExcludePickPartial<Indicator<Boll>, 'name' | 'calc'> = {
   name: 'BOLL',
   shortName: 'BOLL',
   series: IndicatorSeries.PRICE,
@@ -54,8 +54,8 @@ const bollingerBands: PickRequired<Partial<Indicator<Boll>>, 'name' | 'calc'> = 
     { key: 'mid', title: 'MID: ', type: 'line' },
     { key: 'dn', title: 'DN: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Boll>) => {
-    const params = options.calcParams ?? []
+  calc: (dataList: KLineData[], indicator: Indicator<Boll>) => {
+    const params = indicator.calcParams
     const p = params[0] - 1
     let closeSum = 0
     return dataList.map((kLineData: KLineData, i: number) => {

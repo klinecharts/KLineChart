@@ -12,10 +12,10 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import TypeOrNull from '../../common/TypeOrNull'
 
-import IndicatorTemplate, { Indicator, IndicatorConstructor } from '../../componentl/Indicator'
+import IndicatorImp, { Indicator, IndicatorConstructor } from '../../componentl/Indicator'
 
 import averagePrice from './averagePrice'
 import awesomeOscillator from './awesomeOscillator'
@@ -47,7 +47,7 @@ import williamsR from './williamsR'
 
 const indicators: { [key: string]: IndicatorConstructor } = {}
 
-const templates = [
+const extensions = [
   averagePrice, awesomeOscillator, bias, bollingerBands, brar,
   bullAndBearIndex, commodityChannelIndex, currentRatio, differentOfMovingAverage,
   directionalMovementIndex, easeOfMovementValue, exponentialMovingAverage, momentum,
@@ -56,12 +56,12 @@ const templates = [
   stoch, stopAndReverse, tripleExponentiallySmoothedAverage, volume, volumeRatio, williamsR
 ]
 
-templates.forEach((template: PickRequired<Partial<Indicator>, 'name' | 'calc'>) => {
-  indicators[template.name] = IndicatorTemplate.extend(template)
+extensions.forEach((indicator: ExcludePickPartial<Indicator, 'name' | 'calc'>) => {
+  indicators[indicator.name] = IndicatorImp.extend(indicator)
 })
 
-function registerIndicator<D> (indicator: PickRequired<Partial<Indicator<D>>, 'name' | 'calc'>): void {
-  indicators[indicator.name] = IndicatorTemplate.extend(indicator)
+function registerIndicator<D> (indicator: ExcludePickPartial<Indicator<D>, 'name' | 'calc'>): void {
+  indicators[indicator.name] = IndicatorImp.extend(indicator)
 }
 
 function getIndicatorClass (name: string): TypeOrNull<IndicatorConstructor> {

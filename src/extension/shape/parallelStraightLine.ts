@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import Coordinate from '../../common/Coordinate'
 import Bounding from '../../common/Bounding'
 
@@ -64,7 +64,7 @@ export function getParallelLines (coordinates: Coordinate[], bounding: Bounding,
   return lines
 }
 
-const parallelStraightLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
+const parallelStraightLine: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'parallelStraightLine',
   totalStep: 4,
   createFigures: ({ coordinates, bounding }) => {

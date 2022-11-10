@@ -329,34 +329,30 @@ export default class Chart {
     return id
   }
 
-  // /**
-  //  * 获取图形标记
-  //  * @param shapeId 图形标记id
-  //  * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
-  //  */
-  // getShape (shapeId) {
-  //   return this._chartPane.chartStore().shapeStore().getInstanceInfo(shapeId)
-  // }
+  /**
+   * 获取图形标记
+   * @param shapeId 图形标记id
+   * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
+   */
+  getShapeById (shapeId: string): TypeOrNull<Shape> {
+    return this._internal.getChartStore().getShapeStore().getInstanceById(shapeId)
+  }
 
-  // /**
-  //  * 设置图形标记配置
-  //  * @param options 图形标记配置
-  //  */
-  // setShapeOptions (options) {
-  //   if (!isObject(options) || isArray(options)) {
-  //     logWarn('setShapeOptions', 'options', 'options must be an object!!!')
-  //     return
-  //   }
-  //   this._chartPane.chartStore().shapeStore().setInstanceOptions(options)
-  // }
+  /**
+   * 设置图形标记配置
+   * @param override 图形标记配置
+   */
+  overrideShape (override: Partial<Shape>): void {
+    this._internal.getChartStore().getShapeStore().override(override)
+  }
 
-  // /**
-  //  * 移除图形
-  //  * @param shapeId 图形id
-  //  */
-  // removeShape (shapeId) {
-  //   this._chartPane.chartStore().shapeStore().removeInstance(shapeId)
-  // }
+  /**
+   * 移除图形
+   * @param shapeId 图形id
+   */
+  removeShape (shapeId?: string): void {
+    this._internal.getChartStore().getShapeStore().removeInstance(shapeId)
+  }
 
   // /**
   //  * 创建注解

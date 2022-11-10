@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import PickPartial from '../common/PickPartial'
 import Coordinate from '../common/Coordinate'
 import Point from '../common/Point'
 import Bounding from '../common/Bounding'
@@ -124,7 +125,7 @@ export default class ShapeView extends View<YAxis> {
     }
   }
 
-  private _coordinateToPoint (shape: Shape, coordinate: Coordinate): Point {
+  private _coordinateToPoint (shape: Shape, coordinate: Coordinate): PickPartial<Point, 'timestamp'> {
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()
     const paneId = pane.getId()
@@ -132,7 +133,7 @@ export default class ShapeView extends View<YAxis> {
     const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as Axis
     const dataIndex = xAxis.convertFromPixel(coordinate.x)
     const timeScaleStore = chart.getChartStore().getTimeScaleStore()
-    const timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex)
+    const timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
 
     let value = yAxis.convertFromPixel(coordinate.y)
     if (shape.mode !== ShapeMode.NORMAL && paneId === CANDLE_PANE_ID) {
@@ -236,7 +237,7 @@ export default class ShapeView extends View<YAxis> {
     const { points } = shape
     const coordinates = points.map(point => {
       let dataIndex = point.dataIndex
-      if (point.timestamp !== null) {
+      if (point.timestamp !== undefined) {
         dataIndex = timeScaleStore.timestampToDataIndex(point.timestamp)
       }
       return {

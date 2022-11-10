@@ -18,7 +18,7 @@ import { UpdateLevel } from '../common/Updater'
 
 import { createId } from '../common/utils/id'
 
-import ShapeTemplate, { Shape, ShapeConstructor } from '../componentl/Shape'
+import ShapeImp, { Shape, ShapeConstructor } from '../componentl/Shape'
 
 import { getShapeClass } from '../extension/shape/index'
 
@@ -28,13 +28,13 @@ const SHAPE_ID_PREFIX = 'shape_'
 
 export interface ProgressShapeInfo {
   paneId: string
-  instance: ShapeTemplate
+  instance: ShapeImp
   appointPaneFlag: boolean
 }
 
 export interface PressedMoveShapeInfo {
   paneId: string
-  instance: ShapeTemplate
+  instance: ShapeImp
   element: string
 }
 
@@ -46,7 +46,7 @@ export const enum EventShapeInfoElementType {
 
 export interface EventShapeInfo {
   paneId: string
-  instance: TypeOrNull<ShapeTemplate>
+  instance: TypeOrNull<ShapeImp>
   elementType: EventShapeInfoElementType
   elementIndex: number
 }
@@ -54,7 +54,7 @@ export interface EventShapeInfo {
 export default class ShapeStore {
   private readonly _chartStore: ChartStore
 
-  private readonly _instances = new Map<string, ShapeTemplate[]>()
+  private readonly _instances = new Map<string, ShapeImp[]>()
   private _progressInstanceInfo: TypeOrNull<ProgressShapeInfo> = null
 
   private _pressedInstanceInfo: EventShapeInfo = {
@@ -82,7 +82,7 @@ export default class ShapeStore {
     this._chartStore = chartStore
   }
 
-  private _overrideInstance (instance: ShapeTemplate, shape: Partial<Shape>): boolean {
+  private _overrideInstance (instance: ShapeImp, shape: Partial<Shape>): boolean {
     const {
       id, points, styles, lock, mode, extendData,
       onDrawStart, onDrawing,
@@ -151,7 +151,7 @@ export default class ShapeStore {
    * @param id
    * @returns
    */
-  getInstanceById (id: string): TypeOrNull<ShapeTemplate> {
+  getInstanceById (id: string): TypeOrNull<ShapeImp> {
     for (const entry of this._instances) {
       const paneShapes = entry[1]
       const shape = paneShapes.find(s => s.id === id)
@@ -237,7 +237,7 @@ export default class ShapeStore {
    * @param paneId
    * @returns {{}}
    */
-  getInstances (paneId: string): ShapeTemplate[] {
+  getInstances (paneId: string): ShapeImp[] {
     return this._instances.get(paneId) ?? []
   }
 
@@ -377,12 +377,4 @@ export default class ShapeStore {
   isDrawing (): boolean {
     return this._progressInstanceInfo !== null && (this._progressInstanceInfo?.instance.isDrawing() ?? false)
   }
-
-  // /**
-  //  * 是否按住
-  //  * @returns
-  //  */
-  // isPressed (): boolean {
-  //   return this._pressedInstanceInfo.instance !== null
-  // }
 }

@@ -12,18 +12,18 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorFigureStylesCallbackData, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
 
 interface Ao {
   ao?: number
 }
 
-const awesomeOscillator: PickRequired<Partial<Indicator<Ao>>, 'name' | 'calc'> = {
+const awesomeOscillator: ExcludePickPartial<Indicator<Ao>, 'name' | 'calc'> = {
   name: 'AO',
   shortName: 'AO',
   calcParams: [5, 34],
@@ -46,8 +46,8 @@ const awesomeOscillator: PickRequired<Partial<Indicator<Ao>>, 'name' | 'calc'> =
       return { color, style }
     }
   }],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Ao>) => {
-    const params = options.calcParams ?? []
+  calc: (dataList: KLineData[], indicator: Indicator<Ao>) => {
+    const params = indicator.calcParams
     const maxPeriod = Math.max(params[0], params[1])
     let shortSum = 0
     let longSum = 0

@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Vr {
   vr?: number
@@ -29,7 +29,7 @@ interface Vr {
  * 24天以来凡是股价不涨不跌，则那一天的成交量都称为CV，将24天内的CV总和相加后称为PVS
  *
  */
-const volumeRatio: PickRequired<Partial<Indicator<Vr>>, 'name' | 'calc'> = {
+const volumeRatio: ExcludePickPartial<Indicator<Vr>, 'name' | 'calc'> = {
   name: 'VR',
   shortName: 'VR',
   calcParams: [26, 6],
@@ -37,8 +37,8 @@ const volumeRatio: PickRequired<Partial<Indicator<Vr>>, 'name' | 'calc'> = {
     { key: 'vr', title: 'VR: ', type: 'line' },
     { key: 'maVr', title: 'MAVR: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Vr>) => {
-    const params = (options.calcParams ?? []) as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Vr>) => {
+    const params = indicator.calcParams as number[]
     let uvs = 0
     let dvs = 0
     let pvs = 0

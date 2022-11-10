@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Emv {
   emv?: number
@@ -33,7 +33,7 @@ interface Emv {
  * MAEMV=EMV的M日的简单移动平均
  *
  */
-const easeOfMovementValue: PickRequired<Partial<Indicator<Emv>>, 'name' | 'calc'> = {
+const easeOfMovementValue: ExcludePickPartial<Indicator<Emv>, 'name' | 'calc'> = {
   name: 'EMV',
   shortName: 'EMV',
   calcParams: [14, 9],
@@ -41,8 +41,8 @@ const easeOfMovementValue: PickRequired<Partial<Indicator<Emv>>, 'name' | 'calc'
     { key: 'emv', title: 'EMV: ', type: 'line' },
     { key: 'maEmv', title: 'MAEMV: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Emv>) => {
-    const params = (options.calcParams ?? []) as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Emv>) => {
+    const params = indicator.calcParams as number[]
     let emSum = 0
     let emvSum = 0
     const emList: number[] = []

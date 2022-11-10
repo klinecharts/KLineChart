@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Rsi {
   rsi1?: number
@@ -26,7 +26,7 @@ interface Rsi {
  * RSI
  * RSI = SUM(MAX(CLOSE - REF(CLOSE,1),0),N) / SUM(ABS(CLOSE - REF(CLOSE,1)),N) × 100
  */
-const relativeStrengthIndex: PickRequired<Partial<Indicator<Rsi>>, 'name' | 'calc'> = {
+const relativeStrengthIndex: ExcludePickPartial<Indicator<Rsi>, 'name' | 'calc'> = {
   name: 'RSI',
   shortName: 'RSI',
   calcParams: [6, 12, 24],
@@ -41,8 +41,8 @@ const relativeStrengthIndex: PickRequired<Partial<Indicator<Rsi>>, 'name' | 'cal
       return { key: `rsi${num}`, title: `RSI${num}: `, type: 'line' }
     })
   },
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Rsi>) => {
-    const { calcParams: params = [], figures = [] } = options
+  calc: (dataList: KLineData[], indicator: Indicator<Rsi>) => {
+    const { calcParams: params, figures } = indicator
     const sumCloseAs: number[] = []
     const sumCloseBs: number[] = []
     return dataList.map((kLineData, i) => {

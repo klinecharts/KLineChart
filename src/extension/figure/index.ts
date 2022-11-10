@@ -14,7 +14,7 @@
 
 import TypeOrNull from '../../common/TypeOrNull'
 
-import FigureTemplate, { Figure, FigureConstructor } from '../../componentl/Figure'
+import FigureImp, { Figure, FigureConstructor } from '../../componentl/Figure'
 
 import circle from './circle'
 import line from './line'
@@ -24,9 +24,9 @@ import text from './text'
 
 const figures: { [key: string]: FigureConstructor } = {}
 
-const templates = [circle, line, polygon, rect, text]
-templates.forEach((template: Figure) => {
-  figures[template.name] = FigureTemplate.extend(template)
+const extensions = [circle, line, polygon, rect, text]
+extensions.forEach((figure: Figure) => {
+  figures[figure.name] = FigureImp.extend(figure)
 })
 
 function getSupportFigures (): string[] {
@@ -34,14 +34,14 @@ function getSupportFigures (): string[] {
 }
 
 function reisterFigure<A = any, S = any> (figure: Figure<A, S>): void {
-  figures[figure.name] = FigureTemplate.extend(figure)
+  figures[figure.name] = FigureImp.extend(figure)
 }
 
 function getFigureClass<A = any, S = any> (name: string): TypeOrNull<FigureConstructor<A, S>> {
   return figures[name] ?? null
 }
 
-function createFigure<A = any, S = any> (name: string, attrs: A, styles: S): TypeOrNull<FigureTemplate<A, S>> {
+function createFigure<A = any, S = any> (name: string, attrs: A, styles: S): TypeOrNull<FigureImp<A, S>> {
   const FigureClazz = getFigureClass<A, S>(name)
   if (FigureClazz !== null) {
     return new FigureClazz(attrs, styles)

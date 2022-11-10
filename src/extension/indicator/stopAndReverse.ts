@@ -12,18 +12,18 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorCalcOptions, IndicatorSeries, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
+import { Indicator, IndicatorSeries, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
 
 interface Sar {
   sar?: number
 }
 
-const stopAndReverse: PickRequired<Partial<Indicator<Sar>>, 'name' | 'calc'> = {
+const stopAndReverse: ExcludePickPartial<Indicator<Sar>, 'name' | 'calc'> = {
   name: 'SAR',
   shortName: 'SAR',
   series: IndicatorSeries.PRICE,
@@ -47,8 +47,8 @@ const stopAndReverse: PickRequired<Partial<Indicator<Sar>>, 'name' | 'calc'> = {
       }
     }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Sar>) => {
-    const params = options.calcParams ?? []
+  calc: (dataList: KLineData[], indicator: Indicator<Sar>) => {
+    const params = indicator.calcParams
     const startAf = params[0] / 100
     const step = params[1] / 100
     const maxAf = params[2] / 100

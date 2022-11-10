@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorSeries, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator, IndicatorSeries } from '../../componentl/Indicator'
 
 interface Ema {
   ema1?: number
@@ -25,7 +25,7 @@ interface Ema {
 /**
  * EMA 指数移动平均
  */
-const exponentialMovingAverage: PickRequired<Partial<Indicator<Ema>>, 'name' | 'calc'> = {
+const exponentialMovingAverage: ExcludePickPartial<Indicator<Ema>, 'name' | 'calc'> = {
   name: 'EMA',
   shortName: 'EMA',
   series: IndicatorSeries.PRICE,
@@ -42,8 +42,8 @@ const exponentialMovingAverage: PickRequired<Partial<Indicator<Ema>>, 'name' | '
       return { key: `ema${i + 1}`, title: `EMA${p}: `, type: 'line' }
     })
   },
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Ema>) => {
-    const { calcParams: params = [], figures = [] } = options
+  calc: (dataList: KLineData[], indicator: Indicator<Ema>) => {
+    const { calcParams: params, figures } = indicator
     let closeSum = 0
     const emaValues: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {

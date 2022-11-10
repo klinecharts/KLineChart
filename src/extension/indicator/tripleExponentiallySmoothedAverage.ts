@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Trix {
   trix?: number
@@ -34,7 +34,7 @@ interface Trix {
  * TRMA:MA(TRIX,M)
  *
  */
-const tripleExponentiallySmoothedAverage: PickRequired<Partial<Indicator<Trix>>, 'name' | 'calc'> = {
+const tripleExponentiallySmoothedAverage: ExcludePickPartial<Indicator<Trix>, 'name' | 'calc'> = {
   name: 'TRIX',
   shortName: 'TRIX',
   calcParams: [12, 9],
@@ -42,8 +42,8 @@ const tripleExponentiallySmoothedAverage: PickRequired<Partial<Indicator<Trix>>,
     { key: 'trix', title: 'TRIX: ', type: 'line' },
     { key: 'maTrix', title: 'MATRIX: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Trix>) => {
-    const params = (options.calcParams ?? []) as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Trix>) => {
+    const params = indicator.calcParams as number[]
     let closeSum = 0
     let ema1: number
     let ema2: number

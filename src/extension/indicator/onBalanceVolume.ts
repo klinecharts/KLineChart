@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Obv {
   obv?: number
@@ -25,7 +25,7 @@ interface Obv {
  * OBV
  * OBV = REF(OBV) + sign * V
  */
-const onBalanceVolume: PickRequired<Partial<Indicator<Obv>>, 'name' | 'calc'> = {
+const onBalanceVolume: ExcludePickPartial<Indicator<Obv>, 'name' | 'calc'> = {
   name: 'OBV',
   shortName: 'OBV',
   calcParams: [30],
@@ -33,8 +33,8 @@ const onBalanceVolume: PickRequired<Partial<Indicator<Obv>>, 'name' | 'calc'> = 
     { key: 'obv', title: 'OBV: ', type: 'line' },
     { key: 'maObv', title: 'MAOBV: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Obv>) => {
-    const params = (options.calcParams ?? []) as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Obv>) => {
+    const params = indicator.calcParams as number[]
     let obvSum = 0
     let oldObv = 0
     const result: Obv[] = []

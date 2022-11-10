@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
 import { Indicator, IndicatorSeries } from '../../componentl/Indicator'
 
@@ -23,7 +23,7 @@ interface Avp {
 /**
  * averager price
  */
-const averagePrice: PickRequired<Partial<Indicator<Avp>>, 'name' | 'calc'> = {
+const averagePrice: ExcludePickPartial<Indicator<Avp>, 'name' | 'calc'> = {
   name: 'AVP',
   shortName: 'AVP',
   series: IndicatorSeries.PRICE,

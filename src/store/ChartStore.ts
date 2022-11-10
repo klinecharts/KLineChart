@@ -24,7 +24,7 @@ import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
 import CrosshairStore from './CrosshairStore'
 import ShapeStore from './ShapeStore'
-// import AnnotationStore from './AnnotationStore'
+import AnnotationStore from './AnnotationStore'
 // import TagStore from './TagStore'
 // import ActionStore from './ActionStore'
 
@@ -51,7 +51,7 @@ export default class ChartStore {
   // 图形数据存储
   private readonly _shapeStore = new ShapeStore(this)
   // // 注解数据存储
-  // private readonly _annotationStore = new AnnotationStore(this)
+  private readonly _annotationStore = new AnnotationStore(this)
   // 标签数据存储
   // private readonly _tagStore = new TagStore(this)
   // 十字光标数据存储
@@ -83,7 +83,7 @@ export default class ChartStore {
         data: kLineData
       })
     }
-    // this._annotationStore.createVisibleAnnotations()
+    this._annotationStore.createVisibleInstances()
   }
 
   /**
@@ -203,13 +203,13 @@ export default class ChartStore {
     return this._shapeStore
   }
 
-  // /**
-  //  * 获取注解存储
-  //  * @returns
-  //  */
-  // getAnnotationStore (): AnnotationStore {
-  //   return this._annotationStore
-  // }
+  /**
+   * 获取注解存储
+   * @returns
+   */
+  getAnnotationStore (): AnnotationStore {
+    return this._annotationStore
+  }
 
   // /**
   //  * 获取标签数据存储

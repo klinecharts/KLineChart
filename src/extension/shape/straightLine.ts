@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 
 import { getLinearYFromCoordinates } from '../figure/line'
 
 import { Shape } from '../../componentl/Shape'
 
-const straightLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
+const straightLine: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'straightLine',
   totalStep: 3,
   createFigures: ({ coordinates, bounding }) => {

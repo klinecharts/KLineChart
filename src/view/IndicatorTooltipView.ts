@@ -19,7 +19,7 @@ import { IndicatorStyle, TooltipShowRule, TooltipStyle, MarginTextStyle } from '
 
 import Axis from '../componentl/Axis'
 
-import IndicatorTemplate, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../componentl/Indicator'
+import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../componentl/Indicator'
 
 import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 
@@ -47,7 +47,7 @@ export default class IndicatorTooltipView extends View {
     ctx: CanvasRenderingContext2D,
     dataList: KLineData[],
     crosshair: Crosshair,
-    indicators: Map<string, IndicatorTemplate>,
+    indicators: Map<string, IndicatorImp>,
     bounding: Bounding,
     styles: IndicatorStyle,
     top?: number

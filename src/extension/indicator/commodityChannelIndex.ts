@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Cci {
   cci?: number
@@ -28,15 +28,15 @@ interface Cci {
  * MD=近N日TP - 当前MA绝对值的累计之和÷N
  *
  */
-const commodityChannelIndex: PickRequired<Partial<Indicator<Cci>>, 'name' | 'calc'> = {
+const commodityChannelIndex: ExcludePickPartial<Indicator<Cci>, 'name' | 'calc'> = {
   name: 'CCI',
   shortName: 'CCI',
   calcParams: [20],
   figures: [
     { key: 'cci', title: 'CCI: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Cci>) => {
-    const params = options.calcParams ?? []
+  calc: (dataList: KLineData[], indicator: Indicator<Cci>) => {
+    const params = indicator.calcParams
     const p = params[0] - 1
     let tpSum = 0
     const tpList: number[] = []

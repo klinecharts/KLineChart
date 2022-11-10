@@ -28,9 +28,9 @@ export interface Figure<A = any, S = any> {
   checkEventOn: (coordinate: Coordinate, attrs: A, styles: S) => boolean
 }
 
-export type FigureConstructor<A = any, S = any> = new (attrs: A, styles: S) => FigureTemplate<A, S>
+export type FigureConstructor<A = any, S = any> = new (attrs: A, styles: S) => FigureImp<A, S>
 
-export default abstract class FigureTemplate<A = any, S = any> extends Element implements Omit<Figure<A, S>, 'name'> {
+export default abstract class FigureImp<A = any, S = any> extends Element implements Omit<Figure<A, S>, 'name'> {
   private readonly _attrs: A
   private readonly _styles: S
 
@@ -52,8 +52,8 @@ export default abstract class FigureTemplate<A = any, S = any> extends Element i
 
   abstract drawImp (ctx: CanvasRenderingContext2D, attrs: A, styles: S): void
 
-  static extend<A, S> (figure: Omit<Figure<A, S>, 'name'>): new (attrs: A, styles: S) => FigureTemplate<A, S> {
-    class Custom extends FigureTemplate<A, S> {
+  static extend<A, S> (figure: Omit<Figure<A, S>, 'name'>): new (attrs: A, styles: S) => FigureImp<A, S> {
+    class Custom extends FigureImp<A, S> {
       checkEventOnImp (coordinate: Coordinate, attrs: A, styles: S): boolean {
         return figure.checkEventOn(coordinate, attrs, styles)
       }

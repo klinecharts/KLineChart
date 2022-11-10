@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Bias {
   bias1?: number
@@ -26,7 +26,7 @@ interface Bias {
  * BIAS
  * 乖离率=[(当日收盘价-N日平均价)/N日平均价]*100%
  */
-const bias: PickRequired<Partial<Indicator<Bias>>, 'name' | 'calc'> = {
+const bias: ExcludePickPartial<Indicator<Bias>, 'name' | 'calc'> = {
   name: 'BIAS',
   shortName: 'BIAS',
   calcParams: [6, 12, 24],
@@ -40,8 +40,8 @@ const bias: PickRequired<Partial<Indicator<Bias>>, 'name' | 'calc'> = {
       return { key: `bias${i + 1}`, title: `BIAS${p}: `, type: 'line' }
     })
   },
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Bias>) => {
-    const { calcParams: params = [], figures = [] } = options
+  calc: (dataList: KLineData[], indicator: Indicator<Bias>) => {
+    const { calcParams: params, figures } = indicator
     const closeSums: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {
       const bias: Bias = {}

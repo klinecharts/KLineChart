@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorSeries, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator, IndicatorSeries } from '../../componentl/Indicator'
 
 interface Ma {
   ma1?: number
@@ -26,7 +26,7 @@ interface Ma {
 /**
  * MA 移动平均
  */
-const movingAverage: PickRequired<Partial<Indicator<Ma>>, 'name' | 'calc'> = {
+const movingAverage: ExcludePickPartial<Indicator<Ma>, 'name' | 'calc'> = {
   name: 'MA',
   shortName: 'MA',
   series: IndicatorSeries.PRICE,
@@ -44,8 +44,8 @@ const movingAverage: PickRequired<Partial<Indicator<Ma>>, 'name' | 'calc'> = {
       return { key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }
     })
   },
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Ma>) => {
-    const { calcParams: params = [], figures = [] } = options
+  calc: (dataList: KLineData[], indicator: Indicator<Ma>) => {
+    const { calcParams: params, figures } = indicator
     const closeSums: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {
       const ma = {}

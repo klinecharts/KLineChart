@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 
 import { Shape } from '../../componentl/Shape'
 
 import { getParallelLines } from './parallelStraightLine'
 
-const priceChannelLine: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
+const priceChannelLine: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'priceChannelLine',
   totalStep: 4,
   createFigures: ({ coordinates, bounding }) => {

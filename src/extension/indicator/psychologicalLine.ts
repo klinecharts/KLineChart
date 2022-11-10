@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Psy {
   psy?: number
@@ -25,7 +25,7 @@ interface Psy {
  * PSY
  * 公式：PSY=N日内的上涨天数/N×100%。
  */
-const psychologicalLine: PickRequired<Partial<Indicator<Psy>>, 'name' | 'calc'> = {
+const psychologicalLine: ExcludePickPartial<Indicator<Psy>, 'name' | 'calc'> = {
   name: 'PSY',
   shortName: 'PSY',
   calcParams: [12, 6],
@@ -33,8 +33,8 @@ const psychologicalLine: PickRequired<Partial<Indicator<Psy>>, 'name' | 'calc'> 
     { key: 'psy', title: 'PSY: ', type: 'line' },
     { key: 'maPsy', title: 'MAPSY: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Psy>) => {
-    const params = (options.calcParams ?? []) as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Psy>) => {
+    const params = indicator.calcParams as number[]
     let upCount = 0
     let psySum = 0
     const upList: number[] = []

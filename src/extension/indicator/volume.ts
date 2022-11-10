@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorCalcOptions, IndicatorFigureStylesCallbackData, IndicatorSeries, IndicatorFigure } from '../../componentl/Indicator'
+import { Indicator, IndicatorFigureStylesCallbackData, IndicatorSeries, IndicatorFigure } from '../../componentl/Indicator'
 
 interface Vol {
   volume?: number
@@ -26,7 +26,7 @@ interface Vol {
   ma3?: number
 }
 
-const volume: PickRequired<Partial<Indicator<Vol>>, 'name' | 'calc'> = {
+const volume: ExcludePickPartial<Indicator<Vol>, 'name' | 'calc'> = {
   name: 'VOL',
   shortName: 'VOL',
   series: IndicatorSeries.VOLUME,
@@ -80,8 +80,8 @@ const volume: PickRequired<Partial<Indicator<Vol>>, 'name' | 'calc'> = {
     })
     return figures
   },
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Vol>) => {
-    const { calcParams: params = [], figures = [] } = options
+  calc: (dataList: KLineData[], indicator: Indicator<Vol>) => {
+    const { calcParams: params, figures } = indicator
     const volSums: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {
       const volume = kLineData.volume ?? 0

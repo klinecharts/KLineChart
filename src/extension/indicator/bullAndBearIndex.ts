@@ -11,9 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorSeries, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator, IndicatorSeries } from '../../componentl/Indicator'
 
 interface Bbi {
   bbi?: number
@@ -24,7 +24,7 @@ interface Bbi {
  * 公式: BBI = (MA(CLOSE, M) + MA(CLOSE, N) + MA(CLOSE, O) + MA(CLOSE, P)) / 4
  *
  */
-const bullAndBearIndex: PickRequired<Partial<Indicator<Bbi>>, 'name' | 'calc'> = {
+const bullAndBearIndex: ExcludePickPartial<Indicator<Bbi>, 'name' | 'calc'> = {
   name: 'BBI',
   shortName: 'BBI',
   series: IndicatorSeries.PRICE,
@@ -34,8 +34,8 @@ const bullAndBearIndex: PickRequired<Partial<Indicator<Bbi>>, 'name' | 'calc'> =
   figures: [
     { key: 'bbi', title: 'BBI: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Bbi>) => {
-    const params = options.calcParams ?? []
+  calc: (dataList: KLineData[], indicator: Indicator<Bbi>) => {
+    const params = indicator.calcParams
     const maxPeriod = Math.max(...params)
     const closeSums: number[] = []
     const mas: number[] = []

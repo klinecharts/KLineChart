@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 import { getMaxMin } from '../../common/utils/number'
 
@@ -32,7 +32,7 @@ interface Kdj {
  * 若无前一日K 值与D值，则可分别用50来代替。
  * J值=3*当日K值-2*当日D值
  */
-const stoch: PickRequired<Partial<Indicator<Kdj>>, 'name' | 'calc'> = {
+const stoch: ExcludePickPartial<Indicator<Kdj>, 'name' | 'calc'> = {
   name: 'KDJ',
   shortName: 'KDJ',
   calcParams: [9, 3, 3],
@@ -41,8 +41,8 @@ const stoch: PickRequired<Partial<Indicator<Kdj>>, 'name' | 'calc'> = {
     { key: 'd', title: 'D: ', type: 'line' },
     { key: 'j', title: 'J: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Kdj>) => {
-    const params = options.calcParams ?? []
+  calc: (dataList: KLineData[], indicator: Indicator<Kdj>) => {
+    const params = indicator.calcParams
     const result: Kdj[] = []
     dataList.forEach((kLineData: KLineData, i: number) => {
       const kdj: Kdj = {}

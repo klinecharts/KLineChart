@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions, IndicatorSeries } from '../../componentl/Indicator'
+import { Indicator, IndicatorSeries } from '../../componentl/Indicator'
 
 interface Sma {
   sma?: number
@@ -23,7 +23,7 @@ interface Sma {
 /**
  * sma
  */
-const simpleMovingAverage: PickRequired<Partial<Indicator<Sma>>, 'name' | 'calc'> = {
+const simpleMovingAverage: ExcludePickPartial<Indicator<Sma>, 'name' | 'calc'> = {
   name: 'SMA',
   shortName: 'SMA',
   series: IndicatorSeries.PRICE,
@@ -33,8 +33,8 @@ const simpleMovingAverage: PickRequired<Partial<Indicator<Sma>>, 'name' | 'calc'
     { key: 'sma', title: 'SMA: ', type: 'line' }
   ],
   shouldOhlc: true,
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Sma>) => {
-    const params = (options.calcParams ?? []) as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Sma>) => {
+    const params = indicator.calcParams as number[]
     let closeSum = 0
     let smaValue = 0
     return dataList.map((kLineData: KLineData, i: number) => {

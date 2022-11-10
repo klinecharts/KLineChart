@@ -12,6 +12,6 @@
  * limitations under the License.
  */
 
-type PickPartial<T, K extends keyof T> = T & { [P in K]?: T[P] }
+type PickPartial<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 
 export default PickPartial

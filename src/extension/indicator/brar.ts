@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Brar {
   br?: number
@@ -30,7 +30,7 @@ interface Brar {
  * 其中，H为当日最高价，L为当日最低价，O为当日开盘价，N为设定的时间参数
  *
  */
-const brar: PickRequired<Partial<Indicator<Brar>>, 'name' | 'calc'> = {
+const brar: ExcludePickPartial<Indicator<Brar>, 'name' | 'calc'> = {
   name: 'BRAR',
   shortName: 'BRAR',
   calcParams: [26],
@@ -38,8 +38,8 @@ const brar: PickRequired<Partial<Indicator<Brar>>, 'name' | 'calc'> = {
     { key: 'br', title: 'BR: ', type: 'line' },
     { key: 'ar', title: 'AR: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Brar>) => {
-    const params = options.calcParams ?? []
+  calc: (dataList: KLineData[], indicator: Indicator<Brar>) => {
+    const params = indicator.calcParams
     let hcy = 0
     let cyl = 0
     let ho = 0

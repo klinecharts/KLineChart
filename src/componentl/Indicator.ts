@@ -13,7 +13,7 @@
  */
 
 import TypeOrNull from '../common/TypeOrNull'
-import PickRequired from '../common/PickRequired'
+import ExcludePickPartial from '../common/ExcludePickPartial'
 import KLineData from '../common/KLineData'
 import Bounding from '../common/Bounding'
 import VisibleRange from '../common/VisibleRange'
@@ -97,8 +97,7 @@ export interface IndicatorDrawParams<D = any> {
 }
 
 export type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParams<D>) => boolean
-export type IndicatorCalcOptions<D> = Pick<Indicator<D>, 'figures' | 'calcParams' | 'extendData'>
-export type IndicatorCalcCallback<D> = (dataList: KLineData[], options: IndicatorCalcOptions<D>) => Promise<D[]> | D[]
+export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[]
 
 export interface Indicator<D = any> {
   // 指标名
@@ -137,7 +136,7 @@ export interface Indicator<D = any> {
   result: D[]
 }
 
-export type IndicatorConstructor<D = any> = new () => IndicatorTemplate<D>
+export type IndicatorConstructor<D = any> = new () => IndicatorImp<D>
 
 export type EachFigureCallback = (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>, defaultFigureStyles: any, count: number) => void
 
@@ -213,7 +212,7 @@ export function eachFigures<D> (
   })
 }
 
-export default abstract class IndicatorTemplate<D = any> implements Indicator<D> {
+export default abstract class IndicatorImp<D = any> implements Indicator<D> {
   name: string
   shortName: string
   precision: number
@@ -234,7 +233,7 @@ export default abstract class IndicatorTemplate<D = any> implements Indicator<D>
 
   private _precisionFlag: boolean = false
 
-  constructor (indicator: PickRequired<Partial<Indicator<D>>, 'name'>) {
+  constructor (indicator: ExcludePickPartial<Indicator<D>, 'name'>) {
     const {
       name, shortName, series, calcParams, figures, precision,
       shouldOhlc, shouldFormatBigNumber,
@@ -391,7 +390,7 @@ export default abstract class IndicatorTemplate<D = any> implements Indicator<D>
 
   async calcIndicator (dataList: KLineData[]): Promise<boolean> {
     try {
-      const result = await this.calc(dataList, { figures: this.figures, calcParams: this.calcParams, extendData: this.extendData })
+      const result = await this.calc(dataList, this)
       this.result = result
       return true
     } catch (e) {
@@ -399,16 +398,16 @@ export default abstract class IndicatorTemplate<D = any> implements Indicator<D>
     }
   }
 
-  abstract calc (dataList: KLineData[], options: IndicatorCalcOptions<D>): D[] | Promise<D[]>
+  abstract calc (dataList: KLineData[], indicator: Indicator<D>): D[] | Promise<D[]>
 
-  static extend<D> (indicator: PickRequired<Partial<Indicator<D>>, 'name' | 'calc'>): IndicatorConstructor<D> {
-    class Custom extends IndicatorTemplate<D> {
+  static extend<D> (indicator: ExcludePickPartial<Indicator<D>, 'name' | 'calc'>): IndicatorConstructor<D> {
+    class Custom extends IndicatorImp<D> {
       constructor () {
         super(indicator)
       }
 
-      calc (dataList: KLineData[], options: IndicatorCalcOptions<D>): D[] | Promise<D[]> {
-        return indicator.calc(dataList, options)
+      calc (dataList: KLineData[], indicator: Indicator<D>): D[] | Promise<D[]> {
+        return indicator.calc(dataList, indicator)
       }
     }
     return Custom

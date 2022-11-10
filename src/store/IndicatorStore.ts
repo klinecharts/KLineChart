@@ -18,18 +18,18 @@ import Precision from '../common/Precision'
 
 import ChartStore from './ChartStore'
 
-import IndicatorTemplate, { IndicatorConstructor, Indicator, IndicatorSeries } from '../componentl/Indicator'
+import IndicatorImp, { IndicatorConstructor, Indicator, IndicatorSeries } from '../componentl/Indicator'
 import { getIndicatorClass } from '../extension/indicator/index'
 
 export default class IndicatorStore {
   private readonly _chartStore: ChartStore
-  private readonly _instances: Map<string, Map<string, IndicatorTemplate>> = new Map()
+  private readonly _instances: Map<string, Map<string, IndicatorImp>> = new Map()
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
   }
 
-  private _overrideInstance (instance: IndicatorTemplate, indicator: Partial<Indicator>): boolean[] {
+  private _overrideInstance (instance: IndicatorImp, indicator: Partial<Indicator>): boolean[] {
     const {
       shortName, series, calcParams, precision, figures, minValue, maxValue,
       shouldOhlc, shouldFormatBigNumber, styles, extendData,
@@ -103,8 +103,8 @@ export default class IndicatorStore {
       paneInstances = new Map()
       this._instances.set(paneId, paneInstances)
     }
-    const Template = getIndicatorClass(name) as IndicatorConstructor
-    const instance = new Template()
+    const IndicatorClazz = getIndicatorClass(name) as IndicatorConstructor
+    const instance = new IndicatorClazz()
     this._overrideInstance(instance, indicator)
     if (!isStack) {
       paneInstances.clear()
@@ -118,7 +118,7 @@ export default class IndicatorStore {
    * @param {*} paneId
    * @returns
    */
-  getInstances (paneId: string): Map<string, IndicatorTemplate> {
+  getInstances (paneId: string): Map<string, IndicatorImp> {
     return this._instances.get(paneId) ?? new Map()
   }
 
@@ -131,7 +131,7 @@ export default class IndicatorStore {
   removeInstance (paneId: string, name?: string): boolean {
     let removed = false
     if (this._instances.has(paneId)) {
-      const paneInstances = this._instances.get(paneId) as Map<string, IndicatorTemplate>
+      const paneInstances = this._instances.get(paneId) as Map<string, IndicatorImp>
       if (name !== undefined) {
         if (paneInstances.has(name)) {
           paneInstances.delete(name)
@@ -168,13 +168,13 @@ export default class IndicatorStore {
       if (paneId !== undefined) {
         const paneInstances = this._instances.get(paneId)
         if (paneInstances?.has(name) ?? false) {
-          const instance = paneInstances?.get(name) as IndicatorTemplate
+          const instance = paneInstances?.get(name) as IndicatorImp
           tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
         }
       } else {
         this._instances.forEach(paneInstances => {
           if (paneInstances.has(name)) {
-            const instance = paneInstances?.get(name) as IndicatorTemplate
+            const instance = paneInstances?.get(name) as IndicatorImp
             tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
           }
         })
@@ -231,10 +231,10 @@ export default class IndicatorStore {
    */
   async override (indicator: PickRequired<Partial<Indicator>, 'name'>, paneId?: string): Promise<boolean[]> {
     const { name } = indicator
-    let instances: Map<string, Map<string, IndicatorTemplate>> = new Map()
+    let instances: Map<string, Map<string, IndicatorImp>> = new Map()
     if (paneId !== undefined) {
       if (this._instances.has(paneId)) {
-        instances.set(paneId, this._instances.get(paneId) as Map<string, IndicatorTemplate>)
+        instances.set(paneId, this._instances.get(paneId) as Map<string, IndicatorImp>)
       }
     } else {
       instances = this._instances
@@ -242,7 +242,7 @@ export default class IndicatorStore {
     const tasks: Array<Promise<boolean>> = []
     instances.forEach(paneInstances => {
       if (paneInstances.has(name)) {
-        const instance = paneInstances.get(name) as IndicatorTemplate
+        const instance = paneInstances.get(name) as IndicatorImp
         const overrideResult = this._overrideInstance(instance, indicator)
         if (overrideResult[1]) {
           tasks.push(instance.calcIndicator(this._chartStore.getDataList()))

@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Dmi {
   pdi?: number
@@ -48,7 +48,7 @@ interface Dmi {
  * 输出ADXR:ADX的MM日指数平滑移动平均
  *
  */
-const directionalMovementIndex: PickRequired<Partial<Indicator<Dmi>>, 'name' | 'calc'> = {
+const directionalMovementIndex: ExcludePickPartial<Indicator<Dmi>, 'name' | 'calc'> = {
   name: 'DMI',
   shortName: 'DMI',
   calcParams: [14, 6],
@@ -58,8 +58,8 @@ const directionalMovementIndex: PickRequired<Partial<Indicator<Dmi>>, 'name' | '
     { key: 'adx', title: 'ADX: ', type: 'line' },
     { key: 'adxr', title: 'ADXR: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Dmi>) => {
-    const params = (options.calcParams ?? []) as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Dmi>) => {
+    const params = indicator.calcParams as number[]
     let trSum = 0
     let hSum = 0
     let lSum = 0

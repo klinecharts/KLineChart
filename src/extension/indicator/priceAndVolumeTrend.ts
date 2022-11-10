@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
 import { Indicator } from '../../componentl/Indicator'
 
@@ -27,7 +27,7 @@ interface Pvt {
  * PVT = SUM(X)
  *
  */
-const priceAndVolumeTrend: PickRequired<Partial<Indicator<Pvt>>, 'name' | 'calc'> = {
+const priceAndVolumeTrend: ExcludePickPartial<Indicator<Pvt>, 'name' | 'calc'> = {
   name: 'PVT',
   shortName: 'PVT',
   figures: [

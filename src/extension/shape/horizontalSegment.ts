@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 
 import { Shape } from '../../componentl/Shape'
 
 import { LineAttrs } from '../figure/line'
 
-const horizontalSegment: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createFigures'> = {
+const horizontalSegment: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
   name: 'horizontalSegment',
   totalStep: 3,
   createFigures: ({ coordinates }) => {

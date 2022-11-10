@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Dma {
   dma?: number
@@ -25,7 +25,7 @@ interface Dma {
  * DMA
  * 公式：DIF:MA(CLOSE,N1)-MA(CLOSE,N2);DIFMA:MA(DIF,M)
  */
-const differentOfMovingAverage: PickRequired<Partial<Indicator<Dma>>, 'name' | 'calc'> = {
+const differentOfMovingAverage: ExcludePickPartial<Indicator<Dma>, 'name' | 'calc'> = {
   name: 'DMA',
   shortName: 'DMA',
   calcParams: [10, 50, 10],
@@ -33,8 +33,8 @@ const differentOfMovingAverage: PickRequired<Partial<Indicator<Dma>>, 'name' | '
     { key: 'dma', title: 'DMA: ', type: 'line' },
     { key: 'ama', title: 'AMA: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Dma>) => {
-    const params = (options.calcParams ?? []) as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Dma>) => {
+    const params = indicator.calcParams as number[]
     const maxPeriod = Math.max(params[0], params[1])
     let closeSum1 = 0
     let closeSum2 = 0

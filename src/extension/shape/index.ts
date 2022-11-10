@@ -12,10 +12,10 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import TypeOrNull from '../../common/TypeOrNull'
 
-import ShapeTemplate, { Shape, ShapeConstructor } from '../../componentl/Shape'
+import ShapeImp, { Shape, ShapeConstructor } from '../../componentl/Shape'
 
 import fibonacciLine from './fibonacciLine'
 import horizontalRayLine from './horizontalRayLine'
@@ -33,18 +33,18 @@ import verticalStraightLine from './verticalStraightLine'
 
 const shapes: { [key: string]: ShapeConstructor } = {}
 
-const templates = [
+const extensions = [
   fibonacciLine, horizontalRayLine, horizontalSegment, horizontalStraightLine,
   parallelStraightLine, priceChannelLine, priceLine, rayLine, segment,
   straightLine, verticalRayLine, verticalSegment, verticalStraightLine
 ]
 
-templates.forEach((template: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'>) => {
-  shapes[template.name] = ShapeTemplate.extend(template)
+extensions.forEach((shape: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'>) => {
+  shapes[shape.name] = ShapeImp.extend(shape)
 })
 
-function registerShape (shape: PickRequired<Partial<Shape>, 'name' | 'totalStep' | 'createDataSource'>): void {
-  shapes[shape.name] = ShapeTemplate.extend(shape)
+function registerShape (shape: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'>): void {
+  shapes[shape.name] = ShapeImp.extend(shape)
 }
 
 function getShapeClass (name: string): TypeOrNull<ShapeConstructor> {

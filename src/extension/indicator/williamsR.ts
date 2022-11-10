@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 import { getMaxMin } from '../../common/utils/number'
 
@@ -28,7 +28,7 @@ interface Wr {
  * WR
  * 公式 WR(N) = 100 * [ C - HIGH(N) ] / [ HIGH(N)-LOW(N) ]
  */
-const williamsR: PickRequired<Partial<Indicator<Wr>>, 'name' | 'calc'> = {
+const williamsR: ExcludePickPartial<Indicator<Wr>, 'name' | 'calc'> = {
   name: 'WR',
   shortName: 'WR',
   calcParams: [6, 10, 14],
@@ -42,8 +42,8 @@ const williamsR: PickRequired<Partial<Indicator<Wr>>, 'name' | 'calc'> = {
       return { key: `wr${i + 1}`, title: `WR${i + 1}: `, type: 'line' }
     })
   },
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Wr>) => {
-    const { calcParams: params = [], figures = [] } = options
+  calc: (dataList: KLineData[], indicator: Indicator<Wr>) => {
+    const { calcParams: params, figures } = indicator
     return dataList.map((kLineData, i) => {
       const wr: Wr = {}
       const close = kLineData.close

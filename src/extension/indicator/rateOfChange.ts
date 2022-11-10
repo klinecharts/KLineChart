@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import PickRequired from '../../common/PickRequired'
+import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorCalcOptions } from '../../componentl/Indicator'
+import { Indicator } from '../../componentl/Indicator'
 
 interface Roc {
   roc?: number
@@ -25,7 +25,7 @@ interface Roc {
  * 变动率指标
  * 公式：ROC = (CLOSE - REF(CLOSE, N)) / REF(CLOSE, N)
  */
-const rateOfChange: PickRequired<Partial<Indicator<Roc>>, 'name' | 'calc'> = {
+const rateOfChange: ExcludePickPartial<Indicator<Roc>, 'name' | 'calc'> = {
   name: 'ROC',
   shortName: 'ROC',
   calcParams: [12, 6],
@@ -33,8 +33,8 @@ const rateOfChange: PickRequired<Partial<Indicator<Roc>>, 'name' | 'calc'> = {
     { key: 'roc', title: 'ROC: ', type: 'line' },
     { key: 'maRoc', title: 'MAROC: ', type: 'line' }
   ],
-  calc: (dataList: KLineData[], options: IndicatorCalcOptions<Roc>) => {
-    const params = (options.calcParams ?? []) as number[]
+  calc: (dataList: KLineData[], indicator: Indicator<Roc>) => {
+    const params = indicator.calcParams as number[]
     const result: Roc[] = []
     let rocSum = 0
     dataList.forEach((kLineData: KLineData, i: number) => {
