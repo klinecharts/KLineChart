@@ -21,7 +21,8 @@ import { ElementEventHandler } from '../common/Element'
 
 import Axis from '../componentl/Axis'
 import YAxis from '../componentl/YAxis'
-import Annotation, { AnnotationFigure } from '../componentl/Annotation'
+import Annotation from '../componentl/Annotation'
+import { OverlayFigure } from '../componentl/Overlay'
 
 import TimeScaleStore from '../store/TimeScaleStore'
 import { EventAnnotationInfo } from '../store/AnnotationStore'
@@ -115,16 +116,16 @@ export default class AnnotationView extends View<YAxis> {
     clickInstanceInfo: EventAnnotationInfo,
     timeScaleStore: TimeScaleStore
   ): void {
-    const dataIndex = timeScaleStore.timestampToDataIndex(annotation.point.timestamp)
+    const dataIndex = timeScaleStore.timestampToDataIndex(annotation.points.timestamp)
     const coordinate = {
       x: xAxis.convertToPixel(dataIndex),
-      y: yAxis.convertToPixel(annotation.point.value)
+      y: yAxis.convertToPixel(annotation.points.value)
     }
-    const isActive = annotation.id === hoverInstanceInfo.instance?.id || annotation.id === clickInstanceInfo.instance?.id
-    const pointFigures = annotation.createPointFigures?.({
-      annotation, coordinate, bounding, barSpace, precision, isActive, defaultStyles, xAxis, yAxis
+    // const isActive = annotation.id === hoverInstanceInfo.instance?.id || annotation.id === clickInstanceInfo.instance?.id
+    const pointFigures = annotation.createFigures?.({
+      overlay: annotation, coordinates: coordinate, bounding, barSpace, precision, defaultStyles, xAxis, yAxis
     }) ?? []
-    const pfs = new Array<AnnotationFigure>().concat(pointFigures)
+    const pfs = new Array<OverlayFigure>().concat(pointFigures)
     pfs.forEach(({ type, styles, attrs }) => {
       const attrsArray = [].concat(attrs)
       attrsArray.forEach(ats => {
@@ -135,9 +136,9 @@ export default class AnnotationView extends View<YAxis> {
       })
     })
     const extendFigures = annotation.createExtendFigures?.({
-      annotation, coordinate, bounding, barSpace, precision, isActive, defaultStyles, xAxis, yAxis
+      overlay: annotation, coordinates: coordinate, bounding, barSpace, precision, defaultStyles, xAxis, yAxis
     }) ?? []
-    const efs = new Array<AnnotationFigure>().concat(extendFigures)
+    const efs = new Array<OverlayFigure>().concat(extendFigures)
     efs.forEach(({ type, styles, attrs }) => {
       const attrsArray = [].concat(attrs)
       attrsArray.forEach(ats => {

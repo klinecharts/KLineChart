@@ -13,18 +13,15 @@
  */
 
 import TypeOrNull from '../common/TypeOrNull'
-import DeepPartial from '../common/DeepPartial'
 import PickPartial from '../common/PickPartial'
 import ExcludePickPartial from '../common/ExcludePickPartial'
 import Point from '../common/Point'
 import Coordinate from '../common/Coordinate'
-import Bounding from '../common/Bounding'
-import Precision from '../common/Precision'
-import BarSpace from '../common/BarSpace'
 import { ShapeStyle } from '../common/Styles'
+
 import { clone } from '../common/utils/typeChecks'
 
-import Axis from './Axis'
+import OverlayImp, { Overlay, OverlayEventCallback, OverlayFigure, OverlayCreateFiguresCallbackParams } from './Overlay'
 
 import TimeScaleStore from '../store/TimeScaleStore'
 
@@ -42,50 +39,24 @@ export interface ShapePerformEventParams {
   performPoint: PickPartial<Point, 'timestamp'>
 }
 
-export interface ShapeFigure {
-  isCheckEvent?: boolean
-  type: string
-  attrs: any | any[]
-  styles?: any
-}
-
-export interface ShapeCreateFiguresParams {
-  shape: Shape
-  coordinates: Coordinate[]
-  bounding: Bounding
-  barSpace: BarSpace
-  precision: Precision
-  defaultStyles: ShapeStyle
-  xAxis: Axis
-  yAxis: Axis
-}
-
-export type ShapeEventCllback = (shape: Shape) => boolean
-
-export interface Shape {
-  id: string
-  name: string
+export interface Shape extends Overlay<ShapeStyle, Array<PickPartial<Point, 'timestamp'>>, Coordinate[], Shape> {
   totalStep: number
   currentStep: number
   lock: boolean
   mode: ShapeMode
-  points: Array<PickPartial<Point, 'timestamp'>>
-  extendData: any
-  styles: TypeOrNull<DeepPartial<ShapeStyle>>
-  createFigures: (params: ShapeCreateFiguresParams) => ShapeFigure[]
   performEventPressedMove: TypeOrNull<(params: ShapePerformEventParams) => void>
   performEventMoveForDrawing: TypeOrNull<(params: ShapePerformEventParams) => void>
-  onDrawStart: TypeOrNull<ShapeEventCllback>
-  onDrawing: TypeOrNull<ShapeEventCllback>
-  onDrawEnd: TypeOrNull<ShapeEventCllback>
-  onClick: TypeOrNull<ShapeEventCllback>
-  onRightClick: TypeOrNull<ShapeEventCllback>
-  onPressedMove: TypeOrNull<ShapeEventCllback>
-  onMouseEnter: TypeOrNull<ShapeEventCllback>
-  onMouseLeave: TypeOrNull<ShapeEventCllback>
-  onRemoved: TypeOrNull<ShapeEventCllback>
-  onSelected: TypeOrNull<ShapeEventCllback>
-  onDeselected: TypeOrNull<ShapeEventCllback>
+  onDrawStart: TypeOrNull<OverlayEventCallback<Shape>>
+  onDrawing: TypeOrNull<OverlayEventCallback<Shape>>
+  onDrawEnd: TypeOrNull<OverlayEventCallback<Shape>>
+  onClick: TypeOrNull<OverlayEventCallback<Shape>>
+  onRightClick: TypeOrNull<OverlayEventCallback<Shape>>
+  onPressedMove: TypeOrNull<OverlayEventCallback<Shape>>
+  onMouseEnter: TypeOrNull<OverlayEventCallback<Shape>>
+  onMouseLeave: TypeOrNull<OverlayEventCallback<Shape>>
+  onRemoved: TypeOrNull<OverlayEventCallback<Shape>>
+  onSelected: TypeOrNull<OverlayEventCallback<Shape>>
+  onDeselected: TypeOrNull<OverlayEventCallback<Shape>>
 }
 
 export type ShapeTemplate = ExcludePickPartial<Omit<Shape, 'id' | 'points' | 'currentStep'>, 'name' | 'totalStep' | 'createFigures'>
@@ -95,35 +66,31 @@ export type ShapeConstructor = new () => ShapeImp
 const SHAPE_DRAW_STEP_START = 1
 const SHAPE_DRAW_STEP_FINISHED = -1
 
-export default abstract class ShapeImp implements Shape {
-  name: string
+export default abstract class ShapeImp extends OverlayImp<ShapeStyle, Array<PickPartial<Point, 'timestamp'>>, Coordinate[], Shape> implements Shape {
   totalStep: number
   lock: boolean
   mode: ShapeMode
-  points: Array<PickPartial<Point, 'timestamp'>> = []
-  extendData: any
-  styles: TypeOrNull<DeepPartial<ShapeStyle>>
   performEventPressedMove: TypeOrNull<(params: ShapePerformEventParams) => void>
   performEventMoveForDrawing: TypeOrNull<(params: ShapePerformEventParams) => void>
-  onDrawStart: TypeOrNull<ShapeEventCllback>
-  onDrawing: TypeOrNull<ShapeEventCllback>
-  onDrawEnd: TypeOrNull<ShapeEventCllback>
-  onClick: TypeOrNull<ShapeEventCllback>
-  onRightClick: TypeOrNull<ShapeEventCllback>
-  onPressedMove: TypeOrNull<ShapeEventCllback>
-  onMouseEnter: TypeOrNull<ShapeEventCllback>
-  onMouseLeave: TypeOrNull<ShapeEventCllback>
-  onRemoved: TypeOrNull<ShapeEventCllback>
-  onSelected: TypeOrNull<ShapeEventCllback>
-  onDeselected: TypeOrNull<ShapeEventCllback>
+  onDrawStart: TypeOrNull<OverlayEventCallback<Shape>>
+  onDrawing: TypeOrNull<OverlayEventCallback<Shape>>
+  onDrawEnd: TypeOrNull<OverlayEventCallback<Shape>>
+  onClick: TypeOrNull<OverlayEventCallback<Shape>>
+  onRightClick: TypeOrNull<OverlayEventCallback<Shape>>
+  onPressedMove: TypeOrNull<OverlayEventCallback<Shape>>
+  onMouseEnter: TypeOrNull<OverlayEventCallback<Shape>>
+  onMouseLeave: TypeOrNull<OverlayEventCallback<Shape>>
+  onRemoved: TypeOrNull<OverlayEventCallback<Shape>>
+  onSelected: TypeOrNull<OverlayEventCallback<Shape>>
+  onDeselected: TypeOrNull<OverlayEventCallback<Shape>>
 
-  id: string
   currentStep: number = SHAPE_DRAW_STEP_START
 
   private _prevPressedPoint: TypeOrNull<PickPartial<Point, 'timestamp'>> = null
   private _prevPressedPoints: Array<PickPartial<Point, 'timestamp'>> = []
 
   constructor (shape: ShapeTemplate) {
+    super()
     const {
       name, totalStep, lock, mode, extendData, styles,
       performEventPressedMove, performEventMoveForDrawing,
@@ -136,6 +103,7 @@ export default abstract class ShapeImp implements Shape {
     this.totalStep = totalStep
     this.lock = lock ?? false
     this.mode = mode ?? ShapeMode.NORMAL
+    this.points = []
     this.extendData = extendData
     this.styles = styles ?? null
     this.performEventPressedMove = performEventPressedMove ?? null
@@ -151,14 +119,6 @@ export default abstract class ShapeImp implements Shape {
     this.onRemoved = onRemoved ?? null
     this.onSelected = onSelected ?? null
     this.onDeselected = onDeselected ?? null
-  }
-
-  setId (id: string): boolean {
-    if (this.id !== id) {
-      this.id = id
-      return true
-    }
-    return false
   }
 
   /**
@@ -224,27 +184,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  /**
-   * 设置扩展数据
-   * @param extendData
-   */
-  setExtendData (extendData: any): boolean {
-    if (extendData !== this.extendData) {
-      this.extendData = extendData
-      return true
-    }
-    return false
-  }
-
-  setStyles (styles: TypeOrNull<DeepPartial<ShapeStyle>>): boolean {
-    if (styles !== this.styles) {
-      this.styles = styles
-      return true
-    }
-    return false
-  }
-
-  setOnDrawStartCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnDrawStartCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onDrawStart !== callback) {
       this.onDrawStart = callback
       return true
@@ -252,7 +192,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  setOnDrawingCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnDrawingCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onDrawing !== callback) {
       this.onDrawing = callback
       return true
@@ -260,7 +200,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  setOnDrawEndCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnDrawEndCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onDrawEnd !== callback) {
       this.onDrawEnd = callback
       return true
@@ -268,7 +208,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  setOnClickCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnClickCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onClick !== callback) {
       this.onClick = callback
       return true
@@ -276,7 +216,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  setOnRightClickCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnRightClickCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onRightClick !== callback) {
       this.onRightClick = callback
       return true
@@ -284,7 +224,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  setOnPressedMoveCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnPressedMoveCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onPressedMove !== callback) {
       this.onPressedMove = callback
       return true
@@ -292,7 +232,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  setOnMouseEnterCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnMouseEnterCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onMouseEnter !== callback) {
       this.onMouseEnter = callback
       return true
@@ -300,7 +240,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  setOnMouseLeaveCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnMouseLeaveCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onMouseLeave !== callback) {
       this.onMouseLeave = callback
       return true
@@ -308,7 +248,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  setOnRemovedCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnRemovedCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onRemoved !== callback) {
       this.onRemoved = callback
       return true
@@ -316,7 +256,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  setOnSelectedCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnSelectedCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onSelected !== callback) {
       this.onSelected = callback
       return true
@@ -324,7 +264,7 @@ export default abstract class ShapeImp implements Shape {
     return false
   }
 
-  setOnDeselectedCallback (callback: TypeOrNull<ShapeEventCllback>): boolean {
+  setOnDeselectedCallback (callback: TypeOrNull<OverlayEventCallback<Shape>>): boolean {
     if (this.onDeselected !== callback) {
       this.onDeselected = callback
       return true
@@ -419,15 +359,13 @@ export default abstract class ShapeImp implements Shape {
     }
   }
 
-  abstract createFigures (params: ShapeCreateFiguresParams): ShapeFigure[]
-
   static extend (template: ShapeTemplate): ShapeConstructor {
     class Custom extends ShapeImp {
       constructor () {
         super(template)
       }
 
-      createFigures (params: ShapeCreateFiguresParams): ShapeFigure[] {
+      createFigures (params: OverlayCreateFiguresCallbackParams<ShapeStyle, Array<PickPartial<Point, 'timestamp'>>, Coordinate[], Shape>): OverlayFigure | OverlayFigure[] {
         return template.createFigures(params)
       }
     }

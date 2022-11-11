@@ -25,6 +25,7 @@ import { formatValue } from '../common/utils/format'
 
 import Axis from '../componentl/Axis'
 import YAxis from '../componentl/YAxis'
+import { OverlayFigure } from '../componentl/Overlay'
 import Shape, { ShapeMode } from '../componentl/Shape'
 
 import { EventShapeInfo, EventShapeInfoElementType } from '../store/ShapeStore'
@@ -245,7 +246,7 @@ export default class ShapeView extends View<YAxis> {
       }
     })
     if (!shape.isStart() && coordinates.length > 0) {
-      const figures = shape.createFigures({ shape, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis })
+      const figures = new Array<OverlayFigure>().concat(shape.createFigures({ overlay: shape, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis }))
       figures.forEach(({ type, styles, attrs, isCheckEvent }) => {
         const attrsArray = [].concat(attrs)
         attrsArray.forEach((ats, index) => {

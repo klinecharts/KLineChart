@@ -20,8 +20,8 @@ import { TextAttrs } from '../figure/text'
 const fibonacciLine: ShapeTemplate = {
   name: 'fibonacciLine',
   totalStep: 3,
-  createFigures: ({ coordinates, bounding, shape, precision }) => {
-    const points = shape.points
+  createFigures: ({ coordinates, bounding, overlay, precision }) => {
+    const points = overlay.points
     if (coordinates.length > 0) {
       const lines: LineAttrs[] = []
       const texts: TextAttrs[] = []
@@ -45,11 +45,10 @@ const fibonacciLine: ShapeTemplate = {
       return [
         {
           type: 'line',
-          isCheck: true,
           attrs: lines
         }, {
           type: 'text',
-          isCheck: false,
+          isCheckEvent: false,
           attrs: texts
         }
       ]

@@ -764,46 +764,41 @@ const defaultAnnotation: AnnotationStyle = {
   }
 }
 
-// const defaultTag = {
-//   position: OverlayPosition.POINT,
-//   offset: 0,
-//   line: {
-//     show: true,
-//     style: LineType.DASHED,
-//     dashValue: [4, 2],
-//     size: 1,
-//     color: '#2196F3'
-//   },
-//   text: {
-//     color: '#FFFFFF',
-//     backgroundColor: '#2196F3',
-//     size: 12,
-//     family: 'Helvetica Neue',
-//     weight: 'normal',
-//     paddingLeft: 2,
-//     paddingRight: 2,
-//     paddingTop: 2,
-//     paddingBottom: 2,
-//     borderRadius: 2,
-//     borderSize: 1,
-//     borderColor: '#2196F3'
-//   },
-//   mark: {
-//     offset: 0,
-//     color: '#FFFFFF',
-//     backgroundColor: '#2196F3',
-//     size: 12,
-//     family: 'Helvetica Neue',
-//     weight: 'normal',
-//     paddingLeft: 2,
-//     paddingRight: 2,
-//     paddingTop: 2,
-//     paddingBottom: 2,
-//     borderRadius: 2,
-//     borderSize: 1,
-//     borderColor: '#2196F3'
-//   }
-// }
+export interface TagStyle {
+  line: LineStyle
+  polygon: PolygonStyle
+  arc: LineStyle
+  text: TextStyle
+}
+
+const defaultTag: TagStyle = {
+  line: {
+    style: LineType.SOLID,
+    color: '#2196F3',
+    size: 1,
+    dashedValue: [2, 2]
+  },
+  polygon: {
+    style: PolygonType.FILL,
+    color: '#2196F3',
+    borderColor: '#2196F3',
+    borderSize: 1,
+    borderStyle: LineType.SOLID,
+    borderDashedValue: [2, 2]
+  },
+  arc: {
+    style: LineType.SOLID,
+    color: '#2196F3',
+    size: 1,
+    dashedValue: [2, 2]
+  },
+  text: {
+    color: '#2196F3',
+    size: 12,
+    family: 'Helvetica Neue',
+    weight: 'normal'
+  }
+}
 
 export interface SeparatorStyle {
   size: number
@@ -833,6 +828,7 @@ export interface Styles {
   crosshair: CrosshairStyle
   shape: ShapeStyle
   annotation: AnnotationStyle
+  tag: TagStyle
 }
 
 export const defaultStyles: Styles = {
@@ -844,6 +840,6 @@ export const defaultStyles: Styles = {
   separator: defaultSeparator,
   crosshair: defaultCrosshair,
   shape: defaultShape,
-  annotation: defaultAnnotation
-  // tag: defaultTag
+  annotation: defaultAnnotation,
+  tag: defaultTag
 }
