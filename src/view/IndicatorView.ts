@@ -24,7 +24,7 @@ import ChartStore from '../store/ChartStore'
 
 import Axis from '../componentl/Axis'
 
-import { FigureAttrsStyles } from '../componentl/Figure'
+import { FigureCreate } from '../componentl/Figure'
 import { LineAttrs } from '../extension/figure/line'
 import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../componentl/Indicator'
 
@@ -87,12 +87,11 @@ export default class IndicatorView extends CandleBarView {
         ctx.restore()
       }
       if (!isCover) {
-        const result = indicator.result ?? []
-
+        const result = indicator.result
         const lineFigureStyles: Array<TypeOrNull<IndicatorFigureStyle>> = []
         const lineCoordinates: Coordinate[][] = []
 
-        const lines: Array<FigureAttrsStyles<LineAttrs, Partial<LineStyle>>> = []
+        const lines: Array<FigureCreate<LineAttrs, Partial<LineStyle>>> = []
 
         this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
           const { halfGapBar, gapBar } = barSpace
@@ -162,6 +161,7 @@ export default class IndicatorView extends CandleBarView {
                   if (isValid(prevFigureStyles)) {
                     if (prevFigureStyles?.color !== figureStyles.color) {
                       lines.push({
+                        name: 'line',
                         attrs: { coordinates: lineCoordinates[count] },
                         styles: {
                           style: figureStyles.style as LineType,
@@ -174,6 +174,7 @@ export default class IndicatorView extends CandleBarView {
                     } else {
                       if (prevFigureStyles?.style !== figureStyles.style) {
                         lines.push({
+                          name: 'line',
                           attrs: { coordinates: lineCoordinates[count] },
                           styles: {
                             style: figureStyles.style as LineType,
@@ -188,6 +189,7 @@ export default class IndicatorView extends CandleBarView {
                   }
                   if (dataIndex === visibleRange.to - 1) {
                     lines.push({
+                      name: 'line',
                       attrs: { coordinates: lineCoordinates[count] },
                       styles: {
                         style: figureStyles.style as LineType,

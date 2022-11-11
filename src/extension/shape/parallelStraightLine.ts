@@ -12,11 +12,10 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import Coordinate from '../../common/Coordinate'
 import Bounding from '../../common/Bounding'
 
-import { Shape } from '../../componentl/Shape'
+import { ShapeTemplate } from '../../componentl/Shape'
 
 import { LineAttrs, getLinearSlopeIntercept } from '../figure/line'
 
@@ -64,7 +63,7 @@ export function getParallelLines (coordinates: Coordinate[], bounding: Bounding,
   return lines
 }
 
-const parallelStraightLine: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
+const parallelStraightLine: ShapeTemplate = {
   name: 'parallelStraightLine',
   totalStep: 4,
   createFigures: ({ coordinates, bounding }) => {

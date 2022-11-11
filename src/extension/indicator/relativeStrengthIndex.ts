@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Rsi {
   rsi1?: number
@@ -26,7 +25,7 @@ interface Rsi {
  * RSI
  * RSI = SUM(MAX(CLOSE - REF(CLOSE,1),0),N) / SUM(ABS(CLOSE - REF(CLOSE,1)),N) × 100
  */
-const relativeStrengthIndex: ExcludePickPartial<Indicator<Rsi>, 'name' | 'calc'> = {
+const relativeStrengthIndex: IndicatorTemplate<Rsi> = {
   name: 'RSI',
   shortName: 'RSI',
   calcParams: [6, 12, 24],

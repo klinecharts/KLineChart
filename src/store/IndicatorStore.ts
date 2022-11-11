@@ -12,13 +12,12 @@
  * limitations under the License.
  */
 
-import PickRequired from '../common/PickRequired'
 import TypeOrNull from '../common/TypeOrNull'
 import Precision from '../common/Precision'
 
 import ChartStore from './ChartStore'
 
-import IndicatorImp, { IndicatorConstructor, Indicator, IndicatorSeries } from '../componentl/Indicator'
+import IndicatorImp, { IndicatorCreate, IndicatorConstructor, Indicator, IndicatorSeries } from '../componentl/Indicator'
 import { getIndicatorClass } from '../extension/indicator/index'
 
 export default class IndicatorStore {
@@ -93,7 +92,7 @@ export default class IndicatorStore {
    * @param isStack
    * @returns
    */
-  async addInstance (paneId: string, indicator: PickRequired<Partial<Indicator>, 'name'>, isStack: boolean): Promise<boolean> {
+  async addInstance (indicator: IndicatorCreate, paneId: string, isStack: boolean): Promise<boolean> {
     const { name } = indicator
     let paneInstances = this._instances.get(paneId)
     if (paneInstances?.has(name) !== undefined) {
@@ -229,7 +228,7 @@ export default class IndicatorStore {
    * @param paneId
    * @returns
    */
-  async override (indicator: PickRequired<Partial<Indicator>, 'name'>, paneId?: string): Promise<boolean[]> {
+  async override (indicator: IndicatorCreate, paneId?: string): Promise<boolean[]> {
     const { name } = indicator
     let instances: Map<string, Map<string, IndicatorImp>> = new Map()
     if (paneId !== undefined) {

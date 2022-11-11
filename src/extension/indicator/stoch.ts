@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 import { getMaxMin } from '../../common/utils/number'
 
@@ -32,7 +31,7 @@ interface Kdj {
  * 若无前一日K 值与D值，则可分别用50来代替。
  * J值=3*当日K值-2*当日D值
  */
-const stoch: ExcludePickPartial<Indicator<Kdj>, 'name' | 'calc'> = {
+const stoch: IndicatorTemplate<Kdj> = {
   name: 'KDJ',
   shortName: 'KDJ',
   calcParams: [9, 3, 3],

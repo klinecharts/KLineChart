@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Trix {
   trix?: number
@@ -34,7 +33,7 @@ interface Trix {
  * TRMA:MA(TRIX,M)
  *
  */
-const tripleExponentiallySmoothedAverage: ExcludePickPartial<Indicator<Trix>, 'name' | 'calc'> = {
+const tripleExponentiallySmoothedAverage: IndicatorTemplate<Trix> = {
   name: 'TRIX',
   shortName: 'TRIX',
   calcParams: [12, 9],

@@ -738,26 +738,26 @@ export interface AnnotationStyle {
 const defaultAnnotation: AnnotationStyle = {
   line: {
     style: LineType.SOLID,
-    color: '#2196F3',
+    color: '#2d6187',
     size: 1,
     dashedValue: [2, 2]
   },
   polygon: {
     style: PolygonType.FILL,
-    color: '#2196F3',
-    borderColor: '#2196F3',
+    color: '#2d6187',
+    borderColor: '#2d6187',
     borderSize: 1,
     borderStyle: LineType.SOLID,
     borderDashedValue: [2, 2]
   },
   arc: {
     style: LineType.SOLID,
-    color: '#2196F3',
+    color: '#2d6187',
     size: 1,
     dashedValue: [2, 2]
   },
   text: {
-    color: '#2196F3',
+    color: '#2d6187',
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal'

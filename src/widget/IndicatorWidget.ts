@@ -28,6 +28,7 @@ import IndicatorView from '../view/IndicatorView'
 import CrosshairLineView from '../view/CrosshairLineView'
 import IndicatorTooltipView from '../view/IndicatorTooltipView'
 import ShapeView from '../view/ShapeView'
+import AnnotationView from '../view/AnnotationView'
 
 import { cancelAnimationFrame, requestAnimationFrame } from '../common/utils/compatible'
 
@@ -37,6 +38,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   private readonly _crosshairLineView = new CrosshairLineView(this)
   private readonly _tooltipView = this.createTooltipView()
   private readonly _shapeView = new ShapeView(this)
+  private readonly _annotationView = new AnnotationView(this)
 
   // 惯性滚动开始时间
   private _flingStartTime = new Date().getTime()
@@ -201,7 +203,10 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   dispatchEvent (type: string, coordinate: Coordinate): boolean {
-    return this._shapeView.dispatchEvent(type, coordinate)
+    if (this._shapeView.dispatchEvent(type, coordinate)) {
+      return true
+    }
+    return this._annotationView.dispatchEvent(type, coordinate)
   }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
@@ -217,6 +222,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   protected updateMainContent (ctx: CanvasRenderingContext2D): void {}
 
   protected updateOverlay (ctx: CanvasRenderingContext2D): void {
+    this._annotationView.draw(ctx)
     this._shapeView.draw(ctx)
     this._crosshairLineView.draw(ctx)
     this._tooltipView.draw(ctx)

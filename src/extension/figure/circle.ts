@@ -15,7 +15,7 @@
 import Coordinate from '../../common/Coordinate'
 import { PolygonStyle, PolygonType, LineType } from '../../common/Styles'
 
-import { Figure } from '../../componentl/Figure'
+import { FigureTemplate } from '../../componentl/Figure'
 
 export function checkCoordinateOnCircle (coordinate: Coordinate, circle: CircleAttrs): boolean {
   const difX = coordinate.x - circle.x
@@ -62,7 +62,7 @@ export interface CircleAttrs {
   r: number
 }
 
-const circle: Figure<CircleAttrs, Partial<PolygonStyle>> = {
+const circle: FigureTemplate<CircleAttrs, Partial<PolygonStyle>> = {
   name: 'circle',
   checkEventOn: checkCoordinateOnCircle,
   draw: (ctx: CanvasRenderingContext2D, attrs: CircleAttrs, styles: Partial<PolygonStyle>) => {

@@ -17,7 +17,7 @@ import { ElementEventHandler } from '../common/Element'
 import ElementGroup from '../common/ElementGroup'
 
 import Figure from '../componentl/Figure'
-import { createFigure as create } from '../extension/figure/index'
+import { getFigureClass } from '../extension/figure/index'
 
 import Axis from '../componentl/Axis'
 
@@ -34,17 +34,21 @@ export default abstract class View<C extends Axis = Axis> extends ElementGroup {
   getWidget (): Widget<C> { return this._widget }
 
   protected createFigure (name: string, attrs: any, styles: any, eventHandler?: ElementEventHandler): TypeOrNull<Figure> {
-    const figure = create(name, attrs, styles)
-    if (figure !== null && eventHandler !== undefined) {
-      for (const key in eventHandler) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (eventHandler.hasOwnProperty(key)) {
-          figure.registerEvent(key, eventHandler[key])
+    const FigureClazz = getFigureClass(name)
+    if (FigureClazz !== null) {
+      const figure = new FigureClazz({ name, attrs, styles })
+      if (eventHandler !== undefined) {
+        for (const key in eventHandler) {
+          // eslint-disable-next-line no-prototype-builtins
+          if (eventHandler.hasOwnProperty(key)) {
+            figure.registerEvent(key, eventHandler[key])
+          }
         }
+        this.addElement(figure)
       }
-      this.addElement(figure)
+      return figure
     }
-    return figure
+    return null
   }
 
   /**

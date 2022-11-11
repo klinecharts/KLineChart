@@ -12,14 +12,12 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
-
-import { Shape } from '../../componentl/Shape'
+import { ShapeTemplate } from '../../componentl/Shape'
 
 import { LineAttrs } from '../figure/line'
 import { TextAttrs } from '../figure/text'
 
-const fibonacciLine: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
+const fibonacciLine: ShapeTemplate = {
   name: 'fibonacciLine',
   totalStep: 3,
   createFigures: ({ coordinates, bounding, shape, precision }) => {

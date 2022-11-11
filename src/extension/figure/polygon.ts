@@ -15,7 +15,7 @@
 import Coordinate from '../../common/Coordinate'
 import { PolygonStyle, PolygonType, LineType } from '../../common/Styles'
 
-import { Figure } from '../../componentl/Figure'
+import { FigureTemplate } from '../../componentl/Figure'
 
 function checkCoordinateOnPolygon (coordinate: Coordinate, polygon: PolygonAttrs): boolean {
   let on = false
@@ -73,7 +73,7 @@ export interface PolygonAttrs {
   coordinates: Coordinate[]
 }
 
-const polygon: Figure<PolygonAttrs, Partial<PolygonStyle>> = {
+const polygon: FigureTemplate<PolygonAttrs, Partial<PolygonStyle>> = {
   name: 'polygon',
   checkEventOn: checkCoordinateOnPolygon,
   draw: (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs, styles: Partial<PolygonStyle>) => {

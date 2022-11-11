@@ -21,7 +21,7 @@ import ChartStore from '../store/ChartStore'
 
 import Axis from '../componentl/Axis'
 
-import { FigureAttrsStyles } from '../componentl/Figure'
+import { FigureCreate } from '../componentl/Figure'
 import { RectAttrs } from '../extension/figure/rect'
 
 import ChildrenView from './ChildrenView'
@@ -76,9 +76,10 @@ export default class CandleBarView extends ChildrenView {
 
     const barHeight = Math.max(1, priceY[2] - priceY[1])
 
-    let rects: Array<FigureAttrsStyles<RectAttrs, Partial<RectStyle>>> = []
+    let rects: Array<FigureCreate<RectAttrs, Partial<RectStyle>>> = []
     if (type !== CandleType.OHLC) {
       rects.push({
+        name: 'rect',
         attrs: {
           x: x - 0.5,
           y: priceY[0],
@@ -93,6 +94,7 @@ export default class CandleBarView extends ChildrenView {
         (type === CandleType.CANDLE_DOWN_STROKE && open > close)
       ) {
         rects.push({
+          name: 'rect',
           attrs: {
             x: x - halfGapBar + 0.5,
             y: priceY[1],
@@ -106,6 +108,7 @@ export default class CandleBarView extends ChildrenView {
         })
       } else {
         rects.push({
+          name: 'rect',
           attrs: {
             x: x - halfGapBar,
             y: priceY[1],
@@ -116,6 +119,7 @@ export default class CandleBarView extends ChildrenView {
         })
       }
       rects.push({
+        name: 'rect',
         attrs: {
           x: x - 0.5,
           y: priceY[2],
@@ -127,6 +131,7 @@ export default class CandleBarView extends ChildrenView {
     } else {
       rects = [
         {
+          name: 'rect',
           attrs: {
             x: x - 0.5,
             y: priceY[0],
@@ -135,6 +140,7 @@ export default class CandleBarView extends ChildrenView {
           },
           styles: { color }
         }, {
+          name: 'rect',
           attrs: {
             x: x - halfGapBar,
             y: openY,
@@ -143,6 +149,7 @@ export default class CandleBarView extends ChildrenView {
           },
           styles: { color }
         }, {
+          name: 'rect',
           attrs: {
             x,
             y: closeY,

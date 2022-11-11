@@ -12,13 +12,12 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
 
 interface Macd {
   dif?: number
@@ -34,7 +33,7 @@ interface Macd {
  * ⒊再计算DIFF的M日的平均的指数平滑移动平均线，记为DEA。
  * ⒋最后用DIFF减DEA，得MACD。MACD通常绘制成围绕零轴线波动的柱形图。MACD柱状大于0涨颜色，小于0跌颜色。
  */
-const movingAverageConvergenceDivergence: ExcludePickPartial<Indicator<Macd>, 'name' | 'calc'> = {
+const movingAverageConvergenceDivergence: IndicatorTemplate<Macd> = {
   name: 'MACD',
   shortName: 'MACD',
   calcParams: [12, 26, 9],

@@ -36,6 +36,7 @@ export interface AnnotationCreateFiguresCallbackParams {
   bounding: Bounding
   barSpace: BarSpace
   precision: Precision
+  isActive: boolean
   defaultStyles: AnnotationStyle
   xAxis: Axis
   yAxis: Axis
@@ -43,6 +44,7 @@ export interface AnnotationCreateFiguresCallbackParams {
 
 export type AnnotationCreateFiguresCallback = (params: AnnotationCreateFiguresCallbackParams) => AnnotationFigure | AnnotationFigure[]
 
+export type AnnotationEventCllback = (annotation: Annotation) => boolean
 export interface Annotation {
   id: string
   name: string
@@ -51,9 +53,17 @@ export interface Annotation {
   styles: TypeOrNull<DeepPartial<AnnotationStyle>>
   createPointFigures: TypeOrNull<AnnotationCreateFiguresCallback>
   createExtendFigures: TypeOrNull<AnnotationCreateFiguresCallback>
+  onClick: TypeOrNull<AnnotationEventCllback>
+  onRightClick: TypeOrNull<AnnotationEventCllback>
+  onMouseEnter: TypeOrNull<AnnotationEventCllback>
+  onMouseLeave: TypeOrNull<AnnotationEventCllback>
 }
 
 export type AnnotationConstructor = new () => AnnotationImp
+
+export type AnnotationCreate = ExcludePickPartial<Annotation, 'name' | 'point'>
+
+export type AnnotationTemplate = ExcludePickPartial<Omit<Annotation, 'id' | 'point'>, 'name'>
 
 export default class AnnotationImp implements Annotation {
   id: string
@@ -63,14 +73,25 @@ export default class AnnotationImp implements Annotation {
   styles: TypeOrNull<DeepPartial<AnnotationStyle>>
   createPointFigures: TypeOrNull<AnnotationCreateFiguresCallback>
   createExtendFigures: TypeOrNull<AnnotationCreateFiguresCallback>
+  onClick: TypeOrNull<AnnotationEventCllback>
+  onRightClick: TypeOrNull<AnnotationEventCllback>
+  onMouseEnter: TypeOrNull<AnnotationEventCllback>
+  onMouseLeave: TypeOrNull<AnnotationEventCllback>
 
-  constructor (annotation: ExcludePickPartial<Annotation, 'name'>) {
-    const { name, extendData, styles, createPointFigures, createExtendFigures } = annotation
+  constructor (annotation: AnnotationTemplate) {
+    const {
+      name, extendData, styles, createPointFigures, createExtendFigures,
+      onClick, onRightClick, onMouseEnter, onMouseLeave
+    } = annotation
     this.name = name
     this.extendData = extendData ?? null
     this.styles = styles ?? null
     this.createPointFigures = createPointFigures ?? null
     this.createExtendFigures = createExtendFigures ?? null
+    this.onClick = onClick ?? null
+    this.onRightClick = onRightClick ?? null
+    this.onMouseEnter = onMouseEnter ?? null
+    this.onMouseLeave = onMouseLeave ?? null
   }
 
   setId (id: string): boolean {
@@ -121,10 +142,42 @@ export default class AnnotationImp implements Annotation {
     return false
   }
 
-  static extend (annotation: ExcludePickPartial<Annotation, 'name'>): AnnotationConstructor {
+  setOnClickCallback (callback: TypeOrNull<AnnotationEventCllback>): boolean {
+    if (this.onClick !== callback) {
+      this.onClick = callback
+      return true
+    }
+    return false
+  }
+
+  setOnRightClickCallback (callback: TypeOrNull<AnnotationEventCllback>): boolean {
+    if (this.onRightClick !== callback) {
+      this.onRightClick = callback
+      return true
+    }
+    return false
+  }
+
+  setOnMouseEnterCallback (callback: TypeOrNull<AnnotationEventCllback>): boolean {
+    if (this.onMouseEnter !== callback) {
+      this.onMouseEnter = callback
+      return true
+    }
+    return false
+  }
+
+  setOnMouseLeaveCallback (callback: TypeOrNull<AnnotationEventCllback>): boolean {
+    if (this.onMouseLeave !== callback) {
+      this.onMouseLeave = callback
+      return true
+    }
+    return false
+  }
+
+  static extend (template: AnnotationTemplate): AnnotationConstructor {
     class Custom extends AnnotationImp {
       constructor () {
-        super(annotation)
+        super(template)
       }
     }
     return Custom

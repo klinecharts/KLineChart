@@ -12,18 +12,17 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorSeries, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorSeries, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
 
 interface Sar {
   sar?: number
 }
 
-const stopAndReverse: ExcludePickPartial<Indicator<Sar>, 'name' | 'calc'> = {
+const stopAndReverse: IndicatorTemplate<Sar> = {
   name: 'SAR',
   shortName: 'SAR',
   series: IndicatorSeries.PRICE,

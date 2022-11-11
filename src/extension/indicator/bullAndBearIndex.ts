@@ -11,9 +11,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorSeries } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorSeries } from '../../componentl/Indicator'
 
 interface Bbi {
   bbi?: number
@@ -24,7 +23,7 @@ interface Bbi {
  * 公式: BBI = (MA(CLOSE, M) + MA(CLOSE, N) + MA(CLOSE, O) + MA(CLOSE, P)) / 4
  *
  */
-const bullAndBearIndex: ExcludePickPartial<Indicator<Bbi>, 'name' | 'calc'> = {
+const bullAndBearIndex: IndicatorTemplate<Bbi> = {
   name: 'BBI',
   shortName: 'BBI',
   series: IndicatorSeries.PRICE,

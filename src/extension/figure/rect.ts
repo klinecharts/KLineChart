@@ -15,7 +15,7 @@
 import Coordinate from '../../common/Coordinate'
 import { RectStyle, PolygonType, LineType } from '../../common/Styles'
 
-import { Figure } from '../../componentl/Figure'
+import { FigureTemplate } from '../../componentl/Figure'
 
 function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolean {
   return (
@@ -74,7 +74,7 @@ export interface RectAttrs {
   height: number
 }
 
-const rect: Figure<RectAttrs, Partial<RectStyle>> = {
+const rect: FigureTemplate<RectAttrs, Partial<RectStyle>> = {
   name: 'rect',
   checkEventOn: checkCoordinateOnRect,
   draw: (ctx: CanvasRenderingContext2D, attrs: RectAttrs, styles: Partial<RectStyle>) => {

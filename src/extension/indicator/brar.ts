@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Brar {
   br?: number
@@ -30,7 +29,7 @@ interface Brar {
  * 其中，H为当日最高价，L为当日最低价，O为当日开盘价，N为设定的时间参数
  *
  */
-const brar: ExcludePickPartial<Indicator<Brar>, 'name' | 'calc'> = {
+const brar: IndicatorTemplate<Brar> = {
   name: 'BRAR',
   shortName: 'BRAR',
   calcParams: [26],

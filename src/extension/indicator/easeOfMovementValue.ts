@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Emv {
   emv?: number
@@ -33,7 +32,7 @@ interface Emv {
  * MAEMV=EMV的M日的简单移动平均
  *
  */
-const easeOfMovementValue: ExcludePickPartial<Indicator<Emv>, 'name' | 'calc'> = {
+const easeOfMovementValue: IndicatorTemplate<Emv> = {
   name: 'EMV',
   shortName: 'EMV',
   calcParams: [14, 9],

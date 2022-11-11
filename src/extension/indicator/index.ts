@@ -12,10 +12,9 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import TypeOrNull from '../../common/TypeOrNull'
 
-import IndicatorImp, { Indicator, IndicatorConstructor } from '../../componentl/Indicator'
+import IndicatorImp, { IndicatorTemplate, IndicatorConstructor } from '../../componentl/Indicator'
 
 import averagePrice from './averagePrice'
 import awesomeOscillator from './awesomeOscillator'
@@ -56,11 +55,11 @@ const extensions = [
   stoch, stopAndReverse, tripleExponentiallySmoothedAverage, volume, volumeRatio, williamsR
 ]
 
-extensions.forEach((indicator: ExcludePickPartial<Indicator, 'name' | 'calc'>) => {
+extensions.forEach((indicator: IndicatorTemplate) => {
   indicators[indicator.name] = IndicatorImp.extend(indicator)
 })
 
-function registerIndicator<D> (indicator: ExcludePickPartial<Indicator<D>, 'name' | 'calc'>): void {
+function registerIndicator<D> (indicator: IndicatorTemplate<D>): void {
   indicators[indicator.name] = IndicatorImp.extend(indicator)
 }
 

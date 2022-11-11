@@ -21,9 +21,10 @@ import LoadMoreCallback from './common/LoadMoreCallback'
 import { Styles } from './common/Styles'
 
 import { getIndicatorClass } from './extension/indicator/index'
-import { Indicator } from './componentl/Indicator'
+import { Indicator, IndicatorCreate } from './componentl/Indicator'
 import { getShapeClass } from './extension/shape/index'
-import { Shape } from './componentl/Shape'
+import { Shape, ShapeCreate } from './componentl/Shape'
+import { AnnotationCreate } from './componentl/Annotation'
 import { PaneOptions } from './pane/Pane'
 
 import ChartInternal from './ChartInternal'
@@ -263,8 +264,8 @@ export default class Chart {
    * @param paneOptions 窗口配置
    * @returns {string|null}
    */
-  createIndicator (value: string | PickRequired<Partial<Indicator>, 'name'>, isStack?: boolean, paneOptions?: PaneOptions): TypeOrNull<string> {
-    const indicator: PickRequired<Partial<Indicator>, 'name'> = isString(value) ? { name: value as string } : value as Omit<Indicator, 'result'>
+  createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions): TypeOrNull<string> {
+    const indicator: IndicatorCreate = isString(value) ? { name: value as string } : value as IndicatorCreate
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
@@ -277,7 +278,7 @@ export default class Chart {
    * @param override 覆盖参数
    * @param paneId 窗口id
    */
-  overrideIndicator (override: PickRequired<Partial<Indicator>, 'name'>, paneId?: string): void {
+  overrideIndicator (override: IndicatorCreate, paneId?: string): void {
     this._internal.getChartStore().getIndicatorStore().override(override, paneId).then(
       result => {
         if (result.length > 0) {
@@ -311,10 +312,10 @@ export default class Chart {
    * @param value 图形名或者图形配置
    * @param paneId 窗口id
    */
-  createShape (value: string | PickRequired<Partial<Shape>, 'name'>, paneId?: string): TypeOrNull<string> {
-    const shape: PickRequired<Partial<Shape>, 'name'> = isString(value) ? { name: value as string } : value as PickRequired<Partial<Shape>, 'name'>
+  createShape (value: string | ShapeCreate, paneId?: string): TypeOrNull<string> {
+    const shape: PickRequired<Partial<Shape>, 'name'> = isString(value) ? { name: value as string } : value as ShapeCreate
     if (getShapeClass(shape.name) === null) {
-      logWarn('createShape', 'value', 'can not find the corresponding shape!!!')
+      logWarn('createShape', 'value', 'shape not supported, you may need to use registerShape to add one!!!')
       return null
     }
     let appointPaneFlag = true
@@ -342,7 +343,7 @@ export default class Chart {
    * 设置图形标记配置
    * @param override 图形标记配置
    */
-  overrideShape (override: Partial<Shape>): void {
+  overrideShape (override: Partial<ShapeCreate>): void {
     this._internal.getChartStore().getShapeStore().override(override)
   }
 
@@ -354,32 +355,24 @@ export default class Chart {
     this._internal.getChartStore().getShapeStore().removeInstance(shapeId)
   }
 
-  // /**
-  //  * 创建注解
-  //  * @param annotation 单个注解或者注解数组
-  //  * @param paneId 窗口id
-  //  */
-  // createAnnotation (annotation, paneId = CANDLE_PANE_ID) {
-  //   if (!isObject(annotation)) {
-  //     logWarn('createAnnotation', 'annotation', 'annotation must be an object or array!!!')
-  //     return
-  //   }
-  //   if (!this._chartPane.hasPane(paneId)) {
-  //     logWarn('createAnnotation', 'paneId', 'can not find the corresponding pane!!!')
-  //     return
-  //   }
-  //   const annotations = [].concat(annotation)
-  //   this._chartPane.createAnnotation(annotations, paneId)
-  // }
+  /**
+   * 创建注解
+   * @param annotation 单个注解或者注解数组
+   * @param paneId 窗口id
+   */
+  createAnnotation (annotation: AnnotationCreate | AnnotationCreate[], paneId?: string): Map<number, string[]> {
+    const annotations = new Array<AnnotationCreate>().concat(annotation)
+    return this._internal.getChartStore().getAnnotationStore().addInstances(annotations, paneId ?? CANDLE_PANE_ID)
+  }
 
-  // /**
-  //  * 移除注解
-  //  * @param paneId 窗口id
-  //  * @param points 单个点或者点数组
-  //  */
-  // removeAnnotation (paneId, points) {
-  //   this._chartPane.chartStore().annotationStore().remove(paneId, points)
-  // }
+  /**
+   * 移除注解
+   * @param paneId 窗口id
+   * @param ids 单个点或者点数组
+   */
+  removeAnnotation (paneId?: string, ids?: string[]): void {
+    this._internal.getChartStore().getAnnotationStore().removeInstance(paneId, ids)
+  }
 
   // /**
   //  * 创建标签

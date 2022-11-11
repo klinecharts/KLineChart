@@ -17,42 +17,43 @@ import Element from '../common/Element'
 
 export const DEVIATION = 2
 
-export interface FigureAttrsStyles<A, S> {
-  attrs: A
-  styles: S
-}
-
 export interface Figure<A = any, S = any> {
   name: string
+  attrs: A
+  styles: S
   draw: (ctx: CanvasRenderingContext2D, attrs: A, styles: S) => void
   checkEventOn: (coordinate: Coordinate, attrs: A, styles: S) => boolean
 }
 
-export type FigureConstructor<A = any, S = any> = new (attrs: A, styles: S) => FigureImp<A, S>
+export type FigureTemplate<A = any, S = any> = Pick<Figure<A, S>, 'name' | 'draw' | 'checkEventOn'>
 
-export default abstract class FigureImp<A = any, S = any> extends Element implements Omit<Figure<A, S>, 'name'> {
-  private readonly _attrs: A
-  private readonly _styles: S
+export type FigureCreate<A = any, S = any> = Pick<Figure<A, S>, 'name' | 'attrs' | 'styles'>
 
-  constructor (attrs: A, styles: S) {
+export type FigureConstructor<A = any, S = any> = new (figure: FigureCreate) => FigureImp<A, S>
+
+export default abstract class FigureImp<A = any, S = any> extends Element implements Omit<Figure<A, S>, 'name' | 'draw' | 'checkEventOn'> {
+  readonly attrs: A
+  readonly styles: S
+
+  constructor (figure: FigureCreate) {
     super()
-    this._attrs = attrs
-    this._styles = styles
+    this.attrs = figure.attrs
+    this.styles = figure.styles
   }
 
   checkEventOn (coordinate: Coordinate): boolean {
-    return this.checkEventOnImp(coordinate, this._attrs, this._styles)
+    return this.checkEventOnImp(coordinate, this.attrs, this.styles)
   }
 
   draw (ctx: CanvasRenderingContext2D): void {
-    this.drawImp(ctx, this._attrs, this._styles)
+    this.drawImp(ctx, this.attrs, this.styles)
   }
 
   abstract checkEventOnImp (coordinate: Coordinate, attrs: A, styles: S): boolean
 
   abstract drawImp (ctx: CanvasRenderingContext2D, attrs: A, styles: S): void
 
-  static extend<A, S> (figure: Omit<Figure<A, S>, 'name'>): new (attrs: A, styles: S) => FigureImp<A, S> {
+  static extend<A, S> (figure: FigureTemplate<A, S>): new (figure: FigureCreate) => FigureImp<A, S> {
     class Custom extends FigureImp<A, S> {
       checkEventOnImp (coordinate: Coordinate, attrs: A, styles: S): boolean {
         return figure.checkEventOn(coordinate, attrs, styles)

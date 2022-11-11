@@ -21,7 +21,6 @@ import Precision from '../common/Precision'
 import { ShapeStyle } from '../common/Styles'
 import { ElementEventHandler } from '../common/Element'
 
-import { isArray } from '../common/utils/typeChecks'
 import { formatValue } from '../common/utils/format'
 
 import Axis from '../componentl/Axis'
@@ -247,12 +246,12 @@ export default class ShapeView extends View<YAxis> {
     })
     if (!shape.isStart() && coordinates.length > 0) {
       const figures = shape.createFigures({ shape, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis })
-      figures.forEach(({ type, styles, attrs }) => {
-        const attrsArray = isArray(attrs) ? [].concat(attrs) : [attrs]
+      figures.forEach(({ type, styles, attrs, isCheckEvent }) => {
+        const attrsArray = [].concat(attrs)
         attrsArray.forEach((ats, index) => {
+          const evnets = (isCheckEvent ?? true) ? this._elementEvents(shape, EventShapeInfoElementType.OTHER, index) : undefined
           this.createFigure(
-            type, ats, styles ?? defaultStyles[type],
-            this._elementEvents(shape, EventShapeInfoElementType.OTHER, index)
+            type, ats, styles ?? shape.styles?.[type] ?? defaultStyles[type], evnets
           )?.draw(ctx)
         })
       })

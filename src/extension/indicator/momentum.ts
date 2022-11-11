@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Mtm {
   mtm?: number
@@ -25,7 +24,7 @@ interface Mtm {
  * mtm
  * 公式 MTM（N日）=C－CN
  */
-const momentum: ExcludePickPartial<Indicator<Mtm>, 'name' | 'calc'> = {
+const momentum: IndicatorTemplate<Mtm> = {
   name: 'MTM',
   shortName: 'MTM',
   calcParams: [12, 6],

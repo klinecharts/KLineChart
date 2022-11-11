@@ -14,7 +14,7 @@
 
 import TypeOrNull from '../../common/TypeOrNull'
 
-import FigureImp, { Figure, FigureConstructor } from '../../componentl/Figure'
+import FigureImp, { FigureTemplate, FigureConstructor } from '../../componentl/Figure'
 
 import circle from './circle'
 import line from './line'
@@ -25,7 +25,7 @@ import text from './text'
 const figures: { [key: string]: FigureConstructor } = {}
 
 const extensions = [circle, line, polygon, rect, text]
-extensions.forEach((figure: Figure) => {
+extensions.forEach((figure: FigureTemplate) => {
   figures[figure.name] = FigureImp.extend(figure)
 })
 
@@ -33,7 +33,7 @@ function getSupportFigures (): string[] {
   return Object.keys(figures)
 }
 
-function reisterFigure<A = any, S = any> (figure: Figure<A, S>): void {
+function reisterFigure<A = any, S = any> (figure: FigureTemplate<A, S>): void {
   figures[figure.name] = FigureImp.extend(figure)
 }
 
@@ -41,12 +41,4 @@ function getFigureClass<A = any, S = any> (name: string): TypeOrNull<FigureConst
   return figures[name] ?? null
 }
 
-function createFigure<A = any, S = any> (name: string, attrs: A, styles: S): TypeOrNull<FigureImp<A, S>> {
-  const FigureClazz = getFigureClass<A, S>(name)
-  if (FigureClazz !== null) {
-    return new FigureClazz(attrs, styles)
-  }
-  return null
-}
-
-export { getSupportFigures, getFigureClass, reisterFigure, createFigure }
+export { getSupportFigures, getFigureClass, reisterFigure }

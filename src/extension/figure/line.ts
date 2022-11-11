@@ -16,7 +16,7 @@ import TypeOrNull from '../../common/TypeOrNull'
 import Coordinate from '../../common/Coordinate'
 import { LineStyle, LineType } from '../../common/Styles'
 
-import { Figure } from '../../componentl/Figure'
+import { FigureTemplate } from '../../componentl/Figure'
 
 function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs): boolean {
   let on = false
@@ -94,7 +94,7 @@ export interface LineAttrs {
   coordinates: Coordinate[]
 }
 
-const line: Figure<LineAttrs, Partial<LineStyle>> = {
+const line: FigureTemplate<LineAttrs, Partial<LineStyle>> = {
   name: 'line',
   checkEventOn: checkCoordinateOnLine,
   draw: (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<LineStyle>) => {

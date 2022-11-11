@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import PickRequired from './common/PickRequired'
 import TypeOrNull from './common/TypeOrNull'
 import DeepPartial from './common/DeepPartial'
 import { UpdateLevel } from './common/Updater'
@@ -27,7 +26,7 @@ import XAxisPane, { XAXIS_PANE_ID } from './pane/XAxisPane'
 
 import Axis from './componentl/Axis'
 
-import { Indicator } from './componentl/Indicator'
+import { IndicatorCreate } from './componentl/Indicator'
 
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -334,11 +333,11 @@ export default class ChartInternal {
    * @param isStack 是否叠加
    * @param paneOptions 配置
    */
-  createIndicator (indicator: PickRequired<Partial<Indicator>, 'name'>, isStack: boolean, paneOptions?: PaneOptions): string {
+  createIndicator (indicator: IndicatorCreate, isStack: boolean, paneOptions?: PaneOptions): string {
     let paneId: string
     if (paneOptions !== undefined && this._panes.has(paneOptions.id)) {
       paneId = paneOptions.id
-      this._chartStore.getIndicatorStore().addInstance(paneId, indicator, isStack).finally(() => {
+      this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack).finally(() => {
         this.setPaneOptions(paneOptions, this._panes.get(paneId)?.getAxisComponent().buildTicks(true))
       })
     } else {
@@ -350,7 +349,7 @@ export default class ChartInternal {
         pane.setOptions(paneOptions)
       }
       this._panes.set(paneId, pane)
-      this._chartStore.getIndicatorStore().addInstance(paneId, indicator, isStack).finally(() => {
+      this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack).finally(() => {
         this.adjustPaneViewport(true, true, true, true, true)
       })
     }

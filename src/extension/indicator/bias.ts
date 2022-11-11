@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Bias {
   bias1?: number
@@ -26,7 +25,7 @@ interface Bias {
  * BIAS
  * 乖离率=[(当日收盘价-N日平均价)/N日平均价]*100%
  */
-const bias: ExcludePickPartial<Indicator<Bias>, 'name' | 'calc'> = {
+const bias: IndicatorTemplate<Bias> = {
   name: 'BIAS',
   shortName: 'BIAS',
   calcParams: [6, 12, 24],

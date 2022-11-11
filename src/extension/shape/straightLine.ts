@@ -12,13 +12,11 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
-
 import { getLinearYFromCoordinates } from '../figure/line'
 
-import { Shape } from '../../componentl/Shape'
+import { ShapeTemplate } from '../../componentl/Shape'
 
-const straightLine: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
+const straightLine: ShapeTemplate = {
   name: 'straightLine',
   totalStep: 3,
   createFigures: ({ coordinates, bounding }) => {

@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Dma {
   dma?: number
@@ -25,7 +24,7 @@ interface Dma {
  * DMA
  * 公式：DIF:MA(CLOSE,N1)-MA(CLOSE,N2);DIFMA:MA(DIF,M)
  */
-const differentOfMovingAverage: ExcludePickPartial<Indicator<Dma>, 'name' | 'calc'> = {
+const differentOfMovingAverage: IndicatorTemplate<Dma> = {
   name: 'DMA',
   shortName: 'DMA',
   calcParams: [10, 50, 10],

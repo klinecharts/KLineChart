@@ -136,6 +136,10 @@ export interface Indicator<D = any> {
   result: D[]
 }
 
+export type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'reult'>, 'name' | 'calc'>
+
+export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'reult'>, 'name'>
+
 export type IndicatorConstructor<D = any> = new () => IndicatorImp<D>
 
 export type EachFigureCallback = (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>, defaultFigureStyles: any, count: number) => void
@@ -233,7 +237,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
 
   private _precisionFlag: boolean = false
 
-  constructor (indicator: ExcludePickPartial<Indicator<D>, 'name'>) {
+  constructor (indicator: IndicatorTemplate) {
     const {
       name, shortName, series, calcParams, figures, precision,
       shouldOhlc, shouldFormatBigNumber,
@@ -400,14 +404,14 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
 
   abstract calc (dataList: KLineData[], indicator: Indicator<D>): D[] | Promise<D[]>
 
-  static extend<D> (indicator: ExcludePickPartial<Indicator<D>, 'name' | 'calc'>): IndicatorConstructor<D> {
+  static extend<D> (template: IndicatorTemplate): IndicatorConstructor<D> {
     class Custom extends IndicatorImp<D> {
       constructor () {
-        super(indicator)
+        super(template)
       }
 
       calc (dataList: KLineData[], indicator: Indicator<D>): D[] | Promise<D[]> {
-        return indicator.calc(dataList, indicator)
+        return template.calc(dataList, indicator)
       }
     }
     return Custom

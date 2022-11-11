@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Psy {
   psy?: number
@@ -25,7 +24,7 @@ interface Psy {
  * PSY
  * 公式：PSY=N日内的上涨天数/N×100%。
  */
-const psychologicalLine: ExcludePickPartial<Indicator<Psy>, 'name' | 'calc'> = {
+const psychologicalLine: IndicatorTemplate<Psy> = {
   name: 'PSY',
   shortName: 'PSY',
   calcParams: [12, 6],

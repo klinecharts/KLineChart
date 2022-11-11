@@ -12,10 +12,9 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import TypeOrNull from '../../common/TypeOrNull'
 
-import ShapeImp, { Shape, ShapeConstructor } from '../../componentl/Shape'
+import ShapeImp, { ShapeTemplate, ShapeConstructor } from '../../componentl/Shape'
 
 import fibonacciLine from './fibonacciLine'
 import horizontalRayLine from './horizontalRayLine'
@@ -39,11 +38,11 @@ const extensions = [
   straightLine, verticalRayLine, verticalSegment, verticalStraightLine
 ]
 
-extensions.forEach((shape: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'>) => {
+extensions.forEach((shape: ShapeTemplate) => {
   shapes[shape.name] = ShapeImp.extend(shape)
 })
 
-function registerShape (shape: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'>): void {
+function registerShape (shape: ShapeTemplate): void {
   shapes[shape.name] = ShapeImp.extend(shape)
 }
 

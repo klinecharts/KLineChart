@@ -12,11 +12,9 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
+import { ShapeTemplate } from '../../componentl/Shape'
 
-import { Shape } from '../../componentl/Shape'
-
-const priceLine: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
+const priceLine: ShapeTemplate = {
   name: 'priceLine',
   totalStep: 2,
   createFigures: ({ coordinates, bounding, precision, shape }) => {

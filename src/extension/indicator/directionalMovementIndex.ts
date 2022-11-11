@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Dmi {
   pdi?: number
@@ -48,7 +47,7 @@ interface Dmi {
  * 输出ADXR:ADX的MM日指数平滑移动平均
  *
  */
-const directionalMovementIndex: ExcludePickPartial<Indicator<Dmi>, 'name' | 'calc'> = {
+const directionalMovementIndex: IndicatorTemplate<Dmi> = {
   name: 'DMI',
   shortName: 'DMI',
   calcParams: [14, 6],

@@ -20,8 +20,13 @@ import { createId } from '../common/utils/id'
 
 import ChartStore from './ChartStore'
 
-import AnnotationImp, { Annotation } from '../componentl/Annotation'
+import AnnotationImp, { Annotation, AnnotationCreate } from '../componentl/Annotation'
 import { getAnnotationClass } from '../extension/annotation/index'
+
+export interface EventAnnotationInfo {
+  paneId: string
+  instance: TypeOrNull<AnnotationImp>
+}
 
 const ANNOTATION_ID_PREFIX = 'annotation_'
 
@@ -34,15 +39,19 @@ export default class AnnotationStore {
 
   private readonly _visibleInstances: Map<string, AnnotationImp[]> = new Map()
 
-  private _hoverInstance: TypeOrNull<AnnotationImp> = null
-  private _clickInstance: TypeOrNull<AnnotationImp> = null
+  private _hoverInstanceInfo: EventAnnotationInfo = { paneId: '', instance: null }
+
+  private _clickInstanceInfo: EventAnnotationInfo = { paneId: '', instance: null }
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
   }
 
   _overrideInstance (instance: AnnotationImp, annotation: ExcludePickPartial<Annotation, 'name' | 'point'>): boolean {
-    const { id, point, extendData, styles, createPointFigures, createExtendFigures } = annotation
+    const {
+      id, point, extendData, styles, createPointFigures, createExtendFigures,
+      onClick, onRightClick, onMouseEnter, onMouseLeave
+    } = annotation
     let updateFlag = false
     if (id !== undefined && instance.setId(id)) {
       updateFlag = true
@@ -61,6 +70,18 @@ export default class AnnotationStore {
     }
     if (createExtendFigures !== undefined && instance.setCreateExtendFiguresCallback(createExtendFigures)) {
       updateFlag = true
+    }
+    if (onClick !== undefined) {
+      instance.setOnClickCallback(onClick)
+    }
+    if (onRightClick !== undefined) {
+      instance.setOnRightClickCallback(onRightClick)
+    }
+    if (onMouseEnter !== undefined) {
+      instance.setOnMouseEnterCallback(onMouseEnter)
+    }
+    if (onMouseLeave !== undefined) {
+      instance.setOnMouseLeaveCallback(onMouseLeave)
     }
     return updateFlag
   }
@@ -92,17 +113,20 @@ export default class AnnotationStore {
    * 获取注解事件操作信息
    * @return {null}
    */
-  getHoverInstance (): TypeOrNull<AnnotationImp> {
-    return this._hoverInstance
+  getHoverInstanceInfo (): EventAnnotationInfo {
+    return this._hoverInstanceInfo
   }
 
   /**
    * 设置事件操作信息
-   * @param instance
+   * @param info
    */
-  setHoverInstance (instance?: AnnotationImp): void {
-    if (this._hoverInstance?.id !== instance?.id) {
-      this._hoverInstance = instance ?? null
+  setHoverInstanceInfo (info: EventAnnotationInfo): void {
+    const { instance } = this._hoverInstanceInfo
+    if (instance?.id !== info.instance?.id) {
+      this._hoverInstanceInfo = info
+      instance?.onMouseLeave?.(instance)
+      info.instance?.onMouseEnter?.(info.instance)
     }
   }
 
@@ -110,17 +134,23 @@ export default class AnnotationStore {
    * 获取注解事件操作信息
    * @return {null}
    */
-  getClickInstance (): TypeOrNull<AnnotationImp> {
-    return this._clickInstance
+  getClickInstanceInfo (): EventAnnotationInfo {
+    return this._clickInstanceInfo
   }
 
   /**
    * 设置事件操作信息
-   * @param instance
+   * @param info
    */
-  setClickInstance (instance?: AnnotationImp): void {
-    if (this._clickInstance?.id !== instance?.id) {
-      this._clickInstance = instance ?? null
+  setClickInstanceInfo (info: EventAnnotationInfo): void {
+    const { paneId, instance } = this._clickInstanceInfo
+    if (instance?.id !== info.instance?.id) {
+      this._clickInstanceInfo = info
+      info.instance?.onClick?.(info.instance)
+      this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, info.paneId)
+      if (paneId !== info.paneId) {
+        this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
+      }
     }
   }
 
@@ -129,7 +159,7 @@ export default class AnnotationStore {
    * @param annotations
    * @param paneId
    */
-  addInstances (annotations: Array<ExcludePickPartial<Annotation, 'name' | 'point'>>, paneId: string): Map<number, string[]> {
+  addInstances (annotations: AnnotationCreate[], paneId: string): Map<number, string[]> {
     if (!this._instances.has(paneId)) {
       this._instances.set(paneId, new Map<number, AnnotationImp[]>())
     }

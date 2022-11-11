@@ -12,18 +12,17 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
 
 interface Ao {
   ao?: number
 }
 
-const awesomeOscillator: ExcludePickPartial<Indicator<Ao>, 'name' | 'calc'> = {
+const awesomeOscillator: IndicatorTemplate<Ao> = {
   name: 'AO',
   shortName: 'AO',
   calcParams: [5, 34],

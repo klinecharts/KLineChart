@@ -12,12 +12,11 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorFigureStylesCallbackData, IndicatorSeries, IndicatorFigure } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData, IndicatorSeries, IndicatorFigure } from '../../componentl/Indicator'
 
 interface Vol {
   volume?: number
@@ -26,7 +25,7 @@ interface Vol {
   ma3?: number
 }
 
-const volume: ExcludePickPartial<Indicator<Vol>, 'name' | 'calc'> = {
+const volume: IndicatorTemplate<Vol> = {
   name: 'VOL',
   shortName: 'VOL',
   series: IndicatorSeries.VOLUME,

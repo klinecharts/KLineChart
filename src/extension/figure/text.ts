@@ -17,7 +17,7 @@ import { AlignTextStyle } from '../../common/Styles'
 
 import { createFont } from '../../common/utils/canvas'
 
-import { Figure } from '../../componentl/Figure'
+import { FigureTemplate } from '../../componentl/Figure'
 
 export function checkCoordinateOnText (coordinate: Coordinate, text: TextAttrs, styles: Partial<AlignTextStyle>): boolean {
   const { size = 12, align = 'left', baseline = 'top' } = styles
@@ -90,7 +90,7 @@ export interface TextAttrs {
   text: any
 }
 
-const text: Figure<TextAttrs, Partial<AlignTextStyle>> = {
+const text: FigureTemplate<TextAttrs, Partial<AlignTextStyle>> = {
   name: 'text',
   checkEventOn: (coordinate: Coordinate, attrs: TextAttrs, styles: Partial<AlignTextStyle>) => {
     return checkCoordinateOnText(coordinate, attrs, styles)

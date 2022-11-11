@@ -12,23 +12,19 @@
  * limitations under the License.
  */
 
-import PickPartial from '../common/PickPartial'
 import Coordinate from '../common/Coordinate'
-import Point from '../common/Point'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { AnnotationStyle } from '../common/Styles'
 import { ElementEventHandler } from '../common/Element'
 
-import { isArray } from '../common/utils/typeChecks'
-import { formatValue } from '../common/utils/format'
-
 import Axis from '../componentl/Axis'
 import YAxis from '../componentl/YAxis'
 import Annotation, { AnnotationFigure } from '../componentl/Annotation'
 
 import TimeScaleStore from '../store/TimeScaleStore'
+import { EventAnnotationInfo } from '../store/AnnotationStore'
 
 import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 
@@ -47,26 +43,10 @@ export default class AnnotationView extends View<YAxis> {
     const paneId = pane.getId()
     const annotationStore = pane.getChart().getChartStore().getAnnotationStore()
     this.registerEvent('mouseMoveEvent', (coordinate: Coordinate) => {
-      shapeStore.setHoverInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
+      annotationStore.setHoverInstanceInfo({ paneId, instance: null })
       return false
     }).registerEvent('mouseDownEvent', (coordinate: Coordinate) => {
-      const progressInstanceInfo = shapeStore.getProgressInstanceInfo()
-      if (progressInstanceInfo !== null) {
-        if (progressInstanceInfo.instance.isStart()) {
-          shapeStore.updateProgressInstanceInfo(paneId, true)
-        }
-        if (progressInstanceInfo.instance.isDrawing()) {
-          progressInstanceInfo.instance.nextStep()
-          if (!progressInstanceInfo.instance.isDrawing()) {
-            shapeStore.progressInstanceComplete()
-          }
-        }
-        return this._elementMouseDownEvent(progressInstanceInfo.instance, EventShapeInfoElementType.POINT, progressInstanceInfo.instance.points.length - 1)(coordinate)
-      }
-      shapeStore.setClickInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
-      return false
-    }).registerEvent('mouseUpEvent', (coordinate: Coordinate) => {
-      shapeStore.setPressedInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
+      annotationStore.setClickInstanceInfo({ paneId, instance: null })
       return false
     })
   }
@@ -74,27 +54,25 @@ export default class AnnotationView extends View<YAxis> {
   private _elementEvents (annotation: Annotation): ElementEventHandler | undefined {
     return {
       mouseMoveEvent: this._elementMouseMoveEvent(annotation),
-      mouseDownEvent: this._elementMouseDownEvent(shape, elementType, elementIndex)
+      mouseDownEvent: this._elementMouseDownEvent(annotation)
     }
   }
 
   private _elementMouseMoveEvent (annotation: Annotation) {
     return (coordinate: Coordinate) => {
       const pane = this.getWidget().getPane()
-      const shapeStore = pane.getChart().getChartStore().getShapeStore()
-      shapeStore.setHoverInstanceInfo({ paneId: pane.getId(), instance: shape, elementType, elementIndex })
+      const annotationStore = pane.getChart().getChartStore().getAnnotationStore()
+      annotationStore.setHoverInstanceInfo({ paneId: pane.getId(), instance: annotation })
       return true
     }
   }
 
-  private _elementMouseDownEvent (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number) {
+  private _elementMouseDownEvent (annotation: Annotation) {
     return (coordinate: Coordinate) => {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
-      const shapeStore = pane.getChart().getChartStore().getShapeStore()
-      shape.startPressedOtherMove(this._coordinateToPoint(shape, coordinate))
-      shapeStore.setPressedInstanceInfo({ paneId, instance: shape, elementType, elementIndex })
-      shapeStore.setClickInstanceInfo({ paneId, instance: shape, elementType, elementIndex })
+      const annotationStore = pane.getChart().getChartStore().getAnnotationStore()
+      annotationStore.setClickInstanceInfo({ paneId, instance: annotation })
       return true
     }
   }
@@ -116,8 +94,8 @@ export default class AnnotationView extends View<YAxis> {
     const precision = chartStore.getPrecision()
     const defaultStyles = chartStore.getStyleOptions().annotation
     const annotationStore = chartStore.getAnnotationStore()
-    const hoverAnnotation = annotationStore.getHoverInstance()
-    const clickAnnotation = annotationStore.getClickInstance()
+    const hoverAnnotation = annotationStore.getHoverInstanceInfo()
+    const clickAnnotation = annotationStore.getClickInstanceInfo()
     const annotations = annotationStore.getInstances(pane.getId())
     annotations.forEach(annotation => {
       this._drawAnnotation(ctx, annotation, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverAnnotation, clickAnnotation, timeScaleStore)
@@ -133,8 +111,8 @@ export default class AnnotationView extends View<YAxis> {
     defaultStyles: AnnotationStyle,
     xAxis: Axis,
     yAxis: Axis,
-    hoverAnnotation: Annotation,
-    clickAnnotation: Annotation,
+    hoverInstanceInfo: EventAnnotationInfo,
+    clickInstanceInfo: EventAnnotationInfo,
     timeScaleStore: TimeScaleStore
   ): void {
     const dataIndex = timeScaleStore.timestampToDataIndex(annotation.point.timestamp)
@@ -142,28 +120,29 @@ export default class AnnotationView extends View<YAxis> {
       x: xAxis.convertToPixel(dataIndex),
       y: yAxis.convertToPixel(annotation.point.value)
     }
+    const isActive = annotation.id === hoverInstanceInfo.instance?.id || annotation.id === clickInstanceInfo.instance?.id
     const pointFigures = annotation.createPointFigures?.({
-      annotation, coordinate, bounding, barSpace, precision, defaultStyles, xAxis, yAxis
+      annotation, coordinate, bounding, barSpace, precision, isActive, defaultStyles, xAxis, yAxis
     }) ?? []
     const pfs = new Array<AnnotationFigure>().concat(pointFigures)
     pfs.forEach(({ type, styles, attrs }) => {
-      const attrsArray = isArray(attrs) ? [].concat(attrs) : [attrs]
+      const attrsArray = [].concat(attrs)
       attrsArray.forEach(ats => {
         this.createFigure(
-          type, ats, styles ?? defaultStyles[type],
+          type, ats, styles ?? annotation.styles?.[type] ?? defaultStyles[type],
           this._elementEvents(annotation)
         )?.draw(ctx)
       })
     })
     const extendFigures = annotation.createExtendFigures?.({
-      annotation, coordinate, bounding, barSpace, precision, defaultStyles, xAxis, yAxis
+      annotation, coordinate, bounding, barSpace, precision, isActive, defaultStyles, xAxis, yAxis
     }) ?? []
     const efs = new Array<AnnotationFigure>().concat(extendFigures)
     efs.forEach(({ type, styles, attrs }) => {
-      const attrsArray = isArray(attrs) ? [].concat(attrs) : [attrs]
+      const attrsArray = [].concat(attrs)
       attrsArray.forEach(ats => {
         this.createFigure(
-          type, ats, styles ?? defaultStyles[type]
+          type, ats, styles ?? annotation.styles?.[type] ?? defaultStyles[type]
         )?.draw(ctx)
       })
     })

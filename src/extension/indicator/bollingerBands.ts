@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorSeries } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorSeries } from '../../componentl/Indicator'
 
 interface Boll {
   up?: number
@@ -42,7 +41,7 @@ function getBollMd (dataList: KLineData[], ma: number): number {
 /**
  * BOLL
  */
-const bollingerBands: ExcludePickPartial<Indicator<Boll>, 'name' | 'calc'> = {
+const bollingerBands: IndicatorTemplate<Boll> = {
   name: 'BOLL',
   shortName: 'BOLL',
   series: IndicatorSeries.PRICE,

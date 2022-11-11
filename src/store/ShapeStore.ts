@@ -13,12 +13,11 @@
  */
 
 import TypeOrNull from '../common/TypeOrNull'
-import PickRequired from '../common/PickRequired'
 import { UpdateLevel } from '../common/Updater'
 
 import { createId } from '../common/utils/id'
 
-import ShapeImp, { Shape, ShapeConstructor } from '../componentl/Shape'
+import ShapeImp, { ShapeConstructor, ShapeCreate } from '../componentl/Shape'
 
 import { getShapeClass } from '../extension/shape/index'
 
@@ -30,12 +29,6 @@ export interface ProgressShapeInfo {
   paneId: string
   instance: ShapeImp
   appointPaneFlag: boolean
-}
-
-export interface PressedMoveShapeInfo {
-  paneId: string
-  instance: ShapeImp
-  element: string
 }
 
 export const enum EventShapeInfoElementType {
@@ -82,7 +75,7 @@ export default class ShapeStore {
     this._chartStore = chartStore
   }
 
-  private _overrideInstance (instance: ShapeImp, shape: Partial<Shape>): boolean {
+  private _overrideInstance (instance: ShapeImp, shape: Partial<ShapeCreate>): boolean {
     const {
       id, points, styles, lock, mode, extendData,
       onDrawStart, onDrawing,
@@ -172,7 +165,7 @@ export default class ShapeStore {
    * @param shape
    * @param paneId
    */
-  addInstance (shape: PickRequired<Partial<Shape>, 'name'>, paneId: string, appointPaneFlag: boolean): TypeOrNull<string> {
+  addInstance (shape: ShapeCreate, paneId: string, appointPaneFlag: boolean): TypeOrNull<string> {
     const id = shape.id ?? createId(SHAPE_ID_PREFIX)
     if (this.getInstanceById(id) === null) {
       const ShapeClazz = getShapeClass(shape.name) as ShapeConstructor
@@ -245,7 +238,7 @@ export default class ShapeStore {
    * 设置图形标记实例配置
    * @param shape
    */
-  override (shape: Partial<Shape>): void {
+  override (shape: Partial<ShapeCreate>): void {
     const { id, name } = shape
     let updateFlag = false
     if (id !== undefined) {
@@ -345,7 +338,7 @@ export default class ShapeStore {
   }
 
   setClickInstanceInfo (info: EventShapeInfo): void {
-    const { instance, elementType, elementIndex } = this._clickInstanceInfo
+    const { paneId, instance, elementType, elementIndex } = this._clickInstanceInfo
     if (instance?.id !== info.instance?.id || elementType !== info.elementType || elementIndex !== info.elementIndex) {
       this._clickInstanceInfo = info
       if (info.instance?.isDrawing() ?? false) {
@@ -354,6 +347,10 @@ export default class ShapeStore {
       if (instance?.id !== info.instance?.id) {
         instance?.onDeselected?.(instance)
         info.instance?.onSelected?.(info.instance)
+        this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, info.paneId)
+        if (paneId !== info.paneId) {
+          this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
+        }
       }
     }
   }

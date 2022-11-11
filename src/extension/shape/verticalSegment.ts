@@ -12,11 +12,9 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
+import { ShapeTemplate } from '../../componentl/Shape'
 
-import { Shape } from '../../componentl/Shape'
-
-const verticalSegment: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
+const verticalSegment: ShapeTemplate = {
   name: 'verticalSegment',
   totalStep: 3,
   createFigures: ({ coordinates }) => {

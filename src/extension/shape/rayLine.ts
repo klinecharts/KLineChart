@@ -13,10 +13,9 @@
  */
 
 import Coordinate from '../../common/Coordinate'
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import Bounding from '../../common/Bounding'
 
-import { Shape } from '../../componentl/Shape'
+import { ShapeTemplate } from '../../componentl/Shape'
 
 import { getLinearYFromCoordinates, LineAttrs } from '../figure/line'
 
@@ -51,7 +50,7 @@ export function getRayLine (coordinates: Coordinate[], bounding: Bounding): Line
   return []
 }
 
-const rayLine: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'> = {
+const rayLine: ShapeTemplate = {
   name: 'rayLine',
   totalStep: 3,
   createFigures: ({ coordinates, bounding }) => {

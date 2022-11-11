@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Obv {
   obv?: number
@@ -25,7 +24,7 @@ interface Obv {
  * OBV
  * OBV = REF(OBV) + sign * V
  */
-const onBalanceVolume: ExcludePickPartial<Indicator<Obv>, 'name' | 'calc'> = {
+const onBalanceVolume: IndicatorTemplate<Obv> = {
   name: 'OBV',
   shortName: 'OBV',
   calcParams: [30],

@@ -12,10 +12,9 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import TypeOrNull from '../../common/TypeOrNull'
 
-import AnnotationImp, { Annotation, AnnotationConstructor } from '../../componentl/Annotation'
+import AnnotationImp, { AnnotationTemplate, AnnotationConstructor } from '../../componentl/Annotation'
 
 import simple from './simple'
 
@@ -23,11 +22,11 @@ const annotations: { [key: string]: AnnotationConstructor } = {}
 
 const extensions = [simple]
 
-extensions.forEach((annotation: ExcludePickPartial<Annotation, 'name'>) => {
+extensions.forEach((annotation: AnnotationTemplate) => {
   annotations[annotation.name] = AnnotationImp.extend(annotation)
 })
 
-function registerAnnotation (annotation: ExcludePickPartial<Annotation, 'name'>): void {
+function registerAnnotation (annotation: AnnotationTemplate): void {
   annotations[annotation.name] = AnnotationImp.extend(annotation)
 }
 

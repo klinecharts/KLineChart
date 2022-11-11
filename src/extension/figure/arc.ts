@@ -15,7 +15,7 @@
 import Coordinate, { getDistance } from '../../common/Coordinate'
 import { LineStyle, LineType } from '../../common/Styles'
 
-import { Figure, DEVIATION } from '../../componentl/Figure'
+import { FigureTemplate, DEVIATION } from '../../componentl/Figure'
 
 function checkCoordinateOnArc (coordinate: Coordinate, arc: ArcAttrs): boolean {
   if (Math.abs(getDistance(coordinate, arc) - arc.r) < DEVIATION) {
@@ -58,7 +58,7 @@ export interface ArcAttrs {
   endAngle: number
 }
 
-const arc: Figure<ArcAttrs, Partial<LineStyle>> = {
+const arc: FigureTemplate<ArcAttrs, Partial<LineStyle>> = {
   name: 'arc',
   checkEventOn: checkCoordinateOnArc,
   draw: (ctx: CanvasRenderingContext2D, attrs: ArcAttrs, styles: Partial<LineStyle>) => {

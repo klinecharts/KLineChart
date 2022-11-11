@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Roc {
   roc?: number
@@ -25,7 +24,7 @@ interface Roc {
  * 变动率指标
  * 公式：ROC = (CLOSE - REF(CLOSE, N)) / REF(CLOSE, N)
  */
-const rateOfChange: ExcludePickPartial<Indicator<Roc>, 'name' | 'calc'> = {
+const rateOfChange: IndicatorTemplate<Roc> = {
   name: 'ROC',
   shortName: 'ROC',
   calcParams: [12, 6],

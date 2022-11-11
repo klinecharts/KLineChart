@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorSeries } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorSeries } from '../../componentl/Indicator'
 
 interface Sma {
   sma?: number
@@ -23,7 +22,7 @@ interface Sma {
 /**
  * sma
  */
-const simpleMovingAverage: ExcludePickPartial<Indicator<Sma>, 'name' | 'calc'> = {
+const simpleMovingAverage: IndicatorTemplate<Sma> = {
   name: 'SMA',
   shortName: 'SMA',
   series: IndicatorSeries.PRICE,

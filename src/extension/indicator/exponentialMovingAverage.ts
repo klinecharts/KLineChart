@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorSeries } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorSeries } from '../../componentl/Indicator'
 
 interface Ema {
   ema1?: number
@@ -25,7 +24,7 @@ interface Ema {
 /**
  * EMA 指数移动平均
  */
-const exponentialMovingAverage: ExcludePickPartial<Indicator<Ema>, 'name' | 'calc'> = {
+const exponentialMovingAverage: IndicatorTemplate<Ema> = {
   name: 'EMA',
   shortName: 'EMA',
   series: IndicatorSeries.PRICE,

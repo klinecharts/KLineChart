@@ -43,7 +43,7 @@ export interface ShapePerformEventParams {
 }
 
 export interface ShapeFigure {
-  isCheck?: boolean
+  isCheckEvent?: boolean
   type: string
   attrs: any | any[]
   styles?: any
@@ -59,8 +59,6 @@ export interface ShapeCreateFiguresParams {
   xAxis: Axis
   yAxis: Axis
 }
-
-export type ShapeConstructor = new () => ShapeImp
 
 export type ShapeEventCllback = (shape: Shape) => boolean
 
@@ -89,6 +87,10 @@ export interface Shape {
   onSelected: TypeOrNull<ShapeEventCllback>
   onDeselected: TypeOrNull<ShapeEventCllback>
 }
+
+export type ShapeTemplate = ExcludePickPartial<Omit<Shape, 'id' | 'points' | 'currentStep'>, 'name' | 'totalStep' | 'createFigures'>
+export type ShapeCreate = ExcludePickPartial<Omit<Shape, 'currentStep' | 'totalStep' | 'createFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
+export type ShapeConstructor = new () => ShapeImp
 
 const SHAPE_DRAW_STEP_START = 1
 const SHAPE_DRAW_STEP_FINISHED = -1
@@ -121,9 +123,9 @@ export default abstract class ShapeImp implements Shape {
   private _prevPressedPoint: TypeOrNull<PickPartial<Point, 'timestamp'>> = null
   private _prevPressedPoints: Array<PickPartial<Point, 'timestamp'>> = []
 
-  constructor (shape: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'>) {
+  constructor (shape: ShapeTemplate) {
     const {
-      name, totalStep, lock, mode, points, extendData, styles,
+      name, totalStep, lock, mode, extendData, styles,
       performEventPressedMove, performEventMoveForDrawing,
       onDrawStart, onDrawing, onDrawEnd,
       onClick, onRightClick, onPressedMove,
@@ -134,7 +136,6 @@ export default abstract class ShapeImp implements Shape {
     this.totalStep = totalStep
     this.lock = lock ?? false
     this.mode = mode ?? ShapeMode.NORMAL
-    this.setPoints(points ?? [])
     this.extendData = extendData
     this.styles = styles ?? null
     this.performEventPressedMove = performEventPressedMove ?? null
@@ -420,16 +421,14 @@ export default abstract class ShapeImp implements Shape {
 
   abstract createFigures (params: ShapeCreateFiguresParams): ShapeFigure[]
 
-  static extend (
-    shape: ExcludePickPartial<Shape, 'name' | 'totalStep' | 'createFigures'>
-  ): ShapeConstructor {
+  static extend (template: ShapeTemplate): ShapeConstructor {
     class Custom extends ShapeImp {
       constructor () {
-        super(shape)
+        super(template)
       }
 
       createFigures (params: ShapeCreateFiguresParams): ShapeFigure[] {
-        return shape.createFigures(params)
+        return template.createFigures(params)
       }
     }
     return Custom

@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Vr {
   vr?: number
@@ -29,7 +28,7 @@ interface Vr {
  * 24天以来凡是股价不涨不跌，则那一天的成交量都称为CV，将24天内的CV总和相加后称为PVS
  *
  */
-const volumeRatio: ExcludePickPartial<Indicator<Vr>, 'name' | 'calc'> = {
+const volumeRatio: IndicatorTemplate<Vr> = {
   name: 'VR',
   shortName: 'VR',
   calcParams: [26, 6],

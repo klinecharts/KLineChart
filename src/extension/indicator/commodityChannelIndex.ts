@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Cci {
   cci?: number
@@ -28,7 +27,7 @@ interface Cci {
  * MD=近N日TP - 当前MA绝对值的累计之和÷N
  *
  */
-const commodityChannelIndex: ExcludePickPartial<Indicator<Cci>, 'name' | 'calc'> = {
+const commodityChannelIndex: IndicatorTemplate<Cci> = {
   name: 'CCI',
   shortName: 'CCI',
   calcParams: [20],

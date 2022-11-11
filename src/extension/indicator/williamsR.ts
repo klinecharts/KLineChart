@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
 
 import { getMaxMin } from '../../common/utils/number'
 
@@ -28,7 +27,7 @@ interface Wr {
  * WR
  * 公式 WR(N) = 100 * [ C - HIGH(N) ] / [ HIGH(N)-LOW(N) ]
  */
-const williamsR: ExcludePickPartial<Indicator<Wr>, 'name' | 'calc'> = {
+const williamsR: IndicatorTemplate<Wr> = {
   name: 'WR',
   shortName: 'WR',
   calcParams: [6, 10, 14],

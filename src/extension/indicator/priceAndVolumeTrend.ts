@@ -12,9 +12,8 @@
  * limitations under the License.
  */
 
-import ExcludePickPartial from '../../common/ExcludePickPartial'
 import KLineData from '../../common/KLineData'
-import { Indicator } from '../../componentl/Indicator'
+import { IndicatorTemplate } from '../../componentl/Indicator'
 
 interface Pvt {
   pvt?: number
@@ -27,7 +26,7 @@ interface Pvt {
  * PVT = SUM(X)
  *
  */
-const priceAndVolumeTrend: ExcludePickPartial<Indicator<Pvt>, 'name' | 'calc'> = {
+const priceAndVolumeTrend: IndicatorTemplate<Pvt> = {
   name: 'PVT',
   shortName: 'PVT',
   figures: [
