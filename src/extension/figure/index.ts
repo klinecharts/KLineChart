@@ -14,7 +14,7 @@
 
 import TypeOrNull from '../../common/TypeOrNull'
 
-import FigureImp, { FigureTemplate, FigureConstructor } from '../../componentl/Figure'
+import FigureImp, { FigureTemplate, FigureConstructor } from '../../component/Figure'
 
 import circle from './circle'
 import line from './line'

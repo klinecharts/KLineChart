@@ -673,7 +673,7 @@ export interface ShapePointStyle {
   activeRadius: number
 }
 
-export interface ShapeStyle {
+export interface OverlayStyle {
   point: ShapePointStyle
   line: LineStyle
   polygon: PolygonStyle
@@ -685,7 +685,7 @@ export interface ShapeStyle {
  * 默认图形配置
  * @type {{arc: {style: string, color: string, size: number}, polygon: {style: string, color: string, size: number}, line: {style: string, color: string, size: number, dashValue: number[]}, text: {style: string, marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
  */
-const defaultShape: ShapeStyle = {
+const defaultOverlay: OverlayStyle = {
   point: {
     color: '#2196F3',
     borderColor: 'rgba(33, 150, 243, 0.35)',
@@ -696,82 +696,6 @@ const defaultShape: ShapeStyle = {
     activeBorderSize: 3,
     activeRadius: 5
   },
-  line: {
-    style: LineType.SOLID,
-    color: '#2196F3',
-    size: 1,
-    dashedValue: [2, 2]
-  },
-  polygon: {
-    style: PolygonType.FILL,
-    color: '#2196F3',
-    borderColor: '#2196F3',
-    borderSize: 1,
-    borderStyle: LineType.SOLID,
-    borderDashedValue: [2, 2]
-  },
-  arc: {
-    style: LineType.SOLID,
-    color: '#2196F3',
-    size: 1,
-    dashedValue: [2, 2]
-  },
-  text: {
-    color: '#2196F3',
-    size: 12,
-    family: 'Helvetica Neue',
-    weight: 'normal'
-  }
-}
-
-export interface AnnotationStyle {
-  line: LineStyle
-  polygon: PolygonStyle
-  arc: LineStyle
-  text: TextStyle
-}
-
-/**
- * 默认注解信息配置
- * @type {{}}
- */
-const defaultAnnotation: AnnotationStyle = {
-  line: {
-    style: LineType.SOLID,
-    color: '#2d6187',
-    size: 1,
-    dashedValue: [2, 2]
-  },
-  polygon: {
-    style: PolygonType.FILL,
-    color: '#2d6187',
-    borderColor: '#2d6187',
-    borderSize: 1,
-    borderStyle: LineType.SOLID,
-    borderDashedValue: [2, 2]
-  },
-  arc: {
-    style: LineType.SOLID,
-    color: '#2d6187',
-    size: 1,
-    dashedValue: [2, 2]
-  },
-  text: {
-    color: '#2d6187',
-    size: 12,
-    family: 'Helvetica Neue',
-    weight: 'normal'
-  }
-}
-
-export interface TagStyle {
-  line: LineStyle
-  polygon: PolygonStyle
-  arc: LineStyle
-  text: TextStyle
-}
-
-const defaultTag: TagStyle = {
   line: {
     style: LineType.SOLID,
     color: '#2196F3',
@@ -826,9 +750,7 @@ export interface Styles {
   yAxis: YAxisStyle
   separator: SeparatorStyle
   crosshair: CrosshairStyle
-  shape: ShapeStyle
-  annotation: AnnotationStyle
-  tag: TagStyle
+  overlay: OverlayStyle
 }
 
 export const defaultStyles: Styles = {
@@ -839,7 +761,5 @@ export const defaultStyles: Styles = {
   yAxis: defaultYAxis,
   separator: defaultSeparator,
   crosshair: defaultCrosshair,
-  shape: defaultShape,
-  annotation: defaultAnnotation,
-  tag: defaultTag
+  overlay: defaultOverlay
 }

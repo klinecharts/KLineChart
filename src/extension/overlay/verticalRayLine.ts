@@ -12,12 +12,13 @@
  * limitations under the License.
  */
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
-const verticalRayLine: ShapeTemplate = {
+const verticalRayLine: OverlayTemplate = {
   name: 'verticalRayLine',
   totalStep: 3,
-  createFigures: ({ coordinates, bounding }) => {
+  needPointFigure: true,
+  createPointFigures: ({ coordinates, bounding }) => {
     if (coordinates.length === 2) {
       const coordinate = { x: coordinates[0].x, y: 0 }
       if (coordinates[0].y < coordinates[1].y) {

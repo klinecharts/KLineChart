@@ -16,7 +16,7 @@ import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorTemplate, IndicatorSeries, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorSeries, IndicatorFigureStylesCallbackData } from '../../component/Indicator'
 
 interface Sar {
   sar?: number

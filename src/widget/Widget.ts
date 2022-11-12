@@ -17,7 +17,7 @@ import Updater, { UpdateLevel } from '../common/Updater'
 import ElementGroup from '../common/ElementGroup'
 import MouseTouchEventHandler, { EventOptions, EventHandler } from '../common/MouseTouchEventHandler'
 
-import Axis from '../componentl/Axis'
+import Axis from '../component/Axis'
 
 import Pane from '../pane/Pane'
 

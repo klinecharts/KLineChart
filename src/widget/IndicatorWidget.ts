@@ -21,14 +21,13 @@ import Pane from '../pane/Pane'
 
 import DrawWidget from './DrawWidget'
 
-import YAxis from '../componentl/YAxis'
+import YAxis from '../component/YAxis'
 
 import GridView from '../view/GridView'
 import IndicatorView from '../view/IndicatorView'
 import CrosshairLineView from '../view/CrosshairLineView'
 import IndicatorTooltipView from '../view/IndicatorTooltipView'
-import ShapeView from '../view/ShapeView'
-import AnnotationView from '../view/AnnotationView'
+import OverlayView from '../view/OverlayView'
 
 import { cancelAnimationFrame, requestAnimationFrame } from '../common/utils/compatible'
 
@@ -37,8 +36,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   private readonly _indicatorView = new IndicatorView(this)
   private readonly _crosshairLineView = new CrosshairLineView(this)
   private readonly _tooltipView = this.createTooltipView()
-  private readonly _shapeView = new ShapeView(this)
-  private readonly _annotationView = new AnnotationView(this)
+  private readonly _overlayView = new OverlayView(this)
 
   // 惯性滚动开始时间
   private _flingStartTime = new Date().getTime()
@@ -203,10 +201,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   dispatchEvent (type: string, coordinate: Coordinate): boolean {
-    if (this._shapeView.dispatchEvent(type, coordinate)) {
-      return true
-    }
-    return this._annotationView.dispatchEvent(type, coordinate)
+    return this._overlayView.dispatchEvent(type, coordinate)
   }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
@@ -222,8 +217,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   protected updateMainContent (ctx: CanvasRenderingContext2D): void {}
 
   protected updateOverlay (ctx: CanvasRenderingContext2D): void {
-    this._annotationView.draw(ctx)
-    this._shapeView.draw(ctx)
+    this._overlayView.draw(ctx)
     this._crosshairLineView.draw(ctx)
     this._tooltipView.draw(ctx)
   }

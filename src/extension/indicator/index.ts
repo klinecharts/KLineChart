@@ -14,7 +14,7 @@
 
 import TypeOrNull from '../../common/TypeOrNull'
 
-import IndicatorImp, { IndicatorTemplate, IndicatorConstructor } from '../../componentl/Indicator'
+import IndicatorImp, { IndicatorTemplate, IndicatorConstructor } from '../../component/Indicator'
 
 import averagePrice from './averagePrice'
 import awesomeOscillator from './awesomeOscillator'

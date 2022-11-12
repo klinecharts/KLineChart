@@ -17,7 +17,7 @@ import { AlignTextStyle } from '../../common/Styles'
 
 import { createFont } from '../../common/utils/canvas'
 
-import { FigureTemplate } from '../../componentl/Figure'
+import { FigureTemplate } from '../../component/Figure'
 
 export function checkCoordinateOnText (coordinate: Coordinate, text: TextAttrs, styles: Partial<AlignTextStyle>): boolean {
   const { size = 12, align = 'left', baseline = 'top' } = styles
@@ -28,16 +28,16 @@ export function checkCoordinateOnText (coordinate: Coordinate, text: TextAttrs, 
   switch (align) {
     case 'left':
     case 'start': {
-      startX = coordinate.x
+      startX = text.x
       break
     }
     case 'right':
     case 'end': {
-      startX = coordinate.x - width
+      startX = text.x - width
       break
     }
     default: {
-      startX = coordinate.x - width / 2
+      startX = text.x - width / 2
       break
     }
   }
@@ -45,17 +45,17 @@ export function checkCoordinateOnText (coordinate: Coordinate, text: TextAttrs, 
   switch (baseline) {
     case 'top':
     case 'hanging': {
-      startY = coordinate.y
+      startY = text.y
       break
     }
     case 'bottom':
     case 'ideographic':
     case 'alphabetic': {
-      startY = coordinate.y - height
+      startY = text.y - height
       break
     }
     default: {
-      startY = coordinate.y - height / 2
+      startY = text.y - height / 2
       break
     }
   }

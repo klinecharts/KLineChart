@@ -18,7 +18,7 @@ import { AxisStyle, Styles } from '../common/Styles'
 import { LineAttrs } from '../extension/figure/line'
 import { TextAttrs } from '../extension/figure/text'
 
-import Axis, { Tick } from '../componentl/Axis'
+import Axis, { Tick } from '../component/Axis'
 
 import View from './View'
 

@@ -15,7 +15,7 @@
 import Coordinate from '../../common/Coordinate'
 import Bounding from '../../common/Bounding'
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
 import { getLinearYFromCoordinates, LineAttrs } from '../figure/line'
 
@@ -50,10 +50,11 @@ export function getRayLine (coordinates: Coordinate[], bounding: Bounding): Line
   return []
 }
 
-const rayLine: ShapeTemplate = {
+const rayLine: OverlayTemplate = {
   name: 'rayLine',
   totalStep: 3,
-  createFigures: ({ coordinates, bounding }) => {
+  needPointFigure: true,
+  createPointFigures: ({ coordinates, bounding }) => {
     return [
       {
         type: 'line',

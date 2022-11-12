@@ -15,7 +15,7 @@
 import Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
 
-import Axis from '../componentl/Axis'
+import Axis from '../component/Axis'
 
 import Widget from './Widget'
 import View from '../view/View'

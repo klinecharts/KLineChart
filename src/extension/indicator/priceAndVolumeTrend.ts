@@ -13,7 +13,7 @@
  */
 
 import KLineData from '../../common/KLineData'
-import { IndicatorTemplate } from '../../componentl/Indicator'
+import { IndicatorTemplate } from '../../component/Indicator'
 
 interface Pvt {
   pvt?: number

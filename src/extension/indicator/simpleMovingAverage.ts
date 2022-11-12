@@ -13,7 +13,7 @@
  */
 
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorTemplate, IndicatorSeries } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Sma {
   sma?: number

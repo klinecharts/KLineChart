@@ -16,7 +16,7 @@ import { YAxisType } from '../common/Styles'
 
 import View from './View'
 
-import YAxis from '../componentl/YAxis'
+import YAxis from '../component/YAxis'
 
 import { formatPrecision } from '../common/utils/format'
 import { createFont, calcTextWidth } from '../common/utils/canvas'

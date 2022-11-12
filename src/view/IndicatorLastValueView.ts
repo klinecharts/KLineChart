@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import YAxis from '../componentl/YAxis'
+import YAxis from '../component/YAxis'
 
-import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../componentl/Indicator'
+import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../component/Indicator'
 
 import View from './View'
 

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import YAxis from '../componentl/YAxis'
+import YAxis from '../component/YAxis'
 
 import View from './View'
 

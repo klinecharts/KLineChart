@@ -17,57 +17,57 @@ import { UpdateLevel } from '../common/Updater'
 
 import { createId } from '../common/utils/id'
 
-import ShapeImp, { ShapeConstructor, ShapeCreate } from '../componentl/Shape'
+import OverlayImp, { OverlayConstructor, OverlayCreate } from '../component/Overlay'
 
-import { getShapeClass } from '../extension/shape/index'
+import { getOverlayClass } from '../extension/overlay/index'
 
 import ChartStore from './ChartStore'
 
-const SHAPE_ID_PREFIX = 'shape_'
+const OVERLAY_ID_PREFIX = 'overlay_'
 
-export interface ProgressShapeInfo {
+export interface ProgressOverlayInfo {
   paneId: string
-  instance: ShapeImp
+  instance: OverlayImp
   appointPaneFlag: boolean
 }
 
-export const enum EventShapeInfoElementType {
+export const enum EventOverlayInfoElementType {
   NONE = 'none',
   POINT = 'poine',
   OTHER = 'other'
 }
 
-export interface EventShapeInfo {
+export interface EventOverlayInfo {
   paneId: string
-  instance: TypeOrNull<ShapeImp>
-  elementType: EventShapeInfoElementType
+  instance: TypeOrNull<OverlayImp>
+  elementType: EventOverlayInfoElementType
   elementIndex: number
 }
 
-export default class ShapeStore {
+export default class OverlayStore {
   private readonly _chartStore: ChartStore
 
-  private readonly _instances = new Map<string, ShapeImp[]>()
-  private _progressInstanceInfo: TypeOrNull<ProgressShapeInfo> = null
+  private readonly _instances = new Map<string, OverlayImp[]>()
+  private _progressInstanceInfo: TypeOrNull<ProgressOverlayInfo> = null
 
-  private _pressedInstanceInfo: EventShapeInfo = {
+  private _pressedInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
-    elementType: EventShapeInfoElementType.NONE,
+    elementType: EventOverlayInfoElementType.NONE,
     elementIndex: -1
   }
 
-  private _hoverInstanceInfo: EventShapeInfo = {
+  private _hoverInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
-    elementType: EventShapeInfoElementType.NONE,
+    elementType: EventOverlayInfoElementType.NONE,
     elementIndex: -1
   }
 
-  private _clickInstanceInfo: EventShapeInfo = {
+  private _clickInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
-    elementType: EventShapeInfoElementType.NONE,
+    elementType: EventOverlayInfoElementType.NONE,
     elementIndex: -1
   }
 
@@ -75,7 +75,7 @@ export default class ShapeStore {
     this._chartStore = chartStore
   }
 
-  private _overrideInstance (instance: ShapeImp, shape: Partial<ShapeCreate>): boolean {
+  private _overrideInstance (instance: OverlayImp, overlay: Partial<OverlayCreate>): boolean {
     const {
       id, points, styles, lock, mode, extendData,
       onDrawStart, onDrawing,
@@ -83,7 +83,7 @@ export default class ShapeStore {
       onRightClick, onPressedMove,
       onMouseEnter, onMouseLeave,
       onRemoved, onSelected, onDeselected
-    } = shape
+    } = overlay
     let updateFlag = false
     if (id !== undefined) {
       instance.setId(id)
@@ -144,7 +144,7 @@ export default class ShapeStore {
    * @param id
    * @returns
    */
-  getInstanceById (id: string): TypeOrNull<ShapeImp> {
+  getInstanceById (id: string): TypeOrNull<OverlayImp> {
     for (const entry of this._instances) {
       const paneShapes = entry[1]
       const shape = paneShapes.find(s => s.id === id)
@@ -162,16 +162,16 @@ export default class ShapeStore {
 
   /**
    * 添加标记实例
-   * @param shape
+   * @param overlay
    * @param paneId
    */
-  addInstance (shape: ShapeCreate, paneId: string, appointPaneFlag: boolean): TypeOrNull<string> {
-    const id = shape.id ?? createId(SHAPE_ID_PREFIX)
+  addInstance (overlay: OverlayCreate, paneId: string, appointPaneFlag: boolean): TypeOrNull<string> {
+    const id = overlay.id ?? createId(OVERLAY_ID_PREFIX)
     if (this.getInstanceById(id) === null) {
-      const ShapeClazz = getShapeClass(shape.name) as ShapeConstructor
-      const instance = new ShapeClazz()
-      shape.id = id
-      this._overrideInstance(instance, shape)
+      const OverlayClazz = getOverlayClass(overlay.name) as OverlayConstructor
+      const instance = new OverlayClazz()
+      overlay.id = id
+      this._overrideInstance(instance, overlay)
       if (instance.isDrawing()) {
         this._progressInstanceInfo = { paneId, instance, appointPaneFlag }
       } else {
@@ -190,7 +190,7 @@ export default class ShapeStore {
    * 获取进行中的实例
    * @returns
    */
-  getProgressInstanceInfo (): TypeOrNull<ProgressShapeInfo> {
+  getProgressInstanceInfo (): TypeOrNull<ProgressOverlayInfo> {
     return this._progressInstanceInfo
   }
 
@@ -230,32 +230,32 @@ export default class ShapeStore {
    * @param paneId
    * @returns {{}}
    */
-  getInstances (paneId: string): ShapeImp[] {
+  getInstances (paneId: string): OverlayImp[] {
     return this._instances.get(paneId) ?? []
   }
 
   /**
    * 设置图形标记实例配置
-   * @param shape
+   * @param overlay
    */
-  override (shape: Partial<ShapeCreate>): void {
-    const { id, name } = shape
+  override (overlay: Partial<OverlayCreate>): void {
+    const { id, name } = overlay
     let updateFlag = false
     if (id !== undefined) {
       const instance = this.getInstanceById(id)
-      if (instance !== null && this._overrideInstance(instance, shape)) {
+      if (instance !== null && this._overrideInstance(instance, overlay)) {
         updateFlag = true
       }
     } else {
       this._instances.forEach(paneInstances => {
         paneInstances.forEach(instance => {
-          if ((name === undefined || instance.name === name) && this._overrideInstance(instance, shape)) {
+          if ((name === undefined || instance.name === name) && this._overrideInstance(instance, overlay)) {
             updateFlag = true
           }
         })
       })
       if (this._progressInstanceInfo !== null) {
-        if ((name === undefined || this._progressInstanceInfo.instance.name === name) && this._overrideInstance(this._progressInstanceInfo.instance, shape)) {
+        if ((name === undefined || this._progressInstanceInfo.instance.name === name) && this._overrideInstance(this._progressInstanceInfo.instance, overlay)) {
           updateFlag = true
         }
       }
@@ -310,15 +310,15 @@ export default class ShapeStore {
     }
   }
 
-  setPressedInstanceInfo (info: EventShapeInfo): void {
+  setPressedInstanceInfo (info: EventOverlayInfo): void {
     this._pressedInstanceInfo = info
   }
 
-  getPressedInstanceInfo (): EventShapeInfo {
+  getPressedInstanceInfo (): EventOverlayInfo {
     return this._pressedInstanceInfo
   }
 
-  setHoverInstanceInfo (info: EventShapeInfo): void {
+  setHoverInstanceInfo (info: EventOverlayInfo): void {
     const { instance, elementType, elementIndex } = this._hoverInstanceInfo
     if (
       instance?.id !== info.instance?.id ||
@@ -333,11 +333,11 @@ export default class ShapeStore {
     }
   }
 
-  getHoverInstanceInfo (): EventShapeInfo {
+  getHoverInstanceInfo (): EventOverlayInfo {
     return this._hoverInstanceInfo
   }
 
-  setClickInstanceInfo (info: EventShapeInfo): void {
+  setClickInstanceInfo (info: EventOverlayInfo): void {
     const { paneId, instance, elementType, elementIndex } = this._clickInstanceInfo
     if (instance?.id !== info.instance?.id || elementType !== info.elementType || elementIndex !== info.elementIndex) {
       this._clickInstanceInfo = info
@@ -355,7 +355,7 @@ export default class ShapeStore {
     }
   }
 
-  getClickInstanceInfo (): EventShapeInfo {
+  getClickInstanceInfo (): EventOverlayInfo {
     return this._clickInstanceInfo
   }
 

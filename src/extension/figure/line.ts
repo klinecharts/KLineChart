@@ -16,7 +16,7 @@ import TypeOrNull from '../../common/TypeOrNull'
 import Coordinate from '../../common/Coordinate'
 import { LineStyle, LineType } from '../../common/Styles'
 
-import { FigureTemplate } from '../../componentl/Figure'
+import { FigureTemplate } from '../../component/Figure'
 
 function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs): boolean {
   let on = false

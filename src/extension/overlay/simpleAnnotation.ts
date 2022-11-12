@@ -12,20 +12,20 @@
  * limitations under the License.
  */
 
-import { AnnotationTemplate } from '../../componentl/Annotation'
+import { OverlayTemplate } from '../../component/Overlay'
 
 import { formatValue } from '../../common/utils/format'
 
-const simple: AnnotationTemplate = {
-  name: 'simple',
-  createExtendFigures: ({ annotation, coordinate, defaultStyles }) => {
-    const styles = annotation.styles
+const simpleAnnotation: OverlayTemplate = {
+  name: 'simpleAnnotation',
+  createPointFigures: ({ overlay, coordinates, defaultStyles }) => {
+    const styles = overlay.styles
     const textSize = formatValue(styles, 'text.size', defaultStyles.text.size) as number
     const polygonColor = formatValue(styles, 'polygon.color', defaultStyles.polygon.color)
-    const text = annotation.extendData(annotation) as string
+    const text = overlay.extendData(overlay) as string
     const textWidth = text.length * textSize
-    const startX = coordinate.x
-    const startY = coordinate.y - 6
+    const startX = coordinates[0].x
+    const startY = coordinates[0].y - 6
     const lineEndY = startY - 50
     const arrowEndY = lineEndY - 5
     const textStyles = styles?.text ?? defaultStyles.text
@@ -52,4 +52,4 @@ const simple: AnnotationTemplate = {
   }
 }
 
-export default simple
+export default simpleAnnotation

@@ -15,7 +15,7 @@
 import Coordinate from '../../common/Coordinate'
 import { RectStyle, PolygonType, LineType } from '../../common/Styles'
 
-import { FigureTemplate } from '../../componentl/Figure'
+import { FigureTemplate } from '../../component/Figure'
 
 function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolean {
   return (

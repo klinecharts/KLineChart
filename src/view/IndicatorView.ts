@@ -22,11 +22,11 @@ import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 
 import ChartStore from '../store/ChartStore'
 
-import Axis from '../componentl/Axis'
+import Axis from '../component/Axis'
 
-import { FigureCreate } from '../componentl/Figure'
+import { FigureCreate } from '../component/Figure'
 import { LineAttrs } from '../extension/figure/line'
-import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../componentl/Indicator'
+import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../component/Indicator'
 
 import CandleBarView, { CandleBarOptions } from './CandleBarView'
 

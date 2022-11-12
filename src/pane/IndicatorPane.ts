@@ -19,7 +19,7 @@ import DrawWidget from '../widget/DrawWidget'
 import IndicatorWidget from '../widget/IndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 
-import YAxis from '../componentl/YAxis'
+import YAxis from '../component/YAxis'
 
 import Pane from './Pane'
 

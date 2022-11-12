@@ -18,7 +18,7 @@ import Pane from '../pane/Pane'
 
 import DrawWidget from './DrawWidget'
 
-import YAxis from '../componentl/YAxis'
+import YAxis from '../component/YAxis'
 
 import YAxisView from '../view/YAxisView'
 import CandleLastPriceLabelView from '../view/CandleLastPriceLabelView'

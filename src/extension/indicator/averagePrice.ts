@@ -13,7 +13,7 @@
  */
 
 import KLineData from '../../common/KLineData'
-import { IndicatorTemplate, IndicatorSeries } from '../../componentl/Indicator'
+import { IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Avp {
   avp?: number

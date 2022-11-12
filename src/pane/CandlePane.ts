@@ -19,7 +19,7 @@ import CandleWidget from '../widget/CandleWidget'
 import SeparatorWidget from '../widget/SeparatorWidget'
 
 import IndicatorPane from './IndicatorPane'
-import YAxis from '../componentl/YAxis'
+import YAxis from '../component/YAxis'
 
 // 蜡烛图窗口id
 export const CANDLE_PANE_ID = 'candle_pane'

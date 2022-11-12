@@ -16,10 +16,10 @@ import TypeOrNull from '../common/TypeOrNull'
 import { ElementEventHandler } from '../common/Element'
 import ElementGroup from '../common/ElementGroup'
 
-import Figure from '../componentl/Figure'
+import Figure from '../component/Figure'
 import { getFigureClass } from '../extension/figure/index'
 
-import Axis from '../componentl/Axis'
+import Axis from '../component/Axis'
 
 import Widget from '../widget/Widget'
 

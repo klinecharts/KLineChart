@@ -17,7 +17,7 @@ import { IndicatorStyle } from '../../common/Styles'
 
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../component/Indicator'
 
 interface Macd {
   dif?: number

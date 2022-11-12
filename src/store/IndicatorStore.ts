@@ -17,7 +17,7 @@ import Precision from '../common/Precision'
 
 import ChartStore from './ChartStore'
 
-import IndicatorImp, { IndicatorCreate, IndicatorConstructor, Indicator, IndicatorSeries } from '../componentl/Indicator'
+import IndicatorImp, { IndicatorCreate, IndicatorConstructor, Indicator, IndicatorSeries } from '../component/Indicator'
 import { getIndicatorClass } from '../extension/indicator/index'
 
 export default class IndicatorStore {

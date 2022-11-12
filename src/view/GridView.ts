@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import XAxis from '../componentl/XAxis'
-import YAxis from '../componentl/YAxis'
+import XAxis from '../component/XAxis'
+import YAxis from '../component/YAxis'
 
 import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 

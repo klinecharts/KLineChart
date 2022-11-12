@@ -17,7 +17,7 @@ import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
 import { CrosshairStyle, CrosshairDirectionStyle } from '../common/Styles'
 
-import XAxis from '../componentl/XAxis'
+import XAxis from '../component/XAxis'
 
 import ChartStore from '../store/ChartStore'
 

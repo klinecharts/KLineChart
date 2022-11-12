@@ -15,7 +15,7 @@
 import DrawWidget from '../widget/DrawWidget'
 import XAxisWidget from '../widget/XAxisWidget'
 
-import XAxis from '../componentl/XAxis'
+import XAxis from '../component/XAxis'
 
 import Pane from './Pane'
 

@@ -12,14 +12,15 @@
  * limitations under the License.
  */
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
 import { LineAttrs } from '../figure/line'
 
-const horizontalSegment: ShapeTemplate = {
+const horizontalSegment: OverlayTemplate = {
   name: 'horizontalSegment',
   totalStep: 3,
-  createFigures: ({ coordinates }) => {
+  needPointFigure: true,
+  createPointFigures: ({ coordinates }) => {
     const lines: LineAttrs[] = []
     if (coordinates.length === 2) {
       lines.push({ coordinates })

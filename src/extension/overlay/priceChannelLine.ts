@@ -12,27 +12,22 @@
  * limitations under the License.
  */
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
-const horizontalStraightLine: ShapeTemplate = {
-  name: 'horizontalStraightLine',
-  totalStep: 2,
-  createFigures: ({ coordinates, bounding }) => {
-    return [{
-      type: 'line',
-      attrs: {
-        coordinates: [
-          {
-            x: 0,
-            y: coordinates[0].y
-          }, {
-            x: bounding.width,
-            y: coordinates[0].y
-          }
-        ]
+import { getParallelLines } from './parallelStraightLine'
+
+const priceChannelLine: OverlayTemplate = {
+  name: 'priceChannelLine',
+  totalStep: 4,
+  needPointFigure: true,
+  createPointFigures: ({ coordinates, bounding }) => {
+    return [
+      {
+        type: 'line',
+        attrs: getParallelLines(coordinates, bounding, 1)
       }
-    }]
+    ]
   }
 }
 
-export default horizontalStraightLine
+export default priceChannelLine

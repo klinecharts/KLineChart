@@ -15,7 +15,7 @@
 import Coordinate from '../../common/Coordinate'
 import { PolygonStyle, PolygonType, LineType } from '../../common/Styles'
 
-import { FigureTemplate } from '../../componentl/Figure'
+import { FigureTemplate } from '../../component/Figure'
 
 export function checkCoordinateOnCircle (coordinate: Coordinate, circle: CircleAttrs): boolean {
   const difX = coordinate.x - circle.x

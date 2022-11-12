@@ -19,9 +19,9 @@ import { CandleType, ChangeColor, RectStyle, PolygonType } from '../common/Style
 
 import ChartStore from '../store/ChartStore'
 
-import Axis from '../componentl/Axis'
+import Axis from '../component/Axis'
 
-import { FigureCreate } from '../componentl/Figure'
+import { FigureCreate } from '../component/Figure'
 import { RectAttrs } from '../extension/figure/rect'
 
 import ChildrenView from './ChildrenView'

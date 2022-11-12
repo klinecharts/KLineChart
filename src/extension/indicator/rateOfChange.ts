@@ -13,7 +13,7 @@
  */
 
 import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorTemplate } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate } from '../../component/Indicator'
 
 interface Roc {
   roc?: number

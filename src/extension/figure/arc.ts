@@ -15,7 +15,7 @@
 import Coordinate, { getDistance } from '../../common/Coordinate'
 import { LineStyle, LineType } from '../../common/Styles'
 
-import { FigureTemplate, DEVIATION } from '../../componentl/Figure'
+import { FigureTemplate, DEVIATION } from '../../component/Figure'
 
 function checkCoordinateOnArc (coordinate: Coordinate, arc: ArcAttrs): boolean {
   if (Math.abs(getDistance(coordinate, arc) - arc.r) < DEVIATION) {

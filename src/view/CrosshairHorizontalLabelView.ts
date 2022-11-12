@@ -17,8 +17,8 @@ import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
 import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, PaddingTextStyle } from '../common/Styles'
 
-import Axis from '../componentl/Axis'
-import YAxis from '../componentl/YAxis'
+import Axis from '../component/Axis'
+import YAxis from '../component/YAxis'
 
 import ChartStore from '../store/ChartStore'
 

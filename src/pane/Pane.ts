@@ -17,7 +17,7 @@ import TypeOrNull from '../common/TypeOrNull'
 import Updater, { UpdateLevel } from '../common/Updater'
 import Bounding, { getDefaultBounding } from '../common/Bounding'
 
-import Axis from '../componentl/Axis'
+import Axis from '../component/Axis'
 
 import DrawWidget from '../widget/DrawWidget'
 import SeparatorWidget from '../widget/SeparatorWidget'

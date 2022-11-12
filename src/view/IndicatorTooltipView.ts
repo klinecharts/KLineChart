@@ -17,9 +17,9 @@ import KLineData from '../common/KLineData'
 import Crosshair from '../common/Crosshair'
 import { IndicatorStyle, TooltipShowRule, TooltipStyle, MarginTextStyle } from '../common/Styles'
 
-import Axis from '../componentl/Axis'
+import Axis from '../component/Axis'
 
-import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../componentl/Indicator'
+import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../component/Indicator'
 
 import { XAXIS_PANE_ID } from '../pane/XAxisPane'
 

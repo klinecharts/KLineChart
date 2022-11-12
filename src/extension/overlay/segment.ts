@@ -12,12 +12,13 @@
  * limitations under the License.
  */
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
-const segment: ShapeTemplate = {
+const segment: OverlayTemplate = {
   name: 'segment',
   totalStep: 3,
-  createFigures: ({ coordinates }) => {
+  needPointFigure: true,
+  createPointFigures: ({ coordinates }) => {
     if (coordinates.length === 2) {
       return [
         {

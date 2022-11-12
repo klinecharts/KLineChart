@@ -15,7 +15,7 @@
 import Coordinate from '../../common/Coordinate'
 import Bounding from '../../common/Bounding'
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
 import { LineAttrs, getLinearSlopeIntercept } from '../figure/line'
 
@@ -63,10 +63,11 @@ export function getParallelLines (coordinates: Coordinate[], bounding: Bounding,
   return lines
 }
 
-const parallelStraightLine: ShapeTemplate = {
+const parallelStraightLine: OverlayTemplate = {
   name: 'parallelStraightLine',
   totalStep: 4,
-  createFigures: ({ coordinates, bounding }) => {
+  needPointFigure: true,
+  createPointFigures: ({ coordinates, bounding }) => {
     return [
       {
         type: 'line',

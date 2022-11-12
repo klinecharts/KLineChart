@@ -16,8 +16,8 @@ import Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
 import { EventOptions, MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
-import Axis from '../componentl/Axis'
-import YAxis from '../componentl/YAxis'
+import Axis from '../component/Axis'
+import YAxis from '../component/YAxis'
 
 import Widget from './Widget'
 import Pane from '../pane/Pane'

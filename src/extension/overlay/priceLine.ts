@@ -12,13 +12,14 @@
  * limitations under the License.
  */
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
-const priceLine: ShapeTemplate = {
+const priceLine: OverlayTemplate = {
   name: 'priceLine',
   totalStep: 2,
-  createFigures: ({ coordinates, bounding, precision, shape }) => {
-    const { value } = (shape.points)[0]
+  needPointFigure: true,
+  createPointFigures: ({ coordinates, bounding, precision, overlay }) => {
+    const { value } = (overlay.points)[0]
     return [
       {
         type: 'line',

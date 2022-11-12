@@ -18,8 +18,8 @@ import { AxisStyle, Styles } from '../common/Styles'
 import { LineAttrs } from '../extension/figure/line'
 import { TextAttrs } from '../extension/figure/text'
 
-import { Tick } from '../componentl/Axis'
-import XAxis from '../componentl/XAxis'
+import { Tick } from '../component/Axis'
+import XAxis from '../component/XAxis'
 
 import AxisView from './AxisView'
 

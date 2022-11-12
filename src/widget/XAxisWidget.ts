@@ -19,7 +19,7 @@ import Pane from '../pane/Pane'
 
 import DrawWidget from './DrawWidget'
 
-import XAxis from '../componentl/XAxis'
+import XAxis from '../component/XAxis'
 
 import XAxisView from '../view/XAxisView'
 import CrosshairVerticalLabelView from '../view/CrosshairVerticalLabelView'

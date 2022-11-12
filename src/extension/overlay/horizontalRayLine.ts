@@ -12,34 +12,33 @@
  * limitations under the License.
  */
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
-const verticalSegment: ShapeTemplate = {
-  name: 'verticalSegment',
+const horizontalRayLine: OverlayTemplate = {
+  name: 'horizontalRayLine',
   totalStep: 3,
-  createFigures: ({ coordinates }) => {
-    if (coordinates.length === 2) {
-      return [
-        {
-          type: 'line',
-          attrs: { coordinates }
-        }
-      ]
+  needPointFigure: true,
+  createPointFigures: ({ coordinates, bounding }) => {
+    const coordinate = { x: 0, y: coordinates[0].y }
+    if (coordinates[1] !== undefined && coordinates[0].x < coordinates[1].x) {
+      coordinate.x = bounding.width
     }
-    return []
+    return [
+      {
+        type: 'line',
+        attrs: { coordinates: [coordinates[0], coordinate] }
+      }
+    ]
   },
   performEventPressedMove: ({ points, performPoint }) => {
-    points[0].timestamp = performPoint.timestamp
-    points[0].dataIndex = performPoint.dataIndex
-    points[1].timestamp = performPoint.timestamp
-    points[1].dataIndex = performPoint.dataIndex
+    points[0].value = performPoint.value
+    points[1].value = performPoint.value
   },
   performEventMoveForDrawing: ({ currentStep, points, performPoint }) => {
     if (currentStep === 2) {
-      points[0].timestamp = performPoint.timestamp
-      points[0].dataIndex = performPoint.dataIndex
+      points[0].value = performPoint.value
     }
   }
 }
 
-export default verticalSegment
+export default horizontalRayLine

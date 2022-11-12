@@ -14,12 +14,13 @@
 
 import { getLinearYFromCoordinates } from '../figure/line'
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
-const straightLine: ShapeTemplate = {
+const straightLine: OverlayTemplate = {
   name: 'straightLine',
   totalStep: 3,
-  createFigures: ({ coordinates, bounding }) => {
+  needPointFigure: true,
+  createPointFigures: ({ coordinates, bounding }) => {
     if (coordinates.length === 2) {
       if (coordinates[0].x === coordinates[1].x) {
         return [

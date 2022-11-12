@@ -23,9 +23,7 @@ import { isArray, merge, clone } from '../common/utils/typeChecks'
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
 import CrosshairStore from './CrosshairStore'
-import ShapeStore from './ShapeStore'
-import AnnotationStore from './AnnotationStore'
-// import TagStore from './TagStore'
+import OverlayStore from './OverlayStore'
 // import ActionStore from './ActionStore'
 
 import ChartInternal from '../ChartInternal'
@@ -48,12 +46,8 @@ export default class ChartStore {
   private readonly _timeScaleStore = new TimeScaleStore(this)
   // 技术指标数据存储
   private readonly _indicatorStore = new IndicatorStore(this)
-  // 图形数据存储
-  private readonly _shapeStore = new ShapeStore(this)
-  // // 注解数据存储
-  private readonly _annotationStore = new AnnotationStore(this)
-  // 标签数据存储
-  // private readonly _tagStore = new TagStore(this)
+  // 覆盖物数据存储
+  private readonly _overlayStore = new OverlayStore(this)
   // 十字光标数据存储
   private readonly _crosshairStore = new CrosshairStore(this)
   // 事件存储
@@ -83,7 +77,6 @@ export default class ChartStore {
         data: kLineData
       })
     }
-    this._annotationStore.createVisibleInstances()
   }
 
   /**
@@ -199,16 +192,8 @@ export default class ChartStore {
    * 获取图形存储
    * @returns
    */
-  getShapeStore (): ShapeStore {
-    return this._shapeStore
-  }
-
-  /**
-   * 获取注解存储
-   * @returns
-   */
-  getAnnotationStore (): AnnotationStore {
-    return this._annotationStore
+  getOverlayStore (): OverlayStore {
+    return this._overlayStore
   }
 
   // /**

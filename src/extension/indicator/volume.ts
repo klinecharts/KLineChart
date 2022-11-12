@@ -16,7 +16,7 @@ import KLineData from '../../common/KLineData'
 import { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData, IndicatorSeries, IndicatorFigure } from '../../componentl/Indicator'
+import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData, IndicatorSeries, IndicatorFigure } from '../../component/Indicator'
 
 interface Vol {
   volume?: number

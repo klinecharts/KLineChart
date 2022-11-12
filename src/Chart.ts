@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 
-import PickRequired from './common/PickRequired'
 import TypeOrNull from './common/TypeOrNull'
 import DeepPartial from './common/DeepPartial'
 import { UpdateLevel } from './common/Updater'
@@ -21,10 +20,9 @@ import LoadMoreCallback from './common/LoadMoreCallback'
 import { Styles } from './common/Styles'
 
 import { getIndicatorClass } from './extension/indicator/index'
-import { Indicator, IndicatorCreate } from './componentl/Indicator'
-import { getShapeClass } from './extension/shape/index'
-import { Shape, ShapeCreate } from './componentl/Shape'
-import { AnnotationCreate } from './componentl/Annotation'
+import { Indicator, IndicatorCreate } from './component/Indicator'
+import { getOverlayClass } from './extension/overlay/index'
+import { Overlay, OverlayCreate } from './component/Overlay'
 import { PaneOptions } from './pane/Pane'
 
 import ChartInternal from './ChartInternal'
@@ -312,10 +310,10 @@ export default class Chart {
    * @param value 图形名或者图形配置
    * @param paneId 窗口id
    */
-  createShape (value: string | ShapeCreate, paneId?: string): TypeOrNull<string> {
-    const shape: PickRequired<Partial<Shape>, 'name'> = isString(value) ? { name: value as string } : value as ShapeCreate
-    if (getShapeClass(shape.name) === null) {
-      logWarn('createShape', 'value', 'shape not supported, you may need to use registerShape to add one!!!')
+  createOverlay (value: string | OverlayCreate, paneId?: string): TypeOrNull<string> {
+    const overlay: OverlayCreate = isString(value) ? { name: value as string } : value as OverlayCreate
+    if (getOverlayClass(overlay.name) === null) {
+      logWarn('createOverlay', 'value', 'overlay not supported, you may need to use registerOverlay to add one!!!')
       return null
     }
     let appointPaneFlag = true
@@ -323,74 +321,37 @@ export default class Chart {
       paneId = CANDLE_PANE_ID
       appointPaneFlag = false
     }
-    const id = this._internal.getChartStore().getShapeStore().addInstance(shape, paneId, appointPaneFlag)
+    const id = this._internal.getChartStore().getOverlayStore().addInstance(overlay, paneId, appointPaneFlag)
     if (id === null) {
-      logWarn('createShape', 'options.id', 'duplicate id!!!')
+      logWarn('createOverlay', 'options.id', 'duplicate id!!!')
     }
     return id
   }
 
   /**
-   * 获取图形标记
-   * @param shapeId 图形标记id
+   * overlay
+   * @param id overlay id
    * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
    */
-  getShapeById (shapeId: string): TypeOrNull<Shape> {
-    return this._internal.getChartStore().getShapeStore().getInstanceById(shapeId)
+  getOverlayById (id: string): TypeOrNull<Overlay> {
+    return this._internal.getChartStore().getOverlayStore().getInstanceById(id)
   }
 
   /**
    * 设置图形标记配置
    * @param override 图形标记配置
    */
-  overrideShape (override: Partial<ShapeCreate>): void {
-    this._internal.getChartStore().getShapeStore().override(override)
+  overrideOverlay (override: Partial<OverlayCreate>): void {
+    this._internal.getChartStore().getOverlayStore().override(override)
   }
 
   /**
    * 移除图形
-   * @param shapeId 图形id
+   * @param id 图形id
    */
-  removeShape (shapeId?: string): void {
-    this._internal.getChartStore().getShapeStore().removeInstance(shapeId)
+  removeOverlay (id?: string): void {
+    this._internal.getChartStore().getOverlayStore().removeInstance(id)
   }
-
-  /**
-   * 创建注解
-   * @param annotation 单个注解或者注解数组
-   * @param paneId 窗口id
-   */
-  createAnnotation (annotation: AnnotationCreate | AnnotationCreate[], paneId?: string): Map<number, string[]> {
-    const annotations = new Array<AnnotationCreate>().concat(annotation)
-    return this._internal.getChartStore().getAnnotationStore().addInstances(annotations, paneId ?? CANDLE_PANE_ID)
-  }
-
-  /**
-   * 移除注解
-   * @param paneId 窗口id
-   * @param ids 单个点或者点数组
-   */
-  removeAnnotation (paneId?: string, ids?: string[]): void {
-    this._internal.getChartStore().getAnnotationStore().removeInstance(paneId, ids)
-  }
-
-  // /**
-  //  * 创建标签
-  //  * @param tag 单个标签或者标签数组
-  //  * @param paneId 窗口id
-  //  */
-  // createTag (tag, paneId = CANDLE_PANE_ID) {
-  //   if (!isObject(tag)) {
-  //     logWarn('createTag', 'tag', 'tag must be an object or array!!!')
-  //     return
-  //   }
-  //   if (!this._chartPane.hasPane(paneId)) {
-  //     logWarn('createTag', 'paneId', 'can not find the corresponding pane!!!')
-  //     return
-  //   }
-  //   const tags = [].concat(tag)
-  //   this._chartPane.createTag(tags, paneId)
-  // }
 
   // /**
   //  * 移除标签

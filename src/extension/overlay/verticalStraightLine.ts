@@ -12,12 +12,13 @@
  * limitations under the License.
  */
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
-const verticalStraightLine: ShapeTemplate = {
+const verticalStraightLine: OverlayTemplate = {
   name: 'verticalStraightLine',
   totalStep: 2,
-  createFigures: ({ coordinates, bounding }) => {
+  needPointFigure: true,
+  createPointFigures: ({ coordinates, bounding }) => {
     return [
       {
         type: 'line',

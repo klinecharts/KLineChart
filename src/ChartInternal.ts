@@ -24,9 +24,9 @@ import CandlePane, { CANDLE_PANE_ID } from './pane/CandlePane'
 import IndicatorPane, { INDICATOR_PANE_ID_PREFIX } from './pane/IndicatorPane'
 import XAxisPane, { XAXIS_PANE_ID } from './pane/XAxisPane'
 
-import Axis from './componentl/Axis'
+import Axis from './component/Axis'
 
-import { IndicatorCreate } from './componentl/Indicator'
+import { IndicatorCreate } from './component/Indicator'
 
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -355,91 +355,6 @@ export default class ChartInternal {
     }
     return paneId
   }
-
-  // /**
-  //  * 创建注解
-  //  * @param annotations
-  //  * @param paneId
-  //  */
-  // createAnnotation (annotations, paneId) {
-  //   const instances = []
-  //   annotations.forEach(({
-  //     point,
-  //     styles,
-  //     checkEventCoordinateOnCustomSymbol,
-  //     drawCustomSymbol,
-  //     drawExtend,
-  //     onClick,
-  //     onRightClick,
-  //     onMouseEnter,
-  //     onMouseLeave
-  //   }) => {
-  //     if (point && point.timestamp) {
-  //       const annotationInstance = new Annotation({
-  //         id: createId(ANNOTATION_ID_PREFIX),
-  //         chartStore: this._chartStore,
-  //         point,
-  //         xAxis: this._xAxisPane.xAxis(),
-  //         yAxis: this._panes.get(paneId).yAxis(),
-  //         styles
-  //       })
-
-  //       perfectOverlayFunc(annotationInstance, [
-  //         { key: 'drawExtend', fn: drawExtend },
-  //         { key: 'drawCustomSymbol', fn: drawCustomSymbol },
-  //         { key: 'checkEventCoordinateOnCustomSymbol', fn: checkEventCoordinateOnCustomSymbol },
-  //         { key: 'onClick', fn: onClick },
-  //         { key: 'onRightClick', fn: onRightClick },
-  //         { key: 'onMouseEnter', fn: onMouseEnter },
-  //         { key: 'onMouseLeave', fn: onMouseLeave }
-  //       ])
-  //       instances.push(annotationInstance)
-  //     }
-  //   })
-  //   if (instances.length > 0) {
-  //     this._chartStore.annotationStore().add(instances, paneId)
-  //   }
-  // }
-
-  // /**
-  //  * 创建标签
-  //  * @param tags
-  //  * @param paneId
-  //  */
-  // createTag (tags, paneId) {
-  //   const instances = []
-  //   let shouldUpdate = false
-  //   let shouldAdd = false
-  //   tags.forEach(({ id, point, text, mark, styles }) => {
-  //     if (isValid(id)) {
-  //       if (this._chartStore.tagStore().has(id, paneId)) {
-  //         const updateSuccess = this._chartStore.tagStore().update(id, paneId, { point, text, mark, styles })
-  //         if (!shouldUpdate) {
-  //           shouldUpdate = updateSuccess
-  //         }
-  //       } else {
-  //         shouldAdd = true
-  //         instances.push(new Tag({
-  //           id,
-  //           point,
-  //           text,
-  //           mark,
-  //           styles,
-  //           chartStore: this._chartStore,
-  //           xAxis: this._xAxisPane.xAxis(),
-  //           yAxis: this._panes.get(paneId).yAxis()
-  //         }))
-  //       }
-  //     }
-  //   })
-  //   if (shouldAdd) {
-  //     this._chartStore.tagStore().add(instances, paneId)
-  //   } else {
-  //     if (shouldUpdate) {
-  //       this._invalidatePane(InvalidateLevel.OVERLAY)
-  //     }
-  //   }
-  // }
 
   // /**
   //  * 移除所有html元素

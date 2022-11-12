@@ -12,15 +12,16 @@
  * limitations under the License.
  */
 
-import { ShapeTemplate } from '../../componentl/Shape'
+import { OverlayTemplate } from '../../component/Overlay'
 
 import { LineAttrs } from '../figure/line'
 import { TextAttrs } from '../figure/text'
 
-const fibonacciLine: ShapeTemplate = {
+const fibonacciLine: OverlayTemplate = {
   name: 'fibonacciLine',
   totalStep: 3,
-  createFigures: ({ coordinates, bounding, overlay, precision }) => {
+  needPointFigure: true,
+  createPointFigures: ({ coordinates, bounding, overlay, precision }) => {
     const points = overlay.points
     if (coordinates.length > 0) {
       const lines: LineAttrs[] = []

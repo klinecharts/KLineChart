@@ -14,7 +14,7 @@
 
 import TypeOrNull from '../../common/TypeOrNull'
 
-import ShapeImp, { ShapeTemplate, ShapeConstructor } from '../../componentl/Shape'
+import OverlayImp, { OverlayTemplate, OverlayConstructor } from '../../component/Overlay'
 
 import fibonacciLine from './fibonacciLine'
 import horizontalRayLine from './horizontalRayLine'
@@ -30,24 +30,27 @@ import verticalRayLine from './verticalRayLine'
 import verticalSegment from './verticalSegment'
 import verticalStraightLine from './verticalStraightLine'
 
-const shapes: { [key: string]: ShapeConstructor } = {}
+import simpleAnnotation from './simpleAnnotation'
+
+const overlays: { [key: string]: OverlayConstructor } = {}
 
 const extensions = [
   fibonacciLine, horizontalRayLine, horizontalSegment, horizontalStraightLine,
   parallelStraightLine, priceChannelLine, priceLine, rayLine, segment,
-  straightLine, verticalRayLine, verticalSegment, verticalStraightLine
+  straightLine, verticalRayLine, verticalSegment, verticalStraightLine,
+  simpleAnnotation
 ]
 
-extensions.forEach((shape: ShapeTemplate) => {
-  shapes[shape.name] = ShapeImp.extend(shape)
+extensions.forEach((template: OverlayTemplate) => {
+  overlays[template.name] = OverlayImp.extend(template)
 })
 
-function registerShape (shape: ShapeTemplate): void {
-  shapes[shape.name] = ShapeImp.extend(shape)
+function registerOverlay (template: OverlayTemplate): void {
+  overlays[template.name] = OverlayImp.extend(template)
 }
 
-function getShapeClass (name: string): TypeOrNull<ShapeConstructor> {
-  return shapes[name] ?? null
+function getOverlayClass (name: string): TypeOrNull<OverlayConstructor> {
+  return overlays[name] ?? null
 }
 
-export { registerShape, getShapeClass }
+export { registerOverlay, getOverlayClass }

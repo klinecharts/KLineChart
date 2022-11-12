@@ -18,17 +18,16 @@ import Point from '../common/Point'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
-import { ShapeStyle } from '../common/Styles'
+import { OverlayStyle } from '../common/Styles'
 import { ElementEventHandler } from '../common/Element'
 
 import { formatValue } from '../common/utils/format'
 
-import Axis from '../componentl/Axis'
-import YAxis from '../componentl/YAxis'
-import { OverlayFigure } from '../componentl/Overlay'
-import Shape, { ShapeMode } from '../componentl/Shape'
+import Axis from '../component/Axis'
+import YAxis from '../component/YAxis'
+import Overlay, { OverlayFigure, OverlayMode } from '../component/Overlay'
 
-import { EventShapeInfo, EventShapeInfoElementType } from '../store/ShapeStore'
+import { EventOverlayInfo, EventOverlayInfoElementType } from '../store/OverlayStore'
 import TimeScaleStore from '../store/TimeScaleStore'
 
 import { CANDLE_PANE_ID } from '../pane/CandlePane'
@@ -47,44 +46,44 @@ export default class ShapeView extends View<YAxis> {
   private _initEvent (): void {
     const pane = this.getWidget().getPane()
     const paneId = pane.getId()
-    const shapeStore = pane.getChart().getChartStore().getShapeStore()
+    const overlayStore = pane.getChart().getChartStore().getOverlayStore()
     this.registerEvent('mouseMoveEvent', (coordinate: Coordinate) => {
-      const progressInstanceInfo = shapeStore.getProgressInstanceInfo()
+      const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
       if (progressInstanceInfo !== null) {
         if (progressInstanceInfo.instance.isStart()) {
-          shapeStore.updateProgressInstanceInfo(paneId)
+          overlayStore.updateProgressInstanceInfo(paneId)
         }
         if (progressInstanceInfo.instance.isDrawing()) {
           progressInstanceInfo.instance.mouseMoveForDrawing(this._coordinateToPoint(progressInstanceInfo.instance, coordinate))
         }
-        return this._elementMouseMoveEvent(progressInstanceInfo.instance, EventShapeInfoElementType.POINT, progressInstanceInfo.instance.points.length - 1)(coordinate)
+        return this._elementMouseMoveEvent(progressInstanceInfo.instance, EventOverlayInfoElementType.POINT, progressInstanceInfo.instance.points.length - 1)(coordinate)
       }
-      shapeStore.setHoverInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
+      overlayStore.setHoverInstanceInfo({ paneId, instance: null, elementType: EventOverlayInfoElementType.NONE, elementIndex: -1 })
       return false
     }).registerEvent('mouseDownEvent', (coordinate: Coordinate) => {
-      const progressInstanceInfo = shapeStore.getProgressInstanceInfo()
+      const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
       if (progressInstanceInfo !== null) {
         if (progressInstanceInfo.instance.isStart()) {
-          shapeStore.updateProgressInstanceInfo(paneId, true)
+          overlayStore.updateProgressInstanceInfo(paneId, true)
         }
         if (progressInstanceInfo.instance.isDrawing()) {
           progressInstanceInfo.instance.nextStep()
           if (!progressInstanceInfo.instance.isDrawing()) {
-            shapeStore.progressInstanceComplete()
+            overlayStore.progressInstanceComplete()
           }
         }
-        return this._elementMouseDownEvent(progressInstanceInfo.instance, EventShapeInfoElementType.POINT, progressInstanceInfo.instance.points.length - 1)(coordinate)
+        return this._elementMouseDownEvent(progressInstanceInfo.instance, EventOverlayInfoElementType.POINT, progressInstanceInfo.instance.points.length - 1)(coordinate)
       }
-      shapeStore.setClickInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
+      overlayStore.setClickInstanceInfo({ paneId, instance: null, elementType: EventOverlayInfoElementType.NONE, elementIndex: -1 })
       return false
     }).registerEvent('mouseUpEvent', (coordinate: Coordinate) => {
-      shapeStore.setPressedInstanceInfo({ paneId, instance: null, elementType: EventShapeInfoElementType.NONE, elementIndex: -1 })
+      overlayStore.setPressedInstanceInfo({ paneId, instance: null, elementType: EventOverlayInfoElementType.NONE, elementIndex: -1 })
       return false
     }).registerEvent('pressedMouseMoveEvent', (coordinate: Coordinate) => {
-      const { instance, elementType, elementIndex } = shapeStore.getPressedInstanceInfo()
+      const { instance, elementType, elementIndex } = overlayStore.getPressedInstanceInfo()
       if (instance !== null) {
         const point = this._coordinateToPoint(instance, coordinate)
-        if (elementType === EventShapeInfoElementType.POINT) {
+        if (elementType === EventOverlayInfoElementType.POINT) {
           instance.mousePressedPointMove(point, elementIndex)
         } else {
           instance.mousePressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore().getTimeScaleStore())
@@ -95,37 +94,37 @@ export default class ShapeView extends View<YAxis> {
     })
   }
 
-  private _elementEvents (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number): ElementEventHandler | undefined {
-    if (!shape.isDrawing()) {
+  private _elementEvents (overlay: Overlay, elementType: EventOverlayInfoElementType, elementIndex: number): ElementEventHandler | undefined {
+    if (!overlay.isDrawing()) {
       return {
-        mouseMoveEvent: this._elementMouseMoveEvent(shape, elementType, elementIndex),
-        mouseDownEvent: this._elementMouseDownEvent(shape, elementType, elementIndex)
+        mouseMoveEvent: this._elementMouseMoveEvent(overlay, elementType, elementIndex),
+        mouseDownEvent: this._elementMouseDownEvent(overlay, elementType, elementIndex)
       }
     }
   }
 
-  private _elementMouseMoveEvent (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number) {
+  private _elementMouseMoveEvent (overlay: Overlay, elementType: EventOverlayInfoElementType, elementIndex: number) {
     return (coordinate: Coordinate) => {
       const pane = this.getWidget().getPane()
-      const shapeStore = pane.getChart().getChartStore().getShapeStore()
-      shapeStore.setHoverInstanceInfo({ paneId: pane.getId(), instance: shape, elementType, elementIndex })
+      const overlayStore = pane.getChart().getChartStore().getOverlayStore()
+      overlayStore.setHoverInstanceInfo({ paneId: pane.getId(), instance: overlay, elementType, elementIndex })
       return true
     }
   }
 
-  private _elementMouseDownEvent (shape: Shape, elementType: EventShapeInfoElementType, elementIndex: number) {
+  private _elementMouseDownEvent (overlay: Overlay, elementType: EventOverlayInfoElementType, elementIndex: number) {
     return (coordinate: Coordinate) => {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
-      const shapeStore = pane.getChart().getChartStore().getShapeStore()
-      shape.startPressedOtherMove(this._coordinateToPoint(shape, coordinate))
-      shapeStore.setPressedInstanceInfo({ paneId, instance: shape, elementType, elementIndex })
-      shapeStore.setClickInstanceInfo({ paneId, instance: shape, elementType, elementIndex })
+      const overlayStore = pane.getChart().getChartStore().getOverlayStore()
+      overlay.startPressedOtherMove(this._coordinateToPoint(overlay, coordinate))
+      overlayStore.setPressedInstanceInfo({ paneId, instance: overlay, elementType, elementIndex })
+      overlayStore.setClickInstanceInfo({ paneId, instance: overlay, elementType, elementIndex })
       return true
     }
   }
 
-  private _coordinateToPoint (shape: Shape, coordinate: Coordinate): PickPartial<Point, 'timestamp'> {
+  private _coordinateToPoint (overlay: Overlay, coordinate: Coordinate): PickPartial<Point, 'timestamp'> {
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()
     const paneId = pane.getId()
@@ -136,11 +135,11 @@ export default class ShapeView extends View<YAxis> {
     const timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
 
     let value = yAxis.convertFromPixel(coordinate.y)
-    if (shape.mode !== ShapeMode.NORMAL && paneId === CANDLE_PANE_ID) {
+    if (overlay.mode !== OverlayMode.NORMAL && paneId === CANDLE_PANE_ID) {
       const kLineData = timeScaleStore.getDataByDataIndex(dataIndex)
       if (kLineData !== null) {
         if (value > kLineData.high) {
-          if (shape.mode === ShapeMode.WEAK_MAGNET) {
+          if (overlay.mode === OverlayMode.WEAK_MAGNET) {
             const highY = yAxis.convertToPixel(kLineData.high)
             const buffValue = yAxis.convertFromPixel(highY - 8)
             if (value < buffValue) {
@@ -150,7 +149,7 @@ export default class ShapeView extends View<YAxis> {
             value = kLineData.high
           }
         } else if (value < kLineData.low) {
-          if (shape.mode === ShapeMode.WEAK_MAGNET) {
+          if (overlay.mode === OverlayMode.WEAK_MAGNET) {
             const lowY = yAxis.convertToPixel(kLineData.low)
             const buffValue = yAxis.convertFromPixel(lowY - 8)
             if (value > buffValue) {
@@ -186,7 +185,7 @@ export default class ShapeView extends View<YAxis> {
   }
 
   dispatchEvent (type: string, coordinate: Coordinate): boolean {
-    if (this.getWidget().getPane().getChart().getChartStore().getShapeStore().isDrawing()) {
+    if (this.getWidget().getPane().getChart().getChartStore().getOverlayStore().isDrawing()) {
       return this.onEvent(type, coordinate)
     }
     return super.dispatchEvent(type, coordinate)
@@ -207,15 +206,15 @@ export default class ShapeView extends View<YAxis> {
     const timeScaleStore = chartStore.getTimeScaleStore()
     const barSpace = timeScaleStore.getBarSpace()
     const precision = chartStore.getPrecision()
-    const defaultStyles = chartStore.getStyleOptions().shape
-    const shapeStore = chartStore.getShapeStore()
-    const hoverInstanceInfo = shapeStore.getHoverInstanceInfo()
-    const clickInstanceInfo = shapeStore.getClickInstanceInfo()
-    const shapes = shapeStore.getInstances(pane.getId())
-    shapes.forEach(shape => {
+    const defaultStyles = chartStore.getStyleOptions().overlay
+    const overlayStore = chartStore.getOverlayStore()
+    const hoverInstanceInfo = overlayStore.getHoverInstanceInfo()
+    const clickInstanceInfo = overlayStore.getClickInstanceInfo()
+    const overlays = overlayStore.getInstances(pane.getId())
+    overlays.forEach(shape => {
       this._drawShape(ctx, shape, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverInstanceInfo, clickInstanceInfo, timeScaleStore)
     })
-    const progressInstanceInfo = shapeStore.getProgressInstanceInfo()
+    const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
     if (progressInstanceInfo !== null && progressInstanceInfo.paneId === pane.getId()) {
       this._drawShape(ctx, progressInstanceInfo.instance, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverInstanceInfo, clickInstanceInfo, timeScaleStore)
     }
@@ -223,18 +222,18 @@ export default class ShapeView extends View<YAxis> {
 
   private _drawShape (
     ctx: CanvasRenderingContext2D,
-    shape: Shape,
+    overlay: Overlay,
     bounding: Bounding,
     barSpace: BarSpace,
     precision: Precision,
-    defaultStyles: ShapeStyle,
+    defaultStyles: OverlayStyle,
     xAxis: Axis,
     yAxis: Axis,
-    hoverInstanceInfo: EventShapeInfo,
-    clickInstanceInfo: EventShapeInfo,
+    hoverInstanceInfo: EventOverlayInfo,
+    clickInstanceInfo: EventOverlayInfo,
     timeScaleStore: TimeScaleStore
   ): void {
-    const { points } = shape
+    const { points } = overlay
     const coordinates = points.map(point => {
       let dataIndex = point.dataIndex
       if (point.timestamp !== undefined) {
@@ -245,50 +244,52 @@ export default class ShapeView extends View<YAxis> {
         y: yAxis.convertToPixel(point.value)
       }
     })
-    if (!shape.isStart() && coordinates.length > 0) {
-      const figures = new Array<OverlayFigure>().concat(shape.createFigures({ overlay: shape, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis }))
+    if (!overlay.isStart() && coordinates.length > 0) {
+      const figures = new Array<OverlayFigure>().concat(overlay.createPointFigures({ overlay, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis }))
       figures.forEach(({ type, styles, attrs, isCheckEvent }) => {
         const attrsArray = [].concat(attrs)
         attrsArray.forEach((ats, index) => {
-          const evnets = (isCheckEvent ?? true) ? this._elementEvents(shape, EventShapeInfoElementType.OTHER, index) : undefined
+          const evnets = (isCheckEvent ?? true) ? this._elementEvents(overlay, EventOverlayInfoElementType.OTHER, index) : undefined
           this.createFigure(
-            type, ats, styles ?? shape.styles?.[type] ?? defaultStyles[type], evnets
+            type, ats, styles ?? overlay.styles?.[type] ?? defaultStyles[type], evnets
           )?.draw(ctx)
         })
       })
     }
-    if (
-      (hoverInstanceInfo.instance?.id === shape.id && hoverInstanceInfo.elementType !== EventShapeInfoElementType.NONE) ||
-      (clickInstanceInfo.instance?.id === shape.id && clickInstanceInfo.elementType !== EventShapeInfoElementType.NONE)
-    ) {
-      const styles = shape.styles
-      coordinates.forEach(({ x, y }, index) => {
-        let radius = formatValue(styles, 'point.radius', defaultStyles.point.radius) as number
-        let color = formatValue(styles, 'point.color', defaultStyles.point.color)
-        let borderColor = formatValue(styles, 'point.borderColor', defaultStyles.point.borderColor)
-        let borderSize = formatValue(styles, 'point.borderSize', defaultStyles.point.borderSize) as number
-        if (
-          hoverInstanceInfo.instance?.id === shape.id &&
-          hoverInstanceInfo.elementType === EventShapeInfoElementType.POINT &&
-          hoverInstanceInfo.elementIndex === index
-        ) {
-          radius = formatValue(styles, 'point.activeRadius', defaultStyles.point.activeRadius) as number
-          color = formatValue(styles, 'point.activeRadius', defaultStyles.point.activeColor)
-          borderColor = formatValue(styles, 'point.activeBorderColor', defaultStyles.point.activeBorderColor)
-          borderSize = formatValue(styles, 'point.activeBorderSize', defaultStyles.point.activeBorderSize) as number
-        }
-        this.createFigure(
-          'circle',
-          { x, y, r: radius + borderSize },
-          { color: borderColor },
-          this._elementEvents(shape, EventShapeInfoElementType.POINT, index)
-        )?.draw(ctx)
-        this.createFigure(
-          'circle',
-          { x, y, r: radius },
-          { color }
-        )?.draw(ctx)
-      })
+    if (overlay.needPointFigure) {
+      if (
+        (hoverInstanceInfo.instance?.id === overlay.id && hoverInstanceInfo.elementType !== EventOverlayInfoElementType.NONE) ||
+        (clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.elementType !== EventOverlayInfoElementType.NONE)
+      ) {
+        const styles = overlay.styles
+        coordinates.forEach(({ x, y }, index) => {
+          let radius = formatValue(styles, 'point.radius', defaultStyles.point.radius) as number
+          let color = formatValue(styles, 'point.color', defaultStyles.point.color)
+          let borderColor = formatValue(styles, 'point.borderColor', defaultStyles.point.borderColor)
+          let borderSize = formatValue(styles, 'point.borderSize', defaultStyles.point.borderSize) as number
+          if (
+            hoverInstanceInfo.instance?.id === overlay.id &&
+            hoverInstanceInfo.elementType === EventOverlayInfoElementType.POINT &&
+            hoverInstanceInfo.elementIndex === index
+          ) {
+            radius = formatValue(styles, 'point.activeRadius', defaultStyles.point.activeRadius) as number
+            color = formatValue(styles, 'point.activeRadius', defaultStyles.point.activeColor)
+            borderColor = formatValue(styles, 'point.activeBorderColor', defaultStyles.point.activeBorderColor)
+            borderSize = formatValue(styles, 'point.activeBorderSize', defaultStyles.point.activeBorderSize) as number
+          }
+          this.createFigure(
+            'circle',
+            { x, y, r: radius + borderSize },
+            { color: borderColor },
+            this._elementEvents(overlay, EventOverlayInfoElementType.POINT, index)
+          )?.draw(ctx)
+          this.createFigure(
+            'circle',
+            { x, y, r: radius },
+            { color }
+          )?.draw(ctx)
+        })
+      }
     }
   }
 }

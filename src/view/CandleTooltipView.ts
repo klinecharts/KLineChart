@@ -18,7 +18,7 @@ import Precision from '../common/Precision'
 import Crosshair from '../common/Crosshair'
 import { Styles, CandleStyle, CandleTooltipValuesChild, CandleTooltipValuesCallback, TooltipShowType, YAxisPosition } from '../common/Styles'
 
-import Indicator from '../componentl/Indicator'
+import Indicator from '../component/Indicator'
 
 import IndicatorTooltipView, { TooltipData } from './IndicatorTooltipView'
 
