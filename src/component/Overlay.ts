@@ -433,11 +433,33 @@ export default abstract class OverlayImp implements Overlay {
   }
 
   createXAxisFigures (params: OverlayCreateFiguresCallbackParams): OverlayFigure | OverlayFigure[] {
-    return []
+    const { coordinates, bounding } = params
+    const figures: OverlayFigure[] = []
+    let leftX = Number.MAX_SAFE_INTEGER
+    let rightX = Number.MIN_SAFE_INTEGER
+    if (coordinates.length > 1) {
+      coordinates.forEach(coordinate => {
+        leftX = Math.min(leftX, coordinate.x)
+        rightX = Math.max(rightX, coordinate.x)
+      })
+      figures.push({ type: 'rect', attrs: { x: leftX, y: 0, width: rightX - leftX, height: bounding.height } })
+    }
+    return figures
   }
 
   createYAxisFigures (params: OverlayCreateFiguresCallbackParams): OverlayFigure | OverlayFigure[] {
-    return []
+    const { coordinates, bounding } = params
+    const figures: OverlayFigure[] = []
+    let topY = Number.MAX_SAFE_INTEGER
+    let bottomY = Number.MIN_SAFE_INTEGER
+    if (coordinates.length > 1) {
+      coordinates.forEach(coordinate => {
+        topY = Math.min(topY, coordinate.y)
+        bottomY = Math.max(bottomY, coordinate.y)
+      })
+      figures.push({ type: 'rect', attrs: { x: 0, y: topY, width: bounding.width, height: bottomY - topY } })
+    }
+    return figures
   }
 
   static extend (template: OverlayTemplate): OverlayConstructor {

@@ -676,6 +676,7 @@ export interface ShapePointStyle {
 export interface OverlayStyle {
   point: ShapePointStyle
   line: LineStyle
+  rect: RectStyle
   polygon: PolygonStyle
   arc: LineStyle
   text: TextStyle
@@ -701,6 +702,15 @@ const defaultOverlay: OverlayStyle = {
     color: '#2196F3',
     size: 1,
     dashedValue: [2, 2]
+  },
+  rect: {
+    style: PolygonType.FILL,
+    color: '#2196F3',
+    borderColor: '#2196F3',
+    borderSize: 1,
+    borderRadius: 4,
+    borderStyle: LineType.SOLID,
+    borderDashedValue: [2, 2]
   },
   polygon: {
     style: PolygonType.FILL,

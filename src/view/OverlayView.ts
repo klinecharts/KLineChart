@@ -37,8 +37,8 @@ import Widget from '../widget/Widget'
 
 import View from './View'
 
-export default class ShapeView extends View<YAxis> {
-  constructor (widget: Widget<YAxis>) {
+export default class OverlayView<C extends Axis = YAxis> extends View<C> {
+  constructor (widget: Widget<C>) {
     super(widget)
     this._initEvent()
   }
@@ -211,16 +211,16 @@ export default class ShapeView extends View<YAxis> {
     const hoverInstanceInfo = overlayStore.getHoverInstanceInfo()
     const clickInstanceInfo = overlayStore.getClickInstanceInfo()
     const overlays = overlayStore.getInstances(pane.getId())
-    overlays.forEach(shape => {
-      this._drawShape(ctx, shape, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverInstanceInfo, clickInstanceInfo, timeScaleStore)
+    overlays.forEach(overlay => {
+      this._drawOverlay(ctx, overlay, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverInstanceInfo, clickInstanceInfo, timeScaleStore)
     })
     const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
     if (progressInstanceInfo !== null && progressInstanceInfo.paneId === pane.getId()) {
-      this._drawShape(ctx, progressInstanceInfo.instance, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverInstanceInfo, clickInstanceInfo, timeScaleStore)
+      this._drawOverlay(ctx, progressInstanceInfo.instance, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverInstanceInfo, clickInstanceInfo, timeScaleStore)
     }
   }
 
-  private _drawShape (
+  private _drawOverlay (
     ctx: CanvasRenderingContext2D,
     overlay: Overlay,
     bounding: Bounding,
@@ -244,8 +244,8 @@ export default class ShapeView extends View<YAxis> {
         y: yAxis.convertToPixel(point.value)
       }
     })
-    if (!overlay.isStart() && coordinates.length > 0) {
-      const figures = new Array<OverlayFigure>().concat(overlay.createPointFigures({ overlay, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis }))
+    if (this.getDrawFiguresFlag(overlay, coordinates, clickInstanceInfo)) {
+      const figures = new Array<OverlayFigure>().concat(this.getFigures(overlay, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis))
       figures.forEach(({ type, styles, attrs, isCheckEvent }) => {
         const attrsArray = [].concat(attrs)
         attrsArray.forEach((ats, index) => {
@@ -256,7 +256,7 @@ export default class ShapeView extends View<YAxis> {
         })
       })
     }
-    if (overlay.needPointFigure) {
+    if (this.getDrawPointFiguresFlag() && overlay.needPointFigure) {
       if (
         (hoverInstanceInfo.instance?.id === overlay.id && hoverInstanceInfo.elementType !== EventOverlayInfoElementType.NONE) ||
         (clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.elementType !== EventOverlayInfoElementType.NONE)
@@ -291,5 +291,30 @@ export default class ShapeView extends View<YAxis> {
         })
       }
     }
+  }
+
+  getDrawFiguresFlag (
+    overlay: Overlay,
+    coordinates: Coordinate[],
+    clickInstanceInfo: EventOverlayInfo
+  ): boolean {
+    return !overlay.isStart() && coordinates.length > 0
+  }
+
+  getFigures (
+    overlay: Overlay,
+    coordinates: Coordinate[],
+    bounding: Bounding,
+    barSpace: BarSpace,
+    precision: Precision,
+    defaultStyles: OverlayStyle,
+    xAxis: Axis,
+    yAxis: Axis
+  ): OverlayFigure | OverlayFigure[] {
+    return overlay.createPointFigures({ overlay, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis })
+  }
+
+  getDrawPointFiguresFlag (): boolean {
+    return true
   }
 }

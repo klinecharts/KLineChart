@@ -22,10 +22,12 @@ import DrawWidget from './DrawWidget'
 import XAxis from '../component/XAxis'
 
 import XAxisView from '../view/XAxisView'
+import OverlayHorizontalTooltipView from '../view/OverlayHorizontalTooltipView'
 import CrosshairVerticalLabelView from '../view/CrosshairVerticalLabelView'
 
 export default class XAxisWidget extends DrawWidget<XAxis> {
   private readonly _xAxisView = new XAxisView(this)
+  private readonly _overlayHorizontalTooltipView = new OverlayHorizontalTooltipView(this)
   private readonly _crosshairVerticalLabelView = new CrosshairVerticalLabelView(this)
 
   constructor (rootContainer: HTMLElement, pane: Pane<XAxis>) {
@@ -48,6 +50,7 @@ export default class XAxisWidget extends DrawWidget<XAxis> {
   }
 
   protected updateOverlay (ctx: CanvasRenderingContext2D): void {
+    this._overlayHorizontalTooltipView.draw(ctx)
     this._crosshairVerticalLabelView.draw(ctx)
   }
 }

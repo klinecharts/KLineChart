@@ -26,7 +26,7 @@ function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolea
   )
 }
 
-function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs, styles: Partial<RectStyle>): void {
+export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs, styles: Partial<RectStyle>): void {
   const { x, y, width: w, height: h } = attrs
   const {
     style = PolygonType.FILL,

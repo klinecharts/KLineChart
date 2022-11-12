@@ -21,7 +21,6 @@ const simpleAnnotation: OverlayTemplate = {
   createPointFigures: ({ overlay, coordinates, defaultStyles }) => {
     const styles = overlay.styles
     const textSize = formatValue(styles, 'text.size', defaultStyles.text.size) as number
-    const polygonColor = formatValue(styles, 'polygon.color', defaultStyles.polygon.color)
     const text = overlay.extendData(overlay) as string
     const textWidth = text.length * textSize
     const startX = coordinates[0].x
@@ -40,8 +39,7 @@ const simpleAnnotation: OverlayTemplate = {
       },
       {
         type: 'rect',
-        attrs: { x: startX - textWidth / 2, y: arrowEndY - textSize - 16, width: textWidth, height: textSize + 16 },
-        styles: { color: polygonColor, borderRadius: 4 }
+        attrs: { x: startX - textWidth / 2, y: arrowEndY - textSize - 16, width: textWidth, height: textSize + 16 }
       },
       {
         type: 'text',
