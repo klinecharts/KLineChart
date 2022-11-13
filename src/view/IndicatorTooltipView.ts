@@ -27,7 +27,7 @@ import View from './View'
 
 import { formatPrecision, formatBigNumber } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
-import { createFont, calcTextWidth } from '../common/utils/canvas'
+import { createFont } from '../common/utils/canvas'
 
 export type TooltipData = IndicatorTooltipDataChild
 
@@ -91,7 +91,7 @@ export default class IndicatorTooltipView extends View {
                 weight: textWeight
               }
             )?.draw(ctx)
-            labelX += (calcTextWidth(ctx, text) + textMarginRight)
+            labelX += (ctx.measureText(text).width + textMarginRight)
           }
           if (valuesValid) {
             height += this.drawStandardTooltip(ctx, bounding, values, labelX, labelY, tooltipTextStyles)
@@ -116,7 +116,7 @@ export default class IndicatorTooltipView extends View {
     const { marginLeft, marginTop, marginRight, marginBottom, size, family, weight } = styles
     values.forEach(({ title, value, color }) => {
       const text = `${title}${value}`
-      const textWidth = calcTextWidth(ctx, text)
+      const textWidth = ctx.measureText(text).width
       if (labelX + marginLeft + textWidth + marginRight > bounding.width) {
         labelX = marginLeft
         height += (size + marginTop + marginBottom)

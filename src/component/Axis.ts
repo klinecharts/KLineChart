@@ -15,8 +15,6 @@
 import Pane from '../pane/Pane'
 
 import { getPrecision, nice, round } from '../common/utils/number'
-import { createDom } from '../common/utils/dom'
-import { getPixelRatio } from '../common/utils/canvas'
 
 export interface Tick {
   coord: number
@@ -40,19 +38,11 @@ export default abstract class Axis {
   private _prevExtremum: Extremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
   private _ticks: Tick[] = []
 
-  private readonly _measureCtx: CanvasRenderingContext2D
-
   constructor (parent: Pane<Axis>) {
     this._parent = parent
-    const canvas = createDom('canvas')
-    const pixelRatio = getPixelRatio(canvas)
-    this._measureCtx = canvas.getContext('2d') as CanvasRenderingContext2D
-    this._measureCtx.scale(pixelRatio, pixelRatio)
   }
 
   getParent (): Pane<Axis> { return this._parent }
-
-  getMeasureCtx (): CanvasRenderingContext2D { return this._measureCtx }
 
   buildTicks (force: boolean): boolean {
     this._extremum = this.calcExtremum()

@@ -24,6 +24,7 @@ import { ElementEventHandler } from '../common/Element'
 import { formatValue } from '../common/utils/format'
 
 import Axis from '../component/Axis'
+import XAxis from '../component/XAxis'
 import YAxis from '../component/YAxis'
 import Overlay, { OverlayFigure, OverlayMode } from '../component/Overlay'
 
@@ -197,13 +198,14 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
 
   protected drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
-    const pane = this.getWidget().getPane()
+    const pane = widget.getPane()
     const chart = pane.getChart()
-    const yAxis = pane.getAxisComponent()
-    const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as Axis
+    const yAxis = pane.getAxisComponent() as unknown as YAxis
+    const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as XAxis
     const bounding = widget.getBounding()
     const chartStore = chart.getChartStore()
     const timeScaleStore = chartStore.getTimeScaleStore()
+    const dateTimeFormat = timeScaleStore.getDateTimeFormat()
     const barSpace = timeScaleStore.getBarSpace()
     const precision = chartStore.getPrecision()
     const defaultStyles = chartStore.getStyleOptions().overlay
@@ -212,11 +214,19 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const clickInstanceInfo = overlayStore.getClickInstanceInfo()
     const overlays = overlayStore.getInstances(pane.getId())
     overlays.forEach(overlay => {
-      this._drawOverlay(ctx, overlay, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverInstanceInfo, clickInstanceInfo, timeScaleStore)
+      this._drawOverlay(
+        ctx, overlay, bounding, barSpace, precision,
+        dateTimeFormat, defaultStyles, xAxis, yAxis,
+        hoverInstanceInfo, clickInstanceInfo, timeScaleStore
+      )
     })
     const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
     if (progressInstanceInfo !== null && progressInstanceInfo.paneId === pane.getId()) {
-      this._drawOverlay(ctx, progressInstanceInfo.instance, bounding, barSpace, precision, defaultStyles, xAxis, yAxis, hoverInstanceInfo, clickInstanceInfo, timeScaleStore)
+      this._drawOverlay(
+        ctx, progressInstanceInfo.instance, bounding, barSpace,
+        precision, dateTimeFormat, defaultStyles, xAxis, yAxis,
+        hoverInstanceInfo, clickInstanceInfo, timeScaleStore
+      )
     }
   }
 
@@ -226,9 +236,10 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     bounding: Bounding,
     barSpace: BarSpace,
     precision: Precision,
+    dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
-    xAxis: Axis,
-    yAxis: Axis,
+    xAxis: XAxis,
+    yAxis: YAxis,
     hoverInstanceInfo: EventOverlayInfo,
     clickInstanceInfo: EventOverlayInfo,
     timeScaleStore: TimeScaleStore
@@ -244,19 +255,20 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         y: yAxis.convertToPixel(point.value)
       }
     })
-    if (this.getDrawFiguresFlag(overlay, coordinates, clickInstanceInfo)) {
-      const figures = new Array<OverlayFigure>().concat(this.getFigures(overlay, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis))
+    if (!overlay.isStart() && coordinates.length > 0) {
+      const figures = new Array<OverlayFigure>().concat(overlay.createPointFigures({ overlay, coordinates, bounding, barSpace, precision, dateTimeFormat, defaultStyles, xAxis, yAxis }))
       figures.forEach(({ type, styles, attrs, isCheckEvent }) => {
         const attrsArray = [].concat(attrs)
         attrsArray.forEach((ats, index) => {
           const evnets = (isCheckEvent ?? true) ? this._elementEvents(overlay, EventOverlayInfoElementType.OTHER, index) : undefined
+          const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
           this.createFigure(
-            type, ats, styles ?? overlay.styles?.[type] ?? defaultStyles[type], evnets
+            type, ats, ss, evnets
           )?.draw(ctx)
         })
       })
     }
-    if (this.getDrawPointFiguresFlag() && overlay.needPointFigure) {
+    if (overlay.needPointFigure) {
       if (
         (hoverInstanceInfo.instance?.id === overlay.id && hoverInstanceInfo.elementType !== EventOverlayInfoElementType.NONE) ||
         (clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.elementType !== EventOverlayInfoElementType.NONE)
@@ -291,30 +303,5 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         })
       }
     }
-  }
-
-  getDrawFiguresFlag (
-    overlay: Overlay,
-    coordinates: Coordinate[],
-    clickInstanceInfo: EventOverlayInfo
-  ): boolean {
-    return !overlay.isStart() && coordinates.length > 0
-  }
-
-  getFigures (
-    overlay: Overlay,
-    coordinates: Coordinate[],
-    bounding: Bounding,
-    barSpace: BarSpace,
-    precision: Precision,
-    defaultStyles: OverlayStyle,
-    xAxis: Axis,
-    yAxis: Axis
-  ): OverlayFigure | OverlayFigure[] {
-    return overlay.createPointFigures({ overlay, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis })
-  }
-
-  getDrawPointFiguresFlag (): boolean {
-    return true
   }
 }

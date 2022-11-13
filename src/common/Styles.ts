@@ -60,24 +60,26 @@ export interface TextStyle {
   weight: number | string
 }
 
-export interface AlignTextStyle extends TextStyle {
-  align: CanvasTextAlign
-  baseline: CanvasTextBaseline
-}
-
 export interface StateTextStyle extends TextStyle {
   show: boolean
 }
 
-export interface PaddingTextStyle extends StateTextStyle {
+export interface RectTextStyle extends TextStyle {
+  style: PolygonType
   paddingLeft: number
   paddingTop: number
   paddingRight: number
   paddingBottom: number
+  borderStyle: LineType
+  borderDashedValue: number[]
   borderSize: number
   borderColor: string
   borderRadius: number
   backgroundColor: string
+}
+
+export interface StateRectTextStyle extends RectTextStyle {
+  show: boolean
 }
 
 export interface MarginTextStyle extends StateTextStyle {
@@ -87,7 +89,7 @@ export interface MarginTextStyle extends StateTextStyle {
   marginBottom: number
 }
 
-export type LastValueMarkTextStyle = Omit<PaddingTextStyle, 'backgroundColor' | 'borderSize' | 'borderColor'>
+export type LastValueMarkTextStyle = Omit<StateRectTextStyle, 'backgroundColor' | 'borderColor'>
 
 /**
  * 说明显示规则
@@ -293,11 +295,15 @@ const defaultCandle: CandleStyle = {
       },
       text: {
         show: true,
+        style: PolygonType.FILL,
         size: 12,
         paddingLeft: 2,
         paddingTop: 2,
         paddingRight: 2,
         paddingBottom: 2,
+        borderStyle: LineType.SOLID,
+        borderSize: 1,
+        borderDashedValue: [2, 2],
         color: '#FFFFFF',
         family: 'Helvetica Neue',
         weight: 'normal',
@@ -418,10 +424,14 @@ const defaultIndicator: IndicatorStyle = {
     show: false,
     text: {
       show: false,
+      style: PolygonType.FILL,
       color: '#FFFFFF',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
+      borderStyle: LineType.SOLID,
+      borderSize: 1,
+      borderDashedValue: [2, 2],
       paddingLeft: 3,
       paddingTop: 2,
       paddingRight: 3,
@@ -599,7 +609,7 @@ const defaultYAxis: YAxisStyle = {
 export interface CrosshairDirectionStyle {
   show: boolean
   line: StateLineStyle
-  text: PaddingTextStyle
+  text: StateRectTextStyle
 }
 
 export interface CrosshairStyle {
@@ -621,17 +631,20 @@ const defaultCrosshair: CrosshairStyle = {
     },
     text: {
       show: true,
+      style: PolygonType.FILL,
       color: '#FFFFFF',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
-      paddingLeft: 2,
-      paddingRight: 2,
-      paddingTop: 2,
-      paddingBottom: 2,
+      borderStyle: LineType.SOLID,
+      borderDashedValue: [2, 2],
       borderSize: 1,
       borderColor: '#686D76',
       borderRadius: 2,
+      paddingLeft: 3,
+      paddingRight: 3,
+      paddingTop: 3,
+      paddingBottom: 3,
       backgroundColor: '#686D76'
     }
   },
@@ -646,17 +659,20 @@ const defaultCrosshair: CrosshairStyle = {
     },
     text: {
       show: true,
+      style: PolygonType.FILL,
       color: '#FFFFFF',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
-      paddingLeft: 2,
-      paddingRight: 2,
-      paddingTop: 2,
-      paddingBottom: 2,
+      borderStyle: LineType.SOLID,
+      borderDashedValue: [2, 2],
       borderSize: 1,
       borderRadius: 2,
       borderColor: '#686D76',
+      paddingLeft: 3,
+      paddingRight: 3,
+      paddingTop: 3,
+      paddingBottom: 3,
       backgroundColor: '#686D76'
     }
   }
@@ -673,13 +689,20 @@ export interface ShapePointStyle {
   activeRadius: number
 }
 
+export interface OverlayTooltipDirectionRangeStyle {
+  show: boolean
+  color: string
+}
+
 export interface OverlayStyle {
   point: ShapePointStyle
   line: LineStyle
   rect: RectStyle
   polygon: PolygonStyle
+  circle: PolygonStyle
   arc: LineStyle
   text: TextStyle
+  rectText: RectTextStyle
 }
 
 /**
@@ -688,49 +711,74 @@ export interface OverlayStyle {
  */
 const defaultOverlay: OverlayStyle = {
   point: {
-    color: '#2196F3',
-    borderColor: 'rgba(33, 150, 243, 0.35)',
+    color: '#3f8aa9',
+    borderColor: 'rgba(63, 138, 169, 0.35)',
     borderSize: 1,
     radius: 5,
-    activeColor: '#2196F3',
-    activeBorderColor: 'rgba(33, 150, 243, 0.35)',
+    activeColor: '#3f8aa9',
+    activeBorderColor: 'rgba(63, 138, 169, 0.35)',
     activeBorderSize: 3,
     activeRadius: 5
   },
   line: {
     style: LineType.SOLID,
-    color: '#2196F3',
+    color: '#3f8aa9',
     size: 1,
     dashedValue: [2, 2]
   },
   rect: {
     style: PolygonType.FILL,
-    color: '#2196F3',
-    borderColor: '#2196F3',
+    color: 'rgba(63, 138, 169, 0.25)',
+    borderColor: '#3f8aa9',
     borderSize: 1,
-    borderRadius: 4,
+    borderRadius: 0,
     borderStyle: LineType.SOLID,
     borderDashedValue: [2, 2]
   },
   polygon: {
     style: PolygonType.FILL,
-    color: '#2196F3',
-    borderColor: '#2196F3',
+    color: 'rgba(63, 138, 169, 0.25)',
+    borderColor: '#3f8aa9',
+    borderSize: 1,
+    borderStyle: LineType.SOLID,
+    borderDashedValue: [2, 2]
+  },
+  circle: {
+    style: PolygonType.FILL,
+    color: 'rgba(63, 138, 169, 0.25)',
+    borderColor: '#3f8aa9',
     borderSize: 1,
     borderStyle: LineType.SOLID,
     borderDashedValue: [2, 2]
   },
   arc: {
     style: LineType.SOLID,
-    color: '#2196F3',
+    color: '#3f8aa9',
     size: 1,
     dashedValue: [2, 2]
   },
   text: {
-    color: '#2196F3',
+    color: '#3f8aa9',
     size: 12,
     family: 'Helvetica Neue',
     weight: 'normal'
+  },
+  rectText: {
+    style: PolygonType.FILL,
+    color: '#FFFFFF',
+    size: 12,
+    family: 'Helvetica Neue',
+    weight: 'normal',
+    borderStyle: LineType.SOLID,
+    borderDashedValue: [2, 2],
+    borderSize: 1,
+    borderRadius: 2,
+    borderColor: '#3f8aa9',
+    paddingLeft: 3,
+    paddingRight: 3,
+    paddingTop: 3,
+    paddingBottom: 3,
+    backgroundColor: '#3f8aa9'
   }
 }
 

@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import PickPartial from '../common/PickPartial'
+import Point from '../common/Point'
 import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
@@ -22,19 +24,57 @@ import Axis from '../component/Axis'
 import YAxis from '../component/YAxis'
 import Overlay, { OverlayFigure } from '../component/Overlay'
 
-import { EventOverlayInfo, EventOverlayInfoElementType } from '../store/OverlayStore'
+import { EventOverlayInfo } from '../store/OverlayStore'
 
-import OverlayView from './OverlayView'
+import View from './View'
 
-export default class OverlayVerticalTooltipView<C extends Axis = YAxis> extends OverlayView<C> {
-  getDrawFiguresFlag (
-    overlay: Overlay,
-    coordinates: Coordinate[],
-    clickInstanceInfo: EventOverlayInfo
-  ): boolean {
-    return (
-      clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.elementType !== EventOverlayInfoElementType.NONE
-    )
+export default class OverlayVerticalTooltipView<C extends Axis = YAxis> extends View<C> {
+  protected drawImp (ctx: CanvasRenderingContext2D): void {
+    const widget = this.getWidget()
+    const pane = widget.getPane()
+    const chart = pane.getChart()
+    const axis = pane.getAxisComponent()
+    const bounding = widget.getBounding()
+    const chartStore = chart.getChartStore()
+    const timeScaleStore = chartStore.getTimeScaleStore()
+    const dateTimeFormat = timeScaleStore.getDateTimeFormat()
+    const barSpace = timeScaleStore.getBarSpace()
+    const precision = chartStore.getPrecision()
+    const defaultStyles = chartStore.getStyleOptions().overlay
+    const overlayStore = chartStore.getOverlayStore()
+    const clickInstanceInfo = overlayStore.getClickInstanceInfo()
+
+    const { instance: overlay } = clickInstanceInfo
+    if (overlay !== null && this.getFiguresDrawFlag(clickInstanceInfo)) {
+      const { points } = overlay
+      const coordinates = points.map(point => {
+        if (point.timestamp !== undefined) {
+          point.dataIndex = timeScaleStore.timestampToDataIndex(point.timestamp)
+        }
+        return this.getCoordinate(point, axis)
+      })
+      const figures = new Array<OverlayFigure>().concat(this.getFigures(overlay, coordinates, bounding, barSpace, precision, dateTimeFormat, defaultStyles, axis))
+      figures.forEach(({ type, styles, attrs }) => {
+        const attrsArray = [].concat(attrs)
+        attrsArray.forEach(ats => {
+          const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
+          this.createFigure(
+            type, ats, ss
+          )?.draw(ctx)
+        })
+      })
+    }
+  }
+
+  getFiguresDrawFlag (clickInstanceInfo: EventOverlayInfo): boolean {
+    return clickInstanceInfo.paneId === this.getWidget().getPane().getId()
+  }
+
+  getCoordinate (point: PickPartial<Point, 'timestamp'>, axis: Axis): Coordinate {
+    return {
+      x: 0,
+      y: axis.convertToPixel(point.value)
+    }
   }
 
   getFigures (
@@ -43,14 +83,10 @@ export default class OverlayVerticalTooltipView<C extends Axis = YAxis> extends 
     bounding: Bounding,
     barSpace: BarSpace,
     precision: Precision,
+    dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
-    xAxis: Axis,
-    yAxis: Axis
+    axis: Axis
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createYAxisFigures({ overlay, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis })
-  }
-
-  getDrawPointFiguresFlag (): boolean {
-    return false
+    return overlay.createYAxisFigures({ overlay, coordinates, bounding, barSpace, precision, dateTimeFormat, defaultStyles, xAxis: null, yAxis: axis as YAxis }) ?? []
   }
 }

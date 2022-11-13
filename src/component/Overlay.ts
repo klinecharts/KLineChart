@@ -24,10 +24,12 @@ import Precision from '../common/Precision'
 import { OverlayStyle } from '../common/Styles'
 
 import { clone } from '../common/utils/typeChecks'
+import { formatPrecision, formatDate } from '../common/utils/format'
 
 import TimeScaleStore from '../store/TimeScaleStore'
 
-import Axis from './Axis'
+import XAxis from './XAxis'
+import YAxis from './YAxis'
 
 export const enum OverlayMode {
   NORMAL = 'normal',
@@ -57,9 +59,10 @@ export interface OverlayCreateFiguresCallbackParams {
   bounding: Bounding
   barSpace: BarSpace
   precision: Precision
+  dateTimeFormat: Intl.DateTimeFormat
   defaultStyles: OverlayStyle
-  xAxis: Axis
-  yAxis: Axis
+  xAxis: TypeOrNull<XAxis>
+  yAxis: TypeOrNull<YAxis>
 }
 
 export type OverlayEventCallback = (overlay: Overlay) => boolean
@@ -163,7 +166,7 @@ export default abstract class OverlayImp implements Overlay {
   }
 
   setId (id: string): boolean {
-    if (this.id !== undefined) {
+    if (this.id === undefined) {
       this.id = id
       return true
     }
@@ -380,17 +383,20 @@ export default abstract class OverlayImp implements Overlay {
    * @param elementIndex
    */
   mousePressedPointMove (point: PickPartial<Point, 'timestamp'>, elementIndex: number): void {
-    if (this.onPressedMove?.(this) ?? false) {
-      this.points[elementIndex].timestamp = point.timestamp
-      this.points[elementIndex].dataIndex = point.dataIndex
-      this.points[elementIndex].value = point.value
-      this.performEventPressedMove?.({
-        currentStep: this.currentStep,
-        points: this.points,
-        mode: this.mode,
-        performPointIndex: elementIndex,
-        performPoint: point
-      })
+    if (!this.lock) {
+      const cover = this.onPressedMove?.(this) ?? false
+      if (!cover) {
+        this.points[elementIndex].timestamp = point.timestamp
+        this.points[elementIndex].dataIndex = point.dataIndex
+        this.points[elementIndex].value = point.value
+        this.performEventPressedMove?.({
+          currentStep: this.currentStep,
+          points: this.points,
+          mode: this.mode,
+          performPointIndex: elementIndex,
+          performPoint: point
+        })
+      }
     }
   }
 
@@ -409,7 +415,8 @@ export default abstract class OverlayImp implements Overlay {
    */
   mousePressedOtherMove (point: PickPartial<Point, 'timestamp'>, timeScaleStore: TimeScaleStore): void {
     if (!this.lock && this._prevPressedPoint !== null) {
-      if (this.onPressedMove?.(this) ?? false) {
+      const cover = this.onPressedMove?.(this) ?? false
+      if (!cover) {
         const difDataIndex = point.dataIndex - this._prevPressedPoint.dataIndex
         const difValue = point.value - this._prevPressedPoint.value
         this.points = this._prevPressedPoints.map(p => {
@@ -433,31 +440,43 @@ export default abstract class OverlayImp implements Overlay {
   }
 
   createXAxisFigures (params: OverlayCreateFiguresCallbackParams): OverlayFigure | OverlayFigure[] {
-    const { coordinates, bounding } = params
+    const { overlay, coordinates, bounding, dateTimeFormat } = params
     const figures: OverlayFigure[] = []
     let leftX = Number.MAX_SAFE_INTEGER
     let rightX = Number.MIN_SAFE_INTEGER
+    coordinates.forEach((coordinate, index) => {
+      leftX = Math.min(leftX, coordinate.x)
+      rightX = Math.max(rightX, coordinate.x)
+      const point = overlay.points[index]
+      let text = 'n/a'
+      if (point.timestamp !== undefined) {
+        text = formatDate(dateTimeFormat, point.timestamp, 'YYYY-MM-DD hh:mm')
+      }
+      figures.push({ type: 'rectText', attrs: { x: coordinate.x, y: 0, text, align: 'center' } })
+    })
+
     if (coordinates.length > 1) {
-      coordinates.forEach(coordinate => {
-        leftX = Math.min(leftX, coordinate.x)
-        rightX = Math.max(rightX, coordinate.x)
-      })
-      figures.push({ type: 'rect', attrs: { x: leftX, y: 0, width: rightX - leftX, height: bounding.height } })
+      figures.unshift({ type: 'rect', attrs: { x: leftX, y: 0, width: rightX - leftX, height: bounding.height } })
     }
     return figures
   }
 
   createYAxisFigures (params: OverlayCreateFiguresCallbackParams): OverlayFigure | OverlayFigure[] {
-    const { coordinates, bounding } = params
+    const { overlay, coordinates, bounding, precision, yAxis } = params
     const figures: OverlayFigure[] = []
     let topY = Number.MAX_SAFE_INTEGER
     let bottomY = Number.MIN_SAFE_INTEGER
+    const isFromZero = yAxis?.isFromZero() ?? false
+    const textAlign = isFromZero ? 'left' : 'right'
+    coordinates.forEach((coordinate, index) => {
+      topY = Math.min(topY, coordinate.y)
+      bottomY = Math.max(bottomY, coordinate.y)
+      const point = overlay.points[index]
+      const text = formatPrecision(point.value, precision.price)
+      figures.push({ type: 'rectText', attrs: { x: 0, y: coordinate.y, text, align: textAlign, baseline: 'middle' } })
+    })
     if (coordinates.length > 1) {
-      coordinates.forEach(coordinate => {
-        topY = Math.min(topY, coordinate.y)
-        bottomY = Math.max(bottomY, coordinate.y)
-      })
-      figures.push({ type: 'rect', attrs: { x: 0, y: topY, width: bounding.width, height: bottomY - topY } })
+      figures.unshift({ type: 'rect', attrs: { x: 0, y: topY, width: bounding.width, height: bottomY - topY } })
     }
     return figures
   }

@@ -12,10 +12,9 @@
  * limitations under the License.
  */
 
-import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
-import { CrosshairStyle, CrosshairDirectionStyle } from '../common/Styles'
+import { CrosshairStyle, CrosshairDirectionStyle, StateRectTextStyle } from '../common/Styles'
 
 import XAxis from '../component/XAxis'
 
@@ -24,6 +23,7 @@ import ChartStore from '../store/ChartStore'
 import { formatDate } from '../common/utils/format'
 
 import CrosshairHorizontalLabelView from './CrosshairHorizontalLabelView'
+import { TextAttrs } from '../extension/figure/text'
 
 export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabelView<XAxis> {
   protected checkPaneId (crosshair: Crosshair): boolean {
@@ -39,16 +39,16 @@ export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabel
     return formatDate(chartStore.getTimeScaleStore().getDateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
   }
 
-  protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Bounding): Coordinate {
+  protected getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: XAxis, styles: StateRectTextStyle): TextAttrs {
     const x = crosshair.realX as number
-    let rectX: number
-    if (x - rectWidth / 2 < 0) {
-      rectX = 0
-    } else if (x + rectWidth / 2 > bounding.width) {
-      rectX = bounding.width - rectWidth
+    let optimalX: number
+    if (x - textWidth / 2 - styles.paddingLeft < 0) {
+      optimalX = styles.paddingLeft + textWidth / 2
+    } else if (x + textWidth / 2 + styles.paddingRight > bounding.width) {
+      optimalX = bounding.width - styles.paddingRight - textWidth / 2
     } else {
-      rectX = x - rectWidth / 2
+      optimalX = x
     }
-    return { x: rectX, y: 0 }
+    return { x: optimalX, y: 0, text, align: 'center', baseline: 'top' }
   }
 }

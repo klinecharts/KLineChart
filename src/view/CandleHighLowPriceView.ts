@@ -123,16 +123,11 @@ export default class CandleHighLowPriceView extends ChildrenView {
       {
         x: textStartX,
         y,
-        text
-      },
-      {
-        color: styles.color,
-        size: styles.textSize,
-        family: styles.textWeight,
-        weight: styles.textWeight,
-        align: textAlign,
+        text,
+        algin: textAlign,
         baseline: 'middle'
-      }
+      },
+      styles
     )?.draw(ctx)
   }
 }

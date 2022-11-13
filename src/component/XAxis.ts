@@ -14,12 +14,12 @@
 
 import TypeOrNull from '../common/TypeOrNull'
 
-import AxisImp, { Extremum, Tick } from './Axis'
+import Axis, { Extremum, Tick } from './Axis'
 
-import { createFont, calcTextWidth } from '../common/utils/canvas'
+import { calcTextWidth } from '../common/utils/canvas'
 import { formatDate } from '../common/utils/format'
 
-export default class XAxis extends AxisImp {
+export default class XAxis extends Axis {
   protected calcExtremum (): Extremum {
     const chartStore = this.getParent().getChart().getChartStore()
     const { from, to } = chartStore.getTimeScaleStore().getVisibleRange()
@@ -39,9 +39,7 @@ export default class XAxis extends AxisImp {
     if (tickLength > 0) {
       const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
       const tickTextStyles = chartStore.getStyleOptions().xAxis.tickText
-      const measureCtx = this.getMeasureCtx()
-      measureCtx.font = createFont(tickTextStyles.size, tickTextStyles.weight, tickTextStyles.family)
-      const defaultLabelWidth = calcTextWidth(measureCtx, '00-00 00:00')
+      const defaultLabelWidth = calcTextWidth('00-00 00:00', tickTextStyles.size, tickTextStyles.weight, tickTextStyles.family)
       const pos = parseInt(ticks[0].value as string, 10)
       const x = this.convertToPixel(pos)
       let tickCountDif = 1

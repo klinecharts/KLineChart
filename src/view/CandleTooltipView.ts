@@ -23,7 +23,7 @@ import Indicator from '../component/Indicator'
 import IndicatorTooltipView, { TooltipData } from './IndicatorTooltipView'
 
 import { formatPrecision, formatBigNumber, formatDate } from '../common/utils/format'
-import { createFont, calcTextWidth } from '../common/utils/canvas'
+import { createFont } from '../common/utils/canvas'
 import { isArray, isString } from '../common/utils/typeChecks'
 
 export default class CandleTooltipView extends IndicatorTooltipView {
@@ -143,7 +143,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         ctx.font = createFont(baseTextSize, baseTextWeight, baseTextFamily)
         baseValues.forEach(value => {
           const text = `${value.title}${value.value}`
-          const labelWidth = calcTextWidth(ctx, text) + baseTextMarginLeft + baseTextMarginRight
+          const labelWidth = ctx.measureText(text).width + baseTextMarginLeft + baseTextMarginRight
           maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
         })
         rectHeight += ((baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseValues.length)
@@ -166,7 +166,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           indicatorValues.push(values)
           values.forEach(value => {
             const text = `${value.title}${value.value}`
-            const labelWidth = calcTextWidth(ctx, text) + indicatorTextMarginLeft + indicatorTextMarginRight
+            const labelWidth = ctx.measureText(text).width + indicatorTextMarginLeft + indicatorTextMarginRight
             maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
             rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize)
           })

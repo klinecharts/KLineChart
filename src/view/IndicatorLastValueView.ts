@@ -20,7 +20,6 @@ import View from './View'
 
 import { formatPrecision, formatBigNumber } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
-import { createFont, calcTextWidth } from '../common/utils/canvas'
 
 export default class IndicatorLastValueView extends View<YAxis> {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
@@ -50,51 +49,28 @@ export default class IndicatorLastValueView extends View<YAxis> {
                 text = formatBigNumber(text)
               }
 
-              ctx.font = createFont(lastValueMarkTextStyles.size, lastValueMarkTextStyles.weight, lastValueMarkTextStyles.family)
-              const paddingLeft = lastValueMarkTextStyles.paddingLeft
-              const paddingRight = lastValueMarkTextStyles.paddingRight
-              const paddingTop = lastValueMarkTextStyles.paddingTop
-              const paddingBottom = lastValueMarkTextStyles.paddingBottom
-              const textSize = lastValueMarkTextStyles.size
-
-              const rectWidth = calcTextWidth(ctx, text) + paddingLeft + paddingRight
-              const rectHeight = paddingTop + textSize + paddingBottom
-
-              let rectStartX: number
+              let x: number
+              let textAlign: CanvasTextAlign
               if (yAxis.isFromZero()) {
-                rectStartX = 0
+                x = 0
+                textAlign = 'left'
               } else {
-                rectStartX = bounding.width - rectWidth
+                x = bounding.width
+                textAlign = 'right'
               }
 
-              const backgroundColor = figureStyles.color
               this.createFigure(
-                'rect',
+                'rectText',
                 {
-                  x: rectStartX,
-                  y: y - paddingTop - textSize / 2,
-                  width: rectWidth,
-                  height: rectHeight
-                },
-                {
-                  color: backgroundColor,
-                  borderRadius: lastValueMarkTextStyles.borderRadius
-                }
-              )?.draw(ctx)
-
-              this.createFigure(
-                'text',
-                {
-                  x: rectStartX + paddingLeft,
+                  x,
                   y,
-                  text
+                  text,
+                  align: textAlign,
+                  baseline: 'middle'
                 },
                 {
-                  color: lastValueMarkTextStyles.color,
-                  size: textSize,
-                  family: lastValueMarkTextStyles.family,
-                  weight: lastValueMarkTextStyles.weight,
-                  baseline: 'middle'
+                  ...lastValueMarkTextStyles,
+                  backgroundColor: figureStyles.color
                 }
               )?.draw(ctx)
             }

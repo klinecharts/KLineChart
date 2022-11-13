@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+let measureCtx: CanvasRenderingContext2D
+
 /**
  * 获取屏幕比
  * @param canvas
@@ -27,32 +29,16 @@ export function createFont (size?: number, weight?: string | number, family?: st
 
 /**
  * 测量文字的宽度
- * @param ctx
  * @param text
  * @returns {number}
  */
-export function calcTextWidth (ctx: CanvasRenderingContext2D, text: string): number {
-  return Math.round(ctx.measureText(text).width)
+export function calcTextWidth (text: string, size?: number, weight?: string | number, family?: string): number {
+  if (measureCtx === undefined) {
+    const canvas = document.createElement('canvas')
+    const pixelRatio = getPixelRatio(canvas)
+    measureCtx = canvas.getContext('2d') as CanvasRenderingContext2D
+    measureCtx.scale(pixelRatio, pixelRatio)
+  }
+  measureCtx.font = createFont(size, weight, family)
+  return Math.round(measureCtx.measureText(text).width)
 }
-
-// /**
-//  * 获取文字框宽度
-//  * @param ctx
-//  * @param text
-//  * @param options
-//  * @returns {number}
-//  */
-// export function getTextRectWidth (ctx, text, options) {
-//   ctx.font = createFont(options.size, options.weight, options.family)
-//   const textWidth = calcTextWidth(ctx, text)
-//   return options.paddingLeft + options.paddingRight + textWidth + (options.borderSize || 0) * 2
-// }
-
-// /**
-//  * 获取文字框高度
-//  * @param options
-//  * @returns {number}
-//  */
-// export function getTextRectHeight (options) {
-//   return options.paddingTop + options.paddingBottom + options.size + (options.borderSize || 0) * 2
-// }

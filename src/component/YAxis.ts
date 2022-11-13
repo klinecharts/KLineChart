@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import AxisImp, { Extremum, Tick } from './Axis'
+import Axis, { Extremum, Tick } from './Axis'
 
 import { IndicatorFigure } from './Indicator'
 
@@ -20,7 +20,7 @@ import { YAxisType } from '../common/Styles'
 
 import { isValid } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
-import { createFont, calcTextWidth } from '../common/utils/canvas'
+import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision, formatBigNumber } from '../common/utils/format'
 
 interface FiguresResult {
@@ -28,7 +28,7 @@ interface FiguresResult {
   result: any[]
 }
 
-export default class YAxis extends AxisImp {
+export default class YAxis extends Axis {
   protected calcExtremum (): Extremum {
     const parent = this.getParent()
     const chartStore = parent.getChart().getChartStore()
@@ -286,7 +286,6 @@ export default class YAxis extends AxisImp {
     if (width !== 'auto') {
       return width
     }
-    const measureCtx = this.getMeasureCtx()
     let yAxisWidth = 0
     if (yAxisStyles.show) {
       if (yAxisStyles.axisLine.show) {
@@ -297,9 +296,8 @@ export default class YAxis extends AxisImp {
       }
       if (yAxisStyles.tickText.show) {
         let textWidth = 0
-        measureCtx.font = createFont(yAxisStyles.tickText.size, yAxisStyles.tickText.weight, yAxisStyles.tickText.family)
         this.getTicks().forEach(tick => {
-          textWidth = Math.max(textWidth, calcTextWidth(measureCtx, tick.text))
+          textWidth = Math.max(textWidth, calcTextWidth(tick.text, yAxisStyles.tickText.size, yAxisStyles.tickText.weight, yAxisStyles.tickText.family))
         })
         yAxisWidth += (yAxisStyles.tickText.marginStart + yAxisStyles.tickText.marginEnd + textWidth)
       }
@@ -320,11 +318,6 @@ export default class YAxis extends AxisImp {
           shouldFormatBigNumber = tech.shouldFormatBigNumber
         }
       })
-      measureCtx.font = createFont(
-        crosshairStyles.horizontal.text.size,
-        crosshairStyles.horizontal.text.weight,
-        crosshairStyles.horizontal.text.family
-      )
       let precision = 2
       if (this.getType() !== YAxisType.PERCENTAGE) {
         if (this.isInCandle()) {
@@ -347,7 +340,12 @@ export default class YAxis extends AxisImp {
         crosshairStyles.horizontal.text.paddingLeft +
         crosshairStyles.horizontal.text.paddingRight +
         crosshairStyles.horizontal.text.borderSize * 2 +
-        calcTextWidth(measureCtx, valueText)
+        calcTextWidth(
+          valueText,
+          crosshairStyles.horizontal.text.size,
+          crosshairStyles.horizontal.text.weight,
+          crosshairStyles.horizontal.text.family
+        )
       )
     }
     return Math.max(yAxisWidth, crosshairVerticalTextWidth)

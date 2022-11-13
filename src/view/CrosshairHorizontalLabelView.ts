@@ -12,18 +12,19 @@
  * limitations under the License.
  */
 
-import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
-import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, PaddingTextStyle } from '../common/Styles'
+import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, StateRectTextStyle } from '../common/Styles'
 
 import Axis from '../component/Axis'
 import YAxis from '../component/YAxis'
 
+import { TextAttrs } from '../extension/figure/text'
+
 import ChartStore from '../store/ChartStore'
 
 import { formatBigNumber, formatPrecision } from '../common/utils/format'
-import { createFont, calcTextWidth } from '../common/utils/canvas'
+import { createFont } from '../common/utils/canvas'
 
 import View from './View'
 
@@ -42,47 +43,11 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
         if (directionStyles.show && textStyles.show) {
           const axis = pane.getAxisComponent()
           const text = this.getText(crosshair, chartStore, axis)
-
           ctx.font = createFont(textStyles.size, textStyles.weight, textStyles.family)
-          const textWidth = calcTextWidth(ctx, text)
-
-          const rectWidth = textStyles.paddingLeft + textStyles.paddingRight + textWidth + textStyles.borderSize * 2
-          const rectHeight = textStyles.paddingTop + textStyles.paddingBottom + textStyles.size + textStyles.borderSize * 2
-
-          const { x: rectX, y: rectY } = this.getRectCoordinate(
-            rectWidth, rectHeight, crosshair, bounding, axis, textStyles
-          )
-
           this.createFigure(
-            'rect',
-            {
-              x: rectX,
-              y: rectY,
-              width: rectWidth,
-              height: rectHeight
-            },
-            {
-              color: textStyles.backgroundColor,
-              borderColor: textStyles.borderColor,
-              borderSize: textStyles.borderSize,
-              borderRadius: textStyles.borderRadius
-            }
-          )?.draw(ctx)
-
-          this.createFigure(
-            'text',
-            {
-              x: rectX + textStyles.paddingLeft,
-              y: rectY + rectHeight / 2,
-              text
-            },
-            {
-              color: textStyles.color,
-              size: textStyles.size,
-              family: textStyles.family,
-              weight: textStyles.weight,
-              baseline: 'middle'
-            }
+            'rectText',
+            this.getTextAttrs(text, ctx.measureText(text).width, crosshair, bounding, axis, textStyles),
+            textStyles
           )?.draw(ctx)
         }
       }
@@ -127,18 +92,18 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     return text
   }
 
-  protected getRectCoordinate (rectWidth: number, rectHeight: number, crosshair: Crosshair, bounding: Bounding, axis: C, styles: Required<PaddingTextStyle>): Coordinate {
+  protected getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: C, styles: StateRectTextStyle): TextAttrs {
     const yAxis = axis as unknown as YAxis
-    let rectX: number
+    let x: number
+    let textAlign: CanvasTextAlign
     if (yAxis.isFromZero()) {
-      rectX = 0
+      x = 0
+      textAlign = 'left'
     } else {
-      rectX = bounding.width - rectWidth
+      x = bounding.width
+      textAlign = 'right'
     }
 
-    const y = crosshair.y as number
-    const rectY = y - styles.borderSize - styles.paddingTop - styles.size / 2
-
-    return { x: rectX, y: rectY }
+    return { x, y: crosshair.y as number, text, align: textAlign, baseline: 'middle' }
   }
 }

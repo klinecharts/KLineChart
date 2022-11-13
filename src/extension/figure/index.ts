@@ -21,10 +21,11 @@ import line from './line'
 import polygon from './polygon'
 import rect from './rect'
 import text from './text'
+import rectText from './rectText'
 
 const figures: { [key: string]: FigureConstructor } = {}
 
-const extensions = [circle, line, polygon, rect, text]
+const extensions = [circle, line, polygon, rect, text, rectText]
 extensions.forEach((figure: FigureTemplate) => {
   figures[figure.name] = FigureImp.extend(figure)
 })

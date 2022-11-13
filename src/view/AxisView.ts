@@ -43,9 +43,8 @@ export default abstract class AxisView<C extends Axis> extends View<C> {
       }
       if (styles.tickText.show) {
         const texts = this.createTickTexts(ticks, bounding, styles)
-        const textStyles = { ...styles.tickText, align: this.getTickTextAlign(), baseline: this.getTickTextBaseline() }
         texts.forEach(text => {
-          this.createFigure('text', text, textStyles)?.draw(ctx)
+          this.createFigure('text', text, styles.tickText)?.draw(ctx)
         })
       }
     }
@@ -56,7 +55,4 @@ export default abstract class AxisView<C extends Axis> extends View<C> {
   protected abstract createAxisLine (bounding: Bounding): LineAttrs
   protected abstract createTickLines (ticks: Tick[], bounding: Bounding, styles: AxisStyle): LineAttrs[]
   protected abstract createTickTexts (tick: Tick[], bounding: Bounding, styles: AxisStyle): TextAttrs[]
-
-  protected abstract getTickTextAlign (): CanvasTextAlign
-  protected abstract getTickTextBaseline (): CanvasTextBaseline
 }

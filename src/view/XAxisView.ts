@@ -55,15 +55,9 @@ export default class XAxisView extends AxisView<XAxis> {
     return ticks.map(tick => ({
       x: tick.coord,
       y: axisLineSize + tickLineLength + tickTickStyles.marginStart,
-      text: tick.text
+      text: tick.text,
+      align: 'center',
+      baseline: 'top'
     }))
-  }
-
-  protected getTickTextAlign (): CanvasTextAlign {
-    return 'center'
-  }
-
-  protected getTickTextBaseline (): CanvasTextBaseline {
-    return 'top'
   }
 }

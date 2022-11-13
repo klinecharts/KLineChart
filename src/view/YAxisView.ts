@@ -96,22 +96,13 @@ export default class YxisView extends AxisView<YAxis> {
         x -= tickLineStyles.length
       }
     }
+    const textAlign = this.getWidget().getPane().getAxisComponent().isFromZero() ? 'left' : 'right'
     return ticks.map(tick => ({
       x,
       y: tick.coord,
-      text: tick.text
+      text: tick.text,
+      align: textAlign,
+      baseline: 'middle'
     }))
-  }
-
-  protected getTickTextAlign (): CanvasTextAlign {
-    const yAxis = this.getWidget().getPane().getAxisComponent()
-    if (yAxis.isFromZero()) {
-      return 'left'
-    }
-    return 'right'
-  }
-
-  protected getTickTextBaseline (): CanvasTextBaseline {
-    return 'middle'
   }
 }

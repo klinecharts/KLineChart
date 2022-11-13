@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import PickPartial from '../common/PickPartial'
+import Point from '../common/Point'
 import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
@@ -22,19 +24,32 @@ import Axis from '../component/Axis'
 import XAxis from '../component/XAxis'
 import Overlay, { OverlayFigure } from '../component/Overlay'
 
+import { EventOverlayInfo } from '../store/OverlayStore'
+
 import OverlayVerticalTooltipView from './OverlayVerticalTooltipView'
 
 export default class OverlayHorizontalTooltipView extends OverlayVerticalTooltipView<XAxis> {
+  getCoordinate (point: PickPartial<Point, 'timestamp'>, axis: Axis): Coordinate {
+    return {
+      x: axis.convertToPixel(point.dataIndex),
+      y: 0
+    }
+  }
+
+  getFiguresDrawFlag (clickInstanceInfo: EventOverlayInfo): boolean {
+    return true
+  }
+
   getFigures (
     overlay: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,
     barSpace: BarSpace,
     precision: Precision,
+    dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
-    xAxis: Axis,
-    yAxis: Axis
+    axis: Axis
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createXAxisFigures({ overlay, coordinates, bounding, barSpace, precision, defaultStyles, xAxis, yAxis })
+    return overlay.createXAxisFigures({ overlay, coordinates, bounding, barSpace, precision, dateTimeFormat, defaultStyles, xAxis: axis as XAxis, yAxis: null }) ?? []
   }
 }

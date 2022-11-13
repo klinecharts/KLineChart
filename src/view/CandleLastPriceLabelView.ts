@@ -19,7 +19,6 @@ import View from './View'
 import YAxis from '../component/YAxis'
 
 import { formatPrecision } from '../common/utils/format'
-import { createFont, calcTextWidth } from '../common/utils/canvas'
 
 export default class CandleLastPriceLabelView extends View {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
@@ -56,50 +55,27 @@ export default class CandleLastPriceLabelView extends View {
           text = formatPrecision(close, precision.price)
         }
 
-        ctx.font = createFont(lastPriceMarkTextStyles.size, lastPriceMarkTextStyles.weight, lastPriceMarkTextStyles.family)
-        const paddingLeft = lastPriceMarkTextStyles.paddingLeft
-        const paddingRight = lastPriceMarkTextStyles.paddingRight
-        const paddingTop = lastPriceMarkTextStyles.paddingTop
-        const paddingBottom = lastPriceMarkTextStyles.paddingBottom
-        const textSize = lastPriceMarkTextStyles.size
-
-        const rectWidth = calcTextWidth(ctx, text) + paddingLeft + paddingRight
-        const rectHeight = paddingTop + textSize + paddingBottom
-
-        let rectX: number
+        let x: number
+        let textAlgin: CanvasTextAlign
         if (yAxis.isFromZero()) {
-          rectX = 0
+          x = 0
+          textAlgin = 'left'
         } else {
-          rectX = bounding.width - rectWidth
+          x = bounding.width
+          textAlgin = 'right'
         }
-
         this.createFigure(
-          'rect',
+          'rectText',
           {
-            x: rectX,
-            y: priceY - paddingTop - textSize / 2,
-            width: rectWidth,
-            height: rectHeight
-          },
-          {
-            color: backgroundColor,
-            borderRadius: lastPriceMarkTextStyles.borderRadius
-          }
-        )?.draw(ctx)
-
-        this.createFigure(
-          'text',
-          {
-            x: rectX + paddingLeft,
+            x,
             y: priceY,
-            text
+            text,
+            align: textAlgin,
+            baseline: 'middle'
           },
           {
-            color: lastPriceMarkTextStyles.color,
-            size: textSize,
-            family: lastPriceMarkTextStyles.family,
-            weight: lastPriceMarkTextStyles.weight,
-            baseline: 'middle'
+            ...lastPriceMarkTextStyles,
+            backgroundColor
           }
         )?.draw(ctx)
       }
