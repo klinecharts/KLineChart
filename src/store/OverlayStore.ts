@@ -23,6 +23,8 @@ import { getOverlayClass } from '../extension/overlay/index'
 
 import ChartStore from './ChartStore'
 
+import { PaneIdConstants } from '../pane/Pane'
+
 const OVERLAY_ID_PREFIX = 'overlay_'
 
 export interface ProgressOverlayInfo {
@@ -33,7 +35,7 @@ export interface ProgressOverlayInfo {
 
 export const enum EventOverlayInfoElementType {
   NONE = 'none',
-  POINT = 'poine',
+  POINT = 'point',
   OTHER = 'other'
 }
 
@@ -230,7 +232,14 @@ export default class OverlayStore {
    * @param paneId
    * @returns {{}}
    */
-  getInstances (paneId: string): OverlayImp[] {
+  getInstances (paneId?: string): OverlayImp[] {
+    if (paneId === undefined) {
+      let instances: OverlayImp[] = []
+      this._instances.forEach(paneInstances => {
+        instances = instances.concat(paneInstances)
+      })
+      return instances
+    }
     return this._instances.get(paneId) ?? []
   }
 
@@ -351,6 +360,7 @@ export default class OverlayStore {
         if (paneId !== info.paneId) {
           this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
         }
+        this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, PaneIdConstants.XAXIS)
       }
     }
   }

@@ -17,7 +17,9 @@ import { OverlayTemplate } from '../../component/Overlay'
 const horizontalStraightLine: OverlayTemplate = {
   name: 'horizontalStraightLine',
   totalStep: 2,
-  needPointFigure: true,
+  needDefaultPointFigure: true,
+  needDefaultXAxisFigure: true,
+  needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => {
     return [{
       type: 'line',

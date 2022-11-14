@@ -31,6 +31,7 @@ import verticalSegment from './verticalSegment'
 import verticalStraightLine from './verticalStraightLine'
 
 import simpleAnnotation from './simpleAnnotation'
+import simpleTag from './simpleTag'
 
 const overlays: { [key: string]: OverlayConstructor } = {}
 
@@ -38,7 +39,7 @@ const extensions = [
   fibonacciLine, horizontalRayLine, horizontalSegment, horizontalStraightLine,
   parallelStraightLine, priceChannelLine, priceLine, rayLine, segment,
   straightLine, verticalRayLine, verticalSegment, verticalStraightLine,
-  simpleAnnotation
+  simpleAnnotation, simpleTag
 ]
 
 extensions.forEach((template: OverlayTemplate) => {

@@ -19,7 +19,9 @@ import { OverlayTemplate } from '../../component/Overlay'
 const straightLine: OverlayTemplate = {
   name: 'straightLine',
   totalStep: 3,
-  needPointFigure: true,
+  needDefaultPointFigure: true,
+  needDefaultXAxisFigure: true,
+  needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => {
     if (coordinates.length === 2) {
       if (coordinates[0].x === coordinates[1].x) {

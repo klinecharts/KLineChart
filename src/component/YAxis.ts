@@ -16,7 +16,7 @@ import Axis, { Extremum, Tick } from './Axis'
 
 import { IndicatorFigure } from './Indicator'
 
-import { YAxisType } from '../common/Styles'
+import { YAxisType, YAxisPosition, CandleType } from '../common/Styles'
 
 import { isValid } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
@@ -73,7 +73,7 @@ export default class YAxis extends Axis {
     }
     const visibleDataList = chartStore.getVisibleDataList()
     const candleStyles = chartStore.getStyleOptions().candle
-    const isArea = candleStyles.type === 'area'
+    const isArea = candleStyles.type === CandleType.AREA
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
     visibleDataList.forEach(({ dataIndex, data }) => {
@@ -107,7 +107,7 @@ export default class YAxis extends Axis {
     const type = this.getType()
     let dif: number
     switch (type) {
-      case 'percentage': {
+      case YAxisType.PERCENTAGE: {
         const fromData = visibleDataList[0]?.data
         if (fromData?.close !== undefined) {
           min = (min - fromData.close) / fromData.close * 100
@@ -116,7 +116,7 @@ export default class YAxis extends Axis {
         dif = Math.pow(10, -2)
         break
       }
-      case 'log': {
+      case YAxisType.LOG: {
         min = log10(min)
         max = log10(max)
         dif = 0.05 * index10(-precision)
@@ -154,7 +154,7 @@ export default class YAxis extends Axis {
     let realMin: number
     let realMax: number
     let realRange: number
-    if (type === 'log') {
+    if (type === YAxisType.LOG) {
       realMin = index10(min)
       realMax = index10(max)
       realRange = Math.abs(realMax - realMin)
@@ -198,7 +198,12 @@ export default class YAxis extends Axis {
       const chartStore = this.getParent().getChart().getChartStore()
       return chartStore.getStyleOptions().yAxis.type
     }
-    return 'normal'
+    return YAxisType.NORMAL
+  }
+
+  getPosition (): string {
+    const chartStore = this.getParent().getChart().getChartStore()
+    return chartStore.getStyleOptions().yAxis.position
   }
 
   /**
@@ -222,8 +227,8 @@ export default class YAxis extends Axis {
     const yAxisStyles = chartStore.getStyleOptions().yAxis
     const inside = yAxisStyles.inside
     return (
-      (yAxisStyles.position === 'left' && inside) ||
-      (yAxisStyles.position === 'right' && !inside)
+      (yAxisStyles.position === YAxisPosition.LEFT && inside) ||
+      (yAxisStyles.position === YAxisPosition.RIGHT && !inside)
     )
   }
 
@@ -357,7 +362,7 @@ export default class YAxis extends Axis {
     const rate = this.isReverse() ? pixel / height : 1 - pixel / height
     const value = rate * range + min
     switch (this.getType()) {
-      case 'percentage': {
+      case YAxisType.PERCENTAGE: {
         const chartStore = this.getParent().getChart().getChartStore()
         const visibleDataList = chartStore.getVisibleDataList()
         const fromData = visibleDataList[0]?.data
@@ -366,7 +371,7 @@ export default class YAxis extends Axis {
         }
         return 0
       }
-      case 'log': {
+      case YAxisType.LOG: {
         return index10(value)
       }
       default: {
@@ -378,7 +383,7 @@ export default class YAxis extends Axis {
   convertToPixel (value: number): number {
     let v = 0
     switch (this.getType()) {
-      case 'percentage': {
+      case YAxisType.PERCENTAGE: {
         const chartStore = this.getParent().getChart().getChartStore()
         const visibleDataList = chartStore.getVisibleDataList()
         const fromData = visibleDataList[0]?.data
@@ -387,7 +392,7 @@ export default class YAxis extends Axis {
         }
         break
       }
-      case 'log': {
+      case YAxisType.LOG: {
         v = log10(value)
         break
       }

@@ -20,7 +20,9 @@ import { TextAttrs } from '../figure/text'
 const fibonacciLine: OverlayTemplate = {
   name: 'fibonacciLine',
   totalStep: 3,
-  needPointFigure: true,
+  needDefaultPointFigure: true,
+  needDefaultXAxisFigure: true,
+  needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding, overlay, precision }) => {
     const points = overlay.points
     if (coordinates.length > 0) {

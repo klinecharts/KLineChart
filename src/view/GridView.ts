@@ -15,7 +15,7 @@
 import XAxis from '../component/XAxis'
 import YAxis from '../component/YAxis'
 
-import { XAXIS_PANE_ID } from '../pane/XAxisPane'
+import { PaneIdConstants } from '../pane/Pane'
 
 import View from './View'
 
@@ -33,7 +33,7 @@ export default class GridView extends View<YAxis> {
       const horizontalStyles = gridStyles.horizontal
       const horizontalShow = horizontalStyles.show
       if (horizontalShow) {
-        const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as XAxis
+        const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as XAxis
         xAxis.getTicks().forEach(tick => {
           this.createFigure(
             'line',

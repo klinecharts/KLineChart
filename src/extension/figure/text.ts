@@ -54,7 +54,7 @@ export function getTextRect (attrs: TextAttrs, styles: Partial<RectTextStyle>, t
     case 'bottom':
     case 'ideographic':
     case 'alphabetic': {
-      startY = y - textHeight - paddingTop
+      startY = y - textHeight - paddingTop - paddingBottom
       break
     }
     default: {

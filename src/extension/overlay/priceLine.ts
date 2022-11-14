@@ -17,7 +17,9 @@ import { OverlayTemplate } from '../../component/Overlay'
 const priceLine: OverlayTemplate = {
   name: 'priceLine',
   totalStep: 2,
-  needPointFigure: true,
+  needDefaultPointFigure: true,
+  needDefaultXAxisFigure: true,
+  needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding, precision, overlay }) => {
     const { value } = (overlay.points)[0]
     return [

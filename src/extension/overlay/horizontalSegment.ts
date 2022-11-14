@@ -19,7 +19,9 @@ import { LineAttrs } from '../figure/line'
 const horizontalSegment: OverlayTemplate = {
   name: 'horizontalSegment',
   totalStep: 3,
-  needPointFigure: true,
+  needDefaultPointFigure: true,
+  needDefaultXAxisFigure: true,
+  needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates }) => {
     const lines: LineAttrs[] = []
     if (coordinates.length === 2) {

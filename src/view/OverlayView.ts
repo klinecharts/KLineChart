@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import TypeOrNull from '../common/TypeOrNull'
 import PickPartial from '../common/PickPartial'
 import Coordinate from '../common/Coordinate'
 import Point from '../common/Point'
@@ -28,11 +29,10 @@ import XAxis from '../component/XAxis'
 import YAxis from '../component/YAxis'
 import Overlay, { OverlayFigure, OverlayMode } from '../component/Overlay'
 
-import { EventOverlayInfo, EventOverlayInfoElementType } from '../store/OverlayStore'
+import OverlayStore, { ProgressOverlayInfo, EventOverlayInfo, EventOverlayInfoElementType } from '../store/OverlayStore'
 import TimeScaleStore from '../store/TimeScaleStore'
 
-import { CANDLE_PANE_ID } from '../pane/CandlePane'
-import { XAXIS_PANE_ID } from '../pane/XAxisPane'
+import { PaneIdConstants } from '../pane/Pane'
 
 import Widget from '../widget/Widget'
 
@@ -130,13 +130,13 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const chart = pane.getChart()
     const paneId = pane.getId()
     const yAxis = pane.getAxisComponent()
-    const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as Axis
+    const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as Axis
     const dataIndex = xAxis.convertFromPixel(coordinate.x)
     const timeScaleStore = chart.getChartStore().getTimeScaleStore()
     const timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
 
     let value = yAxis.convertFromPixel(coordinate.y)
-    if (overlay.mode !== OverlayMode.NORMAL && paneId === CANDLE_PANE_ID) {
+    if (overlay.mode !== OverlayMode.NORMAL && paneId === PaneIdConstants.CANDLE) {
       const kLineData = timeScaleStore.getDataByDataIndex(dataIndex)
       if (kLineData !== null) {
         if (value > kLineData.high) {
@@ -199,9 +199,10 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
+    const paneId = pane.getId()
     const chart = pane.getChart()
-    const yAxis = pane.getAxisComponent() as unknown as YAxis
-    const xAxis = chart.getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as XAxis
+    const yAxis = pane.getAxisComponent() as unknown as TypeOrNull<YAxis>
+    const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as TypeOrNull<XAxis>
     const bounding = widget.getBounding()
     const chartStore = chart.getChartStore()
     const timeScaleStore = chartStore.getTimeScaleStore()
@@ -212,7 +213,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const overlayStore = chartStore.getOverlayStore()
     const hoverInstanceInfo = overlayStore.getHoverInstanceInfo()
     const clickInstanceInfo = overlayStore.getClickInstanceInfo()
-    const overlays = overlayStore.getInstances(pane.getId())
+    const overlays = this.getCompleteOverlays(overlayStore, paneId)
     overlays.forEach(overlay => {
       this._drawOverlay(
         ctx, overlay, bounding, barSpace, precision,
@@ -221,12 +222,15 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       )
     })
     const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
-    if (progressInstanceInfo !== null && progressInstanceInfo.paneId === pane.getId()) {
-      this._drawOverlay(
-        ctx, progressInstanceInfo.instance, bounding, barSpace,
-        precision, dateTimeFormat, defaultStyles, xAxis, yAxis,
-        hoverInstanceInfo, clickInstanceInfo, timeScaleStore
-      )
+    if (progressInstanceInfo !== null) {
+      const overlay = this.getProgressOverlay(progressInstanceInfo, paneId)
+      if (overlay !== null) {
+        this._drawOverlay(
+          ctx, overlay, bounding, barSpace,
+          precision, dateTimeFormat, defaultStyles, xAxis, yAxis,
+          hoverInstanceInfo, clickInstanceInfo, timeScaleStore
+        )
+      }
     }
   }
 
@@ -238,8 +242,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
-    xAxis: XAxis,
-    yAxis: YAxis,
+    xAxis: TypeOrNull<XAxis>,
+    yAxis: TypeOrNull<YAxis>,
     hoverInstanceInfo: EventOverlayInfo,
     clickInstanceInfo: EventOverlayInfo,
     timeScaleStore: TimeScaleStore
@@ -251,24 +255,90 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         dataIndex = timeScaleStore.timestampToDataIndex(point.timestamp)
       }
       return {
-        x: xAxis.convertToPixel(dataIndex),
-        y: yAxis.convertToPixel(point.value)
+        x: xAxis?.convertToPixel(dataIndex) ?? 0,
+        y: yAxis?.convertToPixel(point.value) ?? 0
       }
     })
-    if (!overlay.isStart() && coordinates.length > 0) {
-      const figures = new Array<OverlayFigure>().concat(overlay.createPointFigures({ overlay, coordinates, bounding, barSpace, precision, dateTimeFormat, defaultStyles, xAxis, yAxis }))
-      figures.forEach(({ type, styles, attrs, isCheckEvent }) => {
-        const attrsArray = [].concat(attrs)
-        attrsArray.forEach((ats, index) => {
-          const evnets = (isCheckEvent ?? true) ? this._elementEvents(overlay, EventOverlayInfoElementType.OTHER, index) : undefined
-          const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
-          this.createFigure(
-            type, ats, ss, evnets
-          )?.draw(ctx)
-        })
-      })
+    if (coordinates.length > 0) {
+      const figures = new Array<OverlayFigure>().concat(
+        this.getFigures(
+          overlay, coordinates, bounding, barSpace, precision, dateTimeFormat, defaultStyles, xAxis, yAxis
+        )
+      )
+      this.drawFigures(
+        ctx,
+        overlay,
+        figures,
+        defaultStyles
+      )
     }
-    if (overlay.needPointFigure) {
+    this.drawDefaultFigures(
+      ctx,
+      overlay,
+      coordinates,
+      bounding,
+      precision,
+      dateTimeFormat,
+      defaultStyles,
+      xAxis,
+      yAxis,
+      hoverInstanceInfo,
+      clickInstanceInfo
+    )
+  }
+
+  protected drawFigures (ctx: CanvasRenderingContext2D, overlay: Overlay, figures: OverlayFigure[], defaultStyles: OverlayStyle): void {
+    figures.forEach(({ type, styles, attrs, ignoreEvent }, index) => {
+      const attrsArray = [].concat(attrs)
+      attrsArray.forEach(ats => {
+        const evnets = (ignoreEvent === undefined || !ignoreEvent) ? this._elementEvents(overlay, EventOverlayInfoElementType.OTHER, index) : undefined
+        const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
+        this.createFigure(
+          type, ats, ss, evnets
+        )?.draw(ctx)
+      })
+    })
+  }
+
+  protected getCompleteOverlays (overlayStore: OverlayStore, paneId: string): Overlay[] {
+    return overlayStore.getInstances(paneId)
+  }
+
+  protected getProgressOverlay (info: ProgressOverlayInfo, paneId: string): TypeOrNull<Overlay> {
+    if (info.paneId === paneId) {
+      return info.instance
+    }
+    return null
+  }
+
+  protected getFigures (
+    overlay: Overlay,
+    coordinates: Coordinate[],
+    bounding: Bounding,
+    barSpace: BarSpace,
+    precision: Precision,
+    dateTimeFormat: Intl.DateTimeFormat,
+    defaultStyles: OverlayStyle,
+    xAxis: TypeOrNull<XAxis>,
+    yAxis: TypeOrNull<YAxis>
+  ): OverlayFigure | OverlayFigure[] {
+    return overlay.createPointFigures?.({ overlay, coordinates, bounding, barSpace, precision, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+  }
+
+  protected drawDefaultFigures (
+    ctx: CanvasRenderingContext2D,
+    overlay: Overlay,
+    coordinates: Coordinate[],
+    bounding: Bounding,
+    precision: Precision,
+    dateTimeFormat: Intl.DateTimeFormat,
+    defaultStyles: OverlayStyle,
+    xAxis: TypeOrNull<XAxis>,
+    yAxis: TypeOrNull<YAxis>,
+    hoverInstanceInfo: EventOverlayInfo,
+    clickInstanceInfo: EventOverlayInfo
+  ): void {
+    if (overlay.needDefaultPointFigure) {
       if (
         (hoverInstanceInfo.instance?.id === overlay.id && hoverInstanceInfo.elementType !== EventOverlayInfoElementType.NONE) ||
         (clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.elementType !== EventOverlayInfoElementType.NONE)

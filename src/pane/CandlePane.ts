@@ -21,9 +21,6 @@ import SeparatorWidget from '../widget/SeparatorWidget'
 import IndicatorPane from './IndicatorPane'
 import YAxis from '../component/YAxis'
 
-// 蜡烛图窗口id
-export const CANDLE_PANE_ID = 'candle_pane'
-
 export default class CandlePane extends IndicatorPane {
   getName (): string {
     return 'candle'

@@ -19,10 +19,10 @@ import { Styles, YAxisPosition } from './common/Styles'
 
 import ChartStore from './store/ChartStore'
 
-import Pane, { PaneOptions, PANE_DEFAULT_HEIGHT } from './pane/Pane'
-import CandlePane, { CANDLE_PANE_ID } from './pane/CandlePane'
-import IndicatorPane, { INDICATOR_PANE_ID_PREFIX } from './pane/IndicatorPane'
-import XAxisPane, { XAXIS_PANE_ID } from './pane/XAxisPane'
+import Pane, { PaneOptions, PANE_DEFAULT_HEIGHT, PaneIdConstants } from './pane/Pane'
+import CandlePane from './pane/CandlePane'
+import IndicatorPane from './pane/IndicatorPane'
+import XAxisPane from './pane/XAxisPane'
 
 import Axis from './component/Axis'
 
@@ -51,8 +51,8 @@ export default class ChartInternal {
   constructor (container: HTMLElement, styleOptions?: DeepPartial<Styles>) {
     this._initContainer(container)
     this._chartStore = new ChartStore(this, styleOptions)
-    this._xAxisPane = new XAxisPane(this._chartContainer, this, XAXIS_PANE_ID)
-    this._panes.set(CANDLE_PANE_ID, new CandlePane(this._chartContainer, this, CANDLE_PANE_ID))
+    this._xAxisPane = new XAxisPane(this._chartContainer, this, PaneIdConstants.XAXIS)
+    this._panes.set(PaneIdConstants.CANDLE, new CandlePane(this._chartContainer, this, PaneIdConstants.CANDLE))
     this.adjustPaneViewport(true, true, true)
   }
 
@@ -151,7 +151,7 @@ export default class ChartInternal {
     }
     let indicatorPaneTotalHeight = 0
     this._panes.forEach(pane => {
-      if (pane.getId() !== CANDLE_PANE_ID) {
+      if (pane.getId() !== PaneIdConstants.CANDLE) {
         let paneHeight = pane.getBounding().height
         const paneMinHeight = pane.getOptions().minHeight
         if (paneHeight < paneMinHeight) {
@@ -168,7 +168,7 @@ export default class ChartInternal {
     })
 
     const candlePaneHeight = paneExcludeXAxisHeight - indicatorPaneTotalHeight
-    this._panes.get(CANDLE_PANE_ID)?.setBounding({ height: candlePaneHeight })
+    this._panes.get(PaneIdConstants.CANDLE)?.setBounding({ height: candlePaneHeight })
 
     let top = 0
     this._panes.forEach(pane => {
@@ -293,7 +293,7 @@ export default class ChartInternal {
    * @returns
    */
   getPaneById (paneId: string): TypeOrNull<Pane<Axis>> {
-    if (paneId === XAXIS_PANE_ID) {
+    if (paneId === PaneIdConstants.XAXIS) {
       return this._xAxisPane
     }
     return this._panes.get(paneId) ?? null
@@ -309,7 +309,7 @@ export default class ChartInternal {
     const removed = indicatorStore.removeInstance(paneId, name)
     if (removed) {
       let shouldMeasureHeight = false
-      if (paneId !== CANDLE_PANE_ID) {
+      if (paneId !== PaneIdConstants.CANDLE) {
         if (!indicatorStore.hasInstances(paneId)) {
           const deletePane = this._panes.get(paneId)
           if (deletePane !== undefined) {
@@ -341,7 +341,7 @@ export default class ChartInternal {
         this.setPaneOptions(paneOptions, this._panes.get(paneId)?.getAxisComponent().buildTicks(true))
       })
     } else {
-      paneId = paneOptions?.id ?? createId(INDICATOR_PANE_ID_PREFIX)
+      paneId = paneOptions?.id ?? createId(PaneIdConstants.INDICATOR)
       const pane = new IndicatorPane(this._chartContainer, this, paneId, Array.from(this._panes.values()).pop() as unknown as Pane<Axis>)
       const height = paneOptions?.height ?? PANE_DEFAULT_HEIGHT
       pane.setBounding({ height })
@@ -370,7 +370,7 @@ export default class ChartInternal {
    * @param forceShouldAdjust
    */
   setPaneOptions (options: PaneOptions, forceShouldAdjust?: boolean): void {
-    if (options.id !== CANDLE_PANE_ID) {
+    if (options.id !== PaneIdConstants.CANDLE) {
       const pane = this._panes.get(options.id)
       if (pane !== undefined) {
         let shouldAdjust = forceShouldAdjust ?? false

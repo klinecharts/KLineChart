@@ -17,7 +17,9 @@ import { OverlayTemplate } from '../../component/Overlay'
 const horizontalRayLine: OverlayTemplate = {
   name: 'horizontalRayLine',
   totalStep: 3,
-  needPointFigure: true,
+  needDefaultPointFigure: true,
+  needDefaultXAxisFigure: true,
+  needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => {
     const coordinate = { x: 0, y: coordinates[0].y }
     if (coordinates[1] !== undefined && coordinates[0].x < coordinates[1].x) {

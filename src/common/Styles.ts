@@ -297,10 +297,10 @@ const defaultCandle: CandleStyle = {
         show: true,
         style: PolygonType.FILL,
         size: 12,
-        paddingLeft: 2,
-        paddingTop: 2,
-        paddingRight: 2,
-        paddingBottom: 2,
+        paddingLeft: 4,
+        paddingTop: 4,
+        paddingRight: 4,
+        paddingBottom: 4,
         borderStyle: LineType.SOLID,
         borderSize: 1,
         borderDashedValue: [2, 2],
@@ -432,10 +432,10 @@ const defaultIndicator: IndicatorStyle = {
       borderStyle: LineType.SOLID,
       borderSize: 1,
       borderDashedValue: [2, 2],
-      paddingLeft: 3,
-      paddingTop: 2,
-      paddingRight: 3,
-      paddingBottom: 2,
+      paddingLeft: 4,
+      paddingTop: 4,
+      paddingRight: 4,
+      paddingBottom: 4,
       borderRadius: 2
     }
   },
@@ -641,10 +641,10 @@ const defaultCrosshair: CrosshairStyle = {
       borderSize: 1,
       borderColor: '#686D76',
       borderRadius: 2,
-      paddingLeft: 3,
-      paddingRight: 3,
-      paddingTop: 3,
-      paddingBottom: 3,
+      paddingLeft: 4,
+      paddingRight: 4,
+      paddingTop: 4,
+      paddingBottom: 4,
       backgroundColor: '#686D76'
     }
   },
@@ -669,10 +669,10 @@ const defaultCrosshair: CrosshairStyle = {
       borderSize: 1,
       borderRadius: 2,
       borderColor: '#686D76',
-      paddingLeft: 3,
-      paddingRight: 3,
-      paddingTop: 3,
-      paddingBottom: 3,
+      paddingLeft: 4,
+      paddingRight: 4,
+      paddingTop: 4,
+      paddingBottom: 4,
       backgroundColor: '#686D76'
     }
   }
@@ -737,7 +737,7 @@ const defaultOverlay: OverlayStyle = {
   },
   polygon: {
     style: PolygonType.FILL,
-    color: 'rgba(63, 138, 169, 0.25)',
+    color: '#3f8aa9',
     borderColor: '#3f8aa9',
     borderSize: 1,
     borderStyle: LineType.SOLID,
@@ -774,10 +774,10 @@ const defaultOverlay: OverlayStyle = {
     borderSize: 1,
     borderRadius: 2,
     borderColor: '#3f8aa9',
-    paddingLeft: 3,
-    paddingRight: 3,
-    paddingTop: 3,
-    paddingBottom: 3,
+    paddingLeft: 4,
+    paddingRight: 4,
+    paddingTop: 4,
+    paddingBottom: 4,
     backgroundColor: '#3f8aa9'
   }
 }

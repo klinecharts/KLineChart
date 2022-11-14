@@ -17,7 +17,9 @@ import { OverlayTemplate } from '../../component/Overlay'
 const verticalRayLine: OverlayTemplate = {
   name: 'verticalRayLine',
   totalStep: 3,
-  needPointFigure: true,
+  needDefaultPointFigure: true,
+  needDefaultXAxisFigure: true,
+  needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => {
     if (coordinates.length === 2) {
       const coordinate = { x: coordinates[0].x, y: 0 }

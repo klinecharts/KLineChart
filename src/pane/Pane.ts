@@ -44,6 +44,12 @@ export const PANE_MIN_HEIGHT = 30
 
 export const PANE_DEFAULT_HEIGHT = 100
 
+export const PaneIdConstants = {
+  CANDLE: 'canle_pane',
+  INDICATOR: 'indcator_pane_',
+  XAXIS: 'xaxis_pane'
+}
+
 export default abstract class Pane<C extends Axis> implements Updater {
   private _container: HTMLElement
   private _seriesContiainer: HTMLElement

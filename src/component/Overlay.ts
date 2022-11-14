@@ -24,7 +24,6 @@ import Precision from '../common/Precision'
 import { OverlayStyle } from '../common/Styles'
 
 import { clone } from '../common/utils/typeChecks'
-import { formatPrecision, formatDate } from '../common/utils/format'
 
 import TimeScaleStore from '../store/TimeScaleStore'
 
@@ -50,7 +49,7 @@ export interface OverlayFigure {
   type: string
   attrs: any | any[]
   styles?: any
-  isCheckEvent?: boolean
+  ignoreEvent?: boolean
 }
 
 export interface OverlayCreateFiguresCallbackParams {
@@ -75,14 +74,16 @@ export interface Overlay {
   totalStep: number
   currentStep: number
   lock: boolean
-  needPointFigure: boolean
+  needDefaultPointFigure: boolean
+  needDefaultXAxisFigure: boolean
+  needDefaultYAxisFigure: boolean
   mode: OverlayMode
   points: Array<PickPartial<Point, 'timestamp'>>
   extendData: any
   styles: TypeOrNull<DeepPartial<OverlayStyle>>
-  createPointFigures: OverlayCreateFiguresCallback
-  createXAxisFigures: OverlayCreateFiguresCallback
-  createYAxisFigures: OverlayCreateFiguresCallback
+  createPointFigures: TypeOrNull<OverlayCreateFiguresCallback>
+  createXAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>
+  createYAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>
   performEventPressedMove: TypeOrNull<(params: OverlayPerformEventParams) => void>
   performEventMoveForDrawing: TypeOrNull<(params: OverlayPerformEventParams) => void>
   onDrawStart: TypeOrNull<OverlayEventCallback>
@@ -110,12 +111,17 @@ export default abstract class OverlayImp implements Overlay {
   name: string
   totalStep: number
   currentStep: number = OVERLAY_DRAW_STEP_START
-  needPointFigure: boolean
+  needDefaultPointFigure: boolean
+  needDefaultXAxisFigure: boolean
+  needDefaultYAxisFigure: boolean
   lock: boolean
   mode: OverlayMode
   points: Array<PickPartial<Point, 'timestamp'>> = []
   extendData: any
   styles: TypeOrNull<DeepPartial<OverlayStyle>>
+  createPointFigures: TypeOrNull<OverlayCreateFiguresCallback>
+  createXAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>
+  createYAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>
   performEventPressedMove: TypeOrNull<(params: OverlayPerformEventParams) => void>
   performEventMoveForDrawing: TypeOrNull<(params: OverlayPerformEventParams) => void>
   onDrawStart: TypeOrNull<OverlayEventCallback>
@@ -135,7 +141,10 @@ export default abstract class OverlayImp implements Overlay {
 
   constructor (overlay: OverlayTemplate) {
     const {
-      name, totalStep, lock, needPointFigure, mode, extendData, styles,
+      mode, extendData, styles,
+      name, totalStep, lock,
+      needDefaultPointFigure, needDefaultXAxisFigure, needDefaultYAxisFigure,
+      createPointFigures, createXAxisFigures, createYAxisFigures,
       performEventPressedMove, performEventMoveForDrawing,
       onDrawStart, onDrawing, onDrawEnd,
       onClick, onRightClick, onPressedMove,
@@ -145,11 +154,16 @@ export default abstract class OverlayImp implements Overlay {
     this.name = name
     this.totalStep = (totalStep === undefined || totalStep < 2) ? 1 : totalStep
     this.lock = lock ?? false
-    this.needPointFigure = needPointFigure ?? false
+    this.needDefaultPointFigure = needDefaultPointFigure ?? false
+    this.needDefaultXAxisFigure = needDefaultXAxisFigure ?? false
+    this.needDefaultYAxisFigure = needDefaultYAxisFigure ?? false
     this.mode = mode ?? OverlayMode.NORMAL
     this.points = []
     this.extendData = extendData
     this.styles = styles ?? null
+    this.createPointFigures = createPointFigures ?? null
+    this.createXAxisFigures = createXAxisFigures ?? null
+    this.createYAxisFigures = createYAxisFigures ?? null
     this.performEventPressedMove = performEventPressedMove ?? null
     this.performEventMoveForDrawing = performEventMoveForDrawing ?? null
     this.onDrawStart = onDrawStart ?? null
@@ -435,77 +449,10 @@ export default abstract class OverlayImp implements Overlay {
     }
   }
 
-  createPointFigures (params: OverlayCreateFiguresCallbackParams): OverlayFigure | OverlayFigure[] {
-    return []
-  }
-
-  createXAxisFigures (params: OverlayCreateFiguresCallbackParams): OverlayFigure | OverlayFigure[] {
-    const { overlay, coordinates, bounding, dateTimeFormat } = params
-    const figures: OverlayFigure[] = []
-    let leftX = Number.MAX_SAFE_INTEGER
-    let rightX = Number.MIN_SAFE_INTEGER
-    coordinates.forEach((coordinate, index) => {
-      leftX = Math.min(leftX, coordinate.x)
-      rightX = Math.max(rightX, coordinate.x)
-      const point = overlay.points[index]
-      let text = 'n/a'
-      if (point.timestamp !== undefined) {
-        text = formatDate(dateTimeFormat, point.timestamp, 'YYYY-MM-DD hh:mm')
-      }
-      figures.push({ type: 'rectText', attrs: { x: coordinate.x, y: 0, text, align: 'center' } })
-    })
-
-    if (coordinates.length > 1) {
-      figures.unshift({ type: 'rect', attrs: { x: leftX, y: 0, width: rightX - leftX, height: bounding.height } })
-    }
-    return figures
-  }
-
-  createYAxisFigures (params: OverlayCreateFiguresCallbackParams): OverlayFigure | OverlayFigure[] {
-    const { overlay, coordinates, bounding, precision, yAxis } = params
-    const figures: OverlayFigure[] = []
-    let topY = Number.MAX_SAFE_INTEGER
-    let bottomY = Number.MIN_SAFE_INTEGER
-    const isFromZero = yAxis?.isFromZero() ?? false
-    const textAlign = isFromZero ? 'left' : 'right'
-    coordinates.forEach((coordinate, index) => {
-      topY = Math.min(topY, coordinate.y)
-      bottomY = Math.max(bottomY, coordinate.y)
-      const point = overlay.points[index]
-      const text = formatPrecision(point.value, precision.price)
-      figures.push({ type: 'rectText', attrs: { x: 0, y: coordinate.y, text, align: textAlign, baseline: 'middle' } })
-    })
-    if (coordinates.length > 1) {
-      figures.unshift({ type: 'rect', attrs: { x: 0, y: topY, width: bounding.width, height: bottomY - topY } })
-    }
-    return figures
-  }
-
   static extend (template: OverlayTemplate): OverlayConstructor {
     class Custom extends OverlayImp {
       constructor () {
         super(template)
-      }
-
-      createPointFigures (params: OverlayCreateFiguresCallbackParams): OverlayFigure | OverlayFigure[] {
-        if (template.createPointFigures !== undefined) {
-          return template.createPointFigures(params)
-        }
-        return super.createPointFigures(params)
-      }
-
-      createXAxisFigures (params: OverlayCreateFiguresCallbackParams): OverlayFigure | OverlayFigure[] {
-        if (template.createXAxisFigures !== undefined) {
-          return template.createXAxisFigures(params)
-        }
-        return super.createXAxisFigures(params)
-      }
-
-      createYAxisFigures (params: OverlayCreateFiguresCallbackParams): OverlayFigure | OverlayFigure[] {
-        if (template.createYAxisFigures !== undefined) {
-          return template.createYAxisFigures(params)
-        }
-        return super.createYAxisFigures(params)
       }
     }
     return Custom

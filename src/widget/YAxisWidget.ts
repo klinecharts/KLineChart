@@ -23,14 +23,14 @@ import YAxis from '../component/YAxis'
 import YAxisView from '../view/YAxisView'
 import CandleLastPriceLabelView from '../view/CandleLastPriceLabelView'
 import IndicatorLastValueView from '../view/IndicatorLastValueView'
-import OverlayVerticalTooltipView from '../view/OverlayVerticalTooltipView'
+import OverlayYAxisView from '../view/OverlayYAxisView'
 import CrosshairHorizontalLabelView from '../view/CrosshairHorizontalLabelView'
 
 export default class YAxisWidget extends DrawWidget<YAxis> {
   private readonly _yAxisView = new YAxisView(this)
   private readonly _candleLastPriceLabelView = new CandleLastPriceLabelView(this)
   private readonly _indicatorLastValueView = new IndicatorLastValueView(this)
-  private readonly _overlayVerticalTooltipView = new OverlayVerticalTooltipView(this)
+  private readonly _overlayYAxisView = new OverlayYAxisView(this)
   private readonly _crosshairHorizontalLabelView = new CrosshairHorizontalLabelView(this)
 
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
@@ -54,7 +54,7 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
   }
 
   protected updateOverlay (ctx: CanvasRenderingContext2D): void {
-    this._overlayVerticalTooltipView.draw(ctx)
+    this._overlayYAxisView.draw(ctx)
     this._crosshairHorizontalLabelView.draw(ctx)
   }
 }

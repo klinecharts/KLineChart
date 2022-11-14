@@ -23,11 +23,9 @@ import { getIndicatorClass } from './extension/indicator/index'
 import { Indicator, IndicatorCreate } from './component/Indicator'
 import { getOverlayClass } from './extension/overlay/index'
 import { Overlay, OverlayCreate } from './component/Overlay'
-import { PaneOptions } from './pane/Pane'
+import { PaneOptions, PaneIdConstants } from './pane/Pane'
 
 import ChartInternal from './ChartInternal'
-import { CANDLE_PANE_ID } from './pane/CandlePane'
-import { XAXIS_PANE_ID } from './pane/XAxisPane'
 
 import { clone, isString } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
@@ -112,8 +110,8 @@ export default class Chart {
    */
   setTimezone (timezone: string): Chart {
     this._internal.getChartStore().getTimeScaleStore().setTimezone(timezone)
-    this._internal.getPaneById(XAXIS_PANE_ID)?.getAxisComponent().buildTicks(true)
-    this._internal.updatePane(UpdateLevel.DRAWER, XAXIS_PANE_ID)
+    this._internal.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent().buildTicks(true)
+    this._internal.updatePane(UpdateLevel.DRAWER, PaneIdConstants.XAXIS)
     return this
   }
 
@@ -318,7 +316,7 @@ export default class Chart {
     }
     let appointPaneFlag = true
     if (paneId === undefined || this._internal.getPaneById(paneId) === null) {
-      paneId = CANDLE_PANE_ID
+      paneId = PaneIdConstants.CANDLE
       appointPaneFlag = false
     }
     const id = this._internal.getChartStore().getOverlayStore().addInstance(overlay, paneId, appointPaneFlag)

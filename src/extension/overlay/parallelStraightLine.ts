@@ -66,7 +66,9 @@ export function getParallelLines (coordinates: Coordinate[], bounding: Bounding,
 const parallelStraightLine: OverlayTemplate = {
   name: 'parallelStraightLine',
   totalStep: 4,
-  needPointFigure: true,
+  needDefaultPointFigure: true,
+  needDefaultXAxisFigure: true,
+  needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => {
     return [
       {

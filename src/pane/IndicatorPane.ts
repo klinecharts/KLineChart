@@ -23,9 +23,6 @@ import YAxis from '../component/YAxis'
 
 import Pane from './Pane'
 
-// 技术指标窗口id前缀
-export const INDICATOR_PANE_ID_PREFIX = 'indicator_pane_'
-
 export default class IndicatorPane extends Pane<YAxis> {
   getName (): string {
     return 'indicator'

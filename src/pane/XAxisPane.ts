@@ -19,8 +19,6 @@ import XAxis from '../component/XAxis'
 
 import Pane from './Pane'
 
-export const XAXIS_PANE_ID = 'x_axis_pane'
-
 export default class XAxisPane extends Pane<XAxis> {
   getName (): string {
     return 'xAxis'

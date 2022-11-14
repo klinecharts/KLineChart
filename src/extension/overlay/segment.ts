@@ -17,7 +17,9 @@ import { OverlayTemplate } from '../../component/Overlay'
 const segment: OverlayTemplate = {
   name: 'segment',
   totalStep: 3,
-  needPointFigure: true,
+  needDefaultPointFigure: true,
+  needDefaultXAxisFigure: true,
+  needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates }) => {
     if (coordinates.length === 2) {
       return [

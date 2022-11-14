@@ -21,7 +21,7 @@ import Axis from '../component/Axis'
 
 import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../component/Indicator'
 
-import { XAXIS_PANE_ID } from '../pane/XAxisPane'
+import { PaneIdConstants } from '../pane/Pane'
 
 import View from './View'
 
@@ -161,7 +161,7 @@ export default class IndicatorTooltipView extends View {
         bounding: widget.getBounding(),
         crosshair,
         defaultStyles: styles,
-        xAxis: pane.getChart().getPaneById(XAXIS_PANE_ID)?.getAxisComponent() as Axis,
+        xAxis: pane.getChart().getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as Axis,
         yAxis: pane.getAxisComponent()
       })
     }

@@ -53,7 +53,9 @@ export function getRayLine (coordinates: Coordinate[], bounding: Bounding): Line
 const rayLine: OverlayTemplate = {
   name: 'rayLine',
   totalStep: 3,
-  needPointFigure: true,
+  needDefaultPointFigure: true,
+  needDefaultXAxisFigure: true,
+  needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => {
     return [
       {
