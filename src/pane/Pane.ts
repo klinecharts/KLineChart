@@ -96,6 +96,10 @@ export default abstract class Pane<C extends Axis> implements Updater {
     this._yAxisWidget = this.creatYAxisWidget(this._seriesContiainer)
   }
 
+  getContainer (): HTMLElement {
+    return this._seriesContiainer
+  }
+
   getId (): string {
     return this._id
   }

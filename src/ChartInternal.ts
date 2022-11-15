@@ -391,16 +391,6 @@ export default class ChartInternal {
   }
 
   // /**
-  //  * 设置时区
-  //  * @param timezone
-  //  */
-  // setTimezone (timezone) {
-  //   this._chartStore.timeScaleStore().setTimezone(timezone)
-  //   this._xAxisPane.xAxis().computeAxis(true)
-  //   this._xAxisPane.invalidate(InvalidateLevel.FULL)
-  // }
-
-  // /**
   //  * 将值装换成像素
   //  * @param timestamp
   //  * @param point
@@ -470,22 +460,6 @@ export default class ChartInternal {
   //     absoluteTop += pane.height() + separatorSize
   //   }
   //   return isArray(coordinate) ? points : (points[0] || {})
-  // }
-
-  // /**
-  //  * 图表宽度
-  //  * @return {*|{}}
-  //  */
-  // chartWidth () {
-  //   return this._chartWidth
-  // }
-
-  // /**
-  //  * 图表高度
-  //  * @return {*|{}}
-  //  */
-  // chartHeight () {
-  //   return this._chartHeight
   // }
 
   // /**

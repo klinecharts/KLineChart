@@ -138,7 +138,10 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   mouseUpEvent (event: MouseTouchEvent): void {
-    this.dispatchEvent('mouseUpEvent', event)
+    if (this.dispatchEvent('mouseUpEvent', event)) {
+      const pane = this.getPane()
+      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+    }
     this._startScrollCoordinate = null
     this._prevExtremum = null
   }

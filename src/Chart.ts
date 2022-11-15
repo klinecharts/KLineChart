@@ -14,22 +14,39 @@
 
 import TypeOrNull from './common/TypeOrNull'
 import DeepPartial from './common/DeepPartial'
+import Coordinate from './common/Coordinate'
+import Point from './common/Point'
+import Bounding from './common/Bounding'
 import { UpdateLevel } from './common/Updater'
 import KLineData from './common/KLineData'
 import LoadMoreCallback from './common/LoadMoreCallback'
 import { Styles } from './common/Styles'
 
-import { getIndicatorClass } from './extension/indicator/index'
 import { Indicator, IndicatorCreate } from './component/Indicator'
-import { getOverlayClass } from './extension/overlay/index'
 import { Overlay, OverlayCreate } from './component/Overlay'
+
+import { getIndicatorClass } from './extension/indicator/index'
+import { getOverlayClass } from './extension/overlay/index'
+
 import { PaneOptions, PaneIdConstants } from './pane/Pane'
 
 import ChartInternal from './ChartInternal'
 
-import { clone, isString } from './common/utils/typeChecks'
+import { clone, isString, isArray } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
 import { formatValue } from './common/utils/format'
+import { binarySearchNearest } from './common/utils/number'
+
+export const enum DomPosition {
+  ROOT,
+  MAIN,
+  YAXIS
+}
+
+export interface ConvertFinder {
+  paneId?: string
+  absolute?: boolean
+}
 
 export default class Chart {
   private readonly _internal: ChartInternal
@@ -43,38 +60,59 @@ export default class Chart {
    * @param finder
    * @returns
    */
-  // getDom (finder) {
-  //   if (finder) {
-  //     if (!isObject(finder)) {
-  //       logWarn('getDom', 'options', 'options must be an object!!!')
-  //       return null
-  //     }
-  //     const { paneId, position } = finder
-  //     const pane = this._chartPane.getPane(paneId)
-  //     if (!pane) {
-  //       logWarn('getDom', 'options.paneId', 'can not find the corresponding pane!!!')
-  //       return null
-  //     }
-  //     return pane.container(position) || null
-  //   }
-  //   return this._chartPane.getContainer()
-  // }
+  getDom (paneId?: string, position?: DomPosition): TypeOrNull<HTMLElement> {
+    if (paneId !== undefined) {
+      const pane = this._internal.getPaneById(paneId)
+      if (pane !== null) {
+        const pos = position ?? DomPosition.ROOT
+        switch (pos) {
+          case DomPosition.ROOT: {
+            return pane.getContainer()
+          }
+          case DomPosition.MAIN: {
+            return pane.getMainWidget().getContainer()
+          }
+          case DomPosition.YAXIS: {
+            return pane.getYAxisWidget()?.getContainer() ?? null
+          }
+        }
+      }
+    } else {
+      return this._internal.getChartContainer()
+    }
+    return null
+  }
 
-  /**
-   * 获取宽尺寸
-   * @return {*|{}}
-   */
-  // getWidth () {
-  //   return this._chartPane.chartWidth()
-  // }
-
-  /**
-   * 获取高度尺寸
-   * @return {*|{}}
-   */
-  // getHeight () {
-  //   return this._chartPane.chartHeight()
-  // }
+  getSize (paneId?: string, position?: DomPosition): TypeOrNull<Bounding> {
+    if (paneId !== undefined) {
+      const pane = this._internal.getPaneById(paneId)
+      if (pane !== null) {
+        const pos = position ?? DomPosition.ROOT
+        switch (pos) {
+          case DomPosition.ROOT: {
+            return pane.getBounding()
+          }
+          case DomPosition.MAIN: {
+            return pane.getMainWidget().getBounding()
+          }
+          case DomPosition.YAXIS: {
+            return pane.getYAxisWidget()?.getBounding() ?? null
+          }
+        }
+      }
+    } else {
+      const container = this._internal.getChartContainer()
+      return {
+        width: container.offsetWidth,
+        height: container.offsetHeight,
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0
+      }
+    }
+    return null
+  }
 
   /**
    * 设置样式配置
@@ -351,252 +389,228 @@ export default class Chart {
     this._internal.getChartStore().getOverlayStore().removeInstance(id)
   }
 
-  // /**
-  //  * 移除标签
-  //  * @param paneId 窗口id
-  //  * @param tagId 标签id
-  //  */
-  // removeTag (paneId, tagId) {
-  //   this._chartPane.chartStore().tagStore().remove(paneId, tagId)
-  // }
+  /**
+   * 设置窗口属性
+   * @param options 窗口配置
+   */
+  setPaneOptions (options: PaneOptions): void {
+    this._internal.setPaneOptions(options, false)
+  }
 
-  // /**
-  //  * 创建html元素
-  //  * @param html
-  //  * @param paneId
-  //  * @returns
-  //  */
-  // createHtml (html, paneId = CANDLE_PANE_ID) {
-  //   if (!isObject(html)) {
-  //     logWarn('createHtml', 'html', 'options must be an object!!!')
-  //     return null
-  //   }
-  //   if (!isString(html.content) && !(html.content instanceof HTMLElement)) {
-  //     logWarn('createHtml', 'html.content', 'invalid html.content!!!')
-  //     return null
-  //   }
-  //   const pane = this._chartPane.getPane(paneId)
-  //   if (!pane) {
-  //     logWarn('createHtml', 'paneId', 'can not find the corresponding pane!!!')
-  //     return null
-  //   }
-  //   return pane.createHtml(html)
-  // }
+  /**
+   * 设置是否可以缩放
+   * @param enabled 标识
+   */
+  setZoomEnabled (enabled: boolean): void {
+    this._internal.getChartStore().getTimeScaleStore().setZoomEnabled(enabled)
+  }
 
-  // /**
-  //  * 移除html元素
-  //  * @param paneId
-  //  * @param htmlId
-  //  */
-  // removeHtml (paneId, htmlId) {
-  //   if (paneId) {
-  //     const pane = this._chartPane.getPane(paneId)
-  //     pane && pane.removeHtml(htmlId)
-  //   } else {
-  //     this._chartPane.removeAllHtml()
-  //   }
-  // }
+  /**
+   * 是否可以缩放
+   * @return {boolean}
+   */
+  isZoomEnabled (): boolean {
+    return this._internal.getChartStore().getTimeScaleStore().getZoomEnabled()
+  }
 
-  // /**
-  //  * 设置窗口属性
-  //  * @param options 窗口配置
-  //  */
-  // setPaneOptions (options) {
-  //   if (!isObject(options)) {
-  //     logWarn('setPaneOptions', 'options', 'options must be an object!!!')
-  //     return
-  //   }
-  //   this._chartPane.setPaneOptions(options, false)
-  // }
+  /**
+   * 设置是否可以拖拽滚动
+   * @param enabled 标识
+   */
+  setScrollEnabled (enabled: boolean): void {
+    this._internal.getChartStore().getTimeScaleStore().setScrollEnabled(enabled)
+  }
 
-  // /**
-  //  * 设置是否可以缩放
-  //  * @param enabled 标识
-  //  */
-  // setZoomEnabled (enabled) {
-  //   this._chartPane.chartStore().timeScaleStore().setZoomEnabled(enabled)
-  // }
+  /**
+   * 是否可以拖拽滚动
+   * @return {boolean}
+   */
+  isScrollEnabled (): boolean {
+    return this._internal.getChartStore().getTimeScaleStore().getScrollEnabled()
+  }
 
-  // /**
-  //  * 是否可以缩放
-  //  * @return {boolean}
-  //  */
-  // isZoomEnabled () {
-  //   return this._chartPane.chartStore().timeScaleStore().zoomEnabled()
-  // }
+  /**
+   * 按距离滚动
+   * @param distance 距离
+   * @param animationDuration 动画持续时间
+   */
+  scrollByDistance (distance: number, animationDuration?: number): void {
+    const duration = animationDuration === undefined || animationDuration < 0 ? 0 : animationDuration
+    const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+    if (duration > 0) {
+      timeScaleStore.startScroll()
+      const startTime = new Date().getTime()
+      const animation: (() => void) = () => {
+        const progress = (new Date().getTime() - startTime) / duration
+        const finished = progress >= 1
+        const dis = finished ? distance : distance * progress
+        timeScaleStore.scroll(dis)
+        if (!finished) {
+          requestAnimationFrame(animation)
+        }
+      }
+      animation()
+    } else {
+      timeScaleStore.startScroll()
+      timeScaleStore.scroll(distance)
+    }
+  }
 
-  // /**
-  //  * 设置是否可以拖拽滚动
-  //  * @param enabled 标识
-  //  */
-  // setScrollEnabled (enabled) {
-  //   this._chartPane.chartStore().timeScaleStore().setScrollEnabled(enabled)
-  // }
+  /**
+   * 滚动到实时位置
+   * @param animationDuration 动画持续时间
+   */
+  scrollToRealTime (animationDuration?: number): void {
+    const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+    const { bar: barSpace } = timeScaleStore.getBarSpace()
+    const difBarCount = timeScaleStore.getOffsetRightBarCount() - timeScaleStore.getOffsetRightDistance() / barSpace
+    const distance = difBarCount * barSpace
+    this.scrollByDistance(distance, animationDuration)
+  }
 
-  // /**
-  //  * 是否可以拖拽滚动
-  //  * @return {boolean}
-  //  */
-  // isScrollEnabled () {
-  //   return this._chartPane.chartStore().timeScaleStore().scrollEnabled()
-  // }
+  /**
+   * 滚动到指定的数据索引
+   * @param dataIndex 数据索引
+   * @param animationDuration 动画持续时间
+   */
+  scrollToDataIndex (dataIndex: number, animationDuration?: number): void {
+    const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+    const distance = (
+      timeScaleStore.getOffsetRightBarCount() + (this.getDataList().length - 1 - dataIndex)
+    ) * timeScaleStore.getBarSpace().bar
+    this.scrollByDistance(distance, animationDuration)
+  }
 
-  // /**
-  //  * 按距离滚动
-  //  * @param distance 距离
-  //  * @param animationDuration 动画持续时间
-  //  */
-  // scrollByDistance (distance, animationDuration) {
-  //   if (!isNumber(distance)) {
-  //     logWarn('scrollByDistance', 'distance', 'distance must be a number!!!')
-  //     return
-  //   }
-  //   if (isNumber(animationDuration) && animationDuration > 0) {
-  //     this._chartPane.chartStore().timeScaleStore().startScroll()
-  //     const startTime = new Date().getTime()
-  //     const animation = () => {
-  //       const progress = (new Date().getTime() - startTime) / animationDuration
-  //       const finished = progress >= 1
-  //       const dis = finished ? distance : distance * progress
-  //       this._chartPane.chartStore().timeScaleStore().scroll(dis)
-  //       if (!finished) {
-  //         requestAnimationFrame(animation)
-  //       }
-  //     }
-  //     animation()
-  //   } else {
-  //     this._chartPane.chartStore().timeScaleStore().startScroll()
-  //     this._chartPane.chartStore().timeScaleStore().scroll(distance)
-  //   }
-  // }
+  /**
+   * 滚动到指定时间戳
+   * @param timestamp 时间戳
+   * @param animationDuration 动画持续时间
+   */
+  scrollToTimestamp (timestamp: number, animationDuration?: number): void {
+    const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
+    this.scrollToDataIndex(dataIndex, animationDuration)
+  }
 
-  // /**
-  //  * 滚动到实时位置
-  //  * @param animationDuration 动画持续时间
-  //  */
-  // scrollToRealTime (animationDuration) {
-  //   const dataSpace = this._chartPane.chartStore().timeScaleStore().dataSpace()
-  //   const difBarCount = this._chartPane.chartStore().timeScaleStore().offsetRightBarCount() - this._chartPane.chartStore().timeScaleStore().offsetRightSpace() / dataSpace
-  //   const distance = difBarCount * dataSpace
-  //   this.scrollByDistance(distance, animationDuration)
-  // }
+  /**
+   * 在某个坐标点缩放
+   * @param scale 缩放比例
+   * @param coordinate 坐标点
+   * @param animationDuration 动画持续时间
+   */
+  zoomAtCoordinate (scale: number, coordinate: Coordinate, animationDuration?: number): void {
+    const duration = animationDuration === undefined || animationDuration < 0 ? 0 : animationDuration
+    const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+    if (duration > 0) {
+      const { bar: barSpace } = timeScaleStore.getBarSpace()
+      const scaleDataSpace = barSpace * scale
+      const difSpace = scaleDataSpace - barSpace
+      const startTime = new Date().getTime()
+      const animation: (() => void) = () => {
+        const progress = (new Date().getTime() - startTime) / duration
+        const finished = progress >= 1
+        const progressDataSpace = finished ? difSpace : difSpace * progress
+        timeScaleStore.zoom(progressDataSpace / barSpace, coordinate)
+        if (!finished) {
+          requestAnimationFrame(animation)
+        }
+      }
+      animation()
+    } else {
+      timeScaleStore.zoom(scale, coordinate)
+    }
+  }
 
-  // /**
-  //  * 滚动到指定的数据索引
-  //  * @param dataIndex 数据索引
-  //  * @param animationDuration 动画持续时间
-  //  */
-  // scrollToDataIndex (dataIndex, animationDuration) {
-  //   if (!isNumber(dataIndex)) {
-  //     logWarn('scrollToDataIndex', 'dataIndex', 'dataIndex must be a number!!!')
-  //     return
-  //   }
-  //   const distance = (
-  //     this._chartPane.chartStore().timeScaleStore().offsetRightBarCount() + (this.getDataList().length - 1 - dataIndex)
-  //   ) * this._chartPane.chartStore().timeScaleStore().dataSpace()
-  //   this.scrollByDistance(distance, animationDuration)
-  // }
+  /**
+   * 在某个数据索引缩放
+   * @param scale 缩放比例
+   * @param dataIndex 索引位置
+   * @param animationDuration 动画持续时间
+   */
+  zoomAtDataIndex (scale: number, dataIndex: number, animationDuration?: number): void {
+    const x = this._internal.getChartStore().getTimeScaleStore().dataIndexToCoordinate(dataIndex)
+    this.zoomAtCoordinate(scale, { x, y: 0 }, animationDuration)
+  }
 
-  // /**
-  //  * 滚动到指定时间戳
-  //  * @param timestamp 时间戳
-  //  * @param animationDuration 动画持续时间
-  //  */
-  // scrollToTimestamp (timestamp, animationDuration) {
-  //   if (!isNumber(timestamp)) {
-  //     logWarn('scrollToTimestamp', 'timestamp', 'timestamp must be a number!!!')
-  //     return
-  //   }
-  //   const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
-  //   this.scrollToDataIndex(dataIndex, animationDuration)
-  // }
+  /**
+   * 在某个时间戳缩放
+   * @param scale 缩放比例
+   * @param timestamp 时间戳
+   * @param animationDuration 动画持续时间
+   */
+  zoomAtTimestamp (scale: number, timestamp: number, animationDuration?: number): void {
+    const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
+    this.zoomAtDataIndex(scale, dataIndex, animationDuration)
+  }
 
-  // /**
-  //  * 在某个坐标点缩放
-  //  * @param scale 缩放比例
-  //  * @param coordinate 坐标点
-  //  * @param animationDuration 动画持续时间
-  //  */
-  // zoomAtCoordinate (scale, coordinate, animationDuration) {
-  //   if (!isNumber(scale)) {
-  //     logWarn('zoomAtCoordinate', 'scale', 'scale must be a number!!!')
-  //     return
-  //   }
-  //   if (isNumber(animationDuration) && animationDuration > 0) {
-  //     const dataSpace = this._chartPane.chartStore().timeScaleStore().dataSpace()
-  //     const scaleDataSpace = dataSpace * scale
-  //     const difSpace = scaleDataSpace - dataSpace
-  //     const startTime = new Date().getTime()
-  //     const animation = () => {
-  //       const progress = (new Date().getTime() - startTime) / animationDuration
-  //       const finished = progress >= 1
-  //       const progressDataSpace = finished ? difSpace : difSpace * progress
-  //       this._chartPane.chartStore().timeScaleStore().zoom(progressDataSpace / dataSpace, coordinate)
-  //       if (!finished) {
-  //         requestAnimationFrame(animation)
-  //       }
-  //     }
-  //     animation()
-  //   } else {
-  //     this._chartPane.chartStore().timeScaleStore().zoom(scale, coordinate)
-  //   }
-  // }
+  /**
+   * 将值装换成像素
+   * @param points 单个点或者点集合
+   * @param finder 过滤条件
+   */
+  convertToPixel (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder): Partial<Coordinate> | Array<Partial<Coordinate>> {
+    const { paneId = PaneIdConstants.CANDLE, absolute = false } = finder
+    let coordinates: Array<Partial<Coordinate>> = []
+    if (paneId !== PaneIdConstants.XAXIS) {
+      const pane = this._internal.getPaneById(paneId)
+      if (pane !== null) {
+        const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+        const bounding = pane.getBounding()
+        const ps = new Array<Partial<Point>>().concat(points)
+        const xAxis = this._internal.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent()
+        const yAxis = pane.getAxisComponent()
+        coordinates = ps.map(point => {
+          const coordinate: Partial<Coordinate> = {}
+          let dataIndex = point.dataIndex
+          if (point.timestamp !== undefined) {
+            dataIndex = timeScaleStore.timestampToDataIndex(point.timestamp)
+          }
+          if (dataIndex !== undefined) {
+            coordinate.x = xAxis?.convertToPixel(dataIndex)
+          }
+          if (point.value !== undefined) {
+            const y = yAxis?.convertToPixel(point.value)
+            coordinate.y = absolute ? bounding.top + y : y
+          }
+          return coordinate
+        })
+      }
+    }
+    return isArray(points) ? coordinates : (coordinates[0] ?? {})
+  }
 
-  // /**
-  //  * 在某个数据索引缩放
-  //  * @param scale 缩放比例
-  //  * @param dataIndex 索引位置
-  //  * @param animationDuration 动画持续时间
-  //  */
-  // zoomAtDataIndex (scale, dataIndex, animationDuration) {
-  //   if (!isNumber(scale)) {
-  //     logWarn('zoomAtDataIndex', 'scale', 'scale must be a number!!!')
-  //     return
-  //   }
-  //   if (!isNumber(dataIndex)) {
-  //     logWarn('zoomAtDataIndex', 'dataIndex', 'dataIndex must be a number!!!')
-  //     return
-  //   }
-  //   const x = this._chartPane.chartStore().timeScaleStore().dataIndexToCoordinate(dataIndex)
-  //   this.zoomAtCoordinate(scale, { x }, animationDuration)
-  // }
-
-  // /**
-  //  * 在某个时间戳缩放
-  //  * @param scale 缩放比例
-  //  * @param timestamp 时间戳
-  //  * @param animationDuration 动画持续时间
-  //  */
-  // zoomAtTimestamp (scale, timestamp, animationDuration) {
-  //   if (!isNumber(scale)) {
-  //     logWarn('zoomAtTimestamp', 'scale', 'scale must be a number!!!')
-  //     return
-  //   }
-  //   if (!isNumber(timestamp)) {
-  //     logWarn('zoomAtTimestamp', 'timestamp', 'timestamp must be a number!!!')
-  //     return
-  //   }
-  //   const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
-  //   this.zoomAtDataIndex(scale, dataIndex, animationDuration)
-  // }
-
-  // /**
-  //  * 将值装换成像素
-  //  * @param point 单个点或者点集合
-  //  * @param finder 过滤条件
-  //  */
-  // convertToPixel (point, finder) {
-  //   return this._chartPane.convertToPixel(point, finder)
-  // }
-
-  // /**
-  //  * 将像素转换成值
-  //  * @param coordinate 单个坐标或者坐标集合
-  //  * @param finder 过滤条件
-  //  */
-  // convertFromPixel (coordinate, finder) {
-  //   return this._chartPane.convertFromPixel(coordinate, finder)
-  // }
+  /**
+   * 将像素转换成值
+   * @param coordinates 单个坐标或者坐标集合
+   * @param finder 过滤条件
+   */
+  convertFromPixel (coordinates: Array<Partial<Coordinate>>, finder: ConvertFinder): Partial<Point> | Array<Partial<Point>> {
+    const { paneId = PaneIdConstants.CANDLE, absolute = false } = finder
+    let points: Array<Partial<Point>> = []
+    if (paneId !== PaneIdConstants.XAXIS) {
+      const pane = this._internal.getPaneById(paneId)
+      if (pane !== null) {
+        const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+        const bounding = pane.getBounding()
+        const cs = new Array<Partial<Coordinate>>().concat(coordinates)
+        const xAxis = this._internal.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent()
+        const yAxis = pane.getAxisComponent()
+        points = cs.map(coordinate => {
+          const point: Partial<Point> = {}
+          if (coordinate.x !== undefined) {
+            const dataIndex = xAxis?.convertFromPixel(coordinate.x) as number
+            point.dataIndex = dataIndex
+            point.timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
+          }
+          if (coordinate.y !== undefined) {
+            const y = absolute ? coordinate.y - bounding.top : coordinate.y
+            point.value = yAxis.convertFromPixel(y)
+          }
+          return point
+        })
+      }
+    }
+    return isArray(coordinates) ? points : (points[0] ?? {})
+  }
 
   // /**
   //  * 订阅图表动作

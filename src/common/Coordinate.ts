@@ -13,8 +13,8 @@
  */
 
 export default interface Coordinate {
-  readonly x: number
-  readonly y: number
+  x: number
+  y: number
 }
 
 export function getDistance (coordinate1: Coordinate, coordinate2: Coordinate): number {

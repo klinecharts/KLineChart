@@ -50,6 +50,7 @@ export default class ChartStore {
   private readonly _overlayStore = new OverlayStore(this)
   // 十字光标数据存储
   private readonly _crosshairStore = new CrosshairStore(this)
+
   // 事件存储
   // private readonly _actionStore = new ActionStore()
 

@@ -23,7 +23,6 @@ import Pane from '../pane/Pane'
 
 import { createDom } from '../common/utils/dom'
 import { merge } from '../common/utils/typeChecks'
-
 export default abstract class Widget<C extends Axis> extends ElementGroup implements Updater {
   private readonly _pane: Pane<C>
 
