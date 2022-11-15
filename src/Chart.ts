@@ -642,19 +642,15 @@ export default class Chart {
   //   this._chartPane.chartStore().actionStore().unsubscribe(type, callback)
   // }
 
-  // /**
-  //  * 获取将图表装换成图片后的url
-  //  * @param includeOverlay 是否包含覆盖层
-  //  * @param type 图片类型
-  //  * @param backgroundColor 背景色
-  //  */
-  // getConvertPictureUrl (includeOverlay, type = 'jpeg', backgroundColor = '#FFFFFF') {
-  //   if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
-  //     logWarn('getConvertPictureUrl', 'type', 'type only supports jpeg, png and bmp!!!')
-  //     return
-  //   }
-  //   return this._chartPane.getConvertPictureUrl(includeOverlay, type, backgroundColor)
-  // }
+  /**
+   * 获取将图表装换成图片后的url
+   * @param includeOverlay 是否包含覆盖层
+   * @param type 图片类型
+   * @param backgroundColor 背景色
+   */
+  getConvertPictureUrl (includeOverlay?: boolean, type?: string, backgroundColor?: string): string {
+    return this._internal.getConvertPictureUrl(includeOverlay ?? false, type ?? 'jpeg', backgroundColor ?? '#FFFFFF')
+  }
 
   /**
    * 销毁

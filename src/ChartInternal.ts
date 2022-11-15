@@ -30,6 +30,7 @@ import { IndicatorCreate } from './component/Indicator'
 
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
+import { getPixelRatio } from './common/utils/canvas'
 // import { isArray, isBoolean, isFunction, isValid, isNumber } from './common/utils/typeChecks'
 
 // import { getPixelRatio } from './common/utils/canvas'
@@ -356,14 +357,6 @@ export default class ChartInternal {
     return paneId
   }
 
-  // /**
-  //  * 移除所有html元素
-  //  */
-  // removeAllHtml () {
-  //   this._panes.forEach(pane => { pane.removeHtml() })
-  //   this._xAxisPane.removeHtml()
-  // }
-
   /**
    * 设置窗体参数
    * @param options
@@ -390,122 +383,42 @@ export default class ChartInternal {
     }
   }
 
-  // /**
-  //  * 将值装换成像素
-  //  * @param timestamp
-  //  * @param point
-  //  * @param paneId
-  //  * @param absoluteYAxis
-  //  */
-  // convertToPixel (point, { paneId = CANDLE_PANE_ID, absoluteYAxis }) {
-  //   const points = [].concat(point)
-  //   let coordinates = []
-  //   const separatorSize = this._chartStore.styleOptions().separator.size
-  //   let absoluteTop = 0
-  //   const panes = this._panes.values()
-  //   for (const pane of panes) {
-  //     if (pane.id() === paneId) {
-  //       coordinates = points.map(({ timestamp, dataIndex, value }) => {
-  //         const coordinate = {}
-  //         let index = dataIndex
-  //         if (isValid(timestamp)) {
-  //           index = this._chartStore.timeScaleStore().timestampToDataIndex(timestamp)
-  //         }
-  //         if (isValid(index)) {
-  //           coordinate.x = this._xAxisPane.xAxis().convertToPixel(index)
-  //         }
-  //         if (isValid(value)) {
-  //           const y = pane.yAxis().convertToPixel(value)
-  //           coordinate.y = absoluteYAxis ? absoluteTop + y : y
-  //         }
-  //         return coordinate
-  //       })
-  //       break
-  //     }
-  //     absoluteTop += (pane.height() + separatorSize)
-  //   }
-  //   return isArray(point) ? coordinates : (coordinates[0] || {})
-  // }
+  /**
+   * 获取图表转换为图片后url
+   * @param includeOverlay,
+   * @param type
+   * @param backgroundColor
+   */
+  getConvertPictureUrl (includeOverlay: boolean, type: string, backgroundColor: string): string {
+    const width = this._chartContainer.offsetWidth
+    const height = this._chartContainer.offsetHeight
+    const canvas = createDom('canvas', {
+      width: `${width}px`,
+      height: `${height}px`,
+      boxSizing: 'border-box'
+    })
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const pixelRatio = getPixelRatio(canvas)
+    canvas.width = width * pixelRatio
+    canvas.height = height * pixelRatio
+    ctx.scale(pixelRatio, pixelRatio)
 
-  // /**
-  //  * 将像素转换成值
-  //  * @param coordinate
-  //  * @param paneId
-  //  * @param dataIndexXAxis
-  //  * @param absoluteYAxis
-  //  * @return {{}[]|*[]}
-  //  */
-  // convertFromPixel (coordinate, { paneId = CANDLE_PANE_ID, absoluteYAxis }) {
-  //   const coordinates = [].concat(coordinate)
-  //   let points = []
-  //   const separatorSize = this._chartStore.styleOptions().separator.size
-  //   let absoluteTop = 0
-  //   const panes = this._panes.values()
-  //   for (const pane of panes) {
-  //     if (pane.id() === paneId) {
-  //       points = coordinates.map(({ x, y }) => {
-  //         const point = {}
-  //         if (isValid(x)) {
-  //           point.dataIndex = this._xAxisPane.xAxis().convertFromPixel(x)
-  //           point.timestamp = this._chartStore.timeScaleStore().dataIndexToTimestamp(point.dataIndex)
-  //         }
-  //         if (isValid(y)) {
-  //           const ry = absoluteYAxis ? y - absoluteTop : y
-  //           point.value = pane.yAxis().convertFromPixel(ry)
-  //         }
-  //         return point
-  //       })
-  //       break
-  //     }
-  //     absoluteTop += pane.height() + separatorSize
-  //   }
-  //   return isArray(coordinate) ? points : (points[0] || {})
-  // }
-
-  // /**
-  //  * 获取图表转换为图片后url
-  //  * @param includeOverlay,
-  //  * @param type
-  //  * @param backgroundColor
-  //  */
-  // getConvertPictureUrl (includeOverlay, type, backgroundColor) {
-  //   const width = this._chartContainer.offsetWidth
-  //   const height = this._chartContainer.offsetHeight
-  //   const canvas = createElement('canvas', {
-  //     width: `${width}px`,
-  //     height: `${height}px`,
-  //     boxSizing: 'border-box'
-  //   })
-  //   const ctx = canvas.getContext('2d')
-  //   const pixelRatio = getPixelRatio(canvas)
-  //   canvas.width = width * pixelRatio
-  //   canvas.height = height * pixelRatio
-  //   ctx.scale(pixelRatio, pixelRatio)
-
-  //   ctx.fillStyle = backgroundColor
-  //   ctx.fillRect(0, 0, width, height)
-  //   let offsetTop = 0
-  //   this._panes.forEach((pane, paneId) => {
-  //     if (paneId !== CANDLE_PANE_ID) {
-  //       const separator = this._separators.get(paneId)
-  //       ctx.drawImage(
-  //         separator.getImage(),
-  //         0, offsetTop, width, separator.height()
-  //       )
-  //       offsetTop += separator.height()
-  //     }
-  //     ctx.drawImage(
-  //       pane.getImage(includeOverlay),
-  //       0, offsetTop, width, pane.height()
-  //     )
-  //     offsetTop += pane.height()
-  //   })
-  //   ctx.drawImage(
-  //     this._xAxisPane.getImage(includeOverlay),
-  //     0, offsetTop, width, this._xAxisPane.height()
-  //   )
-  //   return canvas.toDataURL(`image/${type}`)
-  // }
+    ctx.fillStyle = backgroundColor
+    ctx.fillRect(0, 0, width, height)
+    this._panes.forEach((pane, paneId) => {
+      const bounding = pane.getBounding()
+      ctx.drawImage(
+        pane.getImage(includeOverlay),
+        0, bounding.top, width, bounding.height
+      )
+    })
+    const xAxisBounding = this._xAxisPane.getBounding()
+    ctx.drawImage(
+      this._xAxisPane.getImage(includeOverlay),
+      0, xAxisBounding.top, width, xAxisBounding.height
+    )
+    return canvas.toDataURL(`image/${type}`)
+  }
 
   /**
    * 销毁

@@ -26,6 +26,7 @@ import YAxisWidget from '../widget/YAxisWidget'
 import ChartInternal from '../ChartInternal'
 
 import { createDom } from '../common/utils/dom'
+import { getPixelRatio } from '../common/utils/canvas'
 import { merge } from '../common/utils/typeChecks'
 
 export interface PaneGap {
@@ -177,6 +178,47 @@ export default abstract class Pane<C extends Axis> implements Updater {
     this._mainWidget.update(l)
     this._yAxisWidget?.update(l)
     this._separatorWidget?.update(l)
+  }
+
+  getImage (includeOverlay: boolean): HTMLCanvasElement {
+    const { width, height } = this._bounding
+    const canvas = createDom('canvas', {
+      width: `${width}px`,
+      height: `${height}px`,
+      boxSizing: 'border-box'
+    })
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const pixelRatio = getPixelRatio(canvas)
+    canvas.width = width * pixelRatio
+    canvas.height = height * pixelRatio
+    ctx.scale(pixelRatio, pixelRatio)
+
+    let top = 0
+    if (this._separatorWidget != null) {
+      const separatorHeight = this.getChart().getChartStore().getStyleOptions().separator.size
+      top = separatorHeight
+      ctx.drawImage(
+        this._separatorWidget.getImage(),
+        0, 0,
+        width, separatorHeight
+      )
+    }
+
+    const mainBounding = this._mainWidget.getBounding()
+    ctx.drawImage(
+      this._mainWidget.getImage(includeOverlay),
+      mainBounding.left, top,
+      mainBounding.width, mainBounding.height
+    )
+    if (this._yAxisWidget !== null) {
+      const yAxisBounding = this._yAxisWidget.getBounding()
+      ctx.drawImage(
+        this._yAxisWidget.getImage(includeOverlay),
+        yAxisBounding.left, top,
+        yAxisBounding.width, yAxisBounding.height
+      )
+    }
+    return canvas
   }
 
   destroy (): void {

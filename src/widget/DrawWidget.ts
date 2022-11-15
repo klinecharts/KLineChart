@@ -153,6 +153,27 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     }
   }
 
+  getImage (includeOverlay: boolean): HTMLCanvasElement {
+    const { width, height } = this.getBounding()
+    const canvas = createDom('canvas', {
+      width: `${width}px`,
+      height: `${height}px`,
+      boxSizing: 'border-box'
+    })
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const pixelRatio = getPixelRatio(canvas)
+    canvas.width = width * pixelRatio
+    canvas.height = height * pixelRatio
+    ctx.scale(pixelRatio, pixelRatio)
+
+    ctx.drawImage(this._mainCanvas, 0, 0, width, height)
+
+    if (includeOverlay) {
+      ctx.drawImage(this._overlayCanvas, 0, 0, width, height)
+    }
+    return canvas
+  }
+
   protected abstract updateMain (ctx: CanvasRenderingContext2D): void
   protected abstract updateOverlay (ctx: CanvasRenderingContext2D): void
 }

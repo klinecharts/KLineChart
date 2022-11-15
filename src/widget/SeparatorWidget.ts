@@ -23,6 +23,7 @@ import Widget from './Widget'
 import Pane from '../pane/Pane'
 
 import { createDom } from '../common/utils/dom'
+import { getPixelRatio } from '../common/utils/canvas'
 import { throttle } from '../common/utils/performance'
 
 export default class SeparatorWidget extends Widget<YAxis> {
@@ -142,5 +143,24 @@ export default class SeparatorWidget extends Widget<YAxis> {
       container.style.marginLeft = `${fill ? 0 : bounding.left}px`
       container.style.width = fill ? '100%' : `${bounding.width}px`
     }
+  }
+
+  getImage (): HTMLCanvasElement {
+    const separatorStyles = this.getPane().getChart().getChartStore().getStyleOptions().separator
+    const width = this.getContainer().offsetWidth
+    const height = separatorStyles.size
+    const canvas = createDom('canvas', {
+      width: `${width}px`,
+      height: `${height}px`,
+      boxSizing: 'border-box'
+    })
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const pixelRatio = getPixelRatio(canvas)
+    canvas.width = width * pixelRatio
+    canvas.height = height * pixelRatio
+    ctx.scale(pixelRatio, pixelRatio)
+    ctx.fillStyle = separatorStyles.color
+    ctx.fillRect(this.getBounding().left, 0, width, height)
+    return canvas
   }
 }
