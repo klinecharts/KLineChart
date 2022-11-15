@@ -15,12 +15,14 @@
 import TypeOrNull from '../common/TypeOrNull'
 import Coordinate from '../common/Coordinate'
 import Crosshair from '../common/Crosshair'
+import { UpdateLevel } from '../common/Updater'
 import { MouseTouchEvent, TOUCH_MIN_RADIUS } from '../common/MouseTouchEventHandler'
 
 import Pane from '../pane/Pane'
 
 import DrawWidget from './DrawWidget'
 
+import { Extremum } from '../component/Axis'
 import YAxis from '../component/YAxis'
 
 import GridView from '../view/GridView'
@@ -52,6 +54,8 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   private _touchZoomed = false
   // 用来记录捏合缩放的尺寸
   private _pinchScale = 1
+
+  private _prevExtremum: TypeOrNull<Extremum> = null
 
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
     super(rootContainer, pane)
@@ -104,6 +108,25 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
         }
       }
       if (this._startScrollCoordinate !== null) {
+        const pane = this.getPane()
+        const yAxis = pane.getAxisComponent()
+        if (this._prevExtremum !== null && !yAxis.getAutoCalcTickFlag()) {
+          const { min, max, range } = this._prevExtremum
+          const scale = (event.y - this._startScrollCoordinate.y) / this.getBounding().height
+          const difRange = range * scale
+          const newMin = min + difRange
+          const newMax = max + difRange
+          const newRealMin = yAxis.convertToRealValue(newMin)
+          const newRealMax = yAxis.convertToRealValue(newMax)
+          yAxis.setExtremum({
+            min: newMin,
+            max: newMax,
+            range: newMax - newMin,
+            realMin: newRealMin,
+            realMax: newRealMax,
+            realRange: newRealMax - newRealMin
+          })
+        }
         const distance = event.x - this._startScrollCoordinate.x
         chartStore.getTimeScaleStore().scroll(distance)
       }
@@ -117,10 +140,12 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   mouseUpEvent (event: MouseTouchEvent): void {
     this.dispatchEvent('mouseUpEvent', event)
     this._startScrollCoordinate = null
+    this._prevExtremum = null
   }
 
   mouseDownEvent (event: MouseTouchEvent): void {
     this.dispatchEvent('mouseDownEvent', event)
+    this._prevExtremum = { ...this.getPane().getAxisComponent().getExtremum() }
     if (this._flingScrollTimerId !== null) {
       cancelAnimationFrame(this._flingScrollTimerId)
       this._flingScrollTimerId = null
@@ -128,7 +153,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
     const pane = this.getPane()
     const chartStore = pane.getChart().getChartStore()
     this._flingStartTime = new Date().getTime()
-    this._startScrollCoordinate = { x: event.x, y: event.x }
+    this._startScrollCoordinate = { x: event.x, y: event.y }
     chartStore.getTimeScaleStore().startScroll()
     if (event.isTouch) {
       this._touchZoomed = false
@@ -148,6 +173,13 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
       } else {
         this._touchCancelCrosshair = false
       }
+    }
+  }
+
+  mouseRightClickEvent (event: MouseTouchEvent): void {
+    if (this.dispatchEvent('mouseRightClickEvent', event)) {
+      const pane = this.getPane()
+      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
     }
   }
 

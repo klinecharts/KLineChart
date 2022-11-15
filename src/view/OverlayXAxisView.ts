@@ -30,6 +30,14 @@ import OverlayStore, { EventOverlayInfo, ProgressOverlayInfo } from '../store/Ov
 import OverlayYAxisView from './OverlayYAxisView'
 
 export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
+  protected coordinateToPointTimestampDataIndexFlag (): boolean {
+    return true
+  }
+
+  protected coordinateToPointValueFlag (): boolean {
+    return false
+  }
+
   protected getCompleteOverlays (overlayStore: OverlayStore): Overlay[] {
     return overlayStore.getInstances()
   }

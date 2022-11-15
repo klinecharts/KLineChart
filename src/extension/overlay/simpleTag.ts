@@ -16,8 +16,22 @@ import { formatPrecision } from '../../common/utils/format'
 
 import { OverlayTemplate } from '../../component/Overlay'
 
+import { isFunction, isValid } from '../../common/utils/typeChecks'
+
 const simpleTag: OverlayTemplate = {
   name: 'simpleTag',
+  createPointFigures: ({ bounding, coordinates }) => {
+    return {
+      type: 'line',
+      attrs: {
+        coordinates: [
+          { x: 0, y: coordinates[0].y },
+          { x: bounding.width, y: coordinates[0].y }
+        ]
+      },
+      ignoreEvent: true
+    }
+  },
   createYAxisFigures: ({ overlay, coordinates, bounding, yAxis, precision }) => {
     const isFromZero = yAxis?.isFromZero() ?? false
     let textAlign: CanvasTextAlign
@@ -29,8 +43,18 @@ const simpleTag: OverlayTemplate = {
       textAlign = 'right'
       x = bounding.width
     }
-    const text = formatPrecision(overlay.points[0].value, precision.price)
-    return { type: 'rectText', attrs: { x, y: coordinates[0].y, text, align: textAlign, baseline: 'middle' }, ignoreEvent: true }
+    let text
+    if (overlay.extendData !== null) {
+      if (!isFunction(overlay.extendData)) {
+        text = overlay.extendData.toString()
+      } else {
+        text = overlay.extendData(overlay)
+      }
+    }
+    if (!isValid(text)) {
+      text = formatPrecision(overlay.points[0].value, precision.price)
+    }
+    return { type: 'rectText', attrs: { x, y: coordinates[0].y, text, align: textAlign, baseline: 'middle' } }
   }
 }
 

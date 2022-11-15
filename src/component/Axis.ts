@@ -38,6 +38,8 @@ export default abstract class Axis {
   private _prevExtremum: Extremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
   private _ticks: Tick[] = []
 
+  private _autoCalcTickFlag = true
+
   constructor (parent: Pane<Axis>) {
     this._parent = parent
   }
@@ -45,7 +47,9 @@ export default abstract class Axis {
   getParent (): Pane<Axis> { return this._parent }
 
   buildTicks (force: boolean): boolean {
-    this._extremum = this.calcExtremum()
+    if (this._autoCalcTickFlag) {
+      this._extremum = this.calcExtremum()
+    }
     if (this._prevExtremum.min !== this._extremum.min || this._prevExtremum.max !== this._extremum.max || force) {
       this._prevExtremum = this._extremum
       this._ticks = this.optimalTicks(this._calcTicks())
@@ -58,7 +62,18 @@ export default abstract class Axis {
     return this._ticks
   }
 
+  setExtremum (extremum: Extremum): void {
+    this._autoCalcTickFlag = false
+    this._extremum = extremum
+  }
+
   getExtremum (): Extremum { return this._extremum }
+
+  setAutoCalcTickFlag (flag: boolean): void {
+    this._autoCalcTickFlag = flag
+  }
+
+  getAutoCalcTickFlag (): boolean { return this._autoCalcTickFlag }
 
   private _calcTicks (): Tick[] {
     const { realMin, realMax, realRange } = this._extremum

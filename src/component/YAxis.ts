@@ -380,8 +380,8 @@ export default class YAxis extends Axis {
     }
   }
 
-  convertToPixel (value: number): number {
-    let v = 0
+  convertToRealValue (value: number): number {
+    let v = value
     switch (this.getType()) {
       case YAxisType.PERCENTAGE: {
         const chartStore = this.getParent().getChart().getChartStore()
@@ -400,7 +400,11 @@ export default class YAxis extends Axis {
         v = value
       }
     }
-    return this._innerConvertToPixel(v)
+    return v
+  }
+
+  convertToPixel (value: number): number {
+    return this._innerConvertToPixel(this.convertToRealValue(value))
   }
 
   /**

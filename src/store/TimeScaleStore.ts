@@ -299,7 +299,6 @@ export default class TimeScaleStore {
   /**
    * 滚动
    * @param distance
-   * @param crosshair
    */
   scroll (distance: number): void {
     if (!this._scrollEnabled) {

@@ -14,6 +14,7 @@
 
 import TypeOrNull from '../common/TypeOrNull'
 import { UpdateLevel } from '../common/Updater'
+import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
 import { createId } from '../common/utils/id'
 
@@ -33,7 +34,7 @@ export interface ProgressOverlayInfo {
   appointPaneFlag: boolean
 }
 
-export const enum EventOverlayInfoElementType {
+export const enum EventOverlayInfoFigureType {
   NONE = 'none',
   POINT = 'point',
   OTHER = 'other'
@@ -42,8 +43,9 @@ export const enum EventOverlayInfoElementType {
 export interface EventOverlayInfo {
   paneId: string
   instance: TypeOrNull<OverlayImp>
-  elementType: EventOverlayInfoElementType
-  elementIndex: number
+  figureType: EventOverlayInfoFigureType
+  figureIndex: number
+  attrsIndex: number
 }
 
 export default class OverlayStore {
@@ -55,22 +57,25 @@ export default class OverlayStore {
   private _pressedInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
-    elementType: EventOverlayInfoElementType.NONE,
-    elementIndex: -1
+    figureType: EventOverlayInfoFigureType.NONE,
+    figureIndex: -1,
+    attrsIndex: -1
   }
 
   private _hoverInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
-    elementType: EventOverlayInfoElementType.NONE,
-    elementIndex: -1
+    figureType: EventOverlayInfoFigureType.NONE,
+    figureIndex: -1,
+    attrsIndex: -1
   }
 
   private _clickInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
-    elementType: EventOverlayInfoElementType.NONE,
-    elementIndex: -1
+    figureType: EventOverlayInfoFigureType.NONE,
+    figureIndex: -1,
+    attrsIndex: -1
   }
 
   constructor (chartStore: ChartStore) {
@@ -81,8 +86,8 @@ export default class OverlayStore {
     const {
       id, points, styles, lock, mode, extendData,
       onDrawStart, onDrawing,
-      onDrawEnd, onClick,
-      onRightClick, onPressedMove,
+      onDrawEnd, onClick, onRightClick,
+      onPressedMoveStart, onPressedMoving, onPressedMoveEnd,
       onMouseEnter, onMouseLeave,
       onRemoved, onSelected, onDeselected
     } = overlay
@@ -120,8 +125,14 @@ export default class OverlayStore {
     if (onRightClick !== undefined) {
       instance.setOnRightClickCallback(onRightClick)
     }
-    if (onPressedMove !== undefined) {
-      instance.setOnPressedMoveCallback(onPressedMove)
+    if (onPressedMoveStart !== undefined) {
+      instance.setOnPressedMoveStartCallback(onPressedMoveStart)
+    }
+    if (onPressedMoving !== undefined) {
+      instance.setOnPressedMovingCallback(onPressedMoving)
+    }
+    if (onPressedMoveEnd !== undefined) {
+      instance.setOnPressedMoveEndCallback(onPressedMoveEnd)
     }
     if (onMouseEnter !== undefined) {
       instance.setOnMouseEnterCallback(onMouseEnter)
@@ -182,6 +193,7 @@ export default class OverlayStore {
         }
         this._instances.get(paneId)?.push(instance)
       }
+      instance.onDrawStart?.(({ overlay: instance }))
       this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
       return id
     }
@@ -284,7 +296,7 @@ export default class OverlayStore {
       const instance = this._progressInstanceInfo.instance
       if ((id === undefined || instance.id === id)) {
         updatePaneIds.push(this._progressInstanceInfo.paneId)
-        instance.onRemoved?.(instance)
+        instance.onRemoved?.({ overlay: instance })
         this._progressInstanceInfo = null
       }
     }
@@ -294,7 +306,7 @@ export default class OverlayStore {
         const removeIndex = paneInstances.findIndex(instance => instance.id === id)
         if (removeIndex > -1) {
           updatePaneIds.push(entry[0])
-          paneInstances[removeIndex].onRemoved?.(paneInstances[removeIndex])
+          paneInstances[removeIndex].onRemoved?.({ overlay: paneInstances[removeIndex] })
           paneInstances.splice(removeIndex, 1)
           if (paneInstances.length === 0) {
             this._instances.delete(entry[0])
@@ -306,15 +318,14 @@ export default class OverlayStore {
       this._instances.forEach((paneInstances, paneId) => {
         updatePaneIds.push(paneId)
         paneInstances.forEach(instance => {
-          instance.onRemoved?.(instance)
+          instance.onRemoved?.({ overlay: instance })
         })
       })
       this._instances.clear()
     }
     if (updatePaneIds.length > 0) {
-      const update = this._chartStore.getChart().updatePane
       updatePaneIds.forEach(paneId => {
-        update(UpdateLevel.OVERLAY, paneId)
+        this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
       })
     }
   }
@@ -327,17 +338,17 @@ export default class OverlayStore {
     return this._pressedInstanceInfo
   }
 
-  setHoverInstanceInfo (info: EventOverlayInfo): void {
-    const { instance, elementType, elementIndex } = this._hoverInstanceInfo
+  setHoverInstanceInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
+    const { instance, figureType, figureIndex } = this._hoverInstanceInfo
     if (
       instance?.id !== info.instance?.id ||
-      elementType !== info.elementType ||
-      elementIndex !== info.elementIndex
+      figureType !== info.figureType ||
+      figureIndex !== info.figureIndex
     ) {
       this._hoverInstanceInfo = info
       if (instance?.id !== info.instance?.id) {
-        instance?.onMouseLeave?.(instance)
-        info.instance?.onMouseEnter?.(info.instance)
+        instance?.onMouseLeave?.({ overlay: instance, ...event })
+        info.instance?.onMouseEnter?.({ overlay: info.instance, ...event })
       }
     }
   }
@@ -346,16 +357,16 @@ export default class OverlayStore {
     return this._hoverInstanceInfo
   }
 
-  setClickInstanceInfo (info: EventOverlayInfo): void {
-    const { paneId, instance, elementType, elementIndex } = this._clickInstanceInfo
-    if (instance?.id !== info.instance?.id || elementType !== info.elementType || elementIndex !== info.elementIndex) {
+  setClickInstanceInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
+    const { paneId, instance, figureType, figureIndex } = this._clickInstanceInfo
+    if (info.instance?.isDrawing() ?? false) {
+      info.instance?.onClick?.({ overlay: info.instance, ...event })
+    }
+    if (instance?.id !== info.instance?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
       this._clickInstanceInfo = info
-      if (info.instance?.isDrawing() ?? false) {
-        info.instance?.onClick?.(info.instance)
-      }
       if (instance?.id !== info.instance?.id) {
-        instance?.onDeselected?.(instance)
-        info.instance?.onSelected?.(info.instance)
+        instance?.onDeselected?.({ overlay: instance, ...event })
+        info.instance?.onSelected?.({ overlay: info.instance, ...event })
         this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, info.paneId)
         if (paneId !== info.paneId) {
           this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)

@@ -22,6 +22,7 @@ import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { OverlayStyle } from '../common/Styles'
+import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
 import { clone } from '../common/utils/typeChecks'
 
@@ -64,7 +65,11 @@ export interface OverlayCreateFiguresCallbackParams {
   yAxis: TypeOrNull<YAxis>
 }
 
-export type OverlayEventCallback = (overlay: Overlay) => boolean
+export interface OverlayEvent extends Partial<MouseTouchEvent> {
+  overlay: Overlay
+}
+
+export type OverlayEventCallback = (event: OverlayEvent) => boolean
 
 export type OverlayCreateFiguresCallback = (params: OverlayCreateFiguresCallbackParams) => OverlayFigure | OverlayFigure[]
 
@@ -91,7 +96,9 @@ export interface Overlay {
   onDrawEnd: TypeOrNull<OverlayEventCallback>
   onClick: TypeOrNull<OverlayEventCallback>
   onRightClick: TypeOrNull<OverlayEventCallback>
-  onPressedMove: TypeOrNull<OverlayEventCallback>
+  onPressedMoveStart: TypeOrNull<OverlayEventCallback>
+  onPressedMoving: TypeOrNull<OverlayEventCallback>
+  onPressedMoveEnd: TypeOrNull<OverlayEventCallback>
   onMouseEnter: TypeOrNull<OverlayEventCallback>
   onMouseLeave: TypeOrNull<OverlayEventCallback>
   onRemoved: TypeOrNull<OverlayEventCallback>
@@ -129,14 +136,16 @@ export default abstract class OverlayImp implements Overlay {
   onDrawEnd: TypeOrNull<OverlayEventCallback>
   onClick: TypeOrNull<OverlayEventCallback>
   onRightClick: TypeOrNull<OverlayEventCallback>
-  onPressedMove: TypeOrNull<OverlayEventCallback>
+  onPressedMoveStart: TypeOrNull<OverlayEventCallback>
+  onPressedMoving: TypeOrNull<OverlayEventCallback>
+  onPressedMoveEnd: TypeOrNull<OverlayEventCallback>
   onMouseEnter: TypeOrNull<OverlayEventCallback>
   onMouseLeave: TypeOrNull<OverlayEventCallback>
   onRemoved: TypeOrNull<OverlayEventCallback>
   onSelected: TypeOrNull<OverlayEventCallback>
   onDeselected: TypeOrNull<OverlayEventCallback>
 
-  private _prevPressedPoint: TypeOrNull<PickPartial<Point, 'timestamp'>> = null
+  private _prevPressedPoint: TypeOrNull<Partial<Point>> = null
   private _prevPressedPoints: Array<PickPartial<Point, 'timestamp'>> = []
 
   constructor (overlay: OverlayTemplate) {
@@ -147,7 +156,8 @@ export default abstract class OverlayImp implements Overlay {
       createPointFigures, createXAxisFigures, createYAxisFigures,
       performEventPressedMove, performEventMoveForDrawing,
       onDrawStart, onDrawing, onDrawEnd,
-      onClick, onRightClick, onPressedMove,
+      onClick, onRightClick,
+      onPressedMoveStart, onPressedMoving, onPressedMoveEnd,
       onMouseEnter, onMouseLeave, onRemoved,
       onSelected, onDeselected
     } = overlay
@@ -171,7 +181,9 @@ export default abstract class OverlayImp implements Overlay {
     this.onDrawEnd = onDrawEnd ?? null
     this.onClick = onClick ?? null
     this.onRightClick = onRightClick ?? null
-    this.onPressedMove = onPressedMove ?? null
+    this.onPressedMoveStart = onPressedMoveStart ?? null
+    this.onPressedMoving = onPressedMoving ?? null
+    this.onPressedMoveEnd = onPressedMoveEnd ?? null
     this.onMouseEnter = onMouseEnter ?? null
     this.onMouseLeave = onMouseLeave ?? null
     this.onRemoved = onRemoved ?? null
@@ -305,9 +317,25 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnPressedMoveCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
-    if (this.onPressedMove !== callback) {
-      this.onPressedMove = callback
+  setOnPressedMoveStartCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+    if (this.onPressedMoveStart !== callback) {
+      this.onPressedMoveStart = callback
+      return true
+    }
+    return false
+  }
+
+  setOnPressedMovingCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+    if (this.onPressedMoving !== callback) {
+      this.onPressedMoving = callback
+      return true
+    }
+    return false
+  }
+
+  setOnPressedMoveEndCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+    if (this.onPressedMoveEnd !== callback) {
+      this.onPressedMoveEnd = callback
       return true
     }
     return false
@@ -356,7 +384,6 @@ export default abstract class OverlayImp implements Overlay {
   nextStep (): void {
     if (this.currentStep === this.totalStep - 1) {
       this.currentStep = OVERLAY_DRAW_STEP_FINISHED
-      this.onDrawEnd?.(this)
     } else {
       this.currentStep++
     }
@@ -378,47 +405,53 @@ export default abstract class OverlayImp implements Overlay {
     return this.currentStep === OVERLAY_DRAW_STEP_START
   }
 
-  mouseMoveForDrawing (point: PickPartial<Point, 'timestamp'>): void {
+  mouseMoveForDrawing (point: Partial<Point>): void {
     const pointIndex = this.currentStep - 1
-    this.points[pointIndex] = point
+    const newPoint: PickPartial<Point, 'timestamp'> = { dataIndex: -1, value: -1 }
+    if (point.dataIndex !== undefined) {
+      newPoint.dataIndex = point.dataIndex
+      newPoint.timestamp = point.timestamp
+    }
+    if (point.value !== undefined) {
+      newPoint.value = point.value
+    }
+    this.points[pointIndex] = newPoint
     this.performEventMoveForDrawing?.({
       currentStep: this.currentStep,
       mode: this.mode,
       points: this.points,
       performPointIndex: pointIndex,
-      performPoint: point
+      performPoint: newPoint
     })
-    this.onDrawing?.(this)
   }
 
   /**
    * 鼠标按住移动方法
    * @param point
-   * @param elementIndex
+   * @param pointIndex
    */
-  mousePressedPointMove (point: PickPartial<Point, 'timestamp'>, elementIndex: number): void {
-    if (!this.lock) {
-      const cover = this.onPressedMove?.(this) ?? false
-      if (!cover) {
-        this.points[elementIndex].timestamp = point.timestamp
-        this.points[elementIndex].dataIndex = point.dataIndex
-        this.points[elementIndex].value = point.value
-        this.performEventPressedMove?.({
-          currentStep: this.currentStep,
-          points: this.points,
-          mode: this.mode,
-          performPointIndex: elementIndex,
-          performPoint: point
-        })
-      }
+  mousePressedPointMove (point: Partial<Point>, pointIndex: number): void {
+    if (point.dataIndex !== undefined) {
+      this.points[pointIndex].dataIndex = point.dataIndex
+      this.points[pointIndex].timestamp = point.timestamp
     }
+    if (point.value !== undefined) {
+      this.points[pointIndex].value = point.value
+    }
+    this.performEventPressedMove?.({
+      currentStep: this.currentStep,
+      points: this.points,
+      mode: this.mode,
+      performPointIndex: pointIndex,
+      performPoint: this.points[pointIndex]
+    })
   }
 
   /**
-   * 按住非点拖动开始事件
+   * 拖动开始
    * @param point
    */
-  startPressedOtherMove (point: PickPartial<Point, 'timestamp'>): void {
+  startPressedMove (point: Partial<Point>): void {
     this._prevPressedPoint = { ...point }
     this._prevPressedPoints = clone(this.points)
   }
@@ -427,25 +460,30 @@ export default abstract class OverlayImp implements Overlay {
    * 按住非点拖动时事件
    * @param point
    */
-  mousePressedOtherMove (point: PickPartial<Point, 'timestamp'>, timeScaleStore: TimeScaleStore): void {
-    if (!this.lock && this._prevPressedPoint !== null) {
-      const cover = this.onPressedMove?.(this) ?? false
-      if (!cover) {
-        const difDataIndex = point.dataIndex - this._prevPressedPoint.dataIndex
-        const difValue = point.value - this._prevPressedPoint.value
-        this.points = this._prevPressedPoints.map(p => {
-          if (p.dataIndex === undefined && p.timestamp !== undefined) {
-            p.dataIndex = timeScaleStore.timestampToDataIndex(p.timestamp)
-          }
-          const dataIndex = p.dataIndex + difDataIndex
-          const value = p.value + difValue
-          return {
-            dataIndex,
-            value,
-            timestamp: timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
-          }
-        })
+  mousePressedOtherMove (point: Partial<Point>, timeScaleStore: TimeScaleStore): void {
+    if (this._prevPressedPoint !== null) {
+      let difDataIndex: number
+      if (point.dataIndex !== undefined && this._prevPressedPoint.dataIndex !== undefined) {
+        difDataIndex = point.dataIndex - this._prevPressedPoint.dataIndex
       }
+      let difValue: number
+      if (point.value !== undefined && this._prevPressedPoint.value !== undefined) {
+        difValue = point.value - this._prevPressedPoint.value
+      }
+      this.points = this._prevPressedPoints.map(p => {
+        if (p.dataIndex === undefined && p.timestamp !== undefined) {
+          p.dataIndex = timeScaleStore.timestampToDataIndex(p.timestamp)
+        }
+        const newPoint = { ...p }
+        if (difDataIndex !== undefined) {
+          newPoint.dataIndex = p.dataIndex + difDataIndex
+          newPoint.timestamp = timeScaleStore.dataIndexToTimestamp(newPoint.dataIndex) ?? undefined
+        }
+        if (difValue !== undefined) {
+          newPoint.value = p.value + difValue
+        }
+        return newPoint
+      })
     }
   }
 

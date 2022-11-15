@@ -31,6 +31,10 @@ import { EventOverlayInfo } from '../store/OverlayStore'
 import OverlayView from './OverlayView'
 
 export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayView<C> {
+  protected coordinateToPointTimestampDataIndexFlag (): boolean {
+    return false
+  }
+
   protected drawDefaultFigures (
     ctx: CanvasRenderingContext2D,
     overlay: Overlay,

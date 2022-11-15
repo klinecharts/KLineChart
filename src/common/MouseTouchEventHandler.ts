@@ -43,6 +43,7 @@ export interface EventHandler {
   mouseWheelVerticalEvent?: MouseWheelVerticalEventCallback
 
   mouseClickEvent?: MouseTouchEventCallback
+  mouseRightClickEvent?: MouseTouchEventCallback
   tapEvent?: MouseTouchEventCallback
 
   mouseDoubleClickEvent?: MouseTouchEventCallback
@@ -161,6 +162,8 @@ export default class MouseTouchEventHandler {
 
   private _unsubscribeMouseWheel: TypeOrNull<EmptyCallback> = null
 
+  private _unsubscribeContextMenu: TypeOrNull<EmptyCallback> = null
+
   private _unsubscribeRootMouseEvents: TypeOrNull<EmptyCallback> = null
   private _unsubscribeRootTouchEvents: TypeOrNull<EmptyCallback> = null
 
@@ -214,6 +217,11 @@ export default class MouseTouchEventHandler {
       this._unsubscribeMouseWheel = null
     }
 
+    if (this._unsubscribeContextMenu !== null) {
+      this._unsubscribeContextMenu()
+      this._unsubscribeContextMenu = null
+    }
+
     if (this._unsubscribeRootMouseEvents !== null) {
       this._unsubscribeRootMouseEvents()
       this._unsubscribeRootMouseEvents = null
@@ -236,6 +244,7 @@ export default class MouseTouchEventHandler {
   private _mouseEnterHandler (enterEvent: MouseEvent): void {
     this._unsubscribeMousemove?.()
     this._unsubscribeMouseWheel?.()
+    this._unsubscribeContextMenu?.()
 
     const boundMouseMoveHandler = this._mouseMoveHandler.bind(this)
     this._unsubscribeMousemove = () => {
@@ -248,6 +257,12 @@ export default class MouseTouchEventHandler {
       this._target.removeEventListener('wheel', boundMouseWheel)
     }
     this._target.addEventListener('wheel', boundMouseWheel, { passive: false })
+
+    const boundContextMenu = this._contextMenuHandler.bind(this)
+    this._unsubscribeContextMenu = () => {
+      this._target.removeEventListener('contextmenu', boundContextMenu)
+    }
+    this._target.addEventListener('contextmenu', boundContextMenu, { passive: false })
 
     if (this._firesTouchEvents(enterEvent)) {
       return
@@ -328,6 +343,10 @@ export default class MouseTouchEventHandler {
         this._handler.mouseWheelVerticalEvent({ x: compatEvent.x, y: compatEvent.y }, scale)
       }
     }
+  }
+
+  private _contextMenuHandler (mouseEvent: MouseEvent): void {
+    preventDefault(mouseEvent)
   }
 
   private _touchMoveHandler (moveEvent: TouchEvent): void {
@@ -623,6 +642,13 @@ export default class MouseTouchEventHandler {
   }
 
   private _mouseDownHandler (downEvent: MouseEvent): void {
+    if (downEvent.button === MouseEventButton.Right) {
+      preventDefault(downEvent)
+      const compatEvent = this._makeCompatEvent(downEvent)
+      this._processMouseEvent(compatEvent, this._handler.mouseRightClickEvent)
+      return
+    }
+
     if (downEvent.button !== MouseEventButton.Left) {
       return
     }
@@ -808,6 +834,7 @@ export default class MouseTouchEventHandler {
   private _mouseLeaveHandler (event: MouseEvent): void {
     this._unsubscribeMousemove?.()
     this._unsubscribeMouseWheel?.()
+    this._unsubscribeContextMenu?.()
 
     if (this._firesTouchEvents(event)) {
       return

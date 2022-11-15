@@ -13,7 +13,6 @@
  */
 
 import TypeOrNull from '../common/TypeOrNull'
-import PickPartial from '../common/PickPartial'
 import Coordinate from '../common/Coordinate'
 import Point from '../common/Point'
 import Bounding from '../common/Bounding'
@@ -21,6 +20,7 @@ import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { OverlayStyle } from '../common/Styles'
 import { ElementEventHandler } from '../common/Element'
+import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
 import { formatValue } from '../common/utils/format'
 
@@ -29,7 +29,7 @@ import XAxis from '../component/XAxis'
 import YAxis from '../component/YAxis'
 import Overlay, { OverlayFigure, OverlayMode } from '../component/Overlay'
 
-import OverlayStore, { ProgressOverlayInfo, EventOverlayInfo, EventOverlayInfoElementType } from '../store/OverlayStore'
+import OverlayStore, { ProgressOverlayInfo, EventOverlayInfo, EventOverlayInfoFigureType } from '../store/OverlayStore'
 import TimeScaleStore from '../store/TimeScaleStore'
 
 import { PaneIdConstants } from '../pane/Pane'
@@ -48,46 +48,74 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const pane = this.getWidget().getPane()
     const paneId = pane.getId()
     const overlayStore = pane.getChart().getChartStore().getOverlayStore()
-    this.registerEvent('mouseMoveEvent', (coordinate: Coordinate) => {
+    this.registerEvent('mouseMoveEvent', (event: MouseTouchEvent) => {
       const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
       if (progressInstanceInfo !== null) {
-        if (progressInstanceInfo.instance.isStart()) {
+        const overlay = progressInstanceInfo.instance
+        if (overlay.isStart()) {
           overlayStore.updateProgressInstanceInfo(paneId)
         }
-        if (progressInstanceInfo.instance.isDrawing()) {
-          progressInstanceInfo.instance.mouseMoveForDrawing(this._coordinateToPoint(progressInstanceInfo.instance, coordinate))
+        if (overlay.isDrawing()) {
+          overlay.mouseMoveForDrawing(this._coordinateToPoint(progressInstanceInfo.instance, event))
+          overlay.onDrawing?.({ overlay, ...event })
         }
-        return this._elementMouseMoveEvent(progressInstanceInfo.instance, EventOverlayInfoElementType.POINT, progressInstanceInfo.instance.points.length - 1)(coordinate)
+        return this._figureMouseMoveEvent(
+          progressInstanceInfo.instance,
+          EventOverlayInfoFigureType.POINT,
+          progressInstanceInfo.instance.points.length - 1,
+          0
+        )(event)
       }
-      overlayStore.setHoverInstanceInfo({ paneId, instance: null, elementType: EventOverlayInfoElementType.NONE, elementIndex: -1 })
+      overlayStore.setHoverInstanceInfo({
+        paneId, instance: null, figureType: EventOverlayInfoFigureType.NONE, figureIndex: -1, attrsIndex: -1
+      }, event)
       return false
-    }).registerEvent('mouseDownEvent', (coordinate: Coordinate) => {
+    }).registerEvent('mouseDownEvent', (event: MouseTouchEvent) => {
       const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
       if (progressInstanceInfo !== null) {
-        if (progressInstanceInfo.instance.isStart()) {
+        const overlay = progressInstanceInfo.instance
+        if (overlay.isStart()) {
           overlayStore.updateProgressInstanceInfo(paneId, true)
         }
-        if (progressInstanceInfo.instance.isDrawing()) {
-          progressInstanceInfo.instance.nextStep()
-          if (!progressInstanceInfo.instance.isDrawing()) {
+        if (overlay.isDrawing()) {
+          overlay.nextStep()
+          if (!overlay.isDrawing()) {
             overlayStore.progressInstanceComplete()
+            overlay.onDrawEnd?.({ overlay, ...event })
           }
         }
-        return this._elementMouseDownEvent(progressInstanceInfo.instance, EventOverlayInfoElementType.POINT, progressInstanceInfo.instance.points.length - 1)(coordinate)
+        return this._figureMouseDownEvent(
+          progressInstanceInfo.instance,
+          EventOverlayInfoFigureType.POINT,
+          progressInstanceInfo.instance.points.length - 1,
+          0
+        )(event)
       }
-      overlayStore.setClickInstanceInfo({ paneId, instance: null, elementType: EventOverlayInfoElementType.NONE, elementIndex: -1 })
+      overlayStore.setClickInstanceInfo({
+        paneId, instance: null, figureType: EventOverlayInfoFigureType.NONE, figureIndex: -1, attrsIndex: -1
+      }, event)
       return false
-    }).registerEvent('mouseUpEvent', (coordinate: Coordinate) => {
-      overlayStore.setPressedInstanceInfo({ paneId, instance: null, elementType: EventOverlayInfoElementType.NONE, elementIndex: -1 })
-      return false
-    }).registerEvent('pressedMouseMoveEvent', (coordinate: Coordinate) => {
-      const { instance, elementType, elementIndex } = overlayStore.getPressedInstanceInfo()
+    }).registerEvent('mouseUpEvent', (event: MouseTouchEvent) => {
+      const { instance } = overlayStore.getPressedInstanceInfo()
       if (instance !== null) {
-        const point = this._coordinateToPoint(instance, coordinate)
-        if (elementType === EventOverlayInfoElementType.POINT) {
-          instance.mousePressedPointMove(point, elementIndex)
-        } else {
-          instance.mousePressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore().getTimeScaleStore())
+        instance.onPressedMoveEnd?.({ overlay: instance, ...event })
+      }
+      overlayStore.setPressedInstanceInfo({
+        paneId, instance: null, figureType: EventOverlayInfoFigureType.NONE, figureIndex: -1, attrsIndex: -1
+      })
+      return false
+    }).registerEvent('pressedMouseMoveEvent', (event: MouseTouchEvent) => {
+      const { instance, figureType, figureIndex } = overlayStore.getPressedInstanceInfo()
+      if (instance !== null) {
+        if (!instance.lock) {
+          if (!(instance.onPressedMoving?.({ overlay: instance, ...event }) ?? false)) {
+            const point = this._coordinateToPoint(instance, event)
+            if (figureType === EventOverlayInfoFigureType.POINT) {
+              instance.mousePressedPointMove(point, figureIndex)
+            } else {
+              instance.mousePressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore().getTimeScaleStore())
+            }
+          }
         }
         return true
       }
@@ -95,94 +123,124 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     })
   }
 
-  private _elementEvents (overlay: Overlay, elementType: EventOverlayInfoElementType, elementIndex: number): ElementEventHandler | undefined {
+  private _figureEvents (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number): ElementEventHandler | undefined {
     if (!overlay.isDrawing()) {
       return {
-        mouseMoveEvent: this._elementMouseMoveEvent(overlay, elementType, elementIndex),
-        mouseDownEvent: this._elementMouseDownEvent(overlay, elementType, elementIndex)
+        mouseMoveEvent: this._figureMouseMoveEvent(overlay, figureType, figureIndex, attrsIndex),
+        mouseDownEvent: this._figureMouseDownEvent(overlay, figureType, figureIndex, attrsIndex),
+        mouseRightClickEvent: this._figureMouseRightClickEvent(overlay, figureType, figureIndex, attrsIndex)
       }
     }
   }
 
-  private _elementMouseMoveEvent (overlay: Overlay, elementType: EventOverlayInfoElementType, elementIndex: number) {
-    return (coordinate: Coordinate) => {
+  private _figureMouseMoveEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number) {
+    return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       const overlayStore = pane.getChart().getChartStore().getOverlayStore()
-      overlayStore.setHoverInstanceInfo({ paneId: pane.getId(), instance: overlay, elementType, elementIndex })
+      overlayStore.setHoverInstanceInfo(
+        { paneId: pane.getId(), instance: overlay, figureType, figureIndex, attrsIndex }, event
+      )
       return true
     }
   }
 
-  private _elementMouseDownEvent (overlay: Overlay, elementType: EventOverlayInfoElementType, elementIndex: number) {
-    return (coordinate: Coordinate) => {
+  private _figureMouseDownEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number) {
+    return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
       const overlayStore = pane.getChart().getChartStore().getOverlayStore()
-      overlay.startPressedOtherMove(this._coordinateToPoint(overlay, coordinate))
-      overlayStore.setPressedInstanceInfo({ paneId, instance: overlay, elementType, elementIndex })
-      overlayStore.setClickInstanceInfo({ paneId, instance: overlay, elementType, elementIndex })
+      overlay.startPressedMove(this._coordinateToPoint(overlay, event))
+      overlay.onPressedMoveStart?.({ overlay, ...event })
+      overlayStore.setPressedInstanceInfo({ paneId, instance: overlay, figureType, figureIndex, attrsIndex })
+      overlayStore.setClickInstanceInfo({ paneId, instance: overlay, figureType, figureIndex, attrsIndex }, event)
       return true
     }
   }
 
-  private _coordinateToPoint (overlay: Overlay, coordinate: Coordinate): PickPartial<Point, 'timestamp'> {
+  _figureMouseRightClickEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number) {
+    return (event: MouseTouchEvent) => {
+      if (!(overlay.onRightClick?.({ overlay, ...event }) ?? false)) {
+        const pane = this.getWidget().getPane()
+        const overlayStore = pane.getChart().getChartStore().getOverlayStore()
+        overlayStore.removeInstance(overlay.id)
+      }
+      return true
+    }
+  }
+
+  private _coordinateToPoint (overlay: Overlay, coordinate: Coordinate): Partial<Point> {
+    const point: Partial<Point> = {}
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()
     const paneId = pane.getId()
-    const yAxis = pane.getAxisComponent()
-    const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as Axis
-    const dataIndex = xAxis.convertFromPixel(coordinate.x)
     const timeScaleStore = chart.getChartStore().getTimeScaleStore()
-    const timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
-
-    let value = yAxis.convertFromPixel(coordinate.y)
-    if (overlay.mode !== OverlayMode.NORMAL && paneId === PaneIdConstants.CANDLE) {
-      const kLineData = timeScaleStore.getDataByDataIndex(dataIndex)
-      if (kLineData !== null) {
-        if (value > kLineData.high) {
-          if (overlay.mode === OverlayMode.WEAK_MAGNET) {
-            const highY = yAxis.convertToPixel(kLineData.high)
-            const buffValue = yAxis.convertFromPixel(highY - 8)
-            if (value < buffValue) {
-              value = kLineData.high
-            }
-          } else {
-            value = kLineData.high
-          }
-        } else if (value < kLineData.low) {
-          if (overlay.mode === OverlayMode.WEAK_MAGNET) {
-            const lowY = yAxis.convertToPixel(kLineData.low)
-            const buffValue = yAxis.convertFromPixel(lowY - 8)
-            if (value > buffValue) {
-              value = kLineData.low
-            }
-          } else {
-            value = kLineData.low
-          }
-        } else {
-          const max = Math.max(kLineData.open, kLineData.close)
-          const min = Math.min(kLineData.open, kLineData.close)
-          if (value > max) {
-            if (value - max < kLineData.high - value) {
-              value = max
+    if (this.coordinateToPointTimestampDataIndexFlag()) {
+      const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as Axis
+      const dataIndex = xAxis.convertFromPixel(coordinate.x)
+      const timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
+      point.dataIndex = dataIndex
+      point.timestamp = timestamp
+    }
+    if (this.coordinateToPointValueFlag()) {
+      const yAxis = pane.getAxisComponent()
+      let value = yAxis.convertFromPixel(coordinate.y)
+      if (overlay.mode !== OverlayMode.NORMAL && paneId === PaneIdConstants.CANDLE && point.dataIndex !== undefined) {
+        const kLineData = timeScaleStore.getDataByDataIndex(point.dataIndex)
+        if (kLineData !== null) {
+          if (value > kLineData.high) {
+            if (overlay.mode === OverlayMode.WEAK_MAGNET) {
+              const highY = yAxis.convertToPixel(kLineData.high)
+              const buffValue = yAxis.convertFromPixel(highY - 8)
+              if (value < buffValue) {
+                value = kLineData.high
+              }
             } else {
               value = kLineData.high
             }
-          } else if (value < min) {
-            if (value - kLineData.low < min - value) {
+          } else if (value < kLineData.low) {
+            if (overlay.mode === OverlayMode.WEAK_MAGNET) {
+              const lowY = yAxis.convertToPixel(kLineData.low)
+              const buffValue = yAxis.convertFromPixel(lowY - 8)
+              if (value > buffValue) {
+                value = kLineData.low
+              }
+            } else {
               value = kLineData.low
+            }
+          } else {
+            const max = Math.max(kLineData.open, kLineData.close)
+            const min = Math.min(kLineData.open, kLineData.close)
+            if (value > max) {
+              if (value - max < kLineData.high - value) {
+                value = max
+              } else {
+                value = kLineData.high
+              }
+            } else if (value < min) {
+              if (value - kLineData.low < min - value) {
+                value = kLineData.low
+              } else {
+                value = min
+              }
+            } else if (max - value < value - min) {
+              value = max
             } else {
               value = min
             }
-          } else if (max - value < value - min) {
-            value = max
-          } else {
-            value = min
           }
         }
       }
+      point.value = value
     }
-    return { dataIndex, timestamp, value }
+    return point
+  }
+
+  protected coordinateToPointValueFlag (): boolean {
+    return true
+  }
+
+  protected coordinateToPointTimestampDataIndexFlag (): boolean {
+    return true
   }
 
   dispatchEvent (type: string, coordinate: Coordinate): boolean {
@@ -288,10 +346,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   }
 
   protected drawFigures (ctx: CanvasRenderingContext2D, overlay: Overlay, figures: OverlayFigure[], defaultStyles: OverlayStyle): void {
-    figures.forEach(({ type, styles, attrs, ignoreEvent }, index) => {
+    figures.forEach((figure, figureIndex) => {
+      const { type, styles, attrs, ignoreEvent } = figure
       const attrsArray = [].concat(attrs)
-      attrsArray.forEach(ats => {
-        const evnets = (ignoreEvent === undefined || !ignoreEvent) ? this._elementEvents(overlay, EventOverlayInfoElementType.OTHER, index) : undefined
+      attrsArray.forEach((ats, attrsIndex) => {
+        const evnets = (ignoreEvent === undefined || !ignoreEvent) ? this._figureEvents(overlay, EventOverlayInfoFigureType.POINT, figureIndex, attrsIndex) : undefined
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
         this.createFigure(
           type, ats, ss, evnets
@@ -340,8 +399,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   ): void {
     if (overlay.needDefaultPointFigure) {
       if (
-        (hoverInstanceInfo.instance?.id === overlay.id && hoverInstanceInfo.elementType !== EventOverlayInfoElementType.NONE) ||
-        (clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.elementType !== EventOverlayInfoElementType.NONE)
+        (hoverInstanceInfo.instance?.id === overlay.id && hoverInstanceInfo.figureType !== EventOverlayInfoFigureType.NONE) ||
+        (clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.figureType !== EventOverlayInfoFigureType.NONE)
       ) {
         const styles = overlay.styles
         coordinates.forEach(({ x, y }, index) => {
@@ -351,8 +410,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           let borderSize = formatValue(styles, 'point.borderSize', defaultStyles.point.borderSize) as number
           if (
             hoverInstanceInfo.instance?.id === overlay.id &&
-            hoverInstanceInfo.elementType === EventOverlayInfoElementType.POINT &&
-            hoverInstanceInfo.elementIndex === index
+            hoverInstanceInfo.figureType === EventOverlayInfoFigureType.POINT &&
+            hoverInstanceInfo.figureIndex === index
           ) {
             radius = formatValue(styles, 'point.activeRadius', defaultStyles.point.activeRadius) as number
             color = formatValue(styles, 'point.activeRadius', defaultStyles.point.activeColor)
@@ -363,7 +422,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             'circle',
             { x, y, r: radius + borderSize },
             { color: borderColor },
-            this._elementEvents(overlay, EventOverlayInfoElementType.POINT, index)
+            this._figureEvents(overlay, EventOverlayInfoFigureType.POINT, index, 0)
           )?.draw(ctx)
           this.createFigure(
             'circle',
