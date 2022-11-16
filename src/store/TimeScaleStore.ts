@@ -18,11 +18,10 @@ import KLineData from '../common/KLineData'
 import BarSpace from '../common/BarSpace'
 import VisibleRange from '../common/VisibleRange'
 import LoadMoreCallback from '../common/LoadMoreCallback'
+import { ActionType } from '../common/Action'
 
 import { logWarn } from '../common/utils/logger'
 import { binarySearchNearest } from '../common/utils/number'
-
-// import ActionType from '../enum/ActionType'
 
 import ChartStore from './ChartStore'
 
@@ -41,27 +40,79 @@ const DEFAULT_BAR_SPACE = 6
 const DEFAULT_OFFSET_RIGHT_DISTANCE = 50
 
 export default class TimeScaleStore {
+  /**
+   * Root store
+   */
   private readonly _chartStore: ChartStore
 
+  /**
+   * Time foramt
+   */
   private _dateTimeFormat: Intl.DateTimeFormat
 
+  /**
+   * Scale enabled flag
+   */
   private _zoomEnabled: boolean = true
+
+  /**
+   * Scroll enabled flag
+   */
   private _scrollEnabled: boolean = true
 
+  /**
+   * Is loding data flag
+   */
   private _loading: boolean = true
+
+  /**
+   * Load more data callback
+   */
   private _loadMoreCallback: TypeOrNull<LoadMoreCallback> = null
+
+  /**
+   * Whether there are more flag
+   */
   private _more: boolean = true
 
+  /**
+   * Total space of drawing area
+   */
   private _totalBarSpace: number = 0
+
+  /**
+   * Space occupied by a single piece of data
+   */
   private _barSpace: number = DEFAULT_BAR_SPACE
+
+  /**
+   * The space of the draw bar
+   */
   private _gapBarSpace: number
 
+  /**
+   * Distance from the last data to the right of the drawing area
+   */
   private _offsetRightDistance = DEFAULT_OFFSET_RIGHT_DISTANCE
+
+  /**
+   * The number of bar calculated from the distance of the last data to the right of the drawing area
+   */
   private _offsetRightBarCount: number
+
+  /**
+   * The number of bar to the right of the drawing area from the last data when scrolling starts
+   */
   private _startScrollOffsetRightBarCount = 0
 
+  /**
+   * Scroll to the leftmost and rightmost visible bar
+   */
   private _minVisibleBarCount: MinVisibleBarCount = { left: 2, right: 2 }
 
+  /**
+   * Start and end points of visible area data index
+   */
   private _visibleRange: VisibleRange = { from: 0, to: 0 }
 
   constructor (chartStore: ChartStore) {
@@ -75,11 +126,6 @@ export default class TimeScaleStore {
     this._offsetRightBarCount = this._offsetRightDistance / this._barSpace
   }
 
-  /**
-   * 计算一条有空隙柱子的空间
-   * @returns {number}
-   * @private
-   */
   private _calcGapBarSpace (): number {
     const rateSpace = Math.floor(this._barSpace * 0.82)
     const floorSpace = Math.floor(this._barSpace)
@@ -88,8 +134,7 @@ export default class TimeScaleStore {
   }
 
   /**
-   * 调整绘制起点终点位置
-   * @private
+   * adjust visible range
    */
   adjustVisibleRange (): void {
     const dataList = this._chartStore.getDataList()
@@ -101,7 +146,6 @@ export default class TimeScaleStore {
     }
 
     const minRightOffsetBarCount = -dataCount + Math.min(this._minVisibleBarCount.right, dataCount)
-
     if (this._offsetRightBarCount < minRightOffsetBarCount) {
       this._offsetRightBarCount = minRightOffsetBarCount
     }
@@ -114,8 +158,9 @@ export default class TimeScaleStore {
       from = 0
     }
     this._visibleRange = { from, to }
+    this._chartStore.getActionStore().execute(ActionType.onVisibleRangeChange, { from, to })
     this._chartStore.adjustVisibleDataList()
-    // 处理加载更多，有更多并且没有在加载则去加载更多
+    // More processing and loading, more loading if there are callback methods and no data is being loaded
     if (from === 0 && this._more && !this._loading && this._loadMoreCallback !== null) {
       this._loading = true
       const firstData = dataList[0]
@@ -123,35 +168,20 @@ export default class TimeScaleStore {
     }
   }
 
-  /**
-   * 设置是否有更多
-   * @param more
-   */
   setMore (more: boolean): TimeScaleStore {
     this._more = more
     return this
   }
 
-  /**
-   * 设置是否在加载
-   */
   setLoading (loading: boolean): TimeScaleStore {
     this._loading = loading
     return this
   }
 
-  /**
-   * 获取时间格式化
-   * @returns {Intl.DateTimeFormat | Intl.DateTimeFormat}
-   */
   getDateTimeFormat (): Intl.DateTimeFormat {
     return this._dateTimeFormat
   }
 
-  /**
-   * 设置时区
-   * @param timezone
-   */
   setTimezone (timezone: string): void {
     let dateTimeFormat: TypeOrNull<Intl.DateTimeFormat> = null
     try {
@@ -168,18 +198,10 @@ export default class TimeScaleStore {
     }
   }
 
-  /**
-   * 获取时区
-   * @returns {string}
-   */
   getTimezone (): string {
     return this._dateTimeFormat.resolvedOptions().timeZone
   }
 
-  /**
-   * 获取一条数据的空间
-   * @returns {number}
-   */
   getBarSpace (): BarSpace {
     return {
       bar: this._barSpace,
@@ -189,11 +211,6 @@ export default class TimeScaleStore {
     }
   }
 
-  /**
-   * 设置一条数据的空间
-   * @param barSpace
-   * @param adjustBeforeFunc
-   */
   setBarSpace (barSpace: number, adjustBeforeFunc?: () => void): void {
     if (barSpace < BarSpaceLimitContants.MIN || barSpace > BarSpaceLimitContants.MAX || this._barSpace === barSpace) {
       return
@@ -206,10 +223,6 @@ export default class TimeScaleStore {
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 
-  /**
-   * 设置可见区域数据占用的总空间
-   * @param totalSpace
-   */
   setTotalBarSpace (totalSpace: number): TimeScaleStore {
     if (this._totalBarSpace !== totalSpace) {
       this._totalBarSpace = totalSpace
@@ -219,11 +232,6 @@ export default class TimeScaleStore {
     return this
   }
 
-  /**
-   * 设置右边可以偏移的空间
-   * @param distance
-   * @param isUpdate
-   */
   setOffsetRightDistance (distance: number, isUpdate?: boolean): TimeScaleStore {
     this._offsetRightDistance = distance
     this._offsetRightBarCount = distance / this._barSpace
@@ -235,51 +243,28 @@ export default class TimeScaleStore {
     return this
   }
 
-  /**
-   * 重置右边可以偏移的空间
-   */
   resetOffsetRightDistance (): void {
     this.setOffsetRightDistance(this._offsetRightDistance)
   }
 
-  /**
-   * 右偏移距离
-   * @return {number}
-   */
   getOffsetRightDistance (): number {
     return this._offsetRightDistance
   }
 
-  /**
-   * 右偏移bar数量
-   * @return {*|number}
-   */
   getOffsetRightBarCount (): number {
     return this._offsetRightBarCount
   }
 
-  /**
-   * 设置右偏移bar数量
-   * @param barCount
-   */
   setOffsetRightBarCount (barCount: number): TimeScaleStore {
     this._offsetRightBarCount = barCount
     return this
   }
 
-  /**
-   * 设置左边可见的最小bar数量
-   * @param barCount
-   */
   setLeftMinVisibleBarCount (barCount: number): TimeScaleStore {
     this._minVisibleBarCount.left = barCount
     return this
   }
 
-  /**
-   * 设置右边可见的最小bar数量
-   * @param barCount
-   */
   setRightMinVisibleBarCount (barCount: number): TimeScaleStore {
     this._minVisibleBarCount.right = barCount
     return this
@@ -289,42 +274,26 @@ export default class TimeScaleStore {
     return this._visibleRange
   }
 
-  /**
-   * 开始滚动
-   */
   startScroll (): void {
     this._startScrollOffsetRightBarCount = this._offsetRightBarCount
   }
 
-  /**
-   * 滚动
-   * @param distance
-   */
   scroll (distance: number): void {
     if (!this._scrollEnabled) {
       return
     }
     const distanceBarCount = distance / this._barSpace
-    // this._chartStore.getActionStore().execute(ActionType.SCROLL, { barCount: distanceBarCount, distance })
+    this._chartStore.getActionStore().execute(ActionType.onScroll)
     this._offsetRightBarCount = this._startScrollOffsetRightBarCount - distanceBarCount
     this.adjustVisibleRange()
     this._chartStore.getCrosshairStore().recalculate(true)
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 
-  /**
-   * 根据索引获取数据
-   * @param dataIndex
-   */
   getDataByDataIndex (dataIndex: number): TypeOrNull<KLineData> {
     return this._chartStore.getDataList()[dataIndex] ?? null
   }
 
-  /**
-   * x转换成浮点数的位置
-   * @param x
-   * @returns {number}
-   */
   coordinateToFloatIndex (x: number): number {
     const dataCount = this._chartStore.getDataList().length
     const deltaFromRight = (this._totalBarSpace - x) / this._barSpace
@@ -332,21 +301,11 @@ export default class TimeScaleStore {
     return Math.round(index * 1000000) / 1000000
   }
 
-  /**
-   * 数据索引转换成时间戳
-   * @param dataIndex
-   * @return {*}
-   */
   dataIndexToTimestamp (dataIndex: number): TypeOrNull<number> {
     const data = this.getDataByDataIndex(dataIndex)
     return data?.timestamp ?? null
   }
 
-  /**
-   * 将时间戳转换成数据索引位置
-   * @param timestamp
-   * @return {number}
-   */
   timestampToDataIndex (timestamp: number): number {
     const dataList = this._chartStore.getDataList()
     if (dataList.length === 0) {
@@ -355,29 +314,16 @@ export default class TimeScaleStore {
     return binarySearchNearest(dataList, 'timestamp', timestamp)
   }
 
-  /**
-   * 数据索引转换成坐标
-   * @param dataIndex
-   */
   dataIndexToCoordinate (dataIndex: number): number {
     const dataCount = this._chartStore.getDataList().length
     const deltaFromRight = dataCount + this._offsetRightBarCount - dataIndex
     return this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace
   }
 
-  /**
-   * 坐标换成数据索引转
-   * @param x
-   */
   coordinateToDataIndex (x: number): number {
     return Math.ceil(this.coordinateToFloatIndex(x)) - 1
   }
 
-  /**
-   * 缩放
-   * @param scale
-   * @param coordinate
-   */
   zoom (scale: number, coordinate?: Partial<Coordinate>): void {
     if (!this._zoomEnabled) {
       return
@@ -386,7 +332,7 @@ export default class TimeScaleStore {
       const crosshair = this._chartStore.getCrosshairStore().get()
       coordinate = { x: crosshair?.x !== undefined ? crosshair.x : this._totalBarSpace / 2 }
     }
-    // this._chartStore.getActionStore().execute(ActionType.ZOOM, { coordinate, scale })
+    this._chartStore.getActionStore().execute(ActionType.onZoom)
     const floatIndex = this.coordinateToFloatIndex(coordinate.x as number)
     const barSpace = this._barSpace + scale * (this._barSpace / 10)
     this.setBarSpace(barSpace, () => {
@@ -394,52 +340,29 @@ export default class TimeScaleStore {
     })
   }
 
-  /**
-   * 设置是否可以缩放
-   * @param enabled
-   */
   setZoomEnabled (enabled: boolean): TimeScaleStore {
     this._zoomEnabled = enabled
     return this
   }
 
-  /**
-   * 获取是否可以缩放
-   * @return {boolean}
-   */
   getZoomEnabled (): boolean {
     return this._zoomEnabled
   }
 
-  /**
-   * 设置是否可以拖拽滚动
-   * @param enabled
-   */
   setScrollEnabled (enabled: boolean): TimeScaleStore {
     this._scrollEnabled = enabled
     return this
   }
 
-  /**
-   * 获取是否可以拖拽滚动
-   * @return {boolean}
-   */
   getScrollEnabled (): boolean {
     return this._scrollEnabled
   }
 
-  /**
-   * 设置加载更多
-   * @param callback
-   */
   setLoadMoreCallback (callback: LoadMoreCallback): TimeScaleStore {
     this._loadMoreCallback = callback
     return this
   }
 
-  /**
-   * 清除数据
-   */
   clear (): void {
     this._more = true
     this._loading = true

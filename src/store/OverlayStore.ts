@@ -52,8 +52,15 @@ export default class OverlayStore {
   private readonly _chartStore: ChartStore
 
   private readonly _instances = new Map<string, OverlayImp[]>()
+
+  /**
+   * Overlay information in painting
+   */
   private _progressInstanceInfo: TypeOrNull<ProgressOverlayInfo> = null
 
+  /**
+   * Overlay information by the mouse pressed
+   */
   private _pressedInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
@@ -62,6 +69,9 @@ export default class OverlayStore {
     attrsIndex: -1
   }
 
+  /**
+   * Overlay information by hover
+   */
   private _hoverInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
@@ -70,6 +80,9 @@ export default class OverlayStore {
     attrsIndex: -1
   }
 
+  /**
+   * Overlay information by the mouse click
+   */
   private _clickInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
@@ -152,11 +165,6 @@ export default class OverlayStore {
     return updateFlag
   }
 
-  /**
-   * 获取实例
-   * @param id
-   * @returns
-   */
   getInstanceById (id: string): TypeOrNull<OverlayImp> {
     for (const entry of this._instances) {
       const paneShapes = entry[1]
@@ -173,11 +181,6 @@ export default class OverlayStore {
     return null
   }
 
-  /**
-   * 添加标记实例
-   * @param overlay
-   * @param paneId
-   */
   addInstance (overlay: OverlayCreate, paneId: string, appointPaneFlag: boolean): TypeOrNull<string> {
     const id = overlay.id ?? createId(OVERLAY_ID_PREFIX)
     if (this.getInstanceById(id) === null) {
@@ -200,17 +203,10 @@ export default class OverlayStore {
     return null
   }
 
-  /**
-   * 获取进行中的实例
-   * @returns
-   */
   getProgressInstanceInfo (): TypeOrNull<ProgressOverlayInfo> {
     return this._progressInstanceInfo
   }
 
-  /**
-   * 进行中的实例完成
-   */
   progressInstanceComplete (): void {
     if (this._progressInstanceInfo !== null) {
       const { instance, paneId } = this._progressInstanceInfo
@@ -224,10 +220,6 @@ export default class OverlayStore {
     }
   }
 
-  /**
-   * 更新进行中的实例
-   * @param paneId
-   */
   updateProgressInstanceInfo (paneId: string, appointPaneFlag?: boolean): void {
     if (this._progressInstanceInfo !== null) {
       if (appointPaneFlag !== undefined && appointPaneFlag) {
@@ -239,11 +231,6 @@ export default class OverlayStore {
     }
   }
 
-  /**
-   * 获取图形标记的数据
-   * @param paneId
-   * @returns {{}}
-   */
   getInstances (paneId?: string): OverlayImp[] {
     if (paneId === undefined) {
       let instances: OverlayImp[] = []
@@ -255,10 +242,6 @@ export default class OverlayStore {
     return this._instances.get(paneId) ?? []
   }
 
-  /**
-   * 设置图形标记实例配置
-   * @param overlay
-   */
   override (overlay: Partial<OverlayCreate>): void {
     const { id, name } = overlay
     let updateFlag = false
@@ -286,10 +269,6 @@ export default class OverlayStore {
     }
   }
 
-  /**
-   * 移除图形实例
-   * @param id
-   */
   removeInstance (id?: string): void {
     const updatePaneIds: string[] = []
     if (this._progressInstanceInfo !== null) {
@@ -380,18 +359,10 @@ export default class OverlayStore {
     return this._clickInstanceInfo
   }
 
-  /**
-   * 是否为空
-   * @returns
-   */
   isEmpty (): boolean {
     return this._instances.size === 0 && this._progressInstanceInfo === null
   }
 
-  /**
-   * 是否正在绘制
-   * @return
-   */
   isDrawing (): boolean {
     return this._progressInstanceInfo !== null && (this._progressInstanceInfo?.instance.isDrawing() ?? false)
   }

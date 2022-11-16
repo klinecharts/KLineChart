@@ -15,6 +15,7 @@
 import Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
 import { EventOptions, MouseTouchEvent } from '../common/MouseTouchEventHandler'
+import { ActionType } from '../common/Action'
 
 import Axis from '../component/Axis'
 import YAxis from '../component/YAxis'
@@ -87,7 +88,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
         reducedPane.setBounding({ height: reducedPaneHeight })
         increasedPane.setBounding({ height: startDragIncreasedPaneHeight + diffHeight })
         const chart = currentPane.getChart()
-        // chart.getChartStore().getCrosshairStore().set({}, true)
+        chart.getChartStore().getActionStore().execute(ActionType.onPaneDrag, { paneId: currentPane.getId })
         chart.adjustPaneViewport(false, true, true, true, true)
       }
     }

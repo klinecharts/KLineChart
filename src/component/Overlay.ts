@@ -74,35 +74,154 @@ export type OverlayEventCallback = (event: OverlayEvent) => boolean
 export type OverlayCreateFiguresCallback = (params: OverlayCreateFiguresCallbackParams) => OverlayFigure | OverlayFigure[]
 
 export interface Overlay {
+  /**
+   * Unique identification
+   */
   id: string
+
+  /**
+   * Name
+   */
   name: string
+
+  /**
+   * Total number of steps required to complete mouse operation
+   */
   totalStep: number
+
+  /**
+   * Current step
+   */
   currentStep: number
+
+  /**
+   * Whether it is locked. When it is true, it will not respond to events
+   */
   lock: boolean
+
+  /**
+   * Whether the default figure corresponding to the point is required
+   */
   needDefaultPointFigure: boolean
+
+  /**
+   * Whether the default figure on the Y axis is required
+   */
   needDefaultXAxisFigure: boolean
+
+  /**
+   * Whether the default figure on the X axis is required
+   */
   needDefaultYAxisFigure: boolean
+
+  /**
+   * Mode
+   */
   mode: OverlayMode
+
+  /**
+   * Time and value information
+   */
   points: Array<PickPartial<Point, 'timestamp'>>
+
+  /**
+   * Extended Data
+   */
   extendData: any
+
+  /**
+   * The style information and format are consistent with the overlay in the unified configuration
+   */
   styles: TypeOrNull<DeepPartial<OverlayStyle>>
+
+  /**
+   * Create figures corresponding to points
+   */
   createPointFigures: TypeOrNull<OverlayCreateFiguresCallback>
+
+  /**
+   * Create figures on the Y axis
+   */
   createXAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>
+
+  /**
+   * Create figures on the X axis
+   */
   createYAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>
+
+  /**
+   * Special handling callbacks when pressing events
+   */
   performEventPressedMove: TypeOrNull<(params: OverlayPerformEventParams) => void>
+
+  /**
+   * In drawing, special handling callback when moving events
+   */
   performEventMoveForDrawing: TypeOrNull<(params: OverlayPerformEventParams) => void>
+
+  /**
+   * Start drawing event
+   */
   onDrawStart: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * In drawing event
+   */
   onDrawing: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Draw End Event
+   */
   onDrawEnd: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Click event
+   */
   onClick: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Right click event
+   */
   onRightClick: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Pressed move start event
+   */
   onPressedMoveStart: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Pressed moving event
+   */
   onPressedMoving: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Pressed move end event
+   */
   onPressedMoveEnd: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Mouse enter event
+   */
   onMouseEnter: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Mouse leave event
+   */
   onMouseLeave: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Removed event
+   */
   onRemoved: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Selected event
+   */
   onSelected: TypeOrNull<OverlayEventCallback>
+
+  /**
+   * Deselected event
+   */
   onDeselected: TypeOrNull<OverlayEventCallback>
 }
 
@@ -231,7 +350,7 @@ export default abstract class OverlayImp implements Overlay {
         this.currentStep = points.length + 1
         repeatTotalStep = points.length
       }
-      // 重新演练绘制一遍，防止因为点不对而绘制出错误的图形
+      // Prevent wrong drawing due to wrong points
       if (this.performEventMoveForDrawing !== null) {
         for (let i = 0; i < repeatTotalStep; i++) {
           this.performEventMoveForDrawing({
@@ -265,10 +384,6 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  /**
-   * 设置模式
-   * @param mode
-   */
   setMode (mode: OverlayMode): boolean {
     if (mode !== this.mode) {
       this.mode = mode
@@ -389,18 +504,10 @@ export default abstract class OverlayImp implements Overlay {
     }
   }
 
-  /**
-   * 是否在绘制中
-   * @return {boolean}
-   */
   isDrawing (): boolean {
     return this.currentStep !== OVERLAY_DRAW_STEP_FINISHED
   }
 
-  /**
-   * 是否开始
-   * @returns
-   */
   isStart (): boolean {
     return this.currentStep === OVERLAY_DRAW_STEP_START
   }
@@ -447,19 +554,11 @@ export default abstract class OverlayImp implements Overlay {
     })
   }
 
-  /**
-   * 拖动开始
-   * @param point
-   */
   startPressedMove (point: Partial<Point>): void {
     this._prevPressedPoint = { ...point }
     this._prevPressedPoints = clone(this.points)
   }
 
-  /**
-   * 按住非点拖动时事件
-   * @param point
-   */
   mousePressedOtherMove (point: Partial<Point>, timeScaleStore: TimeScaleStore): void {
     if (this._prevPressedPoint !== null) {
       let difDataIndex: number

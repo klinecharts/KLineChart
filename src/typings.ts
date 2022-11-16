@@ -12,13 +12,8 @@
  * limitations under the License.
  */
 
-/**
- * 容器位置
- */
-const ContainerPosition = {
-  ROOT: 'root',
-  CONTENT: 'content',
-  YAXIS: 'yAxis'
-}
+import TypeOrNull from './common/TypeOrNull'
 
-export default ContainerPosition
+export {
+  TypeOrNull
+}

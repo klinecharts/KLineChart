@@ -54,13 +54,15 @@ export default class CrosshairStore {
     const realX = this._chartStore.getTimeScaleStore().dataIndexToCoordinate(realDataIndex)
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
     this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex }
-    if (kLineData !== null) {
-      // this._chartStore.crosshairChange(this._crosshair)
-    }
     if (
-      (prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId) && !(notInvalidate ?? false)
+      prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId
     ) {
-      this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY)
+      if (kLineData !== null) {
+        this._chartStore.getChart().crosshairChange(this._crosshair)
+      }
+      if (!(notInvalidate ?? false)) {
+        this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY)
+      }
     }
     return this
   }

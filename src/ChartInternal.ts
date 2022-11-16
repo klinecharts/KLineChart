@@ -16,6 +16,8 @@ import TypeOrNull from './common/TypeOrNull'
 import DeepPartial from './common/DeepPartial'
 import { UpdateLevel } from './common/Updater'
 import { Styles, YAxisPosition } from './common/Styles'
+import Crosshair from './common/Crosshair'
+import { ActionType } from './common/Action'
 
 import ChartStore from './store/ChartStore'
 
@@ -31,16 +33,6 @@ import { IndicatorCreate } from './component/Indicator'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
-// import { isArray, isBoolean, isFunction, isValid, isNumber } from './common/utils/typeChecks'
-
-// import { getPixelRatio } from './common/utils/canvas'
-
-// import Annotation from './component/overlay/Annotation'
-// import Tag from './component/overlay/Tag'
-// import { perfectOverlayFunc } from './component/overlay/Overlay'
-
-// // 注解id前缀
-// const ANNOTATION_ID_PREFIX = 'an_'
 
 export default class ChartInternal {
   private _container: HTMLElement
@@ -76,68 +68,6 @@ export default class ChartInternal {
     this._chartContainer.tabIndex = 1
     container.appendChild(this._chartContainer)
   }
-
-  // /**
-  //  * 十字光标观察者
-  //  * @private
-  //  */
-  // _crosshairObserver ({ paneId, dataIndex, kLineData, x, y }) {
-  //   if (
-  //     this._chartStore.actionStore().has(ActionType.CROSSHAIR) ||
-  //     this._chartStore.actionStore().has(ActionType.TOOLTIP)
-  //   ) {
-  //     const techDatas = {}
-  //     this._panes.forEach((_, id) => {
-  //       const data = {}
-  //       const techDataList = []
-  //       const techs = this.chartStore().technicalIndicatorStore().instances(id)
-  //       techs.forEach(tech => {
-  //         const result = tech.result
-  //         const techData = result[dataIndex]
-  //         data[tech.name] = techData
-  //         techDataList.push({ name: tech.name, data: techData })
-  //       })
-  //       techDatas[id] = data
-  //       this._chartStore.actionStore().execute(ActionType.TOOLTIP, {
-  //         paneId: id,
-  //         dataIndex,
-  //         kLineData,
-  //         technicalIndicatorData: techDataList
-  //       })
-  //     })
-  //     if (paneId) {
-  //       this._chartStore.actionStore().execute(ActionType.CROSSHAIR, {
-  //         paneId,
-  //         coordinate: { x, y },
-  //         dataIndex,
-  //         kLineData,
-  //         technicalIndicatorData: techDatas
-  //       })
-  //     }
-  //   }
-  // }
-
-  // /**
-  //  * 更新所有pane
-  //  * @private
-  //  */
-  // _invalidatePane (invalidateLevel = InvalidateLevel.FULL) {
-  //   if (invalidateLevel === InvalidateLevel.OVERLAY) {
-  //     this._xAxisPane.invalidate(invalidateLevel)
-  //     this._panes.forEach((pane) => {
-  //       pane.invalidate(invalidateLevel)
-  //     })
-  //   } else {
-  //     let shouldMeasureWidth = false
-  //     this._panes.forEach((pane) => {
-  //       const should = pane.yAxis().computeAxis()
-  //       if (should) {
-  //         shouldMeasureWidth = should
-  //       }
-  //     })
-  //     this.adjustPaneViewport(false, shouldMeasureWidth, true)
-  //   }
-  // }
 
   /**
    * 测量pane高度
@@ -300,6 +230,28 @@ export default class ChartInternal {
     return this._panes.get(paneId) ?? null
   }
 
+  crosshairChange (crosshair: Crosshair): void {
+    const actionStore = this._chartStore.getActionStore()
+    if (actionStore.has(ActionType.onCrosshairChange)) {
+      const indicatorData = {}
+      this._panes.forEach((_, id) => {
+        const paneIndicatorData = {}
+        const indicators = this._chartStore.getIndicatorStore().getInstances(id)
+        indicators.forEach(indicator => {
+          const result = indicator.result
+          paneIndicatorData[indicator.name] = result[crosshair.dataIndex ?? result.length - 1]
+        })
+        indicatorData[id] = paneIndicatorData
+      })
+      if (crosshair.paneId !== undefined) {
+        actionStore.execute(ActionType.onCrosshairChange, {
+          ...crosshair,
+          indicatorData
+        })
+      }
+    }
+  }
+
   /**
    * 移除指标
    * @param paneId
@@ -405,7 +357,7 @@ export default class ChartInternal {
 
     ctx.fillStyle = backgroundColor
     ctx.fillRect(0, 0, width, height)
-    this._panes.forEach((pane, paneId) => {
+    this._panes.forEach(pane => {
       const bounding = pane.getBounding()
       ctx.drawImage(
         pane.getImage(includeOverlay),

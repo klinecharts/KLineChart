@@ -24,36 +24,64 @@ import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
 import CrosshairStore from './CrosshairStore'
 import OverlayStore from './OverlayStore'
-// import ActionStore from './ActionStore'
+import ActionStore from './ActionStore'
 
 import ChartInternal from '../ChartInternal'
 
 export default class ChartStore {
-  //
+  /**
+   * Internal chart
+   */
   private readonly _chart: ChartInternal
-  // 样式配置
+
+  /**
+   * Style config
+   */
   private readonly _styleOptions: Styles
 
+  /**
+   * Price and volume precision
+   */
   private _precision: Precision = { price: 2, volume: 0 }
 
-  // 数据源
+  /**
+   * Data source
+   */
   private _dataList: KLineData[] = []
 
-  // 调整pane标记
+  /**
+   * Drag pane flag
+   */
   private _dragPaneFlag = false
 
-  // 时间轴缩放数据存储
+  /**
+   * Time scale store
+   */
   private readonly _timeScaleStore = new TimeScaleStore(this)
-  // 技术指标数据存储
+
+  /**
+   * Indicator store
+   */
   private readonly _indicatorStore = new IndicatorStore(this)
-  // 覆盖物数据存储
+
+  /**
+   * Overlay store
+   */
   private readonly _overlayStore = new OverlayStore(this)
-  // 十字光标数据存储
+
+  /**
+   * Crosshair store
+   */
   private readonly _crosshairStore = new CrosshairStore(this)
 
-  // 事件存储
-  // private readonly _actionStore = new ActionStore()
+  /**
+   * Chart action store
+   */
+  private readonly _actionStore = new ActionStore()
 
+  /**
+   * Visible data array
+   */
   private _visibleDataList: VisibleData[] = []
 
   constructor (chart: ChartInternal, styleOptions?: DeepPartial<Styles>) {
@@ -63,10 +91,10 @@ export default class ChartStore {
   }
 
   /**
-   * 调整可见数据
+   * @description Adjust visible data
+   * @return {*}
    */
   adjustVisibleDataList (): void {
-    // 处理需要绘制的数据
     this._visibleDataList = []
     const { from, to } = this._timeScaleStore.getVisibleRange()
     for (let i = from; i < to; i++) {
@@ -80,63 +108,33 @@ export default class ChartStore {
     }
   }
 
-  /**
-   * 获取样式配置
-   * @return {{}}
-   */
   getStyleOptions (): Styles {
     return this._styleOptions
   }
 
-  /**
-   * 设置样式配置
-   * @param options
-   */
   applyStyleOptions (options: DeepPartial<Styles>): ChartStore {
     merge(this._styleOptions, options)
     return this
   }
 
-  /**
-   * 价格精度
-   * @returns {number}
-   */
   getPrecision (): Precision {
     return this._precision
   }
 
-  /**
-   * 设置价格和数量精度
-   * @param precision
-   */
   setPrecision (precision: Precision): ChartStore {
     this._precision = precision
     this._indicatorStore.setSeriesPrecision(precision)
     return this
   }
 
-  /**
-   * 获取数据源
-   * @returns {[]|*[]}
-   */
   getDataList (): KLineData[] {
     return this._dataList
   }
 
-  /**
-   * 获取可见数据源
-   * @returns {[]|*[]}
-   */
   getVisibleDataList (): VisibleData[] {
     return this._visibleDataList
   }
 
-  /**
-   * 添加数据
-   * @param data
-   * @param pos
-   * @param more
-   */
   addData (data: KLineData | KLineData[], pos: number, more?: boolean): void {
     if (isArray(data)) {
       this._timeScaleStore.setLoading(false)
@@ -164,87 +162,40 @@ export default class ChartStore {
     this._crosshairStore.recalculate(true)
   }
 
-  /**
-   * 清空数据源
-   */
   clearDataList (): void {
     this._dataList = []
     this._visibleDataList = []
     this._timeScaleStore.clear()
   }
 
-  /**
-   * 获取时间缩放存储
-   * @returns
-   */
   getTimeScaleStore (): TimeScaleStore {
     return this._timeScaleStore
   }
 
-  /**
-   * 获取技术指标存储
-   * @returns
-   */
   getIndicatorStore (): IndicatorStore {
     return this._indicatorStore
   }
 
-  /**
-   * 获取图形存储
-   * @returns
-   */
   getOverlayStore (): OverlayStore {
     return this._overlayStore
   }
 
-  // /**
-  //  * 获取标签数据存储
-  //  * @returns
-  //  */
-  // getTagStore (): TagStore {
-  //   return this._tagStore
-  // }
-
-  /**
-   * 获取十字光标数据存储
-   * @returns
-   */
   getCrosshairStore (): CrosshairStore {
     return this._crosshairStore
   }
 
-  // /**
-  //  * 获取事件数据存储
-  //  * @returns
-  //  */
-  // getActionStore (): ActionStore {
-  //   return this._actionStore
-  // }
+  getActionStore (): ActionStore {
+    return this._actionStore
+  }
 
   getChart (): ChartInternal {
     return this._chart
   }
 
-  /**
-   * 十字光标变化
-   * @param data
-   */
-  // crosshairChange (data: any): void {
-  //   this._handler.crosshair(data)
-  // }
-
-  /**
-   * 获取拖拽Pane标记
-   * @return {boolean}
-   */
   getDragPaneFlag (): boolean {
     return this._dragPaneFlag
   }
 
-  /**
-   * 设置拖拽Pane标记
-   * @param flag
-   */
   setDragPaneFlag (flag: boolean): ChartStore {
     this._dragPaneFlag = flag
     return this

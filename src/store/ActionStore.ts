@@ -12,93 +12,43 @@
  * limitations under the License.
  */
 
-// import { hasAction } from '../enum/ActionType'
+import Action, { ActionType, ActionCallback } from '../common/Action'
 
-// class Delegate {
-//   constructor () {
-//     this._observers = []
-//   }
+export default class ActionStore {
+  /**
+   * Chart action map
+   */
+  private readonly _actions: Map<ActionType, Action> = new Map()
 
-//   subscribe (observer) {
-//     if (this._observers.indexOf(observer) < 0) {
-//       this._observers.push(observer)
-//     }
-//   }
+  execute (type: ActionType, data?: any): void {
+    this._actions.get(type)?.execute(data)
+  }
 
-//   unsubscribe (observer) {
-//     const index = this._observers.indexOf(observer)
-//     if (index > -1) {
-//       this._observers.splice(index, 1)
-//     } else {
-//       this._observers = []
-//     }
-//   }
+  subscribe (type: ActionType, callback: ActionCallback): void {
+    if (!this._actions.has(type)) {
+      this._actions.set(type, new Action())
+    }
+    this._actions.get(type)?.subscribe(callback)
+  }
 
-//   execute (data) {
-//     this._observers.forEach(observer => {
-//       observer(data)
-//     })
-//   }
+  /**
+   * 取消事件订阅
+   * @param type
+   * @param callback
+   * @return {boolean}
+   */
+  unsubscribe (type: ActionType, callback?: ActionCallback): void {
+    const action = this._actions.get(type)
+    if (action !== undefined) {
+      action.unsubscribe(callback)
+      if (action.isEmpty()) {
+        this._actions.delete(type)
+      }
+    }
+  }
 
-//   hasObservers () {
-//     return this._observers.length > 0
-//   }
-// }
-
-// export default class ActionStore {
-//   constructor () {
-//     // 事件代理
-//     this._delegates = new Map()
-//   }
-
-//   /**
-//    * 事件执行
-//    * @param type
-//    * @param data
-//    */
-//   execute (type, data) {
-//     if (this.has(type)) {
-//       this._delegates.get(type).execute(data)
-//     }
-//   }
-
-//   /**
-//    * 是否有事件监听
-//    * @param type
-//    * @return {boolean}
-//    */
-//   has (type) {
-//     return this._delegates.has(type) && this._delegates.get(type).hasObservers()
-//   }
-
-//   /**
-//    * 订阅事件
-//    * @param type
-//    * @param callback
-//    * @return {boolean}
-//    */
-//   subscribe (type, callback) {
-//     if (!this._delegates.has(type)) {
-//       this._delegates.set(type, new Delegate())
-//     }
-//     this._delegates.get(type).subscribe(callback)
-//   }
-
-//   /**
-//    * 取消事件订阅
-//    * @param type
-//    * @param callback
-//    * @return {boolean}
-//    */
-//   unsubscribe (type, callback) {
-//     if (hasAction(type)) {
-//       const delegate = this._delegates.get(type)
-//       if (delegate) {
-//         delegate.unsubscribe(callback)
-//         if (!delegate.hasObservers()) {
-//           this._delegates.delete(type)
-//         }
-//       }
-//     }
-//   }
-// }
+  has (type: ActionType): boolean {
+    const action = this._actions.get(type)
+    return action !== undefined && !action.isEmpty()
+  }
+}

@@ -85,13 +85,6 @@ export default class IndicatorStore {
     return [updateFlag, calcFlag]
   }
 
-  /**
-   * 添加技术指标实例
-   * @param paneId
-   * @param indicator
-   * @param isStack
-   * @returns
-   */
   async addInstance (indicator: IndicatorCreate, paneId: string, isStack: boolean): Promise<boolean> {
     const { name } = indicator
     let paneInstances = this._instances.get(paneId)
@@ -112,21 +105,10 @@ export default class IndicatorStore {
     return await instance.calcIndicator(this._chartStore.getDataList())
   }
 
-  /**
-   * 获取实例
-   * @param {*} paneId
-   * @returns
-   */
   getInstances (paneId: string): Map<string, IndicatorImp> {
     return this._instances.get(paneId) ?? new Map()
   }
 
-  /**
-   * 移除技术指标
-   * @param paneId
-   * @param name
-   * @return {boolean}
-   */
   removeInstance (paneId: string, name?: string): boolean {
     let removed = false
     if (this._instances.has(paneId)) {
@@ -147,20 +129,10 @@ export default class IndicatorStore {
     return removed
   }
 
-  /**
-   * 是否有实例
-   * @param paneId
-   * @returns
-   */
   hasInstances (paneId: string): boolean {
     return this._instances.has(paneId)
   }
 
-  /**
-   * 实例计算
-   * @param paneId
-   * @param name
-   */
   async calcInstance (name?: string, paneId?: string): Promise<boolean[]> {
     const tasks: Array<Promise<boolean>> = []
     if (name !== undefined) {
@@ -188,12 +160,6 @@ export default class IndicatorStore {
     return await Promise.all(tasks)
   }
 
-  /**
-   * 获取实例信息
-   * @param paneId
-   * @param name
-   * @returns
-   */
   getInstanceByPaneId (paneId?: string, name?: string): TypeOrNull<Indicator> | TypeOrNull<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
     if (paneId !== undefined) {
       const paneInstances = this._instances.get(paneId)
@@ -205,10 +171,6 @@ export default class IndicatorStore {
     return this._instances
   }
 
-  /**
-   * 设置系列精度
-   * @param precision
-   */
   setSeriesPrecision (precision: Precision): void {
     this._instances.forEach(paneInstances => {
       paneInstances.forEach(instance => {
@@ -222,12 +184,6 @@ export default class IndicatorStore {
     })
   }
 
-  /**
-   * 覆盖
-   * @param indicator
-   * @param paneId
-   * @returns
-   */
   async override (indicator: IndicatorCreate, paneId?: string): Promise<boolean[]> {
     const { name } = indicator
     let instances: Map<string, Map<string, IndicatorImp>> = new Map()

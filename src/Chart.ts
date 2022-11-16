@@ -21,6 +21,7 @@ import { UpdateLevel } from './common/Updater'
 import KLineData from './common/KLineData'
 import LoadMoreCallback from './common/LoadMoreCallback'
 import { Styles } from './common/Styles'
+import { ActionType, ActionCallback } from './common/Action'
 
 import { Indicator, IndicatorCreate } from './component/Indicator'
 import { Overlay, OverlayCreate } from './component/Overlay'
@@ -612,35 +613,23 @@ export default class Chart {
     return isArray(coordinates) ? points : (points[0] ?? {})
   }
 
-  // /**
-  //  * 订阅图表动作
-  //  * @param type 动作类型
-  //  * @param callback 回调方法
-  //  */
-  // subscribeAction (type, callback) {
-  //   if (!hasAction(type)) {
-  //     logWarn('subscribeAction', 'type', 'type does not exist!!!')
-  //     return
-  //   }
-  //   if (!isFunction(callback)) {
-  //     logWarn('subscribeAction', 'callback', 'callback must be a function!!!')
-  //     return
-  //   }
-  //   this._chartPane.chartStore().actionStore().subscribe(type, callback)
-  // }
+  /**
+   * 订阅图表动作
+   * @param type 动作类型
+   * @param callback 回调方法
+   */
+  subscribeAction (type: ActionType, callback: ActionCallback): void {
+    this._internal.getChartStore().getActionStore().subscribe(type, callback)
+  }
 
-  // /**
-  //  * 取消订阅图表动作
-  //  * @param type 动作类型
-  //  * @param callback 回调方法
-  //  */
-  // unsubscribeAction (type, callback) {
-  //   if (!hasAction(type)) {
-  //     logWarn('unsubscribeAction', 'type', 'type does not exist!!!')
-  //     return
-  //   }
-  //   this._chartPane.chartStore().actionStore().unsubscribe(type, callback)
-  // }
+  /**
+   * 取消订阅图表动作
+   * @param type 动作类型
+   * @param callback 回调方法
+   */
+  unsubscribeAction (type: ActionType, callback?: ActionCallback): void {
+    this._internal.getChartStore().getActionStore().unsubscribe(type, callback)
+  }
 
   /**
    * 获取将图表装换成图片后的url

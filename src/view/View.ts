@@ -24,6 +24,9 @@ import Axis from '../component/Axis'
 import Widget from '../widget/Widget'
 
 export default abstract class View<C extends Axis = Axis> extends ElementGroup {
+  /**
+   * Parent widget
+   */
   private readonly _widget: Widget<C>
 
   constructor (widget: Widget<C>) {
@@ -51,9 +54,6 @@ export default abstract class View<C extends Axis = Axis> extends ElementGroup {
     return null
   }
 
-  /**
-   * 绘制
-   */
   draw (ctx: CanvasRenderingContext2D): void {
     this.clear()
     this.drawImp(ctx)

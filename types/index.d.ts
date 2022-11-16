@@ -11,16 +11,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export declare type TypeOrNull<T> = T | null;
 
-/**
- * 刷新层级
- * @type {{OVERLAY: number, MAIN: number, NONE: number, FULL: number}}
- */
-const InvalidateLevel = {
-  NONE: 0,
-  OVERLAY: 1,
-  MAIN: 2,
-  FULL: 3
-}
+export as namespace klinecharts;
 
-export default InvalidateLevel
+export {};

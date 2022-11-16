@@ -11,7 +11,6 @@
     "index.js",
     "types/",
     "dist/",
-    "lib/",
     "licenses/",
     "NOTICE"
   ],
@@ -36,10 +35,10 @@
   "private": false,
   "scripts": {
     "lint": "eslint src",
-    "build-core:dev": "cross-env NODE_ENV=development node scripts/buildCore.js",
-    "build-core:prod": "cross-env NODE_ENV=production node scripts/buildCore.js",
+    "build-core:dev": "cross-env NODE_ENV=development node scripts/build.js",
+    "build-core:prod": "cross-env NODE_ENV=production node scripts/build.js",
     "build-core": "npm run build-core:dev && npm run build-core:prod",
-    "build-declaration": "node scripts/buildDeclaration.js",
+    "build-declaration": "dts-bundle-generator --no-banner true --umd-module-name klinecharts -o types/index.d.ts src/typings.ts",
     "build": "npm run build-core && npm run build-declaration",
     "deploy": "gh-pages -d website",
     "prepare": "husky install"

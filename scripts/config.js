@@ -40,13 +40,13 @@ const plugins = (env) => [
 ];
 
 function inputConfig (env) {
-  return { input: paths.coreIndex, plugins: plugins(env) };
+  return { input: paths.index, plugins: plugins(env) };
 }
 
 function outputConfig (env) {
   const isDevelopment = env === 'development';
   return {
-    file: `${paths.buildCore}/${isDevelopment ? 'klinecharts' : 'klinecharts.min'}.js`,
+    file: `${paths.buildDir}/${isDevelopment ? 'klinecharts' : 'klinecharts.min'}.js`,
     format: 'umd',
     name: 'klinecharts',
     sourcemap: isDevelopment,

@@ -71,7 +71,7 @@ export default class CandleAreaView extends ChildrenView {
     }
 
     if (areaCoordinates.length > 0) {
-      // 绘制分时线填充区域
+      // Draw real-time background
       const backgroundColor = candleAreaStyles.backgroundColor
       let color: string | CanvasGradient
       if (isArray(backgroundColor)) {
