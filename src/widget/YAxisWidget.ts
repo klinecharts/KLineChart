@@ -54,9 +54,9 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
   }
 
   mouseUpEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('mouseUpEvent', event)) {
+    if (this.dispatchEvent('touchMouseUpEvent', event)) {
       const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+      pane.getChart().updatePane(UpdateLevel.OVERLAY)
     }
     this._prevExtremum = null
     this._startScaleDistance = 0
@@ -64,15 +64,13 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
 
   mouseRightClickEvent (event: MouseTouchEvent): void {
     if (this.dispatchEvent('mouseRightClickEvent', event)) {
-      const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
     }
   }
 
   mouseDownEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('mouseDownEvent', event)) {
-      const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+    if (this.dispatchEvent('touchMouseDownEvent', event)) {
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
     }
     this._prevExtremum = { ...this.getPane().getAxisComponent().getExtremum() }
     this._startScaleDistance = event.y
@@ -80,15 +78,14 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
 
   mouseMoveEvent (event: MouseTouchEvent): void {
     if (this.dispatchEvent('mouseMoveEvent', event)) {
-      const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
     }
   }
 
   pressedMouseMoveEvent (event: MouseTouchEvent): void {
     const pane = this.getPane()
     const chart = pane.getChart()
-    if (!this.dispatchEvent('pressedMouseMoveEvent', event)) {
+    if (!this.dispatchEvent('pressedTouchMouseMoveEvent', event)) {
       const bounding = this.getBounding()
       if (this._prevExtremum !== null && event.x > 0 && event.x < bounding.width && event.y > 0 && event.y < bounding.height) {
         const { min, max, range } = this._prevExtremum
@@ -111,7 +108,7 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
         chart.adjustPaneViewport(false, true, true, true)
       }
     } else {
-      chart.updatePane(UpdateLevel.OVERLAY, pane.getId())
+      chart.updatePane(UpdateLevel.OVERLAY)
     }
   }
 
@@ -121,6 +118,25 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
     if (!yAxis.getAutoCalcTickFlag()) {
       yAxis.setAutoCalcTickFlag(true)
       pane.getChart().adjustPaneViewport(false, true, true, true)
+    }
+  }
+
+  touchStartEvent (event: MouseTouchEvent): void {
+    if (this.dispatchEvent('touchMouseDownEvent', event)) {
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
+    }
+  }
+
+  touchMoveEvent (event: MouseTouchEvent): void {
+    if (this.dispatchEvent('pressedTouchMouseMoveEvent', event)) {
+      event.preventDefault()
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
+    }
+  }
+
+  touchEndEvent (event: MouseTouchEvent): void {
+    if (this.dispatchEvent('touchMouseUpEvent', event)) {
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
     }
   }
 

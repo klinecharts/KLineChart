@@ -512,7 +512,7 @@ export default abstract class OverlayImp implements Overlay {
     return this.currentStep === OVERLAY_DRAW_STEP_START
   }
 
-  mouseMoveForDrawing (point: Partial<Point>): void {
+  eventMoveForDrawing (point: Partial<Point>): void {
     const pointIndex = this.currentStep - 1
     const newPoint: PickPartial<Point, 'timestamp'> = { dataIndex: -1, value: -1 }
     if (point.dataIndex !== undefined) {
@@ -532,12 +532,7 @@ export default abstract class OverlayImp implements Overlay {
     })
   }
 
-  /**
-   * 鼠标按住移动方法
-   * @param point
-   * @param pointIndex
-   */
-  mousePressedPointMove (point: Partial<Point>, pointIndex: number): void {
+  eventPressedPointMove (point: Partial<Point>, pointIndex: number): void {
     if (point.dataIndex !== undefined) {
       this.points[pointIndex].dataIndex = point.dataIndex
       this.points[pointIndex].timestamp = point.timestamp
@@ -559,7 +554,7 @@ export default abstract class OverlayImp implements Overlay {
     this._prevPressedPoints = clone(this.points)
   }
 
-  mousePressedOtherMove (point: Partial<Point>, timeScaleStore: TimeScaleStore): void {
+  eventPressedOtherMove (point: Partial<Point>, timeScaleStore: TimeScaleStore): void {
     if (this._prevPressedPoint !== null) {
       let difDataIndex: number
       if (point.dataIndex !== undefined && this._prevPressedPoint.dataIndex !== undefined) {

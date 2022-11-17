@@ -86,7 +86,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
     const paneId = pane.getId()
     const chartStore = pane.getChart().getChartStore()
     const crosshairStore = chartStore.getCrosshairStore()
-    if (!this.dispatchEvent('pressedMouseMoveEvent', event)) {
+    if (!this.dispatchEvent('pressedTouchMouseMoveEvent', event)) {
       if (this._startScrollCoordinate !== null) {
         const pane = this.getPane()
         const yAxis = pane.getAxisComponent()
@@ -118,16 +118,16 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   mouseUpEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('mouseUpEvent', event)) {
+    if (this.dispatchEvent('touchMouseUpEvent', event)) {
       const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+      pane.getChart().updatePane(UpdateLevel.OVERLAY)
     }
     this._startScrollCoordinate = null
     this._prevExtremum = null
   }
 
   mouseDownEvent (event: MouseTouchEvent): void {
-    this.dispatchEvent('mouseDownEvent', event)
+    this.dispatchEvent('touchMouseDownEvent', event)
     this._prevExtremum = { ...this.getPane().getAxisComponent().getExtremum() }
     this._startScrollCoordinate = { x: event.x, y: event.y }
     this.getPane().getChart().getChartStore().getTimeScaleStore().startScroll()
@@ -135,8 +135,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
 
   mouseRightClickEvent (event: MouseTouchEvent): void {
     if (this.dispatchEvent('mouseRightClickEvent', event)) {
-      const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
     }
   }
 
@@ -155,13 +154,23 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   touchStartEvent (event: MouseTouchEvent): void {
+    const pane = this.getPane()
+    const paneId = pane.getId()
+    const chart = pane.getChart()
+    const chartStore = chart.getChartStore()
+    const crosshairStore = chartStore.getCrosshairStore()
+    if (this.dispatchEvent('touchMouseDownEvent', event)) {
+      this._touchCancelCrosshair = true
+      this._touchCoordinate = null
+      crosshairStore.set(undefined, true)
+      chart.updatePane(UpdateLevel.OVERLAY)
+      return
+    }
     if (this._flingScrollTimerId !== null) {
       clearTimeout(this._flingScrollTimerId)
       this._flingScrollTimerId = null
     }
     this._flingStartTime = new Date().getTime()
-    const pane = this.getPane()
-    const chartStore = pane.getChart().getChartStore()
     this._startScrollCoordinate = { x: event.x, y: event.y }
     chartStore.getTimeScaleStore().startScroll()
     this._touchZoomed = false
@@ -169,10 +178,9 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
       const xDif = event.x - this._touchCoordinate.x
       const yDif = event.y - this._touchCoordinate.y
       const radius = Math.sqrt(xDif * xDif + yDif * yDif)
-      const crosshairStore = chartStore.getCrosshairStore()
       if (radius < TOUCH_MIN_RADIUS) {
         this._touchCoordinate = { x: event.x, y: event.y }
-        crosshairStore.set({ x: event.x, y: event.y, paneId: pane.getId() })
+        crosshairStore.set({ x: event.x, y: event.y, paneId })
       } else {
         this._touchCancelCrosshair = true
         this._touchCoordinate = null
@@ -214,7 +222,13 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
 
   touchMoveEvent (event: MouseTouchEvent): void {
     const pane = this.getPane()
-    const chartStore = pane.getChart().getChartStore()
+    const chart = pane.getChart()
+    if (this.dispatchEvent('pressedTouchMouseMoveEvent', event)) {
+      event.preventDefault()
+      chart.updatePane(UpdateLevel.OVERLAY)
+      return
+    }
+    const chartStore = chart.getChartStore()
     let crosshair: Crosshair | undefined
     if (this._touchCoordinate !== null) {
       event.preventDefault()
@@ -239,6 +253,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   touchEndEvent (event: MouseTouchEvent): void {
+    this.dispatchEvent('touchMouseUpEvent', event)
     if (this._startScrollCoordinate !== null) {
       const time = new Date().getTime() - this._flingStartTime
       const distance = event.x - this._startScrollCoordinate.x

@@ -42,9 +42,9 @@ export default class XAxisWidget extends DrawWidget<XAxis> {
   }
 
   mouseUpEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('moseUpEvent', event)) {
+    if (this.dispatchEvent('touchMoseUpEvent', event)) {
       const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+      pane.getChart().updatePane(UpdateLevel.OVERLAY)
     }
     this._startScaleCoordinate = null
     this._startScaleDistance = 0
@@ -53,15 +53,14 @@ export default class XAxisWidget extends DrawWidget<XAxis> {
 
   mouseMoveEvent (event: MouseTouchEvent): void {
     if (this.dispatchEvent('mouseMoveEvent', event)) {
-      const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
     }
   }
 
   mouseDownEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('mouseDownEvent', event)) {
+    if (this.dispatchEvent('touchMouseDownEvent', event)) {
       const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+      pane.getChart().updatePane(UpdateLevel.OVERLAY)
     }
     this._startScaleCoordinate = { x: event.x, y: event.y }
     this._startScaleDistance = event.x
@@ -69,15 +68,14 @@ export default class XAxisWidget extends DrawWidget<XAxis> {
 
   mouseRightClickEvent (event: MouseTouchEvent): void {
     if (this.dispatchEvent('mouseRightClickEvent', event)) {
-      const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY, pane.getId())
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
     }
   }
 
   pressedMouseMoveEvent (event: MouseTouchEvent): void {
     const pane = this.getPane()
     const chart = pane.getChart()
-    if (!this.dispatchEvent('pressedMouseMoveEvent', event)) {
+    if (!this.dispatchEvent('pressedTouchMouseMoveEvent', event)) {
       const bounding = this.getBounding()
       if (event.x > 0 && event.x < bounding.width && event.y > 0 && event.y < bounding.height) {
         const scale = this._startScaleDistance / event.x
@@ -86,7 +84,26 @@ export default class XAxisWidget extends DrawWidget<XAxis> {
         chart.getChartStore().getTimeScaleStore().zoom(zoomScale, this._startScaleCoordinate ?? undefined)
       }
     } else {
-      chart.updatePane(UpdateLevel.OVERLAY, pane.getId())
+      chart.updatePane(UpdateLevel.OVERLAY)
+    }
+  }
+
+  touchStartEvent (event: MouseTouchEvent): void {
+    if (this.dispatchEvent('touchMouseDownEvent', event)) {
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
+    }
+  }
+
+  touchMoveEvent (event: MouseTouchEvent): void {
+    if (this.dispatchEvent('pressedTouchMouseMoveEvent', event)) {
+      event.preventDefault()
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
+    }
+  }
+
+  touchEndEvent (event: MouseTouchEvent): void {
+    if (this.dispatchEvent('touchMouseUpEvent', event)) {
+      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
     }
   }
 

@@ -303,8 +303,9 @@ export default class OverlayStore {
       this._instances.clear()
     }
     if (updatePaneIds.length > 0) {
+      const chart = this._chartStore.getChart()
       updatePaneIds.forEach(paneId => {
-        this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
+        chart.updatePane(UpdateLevel.OVERLAY, paneId)
       })
     }
   }
@@ -346,11 +347,12 @@ export default class OverlayStore {
       if (instance?.id !== info.instance?.id) {
         instance?.onDeselected?.({ overlay: instance, ...event })
         info.instance?.onSelected?.({ overlay: info.instance, ...event })
-        this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, info.paneId)
+        const chart = this._chartStore.getChart()
+        chart.updatePane(UpdateLevel.OVERLAY, info.paneId)
         if (paneId !== info.paneId) {
-          this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
+          chart.updatePane(UpdateLevel.OVERLAY, paneId)
         }
-        this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, PaneIdConstants.XAXIS)
+        chart.updatePane(UpdateLevel.OVERLAY, PaneIdConstants.XAXIS)
       }
     }
   }
