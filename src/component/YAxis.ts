@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import Axis, { Extremum, Tick } from './Axis'
+import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
 
 import { IndicatorFigure } from './Indicator'
 
@@ -28,10 +28,15 @@ interface FiguresResult {
   result: any[]
 }
 
-export default class YAxis extends Axis {
-  protected calcExtremum (): Extremum {
+export interface YAxis extends Axis {
+  isFromZero: () => boolean
+}
+
+export default class YAxisImp extends AxisImp implements YAxis {
+  protected calcExtremum (): AxisExtremum {
     const parent = this.getParent()
-    const chartStore = parent.getChart().getChartStore()
+    const chart = parent.getChart()
+    const chartStore = chart.getChartStore()
     let min = Number.MAX_SAFE_INTEGER
     let max = Number.MIN_SAFE_INTEGER
     const figuresResultList: FiguresResult[] = []
@@ -72,7 +77,7 @@ export default class YAxis extends Axis {
       }
     }
     const visibleDataList = chartStore.getVisibleDataList()
-    const candleStyles = chartStore.getStyleOptions().candle
+    const candleStyles = chart.getStyleOptions().candle
     const isArea = candleStyles.type === CandleType.AREA
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
@@ -195,15 +200,13 @@ export default class YAxis extends Axis {
    */
   getType (): string {
     if (this.isInCandle()) {
-      const chartStore = this.getParent().getChart().getChartStore()
-      return chartStore.getStyleOptions().yAxis.type
+      return this.getParent().getChart().getStyleOptions().yAxis.type
     }
     return YAxisType.NORMAL
   }
 
   getPosition (): string {
-    const chartStore = this.getParent().getChart().getChartStore()
-    return chartStore.getStyleOptions().yAxis.position
+    return this.getParent().getChart().getStyleOptions().yAxis.position
   }
 
   /**
@@ -212,8 +215,7 @@ export default class YAxis extends Axis {
    */
   isReverse (): boolean {
     if (this.isInCandle()) {
-      const chartStore = this.getParent().getChart().getChartStore()
-      return chartStore.getStyleOptions().yAxis.reverse
+      return this.getParent().getChart().getStyleOptions().yAxis.reverse
     }
     return false
   }
@@ -223,8 +225,7 @@ export default class YAxis extends Axis {
    * @return {boolean}
    */
   isFromZero (): boolean {
-    const chartStore = this.getParent().getChart().getChartStore()
-    const yAxisStyles = chartStore.getStyleOptions().yAxis
+    const yAxisStyles = this.getParent().getChart().getStyleOptions().yAxis
     const inside = yAxisStyles.inside
     return (
       (yAxisStyles.position === YAxisPosition.LEFT && inside) ||
@@ -232,11 +233,11 @@ export default class YAxis extends Axis {
     )
   }
 
-  protected optimalTicks (ticks: Tick[]): Tick[] {
+  protected optimalTicks (ticks: AxisTick[]): AxisTick[] {
     const pane = this.getParent()
     const height = pane.getYAxisWidget()?.getBounding().height ?? 0
     const chartStore = pane.getChart().getChartStore()
-    const optimalTicks: Tick[] = []
+    const optimalTicks: AxisTick[] = []
     const type = this.getType()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     let precision = 0
@@ -284,8 +285,9 @@ export default class YAxis extends Axis {
 
   getAutoSize (): number {
     const pane = this.getParent()
-    const chartStore = pane.getChart().getChartStore()
-    const styles = chartStore.getStyleOptions()
+    const chart = pane.getChart()
+    const chartStore = chart.getChartStore()
+    const styles = chart.getStyleOptions()
     const yAxisStyles = styles.yAxis
     const width = yAxisStyles.size
     if (width !== 'auto') {

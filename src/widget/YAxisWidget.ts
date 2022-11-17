@@ -22,7 +22,7 @@ import Pane from '../pane/Pane'
 
 import DrawWidget from './DrawWidget'
 
-import { Extremum } from '../component/Axis'
+import { AxisExtremum } from '../component/Axis'
 import YAxis from '../component/YAxis'
 
 import YAxisView from '../view/YAxisView'
@@ -38,7 +38,7 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
   private readonly _overlayYAxisView = new OverlayYAxisView(this)
   private readonly _crosshairHorizontalLabelView = new CrosshairHorizontalLabelView(this)
 
-  private _prevExtremum: TypeOrNull<Extremum> = null
+  private _prevExtremum: TypeOrNull<AxisExtremum> = null
   private _startScaleDistance = 0
 
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {

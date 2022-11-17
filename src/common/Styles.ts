@@ -678,7 +678,7 @@ const defaultCrosshair: CrosshairStyle = {
   }
 }
 
-export interface ShapePointStyle {
+export interface OverlayPointStyle {
   color: string
   borderColor: string
   borderSize: number
@@ -689,13 +689,8 @@ export interface ShapePointStyle {
   activeRadius: number
 }
 
-export interface OverlayTooltipDirectionRangeStyle {
-  show: boolean
-  color: string
-}
-
 export interface OverlayStyle {
-  point: ShapePointStyle
+  point: OverlayPointStyle
   line: LineStyle
   rect: RectStyle
   polygon: PolygonStyle

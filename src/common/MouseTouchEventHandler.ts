@@ -406,7 +406,7 @@ export default class MouseTouchEventHandler {
 
       // we should prevent default in case of touch only
       // to prevent scroll of the page
-      preventDefault(moveEvent)
+      // preventDefault(moveEvent)
     }
   }
 

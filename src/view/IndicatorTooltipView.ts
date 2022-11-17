@@ -17,7 +17,8 @@ import KLineData from '../common/KLineData'
 import Crosshair from '../common/Crosshair'
 import { IndicatorStyle, TooltipShowRule, TooltipStyle, MarginTextStyle } from '../common/Styles'
 
-import Axis from '../component/Axis'
+import XAxis from '../component/XAxis'
+import YAxis from '../component/YAxis'
 
 import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../component/Indicator'
 
@@ -31,7 +32,7 @@ import { createFont } from '../common/utils/canvas'
 
 export type TooltipData = IndicatorTooltipDataChild
 
-export default class IndicatorTooltipView extends View {
+export default class IndicatorTooltipView extends View<YAxis> {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
@@ -161,7 +162,7 @@ export default class IndicatorTooltipView extends View {
         bounding: widget.getBounding(),
         crosshair,
         defaultStyles: styles,
-        xAxis: pane.getChart().getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as Axis,
+        xAxis: pane.getChart().getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as XAxis,
         yAxis: pane.getAxisComponent()
       })
     }

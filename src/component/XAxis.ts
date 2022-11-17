@@ -14,13 +14,15 @@
 
 import TypeOrNull from '../common/TypeOrNull'
 
-import Axis, { Extremum, Tick } from './Axis'
+import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
 
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatDate } from '../common/utils/format'
 
-export default class XAxis extends Axis {
-  protected calcExtremum (): Extremum {
+export type XAxis = Axis
+
+export default class XAxisImp extends AxisImp {
+  protected calcExtremum (): AxisExtremum {
     const chartStore = this.getParent().getChart().getChartStore()
     const { from, to } = chartStore.getTimeScaleStore().getVisibleRange()
     const min = from
@@ -31,14 +33,15 @@ export default class XAxis extends Axis {
     }
   }
 
-  protected optimalTicks (ticks: Tick[]): Tick[] {
-    const chartStore = this.getParent().getChart().getChartStore()
-    const optimalTicks: Tick[] = []
+  protected optimalTicks (ticks: AxisTick[]): AxisTick[] {
+    const chart = this.getParent().getChart()
+    const chartStore = chart.getChartStore()
+    const optimalTicks: AxisTick[] = []
     const tickLength = ticks.length
     const dataList = chartStore.getDataList()
     if (tickLength > 0) {
       const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
-      const tickTextStyles = chartStore.getStyleOptions().xAxis.tickText
+      const tickTextStyles = chart.getStyleOptions().xAxis.tickText
       const defaultLabelWidth = calcTextWidth('00-00 00:00', tickTextStyles.size, tickTextStyles.weight, tickTextStyles.family)
       const pos = parseInt(ticks[0].value as string, 10)
       const x = this.convertToPixel(pos)
@@ -103,8 +106,7 @@ export default class XAxis extends Axis {
   }
 
   getAutoSize (): number {
-    const chartStore = this.getParent().getChart().getChartStore()
-    const styles = chartStore.getStyleOptions()
+    const styles = this.getParent().getChart().getStyleOptions()
     const xAxisStyles = styles.xAxis
     const height = xAxisStyles.size
     if (height !== 'auto') {

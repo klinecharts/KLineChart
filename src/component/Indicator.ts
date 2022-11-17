@@ -21,7 +21,8 @@ import BarSpace from '../common/BarSpace'
 import Crosshair from '../common/Crosshair'
 import { IndicatorStyle, IndicatorPolygonStyle, LineStyle, LineType, PolygonType } from '../common/Styles'
 
-import Axis from './Axis'
+import { XAxis } from './XAxis'
+import { YAxis } from './YAxis'
 
 import { formatValue } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
@@ -48,14 +49,14 @@ export interface IndicatorFigureStylesCallbackData<D> {
   next: IndicatorFigureStylesCallbackDataChild<D>
 }
 
-export type IndicatorFigureStyleCallback<D> = (data: IndicatorFigureStylesCallbackData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorFigureStyle
+export type IndicatorFigureStylesCallback<D> = (data: IndicatorFigureStylesCallbackData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorFigureStyle
 
 export interface IndicatorFigure<D = any> {
   key: string
   title?: string
   type?: string
   baseValue?: number
-  styles?: IndicatorFigureStyleCallback<D>
+  styles?: IndicatorFigureStylesCallback<D>
 }
 
 export type IndicatorRegenerateFiguresCallback<D = any> = (calcParms: any[]) => Array<IndicatorFigure<D>>
@@ -78,8 +79,8 @@ export interface IndicatorCreateToolTipDataSourceParams<D = any> {
   bounding: Bounding
   crosshair: Crosshair
   defaultStyles: IndicatorStyle
-  xAxis: Axis
-  yAxis: Axis
+  xAxis: XAxis
+  yAxis: YAxis
 }
 
 export type IndicatorCreateToolTipDataSourceCallback<D = any> = (params: IndicatorCreateToolTipDataSourceParams<D>) => IndicatorTooltipData
@@ -92,8 +93,8 @@ export interface IndicatorDrawParams<D = any> {
   bounding: Bounding
   barSpace: BarSpace
   defaultStyles: IndicatorStyle
-  xAxis: Axis
-  yAxis: Axis
+  xAxis: XAxis
+  yAxis: YAxis
 }
 
 export type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParams<D>) => boolean

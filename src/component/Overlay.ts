@@ -28,8 +28,8 @@ import { clone } from '../common/utils/typeChecks'
 
 import TimeScaleStore from '../store/TimeScaleStore'
 
-import XAxis from './XAxis'
-import YAxis from './YAxis'
+import { XAxis } from './XAxis'
+import { YAxis } from './YAxis'
 
 export const enum OverlayMode {
   NORMAL = 'normal',

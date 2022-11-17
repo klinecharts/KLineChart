@@ -12,7 +12,12 @@
  * limitations under the License.
  */
 
-import Chart from './Chart'
+import DeepPartial from './common/DeepPartial'
+import { Styles } from './common/Styles'
+import ChartImp, { Chart } from './Chart'
+import { reisterFigure, getSupportFigures } from './extension/figure/index'
+import { registerIndicator, getSupportIndicators } from './extension/indicator/index'
+import { registerOverlay, getSupportedOverlays } from './extension/overlay/index'
 import { logError, logTag, logWarn } from './common/utils/logger'
 import {
   clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
@@ -24,20 +29,20 @@ const instances: {[id: string]: Chart} = {}
 let chartBaseId = 1
 
 /**
- * 获取版本号
- * @returns {string}
+ * Chart version
+ * @return {string}
  */
 function version (): string {
   return '__BUILD_VERSION__'
 }
 
 /**
- * 初始化
+ * Init chart instance
  * @param ds
  * @param styles
  * @returns {Chart}
  */
-function init (ds: HTMLElement | string, styles?: any): Chart | null {
+function init (ds: HTMLElement | string, styles?: DeepPartial<Styles>): Chart | null {
   logTag()
   const errorMessage = 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
   let dom
@@ -56,7 +61,7 @@ function init (ds: HTMLElement | string, styles?: any): Chart | null {
     return chart
   }
   const id = `k_line_chart_${chartBaseId++}`
-  chart = new Chart(dom, styles)
+  chart = new ChartImp(dom, styles)
   // @ts-expect-error
   chart.id = id
   dom.chartId = id
@@ -65,7 +70,7 @@ function init (ds: HTMLElement | string, styles?: any): Chart | null {
 }
 
 /**
- * 销毁
+ * Destory chart instace
  * @param dcs
  */
 function dispose (dcs: HTMLElement | Chart | string): void {
@@ -73,7 +78,7 @@ function dispose (dcs: HTMLElement | Chart | string): void {
   if (isString(dcs)) {
     const dom = document.getElementById(dcs as string)
     id = dom?.getAttribute('chartId') ?? null
-  } else if (dcs instanceof Chart) {
+  } else if (dcs instanceof ChartImp) {
     // @ts-expect-error
     id = dcs.id
   } else {
@@ -103,5 +108,9 @@ const utils = {
 }
 
 export {
-  version, init, dispose, utils
+  version, init, dispose,
+  reisterFigure, getSupportFigures,
+  registerIndicator, getSupportIndicators,
+  registerOverlay, getSupportedOverlays,
+  utils
 }

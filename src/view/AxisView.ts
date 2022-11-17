@@ -18,7 +18,7 @@ import { AxisStyle, Styles } from '../common/Styles'
 import { LineAttrs } from '../extension/figure/line'
 import { TextAttrs } from '../extension/figure/text'
 
-import Axis, { Tick } from '../component/Axis'
+import Axis, { AxisTick } from '../component/Axis'
 
 import View from './View'
 
@@ -28,8 +28,7 @@ export default abstract class AxisView<C extends Axis> extends View<C> {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const axis = pane.getAxisComponent()
-    const chartStore = pane.getChart().getChartStore()
-    const styles: AxisStyle = this.getAxisStyles(chartStore.getStyleOptions())
+    const styles: AxisStyle = this.getAxisStyles(pane.getChart().getStyleOptions())
     if (styles.show) {
       if (styles.axisLine.show) {
         this.createFigure('line', this.createAxisLine(bounding), styles.axisLine)?.draw(ctx)
@@ -53,6 +52,6 @@ export default abstract class AxisView<C extends Axis> extends View<C> {
   protected abstract getAxisStyles (styles: Styles): AxisStyle
 
   protected abstract createAxisLine (bounding: Bounding): LineAttrs
-  protected abstract createTickLines (ticks: Tick[], bounding: Bounding, styles: AxisStyle): LineAttrs[]
-  protected abstract createTickTexts (tick: Tick[], bounding: Bounding, styles: AxisStyle): TextAttrs[]
+  protected abstract createTickLines (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): LineAttrs[]
+  protected abstract createTickTexts (tick: AxisTick[], bounding: Bounding, styles: AxisStyle): TextAttrs[]
 }

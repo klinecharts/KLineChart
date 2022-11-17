@@ -31,7 +31,7 @@ export default class CandleWidget extends IndicatorWidget {
   private readonly _candleLastPriceLineView = new CandleLastPriceLineView(this)
 
   protected updateMainContent (ctx: CanvasRenderingContext2D): void {
-    const candleStyles = this.getPane().getChart().getChartStore().getStyleOptions().candle
+    const candleStyles = this.getPane().getChart().getStyleOptions().candle
     if (candleStyles.type !== CandleType.AREA) {
       this._candleBarView.draw(ctx)
       this._candleHighLowPriceView.draw(ctx)

@@ -54,4 +54,8 @@ function getOverlayClass (name: string): TypeOrNull<OverlayConstructor> {
   return overlays[name] ?? null
 }
 
-export { registerOverlay, getOverlayClass }
+function getSupportedOverlays (): string[] {
+  return Object.keys(overlays)
+}
+
+export { registerOverlay, getOverlayClass, getSupportedOverlays }

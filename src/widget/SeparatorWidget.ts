@@ -95,7 +95,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
   }, 20)
 
   mouseEnterEvent (): void {
-    const separatorOptions = this.getPane().getChart().getChartStore().getStyleOptions().separator
+    const separatorOptions = this.getPane().getChart().getStyleOptions().separator
     this._moveDom.style.background = separatorOptions.activeBackgroundColor
     this.getPane().getChart().getChartStore().setDragPaneFlag(true)
     this.getPane().getChart().getChartStore().getCrosshairStore().set()
@@ -136,7 +136,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
 
   protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
     if (level === UpdateLevel.ALL || level === UpdateLevel.SEPARATOR) {
-      const separatorStyles = this.getPane().getChart().getChartStore().getStyleOptions().separator
+      const separatorStyles = this.getPane().getChart().getStyleOptions().separator
       this._moveDom.style.top = `${-Math.floor((7 - separatorStyles.size) / 2)}px`
       const fill = separatorStyles.fill
       container.style.backgroundColor = separatorStyles.color
@@ -147,7 +147,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
   }
 
   getImage (): HTMLCanvasElement {
-    const separatorStyles = this.getPane().getChart().getChartStore().getStyleOptions().separator
+    const separatorStyles = this.getPane().getChart().getStyleOptions().separator
     const width = this.getContainer().offsetWidth
     const height = separatorStyles.size
     const canvas = createDom('canvas', {

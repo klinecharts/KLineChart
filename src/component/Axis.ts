@@ -16,13 +16,13 @@ import Pane from '../pane/Pane'
 
 import { getPrecision, nice, round } from '../common/utils/number'
 
-export interface Tick {
+export interface AxisTick {
   coord: number
   value: number | string
   text: string
 }
 
-export interface Extremum {
+export interface AxisExtremum {
   min: number
   max: number
   range: number
@@ -31,20 +31,25 @@ export interface Extremum {
   realRange: number
 }
 
-export default abstract class Axis {
-  private readonly _parent: Pane<Axis>
+export interface Axis {
+  convertToPixel: (value: number) => number
+  convertFromPixel: (px: number) => number
+}
 
-  private _extremum: Extremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
-  private _prevExtremum: Extremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
-  private _ticks: Tick[] = []
+export default abstract class AxisImp {
+  private readonly _parent: Pane<AxisImp>
+
+  private _extremum: AxisExtremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
+  private _prevExtremum: AxisExtremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
+  private _ticks: AxisTick[] = []
 
   private _autoCalcTickFlag = true
 
-  constructor (parent: Pane<Axis>) {
+  constructor (parent: Pane<AxisImp>) {
     this._parent = parent
   }
 
-  getParent (): Pane<Axis> { return this._parent }
+  getParent (): Pane<AxisImp> { return this._parent }
 
   buildTicks (force: boolean): boolean {
     if (this._autoCalcTickFlag) {
@@ -58,16 +63,16 @@ export default abstract class Axis {
     return false
   }
 
-  getTicks (): Tick[] {
+  getTicks (): AxisTick[] {
     return this._ticks
   }
 
-  setExtremum (extremum: Extremum): void {
+  setExtremum (extremum: AxisExtremum): void {
     this._autoCalcTickFlag = false
     this._extremum = extremum
   }
 
-  getExtremum (): Extremum { return this._extremum }
+  getExtremum (): AxisExtremum { return this._extremum }
 
   setAutoCalcTickFlag (flag: boolean): void {
     this._autoCalcTickFlag = flag
@@ -75,9 +80,9 @@ export default abstract class Axis {
 
   getAutoCalcTickFlag (): boolean { return this._autoCalcTickFlag }
 
-  private _calcTicks (): Tick[] {
+  private _calcTicks (): AxisTick[] {
     const { realMin, realMax, realRange } = this._extremum
-    const ticks: Tick[] = []
+    const ticks: AxisTick[] = []
 
     if (realRange >= 0) {
       const [interval, precision] = this._calcTickInterval(realRange)
@@ -104,9 +109,9 @@ export default abstract class Axis {
     return [interval, precision]
   }
 
-  protected abstract calcExtremum (): Extremum
+  protected abstract calcExtremum (): AxisExtremum
 
-  protected abstract optimalTicks (ticks: Tick[]): Tick[]
+  protected abstract optimalTicks (ticks: AxisTick[]): AxisTick[]
 
   abstract convertToPixel (value: number): number
   abstract convertFromPixel (px: number): number

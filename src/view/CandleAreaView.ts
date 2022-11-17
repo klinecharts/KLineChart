@@ -25,11 +25,12 @@ export default class CandleAreaView extends ChildrenView {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
+    const chart = pane.getChart()
     const chartStore = pane.getChart().getChartStore()
     const bounding = widget.getBounding()
     const yAxis = pane.getAxisComponent()
     const barSpace = chartStore.getTimeScaleStore().getBarSpace()
-    const candleAreaStyles = chartStore.getStyleOptions().candle.area
+    const candleAreaStyles = chart.getStyleOptions().candle.area
     const lineCoordinates: Coordinate[] = []
     const areaCoordinates: Coordinate[] = []
     let minY = Number.MAX_SAFE_INTEGER

@@ -18,7 +18,7 @@ import { AxisStyle, Styles } from '../common/Styles'
 import { LineAttrs } from '../extension/figure/line'
 import { TextAttrs } from '../extension/figure/text'
 
-import { Tick } from '../component/Axis'
+import { AxisTick } from '../component/Axis'
 import XAxis from '../component/XAxis'
 
 import AxisView from './AxisView'
@@ -37,7 +37,7 @@ export default class XAxisView extends AxisView<XAxis> {
     }
   }
 
-  protected createTickLines (ticks: Tick[], bounding: Bounding, styles: AxisStyle): LineAttrs[] {
+  protected createTickLines (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): LineAttrs[] {
     const tickLineStyles = styles.tickLine
     const axisLineSize = styles.axisLine.size
     return ticks.map(tick => ({
@@ -48,7 +48,7 @@ export default class XAxisView extends AxisView<XAxis> {
     }))
   }
 
-  protected createTickTexts (ticks: Tick[], bounding: Bounding, styles: AxisStyle): TextAttrs[] {
+  protected createTickTexts (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): TextAttrs[] {
     const tickTickStyles = styles.tickText
     const axisLineSize = styles.axisLine.size
     const tickLineLength = styles.tickLine.length

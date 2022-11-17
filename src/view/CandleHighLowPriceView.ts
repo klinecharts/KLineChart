@@ -105,7 +105,6 @@ export default class CandleHighLowPriceView extends ChildrenView {
       textStartX = lineEndX + styles.textOffset
     }
 
-    // 绘制竖线
     const y = startY + offsets[1]
     this.createFigure(
       'line',
@@ -124,7 +123,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
         x: textStartX,
         y,
         text,
-        algin: textAlign,
+        align: textAlign,
         baseline: 'middle'
       },
       styles

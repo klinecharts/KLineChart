@@ -22,8 +22,6 @@ import { OverlayStyle } from '../common/Styles'
 import { ElementEventHandler } from '../common/Element'
 import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
-import { formatValue } from '../common/utils/format'
-
 import Axis from '../component/Axis'
 import XAxis from '../component/XAxis'
 import YAxis from '../component/YAxis'
@@ -403,20 +401,21 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         (clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.figureType !== EventOverlayInfoFigureType.NONE)
       ) {
         const styles = overlay.styles
+        const pointStyles = { ...defaultStyles.point, ...styles?.point }
         coordinates.forEach(({ x, y }, index) => {
-          let radius = formatValue(styles, 'point.radius', defaultStyles.point.radius) as number
-          let color = formatValue(styles, 'point.color', defaultStyles.point.color)
-          let borderColor = formatValue(styles, 'point.borderColor', defaultStyles.point.borderColor)
-          let borderSize = formatValue(styles, 'point.borderSize', defaultStyles.point.borderSize) as number
+          let radius = pointStyles.radius
+          let color = pointStyles.color
+          let borderColor = pointStyles.borderColor
+          let borderSize = pointStyles.borderSize
           if (
             hoverInstanceInfo.instance?.id === overlay.id &&
             hoverInstanceInfo.figureType === EventOverlayInfoFigureType.POINT &&
             hoverInstanceInfo.figureIndex === index
           ) {
-            radius = formatValue(styles, 'point.activeRadius', defaultStyles.point.activeRadius) as number
-            color = formatValue(styles, 'point.activeRadius', defaultStyles.point.activeColor)
-            borderColor = formatValue(styles, 'point.activeBorderColor', defaultStyles.point.activeBorderColor)
-            borderSize = formatValue(styles, 'point.activeBorderSize', defaultStyles.point.activeBorderSize) as number
+            radius = pointStyles.activeRadius
+            color = pointStyles.activeColor
+            borderColor = pointStyles.activeBorderColor
+            borderSize = pointStyles.activeBorderSize
           }
           this.createFigure(
             'circle',

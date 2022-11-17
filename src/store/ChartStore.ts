@@ -26,7 +26,7 @@ import CrosshairStore from './CrosshairStore'
 import OverlayStore from './OverlayStore'
 import ActionStore from './ActionStore'
 
-import ChartInternal from '../ChartInternal'
+import ChartInternal from '../Chart'
 
 export default class ChartStore {
   /**

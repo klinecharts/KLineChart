@@ -14,29 +14,38 @@
 
 import TypeOrNull from './common/TypeOrNull'
 import DeepPartial from './common/DeepPartial'
+import Bounding from './common/Bounding'
+import KLineData from './common/KLineData'
 import Coordinate from './common/Coordinate'
 import Point from './common/Point'
-import Bounding from './common/Bounding'
 import { UpdateLevel } from './common/Updater'
-import KLineData from './common/KLineData'
-import LoadMoreCallback from './common/LoadMoreCallback'
-import { Styles } from './common/Styles'
+import { Styles, YAxisPosition } from './common/Styles'
+import Crosshair from './common/Crosshair'
 import { ActionType, ActionCallback } from './common/Action'
+import LoadMoreCallback from './common/LoadMoreCallback'
+
+import { createId } from './common/utils/id'
+import { createDom } from './common/utils/dom'
+import { getPixelRatio } from './common/utils/canvas'
+import { isString, isArray } from './common/utils/typeChecks'
+import { logWarn } from './common/utils/logger'
+import { formatValue } from './common/utils/format'
+import { binarySearchNearest } from './common/utils/number'
+
+import ChartStore from './store/ChartStore'
+
+import Pane, { PaneOptions, PANE_DEFAULT_HEIGHT, PaneIdConstants } from './pane/Pane'
+import CandlePane from './pane/CandlePane'
+import IndicatorPane from './pane/IndicatorPane'
+import XAxisPane from './pane/XAxisPane'
+
+import Axis from './component/Axis'
 
 import { Indicator, IndicatorCreate } from './component/Indicator'
 import { Overlay, OverlayCreate } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
 import { getOverlayClass } from './extension/overlay/index'
-
-import { PaneOptions, PaneIdConstants } from './pane/Pane'
-
-import ChartInternal from './ChartInternal'
-
-import { clone, isString, isArray } from './common/utils/typeChecks'
-import { logWarn } from './common/utils/logger'
-import { formatValue } from './common/utils/format'
-import { binarySearchNearest } from './common/utils/number'
 
 export const enum DomPosition {
   ROOT,
@@ -49,21 +58,264 @@ export interface ConvertFinder {
   absolute?: boolean
 }
 
-export default class Chart {
-  private readonly _internal: ChartInternal
+export interface Chart {
+  getDom: (paneId?: string, position?: DomPosition) => TypeOrNull<HTMLElement>
+  getSize: (paneId?: string, position?: DomPosition) => TypeOrNull<Bounding>
+  setStyleOptions: (options: DeepPartial<Styles>) => void
+  getStyleOptions: () => Styles
+  setPriceVolumePrecision: (pricePrecision: number, volumePrecision: number) => void
+  setTimezone: (timezone: string) => void
+  getTimezone: () => string
+  setOffsetRightDistance: (space: number) => void
+  setLeftMinVisibleBarCount: (barCount: number) => void
+  setRightMinVisibleBarCount: (barCount: number) => void
+  setBarSpace: (space: number) => void
+  getBarSpace: () => number
+  clearData: () => void
+  getDataList: () => KLineData[]
+  applyNewData: (dataList: KLineData[], more?: boolean) => void
+  applyMoreData: (dataList: KLineData[], more?: boolean) => void
+  updateData: (data: KLineData) => void
+  loadMore: (cb: LoadMoreCallback) => void
+  createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => TypeOrNull<string>
+  overrideIndicator: (override: IndicatorCreate, paneId?: string) => void
+  getIndicatorByPaneId: (paneId?: string, name?: string) => TypeOrNull<Indicator> | TypeOrNull<Map<string, Indicator>> | Map<string, Map<string, Indicator>>
+  removeIndicator: (paneId: string, name?: string) => void
+  createOverlay: (value: string | OverlayCreate, paneId?: string) => TypeOrNull<string>
+  getOverlayById: (id: string) => TypeOrNull<Overlay>
+  overrideOverlay: (override: Partial<OverlayCreate>) => void
+  removeOverlay: (id?: string) => void
+  setPaneOptions: (options: PaneOptions) => void
+  setZoomEnabled: (enabled: boolean) => void
+  isZoomEnabled: () => boolean
+  setScrollEnabled: (enabled: boolean) => void
+  isScrollEnabled: () => boolean
+  scrollByDistance: (distance: number, animationDuration?: number) => void
+  scrollToRealTime: (animationDuration?: number) => void
+  scrollToDataIndex: (dataIndex: number, animationDuration?: number) => void
+  scrollToTimestamp: (timestamp: number, animationDuration?: number) => void
+  zoomAtCoordinate: (scale: number, coordinate: Coordinate, animationDuration?: number) => void
+  zoomAtDataIndex: (scale: number, dataIndex: number, animationDuration?: number) => void
+  zoomAtTimestamp: (scale: number, timestamp: number, animationDuration?: number) => void
+  convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder) => Partial<Coordinate> | Array<Partial<Coordinate>>
+  convertFromPixel: (coordinates: Array<Partial<Coordinate>>, finder: ConvertFinder) => Partial<Point> | Array<Partial<Point>>
+  subscribeAction: (type: ActionType, callback: ActionCallback) => void
+  unsubscribeAction: (type: ActionType, callback?: ActionCallback) => void
+  getConvertPictureUrl: (includeOverlay?: boolean, type?: string, backgroundColor?: string) => string
+  resize: () => void
+  destroy: () => void
+}
+
+export default class ChartImp implements Chart {
+  private _container: HTMLElement
+  private _chartContainer: HTMLElement
+  private readonly _chartStore: ChartStore
+  private readonly _xAxisPane: XAxisPane
+  private readonly _panes: Map<string, IndicatorPane> = new Map()
 
   constructor (container: HTMLElement, styleOptions?: DeepPartial<Styles>) {
-    this._internal = new ChartInternal(container, styleOptions)
+    this._initContainer(container)
+    this._chartStore = new ChartStore(this, styleOptions)
+    this._xAxisPane = new XAxisPane(this._chartContainer, this, PaneIdConstants.XAXIS)
+    this._panes.set(PaneIdConstants.CANDLE, new CandlePane(this._chartContainer, this, PaneIdConstants.CANDLE))
+    this.adjustPaneViewport(true, true, true)
   }
 
-  /**
-   * 获取dom
-   * @param finder
-   * @returns
-   */
+  private _initContainer (container: HTMLElement): void {
+    this._container = container
+    this._chartContainer = createDom('div', {
+      position: 'relative',
+      width: '100%',
+      userSelect: 'none',
+      outline: 'none',
+      borderStyle: 'none',
+      cursor: 'crosshair',
+      boxSizing: 'border-box'
+    })
+    this._chartContainer.tabIndex = 1
+    container.appendChild(this._chartContainer)
+  }
+
+  private _measurePaneHeight (): void {
+    const totalHeight = this._container.offsetHeight
+    const xAxisHeight = this._xAxisPane.getAxisComponent().getAutoSize()
+    let paneExcludeXAxisHeight = totalHeight - xAxisHeight
+    if (paneExcludeXAxisHeight < 0) {
+      paneExcludeXAxisHeight = 0
+    }
+    let indicatorPaneTotalHeight = 0
+    this._panes.forEach(pane => {
+      if (pane.getId() !== PaneIdConstants.CANDLE) {
+        let paneHeight = pane.getBounding().height
+        const paneMinHeight = pane.getOptions().minHeight
+        if (paneHeight < paneMinHeight) {
+          paneHeight = paneMinHeight
+        }
+        if (indicatorPaneTotalHeight + paneHeight > paneExcludeXAxisHeight) {
+          indicatorPaneTotalHeight = paneExcludeXAxisHeight
+          paneHeight = Math.max(paneExcludeXAxisHeight - indicatorPaneTotalHeight, 0)
+        } else {
+          indicatorPaneTotalHeight += paneHeight
+        }
+        pane.setBounding({ height: paneHeight })
+      }
+    })
+
+    const candlePaneHeight = paneExcludeXAxisHeight - indicatorPaneTotalHeight
+    this._panes.get(PaneIdConstants.CANDLE)?.setBounding({ height: candlePaneHeight })
+
+    let top = 0
+    this._panes.forEach(pane => {
+      pane.setBounding({ top })
+      top += pane.getBounding().height
+    })
+    this._xAxisPane.setBounding({ height: xAxisHeight, top })
+  }
+
+  private _measurePaneWidth (): void {
+    const styles = this._chartStore.getStyleOptions()
+    const yAxisStyles = styles.yAxis
+    const isYAxisLeft = yAxisStyles.position === YAxisPosition.LEFT
+    const isOutside = !yAxisStyles.inside
+    const totolWidth = this._container.offsetWidth
+    let mainWidth = 0
+    let yAxisWidth = Number.MIN_SAFE_INTEGER
+    let yAxisLeft = 0
+    let mainLeft = 0
+    this._panes.forEach(pane => {
+      yAxisWidth = Math.max(yAxisWidth, pane.getAxisComponent().getAutoSize())
+    })
+    if (yAxisWidth > totolWidth) {
+      yAxisWidth = totolWidth
+    }
+    if (isOutside) {
+      mainWidth = totolWidth - yAxisWidth
+      if (isYAxisLeft) {
+        yAxisLeft = 0
+        mainLeft = yAxisWidth
+      } else {
+        yAxisLeft = totolWidth - yAxisWidth
+        mainLeft = 0
+      }
+    } else {
+      mainWidth = totolWidth
+      mainLeft = 0
+      if (isYAxisLeft) {
+        yAxisLeft = 0
+      } else {
+        yAxisLeft = totolWidth - yAxisWidth
+      }
+    }
+
+    this._chartStore.getTimeScaleStore().setTotalBarSpace(mainWidth)
+
+    const paneBounding = { width: totolWidth }
+    const mainBounding = { width: mainWidth, left: mainLeft }
+    const yAxisBounding = { width: yAxisWidth, left: yAxisLeft }
+    this._panes.forEach((pane) => {
+      pane.setBounding(paneBounding, mainBounding, yAxisBounding)
+    })
+    this._xAxisPane.setBounding(paneBounding, mainBounding, yAxisBounding)
+  }
+
+  private _setPaneOptions (options: PaneOptions, forceShouldAdjust: boolean): void {
+    if (options.id !== PaneIdConstants.CANDLE) {
+      const pane = this._panes.get(options.id)
+      if (pane !== undefined) {
+        let shouldAdjust = forceShouldAdjust
+        let shouldMeasureHeight = false
+        if (options.height !== undefined && options.height > 0) {
+          const minHeight = Math.max(options.minHeight ?? pane.getOptions().minHeight, 0)
+          const height = Math.min(minHeight, options.height)
+          options.height = height
+          shouldAdjust = true
+          shouldMeasureHeight = true
+        }
+        pane.setOptions(options)
+        if (shouldAdjust) {
+          this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
+        }
+      }
+    }
+  }
+
+  getContainer (): HTMLElement { return this._container }
+
+  getChartStore (): ChartStore { return this._chartStore }
+
+  adjustPaneViewport (
+    shouldMeasureHeight: boolean,
+    shouldMeasureWidth: boolean,
+    shouldUpdate: boolean,
+    shouldAdjustYAxis?: boolean,
+    shouldForceAdjustYAxis?: boolean
+  ): void {
+    if (shouldMeasureHeight) {
+      this._measurePaneHeight()
+    }
+    let forceMeasureWidth = shouldMeasureWidth
+    const adjustYAxis = shouldAdjustYAxis ?? false
+    const forceAdjustYAxis = shouldForceAdjustYAxis ?? false
+    if (adjustYAxis || forceAdjustYAxis) {
+      this._panes.forEach(pane => {
+        const adjust = pane.getAxisComponent().buildTicks(forceAdjustYAxis)
+        if (!forceMeasureWidth) {
+          forceMeasureWidth = adjust
+        }
+      })
+    }
+    if (forceMeasureWidth) {
+      this._measurePaneWidth()
+    }
+    if (shouldUpdate ?? false) {
+      this._xAxisPane.getAxisComponent().buildTicks(true)
+      this.updatePane(UpdateLevel.ALL)
+    }
+  }
+
+  updatePane (level: UpdateLevel, paneId?: string): void {
+    if (paneId !== undefined) {
+      this.getPaneById(paneId)?.update(level)
+    } else {
+      this._xAxisPane.update(level)
+      this._panes.forEach(pane => {
+        pane.update(level)
+      })
+    }
+  }
+
+  getPaneById (paneId: string): TypeOrNull<Pane<Axis>> {
+    if (paneId === PaneIdConstants.XAXIS) {
+      return this._xAxisPane
+    }
+    return this._panes.get(paneId) ?? null
+  }
+
+  crosshairChange (crosshair: Crosshair): void {
+    const actionStore = this._chartStore.getActionStore()
+    if (actionStore.has(ActionType.onCrosshairChange)) {
+      const indicatorData = {}
+      this._panes.forEach((_, id) => {
+        const paneIndicatorData = {}
+        const indicators = this._chartStore.getIndicatorStore().getInstances(id)
+        indicators.forEach(indicator => {
+          const result = indicator.result
+          paneIndicatorData[indicator.name] = result[crosshair.dataIndex ?? result.length - 1]
+        })
+        indicatorData[id] = paneIndicatorData
+      })
+      if (crosshair.paneId !== undefined) {
+        actionStore.execute(ActionType.onCrosshairChange, {
+          ...crosshair,
+          indicatorData
+        })
+      }
+    }
+  }
+
   getDom (paneId?: string, position?: DomPosition): TypeOrNull<HTMLElement> {
     if (paneId !== undefined) {
-      const pane = this._internal.getPaneById(paneId)
+      const pane = this.getPaneById(paneId)
       if (pane !== null) {
         const pos = position ?? DomPosition.ROOT
         switch (pos) {
@@ -79,14 +331,14 @@ export default class Chart {
         }
       }
     } else {
-      return this._internal.getChartContainer()
+      return this._chartContainer
     }
     return null
   }
 
   getSize (paneId?: string, position?: DomPosition): TypeOrNull<Bounding> {
     if (paneId !== undefined) {
-      const pane = this._internal.getPaneById(paneId)
+      const pane = this.getPaneById(paneId)
       if (pane !== null) {
         const pos = position ?? DomPosition.ROOT
         switch (pos) {
@@ -102,10 +354,9 @@ export default class Chart {
         }
       }
     } else {
-      const container = this._internal.getChartContainer()
       return {
-        width: container.offsetWidth,
-        height: container.offsetHeight,
+        width: this._chartContainer.offsetWidth,
+        height: this._chartContainer.offsetHeight,
         left: 0,
         top: 0,
         right: 0,
@@ -115,157 +366,81 @@ export default class Chart {
     return null
   }
 
-  /**
-   * 设置样式配置
-   * @param options 配置
-   */
-  setStyleOptions (options: DeepPartial<Styles>): Chart {
-    this._internal.getChartStore().applyStyleOptions(options)
-    this._internal.adjustPaneViewport(true, true, true, true, true)
-    return this
+  setStyleOptions (options: DeepPartial<Styles>): void {
+    this._chartStore.applyStyleOptions(options)
+    this.adjustPaneViewport(true, true, true, true, true)
   }
 
-  /**
-   * 获取样式配置
-   * @returns {[]|*[]}
-   */
   getStyleOptions (): Styles {
-    return clone(this._internal.getChartStore().getStyleOptions())
+    return this._chartStore.getStyleOptions()
   }
 
-  /**
-   * 设置价格数量精度
-   * @param pricePrecision 价格精度
-   * @param volumePrecision 数量精度
-   */
-  setPriceVolumePrecision (pricePrecision: number, volumePrecision: number): Chart {
-    this._internal.getChartStore().setPrecision({ price: pricePrecision, volume: volumePrecision })
-    return this
+  setPriceVolumePrecision (pricePrecision: number, volumePrecision: number): void {
+    this._chartStore.setPrecision({ price: pricePrecision, volume: volumePrecision })
   }
 
-  /**
-   * 设置时区
-   * @param timezone 时区
-   */
-  setTimezone (timezone: string): Chart {
-    this._internal.getChartStore().getTimeScaleStore().setTimezone(timezone)
-    this._internal.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent().buildTicks(true)
-    this._internal.updatePane(UpdateLevel.DRAWER, PaneIdConstants.XAXIS)
-    return this
+  setTimezone (timezone: string): void {
+    this._chartStore.getTimeScaleStore().setTimezone(timezone)
+    this._xAxisPane.getAxisComponent().buildTicks(true)
+    this._xAxisPane.update(UpdateLevel.DRAWER)
   }
 
-  /**
-   * 获取当前时区
-   */
   getTimezone (): string {
-    return this._internal.getChartStore().getTimeScaleStore().getTimezone()
+    return this._chartStore.getTimeScaleStore().getTimezone()
   }
 
-  /**
-   * 重置尺寸，总是会填充父容器
-   */
-  resize (): void {
-    this._internal.adjustPaneViewport(true, true, true, true, true)
+  setOffsetRightDistance (space: number): void {
+    this._chartStore.getTimeScaleStore().setOffsetRightDistance(space, true)
   }
 
-  /**
-   * 设置右边间距
-   * @param space 空间大小
-   */
-  setOffsetRightDistance (space: number): Chart {
-    this._internal.getChartStore().getTimeScaleStore().setOffsetRightDistance(space, true)
-    return this
-  }
-
-  /**
-   * 设置左边可见的最小bar数量
-   * @param barCount bar数量
-   */
-  setLeftMinVisibleBarCount (barCount: number): Chart {
+  setLeftMinVisibleBarCount (barCount: number): void {
     if (barCount > 0) {
-      this._internal.getChartStore().getTimeScaleStore().setLeftMinVisibleBarCount(Math.ceil(barCount))
+      this._chartStore.getTimeScaleStore().setLeftMinVisibleBarCount(Math.ceil(barCount))
     } else {
       logWarn('setLeftMinVisibleBarCount', 'barCount', 'barCount must greater than zero!!!')
     }
-    return this
   }
 
-  /**
-   * 设置右边可见的最小bar数量
-   * @param barCount bar数量
-   */
-  setRightMinVisibleBarCount (barCount: number): Chart {
+  setRightMinVisibleBarCount (barCount: number): void {
     if (barCount > 0) {
-      this._internal.getChartStore().getTimeScaleStore().setRightMinVisibleBarCount(Math.ceil(barCount))
+      this._chartStore.getTimeScaleStore().setRightMinVisibleBarCount(Math.ceil(barCount))
     } else {
       logWarn('setRightMinVisibleBarCount', 'barCount', 'barCount must be a number and greater than zero!!!')
     }
-    return this
   }
 
-  /**
-   * 设置一条数据的空间
-   * @param space 空间大小
-   */
-  setBarSpace (space: number): Chart {
-    this._internal.getChartStore().getTimeScaleStore().setBarSpace(space)
-    return this
+  setBarSpace (space: number): void {
+    this._chartStore.getTimeScaleStore().setBarSpace(space)
   }
 
-  /**
-   * 获取单条数据的空间
-   * @returns
-   */
   getBarSpace (): number {
-    return this._internal.getChartStore().getTimeScaleStore().getBarSpace().bar
+    return this._chartStore.getTimeScaleStore().getBarSpace().bar
   }
 
-  /**
-   * 清空数据
-   */
   clearData (): void {
-    this._internal.getChartStore().clearDataList()
+    this._chartStore.clearDataList()
   }
 
-  /**
-   * 获取数据源
-   */
   getDataList (): KLineData[] {
-    return this._internal.getChartStore().getDataList()
+    return this._chartStore.getDataList()
   }
 
-  /**
-   * 添加新数据
-   * @param dataList k线数据数组
-   * @param more 是否还有更多标识
-   */
   applyNewData (dataList: KLineData[], more?: boolean): void {
-    this._internal.getChartStore().clearDataList()
+    this._chartStore.clearDataList()
     this.applyMoreData(dataList, more)
   }
 
-  /**
-   * 添加历史更多数据
-   * @param dataList k线数据数组
-   * @param more 是否还有更多标识
-   */
   applyMoreData (dataList: KLineData[], more?: boolean): void {
-    const chartStore = this._internal.getChartStore()
-    chartStore.addData(dataList, 0, more)
-    chartStore.getIndicatorStore().calcInstance().finally(
+    this._chartStore.addData(dataList, 0, more)
+    this._chartStore.getIndicatorStore().calcInstance().finally(
       () => {
-        this._internal.adjustPaneViewport(false, true, true, true)
+        this.adjustPaneViewport(false, true, true, true)
       }
     )
   }
 
-  /**
-   * 更新数据
-   * @param data 新的k线数据
-   */
   updateData (data: KLineData): void {
-    const chartStore = this._internal.getChartStore()
-    const dataList = chartStore.getDataList()
+    const dataList = this._chartStore.getDataList()
     const dataCount = dataList.length
     // 这里判断单个数据应该添加到哪个位置
     const timestamp = data.timestamp
@@ -275,78 +450,87 @@ export default class Chart {
       if (timestamp === lastDataTimestamp) {
         pos = dataCount - 1
       }
-      chartStore.addData(data, pos)
-      chartStore.getIndicatorStore().calcInstance().finally(
+      this._chartStore.addData(data, pos)
+      this._chartStore.getIndicatorStore().calcInstance().finally(
         () => {
-          this._internal.adjustPaneViewport(false, true, true, true)
+          this.adjustPaneViewport(false, true, true, true)
         }
       )
     }
   }
 
-  /**
-   * 设置加载更多回调
-   * @param cb 回调方法
-   */
   loadMore (cb: LoadMoreCallback): void {
-    this._internal.getChartStore().getTimeScaleStore().setLoadMoreCallback(cb)
+    this._chartStore.getTimeScaleStore().setLoadMoreCallback(cb)
   }
 
-  /**
-   * 创建一个技术指标
-   * @param value 指标名或者指标
-   * @param isStack 是否覆盖
-   * @param paneOptions 窗口配置
-   * @returns {string|null}
-   */
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions): TypeOrNull<string> {
     const indicator: IndicatorCreate = isString(value) ? { name: value as string } : value as IndicatorCreate
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
     }
-    return this._internal.createIndicator(indicator, isStack ?? false, paneOptions)
+
+    let paneId: string
+    if (paneOptions !== undefined && this._panes.has(paneOptions.id)) {
+      paneId = paneOptions.id
+      this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).finally(() => {
+        this._setPaneOptions(paneOptions, this._panes.get(paneId)?.getAxisComponent().buildTicks(true) ?? false)
+      })
+    } else {
+      paneId = paneOptions?.id ?? createId(PaneIdConstants.INDICATOR)
+      const topPane = Array.from(this._panes.values()).pop() as unknown as Pane<Axis>
+      const pane = new IndicatorPane(this._chartContainer, this, paneId, topPane)
+      topPane.setBottomPane(pane)
+      const height = paneOptions?.height ?? PANE_DEFAULT_HEIGHT
+      pane.setBounding({ height })
+      if (paneOptions !== undefined) {
+        pane.setOptions(paneOptions)
+      }
+      this._panes.set(paneId, pane)
+      this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).finally(() => {
+        this.adjustPaneViewport(true, true, true, true, true)
+      })
+    }
+    return paneId
   }
 
-  /**
-   * 覆盖技术指标
-   * @param override 覆盖参数
-   * @param paneId 窗口id
-   */
   overrideIndicator (override: IndicatorCreate, paneId?: string): void {
-    this._internal.getChartStore().getIndicatorStore().override(override, paneId).then(
+    this._chartStore.getIndicatorStore().override(override, paneId).then(
       result => {
         if (result.length > 0) {
-          this._internal.adjustPaneViewport(false, true, true, true)
+          this.adjustPaneViewport(false, true, true, true)
         }
       }
     ).catch(() => {})
   }
 
-  /**
-    * 获取窗口上的技术指标
-    * @param paneId 窗口id
-    * @param name 指标名
-    * @return {{}}
-    */
   getIndicatorByPaneId (paneId?: string, name?: string): TypeOrNull<Indicator> | TypeOrNull<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
-    return this._internal.getChartStore().getIndicatorStore().getInstanceByPaneId(paneId, name)
+    return this._chartStore.getIndicatorStore().getInstanceByPaneId(paneId, name)
   }
 
-  /**
-   * 移除一个技术指标
-   * @param paneId 窗口id
-   * @param name 指标名
-   */
   removeIndicator (paneId: string, name?: string): void {
-    this._internal.removeIndicator(paneId, name)
+    const indicatorStore = this._chartStore.getIndicatorStore()
+    const removed = indicatorStore.removeInstance(paneId, name)
+    if (removed) {
+      let shouldMeasureHeight = false
+      if (paneId !== PaneIdConstants.CANDLE) {
+        if (!indicatorStore.hasInstances(paneId)) {
+          const deletePane = this._panes.get(paneId)
+          if (deletePane !== undefined) {
+            shouldMeasureHeight = true
+            const deleteTopPane = deletePane.getTopPane()
+            const deleteBottomPane = deletePane.getBottomPane()
+            deleteBottomPane?.setTopPane(deleteTopPane)
+            deleteTopPane?.setBottomPane(deleteBottomPane)
+            deletePane?.destroy()
+            this._panes.delete(paneId)
+          }
+        }
+      }
+      this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
+    }
   }
 
-  /**
-   * 创建图形
-   * @param value 图形名或者图形配置
-   * @param paneId 窗口id
-   */
   createOverlay (value: string | OverlayCreate, paneId?: string): TypeOrNull<string> {
     const overlay: OverlayCreate = isString(value) ? { name: value as string } : value as OverlayCreate
     if (getOverlayClass(overlay.name) === null) {
@@ -354,90 +538,52 @@ export default class Chart {
       return null
     }
     let appointPaneFlag = true
-    if (paneId === undefined || this._internal.getPaneById(paneId) === null) {
+    if (paneId === undefined || this.getPaneById(paneId) === null) {
       paneId = PaneIdConstants.CANDLE
       appointPaneFlag = false
     }
-    const id = this._internal.getChartStore().getOverlayStore().addInstance(overlay, paneId, appointPaneFlag)
+    const id = this._chartStore.getOverlayStore().addInstance(overlay, paneId, appointPaneFlag)
     if (id === null) {
       logWarn('createOverlay', 'options.id', 'duplicate id!!!')
     }
     return id
   }
 
-  /**
-   * overlay
-   * @param id overlay id
-   * @return {{name, lock: *, styles, id, points: (*|*[])}[]|{name, lock: *, styles, id, points: (*|*[])}}
-   */
   getOverlayById (id: string): TypeOrNull<Overlay> {
-    return this._internal.getChartStore().getOverlayStore().getInstanceById(id)
+    return this._chartStore.getOverlayStore().getInstanceById(id)
   }
 
-  /**
-   * 设置图形标记配置
-   * @param override 图形标记配置
-   */
   overrideOverlay (override: Partial<OverlayCreate>): void {
-    this._internal.getChartStore().getOverlayStore().override(override)
+    this._chartStore.getOverlayStore().override(override)
   }
 
-  /**
-   * 移除图形
-   * @param id 图形id
-   */
   removeOverlay (id?: string): void {
-    this._internal.getChartStore().getOverlayStore().removeInstance(id)
+    this._chartStore.getOverlayStore().removeInstance(id)
   }
 
-  /**
-   * 设置窗口属性
-   * @param options 窗口配置
-   */
   setPaneOptions (options: PaneOptions): void {
-    this._internal.setPaneOptions(options, false)
+    this._setPaneOptions(options, false)
   }
 
-  /**
-   * 设置是否可以缩放
-   * @param enabled 标识
-   */
   setZoomEnabled (enabled: boolean): void {
-    this._internal.getChartStore().getTimeScaleStore().setZoomEnabled(enabled)
+    this._chartStore.getTimeScaleStore().setZoomEnabled(enabled)
   }
 
-  /**
-   * 是否可以缩放
-   * @return {boolean}
-   */
   isZoomEnabled (): boolean {
-    return this._internal.getChartStore().getTimeScaleStore().getZoomEnabled()
+    return this._chartStore.getTimeScaleStore().getZoomEnabled()
   }
 
-  /**
-   * 设置是否可以拖拽滚动
-   * @param enabled 标识
-   */
   setScrollEnabled (enabled: boolean): void {
-    this._internal.getChartStore().getTimeScaleStore().setScrollEnabled(enabled)
+    this._chartStore.getTimeScaleStore().setScrollEnabled(enabled)
   }
 
-  /**
-   * 是否可以拖拽滚动
-   * @return {boolean}
-   */
   isScrollEnabled (): boolean {
-    return this._internal.getChartStore().getTimeScaleStore().getScrollEnabled()
+    return this._chartStore.getTimeScaleStore().getScrollEnabled()
   }
 
-  /**
-   * 按距离滚动
-   * @param distance 距离
-   * @param animationDuration 动画持续时间
-   */
   scrollByDistance (distance: number, animationDuration?: number): void {
     const duration = animationDuration === undefined || animationDuration < 0 ? 0 : animationDuration
-    const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+    const timeScaleStore = this._chartStore.getTimeScaleStore()
     if (duration > 0) {
       timeScaleStore.startScroll()
       const startTime = new Date().getTime()
@@ -457,50 +603,30 @@ export default class Chart {
     }
   }
 
-  /**
-   * 滚动到实时位置
-   * @param animationDuration 动画持续时间
-   */
   scrollToRealTime (animationDuration?: number): void {
-    const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+    const timeScaleStore = this._chartStore.getTimeScaleStore()
     const { bar: barSpace } = timeScaleStore.getBarSpace()
     const difBarCount = timeScaleStore.getOffsetRightBarCount() - timeScaleStore.getOffsetRightDistance() / barSpace
     const distance = difBarCount * barSpace
     this.scrollByDistance(distance, animationDuration)
   }
 
-  /**
-   * 滚动到指定的数据索引
-   * @param dataIndex 数据索引
-   * @param animationDuration 动画持续时间
-   */
   scrollToDataIndex (dataIndex: number, animationDuration?: number): void {
-    const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+    const timeScaleStore = this._chartStore.getTimeScaleStore()
     const distance = (
       timeScaleStore.getOffsetRightBarCount() + (this.getDataList().length - 1 - dataIndex)
     ) * timeScaleStore.getBarSpace().bar
     this.scrollByDistance(distance, animationDuration)
   }
 
-  /**
-   * 滚动到指定时间戳
-   * @param timestamp 时间戳
-   * @param animationDuration 动画持续时间
-   */
   scrollToTimestamp (timestamp: number, animationDuration?: number): void {
     const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
     this.scrollToDataIndex(dataIndex, animationDuration)
   }
 
-  /**
-   * 在某个坐标点缩放
-   * @param scale 缩放比例
-   * @param coordinate 坐标点
-   * @param animationDuration 动画持续时间
-   */
   zoomAtCoordinate (scale: number, coordinate: Coordinate, animationDuration?: number): void {
     const duration = animationDuration === undefined || animationDuration < 0 ? 0 : animationDuration
-    const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+    const timeScaleStore = this._chartStore.getTimeScaleStore()
     if (duration > 0) {
       const { bar: barSpace } = timeScaleStore.getBarSpace()
       const scaleDataSpace = barSpace * scale
@@ -521,43 +647,26 @@ export default class Chart {
     }
   }
 
-  /**
-   * 在某个数据索引缩放
-   * @param scale 缩放比例
-   * @param dataIndex 索引位置
-   * @param animationDuration 动画持续时间
-   */
   zoomAtDataIndex (scale: number, dataIndex: number, animationDuration?: number): void {
-    const x = this._internal.getChartStore().getTimeScaleStore().dataIndexToCoordinate(dataIndex)
+    const x = this._chartStore.getTimeScaleStore().dataIndexToCoordinate(dataIndex)
     this.zoomAtCoordinate(scale, { x, y: 0 }, animationDuration)
   }
 
-  /**
-   * 在某个时间戳缩放
-   * @param scale 缩放比例
-   * @param timestamp 时间戳
-   * @param animationDuration 动画持续时间
-   */
   zoomAtTimestamp (scale: number, timestamp: number, animationDuration?: number): void {
     const dataIndex = binarySearchNearest(this.getDataList(), 'timestamp', timestamp)
     this.zoomAtDataIndex(scale, dataIndex, animationDuration)
   }
 
-  /**
-   * 将值装换成像素
-   * @param points 单个点或者点集合
-   * @param finder 过滤条件
-   */
   convertToPixel (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder): Partial<Coordinate> | Array<Partial<Coordinate>> {
     const { paneId = PaneIdConstants.CANDLE, absolute = false } = finder
     let coordinates: Array<Partial<Coordinate>> = []
     if (paneId !== PaneIdConstants.XAXIS) {
-      const pane = this._internal.getPaneById(paneId)
+      const pane = this.getPaneById(paneId)
       if (pane !== null) {
-        const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+        const timeScaleStore = this._chartStore.getTimeScaleStore()
         const bounding = pane.getBounding()
         const ps = new Array<Partial<Point>>().concat(points)
-        const xAxis = this._internal.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent()
+        const xAxis = this._xAxisPane.getAxisComponent()
         const yAxis = pane.getAxisComponent()
         coordinates = ps.map(point => {
           const coordinate: Partial<Coordinate> = {}
@@ -579,26 +688,21 @@ export default class Chart {
     return isArray(points) ? coordinates : (coordinates[0] ?? {})
   }
 
-  /**
-   * 将像素转换成值
-   * @param coordinates 单个坐标或者坐标集合
-   * @param finder 过滤条件
-   */
   convertFromPixel (coordinates: Array<Partial<Coordinate>>, finder: ConvertFinder): Partial<Point> | Array<Partial<Point>> {
     const { paneId = PaneIdConstants.CANDLE, absolute = false } = finder
     let points: Array<Partial<Point>> = []
     if (paneId !== PaneIdConstants.XAXIS) {
-      const pane = this._internal.getPaneById(paneId)
+      const pane = this.getPaneById(paneId)
       if (pane !== null) {
-        const timeScaleStore = this._internal.getChartStore().getTimeScaleStore()
+        const timeScaleStore = this._chartStore.getTimeScaleStore()
         const bounding = pane.getBounding()
         const cs = new Array<Partial<Coordinate>>().concat(coordinates)
-        const xAxis = this._internal.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent()
+        const xAxis = this._xAxisPane.getAxisComponent()
         const yAxis = pane.getAxisComponent()
         points = cs.map(coordinate => {
           const point: Partial<Point> = {}
           if (coordinate.x !== undefined) {
-            const dataIndex = xAxis?.convertFromPixel(coordinate.x) as number
+            const dataIndex = xAxis.convertFromPixel(coordinate.x)
             point.dataIndex = dataIndex
             point.timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
           }
@@ -613,38 +717,56 @@ export default class Chart {
     return isArray(coordinates) ? points : (points[0] ?? {})
   }
 
-  /**
-   * 订阅图表动作
-   * @param type 动作类型
-   * @param callback 回调方法
-   */
   subscribeAction (type: ActionType, callback: ActionCallback): void {
-    this._internal.getChartStore().getActionStore().subscribe(type, callback)
+    this._chartStore.getActionStore().subscribe(type, callback)
   }
 
-  /**
-   * 取消订阅图表动作
-   * @param type 动作类型
-   * @param callback 回调方法
-   */
   unsubscribeAction (type: ActionType, callback?: ActionCallback): void {
-    this._internal.getChartStore().getActionStore().unsubscribe(type, callback)
+    this._chartStore.getActionStore().unsubscribe(type, callback)
   }
 
-  /**
-   * 获取将图表装换成图片后的url
-   * @param includeOverlay 是否包含覆盖层
-   * @param type 图片类型
-   * @param backgroundColor 背景色
-   */
   getConvertPictureUrl (includeOverlay?: boolean, type?: string, backgroundColor?: string): string {
-    return this._internal.getConvertPictureUrl(includeOverlay ?? false, type ?? 'jpeg', backgroundColor ?? '#FFFFFF')
+    const width = this._chartContainer.offsetWidth
+    const height = this._chartContainer.offsetHeight
+    const canvas = createDom('canvas', {
+      width: `${width}px`,
+      height: `${height}px`,
+      boxSizing: 'border-box'
+    })
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const pixelRatio = getPixelRatio(canvas)
+    canvas.width = width * pixelRatio
+    canvas.height = height * pixelRatio
+    ctx.scale(pixelRatio, pixelRatio)
+
+    ctx.fillStyle = backgroundColor ?? '#FFFFFF'
+    ctx.fillRect(0, 0, width, height)
+    const overlayFlag = includeOverlay ?? false
+    this._panes.forEach(pane => {
+      const bounding = pane.getBounding()
+      ctx.drawImage(
+        pane.getImage(overlayFlag),
+        0, bounding.top, width, bounding.height
+      )
+    })
+    const xAxisBounding = this._xAxisPane.getBounding()
+    ctx.drawImage(
+      this._xAxisPane.getImage(overlayFlag),
+      0, xAxisBounding.top, width, xAxisBounding.height
+    )
+    return canvas.toDataURL(`image/${type ?? 'jpeg'}`)
   }
 
-  /**
-   * 销毁
-   */
+  resize (): void {
+    this.adjustPaneViewport(true, true, true, true, true)
+  }
+
   destroy (): void {
-    this._internal.destroy()
+    this._panes.forEach(pane => {
+      pane.destroy()
+    })
+    this._panes.clear()
+    this._xAxisPane.destroy()
+    this._container.removeChild(this._chartContainer)
   }
 }

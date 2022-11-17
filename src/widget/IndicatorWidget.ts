@@ -22,7 +22,7 @@ import Pane from '../pane/Pane'
 
 import DrawWidget from './DrawWidget'
 
-import { Extremum } from '../component/Axis'
+import Axis, { AxisExtremum } from '../component/Axis'
 import YAxis from '../component/YAxis'
 
 import GridView from '../view/GridView'
@@ -30,8 +30,6 @@ import IndicatorView from '../view/IndicatorView'
 import CrosshairLineView from '../view/CrosshairLineView'
 import IndicatorTooltipView from '../view/IndicatorTooltipView'
 import OverlayView from '../view/OverlayView'
-
-import { cancelAnimationFrame, requestAnimationFrame } from '../common/utils/compatible'
 
 export default class IndicatorWidget extends DrawWidget<YAxis> {
   private readonly _gridView = new GridView(this)
@@ -55,7 +53,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   // 用来记录捏合缩放的尺寸
   private _pinchScale = 1
 
-  private _prevExtremum: TypeOrNull<Extremum> = null
+  private _prevExtremum: TypeOrNull<AxisExtremum> = null
 
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
     super(rootContainer, pane)
@@ -83,30 +81,12 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
     this.getPane().getChart().getChartStore().getTimeScaleStore().zoom(scale, coordinate)
   }
 
-  mouseClickEvent (event: MouseTouchEvent): void {
-    if (event.isTouch && this._touchCoordinate === null && !this._touchCancelCrosshair && !this._touchZoomed) {
-      this._touchCoordinate = { x: event.x, y: event.y }
-      const pane = this.getPane()
-      pane.getChart().getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane.getId() })
-    }
-  }
-
   pressedMouseMoveEvent (event: MouseTouchEvent): void {
     const pane = this.getPane()
     const paneId = pane.getId()
     const chartStore = pane.getChart().getChartStore()
     const crosshairStore = chartStore.getCrosshairStore()
     if (!this.dispatchEvent('pressedMouseMoveEvent', event)) {
-      let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId }
-      if (event.isTouch) {
-        if (this._touchCoordinate !== null) {
-          this._touchCoordinate = { x: event.x, y: event.y }
-          crosshairStore.set(crosshair)
-          return
-        } else {
-          crosshair = undefined
-        }
-      }
       if (this._startScrollCoordinate !== null) {
         const pane = this.getPane()
         const yAxis = pane.getAxisComponent()
@@ -149,34 +129,8 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   mouseDownEvent (event: MouseTouchEvent): void {
     this.dispatchEvent('mouseDownEvent', event)
     this._prevExtremum = { ...this.getPane().getAxisComponent().getExtremum() }
-    if (this._flingScrollTimerId !== null) {
-      cancelAnimationFrame(this._flingScrollTimerId)
-      this._flingScrollTimerId = null
-    }
-    const pane = this.getPane()
-    const chartStore = pane.getChart().getChartStore()
-    this._flingStartTime = new Date().getTime()
     this._startScrollCoordinate = { x: event.x, y: event.y }
-    chartStore.getTimeScaleStore().startScroll()
-    if (event.isTouch) {
-      this._touchZoomed = false
-      if (this._touchCoordinate !== null) {
-        const xDif = event.x - this._touchCoordinate.x
-        const yDif = event.y - this._touchCoordinate.y
-        const radius = Math.sqrt(xDif * xDif + yDif * yDif)
-        const crosshairStore = chartStore.getCrosshairStore()
-        if (radius < TOUCH_MIN_RADIUS) {
-          this._touchCoordinate = { x: event.x, y: event.y }
-          crosshairStore.set({ x: event.x, y: event.y, paneId: pane.getId() })
-        } else {
-          this._touchCancelCrosshair = true
-          this._touchCoordinate = null
-          crosshairStore.set()
-        }
-      } else {
-        this._touchCancelCrosshair = false
-      }
-    }
+    this.getPane().getChart().getChartStore().getTimeScaleStore().startScroll()
   }
 
   mouseRightClickEvent (event: MouseTouchEvent): void {
@@ -196,43 +150,125 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   mouseLeaveEvent (event: MouseTouchEvent): void {
-    if (event.isTouch) {
-      if (this._startScrollCoordinate !== null) {
-        const time = new Date().getTime() - this._flingStartTime
-        const distance = event.x - this._startScrollCoordinate.x
-        let v = (distance) / (time > 0 ? time : 1) * 20
-        if (time < 200 && Math.abs(v) > 0) {
-          const timeScaleStore = this.getPane().getChart().getChartStore().getTimeScaleStore()
-          const flingScroll: (() => void) = () => {
-            this._flingScrollTimerId = requestAnimationFrame(() => {
-              timeScaleStore.startScroll()
-              timeScaleStore.scroll(v)
-              v = v * (1 - 0.025)
-              if (Math.abs(v) < 1) {
-                if (this._flingScrollTimerId !== null) {
-                  cancelAnimationFrame(this._flingScrollTimerId)
-                  this._flingScrollTimerId = null
-                }
-              } else {
-                flingScroll()
-              }
-            })
-          }
-          flingScroll()
-        }
+    // this._startScrollCoordinate = null
+    this.getPane().getChart().getChartStore().getCrosshairStore().set()
+  }
+
+  touchStartEvent (event: MouseTouchEvent): void {
+    if (this._flingScrollTimerId !== null) {
+      clearTimeout(this._flingScrollTimerId)
+      this._flingScrollTimerId = null
+    }
+    this._flingStartTime = new Date().getTime()
+    const pane = this.getPane()
+    const chartStore = pane.getChart().getChartStore()
+    this._startScrollCoordinate = { x: event.x, y: event.y }
+    chartStore.getTimeScaleStore().startScroll()
+    this._touchZoomed = false
+    if (this._touchCoordinate !== null) {
+      const xDif = event.x - this._touchCoordinate.x
+      const yDif = event.y - this._touchCoordinate.y
+      const radius = Math.sqrt(xDif * xDif + yDif * yDif)
+      const crosshairStore = chartStore.getCrosshairStore()
+      if (radius < TOUCH_MIN_RADIUS) {
+        this._touchCoordinate = { x: event.x, y: event.y }
+        crosshairStore.set({ x: event.x, y: event.y, paneId: pane.getId() })
+      } else {
+        this._touchCancelCrosshair = true
+        this._touchCoordinate = null
+        crosshairStore.set()
       }
     } else {
-      // this._startScrollCoordinate = null
-      this.getPane().getChart().getChartStore().getCrosshairStore().set()
+      this._touchCancelCrosshair = false
+    }
+  }
+
+  tapEvent (event: MouseTouchEvent): void {
+    if (this._touchCoordinate === null && !this._touchCancelCrosshair && !this._touchZoomed) {
+      this._touchCoordinate = { x: event.x, y: event.y }
+      const pane = this.getPane()
+      pane.getChart().getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane.getId() })
+    }
+  }
+
+  private _touchEventPaneCrosshair (pane: Pane<Axis>, coordinate: Coordinate): TypeOrNull<Crosshair> {
+    const bounding = pane.getBounding()
+    if (coordinate.y >= 0 && coordinate.y <= bounding.height) {
+      return { y: coordinate.y, paneId: pane.getId() }
+    }
+    if (coordinate.y < 0) {
+      const topPane = pane.getTopPane()
+      if (topPane !== null) {
+        const topPaneBounding = topPane.getBounding()
+        return this._touchEventPaneCrosshair(topPane, { x: coordinate.x, y: topPaneBounding.height + coordinate.y })
+      }
+    }
+    if (coordinate.y > bounding.height) {
+      const bottomPane = pane.getBottomPane()
+      if (bottomPane !== null) {
+        return this._touchEventPaneCrosshair(bottomPane, { x: coordinate.x, y: coordinate.y - bounding.height })
+      }
+    }
+    return null
+  }
+
+  touchMoveEvent (event: MouseTouchEvent): void {
+    const pane = this.getPane()
+    const chartStore = pane.getChart().getChartStore()
+    let crosshair: Crosshair | undefined
+    if (this._touchCoordinate !== null) {
+      event.preventDefault()
+      const { width } = this.getBounding()
+      if (event.x > 0 && event.x < width) {
+        const cs = this._touchEventPaneCrosshair(pane, event)
+        if (cs !== null) {
+          this._touchCoordinate = { x: event.x, y: event.y }
+          crosshair = { x: event.x, ...cs }
+        }
+      }
+      chartStore.getCrosshairStore().set(crosshair)
+    } else {
+      if (
+        this._startScrollCoordinate !== null &&
+        Math.abs(this._startScrollCoordinate.x - event.x) > this._startScrollCoordinate.y - event.y
+      ) {
+        const distance = event.x - this._startScrollCoordinate.x
+        chartStore.getTimeScaleStore().scroll(distance)
+      }
+    }
+  }
+
+  touchEndEvent (event: MouseTouchEvent): void {
+    if (this._startScrollCoordinate !== null) {
+      const time = new Date().getTime() - this._flingStartTime
+      const distance = event.x - this._startScrollCoordinate.x
+      let v = (distance) / (time > 0 ? time : 1) * 20
+      if (time < 200 && Math.abs(v) > 0) {
+        const timeScaleStore = this.getPane().getChart().getChartStore().getTimeScaleStore()
+        const flingScroll: (() => void) = () => {
+          this._flingScrollTimerId = setTimeout(() => {
+            timeScaleStore.startScroll()
+            timeScaleStore.scroll(v)
+            v = v * (1 - 0.025)
+            if (Math.abs(v) < 1) {
+              if (this._flingScrollTimerId !== null) {
+                clearTimeout(this._flingScrollTimerId)
+                this._flingScrollTimerId = null
+              }
+            } else {
+              flingScroll()
+            }
+          }, 20)
+        }
+        flingScroll()
+      }
     }
   }
 
   longTapEvent (event: MouseTouchEvent): void {
-    if (event.isTouch) {
-      this._touchCoordinate = { x: event.x, y: event.y }
-      const pane = this.getPane()
-      this.getPane().getChart().getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane.getId() })
-    }
+    this._touchCoordinate = { x: event.x, y: event.y }
+    const pane = this.getPane()
+    this.getPane().getChart().getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane.getId() })
   }
 
   dispatchEvent (type: string, coordinate: Coordinate): boolean {
