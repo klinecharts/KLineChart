@@ -5,9 +5,11 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const eslint = require('@rollup/plugin-eslint');
 const replace = require('@rollup/plugin-replace');
 const commonjs = require('@rollup/plugin-commonjs');
-const { terser } = require('rollup-plugin-terser');
+const typescript = require('@rollup/plugin-typescript');
+const terser = require('@rollup/plugin-terser');
 const fileSize = require('rollup-plugin-filesize');
 const progress = require('rollup-plugin-progress');
+
 const paths = require('./paths');
 
 const packageJson = require(paths.packageJson);
@@ -15,6 +17,7 @@ const packageJson = require(paths.packageJson);
 const version = packageJson.version;
 
 const plugins = (env) => [
+  typescript(),
   eslint({
     throwOnError: true
   }),
@@ -26,41 +29,24 @@ const plugins = (env) => [
   commonjs(),
   progress(),
   replace({
-    '__BUILD_ENV__': env,
-    '__BUILD_VERSION__': version,
+    preventAssignment: true,
+    values: {
+      '__BUILD_ENV__': env,
+      '__BUILD_VERSION__': version
+    }
   }),
   fileSize(),
-  env === 'production' && terser({
-    compress: {
-      pure_getters: true,
-      unsafe: true,
-      unsafe_comps: true
-    }
-  })
+  env === 'production' && terser()
 ];
 
-function inputConfig (type, env) {
-  const inputPath = () => {
-    switch (type) {
-      case 'simple': return paths.simpleIndexJs;
-      case 'blank': return paths.blankIndexJs;
-      default: return paths.fullIndexJs;
-    }
-  }
-  return { input: inputPath(), plugins: plugins(env) };
+function inputConfig (env) {
+  return { input: paths.index, plugins: plugins(env) };
 }
 
-function outputConfig (type, env) {
+function outputConfig (env) {
   const isDevelopment = env === 'development';
-  const fileName = () => {
-    switch (type) {
-      case 'simple': return isDevelopment ? 'klinecharts.simple' : 'klinecharts.simple.min';
-      case 'blank': return isDevelopment ? 'klinecharts.blank' : 'klinecharts.blank.min';
-      default: return isDevelopment ? 'klinecharts' : 'klinecharts.min';
-    }
-  }
   return {
-    file: `${paths.build}/${fileName()}.js`,
+    file: `${paths.buildDir}/${isDevelopment ? 'klinecharts' : 'klinecharts.min'}.js`,
     format: 'umd',
     name: 'klinecharts',
     sourcemap: isDevelopment,

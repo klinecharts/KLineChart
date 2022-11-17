@@ -1,20 +1,18 @@
 module.exports = {
   env: {
     browser: true,
-    es6: true
+    es2021: true
   },
-  extends: [
-    'standard'
-  ],
-  parser: "babel-eslint",
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly'
-  },
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: 'module'
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    project: 'tsconfig.json'
   },
+  extends: 'standard-with-typescript',
+  plugins: ['@typescript-eslint'],
+  overrides: [
+  ],
   rules: {
   }
 }

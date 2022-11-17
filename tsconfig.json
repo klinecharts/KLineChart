@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "target": "es2018",
+    "declaration": false,
+    "declarationMap": false,
+    // "declarationDir": "./types",
+  },
+  "include": [
+    "src/**/*.ts", "/src/**/*.d.ts"
+  ]
+}
