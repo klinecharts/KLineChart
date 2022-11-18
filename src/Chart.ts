@@ -48,9 +48,9 @@ import { getIndicatorClass } from './extension/indicator/index'
 import { getOverlayClass } from './extension/overlay/index'
 
 export const enum DomPosition {
-  ROOT,
-  MAIN,
-  YAXIS
+  ROOT = 'root',
+  MAIN = 'main',
+  YAXIS = 'yAxis'
 }
 
 export interface ConvertFinder {
@@ -113,6 +113,36 @@ export default class ChartImp implements Chart {
   private readonly _xAxisPane: XAxisPane
   private readonly _panes: Map<string, IndicatorPane> = new Map()
 
+  private readonly _boundKeyBoardDownEvent: ((event: KeyboardEvent) => void) = (event: KeyboardEvent) => {
+    if (event.shiftKey) {
+      switch (event.code) {
+        case 'Equal': {
+          this._chartStore.getTimeScaleStore().zoom(0.5)
+          break
+        }
+        case 'Minus': {
+          this._chartStore.getTimeScaleStore().zoom(-0.5)
+          break
+        }
+        case 'ArrowLeft': {
+          const timeScaleStore = this._chartStore.getTimeScaleStore()
+          timeScaleStore.startScroll()
+          timeScaleStore.scroll(-3 * timeScaleStore.getBarSpace().bar)
+          break
+        }
+        case 'ArrowRight': {
+          const timeScaleStore = this._chartStore.getTimeScaleStore()
+          timeScaleStore.startScroll()
+          timeScaleStore.scroll(3 * timeScaleStore.getBarSpace().bar)
+          break
+        }
+        default: {
+          break
+        }
+      }
+    }
+  }
+
   constructor (container: HTMLElement, styleOptions?: DeepPartial<Styles>) {
     this._initContainer(container)
     this._chartStore = new ChartStore(this, styleOptions)
@@ -133,6 +163,7 @@ export default class ChartImp implements Chart {
       boxSizing: 'border-box'
     })
     this._chartContainer.tabIndex = 1
+    this._chartContainer.addEventListener('keydown', this._boundKeyBoardDownEvent)
     container.appendChild(this._chartContainer)
   }
 
@@ -762,6 +793,7 @@ export default class ChartImp implements Chart {
   }
 
   destroy (): void {
+    this._chartContainer.removeEventListener('keydown', this._boundKeyBoardDownEvent)
     this._panes.forEach(pane => {
       pane.destroy()
     })

@@ -47,6 +47,16 @@ export default class SeparatorWidget extends Widget<YAxis> {
     }
   }
 
+  touchStartEvent (event: MouseTouchEvent): void {
+    this.mouseDownEvent(event)
+  }
+
+  touchMoveEvent = throttle(this._pressedTouchMouseMoveEvent, 20)
+
+  touchEndEvent (): void {
+    this.mouseUpEvent()
+  }
+
   mouseDownEvent (event: MouseTouchEvent): void {
     this._dragFlag = true
     this._dragStartY = event.pageY
@@ -60,7 +70,9 @@ export default class SeparatorWidget extends Widget<YAxis> {
     this._dragFlag = false
   }
 
-  pressedMouseMoveEvent = throttle((event: MouseTouchEvent) => {
+  pressedMouseMoveEvent = throttle(this._pressedTouchMouseMoveEvent, 20)
+
+  private _pressedTouchMouseMoveEvent (event: MouseTouchEvent): void {
     const dragDistance = event.pageY - this._dragStartY
     const currentPane = this.getPane()
     const topPane = currentPane.getTopPane()
@@ -92,7 +104,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
         chart.adjustPaneViewport(false, true, true, true, true)
       }
     }
-  }, 20)
+  }
 
   mouseEnterEvent (): void {
     const separatorOptions = this.getPane().getChart().getStyleOptions().separator
