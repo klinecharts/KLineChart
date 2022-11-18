@@ -1,4 +1,50 @@
 # 更新日志
+
+## 9.0.0
+`待发布`
++ 🛠 Typescript重构。
++ 🆕 新特性
+   + 新增Y轴方向缩放，滚动。
+   + API
+     + 新增基图表方法`registerFigure`，`getSupportFigures`，`rigisterOverlay`，`getSupportOverlays`。
+     + 新增实例方法，`getSize`，`createOverlay`，`getOverlayById`，`overrideOverlay`，`removeOverlay`。
+   + 样式配置
+     + 新增`candle.priceMark.last.text.borderStyle`，`indicator.lastValueMark.text.borderStyle`，`crosshair.horizontal.text.borderStyle`，`crosshair.vertical.text.borderStyle`。
++ 👉 变更
+   + API
+     + 图表方法`extension.addTechnicalIndicatorTemplate`变更为`registerIndicator`。
+     + 图表方法`extension.addShapeTemplate`变更为`registerOverlay`。
+     + 实例方法`setPaneOptions(options)`，`options`新增属性`gap`。
+     + 实例方法`setOffsetRightSpace`变更为`setOffsetRightDistance`。
+     + 实例方法`createTechnicalIndicator`变更为`createIndicator`。
+     + 实例方法`overlayTechnicalIndicator`变更为`overlayIndicator`。
+     + 实例方法`getTechnicalIndicatorByPaneId`变更为`getIndicatorByPaneId`。
+     + 实例方法`removeTechnicalIndicator`变更为`removeIndicator`。
+   + 样式配置
+     + 所有`line.style`选项变更为`solid`和`dashed`。
+     + 所有`dashValue`变更为`dashedValue`。
+     + `technicalIndicator`变更为`indicator`。
+     + `xAxis.height`变更为`xAxis.size`，`xAxis.tickText.paddingTop`变更为`xAxis.tickText.marginStart`，`xAxis.tickText.paddingBottom`变更为`xAxis.tickText.marginEnd`。
+     + `yAxis.height`变更为`yAxis.size`，`yAxis.tickText.paddingTop`变更为`yAxis.tickText.marginStart`，`yAxis.tickText.paddingBottom`变更为`yAxis.tickText.marginEnd`。
++ 🗑 废弃
+   + API
+      + 删除实例方法`getWidth`，`getHeight`，改用`getSize`。
+      + 删除实例方法`createShape`，`createAnnotation`，`createTag`，改用`crateOverlay`。
+      + 删除实例方法`removeShape`，`removeAnnotation`，`removeTag`，改用`removeOverlay`。
+      + 删除实例方法`setShapeOptions`，改用`overrideOverlay`。
+      + 删除实例方法`createHtml`，`removeHtml`，`addTechnicalIndicatorTemplate`，`getTechnicalIndicatorTemplate`，`addShapeTemplate`。
+   + 样式配置
+      + 删除`shape`，`annotation`，`tag`，改用`overlay`。
+      + 删除`candle.margin`，`technicalIndicator.margin`。
+   + 自定义扩展
+      + 技术指标模版不再保存相关属性。
+      + 技术指标删除属性`plots`，改用`figures`。
+      + 技术指标删除属性`regeneratePlots`，改用`regeneratefigures`。
+      + 技术指标删除属性`calcTechnicalIndicator`，改用`calc`。
+      + 技术指标删除属性`render`，改用`draw`。
+      + 技术指标删除属性`shouldCheckParamCount`。
+      + 删除`Shape`，改用`Overlay`。
+
 ## 8.6.3
 `2022-10-29`
 + 💄 最优化高最低价显示。
@@ -35,7 +81,7 @@
 + 🐞 修复typescript引用问题。
 
 
-## 8.3.
+## 8.3.6
 `2022-03-23`
 + 🐞 修复移动端画线问题。
 
@@ -288,8 +334,6 @@
 
 ## 7.2.0
 `2021-05-20`
-
-❤️️ 520
 
 + 🆕 新增样式配置`technicalIndicator.tooltip.showType`。
 + 🆕 Api `subscribeAction`新增类型`pane_drag`。

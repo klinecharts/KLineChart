@@ -1,5 +1,50 @@
 # Change Log
 
+## 9.0.0
+`To be released`
++ 🛠 Typescript refactoring.
++ 🆕 New features
+   + Add Y axis direction zoom and scroll.
+   + API
+     + New chart methods `registerFigure`, `getSupportFigures`, `rigiderOverlay`, `getSupportOverlays` are added.
+     + New instance methods, `getSize`, `createOverlay`, `getOverlayById`, `overrideOverlay`, `removeOverlay`.
+   + Style Configuration
+     + Add `candle.priceMark.last.text.borderStyle`, `indicator.lastValueMark.text.borderStyle`, `crosshair.horizontal. text.borderStyle`, `crosshair.vertical.text.borderStyle`.
++ 👉 Change
+   + API
+      + Chart method `extension.addTechnicalIndicatorTemplate` is changed to `registerIndicator`.
+      + Chart method `extension.addShapeTemplate` is changed to `registerOverlay`.
+      + Instance method `setPaneOptions(options)`, `options` add new attribute `gap`.
+      + The instance method `setOffsetRightSpace` is changed to `setOffsetRightDistance`.
+      + The instance method `createTechnicalIndicator` is changed to `createIndicator`
+      + The instance method `overlayTechnicalIndicator` is changed to `overrideIndicator`.
+      + The instance method `getTechnicalIndicatorByPaneId` is changed to `getIndicatorByPaneId`.
+      + The instance method `removeTechnicalIndicator` is changed to `removeIndicator`.
+   + Style Configuration
+      + All `line.style` options are changed to `solid` and `dashed`.
+      + All `dashValue` is changed to `dashedValue`.
+      + `technicalIndicator` is changed to `indicator`.
+      + `xAxis.height` is changed to `xAxis.size`, `xAxis.tickeText.paddingTop` is changed to `xAxis.tickeText.marinStart`, and `xAxis.tickeText.paddingBottom` is changed to `xAxis.tickeText.marinEnd`.
+      + `yAxis.height` is changed to `yAxis.size`, `yAxis.tickeText.paddingTop` is changed to `yAxis.tickeText.marinStart`, and `yAxis.tickeText.paddingBottom` is changed to `yAxis.tickeText.marinEnd`.
++ 🗑 Abandonment
+   + API
+      + Delete instance methods `getWidth`, `getHeight`, and use `getSize` instead.
+      + Delete instance methods `createShape`, `createAnnotation`, `createTag`, and use `createOverlay` instead.
+      + Delete instance methods `removeShape`, `removeAnnotation`, `removeTag`. Use `removeOverlay` instead.
+      + Delete the instance method `setShapeOptions` and use `overrideOverlay` instead.
+      + Delete instance methods `createHtml`, `removeHtml`, `addTechnicalIndicatorTemplate`, `getTechnicalIndicatorTemplate`, `addShapeTemplate`.
+   + Style Configuration
+      + Delete `shape`, `annotation`, `tag` and use `overlay` instead.
+      + Delete `candle.margin`，`technicalIndicator.margin`。
+   + Custom Extension
+      + The related attributes are no longer saved in the technical indicator template.
+      + Delete the attribute `plots` for technical indicators and use `figures` instead.
+      + Delete the attribute `regeneratePlots` for technical indicators and use `regeneratefigures` instead.
+      + Delete the attribute `calcTechnicalIndicator` for technical indicators and use `calc` instead.
+      + Delete the attribute `render` for technical indicators and use `draw` instead.
+      + Delete the attribute `shouldCheckParamCount` for technical indicators.
+      + Delete `Shape` and use `Overlay` instead.
+
 ## 8.6.3
 `2022-10-29`
 + 💄 Optimize the display of high and low prices.

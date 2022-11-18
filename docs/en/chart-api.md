@@ -1,25 +1,36 @@
 # Chart API
 
-### init(ds, options)
+### init(ds, styles)
 Initialize a chart and return the chart instance.
 - `ds` can be one of dom element and element id
-- `options` style configuration, please refer to [style details](styles.md)
-
+- `styles` style configuration, please refer to [style details](styles.md)
 
 ### dispose(dcs)
 Destroy a chart. Once destroyed, the chart will no longer be usable.
 - `dcs` can be one of div node, node id and chart instance
 
 
-### extension.addTechnicalIndicatorTemplate(template)
-Add a technical indicator template globally.
-- `template` technical indicator template, please refer to [technical indicator](technical-indicator.md)
+### registerFigure(template)
+Add a base drawing.
+- `template` basic graphics. For details, see [Figure](figure.md)
 
 
-### extension.addShapeTemplate(template)
-Add a shape template globally.
-- `template` shape template, please refer to [shape](shape.md)
+### getSupportFigures()
+Get the basic graph types supported by the chart
 
+### registerIndicator(template)
+Add a technical indicator template.
+- `template` technical indicators. For details, see [Technical Indicators](indicator.md)
+
+### getSupportIndicators()
+Get the technical indicator types supported by the chart
+
+### registerOverlay(template)
+Add a overlay template.
+- `template` overlay template. For details, see [Overlay](overlay.md)
+
+### getSupportOverlays()
+Get the overlay types supported by the chart
 
 ### utils
 Collection of basic methods.
