@@ -25,7 +25,7 @@
 
 ### registerOverlay(template)
 全局添加一个图形模板。
-- `template` 图形模板，详情参阅[图形标记](overlay.md)
+- `template` 图形模板，详情参阅[覆盖物](overlay.md)
 
 ### getSupportOverlays()
 获取图表支持的覆盖物类型

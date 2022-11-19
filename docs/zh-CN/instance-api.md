@@ -215,7 +215,7 @@ chart.overrideIndicator({
 
 ### createOverlay(value, paneId)
 创建覆盖物，返回一个字符串类型的标识。
-- `value` 图形标记名或者对象，当是对象时，参数和`overrideOverlay`一致
+- `value` 覆盖物名或者对象，当是对象时，参数和`overrideOverlay`一致
 
 示例：
 ```javascript
@@ -265,7 +265,7 @@ chart.createOverlay({
 
 
 ### overrideOverlay(override)
-设置已绘制的图形标记配置。
+设置已绘制的覆盖物配置。
 - `override` 配置， `{ name, id, points, styles, lock, mode, extendData, needDefaultPointFigure, needDefaultXAxisFigure, needDefaultYAxisFigure, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMoveStart, onPressedMoving, onPressedMoveEnd, onMouseEnter, onMouseLeave, onRemoved, onSelected, onDeselected }` 
   - `name` 覆盖物名
   - `id` 可缺省

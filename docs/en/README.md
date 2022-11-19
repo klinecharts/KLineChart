@@ -8,12 +8,12 @@ A highly customizable lightweight financial chart, built-in dozens of technical 
   + [Data source](datasource.md)
   + [Quick start](quick-start.md)
 + Advanced
-  + [Technical indicator](technical-indicator.md)
-  + [Shape](shape.md)
+  + [Overlay](overlay.md) 
+  + [Technical indicator](indicator.md)
+  + [Overlay](overlay.md)
 + API
   + [Chart API](chart-api.md)
   + [Instance API](instance-api.md)
-  + [Shape help API](shape-auxiliary-api.md)
 + [Hot key](hot-key.md)
 + [Environment](environment.md)
 + [Changelog](changelog.md)

@@ -91,10 +91,6 @@ export interface MarginTextStyle extends StateTextStyle {
 
 export type LastValueMarkTextStyle = Omit<StateRectTextStyle, 'backgroundColor' | 'borderColor'>
 
-/**
- * 说明显示规则
- * @type {{FOLLOW_CROSS: string, NONE: string, ALWAYS: string}}
- */
 export const enum TooltipShowRule {
   ALWAYS = 'always',
   FOLLOW_CROSS = 'follow_cross',
@@ -136,10 +132,6 @@ export interface TooltipStyle {
   text: TooltipTextStyle
 }
 
-/**
- * 默认网格配置
- * @type {{horizontal: {size: number, color: string, dashValue: number[], show: boolean, style: string}, show: boolean, vertical: {size: number, color: string, dashValue: number[], show: boolean, style: string}}}
- */
 const defaultGrid: GridStyle = {
   show: true,
   horizontal: {
@@ -211,10 +203,6 @@ export interface CandleTooltipStyle extends TooltipStyle {
   rect: CandleTooltipRectStyle
 }
 
-/**
- * 蜡烛图样式
- * @type {{AREA: string, OHLC: string, CANDLE_STROKE: string, CANDLE_SOLID: string, CANDLE_DOWN_STROKE: string, CANDLE_UP_STROKE: string}}
- */
 export const enum CandleType {
   CANDLE_SOLID = 'candle_solid',
   CANDLE_STROKE = 'candle_stroke',
@@ -239,17 +227,8 @@ export interface CandleStyle {
 const defaultCandle: CandleStyle = {
   type: CandleType.CANDLE_SOLID,
   bar: {
-    /**
-     * 上涨颜色
-     */
     upColor: '#26A69A',
-    /**
-     * 下跌颜色
-     */
     downColor: '#EF5350',
-    /**
-     * 无变化时颜色
-     */
     noChangeColor: '#999999'
   },
   area: {
@@ -364,10 +343,6 @@ export interface IndicatorStyle {
   tooltip: IndicatorTooltipStyle
 }
 
-/**
- * 默认的技术指标样式配置
- * @type {{bar: {noChangeColor: string, upColor: string, downColor: string}, line: {size: number, colors: [string, string, string, string, string]}, tooltip: {showParams: boolean, showName: boolean, showRule: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}}, circle: {noChangeColor: string, upColor: string, downColor: string}, lastValueMark: {show: boolean, text: {paddingBottom: number, color: string, size: number, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}}}}
- */
 const defaultIndicator: IndicatorStyle = {
   ohlc: {
     upColor: 'rgba(38, 166, 154, .65)',
@@ -478,31 +453,15 @@ export interface AxisStyle {
 }
 
 export type XAxisStyle = AxisStyle
-/**
- * 默认x轴配置
- * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, tickText: {paddingBottom: number, color: string, size: number, show: boolean, weight: string, paddingTop: number, family: string}, height: null, tickLine: {size: number, color: string, show: boolean, length: number}}}
- */
+
 const defaultXAxis: XAxisStyle = {
-  /**
-   * 是否显示整个轴
-   */
   show: true,
-  /**
-   * 高度
-   */
   size: 'auto',
-  /**
-   * 轴线配置
-   */
   axisLine: {
     show: true,
     color: '#DDDDDD',
     size: 1
   },
-
-  /**
-   * tick文字
-   */
   tickText: {
     show: true,
     color: '#76808F',
@@ -512,7 +471,6 @@ const defaultXAxis: XAxisStyle = {
     marginStart: 4,
     marginEnd: 4
   },
-  // tick线
   tickLine: {
     show: true,
     size: 1,
@@ -521,19 +479,11 @@ const defaultXAxis: XAxisStyle = {
   }
 }
 
-/**
- * y轴位置
- * @type {{LEFT: string, RIGHT: string}}
- */
 export const enum YAxisPosition {
   LEFT = 'left',
   RIGHT = 'right'
 }
 
-/**
- * y轴类型
- * @type {{PERCENTAGE: string, LOG: string, NORMAL: string}}
- */
 export const enum YAxisType {
   NORMAL = 'normal',
   PERCENTAGE = 'percentage',
@@ -547,10 +497,6 @@ export interface YAxisStyle extends AxisStyle {
   reverse: boolean
 }
 
-/**
- * 默认y轴配置
- * @type {{axisLine: {color: string, size: number, show: boolean}, show: boolean, width: null, position: string, tickText: {color: string, size: number, paddingRight: number, show: boolean, weight: string, family: string, paddingLeft: number}, type: string, inside: boolean, tickLine: {size: number, color: string, show: boolean, length: number}}}
- */
 const defaultYAxis: YAxisStyle = {
   /**
    * 是否显示整个轴
@@ -700,10 +646,6 @@ export interface OverlayStyle {
   rectText: RectTextStyle
 }
 
-/**
- * 默认图形配置
- * @type {{arc: {style: string, color: string, size: number}, polygon: {style: string, color: string, size: number}, line: {style: string, color: string, size: number, dashValue: number[]}, text: {style: string, marginRight: number, color: string, size: number, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, point: {backgroundColor: string, borderColor: string, activeBorderSize: number, activeRadius: number, activeBorderColor: string, activeBackgroundColor: string, borderSize: number, radius: number}}}
- */
 const defaultOverlay: OverlayStyle = {
   point: {
     color: '#3f8aa9',
@@ -784,10 +726,6 @@ export interface SeparatorStyle {
   activeBackgroundColor: string
 }
 
-/**
- * 图表之间默认分割配置
- * @type {{size: number, color: string}}
- */
 const defaultSeparator: SeparatorStyle = {
   size: 1,
   color: '#DDDDDD',

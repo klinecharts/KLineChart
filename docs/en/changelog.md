@@ -1,6 +1,6 @@
 # Change Log
 
-## 9.0.0
+## 9.0.0-alpha1
 `To be released`
 + 🛠 Typescript refactoring.
 + 🆕 New features
@@ -23,9 +23,15 @@
    + Style Configuration
       + All `line.style` options are changed to `solid` and `dashed`.
       + All `dashValue` is changed to `dashedValue`.
-      + `technicalIndicator` is changed to `indicator`.
       + `xAxis.height` is changed to `xAxis.size`, `xAxis.tickeText.paddingTop` is changed to `xAxis.tickeText.marinStart`, and `xAxis.tickeText.paddingBottom` is changed to `xAxis.tickeText.marinEnd`.
       + `yAxis.height` is changed to `yAxis.size`, `yAxis.tickeText.paddingTop` is changed to `yAxis.tickeText.marinStart`, and `yAxis.tickeText.paddingBottom` is changed to `yAxis.tickeText.marinEnd`.
+      + `technicalIndicator.bar` is changed to `indicator.bars`, `technicalIndicator.line` is changed to `indicator.lines`，`technicalIndicator.circle` is changed to `indicator.circles`
+   + Custom Extension
+      + The technical indicator attribute `calcParams` has been changed to support any type.
+      + The technical indicator attribute `plots` is changed to `figures`.
+      + The technical indicator attribute `regeneratePlots` is changed to' regeneratefigures'.
+      + The technical indicator attribute `calcTechnicalIndicator` is changed to `calc`.
+      + The technical indicator attribute `render` is changed to 'draw'.
 + 🗑 Abandonment
    + API
       + Delete instance methods `getWidth`, `getHeight`, and use `getSize` instead.
@@ -38,11 +44,6 @@
       + Delete `candle.margin`，`technicalIndicator.margin`。
    + Custom Extension
       + The related attributes are no longer saved in the technical indicator template.
-      + Delete the attribute `plots` for technical indicators and use `figures` instead.
-      + Delete the attribute `regeneratePlots` for technical indicators and use `regeneratefigures` instead.
-      + Delete the attribute `calcTechnicalIndicator` for technical indicators and use `calc` instead.
-      + Delete the attribute `render` for technical indicators and use `draw` instead.
-      + Delete the attribute `shouldCheckParamCount` for technical indicators.
       + Delete `Shape` and use `Overlay` instead.
 
 ## 8.6.3

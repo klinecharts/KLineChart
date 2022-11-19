@@ -1,6 +1,6 @@
 # 更新日志
 
-## 9.0.0
+## 9.0.0-alpha1
 `待发布`
 + 🛠 Typescript重构。
 + 🆕 新特性
@@ -23,9 +23,15 @@
    + 样式配置
      + 所有`line.style`选项变更为`solid`和`dashed`。
      + 所有`dashValue`变更为`dashedValue`。
-     + `technicalIndicator`变更为`indicator`。
      + `xAxis.height`变更为`xAxis.size`，`xAxis.tickText.paddingTop`变更为`xAxis.tickText.marginStart`，`xAxis.tickText.paddingBottom`变更为`xAxis.tickText.marginEnd`。
      + `yAxis.height`变更为`yAxis.size`，`yAxis.tickText.paddingTop`变更为`yAxis.tickText.marginStart`，`yAxis.tickText.paddingBottom`变更为`yAxis.tickText.marginEnd`。
+     + `technicalIndicator.bar`变更为`indicator.bars`，`technicalIndicator.line`变更为`indicator.lines`，`technicalIndicator.circle`变更为`indicator.circles`。
+   + 自定义扩展
+      + 技术指标属性`calcParams`，变更为支持任意类型。
+      + 技术指标属性`plots`变更为`figures`。
+      + 技术指标属性`regeneratePlots`变更为`regeneratefigures`。
+      + 技术指标属性`calcTechnicalIndicator`变更为`calc`。
+      + 技术指标属性`render`变更为`draw`。
 + 🗑 废弃
    + API
       + 删除实例方法`getWidth`，`getHeight`，改用`getSize`。
@@ -38,10 +44,6 @@
       + 删除`candle.margin`，`technicalIndicator.margin`。
    + 自定义扩展
       + 技术指标模版不再保存相关属性。
-      + 技术指标删除属性`plots`，改用`figures`。
-      + 技术指标删除属性`regeneratePlots`，改用`regeneratefigures`。
-      + 技术指标删除属性`calcTechnicalIndicator`，改用`calc`。
-      + 技术指标删除属性`render`，改用`draw`。
       + 技术指标删除属性`shouldCheckParamCount`。
       + 删除`Shape`，改用`Overlay`。
 

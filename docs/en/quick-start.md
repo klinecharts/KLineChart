@@ -10,22 +10,6 @@ npm install klinecharts --save
 yarn add klinecharts
 ```
 
-
-## Introduction
-```javascript
-// Full introduction, including all built-in technical indicators and drawing marks
-import { init } from 'klinecharts'
-
-// Introduce some functions, excluding built-in drawing markers
-import { init } from 'klinecharts/index.blank'
-
-// Introduce basic functions, excluding built-in technical indicators and drawing marks
-import { init } from 'klinecharts/index.simple'
-
-// Use one of the above three methods as needed
-```
-
-
 ## Create the first chart
 ```javascript
 import { init } from 'klinecharts'
@@ -33,7 +17,7 @@ import { init } from 'klinecharts'
 // Initialize the chart
 const chart = init(`${domId}`)
 
-// add data to the chart
+// Add data to the chart
 chart.applyNewData([
   {close: 4976.16, high: 4977.99, low: 4970.12, open: 4972.89, timestamp: 1587660000000, volume: 204 },
   {close: 4977.33, high: 4979.94, low: 4971.34, open: 4973.20, timestamp: 1587660060000, volume: 194 },

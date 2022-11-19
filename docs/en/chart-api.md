@@ -12,7 +12,7 @@ Destroy a chart. Once destroyed, the chart will no longer be usable.
 
 ### registerFigure(template)
 Add a base drawing.
-- `template` basic graphics. For details, see [Figure](figure.md)
+- `template` basic graphics. For details, see [figure](figure.md)
 
 
 ### getSupportFigures()
@@ -20,14 +20,14 @@ Get the basic graph types supported by the chart
 
 ### registerIndicator(template)
 Add a technical indicator template.
-- `template` technical indicators. For details, see [Technical Indicators](indicator.md)
+- `template` technical indicators. For details, see [technical indicators](indicator.md)
 
 ### getSupportIndicators()
 Get the technical indicator types supported by the chart
 
 ### registerOverlay(template)
 Add a overlay template.
-- `template` overlay template. For details, see [Overlay](overlay.md)
+- `template` overlay template. For details, see [overlay](overlay.md)
 
 ### getSupportOverlays()
 Get the overlay types supported by the chart

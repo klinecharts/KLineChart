@@ -14,14 +14,13 @@
 | RSI | [6, 12, 24] | OBV | [30] | AVP | 无 |
 
 
-
 ## 技术指标模板
-想要完成一个自定义技术指标，只需要生成一个技术指标信息，然后通过`extension.addTechnicalIndicatorTemplate`全局添加，或者通过图表实例方法  `addTechnicalIndicatorTemplate`为单个图表实例添加即可。添加到图表即可和内置技术指标一样去使用。
+想要完成一个自定义技术指标，只需要生成一个技术指标信息，然后通过`registerIndicator`全局添加，添加到图表即可和内置技术指标一样去使用。
 ### 属性说明
 #### 技术指标信息
 ```javascript
 {
-  // 技术指标名字，必要字段，是技术指标的唯一标识
+  // 技术指标名字，必要字段，是创建技术指标的唯一标识
   name: 'xxx',
 
   // 用于提示显示
@@ -30,10 +29,8 @@
   // 技术指标计算方法，必要字段
   // 该字段是一个回调方法，回调参数是当前图表的源数据和计算的参数，需要返回一个数组或者一个promise
   // kLineDataList 图表的原始数据
-  // params 计算参数
-  // plots 技术指标数据配置项
-  // extendData 拓展数据
-  calcTechnicalIndicator: (kLineDataList, { params, plots, extendData }) => { return [] },
+  // indicator 技术指标实例
+  calc: (kLineDataList, indicator) => { return [] },
 
   // 系列，可选参数'normal'、'price'和'volume'
   series: 'normal',
@@ -44,12 +41,8 @@
   // 计算参数，是一个数组，可缺省，可以是数字也可以是`{ value, allowDecimal }`
   calcParams: [],
 
-  // 数据配置项，是一个数组
-  plots: [],
-
-  // 是否需要检查计算参数，可缺省，默认为true
-  // 如果为true，当设置指标参数时，如果参数个数和默认的参数个数不一致，将不能生效
-  shouldCheckParamCount: true,
+  // 图形配置，是一个数组
+  figures: [],
 
   // 是否需要格式化大数据值
   shouldFormatBigNumber: false,
@@ -72,47 +65,55 @@
   // 可以是一个方法，也可以是普通数据
   extendData: (params) => { return },
 
-  // 重新生成plots，是一个回调方法，可缺省
+  // 重新生成图形配置，是一个回调方法，可缺省
   // 当计算参数发生改变时触发
-  // 返回值需要一个plots
-  regeneratePlots: (params) => { return [] },
+  // 返回值需要一个数组
+  regenerateFigures: (params) => { return [] },
 
-  // 生成tooltip显示的数据，返回格式`{ title: 'xxx', value: 'xxx', color: 'xxx' }`的数组，可缺省
-  // dataSource 数据源
-  // viewport 尺寸信息
+  // 生成tooltip显示的数据，返回格式`{ name, calcParamsText, values }`的数组，可缺省， 其中values是一个数组，格式为`{ title, value, color }`
+  // kLineDataList k线数据
+  // indicator 技术指标实例
+  // visibleRange 可见数据区间信息
+  // bounding 尺寸信息
   // crosshair 十字光标信息
-  // technicalIndicator 技术指标信息
+  // defaultStyles 技术指标默认样式
   // xAxis x轴
   // yAxis y轴
-  // defaultStyles 默认样式
   createTooltipDataSource: ({
-    dataSource,
-    viewport,
+    kLineDataList,
+    indicator,
+    visibleRange,
+    bounding,
     crosshair,
-    technicalIndicator,
+    defaultStyles,
     xAxis,
-    yAxis,
-    defaultStyles
+    yAxis
   }) => { return [] }
 
-  // 自定义渲染，可缺省，
+  // 自定义渲染，可缺省，返回一个boolean，true则会覆盖掉默认的图形绘制
   // ctx canvas上下文
-  // dataSource 数据源，包含了原始的k线数据和计算出来的指标数据以及起始绘制点位置
-  // viewport 尺寸信息
+  // kLineDataList k线数据
+  // indicator 技术指标实例
+  // visibleRange 可见数据区间信息
+  // bounding 尺寸信息
+  // barSpace 数据所占空间的一些信息
   // styles 样式
   // xAxis x轴
   // yAxis y轴
-  render: ({
+  draw: ({
     ctx,
-    dataSource,
-    viewport,
-    styles,
+    kLineDataList,
+    indicator,
+    visibleRange,
+    bounding,
+    barSpace,
+    defaultStyles,
     xAxis,
     yAxis
   }) => {}
 }
 ```
-#### Plots子项信息
+#### figures子项信息
 ```javascript
 {
   // 必要字段，决定方法calcTechnicalIndicator的返回值
@@ -125,14 +126,11 @@
   // 如果设置，当图形是bar时，将在此值上下绘制，如：MACD指标的macd值
   baseValue: null,
   // 可缺省
-  // 可以是一个固定的值，也可以是一个方法，如果是方法，需要返回一个颜色值的字符串
-  color: (data, options) => {},
-  // 可缺省，只有当type是'circle'和'bar'才会生效
-  // 可以是一个固定的boolean值，也可以是一个方法，如果是方法，需要返回一个boolean值
-  isStroke: (data, options) => {},
-  // 可缺省，只有当type是'line'才会生效
-  // 可以是一个固定的boolean值，也可以是一个方法，如果是方法，需要返回一个boolean值
-  isDashed: (data, options) => {}
+  // 是一个方法，返回止值类型为`{ style, color }`，style可选项为`solid`，`dashed`，`fill`，`strke`，`stroke_fill`，
+  // data 数据
+  // indicator 技术指标实例
+  // defaultStyles 技术指标默认样式
+  styles: (data, indicator, defaultStyles) => ({ style, color })
 }
 ```
 
@@ -140,12 +138,12 @@
 ### 示例
 以下将以一个名为'MA'技术指标，一步步的介绍如何去做技术指标模板。
 #### 步骤一
-首先确定计算参数(calcParams)和配置项(plots)，'MA'技术指标需要展示两个周期的收盘价平均值连起来的线，一条为'ma1'，一条名为'ma2'。因此plots配置为：
+首先确定计算参数(calcParams)和配置项(figures)，'MA'技术指标需要展示两个周期的收盘价平均值连起来的线，一条为'ma1'，一条名为'ma2'。因此figures配置为：
 ```javascript
 {
   // 计算参数是2个，一个计算5个周期时间的均值，即'ma1'，另一个计算10个周期时间的均值，即'ma10'
   calcParams: [5, 10],
-  plots: [
+  figures: [
     // 第一条线'ma5'
     { key: 'ma1', title: 'MA5: ', type: 'line' },
     // 第二条线'ma10'
@@ -160,20 +158,20 @@
   name: 'MA',
   shortName: 'MA',
   calcParams: [5, 10],
-  plots: [
+  figures: [
     { key: 'ma1', title: 'MA5: ', type: 'line' },
     { key: 'ma2', title: 'MA10: ', type: 'line' }
   ],
   // 当计算参数改变时，希望提示的和参数一样，即title的值需要改变
-  regeneratePlots: (params) => {
+  regenerateFigures: (params) => {
     return params.map((p, i) => {
       return { key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }
     })
   },
   // 计算结果
-  calcTechnicalIndicator: (kLineDataList, { params, plots }) => {
+  calc: (kLineDataList, { calcParams, figures }) => {
     // 注意：返回数据个数需要和kLineDataList的数据个数一致，如果无值，用{}代替即可。
-    // 计算参数最好取回调参数params，如果不是，后续计算参数发生变化的时候，这里计算不能及时响应
+    // 计算参数最好取回调参数calcParams，如果不是，后续计算参数发生变化的时候，这里计算不能及时响应
     const closeSums = []
     return kLineDataList.map((kLineData, i) => {
       const ma = {}
@@ -181,12 +179,12 @@
       params.forEach((param, j) => {
         closeSums[j] = (closeSums[j] || 0) + close
         if (i >= param - 1) {
-          ma[plots[j].key] = closeSums[j] / param
+          ma[figures[j].key] = closeSums[j] / param
           closeSums[j] -= dataList[i - (param - 1)].close
         }
       })
       // 如果有值的情况下，这里每一项的数据格式应该是 { ma1: xxx, ma2: xxx }
-      // 每个key需要和plots中的子项key对应的值一致
+      // 每个key需要和figures中的子项key对应的值一致
       return ma
     })
   }

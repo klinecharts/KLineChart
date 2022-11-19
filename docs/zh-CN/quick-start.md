@@ -10,22 +10,6 @@ npm install klinecharts --save
 yarn add klinecharts
 ```
 
-
-## 引入
-```javascript
-// 全量引入，包含所有内置的技术指标和绘图标记
-import { init } from 'klinecharts'
-
-// 引入部分功能，不包含内置的绘图标记
-import { init } from 'klinecharts/index.blank'
-
-// 引入基础功能，不包含内置的技术指标和绘图标记
-import { init } from 'klinecharts/index.simple'
-
-// 以上三种方式根据需要，使用一种即可
-```
-
-
 ## 创建第一个图表
 ```javascript
 import { init } from 'klinecharts'

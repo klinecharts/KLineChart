@@ -8,12 +8,12 @@
   + [数据源](datasource.md)
   + [快速开始](quick-start.md)
 + 进阶
-  + [技术指标](technical-indicator.md)
-  + [图形](shape.md)
+  + [基础图形](figure.md)
+  + [技术指标](indicator.md)
+  + [覆盖物](overlay.md)
 + API
   + [图表API](chart-api.md)
   + [图表实例API](instance-api.md)
-  + [图形标记辅助API](shape-auxiliary-api.md)
 + [快捷键](hot-key.md)
 + [环境要求](environment.md)
 + [变更日志](changelog.md)

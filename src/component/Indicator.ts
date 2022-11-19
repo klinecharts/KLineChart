@@ -68,7 +68,7 @@ export interface IndicatorTooltipDataChild {
 }
 export interface IndicatorTooltipData {
   name?: string
-  calcParamText?: string
+  calcParamsText?: string
   values?: IndicatorTooltipDataChild[]
 }
 

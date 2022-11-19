@@ -66,7 +66,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       let labelY = top ?? 0
       ctx.font = createFont(textSize, textWeight, textFamily)
       indicators.forEach(indicator => {
-        const { name, calcParamText, values } = this.getIndicatorTooltipData(dataList, crosshair, indicator, styles)
+        const { name, calcParamsText, values } = this.getIndicatorTooltipData(dataList, crosshair, indicator, styles)
         const nameValid = name !== undefined && name.length > 0
         const valuesValid = values !== undefined && values.length > 0
         if (nameValid || valuesValid) {
@@ -75,8 +75,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
           if (nameValid && tooltipStyles.showName) {
             labelX += textMarginLeft
             let text = name
-            if (calcParamText !== undefined && calcParamText.length > 0 && tooltipStyles.showParams) {
-              text = `${text}${calcParamText}`
+            if (calcParamsText !== undefined && calcParamsText.length > 0 && tooltipStyles.showParams) {
+              text = `${text}${calcParamsText}`
             }
             this.createFigure(
               'text',
@@ -170,10 +170,10 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const dataIndex = crosshair.dataIndex as number
     const result = indicator.result ?? []
 
-    let calcParamText = ''
+    let calcParamsText = ''
     const calcParams = indicator.calcParams
     if (calcParams.length > 0) {
-      calcParamText = `(${calcParams.join(',')})`
+      calcParamsText = `(${calcParams.join(',')})`
     }
 
     const indicatorData = result[dataIndex] ?? {}
@@ -190,6 +190,6 @@ export default class IndicatorTooltipView extends View<YAxis> {
         values.push({ title: figure.title, value: value ?? styles.tooltip.defaultValue, color: figureStyles.color })
       }
     })
-    return { name: indicator.shortName, calcParamText, values }
+    return { name: indicator.shortName, calcParamsText, values }
   }
 }

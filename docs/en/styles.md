@@ -7,25 +7,19 @@
     horizontal: {
       show: true,
       size: 1,
-      color: '#393939',
-      // 'solid'|'dash'
-      style: 'dash',
-      dashValue: [2, 2]
+      color: '#EDEDED',
+      style: 'dashed',
+      dashedValue: [2, 2]
     },
     vertical: {
-      show: false,
+      show: true,
       size: 1,
-      color: '#393939',
-      // 'solid'|'dash'
-      style: 'dash',
-      dashValue: [2, 2]
+      color: '#EDEDED',
+      style: 'dashed',
+      dashedValue: [2, 2]
     }
   },
   candle: {
-    margin: {
-      top: 0.2,
-      bottom: 0.1
-    },
     // 'candle_solid'|'candle_stroke'|'candle_up_stroke'|'candle_down_stroke'|'ohlc'|'area'
     type: 'candle_solid',
     bar: {
@@ -37,7 +31,7 @@
       lineSize: 2,
       lineColor: '#2196F3',
       value: 'close',
-      fillColor: [{
+      backgroundColor: [{
         offset: 0,
         color: 'rgba(33, 150, 243, 0.01)'
       }, {
@@ -70,18 +64,24 @@
         noChangeColor: '#888888',
         line: {
           show: true,
-          // 'solid'|'dash'
-          style: 'dash',
-          dashValue: [4, 4],
+          // 'solid' | 'dashed'
+          style: 'dashed',
+          dashedValue: [4, 4],
           size: 1
         },
         text: {
           show: true,
+          // 'fill' | 'stroke' | 'stroke_fill'
+          style: 'fill',
           size: 12,
-          paddingLeft: 2,
-          paddingTop: 2,
-          paddingRight: 2,
-          paddingBottom: 2,
+          paddingLeft: 4,
+          paddingTop: 4,
+          paddingRight: 4,
+          paddingBottom: 4,
+          // 'solid' | 'dashed'
+          borderStyle: 'solid',
+          borderSize: 1,
+          borderDashedValue: [2, 2],
           color: '#FFFFFF',
           family: 'Helvetica Neue',
           weight: 'normal',
@@ -95,6 +95,7 @@
       // 'standard' | 'rect'
       showType: 'standard',
       labels: ['时间', '开', '收', '高', '低', '成交量'],
+      // It can be an array or a method. When it is a method, it returns an array. The return value can be a value array or a colored object, `[{value: 'xxx', color: '# ff0'}]`
       values: null,
       defaultValue: 'n/a',
       rect: {
@@ -108,7 +109,7 @@
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#3f4254',
-        fillColor: 'rgba(17, 17, 17, .3)'
+        backgroundColor: 'rgba(17, 17, 17, .3)'
       },
       text: {
         size: 12,
@@ -122,38 +123,81 @@
       }
     }
   },
-  technicalIndicator: {
-    margin: {
-      top: 0.2,
-      bottom: 0.1
-    },
-    bar: {
-      upColor: '#26A69A',
-      downColor: '#EF5350',
+  indicator: {
+    ohlc: {
+      upColor: 'rgba(38, 166, 154, .65)',
+      downColor: 'rgba(239, 83, 80, .65)',
       noChangeColor: '#888888'
     },
-    line: {
-      size: 1,
-      dashValue: [2, 2],
-      colors: ['#FF9600', '#9D65C9', '#2196F3', '#E11D74', '#01C5C4']
-    },
-    circle: {
-      upColor: '#26A69A',
-      downColor: '#EF5350',
+    bars: [{
+      // 'fill' | 'stroke' | 'stroke_fill'
+      style: 'fill',
+      // 'solid' | 'dashed'
+      borderStyle: 'solid',
+      borderSize: 1,
+      borderDashedValue: [2, 2],
+      upColor: 'rgba(38, 166, 154, .65)',
+      downColor: 'rgba(239, 83, 80, .65)',
       noChangeColor: '#888888'
-    },
+    }],
+    lines: [
+      {
+        // 'solid' | 'dashed'
+        style: 'solid',
+        size: 1,
+        dashedValue: [2, 2],
+        color: '#FF9600'
+      }, {
+        style: 'solid',
+        size: 1,
+        dashedValue: [2, 2],
+        color: '#9D65C9'
+      }, {
+        style: 'solid',
+        size: 1,
+        dashedValue: [2, 2],
+        color: '#2196F3'
+      }, {
+      style: 'solid',
+        size: 1,
+        dashedValue: [2, 2],
+        color: '#E11D74'
+      }, {
+        style: 'solid',
+        size: 1,
+        dashedValue: [2, 2],
+        color: '#01C5C4'
+      }
+    ],
+    circles: [{
+      // 'fill' | 'stroke' | 'stroke_fill'
+      style: 'fill',
+      // 'solid' | 'dashed'
+      borderStyle: 'solid',
+      borderSize: 1,
+      borderDashedValue: [2, 2],
+      upColor: 'rgba(38, 166, 154, .65)',
+      downColor: 'rgba(239, 83, 80, .65)',
+      noChangeColor: '#888888'
+    }],
     lastValueMark: {
       show: false,
       text: {
         show: false,
-        color: '#ffffff',
+        // 'fill' | 'stroke' | 'stroke_fill'
+        style: 'fill',
+        color: '#FFFFFF',
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        paddingLeft: 3,
-        paddingTop: 2,
-        paddingRight: 3,
-        paddingBottom: 2,
+        // 'solid' | 'dashed'
+        borderStyle: 'solid',
+        borderSize: 1,
+        borderDashedValue: [2, 2],
+        paddingLeft: 4,
+        paddingTop: 4,
+        paddingRight: 4,
+        paddingBottom: 4,
         borderRadius: 2
       }
     },
@@ -179,7 +223,7 @@
   },
   xAxis: {
     show: true,
-    height: null,
+    size: 'auto',
     axisLine: {
       show: true,
       color: '#888888',
@@ -191,8 +235,8 @@
       family: 'Helvetica Neue',
       weight: 'normal',
       size: 12,
-      paddingTop: 3,
-      paddingBottom: 6
+      marginStrat: 4,
+      marginBottom: 4
     },
     tickLine: {
       show: true,
@@ -203,13 +247,13 @@
   },
   yAxis: {
     show: true,
-    width: null,
+    size: 'auto',
     // 'left' | 'right'
     position: 'right',
     // 'normal' | 'percentage' | 'log'
     type: 'normal',
     inside: false,
-     reverse: false,
+    reverse: false,
     axisLine: {
       show: true,
       color: '#888888',
@@ -221,8 +265,8 @@
       family: 'Helvetica Neue',
       weight: 'normal',
       size: 12,
-      paddingLeft: 3,
-      paddingRight: 6
+      marginStrat: 4,
+      marginBottom: 4
     },
     tickLine: {
       show: true,
@@ -243,165 +287,146 @@
       show: true,
       line: {
         show: true,
-        // 'solid'|'dash'
-        style: 'dash',
-        dashValue: [4, 2],
+        // 'solid'|'dashed'
+        style: 'dashed',
+        dashedValue: [4, 2],
         size: 1,
         color: '#888888'
       },
       text: {
         show: true,
-        color: '#D9D9D9',
+        // 'fill' | 'stroke' | 'stroke_fill'
+        style: 'fill',
+        color: '#FFFFFF',
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 2,
-        paddingBottom: 2,
+        // 'solid' | 'dashed'
+        borderStyle: 'solid',
+        borderDashedValue: [2, 2],
         borderSize: 1,
-        borderColor: '#505050',
+        borderColor: '#686D76',
         borderRadius: 2,
-        backgroundColor: '#505050'
+        paddingLeft: 4,
+        paddingRight: 4,
+        paddingTop: 4,
+        paddingBottom: 4,
+        backgroundColor: '#686D76'
       }
     },
     vertical: {
       show: true,
       line: {
         show: true,
-        // 'solid'|'dash'
-        style: 'dash',
-        dashValue: [4, 2],
+        // 'solid'|'dashed'
+        style: 'dashed',
+        dashedValue: [4, 2],
         size: 1,
         color: '#888888'
       },
       text: {
         show: true,
-        color: '#D9D9D9',
+        // 'fill' | 'stroke' | 'stroke_fill'
+        style: 'fill',
+        color: '#FFFFFF',
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        paddingLeft: 2,
-        paddingRight: 2,
-        paddingTop: 2,
-        paddingBottom: 2,
+        // 'solid' | 'dashed'
+        borderStyle: 'solid',
+        borderDashedValue: [2, 2],
         borderSize: 1,
-        borderColor: '#505050',
+        borderColor: '#686D76',
         borderRadius: 2,
-        backgroundColor: '#505050'
+        paddingLeft: 4,
+        paddingRight: 4,
+        paddingTop: 4,
+        paddingBottom: 4,
+        backgroundColor: '#686D76'
       }
     }
   },
-  shape: {
+  overlay: {
     point: {
-      backgroundColor: '#2196F3',
-      borderColor: '#2196F3',
+      color: '#3f8aa9',
+      borderColor: 'rgba(63, 138, 169, 0.35)',
       borderSize: 1,
-      radius: 4,
-      activeBackgroundColor: '#2196F3',
-      activeBorderColor: '#2196F3',
-      activeBorderSize: 1,
-      activeRadius: 6
+      radius: 5,
+      activeColor: '#3f8aa9',
+      activeBorderColor: 'rgba(63, 138, 169, 0.35)',
+      activeBorderSize: 3,
+      activeRadius: 5
     },
     line: {
-      // 'solid'|'dash'
-      style: 'solid'
-      color: '#2196F3',
+      // 'solid' | 'dashed'
+      style: 'solid',
+      color: '#3f8aa9',
       size: 1,
-      dashValue: [2, 2]
+      dashedValue: [2, 2]
+    },
+    rect: {
+      // 'fill' | 'stroke' | 'stroke_fill'
+      style: 'fill',
+      color: 'rgba(63, 138, 169, 0.25)',
+      borderColor: '#3f8aa9',
+      borderSize: 1,
+      borderRadius: 0,
+      // 'solid' | 'dashed'
+      borderStyle: 'solid',
+      borderDashedValue: [2, 2]
     },
     polygon: {
-      // 'stroke'|'fill'
-      style: 'stroke',
-      stroke: {
-        // 'solid'|'dash'
-        style: 'solid',
-        size: 1,
-        color: '#2196F3',
-        dashValue: [2, 2]
-      },
-      fill: {
-        color: 'rgba(33, 150, 243, 0.1)'
-      }
+      // 'fill' | 'stroke' | 'stroke_fill'
+      style: 'fill',
+      color: '#3f8aa9',
+      borderColor: '#3f8aa9',
+      borderSize: 1,
+      // 'solid' | 'dashed'
+      borderStyle: 'solid',
+      borderDashedValue: [2, 2]
+    },
+    circle: {
+      // 'fill' | 'stroke' | 'stroke_fill'
+      style: 'fill',
+      color: 'rgba(63, 138, 169, 0.25)',
+      borderColor: '#3f8aa9',
+      borderSize: 1,
+      // 'solid' | 'dashed'
+      borderStyle: 'solid',
+      borderDashedValue: [2, 2]
     },
     arc: {
-      // 'stroke'|'fill'
-      style: 'stroke',
-      stroke: {
-        // 'solid'|'dash'
-        style: 'solid',
-        size: 1,
-        color: '#2196F3',
-        dashValue: [2, 2]
-      },
-      fill: {
-        color: '#2196F3'
-      }
-    },
-    text: {
-      style: 'fill',
-      color: '#2196F3',
-      size: 12,
-      family: 'Helvetica Neue',
-      weight: 'normal',
-      offset: [0, 0]
-    }
-  },
-  annotation: {
-    // 'top' | 'bottom' | 'point'
-    position: 'top',
-    offset: [20, 0]
-    symbol: {
-      // 'diamond' | 'circle' | 'rect' | 'triangle' | 'custom' | 'none'
-      type: 'diamond',
-      size: 8,
-      color: '#2196F3',
-      activeSize: 10,
-      activeColor: '#FF9600'
-    }
-  },
-  tag: {
-    // 'top' | 'bottom' | 'point'
-    position: 'point',
-    offset: 0,
-    line: {
-      show: true,
-      style: LineStyle.DASH,
-      dashValue: [4, 2],
+      // 'solid' | 'dashed'
+      style: 'solid',
+      color: '#3f8aa9',
       size: 1,
-      color: '#2196F3'
+      dashedValue: [2, 2]
     },
     text: {
-      color: '#FFFFFF',
-      backgroundColor: '#2196F3',
+      color: '#3f8aa9',
       size: 12,
       family: 'Helvetica Neue',
-      weight: 'normal',
-      paddingLeft: 2,
-      paddingRight: 2,
-      paddingTop: 2,
-      paddingBottom: 2,
-      borderRadius: 2,
-      borderSize: 1,
-      borderColor: '#2196F3'
+      weight: 'normal'
     },
-    mark: {
-      offset: 0,
+    rectText: {
+      // 'fill' | 'stroke' | 'stroke_fill'
+      style: 'fill',
       color: '#FFFFFF',
-      backgroundColor: '#2196F3',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
-      paddingLeft: 2,
-      paddingRight: 2,
-      paddingTop: 2,
-      paddingBottom: 2,
-      borderRadius: 2,
+      // 'solid' | 'dashed'
+      borderStyle: 'solid',
+      borderDashedValue: [2, 2],
       borderSize: 1,
-      borderColor: '#2196F3'
+      borderRadius: 2,
+      borderColor: '#3f8aa9',
+      paddingLeft: 4,
+      paddingRight: 4,
+      paddingTop: 4,
+      paddingBottom: 4,
+      backgroundColor: '#3f8aa9'
     }
   }
 }
 ```
-
-
