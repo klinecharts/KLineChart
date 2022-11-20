@@ -1,4 +1,5 @@
-# 样式说明
+# 🎨 Style
+Whether you see a point or a line on the chart, you can basically customize the style. Changes can be made via the chart method `init(ds, styles)` or the chart instance method `setStyleOptions(styles)`.
 
 ```javascript
 {

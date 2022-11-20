@@ -136,9 +136,9 @@ To complete a technical indicator template, you only need to generate a technica
 ```
 
 
-### Example
+## Example
 The following a technical indicator named 'MA' to introduce step by step how to make a technical indicator template.
-#### step one
+### step one
 First determine the calculation parameters (calcParams) and configuration items (figures). The 'MA' technical indicator needs to display the line connecting the average closing prices of the two periods, one is 'ma1' and the other is called 'ma2'. So the figures configuration is:
 ```javascript
 {
@@ -152,7 +152,7 @@ First determine the calculation parameters (calcParams) and configuration items 
   ]
 }
 ```
-#### Step two
+### Step two
 Determine other attributes
 ```javascript
 {

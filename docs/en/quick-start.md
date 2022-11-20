@@ -1,4 +1,4 @@
-# Quick start
+# 🚀 Quick start
 
 ## Installation
 ### Use npm

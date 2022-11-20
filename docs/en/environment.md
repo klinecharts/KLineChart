@@ -1,21 +1,25 @@
-# Environment
-The chart is built on html5 canvas and needs to run on a browser that supports canvas. If you need to run on a mobile terminal, please load it with webview.
+# 🏝️ Environment
 
+## Browser support
 
-## Compatible processing
-If you encounter an error that the chart cannot be loaded, please try the following solutions.
+The chart is built based on html5 canvas and needs to run on a browser that supports canvas. If it needs to run on the mobile terminal, please use webview to load it.
+
+## Polyfill
+
 ### [core.js](https://github.com/zloirock/core-js)
-```javascript
-import 'core.js'
-import { init } from 'klincharts'
-```
 
+The internal collection of the chart uses `Map` for compatibility with unsupported older browsers.
+
+```js
+import 'core.js';
+import { init } from 'klincharts';
+```
 
 ### [Intl.js](https://github.com/andyearnshaw/Intl.js)
-This solution is used for compatibility without `window.Intl`, and currently only the mobile QQ browser has no such api.
-Use example:
-```javascript
-import 'intl'
-import 'intl/local-data/jsonp/en'
-import { init } from 'klincharts'
-```
+
+Charts rely on `Intl`, some browsers do not have this API.
+
+```js
+import 'intl';
+import 'intl/local-data/jsonp/en';
+import { init } from 'klincharts';

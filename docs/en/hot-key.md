@@ -1,6 +1,8 @@
-# Hot key
-Currently, the hot keys only support moving and zooming.
-+ `shift` + `→` shift right
-+ `shift` + `←` shift left
-+ `shift` + `+` zoom in
-+ `shift` + `-` zoom out
+# ⌨️ Hot Key
+
+Currently only supports moving and zooming.
+
+- `shift` + `→` move right
+- `shift` + `←` move left
+- `shift` + `+` zoom in
+- `shift` + `-` zoom out

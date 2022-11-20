@@ -1,6 +1,6 @@
-# 数据源
+# 📚 数据
+图表所需要的数据必须是固定格式。通过图表实例 API `applyNewData(dataList, more)`，`applyMoreData(dataList, more)`和`updateData(data)`来和图表进行数据交互。
 
-单条K线数据必须遵循如下格式：
 ```javascript
 {
   // 开盘价，必要字段

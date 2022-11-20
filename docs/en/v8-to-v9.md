@@ -1,4 +1,4 @@
-# From v8 to v9
+# 🛠️ From V8 to V9
 This document will help you upgrade from kinecharts 8.x to klinecharts 9.x. If you are 7.x or older, please refer to the previous upgrade document to upgrade to 8.x.
 
 ## Import adjustment
