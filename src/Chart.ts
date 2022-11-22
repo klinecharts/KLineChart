@@ -266,6 +266,9 @@ export default class ChartImp implements Chart {
     }
     if (forceMeasureWidth) {
       this._measurePaneWidth()
+      this._panes.forEach(pane => {
+        pane.getAxisComponent().buildTicks(forceAdjustYAxis)
+      })
     }
     if (shouldUpdate ?? false) {
       this._xAxisPane.getAxisComponent().buildTicks(true)
