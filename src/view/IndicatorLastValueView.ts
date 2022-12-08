@@ -18,7 +18,7 @@ import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../component
 
 import View from './View'
 
-import { formatPrecision, formatBigNumber } from '../common/utils/format'
+import { formatPrecision } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
 export default class IndicatorLastValueView extends View<YAxis> {
@@ -27,7 +27,8 @@ export default class IndicatorLastValueView extends View<YAxis> {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
-    const defaultStyles = chartStore.getStyleOptions().indicator
+    const customApi = chartStore.getCustomApi()
+    const defaultStyles = chartStore.getStyles().indicator
     const lastValueMarkStyles = defaultStyles.lastValueMark
     const lastValueMarkTextStyles = lastValueMarkStyles.text
     if (lastValueMarkStyles.show) {
@@ -46,7 +47,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
               const y = yAxis.convertToNicePixel(value)
               let text = formatPrecision(value, precision)
               if (indicator.shouldFormatBigNumber) {
-                text = formatBigNumber(text)
+                text = customApi.formatBigNumber(text)
               }
 
               let x: number

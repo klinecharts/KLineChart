@@ -22,7 +22,7 @@ export default class CandleLastPriceView extends View {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
-    const priceMarkStyles = chartStore.getStyleOptions().candle.priceMark
+    const priceMarkStyles = chartStore.getStyles().candle.priceMark
     const lastPriceMarkStyles = priceMarkStyles.last
     const lastPriceMarkLineStyles = lastPriceMarkStyles.line
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkLineStyles.show) {

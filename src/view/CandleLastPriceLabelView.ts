@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { YAxisType } from '../common/Styles'
+import { YAxisType } from '../common/Options'
 
 import View from './View'
 
@@ -26,7 +26,7 @@ export default class CandleLastPriceLabelView extends View {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
-    const priceMarkStyles = chartStore.getStyleOptions().candle.priceMark
+    const priceMarkStyles = chartStore.getStyles().candle.priceMark
     const lastPriceMarkStyles = priceMarkStyles.last
     const lastPriceMarkTextStyles = lastPriceMarkStyles.text
     if (priceMarkStyles.show && lastPriceMarkStyles.show && lastPriceMarkTextStyles.show) {

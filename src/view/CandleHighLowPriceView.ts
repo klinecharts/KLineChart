@@ -15,7 +15,7 @@
 import Coordinate from '../common/Coordinate'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
-import { CandleHighLowPriceMarkStyle } from '../common/Styles'
+import { CandleHighLowPriceMarkStyle } from '../common/Options'
 
 import ChildrenView from './ChildrenView'
 
@@ -26,7 +26,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
-    const priceMarkStyles = chartStore.getStyleOptions().candle.priceMark
+    const priceMarkStyles = chartStore.getStyles().candle.priceMark
     const highPriceMarkStyles = priceMarkStyles.high
     const lowPriceMarkStyles = priceMarkStyles.low
     if (priceMarkStyles.show && (highPriceMarkStyles.show || lowPriceMarkStyles.show)) {

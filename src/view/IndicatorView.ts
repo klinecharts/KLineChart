@@ -16,7 +16,7 @@ import TypeOrNull from '../common/TypeOrNull'
 import Coordinate from '../common/Coordinate'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
-import { CandleType, LineStyle, LineType } from '../common/Styles'
+import { CandleType, LineStyle, LineType } from '../common/Options'
 
 import { PaneIdConstants } from '../pane/Pane'
 
@@ -41,7 +41,7 @@ export default class IndicatorView extends CandleBarView {
       const indicator = entries[1]
       if (indicator.shouldOhlc) {
         const indicatorStyles = indicator.styles
-        const defaultStyles = chartStore.getStyleOptions().indicator
+        const defaultStyles = chartStore.getStyles().indicator
         return {
           type: CandleType.OHLC,
           styles: {
@@ -68,7 +68,7 @@ export default class IndicatorView extends CandleBarView {
     const timeScaleStore = chartStore.getTimeScaleStore()
     const visibleRange = timeScaleStore.getVisibleRange()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-    const defaultStyles = chartStore.getStyleOptions().indicator
+    const defaultStyles = chartStore.getStyles().indicator
     indicators.forEach(indicator => {
       let isCover = false
       if (indicator.draw !== null) {

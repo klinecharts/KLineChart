@@ -15,7 +15,7 @@
 import TypeOrNull from '../common/TypeOrNull'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
-import { CandleType, ChangeColor, RectStyle, PolygonType } from '../common/Styles'
+import { CandleType, ChangeColor, RectStyle, PolygonType } from '../common/Options'
 
 import ChartStore from '../store/ChartStore'
 
@@ -45,7 +45,7 @@ export default class CandleBarView extends ChildrenView {
   }
 
   protected getCandleBarOptions (chartStore: ChartStore): TypeOrNull<CandleBarOptions> {
-    const candleStyles = chartStore.getStyleOptions().candle
+    const candleStyles = chartStore.getStyles().candle
     return {
       type: candleStyles.type as Exclude<CandleType, 'area'>,
       styles: candleStyles.bar

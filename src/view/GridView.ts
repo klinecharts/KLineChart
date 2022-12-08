@@ -26,7 +26,7 @@ export default class GridView extends View<YAxis> {
     const chart = pane.getChart()
     const bounding = widget.getBounding()
 
-    const gridStyles = chart.getStyleOptions().grid
+    const gridStyles = chart.getStyles().grid
     const show = gridStyles.show
 
     if (show) {

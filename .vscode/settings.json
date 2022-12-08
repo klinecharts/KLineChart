@@ -1,18 +1,3 @@
 {
-    "editor.tabSize": 2,
-    "fileheader.customMade": {
-        "Author": "liihuu",
-        "Date": "Do not edit",
-        "LastEditors": "liihuu",
-        "LastEditTime": "Do not edit",
-        "Description": ""
-    },
-    "fileheader.configObj": {
-        "autoAdd": false,
-        "beforeAnnotation": {
-        },
-        "moveCursor": true,
-        "dateFormat": "YYYY-MM-DD HH:mm:ss",
-        "throttleTime": 60000
-    }
+    "editor.tabSize": 2
 }

@@ -13,7 +13,7 @@
  */
 
 import Coordinate from '../common/Coordinate'
-import { CrosshairDirectionStyle } from '../common/Styles'
+import { CrosshairDirectionStyle } from '../common/Options'
 
 import View from './View'
 
@@ -24,7 +24,7 @@ export default class CrosshairLineView extends View {
     const bounding = widget.getBounding()
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getCrosshairStore().get()
-    const styles = chartStore.getStyleOptions().crosshair
+    const styles = chartStore.getStyles().crosshair
     if (crosshair.paneId !== undefined && styles.show) {
       if (crosshair.paneId === pane.getId()) {
         const y = crosshair.y as number

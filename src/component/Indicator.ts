@@ -19,7 +19,7 @@ import Bounding from '../common/Bounding'
 import VisibleRange from '../common/VisibleRange'
 import BarSpace from '../common/BarSpace'
 import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, IndicatorPolygonStyle, LineStyle, LineType, PolygonType } from '../common/Styles'
+import { IndicatorStyle, IndicatorPolygonStyle, LineStyle, LineType, PolygonType, TooltipData } from '../common/Options'
 
 import { XAxis } from './XAxis'
 import { YAxis } from './YAxis'
@@ -61,15 +61,10 @@ export interface IndicatorFigure<D = any> {
 
 export type IndicatorRegenerateFiguresCallback<D = any> = (calcParms: any[]) => Array<IndicatorFigure<D>>
 
-export interface IndicatorTooltipDataChild {
-  title: string
-  value: string
-  color: string
-}
 export interface IndicatorTooltipData {
   name?: string
   calcParamsText?: string
-  values?: IndicatorTooltipDataChild[]
+  values?: TooltipData[]
 }
 
 export interface IndicatorCreateToolTipDataSourceParams<D = any> {

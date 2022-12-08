@@ -12,12 +12,13 @@
  * limitations under the License.
  */
 
-import DeepPartial from './common/DeepPartial'
-import { Styles } from './common/Styles'
+import { Options } from './common/Options'
 import ChartImp, { Chart } from './Chart'
 import { reisterFigure, getSupportFigures } from './extension/figure/index'
 import { registerIndicator, getSupportIndicators } from './extension/indicator/index'
+import { registerLocale, getSupportLocales } from './extension/i18n/index'
 import { registerOverlay, getSupportedOverlays } from './extension/overlay/index'
+import { registerStyles } from './extension/styles/index'
 import { logError, logTag, logWarn } from './common/utils/logger'
 import {
   clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
@@ -42,7 +43,7 @@ function version (): string {
  * @param styles
  * @returns {Chart}
  */
-function init (ds: HTMLElement | string, styles?: DeepPartial<Styles>): Chart | null {
+function init (ds: HTMLElement | string, options?: Options): Chart | null {
   logTag()
   const errorMessage = 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
   let dom
@@ -61,7 +62,7 @@ function init (ds: HTMLElement | string, styles?: DeepPartial<Styles>): Chart | 
     return chart
   }
   const id = `k_line_chart_${chartBaseId++}`
-  chart = new ChartImp(dom, styles)
+  chart = new ChartImp(dom, options)
   // @ts-expect-error
   chart.id = id
   dom.chartId = id
@@ -112,5 +113,6 @@ export {
   reisterFigure, getSupportFigures,
   registerIndicator, getSupportIndicators,
   registerOverlay, getSupportedOverlays,
-  utils
+  registerLocale, getSupportLocales,
+  registerStyles, utils
 }

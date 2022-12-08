@@ -22,7 +22,7 @@ import CandleLastPriceLineView from '../view/CandleLastPriceLineView'
 import IndicatorTooltipView from '../view/IndicatorTooltipView'
 import CandleTooltipView from '../view/CandleTooltipView'
 
-import { CandleType } from '../common/Styles'
+import { CandleType } from '../common/Options'
 
 export default class CandleWidget extends IndicatorWidget {
   private readonly _candleBarView = new CandleBarView(this)
@@ -31,7 +31,7 @@ export default class CandleWidget extends IndicatorWidget {
   private readonly _candleLastPriceLineView = new CandleLastPriceLineView(this)
 
   protected updateMainContent (ctx: CanvasRenderingContext2D): void {
-    const candleStyles = this.getPane().getChart().getStyleOptions().candle
+    const candleStyles = this.getPane().getChart().getStyles().candle
     if (candleStyles.type !== CandleType.AREA) {
       this._candleBarView.draw(ctx)
       this._candleHighLowPriceView.draw(ctx)

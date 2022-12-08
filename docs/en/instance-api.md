@@ -12,12 +12,12 @@ Get size.
 - The `position` position supports `root`, `main`, `yAxis`. The default is `root`
 
 
-### setStyleOptions(styles)
+### setStyles(styles)
 Set the style configuration.
 - `styles` style configuration, please refer to [style details](styles.md)
 
 
-### getStyleOptions()
+### getStyles()
 Get the style configuration.
 
 

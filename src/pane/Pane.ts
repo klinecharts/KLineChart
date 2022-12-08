@@ -123,7 +123,7 @@ export default abstract class Pane<C extends Axis> implements Updater {
   setBounding (rootBounding: Partial<Bounding>, mainBounding?: Partial<Bounding>, yAxisBounding?: Partial<Bounding>): Pane<C> {
     merge(this._bounding, rootBounding)
     if (rootBounding.height !== undefined) {
-      const separatorSize = this.getChart().getStyleOptions().separator.size
+      const separatorSize = this.getChart().getStyles().separator.size
       const contentBounding: Partial<Bounding> = { height: rootBounding.height - separatorSize }
       this._mainWidget.setBounding(contentBounding)
       this._yAxisWidget?.setBounding(contentBounding)
@@ -195,7 +195,7 @@ export default abstract class Pane<C extends Axis> implements Updater {
 
     let top = 0
     if (this._separatorWidget != null) {
-      const separatorHeight = this.getChart().getStyleOptions().separator.size
+      const separatorHeight = this.getChart().getStyles().separator.size
       top = separatorHeight
       ctx.drawImage(
         this._separatorWidget.getImage(),

@@ -14,7 +14,7 @@
 
 import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
-import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, StateRectTextStyle } from '../common/Styles'
+import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, StateRectTextStyle } from '../common/Options'
 
 import Axis from '../component/Axis'
 import YAxis from '../component/YAxis'
@@ -23,7 +23,7 @@ import { TextAttrs } from '../extension/figure/text'
 
 import ChartStore from '../store/ChartStore'
 
-import { formatBigNumber, formatPrecision } from '../common/utils/format'
+import { formatPrecision } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 
 import View from './View'
@@ -35,7 +35,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const bounding = widget.getBounding()
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getCrosshairStore().get()
-    const styles = chartStore.getStyleOptions().crosshair
+    const styles = chartStore.getStyles().crosshair
     if (crosshair.paneId !== undefined && crosshair.kLineData !== undefined && this.checkPaneId(crosshair, pane.getId())) {
       if (styles.show) {
         const directionStyles = this.getDirectionStyles(styles)
@@ -86,7 +86,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
       }
       text = formatPrecision(value, precision)
       if (shouldFormatBigNumber) {
-        text = formatBigNumber(text)
+        text = chartStore.getCustomApi().formatBigNumber(text)
       }
     }
     return text

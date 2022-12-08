@@ -17,7 +17,7 @@ import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
-import { OverlayStyle } from '../common/Styles'
+import { OverlayStyle, CustomApi } from '../common/Options'
 
 import { formatPrecision } from '../common/utils/format'
 
@@ -42,6 +42,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     bounding: Bounding,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
+    customApi: CustomApi,
     defaultStyles: OverlayStyle,
     xAxis: TypeOrNull<XAxis>,
     yAxis: TypeOrNull<YAxis>,
@@ -51,7 +52,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     this.drawFigures(
       ctx,
       overlay,
-      this.getDefaultFigures(overlay, coordinates, bounding, precision, dateTimeFormat, xAxis, yAxis, clickInstanceInfo),
+      this.getDefaultFigures(overlay, coordinates, bounding, precision, dateTimeFormat, customApi, xAxis, yAxis, clickInstanceInfo),
       defaultStyles
     )
   }
@@ -62,6 +63,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     bounding: Bounding,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
+    customApi: CustomApi,
     xAxis: TypeOrNull<XAxis>,
     yAxis: TypeOrNull<YAxis>,
     clickInstanceInfo: EventOverlayInfo

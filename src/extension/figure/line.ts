@@ -14,7 +14,7 @@
 
 import TypeOrNull from '../../common/TypeOrNull'
 import Coordinate from '../../common/Coordinate'
-import { LineStyle, LineType } from '../../common/Styles'
+import { LineStyle, LineType } from '../../common/Options'
 
 import { FigureTemplate } from '../../component/Figure'
 

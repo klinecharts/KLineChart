@@ -13,7 +13,7 @@
  */
 
 import Coordinate from '../../common/Coordinate'
-import { RectTextStyle } from '../../common/Styles'
+import { RectTextStyle } from '../../common/Options'
 
 import { createFont } from '../../common/utils/canvas'
 

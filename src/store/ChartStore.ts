@@ -12,13 +12,12 @@
  * limitations under the License.
  */
 
-import DeepPartial from '../common/DeepPartial'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 import VisibleData from '../common/VisibleData'
-import { defaultStyles, Styles } from '../common/Styles'
+import { getDefaultStyles, Styles, getDefaultCustomApi, CustomApi, defaultLocale, Options } from '../common/Options'
 
-import { isArray, merge, clone } from '../common/utils/typeChecks'
+import { isArray, isString, merge } from '../common/utils/typeChecks'
 
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
@@ -26,18 +25,30 @@ import CrosshairStore from './CrosshairStore'
 import OverlayStore from './OverlayStore'
 import ActionStore from './ActionStore'
 
-import ChartInternal from '../Chart'
+import { getStyles } from '../extension/styles/index'
+
+import Chart from '../Chart'
 
 export default class ChartStore {
   /**
    * Internal chart
    */
-  private readonly _chart: ChartInternal
+  private readonly _chart: Chart
 
   /**
    * Style config
    */
-  private readonly _styleOptions: Styles
+  private readonly _styles: Styles = getDefaultStyles()
+
+  /**
+   * Custom api
+   */
+  private readonly _customApi: CustomApi = getDefaultCustomApi()
+
+  /**
+   * language
+   */
+  private _locale: string = defaultLocale
 
   /**
    * Price and volume precision
@@ -84,10 +95,9 @@ export default class ChartStore {
    */
   private _visibleDataList: VisibleData[] = []
 
-  constructor (chart: ChartInternal, styleOptions?: DeepPartial<Styles>) {
+  constructor (chart: Chart, options?: Options) {
     this._chart = chart
-    this._styleOptions = clone(defaultStyles)
-    merge(this._styleOptions, styleOptions)
+    this.setOptions(options)
   }
 
   /**
@@ -108,13 +118,36 @@ export default class ChartStore {
     }
   }
 
-  getStyleOptions (): Styles {
-    return this._styleOptions
+  setOptions (options?: Options): ChartStore {
+    if (options !== undefined) {
+      const { styles, locale, customApi } = options
+      if (styles !== undefined) {
+        if (isString(styles)) {
+          merge(this._styles, getStyles(styles as string))
+        } else {
+          merge(this._styles, styles)
+        }
+      }
+      if (locale !== undefined) {
+        this._locale = locale
+      }
+      if (customApi !== undefined) {
+        merge(this._customApi, customApi)
+      }
+    }
+    return this
   }
 
-  applyStyleOptions (options: DeepPartial<Styles>): ChartStore {
-    merge(this._styleOptions, options)
-    return this
+  getStyles (): Styles {
+    return this._styles
+  }
+
+  getLocale (): string {
+    return this._locale
+  }
+
+  getCustomApi (): CustomApi {
+    return this._customApi
   }
 
   getPrecision (): Precision {
@@ -188,7 +221,7 @@ export default class ChartStore {
     return this._actionStore
   }
 
-  getChart (): ChartInternal {
+  getChart (): Chart {
     return this._chart
   }
 

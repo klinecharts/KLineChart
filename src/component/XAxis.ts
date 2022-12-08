@@ -13,11 +13,11 @@
  */
 
 import TypeOrNull from '../common/TypeOrNull'
+import { FormatDate } from '../common/Options'
 
 import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
 
 import { calcTextWidth } from '../common/utils/canvas'
-import { formatDate } from '../common/utils/format'
 
 export type XAxis = Axis
 
@@ -36,12 +36,13 @@ export default class XAxisImp extends AxisImp {
   protected optimalTicks (ticks: AxisTick[]): AxisTick[] {
     const chart = this.getParent().getChart()
     const chartStore = chart.getChartStore()
+    const formatDate = chartStore.getCustomApi().formatDate
     const optimalTicks: AxisTick[] = []
     const tickLength = ticks.length
     const dataList = chartStore.getDataList()
     if (tickLength > 0) {
       const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
-      const tickTextStyles = chart.getStyleOptions().xAxis.tickText
+      const tickTextStyles = chart.getStyles().xAxis.tickText
       const defaultLabelWidth = calcTextWidth('00-00 00:00', tickTextStyles.size, tickTextStyles.weight, tickTextStyles.family)
       const pos = parseInt(ticks[0].value as string, 10)
       const x = this.convertToPixel(pos)
@@ -63,7 +64,7 @@ export default class XAxisImp extends AxisImp {
           const prevPos = parseInt(ticks[i - tickCountDif].value as string, 10)
           const prevKLineData = dataList[prevPos]
           const prevTimestamp = prevKLineData.timestamp
-          text = this._optimalTickLabel(dateTimeFormat, timestamp, prevTimestamp) ?? text
+          text = this._optimalTickLabel(formatDate, dateTimeFormat, timestamp, prevTimestamp) ?? text
         }
         const x = this.convertToPixel(pos)
         optimalTicks.push({ text, coord: x, value: timestamp })
@@ -84,14 +85,14 @@ export default class XAxisImp extends AxisImp {
             optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'YYYY')
           }
         } else {
-          optimalTicks[0].text = this._optimalTickLabel(dateTimeFormat, firstTimestamp, secondTimestamp) ?? optimalTicks[0].text
+          optimalTicks[0].text = this._optimalTickLabel(formatDate, dateTimeFormat, firstTimestamp, secondTimestamp) ?? optimalTicks[0].text
         }
       }
     }
     return optimalTicks
   }
 
-  private _optimalTickLabel (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, comparedTimestamp: number): TypeOrNull<string> {
+  private _optimalTickLabel (formatDate: FormatDate, dateTimeFormat: Intl.DateTimeFormat, timestamp: number, comparedTimestamp: number): TypeOrNull<string> {
     const year = formatDate(dateTimeFormat, timestamp, 'YYYY')
     const month = formatDate(dateTimeFormat, timestamp, 'YYYY-MM')
     const day = formatDate(dateTimeFormat, timestamp, 'MM-DD')
@@ -106,7 +107,7 @@ export default class XAxisImp extends AxisImp {
   }
 
   getAutoSize (): number {
-    const styles = this.getParent().getChart().getStyleOptions()
+    const styles = this.getParent().getChart().getStyles()
     const xAxisStyles = styles.xAxis
     const height = xAxisStyles.size
     if (height !== 'auto') {

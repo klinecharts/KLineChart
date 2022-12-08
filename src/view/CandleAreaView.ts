@@ -15,7 +15,7 @@
 import Coordinate from '../common/Coordinate'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
-import { GradientColor } from '../common/Styles'
+import { GradientColor } from '../common/Options'
 
 import ChildrenView from './ChildrenView'
 
@@ -30,7 +30,7 @@ export default class CandleAreaView extends ChildrenView {
     const bounding = widget.getBounding()
     const yAxis = pane.getAxisComponent()
     const barSpace = chartStore.getTimeScaleStore().getBarSpace()
-    const candleAreaStyles = chart.getStyleOptions().candle.area
+    const candleAreaStyles = chart.getStyles().candle.area
     const lineCoordinates: Coordinate[] = []
     const areaCoordinates: Coordinate[] = []
     let minY = Number.MAX_SAFE_INTEGER

@@ -13,7 +13,7 @@
  */
 
 import Coordinate from '../../common/Coordinate'
-import { RectStyle, PolygonType, LineType } from '../../common/Styles'
+import { RectStyle, PolygonType, LineType } from '../../common/Options'
 
 import { FigureTemplate } from '../../component/Figure'
 

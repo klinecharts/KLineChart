@@ -16,15 +16,17 @@ import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 import Crosshair from '../common/Crosshair'
-import { Styles, CandleStyle, CandleTooltipValuesChild, CandleTooltipValuesCallback, TooltipShowType, YAxisPosition } from '../common/Styles'
+import { Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, YAxisPosition, CustomApi } from '../common/Options'
 
 import Indicator from '../component/Indicator'
 
-import IndicatorTooltipView, { TooltipData } from './IndicatorTooltipView'
+import IndicatorTooltipView from './IndicatorTooltipView'
 
-import { formatPrecision, formatBigNumber, formatDate } from '../common/utils/format'
+import { i18n } from '../extension/i18n/index'
+
+import { formatPrecision } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
-import { isArray, isString } from '../common/utils/typeChecks'
+import { isString, isFunction } from '../common/utils/typeChecks'
 
 export default class CandleTooltipView extends IndicatorTooltipView {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
@@ -35,10 +37,12 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const chartStore = pane.getChart().getChartStore()
     const dataList = chartStore.getDataList()
     const precision = chartStore.getPrecision()
+    const locale = chartStore.getLocale()
+    const customApi = chartStore.getCustomApi()
     const crosshair = chartStore.getCrosshairStore().get()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
-    const styles = chartStore.getStyleOptions()
+    const styles = chartStore.getStyles()
     const candleStyles = styles.candle
     const indicatorStyles = styles.indicator
     if (
@@ -48,25 +52,29 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       this._drawRectTooltip(
         ctx, dataList, indicators,
         bounding, yAxisBounding,
-        crosshair, precision, dateTimeFormat,
+        crosshair, precision,
+        dateTimeFormat, locale, customApi,
         styles, 0
       )
     } else if (
       candleStyles.tooltip.showType === TooltipShowType.STANDARD &&
       indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
     ) {
-      const top = this._drawCandleStandardTooltip(ctx, bounding, crosshair, precision, dateTimeFormat, candleStyles)
-      this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, bounding, indicatorStyles, top)
+      const top = this._drawCandleStandardTooltip(
+        ctx, bounding, crosshair, precision,
+        dateTimeFormat, locale, customApi, candleStyles
+      )
+      this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, customApi, bounding, indicatorStyles, top)
     } else if (
       candleStyles.tooltip.showType === TooltipShowType.RECT &&
       indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
     ) {
-      const top = this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, bounding, indicatorStyles, 0)
+      const top = this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, customApi, bounding, indicatorStyles, 0)
       this._drawRectTooltip(
         ctx, dataList, indicators,
         bounding, yAxisBounding,
         crosshair, precision, dateTimeFormat,
-        styles, top
+        locale, customApi, styles, top
       )
     }
   }
@@ -77,13 +85,18 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     crosshair: Crosshair,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
+    locale: string,
+    customApi: CustomApi,
     styles: CandleStyle
   ): number {
     const tooltipStyles = styles.tooltip
     const tooltipTextStyles = tooltipStyles.text
     let height = 0
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
-      const values = this._getCandleTooltipData(crosshair.kLineData as KLineData, precision, dateTimeFormat, styles)
+      const values = this._getCandleTooltipData(
+        crosshair.kLineData as KLineData, precision,
+        dateTimeFormat, locale, customApi, styles
+      )
       if (values.length > 0) {
         height += (tooltipTextStyles.marginTop + tooltipTextStyles.size + tooltipTextStyles.marginBottom)
         height += this.drawStandardTooltip(ctx, bounding, values, 0, tooltipTextStyles.marginTop, tooltipTextStyles)
@@ -101,6 +114,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     crosshair: Crosshair,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
+    locale: string,
+    customApi: CustomApi,
     styles: Styles,
     top: number
   ): void {
@@ -111,7 +126,10 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleTooltipStyles)
     const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorTooltipStyles)
     if (isDrawCandleTooltip || !isDrawIndicatorTooltip) {
-      const baseValues = this._getCandleTooltipData(crosshair.kLineData as KLineData, precision, dateTimeFormat, candleStyles)
+      const candleTooltipDatas = this._getCandleTooltipData(
+        crosshair.kLineData as KLineData, precision,
+        dateTimeFormat, locale, customApi, candleStyles
+      )
       const {
         marginLeft: baseTextMarginLeft,
         marginRight: baseTextMarginRight,
@@ -136,17 +154,19 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         color: rectBackgroundColor
       } = candleTooltipStyles.rect
 
-      let maxLabelWidth = 0
+      let maxTextWidth = 0
       let rectWidth = 0
       let rectHeight = 0
       if (isDrawCandleTooltip) {
         ctx.font = createFont(baseTextSize, baseTextWeight, baseTextFamily)
-        baseValues.forEach(value => {
-          const text = `${value.title}${value.value}`
+        candleTooltipDatas.forEach(data => {
+          const title = data.title as TooltipDataChild
+          const value = data.value as TooltipDataChild
+          const text = `${title.text}${value.text}`
           const labelWidth = ctx.measureText(text).width + baseTextMarginLeft + baseTextMarginRight
-          maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
+          maxTextWidth = Math.max(maxTextWidth, labelWidth)
         })
-        rectHeight += ((baseTextMarginBottom + baseTextMarginTop + baseTextSize) * baseValues.length)
+        rectHeight += ((baseTextMarginBottom + baseTextMarginTop + baseTextSize) * candleTooltipDatas.length)
       }
 
       const {
@@ -158,21 +178,23 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         weight: indicatorTextWeight,
         family: indicatorTextFamily
       } = indicatorTooltipStyles.text
-      const indicatorValues: TooltipData[][] = []
+      const indicatorTooltipDatas: TooltipData[][] = []
       if (isDrawIndicatorTooltip) {
         ctx.font = createFont(indicatorTextSize, indicatorTextWeight, indicatorTextFamily)
         indicators.forEach(indicator => {
-          const values = this.getIndicatorTooltipData(dataList, crosshair, indicator, indicatorStyles).values ?? []
-          indicatorValues.push(values)
-          values.forEach(value => {
-            const text = `${value.title}${value.value}`
-            const labelWidth = ctx.measureText(text).width + indicatorTextMarginLeft + indicatorTextMarginRight
-            maxLabelWidth = Math.max(maxLabelWidth, labelWidth)
+          const tooltipDatas = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, indicatorStyles).values ?? []
+          indicatorTooltipDatas.push(tooltipDatas)
+          tooltipDatas.forEach(data => {
+            const title = data.title as TooltipDataChild
+            const value = data.value as TooltipDataChild
+            const text = `${title.text}${value.text}`
+            const textWidth = ctx.measureText(text).width + indicatorTextMarginLeft + indicatorTextMarginRight
+            maxTextWidth = Math.max(maxTextWidth, textWidth)
             rectHeight += (indicatorTextMarginTop + indicatorTextMarginBottom + indicatorTextSize)
           })
         })
       }
-      rectWidth += maxLabelWidth
+      rectWidth += maxTextWidth
       if (rectWidth !== 0 && rectHeight !== 0) {
         rectWidth += (rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight)
         rectHeight += (rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom)
@@ -205,32 +227,34 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             borderRadius: rectBorderRadius
           }
         )?.draw(ctx)
-        const baseLabelX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
-        let labelY = rectY + rectBorderSize + rectPaddingTop
+        const candleTextX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
+        let textY = rectY + rectBorderSize + rectPaddingTop
         if (isDrawCandleTooltip) {
           // 开始渲染基础数据文字
-          baseValues.forEach(value => {
-            labelY += baseTextMarginTop
+          candleTooltipDatas.forEach(data => {
+            textY += baseTextMarginTop
+            const title = data.title as TooltipDataChild
             this.createFigure(
               'text',
               {
-                x: baseLabelX,
-                y: labelY,
-                text: value.title
+                x: candleTextX,
+                y: textY,
+                text: title.text
               },
               {
-                color: value.color,
+                color: title.color,
                 size: baseTextSize,
                 family: baseTextFamily,
                 weight: baseTextWeight
               }
             )?.draw(ctx)
+            const value = data.value as TooltipDataChild
             this.createFigure(
               'text',
               {
                 x: rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight,
-                y: labelY,
-                text: value.value
+                y: textY,
+                text: value.text
               },
               {
                 color: value.color,
@@ -240,24 +264,26 @@ export default class CandleTooltipView extends IndicatorTooltipView {
                 align: 'right'
               }
             )?.draw(ctx)
-            labelY += (baseTextSize + baseTextMarginBottom)
+            textY += (baseTextSize + baseTextMarginBottom)
           })
         }
         if (isDrawIndicatorTooltip) {
           // 开始渲染指标数据文字
-          const indicatorLabelX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft
-          indicatorValues.forEach(values => {
-            values.forEach(value => {
-              labelY += indicatorTextMarginTop
+          const indicatorTextX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft
+          indicatorTooltipDatas.forEach(datas => {
+            datas.forEach(data => {
+              textY += indicatorTextMarginTop
+              const title = data.title as TooltipDataChild
+              const value = data.value as TooltipDataChild
               this.createFigure(
                 'text',
                 {
-                  x: indicatorLabelX,
-                  y: labelY,
-                  text: value.title
+                  x: indicatorTextX,
+                  y: textY,
+                  text: title.text
                 },
                 {
-                  color: value.color,
+                  color: title.color,
                   size: indicatorTextSize,
                   family: indicatorTextFamily,
                   weight: indicatorTextWeight
@@ -268,8 +294,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
                 'text',
                 {
                   x: rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
-                  y: labelY,
-                  text: value.value
+                  y: textY,
+                  text: value.text
                 },
                 {
                   color: value.color,
@@ -279,7 +305,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
                   align: 'right'
                 }
               )?.draw(ctx)
-              labelY += (indicatorTextSize + indicatorTextMarginBottom)
+              textY += (indicatorTextSize + indicatorTextMarginBottom)
             })
           })
         }
@@ -291,35 +317,60 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     data: KLineData,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
+    locale: string,
+    customApi: CustomApi,
     styles: CandleStyle
   ): TooltipData[] {
     const tooltipStyles = styles.tooltip
     const textColor = tooltipStyles.text.color
-    const baseValues = tooltipStyles.values
-    const baseLabels = tooltipStyles.labels
-    const { price: pricePrecision, volume: volumePrecision } = precision
-    if (baseValues !== null) {
-      let values: any[]
-      if (isArray(baseValues)) {
-        values = baseValues as Array<string | CandleTooltipValuesChild>
-      } else {
-        values = (baseValues as CandleTooltipValuesCallback)(data, styles)
-      }
-      return baseLabels.map((label, i) => {
-        const value = values[i]
-        if (isString(value)) {
-          return { title: label, value: value ?? tooltipStyles.defaultValue, color: textColor }
+    let tooltipData: TooltipData[] = []
+    if (isFunction(tooltipStyles.custom)) {
+      const labelValues = tooltipStyles.custom?.(data, styles) ?? []
+      labelValues.forEach(({ title, value }) => {
+        let t: TooltipDataChild = { text: '', color: '' }
+        if (isString(title)) {
+          t.text = title as string
+          t.color = textColor
+        } else {
+          t = title as TooltipDataChild
         }
-        return { title: label, value: value.value ?? tooltipStyles.defaultValue, color: value.color }
+        t.text = i18n(t.text, locale)
+        let v: TooltipDataChild = { text: '', color: '' }
+        if (isString(value)) {
+          v.text = value as string
+          v.color = textColor
+        } else {
+          v = value as TooltipDataChild
+        }
+        tooltipData.push({ title: t, value: v })
       })
+    } else {
+      const { price: pricePrecision, volume: volumePrecision } = precision
+      tooltipData = [
+        {
+          title: { text: i18n('time', locale), color: textColor },
+          value: { text: customApi.formatDate(dateTimeFormat, data.timestamp, 'YYYY-MM-DD hh:mm'), color: textColor }
+        }, {
+          title: { text: i18n('open', locale), color: textColor },
+          value: { text: formatPrecision(data.open, pricePrecision), color: textColor }
+        }, {
+          title: { text: i18n('high', locale), color: textColor },
+          value: { text: formatPrecision(data.high, pricePrecision), color: textColor }
+        }, {
+          title: { text: i18n('low', locale), color: textColor },
+          value: { text: formatPrecision(data.low, pricePrecision), color: textColor }
+        }, {
+          title: { text: i18n('close', locale), color: textColor },
+          value: { text: formatPrecision(data.close, pricePrecision), color: textColor }
+        }, {
+          title: { text: i18n('volume', locale), color: textColor },
+          value: {
+            text: customApi.formatBigNumber(formatPrecision(data.volume ?? tooltipStyles.defaultValue, volumePrecision)),
+            color: textColor
+          }
+        }
+      ]
     }
-    return [
-      { title: baseLabels[0], value: formatDate(dateTimeFormat, data.timestamp, 'YYYY-MM-DD hh:mm'), color: textColor },
-      { title: baseLabels[1], value: formatPrecision(data.open, pricePrecision), color: textColor },
-      { title: baseLabels[2], value: formatPrecision(data.high, pricePrecision), color: textColor },
-      { title: baseLabels[3], value: formatPrecision(data.low, pricePrecision), color: textColor },
-      { title: baseLabels[4], value: formatPrecision(data.close, pricePrecision), color: textColor },
-      { title: baseLabels[5], value: formatBigNumber(formatPrecision(data.volume ?? tooltipStyles.defaultValue, volumePrecision)), color: textColor }
-    ]
+    return tooltipData
   }
 }

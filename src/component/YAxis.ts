@@ -16,12 +16,12 @@ import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
 
 import { IndicatorFigure } from './Indicator'
 
-import { YAxisType, YAxisPosition, CandleType } from '../common/Styles'
+import { YAxisType, YAxisPosition, CandleType } from '../common/Options'
 
 import { isValid } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
-import { formatPrecision, formatBigNumber } from '../common/utils/format'
+import { formatPrecision } from '../common/utils/format'
 
 interface FiguresResult {
   figures: IndicatorFigure[]
@@ -77,7 +77,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
       }
     }
     const visibleDataList = chartStore.getVisibleDataList()
-    const candleStyles = chart.getStyleOptions().candle
+    const candleStyles = chart.getStyles().candle
     const isArea = candleStyles.type === CandleType.AREA
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
@@ -200,13 +200,13 @@ export default class YAxisImp extends AxisImp implements YAxis {
    */
   getType (): string {
     if (this.isInCandle()) {
-      return this.getParent().getChart().getStyleOptions().yAxis.type
+      return this.getParent().getChart().getStyles().yAxis.type
     }
     return YAxisType.NORMAL
   }
 
   getPosition (): string {
-    return this.getParent().getChart().getStyleOptions().yAxis.position
+    return this.getParent().getChart().getStyles().yAxis.position
   }
 
   /**
@@ -215,7 +215,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
    */
   isReverse (): boolean {
     if (this.isInCandle()) {
-      return this.getParent().getChart().getStyleOptions().yAxis.reverse
+      return this.getParent().getChart().getStyles().yAxis.reverse
     }
     return false
   }
@@ -225,7 +225,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
    * @return {boolean}
    */
   isFromZero (): boolean {
-    const yAxisStyles = this.getParent().getChart().getStyleOptions().yAxis
+    const yAxisStyles = this.getParent().getChart().getStyles().yAxis
     const inside = yAxisStyles.inside
     return (
       (yAxisStyles.position === YAxisPosition.LEFT && inside) ||
@@ -237,6 +237,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
     const pane = this.getParent()
     const height = pane.getYAxisWidget()?.getBounding().height ?? 0
     const chartStore = pane.getChart().getChartStore()
+    const customApi = chartStore.getCustomApi()
     const optimalTicks: AxisTick[] = []
     const type = this.getType()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
@@ -252,7 +253,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
         }
       })
     }
-    const textHeight = chartStore.getStyleOptions().xAxis.tickText.size
+    const textHeight = chartStore.getStyles().xAxis.tickText.size
     let validY: number
     ticks.forEach(({ value }) => {
       let v: string
@@ -270,7 +271,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
         default: {
           v = formatPrecision(value, precision)
           if (shouldFormatBigNumber) {
-            v = formatBigNumber(value)
+            v = customApi.formatBigNumber(value)
           }
           break
         }
@@ -287,7 +288,8 @@ export default class YAxisImp extends AxisImp implements YAxis {
     const pane = this.getParent()
     const chart = pane.getChart()
     const chartStore = chart.getChartStore()
-    const styles = chart.getStyleOptions()
+    const customApi = chartStore.getCustomApi()
+    const styles = chart.getStyles()
     const yAxisStyles = styles.yAxis
     const width = yAxisStyles.size
     if (width !== 'auto') {
@@ -341,7 +343,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
       }
       let valueText = formatPrecision(this.getExtremum().max, precision)
       if (shouldFormatBigNumber) {
-        valueText = formatBigNumber(valueText)
+        valueText = customApi.formatBigNumber(valueText)
       }
       crosshairVerticalTextWidth += (
         crosshairStyles.horizontal.text.paddingLeft +

@@ -13,7 +13,7 @@
  */
 
 import Bounding from '../common/Bounding'
-import { AxisStyle, Styles } from '../common/Styles'
+import { AxisStyle, Styles } from '../common/Options'
 
 import { LineAttrs } from '../extension/figure/line'
 import { TextAttrs } from '../extension/figure/text'

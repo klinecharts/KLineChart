@@ -18,7 +18,7 @@ import Point from '../common/Point'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
-import { OverlayStyle } from '../common/Styles'
+import { OverlayStyle, CustomApi } from '../common/Options'
 import { ElementEventHandler } from '../common/Element'
 import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
@@ -263,11 +263,12 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as TypeOrNull<XAxis>
     const bounding = widget.getBounding()
     const chartStore = chart.getChartStore()
+    const customApi = chartStore.getCustomApi()
     const timeScaleStore = chartStore.getTimeScaleStore()
     const dateTimeFormat = timeScaleStore.getDateTimeFormat()
     const barSpace = timeScaleStore.getBarSpace()
     const precision = chartStore.getPrecision()
-    const defaultStyles = chartStore.getStyleOptions().overlay
+    const defaultStyles = chartStore.getStyles().overlay
     const overlayStore = chartStore.getOverlayStore()
     const hoverInstanceInfo = overlayStore.getHoverInstanceInfo()
     const clickInstanceInfo = overlayStore.getClickInstanceInfo()
@@ -275,7 +276,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     overlays.forEach(overlay => {
       this._drawOverlay(
         ctx, overlay, bounding, barSpace, precision,
-        dateTimeFormat, defaultStyles, xAxis, yAxis,
+        dateTimeFormat, customApi, defaultStyles, xAxis, yAxis,
         hoverInstanceInfo, clickInstanceInfo, timeScaleStore
       )
     })
@@ -285,7 +286,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (overlay !== null) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace,
-          precision, dateTimeFormat, defaultStyles, xAxis, yAxis,
+          precision, dateTimeFormat, customApi, defaultStyles, xAxis, yAxis,
           hoverInstanceInfo, clickInstanceInfo, timeScaleStore
         )
       }
@@ -299,6 +300,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     barSpace: BarSpace,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
+    customApi: CustomApi,
     defaultStyles: OverlayStyle,
     xAxis: TypeOrNull<XAxis>,
     yAxis: TypeOrNull<YAxis>,
@@ -337,6 +339,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       bounding,
       precision,
       dateTimeFormat,
+      customApi,
       defaultStyles,
       xAxis,
       yAxis,
@@ -391,6 +394,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     bounding: Bounding,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
+    customApi: CustomApi,
     defaultStyles: OverlayStyle,
     xAxis: TypeOrNull<XAxis>,
     yAxis: TypeOrNull<YAxis>,

@@ -13,7 +13,7 @@
  */
 
 import KLineData from '../../common/KLineData'
-import { IndicatorStyle } from '../../common/Styles'
+import { IndicatorStyle } from '../../common/Options'
 import { formatValue } from '../../common/utils/format'
 
 import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../component/Indicator'

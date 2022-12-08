@@ -21,7 +21,7 @@ import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
-import { OverlayStyle } from '../common/Styles'
+import { OverlayStyle } from '../common/Options'
 import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
 import { clone } from '../common/utils/typeChecks'

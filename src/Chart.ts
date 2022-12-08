@@ -19,10 +19,11 @@ import KLineData from './common/KLineData'
 import Coordinate from './common/Coordinate'
 import Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
-import { Styles, YAxisPosition } from './common/Styles'
+import { Styles, YAxisPosition, CustomApi, Options } from './common/Options'
 import Crosshair from './common/Crosshair'
 import { ActionType, ActionCallback } from './common/Action'
 import LoadMoreCallback from './common/LoadMoreCallback'
+import Precision from './common/Precision'
 
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -61,9 +62,13 @@ export interface ConvertFinder {
 export interface Chart {
   getDom: (paneId?: string, position?: DomPosition) => TypeOrNull<HTMLElement>
   getSize: (paneId?: string, position?: DomPosition) => TypeOrNull<Bounding>
-  setStyleOptions: (options: DeepPartial<Styles>) => void
-  getStyleOptions: () => Styles
+  setLocale: (locale: string) => void
+  getLocale: () => string
+  setStyles: (styles: DeepPartial<Styles>) => void
+  getStyles: () => Styles
+  setCustomApi: (customApi: Partial<CustomApi>) => void
   setPriceVolumePrecision: (pricePrecision: number, volumePrecision: number) => void
+  getPriceVolumePrecision: () => Precision
   setTimezone: (timezone: string) => void
   getTimezone: () => string
   setOffsetRightDistance: (space: number) => void
@@ -143,9 +148,9 @@ export default class ChartImp implements Chart {
     }
   }
 
-  constructor (container: HTMLElement, styleOptions?: DeepPartial<Styles>) {
+  constructor (container: HTMLElement, options?: Options) {
     this._initContainer(container)
-    this._chartStore = new ChartStore(this, styleOptions)
+    this._chartStore = new ChartStore(this, options)
     this._xAxisPane = new XAxisPane(this._chartContainer, this, PaneIdConstants.XAXIS)
     this._panes.set(PaneIdConstants.CANDLE, new CandlePane(this._chartContainer, this, PaneIdConstants.CANDLE))
     this.adjustPaneViewport(true, true, true)
@@ -204,7 +209,7 @@ export default class ChartImp implements Chart {
   }
 
   private _measurePaneWidth (): void {
-    const styles = this._chartStore.getStyleOptions()
+    const styles = this._chartStore.getStyles()
     const yAxisStyles = styles.yAxis
     const isYAxisLeft = yAxisStyles.position === YAxisPosition.LEFT
     const isOutside = !yAxisStyles.inside
@@ -397,17 +402,35 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  setStyleOptions (options: DeepPartial<Styles>): void {
-    this._chartStore.applyStyleOptions(options)
+  setStyles (styles: string | DeepPartial<Styles>): void {
+    this._chartStore.setOptions({ styles })
     this.adjustPaneViewport(true, true, true, true, true)
   }
 
-  getStyleOptions (): Styles {
-    return this._chartStore.getStyleOptions()
+  getStyles (): Styles {
+    return this._chartStore.getStyles()
+  }
+
+  setLocale (locale: string): void {
+    this._chartStore.setOptions({ locale })
+    this.adjustPaneViewport(true, true, true, true, true)
+  }
+
+  getLocale (): string {
+    return this._chartStore.getLocale()
+  }
+
+  setCustomApi (customApi: Partial<CustomApi>): void {
+    this._chartStore.setOptions({ customApi })
+    this.adjustPaneViewport(true, true, true, true, true)
   }
 
   setPriceVolumePrecision (pricePrecision: number, volumePrecision: number): void {
     this._chartStore.setPrecision({ price: pricePrecision, volume: volumePrecision })
+  }
+
+  getPriceVolumePrecision (): Precision {
+    return this._chartStore.getPrecision()
   }
 
   setTimezone (timezone: string): void {

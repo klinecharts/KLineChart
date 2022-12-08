@@ -12,12 +12,12 @@
 - `position` 位置，支持`root`，`main`，`yAxis`，缺省则是`root`
 
 
-### setStyleOptions(styles)
+### setStyles(styles)
 设置样式配置。
 - `styles` 样式配置，详情可参阅[样式说明](styles.md)
 
 
-### getStyleOptions()
+### getStyles()
 获取样式配置。
 
 

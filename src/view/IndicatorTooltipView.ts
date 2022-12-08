@@ -15,22 +15,20 @@
 import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, TooltipShowRule, TooltipStyle, MarginTextStyle } from '../common/Styles'
+import { IndicatorStyle, TooltipShowRule, TooltipStyle, MarginTextStyle, TooltipData, TooltipDataChild, CustomApi } from '../common/Options'
 
 import XAxis from '../component/XAxis'
 import YAxis from '../component/YAxis'
 
-import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData, IndicatorTooltipDataChild } from '../component/Indicator'
+import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
 
 import { PaneIdConstants } from '../pane/Pane'
 
-import View from './View'
-
-import { formatPrecision, formatBigNumber } from '../common/utils/format'
-import { isValid } from '../common/utils/typeChecks'
+import { formatPrecision } from '../common/utils/format'
+import { isValid, isString } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 
-export type TooltipData = IndicatorTooltipDataChild
+import View from './View'
 
 export default class IndicatorTooltipView extends View<YAxis> {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
@@ -38,10 +36,11 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
+    const customApi = chartStore.getCustomApi()
     const crosshair = chartStore.getCrosshairStore().get()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-    const defaultStyles = chartStore.getStyleOptions().indicator
-    this.drawIndicatorTooltip(ctx, chartStore.getDataList(), crosshair, indicators, bounding, defaultStyles)
+    const defaultStyles = chartStore.getStyles().indicator
+    this.drawIndicatorTooltip(ctx, chartStore.getDataList(), crosshair, indicators, customApi, bounding, defaultStyles)
   }
 
   protected drawIndicatorTooltip (
@@ -49,6 +48,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     dataList: KLineData[],
     crosshair: Crosshair,
     indicators: Map<string, IndicatorImp>,
+    customApi: CustomApi,
     bounding: Bounding,
     styles: IndicatorStyle,
     top?: number
@@ -66,7 +66,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       let labelY = top ?? 0
       ctx.font = createFont(textSize, textWeight, textFamily)
       indicators.forEach(indicator => {
-        const { name, calcParamsText, values } = this.getIndicatorTooltipData(dataList, crosshair, indicator, styles)
+        const { name, calcParamsText, values } = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, styles)
         const nameValid = name !== undefined && name.length > 0
         const valuesValid = values !== undefined && values.length > 0
         if (nameValid || valuesValid) {
@@ -115,10 +115,13 @@ export default class IndicatorTooltipView extends View<YAxis> {
     let labelY = startY
     let height = 0
     const { marginLeft, marginTop, marginRight, marginBottom, size, family, weight } = styles
-    values.forEach(({ title, value, color }) => {
-      const text = `${title}${value}`
-      const textWidth = ctx.measureText(text).width
-      if (labelX + marginLeft + textWidth + marginRight > bounding.width) {
+    values.forEach((data) => {
+      const title = data.title as TooltipDataChild
+      const value = data.value as TooltipDataChild
+      const titleTextWidth = ctx.measureText(`${title.text}`).width
+      const valueTextWidth = ctx.measureText(`${value.text}`).width
+      const totalTextWidth = titleTextWidth + valueTextWidth
+      if (labelX + marginLeft + totalTextWidth + marginRight > bounding.width) {
         labelX = marginLeft
         height += (size + marginTop + marginBottom)
         labelY += (size + marginTop + marginBottom)
@@ -130,11 +133,21 @@ export default class IndicatorTooltipView extends View<YAxis> {
         {
           x: labelX,
           y: labelY,
-          text
+          text: title.text
         },
-        { color, size, family, weight }
+        { color: title.color, size, family, weight }
       )?.draw(ctx)
-      labelX += (textWidth + marginRight)
+      labelX += titleTextWidth
+      this.createFigure(
+        'text',
+        {
+          x: labelX,
+          y: labelY,
+          text: value.text
+        },
+        { color: value.color, size, family, weight }
+      )?.draw(ctx)
+      labelX += (valueTextWidth + marginRight)
     })
     return height
   }
@@ -149,13 +162,14 @@ export default class IndicatorTooltipView extends View<YAxis> {
     dataList: KLineData[],
     crosshair: Crosshair,
     indicator: Indicator,
+    customApi: CustomApi,
     styles: IndicatorStyle
   ): IndicatorTooltipData {
     if (indicator.createToolTipDataSource !== null) {
       const widget = this.getWidget()
       const pane = widget.getPane()
       const chartStore = pane.getChart().getChartStore()
-      return indicator.createToolTipDataSource({
+      const indicatorTooltipDatas = indicator.createToolTipDataSource({
         kLineDataList: dataList,
         indicator,
         visibleRange: chartStore.getTimeScaleStore().getVisibleRange(),
@@ -165,6 +179,27 @@ export default class IndicatorTooltipView extends View<YAxis> {
         xAxis: pane.getChart().getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as XAxis,
         yAxis: pane.getAxisComponent()
       })
+      if (indicatorTooltipDatas.values !== undefined) {
+        const tooltipDatas: TooltipData[] = []
+        const color = styles.tooltip.text.color
+        indicatorTooltipDatas.values.forEach(data => {
+          let title = { text: '', color }
+          if (isString(data.title)) {
+            title.text = data.title as string
+          } else {
+            title = data.title as TooltipDataChild
+          }
+          let value = { text: '', color }
+          if (isString(data.value)) {
+            value.text = data.value as string
+          } else {
+            value = data.value as TooltipDataChild
+          }
+          tooltipDatas.push({ title, value })
+        })
+        indicatorTooltipDatas.values = tooltipDatas
+      }
+      return indicatorTooltipDatas
     }
 
     const dataIndex = crosshair.dataIndex as number
@@ -177,17 +212,18 @@ export default class IndicatorTooltipView extends View<YAxis> {
     }
 
     const indicatorData = result[dataIndex] ?? {}
-    const values: IndicatorTooltipDataChild[] = []
+    const values: TooltipData[] = []
     eachFigures(dataList, indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
       if (figure.title !== undefined) {
+        const color = figureStyles.color
         let value = indicatorData[figure.key]
         if (isValid(value)) {
           value = formatPrecision(value, indicator.precision)
           if (indicator.shouldFormatBigNumber) {
-            value = formatBigNumber(value)
+            value = customApi.formatBigNumber(value)
           }
         }
-        values.push({ title: figure.title, value: value ?? styles.tooltip.defaultValue, color: figureStyles.color })
+        values.push({ title: { text: figure.title, color }, value: { text: value ?? styles.tooltip.defaultValue, color } })
       }
     })
     return { name: indicator.shortName, calcParamsText, values }
