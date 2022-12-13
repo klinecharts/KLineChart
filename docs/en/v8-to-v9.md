@@ -9,6 +9,7 @@ This document will help you upgrade from kinecharts 8.x to klinecharts 9.x. If y
 
 ## Style configuration adjustment
 + The style options of all lines are changed to `dashed` and `dashValue` to `dashedValue`.
++ `candle.tooltip.labels` and `candle.tooltip.values` are merged into `candle.tooltip.custom`.
 + `xAxis.height` is changed to `xAxis.size`, `xAxis.tickeText.paddingTop` is changed to `xAxis.tickeText.marinStart`, and `xAxis.tickeText.paddingBottom` is changed to `xAxis.tickeText.marginEnd`.
 + `yAxis.height` is changed to `yAxis.size`, `yAxis.tickeText.paddingTop` is changed to `yAxis.tickeText.marinStart`, and `yAxis.tickeText.paddingBottom` is changed to `yAxis.tickeText.marginEnd`.
 + `technicalIndicator.bar` is changed to `indicator.bars`, `technicalIndicator.line` is changed to `indicator.lines`，`technicalIndicator.circle` is changed to `indicator.circles`.

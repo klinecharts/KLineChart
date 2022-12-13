@@ -9,6 +9,7 @@
 
 ## 样式配置调整
 + 所有线的样式选项`dash`，更改为`dashed`，`dashValue`更改为`dashedValue`。
++ `candle.tooltip.labels`和`candle.tooltip.values`，合并为`candle.tooltip.custom`。
 + `xAxis.height`变更为`xAxis.size`，`xAxis.tickText.paddingTop`变更为`xAxis.tickText.marginStart`，`xAxis.tickText.paddingBottom`变更为`xAxis.tickText.marginEnd`。
 + `yAxis.height`变更为`yAxis.size`，`yAxis.tickText.paddingTop`变更为`yAxis.tickText.marginStart`，`yAxis.tickText.paddingBottom`变更为`yAxis.tickText.marginEnd`。
 + `technicalIndicator.bar`变更为`indicator.bars`，`technicalIndicator.line`变更为`indicator.lines`，`technicalIndicator.circle`变更为`indicator.circles`。

@@ -17,7 +17,7 @@ import { LineStyle, LineType } from '../../common/Options'
 
 import { FigureTemplate, DEVIATION } from '../../component/Figure'
 
-function checkCoordinateOnArc (coordinate: Coordinate, arc: ArcAttrs): boolean {
+export function checkCoordinateOnArc (coordinate: Coordinate, arc: ArcAttrs): boolean {
   if (Math.abs(getDistance(coordinate, arc) - arc.r) < DEVIATION) {
     const { r, startAngle, endAngle } = arc
     const startCoordinateX = r * Math.cos(startAngle) + arc.x
@@ -34,7 +34,7 @@ function checkCoordinateOnArc (coordinate: Coordinate, arc: ArcAttrs): boolean {
   return false
 }
 
-function drawArc (ctx: CanvasRenderingContext2D, attrs: ArcAttrs, styles: Partial<LineStyle>): void {
+export function drawArc (ctx: CanvasRenderingContext2D, attrs: ArcAttrs, styles: Partial<LineStyle>): void {
   const { x, y, r, startAngle, endAngle } = attrs
   const { style = LineType.SOLID, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
   ctx.lineWidth = size

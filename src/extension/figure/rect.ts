@@ -17,7 +17,7 @@ import { RectStyle, PolygonType, LineType } from '../../common/Options'
 
 import { FigureTemplate } from '../../component/Figure'
 
-function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolean {
+export function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolean {
   return (
     coordinate.x >= rect.x &&
     coordinate.x <= rect.x + rect.width &&

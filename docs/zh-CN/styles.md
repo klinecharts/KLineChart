@@ -103,9 +103,10 @@
       showRule: 'always',
       // 'standard' | 'rect'
       showType: 'standard',
-      labels: ['时间', '开', '收', '高', '低', '成交量'],
-      // 可以是数组，可以是一个方法，当是方法时，返回一个数组，返回值可以是值数组，也可以是带颜色的对象，`[{ value: 'xxx', color: '#ff0' }]`
-      values: null,
+      // 显示回调方法，返回数据格式类型需要时一个数组
+      // 数组的子项类型为 { title, value }
+      // title和value可以是字符串或者对象，对象类型为 { text, color }
+      custom: null
       defaultValue: 'n/a',
       rect: {
         paddingLeft: 0,

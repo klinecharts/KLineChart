@@ -18,7 +18,7 @@ import { LineStyle, LineType } from '../../common/Options'
 
 import { FigureTemplate } from '../../component/Figure'
 
-function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs): boolean {
+export function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs): boolean {
   let on = false
   const coordinates = line.coordinates
   if (coordinates.length > 1) {
@@ -69,7 +69,7 @@ export function getLinearSlopeIntercept (coordinate1: Coordinate, coordinate2: C
   return null
 }
 
-function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<LineStyle>): void {
+export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<LineStyle>): void {
   const { coordinates } = attrs
   if (coordinates.length > 1) {
     const { style = LineType.SOLID, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles

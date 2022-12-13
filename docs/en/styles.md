@@ -95,9 +95,10 @@ Whether you see a point or a line on the chart, you can basically customize the 
       showRule: 'always',
       // 'standard' | 'rect'
       showType: 'standard',
-      labels: ['时间', '开', '收', '高', '低', '成交量'],
-      // It can be an array or a method. When it is a method, it returns an array. The return value can be a value array or a colored object, `[{value: 'xxx', color: '# ff0'}]`
-      values: null,
+      // Display callback methods, and return an array of data format types when required
+      // The subitem type of the array is {title, value}
+      // Title and value can be strings or objects, and the object type is {text, color}
+      custom: null
       defaultValue: 'n/a',
       rect: {
         paddingLeft: 0,

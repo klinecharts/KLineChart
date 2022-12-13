@@ -17,7 +17,7 @@ import { PolygonStyle, PolygonType, LineType } from '../../common/Options'
 
 import { FigureTemplate } from '../../component/Figure'
 
-function checkCoordinateOnPolygon (coordinate: Coordinate, polygon: PolygonAttrs): boolean {
+export function checkCoordinateOnPolygon (coordinate: Coordinate, polygon: PolygonAttrs): boolean {
   let on = false
   const coordinates = polygon.coordinates
   for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
@@ -31,7 +31,7 @@ function checkCoordinateOnPolygon (coordinate: Coordinate, polygon: PolygonAttrs
   return on
 }
 
-function drawPolygon (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs, styles: Partial<PolygonStyle>): void {
+export function drawPolygon (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs, styles: Partial<PolygonStyle>): void {
   const { coordinates } = attrs
   const {
     style = PolygonType.FILL,

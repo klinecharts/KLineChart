@@ -14,16 +14,29 @@
 
 import { Options } from './common/Options'
 import ChartImp, { Chart } from './Chart'
+
+import { checkCoordinateOnArc, drawArc } from './extension/figure/arc'
+import { checkCoordinateOnCircle, drawCircle } from './extension/figure/circle'
+import {
+  checkCoordinateOnLine, drawLine,
+  getLinearYFromSlopeIntercept, getLinearSlopeIntercept, getLinearYFromCoordinates
+} from './extension/figure/line'
+import { checkCoordinateOnPolygon, drawPolygon } from './extension/figure/polygon'
+import { checkCoordinateOnRect, drawRect } from './extension/figure/rect'
+import { drawRectText } from './extension/figure/rectText'
+import { checkCoordinateOnText, drawText } from './extension/figure/text'
+
 import { reisterFigure, getSupportFigures } from './extension/figure/index'
 import { registerIndicator, getSupportIndicators } from './extension/indicator/index'
 import { registerLocale, getSupportLocales } from './extension/i18n/index'
 import { registerOverlay, getSupportedOverlays } from './extension/overlay/index'
 import { registerStyles } from './extension/styles/index'
+
 import { logError, logTag, logWarn } from './common/utils/logger'
+
 import {
   clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
 } from './common/utils/typeChecks'
-
 import { formatValue, formatPrecision, formatBigNumber } from './common/utils/format'
 
 const instances: {[id: string]: Chart} = {}
@@ -40,7 +53,7 @@ function version (): string {
 /**
  * Init chart instance
  * @param ds
- * @param styles
+ * @param options
  * @returns {Chart}
  */
 function init (ds: HTMLElement | string, options?: Options): Chart | null {
@@ -105,7 +118,23 @@ const utils = {
   isBoolean,
   formatValue,
   formatPrecision,
-  formatBigNumber
+  formatBigNumber,
+  getLinearSlopeIntercept,
+  getLinearYFromSlopeIntercept,
+  getLinearYFromCoordinates,
+  checkCoordinateOnArc,
+  checkCoordinateOnCircle,
+  checkCoordinateOnLine,
+  checkCoordinateOnPolygon,
+  checkCoordinateOnRect,
+  checkCoordinateOnText,
+  drawArc,
+  drawCircle,
+  drawLine,
+  drawPolygon,
+  drawRect,
+  drawText,
+  drawRectText
 }
 
 export {
