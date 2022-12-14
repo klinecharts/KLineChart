@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
 import { CandleType, ChangeColor, RectStyle, PolygonType } from '../common/Options'
@@ -44,7 +44,7 @@ export default class CandleBarView extends ChildrenView {
     }
   }
 
-  protected getCandleBarOptions (chartStore: ChartStore): TypeOrNull<CandleBarOptions> {
+  protected getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
     const candleStyles = chartStore.getStyles().candle
     return {
       type: candleStyles.type as Exclude<CandleType, 'area'>,

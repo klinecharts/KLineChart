@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 
 import SeparatorWidget from '../widget/SeparatorWidget'
 import DrawWidget from '../widget/DrawWidget'
@@ -36,11 +36,11 @@ export default class IndicatorPane extends Pane<YAxis> {
     return new IndicatorWidget(container, this)
   }
 
-  protected createSeparatorWidget (container: HTMLElement): TypeOrNull<SeparatorWidget> {
+  protected createSeparatorWidget (container: HTMLElement): Nullable<SeparatorWidget> {
     return new SeparatorWidget(container, this)
   }
 
-  protected creatYAxisWidget (container: HTMLElement): TypeOrNull<YAxisWidget> {
+  protected creatYAxisWidget (container: HTMLElement): Nullable<YAxisWidget> {
     return new YAxisWidget(container, this)
   }
 }

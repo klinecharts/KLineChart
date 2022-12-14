@@ -23,7 +23,7 @@
 
 import Coordinate from './Coordinate'
 
-import TypeOrNull from './TypeOrNull'
+import Nullable from './Nullable'
 
 import { isFF, isIOS, isChrome } from './utils/platform'
 
@@ -136,38 +136,38 @@ export default class MouseTouchEventHandler {
   private readonly _options: EventOptions
 
   private _clickCount: number = 0
-  private _clickTimeoutId: TypeOrNull<TimerId> = null
+  private _clickTimeoutId: Nullable<TimerId> = null
   private _clickCoordinate: Coordinate = { x: Number.NEGATIVE_INFINITY, y: Number.POSITIVE_INFINITY }
 
   private _tapCount: number = 0
-  private _tapTimeoutId: TypeOrNull<TimerId> = null
+  private _tapTimeoutId: Nullable<TimerId> = null
   private _tapCoordinate: Coordinate = { x: Number.NEGATIVE_INFINITY, y: Number.POSITIVE_INFINITY }
 
-  private _longTapTimeoutId: TypeOrNull<TimerId> = null
+  private _longTapTimeoutId: Nullable<TimerId> = null
   private _longTapActive: boolean = false
 
-  private _mouseMoveStartCoordinate: TypeOrNull<Coordinate> = null
+  private _mouseMoveStartCoordinate: Nullable<Coordinate> = null
 
-  private _touchMoveStartCoordinate: TypeOrNull<Coordinate> = null
+  private _touchMoveStartCoordinate: Nullable<Coordinate> = null
   private _touchMoveExceededManhattanDistance: boolean = false
 
   private _cancelClick: boolean = false
   private _cancelTap: boolean = false
 
-  private _unsubscribeOutsideMouseEvents: TypeOrNull<EmptyCallback> = null
-  private _unsubscribeOutsideTouchEvents: TypeOrNull<EmptyCallback> = null
-  private _unsubscribeMobileSafariEvents: TypeOrNull<EmptyCallback> = null
+  private _unsubscribeOutsideMouseEvents: Nullable<EmptyCallback> = null
+  private _unsubscribeOutsideTouchEvents: Nullable<EmptyCallback> = null
+  private _unsubscribeMobileSafariEvents: Nullable<EmptyCallback> = null
 
-  private _unsubscribeMousemove: TypeOrNull<EmptyCallback> = null
+  private _unsubscribeMousemove: Nullable<EmptyCallback> = null
 
-  private _unsubscribeMouseWheel: TypeOrNull<EmptyCallback> = null
+  private _unsubscribeMouseWheel: Nullable<EmptyCallback> = null
 
-  private _unsubscribeContextMenu: TypeOrNull<EmptyCallback> = null
+  private _unsubscribeContextMenu: Nullable<EmptyCallback> = null
 
-  private _unsubscribeRootMouseEvents: TypeOrNull<EmptyCallback> = null
-  private _unsubscribeRootTouchEvents: TypeOrNull<EmptyCallback> = null
+  private _unsubscribeRootMouseEvents: Nullable<EmptyCallback> = null
+  private _unsubscribeRootTouchEvents: Nullable<EmptyCallback> = null
 
-  private _startPinchMiddleCoordinate: TypeOrNull<Coordinate> = null
+  private _startPinchMiddleCoordinate: Nullable<Coordinate> = null
   private _startPinchDistance: number = 0
   private _pinchPrevented: boolean = false
   private _preventTouchDragProcess: boolean = false
@@ -178,7 +178,7 @@ export default class MouseTouchEventHandler {
 
   // for touchstart/touchmove/touchend events we handle only first touch
   // i.e. we don't support several active touches at the same time (except pinch event)
-  private _activeTouchId: TypeOrNull<number> = null
+  private _activeTouchId: Nullable<number> = null
 
   // accept all mouse leave events if it's not an iOS device
   // see _mouseEnterHandler, _mouseMoveHandler, _mouseLeaveHandler
@@ -964,7 +964,7 @@ function eventTimeStamp (e: TouchEvent | MouseEvent): number {
   return e.timeStamp ?? performance.now()
 }
 
-function touchWithId (touches: TouchList, id: TypeOrNull<number>): TypeOrNull<Touch> {
+function touchWithId (touches: TouchList, id: Nullable<number>): Nullable<Touch> {
   for (let i = 0; i < touches.length; ++i) {
     if (touches[i].identifier === id) {
       return touches[i]

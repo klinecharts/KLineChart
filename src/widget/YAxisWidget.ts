@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import Coordinate from '../common/Coordinate'
 import { UpdateLevel } from '../common/Updater'
 
@@ -38,7 +38,7 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
   private readonly _overlayYAxisView = new OverlayYAxisView(this)
   private readonly _crosshairHorizontalLabelView = new CrosshairHorizontalLabelView(this)
 
-  private _prevExtremum: TypeOrNull<AxisExtremum> = null
+  private _prevExtremum: Nullable<AxisExtremum> = null
   private _startScaleDistance = 0
 
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {

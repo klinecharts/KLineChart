@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../../common/TypeOrNull'
+import Nullable from '../../common/Nullable'
 import Coordinate from '../../common/Coordinate'
 import { LineStyle, LineType } from '../../common/Options'
 
@@ -41,7 +41,7 @@ export function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs):
   return on
 }
 
-export function getLinearYFromSlopeIntercept (kb: TypeOrNull<number[]>, coordinate: Coordinate): number {
+export function getLinearYFromSlopeIntercept (kb: Nullable<number[]>, coordinate: Coordinate): number {
   if (kb != null) {
     return coordinate.x * kb[0] + kb[1]
   }
@@ -59,7 +59,7 @@ export function getLinearYFromCoordinates (coordinate1: Coordinate, coordinate2:
   return getLinearYFromSlopeIntercept(kb, targetCoordinate)
 }
 
-export function getLinearSlopeIntercept (coordinate1: Coordinate, coordinate2: Coordinate): TypeOrNull<number[]> {
+export function getLinearSlopeIntercept (coordinate1: Coordinate, coordinate2: Coordinate): Nullable<number[]> {
   const difX = coordinate1.x - coordinate2.x
   if (difX !== 0) {
     const k = (coordinate1.y - coordinate2.y) / difX

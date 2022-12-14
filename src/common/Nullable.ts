@@ -13,6 +13,6 @@
  * limitations under the License.
  */
 
-type TypeOrNull<T> = T | null
+type Nullable<T> = T | null
 
-export default TypeOrNull
+export default Nullable

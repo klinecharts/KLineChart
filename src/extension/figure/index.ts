@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../../common/TypeOrNull'
+import Nullable from '../../common/Nullable'
 
 import FigureImp, { FigureTemplate, FigureConstructor } from '../../component/Figure'
 
@@ -38,7 +38,7 @@ function reisterFigure<A = any, S = any> (figure: FigureTemplate<A, S>): void {
   figures[figure.name] = FigureImp.extend(figure)
 }
 
-function getFigureClass<A = any, S = any> (name: string): TypeOrNull<FigureConstructor<A, S>> {
+function getFigureClass<A = any, S = any> (name: string): Nullable<FigureConstructor<A, S>> {
   return figures[name] ?? null
 }
 

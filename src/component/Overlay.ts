@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import PickPartial from '../common/PickPartial'
 import DeepPartial from '../common/DeepPartial'
 import ExcludePickPartial from '../common/ExcludePickPartial'
@@ -61,8 +61,8 @@ export interface OverlayCreateFiguresCallbackParams {
   precision: Precision
   dateTimeFormat: Intl.DateTimeFormat
   defaultStyles: OverlayStyle
-  xAxis: TypeOrNull<XAxis>
-  yAxis: TypeOrNull<YAxis>
+  xAxis: Nullable<XAxis>
+  yAxis: Nullable<YAxis>
 }
 
 export interface OverlayEvent extends Partial<MouseTouchEvent> {
@@ -132,97 +132,97 @@ export interface Overlay {
   /**
    * The style information and format are consistent with the overlay in the unified configuration
    */
-  styles: TypeOrNull<DeepPartial<OverlayStyle>>
+  styles: Nullable<DeepPartial<OverlayStyle>>
 
   /**
    * Create figures corresponding to points
    */
-  createPointFigures: TypeOrNull<OverlayCreateFiguresCallback>
+  createPointFigures: Nullable<OverlayCreateFiguresCallback>
 
   /**
    * Create figures on the Y axis
    */
-  createXAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>
+  createXAxisFigures: Nullable<OverlayCreateFiguresCallback>
 
   /**
    * Create figures on the X axis
    */
-  createYAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>
+  createYAxisFigures: Nullable<OverlayCreateFiguresCallback>
 
   /**
    * Special handling callbacks when pressing events
    */
-  performEventPressedMove: TypeOrNull<(params: OverlayPerformEventParams) => void>
+  performEventPressedMove: Nullable<(params: OverlayPerformEventParams) => void>
 
   /**
    * In drawing, special handling callback when moving events
    */
-  performEventMoveForDrawing: TypeOrNull<(params: OverlayPerformEventParams) => void>
+  performEventMoveForDrawing: Nullable<(params: OverlayPerformEventParams) => void>
 
   /**
    * Start drawing event
    */
-  onDrawStart: TypeOrNull<OverlayEventCallback>
+  onDrawStart: Nullable<OverlayEventCallback>
 
   /**
    * In drawing event
    */
-  onDrawing: TypeOrNull<OverlayEventCallback>
+  onDrawing: Nullable<OverlayEventCallback>
 
   /**
    * Draw End Event
    */
-  onDrawEnd: TypeOrNull<OverlayEventCallback>
+  onDrawEnd: Nullable<OverlayEventCallback>
 
   /**
    * Click event
    */
-  onClick: TypeOrNull<OverlayEventCallback>
+  onClick: Nullable<OverlayEventCallback>
 
   /**
    * Right click event
    */
-  onRightClick: TypeOrNull<OverlayEventCallback>
+  onRightClick: Nullable<OverlayEventCallback>
 
   /**
    * Pressed move start event
    */
-  onPressedMoveStart: TypeOrNull<OverlayEventCallback>
+  onPressedMoveStart: Nullable<OverlayEventCallback>
 
   /**
    * Pressed moving event
    */
-  onPressedMoving: TypeOrNull<OverlayEventCallback>
+  onPressedMoving: Nullable<OverlayEventCallback>
 
   /**
    * Pressed move end event
    */
-  onPressedMoveEnd: TypeOrNull<OverlayEventCallback>
+  onPressedMoveEnd: Nullable<OverlayEventCallback>
 
   /**
    * Mouse enter event
    */
-  onMouseEnter: TypeOrNull<OverlayEventCallback>
+  onMouseEnter: Nullable<OverlayEventCallback>
 
   /**
    * Mouse leave event
    */
-  onMouseLeave: TypeOrNull<OverlayEventCallback>
+  onMouseLeave: Nullable<OverlayEventCallback>
 
   /**
    * Removed event
    */
-  onRemoved: TypeOrNull<OverlayEventCallback>
+  onRemoved: Nullable<OverlayEventCallback>
 
   /**
    * Selected event
    */
-  onSelected: TypeOrNull<OverlayEventCallback>
+  onSelected: Nullable<OverlayEventCallback>
 
   /**
    * Deselected event
    */
-  onDeselected: TypeOrNull<OverlayEventCallback>
+  onDeselected: Nullable<OverlayEventCallback>
 }
 
 export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'points' | 'currentStep'>, 'name'>
@@ -244,27 +244,27 @@ export default abstract class OverlayImp implements Overlay {
   mode: OverlayMode
   points: Array<PickPartial<Point, 'timestamp'>> = []
   extendData: any
-  styles: TypeOrNull<DeepPartial<OverlayStyle>>
-  createPointFigures: TypeOrNull<OverlayCreateFiguresCallback>
-  createXAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>
-  createYAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>
-  performEventPressedMove: TypeOrNull<(params: OverlayPerformEventParams) => void>
-  performEventMoveForDrawing: TypeOrNull<(params: OverlayPerformEventParams) => void>
-  onDrawStart: TypeOrNull<OverlayEventCallback>
-  onDrawing: TypeOrNull<OverlayEventCallback>
-  onDrawEnd: TypeOrNull<OverlayEventCallback>
-  onClick: TypeOrNull<OverlayEventCallback>
-  onRightClick: TypeOrNull<OverlayEventCallback>
-  onPressedMoveStart: TypeOrNull<OverlayEventCallback>
-  onPressedMoving: TypeOrNull<OverlayEventCallback>
-  onPressedMoveEnd: TypeOrNull<OverlayEventCallback>
-  onMouseEnter: TypeOrNull<OverlayEventCallback>
-  onMouseLeave: TypeOrNull<OverlayEventCallback>
-  onRemoved: TypeOrNull<OverlayEventCallback>
-  onSelected: TypeOrNull<OverlayEventCallback>
-  onDeselected: TypeOrNull<OverlayEventCallback>
+  styles: Nullable<DeepPartial<OverlayStyle>>
+  createPointFigures: Nullable<OverlayCreateFiguresCallback>
+  createXAxisFigures: Nullable<OverlayCreateFiguresCallback>
+  createYAxisFigures: Nullable<OverlayCreateFiguresCallback>
+  performEventPressedMove: Nullable<(params: OverlayPerformEventParams) => void>
+  performEventMoveForDrawing: Nullable<(params: OverlayPerformEventParams) => void>
+  onDrawStart: Nullable<OverlayEventCallback>
+  onDrawing: Nullable<OverlayEventCallback>
+  onDrawEnd: Nullable<OverlayEventCallback>
+  onClick: Nullable<OverlayEventCallback>
+  onRightClick: Nullable<OverlayEventCallback>
+  onPressedMoveStart: Nullable<OverlayEventCallback>
+  onPressedMoving: Nullable<OverlayEventCallback>
+  onPressedMoveEnd: Nullable<OverlayEventCallback>
+  onMouseEnter: Nullable<OverlayEventCallback>
+  onMouseLeave: Nullable<OverlayEventCallback>
+  onRemoved: Nullable<OverlayEventCallback>
+  onSelected: Nullable<OverlayEventCallback>
+  onDeselected: Nullable<OverlayEventCallback>
 
-  private _prevPressedPoint: TypeOrNull<Partial<Point>> = null
+  private _prevPressedPoint: Nullable<Partial<Point>> = null
   private _prevPressedPoints: Array<PickPartial<Point, 'timestamp'>> = []
 
   constructor (overlay: OverlayTemplate) {
@@ -326,7 +326,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setStyles (styles: TypeOrNull<DeepPartial<OverlayStyle>>): boolean {
+  setStyles (styles: Nullable<DeepPartial<OverlayStyle>>): boolean {
     if (styles !== this.styles) {
       this.styles = styles
       return true
@@ -392,7 +392,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnDrawStartCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnDrawStartCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onDrawStart !== callback) {
       this.onDrawStart = callback
       return true
@@ -400,7 +400,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnDrawingCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnDrawingCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onDrawing !== callback) {
       this.onDrawing = callback
       return true
@@ -408,7 +408,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnDrawEndCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnDrawEndCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onDrawEnd !== callback) {
       this.onDrawEnd = callback
       return true
@@ -416,7 +416,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnClickCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnClickCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onClick !== callback) {
       this.onClick = callback
       return true
@@ -424,7 +424,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnRightClickCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnRightClickCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onRightClick !== callback) {
       this.onRightClick = callback
       return true
@@ -432,7 +432,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnPressedMoveStartCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnPressedMoveStartCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onPressedMoveStart !== callback) {
       this.onPressedMoveStart = callback
       return true
@@ -440,7 +440,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnPressedMovingCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnPressedMovingCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onPressedMoving !== callback) {
       this.onPressedMoving = callback
       return true
@@ -448,7 +448,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnPressedMoveEndCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnPressedMoveEndCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onPressedMoveEnd !== callback) {
       this.onPressedMoveEnd = callback
       return true
@@ -456,7 +456,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnMouseEnterCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnMouseEnterCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onMouseEnter !== callback) {
       this.onMouseEnter = callback
       return true
@@ -464,7 +464,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnMouseLeaveCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnMouseLeaveCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onMouseLeave !== callback) {
       this.onMouseLeave = callback
       return true
@@ -472,7 +472,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnRemovedCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnRemovedCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onRemoved !== callback) {
       this.onRemoved = callback
       return true
@@ -480,7 +480,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnSelectedCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnSelectedCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onSelected !== callback) {
       this.onSelected = callback
       return true
@@ -488,7 +488,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setOnDeselectedCallback (callback: TypeOrNull<OverlayEventCallback>): boolean {
+  setOnDeselectedCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onDeselected !== callback) {
       this.onDeselected = callback
       return true

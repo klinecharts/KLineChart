@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import Precision from '../common/Precision'
 
 import ChartStore from './ChartStore'
@@ -160,7 +160,7 @@ export default class IndicatorStore {
     return await Promise.all(tasks)
   }
 
-  getInstanceByPaneId (paneId?: string, name?: string): TypeOrNull<Indicator> | TypeOrNull<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
+  getInstanceByPaneId (paneId?: string, name?: string): Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
     if (paneId !== undefined) {
       const paneInstances = this._instances.get(paneId)
       if (name !== undefined) {

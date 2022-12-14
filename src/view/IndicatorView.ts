@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import Coordinate from '../common/Coordinate'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
@@ -34,7 +34,7 @@ import { formatValue } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
 export default class IndicatorView extends CandleBarView {
-  protected getCandleBarOptions (chartStore: ChartStore): TypeOrNull<CandleBarOptions> {
+  protected getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
     const pane = this.getWidget().getPane()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     for (const entries of indicators) {
@@ -88,7 +88,7 @@ export default class IndicatorView extends CandleBarView {
       }
       if (!isCover) {
         const result = indicator.result
-        const lineFigureStyles: Array<TypeOrNull<IndicatorFigureStyle>> = []
+        const lineFigureStyles: Array<Nullable<IndicatorFigureStyle>> = []
         const lineCoordinates: Coordinate[][] = []
 
         const lines: Array<FigureCreate<LineAttrs, Partial<LineStyle>>> = []
@@ -149,7 +149,7 @@ export default class IndicatorView extends CandleBarView {
                 break
               }
               case 'line': {
-                let innerFigureStyle: TypeOrNull<IndicatorFigureStyle> = null
+                let innerFigureStyle: Nullable<IndicatorFigureStyle> = null
                 if (isValid(value)) {
                   innerFigureStyle = figureStyles
                   const coordinate = { x, y: valueY }

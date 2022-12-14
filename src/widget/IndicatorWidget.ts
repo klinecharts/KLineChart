@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import Coordinate from '../common/Coordinate'
 import Crosshair from '../common/Crosshair'
 import { UpdateLevel } from '../common/Updater'
@@ -41,11 +41,11 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   // 惯性滚动开始时间
   private _flingStartTime = new Date().getTime()
   // 惯性滚动定时器
-  private _flingScrollTimerId: TypeOrNull<number> = null
+  private _flingScrollTimerId: Nullable<number> = null
   // 开始滚动时坐标点
-  private _startScrollCoordinate: TypeOrNull<Coordinate> = null
+  private _startScrollCoordinate: Nullable<Coordinate> = null
   // 开始触摸时坐标
-  private _touchCoordinate: TypeOrNull<Coordinate> = null
+  private _touchCoordinate: Nullable<Coordinate> = null
   // 是否是取消了十字光标
   private _touchCancelCrosshair = false
   // 是否缩放过
@@ -53,7 +53,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   // 用来记录捏合缩放的尺寸
   private _pinchScale = 1
 
-  private _prevExtremum: TypeOrNull<AxisExtremum> = null
+  private _prevExtremum: Nullable<AxisExtremum> = null
 
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
     super(rootContainer, pane)
@@ -199,7 +199,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
     }
   }
 
-  private _touchEventPaneCrosshair (pane: Pane<Axis>, coordinate: Coordinate): TypeOrNull<Crosshair> {
+  private _touchEventPaneCrosshair (pane: Pane<Axis>, coordinate: Coordinate): Nullable<Crosshair> {
     const bounding = pane.getBounding()
     if (coordinate.y >= 0 && coordinate.y <= bounding.height) {
       return { y: coordinate.y, paneId: pane.getId() }

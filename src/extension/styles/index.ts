@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../../common/TypeOrNull'
+import Nullable from '../../common/Nullable'
 import DeepPartial from '../../common/DeepPartial'
 import { Styles } from '../../common/Options'
 
@@ -24,7 +24,7 @@ function registerStyles (name: string, styles: DeepPartial<Styles>): void {
   styles[name] = styles
 }
 
-function getStyles (name: string): TypeOrNull<DeepPartial<Styles>> {
+function getStyles (name: string): Nullable<DeepPartial<Styles>> {
   return styles[name] ?? null
 }
 

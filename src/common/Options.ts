@@ -13,7 +13,7 @@
  */
 
 import DeepPartial from './DeepPartial'
-import TypeOrNull from './TypeOrNull'
+import Nullable from './Nullable'
 import KLineData from './KLineData'
 
 import { formatDate, formatBigNumber } from './utils/format'
@@ -209,7 +209,7 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borde
 export type CandleTooltipCustomCallback = (kLineData: KLineData, styles: CandleStyle) => TooltipData[]
 
 export interface CandleTooltipStyle extends TooltipStyle {
-  custom: TypeOrNull<CandleTooltipCustomCallback>
+  custom: Nullable<CandleTooltipCustomCallback>
   rect: CandleTooltipRectStyle
 }
 

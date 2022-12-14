@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import TypeOrNull from './TypeOrNull'
+import Nullable from './Nullable'
 
-type LoadMoreCallback = (timestamp: TypeOrNull<number>) => void
+type LoadMoreCallback = (timestamp: Nullable<number>) => void
 
 export default LoadMoreCallback

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 
 import DrawWidget from '../widget/DrawWidget'
 import CandleWidget from '../widget/CandleWidget'
@@ -30,7 +30,7 @@ export default class CandlePane extends IndicatorPane {
     return new CandleWidget(container, this)
   }
 
-  protected createSeparatorWidget (container: HTMLElement): TypeOrNull<SeparatorWidget> {
+  protected createSeparatorWidget (container: HTMLElement): Nullable<SeparatorWidget> {
     return null
   }
 }

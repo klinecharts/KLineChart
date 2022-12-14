@@ -1,123 +1,293 @@
 # 实例API
 
-### getDom(paneId, position)
-获取dom容器
+## getDom(paneId, position)
+```typescript
+(paneId?: string, position?: 'root' | 'main' | 'yAxis') => HTMLElement
+```
+获取dom容器。
 - `paneId` 窗口id，缺省则是整个图表容器
-- `position` 位置，支持`root`，`main`，`yAxis`，缺省则是`root`
+- `position` 可选项为'root'，'main'和'yAxis'，缺省则是'root'
 
 
-### getSize(paneId, position)
+## getSize(paneId, position)
+```typescript
+(paneId?: string, position?: 'root' | 'main' | 'yAxis') => {
+  width: number,
+  height: number,
+  left: number,
+  top: number,
+  right: number,
+  bottom: number
+}
+```
 获取尺寸。
 - `paneId` 窗口id，缺省则是整个图表容器
 - `position` 位置，支持`root`，`main`，`yAxis`，缺省则是`root`
 
 
-### setStyles(styles)
+## setStyles(styles)
+```typescript
+(styles: string | object) => HTMLElement
+```
 设置样式配置。
-- `styles` 样式配置，详情可参阅[样式说明](styles.md)
+- `styles` 样式配置，可以是通过`registerStyles`注册进去的样式名。当是对象时，详情可参阅[样式说明](styles.md)，支持合并。
 
 
-### getStyles()
-获取样式配置。
+## getStyles()
+```typescript
+() => object
+```
+获取样式配置，返回完整类型参阅[样式说明](styles.md)。
 
 
-### setPriceVolumePrecision(pricePrecision, volumePrecision)
-设置价格和数量精度，同时技术指标系列是'price'或者'volume'也会受影响
+## setPriceVolumePrecision(pricePrecision, volumePrecision)
+```typescript
+(pricePrecision: number, volumePrecision: number) => void
+```
+设置价格和数量精度，同时技术指标系列是'price'或者'volume'也会受影响。
 - `pricePrecision` 价格精度
 - `volumePrecision` 数量精度
 
 
-### setTimezone(timezone)
+## setTimezone(timezone)
+```typescript
+(timezone: string) => void
+```
 设置时区。
-- `timezone` 时区名，如'Asia/Shanghai'，如果不设置会自动获取本机时区，时区对应名字列表请自寻查找相关文档
+- `timezone` 时区名，如'Asia/Shanghai'，如果不设置会自动获取本机时区，时区对应名字列表请参阅[时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)。
 
 
-### getTimezone()
-获取图表时区。
+## getTimezone()
+```typescript
+() => string
+```
+获取图表时区名。
 
 
-### setZoomEnabled(enabled)
+## setZoomEnabled(enabled)
+```typescript
+(enabled: boolean) => void
+```
 设置是否缩放。
-- `enabled` `true` 或 `false`
 
 
-### isZoomEnabled()
+## isZoomEnabled()
+```typescript
+() => boolean
+```
 是否可以缩放。
 
 
-### setScrollEnabled(enabled)
+## setScrollEnabled(enabled)
+```typescript
+(enabled: boolean) => void
+```
 设置是否可以拖拽滚动。
-- `enabled` `true` 或 `false`
 
 
-### isScrollEnabled()
+## isScrollEnabled()
+```typescript
+(enabled: boolean) => void
+```
 是否可以拖拽滚动。
 
 
-### setOffsetRightDistance(distance)
+## setOffsetRightDistance(distance)
+```typescript
+(distance: number) => void
+```
 设置图表右边可以空出来的间隙。
-- `distance` 距离
 
 
-### setLeftMinVisibleBarCount(barCount)
+## setLeftMinVisibleBarCount(barCount)
+```typescript
+(barCount: number) => void
+```
 设置左边最小可见的蜡烛数量。
-- `barCount` 数量，number类型
 
 
-### setRightMinVisibleBarCount(barCount)
+## setRightMinVisibleBarCount(barCount)
+```typescript
+(barCount: number) => void
+```
 设置右边最小可见的蜡烛数量。
-- `barCount` 数量，number类型
 
 
-### setBarSpace(space)
-设置图表一条数据所占用的空间，即单根蜡烛柱的宽度。
-- `space` 宽度，number类型
+## setBarSpace(space)
+```typescript
+(space: number) => void
+```
+设置图表单根蜡烛柱的宽度，不包含蜡烛柱之间的间隙。
 
 
-### getBarSpace()
-获取图表一条数据所占用的空间。
+## getBarSpace()
+```typescript
+() => number
+```
+获取图表单根蜡烛柱的宽度，不包含蜡烛柱之间的间隙。
 
 
-### applyNewData(dataList, more)
+## applyNewData(dataList, more)
+```typescript
+(
+  dataList：Array<{
+    timestamp: number,
+    open: number,
+    close: number,
+    high: number,
+    low: number,
+    volume?: number,
+    turnover?: number
+  }>,
+  more?: boolean
+) => void
+```
 添加新数据，此方法会清空图表数据，不需要额外调用clearData方法。
-- `dataList` 是一个KLineData数组，KLineData类型详情可参阅数据源
+- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 
 
-### applyMoreData(dataList, more)
+## applyMoreData(dataList, more)
+```typescript
+(
+  dataList：Array<{
+    timestamp: number,
+    open: number,
+    close: number,
+    high: number,
+    low: number,
+    volume?: number,
+    turnover?: number
+  }>,
+  more?: boolean
+) => void
+```
 添加历史更多数据。
-- `dataList` 是一个KLineData数组，KLineData类型详情可参阅数据源
+- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 
 
-### updateData(data)
+## updateData(data)
+```typescript
+(data: {
+  timestamp: number,
+  open: number,
+  close: number,
+  high: number,
+  low: number,
+  volume?: number,
+  turnover?: number
+}) => void
+```
 更新数据，目前只会匹配当前最后一条数据的时间戳，相同则覆盖，不同则追加。
-- `data` 单条k线数据
+- `data` 单条k线数据，数据类型详情可参阅[数据源](./datasource.md)
 
 
-### getDataList()
-获取图表目前的数据源。
+## getDataList()
+```typescript
+() => Array<{
+  timestamp: number,
+  open: number,
+  close: number,
+  high: number,
+  low: number,
+  volume?: number,
+  turnover?: number
+}>
+```
+获取图表目前的数据源，返回数据类型可参阅[数据源](./datasource.md)。
 
 
-### clearData()
-清空图表数据，一般情况下清空数据是为了添加新的数据，为了避免重复绘制，所有这里只是清除数据，图表不会重绘
+## clearData()
+```typescript
+() => void
+```
+清空图表数据，一般情况下不用手动调用，为了避免重复绘制，这里只是清除数据，图表不会重绘。
 
 
-### loadMore(cb)
+## loadMore(cb)
+```typescript
+(cb: (timestamp: number | null) => void) => void
+```
 设置加载更多回调函数。
-- `cb` 是一个回调方法，回调参数为第一条数据的时间戳
+- `cb` 是一个回调方法，`timestamp`为第一条数据的时间戳
 
 
-### createIndicator(value, isStack, paneOptions)
+## createIndicator(value, isStack, paneOptions)
+```typescript
+(
+  value: string | {
+  name: string,
+    shortName?: string,
+    precision?: number,
+    calcParams?: any[],
+    shouldOhlc?: boolean,
+    shouldFormatBigNumber?: boolean,
+    extendData?: any,
+    series?: 'normal' | 'price' | 'volume',
+    figures?: Array<{
+      key: string,
+      title?: string,
+      type?: string,
+      baseValue?: number,
+      styles?: (
+        data: object,
+        indicator: object,
+        defaultStyles: object
+      ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
+    }>
+    minValue?: number,
+    maxValue?: number,
+    styles?: object,
+    calc?: (dataList: KLineData[], indicator: object) => Promise<object[]> | object[],
+    regenerateFigures?: (calcParms: any[]) => Array<{
+      key: string,
+      title?: string,
+      type?: string,
+      baseValue?: number,
+      styles?: (
+        data: object,
+        indicator: object,
+        defaultStyles: object
+      ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
+    }>,
+    createToolTipDataSource?: (params: object) => {
+      name?: string,
+      calcParamsText?: string,
+      values?: Array<{
+        title: string | { text: string, color: string },
+        value: string | { text: string, color: string }
+      }>
+    },
+    draw?: (params: object) => boolean
+  },
+  isStack?: boolean,
+  paneOptions?: {
+    id?: string,
+    height?: number,
+    minHeight?: number,
+    dragEnabled?: boolean
+    gap?: {
+      top?: number,
+      bottom?: number
+    }
+  }
+) => string | null
+```
 创建一个技术指标，返回值是一个标识窗口的字符串，这非常重要，后续对该窗口的一些操作，都需要此标识。
-- `value` 技术指标名或者技术指标对象，当是对象时，类型和`overrideIndicator`的入参一致
+- `value` 技术指标名或者技术指标对象，当是对象时，类型和图表方法`overrideIndicator`的入参一致
 - `isStack` 是否覆盖
-- `paneOptions` 窗口配置信息，可缺省， `{ id, minHeight, height, dragEnabled, gap }`
-   - `id` 窗口id，可缺省。特殊的paneId: candle_pane，主图的窗口id
+- `paneOptions` 窗口配置信息，可缺省
+   - `id` 窗口id，可缺省
    - `height` 窗口高度，可缺省
    - `minHeight` 窗口最小高度，可缺省
    - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
-   - `gap` 边距`{ top, bottom }`，可缺省
+   - `gap` 边距
+     - `top` 上边距，值小余1则是百分比
+     - `bottom` 下边距，值小余1则是百分比
+<Alert type="info">
+  特殊的id: 'candle_pane'，主图的窗口id
+</Alert>
 
 示例：
 ```javascript
@@ -131,26 +301,79 @@ chart.createTechnicalIndicator('MA', false, {
 ```
 
 
-### overrideIndicator(override, paneId)
+## overrideIndicator(override, paneId)
+```typescript
+(
+  override: {
+    name: string,
+    shortName?: string,
+    precision?: number,
+    calcParams?: any[],
+    shouldOhlc?: boolean,
+    shouldFormatBigNumber?: boolean,
+    extendData?: any,
+    series?: 'normal' | 'price' | 'volume',
+    figures?: Array<{
+      key: string,
+      title?: string,
+      type?: string,
+      baseValue?: number,
+      styles?: (
+        data: object,
+        indicator: object,
+        defaultStyles: object
+      ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
+    }>
+    minValue?: number,
+    maxValue?: number,
+    styles?: object,
+    calc?: (dataList: KLineData[], indicator: object) => Promise<object[]> | object[],
+    regenerateFigures?: (calcParms: any[]) => Array<{
+      key: string,
+      title?: string,
+      type?: string,
+      baseValue?: number,
+      styles?: (
+        data: object,
+        indicator: object,
+        defaultStyles: object
+      ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
+    }>,
+    createToolTipDataSource?: (params: object) => {
+      name?: string,
+      calcParamsText?: string,
+      values?: Array<{
+        title: string | { text: string, color: string },
+        value: string | { text: string, color: string }
+      }>
+    },
+    draw?: (params: object) => boolean
+  },
+  paneId?: string
+) => void
+```
 覆盖技术指标信息。
-- `override` 需要覆盖的一些参数， `{ name, shortName, calcParams, precision, shouldOhlc, shouldFormatBigNumber, extendData, series, figures, minValue, maxValue, styles, calc, regenerateFigures, createToolTipDataSource, draw }`
-  - `name` 技术指标名，必填字段
-  - `shortName` 指标简短名称，可缺省
-  - `calcParams` 计算参数，可缺省
-  - `precision` 精度，可缺省
-  - `shouldOhlc` 是否需要ohlc辅助线，可缺省
-  - `shouldFormatBigNumber` 是否需要格式化大数字，可缺省
-  - `extendData` 扩展数据，可缺省
-  - `series` 系列，可缺省
-  - `figures` 配置信息，可缺省
-  - `minValue` 指定的最小值，可缺省
-  - `maxValue` 指定的最大值，可缺省
-  - `styles` 样式，可缺省，格式同样式配置中 `indicator` 一致
-  - `calc` 计算，可缺省
-  - `regenerateFigures` 重新生成数图形配置，可缺省
-  - `createToolTipDataSource` 创建自定义提示文字，可缺省
-  - `draw` 自定义绘制，可缺省
+- `override` 需要覆盖的一些参数
+  - `name` 指标名，用于创建和操作的唯一标识
+  - `shortName` 简短名字，用于显示
+  - `precision` 精度
+  - `calcParams` 计算参数
+  - `shouldOhlc` 是否需要ohlc辅助图形
+  - `shouldFormatBigNumber` 是否需要格式化大的数字。如1000转换成1k，1000000转换为1M等
+  - `extendData` 扩展数据
+  - `series` 指标系列，可选项有'normal'，'price'和'volume'
+  - `figures` 图形配置
+  - `minValue` 指定最小值
+  - `maxValue` 指定最大值
+  - `styles` 样式
+  - `calc` 计算方法
+  - `regenerateFigures` 重新生成图形信息方法
+  - `createToolTipDataSource` 创建自定义提示信息方法
+  - `draw` 自定义绘制方法
 - `paneId` 窗口id，缺省则设置所有
+<Alert type="info">
+  特殊的paneId: 'candle_pane'，主图的窗口id
+</Alert>
 
 示例：
 ```javascript
@@ -199,23 +422,66 @@ chart.overrideIndicator({
 ```
 
 
-### getIndicatorByPaneId(paneId, name)
+## getIndicatorByPaneId(paneId, name)
+```typescript
+(paneId?: string, name?: string) => object
+```
 根据窗口id获取技术指标信息。
-- `paneId` 窗口id，可缺省，缺省则返回所有。
+- `paneId` 窗口id，即调用`createIndicator`方法时返回的窗口标识，可缺省，缺省则返回所有。
 - `name` 技术指标名
-特殊的paneId: candle_pane，主图的窗口id
+<Alert type="info">
+  特殊的paneId: 'candle_pane'，主图的窗口id
+</Alert>
 
 
-### removeIndicator(paneId, name)
+## removeIndicator(paneId, name)
+```typescript
+(paneId: string, name?: string) => object
+```
 移除技术指标。
-- `paneId` 窗口id，即调用createTechnicalIndicator方法时返回的窗口标识
-特殊的paneId: candle_pane，主图的窗口id
-- `name` 技术指标类型，如果缺省，则会移除所有
+- `paneId` 窗口id，即调用`createIndicator`方法时返回的窗口标识
+- `name` 技术指标名，如果缺省，则会移除所有
+<Alert type="info">
+  特殊的paneId: 'candle_pane'，主图的窗口id
+</Alert>
 
 
-### createOverlay(value, paneId)
+## createOverlay(value, paneId)
+```typescript
+(
+  value: string | {
+    name: string,
+    lock?: boolean,
+    needDefaultPointFigure?: boolean,
+    needDefaultXAxisFigure?: boolean,
+    needDefaultYAxisFigure?: boolean,
+    mode?: 'normal' | 'weak_magnet' | 'strong_magnet',
+    points?: Array<{ timestamp: number, dataIndex?: number, value?: number }>,
+    extendData?: any,
+    styles?: object,
+    onDrawStart?: (event: object) => boolean,
+    onDrawing?: (event: object) => boolean,
+    onDrawEnd?: (event: object) => boolean,
+    onClick?: (event: object) => boolean,
+    onRightClick?: (event: object) => boolean,
+    onPressedMoveStart?: (event: object) => boolean,
+    onPressedMoving?: (event: object) => boolean,
+    onPressedMoveEnd?: (event: object) => boolean,
+    onMouseEnter?: (event: object) => boolean,
+    onMouseLeave?: (event: object) => boolean,
+    onRemoved?: (event: object) => boolean,
+    onSelected?: (event: object) => boolean,
+    onDeselected?: (event: object) => boolean
+  },
+  paneId?: string
+) => string | null
+```
 创建覆盖物，返回一个字符串类型的标识。
 - `value` 覆盖物名或者对象，当是对象时，参数和`overrideOverlay`一致
+- `paneId` 窗口id，可缺省
+<Alert type="info">
+  特殊的paneId: 'candle_pane'，主图的窗口id
+</Alert>
 
 示例：
 ```javascript
@@ -259,37 +525,70 @@ chart.createOverlay({
 ```
 
 
-### getOverlayById(id)
+## getOverlayById(id)
+```typescript
+(id: string) => object
+```
 根据id获取覆盖物信息。
 - `id` 调用`createOverlay`方法是返回的标识
 
 
-### overrideOverlay(override)
-设置已绘制的覆盖物配置。
-- `override` 配置， `{ name, id, points, styles, lock, mode, extendData, needDefaultPointFigure, needDefaultXAxisFigure, needDefaultYAxisFigure, onDrawStart, onDrawing, onDrawEnd, onClick, onRightClick, onPressedMoveStart, onPressedMoving, onPressedMoveEnd, onMouseEnter, onMouseLeave, onRemoved, onSelected, onDeselected }` 
-  - `name` 覆盖物名
-  - `id` 可缺省
-  - `lock` 是否锁定
-  - `needDefaultPointFigure` 是否需要默认点上的图形
-  - `needDefaultXAxisFigure` 是否需要默认X轴上的图形
-  - `needDefaultYAxisFigure` 是否需要默认Y轴上的图形
-  - `mode` 模式类型，支持`normal`，`weak_magnet`，`strong_magnet`
-  - `points` 点信息，可缺省，如果指定，则会按照点信息绘制一个图形
-  - `extendData` 扩展数据，可缺省
-  - `styles` 样式，可缺省，格式同样式配置中 `overlay` 一致
-  - `onDrawStart` 绘制开始回调事件，可缺省
-  - `onDrawing` 绘制过程中回调事件，可缺省
-  - `onDrawEnd` 绘制结束回调事件，可缺省
-  - `onClick` 点击回调事件，可缺省
-  - `onRightClick` 右击回调事件，可缺省，需要返回一个boolean类型的值，如果返回true，内置的右击删除将无效
-  - `onPressedMoveStart` 按住拖动开始回调事件，可缺省
-  - `onPressedMoving` 按住拖动回调事件，可缺省
-  - `onPressedMoveEnd` 按住拖动结束回调事件，可缺省
-  - `onMouseEnter` 鼠标移入事件，可缺省
-  - `onMouseLeave` 鼠标移出事件，可缺省
-  - `onRemoved` 删除回调事件，可缺省
-  - `onSelected` 选中回调事件，可缺省
-  - `onDeselected` 取消回调事件，可缺省
+## overrideOverlay(override)
+```typescript
+(
+  override: {
+    name: string,
+    id?: string,
+    lock?: boolean,
+    needDefaultPointFigure?: boolean,
+    needDefaultXAxisFigure?: boolean,
+    needDefaultYAxisFigure?: boolean,
+    mode?: 'normal' | 'weak_magnet' | 'strong_magnet',
+    points?: Array<{ timestamp: number, dataIndex?: number, value?: number }>,
+    extendData?: any,
+    styles?: object,
+    onDrawStart?: (event: object) => boolean,
+    onDrawing?: (event: object) => boolean,
+    onDrawEnd?: (event: object) => boolean,
+    onClick?: (event: object) => boolean,
+    onRightClick?: (event: object) => boolean,
+    onPressedMoveStart?: (event: object) => boolean,
+    onPressedMoving?: (event: object) => boolean,
+    onPressedMoveEnd?: (event: object) => boolean,
+    onMouseEnter?: (event: object) => boolean,
+    onMouseLeave?: (event: object) => boolean,
+    onRemoved?: (event: object) => boolean,
+    onSelected?: (event: object) => boolean,
+    onDeselected?: (event: object) => boolean
+  }
+) => string | null
+```
+覆盖已绘制的覆盖物。
+- `override` 需要覆盖的参数 
+  - `name` 覆盖物名，用于创建的唯一标识
+  - `id` 覆盖物标识，如果id存在，则会以id为依据去覆盖
+  - `lock` 是否锁定不让拖动
+  - `needDefaultPointFigure` 是否需要默认的点对应的图形
+  - `needDefaultXAxisFigure` 是否需要默认的x轴上的图形
+  - `needDefaultYAxisFigure` 是否需要默认的y轴上的图形
+  - `mode` 模式，可选项有'normal'，'weak_magnet'和'strong_magnet'
+  - `points` 点信息
+  - `extendData` 扩展数据
+  - `styles` 样式
+  - `onDrawStart` 开始绘制事件
+  - `onDrawing` 绘制中事件
+  - `onDrawEnd` 绘制结束事件
+  - `onClick` 点击事件
+  - `onRightClick` 右击事件
+  - `onPressedMoveStart` 按住开始移动事件
+  - `onPressedMoving` 按住移动中事件
+  - `onPressedMoveEnd` 按住移动结束事件
+  - `onMouseEnter` 鼠标移入事件
+  - `onMouseLeave` 鼠标移出事件
+  - `onRemoved` 删除事件
+  - `onSelected` 选中事件
+  - `onDeselected` 取消选中事件
+
 示例：
 ```javascript
 chart.overrideOverlay({
@@ -332,7 +631,10 @@ chart.overrideOverlay({
 ```
 
 
-### removeOverlay(id)
+## removeOverlay(id)
+```typescript
+(id: string) => void
+```
 移除图形。
 - `id` 调用`createOverlay`方法是返回的标识，如果缺省，则会移除所有
 
@@ -341,57 +643,95 @@ chart.overrideOverlay({
 - `htmlId` 创建时候的id，可以是单个id，也可以是id组成的数组，缺省则删除对应窗口上所有的
 
 
-### scrollByDistance(distance, animationDuration)
+## scrollByDistance(distance, animationDuration)
+```typescript
+(distance: number, animationDuration?: number) => void
+```
 滚动一定的距离。
 - `distance` 距离
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
-### scrollToRealTime(animationDuration)
+## scrollToRealTime(animationDuration)
+```typescript
+(distance: number, animationDuration?: number) => void
+```
 滚动到最初的位置。
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
-### scrollToDataIndex(dataIndex, animationDuration)
+## scrollToDataIndex(dataIndex, animationDuration)
+```typescript
+(dataIndex: number, animationDuration?: number) => void
+```
 滚动到指定的位置。
 - `dataIndex` 数据的索引
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
-### scrollToTimestamp(timestamp, animationDuration)
+## scrollToTimestamp(timestamp, animationDuration)
+```typescript
+(timestamp: number, animationDuration?: number) => void
+```
 滚动到指定时间戳。
 - `timestamp` 时间戳
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
-### zoomAtCoordinate(scale, coordinate, animationDuration)
+## zoomAtCoordinate(scale, coordinate, animationDuration)
+```typescript
+(scale: number, coordinate?: { x: number, y: number }, animationDuration?: number) => void
+```
 在某个坐标点缩放。
 - `scale` 缩放比例
-- `coordinate` 坐标点，`{ x }` 可缺省，缺省则在图表中间位置缩放
+- `coordinate` 坐标点，可缺省，缺省则在图表中间位置缩放
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
-### zoomAtDataIndex(scale, dataIndex, animationDuration)
+## zoomAtDataIndex(scale, dataIndex, animationDuration)
+```typescript
+(scale: number, dataIndex: number, animationDuration?: number) => void
+```
 在某个位置缩放。
 - `scale` 缩放比例
 - `dataIndex` 数据的索引
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
-### zoomAtTimestamp(scale, timestamp, animationDuration)
+## zoomAtTimestamp(scale, timestamp, animationDuration)
+```typescript
+(scale: number, timestamp: number, animationDuration?: number) => void
+```
 在指定时间戳上缩放。
 - `scale` 缩放比例
 - `timestamp` 时间戳
 - `animationDuration` 动画时间，可以缺省，缺省则无动画
 
 
-### setPaneOptions(options)
+## setPaneOptions(options)
+```typescript
+(options: {
+  id: string,
+  height?: number,
+  minHeight?: number,
+  dragEnabled?: boolean
+  gap?: {
+    top?: number,
+    bottom?: number
+  }
+}) => void
+```
 设置窗口配置。
-- `paneOptions` 窗口配置信息，可缺省， `{ id, minHeight, height, dragEnabled, gap }`
-   - `id` 窗口id，可缺省。特殊的paneId: candle_pane，主图的窗口id
+- `paneOptions` 窗口配置信息，可缺省
+   - `id` 窗口id
    - `height` 窗口高度，可缺省
    - `minHeight` 窗口最小高度，可缺省
    - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
-   - `gap` 边距`{ top, bottom }`，可缺省
+   - `gap` 边距
+     - `top` 上边距，值小余1则是百分比
+     - `bottom` 下边距，值小余1则是百分比
+<Alert type="info">
+  特殊的id: 'candle_pane'，主图的窗口id
+</Alert>
 
 示例：
 ```javascript
@@ -405,37 +745,99 @@ chart.setPaneOptions({
 ```
 
 
-### subscribeAction(type, callback)
+## subscribeAction(type, callback)
+```typescript
+(
+  type: 'onZoom' | 'onScroll' | 'onVisibleDataChange' | 'onCrosshairChange' | 'onPaneDrag',
+  callback: (data?: any) => void
+) => void
+```
 订阅图表动作。
-- `type` 类型是`onZoom`, `onScroll`, `onCrosshairChange` 和 `onPaneDrag`
+- `type` 可选项为'onZoom'，'onScroll'，'onVisibleDataChange'，'onCrosshairChange'和'onPaneDrag'
 - `callback` 是一个回调方法
 
 
-### unsubscribeAction(type, callback)
+## unsubscribeAction(type, callback)
+```typescript
+(
+  type: 'onZoom' | 'onScroll' | 'onVisibleDataChange' | 'onCrosshairChange' | 'onPaneDrag',
+  callback?: (data?: any) => void
+) => void
+```
 取消订阅图表动作。
-- `type` 类型是`onZoom`, `onScroll`, `onCrosshairChange` 和 `onPaneDrag`
+- `type` 可选项为'onZoom'，'onScroll'，'onVisibleDataChange'，'onCrosshairChange'和'onPaneDrag'
 - `callback` 订阅时的回调方法，缺省则取消当前类型所有
 
 
-### convertToPixel(value, finder)
+## convertToPixel(value, finder)
+```typescript
+(
+  value: {
+    dataIndex?: number,
+    timestamp?: number,
+    value?: number
+  } | Array<{
+    dataIndex?: number,
+    timestamp?: number,
+    value?: number
+  }>,
+  finder: {
+    paneId?: string,
+    absolute?: boolean
+  }
+) => { x: number?, y?: number } | Array<{ x?: number, y?: number }>
+```
 将值转换成坐标。
-- `value` 值，`{ timestamp, dataIndex, value }`
-- `finder` 过滤条件，`{ paneId, absolute }`
+- `value` 需要转换的值，可以是当个对象，也可以是数组
+  - `dataIndex` 数据索引，如果`dataIndex`和`timestamp`同时存在，则依据索引转换
+  - `timestamp` 时间戳
+  - `value` 对应y轴的值
+- `finder` 过滤条件
+  - `paneId` 窗口id
+  - `absolute` 是否是绝对坐标，只作用于y轴
 
 
-### convertFromPixel(coordinate, finder)
+## convertFromPixel(coordinate, finder)
+```typescript
+(
+  coordinate: { x: number?, y?: number } | Array<{ x?: number, y?: number },
+  finder: {
+    paneId?: string,
+    absolute?: boolean
+  }
+) => {
+    dataIndex?: number,
+    timestamp?: number,
+    value?: number
+  } | Array<{
+    dataIndex?: number,
+    timestamp?: number,
+    value?: number
+  }>
+```
 将坐标转换成值。
-- `coordinate` 坐标，`{ x, y }`
-- `finder` 过滤条件，`{ paneId, absolute }`
+- `coordinate` 需要转换的值，可以是当个对象，也可以是数组
+- `finder` 过滤条件
+  - `paneId` 窗口id
+  - `absolute` 是否是绝对坐标，只作用于y轴
 
 
-### getConvertPictureUrl(includeOverlay, type, backgroundColor)
+## getConvertPictureUrl(includeOverlay, type, backgroundColor)
+```typescript
+(includeOverlay?: boolean, type?: string, backgroundColor?: string) => string
+```
 获取图表转换成图片后的图片url。
 - `includeOverlay` 是否需要包含浮层，可缺省
 - `type` 转换后的图片类型，类型是'png'、'jpeg'、'bmp'三种中的一种，可缺省，默认为'jpeg'
 - `backgroundColor` 背景色，可缺省，默认为'#FFFFFF'
 
 
-### resize()
+## resize()
+```typescript
+() => void
+```
 调整图表大小，总是会填充容器大小。
-注意：此方法会重新计算整个图表各个模块的大小，频繁调用可能会影响到性能，调用请谨慎
+<Alert type="warning">
+  注意：此方法会重新计算整个图表各个模块的大小，频繁调用可能会影响到性能，调用请谨慎
+</Alert>
+

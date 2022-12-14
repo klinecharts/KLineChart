@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
@@ -44,8 +44,8 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
     defaultStyles: OverlayStyle,
-    xAxis: TypeOrNull<XAxis>,
-    yAxis: TypeOrNull<YAxis>,
+    xAxis: Nullable<XAxis>,
+    yAxis: Nullable<YAxis>,
     hoverInstanceInfo: EventOverlayInfo,
     clickInstanceInfo: EventOverlayInfo
   ): void {
@@ -64,8 +64,8 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
-    xAxis: TypeOrNull<XAxis>,
-    yAxis: TypeOrNull<YAxis>,
+    xAxis: Nullable<XAxis>,
+    yAxis: Nullable<YAxis>,
     clickInstanceInfo: EventOverlayInfo
   ): OverlayFigure[] {
     const figures: OverlayFigure[] = []
@@ -108,8 +108,8 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
-    xAxis: TypeOrNull<XAxis>,
-    yAxis: TypeOrNull<YAxis>
+    xAxis: Nullable<XAxis>,
+    yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
     return overlay.createYAxisFigures?.({ overlay, coordinates, bounding, barSpace, precision, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
   }

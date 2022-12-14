@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import Coordinate from '../common/Coordinate'
 import { UpdateLevel } from '../common/Updater'
 import { EventOptions, MouseTouchEvent } from '../common/MouseTouchEventHandler'
@@ -32,7 +32,7 @@ export default class XAxisWidget extends DrawWidget<XAxis> {
   private readonly _overlayXAxisView = new OverlayXAxisView(this)
   private readonly _crosshairVerticalLabelView = new CrosshairVerticalLabelView(this)
 
-  private _startScaleCoordinate: TypeOrNull<Coordinate> = null
+  private _startScaleCoordinate: Nullable<Coordinate> = null
   private _startScaleDistance = 0
   private _scale = 1
 

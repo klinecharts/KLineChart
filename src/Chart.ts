@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from './common/TypeOrNull'
+import Nullable from './common/Nullable'
 import DeepPartial from './common/DeepPartial'
 import Bounding from './common/Bounding'
 import KLineData from './common/KLineData'
@@ -60,8 +60,8 @@ export interface ConvertFinder {
 }
 
 export interface Chart {
-  getDom: (paneId?: string, position?: DomPosition) => TypeOrNull<HTMLElement>
-  getSize: (paneId?: string, position?: DomPosition) => TypeOrNull<Bounding>
+  getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
+  getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
   setLocale: (locale: string) => void
   getLocale: () => string
   setStyles: (styles: DeepPartial<Styles>) => void
@@ -82,12 +82,12 @@ export interface Chart {
   applyMoreData: (dataList: KLineData[], more?: boolean) => void
   updateData: (data: KLineData) => void
   loadMore: (cb: LoadMoreCallback) => void
-  createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => TypeOrNull<string>
+  createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
   overrideIndicator: (override: IndicatorCreate, paneId?: string) => void
-  getIndicatorByPaneId: (paneId?: string, name?: string) => TypeOrNull<Indicator> | TypeOrNull<Map<string, Indicator>> | Map<string, Map<string, Indicator>>
+  getIndicatorByPaneId: (paneId?: string, name?: string) => Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>>
   removeIndicator: (paneId: string, name?: string) => void
-  createOverlay: (value: string | OverlayCreate, paneId?: string) => TypeOrNull<string>
-  getOverlayById: (id: string) => TypeOrNull<Overlay>
+  createOverlay: (value: string | OverlayCreate, paneId?: string) => Nullable<string>
+  getOverlayById: (id: string) => Nullable<Overlay>
   overrideOverlay: (override: Partial<OverlayCreate>) => void
   removeOverlay: (id?: string) => void
   setPaneOptions: (options: PaneOptions) => void
@@ -320,7 +320,7 @@ export default class ChartImp implements Chart {
     }
   }
 
-  getPaneById (paneId: string): TypeOrNull<Pane<Axis>> {
+  getPaneById (paneId: string): Nullable<Pane<Axis>> {
     if (paneId === PaneIdConstants.XAXIS) {
       return this._xAxisPane
     }
@@ -349,7 +349,7 @@ export default class ChartImp implements Chart {
     }
   }
 
-  getDom (paneId?: string, position?: DomPosition): TypeOrNull<HTMLElement> {
+  getDom (paneId?: string, position?: DomPosition): Nullable<HTMLElement> {
     if (paneId !== undefined) {
       const pane = this.getPaneById(paneId)
       if (pane !== null) {
@@ -372,7 +372,7 @@ export default class ChartImp implements Chart {
     return null
   }
 
-  getSize (paneId?: string, position?: DomPosition): TypeOrNull<Bounding> {
+  getSize (paneId?: string, position?: DomPosition): Nullable<Bounding> {
     if (paneId !== undefined) {
       const pane = this.getPaneById(paneId)
       if (pane !== null) {
@@ -517,7 +517,7 @@ export default class ChartImp implements Chart {
     this._chartStore.getTimeScaleStore().setLoadMoreCallback(cb)
   }
 
-  createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions): TypeOrNull<string> {
+  createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions): Nullable<string> {
     const indicator: IndicatorCreate = isString(value) ? { name: value as string } : value as IndicatorCreate
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
@@ -558,7 +558,7 @@ export default class ChartImp implements Chart {
     ).catch(() => {})
   }
 
-  getIndicatorByPaneId (paneId?: string, name?: string): TypeOrNull<Indicator> | TypeOrNull<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
+  getIndicatorByPaneId (paneId?: string, name?: string): Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
     return this._chartStore.getIndicatorStore().getInstanceByPaneId(paneId, name)
   }
 
@@ -585,7 +585,7 @@ export default class ChartImp implements Chart {
     }
   }
 
-  createOverlay (value: string | OverlayCreate, paneId?: string): TypeOrNull<string> {
+  createOverlay (value: string | OverlayCreate, paneId?: string): Nullable<string> {
     const overlay: OverlayCreate = isString(value) ? { name: value as string } : value as OverlayCreate
     if (getOverlayClass(overlay.name) === null) {
       logWarn('createOverlay', 'value', 'overlay not supported, you may need to use registerOverlay to add one!!!')
@@ -603,7 +603,7 @@ export default class ChartImp implements Chart {
     return id
   }
 
-  getOverlayById (id: string): TypeOrNull<Overlay> {
+  getOverlayById (id: string): Nullable<Overlay> {
     return this._chartStore.getOverlayStore().getInstanceById(id)
   }
 

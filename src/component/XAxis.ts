@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import { FormatDate } from '../common/Options'
 
 import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
@@ -92,7 +92,7 @@ export default class XAxisImp extends AxisImp {
     return optimalTicks
   }
 
-  private _optimalTickLabel (formatDate: FormatDate, dateTimeFormat: Intl.DateTimeFormat, timestamp: number, comparedTimestamp: number): TypeOrNull<string> {
+  private _optimalTickLabel (formatDate: FormatDate, dateTimeFormat: Intl.DateTimeFormat, timestamp: number, comparedTimestamp: number): Nullable<string> {
     const year = formatDate(dateTimeFormat, timestamp, 'YYYY')
     const month = formatDate(dateTimeFormat, timestamp, 'YYYY-MM')
     const day = formatDate(dateTimeFormat, timestamp, 'MM-DD')

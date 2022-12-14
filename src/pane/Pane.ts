@@ -13,7 +13,7 @@
  */
 
 import DeepRequired from '../common/DeepRequired'
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import Updater, { UpdateLevel } from '../common/Updater'
 import Bounding, { getDefaultBounding } from '../common/Bounding'
 
@@ -57,14 +57,14 @@ export default abstract class Pane<C extends Axis> implements Updater {
   private readonly _id: string
   private readonly _chart: ChartInternal
   private _mainWidget: DrawWidget<C>
-  private _yAxisWidget: TypeOrNull<YAxisWidget> = null
-  private _separatorWidget: TypeOrNull<SeparatorWidget> = null
+  private _yAxisWidget: Nullable<YAxisWidget> = null
+  private _separatorWidget: Nullable<SeparatorWidget> = null
   private readonly _axis: C = this.createAxisComponent()
 
   private readonly _bounding: Bounding = getDefaultBounding()
 
-  private _topPane: TypeOrNull<Pane<Axis>>
-  private _bottomPane: TypeOrNull<Pane<Axis>>
+  private _topPane: Nullable<Pane<Axis>>
+  private _bottomPane: Nullable<Pane<Axis>>
 
   private readonly _options: DeepRequired<Omit<PaneOptions, 'id' | 'height'>> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 } }
 
@@ -138,20 +138,20 @@ export default abstract class Pane<C extends Axis> implements Updater {
     return this
   }
 
-  getTopPane (): TypeOrNull<Pane<Axis>> {
+  getTopPane (): Nullable<Pane<Axis>> {
     return this._topPane
   }
 
-  setTopPane (pane: TypeOrNull<Pane<Axis>>): Pane<C> {
+  setTopPane (pane: Nullable<Pane<Axis>>): Pane<C> {
     this._topPane = pane
     return this
   }
 
-  getBottomPane (): TypeOrNull<Pane<Axis>> {
+  getBottomPane (): Nullable<Pane<Axis>> {
     return this._bottomPane
   }
 
-  setBottomPane (pane: TypeOrNull<Pane<Axis>>): Pane<C> {
+  setBottomPane (pane: Nullable<Pane<Axis>>): Pane<C> {
     this._bottomPane = pane
     return this
   }
@@ -162,9 +162,9 @@ export default abstract class Pane<C extends Axis> implements Updater {
 
   getMainWidget (): DrawWidget<C> { return this._mainWidget }
 
-  getYAxisWidget (): TypeOrNull<YAxisWidget> { return this._yAxisWidget }
+  getYAxisWidget (): Nullable<YAxisWidget> { return this._yAxisWidget }
 
-  getSeparatorWidget (): TypeOrNull<SeparatorWidget> { return this._separatorWidget }
+  getSeparatorWidget (): Nullable<SeparatorWidget> { return this._separatorWidget }
 
   update (level?: UpdateLevel): void {
     if (this._bounding.width !== this._seriesContiainer.offsetWidth) {
@@ -232,9 +232,9 @@ export default abstract class Pane<C extends Axis> implements Updater {
 
   protected abstract createAxisComponent (): C
 
-  protected createSeparatorWidget (container: HTMLElement): TypeOrNull<SeparatorWidget> { return null }
+  protected createSeparatorWidget (container: HTMLElement): Nullable<SeparatorWidget> { return null }
 
-  protected creatYAxisWidget (container: HTMLElement): TypeOrNull<YAxisWidget> { return null }
+  protected creatYAxisWidget (container: HTMLElement): Nullable<YAxisWidget> { return null }
 
   protected abstract createMainWidget (container: HTMLElement): DrawWidget<C>
 }

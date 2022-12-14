@@ -1,6 +1,6 @@
 # 图表API
 
-### init(ds, options)
+## init(ds, options)
 ```typescript
 (ds: string | HTMLElement, options?: {
   locale?: string,
@@ -21,14 +21,14 @@
     - `formatBigNumber` 格式化大的数字，如1000转换成1k，1000000转换为1M等。
 
 
-### dispose(dcs)
+## dispose(dcs)
 ```typescript
 (dcs: HTMLElement | Chart | string) => void
 ```
 销毁一个图表，一旦销毁，图表将不再可用。
 - `dcs` 可以是dom元素、元素id或者图表实例。
 
-### registerFigure(figure)
+## registerFigure(figure)
 ```typescript
 (figure: {
   name: string,
@@ -42,13 +42,13 @@
   - `draw` 绘制方法
   - `checkEventOn` 检查事件是否在图形上
 
-### getSupportFigures()
+## getSupportFigures()
 ```typescript
 () => string[]
 ```
 获取图表支持的基础图形类型
 
-### registerIndicator(indicator)
+## registerIndicator(indicator)
 ```typescript
 (indicator: {
   name: string,
@@ -109,19 +109,20 @@
   - `figures` 图形配置
   - `minValue` 指定最小值
   - `maxValue` 指定最大值
+  - `styles` 样式
   - `calc` 计算方法
   - `regenerateFigures` 重新生成图形信息方法
   - `createToolTipDataSource` 创建自定义提示信息方法
   - `draw` 自定义绘制方法
 
 
-### getSupportIndicators()
+## getSupportIndicators()
 ```typescript
 () => string[]
 ```
 获取图表支持的技术指标
 
-### registerOverlay(overlay)
+## registerOverlay(overlay)
 ```typescript
 (overlay: {
   name: string,
@@ -202,6 +203,9 @@
   - `points` 点信息
   - `extendData` 扩展数据
   - `styles` 样式
+  - `createPointFigures` 创建点对应的图形
+  - `createXAxisFigures` 创建x轴上的图形
+  - `createYAxisFigures` 创建y轴上的图形
   - `performEventPressedMove` 按住移动事件特殊处理方法
   - `performEventMoveForDrawing` 移动事件过程中特殊处理方法
   - `onDrawStart` 开始绘制事件
@@ -218,94 +222,93 @@
   - `onSelected` 选中事件
   - `onDeselected` 取消选中事件
 
-### getSupportOverlays()
+## getSupportOverlays()
 ```typescript
 () => string[]
 ```
 获取图表支持的覆盖物
 
-### version()
+## version()
 ```typescript
 () => string
 ```
 获取图表当前版本号。
 
-### utils
+## utils
 辅助方法集合。
-#### utils.clone(target)
+### utils.clone(target)
 ```typescript
 (target: any) => any
 ```
 深度复制。
 
-#### utils.merge(target, source)
+### utils.merge(target, source)
 ```typescript
 (target: object, source: object) => void
 ```
 将一个对象合并到另一个对象。
 
-#### utils.isString(value)
+### utils.isString(value)
 ```typescript
 (value: any) => boolean
 ```
 检查某个值是否是字符串。
 
-#### utils.isNumber(value)
+### utils.isNumber(value)
 ```typescript
 (value: any) => boolean
 ```
 检查某个值是否是数字。
 
-#### utils.isValid(value)
+### utils.isValid(value)
 ```typescript
 (value: any) => boolean
 ```
 检查某个值是否有效。
 
-#### utils.isObject(value)
+### utils.isObject(value)
 ```typescript
 (value: any) => boolean
 ```
 检查某个值是否是对象。
 
-#### utils.isFunction(value)
+### utils.isFunction(value)
 ```typescript
 (value: any) => boolean
 ```
 检查某个值是否是方法。
 
-#### utils.isBoolean(value)
+### utils.isBoolean(value)
 ```typescript
 (value: any) => boolean
 ```
 检查某个值是否是bool值。
 
-#### utils.formatValue(value, key, defaultValue)
+### utils.formatValue(value, key, defaultValue)
 ```typescript
 (data: any, key: string, defaultValue?: any) => any
 ```
 从某个值取对应的值，支持嵌套，如`const o = { a: { b: { c: 1 } } }`，`formatValue(o, 'a.b.c')`取`c`的值。
 
-#### utils.formatPrecision(value)
+### utils.formatPrecision(value)
 ```typescript
 (value: string | number, precision?: number) => string
 ```
 格式化精度。
 
-
-#### utils.formatBigNumber(value)
+### utils.formatBigNumber(value)
 ```typescript
 (value: string | number) => string
 ```
 格式化大的数字，如1000转换成1k，1000000转换为1M等。
 
-#### utils.getLinearSlopeIntercept(coordinate1, coordinate2)
+### utils.getLinearSlopeIntercept(coordinate1, coordinate2)
 ```typescript
 (coordinate1: { x: number, y: number }, coordinate2: { x: number, y: number }) => []
 ```
 根据两个坐标点，获取点组成的线的斜率和常数项，即`y = kx + b`中的`k`和`b`。
 
-#### utils.getLinearYFromCoordinates(coordinate1, coordinate2, targetCoordinate)
+### utils.getLinearYFromCoordinates(coordinate1, coordinate2, targetCoordinate)
 ```typescript
 (
   coordinate1: { x: number, y: number },
@@ -315,13 +318,13 @@
 ```
 获取一个点在另外两个坐标点形成的线上的y轴坐标值。
 
-#### utils.getLinearYFromSlopeIntercept(kb, targetCoordinate)
+### utils.getLinearYFromSlopeIntercept(kb, targetCoordinate)
 ```typescript
 (kb: Array<number>, targetCoordinate: { x: number, y: number }) => number
 ```
 获取一个点在斜率和常数项形成的线上的y轴坐标值。
 
-#### utils.checkCoordinateOnArc(coordinate, arc)
+### utils.checkCoordinateOnArc(coordinate, arc)
 ```typescript
 (coordinate: { x: number, y: number }, arc: {
   x: number,
@@ -340,7 +343,7 @@
   - `startAngle` 起始角度
   - `endAngle` 结束角度
 
-#### utils.checkCoordinateOnCircle(coordinate, circle)
+### utils.checkCoordinateOnCircle(coordinate, circle)
 ```typescript
 (coordinate: { x: number, y: number }, circle: {
   x: number,
@@ -355,19 +358,19 @@
   - `y` 圆心的y轴值
   - `r` 半径
 
-#### utils.checkCoordinateOnLine(coordinate, line)
+### utils.checkCoordinateOnLine(coordinate, line)
 ```typescript
 (coordinate: { x: number, y: number }, line: { coordinates: Array<{ x: number, y: number }> }) => boolean
 ```
 检查某个坐标点是否在线上。
 
-#### utils.checkCoordinateOnPolygon(coordinate, polygon)
+### utils.checkCoordinateOnPolygon(coordinate, polygon)
 ```typescript
 (coordinate: { x: number, y: number }, polygon: { coordinates: Array<{ x: number, y: number }> }) => boolean
 ```
 检查某个坐标点是否在多边形上。
 
-#### utils.checkCoordinateOnRect(coordinate, rect)
+### utils.checkCoordinateOnRect(coordinate, rect)
 ```typescript
 (coordinate: { x: number, y: number }, rect: {
   x: number,
@@ -384,7 +387,7 @@
   - `width` 宽度
   - `height` 高度
 
-#### utils.checkCoordinateOnText(coordinate, text, styles)
+### utils.checkCoordinateOnText(coordinate, text, styles)
 ```typescript
 (
   coordinate: { x: number, y: number },
@@ -418,7 +421,7 @@
   - `weight` 权重
 
 
-#### utils.drawArc(ctx, arc, styles)
+### utils.drawArc(ctx, arc, styles)
 ```typescript
 (
   ctx: CanvasRenderingContext2D,
@@ -451,7 +454,7 @@
   - `color` 颜色
   - `dashedValue` 虚线参数值
 
-#### utils.drawCircle(ctx, circle, styles)
+### utils.drawCircle(ctx, circle, styles)
 ```typescript
 (
   ctx: CanvasRenderingContext2D,
@@ -484,7 +487,7 @@
   - `borderStyle` 边框样式
   - `borderDashedValue` 边框虚线参数值
 
-#### utils.drawLine(ctx, line, styles)
+### utils.drawLine(ctx, line, styles)
 ```typescript
 (
   ctx: CanvasRenderingContext2D,
@@ -506,7 +509,7 @@
   - `color` 颜色
   - `dashedValue` 虚线参数值
 
-#### utils.drawPolygon(ctx, polygon, styles)
+### utils.drawPolygon(ctx, polygon, styles)
 ```typescript
 (
   ctx: CanvasRenderingContext2D,
@@ -532,7 +535,7 @@
   - `borderStyle` 边框样式
   - `borderDashedValue` 边框虚线参数值
 
-#### utils.drawRect(ctx, rect, styles)
+### utils.drawRect(ctx, rect, styles)
 ```typescript
 (
   ctx: CanvasRenderingContext2D,
@@ -568,7 +571,7 @@
   - `borderDashedValue` 边框虚线参数值
 
 
-#### utils.drawText(ctx, text, styles)
+### utils.drawText(ctx, text, styles)
 ```typescript
 (
   ctx: CanvasRenderingContext2D,
@@ -601,7 +604,7 @@
   - `family` 字体
   - `weight` 权重
   
-#### utils.drawRectText(ctx, rectText, styles)
+### utils.drawRectText(ctx, rectText, styles)
 ```typescript
 (
   ctx: CanvasRenderingContext2D,
@@ -645,10 +648,10 @@
   - `size` 尺寸
   - `family` 字体
   - `weight` 权重
-  - `paddingLeft`: 左内边距,
-  - `paddingTop`: 上内边距,
-  - `paddingRight`: 右内边距,
-  - `paddingBottom`: 下内边距,
+  - `paddingLeft` 左内边距,
+  - `paddingTop` 上内边距,
+  - `paddingRight` 右内边距,
+  - `paddingBottom` 下内边距,
   - `borderColor` 边框颜色
   - `borderSize` 边框粗细
   - `borderStyle` 边框样式

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import Coordinate from '../common/Coordinate'
 import KLineData from '../common/KLineData'
 import BarSpace from '../common/BarSpace'
@@ -68,7 +68,7 @@ export default class TimeScaleStore {
   /**
    * Load more data callback
    */
-  private _loadMoreCallback: TypeOrNull<LoadMoreCallback> = null
+  private _loadMoreCallback: Nullable<LoadMoreCallback> = null
 
   /**
    * Whether there are more flag
@@ -183,7 +183,7 @@ export default class TimeScaleStore {
   }
 
   setTimezone (timezone: string): void {
-    let dateTimeFormat: TypeOrNull<Intl.DateTimeFormat> = null
+    let dateTimeFormat: Nullable<Intl.DateTimeFormat> = null
     try {
       dateTimeFormat = new Intl.DateTimeFormat(
         'en', {
@@ -290,7 +290,7 @@ export default class TimeScaleStore {
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 
-  getDataByDataIndex (dataIndex: number): TypeOrNull<KLineData> {
+  getDataByDataIndex (dataIndex: number): Nullable<KLineData> {
     return this._chartStore.getDataList()[dataIndex] ?? null
   }
 
@@ -301,7 +301,7 @@ export default class TimeScaleStore {
     return Math.round(index * 1000000) / 1000000
   }
 
-  dataIndexToTimestamp (dataIndex: number): TypeOrNull<number> {
+  dataIndexToTimestamp (dataIndex: number): Nullable<number> {
     const data = this.getDataByDataIndex(dataIndex)
     return data?.timestamp ?? null
   }

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import { ElementEventHandler } from '../common/Element'
 import ElementGroup from '../common/ElementGroup'
 
@@ -36,7 +36,7 @@ export default abstract class View<C extends Axis = Axis> extends ElementGroup {
 
   getWidget (): Widget<C> { return this._widget }
 
-  protected createFigure (name: string, attrs: any, styles: any, eventHandler?: ElementEventHandler): TypeOrNull<Figure> {
+  protected createFigure (name: string, attrs: any, styles: any, eventHandler?: ElementEventHandler): Nullable<Figure> {
     const FigureClazz = getFigureClass(name)
     if (FigureClazz !== null) {
       const figure = new FigureClazz({ name, attrs, styles })

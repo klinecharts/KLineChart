@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import Coordinate from '../common/Coordinate'
 import Point from '../common/Point'
 import Bounding from '../common/Bounding'
@@ -259,8 +259,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const pane = widget.getPane()
     const paneId = pane.getId()
     const chart = pane.getChart()
-    const yAxis = pane.getAxisComponent() as unknown as TypeOrNull<YAxis>
-    const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as TypeOrNull<XAxis>
+    const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
+    const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as Nullable<XAxis>
     const bounding = widget.getBounding()
     const chartStore = chart.getChartStore()
     const customApi = chartStore.getCustomApi()
@@ -302,8 +302,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
     defaultStyles: OverlayStyle,
-    xAxis: TypeOrNull<XAxis>,
-    yAxis: TypeOrNull<YAxis>,
+    xAxis: Nullable<XAxis>,
+    yAxis: Nullable<YAxis>,
     hoverInstanceInfo: EventOverlayInfo,
     clickInstanceInfo: EventOverlayInfo,
     timeScaleStore: TimeScaleStore
@@ -366,7 +366,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return overlayStore.getInstances(paneId)
   }
 
-  protected getProgressOverlay (info: ProgressOverlayInfo, paneId: string): TypeOrNull<Overlay> {
+  protected getProgressOverlay (info: ProgressOverlayInfo, paneId: string): Nullable<Overlay> {
     if (info.paneId === paneId) {
       return info.instance
     }
@@ -381,8 +381,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
-    xAxis: TypeOrNull<XAxis>,
-    yAxis: TypeOrNull<YAxis>
+    xAxis: Nullable<XAxis>,
+    yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
     return overlay.createPointFigures?.({ overlay, coordinates, bounding, barSpace, precision, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
   }
@@ -396,8 +396,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
     defaultStyles: OverlayStyle,
-    xAxis: TypeOrNull<XAxis>,
-    yAxis: TypeOrNull<YAxis>,
+    xAxis: Nullable<XAxis>,
+    yAxis: Nullable<YAxis>,
     hoverInstanceInfo: EventOverlayInfo,
     clickInstanceInfo: EventOverlayInfo
   ): void {

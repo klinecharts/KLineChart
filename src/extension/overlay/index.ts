@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../../common/TypeOrNull'
+import Nullable from '../../common/Nullable'
 
 import OverlayImp, { OverlayTemplate, OverlayConstructor } from '../../component/Overlay'
 
@@ -50,7 +50,7 @@ function registerOverlay (template: OverlayTemplate): void {
   overlays[template.name] = OverlayImp.extend(template)
 }
 
-function getOverlayClass (name: string): TypeOrNull<OverlayConstructor> {
+function getOverlayClass (name: string): Nullable<OverlayConstructor> {
   return overlays[name] ?? null
 }
 

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import { UpdateLevel } from '../common/Updater'
 import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
@@ -42,7 +42,7 @@ export const enum EventOverlayInfoFigureType {
 
 export interface EventOverlayInfo {
   paneId: string
-  instance: TypeOrNull<OverlayImp>
+  instance: Nullable<OverlayImp>
   figureType: EventOverlayInfoFigureType
   figureIndex: number
   attrsIndex: number
@@ -56,7 +56,7 @@ export default class OverlayStore {
   /**
    * Overlay information in painting
    */
-  private _progressInstanceInfo: TypeOrNull<ProgressOverlayInfo> = null
+  private _progressInstanceInfo: Nullable<ProgressOverlayInfo> = null
 
   /**
    * Overlay information by the mouse pressed
@@ -165,7 +165,7 @@ export default class OverlayStore {
     return updateFlag
   }
 
-  getInstanceById (id: string): TypeOrNull<OverlayImp> {
+  getInstanceById (id: string): Nullable<OverlayImp> {
     for (const entry of this._instances) {
       const paneShapes = entry[1]
       const shape = paneShapes.find(s => s.id === id)
@@ -181,7 +181,7 @@ export default class OverlayStore {
     return null
   }
 
-  addInstance (overlay: OverlayCreate, paneId: string, appointPaneFlag: boolean): TypeOrNull<string> {
+  addInstance (overlay: OverlayCreate, paneId: string, appointPaneFlag: boolean): Nullable<string> {
     const id = overlay.id ?? createId(OVERLAY_ID_PREFIX)
     if (this.getInstanceById(id) === null) {
       const OverlayClazz = getOverlayClass(overlay.name) as OverlayConstructor
@@ -203,7 +203,7 @@ export default class OverlayStore {
     return null
   }
 
-  getProgressInstanceInfo (): TypeOrNull<ProgressOverlayInfo> {
+  getProgressInstanceInfo (): Nullable<ProgressOverlayInfo> {
     return this._progressInstanceInfo
   }
 

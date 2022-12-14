@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import ExcludePickPartial from '../common/ExcludePickPartial'
 import KLineData from '../common/KLineData'
 import Bounding from '../common/Bounding'
@@ -115,19 +115,19 @@ export interface Indicator<D = any> {
   // 数据信息
   figures: Array<IndicatorFigure<D>>
   // 指定的最小值
-  minValue: TypeOrNull<number>
+  minValue: Nullable<number>
   // 指定的最大值
-  maxValue: TypeOrNull<number>
+  maxValue: Nullable<number>
   // 样式
-  styles: TypeOrNull<Partial<IndicatorStyle>>
+  styles: Nullable<Partial<IndicatorStyle>>
   // 计算
   calc: IndicatorCalcCallback<D>
   // 重新生成数图形配置
-  regenerateFigures: TypeOrNull<IndicatorRegenerateFiguresCallback<D>>
+  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>>
   // 创建自定义提示文字
-  createToolTipDataSource: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>
+  createToolTipDataSource: Nullable<IndicatorCreateToolTipDataSourceCallback>
   // 自定义绘制
-  draw: TypeOrNull<IndicatorDrawCallback<D>>
+  draw: Nullable<IndicatorDrawCallback<D>>
   // 结果
   result: D[]
 }
@@ -222,12 +222,12 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
   extendData: any
   series: IndicatorSeries
   figures: Array<IndicatorFigure<D>>
-  minValue: TypeOrNull<number>
-  maxValue: TypeOrNull<number>
-  styles: TypeOrNull<Partial<IndicatorStyle>>
-  regenerateFigures: TypeOrNull<IndicatorRegenerateFiguresCallback<D>>
-  createToolTipDataSource: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>
-  draw: TypeOrNull<IndicatorDrawCallback<D>>
+  minValue: Nullable<number>
+  maxValue: Nullable<number>
+  styles: Nullable<Partial<IndicatorStyle>>
+  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>>
+  createToolTipDataSource: Nullable<IndicatorCreateToolTipDataSourceCallback>
+  draw: Nullable<IndicatorDrawCallback<D>>
 
   result: D[] = []
 
@@ -324,7 +324,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     return false
   }
 
-  setStyles (styles: TypeOrNull<Partial<IndicatorStyle>>): boolean {
+  setStyles (styles: Nullable<Partial<IndicatorStyle>>): boolean {
     if (this.styles !== styles) {
       this.styles = styles
       return true
@@ -348,7 +348,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     return false
   }
 
-  setMinValue (value: TypeOrNull<number>): boolean {
+  setMinValue (value: Nullable<number>): boolean {
     if (this.minValue !== value) {
       this.minValue = value
       return true
@@ -356,7 +356,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     return false
   }
 
-  setMaxValue (value: TypeOrNull<number>): boolean {
+  setMaxValue (value: Nullable<number>): boolean {
     if (this.maxValue !== value) {
       this.maxValue = value
       return true
@@ -364,7 +364,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     return false
   }
 
-  setRegenerateFigures (callback: TypeOrNull<IndicatorRegenerateFiguresCallback>): boolean {
+  setRegenerateFigures (callback: Nullable<IndicatorRegenerateFiguresCallback>): boolean {
     if (this.regenerateFigures !== callback) {
       this.regenerateFigures = callback
       return true
@@ -372,7 +372,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     return false
   }
 
-  setCreateToolTipDataSource (callback: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>): boolean {
+  setCreateToolTipDataSource (callback: Nullable<IndicatorCreateToolTipDataSourceCallback>): boolean {
     if (this.createToolTipDataSource !== callback) {
       this.createToolTipDataSource = callback
       return true
@@ -380,7 +380,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     return false
   }
 
-  setDraw (callback: TypeOrNull<IndicatorDrawCallback>): boolean {
+  setDraw (callback: Nullable<IndicatorDrawCallback>): boolean {
     if (this.draw !== callback) {
       this.draw = callback
       return true

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../../common/TypeOrNull'
+import Nullable from '../../common/Nullable'
 
 import IndicatorImp, { IndicatorTemplate, IndicatorConstructor } from '../../component/Indicator'
 
@@ -63,7 +63,7 @@ function registerIndicator<D> (indicator: IndicatorTemplate<D>): void {
   indicators[indicator.name] = IndicatorImp.extend(indicator)
 }
 
-function getIndicatorClass (name: string): TypeOrNull<IndicatorConstructor> {
+function getIndicatorClass (name: string): Nullable<IndicatorConstructor> {
   return indicators[name] ?? null
 }
 

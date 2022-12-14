@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import TypeOrNull from '../common/TypeOrNull'
+import Nullable from '../common/Nullable'
 import KLineData from '../common/KLineData'
 import Crosshair from '../common/Crosshair'
 import { UpdateLevel } from '../common/Updater'
@@ -50,7 +50,7 @@ export default class CrosshairStore {
       realDataIndex = dataList.length - 1
       dataIndex = realDataIndex
     }
-    const kLineData: TypeOrNull<KLineData> = dataList[dataIndex]
+    const kLineData: Nullable<KLineData> = dataList[dataIndex]
     const realX = this._chartStore.getTimeScaleStore().dataIndexToCoordinate(realDataIndex)
     const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
     this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex }
