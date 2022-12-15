@@ -37,7 +37,7 @@ This document will help you upgrade from kinecharts 8.x to klinecharts 9.x. If y
 + To delete `getTechnicalIndicatorByPaneId(paneId, name)`.
 
 ### Shape help API
-
++ All APIs are migrated to 'klinecahrts.utils'.
 
 ## Customized technical indicator adjustment
 + Attribute `plots` is changed to `figures`, sub item methods `color`, `isStroke`, `isDashed` are merged into `styles`.

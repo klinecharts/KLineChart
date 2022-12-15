@@ -2,8 +2,8 @@
 A highly customizable lightweight financial chart, built-in dozens of technical indicators, built-in multiple shapes, support for custom technical indicators, support for custom shape, support mobile.
 
 ## Docs
++ [Introduce](introduce.md)
 + Getting Started
-  + [Features](features.md)
   + [Styles](styles.md)
   + [Data source](datasource.md)
   + [Quick start](quick-start.md)
@@ -18,3 +18,4 @@ A highly customizable lightweight financial chart, built-in dozens of technical 
 + [Environment](environment.md)
 + [Changelog](changelog.md)
 + [V7 to V8](v7-to-v8.md)
++ [FAQ](faq.md)
