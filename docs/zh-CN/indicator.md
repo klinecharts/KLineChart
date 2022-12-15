@@ -1,4 +1,5 @@
 # 技术指标
+本文档介绍了图表内置的技术指标和如何自定义一个技术指标。
 
 ## 默认技术指标
 | **指标名** | **默认计算参数** | **指标名** | **默认计算参数** | **指标名** | **默认计算参数** |
@@ -14,129 +15,198 @@
 | RSI | [6, 12, 24] | OBV | [30] | AVP | 无 |
 
 
-## 技术指标模板
-想要完成一个自定义技术指标，只需要生成一个技术指标信息，然后通过`registerIndicator`全局添加，添加到图表即可和内置技术指标一样去使用。
+## 自定义技术指标
+创建一个自定义技术指标，只需要生成一个技术指标信息，然后通过`registerIndicator`全局添加，添加到图表即可和内置技术指标一样去使用。
+
 ### 属性说明
-#### 技术指标信息
-```javascript
+```typescript
 {
-  // 技术指标名字，必要字段，是创建技术指标的唯一标识
-  name: 'xxx',
-
-  // 用于提示显示
-  shortName: 'xxx',
-
-  // 技术指标计算方法，必要字段
-  // 该字段是一个回调方法，回调参数是当前图表的源数据和计算的参数，需要返回一个数组或者一个promise
-  // kLineDataList 图表的原始数据
-  // indicator 技术指标实例
-  calc: (kLineDataList, indicator) => { return [] },
-
-  // 系列，可选参数'normal'、'price'和'volume'
-  series: 'normal',
-
-  // 精度，可缺省，默认为4
-  precision: 4,
-
-  // 计算参数，是一个数组，可缺省，可以是数字也可以是`{ value, allowDecimal }`
-  calcParams: [],
-
-  // 图形配置，是一个数组
-  figures: [],
-
-  // 是否需要格式化大数据值
-  shouldFormatBigNumber: false,
-
-  // 是否需要辅助ohlc线
-  shouldOhlc: false,
-
-  // 指定的最小值，可缺省
-  // 如果设置，在计算y轴上最小值时将以此为准
-  minValue: null,
-
-  // 指定的最大值，可缺省
-  // 如果设置，在计算y轴上最大值时将以此为准
-  maxValue: null,
-
-  // 样式，可缺省，缺省则同步样式配置
-  styles: null,
-
-  // 拓展数据 可缺省
-  // 可以是一个方法，也可以是普通数据
-  extendData: (params) => { return },
-
-  // 重新生成图形配置，是一个回调方法，可缺省
-  // 当计算参数发生改变时触发
-  // 返回值需要一个数组
-  regenerateFigures: (params) => { return [] },
-
-  // 生成tooltip显示的数据，返回格式`{ name, calcParamsText, values }`的数组，可缺省， 其中values是一个数组，格式为`{ title, value, color }`
-  // kLineDataList k线数据
-  // indicator 技术指标实例
-  // visibleRange 可见数据区间信息
-  // bounding 尺寸信息
-  // crosshair 十字光标信息
-  // defaultStyles 技术指标默认样式
-  // xAxis x轴
-  // yAxis y轴
-  createTooltipDataSource: ({
-    kLineDataList,
-    indicator,
-    visibleRange,
-    bounding,
-    crosshair,
-    defaultStyles,
-    xAxis,
-    yAxis
-  }) => { return [] }
-
-  // 自定义渲染，可缺省，返回一个boolean，true则会覆盖掉默认的图形绘制
-  // ctx canvas上下文
-  // kLineDataList k线数据
-  // indicator 技术指标实例
-  // visibleRange 可见数据区间信息
-  // bounding 尺寸信息
-  // barSpace 数据所占空间的一些信息
-  // styles 样式
-  // xAxis x轴
-  // yAxis y轴
-  draw: ({
-    ctx,
-    kLineDataList,
-    indicator,
-    visibleRange,
-    bounding,
-    barSpace,
-    defaultStyles,
-    xAxis,
-    yAxis
-  }) => {}
+  // 指标名
+  name: string,
+  // 指标简短名称，用于显示，缺省将显示name
+  shortName?: string,
+  // 精度，默认为4
+  precision?: number,
+  // 计算参数
+  calcParams?: any[],
+  // 是否需要ohlc
+  shouldOhlc?: boolean,
+  // 是否需要格式化大数据值，从1000开始格式化，比如100000是否需要格式化100K
+  shouldFormatBigNumber?: boolean,
+  // 扩展数据
+  extendData?: any
+  // 系列，默认为'normal'
+  series?: 'normal' | 'price' | 'volume',
+  // 数据信息
+  figures?: Array<{
+    // 用于取计算结果中值
+    key: string,
+    // 用于tooltip显示
+    title?: string,
+    // 图形类型
+    type?: string,
+    // 基准值，如果给定，将以这个值上下去绘制，一般用于type是'rect'
+    baseValue?: number,
+    // 是一个方法
+    styles?: (
+      data: {
+        // 上一个图形的数据
+        prev: {
+          // k线数据，类型参阅[数据源]
+          kLineData?: KLineData,
+          // 技术指标数据
+          indicatorData?: any
+        },
+        // 当前图形的数据
+        current: {
+          kLineData?: KLineData,
+          indicatorData?: any
+        },
+        // 下一个图形的数据
+        next: {
+          kLineData?: KLineData,
+          indicatorData?: any
+        }
+      },
+      // 技术图表实例
+      indicator: Indicator,
+      // 默认的技术指标样式，即全局设置的技术指标样式，参阅[样式]中的indicator
+      defaultStyles: IndicatorStyle
+    ) => ({
+      // 样式，可选项为'solid'，'dashed'，'fill'，'stroke'，'stoke_fill'
+      style?: 'solid' | 'dashed' | 'fill' | 'stroke' | 'stoke_fill',
+      // 颜色
+      color?: string
+    })
+  }>,
+  // 指定的最小值，默认null
+  minValue?: number
+  // 指定的最大值，默认null
+  maxValue?: number
+  // 样式，支持增量，默认为null，类型参阅[样式]中的indicator
+  styles?: IndicatorStyle,
+  // 计算方法，可以是一个promise
+  calc: (
+    // 数据源，类型参阅[数据源]
+    dataList: KLineData[],
+    // 技术指标实例
+    indicator: Indicator
+  ) => Promise<Array<any>> | Array<any>,
+  // 重新生成数图形配置方法，会在计算参数发生变化后触发，返回类型参阅figures，默认为null
+  regenerateFigures?: (
+    // 计算参数
+    calcParms: any[]
+  ) => Array<IndicatorFigure<D>>
+  // 创建自定义提示文字
+  createToolTipDataSource?: (params: {
+    // 数据源，类型参阅[数据源]
+    kLineDataList: KLineData[],
+    // 技术指标实例
+    indicator: Indicator,
+    // 可见区域信息
+    visibleRange: {
+      // 起点数据索引
+      from: number,
+      // 终点数据索引
+      to: number
+    },
+    // 窗口尺寸信息
+    bounding: {
+      // 宽
+      width: number,
+      // 高
+      height: number,
+      // 距离左边距离
+      left: number,
+      // 距离右边距离
+      right: number,
+      // 距离顶部距离
+      top: number,
+      // 距离底部距离
+      bottom: number
+    },
+    // 十字光标的信息
+    crosshair: {
+      // 十字光标交叉点所在的窗口id
+      paneId?: string,
+      // 真实的x坐标
+      realX?: number,
+      // k线数据，类型参阅[数据源]
+      kLineData?: KLineData,
+      // 数据索引
+      dataIndex?: number,
+      // 真实数据索引
+      realDataIndex?: number
+    },
+    // 默认的技术指标样式，即全局设置的技术指标样式，参阅[样式]中的indicator
+    defaultStyles: IndicatorStyle,
+    // x轴组件，内置一些转换方法
+    xAxis: XAxis,
+    // y轴组件，内置一些转换方法
+    yAxis: YAxis
+  }) => ({
+    // 名字
+    name?: string,
+    // 计算参数文字，如果name无值，则不会显示
+    calcParamsText?: string,
+    // 值信息
+    values?: Array<{
+      title: string | { text: string, color: string }
+      value: string | { text: string, color: string }
+    }>
+  }),
+  // 自定义绘制，如果返回true，则figures配置的图形不会绘制
+  draw?: (params: {
+    // 画布上下文
+    ctx: CanvasRenderingContext2D,
+    // 数据源，类型参阅[数据源]
+    kLineDataList: KLineData[],
+    // 技术指标实例
+    indicator: Indicator,
+    // 可见区域信息
+    visibleRange: {
+      // 起点数据索引
+      from: number,
+      // 终点数据索引
+      to: number
+    },
+    // 窗口尺寸信息
+    bounding: {
+      // 宽
+      width: number,
+      // 高
+      height: number,
+      // 距离左边距离
+      left: number,
+      // 距离右边距离
+      right: number,
+      // 距离顶部距离
+      top: number,
+      // 距离底部距离
+      bottom: number
+    },
+    // 蜡烛柱的尺寸信息
+    barSpace: {
+      // 蜡烛柱尺寸
+      bar: number,
+      halfBar: number,
+      // 蜡烛柱不包含蜡烛柱之间间隙的尺寸
+      gapBar: number,
+      halfGapBar: number
+    },
+    // 默认的技术指标样式，即全局设置的技术指标样式，参阅[样式]中的indicator
+    defaultStyles: IndicatorStyle,
+    // x轴组件，内置一些转换方法
+    xAxis: XAxis,
+    // y轴组件，内置一些转换方法
+    yAxis: YAxis
+  }) => boolean
 }
 ```
-#### figures子项信息
-```javascript
-{
-  // 必要字段，决定方法calcTechnicalIndicator的返回值
-  key: '',
-  // 可缺省，主要用于提示
-  title: '',
-  // 可缺省，绘制类型，目前支持'line', 'circle'和'bar'
-  type: '',
-  // 基础比对数据，可缺省
-  // 如果设置，当图形是bar时，将在此值上下绘制，如：MACD指标的macd值
-  baseValue: null,
-  // 可缺省
-  // 是一个方法，返回止值类型为`{ style, color }`，style可选项为`solid`，`dashed`，`fill`，`strke`，`stroke_fill`，
-  // data 数据
-  // indicator 技术指标实例
-  // defaultStyles 技术指标默认样式
-  styles: (data, indicator, defaultStyles) => ({ style, color })
-}
-```
 
-## 示例
-以下将以一个名为'MA'技术指标，一步步的介绍如何去做技术指标模板。
-### 步骤一
+### 示例
+以一个名为'MA'技术指标，介绍如何去做自定义技术指标。
+#### 步骤一
 首先确定计算参数(calcParams)和配置项(figures)，'MA'技术指标需要展示两个周期的收盘价平均值连起来的线，一条为'ma1'，一条名为'ma2'。因此figures配置为：
 ```javascript
 {
@@ -150,7 +220,7 @@
   ]
 }
 ```
-### 步骤二
+#### 步骤二
 确定其它属性
 ```javascript
 {
@@ -189,5 +259,7 @@
   }
 }
 ```
+
+这样一个自定义指标就完成了。
 
 
