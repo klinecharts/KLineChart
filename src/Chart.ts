@@ -64,7 +64,7 @@ export interface Chart {
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
   setLocale: (locale: string) => void
   getLocale: () => string
-  setStyles: (styles: DeepPartial<Styles>) => void
+  setStyles: (styles: string | DeepPartial<Styles>) => void
   getStyles: () => Styles
   setCustomApi: (customApi: Partial<CustomApi>) => void
   setPriceVolumePrecision: (pricePrecision: number, volumePrecision: number) => void
@@ -434,7 +434,7 @@ export default class ChartImp implements Chart {
   }
 
   setTimezone (timezone: string): void {
-    this._chartStore.getTimeScaleStore().setTimezone(timezone)
+    this._chartStore.setOptions({ timezone })
     this._xAxisPane.getAxisComponent().buildTicks(true)
     this._xAxisPane.update(UpdateLevel.DRAWER)
   }

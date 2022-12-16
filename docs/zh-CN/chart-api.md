@@ -5,6 +5,7 @@
 (ds: string | HTMLElement, options?: {
   locale?: string,
   styles?: string | object,
+  timezone?: string,
   customApi?: {
     formateDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format?: string) => string,
     formatBigNumber?: (value: string | number) => string
@@ -15,7 +16,8 @@
 - `ds` 容器，可以是dom元素或者元素id。
 - `options` 可选配置项。
   - `locale` 语言，内置支持`zh-CN`和`en-US`。
-  - `styles` 样式列表，详情参阅[样式](/zh-CN/guide/style)，支持增量。
+  - `timezone` 时区名，如'Asia/Shanghai'，如果不设置会自动获取本机时区，时区对应名字列表请参阅[时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)。
+  - `styles` 可以是通过`klinecharts.registerStyles`注册的样式名，也可以是object，样式列表，详情参阅[样式](/zh-CN/guide/style)，支持增量。
   - `customApi` 自定义一些api。
     - `formateDate` 格式化日期。
     - `formatBigNumber` 格式化大的数字，如1000转换成1k，1000000转换为1M等。
@@ -27,6 +29,43 @@
 ```
 销毁一个图表，一旦销毁，图表将不再可用。
 - `dcs` 可以是dom元素、元素id或者图表实例。
+
+
+## registerLocale(locale, locales)
+```typescript
+(
+  locale: string,
+  locales: {
+    time: string,
+    open: string,
+    high: string,
+    low: string,
+    close: string,
+    volume: string
+  }
+) => void
+```
+添加一个本地化语言。图表内置了`zh-CN`和`en-US`。
+- `locale` 语言名
+- `locales` 语言配置
+
+## getSupportLocales()
+```typescript
+() => string[]
+```
+获取图表支持的本地化语言类型。
+
+## registerStyles(name, styles)
+```typescript
+(
+  name: string,
+  styles: object
+) => void
+```
+添加一个样式配置。
+- `name` 样式名
+- `styles` 样式配置，类型参阅[样式](/zh-CN/guide/style)，支持增量。
+
 
 ## registerFigure(figure)
 ```typescript

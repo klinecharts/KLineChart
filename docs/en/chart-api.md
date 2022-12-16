@@ -4,6 +4,7 @@
 ```typescript
 (ds: string | HTMLElement, options?: {
    locale?: string,
+   timezone?: string,
    styles?: string | object,
    customApi?: {
       formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format?: string) => string,
@@ -15,7 +16,8 @@ Initialize a chart and return the chart instance.
 - `ds` container, can be dom element or element id.
 - `options` optional configuration items.
    - `locale` language, built-in support for `zh-CN` and `en-US`.
-   - `styles` list of styles, see [styles](/guide/style) for details, support increment.
+   - `timezone` time zone name, such as 'Asia/Shanghai', if not set, it will automatically get the local time zone, please refer to [timezone list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List ).
+   - `styles` It can be the style name registered through `klinecharts.registerStyles`, or it can be an object, a list of styles, see [styles](/guide/style) for details, and supports increments.
    - `customApi` customize some APIs.
      - `formatDate` formats a date.
      - `formatBigNumber` format big numbers, such as 1000 into 1k, 1000000 into 1M, etc.
@@ -27,6 +29,42 @@ Initialize a chart and return the chart instance.
 ```
 Destroys a chart, once destroyed the chart will no longer be available.
 - `dcs` can be a dom element, element id or chart instance.
+
+
+## registerLocale(locale, locales)
+```typescript
+(
+   locale: string,
+   locales: {
+     time: string,
+     open: string,
+     high: string,
+     low: string,
+     close: string,
+     volume: string
+   }
+) => void
+```
+Add a localization language. Charts have built-in `zh-CN` and `en-US`.
+- `locale` language name
+- `locales` language configuration
+
+## getSupportLocales()
+```typescript
+() => string[]
+```
+Get the localized language types supported by the chart.
+
+## registerStyles(name, styles)
+```typescript
+(
+   name: string,
+   styles: object
+) => void
+```
+Add a style configuration.
+- `name` style name
+- `styles` style configuration, refer to [style](/guide/style) for the type, support increment.
 
 ## registerFigure(figure)
 ```typescript

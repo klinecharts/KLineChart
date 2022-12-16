@@ -808,6 +808,7 @@ export interface Locales {
 
 export interface Options {
   locale?: string
+  timezone?: string
   styles?: string | DeepPartial<Styles>
   customApi?: Partial<CustomApi>
 }

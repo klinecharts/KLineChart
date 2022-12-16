@@ -120,16 +120,19 @@ export default class ChartStore {
 
   setOptions (options?: Options): ChartStore {
     if (options !== undefined) {
-      const { styles, locale, customApi } = options
+      const { locale, timezone, styles, customApi } = options
+      if (locale !== undefined) {
+        this._locale = locale
+      }
+      if (timezone !== undefined) {
+        this._timeScaleStore.setTimezone(timezone)
+      }
       if (styles !== undefined) {
         if (isString(styles)) {
           merge(this._styles, getStyles(styles as string))
         } else {
           merge(this._styles, styles)
         }
-      }
-      if (locale !== undefined) {
-        this._locale = locale
       }
       if (customApi !== undefined) {
         merge(this._customApi, customApi)
