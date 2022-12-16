@@ -30,14 +30,14 @@
 (styles: string | object) => HTMLElement
 ```
 设置样式配置。
-- `styles` 样式配置，可以是通过`registerStyles`注册进去的样式名。当是对象时，详情可参阅[样式说明](styles.md)，支持合并。
+- `styles` 样式配置，可以是通过`registerStyles`注册进去的样式名。当是对象时，详情可参阅[样式](/zh-CN/guide/style)，支持合并。
 
 
 ## getStyles()
 ```typescript
 () => object
 ```
-获取样式配置，返回完整类型参阅[样式说明](styles.md)。
+获取样式配置，返回完整类型参阅[样式](/zh-CN/guide/style)。
 
 
 ## setPriceVolumePrecision(pricePrecision, volumePrecision)
@@ -117,14 +117,14 @@
 ```typescript
 (space: number) => void
 ```
-设置图表单根蜡烛柱的宽度，不包含蜡烛柱之间的间隙。
+设置图表单根蜡烛柱的宽度。
 
 
 ## getBarSpace()
 ```typescript
 () => number
 ```
-获取图表单根蜡烛柱的宽度，不包含蜡烛柱之间的间隙。
+获取图表单根蜡烛柱的宽度。
 
 
 ## applyNewData(dataList, more)
@@ -143,7 +143,7 @@
 ) => void
 ```
 添加新数据，此方法会清空图表数据，不需要额外调用clearData方法。
-- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
+- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](/zh-CN/guide/data)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 
 
@@ -163,7 +163,7 @@
 ) => void
 ```
 添加历史更多数据。
-- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
+- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](/zh-CN/guide/data)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 
 
@@ -180,7 +180,7 @@
 }) => void
 ```
 更新数据，目前只会匹配当前最后一条数据的时间戳，相同则覆盖，不同则追加。
-- `data` 单条k线数据，数据类型详情可参阅[数据源](./datasource.md)
+- `data` 单条k线数据，数据类型详情可参阅[数据源](/zh-CN/guide/data)
 
 
 ## getDataList()
@@ -195,7 +195,7 @@
   turnover?: number
 }>
 ```
-获取图表目前的数据源，返回数据类型可参阅[数据源](./datasource.md)。
+获取图表目前的数据源，返回数据类型可参阅[数据源](/zh-CN/guide/data)。
 
 
 ## clearData()

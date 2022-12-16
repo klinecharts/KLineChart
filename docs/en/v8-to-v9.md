@@ -5,7 +5,7 @@ This document will help you upgrade from kinecharts 8.x to klinecharts 9.x. If y
 `klinecharts/index.blank'` and `klinecharts/index.simple` are no longer distinguished. Please use `import {...} from klinecharts` uniformly.
 
 ## Design adjustment
-`shape`, `annotation`, `tag` are merged into `overlay`. Please refer to [overlay](overlay.md) for details.
+`shape`, `annotation`, `tag` are merged into `overlay`. Please refer to [overlay](/advanced/overlay) for details.
 
 ## Style configuration adjustment
 + The style options of all lines are changed to `dashed` and `dashValue` to `dashedValue`.

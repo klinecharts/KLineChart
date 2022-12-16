@@ -15,7 +15,7 @@ Initialize a chart and return the chart instance.
 - `ds` container, can be dom element or element id.
 - `options` optional configuration items.
    - `locale` language, built-in support for `zh-CN` and `en-US`.
-   - `styles` list of styles, see [styles](styles.md) for details, support increment.
+   - `styles` list of styles, see [styles](/guide/style) for details, support increment.
    - `customApi` customize some APIs.
      - `formatDate` formats a date.
      - `formatBigNumber` format big numbers, such as 1000 into 1k, 1000000 into 1M, etc.
@@ -37,7 +37,7 @@ Destroys a chart, once destroyed the chart will no longer be available.
 }) => void
 ```
 Add a base shape.
-- `figure` Basic figure information, see [Basic figure](figure.md) for details
+- `figure` Basic figure information, see [figure](/advanced) for details
    - `name` name, unique identifier
    - `draw` drawing method
    - `checkEventOn` checks if the event is on the graph
@@ -199,7 +199,7 @@ Get technical indicators for chart support.
 }) => void
 ```
 Add a overlay.
-- `overlay` overlay information, see [overlay](overlay.md) for details
+- `overlay` overlay information, see [overlay](/advanced/overlay) for details
    - `name` overlay name, unique identifier for creation
    - `totalStep` total implementation steps
    - `lock` is locked to prevent dragging

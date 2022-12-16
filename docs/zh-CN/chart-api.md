@@ -15,7 +15,7 @@
 - `ds` 容器，可以是dom元素或者元素id。
 - `options` 可选配置项。
   - `locale` 语言，内置支持`zh-CN`和`en-US`。
-  - `styles` 样式列表，详情参阅[样式](styles.md)，支持增量。
+  - `styles` 样式列表，详情参阅[样式](/zh-CN/guide/style)，支持增量。
   - `customApi` 自定义一些api。
     - `formateDate` 格式化日期。
     - `formatBigNumber` 格式化大的数字，如1000转换成1k，1000000转换为1M等。
@@ -37,7 +37,7 @@
 }) => void
 ```
 添加一个基础图形。
-- `figure` 基础图形信息，详情参阅[基础图形](figure.md)
+- `figure` 基础图形信息，详情参阅[基础图形](/zh-CN/advanced)
   - `name` 名字，唯一标识
   - `draw` 绘制方法
   - `checkEventOn` 检查事件是否在图形上
@@ -201,7 +201,7 @@
 }) => void
 ```
 添加一个覆盖物。
-- `overlay` 覆盖物信息，详情参阅[覆盖物](overlay.md)
+- `overlay` 覆盖物信息，详情参阅[覆盖物](/zh-CN/advanced/overlay)
   - `name` 覆盖物名，用于创建的唯一标识
   - `totalStep` 总的实现步骤
   - `lock` 是否锁定不让拖动

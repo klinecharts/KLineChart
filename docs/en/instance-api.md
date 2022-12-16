@@ -30,14 +30,14 @@ Get the dimensions.
 (styles: string | object) => HTMLElement
 ```
 Set style configuration.
-- `styles` style configuration, which can be the style name registered through `registerStyles`. When it is an object, please refer to [style description](styles.md) for details, and it supports merging.
+- `styles` style configuration, which can be the style name registered through `registerStyles`. When it is an object, please refer to [styles](guide/style) for details, and it supports merging.
 
 
 ## getStyles()
 ```typescript
 () => object
 ```
-Get the style configuration, return the complete type refer to [style description](styles.md).
+Get the style configuration, return the complete type refer to [styles](guide/style).
 
 
 ## setPriceVolumePrecision(pricePrecision, volumePrecision)
@@ -117,14 +117,14 @@ Sets the minimum number of visible candles to the right.
 ```typescript
 (space: number) => void
 ```
-Sets the width of a single candlestick of the chart, excluding the gaps between candlesticks.
+Sets the width of a single candlestick of the chart.
 
 
 ## getBarSpace()
 ```typescript
 () => number
 ```
-Gets the width of a single candlestick on the chart, not including the gaps between candlesticks.
+Gets the width of a single candlestick on the chart.
 
 
 ## applyNewData(dataList, more)
@@ -143,7 +143,7 @@ Gets the width of a single candlestick on the chart, not including the gaps betw
 ) => void
 ```
 Add new data, this method will clear the chart data, no need to call the clearData method additionally.
-- `dataList` is an array of K-line data. For details of the data type, please refer to [Data Source](./datasource.md)
+- `dataList` is an array of K-line data. For details of the data type, please refer to [data](guide/data)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
 
 
@@ -163,7 +163,7 @@ Add new data, this method will clear the chart data, no need to call the clearDa
 ) => void
 ```
 Add more historical data.
-- `dataList` is an array of K-line data. For details of the data type, please refer to [Data Source](./datasource.md)
+- `dataList` is an array of K-line data. For details of the data type, please refer to [data](guide/data)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
 
 
@@ -180,7 +180,7 @@ Add more historical data.
 }) => void
 ```
 Update data. Currently, only the timestamp of the last piece of data will be matched. If it is the same, it will be overwritten, and if it is different, it will be appended.
-- `data` single k-line data, please refer to [data source](./datasource.md) for details of data type
+- `data` single k-line data, please refer to [data](guide/data) for details of data type
 
 
 ## getDataList()
@@ -195,7 +195,7 @@ Update data. Currently, only the timestamp of the last piece of data will be mat
    turnover?: number
 }>
 ```
-Get the current data source of the chart. For the returned data type, please refer to [Data Source](./datasource.md).
+Get the current data source of the chart. For the returned data type, please refer to [data](guide/data).
 
 
 ## clearData()
