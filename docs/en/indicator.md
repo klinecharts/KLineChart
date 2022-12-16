@@ -1,7 +1,7 @@
 # Technical indicator
 This document introduces the built-in technical indicators in the chart and how to customize a technical indicator.
 
-## Default technical indicators
+## Built-in technical indicators
 | **Name** | **Default calc params** | **Name** | **Default calc params** | **Name** | **Default calc params** |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | MA | [5, 10, 30, 60] | BIAS | [6, 12, 24] | VR | [24, 30] |
@@ -16,7 +16,7 @@ This document introduces the built-in technical indicators in the chart and how 
 
 
 ## Custom Technical Indicators
-To create a custom technical indicator, you only need to generate a technical indicator information, and then add it globally through `registerIndicator`, add it to the chart and use it like the built-in technical indicator.
+To create a custom technical indicator, you only need to generate a technical indicator information, and then add it globally through `klinecharts.registerIndicator`, add it to the chart and use it like the built-in technical indicator.
 
 ### Attribute description
 ```typescript
@@ -258,4 +258,4 @@ Determine other attributes
 }
 ```
 
-Such a custom indicator is completed.
+So a custom indicator is completed.

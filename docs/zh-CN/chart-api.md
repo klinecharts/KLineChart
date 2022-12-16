@@ -46,7 +46,16 @@
 ```typescript
 () => string[]
 ```
-获取图表支持的基础图形类型
+获取图表支持的基础图形类型。
+
+
+## getFigureClass(name)
+```typescript
+(name: string) => Figure
+```
+获取图形类
+- `name` 图形名
+
 
 ## registerIndicator(indicator)
 ```typescript
@@ -551,7 +560,8 @@
     borderColor?: string,
     borderSize?: number,
     borderStyle?: 'solid' | 'dashed',
-    borderDashedValue?: Array<number>
+    borderDashedValue?: Array<number>,
+    borderRadius?: number
   }
 ) => void
 ```
@@ -569,6 +579,7 @@
   - `borderSize` 边框粗细
   - `borderStyle` 边框样式
   - `borderDashedValue` 边框虚线参数值
+  - `borderRadius` 边框圆角值
 
 
 ### utils.drawText(ctx, text, styles)

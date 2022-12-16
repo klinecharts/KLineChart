@@ -6,8 +6,8 @@
    locale?: string,
    styles?: string | object,
    customApi?: {
-     formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format?: string) => string,
-     formatBigNumber?: (value: string | number) => string
+      formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format?: string) => string,
+      formatBigNumber?: (value: string | number) => string
    }
 }) => Chart
 ```
@@ -28,7 +28,7 @@ Initialize a chart and return the chart instance.
 Destroys a chart, once destroyed the chart will no longer be available.
 - `dcs` can be a dom element, element id or chart instance.
 
-## register Figure(figure)
+## registerFigure(figure)
 ```typescript
 (figure: {
    name: string,
@@ -46,7 +46,14 @@ Add a base shape.
 ```typescript
 () => string[]
 ```
-Get the basic graph type supported by the graph
+Get the basic graph type supported by the graph.
+
+## getFigureClass(name)
+```typescript
+(name: string) => Figure
+```
+Get graph class.
+- `name` name
 
 ## registerIndicator(indicator)
 ```typescript
@@ -60,38 +67,38 @@ Get the basic graph type supported by the graph
    extendData?: any,
    series?: 'normal' | 'price' | 'volume',
    figures?: Array<{
-     key: string,
-     title?: string,
-     type?: string,
-     baseValue?: number,
-     styles?: (
-       data: object,
-       indicator: object,
-       defaultStyles: object
-     ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
+      key: string,
+      title?: string,
+      type?: string,
+      baseValue?: number,
+      styles?: (
+         data: object,
+         indicator: object,
+         defaultStyles: object
+      ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
    }>
    minValue?: number,
    maxValue?: number,
    styles?: object,
    calc: (dataList: KLineData[], indicator: object) => Promise<object[]> | object[],
    regenerateFigures?: (calcParms: any[]) => Array<{
-     key: string,
-     title?: string,
-     type?: string,
-     baseValue?: number,
-     styles?: (
-       data: object,
-       indicator: object,
-       defaultStyles: object
-     ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
+      key: string,
+      title?: string,
+      type?: string,
+      baseValue?: number,
+      styles?: (
+         data: object,
+         indicator: object,
+         defaultStyles: object
+      ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
    }>,
    createToolTipDataSource?: (params: object) => {
-     name?: string,
-     calcParamsText?: string,
-     values?: Array<{
-       title: string | { text: string, color: string },
-       value: string | { text: string, color: string }
-     }>
+      name?: string,
+      calcParamsText?: string,
+      values?: Array<{
+         title: string | { text: string, color: string },
+         value: string | { text: string, color: string }
+      }>
    },
    draw?: (params: object) => boolean
 }) => void
@@ -136,43 +143,43 @@ Get technical indicators for chart support.
    extendData?: any,
    styles?: object,
    createPointFigures?: (params: object) => {
-     key?: string
-     type: string
-     attrs: any | any[]
-     styles?: any
-     ignoreEvent?: boolean
+      key?: string,
+      type: string,
+      attrs: any | any[],
+      styles?: any,
+      ignoreEvent?: boolean
    } | Array<{
-     key?: string
-     type: string
-     attrs: any | any[]
-     styles?: any
-     ignoreEvent?: boolean
+      key?: string,
+      type: string,
+      attrs: any | any[],
+      styles?: any,
+      ignoreEvent?: boolean
    }>,
    createXAxisFigures?: (params: object) => {
-     key?: string
-     type: string
-     attrs: any | any[]
-     styles?: any
-     ignoreEvent?: boolean
+      key?: string,
+      type: string,
+      attrs: any | any[],
+      styles?: any,
+      ignoreEvent?: boolean
    } | Array<{
-     key?: string
-     type: string
-     attrs: any | any[]
-     styles?: any
-     ignoreEvent?: boolean
+      key?: string,
+      type: string,
+      attrs: any | any[],
+      styles?: any,
+      ignoreEvent?: boolean
    }>,
    createYAxisFigures?: (params: object) => {
-     key?: string
-     type: string
-     attrs: any | any[]
-     styles?: any
-     ignoreEvent?: boolean
+      key?: string,
+      type: string,
+      attrs: any | any[],
+      styles?: any,
+      ignoreEvent?: boolean
    } | Array<{
-     key?: string
-     type: string
-     attrs: any | any[]
-     styles?: any
-     ignoreEvent?: boolean
+      key?: string,
+      type: string,
+      attrs: any | any[],
+      styles?: any,
+      ignoreEvent?: boolean
    }>,
    performEventPressedMove?: (params: object) => void,
    performEventMoveForDrawing?: (params: object) => void,
@@ -392,17 +399,17 @@ Checks whether a certain coordinate point is on a rectangle.
 (
    coordinate: { x: number, y: number },
    text: {
-     x: number,
-     y: number,
-     text: any,
-     align?: 'center' | 'end' | 'left' | 'right' | 'start',
-     baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
+      x: number,
+      y: number,
+      text: any,
+      align?: 'center' | 'end' | 'left' | 'right' | 'start',
+      baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
    },
    styles: {
-     color?: string,
-     size?: number,
-     family?: string,
-     weight?: number | string
+      color?: string,
+      size?: number,
+      family?: string,
+      weight?: number | string
    }
 ) => boolean
 ```
@@ -425,17 +432,17 @@ Check if a certain coordinate point is on the text.
 (
    ctx: CanvasRenderingContext2D,
    arc: {
-     x: number,
-     y: number,
-     r: number,
-     startAngle: number,
-     endAngle: number
+      x: number,
+      y: number,
+      r: number,
+      startAngle: number,
+      endAngle: number
    },
    styles: {
-     style?: 'solid' | 'dashed',
-     size?: number,
-     color?: string,
-     dashedValue?: number[]
+      style?: 'solid' | 'dashed',
+      size?: number,
+      color?: string,
+      dashedValue?: number[]
    }
 ) => void
 ```
@@ -458,17 +465,17 @@ Draw an arc.
 (
    ctx: CanvasRenderingContext2D,
    circle: {
-     x: number,
-     y: number,
-     r: number
+      x: number,
+      y: number,
+      r: number
    },
    styles: {
-     style?: 'stroke' | 'fill' | 'stroke_fill',
-     color?: string | CanvasGradient,
-     borderColor?: string,
-     borderSize?: number,
-     borderStyle?: 'solid' | 'dashed',
-     borderDashedValue?: Array<number>
+      style?: 'stroke' | 'fill' | 'stroke_fill',
+      color?: string | CanvasGradient,
+      borderColor?: string,
+      borderSize?: number,
+      borderStyle?: 'solid' | 'dashed',
+      borderDashedValue?: Array<number>
    }
 ) => void
 ```
@@ -492,10 +499,10 @@ Draw the circle.
    ctx: CanvasRenderingContext2D,
    line: { coordinates: Array<{ x: number, y: number }> },
    styles: {
-     style?: 'solid' | 'dashed',
-     size?: number,
-     color?: string,
-     dashedValue?: number[]
+      style?: 'solid' | 'dashed',
+      size?: number,
+      color?: string,
+      dashedValue?: number[]
    }
 ) => void
 ```
@@ -514,12 +521,12 @@ Draw the line.
    ctx: CanvasRenderingContext2D,
    polygon: { coordinates: Array<{ x: number, y: number }> },
    styles: {
-     style?: 'stroke' | 'fill' | 'stroke_fill',
-     color?: string | CanvasGradient,
-     borderColor?: string,
-     borderSize?: number,
-     borderStyle?: 'solid' | 'dashed',
-     borderDashedValue?: Array<number>
+      style?: 'stroke' | 'fill' | 'stroke_fill',
+      color?: string | CanvasGradient,
+      borderColor?: string,
+      borderSize?: number,
+      borderStyle?: 'solid' | 'dashed',
+      borderDashedValue?: Array<number>
    }
 ) => void
 ```
@@ -539,18 +546,19 @@ Draw the polygon.
 (
    ctx: CanvasRenderingContext2D,
    rect: {
-     x: number,
-     y: number,
-     width: number,
-     height: number
+      x: number,
+      y: number,
+      width: number,
+      height: number
    },
    styles: {
-     style?: 'stroke' | 'fill' | 'stroke_fill',
-     color?: string | CanvasGradient,
-     borderColor?: string,
-     borderSize?: number,
-     borderStyle?: 'solid' | 'dashed',
-     borderDashedValue?: Array<number>
+      style?: 'stroke' | 'fill' | 'stroke_fill',
+      color?: string | CanvasGradient,
+      borderColor?: string,
+      borderSize?: number,
+      borderStyle?: 'solid' | 'dashed',
+      borderDashedValue?: Array<number>,
+      borderRadius?: number
    }
 ) => void
 ```
@@ -568,6 +576,7 @@ Draw a rectangle.
    - `borderSize` border thickness
    - `borderStyle` border style
    - `borderDashedValue` border dashed line parameter value
+   - `borderRadius` border radius
 
 
 ### utils.drawText(ctx, text, styles)
@@ -575,17 +584,17 @@ Draw a rectangle.
 (
    ctx: CanvasRenderingContext2D,
    text: {
-     x: number,
-     y: number,
-     text: any,
-     align?: 'center' | 'end' | 'left' | 'right' | 'start',
-     baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
+      x: number,
+      y: number,
+      text: any,
+      align?: 'center' | 'end' | 'left' | 'right' | 'start',
+      baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
    },
    styles: {
-     color?: string,
-     size?: number,
-     family?: string,
-     weight?: number | string
+      color?: string,
+      size?: number,
+      family?: string,
+      weight?: number | string
    }
 ) => void
 ```
@@ -608,28 +617,28 @@ Draw text.
 (
    ctx: CanvasRenderingContext2D,
    rectText: {
-     x: number,
-     y: number,
-     text: any,
-     align?: 'center' | 'end' | 'left' | 'right' | 'start',
-     baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
+      x: number,
+      y: number,
+      text: any,
+      align?: 'center' | 'end' | 'left' | 'right' | 'start',
+      baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
    },
    styles: {
-     style?: 'stroke' | 'fill' | 'stroke_fill',
-     color?: string,
-     size?: number,
-     family?: string,
-     weight?: number | string,
-     paddingLeft?: number,
-     paddingTop?: number,
-     paddingRight?: number,
-     paddingBottom?: number,
-     borderStyle?: 'solid' | 'dashed',
-     borderDashedValue?: number[],
-     borderSize?: number,
-     borderColor?: string,
-     borderRadius?: number,
-     backgroundColor?: string
+      style?: 'stroke' | 'fill' | 'stroke_fill',
+      color?: string,
+      size?: number,
+      family?: string,
+      weight?: number | string,
+      paddingLeft?: number,
+      paddingTop?: number,
+      paddingRight?: number,
+      paddingBottom?: number,
+      borderStyle?: 'solid' | 'dashed',
+      borderDashedValue?: number[],
+      borderSize?: number,
+      borderColor?: string,
+      borderRadius?: number,
+      backgroundColor?: string
    }
 ) => void
 ```

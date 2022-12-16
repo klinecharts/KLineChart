@@ -10,7 +10,7 @@
 
 图表内部集合使用`Map`，用于兼容不支持的老版浏览器。
 
-```js
+```javascript
 import 'core.js';
 import { init } from 'klincharts';
 ```
@@ -19,7 +19,7 @@ import { init } from 'klincharts';
 
 图表依赖`Intl`，某些浏览器无此 API。
 
-```js
+```javascript
 import 'intl';
 import 'intl/local-data/jsonp/en';
 import { init } from 'klincharts';

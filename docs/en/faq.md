@@ -8,7 +8,7 @@ Chart default price precision is two decimal, call `setPriceVolumePrecision(pric
 
 ## How to create a real-time chart?
 Through style settings.
-```js
+```javascript
 chart.setStyleOptions({
   candle: {
     type: 'area',

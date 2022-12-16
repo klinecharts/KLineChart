@@ -1,163 +1,188 @@
 # 覆盖物
+本文档介绍了图表内置的覆盖物和如何自定义一个覆盖物。
 
-## 默认覆盖物类型
+## 内置覆盖物类型
 `horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `straightLine`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`, `simpleAnnotation`, `simpleTag`
 
-## 覆盖物模版
-创建一个模板，然后通过`registerOverlay` 全局添加，添加到图表即可和内置覆盖物一样去使用。
+## 自定义覆盖物
+自定义一个覆盖物，然后通过`klinecharts.registerOverlay` 全局添加，添加到图表即可和内置覆盖物一样去使用。
 ### 属性说明
-```javascript
+```typescript
 {
   // 名称，必须字段，作为覆盖物创建的唯一标识
-  name: 'xxx',
+  name: string,
 
   // 总共需要多少步操作才行绘制完成，非必须
-  totalStep: 3,
+  totalStep?: number,
 
   // 是否锁定，不触发事件，非必须
-  lock: false,
+  lock?: boolean,
 
   // 是否需要默认的点对应的图形，非必须
-  needDefaultPointFigure: false
+  needDefaultPointFigure?: boolean,
 
   // 是否需要默认的X轴上的图形，非必须
-  needDefaultXAxisFigure: false
+  needDefaultXAxisFigure?: boolean,
 
   // 是否需要默认的Y轴上的图形，非必须
-  needDefaultYAxisFigure: false
+  needDefaultYAxisFigure?: boolean,
 
   // 模式，可选项为`normal`，`weak_magnet`，`strong_magnet`，非必须
-  mode: 'normal,
+  mode?: 'normal' | 'weak_magnet' | 'strong_magnet',
 
   // 点信息，非必须
-  points: []
+  points?: Array<{
+    // 时间戳
+    timestamp: number,
+    // 数据索引
+    dataIndex?: number,
+    // 对应y轴的值
+    value?: number
+  }>,
 
-  // 扩展数据，可以是一个方法，也可以是一个固定值，非必须
-  extendData: null
+  // 扩展数据，非必须
+  extendData?: any,
 
-  // 样式，非必须
-  styles: null
+  // 样式，非必须，类型参与[样式]中的overlay
+  styles?: OverlayStyle,
 
-  // 创建点对应的图形，非必须，返回值是一个图形信息或者图形信息数组，类型为`{ key, type, attrs, styles, ignoreEvent }`
-  // key 无实际作用，可以用于一个自定义的标识，可缺省
-  // type 图形类型，和图表支持的figures里面的类型一致，可以调用图表方法`getSupportFigures`查看图表所支持的类型，必要字段
-  // attrs 属性，和type对应图形的属性一致，可以是单个属性，也可以数组，必要字段
-  // styles 样式，和type对应的图形样式一致，可缺省
-  // ignoreEvent 是否要忽略事件响应，可缺省
-
-  // overlay 覆盖物实例
-  // coordinates 覆盖物点信息对应的坐标
-  // bounding 窗口尺寸信息
-  // barSpace 数据尺寸信息
-  // precision 精度
-  // dateTimeFormat 时间格式化
-  // defaultStyles 默认的覆盖物样式
-  // xAxis x轴
-  // yAxis y轴
+  // 创建点对应的图形，非必须
   createPointFigures: ({
-    overlay,
-    coordinates,
-    bounding,
-    barSpace,
-    precision,
-    dateTimeFormat,
-    defaultStyles,
-    xAxis,
-    yAxis,
-  }) => ({ key: 'xxx', type: 'circle', attrs: {}, styles: {}, ignoreEvent: false })
+    // 覆盖物实例
+    overlay: Overlay,
+    // points对应的坐标信息
+    coordinates: Array<{ x: number, y: number }>,
+    // 窗口尺寸信息
+    bounding: {
+      // 宽
+      width: number,
+      // 高
+      height: number,
+      // 距离左边距离
+      left: number,
+      // 距离右边距离
+      right: number,
+      // 距离顶部距离
+      top: number,
+      // 距离底部距离
+      bottom: number
+    },
+    // 蜡烛柱的尺寸信息
+    barSpace: {
+      // 蜡烛柱尺寸
+      bar: number,
+      halfBar: number,
+      // 蜡烛柱不包含蜡烛柱之间间隙的尺寸
+      gapBar: number,
+      halfGapBar: number
+    },
+    // 精度
+    precision: {
+      // 价格精度
+      price: number,
+      // 数量精度
+      volume: number
+    },
+    // 格式化日期和时间的对象的构造器，详情参阅 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+    dateTimeFormat: Intl.DateTimeFormat,
+    // 默认样式，即全局样式配置中的overlay，类型参与[样式]中的overlay
+    defaultStyles: OverlayStyle,
+     // x轴组件，内置一些转换方法
+    xAxis: XAxis,
+    // y轴组件，内置一些转换方法
+    yAxis: YAxis
+  }) => ({
+    // 无特殊含义，可用于扩展字段
+    key?: string,
+    // 图形类型，类型为klinecharts.getSupportFigures返回值中的一种
+    type: string,
+    // type对应的图形的属性
+    attrs: any | any[],
+    // type对应的图形的样式
+    styles?: any,
+    // 是否忽略事件
+    ignoreEvent?: boolean
+  }) | Array<{
+    key?: string,
+    type: string,
+    attrs: any | any[],
+    styles?: any,
+    ignoreEvent?: boolean
+  }>
 
-  // 创建X轴上的图形，非必须，返回值和`createPointFigures`一致
-  createXAxisFigures: ({
-    overlay,
-    coordinates,
-    bounding,
-    barSpace,
-    precision,
-    dateTimeFormat,
-    defaultStyles,
-    xAxis,
-    yAxis,
-  }) => ({ key: 'xxx', type: 'circle', attrs: {}, styles: {}, ignoreEvent: false })
+  // 创建X轴上的图形，非必须，参数和返回值和`createPointFigures`一致
+  createXAxisFigures?: OverlayCreateFiguresCallback,
 
-  // 创建Y轴上的图形，非必须，返回值和`createPointFigures`一致
-  createYAxisFigures: ({
-    overlay,
-    coordinates,
-    bounding,
-    barSpace,
-    precision,
-    dateTimeFormat,
-    defaultStyles,
-    xAxis,
-    yAxis,
-  }) => ({ key: 'xxx', type: 'circle', attrs: {}, styles: {}, ignoreEvent: false })
+  // 创建Y轴上的图形，非必须，参数和返回值和`createPointFigures`一致
+  createYAxisFigures?: OverlayCreateFiguresCallback,
 
   // 处理在绘制过程中移动操作，可缺省，移动绘制过程中触发
-  // currentStep 当前步骤
-  // mode 模式
-  // points 覆盖物点信息
-  // performPointIndex 对应的点的索引
-  // performPoint 对应的点的信息
-  performEventMoveForDrawing: ({
-    currentStep,
-    mode,
-    points,
+  performEventMoveForDrawing?: ({
+    // 当前步骤
+    currentStep: number,
+    // 模式
+    mode: 'normal' | 'weak_magnet' | 'strong_magnet',
+    // 点信息
+    points: Array<{
+      // 时间戳
+      timestamp: number,
+      // 数据索引
+      dataIndex?: number,
+      // 对应y轴的值
+      value?: number
+    }>,
+    // 事件所在点的索引
     performPointIndex,
+    // 事件所在点的信息
     performPoint
-  }) => {},
+  }) => void,
 
   // 处理按住移动操作，可缺省，按住某个操作点移动过程中触发
   // 回调参数和`performEventMoveForDrawing`一致
-  performEventPressedMove: ({
-    currentStep,
-    mode,
-    points,
-    performPointIndex,
-    performPoint
-  }) => {},
+  performEventPressedMove?: (params: OverlayPerformEventParams) => void,
 
   // 绘制开始回调事件，可缺省
-  onDrawStart: (event) => {},
+  onDrawStart?: (event: OverlayEvent) => boolean,
 
   // 绘制过程中回调事件，可缺省
-  onDrawing: (event) => {},
+  onDrawing?: (event: OverlayEvent) => boolean,
 
   // 绘制结束回调事件，可缺省
-  onDrawEnd: (event) => {},
+  onDrawEnd?: (event: OverlayEvent) => boolean,
 
   // 点击回调事件，可缺省
-  onClick: (event) => {},
+  onClick?: (event: OverlayEvent) => boolean,
 
   // 右击回调事件，可缺省，需要返回一个boolean类型的值，如果返回true，内置的右击删除将无效
-  onRightClick: (event) => {},
+  onRightClick?: (event: OverlayEvent) => boolean,
 
   // 按住拖动开始回调事件，可缺省
-  onPressedMoveStart: (event) => {},
+  onPressedMoveStart?: (event: OverlayEvent) => boolean,
 
   // 按住拖动回调事件，可缺省  
-  onPressedMoving: (event) => {},
+  onPressedMoving?: (event: OverlayEvent) => boolean,
 
   // 按住拖动结束回调事件，可缺省
-  onPressedMoveEnd: (event) => {},
+  onPressedMoveEnd: (event: OverlayEvent) => boolean,
 
   // 鼠标移入事件，可缺省
-  onMouseEnter: (event) => {},
+  onMouseEnter?: (event: OverlayEvent) => boolean,
 
   // 鼠标移出事件，可缺省
-  onMouseLeave: (event) => {},
+  onMouseLeave?: (event: OverlayEvent) => boolean,
 
   // 删除回调事件，可缺省
-  onRemoved: (event) => {},
+  onRemoved?: (event: OverlayEvent) => boolean,
 
   // 选中回调事件，可缺省
-  onSelected: (event) => {},
+  onSelected?: (event: OverlayEvent) => boolean,
 
   // 取消回调事件，可缺省
-  onDeselected: (event) => {}
+  onDeselected?: (event: OverlayEvent) => boolean,
 }
 ```
 
-## 示例
+### 示例
 以一个填充带边框的圆来具体说明如何配置。
 ```javascript
 {
@@ -192,3 +217,4 @@
   }
 }
 ```
+这样一个自定义覆盖物就完成了。

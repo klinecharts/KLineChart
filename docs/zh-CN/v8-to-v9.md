@@ -39,7 +39,7 @@
 
 
 ### 图形辅助API
-+ 所有的API都迁移至`klinecahrts.utils`。
++ 所有的API都迁移至`klinecharts.utils`。
 
 ## 自定义技术指标调整
 + 属性`plots`变更为`figures`，子项方法`color`，`isStroke`，`isDashed`合并成`styles`。

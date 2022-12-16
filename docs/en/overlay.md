@@ -1,200 +1,220 @@
 # Overlay
+This document introduces the built-in overlays in the chart and how to customize a overlay.
 
-## Default overlay type
-`horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `straightLine`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`, `simpleAnnotation`, `simpleTag`
+## Built-in overlay types
+`horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `straightLine`, `priceLine`, `priceChannelLine`, `parallelL`filineLine`, ci `, `simpleAnnotation`, `simpleTag`
 
-## Overlay template
-Create a template, and then add it globally through 'registerOverlay'. Adding it to a chart can be used as a built-in overlay.
-
-### Template attribute description
-
-```javascript
+## Custom overlays
+Customize an overlay, then add it globally through `klinecharts.registerOverlay`, add it to the chart and use it like the built-in overlay.
+### Attribute description
+```typescript
 {
-  // Is used as the unique identifier for covering creation, required field
-  name: 'xxx',
+   // Name, a required field, used as the unique identifier for overlay creation
+   name: string,
 
-  // How many steps are required to complete the drawing, not required
-  totalStep: 3,
+   // How many steps are needed in total to complete the drawing, not necessary
+   totalStep?: number,
 
-  // Whether to lock, do not trigger the event, not required
-  lock: false,
+   // Whether to lock, do not trigger events, not necessary
+   lock?: boolean,
 
-  // Whether the figure corresponding to the default point is required, not required
-  needDefaultPointFigure: false
+   // Do you need the graphics corresponding to the default points, not necessary
+   needDefaultPointFigure?: boolean,
 
-  // Whether the default X axis figure is required, not required
-  needDefaultXAxisFigure: false
+   // Do you need the graphics on the default X-axis, not necessary
+   needDefaultXAxisFigure?: boolean,
 
-  // Whether the default Y axis figure is required, not required
-  needDefaultYAxisFigure: false
+   // Do you need the graphics on the default Y axis, not necessary
+   needDefaultYAxisFigure?: boolean,
 
-  // Mode, options are 'normal', 'weak_magnet`，`strong_magnet ', not required
-  mode: 'normal,
+   // mode, options are `normal`, `weak_magnet`, `strong_magnet`, not required
+   mode?: 'normal' | 'weak_magnet' | 'strong_magnet',
 
-  // Point information, not required
-  points: []
+   // point information, not required
+   points?: Array<{
+     // timestamp
+     timestamp: number,
+     // data index
+     dataIndex?: number,
+     // corresponding to the value of the y-axis
+     value?: number
+   }>,
 
-  // Extended data, which can be a method or a fixed value, not required
-  extendData: null
+   // Extended data, not required
+   extendData?: any,
 
-  // Style, not required
-  styles: null
+   // style, not required, the type participates in the overlay in [style]
+   styles?: OverlayStyle,
 
-  // It is not necessary to create a figure corresponding to a point. The return value is a figure information or an array of graph information. The type is `{ key, type, attrs, styles, ignoreEvent }`
-  // key The key has no practical effect. It can be used for a user-defined identifier, which can be defaulted
-  // type Type is consistent with the types in figures supported by the chart. You can call the chart method `getSupportFigures` to view the types supported by the chart and the required fields
-  // attrs The attrs attribute is consistent with the attributes of the figure corresponding to type. It can be a single attribute, an array, or a required field
-  // styles Style, consistent with the figure style corresponding to type, can be defaulted
-  // ignoreEvent Whether to ignore the event response, you can default
+   // Create graphics corresponding to points, not required
+   createPointFigures: ({
+     // overlay instance
+     overlay: Overlay,
+     // coordinate information corresponding to points
+     coordinates: Array<{ x: number, y: number }>,
+     // window size information
+     bounding: {
+       // width
+       width: number,
+       // high
+       height: number,
+       // distance to the left
+       left: number,
+       // distance to the right
+       right: number,
+       // distance from top
+       top: number,
+       // distance from bottom
+       bottom: number
+     },
+     // information about the size of the candlestick
+     barSpace: {
+       // candlestick size
+       bar: number,
+       halfBar: number,
+       // candlesticks do not include dimensions of gaps between candlesticks
+       gapBar: number,
+       halfGapBar: number
+     },
+     // precision
+     precision: {
+       // price precision
+       price: number,
+       // Quantity precision
+       volume: number
+     },
+     // Constructor for objects that format date and time, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat for details
+     dateTimeFormat: Intl. DateTimeFormat,
+     // The default style, that is, the overlay in the global style configuration, the type participates in the overlay in [style]
+     defaultStyles: OverlayStyle,
+      // x-axis component, some built-in conversion methods
+     xAxis: XAxis,
+     // y-axis component, with some built-in conversion methods
+     yAxis: YAxis
+   }) => ({
+     // No special meaning, can be used for extension fields
+     key?: string,
+     // Graphic type, one of the return values of klinecharts.getSupportFigures
+     type: string,
+     // The properties of the graphic corresponding to the type
+     attrs: any | any[],
+     // The style of the graphic corresponding to type
+     styles?: any,
+     // Whether to ignore the event
+     ignoreEvent?: boolean
+   }) | Array<{
+     key?: string,
+     type: string,
+     attrs: any | any[],
+     styles?: any,
+     ignoreEvent?: boolean
+   }>
 
-  // overlay Overlay instance
-  // coordinates Coordinates corresponding to the covering point information
-  // bounding Window size information
-  // barSpace Data size information
-  // precision
-  // dateTimeFormat
-  // defaultStyles Default overlay style
-  // xAxis X axis component
-  // yAxis Y axis component
-  createPointFigures: ({
-    overlay,
-    coordinates,
-    bounding,
-    barSpace,
-    precision,
-    dateTimeFormat,
-    defaultStyles,
-    xAxis,
-    yAxis
-  }) => ({ key: 'xxx', type: 'circle', attrs: {}, styles: {}, ignoreEvent: false })
+   // Create graphics on the X axis, not required, parameters and return values are consistent with `createPointFigures`
+   createXAxisFigures?: OverlayCreateFiguresCallback,
 
-  // It is not necessary to create a figure on the X axis. The return value is consistent with 'createPointFigures'
-  createXAxisFigures: ({
-    overlay,
-    coordinates,
-    bounding,
-    barSpace,
-    precision,
-    dateTimeFormat,
-    defaultStyles,
-    xAxis,
-    yAxis
-  }) => ({ key: 'xxx', type: 'circle', attrs: {}, styles: {}, ignoreEvent: false })
+   // Create graphics on the Y axis, not required, parameters and return values are consistent with `createPointFigures`
+   createYAxisFigures?: OverlayCreateFiguresCallback,
 
-  // It is not necessary to create a figure on the Y axis. The return value is consistent with 'createPointFigures'
-  createYAxisFigures: ({
-    overlay,
-    coordinates,
-    bounding,
-    barSpace,
-    precision,
-    dateTimeFormat,
-    defaultStyles,
-    xAxis,
-    yAxis
-  }) => ({ key: 'xxx', type: 'circle', attrs: {}, styles: {}, ignoreEvent: false })
+   // Handle the movement operation during the drawing process, which can be defaulted and triggered during the movement drawing process
+   performEventMoveForDrawing?: ({
+     // current step
+     currentStep: number,
+     // model
+     mode: 'normal' | 'weak_magnet' | 'strong_magnet',
+     // point information
+     points: Array<{
+       // timestamp
+       timestamp: number,
+       // data index
+       dataIndex?: number,
+       // corresponding to the value of the y-axis
+       value?: number
+     }>,
+     // index of the event point
+     performPointIndex,
+     // Information about the point where the event is located
+     performPoint
+   }) => void,
 
-  // Processing the move operation in the drawing process, which can be defaulted and triggered in the moving drawing process
-  // currentStep Current step
-  // mode
-  // points Overlay point information
-  // performPointIndex Index of the point corresponding
-  // performPoint Information of the point corresponding
+   // Handle the press and move operation, which can be defaulted, and is triggered during the movement of a certain operation point
+   // The callback parameters are consistent with `performEventMoveForDrawing`
+   performEventPressedMove?: (params: OverlayPerformEventParams) => void,
 
-  performEventMoveForDrawing: ({
-    currentStep,
-    mode,
-    points,
-    performPointIndex,
-    performPoint
-  }) => {},
+   // draw start callback event, can be default
+   onDrawStart?: (event: OverlayEvent) => boolean,
 
-  // Handle the press and hold movement operation, which can be defaulted, and is triggered when pressing and holding an operation point to move
-  // The callback parameters are consistent with 'performEventMoveForDrawing'
+   // callback event during drawing, can be defaulted
+   onDrawing?: (event: OverlayEvent) => boolean,
 
-  performEventPressedMove: ({
-    currentStep,
-    mode,
-    points,
-    performPointIndex,
-    performPoint
-  }) => {},
+   // Draw end callback event, can be default
+   onDrawEnd?: (event: OverlayEvent) => boolean,
 
-  // Draw the start callback event by default
-  onDrawStart: (event) => {},
+   // click callback event, default
+   onClick?: (event: OverlayEvent) => boolean,
 
-  // Callback event during drawing, which can be defaulted
-  onDrawing: (event) => {},
+   // The right-click callback event, which can be defaulted, needs to return a value of type boolean. If it returns true, the built-in right-click delete will be invalid
+   onRightClick?: (event: OverlayEvent) => boolean,
 
-  // Draw the end callback event by default
-  onDrawEnd: (event) => {},
+   // Hold down and drag to start the callback event, which can be defaulted
+   onPressedMoveStart?: (event: OverlayEvent) => boolean,
 
-  // Click the callback event to default
-  onClick: (event) => {},
+   // Press and hold the drag callback event, which can be defaulted
+   onPressedMoving?: (event: OverlayEvent) => boolean,
 
-  // Right click the callback event. By default, a boolean type value needs to be returned. If true is returned, the built-in right-click deletion will be invalid
-  onRightClick: (event) => {},
+   // Hold down and drag to end the callback event, which can be defaulted
+   onPressedMoveEnd: (event: OverlayEvent) => boolean,
 
-  // Press and drag to start callback event, which can be defaulted
-  onPressedMoveStart: (event) => {},
+   // Mouse move event, can be default
+   onMouseEnter?: (event: OverlayEvent) => boolean,
 
-  // Press and hold the drag callback event to default
-  onPressedMoving: (event) => {},
+   // Mouse out event, default
+   onMouseLeave?: (event: OverlayEvent) => boolean,
 
-  // Press and drag to end the callback event, which can be defaulted
-  onPressedMoveEnd: (event) => {},
+   // delete callback event, default
+   onRemoved?: (event: OverlayEvent) => boolean,
 
-  // Mouse in event, which can be defaulted
-  onMouseEnter: (event) => {},
+   // Select the callback event, which can be defaulted
+   onSelected?: (event: OverlayEvent) => boolean,
 
-  // Mouse out event, which can be defaulted
-  onMouseLeave: (event) => {},
-
-  // Delete callback event by default
-  onRemoved: (event) => {},
-
-  // Select the callback event to default
-  onSelected: (event) => {},
-
-  // Cancel callback event, which can be defaulted
-
-  onDeselected: (event) => {}
+   // cancel callback event, default
+   onDeselected?: (event: OverlayEvent) => boolean,
 }
 ```
 
-## Example
-A circle filled with a border is used to specify how to configure.
-
+### Example
+A filled, bordered circle is used to illustrate how to configure.
 ```javascript
 {
-  name: 'sampleCircle',
+   // name
+   name: 'sampleCircle',
 
-  // It takes three steps to complete the drawing of a circle
-  totalStep: 3,
+   // Three steps are required to complete the drawing of a circle
+   totalStep: 3,
 
-  // Create figures information corresponding to points
-  createPointFigures: ({ step, points, coordinates }) => {
-    if (coordinates.length === 2) {
-      const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
-      const yDis = Math.abs(coordinates[0].y - coordinates[1].y)
-      // Determine the coordinates of the circle generated by the corresponding point
-      const radius = Math. sqrt(xDis * xDis + yDis * yDis)
-      // The chart has built-in basic graph 'circle', which can be used directly
-      return {
-        key: 'sampleCircle',
-        type: 'circle',
-        attrs: {
-          ...coordinates[0],
-          r: radius
-        }
-        styles: {
-          // Select the border and fill, and use the default style for other selections
-          style: 'stroke_ fill'
-        }
-      }
-    }
-    return []
-  }
+   // Create the graphic information corresponding to the point
+   createPointFigures: ({ step, points, coordinates }) => {
+     if (coordinates. length === 2) {
+       const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
+       const yDis = Math.abs(coordinates[0].y - coordinates[1].y)
+       // Determine the coordinates of the circle generated by the corresponding point
+       const radius = Math. sqrt(xDis * xDis + yDis * yDis)
+       // The chart has built-in basic graphics 'circle', which can be used directly
+       return {
+         key: 'sampleCircle',
+         type: 'circle',
+         attrs: {
+           ...coordinates[0],
+           r: radius
+         }
+         styles: {
+           // Select the border and fill it, other selections use the default style
+           style: 'stroke_fill'
+         }
+       }
+     }
+     return []
+   }
 }
-
 ```
+So a custom overlay is complete.

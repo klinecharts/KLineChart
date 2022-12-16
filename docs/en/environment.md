@@ -10,7 +10,7 @@ The chart is built based on html5 canvas and needs to run on a browser that supp
 
 The internal collection of the chart uses `Map` for compatibility with unsupported older browsers.
 
-```js
+```javascript
 import 'core.js';
 import { init } from 'klincharts';
 ```
@@ -19,7 +19,7 @@ import { init } from 'klincharts';
 
 Charts rely on `Intl`, some browsers do not have this API.
 
-```js
+```javascript
 import 'intl';
 import 'intl/local-data/jsonp/en';
 import { init } from 'klincharts';
