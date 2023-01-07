@@ -31,7 +31,7 @@ export default abstract class AxisView<C extends Axis> extends View<C> {
     const styles: AxisStyle = this.getAxisStyles(pane.getChart().getStyles())
     if (styles.show) {
       if (styles.axisLine.show) {
-        this.createFigure('line', this.createAxisLine(bounding), styles.axisLine)?.draw(ctx)
+        this.createFigure('line', this.createAxisLine(bounding, styles), styles.axisLine)?.draw(ctx)
       }
       const ticks = axis.getTicks()
       if (styles.tickLine.show) {
@@ -51,7 +51,7 @@ export default abstract class AxisView<C extends Axis> extends View<C> {
 
   protected abstract getAxisStyles (styles: Styles): AxisStyle
 
-  protected abstract createAxisLine (bounding: Bounding): LineAttrs
+  protected abstract createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs
   protected abstract createTickLines (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): LineAttrs[]
   protected abstract createTickTexts (tick: AxisTick[], bounding: Bounding, styles: AxisStyle): TextAttrs[]
 }

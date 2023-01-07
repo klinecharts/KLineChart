@@ -25,16 +25,17 @@ import AxisView from './AxisView'
 
 export default class YxisView extends AxisView<YAxis> {
   protected getAxisStyles (styles: Styles): AxisStyle {
-    return styles.xAxis
+    return styles.yAxis
   }
 
-  protected createAxisLine (bounding: Bounding): LineAttrs {
+  protected createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs {
     const yAxis = this.getWidget().getPane().getAxisComponent()
+    const size = styles.axisLine.size
     let x: number
     if (yAxis.isFromZero()) {
-      x = 0
+      x = size / 2
     } else {
-      x = bounding.width - 1
+      x = bounding.width - size
     }
     return {
       coordinates: [
