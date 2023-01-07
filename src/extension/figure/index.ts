@@ -14,7 +14,7 @@
 
 import Nullable from '../../common/Nullable'
 
-import FigureImp, { FigureTemplate, FigureConstructor } from '../../component/Figure'
+import FigureImp, { FigureTemplate, FigureConstructor, FigureInnerConstructor } from '../../component/Figure'
 
 import circle from './circle'
 import line from './line'
@@ -23,7 +23,7 @@ import rect from './rect'
 import text from './text'
 import rectText from './rectText'
 
-const figures: { [key: string]: FigureConstructor } = {}
+const figures: { [key: string]: FigureInnerConstructor } = {}
 
 const extensions = [circle, line, polygon, rect, text, rectText]
 extensions.forEach((figure: FigureTemplate) => {
@@ -38,8 +38,12 @@ function reisterFigure<A = any, S = any> (figure: FigureTemplate<A, S>): void {
   figures[figure.name] = FigureImp.extend(figure)
 }
 
+function getInnerFigureClass<A = any, S = any> (name: string): Nullable<FigureInnerConstructor<A, S>> {
+  return figures[name] ?? null
+}
+
 function getFigureClass<A = any, S = any> (name: string): Nullable<FigureConstructor<A, S>> {
   return figures[name] ?? null
 }
 
-export { getSupportFigures, getFigureClass, reisterFigure }
+export { getSupportFigures, getFigureClass, getInnerFigureClass, reisterFigure }

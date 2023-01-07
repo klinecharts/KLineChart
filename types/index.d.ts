@@ -27,6 +27,20 @@ export declare type DeepPartial<T> = {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export declare type Nullable<T> = T | null;
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+
+ * http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 export interface KLineData {
 	timestamp: number;
 	open: number;
@@ -101,10 +115,6 @@ export interface MarginTextStyle extends StateTextStyle {
 	marginBottom: number;
 }
 export declare type LastValueMarkTextStyle = Omit<StateRectTextStyle, "backgroundColor" | "borderColor">;
-/**
- * 说明显示规则
- * @type {{FOLLOW_CROSS: string, NONE: string, ALWAYS: string}}
- */
 export declare const enum TooltipShowRule {
 	ALWAYS = "always",
 	FOLLOW_CROSS = "follow_cross",
@@ -133,6 +143,14 @@ export interface GridStyle {
 	vertical: StateLineStyle;
 }
 export declare type TooltipTextStyle = Omit<MarginTextStyle, "show">;
+export interface TooltipDataChild {
+	text: string;
+	color: string;
+}
+export interface TooltipData {
+	title: string | TooltipDataChild;
+	value: string | TooltipDataChild;
+}
 export interface TooltipStyle {
 	showRule: TooltipShowRule;
 	showType: TooltipShowType;
@@ -174,20 +192,11 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, "style" | "borde
 	offsetTop: number;
 	offsetRight: number;
 }
-export interface CandleTooltipValuesChild {
-	color: string;
-	value: string;
-}
-export declare type CandleTooltipValuesCallback = (kLineData: KLineData, styles: CandleStyle) => string[] | CandleTooltipValuesChild[];
+export declare type CandleTooltipCustomCallback = (kLineData: KLineData, styles: CandleStyle) => TooltipData[];
 export interface CandleTooltipStyle extends TooltipStyle {
-	labels: string[];
-	values: CandleTooltipValuesCallback | string[] | null;
+	custom: Nullable<CandleTooltipCustomCallback>;
 	rect: CandleTooltipRectStyle;
 }
-/**
- * 蜡烛图样式
- * @type {{AREA: string, OHLC: string, CANDLE_STROKE: string, CANDLE_SOLID: string, CANDLE_DOWN_STROKE: string, CANDLE_UP_STROKE: string}}
- */
 export declare const enum CandleType {
 	CANDLE_SOLID = "candle_solid",
 	CANDLE_STROKE = "candle_stroke",
@@ -236,18 +245,10 @@ export interface AxisStyle {
 	tickText: AxisTickTextStyle;
 }
 export declare type XAxisStyle = AxisStyle;
-/**
- * y轴位置
- * @type {{LEFT: string, RIGHT: string}}
- */
 export declare const enum YAxisPosition {
 	LEFT = "left",
 	RIGHT = "right"
 }
-/**
- * y轴类型
- * @type {{PERCENTAGE: string, LOG: string, NORMAL: string}}
- */
 export declare const enum YAxisType {
 	NORMAL = "normal",
 	PERCENTAGE = "percentage",
@@ -305,20 +306,32 @@ export interface Styles {
 	crosshair: CrosshairStyle;
 	overlay: OverlayStyle;
 }
-/**
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
-
- * http://www.apache.org/licenses/LICENSE-2.0
-
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-export declare type TypeOrNull<T> = T | null;
+export declare const enum FormatDateType {
+	NORMAL = 0,
+	TOOLTIP = 1,
+	CROSSHAIR = 2,
+	XAXIS = 3
+}
+export declare type FormatDate = (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: FormatDateType) => string;
+export declare type FormatBigNumber = (value: string | number) => string;
+export interface CustomApi {
+	formatDate: FormatDate;
+	formatBigNumber: FormatBigNumber;
+}
+export interface Locales {
+	time: string;
+	open: string;
+	high: string;
+	low: string;
+	close: string;
+	volume: string;
+}
+export interface Options {
+	locale?: string;
+	timezone?: string;
+	styles?: string | DeepPartial<Styles>;
+	customApi?: Partial<CustomApi>;
+}
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -403,7 +416,7 @@ export declare const enum ActionType {
 	onCrosshairChange = "onCrosshairChange",
 	onPaneDrag = "onPaneDrag"
 }
-export declare type LoadMoreCallback = (timestamp: TypeOrNull<number>) => void;
+export declare type LoadMoreCallback = (timestamp: Nullable<number>) => void;
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -499,6 +512,10 @@ export interface Figure<A = any, S = any> {
 	checkEventOn: (coordinate: Coordinate, attrs: A, styles: S) => boolean;
 }
 export declare type FigureTemplate<A = any, S = any> = Pick<Figure<A, S>, "name" | "draw" | "checkEventOn">;
+export declare type FigureCreate<A = any, S = any> = Pick<Figure<A, S>, "name" | "attrs" | "styles">;
+export declare type FigureConstructor<A = any, S = any> = new (figure: FigureCreate<A, S>) => ({
+	draw: (ctx: CanvasRenderingContext2D) => void;
+});
 export interface YAxis extends Axis {
 	isFromZero: () => boolean;
 }
@@ -545,15 +562,10 @@ export interface IndicatorFigure<D = any> {
 	styles?: IndicatorFigureStylesCallback<D>;
 }
 export declare type IndicatorRegenerateFiguresCallback<D = any> = (calcParms: any[]) => Array<IndicatorFigure<D>>;
-export interface IndicatorTooltipDataChild {
-	title: string;
-	value: string;
-	color: string;
-}
 export interface IndicatorTooltipData {
 	name?: string;
-	calcParamText?: string;
-	values?: IndicatorTooltipDataChild[];
+	calcParamsText?: string;
+	values?: TooltipData[];
 }
 export interface IndicatorCreateToolTipDataSourceParams<D = any> {
 	kLineDataList: KLineData[];
@@ -589,13 +601,13 @@ export interface Indicator<D = any> {
 	extendData: any;
 	series: IndicatorSeries;
 	figures: Array<IndicatorFigure<D>>;
-	minValue: TypeOrNull<number>;
-	maxValue: TypeOrNull<number>;
-	styles: TypeOrNull<Partial<IndicatorStyle>>;
+	minValue: Nullable<number>;
+	maxValue: Nullable<number>;
+	styles: Nullable<Partial<IndicatorStyle>>;
 	calc: IndicatorCalcCallback<D>;
-	regenerateFigures: TypeOrNull<IndicatorRegenerateFiguresCallback<D>>;
-	createToolTipDataSource: TypeOrNull<IndicatorCreateToolTipDataSourceCallback>;
-	draw: TypeOrNull<IndicatorDrawCallback<D>>;
+	regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>>;
+	createToolTipDataSource: Nullable<IndicatorCreateToolTipDataSourceCallback>;
+	draw: Nullable<IndicatorDrawCallback<D>>;
 	result: D[];
 }
 export declare type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name" | "calc">;
@@ -641,8 +653,8 @@ export interface OverlayCreateFiguresCallbackParams {
 	precision: Precision;
 	dateTimeFormat: Intl.DateTimeFormat;
 	defaultStyles: OverlayStyle;
-	xAxis: TypeOrNull<XAxis>;
-	yAxis: TypeOrNull<YAxis>;
+	xAxis: Nullable<XAxis>;
+	yAxis: Nullable<YAxis>;
 }
 export interface OverlayEvent extends Partial<MouseTouchEvent> {
 	overlay: Overlay;
@@ -697,97 +709,101 @@ export interface Overlay {
 	/**
 	 * The style information and format are consistent with the overlay in the unified configuration
 	 */
-	styles: TypeOrNull<DeepPartial<OverlayStyle>>;
+	styles: Nullable<DeepPartial<OverlayStyle>>;
 	/**
 	 * Create figures corresponding to points
 	 */
-	createPointFigures: TypeOrNull<OverlayCreateFiguresCallback>;
+	createPointFigures: Nullable<OverlayCreateFiguresCallback>;
 	/**
 	 * Create figures on the Y axis
 	 */
-	createXAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>;
+	createXAxisFigures: Nullable<OverlayCreateFiguresCallback>;
 	/**
 	 * Create figures on the X axis
 	 */
-	createYAxisFigures: TypeOrNull<OverlayCreateFiguresCallback>;
+	createYAxisFigures: Nullable<OverlayCreateFiguresCallback>;
 	/**
 	 * Special handling callbacks when pressing events
 	 */
-	performEventPressedMove: TypeOrNull<(params: OverlayPerformEventParams) => void>;
+	performEventPressedMove: Nullable<(params: OverlayPerformEventParams) => void>;
 	/**
 	 * In drawing, special handling callback when moving events
 	 */
-	performEventMoveForDrawing: TypeOrNull<(params: OverlayPerformEventParams) => void>;
+	performEventMoveForDrawing: Nullable<(params: OverlayPerformEventParams) => void>;
 	/**
 	 * Start drawing event
 	 */
-	onDrawStart: TypeOrNull<OverlayEventCallback>;
+	onDrawStart: Nullable<OverlayEventCallback>;
 	/**
 	 * In drawing event
 	 */
-	onDrawing: TypeOrNull<OverlayEventCallback>;
+	onDrawing: Nullable<OverlayEventCallback>;
 	/**
 	 * Draw End Event
 	 */
-	onDrawEnd: TypeOrNull<OverlayEventCallback>;
+	onDrawEnd: Nullable<OverlayEventCallback>;
 	/**
 	 * Click event
 	 */
-	onClick: TypeOrNull<OverlayEventCallback>;
+	onClick: Nullable<OverlayEventCallback>;
 	/**
 	 * Right click event
 	 */
-	onRightClick: TypeOrNull<OverlayEventCallback>;
+	onRightClick: Nullable<OverlayEventCallback>;
 	/**
 	 * Pressed move start event
 	 */
-	onPressedMoveStart: TypeOrNull<OverlayEventCallback>;
+	onPressedMoveStart: Nullable<OverlayEventCallback>;
 	/**
 	 * Pressed moving event
 	 */
-	onPressedMoving: TypeOrNull<OverlayEventCallback>;
+	onPressedMoving: Nullable<OverlayEventCallback>;
 	/**
 	 * Pressed move end event
 	 */
-	onPressedMoveEnd: TypeOrNull<OverlayEventCallback>;
+	onPressedMoveEnd: Nullable<OverlayEventCallback>;
 	/**
 	 * Mouse enter event
 	 */
-	onMouseEnter: TypeOrNull<OverlayEventCallback>;
+	onMouseEnter: Nullable<OverlayEventCallback>;
 	/**
 	 * Mouse leave event
 	 */
-	onMouseLeave: TypeOrNull<OverlayEventCallback>;
+	onMouseLeave: Nullable<OverlayEventCallback>;
 	/**
 	 * Removed event
 	 */
-	onRemoved: TypeOrNull<OverlayEventCallback>;
+	onRemoved: Nullable<OverlayEventCallback>;
 	/**
 	 * Selected event
 	 */
-	onSelected: TypeOrNull<OverlayEventCallback>;
+	onSelected: Nullable<OverlayEventCallback>;
 	/**
 	 * Deselected event
 	 */
-	onDeselected: TypeOrNull<OverlayEventCallback>;
+	onDeselected: Nullable<OverlayEventCallback>;
 }
 export declare type OverlayTemplate = ExcludePickPartial<Omit<Overlay, "id" | "points" | "currentStep">, "name">;
-export declare type OverlayCreate = ExcludePickPartial<Omit<Overlay, "series" | "currentStep" | "totalStep" | "createPointFigures" | "createXAxisFigures" | "createYAxisFigures" | "performEventPressedMove" | "performEventMoveForDrawing">, "name">;
+export declare type OverlayCreate = ExcludePickPartial<Omit<Overlay, "currentStep" | "totalStep" | "createPointFigures" | "createXAxisFigures" | "createYAxisFigures" | "performEventPressedMove" | "performEventMoveForDrawing">, "name">;
 export declare const enum DomPosition {
-	ROOT = 0,
-	MAIN = 1,
-	YAXIS = 2
+	ROOT = "root",
+	MAIN = "main",
+	YAXIS = "yAxis"
 }
 export interface ConvertFinder {
 	paneId?: string;
 	absolute?: boolean;
 }
 export interface Chart {
-	getDom: (paneId?: string, position?: DomPosition) => TypeOrNull<HTMLElement>;
-	getSize: (paneId?: string, position?: DomPosition) => TypeOrNull<Bounding>;
-	setStyleOptions: (options: DeepPartial<Styles>) => void;
-	getStyleOptions: () => Styles;
+	getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>;
+	getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>;
+	setLocale: (locale: string) => void;
+	getLocale: () => string;
+	setStyles: (styles: string | DeepPartial<Styles>) => void;
+	getStyles: () => Styles;
+	setCustomApi: (customApi: Partial<CustomApi>) => void;
 	setPriceVolumePrecision: (pricePrecision: number, volumePrecision: number) => void;
+	getPriceVolumePrecision: () => Precision;
 	setTimezone: (timezone: string) => void;
 	getTimezone: () => string;
 	setOffsetRightDistance: (space: number) => void;
@@ -801,12 +817,12 @@ export interface Chart {
 	applyMoreData: (dataList: KLineData[], more?: boolean) => void;
 	updateData: (data: KLineData) => void;
 	loadMore: (cb: LoadMoreCallback) => void;
-	createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => TypeOrNull<string>;
+	createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>;
 	overrideIndicator: (override: IndicatorCreate, paneId?: string) => void;
-	getIndicatorByPaneId: (paneId?: string, name?: string) => TypeOrNull<Indicator> | TypeOrNull<Map<string, Indicator>> | Map<string, Map<string, Indicator>>;
+	getIndicatorByPaneId: (paneId?: string, name?: string) => Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>>;
 	removeIndicator: (paneId: string, name?: string) => void;
-	createOverlay: (value: string | OverlayCreate, paneId?: string) => TypeOrNull<string>;
-	getOverlayById: (id: string) => TypeOrNull<Overlay>;
+	createOverlay: (value: string | OverlayCreate, paneId?: string) => Nullable<string>;
+	getOverlayById: (id: string) => Nullable<Overlay>;
 	overrideOverlay: (override: Partial<OverlayCreate>) => void;
 	removeOverlay: (id?: string) => void;
 	setPaneOptions: (options: PaneOptions) => void;
@@ -829,12 +845,63 @@ export interface Chart {
 	resize: () => void;
 	destroy: () => void;
 }
+declare function checkCoordinateOnArc(coordinate: Coordinate, arc: ArcAttrs): boolean;
+declare function drawArc(ctx: CanvasRenderingContext2D, attrs: ArcAttrs, styles: Partial<LineStyle>): void;
+export interface ArcAttrs {
+	x: number;
+	y: number;
+	r: number;
+	startAngle: number;
+	endAngle: number;
+}
+declare function checkCoordinateOnCircle(coordinate: Coordinate, circle: CircleAttrs): boolean;
+declare function drawCircle(ctx: CanvasRenderingContext2D, attrs: CircleAttrs, styles: Partial<PolygonStyle>): void;
+export interface CircleAttrs {
+	x: number;
+	y: number;
+	r: number;
+}
+declare function checkCoordinateOnLine(coordinate: Coordinate, line: LineAttrs): boolean;
+declare function getLinearYFromSlopeIntercept(kb: Nullable<number[]>, coordinate: Coordinate): number;
+declare function getLinearYFromCoordinates(coordinate1: Coordinate, coordinate2: Coordinate, targetCoordinate: Coordinate): number;
+declare function getLinearSlopeIntercept(coordinate1: Coordinate, coordinate2: Coordinate): Nullable<number[]>;
+declare function drawLine(ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<LineStyle>): void;
+export interface LineAttrs {
+	coordinates: Coordinate[];
+}
+declare function checkCoordinateOnPolygon(coordinate: Coordinate, polygon: PolygonAttrs): boolean;
+declare function drawPolygon(ctx: CanvasRenderingContext2D, attrs: PolygonAttrs, styles: Partial<PolygonStyle>): void;
+export interface PolygonAttrs {
+	coordinates: Coordinate[];
+}
+declare function checkCoordinateOnRect(coordinate: Coordinate, rect: RectAttrs): boolean;
+declare function drawRect(ctx: CanvasRenderingContext2D, attrs: RectAttrs, styles: Partial<RectStyle>): void;
+export interface RectAttrs {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+}
+declare function checkCoordinateOnText(coordinate: Coordinate, attrs: TextAttrs, styles: Partial<RectTextStyle>): boolean;
+declare function drawText(ctx: CanvasRenderingContext2D, attrs: TextAttrs, styles: Partial<TextStyle>): void;
+export interface TextAttrs {
+	x: number;
+	y: number;
+	text: any;
+	align?: CanvasTextAlign;
+	baseline?: CanvasTextBaseline;
+}
+declare function drawRectText(ctx: CanvasRenderingContext2D, attrs: TextAttrs, styles: Partial<RectTextStyle>): void;
 export declare function getSupportFigures(): string[];
 export declare function reisterFigure<A = any, S = any>(figure: FigureTemplate<A, S>): void;
+export declare function getFigureClass<A = any, S = any>(name: string): Nullable<FigureConstructor<A, S>>;
 export declare function registerIndicator<D>(indicator: IndicatorTemplate<D>): void;
 export declare function getSupportIndicators(): string[];
+export declare function registerLocale(locale: string, locales: Locales): void;
+export declare function getSupportLocales(): string[];
 export declare function registerOverlay(template: OverlayTemplate): void;
 export declare function getSupportedOverlays(): string[];
+export declare function registerStyles(name: string, styles: DeepPartial<Styles>): void;
 declare function merge(target: any, source: any): void;
 declare function clone(target: any): any;
 declare function isArray(value: any): boolean;
@@ -855,10 +922,10 @@ export declare function version(): string;
 /**
  * Init chart instance
  * @param ds
- * @param styles
+ * @param options
  * @returns {Chart}
  */
-export declare function init(ds: HTMLElement | string, styles?: DeepPartial<Styles>): Chart | null;
+export declare function init(ds: HTMLElement | string, options?: Options): Chart | null;
 /**
  * Destory chart instace
  * @param dcs
@@ -877,6 +944,22 @@ export declare const utils: {
 	formatValue: typeof formatValue;
 	formatPrecision: typeof formatPrecision;
 	formatBigNumber: typeof formatBigNumber;
+	getLinearSlopeIntercept: typeof getLinearSlopeIntercept;
+	getLinearYFromSlopeIntercept: typeof getLinearYFromSlopeIntercept;
+	getLinearYFromCoordinates: typeof getLinearYFromCoordinates;
+	checkCoordinateOnArc: typeof checkCoordinateOnArc;
+	checkCoordinateOnCircle: typeof checkCoordinateOnCircle;
+	checkCoordinateOnLine: typeof checkCoordinateOnLine;
+	checkCoordinateOnPolygon: typeof checkCoordinateOnPolygon;
+	checkCoordinateOnRect: typeof checkCoordinateOnRect;
+	checkCoordinateOnText: typeof checkCoordinateOnText;
+	drawArc: typeof drawArc;
+	drawCircle: typeof drawCircle;
+	drawLine: typeof drawLine;
+	drawPolygon: typeof drawPolygon;
+	drawRect: typeof drawRect;
+	drawText: typeof drawText;
+	drawRectText: typeof drawRectText;
 };
 
 export as namespace klinecharts;
