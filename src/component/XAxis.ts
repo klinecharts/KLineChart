@@ -13,7 +13,7 @@
  */
 
 import Nullable from '../common/Nullable'
-import { FormatDate } from '../common/Options'
+import { FormatDate, FormatDateType } from '../common/Options'
 
 import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
 
@@ -59,7 +59,7 @@ export default class XAxisImp extends AxisImp {
         const pos = parseInt(ticks[i].value as string, 10)
         const kLineData = dataList[pos]
         const timestamp = kLineData.timestamp
-        let text = formatDate(dateTimeFormat, timestamp, 'hh:mm')
+        let text = formatDate(dateTimeFormat, timestamp, 'hh:mm', FormatDateType.XAXIS)
         if (i !== 0) {
           const prevPos = parseInt(ticks[i - tickCountDif].value as string, 10)
           const prevKLineData = dataList[prevPos]
@@ -71,18 +71,18 @@ export default class XAxisImp extends AxisImp {
       }
       const optimalTickLength = optimalTicks.length
       if (optimalTickLength === 1) {
-        optimalTicks[0].text = formatDate(dateTimeFormat, optimalTicks[0].value as number, 'YYYY-MM-DD hh:mm')
+        optimalTicks[0].text = formatDate(dateTimeFormat, optimalTicks[0].value as number, 'YYYY-MM-DD hh:mm', FormatDateType.XAXIS)
       } else {
         const firstTimestamp = optimalTicks[0].value as number
         const secondTimestamp = optimalTicks[1].value as number
         if (optimalTicks[2] !== undefined) {
           const thirdText = optimalTicks[2].text
           if (/^[0-9]{2}-[0-9]{2}$/.test(thirdText)) {
-            optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'MM-DD')
+            optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'MM-DD', FormatDateType.XAXIS)
           } else if (/^[0-9]{4}-[0-9]{2}$/.test(thirdText)) {
-            optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'YYYY-MM')
+            optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'YYYY-MM', FormatDateType.XAXIS)
           } else if (/^[0-9]{4}$/.test(thirdText)) {
-            optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'YYYY')
+            optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'YYYY', FormatDateType.XAXIS)
           }
         } else {
           optimalTicks[0].text = this._optimalTickLabel(formatDate, dateTimeFormat, firstTimestamp, secondTimestamp) ?? optimalTicks[0].text
@@ -93,14 +93,14 @@ export default class XAxisImp extends AxisImp {
   }
 
   private _optimalTickLabel (formatDate: FormatDate, dateTimeFormat: Intl.DateTimeFormat, timestamp: number, comparedTimestamp: number): Nullable<string> {
-    const year = formatDate(dateTimeFormat, timestamp, 'YYYY')
-    const month = formatDate(dateTimeFormat, timestamp, 'YYYY-MM')
-    const day = formatDate(dateTimeFormat, timestamp, 'MM-DD')
-    if (year !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY')) {
+    const year = formatDate(dateTimeFormat, timestamp, 'YYYY', FormatDateType.NORMAL)
+    const month = formatDate(dateTimeFormat, timestamp, 'YYYY-MM', FormatDateType.NORMAL)
+    const day = formatDate(dateTimeFormat, timestamp, 'MM-DD', FormatDateType.NORMAL)
+    if (year !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY', FormatDateType.NORMAL)) {
       return year
-    } else if (month !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY-MM')) {
+    } else if (month !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY-MM', FormatDateType.NORMAL)) {
       return month
-    } else if (day !== formatDate(dateTimeFormat, comparedTimestamp, 'MM-DD')) {
+    } else if (day !== formatDate(dateTimeFormat, comparedTimestamp, 'MM-DD', FormatDateType.NORMAL)) {
       return day
     }
     return null

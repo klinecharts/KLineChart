@@ -14,7 +14,7 @@
 
 import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
-import { CrosshairStyle, CrosshairDirectionStyle, StateRectTextStyle } from '../common/Options'
+import { CrosshairStyle, CrosshairDirectionStyle, StateRectTextStyle, FormatDateType } from '../common/Options'
 
 import XAxis from '../component/XAxis'
 
@@ -34,7 +34,7 @@ export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabel
 
   protected getText (crosshair: Crosshair, chartStore: ChartStore, axis: XAxis): string {
     const timestamp = crosshair.kLineData?.timestamp as number
-    return chartStore.getCustomApi().formatDate(chartStore.getTimeScaleStore().getDateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm')
+    return chartStore.getCustomApi().formatDate(chartStore.getTimeScaleStore().getDateTimeFormat(), timestamp, 'YYYY-MM-DD hh:mm', FormatDateType.CROSSHAIR)
   }
 
   protected getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: XAxis, styles: StateRectTextStyle): TextAttrs {

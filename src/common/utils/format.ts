@@ -62,7 +62,7 @@ export function formatValue (data: unknown, key: string, defaultValue?: unknown)
  * @param format
  * @returns {string}
  */
-export function formatDate (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format?: string): string {
+export function formatDate (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string {
   const dateTimeString = dateTimeFormat.format(new Date(timestamp))
   const dateTimeStringArray = dateTimeString.split(', ')
   const dateStringArray = dateTimeStringArray[0].split('/')
@@ -75,7 +75,7 @@ export function formatDate (dateTimeFormat: Intl.DateTimeFormat, timestamp: numb
       ? hourMinute.replace(/^[\d]{2}/, '00')
       : hourMinute
   }
-  return (format ?? 'MM-DD hh:mm').replace(/YYYY|MM|DD|(hh:mm)/g, key => date[key])
+  return format.replace(/YYYY|MM|DD|(hh:mm)/g, key => date[key])
 }
 
 /**

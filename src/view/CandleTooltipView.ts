@@ -16,7 +16,7 @@ import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 import Crosshair from '../common/Crosshair'
-import { Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, YAxisPosition, CustomApi } from '../common/Options'
+import { Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, YAxisPosition, CustomApi, FormatDateType } from '../common/Options'
 
 import Indicator from '../component/Indicator'
 
@@ -349,7 +349,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       tooltipData = [
         {
           title: { text: i18n('time', locale), color: textColor },
-          value: { text: customApi.formatDate(dateTimeFormat, data.timestamp, 'YYYY-MM-DD hh:mm'), color: textColor }
+          value: { text: customApi.formatDate(dateTimeFormat, data.timestamp, 'YYYY-MM-DD hh:mm', FormatDateType.TOOLTIP), color: textColor }
         }, {
           title: { text: i18n('open', locale), color: textColor },
           value: { text: formatPrecision(data.open, pricePrecision), color: textColor }

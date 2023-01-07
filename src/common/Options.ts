@@ -779,7 +779,14 @@ export function getDefaultStyles (): Styles {
   }
 }
 
-export type FormatDate = (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format?: string) => string
+export const enum FormatDateType {
+  NORMAL,
+  TOOLTIP,
+  CROSSHAIR,
+  XAXIS
+}
+
+export type FormatDate = (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: FormatDateType) => string
 
 export type FormatBigNumber = (value: string | number) => string
 
