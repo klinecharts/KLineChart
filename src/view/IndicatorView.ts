@@ -36,18 +36,21 @@ import { isValid } from '../common/utils/typeChecks'
 export default class IndicatorView extends CandleBarView {
   protected getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
     const pane = this.getWidget().getPane()
-    const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-    for (const entries of indicators) {
-      const indicator = entries[1]
-      if (indicator.shouldOhlc) {
-        const indicatorStyles = indicator.styles
-        const defaultStyles = chartStore.getStyles().indicator
-        return {
-          type: CandleType.OHLC,
-          styles: {
-            upColor: formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string,
-            downColor: formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string,
-            noChangeColor: formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
+    const yAxis = pane.getAxisComponent()
+    if (!yAxis.isInCandle()) {
+      const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+      for (const entries of indicators) {
+        const indicator = entries[1]
+        if (indicator.shouldOhlc) {
+          const indicatorStyles = indicator.styles
+          const defaultStyles = chartStore.getStyles().indicator
+          return {
+            type: CandleType.OHLC,
+            styles: {
+              upColor: formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string,
+              downColor: formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string,
+              noChangeColor: formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
+            }
           }
         }
       }
