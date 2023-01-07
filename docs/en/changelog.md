@@ -6,20 +6,22 @@
 + 🆕 New features
    + Add Y axis direction zoom and scroll.
    + API
-     + New chart methods `registerFigure`, `getSupportFigures`, `rigiderOverlay`, `getSupportOverlays` are added.
-     + New instance methods, `getSize`, `createOverlay`, `getOverlayById`, `overrideOverlay`, `removeOverlay`.
+     + New chart methods `registerFigure`, `getSupportFigures`, `getFigureClass`, `rigiderOverlay`, `getSupportOverlays`, `registerLocale`, `getSupportLocales`, `registerStyles` are added.
+     + New instance methods, `getSize`, `setLocale`, `getLocal`, `setCustomApi`, `createOverlay`, `getOverlayById`, `overrideOverlay`, `removeOverlay`.
    + Style Configuration
      + Add `candle.priceMark.last.text.borderStyle`, `indicator.lastValueMark.text.borderStyle`, `crosshair.horizontal. text.borderStyle`, `crosshair.vertical.text.borderStyle`.
 + 👉 Change
    + API
       + Chart method `extension.addTechnicalIndicatorTemplate` is changed to `registerIndicator`.
       + Chart method `extension.addShapeTemplate` is changed to `registerOverlay`.
+      + Instance method `setStyleOptions` is changed to `setStyles`.
+      + Instance method `getStyleOptions` is changed to `getStyles`.
       + Instance method `setPaneOptions(options)`, `options` add new attribute `gap`.
-      + The instance method `setOffsetRightSpace` is changed to `setOffsetRightDistance`.
-      + The instance method `createTechnicalIndicator` is changed to `createIndicator`
-      + The instance method `overlayTechnicalIndicator` is changed to `overrideIndicator`.
-      + The instance method `getTechnicalIndicatorByPaneId` is changed to `getIndicatorByPaneId`.
-      + The instance method `removeTechnicalIndicator` is changed to `removeIndicator`.
+      + Instance method `setOffsetRightSpace` is changed to `setOffsetRightDistance`.
+      + Instance method `createTechnicalIndicator` is changed to `createIndicator`
+      + Instance method `overlayTechnicalIndicator` is changed to `overrideIndicator`.
+      + Instance method `getTechnicalIndicatorByPaneId` is changed to `getIndicatorByPaneId`.
+      + Instance method `removeTechnicalIndicator` is changed to `removeIndicator`.
    + Style Configuration
       + All `line.style` options are changed to `solid` and `dashed`.
       + All `dashValue` is changed to `dashedValue`.

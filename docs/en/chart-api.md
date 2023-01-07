@@ -7,7 +7,7 @@
    timezone?: string,
    styles?: string | object,
    customApi?: {
-      formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format?: string) => string,
+      formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: number) => string,
       formatBigNumber?: (value: string | number) => string
    }
 }) => Chart

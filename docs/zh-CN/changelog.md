@@ -6,14 +6,16 @@
 + 🆕 新特性
    + 新增Y轴方向缩放，滚动。
    + API
-     + 新增基图表方法`registerFigure`，`getSupportFigures`，`rigisterOverlay`，`getSupportOverlays`。
-     + 新增实例方法，`getSize`，`createOverlay`，`getOverlayById`，`overrideOverlay`，`removeOverlay`。
+     + 新增基图表方法`registerFigure`，`getSupportFigures`，`getFigureClass`，`rigisterOverlay`，`getSupportOverlays`，`registerLocale`，`getSupportLocales`，`registerStyles`。
+     + 新增实例方法，`getSize`，`setLocale`，`getLocal`，`setCustomApi`，`createOverlay`，`getOverlayById`，`overrideOverlay`，`removeOverlay`。
    + 样式配置
      + 新增`candle.priceMark.last.text.borderStyle`，`indicator.lastValueMark.text.borderStyle`，`crosshair.horizontal.text.borderStyle`，`crosshair.vertical.text.borderStyle`。
 + 👉 变更
    + API
      + 图表方法`extension.addTechnicalIndicatorTemplate`变更为`registerIndicator`。
      + 图表方法`extension.addShapeTemplate`变更为`registerOverlay`。
+     + 实例方法`setStyleOptions`变更为`setStyles`。
+     + 实例方法`getStyleOptions`变更为`getStyles`。
      + 实例方法`setPaneOptions(options)`，`options`新增属性`gap`。
      + 实例方法`setOffsetRightSpace`变更为`setOffsetRightDistance`。
      + 实例方法`createTechnicalIndicator`变更为`createIndicator`。
