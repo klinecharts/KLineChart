@@ -59,7 +59,7 @@ export default class XAxisImp extends AxisImp {
         const pos = parseInt(ticks[i].value as string, 10)
         const kLineData = dataList[pos]
         const timestamp = kLineData.timestamp
-        let text = formatDate(dateTimeFormat, timestamp, 'hh:mm', FormatDateType.XAXIS)
+        let text = formatDate(dateTimeFormat, timestamp, 'HH:mm', FormatDateType.XAXIS)
         if (i !== 0) {
           const prevPos = parseInt(ticks[i - tickCountDif].value as string, 10)
           const prevKLineData = dataList[prevPos]
@@ -71,7 +71,7 @@ export default class XAxisImp extends AxisImp {
       }
       const optimalTickLength = optimalTicks.length
       if (optimalTickLength === 1) {
-        optimalTicks[0].text = formatDate(dateTimeFormat, optimalTicks[0].value as number, 'YYYY-MM-DD hh:mm', FormatDateType.XAXIS)
+        optimalTicks[0].text = formatDate(dateTimeFormat, optimalTicks[0].value as number, 'YYYY-MM-DD HH:mm', FormatDateType.XAXIS)
       } else {
         const firstTimestamp = optimalTicks[0].value as number
         const secondTimestamp = optimalTicks[1].value as number
@@ -93,14 +93,14 @@ export default class XAxisImp extends AxisImp {
   }
 
   private _optimalTickLabel (formatDate: FormatDate, dateTimeFormat: Intl.DateTimeFormat, timestamp: number, comparedTimestamp: number): Nullable<string> {
-    const year = formatDate(dateTimeFormat, timestamp, 'YYYY', FormatDateType.NORMAL)
-    const month = formatDate(dateTimeFormat, timestamp, 'YYYY-MM', FormatDateType.NORMAL)
-    const day = formatDate(dateTimeFormat, timestamp, 'MM-DD', FormatDateType.NORMAL)
-    if (year !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY', FormatDateType.NORMAL)) {
+    const year = formatDate(dateTimeFormat, timestamp, 'YYYY', FormatDateType.XAXIS)
+    const month = formatDate(dateTimeFormat, timestamp, 'YYYY-MM', FormatDateType.XAXIS)
+    const day = formatDate(dateTimeFormat, timestamp, 'MM-DD', FormatDateType.XAXIS)
+    if (year !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY', FormatDateType.XAXIS)) {
       return year
-    } else if (month !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY-MM', FormatDateType.NORMAL)) {
+    } else if (month !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY-MM', FormatDateType.XAXIS)) {
       return month
-    } else if (day !== formatDate(dateTimeFormat, comparedTimestamp, 'MM-DD', FormatDateType.NORMAL)) {
+    } else if (day !== formatDate(dateTimeFormat, comparedTimestamp, 'MM-DD', FormatDateType.XAXIS)) {
       return day
     }
     return null

@@ -349,7 +349,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       tooltipData = [
         {
           title: { text: i18n('time', locale), color: textColor },
-          value: { text: customApi.formatDate(dateTimeFormat, data.timestamp, 'YYYY-MM-DD hh:mm', FormatDateType.TOOLTIP), color: textColor }
+          value: { text: customApi.formatDate(dateTimeFormat, data.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.TOOLTIP), color: textColor }
         }, {
           title: { text: i18n('open', locale), color: textColor },
           value: { text: formatPrecision(data.open, pricePrecision), color: textColor }

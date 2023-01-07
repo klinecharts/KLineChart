@@ -780,7 +780,6 @@ export function getDefaultStyles (): Styles {
 }
 
 export const enum FormatDateType {
-  NORMAL,
   TOOLTIP,
   CROSSHAIR,
   XAXIS

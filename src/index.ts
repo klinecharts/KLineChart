@@ -37,7 +37,7 @@ import { logError, logTag, logWarn } from './common/utils/logger'
 import {
   clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
 } from './common/utils/typeChecks'
-import { formatValue, formatPrecision, formatBigNumber } from './common/utils/format'
+import { formatValue, formatPrecision, formatBigNumber, formatDate } from './common/utils/format'
 
 const instances: {[id: string]: Chart} = {}
 let chartBaseId = 1
@@ -119,6 +119,7 @@ const utils = {
   formatValue,
   formatPrecision,
   formatBigNumber,
+  formatDate,
   getLinearSlopeIntercept,
   getLinearYFromSlopeIntercept,
   getLinearYFromCoordinates,

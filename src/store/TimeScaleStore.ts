@@ -48,7 +48,7 @@ export default class TimeScaleStore {
   /**
    * Time foramt
    */
-  private _dateTimeFormat: Intl.DateTimeFormat
+  private _dateTimeFormat: Intl.DateTimeFormat = this._buildDateTimeFormat() as Intl.DateTimeFormat
 
   /**
    * Scale enabled flag
@@ -117,11 +117,6 @@ export default class TimeScaleStore {
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
-    this._dateTimeFormat = new Intl.DateTimeFormat(
-      'en', {
-        hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
-      }
-    )
     this._gapBarSpace = this._calcGapBarSpace()
     this._offsetRightBarCount = this._offsetRightDistance / this._barSpace
   }
@@ -182,17 +177,30 @@ export default class TimeScaleStore {
     return this._dateTimeFormat
   }
 
-  setTimezone (timezone: string): void {
+  _buildDateTimeFormat (timezone?: string): Nullable<Intl.DateTimeFormat> {
+    const options: Intl.DateTimeFormatOptions = {
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }
+    if (timezone !== undefined) {
+      options.timeZone = timezone
+    }
     let dateTimeFormat: Nullable<Intl.DateTimeFormat> = null
     try {
-      dateTimeFormat = new Intl.DateTimeFormat(
-        'en', {
-          hour12: false, timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
-        }
-      )
+      dateTimeFormat = new Intl.DateTimeFormat('en', options)
     } catch (e) {
       logWarn('', '', 'Timezone is error!!!')
     }
+    return dateTimeFormat
+  }
+
+  setTimezone (timezone: string): void {
+    const dateTimeFormat: Nullable<Intl.DateTimeFormat> = this._buildDateTimeFormat(timezone)
     if (dateTimeFormat !== null) {
       this._dateTimeFormat = dateTimeFormat
     }

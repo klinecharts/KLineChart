@@ -66,16 +66,16 @@ export function formatDate (dateTimeFormat: Intl.DateTimeFormat, timestamp: numb
   const dateTimeString = dateTimeFormat.format(new Date(timestamp))
   const dateTimeStringArray = dateTimeString.split(', ')
   const dateStringArray = dateTimeStringArray[0].split('/')
-  const hourMinute = dateTimeStringArray[1]
+  const timeStringArray = dateTimeStringArray[1].split(':')
   const date = {
     YYYY: dateStringArray[2],
     MM: dateStringArray[0],
     DD: dateStringArray[1],
-    'hh:mm': (hourMinute.match(/^[\d]{2}/) ?? [])[0] === '24'
-      ? hourMinute.replace(/^[\d]{2}/, '00')
-      : hourMinute
+    HH: timeStringArray[0] === '24' ? '00' : timeStringArray[0],
+    mm: timeStringArray[1],
+    ss: timeStringArray[2]
   }
-  return format.replace(/YYYY|MM|DD|(hh:mm)/g, key => date[key])
+  return format.replace(/YYYY|MM|DD|HH|mm|ss/g, key => date[key])
 }
 
 /**
