@@ -44,9 +44,9 @@ const simpleTag: OverlayTemplate = {
       x = bounding.width
     }
     let text
-    if (overlay.extendData !== null) {
+    if (isValid(overlay.extendData)) {
       if (!isFunction(overlay.extendData)) {
-        text = overlay.extendData.toString()
+        text = overlay.extendData ?? ''
       } else {
         text = overlay.extendData(overlay)
       }
@@ -54,7 +54,7 @@ const simpleTag: OverlayTemplate = {
     if (!isValid(text)) {
       text = formatPrecision(overlay.points[0].value, precision.price)
     }
-    return { type: 'rectText', attrs: { x, y: coordinates[0].y, text, align: textAlign, baseline: 'middle' } }
+    return { type: 'rectText', attrs: { x, y: coordinates[0].y, text: text ?? '', align: textAlign, baseline: 'middle' } }
   }
 }
 

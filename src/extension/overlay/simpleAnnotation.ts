@@ -13,11 +13,19 @@
  */
 
 import { OverlayTemplate } from '../../component/Overlay'
+import { isFunction, isValid } from '../../common/utils/typeChecks'
 
 const simpleAnnotation: OverlayTemplate = {
   name: 'simpleAnnotation',
   createPointFigures: ({ overlay, coordinates }) => {
-    const text = overlay.extendData(overlay) as string
+    let text
+    if (isValid(overlay.extendData)) {
+      if (!isFunction(overlay.extendData)) {
+        text = overlay.extendData ?? ''
+      } else {
+        text = overlay.extendData(overlay)
+      }
+    }
     const startX = coordinates[0].x
     const startY = coordinates[0].y - 6
     const lineEndY = startY - 50
@@ -35,7 +43,7 @@ const simpleAnnotation: OverlayTemplate = {
       },
       {
         type: 'rectText',
-        attrs: { x: startX, y: arrowEndY, text, align: 'center', baseline: 'bottom' },
+        attrs: { x: startX, y: arrowEndY, text: text ?? '', align: 'center', baseline: 'bottom' },
         ignoreEvent: true
       }
     ]
