@@ -291,9 +291,9 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {
-    this._gridView.draw(ctx)
     this.updateMainContent(ctx)
     this._indicatorView.draw(ctx)
+    this._gridView.draw(ctx)
   }
 
   protected createTooltipView (): IndicatorTooltipView {

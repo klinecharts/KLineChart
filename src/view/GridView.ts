@@ -30,6 +30,8 @@ export default class GridView extends View<YAxis> {
     const show = gridStyles.show
 
     if (show) {
+      ctx.save()
+      ctx.globalCompositeOperation = 'destination-over'
       const horizontalStyles = gridStyles.horizontal
       const horizontalShow = horizontalStyles.show
       if (horizontalShow) {
@@ -64,6 +66,7 @@ export default class GridView extends View<YAxis> {
           )?.draw(ctx)
         })
       }
+      ctx.restore()
     }
   }
 }
