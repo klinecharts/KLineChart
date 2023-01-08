@@ -65,15 +65,16 @@ const volume: IndicatorTemplate<Vol> = {
       title: 'VOLUME: ',
       type: 'bar',
       baseValue: 0,
-      styles: (data: IndicatorFigureStylesCallbackData<Vol>, defayltStyles: any) => {
+      styles: (data: IndicatorFigureStylesCallbackData<Vol>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
         const kLineData = data.current.kLineData as KLineData
         let color: string
         if (kLineData.close > kLineData.open) {
-          color = defayltStyles.bar.upColor
+          color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles.bars)[0].upColor) as string
         } else if (kLineData.close < kLineData.open) {
-          color = defayltStyles.bar.downColor
+          color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles.bars)[0].downColor) as string
+        } else {
+          color = formatValue(indicator.styles, 'bars[0].noChangeColor', (defaultStyles.bars)[0].noChangeColor) as string
         }
-        color = defayltStyles.bar.noChangeColor
         return { color }
       }
     })
