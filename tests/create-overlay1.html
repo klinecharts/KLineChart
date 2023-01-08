@@ -23,7 +23,7 @@ limitations under the License.
     <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
     <script type="text/javascript" src="./js/dataSource.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>图形随意创建</title>
+    <title>Create overlay</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -31,9 +31,10 @@ limitations under the License.
     <script>
       window.onload = function () {
         var chart = klinecharts.init('chart')
-        chart.createTechnicalIndicator('KDJ')
+        chart.createIndicator('KDJ')
         chart.applyNewData(generated())
-        chart.createShape('segment')
+        // Create any
+        chart.createOverlay('segment')
       }
     </script>
   </body>

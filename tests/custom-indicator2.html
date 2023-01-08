@@ -20,50 +20,54 @@ limitations under the License.
     <meta name="theme-color" content="#000000" />
     <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
     <meta name="description" content="shape test"/>
-    <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="../dist/klinecharts.js"></script>
     <script type="text/javascript" src="./js/dataSource.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>技术指标模板自定义绘制</title>
+    <title>Custom indicator</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="chart"></div>
     <script>
       window.onload = function () {
-        var chart = klinecharts.init('chart')
-        // 添加一个指标模板
-        chart.addTechnicalIndicatorTemplate({
+        // Register indicator
+        klinecharts.registerIndicator({
           name: 'TEST-Render',
           precision: 2,
-          calcTechnicalIndicator: function (kLineDataList, { params, plots }) {
+          calc: function (kLineDataList) {
             return kLineDataList.map(kLineData => ({ volume: kLineData.volume }))
           },
           createToolTipDataSource: function (data) {
-            return [{ title: 'VALUE: ', value: data.crosshair.kLineData.volume, color: 'rgb(65, 20, 69)' }]
+            return {
+              name: 'TEST-Render',
+              values: [{ title: 'VALUE: ', value: { text: data.crosshair.kLineData.volume, color: 'rgb(65, 20, 69)' } }]
+            }
           },
-          render: function ({ ctx, dataSource, viewport }) {
+          draw: function ({ ctx, visibleRange, bounding, indicator }) {
             let max = 0
-            const result = dataSource.technicalIndicatorDataList
-            for (let i = dataSource.from; i < dataSource.to; i++) {
+            const result = indicator.result
+            for (let i = visibleRange.from; i < visibleRange.to; i++) {
               max = Math.max(max, result[i].volume)
             }
-            const length = dataSource.to - dataSource.from
-            const barHeight = (viewport.height) / length
+            const length = visibleRange.to - visibleRange.from
+            const barHeight = (bounding.height) / length
             const realBarHeight = barHeight * 0.8
 
             ctx.globalCompositeOperation = 'destination-over'
             ctx.fillStyle = 'rgba(65, 20, 69, .35)'
             let startY = (barHeight - realBarHeight) / 2
-            for (let i = dataSource.from; i < dataSource.to; i++) {
+            for (let i = visibleRange.from; i < visibleRange.to; i++) {
               const barWidth = Math.floor(result[i].volume / max * 150)
-              ctx.fillRect(viewport.width - barWidth, startY, barWidth, realBarHeight)
+              ctx.fillRect(bounding.width - barWidth, startY, barWidth, realBarHeight)
               startY += barHeight
             }
           }
         })
-        chart.createTechnicalIndicator('MA', false, { id: 'candle_pane' })
-        chart.createTechnicalIndicator('TEST-Render', true, { id: 'candle_pane' })
-        chart.createTechnicalIndicator('KDJ')
+        var chart = klinecharts.init('chart')
+        chart.createIndicator('MA', false, { id: 'candle_pane' })
+        chart.createIndicator('EMA', true, { id: 'candle_pane' })
+        chart.createIndicator('TEST-Render', true, { id: 'candle_pane' })
+        chart.createIndicator('KDJ')
         chart.applyNewData(generated())
       }
     </script>

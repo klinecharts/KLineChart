@@ -23,7 +23,7 @@ limitations under the License.
     <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
     <script type="text/javascript" src="./js/dataSource.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>图形模板</title>
+    <title>Overlay override</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -32,29 +32,36 @@ limitations under the License.
       window.onload = function () {
         var chart = klinecharts.init('chart')
         // 新增一个图形模板
-        chart.addShapeTemplate({
+        klinecharts.registerOverlay({
           name: 'circle',
+          needDefaultPointFigure: true,
+          needDefaultXAxisFigure: true,
+          needDefaultYAxisFigure: true,
           totalStep: 3,
-          checkEventCoordinateOnShape: function ({ dataSource, eventCoordinate }) {
-            const xDis = Math.abs(dataSource.x - eventCoordinate.x)
-            const yDis = Math.abs(dataSource.y - eventCoordinate.y)
-            const r = Math.sqrt(xDis * xDis + yDis * yDis)
-            return Math.abs(r) <= dataSource.radius
-          },
-          createShapeDataSource: function ({ coordinates }) {
+          createPointFigures: function ({ overlay, coordinates }) {
             if (coordinates.length === 2) {
               const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
               const yDis = Math.abs(coordinates[0].y - coordinates[1].y)
               const radius = Math.sqrt(xDis * xDis + yDis * yDis)
               return [
                 {
-                  type: 'arc',
-                  isDraw: true,
-                  isCheck: true,
-                  styles: { style: 'fill', fill: { color: 'rgba(200, 176, 90, .5)' } },
-                  dataSource: [
-                    { ...coordinates[0], radius, startAngle: 0, endAngle: Math.PI * 2 }
-                  ]
+                  key: 'circle',
+                  type: 'circle',
+                  attrs: {
+                    ...coordinates[0],
+                    r: radius
+                  },
+                  styles: {
+                    style: 'stroke_fill'
+                  }
+                },
+                {
+                  key: 'text',
+                  type: 'text',
+                  attrs: {
+                    ...coordinates[0],
+                    text: overlay.extendData
+                  }
                 }
               ]
             }
@@ -63,7 +70,20 @@ limitations under the License.
         })
         chart.applyNewData(generated())
         // 创建
-        chart.createShape('circle')
+        chart.createOverlay({
+          name: 'circle',
+          extendData: 'Override overlay',
+          styles: { text: { color: 'rgba(100, 10, 200, .3)' } },
+          onDrawEnd: function ({ overlay }) {
+            // 监听绘制完成，覆盖属性
+            chart.overrideOverlay({
+              id: overlay.id,
+              lock: true,
+              extendData: 'Update override overlay',
+              styles: { color: 'rgba(10, 230, 100, .3)' }
+            })
+          }
+        })
       }
     </script>
   </body>

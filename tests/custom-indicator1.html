@@ -19,34 +19,30 @@ limitations under the License.
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
-    <meta name="description" content="create html test"/>
+    <meta name="description" content="shape test"/>
     <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
     <script type="text/javascript" src="./js/dataSource.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>创建html</title>
+    <title>Custom indicator</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="chart"></div>
     <script>
       window.onload = function () {
+        // Register indicator
+        klinecharts.registerIndicator({
+          name: 'TEST',
+          calcParams: [5.5],
+          precision: 2,
+          figures: [{ key: 'price', title: 'price: ', type: 'line' }],
+          calc: function (kLineDataList) {
+            return Promise.resolve(kLineDataList.map(kLineData => ({ price: kLineData.close / params[0] })))
+          }
+        })
         var chart = klinecharts.init('chart')
-        var paneId = chart.createTechnicalIndicator('MACD')
-        chart.applyNewData(generated(), true)
-        chart.createHtml({
-          content: '123',
-          style: { top: '20px', left: '20px'}
-        })
-        chart.createHtml({
-          content: '<div>555</div>',
-          position: 'yAxis'
-        })
-        var dom = document.createElement('div')
-        dom.innerHTML = 9999
-        chart.createHtml({
-          content: dom,
-          style: { top: '10px', right: '10px'}
-        }, paneId)
+        chart.createTechnicalIndicator('TEST')
+        chart.applyNewData(generated())
       }
     </script>
   </body>

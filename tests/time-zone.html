@@ -31,7 +31,7 @@ limitations under the License.
     <script>
       window.onload = function () {
         var chart = klinecharts.init('chart')
-        chart.createTechnicalIndicator('KDJ')
+        chart.createIndicator('KDJ')
         chart.applyNewData(generated(), true)
         setTimeout(function () {
           chart.setTimezone('Europe/Berlin')

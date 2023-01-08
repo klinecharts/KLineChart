@@ -20,10 +20,10 @@ limitations under the License.
     <meta name="theme-color" content="#000000" />
     <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
     <meta name="description" content="shape test"/>
-    <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="../dist/klinecharts.js"></script>
     <script type="text/javascript" src="./js/dataSource.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>技术指标模板</title>
+    <title>Simple overlay</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -31,18 +31,21 @@ limitations under the License.
     <script>
       window.onload = function () {
         var chart = klinecharts.init('chart')
-        // 添加一个指标模板
-        chart.addTechnicalIndicatorTemplate({
-          name: 'TEST',
-          calcParams: [{ allowDecimal: true, value: 5.5 }],
-          precision: 2,
-          plots: [{ key: 'price', title: 'price: ', type: 'line' }],
-          calcTechnicalIndicator: function (kLineDataList, { params, plots }) {
-            return Promise.resolve(kLineDataList.map(kLineData => ({ price: kLineData.close / params[0] })))
-          }
+        var kdjPaneId = chart.createIndicator('KDJ')
+        var dataList = generated()
+        chart.applyNewData(dataList)
+        // Create on main
+        chart.createOverlay({
+          name: 'simpleAnnotation',
+          extendData: '1111111111',
+          points: [{ timestamp: dataList[dataList.length - 20].timestamp, value: dataList[dataList.length - 20].high }]
         })
-        chart.createTechnicalIndicator('TEST')
-        chart.applyNewData(generated())
+         // Create on sub
+        chart.createOverlay({
+          name: 'simpleAnnotation',
+          extendData: '22222222222',
+          points: [{ timestamp: dataList[dataList.length - 20].timestamp, value: 40 }]
+        }, kdjPaneId)
       }
     </script>
   </body>

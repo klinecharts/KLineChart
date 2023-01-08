@@ -23,7 +23,7 @@ limitations under the License.
     <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
     <script type="text/javascript" src="./js/dataSource.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>技术指标覆盖</title>
+    <title>Create overlay</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -31,36 +31,43 @@ limitations under the License.
     <script>
       window.onload = function () {
         var chart = klinecharts.init('chart')
-        // 创建的时候直接修改
-        chart.createTechnicalIndicator({ 
-          name: 'MA',
-          precision: 3,
-          calcParams: [5, 10],
-          styles: { line: { size: 2, colors: ['#00ff00', '#ff00ff'] } }
-        }, false, { id: 'candle_pane' })
-        
-        // 创建两个相同的EMA副图指标
-        chart.createTechnicalIndicator('EMA')
-        chart.createTechnicalIndicator('EMA')
-        // 修改所有创建好的EMA指标
-        chart.overrideTechnicalIndicator({
-          name: 'EMA',
-          precision: 3,
-          calcParams: [20],
-          styles: { line: { size: 2, colors: ['#09cf00', '#ff00ff'] } }
-        })
-
-        // 创建两个相同的BOLL副图指标
-        var bollPaneId = chart.createTechnicalIndicator('BOLL')
-        chart.createTechnicalIndicator('BOLL')
-        // 修改指定窗口上创建好的BOLL指标
-        chart.overrideTechnicalIndicator({
-          name: 'BOLL',
-          precision: 3,
-          calcParams: [16, 5],
-          styles: { line: { size: 2, colors: ['#AC89BB', '#78bcaa', '#00ffad'] } }
-        }, bollPaneId)
+        chart.createIndicator('MACD')
         chart.applyNewData(generated())
+        var dataList = chart.getDataList()
+        var data2 = dataList[dataList.length - 100]
+        var data1 = dataList[dataList.length - 40]
+        chart.createOverlay({ 
+          name: 'priceChannelLine',
+          points: [{ timestamp: data1.timestamp, value: data1.low }, { timestamp: data2.timestamp, value: data2.high }],
+          onDrawStart: function (event) {
+            console.log('onDrawStart: ', event)
+          },
+          onDrawing: function (event) {
+            console.log('onDrawing: ', event)
+          },
+          onDrawEnd: function (event) {
+            console.log('onDrawEnd: ', event)
+          },
+          onClick: function (event) {
+            console.log('onClick: ', event)
+          },
+          onRightClick: function (event) {
+            console.log('onRightClick: ', event)
+            // return true
+          },
+          onPressedMove: function (event) {
+            console.log('onPressedMove: ', event)
+          },
+          onMouseEnter: function (event) {
+            console.log('onMouseEnter: ', event)
+          },
+          onMouseLeave: function (event) {
+            console.log('onMouseLeave: ', event)
+          },
+          onRemove: function (event) {
+            console.log('onRemove: ', event)
+          }
+        })
       }
     </script>
   </body>

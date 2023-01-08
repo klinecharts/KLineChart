@@ -20,10 +20,10 @@ limitations under the License.
     <meta name="theme-color" content="#000000" />
     <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
     <meta name="description" content="shape test"/>
-    <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="../dist/klinecharts.js"></script>
     <script type="text/javascript" src="./js/dataSource.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>技术指标</title>
+    <title>Indicator</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -31,14 +31,10 @@ limitations under the License.
     <script>
       window.onload = function () {
         var chart = klinecharts.init('chart')
-        // 创建一个主图指标
-        chart.createTechnicalIndicator('MA', false, { id: 'candle_pane' })
-        // 创建一个主图指标叠加
-        chart.createTechnicalIndicator('BOLL', true, { id: 'candle_pane' })
-        // 创建一个副图指标
-        chart.createTechnicalIndicator({ name: 'VOL', calcParams: [10], styles: { margin: { top: 0.2, bottom: 2 } } })
-        // 创建一个副图指标
-        chart.createTechnicalIndicator('MACD')
+        chart.createIndicator('MA', false, { id: 'candle_pane' })
+        chart.createIndicator('BOLL', true, { id: 'candle_pane' })
+        chart.createIndicator({ name: 'VOL', calcParams: [10] }, false, { gap: { bottom: 2 } })
+        chart.createIndicator('MACD')
         chart.applyNewData(generated())
       }
     </script>
