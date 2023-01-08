@@ -147,7 +147,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
     if (topRate >= 1) {
       topRate = topRate / height
     }
-    let bottomRate = paneGap?.top ?? 0.1
+    let bottomRate = paneGap?.bottom ?? 0.1
     if (bottomRate >= 1) {
       bottomRate = bottomRate / height
     }
