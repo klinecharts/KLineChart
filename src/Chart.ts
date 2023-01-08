@@ -486,11 +486,13 @@ export default class ChartImp implements Chart {
 
   applyMoreData (dataList: KLineData[], more?: boolean): void {
     this._chartStore.addData(dataList, 0, more)
-    this._chartStore.getIndicatorStore().calcInstance().finally(
-      () => {
-        this.adjustPaneViewport(false, true, true, true)
+    this._chartStore.getIndicatorStore().calcInstance().then(
+      result => {
+        if (result.includes(true)) {
+          this.adjustPaneViewport(false, true, true, true)
+        }
       }
-    )
+    ).catch(_ => {})
   }
 
   updateData (data: KLineData): void {
@@ -505,11 +507,13 @@ export default class ChartImp implements Chart {
         pos = dataCount - 1
       }
       this._chartStore.addData(data, pos)
-      this._chartStore.getIndicatorStore().calcInstance().finally(
-        () => {
-          this.adjustPaneViewport(false, true, true, true)
+      this._chartStore.getIndicatorStore().calcInstance().then(
+        result => {
+          if (result.includes(true)) {
+            this.adjustPaneViewport(false, true, true, true)
+          }
         }
-      )
+      ).catch(_ => {})
     }
   }
 
@@ -527,9 +531,9 @@ export default class ChartImp implements Chart {
     let paneId: string
     if (paneOptions !== undefined && this._panes.has(paneOptions.id)) {
       paneId = paneOptions.id
-      this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).finally(() => {
+      this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).then(_ => {
         this._setPaneOptions(paneOptions, this._panes.get(paneId)?.getAxisComponent().buildTicks(true) ?? false)
-      })
+      }).catch(_ => {})
     } else {
       paneId = paneOptions?.id ?? createId(PaneIdConstants.INDICATOR)
       const topPane = Array.from(this._panes.values()).pop() as unknown as Pane<Axis>
