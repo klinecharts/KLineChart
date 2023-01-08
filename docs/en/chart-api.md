@@ -347,6 +347,12 @@ Formatting precision.
 ```
 Format large numbers, such as 1000 into 1k, 1000000 into 1M, etc.
 
+### utils.formatDate(dateTimeFormat, timestamp, format)
+```typescript
+(dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string) => string
+```
+Format date. `format`, such as 'YYYY-MM-DD HH:mm:ss'.
+
 ### utils.getLinearSlopeIntercept(coordinate1, coordinate2)
 ```typescript
 (coordinate1: { x: number, y: number }, coordinate2: { x: number, y: number }) => []

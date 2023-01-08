@@ -193,7 +193,7 @@
   totalStep: 3,
 
   // 创建点对应的图形信息
-  createPointFigures: ({ step, points, coordinates }) => {
+  createPointFigures: ({ coordinates }) => {
     if (coordinates.length === 2) {
       const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
       const yDis = Math.abs(coordinates[0].y - coordinates[1].y)
@@ -206,7 +206,7 @@
         attrs: {
           ...coordinates[0],
           r: radius
-        }
+        },
         styles: {
           // 选择边框且填充，其它选择使用默认样式
           style: 'stroke_fill'

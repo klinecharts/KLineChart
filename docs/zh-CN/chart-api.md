@@ -350,6 +350,12 @@
 ```
 格式化大的数字，如1000转换成1k，1000000转换为1M等。
 
+### utils.formatDate(dateTimeFormat, timestamp, format)
+```typescript
+(dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string) => string
+```
+格式化日期。`format`格式，如'YYYY-MM-DD HH:mm:ss'。
+
 ### utils.getLinearSlopeIntercept(coordinate1, coordinate2)
 ```typescript
 (coordinate1: { x: number, y: number }, coordinate2: { x: number, y: number }) => []

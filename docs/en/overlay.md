@@ -193,7 +193,7 @@ A filled, bordered circle is used to illustrate how to configure.
    totalStep: 3,
 
    // Create the graphic information corresponding to the point
-   createPointFigures: ({ step, points, coordinates }) => {
+   createPointFigures: ({ scoordinates }) => {
      if (coordinates. length === 2) {
        const xDis = Math.abs(coordinates[0].x - coordinates[1].x)
        const yDis = Math.abs(coordinates[0].y - coordinates[1].y)
@@ -206,7 +206,7 @@ A filled, bordered circle is used to illustrate how to configure.
          attrs: {
            ...coordinates[0],
            r: radius
-         }
+         },
          styles: {
            // Select the border and fill it, other selections use the default style
            style: 'stroke_fill'
