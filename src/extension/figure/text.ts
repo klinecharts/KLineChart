@@ -24,7 +24,7 @@ import { RectAttrs } from './rect'
 export function getTextRect (attrs: TextAttrs, styles: Partial<RectTextStyle>, textWidth?: number): RectAttrs {
   const { size = 12, paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0 } = styles
   const { x, y, text, align = 'left', baseline = 'top' } = attrs
-  const length = text.toString().length
+  const length = text.length
   textWidth = textWidth ?? size * length
   const textHeight = size
   let startX: number
@@ -93,7 +93,7 @@ export function drawText (ctx: CanvasRenderingContext2D, attrs: TextAttrs, style
 export interface TextAttrs {
   x: number
   y: number
-  text: any
+  text: string
   align?: CanvasTextAlign
   baseline?: CanvasTextBaseline
 }
