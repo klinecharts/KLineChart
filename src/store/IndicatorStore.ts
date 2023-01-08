@@ -88,8 +88,8 @@ export default class IndicatorStore {
   async addInstance (indicator: IndicatorCreate, paneId: string, isStack: boolean): Promise<boolean> {
     const { name } = indicator
     let paneInstances = this._instances.get(paneId)
-    if (paneInstances?.has(name) !== undefined) {
-      return await Promise.resolve(false)
+    if (paneInstances?.has(name) ?? false) {
+      return await Promise.reject(new Error('Duplicate indicators.'))
     }
     if (paneInstances === undefined) {
       paneInstances = new Map()

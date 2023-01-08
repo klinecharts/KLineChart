@@ -62,13 +62,13 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const textSize = tooltipTextStyles.size
       const textWeight = tooltipTextStyles.weight
       const textFamily = tooltipTextStyles.family
-      let labelX = 0
       let labelY = top ?? 0
       ctx.font = createFont(textSize, textWeight, textFamily)
       indicators.forEach(indicator => {
         const { name, calcParamsText, values } = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, styles)
         const nameValid = name !== undefined && name.length > 0
         const valuesValid = values !== undefined && values.length > 0
+        let labelX = 0
         if (nameValid || valuesValid) {
           labelY += tooltipTextStyles.marginTop
           height += (tooltipTextStyles.marginTop + textSize + tooltipTextStyles.marginBottom)
@@ -95,8 +95,11 @@ export default class IndicatorTooltipView extends View<YAxis> {
             labelX += (ctx.measureText(text).width + textMarginRight)
           }
           if (valuesValid) {
-            height += this.drawStandardTooltip(ctx, bounding, values, labelX, labelY, tooltipTextStyles)
+            const h = this.drawStandardTooltip(ctx, bounding, values, labelX, labelY, tooltipTextStyles)
+            height += h
+            labelY += h
           }
+          labelY += (textSize + tooltipTextStyles.marginBottom)
         }
       })
     }
