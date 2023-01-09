@@ -80,6 +80,11 @@ export interface Overlay {
   id: string
 
   /**
+   * Group id
+   */
+  groupId: string
+
+  /**
    * Name
    */
   name: string
@@ -225,8 +230,9 @@ export interface Overlay {
   onDeselected: Nullable<OverlayEventCallback>
 }
 
-export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'points' | 'currentStep'>, 'name'>
+export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' | 'points' | 'currentStep'>, 'name'>
 export type OverlayCreate = ExcludePickPartial<Omit<Overlay, 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
+export type OverlayRemove = Partial<Pick<Overlay, 'id' | 'groupId' | 'name'>>
 export type OverlayConstructor = new () => OverlayImp
 
 const OVERLAY_DRAW_STEP_START = 1
@@ -234,6 +240,7 @@ const OVERLAY_DRAW_STEP_FINISHED = -1
 
 export default abstract class OverlayImp implements Overlay {
   id: string
+  groupId: string
   name: string
   totalStep: number
   currentStep: number = OVERLAY_DRAW_STEP_START
@@ -318,6 +325,14 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
+  setGroupId (groupId: string): boolean {
+    if (this.groupId === undefined) {
+      this.groupId = groupId
+      return true
+    }
+    return false
+  }
+
   setExtendData (extendData: any): boolean {
     if (extendData !== this.extendData) {
       this.extendData = extendData
@@ -334,11 +349,6 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  /**
-   * 设置点
-   * @param points
-   * @return {boolean}
-   */
   setPoints (points: Array<PickPartial<Point, 'timestamp'>>): boolean {
     if (points.length > 0) {
       let repeatTotalStep: number

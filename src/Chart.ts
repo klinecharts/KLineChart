@@ -43,7 +43,7 @@ import XAxisPane from './pane/XAxisPane'
 import Axis from './component/Axis'
 
 import { Indicator, IndicatorCreate } from './component/Indicator'
-import { Overlay, OverlayCreate } from './component/Overlay'
+import { Overlay, OverlayCreate, OverlayRemove } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
 import { getOverlayClass } from './extension/overlay/index'
@@ -89,7 +89,7 @@ export interface Chart {
   createOverlay: (value: string | OverlayCreate, paneId?: string) => Nullable<string>
   getOverlayById: (id: string) => Nullable<Overlay>
   overrideOverlay: (override: Partial<OverlayCreate>) => void
-  removeOverlay: (id?: string) => void
+  removeOverlay: (remove?: string | OverlayRemove) => void
   setPaneOptions: (options: PaneOptions) => void
   setZoomEnabled: (enabled: boolean) => void
   isZoomEnabled: () => boolean
@@ -615,8 +615,16 @@ export default class ChartImp implements Chart {
     this._chartStore.getOverlayStore().override(override)
   }
 
-  removeOverlay (id?: string): void {
-    this._chartStore.getOverlayStore().removeInstance(id)
+  removeOverlay (remove?: string | OverlayRemove): void {
+    let overlayRemove
+    if (remove !== undefined) {
+      if (isString(remove)) {
+        overlayRemove = { id: remove as string }
+      } else {
+        overlayRemove = remove as OverlayRemove
+      }
+    }
+    this._chartStore.getOverlayStore().removeInstance(overlayRemove)
   }
 
   setPaneOptions (options: PaneOptions): void {

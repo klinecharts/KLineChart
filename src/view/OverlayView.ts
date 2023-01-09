@@ -162,7 +162,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (!(overlay.onRightClick?.({ overlay, ...event }) ?? false)) {
         const pane = this.getWidget().getPane()
         const overlayStore = pane.getChart().getChartStore().getOverlayStore()
-        overlayStore.removeInstance(overlay.id)
+        overlayStore.removeInstance(overlay)
       }
       return true
     }

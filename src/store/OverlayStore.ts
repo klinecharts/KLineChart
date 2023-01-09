@@ -18,7 +18,7 @@ import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
 
 import { createId } from '../common/utils/id'
 
-import OverlayImp, { OverlayConstructor, OverlayCreate } from '../component/Overlay'
+import OverlayImp, { OverlayConstructor, OverlayCreate, OverlayRemove } from '../component/Overlay'
 
 import { getOverlayClass } from '../extension/overlay/index'
 
@@ -51,7 +51,7 @@ export interface EventOverlayInfo {
 export default class OverlayStore {
   private readonly _chartStore: ChartStore
 
-  private readonly _instances = new Map<string, OverlayImp[]>()
+  private _instances = new Map<string, OverlayImp[]>()
 
   /**
    * Overlay information in painting
@@ -97,7 +97,7 @@ export default class OverlayStore {
 
   private _overrideInstance (instance: OverlayImp, overlay: Partial<OverlayCreate>): boolean {
     const {
-      id, points, styles, lock, mode, extendData,
+      id, groupId, points, styles, lock, mode, extendData,
       onDrawStart, onDrawing,
       onDrawEnd, onClick, onRightClick,
       onPressedMoveStart, onPressedMoving, onPressedMoveEnd,
@@ -107,6 +107,9 @@ export default class OverlayStore {
     let updateFlag = false
     if (id !== undefined) {
       instance.setId(id)
+    }
+    if (groupId !== undefined) {
+      instance.setGroupId(groupId)
     }
     if (points !== undefined && instance.setPoints(points)) {
       updateFlag = true
@@ -186,7 +189,9 @@ export default class OverlayStore {
     if (this.getInstanceById(id) === null) {
       const OverlayClazz = getOverlayClass(overlay.name) as OverlayConstructor
       const instance = new OverlayClazz()
+      const groupId = overlay.groupId ?? id
       overlay.id = id
+      overlay.groupId = groupId
       this._overrideInstance(instance, overlay)
       if (instance.isDrawing()) {
         this._progressInstanceInfo = { paneId, instance, appointPaneFlag }
@@ -243,7 +248,7 @@ export default class OverlayStore {
   }
 
   override (overlay: Partial<OverlayCreate>): void {
-    const { id, name } = overlay
+    const { id, groupId, name } = overlay
     let updateFlag = false
     if (id !== undefined) {
       const instance = this.getInstanceById(id)
@@ -253,13 +258,24 @@ export default class OverlayStore {
     } else {
       this._instances.forEach(paneInstances => {
         paneInstances.forEach(instance => {
-          if ((name === undefined || instance.name === name) && this._overrideInstance(instance, overlay)) {
+          if (
+            ((name !== undefined && instance.name === name) ||
+              (groupId !== undefined && instance.groupId === groupId) ||
+              (name === undefined && groupId === undefined)) &&
+            this._overrideInstance(instance, overlay)
+          ) {
             updateFlag = true
           }
         })
       })
       if (this._progressInstanceInfo !== null) {
-        if ((name === undefined || this._progressInstanceInfo.instance.name === name) && this._overrideInstance(this._progressInstanceInfo.instance, overlay)) {
+        const progressInstance = this._progressInstanceInfo.instance
+        if (
+          ((name !== undefined && progressInstance.name === name) ||
+          (groupId !== undefined && progressInstance.groupId === groupId) ||
+          (name === undefined && groupId === undefined)) &&
+           this._overrideInstance(progressInstance, overlay)
+        ) {
           updateFlag = true
         }
       }
@@ -269,30 +285,40 @@ export default class OverlayStore {
     }
   }
 
-  removeInstance (id?: string): void {
+  removeInstance (overlayRemove?: OverlayRemove): void {
     const updatePaneIds: string[] = []
     if (this._progressInstanceInfo !== null) {
       const instance = this._progressInstanceInfo.instance
-      if ((id === undefined || instance.id === id)) {
+      if (
+        overlayRemove === undefined ||
+        instance.id === overlayRemove.id ||
+        instance.groupId === overlayRemove.groupId ||
+        instance.name === overlayRemove.name
+      ) {
         updatePaneIds.push(this._progressInstanceInfo.paneId)
         instance.onRemoved?.({ overlay: instance })
         this._progressInstanceInfo = null
       }
     }
-    if (id !== undefined) {
+    if (overlayRemove !== undefined) {
+      const instances = new Map<string, OverlayImp[]>()
       for (const entry of this._instances) {
         const paneInstances = entry[1]
-        const removeIndex = paneInstances.findIndex(instance => instance.id === id)
-        if (removeIndex > -1) {
-          updatePaneIds.push(entry[0])
-          paneInstances[removeIndex].onRemoved?.({ overlay: paneInstances[removeIndex] })
-          paneInstances.splice(removeIndex, 1)
-          if (paneInstances.length === 0) {
-            this._instances.delete(entry[0])
+        const newPaneInstances = paneInstances.filter(instance => {
+          if (instance.id !== overlayRemove.id && instance.groupId !== overlayRemove.groupId && instance.name !== overlayRemove.name) {
+            return true
           }
-          break
+          if (!updatePaneIds.includes(entry[0])) {
+            updatePaneIds.push(entry[0])
+          }
+          instance.onRemoved?.({ overlay: instance })
+          return false
+        })
+        if (newPaneInstances.length > 0) {
+          instances.set(entry[0], newPaneInstances)
         }
       }
+      this._instances = instances
     } else {
       this._instances.forEach((paneInstances, paneId) => {
         updatePaneIds.push(paneId)
