@@ -23,6 +23,8 @@ This document will help you upgrade from kinecharts 8.x to klinecharts 9.x. If y
 ### Instance API
 + `getDom({paneId, position})` is changed to `getDom(paneId, position)`, and the parameter `position` option is changed to `root`, `main` and `yAxis`.
 + `getWidth()` and `getHeight()` are combined into a method '`getSize(paneId, position)`.
++ `setStyleOptions(styles)` is changed to `setStyles(styles)`.
++ `getStyleOptions()` is changed to `getStyles()`.
 + `setOffsetRightSpace(space)` is changed to `setOffsetRightDistance(distance)`.
 + `createTechnicalIndicator(value, isStack, paneOptions)` is changed to `createIndicator(value, isStack, paneOptions)`.
 + `overrideTechnicalIndicator(override, paneId)` is changed to `overrideIndicator(override, paneId)`.
