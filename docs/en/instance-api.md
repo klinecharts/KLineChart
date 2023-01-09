@@ -447,6 +447,8 @@ Remove technical indicators.
 (
    value: string | {
      name: string,
+     id?: string,
+     groupId?: string,
      lock?: boolean,
      needDefaultPointFigure?: boolean,
      needDefaultXAxisFigure?: boolean,
@@ -483,6 +485,8 @@ Example:
 ```javascript
 chart.createOverlay({
    name: 'segment',
+   id: 'segment_1',
+   groupId: 'segment',
    points: [
      { timestamp: 1614171282000, value: 18987 },
      { timestamp: 1614171202000, value: 16098 },
@@ -534,6 +538,7 @@ Get overlay information by id.
    override: {
      name: string,
      id?: string,
+     groupId?: string,
      lock?: boolean,
      needDefaultPointFigure?: boolean,
      needDefaultXAxisFigure?: boolean,
@@ -562,6 +567,7 @@ Overlays that have been drawn.
 - `override` parameters that need to be overridden
    - `name` overlay name, unique identifier for creation
    - `id` Overlay identification, if the id exists, it will be based on the id to overwrite
+   - `groupId` Group id
    - `lock` is locked to prevent dragging
    - `needDefaultPointFigure` needs a default point figure
    - `needDefaultXAxisFigure` needs the default x-axis figure
@@ -588,6 +594,8 @@ Example:
 ```javascript
 chart.overrideOverlay({
    name: 'segment',
+   id: 'segment_1',
+   groupId: 'segment',
    points: [
      { timestamp: 1614171282000, value: 18987 },
      { timestamp: 1614171202000, value: 16098 },
@@ -625,16 +633,20 @@ chart.overrideOverlay({
 })
 ```
 
-## removeOverlay(id)
+## removeOverlay(remove)
 ```typescript
-(id: string) => void
+(
+  remove: string | {
+    id?: string,
+    groupId?: string,
+    name?: string
+  }
+) => void
 ```
 Remove graphics.
-- `id` is the ID returned by calling the `createOverlay` method, if default, all overlays will be removed
-
-remove an html element
-- `paneId` window id, default to delete all
-- The id of `htmlId` when it was created can be a single id or an array of ids. By default, all the ids on the corresponding window will be deleted
+- `id` The ID returned by calling the `createOverlay` method.
+- `groupId` Group id
+- `name` Overlay name
 
 
 ## scrollByDistance(distance, animationDuration)

@@ -1,5 +1,10 @@
 # 📠 Change Log
 
+## 9.0.0-alpha2
+`2023-01-10`
++ 🆕 `Overlay` supports grouping.
++ 🐞 Fix the problem of tooltip display when there is no data.
+
 ## 9.0.0-alpha1
 `2023-01-09`
 + 🛠 Typescript refactoring.

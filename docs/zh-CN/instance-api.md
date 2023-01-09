@@ -451,6 +451,8 @@ chart.overrideIndicator({
 (
   value: string | {
     name: string,
+    id?: string,
+    groupId?: string, 
     lock?: boolean,
     needDefaultPointFigure?: boolean,
     needDefaultXAxisFigure?: boolean,
@@ -487,6 +489,8 @@ chart.overrideIndicator({
 ```javascript
 chart.createOverlay({
   name: 'segment',
+  id: 'segment_1'
+  groupId: 'segment',
   points: [
     { timestamp: 1614171282000, value: 18987 },
     { timestamp: 1614171202000, value: 16098 },
@@ -539,6 +543,7 @@ chart.createOverlay({
   override: {
     name: string,
     id?: string,
+    groupId?: string,
     lock?: boolean,
     needDefaultPointFigure?: boolean,
     needDefaultXAxisFigure?: boolean,
@@ -567,6 +572,7 @@ chart.createOverlay({
 - `override` 需要覆盖的参数 
   - `name` 覆盖物名，用于创建的唯一标识
   - `id` 覆盖物标识，如果id存在，则会以id为依据去覆盖
+  - `groupId` 编组id
   - `lock` 是否锁定不让拖动
   - `needDefaultPointFigure` 是否需要默认的点对应的图形
   - `needDefaultXAxisFigure` 是否需要默认的x轴上的图形
@@ -593,6 +599,8 @@ chart.createOverlay({
 ```javascript
 chart.overrideOverlay({
   name: 'segment',
+  id: 'segment_1',
+  groupId: 'segment',
   points: [
     { timestamp: 1614171282000, value: 18987 },
     { timestamp: 1614171202000, value: 16098 },
@@ -631,12 +639,20 @@ chart.overrideOverlay({
 ```
 
 
-## removeOverlay(id)
+## removeOverlay(remove)
 ```typescript
-(id: string) => void
+(
+  remove: string | {
+    id?: string,
+    groupId?: string,
+    name?: string
+  }
+) => void
 ```
 移除图形。
-- `id` 调用`createOverlay`方法是返回的标识，如果缺省，则会移除所有
+- `id` 调用`createOverlay`方法是返回的标识
+- `groupId` 编组id
+- `name` 覆盖物名称
 
 删除一个html元素
 - `paneId` 窗口id，缺省则删除所有
