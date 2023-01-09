@@ -307,10 +307,9 @@ export interface Styles {
 	overlay: OverlayStyle;
 }
 export declare const enum FormatDateType {
-	NORMAL = 0,
-	TOOLTIP = 1,
-	CROSSHAIR = 2,
-	XAXIS = 3
+	TOOLTIP = 0,
+	CROSSHAIR = 1,
+	XAXIS = 2
 }
 export declare type FormatDate = (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: FormatDateType) => string;
 export declare type FormatBigNumber = (value: string | number) => string;
@@ -887,7 +886,7 @@ declare function drawText(ctx: CanvasRenderingContext2D, attrs: TextAttrs, style
 export interface TextAttrs {
 	x: number;
 	y: number;
-	text: any;
+	text: string;
 	align?: CanvasTextAlign;
 	baseline?: CanvasTextBaseline;
 }
@@ -897,11 +896,11 @@ export declare function reisterFigure<A = any, S = any>(figure: FigureTemplate<A
 export declare function getFigureClass<A = any, S = any>(name: string): Nullable<FigureConstructor<A, S>>;
 export declare function registerIndicator<D>(indicator: IndicatorTemplate<D>): void;
 export declare function getSupportIndicators(): string[];
-export declare function registerLocale(locale: string, locales: Locales): void;
+export declare function registerLocale(locale: string, ls: Locales): void;
 export declare function getSupportLocales(): string[];
 export declare function registerOverlay(template: OverlayTemplate): void;
 export declare function getSupportedOverlays(): string[];
-export declare function registerStyles(name: string, styles: DeepPartial<Styles>): void;
+export declare function registerStyles(name: string, ss: DeepPartial<Styles>): void;
 declare function merge(target: any, source: any): void;
 declare function clone(target: any): any;
 declare function isArray(value: any): boolean;
@@ -912,6 +911,7 @@ declare function isValid(value: any | null): boolean;
 declare function isBoolean(value: any): boolean;
 declare function isString(value: any): boolean;
 declare function formatValue(data: unknown, key: string, defaultValue?: unknown): unknown;
+declare function formatDate(dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string;
 declare function formatPrecision(value: string | number, precision?: number): string;
 declare function formatBigNumber(value: string | number): string;
 /**
@@ -944,6 +944,7 @@ export declare const utils: {
 	formatValue: typeof formatValue;
 	formatPrecision: typeof formatPrecision;
 	formatBigNumber: typeof formatBigNumber;
+	formatDate: typeof formatDate;
 	getLinearSlopeIntercept: typeof getLinearSlopeIntercept;
 	getLinearYFromSlopeIntercept: typeof getLinearYFromSlopeIntercept;
 	getLinearYFromCoordinates: typeof getLinearYFromCoordinates;

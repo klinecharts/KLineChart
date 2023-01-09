@@ -108,7 +108,7 @@ export default class TimeScaleStore {
   /**
    * Scroll to the leftmost and rightmost visible bar
    */
-  private _minVisibleBarCount: MinVisibleBarCount = { left: 2, right: 2 }
+  private readonly _minVisibleBarCount: MinVisibleBarCount = { left: 2, right: 2 }
 
   /**
    * Start and end points of visible area data index
