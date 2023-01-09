@@ -32,70 +32,72 @@ export default class CandleTooltipView extends IndicatorTooltipView {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
-    const bounding = widget.getBounding()
-    const yAxisBounding = pane.getYAxisWidget()?.getBounding() as Bounding
     const chartStore = pane.getChart().getChartStore()
-    const dataList = chartStore.getDataList()
-    const precision = chartStore.getPrecision()
-    const locale = chartStore.getLocale()
-    const customApi = chartStore.getCustomApi()
     const crosshair = chartStore.getCrosshairStore().get()
-    const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-    const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
-    const styles = chartStore.getStyles()
-    const candleStyles = styles.candle
-    const indicatorStyles = styles.indicator
-    if (
-      candleStyles.tooltip.showType === TooltipShowType.RECT &&
-      indicatorStyles.tooltip.showType === TooltipShowType.RECT
-    ) {
-      const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
-      const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
-      this._drawRectTooltip(
-        ctx, dataList, indicators,
-        bounding, yAxisBounding,
-        crosshair, precision,
-        dateTimeFormat, locale, customApi,
-        isDrawCandleTooltip, isDrawIndicatorTooltip,
-        styles, 0
-      )
-    } else if (
-      candleStyles.tooltip.showType === TooltipShowType.STANDARD &&
-      indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
-    ) {
-      const top = this._drawCandleStandardTooltip(
-        ctx, bounding, crosshair, precision,
-        dateTimeFormat, locale, customApi, candleStyles
-      )
-      this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, customApi, bounding, indicatorStyles, top)
-    } else if (
-      candleStyles.tooltip.showType === TooltipShowType.RECT &&
-      indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
-    ) {
-      const top = this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, customApi, bounding, indicatorStyles, 0)
-      const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
-      this._drawRectTooltip(
-        ctx, dataList, indicators,
-        bounding, yAxisBounding,
-        crosshair, precision, dateTimeFormat,
-        locale, customApi,
-        isDrawCandleTooltip, false,
-        styles, top
-      )
-    } else {
-      const top = this._drawCandleStandardTooltip(
-        ctx, bounding, crosshair, precision,
-        dateTimeFormat, locale, customApi, candleStyles
-      )
-      const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
-      this._drawRectTooltip(
-        ctx, dataList, indicators,
-        bounding, yAxisBounding,
-        crosshair, precision, dateTimeFormat,
-        locale, customApi,
-        false, isDrawIndicatorTooltip,
-        styles, top
-      )
+    if (crosshair.kLineData !== undefined) {
+      const bounding = widget.getBounding()
+      const yAxisBounding = pane.getYAxisWidget()?.getBounding() as Bounding
+      const dataList = chartStore.getDataList()
+      const precision = chartStore.getPrecision()
+      const locale = chartStore.getLocale()
+      const customApi = chartStore.getCustomApi()
+      const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+      const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
+      const styles = chartStore.getStyles()
+      const candleStyles = styles.candle
+      const indicatorStyles = styles.indicator
+      if (
+        candleStyles.tooltip.showType === TooltipShowType.RECT &&
+        indicatorStyles.tooltip.showType === TooltipShowType.RECT
+      ) {
+        const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
+        const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
+        this._drawRectTooltip(
+          ctx, dataList, indicators,
+          bounding, yAxisBounding,
+          crosshair, precision,
+          dateTimeFormat, locale, customApi,
+          isDrawCandleTooltip, isDrawIndicatorTooltip,
+          styles, 0
+        )
+      } else if (
+        candleStyles.tooltip.showType === TooltipShowType.STANDARD &&
+        indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
+      ) {
+        const top = this._drawCandleStandardTooltip(
+          ctx, bounding, crosshair, precision,
+          dateTimeFormat, locale, customApi, candleStyles
+        )
+        this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, customApi, bounding, indicatorStyles, top)
+      } else if (
+        candleStyles.tooltip.showType === TooltipShowType.RECT &&
+        indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
+      ) {
+        const top = this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, customApi, bounding, indicatorStyles, 0)
+        const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
+        this._drawRectTooltip(
+          ctx, dataList, indicators,
+          bounding, yAxisBounding,
+          crosshair, precision, dateTimeFormat,
+          locale, customApi,
+          isDrawCandleTooltip, false,
+          styles, top
+        )
+      } else {
+        const top = this._drawCandleStandardTooltip(
+          ctx, bounding, crosshair, precision,
+          dateTimeFormat, locale, customApi, candleStyles
+        )
+        const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
+        this._drawRectTooltip(
+          ctx, dataList, indicators,
+          bounding, yAxisBounding,
+          crosshair, precision, dateTimeFormat,
+          locale, customApi,
+          false, isDrawIndicatorTooltip,
+          styles, top
+        )
+      }
     }
   }
 

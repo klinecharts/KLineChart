@@ -34,13 +34,15 @@ export default class IndicatorTooltipView extends View<YAxis> {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
-    const bounding = widget.getBounding()
     const chartStore = pane.getChart().getChartStore()
-    const customApi = chartStore.getCustomApi()
     const crosshair = chartStore.getCrosshairStore().get()
-    const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-    const defaultStyles = chartStore.getStyles().indicator
-    this.drawIndicatorTooltip(ctx, chartStore.getDataList(), crosshair, indicators, customApi, bounding, defaultStyles)
+    if (crosshair.kLineData !== undefined) {
+      const bounding = widget.getBounding()
+      const customApi = chartStore.getCustomApi()
+      const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+      const defaultStyles = chartStore.getStyles().indicator
+      this.drawIndicatorTooltip(ctx, chartStore.getDataList(), crosshair, indicators, customApi, bounding, defaultStyles)
+    }
   }
 
   protected drawIndicatorTooltip (
