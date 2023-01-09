@@ -26,7 +26,7 @@ import { i18n } from '../extension/i18n/index'
 
 import { formatPrecision } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
-import { isString, isFunction } from '../common/utils/typeChecks'
+import { isFunction, isObject } from '../common/utils/typeChecks'
 
 export default class CandleTooltipView extends IndicatorTooltipView {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
@@ -349,19 +349,19 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const labelValues = tooltipStyles.custom?.(data, styles) ?? []
       labelValues.forEach(({ title, value }) => {
         let t: TooltipDataChild = { text: '', color: '' }
-        if (isString(title)) {
+        if (isObject(title)) {
+          t = title as TooltipDataChild
+        } else {
           t.text = title as string
           t.color = textColor
-        } else {
-          t = title as TooltipDataChild
         }
         t.text = i18n(t.text, locale)
         let v: TooltipDataChild = { text: '', color: '' }
-        if (isString(value)) {
+        if (isObject(value)) {
+          v = value as TooltipDataChild
+        } else {
           v.text = value as string
           v.color = textColor
-        } else {
-          v = value as TooltipDataChild
         }
         tooltipData.push({ title: t, value: v })
       })

@@ -25,7 +25,7 @@ import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureS
 import { PaneIdConstants } from '../pane/Pane'
 
 import { formatPrecision } from '../common/utils/format'
-import { isValid, isString } from '../common/utils/typeChecks'
+import { isValid, isObject } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 
 import View from './View'
@@ -188,16 +188,16 @@ export default class IndicatorTooltipView extends View<YAxis> {
         const color = styles.tooltip.text.color
         indicatorTooltipDatas.values.forEach(data => {
           let title = { text: '', color }
-          if (isString(data.title)) {
-            title.text = data.title as string
-          } else {
+          if (isObject(data.title)) {
             title = data.title as TooltipDataChild
+          } else {
+            title.text = data.title as string
           }
           let value = { text: '', color }
-          if (isString(data.value)) {
-            value.text = data.value as string
-          } else {
+          if (isObject(data.value)) {
             value = data.value as TooltipDataChild
+          } else {
+            value.text = data.value as string
           }
           tooltipDatas.push({ title, value })
         })
