@@ -16,12 +16,15 @@ import Nullable from '../../common/Nullable'
 import DeepPartial from '../../common/DeepPartial'
 import { Styles } from '../../common/Options'
 
+import dark from './dark'
+
 const styles: { [key: string]: DeepPartial<Styles> } = {
-  light: {}
+  light: {},
+  dark
 }
 
-function registerStyles (name: string, styles: DeepPartial<Styles>): void {
-  styles[name] = styles
+function registerStyles (name: string, ss: DeepPartial<Styles>): void {
+  styles[name] = ss
 }
 
 function getStyles (name: string): Nullable<DeepPartial<Styles>> {
