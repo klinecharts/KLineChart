@@ -25,7 +25,7 @@
 + `getDom({ paneId, position })`变更为`getDom(paneId, position)`，参数`position`选项变更为`root`，`main`和`yAxis`。
 + `getWidth()`和`getHeight()`合并成一个方法`getSize(paneId, position)`。
 + `setStyleOptions(styles)`变更为`setStyles(styles)`。
-+ `getStyleOptions(styles)`变更为`getStyles(styles)`。
++ `getStyleOptions()`变更为`getStyles()`。
 + `setOffsetRightSpace(space)`变更为`setOffsetRightDistance(distance)`
 + `createTechnicalIndicator(value, isStack, paneOptions)`变更为`createIndicator(value, isStack, paneOptions)`
 + `overrideTechnicalIndicator(override, paneId)`变更为`overrideIndicator(override, paneId)`。
