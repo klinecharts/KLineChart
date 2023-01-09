@@ -118,11 +118,12 @@ export default class IndicatorTooltipView extends View<YAxis> {
     let labelY = startY
     let height = 0
     const { marginLeft, marginTop, marginRight, marginBottom, size, family, weight } = styles
-    values.forEach((data) => {
+    ctx.font = createFont(size, weight, family)
+    values.forEach((data, index) => {
       const title = data.title as TooltipDataChild
       const value = data.value as TooltipDataChild
-      const titleTextWidth = ctx.measureText(`${title.text}`).width
-      const valueTextWidth = ctx.measureText(`${value.text}`).width
+      const titleTextWidth = ctx.measureText(title.text).width
+      const valueTextWidth = ctx.measureText(value.text).width
       const totalTextWidth = titleTextWidth + valueTextWidth
       if (labelX + marginLeft + totalTextWidth + marginRight > bounding.width) {
         labelX = marginLeft

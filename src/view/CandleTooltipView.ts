@@ -16,7 +16,7 @@ import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 import Crosshair from '../common/Crosshair'
-import { Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, YAxisPosition, CustomApi, FormatDateType } from '../common/Options'
+import { Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, YAxisPosition, PolygonType, CustomApi, FormatDateType } from '../common/Options'
 
 import Indicator from '../component/Indicator'
 
@@ -49,11 +49,14 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       candleStyles.tooltip.showType === TooltipShowType.RECT &&
       indicatorStyles.tooltip.showType === TooltipShowType.RECT
     ) {
+      const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
+      const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
       this._drawRectTooltip(
         ctx, dataList, indicators,
         bounding, yAxisBounding,
         crosshair, precision,
         dateTimeFormat, locale, customApi,
+        isDrawCandleTooltip, isDrawIndicatorTooltip,
         styles, 0
       )
     } else if (
@@ -70,11 +73,28 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
     ) {
       const top = this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, customApi, bounding, indicatorStyles, 0)
+      const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
       this._drawRectTooltip(
         ctx, dataList, indicators,
         bounding, yAxisBounding,
         crosshair, precision, dateTimeFormat,
-        locale, customApi, styles, top
+        locale, customApi,
+        isDrawCandleTooltip, false,
+        styles, top
+      )
+    } else {
+      const top = this._drawCandleStandardTooltip(
+        ctx, bounding, crosshair, precision,
+        dateTimeFormat, locale, customApi, candleStyles
+      )
+      const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
+      this._drawRectTooltip(
+        ctx, dataList, indicators,
+        bounding, yAxisBounding,
+        crosshair, precision, dateTimeFormat,
+        locale, customApi,
+        false, isDrawIndicatorTooltip,
+        styles, top
       )
     }
   }
@@ -116,6 +136,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     dateTimeFormat: Intl.DateTimeFormat,
     locale: string,
     customApi: CustomApi,
+    isDrawCandleTooltip: boolean,
+    isDrawIndicatorTooltip: boolean,
     styles: Styles,
     top: number
   ): void {
@@ -123,9 +145,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const indicatorStyles = styles.indicator
     const candleTooltipStyles = candleStyles.tooltip
     const indicatorTooltipStyles = indicatorStyles.tooltip
-    const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleTooltipStyles)
-    const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorTooltipStyles)
-    if (isDrawCandleTooltip || !isDrawIndicatorTooltip) {
+    if (isDrawCandleTooltip || isDrawIndicatorTooltip) {
       const candleTooltipDatas = this._getCandleTooltipData(
         crosshair.kLineData as KLineData, precision,
         dateTimeFormat, locale, customApi, candleStyles
@@ -221,6 +241,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             height: rectHeight
           },
           {
+            style: PolygonType.STROKE_FILL,
             color: rectBackgroundColor,
             borderColor: rectBorderColor,
             borderSize: rectBorderSize,
@@ -254,14 +275,14 @@ export default class CandleTooltipView extends IndicatorTooltipView {
               {
                 x: rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight,
                 y: textY,
-                text: value.text
+                text: value.text,
+                align: 'right'
               },
               {
                 color: value.color,
                 size: baseTextSize,
                 family: baseTextFamily,
-                weight: baseTextWeight,
-                align: 'right'
+                weight: baseTextWeight
               }
             )?.draw(ctx)
             textY += (baseTextSize + baseTextMarginBottom)
@@ -295,14 +316,14 @@ export default class CandleTooltipView extends IndicatorTooltipView {
                 {
                   x: rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
                   y: textY,
-                  text: value.text
+                  text: value.text,
+                  align: 'right'
                 },
                 {
                   color: value.color,
                   size: indicatorTextSize,
                   family: indicatorTextFamily,
-                  weight: indicatorTextWeight,
-                  align: 'right'
+                  weight: indicatorTextWeight
                 }
               )?.draw(ctx)
               textY += (indicatorTextSize + indicatorTextMarginBottom)
