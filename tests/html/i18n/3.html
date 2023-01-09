@@ -20,32 +20,28 @@ limitations under the License.
     <meta name="theme-color" content="#000000" />
     <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
     <meta name="description" content="shape test"/>
-    <script type="text/javascript" src="../dist/klinecharts.js"></script>
-    <script type="text/javascript" src="./js/dataSource.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>Simple overlay</title>
+    <script type="text/javascript" src="../../../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="../../js/dataSource.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/chart.css"/>
+    <title>I18n -- Register</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="chart"></div>
     <script>
       window.onload = function () {
-        var chart = klinecharts.init('chart')
-        var kdjPaneId = chart.createIndicator('KDJ')
-        var dataList = generated()
-        chart.applyNewData(dataList)
-        // Create on main
-        chart.createOverlay({
-          name: 'simpleAnnotation',
-          extendData: '1111111111',
-          points: [{ timestamp: dataList[dataList.length - 20].timestamp, value: dataList[dataList.length - 20].high }]
+        klinecharts.registerLocale('zh-HK', {
+          time: '時間：',
+          open: '開：',
+          high: '高：',
+          low: '低：',
+          close: '收：',
+          volume: '成交量：'
         })
-         // Create on sub
-        chart.createOverlay({
-          name: 'simpleAnnotation',
-          extendData: '22222222222',
-          points: [{ timestamp: dataList[dataList.length - 20].timestamp, value: 40 }]
-        }, kdjPaneId)
+        var chart = klinecharts.init('chart', {
+          locale: 'zh-HK'
+        })
+        chart.applyNewData(generated(), true)
       }
     </script>
   </body>

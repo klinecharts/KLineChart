@@ -20,96 +20,92 @@ limitations under the License.
     <meta name="theme-color" content="#000000" />
     <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
     <meta name="description" content="shape test"/>
-    <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
-    <script type="text/javascript" src="./js/dataSource.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>初始化更改样式</title>
+    <script type="text/javascript" src="../../../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="../../js/dataSource.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/chart.css"/>
+    <title>Styles -- Register Styles</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="chart" style="background-color: #222222"></div>
     <script>
       window.onload = function () {
-        var chart = klinecharts.init(
-          'chart',
-          {
-            styles: {
+        klinecharts.registerStyles('green', {
               grid: {
                 horizontal: {
-                  color: '#292929'
+                  color: '#00ff00'
                 },
                 vertical: {
-                  color: '#292929'
+                  color: '#00ff00'
                 }
               },
               candle: {
                 priceMark: {
                   high: {
-                    color: '#929AA5'
+                    color: '#00ff00'
                   },
                   low: {
-                    color: '#929AA5'
+                    color: '#00ff00'
                   }
                 },
                 tooltip: {
                   text: {
-                    color: '#929AA5'
+                    color: '#00ff00'
                   }
                 }
               },
               indicator: {
                 tooltip: {
                   text: {
-                    color: '#929AA5'
+                    color: '#00ff00'
                   }
                 }
               },
               xAxis: {
                 axisLine: {
-                  color: '#333333'
+                  color: '#00ff00'
                 },
                 tickLine: {
-                  color: '#333333'
+                  color: '#00ff00'
                 },
                 tickText: {
-                  color: '#929AA5'
+                  color: '#00ff00'
                 }
               },
               yAxis: {
                 axisLine: {
-                  color: '#333333'
+                  color: '#00ff00'
                 },
                 tickLine: {
-                  color: '#333333'
+                  color: '#00ff00'
                 },
                 tickText: {
-                  color: '#929AA5'
+                  color: '#00ff00'
                 }
               },
               separator: {
-                color: '#333333'
+                color: '#00ff00'
               },
               crosshair: {
                 horizontal: {
                   line: {
-                    color: '#666666'
+                    color: '#00ff00'
                   },
                   text: {
-                    backgroundColor: '#373a40'
+                    backgroundColor: '#00ff00'
                   }
                 },
                 vertical: {
                   line: {
-                    color: '#666666'
+                    color: '#00ff00'
                   },
                   text: {
-                    backgroundColor: '#373a40'
+                    backgroundColor: '#00ff00'
                   }
                 }
               }
-            }
-          }
-        )
+            })
+        var chart = klinecharts.init('chart', { styles: 'green' })
         chart.applyNewData(generated())
       }
     </script>

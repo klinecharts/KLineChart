@@ -20,21 +20,35 @@ limitations under the License.
     <meta name="theme-color" content="#000000" />
     <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
     <meta name="description" content="shape test"/>
-    <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
-    <script type="text/javascript" src="./js/dataSource.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>Create overlay</title>
+    <script type="text/javascript" src="../../../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="../../js/dataSource.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/chart.css"/>
+    <title>Styles -- Rect tooltip</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="chart"></div>
     <script>
       window.onload = function () {
-        var chart = klinecharts.init('chart')
+        var chart = klinecharts.init('chart', {
+          styles: {
+            candle: {
+              tooltip: {
+                showType: 'rect'
+              }
+            },
+            indicator: {
+              tooltip: {
+                showType: 'rect'
+              }
+            }
+          }
+        })
+        chart.createIndicator('MA', false, { id: 'candle_pane' })
+        chart.createIndicator('EMA', true, { id: 'candle_pane' })
+        chart.createIndicator('VOL')
         chart.createIndicator('MACD')
-        chart.applyNewData(generated())
-        // Create on main
-        chart.createOverlay('segment', 'candle_pane')
+        chart.applyNewData(generated(), true)
       }
     </script>
   </body>

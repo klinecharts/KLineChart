@@ -8025,7 +8025,7 @@ function generated () {
       high: +data[2],
       low: +data[3],
       close: +data[4],
-      volume: Math.ceil(+data[5])
+      volume: Math.ceil(+data[5] * 10000)
     }
   })
 }

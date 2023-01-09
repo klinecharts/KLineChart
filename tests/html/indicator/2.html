@@ -20,10 +20,10 @@ limitations under the License.
     <meta name="theme-color" content="#000000" />
     <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
     <meta name="description" content="shape test"/>
-    <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
-    <script type="text/javascript" src="./js/dataSource.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
-    <title>Override indicator</title>
+    <script type="text/javascript" src="../../../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="../../js/dataSource.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/chart.css"/>
+    <title>Indicator -- Override</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -31,7 +31,7 @@ limitations under the License.
     <script>
       window.onload = function () {
         var chart = klinecharts.init('chart')
-        // 创建的时候直接修改
+        // Modify directly when creating
         chart.createIndicator({ 
           name: 'MA',
           precision: 3,
@@ -44,10 +44,10 @@ limitations under the License.
           }
         }, false, { id: 'candle_pane' })
         
-        // 创建两个相同的EMA副图指标
+        // Create two identical EMA sub graph indicators
         chart.createIndicator('EMA')
         chart.createIndicator('EMA')
-        // 修改所有创建好的EMA指标
+        // Modify all created EMA indicators
         chart.overrideIndicator({
           name: 'EMA',
           precision: 3,
@@ -60,10 +60,10 @@ limitations under the License.
           }
         })
 
-        // 创建两个相同的BOLL副图指标
+        // Create two identical BOLL sub graph indicators
         var bollPaneId = chart.createIndicator('BOLL')
         chart.createIndicator('BOLL')
-        // 修改指定窗口上创建好的BOLL指标
+        // Modify the created BOLL indicator in the specified window
         chart.overrideIndicator({
           name: 'BOLL',
           precision: 3,

@@ -20,9 +20,9 @@ limitations under the License.
     <meta name="theme-color" content="#000000" />
     <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表"/>
     <meta name="description" content="shape test"/>
-    <script type="text/javascript" src="../dist/klinecharts.min.js"></script>
-    <script type="text/javascript" src="./js/dataSource.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css/chart.css"/>
+    <script type="text/javascript" src="../../../dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="../../js/dataSource.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/chart.css"/>
     <title>Overlay override</title>
   </head>
   <body>
@@ -31,7 +31,7 @@ limitations under the License.
     <script>
       window.onload = function () {
         var chart = klinecharts.init('chart')
-        // 新增一个图形模板
+        // Register overlay
         klinecharts.registerOverlay({
           name: 'circle',
           needDefaultPointFigure: true,
@@ -69,13 +69,13 @@ limitations under the License.
           }
         })
         chart.applyNewData(generated())
-        // 创建
+        // Create overlay
         chart.createOverlay({
           name: 'circle',
           extendData: 'Override overlay',
           styles: { text: { color: 'rgba(100, 10, 200, .3)' } },
           onDrawEnd: function ({ overlay }) {
-            // 监听绘制完成，覆盖属性
+            // Listen to the completion of drawing and overwrite the attribute
             chart.overrideOverlay({
               id: overlay.id,
               lock: true,
