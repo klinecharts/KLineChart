@@ -45,7 +45,7 @@ const bollingerBands: IndicatorTemplate<Boll> = {
   name: 'BOLL',
   shortName: 'BOLL',
   series: IndicatorSeries.PRICE,
-  calcParams: [20, { value: 2, allowDecimal: true }],
+  calcParams: [20, 2],
   precision: 2,
   shouldOhlc: true,
   figures: [
