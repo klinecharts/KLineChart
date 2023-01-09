@@ -22,8 +22,8 @@ const locales: { [key: string]: Locales } = {
   'en-US': enUS
 }
 
-function registerLocale (locale: string, locales: Locales): void {
-  locales[locale] = locales
+function registerLocale (locale: string, ls: Locales): void {
+  locales[locale] = ls
 }
 
 function getSupportLocales (): string[] {
