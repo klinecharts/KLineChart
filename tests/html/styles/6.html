@@ -23,7 +23,7 @@ limitations under the License.
     <script type="text/javascript" src="../../../dist/klinecharts.min.js"></script>
     <script type="text/javascript" src="../../js/dataSource.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/chart.css"/>
-    <title>Styles -- Rect tooltip</title>
+    <title>Styles -- Tooltip</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -34,7 +34,15 @@ limitations under the License.
           styles: {
             candle: {
               tooltip: {
-                showType: 'rect'
+                showType: 'rect',
+                custom: function (data) {
+                  return [
+                    { title: 'open', value: data.open },
+                    { title: 'high', value: { text: data.high, color: 'red' } },
+                    { title: { text: 'low', color: 'green' }, value: { text: data.low, color: 'green' } },
+                    { title: { text: 'close', color: 'blue' }, value: data.close }
+                  ]
+                }
               }
             },
             indicator: {
