@@ -262,8 +262,8 @@ export default class ChartImp implements Chart {
         let shouldMeasureHeight = false
         if (options.height !== undefined && options.height > 0) {
           const minHeight = Math.max(options.minHeight ?? pane.getOptions().minHeight, 0)
-          const height = Math.min(minHeight, options.height)
-          options.height = height
+          const height = Math.max(minHeight, options.height)
+          pane.setBounding({ height })
           shouldAdjust = true
           shouldMeasureHeight = true
         }
@@ -488,7 +488,7 @@ export default class ChartImp implements Chart {
     this._chartStore.addData(dataList, 0, more)
     this._chartStore.getIndicatorStore().calcInstance().then(
       result => {
-        if (result.includes(true)) {
+        if (result.length === 0 || result.includes(true)) {
           this.adjustPaneViewport(false, true, true, true)
         }
       }
@@ -509,7 +509,7 @@ export default class ChartImp implements Chart {
       this._chartStore.addData(data, pos)
       this._chartStore.getIndicatorStore().calcInstance().then(
         result => {
-          if (result.includes(true)) {
+          if (result.length === 0 || result.includes(true)) {
             this.adjustPaneViewport(false, true, true, true)
           }
         }

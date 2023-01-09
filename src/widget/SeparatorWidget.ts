@@ -77,7 +77,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
     const currentPane = this.getPane()
     const topPane = currentPane.getTopPane()
     const isUpDrag = dragDistance < 0
-    if (topPane !== null) {
+    if (topPane !== null && currentPane.getOptions().dragEnabled) {
       let reducedPane: Pane<Axis>
       let increasedPane: Pane<Axis>
       let startDragReducedPaneHeight: number
@@ -107,10 +107,15 @@ export default class SeparatorWidget extends Widget<YAxis> {
   }
 
   mouseEnterEvent (): void {
-    const separatorOptions = this.getPane().getChart().getStyles().separator
-    this._moveDom.style.background = separatorOptions.activeBackgroundColor
-    this.getPane().getChart().getChartStore().setDragPaneFlag(true)
-    this.getPane().getChart().getChartStore().getCrosshairStore().set()
+    const pane = this.getPane()
+    if (pane.getOptions().dragEnabled) {
+      const chart = pane.getChart()
+      const separatorOptions = chart.getStyles().separator
+      this._moveDom.style.background = separatorOptions.activeBackgroundColor
+      const chartStore = chart.getChartStore()
+      chartStore.setDragPaneFlag(true)
+      chartStore.getCrosshairStore().set()
+    }
   }
 
   mouseLeaveEvent (): void {
