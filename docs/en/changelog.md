@@ -1,7 +1,7 @@
 # 📠 Change Log
 
 ## 9.0.0-alpha3
-`To be released`
+`2023-01-11`
 + 🆕 Add instance api `getVisibleRange`.
 + Fix the problem of reverse y-axis vertical scaling.
 
