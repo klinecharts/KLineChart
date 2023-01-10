@@ -92,7 +92,13 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
         const yAxis = pane.getAxisComponent()
         if (this._prevExtremum !== null && !yAxis.getAutoCalcTickFlag()) {
           const { min, max, range } = this._prevExtremum
-          const scale = (event.y - this._startScrollCoordinate.y) / this.getBounding().height
+          let distance: number
+          if (yAxis.isReverse()) {
+            distance = this._startScrollCoordinate.y - event.y
+          } else {
+            distance = event.y - this._startScrollCoordinate.y
+          }
+          const scale = distance / this.getBounding().height
           const difRange = range * scale
           const newMin = min + difRange
           const newMax = max + difRange
