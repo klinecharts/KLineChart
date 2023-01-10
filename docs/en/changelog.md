@@ -1,5 +1,9 @@
 # 📠 Change Log
 
+## 9.0.0-alpha3
+`To be released`
++ 🆕 Add instance api `getVisibleRange`.
+
 ## 9.0.0-alpha2
 `2023-01-10`
 + 🆕 `Overlay` supports grouping.

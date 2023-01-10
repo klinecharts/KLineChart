@@ -24,6 +24,7 @@ import Crosshair from './common/Crosshair'
 import { ActionType, ActionCallback } from './common/Action'
 import LoadMoreCallback from './common/LoadMoreCallback'
 import Precision from './common/Precision'
+import VisibleRange from './common/VisibleRange'
 
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -76,6 +77,7 @@ export interface Chart {
   setRightMinVisibleBarCount: (barCount: number) => void
   setBarSpace: (space: number) => void
   getBarSpace: () => number
+  getVisibleRange: () => VisibleRange
   clearData: () => void
   getDataList: () => KLineData[]
   applyNewData: (dataList: KLineData[], more?: boolean) => void
@@ -469,6 +471,10 @@ export default class ChartImp implements Chart {
 
   getBarSpace (): number {
     return this._chartStore.getTimeScaleStore().getBarSpace().bar
+  }
+
+  getVisibleRange (): VisibleRange {
+    return this._chartStore.getTimeScaleStore().getVisibleRange()
   }
 
   clearData (): void {

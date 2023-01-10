@@ -446,11 +446,9 @@ export interface Precision {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface BarSpace {
-	bar: number;
-	halfBar: number;
-	gapBar: number;
-	halfGapBar: number;
+export interface VisibleRange {
+	from: number;
+	to: number;
 }
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -465,9 +463,11 @@ export interface BarSpace {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface VisibleRange {
-	from: number;
-	to: number;
+export interface BarSpace {
+	bar: number;
+	halfBar: number;
+	gapBar: number;
+	halfGapBar: number;
 }
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -666,6 +666,10 @@ export interface Overlay {
 	 */
 	id: string;
 	/**
+	 * Group id
+	 */
+	groupId: string;
+	/**
 	 * Name
 	 */
 	name: string;
@@ -782,8 +786,9 @@ export interface Overlay {
 	 */
 	onDeselected: Nullable<OverlayEventCallback>;
 }
-export declare type OverlayTemplate = ExcludePickPartial<Omit<Overlay, "id" | "points" | "currentStep">, "name">;
+export declare type OverlayTemplate = ExcludePickPartial<Omit<Overlay, "id" | "groupId" | "points" | "currentStep">, "name">;
 export declare type OverlayCreate = ExcludePickPartial<Omit<Overlay, "currentStep" | "totalStep" | "createPointFigures" | "createXAxisFigures" | "createYAxisFigures" | "performEventPressedMove" | "performEventMoveForDrawing">, "name">;
+export declare type OverlayRemove = Partial<Pick<Overlay, "id" | "groupId" | "name">>;
 export declare const enum DomPosition {
 	ROOT = "root",
 	MAIN = "main",
@@ -810,6 +815,7 @@ export interface Chart {
 	setRightMinVisibleBarCount: (barCount: number) => void;
 	setBarSpace: (space: number) => void;
 	getBarSpace: () => number;
+	getVisibleRange: () => VisibleRange;
 	clearData: () => void;
 	getDataList: () => KLineData[];
 	applyNewData: (dataList: KLineData[], more?: boolean) => void;
@@ -823,7 +829,7 @@ export interface Chart {
 	createOverlay: (value: string | OverlayCreate, paneId?: string) => Nullable<string>;
 	getOverlayById: (id: string) => Nullable<Overlay>;
 	overrideOverlay: (override: Partial<OverlayCreate>) => void;
-	removeOverlay: (id?: string) => void;
+	removeOverlay: (remove?: string | OverlayRemove) => void;
 	setPaneOptions: (options: PaneOptions) => void;
 	setZoomEnabled: (enabled: boolean) => void;
 	isZoomEnabled: () => boolean;

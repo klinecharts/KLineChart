@@ -126,6 +126,12 @@ Sets the width of a single candlestick of the chart.
 ```
 Gets the width of a single candlestick on the chart.
 
+## getVisibleRange()
+```typescript
+() => { from: number, to: number }
+```
+Get visible range.
+
 
 ## applyNewData(dataList, more)
 ```typescript

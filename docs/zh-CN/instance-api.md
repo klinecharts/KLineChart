@@ -127,6 +127,12 @@
 获取图表单根蜡烛柱的宽度。
 
 
+## getVisibleRange()
+```typescript
+() => { from: number, to: number }
+```
+获取可见区间范围。
+
 ## applyNewData(dataList, more)
 ```typescript
 (
