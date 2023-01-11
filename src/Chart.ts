@@ -163,11 +163,16 @@ export default class ChartImp implements Chart {
     this._chartContainer = createDom('div', {
       position: 'relative',
       width: '100%',
-      userSelect: 'none',
       outline: 'none',
       borderStyle: 'none',
       cursor: 'crosshair',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      userSelect: 'none',
+      webkitUserSelect: 'none',
+      // @ts-expect-error
+      msUserSelect: 'none',
+      MozUserSelect: 'none',
+      webkitTapHighlightColor: 'transparent'
     })
     this._chartContainer.tabIndex = 1
     this._chartContainer.addEventListener('keydown', this._boundKeyBoardDownEvent)
@@ -257,22 +262,20 @@ export default class ChartImp implements Chart {
   }
 
   private _setPaneOptions (options: PaneOptions, forceShouldAdjust: boolean): void {
-    if (options.id !== PaneIdConstants.CANDLE) {
-      const pane = this._panes.get(options.id)
-      if (pane !== undefined) {
-        let shouldAdjust = forceShouldAdjust
-        let shouldMeasureHeight = false
-        if (options.height !== undefined && options.height > 0) {
-          const minHeight = Math.max(options.minHeight ?? pane.getOptions().minHeight, 0)
-          const height = Math.max(minHeight, options.height)
-          pane.setBounding({ height })
-          shouldAdjust = true
-          shouldMeasureHeight = true
-        }
-        pane.setOptions(options)
-        if (shouldAdjust) {
-          this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
-        }
+    const pane = this._panes.get(options.id)
+    let shouldMeasureHeight = false
+    if (pane !== undefined) {
+      let shouldAdjust = forceShouldAdjust
+      if (options.id !== PaneIdConstants.CANDLE && options.height !== undefined && options.height > 0) {
+        const minHeight = Math.max(options.minHeight ?? pane.getOptions().minHeight, 0)
+        const height = Math.max(minHeight, options.height)
+        pane.setBounding({ height })
+        shouldAdjust = true
+        shouldMeasureHeight = true
+      }
+      pane.setOptions(options)
+      if (shouldAdjust) {
+        this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
       }
     }
   }
