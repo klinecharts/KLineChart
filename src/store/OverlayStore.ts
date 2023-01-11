@@ -286,14 +286,33 @@ export default class OverlayStore {
   }
 
   removeInstance (overlayRemove?: OverlayRemove): void {
+    const match: ((remove: OverlayRemove, overlay: OverlayImp) => boolean) = (remove: OverlayRemove, overlay: OverlayImp) => {
+      if (remove.id !== undefined) {
+        if (overlay.id !== remove.id) {
+          return false
+        }
+      } else {
+        if (remove.groupId !== undefined) {
+          if (overlay.groupId !== remove.groupId) {
+            return false
+          }
+        } else {
+          if (remove.name !== undefined) {
+            if (overlay.name !== remove.name) {
+              return false
+            }
+          }
+        }
+      }
+      return true
+    }
+
     const updatePaneIds: string[] = []
     if (this._progressInstanceInfo !== null) {
       const instance = this._progressInstanceInfo.instance
       if (
         overlayRemove === undefined ||
-        instance.id === overlayRemove.id ||
-        instance.groupId === overlayRemove.groupId ||
-        instance.name === overlayRemove.name
+        (overlayRemove !== undefined && match(overlayRemove, instance))
       ) {
         updatePaneIds.push(this._progressInstanceInfo.paneId)
         instance.onRemoved?.({ overlay: instance })
@@ -305,14 +324,14 @@ export default class OverlayStore {
       for (const entry of this._instances) {
         const paneInstances = entry[1]
         const newPaneInstances = paneInstances.filter(instance => {
-          if (instance.id !== overlayRemove.id && instance.groupId !== overlayRemove.groupId && instance.name !== overlayRemove.name) {
-            return true
+          if (match(overlayRemove, instance)) {
+            if (!updatePaneIds.includes(entry[0])) {
+              updatePaneIds.push(entry[0])
+            }
+            instance.onRemoved?.({ overlay: instance })
+            return false
           }
-          if (!updatePaneIds.includes(entry[0])) {
-            updatePaneIds.push(entry[0])
-          }
-          instance.onRemoved?.({ overlay: instance })
-          return false
+          return true
         })
         if (newPaneInstances.length > 0) {
           instances.set(entry[0], newPaneInstances)

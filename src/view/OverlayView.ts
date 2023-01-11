@@ -85,15 +85,29 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           }
         }
         return this._figureTouchMouseDownEvent(
-          progressInstanceInfo.instance,
+          overlay,
           EventOverlayInfoFigureType.POINT,
-          progressInstanceInfo.instance.points.length - 1,
+          overlay.points.length - 1,
           0
         )(event)
       }
       overlayStore.setClickInstanceInfo({
         paneId, instance: null, figureType: EventOverlayInfoFigureType.NONE, figureIndex: -1, attrsIndex: -1
       }, event)
+      return false
+    }).registerEvent('mouseRightClickEvent', (event: MouseTouchEvent) => {
+      const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
+      if (progressInstanceInfo !== null) {
+        const overlay = progressInstanceInfo.instance
+        if (overlay.isDrawing()) {
+          return this._figureMouseRightClickEvent(
+            overlay,
+            EventOverlayInfoFigureType.POINT,
+            overlay.points.length - 1,
+            0
+          )(event)
+        }
+      }
       return false
     }).registerEvent('touchMouseUpEvent', (event: MouseTouchEvent) => {
       const { instance } = overlayStore.getPressedInstanceInfo()
