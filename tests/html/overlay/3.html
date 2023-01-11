@@ -30,7 +30,6 @@ limitations under the License.
     <div id="chart"></div>
     <script>
       window.onload = function () {
-        var chart = klinecharts.init('chart')
         // Register overlay
         klinecharts.registerOverlay({
           name: 'circle',
@@ -68,6 +67,8 @@ limitations under the License.
             return []
           }
         })
+        
+        var chart = klinecharts.init('chart')
         chart.applyNewData(generated())
         // Create overlay
         chart.createOverlay({

@@ -1,9 +1,15 @@
 # 📠 Change Log
 
+## 9.0.0-alpha4
+`2023-01-12`
++ 🐞 Fix the problem of creating main chart indicators without updating.
++ 🐞 Fix the problem of removing overlays.
++ 💄 Optimize the built-in overlays.
+
 ## 9.0.0-alpha3
 `2023-01-11`
 + 🆕 Add instance api `getVisibleRange`.
-+ Fix the problem of reverse y-axis vertical scaling.
++ 🐞 Fix the problem of reverse y-axis vertical scaling.
 
 ## 9.0.0-alpha2
 `2023-01-10`

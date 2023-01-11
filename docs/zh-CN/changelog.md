@@ -1,5 +1,12 @@
 # 📠 更新日志
 
+## 9.0.0-alpha4
+`2023-01-12`
++ 🐞 修复创建主图指标不更新问题。
++ 🐞 修复删除覆盖物问题。
++ 💄 优化内置覆盖物。
+
+
 ## 9.0.0-alpha3
 `2023-01-11`
 + 🆕 新增实例方法`getVisibleRange`。
@@ -48,7 +55,7 @@
 + 🗑 废弃
    + API
       + 删除实例方法`getWidth`，`getHeight`，改用`getSize`。
-      + 删除实例方法`createShape`，`createAnnotation`，`createTag`，改用`crateOverlay`。
+      + 删除实例方法`createShape`，`createAnnotation`，`createTag`，改用`createOverlay`。
       + 删除实例方法`removeShape`，`removeAnnotation`，`removeTag`，改用`removeOverlay`。
       + 删除实例方法`setShapeOptions`，改用`overrideOverlay`。
       + 删除实例方法`createHtml`，`removeHtml`，`addTechnicalIndicatorTemplate`，`getTechnicalIndicatorTemplate`，`addShapeTemplate`。

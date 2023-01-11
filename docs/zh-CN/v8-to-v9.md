@@ -33,7 +33,7 @@
 + `removeTechnicalIndicator(paneId, name)`变更为`removeIndicator(paneId, name)`。
 + `subscribeAction(type, callback)`和`unsubscribeAction(type, callback)`，参数`type`选项变更为`onZoom`，`onScroll`，`onCrosshairChange`，`onVisibleRangeChange`和`onPaneDrag`。
 + `convertToPixel(value, finder)`和`convertFromPixel(coordinate, finder)`，参数`finder.absoluteYAxis`变更为`finder.absolute`。
-+ 删除`createShape(value, paneId)`，`createAnnotation(annotation, paneId)`，`createTag(tag, paneId)`，请用`crateOverlay(value, paneId)`代替。
++ 删除`createShape(value, paneId)`，`createAnnotation(annotation, paneId)`，`createTag(tag, paneId)`，请用`createOverlay(value, paneId)`代替。
 + 删除`removeShape(id)`，`removeAnnotation(paneId, points)`，`removeTag(paneId, tagId)`，请用`removeOverlay(id)`代替。
 + 删除`setShapeOptions(options)`，请用`overrideOverlay(override)`代替。
 + 删除`createHtml(html, paneId)`，`removeHtml(paneId, htmlId)`，请通过`getDom(paneId, position)`获取到对应的dom后操作。
