@@ -41,7 +41,8 @@ const fibonacciLine: OverlayTemplate = {
           texts.push({
             x: startX,
             y,
-            text: `${value} (${(percent * 100).toFixed(1)}%)`
+            text: `${value} (${(percent * 100).toFixed(1)}%)`,
+            baseline: 'bottom'
           })
         })
       }
