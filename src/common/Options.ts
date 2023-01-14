@@ -244,14 +244,14 @@ function getDefaultCandleStyle (): CandleStyle {
     },
     area: {
       lineSize: 2,
-      lineColor: '#2196F3',
+      lineColor: '#1677FF',
       value: 'close',
       backgroundColor: [{
         offset: 0,
-        color: 'rgba(33, 150, 243, 0.01)'
+        color: 'rgba(22, 119, 255, 0.01)'
       }, {
         offset: 1,
-        color: 'rgba(33, 150, 243, 0.2)'
+        color: 'rgba(22, 119, 255, 0.2)'
       }]
     },
     priceMark: {
@@ -385,7 +385,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         style: LineType.SOLID,
         size: 1,
         dashedValue: [2, 2],
-        color: '#2196F3'
+        color: '#1677FF'
       }, {
         style: LineType.SOLID,
         size: 1,
@@ -667,25 +667,25 @@ export interface OverlayStyle {
 function getDefaultOverlayStyle (): OverlayStyle {
   return {
     point: {
-      color: '#3f8aa9',
-      borderColor: 'rgba(63, 138, 169, 0.35)',
+      color: '#1677FF',
+      borderColor: 'rgba(22, 119, 255, 0.35)',
       borderSize: 1,
       radius: 5,
-      activeColor: '#3f8aa9',
-      activeBorderColor: 'rgba(63, 138, 169, 0.35)',
+      activeColor: '#1677FF',
+      activeBorderColor: 'rgba(22, 119, 255, 0.35)',
       activeBorderSize: 3,
       activeRadius: 5
     },
     line: {
       style: LineType.SOLID,
-      color: '#3f8aa9',
+      color: '#1677FF',
       size: 1,
       dashedValue: [2, 2]
     },
     rect: {
       style: PolygonType.FILL,
-      color: 'rgba(63, 138, 169, 0.25)',
-      borderColor: '#3f8aa9',
+      color: 'rgba(22, 119, 255, 0.25)',
+      borderColor: '#1677FF',
       borderSize: 1,
       borderRadius: 0,
       borderStyle: LineType.SOLID,
@@ -693,28 +693,28 @@ function getDefaultOverlayStyle (): OverlayStyle {
     },
     polygon: {
       style: PolygonType.FILL,
-      color: '#3f8aa9',
-      borderColor: '#3f8aa9',
+      color: '#1677FF',
+      borderColor: '#1677FF',
       borderSize: 1,
       borderStyle: LineType.SOLID,
       borderDashedValue: [2, 2]
     },
     circle: {
       style: PolygonType.FILL,
-      color: 'rgba(63, 138, 169, 0.25)',
-      borderColor: '#3f8aa9',
+      color: 'rgba(22, 119, 255, 0.25)',
+      borderColor: '#1677FF',
       borderSize: 1,
       borderStyle: LineType.SOLID,
       borderDashedValue: [2, 2]
     },
     arc: {
       style: LineType.SOLID,
-      color: '#3f8aa9',
+      color: '#1677FF',
       size: 1,
       dashedValue: [2, 2]
     },
     text: {
-      color: '#3f8aa9',
+      color: '#1677FF',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal'
@@ -729,12 +729,12 @@ function getDefaultOverlayStyle (): OverlayStyle {
       borderDashedValue: [2, 2],
       borderSize: 1,
       borderRadius: 2,
-      borderColor: '#3f8aa9',
+      borderColor: '#1677FF',
       paddingLeft: 4,
       paddingRight: 4,
       paddingTop: 4,
       paddingBottom: 4,
-      backgroundColor: '#3f8aa9'
+      backgroundColor: '#1677FF'
     }
   }
 }
