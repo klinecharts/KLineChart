@@ -48,6 +48,7 @@ export default class IndicatorStore {
     }
     if (figures !== undefined && instance.setFigures(figures)) {
       updateFlag = true
+      calcFlag = true
     }
     if (minValue !== undefined && instance.setMinValue(minValue)) {
       updateFlag = true
@@ -69,6 +70,7 @@ export default class IndicatorStore {
     }
     if (extendData !== undefined && instance.setExtendData(extendData)) {
       updateFlag = true
+      calcFlag = true
     }
     if (regenerateFigures !== undefined && instance.setRegenerateFigures(regenerateFigures)) {
       updateFlag = true
@@ -81,6 +83,7 @@ export default class IndicatorStore {
     }
     if (calc !== undefined) {
       instance.calc = calc
+      calcFlag = true
     }
     return [updateFlag, calcFlag]
   }
