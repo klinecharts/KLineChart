@@ -219,7 +219,7 @@
 - `cb` 是一个回调方法，`timestamp`为第一条数据的时间戳
 
 
-## createIndicator(value, isStack, paneOptions)
+## createIndicator(value, isStack, paneOptions, callback)
 ```typescript
 (
   value: string | {
@@ -277,7 +277,8 @@
       top?: number,
       bottom?: number
     }
-  }
+  } | null,
+  callback?: () => void
 ) => string | null
 ```
 创建一个技术指标，返回值是一个标识窗口的字符串，这非常重要，后续对该窗口的一些操作，都需要此标识。
@@ -291,6 +292,7 @@
    - `gap` 边距
      - `top` 上边距，值小余1则是百分比
      - `bottom` 下边距，值小余1则是百分比
+- `callback` 指标创建完成回调方法
 <Alert type="info">
   特殊的id: 'candle_pane'，主图的窗口id
 </Alert>
@@ -303,11 +305,11 @@ chart.createTechnicalIndicator('MA', false, {
   minHeight: 30,
   dragEnabled: true,
   gap: { top: 0.2, bottom: 0.1 }
-})
+}, () => {})
 ```
 
 
-## overrideIndicator(override, paneId)
+## overrideIndicator(override, paneId, callback)
 ```typescript
 (
   override: {
@@ -355,7 +357,8 @@ chart.createTechnicalIndicator('MA', false, {
     },
     draw?: (params: object) => boolean
   },
-  paneId?: string
+  paneId?: string | null,
+  callback?: () => void
 ) => void
 ```
 覆盖技术指标信息。
@@ -377,6 +380,7 @@ chart.createTechnicalIndicator('MA', false, {
   - `createToolTipDataSource` 创建自定义提示信息方法
   - `draw` 自定义绘制方法
 - `paneId` 窗口id，缺省则设置所有
+- `callback` 成功回调
 <Alert type="info">
   特殊的paneId: 'candle_pane'，主图的窗口id
 </Alert>
@@ -424,7 +428,7 @@ chart.overrideIndicator({
       noChangeColor: '#888888'
     }]
   }
-}, 'candle_pane')
+}, 'candle_pane', () => {})
 ```
 
 

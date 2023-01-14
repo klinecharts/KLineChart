@@ -84,8 +84,8 @@ export interface Chart {
   applyMoreData: (dataList: KLineData[], more?: boolean) => void
   updateData: (data: KLineData) => void
   loadMore: (cb: LoadMoreCallback) => void
-  createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
-  overrideIndicator: (override: IndicatorCreate, paneId?: string) => void
+  createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions, callback?: () => void) => Nullable<string>
+  overrideIndicator: (override: IndicatorCreate, paneId?: string, callback?: () => void) => void
   getIndicatorByPaneId: (paneId?: string, name?: string) => Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>>
   removeIndicator: (paneId: string, name?: string) => void
   createOverlay: (value: string | OverlayCreate, paneId?: string) => Nullable<string>
@@ -530,7 +530,7 @@ export default class ChartImp implements Chart {
     this._chartStore.getTimeScaleStore().setLoadMoreCallback(cb)
   }
 
-  createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions): Nullable<string> {
+  createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>, callback?: () => void): Nullable<string> {
     const indicator: IndicatorCreate = isString(value) ? { name: value as string } : value as IndicatorCreate
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
@@ -538,7 +538,7 @@ export default class ChartImp implements Chart {
     }
 
     let paneId: string
-    if (paneOptions !== undefined && this._panes.has(paneOptions.id)) {
+    if (paneOptions !== undefined && paneOptions !== null && this._panes.has(paneOptions.id)) {
       paneId = paneOptions.id
       this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).then(_ => {
         this._setPaneOptions(paneOptions, this._panes.get(paneId)?.getAxisComponent().buildTicks(true) ?? false)
@@ -550,22 +550,24 @@ export default class ChartImp implements Chart {
       topPane.setBottomPane(pane)
       const height = paneOptions?.height ?? PANE_DEFAULT_HEIGHT
       pane.setBounding({ height })
-      if (paneOptions !== undefined) {
+      if (paneOptions !== undefined && paneOptions !== null) {
         pane.setOptions(paneOptions)
       }
       this._panes.set(paneId, pane)
       this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).finally(() => {
         this.adjustPaneViewport(true, true, true, true, true)
+        callback?.()
       })
     }
     return paneId
   }
 
-  overrideIndicator (override: IndicatorCreate, paneId?: string): void {
-    this._chartStore.getIndicatorStore().override(override, paneId).then(
+  overrideIndicator (override: IndicatorCreate, paneId?: Nullable<string>, callback?: () => void): void {
+    this._chartStore.getIndicatorStore().override(override, paneId ?? null).then(
       result => {
         if (result.length > 0) {
           this.adjustPaneViewport(false, true, true, true)
+          callback?.()
         }
       }
     ).catch(() => {})

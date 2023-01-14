@@ -218,7 +218,7 @@ Clear the data of the chart. Generally, it is not necessary to call it manually.
 Set load more callback function.
 - `cb` is a callback method, `timestamp` is the timestamp of the first piece of data.
 
-## createIndicator(value, isStack, paneOptions)
+## createIndicator(value, isStack, paneOptions, callback)
 ```typescript
 (
    value: string | {
@@ -276,7 +276,8 @@ Set load more callback function.
        top?: number,
        bottom?: number
      }
-   }
+   } | null,
+   callback?: () => void
 ) => string | null
 ```
 Create a technical indicator, the return value is a string that identifies the window, which is very important, and this identification is required for some subsequent operations on the window.
@@ -290,6 +291,7 @@ Create a technical indicator, the return value is a string that identifies the w
     - `gap` margins
       - `top` top margin, value less than 1 is a percentage
       - `bottom` bottom margin, value less than 1 is a percentage
+- `callback` success callback
 <Alert type="info">
    Special id: 'candle_pane', the window id of the main picture
 </Alert>
@@ -302,10 +304,10 @@ chart.createTechnicalIndicator('MA', false, {
    minHeight: 30,
    dragEnabled: true,
    gap: { top: 0.2, bottom: 0.1 }
-})
+}, () => {})
 ```
 
-## overrideIndicator(override, paneId)
+## overrideIndicator(override, paneId, callback)
 ```typescript
 (
    override: {
@@ -353,7 +355,8 @@ chart.createTechnicalIndicator('MA', false, {
      },
      draw?: (params: object) => boolean
    },
-   paneId?: string
+   paneId?: string | null,
+   callback?: () => void
 ) => void
 ```
 Overlay technical indicator information.
@@ -375,6 +378,7 @@ Overlay technical indicator information.
    - `createToolTipDataSource` method to create custom tip information
    - `draw` custom drawing method
 - `paneId` window id, default is set to all
+- `callback` success callback
 <Alert type="info">
    Special paneId: 'candle_pane', the window id of the main image
 </Alert>
@@ -422,7 +426,7 @@ chart.overrideIndicator({
        noChangeColor: '#888888'
      }]
    }
-}, 'candle_pane')
+}, 'candle_pane', () => {})
 ```
 
 ## getIndicatorByPaneId(paneId, name)

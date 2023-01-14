@@ -187,10 +187,10 @@ export default class IndicatorStore {
     })
   }
 
-  async override (indicator: IndicatorCreate, paneId?: string): Promise<boolean[]> {
+  async override (indicator: IndicatorCreate, paneId: Nullable<string>): Promise<boolean[]> {
     const { name } = indicator
     let instances: Map<string, Map<string, IndicatorImp>> = new Map()
-    if (paneId !== undefined) {
+    if (paneId !== null) {
       if (this._instances.has(paneId)) {
         instances.set(paneId, this._instances.get(paneId) as Map<string, IndicatorImp>)
       }
