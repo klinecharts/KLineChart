@@ -1,9 +1,9 @@
-<p align="center">
-  <a href="https://github.com/liihuu/KLineChart">
-    <img style="width: 120px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1673683556230-assets/web-upload/af9a0454-369f-4a4b-a0ae-c80299c30e5b.png"/>
+<div align="center">
+  <a href="https://klinecharts.com">
+    <img style="width: 140px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1673683556230-assets/web-upload/af9a0454-369f-4a4b-a0ae-c80299c30e5b.png"/>
   </a>
-</p>
-<h1 align="center" style="margin-top: -16px">KLineChart</h1>
+</div>
+<h1 align="center">KLineChart</h1>
 <p align="center">💹📈Lightweight k-line chart built with html5 canvas.</p>
 <div align="center">
 
