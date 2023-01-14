@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/liihuu/KLineChart">
-    <img style="width: 160px" src="https://cdn.nlark.com/yuque/0/2022/png/8403091/1646572140298-assets/web-upload/16d5552a-3a7d-43a0-a5cb-079274af1df6.png"/>
+    <img style="width: 120px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1673683556230-assets/web-upload/af9a0454-369f-4a4b-a0ae-c80299c30e5b.png"/>
   </a>
 </p>
 <h1 align="center" style="margin-top: -16px">KLineChart</h1>
