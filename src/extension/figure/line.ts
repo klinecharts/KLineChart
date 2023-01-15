@@ -14,9 +14,29 @@
 
 import Nullable from '../../common/Nullable'
 import Coordinate from '../../common/Coordinate'
-import { LineStyle, LineType } from '../../common/Options'
+import { SmoothLineStyle, LineType } from '../../common/Options'
 
 import { FigureTemplate } from '../../component/Figure'
+
+function getDistance (coordinate1: Coordinate, coordinate2: Coordinate): number {
+  return Math.sqrt(Math.pow(coordinate1.x + coordinate2.x, 2) + Math.pow(coordinate1.y + coordinate2.y, 2))
+}
+
+function getBezierCurveControlCoordinate (coordinates: Coordinate[]): Coordinate[] {
+  const d01 = getDistance(coordinates[0], coordinates[1])
+  const d12 = getDistance(coordinates[1], coordinates[2])
+  const d02 = d01 + d12
+  const vector = [coordinates[2].x - coordinates[0].x, coordinates[2].y - coordinates[0].y]
+  return [
+    {
+      x: coordinates[1].x - vector[0] * 0.5 * d01 / d02,
+      y: coordinates[1].y - vector[1] * 0.5 * d01 / d02
+    }, {
+      x: coordinates[1].x + vector[0] * 0.5 * d01 / d02,
+      y: coordinates[1].y + vector[1] * 0.5 * d01 / d02
+    }
+  ]
+}
 
 export function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs): boolean {
   let on = false
@@ -69,10 +89,11 @@ export function getLinearSlopeIntercept (coordinate1: Coordinate, coordinate2: C
   return null
 }
 
-export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<LineStyle>): void {
+export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<SmoothLineStyle>): void {
   const { coordinates } = attrs
-  if (coordinates.length > 1) {
-    const { style = LineType.SOLID, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
+  const length = coordinates.length
+  if (length > 1) {
+    const { style = LineType.SOLID, smooth = false, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
     ctx.lineWidth = size
     ctx.strokeStyle = color
     if (style === LineType.DASHED) {
@@ -82,8 +103,34 @@ export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, style
     }
     ctx.beginPath()
     ctx.moveTo(coordinates[0].x, coordinates[0].y)
-    for (let i = 1; i < coordinates.length; i++) {
-      ctx.lineTo(coordinates[i].x, coordinates[i].y)
+
+    if (smooth) {
+      let controlCoordinates: Coordinate[] = []
+      for (let i = 1; i < length - 1; i++) {
+        controlCoordinates = controlCoordinates.concat(getBezierCurveControlCoordinate([coordinates[i - 1], coordinates[i], coordinates[i + 1]]))
+      }
+      ctx.quadraticCurveTo(controlCoordinates[0].x, controlCoordinates[0].y, coordinates[1].x, coordinates[1].y)
+      let i = 2
+      for (; i < length - 1; i++) {
+        ctx.bezierCurveTo(
+          controlCoordinates[(i - 2) * 2 + 1].x,
+          controlCoordinates[(i - 2) * 2 + 1].y,
+          controlCoordinates[(i - 1) * 2].x,
+          controlCoordinates[(i - 1) * 2].y,
+          coordinates[i].x,
+          coordinates[i].y
+        )
+      }
+      ctx.quadraticCurveTo(
+        controlCoordinates[(i - 2) * 2 + 1].x,
+        controlCoordinates[(i - 2) * 2 + 1].y,
+        coordinates[i].x,
+        coordinates[i].y
+      )
+    } else {
+      for (let i = 1; i < coordinates.length; i++) {
+        ctx.lineTo(coordinates[i].x, coordinates[i].y)
+      }
     }
     ctx.stroke()
     ctx.closePath()
@@ -94,10 +141,10 @@ export interface LineAttrs {
   coordinates: Coordinate[]
 }
 
-const line: FigureTemplate<LineAttrs, Partial<LineStyle>> = {
+const line: FigureTemplate<LineAttrs, Partial<SmoothLineStyle>> = {
   name: 'line',
   checkEventOn: checkCoordinateOnLine,
-  draw: (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<LineStyle>) => {
+  draw: (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<SmoothLineStyle>) => {
     drawLine(ctx, attrs, styles)
   }
 }

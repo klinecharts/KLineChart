@@ -64,6 +64,9 @@ export interface LineStyle {
 	color: string;
 	dashedValue: number[];
 }
+export interface SmoothLineStyle extends LineStyle {
+	smooth: boolean;
+}
 export interface StateLineStyle extends LineStyle {
 	show: boolean;
 }
@@ -120,10 +123,6 @@ export declare const enum TooltipShowRule {
 	FOLLOW_CROSS = "follow_cross",
 	NONE = "none"
 }
-/**
- * 数据提示显示类型
- * @type {{RECT: string, STANDARD: string}}
- */
 export declare const enum TooltipShowType {
 	RECT = "rect",
 	STANDARD = "standard"
@@ -224,7 +223,7 @@ export interface IndicatorTooltipStyle extends TooltipStyle {
 export interface IndicatorStyle {
 	ohlc: ChangeColor;
 	bars: IndicatorPolygonStyle[];
-	lines: LineStyle[];
+	lines: SmoothLineStyle[];
 	circles: IndicatorPolygonStyle[];
 	lastValueMark: IndicatorLastValueMarkStyle;
 	tooltip: IndicatorTooltipStyle;
@@ -282,7 +281,7 @@ export interface OverlayPointStyle {
 }
 export interface OverlayStyle {
 	point: OverlayPointStyle;
-	line: LineStyle;
+	line: SmoothLineStyle;
 	rect: RectStyle;
 	polygon: PolygonStyle;
 	circle: PolygonStyle;
@@ -591,22 +590,73 @@ export interface IndicatorDrawParams<D = any> {
 export declare type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParams<D>) => boolean;
 export declare type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[];
 export interface Indicator<D = any> {
+	/**
+	 * indicator name
+	 */
 	name: string;
+	/**
+	 * short name, for display
+	 */
 	shortName: string;
+	/**
+	 * precision
+	 */
 	precision: number;
+	/**
+	 * calculation parameters
+	 */
 	calcParams: any[];
+	/**
+	 * whether ohlc column is required
+	 */
 	shouldOhlc: boolean;
+	/**
+	 * whether large data values need to be formatted, starting from 1000, for example, whether 100000 needs to be formatted with 100K
+	 */
 	shouldFormatBigNumber: boolean;
+	/**
+	 * extend data
+	 */
 	extendData: any;
+	/**
+	 * indicator series
+	 */
 	series: IndicatorSeries;
+	/**
+	 * figure configuration information
+	 */
 	figures: Array<IndicatorFigure<D>>;
+	/**
+	 * specified minimum value
+	 */
 	minValue: Nullable<number>;
+	/**
+	 * specified maximum value
+	 */
 	maxValue: Nullable<number>;
+	/**
+	 * style configuration
+	 */
 	styles: Nullable<Partial<IndicatorStyle>>;
+	/**
+	 * indicator calculation
+	 */
 	calc: IndicatorCalcCallback<D>;
+	/**
+	 * regenerate figure configuration
+	 */
 	regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>>;
+	/**
+	 * create custom tooltip text
+	 */
 	createToolTipDataSource: Nullable<IndicatorCreateToolTipDataSourceCallback>;
+	/**
+	 * custom draw
+	 */
 	draw: Nullable<IndicatorDrawCallback<D>>;
+	/**
+	 * calculation result
+	 */
 	result: D[];
 }
 export declare type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name" | "calc">;
@@ -822,8 +872,8 @@ export interface Chart {
 	applyMoreData: (dataList: KLineData[], more?: boolean) => void;
 	updateData: (data: KLineData) => void;
 	loadMore: (cb: LoadMoreCallback) => void;
-	createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>;
-	overrideIndicator: (override: IndicatorCreate, paneId?: string) => void;
+	createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions, callback?: () => void) => Nullable<string>;
+	overrideIndicator: (override: IndicatorCreate, paneId?: string, callback?: () => void) => void;
 	getIndicatorByPaneId: (paneId?: string, name?: string) => Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>>;
 	removeIndicator: (paneId: string, name?: string) => void;
 	createOverlay: (value: string | OverlayCreate, paneId?: string) => Nullable<string>;
@@ -870,7 +920,7 @@ declare function checkCoordinateOnLine(coordinate: Coordinate, line: LineAttrs):
 declare function getLinearYFromSlopeIntercept(kb: Nullable<number[]>, coordinate: Coordinate): number;
 declare function getLinearYFromCoordinates(coordinate1: Coordinate, coordinate2: Coordinate, targetCoordinate: Coordinate): number;
 declare function getLinearSlopeIntercept(coordinate1: Coordinate, coordinate2: Coordinate): Nullable<number[]>;
-declare function drawLine(ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<LineStyle>): void;
+declare function drawLine(ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<SmoothLineStyle>): void;
 export interface LineAttrs {
 	coordinates: Coordinate[];
 }

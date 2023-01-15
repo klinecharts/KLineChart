@@ -19,7 +19,7 @@ import Bounding from '../common/Bounding'
 import VisibleRange from '../common/VisibleRange'
 import BarSpace from '../common/BarSpace'
 import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, IndicatorPolygonStyle, LineStyle, LineType, PolygonType, TooltipData } from '../common/Options'
+import { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, LineType, PolygonType, TooltipData } from '../common/Options'
 
 import { XAxis } from './XAxis'
 import { YAxis } from './YAxis'
@@ -96,39 +96,89 @@ export type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParams<D>) =>
 export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[]
 
 export interface Indicator<D = any> {
-  // 指标名
+  /**
+   * indicator name
+   */
   name: string
-  // 指标简短名称，用于显示
+
+  /**
+   * short name, for display
+   */
   shortName: string
-  // 精度
+
+  /**
+   * precision
+   */
   precision: number
-  // 计算参数
+
+  /**
+   * calculation parameters
+   */
   calcParams: any[]
-  // 是否需要ohlc
+
+  /**
+   * whether ohlc column is required
+   */
   shouldOhlc: boolean
-  // 是否需要格式化大数据值，从1000开始格式化，比如100000是否需要格式化100K
+
+  /**
+   * whether large data values need to be formatted, starting from 1000, for example, whether 100000 needs to be formatted with 100K
+   */
   shouldFormatBigNumber: boolean
-  // 扩展数据
+
+  /**
+   * extend data
+   */
   extendData: any
-  // 系列
+
+  /**
+   * indicator series
+   */
   series: IndicatorSeries
-  // 数据信息
+
+  /**
+   * figure configuration information
+   */
   figures: Array<IndicatorFigure<D>>
-  // 指定的最小值
+
+  /**
+   * specified minimum value
+   */
   minValue: Nullable<number>
-  // 指定的最大值
+
+  /**
+   * specified maximum value
+   */
   maxValue: Nullable<number>
-  // 样式
+
+  /**
+   * style configuration
+   */
   styles: Nullable<Partial<IndicatorStyle>>
-  // 计算
+
+  /**
+   * indicator calculation
+   */
   calc: IndicatorCalcCallback<D>
-  // 重新生成数图形配置
+
+  /**
+   * regenerate figure configuration
+   */
   regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>>
-  // 创建自定义提示文字
+
+  /**
+   * create custom tooltip text
+   */
   createToolTipDataSource: Nullable<IndicatorCreateToolTipDataSourceCallback>
-  // 自定义绘制
+
+  /**
+   * custom draw
+   */
   draw: Nullable<IndicatorDrawCallback<D>>
-  // 结果
+
+  /**
+   * calculation result
+   */
   result: D[]
 }
 
@@ -157,7 +207,7 @@ export function eachFigures<D> (
   const barStyles = formatValue(styles, 'bars', defaultStyles.bars) as IndicatorPolygonStyle[]
   const barStyleCount = barStyles.length
 
-  const lineStyles = formatValue(styles, 'lines', defaultStyles.lines) as LineStyle[]
+  const lineStyles = formatValue(styles, 'lines', defaultStyles.lines) as SmoothLineStyle[]
   const lineStyleCount = lineStyles.length
 
   let circleCount = 0
@@ -278,12 +328,6 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     return false
   }
 
-  /**
-   * 设置精度
-   * @param precision
-   * @param flag
-   * @returns
-   */
   setPrecision (precision: number, flag?: boolean): boolean {
     const f = flag ?? false
     const optimalPrecision = Math.floor(precision)
@@ -297,11 +341,6 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     return false
   }
 
-  /**
-   * 设置计算参数
-   * @param params
-   * @returns
-   */
   setCalcParams (params: any[]): boolean {
     this.calcParams = params
     this.figures = this.regenerateFigures?.(params) ?? this.figures

@@ -16,7 +16,7 @@ import Nullable from '../common/Nullable'
 import Coordinate from '../common/Coordinate'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
-import { CandleType, LineStyle, LineType } from '../common/Options'
+import { CandleType, SmoothLineStyle, LineType } from '../common/Options'
 
 import { PaneIdConstants } from '../pane/Pane'
 
@@ -94,7 +94,7 @@ export default class IndicatorView extends CandleBarView {
         const lineFigureStyles: Array<Nullable<IndicatorFigureStyle>> = []
         const lineCoordinates: Coordinate[][] = []
 
-        const lines: Array<FigureCreate<LineAttrs, Partial<LineStyle>>> = []
+        const lines: Array<FigureCreate<LineAttrs, Partial<SmoothLineStyle>>> = []
 
         this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
           const { halfGapBar, gapBar } = barSpace
@@ -170,6 +170,7 @@ export default class IndicatorView extends CandleBarView {
                           style: figureStyles.style as LineType,
                           color: figureStyles.color,
                           size: defaultFigureStyles.size,
+                          smooth: defaultFigureStyles.smooth,
                           dashedValue: defaultFigureStyles.dashedValue
                         }
                       })
@@ -183,6 +184,7 @@ export default class IndicatorView extends CandleBarView {
                             style: figureStyles.style as LineType,
                             color: figureStyles.color,
                             size: defaultFigureStyles.size,
+                            smooth: defaultFigureStyles.smooth,
                             dashedValue: defaultFigureStyles.dashedValue
                           }
                         })
@@ -198,6 +200,7 @@ export default class IndicatorView extends CandleBarView {
                         style: figureStyles.style as LineType,
                         color: figureStyles?.color,
                         size: defaultFigureStyles.size,
+                        smooth: defaultFigureStyles.smooth,
                         dashedValue: defaultFigureStyles.dashedValue
                       }
                     })

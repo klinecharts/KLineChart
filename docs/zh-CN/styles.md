@@ -155,26 +155,31 @@
       {
         // 'solid' | 'dashed'
         style: 'solid',
+        smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#FF9600'
       }, {
         style: 'solid',
+        smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#9D65C9'
       }, {
         style: 'solid',
+        smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#2196F3'
       }, {
-      style: 'solid',
+        style: 'solid',
+        smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#E11D74'
       }, {
         style: 'solid',
+        smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#01C5C4'
@@ -374,27 +379,28 @@
   // 覆盖物
   overlay: {
     point: {
-      color: '#3f8aa9',
-      borderColor: 'rgba(63, 138, 169, 0.35)',
+      color: '#1677FF',
+      borderColor: 'rgba(22, 119, 255, 0.35)',
       borderSize: 1,
       radius: 5,
-      activeColor: '#3f8aa9',
-      activeBorderColor: 'rgba(63, 138, 169, 0.35)',
+      activeColor: '#1677FF',
+      activeBorderColor: 'rgba(22, 119, 255, 0.35)',
       activeBorderSize: 3,
       activeRadius: 5
     },
     line: {
       // 'solid' | 'dashed'
       style: 'solid',
-      color: '#3f8aa9',
+      smooth: false,
+      color: '#1677FF',
       size: 1,
       dashedValue: [2, 2]
     },
     rect: {
       // 'fill' | 'stroke' | 'stroke_fill'
       style: 'fill',
-      color: 'rgba(63, 138, 169, 0.25)',
-      borderColor: '#3f8aa9',
+      color: 'rgba(22, 119, 255, 0.25)',
+      borderColor: '#1677FF',
       borderSize: 1,
       borderRadius: 0,
       // 'solid' | 'dashed'
@@ -404,8 +410,8 @@
     polygon: {
       // 'fill' | 'stroke' | 'stroke_fill'
       style: 'fill',
-      color: '#3f8aa9',
-      borderColor: '#3f8aa9',
+      color: '#1677FF',
+      borderColor: '#1677FF',
       borderSize: 1,
       // 'solid' | 'dashed'
       borderStyle: 'solid',
@@ -414,8 +420,8 @@
     circle: {
       // 'fill' | 'stroke' | 'stroke_fill'
       style: 'fill',
-      color: 'rgba(63, 138, 169, 0.25)',
-      borderColor: '#3f8aa9',
+      color: 'rgba(22, 119, 255, 0.25)',
+      borderColor: '#1677FF',
       borderSize: 1,
       // 'solid' | 'dashed'
       borderStyle: 'solid',
@@ -424,12 +430,12 @@
     arc: {
       // 'solid' | 'dashed'
       style: 'solid',
-      color: '#3f8aa9',
+      color: '#1677FF',
       size: 1,
       dashedValue: [2, 2]
     },
     text: {
-      color: '#3f8aa9',
+      color: '#1677FF',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal'
@@ -446,12 +452,12 @@
       borderDashedValue: [2, 2],
       borderSize: 1,
       borderRadius: 2,
-      borderColor: '#3f8aa9',
+      borderColor: '#1677FF',
       paddingLeft: 4,
       paddingRight: 4,
       paddingTop: 4,
       paddingBottom: 4,
-      backgroundColor: '#3f8aa9'
+      backgroundColor: '#1677FF'
     }
   }
 }

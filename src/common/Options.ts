@@ -34,6 +34,10 @@ export interface LineStyle {
   dashedValue: number[]
 }
 
+export interface SmoothLineStyle extends LineStyle {
+  smooth: boolean
+}
+
 export interface StateLineStyle extends LineStyle {
   show: boolean
 }
@@ -101,10 +105,6 @@ export const enum TooltipShowRule {
   NONE = 'none'
 }
 
-/**
- * 数据提示显示类型
- * @type {{RECT: string, STANDARD: string}}
- */
 export const enum TooltipShowType {
   RECT = 'rect',
   STANDARD = 'standard'
@@ -231,7 +231,7 @@ export interface CandleStyle {
 }
 
 /**
- * 默认蜡烛柱图样式配置
+ * Get default candle style
  * @type {{area: {backgroundColor: [{offset: number, color: string}, {offset: number, color: string}], lineColor: string, lineSize: number, value: string}, bar: {noChangeColor: string, upColor: string, downColor: string}, tooltip: {rect: {offsetTop: number, fillColor: string, borderColor: string, paddingBottom: number, borderRadius: number, paddingRight: number, borderSize: number, offsetLeft: number, paddingTop: number, paddingLeft: number, offsetRight: number}, showRule: string, values: null, showType: string, text: {marginRight: number, size: number, color: string, weight: string, marginBottom: number, family: string, marginTop: number, marginLeft: number}, labels: string[]}, type: string, priceMark: {high: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, last: {noChangeColor: string, upColor: string, line: {dashValue: number[], size: number, show: boolean, style: string}, show: boolean, text: {paddingBottom: number, size: number, color: string, paddingRight: number, show: boolean, weight: string, paddingTop: number, family: string, paddingLeft: number}, downColor: string}, low: {textMargin: number, textSize: number, color: string, textFamily: string, show: boolean, textWeight: string}, show: boolean}}}
  */
 function getDefaultCandleStyle (): CandleStyle {
@@ -348,12 +348,15 @@ export interface IndicatorTooltipStyle extends TooltipStyle {
 export interface IndicatorStyle {
   ohlc: ChangeColor
   bars: IndicatorPolygonStyle[]
-  lines: LineStyle[]
+  lines: SmoothLineStyle[]
   circles: IndicatorPolygonStyle[]
   lastValueMark: IndicatorLastValueMarkStyle
   tooltip: IndicatorTooltipStyle
 }
 
+/**
+ * Get default indicator style
+ */
 function getDefaultIndicatorStyle (): IndicatorStyle {
   return {
     ohlc: {
@@ -373,26 +376,31 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
     lines: [
       {
         style: LineType.SOLID,
+        smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#FF9600'
       }, {
         style: LineType.SOLID,
+        smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#9D65C9'
       }, {
         style: LineType.SOLID,
+        smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#1677FF'
       }, {
         style: LineType.SOLID,
+        smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#E11D74'
       }, {
         style: LineType.SOLID,
+        smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#01C5C4'
@@ -514,41 +522,17 @@ export interface YAxisStyle extends AxisStyle {
 
 function getDefaultYAxisStyle (): YAxisStyle {
   return {
-    /**
-     * 是否显示整个轴
-     */
     show: true,
-    /**
-     * 宽度
-     */
     size: 'auto',
-    /**
-     * y轴类型
-     */
     type: YAxisType.NORMAL,
-    /**
-     * 轴位置
-     */
     position: YAxisPosition.RIGHT,
-    /**
-     * 轴是否在内部
-     */
     inside: false,
-    /**
-     * 轴是否反转
-     */
     reverse: false,
-    /**
-     * 轴线配置
-     */
     axisLine: {
       show: true,
       color: '#DDDDDD',
       size: 1
     },
-    /**
-     * tick文字
-     */
     tickText: {
       show: true,
       color: '#76808F',
@@ -558,7 +542,6 @@ function getDefaultYAxisStyle (): YAxisStyle {
       marginStart: 4,
       marginEnd: 4
     },
-    // tick线
     tickLine: {
       show: true,
       size: 1,
@@ -655,7 +638,7 @@ export interface OverlayPointStyle {
 
 export interface OverlayStyle {
   point: OverlayPointStyle
-  line: LineStyle
+  line: SmoothLineStyle
   rect: RectStyle
   polygon: PolygonStyle
   circle: PolygonStyle
@@ -678,6 +661,7 @@ function getDefaultOverlayStyle (): OverlayStyle {
     },
     line: {
       style: LineType.SOLID,
+      smooth: false,
       color: '#1677FF',
       size: 1,
       dashedValue: [2, 2]
