@@ -13,7 +13,7 @@
  */
 
 /**
- * 二分查找最接近的数
+ * Binary search for the nearest result
  * @param dataList
  * @param valueKey
  * @param targetValue

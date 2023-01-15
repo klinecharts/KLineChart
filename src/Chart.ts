@@ -507,7 +507,7 @@ export default class ChartImp implements Chart {
   updateData (data: KLineData): void {
     const dataList = this._chartStore.getDataList()
     const dataCount = dataList.length
-    // 这里判断单个数据应该添加到哪个位置
+    // Determine where individual data should be added
     const timestamp = data.timestamp
     const lastDataTimestamp = formatValue(dataList[dataCount - 1], 'timestamp', 0) as number
     if (timestamp >= lastDataTimestamp) {

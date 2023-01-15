@@ -13,7 +13,7 @@
  */
 
 /**
- * 创建一个dom
+ * Create dom
  * @param tagName
  * @param styles
  * @return {*}

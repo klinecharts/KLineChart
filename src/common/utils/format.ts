@@ -24,13 +24,6 @@ const rePropName = RegExp(
   '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))'
   , 'g')
 
-/**
- * 格式化值
- * @param data
- * @param key
- * @param defaultValue
- * @returns {string|*}
- */
 export function formatValue (data: unknown, key: string, defaultValue?: unknown): unknown {
   if (isValid(data)) {
     const path: string[] = []
@@ -55,13 +48,6 @@ export function formatValue (data: unknown, key: string, defaultValue?: unknown)
   return defaultValue ?? '--'
 }
 
-/**
- * 格式化时间
- * @param dateTimeFormat
- * @param timestamp
- * @param format
- * @returns {string}
- */
 export function formatDate (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string {
   const dateTimeString = dateTimeFormat.format(new Date(timestamp))
   const dateTimeStringArray = dateTimeString.split(', ')
@@ -78,9 +64,6 @@ export function formatDate (dateTimeFormat: Intl.DateTimeFormat, timestamp: numb
   return format.replace(/YYYY|MM|DD|HH|mm|ss/g, key => date[key])
 }
 
-/**
- * 格式化精度
- */
 export function formatPrecision (value: string | number, precision?: number): string {
   const v = +value
   if (isNumber(v)) {
@@ -89,10 +72,6 @@ export function formatPrecision (value: string | number, precision?: number): st
   return `${v}`
 }
 
-/**
- * 格式化大数据
- * @param value
- */
 export function formatBigNumber (value: string | number): string {
   const v = +value
   if (isNumber(v)) {

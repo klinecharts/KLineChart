@@ -15,7 +15,7 @@
 let measureCtx: CanvasRenderingContext2D
 
 /**
- * 获取屏幕比
+ * Get pixel ratio
  * @param canvas
  * @returns {number}
  */
@@ -28,7 +28,7 @@ export function createFont (size?: number, weight?: string | number, family?: st
 }
 
 /**
- * 测量文字的宽度
+ * Measure the width of text
  * @param text
  * @returns {number}
  */

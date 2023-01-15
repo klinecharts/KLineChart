@@ -24,29 +24,14 @@ function log (message: string, style: string, api: string, invalidParam: string,
   }
 }
 
-/**
- * 打印警告日志
- * @param api
- * @param invalidParam
- * @param append
- */
 export function logWarn (api: string, invalidParam: string, append?: string): void {
   log('%c😑 klinecharts warning: \n%s%s%s', 'color:#fcaf17;font-weight:bold', api, invalidParam, append ?? '')
 }
 
-/**
- * 打印错误日志
- * @param api
- * @param invalidParam
- * @param append
- */
 export function logError (api: string, invalidParam: string, append?: string): void {
   log('%c😟 klinecharts error: \n%s%s%s', 'color:#ed1941;font-weight:bold', api, invalidParam, append ?? '')
 }
 
-/**
- * 打印标识
- */
 export function logTag (): void {
   log(
     '%c❤️ Welcome to klinecharts. Version is __BUILD_VERSION__',

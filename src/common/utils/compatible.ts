@@ -12,10 +12,6 @@
  * limitations under the License.
  */
 
-/**
- * requestAnimationFrame兼容
- * @param fn
- */
 export function requestAnimationFrame (fn: (params: any) => any): number {
   if (window.requestAnimationFrame == null) {
     return window.setTimeout(fn, 20)
@@ -23,10 +19,6 @@ export function requestAnimationFrame (fn: (params: any) => any): number {
   return window.requestAnimationFrame(fn)
 }
 
-/**
- * cancelAnimationFrame兼容
- * @param id
- */
 export function cancelAnimationFrame (id: number): void {
   if (window.cancelAnimationFrame == null) {
     window.clearTimeout(id)
