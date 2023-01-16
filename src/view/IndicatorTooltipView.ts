@@ -171,11 +171,11 @@ export default class IndicatorTooltipView extends View<YAxis> {
     customApi: CustomApi,
     styles: IndicatorStyle
   ): IndicatorTooltipData {
-    if (indicator.createToolTipDataSource !== null) {
+    if (indicator.createTooltipDataSource !== null) {
       const widget = this.getWidget()
       const pane = widget.getPane()
       const chartStore = pane.getChart().getChartStore()
-      const indicatorTooltipDatas = indicator.createToolTipDataSource({
+      const indicatorTooltipDatas = indicator.createTooltipDataSource({
         kLineDataList: dataList,
         indicator,
         visibleRange: chartStore.getTimeScaleStore().getVisibleRange(),

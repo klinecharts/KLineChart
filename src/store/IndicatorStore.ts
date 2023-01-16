@@ -32,7 +32,7 @@ export default class IndicatorStore {
     const {
       shortName, series, calcParams, precision, figures, minValue, maxValue,
       shouldOhlc, shouldFormatBigNumber, styles, extendData,
-      regenerateFigures, createToolTipDataSource, draw, calc
+      regenerateFigures, createTooltipDataSource, draw, calc
     } = indicator
     let updateFlag = false
     if (shortName !== undefined && instance.setShortName(shortName)) {
@@ -75,7 +75,7 @@ export default class IndicatorStore {
     if (regenerateFigures !== undefined && instance.setRegenerateFigures(regenerateFigures)) {
       updateFlag = true
     }
-    if (createToolTipDataSource !== undefined && instance.setCreateToolTipDataSource(createToolTipDataSource)) {
+    if (createTooltipDataSource !== undefined && instance.setCreateTooltipDataSource(createTooltipDataSource)) {
       updateFlag = true
     }
     if (draw !== undefined && instance.setDraw(draw)) {

@@ -257,7 +257,7 @@
         defaultStyles: object
       ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
     }>,
-    createToolTipDataSource?: (params: object) => {
+    createTooltipDataSource?: (params: object) => {
       name?: string,
       calcParamsText?: string,
       values?: Array<{
@@ -347,7 +347,7 @@ chart.createTechnicalIndicator('MA', false, {
         defaultStyles: object
       ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
     }>,
-    createToolTipDataSource?: (params: object) => {
+    createTooltipDataSource?: (params: object) => {
       name?: string,
       calcParamsText?: string,
       values?: Array<{
@@ -377,7 +377,7 @@ chart.createTechnicalIndicator('MA', false, {
   - `styles` 样式
   - `calc` 计算方法
   - `regenerateFigures` 重新生成图形信息方法
-  - `createToolTipDataSource` 创建自定义提示信息方法
+  - `createTooltipDataSource` 创建自定义提示信息方法
   - `draw` 自定义绘制方法
 - `paneId` 窗口id，缺省则设置所有
 - `callback` 成功回调

@@ -98,7 +98,7 @@ To create a custom technical indicator, you only need to generate a technical in
     calcParms: any[]
   ) => Array<IndicatorFigure<D>>
   // Create a custom hint text
-  createToolTipDataSource?: (params: {
+  createTooltipDataSource?: (params: {
     // data source, see [data source] for type
     kLineDataList: KLineData[],
     // technical indicator example

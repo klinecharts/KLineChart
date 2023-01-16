@@ -98,7 +98,7 @@
     calcParms: any[]
   ) => Array<IndicatorFigure<D>>
   // 创建自定义提示文字
-  createToolTipDataSource?: (params: {
+  createTooltipDataSource?: (params: {
     // 数据源，类型参阅[数据源]
     kLineDataList: KLineData[],
     // 技术指标实例

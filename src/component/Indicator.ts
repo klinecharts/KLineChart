@@ -67,7 +67,7 @@ export interface IndicatorTooltipData {
   values?: TooltipData[]
 }
 
-export interface IndicatorCreateToolTipDataSourceParams<D = any> {
+export interface IndicatorCreateTooltipDataSourceParams<D = any> {
   kLineDataList: KLineData[]
   indicator: Indicator<D>
   visibleRange: VisibleRange
@@ -78,7 +78,7 @@ export interface IndicatorCreateToolTipDataSourceParams<D = any> {
   yAxis: YAxis
 }
 
-export type IndicatorCreateToolTipDataSourceCallback<D = any> = (params: IndicatorCreateToolTipDataSourceParams<D>) => IndicatorTooltipData
+export type IndicatorCreateTooltipDataSourceCallback<D = any> = (params: IndicatorCreateTooltipDataSourceParams<D>) => IndicatorTooltipData
 
 export interface IndicatorDrawParams<D = any> {
   ctx: CanvasRenderingContext2D
@@ -97,87 +97,87 @@ export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indica
 
 export interface Indicator<D = any> {
   /**
-   * indicator name
+   * Indicator name
    */
   name: string
 
   /**
-   * short name, for display
+   * Short name, for display
    */
   shortName: string
 
   /**
-   * precision
+   * Precision
    */
   precision: number
 
   /**
-   * calculation parameters
+   * Calculation parameters
    */
   calcParams: any[]
 
   /**
-   * whether ohlc column is required
+   * Whether ohlc column is required
    */
   shouldOhlc: boolean
 
   /**
-   * whether large data values need to be formatted, starting from 1000, for example, whether 100000 needs to be formatted with 100K
+   * Whether large data values need to be formatted, starting from 1000, for example, whether 100000 needs to be formatted with 100K
    */
   shouldFormatBigNumber: boolean
 
   /**
-   * extend data
+   * Extend data
    */
   extendData: any
 
   /**
-   * indicator series
+   * Indicator series
    */
   series: IndicatorSeries
 
   /**
-   * figure configuration information
+   * Figure configuration information
    */
   figures: Array<IndicatorFigure<D>>
 
   /**
-   * specified minimum value
+   * Specified minimum value
    */
   minValue: Nullable<number>
 
   /**
-   * specified maximum value
+   * Specified maximum value
    */
   maxValue: Nullable<number>
 
   /**
-   * style configuration
+   * Style configuration
    */
   styles: Nullable<Partial<IndicatorStyle>>
 
   /**
-   * indicator calculation
+   * Indicator calculation
    */
   calc: IndicatorCalcCallback<D>
 
   /**
-   * regenerate figure configuration
+   * Regenerate figure configuration
    */
   regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>>
 
   /**
-   * create custom tooltip text
+   * Create custom tooltip text
    */
-  createToolTipDataSource: Nullable<IndicatorCreateToolTipDataSourceCallback>
+  createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback>
 
   /**
-   * custom draw
+   * Custom draw
    */
   draw: Nullable<IndicatorDrawCallback<D>>
 
   /**
-   * calculation result
+   * Calculation result
    */
   result: D[]
 }
@@ -276,7 +276,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
   maxValue: Nullable<number>
   styles: Nullable<Partial<IndicatorStyle>>
   regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>>
-  createToolTipDataSource: Nullable<IndicatorCreateToolTipDataSourceCallback>
+  createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback>
   draw: Nullable<IndicatorDrawCallback<D>>
 
   result: D[] = []
@@ -288,7 +288,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
       name, shortName, series, calcParams, figures, precision,
       shouldOhlc, shouldFormatBigNumber,
       minValue, maxValue, styles, extendData,
-      regenerateFigures, createToolTipDataSource, draw
+      regenerateFigures, createTooltipDataSource, draw
     } = indicator
     this.name = name
     this.shortName = shortName ?? name
@@ -303,15 +303,10 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     this.styles = styles ?? null
     this.extendData = extendData
     this.regenerateFigures = regenerateFigures ?? null
-    this.createToolTipDataSource = createToolTipDataSource ?? null
+    this.createTooltipDataSource = createTooltipDataSource ?? null
     this.draw = draw ?? null
   }
 
-  /**
-   * 设置简短名称
-   * @param shortName
-   * @returns
-   */
   setShortName (shortName: string): boolean {
     if (this.shortName !== shortName) {
       this.shortName = shortName
@@ -411,9 +406,9 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     return false
   }
 
-  setCreateToolTipDataSource (callback: Nullable<IndicatorCreateToolTipDataSourceCallback>): boolean {
-    if (this.createToolTipDataSource !== callback) {
-      this.createToolTipDataSource = callback
+  setCreateTooltipDataSource (callback: Nullable<IndicatorCreateTooltipDataSourceCallback>): boolean {
+    if (this.createTooltipDataSource !== callback) {
+      this.createTooltipDataSource = callback
       return true
     }
     return false

@@ -130,7 +130,7 @@ Get graph class.
          defaultStyles: object
       ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
    }>,
-   createToolTipDataSource?: (params: object) => {
+   createTooltipDataSource?: (params: object) => {
       name?: string,
       calcParamsText?: string,
       values?: Array<{
@@ -157,7 +157,7 @@ Add a technical indicator.
    - `styles` styles
    - `calc` calculation method
    - `regenerateFigures` method to regenerate figure information
-   - `createToolTipDataSource` method to create custom tip information
+   - `createTooltipDataSource` method to create custom tip information
    - `draw` custom drawing method
 
 

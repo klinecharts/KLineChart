@@ -1,4 +1,11 @@
 # 📠 更新日志
+## 9.0.0-alpha5
+`2023-01-17`
++ 🆕 实例方法`createIndicator`和`overrideIndicator`新增成功回调。
++ 🆕 样式`indicator.lines`和`overlay.line`新增`smooth`。
++ 💄 优化指标计算方法触发条件。
++ 💄 优化样式`overlay`。
+
 
 ## 9.0.0-alpha4
 `2023-01-12`
@@ -11,6 +18,7 @@
 `2023-01-11`
 + 🆕 新增实例方法`getVisibleRange`。
 + 🐞 修复反转y轴垂直缩放问题。
+
 
 ## 9.0.0-alpha2
 `2023-01-10`

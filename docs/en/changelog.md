@@ -1,5 +1,12 @@
 # 📠 Change Log
 
+## 9.0.0-alpha5
+`2023-01-17`
++ 🆕 The instance methods `createIndicator` and `overrideIndicator` add a successful callback.
++ 🆕 Styles `indicator.lines` and `overlay.line` add `smooth`.
++ 💄 Trigger conditions of optimization indicator calculation method.
++ 💄 Optimize the style `overlay`.
+
 ## 9.0.0-alpha4
 `2023-01-12`
 + 🐞 Fix the problem of creating main chart indicators without updating.

@@ -565,7 +565,7 @@ export interface IndicatorTooltipData {
 	calcParamsText?: string;
 	values?: TooltipData[];
 }
-export interface IndicatorCreateToolTipDataSourceParams<D = any> {
+export interface IndicatorCreateTooltipDataSourceParams<D = any> {
 	kLineDataList: KLineData[];
 	indicator: Indicator<D>;
 	visibleRange: VisibleRange;
@@ -575,7 +575,7 @@ export interface IndicatorCreateToolTipDataSourceParams<D = any> {
 	xAxis: XAxis;
 	yAxis: YAxis;
 }
-export declare type IndicatorCreateToolTipDataSourceCallback<D = any> = (params: IndicatorCreateToolTipDataSourceParams<D>) => IndicatorTooltipData;
+export declare type IndicatorCreateTooltipDataSourceCallback<D = any> = (params: IndicatorCreateTooltipDataSourceParams<D>) => IndicatorTooltipData;
 export interface IndicatorDrawParams<D = any> {
 	ctx: CanvasRenderingContext2D;
 	kLineDataList: KLineData[];
@@ -591,71 +591,71 @@ export declare type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParam
 export declare type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[];
 export interface Indicator<D = any> {
 	/**
-	 * indicator name
+	 * Indicator name
 	 */
 	name: string;
 	/**
-	 * short name, for display
+	 * Short name, for display
 	 */
 	shortName: string;
 	/**
-	 * precision
+	 * Precision
 	 */
 	precision: number;
 	/**
-	 * calculation parameters
+	 * Calculation parameters
 	 */
 	calcParams: any[];
 	/**
-	 * whether ohlc column is required
+	 * Whether ohlc column is required
 	 */
 	shouldOhlc: boolean;
 	/**
-	 * whether large data values need to be formatted, starting from 1000, for example, whether 100000 needs to be formatted with 100K
+	 * Whether large data values need to be formatted, starting from 1000, for example, whether 100000 needs to be formatted with 100K
 	 */
 	shouldFormatBigNumber: boolean;
 	/**
-	 * extend data
+	 * Extend data
 	 */
 	extendData: any;
 	/**
-	 * indicator series
+	 * Indicator series
 	 */
 	series: IndicatorSeries;
 	/**
-	 * figure configuration information
+	 * Figure configuration information
 	 */
 	figures: Array<IndicatorFigure<D>>;
 	/**
-	 * specified minimum value
+	 * Specified minimum value
 	 */
 	minValue: Nullable<number>;
 	/**
-	 * specified maximum value
+	 * Specified maximum value
 	 */
 	maxValue: Nullable<number>;
 	/**
-	 * style configuration
+	 * Style configuration
 	 */
 	styles: Nullable<Partial<IndicatorStyle>>;
 	/**
-	 * indicator calculation
+	 * Indicator calculation
 	 */
 	calc: IndicatorCalcCallback<D>;
 	/**
-	 * regenerate figure configuration
+	 * Regenerate figure configuration
 	 */
 	regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>>;
 	/**
-	 * create custom tooltip text
+	 * Create custom tooltip text
 	 */
-	createToolTipDataSource: Nullable<IndicatorCreateToolTipDataSourceCallback>;
+	createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback>;
 	/**
-	 * custom draw
+	 * Custom draw
 	 */
 	draw: Nullable<IndicatorDrawCallback<D>>;
 	/**
-	 * calculation result
+	 * Calculation result
 	 */
 	result: D[];
 }

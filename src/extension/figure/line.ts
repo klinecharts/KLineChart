@@ -22,7 +22,7 @@ function getDistance (coordinate1: Coordinate, coordinate2: Coordinate): number 
   return Math.sqrt(Math.pow(coordinate1.x + coordinate2.x, 2) + Math.pow(coordinate1.y + coordinate2.y, 2))
 }
 
-function getBezierCurveControlCoordinate (coordinates: Coordinate[]): Coordinate[] {
+function getSmoothControlCoordinate (coordinates: Coordinate[]): Coordinate[] {
   const d01 = getDistance(coordinates[0], coordinates[1])
   const d12 = getDistance(coordinates[1], coordinates[2])
   const d02 = d01 + d12
@@ -93,7 +93,7 @@ export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, style
   const { coordinates } = attrs
   const length = coordinates.length
   if (length > 1) {
-    const { style = LineType.SOLID, smooth = false, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
+    const { style = LineType.SOLID, smooth, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
     ctx.lineWidth = size
     ctx.strokeStyle = color
     if (style === LineType.DASHED) {
@@ -104,10 +104,10 @@ export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, style
     ctx.beginPath()
     ctx.moveTo(coordinates[0].x, coordinates[0].y)
 
-    if (smooth) {
+    if (smooth ?? false) {
       let controlCoordinates: Coordinate[] = []
       for (let i = 1; i < length - 1; i++) {
-        controlCoordinates = controlCoordinates.concat(getBezierCurveControlCoordinate([coordinates[i - 1], coordinates[i], coordinates[i + 1]]))
+        controlCoordinates = controlCoordinates.concat(getSmoothControlCoordinate([coordinates[i - 1], coordinates[i], coordinates[i + 1]]))
       }
       ctx.quadraticCurveTo(controlCoordinates[0].x, controlCoordinates[0].y, coordinates[1].x, coordinates[1].y)
       let i = 2

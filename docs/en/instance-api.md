@@ -256,7 +256,7 @@ Set load more callback function.
          defaultStyles: object
        ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
      }>,
-     createToolTipDataSource?: (params: object) => {
+     createTooltipDataSource?: (params: object) => {
        name?: string,
        calcParamsText?: string,
        values?: Array<{
@@ -345,7 +345,7 @@ chart.createTechnicalIndicator('MA', false, {
          defaultStyles: object
        ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
      }>,
-     createToolTipDataSource?: (params: object) => {
+     createTooltipDataSource?: (params: object) => {
        name?: string,
        calcParamsText?: string,
        values?: Array<{
@@ -375,7 +375,7 @@ Overlay technical indicator information.
    - `styles` styles
    - `calc` calculation method
    - `regenerateFigures` method to regenerate figure information
-   - `createToolTipDataSource` method to create custom tip information
+   - `createTooltipDataSource` method to create custom tip information
    - `draw` custom drawing method
 - `paneId` window id, default is set to all
 - `callback` success callback

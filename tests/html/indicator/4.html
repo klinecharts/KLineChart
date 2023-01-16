@@ -37,7 +37,7 @@ limitations under the License.
           calc: function (kLineDataList) {
             return kLineDataList.map(kLineData => ({ volume: kLineData.volume }))
           },
-          createToolTipDataSource: function (data) {
+          createTooltipDataSource: function (data) {
             return {
               name: 'TEST-Render',
               values: [{ title: 'VALUE: ', value: { text: data.crosshair.kLineData.volume, color: 'rgb(65, 20, 69)' } }]
