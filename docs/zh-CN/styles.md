@@ -1,6 +1,199 @@
 # 🎨 样式配置
 图表上看到的不管是点还是线，基本都可以自定义样式。可以通过图表方法`init(ds, options)`或者图表实例方法`setStyles(styles)`进行更改。
 
+## 图解说明
+[![Styles](/images/style.jpg)](/images/style.jpg)
+<div
+  style="display:flex;flex-direction:row;align-items:center;flex-wrap:wrap;">
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      1
+    </strong>
+    &nbsp;grid.horizontal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      2
+    </strong>
+    &nbsp;grid.vertical&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      3
+    </strong>
+    &nbsp;candle.bar&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      4
+    </strong>
+    &nbsp;candle.candle.priceMark.last.line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      5
+    </strong>
+    &nbsp;candle.candle.priceMark.last.text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      6
+    </strong>
+    &nbsp;candle.candle.priceMark.high&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      7
+    </strong>
+    &nbsp;candle.candle.priceMark.low&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      8
+    </strong>
+    &nbsp;candle.candle.tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      9
+    </strong>
+    &nbsp;indicator.ohlc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      10
+    </strong>
+    &nbsp;indicator.lastValueMark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      11
+    </strong>
+    &nbsp;indicator.tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      12
+    </strong>
+    &nbsp;xAxis.axisLine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      13
+    </strong>
+    &nbsp;xAxis.tickLine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      14
+    </strong>
+    &nbsp;xAxis.tickText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      15
+    </strong>
+    &nbsp;yAxis.axisLine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      16
+    </strong>
+    &nbsp;yAxis.tickLine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      17
+    </strong>
+    &nbsp;yAxis.tickText&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      18
+    </strong>
+    &nbsp;separator&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      19
+    </strong>
+    &nbsp;crosshair.horizontal.line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      20
+    </strong>
+    &nbsp;crosshair.horizontal.text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      21
+    </strong>
+    &nbsp;crosshair.vertical.line&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      22
+    </strong>
+    &nbsp;crosshair.vertical.text&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  <span
+    style="display:flex;flex-direction:row;justify-content:center;align-items:center;">
+    <strong align="center"
+      style="display:inline-block;width:16px;height:16px;border-radius:8px;background-color:#F01D1D;color:#fff;font-size:12px;line-height:16px">
+      23
+    </strong>
+    &nbsp;overlay
+  </span>
+</div>
+
+
+## 默认完整配置
+
 ```javascript
 {
   // 网格线
