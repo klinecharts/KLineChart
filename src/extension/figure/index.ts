@@ -34,7 +34,7 @@ function getSupportFigures (): string[] {
   return Object.keys(figures)
 }
 
-function reisterFigure<A = any, S = any> (figure: FigureTemplate<A, S>): void {
+function registerFigure<A = any, S = any> (figure: FigureTemplate<A, S>): void {
   figures[figure.name] = FigureImp.extend(figure)
 }
 
@@ -46,4 +46,4 @@ function getFigureClass<A = any, S = any> (name: string): Nullable<FigureConstru
   return figures[name] ?? null
 }
 
-export { getSupportFigures, getFigureClass, getInnerFigureClass, reisterFigure }
+export { getSupportFigures, getFigureClass, getInnerFigureClass, registerFigure }

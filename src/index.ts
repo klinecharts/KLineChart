@@ -26,7 +26,7 @@ import { checkCoordinateOnRect, drawRect } from './extension/figure/rect'
 import { drawRectText } from './extension/figure/rectText'
 import { checkCoordinateOnText, drawText } from './extension/figure/text'
 
-import { reisterFigure, getSupportFigures, getFigureClass } from './extension/figure/index'
+import { registerFigure, getSupportFigures, getFigureClass } from './extension/figure/index'
 import { registerIndicator, getSupportIndicators } from './extension/indicator/index'
 import { registerLocale, getSupportLocales } from './extension/i18n/index'
 import { registerOverlay, getSupportedOverlays } from './extension/overlay/index'
@@ -140,7 +140,7 @@ const utils = {
 
 export {
   version, init, dispose,
-  reisterFigure, getSupportFigures, getFigureClass,
+  registerFigure, getSupportFigures, getFigureClass,
   registerIndicator, getSupportIndicators,
   registerOverlay, getSupportedOverlays,
   registerLocale, getSupportLocales,
