@@ -16,10 +16,11 @@ import Nullable from '../../common/Nullable'
 import DeepPartial from '../../common/DeepPartial'
 import { Styles } from '../../common/Options'
 
+import light from './light'
 import dark from './dark'
 
 const styles: { [key: string]: DeepPartial<Styles> } = {
-  light: {},
+  light,
   dark
 }
 
