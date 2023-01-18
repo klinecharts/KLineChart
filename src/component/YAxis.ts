@@ -287,14 +287,14 @@ export default class YAxisImp extends AxisImp implements YAxis {
   getAutoSize (): number {
     const pane = this.getParent()
     const chart = pane.getChart()
-    const chartStore = chart.getChartStore()
-    const customApi = chartStore.getCustomApi()
     const styles = chart.getStyles()
     const yAxisStyles = styles.yAxis
     const width = yAxisStyles.size
     if (width !== 'auto') {
       return width
     }
+    const chartStore = chart.getChartStore()
+    const customApi = chartStore.getCustomApi()
     let yAxisWidth = 0
     if (yAxisStyles.show) {
       if (yAxisStyles.axisLine.show) {
@@ -411,11 +411,6 @@ export default class YAxisImp extends AxisImp implements YAxis {
     return this._innerConvertToPixel(this.convertToRealValue(value))
   }
 
-  /**
-   * 将值转换成坐标，即使坐标不在范围内，也会显示在顶部或者底部
-   * @param value
-   * @return {number}
-   */
   convertToNicePixel (value: number): number {
     const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
     const pixel = this.convertToPixel(value)
