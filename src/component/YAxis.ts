@@ -386,6 +386,14 @@ export default class YAxisImp extends AxisImp implements YAxis {
 
   convertToRealValue (value: number): number {
     let v = value
+    if (this.getType() === YAxisType.LOG) {
+      v = index10(value)
+    }
+    return v
+  }
+
+  convertToPixel (value: number): number {
+    let v = value
     switch (this.getType()) {
       case YAxisType.PERCENTAGE: {
         const chartStore = this.getParent().getChart().getChartStore()
@@ -404,11 +412,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
         v = value
       }
     }
-    return v
-  }
-
-  convertToPixel (value: number): number {
-    return this._innerConvertToPixel(this.convertToRealValue(value))
+    return this._innerConvertToPixel(v)
   }
 
   convertToNicePixel (value: number): number {

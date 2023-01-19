@@ -48,6 +48,7 @@ import { Overlay, OverlayCreate, OverlayRemove } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
 import { getOverlayClass } from './extension/overlay/index'
+import { getStyles as getExtensionStyles } from './extension/styles/index'
 
 export const enum DomPosition {
   ROOT = 'root',
@@ -409,6 +410,15 @@ export default class ChartImp implements Chart {
 
   setStyles (styles: string | DeepPartial<Styles>): void {
     this._chartStore.setOptions({ styles })
+    let realStyles: Nullable<DeepPartial<Styles>>
+    if (isString(styles)) {
+      realStyles = getExtensionStyles(styles as string)
+    } else {
+      realStyles = styles as DeepPartial<Styles>
+    }
+    if (realStyles?.yAxis?.type !== undefined) {
+      this.getPaneById(PaneIdConstants.CANDLE)?.getAxisComponent().setAutoCalcTickFlag(true)
+    }
     this.adjustPaneViewport(true, true, true, true, true)
   }
 
