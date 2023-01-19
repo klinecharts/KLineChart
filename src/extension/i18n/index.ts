@@ -23,7 +23,7 @@ const locales: { [key: string]: Locales } = {
 }
 
 function registerLocale (locale: string, ls: Locales): void {
-  locales[locale] = ls
+  locales[locale] = { ...locales[locale], ...ls }
 }
 
 function getSupportLocales (): string[] {
