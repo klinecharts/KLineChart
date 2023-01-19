@@ -352,6 +352,7 @@ export default class OverlayStore {
       updatePaneIds.forEach(paneId => {
         chart.updatePane(UpdateLevel.OVERLAY, paneId)
       })
+      chart.updatePane(UpdateLevel.OVERLAY, PaneIdConstants.XAXIS)
     }
   }
 

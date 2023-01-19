@@ -948,7 +948,7 @@ export interface TextAttrs {
 }
 declare function drawRectText(ctx: CanvasRenderingContext2D, attrs: TextAttrs, styles: Partial<RectTextStyle>): void;
 export declare function getSupportFigures(): string[];
-export declare function reisterFigure<A = any, S = any>(figure: FigureTemplate<A, S>): void;
+export declare function registerFigure<A = any, S = any>(figure: FigureTemplate<A, S>): void;
 export declare function getFigureClass<A = any, S = any>(name: string): Nullable<FigureConstructor<A, S>>;
 export declare function registerIndicator<D>(indicator: IndicatorTemplate<D>): void;
 export declare function getSupportIndicators(): string[];
