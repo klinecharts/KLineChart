@@ -21,7 +21,7 @@ const priceLine: OverlayTemplate = {
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding, precision, overlay }) => {
-    const { value } = (overlay.points)[0]
+    const { value = 0 } = (overlay.points)[0]
     return [
       {
         type: 'line',

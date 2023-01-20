@@ -13,7 +13,6 @@
  */
 
 import Nullable from '../common/Nullable'
-import PickPartial from '../common/PickPartial'
 import DeepPartial from '../common/DeepPartial'
 import ExcludePickPartial from '../common/ExcludePickPartial'
 import Point from '../common/Point'
@@ -40,9 +39,9 @@ export const enum OverlayMode {
 export interface OverlayPerformEventParams {
   currentStep: number
   mode: OverlayMode
-  points: Array<PickPartial<Point, 'timestamp'>>
+  points: Array<Partial<Point>>
   performPointIndex: number
-  performPoint: PickPartial<Point, 'timestamp'>
+  performPoint: Partial<Point>
 }
 
 export interface OverlayFigure {
@@ -127,7 +126,7 @@ export interface Overlay {
   /**
    * Time and value information
    */
-  points: Array<PickPartial<Point, 'timestamp'>>
+  points: Array<Partial<Point>>
 
   /**
    * Extended Data
@@ -249,7 +248,7 @@ export default abstract class OverlayImp implements Overlay {
   needDefaultYAxisFigure: boolean
   lock: boolean
   mode: OverlayMode
-  points: Array<PickPartial<Point, 'timestamp'>> = []
+  points: Array<Partial<Point>> = []
   extendData: any
   styles: Nullable<DeepPartial<OverlayStyle>>
   createPointFigures: Nullable<OverlayCreateFiguresCallback>
@@ -272,7 +271,7 @@ export default abstract class OverlayImp implements Overlay {
   onDeselected: Nullable<OverlayEventCallback>
 
   private _prevPressedPoint: Nullable<Partial<Point>> = null
-  private _prevPressedPoints: Array<PickPartial<Point, 'timestamp'>> = []
+  private _prevPressedPoints: Array<Partial<Point>> = []
 
   constructor (overlay: OverlayTemplate) {
     const {
@@ -294,7 +293,6 @@ export default abstract class OverlayImp implements Overlay {
     this.needDefaultXAxisFigure = needDefaultXAxisFigure ?? false
     this.needDefaultYAxisFigure = needDefaultYAxisFigure ?? false
     this.mode = mode ?? OverlayMode.NORMAL
-    this.points = []
     this.extendData = extendData
     this.styles = styles ?? null
     this.createPointFigures = createPointFigures ?? null
@@ -349,7 +347,7 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setPoints (points: Array<PickPartial<Point, 'timestamp'>>): boolean {
+  setPoints (points: Array<Partial<Point>>): boolean {
     if (points.length > 0) {
       let repeatTotalStep: number
       this.points = [...points]
@@ -524,10 +522,12 @@ export default abstract class OverlayImp implements Overlay {
 
   eventMoveForDrawing (point: Partial<Point>): void {
     const pointIndex = this.currentStep - 1
-    const newPoint: PickPartial<Point, 'timestamp'> = { dataIndex: -1, value: -1 }
+    const newPoint: Partial<Point> = {}
+    if (point.timestamp !== undefined) {
+      newPoint.timestamp = point.timestamp
+    }
     if (point.dataIndex !== undefined) {
       newPoint.dataIndex = point.dataIndex
-      newPoint.timestamp = point.timestamp
     }
     if (point.value !== undefined) {
       newPoint.value = point.value
@@ -579,11 +579,11 @@ export default abstract class OverlayImp implements Overlay {
           p.dataIndex = timeScaleStore.timestampToDataIndex(p.timestamp)
         }
         const newPoint = { ...p }
-        if (difDataIndex !== undefined) {
+        if (difDataIndex !== undefined && p.dataIndex !== undefined) {
           newPoint.dataIndex = p.dataIndex + difDataIndex
           newPoint.timestamp = timeScaleStore.dataIndexToTimestamp(newPoint.dataIndex) ?? undefined
         }
-        if (difValue !== undefined) {
+        if (difValue !== undefined && p.value !== undefined) {
           newPoint.value = p.value + difValue
         }
         return newPoint

@@ -328,10 +328,14 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (point.timestamp !== undefined) {
         dataIndex = timeScaleStore.timestampToDataIndex(point.timestamp)
       }
-      return {
-        x: xAxis?.convertToPixel(dataIndex) ?? 0,
-        y: yAxis?.convertToPixel(point.value) ?? 0
+      const coordinate = { x: 0, y: 0 }
+      if (dataIndex !== undefined) {
+        coordinate.x = xAxis?.convertToPixel(dataIndex) ?? 0
       }
+      if (point.value !== undefined) {
+        coordinate.y = yAxis?.convertToPixel(point.value) ?? 0
+      }
+      return coordinate
     })
     if (coordinates.length > 0) {
       const figures = new Array<OverlayFigure>().concat(

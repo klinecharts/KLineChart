@@ -87,11 +87,13 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
         x = bounding.width
       }
       coordinates.forEach((coordinate, index) => {
-        topY = Math.min(topY, coordinate.y)
-        bottomY = Math.max(bottomY, coordinate.y)
         const point = overlay.points[index]
-        const text = formatPrecision(point.value, precision.price)
-        figures.push({ type: 'rectText', attrs: { x, y: coordinate.y, text, align: textAlign, baseline: 'middle' }, ignoreEvent: true })
+        if (point.value !== undefined) {
+          topY = Math.min(topY, coordinate.y)
+          bottomY = Math.max(bottomY, coordinate.y)
+          const text = formatPrecision(point.value, precision.price)
+          figures.push({ type: 'rectText', attrs: { x, y: coordinate.y, text, align: textAlign, baseline: 'middle' }, ignoreEvent: true })
+        }
       })
       if (coordinates.length > 1) {
         figures.unshift({ type: 'rect', attrs: { x: 0, y: topY, width: bounding.width, height: bottomY - topY }, ignoreEvent: true })

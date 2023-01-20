@@ -51,7 +51,7 @@ const simpleTag: OverlayTemplate = {
         text = overlay.extendData(overlay)
       }
     }
-    if (!isValid(text)) {
+    if (!isValid(text) && overlay.points[0].value !== undefined) {
       text = formatPrecision(overlay.points[0].value, precision.price)
     }
     return { type: 'rectText', attrs: { x, y: coordinates[0].y, text: text ?? '', align: textAlign, baseline: 'middle' } }

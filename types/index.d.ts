@@ -522,7 +522,7 @@ export interface PaneGap {
 	bottom?: number;
 }
 export interface PaneOptions {
-	id: string;
+	id?: string;
 	height?: number;
 	minHeight?: number;
 	dragEnabled?: boolean;
@@ -661,20 +661,6 @@ export interface Indicator<D = any> {
 }
 export declare type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name" | "calc">;
 export declare type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name">;
-/**
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
-
- * http://www.apache.org/licenses/LICENSE-2.0
-
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-export declare type PickPartial<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 export declare const enum OverlayMode {
 	NORMAL = "normal",
 	WEAK_MAGNET = "weak_magnet",
@@ -683,9 +669,9 @@ export declare const enum OverlayMode {
 export interface OverlayPerformEventParams {
 	currentStep: number;
 	mode: OverlayMode;
-	points: Array<PickPartial<Point, "timestamp">>;
+	points: Array<Partial<Point>>;
 	performPointIndex: number;
-	performPoint: PickPartial<Point, "timestamp">;
+	performPoint: Partial<Point>;
 }
 export interface OverlayFigure {
 	key?: string;
@@ -754,7 +740,7 @@ export interface Overlay {
 	/**
 	 * Time and value information
 	 */
-	points: Array<PickPartial<Point, "timestamp">>;
+	points: Array<Partial<Point>>;
 	/**
 	 * Extended Data
 	 */
