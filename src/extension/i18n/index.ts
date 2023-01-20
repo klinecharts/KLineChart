@@ -26,7 +26,7 @@ function registerLocale (locale: string, ls: Locales): void {
   locales[locale] = { ...locales[locale], ...ls }
 }
 
-function getSupportLocales (): string[] {
+function getSupportedLocales (): string[] {
   return Object.keys(locales)
 }
 
@@ -34,4 +34,4 @@ function i18n (key: string, locale: string): string {
   return locales[locale]?.[key] ?? key
 }
 
-export { i18n, registerLocale, getSupportLocales }
+export { i18n, registerLocale, getSupportedLocales }

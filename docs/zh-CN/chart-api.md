@@ -49,7 +49,7 @@
 - `locale` 语言名
 - `locales` 语言配置
 
-## getSupportLocales()
+## getSupportedLocales()
 ```typescript
 () => string[]
 ```
@@ -81,7 +81,7 @@
   - `draw` 绘制方法
   - `checkEventOn` 检查事件是否在图形上
 
-## getSupportFigures()
+## getSupportedFigures()
 ```typescript
 () => string[]
 ```
@@ -164,7 +164,7 @@
   - `draw` 自定义绘制方法
 
 
-## getSupportIndicators()
+## getSupportedIndicators()
 ```typescript
 () => string[]
 ```
@@ -270,7 +270,7 @@
   - `onSelected` 选中事件
   - `onDeselected` 取消选中事件
 
-## getSupportOverlays()
+## getSupportedOverlays()
 ```typescript
 () => string[]
 ```

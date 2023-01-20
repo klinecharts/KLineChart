@@ -67,8 +67,8 @@ function getIndicatorClass (name: string): Nullable<IndicatorConstructor> {
   return indicators[name] ?? null
 }
 
-function getSupportIndicators (): string[] {
+function getSupportedIndicators (): string[] {
   return Object.keys(indicators)
 }
 
-export { registerIndicator, getIndicatorClass, getSupportIndicators }
+export { registerIndicator, getIndicatorClass, getSupportedIndicators }

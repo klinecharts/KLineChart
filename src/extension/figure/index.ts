@@ -30,7 +30,7 @@ extensions.forEach((figure: FigureTemplate) => {
   figures[figure.name] = FigureImp.extend(figure)
 })
 
-function getSupportFigures (): string[] {
+function getSupportedFigures (): string[] {
   return Object.keys(figures)
 }
 
@@ -46,4 +46,4 @@ function getFigureClass<A = any, S = any> (name: string): Nullable<FigureConstru
   return figures[name] ?? null
 }
 
-export { getSupportFigures, getFigureClass, getInnerFigureClass, registerFigure }
+export { getSupportedFigures, getFigureClass, getInnerFigureClass, registerFigure }

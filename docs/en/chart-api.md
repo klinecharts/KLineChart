@@ -49,7 +49,7 @@ Add a localization language. Charts have built-in `zh-CN` and `en-US`.
 - `locale` language name
 - `locales` language configuration
 
-## getSupportLocales()
+## getSupportedLocales()
 ```typescript
 () => string[]
 ```
@@ -80,7 +80,7 @@ Add a base shape.
    - `draw` drawing method
    - `checkEventOn` checks if the event is on the graph
 
-## getSupportFigures()
+## getSupportedFigures()
 ```typescript
 () => string[]
 ```
@@ -161,7 +161,7 @@ Add a technical indicator.
    - `draw` custom drawing method
 
 
-## getSupportIndicators()
+## getSupportedIndicators()
 ```typescript
 () => string[]
 ```
@@ -267,7 +267,7 @@ Add a overlay.
    - `onSelected` selected event
    - `onDeselected` deselected event
 
-## getSupportOverlays()
+## getSupportedOverlays()
 ```typescript
 () => string[]
 ```
