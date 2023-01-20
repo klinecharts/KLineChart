@@ -34,7 +34,7 @@ export interface PaneGap {
   bottom?: number
 }
 export interface PaneOptions {
-  id: string
+  id?: string
   height?: number
   minHeight?: number
   dragEnabled?: boolean

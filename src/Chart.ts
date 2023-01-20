@@ -263,7 +263,7 @@ export default class ChartImp implements Chart {
   }
 
   private _setPaneOptions (options: PaneOptions, forceShouldAdjust: boolean): void {
-    const pane = this._panes.get(options.id)
+    const pane = this._panes.get(options?.id ?? '')
     let shouldMeasureHeight = false
     if (pane !== undefined) {
       let shouldAdjust = forceShouldAdjust
@@ -548,7 +548,7 @@ export default class ChartImp implements Chart {
     }
 
     let paneId: string
-    if (paneOptions !== undefined && paneOptions !== null && this._panes.has(paneOptions.id)) {
+    if (paneOptions?.id !== undefined && this._panes.has(paneOptions.id)) {
       paneId = paneOptions.id
       this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).then(_ => {
         this._setPaneOptions(paneOptions, this._panes.get(paneId)?.getAxisComponent().buildTicks(true) ?? false)
