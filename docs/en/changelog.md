@@ -1,4 +1,12 @@
 # 📠 Change Log
+## 9.0.0-alpha6
+`2023-01-20`
++ 🆕 I18n supports incremental register.
++ 💄 Optimize some typescript input parameters.
++ 🐞 Fix the problem that switching from dark theme to light theme does not work.
++ 🐞 Fix the y-axis scaling roll problem.
++ 🐞 Fix the problem of covering deletion and chart refresh.
+
 
 ## 9.0.0-alpha5
 `2023-01-17`
