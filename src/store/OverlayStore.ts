@@ -14,7 +14,7 @@
 
 import Nullable from '../common/Nullable'
 import { UpdateLevel } from '../common/Updater'
-import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
+import { MouseTouchEvent } from '../common/SyntheticEvent'
 
 import { createId } from '../common/utils/id'
 
@@ -385,7 +385,7 @@ export default class OverlayStore {
 
   setClickInstanceInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
     const { paneId, instance, figureType, figureIndex } = this._clickInstanceInfo
-    if (info.instance?.isDrawing() ?? false) {
+    if (!(info.instance?.isDrawing() ?? false)) {
       info.instance?.onClick?.({ overlay: info.instance, ...event })
     }
     if (instance?.id !== info.instance?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {

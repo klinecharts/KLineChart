@@ -50,6 +50,8 @@ import { getIndicatorClass } from './extension/indicator/index'
 import { getOverlayClass } from './extension/overlay/index'
 import { getStyles as getExtensionStyles } from './extension/styles/index'
 
+import ChartEvent from './ChartEvent'
+
 export const enum DomPosition {
   ROOT = 'root',
   MAIN = 'main',
@@ -117,42 +119,14 @@ export interface Chart {
 export default class ChartImp implements Chart {
   private _container: HTMLElement
   private _chartContainer: HTMLElement
+  private readonly _chartEvent: ChartEvent
   private readonly _chartStore: ChartStore
   private readonly _xAxisPane: XAxisPane
   private readonly _panes: Map<string, IndicatorPane> = new Map()
 
-  private readonly _boundKeyBoardDownEvent: ((event: KeyboardEvent) => void) = (event: KeyboardEvent) => {
-    if (event.shiftKey) {
-      switch (event.code) {
-        case 'Equal': {
-          this._chartStore.getTimeScaleStore().zoom(0.5)
-          break
-        }
-        case 'Minus': {
-          this._chartStore.getTimeScaleStore().zoom(-0.5)
-          break
-        }
-        case 'ArrowLeft': {
-          const timeScaleStore = this._chartStore.getTimeScaleStore()
-          timeScaleStore.startScroll()
-          timeScaleStore.scroll(-3 * timeScaleStore.getBarSpace().bar)
-          break
-        }
-        case 'ArrowRight': {
-          const timeScaleStore = this._chartStore.getTimeScaleStore()
-          timeScaleStore.startScroll()
-          timeScaleStore.scroll(3 * timeScaleStore.getBarSpace().bar)
-          break
-        }
-        default: {
-          break
-        }
-      }
-    }
-  }
-
   constructor (container: HTMLElement, options?: Options) {
     this._initContainer(container)
+    this._chartEvent = new ChartEvent(this._chartContainer, this)
     this._chartStore = new ChartStore(this, options)
     this._xAxisPane = new XAxisPane(this._chartContainer, this, PaneIdConstants.XAXIS)
     this._panes.set(PaneIdConstants.CANDLE, new CandlePane(this._chartContainer, this, PaneIdConstants.CANDLE))
@@ -176,7 +150,6 @@ export default class ChartImp implements Chart {
       webkitTapHighlightColor: 'transparent'
     })
     this._chartContainer.tabIndex = 1
-    this._chartContainer.addEventListener('keydown', this._boundKeyBoardDownEvent)
     container.appendChild(this._chartContainer)
   }
 
@@ -284,6 +257,8 @@ export default class ChartImp implements Chart {
   getContainer (): HTMLElement { return this._container }
 
   getChartStore (): ChartStore { return this._chartStore }
+
+  getAllPanes (): Map<string, IndicatorPane> { return this._panes }
 
   adjustPaneViewport (
     shouldMeasureHeight: boolean,
@@ -849,7 +824,7 @@ export default class ChartImp implements Chart {
   }
 
   destroy (): void {
-    this._chartContainer.removeEventListener('keydown', this._boundKeyBoardDownEvent)
+    this._chartEvent.destroy()
     this._panes.forEach(pane => {
       pane.destroy()
     })

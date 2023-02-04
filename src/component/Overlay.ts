@@ -21,7 +21,7 @@ import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { OverlayStyle } from '../common/Options'
-import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
+import { MouseTouchEvent } from '../common/SyntheticEvent'
 
 import { clone } from '../common/utils/typeChecks'
 

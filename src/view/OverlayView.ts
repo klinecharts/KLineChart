@@ -19,8 +19,7 @@ import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { OverlayStyle, CustomApi } from '../common/Options'
-import { ElementEventHandler } from '../common/Element'
-import { MouseTouchEvent } from '../common/MouseTouchEventHandler'
+import { EventHandler, EventName, MouseTouchEvent } from '../common/SyntheticEvent'
 
 import Axis from '../component/Axis'
 import XAxis from '../component/XAxis'
@@ -68,7 +67,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         paneId, instance: null, figureType: EventOverlayInfoFigureType.NONE, figureIndex: -1, attrsIndex: -1
       }, event)
       return false
-    }).registerEvent('touchMouseDownEvent', (event: MouseTouchEvent) => {
+    }).registerEvent('mouseDownEvent', (event: MouseTouchEvent) => {
       const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
       if (progressInstanceInfo !== null) {
         const overlay = progressInstanceInfo.instance
@@ -84,7 +83,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             overlay.onDrawEnd?.({ overlay, ...event })
           }
         }
-        return this._figureTouchMouseDownEvent(
+        return this._figureMouseDownEvent(
           overlay,
           EventOverlayInfoFigureType.POINT,
           overlay.points.length - 1,
@@ -109,7 +108,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         }
       }
       return false
-    }).registerEvent('touchMouseUpEvent', (event: MouseTouchEvent) => {
+    }).registerEvent('mouseUpEvent', (event: MouseTouchEvent) => {
       const { instance } = overlayStore.getPressedInstanceInfo()
       if (instance !== null) {
         instance.onPressedMoveEnd?.({ overlay: instance, ...event })
@@ -118,7 +117,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         paneId, instance: null, figureType: EventOverlayInfoFigureType.NONE, figureIndex: -1, attrsIndex: -1
       })
       return false
-    }).registerEvent('pressedTouchMouseMoveEvent', (event: MouseTouchEvent) => {
+    }).registerEvent('pressedMouseMoveEvent', (event: MouseTouchEvent) => {
       const { instance, figureType, figureIndex } = overlayStore.getPressedInstanceInfo()
       if (instance !== null) {
         if (!instance.lock) {
@@ -137,11 +136,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     })
   }
 
-  private _figureEvents (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number): ElementEventHandler | undefined {
+  private _figureEvents (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number): EventHandler | undefined {
     if (!overlay.isDrawing()) {
       return {
         mouseMoveEvent: this._figureMouseMoveEvent(overlay, figureType, figureIndex, attrsIndex),
-        touchMouseDownEvent: this._figureTouchMouseDownEvent(overlay, figureType, figureIndex, attrsIndex),
+        mouseDownEvent: this._figureMouseDownEvent(overlay, figureType, figureIndex, attrsIndex),
         mouseRightClickEvent: this._figureMouseRightClickEvent(overlay, figureType, figureIndex, attrsIndex)
       }
     }
@@ -158,7 +157,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  private _figureTouchMouseDownEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number) {
+  private _figureMouseDownEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number) {
     return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
@@ -257,11 +256,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return true
   }
 
-  dispatchEvent (type: string, coordinate: Coordinate): boolean {
+  dispatchEvent (name: EventName, event: MouseTouchEvent, other?: number): boolean {
     if (this.getWidget().getPane().getChart().getChartStore().getOverlayStore().isDrawing()) {
-      return this.onEvent(type, coordinate)
+      return this.onEvent(name, event, other)
     }
-    return super.dispatchEvent(type, coordinate)
+    return super.dispatchEvent(name, event, other)
   }
 
   checkEventOn (coordinate: Coordinate): boolean {

@@ -12,11 +12,6 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import Coordinate from '../common/Coordinate'
-import { UpdateLevel } from '../common/Updater'
-import { EventOptions, MouseTouchEvent } from '../common/MouseTouchEventHandler'
-
 import Pane from '../pane/Pane'
 
 import DrawWidget from './DrawWidget'
@@ -32,86 +27,14 @@ export default class XAxisWidget extends DrawWidget<XAxis> {
   private readonly _overlayXAxisView = new OverlayXAxisView(this)
   private readonly _crosshairVerticalLabelView = new CrosshairVerticalLabelView(this)
 
-  private _startScaleCoordinate: Nullable<Coordinate> = null
-  private _startScaleDistance = 0
-  private _scale = 1
-
   constructor (rootContainer: HTMLElement, pane: Pane<XAxis>) {
     super(rootContainer, pane)
-    this.getEventContainer().style.cursor = 'ew-resize'
+    this.getContainer().style.cursor = 'ew-resize'
+    this.addChild(this._overlayXAxisView)
   }
 
-  mouseUpEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('touchMoseUpEvent', event)) {
-      const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY)
-    }
-    this._startScaleCoordinate = null
-    this._startScaleDistance = 0
-    this._scale = 1
-  }
-
-  mouseMoveEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('mouseMoveEvent', event)) {
-      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
-    }
-  }
-
-  mouseDownEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('touchMouseDownEvent', event)) {
-      const pane = this.getPane()
-      pane.getChart().updatePane(UpdateLevel.OVERLAY)
-    }
-    this._startScaleCoordinate = { x: event.x, y: event.y }
-    this._startScaleDistance = event.x
-  }
-
-  mouseRightClickEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('mouseRightClickEvent', event)) {
-      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
-    }
-  }
-
-  pressedMouseMoveEvent (event: MouseTouchEvent): void {
-    const pane = this.getPane()
-    const chart = pane.getChart()
-    if (!this.dispatchEvent('pressedTouchMouseMoveEvent', event)) {
-      const bounding = this.getBounding()
-      if (event.x > 0 && event.x < bounding.width && event.y > 0 && event.y < bounding.height) {
-        const scale = this._startScaleDistance / event.x
-        const zoomScale = (scale - this._scale) * 10
-        this._scale = scale
-        chart.getChartStore().getTimeScaleStore().zoom(zoomScale, this._startScaleCoordinate ?? undefined)
-      }
-    } else {
-      chart.updatePane(UpdateLevel.OVERLAY)
-    }
-  }
-
-  touchStartEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('touchMouseDownEvent', event)) {
-      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
-    }
-  }
-
-  touchMoveEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('pressedTouchMouseMoveEvent', event)) {
-      event.preventDefault()
-      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
-    }
-  }
-
-  touchEndEvent (event: MouseTouchEvent): void {
-    if (this.dispatchEvent('touchMouseUpEvent', event)) {
-      this.getPane().getChart().updatePane(UpdateLevel.OVERLAY)
-    }
-  }
-
-  protected getEventOptions (): EventOptions {
-    return {
-      treatVertTouchDragAsPageScroll: () => true,
-      treatHorzTouchDragAsPageScroll: () => false
-    }
+  getName (): string {
+    return 'xAxis'
   }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {

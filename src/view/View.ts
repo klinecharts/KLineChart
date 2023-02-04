@@ -13,8 +13,8 @@
  */
 
 import Nullable from '../common/Nullable'
-import { ElementEventHandler } from '../common/Element'
-import ElementGroup from '../common/ElementGroup'
+import { EventHandler, EventName } from '../common/SyntheticEvent'
+import Eventful from '../common/Eventful'
 
 import Figure from '../component/Figure'
 import { getInnerFigureClass } from '../extension/figure/index'
@@ -23,7 +23,7 @@ import Axis from '../component/Axis'
 
 import Widget from '../widget/Widget'
 
-export default abstract class View<C extends Axis = Axis> extends ElementGroup {
+export default abstract class View<C extends Axis = Axis> extends Eventful {
   /**
    * Parent widget
    */
@@ -36,7 +36,7 @@ export default abstract class View<C extends Axis = Axis> extends ElementGroup {
 
   getWidget (): Widget<C> { return this._widget }
 
-  protected createFigure (name: string, attrs: any, styles: any, eventHandler?: ElementEventHandler): Nullable<Figure> {
+  protected createFigure (name: string, attrs: any, styles: any, eventHandler?: EventHandler): Nullable<Figure> {
     const FigureClazz = getInnerFigureClass(name)
     if (FigureClazz !== null) {
       const figure = new FigureClazz({ name, attrs, styles })
@@ -44,10 +44,10 @@ export default abstract class View<C extends Axis = Axis> extends ElementGroup {
         for (const key in eventHandler) {
           // eslint-disable-next-line no-prototype-builtins
           if (eventHandler.hasOwnProperty(key)) {
-            figure.registerEvent(key, eventHandler[key])
+            figure.registerEvent(key as EventName, eventHandler[key])
           }
         }
-        this.addElement(figure)
+        this.addChild(figure)
       }
       return figure
     }

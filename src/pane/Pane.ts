@@ -23,7 +23,7 @@ import DrawWidget from '../widget/DrawWidget'
 import SeparatorWidget from '../widget/SeparatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 
-import ChartInternal from '../Chart'
+import Chart from '../Chart'
 
 import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
@@ -51,11 +51,11 @@ export const PaneIdConstants = {
   XAXIS: 'xaxis_pane'
 }
 
-export default abstract class Pane<C extends Axis> implements Updater {
+export default abstract class Pane<C extends Axis = Axis> implements Updater {
   private _container: HTMLElement
   private _seriesContiainer: HTMLElement
   private readonly _id: string
-  private readonly _chart: ChartInternal
+  private readonly _chart: Chart
   private _mainWidget: DrawWidget<C>
   private _yAxisWidget: Nullable<YAxisWidget> = null
   private _separatorWidget: Nullable<SeparatorWidget> = null
@@ -63,12 +63,12 @@ export default abstract class Pane<C extends Axis> implements Updater {
 
   private readonly _bounding: Bounding = getDefaultBounding()
 
-  private _topPane: Nullable<Pane<Axis>>
-  private _bottomPane: Nullable<Pane<Axis>>
+  private _topPane: Nullable<Pane>
+  private _bottomPane: Nullable<Pane>
 
   private readonly _options: DeepRequired<Omit<PaneOptions, 'id' | 'height'>> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 } }
 
-  constructor (rootContainer: HTMLElement, chart: ChartInternal, id: string, topPane?: Pane<Axis>, bottomPane?: Pane<Axis>) {
+  constructor (rootContainer: HTMLElement, chart: Chart, id: string, topPane?: Pane, bottomPane?: Pane) {
     this._chart = chart
     this._id = id
     this._topPane = topPane ?? null
@@ -112,7 +112,7 @@ export default abstract class Pane<C extends Axis> implements Updater {
 
   getOptions (): DeepRequired<Omit<PaneOptions, 'id' | 'height'>> { return this._options }
 
-  getChart (): ChartInternal {
+  getChart (): Chart {
     return this._chart
   }
 
@@ -122,9 +122,15 @@ export default abstract class Pane<C extends Axis> implements Updater {
 
   setBounding (rootBounding: Partial<Bounding>, mainBounding?: Partial<Bounding>, yAxisBounding?: Partial<Bounding>): Pane<C> {
     merge(this._bounding, rootBounding)
-    if (rootBounding.height !== undefined) {
+    if (this._separatorWidget !== null) {
       const separatorSize = this.getChart().getStyles().separator.size
-      const contentBounding: Partial<Bounding> = { height: rootBounding.height - separatorSize }
+      const contentBounding: Partial<Bounding> = {}
+      if (rootBounding.height !== undefined) {
+        contentBounding.height = rootBounding.height - separatorSize
+      }
+      if (rootBounding.top !== undefined) {
+        contentBounding.top = rootBounding.top + separatorSize
+      }
       this._mainWidget.setBounding(contentBounding)
       this._yAxisWidget?.setBounding(contentBounding)
     }
@@ -138,20 +144,20 @@ export default abstract class Pane<C extends Axis> implements Updater {
     return this
   }
 
-  getTopPane (): Nullable<Pane<Axis>> {
+  getTopPane (): Nullable<Pane> {
     return this._topPane
   }
 
-  setTopPane (pane: Nullable<Pane<Axis>>): Pane<C> {
+  setTopPane (pane: Nullable<Pane>): Pane<C> {
     this._topPane = pane
     return this
   }
 
-  getBottomPane (): Nullable<Pane<Axis>> {
+  getBottomPane (): Nullable<Pane> {
     return this._bottomPane
   }
 
-  setBottomPane (pane: Nullable<Pane<Axis>>): Pane<C> {
+  setBottomPane (pane: Nullable<Pane>): Pane<C> {
     this._bottomPane = pane
     return this
   }

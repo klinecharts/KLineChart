@@ -482,25 +482,11 @@ export interface BarSpace {
  * limitations under the License.
  */
 export declare type ExcludePickPartial<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
-export declare type EmptyCallback = () => void;
-export interface MouseTouchEvent {
-	readonly clientX: number;
-	readonly clientY: number;
-	readonly pageX: number;
-	readonly pageY: number;
-	readonly screenX: number;
-	readonly screenY: number;
-	readonly x: number;
-	readonly y: number;
-	readonly ctrlKey: boolean;
-	readonly altKey: boolean;
-	readonly shiftKey: boolean;
-	readonly metaKey: boolean;
-	readonly srcType: string;
-	readonly isTouch: boolean;
-	target: MouseEvent["target"];
-	view: MouseEvent["view"];
-	preventDefault: EmptyCallback;
+export interface MouseTouchEvent extends Coordinate {
+	pageX: number;
+	pageY: number;
+	isTouch?: boolean;
+	preventDefault?: () => void;
 }
 export interface Figure<A = any, S = any> {
 	name: string;
@@ -933,13 +919,13 @@ export interface TextAttrs {
 	baseline?: CanvasTextBaseline;
 }
 declare function drawRectText(ctx: CanvasRenderingContext2D, attrs: TextAttrs, styles: Partial<RectTextStyle>): void;
-export declare function getSupportFigures(): string[];
+export declare function getSupportedFigures(): string[];
 export declare function registerFigure<A = any, S = any>(figure: FigureTemplate<A, S>): void;
 export declare function getFigureClass<A = any, S = any>(name: string): Nullable<FigureConstructor<A, S>>;
 export declare function registerIndicator<D>(indicator: IndicatorTemplate<D>): void;
-export declare function getSupportIndicators(): string[];
+export declare function getSupportedIndicators(): string[];
 export declare function registerLocale(locale: string, ls: Locales): void;
-export declare function getSupportLocales(): string[];
+export declare function getSupportedLocales(): string[];
 export declare function registerOverlay(template: OverlayTemplate): void;
 export declare function getSupportedOverlays(): string[];
 export declare function registerStyles(name: string, ss: DeepPartial<Styles>): void;

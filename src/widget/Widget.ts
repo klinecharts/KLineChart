@@ -14,8 +14,7 @@
 
 import Bounding, { getDefaultBounding } from '../common/Bounding'
 import Updater, { UpdateLevel } from '../common/Updater'
-import ElementGroup from '../common/ElementGroup'
-import MouseTouchEventHandler, { EventOptions, EventHandler } from '../common/MouseTouchEventHandler'
+import Eventful from '../common/Eventful'
 
 import Axis from '../component/Axis'
 
@@ -23,7 +22,7 @@ import Pane from '../pane/Pane'
 
 import { createDom } from '../common/utils/dom'
 import { merge } from '../common/utils/typeChecks'
-export default abstract class Widget<C extends Axis> extends ElementGroup implements Updater {
+export default abstract class Widget<C extends Axis = Axis> extends Eventful implements Updater {
   /**
    * Parent pane
    */
@@ -33,8 +32,6 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
    * Root dom container
    */
   private _container: HTMLElement
-
-  private _event: MouseTouchEventHandler
 
   private readonly _bounding: Bounding = getDefaultBounding()
 
@@ -57,7 +54,6 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
       rootContainer.appendChild(this._container)
     }
     this.initDom(this._container)
-    this._event = new MouseTouchEventHandler(this.getEventContainer(), this as EventHandler, this.getEventOptions())
   }
 
   setBounding (bounding: Partial<Bounding>): Widget<C> {
@@ -66,15 +62,6 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
   }
 
   getContainer (): HTMLElement { return this._container }
-
-  protected getEventContainer (): HTMLElement { return this._container }
-
-  protected getEventOptions (): EventOptions {
-    return {
-      treatVertTouchDragAsPageScroll: () => false,
-      treatHorzTouchDragAsPageScroll: () => false
-    }
-  }
 
   getBounding (): Bounding {
     return this._bounding
@@ -87,6 +74,8 @@ export default abstract class Widget<C extends Axis> extends ElementGroup implem
   update (level: UpdateLevel): void {
     this.updateImp(level, this._container, this._bounding)
   }
+
+  abstract getName (): string
 
   protected insertBefore (): boolean { return false }
 

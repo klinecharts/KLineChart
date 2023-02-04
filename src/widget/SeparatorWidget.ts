@@ -14,7 +14,7 @@
 
 import Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
-import { EventOptions, MouseTouchEvent } from '../common/MouseTouchEventHandler'
+import { MouseTouchEvent } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
 
 import Axis from '../component/Axis'
@@ -36,15 +36,20 @@ export default class SeparatorWidget extends Widget<YAxis> {
   private _topPaneHeight = 0
   private _currentPaneHeight = 0
 
-  protected getEventContainer (): HTMLElement {
-    return this._moveDom
+  constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
+    super(rootContainer, pane)
+    this.registerEvent('touchStartEvent', this.touchStartEvent.bind(this))
+      .registerEvent('touchMoveEvent', this.touchMoveEvent.bind(this))
+      .registerEvent('touchEndEvent', this.touchEndEvent.bind(this))
+      .registerEvent('mouseDownEvent', this.mouseDownEvent.bind(this))
+      .registerEvent('mouseUpEvent', this.mouseUpEvent.bind(this))
+      .registerEvent('pressedMouseMoveEvent', this.pressedMouseMoveEvent.bind(this))
+      .registerEvent('mouseEnterEvent', this.mouseEnterEvent.bind(this))
+      .registerEvent('mouseLeaveEvent', this.mouseLeaveEvent.bind(this))
   }
 
-  protected getEventOptions (): EventOptions {
-    return {
-      treatVertTouchDragAsPageScroll: () => false,
-      treatHorzTouchDragAsPageScroll: () => true
-    }
+  getName (): string {
+    return 'separator'
   }
 
   touchStartEvent (event: MouseTouchEvent): void {
@@ -59,7 +64,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
 
   mouseDownEvent (event: MouseTouchEvent): void {
     this._dragFlag = true
-    this._dragStartY = event.pageY
+    this._dragStartY = event.pageY ?? 0
     const pane = this.getPane()
     this._topPaneHeight = pane.getTopPane()?.getBounding().height ?? 0
     this._currentPaneHeight = pane.getBounding().height
@@ -73,7 +78,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
   pressedMouseMoveEvent = throttle(this._pressedTouchMouseMoveEvent, 20)
 
   private _pressedTouchMouseMoveEvent (event: MouseTouchEvent): void {
-    const dragDistance = event.pageY - this._dragStartY
+    const dragDistance = event.pageY ?? this._dragStartY - this._dragStartY
     const currentPane = this.getPane()
     const topPane = currentPane.getTopPane()
     const isUpDrag = dragDistance < 0

@@ -13,7 +13,9 @@
  */
 
 import Coordinate from '../common/Coordinate'
-import Element from '../common/Element'
+
+import Eventful from '../common/Eventful'
+import { MouseTouchEvent } from '../common/SyntheticEvent'
 
 export const DEVIATION = 2
 
@@ -33,7 +35,7 @@ export type FigureInnerConstructor<A = any, S = any> = new (figure: FigureCreate
 
 export type FigureConstructor<A = any, S = any> = new (figure: FigureCreate<A, S>) => ({ draw: (ctx: CanvasRenderingContext2D) => void })
 
-export default abstract class FigureImp<A = any, S = any> extends Element implements Omit<Figure<A, S>, 'name' | 'draw' | 'checkEventOn'> {
+export default abstract class FigureImp<A = any, S = any> extends Eventful implements Omit<Figure<A, S>, 'name' | 'draw' | 'checkEventOn'> {
   readonly attrs: A
   readonly styles: S
 
@@ -43,15 +45,15 @@ export default abstract class FigureImp<A = any, S = any> extends Element implem
     this.styles = figure.styles
   }
 
-  checkEventOn (coordinate: Coordinate): boolean {
-    return this.checkEventOnImp(coordinate, this.attrs, this.styles)
+  checkEventOn (event: MouseTouchEvent): boolean {
+    return this.checkEventOnImp(event, this.attrs, this.styles)
   }
 
   draw (ctx: CanvasRenderingContext2D): void {
     this.drawImp(ctx, this.attrs, this.styles)
   }
 
-  abstract checkEventOnImp (coordinate: Coordinate, attrs: A, styles: S): boolean
+  abstract checkEventOnImp (event: MouseTouchEvent, attrs: A, styles: S): boolean
 
   abstract drawImp (ctx: CanvasRenderingContext2D, attrs: A, styles: S): void
 
