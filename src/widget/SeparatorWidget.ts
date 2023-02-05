@@ -27,6 +27,8 @@ import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
 import { throttle } from '../common/utils/performance'
 
+export const REAL_SEPARATOR_HEIGHT = 7
+
 export default class SeparatorWidget extends Widget<YAxis> {
   private _moveDom: HTMLElement
 
@@ -38,47 +40,42 @@ export default class SeparatorWidget extends Widget<YAxis> {
 
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
     super(rootContainer, pane)
-    this.registerEvent('touchStartEvent', this.touchStartEvent.bind(this))
-      .registerEvent('touchMoveEvent', this.touchMoveEvent.bind(this))
-      .registerEvent('touchEndEvent', this.touchEndEvent.bind(this))
-      .registerEvent('mouseDownEvent', this.mouseDownEvent.bind(this))
-      .registerEvent('mouseUpEvent', this.mouseUpEvent.bind(this))
-      .registerEvent('pressedMouseMoveEvent', this.pressedMouseMoveEvent.bind(this))
-      .registerEvent('mouseEnterEvent', this.mouseEnterEvent.bind(this))
-      .registerEvent('mouseLeaveEvent', this.mouseLeaveEvent.bind(this))
+    this.registerEvent('touchStartEvent', this._mouseDownEvent.bind(this))
+      .registerEvent('touchMoveEvent', this._pressedMouseMoveEvent.bind(this))
+      .registerEvent('touchEndEvent', this._mouseUpEvent.bind(this))
+      .registerEvent('mouseDownEvent', this._mouseDownEvent.bind(this))
+      .registerEvent('mouseUpEvent', this._mouseUpEvent.bind(this))
+      .registerEvent('pressedMouseMoveEvent', this._pressedMouseMoveEvent.bind(this))
+      .registerEvent('mouseEnterEvent', this._mouseEnterEvent.bind(this))
+      .registerEvent('mouseLeaveEvent', this._mouseLeaveEvent.bind(this))
   }
 
   getName (): string {
     return 'separator'
   }
 
-  touchStartEvent (event: MouseTouchEvent): void {
-    this.mouseDownEvent(event)
+  checkEventOn (): boolean {
+    return true
   }
 
-  touchMoveEvent = throttle(this._pressedTouchMouseMoveEvent, 20)
-
-  touchEndEvent (): void {
-    this.mouseUpEvent()
-  }
-
-  mouseDownEvent (event: MouseTouchEvent): void {
+  private _mouseDownEvent (event: MouseTouchEvent): boolean {
     this._dragFlag = true
-    this._dragStartY = event.pageY ?? 0
+    this._dragStartY = event.pageY
     const pane = this.getPane()
     this._topPaneHeight = pane.getTopPane()?.getBounding().height ?? 0
     this._currentPaneHeight = pane.getBounding().height
+    return true
   }
 
-  mouseUpEvent (): void {
-    this.mouseLeaveEvent()
+  private _mouseUpEvent (): boolean {
     this._dragFlag = false
+    return this._mouseLeaveEvent()
   }
 
-  pressedMouseMoveEvent = throttle(this._pressedTouchMouseMoveEvent, 20)
+  private readonly _pressedMouseMoveEvent = throttle(this._pressedTouchMouseMoveEvent, 20)
 
-  private _pressedTouchMouseMoveEvent (event: MouseTouchEvent): void {
-    const dragDistance = event.pageY ?? this._dragStartY - this._dragStartY
+  private _pressedTouchMouseMoveEvent (event: MouseTouchEvent): boolean {
+    const dragDistance = event.pageY - this._dragStartY
     const currentPane = this.getPane()
     const topPane = currentPane.getTopPane()
     const isUpDrag = dragDistance < 0
@@ -106,28 +103,33 @@ export default class SeparatorWidget extends Widget<YAxis> {
         increasedPane.setBounding({ height: startDragIncreasedPaneHeight + diffHeight })
         const chart = currentPane.getChart()
         chart.getChartStore().getActionStore().execute(ActionType.onPaneDrag, { paneId: currentPane.getId })
-        chart.adjustPaneViewport(false, true, true, true, true)
+        chart.adjustPaneViewport(true, true, true, true, true)
       }
     }
+    return true
   }
 
-  mouseEnterEvent (): void {
+  private _mouseEnterEvent (): boolean {
     const pane = this.getPane()
     if (pane.getOptions().dragEnabled) {
       const chart = pane.getChart()
-      const separatorOptions = chart.getStyles().separator
-      this._moveDom.style.background = separatorOptions.activeBackgroundColor
+      const styles = chart.getStyles().separator
+      this._moveDom.style.background = styles.activeBackgroundColor
       const chartStore = chart.getChartStore()
       chartStore.setDragPaneFlag(true)
       chartStore.getCrosshairStore().set()
+      return true
     }
+    return false
   }
 
-  mouseLeaveEvent (): void {
+  private _mouseLeaveEvent (): boolean {
     if (!this._dragFlag) {
       this._moveDom.style.background = ''
       this.getPane().getChart().getChartStore().setDragPaneFlag(false)
+      return true
     }
+    return false
   }
 
   protected getContainerStyle (): Partial<CSSStyleDeclaration> {
@@ -144,7 +146,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
   protected initDom (container: HTMLElement): void {
     this._moveDom = createDom('div', {
       width: '100%',
-      height: '7px',
+      height: `${REAL_SEPARATOR_HEIGHT}px`,
       margin: '0',
       padding: '0',
       position: 'absolute',
@@ -158,20 +160,21 @@ export default class SeparatorWidget extends Widget<YAxis> {
 
   protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
     if (level === UpdateLevel.ALL || level === UpdateLevel.SEPARATOR) {
-      const separatorStyles = this.getPane().getChart().getStyles().separator
-      this._moveDom.style.top = `${-Math.floor((7 - separatorStyles.size) / 2)}px`
-      const fill = separatorStyles.fill
-      container.style.backgroundColor = separatorStyles.color
-      container.style.height = `${separatorStyles.size}px`
+      const styles = this.getPane().getChart().getStyles().separator
+      this._moveDom.style.top = `${-Math.floor((REAL_SEPARATOR_HEIGHT - styles.size) / 2)}px`
+      this._moveDom.style.height = `${REAL_SEPARATOR_HEIGHT}px`
+      const fill = styles.fill
+      container.style.backgroundColor = styles.color
+      container.style.height = `${styles.size}px`
       container.style.marginLeft = `${fill ? 0 : bounding.left}px`
       container.style.width = fill ? '100%' : `${bounding.width}px`
     }
   }
 
   getImage (): HTMLCanvasElement {
-    const separatorStyles = this.getPane().getChart().getStyles().separator
+    const styles = this.getPane().getChart().getStyles().separator
     const width = this.getContainer().offsetWidth
-    const height = separatorStyles.size
+    const height = styles.size
     const canvas = createDom('canvas', {
       width: `${width}px`,
       height: `${height}px`,
@@ -182,7 +185,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
     canvas.width = width * pixelRatio
     canvas.height = height * pixelRatio
     ctx.scale(pixelRatio, pixelRatio)
-    ctx.fillStyle = separatorStyles.color
+    ctx.fillStyle = styles.color
     ctx.fillRect(this.getBounding().left, 0, width, height)
     return canvas
   }

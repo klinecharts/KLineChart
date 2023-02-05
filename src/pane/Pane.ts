@@ -20,7 +20,7 @@ import Bounding, { getDefaultBounding } from '../common/Bounding'
 import Axis from '../component/Axis'
 
 import DrawWidget from '../widget/DrawWidget'
-import SeparatorWidget from '../widget/SeparatorWidget'
+import SeparatorWidget, { REAL_SEPARATOR_HEIGHT } from '../widget/SeparatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 
 import Chart from '../Chart'
@@ -122,18 +122,24 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
 
   setBounding (rootBounding: Partial<Bounding>, mainBounding?: Partial<Bounding>, yAxisBounding?: Partial<Bounding>): Pane<C> {
     merge(this._bounding, rootBounding)
+    let separatorSize = 0
     if (this._separatorWidget !== null) {
-      const separatorSize = this.getChart().getStyles().separator.size
-      const contentBounding: Partial<Bounding> = {}
-      if (rootBounding.height !== undefined) {
-        contentBounding.height = rootBounding.height - separatorSize
-      }
+      separatorSize = this._chart.getStyles().separator.size
+      const separatorBounding: Partial<Bounding> = { ...rootBounding, height: REAL_SEPARATOR_HEIGHT }
       if (rootBounding.top !== undefined) {
-        contentBounding.top = rootBounding.top + separatorSize
+        separatorBounding.top = rootBounding.top - Math.floor((REAL_SEPARATOR_HEIGHT - separatorSize) / 2)
       }
-      this._mainWidget.setBounding(contentBounding)
-      this._yAxisWidget?.setBounding(contentBounding)
+      this._separatorWidget.setBounding(separatorBounding)
     }
+    const contentBounding: Partial<Bounding> = {}
+    if (rootBounding.height !== undefined) {
+      contentBounding.height = rootBounding.height - separatorSize
+    }
+    if (rootBounding.top !== undefined) {
+      contentBounding.top = rootBounding.top + separatorSize
+    }
+    this._mainWidget.setBounding(contentBounding)
+    this._yAxisWidget?.setBounding(contentBounding)
     if (mainBounding !== undefined) {
       this._mainWidget.setBounding(mainBounding)
       this._separatorWidget?.setBounding(mainBounding)

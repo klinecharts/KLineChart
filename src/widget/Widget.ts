@@ -22,6 +22,7 @@ import Pane from '../pane/Pane'
 
 import { createDom } from '../common/utils/dom'
 import { merge } from '../common/utils/typeChecks'
+
 export default abstract class Widget<C extends Axis = Axis> extends Eventful implements Updater {
   /**
    * Parent pane
