@@ -14,6 +14,7 @@
 
 import Pane from '../pane/Pane'
 
+import { WidgetNameConstants } from './Widget'
 import DrawWidget from './DrawWidget'
 
 import XAxis from '../component/XAxis'
@@ -34,7 +35,7 @@ export default class XAxisWidget extends DrawWidget<XAxis> {
   }
 
   getName (): string {
-    return 'xAxis'
+    return WidgetNameConstants.XAXIS
   }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {

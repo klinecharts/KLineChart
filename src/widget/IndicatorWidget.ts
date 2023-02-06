@@ -14,6 +14,7 @@
 
 import Pane from '../pane/Pane'
 
+import { WidgetNameConstants } from './Widget'
 import DrawWidget from './DrawWidget'
 
 import YAxis from '../component/YAxis'
@@ -38,7 +39,7 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   }
 
   getName (): string {
-    return 'main'
+    return WidgetNameConstants.MAIN
   }
 
   protected updateMain (ctx: CanvasRenderingContext2D): void {

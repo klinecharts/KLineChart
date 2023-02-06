@@ -16,13 +16,14 @@ import Nullable from './common/Nullable'
 import SyntheticEvent, { EventHandler, MouseTouchEvent, TOUCH_MIN_RADIUS } from './common/SyntheticEvent'
 import Coordinate from './common/Coordinate'
 import { UpdateLevel } from './common/Updater'
+import Bounding from './common/Bounding'
 
 import { AxisExtremum } from './component/Axis'
 import YAxis from './component/YAxis'
 
 import Chart from './Chart'
 import Pane, { PaneIdConstants } from './pane/Pane'
-import Widget from './widget/Widget'
+import Widget, { WidgetNameConstants } from './widget/Widget'
 import { REAL_SEPARATOR_HEIGHT } from './widget/SeparatorWidget'
 
 interface EventTriggerWidgetInfo {
@@ -110,7 +111,7 @@ export default class ChartEvent implements EventHandler {
 
   pinchEvent (e: MouseTouchEvent, scale: number): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
-    if (pane?.getId() !== PaneIdConstants.XAXIS && widget?.getName() === 'main') {
+    if (pane?.getId() !== PaneIdConstants.XAXIS && widget?.getName() === WidgetNameConstants.MAIN) {
       const event = this._makeWidgetEvent(e, widget)
       const zoomScale = (scale - this._pinchScale) * 5
       this._pinchScale = scale
@@ -120,21 +121,32 @@ export default class ChartEvent implements EventHandler {
     return false
   }
 
-  mouseWheelHorizontalEvent (e: MouseTouchEvent, distance: number): boolean {
-    const { pane, widget } = this._findWidgetByEvent(e)
-    if (pane?.getId() !== PaneIdConstants.XAXIS && widget?.getName() === 'main') {
-      const timeScaleStore = this._chart.getChartStore().getTimeScaleStore()
-      timeScaleStore.startScroll()
-      timeScaleStore.scroll(distance)
-      return true
-    }
-    return false
+  mouseWheelHortEvent (e: MouseTouchEvent, distance: number): boolean {
+    const timeScaleStore = this._chart.getChartStore().getTimeScaleStore()
+    timeScaleStore.startScroll()
+    timeScaleStore.scroll(distance)
+    return true
   }
 
-  mouseWheelVerticalEvent (e: MouseTouchEvent, scale: number): boolean {
-    const { pane, widget } = this._findWidgetByEvent(e)
-    if (pane?.getId() !== PaneIdConstants.XAXIS && widget?.getName() === 'main') {
-      const event = this._makeWidgetEvent(e, widget)
+  mouseWheelVertEvent (e: MouseTouchEvent, scale: number): boolean {
+    const { widget } = this._findWidgetByEvent(e)
+    const isTouch = e.isTouch ?? false
+    const event = this._makeWidgetEvent(e, widget)
+    let zoomCoordinate: Nullable<Coordinate> = null
+    const name = widget?.getName()
+    if (isTouch) {
+      if (name === WidgetNameConstants.MAIN || name === WidgetNameConstants.XAXIS) {
+        zoomCoordinate = { x: event.x, y: event.y }
+      } else {
+        const bounding = this._chart.getPaneById(PaneIdConstants.CANDLE)?.getBounding() as Bounding
+        zoomCoordinate = { x: bounding.width / 2, y: bounding.height / 2 }
+      }
+    } else {
+      if (name === WidgetNameConstants.MAIN) {
+        zoomCoordinate = { x: event.x, y: event.y }
+      }
+    }
+    if (zoomCoordinate !== null) {
       this._chart.getChartStore().getTimeScaleStore().zoom(scale, { x: event.x, y: event.y })
       return true
     }
@@ -148,17 +160,17 @@ export default class ChartEvent implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
       switch (name) {
-        case 'separator': {
+        case WidgetNameConstants.SEPARATOR: {
           return widget.dispatchEvent('mouseDownEvent', event)
         }
-        case 'main': {
+        case WidgetNameConstants.MAIN: {
           const extremum = pane?.getAxisComponent().getExtremum() ?? null
           this._prevYAxisExtremum = extremum === null ? extremum : { ...extremum }
           this._startScrollCoordinate = { x: event.x, y: event.y }
           this._chart.getChartStore().getTimeScaleStore().startScroll()
           return widget.dispatchEvent('mouseDownEvent', event)
         }
-        case 'xAxis': {
+        case WidgetNameConstants.XAXIS: {
           const consumed = widget.dispatchEvent('mouseDownEvent', event)
           if (consumed) {
             this._chart.updatePane(UpdateLevel.OVERLAY)
@@ -167,7 +179,7 @@ export default class ChartEvent implements EventHandler {
           this._xAxisStartScaleDistance = event.pageX
           return consumed
         }
-        case 'yAxis': {
+        case WidgetNameConstants.YAXIS: {
           const consumed = widget.dispatchEvent('mouseDownEvent', event)
           if (consumed) {
             this._chart.updatePane(UpdateLevel.OVERLAY)
@@ -196,13 +208,13 @@ export default class ChartEvent implements EventHandler {
     if (widget !== null) {
       const name = widget.getName()
       switch (name) {
-        case 'main': {
+        case WidgetNameConstants.MAIN: {
           this._chart.getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane?.getId() })
           return widget.dispatchEvent('mouseMoveEvent', event)
         }
-        case 'separator':
-        case 'xAxis':
-        case 'yAxis': {
+        case WidgetNameConstants.SEPARATOR:
+        case WidgetNameConstants.XAXIS:
+        case WidgetNameConstants.YAXIS: {
           const consumed = widget.dispatchEvent('mouseMoveEvent', event)
           this._chart.getChartStore().getCrosshairStore().set()
           return consumed
@@ -213,7 +225,7 @@ export default class ChartEvent implements EventHandler {
   }
 
   pressedMouseMoveEvent (e: MouseTouchEvent): boolean {
-    if (this._mouseDownWidget !== null && this._mouseDownWidget.getName() === 'separator') {
+    if (this._mouseDownWidget !== null && this._mouseDownWidget.getName() === WidgetNameConstants.SEPARATOR) {
       return this._mouseDownWidget.dispatchEvent('pressedMouseMoveEvent', e)
     }
     const { pane, widget } = this._findWidgetByEvent(e)
@@ -225,7 +237,7 @@ export default class ChartEvent implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
       switch (name) {
-        case 'main': {
+        case WidgetNameConstants.MAIN: {
           const bounding = widget.getBounding()
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed && this._startScrollCoordinate !== null) {
@@ -259,7 +271,7 @@ export default class ChartEvent implements EventHandler {
           this._chart.getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane?.getId() })
           return consumed
         }
-        case 'xAxis': {
+        case WidgetNameConstants.XAXIS: {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
             const scale = this._xAxisStartScaleDistance / event.pageX
@@ -271,7 +283,7 @@ export default class ChartEvent implements EventHandler {
           }
           return consumed
         }
-        case 'yAxis': {
+        case WidgetNameConstants.YAXIS: {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
             if (this._prevYAxisExtremum !== null) {
@@ -311,10 +323,10 @@ export default class ChartEvent implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
       switch (name) {
-        case 'main':
-        case 'separator':
-        case 'xAxis':
-        case 'yAxis': {
+        case WidgetNameConstants.MAIN:
+        case WidgetNameConstants.SEPARATOR:
+        case WidgetNameConstants.XAXIS:
+        case WidgetNameConstants.YAXIS: {
           consumed = widget.dispatchEvent('mouseUpEvent', event)
           break
         }
@@ -340,9 +352,9 @@ export default class ChartEvent implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
       switch (name) {
-        case 'main':
-        case 'xAxis':
-        case 'yAxis': {
+        case WidgetNameConstants.MAIN:
+        case WidgetNameConstants.XAXIS:
+        case WidgetNameConstants.YAXIS: {
           consumed = widget.dispatchEvent('mouseRightClickEvent', event)
           break
         }
@@ -356,7 +368,7 @@ export default class ChartEvent implements EventHandler {
 
   mouseDoubleClickEvent (e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
-    if (widget !== null && widget.getName() === 'yAxis') {
+    if (widget !== null && widget.getName() === WidgetNameConstants.YAXIS) {
       const yAxis = pane?.getAxisComponent() as YAxis
       if (!yAxis.getAutoCalcTickFlag()) {
         yAxis.setAutoCalcTickFlag(true)
@@ -378,7 +390,7 @@ export default class ChartEvent implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
       switch (name) {
-        case 'main': {
+        case WidgetNameConstants.MAIN: {
           const chartStore = this._chart.getChartStore()
           const crosshairStore = chartStore.getCrosshairStore()
           if (widget.dispatchEvent('mouseDownEvent', event)) {
@@ -413,8 +425,8 @@ export default class ChartEvent implements EventHandler {
           }
           return true
         }
-        case 'xAxis':
-        case 'yAxis': {
+        case WidgetNameConstants.XAXIS:
+        case WidgetNameConstants.YAXIS: {
           const consumed = widget.dispatchEvent('mouseDownEvent', event)
           if (consumed) {
             this._chart.updatePane(UpdateLevel.OVERLAY)
@@ -432,7 +444,7 @@ export default class ChartEvent implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
       switch (name) {
-        case 'main': {
+        case WidgetNameConstants.MAIN: {
           if (widget.dispatchEvent('pressedMouseMoveEvent', event)) {
             event.preventDefault?.()
             this._chart.updatePane(UpdateLevel.OVERLAY)
@@ -453,8 +465,8 @@ export default class ChartEvent implements EventHandler {
           }
           return true
         }
-        case 'xAxis':
-        case 'yAxis': {
+        case WidgetNameConstants.XAXIS:
+        case WidgetNameConstants.YAXIS: {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (consumed) {
             event.preventDefault?.()
@@ -473,7 +485,7 @@ export default class ChartEvent implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
       switch (name) {
-        case 'main': {
+        case WidgetNameConstants.MAIN: {
           widget.dispatchEvent('mouseUpEvent', event)
           if (this._startScrollCoordinate !== null) {
             const time = new Date().getTime() - this._flingStartTime
@@ -501,8 +513,8 @@ export default class ChartEvent implements EventHandler {
           }
           return true
         }
-        case 'xAxis':
-        case 'yAxis': {
+        case WidgetNameConstants.XAXIS:
+        case WidgetNameConstants.YAXIS: {
           const consumed = widget.dispatchEvent('mouseUpEvent', event)
           if (consumed) {
             this._chart.updatePane(UpdateLevel.OVERLAY)
@@ -515,7 +527,7 @@ export default class ChartEvent implements EventHandler {
 
   tapEvent (e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
-    if (widget !== null && widget.getName() === 'main' && this._touchCoordinate === null && !this._touchCancelCrosshair && !this._touchZoomed) {
+    if (widget !== null && widget.getName() === WidgetNameConstants.MAIN && this._touchCoordinate === null && !this._touchCancelCrosshair && !this._touchZoomed) {
       const event = this._makeWidgetEvent(e, widget)
       this._touchCoordinate = { x: event.x, y: event.y }
       this._chart.getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane?.getId() })
@@ -526,7 +538,7 @@ export default class ChartEvent implements EventHandler {
 
   longTapEvent (e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
-    if (widget !== null && widget.getName() === 'main') {
+    if (widget !== null && widget.getName() === WidgetNameConstants.MAIN) {
       const event = this._makeWidgetEvent(e, widget)
       this._touchCoordinate = { x: event.x, y: event.y }
       this._chart.getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane?.getId() })

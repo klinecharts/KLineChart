@@ -20,7 +20,7 @@ import { ActionType } from '../common/Action'
 import Axis from '../component/Axis'
 import YAxis from '../component/YAxis'
 
-import Widget from './Widget'
+import Widget, { WidgetNameConstants } from './Widget'
 import Pane from '../pane/Pane'
 
 import { createDom } from '../common/utils/dom'
@@ -51,7 +51,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
   }
 
   getName (): string {
-    return 'separator'
+    return WidgetNameConstants.SEPARATOR
   }
 
   checkEventOn (): boolean {
