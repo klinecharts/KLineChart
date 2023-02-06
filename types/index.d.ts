@@ -488,18 +488,6 @@ export interface MouseTouchEvent extends Coordinate {
 	isTouch?: boolean;
 	preventDefault?: () => void;
 }
-export interface Figure<A = any, S = any> {
-	name: string;
-	attrs: A;
-	styles: S;
-	draw: (ctx: CanvasRenderingContext2D, attrs: A, styles: S) => void;
-	checkEventOn: (coordinate: Coordinate, attrs: A, styles: S) => boolean;
-}
-export declare type FigureTemplate<A = any, S = any> = Pick<Figure<A, S>, "name" | "draw" | "checkEventOn">;
-export declare type FigureCreate<A = any, S = any> = Pick<Figure<A, S>, "name" | "attrs" | "styles">;
-export declare type FigureConstructor<A = any, S = any> = new (figure: FigureCreate<A, S>) => ({
-	draw: (ctx: CanvasRenderingContext2D) => void;
-});
 export interface YAxis extends Axis {
 	isFromZero: () => boolean;
 }
@@ -872,6 +860,18 @@ export interface Chart {
 	resize: () => void;
 	destroy: () => void;
 }
+export interface Figure<A = any, S = any> {
+	name: string;
+	attrs: A;
+	styles: S;
+	draw: (ctx: CanvasRenderingContext2D, attrs: A, styles: S) => void;
+	checkEventOn: (coordinate: Coordinate, attrs: A, styles: S) => boolean;
+}
+export declare type FigureTemplate<A = any, S = any> = Pick<Figure<A, S>, "name" | "draw" | "checkEventOn">;
+export declare type FigureCreate<A = any, S = any> = Pick<Figure<A, S>, "name" | "attrs" | "styles">;
+export declare type FigureConstructor<A = any, S = any> = new (figure: FigureCreate<A, S>) => ({
+	draw: (ctx: CanvasRenderingContext2D) => void;
+});
 declare function checkCoordinateOnArc(coordinate: Coordinate, arc: ArcAttrs): boolean;
 declare function drawArc(ctx: CanvasRenderingContext2D, attrs: ArcAttrs, styles: Partial<LineStyle>): void;
 export interface ArcAttrs {
