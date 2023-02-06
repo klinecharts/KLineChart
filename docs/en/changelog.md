@@ -1,4 +1,9 @@
 # 📠 Change Log
+## 9.0.0-alpha7
+`2023-02-07`
++ 💄 Optimize chart event processing.
++ 🐞 Fix the problem that the `overlay` click event does not trigger.
+
 ## 9.0.0-alpha6
 `2023-01-20`
 + 🆕 I18n supports incremental register.
