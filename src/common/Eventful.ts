@@ -30,10 +30,8 @@ export default abstract class Eventful implements EventDispatcher {
 
   onEvent (name: EventName, event: MouseTouchEvent, other?: number): boolean {
     const callback = this._callbacks.get(name)
-    if (callback !== undefined) {
-      if (this.checkEventOn(event)) {
-        return callback(event, other)
-      }
+    if (callback !== undefined && this.checkEventOn(event)) {
+      return callback(event, other)
     }
     return false
   }
@@ -48,16 +46,18 @@ export default abstract class Eventful implements EventDispatcher {
   }
 
   dispatchEvent (name: EventName, event: MouseTouchEvent, other?: number): boolean {
-    const count = this._children.length
-    for (let i = count - 1; i >= 0; i--) {
-      if (this._children[i].onEvent(name, event, other)) {
-        return true
+    const start = this._children.length - 1
+    if (start > -1) {
+      for (let i = start; i > -1; i--) {
+        if (this._children[i].dispatchEvent(name, event, other)) {
+          return true
+        }
       }
     }
     return this.onEvent(name, event, other)
   }
 
-  addChild (eventful: Eventful): EventDispatcher {
+  addChild (eventful: Eventful): Eventful {
     this._children.push(eventful)
     return this
   }

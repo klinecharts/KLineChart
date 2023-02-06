@@ -230,9 +230,7 @@ export default class OverlayStore {
       if (appointPaneFlag !== undefined && appointPaneFlag) {
         this._progressInstanceInfo.appointPaneFlag = appointPaneFlag
       }
-      if (!this._progressInstanceInfo.appointPaneFlag) {
-        this._progressInstanceInfo.paneId = paneId
-      }
+      this._progressInstanceInfo.paneId = paneId
     }
   }
 

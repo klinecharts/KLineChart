@@ -542,7 +542,7 @@ export default class ChartEvent implements EventHandler {
     for (const [, p] of panes) {
       const bounding = p.getBounding()
       if (
-        x >= bounding.left && y <= bounding.left + bounding.width &&
+        x >= bounding.left && x <= bounding.left + bounding.width &&
         y >= bounding.top && y <= bounding.top + bounding.height
       ) {
         pane = p
