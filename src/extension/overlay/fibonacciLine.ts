@@ -30,14 +30,13 @@ const fibonacciLine: OverlayTemplate = {
       const texts: TextAttrs[] = []
       const startX = 0
       const endX = bounding.width
-      const value1 = points[1].value
-      if (coordinates.length > 1 && points[0].value !== undefined && value1 !== undefined) {
+      if (coordinates.length > 1 && points[0].value !== undefined && points[1].value !== undefined) {
         const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDif = coordinates[0].y - coordinates[1].y
-        const valueDif = points[0].value - value1
+        const valueDif = points[0].value - points[1].value
         percents.forEach(percent => {
           const y = coordinates[1].y + yDif * percent
-          const value = (value1 + valueDif * percent).toFixed(precision.price)
+          const value = ((points[1].value ?? 0) + valueDif * percent).toFixed(precision.price)
           lines.push({ coordinates: [{ x: startX, y }, { x: endX, y }] })
           texts.push({
             x: startX,
