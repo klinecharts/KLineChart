@@ -39,7 +39,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
       indicators.forEach(indicator => {
         const result = indicator.result
         const indicatorData = result[dataIndex]
-        if (indicatorData !== undefined) {
+        if (indicatorData !== undefined && indicator.visible) {
           const precision = indicator.precision
           eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
             const value = indicatorData[figure.key]

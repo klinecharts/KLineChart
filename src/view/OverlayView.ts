@@ -291,16 +291,19 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const clickInstanceInfo = overlayStore.getClickInstanceInfo()
     const overlays = this.getCompleteOverlays(overlayStore, paneId)
     overlays.forEach(overlay => {
-      this._drawOverlay(
-        ctx, overlay, bounding, barSpace, precision,
-        dateTimeFormat, customApi, defaultStyles, xAxis, yAxis,
-        hoverInstanceInfo, clickInstanceInfo, timeScaleStore
-      )
+      if (overlay.visible) {
+        this._drawOverlay(
+          ctx, overlay, bounding, barSpace, precision,
+          dateTimeFormat, customApi, defaultStyles, xAxis, yAxis,
+          hoverInstanceInfo, clickInstanceInfo, timeScaleStore
+        )
+      }
     })
     const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
     if (progressInstanceInfo !== null) {
       const overlay = this.getProgressOverlay(progressInstanceInfo, paneId)
-      if (overlay !== null) {
+      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+      if (overlay !== null && overlay.visible) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace,
           precision, dateTimeFormat, customApi, defaultStyles, xAxis, yAxis,

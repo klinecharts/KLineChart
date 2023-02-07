@@ -41,7 +41,7 @@ export default class IndicatorView extends CandleBarView {
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
       for (const entries of indicators) {
         const indicator = entries[1]
-        if (indicator.shouldOhlc) {
+        if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
           const defaultStyles = chartStore.getStyles().indicator
           return {
@@ -73,110 +73,97 @@ export default class IndicatorView extends CandleBarView {
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     const defaultStyles = chartStore.getStyles().indicator
     indicators.forEach(indicator => {
-      let isCover = false
-      if (indicator.draw !== null) {
-        ctx.save()
-        isCover = indicator.draw({
-          ctx,
-          kLineDataList: dataList,
-          indicator,
-          visibleRange,
-          bounding,
-          barSpace: timeScaleStore.getBarSpace(),
-          defaultStyles,
-          xAxis,
-          yAxis
-        }) ?? false
-        ctx.restore()
-      }
-      if (!isCover) {
-        const result = indicator.result
-        const lineFigureStyles: Array<Nullable<IndicatorFigureStyle>> = []
-        const lineCoordinates: Coordinate[][] = []
+      if (indicator.visible) {
+        let isCover = false
+        if (indicator.draw !== null) {
+          ctx.save()
+          isCover = indicator.draw({
+            ctx,
+            kLineDataList: dataList,
+            indicator,
+            visibleRange,
+            bounding,
+            barSpace: timeScaleStore.getBarSpace(),
+            defaultStyles,
+            xAxis,
+            yAxis
+          }) ?? false
+          ctx.restore()
+        }
+        if (!isCover) {
+          const result = indicator.result
+          const lineFigureStyles: Array<Nullable<IndicatorFigureStyle>> = []
+          const lineCoordinates: Coordinate[][] = []
 
-        const lines: Array<FigureCreate<LineAttrs, Partial<SmoothLineStyle>>> = []
+          const lines: Array<FigureCreate<LineAttrs, Partial<SmoothLineStyle>>> = []
 
-        this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
-          const { halfGapBar, gapBar } = barSpace
-          const { dataIndex, x } = data
-          const indicatorData = result[dataIndex] ?? {}
+          this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
+            const { halfGapBar, gapBar } = barSpace
+            const { dataIndex, x } = data
+            const indicatorData = result[dataIndex] ?? {}
 
-          eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>, defaultFigureStyles: any, count: number) => {
-            const value = indicatorData[figure.key]
-            const valueY = yAxis.convertToPixel(value)
-            switch (figure.type) {
-              case 'circle': {
-                if (isValid(value)) {
-                  this.createFigure(
-                    'circle',
-                    {
-                      x,
-                      y: valueY,
-                      r: halfGapBar
-                    },
-                    {
-                      style: figureStyles.style,
-                      color: figureStyles.color,
-                      borderColor: figureStyles.color
-                    }
-                  )?.draw(ctx)
-                }
-                break
-              }
-              case 'bar': {
-                if (isValid(value)) {
-                  const baseValue = figure.baseValue ?? yAxis.getExtremum().min
-                  const baseValueY = yAxis.convertToPixel(baseValue)
-                  const height = Math.abs(baseValueY - valueY)
-                  let y: number
-                  if (valueY > baseValueY) {
-                    y = baseValueY
-                  } else {
-                    y = height < 1 ? baseValueY - 1 : valueY
+            eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>, defaultFigureStyles: any, count: number) => {
+              const value = indicatorData[figure.key]
+              const valueY = yAxis.convertToPixel(value)
+              switch (figure.type) {
+                case 'circle': {
+                  if (isValid(value)) {
+                    this.createFigure(
+                      'circle',
+                      {
+                        x,
+                        y: valueY,
+                        r: halfGapBar
+                      },
+                      {
+                        style: figureStyles.style,
+                        color: figureStyles.color,
+                        borderColor: figureStyles.color
+                      }
+                    )?.draw(ctx)
                   }
-                  this.createFigure(
-                    'rect',
-                    {
-                      x: x - halfGapBar,
-                      y,
-                      width: gapBar,
-                      height
-                    },
-                    {
-                      style: figureStyles.style,
-                      color: figureStyles.color,
-                      borderColor: figureStyles.color
-                    }
-                  )?.draw(ctx)
+                  break
                 }
-                break
-              }
-              case 'line': {
-                let innerFigureStyle: Nullable<IndicatorFigureStyle> = null
-                if (isValid(value)) {
-                  innerFigureStyle = figureStyles
-                  const coordinate = { x, y: valueY }
-                  const prevFigureStyles = lineFigureStyles[count]
-                  if (!isValid(lineCoordinates[count])) {
-                    lineCoordinates[count] = []
-                  }
-                  lineCoordinates[count].push(coordinate)
-                  if (isValid(prevFigureStyles)) {
-                    if (prevFigureStyles?.color !== figureStyles.color) {
-                      lines.push({
-                        name: 'line',
-                        attrs: { coordinates: lineCoordinates[count] },
-                        styles: {
-                          style: figureStyles.style as LineType,
-                          color: figureStyles.color,
-                          size: defaultFigureStyles.size,
-                          smooth: defaultFigureStyles.smooth,
-                          dashedValue: defaultFigureStyles.dashedValue
-                        }
-                      })
-                      lineCoordinates[count] = [coordinate]
+                case 'bar': {
+                  if (isValid(value)) {
+                    const baseValue = figure.baseValue ?? yAxis.getExtremum().min
+                    const baseValueY = yAxis.convertToPixel(baseValue)
+                    const height = Math.abs(baseValueY - valueY)
+                    let y: number
+                    if (valueY > baseValueY) {
+                      y = baseValueY
                     } else {
-                      if (prevFigureStyles?.style !== figureStyles.style) {
+                      y = height < 1 ? baseValueY - 1 : valueY
+                    }
+                    this.createFigure(
+                      'rect',
+                      {
+                        x: x - halfGapBar,
+                        y,
+                        width: gapBar,
+                        height
+                      },
+                      {
+                        style: figureStyles.style,
+                        color: figureStyles.color,
+                        borderColor: figureStyles.color
+                      }
+                    )?.draw(ctx)
+                  }
+                  break
+                }
+                case 'line': {
+                  let innerFigureStyle: Nullable<IndicatorFigureStyle> = null
+                  if (isValid(value)) {
+                    innerFigureStyle = figureStyles
+                    const coordinate = { x, y: valueY }
+                    const prevFigureStyles = lineFigureStyles[count]
+                    if (!isValid(lineCoordinates[count])) {
+                      lineCoordinates[count] = []
+                    }
+                    lineCoordinates[count].push(coordinate)
+                    if (isValid(prevFigureStyles)) {
+                      if (prevFigureStyles?.color !== figureStyles.color) {
                         lines.push({
                           name: 'line',
                           attrs: { coordinates: lineCoordinates[count] },
@@ -189,33 +176,48 @@ export default class IndicatorView extends CandleBarView {
                           }
                         })
                         lineCoordinates[count] = [coordinate]
+                      } else {
+                        if (prevFigureStyles?.style !== figureStyles.style) {
+                          lines.push({
+                            name: 'line',
+                            attrs: { coordinates: lineCoordinates[count] },
+                            styles: {
+                              style: figureStyles.style as LineType,
+                              color: figureStyles.color,
+                              size: defaultFigureStyles.size,
+                              smooth: defaultFigureStyles.smooth,
+                              dashedValue: defaultFigureStyles.dashedValue
+                            }
+                          })
+                          lineCoordinates[count] = [coordinate]
+                        }
                       }
                     }
+                    if (dataIndex === visibleRange.to - 1) {
+                      lines.push({
+                        name: 'line',
+                        attrs: { coordinates: lineCoordinates[count] },
+                        styles: {
+                          style: figureStyles.style as LineType,
+                          color: figureStyles?.color,
+                          size: defaultFigureStyles.size,
+                          smooth: defaultFigureStyles.smooth,
+                          dashedValue: defaultFigureStyles.dashedValue
+                        }
+                      })
+                    }
                   }
-                  if (dataIndex === visibleRange.to - 1) {
-                    lines.push({
-                      name: 'line',
-                      attrs: { coordinates: lineCoordinates[count] },
-                      styles: {
-                        style: figureStyles.style as LineType,
-                        color: figureStyles?.color,
-                        size: defaultFigureStyles.size,
-                        smooth: defaultFigureStyles.smooth,
-                        dashedValue: defaultFigureStyles.dashedValue
-                      }
-                    })
-                  }
+                  lineFigureStyles[count] = innerFigureStyle
+                  break
                 }
-                lineFigureStyles[count] = innerFigureStyle
-                break
+                default: { break }
               }
-              default: { break }
-            }
+            })
           })
-        })
-        lines.forEach(({ attrs, styles }) => {
-          this.createFigure('line', attrs, styles)?.draw(ctx)
-        })
+          lines.forEach(({ attrs, styles }) => {
+            this.createFigure('line', attrs, styles)?.draw(ctx)
+          })
+        }
       }
     })
   }

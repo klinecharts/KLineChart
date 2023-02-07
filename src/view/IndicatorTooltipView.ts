@@ -171,6 +171,16 @@ export default class IndicatorTooltipView extends View<YAxis> {
     customApi: CustomApi,
     styles: IndicatorStyle
   ): IndicatorTooltipData {
+    let calcParamsText = ''
+    const calcParams = indicator.calcParams
+    if (calcParams.length > 0) {
+      calcParamsText = `(${calcParams.join(',')})`
+    }
+
+    if (!indicator.visible) {
+      return { name: indicator.shortName, calcParamsText, values: [] }
+    }
+
     if (indicator.createTooltipDataSource !== null) {
       const widget = this.getWidget()
       const pane = widget.getPane()
@@ -210,12 +220,6 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
     const dataIndex = crosshair.dataIndex as number
     const result = indicator.result ?? []
-
-    let calcParamsText = ''
-    const calcParams = indicator.calcParams
-    if (calcParams.length > 0) {
-      calcParamsText = `(${calcParams.join(',')})`
-    }
 
     const indicatorData = result[dataIndex] ?? {}
     const values: TooltipData[] = []
