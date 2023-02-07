@@ -102,6 +102,7 @@ Get graph class.
    calcParams?: any[],
    shouldOhlc?: boolean,
    shouldFormatBigNumber?: boolean,
+   visible?: boolean,
    extendData?: any,
    series?: 'normal' | 'price' | 'volume',
    figures?: Array<{
@@ -149,6 +150,7 @@ Add a technical indicator.
    - `calcParams` calculation parameters
    - `shouldOhlc` needs ohlc auxiliary graphics
    - `shouldFormatBigNumber` should format large numbers. For example, 1000 is converted to 1k, 1000000 is converted to 1M, etc.
+   - `visible` visible or not
    - `extendData` extended data
    - `series` indicator series, options are 'normal', 'price' and 'volume'
    - `figures` graphics configuration
@@ -173,6 +175,7 @@ Get technical indicators for chart support.
    name: string,
    totalStep?: number,
    lock?: boolean,
+   visible?: boolean,
    needDefaultPointFigure?: boolean,
    needDefaultXAxisFigure?: boolean,
    needDefaultYAxisFigure?: boolean,
@@ -241,6 +244,7 @@ Add a overlay.
    - `name` overlay name, unique identifier for creation
    - `totalStep` total implementation steps
    - `lock` is locked to prevent dragging
+   - `visible` visible or not
    - `needDefaultPointFigure` needs the default point figure
    - `needDefaultXAxisFigure` needs the default x-axis figure
    - `needDefaultYAxisFigure` needs the default y-axis figure

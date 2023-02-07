@@ -127,6 +127,11 @@ export interface Indicator<D = any> {
   shouldFormatBigNumber: boolean
 
   /**
+   * Whether the indicator is visible
+   */
+  visible: boolean
+
+  /**
    * Extend data
    */
   extendData: any
@@ -269,6 +274,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
   calcParams: any[]
   shouldOhlc: boolean
   shouldFormatBigNumber: boolean
+  visible: boolean
   extendData: any
   series: IndicatorSeries
   figures: Array<IndicatorFigure<D>>
@@ -286,7 +292,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
   constructor (indicator: IndicatorTemplate) {
     const {
       name, shortName, series, calcParams, figures, precision,
-      shouldOhlc, shouldFormatBigNumber,
+      shouldOhlc, shouldFormatBigNumber, visible,
       minValue, maxValue, styles, extendData,
       regenerateFigures, createTooltipDataSource, draw
     } = indicator
@@ -298,6 +304,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     this.figures = figures ?? []
     this.shouldOhlc = shouldOhlc ?? false
     this.shouldFormatBigNumber = shouldFormatBigNumber ?? false
+    this.visible = visible ?? true
     this.minValue = minValue ?? null
     this.maxValue = maxValue ?? null
     this.styles = styles ?? null
@@ -353,6 +360,14 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
   setShouldFormatBigNumber (shouldFormatBigNumber: boolean): boolean {
     if (this.shouldFormatBigNumber !== shouldFormatBigNumber) {
       this.shouldFormatBigNumber = shouldFormatBigNumber
+      return true
+    }
+    return false
+  }
+
+  setVisible (visible: boolean): boolean {
+    if (this.visible !== visible) {
+      this.visible = visible
       return true
     }
     return false

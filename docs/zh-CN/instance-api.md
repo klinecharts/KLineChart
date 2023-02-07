@@ -229,6 +229,7 @@
     calcParams?: any[],
     shouldOhlc?: boolean,
     shouldFormatBigNumber?: boolean,
+    visible?: boolean,
     extendData?: any,
     series?: 'normal' | 'price' | 'volume',
     figures?: Array<{
@@ -319,6 +320,7 @@ chart.createTechnicalIndicator('MA', false, {
     calcParams?: any[],
     shouldOhlc?: boolean,
     shouldFormatBigNumber?: boolean,
+    visible?: boolean,
     extendData?: any,
     series?: 'normal' | 'price' | 'volume',
     figures?: Array<{
@@ -369,6 +371,7 @@ chart.createTechnicalIndicator('MA', false, {
   - `calcParams` 计算参数
   - `shouldOhlc` 是否需要ohlc辅助图形
   - `shouldFormatBigNumber` 是否需要格式化大的数字。如1000转换成1k，1000000转换为1M等
+  - `visible` 是否可见
   - `extendData` 扩展数据
   - `series` 指标系列，可选项有'normal'，'price'和'volume'
   - `figures` 图形配置
@@ -394,6 +397,7 @@ chart.overrideIndicator({
   precision: 4,
   shouldOhlc: true,
   shouldFormatBigNumber: false,
+  visible: true,
   extendData: 2432435,
   series: 'price',
   figures: [],
@@ -464,6 +468,7 @@ chart.overrideIndicator({
     id?: string,
     groupId?: string, 
     lock?: boolean,
+    visible?: boolean,
     needDefaultPointFigure?: boolean,
     needDefaultXAxisFigure?: boolean,
     needDefaultYAxisFigure?: boolean,
@@ -514,6 +519,7 @@ chart.createOverlay({
     }
   },
   lock: false,
+  visible: true,
   mode: 'weak_magnet',
   extendData: 'xxxxxxxx',
   needDefaultPointFigure: false,
@@ -555,6 +561,7 @@ chart.createOverlay({
     id?: string,
     groupId?: string,
     lock?: boolean,
+    visible?: boolean,
     needDefaultPointFigure?: boolean,
     needDefaultXAxisFigure?: boolean,
     needDefaultYAxisFigure?: boolean,
@@ -584,6 +591,7 @@ chart.createOverlay({
   - `id` 覆盖物标识，如果id存在，则会以id为依据去覆盖
   - `groupId` 编组id
   - `lock` 是否锁定不让拖动
+  - `visible` 是否可见
   - `needDefaultPointFigure` 是否需要默认的点对应的图形
   - `needDefaultXAxisFigure` 是否需要默认的x轴上的图形
   - `needDefaultYAxisFigure` 是否需要默认的y轴上的图形
@@ -624,6 +632,7 @@ chart.overrideOverlay({
     }
   },
   lock: false,
+  visible: true,
   mode: 'weak_magnet',
   extendData: 'xxxxxxxx',
   needDefaultPointFigure: false,

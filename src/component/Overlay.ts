@@ -104,6 +104,11 @@ export interface Overlay {
   lock: boolean
 
   /**
+   * Whether the overlay is visible
+   */
+  visible: boolean
+
+  /**
    * Whether the default figure corresponding to the point is required
    */
   needDefaultPointFigure: boolean
@@ -247,6 +252,7 @@ export default abstract class OverlayImp implements Overlay {
   needDefaultXAxisFigure: boolean
   needDefaultYAxisFigure: boolean
   lock: boolean
+  visible: boolean
   mode: OverlayMode
   points: Array<Partial<Point>> = []
   extendData: any
@@ -276,7 +282,7 @@ export default abstract class OverlayImp implements Overlay {
   constructor (overlay: OverlayTemplate) {
     const {
       mode, extendData, styles,
-      name, totalStep, lock,
+      name, totalStep, lock, visible,
       needDefaultPointFigure, needDefaultXAxisFigure, needDefaultYAxisFigure,
       createPointFigures, createXAxisFigures, createYAxisFigures,
       performEventPressedMove, performEventMoveForDrawing,
@@ -289,6 +295,7 @@ export default abstract class OverlayImp implements Overlay {
     this.name = name
     this.totalStep = (totalStep === undefined || totalStep < 2) ? 1 : totalStep
     this.lock = lock ?? false
+    this.visible = visible ?? true
     this.needDefaultPointFigure = needDefaultPointFigure ?? false
     this.needDefaultXAxisFigure = needDefaultXAxisFigure ?? false
     this.needDefaultYAxisFigure = needDefaultYAxisFigure ?? false
@@ -387,6 +394,14 @@ export default abstract class OverlayImp implements Overlay {
   setLock (lock: boolean): boolean {
     if (this.lock !== lock) {
       this.lock = lock
+      return true
+    }
+    return false
+  }
+
+  setVisible (visible: boolean): boolean {
+    if (this.visible !== visible) {
+      this.visible = visible
       return true
     }
     return false

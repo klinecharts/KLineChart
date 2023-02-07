@@ -228,6 +228,7 @@ Set load more callback function.
      calcParams?: any[],
      shouldOhlc?: boolean,
      shouldFormatBigNumber?: boolean,
+     visible?: boolean,
      extendData?: any,
      series?: 'normal' | 'price' | 'volume',
      figures?: Array<{
@@ -317,6 +318,7 @@ chart.createTechnicalIndicator('MA', false, {
      calcParams?: any[],
      shouldOhlc?: boolean,
      shouldFormatBigNumber?: boolean,
+     visible?: boolean,
      extendData?: any,
      series?: 'normal' | 'price' | 'volume',
      figures?: Array<{
@@ -367,6 +369,7 @@ Overlay technical indicator information.
    - `calcParams` calculation parameters
    - `shouldOhlc` needs ohlc auxiliary graphics
    - `shouldFormatBigNumber` should format large numbers. For example, 1000 is converted to 1k, 1000000 is converted to 1M, etc.
+   - `visible` visible or not
    - `extendData` extended data
    - `series` indicator series, optional options are 'normal', 'price' and 'volume'
    - `figures` graphics configuration
@@ -392,6 +395,7 @@ chart.overrideIndicator({
    precision: 4,
    shouldOhlc: true,
    shouldFormatBigNumber: false,
+   visible: true,
    extendData: 2432435,
    series: 'price',
    figures: [],
@@ -460,6 +464,7 @@ Remove technical indicators.
      id?: string,
      groupId?: string,
      lock?: boolean,
+     visible?: boolean,
      needDefaultPointFigure?: boolean,
      needDefaultXAxisFigure?: boolean,
      needDefaultYAxisFigure?: boolean,
@@ -510,6 +515,7 @@ chart.createOverlay({
      }
    },
    lock: false,
+   visible: true,
    mode: 'weak_magnet',
    extendData: 'xxxxxxxx',
    needDefaultPointFigure: false,
@@ -545,32 +551,33 @@ Get overlay information by id.
 ## overrideOverlay(override)
 ```typescript
 (
-   override: {
-     name: string,
-     id?: string,
-     groupId?: string,
-     lock?: boolean,
-     needDefaultPointFigure?: boolean,
-     needDefaultXAxisFigure?: boolean,
-     needDefaultYAxisFigure?: boolean,
-     mode?: 'normal' | 'weak_magnet' | 'strong_magnet',
-     points?: Array<{ timestamp?: number, dataIndex?: number, value?: number }>,
-     extendData?: any,
-     styles?: object,
-     onDrawStart?: (event: object) => boolean,
-     onDrawing?: (event: object) => boolean,
-     onDrawEnd?: (event: object) => boolean,
-     onClick?: (event: object) => boolean,
-     onRightClick?: (event: object) => boolean,
-     onPressedMoveStart?: (event: object) => boolean,
-     onPressedMoving?: (event: object) => boolean,
-     onPressedMoveEnd?: (event: object) => boolean,
-     onMouseEnter?: (event: object) => boolean,
-     onMouseLeave?: (event: object) => boolean,
-     onRemoved?: (event: object) => boolean,
-     onSelected?: (event: object) => boolean,
-     onDeselected?: (event: object) => boolean
-   }
+  override: {
+    name: string,
+    id?: string,
+    groupId?: string,
+    lock?: boolean,
+    visible?: boolean,
+    needDefaultPointFigure?: boolean,
+    needDefaultXAxisFigure?: boolean,
+    needDefaultYAxisFigure?: boolean,
+    mode?: 'normal' | 'weak_magnet' | 'strong_magnet',
+    points?: Array<{ timestamp?: number, dataIndex?: number, value?: number }>,
+    extendData?: any,
+    styles?: object,
+    onDrawStart?: (event: object) => boolean,
+    onDrawing?: (event: object) => boolean,
+    onDrawEnd?: (event: object) => boolean,
+    onClick?: (event: object) => boolean,
+    onRightClick?: (event: object) => boolean,
+    onPressedMoveStart?: (event: object) => boolean,
+    onPressedMoving?: (event: object) => boolean,
+    onPressedMoveEnd?: (event: object) => boolean,
+    onMouseEnter?: (event: object) => boolean,
+    onMouseLeave?: (event: object) => boolean,
+    onRemoved?: (event: object) => boolean,
+    onSelected?: (event: object) => boolean,
+    onDeselected?: (event: object) => boolean
+  }
 ) => string | null
 ```
 Overlays that have been drawn.
@@ -579,6 +586,7 @@ Overlays that have been drawn.
    - `id` Overlay identification, if the id exists, it will be based on the id to overwrite
    - `groupId` Group id
    - `lock` is locked to prevent dragging
+   - `visible` visible or not
    - `needDefaultPointFigure` needs a default point figure
    - `needDefaultXAxisFigure` needs the default x-axis figure
    - `needDefaultYAxisFigure` needs the default y-axis figure
@@ -619,6 +627,7 @@ chart.overrideOverlay({
      }
    },
    lock: false,
+   visible: true,
    mode: 'weak_magnet',
    extendData: 'xxxxxxxx',
    needDefaultPointFigure: false,

@@ -31,7 +31,7 @@ export default class IndicatorStore {
   private _overrideInstance (instance: IndicatorImp, indicator: Partial<Indicator>): boolean[] {
     const {
       shortName, series, calcParams, precision, figures, minValue, maxValue,
-      shouldOhlc, shouldFormatBigNumber, styles, extendData,
+      shouldOhlc, shouldFormatBigNumber, visible, styles, extendData,
       regenerateFigures, createTooltipDataSource, draw, calc
     } = indicator
     let updateFlag = false
@@ -63,6 +63,9 @@ export default class IndicatorStore {
       updateFlag = true
     }
     if (shouldFormatBigNumber !== undefined && instance.setShouldFormatBigNumber(shouldFormatBigNumber)) {
+      updateFlag = true
+    }
+    if (visible !== undefined && instance.setVisible(visible)) {
       updateFlag = true
     }
     if (styles !== undefined && instance.setStyles(styles)) {

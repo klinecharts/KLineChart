@@ -105,6 +105,7 @@
   calcParams?: any[],
   shouldOhlc?: boolean,
   shouldFormatBigNumber?: boolean,
+  visible?: boolean,
   extendData?: any,
   series?: 'normal' | 'price' | 'volume',
   figures?: Array<{
@@ -152,6 +153,7 @@
   - `calcParams` 计算参数
   - `shouldOhlc` 是否需要ohlc辅助图形
   - `shouldFormatBigNumber` 是否需要格式化大的数字。如1000转换成1k，1000000转换为1M等
+  - `visible` 是否可见
   - `extendData` 扩展数据
   - `series` 指标系列，可选项有'normal'，'price'和'volume'
   - `figures` 图形配置
@@ -176,6 +178,7 @@
   name: string,
   totalStep?: number,
   lock?: boolean,
+  visible?: boolean,
   needDefaultPointFigure?: boolean,
   needDefaultXAxisFigure?: boolean,
   needDefaultYAxisFigure?: boolean,
@@ -244,6 +247,7 @@
   - `name` 覆盖物名，用于创建的唯一标识
   - `totalStep` 总的实现步骤
   - `lock` 是否锁定不让拖动
+  - `visible` 是否可见
   - `needDefaultPointFigure` 是否需要默认的点对应的图形
   - `needDefaultXAxisFigure` 是否需要默认的x轴上的图形
   - `needDefaultYAxisFigure` 是否需要默认的y轴上的图形

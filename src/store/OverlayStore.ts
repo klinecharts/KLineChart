@@ -97,7 +97,7 @@ export default class OverlayStore {
 
   private _overrideInstance (instance: OverlayImp, overlay: Partial<OverlayCreate>): boolean {
     const {
-      id, groupId, points, styles, lock, mode, extendData,
+      id, groupId, points, styles, lock, visible, mode, extendData,
       onDrawStart, onDrawing,
       onDrawEnd, onClick, onRightClick,
       onPressedMoveStart, onPressedMoving, onPressedMoveEnd,
@@ -119,6 +119,9 @@ export default class OverlayStore {
     }
     if (lock !== undefined) {
       instance.setLock(lock)
+    }
+    if (visible !== undefined && instance.setVisible(visible)) {
+      updateFlag = true
     }
     if (mode !== undefined) {
       instance.setMode(mode)
