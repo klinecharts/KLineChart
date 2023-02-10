@@ -139,11 +139,36 @@ export interface TooltipData {
   value: string | TooltipDataChild
 }
 
+export enum TooltipIconPosition {
+  LEFT = 'left',
+  MIDDLE = 'middle',
+  RIGHT = 'right'
+}
+export interface TooltipIconStyle {
+  id: string
+  position: TooltipIconPosition
+  marginLeft: number
+  marginTop: number
+  marginRight: number
+  marginBottom: number
+  paddingLeft: number
+  paddingTop: number
+  paddingRight: number
+  paddingBottom: number
+  color: string
+  size: number
+  fontFamily: string
+  icon: string
+  backgroundColor: string
+  activeBackgroundColor: string
+}
+
 export interface TooltipStyle {
   showRule: TooltipShowRule
   showType: TooltipShowType
   defaultValue: string
   text: TooltipTextStyle
+  icons: TooltipIconStyle[]
 }
 
 function getDefaultGridStyle (): GridStyle {
@@ -324,11 +349,12 @@ function getDefaultCandleStyle (): CandleStyle {
         family: 'Helvetica Neue',
         weight: 'normal',
         color: '#76808F',
-        marginLeft: 8,
-        marginTop: 6,
-        marginRight: 8,
+        marginLeft: 10,
+        marginTop: 8,
+        marginRight: 6,
         marginBottom: 0
-      }
+      },
+      icons: []
     }
   }
 }
@@ -445,11 +471,12 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         family: 'Helvetica Neue',
         weight: 'normal',
         color: '#76808F',
-        marginTop: 6,
-        marginRight: 8,
-        marginBottom: 0,
-        marginLeft: 8
-      }
+        marginLeft: 10,
+        marginTop: 8,
+        marginRight: 6,
+        marginBottom: 0
+      },
+      icons: []
     }
   }
 }

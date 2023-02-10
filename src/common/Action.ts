@@ -17,7 +17,8 @@ export type ActionCallback = (data?: any) => void
 export const enum ActionType {
   onZoom = 'onZoom',
   onScroll = 'onScroll',
-  onVisibleRangeChange = 'onVisibleDataChange',
+  onVisibleRangeChange = 'onVisibleRangeChange',
+  onTooltipIconClick = 'onTooltipIconClick',
   onCrosshairChange = 'onCrosshairChange',
   onPaneDrag = 'onPaneDrag'
 }

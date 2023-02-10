@@ -22,6 +22,7 @@ import { isArray, isString, merge } from '../common/utils/typeChecks'
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
 import CrosshairStore from './CrosshairStore'
+import TooltipStore from './TooltipStore'
 import OverlayStore from './OverlayStore'
 import ActionStore from './ActionStore'
 
@@ -61,11 +62,6 @@ export default class ChartStore {
   private _dataList: KLineData[] = []
 
   /**
-   * Drag pane flag
-   */
-  private _dragPaneFlag = false
-
-  /**
    * Time scale store
    */
   private readonly _timeScaleStore = new TimeScaleStore(this)
@@ -84,6 +80,11 @@ export default class ChartStore {
    * Crosshair store
    */
   private readonly _crosshairStore = new CrosshairStore(this)
+
+  /**
+   * Tooltip store
+   */
+  private readonly _tooltipStore = new TooltipStore(this)
 
   /**
    * Chart action store
@@ -220,20 +221,15 @@ export default class ChartStore {
     return this._crosshairStore
   }
 
+  getTooltipStore (): TooltipStore {
+    return this._tooltipStore
+  }
+
   getActionStore (): ActionStore {
     return this._actionStore
   }
 
   getChart (): Chart {
     return this._chart
-  }
-
-  getDragPaneFlag (): boolean {
-    return this._dragPaneFlag
-  }
-
-  setDragPaneFlag (flag: boolean): ChartStore {
-    this._dragPaneFlag = flag
-    return this
   }
 }

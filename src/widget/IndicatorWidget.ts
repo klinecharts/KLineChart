@@ -35,7 +35,12 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
     super(rootContainer, pane)
     this.addChild(this._overlayView)
+    this.addChild(this._tooltipView)
     this.getContainer().style.cursor = 'crosshair'
+    this.registerEvent('mouseMoveEvent', () => {
+      pane.getChart().getChartStore().getTooltipStore().setActiveIconInfo()
+      return false
+    })
   }
 
   getName (): string {

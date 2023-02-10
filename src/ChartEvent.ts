@@ -17,6 +17,7 @@ import SyntheticEvent, { EventHandler, MouseTouchEvent, TOUCH_MIN_RADIUS } from 
 import Coordinate from './common/Coordinate'
 import { UpdateLevel } from './common/Updater'
 import Bounding from './common/Bounding'
+import Crosshair from './common/Crosshair'
 
 import { AxisExtremum } from './component/Axis'
 import YAxis from './component/YAxis'
@@ -209,8 +210,17 @@ export default class ChartEvent implements EventHandler {
       const name = widget.getName()
       switch (name) {
         case WidgetNameConstants.MAIN: {
-          this._chart.getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane?.getId() })
-          return widget.dispatchEvent('mouseMoveEvent', event)
+          const consumed = widget.dispatchEvent('mouseMoveEvent', event)
+          const chartStore = this._chart.getChartStore()
+          let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane?.getId() }
+          if (consumed && chartStore.getTooltipStore().getActiveIconInfo() !== null) {
+            crosshair = undefined
+            if (widget !== null) {
+              widget.getContainer().style.cursor = 'pointer'
+            }
+          }
+          this._chart.getChartStore().getCrosshairStore().set(crosshair)
+          return consumed
         }
         case WidgetNameConstants.SEPARATOR:
         case WidgetNameConstants.XAXIS:

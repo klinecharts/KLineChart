@@ -32,6 +32,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
   protected drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
+    const paneId = pane.getId()
     const chartStore = pane.getChart().getChartStore()
     const crosshair = chartStore.getCrosshairStore().get()
     if (crosshair.kLineData !== undefined) {
@@ -41,6 +42,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const precision = chartStore.getPrecision()
       const locale = chartStore.getLocale()
       const customApi = chartStore.getCustomApi()
+      const activeIconInfo = chartStore.getTooltipStore().getActiveIconInfo()
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
       const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
       const styles = chartStore.getStyles()
@@ -68,12 +70,12 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           ctx, bounding, crosshair, precision,
           dateTimeFormat, locale, customApi, candleStyles
         )
-        this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, customApi, bounding, indicatorStyles, top)
+        this.drawIndicatorTooltip(ctx, paneId, dataList, crosshair, activeIconInfo, indicators, customApi, bounding, indicatorStyles, top)
       } else if (
         candleStyles.tooltip.showType === TooltipShowType.RECT &&
         indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
       ) {
-        const top = this.drawIndicatorTooltip(ctx, dataList, crosshair, indicators, customApi, bounding, indicatorStyles, 0)
+        const top = this.drawIndicatorTooltip(ctx, paneId, dataList, crosshair, activeIconInfo, indicators, customApi, bounding, indicatorStyles, 0)
         const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
         this._drawRectTooltip(
           ctx, dataList, indicators,
@@ -120,8 +122,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         dateTimeFormat, locale, customApi, styles
       )
       if (values.length > 0) {
-        height += (tooltipTextStyles.marginTop + tooltipTextStyles.size + tooltipTextStyles.marginBottom)
-        height += this.drawStandardTooltip(ctx, bounding, values, 0, tooltipTextStyles.marginTop, tooltipTextStyles)
+        height += this.drawStandardTooltipLabels(ctx, bounding, values, 0, 0, 0, tooltipTextStyles)[3]
       }
     }
     return height
@@ -200,13 +201,13 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         weight: indicatorTextWeight,
         family: indicatorTextFamily
       } = indicatorTooltipStyles.text
-      const indicatorTooltipDatas: TooltipData[][] = []
+      const indicatorTooltipDataValuess: TooltipData[][] = []
       if (isDrawIndicatorTooltip) {
         ctx.font = createFont(indicatorTextSize, indicatorTextWeight, indicatorTextFamily)
         indicators.forEach(indicator => {
-          const tooltipDatas = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, indicatorStyles).values ?? []
-          indicatorTooltipDatas.push(tooltipDatas)
-          tooltipDatas.forEach(data => {
+          const tooltipDataValues = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, indicatorStyles).values ?? []
+          indicatorTooltipDataValuess.push(tooltipDataValues)
+          tooltipDataValues.forEach(data => {
             const title = data.title as TooltipDataChild
             const value = data.value as TooltipDataChild
             const text = `${title.text}${value.text}`
@@ -293,7 +294,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         if (isDrawIndicatorTooltip) {
           // 开始渲染指标数据文字
           const indicatorTextX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft
-          indicatorTooltipDatas.forEach(datas => {
+          indicatorTooltipDataValuess.forEach(datas => {
             datas.forEach(data => {
               textY += indicatorTextMarginTop
               const title = data.title as TooltipDataChild
