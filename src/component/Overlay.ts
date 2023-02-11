@@ -30,10 +30,10 @@ import TimeScaleStore from '../store/TimeScaleStore'
 import { XAxis } from './XAxis'
 import { YAxis } from './YAxis'
 
-export const enum OverlayMode {
-  NORMAL = 'normal',
-  WEAK_MAGNET = 'weak_magnet',
-  STRONG_MAGNET = 'strong_magnet'
+export enum OverlayMode {
+  Normal = 'normal',
+  WeakMagnet = 'weak_magnet',
+  StrongMagnet = 'strong_magnet'
 }
 
 export interface OverlayPerformEventParams {
@@ -299,7 +299,7 @@ export default abstract class OverlayImp implements Overlay {
     this.needDefaultPointFigure = needDefaultPointFigure ?? false
     this.needDefaultXAxisFigure = needDefaultXAxisFigure ?? false
     this.needDefaultYAxisFigure = needDefaultYAxisFigure ?? false
-    this.mode = mode ?? OverlayMode.NORMAL
+    this.mode = mode ?? OverlayMode.Normal
     this.extendData = extendData
     this.styles = styles ?? null
     this.createPointFigures = createPointFigures ?? null

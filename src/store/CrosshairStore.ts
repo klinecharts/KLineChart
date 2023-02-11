@@ -61,7 +61,7 @@ export default class CrosshairStore {
         this._chartStore.getChart().crosshairChange(this._crosshair)
       }
       if (!(notInvalidate ?? false)) {
-        this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY)
+        this._chartStore.getChart().updatePane(UpdateLevel.Overlay)
       }
     }
     return this

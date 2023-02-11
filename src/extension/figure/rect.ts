@@ -29,15 +29,15 @@ export function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs):
 export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs, styles: Partial<RectStyle>): void {
   const { x, y, width: w, height: h } = attrs
   const {
-    style = PolygonType.FILL,
+    style = PolygonType.Fill,
     color = 'currentColor',
     borderSize = 1,
     borderColor = 'currentColor',
-    borderStyle = LineType.SOLID,
+    borderStyle = LineType.Solid,
     borderRadius: r = 0,
     borderDashedValue = [2, 2]
   } = styles
-  if (style === PolygonType.FILL || styles.style === PolygonType.STROKE_FILL) {
+  if (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) {
     ctx.fillStyle = color
     ctx.beginPath()
     ctx.moveTo(x + r, y)
@@ -48,10 +48,10 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs, style
     ctx.closePath()
     ctx.fill()
   }
-  if (style === PolygonType.STROKE || styles.style === PolygonType.STROKE_FILL) {
+  if (style === PolygonType.Stroke || styles.style === PolygonType.StrokeFill) {
     ctx.strokeStyle = borderColor
     ctx.lineWidth = borderSize
-    if (borderStyle === LineType.DASHED) {
+    if (borderStyle === LineType.Dashed) {
       ctx.setLineDash(borderDashedValue)
     } else {
       ctx.setLineDash([])

@@ -60,13 +60,13 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         }
         return this._figureMouseMoveEvent(
           progressInstanceInfo.instance,
-          EventOverlayInfoFigureType.POINT,
+          EventOverlayInfoFigureType.Point,
           progressInstanceInfo.instance.points.length - 1,
           0
         )(event)
       }
       overlayStore.setHoverInstanceInfo({
-        paneId, instance: null, figureType: EventOverlayInfoFigureType.NONE, figureIndex: -1, attrsIndex: -1
+        paneId, instance: null, figureType: EventOverlayInfoFigureType.None, figureIndex: -1, attrsIndex: -1
       }, event)
       return false
     }).registerEvent('mouseDownEvent', (event: MouseTouchEvent) => {
@@ -89,13 +89,13 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         }
         return this._figureMouseDownEvent(
           overlay,
-          EventOverlayInfoFigureType.POINT,
+          EventOverlayInfoFigureType.Point,
           overlay.points.length - 1,
           0
         )(event)
       }
       overlayStore.setClickInstanceInfo({
-        paneId, instance: null, figureType: EventOverlayInfoFigureType.NONE, figureIndex: -1, attrsIndex: -1
+        paneId, instance: null, figureType: EventOverlayInfoFigureType.None, figureIndex: -1, attrsIndex: -1
       }, event)
       return false
     }).registerEvent('mouseRightClickEvent', (event: MouseTouchEvent) => {
@@ -105,7 +105,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         if (overlay.isDrawing()) {
           return this._figureMouseRightClickEvent(
             overlay,
-            EventOverlayInfoFigureType.POINT,
+            EventOverlayInfoFigureType.Point,
             overlay.points.length - 1,
             0
           )(event)
@@ -118,7 +118,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         instance.onPressedMoveEnd?.({ overlay: instance, ...event })
       }
       overlayStore.setPressedInstanceInfo({
-        paneId, instance: null, figureType: EventOverlayInfoFigureType.NONE, figureIndex: -1, attrsIndex: -1
+        paneId, instance: null, figureType: EventOverlayInfoFigureType.None, figureIndex: -1, attrsIndex: -1
       })
       return false
     }).registerEvent('pressedMouseMoveEvent', (event: MouseTouchEvent) => {
@@ -127,7 +127,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         if (!instance.lock) {
           if (!(instance.onPressedMoving?.({ overlay: instance, ...event }) ?? false)) {
             const point = this._coordinateToPoint(instance, event)
-            if (figureType === EventOverlayInfoFigureType.POINT) {
+            if (figureType === EventOverlayInfoFigureType.Point) {
               instance.eventPressedPointMove(point, figureIndex)
             } else {
               instance.eventPressedOtherMove(point, this.getWidget().getPane().getChart().getChartStore().getTimeScaleStore())
@@ -201,11 +201,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (this.coordinateToPointValueFlag()) {
       const yAxis = pane.getAxisComponent()
       let value = yAxis.convertFromPixel(coordinate.y)
-      if (overlay.mode !== OverlayMode.NORMAL && paneId === PaneIdConstants.CANDLE && point.dataIndex !== undefined) {
+      if (overlay.mode !== OverlayMode.Normal && paneId === PaneIdConstants.CANDLE && point.dataIndex !== undefined) {
         const kLineData = timeScaleStore.getDataByDataIndex(point.dataIndex)
         if (kLineData !== null) {
           if (value > kLineData.high) {
-            if (overlay.mode === OverlayMode.WEAK_MAGNET) {
+            if (overlay.mode === OverlayMode.WeakMagnet) {
               const highY = yAxis.convertToPixel(kLineData.high)
               const buffValue = yAxis.convertFromPixel(highY - 8)
               if (value < buffValue) {
@@ -215,7 +215,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
               value = kLineData.high
             }
           } else if (value < kLineData.low) {
-            if (overlay.mode === OverlayMode.WEAK_MAGNET) {
+            if (overlay.mode === OverlayMode.WeakMagnet) {
               const lowY = yAxis.convertToPixel(kLineData.low)
               const buffValue = yAxis.convertFromPixel(lowY - 8)
               if (value > buffValue) {
@@ -377,7 +377,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       const { type, styles, attrs, ignoreEvent } = figure
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats, attrsIndex) => {
-        const evnets = !(ignoreEvent ?? false) ? this._createFigureEvents(overlay, EventOverlayInfoFigureType.OTHER, figureIndex, attrsIndex) : undefined
+        const evnets = !(ignoreEvent ?? false) ? this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figureIndex, attrsIndex) : undefined
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
         this.createFigure(
           type, ats, ss, evnets
@@ -427,8 +427,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   ): void {
     if (overlay.needDefaultPointFigure) {
       if (
-        (hoverInstanceInfo.instance?.id === overlay.id && hoverInstanceInfo.figureType !== EventOverlayInfoFigureType.NONE) ||
-        (clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.figureType !== EventOverlayInfoFigureType.NONE)
+        (hoverInstanceInfo.instance?.id === overlay.id && hoverInstanceInfo.figureType !== EventOverlayInfoFigureType.None) ||
+        (clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.figureType !== EventOverlayInfoFigureType.None)
       ) {
         const styles = overlay.styles
         const pointStyles = { ...defaultStyles.point, ...styles?.point }
@@ -439,7 +439,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           let borderSize = pointStyles.borderSize
           if (
             hoverInstanceInfo.instance?.id === overlay.id &&
-            hoverInstanceInfo.figureType === EventOverlayInfoFigureType.POINT &&
+            hoverInstanceInfo.figureType === EventOverlayInfoFigureType.Point &&
             hoverInstanceInfo.figureIndex === index
           ) {
             radius = pointStyles.activeRadius
@@ -451,7 +451,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             'circle',
             { x, y, r: radius + borderSize },
             { color: borderColor },
-            this._createFigureEvents(overlay, EventOverlayInfoFigureType.POINT, index, 0)
+            this._createFigureEvents(overlay, EventOverlayInfoFigureType.Point, index, 0)
           )?.draw(ctx)
           this.createFigure(
             'circle',

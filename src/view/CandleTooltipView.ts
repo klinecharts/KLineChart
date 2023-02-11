@@ -51,8 +51,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const candleStyles = styles.candle
       const indicatorStyles = styles.indicator
       if (
-        candleStyles.tooltip.showType === TooltipShowType.RECT &&
-        indicatorStyles.tooltip.showType === TooltipShowType.RECT
+        candleStyles.tooltip.showType === TooltipShowType.Rect &&
+        indicatorStyles.tooltip.showType === TooltipShowType.Rect
       ) {
         const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
         const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
@@ -65,8 +65,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           styles, 0
         )
       } else if (
-        candleStyles.tooltip.showType === TooltipShowType.STANDARD &&
-        indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
+        candleStyles.tooltip.showType === TooltipShowType.Standard &&
+        indicatorStyles.tooltip.showType === TooltipShowType.Standard
       ) {
         const top = this._drawCandleStandardTooltip(
           ctx, paneId, bounding, crosshair, activeIconInfo, precision,
@@ -74,8 +74,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         )
         this.drawIndicatorTooltip(ctx, paneId, dataList, crosshair, activeIconInfo, indicators, customApi, bounding, indicatorStyles, top)
       } else if (
-        candleStyles.tooltip.showType === TooltipShowType.RECT &&
-        indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
+        candleStyles.tooltip.showType === TooltipShowType.Rect &&
+        indicatorStyles.tooltip.showType === TooltipShowType.Standard
       ) {
         const top = this.drawIndicatorTooltip(ctx, paneId, dataList, crosshair, activeIconInfo, indicators, customApi, bounding, indicatorStyles, 0)
         const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
@@ -264,12 +264,12 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         let rectX: number
         if ((crosshair.realX ?? 0) < centerX) {
           rectX = bounding.width - rectRight - rectWidth
-          if (styles.yAxis.inside && styles.yAxis.position === YAxisPosition.RIGHT) {
+          if (styles.yAxis.inside && styles.yAxis.position === YAxisPosition.Right) {
             rectX -= yAxisBounding.width
           }
         } else {
           rectX = rectLeft
-          if (styles.yAxis.inside && styles.yAxis.position === YAxisPosition.LEFT) {
+          if (styles.yAxis.inside && styles.yAxis.position === YAxisPosition.Left) {
             rectX += yAxisBounding.width
           }
         }
@@ -283,7 +283,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             height: rectHeight
           },
           {
-            style: PolygonType.STROKE_FILL,
+            style: PolygonType.StrokeFill,
             color: rectBackgroundColor,
             borderColor: rectBorderColor,
             borderSize: rectBorderSize,
@@ -412,7 +412,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       tooltipData = [
         {
           title: { text: i18n('time', locale), color: textColor },
-          value: { text: customApi.formatDate(dateTimeFormat, data.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.TOOLTIP), color: textColor }
+          value: { text: customApi.formatDate(dateTimeFormat, data.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip), color: textColor }
         }, {
           title: { text: i18n('open', locale), color: textColor },
           value: { text: formatPrecision(data.open, pricePrecision), color: textColor }

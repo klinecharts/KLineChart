@@ -66,7 +66,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const yAxis = axis as unknown as YAxis
     const value = axis.convertFromPixel(crosshair.y as number)
     let text: string
-    if (yAxis.getType() === YAxisType.PERCENTAGE) {
+    if (yAxis.getType() === YAxisType.Percentage) {
       const visibleDataList = chartStore.getVisibleDataList()
       const fromData = visibleDataList[0]?.data ?? {}
       text = `${((value - fromData.close) / fromData.close * 100).toFixed(2)}%`

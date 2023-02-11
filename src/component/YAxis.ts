@@ -78,7 +78,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
     }
     const visibleDataList = chartStore.getVisibleDataList()
     const candleStyles = chart.getStyles().candle
-    const isArea = candleStyles.type === CandleType.AREA
+    const isArea = candleStyles.type === CandleType.Area
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
     visibleDataList.forEach(({ dataIndex, data }) => {
@@ -112,7 +112,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
     const type = this.getType()
     let dif: number
     switch (type) {
-      case YAxisType.PERCENTAGE: {
+      case YAxisType.Percentage: {
         const fromData = visibleDataList[0]?.data
         if (fromData?.close !== undefined) {
           min = (min - fromData.close) / fromData.close * 100
@@ -121,7 +121,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
         dif = Math.pow(10, -2)
         break
       }
-      case YAxisType.LOG: {
+      case YAxisType.Log: {
         min = log10(min)
         max = log10(max)
         dif = 0.05 * index10(-precision)
@@ -159,7 +159,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
     let realMin: number
     let realMax: number
     let realRange: number
-    if (type === YAxisType.LOG) {
+    if (type === YAxisType.Log) {
       realMin = index10(min)
       realMax = index10(max)
       realRange = Math.abs(realMax - realMin)
@@ -196,13 +196,13 @@ export default class YAxisImp extends AxisImp implements YAxis {
 
   /**
    * y轴类型
-   * @return {string}
+   * @return {YAxisType}
    */
-  getType (): string {
+  getType (): YAxisType {
     if (this.isInCandle()) {
       return this.getParent().getChart().getStyles().yAxis.type
     }
-    return YAxisType.NORMAL
+    return YAxisType.Normal
   }
 
   getPosition (): string {
@@ -228,8 +228,8 @@ export default class YAxisImp extends AxisImp implements YAxis {
     const yAxisStyles = this.getParent().getChart().getStyles().yAxis
     const inside = yAxisStyles.inside
     return (
-      (yAxisStyles.position === YAxisPosition.LEFT && inside) ||
-      (yAxisStyles.position === YAxisPosition.RIGHT && !inside)
+      (yAxisStyles.position === YAxisPosition.Left && inside) ||
+      (yAxisStyles.position === YAxisPosition.Right && !inside)
     )
   }
 
@@ -259,11 +259,11 @@ export default class YAxisImp extends AxisImp implements YAxis {
       let v: string
       let y = this._innerConvertToPixel(+value)
       switch (type) {
-        case YAxisType.PERCENTAGE: {
+        case YAxisType.Percentage: {
           v = `${formatPrecision(value, 2)}%`
           break
         }
-        case YAxisType.LOG: {
+        case YAxisType.Log: {
           y = this._innerConvertToPixel(log10(+value))
           v = formatPrecision(value, precision)
           break
@@ -328,7 +328,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
         }
       })
       let precision = 2
-      if (this.getType() !== YAxisType.PERCENTAGE) {
+      if (this.getType() !== YAxisType.Percentage) {
         if (this.isInCandle()) {
           const { price: pricePrecision } = chartStore.getPrecision()
           const lastValueMarkStyles = styles.indicator.lastValueMark
@@ -366,7 +366,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
     const rate = this.isReverse() ? pixel / height : 1 - pixel / height
     const value = rate * range + min
     switch (this.getType()) {
-      case YAxisType.PERCENTAGE: {
+      case YAxisType.Percentage: {
         const chartStore = this.getParent().getChart().getChartStore()
         const visibleDataList = chartStore.getVisibleDataList()
         const fromData = visibleDataList[0]?.data
@@ -375,7 +375,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
         }
         return 0
       }
-      case YAxisType.LOG: {
+      case YAxisType.Log: {
         return index10(value)
       }
       default: {
@@ -386,7 +386,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
 
   convertToRealValue (value: number): number {
     let v = value
-    if (this.getType() === YAxisType.LOG) {
+    if (this.getType() === YAxisType.Log) {
       v = index10(value)
     }
     return v
@@ -395,7 +395,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
   convertToPixel (value: number): number {
     let v = value
     switch (this.getType()) {
-      case YAxisType.PERCENTAGE: {
+      case YAxisType.Percentage: {
         const chartStore = this.getParent().getChart().getChartStore()
         const visibleDataList = chartStore.getVisibleDataList()
         const fromData = visibleDataList[0]?.data
@@ -404,7 +404,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
         }
         break
       }
-      case YAxisType.LOG: {
+      case YAxisType.Log: {
         v = log10(value)
         break
       }

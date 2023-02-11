@@ -37,7 +37,7 @@ import View from './View'
 export default class IndicatorTooltipView extends View<YAxis> {
   private readonly _boundIconClickEvent = (currentIconInfo: TooltipIconInfo, iconId: string) => (event: MouseTouchEvent) => {
     const pane = this.getWidget().getPane()
-    pane.getChart().getChartStore().getActionStore().execute(ActionType.onTooltipIconClick, { ...currentIconInfo, iconId })
+    pane.getChart().getChartStore().getActionStore().execute(ActionType.OnTooltipIconClick, { ...currentIconInfo, iconId })
     return true
   }
 
@@ -274,8 +274,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
   protected isDrawTooltip (crosshair: Crosshair, styles: TooltipStyle): boolean {
     const showRule = styles.showRule
-    return showRule === TooltipShowRule.ALWAYS ||
-      (showRule === TooltipShowRule.FOLLOW_CROSS && (crosshair.paneId !== undefined))
+    return showRule === TooltipShowRule.Always ||
+      (showRule === TooltipShowRule.FollowCross && (crosshair.paneId !== undefined))
   }
 
   protected getIndicatorTooltipData (
@@ -370,15 +370,15 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const rightIcons: TooltipIconStyle[] = []
     icons.forEach(icon => {
       switch (icon.position) {
-        case TooltipIconPosition.LEFT: {
+        case TooltipIconPosition.Left: {
           leftIcons.push(icon)
           break
         }
-        case TooltipIconPosition.MIDDLE: {
+        case TooltipIconPosition.Middle: {
           middleIcons.push(icon)
           break
         }
-        case TooltipIconPosition.RIGHT: {
+        case TooltipIconPosition.Right: {
           rightIcons.push(icon)
           break
         }

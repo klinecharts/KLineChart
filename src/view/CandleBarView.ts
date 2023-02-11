@@ -27,7 +27,7 @@ import { RectAttrs } from '../extension/figure/rect'
 import ChildrenView from './ChildrenView'
 
 export interface CandleBarOptions {
-  type: Exclude<CandleType, 'area'>
+  type: Exclude<CandleType, CandleType.Area>
   styles: ChangeColor
 }
 
@@ -47,7 +47,7 @@ export default class CandleBarView extends ChildrenView {
   protected getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
     const candleStyles = chartStore.getStyles().candle
     return {
-      type: candleStyles.type as Exclude<CandleType, 'area'>,
+      type: candleStyles.type as Exclude<CandleType, CandleType.Area>,
       styles: candleStyles.bar
     }
   }
@@ -77,7 +77,7 @@ export default class CandleBarView extends ChildrenView {
     const barHeight = Math.max(1, priceY[2] - priceY[1])
 
     let rects: Array<FigureCreate<RectAttrs, Partial<RectStyle>>> = []
-    if (type !== CandleType.OHLC) {
+    if (type !== CandleType.Ohlc) {
       rects.push({
         name: 'rect',
         attrs: {
@@ -89,9 +89,9 @@ export default class CandleBarView extends ChildrenView {
         styles: { color }
       })
       if (
-        type === CandleType.CANDLE_STROKE ||
-        (type === CandleType.CANDLE_UP_STROKE && open < close) ||
-        (type === CandleType.CANDLE_DOWN_STROKE && open > close)
+        type === CandleType.CandleStroke ||
+        (type === CandleType.CandleUpStroke && open < close) ||
+        (type === CandleType.CandleDownStroke && open > close)
       ) {
         rects.push({
           name: 'rect',
@@ -102,7 +102,7 @@ export default class CandleBarView extends ChildrenView {
             height: barHeight
           },
           styles: {
-            style: PolygonType.STROKE,
+            style: PolygonType.Stroke,
             borderColor: color
           }
         })

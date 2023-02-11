@@ -27,10 +27,10 @@ import { YAxis } from './YAxis'
 import { formatValue } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
-export const enum IndicatorSeries {
-  NORMAL = 'normal',
-  PRICE = 'price',
-  VOLUME = 'volume'
+export enum IndicatorSeries {
+  Normal = 'normal',
+  Price = 'price',
+  Volume = 'volume'
 }
 
 export interface IndicatorFigureStyle {
@@ -299,7 +299,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     } = indicator
     this.name = name
     this.shortName = shortName ?? name
-    this.series = series ?? IndicatorSeries.NORMAL
+    this.series = series ?? IndicatorSeries.Normal
     this.precision = precision ?? 4
     this.calcParams = calcParams ?? []
     this.figures = figures ?? []

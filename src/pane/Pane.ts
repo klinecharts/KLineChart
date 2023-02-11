@@ -186,7 +186,7 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
     if (seriesHeight !== this._seriesContiainer.offsetHeight) {
       this._seriesContiainer.style.height = `${seriesHeight}px`
     }
-    const l = level ?? UpdateLevel.DRAWER
+    const l = level ?? UpdateLevel.Drawer
     this._mainWidget.update(l)
     this._yAxisWidget?.update(l)
     this._separatorWidget?.update(l)

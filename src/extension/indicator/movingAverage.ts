@@ -28,7 +28,7 @@ interface Ma {
 const movingAverage: IndicatorTemplate<Ma> = {
   name: 'MA',
   shortName: 'MA',
-  series: IndicatorSeries.PRICE,
+  series: IndicatorSeries.Price,
   calcParams: [5, 10, 30, 60],
   precision: 2,
   shouldOhlc: true,

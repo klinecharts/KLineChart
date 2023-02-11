@@ -52,10 +52,10 @@ import { getStyles as getExtensionStyles } from './extension/styles/index'
 
 import ChartEvent from './ChartEvent'
 
-export const enum DomPosition {
-  ROOT = 'root',
-  MAIN = 'main',
-  YAXIS = 'yAxis'
+export enum DomPosition {
+  Root = 'root',
+  Main = 'main',
+  YAxis = 'yAxis'
 }
 
 export interface ConvertFinder {
@@ -192,7 +192,7 @@ export default class ChartImp implements Chart {
   private _measurePaneWidth (): void {
     const styles = this._chartStore.getStyles()
     const yAxisStyles = styles.yAxis
-    const isYAxisLeft = yAxisStyles.position === YAxisPosition.LEFT
+    const isYAxisLeft = yAxisStyles.position === YAxisPosition.Left
     const isOutside = !yAxisStyles.inside
     const totolWidth = this._container.offsetWidth
     let mainWidth = 0
@@ -286,7 +286,7 @@ export default class ChartImp implements Chart {
     }
     if (shouldUpdate ?? false) {
       this._xAxisPane.getAxisComponent().buildTicks(true)
-      this.updatePane(UpdateLevel.ALL)
+      this.updatePane(UpdateLevel.All)
     }
   }
 
@@ -310,7 +310,7 @@ export default class ChartImp implements Chart {
 
   crosshairChange (crosshair: Crosshair): void {
     const actionStore = this._chartStore.getActionStore()
-    if (actionStore.has(ActionType.onCrosshairChange)) {
+    if (actionStore.has(ActionType.OnCrosshairChange)) {
       const indicatorData = {}
       this._panes.forEach((_, id) => {
         const paneIndicatorData = {}
@@ -322,7 +322,7 @@ export default class ChartImp implements Chart {
         indicatorData[id] = paneIndicatorData
       })
       if (crosshair.paneId !== undefined) {
-        actionStore.execute(ActionType.onCrosshairChange, {
+        actionStore.execute(ActionType.OnCrosshairChange, {
           ...crosshair,
           indicatorData
         })
@@ -334,15 +334,15 @@ export default class ChartImp implements Chart {
     if (paneId !== undefined) {
       const pane = this.getPaneById(paneId)
       if (pane !== null) {
-        const pos = position ?? DomPosition.ROOT
+        const pos = position ?? DomPosition.Root
         switch (pos) {
-          case DomPosition.ROOT: {
+          case DomPosition.Root: {
             return pane.getContainer()
           }
-          case DomPosition.MAIN: {
+          case DomPosition.Main: {
             return pane.getMainWidget().getContainer()
           }
-          case DomPosition.YAXIS: {
+          case DomPosition.YAxis: {
             return pane.getYAxisWidget()?.getContainer() ?? null
           }
         }
@@ -357,15 +357,15 @@ export default class ChartImp implements Chart {
     if (paneId !== undefined) {
       const pane = this.getPaneById(paneId)
       if (pane !== null) {
-        const pos = position ?? DomPosition.ROOT
+        const pos = position ?? DomPosition.Root
         switch (pos) {
-          case DomPosition.ROOT: {
+          case DomPosition.Root: {
             return pane.getBounding()
           }
-          case DomPosition.MAIN: {
+          case DomPosition.Main: {
             return pane.getMainWidget().getBounding()
           }
-          case DomPosition.YAXIS: {
+          case DomPosition.YAxis: {
             return pane.getYAxisWidget()?.getBounding() ?? null
           }
         }
@@ -426,7 +426,7 @@ export default class ChartImp implements Chart {
   setTimezone (timezone: string): void {
     this._chartStore.setOptions({ timezone })
     this._xAxisPane.getAxisComponent().buildTicks(true)
-    this._xAxisPane.update(UpdateLevel.DRAWER)
+    this._xAxisPane.update(UpdateLevel.Drawer)
   }
 
   getTimezone (): string {

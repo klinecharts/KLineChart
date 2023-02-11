@@ -28,7 +28,7 @@ interface Vol {
 const volume: IndicatorTemplate<Vol> = {
   name: 'VOL',
   shortName: 'VOL',
-  series: IndicatorSeries.VOLUME,
+  series: IndicatorSeries.Volume,
   calcParams: [5, 10, 20],
   shouldFormatBigNumber: true,
   precision: 0,

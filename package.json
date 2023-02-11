@@ -38,8 +38,8 @@
     "build-core:dev": "cross-env NODE_ENV=development node scripts/build.js",
     "build-core:prod": "cross-env NODE_ENV=production node scripts/build.js",
     "build-core": "npm run build-core:dev && npm run build-core:prod",
-    "build-declaration": "dts-bundle-generator --no-banner true --umd-module-name klinecharts -o types/index.d.ts src/index.ts",
-    "build": "npm run build-core && npm run build-declaration",
+    "build-dts": "dts-bundle-generator --no-banner true --umd-module-name klinecharts -o types/index.d.ts src/index.ts",
+    "build": "npm run build-core && npm run build-dts",
     "deploy": "gh-pages -d website",
     "prepare": "husky install"
   },

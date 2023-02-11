@@ -35,9 +35,7 @@ export interface ProgressOverlayInfo {
 }
 
 export const enum EventOverlayInfoFigureType {
-  NONE = 'none',
-  POINT = 'point',
-  OTHER = 'other'
+  None, Point, Other
 }
 
 export interface EventOverlayInfo {
@@ -64,7 +62,7 @@ export default class OverlayStore {
   private _pressedInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
-    figureType: EventOverlayInfoFigureType.NONE,
+    figureType: EventOverlayInfoFigureType.None,
     figureIndex: -1,
     attrsIndex: -1
   }
@@ -75,7 +73,7 @@ export default class OverlayStore {
   private _hoverInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
-    figureType: EventOverlayInfoFigureType.NONE,
+    figureType: EventOverlayInfoFigureType.None,
     figureIndex: -1,
     attrsIndex: -1
   }
@@ -86,7 +84,7 @@ export default class OverlayStore {
   private _clickInstanceInfo: EventOverlayInfo = {
     paneId: '',
     instance: null,
-    figureType: EventOverlayInfoFigureType.NONE,
+    figureType: EventOverlayInfoFigureType.None,
     figureIndex: -1,
     attrsIndex: -1
   }
@@ -205,7 +203,7 @@ export default class OverlayStore {
         this._instances.get(paneId)?.push(instance)
       }
       instance.onDrawStart?.(({ overlay: instance }))
-      this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY, paneId)
+      this._chartStore.getChart().updatePane(UpdateLevel.Overlay, paneId)
       return id
     }
     return null
@@ -282,7 +280,7 @@ export default class OverlayStore {
       }
     }
     if (updateFlag) {
-      this._chartStore.getChart().updatePane(UpdateLevel.OVERLAY)
+      this._chartStore.getChart().updatePane(UpdateLevel.Overlay)
     }
   }
 
@@ -351,9 +349,9 @@ export default class OverlayStore {
     if (updatePaneIds.length > 0) {
       const chart = this._chartStore.getChart()
       updatePaneIds.forEach(paneId => {
-        chart.updatePane(UpdateLevel.OVERLAY, paneId)
+        chart.updatePane(UpdateLevel.Overlay, paneId)
       })
-      chart.updatePane(UpdateLevel.OVERLAY, PaneIdConstants.XAXIS)
+      chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.XAXIS)
     }
   }
 
@@ -395,11 +393,11 @@ export default class OverlayStore {
         instance?.onDeselected?.({ overlay: instance, ...event })
         info.instance?.onSelected?.({ overlay: info.instance, ...event })
         const chart = this._chartStore.getChart()
-        chart.updatePane(UpdateLevel.OVERLAY, info.paneId)
+        chart.updatePane(UpdateLevel.Overlay, info.paneId)
         if (paneId !== info.paneId) {
-          chart.updatePane(UpdateLevel.OVERLAY, paneId)
+          chart.updatePane(UpdateLevel.Overlay, paneId)
         }
-        chart.updatePane(UpdateLevel.OVERLAY, PaneIdConstants.XAXIS)
+        chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.XAXIS)
       }
     }
   }

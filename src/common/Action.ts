@@ -14,13 +14,13 @@
 
 export type ActionCallback = (data?: any) => void
 
-export const enum ActionType {
-  onZoom = 'onZoom',
-  onScroll = 'onScroll',
-  onVisibleRangeChange = 'onVisibleRangeChange',
-  onTooltipIconClick = 'onTooltipIconClick',
-  onCrosshairChange = 'onCrosshairChange',
-  onPaneDrag = 'onPaneDrag'
+export enum ActionType {
+  OnZoom = 'onZoom',
+  OnScroll = 'onScroll',
+  OnVisibleRangeChange = 'onVisibleRangeChange',
+  OnTooltipIconClick = 'onTooltipIconClick',
+  OnCrosshairChange = 'onCrosshairChange',
+  OnPaneDrag = 'onPaneDrag'
 }
 
 export default class Delegate {

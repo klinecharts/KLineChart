@@ -26,7 +26,7 @@ interface Bbi {
 const bullAndBearIndex: IndicatorTemplate<Bbi> = {
   name: 'BBI',
   shortName: 'BBI',
-  series: IndicatorSeries.PRICE,
+  series: IndicatorSeries.Price,
   precision: 2,
   calcParams: [3, 6, 12, 24],
   shouldOhlc: true,

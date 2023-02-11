@@ -47,7 +47,7 @@ export default class CandleLastPriceLabelView extends View {
           backgroundColor = lastPriceMarkStyles.noChangeColor
         }
         let text: string
-        if (yAxis.getType() === YAxisType.PERCENTAGE) {
+        if (yAxis.getType() === YAxisType.Percentage) {
           const fromData = visibleDataList[0].data
           const fromClose = fromData.close
           text = `${((close - fromClose) / fromClose * 100).toFixed(2)}%`

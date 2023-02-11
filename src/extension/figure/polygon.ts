@@ -34,14 +34,14 @@ export function checkCoordinateOnPolygon (coordinate: Coordinate, polygon: Polyg
 export function drawPolygon (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs, styles: Partial<PolygonStyle>): void {
   const { coordinates } = attrs
   const {
-    style = PolygonType.FILL,
+    style = PolygonType.Fill,
     color = 'currentColor',
     borderSize = 1,
     borderColor = 'currentColor',
-    borderStyle = LineType.SOLID,
+    borderStyle = LineType.Solid,
     borderDashedValue = [2, 2]
   } = styles
-  if (style === PolygonType.FILL || styles.style === PolygonType.STROKE_FILL) {
+  if (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) {
     ctx.fillStyle = color
     ctx.beginPath()
     ctx.moveTo(coordinates[0].x, coordinates[0].y)
@@ -51,10 +51,10 @@ export function drawPolygon (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs,
     ctx.closePath()
     ctx.fill()
   }
-  if (style === PolygonType.STROKE || styles.style === PolygonType.STROKE_FILL) {
+  if (style === PolygonType.Stroke || styles.style === PolygonType.StrokeFill) {
     ctx.strokeStyle = borderColor
     ctx.lineWidth = borderSize
-    if (borderStyle === LineType.DASHED) {
+    if (borderStyle === LineType.Dashed) {
       ctx.setLineDash(borderDashedValue)
     } else {
       ctx.setLineDash([])

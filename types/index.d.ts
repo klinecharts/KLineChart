@@ -50,13 +50,9 @@ export interface KLineData {
 	volume?: number;
 	turnover?: number;
 }
-/**
- * line type
- * @type {{DASHED: string, SOLID: string}}
- */
-export declare const enum LineType {
-	DASHED = "dashed",
-	SOLID = "solid"
+declare enum LineType {
+	Dashed = "dashed",
+	Solid = "solid"
 }
 export interface LineStyle {
 	style: LineType;
@@ -70,10 +66,10 @@ export interface SmoothLineStyle extends LineStyle {
 export interface StateLineStyle extends LineStyle {
 	show: boolean;
 }
-export declare const enum PolygonType {
-	STROKE = "stroke",
-	FILL = "fill",
-	STROKE_FILL = "stroke_fill"
+declare enum PolygonType {
+	Stroke = "stroke",
+	Fill = "fill",
+	StrokeFill = "stroke_fill"
 }
 export interface PolygonStyle {
 	style: PolygonType;
@@ -118,14 +114,14 @@ export interface MarginTextStyle extends StateTextStyle {
 	marginBottom: number;
 }
 export declare type LastValueMarkTextStyle = Omit<StateRectTextStyle, "backgroundColor" | "borderColor">;
-export declare const enum TooltipShowRule {
-	ALWAYS = "always",
-	FOLLOW_CROSS = "follow_cross",
-	NONE = "none"
+declare enum TooltipShowRule {
+	Always = "always",
+	FollowCross = "follow_cross",
+	None = "none"
 }
-export declare const enum TooltipShowType {
-	RECT = "rect",
-	STANDARD = "standard"
+declare enum TooltipShowType {
+	Standard = "standard",
+	Rect = "rect"
 }
 export interface ChangeColor {
 	upColor: string;
@@ -150,11 +146,36 @@ export interface TooltipData {
 	title: string | TooltipDataChild;
 	value: string | TooltipDataChild;
 }
+declare enum TooltipIconPosition {
+	Left = "left",
+	Middle = "middle",
+	Right = "right"
+}
+export interface TooltipIconStyle {
+	id: string;
+	position: TooltipIconPosition;
+	marginLeft: number;
+	marginTop: number;
+	marginRight: number;
+	marginBottom: number;
+	paddingLeft: number;
+	paddingTop: number;
+	paddingRight: number;
+	paddingBottom: number;
+	color: string;
+	activeColor: string;
+	size: number;
+	fontFamily: string;
+	icon: string;
+	backgroundColor: string;
+	activeBackgroundColor: string;
+}
 export interface TooltipStyle {
 	showRule: TooltipShowRule;
 	showType: TooltipShowType;
 	defaultValue: string;
 	text: TooltipTextStyle;
+	icons: TooltipIconStyle[];
 }
 export interface CandleAreaStyle {
 	lineSize: number;
@@ -196,13 +217,13 @@ export interface CandleTooltipStyle extends TooltipStyle {
 	custom: Nullable<CandleTooltipCustomCallback>;
 	rect: CandleTooltipRectStyle;
 }
-export declare const enum CandleType {
-	CANDLE_SOLID = "candle_solid",
-	CANDLE_STROKE = "candle_stroke",
-	CANDLE_UP_STROKE = "candle_up_stroke",
-	CANDLE_DOWN_STROKE = "candle_down_stroke",
-	OHLC = "ohlc",
-	AREA = "area"
+declare enum CandleType {
+	CandleSolid = "candle_solid",
+	CandleStroke = "candle_stroke",
+	CandleUpStroke = "candle_up_stroke",
+	CandleDownStroke = "candle_down_stroke",
+	Ohlc = "ohlc",
+	Area = "area"
 }
 export interface CandleStyle {
 	type: CandleType;
@@ -244,14 +265,14 @@ export interface AxisStyle {
 	tickText: AxisTickTextStyle;
 }
 export declare type XAxisStyle = AxisStyle;
-export declare const enum YAxisPosition {
-	LEFT = "left",
-	RIGHT = "right"
+declare enum YAxisPosition {
+	Left = "left",
+	Right = "right"
 }
-export declare const enum YAxisType {
-	NORMAL = "normal",
-	PERCENTAGE = "percentage",
-	LOG = "log"
+declare enum YAxisType {
+	Normal = "normal",
+	Percentage = "percentage",
+	Log = "log"
 }
 export interface YAxisStyle extends AxisStyle {
 	type: YAxisType;
@@ -305,10 +326,10 @@ export interface Styles {
 	crosshair: CrosshairStyle;
 	overlay: OverlayStyle;
 }
-export declare const enum FormatDateType {
-	TOOLTIP = 0,
-	CROSSHAIR = 1,
-	XAXIS = 2
+declare enum FormatDateType {
+	Tooltip = 0,
+	Crosshair = 1,
+	XAxis = 2
 }
 export declare type FormatDate = (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: FormatDateType) => string;
 export declare type FormatBigNumber = (value: string | number) => string;
@@ -407,12 +428,13 @@ export interface Crosshair extends Partial<Coordinate> {
  * limitations under the License.
  */
 export declare type ActionCallback = (data?: any) => void;
-export declare const enum ActionType {
-	onZoom = "onZoom",
-	onScroll = "onScroll",
-	onVisibleRangeChange = "onVisibleDataChange",
-	onCrosshairChange = "onCrosshairChange",
-	onPaneDrag = "onPaneDrag"
+declare enum ActionType {
+	OnZoom = "onZoom",
+	OnScroll = "onScroll",
+	OnVisibleRangeChange = "onVisibleRangeChange",
+	OnTooltipIconClick = "onTooltipIconClick",
+	OnCrosshairChange = "onCrosshairChange",
+	OnPaneDrag = "onPaneDrag"
 }
 export declare type LoadMoreCallback = (timestamp: Nullable<number>) => void;
 /**
@@ -507,10 +529,10 @@ export interface Axis {
 	convertFromPixel: (px: number) => number;
 }
 export declare type XAxis = Axis;
-export declare const enum IndicatorSeries {
-	NORMAL = "normal",
-	PRICE = "price",
-	VOLUME = "volume"
+declare enum IndicatorSeries {
+	Normal = "normal",
+	Price = "price",
+	Volume = "volume"
 }
 export interface IndicatorFigureStyle {
 	style?: LineType[keyof LineType] | PolygonType[keyof PolygonType];
@@ -535,9 +557,10 @@ export interface IndicatorFigure<D = any> {
 }
 export declare type IndicatorRegenerateFiguresCallback<D = any> = (calcParms: any[]) => Array<IndicatorFigure<D>>;
 export interface IndicatorTooltipData {
-	name?: string;
-	calcParamsText?: string;
-	values?: TooltipData[];
+	name: string;
+	calcParamsText: string;
+	icons: TooltipIconStyle[];
+	values: TooltipData[];
 }
 export interface IndicatorCreateTooltipDataSourceParams<D = any> {
 	kLineDataList: KLineData[];
@@ -589,6 +612,10 @@ export interface Indicator<D = any> {
 	 */
 	shouldFormatBigNumber: boolean;
 	/**
+	 * Whether the indicator is visible
+	 */
+	visible: boolean;
+	/**
 	 * Extend data
 	 */
 	extendData: any;
@@ -635,10 +662,10 @@ export interface Indicator<D = any> {
 }
 export declare type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name" | "calc">;
 export declare type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name">;
-export declare const enum OverlayMode {
-	NORMAL = "normal",
-	WEAK_MAGNET = "weak_magnet",
-	STRONG_MAGNET = "strong_magnet"
+declare enum OverlayMode {
+	Normal = "normal",
+	WeakMagnet = "weak_magnet",
+	StrongMagnet = "strong_magnet"
 }
 export interface OverlayPerformEventParams {
 	currentStep: number;
@@ -695,6 +722,10 @@ export interface Overlay {
 	 * Whether it is locked. When it is true, it will not respond to events
 	 */
 	lock: boolean;
+	/**
+	 * Whether the overlay is visible
+	 */
+	visible: boolean;
 	/**
 	 * Whether the default figure corresponding to the point is required
 	 */
@@ -799,10 +830,10 @@ export interface Overlay {
 export declare type OverlayTemplate = ExcludePickPartial<Omit<Overlay, "id" | "groupId" | "points" | "currentStep">, "name">;
 export declare type OverlayCreate = ExcludePickPartial<Omit<Overlay, "currentStep" | "totalStep" | "createPointFigures" | "createXAxisFigures" | "createYAxisFigures" | "performEventPressedMove" | "performEventMoveForDrawing">, "name">;
 export declare type OverlayRemove = Partial<Pick<Overlay, "id" | "groupId" | "name">>;
-export declare const enum DomPosition {
-	ROOT = "root",
-	MAIN = "main",
-	YAXIS = "yAxis"
+declare enum DomPosition {
+	Root = "root",
+	Main = "main",
+	YAxis = "yAxis"
 }
 export interface ConvertFinder {
 	paneId?: string;

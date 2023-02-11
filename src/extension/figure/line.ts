@@ -93,10 +93,10 @@ export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, style
   const { coordinates } = attrs
   const length = coordinates.length
   if (length > 1) {
-    const { style = LineType.SOLID, smooth, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
+    const { style = LineType.Solid, smooth, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
     ctx.lineWidth = size
     ctx.strokeStyle = color
-    if (style === LineType.DASHED) {
+    if (style === LineType.Dashed) {
       ctx.setLineDash(dashedValue)
     } else {
       ctx.setLineDash([])

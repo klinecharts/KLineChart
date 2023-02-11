@@ -181,10 +181,10 @@ export default class IndicatorStore {
   setSeriesPrecision (precision: Precision): void {
     this._instances.forEach(paneInstances => {
       paneInstances.forEach(instance => {
-        if (instance.series === IndicatorSeries.PRICE) {
+        if (instance.series === IndicatorSeries.Price) {
           instance.setPrecision(precision.price, true)
         }
-        if (instance.series === IndicatorSeries.VOLUME) {
+        if (instance.series === IndicatorSeries.Volume) {
           instance.setPrecision(precision.volume, true)
         }
       })

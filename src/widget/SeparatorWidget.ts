@@ -102,7 +102,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
         reducedPane.setBounding({ height: reducedPaneHeight })
         increasedPane.setBounding({ height: startDragIncreasedPaneHeight + diffHeight })
         const chart = currentPane.getChart()
-        chart.getChartStore().getActionStore().execute(ActionType.onPaneDrag, { paneId: currentPane.getId })
+        chart.getChartStore().getActionStore().execute(ActionType.OnPaneDrag, { paneId: currentPane.getId })
         chart.adjustPaneViewport(true, true, true, true, true)
       }
     }
@@ -155,7 +155,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
   }
 
   protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
-    if (level === UpdateLevel.ALL || level === UpdateLevel.SEPARATOR) {
+    if (level === UpdateLevel.All || level === UpdateLevel.Separator) {
       const styles = this.getPane().getChart().getStyles().separator
       this._moveDom.style.top = `${-Math.floor((REAL_SEPARATOR_HEIGHT - styles.size) / 2)}px`
       this._moveDom.style.height = `${REAL_SEPARATOR_HEIGHT}px`

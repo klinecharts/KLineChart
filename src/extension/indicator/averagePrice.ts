@@ -25,7 +25,7 @@ interface Avp {
 const averagePrice: IndicatorTemplate<Avp> = {
   name: 'AVP',
   shortName: 'AVP',
-  series: IndicatorSeries.PRICE,
+  series: IndicatorSeries.Price,
   precision: 2,
   figures: [
     { key: 'avp', title: 'AVP: ', type: 'line' }

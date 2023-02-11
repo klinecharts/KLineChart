@@ -44,7 +44,7 @@ function getBollMd (dataList: KLineData[], ma: number): number {
 const bollingerBands: IndicatorTemplate<Boll> = {
   name: 'BOLL',
   shortName: 'BOLL',
-  series: IndicatorSeries.PRICE,
+  series: IndicatorSeries.Price,
   calcParams: [20, 2],
   precision: 2,
   shouldOhlc: true,

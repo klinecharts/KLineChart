@@ -25,7 +25,7 @@ interface Sma {
 const simpleMovingAverage: IndicatorTemplate<Sma> = {
   name: 'SMA',
   shortName: 'SMA',
-  series: IndicatorSeries.PRICE,
+  series: IndicatorSeries.Price,
   calcParams: [12, 2],
   precision: 2,
   figures: [

@@ -118,26 +118,26 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
       this._overlayCanvas.height = scaleHeight
       this._overlayCtx.scale(pixelRatio, pixelRatio)
 
-      l = UpdateLevel.DRAWER
+      l = UpdateLevel.Drawer
     } else {
-      if (l === UpdateLevel.ALL || l === UpdateLevel.DRAWER || l === UpdateLevel.MAIN) {
+      if (l === UpdateLevel.All || l === UpdateLevel.Drawer || l === UpdateLevel.Main) {
         this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
       }
-      if (l === UpdateLevel.ALL || l === UpdateLevel.DRAWER || l === UpdateLevel.OVERLAY) {
+      if (l === UpdateLevel.All || l === UpdateLevel.Drawer || l === UpdateLevel.Overlay) {
         this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
       }
     }
     switch (l) {
-      case UpdateLevel.MAIN: {
+      case UpdateLevel.Main: {
         this._optimalUpdateMain()
         break
       }
-      case UpdateLevel.OVERLAY: {
+      case UpdateLevel.Overlay: {
         this._optimalUpdateOverlay()
         break
       }
-      case UpdateLevel.DRAWER:
-      case UpdateLevel.ALL: {
+      case UpdateLevel.Drawer:
+      case UpdateLevel.All: {
         this._optimalUpdateMain()
         this._optimalUpdateOverlay()
         break

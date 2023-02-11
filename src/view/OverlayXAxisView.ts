@@ -64,7 +64,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
         rightX = Math.max(rightX, coordinate.x)
         const point = overlay.points[index]
         if (point.timestamp !== undefined) {
-          const text = customApi.formatDate(dateTimeFormat, point.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.CROSSHAIR)
+          const text = customApi.formatDate(dateTimeFormat, point.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
           figures.push({ type: 'rectText', attrs: { x: coordinate.x, y: 0, text, align: 'center' }, ignoreEvent: true })
         }
       })

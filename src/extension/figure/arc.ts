@@ -36,10 +36,10 @@ export function checkCoordinateOnArc (coordinate: Coordinate, arc: ArcAttrs): bo
 
 export function drawArc (ctx: CanvasRenderingContext2D, attrs: ArcAttrs, styles: Partial<LineStyle>): void {
   const { x, y, r, startAngle, endAngle } = attrs
-  const { style = LineType.SOLID, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
+  const { style = LineType.Solid, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
   ctx.lineWidth = size
   ctx.strokeStyle = color
-  if (style === LineType.DASHED) {
+  if (style === LineType.Dashed) {
     ctx.setLineDash(dashedValue)
   } else {
     ctx.setLineDash([])

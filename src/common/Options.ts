@@ -20,11 +20,10 @@ import { formatDate, formatBigNumber } from './utils/format'
 
 /**
  * line type
- * @type {{DASHED: string, SOLID: string}}
  */
-export const enum LineType {
-  DASHED = 'dashed',
-  SOLID = 'solid'
+export enum LineType {
+  Dashed = 'dashed',
+  Solid = 'solid'
 }
 
 export interface LineStyle {
@@ -42,10 +41,10 @@ export interface StateLineStyle extends LineStyle {
   show: boolean
 }
 
-export const enum PolygonType {
-  STROKE = 'stroke',
-  FILL = 'fill',
-  STROKE_FILL = 'stroke_fill'
+export enum PolygonType {
+  Stroke = 'stroke',
+  Fill = 'fill',
+  StrokeFill = 'stroke_fill'
 }
 
 export interface PolygonStyle {
@@ -99,15 +98,15 @@ export interface MarginTextStyle extends StateTextStyle {
 
 export type LastValueMarkTextStyle = Omit<StateRectTextStyle, 'backgroundColor' | 'borderColor'>
 
-export const enum TooltipShowRule {
-  ALWAYS = 'always',
-  FOLLOW_CROSS = 'follow_cross',
-  NONE = 'none'
+export enum TooltipShowRule {
+  Always = 'always',
+  FollowCross = 'follow_cross',
+  None = 'none'
 }
 
-export const enum TooltipShowType {
-  RECT = 'rect',
-  STANDARD = 'standard'
+export enum TooltipShowType {
+  Standard = 'standard',
+  Rect = 'rect'
 }
 
 export interface ChangeColor {
@@ -140,9 +139,9 @@ export interface TooltipData {
 }
 
 export enum TooltipIconPosition {
-  LEFT = 'left',
-  MIDDLE = 'middle',
-  RIGHT = 'right'
+  Left = 'left',
+  Middle = 'middle',
+  Right = 'right'
 }
 export interface TooltipIconStyle {
   id: string
@@ -179,14 +178,14 @@ function getDefaultGridStyle (): GridStyle {
       show: true,
       size: 1,
       color: '#EDEDED',
-      style: LineType.DASHED,
+      style: LineType.Dashed,
       dashedValue: [2, 2]
     },
     vertical: {
       show: true,
       size: 1,
       color: '#EDEDED',
-      style: LineType.DASHED,
+      style: LineType.Dashed,
       dashedValue: [2, 2]
     }
   }
@@ -239,13 +238,13 @@ export interface CandleTooltipStyle extends TooltipStyle {
   rect: CandleTooltipRectStyle
 }
 
-export const enum CandleType {
-  CANDLE_SOLID = 'candle_solid',
-  CANDLE_STROKE = 'candle_stroke',
-  CANDLE_UP_STROKE = 'candle_up_stroke',
-  CANDLE_DOWN_STROKE = 'candle_down_stroke',
-  OHLC = 'ohlc',
-  AREA = 'area'
+export enum CandleType {
+  CandleSolid = 'candle_solid',
+  CandleStroke = 'candle_stroke',
+  CandleUpStroke = 'candle_up_stroke',
+  CandleDownStroke = 'candle_down_stroke',
+  Ohlc = 'ohlc',
+  Area = 'area'
 }
 
 export interface CandleStyle {
@@ -262,7 +261,7 @@ export interface CandleStyle {
  */
 function getDefaultCandleStyle (): CandleStyle {
   return {
-    type: CandleType.CANDLE_SOLID,
+    type: CandleType.CandleSolid,
     bar: {
       upColor: '#26A69A',
       downColor: '#EF5350',
@@ -305,19 +304,19 @@ function getDefaultCandleStyle (): CandleStyle {
         noChangeColor: '#888888',
         line: {
           show: true,
-          style: LineType.DASHED,
+          style: LineType.Dashed,
           dashedValue: [4, 4],
           size: 1
         },
         text: {
           show: true,
-          style: PolygonType.FILL,
+          style: PolygonType.Fill,
           size: 12,
           paddingLeft: 4,
           paddingTop: 4,
           paddingRight: 4,
           paddingBottom: 4,
-          borderStyle: LineType.SOLID,
+          borderStyle: LineType.Solid,
           borderSize: 1,
           borderDashedValue: [2, 2],
           color: '#FFFFFF',
@@ -328,8 +327,8 @@ function getDefaultCandleStyle (): CandleStyle {
       }
     },
     tooltip: {
-      showRule: TooltipShowRule.ALWAYS,
-      showType: TooltipShowType.STANDARD,
+      showRule: TooltipShowRule.Always,
+      showType: TooltipShowType.Standard,
       custom: null,
       defaultValue: 'n/a',
       rect: {
@@ -392,8 +391,8 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       noChangeColor: '#888888'
     },
     bars: [{
-      style: PolygonType.FILL,
-      borderStyle: LineType.SOLID,
+      style: PolygonType.Fill,
+      borderStyle: LineType.Solid,
       borderSize: 1,
       borderDashedValue: [2, 2],
       upColor: 'rgba(38, 166, 154, .65)',
@@ -402,31 +401,31 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
     }],
     lines: [
       {
-        style: LineType.SOLID,
+        style: LineType.Solid,
         smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#FF9600'
       }, {
-        style: LineType.SOLID,
+        style: LineType.Solid,
         smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#9D65C9'
       }, {
-        style: LineType.SOLID,
+        style: LineType.Solid,
         smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#1677FF'
       }, {
-        style: LineType.SOLID,
+        style: LineType.Solid,
         smooth: false,
         size: 1,
         dashedValue: [2, 2],
         color: '#E11D74'
       }, {
-        style: LineType.SOLID,
+        style: LineType.Solid,
         smooth: false,
         size: 1,
         dashedValue: [2, 2],
@@ -434,8 +433,8 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       }
     ],
     circles: [{
-      style: PolygonType.FILL,
-      borderStyle: LineType.SOLID,
+      style: PolygonType.Fill,
+      borderStyle: LineType.Solid,
       borderSize: 1,
       borderDashedValue: [2, 2],
       upColor: 'rgba(38, 166, 154, .65)',
@@ -446,12 +445,12 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       show: false,
       text: {
         show: false,
-        style: PolygonType.FILL,
+        style: PolygonType.Fill,
         color: '#FFFFFF',
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        borderStyle: LineType.SOLID,
+        borderStyle: LineType.Solid,
         borderSize: 1,
         borderDashedValue: [2, 2],
         paddingLeft: 4,
@@ -462,8 +461,8 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       }
     },
     tooltip: {
-      showRule: TooltipShowRule.ALWAYS,
-      showType: TooltipShowType.STANDARD,
+      showRule: TooltipShowRule.Always,
+      showType: TooltipShowType.Standard,
       showName: true,
       showParams: true,
       defaultValue: 'n/a',
@@ -530,15 +529,15 @@ function getDefaultXAxisStyle (): XAxisStyle {
   }
 }
 
-export const enum YAxisPosition {
-  LEFT = 'left',
-  RIGHT = 'right'
+export enum YAxisPosition {
+  Left = 'left',
+  Right = 'right'
 }
 
-export const enum YAxisType {
-  NORMAL = 'normal',
-  PERCENTAGE = 'percentage',
-  LOG = 'log'
+export enum YAxisType {
+  Normal = 'normal',
+  Percentage = 'percentage',
+  Log = 'log'
 }
 
 export interface YAxisStyle extends AxisStyle {
@@ -552,8 +551,8 @@ function getDefaultYAxisStyle (): YAxisStyle {
   return {
     show: true,
     size: 'auto',
-    type: YAxisType.NORMAL,
-    position: YAxisPosition.RIGHT,
+    type: YAxisType.Normal,
+    position: YAxisPosition.Right,
     inside: false,
     reverse: false,
     axisLine: {
@@ -598,19 +597,19 @@ function getDefaultCrosshairStyle (): CrosshairStyle {
       show: true,
       line: {
         show: true,
-        style: LineType.DASHED,
+        style: LineType.Dashed,
         dashedValue: [4, 2],
         size: 1,
         color: '#76808F'
       },
       text: {
         show: true,
-        style: PolygonType.FILL,
+        style: PolygonType.Fill,
         color: '#FFFFFF',
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        borderStyle: LineType.SOLID,
+        borderStyle: LineType.Solid,
         borderDashedValue: [2, 2],
         borderSize: 1,
         borderColor: '#686D76',
@@ -626,19 +625,19 @@ function getDefaultCrosshairStyle (): CrosshairStyle {
       show: true,
       line: {
         show: true,
-        style: LineType.DASHED,
+        style: LineType.Dashed,
         dashedValue: [4, 2],
         size: 1,
         color: '#76808F'
       },
       text: {
         show: true,
-        style: PolygonType.FILL,
+        style: PolygonType.Fill,
         color: '#FFFFFF',
         size: 12,
         family: 'Helvetica Neue',
         weight: 'normal',
-        borderStyle: LineType.SOLID,
+        borderStyle: LineType.Solid,
         borderDashedValue: [2, 2],
         borderSize: 1,
         borderRadius: 2,
@@ -688,39 +687,39 @@ function getDefaultOverlayStyle (): OverlayStyle {
       activeRadius: 5
     },
     line: {
-      style: LineType.SOLID,
+      style: LineType.Solid,
       smooth: false,
       color: '#1677FF',
       size: 1,
       dashedValue: [2, 2]
     },
     rect: {
-      style: PolygonType.FILL,
+      style: PolygonType.Fill,
       color: 'rgba(22, 119, 255, 0.25)',
       borderColor: '#1677FF',
       borderSize: 1,
       borderRadius: 0,
-      borderStyle: LineType.SOLID,
+      borderStyle: LineType.Solid,
       borderDashedValue: [2, 2]
     },
     polygon: {
-      style: PolygonType.FILL,
+      style: PolygonType.Fill,
       color: '#1677FF',
       borderColor: '#1677FF',
       borderSize: 1,
-      borderStyle: LineType.SOLID,
+      borderStyle: LineType.Solid,
       borderDashedValue: [2, 2]
     },
     circle: {
-      style: PolygonType.FILL,
+      style: PolygonType.Fill,
       color: 'rgba(22, 119, 255, 0.25)',
       borderColor: '#1677FF',
       borderSize: 1,
-      borderStyle: LineType.SOLID,
+      borderStyle: LineType.Solid,
       borderDashedValue: [2, 2]
     },
     arc: {
-      style: LineType.SOLID,
+      style: LineType.Solid,
       color: '#1677FF',
       size: 1,
       dashedValue: [2, 2]
@@ -732,12 +731,12 @@ function getDefaultOverlayStyle (): OverlayStyle {
       weight: 'normal'
     },
     rectText: {
-      style: PolygonType.FILL,
+      style: PolygonType.Fill,
       color: '#FFFFFF',
       size: 12,
       family: 'Helvetica Neue',
       weight: 'normal',
-      borderStyle: LineType.SOLID,
+      borderStyle: LineType.Solid,
       borderDashedValue: [2, 2],
       borderSize: 1,
       borderRadius: 2,
@@ -791,10 +790,10 @@ export function getDefaultStyles (): Styles {
   }
 }
 
-export const enum FormatDateType {
-  TOOLTIP,
-  CROSSHAIR,
-  XAXIS
+export enum FormatDateType {
+  Tooltip,
+  Crosshair,
+  XAxis
 }
 
 export type FormatDate = (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: FormatDateType) => string

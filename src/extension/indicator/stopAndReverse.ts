@@ -25,7 +25,7 @@ interface Sar {
 const stopAndReverse: IndicatorTemplate<Sar> = {
   name: 'SAR',
   shortName: 'SAR',
-  series: IndicatorSeries.PRICE,
+  series: IndicatorSeries.Price,
   calcParams: [2, 2, 20],
   precision: 2,
   shouldOhlc: true,

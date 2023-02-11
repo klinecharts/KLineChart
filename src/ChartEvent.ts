@@ -174,7 +174,7 @@ export default class ChartEvent implements EventHandler {
         case WidgetNameConstants.XAXIS: {
           const consumed = widget.dispatchEvent('mouseDownEvent', event)
           if (consumed) {
-            this._chart.updatePane(UpdateLevel.OVERLAY)
+            this._chart.updatePane(UpdateLevel.Overlay)
           }
           this._xAxisStartScaleCoordinate = { x: event.x, y: event.y }
           this._xAxisStartScaleDistance = event.pageX
@@ -183,7 +183,7 @@ export default class ChartEvent implements EventHandler {
         case WidgetNameConstants.YAXIS: {
           const consumed = widget.dispatchEvent('mouseDownEvent', event)
           if (consumed) {
-            this._chart.updatePane(UpdateLevel.OVERLAY)
+            this._chart.updatePane(UpdateLevel.Overlay)
           }
           const extremum = pane?.getAxisComponent().getExtremum() ?? null
           this._prevYAxisExtremum = extremum === null ? extremum : { ...extremum }
@@ -289,7 +289,7 @@ export default class ChartEvent implements EventHandler {
             this._xAxisScale = scale
             this._chart.getChartStore().getTimeScaleStore().zoom(zoomScale, this._xAxisStartScaleCoordinate ?? undefined)
           } else {
-            this._chart.updatePane(UpdateLevel.OVERLAY)
+            this._chart.updatePane(UpdateLevel.Overlay)
           }
           return consumed
         }
@@ -317,7 +317,7 @@ export default class ChartEvent implements EventHandler {
               this._chart.adjustPaneViewport(false, true, true, true)
             }
           } else {
-            this._chart.updatePane(UpdateLevel.OVERLAY)
+            this._chart.updatePane(UpdateLevel.Overlay)
           }
           return consumed
         }
@@ -342,7 +342,7 @@ export default class ChartEvent implements EventHandler {
         }
       }
       if (consumed) {
-        this._chart.updatePane(UpdateLevel.OVERLAY)
+        this._chart.updatePane(UpdateLevel.Overlay)
       }
     }
     this._mouseDownWidget = null
@@ -370,7 +370,7 @@ export default class ChartEvent implements EventHandler {
         }
       }
       if (consumed) {
-        this._chart.updatePane(UpdateLevel.OVERLAY)
+        this._chart.updatePane(UpdateLevel.Overlay)
       }
     }
     return false
@@ -407,7 +407,7 @@ export default class ChartEvent implements EventHandler {
             this._touchCancelCrosshair = true
             this._touchCoordinate = null
             crosshairStore.set(undefined, true)
-            this._chart.updatePane(UpdateLevel.OVERLAY)
+            this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
           if (this._flingScrollTimerId !== null) {
@@ -439,7 +439,7 @@ export default class ChartEvent implements EventHandler {
         case WidgetNameConstants.YAXIS: {
           const consumed = widget.dispatchEvent('mouseDownEvent', event)
           if (consumed) {
-            this._chart.updatePane(UpdateLevel.OVERLAY)
+            this._chart.updatePane(UpdateLevel.Overlay)
           }
           return consumed
         }
@@ -457,7 +457,7 @@ export default class ChartEvent implements EventHandler {
         case WidgetNameConstants.MAIN: {
           if (widget.dispatchEvent('pressedMouseMoveEvent', event)) {
             event.preventDefault?.()
-            this._chart.updatePane(UpdateLevel.OVERLAY)
+            this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
           const chartStore = this._chart.getChartStore()
@@ -480,7 +480,7 @@ export default class ChartEvent implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (consumed) {
             event.preventDefault?.()
-            this._chart.updatePane(UpdateLevel.OVERLAY)
+            this._chart.updatePane(UpdateLevel.Overlay)
           }
           return consumed
         }
@@ -527,7 +527,7 @@ export default class ChartEvent implements EventHandler {
         case WidgetNameConstants.YAXIS: {
           const consumed = widget.dispatchEvent('mouseUpEvent', event)
           if (consumed) {
-            this._chart.updatePane(UpdateLevel.OVERLAY)
+            this._chart.updatePane(UpdateLevel.Overlay)
           }
         }
       }

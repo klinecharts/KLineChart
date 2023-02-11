@@ -45,7 +45,7 @@ export default class IndicatorView extends CandleBarView {
           const indicatorStyles = indicator.styles
           const defaultStyles = chartStore.getStyles().indicator
           return {
-            type: CandleType.OHLC,
+            type: CandleType.Ohlc,
             styles: {
               upColor: formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string,
               downColor: formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string,

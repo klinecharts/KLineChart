@@ -27,7 +27,7 @@ interface Ema {
 const exponentialMovingAverage: IndicatorTemplate<Ema> = {
   name: 'EMA',
   shortName: 'EMA',
-  series: IndicatorSeries.PRICE,
+  series: IndicatorSeries.Price,
   calcParams: [6, 12, 20],
   precision: 2,
   shouldOhlc: true,

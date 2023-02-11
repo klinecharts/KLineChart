@@ -13,11 +13,11 @@
  */
 
 export const enum UpdateLevel {
-  MAIN,
-  OVERLAY,
-  SEPARATOR,
-  DRAWER,
-  ALL
+  Main,
+  Overlay,
+  Separator,
+  Drawer,
+  All
 }
 
 export default interface Updater {
