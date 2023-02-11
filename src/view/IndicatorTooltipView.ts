@@ -94,7 +94,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           // draw left icons
           const [leftIconsNextStartX, leftIconsNextStartY, leftIconsLastRowHeight, leftIconsIncreaseHeight] = this.drawStandardTooltipIcons(
             ctx, bounding, { paneId, indicatorName: indicator.name, iconId: '' },
-            activeTooltipIconInfo, leftIcons, x, y, 0
+            activeTooltipIconInfo, leftIcons, x, y, prevRowHeight
           )
           x = leftIconsNextStartX
           y = leftIconsNextStartY
@@ -191,9 +191,10 @@ export default class IndicatorTooltipView extends View<YAxis> {
         const {
           marginLeft, marginTop, marginRight,
           paddingLeft, paddingTop, paddingRight, paddingBottom,
-          color, size, fontFamily, icon: text, backgroundColor, activeBackgroundColor
+          color, activeColor, size, fontFamily, icon: text, backgroundColor, activeBackgroundColor
         } = icon
         x += marginLeft
+        const active = activeIconInfo.paneId === currentIconInfo.paneId && activeIconInfo.indicatorName === currentIconInfo.indicatorName && activeIconInfo.iconId === icon.id
         this.createFigure(
           'rectText',
           { text, x, y: y + marginTop },
@@ -202,12 +203,10 @@ export default class IndicatorTooltipView extends View<YAxis> {
             paddingTop,
             paddingRight,
             paddingBottom,
-            color,
+            color: active ? activeColor : color,
             size,
             family: fontFamily,
-            backgroundColor: activeIconInfo.paneId === currentIconInfo.paneId && activeIconInfo.indicatorName === currentIconInfo.indicatorName && activeIconInfo.iconId === icon.id
-              ? activeBackgroundColor
-              : backgroundColor
+            backgroundColor: active ? activeBackgroundColor : backgroundColor
           },
           {
             mouseDownEvent: this._boundIconClickEvent(currentIconInfo, icon.id),

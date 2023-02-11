@@ -22,6 +22,8 @@ import Indicator from '../component/Indicator'
 
 import IndicatorTooltipView from './IndicatorTooltipView'
 
+import { TooltipIconInfo } from '../store/TooltipStore'
+
 import { i18n } from '../extension/i18n/index'
 
 import { formatPrecision } from '../common/utils/format'
@@ -67,7 +69,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         indicatorStyles.tooltip.showType === TooltipShowType.STANDARD
       ) {
         const top = this._drawCandleStandardTooltip(
-          ctx, bounding, crosshair, precision,
+          ctx, paneId, bounding, crosshair, activeIconInfo, precision,
           dateTimeFormat, locale, customApi, candleStyles
         )
         this.drawIndicatorTooltip(ctx, paneId, dataList, crosshair, activeIconInfo, indicators, customApi, bounding, indicatorStyles, top)
@@ -87,7 +89,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         )
       } else {
         const top = this._drawCandleStandardTooltip(
-          ctx, bounding, crosshair, precision,
+          ctx, paneId, bounding, crosshair, activeIconInfo, precision,
           dateTimeFormat, locale, customApi, candleStyles
         )
         const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
@@ -105,8 +107,10 @@ export default class CandleTooltipView extends IndicatorTooltipView {
 
   private _drawCandleStandardTooltip (
     ctx: CanvasRenderingContext2D,
+    paneId: string,
     bounding: Bounding,
     crosshair: Crosshair,
+    activeTooltipIconInfo: TooltipIconInfo,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
     locale: string,
@@ -121,9 +125,44 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         crosshair.kLineData as KLineData, precision,
         dateTimeFormat, locale, customApi, styles
       )
+      let x = 0
+      let y = 0
+      let prevRowHeight = 0
+      const [leftIcons, middleIcons, rightIcons] = this.classifyTooltipIcons(tooltipStyles.icons)
+      const [leftIconsNextStartX, leftIconsNextStartY, leftIconsLastRowHeight, leftIconsIncreaseHeight] = this.drawStandardTooltipIcons(
+        ctx, bounding, { paneId, indicatorName: '', iconId: '' },
+        activeTooltipIconInfo, leftIcons, x, y, 0
+      )
+      x = leftIconsNextStartX
+      y = leftIconsNextStartY
+      height += leftIconsIncreaseHeight
+      prevRowHeight = leftIconsLastRowHeight
+
+      const [middleIconsNextStartX, middleIconsNextStartY, middleIconsLastRowHeight, middleIconsIncreaseHeight] = this.drawStandardTooltipIcons(
+        ctx, bounding, { paneId, indicatorName: '', iconId: '' },
+        activeTooltipIconInfo, middleIcons, x, y, prevRowHeight
+      )
+      x = middleIconsNextStartX
+      y = middleIconsNextStartY
+      height += middleIconsIncreaseHeight
+      prevRowHeight = middleIconsLastRowHeight
+
       if (values.length > 0) {
-        height += this.drawStandardTooltipLabels(ctx, bounding, values, 0, 0, 0, tooltipTextStyles)[3]
+        const [valuesNextStartX, valuesIconsNextStartY, valuesIconsLastRowHeight, valuesIconsIncreaseHeight] = this.drawStandardTooltipLabels(ctx, bounding, values, x, y, prevRowHeight, tooltipTextStyles)
+        x = valuesNextStartX
+        y = valuesIconsNextStartY
+        height += valuesIconsIncreaseHeight
+        prevRowHeight = valuesIconsLastRowHeight
       }
+
+      const [rightIconsNextStartX, rightIconsNextStartY, rightIconsLastRowHeight, rightIconsIncreaseHeight] = this.drawStandardTooltipIcons(
+        ctx, bounding, { paneId, indicatorName: '', iconId: '' },
+        activeTooltipIconInfo, rightIcons, x, y, prevRowHeight
+      )
+      x = rightIconsNextStartX
+      y = rightIconsNextStartY
+      height += rightIconsIncreaseHeight
+      prevRowHeight = rightIconsLastRowHeight
     }
     return height
   }

@@ -156,6 +156,7 @@ export interface TooltipIconStyle {
   paddingRight: number
   paddingBottom: number
   color: string
+  activeColor: string
   size: number
   fontFamily: string
   icon: string
