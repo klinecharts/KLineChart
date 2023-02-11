@@ -1,55 +1,14 @@
 # 📠 更新日志
-## 9.0.0-alpha7
-`2023-02-07`
-+ 💄 优化图表事件处理。
-+ 🐞 修复`overlay`点击事件不触发问题。
-
-
-## 9.0.0-alpha6
-`2023-01-20`
-+ 🆕 国际化支持增量注册。
-+ 💄 优化部分typescript入参。
-+ 🐞 修复由深色主题切换到浅色主题不生效问题。
-+ 🐞 修复y轴缩放滚动问题。
-+ 🐞 修复覆盖物删除，图表刷新问题。
-
-## 9.0.0-alpha5
-`2023-01-17`
-+ 🆕 实例方法`createIndicator`和`overrideIndicator`新增成功回调。
-+ 🆕 样式`indicator.lines`和`overlay.line`新增`smooth`。
-+ 💄 优化指标计算方法触发条件。
-+ 💄 优化样式`overlay`。
-
-
-## 9.0.0-alpha4
-`2023-01-12`
-+ 🐞 修复创建主图指标不更新问题。
-+ 🐞 修复删除覆盖物问题。
-+ 💄 优化内置覆盖物。
-
-
-## 9.0.0-alpha3
-`2023-01-11`
-+ 🆕 新增实例方法`getVisibleRange`。
-+ 🐞 修复反转y轴垂直缩放问题。
-
-
-## 9.0.0-alpha2
-`2023-01-10`
-+ 🆕 `Overlay`支持分组。
-+ 🐞 修复无数据时，提示显示问题。
-
-
-## 9.0.0-alpha1
-`2023-01-09`
+## 9.0.0
+`待发布`
 + 🛠 Typescript重构。
 + 🆕 新特性
    + 新增Y轴方向缩放，滚动。
    + API
      + 新增基图表方法`registerFigure`，`getSupportFigures`，`getFigureClass`，`rigisterOverlay`，`getSupportOverlays`，`registerLocale`，`getSupportLocales`，`registerStyles`。
-     + 新增实例方法，`getSize`，`setLocale`，`getLocal`，`setCustomApi`，`createOverlay`，`getOverlayById`，`overrideOverlay`，`removeOverlay`。
+     + 新增实例方法，`getSize`，`setLocale`，`getLocal`，`setCustomApi`，`getVisibleRange`，`createOverlay`，`getOverlayById`，`overrideOverlay`，`removeOverlay`。
    + 样式配置
-     + 新增`candle.priceMark.last.text.borderStyle`，`indicator.lastValueMark.text.borderStyle`，`crosshair.horizontal.text.borderStyle`，`crosshair.vertical.text.borderStyle`。
+     + 新增`candle.priceMark.last.text.borderStyle`，`candle.tooltip.icons`，`indicator.lastValueMark.text.borderStyle`，`indicator.tooltip.icons`，`crosshair.horizontal.text.borderStyle`，`crosshair.vertical.text.borderStyle`。
 + 👉 变更
    + API
      + 图表方法`extension.addTechnicalIndicatorTemplate`变更为`registerIndicator`。

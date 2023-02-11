@@ -1,51 +1,15 @@
 # 📠 Change Log
-## 9.0.0-alpha7
-`2023-02-07`
-+ 💄 Optimize chart event processing.
-+ 🐞 Fix the problem that the `overlay` click event does not trigger.
 
-## 9.0.0-alpha6
-`2023-01-20`
-+ 🆕 I18n supports incremental register.
-+ 💄 Optimize some typescript input parameters.
-+ 🐞 Fix the problem that switching from dark theme to light theme does not work.
-+ 🐞 Fix the y-axis scaling roll problem.
-+ 🐞 Fix the problem of covering deletion and chart refresh.
-
-
-## 9.0.0-alpha5
-`2023-01-17`
-+ 🆕 The instance methods `createIndicator` and `overrideIndicator` add a successful callback.
-+ 🆕 Styles `indicator.lines` and `overlay.line` add `smooth`.
-+ 💄 Trigger conditions of optimization indicator calculation method.
-+ 💄 Optimize the style `overlay`.
-
-## 9.0.0-alpha4
-`2023-01-12`
-+ 🐞 Fix the problem of creating main chart indicators without updating.
-+ 🐞 Fix the problem of removing overlays.
-+ 💄 Optimize the built-in overlays.
-
-## 9.0.0-alpha3
-`2023-01-11`
-+ 🆕 Add instance api `getVisibleRange`.
-+ 🐞 Fix the problem of reverse y-axis vertical scaling.
-
-## 9.0.0-alpha2
-`2023-01-10`
-+ 🆕 `Overlay` supports grouping.
-+ 🐞 Fix the problem of tooltip display when there is no data.
-
-## 9.0.0-alpha1
-`2023-01-09`
+## 9.0.0
+`To be released`
 + 🛠 Typescript refactoring.
 + 🆕 New features
    + Add Y axis direction zoom and scroll.
    + API
      + New chart methods `registerFigure`, `getSupportFigures`, `getFigureClass`, `rigiderOverlay`, `getSupportOverlays`, `registerLocale`, `getSupportLocales`, `registerStyles` are added.
-     + New instance methods, `getSize`, `setLocale`, `getLocal`, `setCustomApi`, `createOverlay`, `getOverlayById`, `overrideOverlay`, `removeOverlay`.
+     + New instance methods, `getSize`, `setLocale`, `getLocal`, `setCustomApi`, `getVisibleRange`, `createOverlay`, `getOverlayById`, `overrideOverlay`, `removeOverlay`.
    + Style Configuration
-     + Add `candle.priceMark.last.text.borderStyle`, `indicator.lastValueMark.text.borderStyle`, `crosshair.horizontal. text.borderStyle`, `crosshair.vertical.text.borderStyle`.
+     + Add `candle.priceMark.last.text.borderStyle`, `candle.tooltip.icons`, `indicator.lastValueMark.text.borderStyle`, `indicator.tooltip.icons`, `crosshair.horizontal. text.borderStyle`, `crosshair.vertical.text.borderStyle`.
 + 👉 Change
    + API
       + Chart method `extension.addTechnicalIndicatorTemplate` is changed to `registerIndicator`.
