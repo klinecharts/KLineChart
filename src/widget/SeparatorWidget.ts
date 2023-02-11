@@ -115,9 +115,6 @@ export default class SeparatorWidget extends Widget<YAxis> {
       const chart = pane.getChart()
       const styles = chart.getStyles().separator
       this._moveDom.style.background = styles.activeBackgroundColor
-      const chartStore = chart.getChartStore()
-      chartStore.setDragPaneFlag(true)
-      chartStore.getCrosshairStore().set()
       return true
     }
     return false
@@ -126,7 +123,6 @@ export default class SeparatorWidget extends Widget<YAxis> {
   private _mouseLeaveEvent (): boolean {
     if (!this._dragFlag) {
       this._moveDom.style.background = ''
-      this.getPane().getChart().getChartStore().setDragPaneFlag(false)
       return true
     }
     return false
