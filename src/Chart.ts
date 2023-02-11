@@ -480,13 +480,13 @@ export default class ChartImp implements Chart {
 
   applyMoreData (dataList: KLineData[], more?: boolean): void {
     this._chartStore.addData(dataList, 0, more)
-    this._chartStore.getIndicatorStore().calcInstance().then(
-      result => {
-        if (result.length === 0 || result.includes(true)) {
+    if (dataList.length > 0) {
+      this._chartStore.getIndicatorStore().calcInstance().then(
+        _ => {
           this.adjustPaneViewport(false, true, true, true)
         }
-      }
-    ).catch(_ => {})
+      ).catch(_ => {})
+    }
   }
 
   updateData (data: KLineData): void {
@@ -502,10 +502,8 @@ export default class ChartImp implements Chart {
       }
       this._chartStore.addData(data, pos)
       this._chartStore.getIndicatorStore().calcInstance().then(
-        result => {
-          if (result.length === 0 || result.includes(true)) {
-            this.adjustPaneViewport(false, true, true, true)
-          }
+        _ => {
+          this.adjustPaneViewport(false, true, true, true)
         }
       ).catch(_ => {})
     }
@@ -549,9 +547,9 @@ export default class ChartImp implements Chart {
 
   overrideIndicator (override: IndicatorCreate, paneId?: Nullable<string>, callback?: () => void): void {
     this._chartStore.getIndicatorStore().override(override, paneId ?? null).then(
-      result => {
-        if (result.length > 0) {
-          this.adjustPaneViewport(false, true, true, true)
+      ([onlyUpdateFlag, resizeFlag]) => {
+        if (onlyUpdateFlag || resizeFlag) {
+          this.adjustPaneViewport(false, resizeFlag, true, resizeFlag)
           callback?.()
         }
       }

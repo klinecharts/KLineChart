@@ -117,8 +117,8 @@ export default class IndicatorStore {
 
   removeInstance (paneId: string, name?: string): boolean {
     let removed = false
-    if (this._instances.has(paneId)) {
-      const paneInstances = this._instances.get(paneId) as Map<string, IndicatorImp>
+    const paneInstances = this._instances.get(paneId)
+    if (paneInstances !== undefined) {
       if (name !== undefined) {
         if (paneInstances.has(name)) {
           paneInstances.delete(name)
@@ -139,7 +139,7 @@ export default class IndicatorStore {
     return this._instances.has(paneId)
   }
 
-  async calcInstance (name?: string, paneId?: string): Promise<boolean[]> {
+  async calcInstance (name?: string, paneId?: string): Promise<boolean> {
     const tasks: Array<Promise<boolean>> = []
     if (name !== undefined) {
       if (paneId !== undefined) {
@@ -163,7 +163,8 @@ export default class IndicatorStore {
         })
       })
     }
-    return await Promise.all(tasks)
+    const result = await Promise.all(tasks)
+    return result.includes(true)
   }
 
   getInstanceByPaneId (paneId?: string, name?: string): Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
@@ -190,26 +191,33 @@ export default class IndicatorStore {
     })
   }
 
-  async override (indicator: IndicatorCreate, paneId: Nullable<string>): Promise<boolean[]> {
+  async override (indicator: IndicatorCreate, paneId: Nullable<string>): Promise<[boolean, boolean]> {
     const { name } = indicator
     let instances: Map<string, Map<string, IndicatorImp>> = new Map()
     if (paneId !== null) {
-      if (this._instances.has(paneId)) {
-        instances.set(paneId, this._instances.get(paneId) as Map<string, IndicatorImp>)
+      const paneInstances = this._instances.get(paneId)
+      if (paneInstances !== undefined) {
+        instances.set(paneId, paneInstances)
       }
     } else {
       instances = this._instances
     }
+    let onlyUpdateFlag = false
     const tasks: Array<Promise<boolean>> = []
     instances.forEach(paneInstances => {
-      if (paneInstances.has(name)) {
-        const instance = paneInstances.get(name) as IndicatorImp
+      const instance = paneInstances.get(name)
+      if (instance !== undefined) {
         const overrideResult = this._overrideInstance(instance, indicator)
         if (overrideResult[1]) {
           tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
+        } else {
+          if (overrideResult[0]) {
+            onlyUpdateFlag = true
+          }
         }
       }
     })
-    return await Promise.all(tasks)
+    const result = await Promise.all(tasks)
+    return [onlyUpdateFlag, result.includes(true)]
   }
 }
