@@ -310,11 +310,31 @@ Whether you see a point or a line on the chart, you can basically customize the 
         family: 'Helvetica Neue',
         weight: 'normal',
         color: '#D9D9D9',
-        marginLeft: 8,
-        marginTop: 6,
-        marginRight: 8,
+        marginLeft: 10,
+        marginTop: 8,
+        marginRight: 6,
         marginBottom: 0
-      }
+      },
+      // sample:
+      // [{
+      //   id: 'icon_id',
+      //   position: 'left', // types include 'left', 'middle', 'right'
+      //   marginLeft: 8,
+      //   marginTop: 6,
+      //   marginRight: 0,
+      //   marginBottom: 0,
+      //   paddingLeft: 1,
+      //   paddingTop: 1,
+      //   paddingRight: 1,
+      //   paddingBottom: 1,
+      //   icon: '\ue900',
+      //   fontFamily: 'iconfont',
+      //   size: 12,
+      //   color: '#76808F',
+      //   backgroundColor: 'rgba(33, 150, 243, 0.2)',
+      //   activeBackgroundColor: 'rgba(33, 150, 243, 0.4)'
+      // }]
+      icons: []
     }
   },
   indicator: {
@@ -413,11 +433,31 @@ Whether you see a point or a line on the chart, you can basically customize the 
         family: 'Helvetica Neue',
         weight: 'normal',
         color: '#D9D9D9',
-        marginTop: 6,
-        marginRight: 8,
+        marginTop: 8,
+        marginRight: 6,
         marginBottom: 0,
-        marginLeft: 8
-      }
+        marginLeft: 10
+      },
+      // sample:
+      // [{
+      //   id: 'icon_id',
+      //   position: 'left', // types include 'left', 'middle', 'right'
+      //   marginLeft: 8,
+      //   marginTop: 6,
+      //   marginRight: 0,
+      //   marginBottom: 0,
+      //   paddingLeft: 1,
+      //   paddingTop: 1,
+      //   paddingRight: 1,
+      //   paddingBottom: 1,
+      //   icon: '\ue900',
+      //   fontFamily: 'iconfont',
+      //   size: 12,
+      //   color: '#76808F',
+      //   backgroundColor: 'rgba(33, 150, 243, 0.2)',
+      //   activeBackgroundColor: 'rgba(33, 150, 243, 0.4)'
+      // }]
+      icons: []
     }
   },
   xAxis: {
