@@ -35,14 +35,14 @@ export default class GridView extends View<YAxis> {
       const horizontalStyles = gridStyles.horizontal
       const horizontalShow = horizontalStyles.show
       if (horizontalShow) {
-        const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as XAxis
-        xAxis.getTicks().forEach(tick => {
+        const yAxis = pane.getAxisComponent()
+        yAxis.getTicks().forEach(tick => {
           this.createFigure(
             'line',
             {
               coordinates: [
-                { x: tick.coord, y: 0 },
-                { x: tick.coord, y: bounding.height }
+                { x: 0, y: tick.coord },
+                { x: bounding.width, y: tick.coord }
               ]
             },
             horizontalStyles
@@ -52,14 +52,14 @@ export default class GridView extends View<YAxis> {
       const verticalStyles = gridStyles.vertical
       const verticalShow = verticalStyles.show
       if (verticalShow) {
-        const yAxis = pane.getAxisComponent()
-        yAxis.getTicks().forEach(tick => {
+        const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as XAxis
+        xAxis.getTicks().forEach(tick => {
           this.createFigure(
             'line',
             {
               coordinates: [
-                { x: 0, y: tick.coord },
-                { x: bounding.width, y: tick.coord }
+                { x: tick.coord, y: 0 },
+                { x: tick.coord, y: bounding.height }
               ]
             },
             verticalStyles
