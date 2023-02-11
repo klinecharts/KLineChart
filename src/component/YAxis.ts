@@ -183,7 +183,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
     const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
     const { min, range } = this.getExtremum()
     const rate = (value - min) / range
-    return this.isReverse() ? Math.round(rate * height) : Math.round((1.0 - rate) * height)
+    return this.isReverse() ? Math.round(rate * height) : Math.round((1 - rate) * height)
   }
 
   /**

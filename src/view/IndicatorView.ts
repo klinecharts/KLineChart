@@ -128,12 +128,15 @@ export default class IndicatorView extends CandleBarView {
                   if (isValid(value)) {
                     const baseValue = figure.baseValue ?? yAxis.getExtremum().min
                     const baseValueY = yAxis.convertToPixel(baseValue)
-                    const height = Math.abs(baseValueY - valueY)
+                    let height = Math.abs(baseValueY - valueY)
+                    if (baseValue !== value) {
+                      height = Math.max(1, height)
+                    }
                     let y: number
                     if (valueY > baseValueY) {
                       y = baseValueY
                     } else {
-                      y = height < 1 ? baseValueY - 1 : valueY
+                      y = valueY
                     }
                     this.createFigure(
                       'rect',
