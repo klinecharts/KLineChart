@@ -44,7 +44,7 @@ export default class CrosshairLineView extends View {
           { x, y: 0 },
           { x, y: bounding.height }
         ],
-        styles.horizontal
+        styles.vertical
       )
     }
   }
