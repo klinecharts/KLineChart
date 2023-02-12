@@ -1,6 +1,5 @@
 'use strict';
 
-const { babel } = require('@rollup/plugin-babel');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const eslint = require('@rollup/plugin-eslint');
 const replace = require('@rollup/plugin-replace');
@@ -20,10 +19,6 @@ const plugins = (env) => [
   typescript(),
   eslint({
     throwOnError: true
-  }),
-  babel({
-    babelHelpers: 'runtime',
-    exclude: '**/node_modules/**'
   }),
   nodeResolve(),
   commonjs(),

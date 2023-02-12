@@ -1,7 +1,6 @@
 config/
 dist/
 types/
-lib/
 scripts/
 .eslintrc.js
 index.js
