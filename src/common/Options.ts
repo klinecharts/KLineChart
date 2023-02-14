@@ -231,7 +231,13 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borde
   offsetRight: number
 }
 
-export type CandleTooltipCustomCallback = (kLineData: KLineData, styles: CandleStyle) => TooltipData[]
+export interface CandleTooltipCustomCallbackData {
+  prev: Nullable<KLineData>
+  current: KLineData
+  next: Nullable<KLineData>
+}
+
+export type CandleTooltipCustomCallback = (data: CandleTooltipCustomCallbackData, styles: CandleStyle) => TooltipData[]
 
 export interface CandleTooltipStyle extends TooltipStyle {
   custom: Nullable<CandleTooltipCustomCallback>

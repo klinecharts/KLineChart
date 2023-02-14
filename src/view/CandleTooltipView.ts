@@ -16,7 +16,7 @@ import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 import Crosshair from '../common/Crosshair'
-import { Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, YAxisPosition, PolygonType, CustomApi, FormatDateType } from '../common/Options'
+import { Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, CandleTooltipCustomCallbackData, YAxisPosition, PolygonType, CustomApi, FormatDateType } from '../common/Options'
 
 import Indicator from '../component/Indicator'
 
@@ -69,7 +69,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         indicatorStyles.tooltip.showType === TooltipShowType.Standard
       ) {
         const top = this._drawCandleStandardTooltip(
-          ctx, paneId, bounding, crosshair, activeIconInfo, precision,
+          ctx, dataList, paneId, bounding, crosshair, activeIconInfo, precision,
           dateTimeFormat, locale, customApi, candleStyles
         )
         this.drawIndicatorTooltip(ctx, paneId, dataList, crosshair, activeIconInfo, indicators, customApi, bounding, indicatorStyles, top)
@@ -89,7 +89,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         )
       } else {
         const top = this._drawCandleStandardTooltip(
-          ctx, paneId, bounding, crosshair, activeIconInfo, precision,
+          ctx, dataList, paneId, bounding, crosshair, activeIconInfo, precision,
           dateTimeFormat, locale, customApi, candleStyles
         )
         const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
@@ -107,6 +107,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
 
   private _drawCandleStandardTooltip (
     ctx: CanvasRenderingContext2D,
+    dataList: KLineData[],
     paneId: string,
     bounding: Bounding,
     crosshair: Crosshair,
@@ -121,9 +122,10 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const tooltipTextStyles = tooltipStyles.text
     let height = 0
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
+      const dataIndex = crosshair.dataIndex ?? 0
       const values = this._getCandleTooltipData(
-        crosshair.kLineData as KLineData, precision,
-        dateTimeFormat, locale, customApi, styles
+        { prev: dataList[dataIndex - 1] ?? null, current: crosshair.kLineData as KLineData, next: dataList[dataIndex + 1] ?? null },
+        precision, dateTimeFormat, locale, customApi, styles
       )
       let x = 0
       let y = 0
@@ -188,9 +190,10 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const candleTooltipStyles = candleStyles.tooltip
     const indicatorTooltipStyles = indicatorStyles.tooltip
     if (isDrawCandleTooltip || isDrawIndicatorTooltip) {
+      const dataIndex = crosshair.dataIndex ?? 0
       const candleTooltipDatas = this._getCandleTooltipData(
-        crosshair.kLineData as KLineData, precision,
-        dateTimeFormat, locale, customApi, candleStyles
+        { prev: dataList[dataIndex - 1] ?? null, current: crosshair.kLineData as KLineData, next: dataList[dataIndex + 1] ?? null },
+        precision, dateTimeFormat, locale, customApi, candleStyles
       )
       const {
         marginLeft: baseTextMarginLeft,
@@ -377,7 +380,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
   }
 
   private _getCandleTooltipData (
-    data: KLineData,
+    data: CandleTooltipCustomCallbackData,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
     locale: string,
@@ -409,26 +412,27 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       })
     } else {
       const { price: pricePrecision, volume: volumePrecision } = precision
+      const current = data.current
       tooltipData = [
         {
           title: { text: i18n('time', locale), color: textColor },
-          value: { text: customApi.formatDate(dateTimeFormat, data.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip), color: textColor }
+          value: { text: customApi.formatDate(dateTimeFormat, current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip), color: textColor }
         }, {
           title: { text: i18n('open', locale), color: textColor },
-          value: { text: formatPrecision(data.open, pricePrecision), color: textColor }
+          value: { text: formatPrecision(current.open, pricePrecision), color: textColor }
         }, {
           title: { text: i18n('high', locale), color: textColor },
-          value: { text: formatPrecision(data.high, pricePrecision), color: textColor }
+          value: { text: formatPrecision(current.high, pricePrecision), color: textColor }
         }, {
           title: { text: i18n('low', locale), color: textColor },
-          value: { text: formatPrecision(data.low, pricePrecision), color: textColor }
+          value: { text: formatPrecision(current.low, pricePrecision), color: textColor }
         }, {
           title: { text: i18n('close', locale), color: textColor },
-          value: { text: formatPrecision(data.close, pricePrecision), color: textColor }
+          value: { text: formatPrecision(current.close, pricePrecision), color: textColor }
         }, {
           title: { text: i18n('volume', locale), color: textColor },
           value: {
-            text: customApi.formatBigNumber(formatPrecision(data.volume ?? tooltipStyles.defaultValue, volumePrecision)),
+            text: customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision)),
             color: textColor
           }
         }

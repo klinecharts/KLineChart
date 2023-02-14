@@ -21,7 +21,7 @@ import ChildrenView from './ChildrenView'
 import { formatPrecision } from '../common/utils/format'
 
 export default class CandleHighLowPriceView extends ChildrenView {
-  protected drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
