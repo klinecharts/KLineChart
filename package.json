@@ -35,11 +35,12 @@
   "private": false,
   "scripts": {
     "lint": "eslint src",
+    "clean": "node scripts/clean.js",
     "build-core:dev": "cross-env NODE_ENV=development node scripts/build.js",
     "build-core:prod": "cross-env NODE_ENV=production node scripts/build.js",
     "build-core": "npm run build-core:dev && npm run build-core:prod",
     "build-dts": "dts-bundle-generator --no-banner true --umd-module-name klinecharts -o types/index.d.ts src/index.ts",
-    "build": "npm run build-core && npm run build-dts",
+    "build": "npm run clean && npm run build-core && npm run build-dts",
     "deploy": "gh-pages -d website",
     "prepare": "husky install"
   },

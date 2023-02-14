@@ -9,7 +9,8 @@ const { inputConfig, outputConfig } = require('./config');
 const env = process.env.NODE_ENV;
 
 async function build() {
-  console.log(`Creating an optimized ${chalk.blue(`${env}`)} build...\n`);
+  const fileName = env === 'development' ? 'klinecharts.js' : 'klinecharts.min.js'
+  console.log(`Creating an optimized ${chalk.blue(`${fileName}`)} build...\n`);
   const input = inputConfig(env);
 
   try {
@@ -17,14 +18,14 @@ async function build() {
 
     console.log('\n\nFile info: ');
 
-    const output = outputConfig(env);
+    const output = outputConfig(env, fileName);
 
     await bundle.write(output);
 
-    console.log(chalk.green(`\nCompiled ${env} successfully.\n`));
+    console.log(chalk.green(`\nCompiled ${fileName} successfully.\n`));
   } catch (err) {
     console.log(`\n\n${chalk.red(err)}\n`);
-    console.log(chalk.red(`Failed to compile ${env}.\n`));
+    console.log(chalk.red(`Failed to compile ${fileName}.\n`));
     process.exit(1);
   }
 }

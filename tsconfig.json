@@ -2,7 +2,6 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "target": "ES5",
-    "sourceMap": true,
     "downlevelIteration": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,

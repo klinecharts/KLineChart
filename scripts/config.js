@@ -38,10 +38,10 @@ function inputConfig (env) {
   return { input: paths.index, plugins: plugins(env) };
 }
 
-function outputConfig (env) {
+function outputConfig (env, fileName) {
   const isDevelopment = env === 'development';
   return {
-    file: `${paths.buildDir}/${isDevelopment ? 'klinecharts' : 'klinecharts.min'}.js`,
+    file: paths.resolvePath(fileName, paths.buildDir),
     format: 'umd',
     name: 'klinecharts',
     sourcemap: isDevelopment,
