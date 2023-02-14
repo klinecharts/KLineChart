@@ -18,7 +18,7 @@ import { CrosshairDirectionStyle } from '../common/Options'
 import View from './View'
 
 export default class CrosshairLineView extends View {
-  drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const bounding = widget.getBounding()

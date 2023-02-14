@@ -34,7 +34,7 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
   private _mainRequestAnimationId: number = DEFAULT_REQUEST_ID
   private _overlayRequestAnimationId: number = DEFAULT_REQUEST_ID
 
-  protected getContainerStyle (): Partial<CSSStyleDeclaration> {
+  override getContainerStyle (): Partial<CSSStyleDeclaration> {
     return {
       margin: '0',
       padding: '0',
@@ -45,7 +45,7 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     }
   }
 
-  protected initDom (container: HTMLElement): void {
+  override initDom (container: HTMLElement): void {
     this._mainCanvas = createDom('canvas', {
       position: 'absolute',
       top: '0',
@@ -86,7 +86,7 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     })
   }
 
-  protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
+  override updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
     const { width, height, left } = bounding
     container.style.left = `${left}px`
 

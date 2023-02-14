@@ -34,15 +34,15 @@ export default class XAxisWidget extends DrawWidget<XAxis> {
     this.addChild(this._overlayXAxisView)
   }
 
-  getName (): string {
+  override getName (): string {
     return WidgetNameConstants.XAXIS
   }
 
-  protected updateMain (ctx: CanvasRenderingContext2D): void {
+  override updateMain (ctx: CanvasRenderingContext2D): void {
     this._xAxisView.draw(ctx)
   }
 
-  protected updateOverlay (ctx: CanvasRenderingContext2D): void {
+  override updateOverlay (ctx: CanvasRenderingContext2D): void {
     this._overlayXAxisView.draw(ctx)
     this._crosshairVerticalLabelView.draw(ctx)
   }

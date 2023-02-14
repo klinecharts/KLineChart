@@ -24,20 +24,20 @@ import CrosshairHorizontalLabelView from './CrosshairHorizontalLabelView'
 import { TextAttrs } from '../extension/figure/text'
 
 export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabelView<XAxis> {
-  protected checkPaneId (crosshair: Crosshair): boolean {
+  override checkPaneId (crosshair: Crosshair): boolean {
     return crosshair.dataIndex === crosshair.realDataIndex
   }
 
-  protected getDirectionStyles (styles: CrosshairStyle): CrosshairDirectionStyle {
+  override getDirectionStyles (styles: CrosshairStyle): CrosshairDirectionStyle {
     return styles.vertical
   }
 
-  protected getText (crosshair: Crosshair, chartStore: ChartStore, axis: XAxis): string {
+  override getText (crosshair: Crosshair, chartStore: ChartStore): string {
     const timestamp = crosshair.kLineData?.timestamp as number
     return chartStore.getCustomApi().formatDate(chartStore.getTimeScaleStore().getDateTimeFormat(), timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
   }
 
-  protected getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: XAxis, styles: StateRectTextStyle): TextAttrs {
+  override getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, _axis: XAxis, styles: StateRectTextStyle): TextAttrs {
     const x = crosshair.realX as number
     let optimalX: number
     if (x - textWidth / 2 - styles.paddingLeft < 0) {

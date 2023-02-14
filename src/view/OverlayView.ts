@@ -148,6 +148,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         mouseRightClickEvent: this._figureMouseRightClickEvent(overlay, figureType, figureIndex, attrsIndex)
       }
     }
+    return undefined
   }
 
   private _figureMouseMoveEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
@@ -174,7 +175,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  _figureMouseRightClickEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
+  _figureMouseRightClickEvent (overlay: Overlay, _figureType: EventOverlayInfoFigureType, _figureIndex: number, _attrsIndex: number): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       if (!(overlay.onRightClick?.({ overlay, ...event }) ?? false)) {
         const pane = this.getWidget().getPane()
@@ -260,18 +261,18 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return true
   }
 
-  dispatchEvent (name: EventName, event: MouseTouchEvent, other?: number): boolean {
+  override dispatchEvent (name: EventName, event: MouseTouchEvent, other?: number): boolean {
     if (this.getWidget().getPane().getChart().getChartStore().getOverlayStore().isDrawing()) {
       return this.onEvent(name, event, other)
     }
     return super.dispatchEvent(name, event, other)
   }
 
-  checkEventOn (event: MouseTouchEvent): boolean {
+  override checkEventOn (): boolean {
     return true
   }
 
-  protected drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const paneId = pane.getId()
@@ -415,13 +416,13 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     ctx: CanvasRenderingContext2D,
     overlay: Overlay,
     coordinates: Coordinate[],
-    bounding: Bounding,
-    precision: Precision,
-    dateTimeFormat: Intl.DateTimeFormat,
-    customApi: CustomApi,
+    _bounding: Bounding,
+    _precision: Precision,
+    _dateTimeFormat: Intl.DateTimeFormat,
+    _customApi: CustomApi,
     defaultStyles: OverlayStyle,
-    xAxis: Nullable<XAxis>,
-    yAxis: Nullable<YAxis>,
+    _xAxis: Nullable<XAxis>,
+    _yAxis: Nullable<YAxis>,
     hoverInstanceInfo: EventOverlayInfo,
     clickInstanceInfo: EventOverlayInfo
   ): void {

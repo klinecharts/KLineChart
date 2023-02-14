@@ -38,11 +38,11 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
     this.addChild(this._overlayYAxisView)
   }
 
-  getName (): string {
+  override getName (): string {
     return WidgetNameConstants.YAXIS
   }
 
-  protected updateMain (ctx: CanvasRenderingContext2D): void {
+  override updateMain (ctx: CanvasRenderingContext2D): void {
     this._yAxisView.draw(ctx)
     if (this.getPane().getAxisComponent().isInCandle()) {
       this._candleLastPriceLabelView.draw(ctx)
@@ -50,7 +50,7 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
     this._indicatorLastValueView.draw(ctx)
   }
 
-  protected updateOverlay (ctx: CanvasRenderingContext2D): void {
+  override updateOverlay (ctx: CanvasRenderingContext2D): void {
     this._overlayYAxisView.draw(ctx)
     this._crosshairHorizontalLabelView.draw(ctx)
   }

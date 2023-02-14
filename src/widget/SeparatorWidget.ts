@@ -50,11 +50,11 @@ export default class SeparatorWidget extends Widget<YAxis> {
       .registerEvent('mouseLeaveEvent', this._mouseLeaveEvent.bind(this))
   }
 
-  getName (): string {
+  override getName (): string {
     return WidgetNameConstants.SEPARATOR
   }
 
-  checkEventOn (): boolean {
+  override checkEventOn (): boolean {
     return true
   }
 
@@ -128,7 +128,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
     return false
   }
 
-  protected getContainerStyle (): Partial<CSSStyleDeclaration> {
+  override getContainerStyle (): Partial<CSSStyleDeclaration> {
     return {
       margin: '0',
       padding: '0',
@@ -137,9 +137,9 @@ export default class SeparatorWidget extends Widget<YAxis> {
     }
   }
 
-  protected insertBefore (): boolean { return true }
+  override insertBefore (): boolean { return true }
 
-  protected initDom (container: HTMLElement): void {
+  override initDom (container: HTMLElement): void {
     this._moveDom = createDom('div', {
       width: '100%',
       height: `${REAL_SEPARATOR_HEIGHT}px`,
@@ -154,7 +154,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
     container.appendChild(this._moveDom)
   }
 
-  protected updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
+  override updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
     if (level === UpdateLevel.All || level === UpdateLevel.Separator) {
       const styles = this.getPane().getChart().getStyles().separator
       this._moveDom.style.top = `${-Math.floor((REAL_SEPARATOR_HEIGHT - styles.size) / 2)}px`

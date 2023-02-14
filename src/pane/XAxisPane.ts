@@ -20,15 +20,15 @@ import XAxis from '../component/XAxis'
 import Pane from './Pane'
 
 export default class XAxisPane extends Pane<XAxis> {
-  getName (): string {
+  override getName (): string {
     return 'xAxis'
   }
 
-  protected createAxisComponent (): XAxis {
+  override createAxisComponent (): XAxis {
     return new XAxis(this)
   }
 
-  protected createMainWidget (container: HTMLElement): DrawWidget<XAxis> {
+  override createMainWidget (container: HTMLElement): DrawWidget<XAxis> {
     return new XAxisWidget(container, this)
   }
 }

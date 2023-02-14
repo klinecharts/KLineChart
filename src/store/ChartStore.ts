@@ -84,7 +84,7 @@ export default class ChartStore {
   /**
    * Tooltip store
    */
-  private readonly _tooltipStore = new TooltipStore(this)
+  private readonly _tooltipStore = new TooltipStore()
 
   /**
    * Chart action store

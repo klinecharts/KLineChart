@@ -22,7 +22,7 @@ import ChildrenView from './ChildrenView'
 import { isNumber, isArray } from '../common/utils/typeChecks'
 
 export default class CandleAreaView extends ChildrenView {
-  protected drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()

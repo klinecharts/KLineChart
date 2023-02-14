@@ -122,7 +122,7 @@ export default class ChartEvent implements EventHandler {
     return false
   }
 
-  mouseWheelHortEvent (e: MouseTouchEvent, distance: number): boolean {
+  mouseWheelHortEvent (_: MouseTouchEvent, distance: number): boolean {
     const timeScaleStore = this._chart.getChartStore().getTimeScaleStore()
     timeScaleStore.startScroll()
     timeScaleStore.scroll(distance)

@@ -22,15 +22,15 @@ import IndicatorPane from './IndicatorPane'
 import YAxis from '../component/YAxis'
 
 export default class CandlePane extends IndicatorPane {
-  getName (): string {
+  override getName (): string {
     return 'candle'
   }
 
-  protected createMainWidget (container: HTMLElement): DrawWidget<YAxis> {
+  override createMainWidget (container: HTMLElement): DrawWidget<YAxis> {
     return new CandleWidget(container, this)
   }
 
-  protected createSeparatorWidget (container: HTMLElement): Nullable<SeparatorWidget> {
+  override createSeparatorWidget (): Nullable<SeparatorWidget> {
     return null
   }
 }

@@ -24,7 +24,7 @@ import Coordinate from './Coordinate'
 
 import Nullable from './Nullable'
 
-import { isFF, isIOS, isChrome } from './utils/platform'
+import { isFF, isIOS } from './utils/platform'
 
 export type MouseTouchEventCallback = (event: MouseTouchEvent, other?: number) => boolean
 
@@ -398,7 +398,6 @@ export default class SyntheticEvent {
       this._cancelClick = true
       this._resetClickTimeout()
     }
-
     if (this._cancelClick) {
       // if this._cancelClick is true, that means that minimum manhattan distance is already exceeded
       this._processEvent(this._makeCompatEvent(moveEvent), this._handler.pressedMouseMoveEvent)
@@ -713,10 +712,6 @@ export default class SyntheticEvent {
 
     this._target.addEventListener('touchstart', this._touchStartHandler.bind(this), { passive: true })
 
-    // prevent scroll by wheel click
-    if (!isChrome()) {
-      return
-    }
     this._target.addEventListener('mousedown', (e: MouseEvent) => {
       if (e.button === MouseEventButton.Middle) {
         // prevent incorrect scrolling event

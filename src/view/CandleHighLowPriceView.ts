@@ -14,7 +14,6 @@
 
 import Coordinate from '../common/Coordinate'
 import VisibleData from '../common/VisibleData'
-import BarSpace from '../common/BarSpace'
 import { CandleHighLowPriceMarkStyle } from '../common/Options'
 
 import ChildrenView from './ChildrenView'
@@ -36,7 +35,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
       let highX = 0
       let low = Number.MAX_SAFE_INTEGER
       let lowX = 0
-      this.eachChildren((data: VisibleData, barSpace: BarSpace, i: number) => {
+      this.eachChildren((data: VisibleData) => {
         const { data: kLineData, x } = data
         if (high < kLineData.high) {
           high = kLineData.high

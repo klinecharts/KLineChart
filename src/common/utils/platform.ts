@@ -25,11 +25,3 @@ export function isIOS (): boolean {
   }
   return /iPhone|iPad|iPod/.test(window.navigator.platform)
 }
-
-export function isChrome (): boolean {
-  if (typeof window === 'undefined') {
-    return false
-  }
-  // @ts-expect-error
-  return window.chrome !== undefined
-}

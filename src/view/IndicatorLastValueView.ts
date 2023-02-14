@@ -22,7 +22,7 @@ import { formatPrecision } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
 export default class IndicatorLastValueView extends View<YAxis> {
-  protected drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const bounding = widget.getBounding()

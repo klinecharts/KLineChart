@@ -12,8 +12,6 @@
  * limitations under the License.
  */
 
-import ChartStore from './ChartStore'
-
 export interface TooltipIconInfo {
   paneId: string
   indicatorName: string
@@ -21,12 +19,7 @@ export interface TooltipIconInfo {
 }
 
 export default class TooltipStore {
-  private readonly _chartStore: ChartStore
   private _activeIconInfo: TooltipIconInfo = { paneId: '', indicatorName: '', iconId: '' }
-
-  constructor (chartStore: ChartStore) {
-    this._chartStore = chartStore
-  }
 
   setActiveIconInfo (info?: TooltipIconInfo): void {
     if (info === undefined) {

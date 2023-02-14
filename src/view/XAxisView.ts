@@ -24,11 +24,11 @@ import XAxis from '../component/XAxis'
 import AxisView from './AxisView'
 
 export default class XAxisView extends AxisView<XAxis> {
-  protected getAxisStyles (styles: Styles): AxisStyle {
+  override getAxisStyles (styles: Styles): AxisStyle {
     return styles.xAxis
   }
 
-  protected createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs {
+  override createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs {
     const correction = styles.axisLine.size / 2
     return {
       coordinates: [
@@ -38,7 +38,7 @@ export default class XAxisView extends AxisView<XAxis> {
     }
   }
 
-  protected createTickLines (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): LineAttrs[] {
+  override createTickLines (ticks: AxisTick[], _bounding: Bounding, styles: AxisStyle): LineAttrs[] {
     const tickLineStyles = styles.tickLine
     const axisLineSize = styles.axisLine.size
     return ticks.map(tick => ({
@@ -49,7 +49,7 @@ export default class XAxisView extends AxisView<XAxis> {
     }))
   }
 
-  protected createTickTexts (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): TextAttrs[] {
+  override createTickTexts (ticks: AxisTick[], _bounding: Bounding, styles: AxisStyle): TextAttrs[] {
     const tickTickStyles = styles.tickText
     const axisLineSize = styles.axisLine.size
     const tickLineLength = styles.tickLine.length

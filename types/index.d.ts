@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export declare type DeepPartial<T> = {
+export type DeepPartial<T> = {
 	[P in keyof T]?: T[P] extends Array<infer U> ? Array<DeepPartial<U>> : T[P] extends ReadonlyArray<infer X> ? ReadonlyArray<DeepPartial<X>> : DeepPartial<T[P]>;
 };
 /**
@@ -27,7 +27,7 @@ export declare type DeepPartial<T> = {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export declare type Nullable<T> = T | null;
+export type Nullable<T> = T | null;
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ export interface MarginTextStyle extends StateTextStyle {
 	marginRight: number;
 	marginBottom: number;
 }
-export declare type LastValueMarkTextStyle = Omit<StateRectTextStyle, "backgroundColor" | "borderColor">;
+export type LastValueMarkTextStyle = Omit<StateRectTextStyle, "backgroundColor" | "borderColor">;
 declare enum TooltipShowRule {
 	Always = "always",
 	FollowCross = "follow_cross",
@@ -137,7 +137,7 @@ export interface GridStyle {
 	horizontal: StateLineStyle;
 	vertical: StateLineStyle;
 }
-export declare type TooltipTextStyle = Omit<MarginTextStyle, "show">;
+export type TooltipTextStyle = Omit<MarginTextStyle, "show">;
 export interface TooltipDataChild {
 	text: string;
 	color: string;
@@ -191,7 +191,7 @@ export interface CandleHighLowPriceMarkStyle {
 	textFamily: string;
 	textWeight: string;
 }
-export declare type CandleLastPriceMarkLineStyle = Omit<StateLineStyle, "color">;
+export type CandleLastPriceMarkLineStyle = Omit<StateLineStyle, "color">;
 export interface CandleLastPriceMarkStyle extends ChangeColor {
 	show: boolean;
 	line: CandleLastPriceMarkLineStyle;
@@ -212,7 +212,7 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, "style" | "borde
 	offsetTop: number;
 	offsetRight: number;
 }
-export declare type CandleTooltipCustomCallback = (kLineData: KLineData, styles: CandleStyle) => TooltipData[];
+export type CandleTooltipCustomCallback = (kLineData: KLineData, styles: CandleStyle) => TooltipData[];
 export interface CandleTooltipStyle extends TooltipStyle {
 	custom: Nullable<CandleTooltipCustomCallback>;
 	rect: CandleTooltipRectStyle;
@@ -232,7 +232,7 @@ export interface CandleStyle {
 	priceMark: CandlePriceMarkStyle;
 	tooltip: CandleTooltipStyle;
 }
-export declare type IndicatorPolygonStyle = Omit<PolygonStyle, "color" | "borderColor"> & ChangeColor;
+export type IndicatorPolygonStyle = Omit<PolygonStyle, "color" | "borderColor"> & ChangeColor;
 export interface IndicatorLastValueMarkStyle {
 	show: boolean;
 	text: LastValueMarkTextStyle;
@@ -249,7 +249,7 @@ export interface IndicatorStyle {
 	lastValueMark: IndicatorLastValueMarkStyle;
 	tooltip: IndicatorTooltipStyle;
 }
-export declare type AxisLineStyle = Omit<StateLineStyle, "style" | "dashedValue">;
+export type AxisLineStyle = Omit<StateLineStyle, "style" | "dashedValue">;
 export interface AxisTickLineStyle extends AxisLineStyle {
 	length: number;
 }
@@ -264,7 +264,7 @@ export interface AxisStyle {
 	tickLine: AxisTickLineStyle;
 	tickText: AxisTickTextStyle;
 }
-export declare type XAxisStyle = AxisStyle;
+export type XAxisStyle = AxisStyle;
 declare enum YAxisPosition {
 	Left = "left",
 	Right = "right"
@@ -331,8 +331,8 @@ declare enum FormatDateType {
 	Crosshair = 1,
 	XAxis = 2
 }
-export declare type FormatDate = (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: FormatDateType) => string;
-export declare type FormatBigNumber = (value: string | number) => string;
+export type FormatDate = (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: FormatDateType) => string;
+export type FormatBigNumber = (value: string | number) => string;
 export interface CustomApi {
 	formatDate: FormatDate;
 	formatBigNumber: FormatBigNumber;
@@ -427,7 +427,7 @@ export interface Crosshair extends Partial<Coordinate> {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export declare type ActionCallback = (data?: any) => void;
+export type ActionCallback = (data?: any) => void;
 declare enum ActionType {
 	OnZoom = "onZoom",
 	OnScroll = "onScroll",
@@ -436,7 +436,7 @@ declare enum ActionType {
 	OnCrosshairChange = "onCrosshairChange",
 	OnPaneDrag = "onPaneDrag"
 }
-export declare type LoadMoreCallback = (timestamp: Nullable<number>) => void;
+export type LoadMoreCallback = (timestamp: Nullable<number>) => void;
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -503,7 +503,7 @@ export interface BarSpace {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export declare type ExcludePickPartial<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
+export type ExcludePickPartial<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
 export interface MouseTouchEvent extends Coordinate {
 	pageX: number;
 	pageY: number;
@@ -528,7 +528,7 @@ export interface Axis {
 	convertToPixel: (value: number) => number;
 	convertFromPixel: (px: number) => number;
 }
-export declare type XAxis = Axis;
+export type XAxis = Axis;
 declare enum IndicatorSeries {
 	Normal = "normal",
 	Price = "price",
@@ -547,7 +547,7 @@ export interface IndicatorFigureStylesCallbackData<D> {
 	current: IndicatorFigureStylesCallbackDataChild<D>;
 	next: IndicatorFigureStylesCallbackDataChild<D>;
 }
-export declare type IndicatorFigureStylesCallback<D> = (data: IndicatorFigureStylesCallbackData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorFigureStyle;
+export type IndicatorFigureStylesCallback<D> = (data: IndicatorFigureStylesCallbackData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorFigureStyle;
 export interface IndicatorFigure<D = any> {
 	key: string;
 	title?: string;
@@ -555,7 +555,7 @@ export interface IndicatorFigure<D = any> {
 	baseValue?: number;
 	styles?: IndicatorFigureStylesCallback<D>;
 }
-export declare type IndicatorRegenerateFiguresCallback<D = any> = (calcParms: any[]) => Array<IndicatorFigure<D>>;
+export type IndicatorRegenerateFiguresCallback<D = any> = (calcParms: any[]) => Array<IndicatorFigure<D>>;
 export interface IndicatorTooltipData {
 	name: string;
 	calcParamsText: string;
@@ -572,7 +572,7 @@ export interface IndicatorCreateTooltipDataSourceParams<D = any> {
 	xAxis: XAxis;
 	yAxis: YAxis;
 }
-export declare type IndicatorCreateTooltipDataSourceCallback<D = any> = (params: IndicatorCreateTooltipDataSourceParams<D>) => IndicatorTooltipData;
+export type IndicatorCreateTooltipDataSourceCallback<D = any> = (params: IndicatorCreateTooltipDataSourceParams<D>) => IndicatorTooltipData;
 export interface IndicatorDrawParams<D = any> {
 	ctx: CanvasRenderingContext2D;
 	kLineDataList: KLineData[];
@@ -584,8 +584,8 @@ export interface IndicatorDrawParams<D = any> {
 	xAxis: XAxis;
 	yAxis: YAxis;
 }
-export declare type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParams<D>) => boolean;
-export declare type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[];
+export type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParams<D>) => boolean;
+export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[];
 export interface Indicator<D = any> {
 	/**
 	 * Indicator name
@@ -660,8 +660,8 @@ export interface Indicator<D = any> {
 	 */
 	result: D[];
 }
-export declare type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name" | "calc">;
-export declare type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name">;
+export type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name" | "calc">;
+export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name">;
 declare enum OverlayMode {
 	Normal = "normal",
 	WeakMagnet = "weak_magnet",
@@ -695,8 +695,8 @@ export interface OverlayCreateFiguresCallbackParams {
 export interface OverlayEvent extends Partial<MouseTouchEvent> {
 	overlay: Overlay;
 }
-export declare type OverlayEventCallback = (event: OverlayEvent) => boolean;
-export declare type OverlayCreateFiguresCallback = (params: OverlayCreateFiguresCallbackParams) => OverlayFigure | OverlayFigure[];
+export type OverlayEventCallback = (event: OverlayEvent) => boolean;
+export type OverlayCreateFiguresCallback = (params: OverlayCreateFiguresCallbackParams) => OverlayFigure | OverlayFigure[];
 export interface Overlay {
 	/**
 	 * Unique identification
@@ -827,9 +827,9 @@ export interface Overlay {
 	 */
 	onDeselected: Nullable<OverlayEventCallback>;
 }
-export declare type OverlayTemplate = ExcludePickPartial<Omit<Overlay, "id" | "groupId" | "points" | "currentStep">, "name">;
-export declare type OverlayCreate = ExcludePickPartial<Omit<Overlay, "currentStep" | "totalStep" | "createPointFigures" | "createXAxisFigures" | "createYAxisFigures" | "performEventPressedMove" | "performEventMoveForDrawing">, "name">;
-export declare type OverlayRemove = Partial<Pick<Overlay, "id" | "groupId" | "name">>;
+export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, "id" | "groupId" | "points" | "currentStep">, "name">;
+export type OverlayCreate = ExcludePickPartial<Omit<Overlay, "currentStep" | "totalStep" | "createPointFigures" | "createXAxisFigures" | "createYAxisFigures" | "performEventPressedMove" | "performEventMoveForDrawing">, "name">;
+export type OverlayRemove = Partial<Pick<Overlay, "id" | "groupId" | "name">>;
 declare enum DomPosition {
 	Root = "root",
 	Main = "main",
@@ -898,9 +898,9 @@ export interface Figure<A = any, S = any> {
 	draw: (ctx: CanvasRenderingContext2D, attrs: A, styles: S) => void;
 	checkEventOn: (coordinate: Coordinate, attrs: A, styles: S) => boolean;
 }
-export declare type FigureTemplate<A = any, S = any> = Pick<Figure<A, S>, "name" | "draw" | "checkEventOn">;
-export declare type FigureCreate<A = any, S = any> = Pick<Figure<A, S>, "name" | "attrs" | "styles">;
-export declare type FigureConstructor<A = any, S = any> = new (figure: FigureCreate<A, S>) => ({
+export type FigureTemplate<A = any, S = any> = Pick<Figure<A, S>, "name" | "draw" | "checkEventOn">;
+export type FigureCreate<A = any, S = any> = Pick<Figure<A, S>, "name" | "attrs" | "styles">;
+export type FigureConstructor<A = any, S = any> = new (figure: FigureCreate<A, S>) => ({
 	draw: (ctx: CanvasRenderingContext2D) => void;
 });
 declare function checkCoordinateOnArc(coordinate: Coordinate, arc: ArcAttrs): boolean;

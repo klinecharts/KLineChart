@@ -34,7 +34,7 @@ import { formatValue } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
 export default class IndicatorView extends CandleBarView {
-  protected getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
+  override getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
     const pane = this.getWidget().getPane()
     const yAxis = pane.getAxisComponent()
     if (!yAxis.isInCandle()) {
@@ -58,7 +58,7 @@ export default class IndicatorView extends CandleBarView {
     return null
   }
 
-  drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     super.drawImp(ctx)
     const widget = this.getWidget()
     const pane = widget.getPane()

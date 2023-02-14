@@ -57,9 +57,9 @@ export default class IndicatorWidget extends DrawWidget<YAxis> {
     return new IndicatorTooltipView(this)
   }
 
-  protected updateMainContent (ctx: CanvasRenderingContext2D): void {}
+  protected updateMainContent (_ctx: CanvasRenderingContext2D): void {}
 
-  protected updateOverlay (ctx: CanvasRenderingContext2D): void {
+  override updateOverlay (ctx: CanvasRenderingContext2D): void {
     this._overlayView.draw(ctx)
     this._crosshairLineView.draw(ctx)
     this._tooltipView.draw(ctx)

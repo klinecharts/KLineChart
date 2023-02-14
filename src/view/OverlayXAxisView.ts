@@ -28,31 +28,31 @@ import OverlayStore, { EventOverlayInfo, ProgressOverlayInfo } from '../store/Ov
 import OverlayYAxisView from './OverlayYAxisView'
 
 export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
-  protected coordinateToPointTimestampDataIndexFlag (): boolean {
+  override coordinateToPointTimestampDataIndexFlag (): boolean {
     return true
   }
 
-  protected coordinateToPointValueFlag (): boolean {
+  override coordinateToPointValueFlag (): boolean {
     return false
   }
 
-  protected getCompleteOverlays (overlayStore: OverlayStore): Overlay[] {
+  override getCompleteOverlays (overlayStore: OverlayStore): Overlay[] {
     return overlayStore.getInstances()
   }
 
-  protected getProgressOverlay (info: ProgressOverlayInfo): Overlay {
+  override getProgressOverlay (info: ProgressOverlayInfo): Overlay {
     return info.instance
   }
 
-  protected getDefaultFigures (
+  override getDefaultFigures (
     overlay: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,
-    precision: Precision,
+    _precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
-    xAxis: Nullable<XAxis>,
-    yAxis: Nullable<YAxis>,
+    _xAxis: Nullable<XAxis>,
+    _yAxis: Nullable<YAxis>,
     clickInstanceInfo: EventOverlayInfo
   ): OverlayFigure[] {
     const figures: OverlayFigure[] = []
@@ -75,7 +75,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     return figures
   }
 
-  protected getFigures (
+  override getFigures (
     overlay: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,

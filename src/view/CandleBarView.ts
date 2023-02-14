@@ -32,7 +32,7 @@ export interface CandleBarOptions {
 }
 
 export default class CandleBarView extends ChildrenView {
-  protected drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     const pane = this.getWidget().getPane()
     const chartStore = pane.getChart().getChartStore()
     const candleBarOptions = this.getCandleBarOptions(chartStore)

@@ -15,7 +15,6 @@
 import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Crosshair from '../common/Crosshair'
-import { MouseTouchEvent } from '../common/SyntheticEvent'
 import { IndicatorStyle, TooltipStyle, TooltipIconStyle, MarginTextStyle, TooltipData, TooltipShowRule, TooltipDataChild, TooltipIconPosition, CustomApi } from '../common/Options'
 import { ActionType } from '../common/Action'
 
@@ -35,20 +34,20 @@ import { TooltipIconInfo } from '../store/TooltipStore'
 import View from './View'
 
 export default class IndicatorTooltipView extends View<YAxis> {
-  private readonly _boundIconClickEvent = (currentIconInfo: TooltipIconInfo, iconId: string) => (event: MouseTouchEvent) => {
+  private readonly _boundIconClickEvent = (currentIconInfo: TooltipIconInfo, iconId: string) => () => {
     const pane = this.getWidget().getPane()
     pane.getChart().getChartStore().getActionStore().execute(ActionType.OnTooltipIconClick, { ...currentIconInfo, iconId })
     return true
   }
 
-  private readonly _boundIconMouseMoveEvent = (currentIconInfo: TooltipIconInfo, iconId: string) => (event: MouseTouchEvent) => {
+  private readonly _boundIconMouseMoveEvent = (currentIconInfo: TooltipIconInfo, iconId: string) => () => {
     const pane = this.getWidget().getPane()
     const tooltipStore = pane.getChart().getChartStore().getTooltipStore()
     tooltipStore.setActiveIconInfo({ ...currentIconInfo, iconId })
     return true
   }
 
-  protected drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()

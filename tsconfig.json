@@ -2,15 +2,18 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "target": "ES5",
-    "declaration": false,
-    "declarationMap": false,
+    "sourceMap": true,
     "downlevelIteration": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
     "lib": [
       "dom",
       "es2018"
     ]
   },
   "include": [
-    "src/**/*.ts", "/src/**/*.d.ts"
+    "src/**/*.ts"
   ]
 }

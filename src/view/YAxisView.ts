@@ -24,11 +24,11 @@ import YAxis from '../component/YAxis'
 import AxisView from './AxisView'
 
 export default class YxisView extends AxisView<YAxis> {
-  protected getAxisStyles (styles: Styles): AxisStyle {
+  override getAxisStyles (styles: Styles): AxisStyle {
     return styles.yAxis
   }
 
-  protected createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs {
+  override createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs {
     const yAxis = this.getWidget().getPane().getAxisComponent()
     const size = styles.axisLine.size
     let x: number
@@ -45,7 +45,7 @@ export default class YxisView extends AxisView<YAxis> {
     }
   }
 
-  protected createTickLines (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): LineAttrs[] {
+  override createTickLines (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): LineAttrs[] {
     const yAxis = this.getWidget().getPane().getAxisComponent()
     const axisLineStyles = styles.axisLine
     const tickLineStyles = styles.tickLine
@@ -73,7 +73,7 @@ export default class YxisView extends AxisView<YAxis> {
     }))
   }
 
-  protected createTickTexts (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): TextAttrs[] {
+  override createTickTexts (ticks: AxisTick[], bounding: Bounding, styles: AxisStyle): TextAttrs[] {
     const yAxis = this.getWidget().getPane().getAxisComponent()
     const axisLineStyles = styles.axisLine
     const tickLineStyles = styles.tickLine

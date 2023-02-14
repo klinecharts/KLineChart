@@ -29,7 +29,7 @@ import { createFont } from '../common/utils/canvas'
 import View from './View'
 
 export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extends View<C> {
-  drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const bounding = widget.getBounding()
@@ -92,7 +92,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     return text
   }
 
-  protected getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: C, styles: StateRectTextStyle): TextAttrs {
+  protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: C, _styles: StateRectTextStyle): TextAttrs {
     const yAxis = axis as unknown as YAxis
     let x: number
     let textAlign: CanvasTextAlign

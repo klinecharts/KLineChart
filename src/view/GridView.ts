@@ -20,7 +20,7 @@ import { PaneIdConstants } from '../pane/Pane'
 import View from './View'
 
 export default class GridView extends View<YAxis> {
-  protected drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()

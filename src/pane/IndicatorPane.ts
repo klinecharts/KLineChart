@@ -24,23 +24,23 @@ import YAxis from '../component/YAxis'
 import Pane from './Pane'
 
 export default class IndicatorPane extends Pane<YAxis> {
-  getName (): string {
+  override getName (): string {
     return 'indicator'
   }
 
-  protected createAxisComponent (): YAxis {
+  override createAxisComponent (): YAxis {
     return new YAxis(this)
   }
 
-  protected createMainWidget (container: HTMLElement): DrawWidget<YAxis> {
+  override createMainWidget (container: HTMLElement): DrawWidget<YAxis> {
     return new IndicatorWidget(container, this)
   }
 
-  protected createSeparatorWidget (container: HTMLElement): Nullable<SeparatorWidget> {
+  override createSeparatorWidget (container: HTMLElement): Nullable<SeparatorWidget> {
     return new SeparatorWidget(container, this)
   }
 
-  protected creatYAxisWidget (container: HTMLElement): Nullable<YAxisWidget> {
+  override creatYAxisWidget (container: HTMLElement): Nullable<YAxisWidget> {
     return new YAxisWidget(container, this)
   }
 }

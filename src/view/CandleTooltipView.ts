@@ -31,7 +31,7 @@ import { createFont } from '../common/utils/canvas'
 import { isFunction, isObject } from '../common/utils/typeChecks'
 
 export default class CandleTooltipView extends IndicatorTooltipView {
-  protected drawImp (ctx: CanvasRenderingContext2D): void {
+  override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const paneId = pane.getId()

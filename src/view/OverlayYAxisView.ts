@@ -31,11 +31,11 @@ import { EventOverlayInfo } from '../store/OverlayStore'
 import OverlayView from './OverlayView'
 
 export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayView<C> {
-  protected coordinateToPointTimestampDataIndexFlag (): boolean {
+  override coordinateToPointTimestampDataIndexFlag (): boolean {
     return false
   }
 
-  protected drawDefaultFigures (
+  override drawDefaultFigures (
     ctx: CanvasRenderingContext2D,
     overlay: Overlay,
     coordinates: Coordinate[],
@@ -46,7 +46,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     defaultStyles: OverlayStyle,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
-    hoverInstanceInfo: EventOverlayInfo,
+    _hoverInstanceInfo: EventOverlayInfo,
     clickInstanceInfo: EventOverlayInfo
   ): void {
     this.drawFigures(
@@ -62,9 +62,9 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     coordinates: Coordinate[],
     bounding: Bounding,
     precision: Precision,
-    dateTimeFormat: Intl.DateTimeFormat,
-    customApi: CustomApi,
-    xAxis: Nullable<XAxis>,
+    _dateTimeFormat: Intl.DateTimeFormat,
+    _customApi: CustomApi,
+    _xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
     clickInstanceInfo: EventOverlayInfo
   ): OverlayFigure[] {
@@ -102,7 +102,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     return figures
   }
 
-  protected getFigures (
+  override getFigures (
     overlay: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,

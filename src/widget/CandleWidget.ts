@@ -30,7 +30,7 @@ export default class CandleWidget extends IndicatorWidget {
   private readonly _candleHighLowPriceView = new CandleHighLowPriceView(this)
   private readonly _candleLastPriceLineView = new CandleLastPriceLineView(this)
 
-  protected updateMainContent (ctx: CanvasRenderingContext2D): void {
+  override updateMainContent (ctx: CanvasRenderingContext2D): void {
     const candleStyles = this.getPane().getChart().getStyles().candle
     if (candleStyles.type !== CandleType.Area) {
       this._candleBarView.draw(ctx)
@@ -41,7 +41,7 @@ export default class CandleWidget extends IndicatorWidget {
     }
   }
 
-  protected createTooltipView (): IndicatorTooltipView {
+  override createTooltipView (): IndicatorTooltipView {
     return new CandleTooltipView(this)
   }
 }

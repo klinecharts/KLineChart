@@ -244,9 +244,9 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
 
   protected abstract createAxisComponent (): C
 
-  protected createSeparatorWidget (container: HTMLElement): Nullable<SeparatorWidget> { return null }
+  protected createSeparatorWidget (_container: HTMLElement): Nullable<SeparatorWidget> { return null }
 
-  protected creatYAxisWidget (container: HTMLElement): Nullable<YAxisWidget> { return null }
+  protected creatYAxisWidget (_container: HTMLElement): Nullable<YAxisWidget> { return null }
 
   protected abstract createMainWidget (container: HTMLElement): DrawWidget<C>
 }

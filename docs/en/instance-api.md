@@ -773,24 +773,24 @@ chart.setPaneOptions({
 ## subscribeAction(type, callback)
 ```typescript
 (
-   type: 'onZoom' | 'onScroll' | 'onVisibleDataChange' | 'onCrosshairChange' | 'onPaneDrag',
+   type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onTooltipIconClick' | 'onPaneDrag',
    callback: (data?: any) => void
 ) => void
 ```
 Subscribe to chart actions.
-- `type` options are 'onZoom', 'onScroll', 'onVisibleDataChange', 'onCrosshairChange' and 'onPaneDrag'
+- `type` options are 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
 - `callback` is a callback method
 
 
 ## unsubscribeAction(type, callback)
 ```typescript
 (
-   type: 'onZoom' | 'onScroll' | 'onVisibleDataChange' | 'onCrosshairChange' | 'onPaneDrag',
+   type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onTooltipIconClick' | 'onPaneDrag',
    callback?: (data?: any) => void
 ) => void
 ```
 Unsubscribe from chart actions.
-- `type` options are 'onZoom', 'onScroll', 'onVisibleDataChange', 'onCrosshairChange' and 'onPaneDrag'
+- `type` options are 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
 - `callback` is the callback method when subscribing, the default is to cancel all the current types
 
 
