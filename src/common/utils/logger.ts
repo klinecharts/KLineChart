@@ -35,7 +35,7 @@ export function logError (api: string, invalidParam: string, append?: string): v
 export function logTag (): void {
   log(
     '%c❤️ Welcome to klinecharts. Version is __BUILD_VERSION__',
-    'border-radius:2px;border:dashed 1px #2196F3;padding:26px 20px;font-size:14px;color:#2196F3',
+    'border-radius:2px;border:dashed 1px #1677FF;padding:26px 20px;margin:16px 0;font-size:14px;color:#1677FF',
     '',
     '',
     ''
