@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import Nullable from '../common/Nullable'
 import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Crosshair from '../common/Crosshair'
@@ -69,7 +70,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     paneId: string,
     dataList: KLineData[],
     crosshair: Crosshair,
-    activeTooltipIconInfo: TooltipIconInfo,
+    activeTooltipIconInfo: Nullable<TooltipIconInfo>,
     indicators: Map<string, IndicatorImp>,
     customApi: CustomApi,
     bounding: Bounding,
@@ -139,14 +140,14 @@ export default class IndicatorTooltipView extends View<YAxis> {
           }
 
           // draw right icons
-          const [rightIconsNextStartX, rightIconsNextStartY, rightIconsLastRowHeight, rightIconsIncreaseHeight] = this.drawStandardTooltipIcons(
+          const [, rightIconsNextStartY, rightIconsLastRowHeight, rightIconsIncreaseHeight] = this.drawStandardTooltipIcons(
             ctx, bounding, { paneId, indicatorName: indicator.name, iconId: '' },
             activeTooltipIconInfo, rightIcons, x, y, prevRowHeight
           )
-          x = rightIconsNextStartX
-          y = rightIconsNextStartY
+          x = 0
           height += rightIconsIncreaseHeight
-          prevRowHeight = rightIconsLastRowHeight
+          y = rightIconsNextStartY + rightIconsLastRowHeight
+          prevRowHeight = 0
         }
       })
     }
@@ -157,7 +158,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     ctx: CanvasRenderingContext2D,
     bounding: Bounding,
     currentIconInfo: TooltipIconInfo,
-    activeIconInfo: TooltipIconInfo,
+    activeIconInfo: Nullable<TooltipIconInfo>,
     icons: TooltipIconStyle[],
     startX: number,
     startY: number,
@@ -193,7 +194,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           color, activeColor, size, fontFamily, icon: text, backgroundColor, activeBackgroundColor
         } = icon
         x += marginLeft
-        const active = activeIconInfo.paneId === currentIconInfo.paneId && activeIconInfo.indicatorName === currentIconInfo.indicatorName && activeIconInfo.iconId === icon.id
+        const active = activeIconInfo?.paneId === currentIconInfo.paneId && activeIconInfo?.indicatorName === currentIconInfo.indicatorName && activeIconInfo?.iconId === icon.id
         this.createFigure(
           'rectText',
           { text, x, y: y + marginTop },

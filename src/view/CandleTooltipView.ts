@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import Nullable from '../common/Nullable'
 import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
@@ -111,7 +112,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     paneId: string,
     bounding: Bounding,
     crosshair: Crosshair,
-    activeTooltipIconInfo: TooltipIconInfo,
+    activeTooltipIconInfo: Nullable<TooltipIconInfo>,
     precision: Precision,
     dateTimeFormat: Intl.DateTimeFormat,
     locale: string,

@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import Nullable from '../common/Nullable'
+
 export interface TooltipIconInfo {
   paneId: string
   indicatorName: string
@@ -19,17 +21,13 @@ export interface TooltipIconInfo {
 }
 
 export default class TooltipStore {
-  private _activeIconInfo: TooltipIconInfo = { paneId: '', indicatorName: '', iconId: '' }
+  private _activeIconInfo: Nullable<TooltipIconInfo> = null
 
   setActiveIconInfo (info?: TooltipIconInfo): void {
-    if (info === undefined) {
-      this._activeIconInfo = { paneId: '', indicatorName: '', iconId: '' }
-    } else {
-      this._activeIconInfo = info
-    }
+    this._activeIconInfo = info ?? null
   }
 
-  getActiveIconInfo (): TooltipIconInfo {
-    return this._activeIconInfo ?? null
+  getActiveIconInfo (): Nullable<TooltipIconInfo> {
+    return this._activeIconInfo
   }
 }
