@@ -1,7 +1,7 @@
 # 📠 Change Log
 
 ## 9.0.0
-`To be released`
+`2023-02-16`
 + 🛠 Typescript refactoring.
 + 🆕 New features
    + Add Y axis direction zoom and scroll.
