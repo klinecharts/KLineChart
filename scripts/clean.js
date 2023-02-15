@@ -29,12 +29,12 @@ function deleteFiles (dir) {
       if (fs.statSync(path).isDirectory()) {
         deleteDir(path);
       } else {
+        fs.unlinkSync(path);
         deletedFileCount++
         process.stdout.clearLine(process.stdout);
         process.stdout.cursorTo(0);
         const percent = `${Math.round(deletedFileCount / totalFileCount * 100)}%`;
         process.stdout.write(`${chalk.blue(`${percent}(${deletedFileCount}/${totalFileCount}): ${file}`)}`, 'utf-8');
-        fs.unlinkSync(path);
       }
     })
     fs.rmdirSync(dir);
