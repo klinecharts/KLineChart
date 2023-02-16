@@ -12,8 +12,15 @@
  * limitations under the License.
  */
 
-import { Options } from './common/Options'
-import ChartImp, { Chart } from './Chart'
+import {
+  Options, LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
+  CandleType, YAxisPosition, YAxisType, FormatDateType
+} from './common/Options'
+import ChartImp, { Chart, DomPosition } from './Chart'
+
+import { ActionType } from './common/Action'
+import { IndicatorSeries } from './component/Indicator'
+import { OverlayMode } from './component/Overlay'
 
 import { checkCoordinateOnArc, drawArc } from './extension/figure/arc'
 import { checkCoordinateOnCircle, drawCircle } from './extension/figure/circle'
@@ -144,5 +151,8 @@ export {
   registerIndicator, getSupportedIndicators,
   registerOverlay, getSupportedOverlays,
   registerLocale, getSupportedLocales,
-  registerStyles, utils
+  registerStyles, utils,
+  LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
+  CandleType, YAxisPosition, YAxisType, FormatDateType,
+  DomPosition, ActionType, IndicatorSeries, OverlayMode
 }

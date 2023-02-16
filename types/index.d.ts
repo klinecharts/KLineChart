@@ -50,7 +50,10 @@ export interface KLineData {
 	volume?: number;
 	turnover?: number;
 }
-declare enum LineType {
+/**
+ * line type
+ */
+export declare enum LineType {
 	Dashed = "dashed",
 	Solid = "solid"
 }
@@ -66,7 +69,7 @@ export interface SmoothLineStyle extends LineStyle {
 export interface StateLineStyle extends LineStyle {
 	show: boolean;
 }
-declare enum PolygonType {
+export declare enum PolygonType {
 	Stroke = "stroke",
 	Fill = "fill",
 	StrokeFill = "stroke_fill"
@@ -114,12 +117,12 @@ export interface MarginTextStyle extends StateTextStyle {
 	marginBottom: number;
 }
 export type LastValueMarkTextStyle = Omit<StateRectTextStyle, "backgroundColor" | "borderColor">;
-declare enum TooltipShowRule {
+export declare enum TooltipShowRule {
 	Always = "always",
 	FollowCross = "follow_cross",
 	None = "none"
 }
-declare enum TooltipShowType {
+export declare enum TooltipShowType {
 	Standard = "standard",
 	Rect = "rect"
 }
@@ -146,7 +149,7 @@ export interface TooltipData {
 	title: string | TooltipDataChild;
 	value: string | TooltipDataChild;
 }
-declare enum TooltipIconPosition {
+export declare enum TooltipIconPosition {
 	Left = "left",
 	Middle = "middle",
 	Right = "right"
@@ -222,7 +225,7 @@ export interface CandleTooltipStyle extends TooltipStyle {
 	custom: Nullable<CandleTooltipCustomCallback>;
 	rect: CandleTooltipRectStyle;
 }
-declare enum CandleType {
+export declare enum CandleType {
 	CandleSolid = "candle_solid",
 	CandleStroke = "candle_stroke",
 	CandleUpStroke = "candle_up_stroke",
@@ -270,11 +273,11 @@ export interface AxisStyle {
 	tickText: AxisTickTextStyle;
 }
 export type XAxisStyle = AxisStyle;
-declare enum YAxisPosition {
+export declare enum YAxisPosition {
 	Left = "left",
 	Right = "right"
 }
-declare enum YAxisType {
+export declare enum YAxisType {
 	Normal = "normal",
 	Percentage = "percentage",
 	Log = "log"
@@ -331,7 +334,7 @@ export interface Styles {
 	crosshair: CrosshairStyle;
 	overlay: OverlayStyle;
 }
-declare enum FormatDateType {
+export declare enum FormatDateType {
 	Tooltip = 0,
 	Crosshair = 1,
 	XAxis = 2
@@ -433,7 +436,7 @@ export interface Crosshair extends Partial<Coordinate> {
  * limitations under the License.
  */
 export type ActionCallback = (data?: any) => void;
-declare enum ActionType {
+export declare enum ActionType {
 	OnZoom = "onZoom",
 	OnScroll = "onScroll",
 	OnVisibleRangeChange = "onVisibleRangeChange",
@@ -534,7 +537,7 @@ export interface Axis {
 	convertFromPixel: (px: number) => number;
 }
 export type XAxis = Axis;
-declare enum IndicatorSeries {
+export declare enum IndicatorSeries {
 	Normal = "normal",
 	Price = "price",
 	Volume = "volume"
@@ -667,7 +670,7 @@ export interface Indicator<D = any> {
 }
 export type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name" | "calc">;
 export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, "reult">, "name">;
-declare enum OverlayMode {
+export declare enum OverlayMode {
 	Normal = "normal",
 	WeakMagnet = "weak_magnet",
 	StrongMagnet = "strong_magnet"
@@ -835,7 +838,7 @@ export interface Overlay {
 export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, "id" | "groupId" | "points" | "currentStep">, "name">;
 export type OverlayCreate = ExcludePickPartial<Omit<Overlay, "currentStep" | "totalStep" | "createPointFigures" | "createXAxisFigures" | "createYAxisFigures" | "performEventPressedMove" | "performEventMoveForDrawing">, "name">;
 export type OverlayRemove = Partial<Pick<Overlay, "id" | "groupId" | "name">>;
-declare enum DomPosition {
+export declare enum DomPosition {
 	Root = "root",
 	Main = "main",
 	YAxis = "yAxis"

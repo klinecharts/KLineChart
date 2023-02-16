@@ -1,4 +1,7 @@
 # 📠 Change Log
+## 9.0.1
+`2023-02-17`
+🐞 Fix the introduction of typescript.
 
 ## 9.0.0
 `2023-02-16`

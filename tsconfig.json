@@ -2,6 +2,7 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "target": "ES5",
+    "esModuleInterop": true,
     "downlevelIteration": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,

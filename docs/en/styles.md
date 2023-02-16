@@ -303,7 +303,7 @@ Whether you see a point or a line on the chart, you can basically customize the 
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#3f4254',
-        backgroundColor: 'rgba(17, 17, 17, .3)'
+        color: 'rgba(17, 17, 17, .3)'
       },
       text: {
         size: 12,
