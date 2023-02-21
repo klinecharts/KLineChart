@@ -69,7 +69,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         paneId, instance: null, figureType: EventOverlayInfoFigureType.None, figureIndex: -1, attrsIndex: -1
       }, event)
       return false
-    }).registerEvent('mouseDownEvent', (event: MouseTouchEvent) => {
+    }).registerEvent('mouseClickEvent', (event: MouseTouchEvent) => {
       const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
       if (progressInstanceInfo !== null) {
         const overlay = progressInstanceInfo.instance
@@ -87,7 +87,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             overlay.onDrawEnd?.({ overlay, ...event })
           }
         }
-        return this._figureMouseDownEvent(
+        return this._figureMouseClickEvent(
           overlay,
           EventOverlayInfoFigureType.Point,
           overlay.points.length - 1,
@@ -97,6 +97,21 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       overlayStore.setClickInstanceInfo({
         paneId, instance: null, figureType: EventOverlayInfoFigureType.None, figureIndex: -1, attrsIndex: -1
       }, event)
+      return false
+    }).registerEvent('mouseDoubleClickEvent', (event: MouseTouchEvent) => {
+      const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
+      if (progressInstanceInfo !== null) {
+        const overlay = progressInstanceInfo.instance
+        const progressInstancePaneId = progressInstanceInfo.paneId
+        if (overlay.isDrawing() && progressInstancePaneId === paneId) {
+          overlay.forceComplete()
+          if (!overlay.isDrawing()) {
+            overlayStore.progressInstanceComplete()
+            overlay.onDrawEnd?.({ overlay, ...event })
+          }
+        }
+        return true
+      }
       return false
     }).registerEvent('mouseRightClickEvent', (event: MouseTouchEvent) => {
       const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
@@ -145,6 +160,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       return {
         mouseMoveEvent: this._figureMouseMoveEvent(overlay, figureType, figureIndex, attrsIndex),
         mouseDownEvent: this._figureMouseDownEvent(overlay, figureType, figureIndex, attrsIndex),
+        mouseClickEvent: this._figureMouseClickEvent(overlay, figureType, figureIndex, attrsIndex),
         mouseRightClickEvent: this._figureMouseRightClickEvent(overlay, figureType, figureIndex, attrsIndex)
       }
     }
@@ -170,6 +186,15 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       overlay.startPressedMove(this._coordinateToPoint(overlay, event))
       overlay.onPressedMoveStart?.({ overlay, ...event })
       overlayStore.setPressedInstanceInfo({ paneId, instance: overlay, figureType, figureIndex, attrsIndex })
+      return true
+    }
+  }
+
+  _figureMouseClickEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
+    return (event: MouseTouchEvent) => {
+      const pane = this.getWidget().getPane()
+      const paneId = pane.getId()
+      const overlayStore = pane.getChart().getChartStore().getOverlayStore()
       overlayStore.setClickInstanceInfo({ paneId, instance: overlay, figureType, figureIndex, attrsIndex }, event)
       return true
     }

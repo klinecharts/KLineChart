@@ -527,6 +527,10 @@ export default abstract class OverlayImp implements Overlay {
     }
   }
 
+  forceComplete (): void {
+    this.currentStep = OVERLAY_DRAW_STEP_FINISHED
+  }
+
   isDrawing (): boolean {
     return this.currentStep !== OVERLAY_DRAW_STEP_FINISHED
   }
