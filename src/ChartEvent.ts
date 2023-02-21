@@ -355,6 +355,15 @@ export default class ChartEvent implements EventHandler {
     return consumed
   }
 
+  mouseClickEvent (e: MouseTouchEvent): boolean {
+    const { widget } = this._findWidgetByEvent(e)
+    if (widget !== null) {
+      const event = this._makeWidgetEvent(e, widget)
+      return widget.dispatchEvent('mouseClickEvent', event)
+    }
+    return false
+  }
+
   mouseRightClickEvent (e: MouseTouchEvent): boolean {
     const { widget } = this._findWidgetByEvent(e)
     let consumed: boolean = false
@@ -378,12 +387,22 @@ export default class ChartEvent implements EventHandler {
 
   mouseDoubleClickEvent (e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
-    if (widget !== null && widget.getName() === WidgetNameConstants.YAXIS) {
-      const yAxis = pane?.getAxisComponent() as YAxis
-      if (!yAxis.getAutoCalcTickFlag()) {
-        yAxis.setAutoCalcTickFlag(true)
-        this._chart.adjustPaneViewport(false, true, true, true)
-        return true
+    if (widget !== null) {
+      const name = widget.getName()
+      switch (name) {
+        case WidgetNameConstants.MAIN: {
+          const event = this._makeWidgetEvent(e, widget)
+          return widget.dispatchEvent('mouseDoubleClickEvent', event)
+        }
+        case WidgetNameConstants.YAXIS: {
+          const yAxis = pane?.getAxisComponent() as YAxis
+          if (!yAxis.getAutoCalcTickFlag()) {
+            yAxis.setAutoCalcTickFlag(true)
+            this._chart.adjustPaneViewport(false, true, true, true)
+            return true
+          }
+          break
+        }
       }
     }
     return false
@@ -426,12 +445,10 @@ export default class ChartEvent implements EventHandler {
               this._touchCoordinate = { x: event.x, y: event.y }
               crosshairStore.set({ x: event.x, y: event.y, paneId: pane?.getId() })
             } else {
-              this._touchCancelCrosshair = true
               this._touchCoordinate = null
+              this._touchCancelCrosshair = true
               crosshairStore.set()
             }
-          } else {
-            this._touchCancelCrosshair = false
           }
           return true
         }
@@ -453,17 +470,19 @@ export default class ChartEvent implements EventHandler {
     if (widget !== null) {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
+      const chartStore = this._chart.getChartStore()
+      const crosshairStore = chartStore.getCrosshairStore()
       switch (name) {
         case WidgetNameConstants.MAIN: {
           if (widget.dispatchEvent('pressedMouseMoveEvent', event)) {
             event.preventDefault?.()
+            crosshairStore.set(undefined, true)
             this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
-          const chartStore = this._chart.getChartStore()
           if (this._touchCoordinate !== null) {
             event.preventDefault?.()
-            chartStore.getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane?.getId() })
+            crosshairStore.set({ x: event.x, y: event.y, paneId: pane?.getId() })
           } else {
             if (
               this._startScrollCoordinate !== null &&
@@ -537,13 +556,37 @@ export default class ChartEvent implements EventHandler {
 
   tapEvent (e: MouseTouchEvent): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
-    if (widget !== null && widget.getName() === WidgetNameConstants.MAIN && this._touchCoordinate === null && !this._touchCancelCrosshair && !this._touchZoomed) {
+    let consumed = false
+    if (widget !== null) {
       const event = this._makeWidgetEvent(e, widget)
-      this._touchCoordinate = { x: event.x, y: event.y }
-      this._chart.getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane?.getId() })
-      return true
+      const result = widget.dispatchEvent('mouseClickEvent', event)
+      if (widget.getName() === WidgetNameConstants.MAIN) {
+        const event = this._makeWidgetEvent(e, widget)
+        const chartStore = this._chart.getChartStore()
+        const crosshairStore = chartStore.getCrosshairStore()
+        if (result) {
+          this._touchCancelCrosshair = true
+          this._touchCoordinate = null
+          crosshairStore.set(undefined, true)
+          consumed = true
+        } else {
+          if (!this._touchCancelCrosshair && !this._touchZoomed) {
+            this._touchCoordinate = { x: event.x, y: event.y }
+            crosshairStore.set({ x: event.x, y: event.y, paneId: pane?.getId() }, true)
+            consumed = true
+          }
+          this._touchCancelCrosshair = false
+        }
+      }
+      if (consumed || result) {
+        this._chart.updatePane(UpdateLevel.Overlay)
+      }
     }
-    return false
+    return consumed
+  }
+
+  doubleTapEvent (e: MouseTouchEvent): boolean {
+    return this.mouseDoubleClickEvent(e)
   }
 
   longTapEvent (e: MouseTouchEvent): boolean {

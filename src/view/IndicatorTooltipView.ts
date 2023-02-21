@@ -209,7 +209,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
             backgroundColor: active ? activeBackgroundColor : backgroundColor
           },
           {
-            mouseDownEvent: this._boundIconClickEvent(currentIconInfo, icon.id),
+            mouseClickEvent: this._boundIconClickEvent(currentIconInfo, icon.id),
             mouseMoveEvent: this._boundIconMouseMoveEvent(currentIconInfo, icon.id)
           }
         )?.draw(ctx)
