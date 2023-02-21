@@ -783,24 +783,24 @@ chart.setPaneOptions({
 ## subscribeAction(type, callback)
 ```typescript
 (
-  type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onTooltipIconClick' | 'onPaneDrag',
+  type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
   callback: (data?: any) => void
 ) => void
 ```
 订阅图表动作。
-- `type` 可选项为'onZoom'，'onScroll'，'onVisibleRangeChange'，'onTooltipIconClick'，'onCrosshairChange'和'onPaneDrag'
+- `type` 可选项为'onZoom'，'onScroll'，'onVisibleRangeChange'，'onCandleBarClick', 'onTooltipIconClick'，'onCrosshairChange'和'onPaneDrag'
 - `callback` 是一个回调方法
 
 
 ## unsubscribeAction(type, callback)
 ```typescript
 (
-  type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onTooltipIconClick' | 'onPaneDrag',
+  type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
   callback?: (data?: any) => void
 ) => void
 ```
 取消订阅图表动作。
-- `type` 可选项为'onZoom'，'onScroll'，'onVisibleRangeChange'，'onTooltipIconClick'，'onCrosshairChange'和'onPaneDrag'
+- `type` 可选项为'onZoom'，'onScroll'，'onVisibleRangeChange'，'onCandleBarClick', 'onTooltipIconClick'，'onCrosshairChange'和'onPaneDrag'
 - `callback` 订阅时的回调方法，缺省则取消当前类型所有
 
 

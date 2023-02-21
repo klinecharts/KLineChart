@@ -15,6 +15,8 @@
 import Nullable from '../common/Nullable'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
+import { EventHandler } from '../common/SyntheticEvent'
+import { ActionType } from '../common/Action'
 import { CandleType, ChangeColor, RectStyle, PolygonType } from '../common/Options'
 
 import ChartStore from '../store/ChartStore'
@@ -26,20 +28,28 @@ import { RectAttrs } from '../extension/figure/rect'
 
 import ChildrenView from './ChildrenView'
 
+import { PaneIdConstants } from '../pane/Pane'
+
 export interface CandleBarOptions {
   type: Exclude<CandleType, CandleType.Area>
   styles: ChangeColor
 }
 
 export default class CandleBarView extends ChildrenView {
+  private readonly _boundCandleBarClickEvent = (data: VisibleData) => () => {
+    this.getWidget().getPane().getChart().getChartStore().getActionStore().execute(ActionType.OnCandleBarClick, data)
+    return false
+  }
+
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const pane = this.getWidget().getPane()
+    const isMain = pane.getId() === PaneIdConstants.CANDLE
     const chartStore = pane.getChart().getChartStore()
     const candleBarOptions = this.getCandleBarOptions(chartStore)
     if (candleBarOptions !== null) {
       const yAxis = pane.getAxisComponent()
       this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
-        this._drawCandleBar(ctx, yAxis, data, barSpace, candleBarOptions)
+        this._drawCandleBar(ctx, yAxis, data, barSpace, candleBarOptions, isMain)
       })
     }
   }
@@ -52,7 +62,14 @@ export default class CandleBarView extends ChildrenView {
     }
   }
 
-  private _drawCandleBar (ctx: CanvasRenderingContext2D, axis: Axis, data: VisibleData, barSpace: BarSpace, candleBarOptions: CandleBarOptions): void {
+  private _drawCandleBar (
+    ctx: CanvasRenderingContext2D,
+    axis: Axis,
+    data: VisibleData,
+    barSpace: BarSpace,
+    candleBarOptions: CandleBarOptions,
+    isMain: boolean
+  ): void {
     const { data: kLineData, x } = data
     const { open, high, low, close } = kLineData
     const { halfGapBar, gapBar } = barSpace
@@ -161,7 +178,13 @@ export default class CandleBarView extends ChildrenView {
       ]
     }
     rects.forEach(({ attrs, styles }) => {
-      this.createFigure('rect', attrs, styles)?.draw(ctx)
+      let handler: EventHandler | undefined
+      if (isMain) {
+        handler = {
+          mouseClickEvent: this._boundCandleBarClickEvent(data)
+        }
+      }
+      this.createFigure('rect', attrs, styles, handler)?.draw(ctx)
     })
   }
 }
