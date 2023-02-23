@@ -1,4 +1,11 @@
 # 📠 Change Log
+## 9.1.0
+`2023-02-23`
++ 🆕 The chart instance method `subscribeAction` and `unsubscribeAction` types add `onCandleBarClick`.
++ 🆕 The overlay supports double-clicking to force the end of drawing.
++ 💄 Optimize event handling.
+
+
 ## 9.0.1
 `2023-02-17`
 🐞 Fix the introduction of typescript.

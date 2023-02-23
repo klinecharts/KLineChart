@@ -442,6 +442,7 @@ export declare enum ActionType {
 	OnVisibleRangeChange = "onVisibleRangeChange",
 	OnTooltipIconClick = "onTooltipIconClick",
 	OnCrosshairChange = "onCrosshairChange",
+	OnCandleBarClick = "onCandleBarClick",
 	OnPaneDrag = "onPaneDrag"
 }
 export type LoadMoreCallback = (timestamp: Nullable<number>) => void;

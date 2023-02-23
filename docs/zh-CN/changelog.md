@@ -1,7 +1,13 @@
 # 📠 更新日志
+## 9.1.0
+`2023-02-23`
++ 🆕 图表实例方法`subscribeAction`和`unsubscribeAction`类型新增`onCandleBarClick`。
++ 🆕 覆盖物支持双击强制结束绘制。
++ 💄 优化事件处理。
+
 ## 9.0.1
 `2023-02-17`
-🐞 修复typescript引入问题。
++ 🐞 修复typescript引入问题。
 
 ## 9.0.0
 `2023-02-16`
