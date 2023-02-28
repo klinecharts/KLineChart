@@ -244,12 +244,12 @@
     const closeSums = []
     return kLineDataList.map((kLineData, i) => {
       const ma = {}
-      const close = kLineData.close
-      params.forEach((param, j) => {
+      const close = kLineData. close
+      calcParams.forEach((param, j) => {
         closeSums[j] = (closeSums[j] || 0) + close
         if (i >= param - 1) {
           ma[figures[j].key] = closeSums[j] / param
-          closeSums[j] -= dataList[i - (param - 1)].close
+          closeSums[j] -= kLineDataList[i - (param - 1)].close
         }
       })
       // 如果有值的情况下，这里每一项的数据格式应该是 { ma1: xxx, ma2: xxx }

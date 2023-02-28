@@ -243,11 +243,11 @@ Determine other attributes
      return kLineDataList. map((kLineData, i) => {
        const ma = {}
        const close = kLineData. close
-       params.forEach((param, j) => {
+       calcParams.forEach((param, j) => {
          closeSums[j] = (closeSums[j] || 0) + close
          if (i >= param - 1) {
            ma[figures[j].key] = closeSums[j] / param
-           closeSums[j] -= dataList[i - (param - 1)].close
+           closeSums[j] -= kLineDataList[i - (param - 1)].close
          }
        })
        // If there is a value, the data format of each item here should be { ma1: xxx, ma2: xxx }
