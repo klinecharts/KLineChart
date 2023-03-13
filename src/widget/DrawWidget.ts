@@ -66,22 +66,52 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     container.appendChild(this._overlayCanvas)
   }
 
-  private _optimalUpdateMain (): void {
+  private _optimalUpdateMain (width: number, height: number): void {
     if (this._mainRequestAnimationId !== DEFAULT_REQUEST_ID) {
       cancelAnimationFrame(this._mainRequestAnimationId)
       this._mainRequestAnimationId = DEFAULT_REQUEST_ID
     }
     this._mainRequestAnimationId = requestAnimationFrame(() => {
+      if (width !== this._mainCanvas.offsetWidth || height !== this._mainCanvas.offsetHeight) {
+        this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
+
+        const pixelRatio = getPixelRatio(this._mainCanvas)
+        const scaleWidth = Math.floor(width * pixelRatio)
+        const scaleHeight = Math.floor(height * pixelRatio)
+
+        this._mainCanvas.style.width = `${width}px`
+        this._mainCanvas.style.height = `${height}px`
+        this._mainCanvas.width = scaleWidth
+        this._mainCanvas.height = scaleHeight
+        this._mainCtx.scale(pixelRatio, pixelRatio)
+      } else {
+        this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
+      }
       this.updateMain(this._mainCtx)
     })
   }
 
-  private _optimalUpdateOverlay (): void {
+  private _optimalUpdateOverlay (width: number, height: number): void {
     if (this._overlayRequestAnimationId !== DEFAULT_REQUEST_ID) {
       cancelAnimationFrame(this._overlayRequestAnimationId)
       this._overlayRequestAnimationId = DEFAULT_REQUEST_ID
     }
     this._overlayRequestAnimationId = requestAnimationFrame(() => {
+      if (width !== this._overlayCanvas.offsetWidth || height !== this._overlayCanvas.offsetHeight) {
+        this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
+
+        const pixelRatio = getPixelRatio(this._overlayCanvas)
+        const scaleWidth = Math.floor(width * pixelRatio)
+        const scaleHeight = Math.floor(height * pixelRatio)
+
+        this._overlayCanvas.style.width = `${width}px`
+        this._overlayCanvas.style.height = `${height}px`
+        this._overlayCanvas.width = scaleWidth
+        this._overlayCanvas.height = scaleHeight
+        this._overlayCtx.scale(pixelRatio, pixelRatio)
+      } else {
+        this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
+      }
       this.updateOverlay(this._overlayCtx)
     })
   }
@@ -90,56 +120,25 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     const { width, height, left } = bounding
     container.style.left = `${left}px`
 
-    const sizeFlag = width !== container.offsetWidth || height !== container.offsetHeight
     let l = level
-    if (sizeFlag) {
-      this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
-      this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
-
-      const domWidth = `${width}px`
-      const domHeight = `${height}px`
-
-      container.style.width = domWidth
-      container.style.height = domHeight
-
-      const pixelRatio = getPixelRatio(this._mainCanvas)
-      const scaleWidth = Math.floor(width * pixelRatio)
-      const scaleHeight = Math.floor(height * pixelRatio)
-
-      this._mainCanvas.style.width = domWidth
-      this._mainCanvas.style.height = domHeight
-      this._mainCanvas.width = scaleWidth
-      this._mainCanvas.height = scaleHeight
-      this._mainCtx.scale(pixelRatio, pixelRatio)
-
-      this._overlayCanvas.style.width = domWidth
-      this._overlayCanvas.style.height = domHeight
-      this._overlayCanvas.width = scaleWidth
-      this._overlayCanvas.height = scaleHeight
-      this._overlayCtx.scale(pixelRatio, pixelRatio)
-
+    if (width !== container.offsetWidth || height !== container.offsetHeight) {
+      container.style.width = `${width}px`
+      container.style.height = `${height}px`
       l = UpdateLevel.Drawer
-    } else {
-      if (l === UpdateLevel.All || l === UpdateLevel.Drawer || l === UpdateLevel.Main) {
-        this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
-      }
-      if (l === UpdateLevel.All || l === UpdateLevel.Drawer || l === UpdateLevel.Overlay) {
-        this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
-      }
     }
     switch (l) {
       case UpdateLevel.Main: {
-        this._optimalUpdateMain()
+        this._optimalUpdateMain(width, height)
         break
       }
       case UpdateLevel.Overlay: {
-        this._optimalUpdateOverlay()
+        this._optimalUpdateOverlay(width, height)
         break
       }
       case UpdateLevel.Drawer:
       case UpdateLevel.All: {
-        this._optimalUpdateMain()
-        this._optimalUpdateOverlay()
+        this._optimalUpdateMain(width, height)
+        this._optimalUpdateOverlay(width, height)
         break
       }
     }

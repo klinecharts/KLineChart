@@ -18,6 +18,7 @@ import Coordinate from './common/Coordinate'
 import { UpdateLevel } from './common/Updater'
 import Bounding from './common/Bounding'
 import Crosshair from './common/Crosshair'
+import { requestAnimationFrame, cancelAnimationFrame } from './common/utils/compatible'
 
 import { AxisExtremum } from './component/Axis'
 import YAxis from './component/YAxis'
@@ -40,7 +41,7 @@ export default class ChartEvent implements EventHandler {
   // 惯性滚动开始时间
   private _flingStartTime = new Date().getTime()
   // 惯性滚动定时器
-  private _flingScrollTimerId: Nullable<number> = null
+  private _flingScrollRequestId: Nullable<number> = null
   // 开始滚动时坐标点
   private _startScrollCoordinate: Nullable<Coordinate> = null
   // 开始触摸时坐标
@@ -429,9 +430,9 @@ export default class ChartEvent implements EventHandler {
             this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
-          if (this._flingScrollTimerId !== null) {
-            clearTimeout(this._flingScrollTimerId)
-            this._flingScrollTimerId = null
+          if (this._flingScrollRequestId !== null) {
+            clearTimeout(this._flingScrollRequestId)
+            this._flingScrollRequestId = null
           }
           this._flingStartTime = new Date().getTime()
           this._startScrollCoordinate = { x: event.x, y: event.y }
@@ -523,19 +524,19 @@ export default class ChartEvent implements EventHandler {
             if (time < 200 && Math.abs(v) > 0) {
               const timeScaleStore = this._chart.getChartStore().getTimeScaleStore()
               const flingScroll: (() => void) = () => {
-                this._flingScrollTimerId = setTimeout(() => {
+                this._flingScrollRequestId = requestAnimationFrame(() => {
                   timeScaleStore.startScroll()
                   timeScaleStore.scroll(v)
                   v = v * (1 - 0.025)
                   if (Math.abs(v) < 1) {
-                    if (this._flingScrollTimerId !== null) {
-                      clearTimeout(this._flingScrollTimerId)
-                      this._flingScrollTimerId = null
+                    if (this._flingScrollRequestId !== null) {
+                      cancelAnimationFrame(this._flingScrollRequestId)
+                      this._flingScrollRequestId = null
                     }
                   } else {
                     flingScroll()
                   }
-                }, 20)
+                })
               }
               flingScroll()
             }
