@@ -1,4 +1,9 @@
 # 📠 Change Log
+## 9.1.1
+`2023-03-14`
++ 🐞 Fix the invalidity of the built-in figure `arc`.
++ 💄 Optimize rendering updates.
+
 ## 9.1.0
 `2023-02-23`
 + 🆕 The chart instance method `subscribeAction` and `unsubscribeAction` types add `onCandleBarClick`.

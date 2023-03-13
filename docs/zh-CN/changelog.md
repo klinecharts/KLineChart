@@ -1,4 +1,9 @@
 # 📠 更新日志
+## 9.1.1
+`2023-03-14`
++ 🐞 修复内置基础图形`arc`不生效问题。
++ 💄 优化渲染更新。
+
 ## 9.1.0
 `2023-02-23`
 + 🆕 图表实例方法`subscribeAction`和`unsubscribeAction`类型新增`onCandleBarClick`。
