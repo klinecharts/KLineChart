@@ -41,8 +41,11 @@
     "build-core": "npm run build-core:dev && npm run build-core:prod",
     "build-dts": "dts-bundle-generator --no-banner true --umd-module-name klinecharts -o types/index.d.ts src/index.ts",
     "build": "npm run clean && npm run build-core && npm run build-dts",
-    "deploy": "gh-pages -d website",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "docs:deploy": "npm run docs:build && gh-pages -d website"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^23.0.2",
@@ -67,7 +70,10 @@
     "rollup": "^3.2.5",
     "rollup-plugin-filesize": "^9.1.2",
     "rollup-plugin-progress": "^1.1.2",
-    "typescript": "^4.8.3",
-    "tslib": "^2.5.0"
+    "tslib": "^2.5.0",
+    "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "vitepress": "^1.0.0-alpha.60"
   }
 }
