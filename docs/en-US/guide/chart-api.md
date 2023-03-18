@@ -17,7 +17,7 @@ Initialize a chart and return the chart instance.
 - `options` optional configuration items.
    - `locale` language, built-in support for `zh-CN` and `en-US`.
    - `timezone` time zone name, such as 'Asia/Shanghai', if not set, it will automatically get the local time zone, please refer to [timezone list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List ).
-   - `styles` It can be the style name registered through `klinecharts.registerStyles`, or it can be an object, a list of styles, see [styles](/guide/style) for details, and supports increments.
+   - `styles` It can be the style name registered through `klinecharts.registerStyles`, or it can be an object, a list of styles, see [styles](./styles.md) for details, and supports increments.
    - `customApi` customize some APIs.
      - `formatDate` formats a date.
      - `formatBigNumber` format big numbers, such as 1000 into 1k, 1000000 into 1M, etc.
@@ -64,7 +64,7 @@ Get the localized language types supported by the chart.
 ```
 Add a style configuration.
 - `name` style name
-- `styles` style configuration, refer to [style](/guide/style) for the type, support increment.
+- `styles` style configuration, refer to [style](./styles.md) for the type, support increment.
 
 ## registerFigure(figure)
 ```typescript
@@ -74,8 +74,8 @@ Add a style configuration.
    checkEventOn: (coordinate: Coordinate, attrs: any, styles: object) => boolean
 }) => void
 ```
-Add a base shape.
-- `figure` Basic figure information, see [figure](/advanced) for details
+Add a figure.
+- `figure` Basic figure information, see [figure](./figure.md) for details
    - `name` name, unique identifier
    - `draw` drawing method
    - `checkEventOn` checks if the event is on the graph
@@ -240,7 +240,7 @@ Get technical indicators for chart support.
 }) => void
 ```
 Add a overlay.
-- `overlay` overlay information, see [overlay](/advanced/overlay) for details
+- `overlay` overlay information, see [overlay](./overlay.md) for details
    - `name` overlay name, unique identifier for creation
    - `totalStep` total implementation steps
    - `lock` is locked to prevent dragging

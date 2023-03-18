@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Getting Started
-      link: /guide/quick-start
+      link: /en-US/guide/getting-started
     - theme: alt
       text: View on Github
       link: https://github.com/liihuu/KLineChart
@@ -28,5 +28,3 @@ features:
     title: Highly expand
     details: Provide rich configuration and Api, style modification, function collocation as you like. Provide technical indicators and line drawing model extensions, so that the chart has more possibilities.
 ---
-
-<WhoAreUse/>

@@ -5,7 +5,7 @@
 不再区分`klinecharts/index.blank`和`klinecharts/index.simple`，请统一使用`import { ... } from 'klinecharts'`。
 
 ## 设计调整
-`shape`，`annotation`，`tag`合并成`overlay`，详情请查阅[覆盖物](/zh-CN/advanced/overlay)。
+`shape`，`annotation`，`tag`合并成`overlay`，详情请查阅[覆盖物](./overlay.md)。
 
 ## 样式配置调整
 + 所有线的样式选项`dash`，更改为`dashed`，`dashValue`更改为`dashedValue`。

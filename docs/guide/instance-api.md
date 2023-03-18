@@ -30,14 +30,14 @@
 (styles: string | object) => HTMLElement
 ```
 设置样式配置。
-- `styles` 样式配置，可以是通过`registerStyles`注册进去的样式名。当是对象时，详情可参阅[样式](/zh-CN/guide/style)，支持合并。
+- `styles` 样式配置，可以是通过`registerStyles`注册进去的样式名。当是对象时，详情可参阅[样式](./styles.md)，支持合并。
 
 
 ## getStyles()
 ```typescript
 () => object
 ```
-获取样式配置，返回完整类型参阅[样式](/zh-CN/guide/style)。
+获取样式配置，返回完整类型参阅[样式](./styles.md)。
 
 
 ## setPriceVolumePrecision(pricePrecision, volumePrecision)
@@ -149,7 +149,7 @@
 ) => void
 ```
 添加新数据，此方法会清空图表数据，不需要额外调用clearData方法。
-- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](/zh-CN/guide/data)
+- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 
 
@@ -169,7 +169,7 @@
 ) => void
 ```
 添加历史更多数据。
-- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](/zh-CN/guide/data)
+- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 
 
@@ -186,7 +186,7 @@
 }) => void
 ```
 更新数据，目前只会匹配当前最后一条数据的时间戳，相同则覆盖，不同则追加。
-- `data` 单条k线数据，数据类型详情可参阅[数据源](/zh-CN/guide/data)
+- `data` 单条k线数据，数据类型详情可参阅[数据源](./datasource.md)
 
 
 ## getDataList()
@@ -201,7 +201,7 @@
   turnover?: number
 }>
 ```
-获取图表目前的数据源，返回数据类型可参阅[数据源](/zh-CN/guide/data)。
+获取图表目前的数据源，返回数据类型可参阅[数据源](./datasource.md)。
 
 
 ## clearData()
@@ -294,9 +294,9 @@
      - `top` 上边距，值小余1则是百分比
      - `bottom` 下边距，值小余1则是百分比
 - `callback` 指标创建完成回调方法
-<Alert type="info">
-  特殊的id: 'candle_pane'，主图的窗口id
-</Alert>
+::: tip 特殊的id
+'candle_pane'，主图的窗口id。
+:::
 
 示例：
 ```javascript
@@ -384,9 +384,9 @@ chart.createTechnicalIndicator('MA', false, {
   - `draw` 自定义绘制方法
 - `paneId` 窗口id，缺省则设置所有
 - `callback` 成功回调
-<Alert type="info">
-  特殊的paneId: 'candle_pane'，主图的窗口id
-</Alert>
+::: tip 特殊的id
+'candle_pane'，主图的窗口id。
+:::
 
 示例：
 ```javascript
@@ -443,9 +443,9 @@ chart.overrideIndicator({
 根据窗口id获取技术指标信息。
 - `paneId` 窗口id，即调用`createIndicator`方法时返回的窗口标识，可缺省，缺省则返回所有。
 - `name` 技术指标名
-<Alert type="info">
-  特殊的paneId: 'candle_pane'，主图的窗口id
-</Alert>
+::: tip 特殊的id
+'candle_pane'，主图的窗口id。
+:::
 
 
 ## removeIndicator(paneId, name)
@@ -455,9 +455,9 @@ chart.overrideIndicator({
 移除技术指标。
 - `paneId` 窗口id，即调用`createIndicator`方法时返回的窗口标识
 - `name` 技术指标名，如果缺省，则会移除所有
-<Alert type="info">
-  特殊的paneId: 'candle_pane'，主图的窗口id
-</Alert>
+::: tip 特殊的id
+'candle_pane'，主图的窗口id。
+:::
 
 
 ## createOverlay(value, paneId)
@@ -496,9 +496,9 @@ chart.overrideIndicator({
 创建覆盖物，返回一个字符串类型的标识。
 - `value` 覆盖物名或者对象，当是对象时，参数和`overrideOverlay`一致
 - `paneId` 窗口id，可缺省
-<Alert type="info">
-  特殊的paneId: 'candle_pane'，主图的窗口id
-</Alert>
+::: tip 特殊的id
+'candle_pane'，主图的窗口id。
+:::
 
 示例：
 ```javascript
@@ -764,9 +764,9 @@ chart.overrideOverlay({
    - `gap` 边距
      - `top` 上边距，值小余1则是百分比
      - `bottom` 下边距，值小余1则是百分比
-<Alert type="info">
-  特殊的id: 'candle_pane'，主图的窗口id
-</Alert>
+::: tip 特殊的id
+'candle_pane'，主图的窗口id。
+:::
 
 示例：
 ```javascript
@@ -872,7 +872,7 @@ chart.setPaneOptions({
 () => void
 ```
 调整图表大小，总是会填充容器大小。
-<Alert type="warning">
-  注意：此方法会重新计算整个图表各个模块的大小，频繁调用可能会影响到性能，调用请谨慎
-</Alert>
+::: warning 注意
+此方法会重新计算整个图表各个模块的大小，频繁调用可能会影响到性能，调用请谨慎。
+:::
 

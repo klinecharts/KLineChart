@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: 快速开始
-      link: /guide/quick-start
+      link: /guide/getting-started
     - theme: alt
       text: 在 Github 上查看
       link: https://github.com/liihuu/KLineChart
@@ -28,5 +28,3 @@ features:
     title: 高可扩展
     details: 提供丰富的配置和Api，样式修改、功能搭配随心所欲。提供技术指标和画线模型扩展，让图表拥有更多可能。
 ---
-
-<WhoAreUse/>

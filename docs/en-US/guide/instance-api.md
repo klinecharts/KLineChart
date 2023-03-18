@@ -30,14 +30,14 @@ Get the dimensions.
 (styles: string | object) => HTMLElement
 ```
 Set style configuration.
-- `styles` style configuration, which can be the style name registered through `registerStyles`. When it is an object, please refer to [styles](/guide/style) for details, and it supports merging.
+- `styles` style configuration, which can be the style name registered through `registerStyles`. When it is an object, please refer to [styles](./styles.md) for details, and it supports merging.
 
 
 ## getStyles()
 ```typescript
 () => object
 ```
-Get the style configuration, return the complete type refer to [styles](/guide/style).
+Get the style configuration, return the complete type refer to [styles](./styles.md).
 
 
 ## setPriceVolumePrecision(pricePrecision, volumePrecision)
@@ -149,7 +149,7 @@ Get visible range.
 ) => void
 ```
 Add new data, this method will clear the chart data, no need to call the clearData method additionally.
-- `dataList` is an array of K-line data. For details of the data type, please refer to [data](/guide/data)
+- `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
 
 
@@ -169,7 +169,7 @@ Add new data, this method will clear the chart data, no need to call the clearDa
 ) => void
 ```
 Add more historical data.
-- `dataList` is an array of K-line data. For details of the data type, please refer to [data](/guide/data)
+- `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
 
 
@@ -186,7 +186,7 @@ Add more historical data.
 }) => void
 ```
 Update data. Currently, only the timestamp of the last piece of data will be matched. If it is the same, it will be overwritten, and if it is different, it will be appended.
-- `data` single k-line data, please refer to [data](/guide/data) for details of data type
+- `data` single k-line data, please refer to [data](./datasource.md) for details of data type
 
 
 ## getDataList()
@@ -201,7 +201,7 @@ Update data. Currently, only the timestamp of the last piece of data will be mat
    turnover?: number
 }>
 ```
-Get the current data source of the chart. For the returned data type, please refer to [data](/guide/data).
+Get the current data source of the chart. For the returned data type, please refer to [data](./datasource.md).
 
 
 ## clearData()
@@ -293,9 +293,9 @@ Create a technical indicator, the return value is a string that identifies the w
       - `top` top margin, value less than 1 is a percentage
       - `bottom` bottom margin, value less than 1 is a percentage
 - `callback` success callback
-<Alert type="info">
-   Special id: 'candle_pane', the window id of the main picture
-</Alert>
+::: tip Special id
+'candle_pane', the window id of the main picture.
+:::
 
 Example:
 ```javascript
@@ -382,9 +382,9 @@ Overlay technical indicator information.
    - `draw` custom drawing method
 - `paneId` window id, default is set to all
 - `callback` success callback
-<Alert type="info">
-   Special paneId: 'candle_pane', the window id of the main image
-</Alert>
+::: tip Special id
+'candle_pane', the window id of the main picture.
+:::
 
 Example:
 ```javascript
@@ -440,9 +440,9 @@ chart.overrideIndicator({
 Obtain technical indicator information according to the window id.
 - `paneId` window id, that is, the window ID returned when calling the `createIndicator` method, can be defaulted, and all will be returned by default.
 - `name` technical indicator name
-<Alert type="info">
-   Special paneId: 'candle_pane', the window id of the main image
-</Alert>
+::: tip Special id
+'candle_pane', the window id of the main picture.
+:::
 
 
 ## removeIndicator(paneId, name)
@@ -452,9 +452,9 @@ Obtain technical indicator information according to the window id.
 Remove technical indicators.
 - `paneId` window id, that is, the window ID returned when calling the `createIndicator` method
 - `name` technical indicator name, if default, will remove all
-<Alert type="info">
-   Special paneId: 'candle_pane', the window id of the main image
-</Alert>
+::: tip Special id
+'candle_pane', the window id of the main picture.
+:::
 
 ## createOverlay(value, paneId)
 ```typescript
@@ -492,9 +492,9 @@ Remove technical indicators.
 Creates an overlay, returning an identifier of type String.
 - `value` Overlay name or object, when it is an object, the parameters are consistent with `overrideOverlay`
 - `paneId` window id, can be default
-<Alert type="info">
-   Special paneId: 'candle_pane', the window id of the main image
-</Alert>
+::: tip Special id
+'candle_pane', the window id of the main picture.
+:::
 
 Example:
 ```javascript
@@ -754,9 +754,9 @@ Set window configuration.
     - `gap` margins
       - `top` top margin, value less than 1 is a percentage
       - `bottom` bottom margin, value less than 1 is a percentage
-<Alert type="info">
-   Special id: 'candle_pane', the window id of the main picture
-</Alert>
+::: tip Special id
+'candle_pane', the window id of the main picture.
+:::
 
 Example:
 ```javascript
@@ -862,6 +862,6 @@ Get the image url after the chart is converted into an image.
 () => void
 ```
 Resizing the chart will always fill the container size.
-<Alert type="warning">
-   Note: This method will recalculate the size of each module in the entire chart, frequent calls may affect performance, please call with caution
-</Alert>
+::: warning Note
+This method will recalculate the size of each module in the entire chart, frequent calls may affect performance, please call with caution.
+:::

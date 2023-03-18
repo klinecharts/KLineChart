@@ -1,7 +1,13 @@
+<script setup>
+  import { useData } from 'vitepress'
+
+  const { lang } = useData()
+</script>
+
 <template>
   <section class="home-section who-are-use-section">
     <div class="home-section-content who-are-use">
-      <h2>谁在使用</h2>
+      <h2>{{ lang === 'zh-CN' ? '谁在使用' : 'Who are using' }}</h2>
       <div class="grid">
         <a class="item">
           <svg class="image" width="87" height="34" viewBox="0 0 87 34" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -65,7 +71,7 @@
   </section>
 </template>
 
-<style>
+<style scoped>
   .who-are-use-section {
     margin-top: 100px;
   }

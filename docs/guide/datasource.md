@@ -1,5 +1,5 @@
 # 📚 数据
-图表所需要的数据必须是固定格式。通过图表实例 API `applyNewData(dataList, more)`，`applyMoreData(dataList, more)`和`updateData(data)`来和图表进行数据交互。
+图表所需要的数据必须是固定格式。通过图表实例 API [applyNewData(dataList, more)](./instance-api.md#applynewdata-datalist-more)，[applyMoreData(dataList, more)](./instance-api.md#applymoredatadatalist-more)和[updateData(data)](./instance-api.md#updatedatadata)来和图表进行数据交互。
 
 ```typescript
 {
