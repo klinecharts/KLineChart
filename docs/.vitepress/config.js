@@ -11,6 +11,9 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/images/logo.svg' }],
   ],
+  vue: {
+    reactivityTransform: true,
+  },
   transformHead: () => {
     return [
       [

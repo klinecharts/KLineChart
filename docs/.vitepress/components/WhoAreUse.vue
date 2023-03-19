@@ -74,7 +74,6 @@
 <style scoped>
   .who-are-use-section {
     margin-top: 100px;
-    margin-bottom: -60px;
   }
 
   .who-are-use h2 {
