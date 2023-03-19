@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitepress'
 
-import { join } from 'path'
+import pkg from '../../package.json'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -34,9 +34,14 @@ export default defineConfig({
       themeConfig: {
         nav: [
           { text: '指南', link: '/guide/what-is-klinechart', activeMatch: 'guide' },
-          { text: 'Playground', link: 'https://playground.klinecharts.com' },
+          // { text: 'Pro', link: 'https://pro.klinecharts.com' },
+          { text: '预览', link: 'https://preview.klinecharts.com' },
           { text: '赞助', link: '/sponsor' },
           { text: '找工作', link: 'https://www.bolejobs.co' },
+          {
+            text: `V${pkg.version}`,
+            items: [{ text: 'V8 文档', link: 'https://v8.klinecharts.com/zh-CN' }]
+          },
         ],
         sidebar: {
           '/guide/': [
@@ -108,9 +113,14 @@ export default defineConfig({
       themeConfig: {
         nav: [
           { text: 'Guide', link: '/en-US/guide/what-is-klinechart', activeMatch: 'guide' },
-          { text: 'Playground', link: 'https://playground.klinecharts.com' },
+          // { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
+          { text: 'Preview', link: 'https://preview.klinecharts.com/en-US' },
           { text: 'Sponsor', link: '/en-US/sponsor' },
           { text: 'Jobs', link: 'https://www.bolejobs.co' },
+          {
+            text: `V${pkg.version}`,
+            items: [{ text: 'V8 Docs', link: 'https://v8.klinecharts.com' }]
+          },
         ],
         sidebar: {
           '/en-US/guide/': [
