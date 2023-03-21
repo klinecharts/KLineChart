@@ -1,1 +1,0 @@
-import{_ as t,c as a,o as e,Q as r}from"./chunks/framework.7935546f.js";const u=JSON.parse('{"title":"📃 介绍","description":"","frontmatter":{},"headers":[],"relativePath":"guide/what-is-klinechart.md"}'),i={name:"guide/what-is-klinechart.md"},n=r("",5),o=[n];function s(l,c,h,_,d,p){return e(),a("div",null,o)}const m=t(i,[["render",s]]);export{u as __pageData,m as default};

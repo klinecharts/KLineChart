@@ -1,0 +1,1 @@
+import{_ as e,c as o,o as t,O as c}from"./chunks/framework.7488e621.js";const u=JSON.parse('{"title":"⌨️ Hot Key","description":"","frontmatter":{},"headers":[],"relativePath":"en-US/guide/hot-key.md"}'),d={name:"en-US/guide/hot-key.md"},i=c("",3),a=[i];function n(s,r,_,l,h,m){return t(),o("div",null,a)}const f=e(d,[["render",n]]);export{u as __pageData,f as default};
