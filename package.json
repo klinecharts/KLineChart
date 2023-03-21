@@ -7,7 +7,6 @@
   "files": [
     "LICENSE",
     "README.md",
-    "docs/",
     "index.js",
     "types/",
     "dist/",
@@ -45,6 +44,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
+    "docs:gen-search": "npm run docs:build && node ./docs/.vitepress/lunrBuild.js",
     "docs:deploy": "npm run docs:build && gh-pages -d website"
   },
   "devDependencies": {
@@ -71,9 +71,11 @@
     "rollup-plugin-filesize": "^9.1.2",
     "rollup-plugin-progress": "^1.1.2",
     "tslib": "^2.5.0",
-    "typescript": "^4.8.3"
-  },
-  "dependencies": {
+    "typescript": "^4.8.3",
+    "@docsearch/css": "^3.3.3",
+    "@docsearch/js": "^3.3.3",
+    "cheerio": "^1.0.0-rc.12",
+    "lunr": "^2.3.9",
     "vitepress": "^1.0.0-alpha.60"
   }
 }

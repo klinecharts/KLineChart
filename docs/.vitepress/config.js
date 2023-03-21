@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitepress'
 
+import path from 'path'
+
 import pkg from '../../package.json'
 
 // https://vitepress.dev/reference/site-config
@@ -13,6 +15,13 @@ export default defineConfig({
   ],
   vue: {
     reactivityTransform: true,
+  },
+  vite: {
+    resolve: {
+      alias: {
+        './VPNavBarSearch.vue': path.join(__dirname, 'components', 'search', 'NavBarSearch.vue')
+      }
+    }
   },
   transformHead: () => {
     return [
@@ -99,11 +108,6 @@ export default defineConfig({
           prev: '上一篇',
           next: '下一篇'
         },
-        // algolia: {
-        //   locales: {
-
-        //   }
-        // },
         sidebarMenuLabel: '菜单',
         darkModeSwitchLabel: '主题',
         outlineTitle: '本页目录'
@@ -183,7 +187,6 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/liihuu/KLineChart' }
     ],
-
     footer: {
       message: 'Released under the Apache License V2.',
       copyright: 'Copyright © 2018-present liihuu'

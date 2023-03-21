@@ -1,5 +1,6 @@
 config/
 dist/
+docs/cache
 types/
 scripts/
 .eslintrc.js
