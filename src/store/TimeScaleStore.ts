@@ -338,7 +338,7 @@ export default class TimeScaleStore {
     }
     if (coordinate?.x === undefined) {
       const crosshair = this._chartStore.getCrosshairStore().get()
-      coordinate = { x: crosshair?.x !== undefined ? crosshair.x : this._totalBarSpace / 2 }
+      coordinate = { x: crosshair?.x ?? this._totalBarSpace / 2 }
     }
     this._chartStore.getActionStore().execute(ActionType.OnZoom)
     const floatIndex = this.coordinateToFloatIndex(coordinate.x as number)

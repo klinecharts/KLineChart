@@ -104,7 +104,7 @@ export interface Chart {
   scrollToRealTime: (animationDuration?: number) => void
   scrollToDataIndex: (dataIndex: number, animationDuration?: number) => void
   scrollToTimestamp: (timestamp: number, animationDuration?: number) => void
-  zoomAtCoordinate: (scale: number, coordinate: Coordinate, animationDuration?: number) => void
+  zoomAtCoordinate: (scale: number, coordinate?: Coordinate, animationDuration?: number) => void
   zoomAtDataIndex: (scale: number, dataIndex: number, animationDuration?: number) => void
   zoomAtTimestamp: (scale: number, timestamp: number, animationDuration?: number) => void
   convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder) => Partial<Coordinate> | Array<Partial<Coordinate>>
@@ -684,7 +684,7 @@ export default class ChartImp implements Chart {
     this.scrollToDataIndex(dataIndex, animationDuration)
   }
 
-  zoomAtCoordinate (scale: number, coordinate: Coordinate, animationDuration?: number): void {
+  zoomAtCoordinate (scale: number, coordinate?: Coordinate, animationDuration?: number): void {
     const duration = animationDuration === undefined || animationDuration < 0 ? 0 : animationDuration
     const timeScaleStore = this._chartStore.getTimeScaleStore()
     if (duration > 0) {
