@@ -1,0 +1,1 @@
+import{_ as a,c as e,o as t,Q as r}from"./chunks/framework.7935546f.js";const f=JSON.parse('{"title":"❤️ Sponsor","description":"","frontmatter":{},"headers":[],"relativePath":"en-US/sponsor.md"}'),o={name:"en-US/sponsor.md"},l=r("",6),s=[l];function i(n,h,c,p,d,u){return t(),e("div",null,s)}const m=a(o,[["render",i]]);export{f as __pageData,m as default};

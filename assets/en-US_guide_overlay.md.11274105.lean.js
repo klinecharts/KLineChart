@@ -1,1 +1,0 @@
-import{_ as s,c as n,o as a,N as l}from"./chunks/framework.a087d028.js";const A=JSON.parse('{"title":"Overlay","description":"","frontmatter":{},"headers":[],"relativePath":"en-US/guide/overlay.md"}'),p={name:"en-US/guide/overlay.md"},o=l("",12),e=[o];function t(c,r,y,F,D,i){return a(),n("div",null,e)}const d=s(p,[["render",t]]);export{A as __pageData,d as default};

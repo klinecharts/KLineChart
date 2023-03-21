@@ -1,0 +1,1 @@
+import{_ as s,c as a,o as n,Q as o}from"./chunks/framework.7935546f.js";const d=JSON.parse('{"title":"🏝️ 环境要求","description":"","frontmatter":{},"headers":[],"relativePath":"guide/environment.md"}'),l={name:"guide/environment.md"},t=o("",10),e=[t];function p(r,c,i,D,y,F){return n(),a("div",null,e)}const C=s(l,[["render",p]]);export{d as __pageData,C as default};

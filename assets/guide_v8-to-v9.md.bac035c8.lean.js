@@ -1,0 +1,1 @@
+import{_ as e,c as o,o as c,Q as d}from"./chunks/framework.7935546f.js";const m=JSON.parse('{"title":"🛠️ 从 V8 到 V9","description":"","frontmatter":{},"headers":[],"relativePath":"guide/v8-to-v9.md"}'),a={name:"guide/v8-to-v9.md"},i=d("",17),t=[i];function l(n,r,s,h,p,x){return c(),o("div",null,t)}const I=e(a,[["render",l]]);export{m as __pageData,I as default};
