@@ -72,7 +72,8 @@ export default defineConfig({
                 { text: '样式配置', link: '/guide/styles' },
                 { text: '数据', link: '/guide/datasource' },
                 { text: '环境要求', link: '/guide/environment' },
-                { text: '快捷键', link: '/guide/hot-key' }
+                { text: '快捷键', link: '/guide/hot-key' },
+                { text: '国际化', link: '/guide/i18n' }
               ]
             },
             {
@@ -146,7 +147,8 @@ export default defineConfig({
                 { text: 'Style Configuration', link: '/en-US/guide/styles' },
                 { text: 'Datasource', link: '/en-US/guide/datasource' },
                 { text: 'Environment', link: '/en-US/guide/environment' },
-                { text: 'Hot Key', link: '/en-US/guide/hot-key' }
+                { text: 'Hot Key', link: '/en-US/guide/hot-key' },
+                { text: 'Internationalization', link: '/en-US//guide/i18n' }
               ]
             },
             {

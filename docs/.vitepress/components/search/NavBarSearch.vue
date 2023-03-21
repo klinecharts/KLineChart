@@ -2,10 +2,10 @@
 
 <script setup>
 import '@docsearch/css'
-import { defineAsyncComponent, ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useData } from 'vitepress'
 
-const VPSearchBox = defineAsyncComponent(() => import('./LunrSearchBox.vue'));
+import SearchBox from './LunrSearchBox.vue'
 
 const { theme } = useData()
 
@@ -53,7 +53,7 @@ function load() {
 <template>
   <!-- <div v-if="theme.algolia" class="VPNavBarSearch"> -->
   <div class="VPNavBarSearch">
-    <VPSearchBox v-if="loaded" />
+    <SearchBox v-if="loaded" />
 
     <div v-else id="docsearch" @click="load">
       <button type="button" class="DocSearch DocSearch-Button" aria-label="Search">
