@@ -1,1 +1,0 @@
-import{_ as s,c as a,o as n,O as e}from"./chunks/framework.7488e621.js";const u=JSON.parse('{"title":"📚 Data","description":"","frontmatter":{},"headers":[],"relativePath":"en-US/guide/datasource.md"}'),l={name:"en-US/guide/datasource.md"},p=e("",4),t=[p];function o(c,r,i,y,F,d){return n(),a("div",null,t)}const h=s(l,[["render",o]]);export{u as __pageData,h as default};
