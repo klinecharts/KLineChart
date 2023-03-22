@@ -5,7 +5,7 @@ layout: home
 hero:
   name: KLineChart
   text: 可高度自定义的专业级轻量金融图表
-  tagline: 开箱即用的金融图表解决方案
+  tagline: 简单易用，轻量流畅，适用场景丰富的 Web 前端金融图表。
   actions:
     - theme: brand
       text: 快速开始

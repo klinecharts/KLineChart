@@ -5,7 +5,7 @@ layout: home
 hero:
   name: KLineChart
   text: Highly customizable professional lightweight financial chart
-  tagline: Out of the box financial chart solution.
+  tagline: Easy to use, lightweight and smooth, suitable for web front-end financial chart with rich scenarios.
   actions:
     - theme: brand
       text: Getting Started

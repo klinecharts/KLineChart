@@ -42,7 +42,7 @@ chart.applyNewData([
 ])
 ```
 
-### Created in the normal project
+### Create in a project that is imported directly through a script tag
 ```html
 <!DOCTYPE html>
 <html lang="en">

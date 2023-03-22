@@ -42,7 +42,7 @@ chart.applyNewData([
 ])
 ```
 
-### 在普通项目中创建
+### 在直接通过 script 标签引入的项目中创建
 ```html
 <!DOCTYPE html>
 <html lang="en" >

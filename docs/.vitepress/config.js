@@ -10,6 +10,7 @@ export default defineConfig({
   title: 'KLineChart',
   description: '💹📈 可高度自定义的专业级轻量金融图表。',
   outDir: '../website',
+  lastUpdated: true,
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/images/logo.svg' }],
   ],
@@ -46,7 +47,7 @@ export default defineConfig({
       themeConfig: {
         nav: [
           { text: '指南', link: '/guide/what-is-klinechart', activeMatch: 'guide' },
-          // { text: 'Pro', link: 'https://pro.klinecharts.com' },
+          { text: 'Pro', link: 'https://pro.klinecharts.com' },
           { text: '预览', link: 'https://preview.klinecharts.com' },
           { text: '赞助', link: '/sponsor' },
           { text: '找工作', link: 'https://www.bolejobs.co' },
@@ -109,6 +110,11 @@ export default defineConfig({
           prev: '上一篇',
           next: '下一篇'
         },
+        editLink: {
+          pattern: 'https://github.com/liihuu/KLineChart/edit/main/docs/:path',
+          text: '为此页提供修改建议'
+        },
+        lastUpdatedText: '最后更新时间',
         sidebarMenuLabel: '菜单',
         darkModeSwitchLabel: '主题',
         outlineTitle: '本页目录'
@@ -121,7 +127,7 @@ export default defineConfig({
       themeConfig: {
         nav: [
           { text: 'Guide', link: '/en-US/guide/what-is-klinechart', activeMatch: 'guide' },
-          // { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
+          { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
           { text: 'Preview', link: 'https://preview.klinecharts.com/en-US' },
           { text: 'Sponsor', link: '/en-US/sponsor' },
           { text: 'Jobs', link: 'https://www.bolejobs.co' },
@@ -179,6 +185,9 @@ export default defineConfig({
               ]
             }
           ]
+        },
+        editLink: {
+          pattern: 'https://github.com/liihuu/KLineChart/edit/main/docs/:path'
         }
       }
     },
