@@ -5,7 +5,7 @@ import lunr from 'lunr';
 import { withBase } from 'vitepress'
 import { LUNR_DATA, PREVIEW_LOOKUP } from './lunrData'
 
-export function lunrSearch(props) {
+export function LunrSearch(props) {
   props.disableUserPersonalization = true;
   props.transformSearchClient = searchClient => {
     searchClient.search = (n, r) => {

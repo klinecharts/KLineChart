@@ -2,7 +2,7 @@
 import { h } from 'vue'
 import Theme from 'vitepress/theme'
 
-import WhoAreUse from '../components/WhoAreUse.vue'
+import HomeWhoAreUse from '../components/HomeWhoAreUse.vue'
 // import NotFound from '../components/NotFound.vue'
 
 import './style.css'
@@ -12,7 +12,7 @@ export default {
   Layout: () => {
     return h(Theme.Layout, null, {
       // https://vitepress.dev/guide/extending-default-theme#layout-slots
-      'home-features-after': () => h(WhoAreUse),
+      'home-features-after': () => h(HomeWhoAreUse),
       // 'not-found': () => h(NotFound)
     })
   },

@@ -3,7 +3,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter, useRoute, useData } from 'vitepress'
-import { lunrSearch } from './lunrSearch'
+import { LunrSearch } from './LunrSearch'
 
 const router = useRouter()
 const route = useRoute()
@@ -66,7 +66,7 @@ function initialize(userOptions) {
     }
   })
 
-  lunrSearch(options)
+  LunrSearch(options)
 }
 
 function getRelativePath(absoluteUrl) {

@@ -14,8 +14,6 @@ const EXCLUDE_FILES = [];
 const MAX_PREVIEW_CHARS = 128; // Number of characters to show for a given search result
 const OUTPUT_INDEX = path.join(rootDirectory, 'docs', '.vitepress', 'components', 'search', 'lunrData.js'); // Index file
 
-console.log(process.cwd())
-
 function isHtml(filename) {
   lower = filename.toLowerCase();
   return lower.endsWith('.htm') || lower.endsWith('.html');
