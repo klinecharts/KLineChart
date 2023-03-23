@@ -1,14 +1,16 @@
 <div align="center">
   <a href="https://klinecharts.com">
-    <img style="height: 110px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1673888439816-assets/web-upload/2264ae9d-157e-43bd-8646-60bc97c19d8f.png"/>
+    <img style="height: 100px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1679578359765-assets/web-upload/95cb43ed-810b-4aa7-8926-beea5e49298b.png"/>
   </a>
 </div>
 <h1 align="center">KLineChart</h1>
 <p align="center">💹📈Lightweight k-line chart built with html5 canvas.</p>
 <div align="center">
 
+[![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/liihuu/KLineChart/build.yml?logo=github)](https://github.com/liihuu/KLineChart/actions/workflows/build.yml)
 [![Version](https://badgen.net/npm/v/klinecharts)](https://www.npmjs.com/package/klinecharts)
 [![Size](https://badgen.net/bundlephobia/minzip/klinecharts@latest)](https://bundlephobia.com/result?p=klinecharts@latest)
+[![npms.io (maintenance)](https://img.shields.io/npms-io/quality-score/klinecharts)](https://www.npmjs.com/package/klinecharts)
 [![Typescript](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
 [![LICENSE](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
 
@@ -43,8 +45,8 @@ https://unpkg.com/klinecharts/dist/klinecharts.min.js
 https://cdn.jsdelivr.net/npm/klinecharts/dist/klinecharts.min.js
 
 ## 📄 Docs
-+ [中文](https://www.klinecharts.com/zh-CN)
-+ [English](https://www.klinecharts.com)
++ [中文](https://www.klinecharts.com)
++ [English](https://www.klinecharts.com/en-US)
 
 ## 🛠️ Build
 Execute command in root directory. [Node.js](https://nodejs.org) is required.
@@ -58,7 +60,8 @@ npm run build
 The generated files are in the dist folder.
 
 ## 🔗 Links
-+ [Sample page](https://www.klinecharts.com/sample)
++ [Online preview](https://preview.klinecharts.com)
++ [KLineChartPro](https://pro.klinecharts.com)
 + [Sample code](https://github.com/liihuu/KLineChartSample)
 
 ## ©️ License
