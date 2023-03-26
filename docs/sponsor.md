@@ -1,5 +1,5 @@
 ---
-layout: doc
+sidebar: false
 ---
 
 # ❤️ 赞助

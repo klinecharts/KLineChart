@@ -1,4 +1,5 @@
 ---
+title: 可高度自定义的专业级轻量金融图表
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
