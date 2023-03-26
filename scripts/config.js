@@ -31,7 +31,13 @@ const plugins = (env) => [
     }
   }),
   fileSize(),
-  env === 'production' && terser()
+  env === 'production' && terser({
+    compress: {
+      pure_getters: true,
+      unsafe: true,
+      unsafe_comps: true
+    }
+  })
 ];
 
 function inputConfig (env) {
