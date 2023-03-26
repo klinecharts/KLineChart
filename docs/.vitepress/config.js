@@ -134,7 +134,7 @@ export default defineConfig({
         nav: [
           { text: 'Guide', link: '/en-US/guide/what-is-klinechart', activeMatch: 'guide' },
           { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
-          { text: 'Preview', link: 'https://preview.klinecharts.com/en-US' },
+          { text: 'Preview', link: 'https://preview.klinecharts.com/#en-US' },
           { text: 'Sponsor', link: '/en-US/sponsor' },
           { text: 'Jobs', link: 'https://www.bolejobs.co' },
           {

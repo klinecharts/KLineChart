@@ -7,7 +7,6 @@ const { lang } = useData()
 
 const root = ref('/')
 onMounted(() => {
-  console.log(lang.value)
   root.value = lang.value === 'zh-CN' ? '/' : `/${lang.value}/`
 })
 </script>
