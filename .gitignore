@@ -6,3 +6,4 @@
 /docs/.vitepress/cache
 
 /package-lock.json
+/pnpm-lock.yaml
