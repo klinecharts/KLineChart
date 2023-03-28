@@ -243,7 +243,6 @@
       high: {
         show: true,
         color: '#D9D9D9',
-        textMargin: 5,
         textOffset: 5,
         textSize: 10,
         textFamily: 'Helvetica Neue',
@@ -253,7 +252,6 @@
       low: {
         show: true,
         color: '#D9D9D9',
-        textMargin: 5,
         textOffset: 5,
         textSize: 10,
         textFamily: 'Helvetica Neue',
