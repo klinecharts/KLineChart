@@ -7,7 +7,7 @@
   styles?: string | object,
   timezone?: string,
   customApi?: {
-    formateDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: number) => string,
+    formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: number) => string,
     formatBigNumber?: (value: string | number) => string
   }
 }) => Chart
@@ -19,7 +19,7 @@
   - `timezone` 时区名，如'Asia/Shanghai'，如果不设置会自动获取本机时区，时区对应名字列表请参阅[时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)。
   - `styles` 可以是通过`klinecharts.registerStyles`注册的样式名，也可以是object，样式列表，详情参阅[样式](./styles.md)，支持增量。
   - `customApi` 自定义一些api。
-    - `formateDate` 格式化日期。
+    - `formatDate` 格式化日期。
     - `formatBigNumber` 格式化大的数字，如1000转换成1k，1000000转换为1M等。
 
 

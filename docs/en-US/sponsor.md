@@ -1,3 +1,7 @@
+---
+sidebar: false
+---
+
 # ❤️ Sponsor
 
 If you think the plugin is good, I hope you can click 🌟 on [GitHub](https://github.com/liihuu/KLineChart). If you can reward a cup of ☕️, that would be very much appreciated.

@@ -10,7 +10,7 @@
 通过样式设置。
 
 ```javascript
-chart.setStyleOptions({
+chart.setStyles({
   candle: {
     type: 'area',
   },
