@@ -39,10 +39,14 @@ yarn add klinecharts
 
 ### CDNs
 #### [unpkg](https://unpkg.com)
-https://unpkg.com/klinecharts/dist/klinecharts.min.js
+```html
+<script type="text/javascript" src="https://unpkg.com/klinecharts/dist/klinecharts.min.js"></script>
+```
 
 #### [jsDelivr](https://cdn.jsdelivr.net)
-https://cdn.jsdelivr.net/npm/klinecharts/dist/klinecharts.min.js
+```html
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/klinecharts.min.js"></script>
+```
 
 ## 📄 Docs
 + [中文](https://www.klinecharts.com)
@@ -60,9 +64,9 @@ npm run build
 The generated files are in the dist folder.
 
 ## 🔗 Links
-+ [Online preview](https://preview.klinecharts.com)
-+ [KLineChartPro](https://pro.klinecharts.com)
-+ [Sample code](https://github.com/liihuu/KLineChartSample)
++ [Online Preview](https://preview.klinecharts.com)
++ [KLineChart Pro](https://pro.klinecharts.com)
++ [Sample Code](https://github.com/liihuu/KLineChartSample)
 
 ## ©️ License
 KLineChart is available under the Apache License V2.
