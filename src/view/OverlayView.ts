@@ -20,11 +20,12 @@ import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { OverlayStyle, CustomApi } from '../common/Options'
 import { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
+import { isBoolean } from '../common/utils/typeChecks'
 
 import Axis from '../component/Axis'
 import XAxis from '../component/XAxis'
 import YAxis from '../component/YAxis'
-import Overlay, { OverlayFigure, OverlayMode } from '../component/Overlay'
+import Overlay, { OverlayFigure, OverlayFigureIgnoreEventType, OverlayMode, getAllOverlayFigureIgnoreEventTypes } from '../component/Overlay'
 
 import OverlayStore, { ProgressOverlayInfo, EventOverlayInfo, EventOverlayInfoFigureType } from '../store/OverlayStore'
 import TimeScaleStore from '../store/TimeScaleStore'
@@ -155,16 +156,52 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     })
   }
 
-  private _createFigureEvents (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number): EventHandler | undefined {
+  private _createFigureEvents (
+    overlay: Overlay,
+    figureType: EventOverlayInfoFigureType,
+    figureIndex: number,
+    attrsIndex: number,
+    ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+  ): EventHandler | undefined {
+    let eventHandler
     if (!overlay.isDrawing()) {
-      return {
-        mouseMoveEvent: this._figureMouseMoveEvent(overlay, figureType, figureIndex, attrsIndex),
-        mouseDownEvent: this._figureMouseDownEvent(overlay, figureType, figureIndex, attrsIndex),
-        mouseClickEvent: this._figureMouseClickEvent(overlay, figureType, figureIndex, attrsIndex),
-        mouseRightClickEvent: this._figureMouseRightClickEvent(overlay, figureType, figureIndex, attrsIndex)
+      let eventTypes: OverlayFigureIgnoreEventType[] = []
+      if (ignoreEvent !== undefined) {
+        if (isBoolean(ignoreEvent)) {
+          if (ignoreEvent as boolean) {
+            eventTypes = getAllOverlayFigureIgnoreEventTypes()
+          }
+        } else {
+          eventTypes = ignoreEvent as OverlayFigureIgnoreEventType[]
+        }
+      }
+      if (eventTypes.length === 0) {
+        return {
+          mouseMoveEvent: this._figureMouseMoveEvent(overlay, figureType, figureIndex, attrsIndex),
+          mouseDownEvent: this._figureMouseDownEvent(overlay, figureType, figureIndex, attrsIndex),
+          mouseClickEvent: this._figureMouseClickEvent(overlay, figureType, figureIndex, attrsIndex),
+          mouseRightClickEvent: this._figureMouseRightClickEvent(overlay, figureType, figureIndex, attrsIndex)
+        }
+      }
+      eventHandler = {}
+      // [
+      //   'mouseClickEvent', 'mouseRightClickEvent', 'tapEvent', 'mouseDownEvent',
+      //   'touchStartEvent', 'mouseMoveEvent', 'touchMoveEvent'
+      // ]
+      if (!eventTypes.includes('mouseMoveEvent') && !eventTypes.includes('touchMoveEvent')) {
+        eventHandler.mouseMoveEvent = this._figureMouseMoveEvent(overlay, figureType, figureIndex, attrsIndex)
+      }
+      if (!eventTypes.includes('mouseDownEvent') && !eventTypes.includes('touchStartEvent')) {
+        eventHandler.mouseDownEvent = this._figureMouseDownEvent(overlay, figureType, figureIndex, attrsIndex)
+      }
+      if (!eventTypes.includes('mouseClickEvent') && !eventTypes.includes('tapEvent')) {
+        eventHandler.mouseClickEvent = this._figureMouseClickEvent(overlay, figureType, figureIndex, attrsIndex)
+      }
+      if (!eventTypes.includes('mouseRightClickEvent')) {
+        eventHandler.mouseRightClickEvent = this._figureMouseRightClickEvent(overlay, figureType, figureIndex, attrsIndex)
       }
     }
-    return undefined
+    return eventHandler
   }
 
   private _figureMouseMoveEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
@@ -190,7 +227,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  _figureMouseClickEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
+  private _figureMouseClickEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
@@ -200,7 +237,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  _figureMouseRightClickEvent (overlay: Overlay, _figureType: EventOverlayInfoFigureType, _figureIndex: number, _attrsIndex: number): MouseTouchEventCallback {
+  private _figureMouseRightClickEvent (overlay: Overlay, _figureType: EventOverlayInfoFigureType, _figureIndex: number, _attrsIndex: number): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       if (!(overlay.onRightClick?.({ overlay, ...event }) ?? false)) {
         const pane = this.getWidget().getPane()
@@ -403,7 +440,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       const { type, styles, attrs, ignoreEvent } = figure
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats, attrsIndex) => {
-        const evnets = !(ignoreEvent ?? false) ? this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figureIndex, attrsIndex) : undefined
+        const evnets = this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figureIndex, attrsIndex, ignoreEvent)
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
         this.createFigure(
           type, ats, ss, evnets

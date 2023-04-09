@@ -44,12 +44,26 @@ export interface OverlayPerformEventParams {
   performPoint: Partial<Point>
 }
 
+export type OverlayFigureIgnoreEventType = 'mouseClickEvent' | 'mouseRightClickEvent' | 'tapEvent' | 'mouseDownEvent' | 'touchStartEvent' | 'mouseMoveEvent' | 'touchMoveEvent'
+
+export function getAllOverlayFigureIgnoreEventTypes (): OverlayFigureIgnoreEventType[] {
+  return [
+    'mouseClickEvent',
+    'mouseRightClickEvent',
+    'tapEvent',
+    'mouseDownEvent',
+    'touchStartEvent',
+    'mouseMoveEvent',
+    'touchMoveEvent'
+  ]
+}
+
 export interface OverlayFigure {
   key?: string
   type: string
   attrs: any | any[]
   styles?: any
-  ignoreEvent?: boolean
+  ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
 }
 
 export interface OverlayCreateFiguresCallbackParams {
