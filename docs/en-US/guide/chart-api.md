@@ -188,39 +188,39 @@ Get technical indicators for chart support.
       type: string,
       attrs: any | any[],
       styles?: any,
-      ignoreEvent?: boolean
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
    } | Array<{
       key?: string,
       type: string,
       attrs: any | any[],
       styles?: any,
-      ignoreEvent?: boolean
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
    }>,
    createXAxisFigures?: (params: object) => {
       key?: string,
       type: string,
       attrs: any | any[],
       styles?: any,
-      ignoreEvent?: boolean
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
    } | Array<{
       key?: string,
       type: string,
       attrs: any | any[],
       styles?: any,
-      ignoreEvent?: boolean
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
    }>,
    createYAxisFigures?: (params: object) => {
       key?: string,
       type: string,
       attrs: any | any[],
       styles?: any,
-      ignoreEvent?: boolean
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
    } | Array<{
       key?: string,
       type: string,
       attrs: any | any[],
       styles?: any,
-      ignoreEvent?: boolean
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
    }>,
    performEventPressedMove?: (params: object) => void,
    performEventMoveForDrawing?: (params: object) => void,

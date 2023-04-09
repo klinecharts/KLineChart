@@ -101,13 +101,13 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
      // The style of the graphic corresponding to type
      styles?: any,
      // Whether to ignore the event
-     ignoreEvent?: boolean
+     ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
    }) | Array<{
      key?: string,
      type: string,
      attrs: any | any[],
      styles?: any,
-     ignoreEvent?: boolean
+     ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
    }>
 
    // Create graphics on the X axis, not required, parameters and return values are consistent with `createPointFigures`

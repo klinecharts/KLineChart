@@ -1,4 +1,10 @@
 # 📠 Change Log
+## 9.1.2
+`2023-04-10`
++ 🐞 Fix the issue of inaccurate triggering events for the built-in figure `line`.
++ 🐞 Fix the issue of triggering events for the first time after the `simpleAnnotation` and `simpleTag` built-in overlays are drawn.
++ 💄 Optimize overlay figure to ignore events and support event selection.
+
 ## 9.1.1
 `2023-03-14`
 + 🐞 Fix the invalidity of the built-in figure `arc`.

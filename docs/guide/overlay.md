@@ -101,13 +101,13 @@
     // type对应的图形的样式
     styles?: any,
     // 是否忽略事件
-    ignoreEvent?: boolean
+    ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
   }) | Array<{
     key?: string,
     type: string,
     attrs: any | any[],
     styles?: any,
-    ignoreEvent?: boolean
+    ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
   }>
 
   // 创建X轴上的图形，非必须，参数和返回值和`createPointFigures`一致
