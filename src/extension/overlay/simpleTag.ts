@@ -20,6 +20,7 @@ import { isFunction, isValid } from '../../common/utils/typeChecks'
 
 const simpleTag: OverlayTemplate = {
   name: 'simpleTag',
+  totalStep: 2,
   createPointFigures: ({ bounding, coordinates }) => {
     return {
       type: 'line',

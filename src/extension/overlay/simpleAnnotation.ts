@@ -17,6 +17,7 @@ import { isFunction, isValid } from '../../common/utils/typeChecks'
 
 const simpleAnnotation: OverlayTemplate = {
   name: 'simpleAnnotation',
+  totalStep: 2,
   createPointFigures: ({ overlay, coordinates }) => {
     let text
     if (isValid(overlay.extendData)) {
