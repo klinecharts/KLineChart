@@ -44,7 +44,7 @@ import volume from './volume'
 import volumeRatio from './volumeRatio'
 import williamsR from './williamsR'
 
-const indicators: { [key: string]: IndicatorConstructor } = {}
+const indicators: Record<string, IndicatorConstructor> = {}
 
 const extensions = [
   averagePrice, awesomeOscillator, bias, bollingerBands, brar,

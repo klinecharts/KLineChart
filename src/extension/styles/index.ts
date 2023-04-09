@@ -19,7 +19,7 @@ import { Styles } from '../../common/Options'
 import light from './light'
 import dark from './dark'
 
-const styles: { [key: string]: DeepPartial<Styles> } = {
+const styles: Record<string, DeepPartial<Styles>> = {
   light,
   dark
 }

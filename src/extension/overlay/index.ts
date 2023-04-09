@@ -33,7 +33,7 @@ import verticalStraightLine from './verticalStraightLine'
 import simpleAnnotation from './simpleAnnotation'
 import simpleTag from './simpleTag'
 
-const overlays: { [key: string]: OverlayConstructor } = {}
+const overlays: Record<string, OverlayConstructor> = {}
 
 const extensions = [
   fibonacciLine, horizontalRayLine, horizontalSegment, horizontalStraightLine,

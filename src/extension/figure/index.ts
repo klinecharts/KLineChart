@@ -24,7 +24,7 @@ import text from './text'
 import rectText from './rectText'
 import arc from './arc'
 
-const figures: { [key: string]: FigureInnerConstructor } = {}
+const figures: Record<string, FigureInnerConstructor> = {}
 
 const extensions = [circle, line, polygon, rect, text, rectText, arc]
 extensions.forEach((figure: FigureTemplate) => {

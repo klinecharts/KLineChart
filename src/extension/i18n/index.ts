@@ -17,7 +17,7 @@ import { Locales } from '../../common/Options'
 import zhCN from './zh-CN'
 import enUS from './en-US'
 
-const locales: { [key: string]: Locales } = {
+const locales: Record<string, Locales> = {
   'zh-CN': zhCN,
   'en-US': enUS
 }
