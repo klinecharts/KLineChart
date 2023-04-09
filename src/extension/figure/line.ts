@@ -18,6 +18,8 @@ import { SmoothLineStyle, LineType } from '../../common/Options'
 
 import { FigureTemplate } from '../../component/Figure'
 
+const DEVIATION = 2
+
 function getDistance (coordinate1: Coordinate, coordinate2: Coordinate): number {
   return Math.sqrt(Math.pow(coordinate1.x + coordinate2.x, 2) + Math.pow(coordinate1.y + coordinate2.y, 2))
 }
@@ -39,26 +41,31 @@ function getSmoothControlCoordinate (coordinates: Coordinate[]): Coordinate[] {
 }
 
 export function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs): boolean {
-  let on = false
   const coordinates = line.coordinates
   if (coordinates.length > 1) {
     for (let i = 1; i < coordinates.length; i++) {
       const prevCoordinate = coordinates[i - 1]
       const currentCoordinate = coordinates[i]
       if (prevCoordinate.x === currentCoordinate.x) {
-        on = Math.abs(coordinate.x - prevCoordinate.x) < 2
-      } else {
-        const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate) as number[]
-        const y = getLinearYFromSlopeIntercept(kb, coordinate)
-        const yDif = Math.abs(y - coordinate.y)
-        on = yDif * yDif / (kb[0] * kb[0] + 1) < 2 * 2
+        if (
+          Math.abs(prevCoordinate.y - coordinate.y) + Math.abs(currentCoordinate.y - coordinate.y) - Math.abs(prevCoordinate.y - currentCoordinate.y) < DEVIATION + DEVIATION &&
+          Math.abs(coordinate.x - prevCoordinate.x) < DEVIATION
+        ) {
+          return true
+        }
       }
-      if (on) {
-        return on
+      const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate) as number[]
+      const y = getLinearYFromSlopeIntercept(kb, coordinate)
+      const yDif = Math.abs(y - coordinate.y)
+      if (
+        Math.abs(prevCoordinate.x - coordinate.x) + Math.abs(currentCoordinate.x - coordinate.x) - Math.abs(prevCoordinate.x - currentCoordinate.x) < DEVIATION + DEVIATION &&
+        yDif * yDif / (kb[0] * kb[0] + 1) < DEVIATION * DEVIATION
+      ) {
+        return true
       }
     }
   }
-  return on
+  return false
 }
 
 export function getLinearYFromSlopeIntercept (kb: Nullable<number[]>, coordinate: Coordinate): number {
