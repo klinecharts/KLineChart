@@ -26,10 +26,8 @@ export default class CandleAreaView extends ChildrenView {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()
-    const chartStore = pane.getChart().getChartStore()
     const bounding = widget.getBounding()
     const yAxis = pane.getAxisComponent()
-    const barSpace = chartStore.getTimeScaleStore().getBarSpace()
     const candleAreaStyles = chart.getStyles().candle.area
     const lineCoordinates: Coordinate[] = []
     const areaCoordinates: Coordinate[] = []
@@ -54,7 +52,7 @@ export default class CandleAreaView extends ChildrenView {
     const areaCoordinateCount = areaCoordinates.length
     if (areaCoordinateCount > 0) {
       const lastCoordinate: Coordinate = areaCoordinates[areaCoordinateCount - 1]
-      const endX = lastCoordinate.x + barSpace.halfGapBar
+      const endX = lastCoordinate.x
       lineCoordinates.push({ x: endX, y: lastCoordinate.y })
       areaCoordinates.push({ x: endX, y: lastCoordinate.y })
       areaCoordinates.push({ x: endX, y: bounding.height })
