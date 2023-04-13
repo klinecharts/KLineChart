@@ -131,10 +131,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
         dif = index10(-precision)
       }
     }
-    if (
-      min === max ||
-      Math.abs(min - max) < dif
-    ) {
+    if ((min === max || Math.abs(min - max) < dif) && max > 1) {
       const minCheck = specifyMin === min
       const maxCheck = specifyMax === max
       min = minCheck ? min : (maxCheck ? min - 8 * dif : min - 4 * dif)
