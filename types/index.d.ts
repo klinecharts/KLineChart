@@ -703,6 +703,8 @@ export interface OverlayCreateFiguresCallbackParams {
 	yAxis: Nullable<YAxis>;
 }
 export interface OverlayEvent extends Partial<MouseTouchEvent> {
+	figureKey?: string;
+	figureIndex?: number;
 	overlay: Overlay;
 }
 export type OverlayEventCallback = (event: OverlayEvent) => boolean;
