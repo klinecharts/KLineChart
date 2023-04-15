@@ -76,7 +76,7 @@ export function isNumber (value: any): boolean {
   return typeof value === 'number' && !isNaN(value)
 }
 
-export function isValid (value: any | null): boolean {
+export function isValid (value: any): boolean {
   return value !== null && value !== undefined
 }
 
