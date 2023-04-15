@@ -87,8 +87,9 @@ export default class YAxisImp extends AxisImp implements YAxis {
         max = Math.max(max, data.high)
       }
       if (inCandle && isArea) {
-        min = Math.min(min, data[areaValueKey])
-        max = Math.max(max, data[areaValueKey])
+        const value = data[areaValueKey]
+        min = Math.min(min, value)
+        max = Math.max(max, value)
       }
       figuresResultList.forEach(({ figures, result }) => {
         const indicatorData = result[dataIndex] ?? {}

@@ -678,6 +678,7 @@ export interface OverlayStyle {
   arc: LineStyle
   text: TextStyle
   rectText: RectTextStyle
+  [key: string]: any
 }
 
 function getDefaultOverlayStyle (): OverlayStyle {

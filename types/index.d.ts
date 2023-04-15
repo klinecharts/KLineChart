@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 export type DeepPartial<T> = {
-	[P in keyof T]?: T[P] extends Array<infer U> ? Array<DeepPartial<U>> : T[P] extends ReadonlyArray<infer X> ? ReadonlyArray<DeepPartial<X>> : DeepPartial<T[P]>;
+	[P in keyof T]?: T[P] extends Array<infer U> ? Array<DeepPartial<U>> : T[P] extends ReadonlyArray<infer X> ? ReadonlyArray<DeepPartial<X>> : T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -317,6 +317,7 @@ export interface OverlayStyle {
 	arc: LineStyle;
 	text: TextStyle;
 	rectText: RectTextStyle;
+	[key: string]: any;
 }
 export interface SeparatorStyle {
 	size: number;
