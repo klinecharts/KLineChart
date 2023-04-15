@@ -475,7 +475,11 @@ export default class ChartImp implements Chart {
 
   applyNewData (dataList: KLineData[], more?: boolean): void {
     this._chartStore.clearDataList()
-    this.applyMoreData(dataList, more)
+    if (dataList.length === 0) {
+      this.adjustPaneViewport(false, true, true, true)
+    } else {
+      this.applyMoreData(dataList, more)
+    }
   }
 
   applyMoreData (dataList: KLineData[], more?: boolean): void {
