@@ -36,7 +36,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getCrosshairStore().get()
     const styles = chartStore.getStyles().crosshair
-    if (crosshair.paneId !== undefined && crosshair.kLineData !== undefined && this.checkPaneId(crosshair, pane.getId())) {
+    if (crosshair.paneId !== undefined && this.compare(crosshair, pane.getId())) {
       if (styles.show) {
         const directionStyles = this.getDirectionStyles(styles)
         const textStyles = directionStyles.text
@@ -54,7 +54,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     }
   }
 
-  protected checkPaneId (crosshair: Crosshair, paneId: string): boolean {
+  protected compare (crosshair: Crosshair, paneId: string): boolean {
     return crosshair.paneId === paneId
   }
 

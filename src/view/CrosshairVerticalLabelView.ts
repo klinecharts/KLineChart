@@ -24,8 +24,8 @@ import CrosshairHorizontalLabelView from './CrosshairHorizontalLabelView'
 import { TextAttrs } from '../extension/figure/text'
 
 export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabelView<XAxis> {
-  override checkPaneId (crosshair: Crosshair): boolean {
-    return crosshair.dataIndex === crosshair.realDataIndex
+  override compare (crosshair: Crosshair): boolean {
+    return crosshair.kLineData !== undefined && crosshair.dataIndex === crosshair.realDataIndex
   }
 
   override getDirectionStyles (styles: CrosshairStyle): CrosshairDirectionStyle {
