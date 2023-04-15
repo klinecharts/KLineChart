@@ -410,6 +410,15 @@ export default class ChartImp implements Chart {
     return this._chartStore.getLocale()
   }
 
+  setYScrolling (yScrolling: boolean): void {
+    this._chartStore.setOptions({ yScrolling })
+    this.adjustPaneViewport(true, true, true, true, true)
+  }
+
+  getYScrolling (): boolean {
+    return this._chartStore.getYScrolling()
+  }
+
   setCustomApi (customApi: Partial<CustomApi>): void {
     this._chartStore.setOptions({ customApi })
     this.adjustPaneViewport(true, true, true, true, true)

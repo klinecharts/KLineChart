@@ -52,6 +52,11 @@ export default class ChartStore {
   private _locale: string = defaultLocale
 
   /**
+   * vertically scrolling
+   */
+  private _yScrolling: boolean = true
+
+  /**
    * Price and volume precision
    */
   private _precision: Precision = { price: 2, volume: 0 }
@@ -121,12 +126,15 @@ export default class ChartStore {
 
   setOptions (options?: Options): ChartStore {
     if (options !== undefined) {
-      const { locale, timezone, styles, customApi } = options
+      const { locale, yScrolling, timezone, styles, customApi } = options
       if (locale !== undefined) {
         this._locale = locale
       }
       if (timezone !== undefined) {
         this._timeScaleStore.setTimezone(timezone)
+      }
+      if (yScrolling !== undefined) {
+        this._yScrolling = yScrolling
       }
       if (styles !== undefined) {
         if (isString(styles)) {
@@ -148,6 +156,10 @@ export default class ChartStore {
 
   getLocale (): string {
     return this._locale
+  }
+
+  getYScrolling (): boolean {
+    return this._yScrolling
   }
 
   getCustomApi (): CustomApi {

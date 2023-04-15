@@ -68,7 +68,8 @@ export default abstract class AxisImp {
   }
 
   setExtremum (extremum: AxisExtremum): void {
-    this._autoCalcTickFlag = false
+    const canYScroll = this.getParent().getChart().getChartStore().getYScrolling()
+    if (canYScroll) this._autoCalcTickFlag = false
     this._extremum = extremum
   }
 
