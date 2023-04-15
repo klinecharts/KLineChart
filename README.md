@@ -18,7 +18,7 @@
 
 [![](https://cdn.nlark.com/yuque/0/2022/png/8403091/1646569986673-assets/web-upload/56a9e87d-8028-4875-97dd-bcfda0eb131a.png)](https://github.com/liihuu/KLineChart)
 
-## Features
+## ✨ Features
 - 📦 <strong>Out of the box:</strong> Simple and fast integration, basically zero cost to get started.
 - 🚀 <strong>Lightweight and smooth:</strong> Zero dependencies, only 40k under gzip compression.
 - 💪 <strong>Powerful functions:</strong> Built-in multiple indicators and line drawing models.
