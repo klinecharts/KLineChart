@@ -1,4 +1,13 @@
 # 📠 Change Log
+
+## 9.1.3
+`2023-04-15`
++ 🐞 Fix the issue of not refreshing when the input parameter of the chart API `applyNewData` is an empty array.
++ 🐞 Fix the issue of cross cursor text not displaying on the y-axis when there is no data.
++ 💄 Optimize the display of area chart.
++ 💄 Optimize coverage event callback parameters and add `figureKey` and `figureIndex`.
++ 💄 Optimize typescript overlay style types, as well as base types `DeepPartial` and `DeepRequired`.
+
 ## 9.1.2
 `2023-04-10`
 + 🐞 Fix the issue of inaccurate triggering events for the built-in figure `line`.
