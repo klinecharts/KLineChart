@@ -17,13 +17,6 @@ export default defineConfig({
   vue: {
     reactivityTransform: true,
   },
-  vite: {
-    resolve: {
-      alias: {
-        './VPNavBarSearch.vue': path.join(__dirname, 'components', 'search', 'NavBarSearch.vue')
-      }
-    }
-  },
   transformHead: () => {
     return [
       [
@@ -205,8 +198,44 @@ export default defineConfig({
     },
   },
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
     logo: '/images/logo.svg',
+    search: {
+      provider: 'local',
+      options: {
+        translations: {
+          button: {
+            buttonText: '搜索文档',
+            buttonAriaLabel: '搜索文档'
+          },
+          modal: {
+            noResultsText: '无法找到相关结果',
+            resetButtonTitle: '清除查询条件',
+            footer: {
+              selectText: '选择',
+              navigateText: '切换'
+            }
+          }
+        },
+        locales: {
+          'en-US': {
+            translations: {
+              button: {
+                buttonText: 'Search',
+                buttonAriaLabel: 'Search'
+              },
+              modal: {
+                noResultsText: 'No results for',
+                resetButtonTitle: 'Reset search',
+                footer: {
+                  selectText: 'to select',
+                  navigateText: 'to navigate'
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     footer: {
       message: 'Released under the Apache License V2.',
       copyright: 'Copyright © 2018-present liihuu'
