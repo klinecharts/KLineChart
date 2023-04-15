@@ -68,6 +68,8 @@ export interface Chart {
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
   setLocale: (locale: string) => void
   getLocale: () => string
+  setYScrolling: (locale: boolean) => void
+  getYScrolling: () => boolean
   setStyles: (styles: string | DeepPartial<Styles>) => void
   getStyles: () => Styles
   setCustomApi: (customApi: Partial<CustomApi>) => void
