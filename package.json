@@ -45,7 +45,6 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "docs:gen-search": "npm run docs:build && node ./docs/.vitepress/lunrBuild.js",
     "docs:deploy": "npm run docs:build && gh-pages -d website"
   },
   "devDependencies": {
@@ -61,7 +60,6 @@
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "@typescript-eslint/parser": "^5.36.2",
     "chalk": "^4.1.2",
-    "cheerio": "^1.0.0-rc.12",
     "cross-env": "^7.0.3",
     "dts-bundle-generator": "^7.0.0",
     "eslint": "^8.23.0",
@@ -72,12 +70,11 @@
     "fs-extra": "^10.1.0",
     "gh-pages": "^2.2.0",
     "husky": "^8.0.1",
-    "lunr": "^2.3.9",
     "rollup": "^3.2.5",
     "rollup-plugin-filesize": "^9.1.2",
     "rollup-plugin-progress": "^1.1.2",
     "tslib": "^2.5.0",
     "typescript": "^4.8.3",
-    "vitepress": "^1.0.0-alpha.65"
+    "vitepress": "^1.0.0-alpha.66"
   }
 }
