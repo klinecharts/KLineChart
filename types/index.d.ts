@@ -979,7 +979,7 @@ declare function isArray(value: any): boolean;
 declare function isFunction(value: any): boolean;
 declare function isObject(value: any): boolean;
 declare function isNumber(value: any): boolean;
-declare function isValid(value: any | null): boolean;
+declare function isValid(value: any): boolean;
 declare function isBoolean(value: any): boolean;
 declare function isString(value: any): boolean;
 declare function formatValue(data: unknown, key: string, defaultValue?: unknown): unknown;
