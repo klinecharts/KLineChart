@@ -12,7 +12,7 @@ https://discord.gg/7YjHYgvvvZ
 
 ## Wechat discussion group
 Scan to add developers, note KLineChart, and join the group chat.
-<img style="width:260px;margin-top:10px" src="/images/wechat.jpeg"/>
+<img style="width:180px;margin-top:10px" src="/images/wechat.jpeg"/>
 
 ## QQ discussion group
-<img style="width:260px;margin-top:10px" src="/images/qq_group_qr_code.png"/>
+<img style="width:180px;margin-top:10px" src="/images/qq_group_qr_code.png"/>
