@@ -9,7 +9,8 @@
   customApi?: {
     formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: number) => string,
     formatBigNumber?: (value: string | number) => string
-  }
+  },
+  thousandsSeparator?: string
 }) => Chart
 ```
 初始化一个图表，返回图表实例。
@@ -21,6 +22,7 @@
   - `customApi` 自定义一些api。
     - `formatDate` 格式化日期。
     - `formatBigNumber` 格式化大的数字，如1000转换成1k，1000000转换为1M等。
+  - `thousandsSeparator` 千分符
 
 
 ## dispose(dcs)

@@ -367,6 +367,7 @@ export interface Options {
 	timezone?: string;
 	styles?: string | DeepPartial<Styles>;
 	customApi?: Partial<CustomApi>;
+	thousandsSeparator?: string;
 }
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -708,6 +709,7 @@ export interface OverlayCreateFiguresCallbackParams {
 	bounding: Bounding;
 	barSpace: BarSpace;
 	precision: Precision;
+	thousandsSeparator: string;
 	dateTimeFormat: Intl.DateTimeFormat;
 	defaultStyles: OverlayStyle;
 	xAxis: Nullable<XAxis>;
@@ -997,6 +999,7 @@ declare function formatValue(data: unknown, key: string, defaultValue?: unknown)
 declare function formatDate(dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string;
 declare function formatPrecision(value: string | number, precision?: number): string;
 declare function formatBigNumber(value: string | number): string;
+declare function formatThousands(value: string | number, sign: string): string;
 /**
  * Chart version
  * @return {string}
@@ -1028,6 +1031,7 @@ export declare const utils: {
 	formatPrecision: typeof formatPrecision;
 	formatBigNumber: typeof formatBigNumber;
 	formatDate: typeof formatDate;
+	formatThousands: typeof formatThousands;
 	getLinearSlopeIntercept: typeof getLinearSlopeIntercept;
 	getLinearYFromSlopeIntercept: typeof getLinearYFromSlopeIntercept;
 	getLinearYFromCoordinates: typeof getLinearYFromCoordinates;

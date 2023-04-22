@@ -57,6 +57,11 @@ export default class ChartStore {
   private _precision: Precision = { price: 2, volume: 0 }
 
   /**
+   * Thousands separator
+   */
+  private _thousandsSeparator: string = ','
+
+  /**
    * Data source
    */
   private _dataList: KLineData[] = []
@@ -138,6 +143,9 @@ export default class ChartStore {
       if (customApi !== undefined) {
         merge(this._customApi, customApi)
       }
+      if (options.thousandsSeparator !== undefined) {
+        this._thousandsSeparator = options.thousandsSeparator
+      }
     }
     return this
   }
@@ -152,6 +160,10 @@ export default class ChartStore {
 
   getCustomApi (): CustomApi {
     return this._customApi
+  }
+
+  getThousandsSeparator (): string {
+    return this._thousandsSeparator
   }
 
   getPrecision (): Precision {

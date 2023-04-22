@@ -23,7 +23,7 @@ import { TextAttrs } from '../extension/figure/text'
 
 import ChartStore from '../store/ChartStore'
 
-import { formatPrecision } from '../common/utils/format'
+import { formatPrecision, formatThousands } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 
 import View from './View'
@@ -89,7 +89,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
         text = chartStore.getCustomApi().formatBigNumber(text)
       }
     }
-    return text
+    return formatThousands(text, chartStore.getThousandsSeparator())
   }
 
   protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: C, _styles: StateRectTextStyle): TextAttrs {

@@ -72,6 +72,7 @@ export interface OverlayCreateFiguresCallbackParams {
   bounding: Bounding
   barSpace: BarSpace
   precision: Precision
+  thousandsSeparator: string
   dateTimeFormat: Intl.DateTimeFormat
   defaultStyles: OverlayStyle
   xAxis: Nullable<XAxis>

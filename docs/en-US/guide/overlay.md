@@ -83,6 +83,8 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
        // Quantity precision
        volume: number
      },
+     // thousands separator
+     thousandsSeparator: string,
      // Constructor for objects that format date and time, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat for details
      dateTimeFormat: Intl. DateTimeFormat,
      // The default style, that is, the overlay in the global style configuration, the type participates in the overlay in [style]

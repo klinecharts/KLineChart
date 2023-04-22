@@ -27,7 +27,7 @@ import { TooltipIconInfo } from '../store/TooltipStore'
 
 import { i18n } from '../extension/i18n/index'
 
-import { formatPrecision } from '../common/utils/format'
+import { formatPrecision, formatThousands } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 import { isFunction, isObject } from '../common/utils/typeChecks'
 
@@ -45,6 +45,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const precision = chartStore.getPrecision()
       const locale = chartStore.getLocale()
       const customApi = chartStore.getCustomApi()
+      const thousandsSeparator = chartStore.getThousandsSeparator()
       const activeIconInfo = chartStore.getTooltipStore().getActiveIconInfo()
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
       const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
@@ -61,7 +62,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           ctx, dataList, indicators,
           bounding, yAxisBounding,
           crosshair, precision,
-          dateTimeFormat, locale, customApi,
+          dateTimeFormat, locale, customApi, thousandsSeparator,
           isDrawCandleTooltip, isDrawIndicatorTooltip,
           styles, 0
         )
@@ -71,34 +72,34 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       ) {
         const top = this._drawCandleStandardTooltip(
           ctx, dataList, paneId, bounding, crosshair, activeIconInfo, precision,
-          dateTimeFormat, locale, customApi, candleStyles
+          dateTimeFormat, locale, customApi, thousandsSeparator, candleStyles
         )
-        this.drawIndicatorTooltip(ctx, paneId, dataList, crosshair, activeIconInfo, indicators, customApi, bounding, indicatorStyles, top)
+        this.drawIndicatorTooltip(ctx, paneId, dataList, crosshair, activeIconInfo, indicators, customApi, thousandsSeparator, bounding, indicatorStyles, top)
       } else if (
         candleStyles.tooltip.showType === TooltipShowType.Rect &&
         indicatorStyles.tooltip.showType === TooltipShowType.Standard
       ) {
-        const top = this.drawIndicatorTooltip(ctx, paneId, dataList, crosshair, activeIconInfo, indicators, customApi, bounding, indicatorStyles, 0)
+        const top = this.drawIndicatorTooltip(ctx, paneId, dataList, crosshair, activeIconInfo, indicators, customApi, thousandsSeparator, bounding, indicatorStyles, 0)
         const isDrawCandleTooltip = this.isDrawTooltip(crosshair, candleStyles.tooltip)
         this._drawRectTooltip(
           ctx, dataList, indicators,
           bounding, yAxisBounding,
           crosshair, precision, dateTimeFormat,
-          locale, customApi,
+          locale, customApi, thousandsSeparator,
           isDrawCandleTooltip, false,
           styles, top
         )
       } else {
         const top = this._drawCandleStandardTooltip(
           ctx, dataList, paneId, bounding, crosshair, activeIconInfo, precision,
-          dateTimeFormat, locale, customApi, candleStyles
+          dateTimeFormat, locale, customApi, thousandsSeparator, candleStyles
         )
         const isDrawIndicatorTooltip = this.isDrawTooltip(crosshair, indicatorStyles.tooltip)
         this._drawRectTooltip(
           ctx, dataList, indicators,
           bounding, yAxisBounding,
           crosshair, precision, dateTimeFormat,
-          locale, customApi,
+          locale, customApi, thousandsSeparator,
           false, isDrawIndicatorTooltip,
           styles, top
         )
@@ -117,6 +118,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     dateTimeFormat: Intl.DateTimeFormat,
     locale: string,
     customApi: CustomApi,
+    thousandsSeparator: string,
     styles: CandleStyle
   ): number {
     const tooltipStyles = styles.tooltip
@@ -126,7 +128,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const dataIndex = crosshair.dataIndex ?? 0
       const values = this._getCandleTooltipData(
         { prev: dataList[dataIndex - 1] ?? null, current: crosshair.kLineData as KLineData, next: dataList[dataIndex + 1] ?? null },
-        precision, dateTimeFormat, locale, customApi, styles
+        precision, dateTimeFormat, locale, customApi, thousandsSeparator, styles
       )
       let x = 0
       let y = 0
@@ -181,6 +183,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     dateTimeFormat: Intl.DateTimeFormat,
     locale: string,
     customApi: CustomApi,
+    thousandsSeparator: string,
     isDrawCandleTooltip: boolean,
     isDrawIndicatorTooltip: boolean,
     styles: Styles,
@@ -194,7 +197,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const dataIndex = crosshair.dataIndex ?? 0
       const candleTooltipDatas = this._getCandleTooltipData(
         { prev: dataList[dataIndex - 1] ?? null, current: crosshair.kLineData as KLineData, next: dataList[dataIndex + 1] ?? null },
-        precision, dateTimeFormat, locale, customApi, candleStyles
+        precision, dateTimeFormat, locale, customApi, thousandsSeparator, candleStyles
       )
       const {
         marginLeft: baseTextMarginLeft,
@@ -248,7 +251,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       if (isDrawIndicatorTooltip) {
         ctx.font = createFont(indicatorTextSize, indicatorTextWeight, indicatorTextFamily)
         indicators.forEach(indicator => {
-          const tooltipDataValues = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, indicatorStyles).values ?? []
+          const tooltipDataValues = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, indicatorStyles).values ?? []
           indicatorTooltipDataValuess.push(tooltipDataValues)
           tooltipDataValues.forEach(data => {
             const title = data.title as TooltipDataChild
@@ -386,6 +389,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     dateTimeFormat: Intl.DateTimeFormat,
     locale: string,
     customApi: CustomApi,
+    thousandsSeparator: string,
     styles: CandleStyle
   ): TooltipData[] {
     const tooltipStyles = styles.tooltip
@@ -420,20 +424,23 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           value: { text: customApi.formatDate(dateTimeFormat, current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip), color: textColor }
         }, {
           title: { text: i18n('open', locale), color: textColor },
-          value: { text: formatPrecision(current.open, pricePrecision), color: textColor }
+          value: { text: formatThousands(formatPrecision(current.open, pricePrecision), thousandsSeparator), color: textColor }
         }, {
           title: { text: i18n('high', locale), color: textColor },
-          value: { text: formatPrecision(current.high, pricePrecision), color: textColor }
+          value: { text: formatThousands(formatPrecision(current.high, pricePrecision), thousandsSeparator), color: textColor }
         }, {
           title: { text: i18n('low', locale), color: textColor },
-          value: { text: formatPrecision(current.low, pricePrecision), color: textColor }
+          value: { text: formatThousands(formatPrecision(current.low, pricePrecision), thousandsSeparator), color: textColor }
         }, {
           title: { text: i18n('close', locale), color: textColor },
-          value: { text: formatPrecision(current.close, pricePrecision), color: textColor }
+          value: { text: formatThousands(formatPrecision(current.close, pricePrecision), thousandsSeparator), color: textColor }
         }, {
           title: { text: i18n('volume', locale), color: textColor },
           value: {
-            text: customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision)),
+            text: formatThousands(
+              customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision)),
+              thousandsSeparator
+            ),
             color: textColor
           }
         }

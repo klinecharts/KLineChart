@@ -9,7 +9,8 @@
    customApi?: {
       formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: number) => string,
       formatBigNumber?: (value: string | number) => string
-   }
+   },
+   thousandsSeparator?: string
 }) => Chart
 ```
 Initialize a chart and return the chart instance.
@@ -20,7 +21,8 @@ Initialize a chart and return the chart instance.
    - `styles` It can be the style name registered through `klinecharts.registerStyles`, or it can be an object, a list of styles, see [styles](./styles.md) for details, and supports increments.
    - `customApi` customize some APIs.
      - `formatDate` formats a date.
-     - `formatBigNumber` format big numbers, such as 1000 into 1k, 1000000 into 1M, etc.
+     - `formatBigNumber` format big numbers, such as 1000 into 1k, 1000000 into 1M, etc.\
+   - `thousandsSeparator` thousands separator
 
 
 ## dispose(dcs)

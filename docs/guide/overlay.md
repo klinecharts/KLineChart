@@ -83,6 +83,8 @@
       // 数量精度
       volume: number
     },
+    // 千分符
+    thousandsSeparator: string,
     // 格式化日期和时间的对象的构造器，详情参阅 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
     dateTimeFormat: Intl.DateTimeFormat,
     // 默认样式，即全局样式配置中的overlay，类型参与[样式]中的overlay

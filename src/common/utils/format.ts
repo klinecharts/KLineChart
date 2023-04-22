@@ -75,16 +75,27 @@ export function formatPrecision (value: string | number, precision?: number): st
 export function formatBigNumber (value: string | number): string {
   const v = +value
   if (isNumber(v)) {
-    if (value > 1000000000) {
+    if (v > 1000000000) {
       return `${+((v / 1000000000).toFixed(3))}B`
     }
-    if (value > 1000000) {
+    if (v > 1000000) {
       return `${+((v / 1000000).toFixed(3))}M`
     }
-    if (value > 1000) {
+    if (v > 1000) {
       return `${+((v / 1000).toFixed(3))}K`
     }
-    return `${value}`
   }
-  return '--'
+  return `${value}`
+}
+
+export function formatThousands (value: string | number, sign: string): string {
+  const vl = `${value}`
+  if (sign.length === 0) {
+    return vl
+  }
+  if (vl.includes('.')) {
+    const arr = vl.split('.')
+    return `${arr[0].replace(/(\d)(?=(\d{3})+$)/g, $1 => `${$1}${sign}`)}.${arr[1]}`
+  }
+  return vl.replace(/(\d)(?=(\d{3})+$)/g, $1 => `${$1}${sign}`)
 }

@@ -850,4 +850,5 @@ export interface Options {
   timezone?: string
   styles?: string | DeepPartial<Styles>
   customApi?: Partial<CustomApi>
+  thousandsSeparator?: string
 }
