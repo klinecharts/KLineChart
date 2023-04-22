@@ -108,7 +108,11 @@
       // 起点数据索引
       from: number,
       // 终点数据索引
-      to: number
+      to: number,
+      // 实际起点数据索引
+      realFrom: number,
+      // 实际终点数据索引
+      realTo: number
     },
     // 窗口尺寸信息
     bounding: {
@@ -168,7 +172,11 @@
       // 起点数据索引
       from: number,
       // 终点数据索引
-      to: number
+      to: number,
+      // 实际起点数据索引
+      realFrom: number,
+      // 实际终点数据索引
+      realTo: number
     },
     // 窗口尺寸信息
     bounding: {

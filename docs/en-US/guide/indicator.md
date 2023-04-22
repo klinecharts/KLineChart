@@ -107,8 +107,12 @@ To create a custom technical indicator, you only need to generate a technical in
     visibleRange: {
       // start data index
       from: number,
-      // endpoint data index
-      to: number
+      // end data index
+      to: number,
+      // real start data index
+      realFrom: number,
+      // real end data index
+      realTo: number
     },
     // window size information
     bounding: {
