@@ -362,6 +362,12 @@
 ```
 格式化日期。`format`格式，如'YYYY-MM-DD HH:mm:ss'。
 
+### utils.formatThousands(value, sign)
+```typescript
+(value: string | number, sign: string) => string
+```
+格式化日期千分符。
+
 ### utils.getLinearSlopeIntercept(coordinate1, coordinate2)
 ```typescript
 (coordinate1: { x: number, y: number }, coordinate2: { x: number, y: number }) => []

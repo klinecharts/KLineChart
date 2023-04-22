@@ -359,6 +359,12 @@ Format large numbers, such as 1000 into 1k, 1000000 into 1M, etc.
 ```
 Format date. `format`, such as 'YYYY-MM-DD HH:mm:ss'.
 
+### utils.formatThousands(value, sign)
+```typescript
+(value: string | number, sign: string) => string
+```
+Format thousands separator.
+
 ### utils.getLinearSlopeIntercept(coordinate1, coordinate2)
 ```typescript
 (coordinate1: { x: number, y: number }, coordinate2: { x: number, y: number }) => []
