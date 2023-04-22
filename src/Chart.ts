@@ -76,6 +76,7 @@ export interface Chart {
   setTimezone: (timezone: string) => void
   getTimezone: () => string
   setOffsetRightDistance: (space: number) => void
+  getOffsetRightDistance: () => number
   setLeftMinVisibleBarCount: (barCount: number) => void
   setRightMinVisibleBarCount: (barCount: number) => void
   setBarSpace: (space: number) => void
@@ -437,6 +438,10 @@ export default class ChartImp implements Chart {
     this._chartStore.getTimeScaleStore().setOffsetRightDistance(space, true)
   }
 
+  getOffsetRightDistance (): number {
+    return this._chartStore.getTimeScaleStore().getOffsetRightDistance()
+  }
+
   setLeftMinVisibleBarCount (barCount: number): void {
     if (barCount > 0) {
       this._chartStore.getTimeScaleStore().setLeftMinVisibleBarCount(Math.ceil(barCount))
@@ -670,7 +675,7 @@ export default class ChartImp implements Chart {
   scrollToRealTime (animationDuration?: number): void {
     const timeScaleStore = this._chartStore.getTimeScaleStore()
     const { bar: barSpace } = timeScaleStore.getBarSpace()
-    const difBarCount = timeScaleStore.getOffsetRightBarCount() - timeScaleStore.getOffsetRightDistance() / barSpace
+    const difBarCount = timeScaleStore.getOffsetRightBarCount() - timeScaleStore.getInitialOffsetRightDistance() / barSpace
     const distance = difBarCount * barSpace
     this.scrollByDistance(distance, animationDuration)
   }

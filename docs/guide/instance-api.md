@@ -87,7 +87,7 @@
 
 ## isScrollEnabled()
 ```typescript
-(enabled: boolean) => void
+() => boolean
 ```
 是否可以拖拽滚动。
 
@@ -97,6 +97,13 @@
 (distance: number) => void
 ```
 设置图表右边可以空出来的间隙。
+
+
+## getOffsetRightDistance()
+```typescript
+() => number
+```
+获取图表右边可以空出来的间隙。
 
 
 ## setLeftMinVisibleBarCount(barCount)
@@ -129,7 +136,7 @@
 
 ## getVisibleRange()
 ```typescript
-() => { from: number, to: number }
+() => { from: number, to: number, realFrom: number, realTo: number }
 ```
 获取可见区间范围。
 

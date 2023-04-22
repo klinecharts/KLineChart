@@ -85,9 +85,9 @@ Whether it can be scaled.
 Set whether dragging and scrolling is possible.
 
 
-##isScrollEnabled()
+## isScrollEnabled()
 ```typescript
-(enabled: boolean) => void
+() => boolean
 ```
 Whether dragging and scrolling is possible.
 
@@ -97,6 +97,12 @@ Whether dragging and scrolling is possible.
 (distance: number) => void
 ```
 Sets the gap that can be left to the right of the chart.
+
+## getOffsetRightDistance()
+```typescript
+() => number
+```
+Get the gap that can be left to the right of the chart.
 
 
 ## setLeftMinVisibleBarCount(barCount)
@@ -128,7 +134,7 @@ Gets the width of a single candlestick on the chart.
 
 ## getVisibleRange()
 ```typescript
-() => { from: number, to: number }
+() => { from: number, to: number, realFrom: number, realTo: number }
 ```
 Get visible range.
 
