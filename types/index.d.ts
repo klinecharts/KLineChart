@@ -233,9 +233,17 @@ export declare enum CandleType {
 	Ohlc = "ohlc",
 	Area = "area"
 }
+export interface CandleBarColor extends ChangeColor {
+	upBorderColor: string;
+	downBorderColor: string;
+	noChangeBorderColor: string;
+	upWickColor: string;
+	downWickColor: string;
+	noChangeWickColor: string;
+}
 export interface CandleStyle {
 	type: CandleType;
-	bar: ChangeColor;
+	bar: CandleBarColor;
 	area: CandleAreaStyle;
 	priceMark: CandlePriceMarkStyle;
 	tooltip: CandleTooltipStyle;
@@ -478,8 +486,10 @@ export interface Precision {
  * limitations under the License.
  */
 export interface VisibleRange {
-	from: number;
-	to: number;
+	readonly from: number;
+	readonly to: number;
+	readonly realFrom: number;
+	readonly realTo: number;
 }
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -865,6 +875,7 @@ export interface Chart {
 	setTimezone: (timezone: string) => void;
 	getTimezone: () => string;
 	setOffsetRightDistance: (space: number) => void;
+	getOffsetRightDistance: () => number;
 	setLeftMinVisibleBarCount: (barCount: number) => void;
 	setRightMinVisibleBarCount: (barCount: number) => void;
 	setBarSpace: (space: number) => void;

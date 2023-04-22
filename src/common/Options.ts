@@ -253,9 +253,18 @@ export enum CandleType {
   Area = 'area'
 }
 
+export interface CandleBarColor extends ChangeColor {
+  upBorderColor: string
+  downBorderColor: string
+  noChangeBorderColor: string
+  upWickColor: string
+  downWickColor: string
+  noChangeWickColor: string
+}
+
 export interface CandleStyle {
   type: CandleType
-  bar: ChangeColor
+  bar: CandleBarColor
   area: CandleAreaStyle
   priceMark: CandlePriceMarkStyle
   tooltip: CandleTooltipStyle
@@ -271,7 +280,13 @@ function getDefaultCandleStyle (): CandleStyle {
     bar: {
       upColor: '#26A69A',
       downColor: '#EF5350',
-      noChangeColor: '#999999'
+      noChangeColor: '#888888',
+      upBorderColor: '#26A69A',
+      downBorderColor: '#EF5350',
+      noChangeBorderColor: '#888888',
+      upWickColor: '#26A69A',
+      downWickColor: '#EF5350',
+      noChangeWickColor: '#888888'
     },
     area: {
       lineSize: 2,

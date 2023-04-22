@@ -44,12 +44,21 @@ export default class IndicatorView extends CandleBarView {
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
           const defaultStyles = chartStore.getStyles().indicator
+          const upColor = formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string
+          const downColor = formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string
+          const noChangeColor = formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
           return {
             type: CandleType.Ohlc,
             styles: {
-              upColor: formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string,
-              downColor: formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string,
-              noChangeColor: formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
+              upColor,
+              downColor,
+              noChangeColor,
+              upBorderColor: upColor,
+              downBorderColor: downColor,
+              noChangeBorderColor: noChangeColor,
+              upWickColor: upColor,
+              downWickColor: downColor,
+              noChangeWickColor: noChangeColor
             }
           }
         }

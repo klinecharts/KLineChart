@@ -218,7 +218,13 @@ Whether you see a point or a line on the chart, you can basically customize the 
     bar: {
       upColor: '#26A69A',
       downColor: '#EF5350',
-      noChangeColor: '#888888'
+      noChangeColor: '#888888',
+      upBorderColor: '#26A69A',
+      downBorderColor: '#EF5350',
+      noChangeBorderColor: '#888888',
+      upWickColor: '#26A69A',
+      downWickColor: '#EF5350',
+      noChangeWickColor: '#888888'
     },
     area: {
       lineSize: 2,
