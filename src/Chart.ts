@@ -84,9 +84,9 @@ export interface Chart {
   getVisibleRange: () => VisibleRange
   clearData: () => void
   getDataList: () => KLineData[]
-  applyNewData: (dataList: KLineData[], more?: boolean) => void
-  applyMoreData: (dataList: KLineData[], more?: boolean) => void
-  updateData: (data: KLineData) => void
+  applyNewData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
+  applyMoreData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
+  updateData: (data: KLineData, callback?: () => void) => void
   loadMore: (cb: LoadMoreCallback) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions, callback?: () => void) => Nullable<string>
   overrideIndicator: (override: IndicatorCreate, paneId?: string, callback?: () => void) => void
@@ -478,27 +478,28 @@ export default class ChartImp implements Chart {
     return this._chartStore.getDataList()
   }
 
-  applyNewData (dataList: KLineData[], more?: boolean): void {
+  applyNewData (dataList: KLineData[], more?: boolean, callback?: () => void): void {
     this._chartStore.clearDataList()
     if (dataList.length === 0) {
       this.adjustPaneViewport(false, true, true, true)
     } else {
-      this.applyMoreData(dataList, more)
+      this.applyMoreData(dataList, more, callback)
     }
   }
 
-  applyMoreData (dataList: KLineData[], more?: boolean): void {
+  applyMoreData (dataList: KLineData[], more?: boolean, callback?: () => void): void {
     this._chartStore.addData(dataList, 0, more)
     if (dataList.length > 0) {
       this._chartStore.getIndicatorStore().calcInstance().then(
         _ => {
           this.adjustPaneViewport(false, true, true, true)
+          callback?.()
         }
       ).catch(_ => {})
     }
   }
 
-  updateData (data: KLineData): void {
+  updateData (data: KLineData, callback?: () => void): void {
     const dataList = this._chartStore.getDataList()
     const dataCount = dataList.length
     // Determine where individual data should be added
@@ -513,6 +514,7 @@ export default class ChartImp implements Chart {
       this._chartStore.getIndicatorStore().calcInstance().then(
         _ => {
           this.adjustPaneViewport(false, true, true, true)
+          callback?.()
         }
       ).catch(_ => {})
     }
