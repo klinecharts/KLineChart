@@ -206,7 +206,12 @@ export interface CandlePriceMarkStyle {
 	low: CandleHighLowPriceMarkStyle;
 	last: CandleLastPriceMarkStyle;
 }
+declare enum CandleTooltipRectPosition {
+	Fixed = "fixed",
+	Pointer = "pointer"
+}
 export interface CandleTooltipRectStyle extends Omit<RectStyle, "style" | "borderDashedValue" | "borderStyle"> {
+	position: CandleTooltipRectPosition;
 	paddingLeft: number;
 	paddingRight: number;
 	paddingTop: number;
@@ -214,6 +219,7 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, "style" | "borde
 	offsetLeft: number;
 	offsetTop: number;
 	offsetRight: number;
+	offsetBottom: number;
 }
 export interface CandleTooltipCustomCallbackData {
 	prev: Nullable<KLineData>;

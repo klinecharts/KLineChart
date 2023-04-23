@@ -221,7 +221,13 @@ export interface CandlePriceMarkStyle {
   last: CandleLastPriceMarkStyle
 }
 
+export enum CandleTooltipRectPosition {
+  Fixed = 'fixed',
+  Pointer = 'pointer'
+}
+
 export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borderDashedValue' | 'borderStyle'> {
+  position: CandleTooltipRectPosition
   paddingLeft: number
   paddingRight: number
   paddingTop: number
@@ -229,6 +235,7 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borde
   offsetLeft: number
   offsetTop: number
   offsetRight: number
+  offsetBottom: number
 }
 
 export interface CandleTooltipCustomCallbackData {
@@ -353,6 +360,7 @@ function getDefaultCandleStyle (): CandleStyle {
       custom: null,
       defaultValue: 'n/a',
       rect: {
+        position: CandleTooltipRectPosition.Fixed,
         paddingLeft: 0,
         paddingRight: 0,
         paddingTop: 0,
@@ -360,6 +368,7 @@ function getDefaultCandleStyle (): CandleStyle {
         offsetLeft: 10,
         offsetTop: 8,
         offsetRight: 10,
+        offsetBottom: 8,
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#F2F3F5',

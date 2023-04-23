@@ -299,17 +299,20 @@ Whether you see a point or a line on the chart, you can basically customize the 
       custom: null
       defaultValue: 'n/a',
       rect: {
+       // 'fixed' | 'pointer'
+        position: 'fixed',
         paddingLeft: 0,
         paddingRight: 0,
         paddingTop: 0,
         paddingBottom: 6,
-        offsetLeft: 8,
+        offsetLeft: 10,
         offsetTop: 8,
-        offsetRight: 8,
+        offsetRight: 10,
+        offsetBottom: 8,
         borderRadius: 4,
         borderSize: 1,
-        borderColor: '#3f4254',
-        color: 'rgba(17, 17, 17, .3)'
+        borderColor: '#f2f3f5',
+        color: '#FEFEFE'
       },
       text: {
         size: 12,

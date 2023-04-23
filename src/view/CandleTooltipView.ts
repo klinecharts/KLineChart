@@ -17,7 +17,12 @@ import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 import Crosshair from '../common/Crosshair'
-import { Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, CandleTooltipCustomCallbackData, YAxisPosition, PolygonType, CustomApi, FormatDateType } from '../common/Options'
+import {
+  Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, CandleTooltipRectPosition,
+  CandleTooltipCustomCallbackData, YAxisPosition, PolygonType, CustomApi, FormatDateType
+} from '../common/Options'
+
+import { PaneIdConstants } from '../pane/Pane'
 
 import Indicator from '../component/Indicator'
 
@@ -210,13 +215,15 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       } = candleTooltipStyles.text
 
       const {
+        position: rectPosition,
         paddingLeft: rectPaddingLeft,
         paddingRight: rectPaddingRight,
         paddingTop: rectPaddingTop,
         paddingBottom: rectPaddingBottom,
-        offsetLeft: rectLeft,
-        offsetRight: rectRight,
+        offsetLeft: rectOffsetLeft,
+        offsetRight: rectOffsetRight,
         offsetTop: rectOffsetTop,
+        offsetBottom: rectOffsetBottom,
         borderSize: rectBorderSize,
         borderRadius: rectBorderRadius,
         borderColor: rectBorderColor,
@@ -268,19 +275,41 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         rectWidth += (rectBorderSize * 2 + rectPaddingLeft + rectPaddingRight)
         rectHeight += (rectBorderSize * 2 + rectPaddingTop + rectPaddingBottom)
         const centerX = bounding.width / 2
-        let rectX: number
-        if ((crosshair.realX ?? 0) < centerX) {
-          rectX = bounding.width - rectRight - rectWidth
-          if (styles.yAxis.inside && styles.yAxis.position === YAxisPosition.Right) {
-            rectX -= yAxisBounding.width
+        const isPointer = rectPosition === CandleTooltipRectPosition.Pointer && crosshair.paneId === PaneIdConstants.CANDLE
+        const isLeft = (crosshair.realX ?? 0) > centerX
+        let rectX: number = 0
+        if (isPointer) {
+          const realX = crosshair.realX as number
+          if (isLeft) {
+            rectX = realX - rectOffsetRight - rectWidth
+          } else {
+            rectX = realX + rectOffsetLeft
           }
         } else {
-          rectX = rectLeft
-          if (styles.yAxis.inside && styles.yAxis.position === YAxisPosition.Left) {
-            rectX += yAxisBounding.width
+          if (isLeft) {
+            rectX = rectOffsetLeft
+            if (styles.yAxis.inside && styles.yAxis.position === YAxisPosition.Left) {
+              rectX += yAxisBounding.width
+            }
+          } else {
+            rectX = bounding.width - rectOffsetRight - rectWidth
+            if (styles.yAxis.inside && styles.yAxis.position === YAxisPosition.Right) {
+              rectX -= yAxisBounding.width
+            }
           }
         }
-        const rectY = top + rectOffsetTop
+
+        let rectY = top + rectOffsetTop
+        if (isPointer) {
+          const y = crosshair.y as number
+          rectY = y - rectHeight / 2
+          if (rectY + rectHeight > bounding.height - rectOffsetBottom) {
+            rectY = bounding.height - rectOffsetBottom - rectHeight
+          }
+          if (rectY < top + rectOffsetTop) {
+            rectY = top + rectOffsetTop
+          }
+        }
         this.createFigure(
           'rect',
           {
@@ -300,7 +329,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         const candleTextX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
         let textY = rectY + rectBorderSize + rectPaddingTop
         if (isDrawCandleTooltip) {
-          // 开始渲染基础数据文字
+          // render candle texts
           candleTooltipDatas.forEach(data => {
             textY += baseTextMarginTop
             const title = data.title as TooltipDataChild
@@ -338,7 +367,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           })
         }
         if (isDrawIndicatorTooltip) {
-          // 开始渲染指标数据文字
+          // render indicator texts
           const indicatorTextX = rectX + rectBorderSize + rectPaddingLeft + indicatorTextMarginLeft
           indicatorTooltipDataValuess.forEach(datas => {
             datas.forEach(data => {
