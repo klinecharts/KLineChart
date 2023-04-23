@@ -1,1 +1,0 @@
-import{_ as s,c as a,o as n,V as o}from"./chunks/framework.79b85dd1.js";const d=JSON.parse('{"title":"国际化","description":"","frontmatter":{},"headers":[],"relativePath":"guide/i18n.md","lastUpdated":1679422797000}'),l={name:"guide/i18n.md"},p=o("",7),e=[p];function t(c,r,D,F,y,i){return n(),a("div",null,e)}const A=s(l,[["render",t]]);export{d as __pageData,A as default};

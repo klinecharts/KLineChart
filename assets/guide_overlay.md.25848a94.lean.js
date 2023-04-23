@@ -1,0 +1,1 @@
+import{_ as s,c as n,o as a,V as l}from"./chunks/framework.96b5c143.js";const A=JSON.parse('{"title":"覆盖物","description":"","frontmatter":{},"headers":[],"relativePath":"guide/overlay.md","lastUpdated":1682190851000}'),p={name:"guide/overlay.md"},o=l("",12),e=[o];function t(c,r,F,y,D,i){return a(),n("div",null,e)}const E=s(p,[["render",t]]);export{A as __pageData,E as default};
