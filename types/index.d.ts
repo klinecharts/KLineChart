@@ -891,9 +891,9 @@ export interface Chart {
 	getVisibleRange: () => VisibleRange;
 	clearData: () => void;
 	getDataList: () => KLineData[];
-	applyNewData: (dataList: KLineData[], more?: boolean) => void;
-	applyMoreData: (dataList: KLineData[], more?: boolean) => void;
-	updateData: (data: KLineData) => void;
+	applyNewData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void;
+	applyMoreData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void;
+	updateData: (data: KLineData, callback?: () => void) => void;
 	loadMore: (cb: LoadMoreCallback) => void;
 	createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions, callback?: () => void) => Nullable<string>;
 	overrideIndicator: (override: IndicatorCreate, paneId?: string, callback?: () => void) => void;
@@ -917,6 +917,7 @@ export interface Chart {
 	zoomAtTimestamp: (scale: number, timestamp: number, animationDuration?: number) => void;
 	convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder) => Partial<Coordinate> | Array<Partial<Coordinate>>;
 	convertFromPixel: (coordinates: Array<Partial<Coordinate>>, finder: ConvertFinder) => Partial<Point> | Array<Partial<Point>>;
+	executeAction: (type: ActionType, data: any) => void;
 	subscribeAction: (type: ActionType, callback: ActionCallback) => void;
 	unsubscribeAction: (type: ActionType, callback?: ActionCallback) => void;
 	getConvertPictureUrl: (includeOverlay?: boolean, type?: string, backgroundColor?: string) => string;

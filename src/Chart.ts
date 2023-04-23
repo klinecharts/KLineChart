@@ -110,6 +110,7 @@ export interface Chart {
   zoomAtTimestamp: (scale: number, timestamp: number, animationDuration?: number) => void
   convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder) => Partial<Coordinate> | Array<Partial<Coordinate>>
   convertFromPixel: (coordinates: Array<Partial<Coordinate>>, finder: ConvertFinder) => Partial<Point> | Array<Partial<Point>>
+  executeAction: (type: ActionType, data: any) => void
   subscribeAction: (type: ActionType, callback: ActionCallback) => void
   unsubscribeAction: (type: ActionType, callback?: ActionCallback) => void
   getConvertPictureUrl: (includeOverlay?: boolean, type?: string, backgroundColor?: string) => string
@@ -786,6 +787,17 @@ export default class ChartImp implements Chart {
       }
     }
     return isArray(coordinates) ? points : (points[0] ?? {})
+  }
+
+  executeAction (type: ActionType, data: any): void {
+    switch (type) {
+      case ActionType.OnCrosshairChange: {
+        const crosshair = { ...data }
+        crosshair.paneId = crosshair.paneId ?? PaneIdConstants.CANDLE
+        this._chartStore.getCrosshairStore().set(crosshair)
+        break
+      }
+    }
   }
 
   subscribeAction (type: ActionType, callback: ActionCallback): void {

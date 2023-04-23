@@ -794,6 +794,17 @@ chart.setPaneOptions({
 })
 ```
 
+## executeAction(type, data)
+```typescript
+(
+   type: 'onCrosshairChange',
+   data: any => void
+) => void
+```
+执行图表动作
+- `type` 仅支持 'onCrosshairChange'
+- `data` 执行动作需要的数据
+
 
 ## subscribeAction(type, callback)
 ```typescript

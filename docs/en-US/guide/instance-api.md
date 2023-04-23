@@ -783,6 +783,17 @@ chart.setPaneOptions({
 })
 ```
 
+## executeAction(type, data)
+```typescript
+(
+   type: 'onCrosshairChange',
+   data: any => void
+) => void
+```
+Execute chart action.
+- `type` only supported 'onCrosshairChange'
+- `data` data required for execution
+
 
 ## subscribeAction(type, callback)
 ```typescript
