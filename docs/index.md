@@ -9,7 +9,7 @@ hero:
   tagline: 简单易用，轻量流畅，适用场景丰富的 Web 前端金融图表。
   image:
     src: /images/logo_hero.svg
-    alt: Vitest
+    alt: KLineChart
   actions:
     - theme: brand
       text: 快速开始

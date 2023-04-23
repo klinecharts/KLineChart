@@ -7,6 +7,9 @@ hero:
   name: KLineChart
   text: Highly customizable professional lightweight financial chart
   tagline: Easy to use, lightweight and smooth, suitable for web front-end financial chart with rich scenarios.
+  image:
+    src: /images/logo_hero.svg
+    alt: KLineChart
   actions:
     - theme: brand
       text: Getting Started
