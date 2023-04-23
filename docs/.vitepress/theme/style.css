@@ -48,21 +48,21 @@
 
   --vp-home-hero-image-background-image: linear-gradient(
     -45deg,
-    #26A69A 50%,
-    #EF5350 50%
+    rgba(38,166,154, 0.3),
+    rgba(239,83,80, 0.3)
   );
   --vp-home-hero-image-filter: blur(40px);
 }
 
 @media (min-width: 640px) {
   :root {
-    --vp-home-hero-image-filter: blur(56px);
+    --vp-home-hero-image-filter: blur(60px);
   }
 }
 
 @media (min-width: 960px) {
   :root {
-    --vp-home-hero-image-filter: blur(72px);
+    --vp-home-hero-image-filter: blur(80px);
   }
 }
 

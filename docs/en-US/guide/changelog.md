@@ -3,7 +3,7 @@
 ## 9.2.0
 `2023-04-24`
 + 🆕 Add instance API `getOffsetRightDistance` and `executeAction`.
-+ 🆕 Add success callback for instance APIs `applyNewData`, `applyMoreData` and `updateData`.
++ 🆕 Add success callback for instance API `applyNewData`, `applyMoreData` and `updateData`.
 + 🆕 Support the display of thousands.
 + 🆕 Add style configuration `candle.bar.upBorderColor`, `candle.bar.downBorderColor`, `candle.bar.noChangeBorderColor`, `candle.bar.upWickColor`, `candle.bar.downWickColor`, `candle.bar.noChangeWickColor`, `candle.tooltip.rect.position` and `candle.tooltip.rect.offsetBottom`.
 + 🆕 Add `realFrom` and `realTo` to all `visibleRange`.
