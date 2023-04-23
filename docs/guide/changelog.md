@@ -1,5 +1,15 @@
 # 📠 更新日志
 
+## 9.2.0
+`2023-04-24`
++ 🆕 实例API新增`getOffsetRightDistance`和`executeAction`。
++ 🆕 实例API`applyNewData`、`applyMoreData`和`updateData`新增成功回调入参`callback`。
++ 🆕 支持千分符显示。
++ 🆕 样式配置新增`candle.bar.upBorderColor`、`candle.bar.downBorderColor`、`candle.bar.noChangeBorderColor`、`candle.bar.upWickColor`、`candle.bar.downWickColor`、`candle.bar.noChangeWickColor`、`candle.tooltip.rect.position`和`candle.tooltip.rect.offsetBottom`。
++ 🆕 所有`visibleRange`新增`realFrom`和`realTo`。
++ 💄 优化API，`klinecharts.utils.isValid`和`klinecharts.utils.formatBigNumber`。
++ 💄 优化开发环境下，日志输出。
+
 ## 9.1.3
 `2023-04-15`
 + 🐞 修复图表api `applyNewData` 入参是空数组时不刷新问题。
