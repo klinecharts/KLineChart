@@ -285,14 +285,14 @@ function getDefaultCandleStyle (): CandleStyle {
   return {
     type: CandleType.CandleSolid,
     bar: {
-      upColor: '#26A69A',
-      downColor: '#EF5350',
+      upColor: '#2DC08E',
+      downColor: '#F92855',
       noChangeColor: '#888888',
-      upBorderColor: '#26A69A',
-      downBorderColor: '#EF5350',
+      upBorderColor: '#2DC08E',
+      downBorderColor: '#F92855',
       noChangeBorderColor: '#888888',
-      upWickColor: '#26A69A',
-      downWickColor: '#EF5350',
+      upWickColor: '#2DC08E',
+      downWickColor: '#F92855',
       noChangeWickColor: '#888888'
     },
     area: {
@@ -327,8 +327,8 @@ function getDefaultCandleStyle (): CandleStyle {
       },
       last: {
         show: true,
-        upColor: '#26A69A',
-        downColor: '#EF5350',
+        upColor: '#2DC08E',
+        downColor: '#F92855',
         noChangeColor: '#888888',
         line: {
           show: true,
@@ -416,8 +416,8 @@ export interface IndicatorStyle {
 function getDefaultIndicatorStyle (): IndicatorStyle {
   return {
     ohlc: {
-      upColor: 'rgba(38, 166, 154, .65)',
-      downColor: 'rgba(239, 83, 80, .65)',
+      upColor: 'rgba(45, 192, 142, .7)',
+      downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'
     },
     bars: [{
@@ -425,8 +425,8 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       borderStyle: LineType.Solid,
       borderSize: 1,
       borderDashedValue: [2, 2],
-      upColor: 'rgba(38, 166, 154, .65)',
-      downColor: 'rgba(239, 83, 80, .65)',
+      upColor: 'rgba(45, 192, 142, .7)',
+      downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'
     }],
     lines: [
@@ -467,8 +467,8 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       borderStyle: LineType.Solid,
       borderSize: 1,
       borderDashedValue: [2, 2],
-      upColor: 'rgba(38, 166, 154, .65)',
-      downColor: 'rgba(239, 83, 80, .65)',
+      upColor: 'rgba(45, 192, 142, .7)',
+      downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'
     }],
     lastValueMark: {

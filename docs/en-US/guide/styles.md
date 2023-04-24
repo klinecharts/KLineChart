@@ -216,14 +216,14 @@ Whether you see a point or a line on the chart, you can basically customize the 
     // 'candle_solid'|'candle_stroke'|'candle_up_stroke'|'candle_down_stroke'|'ohlc'|'area'
     type: 'candle_solid',
     bar: {
-      upColor: '#26A69A',
-      downColor: '#EF5350',
+      upColor: '#2DC08E',
+      downColor: '#F92855',
       noChangeColor: '#888888',
-      upBorderColor: '#26A69A',
-      downBorderColor: '#EF5350',
+      upBorderColor: '#2DC08E',
+      downBorderColor: '#F92855',
       noChangeBorderColor: '#888888',
-      upWickColor: '#26A69A',
-      downWickColor: '#EF5350',
+      upWickColor: '#2DC08E',
+      downWickColor: '#F92855',
       noChangeWickColor: '#888888'
     },
     area: {
@@ -258,8 +258,8 @@ Whether you see a point or a line on the chart, you can basically customize the 
       },
       last: {
         show: true,
-        upColor: '#26A69A',
-        downColor: '#EF5350',
+        upColor: '#2DC08E',
+        downColor: '#F92855',
         noChangeColor: '#888888',
         line: {
           show: true,
@@ -348,8 +348,8 @@ Whether you see a point or a line on the chart, you can basically customize the 
   },
   indicator: {
     ohlc: {
-      upColor: 'rgba(38, 166, 154, .65)',
-      downColor: 'rgba(239, 83, 80, .65)',
+      upColor: 'rgba(45, 192, 142, .7)',
+      downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'
     },
     bars: [{
@@ -359,8 +359,8 @@ Whether you see a point or a line on the chart, you can basically customize the 
       borderStyle: 'solid',
       borderSize: 1,
       borderDashedValue: [2, 2],
-      upColor: 'rgba(38, 166, 154, .65)',
-      downColor: 'rgba(239, 83, 80, .65)',
+      upColor: 'rgba(45, 192, 142, .7)',
+      downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'
     }],
     lines: [
@@ -404,8 +404,8 @@ Whether you see a point or a line on the chart, you can basically customize the 
       borderStyle: 'solid',
       borderSize: 1,
       borderDashedValue: [2, 2],
-      upColor: 'rgba(38, 166, 154, .65)',
-      downColor: 'rgba(239, 83, 80, .65)',
+      upColor: 'rgba(45, 192, 142, .7)',
+      downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'
     }],
     lastValueMark: {
