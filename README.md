@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://klinecharts.com">
-    <img style="height: 100px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1679578359765-assets/web-upload/95cb43ed-810b-4aa7-8926-beea5e49298b.png"/>
+    <img style="height: 100px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1682453956361-assets/web-upload/d21fec8e-7503-47ce-9f91-faceece21195.png"/>
   </a>
 </div>
 <h1 align="center">KLineChart</h1>
