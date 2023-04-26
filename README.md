@@ -13,7 +13,7 @@
 [![npms.io (maintenance)](https://img.shields.io/npms-io/quality-score/klinecharts)](https://www.npmjs.com/package/klinecharts)
 [![Typescript](https://badgen.net/npm/types/klinecharts)](types/index.d.ts)
 [![LICENSE](https://badgen.net/github/license/liihuu/KLineChart)](LICENSE)
-[![Docs](https://shields.io/static/v1?label=docs%20by&message=vitepress&color=blue)](https://vitepress.dev/)
+[![Docs](https://badgen.net/badge/docs%20by/vitepress/10B981)](https://vitepress.dev/)
 
 
 </div>

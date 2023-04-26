@@ -1,6 +1,6 @@
 {
   "name": "klinecharts",
-  "version": "9.2.0",
+  "version": "9.2.1",
   "description": "Lightweight k-line chart built with html5 canvas",
   "main": "./dist/klinecharts.min.js",
   "module": "index.js",
@@ -47,6 +47,9 @@
     "docs:preview": "vitepress preview docs",
     "docs:deploy": "npm run docs:build && gh-pages -d website"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "devDependencies": {
     "@docsearch/css": "^3.3.3",
     "@docsearch/js": "^3.3.3",
@@ -75,6 +78,6 @@
     "rollup-plugin-progress": "^1.1.2",
     "tslib": "^2.5.0",
     "typescript": "^4.8.3",
-    "vitepress": "^1.0.0-alpha.73"
+    "vitepress": "^1.0.0-alpha.74"
   }
 }
