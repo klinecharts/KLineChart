@@ -408,6 +408,7 @@ export interface IndicatorStyle {
   circles: IndicatorPolygonStyle[]
   lastValueMark: IndicatorLastValueMarkStyle
   tooltip: IndicatorTooltipStyle
+  [key: string]: any
 }
 
 /**
@@ -441,7 +442,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         smooth: false,
         size: 1,
         dashedValue: [2, 2],
-        color: '#9D65C9'
+        color: '#935EBD'
       }, {
         style: LineType.Solid,
         smooth: false,
