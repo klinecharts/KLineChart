@@ -1,4 +1,8 @@
 # 📠 Change Log
+## 9.2.1
+`2023-04-27`
++ 💄 Optimize the default style by changing `#EF5350` to `#F92855` and `#26A69A` to `#2DC08E`.
++ 💄 Optimize typescript declarations.
 
 ## 9.2.0
 `2023-04-24`

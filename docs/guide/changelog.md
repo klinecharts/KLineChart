@@ -1,5 +1,10 @@
 # 📠 更新日志
 
+## 9.2.1
+`2023-04-27`
++ 💄 优化默认样式，`#EF5350`变更为`#F92855`，`#26A69A`变更为`#2DC08E`。
++ 💄 优化typescript声明。
+
 ## 9.2.0
 `2023-04-24`
 + 🆕 实例API新增`getOffsetRightDistance`和`executeAction`。
