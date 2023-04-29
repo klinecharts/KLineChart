@@ -1,7 +1,5 @@
 import { defineConfig } from 'vitepress'
 
-import path from 'path'
-
 import pkg from '../../package.json'
 
 // https://vitepress.dev/reference/site-config
