@@ -3,7 +3,8 @@ name: Deploy docs
 on:
   push:
     branches: [ "main" ]
-    paths: ./docs
+    paths:
+      - 'docs/**'
 
 jobs:
   build:
