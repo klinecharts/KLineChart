@@ -270,6 +270,7 @@ export interface IndicatorStyle {
 	circles: IndicatorPolygonStyle[];
 	lastValueMark: IndicatorLastValueMarkStyle;
 	tooltip: IndicatorTooltipStyle;
+	[key: string]: any;
 }
 export type AxisLineStyle = Omit<StateLineStyle, "style" | "dashedValue">;
 export interface AxisTickLineStyle extends AxisLineStyle {
