@@ -1,7 +1,5 @@
 import { defineConfig } from 'vitepress'
 
-import path from 'path'
-
 import pkg from '../../package.json'
 
 // https://vitepress.dev/reference/site-config
@@ -56,13 +54,13 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: '什么是KLineChart？', link: '/guide/what-is-klinechart' },
-                { text: '快速开始', link: '/guide/getting-started' }
               ]
             },
             {
               text: '基础篇',
               collapsed: false,
               items: [
+                { text: '快速开始', link: '/guide/getting-started' },
                 { text: '样式配置', link: '/guide/styles' },
                 { text: '数据', link: '/guide/datasource' },
                 { text: '环境要求', link: '/guide/environment' },
@@ -142,13 +140,13 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: 'What is KLineChart?', link: '/en-US/guide/what-is-klinechart' },
-                { text: 'Getting Started', link: '/en-US/guide/getting-started' }
               ]
             },
             {
               text: 'Basic',
               collapsed: false,
               items: [
+                { text: 'Getting Started', link: '/en-US/guide/getting-started' },
                 { text: 'Style Configuration', link: '/en-US/guide/styles' },
                 { text: 'Datasource', link: '/en-US/guide/datasource' },
                 { text: 'Environment', link: '/en-US/guide/environment' },
