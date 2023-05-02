@@ -135,7 +135,7 @@ export default class ChartStore {
       }
       if (styles !== undefined) {
         if (isString(styles)) {
-          merge(this._styles, getStyles(styles as string))
+          merge(this._styles, getStyles(styles))
         } else {
           merge(this._styles, styles)
         }
@@ -185,11 +185,11 @@ export default class ChartStore {
   }
 
   addData (data: KLineData | KLineData[], pos: number, more?: boolean): void {
-    if (isArray(data)) {
+    if (isArray<KLineData>(data)) {
       this._timeScaleStore.setLoading(false)
       this._timeScaleStore.setMore(more ?? true)
       const isFirstAdd = this._dataList.length === 0
-      this._dataList = (data as KLineData[]).concat(this._dataList)
+      this._dataList = data.concat(this._dataList)
       if (isFirstAdd) {
         this._timeScaleStore.resetOffsetRightDistance()
       }
@@ -197,14 +197,14 @@ export default class ChartStore {
     } else {
       const dataSize = this._dataList.length
       if (pos >= dataSize) {
-        this._dataList.push(data as KLineData)
+        this._dataList.push(data)
         let offsetRightBarCount = this._timeScaleStore.getOffsetRightBarCount()
         if (offsetRightBarCount < 0) {
           this._timeScaleStore.setOffsetRightBarCount(--offsetRightBarCount)
         }
         this._timeScaleStore.adjustVisibleRange()
       } else {
-        this._dataList[pos] = data as KLineData
+        this._dataList[pos] = data
         this.adjustVisibleDataList()
       }
     }

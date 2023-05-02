@@ -429,17 +429,17 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       labelValues.forEach(({ title, value }) => {
         let t: TooltipDataChild = { text: '', color: '' }
         if (isObject(title)) {
-          t = title as TooltipDataChild
+          t = title
         } else {
-          t.text = title as string
+          t.text = title
           t.color = textColor
         }
         t.text = i18n(t.text, locale)
         let v: TooltipDataChild = { text: '', color: '' }
         if (isObject(value)) {
-          v = value as TooltipDataChild
+          v = value
         } else {
-          v.text = value as string
+          v.text = value
           v.color = textColor
         }
         tooltipData.push({ title: t, value: v })

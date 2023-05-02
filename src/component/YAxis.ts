@@ -95,7 +95,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
         const indicatorData = result[dataIndex] ?? {}
         figures.forEach(figure => {
           const value = indicatorData[figure.key]
-          if (isValid(value)) {
+          if (isValid<number>(value)) {
             min = Math.min(min, value)
             max = Math.max(max, value)
           }

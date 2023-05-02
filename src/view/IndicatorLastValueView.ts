@@ -44,7 +44,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
           const precision = indicator.precision
           eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
             const value = indicatorData[figure.key]
-            if (isValid(value)) {
+            if (isValid<number>(value)) {
               const y = yAxis.convertToNicePixel(value)
               let text = formatPrecision(value, precision)
               if (indicator.shouldFormatBigNumber) {

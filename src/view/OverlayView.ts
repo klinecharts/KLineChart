@@ -179,11 +179,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       let eventTypes: OverlayFigureIgnoreEventType[] = []
       if (ignoreEvent !== undefined) {
         if (isBoolean(ignoreEvent)) {
-          if (ignoreEvent as boolean) {
+          if (ignoreEvent) {
             eventTypes = getAllOverlayFigureIgnoreEventTypes()
           }
         } else {
-          eventTypes = ignoreEvent as OverlayFigureIgnoreEventType[]
+          eventTypes = ignoreEvent
         }
       }
       if (eventTypes.length === 0) {

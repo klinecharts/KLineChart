@@ -389,9 +389,9 @@ export default class ChartImp implements Chart {
     this._chartStore.setOptions({ styles })
     let realStyles: Nullable<DeepPartial<Styles>>
     if (isString(styles)) {
-      realStyles = getExtensionStyles(styles as string)
+      realStyles = getExtensionStyles(styles)
     } else {
-      realStyles = styles as DeepPartial<Styles>
+      realStyles = styles
     }
     if (realStyles?.yAxis?.type !== undefined) {
       this.getPaneById(PaneIdConstants.CANDLE)?.getAxisComponent().setAutoCalcTickFlag(true)
@@ -526,7 +526,7 @@ export default class ChartImp implements Chart {
   }
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>, callback?: () => void): Nullable<string> {
-    const indicator: IndicatorCreate = isString(value) ? { name: value as string } : value as IndicatorCreate
+    const indicator: IndicatorCreate = isString(value) ? { name: value } : value
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
@@ -596,7 +596,7 @@ export default class ChartImp implements Chart {
   }
 
   createOverlay (value: string | OverlayCreate, paneId?: string): Nullable<string> {
-    const overlay: OverlayCreate = isString(value) ? { name: value as string } : value as OverlayCreate
+    const overlay: OverlayCreate = isString(value) ? { name: value } : value
     if (getOverlayClass(overlay.name) === null) {
       logWarn('createOverlay', 'value', 'overlay not supported, you may need to use registerOverlay to add one!!!')
       return null
@@ -625,9 +625,9 @@ export default class ChartImp implements Chart {
     let overlayRemove
     if (remove !== undefined) {
       if (isString(remove)) {
-        overlayRemove = { id: remove as string }
+        overlayRemove = { id: remove }
       } else {
-        overlayRemove = remove as OverlayRemove
+        overlayRemove = remove
       }
     }
     this._chartStore.getOverlayStore().removeInstance(overlayRemove)

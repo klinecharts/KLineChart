@@ -116,7 +116,7 @@ export default class IndicatorView extends CandleBarView {
               const valueY = yAxis.convertToPixel(value)
               switch (figure.type) {
                 case 'circle': {
-                  if (isValid(value)) {
+                  if (isValid<number>(value)) {
                     this.createFigure(
                       'circle',
                       {
@@ -166,7 +166,7 @@ export default class IndicatorView extends CandleBarView {
                 }
                 case 'line': {
                   let innerFigureStyle: Nullable<IndicatorFigureStyle> = null
-                  if (isValid(value)) {
+                  if (isValid<number>(value)) {
                     innerFigureStyle = figureStyles
                     const coordinate = { x, y: valueY }
                     const prevFigureStyles = lineFigureStyles[count]

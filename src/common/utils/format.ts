@@ -69,7 +69,7 @@ export function formatPrecision (value: string | number, precision?: number): st
   if (isNumber(v)) {
     return v.toFixed(precision ?? 2)
   }
-  return `${v}`
+  return `${value}`
 }
 
 export function formatBigNumber (value: string | number): string {

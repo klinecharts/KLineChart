@@ -349,15 +349,15 @@ export default class IndicatorTooltipView extends View<YAxis> {
         customValues.forEach(data => {
           let title = { text: '', color }
           if (isObject(data.title)) {
-            title = data.title as TooltipDataChild
+            title = data.title
           } else {
-            title.text = data.title as string
+            title.text = data.title
           }
           let value = { text: '', color }
           if (isObject(data.value)) {
-            value = data.value as TooltipDataChild
+            value = data.value
           } else {
-            value.text = data.value as string
+            value.text = data.value
           }
           value.text = formatThousands(value.text, thousandsSeparator)
           optimizedValues.push({ title, value })

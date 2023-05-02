@@ -73,17 +73,17 @@ export default class CandleAreaView extends ChildrenView {
       // Draw real-time background
       const backgroundColor = candleAreaStyles.backgroundColor
       let color: string | CanvasGradient
-      if (isArray(backgroundColor)) {
+      if (isArray<GradientColor>(backgroundColor)) {
         const gradient = ctx.createLinearGradient(0, bounding.height, 0, minY)
         try {
-          (backgroundColor as GradientColor[]).forEach(({ offset, color }) => {
+          backgroundColor.forEach(({ offset, color }) => {
             gradient.addColorStop(offset, color)
           })
         } catch (e) {
         }
         color = gradient
       } else {
-        color = backgroundColor as string
+        color = backgroundColor
       }
       this.createFigure(
         'polygon',
