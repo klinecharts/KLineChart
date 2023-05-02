@@ -53,15 +53,16 @@ export function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs):
         ) {
           return true
         }
-      }
-      const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate) as number[]
-      const y = getLinearYFromSlopeIntercept(kb, coordinate)
-      const yDif = Math.abs(y - coordinate.y)
-      if (
-        Math.abs(prevCoordinate.x - coordinate.x) + Math.abs(currentCoordinate.x - coordinate.x) - Math.abs(prevCoordinate.x - currentCoordinate.x) < DEVIATION + DEVIATION &&
-        yDif * yDif / (kb[0] * kb[0] + 1) < DEVIATION * DEVIATION
-      ) {
-        return true
+      } else {
+        const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate) as number[]
+        const y = getLinearYFromSlopeIntercept(kb, coordinate)
+        const yDif = Math.abs(y - coordinate.y)
+        if (
+          Math.abs(prevCoordinate.x - coordinate.x) + Math.abs(currentCoordinate.x - coordinate.x) - Math.abs(prevCoordinate.x - currentCoordinate.x) < DEVIATION + DEVIATION &&
+          yDif * yDif / (kb[0] * kb[0] + 1) < DEVIATION * DEVIATION
+        ) {
+          return true
+        }
       }
     }
   }
