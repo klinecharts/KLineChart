@@ -9,6 +9,12 @@ export default defineConfig({
   description: '💹📈 可高度自定义的专业级轻量金融图表。',
   outDir: '../website',
   lastUpdated: true,
+  markdown: {
+    theme: {
+      dark: 'material-theme-palenight',
+      light: 'github-light'
+    }  
+  },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/images/logo.svg' }],
   ],
