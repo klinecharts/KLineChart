@@ -27,7 +27,7 @@
 
 </div>
 
-[![](https://cdn.nlark.com/yuque/0/2023/jpeg/8403091/1683224914539-assets/web-upload/a2134d7e-e47b-4040-aaf0-662d83e43878.jpeg)](https://github.com/liihuu/KLineChart)
+<img style="box-shadow:0px 2px 4px rgba(41, 44, 44, 0.12);margin-bottom:16px" src="https://cdn.nlark.com/yuque/0/2023/jpeg/8403091/1683224914539-assets/web-upload/a2134d7e-e47b-4040-aaf0-662d83e43878.jpeg" />
 
 简体中文 | [English](./README.md)
 
