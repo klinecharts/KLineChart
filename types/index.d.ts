@@ -876,6 +876,8 @@ export interface Chart {
 	setLocale: (locale: string) => void;
 	getLocale: () => string;
 	setStyles: (styles: string | DeepPartial<Styles>) => void;
+	setYScrolling(locale: boolean): void
+  getYScrolling(): boolean
 	getStyles: () => Styles;
 	setCustomApi: (customApi: Partial<CustomApi>) => void;
 	setPriceVolumePrecision: (pricePrecision: number, volumePrecision: number) => void;

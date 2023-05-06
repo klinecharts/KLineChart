@@ -27,18 +27,24 @@ import Chart from '../Chart'
 
 import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
-import { merge } from '../common/utils/typeChecks'
+import { isBoolean, isValid, merge } from '../common/utils/typeChecks'
 
 export interface PaneGap {
   top?: number
   bottom?: number
 }
+
+export interface PaneAxisOptions {
+  scrollZoomEnabled?: boolean
+}
+
 export interface PaneOptions {
   id?: string
   height?: number
   minHeight?: number
   dragEnabled?: boolean
   gap?: PaneGap
+  axisOptions?: PaneAxisOptions
 }
 
 export const PANE_MIN_HEIGHT = 30
@@ -66,7 +72,7 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
   private _topPane: Nullable<Pane>
   private _bottomPane: Nullable<Pane>
 
-  private readonly _options: DeepRequired<Omit<PaneOptions, 'id' | 'height'>> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 } }
+  private readonly _options: DeepRequired<Omit<PaneOptions, 'id' | 'height'>> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 }, axisOptions: { scrollZoomEnabled: true } }
 
   constructor (rootContainer: HTMLElement, chart: Chart, id: string, topPane?: Pane, bottomPane?: Pane) {
     this._chart = chart
@@ -107,6 +113,20 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
 
   setOptions (options: Omit<PaneOptions, 'id' | 'height'>): Pane<C> {
     merge(this._options, options)
+    let container: HTMLElement
+    let cursor: string
+    if (this.getId() === PaneIdConstants.XAXIS) {
+      container = this.getMainWidget().getContainer()
+      cursor = 'ew-resize'
+    } else {
+      container = this.getYAxisWidget()?.getContainer() as HTMLElement
+      cursor = 'ns-resize'
+    }
+    if (options.axisOptions?.scrollZoomEnabled ?? true) {
+      container.style.cursor = cursor
+    } else {
+      container.style.cursor = 'default'
+    }
     return this
   }
 

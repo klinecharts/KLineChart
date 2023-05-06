@@ -29,7 +29,7 @@ import VisibleRange from './common/VisibleRange'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
-import { isString, isArray } from './common/utils/typeChecks'
+import { isString, isArray, isValid } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
 import { formatValue } from './common/utils/format'
 import { binarySearchNearest } from './common/utils/number'
@@ -533,7 +533,7 @@ export default class ChartImp implements Chart {
     }
 
     let paneId: string
-    if (paneOptions?.id !== undefined && this._panes.has(paneOptions.id)) {
+    if (isValid<string>(paneOptions?.id) && this._panes.has(paneOptions.id)) {
       paneId = paneOptions.id
       this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).then(_ => {
         this._setPaneOptions(paneOptions, this._panes.get(paneId)?.getAxisComponent().buildTicks(true) ?? false)
@@ -545,7 +545,7 @@ export default class ChartImp implements Chart {
       topPane.setBottomPane(pane)
       const height = paneOptions?.height ?? PANE_DEFAULT_HEIGHT
       pane.setBounding({ height })
-      if (paneOptions !== undefined && paneOptions !== null) {
+      if (isValid<PaneOptions>(paneOptions)) {
         pane.setOptions(paneOptions)
       }
       this._panes.set(paneId, pane)
