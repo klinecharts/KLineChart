@@ -16,9 +16,7 @@ import Nullable from '../../common/Nullable'
 import Coordinate from '../../common/Coordinate'
 import { SmoothLineStyle, LineType } from '../../common/Options'
 
-import { FigureTemplate } from '../../component/Figure'
-
-const DEVIATION = 2
+import { FigureTemplate, DEVIATION } from '../../component/Figure'
 
 function getDistance (coordinate1: Coordinate, coordinate2: Coordinate): number {
   return Math.sqrt(Math.pow(coordinate1.x + coordinate2.x, 2) + Math.pow(coordinate1.y + coordinate2.y, 2))
