@@ -253,7 +253,7 @@ export default class ChartEvent implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed && this._startScrollCoordinate !== null) {
             const yAxis = pane?.getAxisComponent() as YAxis
-            if (this._prevYAxisExtremum !== null && !yAxis.getAutoCalcTickFlag()) {
+            if (this._prevYAxisExtremum !== null && !yAxis.getAutoCalcTickFlag() && yAxis.getScrollZoomEnabled()) {
               const { min, max, range } = this._prevYAxisExtremum
               let distance: number
               if (yAxis?.isReverse() ?? false) {
@@ -285,10 +285,13 @@ export default class ChartEvent implements EventHandler {
         case WidgetNameConstants.XAXIS: {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
-            const scale = this._xAxisStartScaleDistance / event.pageX
-            const zoomScale = (scale - this._xAxisScale) * 10
-            this._xAxisScale = scale
-            this._chart.getChartStore().getTimeScaleStore().zoom(zoomScale, this._xAxisStartScaleCoordinate ?? undefined)
+            const xAxis = pane?.getAxisComponent()
+            if (xAxis?.getScrollZoomEnabled() ?? true) {
+              const scale = this._xAxisStartScaleDistance / event.pageX
+              const zoomScale = (scale - this._xAxisScale) * 10
+              this._xAxisScale = scale
+              this._chart.getChartStore().getTimeScaleStore().zoom(zoomScale, this._xAxisStartScaleCoordinate ?? undefined)
+            }
           } else {
             this._chart.updatePane(UpdateLevel.Overlay)
           }
@@ -297,7 +300,8 @@ export default class ChartEvent implements EventHandler {
         case WidgetNameConstants.YAXIS: {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
-            if (this._prevYAxisExtremum !== null) {
+            const yAxis = pane?.getAxisComponent() as YAxis
+            if (this._prevYAxisExtremum !== null && yAxis.getScrollZoomEnabled()) {
               const { min, max, range } = this._prevYAxisExtremum
               const scale = event.pageY / this._yAxisStartScaleDistance
               const newRange = range * scale

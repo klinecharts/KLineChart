@@ -52,11 +52,6 @@ export default class ChartStore {
   private _locale: string = defaultLocale
 
   /**
-   * vertically scrolling
-   */
-  private _yScrolling: boolean = true
-
-  /**
    * Price and volume precision
    */
   private _precision: Precision = { price: 2, volume: 0 }
@@ -126,19 +121,16 @@ export default class ChartStore {
 
   setOptions (options?: Options): ChartStore {
     if (options !== undefined) {
-      const { locale, yScrolling, timezone, styles, customApi } = options
+      const { locale, timezone, styles, customApi } = options
       if (locale !== undefined) {
         this._locale = locale
       }
       if (timezone !== undefined) {
         this._timeScaleStore.setTimezone(timezone)
       }
-      if (yScrolling !== undefined) {
-        this._yScrolling = yScrolling
-      }
       if (styles !== undefined) {
         if (isString(styles)) {
-          merge(this._styles, getStyles(styles as string))
+          merge(this._styles, getStyles(styles))
         } else {
           merge(this._styles, styles)
         }
@@ -156,10 +148,6 @@ export default class ChartStore {
 
   getLocale (): string {
     return this._locale
-  }
-
-  getYScrolling (): boolean {
-    return this._yScrolling
   }
 
   getCustomApi (): CustomApi {
@@ -189,7 +177,7 @@ export default class ChartStore {
       this._timeScaleStore.setLoading(false)
       this._timeScaleStore.setMore(more ?? true)
       const isFirstAdd = this._dataList.length === 0
-      this._dataList = (data as KLineData[]).concat(this._dataList)
+      this._dataList = (data).concat(this._dataList)
       if (isFirstAdd) {
         this._timeScaleStore.resetOffsetRightDistance()
       }
@@ -197,14 +185,14 @@ export default class ChartStore {
     } else {
       const dataSize = this._dataList.length
       if (pos >= dataSize) {
-        this._dataList.push(data as KLineData)
+        this._dataList.push(data)
         let offsetRightBarCount = this._timeScaleStore.getOffsetRightBarCount()
         if (offsetRightBarCount < 0) {
           this._timeScaleStore.setOffsetRightBarCount(--offsetRightBarCount)
         }
         this._timeScaleStore.adjustVisibleRange()
       } else {
-        this._dataList[pos] = data as KLineData
+        this._dataList[pos] = data
         this.adjustVisibleDataList()
       }
     }

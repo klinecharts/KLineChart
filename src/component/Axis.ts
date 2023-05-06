@@ -67,9 +67,12 @@ export default abstract class AxisImp {
     return this._ticks
   }
 
+  getScrollZoomEnabled (): boolean {
+    return this.getParent().getOptions().axisOptions.scrollZoomEnabled
+  }
+
   setExtremum (extremum: AxisExtremum): void {
-    const canYScroll = this.getParent().getChart().getChartStore().getYScrolling()
-    if (canYScroll) this._autoCalcTickFlag = false
+    this._autoCalcTickFlag = false
     this._extremum = extremum
   }
 

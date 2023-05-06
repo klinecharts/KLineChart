@@ -832,7 +832,6 @@ export interface Locales {
 export interface Options {
   locale?: string
   timezone?: string
-  yScrolling?: boolean
   styles?: string | DeepPartial<Styles>
   customApi?: Partial<CustomApi>
 }

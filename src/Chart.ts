@@ -29,7 +29,7 @@ import VisibleRange from './common/VisibleRange'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
-import { isString, isArray } from './common/utils/typeChecks'
+import { isString, isArray, isValid } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
 import { formatValue } from './common/utils/format'
 import { binarySearchNearest } from './common/utils/number'
@@ -68,8 +68,6 @@ export interface Chart {
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
   setLocale: (locale: string) => void
   getLocale: () => string
-  setYScrolling: (locale: boolean) => void
-  getYScrolling: () => boolean
   setStyles: (styles: string | DeepPartial<Styles>) => void
   getStyles: () => Styles
   setCustomApi: (customApi: Partial<CustomApi>) => void
@@ -389,9 +387,9 @@ export default class ChartImp implements Chart {
     this._chartStore.setOptions({ styles })
     let realStyles: Nullable<DeepPartial<Styles>>
     if (isString(styles)) {
-      realStyles = getExtensionStyles(styles as string)
+      realStyles = getExtensionStyles(styles)
     } else {
-      realStyles = styles as DeepPartial<Styles>
+      realStyles = styles
     }
     if (realStyles?.yAxis?.type !== undefined) {
       this.getPaneById(PaneIdConstants.CANDLE)?.getAxisComponent().setAutoCalcTickFlag(true)
@@ -410,15 +408,6 @@ export default class ChartImp implements Chart {
 
   getLocale (): string {
     return this._chartStore.getLocale()
-  }
-
-  setYScrolling (yScrolling: boolean): void {
-    this._chartStore.setOptions({ yScrolling })
-    this.adjustPaneViewport(true, true, true, true, true)
-  }
-
-  getYScrolling (): boolean {
-    return this._chartStore.getYScrolling()
   }
 
   setCustomApi (customApi: Partial<CustomApi>): void {
@@ -525,14 +514,14 @@ export default class ChartImp implements Chart {
   }
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>, callback?: () => void): Nullable<string> {
-    const indicator: IndicatorCreate = isString(value) ? { name: value as string } : value as IndicatorCreate
+    const indicator: IndicatorCreate = isString(value) ? { name: value } : value
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
     }
 
     let paneId: string
-    if (paneOptions?.id !== undefined && this._panes.has(paneOptions.id)) {
+    if (isValid<string>(paneOptions?.id) && this._panes.has(paneOptions.id)) {
       paneId = paneOptions.id
       this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).then(_ => {
         this._setPaneOptions(paneOptions, this._panes.get(paneId)?.getAxisComponent().buildTicks(true) ?? false)
@@ -544,7 +533,7 @@ export default class ChartImp implements Chart {
       topPane.setBottomPane(pane)
       const height = paneOptions?.height ?? PANE_DEFAULT_HEIGHT
       pane.setBounding({ height })
-      if (paneOptions !== undefined && paneOptions !== null) {
+      if (isValid<PaneOptions>(paneOptions)) {
         pane.setOptions(paneOptions)
       }
       this._panes.set(paneId, pane)
@@ -595,7 +584,7 @@ export default class ChartImp implements Chart {
   }
 
   createOverlay (value: string | OverlayCreate, paneId?: string): Nullable<string> {
-    const overlay: OverlayCreate = isString(value) ? { name: value as string } : value as OverlayCreate
+    const overlay: OverlayCreate = isString(value) ? { name: value } : value
     if (getOverlayClass(overlay.name) === null) {
       logWarn('createOverlay', 'value', 'overlay not supported, you may need to use registerOverlay to add one!!!')
       return null
@@ -624,9 +613,9 @@ export default class ChartImp implements Chart {
     let overlayRemove
     if (remove !== undefined) {
       if (isString(remove)) {
-        overlayRemove = { id: remove as string }
+        overlayRemove = { id: remove }
       } else {
-        overlayRemove = remove as OverlayRemove
+        overlayRemove = remove
       }
     }
     this._chartStore.getOverlayStore().removeInstance(overlayRemove)

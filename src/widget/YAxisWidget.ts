@@ -34,13 +34,8 @@ export default class YAxisWidget extends DrawWidget<YAxis> {
 
   constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
     super(rootContainer, pane)
-    setTimeout(() => {
-      const canYScroll = pane.getChart().getChartStore().getYScrolling()
-      if (canYScroll) {
-        this.getContainer().style.cursor = 'ns-resize'
-      }
-      this.addChild(this._overlayYAxisView)
-    }, 50)
+    this.getContainer().style.cursor = 'ns-resize'
+    this.addChild(this._overlayYAxisView)
   }
 
   override getName (): string {
