@@ -533,7 +533,7 @@ export default class ChartImp implements Chart {
     }
 
     let paneId: string
-    if (isValid<string>(paneOptions?.id) && this._panes.has(paneOptions.id)) {
+    if (isValid<PaneOptions>(paneOptions) && isString(paneOptions?.id) && this._panes.has(paneOptions.id)) {
       paneId = paneOptions.id
       this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).then(_ => {
         this._setPaneOptions(paneOptions, this._panes.get(paneId)?.getAxisComponent().buildTicks(true) ?? false)

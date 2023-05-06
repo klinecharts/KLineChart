@@ -68,7 +68,7 @@ export default abstract class AxisImp {
   }
 
   getScrollZoomEnabled (): boolean {
-    return this.getParent().getOptions().axisOptions.scrollZoomEnabled
+    return this.getParent().getOptions().axisOptions.scrollZoomEnabled ?? true
   }
 
   setExtremum (extremum: AxisExtremum): void {

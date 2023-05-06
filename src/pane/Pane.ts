@@ -17,6 +17,8 @@ import Nullable from '../common/Nullable'
 import Updater, { UpdateLevel } from '../common/Updater'
 import Bounding, { getDefaultBounding } from '../common/Bounding'
 
+import { merge } from '../common/utils/typeChecks'
+
 import Axis from '../component/Axis'
 
 import DrawWidget from '../widget/DrawWidget'
@@ -27,7 +29,6 @@ import Chart from '../Chart'
 
 import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
-import { isBoolean, isValid, merge } from '../common/utils/typeChecks'
 
 export interface PaneGap {
   top?: number
