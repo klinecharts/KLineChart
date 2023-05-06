@@ -21,7 +21,7 @@ import { YAxisType, YAxisPosition, CandleType } from '../common/Options'
 import { isValid } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
-import { formatPrecision } from '../common/utils/format'
+import { formatPrecision, formatThousands } from '../common/utils/format'
 
 interface FiguresResult {
   figures: IndicatorFigure[]
@@ -87,14 +87,15 @@ export default class YAxisImp extends AxisImp implements YAxis {
         max = Math.max(max, data.high)
       }
       if (inCandle && isArea) {
-        min = Math.min(min, data[areaValueKey])
-        max = Math.max(max, data[areaValueKey])
+        const value = data[areaValueKey]
+        min = Math.min(min, value)
+        max = Math.max(max, value)
       }
       figuresResultList.forEach(({ figures, result }) => {
         const indicatorData = result[dataIndex] ?? {}
         figures.forEach(figure => {
           const value = indicatorData[figure.key]
-          if (isValid(value)) {
+          if (isValid<number>(value)) {
             min = Math.min(min, value)
             max = Math.max(max, value)
           }
@@ -241,6 +242,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
     const optimalTicks: AxisTick[] = []
     const type = this.getType()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+    const thousandsSeparator = chartStore.getThousandsSeparator()
     let precision = 0
     let shouldFormatBigNumber = false
     if (this.isInCandle()) {
@@ -276,6 +278,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
           break
         }
       }
+      v = formatThousands(v, thousandsSeparator)
       if (y > textHeight && y < height - textHeight && ((validY !== undefined && (Math.abs(validY - y) > textHeight * 2)) || validY === undefined)) {
         optimalTicks.push({ text: v, coord: y, value })
         validY = y

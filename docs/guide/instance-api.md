@@ -87,7 +87,7 @@
 
 ## isScrollEnabled()
 ```typescript
-(enabled: boolean) => void
+() => boolean
 ```
 是否可以拖拽滚动。
 
@@ -97,6 +97,13 @@
 (distance: number) => void
 ```
 设置图表右边可以空出来的间隙。
+
+
+## getOffsetRightDistance()
+```typescript
+() => number
+```
+获取图表右边可以空出来的间隙。
 
 
 ## setLeftMinVisibleBarCount(barCount)
@@ -129,11 +136,11 @@
 
 ## getVisibleRange()
 ```typescript
-() => { from: number, to: number }
+() => { from: number, to: number, realFrom: number, realTo: number }
 ```
 获取可见区间范围。
 
-## applyNewData(dataList, more)
+## applyNewData(dataList, more, callback)
 ```typescript
 (
   dataList：Array<{
@@ -145,15 +152,17 @@
     volume?: number,
     turnover?: number
   }>,
-  more?: boolean
+  more?: boolean,
+  callback?: () => void
 ) => void
 ```
 添加新数据，此方法会清空图表数据，不需要额外调用clearData方法。
 - `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
+- `callback` 成功回调
 
 
-## applyMoreData(dataList, more)
+## applyMoreData(dataList, more, callback)
 ```typescript
 (
   dataList：Array<{
@@ -165,28 +174,34 @@
     volume?: number,
     turnover?: number
   }>,
-  more?: boolean
+  more?: boolean,
+  callback?: () => void
 ) => void
 ```
 添加历史更多数据。
 - `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
+- `callback` 成功回调
 
 
-## updateData(data)
+## updateData(data, callback)
 ```typescript
-(data: {
-  timestamp: number,
-  open: number,
-  close: number,
-  high: number,
-  low: number,
-  volume?: number,
-  turnover?: number
-}) => void
+(
+  data: {
+    timestamp: number,
+    open: number,
+    close: number,
+    high: number,
+    low: number,
+    volume?: number,
+    turnover?: number
+  },
+  callback?: () => void
+) => void
 ```
 更新数据，目前只会匹配当前最后一条数据的时间戳，相同则覆盖，不同则追加。
 - `data` 单条k线数据，数据类型详情可参阅[数据源](./datasource.md)
+- `callback` 成功回调
 
 
 ## getDataList()
@@ -778,6 +793,17 @@ chart.setPaneOptions({
   gap: { top: 0.2, bottom: 0.1 }
 })
 ```
+
+## executeAction(type, data)
+```typescript
+(
+   type: 'onCrosshairChange',
+   data: any => void
+) => void
+```
+执行图表动作
+- `type` 仅支持 'onCrosshairChange'
+- `data` 执行动作需要的数据
 
 
 ## subscribeAction(type, callback)

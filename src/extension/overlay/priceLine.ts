@@ -14,13 +14,15 @@
 
 import { OverlayTemplate } from '../../component/Overlay'
 
+import { formatThousands } from '../../common/utils/format'
+
 const priceLine: OverlayTemplate = {
   name: 'priceLine',
   totalStep: 2,
   needDefaultPointFigure: true,
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
-  createPointFigures: ({ coordinates, bounding, precision, overlay }) => {
+  createPointFigures: ({ coordinates, bounding, precision, overlay, thousandsSeparator }) => {
     const { value = 0 } = (overlay.points)[0]
     return [
       {
@@ -30,7 +32,7 @@ const priceLine: OverlayTemplate = {
       {
         type: 'text',
         ignoreEvent: true,
-        attrs: { x: coordinates[0].x, y: coordinates[0].y, text: value.toFixed(precision.price), baseline: 'bottom' }
+        attrs: { x: coordinates[0].x, y: coordinates[0].y, text: formatThousands(value.toFixed(precision.price), thousandsSeparator), baseline: 'bottom' }
       }
     ]
   }

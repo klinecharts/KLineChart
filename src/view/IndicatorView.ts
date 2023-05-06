@@ -44,12 +44,21 @@ export default class IndicatorView extends CandleBarView {
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
           const defaultStyles = chartStore.getStyles().indicator
+          const upColor = formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string
+          const downColor = formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string
+          const noChangeColor = formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
           return {
             type: CandleType.Ohlc,
             styles: {
-              upColor: formatValue(indicatorStyles, 'ohlc.upColor', defaultStyles.ohlc.upColor) as string,
-              downColor: formatValue(indicatorStyles, 'ohlc.downColor', defaultStyles.ohlc.downColor) as string,
-              noChangeColor: formatValue(indicatorStyles, 'ohlc.noChangeColor', defaultStyles.ohlc.noChangeColor) as string
+              upColor,
+              downColor,
+              noChangeColor,
+              upBorderColor: upColor,
+              downBorderColor: downColor,
+              noChangeBorderColor: noChangeColor,
+              upWickColor: upColor,
+              downWickColor: downColor,
+              noChangeWickColor: noChangeColor
             }
           }
         }
@@ -107,7 +116,7 @@ export default class IndicatorView extends CandleBarView {
               const valueY = yAxis.convertToPixel(value)
               switch (figure.type) {
                 case 'circle': {
-                  if (isValid(value)) {
+                  if (isValid<number>(value)) {
                     this.createFigure(
                       'circle',
                       {
@@ -157,7 +166,7 @@ export default class IndicatorView extends CandleBarView {
                 }
                 case 'line': {
                   let innerFigureStyle: Nullable<IndicatorFigureStyle> = null
-                  if (isValid(value)) {
+                  if (isValid<number>(value)) {
                     innerFigureStyle = figureStyles
                     const coordinate = { x, y: valueY }
                     const prevFigureStyles = lineFigureStyles[count]

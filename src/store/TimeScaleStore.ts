@@ -16,7 +16,7 @@ import Nullable from '../common/Nullable'
 import Coordinate from '../common/Coordinate'
 import KLineData from '../common/KLineData'
 import BarSpace from '../common/BarSpace'
-import VisibleRange from '../common/VisibleRange'
+import VisibleRange, { getDefaultVisibleRange } from '../common/VisibleRange'
 import LoadMoreCallback from '../common/LoadMoreCallback'
 import { ActionType } from '../common/Action'
 
@@ -113,7 +113,7 @@ export default class TimeScaleStore {
   /**
    * Start and end points of visible area data index
    */
-  private _visibleRange: VisibleRange = { from: 0, to: 0 }
+  private _visibleRange: VisibleRange = getDefaultVisibleRange()
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
@@ -152,8 +152,9 @@ export default class TimeScaleStore {
     if (from < 0) {
       from = 0
     }
-    this._visibleRange = { from, to }
-    this._chartStore.getActionStore().execute(ActionType.OnVisibleRangeChange, { from, to })
+    const realFrom = this._offsetRightBarCount > 0 ? Math.round(dataCount + this._offsetRightBarCount - barCount) - 1 : from
+    this._visibleRange = { from, to, realFrom, realTo: to }
+    this._chartStore.getActionStore().execute(ActionType.OnVisibleRangeChange, this._visibleRange)
     this._chartStore.adjustVisibleDataList()
     // More processing and loading, more loading if there are callback methods and no data is being loaded
     if (from === 0 && this._more && !this._loading && this._loadMoreCallback !== null) {
@@ -255,8 +256,12 @@ export default class TimeScaleStore {
     this.setOffsetRightDistance(this._offsetRightDistance)
   }
 
-  getOffsetRightDistance (): number {
+  getInitialOffsetRightDistance (): number {
     return this._offsetRightDistance
+  }
+
+  getOffsetRightDistance (): number {
+    return Math.max(0, this._offsetRightBarCount * this._barSpace)
   }
 
   getOffsetRightBarCount (): number {
@@ -374,6 +379,6 @@ export default class TimeScaleStore {
   clear (): void {
     this._more = true
     this._loading = true
-    this._visibleRange = { from: 0, to: 0 }
+    this._visibleRange = getDefaultVisibleRange()
   }
 }

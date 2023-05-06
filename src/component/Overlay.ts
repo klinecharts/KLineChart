@@ -72,6 +72,7 @@ export interface OverlayCreateFiguresCallbackParams {
   bounding: Bounding
   barSpace: BarSpace
   precision: Precision
+  thousandsSeparator: string
   dateTimeFormat: Intl.DateTimeFormat
   defaultStyles: OverlayStyle
   xAxis: Nullable<XAxis>
@@ -79,6 +80,8 @@ export interface OverlayCreateFiguresCallbackParams {
 }
 
 export interface OverlayEvent extends Partial<MouseTouchEvent> {
+  figureKey?: string
+  figureIndex?: number
   overlay: Overlay
 }
 
@@ -255,6 +258,10 @@ export type OverlayConstructor = new () => OverlayImp
 
 const OVERLAY_DRAW_STEP_START = 1
 const OVERLAY_DRAW_STEP_FINISHED = -1
+
+export const OVERLAY_ID_PREFIX = 'overlay_'
+
+export const OVERLAY_FIGURE_KEY_PREFIX = 'overlay_figure_'
 
 export default abstract class OverlayImp implements Overlay {
   id: string

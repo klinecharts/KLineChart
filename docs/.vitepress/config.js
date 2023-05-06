@@ -1,7 +1,5 @@
 import { defineConfig } from 'vitepress'
 
-import path from 'path'
-
 import pkg from '../../package.json'
 
 // https://vitepress.dev/reference/site-config
@@ -11,18 +9,17 @@ export default defineConfig({
   description: '💹📈 可高度自定义的专业级轻量金融图表。',
   outDir: '../website',
   lastUpdated: true,
+  markdown: {
+    theme: {
+      dark: 'material-theme-palenight',
+      light: 'github-light'
+    }  
+  },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/images/logo.svg' }],
   ],
   vue: {
     reactivityTransform: true,
-  },
-  vite: {
-    resolve: {
-      alias: {
-        './VPNavBarSearch.vue': path.join(__dirname, 'components', 'search', 'NavBarSearch.vue')
-      }
-    }
   },
   transformHead: () => {
     return [
@@ -63,13 +60,13 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: '什么是KLineChart？', link: '/guide/what-is-klinechart' },
-                { text: '快速开始', link: '/guide/getting-started' }
               ]
             },
             {
               text: '基础篇',
               collapsed: false,
               items: [
+                { text: '快速开始', link: '/guide/getting-started' },
                 { text: '样式配置', link: '/guide/styles' },
                 { text: '数据', link: '/guide/datasource' },
                 { text: '环境要求', link: '/guide/environment' },
@@ -149,13 +146,13 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: 'What is KLineChart?', link: '/en-US/guide/what-is-klinechart' },
-                { text: 'Getting Started', link: '/en-US/guide/getting-started' }
               ]
             },
             {
               text: 'Basic',
               collapsed: false,
               items: [
+                { text: 'Getting Started', link: '/en-US/guide/getting-started' },
                 { text: 'Style Configuration', link: '/en-US/guide/styles' },
                 { text: 'Datasource', link: '/en-US/guide/datasource' },
                 { text: 'Environment', link: '/en-US/guide/environment' },
@@ -205,8 +202,44 @@ export default defineConfig({
     },
   },
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
     logo: '/images/logo.svg',
+    search: {
+      provider: 'local',
+      options: {
+        translations: {
+          button: {
+            buttonText: '搜索文档',
+            buttonAriaLabel: '搜索文档'
+          },
+          modal: {
+            noResultsText: '无法找到相关结果',
+            resetButtonTitle: '清除查询条件',
+            footer: {
+              selectText: '选择',
+              navigateText: '切换'
+            }
+          }
+        },
+        locales: {
+          'en-US': {
+            translations: {
+              button: {
+                buttonText: 'Search',
+                buttonAriaLabel: 'Search'
+              },
+              modal: {
+                noResultsText: 'No results for',
+                resetButtonTitle: 'Reset search',
+                footer: {
+                  selectText: 'to select',
+                  navigateText: 'to navigate'
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     footer: {
       message: 'Released under the Apache License V2.',
       copyright: 'Copyright © 2018-present liihuu'

@@ -17,13 +17,15 @@ import { OverlayTemplate } from '../../component/Overlay'
 import { LineAttrs } from '../figure/line'
 import { TextAttrs } from '../figure/text'
 
+import { formatThousands } from '../../common/utils/format'
+
 const fibonacciLine: OverlayTemplate = {
   name: 'fibonacciLine',
   totalStep: 3,
   needDefaultPointFigure: true,
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
-  createPointFigures: ({ coordinates, bounding, overlay, precision }) => {
+  createPointFigures: ({ coordinates, bounding, overlay, precision, thousandsSeparator }) => {
     const points = overlay.points
     if (coordinates.length > 0) {
       const lines: LineAttrs[] = []
@@ -36,7 +38,7 @@ const fibonacciLine: OverlayTemplate = {
         const valueDif = points[0].value - points[1].value
         percents.forEach(percent => {
           const y = coordinates[1].y + yDif * percent
-          const value = ((points[1].value ?? 0) + valueDif * percent).toFixed(precision.price)
+          const value = formatThousands(((points[1].value ?? 0) + valueDif * percent).toFixed(precision.price), thousandsSeparator)
           lines.push({ coordinates: [{ x: startX, y }, { x: endX, y }] })
           texts.push({
             x: startX,

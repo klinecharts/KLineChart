@@ -18,7 +18,7 @@ import View from './View'
 
 import YAxis from '../component/YAxis'
 
-import { formatPrecision } from '../common/utils/format'
+import { formatPrecision, formatThousands } from '../common/utils/format'
 
 export default class CandleLastPriceLabelView extends View {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -54,7 +54,7 @@ export default class CandleLastPriceLabelView extends View {
         } else {
           text = formatPrecision(close, precision.price)
         }
-
+        text = formatThousands(text, chartStore.getThousandsSeparator())
         let x: number
         let textAlgin: CanvasTextAlign
         if (yAxis.isFromZero()) {

@@ -17,7 +17,7 @@ import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
 import { EventHandler } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
-import { CandleType, ChangeColor, RectStyle, PolygonType } from '../common/Options'
+import { CandleType, CandleBarColor, RectStyle, PolygonType } from '../common/Options'
 
 import ChartStore from '../store/ChartStore'
 
@@ -32,7 +32,7 @@ import { PaneIdConstants } from '../pane/Pane'
 
 export interface CandleBarOptions {
   type: Exclude<CandleType, CandleType.Area>
-  styles: ChangeColor
+  styles: CandleBarColor
 }
 
 export default class CandleBarView extends ChildrenView {
@@ -75,12 +75,20 @@ export default class CandleBarView extends ChildrenView {
     const { halfGapBar, gapBar } = barSpace
     const { type, styles } = candleBarOptions
     let color: string
+    let borderColor: string
+    let wickColor: string
     if (close > open) {
       color = styles.upColor
+      borderColor = styles.upBorderColor
+      wickColor = styles.upWickColor
     } else if (close < open) {
       color = styles.downColor
+      borderColor = styles.downBorderColor
+      wickColor = styles.downWickColor
     } else {
       color = styles.noChangeColor
+      borderColor = styles.noChangeBorderColor
+      wickColor = styles.noChangeWickColor
     }
     const openY = axis.convertToPixel(open)
     const closeY = axis.convertToPixel(close)
@@ -103,7 +111,7 @@ export default class CandleBarView extends ChildrenView {
           width: 1,
           height: priceY[1] - priceY[0]
         },
-        styles: { color }
+        styles: { color: wickColor }
       })
       if (
         type === CandleType.CandleStroke ||
@@ -113,14 +121,14 @@ export default class CandleBarView extends ChildrenView {
         rects.push({
           name: 'rect',
           attrs: {
-            x: x - halfGapBar + 0.5,
+            x: x - halfGapBar,
             y: priceY[1],
             width: gapBar - 1,
             height: barHeight
           },
           styles: {
             style: PolygonType.Stroke,
-            borderColor: color
+            borderColor
           }
         })
       } else {
@@ -132,7 +140,11 @@ export default class CandleBarView extends ChildrenView {
             width: gapBar,
             height: barHeight
           },
-          styles: { color }
+          styles: {
+            style: PolygonType.StrokeFill,
+            color,
+            borderColor
+          }
         })
       }
       rects.push({
@@ -143,7 +155,7 @@ export default class CandleBarView extends ChildrenView {
           width: 1,
           height: priceY[3] - priceY[2]
         },
-        styles: { color }
+        styles: { color: wickColor }
       })
     } else {
       rects = [

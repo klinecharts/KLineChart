@@ -1,4 +1,16 @@
 /**
+ *       ___           ___                   ___           ___           ___           ___           ___           ___           ___
+ *      /\__\         /\__\      ___        /\__\         /\  \         /\  \         /\__\         /\  \         /\  \         /\  \
+ *     /:/  /        /:/  /     /\  \      /::|  |       /::\  \       /::\  \       /:/  /        /::\  \       /::\  \        \:\  \
+ *    /:/__/        /:/  /      \:\  \    /:|:|  |      /:/\:\  \     /:/\:\  \     /:/__/        /:/\:\  \     /:/\:\  \        \:\  \
+ *   /::\__\____   /:/  /       /::\__\  /:/|:|  |__   /::\~\:\  \   /:/  \:\  \   /::\  \ ___   /::\~\:\  \   /::\~\:\  \       /::\  \
+ *  /:/\:::::\__\ /:/__/     __/:/\/__/ /:/ |:| /\__\ /:/\:\ \:\__\ /:/__/ \:\__\ /:/\:\  /\__\ /:/\:\ \:\__\ /:/\:\ \:\__\     /:/\:\__\
+ *  \/_|:|~~|~    \:\  \    /\/:/  /    \/__|:|/:/  / \:\~\:\ \/__/ \:\  \  \/__/ \/__\:\/:/  / \/__\:\/:/  / \/_|::\/:/  /    /:/  \/__/
+ *     |:|  |      \:\  \   \::/__/         |:/:/  /   \:\ \:\__\    \:\  \            \::/  /       \::/  /     |:|::/  /    /:/  /
+ *     |:|  |       \:\  \   \:\__\         |::/  /     \:\ \/__/     \:\  \           /:/  /        /:/  /      |:|\/__/     \/__/
+ *     |:|  |        \:\__\   \/__/         /:/  /       \:\__\        \:\__\         /:/  /        /:/  /       |:|  |
+ *      \|__|         \/__/                 \/__/         \/__/         \/__/         \/__/         \/__/         \|__|
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,12 +51,14 @@ import { registerLocale, getSupportedLocales } from './extension/i18n/index'
 import { registerOverlay, getSupportedOverlays } from './extension/overlay/index'
 import { registerStyles } from './extension/styles/index'
 
+import Nullable from './common/Nullable'
+
 import { logError, logTag, logWarn } from './common/utils/logger'
 
 import {
   clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
 } from './common/utils/typeChecks'
-import { formatValue, formatPrecision, formatBigNumber, formatDate } from './common/utils/format'
+import { formatValue, formatPrecision, formatBigNumber, formatDate, formatThousands } from './common/utils/format'
 
 const instances: {[id: string]: Chart} = {}
 let chartBaseId = 1
@@ -66,9 +80,9 @@ function version (): string {
 function init (ds: HTMLElement | string, options?: Options): Chart | null {
   logTag()
   const errorMessage = 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
-  let dom
+  let dom: Nullable<HTMLElement>
   if (isString(ds)) {
-    dom = document.getElementById(ds as string)
+    dom = document.getElementById(ds)
   } else {
     dom = ds
   }
@@ -76,6 +90,7 @@ function init (ds: HTMLElement | string, options?: Options): Chart | null {
     logError('', '', errorMessage)
     return null
   }
+  // @ts-expect-error
   let chart = instances[dom.chartId ?? '']
   if (chart !== undefined) {
     logWarn('', '', 'The chart has been initialized on the dom！！！')
@@ -85,6 +100,7 @@ function init (ds: HTMLElement | string, options?: Options): Chart | null {
   chart = new ChartImp(dom, options)
   // @ts-expect-error
   chart.id = id
+  // @ts-expect-error
   dom.chartId = id
   instances[id] = chart
   return chart
@@ -95,9 +111,9 @@ function init (ds: HTMLElement | string, options?: Options): Chart | null {
  * @param dcs
  */
 function dispose (dcs: HTMLElement | Chart | string): void {
-  let id: string | null
+  let id: Nullable<string>
   if (isString(dcs)) {
-    const dom = document.getElementById(dcs as string)
+    const dom = document.getElementById(dcs)
     id = dom?.getAttribute('chartId') ?? null
   } else if (dcs instanceof ChartImp) {
     // @ts-expect-error
@@ -127,6 +143,7 @@ const utils = {
   formatPrecision,
   formatBigNumber,
   formatDate,
+  formatThousands,
   getLinearSlopeIntercept,
   getLinearYFromSlopeIntercept,
   getLinearYFromCoordinates,

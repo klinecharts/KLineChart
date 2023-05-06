@@ -76,6 +76,7 @@ export interface Chart {
   setTimezone: (timezone: string) => void
   getTimezone: () => string
   setOffsetRightDistance: (space: number) => void
+  getOffsetRightDistance: () => number
   setLeftMinVisibleBarCount: (barCount: number) => void
   setRightMinVisibleBarCount: (barCount: number) => void
   setBarSpace: (space: number) => void
@@ -83,9 +84,9 @@ export interface Chart {
   getVisibleRange: () => VisibleRange
   clearData: () => void
   getDataList: () => KLineData[]
-  applyNewData: (dataList: KLineData[], more?: boolean) => void
-  applyMoreData: (dataList: KLineData[], more?: boolean) => void
-  updateData: (data: KLineData) => void
+  applyNewData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
+  applyMoreData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
+  updateData: (data: KLineData, callback?: () => void) => void
   loadMore: (cb: LoadMoreCallback) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions, callback?: () => void) => Nullable<string>
   overrideIndicator: (override: IndicatorCreate, paneId?: string, callback?: () => void) => void
@@ -109,6 +110,7 @@ export interface Chart {
   zoomAtTimestamp: (scale: number, timestamp: number, animationDuration?: number) => void
   convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder) => Partial<Coordinate> | Array<Partial<Coordinate>>
   convertFromPixel: (coordinates: Array<Partial<Coordinate>>, finder: ConvertFinder) => Partial<Point> | Array<Partial<Point>>
+  executeAction: (type: ActionType, data: any) => void
   subscribeAction: (type: ActionType, callback: ActionCallback) => void
   unsubscribeAction: (type: ActionType, callback?: ActionCallback) => void
   getConvertPictureUrl: (includeOverlay?: boolean, type?: string, backgroundColor?: string) => string
@@ -437,6 +439,10 @@ export default class ChartImp implements Chart {
     this._chartStore.getTimeScaleStore().setOffsetRightDistance(space, true)
   }
 
+  getOffsetRightDistance (): number {
+    return this._chartStore.getTimeScaleStore().getOffsetRightDistance()
+  }
+
   setLeftMinVisibleBarCount (barCount: number): void {
     if (barCount > 0) {
       this._chartStore.getTimeScaleStore().setLeftMinVisibleBarCount(Math.ceil(barCount))
@@ -473,23 +479,28 @@ export default class ChartImp implements Chart {
     return this._chartStore.getDataList()
   }
 
-  applyNewData (dataList: KLineData[], more?: boolean): void {
+  applyNewData (dataList: KLineData[], more?: boolean, callback?: () => void): void {
     this._chartStore.clearDataList()
-    this.applyMoreData(dataList, more)
+    if (dataList.length === 0) {
+      this.adjustPaneViewport(false, true, true, true)
+    } else {
+      this.applyMoreData(dataList, more, callback)
+    }
   }
 
-  applyMoreData (dataList: KLineData[], more?: boolean): void {
+  applyMoreData (dataList: KLineData[], more?: boolean, callback?: () => void): void {
     this._chartStore.addData(dataList, 0, more)
     if (dataList.length > 0) {
       this._chartStore.getIndicatorStore().calcInstance().then(
         _ => {
           this.adjustPaneViewport(false, true, true, true)
+          callback?.()
         }
       ).catch(_ => {})
     }
   }
 
-  updateData (data: KLineData): void {
+  updateData (data: KLineData, callback?: () => void): void {
     const dataList = this._chartStore.getDataList()
     const dataCount = dataList.length
     // Determine where individual data should be added
@@ -504,6 +515,7 @@ export default class ChartImp implements Chart {
       this._chartStore.getIndicatorStore().calcInstance().then(
         _ => {
           this.adjustPaneViewport(false, true, true, true)
+          callback?.()
         }
       ).catch(_ => {})
     }
@@ -666,7 +678,7 @@ export default class ChartImp implements Chart {
   scrollToRealTime (animationDuration?: number): void {
     const timeScaleStore = this._chartStore.getTimeScaleStore()
     const { bar: barSpace } = timeScaleStore.getBarSpace()
-    const difBarCount = timeScaleStore.getOffsetRightBarCount() - timeScaleStore.getOffsetRightDistance() / barSpace
+    const difBarCount = timeScaleStore.getOffsetRightBarCount() - timeScaleStore.getInitialOffsetRightDistance() / barSpace
     const distance = difBarCount * barSpace
     this.scrollByDistance(distance, animationDuration)
   }
@@ -775,6 +787,17 @@ export default class ChartImp implements Chart {
       }
     }
     return isArray(coordinates) ? points : (points[0] ?? {})
+  }
+
+  executeAction (type: ActionType, data: any): void {
+    switch (type) {
+      case ActionType.OnCrosshairChange: {
+        const crosshair = { ...data }
+        crosshair.paneId = crosshair.paneId ?? PaneIdConstants.CANDLE
+        this._chartStore.getCrosshairStore().set(crosshair)
+        break
+      }
+    }
   }
 
   subscribeAction (type: ActionType, callback: ActionCallback): void {

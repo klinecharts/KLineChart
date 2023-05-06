@@ -17,7 +17,9 @@ type DeepRequired<T> = {
     ? Array<DeepRequired<U>>
     : T[P] extends ReadonlyArray<infer X>
       ? ReadonlyArray<DeepRequired<X>>
-      : DeepRequired<T[P]>
+      : T[P] extends object
+        ? DeepRequired<T[P]>
+        : T[P]
 }
 
 export default DeepRequired

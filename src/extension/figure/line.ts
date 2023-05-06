@@ -16,9 +16,7 @@ import Nullable from '../../common/Nullable'
 import Coordinate from '../../common/Coordinate'
 import { SmoothLineStyle, LineType } from '../../common/Options'
 
-import { FigureTemplate } from '../../component/Figure'
-
-const DEVIATION = 2
+import { FigureTemplate, DEVIATION } from '../../component/Figure'
 
 function getDistance (coordinate1: Coordinate, coordinate2: Coordinate): number {
   return Math.sqrt(Math.pow(coordinate1.x + coordinate2.x, 2) + Math.pow(coordinate1.y + coordinate2.y, 2))
@@ -53,15 +51,16 @@ export function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs):
         ) {
           return true
         }
-      }
-      const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate) as number[]
-      const y = getLinearYFromSlopeIntercept(kb, coordinate)
-      const yDif = Math.abs(y - coordinate.y)
-      if (
-        Math.abs(prevCoordinate.x - coordinate.x) + Math.abs(currentCoordinate.x - coordinate.x) - Math.abs(prevCoordinate.x - currentCoordinate.x) < DEVIATION + DEVIATION &&
-        yDif * yDif / (kb[0] * kb[0] + 1) < DEVIATION * DEVIATION
-      ) {
-        return true
+      } else {
+        const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate) as number[]
+        const y = getLinearYFromSlopeIntercept(kb, coordinate)
+        const yDif = Math.abs(y - coordinate.y)
+        if (
+          Math.abs(prevCoordinate.x - coordinate.x) + Math.abs(currentCoordinate.x - coordinate.x) - Math.abs(prevCoordinate.x - currentCoordinate.x) < DEVIATION + DEVIATION &&
+          yDif * yDif / (kb[0] * kb[0] + 1) < DEVIATION * DEVIATION
+        ) {
+          return true
+        }
       }
     }
   }

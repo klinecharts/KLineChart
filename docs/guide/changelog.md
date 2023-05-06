@@ -1,4 +1,33 @@
 # 📠 更新日志
+## 9.2.2
+`2023-05-04`
++ 🐞 修复基础图形`line`事件检查可能导致错误问题。
++ 💄 优化类型检查。
+
+
+## 9.2.1
+`2023-04-27`
++ 💄 优化默认样式，`#EF5350`变更为`#F92855`，`#26A69A`变更为`#2DC08E`。
++ 💄 优化typescript声明。
+
+## 9.2.0
+`2023-04-24`
++ 🆕 实例API新增`getOffsetRightDistance`和`executeAction`。
++ 🆕 实例API`applyNewData`、`applyMoreData`和`updateData`新增成功回调入参`callback`。
++ 🆕 支持千分符显示。
++ 🆕 样式配置新增`candle.bar.upBorderColor`、`candle.bar.downBorderColor`、`candle.bar.noChangeBorderColor`、`candle.bar.upWickColor`、`candle.bar.downWickColor`、`candle.bar.noChangeWickColor`、`candle.tooltip.rect.position`和`candle.tooltip.rect.offsetBottom`。
++ 🆕 所有`visibleRange`新增`realFrom`和`realTo`。
++ 💄 优化API，`klinecharts.utils.isValid`和`klinecharts.utils.formatBigNumber`。
++ 💄 优化开发环境下，日志输出。
+
+## 9.1.3
+`2023-04-15`
++ 🐞 修复图表api `applyNewData` 入参是空数组时不刷新问题。
++ 🐞 修复无数据时y轴上十字光标文字不显示问题。
++ 💄 优化面积图显示。
++ 💄 优化覆盖物事件回调参数，新增`figureKey`和`figureIndex`。
++ 💄 优化typescript覆盖物样式类型，和基础类型`DeepPartial`, `DeepRequired`。
+
 ## 9.1.2
 `2023-04-10`
 + 🐞 修复内置基础图形`line`触发事件不准确问题。

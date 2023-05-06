@@ -1,4 +1,32 @@
 # 📠 Change Log
+## 9.2.2
+`2023-05-04`
++ 🐞 Fix figure `line` check event error.
++ 💄 Optimize type check.
+
+## 9.2.1
+`2023-04-27`
++ 💄 Optimize the default style by changing `#EF5350` to `#F92855` and `#26A69A` to `#2DC08E`.
++ 💄 Optimize typescript declarations.
+
+## 9.2.0
+`2023-04-24`
++ 🆕 Add instance API `getOffsetRightDistance` and `executeAction`.
++ 🆕 Add success callback for instance API `applyNewData`, `applyMoreData` and `updateData`.
++ 🆕 Support the display of thousands.
++ 🆕 Add style configuration `candle.bar.upBorderColor`, `candle.bar.downBorderColor`, `candle.bar.noChangeBorderColor`, `candle.bar.upWickColor`, `candle.bar.downWickColor`, `candle.bar.noChangeWickColor`, `candle.tooltip.rect.position` and `candle.tooltip.rect.offsetBottom`.
++ 🆕 Add `realFrom` and `realTo` to all `visibleRange`.
++ 💄 Optimize API, `klinecharts.utils.isValid` and `klinecharts.utils.formatBigNumber`.
++ 💄 Optimize the log output in the development environment.
+
+## 9.1.3
+`2023-04-15`
++ 🐞 Fix the issue of not refreshing when the input parameter of the chart API `applyNewData` is an empty array.
++ 🐞 Fix the issue of cross cursor text not displaying on the y-axis when there is no data.
++ 💄 Optimize the display of area chart.
++ 💄 Optimize coverage event callback parameters and add `figureKey` and `figureIndex`.
++ 💄 Optimize typescript overlay style types, as well as base types `DeepPartial` and `DeepRequired`.
+
 ## 9.1.2
 `2023-04-10`
 + 🐞 Fix the issue of inaccurate triggering events for the built-in figure `line`.

@@ -26,7 +26,7 @@ import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureS
 
 import { PaneIdConstants } from '../pane/Pane'
 
-import { formatPrecision } from '../common/utils/format'
+import { formatPrecision, formatThousands } from '../common/utils/format'
 import { isValid, isObject } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 
@@ -56,11 +56,12 @@ export default class IndicatorTooltipView extends View<YAxis> {
     if (crosshair.kLineData !== undefined) {
       const bounding = widget.getBounding()
       const customApi = chartStore.getCustomApi()
+      const thousandsSeparator = chartStore.getThousandsSeparator()
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
       const activeIconInfo = chartStore.getTooltipStore().getActiveIconInfo()
       const defaultStyles = chartStore.getStyles().indicator
       this.drawIndicatorTooltip(
-        ctx, pane.getId(), chartStore.getDataList(), crosshair, activeIconInfo, indicators, customApi, bounding, defaultStyles
+        ctx, pane.getId(), chartStore.getDataList(), crosshair, activeIconInfo, indicators, customApi, thousandsSeparator, bounding, defaultStyles
       )
     }
   }
@@ -73,6 +74,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     activeTooltipIconInfo: Nullable<TooltipIconInfo>,
     indicators: Map<string, IndicatorImp>,
     customApi: CustomApi,
+    formatThousands: string,
     bounding: Bounding,
     styles: IndicatorStyle,
     top?: number
@@ -85,7 +87,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       let y = top ?? 0
       let prevRowHeight = 0
       indicators.forEach(indicator => {
-        const { name, calcParamsText, values, icons } = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, styles)
+        const { name, calcParamsText, values, icons } = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, formatThousands, styles)
         const nameValid = name.length > 0
         const valuesValid = values.length > 0
         if (nameValid || valuesValid) {
@@ -283,6 +285,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     crosshair: Crosshair,
     indicator: Indicator,
     customApi: CustomApi,
+    thousandsSeparator: string,
     styles: IndicatorStyle
   ): IndicatorTooltipData {
     const tooltipStyles = styles.tooltip
@@ -311,7 +314,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
               value = customApi.formatBigNumber(value)
             }
           }
-          values.push({ title: { text: figure.title, color }, value: { text: value ?? tooltipStyles.defaultValue, color } })
+          values.push({ title: { text: figure.title, color }, value: { text: formatThousands(value ?? tooltipStyles.defaultValue, thousandsSeparator), color } })
         }
       })
       tooltipData.values = values
@@ -346,16 +349,17 @@ export default class IndicatorTooltipView extends View<YAxis> {
         customValues.forEach(data => {
           let title = { text: '', color }
           if (isObject(data.title)) {
-            title = data.title as TooltipDataChild
+            title = data.title
           } else {
-            title.text = data.title as string
+            title.text = data.title
           }
           let value = { text: '', color }
           if (isObject(data.value)) {
-            value = data.value as TooltipDataChild
+            value = data.value
           } else {
-            value.text = data.value as string
+            value.text = data.value
           }
+          value.text = formatThousands(value.text, thousandsSeparator)
           optimizedValues.push({ title, value })
         })
         tooltipData.values = optimizedValues

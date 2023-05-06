@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 export type DeepPartial<T> = {
-	[P in keyof T]?: T[P] extends Array<infer U> ? Array<DeepPartial<U>> : T[P] extends ReadonlyArray<infer X> ? ReadonlyArray<DeepPartial<X>> : DeepPartial<T[P]>;
+	[P in keyof T]?: T[P] extends Array<infer U> ? Array<DeepPartial<U>> : T[P] extends ReadonlyArray<infer X> ? ReadonlyArray<DeepPartial<X>> : T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -206,7 +206,12 @@ export interface CandlePriceMarkStyle {
 	low: CandleHighLowPriceMarkStyle;
 	last: CandleLastPriceMarkStyle;
 }
+declare enum CandleTooltipRectPosition {
+	Fixed = "fixed",
+	Pointer = "pointer"
+}
 export interface CandleTooltipRectStyle extends Omit<RectStyle, "style" | "borderDashedValue" | "borderStyle"> {
+	position: CandleTooltipRectPosition;
 	paddingLeft: number;
 	paddingRight: number;
 	paddingTop: number;
@@ -214,6 +219,7 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, "style" | "borde
 	offsetLeft: number;
 	offsetTop: number;
 	offsetRight: number;
+	offsetBottom: number;
 }
 export interface CandleTooltipCustomCallbackData {
 	prev: Nullable<KLineData>;
@@ -233,9 +239,17 @@ export declare enum CandleType {
 	Ohlc = "ohlc",
 	Area = "area"
 }
+export interface CandleBarColor extends ChangeColor {
+	upBorderColor: string;
+	downBorderColor: string;
+	noChangeBorderColor: string;
+	upWickColor: string;
+	downWickColor: string;
+	noChangeWickColor: string;
+}
 export interface CandleStyle {
 	type: CandleType;
-	bar: ChangeColor;
+	bar: CandleBarColor;
 	area: CandleAreaStyle;
 	priceMark: CandlePriceMarkStyle;
 	tooltip: CandleTooltipStyle;
@@ -317,6 +331,7 @@ export interface OverlayStyle {
 	arc: LineStyle;
 	text: TextStyle;
 	rectText: RectTextStyle;
+	[key: string]: any;
 }
 export interface SeparatorStyle {
 	size: number;
@@ -358,6 +373,7 @@ export interface Options {
 	timezone?: string;
 	styles?: string | DeepPartial<Styles>;
 	customApi?: Partial<CustomApi>;
+	thousandsSeparator?: string;
 }
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -477,8 +493,10 @@ export interface Precision {
  * limitations under the License.
  */
 export interface VisibleRange {
-	from: number;
-	to: number;
+	readonly from: number;
+	readonly to: number;
+	readonly realFrom: number;
+	readonly realTo: number;
 }
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -697,12 +715,15 @@ export interface OverlayCreateFiguresCallbackParams {
 	bounding: Bounding;
 	barSpace: BarSpace;
 	precision: Precision;
+	thousandsSeparator: string;
 	dateTimeFormat: Intl.DateTimeFormat;
 	defaultStyles: OverlayStyle;
 	xAxis: Nullable<XAxis>;
 	yAxis: Nullable<YAxis>;
 }
 export interface OverlayEvent extends Partial<MouseTouchEvent> {
+	figureKey?: string;
+	figureIndex?: number;
 	overlay: Overlay;
 }
 export type OverlayEventCallback = (event: OverlayEvent) => boolean;
@@ -864,6 +885,7 @@ export interface Chart {
 	setTimezone: (timezone: string) => void;
 	getTimezone: () => string;
 	setOffsetRightDistance: (space: number) => void;
+	getOffsetRightDistance: () => number;
 	setLeftMinVisibleBarCount: (barCount: number) => void;
 	setRightMinVisibleBarCount: (barCount: number) => void;
 	setBarSpace: (space: number) => void;
@@ -871,9 +893,9 @@ export interface Chart {
 	getVisibleRange: () => VisibleRange;
 	clearData: () => void;
 	getDataList: () => KLineData[];
-	applyNewData: (dataList: KLineData[], more?: boolean) => void;
-	applyMoreData: (dataList: KLineData[], more?: boolean) => void;
-	updateData: (data: KLineData) => void;
+	applyNewData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void;
+	applyMoreData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void;
+	updateData: (data: KLineData, callback?: () => void) => void;
 	loadMore: (cb: LoadMoreCallback) => void;
 	createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions, callback?: () => void) => Nullable<string>;
 	overrideIndicator: (override: IndicatorCreate, paneId?: string, callback?: () => void) => void;
@@ -897,6 +919,7 @@ export interface Chart {
 	zoomAtTimestamp: (scale: number, timestamp: number, animationDuration?: number) => void;
 	convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder) => Partial<Coordinate> | Array<Partial<Coordinate>>;
 	convertFromPixel: (coordinates: Array<Partial<Coordinate>>, finder: ConvertFinder) => Partial<Point> | Array<Partial<Point>>;
+	executeAction: (type: ActionType, data: any) => void;
 	subscribeAction: (type: ActionType, callback: ActionCallback) => void;
 	unsubscribeAction: (type: ActionType, callback?: ActionCallback) => void;
 	getConvertPictureUrl: (includeOverlay?: boolean, type?: string, backgroundColor?: string) => string;
@@ -978,13 +1001,14 @@ declare function isArray(value: any): boolean;
 declare function isFunction(value: any): boolean;
 declare function isObject(value: any): boolean;
 declare function isNumber(value: any): boolean;
-declare function isValid(value: any | null): boolean;
+declare function isValid(value: any): boolean;
 declare function isBoolean(value: any): boolean;
 declare function isString(value: any): boolean;
 declare function formatValue(data: unknown, key: string, defaultValue?: unknown): unknown;
 declare function formatDate(dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string;
 declare function formatPrecision(value: string | number, precision?: number): string;
 declare function formatBigNumber(value: string | number): string;
+declare function formatThousands(value: string | number, sign: string): string;
 /**
  * Chart version
  * @return {string}
@@ -1016,6 +1040,7 @@ export declare const utils: {
 	formatPrecision: typeof formatPrecision;
 	formatBigNumber: typeof formatBigNumber;
 	formatDate: typeof formatDate;
+	formatThousands: typeof formatThousands;
 	getLinearSlopeIntercept: typeof getLinearSlopeIntercept;
 	getLinearYFromSlopeIntercept: typeof getLinearYFromSlopeIntercept;
 	getLinearYFromCoordinates: typeof getLinearYFromCoordinates;

@@ -36,7 +36,7 @@ export function merge (target: any, source: any): void {
   }
 }
 
-export function clone (target: any): any {
+export function clone<T> (target: T): T {
   if (!isObject(target) || !isArray(target)) {
     return target
   }
@@ -60,30 +60,30 @@ export function clone (target: any): any {
   return copy
 }
 
-export function isArray (value: any): boolean {
+export function isArray<T = any> (value: any): value is T[] {
   return Object.prototype.toString.call(value) === '[object Array]'
 }
 
-export function isFunction (value: any): boolean {
+export function isFunction<T = (...args: any) => any> (value: any): value is T {
   return typeof value === 'function'
 }
 
-export function isObject (value: any): boolean {
+export function isObject (value: any): value is object {
   return (typeof value === 'object')
 }
 
-export function isNumber (value: any): boolean {
+export function isNumber (value: any): value is number {
   return typeof value === 'number' && !isNaN(value)
 }
 
-export function isValid (value: any | null): boolean {
+export function isValid<T> (value: T | null | undefined): value is T {
   return value !== null && value !== undefined
 }
 
-export function isBoolean (value: any): boolean {
+export function isBoolean (value: any): value is boolean {
   return typeof value === 'boolean'
 }
 
-export function isString (value: any): boolean {
+export function isString (value: any): value is string {
   return typeof value === 'string'
 }

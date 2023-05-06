@@ -18,15 +18,13 @@ import { MouseTouchEvent } from '../common/SyntheticEvent'
 
 import { createId } from '../common/utils/id'
 
-import OverlayImp, { OverlayConstructor, OverlayCreate, OverlayRemove } from '../component/Overlay'
+import OverlayImp, { OVERLAY_ID_PREFIX, OverlayConstructor, OverlayCreate, OverlayRemove } from '../component/Overlay'
 
 import { getOverlayClass } from '../extension/overlay/index'
 
 import ChartStore from './ChartStore'
 
 import { PaneIdConstants } from '../pane/Pane'
-
-const OVERLAY_ID_PREFIX = 'overlay_'
 
 export interface ProgressOverlayInfo {
   paneId: string
@@ -42,6 +40,7 @@ export interface EventOverlayInfo {
   paneId: string
   instance: Nullable<OverlayImp>
   figureType: EventOverlayInfoFigureType
+  figureKey: string
   figureIndex: number
   attrsIndex: number
 }
@@ -63,6 +62,7 @@ export default class OverlayStore {
     paneId: '',
     instance: null,
     figureType: EventOverlayInfoFigureType.None,
+    figureKey: '',
     figureIndex: -1,
     attrsIndex: -1
   }
@@ -74,6 +74,7 @@ export default class OverlayStore {
     paneId: '',
     instance: null,
     figureType: EventOverlayInfoFigureType.None,
+    figureKey: '',
     figureIndex: -1,
     attrsIndex: -1
   }
@@ -85,6 +86,7 @@ export default class OverlayStore {
     paneId: '',
     instance: null,
     figureType: EventOverlayInfoFigureType.None,
+    figureKey: '',
     figureIndex: -1,
     attrsIndex: -1
   }
@@ -308,7 +310,7 @@ export default class OverlayStore {
 
     const updatePaneIds: string[] = []
     if (this._progressInstanceInfo !== null) {
-      const instance = this._progressInstanceInfo.instance
+      const { instance } = this._progressInstanceInfo
       if (
         overlayRemove === undefined ||
         (overlayRemove !== undefined && match(overlayRemove, instance))
@@ -364,7 +366,7 @@ export default class OverlayStore {
   }
 
   setHoverInstanceInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
-    const { instance, figureType, figureIndex } = this._hoverInstanceInfo
+    const { instance, figureType, figureKey, figureIndex } = this._hoverInstanceInfo
     if (
       instance?.id !== info.instance?.id ||
       figureType !== info.figureType ||
@@ -372,8 +374,8 @@ export default class OverlayStore {
     ) {
       this._hoverInstanceInfo = info
       if (instance?.id !== info.instance?.id) {
-        instance?.onMouseLeave?.({ overlay: instance, ...event })
-        info.instance?.onMouseEnter?.({ overlay: info.instance, ...event })
+        instance?.onMouseLeave?.({ overlay: instance, figureKey, figureIndex, ...event })
+        info.instance?.onMouseEnter?.({ overlay: info.instance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
       }
     }
   }
@@ -383,15 +385,15 @@ export default class OverlayStore {
   }
 
   setClickInstanceInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
-    const { paneId, instance, figureType, figureIndex } = this._clickInstanceInfo
+    const { paneId, instance, figureType, figureKey, figureIndex } = this._clickInstanceInfo
     if (!(info.instance?.isDrawing() ?? false)) {
-      info.instance?.onClick?.({ overlay: info.instance, ...event })
+      info.instance?.onClick?.({ overlay: info.instance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
     }
     if (instance?.id !== info.instance?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
       this._clickInstanceInfo = info
       if (instance?.id !== info.instance?.id) {
-        instance?.onDeselected?.({ overlay: instance, ...event })
-        info.instance?.onSelected?.({ overlay: info.instance, ...event })
+        instance?.onDeselected?.({ overlay: instance, figureKey, figureIndex, ...event })
+        info.instance?.onSelected?.({ overlay: info.instance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
         const chart = this._chartStore.getChart()
         chart.updatePane(UpdateLevel.Overlay, info.paneId)
         if (paneId !== info.paneId) {

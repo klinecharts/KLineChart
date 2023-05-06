@@ -13,11 +13,7 @@ onMounted(() => {
 
 <template>
   <div class="NotFound">
-    <p class="code">
-      <span>4</span>😭<span>4</span>
-    </p>
-    <h1 class="title">{{ lang === 'zh-CN' ? '页面未找到' : 'PAGE NOT FOUND' }}</h1>
-
+    <img style="margin: 0 auto;width:320px" src="/images/404.png"/>
     <div class="action">
       <a class="link" :href="withBase(root)" aria-label="go to home">
         {{ lang === 'zh-CN' ? '返回主页' : 'Take me home' }}

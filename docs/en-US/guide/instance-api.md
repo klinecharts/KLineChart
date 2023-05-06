@@ -85,9 +85,9 @@ Whether it can be scaled.
 Set whether dragging and scrolling is possible.
 
 
-##isScrollEnabled()
+## isScrollEnabled()
 ```typescript
-(enabled: boolean) => void
+() => boolean
 ```
 Whether dragging and scrolling is possible.
 
@@ -97,6 +97,12 @@ Whether dragging and scrolling is possible.
 (distance: number) => void
 ```
 Sets the gap that can be left to the right of the chart.
+
+## getOffsetRightDistance()
+```typescript
+() => number
+```
+Get the gap that can be left to the right of the chart.
 
 
 ## setLeftMinVisibleBarCount(barCount)
@@ -128,12 +134,12 @@ Gets the width of a single candlestick on the chart.
 
 ## getVisibleRange()
 ```typescript
-() => { from: number, to: number }
+() => { from: number, to: number, realFrom: number, realTo: number }
 ```
 Get visible range.
 
 
-## applyNewData(dataList, more)
+## applyNewData(dataList, more, callback)
 ```typescript
 (
    dataList: Array<{
@@ -145,15 +151,17 @@ Get visible range.
      volume?: number,
      turnover?: number
    }>,
-   more?: boolean
+   more?: boolean,
+   callback?: () => void
 ) => void
 ```
 Add new data, this method will clear the chart data, no need to call the clearData method additionally.
 - `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
+- `callback` success callback
 
 
-## applyMoreData(dataList, more)
+## applyMoreData(dataList, more, callback)
 ```typescript
 (
    dataList: Array<{
@@ -165,28 +173,34 @@ Add new data, this method will clear the chart data, no need to call the clearDa
      volume?: number,
      turnover?: number
    }>,
-   more?: boolean
+   more?: boolean,
+   callback?: () => void
 ) => void
 ```
 Add more historical data.
 - `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
+- `callback` success callback
 
 
-## updateData(data)
+## updateData(data, callback)
 ```typescript
-(data: {
-   timestamp: number,
-   open: number,
-   close: number,
-   high: number,
-   low: number,
-   volume?: number,
-   turnover?: number
-}) => void
+(
+  data: {
+    timestamp: number,
+    open: number,
+    close: number,
+    high: number,
+    low: number,
+    volume?: number,
+    turnover?: number
+  },
+  callback?: () => void
+) => void
 ```
 Update data. Currently, only the timestamp of the last piece of data will be matched. If it is the same, it will be overwritten, and if it is different, it will be appended.
 - `data` single k-line data, please refer to [data](./datasource.md) for details of data type
+- `callback` success callback
 
 
 ## getDataList()
@@ -768,6 +782,17 @@ chart.setPaneOptions({
    gap: { top: 0.2, bottom: 0.1 }
 })
 ```
+
+## executeAction(type, data)
+```typescript
+(
+   type: 'onCrosshairChange',
+   data: any => void
+) => void
+```
+Execute chart action.
+- `type` only supported 'onCrosshairChange'
+- `data` data required for execution
 
 
 ## subscribeAction(type, callback)

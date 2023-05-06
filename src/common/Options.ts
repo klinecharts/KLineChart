@@ -221,7 +221,13 @@ export interface CandlePriceMarkStyle {
   last: CandleLastPriceMarkStyle
 }
 
+export enum CandleTooltipRectPosition {
+  Fixed = 'fixed',
+  Pointer = 'pointer'
+}
+
 export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borderDashedValue' | 'borderStyle'> {
+  position: CandleTooltipRectPosition
   paddingLeft: number
   paddingRight: number
   paddingTop: number
@@ -229,6 +235,7 @@ export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borde
   offsetLeft: number
   offsetTop: number
   offsetRight: number
+  offsetBottom: number
 }
 
 export interface CandleTooltipCustomCallbackData {
@@ -253,9 +260,18 @@ export enum CandleType {
   Area = 'area'
 }
 
+export interface CandleBarColor extends ChangeColor {
+  upBorderColor: string
+  downBorderColor: string
+  noChangeBorderColor: string
+  upWickColor: string
+  downWickColor: string
+  noChangeWickColor: string
+}
+
 export interface CandleStyle {
   type: CandleType
-  bar: ChangeColor
+  bar: CandleBarColor
   area: CandleAreaStyle
   priceMark: CandlePriceMarkStyle
   tooltip: CandleTooltipStyle
@@ -269,9 +285,15 @@ function getDefaultCandleStyle (): CandleStyle {
   return {
     type: CandleType.CandleSolid,
     bar: {
-      upColor: '#26A69A',
-      downColor: '#EF5350',
-      noChangeColor: '#999999'
+      upColor: '#2DC08E',
+      downColor: '#F92855',
+      noChangeColor: '#888888',
+      upBorderColor: '#2DC08E',
+      downBorderColor: '#F92855',
+      noChangeBorderColor: '#888888',
+      upWickColor: '#2DC08E',
+      downWickColor: '#F92855',
+      noChangeWickColor: '#888888'
     },
     area: {
       lineSize: 2,
@@ -305,8 +327,8 @@ function getDefaultCandleStyle (): CandleStyle {
       },
       last: {
         show: true,
-        upColor: '#26A69A',
-        downColor: '#EF5350',
+        upColor: '#2DC08E',
+        downColor: '#F92855',
         noChangeColor: '#888888',
         line: {
           show: true,
@@ -338,6 +360,7 @@ function getDefaultCandleStyle (): CandleStyle {
       custom: null,
       defaultValue: 'n/a',
       rect: {
+        position: CandleTooltipRectPosition.Fixed,
         paddingLeft: 0,
         paddingRight: 0,
         paddingTop: 0,
@@ -345,6 +368,7 @@ function getDefaultCandleStyle (): CandleStyle {
         offsetLeft: 10,
         offsetTop: 8,
         offsetRight: 10,
+        offsetBottom: 8,
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#F2F3F5',
@@ -384,6 +408,7 @@ export interface IndicatorStyle {
   circles: IndicatorPolygonStyle[]
   lastValueMark: IndicatorLastValueMarkStyle
   tooltip: IndicatorTooltipStyle
+  [key: string]: any
 }
 
 /**
@@ -392,8 +417,8 @@ export interface IndicatorStyle {
 function getDefaultIndicatorStyle (): IndicatorStyle {
   return {
     ohlc: {
-      upColor: 'rgba(38, 166, 154, .65)',
-      downColor: 'rgba(239, 83, 80, .65)',
+      upColor: 'rgba(45, 192, 142, .7)',
+      downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'
     },
     bars: [{
@@ -401,8 +426,8 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       borderStyle: LineType.Solid,
       borderSize: 1,
       borderDashedValue: [2, 2],
-      upColor: 'rgba(38, 166, 154, .65)',
-      downColor: 'rgba(239, 83, 80, .65)',
+      upColor: 'rgba(45, 192, 142, .7)',
+      downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'
     }],
     lines: [
@@ -417,7 +442,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         smooth: false,
         size: 1,
         dashedValue: [2, 2],
-        color: '#9D65C9'
+        color: '#935EBD'
       }, {
         style: LineType.Solid,
         smooth: false,
@@ -443,8 +468,8 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       borderStyle: LineType.Solid,
       borderSize: 1,
       borderDashedValue: [2, 2],
-      upColor: 'rgba(38, 166, 154, .65)',
-      downColor: 'rgba(239, 83, 80, .65)',
+      upColor: 'rgba(45, 192, 142, .7)',
+      downColor: 'rgba(249, 40, 85, .7)',
       noChangeColor: '#888888'
     }],
     lastValueMark: {
@@ -678,6 +703,7 @@ export interface OverlayStyle {
   arc: LineStyle
   text: TextStyle
   rectText: RectTextStyle
+  [key: string]: any
 }
 
 function getDefaultOverlayStyle (): OverlayStyle {
@@ -834,4 +860,5 @@ export interface Options {
   timezone?: string
   styles?: string | DeepPartial<Styles>
   customApi?: Partial<CustomApi>
+  thousandsSeparator?: string
 }
