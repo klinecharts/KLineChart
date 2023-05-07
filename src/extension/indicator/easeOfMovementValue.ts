@@ -42,37 +42,32 @@ const easeOfMovementValue: IndicatorTemplate<Emv> = {
   ],
   calc: (dataList: KLineData[], indicator: Indicator<Emv>) => {
     const params = indicator.calcParams as number[]
-    let emSum = 0
-    let emvSum = 0
-    const emList: number[] = []
-    const result: Emv[] = []
-    dataList.forEach((kLineData: KLineData, i: number) => {
+    let emvValueSum = 0
+    const emvValueList: number[] = []
+    return dataList.map((kLineData: KLineData, i: number) => {
       const emv: Emv = {}
-      const prevKLineData = dataList[i - 1] ?? kLineData
-      const high = kLineData.high
-      const low = kLineData.low
-      const turnover = kLineData.turnover ?? 0
-      const halfHl = (high + low) / 2
-      const prevHalfHl = (prevKLineData.high + prevKLineData.low) / 2
-      const hl = high - low
-      let em = 0
-      if (turnover !== 0) {
-        em = (halfHl - prevHalfHl) * hl / turnover
-      }
-      emList.push(em)
-      emSum += em
-      if (i >= params[0] - 1) {
-        emv.emv = emSum
-        emSum -= emList[i - (params[0] - 1)]
-        emvSum += emv.emv
-        if (i >= params[0] + params[1] - 2) {
-          emv.maEmv = emvSum / params[1]
-          emvSum -= (result[i - (params[1] - 1)].emv ?? 0)
+      if (i > 0) {
+        const prevKLineData = dataList[i - 1]
+        const high = kLineData.high
+        const low = kLineData.low
+        const volume = kLineData.volume ?? 0
+        const distanceMoved = (high + low) / 2 - (prevKLineData.high + prevKLineData.low) / 2
+
+        if (volume === 0 || high - low === 0) {
+          emv.emv = 0
+        } else {
+          const ratio = volume / 100000000 / (high - low)
+          emv.emv = distanceMoved / ratio
+        }
+        emvValueSum += emv.emv
+        emvValueList.push(emv.emv)
+        if (i >= params[0]) {
+          emv.maEmv = emvValueSum / params[0]
+          emvValueSum -= emvValueList[i - params[0]]
         }
       }
-      result.push(emv)
+      return emv
     })
-    return result
   }
 }
 
