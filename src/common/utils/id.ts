@@ -12,26 +12,16 @@
  * limitations under the License.
  */
 
-class ID {
-  private _baseId = 1
-  private _prevIdTimestamp: number
+let baseId = 1
+let prevIdTimestamp = new Date().getTime()
 
-  next (prefix?: string): string {
-    const timestamp = new Date().getTime()
-    if (timestamp === this._prevIdTimestamp) {
-      ++this._baseId
-    } else {
-      this._baseId = 1
-    }
-    this._prevIdTimestamp = timestamp
-    return `${prefix ?? ''}${timestamp}_${this._baseId}`
+export function createId (prefix?: string): string {
+  const timestamp = new Date().getTime()
+  if (timestamp === prevIdTimestamp) {
+    ++baseId
+  } else {
+    baseId = 1
   }
+  prevIdTimestamp = timestamp
+  return `${prefix ?? ''}${timestamp}_${baseId}`
 }
-
-const id = new ID()
-
-function createId (prefix?: string): string {
-  return id.next(prefix)
-}
-
-export { createId }
