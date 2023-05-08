@@ -365,6 +365,13 @@ Format date. `format`, such as 'YYYY-MM-DD HH:mm:ss'.
 ```
 Format thousands separator.
 
+
+### utils.calcTextWidth(text, size, weight, family)
+```typescript
+(text: string, size?: number, weight?: string | number, family?: string) => number
+```
+Calculate text width.
+
 ### utils.getLinearSlopeIntercept(coordinate1, coordinate2)
 ```typescript
 (coordinate1: { x: number, y: number }, coordinate2: { x: number, y: number }) => []

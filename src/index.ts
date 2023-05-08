@@ -59,6 +59,7 @@ import {
   clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
 } from './common/utils/typeChecks'
 import { formatValue, formatPrecision, formatBigNumber, formatDate, formatThousands } from './common/utils/format'
+import { calcTextWidth } from './common/utils/canvas'
 
 const instances: {[id: string]: Chart} = {}
 let chartBaseId = 1
@@ -144,6 +145,7 @@ const utils = {
   formatBigNumber,
   formatDate,
   formatThousands,
+  calcTextWidth,
   getLinearSlopeIntercept,
   getLinearYFromSlopeIntercept,
   getLinearYFromCoordinates,

@@ -368,6 +368,13 @@
 ```
 格式化日期千分符。
 
+
+### utils.calcTextWidth(text, size, weight, family)
+```typescript
+(text: string, size?: number, weight?: string | number, family?: string) => number
+```
+计算文字宽度
+
 ### utils.getLinearSlopeIntercept(coordinate1, coordinate2)
 ```typescript
 (coordinate1: { x: number, y: number }, coordinate2: { x: number, y: number }) => []
