@@ -19,7 +19,7 @@ import Bounding from '../common/Bounding'
 import VisibleRange from '../common/VisibleRange'
 import BarSpace from '../common/BarSpace'
 import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, LineType, PolygonType, TooltipData, TooltipIconStyle } from '../common/Options'
+import { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, RectTextStyle, TooltipData, TooltipIconStyle, LineStyle, LineType, PolygonType } from '../common/Options'
 
 import { XAxis } from './XAxis'
 import { YAxis } from './YAxis'
@@ -27,15 +27,34 @@ import { YAxis } from './YAxis'
 import { formatValue } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
+import { ArcAttrs } from '../extension/figure/arc'
+import { RectAttrs } from '../extension/figure/rect'
+import { TextAttrs } from '../extension/figure/text'
+
 export enum IndicatorSeries {
   Normal = 'normal',
   Price = 'price',
   Volume = 'volume'
 }
 
-export interface IndicatorFigureStyle {
-  style?: LineType[keyof LineType] | PolygonType[keyof PolygonType]
-  color?: string
+export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<RectTextStyle> & Partial<{ style: LineType[keyof LineType] | PolygonType[keyof PolygonType] }> & {[key: string]: any }
+
+export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineStyle> & Partial<RectAttrs> & Partial<TextAttrs> & { [key: string]: any }
+
+export interface IndicatorFigureCallbackBrother<PCN> {
+  prev: PCN
+  current: PCN
+  next: PCN
+}
+
+export type IndicatorFigureAttrsCallbackCoordinate<D> = IndicatorFigureCallbackBrother<Record<keyof D, number> & { x: number }>
+
+export interface IndicatorFigureAttrsCallbackParams<D> {
+  coordinate: IndicatorFigureAttrsCallbackCoordinate<D>
+  bounding: Bounding
+  barSpace: BarSpace
+  xAxis: XAxis
+  yAxis: YAxis
 }
 
 export interface IndicatorFigureStylesCallbackDataChild<D> {
@@ -43,12 +62,9 @@ export interface IndicatorFigureStylesCallbackDataChild<D> {
   indicatorData?: D
 }
 
-export interface IndicatorFigureStylesCallbackData<D> {
-  prev: IndicatorFigureStylesCallbackDataChild<D>
-  current: IndicatorFigureStylesCallbackDataChild<D>
-  next: IndicatorFigureStylesCallbackDataChild<D>
-}
+export type IndicatorFigureStylesCallbackData<D> = IndicatorFigureCallbackBrother<IndicatorFigureStylesCallbackDataChild<D>>
 
+export type IndicatorFigureAttrsCallback<D> = (params: IndicatorFigureAttrsCallbackParams<D>) => IndicatorFigureAttrs
 export type IndicatorFigureStylesCallback<D> = (data: IndicatorFigureStylesCallbackData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorFigureStyle
 
 export interface IndicatorFigure<D = any> {
@@ -56,6 +72,7 @@ export interface IndicatorFigure<D = any> {
   title?: string
   type?: string
   baseValue?: number
+  attrs?: IndicatorFigureAttrsCallback<D>
   styles?: IndicatorFigureStylesCallback<D>
 }
 
@@ -194,7 +211,7 @@ export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 're
 
 export type IndicatorConstructor<D = any> = new () => IndicatorImp<D>
 
-export type EachFigureCallback = (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>, defaultFigureStyles: any, count: number) => void
+export type EachFigureCallback = (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle) => void
 
 export function eachFigures<D> (
   kLineDataList: KLineData[],
@@ -220,34 +237,23 @@ export function eachFigures<D> (
   let barCount = 0
   let lineCount = 0
 
-  let typeCount = 0
-
   let defaultFigureStyles
-  let defaultFigureStyle
-  let defaultFigureColor
   figures.forEach(figure => {
     switch (figure.type) {
       case 'circle': {
-        defaultFigureStyles = circleStyles[circleCount % circleStyleCount]
-        defaultFigureStyle = defaultFigureStyles.style
-        defaultFigureColor = defaultFigureStyles.noChangeColor
-        typeCount = circleCount
+        const styles = circleStyles[circleCount % circleStyleCount]
+        defaultFigureStyles = { ...styles, color: styles.noChangeColor }
         circleCount++
         break
       }
       case 'bar': {
-        defaultFigureStyles = barStyles[barCount % barStyleCount]
-        defaultFigureStyle = defaultFigureStyles.style
-        defaultFigureColor = defaultFigureStyles.noChangeColor
-        typeCount = barCount
+        const styles = barStyles[barCount % barStyleCount]
+        defaultFigureStyles = { ...styles, color: styles.noChangeColor }
         barCount++
         break
       }
       case 'line': {
         defaultFigureStyles = lineStyles[lineCount % lineStyleCount]
-        defaultFigureStyle = defaultFigureStyles.style
-        defaultFigureColor = defaultFigureStyles.color
-        typeCount = lineCount
         lineCount++
         break
       }
@@ -259,11 +265,8 @@ export function eachFigures<D> (
         current: { kLineData: kLineDataList[dataIndex], indicatorData: result[dataIndex] },
         next: { kLineData: kLineDataList[dataIndex + 1], indicatorData: result[dataIndex + 1] }
       }
-      const figureStyles = figure.styles?.(cbData, indicator, defaultStyles) ?? { style: defaultFigureStyle, color: defaultFigureColor }
-      eachFigureCallback(figure, {
-        style: (figureStyles.style ?? defaultFigureStyle) as (LineType & PolygonType),
-        color: figureStyles.color ?? defaultFigureColor
-      }, defaultFigureStyles, typeCount)
+      const ss = figure.styles?.(cbData, indicator, defaultStyles)
+      eachFigureCallback(figure, { ...defaultFigureStyles, ...ss })
     }
   })
 }

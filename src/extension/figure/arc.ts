@@ -17,6 +17,8 @@ import { LineStyle, LineType } from '../../common/Options'
 
 import { FigureTemplate, DEVIATION } from '../../component/Figure'
 
+import { CircleAttrs } from './circle'
+
 export function checkCoordinateOnArc (coordinate: Coordinate, arc: ArcAttrs): boolean {
   if (Math.abs(getDistance(coordinate, arc) - arc.r) < DEVIATION) {
     const { r, startAngle, endAngle } = arc
@@ -50,10 +52,7 @@ export function drawArc (ctx: CanvasRenderingContext2D, attrs: ArcAttrs, styles:
   ctx.closePath()
 }
 
-export interface ArcAttrs {
-  x: number
-  y: number
-  r: number
+export interface ArcAttrs extends CircleAttrs {
   startAngle: number
   endAngle: number
 }

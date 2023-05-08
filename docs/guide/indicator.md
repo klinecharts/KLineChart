@@ -47,7 +47,15 @@
     type?: string,
     // 基准值，如果给定，将以这个值上下去绘制，一般用于type是'rect'
     baseValue?: number,
-    // 是一个方法
+    // 是一个方法，用于生成自定义图形的属性，
+    attrs?: ({
+      coordinate: IndicatorFigureAttrsCallbackCoordinate,
+      bounding: Bounding,
+      barSpace: BarSpace,
+      xAxis: XAxis,
+      yAxis: YAxis
+    }) => IndicatorFigureAttrs,
+    // 是一个方法，用于生成样式
     styles?: (
       data: {
         // 上一个图形的数据
@@ -72,12 +80,7 @@
       indicator: Indicator,
       // 默认的技术指标样式，即全局设置的技术指标样式，参阅[样式]中的indicator
       defaultStyles: IndicatorStyle
-    ) => ({
-      // 样式，可选项为'solid'，'dashed'，'fill'，'stroke'，'stoke_fill'
-      style?: 'solid' | 'dashed' | 'fill' | 'stroke' | 'stoke_fill',
-      // 颜色
-      color?: string
-    })
+    ) => IndicatorFigureStyle
   }>,
   // 指定的最小值，默认null
   minValue?: number

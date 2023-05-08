@@ -13,7 +13,7 @@
  */
 
 import KLineData from '../../common/KLineData'
-import { IndicatorStyle } from '../../common/Options'
+import { IndicatorStyle, PolygonType } from '../../common/Options'
 import { formatValue } from '../../common/utils/format'
 
 import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../component/Indicator'
@@ -41,7 +41,7 @@ const awesomeOscillator: IndicatorTemplate<Ao> = {
       } else {
         color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles.bars)[0].downColor) as string
       }
-      const style = currentAo > prevAo ? 'stroke' : 'fill'
+      const style = currentAo > prevAo ? PolygonType.Stroke : PolygonType.Fill
       return { color, style }
     }
   }],

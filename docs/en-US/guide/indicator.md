@@ -48,6 +48,14 @@ To create a custom technical indicator, you only need to generate a technical in
     // Base value, if given, it will be drawn up and down with this value, generally used when the type is 'rect'
     baseValue?: number,
     // is a method
+    attrs?: ({
+      coordinate: IndicatorFigureAttrsCallbackCoordinate,
+      bounding: Bounding,
+      barSpace: BarSpace,
+      xAxis: XAxis,
+      yAxis: YAxis
+    }) => IndicatorFigureAttrs,
+    // is a method
     styles?: (
       data: {
         // The data of the previous graph
@@ -72,12 +80,7 @@ To create a custom technical indicator, you only need to generate a technical in
       indicator: Indicator,
       // The default technical indicator style, that is, the technical indicator style set globally, refer to the indicator in [Style]
       defaultStyles: IndicatorStyle
-    ) => ({
-      // style, options are 'solid', 'dashed', 'fill', 'stroke', 'stoke_fill'
-      style?: 'solid' | 'dashed' | 'fill' | 'stroke' |
-      // color
-      color?: string
-    })
+    ) => IndicatorFigureStyle
   }>,
   // The specified minimum value, default null
   minValue?: number
