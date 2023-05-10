@@ -42,7 +42,7 @@ const awesomeOscillator: IndicatorTemplate<Ao> = {
         color = formatValue(indicator.styles, 'bars[0].downColor', (defaultStyles.bars)[0].downColor) as string
       }
       const style = currentAo > prevAo ? PolygonType.Stroke : PolygonType.Fill
-      return { color, style }
+      return { color, style, borderColor: color }
     }
   }],
   calc: (dataList: KLineData[], indicator: Indicator<Ao>) => {

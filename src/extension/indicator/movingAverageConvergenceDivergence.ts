@@ -58,7 +58,7 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd> = {
           color = formatValue(indicator.styles, 'bars[0].noChangeColor', (defaultStyles.bars)[0].noChangeColor) as string
         }
         const style = prevMacd < currentMacd ? PolygonType.Stroke : PolygonType.Fill
-        return { style, color }
+        return { style, color, borderColor: color }
       }
     }
   ],
