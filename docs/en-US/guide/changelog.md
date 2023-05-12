@@ -1,4 +1,15 @@
 # 📠 Change Log
+
+## 9.3.0
+`2023-05-13`
++ 🆕 Add chart API `utils.calcTextWidth`.
++ 🆕 The instance APIs `createIndicator(value, isStack, options)` and `setPaneOptions(options)` have added `options. axisOptions`.
++ 🆕 The indicator graphic configuration supports customization.
++ 💄 Optimize the bar width ratio.
++ 💄 Optimize internal acquisition of screen pixel ratio.
++ 💄 Optimize internal ID generation.
+
+
 ## 9.2.2
 `2023-05-04`
 + 🐞 Fix figure `line` check event error.

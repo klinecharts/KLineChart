@@ -1,4 +1,14 @@
 # 📠 更新日志
+## 9.3.0
+`2023-05-13`
++ 🆕 新增图表API `utils.calcTextWidth`。
++ 🆕 图表API `createIndicator(value, isStack, options)`和`setPaneOptions(options)`新增`options.axisOptions`。
++ 🆕 指标图形配置支持自定义。
++ 💄 优化bar宽度比例。
++ 💄 优化内部获取屏幕像素比。
++ 💄 优化内部id生成。
+
+
 ## 9.2.2
 `2023-05-04`
 + 🐞 修复基础图形`line`事件检查可能导致错误问题。
