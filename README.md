@@ -27,7 +27,7 @@
 
 </div>
 
-<img style="box-shadow:0px 2px 4px rgba(41, 44, 44, 0.12);margin-bottom:16px" src="https://cdn.nlark.com/yuque/0/2023/jpeg/8403091/1683224914539-assets/web-upload/a2134d7e-e47b-4040-aaf0-662d83e43878.jpeg" />
+<img style="margin-bottom:12px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1684332074039-assets/web-upload/3e7ab2f7-ddb6-4922-b31d-86b9f5fceeab.png" />
 
 English | [简体中文](./README.zh-CN.md)
 
