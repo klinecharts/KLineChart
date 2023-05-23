@@ -126,6 +126,16 @@ export interface Overlay {
   visible: boolean
 
   /**
+   * Default draw level
+   */
+  defaultZLevel: number
+
+  /**
+   * Draw level
+   */
+  zLevel: number
+
+  /**
    * Whether the default figure corresponding to the point is required
    */
   needDefaultPointFigure: boolean
@@ -263,6 +273,8 @@ export const OVERLAY_ID_PREFIX = 'overlay_'
 
 export const OVERLAY_FIGURE_KEY_PREFIX = 'overlay_figure_'
 
+export const OVERLAY_ACTIVE_Z_LEVEL = Number.MAX_SAFE_INTEGER
+
 export default abstract class OverlayImp implements Overlay {
   id: string
   groupId: string
@@ -274,6 +286,8 @@ export default abstract class OverlayImp implements Overlay {
   needDefaultYAxisFigure: boolean
   lock: boolean
   visible: boolean
+  zLevel: number
+  defaultZLevel: number
   mode: OverlayMode
   points: Array<Partial<Point>> = []
   extendData: any
@@ -303,7 +317,7 @@ export default abstract class OverlayImp implements Overlay {
   constructor (overlay: OverlayTemplate) {
     const {
       mode, extendData, styles,
-      name, totalStep, lock, visible,
+      name, totalStep, lock, visible, defaultZLevel, zLevel,
       needDefaultPointFigure, needDefaultXAxisFigure, needDefaultYAxisFigure,
       createPointFigures, createXAxisFigures, createYAxisFigures,
       performEventPressedMove, performEventMoveForDrawing,
@@ -317,6 +331,8 @@ export default abstract class OverlayImp implements Overlay {
     this.totalStep = (totalStep === undefined || totalStep < 2) ? 1 : totalStep
     this.lock = lock ?? false
     this.visible = visible ?? true
+    this.defaultZLevel = defaultZLevel ?? 0
+    this.zLevel = zLevel ?? this.defaultZLevel
     this.needDefaultPointFigure = needDefaultPointFigure ?? false
     this.needDefaultXAxisFigure = needDefaultXAxisFigure ?? false
     this.needDefaultYAxisFigure = needDefaultYAxisFigure ?? false
@@ -423,6 +439,18 @@ export default abstract class OverlayImp implements Overlay {
   setVisible (visible: boolean): boolean {
     if (this.visible !== visible) {
       this.visible = visible
+      return true
+    }
+    return false
+  }
+
+  resetZLevel (): void {
+    this.zLevel = this.defaultZLevel
+  }
+
+  setZLevel (zLevel: number): boolean {
+    if (this.zLevel !== zLevel) {
+      this.zLevel = zLevel
       return true
     }
     return false
