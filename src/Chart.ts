@@ -47,7 +47,6 @@ import { Indicator, IndicatorCreate } from './component/Indicator'
 import { Overlay, OverlayCreate, OverlayRemove } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
-import { getOverlayClass } from './extension/overlay/index'
 import { getStyles as getExtensionStyles } from './extension/styles/index'
 
 import ChartEvent from './ChartEvent'
@@ -92,7 +91,7 @@ export interface Chart {
   overrideIndicator: (override: IndicatorCreate, paneId?: string, callback?: () => void) => void
   getIndicatorByPaneId: (paneId?: string, name?: string) => Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>>
   removeIndicator: (paneId: string, name?: string) => void
-  createOverlay: (value: string | OverlayCreate, paneId?: string) => Nullable<string>
+  createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>, paneId?: string) => Nullable<string> | Array<Nullable<string>>
   getOverlayById: (id: string) => Nullable<Overlay>
   overrideOverlay: (override: Partial<OverlayCreate>) => void
   removeOverlay: (remove?: string | OverlayRemove) => void
@@ -526,7 +525,7 @@ export default class ChartImp implements Chart {
   }
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>, callback?: () => void): Nullable<string> {
-    const indicator: IndicatorCreate = isString(value) ? { name: value } : value
+    const indicator = isString(value) ? { name: value } : value
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
@@ -595,22 +594,31 @@ export default class ChartImp implements Chart {
     }
   }
 
-  createOverlay (value: string | OverlayCreate, paneId?: string): Nullable<string> {
-    const overlay: OverlayCreate = isString(value) ? { name: value } : value
-    if (getOverlayClass(overlay.name) === null) {
-      logWarn('createOverlay', 'value', 'overlay not supported, you may need to use registerOverlay to add one!!!')
-      return null
+  createOverlay (value: string | OverlayCreate | Array<string | OverlayCreate>, paneId?: string): Nullable<string> | Array<Nullable<string>> {
+    let overlays: OverlayCreate[] = []
+    if (isString(value)) {
+      overlays = [{ name: value }]
+    } else if (isArray<Array<string | OverlayCreate>>(value)) {
+      overlays = (value as Array<string | OverlayCreate>).map((v: string | OverlayCreate) => {
+        if (isString(v)) {
+          return { name: v }
+        }
+        return v
+      })
+    } else {
+      const overlay = value as OverlayCreate
+      overlays = [overlay]
     }
     let appointPaneFlag = true
     if (paneId === undefined || this.getPaneById(paneId) === null) {
       paneId = PaneIdConstants.CANDLE
       appointPaneFlag = false
     }
-    const id = this._chartStore.getOverlayStore().addInstance(overlay, paneId, appointPaneFlag)
-    if (id === null) {
-      logWarn('createOverlay', 'options.id', 'duplicate id!!!')
+    const ids = this._chartStore.getOverlayStore().addInstances(overlays, paneId, appointPaneFlag)
+    if (isArray(value)) {
+      return ids
     }
-    return id
+    return ids[0]
   }
 
   getOverlayById (id: string): Nullable<Overlay> {
