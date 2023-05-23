@@ -122,7 +122,7 @@ export default class TimeScaleStore {
   }
 
   private _calcGapBarSpace (): number {
-    const rateSpace = Math.floor(this._barSpace * 0.8)
+    const rateSpace = Math.floor(this._barSpace * 0.82)
     const floorSpace = Math.floor(this._barSpace)
     const optimalSpace = Math.min(rateSpace, floorSpace - 1)
     return Math.max(1, optimalSpace)
