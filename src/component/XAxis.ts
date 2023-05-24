@@ -142,6 +142,18 @@ export default class XAxisImp extends AxisImp {
     return Math.max(xAxisHeight, crosshairVerticalTextHeight)
   }
 
+  convertTimestampFromPixel (pixel: number): Nullable<number> {
+    const timeScaleStore = this.getParent().getChart().getChartStore().getTimeScaleStore()
+    const dataIndex = timeScaleStore.coordinateToDataIndex(pixel)
+    return timeScaleStore.dataIndexToTimestamp(dataIndex)
+  }
+
+  convertTimestampToPixel (timestamp: number): number {
+    const timeScaleStore = this.getParent().getChart().getChartStore().getTimeScaleStore()
+    const dataIndex = timeScaleStore.timestampToDataIndex(timestamp)
+    return timeScaleStore.dataIndexToCoordinate(dataIndex)
+  }
+
   convertFromPixel (pixel: number): number {
     return this.getParent().getChart().getChartStore().getTimeScaleStore().coordinateToDataIndex(pixel)
   }
