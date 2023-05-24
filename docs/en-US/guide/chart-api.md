@@ -122,10 +122,14 @@ Get graph class.
             data: object,
             indicator: object,
             defaultStyles: object
-         ) => {
-            style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill'
-            color?: string
-         }
+         ) => object
+         attrs: (
+            coordinate: object
+            bounding: Bounding
+            barSpace: BarSpace
+            xAxis: XAxis
+            yAxis: YAxis
+         ) => object
       }>
       minValue?: number
       maxValue?: number
@@ -140,10 +144,14 @@ Get graph class.
             data: object
             indicator: object
             defaultStyles: object
-         ) => {
-            style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill'
-            color?: string
-         }
+         ) => object
+         attrs: (
+            coordinate: object
+            bounding: Bounding
+            barSpace: BarSpace
+            xAxis: XAxis
+            yAxis: YAxis
+         ) => object
       }>
       createTooltipDataSource?: (params: object) => {
          name?: string

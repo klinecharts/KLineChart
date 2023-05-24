@@ -308,6 +308,9 @@ Set load more callback function.
       top?: number
       bottom?: number
     }
+    axisOptions?: {
+      scrollZoomEnabled?: boolean
+    }
   } | null,
   callback?: () => void
 ) => string | null
@@ -316,13 +319,15 @@ Create a technical indicator, the return value is a string that identifies the w
 - `value` technical indicator name or technical indicator object, when it is an object, the type is consistent with the input parameter of the chart method `overrideIndicator`
 - `isStack` is overrides
 - `paneOptions` window configuration information, can be default
-    - `id` window id, can be default
-    - `height` window height, can be default
-    - `minHeight` minimum height of the window, can be defaulted
-    - `dragEnbaled` Whether the window can be dragged to adjust the height, it can be defaulted
-    - `gap` margins
-      - `top` top margin, value less than 1 is a percentage
-      - `bottom` bottom margin, value less than 1 is a percentage
+  - `id` window id, can be default
+  - `height` window height, can be default
+  - `minHeight` minimum height of the window, can be defaulted
+  - `dragEnbaled` Whether the window can be dragged to adjust the height, it can be defaulted
+  - `gap` margins
+    - `top` top margin, value less than 1 is a percentage
+    - `bottom` bottom margin, value less than 1 is a percentage
+  - `axisOptions`
+    - `scrollZoomEnabled` Scroll zoom flag
 - `callback` success callback
 ::: tip Special id
 'candle_pane', the window id of the main picture.
@@ -335,7 +340,8 @@ chart.createTechnicalIndicator('MA', false, {
   height: 100,
   minHeight: 30,
   dragEnabled: true,
-  gap: { top: 0.2, bottom: 0.1 }
+  gap: { top: 0.2, bottom: 0.1 },
+  axisOptions: { scrollZoomEnabled: true }
 }, () => {})
 ```
 
@@ -796,18 +802,23 @@ Scale on the specified timestamp.
       top?: number
       bottom?: number
     }
+    axisOptions?: {
+      scrollZoomEnabled?: boolean
+    }
   }
 ) => void
 ```
 Set window configuration.
 - `paneOptions` window configuration information, can be default
-    - `id` window id
-    - `height` window height, can be default
-    - `minHeight` minimum height of the window, can be defaulted
-    - `dragEnbaled` Whether the window can be dragged to adjust the height, it can be defaulted
-    - `gap` margins
-      - `top` top margin, value less than 1 is a percentage
-      - `bottom` bottom margin, value less than 1 is a percentage
+  - `id` window id
+  - `height` window height, can be default
+  - `minHeight` minimum height of the window, can be defaulted
+  - `dragEnbaled` Whether the window can be dragged to adjust the height, it can be defaulted
+  - `gap` margins
+    - `top` top margin, value less than 1 is a percentage
+    - `bottom` bottom margin, value less than 1 is a percentage
+  - `axisOptions`
+    - `scrollZoomEnabled` Scroll zoom flag
 ::: tip Special id
 'candle_pane', the window id of the main picture.
 :::
@@ -815,11 +826,12 @@ Set window configuration.
 Example:
 ```javascript
 chart.setPaneOptions({
-   id: 'pane_1',
-   height: 100,
-   minHeight: 3,
-   dragEnabled: true,
-   gap: { top: 0.2, bottom: 0.1 }
+  id: 'pane_1',
+  height: 100,
+  minHeight: 3,
+  dragEnabled: true,
+  gap: { top: 0.2, bottom: 0.1 },
+  axisOptions: { scrollZoomEnabled: true }
 })
 ```
 

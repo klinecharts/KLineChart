@@ -34,7 +34,7 @@ To create a custom technical indicator, you only need to generate a technical in
   // Do you need to format large data values, starting from 1000, for example, do you need to format 100K for 100000
   shouldFormatBigNumber?: boolean
   // Do you need visible
-  visible?: boolean 
+  visible?: boolean
   // extended data
   extendData?: any
   // series, default is 'normal'

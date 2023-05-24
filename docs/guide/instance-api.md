@@ -310,6 +310,9 @@
       top?: number
       bottom?: number
     }
+    axisOptions?: {
+      scrollZoomEnabled?: boolean
+    }
   } | null,
   callback?: () => void
 ) => string | null
@@ -318,13 +321,16 @@
 - `value` 技术指标名或者技术指标对象，当是对象时，类型和图表方法`overrideIndicator`的入参一致
 - `isStack` 是否覆盖
 - `paneOptions` 窗口配置信息，可缺省
-   - `id` 窗口id，可缺省
-   - `height` 窗口高度，可缺省
-   - `minHeight` 窗口最小高度，可缺省
-   - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
-   - `gap` 边距
-     - `top` 上边距，值小余1则是百分比
-     - `bottom` 下边距，值小余1则是百分比
+  - `id` 窗口id，可缺省
+  - `height` 窗口高度，可缺省
+  - `minHeight` 窗口最小高度，可缺省
+  - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
+  - `gap` 边距
+    - `top` 上边距，值小余1则是百分比
+    - `bottom` 下边距，值小余1则是百分比
+  - `axisOptions`
+    - `scrollZoomEnabled` 轴上是否可以滚动缩放
+  
 - `callback` 指标创建完成回调方法
 ::: tip 特殊的id
 'candle_pane'，主图的窗口id。
@@ -337,7 +343,8 @@ chart.createTechnicalIndicator('MA', false, {
   height: 100,
   minHeight: 30,
   dragEnabled: true,
-  gap: { top: 0.2, bottom: 0.1 }
+  gap: { top: 0.2, bottom: 0.1 },
+  axisOptions: { scrollZoomEnabled: true }
 }, () => {})
 ```
 
@@ -813,18 +820,23 @@ chart.overrideOverlay({
       top?: number
       bottom?: number
     }
+    axisOptions?: {
+      scrollZoomEnabled?: boolean
+    }
   }
 ) => void
 ```
 设置窗口配置。
 - `paneOptions` 窗口配置信息，可缺省
-   - `id` 窗口id
-   - `height` 窗口高度，可缺省
-   - `minHeight` 窗口最小高度，可缺省
-   - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
-   - `gap` 边距
-     - `top` 上边距，值小余1则是百分比
-     - `bottom` 下边距，值小余1则是百分比
+  - `id` 窗口id
+  - `height` 窗口高度，可缺省
+  - `minHeight` 窗口最小高度，可缺省
+  - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
+  - `gap` 边距
+    - `top` 上边距，值小余1则是百分比
+    - `bottom` 下边距，值小余1则是百分比
+  - `axisOptions`
+    - `scrollZoomEnabled` 轴上是否可以滚动缩放
 ::: tip 特殊的id
 'candle_pane'，主图的窗口id。
 :::
@@ -836,7 +848,8 @@ chart.setPaneOptions({
   height: 100,
   minHeight: 3,
   dragEnabled: true,
-  gap: { top: 0.2, bottom: 0.1 }
+  gap: { top: 0.2, bottom: 0.1 },
+  axisOptions: { scrollZoomEnabled: true }
 })
 ```
 

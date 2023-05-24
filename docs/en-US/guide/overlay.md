@@ -18,7 +18,7 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
   // Whether to lock, do not trigger events, not necessary
   lock?: boolean
 
-  // Do you need Visible
+  // Do you need visible
   visible?: boolean
 
   // Do you need the graphics corresponding to the default points, not necessary
