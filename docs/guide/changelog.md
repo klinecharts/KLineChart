@@ -1,4 +1,13 @@
 # 📠 更新日志
+
+## 9.4.0
+`2023-05-25`
++ 🆕 实例api `createOverlay` 支持数组。
++ 🆕 `overlay`新增属性`paneId`，`defaultZLevel`和`zLevel`。
++ 🆕 `xAxis`新增方法`convertTimestampFromPixel`和`convertTimestampToPixel`。
++ 💄 优化蜡烛柱显示。
+
+
 ## 9.3.0
 `2023-05-13`
 + 🆕 新增图表API `utils.calcTextWidth`。

@@ -1,4 +1,10 @@
 # 📠 Change Log
+## 9.4.0
+`2023-05-25`
++ 🆕 Instance API 'createOverlay' supports arrays.
++ 🆕 `overlay` add attributes `paneId`, `defaultZLevel` and `zLevel`.
++ 🆕 `xAxis` add methods `convertTimestampFromPixel` and `convertTimestampToPixel`.
++ 💄 Optimize the display of candle.
 
 ## 9.3.0
 `2023-05-13`
