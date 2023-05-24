@@ -101,6 +101,11 @@ export interface Overlay {
   groupId: string
 
   /**
+   * Pane id
+   */
+  paneId: string
+
+  /**
    * Name
    */
   name: string
@@ -261,8 +266,8 @@ export interface Overlay {
   onDeselected: Nullable<OverlayEventCallback>
 }
 
-export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' | 'points' | 'currentStep'>, 'name'>
-export type OverlayCreate = ExcludePickPartial<Omit<Overlay, 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
+export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' | 'paneId' | 'defaultZLevel' | 'points' | 'currentStep'>, 'name'>
+export type OverlayCreate = ExcludePickPartial<Omit<Overlay, 'paneId' | 'currentStep' | 'totalStep' | 'defaultZLevel' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
 export type OverlayRemove = Partial<Pick<Overlay, 'id' | 'groupId' | 'name'>>
 export type OverlayConstructor = new () => OverlayImp
 
@@ -278,6 +283,7 @@ export const OVERLAY_ACTIVE_Z_LEVEL = Number.MAX_SAFE_INTEGER
 export default abstract class OverlayImp implements Overlay {
   id: string
   groupId: string
+  paneId: string
   name: string
   totalStep: number
   currentStep: number = OVERLAY_DRAW_STEP_START
@@ -317,7 +323,7 @@ export default abstract class OverlayImp implements Overlay {
   constructor (overlay: OverlayTemplate) {
     const {
       mode, extendData, styles,
-      name, totalStep, lock, visible, defaultZLevel, zLevel,
+      name, totalStep, lock, visible, zLevel,
       needDefaultPointFigure, needDefaultXAxisFigure, needDefaultYAxisFigure,
       createPointFigures, createXAxisFigures, createYAxisFigures,
       performEventPressedMove, performEventMoveForDrawing,
@@ -331,8 +337,7 @@ export default abstract class OverlayImp implements Overlay {
     this.totalStep = (totalStep === undefined || totalStep < 2) ? 1 : totalStep
     this.lock = lock ?? false
     this.visible = visible ?? true
-    this.defaultZLevel = defaultZLevel ?? 0
-    this.zLevel = zLevel ?? this.defaultZLevel
+    this.zLevel = zLevel ?? 0
     this.needDefaultPointFigure = needDefaultPointFigure ?? false
     this.needDefaultXAxisFigure = needDefaultXAxisFigure ?? false
     this.needDefaultYAxisFigure = needDefaultYAxisFigure ?? false
@@ -373,6 +378,18 @@ export default abstract class OverlayImp implements Overlay {
       return true
     }
     return false
+  }
+
+  setDefaultZLevel (defaultZLevel: number): boolean {
+    if (this.defaultZLevel === undefined) {
+      this.defaultZLevel = defaultZLevel
+      return true
+    }
+    return false
+  }
+
+  setPaneId (paneId: string): void {
+    this.paneId = paneId
   }
 
   setExtendData (extendData: any): boolean {
