@@ -51,6 +51,8 @@ export default class OverlayStore {
 
   private _instances = new Map<string, OverlayImp[]>()
 
+  private readonly _counter = new Map<string, number>()
+
   /**
    * Overlay information in painting
    */
@@ -210,7 +212,10 @@ export default class OverlayStore {
         const OverlayClazz = getOverlayClass(overlay.name)
         if (OverlayClazz !== null) {
           const instance = new OverlayClazz()
-          instance.defaultZLevel = this._instances.get(paneId)?.length ?? 0
+          const count = (this._counter.get(paneId) ?? 0) + 1
+          this._counter.set(paneId, count)
+          instance.setDefaultZLevel(count)
+          instance.setPaneId(paneId)
           const groupId = overlay.groupId ?? id
           overlay.id = id
           overlay.groupId = groupId
@@ -262,6 +267,7 @@ export default class OverlayStore {
         this._progressInstanceInfo.appointPaneFlag = appointPaneFlag
       }
       this._progressInstanceInfo.paneId = paneId
+      this._progressInstanceInfo.instance.setPaneId(paneId)
     }
   }
 
