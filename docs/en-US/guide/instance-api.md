@@ -508,6 +508,7 @@ Remove technical indicators.
     groupId?: string
     lock?: boolean
     visible?: boolean
+    zLevel?: number
     needDefaultPointFigure?: boolean
     needDefaultXAxisFigure?: boolean
     needDefaultYAxisFigure?: boolean
@@ -532,7 +533,38 @@ Remove technical indicators.
     onRemoved?: (event: object) => boolean
     onSelected?: (event: object) => boolean
     onDeselected?: (event: object) => boolean
-  },
+  } | Array<string | {
+    name: string
+    id?: string
+    groupId?: string
+    lock?: boolean
+    visible?: boolean
+    zLevel?: number
+    needDefaultPointFigure?: boolean
+    needDefaultXAxisFigure?: boolean
+    needDefaultYAxisFigure?: boolean
+    mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
+    points?: Array<{
+      timestamp?: number
+      dataIndex?: number
+      value?: number
+    }>
+    extendData?: any
+    styles?: object
+    onDrawStart?: (event: object) => boolean
+    onDrawing?: (event: object) => boolean
+    onDrawEnd?: (event: object) => boolean
+    onClick?: (event: object) => boolean
+    onRightClick?: (event: object) => boolean
+    onPressedMoveStart?: (event: object) => boolean
+    onPressedMoving?: (event: object) => boolean
+    onPressedMoveEnd?: (event: object) => boolean
+    onMouseEnter?: (event: object) => boolean
+    onMouseLeave?: (event: object) => boolean
+    onRemoved?: (event: object) => boolean
+    onSelected?: (event: object) => boolean
+    onDeselected?: (event: object) => boolean
+  }>,
   paneId?: string
 ) => string | null
 ```
@@ -563,6 +595,7 @@ chart.createOverlay({
    },
    lock: false,
    visible: true,
+   zLevel: 0,
    mode: 'weak_magnet',
    extendData: 'xxxxxxxx',
    needDefaultPointFigure: false,
@@ -604,6 +637,7 @@ Get overlay information by id.
     groupId?: string
     lock?: boolean
     visible?: boolean
+    zLevel?: number
     needDefaultPointFigure?: boolean
     needDefaultXAxisFigure?: boolean
     needDefaultYAxisFigure?: boolean
@@ -633,31 +667,32 @@ Get overlay information by id.
 ```
 Overlays that have been drawn.
 - `override` parameters that need to be overridden
-   - `name` overlay name, unique identifier for creation
-   - `id` Overlay identification, if the id exists, it will be based on the id to overwrite
-   - `groupId` Group id
-   - `lock` is locked to prevent dragging
-   - `visible` visible or not
-   - `needDefaultPointFigure` needs a default point figure
-   - `needDefaultXAxisFigure` needs the default x-axis figure
-   - `needDefaultYAxisFigure` needs the default y-axis figure
-   - `mode` mode, options are 'normal', 'weak_magnet' and 'strong_magnet'
-   - `points` point information
-   - `extendData` extended data
-   - `styles` styles
-   - `onDrawStart` start drawing event
-   - `onDrawing` drawing event
-   - `onDrawEnd` draw end event
-   - `onClick` click event
-   - `onRightClick` right click event
-   - `onPressedMoveStart` press start move event
-   - `onPressedMoving` Press and move event
-   - `onPressedMoveEnd` Press and move end event
-   - `onMouseEnter` mouse enter event
-   - `onMouseLeave` mouse out event
-   - `onRemoved` delete event
-   - `onSelected` selected event
-   - `onDeselected` deselected event
+  - `name` overlay name, unique identifier for creation
+  - `id` Overlay identification, if the id exists, it will be based on the id to overwrite
+  - `groupId` Group id
+  - `lock` is locked to prevent dragging
+  - `visible` visible or not
+  - `zLevel` Draw level
+  - `needDefaultPointFigure` needs a default point figure
+  - `needDefaultXAxisFigure` needs the default x-axis figure
+  - `needDefaultYAxisFigure` needs the default y-axis figure
+  - `mode` mode, options are 'normal', 'weak_magnet' and 'strong_magnet'
+  - `points` point information
+  - `extendData` extended data
+  - `styles` styles
+  - `onDrawStart` start drawing event
+  - `onDrawing` drawing event
+  - `onDrawEnd` draw end event
+  - `onClick` click event
+  - `onRightClick` right click event
+  - `onPressedMoveStart` press start move event
+  - `onPressedMoving` Press and move event
+  - `onPressedMoveEnd` Press and move end event
+  - `onMouseEnter` mouse enter event
+  - `onMouseLeave` mouse out event
+  - `onRemoved` delete event
+  - `onSelected` selected event
+  - `onDeselected` deselected event
 
 Example:
 ```javascript
@@ -679,6 +714,7 @@ chart.overrideOverlay({
    },
    lock: false,
    visible: true,
+   zLevel: 0,
    mode: 'weak_magnet',
    extendData: 'xxxxxxxx',
    needDefaultPointFigure: false,

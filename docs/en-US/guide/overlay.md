@@ -21,6 +21,9 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
   // Do you need visible
   visible?: boolean
 
+  // Draw level
+  zLevel?: number
+
   // Do you need the graphics corresponding to the default points, not necessary
   needDefaultPointFigure?: boolean
 

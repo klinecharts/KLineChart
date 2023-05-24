@@ -520,6 +520,7 @@ chart.overrideIndicator({
     groupId?: string
     lock?: boolean
     visible?: boolean
+    zLevel?: number
     needDefaultPointFigure?: boolean
     needDefaultXAxisFigure?: boolean
     needDefaultYAxisFigure?: boolean
@@ -544,7 +545,38 @@ chart.overrideIndicator({
     onRemoved?: (event: object) => boolean
     onSelected?: (event: object) => boolean
     onDeselected?: (event: object) => boolean
-  },
+  } | Array<string | {
+    name: string
+    id?: string
+    groupId?: string
+    lock?: boolean
+    visible?: boolean
+    zLevel?: number
+    needDefaultPointFigure?: boolean
+    needDefaultXAxisFigure?: boolean
+    needDefaultYAxisFigure?: boolean
+    mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
+    points?: Array<{
+      timestamp?: number
+      dataIndex?: number
+      value?: number
+    }>
+    extendData?: any
+    styles?: object
+    onDrawStart?: (event: object) => boolean
+    onDrawing?: (event: object) => boolean
+    onDrawEnd?: (event: object) => boolean
+    onClick?: (event: object) => boolean
+    onRightClick?: (event: object) => boolean
+    onPressedMoveStart?: (event: object) => boolean
+    onPressedMoving?: (event: object) => boolean
+    onPressedMoveEnd?: (event: object) => boolean
+    onMouseEnter?: (event: object) => boolean
+    onMouseLeave?: (event: object) => boolean
+    onRemoved?: (event: object) => boolean
+    onSelected?: (event: object) => boolean
+    onDeselected?: (event: object) => boolean
+  }>,
   paneId?: string
 ) => string | null
 ```
@@ -575,6 +607,7 @@ chart.createOverlay({
   },
   lock: false,
   visible: true,
+  zLevel: 0,
   mode: 'weak_magnet',
   extendData: 'xxxxxxxx',
   needDefaultPointFigure: false,
@@ -617,6 +650,7 @@ chart.createOverlay({
     groupId?: string
     lock?: boolean
     visible?: boolean
+    zLevel?: number
     needDefaultPointFigure?: boolean
     needDefaultXAxisFigure?: boolean
     needDefaultYAxisFigure?: boolean
@@ -651,6 +685,7 @@ chart.createOverlay({
   - `groupId` 编组id
   - `lock` 是否锁定不让拖动
   - `visible` 是否可见
+  - `zLevel` 绘制层级，值越大越靠前显示
   - `needDefaultPointFigure` 是否需要默认的点对应的图形
   - `needDefaultXAxisFigure` 是否需要默认的x轴上的图形
   - `needDefaultYAxisFigure` 是否需要默认的y轴上的图形
@@ -692,6 +727,7 @@ chart.overrideOverlay({
   },
   lock: false,
   visible: true,
+  zLevel: 0,
   mode: 'weak_magnet',
   extendData: 'xxxxxxxx',
   needDefaultPointFigure: false,

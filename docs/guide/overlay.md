@@ -21,6 +21,9 @@
   // 是否可见
   visible?: boolean
 
+  // 绘制层级，值越大越靠前显示
+  zLevel?: number
+
   // 是否需要默认的点对应的图形，非必须
   needDefaultPointFigure?: boolean
 

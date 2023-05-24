@@ -209,6 +209,7 @@
     totalStep?: number
     lock?: boolean
     visible?: boolean
+    zLevel?: number
     needDefaultPointFigure?: boolean
     needDefaultXAxisFigure?: boolean
     needDefaultYAxisFigure?: boolean
@@ -279,6 +280,7 @@
   - `totalStep` 总的实现步骤
   - `lock` 是否锁定不让拖动
   - `visible` 是否可见
+  - `zLevel` 绘制层级，值越大，越靠前显示
   - `needDefaultPointFigure` 是否需要默认的点对应的图形
   - `needDefaultXAxisFigure` 是否需要默认的x轴上的图形
   - `needDefaultYAxisFigure` 是否需要默认的y轴上的图形

@@ -206,6 +206,7 @@ Get technical indicators for chart support.
       totalStep?: number
       lock?: boolean
       visible?: boolean
+      zLevel?: number
       needDefaultPointFigure?: boolean
       needDefaultXAxisFigure?: boolean
       needDefaultYAxisFigure?: boolean
@@ -276,6 +277,7 @@ Add a overlay.
    - `totalStep` total implementation steps
    - `lock` is locked to prevent dragging
    - `visible` visible or not
+   - `zLevel` draw level
    - `needDefaultPointFigure` needs the default point figure
    - `needDefaultXAxisFigure` needs the default x-axis figure
    - `needDefaultYAxisFigure` needs the default y-axis figure
