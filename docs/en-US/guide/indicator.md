@@ -22,39 +22,41 @@ To create a custom technical indicator, you only need to generate a technical in
 ```typescript
 {
   // indicator name
-  name: string,
+  name: string
   // The short name of the indicator, used for display, the name will be displayed by default
-  shortName?: string,
+  shortName?: string
   // precision, default is 4
-  precision?: number,
+  precision?: number
   // calculation parameter
-  calcParams?: any[],
+  calcParams?: any[]
   // Do you need ohlc
-  shouldOhlc?: boolean,
+  shouldOhlc?: boolean
   // Do you need to format large data values, starting from 1000, for example, do you need to format 100K for 100000
-  shouldFormatBigNumber?: boolean,
+  shouldFormatBigNumber?: boolean
+  // Do you need visible
+  visible?: boolean 
   // extended data
   extendData?: any
   // series, default is 'normal'
-  series?: 'normal' | 'price' | 'volume',
+  series?: 'normal' | 'price' | 'volume'
   // Data information
   figures?: Array<{
     // Used to get the median value of the calculation result
-    key: string,
+    key: string
     // for tooltip display
-    title?: string,
+    title?: string
     // graphic type
-    type?: string,
+    type?: string
     // Base value, if given, it will be drawn up and down with this value, generally used when the type is 'rect'
-    baseValue?: number,
+    baseValue?: number
     // is a method
     attrs?: ({
-      coordinate: IndicatorFigureAttrsCallbackCoordinate,
-      bounding: Bounding,
-      barSpace: BarSpace,
-      xAxis: XAxis,
+      coordinate: IndicatorFigureAttrsCallbackCoordinate
+      bounding: Bounding
+      barSpace: BarSpace
+      xAxis: XAxis
       yAxis: YAxis
-    }) => IndicatorFigureAttrs,
+    }) => IndicatorFigureAttrs
     // is a method
     styles?: (
       data: {
@@ -67,7 +69,7 @@ To create a custom technical indicator, you only need to generate a technical in
         },
         // data of the current graph
         current: {
-          kLineData?: KLineData,
+          kLineData?: KLineData
           indicatorData?: any
         },
         // Data for the next graph
@@ -77,7 +79,7 @@ To create a custom technical indicator, you only need to generate a technical in
         }
       },
       // technical chart example
-      indicator: Indicator,
+      indicator: Indicator
       // The default technical indicator style, that is, the technical indicator style set globally, refer to the indicator in [Style]
       defaultStyles: IndicatorStyle
     ) => IndicatorFigureStyle
@@ -87,14 +89,14 @@ To create a custom technical indicator, you only need to generate a technical in
   // The specified maximum value, default null
   maxValue?: number
   // style, support increment, default is null, type refer to indicator in [style]
-  styles?: IndicatorStyle,
+  styles?: IndicatorStyle
   // calculation method, can be a promise
   calc: (
     // data source, see [data source] for type
     dataList: KLineData[],
     // technical indicator example
     indicator: indicator
-  ) => Promise<Array<any>> | Array<any>,
+  ) => Promise<Array<any>> | Array<any>
   // Regenerate figure graphic configuration method, which will be triggered after the calculation parameters change, refer to figures for the return type, the default is null
   regenerateFigures?: (
     // calculation parameter
@@ -103,108 +105,114 @@ To create a custom technical indicator, you only need to generate a technical in
   // Create a custom hint text
   createTooltipDataSource?: (params: {
     // data source, see [data source] for type
-    kLineDataList: KLineData[],
+    kLineDataList: KLineData[]
     // technical indicator example
-    indicator: Indicator,
+    indicator: Indicator
     // Visible area information
     visibleRange: {
       // start data index
-      from: number,
+      from: number
       // end data index
-      to: number,
+      to: number
       // real start data index
-      realFrom: number,
+      realFrom: number
       // real end data index
       realTo: number
     },
     // window size information
     bounding: {
       // width
-      width: number,
+      width: number
       // high
-      height: number,
+      height: number
       // distance to the left
-      left: number,
+      left: number
       // distance to the right
-      right: number,
+      right: number
       // distance from top
-      top: number,
+      top: number
       // distance from bottom
       bottom: number
     },
     // Information about the cross cursor
     crosshair: {
       // The window id where the cross point of the cross cursor is located
-      paneId?: string,
+      paneId?: string
       // real x coordinate
-      realX?: number,
+      realX?: number
       // k-line data, type refer to [data source]
-      kLineData?: KLineData,
+      kLineData?: KLineData
       // data index
-      dataIndex?: number,
+      dataIndex?: number
       // real data index
       realDataIndex?: number
     },
     // The default technical indicator style, that is, the technical indicator style set globally, refer to the indicator in [Style]
-    defaultStyles: IndicatorStyle,
+    defaultStyles: IndicatorStyle
     // x-axis component, some built-in conversion methods
-    xAxis: XAxis,
+    xAxis: XAxis
     // y-axis component, with some built-in conversion methods
     yAxis: YAxis
   }) => ({
     // name
-    name?: string,
+    name?: string
     // Calculate the parameter text, if name has no value, it will not be displayed
-    calcParamsText?: string,
+    calcParamsText?: string
     // value information
     values?: Array<{
-      title: string | { text: string, color: string }
-      value: string | { text: string, color: string }
+      title: string | {
+        text: string
+        color: string
+      }
+      value: string | {
+        text: string
+        color: string
+      }
     }>
   }),
   // Custom drawing, if true is returned, the graphics configured by figures will not be drawn
   draw?: (params: {
     // canvas context
-    ctx: CanvasRenderingContext2D,
+    ctx: CanvasRenderingContext2D
     // data source, see [data source] for type
-    kLineDataList: KLineData[],
+    kLineDataList: KLineData[]
     // technical indicator example
-    indicator: Indicator,
+    indicator: Indicator
     // Visible area information
     visibleRange: {
       // start data index
-      from: number,
+      from: number
       // endpoint data index
       to: number
     },
     // window size information
     bounding: {
       // width
-      width: number,
+      width: number
       // high
-      height: number,
+      height: number
       // distance to the left
-      left: number,
+      left: number
       // distance to the right
-      right: number,
+      right: number
       // distance from top
-      top: number,
+      top: number
       // distance from bottom
       bottom: number
     },
     // information about the size of the candlestick
     barSpace: {
       // candlestick size
-      bar: number,
-      halfBar: number,
+      bar: number
+      halfBar: number
       // candlesticks do not include dimensions of gaps between candlesticks
-      gapBar: number,
+      gapBar: number
       halfGapBar: number
     },
     // The default technical indicator style, that is, the technical indicator style set globally, refer to the indicator in [Style]
-    defaultStyles: IndicatorStyle,
+    defaultStyles: IndicatorStyle
     // x-axis component, some built-in conversion methods
-    xAxis: XAxis,
+    xAxis: XAxis
     // y-axis component, with some built-in conversion methods
     yAxis: YAxis
   }) => boolean

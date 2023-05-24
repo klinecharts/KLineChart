@@ -12,11 +12,11 @@
 ## getSize(paneId, position)
 ```typescript
 (paneId?: string, position?: 'root' | 'main' | 'yAxis') => {
-  width: number,
-  height: number,
-  left: number,
-  top: number,
-  right: number,
+  width: number
+  height: number
+  left: number
+  top: number
+  right: number
   bottom: number
 }
 ```
@@ -136,7 +136,12 @@
 
 ## getVisibleRange()
 ```typescript
-() => { from: number, to: number, realFrom: number, realTo: number }
+() => {
+  from: number
+  to: number
+  realFrom: number
+  realTo: number
+}
 ```
 获取可见区间范围。
 
@@ -144,11 +149,11 @@
 ```typescript
 (
   dataList：Array<{
-    timestamp: number,
-    open: number,
-    close: number,
-    high: number,
-    low: number,
+    timestamp: number
+    open: number
+    close: number
+    high: number
+    low: number
     volume?: number,
     turnover?: number
   }>,
@@ -166,12 +171,12 @@
 ```typescript
 (
   dataList：Array<{
-    timestamp: number,
-    open: number,
-    close: number,
-    high: number,
-    low: number,
-    volume?: number,
+    timestamp: number
+    open: number
+    close: number
+    high: number
+    low: number
+    volume?: number
     turnover?: number
   }>,
   more?: boolean,
@@ -188,12 +193,12 @@
 ```typescript
 (
   data: {
-    timestamp: number,
-    open: number,
-    close: number,
-    high: number,
-    low: number,
-    volume?: number,
+    timestamp: number
+    open: number
+    close: number
+    high: number
+    low: number
+    volume?: number
     turnover?: number
   },
   callback?: () => void
@@ -207,12 +212,12 @@
 ## getDataList()
 ```typescript
 () => Array<{
-  timestamp: number,
-  open: number,
-  close: number,
-  high: number,
-  low: number,
-  volume?: number,
+  timestamp: number
+  open: number
+  close: number
+  high: number
+  low: number
+  volume?: number
   turnover?: number
 }>
 ```
@@ -238,59 +243,71 @@
 ```typescript
 (
   value: string | {
-  name: string,
-    shortName?: string,
-    precision?: number,
-    calcParams?: any[],
-    shouldOhlc?: boolean,
-    shouldFormatBigNumber?: boolean,
-    visible?: boolean,
-    extendData?: any,
-    series?: 'normal' | 'price' | 'volume',
+    name: string
+    shortName?: string
+    precision?: number
+    calcParams?: any[]
+    shouldOhlc?: boolean
+    shouldFormatBigNumber?: boolean
+    visible?: boolean
+    extendData?: any
+    series?: 'normal' | 'price' | 'volume'
     figures?: Array<{
-      key: string,
-      title?: string,
-      type?: string,
-      baseValue?: number,
+      key: string
+      title?: string
+      type?: string
+      baseValue?: number
       styles?: (
         data: object,
         indicator: object,
         defaultStyles: object
-      ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
+      ) => {
+        style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill'
+        color?: string
+      }
     }>
-    minValue?: number,
-    maxValue?: number,
-    styles?: object,
-    calc?: (dataList: KLineData[], indicator: object) => Promise<object[]> | object[],
+    minValue?: number
+    maxValue?: number
+    styles?: object
+    calc?: (dataList: KLineData[], indicator: object) => Promise<object[]> | object[]
     regenerateFigures?: (calcParms: any[]) => Array<{
-      key: string,
-      title?: string,
-      type?: string,
-      baseValue?: number,
+      key: string
+      title?: string
+      type?: string
+      baseValue?: number
       styles?: (
         data: object,
         indicator: object,
         defaultStyles: object
-      ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
+      ) => {
+        style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill'
+        color?: string
+      }
     }>,
     createTooltipDataSource?: (params: object) => {
-      name?: string,
-      calcParamsText?: string,
+      name?: string
+      calcParamsText?: string
       values?: Array<{
-        title: string | { text: string, color: string },
-        value: string | { text: string, color: string }
+        title: string | {
+          text: string
+          color: string
+        }
+        value: string | {
+          text: string
+          color: string
+        }
       }>
-    },
+    }
     draw?: (params: object) => boolean
   },
   isStack?: boolean,
   paneOptions?: {
-    id?: string,
-    height?: number,
-    minHeight?: number,
+    id?: string
+    height?: number
+    minHeight?: number
     dragEnabled?: boolean
     gap?: {
-      top?: number,
+      top?: number
       bottom?: number
     }
   } | null,
@@ -329,49 +346,61 @@ chart.createTechnicalIndicator('MA', false, {
 ```typescript
 (
   override: {
-    name: string,
-    shortName?: string,
-    precision?: number,
-    calcParams?: any[],
-    shouldOhlc?: boolean,
-    shouldFormatBigNumber?: boolean,
-    visible?: boolean,
-    extendData?: any,
-    series?: 'normal' | 'price' | 'volume',
+    name: string
+    shortName?: string
+    precision?: number
+    calcParams?: any[]
+    shouldOhlc?: boolean
+    shouldFormatBigNumber?: boolean
+    visible?: boolean
+    extendData?: any
+    series?: 'normal' | 'price' | 'volume'
     figures?: Array<{
-      key: string,
-      title?: string,
-      type?: string,
-      baseValue?: number,
+      key: string
+      title?: string
+      type?: string
+      baseValue?: number
       styles?: (
         data: object,
         indicator: object,
         defaultStyles: object
-      ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
+      ) => {
+        style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill'
+        color?: string
+      }
     }>
-    minValue?: number,
-    maxValue?: number,
-    styles?: object,
-    calc?: (dataList: KLineData[], indicator: object) => Promise<object[]> | object[],
+    minValue?: number
+    maxValue?: number
+    styles?: object
+    calc?: (dataList: KLineData[], indicator: object) => Promise<object[]> | object[]
     regenerateFigures?: (calcParms: any[]) => Array<{
-      key: string,
-      title?: string,
-      type?: string,
-      baseValue?: number,
+      key: string
+      title?: string
+      type?: string
+      baseValue?: number
       styles?: (
         data: object,
         indicator: object,
         defaultStyles: object
-      ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
+      ) => {
+        style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill'
+        color?: string
+      }
     }>,
     createTooltipDataSource?: (params: object) => {
-      name?: string,
-      calcParamsText?: string,
+      name?: string
+      calcParamsText?: string
       values?: Array<{
-        title: string | { text: string, color: string },
-        value: string | { text: string, color: string }
+        title: string | {
+          text: string
+          color: string 
+        }
+        value: string | {
+          text: string
+          color: string
+        }
       }>
-    },
+    }
     draw?: (params: object) => boolean
   },
   paneId?: string | null,
@@ -479,30 +508,34 @@ chart.overrideIndicator({
 ```typescript
 (
   value: string | {
-    name: string,
-    id?: string,
-    groupId?: string, 
-    lock?: boolean,
-    visible?: boolean,
-    needDefaultPointFigure?: boolean,
-    needDefaultXAxisFigure?: boolean,
-    needDefaultYAxisFigure?: boolean,
-    mode?: 'normal' | 'weak_magnet' | 'strong_magnet',
-    points?: Array<{ timestamp?: number, dataIndex?: number, value?: number }>,
-    extendData?: any,
-    styles?: object,
-    onDrawStart?: (event: object) => boolean,
-    onDrawing?: (event: object) => boolean,
-    onDrawEnd?: (event: object) => boolean,
-    onClick?: (event: object) => boolean,
-    onRightClick?: (event: object) => boolean,
-    onPressedMoveStart?: (event: object) => boolean,
-    onPressedMoving?: (event: object) => boolean,
-    onPressedMoveEnd?: (event: object) => boolean,
-    onMouseEnter?: (event: object) => boolean,
-    onMouseLeave?: (event: object) => boolean,
-    onRemoved?: (event: object) => boolean,
-    onSelected?: (event: object) => boolean,
+    name: string
+    id?: string
+    groupId?: string
+    lock?: boolean
+    visible?: boolean
+    needDefaultPointFigure?: boolean
+    needDefaultXAxisFigure?: boolean
+    needDefaultYAxisFigure?: boolean
+    mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
+    points?: Array<{
+      timestamp?: number
+      dataIndex?: number
+      value?: number
+    }>
+    extendData?: any
+    styles?: object
+    onDrawStart?: (event: object) => boolean
+    onDrawing?: (event: object) => boolean
+    onDrawEnd?: (event: object) => boolean
+    onClick?: (event: object) => boolean
+    onRightClick?: (event: object) => boolean
+    onPressedMoveStart?: (event: object) => boolean
+    onPressedMoving?: (event: object) => boolean
+    onPressedMoveEnd?: (event: object) => boolean
+    onMouseEnter?: (event: object) => boolean
+    onMouseLeave?: (event: object) => boolean
+    onRemoved?: (event: object) => boolean
+    onSelected?: (event: object) => boolean
     onDeselected?: (event: object) => boolean
   },
   paneId?: string
@@ -572,30 +605,34 @@ chart.createOverlay({
 ```typescript
 (
   override: {
-    name: string,
-    id?: string,
-    groupId?: string,
-    lock?: boolean,
-    visible?: boolean,
-    needDefaultPointFigure?: boolean,
-    needDefaultXAxisFigure?: boolean,
-    needDefaultYAxisFigure?: boolean,
-    mode?: 'normal' | 'weak_magnet' | 'strong_magnet',
-    points?: Array<{ timestamp?: number, dataIndex?: number, value?: number }>,
-    extendData?: any,
-    styles?: object,
-    onDrawStart?: (event: object) => boolean,
-    onDrawing?: (event: object) => boolean,
-    onDrawEnd?: (event: object) => boolean,
-    onClick?: (event: object) => boolean,
-    onRightClick?: (event: object) => boolean,
-    onPressedMoveStart?: (event: object) => boolean,
-    onPressedMoving?: (event: object) => boolean,
-    onPressedMoveEnd?: (event: object) => boolean,
-    onMouseEnter?: (event: object) => boolean,
-    onMouseLeave?: (event: object) => boolean,
-    onRemoved?: (event: object) => boolean,
-    onSelected?: (event: object) => boolean,
+    name: string
+    id?: string
+    groupId?: string
+    lock?: boolean
+    visible?: boolean
+    needDefaultPointFigure?: boolean
+    needDefaultXAxisFigure?: boolean
+    needDefaultYAxisFigure?: boolean
+    mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
+    points?: Array<{
+      timestamp?: number
+      dataIndex?: number
+      value?: number
+    }>
+    extendData?: any
+    styles?: object
+    onDrawStart?: (event: object) => boolean
+    onDrawing?: (event: object) => boolean
+    onDrawEnd?: (event: object) => boolean
+    onClick?: (event: object) => boolean
+    onRightClick?: (event: object) => boolean
+    onPressedMoveStart?: (event: object) => boolean
+    onPressedMoving?: (event: object) => boolean
+    onPressedMoveEnd?: (event: object) => boolean
+    onMouseEnter?: (event: object) => boolean
+    onMouseLeave?: (event: object) => boolean
+    onRemoved?: (event: object) => boolean
+    onSelected?: (event: object) => boolean
     onDeselected?: (event: object) => boolean
   }
 ) => string | null
@@ -677,8 +714,8 @@ chart.overrideOverlay({
 ```typescript
 (
   remove: string | {
-    id?: string,
-    groupId?: string,
+    id?: string
+    groupId?: string
     name?: string
   }
 ) => void
@@ -729,7 +766,14 @@ chart.overrideOverlay({
 
 ## zoomAtCoordinate(scale, coordinate, animationDuration)
 ```typescript
-(scale: number, coordinate?: { x: number, y: number }, animationDuration?: number) => void
+(
+  scale: number,
+  coordinate?: {
+    x: number
+    y: number
+  },
+  animationDuration?: number
+) => void
 ```
 在某个坐标点缩放。
 - `scale` 缩放比例
@@ -759,16 +803,18 @@ chart.overrideOverlay({
 
 ## setPaneOptions(options)
 ```typescript
-(options: {
-  id: string,
-  height?: number,
-  minHeight?: number,
-  dragEnabled?: boolean
-  gap?: {
-    top?: number,
-    bottom?: number
+(
+  options: {
+    id: string
+    height?: number
+    minHeight?: number
+    dragEnabled?: boolean
+    gap?: {
+      top?: number
+      bottom?: number
+    }
   }
-}) => void
+) => void
 ```
 设置窗口配置。
 - `paneOptions` 窗口配置信息，可缺省
@@ -834,16 +880,16 @@ chart.setPaneOptions({
 ```typescript
 (
   value: {
-    dataIndex?: number,
-    timestamp?: number,
+    dataIndex?: number
+    timestamp?: number
     value?: number
   } | Array<{
-    dataIndex?: number,
-    timestamp?: number,
+    dataIndex?: number
+    timestamp?: number
     value?: number
   }>,
   finder: {
-    paneId?: string,
+    paneId?: string
     absolute?: boolean
   }
 ) => { x: number?, y?: number } | Array<{ x?: number, y?: number }>
@@ -861,18 +907,24 @@ chart.setPaneOptions({
 ## convertFromPixel(coordinate, finder)
 ```typescript
 (
-  coordinate: { x: number?, y?: number } | Array<{ x?: number, y?: number },
+  coordinate: {
+    x?: number
+    y?: number
+  } | Array<{
+    x?: number
+    y?: number
+  },
   finder: {
-    paneId?: string,
+    paneId?: string
     absolute?: boolean
   }
 ) => {
-    dataIndex?: number,
-    timestamp?: number,
+    dataIndex?: number
+    timestamp?: number
     value?: number
   } | Array<{
-    dataIndex?: number,
-    timestamp?: number,
+    dataIndex?: number
+    timestamp?: number
     value?: number
   }>
 ```

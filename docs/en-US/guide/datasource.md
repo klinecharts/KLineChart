@@ -5,17 +5,17 @@ The data required for the chart must be in a fixed format. Through the chart API
 ```typescript
 {
   // Timestamp, millisecond, required fields
-  timestamp: number,
+  timestamp: number
   // Open price, required fields
-  open: number,
+  open: number
   // Close price, required field
-  close: number,
+  close: number
   // Highest price, required field
-  high: number,
+  high: number
   // Lowest price, required field
-  low: number,
+  low: number
   // volume, optional field
-  volume: number,
+  volume: number
   // Turnover, a non-required field, if you need to display the technical indicators 'EMV' and 'AVP', you need to fill this field with data.
   turnover: number
 }

@@ -10,177 +10,183 @@
 ```typescript
 {
   // 名称，必须字段，作为覆盖物创建的唯一标识
-  name: string,
+  name: string
 
   // 总共需要多少步操作才行绘制完成，非必须
-  totalStep?: number,
+  totalStep?: number
 
   // 是否锁定，不触发事件，非必须
-  lock?: boolean,
+  lock?: boolean
+
+  // 是否可见
+  visible?: boolean
 
   // 是否需要默认的点对应的图形，非必须
-  needDefaultPointFigure?: boolean,
+  needDefaultPointFigure?: boolean
 
   // 是否需要默认的X轴上的图形，非必须
-  needDefaultXAxisFigure?: boolean,
+  needDefaultXAxisFigure?: boolean
 
   // 是否需要默认的Y轴上的图形，非必须
-  needDefaultYAxisFigure?: boolean,
+  needDefaultYAxisFigure?: boolean
 
   // 模式，可选项为`normal`，`weak_magnet`，`strong_magnet`，非必须
-  mode?: 'normal' | 'weak_magnet' | 'strong_magnet',
+  mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
 
   // 点信息，非必须
   points?: Array<{
     // 时间戳
-    timestamp: number,
+    timestamp: number
     // 数据索引
-    dataIndex?: number,
+    dataIndex?: number
     // 对应y轴的值
     value?: number
   }>,
 
   // 扩展数据，非必须
-  extendData?: any,
+  extendData?: any
 
   // 样式，非必须，类型参与[样式]中的overlay
-  styles?: OverlayStyle,
+  styles?: OverlayStyle
 
   // 创建点对应的图形，非必须
   createPointFigures: ({
     // 覆盖物实例
-    overlay: Overlay,
+    overlay: Overlay
     // points对应的坐标信息
-    coordinates: Array<{ x: number, y: number }>,
+    coordinates: Array<{
+      x: number
+      y: number
+    }>
     // 窗口尺寸信息
     bounding: {
       // 宽
-      width: number,
+      width: number
       // 高
-      height: number,
+      height: number
       // 距离左边距离
-      left: number,
+      left: number
       // 距离右边距离
-      right: number,
+      right: number
       // 距离顶部距离
-      top: number,
+      top: number
       // 距离底部距离
       bottom: number
-    },
+    }
     // 蜡烛柱的尺寸信息
     barSpace: {
       // 蜡烛柱尺寸
-      bar: number,
-      halfBar: number,
+      bar: number
+      halfBar: number
       // 蜡烛柱不包含蜡烛柱之间间隙的尺寸
-      gapBar: number,
+      gapBar: number
       halfGapBar: number
     },
     // 精度
     precision: {
       // 价格精度
-      price: number,
+      price: number
       // 数量精度
       volume: number
-    },
+    }
     // 千分符
-    thousandsSeparator: string,
+    thousandsSeparator: string
     // 格式化日期和时间的对象的构造器，详情参阅 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
-    dateTimeFormat: Intl.DateTimeFormat,
+    dateTimeFormat: Intl.DateTimeFormat
     // 默认样式，即全局样式配置中的overlay，类型参与[样式]中的overlay
-    defaultStyles: OverlayStyle,
+    defaultStyles: OverlayStyle
      // x轴组件，内置一些转换方法
-    xAxis: XAxis,
+    xAxis: XAxis
     // y轴组件，内置一些转换方法
     yAxis: YAxis
   }) => ({
     // 无特殊含义，可用于扩展字段
-    key?: string,
+    key?: string
     // 图形类型，类型为klinecharts.getSupportFigures返回值中的一种
-    type: string,
+    type: string
     // type对应的图形的属性
-    attrs: any | any[],
+    attrs: any | any[]
     // type对应的图形的样式
-    styles?: any,
+    styles?: any
     // 是否忽略事件
     ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
   }) | Array<{
-    key?: string,
-    type: string,
-    attrs: any | any[],
-    styles?: any,
+    key?: string
+    type: string
+    attrs: any | any[]
+    styles?: any
     ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
   }>
 
   // 创建X轴上的图形，非必须，参数和返回值和`createPointFigures`一致
-  createXAxisFigures?: OverlayCreateFiguresCallback,
+  createXAxisFigures?: OverlayCreateFiguresCallback
 
   // 创建Y轴上的图形，非必须，参数和返回值和`createPointFigures`一致
-  createYAxisFigures?: OverlayCreateFiguresCallback,
+  createYAxisFigures?: OverlayCreateFiguresCallback
 
   // 处理在绘制过程中移动操作，可缺省，移动绘制过程中触发
   performEventMoveForDrawing?: ({
     // 当前步骤
-    currentStep: number,
+    currentStep: number
     // 模式
-    mode: 'normal' | 'weak_magnet' | 'strong_magnet',
+    mode: 'normal' | 'weak_magnet' | 'strong_magnet'
     // 点信息
     points: Array<{
       // 时间戳
-      timestamp: number,
+      timestamp: number
       // 数据索引
-      dataIndex?: number,
+      dataIndex?: number
       // 对应y轴的值
       value?: number
-    }>,
+    }>
     // 事件所在点的索引
-    performPointIndex,
+    performPointIndex
     // 事件所在点的信息
     performPoint
-  }) => void,
+  }) => void
 
   // 处理按住移动操作，可缺省，按住某个操作点移动过程中触发
   // 回调参数和`performEventMoveForDrawing`一致
-  performEventPressedMove?: (params: OverlayPerformEventParams) => void,
+  performEventPressedMove?: (params: OverlayPerformEventParams) => void
 
   // 绘制开始回调事件，可缺省
-  onDrawStart?: (event: OverlayEvent) => boolean,
+  onDrawStart?: (event: OverlayEvent) => boolean
 
   // 绘制过程中回调事件，可缺省
-  onDrawing?: (event: OverlayEvent) => boolean,
+  onDrawing?: (event: OverlayEvent) => boolean
 
   // 绘制结束回调事件，可缺省
-  onDrawEnd?: (event: OverlayEvent) => boolean,
+  onDrawEnd?: (event: OverlayEvent) => boolean
 
   // 点击回调事件，可缺省
-  onClick?: (event: OverlayEvent) => boolean,
+  onClick?: (event: OverlayEvent) => boolean
 
   // 右击回调事件，可缺省，需要返回一个boolean类型的值，如果返回true，内置的右击删除将无效
-  onRightClick?: (event: OverlayEvent) => boolean,
+  onRightClick?: (event: OverlayEvent) => boolean
 
   // 按住拖动开始回调事件，可缺省
-  onPressedMoveStart?: (event: OverlayEvent) => boolean,
+  onPressedMoveStart?: (event: OverlayEvent) => boolean
 
   // 按住拖动回调事件，可缺省  
-  onPressedMoving?: (event: OverlayEvent) => boolean,
+  onPressedMoving?: (event: OverlayEvent) => boolean
 
   // 按住拖动结束回调事件，可缺省
-  onPressedMoveEnd: (event: OverlayEvent) => boolean,
+  onPressedMoveEnd: (event: OverlayEvent) => boolean
 
   // 鼠标移入事件，可缺省
-  onMouseEnter?: (event: OverlayEvent) => boolean,
+  onMouseEnter?: (event: OverlayEvent) => boolean
 
   // 鼠标移出事件，可缺省
-  onMouseLeave?: (event: OverlayEvent) => boolean,
+  onMouseLeave?: (event: OverlayEvent) => boolean
 
   // 删除回调事件，可缺省
-  onRemoved?: (event: OverlayEvent) => boolean,
+  onRemoved?: (event: OverlayEvent) => boolean
 
   // 选中回调事件，可缺省
-  onSelected?: (event: OverlayEvent) => boolean,
+  onSelected?: (event: OverlayEvent) => boolean
 
   // 取消回调事件，可缺省
-  onDeselected?: (event: OverlayEvent) => boolean,
+  onDeselected?: (event: OverlayEvent) => boolean
 }
 ```
 

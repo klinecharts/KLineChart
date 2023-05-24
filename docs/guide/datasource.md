@@ -4,17 +4,17 @@
 ```typescript
 {
   // 时间戳，毫秒级别，必要字段
-  timestamp: number,
+  timestamp: number
   // 开盘价，必要字段
-  open: number,
+  open: number
   // 收盘价，必要字段
-  close: number,
+  close: number
   // 最高价，必要字段
-  high: number,
+  high: number
   // 最低价，必要字段
-  low: number,
+  low: number
   // 成交量，非必须字段
-  volume: number,
+  volume: number
   // 成交额，非必须字段，如果需要展示技术指标'EMV'和'AVP'，则需要为该字段填充数据。
   turnover: number
   

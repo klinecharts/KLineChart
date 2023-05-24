@@ -1,4 +1,4 @@
-# Feedback
+# 💬 Feedback
 
 ## Github
 + Issues: [https://github.com/liihuu/KLineChart/issues](https://github.com/liihuu/KLineChart/issues)

@@ -24,23 +24,23 @@ new Figure(attrs, styles).draw(ctx)
 new (
   attrs: {
     // 圆心x轴坐标值
-    x: number,
+    x: number
     // 圆心y轴坐标值
-    y: number,
+    y: number
     // 半径
-    r: number,
+    r: number
     // 开始角度
-    startAngle: number,
+    startAngle: number
     // 结束角度
     endAngle: number
   },
   styles: {
     // 样式，可选项`solid`，`dashed`
-    style?: 'solid' | 'dashed',
+    style?: 'solid' | 'dashed'
     // 尺寸
-    size?: number,
+    size?: number
     // 颜色
-    color?: string,
+    color?: string
     // 虚线参数
     dashedValue?: number[]
   }
@@ -52,23 +52,23 @@ new (
 new (
   attrs: {
     // 圆心x轴坐标值
-    x: number,
+    x: number
     // 圆心y轴坐标值
-    y: number,
+    y: number
     // 半径
     r: number
   },
   styles: {
     // 样式，可选项`fill`，`stroke`，`stroke_fill`
-    style?: 'fill' | 'stroke' | 'stroke_fill',
+    style?: 'fill' | 'stroke' | 'stroke_fill'
     // 颜色
-    color?: string,
+    color?: string
     // 边框样式
-    borderStyle?: 'solid' | 'dashed',
+    borderStyle?: 'solid' | 'dashed'
     // 边框颜色
-    borderColor?: string,
+    borderColor?: string
     // 边框尺寸
-    borderSize?: number,
+    borderSize?: number
     // 边框虚线参数
     borderDashedValue?: number[]
   }
@@ -80,15 +80,18 @@ new (
 new (
   attrs: {
     // 坐标集合
-    coordinates: Array<{ x: number, y: number }>
+    coordinates: Array<{
+      x: number
+      y: number
+    }>
   },
   styles: {
     // 样式，可选项`solid`，`dashed`
-    style?: 'solid' | 'dashed',
+    style?: 'solid' | 'dashed'
     // 尺寸
-    size?: number,
+    size?: number
     // 颜色
-    color?: string,
+    color?: string
     // 虚线参数
     dashedValue?: number[]
   }
@@ -100,19 +103,22 @@ new (
 new (
   attrs: {
     // 坐标集合
-    coordinates: Array<{ x: number, y: number }>
+    coordinates: Array<{
+      x: number
+      y: number
+    }>
   },
   styles: {
     // 样式，可选项`fill`，`stroke`，`stroke_fill`
-    style?: 'fill' | 'stroke' | 'stroke_fill',
+    style?: 'fill' | 'stroke' | 'stroke_fill'
     // 颜色
-    color?: string,
+    color?: string
     // 边框样式
-    borderStyle?: 'solid' | 'dashed',
+    borderStyle?: 'solid' | 'dashed'
     // 边框颜色
-    borderColor?: string,
+    borderColor?: string
     // 边框尺寸
-    borderSize?: number,
+    borderSize?: number
     // 边框虚线参数
     borderDashedValue?: number[]
   }
@@ -124,27 +130,27 @@ new (
 new (
   attrs: {
     // 起始点x轴坐标值
-    x: number,
+    x: number
     // 起始点y轴坐标值
-    y: number,
+    y: number
     // 宽度
-    width: number,
+    width: number
     // 高度
     height: number
   },
   styles: {
     // 样式，可选项`fill`，`stroke`，`stroke_fill`
-    style?: 'fill' | 'stroke' | 'stroke_fill',
+    style?: 'fill' | 'stroke' | 'stroke_fill'
     // 颜色
-    color?: string,
+    color?: string
     // 边框样式
     borderStyle?: 'solid' | 'dashed',
     // 边框颜色
-    borderColor?: string,
+    borderColor?: string
     // 边框尺寸
-    borderSize?: number,
+    borderSize?: number
     // 边框虚线参数
-    borderDashedValue?: number[],
+    borderDashedValue?: number[]
     // 边框圆角值
     borderRadius?: number
   }
@@ -156,25 +162,25 @@ new (
 new (
   attrs: {
     // 起始点x轴坐标值
-    x: number,
+    x: number
     // 起始点y轴坐标值
-    y: number,
+    y: number
     // 文字内容
-    text: any,
+    text: any
     // 对齐方式
-    align: CanvasTextAlign,
+    align: CanvasTextAlign
     // 基准
     baseline: CanvasTextBaseline
   },
   styles: {
     // 颜色
-    color?: string,
+    color?: string
     // 尺寸
-    size?: number,
+    size?: number
     // 字体
-    family?: string,
+    family?: string
     // 粗细
-    weight?: string | number,
+    weight?: string | number
   }
 ) => Figure
 ```
@@ -184,45 +190,45 @@ new (
 new (
   attrs: {
     // 起始点x轴坐标值
-    x: number,
+    x: number
     // 起始点y轴坐标值
-    y: number,
+    y: number
     // 文字内容
-    text: any,
+    text: any
     // 对齐方式
-    align: CanvasTextAlign,
+    align: CanvasTextAlign
     // 基准
     baseline: CanvasTextBaseline
   },
   styles: {
     // 样式，可选项`fill`，`stroke`，`stroke_fill`
-    style?: 'fill' | 'stroke' | 'stroke_fill',
+    style?: 'fill' | 'stroke' | 'stroke_fill'
     // 颜色
-    color?: string,
+    color?: string
     // 尺寸
-    size?: number,
+    size?: number
     // 字体
-    family?: string,
+    family?: string
     // 粗细
-    weight?: string | number,
+    weight?: string | number
     // 左内边距
-    paddingLeft?: number,
+    paddingLeft?: number
     // 右内边距
-    paddingRight?: number,
+    paddingRight?: number
     // 上内边距
-    paddingTop?: number,
+    paddingTop?: number
     // 下内边距
-    paddingBootom?: number,
+    paddingBootom?: number
     // 边框样式
-    borderStyle?: 'solid' | 'dashed',
+    borderStyle?: 'solid' | 'dashed'
     // 边框颜色
-    borderColor?: string,
+    borderColor?: string
     // 边框尺寸
-    borderSize?: number,
+    borderSize?: number
     // 边框虚线参数
-    borderDashedValue?: number[],
+    borderDashedValue?: number[]
     // 边框圆角值
-    borderRadius?: number,
+    borderRadius?: number
     // 背景色
     backgroundColor?: string | CanvasGradient
   }
@@ -233,20 +239,23 @@ new (
 创建一个自定义基础图形，只需要生成基础图形信息，然后通过`klinecharts.registerFigure`全局添加，添加到图表即可和内置基础图形一样去使用。
 
 ### 属性说明
-```javascript
+```typescript
 {
   // 图形名字，必要字段，是创建的唯一标识
-  name: string,
+  name: string
 
   // 校验事件是否在图形上，返回一个boolean值
   checkEventOn: (
     // 事件的坐标
-    coordinate: { x: number, y: number },
+    coordinate: {
+      x: number
+      y: number
+    }
     // 图形的属性
-    attrs: any,
+    attrs: any
     // 图形的样式
     styles: any
-  ) => boolean,
+  ) => boolean
 
   // 绘制
   draw: (

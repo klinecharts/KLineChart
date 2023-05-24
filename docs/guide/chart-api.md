@@ -2,16 +2,19 @@
 
 ## init(ds, options)
 ```typescript
-(ds: string | HTMLElement, options?: {
-  locale?: string,
-  styles?: string | object,
-  timezone?: string,
-  customApi?: {
-    formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: number) => string,
-    formatBigNumber?: (value: string | number) => string
-  },
-  thousandsSeparator?: string
-}) => Chart
+(
+  ds: string | HTMLElement,
+  options?: {
+    locale?: string
+    styles?: string | object
+    timezone?: string
+    customApi?: {
+      formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: number) => string
+      formatBigNumber?: (value: string | number) => string
+    }
+    thousandsSeparator?: string
+  }
+) => Chart
 ```
 初始化一个图表，返回图表实例。
 - `ds` 容器，可以是dom元素或者元素id。
@@ -38,11 +41,11 @@
 (
   locale: string,
   locales: {
-    time: string,
-    open: string,
-    high: string,
-    low: string,
-    close: string,
+    time: string
+    open: string
+    high: string
+    low: string
+    close: string
     volume: string
   }
 ) => void
@@ -71,11 +74,13 @@
 
 ## registerFigure(figure)
 ```typescript
-(figure: {
-  name: string,
-  draw: (ctx: CanvasRenderingContext2D, attrs: any, styles: object) => void,
-  checkEventOn: (coordinate: Coordinate, attrs: any, styles: object) => boolean
-}) => void
+(
+  figure: {
+    name: string
+    draw: (ctx: CanvasRenderingContext2D, attrs: any, styles: object) => void
+    checkEventOn: (coordinate: Coordinate, attrs: any, styles: object) => boolean
+  }
+) => void
 ```
 添加一个基础图形。
 - `figure` 基础图形信息，详情参阅[基础图形](./figure.md)
@@ -100,52 +105,66 @@
 
 ## registerIndicator(indicator)
 ```typescript
-(indicator: {
-  name: string,
-  shortName?: string,
-  precision?: number,
-  calcParams?: any[],
-  shouldOhlc?: boolean,
-  shouldFormatBigNumber?: boolean,
-  visible?: boolean,
-  extendData?: any,
-  series?: 'normal' | 'price' | 'volume',
-  figures?: Array<{
-    key: string,
-    title?: string,
-    type?: string,
-    baseValue?: number,
-    styles?: (
-      data: object,
-      indicator: object,
-      defaultStyles: object
-    ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
-  }>
-  minValue?: number,
-  maxValue?: number,
-  styles?: object,
-  calc: (dataList: KLineData[], indicator: object) => Promise<object[]> | object[],
-  regenerateFigures?: (calcParms: any[]) => Array<{
-    key: string,
-    title?: string,
-    type?: string,
-    baseValue?: number,
-    styles?: (
-      data: object,
-      indicator: object,
-      defaultStyles: object
-    ) => { style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill', color?: string }
-  }>,
-  createTooltipDataSource?: (params: object) => {
-    name?: string,
-    calcParamsText?: string,
-    values?: Array<{
-      title: string | { text: string, color: string },
-      value: string | { text: string, color: string }
+(
+  indicator: {
+    name: string
+    shortName?: string
+    precision?: number
+    calcParams?: any[]
+    shouldOhlc?: boolean
+    shouldFormatBigNumber?: boolean
+    visible?: boolean
+    extendData?: any
+    series?: 'normal' | 'price' | 'volume'
+    figures?: Array<{
+      key: string
+      title?: string
+      type?: string
+      baseValue?: number
+      styles?: (
+        data: object,
+        indicator: object,
+        defaultStyles: object
+      ) => {
+        style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill'
+        color?: string
+      }
     }>
-  },
-  draw?: (params: object) => boolean
-}) => void
+    minValue?: number
+    maxValue?: number
+    styles?: object
+    calc: (dataList: KLineData[], indicator: object) => Promise<object[]> | object[]
+    regenerateFigures?: (calcParms: any[]) => Array<{
+      key: string
+      title?: string
+      type?: string
+      baseValue?: number
+      styles?: (
+        data: object,
+        indicator: object,
+        defaultStyles: object
+      ) => {
+        style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill'
+        color?: string
+      }
+    }>
+    createTooltipDataSource?: (params: object) => {
+      name?: string
+      calcParamsText?: string
+      values?: Array<{
+        title: string | {
+          text: string
+          color: string
+        }
+        value: string | {
+          text: string
+          color: string
+        }
+      }>
+    }
+    draw?: (params: object) => boolean
+  }
+) => void
 ```
 添加一个技术指标。
 - `indicator` 技术指标信息
@@ -176,73 +195,75 @@
 
 ## registerOverlay(overlay)
 ```typescript
-(overlay: {
-  name: string,
-  totalStep?: number,
-  lock?: boolean,
-  visible?: boolean,
-  needDefaultPointFigure?: boolean,
-  needDefaultXAxisFigure?: boolean,
-  needDefaultYAxisFigure?: boolean,
-  mode?: 'normal' | 'weak_magnet' | 'strong_magnet',
-  points?: Array<{ timestamp: number, dataIndex?: number, value?: number }>,
-  extendData?: any,
-  styles?: object,
-  createPointFigures?: (params: object) => {
-    key?: string
-    type: string
-    attrs: any | any[]
-    styles?: any
-    ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
-  } | Array<{
-    key?: string
-    type: string
-    attrs: any | any[]
-    styles?: any
-    ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
-  }>,
-  createXAxisFigures?: (params: object) => {
-    key?: string
-    type: string
-    attrs: any | any[]
-    styles?: any
-    ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
-  } | Array<{
-    key?: string
-    type: string
-    attrs: any | any[]
-    styles?: any
-    ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
-  }>,
-  createYAxisFigures?: (params: object) => {
-    key?: string
-    type: string
-    attrs: any | any[]
-    styles?: any
-    ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
-  } | Array<{
-    key?: string
-    type: string
-    attrs: any | any[]
-    styles?: any
-    ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
-  }>,
-  performEventPressedMove?: (params: object) => void,
-  performEventMoveForDrawing?: (params: object) => void,
-  onDrawStart?: (event: object) => boolean,
-  onDrawing?: (event: object) => boolean,
-  onDrawEnd?: (event: object) => boolean,
-  onClick?: (event: object) => boolean,
-  onRightClick?: (event: object) => boolean,
-  onPressedMoveStart?: (event: object) => boolean,
-  onPressedMoving?: (event: object) => boolean,
-  onPressedMoveEnd?: (event: object) => boolean,
-  onMouseEnter?: (event: object) => boolean,
-  onMouseLeave?: (event: object) => boolean,
-  onRemoved?: (event: object) => boolean,
-  onSelected?: (event: object) => boolean,
-  onDeselected?: (event: object) => boolean
-}) => void
+(
+  overlay: {
+    name: string
+    totalStep?: number
+    lock?: boolean
+    visible?: boolean
+    needDefaultPointFigure?: boolean
+    needDefaultXAxisFigure?: boolean
+    needDefaultYAxisFigure?: boolean
+    mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
+    points?: Array<{ timestamp: number, dataIndex?: number, value?: number }>
+    extendData?: any
+    styles?: object
+    createPointFigures?: (params: object) => {
+      key?: string
+      type: string
+      attrs: any | any[]
+      styles?: any
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+    } | Array<{
+      key?: string
+      type: string
+      attrs: any | any[]
+      styles?: any
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+    }>
+    createXAxisFigures?: (params: object) => {
+      key?: string
+      type: string
+      attrs: any | any[]
+      styles?: any
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+    } | Array<{
+      key?: string
+      type: string
+      attrs: any | any[]
+      styles?: any
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+    }>
+    createYAxisFigures?: (params: object) => {
+      key?: string
+      type: string
+      attrs: any | any[]
+      styles?: any
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+    } | Array<{
+      key?: string
+      type: string
+      attrs: any | any[]
+      styles?: any
+      ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
+    }>
+    performEventPressedMove?: (params: object) => void
+    performEventMoveForDrawing?: (params: object) => void
+    onDrawStart?: (event: object) => boolean
+    onDrawing?: (event: object) => boolean
+    onDrawEnd?: (event: object) => boolean
+    onClick?: (event: object) => boolean
+    onRightClick?: (event: object) => boolean
+    onPressedMoveStart?: (event: object) => boolean
+    onPressedMoving?: (event: object) => boolean
+    onPressedMoveEnd?: (event: object) => boolean
+    onMouseEnter?: (event: object) => boolean
+    onMouseLeave?: (event: object) => boolean
+    onRemoved?: (event: object) => boolean
+    onSelected?: (event: object) => boolean
+    onDeselected?: (event: object) => boolean
+  }
+) => void
 ```
 添加一个覆盖物。
 - `overlay` 覆盖物信息，详情参阅[覆盖物](./overlay.md)
@@ -377,35 +398,65 @@
 
 ### utils.getLinearSlopeIntercept(coordinate1, coordinate2)
 ```typescript
-(coordinate1: { x: number, y: number }, coordinate2: { x: number, y: number }) => []
+(
+  coordinate1: {
+    x: number
+    y: number
+  },
+  coordinate2: {
+    x: number
+    y: number
+  }
+) => []
 ```
 根据两个坐标点，获取点组成的线的斜率和常数项，即`y = kx + b`中的`k`和`b`。
 
 ### utils.getLinearYFromCoordinates(coordinate1, coordinate2, targetCoordinate)
 ```typescript
 (
-  coordinate1: { x: number, y: number },
-  coordinate2: { x: number, y: number },
-  targetCoordinate: { x: number, y: number }
+  coordinate1: {
+    x: number
+    y: number
+  },
+  coordinate2: {
+    x: number
+    y: number
+  }
+  targetCoordinate: {
+    x: number
+    y: number
+  }
 ) => number
 ```
 获取一个点在另外两个坐标点形成的线上的y轴坐标值。
 
 ### utils.getLinearYFromSlopeIntercept(kb, targetCoordinate)
 ```typescript
-(kb: Array<number>, targetCoordinate: { x: number, y: number }) => number
+(
+  kb: Array<number>,
+  targetCoordinate: {
+    x: number
+    y: number
+  }
+) => number
 ```
 获取一个点在斜率和常数项形成的线上的y轴坐标值。
 
 ### utils.checkCoordinateOnArc(coordinate, arc)
 ```typescript
-(coordinate: { x: number, y: number }, arc: {
-  x: number,
-  y: number,
-  r: number,
-  startAngle: number,
-  endAngle: number
-}) => boolean
+(
+  coordinate: {
+    x: number
+    y: number
+  },
+  arc: {
+    x: number
+    y: number
+    r: number
+    startAngle: number
+    endAngle: number
+  }
+) => boolean
 ```
 检查某个坐标点是否在圆弧上。
 - `coordinate` 坐标点信息
@@ -418,11 +469,17 @@
 
 ### utils.checkCoordinateOnCircle(coordinate, circle)
 ```typescript
-(coordinate: { x: number, y: number }, circle: {
-  x: number,
-  y: number,
-  r: number
-}) => boolean
+(
+  coordinate: {
+    x: number
+    y: number
+  },
+  circle: {
+    x: number
+    y: number
+    r: number
+  }
+) => boolean
 ```
 检查某个坐标点是否在圆上。
 - `coordinate` 坐标点信息
@@ -433,24 +490,52 @@
 
 ### utils.checkCoordinateOnLine(coordinate, line)
 ```typescript
-(coordinate: { x: number, y: number }, line: { coordinates: Array<{ x: number, y: number }> }) => boolean
+(
+  coordinate: {
+    x: number
+    y: number
+  },
+  line: {
+    coordinates: Array<{
+      x: number
+      y: number
+    }>
+  }
+) => boolean
 ```
 检查某个坐标点是否在线上。
 
 ### utils.checkCoordinateOnPolygon(coordinate, polygon)
 ```typescript
-(coordinate: { x: number, y: number }, polygon: { coordinates: Array<{ x: number, y: number }> }) => boolean
+(
+  coordinate: {
+    x: number
+    y: number
+  },
+  polygon: {
+    coordinates: Array<{
+      x: number
+      y: number
+    }>
+  }
+) => boolean
 ```
 检查某个坐标点是否在多边形上。
 
 ### utils.checkCoordinateOnRect(coordinate, rect)
 ```typescript
-(coordinate: { x: number, y: number }, rect: {
-  x: number,
-  y: number,
-  width: number,
-  height: number
-}) => boolean
+(
+  coordinate: {
+    x: number
+    y: number
+  },
+  rect: {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+) => boolean
 ```
 检查某个坐标点是否在矩形上。
 - `coordinate` 坐标点信息
@@ -463,18 +548,21 @@
 ### utils.checkCoordinateOnText(coordinate, text, styles)
 ```typescript
 (
-  coordinate: { x: number, y: number },
+  coordinate: {
+    x: number
+    y: number
+  },
   text: {
-    x: number,
-    y: number,
-    text: any,
-    align?: 'center' | 'end' | 'left' | 'right' | 'start',
+    x: number
+    y: number
+    text: any
+    align?: 'center' | 'end' | 'left' | 'right' | 'start'
     baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
   },
   styles: {
-    color?: string,
-    size?: number,
-    family?: string,
+    color?: string
+    size?: number
+    family?: string
     weight?: number | string
   }
 ) => boolean
@@ -499,16 +587,16 @@
 (
   ctx: CanvasRenderingContext2D,
   arc: {
-    x: number,
-    y: number,
-    r: number,
-    startAngle: number,
+    x: number
+    y: number
+    r: number
+    startAngle: number
     endAngle: number
   },
   styles: {
-    style?: 'solid' | 'dashed',
-    size?: number,
-    color?: string,
+    style?: 'solid' | 'dashed'
+    size?: number
+    color?: string
     dashedValue?: number[]
   }
 ) => void
@@ -532,16 +620,16 @@
 (
   ctx: CanvasRenderingContext2D,
   circle: {
-    x: number,
-    y: number,
+    x: number
+    y: number
     r: number
   },
   styles: {
-    style?: 'stroke' | 'fill' | 'stroke_fill',
-    color?: string | CanvasGradient,
-    borderColor?: string,
-    borderSize?: number,
-    borderStyle?: 'solid' | 'dashed',
+    style?: 'stroke' | 'fill' | 'stroke_fill'
+    color?: string | CanvasGradient
+    borderColor?: string
+    borderSize?: number
+    borderStyle?: 'solid' | 'dashed'
     borderDashedValue?: Array<number>
   }
 ) => void
@@ -564,11 +652,16 @@
 ```typescript
 (
   ctx: CanvasRenderingContext2D,
-  line: { coordinates: Array<{ x: number, y: number }> },
+  line: {
+    coordinates: Array<{
+      x: number
+      y: number
+    }>
+  },
   styles: {
-    style?: 'solid' | 'dashed',
-    size?: number,
-    color?: string,
+    style?: 'solid' | 'dashed'
+    size?: number
+    color?: string
     dashedValue?: number[]
   }
 ) => void
@@ -586,13 +679,18 @@
 ```typescript
 (
   ctx: CanvasRenderingContext2D,
-  polygon: { coordinates: Array<{ x: number, y: number }> },
+  polygon: {
+    coordinates: Array<{
+      x: number
+      y: number
+    }>
+  },
   styles: {
-    style?: 'stroke' | 'fill' | 'stroke_fill',
-    color?: string | CanvasGradient,
-    borderColor?: string,
-    borderSize?: number,
-    borderStyle?: 'solid' | 'dashed',
+    style?: 'stroke' | 'fill' | 'stroke_fill'
+    color?: string | CanvasGradient
+    borderColor?: string
+    borderSize?: number
+    borderStyle?: 'solid' | 'dashed'
     borderDashedValue?: Array<number>
   }
 ) => void
@@ -613,18 +711,18 @@
 (
   ctx: CanvasRenderingContext2D,
   rect: {
-    x: number,
-    y: number,
-    width: number,
+    x: number
+    y: number
+    width: number
     height: number
   },
   styles: {
-    style?: 'stroke' | 'fill' | 'stroke_fill',
-    color?: string | CanvasGradient,
-    borderColor?: string,
-    borderSize?: number,
-    borderStyle?: 'solid' | 'dashed',
-    borderDashedValue?: Array<number>,
+    style?: 'stroke' | 'fill' | 'stroke_fill'
+    color?: string | CanvasGradient
+    borderColor?: string
+    borderSize?: number
+    borderStyle?: 'solid' | 'dashed'
+    borderDashedValue?: Array<number>
     borderRadius?: number
   }
 ) => void
@@ -651,16 +749,16 @@
 (
   ctx: CanvasRenderingContext2D,
   text: {
-    x: number,
-    y: number,
-    text: any,
-    align?: 'center' | 'end' | 'left' | 'right' | 'start',
+    x: number
+    y: number
+    text: any
+    align?: 'center' | 'end' | 'left' | 'right' | 'start'
     baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
   },
   styles: {
-    color?: string,
-    size?: number,
-    family?: string,
+    color?: string
+    size?: number
+    family?: string
     weight?: number | string
   }
 ) => void
@@ -684,27 +782,27 @@
 (
   ctx: CanvasRenderingContext2D,
   rectText: {
-    x: number,
-    y: number,
-    text: any,
-    align?: 'center' | 'end' | 'left' | 'right' | 'start',
+    x: number
+    y: number
+    text: any
+    align?: 'center' | 'end' | 'left' | 'right' | 'start'
     baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
   },
   styles: {
-    style?: 'stroke' | 'fill' | 'stroke_fill',
-    color?: string,
-    size?: number,
-    family?: string,
-    weight?: number | string,
-    paddingLeft?: number,
-    paddingTop?: number,
-    paddingRight?: number,
-    paddingBottom?: number,
-    borderStyle?: 'solid' | 'dashed',
-    borderDashedValue?: number[],
-    borderSize?: number,
-    borderColor?: string,
-    borderRadius?: number,
+    style?: 'stroke' | 'fill' | 'stroke_fill'
+    color?: string
+    size?: number
+    family?: string
+    weight?: number | string
+    paddingLeft?: number
+    paddingTop?: number
+    paddingRight?: number
+    paddingBottom?: number
+    borderStyle?: 'solid' | 'dashed'
+    borderDashedValue?: number[]
+    borderSize?: number
+    borderColor?: string
+    borderRadius?: number
     backgroundColor?: string
   }
 ) => void
@@ -733,9 +831,3 @@
   - `borderRadius` 边框圆角尺寸
   - `borderDashedValue` 边框虚线参数值
   - `backgroundColor` 背景色
-  
-  
-
-
-
-
