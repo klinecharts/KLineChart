@@ -21,7 +21,7 @@ new Figure(attrs, styles).draw(ctx)
 These figures are built into the chart, `arc`, `circle`, `line`, `polygon`, `rect`, `text`, `rectText`.
 ### arc
 ```typescript
-new (
+new ({
    attrs: {
      // The x-axis coordinate value of the center of the circle
      x: number
@@ -44,12 +44,12 @@ new (
      // dotted line parameter
      dashedValue?: number[]
    }
-) => Figure
+}) => Figure
 ```
 
 ### circle
 ```typescript
-new (
+new ({
    attrs: {
      // The x-axis coordinate value of the center of the circle
      x: number
@@ -72,12 +72,12 @@ new (
      // border dotted line parameters
      borderDashedValue?: number[]
    }
-) => Figure
+}) => Figure
 ```
 
 ### line
 ```typescript
-new (
+new ({
   attrs: {
     // set of coordinates
     coordinates: Array<{
@@ -95,12 +95,12 @@ new (
     // dotted line parameter
     dashedValue?: number[]
   }
-) => Figure
+}) => Figure
 ```
 
 ###polygon
 ```typescript
-new (
+new ({
   attrs: {
     // set of coordinates
     coordinates: Array<{
@@ -122,12 +122,12 @@ new (
     // border dotted line parameter
     borderDashedValue?: number[]
   }
-) => Figure
+}) => Figure
 ```
 
 ### rect
 ```typescript
-new (
+new ({
   attrs: {
     // The x-axis coordinate value of the starting point
     x: number
@@ -154,12 +154,12 @@ new (
     // Border fillet value
     borderRadius?: number
   }
-) => Figure
+}) => Figure
 ```
 
 ### text
 ```typescript
-new (
+new ({
   attrs: {
     // The x-axis coordinate value of the starting point
     x: number
@@ -182,12 +182,12 @@ new (
     // thickness
     weight?: string | number
   }
-) => Figure
+}) => Figure
 ```
 
 ### rectText
 ```typescript
-new (
+new ({
   attrs: {
     // The x-axis coordinate value of the starting point
     x: number
@@ -232,7 +232,7 @@ new (
     // background color
     backgroundColor?: string | CanvasGradient
   }
-) => Figure
+}) => Figure
 ```
 
 ## Customize figure

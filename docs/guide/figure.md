@@ -14,14 +14,14 @@ const Figure = klinecharts.getFigureClass(name)
 // attrs 属性
 // styles 样式
 // ctx 画布上下文
-new Figure(attrs, styles).draw(ctx)
+new Figure({ attrs, styles }).draw(ctx)
 ```
 
 ## 内置基础图形
 图表内置了这些基础图形，`arc`，`circle`，`line`，`polygon`，`rect`，`text`，`rectText`。
 ### arc
 ```typescript
-new (
+new ({
   attrs: {
     // 圆心x轴坐标值
     x: number
@@ -44,12 +44,12 @@ new (
     // 虚线参数
     dashedValue?: number[]
   }
-) => Figure
+}) => Figure
 ```
 
 ### circle
 ```typescript
-new (
+new ({
   attrs: {
     // 圆心x轴坐标值
     x: number
@@ -72,12 +72,12 @@ new (
     // 边框虚线参数
     borderDashedValue?: number[]
   }
-) => Figure
+}) => Figure
 ```
 
 ### line
 ```typescript
-new (
+new ({
   attrs: {
     // 坐标集合
     coordinates: Array<{
@@ -95,12 +95,12 @@ new (
     // 虚线参数
     dashedValue?: number[]
   }
-) => Figure
+}) => Figure
 ```
 
 ### polygon
 ```typescript
-new (
+new ({
   attrs: {
     // 坐标集合
     coordinates: Array<{
@@ -122,12 +122,12 @@ new (
     // 边框虚线参数
     borderDashedValue?: number[]
   }
-) => Figure
+}) => Figure
 ```
 
 ### rect
 ```typescript
-new (
+new ({
   attrs: {
     // 起始点x轴坐标值
     x: number
@@ -154,12 +154,12 @@ new (
     // 边框圆角值
     borderRadius?: number
   }
-) => Figure
+}) => Figure
 ```
 
 ### text
 ```typescript
-new (
+new ({
   attrs: {
     // 起始点x轴坐标值
     x: number
@@ -182,12 +182,12 @@ new (
     // 粗细
     weight?: string | number
   }
-) => Figure
+}) => Figure
 ```
 
 ### rectText
 ```typescript
-new (
+new ({
   attrs: {
     // 起始点x轴坐标值
     x: number
@@ -232,7 +232,7 @@ new (
     // 背景色
     backgroundColor?: string | CanvasGradient
   }
-) => Figure
+}) => Figure
 ```
 
 ## 自定义基础图形

@@ -7,7 +7,6 @@
 + 🆕 `xAxis`新增方法`convertTimestampFromPixel`和`convertTimestampToPixel`。
 + 💄 优化蜡烛柱显示。
 
-
 ## 9.3.0
 `2023-05-13`
 + 🆕 新增图表API `utils.calcTextWidth`。
