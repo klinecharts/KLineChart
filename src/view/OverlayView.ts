@@ -107,6 +107,9 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       return false
     }).registerEvent('mouseDoubleClickEvent', (event: MouseTouchEvent) => {
       const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
+      // const overlay = progressInstanceInfo?.instance
+      // const index = overlay?.points?.length?- 1
+      // const key = `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`
       if (progressInstanceInfo !== null) {
         const overlay = progressInstanceInfo.instance
         const progressInstancePaneId = progressInstanceInfo.paneId
@@ -119,8 +122,19 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             overlay.onDrawEnd?.({ overlay, figureKey: key, figureIndex: index, ...event })
           }
         }
-        return true
+        const index = overlay.points.length - 1
+        return this._figureMouseClickEvent(
+          overlay,
+          EventOverlayInfoFigureType.Point,
+          `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`,
+          index,
+          0
+        )(event)
       }
+      overlayStore.setdbClickInstanceInfo({
+        paneId, instance: null, figureType: EventOverlayInfoFigureType.None, figureKey: '', figureIndex: -1, attrsIndex: -1
+      }, event)
+
       return false
     }).registerEvent('mouseRightClickEvent', (event: MouseTouchEvent) => {
       const progressInstanceInfo = overlayStore.getProgressInstanceInfo()
@@ -191,7 +205,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           mouseMoveEvent: this._figureMouseMoveEvent(overlay, figureType, figureKey, figureIndex, attrsIndex),
           mouseDownEvent: this._figureMouseDownEvent(overlay, figureType, figureKey, figureIndex, attrsIndex),
           mouseClickEvent: this._figureMouseClickEvent(overlay, figureType, figureKey, figureIndex, attrsIndex),
-          mouseRightClickEvent: this._figureMouseRightClickEvent(overlay, figureType, figureKey, figureIndex, attrsIndex)
+          mouseRightClickEvent: this._figureMouseRightClickEvent(overlay, figureType, figureKey, figureIndex, attrsIndex),
+          mouseDoubleClickEvent: this._figureMousedbClickEvent(overlay, figureType, figureKey, figureIndex, attrsIndex)
         }
       }
       eventHandler = {}
@@ -210,6 +225,9 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       }
       if (!eventTypes.includes('mouseRightClickEvent')) {
         eventHandler.mouseRightClickEvent = this._figureMouseRightClickEvent(overlay, figureType, figureKey, figureIndex, attrsIndex)
+      }
+      if (!eventTypes.includes('mouseDoubleClickEvent')) {
+        eventHandler.mouseDoubleClickEvent = this._figureMousedbClickEvent(overlay, figureType, figureKey, figureIndex, attrsIndex)
       }
     }
     return eventHandler
@@ -244,6 +262,16 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       const paneId = pane.getId()
       const overlayStore = pane.getChart().getChartStore().getOverlayStore()
       overlayStore.setClickInstanceInfo({ paneId, instance: overlay, figureType, figureKey, figureIndex, attrsIndex }, event)
+      return true
+    }
+  }
+
+  private _figureMousedbClickEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
+    return (event: MouseTouchEvent) => {
+      const pane = this.getWidget().getPane()
+      const paneId = pane.getId()
+      const overlayStore = pane.getChart().getChartStore().getOverlayStore()
+      overlayStore.setdbClickInstanceInfo({ paneId, instance: overlay, figureType, figureKey, figureIndex, attrsIndex }, event)
       return true
     }
   }
