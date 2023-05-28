@@ -102,7 +102,7 @@ export default class OverlayStore {
     const {
       id, groupId, points, styles, lock, visible, zLevel, mode, extendData,
       onDrawStart, onDrawing,
-      onDrawEnd, onClick, ondbClick, onRightClick,
+      onDrawEnd, onClick, onDoubleClick, onRightClick,
       onPressedMoveStart, onPressedMoving, onPressedMoveEnd,
       onMouseEnter, onMouseLeave,
       onRemoved, onSelected, onDeselected
@@ -149,8 +149,8 @@ export default class OverlayStore {
     if (onClick !== undefined) {
       instance.setOnClickCallback(onClick)
     }
-    if (ondbClick !== undefined) {
-      instance.setOndbClickCallback(ondbClick)
+    if (onDoubleClick !== undefined) {
+      instance.setOnDoubleClickCallback(onDoubleClick)
     }
     if (onRightClick !== undefined) {
       instance.setOnRightClickCallback(onRightClick)
@@ -461,26 +461,6 @@ export default class OverlayStore {
     const { paneId, instance, figureType, figureKey, figureIndex } = this._clickInstanceInfo
     if (!(info.instance?.isDrawing() ?? false)) {
       info.instance?.onClick?.({ overlay: info.instance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
-    }
-    if (instance?.id !== info.instance?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
-      this._clickInstanceInfo = info
-      if (instance?.id !== info.instance?.id) {
-        instance?.onDeselected?.({ overlay: instance, figureKey, figureIndex, ...event })
-        info.instance?.onSelected?.({ overlay: info.instance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
-        const chart = this._chartStore.getChart()
-        chart.updatePane(UpdateLevel.Overlay, info.paneId)
-        if (paneId !== info.paneId) {
-          chart.updatePane(UpdateLevel.Overlay, paneId)
-        }
-        chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.XAXIS)
-      }
-    }
-  }
-
-  setdbClickInstanceInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
-    const { paneId, instance, figureType, figureKey, figureIndex } = this._clickInstanceInfo
-    if (!(info.instance?.isDrawing() ?? false)) {
-      info.instance?.ondbClick?.({ overlay: info.instance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
     }
     if (instance?.id !== info.instance?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
       this._clickInstanceInfo = info
