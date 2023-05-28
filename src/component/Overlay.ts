@@ -44,7 +44,7 @@ export interface OverlayPerformEventParams {
   performPoint: Partial<Point>
 }
 
-export type OverlayFigureIgnoreEventType = 'mouseClickEvent' | 'mouseRightClickEvent' | 'tapEvent' | 'mouseDownEvent' | 'touchStartEvent' | 'mouseMoveEvent' | 'touchMoveEvent'
+export type OverlayFigureIgnoreEventType = 'mouseClickEvent' | 'mouseRightClickEvent' | 'tapEvent' | 'mouseDownEvent' | 'touchStartEvent' | 'mouseMoveEvent' | 'touchMoveEvent' | 'mouseDoubleClickEvent'
 
 export function getAllOverlayFigureIgnoreEventTypes (): OverlayFigureIgnoreEventType[] {
   return [
@@ -221,6 +221,11 @@ export interface Overlay {
   onClick: Nullable<OverlayEventCallback>
 
   /**
+   * db Click event
+   */
+  ondbClick: Nullable<OverlayEventCallback>
+
+  /**
    * Right click event
    */
   onRightClick: Nullable<OverlayEventCallback>
@@ -307,6 +312,7 @@ export default abstract class OverlayImp implements Overlay {
   onDrawing: Nullable<OverlayEventCallback>
   onDrawEnd: Nullable<OverlayEventCallback>
   onClick: Nullable<OverlayEventCallback>
+  ondbClick: Nullable<OverlayEventCallback>
   onRightClick: Nullable<OverlayEventCallback>
   onPressedMoveStart: Nullable<OverlayEventCallback>
   onPressedMoving: Nullable<OverlayEventCallback>
@@ -328,7 +334,7 @@ export default abstract class OverlayImp implements Overlay {
       createPointFigures, createXAxisFigures, createYAxisFigures,
       performEventPressedMove, performEventMoveForDrawing,
       onDrawStart, onDrawing, onDrawEnd,
-      onClick, onRightClick,
+      onClick, ondbClick, onRightClick,
       onPressedMoveStart, onPressedMoving, onPressedMoveEnd,
       onMouseEnter, onMouseLeave, onRemoved,
       onSelected, onDeselected
@@ -353,6 +359,7 @@ export default abstract class OverlayImp implements Overlay {
     this.onDrawing = onDrawing ?? null
     this.onDrawEnd = onDrawEnd ?? null
     this.onClick = onClick ?? null
+    this.ondbClick = ondbClick ?? null
     this.onRightClick = onRightClick ?? null
     this.onPressedMoveStart = onPressedMoveStart ?? null
     this.onPressedMoving = onPressedMoving ?? null
@@ -508,6 +515,14 @@ export default abstract class OverlayImp implements Overlay {
   setOnClickCallback (callback: Nullable<OverlayEventCallback>): boolean {
     if (this.onClick !== callback) {
       this.onClick = callback
+      return true
+    }
+    return false
+  }
+
+  setOndbClickCallback (callback: Nullable<OverlayEventCallback>): boolean {
+    if (this.ondbClick !== callback) {
+      this.ondbClick = callback
       return true
     }
     return false
