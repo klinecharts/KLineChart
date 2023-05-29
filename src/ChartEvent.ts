@@ -435,7 +435,7 @@ export default class ChartEvent implements EventHandler {
             return true
           }
           if (this._flingScrollRequestId !== null) {
-            clearTimeout(this._flingScrollRequestId)
+            cancelAnimationFrame(this._flingScrollRequestId)
             this._flingScrollRequestId = null
           }
           this._flingStartTime = new Date().getTime()
