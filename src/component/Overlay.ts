@@ -163,6 +163,11 @@ export interface Overlay {
   mode: OverlayMode
 
   /**
+   * When mode is weak_magnet is the response distance
+   */
+  modeSensitivity: number
+
+  /**
    * Time and value information
    */
   points: Array<Partial<Point>>
@@ -302,6 +307,7 @@ export default abstract class OverlayImp implements Overlay {
   zLevel: number
   defaultZLevel: number
   mode: OverlayMode
+  modeSensitivity: number
   points: Array<Partial<Point>> = []
   extendData: any
   styles: Nullable<DeepPartial<OverlayStyle>>
@@ -330,7 +336,7 @@ export default abstract class OverlayImp implements Overlay {
 
   constructor (overlay: OverlayTemplate) {
     const {
-      mode, extendData, styles,
+      mode, modeSensitivity, extendData, styles,
       name, totalStep, lock, visible, zLevel,
       needDefaultPointFigure, needDefaultXAxisFigure, needDefaultYAxisFigure,
       createPointFigures, createXAxisFigures, createYAxisFigures,
@@ -350,6 +356,7 @@ export default abstract class OverlayImp implements Overlay {
     this.needDefaultXAxisFigure = needDefaultXAxisFigure ?? false
     this.needDefaultYAxisFigure = needDefaultYAxisFigure ?? false
     this.mode = mode ?? OverlayMode.Normal
+    this.modeSensitivity = modeSensitivity ?? 8
     this.extendData = extendData
     this.styles = styles ?? null
     this.createPointFigures = createPointFigures ?? null
@@ -483,8 +490,16 @@ export default abstract class OverlayImp implements Overlay {
   }
 
   setMode (mode: OverlayMode): boolean {
-    if (mode !== this.mode) {
+    if (this.mode !== mode) {
       this.mode = mode
+      return true
+    }
+    return false
+  }
+
+  setModeSensitivity (modeSensitivity: number): boolean {
+    if (this.modeSensitivity !== modeSensitivity) {
+      this.modeSensitivity = modeSensitivity
       return true
     }
     return false

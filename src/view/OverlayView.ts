@@ -297,10 +297,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (overlay.mode !== OverlayMode.Normal && paneId === PaneIdConstants.CANDLE && point.dataIndex !== undefined) {
         const kLineData = timeScaleStore.getDataByDataIndex(point.dataIndex)
         if (kLineData !== null) {
+          const modeSensitivity = overlay.modeSensitivity
           if (value > kLineData.high) {
             if (overlay.mode === OverlayMode.WeakMagnet) {
               const highY = yAxis.convertToPixel(kLineData.high)
-              const buffValue = yAxis.convertFromPixel(highY - 8)
+              const buffValue = yAxis.convertFromPixel(highY - modeSensitivity)
               if (value < buffValue) {
                 value = kLineData.high
               }
@@ -310,7 +311,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           } else if (value < kLineData.low) {
             if (overlay.mode === OverlayMode.WeakMagnet) {
               const lowY = yAxis.convertToPixel(kLineData.low)
-              const buffValue = yAxis.convertFromPixel(lowY - 8)
+              const buffValue = yAxis.convertFromPixel(lowY - modeSensitivity)
               if (value > buffValue) {
                 value = kLineData.low
               }
