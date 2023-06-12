@@ -32,12 +32,26 @@
 English | [简体中文](./README.zh-CN.md)
 
 ## ✨ Features
-- 📦 <strong>Out of the box:</strong> Simple and fast integration, basically zero cost to get started.
-- 🚀 <strong>Lightweight and smooth:</strong> Zero dependencies, only 40k under gzip compression.
-- 💪 <strong>Powerful functions:</strong> Built-in multiple indicators and line drawing models.
-- 🎨 <strong>Highly scalable:</strong> With rich style configuration and API, the function can be extended as you like.
-- 📱 <strong>Mobile:</strong> Support mobile, one chart, handle multiple terminals.
-- 🛡 <strong>Typescript development:</strong> Provide complete type definition files.
+- 📦 **Out of the box:** Simple and fast integration, basically zero cost to get started.
+- 🚀 **Lightweight and smooth:** Zero dependencies, only 40k under gzip compression.
+- 💪 **Powerful functions:** Built-in multiple indicators and line drawing models.
+- 🎨 **Highly scalable:** With rich style configuration and API, the function can be extended as you like.
+- 📱 **Mobile:** Support mobile, one chart, handle multiple terminals.
+- 🛡 **Typescript development:** Provide complete type definition files.
+
+## ⚡ Performance
+Similar to chart libraries for performance comparison. 
++ **Test Scenario:** 50000 pieces of data, 5 pane indicators, average 10 runs
++ **Device:** macOS Ventura, Apple M2 Pro, 16G
++ **Browser:** Chrome 114.0.5735.106
++ **Framework:** React@18.2.0
+
+Comparison of time consumption from initialization to full rendering:
+
+| **klinecharts@9.4.0** | **night-vision@0.3.2** | **hqchart@1.1.12147** |
+| :---: | :---: | :---: |
+|  37ms  |  36ms | 241ms | 
+
 
 ## 📦 Install
 ### Using npm
