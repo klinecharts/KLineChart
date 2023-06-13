@@ -63,6 +63,7 @@ export interface ConvertFinder {
 }
 
 export interface Chart {
+  id: string
   getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
   setLocale: (locale: string) => void
@@ -114,10 +115,10 @@ export interface Chart {
   unsubscribeAction: (type: ActionType, callback?: ActionCallback) => void
   getConvertPictureUrl: (includeOverlay?: boolean, type?: string, backgroundColor?: string) => string
   resize: () => void
-  destroy: () => void
 }
 
 export default class ChartImp implements Chart {
+  id: string
   private _container: HTMLElement
   private _chartContainer: HTMLElement
   private readonly _chartEvent: ChartEvent
