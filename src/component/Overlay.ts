@@ -63,7 +63,7 @@ export function getAllOverlayFigureIgnoreEventTypes (): OverlayFigureIgnoreEvent
 export interface OverlayFigure {
   key?: string
   type: string
-  attrs: any | any[]
+  attrs: any
   styles?: any
   ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
 }
