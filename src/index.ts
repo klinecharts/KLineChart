@@ -99,7 +99,7 @@ function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
   const id = `k_line_chart_${chartBaseId++}`
   chart = new ChartImp(dom, options)
   chart.id = id
-  dom.setAttribute('chartId', id)
+  dom.setAttribute('k-line-chart-id', id)
   instances.set(id, chart)
   return chart
 }
@@ -119,7 +119,7 @@ function dispose (dcs: HTMLElement | Chart | string): void {
     } else {
       dom = dcs as HTMLElement
     }
-    id = dom?.getAttribute('chartId') ?? null
+    id = dom?.getAttribute('k-line-chart-id') ?? null
   }
   if (id !== null) {
     instances.get(id)?.destroy()
