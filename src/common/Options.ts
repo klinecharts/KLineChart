@@ -247,7 +247,7 @@ export interface CandleTooltipCustomCallbackData {
 export type CandleTooltipCustomCallback = (data: CandleTooltipCustomCallbackData, styles: CandleStyle) => TooltipData[]
 
 export interface CandleTooltipStyle extends TooltipStyle {
-  custom: Nullable<CandleTooltipCustomCallback>
+  custom: Nullable<CandleTooltipCustomCallback> | Nullable<TooltipData[]>
   rect: CandleTooltipRectStyle
 }
 

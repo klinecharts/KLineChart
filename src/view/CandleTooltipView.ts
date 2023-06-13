@@ -423,58 +423,53 @@ export default class CandleTooltipView extends IndicatorTooltipView {
   ): TooltipData[] {
     const tooltipStyles = styles.tooltip
     const textColor = tooltipStyles.text.color
-    let tooltipData: TooltipData[] = []
-    if (isFunction(tooltipStyles.custom)) {
-      const labelValues = tooltipStyles.custom?.(data, styles) ?? []
-      labelValues.forEach(({ title, value }) => {
-        let t: TooltipDataChild = { text: '', color: '' }
-        if (isObject(title)) {
-          t = title
-        } else {
-          t.text = title
-          t.color = textColor
-        }
-        t.text = i18n(t.text, locale)
-        let v: TooltipDataChild = { text: '', color: '' }
-        if (isObject(value)) {
-          v = value
-        } else {
-          v.text = value
-          v.color = textColor
-        }
-        tooltipData.push({ title: t, value: v })
-      })
-    } else {
-      const { price: pricePrecision, volume: volumePrecision } = precision
-      const current = data.current
-      tooltipData = [
-        {
-          title: { text: i18n('time', locale), color: textColor },
-          value: { text: customApi.formatDate(dateTimeFormat, current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip), color: textColor }
-        }, {
-          title: { text: i18n('open', locale), color: textColor },
-          value: { text: formatThousands(formatPrecision(current.open, pricePrecision), thousandsSeparator), color: textColor }
-        }, {
-          title: { text: i18n('high', locale), color: textColor },
-          value: { text: formatThousands(formatPrecision(current.high, pricePrecision), thousandsSeparator), color: textColor }
-        }, {
-          title: { text: i18n('low', locale), color: textColor },
-          value: { text: formatThousands(formatPrecision(current.low, pricePrecision), thousandsSeparator), color: textColor }
-        }, {
-          title: { text: i18n('close', locale), color: textColor },
-          value: { text: formatThousands(formatPrecision(current.close, pricePrecision), thousandsSeparator), color: textColor }
-        }, {
-          title: { text: i18n('volume', locale), color: textColor },
-          value: {
-            text: formatThousands(
-              customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision)),
-              thousandsSeparator
-            ),
-            color: textColor
-          }
-        }
-      ]
+    const current = data.current
+    const { price: pricePrecision, volume: volumePrecision } = precision
+    const mapping = {
+      '{time}': customApi.formatDate(dateTimeFormat, current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip),
+      '{open}': formatThousands(formatPrecision(current.open, pricePrecision), thousandsSeparator),
+      '{high}': formatThousands(formatPrecision(current.high, pricePrecision), thousandsSeparator),
+      '{low}': formatThousands(formatPrecision(current.low, pricePrecision), thousandsSeparator),
+      '{close}': formatThousands(formatPrecision(current.close, pricePrecision), thousandsSeparator),
+      '{volume}': formatThousands(
+        customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision)),
+        thousandsSeparator
+      )
     }
-    return tooltipData
+    const labelValues = (
+      isFunction(tooltipStyles.custom)
+        ? tooltipStyles.custom?.(data, styles)
+        : tooltipStyles.custom
+    ) ?? [
+      { title: 'time', value: '{time}' },
+      { title: 'open', value: '{open}' },
+      { title: 'high', value: '{high}' },
+      { title: 'low', value: '{low}' },
+      { title: 'close', value: '{close}' },
+      { title: 'volume', value: '{volume}' }
+    ]
+    return labelValues.map(({ title, value }) => {
+      let t: TooltipDataChild = { text: '', color: '' }
+      if (isObject(title)) {
+        t = title
+      } else {
+        t.text = title
+        t.color = textColor
+      }
+      t.text = i18n(t.text, locale)
+      let v: TooltipDataChild = { text: '', color: '' }
+      if (isObject(value)) {
+        v = value
+      } else {
+        v.text = value
+        v.color = textColor
+      }
+      const match = v.text.match(/{(\S*)}/)
+      if (match !== null) {
+        const key = `{${match[1]}}`
+        v.text = v.text.replace(key, mapping[key] ?? tooltipStyles.defaultValue)
+      }
+      return { title: t, value: v }
+    })
   }
 }
