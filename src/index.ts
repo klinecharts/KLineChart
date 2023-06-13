@@ -80,7 +80,6 @@ function version (): string {
  */
 function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
   logTag()
-  const errorMessage = 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
   let dom: Nullable<HTMLElement>
   if (isString(ds)) {
     dom = document.getElementById(ds)
@@ -88,7 +87,7 @@ function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
     dom = ds
   }
   if (dom === null) {
-    logError('', '', errorMessage)
+    logError('', '', 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!')
     return null
   }
   let chart = instances.get(dom.id)
