@@ -613,7 +613,7 @@ export default class ChartEvent implements EventHandler {
       const bounding = p.getBounding()
       if (
         x >= bounding.left && x <= bounding.left + bounding.width &&
-        y >= bounding.top && y <= bounding.top + bounding.height
+        y >= bounding.top && y <= bounding.top + bounding.height - REAL_SEPARATOR_HEIGHT / 2
       ) {
         pane = p
         break
@@ -629,7 +629,7 @@ export default class ChartEvent implements EventHandler {
         const separatorBounding = separatorWidget.getBounding()
         if (
           x >= separatorBounding.left && x <= separatorBounding.left + separatorBounding.width &&
-          y >= separatorBounding.top && y <= separatorBounding.top + REAL_SEPARATOR_HEIGHT
+          y >= separatorBounding.top && y <= (separatorBounding.top + REAL_SEPARATOR_HEIGHT)
         ) {
           widget = separatorWidget
         }
