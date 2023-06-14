@@ -54,7 +54,7 @@ export const PANE_DEFAULT_HEIGHT = 100
 
 export const PaneIdConstants = {
   CANDLE: 'candle_pane',
-  INDICATOR: 'indcator_pane_',
+  INDICATOR: 'indicator_pane_',
   XAXIS: 'xaxis_pane'
 }
 
