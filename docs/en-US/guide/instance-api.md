@@ -513,6 +513,7 @@ Remove technical indicators.
     needDefaultXAxisFigure?: boolean
     needDefaultYAxisFigure?: boolean
     mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
+    modeSensitivity?: number
     points?: Array<{
       timestamp?: number
       dataIndex?: number
@@ -524,6 +525,7 @@ Remove technical indicators.
     onDrawing?: (event: object) => boolean
     onDrawEnd?: (event: object) => boolean
     onClick?: (event: object) => boolean
+    onDoubleClick?: (event: object) => boolean
     onRightClick?: (event: object) => boolean
     onPressedMoveStart?: (event: object) => boolean
     onPressedMoving?: (event: object) => boolean
@@ -544,6 +546,7 @@ Remove technical indicators.
     needDefaultXAxisFigure?: boolean
     needDefaultYAxisFigure?: boolean
     mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
+    modeSensitivity?: number
     points?: Array<{
       timestamp?: number
       dataIndex?: number
@@ -555,6 +558,7 @@ Remove technical indicators.
     onDrawing?: (event: object) => boolean
     onDrawEnd?: (event: object) => boolean
     onClick?: (event: object) => boolean
+    onDoubleClick?: (event: object) => boolean
     onRightClick?: (event: object) => boolean
     onPressedMoveStart?: (event: object) => boolean
     onPressedMoving?: (event: object) => boolean
@@ -597,6 +601,7 @@ chart.createOverlay({
    visible: true,
    zLevel: 0,
    mode: 'weak_magnet',
+   modeSensitivity: 8,
    extendData: 'xxxxxxxx',
    needDefaultPointFigure: false,
    needDefaultXAxisFigure: false,
@@ -605,6 +610,7 @@ chart.createOverlay({
    onDrawing: function (event) { console. log(event) },
    onDrawEnd: function (event) { console. log(event) },
    onClick: function (event) { console. log(event) },
+   onDoubleClick: function (event) { console. log(event) },
    onRightClick: function (event) {
      console. log(event)
      return false
@@ -642,6 +648,7 @@ Get overlay information by id.
     needDefaultXAxisFigure?: boolean
     needDefaultYAxisFigure?: boolean
     mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
+    modeSensitivity?: number
     points?: Array<{
       timestamp?: number
       dataIndex?: number
@@ -653,6 +660,7 @@ Get overlay information by id.
     onDrawing?: (event: object) => boolean
     onDrawEnd?: (event: object) => boolean
     onClick?: (event: object) => boolean
+    onDoubleClick?: (event: object) => boolean
     onRightClick?: (event: object) => boolean
     onPressedMoveStart?: (event: object) => boolean
     onPressedMoving?: (event: object) => boolean
@@ -677,6 +685,7 @@ Overlays that have been drawn.
   - `needDefaultXAxisFigure` needs the default x-axis figure
   - `needDefaultYAxisFigure` needs the default y-axis figure
   - `mode` mode, options are 'normal', 'weak_magnet' and 'strong_magnet'
+  - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet
   - `points` point information
   - `extendData` extended data
   - `styles` styles
@@ -684,6 +693,7 @@ Overlays that have been drawn.
   - `onDrawing` drawing event
   - `onDrawEnd` draw end event
   - `onClick` click event
+  - `onDoubleClick` double click event
   - `onRightClick` right click event
   - `onPressedMoveStart` press start move event
   - `onPressedMoving` Press and move event
@@ -716,6 +726,7 @@ chart.overrideOverlay({
    visible: true,
    zLevel: 0,
    mode: 'weak_magnet',
+   modeSensitivity: 8
    extendData: 'xxxxxxxx',
    needDefaultPointFigure: false,
    needDefaultXAxisFigure: false,
@@ -724,6 +735,7 @@ chart.overrideOverlay({
    onDrawing: function (event) { console. log(event) },
    onDrawEnd: function (event) { console. log(event) },
    onClick: function (event) { console. log(event) },
+   onDoubleClick: function (event) { console. log(event) },
    onRightClick: function (event) {
      console. log(event)
      return false

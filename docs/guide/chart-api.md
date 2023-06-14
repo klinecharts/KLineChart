@@ -214,6 +214,7 @@
     needDefaultXAxisFigure?: boolean
     needDefaultYAxisFigure?: boolean
     mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
+    modeSensitivity?: number
     points?: Array<{ timestamp: number, dataIndex?: number, value?: number }>
     extendData?: any
     styles?: object
@@ -262,6 +263,7 @@
     onDrawing?: (event: object) => boolean
     onDrawEnd?: (event: object) => boolean
     onClick?: (event: object) => boolean
+    onDoubleClick?: (event: object) => boolean
     onRightClick?: (event: object) => boolean
     onPressedMoveStart?: (event: object) => boolean
     onPressedMoving?: (event: object) => boolean
@@ -285,6 +287,7 @@
   - `needDefaultXAxisFigure` 是否需要默认的x轴上的图形
   - `needDefaultYAxisFigure` 是否需要默认的y轴上的图形
   - `mode` 模式，可选项有'normal'，'weak_magnet'和'strong_magnet'
+  - `modeSensitivity` 模式灵敏度，仅 mode 是 weak_magnet 时有效
   - `points` 点信息
   - `extendData` 扩展数据
   - `styles` 样式
@@ -297,6 +300,7 @@
   - `onDrawing` 绘制中事件
   - `onDrawEnd` 绘制结束事件
   - `onClick` 点击事件
+  - `onDoubleClick` 双击事件
   - `onRightClick` 右击事件
   - `onPressedMoveStart` 按住开始移动事件
   - `onPressedMoving` 按住移动中事件

@@ -1,4 +1,14 @@
 # 📠 Change Log
+
+## 9.5.0
+`2023-06-15`
++ 🆕 `Overlay` add event `onDoubleClick`, add property `modeSensitivity`.
++ 🆕 Style configuration `candle.tooltip.custom` supports string templates.
++ 🐞 Optimize the scrolling frame drop issue on the mobile side.
++ 🐞 Fix pane id naming typo.
++ 💄 Optimize the response sensitivity of dividing line events.
++ 💄 Optimize the attrs type declaration in OverlayFigure under typescript.
+
 ## 9.4.0
 `2023-05-25`
 + 🆕 Instance API 'createOverlay' supports arrays.

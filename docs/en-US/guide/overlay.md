@@ -36,6 +36,9 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
   // mode, options are `normal`, `weak_magnet`, `strong_magnet`, not required
   mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
 
+  // mode sensitivity, only valid when mode is weak_magnet
+  modeSensitivity?: number
+
   // point information, not required
   points?: Array<{
     // timestamp
@@ -163,6 +166,9 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
 
   // click callback event, default
   onClick?: (event: OverlayEvent) => boolean
+
+  // double click callback event, default
+  onDoubleClick?: (event: OverlayEvent) => boolean
 
   // The right-click callback event, which can be defaulted, needs to return a value of type boolean. If it returns true, the built-in right-click delete will be invalid
   onRightClick?: (event: OverlayEvent) => boolean

@@ -211,6 +211,7 @@ Get technical indicators for chart support.
       needDefaultXAxisFigure?: boolean
       needDefaultYAxisFigure?: boolean
       mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
+      modeSensitivity?: number
       points?: Array<{ timestamp: number, dataIndex?: number, value?: number }>
       extendData?: any
       styles?: object
@@ -259,6 +260,7 @@ Get technical indicators for chart support.
       onDrawing?: (event: object) => boolean
       onDrawEnd?: (event: object) => boolean
       onClick?: (event: object) => boolean
+      onDoubleClick?: (event: object) => boolean
       onRightClick?: (event: object) => boolean
       onPressedMoveStart?: (event: object) => boolean
       onPressedMoving?: (event: object) => boolean
@@ -282,6 +284,7 @@ Add a overlay.
    - `needDefaultXAxisFigure` needs the default x-axis figure
    - `needDefaultYAxisFigure` needs the default y-axis figure
    - `mode` mode, options are 'normal', 'weak_magnet' and 'strong_magnet'
+   - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet
    - `points` point information
    - `extendData` extended data
    - `styles` styles
@@ -294,6 +297,7 @@ Add a overlay.
    - `onDrawing` drawing event
    - `onDrawEnd` draw end event
    - `onClick` click event
+   - `onDoubleClick` double click event
    - `onRightClick` right click event
    - `onPressedMoveStart` press start move event
    - `onPressedMoving` Press and move event

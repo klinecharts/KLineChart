@@ -36,6 +36,9 @@
   // 模式，可选项为`normal`，`weak_magnet`，`strong_magnet`，非必须
   mode?: 'normal' | 'weak_magnet' | 'strong_magnet'
 
+  // 模式灵敏度，仅 mode 是 weak_magnet 时有效
+  modeSensitivity?: number
+
   // 点信息，非必须
   points?: Array<{
     // 时间戳
@@ -163,6 +166,9 @@
 
   // 点击回调事件，可缺省
   onClick?: (event: OverlayEvent) => boolean
+
+  // 双击回调事件，可缺省
+  onDoubleClick?: (event: OverlayEvent) => boolean
 
   // 右击回调事件，可缺省，需要返回一个boolean类型的值，如果返回true，内置的右击删除将无效
   onRightClick?: (event: OverlayEvent) => boolean
