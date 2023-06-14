@@ -118,9 +118,12 @@ import StyleExplain from '../components/StyleExplain.vue'
       showRule: 'always',
       // 'standard' | 'rect'
       showType: 'standard',
-      // 显示回调方法，返回数据格式类型需要时一个数组
+      // 自定义显示，可以是回调方法也可以是数组，当是一个方法时，需要返回一个数组
       // 数组的子项类型为 { title, value }
       // title和value可以是字符串或者对象，对象类型为 { text, color }
+      // title 或者 title.text 可以是国际化的 key，
+      // value 或者 value.text 支持字符串模版
+      // 例如：想显示时间，开盘和收盘，配置[{ title: 'time', value: '{time}' }, { title: 'open', value: '{open}' }, { title: 'close', value: '{close}' }]
       custom: null
       defaultValue: 'n/a',
       rect: {

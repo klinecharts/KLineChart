@@ -108,9 +108,12 @@ import StyleExplain from '../../components/StyleExplain.vue'
       showRule: 'always',
       // 'standard' | 'rect'
       showType: 'standard',
-      // Display callback methods, and return an array of data format types when required
-      // The subitem type of the array is {title, value}
-      // Title and value can be strings or objects, and the object type is {text, color}
+      // Custom display, it can be a callback method or an array, when it is a method, it needs to return an array
+      // The child item type of the array is { title, value }
+      // title and value can be strings or objects, and the object type is { text, color }
+      // title or title.text can be an internationalized key,
+      // value or value.text supports string templates
+      // For example: want to display time, opening and closing, configure [{ title: 'time', value: '{time}' }, { title: 'open', value: '{open}' }, { title: ' close', value: '{close}' }]
       custom: null
       defaultValue: 'n/a',
       rect: {
