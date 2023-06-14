@@ -61,7 +61,7 @@ import {
 import { formatValue, formatPrecision, formatBigNumber, formatDate, formatThousands } from './common/utils/format'
 import { calcTextWidth } from './common/utils/canvas'
 
-const instances: {[id: string]: Chart} = {}
+const instances = new Map<string, ChartImp>()
 let chartBaseId = 1
 
 /**
@@ -78,9 +78,8 @@ function version (): string {
  * @param options
  * @returns {Chart}
  */
-function init (ds: HTMLElement | string, options?: Options): Chart | null {
+function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
   logTag()
-  const errorMessage = 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!'
   let dom: Nullable<HTMLElement>
   if (isString(ds)) {
     dom = document.getElementById(ds)
@@ -88,22 +87,19 @@ function init (ds: HTMLElement | string, options?: Options): Chart | null {
     dom = ds
   }
   if (dom === null) {
-    logError('', '', errorMessage)
+    logError('', '', 'The chart cannot be initialized correctly. Please check the parameters. The chart container cannot be null and child elements need to be added!!!')
     return null
   }
-  // @ts-expect-error
-  let chart = instances[dom.chartId ?? '']
+  let chart = instances.get(dom.id)
   if (chart !== undefined) {
     logWarn('', '', 'The chart has been initialized on the dom！！！')
     return chart
   }
   const id = `k_line_chart_${chartBaseId++}`
   chart = new ChartImp(dom, options)
-  // @ts-expect-error
   chart.id = id
-  // @ts-expect-error
-  dom.chartId = id
-  instances[id] = chart
+  dom.setAttribute('k-line-chart-id', id)
+  instances.set(id, chart)
   return chart
 }
 
@@ -113,20 +109,20 @@ function init (ds: HTMLElement | string, options?: Options): Chart | null {
  */
 function dispose (dcs: HTMLElement | Chart | string): void {
   let id: Nullable<string>
-  if (isString(dcs)) {
-    const dom = document.getElementById(dcs)
-    id = dom?.getAttribute('chartId') ?? null
-  } else if (dcs instanceof ChartImp) {
-    // @ts-expect-error
+  if (dcs instanceof ChartImp) {
     id = dcs.id
   } else {
-    // @ts-expect-error
-    id = dcs ?? dcs.chartId
+    let dom: Nullable<HTMLElement>
+    if (isString(dcs)) {
+      dom = document.getElementById(dcs)
+    } else {
+      dom = dcs as HTMLElement
+    }
+    id = dom?.getAttribute('k-line-chart-id') ?? null
   }
   if (id !== null) {
-    instances[id].destroy()
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete instances[id]
+    instances.get(id)?.destroy()
+    instances.delete(id)
   }
 }
 

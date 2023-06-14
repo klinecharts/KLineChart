@@ -41,6 +41,8 @@ import CandlePane from './pane/CandlePane'
 import IndicatorPane from './pane/IndicatorPane'
 import XAxisPane from './pane/XAxisPane'
 
+import { REAL_SEPARATOR_HEIGHT } from './widget/SeparatorWidget'
+
 import Axis from './component/Axis'
 
 import { Indicator, IndicatorCreate } from './component/Indicator'
@@ -63,6 +65,7 @@ export interface ConvertFinder {
 }
 
 export interface Chart {
+  id: string
   getDom: (paneId?: string, position?: DomPosition) => Nullable<HTMLElement>
   getSize: (paneId?: string, position?: DomPosition) => Nullable<Bounding>
   setLocale: (locale: string) => void
@@ -114,10 +117,10 @@ export interface Chart {
   unsubscribeAction: (type: ActionType, callback?: ActionCallback) => void
   getConvertPictureUrl: (includeOverlay?: boolean, type?: string, backgroundColor?: string) => string
   resize: () => void
-  destroy: () => void
 }
 
 export default class ChartImp implements Chart {
+  id: string
   private _container: HTMLElement
   private _chartContainer: HTMLElement
   private readonly _chartEvent: ChartEvent
@@ -184,7 +187,7 @@ export default class ChartImp implements Chart {
 
     let top = 0
     this._panes.forEach(pane => {
-      pane.setBounding({ top })
+      pane.setBounding({ top: top - REAL_SEPARATOR_HEIGHT / 2 })
       top += pane.getBounding().height
     })
     this._xAxisPane.setBounding({ height: xAxisHeight, top })
