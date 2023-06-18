@@ -41,8 +41,6 @@ import CandlePane from './pane/CandlePane'
 import IndicatorPane from './pane/IndicatorPane'
 import XAxisPane from './pane/XAxisPane'
 
-import { REAL_SEPARATOR_HEIGHT } from './widget/SeparatorWidget'
-
 import Axis from './component/Axis'
 
 import { Indicator, IndicatorCreate } from './component/Indicator'
@@ -187,7 +185,7 @@ export default class ChartImp implements Chart {
 
     let top = 0
     this._panes.forEach(pane => {
-      pane.setBounding({ top: top - REAL_SEPARATOR_HEIGHT / 2 })
+      pane.setBounding({ top })
       top += pane.getBounding().height
     })
     this._xAxisPane.setBounding({ height: xAxisHeight, top })

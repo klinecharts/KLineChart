@@ -613,7 +613,7 @@ export default class ChartEvent implements EventHandler {
       const bounding = p.getBounding()
       if (
         x >= bounding.left && x <= bounding.left + bounding.width &&
-        y >= bounding.top && y <= bounding.top + bounding.height - REAL_SEPARATOR_HEIGHT / 2
+        y >= bounding.top && y <= bounding.top + bounding.height
       ) {
         pane = p
         break
