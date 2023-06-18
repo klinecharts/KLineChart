@@ -20,7 +20,8 @@ const enUS: Locales = {
   high: 'High: ',
   low: 'Low: ',
   close: 'Close: ',
-  volume: 'Volume: '
+  volume: 'Volume: ',
+  change: 'Change: '
 }
 
 export default enUS

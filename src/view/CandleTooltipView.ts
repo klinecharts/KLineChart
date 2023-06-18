@@ -424,6 +424,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const tooltipStyles = styles.tooltip
     const textColor = tooltipStyles.text.color
     const current = data.current
+    const prevClose = data.prev?.close ?? current.close
+    const changeValue = current.close - prevClose
     const { price: pricePrecision, volume: volumePrecision } = precision
     const mapping = {
       '{time}': customApi.formatDate(dateTimeFormat, current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip),
@@ -434,7 +436,8 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       '{volume}': formatThousands(
         customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision)),
         thousandsSeparator
-      )
+      ),
+      '{change}': prevClose === 0 ? tooltipStyles.defaultValue : `${formatPrecision(changeValue / prevClose * 100)}%`
     }
     const labelValues = (
       isFunction(tooltipStyles.custom)
@@ -457,7 +460,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         t.color = textColor
       }
       t.text = i18n(t.text, locale)
-      let v: TooltipDataChild = { text: '', color: '' }
+      let v: TooltipDataChild = { text: tooltipStyles.defaultValue, color: '' }
       if (isObject(value)) {
         v = value
       } else {
@@ -465,9 +468,12 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         v.color = textColor
       }
       const match = v.text.match(/{(\S*)}/)
-      if (match !== null) {
+      if (match !== null && match.length > 1) {
         const key = `{${match[1]}}`
         v.text = v.text.replace(key, mapping[key] ?? tooltipStyles.defaultValue)
+        if (key === '{change}') {
+          v.color = changeValue === 0 ? styles.priceMark.last.noChangeColor : (changeValue > 0 ? styles.priceMark.last.upColor : styles.priceMark.last.downColor)
+        }
       }
       return { title: t, value: v }
     })

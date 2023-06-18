@@ -20,7 +20,8 @@ const zhCN: Locales = {
   high: '高：',
   low: '低：',
   close: '收：',
-  volume: '成交量：'
+  volume: '成交量：',
+  change: '涨幅：'
 }
 
 export default zhCN

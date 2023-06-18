@@ -853,6 +853,8 @@ export interface Locales {
   low: string
   close: string
   volume: string
+  change: string
+  [key: string]: string
 }
 
 export interface Options {
