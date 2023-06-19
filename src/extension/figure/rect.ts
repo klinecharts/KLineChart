@@ -19,14 +19,26 @@ import { FigureTemplate, DEVIATION } from '../../component/Figure'
 
 export function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolean {
   let { x, y, width, height } = rect
-  if (Math.abs(rect.width) < DEVIATION) {
-    x = rect.x - DEVIATION
-    width = DEVIATION * 2
+  if (width < 0) {
+    x = x + width
+    width = width * -1
   }
 
-  if (Math.abs(rect.height) < DEVIATION) {
-    y = rect.y - DEVIATION
-    height = DEVIATION * 2
+  if (height < 0) {
+    y = y + height
+    height = height * -1
+  }
+
+  if (width < DEVIATION && height < DEVIATION) {
+    return Math.abs(coordinate.x - x) < DEVIATION * 2 && Math.abs(coordinate.y - y) < DEVIATION * 2
+  }
+
+  if (width < DEVIATION && Math.abs(coordinate.x - x) < DEVIATION * 2) {
+    return coordinate.y >= y && coordinate.y <= y + height
+  }
+
+  if (height < DEVIATION && Math.abs(coordinate.y - y) < DEVIATION * 2) {
+    return coordinate.x >= x && coordinate.x <= x + width
   }
 
   return (
