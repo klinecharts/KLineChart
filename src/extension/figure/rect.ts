@@ -18,11 +18,14 @@ import { RectStyle, PolygonType, LineType } from '../../common/Options'
 import { FigureTemplate } from '../../component/Figure'
 
 export function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolean {
+  const minSize = 5
+  const height = Math.abs(rect.height) < minSize ? minSize : rect.height
+  const width = Math.abs(rect.width) < minSize ? minSize : rect.width
   return (
     coordinate.x >= rect.x &&
-    coordinate.x <= rect.x + rect.width &&
+    coordinate.x <= rect.x + width &&
     coordinate.y >= rect.y &&
-    coordinate.y <= rect.y + rect.height
+    coordinate.y <= rect.y + height
   )
 }
 
