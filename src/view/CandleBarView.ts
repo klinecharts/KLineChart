@@ -25,6 +25,7 @@ import Axis from '../component/Axis'
 
 import { FigureCreate } from '../component/Figure'
 import { RectAttrs } from '../extension/figure/rect'
+import { WickAttrs } from '../extension/figure/wick'
 
 import ChildrenView from './ChildrenView'
 
@@ -101,24 +102,25 @@ export default class CandleBarView extends ChildrenView {
 
     const barHeight = Math.max(1, priceY[2] - priceY[1])
 
-    let rects: Array<FigureCreate<RectAttrs, Partial<RectStyle>>> = []
+    let figures: Array<FigureCreate<RectAttrs | WickAttrs, Partial<RectStyle>>> = []
     if (type !== CandleType.Ohlc) {
-      rects.push({
-        name: 'rect',
-        attrs: {
-          x: x - 0.5,
-          y: priceY[0],
-          width: 1,
-          height: priceY[1] - priceY[0]
-        },
-        styles: { color: wickColor }
-      })
       if (
         type === CandleType.CandleStroke ||
         (type === CandleType.CandleUpStroke && open < close) ||
         (type === CandleType.CandleDownStroke && open > close)
       ) {
-        rects.push({
+        figures.push({
+          name: 'rect',
+          attrs: {
+            x: x - 0.5,
+            y: priceY[0],
+            width: 1,
+            height: priceY[1] - priceY[0]
+          },
+          styles: { color: wickColor }
+        })
+
+        figures.push({
           name: 'rect',
           attrs: {
             x: x - halfGapBar + 0.5,
@@ -131,8 +133,19 @@ export default class CandleBarView extends ChildrenView {
             borderColor
           }
         })
+
+        figures.push({
+          name: 'rect',
+          attrs: {
+            x: x - 0.5,
+            y: priceY[2],
+            width: 1,
+            height: priceY[3] - priceY[2]
+          },
+          styles: { color: wickColor }
+        })
       } else {
-        rects.push({
+        figures.push({
           name: 'rect',
           attrs: {
             x: x - halfGapBar + 0.5,
@@ -146,19 +159,20 @@ export default class CandleBarView extends ChildrenView {
             borderColor
           }
         })
+
+        figures.push({
+          name: 'wick',
+          attrs: {
+            coordinates: [
+              { x, y: priceY[0] },
+              { x, y: priceY[3] }
+            ]
+          },
+          styles: { color: wickColor }
+        })
       }
-      rects.push({
-        name: 'rect',
-        attrs: {
-          x: x - 0.5,
-          y: priceY[2],
-          width: 1,
-          height: priceY[3] - priceY[2]
-        },
-        styles: { color: wickColor }
-      })
     } else {
-      rects = [
+      figures = [
         {
           name: 'rect',
           attrs: {
@@ -189,14 +203,14 @@ export default class CandleBarView extends ChildrenView {
         }
       ]
     }
-    rects.forEach(({ attrs, styles }) => {
+    figures.forEach(({ name, attrs, styles }) => {
       let handler: EventHandler | undefined
       if (isMain) {
         handler = {
           mouseClickEvent: this._boundCandleBarClickEvent(data)
         }
       }
-      this.createFigure('rect', attrs, styles, handler)?.draw(ctx)
+      this.createFigure(name, attrs, styles, handler)?.draw(ctx)
     })
   }
 }

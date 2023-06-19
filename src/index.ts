@@ -40,6 +40,7 @@ import {
   checkCoordinateOnLine, drawLine,
   getLinearYFromSlopeIntercept, getLinearSlopeIntercept, getLinearYFromCoordinates
 } from './extension/figure/line'
+import { checkCoordinateOnWick, drawWick } from './extension/figure/wick'
 import { checkCoordinateOnPolygon, drawPolygon } from './extension/figure/polygon'
 import { checkCoordinateOnRect, drawRect } from './extension/figure/rect'
 import { drawRectText } from './extension/figure/rectText'
@@ -151,13 +152,15 @@ const utils = {
   checkCoordinateOnPolygon,
   checkCoordinateOnRect,
   checkCoordinateOnText,
+  checkCoordinateOnWick,
   drawArc,
   drawCircle,
   drawLine,
   drawPolygon,
   drawRect,
   drawText,
-  drawRectText
+  drawRectText,
+  drawWick
 }
 
 export {
