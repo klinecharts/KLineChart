@@ -15,17 +15,25 @@
 import Coordinate from '../../common/Coordinate'
 import { RectStyle, PolygonType, LineType } from '../../common/Options'
 
-import { FigureTemplate } from '../../component/Figure'
+import { FigureTemplate, DEVIATION } from '../../component/Figure'
 
 export function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolean {
-  const minSize = 5
-  const height = Math.abs(rect.height) < minSize ? minSize : rect.height
-  const width = Math.abs(rect.width) < minSize ? minSize : rect.width
+  let { x, y, width, height } = rect
+  if (Math.abs(rect.width) < DEVIATION) {
+    x = rect.x - DEVIATION
+    width = DEVIATION * 2
+  }
+
+  if (Math.abs(rect.height) < DEVIATION) {
+    y = rect.y - DEVIATION
+    height = DEVIATION * 2
+  }
+
   return (
-    coordinate.x >= rect.x &&
-    coordinate.x <= rect.x + width &&
-    coordinate.y >= rect.y &&
-    coordinate.y <= rect.y + height
+    coordinate.x >= x &&
+    coordinate.x <= x + width &&
+    coordinate.y >= y &&
+    coordinate.y <= y + height
   )
 }
 
