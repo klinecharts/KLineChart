@@ -124,8 +124,12 @@ export default class TimeScaleStore {
   private _calcGapBarSpace (): number {
     const rateSpace = Math.floor(this._barSpace * 0.82)
     const floorSpace = Math.floor(this._barSpace)
-    const optimalSpace = Math.min(rateSpace, floorSpace - 1)
-    return Math.max(1, optimalSpace)
+    let optimalSpace = Math.min(rateSpace, floorSpace - 1)
+    // If the optimal space is an odd number halfGapBar will be x.5, which will cause blur fix to fail
+    if (optimalSpace % 2 !== 0) {
+      optimalSpace -= 1
+    }
+    return Math.max(2, optimalSpace)
   }
 
   /**
