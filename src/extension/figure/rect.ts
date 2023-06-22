@@ -26,7 +26,7 @@ export function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs):
   }
   let y = rect.y
   let height = rect.height
-  if (y < DEVIATION * 2) {
+  if (height < DEVIATION * 2) {
     y -= DEVIATION
     height = DEVIATION * 2
   }
