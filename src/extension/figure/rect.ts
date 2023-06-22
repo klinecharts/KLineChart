@@ -18,27 +18,17 @@ import { RectStyle, PolygonType, LineType } from '../../common/Options'
 import { FigureTemplate, DEVIATION } from '../../component/Figure'
 
 export function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolean {
-  let { x, y, width, height } = rect
-  if (width < 0) {
-    x = x + width
-    width = width * -1
+  let x = rect.x
+  let width = rect.width
+  if (width < DEVIATION * 2) {
+    x -= DEVIATION
+    width = DEVIATION * 2
   }
-
-  if (height < 0) {
-    y = y + height
-    height = height * -1
-  }
-
-  if (width < DEVIATION && height < DEVIATION) {
-    return Math.abs(coordinate.x - x) < DEVIATION * 2 && Math.abs(coordinate.y - y) < DEVIATION * 2
-  }
-
-  if (width < DEVIATION && Math.abs(coordinate.x - x) < DEVIATION * 2) {
-    return coordinate.y >= y && coordinate.y <= y + height
-  }
-
-  if (height < DEVIATION && Math.abs(coordinate.y - y) < DEVIATION * 2) {
-    return coordinate.x >= x && coordinate.x <= x + width
+  let y = rect.y
+  let height = rect.height
+  if (y < DEVIATION * 2) {
+    y -= DEVIATION
+    height = DEVIATION * 2
   }
 
   return (
