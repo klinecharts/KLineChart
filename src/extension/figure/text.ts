@@ -62,6 +62,9 @@ export function getTextRect (attrs: TextAttrs, styles: Partial<RectTextStyle>, t
       break
     }
   }
+  startX = Math.round(startX) + 0.5
+  startY = Math.round(startY) + 0.5
+
   return { x: startX, y: startY, width: paddingLeft + textWidth + paddingRight, height: paddingTop + textHeight + paddingBottom }
 }
 
@@ -76,7 +79,7 @@ export function checkCoordinateOnText (coordinate: Coordinate, attrs: TextAttrs,
 }
 
 export function drawText (ctx: CanvasRenderingContext2D, attrs: TextAttrs, styles: Partial<TextStyle>): void {
-  const { x, y, text, align = 'left', baseline = 'top' } = attrs
+  let { x, y, text, align = 'left', baseline = 'top' } = attrs
   const {
     color = 'currentColor',
     size = 12,
@@ -85,6 +88,9 @@ export function drawText (ctx: CanvasRenderingContext2D, attrs: TextAttrs, style
   ctx.textAlign = align
   ctx.textBaseline = baseline
   ctx.font = createFont(size, weight, family)
+
+  x = Math.round(x) + 0.5
+  y = Math.round(y) + 0.5
 
   ctx.fillStyle = color
   ctx.fillText(text, x, y)
