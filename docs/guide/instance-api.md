@@ -338,7 +338,7 @@
 
 示例：
 ```javascript
-chart.createTechnicalIndicator('MA', false, {
+chart.createIndicator('MA', false, {
   id: 'pane_1',
   height: 100,
   minHeight: 30,
