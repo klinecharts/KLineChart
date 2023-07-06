@@ -54,6 +54,12 @@ Add a localization language. Charts have built-in `zh-CN` and `en-US`.
 - `locale` language name
 - `locales` language configuration
 
+## getOverlayClass()
+```typescript
+(name: string) => Nullable<OverlayConstructor>
+```
+Get chart's overlay attributes by overlay name.
+
 ## getSupportedLocales()
 ```typescript
 () => string[]
