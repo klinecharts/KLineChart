@@ -54,6 +54,12 @@
 - `locale` 语言名
 - `locales` 语言配置
 
+## getOverlayClass()
+```typescript
+(name: string) => Nullable<OverlayConstructor>
+```
+根据覆盖物名称获取图表内覆盖物的属性。
+
 ## getSupportedLocales()
 ```typescript
 () => string[]

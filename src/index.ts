@@ -48,7 +48,7 @@ import { checkCoordinateOnText, drawText } from './extension/figure/text'
 import { registerFigure, getSupportedFigures, getFigureClass } from './extension/figure/index'
 import { registerIndicator, getSupportedIndicators } from './extension/indicator/index'
 import { registerLocale, getSupportedLocales } from './extension/i18n/index'
-import { registerOverlay, getSupportedOverlays } from './extension/overlay/index'
+import { registerOverlay, getOverlayClass, getSupportedOverlays } from './extension/overlay/index'
 import { registerStyles } from './extension/styles/index'
 
 import Nullable from './common/Nullable'
@@ -164,7 +164,7 @@ export {
   version, init, dispose,
   registerFigure, getSupportedFigures, getFigureClass,
   registerIndicator, getSupportedIndicators,
-  registerOverlay, getSupportedOverlays,
+  registerOverlay, getOverlayClass, getSupportedOverlays,
   registerLocale, getSupportedLocales,
   registerStyles, utils,
   LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
