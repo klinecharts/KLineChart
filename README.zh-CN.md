@@ -8,8 +8,9 @@
 <div align="center">
 简体中文 | <a href="https://github.com/liihuu/KLineChart">English</a>
 </div>
+<br/>
 
-<p align="center" style="margin-top:16px">💹📈 基于 html5 canvas 构建的轻量级金融图表。</p>
+<p align="center">💹📈 基于 html5 canvas 构建的轻量级金融图表。</p>
 <div align="center">
 
 [![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/liihuu/KLineChart/build.yml?logo=github)](https://github.com/liihuu/KLineChart/actions/workflows/build.yml)

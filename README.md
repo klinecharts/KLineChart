@@ -8,8 +8,9 @@
 <div align="center">
 English | <a href="https://github.com/liihuu/KLineChart/blob/main/README.zh-CN.md">简体中文</a>
 </div>
+<br/>
 
-<p align="center" style="margin-top:16px">💹📈 Lightweight k-line chart built with html5 canvas.</p>
+<p align="center">💹📈 Lightweight k-line chart built with html5 canvas.</p>
 <div align="center">
 
 [![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/liihuu/KLineChart/build.yml?logo=github)](https://github.com/liihuu/KLineChart/actions/workflows/build.yml)
