@@ -4,7 +4,12 @@
   </a>
 </div>
 <h1 align="center">KLineChart</h1>
-<p align="center">💹📈 基于 html5 canvas 构建的轻量级金融图表。</p>
+
+<div align="center">
+简体中文 | <a href="https://github.com/liihuu/KLineChart">English</a>
+</div>
+
+<p align="center" style="margin-top:16px">💹📈 基于 html5 canvas 构建的轻量级金融图表。</p>
 <div align="center">
 
 [![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/liihuu/KLineChart/build.yml?logo=github)](https://github.com/liihuu/KLineChart/actions/workflows/build.yml)
@@ -28,7 +33,7 @@
 
 </div>
 
-<img style="margin-bottom:6px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1684399506365-assets/web-upload/044fe897-168c-4fbb-a485-87a8ef61c04a.png" />
+<img src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1684399506365-assets/web-upload/044fe897-168c-4fbb-a485-87a8ef61c04a.png" />
 
 简体中文 | [English](./README.md)
 

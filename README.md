@@ -4,7 +4,12 @@
   </a>
 </div>
 <h1 align="center">KLineChart</h1>
-<p align="center">💹📈 Lightweight k-line chart built with html5 canvas.</p>
+
+<div align="center">
+English | <a href="https://github.com/liihuu/KLineChart/blob/main/README.zh-CN.md">简体中文</a>
+</div>
+
+<p align="center" style="margin-top:16px">💹📈 Lightweight k-line chart built with html5 canvas.</p>
 <div align="center">
 
 [![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/liihuu/KLineChart/build.yml?logo=github)](https://github.com/liihuu/KLineChart/actions/workflows/build.yml)
@@ -31,7 +36,6 @@
 
 <img style="margin-bottom:6px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1684399506365-assets/web-upload/044fe897-168c-4fbb-a485-87a8ef61c04a.png" />
 
-English | [简体中文](./README.zh-CN.md)
 
 ## ✨ Features
 - 📦 **Out of the box:** Simple and fast integration, basically zero cost to get started.
