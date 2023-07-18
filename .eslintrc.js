@@ -14,5 +14,6 @@ module.exports = {
   overrides: [
   ],
   rules: {
+    'space-before-function-paren': 0
   }
 }
