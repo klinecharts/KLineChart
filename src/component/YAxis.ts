@@ -21,7 +21,7 @@ import { YAxisType, YAxisPosition, CandleType } from '../common/Options'
 import { isValid } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
-import { formatPrecision, formatThousands, formatUnitNumber } from '../common/utils/format'
+import { formatPrecision, formatThousands } from '../common/utils/format'
 
 interface FiguresResult {
   figures: IndicatorFigure[]
@@ -276,14 +276,14 @@ export default class YAxisImp extends AxisImp implements YAxis {
           if (shouldFormatBigNumber) {
             v = customApi.formatBigNumber(value)
           }
+          if (unitNumber) {
+            v = customApi.formatBigNumber(value)
+          }
           break
         }
       }
-      if (unitNumber) {
-        v = formatUnitNumber(v)
-      } else {
-        v = formatThousands(v, thousandsSeparator)
-      }
+      v = formatThousands(v, thousandsSeparator)
+
       if (y > textHeight && y < height - textHeight && ((validY !== undefined && (Math.abs(validY - y) > textHeight * 2)) || validY === undefined)) {
         optimalTicks.push({ text: v, coord: y, value })
         validY = y
