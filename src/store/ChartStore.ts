@@ -62,6 +62,11 @@ export default class ChartStore {
   private _thousandsSeparator: string = ','
 
   /**
+ * fromat y unitNumber
+ */
+  private _unitNumber: boolean = false
+
+  /**
    * Data source
    */
   private _dataList: KLineData[] = []
@@ -146,6 +151,9 @@ export default class ChartStore {
       if (options.thousandsSeparator !== undefined) {
         this._thousandsSeparator = options.thousandsSeparator
       }
+      if (options.unitNumber !== undefined) {
+        this._unitNumber = options.unitNumber
+      }
     }
     return this
   }
@@ -164,6 +172,10 @@ export default class ChartStore {
 
   getThousandsSeparator (): string {
     return this._thousandsSeparator
+  }
+
+  getFormatUnitNumber (): boolean {
+    return this._unitNumber
   }
 
   getPrecision (): Precision {

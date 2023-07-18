@@ -18,8 +18,8 @@ const reEscapeChar = /\\(\\)?/g
 const rePropName = RegExp(
   '[^.[\\]]+' + '|' +
   '\\[(?:' +
-    '([^"\'][^[]*)' + '|' +
-    '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
+  '([^"\'][^[]*)' + '|' +
+  '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
   ')\\]' + '|' +
   '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))'
   , 'g')
@@ -98,4 +98,25 @@ export function formatThousands (value: string | number, sign: string): string {
     return `${arr[0].replace(/(\d)(?=(\d{3})+$)/g, $1 => `${$1}${sign}`)}.${arr[1]}`
   }
   return vl.replace(/(\d)(?=(\d{3})+$)/g, $1 => `${$1}${sign}`)
+}
+
+/*
+ * @Description:  格式化单位
+ */
+export function formatUnitNumber (value: string, fixed: number = 2): string {
+  const vl = +`${value}`
+  if (isNaN(vl)) {
+    return '-'
+  }
+  if (vl >= 100000000) {
+    return (vl / 100000000).toFixed(fixed) + '亿'
+  } else if (vl >= 10000000) {
+    return (vl / 10000000).toFixed(fixed) + '千万'
+  } else if (vl >= 1000000) {
+    return (vl / 1000000).toFixed(fixed) + '百万'
+  } else if (vl >= 10000) {
+    return (vl / 10000).toFixed(fixed) + '万'
+  } else {
+    return vl.toFixed(fixed)
+  }
 }

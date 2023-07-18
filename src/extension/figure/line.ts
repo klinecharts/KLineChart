@@ -15,7 +15,6 @@
 import Nullable from '../../common/Nullable'
 import Coordinate from '../../common/Coordinate'
 import { SmoothLineStyle, LineType } from '../../common/Options'
-
 import { FigureTemplate, DEVIATION } from '../../component/Figure'
 
 function getDistance (coordinate1: Coordinate, coordinate2: Coordinate): number {
@@ -101,6 +100,7 @@ export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, style
   if (length > 1) {
     const { style = LineType.Solid, smooth, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
     ctx.lineWidth = size
+    ctx.fillStyle = color
     ctx.strokeStyle = color
     if (style === LineType.Dashed) {
       ctx.setLineDash(dashedValue)
