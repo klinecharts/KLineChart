@@ -13,10 +13,18 @@ onMounted(() => {
 
 <template>
   <div class="NotFound">
-    <img style="margin: 0 auto;width:320px" src="/images/404.png"/>
+    <div class="logo">
+      <span>4</span>
+      <img src="/images/logo.svg"/>
+      <span>4</span>
+    </div>
+    
+    <p class="title">Page Not Found</p>
+    <p class="tip" style="margin-top: 30px;">Make sure the address is correct and the page hasn't moved.</p>
+    <p class="tip">Please contact your KLineChart administrator if you think this is a mistake.</p>
     <div class="action">
       <a class="link" :href="withBase(root)" aria-label="go to home">
-        {{ lang === 'zh-CN' ? '返回主页' : 'Take me home' }}
+        Take me home
       </a>
     </div>
   </div>
@@ -28,52 +36,39 @@ onMounted(() => {
   text-align: center;
 }
 
+.NotFound .logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.NotFound .logo span {
+  font-size: 110px;
+  font-weight: 600;
+}
+
+.NotFound .logo img {
+  width: 76px;
+  margin: 0 16px
+}
+
 @media (min-width: 768px) {
   .NotFound {
     padding: 128px 32px 168px;
   }
 }
 
-.code {
-  font-size: 80px;
-  font-weight: 600;
-}
-
-.code span {
-  display: inline-block;
-  width: 130px;
-  height: 130px;
-  line-height: 130px;
-  border-top: solid 6px var(--vp-c-border);
-  border-left: solid 10px var(--vp-c-border);
-  border-right: solid 10px var(--vp-c-border);
-  border-bottom: solid 16px var(--vp-c-border);
-  border-radius: 8px;
-  padding-bottom: 30px;
-  box-sizing: border-box;
-}
-
 .title {
-  padding-top: 12px;
+  padding-top: 30px;
   letter-spacing: 2px;
-  line-height: 20px;
-  font-size: 20px;
+  font-size: 30px;
   font-weight: 700;
 }
 
-.divider {
-  margin: 24px auto 18px;
-  width: 64px;
-  height: 1px;
-  background-color: var(--vp-c-divider);
-}
-
-.quote {
-  margin: 0 auto;
-  max-width: 256px;
+.tip {
   font-size: 14px;
-  font-weight: 500;
-  color: var(--vp-c-text-2);
+  color: var(--vp-c-text-2)
 }
 
 .action {
