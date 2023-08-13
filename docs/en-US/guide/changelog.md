@@ -1,5 +1,12 @@
 # 📠 Change Log
 
+## 9.5.1
+`2023-08-14`
++ 🆕 Add chart api `getOverlayClass`.
++ 🆕 Style configuration `candle.tooltip.custom` add built-in support `change`.
++ 💄 Optimize figure `rect` event trigger.
++ ↩️ Separator event trigger optimization rollback.
+
 ## 9.5.0
 `2023-06-15`
 + 🆕 `Overlay` add event `onDoubleClick`, add property `modeSensitivity`.

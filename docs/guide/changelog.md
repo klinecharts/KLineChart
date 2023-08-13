@@ -1,5 +1,13 @@
 # 📠 更新日志
 
+## 9.5.1
+`2023-08-14`
++ 🆕 图表方法新增`getOverlayClass`。
++ 🆕 样式配置`candle.tooltip.custom`新增内置涨跌幅支持。
++ 💄 优化基础图形`rect`事件响应。
++ ↩️ 分割线事件响应回退
+
+
 ## 9.5.0
 `2023-06-15`
 + 🆕 `Overlay`新增事件`onDoubleClick`，新增属性`modeSensitivity`。
