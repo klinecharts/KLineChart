@@ -5,6 +5,7 @@
   "main": "./dist/klinecharts.min.js",
   "module": "index.js",
   "types": "./types/index.d.ts",
+  "type": "module",
   "files": [
     "LICENSE",
     "README.md",
@@ -35,9 +36,9 @@
   "private": false,
   "scripts": {
     "lint": "eslint src",
-    "clean": "node scripts/clean.js",
-    "build-core:dev": "cross-env NODE_ENV=development node scripts/build.js",
-    "build-core:prod": "cross-env NODE_ENV=production node scripts/build.js",
+    "clean": "node scripts/clean.cjs",
+    "build-core:dev": "cross-env NODE_ENV=development node scripts/build.cjs",
+    "build-core:prod": "cross-env NODE_ENV=production node scripts/build.cjs",
     "build-core": "npm run build-core:dev && npm run build-core:prod",
     "build-dts": "dts-bundle-generator --no-banner true --umd-module-name klinecharts -o types/index.d.ts src/index.ts",
     "build": "npm run clean && npm run build-core && npm run build-dts",
@@ -78,6 +79,6 @@
     "rollup-plugin-progress": "^1.1.2",
     "tslib": "^2.5.0",
     "typescript": "^4.8.3",
-    "vitepress": "^1.0.0-beta.5"
+    "vitepress": "^1.0.0-rc.4"
   }
 }

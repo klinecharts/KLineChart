@@ -4,7 +4,7 @@ const rollup = require('rollup');
 
 const chalk = require('chalk');
 
-const { inputConfig, outputConfig } = require('./config');
+const { inputConfig, outputConfig } = require('./config.cjs');
 
 const env = process.env.NODE_ENV;
 

@@ -4,5 +4,5 @@ types/
 docs/cache
 types/
 scripts/
-.eslintrc.js
+.eslintrc.cjs
 index.js
