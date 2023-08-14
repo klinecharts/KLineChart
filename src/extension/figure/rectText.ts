@@ -33,6 +33,7 @@ export function drawRectText (ctx: CanvasRenderingContext2D, attrs: TextAttrs, s
   } = styles
   ctx.font = createFont(size, weight, family)
   const textWidth = ctx.measureText(text).width
+  attrs.textWidth = textWidth
   const rect = getTextRect(attrs, styles, textWidth)
   drawRect(ctx, rect, { ...styles, color: styles.backgroundColor })
   drawText(ctx, { x: rect.x + paddingLeft, y: rect.y + paddingTop, text, align: 'left', baseline: 'top' }, styles)

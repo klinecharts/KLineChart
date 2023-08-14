@@ -25,7 +25,7 @@ export function getTextRect (attrs: TextAttrs, styles: Partial<RectTextStyle>, t
   const { size = 12, paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0 } = styles
   const { x, y, text, align = 'left', baseline = 'top' } = attrs
   const length = text.length
-  textWidth = textWidth ?? size * length
+  textWidth = attrs?.textWidth ?? (textWidth ?? size * length)
   const textHeight = size
   let startX: number
   switch (align) {
@@ -96,6 +96,7 @@ export interface TextAttrs {
   text: string
   align?: CanvasTextAlign
   baseline?: CanvasTextBaseline
+  textWidth?: number
 }
 
 const text: FigureTemplate<TextAttrs, Partial<TextStyle>> = {
