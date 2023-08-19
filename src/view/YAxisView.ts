@@ -23,7 +23,7 @@ import YAxis from '../component/YAxis'
 
 import AxisView from './AxisView'
 
-export default class YxisView extends AxisView<YAxis> {
+export default class YAxisView extends AxisView<YAxis> {
   override getAxisStyles (styles: Styles): AxisStyle {
     return styles.yAxis
   }

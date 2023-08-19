@@ -60,7 +60,7 @@ export const PaneIdConstants = {
 
 export default abstract class Pane<C extends Axis = Axis> implements Updater {
   private _container: HTMLElement
-  private _seriesContiainer: HTMLElement
+  private _seriesContainer: HTMLElement
   private readonly _id: string
   private readonly _chart: Chart
   private _mainWidget: DrawWidget<C>
@@ -85,7 +85,7 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
 
   private _init (rootContainer: HTMLElement): void {
     this._container = rootContainer
-    this._seriesContiainer = createDom('div', {
+    this._seriesContainer = createDom('div', {
       width: '100%',
       margin: '0',
       padding: '0',
@@ -96,16 +96,16 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
     this._separatorWidget = this.createSeparatorWidget(rootContainer)
     const lastElement = rootContainer.lastChild
     if (lastElement !== null) {
-      rootContainer.insertBefore(this._seriesContiainer, lastElement)
+      rootContainer.insertBefore(this._seriesContainer, lastElement)
     } else {
-      rootContainer.appendChild(this._seriesContiainer)
+      rootContainer.appendChild(this._seriesContainer)
     }
-    this._mainWidget = this.createMainWidget(this._seriesContiainer)
-    this._yAxisWidget = this.creatYAxisWidget(this._seriesContiainer)
+    this._mainWidget = this.createMainWidget(this._seriesContainer)
+    this._yAxisWidget = this.createYAxisWidget(this._seriesContainer)
   }
 
   getContainer (): HTMLElement {
-    return this._seriesContiainer
+    return this._seriesContainer
   }
 
   getId (): string {
@@ -200,12 +200,12 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
   getSeparatorWidget (): Nullable<SeparatorWidget> { return this._separatorWidget }
 
   update (level?: UpdateLevel): void {
-    if (this._bounding.width !== this._seriesContiainer.offsetWidth) {
-      this._seriesContiainer.style.width = `${this._bounding.width}px`
+    if (this._bounding.width !== this._seriesContainer.offsetWidth) {
+      this._seriesContainer.style.width = `${this._bounding.width}px`
     }
     const seriesHeight = this._mainWidget.getBounding().height
-    if (seriesHeight !== this._seriesContiainer.offsetHeight) {
-      this._seriesContiainer.style.height = `${seriesHeight}px`
+    if (seriesHeight !== this._seriesContainer.offsetHeight) {
+      this._seriesContainer.style.height = `${seriesHeight}px`
     }
     const l = level ?? UpdateLevel.Drawer
     this._mainWidget.update(l)
@@ -255,7 +255,7 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
   }
 
   destroy (): void {
-    this._container.removeChild(this._seriesContiainer)
+    this._container.removeChild(this._seriesContainer)
     if (this._separatorWidget !== null) {
       this._container.removeChild(this._separatorWidget.getContainer())
     }
@@ -267,7 +267,7 @@ export default abstract class Pane<C extends Axis = Axis> implements Updater {
 
   protected createSeparatorWidget (_container: HTMLElement): Nullable<SeparatorWidget> { return null }
 
-  protected creatYAxisWidget (_container: HTMLElement): Nullable<YAxisWidget> { return null }
+  protected createYAxisWidget (_container: HTMLElement): Nullable<YAxisWidget> { return null }
 
   protected abstract createMainWidget (container: HTMLElement): DrawWidget<C>
 }

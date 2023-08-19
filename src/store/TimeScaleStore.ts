@@ -30,7 +30,7 @@ interface MinVisibleBarCount {
   right: number
 }
 
-const BarSpaceLimitContants = {
+const BarSpaceLimitConstants = {
   MIN: 1,
   MAX: 50
 }
@@ -46,7 +46,7 @@ export default class TimeScaleStore {
   private readonly _chartStore: ChartStore
 
   /**
-   * Time foramt
+   * Time format
    */
   private _dateTimeFormat: Intl.DateTimeFormat = this._buildDateTimeFormat() as Intl.DateTimeFormat
 
@@ -61,7 +61,7 @@ export default class TimeScaleStore {
   private _scrollEnabled: boolean = true
 
   /**
-   * Is loding data flag
+   * Is loading data flag
    */
   private _loading: boolean = true
 
@@ -221,7 +221,7 @@ export default class TimeScaleStore {
   }
 
   setBarSpace (barSpace: number, adjustBeforeFunc?: () => void): void {
-    if (barSpace < BarSpaceLimitContants.MIN || barSpace > BarSpaceLimitContants.MAX || this._barSpace === barSpace) {
+    if (barSpace < BarSpaceLimitConstants.MIN || barSpace > BarSpaceLimitConstants.MAX || this._barSpace === barSpace) {
       return
     }
     this._barSpace = barSpace

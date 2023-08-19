@@ -40,7 +40,7 @@ export default class IndicatorPane extends Pane<YAxis> {
     return new SeparatorWidget(container, this)
   }
 
-  override creatYAxisWidget (container: HTMLElement): Nullable<YAxisWidget> {
+  override createYAxisWidget (container: HTMLElement): Nullable<YAxisWidget> {
     return new YAxisWidget(container, this)
   }
 }
