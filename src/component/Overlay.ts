@@ -23,7 +23,7 @@ import Precision from '../common/Precision'
 import { OverlayStyle } from '../common/Options'
 import { MouseTouchEvent } from '../common/SyntheticEvent'
 
-import { clone } from '../common/utils/typeChecks'
+import { clone, merge } from '../common/utils/typeChecks'
 
 import TimeScaleStore from '../store/TimeScaleStore'
 
@@ -281,7 +281,8 @@ export interface Overlay {
 export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' | 'paneId' | 'defaultZLevel' | 'points' | 'currentStep'>, 'name'>
 export type OverlayCreate = ExcludePickPartial<Omit<Overlay, 'paneId' | 'currentStep' | 'totalStep' | 'defaultZLevel' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
 export type OverlayRemove = Partial<Pick<Overlay, 'id' | 'groupId' | 'name'>>
-export type OverlayConstructor = new () => OverlayImp
+export type OverlayInnerConstructor = new () => OverlayImp
+export type OverlayConstructor = new () => Overlay
 
 const OVERLAY_DRAW_STEP_START = 1
 const OVERLAY_DRAW_STEP_FINISHED = -1
@@ -358,7 +359,7 @@ export default abstract class OverlayImp implements Overlay {
     this.mode = mode ?? OverlayMode.Normal
     this.modeSensitivity = modeSensitivity ?? 8
     this.extendData = extendData
-    this.styles = styles ?? null
+    this.styles = styles ?? {}
     this.createPointFigures = createPointFigures ?? null
     this.createXAxisFigures = createXAxisFigures ?? null
     this.createYAxisFigures = createYAxisFigures ?? null
@@ -417,8 +418,8 @@ export default abstract class OverlayImp implements Overlay {
   }
 
   setStyles (styles: Nullable<DeepPartial<OverlayStyle>>): boolean {
-    if (styles !== this.styles) {
-      this.styles = styles
+    if (styles !== null) {
+      merge(this.styles, styles)
       return true
     }
     return false
@@ -708,7 +709,7 @@ export default abstract class OverlayImp implements Overlay {
     }
   }
 
-  static extend (template: OverlayTemplate): OverlayConstructor {
+  static extend (template: OverlayTemplate): OverlayInnerConstructor {
     class Custom extends OverlayImp {
       constructor () {
         super(template)

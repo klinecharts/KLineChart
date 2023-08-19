@@ -760,39 +760,6 @@ Draw a rectangle.
    - `borderRadius` border radius
 
 
-### utils.drawText(ctx, text, styles)
-```typescript
-(
-   ctx: CanvasRenderingContext2D,
-   text: {
-      x: number
-      y: number
-      text: any
-      align?: 'center' | 'end' | 'left' | 'right' | 'start'
-      baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
-   },
-   styles: {
-      color?: string
-      size?: number
-      family?: string
-      weight?: number | string
-   }
-) => void
-```
-Draw text.
-- `ctx` canvas context
-- `text` text parameter
-   - `x` starting point x-axis value
-   - `y` starting point y-axis value
-   - `text` text content
-   - `align` horizontal alignment
-   - `baseline` vertical alignment
-- `styles` styles
-   - `color` color
-   - `size` size
-   - `family` font
-   - `weight` weight
-  
 ### utils.drawRectText(ctx, rectText, styles)
 ```typescript
 (
@@ -801,6 +768,8 @@ Draw text.
       x: number
       y: number
       text: any
+      width?: number
+      height?: number
       align?: 'center' | 'end' | 'left' | 'right' | 'start'
       baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
    },
@@ -823,12 +792,14 @@ Draw text.
    }
 ) => void
 ```
-Draw text with background.
+Draw text.
 - `ctx` canvas context
 - `rectText` text parameter
    - `x` starting point x-axis value
    - `y` starting point y-axis value
    - `text` text content
+   - `width` width
+   - `height` height
    - `align` horizontal alignment
    - `baseline` vertical alignment
 - `styles` styles
@@ -847,3 +818,6 @@ Draw text with background.
    - `borderRadius` border radius size
    - `borderDashedValue` border dashed line parameter value
    - `backgroundColor` background color
+  
+### utils.drawRectText(ctx, rectText, styles)
+Same as `utils.drawRectText(ctx, text, styles)`, it is deprecated and will be deleted after v10. Please use `utils.drawRectText(ctx, text, styles)` instead.

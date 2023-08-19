@@ -14,7 +14,7 @@
 
 import Nullable from '../../common/Nullable'
 
-import OverlayImp, { OverlayTemplate, OverlayConstructor } from '../../component/Overlay'
+import OverlayImp, { OverlayTemplate, OverlayConstructor, OverlayInnerConstructor } from '../../component/Overlay'
 
 import fibonacciLine from './fibonacciLine'
 import horizontalRayLine from './horizontalRayLine'
@@ -33,7 +33,7 @@ import verticalStraightLine from './verticalStraightLine'
 import simpleAnnotation from './simpleAnnotation'
 import simpleTag from './simpleTag'
 
-const overlays: Record<string, OverlayConstructor> = {}
+const overlays: Record<string, OverlayInnerConstructor> = {}
 
 const extensions = [
   fibonacciLine, horizontalRayLine, horizontalSegment, horizontalStraightLine,
@@ -50,6 +50,10 @@ function registerOverlay (template: OverlayTemplate): void {
   overlays[template.name] = OverlayImp.extend(template)
 }
 
+function getOverlayInnerClass (name: string): Nullable<OverlayInnerConstructor> {
+  return overlays[name] ?? null
+}
+
 function getOverlayClass (name: string): Nullable<OverlayConstructor> {
   return overlays[name] ?? null
 }
@@ -58,4 +62,4 @@ function getSupportedOverlays (): string[] {
   return Object.keys(overlays)
 }
 
-export { registerOverlay, getOverlayClass, getSupportedOverlays }
+export { registerOverlay, getOverlayClass, getOverlayInnerClass, getSupportedOverlays }
