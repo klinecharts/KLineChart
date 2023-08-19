@@ -20,4 +20,3 @@ The data required for the chart must be in a fixed format. Through the chart API
   turnover: number
 }
 ```
-```

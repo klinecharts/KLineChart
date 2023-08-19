@@ -76,7 +76,7 @@ export interface IndicatorFigure<D = any> {
   styles?: IndicatorFigureStylesCallback<D>
 }
 
-export type IndicatorRegenerateFiguresCallback<D = any> = (calcParms: any[]) => Array<IndicatorFigure<D>>
+export type IndicatorRegenerateFiguresCallback<D = any> = (calcParams: any[]) => Array<IndicatorFigure<D>>
 
 export interface IndicatorTooltipData {
   name: string
@@ -205,9 +205,9 @@ export interface Indicator<D = any> {
   result: D[]
 }
 
-export type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'reult'>, 'name' | 'calc'>
+export type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name' | 'calc'>
 
-export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'reult'>, 'name'>
+export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name'>
 
 export type IndicatorConstructor<D = any> = new () => IndicatorImp<D>
 

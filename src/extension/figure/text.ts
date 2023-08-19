@@ -13,20 +13,19 @@
  */
 
 import Coordinate from '../../common/Coordinate'
-import { TextStyle, RectTextStyle } from '../../common/Options'
+import { TextStyle } from '../../common/Options'
 
-import { createFont } from '../../common/utils/canvas'
+import { createFont, calcTextWidth } from '../../common/utils/canvas'
 
 import { FigureTemplate } from '../../component/Figure'
 
-import { RectAttrs } from './rect'
+import { RectAttrs, drawRect } from './rect'
 
-export function getTextRect (attrs: TextAttrs, styles: Partial<RectTextStyle>, textWidth?: number): RectAttrs {
-  const { size = 12, paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0 } = styles
-  const { x, y, text, align = 'left', baseline = 'top' } = attrs
-  const length = text.length
-  textWidth = attrs?.textWidth ?? (textWidth ?? size * length)
-  const textHeight = size
+export function getTextRect (attrs: TextAttrs, styles: Partial<TextStyle>): RectAttrs {
+  const { size = 12, paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0, weight = 'normal', family } = styles
+  const { x, y, text, align = 'left', baseline = 'top', width: w, height: h } = attrs
+  const width = w ?? (paddingLeft + calcTextWidth(text, size, weight, family) + paddingRight)
+  const height = h ?? (paddingTop + size + paddingBottom)
   let startX: number
   switch (align) {
     case 'left':
@@ -36,11 +35,11 @@ export function getTextRect (attrs: TextAttrs, styles: Partial<RectTextStyle>, t
     }
     case 'right':
     case 'end': {
-      startX = x - paddingRight - textWidth - paddingLeft
+      startX = x - width
       break
     }
     default: {
-      startX = x - textWidth / 2 - paddingLeft
+      startX = x - width / 2
       break
     }
   }
@@ -54,18 +53,18 @@ export function getTextRect (attrs: TextAttrs, styles: Partial<RectTextStyle>, t
     case 'bottom':
     case 'ideographic':
     case 'alphabetic': {
-      startY = y - textHeight - paddingTop - paddingBottom
+      startY = y - height
       break
     }
     default: {
-      startY = y - textHeight / 2 - paddingTop
+      startY = y - height / 2
       break
     }
   }
-  return { x: startX, y: startY, width: paddingLeft + textWidth + paddingRight, height: paddingTop + textHeight + paddingBottom }
+  return { x: startX, y: startY, width, height }
 }
 
-export function checkCoordinateOnText (coordinate: Coordinate, attrs: TextAttrs, styles: Partial<RectTextStyle>): boolean {
+export function checkCoordinateOnText (coordinate: Coordinate, attrs: TextAttrs, styles: Partial<TextStyle>): boolean {
   const { x, y, width, height } = getTextRect(attrs, styles)
   return (
     coordinate.x >= x &&
@@ -76,27 +75,35 @@ export function checkCoordinateOnText (coordinate: Coordinate, attrs: TextAttrs,
 }
 
 export function drawText (ctx: CanvasRenderingContext2D, attrs: TextAttrs, styles: Partial<TextStyle>): void {
-  const { x, y, text, align = 'left', baseline = 'top' } = attrs
+  const { text } = attrs
   const {
     color = 'currentColor',
     size = 12,
-    family, weight
+    family,
+    weight,
+    paddingLeft = 0,
+    paddingTop = 0,
+    paddingRight = 0
   } = styles
-  ctx.textAlign = align
-  ctx.textBaseline = baseline
-  ctx.font = createFont(size, weight, family)
+  const rect = getTextRect(attrs, styles)
 
+  drawRect(ctx, rect, { ...styles, color: styles.backgroundColor })
+
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'top'
+  ctx.font = createFont(size, weight, family)
   ctx.fillStyle = color
-  ctx.fillText(text, x, y)
+  ctx.fillText(text, rect.x + paddingTop, rect.y + paddingTop, rect.width - paddingLeft - paddingRight)
 }
 
 export interface TextAttrs {
   x: number
   y: number
   text: string
+  width?: number
+  height?: number
   align?: CanvasTextAlign
   baseline?: CanvasTextBaseline
-  textWidth?: number
 }
 
 const text: FigureTemplate<TextAttrs, Partial<TextStyle>> = {

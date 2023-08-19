@@ -104,7 +104,7 @@ function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
 }
 
 /**
- * Destory chart instace
+ * Destroy chart instance
  * @param dcs
  */
 function dispose (dcs: HTMLElement | Chart | string): void {
@@ -164,7 +164,7 @@ export {
   version, init, dispose,
   registerFigure, getSupportedFigures, getFigureClass,
   registerIndicator, getSupportedIndicators,
-  registerOverlay, getOverlayClass, getSupportedOverlays,
+  registerOverlay, getSupportedOverlays, getOverlayClass,
   registerLocale, getSupportedLocales,
   registerStyles, utils,
   LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,

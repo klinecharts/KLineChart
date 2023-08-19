@@ -94,7 +94,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
           topY = Math.min(topY, coordinate.y)
           bottomY = Math.max(bottomY, coordinate.y)
           const text = formatThousands(formatPrecision(point.value, precision.price), thousandsSeparator)
-          figures.push({ type: 'rectText', attrs: { x, y: coordinate.y, text, align: textAlign, baseline: 'middle' }, ignoreEvent: true })
+          figures.push({ type: 'text', attrs: { x, y: coordinate.y, text, align: textAlign, baseline: 'middle' }, ignoreEvent: true })
         }
       })
       if (coordinates.length > 1) {
