@@ -14,10 +14,24 @@
 
 import { OverlayTemplate } from '../../component/Overlay'
 import { isFunction, isValid } from '../../common/utils/typeChecks'
+import { LineType } from '../../common/Options'
 
 const simpleAnnotation: OverlayTemplate = {
   name: 'simpleAnnotation',
   totalStep: 2,
+  styles: {
+    text: {
+      borderSize: 1,
+      borderRadius: 2,
+      borderColor: '#1677FF',
+      paddingLeft: 4,
+      paddingRight: 4,
+      paddingTop: 4,
+      paddingBottom: 4,
+      backgroundColor: '#1677FF'
+    },
+    line: { style: LineType.Dashed }
+  },
   createPointFigures: ({ overlay, coordinates }) => {
     let text
     if (isValid(overlay.extendData)) {
@@ -43,7 +57,7 @@ const simpleAnnotation: OverlayTemplate = {
         ignoreEvent: true
       },
       {
-        type: 'rectText',
+        type: 'text',
         attrs: { x: startX, y: arrowEndY, text: text ?? '', align: 'center', baseline: 'bottom' },
         ignoreEvent: true
       }

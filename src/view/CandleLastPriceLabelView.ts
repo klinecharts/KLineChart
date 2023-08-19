@@ -65,7 +65,7 @@ export default class CandleLastPriceLabelView extends View {
           textAlgin = 'right'
         }
         this.createFigure(
-          'rectText',
+          'text',
           {
             x,
             y: priceY,

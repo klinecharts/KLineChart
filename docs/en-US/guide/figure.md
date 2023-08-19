@@ -165,34 +165,10 @@ new ({
     x: number
     // The y-axis coordinate value of the starting point
     y: number
-    // text content
-    text: any
-    // alignment
-    align: CanvasTextAlign
-    // benchmark
-    baseline: CanvasTextBaseline
-  },
-  styles: {
-    // color
-    color?: string
-    // size
-    size?: number
-    // font
-    family?: string
-    // thickness
-    weight?: string | number
-  }
-}) => Figure
-```
-
-### rectText
-```typescript
-new ({
-  attrs: {
-    // The x-axis coordinate value of the starting point
-    x: number
-    // The y-axis coordinate value of the starting point
-    y: number
+    // Fixed width
+    width: number
+    // Fixed height
+    height: number
     // text content
     text: any
     // alignment
@@ -218,7 +194,7 @@ new ({
     // top padding
     paddingTop?: number
     // Bottom padding
-    paddingBootom?: number
+    paddingBottom?: number
     // border style
     borderStyle?: 'solid' | 'dashed'
     // border color
@@ -234,6 +210,9 @@ new ({
   }
 }) => Figure
 ```
+
+### rectText
+Same as `text`, it is deprecated and will be deleted after v10. Please use `text` instead.
 
 ## Customize figure
 To create a custom figure, you only need to generate the figure information, and then add it globally through `klinecharts.registerFigure`, and add it to the chart to use it like the built-in figures.

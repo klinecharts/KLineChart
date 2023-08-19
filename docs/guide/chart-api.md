@@ -772,39 +772,8 @@
     x: number
     y: number
     text: any
-    align?: 'center' | 'end' | 'left' | 'right' | 'start'
-    baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
-  },
-  styles: {
-    color?: string
-    size?: number
-    family?: string
-    weight?: number | string
-  }
-) => void
-```
-绘制文字。
-- `ctx` 画布上下文
-- `text` 文字参数
-  - `x` 起始点x轴值
-  - `y` 起始点y轴值
-  - `text` 文字内容
-  - `align` 水平对齐方式
-  - `baseline` 垂直对齐方式
-- `styles` 样式
-  - `color` 颜色
-  - `size` 尺寸
-  - `family` 字体
-  - `weight` 权重
-  
-### utils.drawRectText(ctx, rectText, styles)
-```typescript
-(
-  ctx: CanvasRenderingContext2D,
-  rectText: {
-    x: number
-    y: number
-    text: any
+    width?: number
+    height?: number
     align?: 'center' | 'end' | 'left' | 'right' | 'start'
     baseline?: 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
   },
@@ -829,10 +798,12 @@
 ```
 绘制带背景的文字。
 - `ctx` 画布上下文
-- `rectText` 文字参数
+- `attrs` 文字参数
   - `x` 起始点x轴值
   - `y` 起始点y轴值
   - `text` 文字内容
+  - `width` 宽度
+  - `height` 高度
   - `align` 水平对齐方式
   - `baseline` 垂直对齐方式
 - `styles` 样式
@@ -851,3 +822,6 @@
   - `borderRadius` 边框圆角尺寸
   - `borderDashedValue` 边框虚线参数值
   - `backgroundColor` 背景色
+  
+### utils.drawRectText(ctx, rectText, styles)
+同`utils.drawText(ctx, text, styles)`，已废弃，v10之后会删除，请用`utils.drawText(ctx, text, styles)`代替。

@@ -62,7 +62,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
               }
 
               this.createFigure(
-                'rectText',
+                'text',
                 {
                   x,
                   y,

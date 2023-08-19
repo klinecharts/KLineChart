@@ -17,7 +17,6 @@
   volume: number
   // 成交额，非必须字段，如果需要展示技术指标'EMV'和'AVP'，则需要为该字段填充数据。
   turnover: number
-  
 }
 ```
 

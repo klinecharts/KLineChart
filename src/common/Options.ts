@@ -18,6 +18,20 @@ import KLineData from './KLineData'
 
 import { formatDate, formatBigNumber } from './utils/format'
 
+export interface Margin {
+  marginLeft: number
+  marginTop: number
+  marginRight: number
+  marginBottom: number
+}
+
+export interface Padding {
+  paddingLeft: number
+  paddingTop: number
+  paddingRight: number
+  paddingBottom: number
+}
+
 /**
  * line type
  */
@@ -60,23 +74,12 @@ export interface RectStyle extends PolygonStyle {
   borderRadius: number
 }
 
-export interface TextStyle {
+export interface TextStyle extends Padding {
+  style: PolygonType
   color: string
   size: number
   family: string
   weight: number | string
-}
-
-export interface StateTextStyle extends TextStyle {
-  show: boolean
-}
-
-export interface RectTextStyle extends TextStyle {
-  style: PolygonType
-  paddingLeft: number
-  paddingTop: number
-  paddingRight: number
-  paddingBottom: number
   borderStyle: LineType
   borderDashedValue: number[]
   borderSize: number
@@ -85,18 +88,23 @@ export interface RectTextStyle extends TextStyle {
   backgroundColor: string
 }
 
-export interface StateRectTextStyle extends RectTextStyle {
+/**
+ * @deprecated
+ * Starting from v10, it will be deleted
+ */
+export type RectTextStyle = TextStyle
+
+export interface StateTextStyle extends TextStyle {
   show: boolean
 }
 
-export interface MarginTextStyle extends StateTextStyle {
-  marginLeft: number
-  marginTop: number
-  marginRight: number
-  marginBottom: number
-}
+/**
+ * @deprecated
+ * Starting from v10, it will be deleted
+ */
+export type StateRectTextStyle = StateTextStyle
 
-export type LastValueMarkTextStyle = Omit<StateRectTextStyle, 'backgroundColor' | 'borderColor'>
+export type LastValueMarkTextStyle = Omit<StateTextStyle, 'backgroundColor'>
 
 export enum TooltipShowRule {
   Always = 'always',
@@ -126,7 +134,7 @@ export interface GridStyle {
   vertical: StateLineStyle
 }
 
-export type TooltipTextStyle = Omit<MarginTextStyle, 'show'>
+export type TooltipTextStyle = Pick<TextStyle, 'color' | 'size' | 'family' | 'weight'> & Margin
 
 export interface TooltipDataChild {
   text: string
@@ -143,17 +151,9 @@ export enum TooltipIconPosition {
   Middle = 'middle',
   Right = 'right'
 }
-export interface TooltipIconStyle {
+export interface TooltipIconStyle extends Padding, Margin {
   id: string
   position: TooltipIconPosition
-  marginLeft: number
-  marginTop: number
-  marginRight: number
-  marginBottom: number
-  paddingLeft: number
-  paddingTop: number
-  paddingRight: number
-  paddingBottom: number
   color: string
   activeColor: string
   size: number
@@ -226,12 +226,8 @@ export enum CandleTooltipRectPosition {
   Pointer = 'pointer'
 }
 
-export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borderDashedValue' | 'borderStyle'> {
+export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borderDashedValue' | 'borderStyle'>, Padding {
   position: CandleTooltipRectPosition
-  paddingLeft: number
-  paddingRight: number
-  paddingTop: number
-  paddingBottom: number
   offsetLeft: number
   offsetTop: number
   offsetRight: number
@@ -344,8 +340,9 @@ function getDefaultCandleStyle (): CandleStyle {
           paddingTop: 4,
           paddingRight: 4,
           paddingBottom: 4,
+          borderColor: 'transparent',
           borderStyle: LineType.Solid,
-          borderSize: 1,
+          borderSize: 0,
           borderDashedValue: [2, 2],
           color: '#FFFFFF',
           family: 'Helvetica Neue',
@@ -482,6 +479,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         family: 'Helvetica Neue',
         weight: 'normal',
         borderStyle: LineType.Solid,
+        borderColor: 'transparent',
         borderSize: 1,
         borderDashedValue: [2, 2],
         paddingLeft: 4,
@@ -518,7 +516,7 @@ export interface AxisTickLineStyle extends AxisLineStyle {
   length: number
 }
 
-export interface AxisTickTextStyle extends StateTextStyle {
+export interface AxisTickTextStyle extends Pick<StateTextStyle, 'show' | 'color' | 'weight' | 'family' | 'size'> {
   marginStart: number
   marginEnd: number
 }
@@ -612,7 +610,7 @@ function getDefaultYAxisStyle (): YAxisStyle {
 export interface CrosshairDirectionStyle {
   show: boolean
   line: StateLineStyle
-  text: StateRectTextStyle
+  text: StateTextStyle
 }
 
 export interface CrosshairStyle {
@@ -702,7 +700,11 @@ export interface OverlayStyle {
   circle: PolygonStyle
   arc: LineStyle
   text: TextStyle
-  rectText: RectTextStyle
+  /**
+   * @deprecated
+   * Starting from v10, it will be deleted
+   */
+  rectText: TextStyle
   [key: string]: any
 }
 
@@ -757,10 +759,21 @@ function getDefaultOverlayStyle (): OverlayStyle {
       dashedValue: [2, 2]
     },
     text: {
-      color: '#1677FF',
+      style: PolygonType.Fill,
+      color: '#FFFFFF',
       size: 12,
       family: 'Helvetica Neue',
-      weight: 'normal'
+      weight: 'normal',
+      borderStyle: LineType.Solid,
+      borderDashedValue: [2, 2],
+      borderSize: 0,
+      borderRadius: 2,
+      borderColor: '#1677FF',
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingTop: 0,
+      paddingBottom: 0,
+      backgroundColor: 'transparent'
     },
     rectText: {
       style: PolygonType.Fill,

@@ -167,38 +167,14 @@ new ({
     y: number
     // 文字内容
     text: any
+    // 指定宽
+    width?: number
+    // 指定高
+    height?: number
     // 对齐方式
-    align: CanvasTextAlign
+    align?: CanvasTextAlign
     // 基准
-    baseline: CanvasTextBaseline
-  },
-  styles: {
-    // 颜色
-    color?: string
-    // 尺寸
-    size?: number
-    // 字体
-    family?: string
-    // 粗细
-    weight?: string | number
-  }
-}) => Figure
-```
-
-### rectText
-```typescript
-new ({
-  attrs: {
-    // 起始点x轴坐标值
-    x: number
-    // 起始点y轴坐标值
-    y: number
-    // 文字内容
-    text: any
-    // 对齐方式
-    align: CanvasTextAlign
-    // 基准
-    baseline: CanvasTextBaseline
+    baseline?: CanvasTextBaseline
   },
   styles: {
     // 样式，可选项`fill`，`stroke`，`stroke_fill`
@@ -218,7 +194,7 @@ new ({
     // 上内边距
     paddingTop?: number
     // 下内边距
-    paddingBootom?: number
+    paddingBottom?: number
     // 边框样式
     borderStyle?: 'solid' | 'dashed'
     // 边框颜色
@@ -234,6 +210,9 @@ new ({
   }
 }) => Figure
 ```
+
+### rectText
+同`text`，已废弃，v10之后会删除，请用`text`代替。
 
 ## 自定义基础图形
 创建一个自定义基础图形，只需要生成基础图形信息，然后通过`klinecharts.registerFigure`全局添加，添加到图表即可和内置基础图形一样去使用。

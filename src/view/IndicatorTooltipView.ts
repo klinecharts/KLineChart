@@ -16,7 +16,7 @@ import Nullable from '../common/Nullable'
 import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, TooltipStyle, TooltipIconStyle, MarginTextStyle, TooltipData, TooltipShowRule, TooltipDataChild, TooltipIconPosition, CustomApi } from '../common/Options'
+import { IndicatorStyle, TooltipStyle, TooltipIconStyle, TooltipTextStyle, TooltipData, TooltipShowRule, TooltipDataChild, TooltipIconPosition, CustomApi } from '../common/Options'
 import { ActionType } from '../common/Action'
 
 import XAxis from '../component/XAxis'
@@ -134,9 +134,9 @@ export default class IndicatorTooltipView extends View<YAxis> {
           prevRowHeight = middleIconsLastRowHeight
 
           if (valuesValid) {
-            const [valuesStartX, valuestartY, valuesLastRowHeight, valuesIncreaseHeight] = this.drawStandardTooltipLabels(ctx, bounding, values, x, y, prevRowHeight, tooltipTextStyles)
+            const [valuesStartX, valueStartY, valuesLastRowHeight, valuesIncreaseHeight] = this.drawStandardTooltipLabels(ctx, bounding, values, x, y, prevRowHeight, tooltipTextStyles)
             x = valuesStartX
-            y = valuestartY
+            y = valueStartY
             height += valuesIncreaseHeight
             prevRowHeight = valuesLastRowHeight
           }
@@ -198,7 +198,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         x += marginLeft
         const active = activeIconInfo?.paneId === currentIconInfo.paneId && activeIconInfo?.indicatorName === currentIconInfo.indicatorName && activeIconInfo?.iconId === icon.id
         this.createFigure(
-          'rectText',
+          'text',
           { text, x, y: y + marginTop },
           {
             paddingLeft,
@@ -228,7 +228,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     startX: number,
     startY: number,
     prevRowHeight: number,
-    styles: Omit<MarginTextStyle, 'show'>
+    styles: TooltipTextStyle
   ): [number, number, number, number] {
     let x = startX
     let y = startY

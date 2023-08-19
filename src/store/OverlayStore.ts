@@ -20,7 +20,7 @@ import { createId } from '../common/utils/id'
 
 import OverlayImp, { OVERLAY_ID_PREFIX, OVERLAY_ACTIVE_Z_LEVEL, OverlayCreate, OverlayRemove } from '../component/Overlay'
 
-import { getOverlayClass } from '../extension/overlay/index'
+import { getOverlayInnerClass } from '../extension/overlay/index'
 
 import ChartStore from './ChartStore'
 
@@ -216,7 +216,7 @@ export default class OverlayStore {
     const ids = overlays.map(overlay => {
       const id = overlay.id ?? createId(OVERLAY_ID_PREFIX)
       if (this.getInstanceById(id) === null) {
-        const OverlayClazz = getOverlayClass(overlay.name)
+        const OverlayClazz = getOverlayInnerClass(overlay.name)
         if (OverlayClazz !== null) {
           const instance = new OverlayClazz()
           const count = (this._counter.get(paneId) ?? 0) + 1

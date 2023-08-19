@@ -12,40 +12,20 @@
  * limitations under the License.
  */
 
-import Coordinate from '../../common/Coordinate'
-import { RectTextStyle } from '../../common/Options'
+import text, { drawText } from './text'
 
-import { createFont } from '../../common/utils/canvas'
+/**
+ * @deprecated
+ * Starting from v10, it will be deleted
+ */
+const rectText = text
 
-import { FigureTemplate } from '../../component/Figure'
+const drawRectText = drawText
 
-import { TextAttrs, getTextRect, drawText, checkCoordinateOnText } from './text'
-import { drawRect } from './rect'
-
-export function drawRectText (ctx: CanvasRenderingContext2D, attrs: TextAttrs, styles: Partial<RectTextStyle>): void {
-  const { text } = attrs
-  const {
-    size = 12,
-    family,
-    weight,
-    paddingLeft = 0,
-    paddingTop = 0
-  } = styles
-  ctx.font = createFont(size, weight, family)
-  const textWidth = ctx.measureText(text).width
-  const rect = getTextRect(attrs, styles, textWidth)
-  drawRect(ctx, rect, { ...styles, color: styles.backgroundColor })
-  drawText(ctx, { x: rect.x + paddingLeft, y: rect.y + paddingTop, text, align: 'left', baseline: 'top' }, styles)
-}
-
-const rectText: FigureTemplate<TextAttrs, Partial<RectTextStyle>> = {
-  name: 'rectText',
-  checkEventOn: (coordinate: Coordinate, attrs: TextAttrs, styles: Partial<RectTextStyle>) => {
-    return checkCoordinateOnText(coordinate, attrs, styles)
-  },
-  draw: (ctx: CanvasRenderingContext2D, attrs: TextAttrs, styles: Partial<RectTextStyle>) => {
-    drawRectText(ctx, attrs, styles)
-  }
-}
+/**
+ * @deprecated
+ * Starting from v10, it will be deleted
+ */
+export { drawRectText }
 
 export default rectText
