@@ -472,7 +472,7 @@ export default class ChartImp implements Chart {
   }
 
   clearData (): void {
-    this._chartStore.clearDataList()
+    this._chartStore.clear()
   }
 
   getDataList (): KLineData[] {
@@ -480,7 +480,7 @@ export default class ChartImp implements Chart {
   }
 
   applyNewData (dataList: KLineData[], more?: boolean, callback?: () => void): void {
-    this._chartStore.clearDataList()
+    this._chartStore.clear()
     if (dataList.length === 0) {
       this.adjustPaneViewport(false, true, true, true)
     } else {
@@ -803,7 +803,7 @@ export default class ChartImp implements Chart {
       case ActionType.OnCrosshairChange: {
         const crosshair = { ...data }
         crosshair.paneId = crosshair.paneId ?? PaneIdConstants.CANDLE
-        this._chartStore.getCrosshairStore().set(crosshair)
+        this._chartStore.getTooltipStore().setCrosshair(crosshair)
         break
       }
     }

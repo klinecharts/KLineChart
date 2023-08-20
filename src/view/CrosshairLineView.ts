@@ -23,7 +23,7 @@ export default class CrosshairLineView extends View {
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = widget.getPane().getChart().getChartStore()
-    const crosshair = chartStore.getCrosshairStore().get()
+    const crosshair = chartStore.getTooltipStore().getCrosshair()
     const styles = chartStore.getStyles().crosshair
     if (crosshair.paneId !== undefined && styles.show) {
       if (crosshair.paneId === pane.getId()) {

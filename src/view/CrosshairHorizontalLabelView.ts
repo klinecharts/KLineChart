@@ -34,7 +34,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = widget.getPane().getChart().getChartStore()
-    const crosshair = chartStore.getCrosshairStore().get()
+    const crosshair = chartStore.getTooltipStore().getCrosshair()
     const styles = chartStore.getStyles().crosshair
     if (crosshair.paneId !== undefined && this.compare(crosshair, pane.getId())) {
       if (styles.show) {

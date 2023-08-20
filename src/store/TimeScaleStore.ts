@@ -228,7 +228,7 @@ export default class TimeScaleStore {
     this._gapBarSpace = this._calcGapBarSpace()
     adjustBeforeFunc?.()
     this.adjustVisibleRange()
-    this._chartStore.getCrosshairStore().recalculate(true)
+    this._chartStore.getTooltipStore().recalculateCrosshair(true)
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 
@@ -236,7 +236,7 @@ export default class TimeScaleStore {
     if (this._totalBarSpace !== totalSpace) {
       this._totalBarSpace = totalSpace
       this.adjustVisibleRange()
-      this._chartStore.getCrosshairStore().recalculate(true)
+      this._chartStore.getTooltipStore().recalculateCrosshair(true)
     }
     return this
   }
@@ -246,7 +246,7 @@ export default class TimeScaleStore {
     this._offsetRightBarCount = distance / this._barSpace
     if (isUpdate ?? false) {
       this.adjustVisibleRange()
-      this._chartStore.getCrosshairStore().recalculate(true)
+      this._chartStore.getTooltipStore().recalculateCrosshair(true)
       this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
     }
     return this
@@ -299,7 +299,7 @@ export default class TimeScaleStore {
     this._chartStore.getActionStore().execute(ActionType.OnScroll)
     this._offsetRightBarCount = this._startScrollOffsetRightBarCount - distanceBarCount
     this.adjustVisibleRange()
-    this._chartStore.getCrosshairStore().recalculate(true)
+    this._chartStore.getTooltipStore().recalculateCrosshair(true)
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 
@@ -342,7 +342,7 @@ export default class TimeScaleStore {
       return
     }
     if (coordinate?.x === undefined) {
-      const crosshair = this._chartStore.getCrosshairStore().get()
+      const crosshair = this._chartStore.getTooltipStore().getCrosshair()
       coordinate = { x: crosshair?.x ?? this._totalBarSpace / 2 }
     }
     this._chartStore.getActionStore().execute(ActionType.OnZoom)
