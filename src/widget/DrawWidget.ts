@@ -116,7 +116,7 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
     })
   }
 
-  override updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
+  override updateImp (container: HTMLElement, bounding: Bounding, level: UpdateLevel): void {
     const { width, height, left } = bounding
     container.style.left = `${left}px`
 

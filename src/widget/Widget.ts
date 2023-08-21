@@ -79,8 +79,8 @@ export default abstract class Widget<C extends Axis = Axis> extends Eventful imp
     return this._pane
   }
 
-  update (level: UpdateLevel): void {
-    this.updateImp(level, this._container, this._bounding)
+  update (level?: UpdateLevel): void {
+    this.updateImp(this._container, this._bounding, level ?? UpdateLevel.Drawer)
   }
 
   abstract getName (): string
@@ -91,5 +91,5 @@ export default abstract class Widget<C extends Axis = Axis> extends Eventful imp
 
   protected abstract initDom (container: HTMLElement): void
 
-  protected abstract updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void
+  protected abstract updateImp (container: HTMLElement, bounding: Bounding, level: UpdateLevel): void
 }

@@ -154,7 +154,7 @@ export default class SeparatorWidget extends Widget<YAxis> {
     container.appendChild(this._moveDom)
   }
 
-  override updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
+  override updateImp (container: HTMLElement, bounding: Bounding, level: UpdateLevel): void {
     if (level === UpdateLevel.All || level === UpdateLevel.Separator) {
       const styles = this.getPane().getChart().getStyles().separator
       this._moveDom.style.top = `${-Math.floor((REAL_SEPARATOR_HEIGHT - styles.size) / 2)}px`
