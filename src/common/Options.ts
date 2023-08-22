@@ -85,7 +85,7 @@ export interface TextStyle extends Padding {
   borderSize: number
   borderColor: string
   borderRadius: number
-  backgroundColor: string
+  backgroundColor: string | CanvasGradient
 }
 
 /**
