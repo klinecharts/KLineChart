@@ -273,7 +273,7 @@ new ({
       color = 'currentColor',
       borderSize = 1,
       borderColor = 'currentColor',
-      borderStyle = 'solid,
+      borderStyle = 'solid',
       borderDashedValue = [2, 2]
     } = styles
     // 绘制填充的菱形
