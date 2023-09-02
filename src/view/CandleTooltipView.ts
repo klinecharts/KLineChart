@@ -454,7 +454,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     return labelValues.map(({ title, value }) => {
       let t: TooltipDataChild = { text: '', color: '' }
       if (isObject(title)) {
-        t = title
+        t = { ...title }
       } else {
         t.text = title
         t.color = textColor
@@ -462,7 +462,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       t.text = i18n(t.text, locale)
       let v: TooltipDataChild = { text: tooltipStyles.defaultValue, color: '' }
       if (isObject(value)) {
-        v = value
+        v = { ...value }
       } else {
         v.text = value
         v.color = textColor
