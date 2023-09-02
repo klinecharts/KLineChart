@@ -20,6 +20,10 @@ import text, { drawText } from './text'
  */
 const rectText = text
 
+/**
+ * @deprecated
+ * Starting from v10, it will be deleted
+ */
 const drawRectText = drawText
 
 /**
