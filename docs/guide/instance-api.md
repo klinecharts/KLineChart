@@ -6,7 +6,7 @@
 ```
 获取dom容器。
 - `paneId` 窗口id，缺省则是整个图表容器
-- `position` 可选项为'root'，'main'和'yAxis'，缺省则是'root'
+- `position` 支持`root`，`main`，`yAxis`，缺省则是`root`
 
 
 ## getSize(paneId, position)

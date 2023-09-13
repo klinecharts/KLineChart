@@ -4,7 +4,7 @@ sidebar: false
 
 # ❤️ 赞助
 
-如果你觉得插件还不错，希望你能在[GitHub](https://github.com/liihuu/KLineChart)点一个 🌟。如果能够打赏一杯 ☕️，那就真的太感谢了。
+如果你觉得插件还不错，希望你能在 [GitHub](https://github.com/liihuu/KLineChart) 点一个 🌟。如果能够打赏一杯 ☕️，那就真的太感谢了。
 
 ## 支付宝
 <img style="width:180px;margin-top:10px" src="/images/alipay_qr_code.png"/>

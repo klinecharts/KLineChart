@@ -6,7 +6,7 @@
 ```
 Get the dom container.
 - `paneId` window id, the default is the entire chart container
-- `position` options are 'root', 'main' and 'yAxis', default is 'root'
+- `position` supports `root`, `main`, `yAxis`, the default is `root`
 
 
 ## getSize(paneId, position)
