@@ -1,5 +1,12 @@
 # 📠 Change Log
 
+## 9.5.2
+`2023-09-18`
++ 💄 Optimize the figure `text`.
++ 💄 Optimize built-in overlays `simpleAnnotation` and `simpleTag`.
++ 💄 Optimize the free style of technical indicators and support increment.
++ 🐞 Fix typescript declaration issue.
+
 ## 9.5.1
 `2023-08-14`
 + 🆕 Add chart api `getOverlayClass`.
