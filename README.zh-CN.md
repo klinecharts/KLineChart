@@ -85,7 +85,7 @@ yarn add klinecharts
 [https://www.klinecharts.com](https://www.klinecharts.com)
 
 ### 本地浏览
-在根目录下执行命令，需要[Node.js](https://nodejs.org)环境。
+在根目录下执行命令，需要 [Node.js](https://nodejs.org) 环境。
 ```bash
 # 安装依赖
 npm install
@@ -93,10 +93,11 @@ npm install
 # 启动文档服务
 npm run docs:dev
 ```
+启动成功后，在浏览器中打开 http://localhost:8888。
 
 
 ## 🛠️ 本地构建
-在根目录下执行命令，需要[Node.js](https://nodejs.org)环境。
+在根目录下执行命令，需要 [Node.js](https://nodejs.org) 环境。
 ```bash
 # 安装依赖
 npm install
