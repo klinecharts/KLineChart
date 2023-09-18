@@ -1,5 +1,9 @@
 # 📠 Change Log
 
+## 9.5.3
+`2023-09-19`
++ 🐞 Fix typescript import error.
+
 ## 9.5.2
 `2023-09-18`
 + 💄 Optimize the figure `text`.
