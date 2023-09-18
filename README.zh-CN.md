@@ -81,13 +81,24 @@ yarn add klinecharts
 ```
 
 ## 📄 文档
-+ [中文](https://www.klinecharts.com)
-+ [English](https://www.klinecharts.com/en-US)
+### 在线文档
+[https://www.klinecharts.com](https://www.klinecharts.com)
+
+### 本地浏览
+在根目录下执行命令，需要[Node.js](https://nodejs.org)环境。
+```bash
+# 安装依赖
+npm install
+
+# 启动文档服务
+npm run docs:dev
+```
+
 
 ## 🛠️ 本地构建
 在根目录下执行命令，需要[Node.js](https://nodejs.org)环境。
 ```bash
-# 通过 npm 安装依赖
+# 安装依赖
 npm install
 
 # 打包文件

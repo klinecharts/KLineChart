@@ -83,16 +83,27 @@ yarn add klinecharts
 ```
 
 ## 📄 Docs
-+ [English](https://www.klinecharts.com/en-US)
-+ [中文](https://www.klinecharts.com)
+### Online
+[https://www.klinecharts.com](https://www.klinecharts.com)
+
+### Locale
+Execute command in root directory. [Node.js](https://nodejs.org) is required.
+```bash
+# Install the dependencies
+npm install
+
+# Start document service
+npm run docs:dev
+```
+After successful startup, open in the browser http://localhost:8888 .
 
 ## 🛠️ Build
 Execute command in root directory. [Node.js](https://nodejs.org) is required.
 ```bash
-# Install the dependencies from NPM:
+# Install the dependencies
 npm install
 
-# Build files:
+# Build files
 npm run build
 ```
 The generated files are in the dist folder.

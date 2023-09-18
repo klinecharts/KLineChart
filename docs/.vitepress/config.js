@@ -4,6 +4,11 @@ import pkg from '../../package.json'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  vite: {
+    server: {
+      port: 8888
+    }
+  },
   lang: 'zh-CN',
   title: 'KLineChart',
   description: '💹📈 可高度自定义的专业级轻量金融图表。',

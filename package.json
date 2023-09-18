@@ -5,7 +5,6 @@
   "main": "./dist/klinecharts.min.js",
   "module": "index.js",
   "types": "./types/index.d.ts",
-  "type": "module",
   "files": [
     "LICENSE",
     "README.md",
@@ -43,9 +42,9 @@
     "build-dts": "dts-bundle-generator --no-banner true --umd-module-name klinecharts -o types/index.d.ts src/index.ts",
     "build": "npm run clean && npm run build-core && npm run build-dts",
     "prepare": "husky install",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
+    "docs:dev": "npm run dev --prefix docs",
+    "docs:build": "npm run build --prefix docs",
+    "docs:preview": "npm run preview --prefix docs",
     "docs:deploy": "npm run docs:build && gh-pages -d website"
   },
   "engines": {
