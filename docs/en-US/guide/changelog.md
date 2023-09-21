@@ -1,5 +1,10 @@
 # 📠 Change Log
 
+## 9.5.4
+`2023-09-22`
++ 🐞 Fix the issue of not display the latest price line when the style `candle.type` is `area`.
++ 🐞 Fix the issue of incorrect display of the style `crosshair.vertical.text.paddingLeft`.
+
 ## 9.5.3
 `2023-09-19`
 + 🐞 Fix typescript import error.
