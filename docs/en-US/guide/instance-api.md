@@ -222,6 +222,20 @@ Update data. Currently, only the timestamp of the last piece of data will be mat
 ```
 Get the current data source of the chart. For the returned data type, please refer to [data](./datasource.md).
 
+## getVisibleData()
+```typescript
+() => Array<{
+  timestamp: number
+  open: number
+  close: number
+  high: number
+  low: number
+  volume?: number
+  turnover?: number
+}>
+```
+Get the current visible data source of the chart. For the returned data type, please refer to [data](./datasource.md).
+
 
 ## clearData()
 ```typescript
