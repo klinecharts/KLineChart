@@ -2,7 +2,7 @@
 This document introduces the built-in overlays in the chart and how to customize a overlay.
 
 ## Built-in overlay types
-`horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `straightLine`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `filineLine`, `fibonacciLine`, `simpleAnnotation`, `simpleTag`
+`horizontalRayLine`, `horizontalSegment`, `horizontalStraightLine`, `verticalRayLine`, `verticalSegment`, `verticalStraightLine`, `rayLine`, `segment`, `straightLine`, `priceLine`, `priceChannelLine`, `parallelStraightLine`, `fibonacciLine`, `simpleAnnotation`, `simpleTag`
 
 ## Custom overlays
 Customize an overlay, then add it globally through `klinecharts.registerOverlay`, add it to the chart and use it like the built-in overlay.
