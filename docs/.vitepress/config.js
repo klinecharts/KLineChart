@@ -49,6 +49,7 @@ export default defineConfig({
       themeConfig: {
         nav: [
           { text: '指南', link: '/guide/what-is-klinechart', activeMatch: 'guide' },
+          { text: '示例', link: '/sample/basic', activeMatch: 'sample' },
           { text: 'Pro', link: 'https://pro.klinecharts.com' },
           { text: '预览', link: 'https://preview.klinecharts.com' },
           { text: '赞助', link: '/sponsor' },
@@ -106,6 +107,17 @@ export default defineConfig({
               ]
             }
           ],
+          '/sample/': [
+            { text: '基础展示', link: '/sample/basic' },
+            { text: '蜡烛图类型', link: '/sample/candle-type' },
+            { text: '技术指标', link: '/sample/indicator' },
+            { text: '坐标轴', link: '/sample/axis' },
+            { text: '提示条', link: '/sample/tooltip' },
+            { text: '覆盖物', link: '/sample/overlay' },
+            { text: '数据加载', link: '/sample/data' },
+            { text: '主题', link: '/sample/theme' },
+            { text: '多语言', link: '/sample/i18n' },
+          ]
         },
         socialLinks: [
           { icon: 'github', link: 'https://github.com/liihuu/KLineChart' },
@@ -192,6 +204,17 @@ export default defineConfig({
                 { text: 'Feedback', link: '/en-US/guide/feedback' }
               ]
             }
+          ],
+          '/en-US/sample/': [
+            { text: 'Basic', link: '/en-US/sample/basic' },
+            { text: 'Candle Type', link: '/en-US/sample/candle-type' },
+            { text: 'Indicator', link: '/en-US/sample/indicator' },
+            { text: 'Axis', link: '/en-US/sample/axis' },
+            { text: 'Tooltip', link: '/en-US/sample/tooltip' },
+            { text: 'Overlay', link: '/en-US/sample/overlay' },
+            { text: 'Data', link: '/en-US/sample/data' },
+            { text: 'Theme', link: '/en-US/sample/theme' },
+            { text: 'I18n', link: '/en-US/sample/i18n' },
           ]
         },
         socialLinks: [

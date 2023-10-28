@@ -3,7 +3,7 @@ Whether you see a point or a line on the chart, you can basically customize the 
 
 ## Picture explanation
 <script setup>
-import StyleExplain from '../../components/StyleExplain.vue'
+import StyleExplain from '../../components/style/Explain.vue'
 </script>
 <StyleExplain/>
 
@@ -115,7 +115,7 @@ import StyleExplain from '../../components/StyleExplain.vue'
       // title or title.text can be an internationalized key,
       // value or value.text supports string templates
       // For example: want to display time, opening and closing, configure [{ title: 'time', value: '{time}' }, { title: 'open', value: '{open}' }, { title: ' close', value: '{close}' }]
-      custom: null
+      custom: null,
       defaultValue: 'n/a',
       rect: {
        // 'fixed' | 'pointer'

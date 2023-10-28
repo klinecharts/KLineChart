@@ -4,7 +4,7 @@
 
 ## 图解说明
 <script setup>
-import StyleExplain from '../components/StyleExplain.vue'
+import StyleExplain from '../components/style/Explain.vue'
 </script>
 <StyleExplain/>
 
@@ -125,7 +125,7 @@ import StyleExplain from '../components/StyleExplain.vue'
       // title 或者 title.text 可以是国际化的 key，
       // value 或者 value.text 支持字符串模版
       // 例如：想显示时间，开盘和收盘，配置[{ title: 'time', value: '{time}' }, { title: 'open', value: '{open}' }, { title: 'close', value: '{close}' }]
-      custom: null
+      custom: null,
       defaultValue: 'n/a',
       rect: {
         // 'fixed' | 'pointer'

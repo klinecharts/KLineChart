@@ -232,6 +232,7 @@ onDestroy(() => {
     <meta name="keywords" content="快速开始"/>
     <meta name="description" content="快速开始"/>
     <title>快速开始</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/klinecharts.min.js"></script>
   </head>
   <body>
     <div id="chart" style="width:600px;height:600px"></div>

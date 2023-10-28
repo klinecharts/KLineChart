@@ -4,7 +4,6 @@ import { withBase, useData } from 'vitepress'
 
 
 const { lang } = useData()
-
 const root = ref('/')
 onMounted(() => {
   root.value = lang.value === 'zh-CN' ? '/' : `/${lang.value}/`
