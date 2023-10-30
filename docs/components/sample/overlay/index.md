@@ -1,13 +1,13 @@
 ::: code-group
 ```js:line-numbers [JavaScript]
-<!--@include: ./index.js{2,76}-->
+<!--@include: ./index.js{2,77}-->
 ```
 
 ```html:line-numbers [HTML]
-<!--@include: ./index.js{100,102}-->
+<!--@include: ./index.js{102,104}-->
 ```
 
-```css:line-numbers [CSS]
-<!--@include: ./index.js{80,96}-->
+```css:line-numbers [index.css]
+<!--@include: ./index.js{81,98}-->
 ```
 :::

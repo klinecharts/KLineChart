@@ -64,6 +64,25 @@ onUnmounted(() => {
   window.klinecharts.dispose('k-line-chart')
 })
 
+function openStackBlitz () {
+  const files = {
+    'index.js': props.js,
+    'index.html': props.html,
+  }
+  if (props.css) {
+    files['index.css'] = props.css
+  }
+  stackBlitz.openProject({
+    title: props.title,
+    description: props.description,
+    template: 'javascript',
+    dependencies: {
+      'klinecharts': `${props.version || '^9.5.0'}`
+    },
+    files
+  })
+}
+
 </script>
 
 <template>
@@ -86,19 +105,7 @@ onUnmounted(() => {
         </Tooltip>
       </a>
       <button
-        @click="stackBlitz.openProject({
-          title: props.title,
-          description: props.description,
-          template: 'javascript',
-          dependencies: {
-            'klinecharts': `${version || '^9.5.0'}`
-          },
-          files: {
-            'index.js': `import './index.css'` + props.js,
-            'index.html': props.html,
-            'index.css': props.css
-          },
-        })">
+        @click="openStackBlitz()">
         <Tooltip :tip="lang === 'zh-CN' ? '在 StackBlitz 中打开' : 'Open in StackBlitz'">
           <svg viewBox="0 0 28 28">
             <path d="M12.747 16.273h-7.46L18.925 1.5l-3.671 10.227h7.46L9.075 26.5l3.671-10.227z"/>

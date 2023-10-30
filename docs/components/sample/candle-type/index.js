@@ -1,5 +1,6 @@
 const js = `
 import { init } from 'klinecharts'
+import './index.css'
 
 function genData (timestamp = new Date().getTime(), length = 800) {
   let basePrice = 5000
@@ -72,6 +73,7 @@ const css = `
   font-size: 12px;
   color: #fff;
   outline: none;
+  border: none;
 }
 `
 

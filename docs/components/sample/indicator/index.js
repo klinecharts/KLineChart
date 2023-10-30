@@ -1,5 +1,6 @@
 const js = `
 import { init, registerIndicator } from 'klinecharts'
+import './index.css'
 
 const fruits = [
   '🍏', '🍎', '🍐', '🍊', '🍋', '🍌',
@@ -123,6 +124,7 @@ const css = `
   font-size: 12px;
   color: #fff;
   outline: none;
+  border: none;
 }
 `
 
