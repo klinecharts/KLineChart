@@ -6,8 +6,9 @@ editLink: false
 # 数据加载
 
 <script setup>
-import Chart from '../components/sample/data/index.vue'
+import Chart from '../components/sample/Chart.vue'
+import { js, html } from '../components/sample/data/index.js'
 </script>
-<Chart/>
+<Chart :js="js" :html="html"/>
 
 <!--@include: @/components/sample/data/index.md-->

@@ -6,9 +6,10 @@ editLink: false
 # Overlay
 
 <script setup>
-import Chart from '../../components/sample/overlay/index.vue'
+import Chart from '../../components/sample/Chart.vue'
+import { js, html, css } from '../../components/sample/overlay/index.js'
 </script>
-<Chart/>
+<Chart :js="js" :html="html" :css="css"/>
 
-<!--@include: @/components/sample/overlay/index.en-US.md-->
+<!--@include: @/components/sample/overlay/index.md-->
 

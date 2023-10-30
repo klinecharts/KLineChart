@@ -1,3 +1,6 @@
+const js = `
+import { init } from 'klinecharts'
+
 function genData (timestamp = new Date().getTime(), length = 800) {
   let basePrice = 5000
   timestamp = Math.floor(timestamp / 1000 / 60) * 60 * 1000 - length * 60 * 1000
@@ -22,4 +25,33 @@ function genData (timestamp = new Date().getTime(), length = 800) {
   return dataList
 }
 
-export default genData
+const chart = init('k-line-chart')
+chart.applyNewData(genData())
+chart.loadMore((timestamp) => {
+  loadMoreTimer = setTimeout(() => {
+    chart.applyMoreData(genData(timestamp), true)
+  }, 2000)
+})
+chart.applyNewData(genData(), true)
+updateData()
+
+function updateData () {
+  setTimeout(() => {
+    const dataList = chart.getDataList()
+    const lastData = dataList[dataList.length - 1]
+    const newData = { ...lastData }
+    newData.close += (Math.random() * 20 - 10)
+    newData.high = Math.max(newData.high, newData.close)
+    newData.low = Math.min(newData.low, newData.close)
+    newData.volume += Math.round(Math.random() * 10)
+    chart.updateData(newData)
+    updateData()
+  }, 600)
+}
+`
+
+const html = `
+<div id="k-line-chart" style="height:430px"/>
+`
+
+export { js, html }

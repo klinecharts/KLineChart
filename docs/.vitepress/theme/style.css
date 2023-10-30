@@ -73,18 +73,18 @@ body {
   max-width: 1152px;
 }
 
-.sample-root + .vp-code-group {
+.sample-chart + .vp-code-group {
   margin-top: 0;
 }
 
-.sample-root + .vp-code-group .tabs {
+.sample-chart + .vp-code-group .tabs {
   background-color: transparent;
   border: solid 1px var(--vp-c-divider);
   border-bottom: none;
   border-top-style: dashed;
   border-radius: 0;
 }
-.sample-root + .vp-code-group div[class*='language-'] {
+.sample-chart + .vp-code-group div[class*='language-'] {
   background-color: transparent;
   border: solid 1px var(--vp-c-divider);
   border-top: none

@@ -9,7 +9,7 @@ const props = defineProps(['tip'])
     <span class="body">
       <slot></slot>
     </span>
-    <div class="tip-box">
+    <div class="tip-container">
       <span class="tip">{{ props.tip }}</span>
     </div>
   </div>
@@ -20,7 +20,7 @@ const props = defineProps(['tip'])
   position: relative;
 }
 
-.tip-box {
+.tip-container {
   position: absolute;
   z-index: 10;
   bottom: calc(100% + 6px);
@@ -59,7 +59,7 @@ const props = defineProps(['tip'])
   cursor: pointer;
 }
 
-.body:hover + .tip-box {
+.body:hover + .tip-container {
   opacity: 1;
   bottom: calc(100% + 10px);
 }

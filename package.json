@@ -51,6 +51,7 @@
     "node": ">=16.0.0"
   },
   "devDependencies": {
+    "@babel/standalone": "^7.23.2",
     "@docsearch/css": "^3.3.3",
     "@docsearch/js": "^3.3.3",
     "@rollup/plugin-commonjs": "^23.0.2",
@@ -79,5 +80,8 @@
     "tslib": "^2.5.0",
     "typescript": "^4.8.3",
     "vitepress": "^1.0.0-rc.22"
+  },
+  "dependencies": {
+    "@stackblitz/sdk": "^1.9.0"
   }
 }

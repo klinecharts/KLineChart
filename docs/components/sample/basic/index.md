@@ -1,14 +1,9 @@
 ::: code-group
 ```js:line-numbers [JavaScript]
-import { init } from 'klinecharts'
-
-<!--@include: ../genData.js{,23}-->
-
-const chart = init('basic-chart')
-chart.applyNewData(genData())
+<!--@include: ./index.js{2,29}-->
 ```
 
-```js:line-numbers [HTML]
-<div id="basic-chart" style="height:450px"/>
+```html:line-numbers [HTML]
+<!--@include: ./index.js{33,33}-->
 ```
 :::

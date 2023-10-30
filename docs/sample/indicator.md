@@ -6,9 +6,10 @@ editLink: false
 # 技术指标
 
 <script setup>
-import Chart from '../components/sample/indicator/index.vue'
+import Chart from '../components/sample/Chart.vue'
+import { js, html, css } from '../components/sample/indicator/index.js'
 </script>
-<Chart/>
+<Chart :js="js" :html="html" :css="css"/>
 
 <!--@include: @/components/sample/indicator/index.md-->
 

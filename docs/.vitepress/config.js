@@ -1,12 +1,25 @@
+import path from 'path'
+import fs from 'fs'
+
 import { defineConfig } from 'vitepress'
 
 import pkg from '../../package.json'
+
+const pwd = process.cwd()
+const projectPwd = pwd.split(path.sep)
+projectPwd.splice(projectPwd.length - 1, 1)
+const plugPath = projectPwd.join(path.sep) + path.sep + 'dist' + path.sep + 'klinecharts.min.js'
+
+const plugCode = fs.readFileSync(plugPath, { encoding: 'utf-8' })
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   vite: {
     server: {
       port: 8888
+    },
+    define: {
+      'process.env': JSON.stringify(process.env)
     }
   },
   lang: 'zh-CN',
@@ -40,6 +53,12 @@ export default defineConfig({
         })();`
       ]
     ]
+  },
+  transformPageData: (pageData) => {
+    if (pageData.filePath.startsWith('sample/')) {
+      pageData.frontmatter.head ??= []
+      pageData.frontmatter.head.push(['script', {}, plugCode])
+    }
   },
   locales: {
     root: {

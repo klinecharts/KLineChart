@@ -1,13 +1,29 @@
-<script setup>
-import { onMounted, onUnmounted, watch } from 'vue'
-import { useData } from 'vitepress'
+const js = `
+import { init, registerStyles } from 'klinecharts'
 
-import { init, dispose, registerStyles } from '../../../../src/index'
+function genData (timestamp = new Date().getTime(), length = 800) {
+  let basePrice = 5000
+  timestamp = Math.floor(timestamp / 1000 / 60) * 60 * 1000 - length * 60 * 1000
+  const dataList = []
+  for (let i = 0; i < length; i++) {
+    const prices = []
+    for (let j = 0; j < 4; j++) {
+      prices.push(basePrice + Math.random() * 60 - 30)
+    }
+    prices.sort()
+    const open = +(prices[Math.round(Math.random() * 3)].toFixed(2))
+    const high = +(prices[3].toFixed(2))
+    const low = +(prices[0].toFixed(2))
+    const close = +(prices[Math.round(Math.random() * 3)].toFixed(2))
+    const volume = Math.round(Math.random() * 100) + 10
+    const turnover = (open + high + low + close) / 4 * volume
+    dataList.push({ timestamp, open, high,low, close, volume, turnover })
 
-import Container from '../Container.vue'
-import genData from '../genData'
-
-const { isDark, lang } = useData()
+    basePrice = close
+    timestamp += 60 * 1000
+  }
+  return dataList
+}
 
 const red = '#F92855'
 const green = '#2DC08E'
@@ -101,77 +117,62 @@ registerStyles('red_rise_green_fall', {
   }
 })
 
-let chart
-
-const resizeHandler = () => {
-  window.addEventListener('resize', () => {
-    chart.resize()
-  })
-}
-
-onMounted(() => {
-  chart = init('theme-chart')
-  chart.createIndicator('VOL')
-  chart.applyNewData(genData())
-  chart.setStyles(isDark.value ? 'dark' : 'light')
-  document.getElementById('theme-chart').style.backgroundColor = isDark.value ? '#1b1b1f' : '#ffffff'
-  window.addEventListener('resize', resizeHandler)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', resizeHandler)
-  dispose('theme-chart')
-})
-
-watch(isDark, (newValue) => {
-  const chartElement = document.getElementById('theme-chart')
-  if (newValue) {
-    chart.setStyles('dark')
-    chartElement.style.backgroundColor = '#1b1b1f'
-  } else {
-    chart.setStyles('light')
-    chartElement.style.backgroundColor = '#ffffff'
-  }
-})
+const chart = init('k-line-chart')
+chart.createIndicator('VOL')
+chart.applyNewData(genData())
 
 function setTheme (theme) {
   chart.setStyles(theme)
   if (theme === 'light') {
-    document.getElementById('theme-chart').style.backgroundColor = '#ffffff'
+    document.getElementById('k-line-chart').style.backgroundColor = '#ffffff'
   } else if (theme === 'dark') {
-    document.getElementById('theme-chart').style.backgroundColor = '#1b1b1f'
+    document.getElementById('k-line-chart').style.backgroundColor = '#1b1b1f'
   }
 }
 
-</script>
+// 添加演示代码
+const container = document.getElementById('container')
+const buttonContainer = document.createElement('div')
+buttonContainer.className = 'button-container'
+const items = [
+  { key: 'light', text: '浅色' },
+  { key: 'dark', text: '深色' },
+  { key: 'green_rise_red_fall', text: '绿涨红跌' },
+  { key: 'red_rise_green_fall', text: '红涨绿跌' }
+]
+items.forEach(({ key, text }) => {
+  const button = document.createElement('button')
+  button.innerText = text
+  button.addEventListener('click', () => { setTheme(key) })
+  buttonContainer.appendChild(button)
+})
+container.appendChild(buttonContainer)
+`
 
-<template>
-  <Container>
-    <div class="button-box">
-      <button @click="setTheme('light')">{{ lang === 'zh-CN' ? '浅色' : 'Light' }}</button>
-      <button @click="setTheme('dark')">{{ lang === 'zh-CN' ? '深色' : 'Dark' }}</button>
-      <button @click="setTheme('green_rise_red_fall')">{{ lang === 'zh-CN' ? '绿涨红跌' : 'Green rise and red fall' }}</button>
-      <button @click="setTheme('red_rise_green_fall')">{{ lang === 'zh-CN' ? '红涨绿跌' : 'Red rise and green fall' }}</button>
-    </div>
-    <div id="theme-chart" style="height:450px"/>
-  </Container>
-</template>
-
-<style scoped>
-.button-box {
+const css = `
+.button-container {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  padding: 10px;
+  margin-top: 10px;
+  padding: 10px 22px;
 }
 
-.button-box button {
+.button-container button {
   padding: 2px 6px;
   background-color: #1677FF;
   border-radius: 4px;
   font-size: 12px;
   color: #fff;
+  outline: none;
 }
+`
 
-</style>
+const html = `
+<div id="container">
+  <div id="k-line-chart" style="height:430px">
+</div>
+`
+
+export { js, css, html }
