@@ -61,28 +61,28 @@ function setReverse (reverse) {
   })
 }
 
-
-// 添加演示代码
+// 以下仅仅是为了协助代码演示，在实际项目中根据情况进行调整。
+// The following is only for the purpose of assisting in code demonstration, and adjustments will be made according to the actual situation in the project.
 const container = document.getElementById('container')
 const buttonContainer = document.createElement('div')
 buttonContainer.className = 'button-container'
 
 const positions = [
-  { key: 'right', text: '右侧' },
-  { key: 'left', text: '左侧' }
+  { key: 'right', text: '右侧-Right' },
+  { key: 'left', text: '左侧-Left' }
 ]
 const insideOutside = [
-  { key: true, text: '外部' },
-  { key: false, text: '外部' }
+  { key: false, text: '外部-Outside' },
+  { key: true, text: '内部-Inside' }
 ]
 const types = [
-  { key: 'normal', text: '线性轴' },
-  { key: 'percentage', text: '百分比轴' },
-  { key: 'log', text: '对数轴' },
+  { key: 'normal', text: '线性轴-Liner Axis' },
+  { key: 'percentage', text: '百分比轴-Percentage axis' },
+  { key: 'log', text: '对数轴-Logarithm axis' },
 ]
 const reverse = [
-  { key: false, text: '正向' },
-  { key: true, text: '反向' }
+  { key: false, text: '正向-Regularity' },
+  { key: true, text: '反向-Reverse' }
 ]
 positions.forEach(({ key, text }) => {
   const button = document.createElement('button')

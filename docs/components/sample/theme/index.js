@@ -131,15 +131,16 @@ function setTheme (theme) {
   }
 }
 
-// 添加演示代码
+// 以下仅仅是为了协助代码演示，在实际项目中根据情况进行调整。
+// The following is only for the purpose of assisting in code demonstration, and adjustments will be made according to the actual situation in the project.
 const container = document.getElementById('container')
 const buttonContainer = document.createElement('div')
 buttonContainer.className = 'button-container'
 const items = [
-  { key: 'light', text: '浅色' },
-  { key: 'dark', text: '深色' },
-  { key: 'green_rise_red_fall', text: '绿涨红跌' },
-  { key: 'red_rise_green_fall', text: '红涨绿跌' }
+  { key: 'light', text: '浅色-Light' },
+  { key: 'dark', text: '深色-Dark' },
+  { key: 'green_rise_red_fall', text: '绿涨红跌-Green rise and red fall' },
+  { key: 'red_rise_green_fall', text: '红涨绿跌-Red rise and green fall' }
 ]
 items.forEach(({ key, text }) => {
   const button = document.createElement('button')

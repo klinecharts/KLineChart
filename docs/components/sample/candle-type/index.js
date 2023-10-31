@@ -35,17 +35,18 @@ function setType (type) {
   })
 }
 
-// 添加演示代码
+// 以下仅仅是为了协助代码演示，在实际项目中根据情况进行调整。
+// The following is only for the purpose of assisting in code demonstration, and adjustments will be made according to the actual situation in the project.
 const container = document.getElementById('container')
 const buttonContainer = document.createElement('div')
 buttonContainer.className = 'button-container'
 const items = [
-  { key: 'candle_solid', text: '全实心' },
-  { key: 'candle_stroke', text: '全空心' },
-  { key: 'candle_up_stroke', text: '涨空心' },
-  { key: 'candle_down_stroke', text: '跌空心' },
+  { key: 'candle_solid', text: '全实心-All solid' },
+  { key: 'candle_stroke', text: '全空心-All stroke' },
+  { key: 'candle_up_stroke', text: '涨空心-Up stroke' },
+  { key: 'candle_down_stroke', text: '跌空心-Down stroke' },
   { key: 'ohlc', text: 'OHLC' },
-  { key: 'area', text: '面积图' }
+  { key: 'area', text: '面积图-Area' }
 ]
 items.forEach(({ key, text }) => {
   const button = document.createElement('button')

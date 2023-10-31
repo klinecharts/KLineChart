@@ -38,6 +38,7 @@ const props = defineProps(['tip'])
   background-color: var(--vp-code-block-bg);
   border-radius: 4px;
   color: var(--vp-c-text-1);
+  font-weight: normal;
   box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .5);
 }
 

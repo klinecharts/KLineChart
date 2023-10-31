@@ -1,43 +1,6 @@
 const js = `
-import { init, registerIndicator } from 'klinecharts'
+import { init } from 'klinecharts'
 import './index.css'
-
-const fruits = [
-  '🍏', '🍎', '🍐', '🍊', '🍋', '🍌',
-  '🍉', '🍇', '🍓', '🍈', '🍒', '🍑',
-  '🍍', '🥥', '🥝', '🥭', '🥑', '🍏'
-]
-
-registerIndicator({
-  name: 'Custom',
-  figures: [
-    { key: 'emoji' }
-  ],
-  calc: (kLineDataList) => {
-    return kLineDataList.map(kLineData => ({ emoji: kLineData.close, text: fruits[Math.floor(Math.random() * 17)] }))
-  },
-  draw: ({
-    ctx,
-    barSpace,
-    visibleRange,
-    indicator,
-    xAxis,
-    yAxis
-  }) => {
-    const { from, to } = visibleRange
-
-    ctx.font = barSpace.gapBar + 'px' + 'Helvetica Neue'
-    ctx.textAlign = 'center'
-    const result = indicator.result
-    for (let i = from; i < to; i++) {
-      const data = result[i]
-      const x = xAxis.convertToPixel(i)
-      const y = yAxis.convertToPixel(data.emoji)
-      ctx.fillText(data.text, x, y)
-    }
-    return false
-  }
-})
 
 function genData (timestamp = new Date().getTime(), length = 800) {
   let basePrice = 5000
@@ -66,45 +29,26 @@ function genData (timestamp = new Date().getTime(), length = 800) {
 const chart = init('k-line-chart')
 chart.applyNewData(genData())
 
-function setMainIndicator(name) {
-  chart.createIndicator(name, true, { id: 'candle_pane' })
+function setTimezone (timezone) {
+  chart.setTimezone(timezone)
 }
-
-function setSubIndicator(name) {
-  chart.createIndicator(name)
-}
-
 
 // 以下仅仅是为了协助代码演示，在实际项目中根据情况进行调整。
 // The following is only for the purpose of assisting in code demonstration, and adjustments will be made according to the actual situation in the project.
 const container = document.getElementById('container')
 const buttonContainer = document.createElement('div')
 buttonContainer.className = 'button-container'
-
-const mainIndicators = ['MA', 'BOLL', 'Custom']
-const subIndicators = ['VOL', 'MACD', 'Custom']
-
-const mainTitle = document.createElement('span')
-mainTitle.innerText = '主图指标-Main indicator: '
-buttonContainer.appendChild(mainTitle)
-mainIndicators.forEach((name) => {
+const items = [
+  { key: 'Asia/Shanghai', text: '上海-Shanghai' },
+  { key: 'Europe/Berlin', text: '柏林-Berlin' },
+  { key: 'America/Chicago', text: '芝加哥-Chicago' }
+]
+items.forEach(({ key, text }) => {
   const button = document.createElement('button')
-  button.innerText = name
-  button.addEventListener('click', () => { setMainIndicator(name) })
+  button.innerText = text
+  button.addEventListener('click', () => { setTimezone(key) })
   buttonContainer.appendChild(button)
 })
-
-const subTitle = document.createElement('span')
-subTitle.style.paddingLeft = '16px'
-subTitle.innerText = '副图指标-Sub indicator: '
-buttonContainer.appendChild(subTitle)
-subIndicators.forEach((name) => {
-  const button = document.createElement('button')
-  button.innerText = name
-  button.addEventListener('click', () => { setSubIndicator(name) })
-  buttonContainer.appendChild(button)
-})
-
 container.appendChild(buttonContainer)
 `
 

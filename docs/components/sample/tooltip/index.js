@@ -71,22 +71,23 @@ function setIndicatorTooltipShowType (showType) {
   })
 }
 
-// 添加演示代码
+// 以下仅仅是为了协助代码演示，在实际项目中根据情况进行调整。
+// The following is only for the purpose of assisting in code demonstration, and adjustments will be made according to the actual situation in the project.
 const container = document.getElementById('container')
 const rules = [
-  { key: 'always', text: '总是显示' },
-  { key: 'follow_cross', text: '跟随十字光标' },
-  { key: 'none', text: '不显示' }
+  { key: 'always', text: '总是显示-Always display' },
+  { key: 'follow_cross', text: '跟随十字光标-Follow cross' },
+  { key: 'none', text: '不显示-Hide' }
 ]
 const types = [
-  { key: 'standard', text: '默认' },
-  { key: 'rect', text: '矩形框' }
+  { key: 'standard', text: '默认-Standard' },
+  { key: 'rect', text: '矩形框-Rect' }
 ]
 
 const baseButtonContainer = document.createElement('div')
 baseButtonContainer.className = 'button-container'
 const baseTitle = document.createElement('span')
-baseTitle.innerText = '基础信息提示：'
+baseTitle.innerText = '基础信息提示-Base info tip: '
 baseButtonContainer.appendChild(baseTitle)
 
 rules.forEach(({ key, text }) => {
@@ -107,7 +108,7 @@ container.appendChild(baseButtonContainer)
 const indicatorButtonContainer = document.createElement('div')
 indicatorButtonContainer.className = 'button-container'
 const indicatorTitle = document.createElement('span')
-indicatorTitle.innerText = '指标信息提示：'
+indicatorTitle.innerText = '指标信息提示-Indicator info tip: '
 indicatorButtonContainer.appendChild(indicatorTitle)
 
 rules.forEach(({ key, text }) => {

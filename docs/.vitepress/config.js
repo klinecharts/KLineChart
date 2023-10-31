@@ -55,7 +55,7 @@ export default defineConfig({
     ]
   },
   transformPageData: (pageData) => {
-    if (pageData.filePath.startsWith('sample/')) {
+    if (pageData.filePath.startsWith('sample/') || pageData.filePath.startsWith('en-US/sample/')) {
       pageData.frontmatter.head ??= []
       pageData.frontmatter.head.push(['script', {}, plugCode])
     }
@@ -135,6 +135,7 @@ export default defineConfig({
             { text: '覆盖物', link: '/sample/overlay' },
             { text: '数据加载', link: '/sample/data' },
             { text: '主题', link: '/sample/theme' },
+            { text: '时区', link: '/sample/timezone' },
             { text: '多语言', link: '/sample/i18n' },
           ]
         },
@@ -233,6 +234,7 @@ export default defineConfig({
             { text: 'Overlay', link: '/en-US/sample/overlay' },
             { text: 'Data', link: '/en-US/sample/data' },
             { text: 'Theme', link: '/en-US/sample/theme' },
+            { text: 'Timezone', link: '/en-US/sample/timezone' },
             { text: 'I18n', link: '/en-US/sample/i18n' },
           ]
         },

@@ -27,6 +27,6 @@ watch(isDark, (newValue) => {
   }
 })
 </script>
-<Chart :js="js" :css="css" :html="html"/>
+<Chart :js="js" :css="css" :html="html" title="主题"/>
 
 <!--@include: @/components/sample/theme/index.md-->
