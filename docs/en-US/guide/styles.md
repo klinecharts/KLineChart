@@ -3,7 +3,7 @@ Whether you see a point or a line on the chart, you can basically customize the 
 
 ## Picture explanation
 <script setup>
-import StyleExplain from '../../components/style/Explain.vue'
+import StyleExplain from '../../components/StyleExplain.vue'
 </script>
 <StyleExplain/>
 

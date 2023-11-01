@@ -4,7 +4,7 @@
 
 ## 图解说明
 <script setup>
-import StyleExplain from '../components/style/Explain.vue'
+import StyleExplain from '../components/StyleExplain.vue'
 </script>
 <StyleExplain/>
 

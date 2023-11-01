@@ -6,11 +6,11 @@ editLink: false
 # 覆盖物
 
 <script setup>
-import Chart from '../components/sample/Chart.vue'
-import { js, html, css } from '../components/sample/overlay/index.js'
+import Chart from '../components/SampleChart.vue'
+import { data } from '../data/sample/overlay/index.data.js'
 </script>
-<Chart :js="js" :html="html" :css="css" title="覆盖物"/>
+<Chart :js="data['index.js']" :html="data['index.html']" :css="data['index.css']" title="覆盖物"/>
 
-<!--@include: @/components/sample/overlay/index.md-->
+<!--@include: @/data/sample/overlay/index.md-->
 
 

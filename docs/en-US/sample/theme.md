@@ -9,8 +9,8 @@ editLink: false
 import { onUpdated, watch } from 'vue'
 import { useData } from 'vitepress'
 
-import Chart from '../../components/sample/Chart.vue'
-import { js, css, html } from '../../components/sample/theme/index.js'
+import Chart from '../../components/SampleChart.vue'
+import { data } from '../../data/sample/theme/index.data.js'
 
 const { isDark } = useData()
 
@@ -27,6 +27,6 @@ watch(isDark, (newValue) => {
   }
 })
 </script>
-<Chart :js="js" :css="css" :html="html" title="Theme"/>
+<Chart :js="data['index.js']" :css="data['index.css']" :html="data['index.html']" title="Theme"/>
 
-<!--@include: @/components/sample/theme/index.md-->
+<!--@include: @/data/sample/theme/index.md-->

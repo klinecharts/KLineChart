@@ -6,9 +6,9 @@ editLink: false
 # 提示条
 
 <script setup>
-import Chart from '../components/sample/Chart.vue'
-import { js, html, css } from '../components/sample/tooltip/index.js'
+import Chart from '../components/SampleChart.vue'
+import { data } from '../data/sample/tooltip/index.data.js'
 </script>
-<Chart :js="js" :html="html" :css="css" title="提示条"/>
+<Chart :js="data['index.js']" :html="data['index.html']" :css="data['index.css']" title="提示条"/>
 
-<!--@include: @/components/sample/tooltip/index.md-->
+<!--@include: @/data/sample/tooltip/index.md-->

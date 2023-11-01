@@ -6,9 +6,9 @@ editLink: false
 # 蜡烛类型
 
 <script setup>
-import Chart from '../components/sample/Chart.vue'
-import { js, html, css } from '../components/sample/candle-type/index.js'
+import Chart from '../components/SampleChart.vue'
+import { data } from '../data/sample/candle-type/index.data.js'
 </script>
-<Chart :js="js" :html="html" :css="css" title="蜡烛类型"/>
+<Chart :js="data['index.js']" :html="data['index.html']" :css="data['index.css']" title="蜡烛类型"/>
 
-<!--@include: @/components/sample/candle-type/index.md-->
+<!--@include: @/data/sample/candle-type/index.md-->

@@ -6,9 +6,9 @@ editLink: false
 # Candle Type
 
 <script setup>
-import Chart from '../../components/sample/Chart.vue'
-import { js, html, css } from '../../components/sample/candle-type/index.js'
+import Chart from '../../components/SampleChart.vue'
+import { data } from '../../data/sample/candle-type/index.data.js'
 </script>
-<Chart :js="js" :html="html" :css="css" title="Candle"/>
+<Chart :js="data['index.js']" :html="data['index.html']" :css="data['index.css']" title="Candle"/>
 
-<!--@include: @/components/sample/candle-type/index.md-->
+<!--@include: @/data/sample/candle-type/index.md-->

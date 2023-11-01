@@ -6,9 +6,9 @@ editLink: false
 # 基础展示
 
 <script setup>
-import Chart from '../components/sample/Chart.vue'
-import { js, html } from '../components/sample/basic/index.js'
+import Chart from '../components/SampleChart.vue'
+import { data } from '../data/sample/basic/index.data.js'
 </script>
-<Chart :js="js" :html="html" title="基础展示"/>
+<Chart :js="data['index.js']" :html="data['index.html']" title="基础展示"/>
 
-<!--@include: @/components/sample/basic/index.md-->
+<!--@include: @/data/sample/basic/index.md-->

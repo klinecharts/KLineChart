@@ -1,0 +1,18 @@
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 22px;
+}
+
+.button-container button {
+  padding: 2px 6px;
+  background-color: #1677FF;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #fff;
+  outline: none;
+  border: none;
+}
