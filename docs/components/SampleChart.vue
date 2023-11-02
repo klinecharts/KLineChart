@@ -229,9 +229,12 @@ function getCodeSandboxParameters () {
   .code-action-container a svg, .code-action-container button svg {
     fill: var(--vp-c-text-1);
     opacity: 0.68;
+    transform: scale(1);
+    transition: opacity linear .2s, transform linear .2s;
   }
 
   .code-action-container a svg:hover, .code-action-container button svg:hover {
     opacity: 1;
+    transform: scale(1.2);
   }
 </style>

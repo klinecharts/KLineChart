@@ -42,6 +42,7 @@
     "build-dts": "dts-bundle-generator --no-banner true --umd-module-name klinecharts -o types/index.d.ts src/index.ts",
     "build": "npm run clean && npm run build-core && npm run build-dts",
     "prepare": "husky install",
+    "docs:pre-work": "npm run pre-work --prefix docs",
     "docs:dev": "npm run dev --prefix docs",
     "docs:build": "npm run build-core:prod && npm run build --prefix docs",
     "docs:preview": "npm run preview --prefix docs",

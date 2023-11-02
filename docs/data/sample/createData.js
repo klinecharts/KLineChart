@@ -1,20 +1,24 @@
 import fs from 'fs'
 import path from 'path'
 
-function createData (dir) {
-  const fileNames = fs.readdirSync(dir)
-  const result = {}
-  fileNames.forEach(name => {
-    const fullPath = path.join(dir, name)
-    if (fs.statSync(fullPath).isDirectory()) {
-      result[name] = createData(fullPath)
-    } else {
-      if (name !== 'index.data.js' && name !== 'index.md') {
-        result[name] = fs.readFileSync(fullPath, 'utf-8') 
-      }
+const includeFileNames = ['index.js', 'index.html', 'index.css']
+
+function createData () {
+  const root = path.join(path.resolve(), 'data', 'sample')
+  const dirs = fs.readdirSync(root)
+  dirs.forEach(dir => {
+    const samplePath = path.join(root, dir)
+    if (fs.statSync(samplePath).isDirectory()) {
+      const fileNames = fs.readdirSync(samplePath)
+      const result = {}
+      fileNames.forEach(name => {
+        if (includeFileNames.includes(name)) {
+          result[name] = fs.readFileSync(path.join(samplePath, name), 'utf-8')
+        }
+      })
+      fs.writeFileSync(path.join(samplePath, 'index.json'), JSON.stringify(result), 'utf-8')
     }
   })
-  return result
 }
 
-export default createData
+createData()

@@ -10,7 +10,7 @@ import { onUpdated, watch } from 'vue'
 import { useData } from 'vitepress'
 
 import Chart from '../components/SampleChart.vue'
-import { data } from '../data/sample/theme/index.data.js'
+import data from '../data/sample/theme/index.json'
 
 const { isDark } = useData()
 
