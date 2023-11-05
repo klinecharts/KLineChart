@@ -766,14 +766,14 @@ function getDefaultOverlayStyle (): OverlayStyle {
       weight: 'normal',
       borderStyle: LineType.Solid,
       borderDashedValue: [2, 2],
-      borderSize: 0,
+      borderSize: 1,
       borderRadius: 2,
       borderColor: '#1677FF',
-      paddingLeft: 0,
-      paddingRight: 0,
-      paddingTop: 0,
-      paddingBottom: 0,
-      backgroundColor: 'transparent'
+      paddingLeft: 4,
+      paddingRight: 4,
+      paddingTop: 4,
+      paddingBottom: 4,
+      backgroundColor: '#1677FF'
     },
     rectText: {
       style: PolygonType.Fill,
