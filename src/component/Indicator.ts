@@ -25,7 +25,7 @@ import { XAxis } from './XAxis'
 import { YAxis } from './YAxis'
 
 import { formatValue } from '../common/utils/format'
-import { isValid, merge } from '../common/utils/typeChecks'
+import { isValid, merge, clone } from '../common/utils/typeChecks'
 
 import { ArcAttrs } from '../extension/figure/arc'
 import { RectAttrs } from '../extension/figure/rect'
@@ -311,7 +311,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     this.visible = visible ?? true
     this.minValue = minValue ?? null
     this.maxValue = maxValue ?? null
-    this.styles = styles ?? {}
+    this.styles = clone(styles ?? {})
     this.extendData = extendData
     this.regenerateFigures = regenerateFigures ?? null
     this.createTooltipDataSource = createTooltipDataSource ?? null
