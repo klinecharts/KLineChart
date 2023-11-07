@@ -21,6 +21,7 @@ const enUS: Locales = {
   low: 'Low: ',
   close: 'Close: ',
   volume: 'Volume: ',
+  turnover: 'Turnover: ',
   change: 'Change: '
 }
 

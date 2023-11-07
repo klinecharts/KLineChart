@@ -437,6 +437,10 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision)),
         thousandsSeparator
       ),
+      '{turnover}': formatThousands(
+        formatPrecision(current.turnover ?? tooltipStyles.defaultValue, pricePrecision),
+        thousandsSeparator
+      ),
       '{change}': prevClose === 0 ? tooltipStyles.defaultValue : `${formatPrecision(changeValue / prevClose * 100)}%`
     }
     const labelValues = (
