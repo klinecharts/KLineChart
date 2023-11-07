@@ -14,7 +14,7 @@
 
 import { OverlayTemplate } from '../../component/Overlay'
 import { isFunction, isValid } from '../../common/utils/typeChecks'
-import { LineType } from '../../common/Options'
+import { LineType } from '../../common/Styles'
 
 const simpleAnnotation: OverlayTemplate = {
   name: 'simpleAnnotation',

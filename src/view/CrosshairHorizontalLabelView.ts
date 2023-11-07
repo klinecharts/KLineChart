@@ -14,7 +14,7 @@
 
 import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
-import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, StateRectTextStyle } from '../common/Options'
+import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, StateTextStyle } from '../common/Styles'
 
 import Axis from '../component/Axis'
 import YAxis from '../component/YAxis'
@@ -92,7 +92,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     return formatThousands(text, chartStore.getThousandsSeparator())
   }
 
-  protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: C, _styles: StateRectTextStyle): TextAttrs {
+  protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: C, _styles: StateTextStyle): TextAttrs {
     const yAxis = axis as unknown as YAxis
     let x: number
     let textAlign: CanvasTextAlign

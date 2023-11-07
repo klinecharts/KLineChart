@@ -16,7 +16,7 @@ import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
 
 import { IndicatorFigure } from './Indicator'
 
-import { YAxisType, YAxisPosition, CandleType } from '../common/Options'
+import { YAxisType, YAxisPosition, CandleType } from '../common/Styles'
 
 import { isValid } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'

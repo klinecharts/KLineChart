@@ -20,7 +20,7 @@ import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
-import { OverlayStyle } from '../common/Options'
+import { OverlayStyle } from '../common/Styles'
 import { MouseTouchEvent } from '../common/SyntheticEvent'
 
 import { clone, isNumber, merge } from '../common/utils/typeChecks'

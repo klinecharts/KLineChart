@@ -13,7 +13,7 @@
  */
 
 import Nullable from '../common/Nullable'
-import { FormatDate, FormatDateType } from '../common/Options'
+import { FormatDate, FormatDateType } from '../Options'
 
 import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
 

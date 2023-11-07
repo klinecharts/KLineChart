@@ -14,7 +14,7 @@
 
 import Nullable from '../../common/Nullable'
 import Coordinate from '../../common/Coordinate'
-import { SmoothLineStyle, LineType } from '../../common/Options'
+import { SmoothLineStyle, LineType } from '../../common/Styles'
 
 import { FigureTemplate, DEVIATION } from '../../component/Figure'
 

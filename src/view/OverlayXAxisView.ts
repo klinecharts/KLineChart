@@ -17,7 +17,9 @@ import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
-import { OverlayStyle, CustomApi, FormatDateType } from '../common/Options'
+import { OverlayStyle } from '../common/Styles'
+
+import { CustomApi, FormatDateType } from '../Options'
 
 import XAxis from '../component/XAxis'
 import YAxis from '../component/YAxis'

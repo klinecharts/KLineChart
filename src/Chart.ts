@@ -19,7 +19,8 @@ import KLineData from './common/KLineData'
 import Coordinate from './common/Coordinate'
 import Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
-import { Styles, YAxisPosition, CustomApi, Options } from './common/Options'
+import { Styles, YAxisPosition } from './common/Styles'
+
 import Crosshair from './common/Crosshair'
 import { ActionType, ActionCallback } from './common/Action'
 import LoadMoreCallback from './common/LoadMoreCallback'
@@ -49,7 +50,9 @@ import { Overlay, OverlayCreate, OverlayRemove } from './component/Overlay'
 import { getIndicatorClass } from './extension/indicator/index'
 import { getStyles as getExtensionStyles } from './extension/styles/index'
 
-import ChartEvent from './ChartEvent'
+import Event from './Event'
+
+import { CustomApi, Options } from './Options'
 
 export enum DomPosition {
   Root = 'root',
@@ -121,14 +124,14 @@ export default class ChartImp implements Chart {
   id: string
   private _container: HTMLElement
   private _chartContainer: HTMLElement
-  private readonly _chartEvent: ChartEvent
+  private readonly _chartEvent: Event
   private readonly _chartStore: ChartStore
   private readonly _xAxisPane: XAxisPane
   private readonly _panes: Map<string, IndicatorPane> = new Map()
 
   constructor (container: HTMLElement, options?: Options) {
     this._initContainer(container)
-    this._chartEvent = new ChartEvent(this._chartContainer, this)
+    this._chartEvent = new Event(this._chartContainer, this)
     this._chartStore = new ChartStore(this, options)
     this._xAxisPane = new XAxisPane(this._chartContainer, this, PaneIdConstants.XAXIS)
     this._panes.set(PaneIdConstants.CANDLE, new CandlePane(this._chartContainer, this, PaneIdConstants.CANDLE))

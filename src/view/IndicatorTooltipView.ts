@@ -16,8 +16,10 @@ import Nullable from '../common/Nullable'
 import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, TooltipStyle, TooltipIconStyle, TooltipTextStyle, TooltipData, TooltipShowRule, TooltipDataChild, TooltipIconPosition, CustomApi } from '../common/Options'
+import { IndicatorStyle, TooltipStyle, TooltipIconStyle, TooltipTextStyle, TooltipData, TooltipShowRule, TooltipDataChild, TooltipIconPosition } from '../common/Styles'
 import { ActionType } from '../common/Action'
+
+import { CustomApi } from '../Options'
 
 import XAxis from '../component/XAxis'
 import YAxis from '../component/YAxis'

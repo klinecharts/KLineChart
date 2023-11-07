@@ -13,7 +13,7 @@
  */
 
 import Coordinate, { getDistance } from '../../common/Coordinate'
-import { LineStyle, LineType } from '../../common/Options'
+import { LineStyle, LineType } from '../../common/Styles'
 
 import { FigureTemplate, DEVIATION } from '../../component/Figure'
 

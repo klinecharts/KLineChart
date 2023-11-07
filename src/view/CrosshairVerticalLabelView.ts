@@ -14,7 +14,8 @@
 
 import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
-import { CrosshairStyle, CrosshairDirectionStyle, StateTextStyle, FormatDateType } from '../common/Options'
+import { CrosshairStyle, CrosshairDirectionStyle, StateTextStyle } from '../common/Styles'
+import { FormatDateType } from '../Options'
 
 import XAxis from '../component/XAxis'
 

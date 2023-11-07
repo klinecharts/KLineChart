@@ -14,7 +14,7 @@
 
 import Coordinate from '../common/Coordinate'
 import VisibleData from '../common/VisibleData'
-import { CandleHighLowPriceMarkStyle } from '../common/Options'
+import { CandleHighLowPriceMarkStyle } from '../common/Styles'
 
 import ChildrenView from './ChildrenView'
 

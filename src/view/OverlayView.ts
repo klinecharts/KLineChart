@@ -18,9 +18,11 @@ import Point from '../common/Point'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
-import { OverlayStyle, CustomApi } from '../common/Options'
+import { OverlayStyle } from '../common/Styles'
 import { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
 import { isBoolean } from '../common/utils/typeChecks'
+
+import { CustomApi } from '../Options'
 
 import Axis from '../component/Axis'
 import XAxis from '../component/XAxis'

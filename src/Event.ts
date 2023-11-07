@@ -33,7 +33,7 @@ interface EventTriggerWidgetInfo {
   widget: Nullable<Widget>
 }
 
-export default class ChartEvent implements EventHandler {
+export default class Event implements EventHandler {
   private readonly _container: HTMLElement
   private readonly _chart: Chart
   private readonly _event: SyntheticEvent

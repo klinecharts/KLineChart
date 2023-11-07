@@ -15,7 +15,9 @@
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 import VisibleData from '../common/VisibleData'
-import { getDefaultStyles, Styles, getDefaultCustomApi, CustomApi, defaultLocale, Options } from '../common/Options'
+import { getDefaultStyles, Styles } from '../common/Styles'
+
+import { getDefaultCustomApi, CustomApi, defaultLocale, Options } from '../Options'
 
 import { isArray, isString, merge } from '../common/utils/typeChecks'
 

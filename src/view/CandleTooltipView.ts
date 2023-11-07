@@ -19,8 +19,10 @@ import Precision from '../common/Precision'
 import Crosshair from '../common/Crosshair'
 import {
   Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, CandleTooltipRectPosition,
-  CandleTooltipCustomCallbackData, YAxisPosition, PolygonType, CustomApi, FormatDateType
-} from '../common/Options'
+  CandleTooltipCustomCallbackData, YAxisPosition, PolygonType
+} from '../common/Styles'
+
+import { CustomApi, FormatDateType } from '../Options'
 
 import { PaneIdConstants } from '../pane/Pane'
 

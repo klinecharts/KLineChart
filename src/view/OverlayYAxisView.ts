@@ -17,7 +17,8 @@ import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
-import { OverlayStyle, CustomApi } from '../common/Options'
+import { OverlayStyle } from '../common/Styles'
+import { CustomApi } from '../Options'
 
 import { formatPrecision, formatThousands } from '../common/utils/format'
 

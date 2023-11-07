@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { Locales } from '../../common/Options'
+import { Locales } from '../../Options'
 
 const zhCN: Locales = {
   time: '时间：',

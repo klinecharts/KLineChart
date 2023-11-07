@@ -15,7 +15,7 @@
 import Nullable from '../common/Nullable'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
-import { CandleType } from '../common/Options'
+import { CandleType } from '../common/Styles'
 
 import { PaneIdConstants } from '../pane/Pane'
 

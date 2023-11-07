@@ -13,7 +13,7 @@
  */
 
 import Coordinate from '../../common/Coordinate'
-import { RectStyle, PolygonType, LineType } from '../../common/Options'
+import { RectStyle, PolygonType, LineType } from '../../common/Styles'
 import { transparent } from '../../common/utils/color'
 import { isString } from '../../common/utils/typeChecks'
 
