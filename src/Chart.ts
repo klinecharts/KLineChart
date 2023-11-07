@@ -50,6 +50,7 @@ import { getIndicatorClass } from './extension/indicator/index'
 import { getStyles as getExtensionStyles } from './extension/styles/index'
 
 import ChartEvent from './ChartEvent'
+import VisibleData from './common/VisibleData'
 
 export enum DomPosition {
   Root = 'root',
@@ -84,6 +85,7 @@ export interface Chart {
   getVisibleRange: () => VisibleRange
   clearData: () => void
   getDataList: () => KLineData[]
+  getVisibleDataList: () => VisibleData[]
   applyNewData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
   applyMoreData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
   updateData: (data: KLineData, callback?: () => void) => void
@@ -477,6 +479,10 @@ export default class ChartImp implements Chart {
 
   getDataList (): KLineData[] {
     return this._chartStore.getDataList()
+  }
+
+  getVisibleDataList (): VisibleData[] {
+    return this._chartStore.getVisibleDataList()
   }
 
   applyNewData (dataList: KLineData[], more?: boolean, callback?: () => void): void {
