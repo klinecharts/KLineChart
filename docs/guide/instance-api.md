@@ -223,6 +223,20 @@
 ```
 获取图表目前的数据源，返回数据类型可参阅[数据源](./datasource.md)。
 
+## getVisibleDataList()
+```typescript
+() => Array<{
+  timestamp: number
+  open: number
+  close: number
+  high: number
+  low: number
+  volume?: number
+  turnover?: number
+}>
+```
+获取图表目前的数据源，返回数据类型可参阅[数据源](./datasource.md)。
+
 
 ## clearData()
 ```typescript
