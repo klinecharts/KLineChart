@@ -12,11 +12,7 @@
  * limitations under the License.
  */
 
-import Pane from '../pane/Pane'
-
 import IndicatorWidget from './IndicatorWidget'
-
-import YAxis from '../component/YAxis'
 
 import CandleBarView from '../view/CandleBarView'
 import CandleAreaView from '../view/CandleAreaView'
@@ -28,13 +24,17 @@ import CandleTooltipView from '../view/CandleTooltipView'
 
 import { CandleType } from '../common/Styles'
 
+import AxisPane from '../pane/DrawPane'
+
+import YAxis from '../component/YAxis'
+
 export default class CandleWidget extends IndicatorWidget {
   private readonly _candleBarView = new CandleBarView(this)
   private readonly _candleAreaView = new CandleAreaView(this)
   private readonly _candleHighLowPriceView = new CandleHighLowPriceView(this)
   private readonly _candleLastPriceLineView = new CandleLastPriceLineView(this)
 
-  constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
+  constructor (rootContainer: HTMLElement, pane: AxisPane<YAxis>) {
     super(rootContainer, pane)
     this.addChild(this._candleBarView)
   }

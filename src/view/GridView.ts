@@ -13,13 +13,12 @@
  */
 
 import XAxis from '../component/XAxis'
-import YAxis from '../component/YAxis'
 
-import { PaneIdConstants } from '../pane/Pane'
+import { PaneIdConstants } from '../pane/types'
 
 import View from './View'
 
-export default class GridView extends View<YAxis> {
+export default class GridView extends View {
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = this.getWidget().getPane()
@@ -52,7 +51,7 @@ export default class GridView extends View<YAxis> {
       const verticalStyles = gridStyles.vertical
       const verticalShow = verticalStyles.show
       if (verticalShow) {
-        const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as XAxis
+        const xAxis = chart.getDrawPaneById(PaneIdConstants.X_AXIS)?.getAxisComponent() as XAxis
         xAxis.getTicks().forEach(tick => {
           this.createFigure(
             'line',

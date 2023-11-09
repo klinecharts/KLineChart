@@ -19,22 +19,23 @@ import Eventful from '../common/Eventful'
 import Figure from '../component/Figure'
 import { getInnerFigureClass } from '../extension/figure/index'
 
-import Axis from '../component/Axis'
+import DrawWidget from '../widget/DrawWidget'
+import DrawPane from '../pane/DrawPane'
 
-import Widget from '../widget/Widget'
+import Axis from '../component/Axis'
 
 export default abstract class View<C extends Axis = Axis> extends Eventful {
   /**
    * Parent widget
    */
-  private readonly _widget: Widget<C>
+  private readonly _widget: DrawWidget<DrawPane<C>>
 
-  constructor (widget: Widget<C>) {
+  constructor (widget: DrawWidget<DrawPane<C>>) {
     super()
     this._widget = widget
   }
 
-  getWidget (): Widget<C> { return this._widget }
+  getWidget (): DrawWidget<DrawPane<C>> { return this._widget }
 
   protected createFigure (name: string, attrs: any, styles: any, eventHandler?: EventHandler): Nullable<Figure> {
     const FigureClazz = getInnerFigureClass(name)

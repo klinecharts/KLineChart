@@ -15,7 +15,7 @@
 import Nullable from '../common/Nullable'
 import { UpdateLevel } from '../common/Updater'
 import { MouseTouchEvent } from '../common/SyntheticEvent'
-
+import { isFunction } from '../common/utils/typeChecks'
 import { createId } from '../common/utils/id'
 
 import OverlayImp, { OVERLAY_ID_PREFIX, OVERLAY_ACTIVE_Z_LEVEL, OverlayCreate, OverlayRemove } from '../component/Overlay'
@@ -24,8 +24,7 @@ import { getOverlayInnerClass } from '../extension/overlay/index'
 
 import ChartStore from './ChartStore'
 
-import { PaneIdConstants } from '../pane/Pane'
-import { isFunction } from '../common/utils/typeChecks'
+import { PaneIdConstants } from '../pane/types'
 
 export interface ProgressOverlayInfo {
   paneId: string
@@ -407,7 +406,7 @@ export default class OverlayStore {
       updatePaneIds.forEach(paneId => {
         chart.updatePane(UpdateLevel.Overlay, paneId)
       })
-      chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.XAXIS)
+      chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.X_AXIS)
     }
   }
 
@@ -476,7 +475,7 @@ export default class OverlayStore {
         if (paneId !== info.paneId) {
           chart.updatePane(UpdateLevel.Overlay, paneId)
         }
-        chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.XAXIS)
+        chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.X_AXIS)
       }
     }
   }

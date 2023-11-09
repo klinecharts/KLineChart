@@ -22,7 +22,7 @@ import Axis, { AxisTick } from '../component/Axis'
 
 import View from './View'
 
-export default abstract class AxisView<C extends Axis> extends View<C> {
+export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()

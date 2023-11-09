@@ -26,7 +26,7 @@ import YAxis from '../component/YAxis'
 
 import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
 
-import { PaneIdConstants } from '../pane/Pane'
+import { PaneIdConstants } from '../pane/types'
 
 import { formatPrecision, formatThousands } from '../common/utils/format'
 import { isValid, isObject } from '../common/utils/typeChecks'
@@ -333,7 +333,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         bounding: widget.getBounding(),
         crosshair,
         defaultStyles: styles,
-        xAxis: pane.getChart().getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as XAxis,
+        xAxis: pane.getChart().getDrawPaneById(PaneIdConstants.X_AXIS)?.getAxisComponent() as XAxis,
         yAxis: pane.getAxisComponent()
       })
       if (customName !== undefined && tooltipStyles.showName) {

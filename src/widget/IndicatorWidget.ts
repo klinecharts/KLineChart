@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import Pane from '../pane/Pane'
+import DrawPane from '../pane/DrawPane'
 
-import { WidgetNameConstants } from './Widget'
+import { WidgetNameConstants } from './types'
 import DrawWidget from './DrawWidget'
 
 import YAxis from '../component/YAxis'
@@ -25,14 +25,14 @@ import CrosshairLineView from '../view/CrosshairLineView'
 import IndicatorTooltipView from '../view/IndicatorTooltipView'
 import OverlayView from '../view/OverlayView'
 
-export default class IndicatorWidget extends DrawWidget<YAxis> {
+export default class IndicatorWidget extends DrawWidget<DrawPane<YAxis>> {
   private readonly _gridView = new GridView(this)
   private readonly _indicatorView = new IndicatorView(this)
   private readonly _crosshairLineView = new CrosshairLineView(this)
   private readonly _tooltipView = this.createTooltipView()
   private readonly _overlayView = new OverlayView(this)
 
-  constructor (rootContainer: HTMLElement, pane: Pane<YAxis>) {
+  constructor (rootContainer: HTMLElement, pane: DrawPane<YAxis>) {
     super(rootContainer, pane)
     this.addChild(this._tooltipView)
     this.addChild(this._overlayView)

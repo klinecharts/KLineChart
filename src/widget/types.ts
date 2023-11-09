@@ -12,24 +12,11 @@
  * limitations under the License.
  */
 
-import DrawWidget from '../widget/DrawWidget'
-import XAxisWidget from '../widget/XAxisWidget'
-
-import XAxis from '../component/XAxis'
-
-import DrawPane from './DrawPane'
-import { PaneNameConstants } from './types'
-
-export default class XAxisPane extends DrawPane<XAxis> {
-  override getName (): string {
-    return PaneNameConstants.X_AXIS
-  }
-
-  override createAxisComponent (): XAxis {
-    return new XAxis(this)
-  }
-
-  override createMainWidget (container: HTMLElement): DrawWidget<DrawPane<XAxis>> {
-    return new XAxisWidget(container, this)
-  }
+export const WidgetNameConstants = {
+  MAIN: 'main',
+  X_AXIS: 'xAxis',
+  Y_AXIS: 'yAxis',
+  SEPARATOR: 'separator'
 }
+
+export const REAL_SEPARATOR_HEIGHT = 7

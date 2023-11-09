@@ -17,7 +17,7 @@ import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
 import { CandleType } from '../common/Styles'
 
-import { PaneIdConstants } from '../pane/Pane'
+import { PaneIdConstants } from '../pane/types'
 
 import ChartStore from '../store/ChartStore'
 
@@ -70,7 +70,7 @@ export default class IndicatorView extends CandleBarView {
     const pane = widget.getPane()
     const chart = pane.getChart()
     const bounding = widget.getBounding()
-    const xAxis = chart.getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as Axis
+    const xAxis = chart.getDrawPaneById(PaneIdConstants.X_AXIS)?.getAxisComponent() as Axis
     const yAxis = pane.getAxisComponent()
     const chartStore = chart.getChartStore()
     const dataList = chartStore.getDataList()

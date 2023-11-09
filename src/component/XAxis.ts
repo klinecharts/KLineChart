@@ -106,7 +106,7 @@ export default class XAxisImp extends AxisImp {
     return null
   }
 
-  getAutoSize (): number {
+  override getAutoSize (): number {
     const styles = this.getParent().getChart().getStyles()
     const xAxisStyles = styles.xAxis
     const height = xAxisStyles.size

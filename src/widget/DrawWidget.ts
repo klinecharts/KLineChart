@@ -15,7 +15,7 @@
 import Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
 
-import Axis from '../component/Axis'
+import DrawPane from '../pane/DrawPane'
 
 import Widget from './Widget'
 
@@ -25,7 +25,7 @@ import { requestAnimationFrame, cancelAnimationFrame } from '../common/utils/com
 
 const DEFAULT_REQUEST_ID = -1
 
-export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C> {
+export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends Widget<P> {
   private _mainCanvas: HTMLCanvasElement
   private _mainCtx: CanvasRenderingContext2D
   private _overlayCanvas: HTMLCanvasElement
@@ -34,18 +34,8 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
   private _mainRequestAnimationId: number = DEFAULT_REQUEST_ID
   private _overlayRequestAnimationId: number = DEFAULT_REQUEST_ID
 
-  override getContainerStyle (): Partial<CSSStyleDeclaration> {
-    return {
-      margin: '0',
-      padding: '0',
-      position: 'absolute',
-      top: '0',
-      overflow: 'hidden',
-      boxSizing: 'border-box'
-    }
-  }
-
-  override initDom (container: HTMLElement): void {
+  override init (rootContainer: HTMLElement): void {
+    super.init(rootContainer)
     this._mainCanvas = createDom('canvas', {
       position: 'absolute',
       top: '0',
@@ -62,8 +52,21 @@ export default abstract class DrawWidget<C extends Axis = Axis> extends Widget<C
       boxSizing: 'border-box'
     })
     this._overlayCtx = this._overlayCanvas.getContext('2d') as CanvasRenderingContext2D
+    const container = this.getContainer()
     container.appendChild(this._mainCanvas)
     container.appendChild(this._overlayCanvas)
+  }
+
+  override createContainer (): HTMLElement {
+    return createDom('div', {
+      margin: '0',
+      padding: '0',
+      position: 'absolute',
+      top: '0',
+      overflow: 'hidden',
+      boxSizing: 'border-box',
+      zIndex: '1'
+    })
   }
 
   private _optimalUpdateMain (width: number, height: number): void {

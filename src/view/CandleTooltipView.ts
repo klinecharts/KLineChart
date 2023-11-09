@@ -24,7 +24,7 @@ import {
 
 import { CustomApi, FormatDateType } from '../Options'
 
-import { PaneIdConstants } from '../pane/Pane'
+import { PaneIdConstants } from '../pane/types'
 
 import Indicator from '../component/Indicator'
 

@@ -62,7 +62,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     return styles.horizontal
   }
 
-  protected getText (crosshair: Crosshair, chartStore: ChartStore, axis: C): string {
+  protected getText (crosshair: Crosshair, chartStore: ChartStore, axis: Axis): string {
     const yAxis = axis as unknown as YAxis
     const value = axis.convertFromPixel(crosshair.y as number)
     let text: string
@@ -92,7 +92,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     return formatThousands(text, chartStore.getThousandsSeparator())
   }
 
-  protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: C, _styles: StateTextStyle): TextAttrs {
+  protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: Axis, _styles: StateTextStyle): TextAttrs {
     const yAxis = axis as unknown as YAxis
     let x: number
     let textAlign: CanvasTextAlign

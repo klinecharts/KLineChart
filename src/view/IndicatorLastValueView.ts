@@ -12,14 +12,14 @@
  * limitations under the License.
  */
 
-import YAxis from '../component/YAxis'
-
 import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../component/Indicator'
 
 import View from './View'
 
 import { formatPrecision, formatThousands } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
+
+import YAxis from '../component/YAxis'
 
 export default class IndicatorLastValueView extends View<YAxis> {
   override drawImp (ctx: CanvasRenderingContext2D): void {

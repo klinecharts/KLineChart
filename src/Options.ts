@@ -13,9 +13,11 @@
  */
 
 import DeepPartial from './common/DeepPartial'
-
 import { Styles } from './common/Styles'
 import { formatDate, formatBigNumber } from './common/utils/format'
+
+import { IndicatorCreate } from './component/Indicator'
+import { PaneOptions } from './pane/types'
 
 export enum FormatDateType {
   Tooltip,
@@ -53,7 +55,20 @@ export interface Locales {
   [key: string]: string
 }
 
+export const enum LayoutChildType {
+  Candle = 'candle',
+  Indicator = 'indicator',
+  XAxis = 'xAxis'
+}
+
+export interface LayoutChild {
+  type: LayoutChildType
+  content?: Array<string | IndicatorCreate>
+  options?: PaneOptions
+}
+
 export interface Options {
+  layout?: LayoutChild[]
   locale?: string
   timezone?: string
   styles?: string | DeepPartial<Styles>

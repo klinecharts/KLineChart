@@ -16,55 +16,41 @@ import Bounding, { getDefaultBounding } from '../common/Bounding'
 import Updater, { UpdateLevel } from '../common/Updater'
 import Eventful from '../common/Eventful'
 
-import Axis from '../component/Axis'
-
 import Pane from '../pane/Pane'
 
-import { createDom } from '../common/utils/dom'
 import { merge } from '../common/utils/typeChecks'
 
-export const WidgetNameConstants = {
-  MAIN: 'main',
-  XAXIS: 'xAxis',
-  YAXIS: 'yAxis',
-  SEPARATOR: 'separator'
-}
+export default abstract class Widget<P extends Pane = Pane> extends Eventful implements Updater {
+  /**
+   * root container
+   */
+  private _rootContainer: HTMLElement
 
-export default abstract class Widget<C extends Axis = Axis> extends Eventful implements Updater {
   /**
    * Parent pane
    */
-  private readonly _pane: Pane<C>
+  private readonly _pane: P
 
   /**
-   * Root dom container
+   * wrapper container
    */
   private _container: HTMLElement
 
   private readonly _bounding: Bounding = getDefaultBounding()
 
-  constructor (rootContainer: HTMLElement, pane: Pane<C>) {
+  constructor (rootContainer: HTMLElement, pane: P) {
     super()
     this._pane = pane
-    this._init(rootContainer)
+    this.init(rootContainer)
   }
 
-  private _init (rootContainer: HTMLElement): void {
-    this._container = createDom('div', this.getContainerStyle())
-    if (this.insertBefore()) {
-      const lastElement = rootContainer.lastChild
-      if (lastElement !== null) {
-        rootContainer.insertBefore(this._container, lastElement)
-      } else {
-        rootContainer.appendChild(this._container)
-      }
-    } else {
-      rootContainer.appendChild(this._container)
-    }
-    this.initDom(this._container)
+  init (rootContainer: HTMLElement): void {
+    this._rootContainer = rootContainer
+    this._container = this.createContainer()
+    rootContainer.appendChild(this._container)
   }
 
-  setBounding (bounding: Partial<Bounding>): Widget<C> {
+  setBounding (bounding: Partial<Bounding>): Widget<P> {
     merge(this._bounding, bounding)
     return this
   }
@@ -75,7 +61,7 @@ export default abstract class Widget<C extends Axis = Axis> extends Eventful imp
     return this._bounding
   }
 
-  getPane (): Pane<C> {
+  getPane (): P {
     return this._pane
   }
 
@@ -83,13 +69,13 @@ export default abstract class Widget<C extends Axis = Axis> extends Eventful imp
     this.updateImp(this._container, this._bounding, level ?? UpdateLevel.Drawer)
   }
 
+  destroy (): void {
+    this._rootContainer.removeChild(this._container)
+  }
+
   abstract getName (): string
 
-  protected insertBefore (): boolean { return false }
-
-  protected abstract getContainerStyle (): Partial<CSSStyleDeclaration>
-
-  protected abstract initDom (container: HTMLElement): void
+  protected abstract createContainer (): HTMLElement
 
   protected abstract updateImp (container: HTMLElement, bounding: Bounding, level: UpdateLevel): void
 }

@@ -287,7 +287,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
     return optimalTicks
   }
 
-  getAutoSize (): number {
+  override getAutoSize (): number {
     const pane = this.getParent()
     const chart = pane.getChart()
     const styles = chart.getStyles()
