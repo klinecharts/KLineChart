@@ -19,13 +19,7 @@ import DrawPane from './DrawPane'
 import IndicatorPane from './IndicatorPane'
 import YAxis from '../component/YAxis'
 
-import { PaneNameConstants } from './types'
-
 export default class CandlePane extends IndicatorPane {
-  override getName (): string {
-    return PaneNameConstants.CANDLE
-  }
-
   override createMainWidget (container: HTMLElement): DrawWidget<DrawPane<YAxis>> {
     return new CandleWidget(container, this)
   }

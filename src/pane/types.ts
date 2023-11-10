@@ -36,13 +36,6 @@ export interface PaneOptions {
   axisOptions?: PaneAxisOptions
 }
 
-export const PaneNameConstants = {
-  CANDLE: 'candle',
-  INDICATOR: 'indicator',
-  SEPARATOR: 'separator',
-  X_AXIS: 'xAxis'
-}
-
 export const PANE_MIN_HEIGHT = 30
 
 export const PANE_DEFAULT_HEIGHT = 100

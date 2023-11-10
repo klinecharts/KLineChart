@@ -16,12 +16,13 @@ import Nullable from '../common/Nullable'
 import { UpdateLevel } from '../common/Updater'
 import Bounding from '../common/Bounding'
 import { merge } from '../common/utils/typeChecks'
+import { createDom } from '../common/utils/dom'
+import { getPixelRatio } from '../common/utils/canvas'
 
 import Chart from '../Chart'
 
 import DrawPane from './DrawPane'
 import Pane from './Pane'
-import { PaneNameConstants } from './types'
 
 import SeparatorWidget from '../widget/SeparatorWidget'
 
@@ -65,22 +66,32 @@ export default class SeparatorPane extends Pane {
   getWidget (): SeparatorWidget { return this._separatorWidget }
 
   override getImage (_includeOverlay: boolean): HTMLCanvasElement {
-    throw new Error('Method not implemented.')
+    const { width, height } = this.getBounding()
+
+    const styles = this.getChart().getStyles().separator
+    const canvas = createDom('canvas', {
+      width: `${width}px`,
+      height: `${height}px`,
+      boxSizing: 'border-box'
+    })
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const pixelRatio = getPixelRatio(canvas)
+    canvas.width = width * pixelRatio
+    canvas.height = height * pixelRatio
+    ctx.scale(pixelRatio, pixelRatio)
+    ctx.fillStyle = styles.color
+    ctx.fillRect(0, 0, width, height)
+    return canvas
   }
 
   override updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void {
     if (level === UpdateLevel.All || level === UpdateLevel.Separator) {
       const styles = this.getChart().getStyles().separator
-      const fill = styles.fill
       container.style.backgroundColor = styles.color
-      container.style.height = `${styles.size}px`
-      container.style.marginLeft = `${fill ? 0 : bounding.left}px`
-      container.style.width = fill ? '100%' : `${bounding.width}px`
+      container.style.height = `${bounding.height}px`
+      container.style.marginLeft = `${bounding.left}px`
+      container.style.width = `${bounding.width}px`
       this._separatorWidget.update(level)
     }
-  }
-
-  override getName (): string {
-    return PaneNameConstants.SEPARATOR
   }
 }

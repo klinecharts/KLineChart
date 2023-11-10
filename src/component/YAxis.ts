@@ -23,6 +23,8 @@ import { index10, log10 } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision, formatThousands } from '../common/utils/format'
 
+import { PaneIdConstants } from '../pane/types'
+
 interface FiguresResult {
   figures: IndicatorFigure[]
   result: any[]
@@ -192,7 +194,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
    * @return {boolean}
    */
   isInCandle (): boolean {
-    return this.getParent().getName() === 'candle'
+    return this.getParent().getId() === PaneIdConstants.CANDLE
   }
 
   /**

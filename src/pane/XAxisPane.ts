@@ -18,13 +18,8 @@ import XAxisWidget from '../widget/XAxisWidget'
 import XAxis from '../component/XAxis'
 
 import DrawPane from './DrawPane'
-import { PaneNameConstants } from './types'
 
 export default class XAxisPane extends DrawPane<XAxis> {
-  override getName (): string {
-    return PaneNameConstants.X_AXIS
-  }
-
   override createAxisComponent (): XAxis {
     return new XAxis(this)
   }

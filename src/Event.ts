@@ -16,7 +16,6 @@ import Nullable from './common/Nullable'
 import SyntheticEvent, { EventHandler, MouseTouchEvent, TOUCH_MIN_RADIUS } from './common/SyntheticEvent'
 import Coordinate from './common/Coordinate'
 import { UpdateLevel } from './common/Updater'
-import Bounding from './common/Bounding'
 import Crosshair from './common/Crosshair'
 import { requestAnimationFrame, cancelAnimationFrame } from './common/utils/compatible'
 
@@ -143,7 +142,7 @@ export default class Event implements EventHandler {
       if (name === WidgetNameConstants.MAIN || name === WidgetNameConstants.X_AXIS) {
         zoomCoordinate = { x: event.x, y: event.y }
       } else {
-        const bounding = this._chart.getDrawPaneById(PaneIdConstants.CANDLE)?.getBounding() as Bounding
+        const bounding = this._chart.getCandlePane().getBounding()
         zoomCoordinate = { x: bounding.width / 2, y: bounding.height / 2 }
       }
     } else {
@@ -625,7 +624,7 @@ export default class Event implements EventHandler {
     const drawPanes = this._chart.getAllDrawPanes()
 
     let pane: Nullable<DrawPane> = null
-    for (const [, p] of drawPanes) {
+    for (const p of drawPanes) {
       const bounding = p.getBounding()
       if (
         x >= bounding.left && x <= bounding.left + bounding.width &&

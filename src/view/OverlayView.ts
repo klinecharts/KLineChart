@@ -288,7 +288,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const paneId = pane.getId()
     const timeScaleStore = chart.getChartStore().getTimeScaleStore()
     if (this.coordinateToPointTimestampDataIndexFlag()) {
-      const xAxis = chart.getDrawPaneById(PaneIdConstants.X_AXIS)?.getAxisComponent() as Axis
+      const xAxis = chart.getXAxisPane().getAxisComponent()
       const dataIndex = xAxis.convertFromPixel(coordinate.x)
       const timestamp = timeScaleStore.dataIndexToTimestamp(dataIndex) ?? undefined
       point.dataIndex = dataIndex
@@ -374,7 +374,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const paneId = pane.getId()
     const chart = pane.getChart()
     const yAxis = pane.getAxisComponent() as unknown as Nullable<YAxis>
-    const xAxis = chart.getDrawPaneById(PaneIdConstants.X_AXIS)?.getAxisComponent() as Nullable<XAxis>
+    const xAxis = chart.getXAxisPane().getAxisComponent()
     const bounding = widget.getBounding()
     const chartStore = chart.getChartStore()
     const customApi = chartStore.getCustomApi()

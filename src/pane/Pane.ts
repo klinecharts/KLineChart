@@ -80,7 +80,5 @@ export default abstract class Pane implements Updater {
 
   abstract getImage (includeOverlay: boolean): HTMLCanvasElement
 
-  abstract getName (): string
-
   abstract updateImp (level: UpdateLevel, container: HTMLElement, bounding: Bounding): void
 }

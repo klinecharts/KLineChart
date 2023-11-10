@@ -12,10 +12,6 @@
  * limitations under the License.
  */
 
-import XAxis from '../component/XAxis'
-
-import { PaneIdConstants } from '../pane/types'
-
 import View from './View'
 
 export default class GridView extends View {
@@ -51,7 +47,7 @@ export default class GridView extends View {
       const verticalStyles = gridStyles.vertical
       const verticalShow = verticalStyles.show
       if (verticalShow) {
-        const xAxis = chart.getDrawPaneById(PaneIdConstants.X_AXIS)?.getAxisComponent() as XAxis
+        const xAxis = chart.getXAxisPane().getAxisComponent()
         xAxis.getTicks().forEach(tick => {
           this.createFigure(
             'line',

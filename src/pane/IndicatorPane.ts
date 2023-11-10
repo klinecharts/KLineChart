@@ -22,13 +22,7 @@ import YAxis from '../component/YAxis'
 
 import DrawPane from './DrawPane'
 
-import { PaneNameConstants } from './types'
-
 export default class IndicatorPane extends DrawPane<YAxis> {
-  override getName (): string {
-    return PaneNameConstants.INDICATOR
-  }
-
   override createAxisComponent (): YAxis {
     return new YAxis(this)
   }

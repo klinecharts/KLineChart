@@ -16,15 +16,14 @@ import Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
 import { MouseTouchEvent } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
+import { createDom } from '../common/utils/dom'
+import { throttle } from '../common/utils/performance'
 
 import Widget from './Widget'
 import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './types'
 
 import SeparatorPane from '../pane/SeparatorPane'
 
-import { createDom } from '../common/utils/dom'
-import { getPixelRatio } from '../common/utils/canvas'
-import { throttle } from '../common/utils/performance'
 import AxisPane from '../pane/DrawPane'
 
 export default class SeparatorWidget extends Widget<SeparatorPane> {
@@ -146,24 +145,5 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
       container.style.top = `${-Math.floor((REAL_SEPARATOR_HEIGHT - styles.size) / 2)}px`
       container.style.height = `${REAL_SEPARATOR_HEIGHT}px`
     }
-  }
-
-  getImage (): HTMLCanvasElement {
-    const styles = this.getPane().getChart().getStyles().separator
-    const width = this.getContainer().offsetWidth
-    const height = styles.size
-    const canvas = createDom('canvas', {
-      width: `${width}px`,
-      height: `${height}px`,
-      boxSizing: 'border-box'
-    })
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
-    const pixelRatio = getPixelRatio(canvas)
-    canvas.width = width * pixelRatio
-    canvas.height = height * pixelRatio
-    ctx.scale(pixelRatio, pixelRatio)
-    ctx.fillStyle = styles.color
-    ctx.fillRect(this.getBounding().left, 0, width, height)
-    return canvas
   }
 }
