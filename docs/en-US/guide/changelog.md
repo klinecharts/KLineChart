@@ -1,5 +1,16 @@
 # 📠 Change Log
 
+## 9.6.0
+`2023-11-14`
++ 🖋️ Refactor the separator module.
++ 🆕 Chart api `init(ds, options)`, parameter `options` add `layout`.
++ 🆕 Instance api `createIndicator(value, isStack, paneOptions, callback)`, parameter `PaneOptions` add `position`.
++ 🆕 Style `candle.tooltip.custom` adds `turnover` string template.
++ 💄 Optimize the style `overlay.text` configuration.
++ 💄 Optimize the implementation of `utils.clone` and `utils.merge`.
++ 🐞 Fix the issue of multiple overlay styles display error.
++ 🐞 Fix the issue of multiple indicator styles display error.
+
 ## 9.5.4
 `2023-09-22`
 + 🐞 Fix the issue of not display the latest price line when the style `candle.type` is `area`.

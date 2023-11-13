@@ -5,6 +5,11 @@
 (
   ds: string | HTMLElement,
   options?: {
+    layout?: Array<{
+      type: 'candle' | 'indicator' | 'xAxis'
+      content: Array<Indicator | string>
+      options: PaneOptions
+    }>
     locale?: string
     styles?: string | object
     timezone?: string
@@ -19,6 +24,7 @@
 初始化一个图表，返回图表实例。
 - `ds` 容器，可以是dom元素或者元素id。
 - `options` 可选配置项。
+  - `layout` 自定义布局，`content`中的内容和`options`参考实例方法 [createIndicator](./instance-api#createindicator-value-isstack-paneoptions-callback) 中的入参`value`和`options`。
   - `locale` 语言，内置支持`zh-CN`和`en-US`。
   - `timezone` 时区名，如'Asia/Shanghai'，如果不设置会自动获取本机时区，时区对应名字列表请参阅[时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)。
   - `styles` 可以是通过`klinecharts.registerStyles`注册的样式名，也可以是object，样式列表，详情参阅[样式](./styles.md)，支持增量。

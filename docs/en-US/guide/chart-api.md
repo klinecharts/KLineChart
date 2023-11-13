@@ -5,6 +5,11 @@
 (
    ds: string | HTMLElement,
    options?: {
+      layout?: Array<{
+         type: 'candle' | 'indicator' | 'xAxis'
+         content: Array<Indicator | string>
+         options: PaneOptions
+      }>
       locale?: string
       timezone?: string
       styles?: string | object
@@ -19,6 +24,7 @@
 Initialize a chart and return the chart instance.
 - `ds` container, can be dom element or element id.
 - `options` optional configuration items.
+   - `layout` custom layout, `content` and `options` refer to the input parameters `value` and `options` in the instance api [createIndicator](./instance-api#createindicator-value-isstack-paneoptions-callback).
    - `locale` language, built-in support for `zh-CN` and `en-US`.
    - `timezone` time zone name, such as 'Asia/Shanghai', if not set, it will automatically get the local time zone, please refer to [timezone list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List ).
    - `styles` It can be the style name registered through `klinecharts.registerStyles`, or it can be an object, a list of styles, see [styles](./styles.md) for details, and supports increments.

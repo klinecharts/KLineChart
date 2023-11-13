@@ -306,6 +306,7 @@
     height?: number
     minHeight?: number
     dragEnabled?: boolean
+    position?: 'top' | 'bottom'
     gap?: {
       top?: number
       bottom?: number
@@ -324,7 +325,8 @@
   - `id` 窗口id，可缺省
   - `height` 窗口高度，可缺省
   - `minHeight` 窗口最小高度，可缺省
-  - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
+  - `dragEnabled` 窗口是否可以拖拽调整高度，可缺省
+  - `position` 位置，仅仅在创建新的窗口时有效
   - `gap` 边距
     - `top` 上边距，值小余1则是百分比
     - `bottom` 下边距，值小余1则是百分比

@@ -48,7 +48,7 @@ onMounted(() => {
 }
 
 .NotFound .logo img {
-  width: 76px;
+  width: 92px;
   margin: 0 16px
 }
 

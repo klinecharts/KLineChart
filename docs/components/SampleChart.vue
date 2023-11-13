@@ -68,8 +68,9 @@ watch(isDark, (newValue) => {
 })
 
 onUnmounted(() => {
-  if (observer) {
-    observer.unobserve(document.getElementById('container'))
+  const container = document.getElementById('container')
+  if (observer && container) {
+    observer.unobserve(container)
   }
   window.klinecharts.dispose('k-line-chart')
 })
