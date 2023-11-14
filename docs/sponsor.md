@@ -1,5 +1,7 @@
 ---
 sidebar: false
+editLink: false
+lastUpdated: false
 ---
 
 # ❤️ 赞助

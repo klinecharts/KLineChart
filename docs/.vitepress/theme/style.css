@@ -83,11 +83,15 @@ body {
   border-bottom: none;
   border-top-style: dashed;
   border-radius: 0;
+  margin-left: 0;
+  margin-right: 0;
 }
 .sample-chart + .vp-code-group div[class*='language-'] {
   background-color: transparent;
   border: solid 1px var(--vp-c-divider);
-  border-top: none
+  border-top: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 @media (min-width: 640px) {
