@@ -12,25 +12,15 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-
 import DrawWidget from '../widget/DrawWidget'
 import CandleWidget from '../widget/CandleWidget'
-import SeparatorWidget from '../widget/SeparatorWidget'
 
+import DrawPane from './DrawPane'
 import IndicatorPane from './IndicatorPane'
 import YAxis from '../component/YAxis'
 
 export default class CandlePane extends IndicatorPane {
-  override getName (): string {
-    return 'candle'
-  }
-
-  override createMainWidget (container: HTMLElement): DrawWidget<YAxis> {
+  override createMainWidget (container: HTMLElement): DrawWidget<DrawPane<YAxis>> {
     return new CandleWidget(container, this)
-  }
-
-  override createSeparatorWidget (): Nullable<SeparatorWidget> {
-    return null
   }
 }

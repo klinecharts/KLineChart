@@ -20,7 +20,7 @@ interface Avp {
 }
 
 /**
- * averager price
+ * average price
  */
 const averagePrice: IndicatorTemplate<Avp> = {
   name: 'AVP',

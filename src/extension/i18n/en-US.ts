@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { Locales } from '../../common/Options'
+import { Locales } from '../../Options'
 
 const enUS: Locales = {
   time: 'Time: ',
@@ -21,6 +21,7 @@ const enUS: Locales = {
   low: 'Low: ',
   close: 'Close: ',
   volume: 'Volume: ',
+  turnover: 'Turnover: ',
   change: 'Change: '
 }
 

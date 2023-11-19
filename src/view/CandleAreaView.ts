@@ -15,7 +15,7 @@
 import Coordinate from '../common/Coordinate'
 import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
-import { GradientColor } from '../common/Options'
+import { GradientColor } from '../common/Styles'
 
 import ChildrenView from './ChildrenView'
 

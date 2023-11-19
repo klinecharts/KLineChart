@@ -16,24 +16,26 @@ import Nullable from './common/Nullable'
 import SyntheticEvent, { EventHandler, MouseTouchEvent, TOUCH_MIN_RADIUS } from './common/SyntheticEvent'
 import Coordinate from './common/Coordinate'
 import { UpdateLevel } from './common/Updater'
-import Bounding from './common/Bounding'
 import Crosshair from './common/Crosshair'
 import { requestAnimationFrame, cancelAnimationFrame } from './common/utils/compatible'
 
 import { AxisExtremum } from './component/Axis'
 import YAxis from './component/YAxis'
+import XAxis from './component/XAxis'
 
 import Chart from './Chart'
-import Pane, { PaneIdConstants } from './pane/Pane'
-import Widget, { WidgetNameConstants } from './widget/Widget'
-import { REAL_SEPARATOR_HEIGHT } from './widget/SeparatorWidget'
+import Pane from './pane/Pane'
+import { PaneIdConstants } from './pane/types'
+import Widget from './widget/Widget'
+import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './widget/types'
+import DrawPane from './pane/DrawPane'
 
 interface EventTriggerWidgetInfo {
   pane: Nullable<Pane>
   widget: Nullable<Widget>
 }
 
-export default class ChartEvent implements EventHandler {
+export default class Event implements EventHandler {
   private readonly _container: HTMLElement
   private readonly _chart: Chart
   private readonly _event: SyntheticEvent
@@ -113,7 +115,7 @@ export default class ChartEvent implements EventHandler {
 
   pinchEvent (e: MouseTouchEvent, scale: number): boolean {
     const { pane, widget } = this._findWidgetByEvent(e)
-    if (pane?.getId() !== PaneIdConstants.XAXIS && widget?.getName() === WidgetNameConstants.MAIN) {
+    if (pane?.getId() !== PaneIdConstants.X_AXIS && widget?.getName() === WidgetNameConstants.MAIN) {
       const event = this._makeWidgetEvent(e, widget)
       const zoomScale = (scale - this._pinchScale) * 5
       this._pinchScale = scale
@@ -137,10 +139,10 @@ export default class ChartEvent implements EventHandler {
     let zoomCoordinate: Nullable<Coordinate> = null
     const name = widget?.getName()
     if (isTouch) {
-      if (name === WidgetNameConstants.MAIN || name === WidgetNameConstants.XAXIS) {
+      if (name === WidgetNameConstants.MAIN || name === WidgetNameConstants.X_AXIS) {
         zoomCoordinate = { x: event.x, y: event.y }
       } else {
-        const bounding = this._chart.getPaneById(PaneIdConstants.CANDLE)?.getBounding() as Bounding
+        const bounding = this._chart.getCandlePane().getBounding()
         zoomCoordinate = { x: bounding.width / 2, y: bounding.height / 2 }
       }
     } else {
@@ -166,13 +168,13 @@ export default class ChartEvent implements EventHandler {
           return widget.dispatchEvent('mouseDownEvent', event)
         }
         case WidgetNameConstants.MAIN: {
-          const extremum = pane?.getAxisComponent().getExtremum() ?? null
+          const extremum = (pane as DrawPane<YAxis>).getAxisComponent().getExtremum() ?? null
           this._prevYAxisExtremum = extremum === null ? extremum : { ...extremum }
           this._startScrollCoordinate = { x: event.x, y: event.y }
           this._chart.getChartStore().getTimeScaleStore().startScroll()
           return widget.dispatchEvent('mouseDownEvent', event)
         }
-        case WidgetNameConstants.XAXIS: {
+        case WidgetNameConstants.X_AXIS: {
           const consumed = widget.dispatchEvent('mouseDownEvent', event)
           if (consumed) {
             this._chart.updatePane(UpdateLevel.Overlay)
@@ -181,12 +183,12 @@ export default class ChartEvent implements EventHandler {
           this._xAxisStartScaleDistance = event.pageX
           return consumed
         }
-        case WidgetNameConstants.YAXIS: {
+        case WidgetNameConstants.Y_AXIS: {
           const consumed = widget.dispatchEvent('mouseDownEvent', event)
           if (consumed) {
             this._chart.updatePane(UpdateLevel.Overlay)
           }
-          const extremum = pane?.getAxisComponent().getExtremum() ?? null
+          const extremum = (pane as DrawPane<YAxis>).getAxisComponent().getExtremum() ?? null
           this._prevYAxisExtremum = extremum === null ? extremum : { ...extremum }
           this._yAxisStartScaleDistance = event.pageY
           return consumed
@@ -214,20 +216,20 @@ export default class ChartEvent implements EventHandler {
           const consumed = widget.dispatchEvent('mouseMoveEvent', event)
           const chartStore = this._chart.getChartStore()
           let crosshair: Crosshair | undefined = { x: event.x, y: event.y, paneId: pane?.getId() }
-          if (consumed && chartStore.getTooltipStore().getActiveIconInfo() !== null) {
+          if (consumed && chartStore.getTooltipStore().getActiveIcon() !== null) {
             crosshair = undefined
             if (widget !== null) {
               widget.getContainer().style.cursor = 'pointer'
             }
           }
-          this._chart.getChartStore().getCrosshairStore().set(crosshair)
+          this._chart.getChartStore().getTooltipStore().setCrosshair(crosshair)
           return consumed
         }
         case WidgetNameConstants.SEPARATOR:
-        case WidgetNameConstants.XAXIS:
-        case WidgetNameConstants.YAXIS: {
+        case WidgetNameConstants.X_AXIS:
+        case WidgetNameConstants.Y_AXIS: {
           const consumed = widget.dispatchEvent('mouseMoveEvent', event)
-          this._chart.getChartStore().getCrosshairStore().set()
+          this._chart.getChartStore().getTooltipStore().setCrosshair()
           return consumed
         }
       }
@@ -252,7 +254,7 @@ export default class ChartEvent implements EventHandler {
           const bounding = widget.getBounding()
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed && this._startScrollCoordinate !== null) {
-            const yAxis = pane?.getAxisComponent() as YAxis
+            const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
             if (this._prevYAxisExtremum !== null && !yAxis.getAutoCalcTickFlag() && yAxis.getScrollZoomEnabled()) {
               const { min, max, range } = this._prevYAxisExtremum
               let distance: number
@@ -279,13 +281,13 @@ export default class ChartEvent implements EventHandler {
             const distance = event.x - this._startScrollCoordinate.x
             this._chart.getChartStore().getTimeScaleStore().scroll(distance)
           }
-          this._chart.getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane?.getId() })
+          this._chart.getChartStore().getTooltipStore().setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
           return consumed
         }
-        case WidgetNameConstants.XAXIS: {
+        case WidgetNameConstants.X_AXIS: {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
-            const xAxis = pane?.getAxisComponent()
+            const xAxis = (pane as DrawPane<XAxis>).getAxisComponent()
             if (xAxis?.getScrollZoomEnabled() ?? true) {
               const scale = this._xAxisStartScaleDistance / event.pageX
               const zoomScale = (scale - this._xAxisScale) * 10
@@ -297,10 +299,10 @@ export default class ChartEvent implements EventHandler {
           }
           return consumed
         }
-        case WidgetNameConstants.YAXIS: {
+        case WidgetNameConstants.Y_AXIS: {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
-            const yAxis = pane?.getAxisComponent() as YAxis
+            const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
             if (this._prevYAxisExtremum !== null && yAxis.getScrollZoomEnabled()) {
               const { min, max, range } = this._prevYAxisExtremum
               const scale = event.pageY / this._yAxisStartScaleDistance
@@ -308,7 +310,6 @@ export default class ChartEvent implements EventHandler {
               const difRange = (newRange - range) / 2
               const newMin = min - difRange
               const newMax = max + difRange
-              const yAxis = pane?.getAxisComponent() as YAxis
               const newRealMin = yAxis.convertToRealValue(newMin)
               const newRealMax = yAxis.convertToRealValue(newMax)
               yAxis.setExtremum({
@@ -340,8 +341,8 @@ export default class ChartEvent implements EventHandler {
       switch (name) {
         case WidgetNameConstants.MAIN:
         case WidgetNameConstants.SEPARATOR:
-        case WidgetNameConstants.XAXIS:
-        case WidgetNameConstants.YAXIS: {
+        case WidgetNameConstants.X_AXIS:
+        case WidgetNameConstants.Y_AXIS: {
           consumed = widget.dispatchEvent('mouseUpEvent', event)
           break
         }
@@ -377,8 +378,8 @@ export default class ChartEvent implements EventHandler {
       const name = widget.getName()
       switch (name) {
         case WidgetNameConstants.MAIN:
-        case WidgetNameConstants.XAXIS:
-        case WidgetNameConstants.YAXIS: {
+        case WidgetNameConstants.X_AXIS:
+        case WidgetNameConstants.Y_AXIS: {
           consumed = widget.dispatchEvent('mouseRightClickEvent', event)
           break
         }
@@ -399,8 +400,8 @@ export default class ChartEvent implements EventHandler {
           const event = this._makeWidgetEvent(e, widget)
           return widget.dispatchEvent('mouseDoubleClickEvent', event)
         }
-        case WidgetNameConstants.YAXIS: {
-          const yAxis = pane?.getAxisComponent() as YAxis
+        case WidgetNameConstants.Y_AXIS: {
+          const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
           if (!yAxis.getAutoCalcTickFlag()) {
             yAxis.setAutoCalcTickFlag(true)
             this._chart.adjustPaneViewport(false, true, true, true)
@@ -414,7 +415,7 @@ export default class ChartEvent implements EventHandler {
   }
 
   mouseLeaveEvent (): boolean {
-    this._chart.getChartStore().getCrosshairStore().set()
+    this._chart.getChartStore().getTooltipStore().setCrosshair()
     return true
   }
 
@@ -426,11 +427,11 @@ export default class ChartEvent implements EventHandler {
       switch (name) {
         case WidgetNameConstants.MAIN: {
           const chartStore = this._chart.getChartStore()
-          const crosshairStore = chartStore.getCrosshairStore()
+          const tooltipStore = chartStore.getTooltipStore()
           if (widget.dispatchEvent('mouseDownEvent', event)) {
             this._touchCancelCrosshair = true
             this._touchCoordinate = null
-            crosshairStore.set(undefined, true)
+            tooltipStore.setCrosshair(undefined, true)
             this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
@@ -448,17 +449,17 @@ export default class ChartEvent implements EventHandler {
             const radius = Math.sqrt(xDif * xDif + yDif * yDif)
             if (radius < TOUCH_MIN_RADIUS) {
               this._touchCoordinate = { x: event.x, y: event.y }
-              crosshairStore.set({ x: event.x, y: event.y, paneId: pane?.getId() })
+              tooltipStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
             } else {
               this._touchCoordinate = null
               this._touchCancelCrosshair = true
-              crosshairStore.set()
+              tooltipStore.setCrosshair()
             }
           }
           return true
         }
-        case WidgetNameConstants.XAXIS:
-        case WidgetNameConstants.YAXIS: {
+        case WidgetNameConstants.X_AXIS:
+        case WidgetNameConstants.Y_AXIS: {
           const consumed = widget.dispatchEvent('mouseDownEvent', event)
           if (consumed) {
             this._chart.updatePane(UpdateLevel.Overlay)
@@ -476,18 +477,18 @@ export default class ChartEvent implements EventHandler {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
       const chartStore = this._chart.getChartStore()
-      const crosshairStore = chartStore.getCrosshairStore()
+      const tooltipStore = chartStore.getTooltipStore()
       switch (name) {
         case WidgetNameConstants.MAIN: {
           if (widget.dispatchEvent('pressedMouseMoveEvent', event)) {
             event.preventDefault?.()
-            crosshairStore.set(undefined, true)
+            tooltipStore.setCrosshair(undefined, true)
             this._chart.updatePane(UpdateLevel.Overlay)
             return true
           }
           if (this._touchCoordinate !== null) {
             event.preventDefault?.()
-            crosshairStore.set({ x: event.x, y: event.y, paneId: pane?.getId() })
+            tooltipStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
           } else {
             if (
               this._startScrollCoordinate !== null &&
@@ -499,8 +500,8 @@ export default class ChartEvent implements EventHandler {
           }
           return true
         }
-        case WidgetNameConstants.XAXIS:
-        case WidgetNameConstants.YAXIS: {
+        case WidgetNameConstants.X_AXIS:
+        case WidgetNameConstants.Y_AXIS: {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (consumed) {
             event.preventDefault?.()
@@ -547,8 +548,8 @@ export default class ChartEvent implements EventHandler {
           }
           return true
         }
-        case WidgetNameConstants.XAXIS:
-        case WidgetNameConstants.YAXIS: {
+        case WidgetNameConstants.X_AXIS:
+        case WidgetNameConstants.Y_AXIS: {
           const consumed = widget.dispatchEvent('mouseUpEvent', event)
           if (consumed) {
             this._chart.updatePane(UpdateLevel.Overlay)
@@ -568,16 +569,16 @@ export default class ChartEvent implements EventHandler {
       if (widget.getName() === WidgetNameConstants.MAIN) {
         const event = this._makeWidgetEvent(e, widget)
         const chartStore = this._chart.getChartStore()
-        const crosshairStore = chartStore.getCrosshairStore()
+        const tooltipStore = chartStore.getTooltipStore()
         if (result) {
           this._touchCancelCrosshair = true
           this._touchCoordinate = null
-          crosshairStore.set(undefined, true)
+          tooltipStore.setCrosshair(undefined, true)
           consumed = true
         } else {
           if (!this._touchCancelCrosshair && !this._touchZoomed) {
             this._touchCoordinate = { x: event.x, y: event.y }
-            crosshairStore.set({ x: event.x, y: event.y, paneId: pane?.getId() }, true)
+            tooltipStore.setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() }, true)
             consumed = true
           }
           this._touchCancelCrosshair = false
@@ -599,17 +600,31 @@ export default class ChartEvent implements EventHandler {
     if (widget !== null && widget.getName() === WidgetNameConstants.MAIN) {
       const event = this._makeWidgetEvent(e, widget)
       this._touchCoordinate = { x: event.x, y: event.y }
-      this._chart.getChartStore().getCrosshairStore().set({ x: event.x, y: event.y, paneId: pane?.getId() })
+      this._chart.getChartStore().getTooltipStore().setCrosshair({ x: event.x, y: event.y, paneId: pane?.getId() })
       return true
     }
     return false
   }
 
   private _findWidgetByEvent (event: MouseTouchEvent): EventTriggerWidgetInfo {
-    const panes = this._chart.getAllPanes()
     const { x, y } = event
-    let pane: Nullable<Pane> = null
-    for (const [, p] of panes) {
+    const separatorPanes = this._chart.getAllSeparatorPanes()
+    const separatorSize = this._chart.getChartStore().getStyles().separator.size
+    for (const [, pane] of separatorPanes) {
+      const bounding = pane.getBounding()
+      const top = bounding.top - Math.round((REAL_SEPARATOR_HEIGHT - separatorSize) / 2)
+      if (
+        x >= bounding.left && x <= bounding.left + bounding.width &&
+        y >= top && y <= top + REAL_SEPARATOR_HEIGHT
+      ) {
+        return { pane, widget: pane.getWidget() }
+      }
+    }
+
+    const drawPanes = this._chart.getAllDrawPanes()
+
+    let pane: Nullable<DrawPane> = null
+    for (const p of drawPanes) {
       const bounding = p.getBounding()
       if (
         x >= bounding.left && x <= bounding.left + bounding.width &&
@@ -619,21 +634,8 @@ export default class ChartEvent implements EventHandler {
         break
       }
     }
-    if (pane === null) {
-      pane = this._chart.getPaneById(PaneIdConstants.XAXIS)
-    }
     let widget: Nullable<Widget> = null
     if (pane !== null) {
-      const separatorWidget = pane.getSeparatorWidget()
-      if (separatorWidget !== null) {
-        const separatorBounding = separatorWidget.getBounding()
-        if (
-          x >= separatorBounding.left && x <= separatorBounding.left + separatorBounding.width &&
-          y >= separatorBounding.top && y <= (separatorBounding.top + REAL_SEPARATOR_HEIGHT)
-        ) {
-          widget = separatorWidget
-        }
-      }
       if (widget === null) {
         const mainWidget = pane.getMainWidget()
         const mainBounding = mainWidget.getBounding()

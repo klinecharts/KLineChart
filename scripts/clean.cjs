@@ -2,7 +2,7 @@
 const fs = require('fs');
 const chalk = require('chalk');
 
-const { resolvePath, buildDir } = require('./paths');
+const { resolvePath, buildDir } = require('./paths.cjs');
 
 let totalFileCount = 0
 let deletedFileCount = 0

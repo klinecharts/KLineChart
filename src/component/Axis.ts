@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import Pane from '../pane/Pane'
+import DrawPane from '../pane/DrawPane'
 
 import { getPrecision, nice, round } from '../common/utils/number'
 
@@ -37,7 +37,7 @@ export interface Axis {
 }
 
 export default abstract class AxisImp {
-  private readonly _parent: Pane<AxisImp>
+  private readonly _parent: DrawPane<AxisImp>
 
   private _extremum: AxisExtremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
   private _prevExtremum: AxisExtremum = { min: 0, max: 0, range: 0, realMin: 0, realMax: 0, realRange: 0 }
@@ -45,11 +45,11 @@ export default abstract class AxisImp {
 
   private _autoCalcTickFlag = true
 
-  constructor (parent: Pane<AxisImp>) {
+  constructor (parent: DrawPane<AxisImp>) {
     this._parent = parent
   }
 
-  getParent (): Pane<AxisImp> { return this._parent }
+  getParent (): DrawPane<AxisImp> { return this._parent }
 
   buildTicks (force: boolean): boolean {
     if (this._autoCalcTickFlag) {
@@ -116,6 +116,8 @@ export default abstract class AxisImp {
   protected abstract calcExtremum (): AxisExtremum
 
   protected abstract optimalTicks (ticks: AxisTick[]): AxisTick[]
+
+  abstract getAutoSize (): number
 
   abstract convertToPixel (value: number): number
   abstract convertFromPixel (px: number): number

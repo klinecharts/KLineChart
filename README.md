@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://klinecharts.com">
-    <img style="height: 100px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1682453956361-assets/web-upload/d21fec8e-7503-47ce-9f91-faceece21195.png"/>
+    <img src="https://github.com/liihuu/KLineChart/assets/10508024/2efeec96-e73c-4496-8f3a-751ed4996de6"/>
   </a>
 </div>
 <h1 align="center">KLineChart</h1>
@@ -30,7 +30,7 @@ English | <a href="https://github.com/liihuu/KLineChart/blob/main/README.zh-CN.m
 [![Telegram](https://img.shields.io/static/v1?color=1296DB&logo=telegram&logoColor=fff&label&message=Telegram)](https://t.me/+098syuQtzI0yNzll)
 [![Discord](https://img.shields.io/static/v1?color=738BD8&logo=discord&logoColor=fff&label&message=Discord)](https://discord.gg/7YjHYgvvvZ)
 [![Wechat](https://img.shields.io/static/v1?color=1EBE1F&logo=wechat&logoColor=fff&label&message=Wechat)](https://klinecharts.com/en-US/guide/feedback.html)
-[![Twitter](https://img.shields.io/static/v1?color=1D9BF0&logo=twitter&logoColor=fff&label&message=Twitter)](https://twitter.com/klinecharts)
+<!-- [![Twitter](https://img.shields.io/static/v1?color=1D9BF0&logo=twitter&logoColor=fff&label&message=Twitter)](https://twitter.com/klinecharts) -->
 
 
 </div>
@@ -83,16 +83,27 @@ yarn add klinecharts
 ```
 
 ## 📄 Docs
-+ [English](https://www.klinecharts.com/en-US)
-+ [中文](https://www.klinecharts.com)
+### Online
+[https://www.klinecharts.com](https://www.klinecharts.com)
+
+### Locale
+Execute command in root directory. [Node.js](https://nodejs.org) is required.
+```bash
+# Install the dependencies
+npm install
+
+# Start document service
+npm run docs:dev
+```
+After successful startup, open in the browser http://localhost:8888 .
 
 ## 🛠️ Build
 Execute command in root directory. [Node.js](https://nodejs.org) is required.
 ```bash
-# Install the dependencies from NPM:
+# Install the dependencies
 npm install
 
-# Build files:
+# Build files
 npm run build
 ```
 The generated files are in the dist folder.

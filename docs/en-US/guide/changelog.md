@@ -1,5 +1,39 @@
 # 📠 Change Log
 
+## 9.6.0
+`2023-11-14`
++ 🖋️ Refactor the separator module.
++ 🆕 Chart api `init(ds, options)`, parameter `options` add `layout`.
++ 🆕 Instance api `createIndicator(value, isStack, paneOptions, callback)`, parameter `PaneOptions` add `position`.
++ 🆕 Style `candle.tooltip.custom` adds `turnover` string template.
++ 💄 Optimize the style `overlay.text` configuration.
++ 💄 Optimize the implementation of `utils.clone` and `utils.merge`.
++ 🐞 Fix the issue of multiple overlay styles display error.
++ 🐞 Fix the issue of multiple indicator styles display error.
+
+## 9.5.4
+`2023-09-22`
++ 🐞 Fix the issue of not display the latest price line when the style `candle.type` is `area`.
++ 🐞 Fix the issue of incorrect display of the style `crosshair.vertical.text.paddingLeft`.
+
+## 9.5.3
+`2023-09-19`
++ 🐞 Fix typescript import error.
+
+## 9.5.2
+`2023-09-18`
++ 💄 Optimize the figure `text`.
++ 💄 Optimize built-in overlays `simpleAnnotation` and `simpleTag`.
++ 💄 Optimize the free style of technical indicators and support increment.
++ 🐞 Fix typescript declaration issue.
+
+## 9.5.1
+`2023-08-14`
++ 🆕 Add chart api `getOverlayClass`.
++ 🆕 Style configuration `candle.tooltip.custom` add built-in support `change`.
++ 💄 Optimize figure `rect` event trigger.
++ ↩️ Separator event trigger optimization rollback.
+
 ## 9.5.0
 `2023-06-15`
 + 🆕 `Overlay` add event `onDoubleClick`, add property `modeSensitivity`.

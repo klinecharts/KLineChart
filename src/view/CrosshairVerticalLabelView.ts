@@ -14,8 +14,10 @@
 
 import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
-import { CrosshairStyle, CrosshairDirectionStyle, StateRectTextStyle, FormatDateType } from '../common/Options'
+import { CrosshairStyle, CrosshairDirectionStyle, StateTextStyle } from '../common/Styles'
+import { FormatDateType } from '../Options'
 
+import Axis from '../component/Axis'
 import XAxis from '../component/XAxis'
 
 import ChartStore from '../store/ChartStore'
@@ -37,16 +39,19 @@ export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabel
     return chartStore.getCustomApi().formatDate(chartStore.getTimeScaleStore().getDateTimeFormat(), timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Crosshair)
   }
 
-  override getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, _axis: XAxis, styles: StateRectTextStyle): TextAttrs {
+  override getTextAttrs (text: string, textWidth: number, crosshair: Crosshair, bounding: Bounding, _axis: Axis, styles: StateTextStyle): TextAttrs {
     const x = crosshair.realX as number
     let optimalX: number
+    let align: CanvasTextAlign = 'center'
     if (x - textWidth / 2 - styles.paddingLeft < 0) {
-      optimalX = styles.paddingLeft + textWidth / 2
+      optimalX = 0
+      align = 'left'
     } else if (x + textWidth / 2 + styles.paddingRight > bounding.width) {
-      optimalX = bounding.width - styles.paddingRight - textWidth / 2
+      optimalX = bounding.width
+      align = 'right'
     } else {
       optimalX = x
     }
-    return { x: optimalX, y: 0, text, align: 'center', baseline: 'top' }
+    return { x: optimalX, y: 0, text, align, baseline: 'top' }
   }
 }

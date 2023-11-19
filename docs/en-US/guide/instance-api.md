@@ -6,7 +6,7 @@
 ```
 Get the dom container.
 - `paneId` window id, the default is the entire chart container
-- `position` options are 'root', 'main' and 'yAxis', default is 'root'
+- `position` supports `root`, `main`, `yAxis`, the default is `root`
 
 
 ## getSize(paneId, position)
@@ -318,6 +318,7 @@ Set load more callback function.
     height?: number
     minHeight?: number
     dragEnabled?: boolean
+    position?: 'top' | 'bottom'
     gap?: {
       top?: number
       bottom?: number
@@ -336,7 +337,8 @@ Create a technical indicator, the return value is a string that identifies the w
   - `id` window id, can be default
   - `height` window height, can be default
   - `minHeight` minimum height of the window, can be defaulted
-  - `dragEnbaled` Whether the window can be dragged to adjust the height, it can be defaulted
+  - `dragEnabled` Whether the window can be dragged to adjust the height, it can be defaulted
+  - `position` Only valid when creating a new pane
   - `gap` margins
     - `top` top margin, value less than 1 is a percentage
     - `bottom` bottom margin, value less than 1 is a percentage

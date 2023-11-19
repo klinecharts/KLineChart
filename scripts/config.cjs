@@ -9,7 +9,7 @@ const terser = require('@rollup/plugin-terser');
 const fileSize = require('rollup-plugin-filesize');
 const progress = require('rollup-plugin-progress');
 
-const paths = require('./paths');
+const paths = require('./paths.cjs');
 
 const packageJson = require(paths.packageJson);
 

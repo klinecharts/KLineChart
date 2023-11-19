@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { Locales } from '../../common/Options'
+import { Locales } from '../../Options'
 
 import zhCN from './zh-CN'
 import enUS from './en-US'

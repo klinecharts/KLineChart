@@ -13,7 +13,7 @@
  */
 
 import Coordinate from '../../common/Coordinate'
-import { TextStyle } from '../../common/Options'
+import { TextStyle } from '../../common/Styles'
 
 import { createFont, calcTextWidth } from '../../common/utils/canvas'
 
@@ -93,7 +93,7 @@ export function drawText (ctx: CanvasRenderingContext2D, attrs: TextAttrs, style
   ctx.textBaseline = 'top'
   ctx.font = createFont(size, weight, family)
   ctx.fillStyle = color
-  ctx.fillText(text, rect.x + paddingTop, rect.y + paddingTop, rect.width - paddingLeft - paddingRight)
+  ctx.fillText(text, rect.x + paddingLeft, rect.y + paddingTop, rect.width - paddingLeft - paddingRight)
 }
 
 export interface TextAttrs {

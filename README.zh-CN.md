@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://klinecharts.com">
-    <img style="height: 100px" src="https://cdn.nlark.com/yuque/0/2023/png/8403091/1682453956361-assets/web-upload/d21fec8e-7503-47ce-9f91-faceece21195.png"/>
+    <img src="https://github.com/liihuu/KLineChart/assets/10508024/2efeec96-e73c-4496-8f3a-751ed4996de6"/>
   </a>
 </div>
 <h1 align="center">KLineChart</h1>
@@ -30,7 +30,7 @@
 [![Telegram](https://img.shields.io/static/v1?color=1296DB&logo=telegram&logoColor=fff&label&message=Telegram)](https://t.me/+098syuQtzI0yNzll)
 [![Discord](https://img.shields.io/static/v1?color=738BD8&logo=discord&logoColor=fff&label&message=Discord)](https://discord.gg/7YjHYgvvvZ)
 [![Wechat](https://img.shields.io/static/v1?color=1EBE1F&logo=wechat&logoColor=fff&label&message=微信)](https://klinecharts.com/guide/feedback.html)
-[![Twitter](https://img.shields.io/static/v1?color=1D9BF0&logo=twitter&logoColor=fff&label&message=Twitter)](https://twitter.com/klinecharts)
+<!-- [![Twitter](https://img.shields.io/static/v1?color=1D9BF0&logo=twitter&logoColor=fff&label&message=Twitter)](https://twitter.com/klinecharts) -->
 
 </div>
 
@@ -81,13 +81,25 @@ yarn add klinecharts
 ```
 
 ## 📄 文档
-+ [中文](https://www.klinecharts.com)
-+ [English](https://www.klinecharts.com/en-US)
+### 在线文档
+[https://www.klinecharts.com](https://www.klinecharts.com)
+
+### 本地浏览
+在根目录下执行命令，需要 [Node.js](https://nodejs.org) 环境。
+```bash
+# 安装依赖
+npm install
+
+# 启动文档服务
+npm run docs:dev
+```
+启动成功后，在浏览器中打开 http://localhost:8888。
+
 
 ## 🛠️ 本地构建
-在根目录下执行命令，需要[Node.js](https://nodejs.org)环境。
+在根目录下执行命令，需要 [Node.js](https://nodejs.org) 环境。
 ```bash
-# 通过 npm 安装依赖
+# 安装依赖
 npm install
 
 # 打包文件

@@ -30,7 +30,7 @@ interface MinVisibleBarCount {
   right: number
 }
 
-const BarSpaceLimitContants = {
+const BarSpaceLimitConstants = {
   MIN: 1,
   MAX: 50
 }
@@ -46,7 +46,7 @@ export default class TimeScaleStore {
   private readonly _chartStore: ChartStore
 
   /**
-   * Time foramt
+   * Time format
    */
   private _dateTimeFormat: Intl.DateTimeFormat = this._buildDateTimeFormat() as Intl.DateTimeFormat
 
@@ -61,7 +61,7 @@ export default class TimeScaleStore {
   private _scrollEnabled: boolean = true
 
   /**
-   * Is loding data flag
+   * Is loading data flag
    */
   private _loading: boolean = true
 
@@ -221,14 +221,14 @@ export default class TimeScaleStore {
   }
 
   setBarSpace (barSpace: number, adjustBeforeFunc?: () => void): void {
-    if (barSpace < BarSpaceLimitContants.MIN || barSpace > BarSpaceLimitContants.MAX || this._barSpace === barSpace) {
+    if (barSpace < BarSpaceLimitConstants.MIN || barSpace > BarSpaceLimitConstants.MAX || this._barSpace === barSpace) {
       return
     }
     this._barSpace = barSpace
     this._gapBarSpace = this._calcGapBarSpace()
     adjustBeforeFunc?.()
     this.adjustVisibleRange()
-    this._chartStore.getCrosshairStore().recalculate(true)
+    this._chartStore.getTooltipStore().recalculateCrosshair(true)
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 
@@ -236,7 +236,7 @@ export default class TimeScaleStore {
     if (this._totalBarSpace !== totalSpace) {
       this._totalBarSpace = totalSpace
       this.adjustVisibleRange()
-      this._chartStore.getCrosshairStore().recalculate(true)
+      this._chartStore.getTooltipStore().recalculateCrosshair(true)
     }
     return this
   }
@@ -246,7 +246,7 @@ export default class TimeScaleStore {
     this._offsetRightBarCount = distance / this._barSpace
     if (isUpdate ?? false) {
       this.adjustVisibleRange()
-      this._chartStore.getCrosshairStore().recalculate(true)
+      this._chartStore.getTooltipStore().recalculateCrosshair(true)
       this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
     }
     return this
@@ -299,7 +299,7 @@ export default class TimeScaleStore {
     this._chartStore.getActionStore().execute(ActionType.OnScroll)
     this._offsetRightBarCount = this._startScrollOffsetRightBarCount - distanceBarCount
     this.adjustVisibleRange()
-    this._chartStore.getCrosshairStore().recalculate(true)
+    this._chartStore.getTooltipStore().recalculateCrosshair(true)
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 
@@ -330,7 +330,7 @@ export default class TimeScaleStore {
   dataIndexToCoordinate (dataIndex: number): number {
     const dataCount = this._chartStore.getDataList().length
     const deltaFromRight = dataCount + this._offsetRightBarCount - dataIndex
-    return this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace
+    return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
   }
 
   coordinateToDataIndex (x: number): number {
@@ -342,7 +342,7 @@ export default class TimeScaleStore {
       return
     }
     if (coordinate?.x === undefined) {
-      const crosshair = this._chartStore.getCrosshairStore().get()
+      const crosshair = this._chartStore.getTooltipStore().getCrosshair()
       coordinate = { x: crosshair?.x ?? this._totalBarSpace / 2 }
     }
     this._chartStore.getActionStore().execute(ActionType.OnZoom)

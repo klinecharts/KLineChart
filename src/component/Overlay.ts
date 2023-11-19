@@ -20,10 +20,10 @@ import Coordinate from '../common/Coordinate'
 import Bounding from '../common/Bounding'
 import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
-import { OverlayStyle } from '../common/Options'
+import { OverlayStyle } from '../common/Styles'
 import { MouseTouchEvent } from '../common/SyntheticEvent'
 
-import { clone, merge } from '../common/utils/typeChecks'
+import { clone, isNumber, merge } from '../common/utils/typeChecks'
 
 import TimeScaleStore from '../store/TimeScaleStore'
 
@@ -349,7 +349,7 @@ export default abstract class OverlayImp implements Overlay {
       onSelected, onDeselected
     } = overlay
     this.name = name
-    this.totalStep = (totalStep === undefined || totalStep < 2) ? 1 : totalStep
+    this.totalStep = (!isNumber(totalStep) || totalStep < 2) ? 1 : totalStep
     this.lock = lock ?? false
     this.visible = visible ?? true
     this.zLevel = zLevel ?? 0
@@ -359,7 +359,7 @@ export default abstract class OverlayImp implements Overlay {
     this.mode = mode ?? OverlayMode.Normal
     this.modeSensitivity = modeSensitivity ?? 8
     this.extendData = extendData
-    this.styles = styles ?? {}
+    this.styles = clone(styles ?? {})
     this.createPointFigures = createPointFigures ?? null
     this.createXAxisFigures = createXAxisFigures ?? null
     this.createYAxisFigures = createYAxisFigures ?? null

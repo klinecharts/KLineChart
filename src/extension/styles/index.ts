@@ -14,7 +14,7 @@
 
 import Nullable from '../../common/Nullable'
 import DeepPartial from '../../common/DeepPartial'
-import { Styles } from '../../common/Options'
+import { Styles } from '../../common/Styles'
 
 import light from './light'
 import dark from './dark'

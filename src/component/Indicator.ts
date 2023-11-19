@@ -19,13 +19,13 @@ import Bounding from '../common/Bounding'
 import VisibleRange from '../common/VisibleRange'
 import BarSpace from '../common/BarSpace'
 import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, RectTextStyle, TooltipData, TooltipIconStyle, LineStyle, LineType, PolygonType } from '../common/Options'
+import { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipData, TooltipIconStyle, LineStyle, LineType, PolygonType } from '../common/Styles'
 
 import { XAxis } from './XAxis'
 import { YAxis } from './YAxis'
 
 import { formatValue } from '../common/utils/format'
-import { isValid } from '../common/utils/typeChecks'
+import { isValid, merge, clone } from '../common/utils/typeChecks'
 
 import { ArcAttrs } from '../extension/figure/arc'
 import { RectAttrs } from '../extension/figure/rect'
@@ -37,7 +37,7 @@ export enum IndicatorSeries {
   Volume = 'volume'
 }
 
-export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<RectTextStyle> & Partial<{ style: LineType[keyof LineType] | PolygonType[keyof PolygonType] }> & {[key: string]: any }
+export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<TextStyle> & Partial<{ style: LineType[keyof LineType] | PolygonType[keyof PolygonType] }> & {[key: string]: any }
 
 export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineStyle> & Partial<RectAttrs> & Partial<TextAttrs> & { [key: string]: any }
 
@@ -311,7 +311,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     this.visible = visible ?? true
     this.minValue = minValue ?? null
     this.maxValue = maxValue ?? null
-    this.styles = styles ?? null
+    this.styles = clone(styles ?? {})
     this.extendData = extendData
     this.regenerateFigures = regenerateFigures ?? null
     this.createTooltipDataSource = createTooltipDataSource ?? null
@@ -378,8 +378,8 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
   }
 
   setStyles (styles: Nullable<Partial<IndicatorStyle>>): boolean {
-    if (this.styles !== styles) {
-      this.styles = styles
+    if (styles !== null) {
+      merge(this.styles, styles)
       return true
     }
     return false

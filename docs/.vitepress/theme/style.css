@@ -8,37 +8,25 @@
  * -------------------------------------------------------------------------- */
 
  :root {
-  --vp-c-brand: #1677FF;
-  --vp-c-brand-dark: #1677FF;
-  --vp-c-brand-light: #3086ff;
-  --vp-c-brand-lighter: #4995ff;
-  --vp-c-brand-lightest: #afd0ff;
-  /* --vp-c-brand-dark: #535bf2;
-  --vp-c-brand-darker: #454ce1; */
-  --vp-c-brand-dimm: rgba(22, 119, 255, 0.08);
-}
+  --vp-c-indigo-1: #1677FF;
+  --vp-c-indigo-2: #3086ff;
+  --vp-c-indigo-3: #4995ff;
+  --vp-c-indigo-soft: rgb(22, 119, 255, 0.14);
 
-/**
- * Component: Button
- * -------------------------------------------------------------------------- */
+  --vp-code-color: #476582;
 
-:root {
-  --vp-button-brand-border: var(--vp-c-brand-light);
-  /* --vp-button-brand-text: var(--vp-c-white); */
-  --vp-button-brand-bg: var(--vp-c-brand);
-  --vp-button-brand-hover-border: var(--vp-c-brand-light);
-  /* --vp-button-brand-hover-text: var(--vp-c-white); */
-  --vp-button-brand-hover-bg: var(--vp-c-brand-light);
-  --vp-button-brand-active-border: var(--vp-c-brand-light);
-  /* --vp-button-brand-active-text: var(--vp-c-white); */
+  --vp-button-brand-border: var(--vp-c-indigo-2);
+  --vp-button-brand-bg: var(--vp-c-indigo-1);
+  --vp-button-brand-hover-border: var(--vp-c-indigo-2);
+  --vp-button-brand-hover-bg: var(--vp-c-indigo-2);
+  --vp-button-brand-active-border: var(--vp-c-indigo-2);
   --vp-button-brand-active-bg: var(--vp-button-brand-bg);
-}
 
-/**
- * Component: Home
- * -------------------------------------------------------------------------- */
+  --vp-custom-block-font-size: 13px;
+  --vp-custom-block-code-font-size: 12px;
+  --vp-code-line-height: 1.6;
+  --vp-code-font-size: 1em;
 
-:root {
   --vp-home-hero-name-color: transparent;
   --vp-home-hero-name-background: -webkit-linear-gradient(
     145deg,
@@ -54,6 +42,14 @@
   --vp-home-hero-image-filter: blur(40px);
 }
 
+.dark {
+  --vp-code-color: #c9def1;
+}
+
+body {
+  font-size: 14px;
+}
+
 @media (min-width: 640px) {
   :root {
     --vp-home-hero-image-filter: blur(60px);
@@ -66,62 +62,6 @@
   }
 }
 
-/**
- * Component: Custom Block
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-custom-block-tip-border: var(--vp-c-brand);
-  --vp-custom-block-tip-text: var(--vp-c-brand);
-  --vp-custom-block-tip-bg: var(--vp-c-brand-dimm);
-}
-
-.dark {
-  --vp-custom-block-tip-border: var(--vp-c-brand);
-  --vp-custom-block-tip-text: var(--vp-c-brand-lightest);
-  --vp-custom-block-tip-bg: var(--vp-c-brand-dimm);
-}
-
-/**
- * Component: Algolia
- * -------------------------------------------------------------------------- */
-
-/* .DocSearch {
-  --docsearch-primary-color: var(--vp-c-brand) !important;
-} */
-
-/**
- * VitePress: Custom fix
- * -------------------------------------------------------------------------- */
-
-/*
-  Use lighter colors for links in dark mode for a11y.
-  Also specify some classes twice to have higher specificity
-  over scoped class data attribute.
-*/
-/* .dark .vp-doc a,
-.dark .vp-doc a > code,
-.dark .VPNavBarMenuLink.VPNavBarMenuLink:hover,
-.dark .VPNavBarMenuLink.VPNavBarMenuLink.active,
-.dark .link.link:hover,
-.dark .link.link.active,
-.dark .edit-link-button.edit-link-button,
-.dark .pager-link .title {
-  color: var(--vp-c-brand-lighter);
-} */
-
-/* .dark .vp-doc a:hover,
-.dark .vp-doc a > code:hover {
-  color: var(--vp-c-brand-lightest);
-  opacity: 1;
-} */
-
-/* Transition by color instead of opacity */
-/* .dark .vp-doc .custom-block a {
-  transition: color 0.25s;
-} */
-
-
 .home-section {
   border-top: 1px solid var(--vp-c-gutter);
   padding: 60px 24px;
@@ -131,6 +71,27 @@
 .home-section .home-section-content {
   margin: 0 auto;
   max-width: 1152px;
+}
+
+.sample-chart + .vp-code-group {
+  margin-top: 0;
+}
+
+.sample-chart + .vp-code-group .tabs {
+  background-color: transparent;
+  border: solid 1px var(--vp-c-divider);
+  border-bottom: none;
+  border-top-style: dashed;
+  border-radius: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+.sample-chart + .vp-code-group div[class*='language-'] {
+  background-color: transparent;
+  border: solid 1px var(--vp-c-divider);
+  border-top: none;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 @media (min-width: 640px) {

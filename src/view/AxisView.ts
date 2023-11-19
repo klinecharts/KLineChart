@@ -13,7 +13,7 @@
  */
 
 import Bounding from '../common/Bounding'
-import { AxisStyle, Styles } from '../common/Options'
+import { AxisStyle, Styles } from '../common/Styles'
 
 import { LineAttrs } from '../extension/figure/line'
 import { TextAttrs } from '../extension/figure/text'
@@ -22,7 +22,7 @@ import Axis, { AxisTick } from '../component/Axis'
 
 import View from './View'
 
-export default abstract class AxisView<C extends Axis> extends View<C> {
+export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()

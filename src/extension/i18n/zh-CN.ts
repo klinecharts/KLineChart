@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { Locales } from '../../common/Options'
+import { Locales } from '../../Options'
 
 const zhCN: Locales = {
   time: '时间：',
@@ -21,6 +21,7 @@ const zhCN: Locales = {
   low: '低：',
   close: '收：',
   volume: '成交量：',
+  turnover: '成交额：',
   change: '涨幅：'
 }
 

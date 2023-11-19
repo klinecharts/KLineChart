@@ -17,18 +17,14 @@ import XAxisWidget from '../widget/XAxisWidget'
 
 import XAxis from '../component/XAxis'
 
-import Pane from './Pane'
+import DrawPane from './DrawPane'
 
-export default class XAxisPane extends Pane<XAxis> {
-  override getName (): string {
-    return 'xAxis'
-  }
-
+export default class XAxisPane extends DrawPane<XAxis> {
   override createAxisComponent (): XAxis {
     return new XAxis(this)
   }
 
-  override createMainWidget (container: HTMLElement): DrawWidget<XAxis> {
+  override createMainWidget (container: HTMLElement): DrawWidget<DrawPane<XAxis>> {
     return new XAxisWidget(container, this)
   }
 }

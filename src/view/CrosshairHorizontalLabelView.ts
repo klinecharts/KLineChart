@@ -14,7 +14,7 @@
 
 import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
-import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, StateRectTextStyle } from '../common/Options'
+import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, StateTextStyle } from '../common/Styles'
 
 import Axis from '../component/Axis'
 import YAxis from '../component/YAxis'
@@ -34,7 +34,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const pane = widget.getPane()
     const bounding = widget.getBounding()
     const chartStore = widget.getPane().getChart().getChartStore()
-    const crosshair = chartStore.getCrosshairStore().get()
+    const crosshair = chartStore.getTooltipStore().getCrosshair()
     const styles = chartStore.getStyles().crosshair
     if (crosshair.paneId !== undefined && this.compare(crosshair, pane.getId())) {
       if (styles.show) {
@@ -62,7 +62,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     return styles.horizontal
   }
 
-  protected getText (crosshair: Crosshair, chartStore: ChartStore, axis: C): string {
+  protected getText (crosshair: Crosshair, chartStore: ChartStore, axis: Axis): string {
     const yAxis = axis as unknown as YAxis
     const value = axis.convertFromPixel(crosshair.y as number)
     let text: string
@@ -92,7 +92,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     return formatThousands(text, chartStore.getThousandsSeparator())
   }
 
-  protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: C, _styles: StateRectTextStyle): TextAttrs {
+  protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: Axis, _styles: StateTextStyle): TextAttrs {
     const yAxis = axis as unknown as YAxis
     let x: number
     let textAlign: CanvasTextAlign

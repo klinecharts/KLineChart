@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { YAxisType } from '../common/Options'
+import { YAxisType } from '../common/Styles'
 
 import View from './View'
 

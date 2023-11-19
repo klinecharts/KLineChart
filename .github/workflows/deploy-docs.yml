@@ -1,10 +1,14 @@
 name: Deploy docs
 
+# on:
+#   push:
+#     branches: [ "main" ]
+#     paths:
+#       - 'docs/**'
+
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - 'docs/**'
+  release:
+    types: [created]
 
 jobs:
   build:

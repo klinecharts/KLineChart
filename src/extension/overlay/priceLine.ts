@@ -32,7 +32,12 @@ const priceLine: OverlayTemplate = {
       {
         type: 'text',
         ignoreEvent: true,
-        attrs: { x: coordinates[0].x, y: coordinates[0].y, text: formatThousands(value.toFixed(precision.price), thousandsSeparator), baseline: 'bottom' }
+        attrs: {
+          x: coordinates[0].x,
+          y: coordinates[0].y,
+          text: formatThousands(value.toFixed(precision.price), thousandsSeparator),
+          baseline: 'bottom'
+        }
       }
     ]
   }

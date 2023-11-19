@@ -12,11 +12,8 @@
  * limitations under the License.
  */
 
-import DeepPartial from './DeepPartial'
 import Nullable from './Nullable'
 import KLineData from './KLineData'
-
-import { formatDate, formatBigNumber } from './utils/format'
 
 export interface Margin {
   marginLeft: number
@@ -85,7 +82,7 @@ export interface TextStyle extends Padding {
   borderSize: number
   borderColor: string
   borderRadius: number
-  backgroundColor: string
+  backgroundColor: string | CanvasGradient
 }
 
 /**
@@ -766,14 +763,14 @@ function getDefaultOverlayStyle (): OverlayStyle {
       weight: 'normal',
       borderStyle: LineType.Solid,
       borderDashedValue: [2, 2],
-      borderSize: 0,
+      borderSize: 1,
       borderRadius: 2,
       borderColor: '#1677FF',
-      paddingLeft: 0,
-      paddingRight: 0,
-      paddingTop: 0,
-      paddingBottom: 0,
-      backgroundColor: 'transparent'
+      paddingLeft: 4,
+      paddingRight: 4,
+      paddingTop: 4,
+      paddingBottom: 4,
+      backgroundColor: '#1677FF'
     },
     rectText: {
       style: PolygonType.Fill,
@@ -833,47 +830,4 @@ export function getDefaultStyles (): Styles {
     crosshair: getDefaultCrosshairStyle(),
     overlay: getDefaultOverlayStyle()
   }
-}
-
-export enum FormatDateType {
-  Tooltip,
-  Crosshair,
-  XAxis
-}
-
-export type FormatDate = (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: FormatDateType) => string
-
-export type FormatBigNumber = (value: string | number) => string
-
-export interface CustomApi {
-  formatDate: FormatDate
-  formatBigNumber: FormatBigNumber
-}
-
-export function getDefaultCustomApi (): CustomApi {
-  return {
-    formatDate,
-    formatBigNumber
-  }
-}
-
-export const defaultLocale = 'en-US'
-
-export interface Locales {
-  time: string
-  open: string
-  high: string
-  low: string
-  close: string
-  volume: string
-  change: string
-  [key: string]: string
-}
-
-export interface Options {
-  locale?: string
-  timezone?: string
-  styles?: string | DeepPartial<Styles>
-  customApi?: Partial<CustomApi>
-  thousandsSeparator?: string
 }

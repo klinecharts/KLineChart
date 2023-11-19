@@ -13,7 +13,7 @@
  */
 
 import DeepPartial from '../../common/DeepPartial'
-import { Styles } from '../../common/Options'
+import { Styles } from '../../common/Styles'
 
 const light: DeepPartial<Styles> = {
   grid: {

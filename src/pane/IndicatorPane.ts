@@ -14,33 +14,24 @@
 
 import Nullable from '../common/Nullable'
 
-import SeparatorWidget from '../widget/SeparatorWidget'
 import DrawWidget from '../widget/DrawWidget'
 import IndicatorWidget from '../widget/IndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 
 import YAxis from '../component/YAxis'
 
-import Pane from './Pane'
+import DrawPane from './DrawPane'
 
-export default class IndicatorPane extends Pane<YAxis> {
-  override getName (): string {
-    return 'indicator'
-  }
-
+export default class IndicatorPane extends DrawPane<YAxis> {
   override createAxisComponent (): YAxis {
     return new YAxis(this)
   }
 
-  override createMainWidget (container: HTMLElement): DrawWidget<YAxis> {
+  override createMainWidget (container: HTMLElement): DrawWidget<DrawPane<YAxis>> {
     return new IndicatorWidget(container, this)
   }
 
-  override createSeparatorWidget (container: HTMLElement): Nullable<SeparatorWidget> {
-    return new SeparatorWidget(container, this)
-  }
-
-  override creatYAxisWidget (container: HTMLElement): Nullable<YAxisWidget> {
+  override createYAxisWidget (container: HTMLElement): Nullable<YAxisWidget> {
     return new YAxisWidget(container, this)
   }
 }

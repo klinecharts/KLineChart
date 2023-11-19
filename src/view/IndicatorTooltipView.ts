@@ -16,35 +16,34 @@ import Nullable from '../common/Nullable'
 import Bounding from '../common/Bounding'
 import KLineData from '../common/KLineData'
 import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, TooltipStyle, TooltipIconStyle, TooltipTextStyle, TooltipData, TooltipShowRule, TooltipDataChild, TooltipIconPosition, CustomApi } from '../common/Options'
+import { IndicatorStyle, TooltipStyle, TooltipIconStyle, TooltipTextStyle, TooltipData, TooltipShowRule, TooltipDataChild, TooltipIconPosition } from '../common/Styles'
 import { ActionType } from '../common/Action'
 
-import XAxis from '../component/XAxis'
+import { CustomApi } from '../Options'
+
 import YAxis from '../component/YAxis'
 
 import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
-
-import { PaneIdConstants } from '../pane/Pane'
 
 import { formatPrecision, formatThousands } from '../common/utils/format'
 import { isValid, isObject } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 
-import { TooltipIconInfo } from '../store/TooltipStore'
+import { TooltipIcon } from '../store/TooltipStore'
 
 import View from './View'
 
 export default class IndicatorTooltipView extends View<YAxis> {
-  private readonly _boundIconClickEvent = (currentIconInfo: TooltipIconInfo, iconId: string) => () => {
+  private readonly _boundIconClickEvent = (currentIcon: TooltipIcon, iconId: string) => () => {
     const pane = this.getWidget().getPane()
-    pane.getChart().getChartStore().getActionStore().execute(ActionType.OnTooltipIconClick, { ...currentIconInfo, iconId })
+    pane.getChart().getChartStore().getActionStore().execute(ActionType.OnTooltipIconClick, { ...currentIcon, iconId })
     return true
   }
 
-  private readonly _boundIconMouseMoveEvent = (currentIconInfo: TooltipIconInfo, iconId: string) => () => {
+  private readonly _boundIconMouseMoveEvent = (currentIconInfo: TooltipIcon, iconId: string) => () => {
     const pane = this.getWidget().getPane()
     const tooltipStore = pane.getChart().getChartStore().getTooltipStore()
-    tooltipStore.setActiveIconInfo({ ...currentIconInfo, iconId })
+    tooltipStore.setActiveIcon({ ...currentIconInfo, iconId })
     return true
   }
 
@@ -52,16 +51,16 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
-    const crosshair = chartStore.getCrosshairStore().get()
+    const crosshair = chartStore.getTooltipStore().getCrosshair()
     if (crosshair.kLineData !== undefined) {
       const bounding = widget.getBounding()
       const customApi = chartStore.getCustomApi()
       const thousandsSeparator = chartStore.getThousandsSeparator()
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-      const activeIconInfo = chartStore.getTooltipStore().getActiveIconInfo()
+      const activeIcon = chartStore.getTooltipStore().getActiveIcon()
       const defaultStyles = chartStore.getStyles().indicator
       this.drawIndicatorTooltip(
-        ctx, pane.getId(), chartStore.getDataList(), crosshair, activeIconInfo, indicators, customApi, thousandsSeparator, bounding, defaultStyles
+        ctx, pane.getId(), chartStore.getDataList(), crosshair, activeIcon, indicators, customApi, thousandsSeparator, bounding, defaultStyles
       )
     }
   }
@@ -71,7 +70,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     paneId: string,
     dataList: KLineData[],
     crosshair: Crosshair,
-    activeTooltipIconInfo: Nullable<TooltipIconInfo>,
+    activeTooltipIconInfo: Nullable<TooltipIcon>,
     indicators: Map<string, IndicatorImp>,
     customApi: CustomApi,
     formatThousands: string,
@@ -159,8 +158,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
   protected drawStandardTooltipIcons (
     ctx: CanvasRenderingContext2D,
     bounding: Bounding,
-    currentIconInfo: TooltipIconInfo,
-    activeIconInfo: Nullable<TooltipIconInfo>,
+    currentIcon: TooltipIcon,
+    activeIcon: Nullable<TooltipIcon>,
     icons: TooltipIconStyle[],
     startX: number,
     startY: number,
@@ -196,7 +195,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           color, activeColor, size, fontFamily, icon: text, backgroundColor, activeBackgroundColor
         } = icon
         x += marginLeft
-        const active = activeIconInfo?.paneId === currentIconInfo.paneId && activeIconInfo?.indicatorName === currentIconInfo.indicatorName && activeIconInfo?.iconId === icon.id
+        const active = activeIcon?.paneId === currentIcon.paneId && activeIcon?.indicatorName === currentIcon.indicatorName && activeIcon?.iconId === icon.id
         this.createFigure(
           'text',
           { text, x, y: y + marginTop },
@@ -211,8 +210,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
             backgroundColor: active ? activeBackgroundColor : backgroundColor
           },
           {
-            mouseClickEvent: this._boundIconClickEvent(currentIconInfo, icon.id),
-            mouseMoveEvent: this._boundIconMouseMoveEvent(currentIconInfo, icon.id)
+            mouseClickEvent: this._boundIconClickEvent(currentIcon, icon.id),
+            mouseMoveEvent: this._boundIconMouseMoveEvent(currentIcon, icon.id)
           }
         )?.draw(ctx)
         x += (paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
@@ -331,7 +330,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
         bounding: widget.getBounding(),
         crosshair,
         defaultStyles: styles,
-        xAxis: pane.getChart().getPaneById(PaneIdConstants.XAXIS)?.getAxisComponent() as XAxis,
+        xAxis: pane.getChart().getXAxisPane().getAxisComponent(),
         yAxis: pane.getAxisComponent()
       })
       if (customName !== undefined && tooltipStyles.showName) {

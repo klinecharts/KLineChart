@@ -22,14 +22,12 @@ export function merge (target: any, source: any): void {
       const sourceProp = source[key]
       if (
         isObject(sourceProp) &&
-        isObject(targetProp) &&
-        !isArray(sourceProp) &&
-        !isArray(targetProp)
+        isObject(targetProp)
       ) {
         merge(targetProp, sourceProp)
       } else {
         if (isValid(source[key])) {
-          target[key] = source[key]
+          target[key] = clone(source[key])
         }
       }
     }
@@ -37,7 +35,7 @@ export function merge (target: any, source: any): void {
 }
 
 export function clone<T> (target: T): T {
-  if (!isObject(target) || !isArray(target)) {
+  if (!isObject(target)) {
     return target
   }
 
@@ -69,7 +67,7 @@ export function isFunction<T = (...args: any) => any> (value: any): value is T {
 }
 
 export function isObject (value: any): value is object {
-  return (typeof value === 'object')
+  return (typeof value === 'object') && isValid(value)
 }
 
 export function isNumber (value: any): value is number {

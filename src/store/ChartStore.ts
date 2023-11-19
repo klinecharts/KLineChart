@@ -15,13 +15,14 @@
 import KLineData from '../common/KLineData'
 import Precision from '../common/Precision'
 import VisibleData from '../common/VisibleData'
-import { getDefaultStyles, Styles, getDefaultCustomApi, CustomApi, defaultLocale, Options } from '../common/Options'
+import { getDefaultStyles, Styles } from '../common/Styles'
+
+import { getDefaultCustomApi, CustomApi, defaultLocale, Options } from '../Options'
 
 import { isArray, isString, merge } from '../common/utils/typeChecks'
 
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
-import CrosshairStore from './CrosshairStore'
 import TooltipStore from './TooltipStore'
 import OverlayStore from './OverlayStore'
 import ActionStore from './ActionStore'
@@ -82,14 +83,9 @@ export default class ChartStore {
   private readonly _overlayStore = new OverlayStore(this)
 
   /**
-   * Crosshair store
-   */
-  private readonly _crosshairStore = new CrosshairStore(this)
-
-  /**
    * Tooltip store
    */
-  private readonly _tooltipStore = new TooltipStore()
+  private readonly _tooltipStore = new TooltipStore(this)
 
   /**
    * Chart action store
@@ -208,13 +204,14 @@ export default class ChartStore {
         this.adjustVisibleDataList()
       }
     }
-    this._crosshairStore.recalculate(true)
+    this._tooltipStore.recalculateCrosshair(true)
   }
 
-  clearDataList (): void {
+  clear (): void {
     this._dataList = []
     this._visibleDataList = []
     this._timeScaleStore.clear()
+    this._tooltipStore.clear()
   }
 
   getTimeScaleStore (): TimeScaleStore {
@@ -227,10 +224,6 @@ export default class ChartStore {
 
   getOverlayStore (): OverlayStore {
     return this._overlayStore
-  }
-
-  getCrosshairStore (): CrosshairStore {
-    return this._crosshairStore
   }
 
   getTooltipStore (): TooltipStore {

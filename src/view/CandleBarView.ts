@@ -17,7 +17,7 @@ import VisibleData from '../common/VisibleData'
 import BarSpace from '../common/BarSpace'
 import { EventHandler } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
-import { CandleType, CandleBarColor, RectStyle, PolygonType } from '../common/Options'
+import { CandleType, CandleBarColor, RectStyle, PolygonType } from '../common/Styles'
 
 import ChartStore from '../store/ChartStore'
 
@@ -28,7 +28,7 @@ import { RectAttrs } from '../extension/figure/rect'
 
 import ChildrenView from './ChildrenView'
 
-import { PaneIdConstants } from '../pane/Pane'
+import { PaneIdConstants } from '../pane/types'
 
 export interface CandleBarOptions {
   type: Exclude<CandleType, CandleType.Area>

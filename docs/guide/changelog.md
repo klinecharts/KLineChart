@@ -1,5 +1,41 @@
 # 📠 更新日志
 
+## 9.6.0
+`2023-11-14`
++ 🖋️ 重构窗口之间的分割线模块。
++ 🆕 图表方法`init(ds, options)`，参数`options`新增`layout`。
++ 🆕 实例方法`createIndicator(value, isStack, paneOptions, callback)`，参数`paneOptions`新增`position`。
++ 🆕 样式`candle.tooltip.custom`新增`turnover`字符串模版。
++ 💄 优化样式`overlay.text`配置。
++ 💄 优化`utils.clone`和`utils.merge`实现。
++ 🐞 修复多个覆盖物样式显示不对问题。
++ 🐞 修复多个指标样式显示不对问题。
+
+
+## 9.5.4
+`2023-09-22`
++ 🐞 修复样式`candle.type`是`area`时，最新价线不显示问题。
++ 🐞 修复样式`crosshair.vertical.text.paddingLeft`显示不对问题。
+
+## 9.5.3
+`2023-09-19`
++ 🐞 修复ts下引入问题。
+
+## 9.5.2
+`2023-09-18`
++ 💄 优化基础图形`text`。
++ 💄 优化内置覆盖物`simpleAnnotation`和`simpleTag`。
++ 💄 优化技术指标自由样式，支持增量。
++ 🐞 修复typescript声明问题。
+
+## 9.5.1
+`2023-08-14`
++ 🆕 图表方法新增`getOverlayClass`。
++ 🆕 样式配置`candle.tooltip.custom`新增内置涨跌幅支持。
++ 💄 优化基础图形`rect`事件响应。
++ ↩️ 分割线事件响应回退
+
+
 ## 9.5.0
 `2023-06-15`
 + 🆕 `Overlay`新增事件`onDoubleClick`，新增属性`modeSensitivity`。

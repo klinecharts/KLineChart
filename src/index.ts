@@ -25,9 +25,11 @@
  */
 
 import {
-  Options, LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
-  CandleType, YAxisPosition, YAxisType, FormatDateType
-} from './common/Options'
+  LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
+  CandleType, YAxisPosition, YAxisType
+} from './common/Styles'
+
+import { Options, FormatDateType } from './Options'
 import ChartImp, { Chart, DomPosition } from './Chart'
 
 import { ActionType } from './common/Action'

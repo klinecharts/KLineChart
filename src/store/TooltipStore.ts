@@ -13,21 +13,92 @@
  */
 
 import Nullable from '../common/Nullable'
+import KLineData from '../common/KLineData'
+import Crosshair from '../common/Crosshair'
+import { UpdateLevel } from '../common/Updater'
 
-export interface TooltipIconInfo {
+import ChartStore from './ChartStore'
+
+export interface TooltipIcon {
   paneId: string
   indicatorName: string
   iconId: string
 }
 
 export default class TooltipStore {
-  private _activeIconInfo: Nullable<TooltipIconInfo> = null
+  private readonly _chartStore: ChartStore
+  private _crosshair: Crosshair = {}
+  private _activeIcon: Nullable<TooltipIcon> = null
 
-  setActiveIconInfo (info?: TooltipIconInfo): void {
-    this._activeIconInfo = info ?? null
+  constructor (chartStore: ChartStore) {
+    this._chartStore = chartStore
   }
 
-  getActiveIconInfo (): Nullable<TooltipIconInfo> {
-    return this._activeIconInfo
+  /**
+    * 设置十字光标点信息
+    * @param crosshair
+    * @param notInvalidate
+    */
+  setCrosshair (crosshair?: Crosshair, notInvalidate?: boolean): void {
+    const dataList = this._chartStore.getDataList()
+    const cr = crosshair ?? {}
+    let realDataIndex: number
+    let dataIndex: number
+    if (cr.x !== undefined) {
+      realDataIndex = this._chartStore.getTimeScaleStore().coordinateToDataIndex(cr.x)
+      if (realDataIndex < 0) {
+        dataIndex = 0
+      } else if (realDataIndex > dataList.length - 1) {
+        dataIndex = dataList.length - 1
+      } else {
+        dataIndex = realDataIndex
+      }
+    } else {
+      realDataIndex = dataList.length - 1
+      dataIndex = realDataIndex
+    }
+    const kLineData: Nullable<KLineData> = dataList[dataIndex]
+    const realX = this._chartStore.getTimeScaleStore().dataIndexToCoordinate(realDataIndex)
+    const prevCrosshair = { x: this._crosshair.x, y: this._crosshair.y, paneId: this._crosshair.paneId }
+    this._crosshair = { ...cr, realX, kLineData, realDataIndex, dataIndex }
+    if (
+      prevCrosshair.x !== cr.x || prevCrosshair.y !== cr.y || prevCrosshair.paneId !== cr.paneId
+    ) {
+      if (kLineData !== null) {
+        this._chartStore.getChart().crosshairChange(this._crosshair)
+      }
+      if (!(notInvalidate ?? false)) {
+        this._chartStore.getChart().updatePane(UpdateLevel.Overlay)
+      }
+    }
+  }
+
+  /**
+   * 重新计算十字光标
+   * @param notInvalidate
+   */
+  recalculateCrosshair (notInvalidate: boolean): void {
+    this.setCrosshair(this._crosshair, notInvalidate)
+  }
+
+  /**
+   * 获取crosshair信息
+   * @returns
+   */
+  getCrosshair (): Crosshair {
+    return this._crosshair
+  }
+
+  setActiveIcon (icon?: TooltipIcon): void {
+    this._activeIcon = icon ?? null
+  }
+
+  getActiveIcon (): Nullable<TooltipIcon> {
+    return this._activeIcon
+  }
+
+  clear (): void {
+    this.setCrosshair({}, true)
+    this.setActiveIcon()
   }
 }
