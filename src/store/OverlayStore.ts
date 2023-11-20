@@ -50,8 +50,6 @@ export default class OverlayStore {
 
   private _instances = new Map<string, OverlayImp[]>()
 
-  private readonly _counter = new Map<string, number>()
-
   /**
    * Overlay information in painting
    */
@@ -203,10 +201,10 @@ export default class OverlayStore {
 
   private _sort (paneId?: string): void {
     if (paneId !== undefined) {
-      this._instances.get(paneId)?.sort((o1, o2) => o1.defaultZLevel - o2.defaultZLevel).sort((o1, o2) => o1.zLevel - o2.zLevel)
+      this._instances.get(paneId)?.sort((o1, o2) => o1.zLevel - o2.zLevel).sort((o1, o2) => o1.zLevel - o2.zLevel)
     } else {
       this._instances.forEach(paneInstances => {
-        paneInstances.sort((o1, o2) => o1.defaultZLevel - o2.defaultZLevel).sort((o1, o2) => o1.zLevel - o2.zLevel)
+        paneInstances.sort((o1, o2) => o1.zLevel - o2.zLevel).sort((o1, o2) => o1.zLevel - o2.zLevel)
       })
     }
   }
@@ -218,9 +216,6 @@ export default class OverlayStore {
         const OverlayClazz = getOverlayInnerClass(overlay.name)
         if (OverlayClazz !== null) {
           const instance = new OverlayClazz()
-          const count = (this._counter.get(paneId) ?? 0) + 1
-          this._counter.set(paneId, count)
-          instance.setDefaultZLevel(count)
           instance.setPaneId(paneId)
           const groupId = overlay.groupId ?? id
           overlay.id = id
@@ -431,7 +426,6 @@ export default class OverlayStore {
         let sortFlag = false
         if (instance !== null) {
           sortFlag = true
-          instance.resetZLevel()
           if (isFunction(instance.onMouseLeave)) {
             instance.onMouseLeave({ overlay: instance, figureKey, figureIndex, ...event })
             ignoreUpdateFlag = true

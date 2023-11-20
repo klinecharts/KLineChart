@@ -133,11 +133,6 @@ export interface Overlay {
   visible: boolean
 
   /**
-   * Default draw level
-   */
-  defaultZLevel: number
-
-  /**
    * Draw level
    */
   zLevel: number
@@ -278,8 +273,8 @@ export interface Overlay {
   onDeselected: Nullable<OverlayEventCallback>
 }
 
-export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' | 'paneId' | 'defaultZLevel' | 'points' | 'currentStep'>, 'name'>
-export type OverlayCreate = ExcludePickPartial<Omit<Overlay, 'paneId' | 'currentStep' | 'totalStep' | 'defaultZLevel' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
+export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' | 'paneId' | 'points' | 'currentStep'>, 'name'>
+export type OverlayCreate = ExcludePickPartial<Omit<Overlay, 'paneId' | 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
 export type OverlayRemove = Partial<Pick<Overlay, 'id' | 'groupId' | 'name'>>
 export type OverlayInnerConstructor = new () => OverlayImp
 export type OverlayConstructor = new () => Overlay
@@ -306,7 +301,6 @@ export default abstract class OverlayImp implements Overlay {
   lock: boolean
   visible: boolean
   zLevel: number
-  defaultZLevel: number
   mode: OverlayMode
   modeSensitivity: number
   points: Array<Partial<Point>> = []
@@ -397,14 +391,6 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setDefaultZLevel (defaultZLevel: number): boolean {
-    if (this.defaultZLevel === undefined) {
-      this.defaultZLevel = defaultZLevel
-      return true
-    }
-    return false
-  }
-
   setPaneId (paneId: string): void {
     this.paneId = paneId
   }
@@ -476,10 +462,6 @@ export default abstract class OverlayImp implements Overlay {
       return true
     }
     return false
-  }
-
-  resetZLevel (): void {
-    this.zLevel = this.defaultZLevel
   }
 
   setZLevel (zLevel: number): boolean {
