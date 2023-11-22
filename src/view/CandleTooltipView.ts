@@ -181,7 +181,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
   private _drawRectTooltip (
     ctx: CanvasRenderingContext2D,
     dataList: KLineData[],
-    indicators: Map<string, Indicator>,
+    indicators: Indicator[],
     bounding: Bounding,
     yAxisBounding: Bounding,
     crosshair: Crosshair,

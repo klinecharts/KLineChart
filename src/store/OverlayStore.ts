@@ -15,7 +15,7 @@
 import Nullable from '../common/Nullable'
 import { UpdateLevel } from '../common/Updater'
 import { MouseTouchEvent } from '../common/SyntheticEvent'
-import { isFunction, isValid, isString, isBoolean } from '../common/utils/typeChecks'
+import { isFunction, isValid, isString, isBoolean, isNumber, isArray } from '../common/utils/typeChecks'
 import { createId } from '../common/utils/id'
 
 import OverlayImp, { OVERLAY_ID_PREFIX, OVERLAY_ACTIVE_Z_LEVEL, OverlayCreate, OverlayRemove } from '../component/Overlay'
@@ -107,79 +107,51 @@ export default class OverlayStore {
     } = overlay
     let updateFlag = false
     let sortFlag = false
-    if (id !== undefined) {
+    if (isString(id)) {
       instance.setId(id)
     }
-    if (groupId !== undefined) {
+    if (isString(groupId)) {
       instance.setGroupId(groupId)
     }
-    if (points !== undefined && instance.setPoints(points)) {
+    if (isArray(points) && instance.setPoints(points)) {
       updateFlag = true
     }
-    if (styles !== undefined && instance.setStyles(styles)) {
+    if (isValid(styles) && instance.setStyles(styles)) {
       updateFlag = true
     }
-    if (lock !== undefined) {
+    if (isBoolean(lock)) {
       instance.setLock(lock)
     }
-    if (visible !== undefined && instance.setVisible(visible)) {
+    if (isBoolean(visible) && instance.setVisible(visible)) {
       updateFlag = true
     }
-    if (zLevel !== undefined && instance.setZLevel(zLevel)) {
+    if (isNumber(zLevel) && instance.setZLevel(zLevel)) {
       updateFlag = true
       sortFlag = true
     }
-    if (mode !== undefined) {
+    if (isValid(mode)) {
       instance.setMode(mode)
     }
-    if (modeSensitivity !== undefined) {
+    if (isNumber(modeSensitivity)) {
       instance.setModeSensitivity(modeSensitivity)
     }
-    if (extendData !== undefined && instance.setExtendData(extendData)) {
+    if (instance.setExtendData(extendData)) {
       updateFlag = true
     }
-    if (onDrawStart !== undefined) {
-      instance.setOnDrawStartCallback(onDrawStart)
-    }
-    if (onDrawing !== undefined) {
-      instance.setOnDrawingCallback(onDrawing)
-    }
-    if (onDrawEnd !== undefined) {
-      instance.setOnDrawEndCallback(onDrawEnd)
-    }
-    if (onClick !== undefined) {
-      instance.setOnClickCallback(onClick)
-    }
-    if (onDoubleClick !== undefined) {
-      instance.setOnDoubleClickCallback(onDoubleClick)
-    }
-    if (onRightClick !== undefined) {
-      instance.setOnRightClickCallback(onRightClick)
-    }
-    if (onPressedMoveStart !== undefined) {
-      instance.setOnPressedMoveStartCallback(onPressedMoveStart)
-    }
-    if (onPressedMoving !== undefined) {
-      instance.setOnPressedMovingCallback(onPressedMoving)
-    }
-    if (onPressedMoveEnd !== undefined) {
-      instance.setOnPressedMoveEndCallback(onPressedMoveEnd)
-    }
-    if (onMouseEnter !== undefined) {
-      instance.setOnMouseEnterCallback(onMouseEnter)
-    }
-    if (onMouseLeave !== undefined) {
-      instance.setOnMouseLeaveCallback(onMouseLeave)
-    }
-    if (onRemoved !== undefined) {
-      instance.setOnRemovedCallback(onRemoved)
-    }
-    if (onSelected !== undefined) {
-      instance.setOnSelectedCallback(onSelected)
-    }
-    if (onDeselected !== undefined) {
-      instance.setOnDeselectedCallback(onDeselected)
-    }
+    instance.setOnDrawStartCallback(onDrawStart ?? null)
+    instance.setOnDrawingCallback(onDrawing ?? null)
+    instance.setOnDrawEndCallback(onDrawEnd ?? null)
+    instance.setOnClickCallback(onClick ?? null)
+    instance.setOnDoubleClickCallback(onDoubleClick ?? null)
+    instance.setOnRightClickCallback(onRightClick ?? null)
+    instance.setOnPressedMoveStartCallback(onPressedMoveStart ?? null)
+    instance.setOnPressedMovingCallback(onPressedMoving ?? null)
+    instance.setOnPressedMoveEndCallback(onPressedMoveEnd ?? null)
+    instance.setOnMouseEnterCallback(onMouseEnter ?? null)
+    instance.setOnMouseLeaveCallback(onMouseLeave ?? null)
+    instance.setOnRemovedCallback(onRemoved ?? null)
+    instance.setOnSelectedCallback(onSelected ?? null)
+    instance.setOnDeselectedCallback(onDeselected ?? null)
     return [updateFlag, sortFlag]
   }
 
@@ -201,10 +173,10 @@ export default class OverlayStore {
 
   private _sort (paneId?: string): void {
     if (isString(paneId)) {
-      this._instances.get(paneId)?.sort((o1, o2) => o1.zLevel - o2.zLevel).sort((o1, o2) => o1.zLevel - o2.zLevel)
+      this._instances.get(paneId)?.sort((o1, o2) => o1.zLevel - o2.zLevel)
     } else {
       this._instances.forEach(paneInstances => {
-        paneInstances.sort((o1, o2) => o1.zLevel - o2.zLevel).sort((o1, o2) => o1.zLevel - o2.zLevel)
+        paneInstances.sort((o1, o2) => o1.zLevel - o2.zLevel)
       })
     }
   }

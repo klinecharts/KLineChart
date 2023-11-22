@@ -150,6 +150,11 @@ export interface Indicator<D = any> {
   visible: boolean
 
   /**
+   * Z index
+   */
+  zLevel: number
+
+  /**
    * Extend data
    */
   extendData: any
@@ -279,6 +284,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
   shouldOhlc: boolean
   shouldFormatBigNumber: boolean
   visible: boolean
+  zLevel: number
   extendData: any
   series: IndicatorSeries
   figures: Array<IndicatorFigure<D>>
@@ -296,7 +302,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
   constructor (indicator: IndicatorTemplate) {
     const {
       name, shortName, series, calcParams, figures, precision,
-      shouldOhlc, shouldFormatBigNumber, visible,
+      shouldOhlc, shouldFormatBigNumber, visible, zLevel,
       minValue, maxValue, styles, extendData,
       regenerateFigures, createTooltipDataSource, draw
     } = indicator
@@ -309,6 +315,7 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     this.shouldOhlc = shouldOhlc ?? false
     this.shouldFormatBigNumber = shouldFormatBigNumber ?? false
     this.visible = visible ?? true
+    this.zLevel = zLevel ?? 0
     this.minValue = minValue ?? null
     this.maxValue = maxValue ?? null
     this.styles = clone(styles ?? {})
@@ -377,12 +384,17 @@ export default abstract class IndicatorImp<D = any> implements Indicator<D> {
     return false
   }
 
-  setStyles (styles: Nullable<Partial<IndicatorStyle>>): boolean {
-    if (styles !== null) {
-      merge(this.styles, styles)
+  setZLevel (zLevel: number): boolean {
+    if (this.zLevel !== zLevel) {
+      this.zLevel = zLevel
       return true
     }
     return false
+  }
+
+  setStyles (styles: Partial<IndicatorStyle>): boolean {
+    merge(this.styles, styles)
+    return true
   }
 
   setExtendData (extendData: any): boolean {

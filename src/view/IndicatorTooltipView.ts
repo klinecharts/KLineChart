@@ -70,7 +70,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     dataList: KLineData[],
     crosshair: Crosshair,
     activeTooltipIconInfo: Nullable<TooltipIcon>,
-    indicators: Map<string, IndicatorImp>,
+    indicators: IndicatorImp[],
     customApi: CustomApi,
     formatThousands: string,
     bounding: Bounding,

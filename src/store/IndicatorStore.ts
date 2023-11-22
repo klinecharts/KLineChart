@@ -14,7 +14,7 @@
 
 import Nullable from '../common/Nullable'
 import Precision from '../common/Precision'
-import { isValid } from '../common/utils/typeChecks'
+import { isValid, isString, isArray, isNumber, isBoolean, isFunction } from '../common/utils/typeChecks'
 
 import ChartStore from './ChartStore'
 
@@ -23,113 +23,133 @@ import { getIndicatorClass } from '../extension/indicator/index'
 
 export default class IndicatorStore {
   private readonly _chartStore: ChartStore
-  private readonly _instances: Map<string, Map<string, IndicatorImp>> = new Map()
+  private readonly _instances: Map<string, IndicatorImp[]> = new Map()
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
   }
 
-  private _overrideInstance (instance: IndicatorImp, indicator: Partial<Indicator>): boolean[] {
+  private _overrideInstance (instance: IndicatorImp, indicator: Partial<Indicator>): [boolean, boolean, boolean] {
     const {
       shortName, series, calcParams, precision, figures, minValue, maxValue,
-      shouldOhlc, shouldFormatBigNumber, visible, styles, extendData,
+      shouldOhlc, shouldFormatBigNumber, visible, zLevel, styles, extendData,
       regenerateFigures, createTooltipDataSource, draw, calc
     } = indicator
     let updateFlag = false
-    if (shortName !== undefined && instance.setShortName(shortName)) {
+    if (isString(shortName) && instance.setShortName(shortName)) {
       updateFlag = true
     }
-    if (series !== undefined && instance.setSeries(series)) {
+    if (isValid(series) && instance.setSeries(series)) {
       updateFlag = true
     }
     let calcFlag = false
-    if (calcParams !== undefined && instance.setCalcParams(calcParams)) {
+    if (isArray(calcParams) && instance.setCalcParams(calcParams)) {
       updateFlag = true
       calcFlag = true
     }
-    if (figures !== undefined && instance.setFigures(figures)) {
+    if (isArray(figures) && instance.setFigures(figures)) {
       updateFlag = true
       calcFlag = true
     }
-    if (minValue !== undefined && instance.setMinValue(minValue)) {
+    if (instance.setMinValue(minValue ?? null)) {
       updateFlag = true
     }
-    if (maxValue !== undefined && instance.setMinValue(maxValue)) {
+    if (instance.setMinValue(maxValue ?? null)) {
       updateFlag = true
     }
-    if (precision !== undefined && instance.setPrecision(precision)) {
+    if (isNumber(precision) && instance.setPrecision(precision)) {
       updateFlag = true
     }
-    if (shouldOhlc !== undefined && instance.setShouldOhlc(shouldOhlc)) {
+    if (isBoolean(shouldOhlc) && instance.setShouldOhlc(shouldOhlc)) {
       updateFlag = true
     }
-    if (shouldFormatBigNumber !== undefined && instance.setShouldFormatBigNumber(shouldFormatBigNumber)) {
+    if (isBoolean(shouldFormatBigNumber) && instance.setShouldFormatBigNumber(shouldFormatBigNumber)) {
       updateFlag = true
     }
-    if (visible !== undefined && instance.setVisible(visible)) {
+    if (isBoolean(visible) && instance.setVisible(visible)) {
       updateFlag = true
     }
-    if (styles !== undefined && instance.setStyles(styles)) {
+    let sortFlag = false
+    if (isNumber(zLevel) && instance.setZLevel(zLevel)) {
+      updateFlag = true
+      sortFlag = true
+    }
+    if (isValid(styles) && instance.setStyles(styles)) {
       updateFlag = true
     }
-    if (extendData !== undefined && instance.setExtendData(extendData)) {
+    if (instance.setExtendData(extendData)) {
       updateFlag = true
       calcFlag = true
     }
-    if (regenerateFigures !== undefined && instance.setRegenerateFigures(regenerateFigures)) {
+    if (instance.setRegenerateFigures(regenerateFigures ?? null)) {
       updateFlag = true
     }
-    if (createTooltipDataSource !== undefined && instance.setCreateTooltipDataSource(createTooltipDataSource)) {
+    if (instance.setCreateTooltipDataSource(createTooltipDataSource ?? null)) {
       updateFlag = true
     }
-    if (draw !== undefined && instance.setDraw(draw)) {
+    if (instance.setDraw(draw ?? null)) {
       updateFlag = true
     }
-    if (calc !== undefined) {
+    if (isFunction(calc)) {
       instance.calc = calc
       calcFlag = true
     }
-    return [updateFlag, calcFlag]
+    return [updateFlag, calcFlag, sortFlag]
+  }
+
+  private _sort (paneId?: string): void {
+    if (isString(paneId)) {
+      this._instances.get(paneId)?.sort((i1, i2) => i1.zLevel - i2.zLevel)
+    } else {
+      this._instances.forEach(paneInstances => {
+        paneInstances.sort((i1, i2) => i1.zLevel - i2.zLevel)
+      })
+    }
   }
 
   async addInstance (indicator: IndicatorCreate, paneId: string, isStack: boolean): Promise<boolean> {
     const { name } = indicator
     let paneInstances = this._instances.get(paneId)
-    if (paneInstances?.has(name) ?? false) {
-      return await Promise.reject(new Error('Duplicate indicators.'))
+    if (isValid(paneInstances)) {
+      const instance = paneInstances.find(ins => ins.name === name)
+      if (isValid(instance)) {
+        return await Promise.reject(new Error('Duplicate indicators.'))
+      }
     }
-    if (paneInstances === undefined) {
-      paneInstances = new Map()
-      this._instances.set(paneId, paneInstances)
+    if (!isValid(paneInstances)) {
+      paneInstances = []
     }
     const IndicatorClazz = getIndicatorClass(name) as IndicatorConstructor
     const instance = new IndicatorClazz()
     this._overrideInstance(instance, indicator)
     if (!isStack) {
-      paneInstances.clear()
+      paneInstances = []
     }
-    paneInstances.set(name, instance)
+    paneInstances.push(instance)
+    this._instances.set(paneId, paneInstances)
+    this._sort(paneId)
     return await instance.calcIndicator(this._chartStore.getDataList())
   }
 
-  getInstances (paneId: string): Map<string, IndicatorImp> {
-    return this._instances.get(paneId) ?? new Map()
+  getInstances (paneId: string): IndicatorImp[] {
+    return this._instances.get(paneId) ?? []
   }
 
   removeInstance (paneId: string, name?: string): boolean {
     let removed = false
     const paneInstances = this._instances.get(paneId)
-    if (paneInstances !== undefined) {
-      if (name !== undefined) {
-        if (paneInstances.has(name)) {
-          paneInstances.delete(name)
+    if (isValid(paneInstances)) {
+      if (isString(name)) {
+        const index = paneInstances.findIndex(ins => ins.name === name)
+        if (index > -1) {
+          paneInstances.splice(index, 1)
           removed = true
         }
       } else {
-        paneInstances.clear()
+        this._instances.set(paneId, [])
         removed = true
       }
-      if (paneInstances.size === 0) {
+      if (this._instances.get(paneId)?.length === 0) {
         this._instances.delete(paneId)
       }
     }
@@ -142,17 +162,19 @@ export default class IndicatorStore {
 
   async calcInstance (name?: string, paneId?: string): Promise<boolean> {
     const tasks: Array<Promise<boolean>> = []
-    if (name !== undefined) {
-      if (paneId !== undefined) {
+    if (isString(name)) {
+      if (isString(paneId)) {
         const paneInstances = this._instances.get(paneId)
-        if (paneInstances?.has(name) ?? false) {
-          const instance = paneInstances?.get(name) as IndicatorImp
-          tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
+        if (isValid(paneInstances)) {
+          const instance = paneInstances.find(ins => ins.name === name)
+          if (isValid(instance)) {
+            tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
+          }
         }
       } else {
         this._instances.forEach(paneInstances => {
-          if (paneInstances.has(name)) {
-            const instance = paneInstances?.get(name) as IndicatorImp
+          const instance = paneInstances.find(ins => ins.name === name)
+          if (isValid(instance)) {
             tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
           }
         })
@@ -169,14 +191,26 @@ export default class IndicatorStore {
   }
 
   getInstanceByPaneId (paneId?: string, name?: string): Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
-    if (paneId !== undefined) {
-      const paneInstances = this._instances.get(paneId)
-      if (name !== undefined) {
-        return paneInstances?.get(name) ?? null
-      }
-      return paneInstances ?? null
+    const createMapping: ((instances: IndicatorImp[]) => Map<string, Indicator>) = (instances: IndicatorImp[]) => {
+      const mapping = new Map<string, Indicator>()
+      instances.forEach(ins => {
+        mapping.set(ins.name, ins)
+      })
+      return mapping
     }
-    return this._instances
+
+    if (isString(paneId)) {
+      const paneInstances = this._instances.get(paneId) ?? []
+      if (isString(name)) {
+        return paneInstances?.find(ins => ins.name === name) ?? null
+      }
+      return createMapping(paneInstances)
+    }
+    const mapping = new Map<string, Map<string, Indicator>>()
+    this._instances.forEach((instances, paneId) => {
+      mapping.set(paneId, createMapping(instances))
+    })
+    return mapping
   }
 
   setSeriesPrecision (precision: Precision): void {
@@ -194,7 +228,7 @@ export default class IndicatorStore {
 
   async override (indicator: IndicatorCreate, paneId: Nullable<string>): Promise<[boolean, boolean]> {
     const { name } = indicator
-    let instances: Map<string, Map<string, IndicatorImp>> = new Map()
+    let instances: Map<string, IndicatorImp[]> = new Map()
     if (paneId !== null) {
       const paneInstances = this._instances.get(paneId)
       if (isValid(paneInstances)) {
@@ -205,10 +239,14 @@ export default class IndicatorStore {
     }
     let onlyUpdateFlag = false
     const tasks: Array<Promise<boolean>> = []
+    let sortFlag = false
     instances.forEach(paneInstances => {
-      const instance = paneInstances.get(name)
+      const instance = paneInstances.find(ins => ins.name === name)
       if (isValid(instance)) {
         const overrideResult = this._overrideInstance(instance, indicator)
+        if (overrideResult[2]) {
+          sortFlag = true
+        }
         if (overrideResult[1]) {
           tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
         } else {
@@ -218,6 +256,9 @@ export default class IndicatorStore {
         }
       }
     })
+    if (sortFlag) {
+      this._sort()
+    }
     const result = await Promise.all(tasks)
     return [onlyUpdateFlag, result.includes(true)]
   }

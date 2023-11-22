@@ -22,7 +22,7 @@ import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { OverlayStyle } from '../common/Styles'
 import { MouseTouchEvent } from '../common/SyntheticEvent'
-import { clone, isNumber, isValid, merge } from '../common/utils/typeChecks'
+import { clone, isNumber, isString, merge } from '../common/utils/typeChecks'
 
 import TimeScaleStore from '../store/TimeScaleStore'
 
@@ -375,7 +375,7 @@ export default abstract class OverlayImp implements Overlay {
   }
 
   setId (id: string): boolean {
-    if (!isValid(this.id)) {
+    if (!isString(this.id)) {
       this.id = id
       return true
     }
@@ -383,7 +383,7 @@ export default abstract class OverlayImp implements Overlay {
   }
 
   setGroupId (groupId: string): boolean {
-    if (!isValid(this.groupId)) {
+    if (!isString(this.groupId)) {
       this.groupId = groupId
       return true
     }
@@ -402,12 +402,9 @@ export default abstract class OverlayImp implements Overlay {
     return false
   }
 
-  setStyles (styles: Nullable<DeepPartial<OverlayStyle>>): boolean {
-    if (styles !== null) {
-      merge(this.styles, styles)
-      return true
-    }
-    return false
+  setStyles (styles: DeepPartial<OverlayStyle>): boolean {
+    merge(this.styles, styles)
+    return true
   }
 
   setPoints (points: Array<Partial<Point>>): boolean {
