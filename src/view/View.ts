@@ -15,14 +15,15 @@
 import Nullable from '../common/Nullable'
 import { EventHandler, EventName } from '../common/SyntheticEvent'
 import Eventful from '../common/Eventful'
+import { isValid } from '../common/utils/typeChecks'
 
 import Figure from '../component/Figure'
+import Axis from '../component/Axis'
+
 import { getInnerFigureClass } from '../extension/figure/index'
 
 import DrawWidget from '../widget/DrawWidget'
 import DrawPane from '../pane/DrawPane'
-
-import Axis from '../component/Axis'
 
 export default abstract class View<C extends Axis = Axis> extends Eventful {
   /**
@@ -41,7 +42,7 @@ export default abstract class View<C extends Axis = Axis> extends Eventful {
     const FigureClazz = getInnerFigureClass(name)
     if (FigureClazz !== null) {
       const figure = new FigureClazz({ name, attrs, styles })
-      if (eventHandler !== undefined) {
+      if (isValid(eventHandler)) {
         for (const key in eventHandler) {
           // eslint-disable-next-line no-prototype-builtins
           if (eventHandler.hasOwnProperty(key)) {

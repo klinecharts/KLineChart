@@ -18,16 +18,15 @@ import KLineData from '../common/KLineData'
 import Crosshair from '../common/Crosshair'
 import { IndicatorStyle, TooltipStyle, TooltipIconStyle, TooltipTextStyle, TooltipData, TooltipShowRule, TooltipDataChild, TooltipIconPosition } from '../common/Styles'
 import { ActionType } from '../common/Action'
+import { formatPrecision, formatThousands } from '../common/utils/format'
+import { isValid, isObject, isString } from '../common/utils/typeChecks'
+import { createFont } from '../common/utils/canvas'
 
 import { CustomApi } from '../Options'
 
 import YAxis from '../component/YAxis'
 
 import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
-
-import { formatPrecision, formatThousands } from '../common/utils/format'
-import { isValid, isObject } from '../common/utils/typeChecks'
-import { createFont } from '../common/utils/canvas'
 
 import { TooltipIcon } from '../store/TooltipStore'
 
@@ -52,7 +51,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
     const crosshair = chartStore.getTooltipStore().getCrosshair()
-    if (crosshair.kLineData !== undefined) {
+    if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
       const customApi = chartStore.getCustomApi()
       const thousandsSeparator = chartStore.getThousandsSeparator()
@@ -276,7 +275,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
   protected isDrawTooltip (crosshair: Crosshair, styles: TooltipStyle): boolean {
     const showRule = styles.showRule
     return showRule === TooltipShowRule.Always ||
-      (showRule === TooltipShowRule.FollowCross && (crosshair.paneId !== undefined))
+      (showRule === TooltipShowRule.FollowCross && isString(crosshair.paneId))
   }
 
   protected getIndicatorTooltipData (
@@ -304,7 +303,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     if (indicator.visible) {
       const indicatorData = result[dataIndex] ?? {}
       eachFigures(dataList, indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
-        if (figure.title !== undefined) {
+        if (isString(figure.title)) {
           const color = figureStyles.color
           let value = indicatorData[figure.key]
           if (isValid(value)) {
@@ -333,16 +332,16 @@ export default class IndicatorTooltipView extends View<YAxis> {
         xAxis: pane.getChart().getXAxisPane().getAxisComponent(),
         yAxis: pane.getAxisComponent()
       })
-      if (customName !== undefined && tooltipStyles.showName) {
+      if (isString(customName) && tooltipStyles.showName) {
         tooltipData.name = customName
       }
-      if (customCalcParamsText !== undefined && tooltipStyles.showParams) {
+      if (isString(customCalcParamsText) && tooltipStyles.showParams) {
         tooltipData.calcParamsText = customCalcParamsText
       }
-      if (customIcons !== undefined) {
+      if (isValid(customIcons)) {
         tooltipData.icons = customIcons
       }
-      if (customValues !== undefined && indicator.visible) {
+      if (isValid(customValues) && indicator.visible) {
         const optimizedValues: TooltipData[] = []
         const color = styles.tooltip.text.color
         customValues.forEach(data => {

@@ -14,6 +14,7 @@
 
 import Nullable from '../common/Nullable'
 import Precision from '../common/Precision'
+import { isValid } from '../common/utils/typeChecks'
 
 import ChartStore from './ChartStore'
 
@@ -196,7 +197,7 @@ export default class IndicatorStore {
     let instances: Map<string, Map<string, IndicatorImp>> = new Map()
     if (paneId !== null) {
       const paneInstances = this._instances.get(paneId)
-      if (paneInstances !== undefined) {
+      if (isValid(paneInstances)) {
         instances.set(paneId, paneInstances)
       }
     } else {
@@ -206,7 +207,7 @@ export default class IndicatorStore {
     const tasks: Array<Promise<boolean>> = []
     instances.forEach(paneInstances => {
       const instance = paneInstances.get(name)
-      if (instance !== undefined) {
+      if (isValid(instance)) {
         const overrideResult = this._overrideInstance(instance, indicator)
         if (overrideResult[1]) {
           tasks.push(instance.calcIndicator(this._chartStore.getDataList()))

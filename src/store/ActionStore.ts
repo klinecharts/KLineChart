@@ -13,6 +13,7 @@
  */
 
 import Action, { ActionType, ActionCallback } from '../common/Action'
+import { isValid } from '../common/utils/typeChecks'
 
 export default class ActionStore {
   /**
@@ -39,7 +40,7 @@ export default class ActionStore {
    */
   unsubscribe (type: ActionType, callback?: ActionCallback): void {
     const action = this._actions.get(type)
-    if (action !== undefined) {
+    if (isValid(action)) {
       action.unsubscribe(callback)
       if (action.isEmpty()) {
         this._actions.delete(type)
@@ -49,6 +50,6 @@ export default class ActionStore {
 
   has (type: ActionType): boolean {
     const action = this._actions.get(type)
-    return action !== undefined && !action.isEmpty()
+    return isValid(action) && !action.isEmpty()
   }
 }

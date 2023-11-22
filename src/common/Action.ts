@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import { isFunction } from './utils/typeChecks'
+
 export type ActionCallback = (data?: any) => void
 
 export enum ActionType {
@@ -35,7 +37,7 @@ export default class Delegate {
   }
 
   unsubscribe (callback?: ActionCallback): void {
-    if (callback !== undefined) {
+    if (isFunction(callback)) {
       const index = this._callbacks.indexOf(callback) ?? -1
       if (index > -1) {
         this._callbacks.splice(index, 1)

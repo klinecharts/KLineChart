@@ -22,6 +22,7 @@ import { ActionType } from '../common/Action'
 
 import { logWarn } from '../common/utils/logger'
 import { binarySearchNearest } from '../common/utils/number'
+import { isNumber, isString } from '../common/utils/typeChecks'
 
 import ChartStore from './ChartStore'
 
@@ -188,7 +189,7 @@ export default class TimeScaleStore {
       minute: '2-digit',
       second: '2-digit'
     }
-    if (timezone !== undefined) {
+    if (isString(timezone)) {
       options.timeZone = timezone
     }
     let dateTimeFormat: Nullable<Intl.DateTimeFormat> = null
@@ -341,12 +342,12 @@ export default class TimeScaleStore {
     if (!this._zoomEnabled) {
       return
     }
-    if (coordinate?.x === undefined) {
+    if (!isNumber(coordinate?.x)) {
       const crosshair = this._chartStore.getTooltipStore().getCrosshair()
       coordinate = { x: crosshair?.x ?? this._totalBarSpace / 2 }
     }
     this._chartStore.getActionStore().execute(ActionType.OnZoom)
-    const floatIndex = this.coordinateToFloatIndex(coordinate.x as number)
+    const floatIndex = this.coordinateToFloatIndex(coordinate?.x as number)
     const barSpace = this._barSpace + scale * (this._barSpace / 10)
     this.setBarSpace(barSpace, () => {
       this._offsetRightBarCount += (floatIndex - this.coordinateToFloatIndex(coordinate?.x as number))

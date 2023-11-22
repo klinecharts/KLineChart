@@ -22,8 +22,7 @@ import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { OverlayStyle } from '../common/Styles'
 import { MouseTouchEvent } from '../common/SyntheticEvent'
-
-import { clone, isNumber, merge } from '../common/utils/typeChecks'
+import { clone, isNumber, isValid, merge } from '../common/utils/typeChecks'
 
 import TimeScaleStore from '../store/TimeScaleStore'
 
@@ -376,7 +375,7 @@ export default abstract class OverlayImp implements Overlay {
   }
 
   setId (id: string): boolean {
-    if (this.id === undefined) {
+    if (!isValid(this.id)) {
       this.id = id
       return true
     }
@@ -384,7 +383,7 @@ export default abstract class OverlayImp implements Overlay {
   }
 
   setGroupId (groupId: string): boolean {
-    if (this.groupId === undefined) {
+    if (!isValid(this.groupId)) {
       this.groupId = groupId
       return true
     }
@@ -623,13 +622,13 @@ export default abstract class OverlayImp implements Overlay {
   eventMoveForDrawing (point: Partial<Point>): void {
     const pointIndex = this.currentStep - 1
     const newPoint: Partial<Point> = {}
-    if (point.timestamp !== undefined) {
+    if (isNumber(point.timestamp)) {
       newPoint.timestamp = point.timestamp
     }
-    if (point.dataIndex !== undefined) {
+    if (isNumber(point.dataIndex)) {
       newPoint.dataIndex = point.dataIndex
     }
-    if (point.value !== undefined) {
+    if (isNumber(point.value)) {
       newPoint.value = point.value
     }
     this.points[pointIndex] = newPoint
@@ -643,11 +642,11 @@ export default abstract class OverlayImp implements Overlay {
   }
 
   eventPressedPointMove (point: Partial<Point>, pointIndex: number): void {
-    if (point.dataIndex !== undefined) {
+    if (isNumber(point.dataIndex)) {
       this.points[pointIndex].dataIndex = point.dataIndex
       this.points[pointIndex].timestamp = point.timestamp
     }
-    if (point.value !== undefined) {
+    if (isNumber(point.value)) {
       this.points[pointIndex].value = point.value
     }
     this.performEventPressedMove?.({
@@ -667,23 +666,23 @@ export default abstract class OverlayImp implements Overlay {
   eventPressedOtherMove (point: Partial<Point>, timeScaleStore: TimeScaleStore): void {
     if (this._prevPressedPoint !== null) {
       let difDataIndex: number
-      if (point.dataIndex !== undefined && this._prevPressedPoint.dataIndex !== undefined) {
+      if (isNumber(point.dataIndex) && isNumber(this._prevPressedPoint.dataIndex)) {
         difDataIndex = point.dataIndex - this._prevPressedPoint.dataIndex
       }
       let difValue: number
-      if (point.value !== undefined && this._prevPressedPoint.value !== undefined) {
+      if (isNumber(point.value) && isNumber(this._prevPressedPoint.value)) {
         difValue = point.value - this._prevPressedPoint.value
       }
       this.points = this._prevPressedPoints.map(p => {
-        if (p.dataIndex === undefined && p.timestamp !== undefined) {
+        if (isNumber(p.dataIndex) && isNumber(p.timestamp)) {
           p.dataIndex = timeScaleStore.timestampToDataIndex(p.timestamp)
         }
         const newPoint = { ...p }
-        if (difDataIndex !== undefined && p.dataIndex !== undefined) {
+        if (isNumber(difDataIndex) && isNumber(p.dataIndex)) {
           newPoint.dataIndex = p.dataIndex + difDataIndex
           newPoint.timestamp = timeScaleStore.dataIndexToTimestamp(newPoint.dataIndex) ?? undefined
         }
-        if (difValue !== undefined && p.value !== undefined) {
+        if (isNumber(difValue) && isNumber(p.value)) {
           newPoint.value = p.value + difValue
         }
         return newPoint
