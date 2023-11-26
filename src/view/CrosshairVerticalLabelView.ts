@@ -15,6 +15,8 @@
 import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
 import { CrosshairStyle, CrosshairDirectionStyle, StateTextStyle } from '../common/Styles'
+import { isValid } from '../common/utils/typeChecks'
+
 import { FormatDateType } from '../Options'
 
 import Axis from '../component/Axis'
@@ -27,7 +29,7 @@ import { TextAttrs } from '../extension/figure/text'
 
 export default class CrosshairVerticalLabelView extends CrosshairHorizontalLabelView<XAxis> {
   override compare (crosshair: Crosshair): boolean {
-    return crosshair.kLineData !== undefined && crosshair.dataIndex === crosshair.realDataIndex
+    return isValid(crosshair.kLineData) && crosshair.dataIndex === crosshair.realDataIndex
   }
 
   override getDirectionStyles (styles: CrosshairStyle): CrosshairDirectionStyle {

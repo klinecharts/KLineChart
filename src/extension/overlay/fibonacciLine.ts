@@ -12,12 +12,13 @@
  * limitations under the License.
  */
 
+import { formatThousands } from '../../common/utils/format'
+import { isNumber } from '../../common/utils/typeChecks'
+
 import { OverlayTemplate } from '../../component/Overlay'
 
 import { LineAttrs } from '../figure/line'
 import { TextAttrs } from '../figure/text'
-
-import { formatThousands } from '../../common/utils/format'
 
 const fibonacciLine: OverlayTemplate = {
   name: 'fibonacciLine',
@@ -32,7 +33,7 @@ const fibonacciLine: OverlayTemplate = {
       const texts: TextAttrs[] = []
       const startX = 0
       const endX = bounding.width
-      if (coordinates.length > 1 && points[0].value !== undefined && points[1].value !== undefined) {
+      if (coordinates.length > 1 && isNumber(points[0].value) && isNumber(points[1].value)) {
         const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDif = coordinates[0].y - coordinates[1].y
         const valueDif = points[0].value - points[1].value

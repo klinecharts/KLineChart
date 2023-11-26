@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import { isValid } from './utils/typeChecks'
+
 import { EventName, MouseTouchEvent, MouseTouchEventCallback } from './SyntheticEvent'
 
 export interface EventDispatcher {
@@ -30,7 +32,7 @@ export default abstract class Eventful implements EventDispatcher {
 
   onEvent (name: EventName, event: MouseTouchEvent, other?: number): boolean {
     const callback = this._callbacks.get(name)
-    if (callback !== undefined && this.checkEventOn(event)) {
+    if (isValid(callback) && this.checkEventOn(event)) {
       return callback(event, other)
     }
     return false

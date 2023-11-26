@@ -13,12 +13,12 @@
  */
 
 import { YAxisType } from '../common/Styles'
+import { formatPrecision, formatThousands } from '../common/utils/format'
+import { isValid } from '../common/utils/typeChecks'
 
 import View from './View'
 
 import YAxis from '../component/YAxis'
-
-import { formatPrecision, formatThousands } from '../common/utils/format'
 
 export default class CandleLastPriceLabelView extends View {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -35,7 +35,7 @@ export default class CandleLastPriceLabelView extends View {
       const dataList = chartStore.getDataList()
       const visibleDataList = chartStore.getVisibleDataList()
       const data = dataList[dataList.length - 1]
-      if (data !== undefined) {
+      if (isValid(data)) {
         const { close, open } = data
         const priceY = yAxis.convertToNicePixel(close)
         let backgroundColor: string

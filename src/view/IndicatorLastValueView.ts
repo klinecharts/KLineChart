@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
+import { formatPrecision, formatThousands } from '../common/utils/format'
+import { isValid } from '../common/utils/typeChecks'
+
 import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../component/Indicator'
 
 import View from './View'
-
-import { formatPrecision, formatThousands } from '../common/utils/format'
-import { isValid } from '../common/utils/typeChecks'
 
 import YAxis from '../component/YAxis'
 
@@ -40,7 +40,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
       indicators.forEach(indicator => {
         const result = indicator.result
         const indicatorData = result[dataIndex]
-        if (indicatorData !== undefined && indicator.visible) {
+        if (isValid(indicatorData) && indicator.visible) {
           const precision = indicator.precision
           eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
             const value = indicatorData[figure.key]

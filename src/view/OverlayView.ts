@@ -20,7 +20,7 @@ import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { OverlayStyle } from '../common/Styles'
 import { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
-import { isBoolean } from '../common/utils/typeChecks'
+import { isBoolean, isNumber, isValid } from '../common/utils/typeChecks'
 
 import { CustomApi } from '../Options'
 
@@ -187,7 +187,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     let eventHandler
     if (!overlay.isDrawing()) {
       let eventTypes: OverlayFigureIgnoreEventType[] = []
-      if (ignoreEvent !== undefined) {
+      if (isValid(ignoreEvent)) {
         if (isBoolean(ignoreEvent)) {
           if (ignoreEvent) {
             eventTypes = getAllOverlayFigureIgnoreEventTypes()
@@ -297,7 +297,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (this.coordinateToPointValueFlag()) {
       const yAxis = pane.getAxisComponent()
       let value = yAxis.convertFromPixel(coordinate.y)
-      if (overlay.mode !== OverlayMode.Normal && paneId === PaneIdConstants.CANDLE && point.dataIndex !== undefined) {
+      if (overlay.mode !== OverlayMode.Normal && paneId === PaneIdConstants.CANDLE && isNumber(point.dataIndex)) {
         const kLineData = timeScaleStore.getDataByDataIndex(point.dataIndex)
         if (kLineData !== null) {
           const modeSensitivity = overlay.modeSensitivity
@@ -432,14 +432,14 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const { points } = overlay
     const coordinates = points.map(point => {
       let dataIndex = point.dataIndex
-      if (point.timestamp !== undefined) {
+      if (isNumber(point.timestamp)) {
         dataIndex = timeScaleStore.timestampToDataIndex(point.timestamp)
       }
       const coordinate = { x: 0, y: 0 }
-      if (dataIndex !== undefined) {
+      if (isNumber(dataIndex)) {
         coordinate.x = xAxis?.convertToPixel(dataIndex) ?? 0
       }
-      if (point.value !== undefined) {
+      if (isNumber(point.value)) {
         coordinate.y = yAxis?.convertToPixel(point.value) ?? 0
       }
       return coordinate

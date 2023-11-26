@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import { isValid } from './typeChecks'
+
 let measureCtx: CanvasRenderingContext2D
 
 /**
@@ -33,7 +35,7 @@ export function createFont (size?: number, weight?: string | number, family?: st
  * @returns {number}
  */
 export function calcTextWidth (text: string, size?: number, weight?: string | number, family?: string): number {
-  if (measureCtx === undefined) {
+  if (!isValid(measureCtx)) {
     const canvas = document.createElement('canvas')
     const pixelRatio = getPixelRatio(canvas)
     measureCtx = canvas.getContext('2d') as CanvasRenderingContext2D

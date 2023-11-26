@@ -15,6 +15,9 @@
 import Bounding from '../common/Bounding'
 import Crosshair from '../common/Crosshair'
 import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, StateTextStyle } from '../common/Styles'
+import { isString } from '../common/utils/typeChecks'
+import { formatPrecision, formatThousands } from '../common/utils/format'
+import { createFont } from '../common/utils/canvas'
 
 import Axis from '../component/Axis'
 import YAxis from '../component/YAxis'
@@ -22,9 +25,6 @@ import YAxis from '../component/YAxis'
 import { TextAttrs } from '../extension/figure/text'
 
 import ChartStore from '../store/ChartStore'
-
-import { formatPrecision, formatThousands } from '../common/utils/format'
-import { createFont } from '../common/utils/canvas'
 
 import View from './View'
 
@@ -36,7 +36,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getTooltipStore().getCrosshair()
     const styles = chartStore.getStyles().crosshair
-    if (crosshair.paneId !== undefined && this.compare(crosshair, pane.getId())) {
+    if (isString(crosshair.paneId) && this.compare(crosshair, pane.getId())) {
       if (styles.show) {
         const directionStyles = this.getDirectionStyles(styles)
         const textStyles = directionStyles.text

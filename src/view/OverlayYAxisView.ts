@@ -19,8 +19,8 @@ import BarSpace from '../common/BarSpace'
 import Precision from '../common/Precision'
 import { OverlayStyle } from '../common/Styles'
 import { CustomApi } from '../Options'
-
 import { formatPrecision, formatThousands } from '../common/utils/format'
+import { isNumber } from '../common/utils/typeChecks'
 
 import Axis from '../component/Axis'
 import XAxis from '../component/XAxis'
@@ -91,7 +91,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
       }
       coordinates.forEach((coordinate, index) => {
         const point = overlay.points[index]
-        if (point.value !== undefined) {
+        if (isNumber(point.value)) {
           topY = Math.min(topY, coordinate.y)
           bottomY = Math.max(bottomY, coordinate.y)
           const text = formatThousands(formatPrecision(point.value, precision.price), thousandsSeparator)

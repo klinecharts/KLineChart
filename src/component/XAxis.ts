@@ -13,11 +13,12 @@
  */
 
 import Nullable from '../common/Nullable'
+import { calcTextWidth } from '../common/utils/canvas'
+import { isValid } from '../common/utils/typeChecks'
+
 import { FormatDate, FormatDateType } from '../Options'
 
 import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
-
-import { calcTextWidth } from '../common/utils/canvas'
 
 export type XAxis = Axis
 
@@ -75,7 +76,7 @@ export default class XAxisImp extends AxisImp {
       } else {
         const firstTimestamp = optimalTicks[0].value as number
         const secondTimestamp = optimalTicks[1].value as number
-        if (optimalTicks[2] !== undefined) {
+        if (isValid(optimalTicks[2])) {
           const thirdText = optimalTicks[2].text
           if (/^[0-9]{2}-[0-9]{2}$/.test(thirdText)) {
             optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'MM-DD', FormatDateType.XAxis)
