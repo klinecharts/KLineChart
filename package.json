@@ -44,7 +44,7 @@
     "prepare": "husky install",
     "docs:pre-work": "npm run pre-work --prefix docs",
     "docs:dev": "npm run dev --prefix docs",
-    "docs:build": "npm run build-core:prod && npm run build --prefix docs",
+    "docs:build": "npm run build --prefix docs",
     "docs:preview": "npm run preview --prefix docs",
     "docs:deploy": "npm run docs:build && gh-pages -d website"
   },
@@ -65,7 +65,6 @@
     "@types/node": "^18.15.10",
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "@typescript-eslint/parser": "^5.36.2",
-    "resize-observer-polyfill": "^1.5.1",
     "chalk": "^4.1.2",
     "codesandbox": "^2.2.3",
     "cross-env": "^7.0.3",
@@ -78,11 +77,12 @@
     "fs-extra": "^10.1.0",
     "gh-pages": "^2.2.0",
     "husky": "^8.0.1",
+    "resize-observer-polyfill": "^1.5.1",
     "rollup": "^3.2.5",
     "rollup-plugin-filesize": "^9.1.2",
     "rollup-plugin-progress": "^1.1.2",
     "tslib": "^2.5.0",
     "typescript": "^4.8.3",
-    "vitepress": "^1.0.0-rc.24"
+    "vitepress": "^1.0.0-rc.30"
   }
 }
