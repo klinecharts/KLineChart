@@ -158,13 +158,14 @@ export default class CandleBarView extends ChildrenView {
         styles: { color: wickColor }
       })
     } else {
+      const size = Math.min(Math.max(Math.round(barSpace.gapBar * 0.1), 1), 3)
       rects = [
         {
           name: 'rect',
           attrs: {
-            x: x - 0.5,
+            x: x - size / 2,
             y: priceY[0],
-            width: 1,
+            width: size,
             height: priceY[3] - priceY[0]
           },
           styles: { color }
@@ -172,18 +173,18 @@ export default class CandleBarView extends ChildrenView {
           name: 'rect',
           attrs: {
             x: x - halfGapBar,
-            y: openY,
-            width: halfGapBar,
-            height: 1
+            y: openY + size > priceY[3] ? priceY[3] - size : openY,
+            width: halfGapBar - size / 2,
+            height: size
           },
           styles: { color }
         }, {
           name: 'rect',
           attrs: {
-            x,
-            y: closeY,
-            width: halfGapBar,
-            height: 1
+            x: x + size / 2,
+            y: closeY + size > priceY[3] ? priceY[3] - size : closeY,
+            width: halfGapBar - size / 2,
+            height: size
           },
           styles: { color }
         }
