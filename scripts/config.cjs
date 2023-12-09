@@ -64,5 +64,6 @@ function outputConfig (env, fileName) {
 
 module.exports = { 
   inputConfig,
-  outputConfig
+  outputConfig,
+  version
 };
