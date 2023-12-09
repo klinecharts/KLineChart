@@ -14,18 +14,17 @@ async function build() {
   const input = inputConfig(env);
 
   try {
+    const startTime = new Date().getTime()
     const bundle = await rollup.rollup(input);
-
-    console.log('\n\nFile info: ');
-
+    
     const output = outputConfig(env, fileName);
-
     await bundle.write(output);
 
-    console.log(chalk.green(`\nCompiled ${fileName} successfully.\n`));
+    console.log(chalk.green(`\n✔️ Compiled ${fileName} successfully.\n`));
+    console.log(`Done in ${((new Date().getTime() - startTime) / 1000 / 60).toFixed(2)}s.\n`)
   } catch (err) {
     console.log(`\n\n${chalk.red(err)}\n`);
-    console.log(chalk.red(`Failed to compile ${fileName}.\n`));
+    console.log(chalk.red(`✖️ Failed to compile ${fileName}.\n`));
     process.exit(1);
   }
 }

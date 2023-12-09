@@ -45,7 +45,7 @@ function clean () {
   eachFiles(buildDir);
   deleteFiles(buildDir);
 
-  console.log(chalk.green('\n\nClean successfully.\n'));
+  console.log(chalk.green('\n\n✔️ Clean successfully.\n'));
 }
 
 clean();
