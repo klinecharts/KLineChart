@@ -69,7 +69,7 @@ let chartBaseId = 1
  * @return {string}
  */
 function version (): string {
-  return '__BUILD_VERSION__'
+  return '__VERSION__'
 }
 
 /**
