@@ -2,8 +2,8 @@
   "name": "klinecharts",
   "version": "9.6.0",
   "description": "Lightweight k-line chart built with html5 canvas",
-  "main": "./dist/main.js",
-  "module": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.esm.js",
   "unpkg": "./dist/umd/klinecharts.min.js",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/liihuu/KLineChart"
+    "url": "https://github.com/klinecharts/KLineChart"
   },
   "keywords": [
     "k-line",
