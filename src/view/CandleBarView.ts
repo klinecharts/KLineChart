@@ -18,6 +18,7 @@ import BarSpace from '../common/BarSpace'
 import { EventHandler } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
 import { CandleType, CandleBarColor, RectStyle, PolygonType } from '../common/Styles'
+import { memoize } from '../common/utils/performance'
 
 import ChartStore from '../store/ChartStore'
 
@@ -61,6 +62,10 @@ export default class CandleBarView extends ChildrenView {
       styles: candleStyles.bar
     }
   }
+
+  private readonly _calcOhlcSize = memoize((gapBarSpace: number) => {
+    return Math.min(Math.max(Math.round(gapBarSpace * 0.1), 1), 3)
+  })
 
   private _drawCandleBar (
     ctx: CanvasRenderingContext2D,
@@ -158,7 +163,7 @@ export default class CandleBarView extends ChildrenView {
         styles: { color: wickColor }
       })
     } else {
-      const size = Math.min(Math.max(Math.round(barSpace.gapBar * 0.1), 1), 3)
+      const size = this._calcOhlcSize(barSpace.gapBar)
       rects = [
         {
           name: 'rect',
