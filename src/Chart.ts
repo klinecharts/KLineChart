@@ -81,8 +81,10 @@ export interface Chart {
   getPriceVolumePrecision: () => Precision
   setTimezone: (timezone: string) => void
   getTimezone: () => string
-  setOffsetRightDistance: (space: number) => void
+  setOffsetRightDistance: (distance: number) => void
   getOffsetRightDistance: () => number
+  setMaxOffsetLeftDistance: (distance: number) => void
+  setMaxOffsetRightDistance: (distance: number) => void
   setLeftMinVisibleBarCount: (barCount: number) => void
   setRightMinVisibleBarCount: (barCount: number) => void
   setBarSpace: (space: number) => void
@@ -598,28 +600,44 @@ export default class ChartImp implements Chart {
     return this._chartStore.getTimeScaleStore().getTimezone()
   }
 
-  setOffsetRightDistance (space: number): void {
-    this._chartStore.getTimeScaleStore().setOffsetRightDistance(space, true)
+  setOffsetRightDistance (distance: number): void {
+    this._chartStore.getTimeScaleStore().setOffsetRightDistance(distance, true)
   }
 
   getOffsetRightDistance (): number {
     return this._chartStore.getTimeScaleStore().getOffsetRightDistance()
   }
 
-  setLeftMinVisibleBarCount (barCount: number): void {
-    if (barCount > 0) {
-      this._chartStore.getTimeScaleStore().setLeftMinVisibleBarCount(Math.ceil(barCount))
-    } else {
-      logWarn('setLeftMinVisibleBarCount', 'barCount', 'barCount must greater than zero!!!')
+  setMaxOffsetLeftDistance (distance: number): void {
+    if (distance < 0) {
+      logWarn('setMaxOffsetLeftDistance', 'distance', 'distance must greater than zero!!!')
+      return
     }
+    this._chartStore.getTimeScaleStore().setMaxOffsetLeftDistance(distance)
+  }
+
+  setMaxOffsetRightDistance (distance: number): void {
+    if (distance < 0) {
+      logWarn('setMaxOffsetRightDistance', 'distance', 'distance must greater than zero!!!')
+      return
+    }
+    this._chartStore.getTimeScaleStore().setMaxOffsetRightDistance(distance)
+  }
+
+  setLeftMinVisibleBarCount (barCount: number): void {
+    if (barCount < 0) {
+      logWarn('setLeftMinVisibleBarCount', 'barCount', 'barCount must greater than zero!!!')
+      return
+    }
+    this._chartStore.getTimeScaleStore().setLeftMinVisibleBarCount(Math.ceil(barCount))
   }
 
   setRightMinVisibleBarCount (barCount: number): void {
-    if (barCount > 0) {
-      this._chartStore.getTimeScaleStore().setRightMinVisibleBarCount(Math.ceil(barCount))
-    } else {
-      logWarn('setRightMinVisibleBarCount', 'barCount', 'barCount must be a number and greater than zero!!!')
+    if (barCount < 0) {
+      logWarn('setRightMinVisibleBarCount', 'barCount', 'barCount must greater than zero!!!')
+      return
     }
+    this._chartStore.getTimeScaleStore().setRightMinVisibleBarCount(Math.ceil(barCount))
   }
 
   setBarSpace (space: number): void {

@@ -26,7 +26,7 @@ import { isNumber, isString } from '../common/utils/typeChecks'
 
 import ChartStore from './ChartStore'
 
-interface MinVisibleBarCount {
+interface LeftRightSide {
   left: number
   right: number
 }
@@ -34,6 +34,11 @@ interface MinVisibleBarCount {
 const BarSpaceLimitConstants = {
   MIN: 1,
   MAX: 50
+}
+
+const enum ScrollLimitRole {
+  BarCount,
+  Distance
 }
 
 const DEFAULT_BAR_SPACE = 6
@@ -107,9 +112,19 @@ export default class TimeScaleStore {
   private _startScrollOffsetRightBarCount = 0
 
   /**
+   * Scroll limit role
+   */
+  private _scrollLimitRole: ScrollLimitRole = ScrollLimitRole.BarCount
+
+  /**
    * Scroll to the leftmost and rightmost visible bar
    */
-  private readonly _minVisibleBarCount: MinVisibleBarCount = { left: 2, right: 2 }
+  private readonly _minVisibleBarCount: LeftRightSide = { left: 2, right: 2 }
+
+  /**
+   * Scroll to the leftmost and rightmost distance
+   */
+  private readonly _maxOffsetDistance: LeftRightSide = { left: 50, right: 50 }
 
   /**
    * Start and end points of visible area data index
@@ -136,15 +151,31 @@ export default class TimeScaleStore {
     const dataList = this._chartStore.getDataList()
     const dataCount = dataList.length
     const barCount = this._totalBarSpace / this._barSpace
-    const maxRightOffsetBarCount = barCount - Math.min(this._minVisibleBarCount.left, dataCount)
+
+    let leftMinVisibleBarCount: number
+    let rightMinVisibleBarCount: number
+
+    if (this._scrollLimitRole === ScrollLimitRole.Distance) {
+      leftMinVisibleBarCount = (this._totalBarSpace - this._maxOffsetDistance.right) / this._barSpace
+      rightMinVisibleBarCount = (this._totalBarSpace - this._maxOffsetDistance.left) / this._barSpace
+    } else {
+      leftMinVisibleBarCount = this._minVisibleBarCount.left
+      rightMinVisibleBarCount = this._minVisibleBarCount.right
+    }
+
+    leftMinVisibleBarCount = Math.max(0, leftMinVisibleBarCount)
+    rightMinVisibleBarCount = Math.max(0, rightMinVisibleBarCount)
+
+    const maxRightOffsetBarCount = barCount - Math.min(leftMinVisibleBarCount, dataCount)
     if (this._offsetRightBarCount > maxRightOffsetBarCount) {
       this._offsetRightBarCount = maxRightOffsetBarCount
     }
 
-    const minRightOffsetBarCount = -dataCount + Math.min(this._minVisibleBarCount.right, dataCount)
+    const minRightOffsetBarCount = -dataCount + Math.min(rightMinVisibleBarCount, dataCount)
     if (this._offsetRightBarCount < minRightOffsetBarCount) {
       this._offsetRightBarCount = minRightOffsetBarCount
     }
+
     let to = Math.round(this._offsetRightBarCount + dataCount + 0.5)
     if (to > dataCount) {
       to = dataCount
@@ -243,8 +274,8 @@ export default class TimeScaleStore {
   }
 
   setOffsetRightDistance (distance: number, isUpdate?: boolean): TimeScaleStore {
-    this._offsetRightDistance = distance
-    this._offsetRightBarCount = distance / this._barSpace
+    this._offsetRightDistance = this._scrollLimitRole === ScrollLimitRole.Distance ? Math.min(this._maxOffsetDistance.right, distance) : distance
+    this._offsetRightBarCount = this._offsetRightDistance / this._barSpace
     if (isUpdate ?? false) {
       this.adjustVisibleRange()
       this._chartStore.getTooltipStore().recalculateCrosshair(true)
@@ -274,12 +305,26 @@ export default class TimeScaleStore {
     return this
   }
 
+  setMaxOffsetLeftDistance (distance: number): TimeScaleStore {
+    this._scrollLimitRole = ScrollLimitRole.Distance
+    this._maxOffsetDistance.left = distance
+    return this
+  }
+
+  setMaxOffsetRightDistance (distance: number): TimeScaleStore {
+    this._scrollLimitRole = ScrollLimitRole.Distance
+    this._maxOffsetDistance.right = distance
+    return this
+  }
+
   setLeftMinVisibleBarCount (barCount: number): TimeScaleStore {
+    this._scrollLimitRole = ScrollLimitRole.BarCount
     this._minVisibleBarCount.left = barCount
     return this
   }
 
   setRightMinVisibleBarCount (barCount: number): TimeScaleStore {
+    this._scrollLimitRole = ScrollLimitRole.BarCount
     this._minVisibleBarCount.right = barCount
     return this
   }
