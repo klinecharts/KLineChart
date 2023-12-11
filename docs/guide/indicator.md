@@ -34,7 +34,9 @@
   // 是否需要格式化大数据值，从1000开始格式化，比如100000是否需要格式化100K
   shouldFormatBigNumber?: boolean
   // 是否可见
-  visible?: boolean 
+  visible?: boolean
+  // 层级
+  zLevel?: number
   // 扩展数据
   extendData?: any
   // 系列，默认为'normal'

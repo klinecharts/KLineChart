@@ -1,5 +1,13 @@
 # 📠 更新日志
 
+## 9.7.0
+`2023-12-12`
++ 🆕 实例方法新增`setMaxOffsetLeftDistance`和`setMaxOffsetRightDistance`。
++ 🆕 指标新增`zLevel`属性。
++ 💄 优化`ohlc`蜡烛柱渲染。
++ 🐞 修复蜡烛柱模糊问题。
++ 🐞 修复覆盖物`zLevel`渲染规则。
+
 ## 9.6.0
 `2023-11-14`
 + 🖋️ 重构窗口之间的分割线模块。

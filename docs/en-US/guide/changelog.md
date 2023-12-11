@@ -1,5 +1,13 @@
 # 📠 Change Log
 
+## 9.7.0
+`2023-12-12`
++ 🆕 Add instance apis`setMaxOffsetLeftDistance` and `setMaxOffsetRightDistance`.
++ 🆕 Add indicator attribute `zLevel`.
++ 💄 Optimize the rendering of the ohlc candle bar.
++ 🐞 Fix the blurry issue with the candle bar.
++ 🐞 Fix the rendering rules for the `zLevel` overlay.
+
 ## 9.6.0
 `2023-11-14`
 + 🖋️ Refactor the separator module.
