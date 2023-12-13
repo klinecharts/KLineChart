@@ -193,9 +193,9 @@ export default class ChartStore {
       const dataSize = this._dataList.length
       if (pos >= dataSize) {
         this._dataList.push(data)
-        let offsetRightBarCount = this._timeScaleStore.getOffsetRightBarCount()
-        if (offsetRightBarCount < 0) {
-          this._timeScaleStore.setOffsetRightBarCount(--offsetRightBarCount)
+        let lastBarRightSideDiffBarCount = this._timeScaleStore.getLastBarRightSideDiffBarCount()
+        if (lastBarRightSideDiffBarCount < 0) {
+          this._timeScaleStore.setLastBarRightSideDiffBarCount(--lastBarRightSideDiffBarCount)
         }
         this._timeScaleStore.adjustVisibleRange()
       } else {
