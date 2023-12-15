@@ -14,7 +14,7 @@
 
 import Coordinate from '../../common/Coordinate'
 import { RectStyle, PolygonType, LineType } from '../../common/Styles'
-import { transparent } from '../../common/utils/color'
+import { isTransparent } from '../../common/utils/color'
 import { isString } from '../../common/utils/typeChecks'
 
 import { FigureTemplate, DEVIATION } from '../../component/Figure'
@@ -52,27 +52,21 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs, style
     borderRadius: r = 0,
     borderDashedValue = [2, 2]
   } = styles
-  if (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) {
-    let draw = true
-    if (isString(color)) {
-      draw = !transparent(color)
-    }
-    if (draw) {
-      ctx.fillStyle = color
-      ctx.beginPath()
-      ctx.moveTo(x + r, y)
-      ctx.arcTo(x + w, y, x + w, y + h, r)
-      ctx.arcTo(x + w, y + h, x, y + h, r)
-      ctx.arcTo(x, y + h, x, y, r)
-      ctx.arcTo(x, y, x + w, y, r)
-      ctx.closePath()
-      ctx.fill()
-    }
-  }
   if (
-    (style === PolygonType.Stroke || styles.style === PolygonType.StrokeFill) &&
-    (!transparent(borderColor) && borderSize >= 0)
+    (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) &&
+    (!isString(color) || !isTransparent(color))
   ) {
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.moveTo(x + r, y)
+    ctx.arcTo(x + w, y, x + w, y + h, r)
+    ctx.arcTo(x + w, y + h, x, y + h, r)
+    ctx.arcTo(x, y + h, x, y, r)
+    ctx.arcTo(x, y, x + w, y, r)
+    ctx.closePath()
+    ctx.fill()
+  }
+  if ((style === PolygonType.Stroke || styles.style === PolygonType.StrokeFill) && borderSize > 0 && !isTransparent(borderColor)) {
     ctx.strokeStyle = borderColor
     ctx.lineWidth = borderSize
     if (borderStyle === LineType.Dashed) {
