@@ -19,17 +19,22 @@ const href = ref()
 const props = defineProps(['js', 'css', 'html', 'title', 'description'])
 
 const version = ref('9.5.0')
-const loaded = ref(false)
+const loading = ref(true)
 
 let observer
 
 onMounted(() => {
   href.value = location.href
-  const loadSource = () => {
+  loading.value = true
+  const container = document.getElementById('container')
+  const coreScript = document.createElement('script')
+  coreScript.defer = true
+  coreScript.src = 'https://unpkg.com/klinecharts/dist/umd/klinecharts.min.js'
+  coreScript.onload = () => {
     const klinecharts = window.klinecharts
-    if (klinecharts && !loaded.value) {
+    if (klinecharts) {
       version.value = klinecharts.version()
-      const container = document.getElementById('container')
+      
       if (props.css) {
         const style = document.createElement('style')
         style.setAttribute('type', 'text/css')
@@ -59,16 +64,11 @@ onMounted(() => {
           window.chart.resize()
         })
         observer.observe(container)
-
-        loaded.value = true
       }
+      loading.value = false
     }
   }
-  loadSource()
-  const coreScript = document.getElementById('klinecharts-script')
-  coreScript.onload = () => {
-    loadSource()
-  }
+  container.appendChild(coreScript)
 })
 
 watch(isDark, (newValue) => {
@@ -84,7 +84,9 @@ onUnmounted(() => {
   if (observer && container) {
     observer.unobserve(container)
   }
-  window.klinecharts.dispose('k-line-chart')
+  if (window.klinecharts) {
+    window.klinecharts.dispose('k-line-chart')
+  }
 })
 
 function openStackBlitz () {
@@ -152,7 +154,7 @@ function getCodeSandboxParameters () {
 <template>
   <div class="chart sample-chart">
     <div id="container" class="chart-container">
-      <Loading v-if="!loaded"/>
+      <Loading v-if="loading"/>
     </div>
     <div class="code-action-container">
       <form
