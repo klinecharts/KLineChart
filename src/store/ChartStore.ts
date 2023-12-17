@@ -121,7 +121,7 @@ export default class ChartStore {
 
   setOptions (options?: Options): ChartStore {
     if (isValid(options)) {
-      const { locale, timezone, styles, customApi } = options
+      const { locale, timezone, styles, customApi, thousandsSeparator } = options
       if (isString(locale)) {
         this._locale = locale
       }
@@ -138,8 +138,8 @@ export default class ChartStore {
       if (isValid(customApi)) {
         merge(this._customApi, customApi)
       }
-      if (isString(options.thousandsSeparator)) {
-        this._thousandsSeparator = options.thousandsSeparator
+      if (isString(thousandsSeparator)) {
+        this._thousandsSeparator = thousandsSeparator
       }
     }
     return this
