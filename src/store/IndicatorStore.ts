@@ -81,13 +81,13 @@ export default class IndicatorStore {
       updateFlag = true
       calcFlag = true
     }
-    if (instance.setRegenerateFigures(regenerateFigures ?? null)) {
+    if (regenerateFigures !== undefined && instance.setRegenerateFigures(regenerateFigures)) {
       updateFlag = true
     }
-    if (instance.setCreateTooltipDataSource(createTooltipDataSource ?? null)) {
+    if (createTooltipDataSource !== undefined && instance.setCreateTooltipDataSource(createTooltipDataSource)) {
       updateFlag = true
     }
-    if (instance.setDraw(draw ?? null)) {
+    if (draw !== undefined && instance.setDraw(draw)) {
       updateFlag = true
     }
     if (isFunction(calc)) {
