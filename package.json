@@ -18,6 +18,10 @@
     "type": "git",
     "url": "https://github.com/klinecharts/KLineChart"
   },
+  "bugs": {
+    "url": "https://github.com/klinecharts/KLineChart/issues"
+  },
+  "homepage": "https://klinecharts.com/",
   "keywords": [
     "k-line",
     "time-line",
@@ -52,7 +56,7 @@
     "docs:deploy": "npm run docs:build && gh-pages -d website"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=0.10.0"
   },
   "devDependencies": {
     "@babel/standalone": "^7.23.2",
