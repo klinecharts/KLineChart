@@ -323,6 +323,18 @@
   - `onSelected` 选中事件
   - `onDeselected` 取消选中事件
 
+## getOverlays()
+```typescript
+() => OverlayState[]
+```
+获取图表上全部覆盖物
+
+## restoreOverlays()
+```typescript
+(overlays: OverlayState[]) => Array<Nullable<string> | Array<Nullable<string>>>
+```
+恢复图表上全部覆盖物
+
 ## getSupportedOverlays()
 ```typescript
 () => string[]

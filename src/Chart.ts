@@ -48,7 +48,7 @@ import { PaneOptions, PanePosition, PANE_DEFAULT_HEIGHT, PaneIdConstants } from 
 import Axis from './component/Axis'
 
 import { Indicator, IndicatorCreate } from './component/Indicator'
-import { Overlay, OverlayCreate, OverlayRemove } from './component/Overlay'
+import { Overlay, OverlayCreate, OverlayRemove, OverlayState } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
 import { getStyles as getExtensionStyles } from './extension/styles/index'
@@ -77,6 +77,8 @@ export interface Chart {
   setStyles: (styles: string | DeepPartial<Styles>) => void
   getStyles: () => Styles
   setCustomApi: (customApi: Partial<CustomApi>) => void
+  getOverlays: () => OverlayState[]
+  restoreOverlays: (overlays: OverlayState[]) => Array<Nullable<string> | Array<Nullable<string>>>
   setPriceVolumePrecision: (pricePrecision: number, volumePrecision: number) => void
   getPriceVolumePrecision: () => Precision
   setTimezone: (timezone: string) => void
@@ -817,6 +819,17 @@ export default class ChartImp implements Chart {
 
   getOverlayById (id: string): Nullable<Overlay> {
     return this._chartStore.getOverlayStore().getInstanceById(id)
+  }
+
+  getOverlays (): OverlayState[] {
+    return this._chartStore.getOverlayStore().getInstances().map(o => {
+      const { id, name, groupId, points, extendData, lock, mode, visible, styles, zLevel, paneId, modeSensitivity } = o
+      return { id, name, groupId, points, extendData, lock, mode, visible, styles, zLevel, paneId, modeSensitivity }
+    })
+  }
+
+  restoreOverlays (overlays: OverlayState[]): Array<Nullable<string> | Array<Nullable<string>>> {
+    return overlays.map((o) => this.createOverlay(o, o.paneId))
   }
 
   overrideOverlay (override: Partial<OverlayCreate>): void {

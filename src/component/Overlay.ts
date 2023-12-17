@@ -90,7 +90,7 @@ export type OverlayEventCallback = (event: OverlayEvent) => boolean
 
 export type OverlayCreateFiguresCallback = (params: OverlayCreateFiguresCallbackParams) => OverlayFigure | OverlayFigure[]
 
-export interface Overlay {
+export interface OverlayState {
   /**
    * Unique identification
    */
@@ -112,16 +112,6 @@ export interface Overlay {
   name: string
 
   /**
-   * Total number of steps required to complete mouse operation
-   */
-  totalStep: number
-
-  /**
-   * Current step
-   */
-  currentStep: number
-
-  /**
    * Whether it is locked. When it is true, it will not respond to events
    */
   lock: boolean
@@ -135,21 +125,6 @@ export interface Overlay {
    * Draw level
    */
   zLevel: number
-
-  /**
-   * Whether the default figure corresponding to the point is required
-   */
-  needDefaultPointFigure: boolean
-
-  /**
-   * Whether the default figure on the Y axis is required
-   */
-  needDefaultXAxisFigure: boolean
-
-  /**
-   * Whether the default figure on the X axis is required
-   */
-  needDefaultYAxisFigure: boolean
 
   /**
    * Mode
@@ -175,6 +150,33 @@ export interface Overlay {
    * The style information and format are consistent with the overlay in the unified configuration
    */
   styles: Nullable<DeepPartial<OverlayStyle>>
+}
+
+export interface Overlay extends OverlayState{
+
+  /**
+   * Total number of steps required to complete mouse operation
+   */
+  totalStep: number
+
+  /**
+   * Current step
+   */
+  currentStep: number
+  /**
+   * Whether the default figure corresponding to the point is required
+   */
+  needDefaultPointFigure: boolean
+
+  /**
+   * Whether the default figure on the Y axis is required
+   */
+  needDefaultXAxisFigure: boolean
+
+  /**
+   * Whether the default figure on the X axis is required
+   */
+  needDefaultYAxisFigure: boolean
 
   /**
    * Create figures corresponding to points
