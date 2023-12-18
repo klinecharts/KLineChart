@@ -1,5 +1,10 @@
 # 📠 更新日志
 
+## 9.7.1
+`2023-12-18`
++ 🐞 修复指标和覆盖物方法不执行问题。
++ 🐞 修复包管理器下载node版本依赖问题。
+
 ## 9.7.0
 `2023-12-12`
 + 🆕 实例方法新增`setMaxOffsetLeftDistance`和`setMaxOffsetRightDistance`。

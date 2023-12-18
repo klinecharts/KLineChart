@@ -138,20 +138,48 @@ export default class OverlayStore {
     if (instance.setExtendData(extendData)) {
       updateFlag = true
     }
-    instance.setOnDrawStartCallback(onDrawStart ?? null)
-    instance.setOnDrawingCallback(onDrawing ?? null)
-    instance.setOnDrawEndCallback(onDrawEnd ?? null)
-    instance.setOnClickCallback(onClick ?? null)
-    instance.setOnDoubleClickCallback(onDoubleClick ?? null)
-    instance.setOnRightClickCallback(onRightClick ?? null)
-    instance.setOnPressedMoveStartCallback(onPressedMoveStart ?? null)
-    instance.setOnPressedMovingCallback(onPressedMoving ?? null)
-    instance.setOnPressedMoveEndCallback(onPressedMoveEnd ?? null)
-    instance.setOnMouseEnterCallback(onMouseEnter ?? null)
-    instance.setOnMouseLeaveCallback(onMouseLeave ?? null)
-    instance.setOnRemovedCallback(onRemoved ?? null)
-    instance.setOnSelectedCallback(onSelected ?? null)
-    instance.setOnDeselectedCallback(onDeselected ?? null)
+    if (onDrawStart !== undefined) {
+      instance.setOnDrawStartCallback(onDrawStart)
+    }
+    if (onDrawing !== undefined) {
+      instance.setOnDrawingCallback(onDrawing)
+    }
+    if (onDrawEnd !== undefined) {
+      instance.setOnDrawEndCallback(onDrawEnd)
+    }
+    if (onClick !== undefined) {
+      instance.setOnClickCallback(onClick)
+    }
+    if (onDoubleClick !== undefined) {
+      instance.setOnDoubleClickCallback(onDoubleClick)
+    }
+    if (onRightClick !== undefined) {
+      instance.setOnRightClickCallback(onRightClick)
+    }
+    if (onPressedMoveStart !== undefined) {
+      instance.setOnPressedMoveStartCallback(onPressedMoveStart)
+    }
+    if (onPressedMoving !== undefined) {
+      instance.setOnPressedMovingCallback(onPressedMoving)
+    }
+    if (onPressedMoveEnd !== undefined) {
+      instance.setOnPressedMoveEndCallback(onPressedMoveEnd)
+    }
+    if (onMouseEnter !== undefined) {
+      instance.setOnMouseEnterCallback(onMouseEnter)
+    }
+    if (onMouseLeave !== undefined) {
+      instance.setOnMouseLeaveCallback(onMouseLeave)
+    }
+    if (onRemoved !== undefined) {
+      instance.setOnRemovedCallback(onRemoved)
+    }
+    if (onSelected !== undefined) {
+      instance.setOnSelectedCallback(onSelected)
+    }
+    if (onDeselected !== undefined) {
+      instance.setOnDeselectedCallback(onDeselected)
+    }
     return [updateFlag, sortFlag]
   }
 

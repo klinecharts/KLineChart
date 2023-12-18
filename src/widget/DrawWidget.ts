@@ -69,27 +69,28 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
     })
   }
 
+  private _clearCanvas (width: number, height: number, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): void {
+    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight)
+    if (width !== canvas.offsetWidth || height !== canvas.offsetHeight) {
+      const pixelRatio = getPixelRatio(canvas)
+      const scaleWidth = Math.round(width * pixelRatio)
+      const scaleHeight = Math.round(height * pixelRatio)
+
+      canvas.style.width = `${width}px`
+      canvas.style.height = `${height}px`
+      canvas.width = scaleWidth
+      canvas.height = scaleHeight
+      ctx.scale(pixelRatio, pixelRatio)
+    }
+  }
+
   private _optimalUpdateMain (width: number, height: number): void {
     if (this._mainRequestAnimationId !== DEFAULT_REQUEST_ID) {
       cancelAnimationFrame(this._mainRequestAnimationId)
       this._mainRequestAnimationId = DEFAULT_REQUEST_ID
     }
     this._mainRequestAnimationId = requestAnimationFrame(() => {
-      if (width !== this._mainCanvas.offsetWidth || height !== this._mainCanvas.offsetHeight) {
-        this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
-
-        const pixelRatio = getPixelRatio(this._mainCanvas)
-        const scaleWidth = Math.floor(width * pixelRatio)
-        const scaleHeight = Math.floor(height * pixelRatio)
-
-        this._mainCanvas.style.width = `${width}px`
-        this._mainCanvas.style.height = `${height}px`
-        this._mainCanvas.width = scaleWidth
-        this._mainCanvas.height = scaleHeight
-        this._mainCtx.scale(pixelRatio, pixelRatio)
-      } else {
-        this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
-      }
+      this._clearCanvas(width, height, this._mainCanvas, this._mainCtx)
       this.updateMain(this._mainCtx)
     })
   }
@@ -100,21 +101,7 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
       this._overlayRequestAnimationId = DEFAULT_REQUEST_ID
     }
     this._overlayRequestAnimationId = requestAnimationFrame(() => {
-      if (width !== this._overlayCanvas.offsetWidth || height !== this._overlayCanvas.offsetHeight) {
-        this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
-
-        const pixelRatio = getPixelRatio(this._overlayCanvas)
-        const scaleWidth = Math.floor(width * pixelRatio)
-        const scaleHeight = Math.floor(height * pixelRatio)
-
-        this._overlayCanvas.style.width = `${width}px`
-        this._overlayCanvas.style.height = `${height}px`
-        this._overlayCanvas.width = scaleWidth
-        this._overlayCanvas.height = scaleHeight
-        this._overlayCtx.scale(pixelRatio, pixelRatio)
-      } else {
-        this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
-      }
+      this._clearCanvas(width, height, this._overlayCanvas, this._overlayCtx)
       this.updateOverlay(this._overlayCtx)
     })
   }

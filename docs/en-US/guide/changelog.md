@@ -1,5 +1,10 @@
 # 📠 Change Log
 
+## 9.7.1
+`2023-12-18`
++ 🐞 Fix indicators and overlays methods not effect error.
++ 🐞 Fix package manager download node version dependency error.
+
 ## 9.7.0
 `2023-12-12`
 + 🆕 Add instance apis`setMaxOffsetLeftDistance` and `setMaxOffsetRightDistance`.

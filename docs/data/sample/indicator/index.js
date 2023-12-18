@@ -25,7 +25,7 @@ registerIndicator({
   }) => {
     const { from, to } = visibleRange
 
-    ctx.font = barSpace.gapBar + 'px' + 'Helvetica Neue'
+    ctx.font = barSpace.gapBar + 'px' + ' Helvetica Neue'
     ctx.textAlign = 'center'
     const result = indicator.result
     for (let i = from; i < to; i++) {

@@ -554,7 +554,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         weight: 'normal',
         borderStyle: LineType.Solid,
         borderColor: 'transparent',
-        borderSize: 1,
+        borderSize: 0,
         borderDashedValue: [2, 2],
         paddingLeft: 4,
         paddingTop: 4,
