@@ -111,6 +111,11 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
     }
   }
 
+  destroy (): void {
+    this._mainCanvas.destroy()
+    this._overlayCanvas.destroy()
+  }
+
   getImage (includeOverlay: boolean): HTMLCanvasElement {
     const { width, height } = this.getBounding()
     const canvas = createDom('canvas', {

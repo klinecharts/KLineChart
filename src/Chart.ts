@@ -1058,6 +1058,10 @@ export default class ChartImp implements Chart {
       pane.destroy()
     })
     this._drawPanes = []
+    this._separatorPanes.forEach(pane => {
+      pane.destroy()
+    })
+    this._separatorPanes.clear()
     this._container.removeChild(this._chartContainer)
   }
 }

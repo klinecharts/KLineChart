@@ -102,6 +102,12 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     this._yAxisWidget?.update(level)
   }
 
+  destroy (): void {
+    super.destroy()
+    this._mainWidget.destroy()
+    this._yAxisWidget?.destroy()
+  }
+
   override getImage (includeOverlay: boolean): HTMLCanvasElement {
     const { width, height } = this.getBounding()
     const canvas = createDom('canvas', {
