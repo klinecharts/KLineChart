@@ -23,7 +23,7 @@ export default interface Bounding {
   bottom: number
 }
 
-export function getDefaultBounding (bounding?: Partial<Bounding>): Bounding {
+export function createDefaultBounding (bounding?: Partial<Bounding>): Bounding {
   const defaultBounding: Bounding = {
     width: 0,
     height: 0,

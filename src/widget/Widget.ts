@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import Bounding, { getDefaultBounding } from '../common/Bounding'
+import Bounding, { createDefaultBounding } from '../common/Bounding'
 import Updater, { UpdateLevel } from '../common/Updater'
 import Eventful from '../common/Eventful'
 
@@ -36,7 +36,7 @@ export default abstract class Widget<P extends Pane = Pane> extends Eventful imp
    */
   private _container: HTMLElement
 
-  private readonly _bounding: Bounding = getDefaultBounding()
+  private readonly _bounding: Bounding = createDefaultBounding()
 
   constructor (rootContainer: HTMLElement, pane: P) {
     super()

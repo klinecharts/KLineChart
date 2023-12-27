@@ -149,8 +149,8 @@ export default class TimeScaleStore {
    */
   adjustVisibleRange (): void {
     const dataList = this._chartStore.getDataList()
-    const dataCount = dataList.length
-    const barCount = this._totalBarSpace / this._barSpace
+    const totalBarCount = dataList.length
+    const visibleBarCount = this._totalBarSpace / this._barSpace
 
     let leftMinVisibleBarCount: number
     let rightMinVisibleBarCount: number
@@ -166,25 +166,25 @@ export default class TimeScaleStore {
     leftMinVisibleBarCount = Math.max(0, leftMinVisibleBarCount)
     rightMinVisibleBarCount = Math.max(0, rightMinVisibleBarCount)
 
-    const maxRightOffsetBarCount = barCount - Math.min(leftMinVisibleBarCount, dataCount)
+    const maxRightOffsetBarCount = visibleBarCount - Math.min(leftMinVisibleBarCount, totalBarCount)
     if (this._lastBarRightSideDiffBarCount > maxRightOffsetBarCount) {
       this._lastBarRightSideDiffBarCount = maxRightOffsetBarCount
     }
 
-    const minRightOffsetBarCount = -dataCount + Math.min(rightMinVisibleBarCount, dataCount)
+    const minRightOffsetBarCount = -totalBarCount + Math.min(rightMinVisibleBarCount, totalBarCount)
     if (this._lastBarRightSideDiffBarCount < minRightOffsetBarCount) {
       this._lastBarRightSideDiffBarCount = minRightOffsetBarCount
     }
 
-    let to = Math.round(this._lastBarRightSideDiffBarCount + dataCount + 0.5)
-    if (to > dataCount) {
-      to = dataCount
+    let to = Math.round(this._lastBarRightSideDiffBarCount + totalBarCount + 0.5)
+    if (to > totalBarCount) {
+      to = totalBarCount
     }
-    let from = Math.round(to - barCount) - 1
+    let from = Math.round(to - visibleBarCount) - 1
     if (from < 0) {
       from = 0
     }
-    const realFrom = this._lastBarRightSideDiffBarCount > 0 ? Math.round(dataCount + this._lastBarRightSideDiffBarCount - barCount) - 1 : from
+    const realFrom = this._lastBarRightSideDiffBarCount > 0 ? Math.round(totalBarCount + this._lastBarRightSideDiffBarCount - visibleBarCount) - 1 : from
     this._visibleRange = { from, to, realFrom, realTo: to }
     this._chartStore.getActionStore().execute(ActionType.OnVisibleRangeChange, this._visibleRange)
     this._chartStore.adjustVisibleDataList()
@@ -377,6 +377,7 @@ export default class TimeScaleStore {
     const dataCount = this._chartStore.getDataList().length
     const deltaFromRight = dataCount + this._lastBarRightSideDiffBarCount - dataIndex
     return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
+    // return this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace
   }
 
   coordinateToDataIndex (x: number): number {
