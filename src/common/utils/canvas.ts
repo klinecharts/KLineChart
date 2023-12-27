@@ -22,7 +22,7 @@ let measureCtx: CanvasRenderingContext2D
  * @returns {number}
  */
 export function getPixelRatio (canvas: HTMLCanvasElement): number {
-  return Math.ceil(canvas.ownerDocument?.defaultView?.devicePixelRatio ?? 2)
+  return canvas.ownerDocument?.defaultView?.devicePixelRatio ?? 1
 }
 
 export function createFont (size?: number, weight?: string | number, family?: string): string {
