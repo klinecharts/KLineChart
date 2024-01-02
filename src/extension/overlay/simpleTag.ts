@@ -14,7 +14,7 @@
 
 import { formatPrecision } from '../../common/utils/format'
 
-import { OverlayTemplate } from '../../component/Overlay'
+import { type OverlayTemplate } from '../../component/Overlay'
 
 import { isFunction, isNumber, isValid } from '../../common/utils/typeChecks'
 

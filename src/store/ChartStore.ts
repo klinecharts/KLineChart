@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import KLineData from '../common/KLineData'
-import Precision from '../common/Precision'
-import VisibleData from '../common/VisibleData'
-import { getDefaultStyles, Styles } from '../common/Styles'
+import type KLineData from '../common/KLineData'
+import type Precision from '../common/Precision'
+import type VisibleData from '../common/VisibleData'
+import { getDefaultStyles, type Styles } from '../common/Styles'
 import { isArray, isString, isValid, merge } from '../common/utils/typeChecks'
 
-import { getDefaultCustomApi, CustomApi, defaultLocale, Options } from '../Options'
+import { getDefaultCustomApi, type CustomApi, defaultLocale, type Options } from '../Options'
 
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
@@ -28,7 +28,7 @@ import ActionStore from './ActionStore'
 
 import { getStyles } from '../extension/styles/index'
 
-import Chart from '../Chart'
+import type Chart from '../Chart'
 
 export default class ChartStore {
   /**
@@ -119,7 +119,7 @@ export default class ChartStore {
     }
   }
 
-  setOptions (options?: Options): ChartStore {
+  setOptions (options?: Options): this {
     if (isValid(options)) {
       const { locale, timezone, styles, customApi, thousandsSeparator } = options
       if (isString(locale)) {
@@ -165,7 +165,7 @@ export default class ChartStore {
     return this._precision
   }
 
-  setPrecision (precision: Precision): ChartStore {
+  setPrecision (precision: Precision): this {
     this._precision = precision
     this._indicatorStore.setSeriesPrecision(precision)
     return this

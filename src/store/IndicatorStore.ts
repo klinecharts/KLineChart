@@ -12,18 +12,20 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import Precision from '../common/Precision'
+import type Nullable from '../common/Nullable'
+import type Precision from '../common/Precision'
 import { isValid, isString, isArray, isNumber, isBoolean, isFunction } from '../common/utils/typeChecks'
 
-import ChartStore from './ChartStore'
+import type ChartStore from './ChartStore'
 
-import IndicatorImp, { IndicatorCreate, IndicatorConstructor, Indicator, IndicatorSeries } from '../component/Indicator'
+import { type IndicatorCreate, type Indicator } from '../component/Indicator'
+import type IndicatorImp from '../component/Indicator'
+import { IndicatorSeries } from '../component/Indicator'
 import { getIndicatorClass } from '../extension/indicator/index'
 
 export default class IndicatorStore {
   private readonly _chartStore: ChartStore
-  private readonly _instances: Map<string, IndicatorImp[]> = new Map()
+  private readonly _instances = new Map<string, IndicatorImp[]>()
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
@@ -119,7 +121,7 @@ export default class IndicatorStore {
     if (!isValid(paneInstances)) {
       paneInstances = []
     }
-    const IndicatorClazz = getIndicatorClass(name) as IndicatorConstructor
+    const IndicatorClazz = getIndicatorClass(name)!
     const instance = new IndicatorClazz()
     this._overrideInstance(instance, indicator)
     if (!isStack) {
@@ -228,7 +230,7 @@ export default class IndicatorStore {
 
   async override (indicator: IndicatorCreate, paneId: Nullable<string>): Promise<[boolean, boolean]> {
     const { name } = indicator
-    let instances: Map<string, IndicatorImp[]> = new Map()
+    let instances = new Map<string, IndicatorImp[]>()
     if (paneId !== null) {
       const paneInstances = this._instances.get(paneId)
       if (isValid(paneInstances)) {

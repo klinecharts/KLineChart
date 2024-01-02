@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import Coordinate from '../common/Coordinate'
-import VisibleData from '../common/VisibleData'
-import { CandleHighLowPriceMarkStyle } from '../common/Styles'
+import type Coordinate from '../common/Coordinate'
+import type VisibleData from '../common/VisibleData'
+import { type CandleHighLowPriceMarkStyle } from '../common/Styles'
 
 import ChildrenView from './ChildrenView'
 

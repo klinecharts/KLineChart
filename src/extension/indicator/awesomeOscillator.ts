@@ -12,11 +12,11 @@
  * limitations under the License.
  */
 
-import KLineData from '../../common/KLineData'
-import { IndicatorStyle, PolygonType } from '../../common/Styles'
+import type KLineData from '../../common/KLineData'
+import { type IndicatorStyle, PolygonType } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../component/Indicator'
+import { type Indicator, type IndicatorTemplate, type IndicatorFigureStylesCallbackData } from '../../component/Indicator'
 
 interface Ao {
   ao?: number
@@ -47,7 +47,7 @@ const awesomeOscillator: IndicatorTemplate<Ao> = {
   }],
   calc: (dataList: KLineData[], indicator: Indicator<Ao>) => {
     const params = indicator.calcParams
-    const maxPeriod = Math.max(params[0], params[1])
+    const maxPeriod = Math.max(params[0] as number, params[1] as number)
     let shortSum = 0
     let longSum = 0
     let short = 0

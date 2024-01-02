@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import Coordinate from '../../common/Coordinate'
-import { RectStyle, PolygonType, LineType } from '../../common/Styles'
+import type Coordinate from '../../common/Coordinate'
+import { type RectStyle, PolygonType, LineType } from '../../common/Styles'
 import { isTransparent } from '../../common/utils/color'
 import { isString } from '../../common/utils/typeChecks'
 
-import { FigureTemplate, DEVIATION } from '../../component/Figure'
+import { type FigureTemplate, DEVIATION } from '../../component/Figure'
 
 export function checkCoordinateOnRect (coordinate: Coordinate, rect: RectAttrs): boolean {
   let x = rect.x

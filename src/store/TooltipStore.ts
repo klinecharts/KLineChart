@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import KLineData from '../common/KLineData'
-import Crosshair from '../common/Crosshair'
+import type Nullable from '../common/Nullable'
+import type KLineData from '../common/KLineData'
+import type Crosshair from '../common/Crosshair'
 import { UpdateLevel } from '../common/Updater'
 import { isNumber } from '../common/utils/typeChecks'
 
-import ChartStore from './ChartStore'
+import type ChartStore from './ChartStore'
 
 export interface TooltipIcon {
   paneId: string

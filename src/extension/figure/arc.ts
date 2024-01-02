@@ -12,12 +12,13 @@
  * limitations under the License.
  */
 
-import Coordinate, { getDistance } from '../../common/Coordinate'
-import { LineStyle, LineType } from '../../common/Styles'
+import type Coordinate from '../../common/Coordinate'
+import { getDistance } from '../../common/Coordinate'
+import { type LineStyle, LineType } from '../../common/Styles'
 
-import { FigureTemplate, DEVIATION } from '../../component/Figure'
+import { type FigureTemplate, DEVIATION } from '../../component/Figure'
 
-import { CircleAttrs } from './circle'
+import { type CircleAttrs } from './circle'
 
 export function checkCoordinateOnArc (coordinate: Coordinate, arc: ArcAttrs): boolean {
   if (Math.abs(getDistance(coordinate, arc) - arc.r) < DEVIATION) {

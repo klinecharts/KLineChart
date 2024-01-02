@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
+import type Nullable from '../common/Nullable'
 import { calcTextWidth } from '../common/utils/canvas'
 import { isValid } from '../common/utils/typeChecks'
 
-import { FormatDate, FormatDateType } from '../Options'
+import { type FormatDate, FormatDateType } from '../Options'
 
-import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
+import AxisImp, { type Axis, type AxisExtremum, type AxisTick } from './Axis'
 
 export type XAxis = Axis
 

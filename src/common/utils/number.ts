@@ -110,11 +110,11 @@ export function getPrecision (value: number): number {
   }
 }
 
-export function getMaxMin<D> (dataList: D[], maxKey: string, minKey: string): number[] {
+export function getMaxMin<D> (dataList: D[], maxKey: keyof D, minKey: keyof D): number[] {
   const maxMin = [Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER]
   dataList.forEach(data => {
-    maxMin[0] = Math.max(data[maxKey] ?? data, maxMin[0])
-    maxMin[1] = Math.min(data[minKey] ?? data, maxMin[1])
+    maxMin[0] = Math.max((data[maxKey] ?? data) as number, maxMin[0])
+    maxMin[1] = Math.min((data[minKey] ?? data) as number, maxMin[1])
   })
   return maxMin
 }

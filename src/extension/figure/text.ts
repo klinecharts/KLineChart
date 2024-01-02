@@ -12,14 +12,14 @@
  * limitations under the License.
  */
 
-import Coordinate from '../../common/Coordinate'
-import { TextStyle } from '../../common/Styles'
+import type Coordinate from '../../common/Coordinate'
+import { type TextStyle } from '../../common/Styles'
 
 import { createFont, calcTextWidth } from '../../common/utils/canvas'
 
-import { FigureTemplate } from '../../component/Figure'
+import { type FigureTemplate } from '../../component/Figure'
 
-import { RectAttrs, drawRect } from './rect'
+import { type RectAttrs, drawRect } from './rect'
 
 export function getTextRect (attrs: TextAttrs, styles: Partial<TextStyle>): RectAttrs {
   const { size = 12, paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0, weight = 'normal', family } = styles

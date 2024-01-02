@@ -11,11 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Nullable from '../common/Nullable'
-import Updater, { UpdateLevel } from '../common/Updater'
-import Bounding, { createDefaultBounding } from '../common/Bounding'
+import type Nullable from '../common/Nullable'
+import type Updater from '../common/Updater'
+import { UpdateLevel } from '../common/Updater'
+import type Bounding from '../common/Bounding'
+import { createDefaultBounding } from '../common/Bounding'
 
-import Chart from '../Chart'
+import type Chart from '../Chart'
 
 import { createDom } from '../common/utils/dom'
 export default abstract class Pane implements Updater {

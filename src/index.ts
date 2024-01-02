@@ -28,7 +28,7 @@ import {
   LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
   CandleType, YAxisPosition, YAxisType
 } from './common/Styles'
-import Nullable from './common/Nullable'
+import type Nullable from './common/Nullable'
 
 import { logError, logTag, logWarn } from './common/utils/logger'
 
@@ -41,8 +41,8 @@ import { ActionType } from './common/Action'
 import { IndicatorSeries } from './component/Indicator'
 import { OverlayMode } from './component/Overlay'
 
-import { Options, FormatDateType } from './Options'
-import ChartImp, { Chart, DomPosition } from './Chart'
+import { type Options, FormatDateType } from './Options'
+import ChartImp, { type Chart, DomPosition } from './Chart'
 
 import { checkCoordinateOnArc, drawArc } from './extension/figure/arc'
 import { checkCoordinateOnCircle, drawCircle } from './extension/figure/circle'

@@ -12,11 +12,11 @@
  * limitations under the License.
  */
 
-import Bounding from '../common/Bounding'
+import type Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
 import Canvas from '../common/Canvas'
 
-import DrawPane from '../pane/DrawPane'
+import type DrawPane from '../pane/DrawPane'
 
 import Widget from './Widget'
 
@@ -123,7 +123,7 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
       height: `${height}px`,
       boxSizing: 'border-box'
     })
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const ctx = canvas.getContext('2d')!
     const pixelRatio = getPixelRatio(canvas)
     canvas.width = width * pixelRatio
     canvas.height = height * pixelRatio

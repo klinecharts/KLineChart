@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import Coordinate from '../../common/Coordinate'
-import { PolygonStyle, PolygonType, LineType } from '../../common/Styles'
+import type Coordinate from '../../common/Coordinate'
+import { type PolygonStyle, PolygonType, LineType } from '../../common/Styles'
 import { isString } from '../../common/utils/typeChecks'
 import { isTransparent } from '../../common/utils/color'
 
-import { FigureTemplate } from '../../component/Figure'
+import { type FigureTemplate } from '../../component/Figure'
 
 export function checkCoordinateOnCircle (coordinate: Coordinate, circle: CircleAttrs): boolean {
   const difX = coordinate.x - circle.x

@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import Coordinate from '../../common/Coordinate'
-import Bounding from '../../common/Bounding'
+import type Coordinate from '../../common/Coordinate'
+import type Bounding from '../../common/Bounding'
 
-import { OverlayTemplate } from '../../component/Overlay'
+import { type OverlayTemplate } from '../../component/Overlay'
 
-import { getLinearYFromCoordinates, LineAttrs } from '../figure/line'
+import { getLinearYFromCoordinates, type LineAttrs } from '../figure/line'
 
 export function getRayLine (coordinates: Coordinate[], bounding: Bounding): LineAttrs | LineAttrs[] {
   if (coordinates.length > 1) {

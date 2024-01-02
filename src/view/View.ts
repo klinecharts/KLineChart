@@ -12,18 +12,18 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import { EventHandler, EventName } from '../common/SyntheticEvent'
+import type Nullable from '../common/Nullable'
+import { type EventHandler, type EventName } from '../common/SyntheticEvent'
 import Eventful from '../common/Eventful'
 import { isValid } from '../common/utils/typeChecks'
 
-import Figure from '../component/Figure'
-import Axis from '../component/Axis'
+import type Figure from '../component/Figure'
+import type Axis from '../component/Axis'
 
 import { getInnerFigureClass } from '../extension/figure/index'
 
-import DrawWidget from '../widget/DrawWidget'
-import DrawPane from '../pane/DrawPane'
+import type DrawWidget from '../widget/DrawWidget'
+import type DrawPane from '../pane/DrawPane'
 
 export default abstract class View<C extends Axis = Axis> extends Eventful {
   /**
@@ -46,6 +46,7 @@ export default abstract class View<C extends Axis = Axis> extends Eventful {
         for (const key in eventHandler) {
           // eslint-disable-next-line no-prototype-builtins
           if (eventHandler.hasOwnProperty(key)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             figure.registerEvent(key as EventName, eventHandler[key])
           }
         }

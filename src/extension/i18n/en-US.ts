@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { Locales } from '../../Options'
+import { type Locales } from '../../Options'
 
 const enUS: Locales = {
   time: 'Time: ',

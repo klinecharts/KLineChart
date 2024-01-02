@@ -12,14 +12,14 @@
  * limitations under the License.
  */
 
-import Action, { ActionType, ActionCallback } from '../common/Action'
+import Action, { type ActionType, type ActionCallback } from '../common/Action'
 import { isValid } from '../common/utils/typeChecks'
 
 export default class ActionStore {
   /**
    * Chart action map
    */
-  private readonly _actions: Map<ActionType, Action> = new Map()
+  private readonly _actions = new Map<ActionType, Action>()
 
   execute (type: ActionType, data?: any): void {
     this._actions.get(type)?.execute(data)

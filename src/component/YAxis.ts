@@ -13,14 +13,14 @@
  */
 
 import { YAxisType, YAxisPosition, CandleType } from '../common/Styles'
-import { isValid, isNumber } from '../common/utils/typeChecks'
+import { isNumber } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision, formatThousands } from '../common/utils/format'
 
-import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
+import AxisImp, { type Axis, type AxisExtremum, type AxisTick } from './Axis'
 
-import { IndicatorFigure } from './Indicator'
+import { type IndicatorFigure } from './Indicator'
 
 import { PaneIdConstants } from '../pane/types'
 
@@ -89,14 +89,16 @@ export default class YAxisImp extends AxisImp implements YAxis {
       }
       if (inCandle && isArea) {
         const value = data[areaValueKey]
-        min = Math.min(min, value)
-        max = Math.max(max, value)
+        if (isNumber(value)) {
+          min = Math.min(min, value)
+          max = Math.max(max, value)
+        }
       }
       figuresResultList.forEach(({ figures, result }) => {
         const indicatorData = result[dataIndex] ?? {}
         figures.forEach(figure => {
           const value = indicatorData[figure.key]
-          if (isValid<number>(value)) {
+          if (isNumber(value)) {
             min = Math.min(min, value)
             max = Math.max(max, value)
           }

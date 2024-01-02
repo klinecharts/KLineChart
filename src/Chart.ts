@@ -12,20 +12,20 @@
  * limitations under the License.
  */
 
-import Nullable from './common/Nullable'
-import DeepPartial from './common/DeepPartial'
-import Bounding from './common/Bounding'
-import KLineData from './common/KLineData'
-import Coordinate from './common/Coordinate'
-import Point from './common/Point'
+import type Nullable from './common/Nullable'
+import type DeepPartial from './common/DeepPartial'
+import type Bounding from './common/Bounding'
+import type KLineData from './common/KLineData'
+import type Coordinate from './common/Coordinate'
+import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
-import { Styles, YAxisPosition } from './common/Styles'
+import { type Styles, YAxisPosition } from './common/Styles'
 
-import Crosshair from './common/Crosshair'
-import { ActionType, ActionCallback } from './common/Action'
-import LoadMoreCallback from './common/LoadMoreCallback'
-import Precision from './common/Precision'
-import VisibleRange from './common/VisibleRange'
+import type Crosshair from './common/Crosshair'
+import { ActionType, type ActionCallback } from './common/Action'
+import type LoadMoreCallback from './common/LoadMoreCallback'
+import type Precision from './common/Precision'
+import type VisibleRange from './common/VisibleRange'
 
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -40,22 +40,22 @@ import ChartStore from './store/ChartStore'
 import CandlePane from './pane/CandlePane'
 import IndicatorPane from './pane/IndicatorPane'
 import XAxisPane from './pane/XAxisPane'
-import DrawPane from './pane/DrawPane'
+import type DrawPane from './pane/DrawPane'
 import SeparatorPane from './pane/SeparatorPane'
 
-import { PaneOptions, PanePosition, PANE_DEFAULT_HEIGHT, PaneIdConstants } from './pane/types'
+import { type PaneOptions, PanePosition, PANE_DEFAULT_HEIGHT, PaneIdConstants } from './pane/types'
 
-import Axis from './component/Axis'
+import type Axis from './component/Axis'
 
-import { Indicator, IndicatorCreate } from './component/Indicator'
-import { Overlay, OverlayCreate, OverlayRemove } from './component/Overlay'
+import { type Indicator, type IndicatorCreate } from './component/Indicator'
+import { type Overlay, type OverlayCreate, type OverlayRemove } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
 import { getStyles as getExtensionStyles } from './extension/styles/index'
 
 import Event from './Event'
 
-import { CustomApi, LayoutChildType, Options } from './Options'
+import { type CustomApi, LayoutChildType, type Options } from './Options'
 
 export enum DomPosition {
   Root = 'root',
@@ -134,7 +134,7 @@ export default class ChartImp implements Chart {
   private _drawPanes: DrawPane[] = []
   private _candlePane: CandlePane
   private _xAxisPane: XAxisPane
-  private readonly _separatorPanes: Map<DrawPane, SeparatorPane> = new Map()
+  private readonly _separatorPanes = new Map<DrawPane, SeparatorPane>()
 
   constructor (container: HTMLElement, options?: Options) {
     this._initContainer(container)
@@ -155,6 +155,7 @@ export default class ChartImp implements Chart {
       boxSizing: 'border-box',
       userSelect: 'none',
       webkitUserSelect: 'none',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       msUserSelect: 'none',
       MozUserSelect: 'none',
@@ -220,8 +221,8 @@ export default class ChartImp implements Chart {
     id: string,
     options?: PaneOptions
   ): P {
-    let index
-    let pane
+    let index: Nullable<number> = null
+    let pane: Nullable<P> = null
     const position = options?.position
     switch (position) {
       case PanePosition.Top: {
@@ -376,7 +377,7 @@ export default class ChartImp implements Chart {
     const mainBounding = { width: mainWidth, left: mainLeft }
     const yAxisBounding = { width: yAxisWidth, left: yAxisLeft }
     const separatorFill = styles.separator.fill
-    let separatorBounding
+    let separatorBounding: Partial<Bounding>
     if (isOutside && !separatorFill) {
       separatorBounding = mainBounding
     } else {
@@ -727,7 +728,7 @@ export default class ChartImp implements Chart {
       const pane = this._createPane(IndicatorPane, paneId, paneOptions ?? {})
       const height = paneOptions?.height ?? PANE_DEFAULT_HEIGHT
       pane.setBounding({ height })
-      this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).finally(() => {
+      void this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).finally(() => {
         this.adjustPaneViewport(true, true, true, true, true)
         callback?.()
       })
@@ -827,7 +828,7 @@ export default class ChartImp implements Chart {
   }
 
   removeOverlay (remove?: string | OverlayRemove): void {
-    let overlayRemove
+    let overlayRemove: OverlayRemove
     if (isValid(remove)) {
       if (isString(remove)) {
         overlayRemove = { id: remove }
@@ -835,7 +836,7 @@ export default class ChartImp implements Chart {
         overlayRemove = remove
       }
     }
-    this._chartStore.getOverlayStore().removeInstance(overlayRemove)
+    this._chartStore.getOverlayStore().removeInstance(overlayRemove!)
   }
 
   setPaneOptions (options: PaneOptions): void {
@@ -997,7 +998,7 @@ export default class ChartImp implements Chart {
   executeAction (type: ActionType, data: any): void {
     switch (type) {
       case ActionType.OnCrosshairChange: {
-        const crosshair = { ...data }
+        const crosshair: Crosshair = { ...data }
         crosshair.paneId = crosshair.paneId ?? PaneIdConstants.CANDLE
         this._chartStore.getTooltipStore().setCrosshair(crosshair)
         break
@@ -1020,7 +1021,7 @@ export default class ChartImp implements Chart {
       height: `${height}px`,
       boxSizing: 'border-box'
     })
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const ctx = canvas.getContext('2d')!
     const pixelRatio = getPixelRatio(canvas)
     canvas.width = width * pixelRatio
     canvas.height = height * pixelRatio

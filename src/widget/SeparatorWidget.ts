@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import Bounding from '../common/Bounding'
+import type Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
-import { MouseTouchEvent } from '../common/SyntheticEvent'
+import { type MouseTouchEvent } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
 import { createDom } from '../common/utils/dom'
 import { throttle } from '../common/utils/performance'
@@ -22,9 +22,9 @@ import { throttle } from '../common/utils/performance'
 import Widget from './Widget'
 import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './types'
 
-import SeparatorPane from '../pane/SeparatorPane'
+import type SeparatorPane from '../pane/SeparatorPane'
 
-import AxisPane from '../pane/DrawPane'
+import type AxisPane from '../pane/DrawPane'
 
 export default class SeparatorWidget extends Widget<SeparatorPane> {
   private _dragFlag = false
@@ -35,13 +35,21 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
 
   constructor (rootContainer: HTMLElement, pane: SeparatorPane) {
     super(rootContainer, pane)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.registerEvent('touchStartEvent', this._mouseDownEvent.bind(this))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .registerEvent('touchMoveEvent', this._pressedMouseMoveEvent.bind(this))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .registerEvent('touchEndEvent', this._mouseUpEvent.bind(this))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .registerEvent('mouseDownEvent', this._mouseDownEvent.bind(this))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .registerEvent('mouseUpEvent', this._mouseUpEvent.bind(this))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .registerEvent('pressedMouseMoveEvent', this._pressedMouseMoveEvent.bind(this))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .registerEvent('mouseEnterEvent', this._mouseEnterEvent.bind(this))
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       .registerEvent('mouseLeaveEvent', this._mouseLeaveEvent.bind(this))
   }
 
@@ -67,6 +75,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     return this._mouseLeaveEvent()
   }
 
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   private readonly _pressedMouseMoveEvent = throttle(this._pressedTouchMouseMoveEvent, 20)
 
   private _pressedTouchMouseMoveEvent (event: MouseTouchEvent): boolean {
@@ -98,7 +107,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
         reducedPane.setBounding({ height: reducedPaneHeight })
         increasedPane.setBounding({ height: startDragIncreasedPaneHeight + diffHeight })
         const chart = currentPane.getChart()
-        chart.getChartStore().getActionStore().execute(ActionType.OnPaneDrag, { paneId: currentPane.getId })
+        chart.getChartStore().getActionStore().execute(ActionType.OnPaneDrag, { paneId: currentPane.getId() })
         chart.adjustPaneViewport(true, true, true, true, true)
       }
     }

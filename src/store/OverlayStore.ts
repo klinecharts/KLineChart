@@ -12,17 +12,19 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
+import type Nullable from '../common/Nullable'
 import { UpdateLevel } from '../common/Updater'
-import { MouseTouchEvent } from '../common/SyntheticEvent'
+import { type MouseTouchEvent } from '../common/SyntheticEvent'
 import { isFunction, isValid, isString, isBoolean, isNumber, isArray } from '../common/utils/typeChecks'
 import { createId } from '../common/utils/id'
 
-import OverlayImp, { OVERLAY_ID_PREFIX, OVERLAY_ACTIVE_Z_LEVEL, OverlayCreate, OverlayRemove } from '../component/Overlay'
+import { type OverlayCreate, type OverlayRemove } from '../component/Overlay'
+import type OverlayImp from '../component/Overlay'
+import { OVERLAY_ID_PREFIX, OVERLAY_ACTIVE_Z_LEVEL } from '../component/Overlay'
 
 import { getOverlayInnerClass } from '../extension/overlay/index'
 
-import ChartStore from './ChartStore'
+import type ChartStore from './ChartStore'
 
 import { PaneIdConstants } from '../pane/types'
 

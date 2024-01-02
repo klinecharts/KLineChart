@@ -12,11 +12,11 @@
  * limitations under the License.
  */
 
-import KLineData from '../../common/KLineData'
-import { IndicatorStyle } from '../../common/Styles'
+import type KLineData from '../../common/KLineData'
+import { type IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData, IndicatorSeries, IndicatorFigure } from '../../component/Indicator'
+import { type Indicator, type IndicatorTemplate, type IndicatorFigureStylesCallbackData, IndicatorSeries, type IndicatorFigure } from '../../component/Indicator'
 
 interface Vol {
   volume?: number
@@ -43,7 +43,7 @@ const volume: IndicatorTemplate<Vol> = {
       type: 'bar',
       baseValue: 0,
       styles: (data: IndicatorFigureStylesCallbackData<Vol>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
-        const kLineData = data.current.kLineData as KLineData
+        const kLineData = data.current.kLineData!
         let color: string
         if (kLineData.close > kLineData.open) {
           color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles.bars)[0].upColor) as string
@@ -66,7 +66,7 @@ const volume: IndicatorTemplate<Vol> = {
       type: 'bar',
       baseValue: 0,
       styles: (data: IndicatorFigureStylesCallbackData<Vol>, indicator: Indicator, defaultStyles: IndicatorStyle) => {
-        const kLineData = data.current.kLineData as KLineData
+        const kLineData = data.current.kLineData!
         let color: string
         if (kLineData.close > kLineData.open) {
           color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles.bars)[0].upColor) as string

@@ -13,13 +13,13 @@
  */
 
 import { formatPrecision, formatThousands } from '../common/utils/format'
-import { isValid } from '../common/utils/typeChecks'
+import { isNumber, isValid } from '../common/utils/typeChecks'
 
-import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../component/Indicator'
+import { eachFigures, type IndicatorFigure, type IndicatorFigureStyle } from '../component/Indicator'
 
 import View from './View'
 
-import YAxis from '../component/YAxis'
+import type YAxis from '../component/YAxis'
 
 export default class IndicatorLastValueView extends View<YAxis> {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -44,7 +44,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
           const precision = indicator.precision
           eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
             const value = indicatorData[figure.key]
-            if (isValid<number>(value)) {
+            if (isNumber(value)) {
               const y = yAxis.convertToNicePixel(value)
               let text = formatPrecision(value, precision)
               if (indicator.shouldFormatBigNumber) {

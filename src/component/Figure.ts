@@ -12,10 +12,10 @@
  * limitations under the License.
  */
 
-import Coordinate from '../common/Coordinate'
+import type Coordinate from '../common/Coordinate'
 
 import Eventful from '../common/Eventful'
-import { MouseTouchEvent } from '../common/SyntheticEvent'
+import { type MouseTouchEvent } from '../common/SyntheticEvent'
 
 export const DEVIATION = 2
 

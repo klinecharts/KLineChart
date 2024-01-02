@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import KLineData from './KLineData'
+import type KLineData from './KLineData'
 
 export default interface VisibleData {
   dataIndex: number

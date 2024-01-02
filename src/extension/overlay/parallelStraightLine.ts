@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import Coordinate from '../../common/Coordinate'
-import Bounding from '../../common/Bounding'
+import type Coordinate from '../../common/Coordinate'
+import type Bounding from '../../common/Bounding'
 
-import { OverlayTemplate } from '../../component/Overlay'
+import { type OverlayTemplate } from '../../component/Overlay'
 
-import { LineAttrs, getLinearSlopeIntercept } from '../figure/line'
+import { type LineAttrs, getLinearSlopeIntercept } from '../figure/line'
 
 /**
  * 获取平行线
@@ -45,7 +45,7 @@ export function getParallelLines (coordinates: Coordinate[], bounding: Bounding,
     } else {
       const startX = 0
       const endX = bounding.width
-      const kb = getLinearSlopeIntercept(coordinates[0], coordinates[1]) as number[]
+      const kb = getLinearSlopeIntercept(coordinates[0], coordinates[1])!
       const k = kb[0]
       const b = kb[1]
       lines.push({ coordinates: [{ x: startX, y: startX * k + b }, { x: endX, y: endX * k + b }] })

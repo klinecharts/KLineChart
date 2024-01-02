@@ -14,5 +14,6 @@ module.exports = {
   overrides: [
   ],
   rules: {
+    "@typescript-eslint/no-non-null-assertion": "off"
   }
 }

@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import Nullable from './Nullable'
-import KLineData from './KLineData'
+import type Nullable from './Nullable'
+import type KLineData from './KLineData'
 
 export interface Margin {
   marginLeft: number

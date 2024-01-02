@@ -12,23 +12,25 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import Bounding from '../common/Bounding'
-import KLineData from '../common/KLineData'
-import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, TooltipStyle, TooltipIconStyle, TooltipTextStyle, TooltipData, TooltipShowRule, TooltipDataChild, TooltipIconPosition } from '../common/Styles'
+import type Nullable from '../common/Nullable'
+import type Bounding from '../common/Bounding'
+import type KLineData from '../common/KLineData'
+import type Crosshair from '../common/Crosshair'
+import { type IndicatorStyle, type TooltipStyle, type TooltipIconStyle, type TooltipTextStyle, type TooltipData, TooltipShowRule, type TooltipDataChild, TooltipIconPosition } from '../common/Styles'
 import { ActionType } from '../common/Action'
 import { formatPrecision, formatThousands } from '../common/utils/format'
-import { isValid, isObject, isString } from '../common/utils/typeChecks'
+import { isValid, isObject, isString, isNumber } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 
-import { CustomApi } from '../Options'
+import { type CustomApi } from '../Options'
 
-import YAxis from '../component/YAxis'
+import type YAxis from '../component/YAxis'
 
-import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
+import { type Indicator, type IndicatorFigure, type IndicatorFigureStyle, type IndicatorTooltipData } from '../component/Indicator'
+import type IndicatorImp from '../component/Indicator'
+import { eachFigures } from '../component/Indicator'
 
-import { TooltipIcon } from '../store/TooltipStore'
+import { type TooltipIcon } from '../store/TooltipStore'
 
 import View from './View'
 
@@ -296,7 +298,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
     const tooltipData: IndicatorTooltipData = { name, calcParamsText, values: [], icons: tooltipStyles.icons }
 
-    const dataIndex = crosshair.dataIndex as number
+    const dataIndex = crosshair.dataIndex!
     const result = indicator.result ?? []
 
     const values: TooltipData[] = []
@@ -306,13 +308,13 @@ export default class IndicatorTooltipView extends View<YAxis> {
         if (isString(figure.title)) {
           const color = figureStyles.color
           let value = indicatorData[figure.key]
-          if (isValid(value)) {
+          if (isNumber(value)) {
             value = formatPrecision(value, indicator.precision)
             if (indicator.shouldFormatBigNumber) {
-              value = customApi.formatBigNumber(value)
+              value = customApi.formatBigNumber(value as string)
             }
           }
-          values.push({ title: { text: figure.title, color }, value: { text: formatThousands(value ?? tooltipStyles.defaultValue, thousandsSeparator), color } })
+          values.push({ title: { text: figure.title, color }, value: { text: formatThousands((value ?? tooltipStyles.defaultValue) as string, thousandsSeparator), color } })
         }
       })
       tooltipData.values = values

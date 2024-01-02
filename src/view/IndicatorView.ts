@@ -12,16 +12,16 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import VisibleData from '../common/VisibleData'
-import BarSpace from '../common/BarSpace'
+import type Nullable from '../common/Nullable'
+import type VisibleData from '../common/VisibleData'
+import type BarSpace from '../common/BarSpace'
 import { CandleType } from '../common/Styles'
 
-import ChartStore from '../store/ChartStore'
+import type ChartStore from '../store/ChartStore'
 
-import { eachFigures, IndicatorFigure, IndicatorFigureAttrs, IndicatorFigureStyle } from '../component/Indicator'
+import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle } from '../component/Indicator'
 
-import CandleBarView, { CandleBarOptions } from './CandleBarView'
+import CandleBarView, { type CandleBarOptions } from './CandleBarView'
 
 import { formatValue } from '../common/utils/format'
 import { isNumber, isValid } from '../common/utils/typeChecks'
@@ -112,9 +112,18 @@ export default class IndicatorView extends CandleBarView {
             const currentCoordinate = { x }
             const nextCoordinate = { x: nextX }
             indicator.figures.forEach(({ key }) => {
-              prevCoordinate[key] = yAxis.convertToPixel(prevIndicatorData[key])
-              currentCoordinate[key] = yAxis.convertToPixel(currentIndicatorData[key])
-              nextCoordinate[key] = yAxis.convertToPixel(nextIndicatorData[key])
+              const prevValue = prevIndicatorData[key]
+              if (isNumber(prevValue)) {
+                prevCoordinate[key] = yAxis.convertToPixel(prevValue)
+              }
+              const currentValue = currentIndicatorData[key]
+              if (isNumber(currentValue)) {
+                currentCoordinate[key] = yAxis.convertToPixel(currentValue)
+              }
+              const nextValue = nextIndicatorData[key]
+              if (isNumber(nextValue)) {
+                nextCoordinate[key] = yAxis.convertToPixel(nextValue)
+              }
             })
             eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle) => {
               if (isValid(currentIndicatorData[figure.key])) {
@@ -169,7 +178,7 @@ export default class IndicatorView extends CandleBarView {
                   }
                 }
                 if (isValid<IndicatorFigureAttrs>(attrs)) {
-                  const name = figure.type as string
+                  const name = figure.type!
                   this.createFigure(name === 'bar' ? 'rect' : name, attrs, figureStyles)?.draw(ctx)
                 }
               }

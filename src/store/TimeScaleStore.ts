@@ -12,19 +12,20 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import Coordinate from '../common/Coordinate'
-import KLineData from '../common/KLineData'
-import BarSpace from '../common/BarSpace'
-import VisibleRange, { getDefaultVisibleRange } from '../common/VisibleRange'
-import LoadMoreCallback from '../common/LoadMoreCallback'
+import type Nullable from '../common/Nullable'
+import type Coordinate from '../common/Coordinate'
+import type KLineData from '../common/KLineData'
+import type BarSpace from '../common/BarSpace'
+import type VisibleRange from '../common/VisibleRange'
+import { getDefaultVisibleRange } from '../common/VisibleRange'
+import type LoadMoreCallback from '../common/LoadMoreCallback'
 import { ActionType } from '../common/Action'
 
 import { logWarn } from '../common/utils/logger'
 import { binarySearchNearest } from '../common/utils/number'
 import { isNumber, isString } from '../common/utils/typeChecks'
 
-import ChartStore from './ChartStore'
+import type ChartStore from './ChartStore'
 
 interface LeftRightSide {
   left: number
@@ -54,7 +55,7 @@ export default class TimeScaleStore {
   /**
    * Time format
    */
-  private _dateTimeFormat: Intl.DateTimeFormat = this._buildDateTimeFormat() as Intl.DateTimeFormat
+  private _dateTimeFormat: Intl.DateTimeFormat = this._buildDateTimeFormat()!
 
   /**
    * Scale enabled flag
@@ -196,12 +197,12 @@ export default class TimeScaleStore {
     }
   }
 
-  setMore (more: boolean): TimeScaleStore {
+  setMore (more: boolean): this {
     this._more = more
     return this
   }
 
-  setLoading (loading: boolean): TimeScaleStore {
+  setLoading (loading: boolean): this {
     this._loading = loading
     return this
   }
@@ -264,7 +265,7 @@ export default class TimeScaleStore {
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
   }
 
-  setTotalBarSpace (totalSpace: number): TimeScaleStore {
+  setTotalBarSpace (totalSpace: number): this {
     if (this._totalBarSpace !== totalSpace) {
       this._totalBarSpace = totalSpace
       this.adjustVisibleRange()
@@ -273,7 +274,7 @@ export default class TimeScaleStore {
     return this
   }
 
-  setOffsetRightDistance (distance: number, isUpdate?: boolean): TimeScaleStore {
+  setOffsetRightDistance (distance: number, isUpdate?: boolean): this {
     this._offsetRightDistance = this._scrollLimitRole === ScrollLimitRole.Distance ? Math.min(this._maxOffsetDistance.right, distance) : distance
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
     if (isUpdate ?? false) {
@@ -300,30 +301,30 @@ export default class TimeScaleStore {
     return this._lastBarRightSideDiffBarCount
   }
 
-  setLastBarRightSideDiffBarCount (barCount: number): TimeScaleStore {
+  setLastBarRightSideDiffBarCount (barCount: number): this {
     this._lastBarRightSideDiffBarCount = barCount
     return this
   }
 
-  setMaxOffsetLeftDistance (distance: number): TimeScaleStore {
+  setMaxOffsetLeftDistance (distance: number): this {
     this._scrollLimitRole = ScrollLimitRole.Distance
     this._maxOffsetDistance.left = distance
     return this
   }
 
-  setMaxOffsetRightDistance (distance: number): TimeScaleStore {
+  setMaxOffsetRightDistance (distance: number): this {
     this._scrollLimitRole = ScrollLimitRole.Distance
     this._maxOffsetDistance.right = distance
     return this
   }
 
-  setLeftMinVisibleBarCount (barCount: number): TimeScaleStore {
+  setLeftMinVisibleBarCount (barCount: number): this {
     this._scrollLimitRole = ScrollLimitRole.BarCount
     this._minVisibleBarCount.left = barCount
     return this
   }
 
-  setRightMinVisibleBarCount (barCount: number): TimeScaleStore {
+  setRightMinVisibleBarCount (barCount: number): this {
     this._scrollLimitRole = ScrollLimitRole.BarCount
     this._minVisibleBarCount.right = barCount
     return this
@@ -388,19 +389,21 @@ export default class TimeScaleStore {
     if (!this._zoomEnabled) {
       return
     }
-    if (!isNumber(coordinate?.x)) {
+    let zoomCoordinate: Nullable<Partial<Coordinate>> = coordinate ?? null
+    if (!isNumber(zoomCoordinate?.x)) {
       const crosshair = this._chartStore.getTooltipStore().getCrosshair()
-      coordinate = { x: crosshair?.x ?? this._totalBarSpace / 2 }
+      zoomCoordinate = { x: crosshair?.x ?? this._totalBarSpace / 2 }
     }
     this._chartStore.getActionStore().execute(ActionType.OnZoom)
-    const floatIndex = this.coordinateToFloatIndex(coordinate?.x as number)
+    const x = zoomCoordinate!.x!
+    const floatIndex = this.coordinateToFloatIndex(x)
     const barSpace = this._barSpace + scale * (this._barSpace / 10)
     this.setBarSpace(barSpace, () => {
-      this._lastBarRightSideDiffBarCount += (floatIndex - this.coordinateToFloatIndex(coordinate?.x as number))
+      this._lastBarRightSideDiffBarCount += (floatIndex - this.coordinateToFloatIndex(x))
     })
   }
 
-  setZoomEnabled (enabled: boolean): TimeScaleStore {
+  setZoomEnabled (enabled: boolean): this {
     this._zoomEnabled = enabled
     return this
   }
@@ -409,7 +412,7 @@ export default class TimeScaleStore {
     return this._zoomEnabled
   }
 
-  setScrollEnabled (enabled: boolean): TimeScaleStore {
+  setScrollEnabled (enabled: boolean): this {
     this._scrollEnabled = enabled
     return this
   }
@@ -418,7 +421,7 @@ export default class TimeScaleStore {
     return this._scrollEnabled
   }
 
-  setLoadMoreCallback (callback: LoadMoreCallback): TimeScaleStore {
+  setLoadMoreCallback (callback: LoadMoreCallback): this {
     this._loadMoreCallback = callback
     return this
   }

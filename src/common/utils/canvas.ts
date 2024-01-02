@@ -38,7 +38,7 @@ export function calcTextWidth (text: string, size?: number, weight?: string | nu
   if (!isValid(measureCtx)) {
     const canvas = document.createElement('canvas')
     const pixelRatio = getPixelRatio(canvas)
-    measureCtx = canvas.getContext('2d') as CanvasRenderingContext2D
+    measureCtx = canvas.getContext('2d')!
     measureCtx.scale(pixelRatio, pixelRatio)
   }
   measureCtx.font = createFont(size, weight, family)
