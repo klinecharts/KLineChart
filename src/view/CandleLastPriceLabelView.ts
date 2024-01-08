@@ -64,20 +64,20 @@ export default class CandleLastPriceLabelView extends View {
           x = bounding.width
           textAlgin = 'right'
         }
-        this.createFigure(
-          'text',
-          {
+        this.createFigure({
+          name: 'text',
+          attrs: {
             x,
             y: priceY,
             text,
             align: textAlgin,
             baseline: 'middle'
           },
-          {
+          styles: {
             ...lastPriceMarkTextStyles,
             backgroundColor
           }
-        )?.draw(ctx)
+        })?.draw(ctx)
       }
     }
   }

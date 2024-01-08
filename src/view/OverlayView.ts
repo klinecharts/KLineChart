@@ -486,9 +486,9 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       attrsArray.forEach((ats, attrsIndex) => {
         const events = this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figure.key ?? '', figureIndex, attrsIndex, ignoreEvent)
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
-        this.createFigure(
-          type, ats, ss, events
-        )?.draw(ctx)
+        this.createFigure({
+          name: type, attrs: ats, styles: ss
+        }, events)?.draw(ctx)
       })
     })
   }
@@ -556,17 +556,16 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             borderColor = pointStyles.activeBorderColor
             borderSize = pointStyles.activeBorderSize
           }
-          this.createFigure(
-            'circle',
-            { x, y, r: radius + borderSize },
-            { color: borderColor },
-            this._createFigureEvents(overlay, EventOverlayInfoFigureType.Point, `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`, index, 0)
-          )?.draw(ctx)
-          this.createFigure(
-            'circle',
-            { x, y, r: radius },
-            { color }
-          )?.draw(ctx)
+          this.createFigure({
+            name: 'circle',
+            attrs: { x, y, r: radius + borderSize },
+            styles: { color: borderColor }
+          }, this._createFigureEvents(overlay, EventOverlayInfoFigureType.Point, `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`, index, 0))?.draw(ctx)
+          this.createFigure({
+            name: 'circle',
+            attrs: { x, y, r: radius },
+            styles: { color }
+          })?.draw(ctx)
         })
       }
     }

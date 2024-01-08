@@ -59,13 +59,14 @@ export default class CandleAreaView extends ChildrenView {
     }
 
     if (lineCoordinates.length > 0) {
-      this.createFigure(
-        'line',
-        { coordinates: lineCoordinates },
-        {
+      this.createFigure({
+        name: 'line',
+        attrs: { coordinates: lineCoordinates },
+        styles: {
           color: candleAreaStyles.lineColor,
           size: candleAreaStyles.lineSize
         }
+      }
       )?.draw(ctx)
     }
 
@@ -85,11 +86,11 @@ export default class CandleAreaView extends ChildrenView {
       } else {
         color = backgroundColor
       }
-      this.createFigure(
-        'polygon',
-        { coordinates: areaCoordinates },
-        { color }
-      )?.draw(ctx)
+      this.createFigure({
+        name: 'polygon',
+        attrs: { coordinates: areaCoordinates },
+        styles: { color }
+      })?.draw(ctx)
     }
   }
 }

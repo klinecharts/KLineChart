@@ -311,22 +311,22 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             rectY = top + rectOffsetTop
           }
         }
-        this.createFigure(
-          'rect',
-          {
+        this.createFigure({
+          name: 'rect',
+          attrs: {
             x: rectX,
             y: rectY,
             width: rectWidth,
             height: rectHeight
           },
-          {
+          styles: {
             style: PolygonType.StrokeFill,
             color: rectBackgroundColor,
             borderColor: rectBorderColor,
             borderSize: rectBorderSize,
             borderRadius: rectBorderRadius
           }
-        )?.draw(ctx)
+        })?.draw(ctx)
         const candleTextX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
         let textY = rectY + rectBorderSize + rectPaddingTop
         if (isDrawCandleTooltip) {
@@ -334,36 +334,36 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           candleTooltipDatas.forEach(data => {
             textY += baseTextMarginTop
             const title = data.title as TooltipDataChild
-            this.createFigure(
-              'text',
-              {
+            this.createFigure({
+              name: 'text',
+              attrs: {
                 x: candleTextX,
                 y: textY,
                 text: title.text
               },
-              {
+              styles: {
                 color: title.color,
                 size: baseTextSize,
                 family: baseTextFamily,
                 weight: baseTextWeight
               }
-            )?.draw(ctx)
+            })?.draw(ctx)
             const value = data.value as TooltipDataChild
-            this.createFigure(
-              'text',
-              {
+            this.createFigure({
+              name: 'text',
+              attrs: {
                 x: rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight,
                 y: textY,
                 text: value.text,
                 align: 'right'
               },
-              {
+              styles: {
                 color: value.color,
                 size: baseTextSize,
                 family: baseTextFamily,
                 weight: baseTextWeight
               }
-            )?.draw(ctx)
+            })?.draw(ctx)
             textY += (baseTextSize + baseTextMarginBottom)
           })
         }
@@ -375,36 +375,36 @@ export default class CandleTooltipView extends IndicatorTooltipView {
               textY += indicatorTextMarginTop
               const title = data.title as TooltipDataChild
               const value = data.value as TooltipDataChild
-              this.createFigure(
-                'text',
-                {
+              this.createFigure({
+                name: 'text',
+                attrs: {
                   x: indicatorTextX,
                   y: textY,
                   text: title.text
                 },
-                {
+                styles: {
                   color: title.color,
                   size: indicatorTextSize,
                   family: indicatorTextFamily,
                   weight: indicatorTextWeight
                 }
-              )?.draw(ctx)
+              })?.draw(ctx)
 
-              this.createFigure(
-                'text',
-                {
+              this.createFigure({
+                name: 'text',
+                attrs: {
                   x: rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
                   y: textY,
                   text: value.text,
                   align: 'right'
                 },
-                {
+                styles: {
                   color: value.color,
                   size: indicatorTextSize,
                   family: indicatorTextFamily,
                   weight: indicatorTextWeight
                 }
-              )?.draw(ctx)
+              })?.draw(ctx)
               textY += (indicatorTextSize + indicatorTextMarginBottom)
             })
           })

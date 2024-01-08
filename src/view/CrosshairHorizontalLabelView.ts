@@ -44,11 +44,11 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
           const axis = pane.getAxisComponent()
           const text = this.getText(crosshair, chartStore, axis)
           ctx.font = createFont(textStyles.size, textStyles.weight, textStyles.family)
-          this.createFigure(
-            'text',
-            this.getTextAttrs(text, ctx.measureText(text).width, crosshair, bounding, axis, textStyles),
-            textStyles
-          )?.draw(ctx)
+          this.createFigure({
+            name: 'text',
+            attrs: this.getTextAttrs(text, ctx.measureText(text).width, crosshair, bounding, axis, textStyles),
+            styles: textStyles
+          })?.draw(ctx)
         }
       }
     }

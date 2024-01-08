@@ -32,16 +32,16 @@ export default class GridView extends View {
       if (horizontalShow) {
         const yAxis = pane.getAxisComponent()
         yAxis.getTicks().forEach(tick => {
-          this.createFigure(
-            'line',
-            {
+          this.createFigure({
+            name: 'line',
+            attrs: {
               coordinates: [
                 { x: 0, y: tick.coord },
                 { x: bounding.width, y: tick.coord }
               ]
             },
-            horizontalStyles
-          )?.draw(ctx)
+            styles: horizontalStyles
+          })?.draw(ctx)
         })
       }
       const verticalStyles = gridStyles.vertical
@@ -49,16 +49,16 @@ export default class GridView extends View {
       if (verticalShow) {
         const xAxis = chart.getXAxisPane().getAxisComponent()
         xAxis.getTicks().forEach(tick => {
-          this.createFigure(
-            'line',
-            {
+          this.createFigure({
+            name: 'line',
+            attrs: {
               coordinates: [
                 { x: tick.coord, y: 0 },
                 { x: tick.coord, y: bounding.height }
               ]
             },
-            verticalStyles
-          )?.draw(ctx)
+            styles: verticalStyles
+          })?.draw(ctx)
         })
       }
       ctx.restore()

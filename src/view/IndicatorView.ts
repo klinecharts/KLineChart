@@ -179,7 +179,11 @@ export default class IndicatorView extends CandleBarView {
                 }
                 if (isValid<IndicatorFigureAttrs>(attrs)) {
                   const name = figure.type!
-                  this.createFigure(name === 'bar' ? 'rect' : name, attrs, figureStyles)?.draw(ctx)
+                  this.createFigure({
+                    name: name === 'bar' ? 'rect' : name,
+                    attrs,
+                    styles: figureStyles
+                  })?.draw(ctx)
                 }
               }
             })

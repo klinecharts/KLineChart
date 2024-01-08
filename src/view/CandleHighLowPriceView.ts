@@ -79,17 +79,17 @@ export default class CandleHighLowPriceView extends ChildrenView {
   ): void {
     const startX = coordinate.x
     const startY = coordinate.y + offsets[0]
-    this.createFigure(
-      'line',
-      {
+    this.createFigure({
+      name: 'line',
+      attrs: {
         coordinates: [
           { x: startX - 2, y: startY + offsets[0] },
           { x: startX, y: startY },
           { x: startX + 2, y: startY + offsets[0] }
         ]
       },
-      { color: styles.color }
-    )?.draw(ctx)
+      styles: { color: styles.color }
+    })?.draw(ctx)
 
     let lineEndX: number
     let textStartX: number
@@ -106,32 +106,32 @@ export default class CandleHighLowPriceView extends ChildrenView {
     }
 
     const y = startY + offsets[1]
-    this.createFigure(
-      'line',
-      {
+    this.createFigure({
+      name: 'line',
+      attrs: {
         coordinates: [
           { x: startX, y: startY },
           { x: startX, y },
           { x: lineEndX, y }
         ]
       },
-      { color: styles.color }
-    )?.draw(ctx)
-    this.createFigure(
-      'text',
-      {
+      styles: { color: styles.color }
+    })?.draw(ctx)
+    this.createFigure({
+      name: 'text',
+      attrs: {
         x: textStartX,
         y,
         text,
         align: textAlign,
         baseline: 'middle'
       },
-      {
+      styles: {
         color: styles.color,
         size: styles.textSize,
         family: styles.textFamily,
         weight: styles.textWeight
       }
-    )?.draw(ctx)
+    })?.draw(ctx)
   }
 }

@@ -54,7 +54,11 @@ export default class CrosshairLineView extends View {
     if (styles.show) {
       const lineStyles = styles.line
       if (lineStyles.show) {
-        this.createFigure('line', { coordinates }, lineStyles)?.draw(ctx)
+        this.createFigure({
+          name: 'line',
+          attrs: { coordinates },
+          styles: lineStyles
+        })?.draw(ctx)
       }
     }
   }

@@ -377,8 +377,8 @@ export default class TimeScaleStore {
   dataIndexToCoordinate (dataIndex: number): number {
     const dataCount = this._chartStore.getDataList().length
     const deltaFromRight = dataCount + this._lastBarRightSideDiffBarCount - dataIndex
-    return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
-    // return this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace
+    // return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
+    return this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace
   }
 
   coordinateToDataIndex (x: number): number {

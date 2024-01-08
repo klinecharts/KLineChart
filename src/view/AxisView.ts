@@ -32,19 +32,31 @@ export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
     const styles: AxisStyle = this.getAxisStyles(pane.getChart().getStyles())
     if (styles.show) {
       if (styles.axisLine.show) {
-        this.createFigure('line', this.createAxisLine(bounding, styles), styles.axisLine)?.draw(ctx)
+        this.createFigure({
+          name: 'line',
+          attrs: this.createAxisLine(bounding, styles),
+          styles: styles.axisLine
+        })?.draw(ctx)
       }
       const ticks = axis.getTicks()
       if (styles.tickLine.show) {
         const lines = this.createTickLines(ticks, bounding, styles)
         lines.forEach(line => {
-          this.createFigure('line', line, styles.tickLine)?.draw(ctx)
+          this.createFigure({
+            name: 'line',
+            attrs: line,
+            styles: styles.tickLine
+          })?.draw(ctx)
         })
       }
       if (styles.tickText.show) {
         const texts = this.createTickTexts(ticks, bounding, styles)
         texts.forEach(text => {
-          this.createFigure('text', text, styles.tickText)?.draw(ctx)
+          this.createFigure({
+            name: 'text',
+            attrs: text,
+            styles: styles.tickText
+          })?.draw(ctx)
         })
       }
     }

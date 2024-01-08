@@ -19,7 +19,7 @@
  * @param targetValue
  * @return {number}
  */
-export function binarySearchNearest (dataList: any[], valueKey: string, targetValue: any): number {
+export function binarySearchNearest<T> (dataList: T[], valueKey: keyof T, targetValue: any): number {
   let left = 0
   let right = 0
   for (right = dataList.length - 1; left !== right;) {

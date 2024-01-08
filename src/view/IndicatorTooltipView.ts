@@ -197,10 +197,10 @@ export default class IndicatorTooltipView extends View<YAxis> {
         } = icon
         x += marginLeft
         const active = activeIcon?.paneId === currentIcon.paneId && activeIcon?.indicatorName === currentIcon.indicatorName && activeIcon?.iconId === icon.id
-        this.createFigure(
-          'text',
-          { text, x, y: y + marginTop },
-          {
+        this.createFigure({
+          name: 'text',
+          attrs: { text, x, y: y + marginTop },
+          styles: {
             paddingLeft,
             paddingTop,
             paddingRight,
@@ -209,12 +209,11 @@ export default class IndicatorTooltipView extends View<YAxis> {
             size,
             family: fontFamily,
             backgroundColor: active ? activeBackgroundColor : backgroundColor
-          },
-          {
-            mouseClickEvent: this._boundIconClickEvent(currentIcon, icon.id),
-            mouseMoveEvent: this._boundIconMouseMoveEvent(currentIcon, icon.id)
           }
-        )?.draw(ctx)
+        }, {
+          mouseClickEvent: this._boundIconClickEvent(currentIcon, icon.id),
+          mouseMoveEvent: this._boundIconMouseMoveEvent(currentIcon, icon.id)
+        })?.draw(ctx)
         x += (paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
       })
     }
@@ -256,18 +255,18 @@ export default class IndicatorTooltipView extends View<YAxis> {
         rowHeight = Math.max(currentPrevRowHeight, height)
         currentPrevRowHeight = rowHeight
         if (title.text.length > 0) {
-          this.createFigure(
-            'text',
-            { x, y: y + marginTop, text: title.text },
-            { color: title.color, size, family, weight }
-          )?.draw(ctx)
+          this.createFigure({
+            name: 'text',
+            attrs: { x, y: y + marginTop, text: title.text },
+            styles: { color: title.color, size, family, weight }
+          })?.draw(ctx)
           x += titleTextWidth
         }
-        this.createFigure(
-          'text',
-          { x, y: y + marginTop, text: value.text },
-          { color: value.color, size, family, weight }
-        )?.draw(ctx)
+        this.createFigure({
+          name: 'text',
+          attrs: { x, y: y + marginTop, text: value.text },
+          styles: { color: value.color, size, family, weight }
+        })?.draw(ctx)
         x += (valueTextWidth + marginRight)
       })
     }

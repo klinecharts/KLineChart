@@ -61,20 +61,20 @@ export default class IndicatorLastValueView extends View<YAxis> {
                 textAlign = 'right'
               }
 
-              this.createFigure(
-                'text',
-                {
+              this.createFigure({
+                name: 'text',
+                attrs: {
                   x,
                   y,
                   text,
                   align: textAlign,
                   baseline: 'middle'
                 },
-                {
+                styles: {
                   ...lastValueMarkTextStyles,
                   backgroundColor: figureStyles.color
                 }
-              )?.draw(ctx)
+              })?.draw(ctx)
             }
           })
         }
