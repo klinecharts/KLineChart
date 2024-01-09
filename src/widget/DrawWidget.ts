@@ -22,16 +22,10 @@ import Widget from './Widget'
 
 import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
-import { requestAnimationFrame, cancelAnimationFrame } from '../common/utils/compatible'
-
-const DEFAULT_REQUEST_ID = -1
 
 export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends Widget<P> {
   private _mainCanvas: Canvas
   private _overlayCanvas: Canvas
-
-  private _mainRequestAnimationId: number = DEFAULT_REQUEST_ID
-  private _overlayRequestAnimationId: number = DEFAULT_REQUEST_ID
 
   override init (rootContainer: HTMLElement): void {
     super.init(rootContainer)
@@ -42,13 +36,7 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
       zIndex: '2',
       boxSizing: 'border-box'
     }, () => {
-      if (this._mainRequestAnimationId !== DEFAULT_REQUEST_ID) {
-        cancelAnimationFrame(this._mainRequestAnimationId)
-        this._mainRequestAnimationId = DEFAULT_REQUEST_ID
-      }
-      this._mainRequestAnimationId = requestAnimationFrame(() => {
-        this.updateMain(this._mainCanvas.getContext())
-      })
+      this.updateMain(this._mainCanvas.getContext())
     })
     this._overlayCanvas = new Canvas({
       position: 'absolute',
@@ -57,13 +45,7 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
       zIndex: '2',
       boxSizing: 'border-box'
     }, () => {
-      if (this._overlayRequestAnimationId !== DEFAULT_REQUEST_ID) {
-        cancelAnimationFrame(this._overlayRequestAnimationId)
-        this._overlayRequestAnimationId = DEFAULT_REQUEST_ID
-      }
-      this._overlayRequestAnimationId = requestAnimationFrame(() => {
-        this.updateOverlay(this._overlayCanvas.getContext())
-      })
+      this.updateOverlay(this._overlayCanvas.getContext())
     })
     const container = this.getContainer()
     container.appendChild(this._mainCanvas.getElement())
@@ -95,17 +77,17 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
     }
     switch (l) {
       case UpdateLevel.Main: {
-        this._mainCanvas.setSize(width, height)
+        this._mainCanvas.update(width, height)
         break
       }
       case UpdateLevel.Overlay: {
-        this._overlayCanvas.setSize(width, height)
+        this._overlayCanvas.update(width, height)
         break
       }
       case UpdateLevel.Drawer:
       case UpdateLevel.All: {
-        this._mainCanvas.setSize(width, height)
-        this._overlayCanvas.setSize(width, height)
+        this._mainCanvas.update(width, height)
+        this._overlayCanvas.update(width, height)
         break
       }
     }

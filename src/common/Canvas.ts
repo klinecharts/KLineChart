@@ -15,6 +15,7 @@
 import { getPixelRatio } from './utils/canvas'
 import { createDom } from './utils/dom'
 import { isValid } from './utils/typeChecks'
+import { requestAnimationFrame, cancelAnimationFrame } from './utils/compatible'
 
 type DrawListener = () => void
 
@@ -28,6 +29,8 @@ async function isSupportedDevicePixelContentBox (): Promise<boolean> {
   }).catch(() => false)
 }
 
+const DEFAULT_REQUEST_ANIMATION_ID = -1
+
 export default class Canvas {
   private readonly _element: HTMLCanvasElement
   private _resizeObserver: ResizeObserver
@@ -39,8 +42,13 @@ export default class Canvas {
 
   private _supportedDevicePixelContentBox = false
 
+  private _width = 0
+  private _height = 0
+
   private _pixelWidth = 0
   private _pixelHeight = 0
+
+  private _requestAnimationId = DEFAULT_REQUEST_ANIMATION_ID
 
   private readonly _mediaQueryListener: () => void = () => {
     const pixelRatio = getPixelRatio(this._element)
@@ -86,28 +94,46 @@ export default class Canvas {
     horizontalPixelRatio: number,
     verticalPixelRatio: number
   ): void {
-    this._pixelWidth = pixelWidth
-    this._pixelHeight = pixelHeight
-    this._element.width = pixelWidth
-    this._element.height = pixelHeight
-    this._ctx.scale(horizontalPixelRatio, verticalPixelRatio)
-    this._listener()
+    this._executeListener(() => {
+      const { width, height } = this._element.getBoundingClientRect()
+      this._width = width
+      this._height = height
+      this._pixelWidth = pixelWidth
+      this._pixelHeight = pixelHeight
+      this._element.width = pixelWidth
+      this._element.height = pixelHeight
+      this._ctx.scale(horizontalPixelRatio, verticalPixelRatio)
+    })
   }
 
-  setSize (w: number, h: number): void {
-    const { width, height } = this._element.getBoundingClientRect()
-    this._ctx.clearRect(0, 0, width, height)
-    if (w !== width || h !== height) {
+  private _executeListener (fn?: () => void): void {
+    if (this._requestAnimationId !== DEFAULT_REQUEST_ANIMATION_ID) {
+      cancelAnimationFrame(this._requestAnimationId)
+      this._requestAnimationId = DEFAULT_REQUEST_ANIMATION_ID
+    }
+    this._requestAnimationId = requestAnimationFrame(() => {
+      this._ctx.clearRect(0, 0, this._width, this._height)
+      fn?.()
+      this._listener()
+    })
+  }
+
+  update (w: number, h: number): void {
+    if (this._width !== w || this._height !== h) {
       this._element.style.width = `${w}px`
       this._element.style.height = `${h}px`
       if (!this._supportedDevicePixelContentBox) {
         const pixelRatio = getPixelRatio(this._element)
-        this._element.width = Math.round(w * pixelRatio)
-        this._element.height = Math.round(h * pixelRatio)
-        this._ctx.scale(pixelRatio, pixelRatio)
+        this._resetPixelRatio(
+          Math.round(w * pixelRatio),
+          Math.round(h * pixelRatio),
+          pixelRatio,
+          pixelRatio
+        )
       }
+    } else {
+      this._executeListener()
     }
-    this._listener()
   }
 
   getElement (): HTMLCanvasElement {
