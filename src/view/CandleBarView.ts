@@ -100,7 +100,7 @@ export default class CandleBarView extends ChildrenView {
             break
           }
           case CandleType.Ohlc: {
-            const size = Math.min(Math.max(Math.round(barSpace.gapBar * 0.1), 1), 3)
+            const size = Math.min(Math.max(Math.round(barSpace.gapBar * 0.2), 1), 7)
             rects = [
               {
                 name: 'rect',
