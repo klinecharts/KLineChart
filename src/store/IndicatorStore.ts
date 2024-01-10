@@ -53,10 +53,10 @@ export default class IndicatorStore {
       updateFlag = true
       calcFlag = true
     }
-    if (instance.setMinValue(minValue ?? null)) {
+    if (minValue !== undefined && instance.setMinValue(minValue)) {
       updateFlag = true
     }
-    if (instance.setMinValue(maxValue ?? null)) {
+    if (maxValue !== undefined && instance.setMinValue(maxValue)) {
       updateFlag = true
     }
     if (isNumber(precision) && instance.setPrecision(precision)) {

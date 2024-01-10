@@ -51,10 +51,10 @@ export default class YAxisImp extends AxisImp implements YAxis {
         shouldOhlc = indicator.shouldOhlc ?? false
       }
       indicatorPrecision = Math.min(indicatorPrecision, indicator.precision)
-      if (indicator.minValue !== null) {
+      if (isNumber(indicator.minValue)) {
         specifyMin = Math.min(specifyMin, indicator.minValue)
       }
-      if (indicator.maxValue !== null) {
+      if (isNumber(indicator.maxValue)) {
         specifyMax = Math.max(specifyMax, indicator.maxValue)
       }
       figuresResultList.push({
@@ -105,6 +105,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
         })
       })
     })
+
     if (min !== Number.MAX_SAFE_INTEGER && max !== Number.MIN_SAFE_INTEGER) {
       min = Math.min(specifyMin, min)
       max = Math.max(specifyMax, max)
@@ -156,7 +157,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
       bottomRate = bottomRate / height
     }
     let range = Math.abs(max - min)
-    // 保证每次图形绘制上下都留间隙
+    // gap
     min = min - range * bottomRate
     max = max + range * topRate
     range = Math.abs(max - min)
@@ -172,6 +173,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
       realMax = max
       realRange = range
     }
+
     return {
       min, max, range, realMin, realMax, realRange
     }
