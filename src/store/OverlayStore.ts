@@ -241,8 +241,9 @@ export default class OverlayStore {
     })
     if (ids.some(id => id !== null)) {
       this._sort()
-      this._chartStore.getChart().updatePane(UpdateLevel.Overlay, paneId)
-      this._chartStore.getChart().updatePane(UpdateLevel.Overlay, PaneIdConstants.X_AXIS)
+      const chart = this._chartStore.getChart()
+      chart.updatePane(UpdateLevel.Overlay, paneId)
+      chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.X_AXIS)
     }
     return ids
   }
