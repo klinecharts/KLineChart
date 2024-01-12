@@ -1,5 +1,11 @@
 # 📠 Change Log
 
+`2024-01-12`
++ 🐞 Fix the issue of ineffective indicator attributes `minValue` and `maxValue`.
++ 🐞 Fix the display issue on the x-axis of the overlay.
++ 💄 Optimize the display of style `candle.type: 'ohlc'`.
++ 💄 Optimize drawing clarity.
+
 ## 9.7.1
 `2023-12-18`
 + 🐞 Fix indicators and overlays methods not effect error.
