@@ -64,7 +64,7 @@ export default class Canvas {
   constructor (style: Partial<CSSStyleDeclaration>, listener: DrawListener) {
     this._listener = listener
     this._element = createDom('canvas', style)
-    this._ctx = this._element.getContext('2d')!
+    this._ctx = this._element.getContext('2d', { willReadFrequently: true })!
     isSupportedDevicePixelContentBox().then(result => {
       this._supportedDevicePixelContentBox = result
       if (result) {
