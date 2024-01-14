@@ -19,21 +19,31 @@
 }
 
 .loader {
-  width: 50px;
+  width: 12px;
   aspect-ratio: 1;
-  --bg: no-repeat radial-gradient(farthest-side,var(--vp-c-indigo-1) 90%,#0000);
-  background: var(--bg), var(--bg), var(--bg);
-  background-size: 25% 25%;
-  animation: anim 1s infinite;
+  position: relative;
 }
-@keyframes anim{ 
-  0%     {background-position: 0% -100%,50% -100%,100% -100%}
-  16.67% {background-position: 0%   50%,50% -100%,100% -100%}
-  33.33% {background-position: 0%   50%,50%   50%,100% -100%}
-  45%,55%{background-position: 0%   50%,50%   50%,100%   50%}
-  66.67% {background-position: 0%  200%,50%   50%,100%   50%}
-  83.33% {background-position: 0%  200%,50%  200%,100%   50%}
-  100%   {background-position: 0%  200%,50%  200%,100%  200%}
+.loader::before, .loader::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: var(--vp-c-indigo-1);
+}
+.loader::before {
+  box-shadow: -18px 0 var(--vp-c-indigo-1);
+  animation: l8-1 1s infinite linear;
+}
+.loader::after {
+  transform: rotate(0deg) translateX(18px);
+  animation: l8-2 1s infinite linear;
+}
+
+@keyframes l8-1 {
+    100% {transform: translateX(18px)}
+}
+@keyframes l8-2 {
+    100% {transform: rotate(-180deg) translateX(18px)}
 }
 </style>
 
