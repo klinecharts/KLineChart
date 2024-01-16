@@ -291,8 +291,7 @@ export default class ChartImp implements Chart {
   }
 
   private _measurePaneHeight (): void {
-    const { height: h } = this._container.getBoundingClientRect()
-    const totalHeight = Math.floor(h)
+    const totalHeight = Math.floor(this._container.clientHeight)
     const separatorSize = this._chartStore.getStyles().separator.size
     const xAxisHeight = this._xAxisPane.getAxisComponent().getAutoSize()
     let paneExcludeXAxisHeight = totalHeight - xAxisHeight - this._separatorPanes.size * separatorSize
@@ -334,8 +333,7 @@ export default class ChartImp implements Chart {
   }
 
   private _measurePaneWidth (): void {
-    const { width: w } = this._container.getBoundingClientRect()
-    const totalWidth = Math.floor(w)
+    const totalWidth = Math.floor(this._container.clientWidth)
     const styles = this._chartStore.getStyles()
     const yAxisStyles = styles.yAxis
     const isYAxisLeft = yAxisStyles.position === YAxisPosition.Left
@@ -541,10 +539,9 @@ export default class ChartImp implements Chart {
         }
       }
     } else {
-      const { width, height } = this._chartContainer.getBoundingClientRect()
       return {
-        width: Math.floor(width),
-        height: Math.floor(height),
+        width: Math.floor(this._chartContainer.clientWidth),
+        height: Math.floor(this._chartContainer.clientHeight),
         left: 0,
         top: 0,
         right: 0,
@@ -1015,7 +1012,8 @@ export default class ChartImp implements Chart {
   }
 
   getConvertPictureUrl (includeOverlay?: boolean, type?: string, backgroundColor?: string): string {
-    const { width, height } = this._chartContainer.getBoundingClientRect()
+    const width = this._chartContainer.clientWidth
+    const height = this._chartContainer.clientHeight
     const canvas = createDom('canvas', {
       width: `${width}px`,
       height: `${height}px`,
