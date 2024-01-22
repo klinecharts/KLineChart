@@ -26,7 +26,7 @@ features:
   - icon:
       src: /images/rocket.png
     title: Lightweight and smooth
-    details: Zero dependency, only about 40k under Gzip compression, and less than 1 millisecond to load under 4G network. Charts remain fluid even with thousands of candles.
+    details: Zero dependency, only about 50k under Gzip compression, and less than 1 millisecond to load under 4G network. Charts remain fluid even with thousands of candles.
   - icon:
       src: /images/expand.png
     title: Highly expand

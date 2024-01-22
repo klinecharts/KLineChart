@@ -12,10 +12,10 @@
  * limitations under the License.
  */
 
-import Coordinate from '../common/Coordinate'
-import VisibleData from '../common/VisibleData'
-import BarSpace from '../common/BarSpace'
-import { GradientColor } from '../common/Styles'
+import type Coordinate from '../common/Coordinate'
+import type VisibleData from '../common/VisibleData'
+import type BarSpace from '../common/BarSpace'
+import { type GradientColor } from '../common/Styles'
 
 import ChildrenView from './ChildrenView'
 
@@ -59,13 +59,14 @@ export default class CandleAreaView extends ChildrenView {
     }
 
     if (lineCoordinates.length > 0) {
-      this.createFigure(
-        'line',
-        { coordinates: lineCoordinates },
-        {
+      this.createFigure({
+        name: 'line',
+        attrs: { coordinates: lineCoordinates },
+        styles: {
           color: candleAreaStyles.lineColor,
           size: candleAreaStyles.lineSize
         }
+      }
       )?.draw(ctx)
     }
 
@@ -85,11 +86,11 @@ export default class CandleAreaView extends ChildrenView {
       } else {
         color = backgroundColor
       }
-      this.createFigure(
-        'polygon',
-        { coordinates: areaCoordinates },
-        { color }
-      )?.draw(ctx)
+      this.createFigure({
+        name: 'polygon',
+        attrs: { coordinates: areaCoordinates },
+        styles: { color }
+      })?.draw(ctx)
     }
   }
 }

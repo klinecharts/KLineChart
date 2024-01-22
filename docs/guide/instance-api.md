@@ -106,6 +106,20 @@
 获取图表右边可以空出来的间隙。
 
 
+## setMaxOffsetLeftDistance()
+```typescript
+(distance: number) => void
+```
+设置图表左边最大可空出来的间隙。
+
+
+## setMaxOffsetRightDistance()
+```typescript
+(distance: number) => void
+```
+设置图表右边最大可空出来的间隙。
+
+
 ## setLeftMinVisibleBarCount(barCount)
 ```typescript
 (barCount: number) => void
@@ -250,6 +264,7 @@
     shouldOhlc?: boolean
     shouldFormatBigNumber?: boolean
     visible?: boolean
+    zLevel?: number
     extendData?: any
     series?: 'normal' | 'price' | 'volume'
     figures?: Array<{
@@ -362,6 +377,7 @@ chart.createIndicator('MA', false, {
     shouldOhlc?: boolean
     shouldFormatBigNumber?: boolean
     visible?: boolean
+    zLevel?: number
     extendData?: any
     series?: 'normal' | 'price' | 'volume'
     figures?: Array<{
@@ -425,6 +441,7 @@ chart.createIndicator('MA', false, {
   - `shouldOhlc` 是否需要ohlc辅助图形
   - `shouldFormatBigNumber` 是否需要格式化大的数字。如1000转换成1k，1000000转换为1M等
   - `visible` 是否可见
+  - `zLevel` 层级
   - `extendData` 扩展数据
   - `series` 指标系列，可选项有'normal'，'price'和'volume'
   - `figures` 图形配置
@@ -451,6 +468,7 @@ chart.overrideIndicator({
   shouldOhlc: true,
   shouldFormatBigNumber: false,
   visible: true,
+  zLevel: 1,
   extendData: 2432435,
   series: 'price',
   figures: [],

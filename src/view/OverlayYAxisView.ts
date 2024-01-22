@@ -12,22 +12,23 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import Coordinate from '../common/Coordinate'
-import Bounding from '../common/Bounding'
-import BarSpace from '../common/BarSpace'
-import Precision from '../common/Precision'
-import { OverlayStyle } from '../common/Styles'
-import { CustomApi } from '../Options'
+import type Nullable from '../common/Nullable'
+import type Coordinate from '../common/Coordinate'
+import type Bounding from '../common/Bounding'
+import type BarSpace from '../common/BarSpace'
+import type Precision from '../common/Precision'
+import { type OverlayStyle } from '../common/Styles'
+import { type CustomApi } from '../Options'
 import { formatPrecision, formatThousands } from '../common/utils/format'
 import { isNumber } from '../common/utils/typeChecks'
 
-import Axis from '../component/Axis'
-import XAxis from '../component/XAxis'
-import YAxis from '../component/YAxis'
-import Overlay, { OverlayFigure } from '../component/Overlay'
+import type Axis from '../component/Axis'
+import type XAxis from '../component/XAxis'
+import type YAxis from '../component/YAxis'
+import { type OverlayFigure } from '../component/Overlay'
+import type Overlay from '../component/Overlay'
 
-import { EventOverlayInfo } from '../store/OverlayStore'
+import { type EventOverlayInfo } from '../store/OverlayStore'
 
 import OverlayView from './OverlayView'
 

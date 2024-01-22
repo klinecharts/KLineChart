@@ -12,30 +12,34 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import Coordinate from '../common/Coordinate'
-import Point from '../common/Point'
-import Bounding from '../common/Bounding'
-import BarSpace from '../common/BarSpace'
-import Precision from '../common/Precision'
-import { OverlayStyle } from '../common/Styles'
-import { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
+import type Nullable from '../common/Nullable'
+import type Coordinate from '../common/Coordinate'
+import type Point from '../common/Point'
+import type Bounding from '../common/Bounding'
+import type BarSpace from '../common/BarSpace'
+import type Precision from '../common/Precision'
+import { type OverlayStyle } from '../common/Styles'
+import { type EventHandler, type EventName, type MouseTouchEvent, type MouseTouchEventCallback } from '../common/SyntheticEvent'
 import { isBoolean, isNumber, isValid } from '../common/utils/typeChecks'
 
-import { CustomApi } from '../Options'
+import { type CustomApi } from '../Options'
 
-import Axis from '../component/Axis'
-import XAxis from '../component/XAxis'
-import YAxis from '../component/YAxis'
-import Overlay, { OVERLAY_FIGURE_KEY_PREFIX, OverlayFigure, OverlayFigureIgnoreEventType, OverlayMode, getAllOverlayFigureIgnoreEventTypes } from '../component/Overlay'
+import type Axis from '../component/Axis'
+import type XAxis from '../component/XAxis'
+import type YAxis from '../component/YAxis'
+import { type OverlayFigure, type OverlayFigureIgnoreEventType } from '../component/Overlay'
+import type Overlay from '../component/Overlay'
+import { OVERLAY_FIGURE_KEY_PREFIX, OverlayMode, getAllOverlayFigureIgnoreEventTypes } from '../component/Overlay'
 
-import OverlayStore, { ProgressOverlayInfo, EventOverlayInfo, EventOverlayInfoFigureType } from '../store/OverlayStore'
-import TimeScaleStore from '../store/TimeScaleStore'
+import { type ProgressOverlayInfo, type EventOverlayInfo } from '../store/OverlayStore'
+import type OverlayStore from '../store/OverlayStore'
+import { EventOverlayInfoFigureType } from '../store/OverlayStore'
+import type TimeScaleStore from '../store/TimeScaleStore'
 
 import { PaneIdConstants } from '../pane/types'
 
-import DrawWidget from '../widget/DrawWidget'
-import DrawPane from '../pane/DrawPane'
+import type DrawWidget from '../widget/DrawWidget'
+import type DrawPane from '../pane/DrawPane'
 
 import View from './View'
 
@@ -477,13 +481,14 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   protected drawFigures (ctx: CanvasRenderingContext2D, overlay: Overlay, figures: OverlayFigure[], defaultStyles: OverlayStyle): void {
     figures.forEach((figure, figureIndex) => {
       const { type, styles, attrs, ignoreEvent } = figure
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats, attrsIndex) => {
         const events = this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figure.key ?? '', figureIndex, attrsIndex, ignoreEvent)
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
-        this.createFigure(
-          type, ats, ss, events
-        )?.draw(ctx)
+        this.createFigure({
+          name: type, attrs: ats, styles: ss
+        }, events)?.draw(ctx)
       })
     })
   }
@@ -551,17 +556,16 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             borderColor = pointStyles.activeBorderColor
             borderSize = pointStyles.activeBorderSize
           }
-          this.createFigure(
-            'circle',
-            { x, y, r: radius + borderSize },
-            { color: borderColor },
-            this._createFigureEvents(overlay, EventOverlayInfoFigureType.Point, `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`, index, 0)
-          )?.draw(ctx)
-          this.createFigure(
-            'circle',
-            { x, y, r: radius },
-            { color }
-          )?.draw(ctx)
+          this.createFigure({
+            name: 'circle',
+            attrs: { x, y, r: radius + borderSize },
+            styles: { color: borderColor }
+          }, this._createFigureEvents(overlay, EventOverlayInfoFigureType.Point, `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`, index, 0))?.draw(ctx)
+          this.createFigure({
+            name: 'circle',
+            attrs: { x, y, r: radius },
+            styles: { color }
+          })?.draw(ctx)
         })
       }
     }

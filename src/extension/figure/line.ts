@@ -12,11 +12,11 @@
  * limitations under the License.
  */
 
-import Nullable from '../../common/Nullable'
-import Coordinate from '../../common/Coordinate'
-import { SmoothLineStyle, LineType } from '../../common/Styles'
+import type Nullable from '../../common/Nullable'
+import type Coordinate from '../../common/Coordinate'
+import { type SmoothLineStyle, LineType } from '../../common/Styles'
 
-import { FigureTemplate, DEVIATION } from '../../component/Figure'
+import { type FigureTemplate, DEVIATION } from '../../component/Figure'
 
 function getDistance (coordinate1: Coordinate, coordinate2: Coordinate): number {
   return Math.sqrt(Math.pow(coordinate1.x + coordinate2.x, 2) + Math.pow(coordinate1.y + coordinate2.y, 2))
@@ -52,7 +52,7 @@ export function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs):
           return true
         }
       } else {
-        const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate) as number[]
+        const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate)!
         const y = getLinearYFromSlopeIntercept(kb, coordinate)
         const yDif = Math.abs(y - coordinate.y)
         if (

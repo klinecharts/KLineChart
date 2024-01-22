@@ -11,8 +11,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import KLineData from '../../common/KLineData'
-import { Indicator, IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import type KLineData from '../../common/KLineData'
+import { type Indicator, type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Bbi {
   bbi?: number
@@ -34,7 +34,7 @@ const bullAndBearIndex: IndicatorTemplate<Bbi> = {
     { key: 'bbi', title: 'BBI: ', type: 'line' }
   ],
   calc: (dataList: KLineData[], indicator: Indicator<Bbi>) => {
-    const params = indicator.calcParams
+    const params = indicator.calcParams as number[]
     const maxPeriod = Math.max(...params)
     const closeSums: number[] = []
     const mas: number[] = []

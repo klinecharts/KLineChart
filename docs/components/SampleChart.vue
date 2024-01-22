@@ -11,52 +11,64 @@ import ResizeObserver from 'resize-observer-polyfill'
 
 const { isDark, lang } = useData()
 
-import Tooltip from './Tooltip.vue';
+import Tooltip from './Tooltip.vue'
+import Loading from './Loading.vue'
 
 const href = ref()
 
 const props = defineProps(['js', 'css', 'html', 'title', 'description'])
 
 const version = ref('9.5.0')
+const loading = ref(true)
 
 let observer
 
 onMounted(() => {
   href.value = location.href
-  if (klinecharts) {
-    version.value = klinecharts.version()
-  }
+  loading.value = true
   const container = document.getElementById('container')
-  if (props.css) {
-    const style = document.createElement('style')
-    style.setAttribute('type', 'text/css')
-    style.innerHTML = props.css
-    container.appendChild(style)
-  }
-  if (props.js) {
-    const transformJs = props.js + '\n' + 'window.chart = chart'
-    const { code } = transform(transformJs,  {
-      presets: [
-      'es2015',
-        ['stage-3', { decoratorsBeforeExport: true }],
-      ],
-      plugins: ['transform-modules-umd'],
-    })
+  const coreScript = document.createElement('script')
+  coreScript.defer = true
+  coreScript.src = 'https://unpkg.com/klinecharts/dist/umd/klinecharts.min.js'
+  coreScript.onload = () => {
+    const klinecharts = window.klinecharts
+    if (klinecharts) {
+      version.value = klinecharts.version()
+      
+      if (props.css) {
+        const style = document.createElement('style')
+        style.setAttribute('type', 'text/css')
+        style.innerHTML = props.css
+        container.appendChild(style)
+      }
+      if (props.js) {
+        const transformJs = props.js + '\n' + 'window.chart = chart'
+        const { code } = transform(transformJs,  {
+          presets: [
+          'es2015',
+            ['stage-3', { decoratorsBeforeExport: true }],
+          ],
+          plugins: ['transform-modules-umd'],
+        })
 
-    const chartDom = document.createElement('div')
-    chartDom.style.height = '430px'
-    chartDom.id = 'k-line-chart'
-    container.appendChild(chartDom)
-    const script = document.createElement('script')
-    script.innerHTML = code
-    container.appendChild(script)
-    window.chart.setStyles(isDark.value ? 'dark' : 'light')
+        const chartDom = document.createElement('div')
+        chartDom.style.height = '430px'
+        chartDom.id = 'k-line-chart'
+        container.appendChild(chartDom)
+        const script = document.createElement('script')
+        script.innerHTML = code
+        container.appendChild(script)
+        window.chart.setStyles(isDark.value ? 'dark' : 'light')
 
-    observer = new ResizeObserver(entries => {
-      window.chart.resize()
-    })
-    observer.observe(container)
+        observer = new ResizeObserver(entries => {
+          window.chart.resize()
+        })
+        observer.observe(container)
+      }
+      loading.value = false
+    }
   }
+  container.appendChild(coreScript)
 })
 
 watch(isDark, (newValue) => {
@@ -72,7 +84,9 @@ onUnmounted(() => {
   if (observer && container) {
     observer.unobserve(container)
   }
-  window.klinecharts.dispose('k-line-chart')
+  if (window.klinecharts) {
+    window.klinecharts.dispose('k-line-chart')
+  }
 })
 
 function openStackBlitz () {
@@ -140,6 +154,7 @@ function getCodeSandboxParameters () {
 <template>
   <div class="chart sample-chart">
     <div id="container" class="chart-container">
+      <Loading v-if="loading"/>
     </div>
     <div class="code-action-container">
       <form
@@ -204,6 +219,8 @@ function getCodeSandboxParameters () {
   
   .chart-container {
     padding-bottom: 10px;
+    min-height: 400px;
+    position: relative;
   }
 
   .code-action-container {

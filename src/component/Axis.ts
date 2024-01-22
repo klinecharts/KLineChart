@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import DrawPane from '../pane/DrawPane'
+import type DrawPane from '../pane/DrawPane'
 
 import { getPrecision, nice, round } from '../common/utils/number'
 

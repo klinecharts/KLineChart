@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import Nullable from '../../common/Nullable'
-import DeepPartial from '../../common/DeepPartial'
-import { Styles } from '../../common/Styles'
+import type Nullable from '../../common/Nullable'
+import type DeepPartial from '../../common/DeepPartial'
+import { type Styles } from '../../common/Styles'
 
 import light from './light'
 import dark from './dark'

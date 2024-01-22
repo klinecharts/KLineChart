@@ -13,14 +13,14 @@
  */
 
 import { YAxisType, YAxisPosition, CandleType } from '../common/Styles'
-import { isValid, isNumber } from '../common/utils/typeChecks'
+import { isNumber } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision, formatThousands } from '../common/utils/format'
 
-import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
+import AxisImp, { type Axis, type AxisExtremum, type AxisTick } from './Axis'
 
-import { IndicatorFigure } from './Indicator'
+import { type IndicatorFigure } from './Indicator'
 
 import { PaneIdConstants } from '../pane/types'
 
@@ -51,10 +51,10 @@ export default class YAxisImp extends AxisImp implements YAxis {
         shouldOhlc = indicator.shouldOhlc ?? false
       }
       indicatorPrecision = Math.min(indicatorPrecision, indicator.precision)
-      if (indicator.minValue !== null) {
+      if (isNumber(indicator.minValue)) {
         specifyMin = Math.min(specifyMin, indicator.minValue)
       }
-      if (indicator.maxValue !== null) {
+      if (isNumber(indicator.maxValue)) {
         specifyMax = Math.max(specifyMax, indicator.maxValue)
       }
       figuresResultList.push({
@@ -89,20 +89,23 @@ export default class YAxisImp extends AxisImp implements YAxis {
       }
       if (inCandle && isArea) {
         const value = data[areaValueKey]
-        min = Math.min(min, value)
-        max = Math.max(max, value)
+        if (isNumber(value)) {
+          min = Math.min(min, value)
+          max = Math.max(max, value)
+        }
       }
       figuresResultList.forEach(({ figures, result }) => {
         const indicatorData = result[dataIndex] ?? {}
         figures.forEach(figure => {
           const value = indicatorData[figure.key]
-          if (isValid<number>(value)) {
+          if (isNumber(value)) {
             min = Math.min(min, value)
             max = Math.max(max, value)
           }
         })
       })
     })
+
     if (min !== Number.MAX_SAFE_INTEGER && max !== Number.MIN_SAFE_INTEGER) {
       min = Math.min(specifyMin, min)
       max = Math.max(specifyMax, max)
@@ -154,7 +157,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
       bottomRate = bottomRate / height
     }
     let range = Math.abs(max - min)
-    // 保证每次图形绘制上下都留间隙
+    // gap
     min = min - range * bottomRate
     max = max + range * topRate
     range = Math.abs(max - min)
@@ -170,6 +173,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
       realMax = max
       realRange = range
     }
+
     return {
       min, max, range, realMin, realMax, realRange
     }

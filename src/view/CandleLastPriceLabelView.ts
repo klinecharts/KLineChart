@@ -18,7 +18,7 @@ import { isValid } from '../common/utils/typeChecks'
 
 import View from './View'
 
-import YAxis from '../component/YAxis'
+import type YAxis from '../component/YAxis'
 
 export default class CandleLastPriceLabelView extends View {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -64,20 +64,20 @@ export default class CandleLastPriceLabelView extends View {
           x = bounding.width
           textAlgin = 'right'
         }
-        this.createFigure(
-          'text',
-          {
+        this.createFigure({
+          name: 'text',
+          attrs: {
             x,
             y: priceY,
             text,
             align: textAlgin,
             baseline: 'middle'
           },
-          {
+          styles: {
             ...lastPriceMarkTextStyles,
             backgroundColor
           }
-        )?.draw(ctx)
+        })?.draw(ctx)
       }
     }
   }

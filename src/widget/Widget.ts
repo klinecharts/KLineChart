@@ -12,11 +12,13 @@
  * limitations under the License.
  */
 
-import Bounding, { getDefaultBounding } from '../common/Bounding'
-import Updater, { UpdateLevel } from '../common/Updater'
+import type Bounding from '../common/Bounding'
+import { createDefaultBounding } from '../common/Bounding'
+import type Updater from '../common/Updater'
+import { UpdateLevel } from '../common/Updater'
 import Eventful from '../common/Eventful'
 
-import Pane from '../pane/Pane'
+import type Pane from '../pane/Pane'
 
 import { merge } from '../common/utils/typeChecks'
 
@@ -36,7 +38,7 @@ export default abstract class Widget<P extends Pane = Pane> extends Eventful imp
    */
   private _container: HTMLElement
 
-  private readonly _bounding: Bounding = getDefaultBounding()
+  private readonly _bounding: Bounding = createDefaultBounding()
 
   constructor (rootContainer: HTMLElement, pane: P) {
     super()
@@ -50,7 +52,7 @@ export default abstract class Widget<P extends Pane = Pane> extends Eventful imp
     rootContainer.appendChild(this._container)
   }
 
-  setBounding (bounding: Partial<Bounding>): Widget<P> {
+  setBounding (bounding: Partial<Bounding>): this {
     merge(this._bounding, bounding)
     return this
   }

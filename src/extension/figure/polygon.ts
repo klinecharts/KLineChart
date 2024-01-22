@@ -12,10 +12,12 @@
  * limitations under the License.
  */
 
-import Coordinate from '../../common/Coordinate'
-import { PolygonStyle, PolygonType, LineType } from '../../common/Styles'
+import type Coordinate from '../../common/Coordinate'
+import { type PolygonStyle, PolygonType, LineType } from '../../common/Styles'
+import { isString } from '../../common/utils/typeChecks'
+import { isTransparent } from '../../common/utils/color'
 
-import { FigureTemplate } from '../../component/Figure'
+import { type FigureTemplate } from '../../component/Figure'
 
 export function checkCoordinateOnPolygon (coordinate: Coordinate, polygon: PolygonAttrs): boolean {
   let on = false
@@ -41,7 +43,9 @@ export function drawPolygon (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs,
     borderStyle = LineType.Solid,
     borderDashedValue = [2, 2]
   } = styles
-  if (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) {
+  if (
+    (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) &&
+    (!isString(color) || !isTransparent(color))) {
     ctx.fillStyle = color
     ctx.beginPath()
     ctx.moveTo(coordinates[0].x, coordinates[0].y)
@@ -51,7 +55,7 @@ export function drawPolygon (ctx: CanvasRenderingContext2D, attrs: PolygonAttrs,
     ctx.closePath()
     ctx.fill()
   }
-  if (style === PolygonType.Stroke || styles.style === PolygonType.StrokeFill) {
+  if ((style === PolygonType.Stroke || styles.style === PolygonType.StrokeFill) && borderSize > 0 && !isTransparent(borderColor)) {
     ctx.strokeStyle = borderColor
     ctx.lineWidth = borderSize
     if (borderStyle === LineType.Dashed) {

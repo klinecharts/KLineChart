@@ -12,24 +12,24 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import ExcludePickPartial from '../common/ExcludePickPartial'
-import KLineData from '../common/KLineData'
-import Bounding from '../common/Bounding'
-import VisibleRange from '../common/VisibleRange'
-import BarSpace from '../common/BarSpace'
-import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipData, TooltipIconStyle, LineStyle, LineType, PolygonType } from '../common/Styles'
+import type Nullable from '../common/Nullable'
+import type ExcludePickPartial from '../common/ExcludePickPartial'
+import type KLineData from '../common/KLineData'
+import type Bounding from '../common/Bounding'
+import type VisibleRange from '../common/VisibleRange'
+import type BarSpace from '../common/BarSpace'
+import type Crosshair from '../common/Crosshair'
+import { type IndicatorStyle, type IndicatorPolygonStyle, type SmoothLineStyle, type RectStyle, type TextStyle, type TooltipData, type TooltipIconStyle, type LineStyle, type LineType, type PolygonType } from '../common/Styles'
 
-import { XAxis } from './XAxis'
-import { YAxis } from './YAxis'
+import { type XAxis } from './XAxis'
+import { type YAxis } from './YAxis'
 
 import { formatValue } from '../common/utils/format'
 import { isValid, merge, clone } from '../common/utils/typeChecks'
 
-import { ArcAttrs } from '../extension/figure/arc'
-import { RectAttrs } from '../extension/figure/rect'
-import { TextAttrs } from '../extension/figure/text'
+import { type ArcAttrs } from '../extension/figure/arc'
+import { type RectAttrs } from '../extension/figure/rect'
+import { type TextAttrs } from '../extension/figure/text'
 
 export enum IndicatorSeries {
   Normal = 'normal',
@@ -37,9 +37,9 @@ export enum IndicatorSeries {
   Volume = 'volume'
 }
 
-export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<TextStyle> & Partial<{ style: LineType[keyof LineType] | PolygonType[keyof PolygonType] }> & {[key: string]: any }
+export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<TextStyle> & Partial<{ style: LineType[keyof LineType] | PolygonType[keyof PolygonType] }> & Record<string, any>
 
-export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineStyle> & Partial<RectAttrs> & Partial<TextAttrs> & { [key: string]: any }
+export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineStyle> & Partial<RectAttrs> & Partial<TextAttrs> & Record<string, any>
 
 export interface IndicatorFigureCallbackBrother<PCN> {
   prev: PCN
@@ -272,6 +272,7 @@ export function eachFigures<D> (
         next: { kLineData: kLineDataList[dataIndex + 1], indicatorData: result[dataIndex + 1] }
       }
       const ss = figure.styles?.(cbData, indicator, defaultStyles)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       eachFigureCallback(figure, { ...defaultFigureStyles, ...ss })
     }
   })

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +21,9 @@
  * </licenses/LICENSE-lightweight-charts>).
  */
 
-import Coordinate from './Coordinate'
+import type Coordinate from './Coordinate'
 
-import Nullable from './Nullable'
+import type Nullable from './Nullable'
 
 import { isFF, isIOS } from './utils/platform'
 import { isValid } from './utils/typeChecks'
@@ -345,7 +346,7 @@ export default class SyntheticEvent {
     // prevent pinch if move event comes faster than the second touch
     this._pinchPrevented = true
 
-    const moveInfo = this._mouseTouchMoveWithDownInfo(this._getCoordinate(touch), this._touchMoveStartCoordinate as Coordinate)
+    const moveInfo = this._mouseTouchMoveWithDownInfo(this._getCoordinate(touch), this._touchMoveStartCoordinate!)
     const { xOffset, yOffset, manhattanDistance } = moveInfo
 
     if (!this._touchMoveExceededManhattanDistance && manhattanDistance < ManhattanDistance.CancelTap) {
@@ -391,7 +392,7 @@ export default class SyntheticEvent {
       return
     }
 
-    const moveInfo = this._mouseTouchMoveWithDownInfo(this._getCoordinate(moveEvent), this._mouseMoveStartCoordinate as Coordinate)
+    const moveInfo = this._mouseTouchMoveWithDownInfo(this._getCoordinate(moveEvent), this._mouseMoveStartCoordinate!)
     const { manhattanDistance } = moveInfo
 
     if (manhattanDistance >= ManhattanDistance.CancelClick) {
@@ -743,7 +744,7 @@ export default class SyntheticEvent {
 
     this._target.addEventListener(
       'touchstart',
-      (event: TouchEvent) => this._checkPinchState(event.touches),
+      (event: TouchEvent) => { this._checkPinchState(event.touches) },
       { passive: true }
     )
 
@@ -843,8 +844,10 @@ export default class SyntheticEvent {
   }
 
   private _firesTouchEvents (e: MouseEvent): boolean {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     if (isValid(e.sourceCapabilities?.firesTouchEvents)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       return e.sourceCapabilities.firesTouchEvents
     }

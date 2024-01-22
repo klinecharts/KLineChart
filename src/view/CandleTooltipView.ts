@@ -12,28 +12,28 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import Bounding from '../common/Bounding'
-import KLineData from '../common/KLineData'
-import Precision from '../common/Precision'
-import Crosshair from '../common/Crosshair'
+import type Nullable from '../common/Nullable'
+import type Bounding from '../common/Bounding'
+import type KLineData from '../common/KLineData'
+import type Precision from '../common/Precision'
+import type Crosshair from '../common/Crosshair'
 import {
-  Styles, CandleStyle, TooltipData, TooltipDataChild, TooltipShowType, CandleTooltipRectPosition,
-  CandleTooltipCustomCallbackData, YAxisPosition, PolygonType
+  type Styles, type CandleStyle, type TooltipData, type TooltipDataChild, TooltipShowType, CandleTooltipRectPosition,
+  type CandleTooltipCustomCallbackData, YAxisPosition, PolygonType
 } from '../common/Styles'
 import { formatPrecision, formatThousands } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 import { isFunction, isObject, isValid } from '../common/utils/typeChecks'
 
-import { CustomApi, FormatDateType } from '../Options'
+import { type CustomApi, FormatDateType } from '../Options'
 
 import { PaneIdConstants } from '../pane/types'
 
-import Indicator from '../component/Indicator'
+import type Indicator from '../component/Indicator'
 
 import IndicatorTooltipView from './IndicatorTooltipView'
 
-import { TooltipIcon } from '../store/TooltipStore'
+import { type TooltipIcon } from '../store/TooltipStore'
 
 import { i18n } from '../extension/i18n/index'
 
@@ -46,7 +46,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const crosshair = chartStore.getTooltipStore().getCrosshair()
     if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
-      const yAxisBounding = pane.getYAxisWidget()?.getBounding() as Bounding
+      const yAxisBounding = pane.getYAxisWidget()!.getBounding()
       const dataList = chartStore.getDataList()
       const precision = chartStore.getPrecision()
       const locale = chartStore.getLocale()
@@ -133,7 +133,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
       const dataIndex = crosshair.dataIndex ?? 0
       const values = this._getCandleTooltipData(
-        { prev: dataList[dataIndex - 1] ?? null, current: crosshair.kLineData as KLineData, next: dataList[dataIndex + 1] ?? null },
+        { prev: dataList[dataIndex - 1] ?? null, current: crosshair.kLineData!, next: dataList[dataIndex + 1] ?? null },
         precision, dateTimeFormat, locale, customApi, thousandsSeparator, styles
       )
       let x = 0
@@ -202,7 +202,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     if (isDrawCandleTooltip || isDrawIndicatorTooltip) {
       const dataIndex = crosshair.dataIndex ?? 0
       const candleTooltipDatas = this._getCandleTooltipData(
-        { prev: dataList[dataIndex - 1] ?? null, current: crosshair.kLineData as KLineData, next: dataList[dataIndex + 1] ?? null },
+        { prev: dataList[dataIndex - 1] ?? null, current: crosshair.kLineData!, next: dataList[dataIndex + 1] ?? null },
         precision, dateTimeFormat, locale, customApi, thousandsSeparator, candleStyles
       )
       const {
@@ -280,7 +280,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         const isLeft = (crosshair.realX ?? 0) > centerX
         let rectX: number = 0
         if (isPointer) {
-          const realX = crosshair.realX as number
+          const realX = crosshair.realX!
           if (isLeft) {
             rectX = realX - rectOffsetRight - rectWidth
           } else {
@@ -302,7 +302,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
 
         let rectY = top + rectOffsetTop
         if (isPointer) {
-          const y = crosshair.y as number
+          const y = crosshair.y!
           rectY = y - rectHeight / 2
           if (rectY + rectHeight > bounding.height - rectOffsetBottom) {
             rectY = bounding.height - rectOffsetBottom - rectHeight
@@ -311,22 +311,22 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             rectY = top + rectOffsetTop
           }
         }
-        this.createFigure(
-          'rect',
-          {
+        this.createFigure({
+          name: 'rect',
+          attrs: {
             x: rectX,
             y: rectY,
             width: rectWidth,
             height: rectHeight
           },
-          {
+          styles: {
             style: PolygonType.StrokeFill,
             color: rectBackgroundColor,
             borderColor: rectBorderColor,
             borderSize: rectBorderSize,
             borderRadius: rectBorderRadius
           }
-        )?.draw(ctx)
+        })?.draw(ctx)
         const candleTextX = rectX + rectBorderSize + rectPaddingLeft + baseTextMarginLeft
         let textY = rectY + rectBorderSize + rectPaddingTop
         if (isDrawCandleTooltip) {
@@ -334,36 +334,36 @@ export default class CandleTooltipView extends IndicatorTooltipView {
           candleTooltipDatas.forEach(data => {
             textY += baseTextMarginTop
             const title = data.title as TooltipDataChild
-            this.createFigure(
-              'text',
-              {
+            this.createFigure({
+              name: 'text',
+              attrs: {
                 x: candleTextX,
                 y: textY,
                 text: title.text
               },
-              {
+              styles: {
                 color: title.color,
                 size: baseTextSize,
                 family: baseTextFamily,
                 weight: baseTextWeight
               }
-            )?.draw(ctx)
+            })?.draw(ctx)
             const value = data.value as TooltipDataChild
-            this.createFigure(
-              'text',
-              {
+            this.createFigure({
+              name: 'text',
+              attrs: {
                 x: rectX + rectWidth - rectBorderSize - baseTextMarginRight - rectPaddingRight,
                 y: textY,
                 text: value.text,
                 align: 'right'
               },
-              {
+              styles: {
                 color: value.color,
                 size: baseTextSize,
                 family: baseTextFamily,
                 weight: baseTextWeight
               }
-            )?.draw(ctx)
+            })?.draw(ctx)
             textY += (baseTextSize + baseTextMarginBottom)
           })
         }
@@ -375,36 +375,36 @@ export default class CandleTooltipView extends IndicatorTooltipView {
               textY += indicatorTextMarginTop
               const title = data.title as TooltipDataChild
               const value = data.value as TooltipDataChild
-              this.createFigure(
-                'text',
-                {
+              this.createFigure({
+                name: 'text',
+                attrs: {
                   x: indicatorTextX,
                   y: textY,
                   text: title.text
                 },
-                {
+                styles: {
                   color: title.color,
                   size: indicatorTextSize,
                   family: indicatorTextFamily,
                   weight: indicatorTextWeight
                 }
-              )?.draw(ctx)
+              })?.draw(ctx)
 
-              this.createFigure(
-                'text',
-                {
+              this.createFigure({
+                name: 'text',
+                attrs: {
                   x: rectX + rectWidth - rectBorderSize - indicatorTextMarginRight - rectPaddingRight,
                   y: textY,
                   text: value.text,
                   align: 'right'
                 },
-                {
+                styles: {
                   color: value.color,
                   size: indicatorTextSize,
                   family: indicatorTextFamily,
                   weight: indicatorTextWeight
                 }
-              )?.draw(ctx)
+              })?.draw(ctx)
               textY += (indicatorTextSize + indicatorTextMarginBottom)
             })
           })
@@ -475,7 +475,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const match = v.text.match(/{(\S*)}/)
       if (match !== null && match.length > 1) {
         const key = `{${match[1]}}`
-        v.text = v.text.replace(key, mapping[key] ?? tooltipStyles.defaultValue)
+        v.text = v.text.replace(key, (mapping[key] ?? tooltipStyles.defaultValue) as string)
         if (key === '{change}') {
           v.color = changeValue === 0 ? styles.priceMark.last.noChangeColor : (changeValue > 0 ? styles.priceMark.last.upColor : styles.priceMark.last.downColor)
         }

@@ -12,26 +12,26 @@
  * limitations under the License.
  */
 
-import DeepRequired from '../common/DeepRequired'
-import Nullable from '../common/Nullable'
-import { UpdateLevel } from '../common/Updater'
-import Bounding from '../common/Bounding'
+import type DeepRequired from '../common/DeepRequired'
+import type Nullable from '../common/Nullable'
+import { type UpdateLevel } from '../common/Updater'
+import type Bounding from '../common/Bounding'
 
 import { isValid, merge } from '../common/utils/typeChecks'
 
-import Axis from '../component/Axis'
+import type Axis from '../component/Axis'
 
-import DrawWidget from '../widget/DrawWidget'
-import YAxisWidget from '../widget/YAxisWidget'
+import type DrawWidget from '../widget/DrawWidget'
+import type YAxisWidget from '../widget/YAxisWidget'
 
 import Pane from './Pane'
-import { PaneOptions, PANE_MIN_HEIGHT, PaneIdConstants } from './types'
+import { type PaneOptions, PANE_MIN_HEIGHT, PaneIdConstants } from './types'
 
-import Chart from '../Chart'
+import type Chart from '../Chart'
 
 import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
-import PickPartial from '../common/PickPartial'
+import type PickPartial from '../common/PickPartial'
 
 export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   private readonly _mainWidget: DrawWidget<DrawPane<C>>
@@ -48,7 +48,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     this._yAxisWidget = this.createYAxisWidget(container)
   }
 
-  setOptions (options: Omit<PaneOptions, 'id' | 'height'>): DrawPane<C> {
+  setOptions (options: Omit<PaneOptions, 'id' | 'height'>): this {
     merge(this._options, options)
     let container: HTMLElement
     let cursor: string
@@ -56,7 +56,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
       container = this.getMainWidget().getContainer()
       cursor = 'ew-resize'
     } else {
-      container = this.getYAxisWidget()?.getContainer() as HTMLElement
+      container = this.getYAxisWidget()!.getContainer()
       cursor = 'ns-resize'
     }
     if (options.axisOptions?.scrollZoomEnabled ?? true) {
@@ -73,7 +73,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     return this._axis
   }
 
-  override setBounding (rootBounding: Partial<Bounding>, mainBounding?: Partial<Bounding>, yAxisBounding?: Partial<Bounding>): DrawPane {
+  override setBounding (rootBounding: Partial<Bounding>, mainBounding?: Partial<Bounding>, yAxisBounding?: Partial<Bounding>): this {
     merge(this.getBounding(), rootBounding)
     const contentBounding: Partial<Bounding> = {}
     if (isValid(rootBounding.height)) {
@@ -102,6 +102,12 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     this._yAxisWidget?.update(level)
   }
 
+  destroy (): void {
+    super.destroy()
+    this._mainWidget.destroy()
+    this._yAxisWidget?.destroy()
+  }
+
   override getImage (includeOverlay: boolean): HTMLCanvasElement {
     const { width, height } = this.getBounding()
     const canvas = createDom('canvas', {
@@ -109,7 +115,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
       height: `${height}px`,
       boxSizing: 'border-box'
     })
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const ctx = canvas.getContext('2d')!
     const pixelRatio = getPixelRatio(canvas)
     canvas.width = width * pixelRatio
     canvas.height = height * pixelRatio

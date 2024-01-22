@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import Nullable from '../../common/Nullable'
+import type Nullable from '../../common/Nullable'
 
-import IndicatorImp, { IndicatorTemplate, IndicatorConstructor } from '../../component/Indicator'
+import IndicatorImp, { type IndicatorTemplate, type IndicatorConstructor } from '../../component/Indicator'
 
 import averagePrice from './averagePrice'
 import awesomeOscillator from './awesomeOscillator'

@@ -12,17 +12,19 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
+import type Nullable from '../common/Nullable'
 import { UpdateLevel } from '../common/Updater'
-import { MouseTouchEvent } from '../common/SyntheticEvent'
+import { type MouseTouchEvent } from '../common/SyntheticEvent'
 import { isFunction, isValid, isString, isBoolean, isNumber, isArray } from '../common/utils/typeChecks'
 import { createId } from '../common/utils/id'
 
-import OverlayImp, { OVERLAY_ID_PREFIX, OVERLAY_ACTIVE_Z_LEVEL, OverlayCreate, OverlayRemove } from '../component/Overlay'
+import { type OverlayCreate, type OverlayRemove } from '../component/Overlay'
+import type OverlayImp from '../component/Overlay'
+import { OVERLAY_ID_PREFIX, OVERLAY_ACTIVE_Z_LEVEL } from '../component/Overlay'
 
 import { getOverlayInnerClass } from '../extension/overlay/index'
 
-import ChartStore from './ChartStore'
+import type ChartStore from './ChartStore'
 
 import { PaneIdConstants } from '../pane/types'
 
@@ -138,20 +140,48 @@ export default class OverlayStore {
     if (instance.setExtendData(extendData)) {
       updateFlag = true
     }
-    instance.setOnDrawStartCallback(onDrawStart ?? null)
-    instance.setOnDrawingCallback(onDrawing ?? null)
-    instance.setOnDrawEndCallback(onDrawEnd ?? null)
-    instance.setOnClickCallback(onClick ?? null)
-    instance.setOnDoubleClickCallback(onDoubleClick ?? null)
-    instance.setOnRightClickCallback(onRightClick ?? null)
-    instance.setOnPressedMoveStartCallback(onPressedMoveStart ?? null)
-    instance.setOnPressedMovingCallback(onPressedMoving ?? null)
-    instance.setOnPressedMoveEndCallback(onPressedMoveEnd ?? null)
-    instance.setOnMouseEnterCallback(onMouseEnter ?? null)
-    instance.setOnMouseLeaveCallback(onMouseLeave ?? null)
-    instance.setOnRemovedCallback(onRemoved ?? null)
-    instance.setOnSelectedCallback(onSelected ?? null)
-    instance.setOnDeselectedCallback(onDeselected ?? null)
+    if (onDrawStart !== undefined) {
+      instance.setOnDrawStartCallback(onDrawStart)
+    }
+    if (onDrawing !== undefined) {
+      instance.setOnDrawingCallback(onDrawing)
+    }
+    if (onDrawEnd !== undefined) {
+      instance.setOnDrawEndCallback(onDrawEnd)
+    }
+    if (onClick !== undefined) {
+      instance.setOnClickCallback(onClick)
+    }
+    if (onDoubleClick !== undefined) {
+      instance.setOnDoubleClickCallback(onDoubleClick)
+    }
+    if (onRightClick !== undefined) {
+      instance.setOnRightClickCallback(onRightClick)
+    }
+    if (onPressedMoveStart !== undefined) {
+      instance.setOnPressedMoveStartCallback(onPressedMoveStart)
+    }
+    if (onPressedMoving !== undefined) {
+      instance.setOnPressedMovingCallback(onPressedMoving)
+    }
+    if (onPressedMoveEnd !== undefined) {
+      instance.setOnPressedMoveEndCallback(onPressedMoveEnd)
+    }
+    if (onMouseEnter !== undefined) {
+      instance.setOnMouseEnterCallback(onMouseEnter)
+    }
+    if (onMouseLeave !== undefined) {
+      instance.setOnMouseLeaveCallback(onMouseLeave)
+    }
+    if (onRemoved !== undefined) {
+      instance.setOnRemovedCallback(onRemoved)
+    }
+    if (onSelected !== undefined) {
+      instance.setOnSelectedCallback(onSelected)
+    }
+    if (onDeselected !== undefined) {
+      instance.setOnDeselectedCallback(onDeselected)
+    }
     return [updateFlag, sortFlag]
   }
 
@@ -211,7 +241,9 @@ export default class OverlayStore {
     })
     if (ids.some(id => id !== null)) {
       this._sort()
-      this._chartStore.getChart().updatePane(UpdateLevel.Overlay, paneId)
+      const chart = this._chartStore.getChart()
+      chart.updatePane(UpdateLevel.Overlay, paneId)
+      chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.X_AXIS)
     }
     return ids
   }

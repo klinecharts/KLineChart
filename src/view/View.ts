@@ -12,18 +12,19 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import { EventHandler, EventName } from '../common/SyntheticEvent'
+import type Nullable from '../common/Nullable'
+import { type EventHandler, type EventName } from '../common/SyntheticEvent'
 import Eventful from '../common/Eventful'
 import { isValid } from '../common/utils/typeChecks'
 
-import Figure from '../component/Figure'
-import Axis from '../component/Axis'
+import type Figure from '../component/Figure'
+import type Axis from '../component/Axis'
+import { type FigureCreate } from '../component/Figure'
 
 import { getInnerFigureClass } from '../extension/figure/index'
 
-import DrawWidget from '../widget/DrawWidget'
-import DrawPane from '../pane/DrawPane'
+import type DrawWidget from '../widget/DrawWidget'
+import type DrawPane from '../pane/DrawPane'
 
 export default abstract class View<C extends Axis = Axis> extends Eventful {
   /**
@@ -38,20 +39,21 @@ export default abstract class View<C extends Axis = Axis> extends Eventful {
 
   getWidget (): DrawWidget<DrawPane<C>> { return this._widget }
 
-  protected createFigure (name: string, attrs: any, styles: any, eventHandler?: EventHandler): Nullable<Figure> {
-    const FigureClazz = getInnerFigureClass(name)
+  protected createFigure (figure: FigureCreate, eventHandler?: EventHandler): Nullable<Figure> {
+    const FigureClazz = getInnerFigureClass(figure.name)
     if (FigureClazz !== null) {
-      const figure = new FigureClazz({ name, attrs, styles })
+      const instance = new FigureClazz(figure)
       if (isValid(eventHandler)) {
         for (const key in eventHandler) {
           // eslint-disable-next-line no-prototype-builtins
           if (eventHandler.hasOwnProperty(key)) {
-            figure.registerEvent(key as EventName, eventHandler[key])
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            instance.registerEvent(key as EventName, eventHandler[key])
           }
         }
-        this.addChild(figure)
+        this.addChild(instance)
       }
-      return figure
+      return instance
     }
     return null
   }

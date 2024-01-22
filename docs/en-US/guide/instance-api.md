@@ -96,7 +96,7 @@ Whether dragging and scrolling is possible.
 ```typescript
 (distance: number) => void
 ```
-Sets the gap that can be left to the right of the chart.
+Set the gap that can be left to the right of the chart.
 
 ## getOffsetRightDistance()
 ```typescript
@@ -105,25 +105,39 @@ Sets the gap that can be left to the right of the chart.
 Get the gap that can be left to the right of the chart.
 
 
+## setMaxOffsetLeftDistance()
+```typescript
+(distance: number) => void
+```
+Set the maximum available gap on the left side of the chart.
+
+
+## setMaxOffsetRightDistance()
+```typescript
+(distance: number) => void
+```
+Set the maximum available gap on the right side of the chart.
+
+
 ## setLeftMinVisibleBarCount(barCount)
 ```typescript
 (barCount: number) => void
 ```
-Sets the minimum number of visible candles to the left.
+Set the minimum number of visible candles to the left.
 
 
 ## setRightMinVisibleBarCount(barCount)
 ```typescript
 (barCount: number) => void
 ```
-Sets the minimum number of visible candles to the right.
+Set the minimum number of visible candles to the right.
 
 
 ## setBarSpace(space)
 ```typescript
 (space: number) => void
 ```
-Sets the width of a single candlestick of the chart.
+Set the width of a single candlestick of the chart.
 
 
 ## getBarSpace()
@@ -248,6 +262,7 @@ Set load more callback function.
     shouldOhlc?: boolean
     shouldFormatBigNumber?: boolean
     visible?: boolean
+    zLevel?: number
     extendData?: any
     series?: 'normal' | 'price' | 'volume'
     figures?: Array<{
@@ -358,6 +373,7 @@ chart.createIndicator('MA', false, {
     shouldOhlc?: boolean
     shouldFormatBigNumber?: boolean
     visible?: boolean
+    zLevel?: number 
     extendData?: any
     series?: 'normal' | 'price' | 'volume'
     figures?: Array<{
@@ -415,6 +431,7 @@ Overlay technical indicator information.
    - `shouldOhlc` needs ohlc auxiliary graphics
    - `shouldFormatBigNumber` should format large numbers. For example, 1000 is converted to 1k, 1000000 is converted to 1M, etc.
    - `visible` visible or not
+   - `zLevel` z level
    - `extendData` extended data
    - `series` indicator series, optional options are 'normal', 'price' and 'volume'
    - `figures` graphics configuration
@@ -441,6 +458,7 @@ chart.overrideIndicator({
    shouldOhlc: true,
    shouldFormatBigNumber: false,
    visible: true,
+   zLevel: 1,
    extendData: 2432435,
    series: 'price',
    figures: [],

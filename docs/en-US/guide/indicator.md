@@ -35,6 +35,8 @@ To create a custom technical indicator, you only need to generate a technical in
   shouldFormatBigNumber?: boolean
   // Do you need visible
   visible?: boolean
+  // z level
+  zLevel?: number
   // extended data
   extendData?: any
   // series, default is 'normal'

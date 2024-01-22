@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
+import type Nullable from '../common/Nullable'
 
-import DrawWidget from '../widget/DrawWidget'
+import type DrawWidget from '../widget/DrawWidget'
 import IndicatorWidget from '../widget/IndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 

@@ -12,13 +12,13 @@
  * limitations under the License.
  */
 
-import KLineData from '../common/KLineData'
-import Precision from '../common/Precision'
-import VisibleData from '../common/VisibleData'
-import { getDefaultStyles, Styles } from '../common/Styles'
+import type KLineData from '../common/KLineData'
+import type Precision from '../common/Precision'
+import type VisibleData from '../common/VisibleData'
+import { getDefaultStyles, type Styles } from '../common/Styles'
 import { isArray, isString, isValid, merge } from '../common/utils/typeChecks'
 
-import { getDefaultCustomApi, CustomApi, defaultLocale, Options } from '../Options'
+import { getDefaultCustomApi, type CustomApi, defaultLocale, type Options } from '../Options'
 
 import TimeScaleStore from './TimeScaleStore'
 import IndicatorStore from './IndicatorStore'
@@ -28,7 +28,7 @@ import ActionStore from './ActionStore'
 
 import { getStyles } from '../extension/styles/index'
 
-import Chart from '../Chart'
+import type Chart from '../Chart'
 
 export default class ChartStore {
   /**
@@ -119,9 +119,9 @@ export default class ChartStore {
     }
   }
 
-  setOptions (options?: Options): ChartStore {
+  setOptions (options?: Options): this {
     if (isValid(options)) {
-      const { locale, timezone, styles, customApi } = options
+      const { locale, timezone, styles, customApi, thousandsSeparator } = options
       if (isString(locale)) {
         this._locale = locale
       }
@@ -138,8 +138,8 @@ export default class ChartStore {
       if (isValid(customApi)) {
         merge(this._customApi, customApi)
       }
-      if (isString(options.thousandsSeparator)) {
-        this._thousandsSeparator = options.thousandsSeparator
+      if (isString(thousandsSeparator)) {
+        this._thousandsSeparator = thousandsSeparator
       }
     }
     return this
@@ -165,7 +165,7 @@ export default class ChartStore {
     return this._precision
   }
 
-  setPrecision (precision: Precision): ChartStore {
+  setPrecision (precision: Precision): this {
     this._precision = precision
     this._indicatorStore.setSeriesPrecision(precision)
     return this
@@ -193,9 +193,9 @@ export default class ChartStore {
       const dataSize = this._dataList.length
       if (pos >= dataSize) {
         this._dataList.push(data)
-        let offsetRightBarCount = this._timeScaleStore.getOffsetRightBarCount()
-        if (offsetRightBarCount < 0) {
-          this._timeScaleStore.setOffsetRightBarCount(--offsetRightBarCount)
+        let lastBarRightSideDiffBarCount = this._timeScaleStore.getLastBarRightSideDiffBarCount()
+        if (lastBarRightSideDiffBarCount < 0) {
+          this._timeScaleStore.setLastBarRightSideDiffBarCount(--lastBarRightSideDiffBarCount)
         }
         this._timeScaleStore.adjustVisibleRange()
       } else {

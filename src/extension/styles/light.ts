@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import DeepPartial from '../../common/DeepPartial'
-import { Styles } from '../../common/Styles'
+import type DeepPartial from '../../common/DeepPartial'
+import { type Styles } from '../../common/Styles'
 
 const light: DeepPartial<Styles> = {
   grid: {

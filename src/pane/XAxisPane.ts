@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import DrawWidget from '../widget/DrawWidget'
+import type DrawWidget from '../widget/DrawWidget'
 import XAxisWidget from '../widget/XAxisWidget'
 
 import XAxis from '../component/XAxis'

@@ -12,22 +12,22 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import DeepPartial from '../common/DeepPartial'
-import ExcludePickPartial from '../common/ExcludePickPartial'
-import Point from '../common/Point'
-import Coordinate from '../common/Coordinate'
-import Bounding from '../common/Bounding'
-import BarSpace from '../common/BarSpace'
-import Precision from '../common/Precision'
-import { OverlayStyle } from '../common/Styles'
-import { MouseTouchEvent } from '../common/SyntheticEvent'
+import type Nullable from '../common/Nullable'
+import type DeepPartial from '../common/DeepPartial'
+import type ExcludePickPartial from '../common/ExcludePickPartial'
+import type Point from '../common/Point'
+import type Coordinate from '../common/Coordinate'
+import type Bounding from '../common/Bounding'
+import type BarSpace from '../common/BarSpace'
+import type Precision from '../common/Precision'
+import { type OverlayStyle } from '../common/Styles'
+import { type MouseTouchEvent } from '../common/SyntheticEvent'
 import { clone, isNumber, isString, merge } from '../common/utils/typeChecks'
 
-import TimeScaleStore from '../store/TimeScaleStore'
+import type TimeScaleStore from '../store/TimeScaleStore'
 
-import { XAxis } from './XAxis'
-import { YAxis } from './YAxis'
+import { type XAxis } from './XAxis'
+import { type YAxis } from './YAxis'
 
 export enum OverlayMode {
   Normal = 'normal',
