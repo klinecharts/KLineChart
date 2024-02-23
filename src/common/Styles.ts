@@ -272,7 +272,7 @@ export interface IndicatorStyle {
   [key: string]: any
 }
 
-export type AxisLineStyle = Omit<StateLineStyle, 'style' | 'dashedValue'>
+export type AxisLineStyle = StateLineStyle
 
 export interface AxisTickLineStyle extends AxisLineStyle {
   length: number
