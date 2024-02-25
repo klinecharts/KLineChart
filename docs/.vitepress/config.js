@@ -86,7 +86,8 @@ export default defineConfig({
               items: [
                 { text: '基础图形', link: '/guide/figure' },
                 { text: '技术指标', link: '/guide/indicator' },
-                { text: '覆盖物', link: '/guide/overlay' }
+                { text: '覆盖物', link: '/guide/overlay' },
+                { text: '自定义坐标轴', link: '/guide/custom-axis' }
               ]
             },
             {
@@ -186,7 +187,8 @@ export default defineConfig({
               items: [
                 { text: 'Figure', link: '/en-US/guide/figure' },
                 { text: 'Indicator', link: '/en-US/guide/indicator' },
-                { text: 'Overlay', link: '/en-US/guide/overlay' }
+                { text: 'Overlay', link: '/en-US/guide/overlay' },
+                { text: 'Custom Axis', link: '/en-US/guide/custom-axis' }
               ]
             },
             {

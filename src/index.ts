@@ -60,6 +60,8 @@ import { registerIndicator, getSupportedIndicators } from './extension/indicator
 import { registerLocale, getSupportedLocales } from './extension/i18n/index'
 import { registerOverlay, getOverlayClass, getSupportedOverlays } from './extension/overlay/index'
 import { registerStyles } from './extension/styles/index'
+import { registerXAxis } from './extension/x-axis'
+import { registerYAxis } from './extension/y-axis'
 
 const instances = new Map<string, ChartImp>()
 let chartBaseId = 1
@@ -166,7 +168,9 @@ export {
   registerIndicator, getSupportedIndicators,
   registerOverlay, getSupportedOverlays, getOverlayClass,
   registerLocale, getSupportedLocales,
-  registerStyles, utils,
+  registerStyles,
+  registerXAxis, registerYAxis,
+  utils,
   LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
   CandleType, YAxisPosition, YAxisType, FormatDateType,
   DomPosition, ActionType, IndicatorSeries, OverlayMode

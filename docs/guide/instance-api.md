@@ -327,6 +327,7 @@
       bottom?: number
     }
     axisOptions?: {
+      name?: string
       scrollZoomEnabled?: boolean
     }
   } | null,
@@ -346,6 +347,7 @@
     - `top` 上边距，值小余1则是百分比
     - `bottom` 下边距，值小余1则是百分比
   - `axisOptions`
+    - `name` 指定的轴的名字，此参数对应图表实例方法 [registerYAxis(axis)](./chart-api#registeryaxis-axis) 中的 `axis.name`，默认为 'default'
     - `scrollZoomEnabled` 轴上是否可以滚动缩放
   
 - `callback` 指标创建完成回调方法

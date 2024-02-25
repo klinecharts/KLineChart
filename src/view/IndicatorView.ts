@@ -143,7 +143,7 @@ export default class IndicatorView extends CandleBarView {
                     }
                     case 'rect':
                     case 'bar': {
-                      const baseValue = figure.baseValue ?? yAxis.getExtremum().min
+                      const baseValue = figure.baseValue ?? yAxis.getRange().from
                       const baseValueY = yAxis.convertToPixel(baseValue)
                       let height = Math.abs(baseValueY - (valueY as number))
                       if (baseValue !== currentIndicatorData[figure.key]) {

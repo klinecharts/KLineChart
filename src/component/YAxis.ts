@@ -13,14 +13,17 @@
  */
 
 import { YAxisType, YAxisPosition, CandleType } from '../common/Styles'
+import type Bounding from '../common/Bounding'
 import { isNumber } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision, formatThousands } from '../common/utils/format'
 
-import AxisImp, { type Axis, type AxisExtremum, type AxisTick } from './Axis'
+import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams } from './Axis'
 
 import { type IndicatorFigure } from './Indicator'
+
+import type DrawPane from '../pane/DrawPane'
 
 import { PaneIdConstants } from '../pane/types'
 
@@ -33,8 +36,10 @@ export interface YAxis extends Axis {
   isFromZero: () => boolean
 }
 
-export default class YAxisImp extends AxisImp implements YAxis {
-  protected calcExtremum (): AxisExtremum {
+export type YAxisConstructor = new (parent: DrawPane<AxisImp>) => YAxisImp
+
+export default abstract class YAxisImp extends AxisImp implements YAxis {
+  protected calcRange (): AxisRange {
     const parent = this.getParent()
     const chart = parent.getChart()
     const chartStore = chart.getChartStore()
@@ -175,7 +180,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
     }
 
     return {
-      min, max, range, realMin, realMax, realRange
+      from: min, to: max, range, realFrom: realMin, realTo: realMax, realRange
     }
   }
 
@@ -187,8 +192,8 @@ export default class YAxisImp extends AxisImp implements YAxis {
    */
   _innerConvertToPixel (value: number): number {
     const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
-    const { min, range } = this.getExtremum()
-    const rate = (value - min) / range
+    const { from, range } = this.getRange()
+    const rate = (value - from) / range
     return this.isReverse() ? Math.round(rate * height) : Math.round((1 - rate) * height)
   }
 
@@ -353,7 +358,7 @@ export default class YAxisImp extends AxisImp implements YAxis {
           precision = techPrecision
         }
       }
-      let valueText = formatPrecision(this.getExtremum().max, precision)
+      let valueText = formatPrecision(this.getRange().to, precision)
       if (shouldFormatBigNumber) {
         valueText = customApi.formatBigNumber(valueText)
       }
@@ -372,11 +377,15 @@ export default class YAxisImp extends AxisImp implements YAxis {
     return Math.max(yAxisWidth, crosshairVerticalTextWidth)
   }
 
+  getSelfBounding (): Bounding {
+    return this.getParent().getYAxisWidget()!.getBounding()
+  }
+
   convertFromPixel (pixel: number): number {
     const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
-    const { min, range } = this.getExtremum()
+    const { from, range } = this.getRange()
     const rate = this.isReverse() ? pixel / height : 1 - pixel / height
-    const value = rate * range + min
+    const value = rate * range + from
     switch (this.getType()) {
       case YAxisType.Percentage: {
         const chartStore = this.getParent().getChart().getChartStore()
@@ -431,5 +440,14 @@ export default class YAxisImp extends AxisImp implements YAxis {
     const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
     const pixel = this.convertToPixel(value)
     return Math.round(Math.max(height * 0.05, Math.min(pixel, height * 0.98)))
+  }
+
+  static extend (template: AxisTemplate): YAxisConstructor {
+    class Custom extends YAxisImp {
+      createTicks (params: AxisCreateTicksParams): AxisTick[] {
+        return template.createTicks(params)
+      }
+    }
+    return Custom
   }
 }

@@ -8,7 +8,21 @@
     layout?: Array<{
       type: 'candle' | 'indicator' | 'xAxis'
       content: Array<Indicator | string>
-      options: PaneOptions
+      options: {
+        id?: string
+        height?: number
+        minHeight?: number
+        dragEnabled?: boolean
+        position?: 'top' | 'bottom'
+        gap?: {
+          top?: number
+          bottom?: number
+        }
+        axisOptions?: {
+          name?: string
+          scrollZoomEnabled?: boolean
+        }
+      }
     }>
     locale?: string
     styles?: string | object
@@ -328,6 +342,42 @@
 () => string[]
 ```
 获取图表支持的覆盖物
+
+## registerXAxis(axis)
+```typescript
+(
+  axis: {
+    name: string
+    createTicks: (params: object) => Array<{
+      coord: number
+      value: number | string
+      text: string
+    }>
+  }
+) => void
+```
+添加一个自定义x轴。
+- `axis` 坐标信息
+  - `name` 坐标轴名字
+  - `createTicks` 创建分割文字
+
+## registerYAxis(axis)
+```typescript
+(
+  axis: {
+    name: string
+    createTicks: (params: object) => Array<{
+      coord: number
+      value: number | string
+      text: string
+    }>
+  }
+) => void
+```
+添加一个自定义y轴。
+- `axis` 坐标信息
+  - `name` 坐标轴名字
+  - `createTicks` 创建分割文字
 
 ## version()
 ```typescript

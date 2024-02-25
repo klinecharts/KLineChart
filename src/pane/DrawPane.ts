@@ -37,15 +37,17 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   private readonly _mainWidget: DrawWidget<DrawPane<C>>
   private readonly _yAxisWidget: Nullable<YAxisWidget> = null
 
-  private readonly _axis: C = this.createAxisComponent()
+  private readonly _axis: C
 
   private readonly _options: PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 }, axisOptions: { scrollZoomEnabled: true } }
 
-  constructor (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string) {
+  constructor (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string, options: Omit<PaneOptions, 'id' | 'height'>) {
     super(rootContainer, afterElement, chart, id)
     const container = this.getContainer()
     this._mainWidget = this.createMainWidget(container)
     this._yAxisWidget = this.createYAxisWidget(container)
+    this.setOptions(options)
+    this._axis = this.createAxisComponent(this._options.axisOptions.name)
   }
 
   setOptions (options: Omit<PaneOptions, 'id' | 'height'>): this {
@@ -138,7 +140,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     return canvas
   }
 
-  protected abstract createAxisComponent (): C
+  protected abstract createAxisComponent (name?: string): C
 
   protected createYAxisWidget (_container: HTMLElement): Nullable<YAxisWidget> { return null }
 

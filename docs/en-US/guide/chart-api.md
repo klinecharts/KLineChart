@@ -8,7 +8,21 @@
       layout?: Array<{
          type: 'candle' | 'indicator' | 'xAxis'
          content: Array<Indicator | string>
-         options: PaneOptions
+         options: {
+            id?: string
+            height?: number
+            minHeight?: number
+            dragEnabled?: boolean
+            position?: 'top' | 'bottom'
+            gap?: {
+               top?: number
+               bottom?: number
+            }
+            axisOptions?: {
+               name?: string
+               scrollZoomEnabled?: boolean
+            }
+         }
       }>
       locale?: string
       timezone?: string
@@ -325,6 +339,42 @@ Add a overlay.
 () => string[]
 ```
 Get overlays for chart support.
+
+## registerXAxis(axis)
+```typescript
+(
+  axis: {
+    name: string
+    createTicks: (params: object) => Array<{
+      coord: number
+      value: number | string
+      text: string
+    }>
+  }
+) => void
+```
+Add custom x-axis.
+- `axis` axis info
+  - `name` axis name
+  - `createTicks` create ticks
+
+## registerYAxis(axis)
+```typescript
+(
+  axis: {
+    name: string
+    createTicks: (params: object) => Array<{
+      coord: number
+      value: number | string
+      text: string
+    }>
+  }
+) => void
+```
+Add custom y-axis.
+- `axis` axis info
+  - `name` axis name
+  - `createTicks` create ticks
 
 ## version()
 ```typescript

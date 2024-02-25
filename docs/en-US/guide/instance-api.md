@@ -325,6 +325,7 @@ Set load more callback function.
       bottom?: number
     }
     axisOptions?: {
+      name?: string
       scrollZoomEnabled?: boolean
     }
   } | null,
@@ -344,6 +345,7 @@ Create a technical indicator, the return value is a string that identifies the w
     - `top` top margin, value less than 1 is a percentage
     - `bottom` bottom margin, value less than 1 is a percentage
   - `axisOptions`
+    - `name` is same `axis.name` in [registerYAxis(axis)](./chart-api#registeryaxis-axis) of chart api, default is 'default'
     - `scrollZoomEnabled` Scroll zoom flag
 - `callback` success callback
 ::: tip Special id
