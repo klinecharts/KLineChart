@@ -891,21 +891,23 @@ chart.overrideOverlay({
       bottom?: number
     }
     axisOptions?: {
+      name?: string
       scrollZoomEnabled?: boolean
     }
   }
 ) => void
 ```
 设置窗口配置。
-- `paneOptions` 窗口配置信息，可缺省
+- `options` 窗口配置信息，可缺省
   - `id` 窗口id
   - `height` 窗口高度，可缺省
   - `minHeight` 窗口最小高度，可缺省
-  - `dragEnbaled` 窗口是否可以拖拽调整高度，可缺省
+  - `dragEnabled` 窗口是否可以拖拽调整高度，可缺省
   - `gap` 边距
     - `top` 上边距，值小余1则是百分比
     - `bottom` 下边距，值小余1则是百分比
   - `axisOptions`
+    - `name` 轴名字
     - `scrollZoomEnabled` 轴上是否可以滚动缩放
 ::: tip 特殊的id
 'candle_pane'，主图的窗口id。
@@ -919,7 +921,7 @@ chart.setPaneOptions({
   minHeight: 3,
   dragEnabled: true,
   gap: { top: 0.2, bottom: 0.1 },
-  axisOptions: { scrollZoomEnabled: true }
+  axisOptions: { name: 'default', scrollZoomEnabled: true }
 })
 ```
 

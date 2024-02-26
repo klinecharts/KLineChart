@@ -399,6 +399,9 @@ export default class ChartImp implements Chart {
           shouldAdjust = true
           shouldMeasureHeight = true
         }
+        if (isString(options.axisOptions?.name) || isValid(options.gap)) {
+          shouldAdjust = true
+        }
         pane.setOptions(options)
         if (shouldAdjust) {
           this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)

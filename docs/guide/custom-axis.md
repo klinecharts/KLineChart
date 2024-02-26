@@ -60,7 +60,7 @@
 ```
 
 ## 使用说明
-当注册完成之后，即可使用图表方法 [init(ds, options)](./chart-api#init-ds-options) 参数 `options.layout` 中的子项 `options.axisOptions.name` 来指定坐标轴，或者使用实例方法 [createIndicator(value, isStack, paneOptions, callback)](./instance-api#createindicator-value-isstack-paneoptions-callback) 参数 `paneOptions.axisOptions.name` 来指定。
+当注册完成之后，即可使用图表方法 [init(ds, options)](./chart-api#init-ds-options) 参数 `options.layout` 中的子项 `options.axisOptions.name` 来指定坐标轴，或者使用实例方法 [createIndicator(value, isStack, paneOptions, callback)](./instance-api#createindicator-value-isstack-paneoptions-callback) 和 [setPaneOptions(paneOptions)](./instance-api#setpaneoptions-options) 参数 `paneOptions.axisOptions.name` 来指定。
 
 ### 使用 init 方法
 ```typescript
@@ -105,4 +105,15 @@ createIndicator(
     }
   }
 )
+```
+
+### 使用 setPaneOptions 方法
+```typescript
+setPaneOptions({
+  id: 'candle_pane',
+  axisOptions: {
+    // 这里的 customYAxisName 使用自定义y轴时的 name 代替
+    name: `${customYAxisName}`
+  }
+})
 ```

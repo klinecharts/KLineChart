@@ -42,7 +42,7 @@ Chart support custom axis, which can be achieved through the chart api [register
 ```
 
 ## Usage
-After register completed, you can use the sub item `options.axisOptions.name` in the `options.layout` parameter of the chart api [init(ds, options)](./chart-api#init-ds-options) to specify the coordinate axis, or use the instance api [createIndicator(value, isStack, paneOptions, callback)](./instance-api#createindicator-value-isstack-paneoptions-callback) parameter `paneOptions.axisOptions.name` to specify it.
+After register completed, you can use the sub item `options.axisOptions.name` in the `options.layout` parameter of the chart api [init(ds, options)](./chart-api#init-ds-options) to specify the coordinate axis, or use the instance api [createIndicator(value, isStack, paneOptions, callback)](./instance-api#createindicator-value-isstack-paneoptions-callback) and [setPaneOptions(paneOptions)](./instance-api#setpaneoptions-options) parameter `paneOptions.axisOptions.name` to specify it.
 
 ### Using init of chart api
 ```typescript
@@ -87,4 +87,15 @@ createIndicator(
     }
   }
 )
+```
+
+### Using setPaneOptions of instance api
+```typescript
+setPaneOptions({
+  id: 'candle_pane',
+  axisOptions: {
+    // The customYAxisName here uses the name used when customizing the y-axis instead
+    name: `${customYAxisName}`
+  }
+})
 ```

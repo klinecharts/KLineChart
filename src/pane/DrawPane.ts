@@ -17,7 +17,7 @@ import type Nullable from '../common/Nullable'
 import { type UpdateLevel } from '../common/Updater'
 import type Bounding from '../common/Bounding'
 
-import { isValid, merge } from '../common/utils/typeChecks'
+import { isString, isValid, merge } from '../common/utils/typeChecks'
 
 import type Axis from '../component/Axis'
 
@@ -37,9 +37,9 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   private readonly _mainWidget: DrawWidget<DrawPane<C>>
   private readonly _yAxisWidget: Nullable<YAxisWidget> = null
 
-  private readonly _axis: C
+  private _axis: C
 
-  private readonly _options: PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 }, axisOptions: { scrollZoomEnabled: true } }
+  private readonly _options: PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 }, axisOptions: { name: 'default', scrollZoomEnabled: true } }
 
   constructor (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string, options: Omit<PaneOptions, 'id' | 'height'>) {
     super(rootContainer, afterElement, chart, id)
@@ -47,10 +47,16 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     this._mainWidget = this.createMainWidget(container)
     this._yAxisWidget = this.createYAxisWidget(container)
     this.setOptions(options)
-    this._axis = this.createAxisComponent(this._options.axisOptions.name)
   }
 
   setOptions (options: Omit<PaneOptions, 'id' | 'height'>): this {
+    const name = options.axisOptions?.name
+    if (
+      (this._options.axisOptions.name !== name && isString(name)) ||
+      !isValid(this._axis)
+    ) {
+      this._axis = this.createAxisComponent(name ?? 'default')
+    }
     merge(this._options, options)
     let container: HTMLElement
     let cursor: string
@@ -140,7 +146,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     return canvas
   }
 
-  protected abstract createAxisComponent (name?: string): C
+  protected abstract createAxisComponent (name: string): C
 
   protected createYAxisWidget (_container: HTMLElement): Nullable<YAxisWidget> { return null }
 

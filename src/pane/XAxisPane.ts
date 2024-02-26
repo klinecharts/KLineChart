@@ -22,8 +22,8 @@ import DrawPane from './DrawPane'
 import { getXAxisClass } from '../extension/x-axis'
 
 export default class XAxisPane extends DrawPane<XAxis> {
-  override createAxisComponent (name?: string): XAxis {
-    const XAxisClass = getXAxisClass(name ?? 'default')
+  override createAxisComponent (name: string): XAxis {
+    const XAxisClass = getXAxisClass(name)
     return new XAxisClass(this)
   }
 
