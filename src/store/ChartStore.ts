@@ -107,8 +107,8 @@ export default class ChartStore {
    */
   adjustVisibleDataList (): void {
     this._visibleDataList = []
-    const { from, to } = this._timeScaleStore.getVisibleRange()
-    for (let i = from; i < to; i++) {
+    const { realFrom, realTo } = this._timeScaleStore.getVisibleRange()
+    for (let i = realFrom; i < realTo; i++) {
       const kLineData = this._dataList[i]
       const x = this._timeScaleStore.dataIndexToCoordinate(i)
       this._visibleDataList.push({

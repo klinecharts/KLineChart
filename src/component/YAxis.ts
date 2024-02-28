@@ -14,7 +14,7 @@
 
 import { YAxisType, YAxisPosition, CandleType } from '../common/Styles'
 import type Bounding from '../common/Bounding'
-import { isNumber } from '../common/utils/typeChecks'
+import { isNumber, isValid } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision, formatThousands } from '../common/utils/format'
@@ -88,15 +88,17 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const areaValueKey = candleStyles.area.value
     const shouldCompareHighLow = (inCandle && !isArea) || (!inCandle && shouldOhlc)
     visibleDataList.forEach(({ dataIndex, data }) => {
-      if (shouldCompareHighLow) {
-        min = Math.min(min, data.low)
-        max = Math.max(max, data.high)
-      }
-      if (inCandle && isArea) {
-        const value = data[areaValueKey]
-        if (isNumber(value)) {
-          min = Math.min(min, value)
-          max = Math.max(max, value)
+      if (isValid(data)) {
+        if (shouldCompareHighLow) {
+          min = Math.min(min, data.low)
+          max = Math.max(max, data.high)
+        }
+        if (inCandle && isArea) {
+          const value = data[areaValueKey]
+          if (isNumber(value)) {
+            min = Math.min(min, value)
+            max = Math.max(max, value)
+          }
         }
       }
       figuresResultList.forEach(({ figures, result }) => {
@@ -124,7 +126,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     switch (type) {
       case YAxisType.Percentage: {
         const fromData = visibleDataList[0]?.data
-        if (isNumber(fromData?.close)) {
+        if (isValid(fromData) && isNumber(fromData.close)) {
           min = (min - fromData.close) / fromData.close * 100
           max = (max - fromData.close) / fromData.close * 100
         }
@@ -391,7 +393,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         const chartStore = this.getParent().getChart().getChartStore()
         const visibleDataList = chartStore.getVisibleDataList()
         const fromData = visibleDataList[0]?.data
-        if (isNumber(fromData?.close)) {
+        if (isValid(fromData) && isNumber(fromData.close)) {
           return fromData.close * value / 100 + fromData.close
         }
         return 0
@@ -420,7 +422,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         const chartStore = this.getParent().getChart().getChartStore()
         const visibleDataList = chartStore.getVisibleDataList()
         const fromData = visibleDataList[0]?.data
-        if (isNumber(fromData?.close)) {
+        if (isValid(fromData) && isNumber(fromData.close)) {
           v = (value - fromData.close) / fromData.close * 100
         }
         break

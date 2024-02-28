@@ -19,6 +19,7 @@ import { type CandleHighLowPriceMarkStyle } from '../common/Styles'
 import ChildrenView from './ChildrenView'
 
 import { formatPrecision, formatThousands } from '../common/utils/format'
+import { isValid } from '../common/utils/typeChecks'
 
 export default class CandleHighLowPriceView extends ChildrenView {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -38,13 +39,15 @@ export default class CandleHighLowPriceView extends ChildrenView {
       let lowX = 0
       this.eachChildren((data: VisibleData) => {
         const { data: kLineData, x } = data
-        if (high < kLineData.high) {
-          high = kLineData.high
-          highX = x
-        }
-        if (low > kLineData.low) {
-          low = kLineData.low
-          lowX = x
+        if (isValid(kLineData)) {
+          if (high < kLineData.high) {
+            high = kLineData.high
+            highX = x
+          }
+          if (low > kLineData.low) {
+            low = kLineData.low
+            lowX = x
+          }
         }
       })
       const highY = yAxis.convertToPixel(high)

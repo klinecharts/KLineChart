@@ -35,7 +35,7 @@ export default class CandleAreaView extends ChildrenView {
     this.eachChildren((data: VisibleData, barSpace: BarSpace, i: number) => {
       const { data: kLineData, x } = data
       const { halfGapBar } = barSpace
-      const value = kLineData[candleAreaStyles.value]
+      const value = kLineData?.[candleAreaStyles.value]
       if (isNumber(value)) {
         const y = yAxis.convertToPixel(value)
         if (i === 0) {

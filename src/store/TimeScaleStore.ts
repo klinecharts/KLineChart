@@ -178,6 +178,7 @@ export default class TimeScaleStore {
     }
 
     let to = Math.round(this._lastBarRightSideDiffBarCount + totalBarCount + 0.5)
+    const realTo = to
     if (to > totalBarCount) {
       to = totalBarCount
     }
@@ -186,7 +187,7 @@ export default class TimeScaleStore {
       from = 0
     }
     const realFrom = this._lastBarRightSideDiffBarCount > 0 ? Math.round(totalBarCount + this._lastBarRightSideDiffBarCount - visibleBarCount) - 1 : from
-    this._visibleRange = { from, to, realFrom, realTo: to }
+    this._visibleRange = { from, to, realFrom, realTo }
     this._chartStore.getActionStore().execute(ActionType.OnVisibleRangeChange, this._visibleRange)
     this._chartStore.adjustVisibleDataList()
     // More processing and loading, more loading if there are callback methods and no data is being loaded
