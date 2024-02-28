@@ -49,18 +49,35 @@ export function formatValue (data: unknown, key: string, defaultValue?: unknown)
 }
 
 export function formatDate (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string {
-  const dateTimeString = dateTimeFormat.format(new Date(timestamp))
-  const dateTimeStringArray = dateTimeString.split(', ')
-  const dateStringArray = dateTimeStringArray[0].split('/')
-  const timeStringArray = dateTimeStringArray[1].split(':')
-  const date = {
-    YYYY: dateStringArray[2],
-    MM: dateStringArray[0],
-    DD: dateStringArray[1],
-    HH: timeStringArray[0] === '24' ? '00' : timeStringArray[0],
-    mm: timeStringArray[1],
-    ss: timeStringArray[2]
-  }
+  const date: Record<string, string> = {}
+  dateTimeFormat.formatToParts(new Date(timestamp)).forEach(({ type, value }) => {
+    switch (type) {
+      case 'year': {
+        date.YYYY = value
+        break
+      }
+      case 'month': {
+        date.MM = value
+        break
+      }
+      case 'day': {
+        date.DD = value
+        break
+      }
+      case 'hour': {
+        date.HH = value === '24' ? '00' : value
+        break
+      }
+      case 'minute': {
+        date.mm = value
+        break
+      }
+      case 'second': {
+        date.ss = value
+        break
+      }
+    }
+  })
   return format.replace(/YYYY|MM|DD|HH|mm|ss/g, key => date[key])
 }
 
