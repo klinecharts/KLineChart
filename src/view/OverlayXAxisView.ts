@@ -57,6 +57,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
     _thousandsSeparator: string,
+    _decimalFoldThreshold: number,
     _xAxis: Nullable<XAxis>,
     _yAxis: Nullable<YAxis>,
     clickInstanceInfo: EventOverlayInfo
@@ -88,11 +89,12 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     barSpace: BarSpace,
     precision: Precision,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createXAxisFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+    return overlay.createXAxisFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
   }
 }

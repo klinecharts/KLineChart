@@ -383,6 +383,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const chartStore = chart.getChartStore()
     const customApi = chartStore.getCustomApi()
     const thousandsSeparator = chartStore.getThousandsSeparator()
+    const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
     const timeScaleStore = chartStore.getTimeScaleStore()
     const dateTimeFormat = timeScaleStore.getDateTimeFormat()
     const barSpace = timeScaleStore.getBarSpace()
@@ -396,7 +397,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (overlay.visible) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace, precision,
-          dateTimeFormat, customApi, thousandsSeparator,
+          dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
           defaultStyles, xAxis, yAxis,
           hoverInstanceInfo, clickInstanceInfo, timeScaleStore
         )
@@ -409,7 +410,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (overlay !== null && overlay.visible) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace,
-          precision, dateTimeFormat, customApi, thousandsSeparator,
+          precision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
           defaultStyles, xAxis, yAxis,
           hoverInstanceInfo, clickInstanceInfo, timeScaleStore
         )
@@ -426,6 +427,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     defaultStyles: OverlayStyle,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
@@ -451,7 +453,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (coordinates.length > 0) {
       const figures = new Array<OverlayFigure>().concat(
         this.getFigures(
-          overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, dateTimeFormat, defaultStyles, xAxis, yAxis
+          overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis
         )
       )
       this.drawFigures(
@@ -470,6 +472,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       dateTimeFormat,
       customApi,
       thousandsSeparator,
+      decimalFoldThreshold,
       defaultStyles,
       xAxis,
       yAxis,
@@ -511,12 +514,13 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     barSpace: BarSpace,
     precision: Precision,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createPointFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+    return overlay.createPointFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
   }
 
   protected drawDefaultFigures (
@@ -528,6 +532,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     _dateTimeFormat: Intl.DateTimeFormat,
     _customApi: CustomApi,
     _thousandsSeparator: string,
+    _drawDefaultFigures: number,
     defaultStyles: OverlayStyle,
     _xAxis: Nullable<XAxis>,
     _yAxis: Nullable<YAxis>,

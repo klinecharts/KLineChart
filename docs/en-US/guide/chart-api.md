@@ -30,8 +30,9 @@
       customApi?: {
          formatDate?: (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string, type: number) => string
          formatBigNumber?: (value: string | number) => string
-      },
+      }
       thousandsSeparator?: string
+      decimalFoldThreshold?: number
    }
 ) => Chart
 ```
@@ -46,6 +47,7 @@ Initialize a chart and return the chart instance.
      - `formatDate` formats a date.
      - `formatBigNumber` format big numbers, such as 1000 into 1k, 1000000 into 1M, etc.\
    - `thousandsSeparator` thousands separator
+   - `decimalFoldThreshold` decimal fold threshold
 
 
 ## dispose(dcs)
@@ -461,6 +463,12 @@ Format date. `format`, such as 'YYYY-MM-DD HH:mm:ss'.
 (value: string | number, sign: string) => string
 ```
 Format thousands separator.
+
+### utils.foldDecimal(value, threshold)
+```typescript
+(value: string | number, threshold: number) => string
+```
+Fold decimal.
 
 
 ### utils.calcTextWidth(text, size, weight, family)

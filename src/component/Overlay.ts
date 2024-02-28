@@ -74,6 +74,7 @@ export interface OverlayCreateFiguresCallbackParams {
   barSpace: BarSpace
   precision: Precision
   thousandsSeparator: string
+  decimalFoldThreshold: number
   dateTimeFormat: Intl.DateTimeFormat
   defaultStyles: OverlayStyle
   xAxis: Nullable<XAxis>

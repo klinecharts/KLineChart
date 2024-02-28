@@ -74,4 +74,5 @@ export interface Options {
   styles?: string | DeepPartial<Styles>
   customApi?: Partial<CustomApi>
   thousandsSeparator?: string
+  decimalFoldThreshold?: number
 }

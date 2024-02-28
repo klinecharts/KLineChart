@@ -32,6 +32,7 @@
       formatBigNumber?: (value: string | number) => string
     }
     thousandsSeparator?: string
+    decimalFoldThreshold?: number
   }
 ) => Chart
 ```
@@ -46,6 +47,7 @@
     - `formatDate` 格式化日期。
     - `formatBigNumber` 格式化大的数字，如1000转换成1k，1000000转换为1M等。
   - `thousandsSeparator` 千分符
+  - `decimalFoldThreshold` 小数折叠阈值
 
 
 ## dispose(dcs)
@@ -464,6 +466,12 @@
 (value: string | number, sign: string) => string
 ```
 格式化日期千分符。
+
+### utils.foldDecimal(value, threshold)
+```typescript
+(value: string | number, threshold: number) => string
+```
+折叠小数。
 
 
 ### utils.calcTextWidth(text, size, weight, family)

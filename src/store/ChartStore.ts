@@ -16,7 +16,7 @@ import type KLineData from '../common/KLineData'
 import type Precision from '../common/Precision'
 import type VisibleData from '../common/VisibleData'
 import { getDefaultStyles, type Styles } from '../common/Styles'
-import { isArray, isString, isValid, merge } from '../common/utils/typeChecks'
+import { isArray, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 
 import { getDefaultCustomApi, type CustomApi, defaultLocale, type Options } from '../Options'
 
@@ -60,6 +60,9 @@ export default class ChartStore {
    * Thousands separator
    */
   private _thousandsSeparator: string = ','
+
+  // Decimal fold threshold
+  private _decimalFoldThreshold = 3
 
   /**
    * Data source
@@ -121,7 +124,7 @@ export default class ChartStore {
 
   setOptions (options?: Options): this {
     if (isValid(options)) {
-      const { locale, timezone, styles, customApi, thousandsSeparator } = options
+      const { locale, timezone, styles, customApi, thousandsSeparator, decimalFoldThreshold } = options
       if (isString(locale)) {
         this._locale = locale
       }
@@ -141,6 +144,9 @@ export default class ChartStore {
       if (isString(thousandsSeparator)) {
         this._thousandsSeparator = thousandsSeparator
       }
+      if (isNumber(decimalFoldThreshold)) {
+        this._decimalFoldThreshold = decimalFoldThreshold
+      }
     }
     return this
   }
@@ -159,6 +165,10 @@ export default class ChartStore {
 
   getThousandsSeparator (): string {
     return this._thousandsSeparator
+  }
+
+  getDecimalFoldThreshold (): number {
+    return this._decimalFoldThreshold
   }
 
   getPrecision (): Precision {

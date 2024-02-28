@@ -17,7 +17,7 @@ import type Bounding from '../common/Bounding'
 import { isNumber, isValid } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
-import { formatPrecision, formatThousands } from '../common/utils/format'
+import { formatPrecision, formatThousands, foldDecimal } from '../common/utils/format'
 
 import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams } from './Axis'
 
@@ -255,6 +255,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const type = this.getType()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     const thousandsSeparator = chartStore.getThousandsSeparator()
+    const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
     let precision = 0
     let shouldFormatBigNumber = false
     if (this.isInCandle()) {
@@ -290,7 +291,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
           break
         }
       }
-      v = formatThousands(v, thousandsSeparator)
+      v = foldDecimal(formatThousands(v, thousandsSeparator), decimalFoldThreshold)
       const validYNumber = isNumber(validY)
       if (
         y > textHeight &&
