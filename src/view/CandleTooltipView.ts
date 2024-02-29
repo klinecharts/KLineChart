@@ -21,7 +21,7 @@ import {
   type Styles, type CandleStyle, type TooltipData, type TooltipDataChild, TooltipShowType, CandleTooltipRectPosition,
   type CandleTooltipCustomCallbackData, YAxisPosition, PolygonType
 } from '../common/Styles'
-import { formatPrecision, formatThousands, foldDecimal } from '../common/utils/format'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 import { isFunction, isObject, isValid } from '../common/utils/typeChecks'
 
@@ -444,15 +444,15 @@ export default class CandleTooltipView extends IndicatorTooltipView {
     const { price: pricePrecision, volume: volumePrecision } = precision
     const mapping = {
       '{time}': customApi.formatDate(dateTimeFormat, current.timestamp, 'YYYY-MM-DD HH:mm', FormatDateType.Tooltip),
-      '{open}': foldDecimal(formatThousands(formatPrecision(current.open, pricePrecision), thousandsSeparator), decimalFoldThreshold),
-      '{high}': foldDecimal(formatThousands(formatPrecision(current.high, pricePrecision), thousandsSeparator), decimalFoldThreshold),
-      '{low}': foldDecimal(formatThousands(formatPrecision(current.low, pricePrecision), thousandsSeparator), decimalFoldThreshold),
-      '{close}': foldDecimal(formatThousands(formatPrecision(current.close, pricePrecision), thousandsSeparator), decimalFoldThreshold),
-      '{volume}': foldDecimal(formatThousands(
+      '{open}': formatFoldDecimal(formatThousands(formatPrecision(current.open, pricePrecision), thousandsSeparator), decimalFoldThreshold),
+      '{high}': formatFoldDecimal(formatThousands(formatPrecision(current.high, pricePrecision), thousandsSeparator), decimalFoldThreshold),
+      '{low}': formatFoldDecimal(formatThousands(formatPrecision(current.low, pricePrecision), thousandsSeparator), decimalFoldThreshold),
+      '{close}': formatFoldDecimal(formatThousands(formatPrecision(current.close, pricePrecision), thousandsSeparator), decimalFoldThreshold),
+      '{volume}': formatFoldDecimal(formatThousands(
         customApi.formatBigNumber(formatPrecision(current.volume ?? tooltipStyles.defaultValue, volumePrecision)),
         thousandsSeparator
       ), decimalFoldThreshold),
-      '{turnover}': foldDecimal(formatThousands(
+      '{turnover}': formatFoldDecimal(formatThousands(
         formatPrecision(current.turnover ?? tooltipStyles.defaultValue, pricePrecision),
         thousandsSeparator
       ), decimalFoldThreshold),

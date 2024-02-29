@@ -19,7 +19,7 @@ import type BarSpace from '../common/BarSpace'
 import type Precision from '../common/Precision'
 import { type OverlayStyle } from '../common/Styles'
 import { type CustomApi } from '../Options'
-import { formatPrecision, formatThousands, foldDecimal } from '../common/utils/format'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isNumber } from '../common/utils/typeChecks'
 
 import type Axis from '../component/Axis'
@@ -97,7 +97,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
         if (isNumber(point.value)) {
           topY = Math.min(topY, coordinate.y)
           bottomY = Math.max(bottomY, coordinate.y)
-          const text = foldDecimal(formatThousands(formatPrecision(point.value, precision.price), thousandsSeparator), decimalFoldThreshold)
+          const text = formatFoldDecimal(formatThousands(formatPrecision(point.value, precision.price), thousandsSeparator), decimalFoldThreshold)
           figures.push({ type: 'text', attrs: { x, y: coordinate.y, text, align: textAlign, baseline: 'middle' }, ignoreEvent: true })
         }
       })

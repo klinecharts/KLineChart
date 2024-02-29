@@ -14,7 +14,7 @@
 
 import { type OverlayTemplate } from '../../component/Overlay'
 
-import { formatThousands, foldDecimal } from '../../common/utils/format'
+import { formatThousands, formatFoldDecimal } from '../../common/utils/format'
 
 const priceLine: OverlayTemplate = {
   name: 'priceLine',
@@ -35,7 +35,7 @@ const priceLine: OverlayTemplate = {
         attrs: {
           x: coordinates[0].x,
           y: coordinates[0].y,
-          text: foldDecimal(formatThousands(value.toFixed(precision.price), thousandsSeparator), decimalFoldThreshold),
+          text: formatFoldDecimal(formatThousands(value.toFixed(precision.price), thousandsSeparator), decimalFoldThreshold),
           baseline: 'bottom'
         }
       }

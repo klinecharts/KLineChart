@@ -18,7 +18,7 @@ import type KLineData from '../common/KLineData'
 import type Crosshair from '../common/Crosshair'
 import { type IndicatorStyle, type TooltipStyle, type TooltipIconStyle, type TooltipTextStyle, type TooltipData, TooltipShowRule, type TooltipDataChild, TooltipIconPosition } from '../common/Styles'
 import { ActionType } from '../common/Action'
-import { formatPrecision, formatThousands, foldDecimal } from '../common/utils/format'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isValid, isObject, isString, isNumber } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 
@@ -318,7 +318,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
               value = customApi.formatBigNumber(value as string)
             }
           }
-          values.push({ title: { text: figure.title, color }, value: { text: foldDecimal(formatThousands((value ?? tooltipStyles.defaultValue) as string, thousandsSeparator), decimalFoldThreshold), color } })
+          values.push({ title: { text: figure.title, color }, value: { text: formatFoldDecimal(formatThousands((value ?? tooltipStyles.defaultValue) as string, thousandsSeparator), decimalFoldThreshold), color } })
         }
       })
       tooltipData.values = values
@@ -363,7 +363,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           } else {
             value.text = data.value
           }
-          value.text = foldDecimal(formatThousands(value.text, thousandsSeparator), decimalFoldThreshold)
+          value.text = formatFoldDecimal(formatThousands(value.text, thousandsSeparator), decimalFoldThreshold)
           optimizedValues.push({ title, value })
         })
         tooltipData.values = optimizedValues

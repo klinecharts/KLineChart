@@ -117,7 +117,7 @@ export function formatThousands (value: string | number, sign: string): string {
   return vl.replace(/(\d)(?=(\d{3})+$)/g, $1 => `${$1}${sign}`)
 }
 
-export function foldDecimal (value: string | number, threshold: number): string {
+export function formatFoldDecimal (value: string | number, threshold: number): string {
   const vl = `${value}`
   const match = vl.match(/\.0*(\d+)/)
   if (isValid(match) && parseInt(match[1]) > 0) {

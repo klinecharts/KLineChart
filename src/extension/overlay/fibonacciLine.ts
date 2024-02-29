@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { formatThousands, foldDecimal } from '../../common/utils/format'
+import { formatThousands, formatFoldDecimal } from '../../common/utils/format'
 import { isNumber } from '../../common/utils/typeChecks'
 
 import { type OverlayTemplate } from '../../component/Overlay'
@@ -39,7 +39,7 @@ const fibonacciLine: OverlayTemplate = {
         const valueDif = points[0].value - points[1].value
         percents.forEach(percent => {
           const y = coordinates[1].y + yDif * percent
-          const value = foldDecimal(formatThousands(((points[1].value ?? 0) + valueDif * percent).toFixed(precision.price), thousandsSeparator), decimalFoldThreshold)
+          const value = formatFoldDecimal(formatThousands(((points[1].value ?? 0) + valueDif * percent).toFixed(precision.price), thousandsSeparator), decimalFoldThreshold)
           lines.push({ coordinates: [{ x: startX, y }, { x: endX, y }] })
           texts.push({
             x: startX,

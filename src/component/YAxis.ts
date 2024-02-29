@@ -17,7 +17,7 @@ import type Bounding from '../common/Bounding'
 import { isNumber, isValid } from '../common/utils/typeChecks'
 import { index10, log10 } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
-import { formatPrecision, formatThousands, foldDecimal } from '../common/utils/format'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 
 import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams } from './Axis'
 
@@ -291,7 +291,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
           break
         }
       }
-      v = foldDecimal(formatThousands(v, thousandsSeparator), decimalFoldThreshold)
+      v = formatFoldDecimal(formatThousands(v, thousandsSeparator), decimalFoldThreshold)
       const validYNumber = isNumber(validY)
       if (
         y > textHeight &&

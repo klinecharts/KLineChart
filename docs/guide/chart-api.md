@@ -467,11 +467,11 @@
 ```
 格式化日期千分符。
 
-### utils.foldDecimal(value, threshold)
+### utils.formatFoldDecimal(value, threshold)
 ```typescript
 (value: string | number, threshold: number) => string
 ```
-折叠小数。
+格式化折叠小数。
 
 
 ### utils.calcTextWidth(text, size, weight, family)

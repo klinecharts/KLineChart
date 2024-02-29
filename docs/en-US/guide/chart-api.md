@@ -464,11 +464,11 @@ Format date. `format`, such as 'YYYY-MM-DD HH:mm:ss'.
 ```
 Format thousands separator.
 
-### utils.foldDecimal(value, threshold)
+### utils.formatFoldDecimal(value, threshold)
 ```typescript
 (value: string | number, threshold: number) => string
 ```
-Fold decimal.
+Format fold decimal.
 
 
 ### utils.calcTextWidth(text, size, weight, family)

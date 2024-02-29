@@ -18,7 +18,7 @@ import { type CandleHighLowPriceMarkStyle } from '../common/Styles'
 
 import ChildrenView from './ChildrenView'
 
-import { formatPrecision, formatThousands, foldDecimal } from '../common/utils/format'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
 export default class CandleHighLowPriceView extends ChildrenView {
@@ -56,7 +56,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
       if (highPriceMarkStyles.show && high !== Number.MIN_SAFE_INTEGER) {
         this._drawMark(
           ctx,
-          foldDecimal(formatThousands(formatPrecision(high, precision.price), thousandsSeparator), decimalFoldThreshold),
+          formatFoldDecimal(formatThousands(formatPrecision(high, precision.price), thousandsSeparator), decimalFoldThreshold),
           { x: highX, y: highY },
           highY < lowY ? [-2, -5] : [2, 5],
           highPriceMarkStyles
@@ -65,7 +65,7 @@ export default class CandleHighLowPriceView extends ChildrenView {
       if (lowPriceMarkStyles.show && low !== Number.MAX_SAFE_INTEGER) {
         this._drawMark(
           ctx,
-          foldDecimal(formatThousands(formatPrecision(low, precision.price), thousandsSeparator), decimalFoldThreshold),
+          formatFoldDecimal(formatThousands(formatPrecision(low, precision.price), thousandsSeparator), decimalFoldThreshold),
           { x: lowX, y: lowY },
           highY < lowY ? [2, 5] : [-2, -5],
           lowPriceMarkStyles

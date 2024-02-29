@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { formatPrecision, formatThousands, foldDecimal } from '../common/utils/format'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isNumber, isValid } from '../common/utils/typeChecks'
 
 import { eachFigures, type IndicatorFigure, type IndicatorFigureStyle } from '../component/Indicator'
@@ -51,7 +51,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
               if (indicator.shouldFormatBigNumber) {
                 text = customApi.formatBigNumber(text)
               }
-              text = foldDecimal(formatThousands(text, thousandsSeparator), decimalFoldThreshold)
+              text = formatFoldDecimal(formatThousands(text, thousandsSeparator), decimalFoldThreshold)
               let x: number
               let textAlign: CanvasTextAlign
               if (yAxis.isFromZero()) {

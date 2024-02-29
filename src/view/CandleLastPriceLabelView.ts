@@ -13,7 +13,7 @@
  */
 
 import { YAxisType } from '../common/Styles'
-import { formatPrecision, formatThousands, foldDecimal } from '../common/utils/format'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
 import View from './View'
@@ -54,7 +54,7 @@ export default class CandleLastPriceLabelView extends View {
         } else {
           text = formatPrecision(close, precision.price)
         }
-        text = foldDecimal(formatThousands(text, chartStore.getThousandsSeparator()), chartStore.getDecimalFoldThreshold())
+        text = formatFoldDecimal(formatThousands(text, chartStore.getThousandsSeparator()), chartStore.getDecimalFoldThreshold())
         let x: number
         let textAlgin: CanvasTextAlign
         if (yAxis.isFromZero()) {
