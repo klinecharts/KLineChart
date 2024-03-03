@@ -345,7 +345,7 @@
 ```
 获取图表支持的覆盖物
 
-## registerXAxis(axis)
+## registerXAxis(axis) <Tag>v9.8.0+</Tag>
 ```typescript
 (
   axis: {
@@ -363,7 +363,7 @@
   - `name` 坐标轴名字
   - `createTicks` 创建分割文字
 
-## registerYAxis(axis)
+## registerYAxis(axis) <Tag>v9.8.0+</Tag>
 ```typescript
 (
   axis: {
@@ -467,7 +467,7 @@
 ```
 格式化日期千分符。
 
-### utils.formatFoldDecimal(value, threshold)
+### utils.formatFoldDecimal(value, threshold) <Tag>v9.8.0+</Tag>
 ```typescript
 (value: string | number, threshold: number) => string
 ```

@@ -12,26 +12,22 @@
  * limitations under the License.
  */
 
-import text, { drawText } from './text'
+import type Nullable from './Nullable'
+import type KLineData from './KLineData'
 
-/**
- * @deprecated
- * Starting from v10, it will be deleted
- */
-const rectText = text
-
-/**
- * @deprecated
- * Starting from v10, it will be deleted
- */
-const drawRectText = drawText
-
-/**
- * @deprecated
- * Starting from v10, it will be deleted
- */
-export {
-  drawRectText
+enum LoadDataType {
+  Forward = 'forward',
+  Backward = 'backward'
 }
 
-export default rectText
+interface LoadDataParams {
+  type: LoadDataType
+  data: Nullable<KLineData>
+  callback: (dataList: KLineData[], more?: boolean) => void
+}
+
+export { LoadDataType, type LoadDataParams }
+
+type LoadDataCallback = (params: LoadDataParams) => void
+
+export default LoadDataCallback

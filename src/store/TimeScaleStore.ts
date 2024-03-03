@@ -18,7 +18,6 @@ import type KLineData from '../common/KLineData'
 import type BarSpace from '../common/BarSpace'
 import type VisibleRange from '../common/VisibleRange'
 import { getDefaultVisibleRange } from '../common/VisibleRange'
-import type LoadMoreCallback from '../common/LoadMoreCallback'
 import { ActionType } from '../common/Action'
 
 import { logWarn } from '../common/utils/logger'
@@ -26,6 +25,7 @@ import { binarySearchNearest } from '../common/utils/number'
 import { isNumber, isString } from '../common/utils/typeChecks'
 
 import type ChartStore from './ChartStore'
+import { LoadDataType } from '../common/LoadDataCallback'
 
 interface LeftRightSide {
   left: number
@@ -66,21 +66,6 @@ export default class TimeScaleStore {
    * Scroll enabled flag
    */
   private _scrollEnabled: boolean = true
-
-  /**
-   * Is loading data flag
-   */
-  private _loading: boolean = true
-
-  /**
-   * Load more data callback
-   */
-  private _loadMoreCallback: Nullable<LoadMoreCallback> = null
-
-  /**
-   * Whether there are more flag
-   */
-  private _more: boolean = true
 
   /**
    * Total space of drawing area
@@ -191,21 +176,20 @@ export default class TimeScaleStore {
     this._chartStore.getActionStore().execute(ActionType.OnVisibleRangeChange, this._visibleRange)
     this._chartStore.adjustVisibleDataList()
     // More processing and loading, more loading if there are callback methods and no data is being loaded
-    if (from === 0 && this._more && !this._loading && this._loadMoreCallback !== null) {
-      this._loading = true
+    if (from === 0) {
       const firstData = dataList[0]
-      this._loadMoreCallback(firstData?.timestamp ?? null)
+      this._chartStore.executeLoadMoreCallback(firstData?.timestamp ?? null)
+      this._chartStore.executeLoadDataCallback({
+        type: LoadDataType.Forward,
+        data: firstData ?? null
+      })
     }
-  }
-
-  setMore (more: boolean): this {
-    this._more = more
-    return this
-  }
-
-  setLoading (loading: boolean): this {
-    this._loading = loading
-    return this
+    if (to === totalBarCount) {
+      this._chartStore.executeLoadDataCallback({
+        type: LoadDataType.Backward,
+        data: dataList[totalBarCount - 1] ?? null
+      })
+    }
   }
 
   getDateTimeFormat (): Intl.DateTimeFormat {
@@ -422,14 +406,7 @@ export default class TimeScaleStore {
     return this._scrollEnabled
   }
 
-  setLoadMoreCallback (callback: LoadMoreCallback): this {
-    this._loadMoreCallback = callback
-    return this
-  }
-
   clear (): void {
-    this._more = true
-    this._loading = true
     this._visibleRange = getDefaultVisibleRange()
   }
 }

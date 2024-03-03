@@ -8,6 +8,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
+    "experimentalDecorators": true,
     "lib": [
       "dom",
       "es2018"

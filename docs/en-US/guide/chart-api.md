@@ -342,7 +342,7 @@ Add a overlay.
 ```
 Get overlays for chart support.
 
-## registerXAxis(axis)
+## registerXAxis(axis) <Tag>v9.8.0+</Tag>
 ```typescript
 (
   axis: {
@@ -360,7 +360,7 @@ Add custom x-axis.
   - `name` axis name
   - `createTicks` create ticks
 
-## registerYAxis(axis)
+## registerYAxis(axis) <Tag>v9.8.0+</Tag>
 ```typescript
 (
   axis: {
@@ -464,7 +464,7 @@ Format date. `format`, such as 'YYYY-MM-DD HH:mm:ss'.
 ```
 Format thousands separator.
 
-### utils.formatFoldDecimal(value, threshold)
+### utils.formatFoldDecimal(value, threshold) <Tag>v9.8.0+</Tag>
 ```typescript
 (value: string | number, threshold: number) => string
 ```

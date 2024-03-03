@@ -16,8 +16,8 @@ const DEV = process.env.NODE_ENV === 'development'
 
 function log (templateText: string, tagStyle: string, messageStyle: string, api: string, invalidParam: string, append: string): void {
   if (DEV) {
-    const apiStr = api !== '' ? `Call api ${api}${invalidParam !== '' || append !== '' ? ', ' : '.'}` : ''
-    const invalidParamStr = invalidParam !== '' ? `invalid parameter ${invalidParam}${append !== '' ? ', ' : '.'}` : ''
+    const apiStr = api !== '' ? `Call api \`${api}\`${invalidParam !== '' || append !== '' ? ', ' : '.'}` : ''
+    const invalidParamStr = invalidParam !== '' ? `invalid parameter \`${invalidParam}\`${append !== '' ? ', ' : '.'}` : ''
     const appendStr = append !== '' ? append : ''
     console.log(templateText, tagStyle, messageStyle, apiStr, invalidParamStr, appendStr)
   }

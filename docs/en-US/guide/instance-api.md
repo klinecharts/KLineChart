@@ -178,6 +178,9 @@ Add new data, this method will clear the chart data, no need to call the clearDa
 - `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
 - `callback` success callback
+::: warning Note
+`callback` has been deprecated since version 9.8.0, use `subscribeAction('onDataReady', () => {})` instead.
+:::
 
 
 ## applyMoreData(dataList, more, callback)
@@ -200,6 +203,9 @@ Add more historical data.
 - `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
 - `callback` success callback
+::: warning Note
+This api has been deprecated since version 9.8.0.
+:::
 
 
 ## updateData(data, callback)
@@ -220,6 +226,9 @@ Add more historical data.
 Update data. Currently, only the timestamp of the last piece of data will be matched. If it is the same, it will be overwritten, and if it is different, it will be appended.
 - `data` single k-line data, please refer to [data](./datasource.md) for details of data type
 - `callback` success callback
+::: warning Note
+`callback` has been deprecated since version 9.8.0, use `subscribeAction('onDataReady', () => {})` instead.
+:::
 
 
 ## getDataList()
@@ -249,7 +258,28 @@ Clear the data of the chart. Generally, it is not necessary to call it manually.
 (cb: (timestamp: number | null) => void) => void
 ```
 Set load more callback function.
-- `cb` is a callback method, `timestamp` is the timestamp of the first piece of data.
+- `cb` is a callback method, `timestamp` is the timestamp of the first piece of data
+::: warning Note
+This api has been deprecated since version 9.8.0, use `setLoadDataCallback` instead.
+:::
+
+
+## setLoadDataCallback(cb) <Tag>v9.8.0+</Tag>
+```typescript
+(
+  cb: (params: { 
+    type: 'forward' | 'backward'
+    data: Nullable<KLineData>
+    callback: (dataList: KLineData[], more?: boolean) => void
+  }) => void
+) => void
+```
+Set auto load data callback
+- `cb` callback
+  - `params` params
+    - `type` forward or backward
+    - `data` boundary data
+    - `callback` used for returning data to chart
 
 ## createIndicator(value, isStack, paneOptions, callback)
 ```typescript
@@ -345,7 +375,7 @@ Create a technical indicator, the return value is a string that identifies the w
     - `top` top margin, value less than 1 is a percentage
     - `bottom` bottom margin, value less than 1 is a percentage
   - `axisOptions`
-    - `name` is same `axis.name` in [registerYAxis(axis)](./chart-api#registeryaxis-axis) of chart api, default is 'default'
+    - `name` is same `axis.name` in [registerYAxis(axis)](./chart-api#registeryaxis-axis) of chart api, default is 'default' <Tag>v9.8.0+</Tag>
     - `scrollZoomEnabled` Scroll zoom flag
 - `callback` success callback
 ::: tip Special id
@@ -614,7 +644,7 @@ chart.createOverlay({
    styles: {
      line: {
        style: 'solid',
-       dashedValue: [2, 2]
+       dashedValue: [2, 2],
        color: '#f00',
        size: 2
      }
@@ -739,7 +769,7 @@ chart.overrideOverlay({
    styles: {
      line: {
        style: 'solid',
-       dashedValue: [2, 2]
+       dashedValue: [2, 2],
        color: '#f00',
        size: 2
      }
@@ -922,24 +952,24 @@ Execute chart action.
 ## subscribeAction(type, callback)
 ```typescript
 (
-   type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
+   type: 'onDataReady' | 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
    callback: (data?: any) => void
 ) => void
 ```
 Subscribe to chart actions.
-- `type` options are 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
+- `type` options are 'onDataReady', 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
 - `callback` is a callback method
 
 
 ## unsubscribeAction(type, callback)
 ```typescript
 (
-   type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
+   type: 'onDataReady' | 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
    callback?: (data?: any) => void
 ) => void
 ```
 Unsubscribe from chart actions.
-- `type` options are 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
+- `type` options are 'onDataReady', 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
 - `callback` is the callback method when subscribing, the default is to cancel all the current types
 
 

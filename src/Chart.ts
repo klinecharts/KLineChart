@@ -20,10 +20,10 @@ import type Coordinate from './common/Coordinate'
 import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
 import { type Styles, YAxisPosition } from './common/Styles'
-
 import type Crosshair from './common/Crosshair'
 import { ActionType, type ActionCallback } from './common/Action'
 import type LoadMoreCallback from './common/LoadMoreCallback'
+import type LoadDataCallback from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
 
@@ -32,7 +32,6 @@ import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
 import { isString, isArray, isValid, merge, isNumber } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
-import { formatValue } from './common/utils/format'
 import { binarySearchNearest } from './common/utils/number'
 
 import ChartStore from './store/ChartStore'
@@ -93,9 +92,18 @@ export interface Chart {
   clearData: () => void
   getDataList: () => KLineData[]
   applyNewData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
+  /**
+   * @deprecated
+   * Since v9.8.0 deprecated, since v10 removed
+   */
   applyMoreData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
   updateData: (data: KLineData, callback?: () => void) => void
+  /**
+   * @deprecated
+   * Since v9.8.0 deprecated, since v10 removed
+   */
   loadMore: (cb: LoadMoreCallback) => void
+  setLoadDataCallback: (cb: LoadDataCallback) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions, callback?: () => void) => Nullable<string>
   overrideIndicator: (override: IndicatorCreate, paneId?: string, callback?: () => void) => void
   getIndicatorByPaneId: (paneId?: string, name?: string) => Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>>
@@ -127,6 +135,7 @@ export interface Chart {
 
 export default class ChartImp implements Chart {
   id: string
+
   private _container: HTMLElement
   private _chartContainer: HTMLElement
   private readonly _chartEvent: Event
@@ -663,50 +672,41 @@ export default class ChartImp implements Chart {
     return this._chartStore.getDataList()
   }
 
-  applyNewData (dataList: KLineData[], more?: boolean, callback?: () => void): void {
-    this._chartStore.clear()
-    if (dataList.length === 0) {
-      this.adjustPaneViewport(false, true, true, true)
-    } else {
-      this.applyMoreData(dataList, more, callback)
+  applyNewData (data: KLineData[], more?: boolean, callback?: () => void): void {
+    if (isValid(callback)) {
+      logWarn('applyNewData', '', 'param `callback` has been deprecated since version 9.8.0, use `subscribeAction(\'onDataReady\')` instead.')
     }
+    this._chartStore.addData(data, true, more).then(() => {}).catch(() => {}).finally(() => { callback?.() })
   }
 
-  applyMoreData (dataList: KLineData[], more?: boolean, callback?: () => void): void {
-    this._chartStore.addData(dataList, 0, more)
-    if (dataList.length > 0) {
-      this._chartStore.getIndicatorStore().calcInstance().then(
-        _ => {
-          this.adjustPaneViewport(false, true, true, true)
-          callback?.()
-        }
-      ).catch(_ => {})
-    }
+  /**
+   * @deprecated
+   * Since v9.8.0 deprecated, since v10 removed
+   */
+  applyMoreData (data: KLineData[], more?: boolean, callback?: () => void): void {
+    logWarn('', '', 'Api `applyMoreData` has been deprecated since version 9.8.0.')
+    const dataList = data.concat(this._chartStore.getDataList())
+    this._chartStore.addData(dataList, false, more ?? true).then(() => {}).catch(() => {}).finally(() => { callback?.() })
   }
 
   updateData (data: KLineData, callback?: () => void): void {
-    const dataList = this._chartStore.getDataList()
-    const dataCount = dataList.length
-    // Determine where individual data should be added
-    const timestamp = data.timestamp
-    const lastDataTimestamp = formatValue(dataList[dataCount - 1], 'timestamp', 0) as number
-    if (timestamp >= lastDataTimestamp) {
-      let pos = dataCount
-      if (timestamp === lastDataTimestamp) {
-        pos = dataCount - 1
-      }
-      this._chartStore.addData(data, pos)
-      this._chartStore.getIndicatorStore().calcInstance().then(
-        _ => {
-          this.adjustPaneViewport(false, true, true, true)
-          callback?.()
-        }
-      ).catch(_ => {})
+    if (isValid(callback)) {
+      logWarn('updateData', '', 'param `callback` has been deprecated since version 9.8.0, use `subscribeAction(\'onDataReady\')` instead.')
     }
+    this._chartStore.addData(data, false).then(() => {}).catch(() => {}).finally(() => { callback?.() })
   }
 
+  /**
+   * @deprecated
+   * Since v9.8.0 deprecated, since v10 removed
+   */
   loadMore (cb: LoadMoreCallback): void {
-    this._chartStore.getTimeScaleStore().setLoadMoreCallback(cb)
+    logWarn('', '', 'Api `loadMore` has been deprecated since version 9.8.0, use `setLoadDataCallback` instead.')
+    this._chartStore.setLoadMoreCallback(cb)
+  }
+
+  setLoadDataCallback (cb: LoadDataCallback): void {
+    this._chartStore.setLoadDataCallback(cb)
   }
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>, callback?: () => void): Nullable<string> {

@@ -4,6 +4,7 @@ import Theme from 'vitepress/theme'
 
 import HomeSponsor from '../components/HomeSponsor.vue'
 import NotFound from '../components/NotFound.vue'
+import Tag from '../components/Tag.vue'
 
 import './style.css'
 
@@ -17,6 +18,7 @@ export default {
     })
   },
   enhanceApp({ app, router, siteData }) {
+    app.component('Tag', Tag)
     // ...
   }
 }

@@ -179,6 +179,9 @@
 - `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 - `callback` 成功回调
+::: warning 注意
+参数 `callback` 自版本9.8.0开始，已废弃，请使用 `subscribeAction('onDataReady', () => {})` 代替。
+:::
 
 
 ## applyMoreData(dataList, more, callback)
@@ -201,6 +204,9 @@
 - `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 - `callback` 成功回调
+::: warning 注意
+该方法自版本9.8.0开始，已废弃。
+:::
 
 
 ## updateData(data, callback)
@@ -221,6 +227,9 @@
 更新数据，目前只会匹配当前最后一条数据的时间戳，相同则覆盖，不同则追加。
 - `data` 单条k线数据，数据类型详情可参阅[数据源](./datasource.md)
 - `callback` 成功回调
+::: warning 注意
+参数 `callback` 自版本9.8.0开始，已废弃，请使用 `subscribeAction('onDataReady', () => {})` 代替。
+:::
 
 
 ## getDataList()
@@ -251,7 +260,27 @@
 ```
 设置加载更多回调函数。
 - `cb` 是一个回调方法，`timestamp`为第一条数据的时间戳
+::: warning 注意
+该方法自版本9.8.0开始，已废弃，请使用 `setLoadDataCallback` 代替。
+:::
 
+
+## setLoadDataCallback(cb) <Tag>v9.8.0+</Tag>
+```typescript
+(
+  cb: (params: { 
+    type: 'forward' | 'backward'
+    data: Nullable<KLineData>
+    callback: (dataList: KLineData[], more?: boolean) => void
+  }) => void
+) => void
+```
+设置自动加载数据回调方法
+- `cb` 回调方法
+  - `params` 回调参数
+    - `type` 类型，是往前加载还是往后加载
+    - `data` 加载边界的数据
+    - `callback` 回调方法，用于回传数据给图表
 
 ## createIndicator(value, isStack, paneOptions, callback)
 ```typescript
@@ -347,7 +376,7 @@
     - `top` 上边距，值小余1则是百分比
     - `bottom` 下边距，值小余1则是百分比
   - `axisOptions`
-    - `name` 指定的轴的名字，此参数对应图表实例方法 [registerYAxis(axis)](./chart-api#registeryaxis-axis) 中的 `axis.name`，默认为 'default'
+    - `name` 指定的轴的名字，此参数对应图表实例方法 [registerYAxis(axis)](./chart-api#registeryaxis-axis) 中的 `axis.name`，默认为 'default' <Tag>v9.8.0+</Tag> 
     - `scrollZoomEnabled` 轴上是否可以滚动缩放
   
 - `callback` 指标创建完成回调方法
@@ -617,7 +646,7 @@ chart.overrideIndicator({
 ```javascript
 chart.createOverlay({
   name: 'segment',
-  id: 'segment_1'
+  id: 'segment_1',
   groupId: 'segment',
   points: [
     { timestamp: 1614171282000, value: 18987 },
@@ -626,7 +655,7 @@ chart.createOverlay({
   styles: {
     line: {
       style: 'solid',
-      dashedValue: [2, 2]
+      dashedValue: [2, 2],
       color: '#f00',
       size: 2
     }
@@ -752,7 +781,7 @@ chart.overrideOverlay({
   styles: {
     line: {
       style: 'solid',
-      dashedValue: [2, 2]
+      dashedValue: [2, 2],
       color: '#f00',
       size: 2
     }
@@ -940,24 +969,24 @@ chart.setPaneOptions({
 ## subscribeAction(type, callback)
 ```typescript
 (
-  type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
+  type: 'onDataReady' | 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
   callback: (data?: any) => void
 ) => void
 ```
 订阅图表动作。
-- `type` 可选项为'onZoom'，'onScroll'，'onVisibleRangeChange'，'onCandleBarClick', 'onTooltipIconClick'，'onCrosshairChange'和'onPaneDrag'
+- `type` 可选项为 'onDataReady'，'onZoom'，'onScroll'，'onVisibleRangeChange'，'onCandleBarClick', 'onTooltipIconClick'，'onCrosshairChange'和'onPaneDrag'
 - `callback` 是一个回调方法
 
 
 ## unsubscribeAction(type, callback)
 ```typescript
 (
-  type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
+  type: 'onDataReady' | 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
   callback?: (data?: any) => void
 ) => void
 ```
 取消订阅图表动作。
-- `type` 可选项为'onZoom'，'onScroll'，'onVisibleRangeChange'，'onCandleBarClick', 'onTooltipIconClick'，'onCrosshairChange'和'onPaneDrag'
+- `type` 可选项为 'onDataReady'，'onZoom'，'onScroll'，'onVisibleRangeChange'，'onCandleBarClick', 'onTooltipIconClick'，'onCrosshairChange'和'onPaneDrag'
 - `callback` 订阅时的回调方法，缺省则取消当前类型所有
 
 

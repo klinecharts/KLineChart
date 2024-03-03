@@ -1,6 +1,6 @@
 {
   "name": "klinecharts",
-  "version": "9.7.2",
+  "version": "9.8.0",
   "description": "Lightweight k-line chart built with html5 canvas",
   "main": "./dist/index.cjs",
   "module": "./dist/index.esm.js",
@@ -88,6 +88,6 @@
     "rollup-plugin-progress": "^1.1.2",
     "tslib": "^2.5.0",
     "typescript": "^4.8.3",
-    "vitepress": "1.0.0-rc.36"
+    "vitepress": "1.0.0-rc.44"
   }
 }

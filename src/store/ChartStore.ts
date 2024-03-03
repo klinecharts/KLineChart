@@ -12,11 +12,17 @@
  * limitations under the License.
  */
 
+import type Nullable from '../common/Nullable'
 import type KLineData from '../common/KLineData'
 import type Precision from '../common/Precision'
 import type VisibleData from '../common/VisibleData'
 import { getDefaultStyles, type Styles } from '../common/Styles'
-import { isArray, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
+import { isArray, isBoolean, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
+import { formatValue } from '../common/utils/format'
+import type LoadDataCallback from '../common/LoadDataCallback'
+import { type LoadDataParams, LoadDataType } from '../common/LoadDataCallback'
+import type LoadMoreCallback from '../common/LoadMoreCallback'
+import { ActionType } from '../common/Action'
 
 import { getDefaultCustomApi, type CustomApi, defaultLocale, type Options } from '../Options'
 
@@ -39,27 +45,27 @@ export default class ChartStore {
   /**
    * Style config
    */
-  private readonly _styles: Styles = getDefaultStyles()
+  private readonly _styles = getDefaultStyles()
 
   /**
    * Custom api
    */
-  private readonly _customApi: CustomApi = getDefaultCustomApi()
+  private readonly _customApi = getDefaultCustomApi()
 
   /**
    * language
    */
-  private _locale: string = defaultLocale
+  private _locale = defaultLocale
 
   /**
    * Price and volume precision
    */
-  private _precision: Precision = { price: 2, volume: 0 }
+  private _precision = { price: 2, volume: 0 }
 
   /**
    * Thousands separator
    */
-  private _thousandsSeparator: string = ','
+  private _thousandsSeparator = ','
 
   // Decimal fold threshold
   private _decimalFoldThreshold = 3
@@ -68,6 +74,33 @@ export default class ChartStore {
    * Data source
    */
   private _dataList: KLineData[] = []
+
+  /**
+   * Load more data callback
+   * Since v9.8.0 deprecated, since v10 removed
+   * @deprecated
+   */
+  private _loadMoreCallback: Nullable<LoadMoreCallback> = null
+
+  /**
+   * Load data callback
+   */
+  private _loadDataCallback: Nullable<LoadDataCallback> = null
+
+  /**
+   * Is loading data flag
+   */
+  private _loading = true
+
+  /**
+   * Whether there are forward more flag
+   */
+  private _forwardMore = true
+
+  /**
+   * Whether there are forward more flag
+   */
+  private _backwardMore = true
 
   /**
    * Time scale store
@@ -189,34 +222,94 @@ export default class ChartStore {
     return this._visibleDataList
   }
 
-  addData (data: KLineData | KLineData[], pos: number, more?: boolean): void {
+  async addData (data: KLineData | KLineData[], isFirstAdd: boolean, more?: boolean): Promise<void> {
+    let success = false
     if (isArray<KLineData>(data)) {
-      this._timeScaleStore.setLoading(false)
-      this._timeScaleStore.setMore(more ?? true)
-      const isFirstAdd = this._dataList.length === 0
-      this._dataList = data.concat(this._dataList)
       if (isFirstAdd) {
+        this.clear()
+        this._dataList = data
+        this._forwardMore = more ?? true
         this._timeScaleStore.resetOffsetRightDistance()
+      } else {
+        this._dataList = data
+        if (isBoolean(more)) {
+          this._forwardMore = more
+        }
       }
-      this._timeScaleStore.adjustVisibleRange()
+      this._loading = false
+      success = true
     } else {
-      const dataSize = this._dataList.length
-      if (pos >= dataSize) {
+      const dataCount = this._dataList.length
+      // Determine where individual data should be added
+      const timestamp = data.timestamp
+      const lastDataTimestamp = formatValue(this._dataList[dataCount - 1], 'timestamp', 0) as number
+      if (timestamp > lastDataTimestamp) {
         this._dataList.push(data)
         let lastBarRightSideDiffBarCount = this._timeScaleStore.getLastBarRightSideDiffBarCount()
         if (lastBarRightSideDiffBarCount < 0) {
           this._timeScaleStore.setLastBarRightSideDiffBarCount(--lastBarRightSideDiffBarCount)
         }
-        this._timeScaleStore.adjustVisibleRange()
-      } else {
-        this._dataList[pos] = data
-        this.adjustVisibleDataList()
+        success = true
+      } else if (timestamp === lastDataTimestamp) {
+        this._dataList[dataCount - 1] = data
+        success = true
       }
     }
-    this._tooltipStore.recalculateCrosshair(true)
+    if (success) {
+      this._timeScaleStore.adjustVisibleRange()
+      this._tooltipStore.recalculateCrosshair(true)
+      try {
+        await this._indicatorStore.calcInstance()
+        this._chart.adjustPaneViewport(false, true, true, true)
+        this._actionStore.execute(ActionType.OnDataReady)
+      } catch {}
+    }
+  }
+
+  setLoadMoreCallback (callback: LoadMoreCallback): void {
+    this._loadMoreCallback = callback
+  }
+
+  executeLoadMoreCallback (timestamp: Nullable<number>): void {
+    if (this._forwardMore && !this._loading && isValid(this._loadMoreCallback)) {
+      this._loading = true
+      this._loadMoreCallback(timestamp)
+    }
+  }
+
+  setLoadDataCallback (callback: LoadDataCallback): void {
+    this._loadDataCallback = callback
+  }
+
+  executeLoadDataCallback (params: Omit<LoadDataParams, 'callback'>): void {
+    if (
+      !this._loading &&
+      isValid(this._loadDataCallback) &&
+      (
+        (this._forwardMore && params.type === LoadDataType.Forward) ||
+        (this._backwardMore && params.type === LoadDataType.Backward)
+      )
+    ) {
+      const cb: ((data: KLineData[], more?: boolean) => void) = (data: KLineData[], more?: boolean) => {
+        let dataList: KLineData[] = []
+        if (params.type === LoadDataType.Backward) {
+          dataList = this._dataList.concat(data)
+          this._backwardMore = more ?? false
+        } else {
+          dataList = data.concat(this._dataList)
+          this._forwardMore = more ?? false
+        }
+        this.addData(dataList, false).then(() => {}).catch(() => {})
+      }
+      this._loading = true
+      this._loadDataCallback({ ...params, callback: cb })
+    }
   }
 
   clear (): void {
+    this._forwardMore = true
+    this._backwardMore = true
+    this._loading = true
     this._dataList = []
     this._visibleDataList = []
     this._timeScaleStore.clear()
