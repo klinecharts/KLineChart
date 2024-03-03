@@ -98,21 +98,21 @@ Whether dragging and scrolling is possible.
 ```
 Set the gap that can be left to the right of the chart.
 
-## getOffsetRightDistance()
+## getOffsetRightDistance() <Tag>v9.2.0+</Tag>
 ```typescript
 () => number
 ```
 Get the gap that can be left to the right of the chart.
 
 
-## setMaxOffsetLeftDistance()
+## setMaxOffsetLeftDistance() <Tag>v9.7.0+</Tag>
 ```typescript
 (distance: number) => void
 ```
 Set the maximum available gap on the left side of the chart.
 
 
-## setMaxOffsetRightDistance()
+## setMaxOffsetRightDistance() <Tag>v9.7.0+</Tag>
 ```typescript
 (distance: number) => void
 ```
@@ -177,7 +177,7 @@ Get visible range.
 Add new data, this method will clear the chart data, no need to call the clearData method additionally.
 - `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
-- `callback` success callback
+- `callback` success callback <Tag>v9.2.0+</Tag>
 ::: warning Note
 `callback` has been deprecated since version 9.8.0, use `subscribeAction('onDataReady', () => {})` instead.
 :::
@@ -202,7 +202,7 @@ Add new data, this method will clear the chart data, no need to call the clearDa
 Add more historical data.
 - `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
-- `callback` success callback
+- `callback` success callback <Tag>v9.2.0+</Tag>
 ::: warning Note
 This api has been deprecated since version 9.8.0.
 :::
@@ -225,7 +225,7 @@ This api has been deprecated since version 9.8.0.
 ```
 Update data. Currently, only the timestamp of the last piece of data will be matched. If it is the same, it will be overwritten, and if it is different, it will be appended.
 - `data` single k-line data, please refer to [data](./datasource.md) for details of data type
-- `callback` success callback
+- `callback` success callback <Tag>v9.2.0+</Tag>
 ::: warning Note
 `callback` has been deprecated since version 9.8.0, use `subscribeAction('onDataReady', () => {})` instead.
 :::
@@ -370,13 +370,13 @@ Create a technical indicator, the return value is a string that identifies the w
   - `height` window height, can be default
   - `minHeight` minimum height of the window, can be defaulted
   - `dragEnabled` Whether the window can be dragged to adjust the height, it can be defaulted
-  - `position` Only valid when creating a new pane
+  - `position` Only valid when creating a new pane <Tag>v9.6.0+</Tag>
   - `gap` margins
     - `top` top margin, value less than 1 is a percentage
     - `bottom` bottom margin, value less than 1 is a percentage
   - `axisOptions`
     - `name` is same `axis.name` in [registerYAxis(axis)](./chart-api#registeryaxis-axis) of chart api, default is 'default' <Tag>v9.8.0+</Tag>
-    - `scrollZoomEnabled` Scroll zoom flag
+    - `scrollZoomEnabled` Scroll zoom flag <Tag>v9.3.0+</Tag>
 - `callback` success callback
 ::: tip Special id
 'candle_pane', the window id of the main picture.
@@ -463,7 +463,7 @@ Overlay technical indicator information.
    - `shouldOhlc` needs ohlc auxiliary graphics
    - `shouldFormatBigNumber` should format large numbers. For example, 1000 is converted to 1k, 1000000 is converted to 1M, etc.
    - `visible` visible or not
-   - `zLevel` z level
+   - `zLevel` z level <Tag>v9.7.0+</Tag>
    - `extendData` extended data
    - `series` indicator series, optional options are 'normal', 'price' and 'volume'
    - `figures` graphics configuration
@@ -737,7 +737,7 @@ Overlays that have been drawn.
   - `needDefaultXAxisFigure` needs the default x-axis figure
   - `needDefaultYAxisFigure` needs the default y-axis figure
   - `mode` mode, options are 'normal', 'weak_magnet' and 'strong_magnet'
-  - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet
+  - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet <Tag>v9.5.0+</Tag>
   - `points` point information
   - `extendData` extended data
   - `styles` styles
@@ -745,7 +745,7 @@ Overlays that have been drawn.
   - `onDrawing` drawing event
   - `onDrawEnd` draw end event
   - `onClick` click event
-  - `onDoubleClick` double click event
+  - `onDoubleClick` double click event <Tag>v9.5.0+</Tag>
   - `onRightClick` right click event
   - `onPressedMoveStart` press start move event
   - `onPressedMoving` Press and move event
@@ -919,8 +919,8 @@ Set window configuration.
     - `top` top margin, value less than 1 is a percentage
     - `bottom` bottom margin, value less than 1 is a percentage
   - `axisOptions`
-    - `name` axis name
-    - `scrollZoomEnabled` Scroll zoom flag
+    - `name` axis name <Tag>v9.8.0+</Tag> 
+    - `scrollZoomEnabled` Scroll zoom flag <Tag>v9.3.0+</Tag>
 ::: tip Special id
 'candle_pane', the window id of the main picture.
 :::
@@ -937,7 +937,7 @@ chart.setPaneOptions({
 })
 ```
 
-## executeAction(type, data)
+## executeAction(type, data) <Tag>v9.2.0+</Tag>
 ```typescript
 (
    type: 'onCrosshairChange',

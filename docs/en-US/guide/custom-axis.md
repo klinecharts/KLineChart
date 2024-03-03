@@ -1,4 +1,4 @@
-# Custom Axis
+# Custom Axis <Tag>v9.8.0+</Tag>
 
 Chart support custom axis, which can be achieved through the chart api [registerXAxis(axis)](./chart-api#registerxaxis-axis) and [registerYAxis(axis)](./chart-api#registeryaxis-axis).
 

@@ -39,7 +39,7 @@
 Initialize a chart and return the chart instance.
 - `ds` container, can be dom element or element id.
 - `options` optional configuration items.
-   - `layout` custom layout, `content` and `options` refer to the input parameters `value` and `options` in the instance api [createIndicator](./instance-api#createindicator-value-isstack-paneoptions-callback).
+   - `layout` custom layout, `content` and `options` refer to the input parameters `value` and `options` in the instance api [createIndicator](./instance-api#createindicator-value-isstack-paneoptions-callback). <Tag>v9.6.0+</Tag>
    - `locale` language, built-in support for `zh-CN` and `en-US`.
    - `timezone` time zone name, such as 'Asia/Shanghai', if not set, it will automatically get the local time zone, please refer to [timezone list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List ).
    - `styles` It can be the style name registered through `klinecharts.registerStyles`, or it can be an object, a list of styles, see [styles](./styles.md) for details, and supports increments.
@@ -47,7 +47,7 @@ Initialize a chart and return the chart instance.
      - `formatDate` formats a date.
      - `formatBigNumber` format big numbers, such as 1000 into 1k, 1000000 into 1M, etc.\
    - `thousandsSeparator` thousands separator
-   - `decimalFoldThreshold` decimal fold threshold
+   - `decimalFoldThreshold` decimal fold threshold <Tag>v9.8.0+</Tag>
 
 
 ## dispose(dcs)
@@ -312,7 +312,7 @@ Add a overlay.
    - `needDefaultXAxisFigure` needs the default x-axis figure
    - `needDefaultYAxisFigure` needs the default y-axis figure
    - `mode` mode, options are 'normal', 'weak_magnet' and 'strong_magnet'
-   - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet
+   - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet <Tag>v9.5.0+</Tag>
    - `points` point information
    - `extendData` extended data
    - `styles` styles
@@ -325,7 +325,7 @@ Add a overlay.
    - `onDrawing` drawing event
    - `onDrawEnd` draw end event
    - `onClick` click event
-   - `onDoubleClick` double click event
+   - `onDoubleClick` double click event <Tag>v9.5.0+</Tag>
    - `onRightClick` right click event
    - `onPressedMoveStart` press start move event
    - `onPressedMoving` Press and move event
@@ -471,7 +471,7 @@ Format thousands separator.
 Format fold decimal.
 
 
-### utils.calcTextWidth(text, size, weight, family)
+### utils.calcTextWidth(text, size, weight, family) <Tag>v9.3.0+</Tag>
 ```typescript
 (text: string, size?: number, weight?: string | number, family?: string) => number
 ```
