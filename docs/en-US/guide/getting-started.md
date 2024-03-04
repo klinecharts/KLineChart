@@ -11,7 +11,7 @@ npm install klinecharts
 yarn add klinecharts
 ```
 ```html [cdn]
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/klinecharts.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/umd/klinecharts.min.js"></script>
 ```
 :::
 
@@ -229,7 +229,7 @@ onDestroy(() => {
     <meta name="theme-color" content="#000000" />
     <meta name="keywords" content="Quick Start"/>
     <meta name="description" content="Quick Start"/>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/klinecharts.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/umd/klinecharts.min.js"></script>
     <title>Quick Start</title>
   </head>
   <body>
