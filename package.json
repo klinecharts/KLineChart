@@ -26,7 +26,7 @@
     "k-line",
     "time-line",
     "candlestick",
-    "technical-indicators",
+    "indicator",
     "finance",
     "klinechart",
     "stockchart",
@@ -88,6 +88,6 @@
     "rollup-plugin-progress": "^1.1.2",
     "tslib": "^2.5.0",
     "typescript": "^4.8.3",
-    "vitepress": "1.0.0-rc.44"
+    "vitepress": "1.0.0-rc.45"
   }
 }

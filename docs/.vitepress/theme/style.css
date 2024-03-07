@@ -15,6 +15,8 @@
 
   --vp-code-color: #476582;
 
+  --vp-nav-height: 60px;
+
   --vp-button-brand-border: var(--vp-c-indigo-2);
   --vp-button-brand-bg: var(--vp-c-indigo-1);
   --vp-button-brand-hover-border: var(--vp-c-indigo-2);
