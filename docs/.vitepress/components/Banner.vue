@@ -43,7 +43,6 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   height: 50px;
-  line-height: 18px;
   background: var(--vp-c-bg);
   overflow: hidden;
   margin: 0;

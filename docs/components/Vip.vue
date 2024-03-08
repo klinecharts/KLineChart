@@ -4,11 +4,11 @@
     <p class="vip-sub-title" v-if="lang === 'zh-CN'">
       为了更好的服务开发者，现开通&nbsp;<span>VIP答疑通道</span>&nbsp;和&nbsp;<span>定制化服务</span>。
     </p>
-    <p class="vip-sub-title" v-else>In order to better serve developers, we have now opened <span>VIP Q&A</span> and <span>Custom service</span> .</p>
+    <p class="vip-sub-title" v-else>In order to better serve developers, we have now opened <span>VIP Q&A</span> and <span>Custom Service</span> .</p>
     <div class="vip-content">
       <div class="vip-content-item">
         <h3 class="vip-content-item-title">{{ lang === 'zh-CN' ? 'VIP答疑' : 'VIP Q&A' }}</h3>
-        <p class="vip-content-item-sub-title">{{ lang === 'zh-CN' ? '专属VIP群解答疑难问题' : 'Exclusive VIP group to answer difficult questions' }}</p>
+        <p class="vip-content-item-sub-title">{{ lang === 'zh-CN' ? '专属微信VIP群解答疑难问题' : 'Exclusive wechat VIP group to answer difficult questions' }}</p>
         <p class="vip-content-item-price">
           {{ lang === 'zh-CN' ? '¥ 300.00' : '$ 48.00' }}<span class="vip-content-item-original-price">{{ lang === 'zh-CN' ? '¥ 500.00' : '$ 78.00' }}</span>
         </p>
@@ -17,7 +17,7 @@
             <svg class="vip-content-item-icon" viewBox="0 0 1024 1024">
               <path d="M512.506025 6.906294c-278.758842 0-505.57773 226.820935-505.57773 505.579777 0 278.797727 226.781026 505.576707 505.57773 505.576707 278.797727 0 505.57773-226.77898 505.57773-505.576707C1018.083755 233.727229 791.303752 6.906294 512.506025 6.906294L512.506025 6.906294zM807.507806 412.036287l-331.285149 334.883093c-0.081864 0.081864-0.246617 0.127913-0.334621 0.25378-0.12075 0.079818-0.12075 0.245593-0.246617 0.328481-2.644223 2.562359-5.915733 4.133134-8.977465 5.876847-1.527796 0.865717-2.771113 2.189875-4.387937 2.808976-4.962012 1.987261-10.213619 3.022847-15.473413 3.022847-5.296633 0-10.631128-1.035586-15.637142-3.105734-1.653663-0.700965-2.980891-2.109034-4.551666-2.978844-3.061732-1.736551-6.244214-3.269463-8.895601-5.872754-0.081864-0.079818-0.125867-0.251733-0.207731-0.333598-0.081864-0.119727-0.245593-0.119727-0.328481-0.246617l-162.930813-167.443593c-15.928784-16.383132-15.555278-42.569538 0.827855-58.499345 16.382109-15.889899 42.531676-15.597233 58.504462 0.827855l133.51076 137.193639L748.712725 353.823468c16.054651-16.257266 42.285059-16.419971 58.505485-0.327458C823.391565 369.5875 823.55427 395.782092 807.507806 412.036287L807.507806 412.036287zM807.507806 412.036287"/>
             </svg>
-            {{ lang === 'zh-CN' ? '专属VIP群' : 'Exclusive VIP group' }}
+            {{ lang === 'zh-CN' ? '专属微信VIP群' : 'Exclusive wechat VIP group' }}
           </li>
           <li>
             <svg class="vip-content-item-icon" viewBox="0 0 1024 1024">
@@ -91,7 +91,7 @@ const { lang } = useData()
   font-weight: bold;
   text-align: center;
   padding: 10px 16px 50px 16px;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   line-height: 42px;
   color: var(--vp-c-text-2);
 }
@@ -129,10 +129,10 @@ const { lang } = useData()
 }
 
 .vip-content-item-title {
-  font-size: 30px;
+  font-size: 28px;
   font-weight: bold;
   text-align: center;
-  letter-spacing: 4px;
+  letter-spacing: 2px;
   line-height: normal;
 }
 
@@ -146,17 +146,17 @@ const { lang } = useData()
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: 38px;
   font-weight: bold;
   text-align: center;
   padding: 30px 0;
 }
 
 .vip-content-item-original-price {
-  font-size: 22px;
+  font-size: 20px;
   color: var(--vp-c-text-2);
   text-decoration: line-through var(--vp-c-text-2);
-  margin-left: 12px;
+  margin-left: 6px;
   font-weight: normal;
 }
 
@@ -193,8 +193,8 @@ const { lang } = useData()
 
 @media (max-width: 960px) {
   .vip-content {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .vip-content {
