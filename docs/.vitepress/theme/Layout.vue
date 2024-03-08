@@ -31,7 +31,7 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
     isDark.value = !isDark.value
     await nextTick()
   }).ready
-
+ 
   document.documentElement.animate(
     { clipPath: isDark.value ? clipPath.reverse() : clipPath },
     {

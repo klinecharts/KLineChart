@@ -50,16 +50,21 @@
           {{ lang === 'zh-CN' ? '成为赞助商' : 'Become a sponsor' }}
         </a> -->
       </div>
-      <h4 v-if="platinum.length > 0">{{ lang === 'zh-CN' ? '铂金赞助商' : 'Platinum Sponsors' }}</h4>
+      <!-- <h4 v-if="platinum.length > 0">{{ lang === 'zh-CN' ? '铂金赞助商' : 'Platinum Sponsors' }}</h4> -->
       <div v-if="platinum.length > 0" class="sponsor-grid sponsor-platinum-grid">
         <a v-for="item in platinum" class="sponsor-grid-item item" target="_blank" rel="noreferrer" :href="item.website">
           <img class="image" :src="item.logo"/>
         </a>
       </div>
-      <h4 v-if="gold.length > 0">{{ lang === 'zh-CN' ? '黄金赞助商' : 'Gold Sponsors' }}</h4>
+      <!-- <h4 v-if="gold.length > 0">{{ lang === 'zh-CN' ? '黄金赞助商' : 'Gold Sponsors' }}</h4> -->
       <div v-if="gold.length > 0" class="sponsor-grid sponsor-gold-grid">
         <a v-for="item in gold" class="sponsor-grid-item item" target="_blank" rel="noreferrer" :href="item.website">
           <img class="image" :src="item.logo"/>
+        </a>
+      </div>
+      <div class="sponsor-become">
+        <a target="_blank" rel="noreferrer" href="./sponsor.html">
+          {{ lang === 'zh-CN' ? '成为赞助商' : 'Become a sponsor' }}
         </a>
       </div>
     </div>
@@ -156,6 +161,29 @@
 
   .sponsor-gold-grid .item .image {
     height: 16px;
+  }
+
+  .sponsor-become {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 26px;
+    font-size: 14px;
+    color: var(--vp-c-indigo-1);
+    font-weight: bold;
+  }
+
+  .sponsor-become a {
+    padding: 8px 22px;
+    border-radius: 99px;
+    transition: all .25s ease-in;
+    text-decoration: underline;
+  }
+
+  .sponsor-become a:hover {
+    background-color: var(--vp-c-indigo-1);
+    color: white;
+    text-decoration: none;
   }
 
   @media (min-width: 640px) {

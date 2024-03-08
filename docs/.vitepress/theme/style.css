@@ -13,6 +13,9 @@
   --vp-c-indigo-3: #4995ff;
   --vp-c-indigo-soft: rgb(22, 119, 255, 0.14);
 
+  --custom-red: #F92855;
+  --custom-green: #2DC08E;
+
   --vp-code-color: #476582;
 
   --vp-nav-height: 60px;
@@ -32,8 +35,8 @@
   --vp-home-hero-name-color: transparent;
   --vp-home-hero-name-background: -webkit-linear-gradient(
     145deg,
-    #2DC08E 26%,
-    #F92855
+    var(--custom-green) 26%,
+    var(--custom-red)
   );
 
   --vp-home-hero-image-background-image: linear-gradient(

@@ -53,6 +53,7 @@ export default defineConfig({
           { text: '示例', link: '/sample/basic', activeMatch: 'sample' },
           { text: 'Pro', link: 'https://pro.klinecharts.com' },
           { text: '预览', link: 'https://preview.klinecharts.com' },
+          { text: 'VIP', link: '/vip' },
           { text: '赞助', link: '/sponsor' },
           {
             text: `V${pkg.version}`,
@@ -154,6 +155,7 @@ export default defineConfig({
           { text: 'Sample', link: '/en-US/sample/basic', activeMatch: 'sample' },
           { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
           { text: 'Preview', link: 'https://preview.klinecharts.com/#en-US' },
+          { text: 'VIP', link: '/en-US/vip' },
           { text: 'Sponsor', link: '/en-US/sponsor' },
           {
             text: `V${pkg.version}`,

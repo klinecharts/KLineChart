@@ -17,18 +17,13 @@ const isVisible = ref(true)
 const { lang } = useData()
 
 const closeBanner = () => {
-  // Hide the banner
   isVisible.value = false
-  // Save action in the local storage
   document.documentElement.classList.remove('banner-fixed')
 }
 
 onMounted(() => {
   if (isVisible.value) {
     document.documentElement.classList.add('banner-fixed')
-    setTimeout(() => {
-      showFlash.value = true
-    }, 2000)
   }
 })
 </script>
