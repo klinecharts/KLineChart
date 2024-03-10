@@ -365,6 +365,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       if (shouldFormatBigNumber) {
         valueText = customApi.formatBigNumber(valueText)
       }
+      valueText = formatFoldDecimal(valueText, chartStore.getDecimalFoldThreshold())
       crosshairVerticalTextWidth += (
         crosshairStyles.horizontal.text.paddingLeft +
         crosshairStyles.horizontal.text.paddingRight +
