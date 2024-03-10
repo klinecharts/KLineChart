@@ -96,34 +96,48 @@ Whether dragging and scrolling is possible.
 ```typescript
 (distance: number) => void
 ```
-Sets the gap that can be left to the right of the chart.
+Set the gap that can be left to the right of the chart.
 
-## getOffsetRightDistance()
+## getOffsetRightDistance() <Tag>v9.2.0+</Tag>
 ```typescript
 () => number
 ```
 Get the gap that can be left to the right of the chart.
 
 
+## setMaxOffsetLeftDistance() <Tag>v9.7.0+</Tag>
+```typescript
+(distance: number) => void
+```
+Set the maximum available gap on the left side of the chart.
+
+
+## setMaxOffsetRightDistance() <Tag>v9.7.0+</Tag>
+```typescript
+(distance: number) => void
+```
+Set the maximum available gap on the right side of the chart.
+
+
 ## setLeftMinVisibleBarCount(barCount)
 ```typescript
 (barCount: number) => void
 ```
-Sets the minimum number of visible candles to the left.
+Set the minimum number of visible candles to the left.
 
 
 ## setRightMinVisibleBarCount(barCount)
 ```typescript
 (barCount: number) => void
 ```
-Sets the minimum number of visible candles to the right.
+Set the minimum number of visible candles to the right.
 
 
 ## setBarSpace(space)
 ```typescript
 (space: number) => void
 ```
-Sets the width of a single candlestick of the chart.
+Set the width of a single candlestick of the chart.
 
 
 ## getBarSpace()
@@ -163,7 +177,10 @@ Get visible range.
 Add new data, this method will clear the chart data, no need to call the clearData method additionally.
 - `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
-- `callback` success callback
+- `callback` success callback <Tag>v9.2.0+</Tag>
+::: warning Note
+`callback` has been deprecated since version 9.8.0, use `subscribeAction('onDataReady', () => {})` instead.
+:::
 
 
 ## applyMoreData(dataList, more, callback)
@@ -185,7 +202,10 @@ Add new data, this method will clear the chart data, no need to call the clearDa
 Add more historical data.
 - `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
-- `callback` success callback
+- `callback` success callback <Tag>v9.2.0+</Tag>
+::: warning Note
+This api has been deprecated since version 9.8.0.
+:::
 
 
 ## updateData(data, callback)
@@ -205,7 +225,10 @@ Add more historical data.
 ```
 Update data. Currently, only the timestamp of the last piece of data will be matched. If it is the same, it will be overwritten, and if it is different, it will be appended.
 - `data` single k-line data, please refer to [data](./datasource.md) for details of data type
-- `callback` success callback
+- `callback` success callback <Tag>v9.2.0+</Tag>
+::: warning Note
+`callback` has been deprecated since version 9.8.0, use `subscribeAction('onDataReady', () => {})` instead.
+:::
 
 
 ## getDataList()
@@ -249,7 +272,28 @@ Clear the data of the chart. Generally, it is not necessary to call it manually.
 (cb: (timestamp: number | null) => void) => void
 ```
 Set load more callback function.
-- `cb` is a callback method, `timestamp` is the timestamp of the first piece of data.
+- `cb` is a callback method, `timestamp` is the timestamp of the first piece of data
+::: warning Note
+This api has been deprecated since version 9.8.0, use `setLoadDataCallback` instead.
+:::
+
+
+## setLoadDataCallback(cb) <Tag>v9.8.0+</Tag>
+```typescript
+(
+  cb: (params: { 
+    type: 'forward' | 'backward'
+    data: Nullable<KLineData>
+    callback: (dataList: KLineData[], more?: boolean) => void
+  }) => void
+) => void
+```
+Set auto load data callback
+- `cb` callback
+  - `params` params
+    - `type` forward or backward
+    - `data` boundary data
+    - `callback` used for returning data to chart
 
 ## createIndicator(value, isStack, paneOptions, callback)
 ```typescript
@@ -262,6 +306,7 @@ Set load more callback function.
     shouldOhlc?: boolean
     shouldFormatBigNumber?: boolean
     visible?: boolean
+    zLevel?: number
     extendData?: any
     series?: 'normal' | 'price' | 'volume'
     figures?: Array<{
@@ -324,6 +369,7 @@ Set load more callback function.
       bottom?: number
     }
     axisOptions?: {
+      name?: string
       scrollZoomEnabled?: boolean
     }
   } | null,
@@ -338,12 +384,13 @@ Create a technical indicator, the return value is a string that identifies the w
   - `height` window height, can be default
   - `minHeight` minimum height of the window, can be defaulted
   - `dragEnabled` Whether the window can be dragged to adjust the height, it can be defaulted
-  - `position` Only valid when creating a new pane
+  - `position` Only valid when creating a new pane <Tag>v9.6.0+</Tag>
   - `gap` margins
     - `top` top margin, value less than 1 is a percentage
     - `bottom` bottom margin, value less than 1 is a percentage
   - `axisOptions`
-    - `scrollZoomEnabled` Scroll zoom flag
+    - `name` is same `axis.name` in [registerYAxis(axis)](./chart-api#registeryaxis-axis) of chart api, default is 'default' <Tag>v9.8.0+</Tag>
+    - `scrollZoomEnabled` Scroll zoom flag <Tag>v9.3.0+</Tag>
 - `callback` success callback
 ::: tip Special id
 'candle_pane', the window id of the main picture.
@@ -372,6 +419,7 @@ chart.createIndicator('MA', false, {
     shouldOhlc?: boolean
     shouldFormatBigNumber?: boolean
     visible?: boolean
+    zLevel?: number 
     extendData?: any
     series?: 'normal' | 'price' | 'volume'
     figures?: Array<{
@@ -429,6 +477,7 @@ Overlay technical indicator information.
    - `shouldOhlc` needs ohlc auxiliary graphics
    - `shouldFormatBigNumber` should format large numbers. For example, 1000 is converted to 1k, 1000000 is converted to 1M, etc.
    - `visible` visible or not
+   - `zLevel` z level <Tag>v9.7.0+</Tag>
    - `extendData` extended data
    - `series` indicator series, optional options are 'normal', 'price' and 'volume'
    - `figures` graphics configuration
@@ -455,6 +504,7 @@ chart.overrideIndicator({
    shouldOhlc: true,
    shouldFormatBigNumber: false,
    visible: true,
+   zLevel: 1,
    extendData: 2432435,
    series: 'price',
    figures: [],
@@ -608,7 +658,7 @@ chart.createOverlay({
    styles: {
      line: {
        style: 'solid',
-       dashedValue: [2, 2]
+       dashedValue: [2, 2],
        color: '#f00',
        size: 2
      }
@@ -701,7 +751,7 @@ Overlays that have been drawn.
   - `needDefaultXAxisFigure` needs the default x-axis figure
   - `needDefaultYAxisFigure` needs the default y-axis figure
   - `mode` mode, options are 'normal', 'weak_magnet' and 'strong_magnet'
-  - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet
+  - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet <Tag>v9.5.0+</Tag>
   - `points` point information
   - `extendData` extended data
   - `styles` styles
@@ -709,7 +759,7 @@ Overlays that have been drawn.
   - `onDrawing` drawing event
   - `onDrawEnd` draw end event
   - `onClick` click event
-  - `onDoubleClick` double click event
+  - `onDoubleClick` double click event <Tag>v9.5.0+</Tag>
   - `onRightClick` right click event
   - `onPressedMoveStart` press start move event
   - `onPressedMoving` Press and move event
@@ -733,7 +783,7 @@ chart.overrideOverlay({
    styles: {
      line: {
        style: 'solid',
-       dashedValue: [2, 2]
+       dashedValue: [2, 2],
        color: '#f00',
        size: 2
      }
@@ -867,22 +917,24 @@ Scale on the specified timestamp.
       bottom?: number
     }
     axisOptions?: {
+      name?: string
       scrollZoomEnabled?: boolean
     }
   }
 ) => void
 ```
 Set window configuration.
-- `paneOptions` window configuration information, can be default
+- `options` window configuration information, can be default
   - `id` window id
   - `height` window height, can be default
   - `minHeight` minimum height of the window, can be defaulted
-  - `dragEnbaled` Whether the window can be dragged to adjust the height, it can be defaulted
+  - `dragEnabled` Whether the window can be dragged to adjust the height, it can be defaulted
   - `gap` margins
     - `top` top margin, value less than 1 is a percentage
     - `bottom` bottom margin, value less than 1 is a percentage
   - `axisOptions`
-    - `scrollZoomEnabled` Scroll zoom flag
+    - `name` axis name <Tag>v9.8.0+</Tag> 
+    - `scrollZoomEnabled` Scroll zoom flag <Tag>v9.3.0+</Tag>
 ::: tip Special id
 'candle_pane', the window id of the main picture.
 :::
@@ -895,11 +947,11 @@ chart.setPaneOptions({
   minHeight: 3,
   dragEnabled: true,
   gap: { top: 0.2, bottom: 0.1 },
-  axisOptions: { scrollZoomEnabled: true }
+  axisOptions: { name: 'default', scrollZoomEnabled: true }
 })
 ```
 
-## executeAction(type, data)
+## executeAction(type, data) <Tag>v9.2.0+</Tag>
 ```typescript
 (
    type: 'onCrosshairChange',
@@ -914,24 +966,24 @@ Execute chart action.
 ## subscribeAction(type, callback)
 ```typescript
 (
-   type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
+   type: 'onDataReady' | 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
    callback: (data?: any) => void
 ) => void
 ```
 Subscribe to chart actions.
-- `type` options are 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
+- `type` options are 'onDataReady', 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
 - `callback` is a callback method
 
 
 ## unsubscribeAction(type, callback)
 ```typescript
 (
-   type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
+   type: 'onDataReady' | 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
    callback?: (data?: any) => void
 ) => void
 ```
 Unsubscribe from chart actions.
-- `type` options are 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
+- `type` options are 'onDataReady', 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
 - `callback` is the callback method when subscribing, the default is to cancel all the current types
 
 

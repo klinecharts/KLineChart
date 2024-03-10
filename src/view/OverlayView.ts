@@ -12,30 +12,34 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import Coordinate from '../common/Coordinate'
-import Point from '../common/Point'
-import Bounding from '../common/Bounding'
-import BarSpace from '../common/BarSpace'
-import Precision from '../common/Precision'
-import { OverlayStyle } from '../common/Styles'
-import { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
-import { isBoolean } from '../common/utils/typeChecks'
+import type Nullable from '../common/Nullable'
+import type Coordinate from '../common/Coordinate'
+import type Point from '../common/Point'
+import type Bounding from '../common/Bounding'
+import type BarSpace from '../common/BarSpace'
+import type Precision from '../common/Precision'
+import { type OverlayStyle } from '../common/Styles'
+import { type EventHandler, type EventName, type MouseTouchEvent, type MouseTouchEventCallback } from '../common/SyntheticEvent'
+import { isBoolean, isNumber, isValid } from '../common/utils/typeChecks'
 
-import { CustomApi } from '../Options'
+import { type CustomApi } from '../Options'
 
-import Axis from '../component/Axis'
-import XAxis from '../component/XAxis'
-import YAxis from '../component/YAxis'
-import Overlay, { OVERLAY_FIGURE_KEY_PREFIX, OverlayFigure, OverlayFigureIgnoreEventType, OverlayMode, getAllOverlayFigureIgnoreEventTypes } from '../component/Overlay'
+import type Axis from '../component/Axis'
+import type XAxis from '../component/XAxis'
+import type YAxis from '../component/YAxis'
+import { type OverlayFigure, type OverlayFigureIgnoreEventType } from '../component/Overlay'
+import type Overlay from '../component/Overlay'
+import { OVERLAY_FIGURE_KEY_PREFIX, OverlayMode, getAllOverlayFigureIgnoreEventTypes } from '../component/Overlay'
 
-import OverlayStore, { ProgressOverlayInfo, EventOverlayInfo, EventOverlayInfoFigureType } from '../store/OverlayStore'
-import TimeScaleStore from '../store/TimeScaleStore'
+import { type ProgressOverlayInfo, type EventOverlayInfo } from '../store/OverlayStore'
+import type OverlayStore from '../store/OverlayStore'
+import { EventOverlayInfoFigureType } from '../store/OverlayStore'
+import type TimeScaleStore from '../store/TimeScaleStore'
 
 import { PaneIdConstants } from '../pane/types'
 
-import DrawWidget from '../widget/DrawWidget'
-import DrawPane from '../pane/DrawPane'
+import type DrawWidget from '../widget/DrawWidget'
+import type DrawPane from '../pane/DrawPane'
 
 import View from './View'
 
@@ -187,7 +191,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     let eventHandler
     if (!overlay.isDrawing()) {
       let eventTypes: OverlayFigureIgnoreEventType[] = []
-      if (ignoreEvent !== undefined) {
+      if (isValid(ignoreEvent)) {
         if (isBoolean(ignoreEvent)) {
           if (ignoreEvent) {
             eventTypes = getAllOverlayFigureIgnoreEventTypes()
@@ -300,7 +304,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (this.coordinateToPointValueFlag()) {
       const yAxis = pane.getAxisComponent()
       let value = yAxis.convertFromPixel(coordinate.y)
-      if (overlay.mode !== OverlayMode.Normal && paneId === PaneIdConstants.CANDLE && point.dataIndex !== undefined) {
+      if (overlay.mode !== OverlayMode.Normal && paneId === PaneIdConstants.CANDLE && isNumber(point.dataIndex)) {
         const kLineData = timeScaleStore.getDataByDataIndex(point.dataIndex)
         if (kLineData !== null) {
           const modeSensitivity = overlay.modeSensitivity
@@ -382,6 +386,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const chartStore = chart.getChartStore()
     const customApi = chartStore.getCustomApi()
     const thousandsSeparator = chartStore.getThousandsSeparator()
+    const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
     const timeScaleStore = chartStore.getTimeScaleStore()
     const dateTimeFormat = timeScaleStore.getDateTimeFormat()
     const barSpace = timeScaleStore.getBarSpace()
@@ -395,7 +400,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (overlay.visible) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace, precision,
-          dateTimeFormat, customApi, thousandsSeparator,
+          dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
           defaultStyles, xAxis, yAxis,
           hoverInstanceInfo, clickInstanceInfo, timeScaleStore
         )
@@ -408,7 +413,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (overlay !== null && overlay.visible) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace,
-          precision, dateTimeFormat, customApi, thousandsSeparator,
+          precision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
           defaultStyles, xAxis, yAxis,
           hoverInstanceInfo, clickInstanceInfo, timeScaleStore
         )
@@ -425,6 +430,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     defaultStyles: OverlayStyle,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
@@ -435,14 +441,14 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const { points } = overlay
     const coordinates = points.map(point => {
       let dataIndex = point.dataIndex
-      if (point.timestamp !== undefined) {
+      if (isNumber(point.timestamp)) {
         dataIndex = timeScaleStore.timestampToDataIndex(point.timestamp)
       }
       const coordinate = { x: 0, y: 0 }
-      if (dataIndex !== undefined) {
+      if (isNumber(dataIndex)) {
         coordinate.x = xAxis?.convertToPixel(dataIndex) ?? 0
       }
-      if (point.value !== undefined) {
+      if (isNumber(point.value)) {
         coordinate.y = yAxis?.convertToPixel(point.value) ?? 0
       }
       return coordinate
@@ -450,7 +456,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (coordinates.length > 0) {
       const figures = new Array<OverlayFigure>().concat(
         this.getFigures(
-          overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, dateTimeFormat, defaultStyles, xAxis, yAxis
+          overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis
         )
       )
       this.drawFigures(
@@ -469,6 +475,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       dateTimeFormat,
       customApi,
       thousandsSeparator,
+      decimalFoldThreshold,
       defaultStyles,
       xAxis,
       yAxis,
@@ -480,13 +487,14 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   protected drawFigures (ctx: CanvasRenderingContext2D, overlay: Overlay, figures: OverlayFigure[], defaultStyles: OverlayStyle): void {
     figures.forEach((figure, figureIndex) => {
       const { type, styles, attrs, ignoreEvent } = figure
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats, attrsIndex) => {
         const events = this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figure.key ?? '', figureIndex, attrsIndex, ignoreEvent)
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
-        this.createFigure(
-          type, ats, ss, events
-        )?.draw(ctx)
+        this.createFigure({
+          name: type, attrs: ats, styles: ss
+        }, events)?.draw(ctx)
       })
     })
   }
@@ -509,12 +517,13 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     barSpace: BarSpace,
     precision: Precision,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createPointFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+    return overlay.createPointFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
   }
 
   protected drawDefaultFigures (
@@ -526,6 +535,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     _dateTimeFormat: Intl.DateTimeFormat,
     _customApi: CustomApi,
     _thousandsSeparator: string,
+    _drawDefaultFigures: number,
     defaultStyles: OverlayStyle,
     _xAxis: Nullable<XAxis>,
     _yAxis: Nullable<YAxis>,
@@ -554,17 +564,16 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
             borderColor = pointStyles.activeBorderColor
             borderSize = pointStyles.activeBorderSize
           }
-          this.createFigure(
-            'circle',
-            { x, y, r: radius + borderSize },
-            { color: borderColor },
-            this._createFigureEvents(overlay, EventOverlayInfoFigureType.Point, `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`, index, 0)
-          )?.draw(ctx)
-          this.createFigure(
-            'circle',
-            { x, y, r: radius },
-            { color }
-          )?.draw(ctx)
+          this.createFigure({
+            name: 'circle',
+            attrs: { x, y, r: radius + borderSize },
+            styles: { color: borderColor }
+          }, this._createFigureEvents(overlay, EventOverlayInfoFigureType.Point, `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`, index, 0))?.draw(ctx)
+          this.createFigure({
+            name: 'circle',
+            attrs: { x, y, r: radius },
+            styles: { color }
+          })?.draw(ctx)
         })
       }
     }

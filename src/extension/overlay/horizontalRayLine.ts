@@ -12,7 +12,8 @@
  * limitations under the License.
  */
 
-import { OverlayTemplate } from '../../component/Overlay'
+import { isValid } from '../../common/utils/typeChecks'
+import { type OverlayTemplate } from '../../component/Overlay'
 
 const horizontalRayLine: OverlayTemplate = {
   name: 'horizontalRayLine',
@@ -22,7 +23,7 @@ const horizontalRayLine: OverlayTemplate = {
   needDefaultYAxisFigure: true,
   createPointFigures: ({ coordinates, bounding }) => {
     const coordinate = { x: 0, y: coordinates[0].y }
-    if (coordinates[1] !== undefined && coordinates[0].x < coordinates[1].x) {
+    if (isValid(coordinates[1]) && coordinates[0].x < coordinates[1].x) {
       coordinate.x = bounding.width
     }
     return [

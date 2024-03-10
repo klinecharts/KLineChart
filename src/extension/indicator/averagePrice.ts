@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import KLineData from '../../common/KLineData'
-import { IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
+import type KLineData from '../../common/KLineData'
+import { type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Avp {
   avp?: number

@@ -45,7 +45,7 @@
 
 ## 自定义技术指标调整
 + 属性`plots`变更为`figures`，子项方法`color`，`isStroke`，`isDashed`合并成`styles`。
-+ 方法`regeneratePlots(params)`变更为`regeneratefigures(params)`。
++ 方法`regeneratePlots(params)`变更为`regenerateFigures(params)`。
 + 方法`calcTechnicalIndicator(kLineDataList, options)`变更为`calc(kLineDataList, indicator)`。
 + 方法`createTooltipDataSource({ dataSource, viewport, crosshair, technicalIndicator, xAxis,yAxis, defaultStyles })`变更为`createTooltipDataSource({ kLineDataList, indicator, visibleRange, bounding, crosshair, defaultStyles, xAxis, yAxis })`，返回值由`[{ title: 'xxx', value: 'xxx', color: 'xxx' }, ...]`变更为`{ name: 'xxx', calcParamsText: 'xxx', values: [{ title: 'xxx', value: 'xxx', color: 'xxx' }, ...] }`。
 + 方法`render({ ctx, dataSource, viewport, styles,xAxis, yAxis })`变更为`draw({ ctx, kLineDataList, indicator, visibleRange, bounding, barSpace, defaultStyles, xAxis, yAxis })`。

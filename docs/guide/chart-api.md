@@ -8,7 +8,21 @@
     layout?: Array<{
       type: 'candle' | 'indicator' | 'xAxis'
       content: Array<Indicator | string>
-      options: PaneOptions
+      options: {
+        id?: string
+        height?: number
+        minHeight?: number
+        dragEnabled?: boolean
+        position?: 'top' | 'bottom'
+        gap?: {
+          top?: number
+          bottom?: number
+        }
+        axisOptions?: {
+          name?: string
+          scrollZoomEnabled?: boolean
+        }
+      }
     }>
     locale?: string
     styles?: string | object
@@ -18,13 +32,14 @@
       formatBigNumber?: (value: string | number) => string
     }
     thousandsSeparator?: string
+    decimalFoldThreshold?: number
   }
 ) => Chart
 ```
 初始化一个图表，返回图表实例。
 - `ds` 容器，可以是dom元素或者元素id。
 - `options` 可选配置项。
-  - `layout` 自定义布局，`content`中的内容和`options`参考实例方法 [createIndicator](./instance-api#createindicator-value-isstack-paneoptions-callback) 中的入参`value`和`options`。
+  - `layout` 自定义布局，`content`中的内容和`options`参考实例方法 [createIndicator](./instance-api#createindicator-value-isstack-paneoptions-callback) 中的入参`value`和`options`。 <Tag>v9.6.0+</Tag>
   - `locale` 语言，内置支持`zh-CN`和`en-US`。
   - `timezone` 时区名，如'Asia/Shanghai'，如果不设置会自动获取本机时区，时区对应名字列表请参阅[时区列表](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)。
   - `styles` 可以是通过`klinecharts.registerStyles`注册的样式名，也可以是object，样式列表，详情参阅[样式](./styles.md)，支持增量。
@@ -32,6 +47,7 @@
     - `formatDate` 格式化日期。
     - `formatBigNumber` 格式化大的数字，如1000转换成1k，1000000转换为1M等。
   - `thousandsSeparator` 千分符
+  - `decimalFoldThreshold` 小数折叠阈值 <Tag>v9.8.0+</Tag>
 
 
 ## dispose(dcs)
@@ -299,7 +315,7 @@
   - `needDefaultXAxisFigure` 是否需要默认的x轴上的图形
   - `needDefaultYAxisFigure` 是否需要默认的y轴上的图形
   - `mode` 模式，可选项有'normal'，'weak_magnet'和'strong_magnet'
-  - `modeSensitivity` 模式灵敏度，仅 mode 是 weak_magnet 时有效
+  - `modeSensitivity` 模式灵敏度，仅 mode 是 weak_magnet 时有效 <Tag>v9.5.0+</Tag>
   - `points` 点信息
   - `extendData` 扩展数据
   - `styles` 样式
@@ -312,7 +328,7 @@
   - `onDrawing` 绘制中事件
   - `onDrawEnd` 绘制结束事件
   - `onClick` 点击事件
-  - `onDoubleClick` 双击事件
+  - `onDoubleClick` 双击事件 <Tag>v9.5.0+</Tag>
   - `onRightClick` 右击事件
   - `onPressedMoveStart` 按住开始移动事件
   - `onPressedMoving` 按住移动中事件
@@ -328,6 +344,42 @@
 () => string[]
 ```
 获取图表支持的覆盖物
+
+## registerXAxis(axis) <Tag>v9.8.0+</Tag>
+```typescript
+(
+  axis: {
+    name: string
+    createTicks: (params: object) => Array<{
+      coord: number
+      value: number | string
+      text: string
+    }>
+  }
+) => void
+```
+添加一个自定义x轴。
+- `axis` 坐标信息
+  - `name` 坐标轴名字
+  - `createTicks` 创建分割文字
+
+## registerYAxis(axis) <Tag>v9.8.0+</Tag>
+```typescript
+(
+  axis: {
+    name: string
+    createTicks: (params: object) => Array<{
+      coord: number
+      value: number | string
+      text: string
+    }>
+  }
+) => void
+```
+添加一个自定义y轴。
+- `axis` 坐标信息
+  - `name` 坐标轴名字
+  - `createTicks` 创建分割文字
 
 ## version()
 ```typescript
@@ -415,8 +467,14 @@
 ```
 格式化日期千分符。
 
+### utils.formatFoldDecimal(value, threshold) <Tag>v9.8.0+</Tag>
+```typescript
+(value: string | number, threshold: number) => string
+```
+格式化折叠小数。
 
-### utils.calcTextWidth(text, size, weight, family)
+
+### utils.calcTextWidth(text, size, weight, family) <Tag>v9.3.0+</Tag>
 ```typescript
 (text: string, size?: number, weight?: string | number, family?: string) => number
 ```

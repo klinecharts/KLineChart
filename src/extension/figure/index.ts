@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import Nullable from '../../common/Nullable'
+import type Nullable from '../../common/Nullable'
 
-import FigureImp, { FigureTemplate, FigureConstructor, FigureInnerConstructor } from '../../component/Figure'
+import FigureImp, { type FigureTemplate, type FigureConstructor, type FigureInnerConstructor } from '../../component/Figure'
 
 import circle from './circle'
 import line from './line'

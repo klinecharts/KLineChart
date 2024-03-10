@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import DrawPane from '../pane/DrawPane'
+import type DrawPane from '../pane/DrawPane'
 
 import { WidgetNameConstants } from './types'
 import DrawWidget from './DrawWidget'
 
-import YAxis from '../component/YAxis'
+import type YAxis from '../component/YAxis'
 
 import GridView from '../view/GridView'
 import IndicatorView from '../view/IndicatorView'

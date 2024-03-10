@@ -12,12 +12,13 @@
  * limitations under the License.
  */
 
-import { OverlayTemplate } from '../../component/Overlay'
+import { formatThousands, formatFoldDecimal } from '../../common/utils/format'
+import { isNumber } from '../../common/utils/typeChecks'
 
-import { LineAttrs } from '../figure/line'
-import { TextAttrs } from '../figure/text'
+import { type OverlayTemplate } from '../../component/Overlay'
 
-import { formatThousands } from '../../common/utils/format'
+import { type LineAttrs } from '../figure/line'
+import { type TextAttrs } from '../figure/text'
 
 const fibonacciLine: OverlayTemplate = {
   name: 'fibonacciLine',
@@ -25,20 +26,20 @@ const fibonacciLine: OverlayTemplate = {
   needDefaultPointFigure: true,
   needDefaultXAxisFigure: true,
   needDefaultYAxisFigure: true,
-  createPointFigures: ({ coordinates, bounding, overlay, precision, thousandsSeparator }) => {
+  createPointFigures: ({ coordinates, bounding, overlay, precision, thousandsSeparator, decimalFoldThreshold }) => {
     const points = overlay.points
     if (coordinates.length > 0) {
       const lines: LineAttrs[] = []
       const texts: TextAttrs[] = []
       const startX = 0
       const endX = bounding.width
-      if (coordinates.length > 1 && points[0].value !== undefined && points[1].value !== undefined) {
+      if (coordinates.length > 1 && isNumber(points[0].value) && isNumber(points[1].value)) {
         const percents = [1, 0.786, 0.618, 0.5, 0.382, 0.236, 0]
         const yDif = coordinates[0].y - coordinates[1].y
         const valueDif = points[0].value - points[1].value
         percents.forEach(percent => {
           const y = coordinates[1].y + yDif * percent
-          const value = formatThousands(((points[1].value ?? 0) + valueDif * percent).toFixed(precision.price), thousandsSeparator)
+          const value = formatFoldDecimal(formatThousands(((points[1].value ?? 0) + valueDif * percent).toFixed(precision.price), thousandsSeparator), decimalFoldThreshold)
           lines.push({ coordinates: [{ x: startX, y }, { x: endX, y }] })
           texts.push({
             x: startX,

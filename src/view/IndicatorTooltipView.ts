@@ -12,24 +12,25 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import Bounding from '../common/Bounding'
-import KLineData from '../common/KLineData'
-import Crosshair from '../common/Crosshair'
-import { IndicatorStyle, TooltipStyle, TooltipIconStyle, TooltipTextStyle, TooltipData, TooltipShowRule, TooltipDataChild, TooltipIconPosition } from '../common/Styles'
+import type Nullable from '../common/Nullable'
+import type Bounding from '../common/Bounding'
+import type KLineData from '../common/KLineData'
+import type Crosshair from '../common/Crosshair'
+import { type IndicatorStyle, type TooltipStyle, type TooltipIconStyle, type TooltipTextStyle, type TooltipData, TooltipShowRule, type TooltipDataChild, TooltipIconPosition } from '../common/Styles'
 import { ActionType } from '../common/Action'
-
-import { CustomApi } from '../Options'
-
-import YAxis from '../component/YAxis'
-
-import IndicatorImp, { eachFigures, Indicator, IndicatorFigure, IndicatorFigureStyle, IndicatorTooltipData } from '../component/Indicator'
-
-import { formatPrecision, formatThousands } from '../common/utils/format'
-import { isValid, isObject } from '../common/utils/typeChecks'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { isValid, isObject, isString, isNumber } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 
-import { TooltipIcon } from '../store/TooltipStore'
+import { type CustomApi } from '../Options'
+
+import type YAxis from '../component/YAxis'
+
+import { type Indicator, type IndicatorFigure, type IndicatorFigureStyle, type IndicatorTooltipData } from '../component/Indicator'
+import type IndicatorImp from '../component/Indicator'
+import { eachFigures } from '../component/Indicator'
+
+import { type TooltipIcon } from '../store/TooltipStore'
 
 import View from './View'
 
@@ -52,15 +53,18 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const pane = widget.getPane()
     const chartStore = pane.getChart().getChartStore()
     const crosshair = chartStore.getTooltipStore().getCrosshair()
-    if (crosshair.kLineData !== undefined) {
+    if (isValid(crosshair.kLineData)) {
       const bounding = widget.getBounding()
       const customApi = chartStore.getCustomApi()
       const thousandsSeparator = chartStore.getThousandsSeparator()
+      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
       const activeIcon = chartStore.getTooltipStore().getActiveIcon()
       const defaultStyles = chartStore.getStyles().indicator
       this.drawIndicatorTooltip(
-        ctx, pane.getId(), chartStore.getDataList(), crosshair, activeIcon, indicators, customApi, thousandsSeparator, bounding, defaultStyles
+        ctx, pane.getId(), chartStore.getDataList(),
+        crosshair, activeIcon, indicators, customApi,
+        thousandsSeparator, decimalFoldThreshold, bounding, defaultStyles
       )
     }
   }
@@ -71,9 +75,10 @@ export default class IndicatorTooltipView extends View<YAxis> {
     dataList: KLineData[],
     crosshair: Crosshair,
     activeTooltipIconInfo: Nullable<TooltipIcon>,
-    indicators: Map<string, IndicatorImp>,
+    indicators: IndicatorImp[],
     customApi: CustomApi,
-    formatThousands: string,
+    thousandsSeparator: string,
+    decimalFoldThreshold: number,
     bounding: Bounding,
     styles: IndicatorStyle,
     top?: number
@@ -86,7 +91,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       let y = top ?? 0
       let prevRowHeight = 0
       indicators.forEach(indicator => {
-        const { name, calcParamsText, values, icons } = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, formatThousands, styles)
+        const { name, calcParamsText, values, icons } = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, styles)
         const nameValid = name.length > 0
         const valuesValid = values.length > 0
         if (nameValid || valuesValid) {
@@ -196,10 +201,10 @@ export default class IndicatorTooltipView extends View<YAxis> {
         } = icon
         x += marginLeft
         const active = activeIcon?.paneId === currentIcon.paneId && activeIcon?.indicatorName === currentIcon.indicatorName && activeIcon?.iconId === icon.id
-        this.createFigure(
-          'text',
-          { text, x, y: y + marginTop },
-          {
+        this.createFigure({
+          name: 'text',
+          attrs: { text, x, y: y + marginTop },
+          styles: {
             paddingLeft,
             paddingTop,
             paddingRight,
@@ -208,12 +213,11 @@ export default class IndicatorTooltipView extends View<YAxis> {
             size,
             family: fontFamily,
             backgroundColor: active ? activeBackgroundColor : backgroundColor
-          },
-          {
-            mouseClickEvent: this._boundIconClickEvent(currentIcon, icon.id),
-            mouseMoveEvent: this._boundIconMouseMoveEvent(currentIcon, icon.id)
           }
-        )?.draw(ctx)
+        }, {
+          mouseClickEvent: this._boundIconClickEvent(currentIcon, icon.id),
+          mouseMoveEvent: this._boundIconMouseMoveEvent(currentIcon, icon.id)
+        })?.draw(ctx)
         x += (paddingLeft + ctx.measureText(text).width + paddingRight + marginRight)
       })
     }
@@ -255,18 +259,18 @@ export default class IndicatorTooltipView extends View<YAxis> {
         rowHeight = Math.max(currentPrevRowHeight, height)
         currentPrevRowHeight = rowHeight
         if (title.text.length > 0) {
-          this.createFigure(
-            'text',
-            { x, y: y + marginTop, text: title.text },
-            { color: title.color, size, family, weight }
-          )?.draw(ctx)
+          this.createFigure({
+            name: 'text',
+            attrs: { x, y: y + marginTop, text: title.text },
+            styles: { color: title.color, size, family, weight }
+          })?.draw(ctx)
           x += titleTextWidth
         }
-        this.createFigure(
-          'text',
-          { x, y: y + marginTop, text: value.text },
-          { color: value.color, size, family, weight }
-        )?.draw(ctx)
+        this.createFigure({
+          name: 'text',
+          attrs: { x, y: y + marginTop, text: value.text },
+          styles: { color: value.color, size, family, weight }
+        })?.draw(ctx)
         x += (valueTextWidth + marginRight)
       })
     }
@@ -276,7 +280,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
   protected isDrawTooltip (crosshair: Crosshair, styles: TooltipStyle): boolean {
     const showRule = styles.showRule
     return showRule === TooltipShowRule.Always ||
-      (showRule === TooltipShowRule.FollowCross && (crosshair.paneId !== undefined))
+      (showRule === TooltipShowRule.FollowCross && isString(crosshair.paneId))
   }
 
   protected getIndicatorTooltipData (
@@ -285,6 +289,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
     indicator: Indicator,
     customApi: CustomApi,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     styles: IndicatorStyle
   ): IndicatorTooltipData {
     const tooltipStyles = styles.tooltip
@@ -297,23 +302,23 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
     const tooltipData: IndicatorTooltipData = { name, calcParamsText, values: [], icons: tooltipStyles.icons }
 
-    const dataIndex = crosshair.dataIndex as number
+    const dataIndex = crosshair.dataIndex!
     const result = indicator.result ?? []
 
     const values: TooltipData[] = []
     if (indicator.visible) {
       const indicatorData = result[dataIndex] ?? {}
       eachFigures(dataList, indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
-        if (figure.title !== undefined) {
+        if (isString(figure.title)) {
           const color = figureStyles.color
           let value = indicatorData[figure.key]
-          if (isValid(value)) {
+          if (isNumber(value)) {
             value = formatPrecision(value, indicator.precision)
             if (indicator.shouldFormatBigNumber) {
-              value = customApi.formatBigNumber(value)
+              value = customApi.formatBigNumber(value as string)
             }
           }
-          values.push({ title: { text: figure.title, color }, value: { text: formatThousands(value ?? tooltipStyles.defaultValue, thousandsSeparator), color } })
+          values.push({ title: { text: figure.title, color }, value: { text: formatFoldDecimal(formatThousands((value ?? tooltipStyles.defaultValue) as string, thousandsSeparator), decimalFoldThreshold), color } })
         }
       })
       tooltipData.values = values
@@ -333,16 +338,16 @@ export default class IndicatorTooltipView extends View<YAxis> {
         xAxis: pane.getChart().getXAxisPane().getAxisComponent(),
         yAxis: pane.getAxisComponent()
       })
-      if (customName !== undefined && tooltipStyles.showName) {
+      if (isString(customName) && tooltipStyles.showName) {
         tooltipData.name = customName
       }
-      if (customCalcParamsText !== undefined && tooltipStyles.showParams) {
+      if (isString(customCalcParamsText) && tooltipStyles.showParams) {
         tooltipData.calcParamsText = customCalcParamsText
       }
-      if (customIcons !== undefined) {
+      if (isValid(customIcons)) {
         tooltipData.icons = customIcons
       }
-      if (customValues !== undefined && indicator.visible) {
+      if (isValid(customValues) && indicator.visible) {
         const optimizedValues: TooltipData[] = []
         const color = styles.tooltip.text.color
         customValues.forEach(data => {
@@ -358,7 +363,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           } else {
             value.text = data.value
           }
-          value.text = formatThousands(value.text, thousandsSeparator)
+          value.text = formatFoldDecimal(formatThousands(value.text, thousandsSeparator), decimalFoldThreshold)
           optimizedValues.push({ title, value })
         })
         tooltipData.values = optimizedValues

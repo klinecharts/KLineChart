@@ -1,8 +1,5 @@
-config/
-dist/
-types/
-docs/
-types/
 scripts/
+dist/
+docs/
 .eslintrc.cjs
 index.js

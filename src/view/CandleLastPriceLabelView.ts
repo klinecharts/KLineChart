@@ -13,12 +13,12 @@
  */
 
 import { YAxisType } from '../common/Styles'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { isValid } from '../common/utils/typeChecks'
 
 import View from './View'
 
-import YAxis from '../component/YAxis'
-
-import { formatPrecision, formatThousands } from '../common/utils/format'
+import type YAxis from '../component/YAxis'
 
 export default class CandleLastPriceLabelView extends View {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -35,7 +35,7 @@ export default class CandleLastPriceLabelView extends View {
       const dataList = chartStore.getDataList()
       const visibleDataList = chartStore.getVisibleDataList()
       const data = dataList[dataList.length - 1]
-      if (data !== undefined) {
+      if (isValid(data)) {
         const { close, open } = data
         const priceY = yAxis.convertToNicePixel(close)
         let backgroundColor: string
@@ -49,12 +49,12 @@ export default class CandleLastPriceLabelView extends View {
         let text: string
         if (yAxis.getType() === YAxisType.Percentage) {
           const fromData = visibleDataList[0].data
-          const fromClose = fromData.close
+          const fromClose = fromData!.close
           text = `${((close - fromClose) / fromClose * 100).toFixed(2)}%`
         } else {
           text = formatPrecision(close, precision.price)
         }
-        text = formatThousands(text, chartStore.getThousandsSeparator())
+        text = formatFoldDecimal(formatThousands(text, chartStore.getThousandsSeparator()), chartStore.getDecimalFoldThreshold())
         let x: number
         let textAlgin: CanvasTextAlign
         if (yAxis.isFromZero()) {
@@ -64,20 +64,20 @@ export default class CandleLastPriceLabelView extends View {
           x = bounding.width
           textAlgin = 'right'
         }
-        this.createFigure(
-          'text',
-          {
+        this.createFigure({
+          name: 'text',
+          attrs: {
             x,
             y: priceY,
             text,
             align: textAlgin,
             baseline: 'middle'
           },
-          {
+          styles: {
             ...lastPriceMarkTextStyles,
             backgroundColor
           }
-        )?.draw(ctx)
+        })?.draw(ctx)
       }
     }
   }

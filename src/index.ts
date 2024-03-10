@@ -28,13 +28,21 @@ import {
   LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
   CandleType, YAxisPosition, YAxisType
 } from './common/Styles'
+import type Nullable from './common/Nullable'
 
-import { Options, FormatDateType } from './Options'
-import ChartImp, { Chart, DomPosition } from './Chart'
+import { logError, logTag, logWarn } from './common/utils/logger'
 
+import {
+  clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
+} from './common/utils/typeChecks'
+import { formatValue, formatPrecision, formatBigNumber, formatDate, formatThousands, formatFoldDecimal } from './common/utils/format'
+import { calcTextWidth } from './common/utils/canvas'
 import { ActionType } from './common/Action'
 import { IndicatorSeries } from './component/Indicator'
 import { OverlayMode } from './component/Overlay'
+
+import { type Options, FormatDateType } from './Options'
+import ChartImp, { type Chart, DomPosition } from './Chart'
 
 import { checkCoordinateOnArc, drawArc } from './extension/figure/arc'
 import { checkCoordinateOnCircle, drawCircle } from './extension/figure/circle'
@@ -52,16 +60,8 @@ import { registerIndicator, getSupportedIndicators } from './extension/indicator
 import { registerLocale, getSupportedLocales } from './extension/i18n/index'
 import { registerOverlay, getOverlayClass, getSupportedOverlays } from './extension/overlay/index'
 import { registerStyles } from './extension/styles/index'
-
-import Nullable from './common/Nullable'
-
-import { logError, logTag, logWarn } from './common/utils/logger'
-
-import {
-  clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
-} from './common/utils/typeChecks'
-import { formatValue, formatPrecision, formatBigNumber, formatDate, formatThousands } from './common/utils/format'
-import { calcTextWidth } from './common/utils/canvas'
+import { registerXAxis } from './extension/x-axis'
+import { registerYAxis } from './extension/y-axis'
 
 const instances = new Map<string, ChartImp>()
 let chartBaseId = 1
@@ -71,7 +71,7 @@ let chartBaseId = 1
  * @return {string}
  */
 function version (): string {
-  return '__BUILD_VERSION__'
+  return '__VERSION__'
 }
 
 /**
@@ -93,7 +93,7 @@ function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
     return null
   }
   let chart = instances.get(dom.id)
-  if (chart !== undefined) {
+  if (isValid(chart)) {
     logWarn('', '', 'The chart has been initialized on the dom！！！')
     return chart
   }
@@ -143,6 +143,7 @@ const utils = {
   formatBigNumber,
   formatDate,
   formatThousands,
+  formatFoldDecimal,
   calcTextWidth,
   getLinearSlopeIntercept,
   getLinearYFromSlopeIntercept,
@@ -168,7 +169,9 @@ export {
   registerIndicator, getSupportedIndicators,
   registerOverlay, getSupportedOverlays, getOverlayClass,
   registerLocale, getSupportedLocales,
-  registerStyles, utils,
+  registerStyles,
+  registerXAxis, registerYAxis,
+  utils,
   LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
   CandleType, YAxisPosition, YAxisType, FormatDateType,
   DomPosition, ActionType, IndicatorSeries, OverlayMode

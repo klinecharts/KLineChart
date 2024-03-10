@@ -12,49 +12,44 @@
  * limitations under the License.
  */
 
-import Bounding from '../common/Bounding'
+import type Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
+import Canvas from '../common/Canvas'
 
-import DrawPane from '../pane/DrawPane'
+import type DrawPane from '../pane/DrawPane'
 
 import Widget from './Widget'
 
 import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
-import { requestAnimationFrame, cancelAnimationFrame } from '../common/utils/compatible'
-
-const DEFAULT_REQUEST_ID = -1
 
 export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends Widget<P> {
-  private _mainCanvas: HTMLCanvasElement
-  private _mainCtx: CanvasRenderingContext2D
-  private _overlayCanvas: HTMLCanvasElement
-  private _overlayCtx: CanvasRenderingContext2D
-
-  private _mainRequestAnimationId: number = DEFAULT_REQUEST_ID
-  private _overlayRequestAnimationId: number = DEFAULT_REQUEST_ID
+  private _mainCanvas: Canvas
+  private _overlayCanvas: Canvas
 
   override init (rootContainer: HTMLElement): void {
     super.init(rootContainer)
-    this._mainCanvas = createDom('canvas', {
+    this._mainCanvas = new Canvas({
       position: 'absolute',
       top: '0',
       left: '0',
       zIndex: '2',
       boxSizing: 'border-box'
+    }, () => {
+      this.updateMain(this._mainCanvas.getContext())
     })
-    this._mainCtx = this._mainCanvas.getContext('2d') as CanvasRenderingContext2D
-    this._overlayCanvas = createDom('canvas', {
+    this._overlayCanvas = new Canvas({
       position: 'absolute',
       top: '0',
       left: '0',
       zIndex: '2',
       boxSizing: 'border-box'
+    }, () => {
+      this.updateOverlay(this._overlayCanvas.getContext())
     })
-    this._overlayCtx = this._overlayCanvas.getContext('2d') as CanvasRenderingContext2D
     const container = this.getContainer()
-    container.appendChild(this._mainCanvas)
-    container.appendChild(this._overlayCanvas)
+    container.appendChild(this._mainCanvas.getElement())
+    container.appendChild(this._overlayCanvas.getElement())
   }
 
   override createContainer (): HTMLElement {
@@ -69,82 +64,39 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
     })
   }
 
-  private _optimalUpdateMain (width: number, height: number): void {
-    if (this._mainRequestAnimationId !== DEFAULT_REQUEST_ID) {
-      cancelAnimationFrame(this._mainRequestAnimationId)
-      this._mainRequestAnimationId = DEFAULT_REQUEST_ID
-    }
-    this._mainRequestAnimationId = requestAnimationFrame(() => {
-      if (width !== this._mainCanvas.offsetWidth || height !== this._mainCanvas.offsetHeight) {
-        this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
-
-        const pixelRatio = getPixelRatio(this._mainCanvas)
-        const scaleWidth = Math.floor(width * pixelRatio)
-        const scaleHeight = Math.floor(height * pixelRatio)
-
-        this._mainCanvas.style.width = `${width}px`
-        this._mainCanvas.style.height = `${height}px`
-        this._mainCanvas.width = scaleWidth
-        this._mainCanvas.height = scaleHeight
-        this._mainCtx.scale(pixelRatio, pixelRatio)
-      } else {
-        this._mainCtx.clearRect(0, 0, this._mainCanvas.offsetWidth, this._mainCanvas.offsetHeight)
-      }
-      this.updateMain(this._mainCtx)
-    })
-  }
-
-  private _optimalUpdateOverlay (width: number, height: number): void {
-    if (this._overlayRequestAnimationId !== DEFAULT_REQUEST_ID) {
-      cancelAnimationFrame(this._overlayRequestAnimationId)
-      this._overlayRequestAnimationId = DEFAULT_REQUEST_ID
-    }
-    this._overlayRequestAnimationId = requestAnimationFrame(() => {
-      if (width !== this._overlayCanvas.offsetWidth || height !== this._overlayCanvas.offsetHeight) {
-        this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
-
-        const pixelRatio = getPixelRatio(this._overlayCanvas)
-        const scaleWidth = Math.floor(width * pixelRatio)
-        const scaleHeight = Math.floor(height * pixelRatio)
-
-        this._overlayCanvas.style.width = `${width}px`
-        this._overlayCanvas.style.height = `${height}px`
-        this._overlayCanvas.width = scaleWidth
-        this._overlayCanvas.height = scaleHeight
-        this._overlayCtx.scale(pixelRatio, pixelRatio)
-      } else {
-        this._overlayCtx.clearRect(0, 0, this._overlayCanvas.offsetWidth, this._overlayCanvas.offsetHeight)
-      }
-      this.updateOverlay(this._overlayCtx)
-    })
-  }
-
   override updateImp (container: HTMLElement, bounding: Bounding, level: UpdateLevel): void {
     const { width, height, left } = bounding
     container.style.left = `${left}px`
 
     let l = level
-    if (width !== container.offsetWidth || height !== container.offsetHeight) {
+    const w = container.clientWidth
+    const h = container.clientHeight
+    if (width !== w || height !== h) {
       container.style.width = `${width}px`
       container.style.height = `${height}px`
       l = UpdateLevel.Drawer
     }
     switch (l) {
       case UpdateLevel.Main: {
-        this._optimalUpdateMain(width, height)
+        this._mainCanvas.update(width, height)
         break
       }
       case UpdateLevel.Overlay: {
-        this._optimalUpdateOverlay(width, height)
+        this._overlayCanvas.update(width, height)
         break
       }
       case UpdateLevel.Drawer:
       case UpdateLevel.All: {
-        this._optimalUpdateMain(width, height)
-        this._optimalUpdateOverlay(width, height)
+        this._mainCanvas.update(width, height)
+        this._overlayCanvas.update(width, height)
         break
       }
     }
+  }
+
+  destroy (): void {
+    this._mainCanvas.destroy()
+    this._overlayCanvas.destroy()
   }
 
   getImage (includeOverlay: boolean): HTMLCanvasElement {
@@ -154,16 +106,16 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
       height: `${height}px`,
       boxSizing: 'border-box'
     })
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    const ctx = canvas.getContext('2d')!
     const pixelRatio = getPixelRatio(canvas)
     canvas.width = width * pixelRatio
     canvas.height = height * pixelRatio
     ctx.scale(pixelRatio, pixelRatio)
 
-    ctx.drawImage(this._mainCanvas, 0, 0, width, height)
+    ctx.drawImage(this._mainCanvas.getElement(), 0, 0, width, height)
 
     if (includeOverlay) {
-      ctx.drawImage(this._overlayCanvas, 0, 0, width, height)
+      ctx.drawImage(this._overlayCanvas.getElement(), 0, 0, width, height)
     }
     return canvas
   }

@@ -12,7 +12,9 @@
  * limitations under the License.
  */
 
-import { EventName, MouseTouchEvent, MouseTouchEventCallback } from './SyntheticEvent'
+import { isValid } from './utils/typeChecks'
+
+import { type EventName, type MouseTouchEvent, type MouseTouchEventCallback } from './SyntheticEvent'
 
 export interface EventDispatcher {
   dispatchEvent: (name: EventName, event: MouseTouchEvent, other?: number) => boolean
@@ -23,14 +25,14 @@ export default abstract class Eventful implements EventDispatcher {
 
   private readonly _callbacks = new Map<EventName, MouseTouchEventCallback>()
 
-  registerEvent (name: EventName, callback: MouseTouchEventCallback): Eventful {
+  registerEvent (name: EventName, callback: MouseTouchEventCallback): this {
     this._callbacks.set(name, callback)
     return this
   }
 
   onEvent (name: EventName, event: MouseTouchEvent, other?: number): boolean {
     const callback = this._callbacks.get(name)
-    if (callback !== undefined && this.checkEventOn(event)) {
+    if (isValid(callback) && this.checkEventOn(event)) {
       return callback(event, other)
     }
     return false
@@ -57,7 +59,7 @@ export default abstract class Eventful implements EventDispatcher {
     return this.onEvent(name, event, other)
   }
 
-  addChild (eventful: Eventful): Eventful {
+  addChild (eventful: Eventful): this {
     this._children.push(eventful)
     return this
   }

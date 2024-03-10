@@ -12,24 +12,30 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import { FormatDate, FormatDateType } from '../Options'
-
-import AxisImp, { Axis, AxisExtremum, AxisTick } from './Axis'
-
+import type Nullable from '../common/Nullable'
+import type Bounding from '../common/Bounding'
 import { calcTextWidth } from '../common/utils/canvas'
+import { isValid } from '../common/utils/typeChecks'
+
+import { type FormatDate, FormatDateType } from '../Options'
+
+import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams } from './Axis'
+
+import type DrawPane from '../pane/DrawPane'
 
 export type XAxis = Axis
 
-export default class XAxisImp extends AxisImp {
-  protected calcExtremum (): AxisExtremum {
+export type XAxisConstructor = new (parent: DrawPane<AxisImp>) => XAxisImp
+
+export default abstract class XAxisImp extends AxisImp {
+  protected calcRange (): AxisRange {
     const chartStore = this.getParent().getChart().getChartStore()
     const { from, to } = chartStore.getTimeScaleStore().getVisibleRange()
-    const min = from
-    const max = to - 1
+    const af = from
+    const at = to - 1
     const range = to - from
     return {
-      min, max, range, realMin: min, realMax: max, realRange: range
+      from: af, to: at, range, realFrom: af, realTo: at, realRange: range
     }
   }
 
@@ -75,7 +81,7 @@ export default class XAxisImp extends AxisImp {
       } else {
         const firstTimestamp = optimalTicks[0].value as number
         const secondTimestamp = optimalTicks[1].value as number
-        if (optimalTicks[2] !== undefined) {
+        if (isValid(optimalTicks[2])) {
           const thirdText = optimalTicks[2].text
           if (/^[0-9]{2}-[0-9]{2}$/.test(thirdText)) {
             optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'MM-DD', FormatDateType.XAxis)
@@ -142,6 +148,10 @@ export default class XAxisImp extends AxisImp {
     return Math.max(xAxisHeight, crosshairVerticalTextHeight)
   }
 
+  getSelfBounding (): Bounding {
+    return this.getParent().getMainWidget().getBounding()
+  }
+
   convertTimestampFromPixel (pixel: number): Nullable<number> {
     const timeScaleStore = this.getParent().getChart().getChartStore().getTimeScaleStore()
     const dataIndex = timeScaleStore.coordinateToDataIndex(pixel)
@@ -160,5 +170,14 @@ export default class XAxisImp extends AxisImp {
 
   convertToPixel (value: number): number {
     return this.getParent().getChart().getChartStore().getTimeScaleStore().dataIndexToCoordinate(value)
+  }
+
+  static extend (template: AxisTemplate): XAxisConstructor {
+    class Custom extends XAxisImp {
+      createTicks (params: AxisCreateTicksParams): AxisTick[] {
+        return template.createTicks(params)
+      }
+    }
+    return Custom
   }
 }

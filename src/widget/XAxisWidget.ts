@@ -15,9 +15,9 @@
 import { WidgetNameConstants } from './types'
 import DrawWidget from './DrawWidget'
 
-import DrawPane from '../pane/DrawPane'
+import type DrawPane from '../pane/DrawPane'
 
-import XAxis from '../component/XAxis'
+import type XAxis from '../component/XAxis'
 
 import XAxisView from '../view/XAxisView'
 import OverlayXAxisView from '../view/OverlayXAxisView'

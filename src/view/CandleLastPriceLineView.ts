@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import YAxis from '../component/YAxis'
+import type YAxis from '../component/YAxis'
 
 import View from './View'
 
@@ -40,21 +40,21 @@ export default class CandleLastPriceView extends View {
         } else {
           color = lastPriceMarkStyles.noChangeColor
         }
-        this.createFigure(
-          'line',
-          {
+        this.createFigure({
+          name: 'line',
+          attrs: {
             coordinates: [
               { x: 0, y: priceY },
               { x: bounding.width, y: priceY }
             ]
           },
-          {
+          styles: {
             style: lastPriceMarkLineStyles.style,
             color,
             size: lastPriceMarkLineStyles.size,
             dashedValue: lastPriceMarkLineStyles.dashedValue
           }
-        )?.draw(ctx)
+        })?.draw(ctx)
       }
     }
   }

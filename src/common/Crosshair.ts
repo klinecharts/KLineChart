@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import Coordinate from './Coordinate'
-import KLineData from './KLineData'
+import type Coordinate from './Coordinate'
+import type KLineData from './KLineData'
 
 export default interface Crosshair extends Partial<Coordinate> {
   paneId?: string

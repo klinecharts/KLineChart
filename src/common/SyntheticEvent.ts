@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +21,12 @@
  * </licenses/LICENSE-lightweight-charts>).
  */
 
-import Coordinate from './Coordinate'
+import type Coordinate from './Coordinate'
 
-import Nullable from './Nullable'
+import type Nullable from './Nullable'
 
 import { isFF, isIOS } from './utils/platform'
+import { isValid } from './utils/typeChecks'
 
 export type MouseTouchEventCallback = (event: MouseTouchEvent, other?: number) => boolean
 
@@ -286,7 +288,7 @@ export default class SyntheticEvent {
 
   private _mouseWheelHandler (wheelEvent: WheelEvent): void {
     if (Math.abs(wheelEvent.deltaX) > Math.abs(wheelEvent.deltaY)) {
-      if (this._handler.mouseWheelHortEvent === undefined) {
+      if (!isValid(this._handler.mouseWheelHortEvent)) {
         return
       }
       this._preventDefault(wheelEvent)
@@ -295,7 +297,7 @@ export default class SyntheticEvent {
       }
       this._handler.mouseWheelHortEvent(this._makeCompatEvent(wheelEvent), -wheelEvent.deltaX)
     } else {
-      if (this._handler.mouseWheelVertEvent === undefined) {
+      if (!isValid(this._handler.mouseWheelVertEvent)) {
         return
       }
       let deltaY = -(wheelEvent.deltaY / 100)
@@ -344,7 +346,7 @@ export default class SyntheticEvent {
     // prevent pinch if move event comes faster than the second touch
     this._pinchPrevented = true
 
-    const moveInfo = this._mouseTouchMoveWithDownInfo(this._getCoordinate(touch), this._touchMoveStartCoordinate as Coordinate)
+    const moveInfo = this._mouseTouchMoveWithDownInfo(this._getCoordinate(touch), this._touchMoveStartCoordinate!)
     const { xOffset, yOffset, manhattanDistance } = moveInfo
 
     if (!this._touchMoveExceededManhattanDistance && manhattanDistance < ManhattanDistance.CancelTap) {
@@ -390,7 +392,7 @@ export default class SyntheticEvent {
       return
     }
 
-    const moveInfo = this._mouseTouchMoveWithDownInfo(this._getCoordinate(moveEvent), this._mouseMoveStartCoordinate as Coordinate)
+    const moveInfo = this._mouseTouchMoveWithDownInfo(this._getCoordinate(moveEvent), this._mouseMoveStartCoordinate!)
     const { manhattanDistance } = moveInfo
 
     if (manhattanDistance >= ManhattanDistance.CancelClick) {
@@ -493,7 +495,7 @@ export default class SyntheticEvent {
 
         // do not fire mouse events if tap handler was executed
         // prevent click event on new dom element (who appeared after tap)
-        if (this._handler.tapEvent !== undefined) {
+        if (isValid(this._handler.tapEvent)) {
           this._preventDefault(touchEndEvent)
         }
       }
@@ -733,16 +735,16 @@ export default class SyntheticEvent {
   }
 
   private _initPinch (): void {
-    if (this._handler.pinchStartEvent === undefined &&
-      this._handler.pinchEvent === undefined &&
-      this._handler.pinchEndEvent === undefined
+    if (!isValid(this._handler.pinchStartEvent) &&
+      !isValid(this._handler.pinchEvent) &&
+      !isValid(this._handler.pinchEndEvent)
     ) {
       return
     }
 
     this._target.addEventListener(
       'touchstart',
-      (event: TouchEvent) => this._checkPinchState(event.touches),
+      (event: TouchEvent) => { this._checkPinchState(event.touches) },
       { passive: true }
     )
 
@@ -752,7 +754,7 @@ export default class SyntheticEvent {
         if (event.touches.length !== 2 || this._startPinchMiddleCoordinate === null) {
           return
         }
-        if (this._handler.pinchEvent !== undefined) {
+        if (isValid(this._handler.pinchEvent)) {
           const currentDistance = this._getTouchDistance(event.touches[0], event.touches[1])
           const scale = currentDistance / this._startPinchDistance
           this._handler.pinchEvent({ ...this._startPinchMiddleCoordinate, pageX: 0, pageY: 0 }, scale)
@@ -788,7 +790,7 @@ export default class SyntheticEvent {
 
     this._startPinchDistance = this._getTouchDistance(touches[0], touches[1])
 
-    if (this._handler.pinchStartEvent !== undefined) {
+    if (isValid(this._handler.pinchStartEvent)) {
       this._handler.pinchStartEvent({ x: 0, y: 0, pageX: 0, pageY: 0 })
     }
 
@@ -802,7 +804,7 @@ export default class SyntheticEvent {
 
     this._startPinchMiddleCoordinate = null
 
-    if (this._handler.pinchEndEvent !== undefined) {
+    if (isValid(this._handler.pinchEndEvent)) {
       this._handler.pinchEndEvent({ x: 0, y: 0, pageX: 0, pageY: 0 })
     }
   }
@@ -842,8 +844,10 @@ export default class SyntheticEvent {
   }
 
   private _firesTouchEvents (e: MouseEvent): boolean {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    if (e.sourceCapabilities?.firesTouchEvents !== undefined) {
+    if (isValid(e.sourceCapabilities?.firesTouchEvents)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       return e.sourceCapabilities.firesTouchEvents
     }

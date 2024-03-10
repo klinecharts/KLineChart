@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { merge } from './utils/typeChecks'
+import { isValid, merge } from './utils/typeChecks'
 
 export default interface Bounding {
   width: number
@@ -23,7 +23,7 @@ export default interface Bounding {
   bottom: number
 }
 
-export function getDefaultBounding (bounding?: Partial<Bounding>): Bounding {
+export function createDefaultBounding (bounding?: Partial<Bounding>): Bounding {
   const defaultBounding: Bounding = {
     width: 0,
     height: 0,
@@ -32,7 +32,7 @@ export function getDefaultBounding (bounding?: Partial<Bounding>): Bounding {
     top: 0,
     bottom: 0
   }
-  if (bounding !== undefined) {
+  if (isValid(bounding)) {
     merge(defaultBounding, bounding)
   }
   return defaultBounding

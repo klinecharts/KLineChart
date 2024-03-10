@@ -12,14 +12,14 @@
  * limitations under the License.
  */
 
-import { eachFigures, IndicatorFigure, IndicatorFigureStyle } from '../component/Indicator'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { isNumber, isValid } from '../common/utils/typeChecks'
+
+import { eachFigures, type IndicatorFigure, type IndicatorFigureStyle } from '../component/Indicator'
 
 import View from './View'
 
-import { formatPrecision, formatThousands } from '../common/utils/format'
-import { isValid } from '../common/utils/typeChecks'
-
-import YAxis from '../component/YAxis'
+import type YAxis from '../component/YAxis'
 
 export default class IndicatorLastValueView extends View<YAxis> {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -37,20 +37,21 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const dataIndex = dataList.length - 1
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
       const thousandsSeparator = chartStore.getThousandsSeparator()
+      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
       indicators.forEach(indicator => {
         const result = indicator.result
         const indicatorData = result[dataIndex]
-        if (indicatorData !== undefined && indicator.visible) {
+        if (isValid(indicatorData) && indicator.visible) {
           const precision = indicator.precision
           eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
             const value = indicatorData[figure.key]
-            if (isValid<number>(value)) {
+            if (isNumber(value)) {
               const y = yAxis.convertToNicePixel(value)
               let text = formatPrecision(value, precision)
               if (indicator.shouldFormatBigNumber) {
                 text = customApi.formatBigNumber(text)
               }
-              text = formatThousands(text, thousandsSeparator)
+              text = formatFoldDecimal(formatThousands(text, thousandsSeparator), decimalFoldThreshold)
               let x: number
               let textAlign: CanvasTextAlign
               if (yAxis.isFromZero()) {
@@ -61,20 +62,20 @@ export default class IndicatorLastValueView extends View<YAxis> {
                 textAlign = 'right'
               }
 
-              this.createFigure(
-                'text',
-                {
+              this.createFigure({
+                name: 'text',
+                attrs: {
                   x,
                   y,
                   text,
                   align: textAlign,
                   baseline: 'middle'
                 },
-                {
+                styles: {
                   ...lastValueMarkTextStyles,
                   backgroundColor: figureStyles.color
                 }
-              )?.draw(ctx)
+              })?.draw(ctx)
             }
           })
         }

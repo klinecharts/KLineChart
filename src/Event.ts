@@ -12,23 +12,23 @@
  * limitations under the License.
  */
 
-import Nullable from './common/Nullable'
-import SyntheticEvent, { EventHandler, MouseTouchEvent, TOUCH_MIN_RADIUS } from './common/SyntheticEvent'
-import Coordinate from './common/Coordinate'
+import type Nullable from './common/Nullable'
+import SyntheticEvent, { type EventHandler, type MouseTouchEvent, TOUCH_MIN_RADIUS } from './common/SyntheticEvent'
+import type Coordinate from './common/Coordinate'
 import { UpdateLevel } from './common/Updater'
-import Crosshair from './common/Crosshair'
+import type Crosshair from './common/Crosshair'
 import { requestAnimationFrame, cancelAnimationFrame } from './common/utils/compatible'
 
-import { AxisExtremum } from './component/Axis'
-import YAxis from './component/YAxis'
-import XAxis from './component/XAxis'
+import { type AxisRange } from './component/Axis'
+import type YAxis from './component/YAxis'
+import type XAxis from './component/XAxis'
 
-import Chart from './Chart'
-import Pane from './pane/Pane'
+import type Chart from './Chart'
+import type Pane from './pane/Pane'
 import { PaneIdConstants } from './pane/types'
-import Widget from './widget/Widget'
+import type Widget from './widget/Widget'
 import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './widget/types'
-import DrawPane from './pane/DrawPane'
+import type DrawPane from './pane/DrawPane'
 
 interface EventTriggerWidgetInfo {
   pane: Nullable<Pane>
@@ -57,7 +57,7 @@ export default class Event implements EventHandler {
 
   private _mouseDownWidget: Nullable<Widget> = null
 
-  private _prevYAxisExtremum: Nullable<AxisExtremum> = null
+  private _prevYAxisRange: Nullable<AxisRange> = null
 
   private _xAxisStartScaleCoordinate: Nullable<Coordinate> = null
   private _xAxisStartScaleDistance = 0
@@ -168,8 +168,8 @@ export default class Event implements EventHandler {
           return widget.dispatchEvent('mouseDownEvent', event)
         }
         case WidgetNameConstants.MAIN: {
-          const extremum = (pane as DrawPane<YAxis>).getAxisComponent().getExtremum() ?? null
-          this._prevYAxisExtremum = extremum === null ? extremum : { ...extremum }
+          const range = (pane as DrawPane<YAxis>).getAxisComponent().getRange() ?? null
+          this._prevYAxisRange = range === null ? range : { ...range }
           this._startScrollCoordinate = { x: event.x, y: event.y }
           this._chart.getChartStore().getTimeScaleStore().startScroll()
           return widget.dispatchEvent('mouseDownEvent', event)
@@ -188,8 +188,8 @@ export default class Event implements EventHandler {
           if (consumed) {
             this._chart.updatePane(UpdateLevel.Overlay)
           }
-          const extremum = (pane as DrawPane<YAxis>).getAxisComponent().getExtremum() ?? null
-          this._prevYAxisExtremum = extremum === null ? extremum : { ...extremum }
+          const range = (pane as DrawPane<YAxis>).getAxisComponent().getRange() ?? null
+          this._prevYAxisRange = range === null ? range : { ...range }
           this._yAxisStartScaleDistance = event.pageY
           return consumed
         }
@@ -255,8 +255,8 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed && this._startScrollCoordinate !== null) {
             const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
-            if (this._prevYAxisExtremum !== null && !yAxis.getAutoCalcTickFlag() && yAxis.getScrollZoomEnabled()) {
-              const { min, max, range } = this._prevYAxisExtremum
+            if (this._prevYAxisRange !== null && !yAxis.getAutoCalcTickFlag() && yAxis.getScrollZoomEnabled()) {
+              const { from, to, range } = this._prevYAxisRange
               let distance: number
               if (yAxis?.isReverse() ?? false) {
                 distance = this._startScrollCoordinate.y - event.y
@@ -265,17 +265,17 @@ export default class Event implements EventHandler {
               }
               const scale = distance / bounding.height
               const difRange = range * scale
-              const newMin = min + difRange
-              const newMax = max + difRange
-              const newRealMin = yAxis.convertToRealValue(newMin)
-              const newRealMax = yAxis.convertToRealValue(newMax)
-              yAxis.setExtremum({
-                min: newMin,
-                max: newMax,
-                range: newMax - newMin,
-                realMin: newRealMin,
-                realMax: newRealMax,
-                realRange: newRealMax - newRealMin
+              const newFrom = from + difRange
+              const newTo = to + difRange
+              const newRealFrom = yAxis.convertToRealValue(newFrom)
+              const newRealTo = yAxis.convertToRealValue(newTo)
+              yAxis.setRange({
+                from: newFrom,
+                to: newTo,
+                range: newTo - newFrom,
+                realFrom: newRealFrom,
+                realTo: newRealTo,
+                realRange: newRealTo - newRealFrom
               })
             }
             const distance = event.x - this._startScrollCoordinate.x
@@ -303,22 +303,22 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
             const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
-            if (this._prevYAxisExtremum !== null && yAxis.getScrollZoomEnabled()) {
-              const { min, max, range } = this._prevYAxisExtremum
+            if (this._prevYAxisRange !== null && yAxis.getScrollZoomEnabled()) {
+              const { from, to, range } = this._prevYAxisRange
               const scale = event.pageY / this._yAxisStartScaleDistance
               const newRange = range * scale
               const difRange = (newRange - range) / 2
-              const newMin = min - difRange
-              const newMax = max + difRange
-              const newRealMin = yAxis.convertToRealValue(newMin)
-              const newRealMax = yAxis.convertToRealValue(newMax)
-              yAxis.setExtremum({
-                min: newMin,
-                max: newMax,
+              const newFrom = from - difRange
+              const newTo = to + difRange
+              const newRealFrom = yAxis.convertToRealValue(newFrom)
+              const newRealTo = yAxis.convertToRealValue(newTo)
+              yAxis.setRange({
+                from: newFrom,
+                to: newTo,
                 range: newRange,
-                realMin: newRealMin,
-                realMax: newRealMax,
-                realRange: newRealMax - newRealMin
+                realFrom: newRealFrom,
+                realTo: newRealTo,
+                realRange: newRealTo - newRealFrom
               })
               this._chart.adjustPaneViewport(false, true, true, true)
             }
@@ -353,7 +353,7 @@ export default class Event implements EventHandler {
     }
     this._mouseDownWidget = null
     this._startScrollCoordinate = null
-    this._prevYAxisExtremum = null
+    this._prevYAxisRange = null
     this._xAxisStartScaleCoordinate = null
     this._xAxisStartScaleDistance = 0
     this._xAxisScale = 1

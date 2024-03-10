@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import KLineData from '../../common/KLineData'
-import { IndicatorStyle, PolygonType } from '../../common/Styles'
+import type KLineData from '../../common/KLineData'
+import { type IndicatorStyle, PolygonType } from '../../common/Styles'
 
 import { formatValue } from '../../common/utils/format'
 
-import { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../component/Indicator'
+import { type Indicator, type IndicatorTemplate, type IndicatorFigureStylesCallbackData } from '../../component/Indicator'
 
 interface Macd {
   dif?: number

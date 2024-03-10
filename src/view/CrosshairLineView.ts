@@ -12,8 +12,9 @@
  * limitations under the License.
  */
 
-import Coordinate from '../common/Coordinate'
-import { CrosshairDirectionStyle } from '../common/Styles'
+import type Coordinate from '../common/Coordinate'
+import { type CrosshairDirectionStyle } from '../common/Styles'
+import { isString } from '../common/utils/typeChecks'
 
 import View from './View'
 
@@ -25,9 +26,9 @@ export default class CrosshairLineView extends View {
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getTooltipStore().getCrosshair()
     const styles = chartStore.getStyles().crosshair
-    if (crosshair.paneId !== undefined && styles.show) {
+    if (isString(crosshair.paneId) && styles.show) {
       if (crosshair.paneId === pane.getId()) {
-        const y = crosshair.y as number
+        const y = crosshair.y!
         this._drawLine(
           ctx,
           [
@@ -37,7 +38,7 @@ export default class CrosshairLineView extends View {
           styles.horizontal
         )
       }
-      const x = crosshair.realX as number
+      const x = crosshair.realX!
       this._drawLine(
         ctx,
         [
@@ -53,7 +54,11 @@ export default class CrosshairLineView extends View {
     if (styles.show) {
       const lineStyles = styles.line
       if (lineStyles.show) {
-        this.createFigure('line', { coordinates }, lineStyles)?.draw(ctx)
+        this.createFigure({
+          name: 'line',
+          attrs: { coordinates },
+          styles: lineStyles
+        })?.draw(ctx)
       }
     }
   }

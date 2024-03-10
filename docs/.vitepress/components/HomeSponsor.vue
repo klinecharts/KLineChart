@@ -34,27 +34,37 @@
       <div class="sponsor-grid sponsor-top-grid">
         <a class="sponsor-grid-item item-no1" :href="sponsors[0].website" target="_blank" rel="noreferrer">
           <img class="image" :src="sponsors[0].logo"/>
+          <span class="text" v-if="!!sponsors[0].text">{{ sponsors[0].text }}</span>
         </a>
-        <!-- <a class="sponsor-grid-item item-no2-no3" :href="sponsors[1].website" target="_blank" rel="noreferrer">
+        <a class="sponsor-grid-item item-no1" :href="sponsors[1].website" target="_blank" rel="noreferrer">
+          <img class="image" :src="sponsors[1].logo"/>
+          <span class="text" v-if="!!sponsors[1].text">{{ sponsors[1].text }}</span>
+        </a>
+        <!-- <a v-if="!!sponsors[1]" class="sponsor-grid-item item-no2-no3" :href="sponsors[1].website" target="_blank" rel="noreferrer">
           <img class="image" :src="sponsors[1].logo"/>
         </a>
-        <a class="sponsor-grid-item item-no2-no3" :href="sponsors[2].website" target="_blank" rel="noreferrer">
+        <a v-if="!!sponsors[2]" class="sponsor-grid-item item-no2-no3" :href="sponsors[2].website" target="_blank" rel="noreferrer">
           <img class="image" :src="sponsors[2].logo"/>
-        </a> -->
+        </a>
         <a class="sponsor-grid-item item-no1" href="./sponsor.html" target="_blank" rel="noreferrer">
           {{ lang === 'zh-CN' ? '成为赞助商' : 'Become a sponsor' }}
-        </a>
+        </a> -->
       </div>
-      <h4 v-if="platinum.length > 0">{{ lang === 'zh-CN' ? '铂金赞助商' : 'Platinum Sponsors' }}</h4>
+      <!-- <h4 v-if="platinum.length > 0">{{ lang === 'zh-CN' ? '铂金赞助商' : 'Platinum Sponsors' }}</h4> -->
       <div v-if="platinum.length > 0" class="sponsor-grid sponsor-platinum-grid">
         <a v-for="item in platinum" class="sponsor-grid-item item" target="_blank" rel="noreferrer" :href="item.website">
           <img class="image" :src="item.logo"/>
         </a>
       </div>
-      <h4 v-if="gold.length > 0">{{ lang === 'zh-CN' ? '黄金赞助商' : 'Gold Sponsors' }}</h4>
+      <!-- <h4 v-if="gold.length > 0">{{ lang === 'zh-CN' ? '黄金赞助商' : 'Gold Sponsors' }}</h4> -->
       <div v-if="gold.length > 0" class="sponsor-grid sponsor-gold-grid">
         <a v-for="item in gold" class="sponsor-grid-item item" target="_blank" rel="noreferrer" :href="item.website">
           <img class="image" :src="item.logo"/>
+        </a>
+      </div>
+      <div class="sponsor-become">
+        <a target="_blank" rel="noreferrer" href="./sponsor.html">
+          {{ lang === 'zh-CN' ? '成为赞助商' : 'Become a sponsor' }}
         </a>
       </div>
     </div>
@@ -99,18 +109,24 @@
     color: inherit;
   }
 
-  .dark .sponsor .sponsor-grid .sponsor-grid-item .image {
-    filter: grayscale(1) invert(1);
+  .sponsor-grid-item .text {
+    font-size: 38px;
+    font-weight: bold;
+    padding-left: 12px;
   }
+
+  /* .dark .sponsor .sponsor-grid .sponsor-grid-item .image {
+    filter: grayscale(1) invert(1);
+  } */
 
   .dark .sponsor .sponsor-grid .sponsor-grid-item:hover {
     background-color: var(--vp-c-neutral);
     color: rgba(0, 0, 0, 0.6)!important;
   }
 
-  .dark .sponsor-grid .sponsor-grid-item:hover .image {
+  /* .dark .sponsor-grid .sponsor-grid-item:hover .image {
     filter: grayscale(0) invert(0);
-  }
+  } */
 
   .sponsor-top-grid .item-no1 {
     height: 160px;
@@ -145,6 +161,29 @@
 
   .sponsor-gold-grid .item .image {
     height: 16px;
+  }
+
+  .sponsor-become {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 26px;
+    font-size: 14px;
+    color: var(--vp-c-indigo-1);
+    font-weight: bold;
+  }
+
+  .sponsor-become a {
+    padding: 8px 22px;
+    border-radius: 99px;
+    transition: all .25s ease-in;
+    text-decoration: underline;
+  }
+
+  .sponsor-become a:hover {
+    background-color: var(--vp-c-indigo-1);
+    color: white;
+    text-decoration: none;
   }
 
   @media (min-width: 640px) {

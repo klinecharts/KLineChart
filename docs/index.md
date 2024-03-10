@@ -26,7 +26,7 @@ features:
   - icon:
       src: /images/rocket.png
     title: 轻量流畅
-    details: 零依赖，Gzip压缩下仅40k左右，4G网络下加载耗时不足1毫秒。图表即使在成千上万蜡烛图的情况下也能保持流畅。
+    details: 零依赖，Gzip压缩下仅50k左右，4G网络下加载耗时不足1毫秒。图表即使在成千上万蜡烛图的情况下也能保持流畅。
   - icon:
       src: /images/expand.png
     title: 高可扩展

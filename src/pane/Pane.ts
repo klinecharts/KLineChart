@@ -11,11 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Nullable from '../common/Nullable'
-import Updater, { UpdateLevel } from '../common/Updater'
-import Bounding, { getDefaultBounding } from '../common/Bounding'
+import type Nullable from '../common/Nullable'
+import type Updater from '../common/Updater'
+import { UpdateLevel } from '../common/Updater'
+import type Bounding from '../common/Bounding'
+import { createDefaultBounding } from '../common/Bounding'
 
-import Chart from '../Chart'
+import type Chart from '../Chart'
 
 import { createDom } from '../common/utils/dom'
 export default abstract class Pane implements Updater {
@@ -24,7 +26,7 @@ export default abstract class Pane implements Updater {
   private readonly _id: string
   private readonly _chart: Chart
 
-  private readonly _bounding: Bounding = getDefaultBounding()
+  private readonly _bounding: Bounding = createDefaultBounding()
 
   constructor (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string) {
     this._chart = chart
@@ -66,7 +68,7 @@ export default abstract class Pane implements Updater {
   }
 
   update (level?: UpdateLevel): void {
-    if (this._bounding.height !== this._container.offsetHeight) {
+    if (this._bounding.height !== this._container.clientHeight) {
       this._container.style.height = `${this._bounding.height}px`
     }
     this.updateImp(level ?? UpdateLevel.Drawer, this._container, this._bounding)

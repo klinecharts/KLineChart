@@ -12,12 +12,13 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import KLineData from '../common/KLineData'
-import Crosshair from '../common/Crosshair'
+import type Nullable from '../common/Nullable'
+import type KLineData from '../common/KLineData'
+import type Crosshair from '../common/Crosshair'
 import { UpdateLevel } from '../common/Updater'
+import { isNumber } from '../common/utils/typeChecks'
 
-import ChartStore from './ChartStore'
+import type ChartStore from './ChartStore'
 
 export interface TooltipIcon {
   paneId: string
@@ -44,7 +45,7 @@ export default class TooltipStore {
     const cr = crosshair ?? {}
     let realDataIndex: number
     let dataIndex: number
-    if (cr.x !== undefined) {
+    if (isNumber(cr.x)) {
       realDataIndex = this._chartStore.getTimeScaleStore().coordinateToDataIndex(cr.x)
       if (realDataIndex < 0) {
         dataIndex = 0

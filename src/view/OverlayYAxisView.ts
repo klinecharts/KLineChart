@@ -12,22 +12,23 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
-import Coordinate from '../common/Coordinate'
-import Bounding from '../common/Bounding'
-import BarSpace from '../common/BarSpace'
-import Precision from '../common/Precision'
-import { OverlayStyle } from '../common/Styles'
-import { CustomApi } from '../Options'
+import type Nullable from '../common/Nullable'
+import type Coordinate from '../common/Coordinate'
+import type Bounding from '../common/Bounding'
+import type BarSpace from '../common/BarSpace'
+import type Precision from '../common/Precision'
+import { type OverlayStyle } from '../common/Styles'
+import { type CustomApi } from '../Options'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { isNumber } from '../common/utils/typeChecks'
 
-import { formatPrecision, formatThousands } from '../common/utils/format'
+import type Axis from '../component/Axis'
+import type XAxis from '../component/XAxis'
+import type YAxis from '../component/YAxis'
+import { type OverlayFigure } from '../component/Overlay'
+import type Overlay from '../component/Overlay'
 
-import Axis from '../component/Axis'
-import XAxis from '../component/XAxis'
-import YAxis from '../component/YAxis'
-import Overlay, { OverlayFigure } from '../component/Overlay'
-
-import { EventOverlayInfo } from '../store/OverlayStore'
+import { type EventOverlayInfo } from '../store/OverlayStore'
 
 import OverlayView from './OverlayView'
 
@@ -45,6 +46,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     defaultStyles: OverlayStyle,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
@@ -54,7 +56,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     this.drawFigures(
       ctx,
       overlay,
-      this.getDefaultFigures(overlay, coordinates, bounding, precision, dateTimeFormat, customApi, thousandsSeparator, xAxis, yAxis, clickInstanceInfo),
+      this.getDefaultFigures(overlay, coordinates, bounding, precision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold, xAxis, yAxis, clickInstanceInfo),
       defaultStyles
     )
   }
@@ -67,6 +69,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     _dateTimeFormat: Intl.DateTimeFormat,
     _customApi: CustomApi,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     _xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
     clickInstanceInfo: EventOverlayInfo
@@ -91,10 +94,10 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
       }
       coordinates.forEach((coordinate, index) => {
         const point = overlay.points[index]
-        if (point.value !== undefined) {
+        if (isNumber(point.value)) {
           topY = Math.min(topY, coordinate.y)
           bottomY = Math.max(bottomY, coordinate.y)
-          const text = formatThousands(formatPrecision(point.value, precision.price), thousandsSeparator)
+          const text = formatFoldDecimal(formatThousands(formatPrecision(point.value, precision.price), thousandsSeparator), decimalFoldThreshold)
           figures.push({ type: 'text', attrs: { x, y: coordinate.y, text, align: textAlign, baseline: 'middle' }, ignoreEvent: true })
         }
       })
@@ -112,11 +115,12 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     barSpace: BarSpace,
     precision: Precision,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createYAxisFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+    return overlay.createYAxisFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
   }
 }

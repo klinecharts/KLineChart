@@ -12,17 +12,19 @@
  * limitations under the License.
  */
 
-import Nullable from '../common/Nullable'
+import type Nullable from '../common/Nullable'
 import { UpdateLevel } from '../common/Updater'
-import { MouseTouchEvent } from '../common/SyntheticEvent'
-import { isFunction } from '../common/utils/typeChecks'
+import { type MouseTouchEvent } from '../common/SyntheticEvent'
+import { isFunction, isValid, isString, isBoolean, isNumber, isArray } from '../common/utils/typeChecks'
 import { createId } from '../common/utils/id'
 
-import OverlayImp, { OVERLAY_ID_PREFIX, OVERLAY_ACTIVE_Z_LEVEL, OverlayCreate, OverlayRemove } from '../component/Overlay'
+import { type OverlayCreate, type OverlayRemove } from '../component/Overlay'
+import type OverlayImp from '../component/Overlay'
+import { OVERLAY_ID_PREFIX, OVERLAY_ACTIVE_Z_LEVEL } from '../component/Overlay'
 
 import { getOverlayInnerClass } from '../extension/overlay/index'
 
-import ChartStore from './ChartStore'
+import type ChartStore from './ChartStore'
 
 import { PaneIdConstants } from '../pane/types'
 
@@ -49,8 +51,6 @@ export default class OverlayStore {
   private readonly _chartStore: ChartStore
 
   private _instances = new Map<string, OverlayImp[]>()
-
-  private readonly _counter = new Map<string, number>()
 
   /**
    * Overlay information in painting
@@ -109,35 +109,35 @@ export default class OverlayStore {
     } = overlay
     let updateFlag = false
     let sortFlag = false
-    if (id !== undefined) {
+    if (isString(id)) {
       instance.setId(id)
     }
-    if (groupId !== undefined) {
+    if (isString(groupId)) {
       instance.setGroupId(groupId)
     }
-    if (points !== undefined && instance.setPoints(points)) {
+    if (isArray(points) && instance.setPoints(points)) {
       updateFlag = true
     }
-    if (styles !== undefined && instance.setStyles(styles)) {
+    if (isValid(styles) && instance.setStyles(styles)) {
       updateFlag = true
     }
-    if (lock !== undefined) {
+    if (isBoolean(lock)) {
       instance.setLock(lock)
     }
-    if (visible !== undefined && instance.setVisible(visible)) {
+    if (isBoolean(visible) && instance.setVisible(visible)) {
       updateFlag = true
     }
-    if (zLevel !== undefined && instance.setZLevel(zLevel)) {
+    if (isNumber(zLevel) && instance.setZLevel(zLevel)) {
       updateFlag = true
       sortFlag = true
     }
-    if (mode !== undefined) {
+    if (isValid(mode)) {
       instance.setMode(mode)
     }
-    if (modeSensitivity !== undefined) {
+    if (isNumber(modeSensitivity)) {
       instance.setModeSensitivity(modeSensitivity)
     }
-    if (extendData !== undefined && instance.setExtendData(extendData)) {
+    if (instance.setExtendData(extendData)) {
       updateFlag = true
     }
     if (onDrawStart !== undefined) {
@@ -188,9 +188,9 @@ export default class OverlayStore {
   getInstanceById (id: string): Nullable<OverlayImp> {
     for (const entry of this._instances) {
       const paneShapes = entry[1]
-      const shape = paneShapes.find(s => s.id === id)
-      if (shape !== undefined) {
-        return shape
+      const overlay = paneShapes.find(s => s.id === id)
+      if (isValid(overlay)) {
+        return overlay
       }
     }
     if (this._progressInstanceInfo !== null) {
@@ -202,11 +202,11 @@ export default class OverlayStore {
   }
 
   private _sort (paneId?: string): void {
-    if (paneId !== undefined) {
-      this._instances.get(paneId)?.sort((o1, o2) => o1.defaultZLevel - o2.defaultZLevel).sort((o1, o2) => o1.zLevel - o2.zLevel)
+    if (isString(paneId)) {
+      this._instances.get(paneId)?.sort((o1, o2) => o1.zLevel - o2.zLevel)
     } else {
       this._instances.forEach(paneInstances => {
-        paneInstances.sort((o1, o2) => o1.defaultZLevel - o2.defaultZLevel).sort((o1, o2) => o1.zLevel - o2.zLevel)
+        paneInstances.sort((o1, o2) => o1.zLevel - o2.zLevel)
       })
     }
   }
@@ -218,9 +218,6 @@ export default class OverlayStore {
         const OverlayClazz = getOverlayInnerClass(overlay.name)
         if (OverlayClazz !== null) {
           const instance = new OverlayClazz()
-          const count = (this._counter.get(paneId) ?? 0) + 1
-          this._counter.set(paneId, count)
-          instance.setDefaultZLevel(count)
           instance.setPaneId(paneId)
           const groupId = overlay.groupId ?? id
           overlay.id = id
@@ -244,7 +241,9 @@ export default class OverlayStore {
     })
     if (ids.some(id => id !== null)) {
       this._sort()
-      this._chartStore.getChart().updatePane(UpdateLevel.Overlay, paneId)
+      const chart = this._chartStore.getChart()
+      chart.updatePane(UpdateLevel.Overlay, paneId)
+      chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.X_AXIS)
     }
     return ids
   }
@@ -269,7 +268,7 @@ export default class OverlayStore {
 
   updateProgressInstanceInfo (paneId: string, appointPaneFlag?: boolean): void {
     if (this._progressInstanceInfo !== null) {
-      if (appointPaneFlag !== undefined && appointPaneFlag) {
+      if (isBoolean(appointPaneFlag) && appointPaneFlag) {
         this._progressInstanceInfo.appointPaneFlag = appointPaneFlag
       }
       this._progressInstanceInfo.paneId = paneId
@@ -278,7 +277,7 @@ export default class OverlayStore {
   }
 
   getInstances (paneId?: string): OverlayImp[] {
-    if (paneId === undefined) {
+    if (!isString(paneId)) {
       let instances: OverlayImp[] = []
       this._instances.forEach(paneInstances => {
         instances = instances.concat(paneInstances)
@@ -303,18 +302,20 @@ export default class OverlayStore {
       }
     }
 
-    if (id !== undefined) {
+    if (isString(id)) {
       const instance = this.getInstanceById(id)
       if (instance !== null) {
         setFlag(instance)
       }
     } else {
+      const nameValid = isString(name)
+      const groupIdValid = isString(groupId)
       this._instances.forEach(paneInstances => {
         paneInstances.forEach(instance => {
           if (
-            (name !== undefined && instance.name === name) ||
-            (groupId !== undefined && instance.groupId === groupId) ||
-            (name === undefined && groupId === undefined)
+            (nameValid && instance.name === name) ||
+            (groupIdValid && instance.groupId === groupId) ||
+            (!nameValid && !groupIdValid)
           ) {
             setFlag(instance)
           }
@@ -323,9 +324,9 @@ export default class OverlayStore {
       if (this._progressInstanceInfo !== null) {
         const progressInstance = this._progressInstanceInfo.instance
         if (
-          (name !== undefined && progressInstance.name === name) ||
-          (groupId !== undefined && progressInstance.groupId === groupId) ||
-          (name === undefined && groupId === undefined)
+          (nameValid && progressInstance.name === name) ||
+          (groupIdValid && progressInstance.groupId === groupId) ||
+          (!nameValid && !groupIdValid)
         ) {
           setFlag(progressInstance)
         }
@@ -341,17 +342,17 @@ export default class OverlayStore {
 
   removeInstance (overlayRemove?: OverlayRemove): void {
     const match: ((remove: OverlayRemove, overlay: OverlayImp) => boolean) = (remove: OverlayRemove, overlay: OverlayImp) => {
-      if (remove.id !== undefined) {
+      if (isString(remove.id)) {
         if (overlay.id !== remove.id) {
           return false
         }
       } else {
-        if (remove.groupId !== undefined) {
+        if (isString(remove.groupId)) {
           if (overlay.groupId !== remove.groupId) {
             return false
           }
         } else {
-          if (remove.name !== undefined) {
+          if (isString(remove.name)) {
             if (overlay.name !== remove.name) {
               return false
             }
@@ -362,18 +363,19 @@ export default class OverlayStore {
     }
 
     const updatePaneIds: string[] = []
+    const overlayRemoveValid = isValid(overlayRemove)
     if (this._progressInstanceInfo !== null) {
       const { instance } = this._progressInstanceInfo
       if (
-        overlayRemove === undefined ||
-        (overlayRemove !== undefined && match(overlayRemove, instance))
+        !overlayRemoveValid ||
+        (overlayRemoveValid && match(overlayRemove, instance))
       ) {
         updatePaneIds.push(this._progressInstanceInfo.paneId)
         instance.onRemoved?.({ overlay: instance })
         this._progressInstanceInfo = null
       }
     }
-    if (overlayRemove !== undefined) {
+    if (overlayRemoveValid) {
       const instances = new Map<string, OverlayImp[]>()
       for (const entry of this._instances) {
         const paneInstances = entry[1]
@@ -431,7 +433,6 @@ export default class OverlayStore {
         let sortFlag = false
         if (instance !== null) {
           sortFlag = true
-          instance.resetZLevel()
           if (isFunction(instance.onMouseLeave)) {
             instance.onMouseLeave({ overlay: instance, figureKey, figureIndex, ...event })
             ignoreUpdateFlag = true

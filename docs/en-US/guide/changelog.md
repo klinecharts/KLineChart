@@ -1,5 +1,32 @@
 # 📠 Change Log
 
+## 9.8.0
+`2024-03-04`
++ 🆕 Support custom coordinate axis.
++ 🆕 Support indicator mapping to future time.
++ 🆕 Support folding long decimals.
++ 🆕 Support adding data forward and backward.
++ 🐞 Fix formatting time issue for different browsers.
+
+`2024-01-12`
++ 🐞 Fix the issue of ineffective indicator attributes `minValue` and `maxValue`.
++ 🐞 Fix the display issue on the x-axis of the overlay.
++ 💄 Optimize the display of style `candle.type: 'ohlc'`.
++ 💄 Optimize drawing clarity.
+
+## 9.7.1
+`2023-12-18`
++ 🐞 Fix indicators and overlays methods not effect error.
++ 🐞 Fix package manager download node version dependency error.
+
+## 9.7.0
+`2023-12-12`
++ 🆕 Add instance apis`setMaxOffsetLeftDistance` and `setMaxOffsetRightDistance`.
++ 🆕 Add indicator attribute `zLevel`.
++ 💄 Optimize the rendering of the ohlc candle bar.
++ 🐞 Fix the blurry issue with the candle bar.
++ 🐞 Fix the rendering rules for the `zLevel` overlay.
+
 ## 9.6.0
 `2023-11-14`
 + 🖋️ Refactor the separator module.

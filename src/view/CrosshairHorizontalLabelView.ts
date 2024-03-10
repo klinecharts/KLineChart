@@ -12,19 +12,19 @@
  * limitations under the License.
  */
 
-import Bounding from '../common/Bounding'
-import Crosshair from '../common/Crosshair'
-import { CrosshairStyle, CrosshairDirectionStyle, YAxisType, StateTextStyle } from '../common/Styles'
-
-import Axis from '../component/Axis'
-import YAxis from '../component/YAxis'
-
-import { TextAttrs } from '../extension/figure/text'
-
-import ChartStore from '../store/ChartStore'
-
-import { formatPrecision, formatThousands } from '../common/utils/format'
+import type Bounding from '../common/Bounding'
+import type Crosshair from '../common/Crosshair'
+import { type CrosshairStyle, type CrosshairDirectionStyle, YAxisType, type StateTextStyle } from '../common/Styles'
+import { isString } from '../common/utils/typeChecks'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
+
+import type Axis from '../component/Axis'
+import type YAxis from '../component/YAxis'
+
+import { type TextAttrs } from '../extension/figure/text'
+
+import type ChartStore from '../store/ChartStore'
 
 import View from './View'
 
@@ -36,7 +36,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const chartStore = widget.getPane().getChart().getChartStore()
     const crosshair = chartStore.getTooltipStore().getCrosshair()
     const styles = chartStore.getStyles().crosshair
-    if (crosshair.paneId !== undefined && this.compare(crosshair, pane.getId())) {
+    if (isString(crosshair.paneId) && this.compare(crosshair, pane.getId())) {
       if (styles.show) {
         const directionStyles = this.getDirectionStyles(styles)
         const textStyles = directionStyles.text
@@ -44,11 +44,11 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
           const axis = pane.getAxisComponent()
           const text = this.getText(crosshair, chartStore, axis)
           ctx.font = createFont(textStyles.size, textStyles.weight, textStyles.family)
-          this.createFigure(
-            'text',
-            this.getTextAttrs(text, ctx.measureText(text).width, crosshair, bounding, axis, textStyles),
-            textStyles
-          )?.draw(ctx)
+          this.createFigure({
+            name: 'text',
+            attrs: this.getTextAttrs(text, ctx.measureText(text).width, crosshair, bounding, axis, textStyles),
+            styles: textStyles
+          })?.draw(ctx)
         }
       }
     }
@@ -64,14 +64,14 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
 
   protected getText (crosshair: Crosshair, chartStore: ChartStore, axis: Axis): string {
     const yAxis = axis as unknown as YAxis
-    const value = axis.convertFromPixel(crosshair.y as number)
+    const value = axis.convertFromPixel(crosshair.y!)
     let text: string
     if (yAxis.getType() === YAxisType.Percentage) {
       const visibleDataList = chartStore.getVisibleDataList()
-      const fromData = visibleDataList[0]?.data ?? {}
-      text = `${((value - fromData.close) / fromData.close * 100).toFixed(2)}%`
+      const fromData = visibleDataList[0]?.data
+      text = `${((value - fromData!.close) / fromData!.close * 100).toFixed(2)}%`
     } else {
-      const indicators = chartStore.getIndicatorStore().getInstances(crosshair.paneId as string)
+      const indicators = chartStore.getIndicatorStore().getInstances(crosshair.paneId!)
       let precision = 0
       let shouldFormatBigNumber = false
       if (yAxis.isInCandle()) {
@@ -89,7 +89,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
         text = chartStore.getCustomApi().formatBigNumber(text)
       }
     }
-    return formatThousands(text, chartStore.getThousandsSeparator())
+    return formatFoldDecimal(formatThousands(text, chartStore.getThousandsSeparator()), chartStore.getDecimalFoldThreshold())
   }
 
   protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: Axis, _styles: StateTextStyle): TextAttrs {
@@ -104,6 +104,6 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
       textAlign = 'right'
     }
 
-    return { x, y: crosshair.y as number, text, align: textAlign, baseline: 'middle' }
+    return { x, y: crosshair.y!, text, align: textAlign, baseline: 'middle' }
   }
 }

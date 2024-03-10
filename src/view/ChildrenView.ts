@@ -13,9 +13,9 @@
  */
 
 import View from './View'
-import VisibleData from '../common/VisibleData'
-import BarSpace from '../common/BarSpace'
-import YAxis from '../component/YAxis'
+import type VisibleData from '../common/VisibleData'
+import type BarSpace from '../common/BarSpace'
+import type YAxis from '../component/YAxis'
 
 export type EachChildCallback = (
   data: VisibleData,

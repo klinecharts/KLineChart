@@ -12,13 +12,12 @@
  * limitations under the License.
  */
 
-// @ts-expect-error
-const DEV = '__BUILD_ENV__' === 'development'
+const DEV = process.env.NODE_ENV === 'development'
 
 function log (templateText: string, tagStyle: string, messageStyle: string, api: string, invalidParam: string, append: string): void {
   if (DEV) {
-    const apiStr = api !== '' ? `Call api ${api}${invalidParam !== '' || append !== '' ? ', ' : '.'}` : ''
-    const invalidParamStr = invalidParam !== '' ? `invalid parameter ${invalidParam}${append !== '' ? ', ' : '.'}` : ''
+    const apiStr = api !== '' ? `Call api \`${api}\`${invalidParam !== '' || append !== '' ? ', ' : '.'}` : ''
+    const invalidParamStr = invalidParam !== '' ? `invalid parameter \`${invalidParam}\`${append !== '' ? ', ' : '.'}` : ''
     const appendStr = append !== '' ? append : ''
     console.log(templateText, tagStyle, messageStyle, apiStr, invalidParamStr, appendStr)
   }
@@ -36,19 +35,14 @@ export function logWarn (api: string, invalidParam: string, append?: string): vo
 export function logError (api: string, invalidParam: string, append?: string): void {
   log(
     '%c😟 klinecharts error%c %s%s%s',
-    'padding:3px 4px;border-radius:2px;color:#ffffff;background-color:#EF5350;',
-    'color:#EF5350;',
+    'padding:3px 4px;border-radius:2px;color:#ffffff;background-color:#F92855;',
+    'color:#F92855;',
     api, invalidParam, append ?? ''
   )
 }
 
 export function logTag (): void {
   log(
-    'test',
-    'border-radius:4px;border:dashed 1px #1677FF;line-height:70px;padding:0 20px;margin:16px 0;font-size:14px;color:#1677FF;',
-    '',
-    '',
-    '',
     ''
   )
 }
