@@ -134,23 +134,9 @@ export default class Event implements EventHandler {
 
   mouseWheelVertEvent (e: MouseTouchEvent, scale: number): boolean {
     const { widget } = this._findWidgetByEvent(e)
-    const isTouch = e.isTouch ?? false
     const event = this._makeWidgetEvent(e, widget)
-    let zoomCoordinate: Nullable<Coordinate> = null
     const name = widget?.getName()
-    if (isTouch) {
-      if (name === WidgetNameConstants.MAIN || name === WidgetNameConstants.X_AXIS) {
-        zoomCoordinate = { x: event.x, y: event.y }
-      } else {
-        const bounding = this._chart.getCandlePane().getBounding()
-        zoomCoordinate = { x: bounding.width / 2, y: bounding.height / 2 }
-      }
-    } else {
-      if (name === WidgetNameConstants.MAIN) {
-        zoomCoordinate = { x: event.x, y: event.y }
-      }
-    }
-    if (zoomCoordinate !== null) {
+    if (name === WidgetNameConstants.MAIN) {
       this._chart.getChartStore().getTimeScaleStore().zoom(scale, { x: event.x, y: event.y })
       return true
     }

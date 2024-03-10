@@ -141,7 +141,7 @@ export default class ChartImp implements Chart {
   private readonly _chartEvent: Event
   private readonly _chartStore: ChartStore
   private _drawPanes: DrawPane[] = []
-  private _candlePane: CandlePane
+  private _candlePane: Nullable<CandlePane>
   private _xAxisPane: XAxisPane
   private readonly _separatorPanes = new Map<DrawPane, SeparatorPane>()
 
@@ -434,8 +434,6 @@ export default class ChartImp implements Chart {
   getContainer (): HTMLElement { return this._container }
 
   getChartStore (): ChartStore { return this._chartStore }
-
-  getCandlePane (): CandlePane { return this._candlePane }
 
   getXAxisPane (): XAxisPane { return this._xAxisPane }
 

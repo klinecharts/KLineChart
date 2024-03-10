@@ -864,15 +864,13 @@ export default class SyntheticEvent {
     // We have to use the last Touch instead
     const eventLike = touch ?? (event as MouseEvent)
     const box = this._target.getBoundingClientRect() ?? { left: 0, top: 0 }
-
     return {
       x: eventLike.clientX - box.left,
       y: eventLike.clientY - box.top,
 
       pageX: eventLike.pageX,
       pageY: eventLike.pageY,
-
-      isTouch: !event.type.startsWith('mouse') && event.type !== 'contextmenu' && event.type !== 'click',
+      isTouch: !event.type.startsWith('mouse') && event.type !== 'contextmenu' && event.type !== 'click' && event.type !== 'wheel',
 
       preventDefault: () => {
         if (event.type !== 'touchstart') {
