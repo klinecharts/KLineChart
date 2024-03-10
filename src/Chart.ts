@@ -193,8 +193,7 @@ export default class ChartImp implements Chart {
           if (!candlePaneInitialized) {
             const paneOptions = child.options ?? {}
             merge(paneOptions, { id: PaneIdConstants.CANDLE })
-            const pane = this._createPane<CandlePane>(CandlePane, PaneIdConstants.CANDLE, paneOptions)
-            this._candlePane = pane
+            this._candlePane = this._createPane<CandlePane>(CandlePane, PaneIdConstants.CANDLE, paneOptions)
             const content = child.content ?? []
             content.forEach(v => {
               this.createIndicator(v, true, paneOptions)
@@ -219,6 +218,7 @@ export default class ChartImp implements Chart {
         }
         case LayoutChildType.XAxis: {
           createXAxisPane(child.options)
+          break
         }
       }
     })
@@ -253,6 +253,7 @@ export default class ChartImp implements Chart {
           ) {
             pane = new DrawPaneClass(this._chartContainer, p.getContainer(), this, id, options ?? {})
             index = i
+            break
           }
         }
       }
@@ -261,7 +262,7 @@ export default class ChartImp implements Chart {
       pane = new DrawPaneClass(this._chartContainer, null, this, id, options ?? {})
     }
     let newIndex: number
-    if (isValid(index)) {
+    if (isNumber(index)) {
       this._drawPanes.splice(index, 0, pane)
       newIndex = index
     } else {
@@ -347,7 +348,7 @@ export default class ChartImp implements Chart {
     const isYAxisLeft = yAxisStyles.position === YAxisPosition.Left
     const isOutside = !yAxisStyles.inside
     let mainWidth = 0
-    let yAxisWidth = Number.MIN_SAFE_INTEGER
+    let yAxisWidth = 0
     let yAxisLeft = 0
     let mainLeft = 0
     this._drawPanes.forEach(pane => {
