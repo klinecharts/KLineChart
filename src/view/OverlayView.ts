@@ -270,8 +270,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  private _figureMouseRightClickEvent (overlay: Overlay, _figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, _attrsIndex: number): MouseTouchEventCallback {
+  private _figureMouseRightClickEvent (overlay: Overlay, _figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, _attrsIndex: number): any {
     return (event: MouseTouchEvent) => {
+      if (overlay.groupId !== 'drawing_tools') {
+        return
+      }
       if (!(overlay.onRightClick?.({ overlay, figureIndex, figureKey, ...event }) ?? false)) {
         const pane = this.getWidget().getPane()
         const overlayStore = pane.getChart().getChartStore().getOverlayStore()
