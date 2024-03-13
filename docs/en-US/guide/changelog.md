@@ -1,5 +1,12 @@
 # 📠 Change Log
 
+## 9.8.1
+`2024-03-13`
++ 🐞 Fix an issue where initialize only `xAxis` in `layout` caused the chart to fail to initialize.
++ 🐞 Fix an issue when modify the built-in indicator `VOL` to `calcParams`.
++ 💄 Optimize the accuracy of width calculation when display decimal fold on the y-axis.
++ 💄 Optimize wheel event trigger.
+
 ## 9.8.0
 `2024-03-04`
 + 🆕 Support custom coordinate axis.
