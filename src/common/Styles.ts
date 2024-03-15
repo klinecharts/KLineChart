@@ -44,9 +44,11 @@ export interface LineStyle {
   dashedValue: number[]
 }
 
-export interface SmoothLineStyle extends LineStyle {
-  smooth: boolean
+export interface SmoothStyle {
+  smooth: boolean | number
 }
+
+export type SmoothLineStyle = SmoothStyle & LineStyle
 
 export interface StateLineStyle extends LineStyle {
   show: boolean
@@ -513,6 +515,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
   const lines = ['#FF9600', '#935EBD', blue, '#E11D74', '#01C5C4'].map(color => ({
     style: LineType.Solid,
     smooth: false,
+    smoothRange: [Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER],
     size: 1,
     dashedValue: [2, 2],
     color
