@@ -216,7 +216,7 @@ export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 're
 
 export type IndicatorConstructor<D = any> = new () => IndicatorImp<D>
 
-export type EachFigureCallback = (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle) => void
+export type EachFigureCallback = (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, index: number) => void
 
 export function eachFigures<D> (
   kLineDataList: KLineData[],
@@ -243,21 +243,25 @@ export function eachFigures<D> (
   let lineCount = 0
 
   let defaultFigureStyles
+  let figureIndex = 0
   figures.forEach(figure => {
     switch (figure.type) {
       case 'circle': {
+        figureIndex = circleCount
         const styles = circleStyles[circleCount % circleStyleCount]
         defaultFigureStyles = { ...styles, color: styles.noChangeColor }
         circleCount++
         break
       }
       case 'bar': {
+        figureIndex = barCount
         const styles = barStyles[barCount % barStyleCount]
         defaultFigureStyles = { ...styles, color: styles.noChangeColor }
         barCount++
         break
       }
       case 'line': {
+        figureIndex = lineCount
         defaultFigureStyles = lineStyles[lineCount % lineStyleCount]
         lineCount++
         break
@@ -272,7 +276,7 @@ export function eachFigures<D> (
       }
       const ss = figure.styles?.(cbData, indicator, defaultStyles)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      eachFigureCallback(figure, { ...defaultFigureStyles, ...ss })
+      eachFigureCallback(figure, { ...defaultFigureStyles, ...ss }, figureIndex)
     }
   })
 }

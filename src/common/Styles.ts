@@ -514,7 +514,7 @@ function getDefaultCandleStyle (): CandleStyle {
 function getDefaultIndicatorStyle (): IndicatorStyle {
   const lines = ['#FF9600', '#935EBD', blue, '#E11D74', '#01C5C4'].map(color => ({
     style: LineType.Solid,
-    smooth: true,
+    smooth: false,
     size: 1,
     dashedValue: [2, 2],
     color
