@@ -76,10 +76,66 @@ export function getLinearSlopeIntercept (coordinate1: Coordinate, coordinate2: C
   return null
 }
 
+export function lineTo (ctx: CanvasRenderingContext2D, coordinates: Coordinate[], smooth: number | boolean): void {
+  const length = coordinates.length
+  const smoothParam = isNumber(smooth) ? (smooth > 0 && smooth < 1 ? smooth : 0) : (smooth ? 0.5 : 0)
+  if ((smoothParam > 0) && length > 2) {
+    let cpx0 = coordinates[0].x
+    let cpy0 = coordinates[0].y
+    for (let i = 1; i < length - 1; i++) {
+      const prevCoordinate = coordinates[i - 1]
+      const coordinate = coordinates[i]
+      const nextCoordinate = coordinates[i + 1]
+      const dx01 = coordinate.x - prevCoordinate.x
+      const dy01 = coordinate.y - prevCoordinate.y
+      const dx12 = nextCoordinate.x - coordinate.x
+      const dy12 = nextCoordinate.y - coordinate.y
+      let dx02 = nextCoordinate.x - prevCoordinate.x
+      let dy02 = nextCoordinate.y - prevCoordinate.y
+      const prevSegmentLength = Math.sqrt(dx01 * dx01 + dy01 * dy01)
+      const nextSegmentLength = Math.sqrt(dx12 * dx12 + dy12 * dy12)
+      const segmentLengthRatio = nextSegmentLength / (nextSegmentLength + prevSegmentLength)
+
+      let nextCpx = coordinate.x + dx02 * smoothParam * segmentLengthRatio
+      let nextCpy = coordinate.y + dy02 * smoothParam * segmentLengthRatio
+      nextCpx = Math.min(nextCpx, Math.max(nextCoordinate.x, coordinate.x))
+      nextCpy = Math.min(nextCpy, Math.max(nextCoordinate.y, coordinate.y))
+      nextCpx = Math.max(nextCpx, Math.min(nextCoordinate.x, coordinate.x))
+      nextCpy = Math.max(nextCpy, Math.min(nextCoordinate.y, coordinate.y))
+
+      dx02 = nextCpx - coordinate.x
+      dy02 = nextCpy - coordinate.y
+
+      let cpx1 = coordinate.x - dx02 * prevSegmentLength / nextSegmentLength
+      let cpy1 = coordinate.y - dy02 * prevSegmentLength / nextSegmentLength
+
+      cpx1 = Math.min(cpx1, Math.max(prevCoordinate.x, coordinate.x))
+      cpy1 = Math.min(cpy1, Math.max(prevCoordinate.y, coordinate.y))
+      cpx1 = Math.max(cpx1, Math.min(prevCoordinate.x, coordinate.x))
+      cpy1 = Math.max(cpy1, Math.min(prevCoordinate.y, coordinate.y))
+
+      dx02 = coordinate.x - cpx1
+      dy02 = coordinate.y - cpy1
+      nextCpx = coordinate.x + dx02 * nextSegmentLength / prevSegmentLength
+      nextCpy = coordinate.y + dy02 * nextSegmentLength / prevSegmentLength
+
+      ctx.bezierCurveTo(cpx0, cpy0, cpx1, cpy1, coordinate.x, coordinate.y)
+
+      cpx0 = nextCpx
+      cpy0 = nextCpy
+    }
+    const lastCoordinate = coordinates[length - 1]
+    ctx.bezierCurveTo(cpx0, cpy0, lastCoordinate.x, lastCoordinate.y, lastCoordinate.x, lastCoordinate.y)
+  } else {
+    for (let i = 1; i < length; i++) {
+      ctx.lineTo(coordinates[i].x, coordinates[i].y)
+    }
+  }
+}
+
 export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<SmoothLineStyle>): void {
   const { coordinates } = attrs
-  const length = coordinates.length
-  if (length > 1) {
+  if (coordinates.length > 1) {
     const { style = LineType.Solid, smooth = false, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
     ctx.lineWidth = size
     ctx.strokeStyle = color
@@ -90,59 +146,7 @@ export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, style
     }
     ctx.beginPath()
     ctx.moveTo(coordinates[0].x, coordinates[0].y)
-    const smoothParam = isNumber(smooth) ? (smooth > 0 && smooth < 1 ? smooth : 0) : (smooth ? 0.5 : 0)
-    if ((smoothParam > 0) && length > 2) {
-      let cpx0 = coordinates[0].x
-      let cpy0 = coordinates[0].y
-      for (let i = 1; i < length - 1; i++) {
-        const prevCoordinate = coordinates[i - 1]
-        const coordinate = coordinates[i]
-        const nextCoordinate = coordinates[i + 1]
-        const dx01 = coordinate.x - prevCoordinate.x
-        const dy01 = coordinate.y - prevCoordinate.y
-        const dx12 = nextCoordinate.x - coordinate.x
-        const dy12 = nextCoordinate.y - coordinate.y
-        let dx02 = nextCoordinate.x - prevCoordinate.x
-        let dy02 = nextCoordinate.y - prevCoordinate.y
-        const prevSegmentLength = Math.sqrt(dx01 * dx01 + dy01 * dy01)
-        const nextSegmentLength = Math.sqrt(dx12 * dx12 + dy12 * dy12)
-        const segmentLengthRatio = nextSegmentLength / (nextSegmentLength + prevSegmentLength)
-
-        let nextCpx = coordinate.x + dx02 * smoothParam * segmentLengthRatio
-        let nextCpy = coordinate.y + dy02 * smoothParam * segmentLengthRatio
-        nextCpx = Math.min(nextCpx, Math.max(nextCoordinate.x, coordinate.x))
-        nextCpy = Math.min(nextCpy, Math.max(nextCoordinate.y, coordinate.y))
-        nextCpx = Math.max(nextCpx, Math.min(nextCoordinate.x, coordinate.x))
-        nextCpy = Math.max(nextCpy, Math.min(nextCoordinate.y, coordinate.y))
-
-        dx02 = nextCpx - coordinate.x
-        dy02 = nextCpy - coordinate.y
-
-        let cpx1 = coordinate.x - dx02 * prevSegmentLength / nextSegmentLength
-        let cpy1 = coordinate.y - dy02 * prevSegmentLength / nextSegmentLength
-
-        cpx1 = Math.min(cpx1, Math.max(prevCoordinate.x, coordinate.x))
-        cpy1 = Math.min(cpy1, Math.max(prevCoordinate.y, coordinate.y))
-        cpx1 = Math.max(cpx1, Math.min(prevCoordinate.x, coordinate.x))
-        cpy1 = Math.max(cpy1, Math.min(prevCoordinate.y, coordinate.y))
-
-        dx02 = coordinate.x - cpx1
-        dy02 = coordinate.y - cpy1
-        nextCpx = coordinate.x + dx02 * nextSegmentLength / prevSegmentLength
-        nextCpy = coordinate.y + dy02 * nextSegmentLength / prevSegmentLength
-
-        ctx.bezierCurveTo(cpx0, cpy0, cpx1, cpy1, coordinate.x, coordinate.y)
-
-        cpx0 = nextCpx
-        cpy0 = nextCpy
-      }
-      const lastCoordinate = coordinates[length - 1]
-      ctx.bezierCurveTo(cpx0, cpy0, lastCoordinate.x, lastCoordinate.y, lastCoordinate.x, lastCoordinate.y)
-    } else {
-      for (let i = 1; i < coordinates.length; i++) {
-        ctx.lineTo(coordinates[i].x, coordinates[i].y)
-      }
-    }
+    lineTo(ctx, coordinates, smooth)
     ctx.stroke()
     ctx.closePath()
   }

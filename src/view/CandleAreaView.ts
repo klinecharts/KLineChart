@@ -21,6 +21,8 @@ import ChildrenView from './ChildrenView'
 
 import { isNumber, isArray } from '../common/utils/typeChecks'
 
+import { lineTo } from '../extension/figure/line'
+
 export default class CandleAreaView extends ChildrenView {
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
@@ -29,49 +31,36 @@ export default class CandleAreaView extends ChildrenView {
     const bounding = widget.getBounding()
     const yAxis = pane.getAxisComponent()
     const candleAreaStyles = chart.getStyles().candle.area
-    const lineCoordinates: Coordinate[] = []
-    const areaCoordinates: Coordinate[] = []
+    const coordinates: Coordinate[] = []
     let minY = Number.MAX_SAFE_INTEGER
-    this.eachChildren((data: VisibleData, barSpace: BarSpace, i: number) => {
+    let areaStartX: number = 0
+    this.eachChildren((data: VisibleData, _: BarSpace, i: number) => {
       const { data: kLineData, x } = data
-      const { halfGapBar } = barSpace
+      // const { halfGapBar } = barSpace
       const value = kLineData?.[candleAreaStyles.value]
       if (isNumber(value)) {
         const y = yAxis.convertToPixel(value)
         if (i === 0) {
-          const startX = x - halfGapBar
-          areaCoordinates.push({ x: startX, y: bounding.height })
-          areaCoordinates.push({ x: startX, y })
-          lineCoordinates.push({ x: startX, y })
+          areaStartX = x
         }
-        lineCoordinates.push({ x, y })
-        areaCoordinates.push({ x, y })
+        coordinates.push({ x, y })
         minY = Math.min(minY, y)
       }
     })
-    const areaCoordinateCount = areaCoordinates.length
-    if (areaCoordinateCount > 0) {
-      const lastCoordinate: Coordinate = areaCoordinates[areaCoordinateCount - 1]
-      const endX = lastCoordinate.x
-      lineCoordinates.push({ x: endX, y: lastCoordinate.y })
-      areaCoordinates.push({ x: endX, y: lastCoordinate.y })
-      areaCoordinates.push({ x: endX, y: bounding.height })
-    }
 
-    if (lineCoordinates.length > 0) {
+    if (coordinates.length > 0) {
       this.createFigure({
         name: 'line',
-        attrs: { coordinates: lineCoordinates },
+        attrs: { coordinates },
         styles: {
           color: candleAreaStyles.lineColor,
-          size: candleAreaStyles.lineSize
+          size: candleAreaStyles.lineSize,
+          smooth: candleAreaStyles.smooth
         }
       }
       )?.draw(ctx)
-    }
 
-    if (areaCoordinates.length > 0) {
-      // Draw real-time background
+      // render area
       const backgroundColor = candleAreaStyles.backgroundColor
       let color: string | CanvasGradient
       if (isArray<GradientColor>(backgroundColor)) {
@@ -86,11 +75,14 @@ export default class CandleAreaView extends ChildrenView {
       } else {
         color = backgroundColor
       }
-      this.createFigure({
-        name: 'polygon',
-        attrs: { coordinates: areaCoordinates },
-        styles: { color }
-      })?.draw(ctx)
+      ctx.fillStyle = color
+      ctx.beginPath()
+      ctx.moveTo(areaStartX, bounding.height)
+      ctx.lineTo(coordinates[0].x, coordinates[0].y)
+      lineTo(ctx, coordinates, candleAreaStyles.smooth)
+      ctx.lineTo(coordinates[coordinates.length - 1].x, bounding.height)
+      ctx.closePath()
+      ctx.fill()
     }
   }
 }
