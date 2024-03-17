@@ -15,7 +15,7 @@
 import { getPixelRatio } from './utils/canvas'
 import { createDom } from './utils/dom'
 import { isValid } from './utils/typeChecks'
-import { requestAnimationFrame, cancelAnimationFrame, DEFAULT_REQUEST_ID } from './utils/compatible'
+import { requestAnimationFrame, DEFAULT_REQUEST_ID } from './utils/compatible'
 
 type DrawListener = () => void
 
@@ -104,15 +104,14 @@ export default class Canvas {
   }
 
   private _executeListener (fn?: () => void): void {
-    if (this._requestAnimationId !== DEFAULT_REQUEST_ID) {
-      cancelAnimationFrame(this._requestAnimationId)
-      this._requestAnimationId = DEFAULT_REQUEST_ID
+    if (this._requestAnimationId === DEFAULT_REQUEST_ID) {
+      this._requestAnimationId = requestAnimationFrame(() => {
+        this._ctx.clearRect(0, 0, this._width, this._height)
+        fn?.()
+        this._listener()
+        this._requestAnimationId = DEFAULT_REQUEST_ID
+      })
     }
-    this._requestAnimationId = requestAnimationFrame(() => {
-      this._ctx.clearRect(0, 0, this._width, this._height)
-      fn?.()
-      this._listener()
-    })
   }
 
   update (w: number, h: number): void {

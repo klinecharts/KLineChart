@@ -278,8 +278,8 @@ export default class ChartStore {
           this._timeScaleStore.adjustVisibleRange()
           this._tooltipStore.recalculateCrosshair(true)
           await this._indicatorStore.calcInstance()
+          this._chart.adjustPaneViewport(false, true, true, true)
         }
-        this._chart.adjustPaneViewport(false, true, true, true)
         this._actionStore.execute(ActionType.OnDataReady)
       } catch {}
     }
