@@ -225,8 +225,9 @@ export default class ChartStore {
   async addData (data: KLineData | KLineData[], type?: LoadDataType, more?: boolean): Promise<void> {
     let success = false
     let adjustFlag = false
-
+    let dataLengthChange = 0
     if (isArray<KLineData>(data)) {
+      dataLengthChange = data.length
       switch (type) {
         case LoadDataType.Init: {
           this.clear()
@@ -239,13 +240,13 @@ export default class ChartStore {
         case LoadDataType.Backward: {
           this._dataList = this._dataList.concat(data)
           this._backwardMore = more ?? false
-          adjustFlag = data.length > 0
+          adjustFlag = dataLengthChange > 0
           break
         }
         case LoadDataType.Forward: {
           this._dataList = data.concat(this._dataList)
           this._forwardMore = more ?? false
-          adjustFlag = data.length > 0
+          adjustFlag = dataLengthChange > 0
         }
       }
       this._loading = false
@@ -261,6 +262,7 @@ export default class ChartStore {
         if (lastBarRightSideDiffBarCount < 0) {
           this._timeScaleStore.setLastBarRightSideDiffBarCount(--lastBarRightSideDiffBarCount)
         }
+        dataLengthChange = 1
         success = true
         adjustFlag = true
       } else if (timestamp === lastDataTimestamp) {
@@ -271,6 +273,7 @@ export default class ChartStore {
     }
     if (success) {
       try {
+        this._overlayStore.updatePointPosition(dataLengthChange, type)
         if (adjustFlag) {
           this._timeScaleStore.adjustVisibleRange()
           this._tooltipStore.recalculateCrosshair(true)
