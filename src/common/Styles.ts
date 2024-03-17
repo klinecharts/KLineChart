@@ -168,12 +168,23 @@ export interface TooltipStyle {
   icons: TooltipIconStyle[]
 }
 
+export interface CandleAreaPointStyle {
+  show: boolean
+  color: string
+  radius: number
+  rippleColor: string
+  rippleRadius: number
+  animation: boolean
+  animationDuration: number
+}
+
 export interface CandleAreaStyle {
   lineSize: number
   lineColor: string
   value: string
   smooth: boolean
   backgroundColor: string | GradientColor[]
+  point: CandleAreaPointStyle
 }
 
 export interface CandleHighLowPriceMarkStyle {
@@ -437,7 +448,16 @@ function getDefaultCandleStyle (): CandleStyle {
       }, {
         offset: 1,
         color: getAlphaBlue(0.2)
-      }]
+      }],
+      point: {
+        show: true,
+        color: blue,
+        radius: 4,
+        rippleColor: getAlphaBlue(0.3),
+        rippleRadius: 8,
+        animation: true,
+        animationDuration: 1000
+      }
     },
     priceMark: {
       show: true,
