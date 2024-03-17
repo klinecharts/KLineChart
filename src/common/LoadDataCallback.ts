@@ -16,6 +16,7 @@ import type Nullable from './Nullable'
 import type KLineData from './KLineData'
 
 enum LoadDataType {
+  Init = 'init',
   Forward = 'forward',
   Backward = 'backward'
 }

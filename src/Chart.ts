@@ -33,6 +33,7 @@ import { getPixelRatio } from './common/utils/canvas'
 import { isString, isArray, isValid, merge, isNumber } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
+import { LoadDataType } from './common/LoadDataCallback'
 
 import ChartStore from './store/ChartStore'
 
@@ -675,7 +676,7 @@ export default class ChartImp implements Chart {
     if (isValid(callback)) {
       logWarn('applyNewData', '', 'param `callback` has been deprecated since version 9.8.0, use `subscribeAction(\'onDataReady\')` instead.')
     }
-    this._chartStore.addData(data, true, more).then(() => {}).catch(() => {}).finally(() => { callback?.() })
+    this._chartStore.addData(data, LoadDataType.Init, more).then(() => {}).catch(() => {}).finally(() => { callback?.() })
   }
 
   /**
@@ -685,14 +686,14 @@ export default class ChartImp implements Chart {
   applyMoreData (data: KLineData[], more?: boolean, callback?: () => void): void {
     logWarn('', '', 'Api `applyMoreData` has been deprecated since version 9.8.0.')
     const dataList = data.concat(this._chartStore.getDataList())
-    this._chartStore.addData(dataList, false, more ?? true).then(() => {}).catch(() => {}).finally(() => { callback?.() })
+    this._chartStore.addData(dataList, LoadDataType.Forward, more ?? true).then(() => {}).catch(() => {}).finally(() => { callback?.() })
   }
 
   updateData (data: KLineData, callback?: () => void): void {
     if (isValid(callback)) {
       logWarn('updateData', '', 'param `callback` has been deprecated since version 9.8.0, use `subscribeAction(\'onDataReady\')` instead.')
     }
-    this._chartStore.addData(data, false).then(() => {}).catch(() => {}).finally(() => { callback?.() })
+    this._chartStore.addData(data).then(() => {}).catch(() => {}).finally(() => { callback?.() })
   }
 
   /**

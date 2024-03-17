@@ -17,7 +17,7 @@ import type KLineData from '../common/KLineData'
 import type Precision from '../common/Precision'
 import type VisibleData from '../common/VisibleData'
 import { getDefaultStyles, type Styles } from '../common/Styles'
-import { isArray, isBoolean, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
+import { isArray, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 import { formatValue } from '../common/utils/format'
 import type LoadDataCallback from '../common/LoadDataCallback'
 import { type LoadDataParams, LoadDataType } from '../common/LoadDataCallback'
@@ -222,18 +222,30 @@ export default class ChartStore {
     return this._visibleDataList
   }
 
-  async addData (data: KLineData | KLineData[], isFirstAdd: boolean, more?: boolean): Promise<void> {
+  async addData (data: KLineData | KLineData[], type?: LoadDataType, more?: boolean): Promise<void> {
     let success = false
+    let adjustFlag = false
+
     if (isArray<KLineData>(data)) {
-      if (isFirstAdd) {
-        this.clear()
-        this._dataList = data
-        this._forwardMore = more ?? true
-        this._timeScaleStore.resetOffsetRightDistance()
-      } else {
-        this._dataList = data
-        if (isBoolean(more)) {
-          this._forwardMore = more
+      switch (type) {
+        case LoadDataType.Init: {
+          this.clear()
+          this._dataList = data
+          this._forwardMore = more ?? true
+          this._timeScaleStore.resetOffsetRightDistance()
+          adjustFlag = true
+          break
+        }
+        case LoadDataType.Backward: {
+          this._dataList = this._dataList.concat(data)
+          this._backwardMore = more ?? false
+          adjustFlag = data.length > 0
+          break
+        }
+        case LoadDataType.Forward: {
+          this._dataList = data.concat(this._dataList)
+          this._forwardMore = more ?? false
+          adjustFlag = data.length > 0
         }
       }
       this._loading = false
@@ -250,16 +262,20 @@ export default class ChartStore {
           this._timeScaleStore.setLastBarRightSideDiffBarCount(--lastBarRightSideDiffBarCount)
         }
         success = true
+        adjustFlag = true
       } else if (timestamp === lastDataTimestamp) {
         this._dataList[dataCount - 1] = data
         success = true
+        adjustFlag = true
       }
     }
     if (success) {
-      this._timeScaleStore.adjustVisibleRange()
-      this._tooltipStore.recalculateCrosshair(true)
       try {
-        await this._indicatorStore.calcInstance()
+        if (adjustFlag) {
+          this._timeScaleStore.adjustVisibleRange()
+          this._tooltipStore.recalculateCrosshair(true)
+          await this._indicatorStore.calcInstance()
+        }
         this._chart.adjustPaneViewport(false, true, true, true)
         this._actionStore.execute(ActionType.OnDataReady)
       } catch {}
@@ -291,15 +307,7 @@ export default class ChartStore {
       )
     ) {
       const cb: ((data: KLineData[], more?: boolean) => void) = (data: KLineData[], more?: boolean) => {
-        let dataList: KLineData[] = []
-        if (params.type === LoadDataType.Backward) {
-          dataList = this._dataList.concat(data)
-          this._backwardMore = more ?? false
-        } else {
-          dataList = data.concat(this._dataList)
-          this._forwardMore = more ?? false
-        }
-        this.addData(dataList, false).then(() => {}).catch(() => {})
+        this.addData(data, params.type, more).then(() => {}).catch(() => {})
       }
       this._loading = true
       this._loadDataCallback({ ...params, callback: cb })
