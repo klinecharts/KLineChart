@@ -9,8 +9,33 @@
       <div class="vip-content-item">
         <h3 class="vip-content-item-title">{{ lang === 'zh-CN' ? 'VIP答疑' : 'VIP Q&A' }}</h3>
         <p class="vip-content-item-sub-title">{{ lang === 'zh-CN' ? '专属微信VIP群解答疑难问题' : 'Exclusive wechat VIP group to answer difficult questions' }}</p>
+        <template v-if="diffDate">
+          <p
+            style="font-size: 14px;padding-bottom: 14px;font-family: Arial, Helvetica, sans-serif;"
+            v-if="diffDate && lang === 'zh-CN'">
+            限时特价&nbsp;&nbsp;
+            <span v-if="diffDate.d > 0">
+              {{ diffDate.d }}<span style="padding-left: 2px;padding-right:2px;">天</span>
+            </span>
+            <span v-if="diffDate.d > 0 || diffDate.h > 0">
+              {{ diffDate.h > 9 ? diffDate.h : `0${diffDate.h}` }}<span style="padding-left: 3px;padding-right:3px;">小时</span>
+            </span>
+            <span v-if="diffDate.d > 0 || diffDate.h > 0 || diffDate.m > 0">
+              {{ diffDate.m > 9 ? diffDate.m : `0${diffDate.m}` }}<span style="padding-left: 3px;padding-right:3px;">分</span>
+            </span>
+            <span>
+              {{ diffDate.s > 9 ? diffDate.s : `0${diffDate.s}` }}<span style="padding-left: 3px;">秒</span>
+            </span>
+          </p>
+          <p
+            style="font-size: 14px;padding-bottom: 14px;font-family: Arial, Helvetica, sans-serif;"
+            v-else>
+            Special offer  {{ diffDate.d }}:{{ diffDate.h > 9 ? diffDate.h : `0${diffDate.h}` }}:{{ diffDate.m > 9 ? diffDate.m : `0${diffDate.m}` }}:{{ diffDate.s > 9 ? diffDate.s : `0${diffDate.s}` }}
+          </p>
+        </template>
+        
         <p class="vip-content-item-price">
-          {{ lang === 'zh-CN' ? '¥ 300.00' : '$ 48.00' }}<span class="vip-content-item-original-price">{{ lang === 'zh-CN' ? '¥ 500.00' : '$ 78.00' }}</span>
+          {{ lang === 'zh-CN' ? `${diffDate ? '¥ 300.00' : '¥ 500.00'}` : `${diffDate ? '$ 48.00' : '$ 78.00'}` }}<span v-if="diffDate" class="vip-content-item-original-price">{{ lang === 'zh-CN' ? '¥ 500.00' : '$ 78.00' }}</span>
         </p>
         <ul class="vip-content-item-access-list">
           <li>
@@ -74,9 +99,34 @@
 </template>
 
 <script setup>
+import { onMounted, ref } from 'vue'
 import { useData } from 'vitepress'
 
 const { lang } = useData()
+
+const diffDate = ref(null)
+
+onMounted(() => {
+  const countdown = () => {
+    const time = new Date().getTime();
+    const endTime = new Date('2024-05-01').getTime()
+    const diff = endTime - time
+    if (diff > 0) {
+      const d = Math.floor(diff / 24 / 60 / 60 / 1000)
+      const h = Math.floor((diff % (24 * 60 * 60 * 1000)) / 60 / 60 / 1000)
+      const m = Math.floor((diff % (60 * 60 * 1000)) / 60 / 1000)
+      const s = Math.floor((diff % (60 * 1000)) / 1000)
+      diffDate.value = { d, h, m, s }
+      setTimeout(() => {
+        countdown()
+      }, 1000)
+    } else {
+      diffDate.value = null
+    }
+  }
+  countdown()
+})
+
 </script>
 <style scoped>
 .vip-title {
@@ -140,8 +190,10 @@ const { lang } = useData()
   font-size: 16px;
   text-align: center;
   padding-top: 6px;
+  padding-bottom: 26px;
   color: var(--vp-c-text-2);
 }
+
 .vip-content-item-price {
   display: flex;
   align-items: center;
@@ -149,7 +201,7 @@ const { lang } = useData()
   font-size: 38px;
   font-weight: bold;
   text-align: center;
-  padding: 30px 0;
+  padding: 0 0 30px 0;
 }
 
 .vip-content-item-original-price {
