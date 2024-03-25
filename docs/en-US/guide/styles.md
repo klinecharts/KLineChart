@@ -44,6 +44,7 @@ import StyleExplain from '../../components/StyleExplain.vue'
     area: {
       lineSize: 2,
       lineColor: '#2196F3',
+      smooth: false,
       value: 'close',
       backgroundColor: [{
         offset: 0,
@@ -51,7 +52,16 @@ import StyleExplain from '../../components/StyleExplain.vue'
       }, {
         offset: 1,
         color: 'rgba(33, 150, 243, 0.2)'
-      }]
+      }],
+      point: {
+        show: true,
+        color: blue,
+        radius: 4,
+        rippleColor: getAlphaBlue(0.3),
+        rippleRadius: 8,
+        animation: true,
+        animationDuration: 1000
+      }
     },
     priceMark: {
       show: true,
@@ -115,7 +125,14 @@ import StyleExplain from '../../components/StyleExplain.vue'
       // title or title.text can be an internationalized key,
       // value or value.text supports string templates
       // For example: want to display time, opening and closing, configure [{ title: 'time', value: '{time}' }, { title: 'open', value: '{open}' }, { title: ' close', value: '{close}' }]
-      custom: null,
+      custom: [
+        { title: 'time', value: '{time}' },
+        { title: 'open', value: '{open}' },
+        { title: 'high', value: '{high}' },
+        { title: 'low', value: '{low}' },
+        { title: 'close', value: '{close}' },
+        { title: 'volume', value: '{volume}' }
+      ],
       defaultValue: 'n/a',
       rect: {
        // 'fixed' | 'pointer'

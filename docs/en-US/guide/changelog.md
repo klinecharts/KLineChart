@@ -1,5 +1,11 @@
 # 📠 Change Log
 
+## 9.8.2
+`2024-03-26`
++ 💄 Optimize the display of the area chart.
++ 💄 Optimize smooth line drawing.
++ 🐞 Fix the overlay and drawing it to future time may not be an issue.
+
 ## 9.8.1
 `2024-03-13`
 + 🐞 Fix an issue where initialize only `xAxis` in `layout` caused the chart to fail to initialize.
