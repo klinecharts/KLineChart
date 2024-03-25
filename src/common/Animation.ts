@@ -37,16 +37,11 @@ export default class Animation {
     merge(this._options, options)
   }
 
-  _getTime (): number {
-    return new Date().getTime()
-  }
-
   _loop (): void {
     this._running = true
     const step: (() => void) = () => {
       if (this._running) {
-        const time = this._getTime()
-        const diffTime = time - this._time
+        const diffTime = new Date().getTime() - this._time
         if (diffTime < this._options.duration) {
           this._doFrameCallback?.(diffTime)
           requestAnimationFrame(step)

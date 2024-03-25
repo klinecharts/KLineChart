@@ -52,7 +52,6 @@ export default class CandleAreaView extends ChildrenView {
     let indicatePointCoordinate: Nullable<Coordinate> = null
     this.eachChildren((data: VisibleData, _: BarSpace, i: number) => {
       const { data: kLineData, x } = data
-      // const { halfGapBar } = barSpace
       const value = kLineData?.[styles.value]
       if (isNumber(value)) {
         const y = yAxis.convertToPixel(value)

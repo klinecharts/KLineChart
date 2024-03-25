@@ -232,7 +232,7 @@ export interface CandleTooltipCustomCallbackData {
 export type CandleTooltipCustomCallback = (data: CandleTooltipCustomCallbackData, styles: CandleStyle) => TooltipData[]
 
 export interface CandleTooltipStyle extends TooltipStyle {
-  custom: Nullable<CandleTooltipCustomCallback> | Nullable<TooltipData[]>
+  custom: CandleTooltipCustomCallback | TooltipData[]
   rect: CandleTooltipRectStyle
 }
 
@@ -496,7 +496,14 @@ function getDefaultCandleStyle (): CandleStyle {
     tooltip: {
       showRule: TooltipShowRule.Always,
       showType: TooltipShowType.Standard,
-      custom: null,
+      custom: [
+        { title: 'time', value: '{time}' },
+        { title: 'open', value: '{open}' },
+        { title: 'high', value: '{high}' },
+        { title: 'low', value: '{low}' },
+        { title: 'close', value: '{close}' },
+        { title: 'volume', value: '{volume}' }
+      ],
       defaultValue: 'n/a',
       rect: {
         position: CandleTooltipRectPosition.Fixed,
