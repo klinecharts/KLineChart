@@ -50,6 +50,7 @@ export interface IndicatorFigureCallbackBrother<PCN> {
 export type IndicatorFigureAttrsCallbackCoordinate<D> = IndicatorFigureCallbackBrother<Record<keyof D, number> & { x: number }>
 
 export interface IndicatorFigureAttrsCallbackParams<D> {
+  currentData: D
   coordinate: IndicatorFigureAttrsCallbackCoordinate<D>
   bounding: Bounding
   barSpace: BarSpace

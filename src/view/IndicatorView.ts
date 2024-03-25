@@ -134,7 +134,8 @@ export default class IndicatorView extends CandleBarView {
                   bounding,
                   barSpace,
                   xAxis,
-                  yAxis
+                  yAxis,
+                  currentData: currentIndicatorData
                 })
                 if (!isValid<IndicatorFigureAttrs>(attrs)) {
                   switch (figure.type) {
