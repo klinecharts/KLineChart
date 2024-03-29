@@ -75,7 +75,7 @@ export default class CandleBarView extends ChildrenView {
           ]
           priceY.sort((a, b) => a - b)
 
-          let rects: Array<FigureCreate<RectAttrs, Partial<RectStyle>>> = []
+          let rects: Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> = []
           switch (type) {
             case CandleType.CandleSolid: {
               rects = this._createSolidBar(x, priceY, barSpace, colors)
@@ -106,30 +106,26 @@ export default class CandleBarView extends ChildrenView {
               rects = [
                 {
                   name: 'rect',
-                  attrs: {
-                    x: x - size / 2,
-                    y: priceY[0],
-                    width: size,
-                    height: priceY[3] - priceY[0]
-                  },
-                  styles: { color: colors[0] }
-                }, {
-                  name: 'rect',
-                  attrs: {
-                    x: x - barSpace.halfGapBar,
-                    y: openY + size > priceY[3] ? priceY[3] - size : openY,
-                    width: barSpace.halfGapBar - size / 2,
-                    height: size
-                  },
-                  styles: { color: colors[0] }
-                }, {
-                  name: 'rect',
-                  attrs: {
-                    x: x + size / 2,
-                    y: closeY + size > priceY[3] ? priceY[3] - size : closeY,
-                    width: barSpace.halfGapBar - size / 2,
-                    height: size
-                  },
+                  attrs: [
+                    {
+                      x: x - size / 2,
+                      y: priceY[0],
+                      width: size,
+                      height: priceY[3] - priceY[0]
+                    },
+                    {
+                      x: x - barSpace.halfGapBar,
+                      y: openY + size > priceY[3] ? priceY[3] - size : openY,
+                      width: barSpace.halfGapBar - size / 2,
+                      height: size
+                    },
+                    {
+                      x: x + size / 2,
+                      y: closeY + size > priceY[3] ? priceY[3] - size : closeY,
+                      width: barSpace.halfGapBar - size / 2,
+                      height: size
+                    }
+                  ],
                   styles: { color: colors[0] }
                 }
               ]
@@ -158,7 +154,7 @@ export default class CandleBarView extends ChildrenView {
     }
   }
 
-  private _createSolidBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs, Partial<RectStyle>>> {
+  private _createSolidBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {
     return [
       {
         name: 'rect',
@@ -187,16 +183,24 @@ export default class CandleBarView extends ChildrenView {
     ]
   }
 
-  private _createStrokeBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs, Partial<RectStyle>>> {
+  private _createStrokeBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {
     return [
       {
         name: 'rect',
-        attrs: {
-          x: x - 0.5,
-          y: priceY[0],
-          width: 1,
-          height: priceY[1] - priceY[0]
-        },
+        attrs: [
+          {
+            x: x - 0.5,
+            y: priceY[0],
+            width: 1,
+            height: priceY[1] - priceY[0]
+          },
+          {
+            x: x - 0.5,
+            y: priceY[2],
+            width: 1,
+            height: priceY[3] - priceY[2]
+          }
+        ],
         styles: { color: colors[2] }
       },
       {
@@ -211,16 +215,6 @@ export default class CandleBarView extends ChildrenView {
           style: PolygonType.Stroke,
           borderColor: colors[1]
         }
-      },
-      {
-        name: 'rect',
-        attrs: {
-          x: x - 0.5,
-          y: priceY[2],
-          width: 1,
-          height: priceY[3] - priceY[2]
-        },
-        styles: { color: colors[2] }
       }
     ]
   }

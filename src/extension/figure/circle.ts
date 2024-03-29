@@ -19,15 +19,25 @@ import { isTransparent } from '../../common/utils/color'
 
 import { type FigureTemplate } from '../../component/Figure'
 
-export function checkCoordinateOnCircle (coordinate: Coordinate, circle: CircleAttrs): boolean {
-  const difX = coordinate.x - circle.x
-  const difY = coordinate.y - circle.y
-  const r = circle.r
-  return !(difX * difX + difY * difY > r * r)
+export function checkCoordinateOnCircle (coordinate: Coordinate, attrs: CircleAttrs | CircleAttrs[]): boolean {
+  let circles: CircleAttrs[] = []
+  circles = circles.concat(attrs)
+
+  for (let i = 0; i < circles.length; i++) {
+    const { x, y, r } = circles[i]
+    const difX = coordinate.x - x
+    const difY = coordinate.y - y
+    if (!(difX * difX + difY * difY > r * r)) {
+      return true
+    }
+  }
+  return false
 }
 
-export function drawCircle (ctx: CanvasRenderingContext2D, attrs: CircleAttrs, styles: Partial<PolygonStyle>): void {
-  const { x, y, r } = attrs
+export function drawCircle (ctx: CanvasRenderingContext2D, attrs: CircleAttrs | CircleAttrs[], styles: Partial<PolygonStyle>): void {
+  let circles: CircleAttrs[] = []
+  circles = circles.concat(attrs)
+
   const {
     style = PolygonType.Fill,
     color = 'currentColor',
@@ -41,10 +51,12 @@ export function drawCircle (ctx: CanvasRenderingContext2D, attrs: CircleAttrs, s
     (!isString(color) || !isTransparent(color))
   ) {
     ctx.fillStyle = color
-    ctx.beginPath()
-    ctx.arc(x, y, r, 0, Math.PI * 2)
-    ctx.closePath()
-    ctx.fill()
+    circles.forEach(({ x, y, r }) => {
+      ctx.beginPath()
+      ctx.arc(x, y, r, 0, Math.PI * 2)
+      ctx.closePath()
+      ctx.fill()
+    })
   }
   if ((style === PolygonType.Stroke || styles.style === PolygonType.StrokeFill) && borderSize > 0 && !isTransparent(borderColor)) {
     ctx.strokeStyle = borderColor
@@ -54,10 +66,12 @@ export function drawCircle (ctx: CanvasRenderingContext2D, attrs: CircleAttrs, s
     } else {
       ctx.setLineDash([])
     }
-    ctx.beginPath()
-    ctx.arc(x, y, r, 0, Math.PI * 2)
-    ctx.closePath()
-    ctx.stroke()
+    circles.forEach(({ x, y, r }) => {
+      ctx.beginPath()
+      ctx.arc(x, y, r, 0, Math.PI * 2)
+      ctx.closePath()
+      ctx.stroke()
+    })
   }
 }
 
@@ -67,10 +81,10 @@ export interface CircleAttrs {
   r: number
 }
 
-const circle: FigureTemplate<CircleAttrs, Partial<PolygonStyle>> = {
+const circle: FigureTemplate<CircleAttrs | CircleAttrs[], Partial<PolygonStyle>> = {
   name: 'circle',
   checkEventOn: checkCoordinateOnCircle,
-  draw: (ctx: CanvasRenderingContext2D, attrs: CircleAttrs, styles: Partial<PolygonStyle>) => {
+  draw: (ctx: CanvasRenderingContext2D, attrs: CircleAttrs | CircleAttrs[], styles: Partial<PolygonStyle>) => {
     drawCircle(ctx, attrs, styles)
   }
 }

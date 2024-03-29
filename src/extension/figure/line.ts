@@ -19,28 +19,33 @@ import { type SmoothLineStyle, LineType } from '../../common/Styles'
 import { type FigureTemplate, DEVIATION } from '../../component/Figure'
 import { isNumber } from '../../common/utils/typeChecks'
 
-export function checkCoordinateOnLine (coordinate: Coordinate, line: LineAttrs): boolean {
-  const coordinates = line.coordinates
-  if (coordinates.length > 1) {
-    for (let i = 1; i < coordinates.length; i++) {
-      const prevCoordinate = coordinates[i - 1]
-      const currentCoordinate = coordinates[i]
-      if (prevCoordinate.x === currentCoordinate.x) {
-        if (
-          Math.abs(prevCoordinate.y - coordinate.y) + Math.abs(currentCoordinate.y - coordinate.y) - Math.abs(prevCoordinate.y - currentCoordinate.y) < DEVIATION + DEVIATION &&
-          Math.abs(coordinate.x - prevCoordinate.x) < DEVIATION
-        ) {
-          return true
-        }
-      } else {
-        const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate)!
-        const y = getLinearYFromSlopeIntercept(kb, coordinate)
-        const yDif = Math.abs(y - coordinate.y)
-        if (
-          Math.abs(prevCoordinate.x - coordinate.x) + Math.abs(currentCoordinate.x - coordinate.x) - Math.abs(prevCoordinate.x - currentCoordinate.x) < DEVIATION + DEVIATION &&
-          yDif * yDif / (kb[0] * kb[0] + 1) < DEVIATION * DEVIATION
-        ) {
-          return true
+export function checkCoordinateOnLine (coordinate: Coordinate, attrs: LineAttrs | LineAttrs[]): boolean {
+  let lines: LineAttrs[] = []
+  lines = lines.concat(attrs)
+
+  for (let i = 0; i < lines.length; i++) {
+    const { coordinates } = lines[i]
+    if (coordinates.length > 1) {
+      for (let i = 1; i < coordinates.length; i++) {
+        const prevCoordinate = coordinates[i - 1]
+        const currentCoordinate = coordinates[i]
+        if (prevCoordinate.x === currentCoordinate.x) {
+          if (
+            Math.abs(prevCoordinate.y - coordinate.y) + Math.abs(currentCoordinate.y - coordinate.y) - Math.abs(prevCoordinate.y - currentCoordinate.y) < DEVIATION + DEVIATION &&
+            Math.abs(coordinate.x - prevCoordinate.x) < DEVIATION
+          ) {
+            return true
+          }
+        } else {
+          const kb = getLinearSlopeIntercept(prevCoordinate, currentCoordinate)!
+          const y = getLinearYFromSlopeIntercept(kb, coordinate)
+          const yDif = Math.abs(y - coordinate.y)
+          if (
+            Math.abs(prevCoordinate.x - coordinate.x) + Math.abs(currentCoordinate.x - coordinate.x) - Math.abs(prevCoordinate.x - currentCoordinate.x) < DEVIATION + DEVIATION &&
+            yDif * yDif / (kb[0] * kb[0] + 1) < DEVIATION * DEVIATION
+          ) {
+            return true
+          }
         }
       }
     }
@@ -133,33 +138,36 @@ export function lineTo (ctx: CanvasRenderingContext2D, coordinates: Coordinate[]
   }
 }
 
-export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<SmoothLineStyle>): void {
-  const { coordinates } = attrs
-  if (coordinates.length > 1) {
-    const { style = LineType.Solid, smooth = false, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
-    ctx.lineWidth = size
-    ctx.strokeStyle = color
-    if (style === LineType.Dashed) {
-      ctx.setLineDash(dashedValue)
-    } else {
-      ctx.setLineDash([])
-    }
-    ctx.beginPath()
-    ctx.moveTo(coordinates[0].x, coordinates[0].y)
-    lineTo(ctx, coordinates, smooth)
-    ctx.stroke()
-    ctx.closePath()
+export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs | LineAttrs[], styles: Partial<SmoothLineStyle>): void {
+  let lines: LineAttrs[] = []
+  lines = lines.concat(attrs)
+  const { style = LineType.Solid, smooth = false, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
+  ctx.lineWidth = size
+  ctx.strokeStyle = color
+  if (style === LineType.Dashed) {
+    ctx.setLineDash(dashedValue)
+  } else {
+    ctx.setLineDash([])
   }
+  lines.forEach(({ coordinates }) => {
+    if (coordinates.length > 1) {
+      ctx.beginPath()
+      ctx.moveTo(coordinates[0].x, coordinates[0].y)
+      lineTo(ctx, coordinates, smooth)
+      ctx.stroke()
+      ctx.closePath()
+    }
+  })
 }
 
 export interface LineAttrs {
   coordinates: Coordinate[]
 }
 
-const line: FigureTemplate<LineAttrs, Partial<SmoothLineStyle>> = {
+const line: FigureTemplate<LineAttrs | LineAttrs[], Partial<SmoothLineStyle>> = {
   name: 'line',
   checkEventOn: checkCoordinateOnLine,
-  draw: (ctx: CanvasRenderingContext2D, attrs: LineAttrs, styles: Partial<SmoothLineStyle>) => {
+  draw: (ctx: CanvasRenderingContext2D, attrs: LineAttrs | LineAttrs[], styles: Partial<SmoothLineStyle>) => {
     drawLine(ctx, attrs, styles)
   }
 }
