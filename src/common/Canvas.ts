@@ -46,16 +46,16 @@ export default class Canvas {
   private _pixelWidth = 0
   private _pixelHeight = 0
 
+  private _nextPixelWidth = 0
+  private _nextPixelHeight = 0
+
   private _requestAnimationId = DEFAULT_REQUEST_ID
 
   private readonly _mediaQueryListener: () => void = () => {
     const pixelRatio = getPixelRatio(this._element)
-    this._resetPixelRatio(
-      Math.round(this._element.clientWidth * pixelRatio),
-      Math.round(this._element.clientHeight * pixelRatio),
-      pixelRatio,
-      pixelRatio
-    )
+    this._nextPixelWidth = Math.round(this._element.clientWidth * pixelRatio)
+    this._nextPixelHeight = Math.round(this._element.clientHeight * pixelRatio)
+    this._resetPixelRatio()
   }
 
   constructor (style: Partial<CSSStyleDeclaration>, listener: DrawListener) {
@@ -69,10 +69,10 @@ export default class Canvas {
           const entry = entries.find((entry: ResizeObserverEntry) => entry.target === this._element)
           const size = entry?.devicePixelContentBoxSize?.[0]
           if (isValid(size)) {
-            const width = size.inlineSize
-            const height = size.blockSize
-            if (this._pixelWidth !== width || this._pixelHeight !== height) {
-              this._resetPixelRatio(width, height, width / this._element.clientWidth, height / this._element.clientHeight)
+            this._nextPixelWidth = size.inlineSize
+            this._nextPixelHeight = size.blockSize
+            if (this._pixelWidth !== this._nextPixelWidth || this._pixelHeight !== this._nextPixelHeight) {
+              this._resetPixelRatio()
             }
           }
         })
@@ -84,21 +84,18 @@ export default class Canvas {
     }).catch(_ => false)
   }
 
-  private _resetPixelRatio (
-    pixelWidth: number,
-    pixelHeight: number,
-    horizontalPixelRatio: number,
-    verticalPixelRatio: number
-  ): void {
+  private _resetPixelRatio (): void {
     this._executeListener(() => {
       const width = this._element.clientWidth
       const height = this._element.clientHeight
+      const horizontalPixelRatio = this._nextPixelWidth / width
+      const verticalPixelRatio = this._nextPixelHeight / height
       this._width = width
       this._height = height
-      this._pixelWidth = pixelWidth
-      this._pixelHeight = pixelHeight
-      this._element.width = pixelWidth
-      this._element.height = pixelHeight
+      this._pixelWidth = this._nextPixelWidth
+      this._pixelHeight = this._nextPixelHeight
+      this._element.width = this._nextPixelWidth
+      this._element.height = this._nextPixelHeight
       this._ctx.scale(horizontalPixelRatio, verticalPixelRatio)
     })
   }
@@ -120,12 +117,9 @@ export default class Canvas {
       this._element.style.height = `${h}px`
       if (!this._supportedDevicePixelContentBox) {
         const pixelRatio = getPixelRatio(this._element)
-        this._resetPixelRatio(
-          Math.round(w * pixelRatio),
-          Math.round(h * pixelRatio),
-          pixelRatio,
-          pixelRatio
-        )
+        this._nextPixelWidth = Math.round(w * pixelRatio)
+        this._nextPixelHeight = Math.round(h * pixelRatio)
+        this._resetPixelRatio()
       }
     } else {
       this._executeListener()
