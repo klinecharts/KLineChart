@@ -49,12 +49,40 @@ export default defineConfig({
       link: '/',
       themeConfig: {
         nav: [
-          { text: '指南', link: '/guide/what-is-klinechart', activeMatch: 'guide' },
+          {
+            text: '文档',
+            link: '/guide/introduction',
+            activeMatch: 'guide'
+          },
           { text: '示例', link: '/sample/basic', activeMatch: 'sample' },
-          { text: 'Pro', link: 'https://pro.klinecharts.com' },
           { text: '预览', link: 'https://preview.klinecharts.com' },
           { text: 'VIP', link: '/vip' },
           { text: '赞助', link: '/sponsor' },
+          {
+            text: '更多',
+            items: [
+              {
+                text: '资源',
+                items: [
+                  { text: 'Pro', link: 'https://pro.klinecharts.com' },
+                  { text: '扩展(建设中)', link: 'https://klinecharts.com' }
+                ]
+              },
+              {
+                text: '开发指南',
+                items: [
+                  { text: '本地开发', link: '/more/local-development' },
+                ]
+              },
+              {
+                text: '社区',
+                items: [
+                  { text: '常见问题', link: '/more/faq' },
+                  { text: '反馈和共建', link: '/more/feedback' }
+                ]
+              }
+            ]
+          },
           {
             text: `V${pkg.version}`,
             items: [{ text: 'V8 文档', link: 'https://v8.klinecharts.com/zh-CN' }]
@@ -63,22 +91,22 @@ export default defineConfig({
         sidebar: {
           '/guide/': [
             {
-              text: '介绍',
+              text: '开始',
               collapsed: false,
               items: [
-                { text: '什么是KLineChart？', link: '/guide/what-is-klinechart' },
+                { text: '简介', link: '/guide/introduction' },
+                { text: '快速上手', link: '/guide/quick-start' },
               ]
             },
             {
               text: '基础篇',
               collapsed: false,
               items: [
-                { text: '快速开始', link: '/guide/getting-started' },
                 { text: '样式配置', link: '/guide/styles' },
                 { text: '数据', link: '/guide/datasource' },
+                { text: '国际化', link: '/guide/i18n' },
                 { text: '环境要求', link: '/guide/environment' },
                 { text: '快捷键', link: '/guide/hot-key' },
-                { text: '国际化', link: '/guide/i18n' }
               ]
             },
             {
@@ -103,10 +131,10 @@ export default defineConfig({
               text: '其它',
               collapsed: false,
               items: [
-                { text: '常见问题', link: '/guide/faq' },
+                
                 { text: '从v8到v9', link: '/guide/v8-to-v9' },
                 { text: '更新日志', link: '/guide/changelog' },
-                { text: '反馈和共建', link: '/guide/feedback' }
+                
               ]
             }
           ],
@@ -151,12 +179,36 @@ export default defineConfig({
       link: '/en-US/',
       themeConfig: {
         nav: [
-          { text: 'Guide', link: '/en-US/guide/what-is-klinechart', activeMatch: 'guide' },
+          { text: 'Docs', link: '/en-US/guide/introduction', activeMatch: 'guide' },
           { text: 'Sample', link: '/en-US/sample/basic', activeMatch: 'sample' },
-          { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
           { text: 'Preview', link: 'https://preview.klinecharts.com/#en-US' },
           { text: 'VIP', link: '/en-US/vip' },
           { text: 'Sponsor', link: '/en-US/sponsor' },
+          {
+            text: 'More',
+            items: [
+              {
+                text: 'Resources',
+                items: [
+                  { text: 'Pro', link: 'https://pro.klinecharts.com/en-US' },
+                  { text: 'Extension(Under construction)', link: 'https://klinecharts.com/en-US' }
+                ]
+              },
+              {
+                text: 'Development Guide',
+                items: [
+                  { text: 'Local Development', link: '/en-US/more/local-development' },
+                ]
+              },
+              {
+                text: 'Community',
+                items: [
+                  { text: 'FAQ', link: '/en-US/more/faq' },
+                  { text: 'Feedback', link: '/en-US/more/feedback' }
+                ]
+              }
+            ]
+          },
           {
             text: `V${pkg.version}`,
             items: [{ text: 'V8 Docs', link: 'https://v8.klinecharts.com' }]
@@ -165,22 +217,22 @@ export default defineConfig({
         sidebar: {
           '/en-US/guide/': [
             {
-              text: 'Introduction',
+              text: 'Getting Started',
               collapsed: false,
               items: [
-                { text: 'What is KLineChart?', link: '/en-US/guide/what-is-klinechart' },
+                { text: 'Introduction', link: '/en-US/guide/introduction' },
+                { text: 'Quick Start', link: '/en-US/guide/quick-start' },
               ]
             },
             {
               text: 'Basic',
               collapsed: false,
               items: [
-                { text: 'Getting Started', link: '/en-US/guide/getting-started' },
                 { text: 'Style Configuration', link: '/en-US/guide/styles' },
                 { text: 'Datasource', link: '/en-US/guide/datasource' },
+                { text: 'Internationalization', link: '/en-US//guide/i18n' },
                 { text: 'Environment', link: '/en-US/guide/environment' },
-                { text: 'Hot Key', link: '/en-US/guide/hot-key' },
-                { text: 'Internationalization', link: '/en-US//guide/i18n' }
+                { text: 'Hot Key', link: '/en-US/guide/hot-key' }
               ]
             },
             {
@@ -205,10 +257,8 @@ export default defineConfig({
               text: 'Others',
               collapsed: false,
               items: [
-                { text: 'FAQ', link: '/en-US/guide/faq' },
                 { text: 'V8 To V9', link: '/en-US/guide/v8-to-v9' },
-                { text: 'Changelog', link: '/en-US/guide/changelog' },
-                { text: 'Feedback', link: '/en-US/guide/feedback' }
+                { text: 'Changelog', link: '/en-US/guide/changelog' }
               ]
             }
           ],

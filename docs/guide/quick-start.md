@@ -1,4 +1,4 @@
-# 🚀 快速开始
+# 🚀 快速上手
 
 ## 获取KLineChart
 KLineChart 支持多种下载方式，你可以通过`npm`或`yarn`等包管理工具，也可以通过`CDN`获取。

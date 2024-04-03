@@ -1,4 +1,4 @@
-# 🚀 Getting started
+# 🚀 Quick Start
 
 ## Get KLineChart
 KLineChart supports multiple download methods, you can get it through package management tools such as `npm` or `yarn`, or through `CDN`.

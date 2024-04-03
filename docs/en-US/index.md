@@ -13,10 +13,10 @@ hero:
   actions:
     - theme: brand
       text: Getting Started
-      link: /en-US/guide/getting-started
+      link: /en-US/guide/quick-start
     - theme: alt
       text: View on Github
-      link: https://github.com/liihuu/KLineChart
+      link: https://github.com/klinecharts/KLineChart
 
 features:
   - icon:

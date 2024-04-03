@@ -20,7 +20,7 @@ chart.setStyles({
 You can override `calc` by the chart method `createIndicator` or `overrideIndicator`.
 
 ## What if I want to create an indicator other than the built-in technical indicator?
-Charts support custom technical indicators, see [indicators](./indicator.md) for details.
+Charts support custom technical indicators, see [indicators](/en-US/guide/indicator) for details.
 
 ## Want to mark the point of sale, how should do?
 Overlays can be used. The built-in overlay has a `simpleAnnotation`, which can be created with the chart api `createOverlay({ name: 'simpleAnnotation', ... }, paneId)`.

@@ -1,4 +1,4 @@
-# 📃 Introducation
+# 📃 Introduction
 
 ## What's KLineChart?
 KLineChart，it is a highly customizable professional lightweight financial chart.

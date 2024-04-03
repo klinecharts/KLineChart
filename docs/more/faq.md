@@ -21,7 +21,7 @@ chart.setStyles({
 可以通过图表方法`createIndicator`或者`overrideIndicator`重写`calc`即可。
 
 ## 想创建一个内置技术指标之外的指标，怎么办？
-图表支持自定义技术指标，详情参阅[技术指标](./indicator.md)。
+图表支持自定义技术指标，详情参阅[技术指标](/guide/indicator)。
 
 ## 想标记一下买卖点，该怎么做？
 可以使用覆盖物，内置的覆盖物有一个`simpleAnnotation`，用图表api创建即可`createOverlay({ name: 'simpleAnnotation', ... }, paneId)`。
