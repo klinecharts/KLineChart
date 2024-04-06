@@ -1,9 +1,9 @@
 <template>
-  <span class="Tag"><slot></slot></span>
+  <span class="Badge"><slot></slot></span>
 </template>
 
 <style scoped>
-.Tag {
+.Badge {
   vertical-align: middle;
   padding: 3px 6px;
   font-size: 12px;

@@ -3,7 +3,7 @@ import Theme from 'vitepress/theme'
 
 import Layout from './Layout.vue'
 
-import Tag from '../components/Tag.vue'
+import Badge from '../components/Badge.vue'
 
 import './style.css'
 
@@ -11,7 +11,7 @@ export default {
   extends: Theme,
   Layout: Layout,
   enhanceApp({ app }) {
-    app.component('Tag', Tag)
+    app.component('Badge', Badge)
     // ...
   }
 }

@@ -1,4 +1,4 @@
-# 自定义坐标轴 <Tag>v9.8.0+</Tag> 
+# 自定义坐标轴 <Badge>^9.8.0</Badge>
 
 图表支持自定义坐标轴，可以通过图表方法 [registerXAxis(axis)](./chart-api#registerxaxis-axis) 和 [registerYAxis(axis)](./chart-api#registeryaxis-axis) 来实现。
 

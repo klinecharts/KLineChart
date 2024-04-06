@@ -39,7 +39,7 @@
 Initialize a chart and return the chart instance.
 - `ds` container, can be dom element or element id.
 - `options` optional configuration items.
-   - `layout` custom layout, `content` and `options` refer to the input parameters `value` and `options` in the instance api [createIndicator](./instance-api#createindicator-value-isstack-paneoptions-callback). <Tag>v9.6.0+</Tag>
+   - `layout` custom layout, `content` and `options` refer to the input parameters `value` and `options` in the instance api [createIndicator](./instance-api#createindicator-value-isstack-paneoptions-callback). <Badge>^9.6.0</Badge>
    - `locale` language, built-in support for `zh-CN` and `en-US`.
    - `timezone` time zone name, such as 'Asia/Shanghai', if not set, it will automatically get the local time zone, please refer to [timezone list](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List ).
    - `styles` It can be the style name registered through `klinecharts.registerStyles`, or it can be an object, a list of styles, see [styles](./styles.md) for details, and supports increments.
@@ -47,7 +47,7 @@ Initialize a chart and return the chart instance.
      - `formatDate` formats a date.
      - `formatBigNumber` format big numbers, such as 1000 into 1k, 1000000 into 1M, etc.\
    - `thousandsSeparator` thousands separator
-   - `decimalFoldThreshold` decimal fold threshold <Tag>v9.8.0+</Tag>
+   - `decimalFoldThreshold` decimal fold threshold <Badge>^9.8.0</Badge>
 
 
 ## dispose(dcs)
@@ -312,7 +312,7 @@ Add a overlay.
    - `needDefaultXAxisFigure` needs the default x-axis figure
    - `needDefaultYAxisFigure` needs the default y-axis figure
    - `mode` mode, options are 'normal', 'weak_magnet' and 'strong_magnet'
-   - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet <Tag>v9.5.0+</Tag>
+   - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet <Badge>^9.5.0</Badge>
    - `points` point information
    - `extendData` extended data
    - `styles` styles
@@ -325,7 +325,7 @@ Add a overlay.
    - `onDrawing` drawing event
    - `onDrawEnd` draw end event
    - `onClick` click event
-   - `onDoubleClick` double click event <Tag>v9.5.0+</Tag>
+   - `onDoubleClick` double click event <Badge>^9.5.0</Badge>
    - `onRightClick` right click event
    - `onPressedMoveStart` press start move event
    - `onPressedMoving` Press and move event
@@ -342,7 +342,7 @@ Add a overlay.
 ```
 Get overlays for chart support.
 
-## registerXAxis(axis) <Tag>v9.8.0+</Tag>
+## registerXAxis(axis) <Badge>^9.8.0</Badge>
 ```typescript
 (
   axis: {
@@ -360,7 +360,7 @@ Add custom x-axis.
   - `name` axis name
   - `createTicks` create ticks
 
-## registerYAxis(axis) <Tag>v9.8.0+</Tag>
+## registerYAxis(axis) <Badge>^9.8.0</Badge>
 ```typescript
 (
   axis: {
@@ -464,14 +464,14 @@ Format date. `format`, such as 'YYYY-MM-DD HH:mm:ss'.
 ```
 Format thousands separator.
 
-### utils.formatFoldDecimal(value, threshold) <Tag>v9.8.0+</Tag>
+### utils.formatFoldDecimal(value, threshold) <Badge>^9.8.0</Badge>
 ```typescript
 (value: string | number, threshold: number) => string
 ```
 Format fold decimal.
 
 
-### utils.calcTextWidth(text, size, weight, family) <Tag>v9.3.0+</Tag>
+### utils.calcTextWidth(text, size, weight, family) <Badge>^9.3.0</Badge>
 ```typescript
 (text: string, size?: number, weight?: string | number, family?: string) => number
 ```

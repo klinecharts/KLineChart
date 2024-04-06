@@ -99,21 +99,21 @@
 设置图表右边可以空出来的间隙。
 
 
-## getOffsetRightDistance() <Tag>v9.2.0+</Tag>
+## getOffsetRightDistance() <Badge>^9.2.0</Badge>
 ```typescript
 () => number
 ```
 获取图表右边可以空出来的间隙。
 
 
-## setMaxOffsetLeftDistance() <Tag>v9.7.0+</Tag>
+## setMaxOffsetLeftDistance() <Badge>^9.7.0</Badge>
 ```typescript
 (distance: number) => void
 ```
 设置图表左边最大可空出来的间隙。
 
 
-## setMaxOffsetRightDistance() <Tag>v9.7.0+</Tag>
+## setMaxOffsetRightDistance() <Badge>^9.7.0</Badge>
 ```typescript
 (distance: number) => void
 ```
@@ -178,7 +178,7 @@
 添加新数据，此方法会清空图表数据，不需要额外调用clearData方法。
 - `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
-- `callback` 成功回调 <Tag>v9.2.0+</Tag>
+- `callback` 成功回调 <Badge>^9.2.0</Badge>
 ::: warning 注意
 参数 `callback` 自版本9.8.0开始，已废弃，请使用 `subscribeAction('onDataReady', () => {})` 代替。
 :::
@@ -203,7 +203,7 @@
 添加历史更多数据。
 - `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
-- `callback` 成功回调 <Tag>v9.2.0+</Tag>
+- `callback` 成功回调 <Badge>^9.2.0</Badge>
 ::: warning 注意
 该方法自版本9.8.0开始，已废弃。
 :::
@@ -226,7 +226,7 @@
 ```
 更新数据，目前只会匹配当前最后一条数据的时间戳，相同则覆盖，不同则追加。
 - `data` 单条k线数据，数据类型详情可参阅[数据源](./datasource.md)
-- `callback` 成功回调 <Tag>v9.2.0+</Tag>
+- `callback` 成功回调 <Badge>^9.2.0</Badge>
 ::: warning 注意
 参数 `callback` 自版本9.8.0开始，已废弃，请使用 `subscribeAction('onDataReady', () => {})` 代替。
 :::
@@ -265,7 +265,7 @@
 :::
 
 
-## setLoadDataCallback(cb) <Tag>v9.8.0+</Tag>
+## setLoadDataCallback(cb) <Badge>^9.8.0</Badge>
 ```typescript
 (
   cb: (params: { 
@@ -371,13 +371,13 @@
   - `height` 窗口高度，可缺省
   - `minHeight` 窗口最小高度，可缺省
   - `dragEnabled` 窗口是否可以拖拽调整高度，可缺省
-  - `position` 位置，仅仅在创建新的窗口时有效 <Tag>v9.6.0+</Tag>
+  - `position` 位置，仅仅在创建新的窗口时有效 <Badge>^9.6.0</Badge>
   - `gap` 边距
     - `top` 上边距，值小余1则是百分比
     - `bottom` 下边距，值小余1则是百分比
   - `axisOptions`
-    - `name` 指定的轴的名字，此参数对应图表实例方法 [registerYAxis(axis)](./chart-api#registeryaxis-axis) 中的 `axis.name`，默认为 'default' <Tag>v9.8.0+</Tag> 
-    - `scrollZoomEnabled` 轴上是否可以滚动缩放 <Tag>v9.3.0+</Tag>
+    - `name` 指定的轴的名字，此参数对应图表实例方法 [registerYAxis(axis)](./chart-api#registeryaxis-axis) 中的 `axis.name`，默认为 'default' <Badge>^9.8.0</Badge>
+    - `scrollZoomEnabled` 轴上是否可以滚动缩放 <Badge>^9.3.0</Badge>
   
 - `callback` 指标创建完成回调方法
 ::: tip 特殊的id
@@ -472,7 +472,7 @@ chart.createIndicator('MA', false, {
   - `shouldOhlc` 是否需要ohlc辅助图形
   - `shouldFormatBigNumber` 是否需要格式化大的数字。如1000转换成1k，1000000转换为1M等
   - `visible` 是否可见
-  - `zLevel` 层级 <Tag>v9.7.0+</Tag>
+  - `zLevel` 层级 <Badge>^9.7.0</Badge>
   - `extendData` 扩展数据
   - `series` 指标系列，可选项有'normal'，'price'和'volume'
   - `figures` 图形配置
@@ -749,7 +749,7 @@ chart.createOverlay({
   - `needDefaultXAxisFigure` 是否需要默认的x轴上的图形
   - `needDefaultYAxisFigure` 是否需要默认的y轴上的图形
   - `mode` 模式，可选项有'normal'，'weak_magnet'和'strong_magnet'
-  - `modeSensitivity` 模式灵敏度，仅 mode 是 weak_magnet 时有效 <Tag>v9.5.0+</Tag>
+  - `modeSensitivity` 模式灵敏度，仅 mode 是 weak_magnet 时有效 <Badge>^9.5.0</Badge>
   - `points` 点信息
   - `extendData` 扩展数据
   - `styles` 样式
@@ -757,7 +757,7 @@ chart.createOverlay({
   - `onDrawing` 绘制中事件
   - `onDrawEnd` 绘制结束事件
   - `onClick` 点击事件
-  - `onDoubleClick` 双击事件 <Tag>v9.5.0+</Tag>
+  - `onDoubleClick` 双击事件 <Badge>^9.5.0</Badge>
   - `onRightClick` 右击事件
   - `onPressedMoveStart` 按住开始移动事件
   - `onPressedMoving` 按住移动中事件
@@ -936,8 +936,8 @@ chart.overrideOverlay({
     - `top` 上边距，值小余1则是百分比
     - `bottom` 下边距，值小余1则是百分比
   - `axisOptions`
-    - `name` 轴名字 <Tag>v9.8.0+</Tag> 
-    - `scrollZoomEnabled` 轴上是否可以滚动缩放 <Tag>v9.3.0+</Tag>
+    - `name` 轴名字 <Badge>^9.8.0</Badge>
+    - `scrollZoomEnabled` 轴上是否可以滚动缩放 <Badge>^9.3.0</Badge>
 ::: tip 特殊的id
 'candle_pane'，主图的窗口id。
 :::
@@ -954,7 +954,7 @@ chart.setPaneOptions({
 })
 ```
 
-## executeAction(type, data) <Tag>v9.2.0+</Tag>
+## executeAction(type, data) <Badge>^9.2.0</Badge>
 ```typescript
 (
    type: 'onCrosshairChange',
