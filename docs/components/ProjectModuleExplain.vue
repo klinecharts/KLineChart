@@ -1,6 +1,6 @@
 <template>
   <div class="module">
-    <img style="width:350px" src="/images/module.png"/>
+    <img style="width:380px" src="/images/module.png"/>
   </div>
 </template>
 
