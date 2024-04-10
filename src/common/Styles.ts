@@ -29,6 +29,13 @@ export interface Padding {
   paddingBottom: number
 }
 
+export interface Offset {
+  offsetLeft: number
+  offsetTop: number
+  offsetRight: number
+  offsetBottom: number
+}
+
 /**
  * line type
  */
@@ -133,15 +140,27 @@ export interface GridStyle {
 
 export type TooltipTextStyle = Pick<TextStyle, 'color' | 'size' | 'family' | 'weight'> & Margin
 
-export interface TooltipDataChild {
+export interface TooltipLegendChild {
   text: string
   color: string
 }
 
-export interface TooltipData {
-  title: string | TooltipDataChild
-  value: string | TooltipDataChild
+/**
+ * @deprecated
+ * Starting from v10, it will be deleted
+ */
+export type TooltipDataChild = TooltipLegendChild
+
+export interface TooltipLegend {
+  title: string | TooltipLegendChild
+  value: string | TooltipLegendChild
 }
+
+/**
+ * @deprecated
+ * Starting from v10, it will be deleted
+ */
+export type TooltipData = TooltipLegend
 
 export enum TooltipIconPosition {
   Left = 'left',
@@ -215,12 +234,8 @@ export enum CandleTooltipRectPosition {
   Pointer = 'pointer'
 }
 
-export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borderDashedValue' | 'borderStyle'>, Padding {
+export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borderDashedValue' | 'borderStyle'>, Padding, Offset {
   position: CandleTooltipRectPosition
-  offsetLeft: number
-  offsetTop: number
-  offsetRight: number
-  offsetBottom: number
 }
 
 export interface CandleTooltipCustomCallbackData {
@@ -231,7 +246,7 @@ export interface CandleTooltipCustomCallbackData {
 
 export type CandleTooltipCustomCallback = (data: CandleTooltipCustomCallbackData, styles: CandleStyle) => TooltipData[]
 
-export interface CandleTooltipStyle extends TooltipStyle {
+export interface CandleTooltipStyle extends TooltipStyle, Offset {
   custom: CandleTooltipCustomCallback | TooltipData[]
   rect: CandleTooltipRectStyle
 }
@@ -269,7 +284,7 @@ export interface IndicatorLastValueMarkStyle {
   text: LastValueMarkTextStyle
 }
 
-export interface IndicatorTooltipStyle extends TooltipStyle {
+export interface IndicatorTooltipStyle extends TooltipStyle, Offset {
   showName: boolean
   showParams: boolean
 }
@@ -494,6 +509,10 @@ function getDefaultCandleStyle (): CandleStyle {
       }
     },
     tooltip: {
+      offsetLeft: 6,
+      offsetTop: 6,
+      offsetRight: 6,
+      offsetBottom: 6,
       showRule: TooltipShowRule.Always,
       showType: TooltipShowType.Standard,
       custom: [
@@ -511,10 +530,10 @@ function getDefaultCandleStyle (): CandleStyle {
         paddingRight: 0,
         paddingTop: 0,
         paddingBottom: 8,
-        offsetLeft: 10,
-        offsetTop: 8,
-        offsetRight: 10,
-        offsetBottom: 8,
+        offsetLeft: 4,
+        offsetTop: 4,
+        offsetRight: 4,
+        offsetBottom: 4,
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#F2F3F5',
@@ -525,10 +544,10 @@ function getDefaultCandleStyle (): CandleStyle {
         family: 'Helvetica Neue',
         weight: 'normal',
         color: textColor,
-        marginLeft: 10,
-        marginTop: 8,
+        marginLeft: 6,
+        marginTop: 4,
         marginRight: 6,
-        marginBottom: 0
+        marginBottom: 4
       },
       icons: []
     }
@@ -593,6 +612,10 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       }
     },
     tooltip: {
+      offsetLeft: 6,
+      offsetTop: 6,
+      offsetRight: 6,
+      offsetBottom: 6,
       showRule: TooltipShowRule.Always,
       showType: TooltipShowType.Standard,
       showName: true,
@@ -603,10 +626,10 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         family: 'Helvetica Neue',
         weight: 'normal',
         color: textColor,
-        marginLeft: 10,
-        marginTop: 8,
+        marginLeft: 6,
+        marginTop: 4,
         marginRight: 6,
-        marginBottom: 0
+        marginBottom: 4
       },
       icons: []
     }
