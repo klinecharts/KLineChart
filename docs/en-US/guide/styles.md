@@ -115,6 +115,10 @@ import StyleExplain from '../../components/StyleExplain.vue'
       }
     },
     tooltip: {
+      offsetLeft: 4,
+      offsetTop: 6,
+      offsetRight: 4,
+      offsetBottom: 6,
       // 'always' | 'follow_cross' | 'none'
       showRule: 'always',
       // 'standard' | 'rect'
@@ -137,14 +141,14 @@ import StyleExplain from '../../components/StyleExplain.vue'
       rect: {
        // 'fixed' | 'pointer'
         position: 'fixed',
-        paddingLeft: 0,
-        paddingRight: 0,
-        paddingTop: 0,
-        paddingBottom: 6,
-        offsetLeft: 10,
-        offsetTop: 8,
-        offsetRight: 10,
-        offsetBottom: 8,
+        paddingLeft: 4,
+        paddingRight: 4,
+        paddingTop: 4,
+        paddingBottom: 4,
+        offsetLeft: 4,
+        offsetTop: 4,
+        offsetRight: 4,
+        offsetBottom: 4,
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#f2f3f5',
@@ -155,10 +159,10 @@ import StyleExplain from '../../components/StyleExplain.vue'
         family: 'Helvetica Neue',
         weight: 'normal',
         color: '#D9D9D9',
-        marginLeft: 10,
-        marginTop: 8,
-        marginRight: 6,
-        marginBottom: 0
+        marginLeft: 8,
+        marginTop: 4,
+        marginRight: 8,
+        marginBottom: 4
       },
       // sample:
       // [{
@@ -266,6 +270,10 @@ import StyleExplain from '../../components/StyleExplain.vue'
       }
     },
     tooltip: {
+      offsetLeft: 4,
+      offsetTop: 6,
+      offsetRight: 4,
+      offsetBottom: 6,
       // 'always' | 'follow_cross' | 'none'
       showRule: 'always',
       // 'standard' | 'rect'
@@ -278,10 +286,10 @@ import StyleExplain from '../../components/StyleExplain.vue'
         family: 'Helvetica Neue',
         weight: 'normal',
         color: '#D9D9D9',
-        marginTop: 8,
-        marginRight: 6,
-        marginBottom: 0,
-        marginLeft: 10
+        marginTop: 4,
+        marginRight: 8,
+        marginBottom: 4,
+        marginLeft: 8
       },
       // sample:
       // [{

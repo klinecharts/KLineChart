@@ -1,5 +1,12 @@
 # 📠 Change Log
 
+## 9.8.3
+`2024-04-12`
++ 💄 Optimize styles by adding `offsetLeft`, `offsetTop`, `offsetRight` and `offsetBottom` to `candle.tooltip` and `indicator.tooltip`.
++ 💄 Optimize figure and support array for attrs.
++ 💄 Optimize y-axis render.
++ 💄 Optimize default display, change the default candle width to 8.
+
 ## 9.8.2
 `2024-03-26`
 + 💄 Optimize the display of the area chart.
