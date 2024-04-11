@@ -19,7 +19,7 @@ import type Bounding from '../common/Bounding'
 import type VisibleRange from '../common/VisibleRange'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
-import { type IndicatorStyle, type IndicatorPolygonStyle, type SmoothLineStyle, type RectStyle, type TextStyle, type TooltipData, type TooltipIconStyle, type LineStyle, type LineType, type PolygonType } from '../common/Styles'
+import { type IndicatorStyle, type IndicatorPolygonStyle, type SmoothLineStyle, type RectStyle, type TextStyle, type TooltipIconStyle, type LineStyle, type LineType, type PolygonType, type TooltipLegend } from '../common/Styles'
 
 import { type XAxis } from './XAxis'
 import { type YAxis } from './YAxis'
@@ -82,7 +82,7 @@ export interface IndicatorTooltipData {
   name: string
   calcParamsText: string
   icons: TooltipIconStyle[]
-  values: TooltipData[]
+  values: TooltipLegend[]
 }
 
 export interface IndicatorCreateTooltipDataSourceParams<D = any> {

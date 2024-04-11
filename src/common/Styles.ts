@@ -244,10 +244,10 @@ export interface CandleTooltipCustomCallbackData {
   next: Nullable<KLineData>
 }
 
-export type CandleTooltipCustomCallback = (data: CandleTooltipCustomCallbackData, styles: CandleStyle) => TooltipData[]
+export type CandleTooltipCustomCallback = (data: CandleTooltipCustomCallbackData, styles: CandleStyle) => TooltipLegend[]
 
 export interface CandleTooltipStyle extends TooltipStyle, Offset {
-  custom: CandleTooltipCustomCallback | TooltipData[]
+  custom: CandleTooltipCustomCallback | TooltipLegend[]
   rect: CandleTooltipRectStyle
 }
 
@@ -509,9 +509,9 @@ function getDefaultCandleStyle (): CandleStyle {
       }
     },
     tooltip: {
-      offsetLeft: 6,
+      offsetLeft: 4,
       offsetTop: 6,
-      offsetRight: 6,
+      offsetRight: 4,
       offsetBottom: 6,
       showRule: TooltipShowRule.Always,
       showType: TooltipShowType.Standard,
@@ -526,10 +526,10 @@ function getDefaultCandleStyle (): CandleStyle {
       defaultValue: 'n/a',
       rect: {
         position: CandleTooltipRectPosition.Fixed,
-        paddingLeft: 0,
-        paddingRight: 0,
-        paddingTop: 0,
-        paddingBottom: 8,
+        paddingLeft: 4,
+        paddingRight: 4,
+        paddingTop: 4,
+        paddingBottom: 4,
         offsetLeft: 4,
         offsetTop: 4,
         offsetRight: 4,
@@ -544,9 +544,9 @@ function getDefaultCandleStyle (): CandleStyle {
         family: 'Helvetica Neue',
         weight: 'normal',
         color: textColor,
-        marginLeft: 6,
+        marginLeft: 8,
         marginTop: 4,
-        marginRight: 6,
+        marginRight: 8,
         marginBottom: 4
       },
       icons: []
@@ -612,9 +612,9 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       }
     },
     tooltip: {
-      offsetLeft: 6,
+      offsetLeft: 4,
       offsetTop: 6,
-      offsetRight: 6,
+      offsetRight: 4,
       offsetBottom: 6,
       showRule: TooltipShowRule.Always,
       showType: TooltipShowType.Standard,
@@ -626,9 +626,9 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         family: 'Helvetica Neue',
         weight: 'normal',
         color: textColor,
-        marginLeft: 6,
+        marginLeft: 8,
         marginTop: 4,
-        marginRight: 6,
+        marginRight: 8,
         marginBottom: 4
       },
       icons: []
