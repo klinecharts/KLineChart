@@ -5,7 +5,8 @@
 + 💄 优化样式，`candle.tooltip` 和 `indicator.tooltip` 新增 `offsetLeft`，`offsetTop`，`offsetRight`，`offsetBottom`。
 + 💄 优化基础图形，图形属性支持数组。
 + 💄 优化y轴渲染。
-+ 💄 优化默认显示，蜡烛柱默认宽度改为8.
++ 💄 优化默认显示，蜡烛柱默认宽度改为8。
++ 🐞 修复 `applyMoreData` 添加重复数据问题。[@cryptotooltop](https://github.com/cryptotooltop)
 
 ## 9.8.2
 `2024-03-26`
