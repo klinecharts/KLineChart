@@ -6,7 +6,7 @@
 + 💄 Optimize figure and support array for attrs.
 + 💄 Optimize y-axis render.
 + 💄 Optimize default display, change the default candle width to 8.
-+ 🐞 Fix `applyMoreData` add duplicate data issue.
++ 🐞 Fix `applyMoreData` add duplicate data issue. [@cryptotooltop](https://github.com/cryptotooltop)
 
 ## 9.8.2
 `2024-03-26`
