@@ -14,7 +14,6 @@
 
 import type Coordinate from '../common/Coordinate'
 import type VisibleData from '../common/VisibleData'
-import type BarSpace from '../common/BarSpace'
 import { type GradientColor, type PolygonStyle } from '../common/Styles'
 import Animation from '../common/Animation'
 import { isNumber, isArray, isValid } from '../common/utils/typeChecks'
@@ -48,14 +47,14 @@ export default class CandleAreaView extends ChildrenView {
     const styles = chart.getStyles().candle.area
     const coordinates: Coordinate[] = []
     let minY = Number.MAX_SAFE_INTEGER
-    let areaStartX: number = 0
+    let areaStartX: number = Number.MIN_SAFE_INTEGER
     let indicatePointCoordinate: Nullable<Coordinate> = null
-    this.eachChildren((data: VisibleData, _: BarSpace, i: number) => {
+    this.eachChildren((data: VisibleData) => {
       const { data: kLineData, x } = data
       const value = kLineData?.[styles.value]
       if (isNumber(value)) {
         const y = yAxis.convertToPixel(value)
-        if (i === 0) {
+        if (areaStartX === Number.MIN_SAFE_INTEGER) {
           areaStartX = x
         }
         coordinates.push({ x, y })
