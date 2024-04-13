@@ -1,7 +1,6 @@
-<script setup lang="ts">
+<script setup>
 import { onMounted, ref } from 'vue'
 import { withBase, useData } from 'vitepress'
-
 
 const { lang } = useData()
 const root = ref('/')
