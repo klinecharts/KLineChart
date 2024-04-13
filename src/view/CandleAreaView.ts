@@ -14,7 +14,7 @@
 
 import type Coordinate from '../common/Coordinate'
 import type VisibleData from '../common/VisibleData'
-import { type GradientColor, type PolygonStyle } from '../common/Styles'
+import { type GradientColor } from '../common/Styles'
 import Animation from '../common/Animation'
 import { isNumber, isArray, isValid } from '../common/utils/typeChecks'
 import { UpdateLevel } from '../common/Updater'
@@ -22,12 +22,21 @@ import { UpdateLevel } from '../common/Updater'
 import ChildrenView from './ChildrenView'
 
 import { lineTo } from '../extension/figure/line'
-import type Figure from '../component/Figure'
 import type Nullable from '../common/Nullable'
-import { type CircleAttrs } from '../extension/figure/circle'
 
 export default class CandleAreaView extends ChildrenView {
-  private _figure: Nullable<Figure<CircleAttrs, Partial<PolygonStyle>>> = null
+  private readonly _ripplePoint = this.createFigure({
+    name: 'circle',
+    attrs: {
+      x: 0,
+      y: 0,
+      r: 0
+    },
+    styles: {
+      style: 'fill'
+    }
+  })
+
   private _animationFrameTime = 0
 
   private readonly _animation = new Animation({ iterationCount: Infinity }).doFrame((time) => {
@@ -48,7 +57,7 @@ export default class CandleAreaView extends ChildrenView {
     const coordinates: Coordinate[] = []
     let minY = Number.MAX_SAFE_INTEGER
     let areaStartX: number = Number.MIN_SAFE_INTEGER
-    let indicatePointCoordinate: Nullable<Coordinate> = null
+    let ripplePointCoordinate: Nullable<Coordinate> = null
     this.eachChildren((data: VisibleData) => {
       const { data: kLineData, x } = data
       const value = kLineData?.[styles.value]
@@ -60,7 +69,7 @@ export default class CandleAreaView extends ChildrenView {
         coordinates.push({ x, y })
         minY = Math.min(minY, y)
         if (data.dataIndex === lastDataIndex) {
-          indicatePointCoordinate = { x, y }
+          ripplePointCoordinate = { x, y }
         }
       }
     })
@@ -103,12 +112,12 @@ export default class CandleAreaView extends ChildrenView {
     }
 
     const pointStyles = styles.point
-    if (pointStyles.show && isValid(indicatePointCoordinate)) {
+    if (pointStyles.show && isValid(ripplePointCoordinate)) {
       this.createFigure({
         name: 'circle',
         attrs: {
-          x: indicatePointCoordinate!.x,
-          y: indicatePointCoordinate!.y,
+          x: ripplePointCoordinate!.x,
+          y: ripplePointCoordinate!.y,
           r: pointStyles.radius
         },
         styles: {
@@ -121,32 +130,19 @@ export default class CandleAreaView extends ChildrenView {
         rippleRadius = pointStyles.radius + this._animationFrameTime / pointStyles.animationDuration * (pointStyles.rippleRadius - pointStyles.radius)
         this._animation.setDuration(pointStyles.animationDuration).start()
       }
-      if (this._figure === null) {
-        this._figure = this.createFigure({
-          name: 'circle',
-          attrs: {
-            x: indicatePointCoordinate!.x,
-            y: indicatePointCoordinate!.y,
-            r: pointStyles.rippleRadius
-          },
-          styles: {
-            style: 'fill',
-            color: pointStyles.rippleColor
-          }
-        })
-      } else {
-        this._figure.setAttrs({
-          x: indicatePointCoordinate!.x,
-          y: indicatePointCoordinate!.y,
+      this._ripplePoint
+        ?.setAttrs({
+          x: ripplePointCoordinate!.x,
+          y: ripplePointCoordinate!.y,
           r: rippleRadius
         })
-      }
-      this._figure?.draw(ctx)
-      if (pointStyles.animation) {
-        this._animation.setDuration(pointStyles.animationDuration).start()
-      }
+        .setStyles({ style: 'fill', color: pointStyles.rippleColor }).draw(ctx)
     } else {
-      this._animation.stop()
+      this.stopAnimation()
     }
+  }
+
+  stopAnimation (): void {
+    this._animation.stop()
   }
 }
