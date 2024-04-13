@@ -1,5 +1,11 @@
 # 📠 Change Log
 
+## 9.8.5
+`2024-04-14`
++ 💄 Optimize the default right offset distance of the chart.
++ 🐞 Fix area chart display issue.
++ 🐞 Fix occasional blank spaces in chart.
+
 ## 9.8.3
 `2024-04-12`
 + 💄 Optimize styles by adding `offsetLeft`, `offsetTop`, `offsetRight` and `offsetBottom` to `candle.tooltip` and `indicator.tooltip`.

@@ -1,5 +1,11 @@
 # 📠 更新日志
 
+## 9.8.5
+`2024-04-14`
++ 💄 优化图表默认右偏移距离。
++ 🐞 修复面积图显示问题。
++ 🐞 修复图表偶发会空白问题。
+
 ## 9.8.3
 `2024-04-12`
 + 💄 优化样式，`candle.tooltip` 和 `indicator.tooltip` 新增 `offsetLeft`，`offsetTop`，`offsetRight`，`offsetBottom`。
