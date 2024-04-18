@@ -79,7 +79,7 @@ export default class IndicatorStore {
     if (isValid(styles) && instance.setStyles(styles)) {
       updateFlag = true
     }
-    if (instance.setExtendData(extendData)) {
+    if (extendData !== undefined && instance.setExtendData(extendData)) {
       updateFlag = true
       calcFlag = true
     }

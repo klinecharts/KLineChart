@@ -138,7 +138,7 @@ export default class OverlayStore {
     if (isNumber(modeSensitivity)) {
       instance.setModeSensitivity(modeSensitivity)
     }
-    if (instance.setExtendData(extendData)) {
+    if (extendData !== undefined && instance.setExtendData(extendData)) {
       updateFlag = true
     }
     if (onDrawStart !== undefined) {
