@@ -175,7 +175,7 @@ Get visible range.
 ) => void
 ```
 Add new data, this method will clear the chart data, no need to call the clearData method additionally.
-- `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
+- `dataList` is an array of K-line data. For details of the data type, please refer to [data](./data-source.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
 - `callback` success callback <Badge>^9.2.0</Badge>
 ::: warning Note
@@ -200,7 +200,7 @@ Add new data, this method will clear the chart data, no need to call the clearDa
 ) => void
 ```
 Add more historical data.
-- `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
+- `dataList` is an array of K-line data. For details of the data type, please refer to [data](./data-source.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
 - `callback` success callback <Badge>^9.2.0</Badge>
 ::: warning Note
@@ -224,7 +224,7 @@ This api has been deprecated since version 9.8.0.
 ) => void
 ```
 Update data. Currently, only the timestamp of the last piece of data will be matched. If it is the same, it will be overwritten, and if it is different, it will be appended.
-- `data` single k-line data, please refer to [data](./datasource.md) for details of data type
+- `data` single k-line data, please refer to [data](./data-source.md) for details of data type
 - `callback` success callback <Badge>^9.2.0</Badge>
 ::: warning Note
 `callback` has been deprecated since version 9.8.0, use `subscribeAction('onDataReady', () => {})` instead.
@@ -243,7 +243,7 @@ Update data. Currently, only the timestamp of the last piece of data will be mat
   turnover?: number
 }>
 ```
-Get the current data source of the chart. For the returned data type, please refer to [data](./datasource.md).
+Get the current data source of the chart. For the returned data type, please refer to [data](./data-source.md).
 
 
 ## clearData()

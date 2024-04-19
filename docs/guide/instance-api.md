@@ -176,7 +176,7 @@
 ) => void
 ```
 添加新数据，此方法会清空图表数据，不需要额外调用clearData方法。
-- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
+- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./data-source.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 - `callback` 成功回调 <Badge>^9.2.0</Badge>
 ::: warning 注意
@@ -201,7 +201,7 @@
 ) => void
 ```
 添加历史更多数据。
-- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./datasource.md)
+- `dataList` 是一个K线数据数组，数据类型详情可参阅[数据源](./data-source.md)
 - `more` 告诉图表还有没有更多历史数据，可缺省，默认为true
 - `callback` 成功回调 <Badge>^9.2.0</Badge>
 ::: warning 注意
@@ -225,7 +225,7 @@
 ) => void
 ```
 更新数据，目前只会匹配当前最后一条数据的时间戳，相同则覆盖，不同则追加。
-- `data` 单条k线数据，数据类型详情可参阅[数据源](./datasource.md)
+- `data` 单条k线数据，数据类型详情可参阅[数据源](./data-source.md)
 - `callback` 成功回调 <Badge>^9.2.0</Badge>
 ::: warning 注意
 参数 `callback` 自版本9.8.0开始，已废弃，请使用 `subscribeAction('onDataReady', () => {})` 代替。
@@ -244,7 +244,7 @@
   turnover?: number
 }>
 ```
-获取图表目前的数据源，返回数据类型可参阅[数据源](./datasource.md)。
+获取图表目前的数据源，返回数据类型可参阅[数据源](./data-source.md)。
 
 
 ## clearData()
