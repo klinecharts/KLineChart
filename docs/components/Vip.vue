@@ -1,5 +1,5 @@
 <template>
-  <div class="vip">
+  <div style="padding-top: 60px;">
     <h1 class="vip-title">{{ lang === 'zh-CN' ? 'VIP服务' : 'VIP Service' }}</h1>
     <p class="vip-sub-title" v-if="lang === 'zh-CN'">
       为了更好的服务开发者，现开通&nbsp;<span>VIP答疑通道</span>&nbsp;和&nbsp;<span>定制化服务</span>。

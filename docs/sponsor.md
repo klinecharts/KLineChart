@@ -26,5 +26,4 @@ KLineChart 是采用 Apache-2.0 许可的开源项目，使用完全免费。
 + BTC: [bc1qnwzukszzk5xfk0zs3sr8etzgctgnrtqts43jzp3khe6gm7xazprsp4y6n3]()
 + ETH: [0xd2c3911654db861e0a2e17415e11a209c1fc3594]()
 + USDT-ERC20: [0xd2c3911654db861e0a2e17415e11a209c1fc3594]()
-+ USDT-Omni: [3DSXSbTbMwXumaaqMySVPgedBP9rGhpnfQ]()
 + USDT-TRC20: [THJpTQmFGaVm12KE1Jzc5mLXiApP6qXMCi]()
