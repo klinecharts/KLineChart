@@ -3,16 +3,7 @@ module.exports = {
     browser: true,
     es2021: true
   },
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: 'tsconfig.json'
-  },
-  extends: 'standard-with-typescript',
-  plugins: ['@typescript-eslint'],
-  overrides: [
-  ],
+  extends: 'love',
   rules: {
     "@typescript-eslint/no-non-null-assertion": "off"
   }
