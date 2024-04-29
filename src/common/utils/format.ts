@@ -119,11 +119,15 @@ export function formatThousands (value: string | number, sign: string): string {
 
 export function formatFoldDecimal (value: string | number, threshold: number): string {
   const vl = `${value}`
-  const match = vl.match(/\.0*(\d+)/)
-  if (isValid(match) && parseInt(match[1]) > 0) {
-    const count = match[0].length - 1 - match[1].length
-    if (count >= threshold) {
-      return vl.replace(/\.0*/, `.0{${count}}`)
+  const reg = new RegExp('.0{' + threshold + ',}[1-9]\\d*$')
+  if (reg.test(vl)) {
+    const result = vl.split('.')
+    const v = result[result.length - 1]
+    const match = v.match(/0*/)
+    if (isValid(match)) {
+      const count = match[0].length
+      result[result.length - 1] = v.replace(/0*/, `0{${count}}`)
+      return result.join('.')
     }
   }
   return vl
