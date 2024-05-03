@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 import pkg from '../../../package.json'
 
 export default defineConfig({
-  label: '简体中文',
+  label: '🇨🇳 简体中文',
   lang: 'zh-CN',
   description: '💹📈 可高度自定义的专业级轻量金融图表。',
   // link: '/',

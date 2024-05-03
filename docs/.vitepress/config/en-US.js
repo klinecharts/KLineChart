@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 import pkg from '../../../package.json'
 
 export default defineConfig({
-  label: 'English',
+  label: '🇬🇧 English',
   lang: 'en-US',
   description: '💹📈 Highly customizable professional lightweight financial chart.',
   themeConfig: {
