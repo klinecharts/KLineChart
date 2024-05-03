@@ -25,8 +25,8 @@
 
 <div align="center">
 
-[![Issues](https://img.shields.io/static/v1?color=1f2328&logo=github&logoColor=fff&label&message=Github%20Issues)](https://github.com/liihuu/KLineChart/issues)
-[![Discussions](https://img.shields.io/static/v1?color=1f2328&logo=github&logoColor=fff&label&message=Github%20Discussions)](https://github.com/liihuu/KLineChart/discussions)
+[![Github Issues](https://img.shields.io/static/v1?color=1f2328&logo=github&logoColor=fff&label&message=Issues)](https://github.com/liihuu/KLineChart/issues)
+[![Github Discussions](https://img.shields.io/static/v1?color=1f2328&logo=github&logoColor=fff&label&message=Discussions)](https://github.com/liihuu/KLineChart/discussions)
 [![Telegram](https://img.shields.io/static/v1?color=1296DB&logo=telegram&logoColor=fff&label&message=Telegram)](https://t.me/klinecharts)
 <!-- [![Discord](https://img.shields.io/static/v1?color=738BD8&logo=discord&logoColor=fff&label&message=Discord)](https://discord.gg/7YjHYgvvvZ) -->
 [![Wechat](https://img.shields.io/static/v1?color=1EBE1F&logo=wechat&logoColor=fff&label&message=微信)](https://klinecharts.com/guide/feedback.html)
