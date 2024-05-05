@@ -11,8 +11,8 @@ import ResizeObserver from 'resize-observer-polyfill'
 
 const { isDark, lang } = useData()
 
-import Tooltip from './Tooltip.vue'
-import Loading from './Loading.vue'
+import Tooltip from '../Tooltip.vue'
+import Loading from '../Loading.vue'
 
 const href = ref()
 

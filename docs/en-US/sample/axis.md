@@ -6,9 +6,8 @@ editLink: false
 # Axis
 
 <script setup>
-import Chart from '../../components/SampleChart.vue'
-import data from '../../data/sample/axis/index.json'
+import Chart from '../../components/sample/axis/index.vue'
 </script>
-<Chart :js="data['index.js']" :html="data['index.html']" :css="data['index.css']" title="Axis"/>
+<Chart/>
 
-<!--@include: @/data/sample/axis/index.md-->
+<!--@include: @/components/sample/axis/index.md-->

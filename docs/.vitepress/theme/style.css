@@ -78,6 +78,20 @@ body {
   }
 }
 
+.vp-doc p a img {
+  display: inline;
+  vertical-align: middle;
+}
+
+.vp-code-group .tabs label {
+  display: flex;
+  align-items: center;
+}
+
+.vp-code-group .tabs label svg {
+  margin-right: 8px;
+}
+
 .home-section {
   border-top: 1px solid var(--vp-c-gutter);
   padding: 60px 24px;

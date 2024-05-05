@@ -6,9 +6,8 @@ editLink: false
 # Timezone
 
 <script setup>
-import Chart from '../../components/SampleChart.vue'
-import data from '../../data/sample/timezone/index.json'
+import Chart from '../../components/sample/timezone/index.vue'
 </script>
-<Chart :js="data['index.js']" :html="data['index.html']" :css="data['index.css']" title="Timezone"/>
+<Chart/>
 
-<!--@include: @/data/sample/timezone/index.md-->
+<!--@include: @/components/sample/timezone/index.md-->
