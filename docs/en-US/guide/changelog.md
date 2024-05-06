@@ -1,5 +1,11 @@
 # 📠 Change Log
 
+## 9.8.6
+`2024-05-07`
++ 🐞 Fix an issue that chart API `registerIndicator` and `registerOverlay` parameters `extendData` cannot take effect.
++ 🐞 Fix an issue of incorrect decimal folding when specifying `.` as the thousandth character.
++ 🐞 Fix an issue where overlays may not be moved after being created.
+
 ## 9.8.5
 `2024-04-14`
 + 💄 Optimize the default right offset distance of the chart.
