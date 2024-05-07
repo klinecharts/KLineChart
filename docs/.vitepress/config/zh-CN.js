@@ -6,7 +6,6 @@ export default defineConfig({
   label: '🇨🇳 简体中文',
   lang: 'zh-CN',
   description: '💹📈 可高度自定义的专业级轻量金融图表。',
-  // link: '/',
   themeConfig: {
     nav: [
       {
@@ -16,7 +15,7 @@ export default defineConfig({
       },
       { text: '示例', link: '/sample/basic', activeMatch: 'sample' },
       { text: '预览', link: 'https://preview.klinecharts.com' },
-      { text: 'VIP', link: '/vip' },
+      { text: '定制', link: '/customize' },
       { text: '赞助', link: '/sponsor' },
       {
         text: '更多',
