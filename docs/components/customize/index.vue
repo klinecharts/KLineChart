@@ -47,7 +47,6 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
 import { useData } from 'vitepress'
 
 import FeatureList from './FeatureList.vue'
@@ -94,6 +93,7 @@ const { lang } = useData()
   border-radius: 8px;
   background-color: var(--vp-c-bg-soft);
   transform: scale(1);
+  transform-origin: center bottom;
   transition: all 0.25s ease-in-out;
   cursor: pointer;
   max-width: 400px;

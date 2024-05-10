@@ -189,7 +189,7 @@
   onPressedMoving?: (event: OverlayEvent) => boolean
 
   // 按住拖动结束回调事件，可缺省
-  onPressedMoveEnd: (event: OverlayEvent) => boolean
+  onPressedMoveEnd?: (event: OverlayEvent) => boolean
 
   // 鼠标移入事件，可缺省
   onMouseEnter?: (event: OverlayEvent) => boolean
