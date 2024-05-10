@@ -1,5 +1,9 @@
 # 📠 更新日志
 
+## 9.8.7
+`2024-05-10`
++ 🐞 修复指标精度不同步价格数量精度问题。
+
 ## 9.8.6
 `2024-05-07`
 + 🐞 修复图表API `registerIndicator` 和 `registerOverlay` 参数 `extendData` 无法生效问题。

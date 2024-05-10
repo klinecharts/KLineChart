@@ -1,5 +1,9 @@
 # 📠 Change Log
 
+## 9.8.7
+`2024-05-10`
++ 🐞 Fix the issue of unsynchronized price and volume precision in indicator precision.
+
 ## 9.8.6
 `2024-05-07`
 + 🐞 Fix an issue that chart API `registerIndicator` and `registerOverlay` parameters `extendData` cannot take effect.
