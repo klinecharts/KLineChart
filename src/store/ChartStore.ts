@@ -210,7 +210,7 @@ export default class ChartStore {
 
   setPrecision (precision: Precision): this {
     this._precision = precision
-    this._indicatorStore.setSeriesPrecision(precision)
+    this._indicatorStore.synchronizeSeriesPrecision()
     return this
   }
 
