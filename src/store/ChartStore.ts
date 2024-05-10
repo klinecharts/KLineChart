@@ -16,7 +16,8 @@ import type Nullable from '../common/Nullable'
 import type KLineData from '../common/KLineData'
 import type Precision from '../common/Precision'
 import type VisibleData from '../common/VisibleData'
-import { getDefaultStyles, type Styles } from '../common/Styles'
+import type DeepPartial from '../common/DeepPartial'
+import { getDefaultStyles, type Styles, type TooltipLegend } from '../common/Styles'
 import { isArray, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 import { formatValue } from '../common/utils/format'
 import type LoadDataCallback from '../common/LoadDataCallback'
@@ -165,10 +166,16 @@ export default class ChartStore {
         this._timeScaleStore.setTimezone(timezone)
       }
       if (isValid(styles)) {
+        let ss: Nullable<DeepPartial<Styles>> = null
         if (isString(styles)) {
-          merge(this._styles, getStyles(styles))
+          ss = getStyles(styles)
         } else {
-          merge(this._styles, styles)
+          ss = styles
+        }
+        merge(this._styles, ss)
+        // `candle.tooltip.custom` should override
+        if (isArray(ss?.candle?.tooltip?.custom)) {
+          this._styles.candle.tooltip.custom = ss?.candle?.tooltip?.custom as unknown as TooltipLegend[]
         }
       }
       if (isValid(customApi)) {
