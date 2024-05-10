@@ -184,7 +184,7 @@ export default class ChartStore {
       if (isString(thousandsSeparator)) {
         this._thousandsSeparator = thousandsSeparator
       }
-      if (isNumber(decimalFoldThreshold)) {
+      if (isNumber(decimalFoldThreshold) && decimalFoldThreshold > 0) {
         this._decimalFoldThreshold = decimalFoldThreshold
       }
     }
