@@ -1,5 +1,12 @@
 # 📠 Change Log
 
+## 9.8.8
+`2024-05-14`
++ 🐞 Fix the issue that the style configuration `candle.tooltip.custom` cannot be overridden when it is an array.
++ 🐞 Fix the issue of decimal folding.
++ 💄 Optimize the parameter `precision` in the overlay callback method.
+
+
 ## 9.8.7
 `2024-05-10`
 + 🐞 Fix the issue of unsynchronized price and volume precision in indicator precision.
