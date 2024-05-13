@@ -67,12 +67,20 @@ export interface OverlayFigure {
   ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
 }
 
+export interface OverlayPrecision extends Precision {
+  max: number
+  min: number
+  excludePriceVolumeMax: number
+  excludePriceVolumeMin: number
+  [key: string]: number
+}
+
 export interface OverlayCreateFiguresCallbackParams {
   overlay: Overlay
   coordinates: Coordinate[]
   bounding: Bounding
   barSpace: BarSpace
-  precision: Precision
+  precision: OverlayPrecision
   thousandsSeparator: string
   decimalFoldThreshold: number
   dateTimeFormat: Intl.DateTimeFormat
