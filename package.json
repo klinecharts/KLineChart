@@ -65,6 +65,7 @@
     "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@shikijs/vitepress-twoslash": "^1.4.0",
     "@stackblitz/sdk": "^1.9.0",
     "@types/node": "^20.12.7",
     "chalk": "^5.3.0",
@@ -85,7 +86,6 @@
     "rollup-plugin-progress": "^1.1.2",
     "tslib": "^2.6.2",
     "typescript": "^4.9.5",
-    "vitepress": "^1.1.4",
-    "@shikijs/vitepress-twoslash": "^1.4.0"
+    "vitepress": "^1.2.0"
   }
 }
