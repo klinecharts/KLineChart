@@ -26,7 +26,7 @@
 
 import {
   LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
-  CandleType, YAxisPosition, YAxisType
+  CandleType, YAxisPosition, YAxisType, CandleTooltipRectPosition
 } from './common/Styles'
 import type Nullable from './common/Nullable'
 
@@ -172,7 +172,7 @@ export {
   registerStyles,
   registerXAxis, registerYAxis,
   utils,
-  LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
+  LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition, CandleTooltipRectPosition,
   CandleType, YAxisPosition, YAxisType, FormatDateType,
   DomPosition, ActionType, IndicatorSeries, OverlayMode
 }
