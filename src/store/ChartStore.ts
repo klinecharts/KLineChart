@@ -225,6 +225,11 @@ export default class ChartStore {
     return this._dataList
   }
 
+  getVisibleFirstData (): Nullable<KLineData> {
+    const { from } = this._timeScaleStore.getVisibleRange()
+    return this._dataList[from] ?? null
+  }
+
   getVisibleDataList (): VisibleData[] {
     return this._visibleDataList
   }
