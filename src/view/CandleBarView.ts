@@ -46,8 +46,16 @@ export default class CandleBarView extends ChildrenView {
     const chartStore = pane.getChart().getChartStore()
     const candleBarOptions = this.getCandleBarOptions(chartStore)
     if (candleBarOptions !== null) {
+      let ohlcSize = 0
+      if (candleBarOptions.type === CandleType.Ohlc) {
+        const { gapBar } = chartStore.getTimeScaleStore().getBarSpace()
+        ohlcSize = Math.min(Math.max(Math.round(gapBar * 0.2), 1), 8)
+        if (ohlcSize > 2 && ohlcSize % 2 === 1) {
+          ohlcSize--
+        }
+      }
       const yAxis = pane.getAxisComponent()
-      this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
+      this.eachChildren((data, barSpace) => {
         const { data: kLineData, x } = data
         if (isValid(kLineData)) {
           const { open, high, low, close } = kLineData
@@ -102,28 +110,27 @@ export default class CandleBarView extends ChildrenView {
               break
             }
             case CandleType.Ohlc: {
-              const size = Math.min(Math.max(Math.round(barSpace.gapBar * 0.2), 1), 7)
               rects = [
                 {
                   name: 'rect',
                   attrs: [
                     {
-                      x: x - size / 2,
+                      x: x - ohlcSize / 2,
                       y: priceY[0],
-                      width: size,
+                      width: ohlcSize,
                       height: priceY[3] - priceY[0]
                     },
                     {
                       x: x - barSpace.halfGapBar,
-                      y: openY + size > priceY[3] ? priceY[3] - size : openY,
-                      width: barSpace.halfGapBar - size / 2,
-                      height: size
+                      y: openY + ohlcSize > priceY[3] ? priceY[3] - ohlcSize : openY,
+                      width: barSpace.halfGapBar - ohlcSize / 2,
+                      height: ohlcSize
                     },
                     {
-                      x: x + size / 2,
-                      y: closeY + size > priceY[3] ? priceY[3] - size : closeY,
-                      width: barSpace.halfGapBar - size / 2,
-                      height: size
+                      x: x + ohlcSize / 2,
+                      y: closeY + ohlcSize > priceY[3] ? priceY[3] - ohlcSize : closeY,
+                      width: barSpace.halfGapBar - ohlcSize / 2,
+                      height: ohlcSize
                     }
                   ],
                   styles: { color: colors[0] }
@@ -159,7 +166,7 @@ export default class CandleBarView extends ChildrenView {
       {
         name: 'rect',
         attrs: {
-          x: x - 0.5,
+          x,
           y: priceY[0],
           width: 1,
           height: priceY[3] - priceY[0]
@@ -169,7 +176,7 @@ export default class CandleBarView extends ChildrenView {
       {
         name: 'rect',
         attrs: {
-          x: x - barSpace.halfGapBar + 0.5,
+          x: x - barSpace.halfGapBar + 1,
           y: priceY[1],
           width: barSpace.gapBar - 1,
           height: Math.max(1, priceY[2] - priceY[1])
@@ -189,13 +196,13 @@ export default class CandleBarView extends ChildrenView {
         name: 'rect',
         attrs: [
           {
-            x: x - 0.5,
+            x,
             y: priceY[0],
             width: 1,
             height: priceY[1] - priceY[0]
           },
           {
-            x: x - 0.5,
+            x,
             y: priceY[2],
             width: 1,
             height: priceY[3] - priceY[2]
@@ -206,7 +213,7 @@ export default class CandleBarView extends ChildrenView {
       {
         name: 'rect',
         attrs: {
-          x: x - barSpace.halfGapBar + 0.5,
+          x: x - barSpace.halfGapBar + 1,
           y: priceY[1],
           width: barSpace.gapBar - 1,
           height: Math.max(1, priceY[2] - priceY[1])
