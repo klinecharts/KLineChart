@@ -149,27 +149,38 @@ export function drawLine (ctx: CanvasRenderingContext2D, attrs: LineAttrs | Line
   } else {
     ctx.setLineDash([])
   }
+  const correction = size % 2 === 1 ? 0.5 : 0
   lines.forEach(({ coordinates }) => {
     if (coordinates.length > 1) {
-      ctx.beginPath()
-      if (coordinates.length === 2) {
-        const correction = (size % 2 === 1) ? 0.5 : 0
+      if (
+        coordinates.length === 2 &&
+        (
+          coordinates[0].x === coordinates[1].x ||
+          coordinates[0].y === coordinates[1].y
+        )
+      ) {
+        ctx.beginPath()
         if (coordinates[0].x === coordinates[1].x) {
           ctx.moveTo(coordinates[0].x + correction, coordinates[0].y)
           ctx.lineTo(coordinates[1].x + correction, coordinates[1].y)
-        } else if (coordinates[0].y === coordinates[1].y) {
+        } else {
           ctx.moveTo(coordinates[0].x, coordinates[0].y + correction)
           ctx.lineTo(coordinates[1].x, coordinates[1].y + correction)
-        } else {
-          ctx.moveTo(coordinates[0].x, coordinates[0].y)
-          ctx.lineTo(coordinates[1].x, coordinates[1].y)
         }
+        ctx.stroke()
+        ctx.closePath()
       } else {
+        ctx.save()
+        if (size % 2 === 1) {
+          ctx.translate(0.5, 0.5)
+        }
+        ctx.beginPath()
         ctx.moveTo(coordinates[0].x, coordinates[0].y)
         lineTo(ctx, coordinates, smooth)
+        ctx.stroke()
+        ctx.closePath()
+        ctx.restore()
       }
-      ctx.stroke()
-      ctx.closePath()
     }
   })
 }

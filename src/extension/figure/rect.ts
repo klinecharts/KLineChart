@@ -60,6 +60,8 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
     borderRadius: r = 0,
     borderDashedValue = [2, 2]
   } = styles
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const draw = ctx.roundRect ?? ctx.rect
   if (
     (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) &&
     (!isString(color) || !isTransparent(color))
@@ -67,11 +69,7 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
     ctx.fillStyle = color
     rects.forEach(({ x, y, width: w, height: h }) => {
       ctx.beginPath()
-      ctx.moveTo(x + r, y)
-      ctx.arcTo(x + w, y, x + w, y + h, r)
-      ctx.arcTo(x + w, y + h, x, y + h, r)
-      ctx.arcTo(x, y + h, x, y, r)
-      ctx.arcTo(x, y, x + w, y, r)
+      draw.call(ctx, x, y, w, h, r)
       ctx.closePath()
       ctx.fill()
     })
@@ -84,13 +82,11 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
     } else {
       ctx.setLineDash([])
     }
+    const correction = borderSize % 2 === 1 ? 0.5 : 0
+    const doubleCorrection = Math.round(correction * 2)
     rects.forEach(({ x, y, width: w, height: h }) => {
       ctx.beginPath()
-      ctx.moveTo(x + r, y)
-      ctx.arcTo(x + w, y, x + w, y + h, r)
-      ctx.arcTo(x + w, y + h, x, y + h, r)
-      ctx.arcTo(x, y + h, x, y, r)
-      ctx.arcTo(x, y, x + w, y, r)
+      draw.call(ctx, x + correction, y + correction, w - doubleCorrection, h - doubleCorrection, r)
       ctx.closePath()
       ctx.stroke()
     })
