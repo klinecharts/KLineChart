@@ -908,11 +908,14 @@ export default class ChartImp implements Chart {
       const scaleDataSpace = barSpace * scale
       const difSpace = scaleDataSpace - barSpace
       const startTime = new Date().getTime()
+      let preScale = 0
       const animation: (() => void) = () => {
         const progress = (new Date().getTime() - startTime) / duration
         const finished = progress >= 1
         const progressDataSpace = finished ? difSpace : difSpace * progress
-        timeScaleStore.zoom(progressDataSpace / barSpace, coordinate)
+        const scale = progressDataSpace / barSpace
+        timeScaleStore.zoom(scale - preScale, coordinate)
+        preScale = scale
         if (!finished) {
           requestAnimationFrame(animation)
         }
