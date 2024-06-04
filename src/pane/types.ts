@@ -18,6 +18,7 @@ export interface PaneGap {
 }
 
 export interface PaneAxisOptions {
+  name?: string
   scrollZoomEnabled?: boolean
 }
 

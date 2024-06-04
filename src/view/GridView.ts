@@ -12,6 +12,8 @@
  * limitations under the License.
  */
 
+import { type LineAttrs } from '../extension/figure/line'
+
 import View from './View'
 
 export default class GridView extends View {
@@ -31,35 +33,33 @@ export default class GridView extends View {
       const horizontalShow = horizontalStyles.show
       if (horizontalShow) {
         const yAxis = pane.getAxisComponent()
-        yAxis.getTicks().forEach(tick => {
-          this.createFigure({
-            name: 'line',
-            attrs: {
-              coordinates: [
-                { x: 0, y: tick.coord },
-                { x: bounding.width, y: tick.coord }
-              ]
-            },
-            styles: horizontalStyles
-          })?.draw(ctx)
-        })
+        const attrs: LineAttrs[] = yAxis.getTicks().map(tick => ({
+          coordinates: [
+            { x: 0, y: tick.coord },
+            { x: bounding.width, y: tick.coord }
+          ]
+        }))
+        this.createFigure({
+          name: 'line',
+          attrs,
+          styles: horizontalStyles
+        })?.draw(ctx)
       }
       const verticalStyles = gridStyles.vertical
       const verticalShow = verticalStyles.show
       if (verticalShow) {
         const xAxis = chart.getXAxisPane().getAxisComponent()
-        xAxis.getTicks().forEach(tick => {
-          this.createFigure({
-            name: 'line',
-            attrs: {
-              coordinates: [
-                { x: tick.coord, y: 0 },
-                { x: tick.coord, y: bounding.height }
-              ]
-            },
-            styles: verticalStyles
-          })?.draw(ctx)
-        })
+        const attrs: LineAttrs[] = xAxis.getTicks().map(tick => ({
+          coordinates: [
+            { x: tick.coord, y: 0 },
+            { x: tick.coord, y: bounding.height }
+          ]
+        }))
+        this.createFigure({
+          name: 'line',
+          attrs,
+          styles: verticalStyles
+        })?.draw(ctx)
       }
       ctx.restore()
     }

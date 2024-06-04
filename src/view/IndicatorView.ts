@@ -15,16 +15,16 @@
 import type Nullable from '../common/Nullable'
 import type VisibleData from '../common/VisibleData'
 import type BarSpace from '../common/BarSpace'
-import { CandleType } from '../common/Styles'
+import { CandleType, type SmoothLineStyle } from '../common/Styles'
+import { formatValue } from '../common/utils/format'
+import { isNumber, isValid } from '../common/utils/typeChecks'
+import type Coordinate from '../common/Coordinate'
 
 import type ChartStore from '../store/ChartStore'
 
 import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle } from '../component/Indicator'
 
 import CandleBarView, { type CandleBarOptions } from './CandleBarView'
-
-import { formatValue } from '../common/utils/format'
-import { isNumber, isValid } from '../common/utils/typeChecks'
 
 export default class IndicatorView extends CandleBarView {
   override getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
@@ -99,6 +99,7 @@ export default class IndicatorView extends CandleBarView {
         }
         if (!isCover) {
           const result = indicator.result
+          const lines: Array<Array<{ coordinates: Coordinate[], styles: SmoothLineStyle }>> = []
 
           this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
             const { halfGapBar, gapBar } = barSpace
@@ -144,7 +145,7 @@ export default class IndicatorView extends CandleBarView {
                     }
                     case 'rect':
                     case 'bar': {
-                      const baseValue = figure.baseValue ?? yAxis.getExtremum().min
+                      const baseValue = figure.baseValue ?? yAxis.getRange().from
                       const baseValueY = yAxis.convertToPixel(baseValue)
                       let height = Math.abs(baseValueY - (valueY as number))
                       if (baseValue !== currentData?.[figure.key]) {
@@ -165,29 +166,75 @@ export default class IndicatorView extends CandleBarView {
                       break
                     }
                     case 'line': {
+                      if (!isValid(lines[figureIndex])) {
+                        lines[figureIndex] = []
+                      }
                       if (isNumber(currentCoordinate[figure.key]) && isNumber(nextCoordinate[figure.key])) {
-                        attrs = {
+                        lines[figureIndex].push({
                           coordinates: [
                             { x: currentCoordinate.x, y: currentCoordinate[figure.key] },
                             { x: nextCoordinate.x, y: nextCoordinate[figure.key] }
-                          ]
-                        }
+                          ],
+                          styles: figureStyles as unknown as SmoothLineStyle
+                        })
                       }
                       break
                     }
                     default: { break }
                   }
                 }
-                if (isValid<IndicatorFigureAttrs>(attrs)) {
-                  const name = figure.type!
+                const type = figure.type!
+                if (isValid<IndicatorFigureAttrs>(attrs) && type !== 'line') {
                   this.createFigure({
-                    name: name === 'bar' ? 'rect' : name,
+                    name: type === 'bar' ? 'rect' : type,
                     attrs,
                     styles: figureStyles
                   })?.draw(ctx)
                 }
+                // merge line render
               }
             })
+          })
+
+          // merge line and render
+          lines.forEach(items => {
+            if (items.length > 1) {
+              const mergeLines = [
+                {
+                  coordinates: [items[0].coordinates[0], items[0].coordinates[1]],
+                  styles: items[0].styles
+                }
+              ]
+              for (let i = 1; i < items.length; i++) {
+                const lastMergeLine = mergeLines[mergeLines.length - 1]
+                const current = items[i]
+                const lastMergeLineLastCoordinate = lastMergeLine.coordinates[lastMergeLine.coordinates.length - 1]
+                if (
+                  lastMergeLineLastCoordinate.x === current.coordinates[0].x &&
+                  lastMergeLineLastCoordinate.y === current.coordinates[0].y &&
+                  lastMergeLine.styles.style === current.styles.style &&
+                  lastMergeLine.styles.color === current.styles.color &&
+                  lastMergeLine.styles.size === current.styles.size &&
+                  lastMergeLine.styles.smooth === current.styles.smooth &&
+                  lastMergeLine.styles.dashedValue[0] === current.styles.dashedValue[0] &&
+                  lastMergeLine.styles.dashedValue[1] === current.styles.dashedValue[1]
+                ) {
+                  lastMergeLine.coordinates.push(current.coordinates[1])
+                } else {
+                  mergeLines.push({
+                    coordinates: [current.coordinates[0], current.coordinates[1]],
+                    styles: current.styles
+                  })
+                }
+              }
+              mergeLines.forEach(({ coordinates, styles }) => {
+                this.createFigure({
+                  name: 'line',
+                  attrs: { coordinates },
+                  styles
+                })?.draw(ctx)
+              })
+            }
           })
         }
       }

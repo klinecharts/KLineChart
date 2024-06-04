@@ -13,7 +13,7 @@
  */
 
 import { YAxisType } from '../common/Styles'
-import { formatPrecision, formatThousands } from '../common/utils/format'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
 import View from './View'
@@ -33,7 +33,6 @@ export default class CandleLastPriceLabelView extends View {
       const precision = chartStore.getPrecision()
       const yAxis = pane.getAxisComponent() as YAxis
       const dataList = chartStore.getDataList()
-      const visibleDataList = chartStore.getVisibleDataList()
       const data = dataList[dataList.length - 1]
       if (isValid(data)) {
         const { close, open } = data
@@ -48,13 +47,13 @@ export default class CandleLastPriceLabelView extends View {
         }
         let text: string
         if (yAxis.getType() === YAxisType.Percentage) {
-          const fromData = visibleDataList[0].data
-          const fromClose = fromData.close
+          const fromData = chartStore.getVisibleFirstData()
+          const fromClose = fromData!.close
           text = `${((close - fromClose) / fromClose * 100).toFixed(2)}%`
         } else {
           text = formatPrecision(close, precision.price)
         }
-        text = formatThousands(text, chartStore.getThousandsSeparator())
+        text = formatFoldDecimal(formatThousands(text, chartStore.getThousandsSeparator()), chartStore.getDecimalFoldThreshold())
         let x: number
         let textAlgin: CanvasTextAlign
         if (yAxis.isFromZero()) {

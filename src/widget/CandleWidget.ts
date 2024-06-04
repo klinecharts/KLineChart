@@ -44,6 +44,7 @@ export default class CandleWidget extends IndicatorWidget {
     if (candleStyles.type !== CandleType.Area) {
       this._candleBarView.draw(ctx)
       this._candleHighLowPriceView.draw(ctx)
+      this._candleAreaView.stopAnimation()
     } else {
       this._candleAreaView.draw(ctx)
     }

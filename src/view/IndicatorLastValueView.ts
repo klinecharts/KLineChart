@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { formatPrecision, formatThousands } from '../common/utils/format'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isNumber, isValid } from '../common/utils/typeChecks'
 
 import { eachFigures, type IndicatorFigure, type IndicatorFigureStyle } from '../component/Indicator'
@@ -37,6 +37,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const dataIndex = dataList.length - 1
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
       const thousandsSeparator = chartStore.getThousandsSeparator()
+      const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
       indicators.forEach(indicator => {
         const result = indicator.result
         const indicatorData = result[dataIndex]
@@ -50,7 +51,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
               if (indicator.shouldFormatBigNumber) {
                 text = customApi.formatBigNumber(text)
               }
-              text = formatThousands(text, thousandsSeparator)
+              text = formatFoldDecimal(formatThousands(text, thousandsSeparator), decimalFoldThreshold)
               let x: number
               let textAlign: CanvasTextAlign
               if (yAxis.isFromZero()) {

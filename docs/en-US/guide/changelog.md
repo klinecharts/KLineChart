@@ -1,5 +1,61 @@
 # 📠 Change Log
 
+## 9.8.9
+`2024-05-28`
++ 🐞 Fix style configuration `yAxis.type: 'percentage'` error.
++ 🐞 Fix declaration issue in typescript.
+
+## 9.8.8
+`2024-05-14`
++ 🐞 Fix the issue that the style configuration `candle.tooltip.custom` cannot be overridden when it is an array.
++ 🐞 Fix the issue of decimal folding.
++ 💄 Optimize the parameter `precision` in the overlay callback method.
+
+## 9.8.7
+`2024-05-10`
++ 🐞 Fix the issue of unsynchronized price and volume precision in indicator precision.
+
+## 9.8.6
+`2024-05-07`
++ 🐞 Fix an issue that chart API `registerIndicator` and `registerOverlay` parameters `extendData` cannot take effect.
++ 🐞 Fix an issue of incorrect decimal folding when specifying `.` as the thousandth character.
++ 🐞 Fix an issue where overlays may not be moved after being created.
+
+## 9.8.5
+`2024-04-14`
++ 💄 Optimize the default right offset distance of the chart.
++ 🐞 Fix area chart display issue.
++ 🐞 Fix occasional blank spaces in chart.
+
+## 9.8.3
+`2024-04-12`
++ 💄 Optimize styles by adding `offsetLeft`, `offsetTop`, `offsetRight` and `offsetBottom` to `candle.tooltip` and `indicator.tooltip`.
++ 💄 Optimize figure and support array for attrs.
++ 💄 Optimize y-axis render.
++ 💄 Optimize default display, change the default candle width to 8.
++ 🐞 Fix `applyMoreData` add duplicate data issue. [@cryptotooltop](https://github.com/cryptotooltop)
+
+## 9.8.2
+`2024-03-26`
++ 💄 Optimize the display of the area chart.
++ 💄 Optimize smooth line drawing.
++ 🐞 Fix the overlay and drawing it to future time may not be an issue.
+
+## 9.8.1
+`2024-03-13`
++ 🐞 Fix an issue where initialize only `xAxis` in `layout` caused the chart to fail to initialize.
++ 🐞 Fix an issue when modify the built-in indicator `VOL` to `calcParams`.
++ 💄 Optimize the accuracy of width calculation when display decimal fold on the y-axis.
++ 💄 Optimize wheel event trigger.
+
+## 9.8.0
+`2024-03-04`
++ 🆕 Support custom coordinate axis.
++ 🆕 Support indicator mapping to future time.
++ 🆕 Support folding long decimals.
++ 🆕 Support adding data forward and backward.
++ 🐞 Fix formatting time issue for different browsers.
+
 `2024-01-12`
 + 🐞 Fix the issue of ineffective indicator attributes `minValue` and `maxValue`.
 + 🐞 Fix the display issue on the x-axis of the overlay.

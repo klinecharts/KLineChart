@@ -36,8 +36,8 @@ export type FigureInnerConstructor<A = any, S = any> = new (figure: FigureCreate
 export type FigureConstructor<A = any, S = any> = new (figure: FigureCreate<A, S>) => ({ draw: (ctx: CanvasRenderingContext2D) => void })
 
 export default abstract class FigureImp<A = any, S = any> extends Eventful implements Omit<Figure<A, S>, 'name' | 'draw' | 'checkEventOn'> {
-  readonly attrs: A
-  readonly styles: S
+  attrs: A
+  styles: S
 
   constructor (figure: FigureCreate) {
     super()
@@ -47,6 +47,16 @@ export default abstract class FigureImp<A = any, S = any> extends Eventful imple
 
   checkEventOn (event: MouseTouchEvent): boolean {
     return this.checkEventOnImp(event, this.attrs, this.styles)
+  }
+
+  setAttrs (attrs: A): this {
+    this.attrs = attrs
+    return this
+  }
+
+  setStyles (styles: S): this {
+    this.styles = styles
+    return this
   }
 
   draw (ctx: CanvasRenderingContext2D): void {

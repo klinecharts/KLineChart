@@ -13,10 +13,10 @@ hero:
   actions:
     - theme: brand
       text: 快速开始
-      link: /guide/getting-started
+      link: /guide/quick-start
     - theme: alt
       text: 在 Github 上查看
-      link: https://github.com/liihuu/KLineChart
+      link: https://github.com/klinecharts/KLineChart
 
 features:
   - icon:

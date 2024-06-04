@@ -47,7 +47,7 @@
     dataIndex?: number
     // 对应y轴的值
     value?: number
-  }>,
+  }>
 
   // 扩展数据，非必须
   extendData?: any
@@ -87,7 +87,7 @@
       // 蜡烛柱不包含蜡烛柱之间间隙的尺寸
       gapBar: number
       halfGapBar: number
-    },
+    }
     // 精度
     precision: {
       // 价格精度
@@ -97,6 +97,8 @@
     }
     // 千分符
     thousandsSeparator: string
+    // 小数折叠阈值
+    decimalFoldThreshold: number
     // 格式化日期和时间的对象的构造器，详情参阅 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
     dateTimeFormat: Intl.DateTimeFormat
     // 默认样式，即全局样式配置中的overlay，类型参与[样式]中的overlay
@@ -146,9 +148,16 @@
       value?: number
     }>
     // 事件所在点的索引
-    performPointIndex
+    performPointIndex: number
     // 事件所在点的信息
-    performPoint
+    performPoint: {
+      // 时间戳
+      timestamp: number
+      // 数据索引
+      dataIndex?: number
+      // 对应y轴的值
+      value?: number
+    }
   }) => void
 
   // 处理按住移动操作，可缺省，按住某个操作点移动过程中触发
@@ -180,7 +189,7 @@
   onPressedMoving?: (event: OverlayEvent) => boolean
 
   // 按住拖动结束回调事件，可缺省
-  onPressedMoveEnd: (event: OverlayEvent) => boolean
+  onPressedMoveEnd?: (event: OverlayEvent) => boolean
 
   // 鼠标移入事件，可缺省
   onMouseEnter?: (event: OverlayEvent) => boolean

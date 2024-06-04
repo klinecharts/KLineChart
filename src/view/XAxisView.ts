@@ -28,12 +28,11 @@ export default class XAxisView extends AxisView<XAxis> {
     return styles.xAxis
   }
 
-  override createAxisLine (bounding: Bounding, styles: AxisStyle): LineAttrs {
-    const correction = styles.axisLine.size / 2
+  override createAxisLine (bounding: Bounding): LineAttrs {
     return {
       coordinates: [
-        { x: 0, y: correction },
-        { x: bounding.width, y: correction }
+        { x: 0, y: 0 },
+        { x: bounding.width, y: 0 }
       ]
     }
   }

@@ -19,7 +19,7 @@ import type Bounding from '../common/Bounding'
 import type VisibleRange from '../common/VisibleRange'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
-import { type IndicatorStyle, type IndicatorPolygonStyle, type SmoothLineStyle, type RectStyle, type TextStyle, type TooltipData, type TooltipIconStyle, type LineStyle, type LineType, type PolygonType } from '../common/Styles'
+import { type IndicatorStyle, type IndicatorPolygonStyle, type SmoothLineStyle, type RectStyle, type TextStyle, type TooltipIconStyle, type LineStyle, type LineType, type PolygonType, type TooltipLegend } from '../common/Styles'
 
 import { type XAxis } from './XAxis'
 import { type YAxis } from './YAxis'
@@ -85,7 +85,7 @@ export interface IndicatorTooltipData {
   name: string
   calcParamsText: string
   icons: TooltipIconStyle[]
-  values: TooltipData[]
+  values: TooltipLegend[]
 }
 
 export interface IndicatorCreateTooltipDataSourceParams<D = any> {
@@ -219,7 +219,7 @@ export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 're
 
 export type IndicatorConstructor<D = any> = new () => IndicatorImp<D>
 
-export type EachFigureCallback = (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle) => void
+export type EachFigureCallback = (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, index: number) => void
 
 export function eachFigures<D> (
   kLineDataList: KLineData[],
@@ -246,21 +246,25 @@ export function eachFigures<D> (
   let lineCount = 0
 
   let defaultFigureStyles
+  let figureIndex = 0
   figures.forEach(figure => {
     switch (figure.type) {
       case 'circle': {
+        figureIndex = circleCount
         const styles = circleStyles[circleCount % circleStyleCount]
         defaultFigureStyles = { ...styles, color: styles.noChangeColor }
         circleCount++
         break
       }
       case 'bar': {
+        figureIndex = barCount
         const styles = barStyles[barCount % barStyleCount]
         defaultFigureStyles = { ...styles, color: styles.noChangeColor }
         barCount++
         break
       }
       case 'line': {
+        figureIndex = lineCount
         defaultFigureStyles = lineStyles[lineCount % lineStyleCount]
         lineCount++
         break
@@ -275,7 +279,7 @@ export function eachFigures<D> (
       }
       const ss = figure.styles?.(cbData, indicator, defaultStyles)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      eachFigureCallback(figure, { ...defaultFigureStyles, ...ss })
+      eachFigureCallback(figure, { ...defaultFigureStyles, ...ss }, figureIndex)
     }
   })
 }

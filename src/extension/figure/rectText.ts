@@ -30,6 +30,8 @@ const drawRectText = drawText
  * @deprecated
  * Starting from v10, it will be deleted
  */
-export { drawRectText }
+export {
+  drawRectText
+}
 
 export default rectText

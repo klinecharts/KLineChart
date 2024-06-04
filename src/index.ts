@@ -26,7 +26,7 @@
 
 import {
   LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
-  CandleType, YAxisPosition, YAxisType
+  CandleType, YAxisPosition, YAxisType, CandleTooltipRectPosition
 } from './common/Styles'
 import type Nullable from './common/Nullable'
 
@@ -35,7 +35,7 @@ import { logError, logTag, logWarn } from './common/utils/logger'
 import {
   clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
 } from './common/utils/typeChecks'
-import { formatValue, formatPrecision, formatBigNumber, formatDate, formatThousands } from './common/utils/format'
+import { formatValue, formatPrecision, formatBigNumber, formatDate, formatThousands, formatFoldDecimal } from './common/utils/format'
 import { calcTextWidth } from './common/utils/canvas'
 import { ActionType } from './common/Action'
 import { IndicatorSeries } from './component/Indicator'
@@ -60,6 +60,8 @@ import { registerIndicator, getSupportedIndicators } from './extension/indicator
 import { registerLocale, getSupportedLocales } from './extension/i18n/index'
 import { registerOverlay, getOverlayClass, getSupportedOverlays } from './extension/overlay/index'
 import { registerStyles } from './extension/styles/index'
+import { registerXAxis } from './extension/x-axis'
+import { registerYAxis } from './extension/y-axis'
 
 const instances = new Map<string, ChartImp>()
 let chartBaseId = 1
@@ -141,6 +143,7 @@ const utils = {
   formatBigNumber,
   formatDate,
   formatThousands,
+  formatFoldDecimal,
   calcTextWidth,
   getLinearSlopeIntercept,
   getLinearYFromSlopeIntercept,
@@ -166,8 +169,10 @@ export {
   registerIndicator, getSupportedIndicators,
   registerOverlay, getSupportedOverlays, getOverlayClass,
   registerLocale, getSupportedLocales,
-  registerStyles, utils,
-  LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition,
+  registerStyles,
+  registerXAxis, registerYAxis,
+  utils,
+  LineType, PolygonType, TooltipShowRule, TooltipShowType, TooltipIconPosition, CandleTooltipRectPosition,
   CandleType, YAxisPosition, YAxisType, FormatDateType,
   DomPosition, ActionType, IndicatorSeries, OverlayMode
 }

@@ -17,7 +17,6 @@ import type Coordinate from '../common/Coordinate'
 import type Point from '../common/Point'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
-import type Precision from '../common/Precision'
 import { type OverlayStyle } from '../common/Styles'
 import { type EventHandler, type EventName, type MouseTouchEvent, type MouseTouchEventCallback } from '../common/SyntheticEvent'
 import { isBoolean, isNumber, isValid } from '../common/utils/typeChecks'
@@ -27,7 +26,7 @@ import { type CustomApi } from '../Options'
 import type Axis from '../component/Axis'
 import type XAxis from '../component/XAxis'
 import type YAxis from '../component/YAxis'
-import { type OverlayFigure, type OverlayFigureIgnoreEventType } from '../component/Overlay'
+import { type OverlayPrecision, type OverlayFigure, type OverlayFigureIgnoreEventType } from '../component/Overlay'
 import type Overlay from '../component/Overlay'
 import { OVERLAY_FIGURE_KEY_PREFIX, OverlayMode, getAllOverlayFigureIgnoreEventTypes } from '../component/Overlay'
 
@@ -383,6 +382,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const chartStore = chart.getChartStore()
     const customApi = chartStore.getCustomApi()
     const thousandsSeparator = chartStore.getThousandsSeparator()
+    const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
     const timeScaleStore = chartStore.getTimeScaleStore()
     const dateTimeFormat = timeScaleStore.getDateTimeFormat()
     const barSpace = timeScaleStore.getBarSpace()
@@ -392,11 +392,27 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const hoverInstanceInfo = overlayStore.getHoverInstanceInfo()
     const clickInstanceInfo = overlayStore.getClickInstanceInfo()
     const overlays = this.getCompleteOverlays(overlayStore, paneId)
+    const paneIndicators = chartStore.getIndicatorStore().getInstances(paneId)
+    const overlayPrecision = paneIndicators.reduce((prev, indicator) => {
+      const precision = indicator.precision
+      prev[indicator.name] = precision
+      prev.max = Math.max(prev.max, precision)
+      prev.min = Math.min(prev.min, precision)
+      prev.excludePriceVolumeMax = Math.max(prev.excludePriceVolumeMax, precision)
+      prev.excludePriceVolumeMin = Math.min(prev.excludePriceVolumeMin, precision)
+      return prev
+    }, {
+      ...precision,
+      max: Math.max(precision.price, precision.volume),
+      min: Math.min(precision.price, precision.volume),
+      excludePriceVolumeMax: Number.MIN_SAFE_INTEGER,
+      excludePriceVolumeMin: Number.MAX_SAFE_INTEGER
+    })
     overlays.forEach(overlay => {
       if (overlay.visible) {
         this._drawOverlay(
-          ctx, overlay, bounding, barSpace, precision,
-          dateTimeFormat, customApi, thousandsSeparator,
+          ctx, overlay, bounding, barSpace, overlayPrecision,
+          dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
           defaultStyles, xAxis, yAxis,
           hoverInstanceInfo, clickInstanceInfo, timeScaleStore
         )
@@ -409,7 +425,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (overlay !== null && overlay.visible) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace,
-          precision, dateTimeFormat, customApi, thousandsSeparator,
+          overlayPrecision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
           defaultStyles, xAxis, yAxis,
           hoverInstanceInfo, clickInstanceInfo, timeScaleStore
         )
@@ -422,10 +438,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     overlay: Overlay,
     bounding: Bounding,
     barSpace: BarSpace,
-    precision: Precision,
+    precision: OverlayPrecision,
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     defaultStyles: OverlayStyle,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>,
@@ -451,7 +468,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (coordinates.length > 0) {
       const figures = new Array<OverlayFigure>().concat(
         this.getFigures(
-          overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, dateTimeFormat, defaultStyles, xAxis, yAxis
+          overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis
         )
       )
       this.drawFigures(
@@ -470,6 +487,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       dateTimeFormat,
       customApi,
       thousandsSeparator,
+      decimalFoldThreshold,
       defaultStyles,
       xAxis,
       yAxis,
@@ -509,14 +527,15 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     coordinates: Coordinate[],
     bounding: Bounding,
     barSpace: BarSpace,
-    precision: Precision,
+    precision: OverlayPrecision,
     thousandsSeparator: string,
+    decimalFoldThreshold: number,
     dateTimeFormat: Intl.DateTimeFormat,
     defaultStyles: OverlayStyle,
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createPointFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+    return overlay.createPointFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
   }
 
   protected drawDefaultFigures (
@@ -524,10 +543,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     overlay: Overlay,
     coordinates: Coordinate[],
     _bounding: Bounding,
-    _precision: Precision,
+    _precision: OverlayPrecision,
     _dateTimeFormat: Intl.DateTimeFormat,
     _customApi: CustomApi,
     _thousandsSeparator: string,
+    _drawDefaultFigures: number,
     defaultStyles: OverlayStyle,
     _xAxis: Nullable<XAxis>,
     _yAxis: Nullable<YAxis>,

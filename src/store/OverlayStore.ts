@@ -17,6 +17,7 @@ import { UpdateLevel } from '../common/Updater'
 import { type MouseTouchEvent } from '../common/SyntheticEvent'
 import { isFunction, isValid, isString, isBoolean, isNumber, isArray } from '../common/utils/typeChecks'
 import { createId } from '../common/utils/id'
+import { LoadDataType } from '../common/LoadDataCallback'
 
 import { type OverlayCreate, type OverlayRemove } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
@@ -137,7 +138,7 @@ export default class OverlayStore {
     if (isNumber(modeSensitivity)) {
       instance.setModeSensitivity(modeSensitivity)
     }
-    if (instance.setExtendData(extendData)) {
+    if (extendData !== undefined && instance.setExtendData(extendData)) {
       updateFlag = true
     }
     if (onDrawStart !== undefined) {
@@ -418,6 +419,26 @@ export default class OverlayStore {
 
   getPressedInstanceInfo (): EventOverlayInfo {
     return this._pressedInstanceInfo
+  }
+
+  updatePointPosition (dataChangeLength: number, type?: LoadDataType): void {
+    if (dataChangeLength > 0) {
+      const dataList = this._chartStore.getDataList()
+      this._instances.forEach(overlays => {
+        overlays.forEach(o => {
+          const points = o.points
+          points.forEach(point => {
+            if (!isValid(point.timestamp) && isValid(point.dataIndex)) {
+              if (type === LoadDataType.Forward) {
+                point.dataIndex = point.dataIndex + dataChangeLength
+              }
+              const data = dataList[point.dataIndex]
+              point.timestamp = data?.timestamp
+            }
+          })
+        })
+      })
+    }
   }
 
   setHoverInstanceInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {

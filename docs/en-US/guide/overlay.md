@@ -78,7 +78,7 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
       top: number
       // distance from bottom
       bottom: number
-    },
+    }
     // information about the size of the candlestick
     barSpace: {
       // candlestick size
@@ -87,22 +87,24 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
       // candlesticks do not include dimensions of gaps between candlesticks
       gapBar: number
       halfGapBar: number
-    },
+    }
     // precision
     precision: {
       // price precision
       price: number
       // Quantity precision
       volume: number
-    },
+    }
     // thousands separator
-    thousandsSeparator: string,
+    thousandsSeparator: string
+    // decimal fold threshold
+    decimalFoldThreshold: number
     // Constructor for objects that format date and time, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat for details
     dateTimeFormat: Intl. DateTimeFormat
     // The default style, that is, the overlay in the global style configuration, the type participates in the overlay in [style]
     defaultStyles: OverlayStyle
     // x-axis component, some built-in conversion methods
-    xAxis: XAxis,
+    xAxis: XAxis
     // y-axis component, with some built-in conversion methods
     yAxis: YAxis
   }) => ({
@@ -144,12 +146,19 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
       dataIndex?: number
       // corresponding to the value of the y-axis
       value?: number
-    }>,
+    }>
     // index of the event point
-    performPointIndex
+    performPointIndex: number
     // Information about the point where the event is located
-    performPoint
-  }) => void,
+    performPoint: {
+      // timestamp
+      timestamp: number
+      // data index
+      dataIndex?: number
+      // corresponding to the value of the y-axis
+      value?: number
+    }
+  }) => void
 
   // Handle the press and move operation, which can be defaulted, and is triggered during the movement of a certain operation point
   // The callback parameters are consistent with `performEventMoveForDrawing`
@@ -180,7 +189,7 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
   onPressedMoving?: (event: OverlayEvent) => boolean
 
   // Hold down and drag to end the callback event, which can be defaulted
-  onPressedMoveEnd: (event: OverlayEvent) => boolean
+  onPressedMoveEnd?: (event: OverlayEvent) => boolean
 
   // Mouse move event, can be default
   onMouseEnter?: (event: OverlayEvent) => boolean

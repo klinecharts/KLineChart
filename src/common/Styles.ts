@@ -29,6 +29,13 @@ export interface Padding {
   paddingBottom: number
 }
 
+export interface Offset {
+  offsetLeft: number
+  offsetTop: number
+  offsetRight: number
+  offsetBottom: number
+}
+
 /**
  * line type
  */
@@ -45,7 +52,7 @@ export interface LineStyle {
 }
 
 export interface SmoothLineStyle extends LineStyle {
-  smooth: boolean
+  smooth: boolean | number
 }
 
 export interface StateLineStyle extends LineStyle {
@@ -133,15 +140,27 @@ export interface GridStyle {
 
 export type TooltipTextStyle = Pick<TextStyle, 'color' | 'size' | 'family' | 'weight'> & Margin
 
-export interface TooltipDataChild {
+export interface TooltipLegendChild {
   text: string
   color: string
 }
 
-export interface TooltipData {
-  title: string | TooltipDataChild
-  value: string | TooltipDataChild
+/**
+ * @deprecated
+ * Starting from v10, it will be deleted
+ */
+export type TooltipDataChild = TooltipLegendChild
+
+export interface TooltipLegend {
+  title: string | TooltipLegendChild
+  value: string | TooltipLegendChild
 }
+
+/**
+ * @deprecated
+ * Starting from v10, it will be deleted
+ */
+export type TooltipData = TooltipLegend
 
 export enum TooltipIconPosition {
   Left = 'left',
@@ -168,11 +187,23 @@ export interface TooltipStyle {
   icons: TooltipIconStyle[]
 }
 
+export interface CandleAreaPointStyle {
+  show: boolean
+  color: string
+  radius: number
+  rippleColor: string
+  rippleRadius: number
+  animation: boolean
+  animationDuration: number
+}
+
 export interface CandleAreaStyle {
   lineSize: number
   lineColor: string
   value: string
+  smooth: boolean
   backgroundColor: string | GradientColor[]
+  point: CandleAreaPointStyle
 }
 
 export interface CandleHighLowPriceMarkStyle {
@@ -203,12 +234,8 @@ export enum CandleTooltipRectPosition {
   Pointer = 'pointer'
 }
 
-export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borderDashedValue' | 'borderStyle'>, Padding {
+export interface CandleTooltipRectStyle extends Omit<RectStyle, 'style' | 'borderDashedValue' | 'borderStyle'>, Padding, Offset {
   position: CandleTooltipRectPosition
-  offsetLeft: number
-  offsetTop: number
-  offsetRight: number
-  offsetBottom: number
 }
 
 export interface CandleTooltipCustomCallbackData {
@@ -217,10 +244,10 @@ export interface CandleTooltipCustomCallbackData {
   next: Nullable<KLineData>
 }
 
-export type CandleTooltipCustomCallback = (data: CandleTooltipCustomCallbackData, styles: CandleStyle) => TooltipData[]
+export type CandleTooltipCustomCallback = (data: CandleTooltipCustomCallbackData, styles: CandleStyle) => TooltipLegend[]
 
-export interface CandleTooltipStyle extends TooltipStyle {
-  custom: Nullable<CandleTooltipCustomCallback> | Nullable<TooltipData[]>
+export interface CandleTooltipStyle extends TooltipStyle, Offset {
+  custom: CandleTooltipCustomCallback | TooltipLegend[]
   rect: CandleTooltipRectStyle
 }
 
@@ -257,7 +284,7 @@ export interface IndicatorLastValueMarkStyle {
   text: LastValueMarkTextStyle
 }
 
-export interface IndicatorTooltipStyle extends TooltipStyle {
+export interface IndicatorTooltipStyle extends TooltipStyle, Offset {
   showName: boolean
   showParams: boolean
 }
@@ -428,6 +455,7 @@ function getDefaultCandleStyle (): CandleStyle {
     area: {
       lineSize: 2,
       lineColor: blue,
+      smooth: false,
       value: 'close',
       backgroundColor: [{
         offset: 0,
@@ -435,7 +463,16 @@ function getDefaultCandleStyle (): CandleStyle {
       }, {
         offset: 1,
         color: getAlphaBlue(0.2)
-      }]
+      }],
+      point: {
+        show: true,
+        color: blue,
+        radius: 4,
+        rippleColor: getAlphaBlue(0.3),
+        rippleRadius: 8,
+        animation: true,
+        animationDuration: 1000
+      }
     },
     priceMark: {
       show: true,
@@ -472,20 +509,31 @@ function getDefaultCandleStyle (): CandleStyle {
       }
     },
     tooltip: {
+      offsetLeft: 4,
+      offsetTop: 6,
+      offsetRight: 4,
+      offsetBottom: 6,
       showRule: TooltipShowRule.Always,
       showType: TooltipShowType.Standard,
-      custom: null,
+      custom: [
+        { title: 'time', value: '{time}' },
+        { title: 'open', value: '{open}' },
+        { title: 'high', value: '{high}' },
+        { title: 'low', value: '{low}' },
+        { title: 'close', value: '{close}' },
+        { title: 'volume', value: '{volume}' }
+      ],
       defaultValue: 'n/a',
       rect: {
         position: CandleTooltipRectPosition.Fixed,
-        paddingLeft: 0,
-        paddingRight: 0,
-        paddingTop: 0,
-        paddingBottom: 8,
-        offsetLeft: 10,
-        offsetTop: 8,
-        offsetRight: 10,
-        offsetBottom: 8,
+        paddingLeft: 4,
+        paddingRight: 4,
+        paddingTop: 4,
+        paddingBottom: 4,
+        offsetLeft: 4,
+        offsetTop: 4,
+        offsetRight: 4,
+        offsetBottom: 4,
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#F2F3F5',
@@ -496,10 +544,10 @@ function getDefaultCandleStyle (): CandleStyle {
         family: 'Helvetica Neue',
         weight: 'normal',
         color: textColor,
-        marginLeft: 10,
-        marginTop: 8,
-        marginRight: 6,
-        marginBottom: 0
+        marginLeft: 8,
+        marginTop: 4,
+        marginRight: 8,
+        marginBottom: 4
       },
       icons: []
     }
@@ -564,6 +612,10 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
       }
     },
     tooltip: {
+      offsetLeft: 4,
+      offsetTop: 6,
+      offsetRight: 4,
+      offsetBottom: 6,
       showRule: TooltipShowRule.Always,
       showType: TooltipShowType.Standard,
       showName: true,
@@ -574,10 +626,10 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
         family: 'Helvetica Neue',
         weight: 'normal',
         color: textColor,
-        marginLeft: 10,
-        marginTop: 8,
-        marginRight: 6,
-        marginBottom: 0
+        marginLeft: 8,
+        marginTop: 4,
+        marginRight: 8,
+        marginBottom: 4
       },
       icons: []
     }

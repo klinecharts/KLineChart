@@ -14,65 +14,80 @@
 
 import type Coordinate from '../common/Coordinate'
 import type VisibleData from '../common/VisibleData'
-import type BarSpace from '../common/BarSpace'
 import { type GradientColor } from '../common/Styles'
+import Animation from '../common/Animation'
+import { isNumber, isArray, isValid } from '../common/utils/typeChecks'
+import { UpdateLevel } from '../common/Updater'
 
 import ChildrenView from './ChildrenView'
 
-import { isNumber, isArray } from '../common/utils/typeChecks'
+import { lineTo } from '../extension/figure/line'
+import type Nullable from '../common/Nullable'
 
 export default class CandleAreaView extends ChildrenView {
+  private readonly _ripplePoint = this.createFigure({
+    name: 'circle',
+    attrs: {
+      x: 0,
+      y: 0,
+      r: 0
+    },
+    styles: {
+      style: 'fill'
+    }
+  })
+
+  private _animationFrameTime = 0
+
+  private readonly _animation = new Animation({ iterationCount: Infinity }).doFrame((time) => {
+    this._animationFrameTime = time
+    const pane = this.getWidget().getPane()
+    pane.getChart().updatePane(UpdateLevel.Main, pane.getId())
+  })
+
   override drawImp (ctx: CanvasRenderingContext2D): void {
     const widget = this.getWidget()
     const pane = widget.getPane()
     const chart = pane.getChart()
+    const dataList = chart.getDataList()
+    const lastDataIndex = dataList.length - 1
     const bounding = widget.getBounding()
     const yAxis = pane.getAxisComponent()
-    const candleAreaStyles = chart.getStyles().candle.area
-    const lineCoordinates: Coordinate[] = []
-    const areaCoordinates: Coordinate[] = []
+    const styles = chart.getStyles().candle.area
+    const coordinates: Coordinate[] = []
     let minY = Number.MAX_SAFE_INTEGER
-    this.eachChildren((data: VisibleData, barSpace: BarSpace, i: number) => {
+    let areaStartX: number = Number.MIN_SAFE_INTEGER
+    let ripplePointCoordinate: Nullable<Coordinate> = null
+    this.eachChildren((data: VisibleData) => {
       const { data: kLineData, x } = data
-      const { halfGapBar } = barSpace
-      const value = kLineData[candleAreaStyles.value]
+      const value = kLineData?.[styles.value]
       if (isNumber(value)) {
         const y = yAxis.convertToPixel(value)
-        if (i === 0) {
-          const startX = x - halfGapBar
-          areaCoordinates.push({ x: startX, y: bounding.height })
-          areaCoordinates.push({ x: startX, y })
-          lineCoordinates.push({ x: startX, y })
+        if (areaStartX === Number.MIN_SAFE_INTEGER) {
+          areaStartX = x
         }
-        lineCoordinates.push({ x, y })
-        areaCoordinates.push({ x, y })
+        coordinates.push({ x, y })
         minY = Math.min(minY, y)
+        if (data.dataIndex === lastDataIndex) {
+          ripplePointCoordinate = { x, y }
+        }
       }
     })
-    const areaCoordinateCount = areaCoordinates.length
-    if (areaCoordinateCount > 0) {
-      const lastCoordinate: Coordinate = areaCoordinates[areaCoordinateCount - 1]
-      const endX = lastCoordinate.x
-      lineCoordinates.push({ x: endX, y: lastCoordinate.y })
-      areaCoordinates.push({ x: endX, y: lastCoordinate.y })
-      areaCoordinates.push({ x: endX, y: bounding.height })
-    }
 
-    if (lineCoordinates.length > 0) {
+    if (coordinates.length > 0) {
       this.createFigure({
         name: 'line',
-        attrs: { coordinates: lineCoordinates },
+        attrs: { coordinates },
         styles: {
-          color: candleAreaStyles.lineColor,
-          size: candleAreaStyles.lineSize
+          color: styles.lineColor,
+          size: styles.lineSize,
+          smooth: styles.smooth
         }
       }
       )?.draw(ctx)
-    }
 
-    if (areaCoordinates.length > 0) {
-      // Draw real-time background
-      const backgroundColor = candleAreaStyles.backgroundColor
+      // render area
+      const backgroundColor = styles.backgroundColor
       let color: string | CanvasGradient
       if (isArray<GradientColor>(backgroundColor)) {
         const gradient = ctx.createLinearGradient(0, bounding.height, 0, minY)
@@ -86,11 +101,48 @@ export default class CandleAreaView extends ChildrenView {
       } else {
         color = backgroundColor
       }
-      this.createFigure({
-        name: 'polygon',
-        attrs: { coordinates: areaCoordinates },
-        styles: { color }
-      })?.draw(ctx)
+      ctx.fillStyle = color
+      ctx.beginPath()
+      ctx.moveTo(areaStartX, bounding.height)
+      ctx.lineTo(coordinates[0].x, coordinates[0].y)
+      lineTo(ctx, coordinates, styles.smooth)
+      ctx.lineTo(coordinates[coordinates.length - 1].x, bounding.height)
+      ctx.closePath()
+      ctx.fill()
     }
+
+    const pointStyles = styles.point
+    if (pointStyles.show && isValid(ripplePointCoordinate)) {
+      this.createFigure({
+        name: 'circle',
+        attrs: {
+          x: ripplePointCoordinate!.x,
+          y: ripplePointCoordinate!.y,
+          r: pointStyles.radius
+        },
+        styles: {
+          style: 'fill',
+          color: pointStyles.color
+        }
+      })?.draw(ctx)
+      let rippleRadius = pointStyles.rippleRadius
+      if (pointStyles.animation) {
+        rippleRadius = pointStyles.radius + this._animationFrameTime / pointStyles.animationDuration * (pointStyles.rippleRadius - pointStyles.radius)
+        this._animation.setDuration(pointStyles.animationDuration).start()
+      }
+      this._ripplePoint
+        ?.setAttrs({
+          x: ripplePointCoordinate!.x,
+          y: ripplePointCoordinate!.y,
+          r: rippleRadius
+        })
+        .setStyles({ style: 'fill', color: pointStyles.rippleColor }).draw(ctx)
+    } else {
+      this.stopAnimation()
+    }
+  }
+
+  stopAnimation (): void {
+    this._animation.stop()
   }
 }

@@ -51,13 +51,23 @@ import StyleExplain from '../components/StyleExplain.vue'
       lineSize: 2,
       lineColor: '#2196F3',
       value: 'close',
+      smooth: false,
       backgroundColor: [{
         offset: 0,
         color: 'rgba(33, 150, 243, 0.01)'
       }, {
         offset: 1,
         color: 'rgba(33, 150, 243, 0.2)'
-      }]
+      }],
+      point: {
+        show: true,
+        color: blue,
+        radius: 4,
+        rippleColor: getAlphaBlue(0.3),
+        rippleRadius: 8,
+        animation: true,
+        animationDuration: 1000
+      }
     },
     priceMark: {
       show: true,
@@ -115,6 +125,10 @@ import StyleExplain from '../components/StyleExplain.vue'
     },
     // 提示
     tooltip: {
+      offsetLeft: 4,
+      offsetTop: 6,
+      offsetRight: 4,
+      offsetBottom: 6,
       // 'always' | 'follow_cross' | 'none'
       showRule: 'always',
       // 'standard' | 'rect'
@@ -125,19 +139,26 @@ import StyleExplain from '../components/StyleExplain.vue'
       // title 或者 title.text 可以是国际化的 key，
       // value 或者 value.text 支持字符串模版
       // 例如：想显示时间，开盘和收盘，配置[{ title: 'time', value: '{time}' }, { title: 'open', value: '{open}' }, { title: 'close', value: '{close}' }]
-      custom: null,
+      custom: [
+        { title: 'time', value: '{time}' },
+        { title: 'open', value: '{open}' },
+        { title: 'high', value: '{high}' },
+        { title: 'low', value: '{low}' },
+        { title: 'close', value: '{close}' },
+        { title: 'volume', value: '{volume}' }
+      ],
       defaultValue: 'n/a',
       rect: {
         // 'fixed' | 'pointer'
         position: 'fixed',
-        paddingLeft: 0,
-        paddingRight: 0,
-        paddingTop: 0,
-        paddingBottom: 6,
-        offsetLeft: 10,
-        offsetTop: 8,
-        offsetRight: 10,
-        offsetBottom: 8,
+        paddingLeft: 4,
+        paddingRight: 4,
+        paddingTop: 4,
+        paddingBottom: 4,
+        offsetLeft: 4,
+        offsetTop: 4,
+        offsetRight: 4,
+        offsetBottom: 4,
         borderRadius: 4,
         borderSize: 1,
         borderColor: '#f2f3f5',
@@ -148,10 +169,10 @@ import StyleExplain from '../components/StyleExplain.vue'
         family: 'Helvetica Neue',
         weight: 'normal',
         color: '#D9D9D9',
-        marginLeft: 10,
-        marginTop: 8,
-        marginRight: 6,
-        marginBottom: 0
+        marginLeft: 8,
+        marginTop: 4,
+        marginRight: 8,
+        marginBottom: 4
       },
       // 示例：
       // [{
@@ -262,6 +283,10 @@ import StyleExplain from '../components/StyleExplain.vue'
     },
     // 提示
     tooltip: {
+      offsetLeft: 4,
+      offsetTop: 6,
+      offsetRight: 4,
+      offsetBottom: 6,
       // 'always' | 'follow_cross' | 'none'
       showRule: 'always',
       // 'standard' | 'rect'
@@ -274,10 +299,10 @@ import StyleExplain from '../components/StyleExplain.vue'
         family: 'Helvetica Neue',
         weight: 'normal',
         color: '#D9D9D9',
-        marginTop: 8,
-        marginRight: 10,
-        marginBottom: 0,
-        marginLeft: 6
+        marginTop: 4,
+        marginRight: 8,
+        marginBottom: 4,
+        marginLeft: 8
       },
       // 示例：
       // [{

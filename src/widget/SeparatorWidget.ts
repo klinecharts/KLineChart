@@ -84,7 +84,10 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     const topPane = currentPane.getTopPane()
     const bottomPane = currentPane.getBottomPane()
     const isUpDrag = dragDistance < 0
-    if (topPane !== null && bottomPane !== null && bottomPane.getOptions().dragEnabled) {
+    if (
+      topPane !== null &&
+      bottomPane?.getOptions().dragEnabled
+    ) {
       let reducedPane: AxisPane
       let increasedPane: AxisPane
       let startDragReducedPaneHeight: number

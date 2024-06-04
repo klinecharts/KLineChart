@@ -15,13 +15,16 @@
 import type DrawWidget from '../widget/DrawWidget'
 import XAxisWidget from '../widget/XAxisWidget'
 
-import XAxis from '../component/XAxis'
+import type XAxis from '../component/XAxis'
 
 import DrawPane from './DrawPane'
 
+import { getXAxisClass } from '../extension/x-axis'
+
 export default class XAxisPane extends DrawPane<XAxis> {
-  override createAxisComponent (): XAxis {
-    return new XAxis(this)
+  override createAxisComponent (name: string): XAxis {
+    const XAxisClass = getXAxisClass(name)
+    return new XAxisClass(this)
   }
 
   override createMainWidget (container: HTMLElement): DrawWidget<DrawPane<XAxis>> {

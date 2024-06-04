@@ -51,13 +51,11 @@ export default abstract class AxisView<C extends Axis = Axis> extends View<C> {
       }
       if (styles.tickText.show) {
         const texts = this.createTickTexts(ticks, bounding, styles)
-        texts.forEach(text => {
-          this.createFigure({
-            name: 'text',
-            attrs: text,
-            styles: styles.tickText
-          })?.draw(ctx)
-        })
+        this.createFigure({
+          name: 'text',
+          attrs: texts,
+          styles: styles.tickText
+        })?.draw(ctx)
       }
     }
   }

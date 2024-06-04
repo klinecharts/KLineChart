@@ -67,13 +67,22 @@ export interface OverlayFigure {
   ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
 }
 
+export interface OverlayPrecision extends Precision {
+  max: number
+  min: number
+  excludePriceVolumeMax: number
+  excludePriceVolumeMin: number
+  [key: string]: number
+}
+
 export interface OverlayCreateFiguresCallbackParams {
   overlay: Overlay
   coordinates: Coordinate[]
   bounding: Bounding
   barSpace: BarSpace
-  precision: Precision
+  precision: OverlayPrecision
   thousandsSeparator: string
+  decimalFoldThreshold: number
   dateTimeFormat: Intl.DateTimeFormat
   defaultStyles: OverlayStyle
   xAxis: Nullable<XAxis>
@@ -671,7 +680,7 @@ export default abstract class OverlayImp implements Overlay {
         difValue = point.value - this._prevPressedPoint.value
       }
       this.points = this._prevPressedPoints.map(p => {
-        if (isNumber(p.dataIndex) && isNumber(p.timestamp)) {
+        if (isNumber(p.timestamp)) {
           p.dataIndex = timeScaleStore.timestampToDataIndex(p.timestamp)
         }
         const newPoint = { ...p }

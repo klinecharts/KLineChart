@@ -13,7 +13,6 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type Precision from '../common/Precision'
 import { isValid, isString, isArray, isNumber, isBoolean, isFunction } from '../common/utils/typeChecks'
 
 import type ChartStore from './ChartStore'
@@ -79,7 +78,7 @@ export default class IndicatorStore {
     if (isValid(styles) && instance.setStyles(styles)) {
       updateFlag = true
     }
-    if (instance.setExtendData(extendData)) {
+    if (extendData !== undefined && instance.setExtendData(extendData)) {
       updateFlag = true
       calcFlag = true
     }
@@ -123,6 +122,8 @@ export default class IndicatorStore {
     }
     const IndicatorClazz = getIndicatorClass(name)!
     const instance = new IndicatorClazz()
+
+    this.synchronizeSeriesPrecision(instance)
     this._overrideInstance(instance, indicator)
     if (!isStack) {
       paneInstances = []
@@ -215,17 +216,31 @@ export default class IndicatorStore {
     return mapping
   }
 
-  setSeriesPrecision (precision: Precision): void {
-    this._instances.forEach(paneInstances => {
-      paneInstances.forEach(instance => {
-        if (instance.series === IndicatorSeries.Price) {
-          instance.setPrecision(precision.price, true)
+  synchronizeSeriesPrecision (indicator?: IndicatorImp): void {
+    const { price: pricePrecision, volume: volumePrecision } = this._chartStore.getPrecision()
+    const synchronize: ((instance: IndicatorImp) => void) = instance => {
+      switch (instance.series) {
+        case IndicatorSeries.Price: {
+          instance.setPrecision(pricePrecision, true)
+          break
         }
-        if (instance.series === IndicatorSeries.Volume) {
-          instance.setPrecision(precision.volume, true)
+        case IndicatorSeries.Volume: {
+          instance.setPrecision(volumePrecision, true)
+          break
         }
+        default: { break }
+      }
+    }
+
+    if (isValid(indicator)) {
+      synchronize(indicator)
+    } else {
+      this._instances.forEach(paneInstances => {
+        paneInstances.forEach(instance => {
+          synchronize(instance)
+        })
       })
-    })
+    }
   }
 
   async override (indicator: IndicatorCreate, paneId: Nullable<string>): Promise<[boolean, boolean]> {

@@ -15,7 +15,7 @@
 import { getPixelRatio } from './utils/canvas'
 import { createDom } from './utils/dom'
 import { isValid } from './utils/typeChecks'
-import { requestAnimationFrame, cancelAnimationFrame } from './utils/compatible'
+import { requestAnimationFrame, DEFAULT_REQUEST_ID } from './utils/compatible'
 
 type DrawListener = () => void
 
@@ -28,8 +28,6 @@ async function isSupportedDevicePixelContentBox (): Promise<boolean> {
     ro.observe(document.body, { box: 'device-pixel-content-box' })
   }).catch(() => false)
 }
-
-const DEFAULT_REQUEST_ANIMATION_ID = -1
 
 export default class Canvas {
   private readonly _element: HTMLCanvasElement
@@ -48,17 +46,16 @@ export default class Canvas {
   private _pixelWidth = 0
   private _pixelHeight = 0
 
-  private _requestAnimationId = DEFAULT_REQUEST_ANIMATION_ID
+  private _nextPixelWidth = 0
+  private _nextPixelHeight = 0
+
+  private _requestAnimationId = DEFAULT_REQUEST_ID
 
   private readonly _mediaQueryListener: () => void = () => {
     const pixelRatio = getPixelRatio(this._element)
-    const { width, height } = this._element.getBoundingClientRect()
-    this._resetPixelRatio(
-      Math.round(width * pixelRatio),
-      Math.round(height * pixelRatio),
-      pixelRatio,
-      pixelRatio
-    )
+    this._nextPixelWidth = Math.round(this._element.clientWidth * pixelRatio)
+    this._nextPixelHeight = Math.round(this._element.clientHeight * pixelRatio)
+    this._resetPixelRatio()
   }
 
   constructor (style: Partial<CSSStyleDeclaration>, listener: DrawListener) {
@@ -70,13 +67,12 @@ export default class Canvas {
       if (result) {
         this._resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
           const entry = entries.find((entry: ResizeObserverEntry) => entry.target === this._element)
-          if (isValid(entry?.devicePixelContentBoxSize?.[0])) {
-            const size = (entry!.devicePixelContentBoxSize[0])!
-            const width = size.inlineSize
-            const height = size.blockSize
-            if (this._pixelWidth !== width || this._pixelHeight !== height) {
-              const bounding = this._element.getBoundingClientRect()
-              this._resetPixelRatio(width, height, width / bounding.width, height / bounding.height)
+          const size = entry?.devicePixelContentBoxSize?.[0]
+          if (isValid(size)) {
+            this._nextPixelWidth = size.inlineSize
+            this._nextPixelHeight = size.blockSize
+            if (this._pixelWidth !== this._nextPixelWidth || this._pixelHeight !== this._nextPixelHeight) {
+              this._resetPixelRatio()
             }
           }
         })
@@ -88,34 +84,31 @@ export default class Canvas {
     }).catch(_ => false)
   }
 
-  private _resetPixelRatio (
-    pixelWidth: number,
-    pixelHeight: number,
-    horizontalPixelRatio: number,
-    verticalPixelRatio: number
-  ): void {
+  private _resetPixelRatio (): void {
     this._executeListener(() => {
-      const { width, height } = this._element.getBoundingClientRect()
+      const width = this._element.clientWidth
+      const height = this._element.clientHeight
+      const horizontalPixelRatio = this._nextPixelWidth / width
+      const verticalPixelRatio = this._nextPixelHeight / height
       this._width = width
       this._height = height
-      this._pixelWidth = pixelWidth
-      this._pixelHeight = pixelHeight
-      this._element.width = pixelWidth
-      this._element.height = pixelHeight
+      this._pixelWidth = this._nextPixelWidth
+      this._pixelHeight = this._nextPixelHeight
+      this._element.width = this._nextPixelWidth
+      this._element.height = this._nextPixelHeight
       this._ctx.scale(horizontalPixelRatio, verticalPixelRatio)
     })
   }
 
   private _executeListener (fn?: () => void): void {
-    if (this._requestAnimationId !== DEFAULT_REQUEST_ANIMATION_ID) {
-      cancelAnimationFrame(this._requestAnimationId)
-      this._requestAnimationId = DEFAULT_REQUEST_ANIMATION_ID
+    if (this._requestAnimationId === DEFAULT_REQUEST_ID) {
+      this._requestAnimationId = requestAnimationFrame(() => {
+        this._ctx.clearRect(0, 0, this._width, this._height)
+        fn?.()
+        this._listener()
+        this._requestAnimationId = DEFAULT_REQUEST_ID
+      })
     }
-    this._requestAnimationId = requestAnimationFrame(() => {
-      this._ctx.clearRect(0, 0, this._width, this._height)
-      fn?.()
-      this._listener()
-    })
   }
 
   update (w: number, h: number): void {
@@ -124,12 +117,9 @@ export default class Canvas {
       this._element.style.height = `${h}px`
       if (!this._supportedDevicePixelContentBox) {
         const pixelRatio = getPixelRatio(this._element)
-        this._resetPixelRatio(
-          Math.round(w * pixelRatio),
-          Math.round(h * pixelRatio),
-          pixelRatio,
-          pixelRatio
-        )
+        this._nextPixelWidth = Math.round(w * pixelRatio)
+        this._nextPixelHeight = Math.round(h * pixelRatio)
+        this._resetPixelRatio()
       }
     } else {
       this._executeListener()

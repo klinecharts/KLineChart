@@ -98,21 +98,21 @@ Whether dragging and scrolling is possible.
 ```
 Set the gap that can be left to the right of the chart.
 
-## getOffsetRightDistance()
+## getOffsetRightDistance() <Badge>^9.2.0</Badge>
 ```typescript
 () => number
 ```
 Get the gap that can be left to the right of the chart.
 
 
-## setMaxOffsetLeftDistance()
+## setMaxOffsetLeftDistance() <Badge>^9.7.0</Badge>
 ```typescript
 (distance: number) => void
 ```
 Set the maximum available gap on the left side of the chart.
 
 
-## setMaxOffsetRightDistance()
+## setMaxOffsetRightDistance() <Badge>^9.7.0</Badge>
 ```typescript
 (distance: number) => void
 ```
@@ -175,9 +175,12 @@ Get visible range.
 ) => void
 ```
 Add new data, this method will clear the chart data, no need to call the clearData method additionally.
-- `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
+- `dataList` is an array of K-line data. For details of the data type, please refer to [data](./data-source.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
-- `callback` success callback
+- `callback` success callback <Badge>^9.2.0</Badge>
+::: warning Note
+`callback` has been deprecated since version 9.8.0, use `subscribeAction('onDataReady', () => {})` instead.
+:::
 
 
 ## applyMoreData(dataList, more, callback)
@@ -197,9 +200,12 @@ Add new data, this method will clear the chart data, no need to call the clearDa
 ) => void
 ```
 Add more historical data.
-- `dataList` is an array of K-line data. For details of the data type, please refer to [data](./datasource.md)
+- `dataList` is an array of K-line data. For details of the data type, please refer to [data](./data-source.md)
 - `more` tells the chart whether there is more historical data, can be defaulted, the default is true
-- `callback` success callback
+- `callback` success callback <Badge>^9.2.0</Badge>
+::: warning Note
+This api has been deprecated since version 9.8.0.
+:::
 
 
 ## updateData(data, callback)
@@ -218,8 +224,11 @@ Add more historical data.
 ) => void
 ```
 Update data. Currently, only the timestamp of the last piece of data will be matched. If it is the same, it will be overwritten, and if it is different, it will be appended.
-- `data` single k-line data, please refer to [data](./datasource.md) for details of data type
-- `callback` success callback
+- `data` single k-line data, please refer to [data](./data-source.md) for details of data type
+- `callback` success callback <Badge>^9.2.0</Badge>
+::: warning Note
+`callback` has been deprecated since version 9.8.0, use `subscribeAction('onDataReady', () => {})` instead.
+:::
 
 
 ## getDataList()
@@ -234,7 +243,7 @@ Update data. Currently, only the timestamp of the last piece of data will be mat
   turnover?: number
 }>
 ```
-Get the current data source of the chart. For the returned data type, please refer to [data](./datasource.md).
+Get the current data source of the chart. For the returned data type, please refer to [data](./data-source.md).
 
 
 ## clearData()
@@ -249,7 +258,28 @@ Clear the data of the chart. Generally, it is not necessary to call it manually.
 (cb: (timestamp: number | null) => void) => void
 ```
 Set load more callback function.
-- `cb` is a callback method, `timestamp` is the timestamp of the first piece of data.
+- `cb` is a callback method, `timestamp` is the timestamp of the first piece of data
+::: warning Note
+This api has been deprecated since version 9.8.0, use `setLoadDataCallback` instead.
+:::
+
+
+## setLoadDataCallback(cb) <Badge>^9.8.0</Badge>
+```typescript
+(
+  cb: (params: { 
+    type: 'forward' | 'backward'
+    data: Nullable<KLineData>
+    callback: (dataList: KLineData[], more?: boolean) => void
+  }) => void
+) => void
+```
+Set auto load data callback
+- `cb` callback
+  - `params` params
+    - `type` forward or backward
+    - `data` boundary data
+    - `callback` used for returning data to chart
 
 ## createIndicator(value, isStack, paneOptions, callback)
 ```typescript
@@ -325,6 +355,7 @@ Set load more callback function.
       bottom?: number
     }
     axisOptions?: {
+      name?: string
       scrollZoomEnabled?: boolean
     }
   } | null,
@@ -339,12 +370,13 @@ Create a technical indicator, the return value is a string that identifies the w
   - `height` window height, can be default
   - `minHeight` minimum height of the window, can be defaulted
   - `dragEnabled` Whether the window can be dragged to adjust the height, it can be defaulted
-  - `position` Only valid when creating a new pane
+  - `position` Only valid when creating a new pane <Badge>^9.6.0</Badge>
   - `gap` margins
     - `top` top margin, value less than 1 is a percentage
     - `bottom` bottom margin, value less than 1 is a percentage
   - `axisOptions`
-    - `scrollZoomEnabled` Scroll zoom flag
+    - `name` is same `axis.name` in [registerYAxis(axis)](./chart-api#registeryaxis-axis) of chart api, default is 'default' <Badge>^9.8.0</Badge>
+    - `scrollZoomEnabled` Scroll zoom flag <Badge>^9.3.0</Badge>
 - `callback` success callback
 ::: tip Special id
 'candle_pane', the window id of the main picture.
@@ -431,7 +463,7 @@ Overlay technical indicator information.
    - `shouldOhlc` needs ohlc auxiliary graphics
    - `shouldFormatBigNumber` should format large numbers. For example, 1000 is converted to 1k, 1000000 is converted to 1M, etc.
    - `visible` visible or not
-   - `zLevel` z level
+   - `zLevel` z level <Badge>^9.7.0</Badge>
    - `extendData` extended data
    - `series` indicator series, optional options are 'normal', 'price' and 'volume'
    - `figures` graphics configuration
@@ -612,7 +644,7 @@ chart.createOverlay({
    styles: {
      line: {
        style: 'solid',
-       dashedValue: [2, 2]
+       dashedValue: [2, 2],
        color: '#f00',
        size: 2
      }
@@ -705,7 +737,7 @@ Overlays that have been drawn.
   - `needDefaultXAxisFigure` needs the default x-axis figure
   - `needDefaultYAxisFigure` needs the default y-axis figure
   - `mode` mode, options are 'normal', 'weak_magnet' and 'strong_magnet'
-  - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet
+  - `modeSensitivity` mode sensitivity, only valid when mode is weak_magnet <Badge>^9.5.0</Badge>
   - `points` point information
   - `extendData` extended data
   - `styles` styles
@@ -713,7 +745,7 @@ Overlays that have been drawn.
   - `onDrawing` drawing event
   - `onDrawEnd` draw end event
   - `onClick` click event
-  - `onDoubleClick` double click event
+  - `onDoubleClick` double click event <Badge>^9.5.0</Badge>
   - `onRightClick` right click event
   - `onPressedMoveStart` press start move event
   - `onPressedMoving` Press and move event
@@ -737,7 +769,7 @@ chart.overrideOverlay({
    styles: {
      line: {
        style: 'solid',
-       dashedValue: [2, 2]
+       dashedValue: [2, 2],
        color: '#f00',
        size: 2
      }
@@ -871,22 +903,24 @@ Scale on the specified timestamp.
       bottom?: number
     }
     axisOptions?: {
+      name?: string
       scrollZoomEnabled?: boolean
     }
   }
 ) => void
 ```
 Set window configuration.
-- `paneOptions` window configuration information, can be default
+- `options` window configuration information, can be default
   - `id` window id
   - `height` window height, can be default
   - `minHeight` minimum height of the window, can be defaulted
-  - `dragEnbaled` Whether the window can be dragged to adjust the height, it can be defaulted
+  - `dragEnabled` Whether the window can be dragged to adjust the height, it can be defaulted
   - `gap` margins
     - `top` top margin, value less than 1 is a percentage
     - `bottom` bottom margin, value less than 1 is a percentage
   - `axisOptions`
-    - `scrollZoomEnabled` Scroll zoom flag
+    - `name` axis name <Badge>^9.8.0</Badge>
+    - `scrollZoomEnabled` Scroll zoom flag <Badge>^9.3.0</Badge>
 ::: tip Special id
 'candle_pane', the window id of the main picture.
 :::
@@ -899,11 +933,11 @@ chart.setPaneOptions({
   minHeight: 3,
   dragEnabled: true,
   gap: { top: 0.2, bottom: 0.1 },
-  axisOptions: { scrollZoomEnabled: true }
+  axisOptions: { name: 'default', scrollZoomEnabled: true }
 })
 ```
 
-## executeAction(type, data)
+## executeAction(type, data) <Badge>^9.2.0</Badge>
 ```typescript
 (
    type: 'onCrosshairChange',
@@ -918,24 +952,24 @@ Execute chart action.
 ## subscribeAction(type, callback)
 ```typescript
 (
-   type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
+   type: 'onDataReady' | 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
    callback: (data?: any) => void
 ) => void
 ```
 Subscribe to chart actions.
-- `type` options are 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
+- `type` options are 'onDataReady', 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
 - `callback` is a callback method
 
 
 ## unsubscribeAction(type, callback)
 ```typescript
 (
-   type: 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
+   type: 'onDataReady' | 'onZoom' | 'onScroll' | 'onVisibleRangeChange' | 'onCrosshairChange' | 'onCandleBarClick' | 'onTooltipIconClick' | 'onPaneDrag',
    callback?: (data?: any) => void
 ) => void
 ```
 Unsubscribe from chart actions.
-- `type` options are 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
+- `type` options are 'onDataReady', 'onZoom', 'onScroll', 'onVisibleRangeChange', 'onCandleBarClick', 'onTooltipIconClick', 'onCrosshairChange' and 'onPaneDrag'
 - `callback` is the callback method when subscribing, the default is to cancel all the current types
 
 

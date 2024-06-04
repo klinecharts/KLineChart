@@ -5,7 +5,6 @@
 /dist
 /types
 /docs/.vitepress/cache
-/docs/data/sample/*/index.json
 
 /package-lock.json
 /pnpm-lock.yaml

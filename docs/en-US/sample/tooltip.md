@@ -6,9 +6,8 @@ editLink: false
 # Tooltip
 
 <script setup>
-import Chart from '../../components/SampleChart.vue'
-import data from '../../data/sample/tooltip/index.json'
+import Chart from '../../components/sample/tooltip/index.vue'
 </script>
-<Chart :js="data['index.js']" :html="data['index.html']" :css="data['index.css']" title="Tooltip"/>
+<Chart/>
 
-<!--@include: @/data/sample/tooltip/index.md-->
+<!--@include: @/components/sample/tooltip/index.md-->

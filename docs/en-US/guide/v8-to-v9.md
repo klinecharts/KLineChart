@@ -35,7 +35,7 @@ This document will help you upgrade from kinecharts 8.x to klinecharts 9.x. If y
 + To delete `createShape(value, paneId)`, `createAnnotation(annotation, paneId)`, `createTag(tag, paneId)`, please use `createOverlay(value, paneId)` instead.
 + To delete `removeShape(id)`, `removeAnnotation(paneId, points)`, `removeTag(paneId, tagId)`, please use `removeOverlay(id)` instead.
 + To delete `setShapeOptions(options)`, use `overrideOverlay(override)` instead.
-+ To delete `reateHtml(html, paneId)`, `removeHtml(paneId, htmlId)`, please obtain the corresponding dom through `getDom(paneId, position)`.
++ To delete `createHtml(html, paneId)`, `removeHtml(paneId, htmlId)`, please obtain the corresponding dom through `getDom(paneId, position)`.
 + To delete `getTechnicalIndicatorByPaneId(paneId, name)`.
 
 ### Shape help API
@@ -43,7 +43,7 @@ This document will help you upgrade from kinecharts 8.x to klinecharts 9.x. If y
 
 ## Customized technical indicator adjustment
 + Attribute `plots` is changed to `figures`, sub item methods `color`, `isStroke`, `isDashed` are merged into `styles`.
-+ Change the method '`regeneratePlots(params)` to `regeneratefigures(params)`.
++ Change the method '`regeneratePlots(params)` to `regenerateFigures(params)`.
 + The method `calcTechnicalIndicator(kLineDataList, options)` is changed to `calc(kLineDataList, indicator)`.
 + The method `createTooltipDataSource({ dataSource, viewport, crosshair, technicalIndicator, xAxis, yAxis, defaultStyles })` is changed to `createTooltipDataSource({ kLineDataList, indicator, visibleRange, bounding, crosshair, defaultStyles, xAxis, yAxis })`. The return value is determined by `[{ title: 'xxx', value: 'xxx', color: 'xxx' } ]` Change to `{ name: 'xxx', calcParamsText: 'xxx', values: [{ title: 'xxx', value: 'xxx', color: 'xxx' }, ...] }`.
 + The method `render({ctx, dataSource, viewport, styles, xAxis, yAxis})` is changed to `draw({ ctx, kLineDataList, indicator, visibleRange, bounding, barSpace, defaultStyles, xAxis, yAxis })`.

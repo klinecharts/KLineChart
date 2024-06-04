@@ -20,10 +20,10 @@ import type Coordinate from './common/Coordinate'
 import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
 import { type Styles, YAxisPosition } from './common/Styles'
-
 import type Crosshair from './common/Crosshair'
 import { ActionType, type ActionCallback } from './common/Action'
 import type LoadMoreCallback from './common/LoadMoreCallback'
+import type LoadDataCallback from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
 
@@ -32,8 +32,8 @@ import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
 import { isString, isArray, isValid, merge, isNumber } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
-import { formatValue } from './common/utils/format'
 import { binarySearchNearest } from './common/utils/number'
+import { LoadDataType } from './common/LoadDataCallback'
 
 import ChartStore from './store/ChartStore'
 
@@ -93,9 +93,18 @@ export interface Chart {
   clearData: () => void
   getDataList: () => KLineData[]
   applyNewData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
+  /**
+   * @deprecated
+   * Since v9.8.0 deprecated, since v10 removed
+   */
   applyMoreData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
   updateData: (data: KLineData, callback?: () => void) => void
+  /**
+   * @deprecated
+   * Since v9.8.0 deprecated, since v10 removed
+   */
   loadMore: (cb: LoadMoreCallback) => void
+  setLoadDataCallback: (cb: LoadDataCallback) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions, callback?: () => void) => Nullable<string>
   overrideIndicator: (override: IndicatorCreate, paneId?: string, callback?: () => void) => void
   getIndicatorByPaneId: (paneId?: string, name?: string) => Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>>
@@ -127,12 +136,13 @@ export interface Chart {
 
 export default class ChartImp implements Chart {
   id: string
+
   private _container: HTMLElement
   private _chartContainer: HTMLElement
   private readonly _chartEvent: Event
   private readonly _chartStore: ChartStore
   private _drawPanes: DrawPane[] = []
-  private _candlePane: CandlePane
+  private _candlePane: Nullable<CandlePane>
   private _xAxisPane: XAxisPane
   private readonly _separatorPanes = new Map<DrawPane, SeparatorPane>()
 
@@ -184,8 +194,7 @@ export default class ChartImp implements Chart {
           if (!candlePaneInitialized) {
             const paneOptions = child.options ?? {}
             merge(paneOptions, { id: PaneIdConstants.CANDLE })
-            const pane = this._createPane<CandlePane>(CandlePane, PaneIdConstants.CANDLE, paneOptions)
-            this._candlePane = pane
+            this._candlePane = this._createPane<CandlePane>(CandlePane, PaneIdConstants.CANDLE, paneOptions)
             const content = child.content ?? []
             content.forEach(v => {
               this.createIndicator(v, true, paneOptions)
@@ -210,6 +219,7 @@ export default class ChartImp implements Chart {
         }
         case LayoutChildType.XAxis: {
           createXAxisPane(child.options)
+          break
         }
       }
     })
@@ -217,7 +227,7 @@ export default class ChartImp implements Chart {
   }
 
   private _createPane<P extends DrawPane> (
-    DrawPaneClass: new (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string) => P,
+    DrawPaneClass: new (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string, options: Omit<PaneOptions, 'id' | 'height'>) => P,
     id: string,
     options?: PaneOptions
   ): P {
@@ -228,7 +238,7 @@ export default class ChartImp implements Chart {
       case PanePosition.Top: {
         const firstPane = this._drawPanes[0]
         if (isValid(firstPane)) {
-          pane = new DrawPaneClass(this._chartContainer, firstPane.getContainer(), this, id)
+          pane = new DrawPaneClass(this._chartContainer, firstPane.getContainer(), this, id, options ?? {})
           index = 0
         }
         break
@@ -242,18 +252,18 @@ export default class ChartImp implements Chart {
             p?.getOptions().position === PanePosition.Bottom &&
             prevP?.getOptions().position !== PanePosition.Bottom
           ) {
-            pane = new DrawPaneClass(this._chartContainer, p.getContainer(), this, id)
+            pane = new DrawPaneClass(this._chartContainer, p.getContainer(), this, id, options ?? {})
             index = i
+            break
           }
         }
       }
     }
     if (!isValid(pane)) {
-      pane = new DrawPaneClass(this._chartContainer, null, this, id)
+      pane = new DrawPaneClass(this._chartContainer, null, this, id, options ?? {})
     }
-    pane.setOptions(options ?? {})
     let newIndex: number
-    if (isValid(index)) {
+    if (isNumber(index)) {
       this._drawPanes.splice(index, 0, pane)
       newIndex = index
     } else {
@@ -291,8 +301,7 @@ export default class ChartImp implements Chart {
   }
 
   private _measurePaneHeight (): void {
-    const { height: h } = this._container.getBoundingClientRect()
-    const totalHeight = Math.floor(h)
+    const totalHeight = Math.floor(this._container.clientHeight)
     const separatorSize = this._chartStore.getStyles().separator.size
     const xAxisHeight = this._xAxisPane.getAxisComponent().getAutoSize()
     let paneExcludeXAxisHeight = totalHeight - xAxisHeight - this._separatorPanes.size * separatorSize
@@ -334,14 +343,13 @@ export default class ChartImp implements Chart {
   }
 
   private _measurePaneWidth (): void {
-    const { width: w } = this._container.getBoundingClientRect()
-    const totalWidth = Math.floor(w)
+    const totalWidth = Math.floor(this._container.clientWidth)
     const styles = this._chartStore.getStyles()
     const yAxisStyles = styles.yAxis
     const isYAxisLeft = yAxisStyles.position === YAxisPosition.Left
     const isOutside = !yAxisStyles.inside
     let mainWidth = 0
-    let yAxisWidth = Number.MIN_SAFE_INTEGER
+    let yAxisWidth = 0
     let yAxisLeft = 0
     let mainLeft = 0
     this._drawPanes.forEach(pane => {
@@ -402,6 +410,9 @@ export default class ChartImp implements Chart {
           shouldAdjust = true
           shouldMeasureHeight = true
         }
+        if (isString(options.axisOptions?.name) || isValid(options.gap)) {
+          shouldAdjust = true
+        }
         pane.setOptions(options)
         if (shouldAdjust) {
           this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
@@ -424,8 +435,6 @@ export default class ChartImp implements Chart {
   getContainer (): HTMLElement { return this._container }
 
   getChartStore (): ChartStore { return this._chartStore }
-
-  getCandlePane (): CandlePane { return this._candlePane }
 
   getXAxisPane (): XAxisPane { return this._xAxisPane }
 
@@ -541,10 +550,9 @@ export default class ChartImp implements Chart {
         }
       }
     } else {
-      const { width, height } = this._chartContainer.getBoundingClientRect()
       return {
-        width: Math.floor(width),
-        height: Math.floor(height),
+        width: Math.floor(this._chartContainer.clientWidth),
+        height: Math.floor(this._chartContainer.clientHeight),
         left: 0,
         top: 0,
         right: 0,
@@ -664,50 +672,40 @@ export default class ChartImp implements Chart {
     return this._chartStore.getDataList()
   }
 
-  applyNewData (dataList: KLineData[], more?: boolean, callback?: () => void): void {
-    this._chartStore.clear()
-    if (dataList.length === 0) {
-      this.adjustPaneViewport(false, true, true, true)
-    } else {
-      this.applyMoreData(dataList, more, callback)
+  applyNewData (data: KLineData[], more?: boolean, callback?: () => void): void {
+    if (isValid(callback)) {
+      logWarn('applyNewData', '', 'param `callback` has been deprecated since version 9.8.0, use `subscribeAction(\'onDataReady\')` instead.')
     }
+    this._chartStore.addData(data, LoadDataType.Init, more).then(() => {}).catch(() => {}).finally(() => { callback?.() })
   }
 
-  applyMoreData (dataList: KLineData[], more?: boolean, callback?: () => void): void {
-    this._chartStore.addData(dataList, 0, more)
-    if (dataList.length > 0) {
-      this._chartStore.getIndicatorStore().calcInstance().then(
-        _ => {
-          this.adjustPaneViewport(false, true, true, true)
-          callback?.()
-        }
-      ).catch(_ => {})
-    }
+  /**
+   * @deprecated
+   * Since v9.8.0 deprecated, since v10 removed
+   */
+  applyMoreData (data: KLineData[], more?: boolean, callback?: () => void): void {
+    logWarn('', '', 'Api `applyMoreData` has been deprecated since version 9.8.0.')
+    this._chartStore.addData(data, LoadDataType.Forward, more ?? true).then(() => {}).catch(() => {}).finally(() => { callback?.() })
   }
 
   updateData (data: KLineData, callback?: () => void): void {
-    const dataList = this._chartStore.getDataList()
-    const dataCount = dataList.length
-    // Determine where individual data should be added
-    const timestamp = data.timestamp
-    const lastDataTimestamp = formatValue(dataList[dataCount - 1], 'timestamp', 0) as number
-    if (timestamp >= lastDataTimestamp) {
-      let pos = dataCount
-      if (timestamp === lastDataTimestamp) {
-        pos = dataCount - 1
-      }
-      this._chartStore.addData(data, pos)
-      this._chartStore.getIndicatorStore().calcInstance().then(
-        _ => {
-          this.adjustPaneViewport(false, true, true, true)
-          callback?.()
-        }
-      ).catch(_ => {})
+    if (isValid(callback)) {
+      logWarn('updateData', '', 'param `callback` has been deprecated since version 9.8.0, use `subscribeAction(\'onDataReady\')` instead.')
     }
+    this._chartStore.addData(data).then(() => {}).catch(() => {}).finally(() => { callback?.() })
   }
 
+  /**
+   * @deprecated
+   * Since v9.8.0 deprecated, since v10 removed
+   */
   loadMore (cb: LoadMoreCallback): void {
-    this._chartStore.getTimeScaleStore().setLoadMoreCallback(cb)
+    logWarn('', '', 'Api `loadMore` has been deprecated since version 9.8.0, use `setLoadDataCallback` instead.')
+    this._chartStore.setLoadMoreCallback(cb)
+  }
+
+  setLoadDataCallback (cb: LoadDataCallback): void {
+    this._chartStore.setLoadDataCallback(cb)
   }
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>, callback?: () => void): Nullable<string> {
@@ -1015,7 +1013,8 @@ export default class ChartImp implements Chart {
   }
 
   getConvertPictureUrl (includeOverlay?: boolean, type?: string, backgroundColor?: string): string {
-    const { width, height } = this._chartContainer.getBoundingClientRect()
+    const width = this._chartContainer.clientWidth
+    const height = this._chartContainer.clientHeight
     const canvas = createDom('canvas', {
       width: `${width}px`,
       height: `${height}px`,

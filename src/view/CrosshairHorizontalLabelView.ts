@@ -16,7 +16,7 @@ import type Bounding from '../common/Bounding'
 import type Crosshair from '../common/Crosshair'
 import { type CrosshairStyle, type CrosshairDirectionStyle, YAxisType, type StateTextStyle } from '../common/Styles'
 import { isString } from '../common/utils/typeChecks'
-import { formatPrecision, formatThousands } from '../common/utils/format'
+import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 
 import type Axis from '../component/Axis'
@@ -67,9 +67,8 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
     const value = axis.convertFromPixel(crosshair.y!)
     let text: string
     if (yAxis.getType() === YAxisType.Percentage) {
-      const visibleDataList = chartStore.getVisibleDataList()
-      const fromData = visibleDataList[0]?.data ?? {}
-      text = `${((value - fromData.close) / fromData.close * 100).toFixed(2)}%`
+      const fromData = chartStore.getVisibleFirstData()
+      text = `${((value - fromData!.close) / fromData!.close * 100).toFixed(2)}%`
     } else {
       const indicators = chartStore.getIndicatorStore().getInstances(crosshair.paneId!)
       let precision = 0
@@ -89,7 +88,7 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
         text = chartStore.getCustomApi().formatBigNumber(text)
       }
     }
-    return formatThousands(text, chartStore.getThousandsSeparator())
+    return formatFoldDecimal(formatThousands(text, chartStore.getThousandsSeparator()), chartStore.getDecimalFoldThreshold())
   }
 
   protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: Axis, _styles: StateTextStyle): TextAttrs {

@@ -69,7 +69,8 @@ export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends 
     container.style.left = `${left}px`
 
     let l = level
-    const { width: w, height: h } = container.getBoundingClientRect()
+    const w = container.clientWidth
+    const h = container.clientHeight
     if (width !== w || height !== h) {
       container.style.width = `${width}px`
       container.style.height = `${height}px`

@@ -68,8 +68,7 @@ export default abstract class Pane implements Updater {
   }
 
   update (level?: UpdateLevel): void {
-    const { height } = this._container.getBoundingClientRect()
-    if (this._bounding.height !== height) {
+    if (this._bounding.height !== this._container.clientHeight) {
       this._container.style.height = `${this._bounding.height}px`
     }
     this.updateImp(level ?? UpdateLevel.Drawer, this._container, this._bounding)

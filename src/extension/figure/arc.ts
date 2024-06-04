@@ -20,25 +20,34 @@ import { type FigureTemplate, DEVIATION } from '../../component/Figure'
 
 import { type CircleAttrs } from './circle'
 
-export function checkCoordinateOnArc (coordinate: Coordinate, arc: ArcAttrs): boolean {
-  if (Math.abs(getDistance(coordinate, arc) - arc.r) < DEVIATION) {
-    const { r, startAngle, endAngle } = arc
-    const startCoordinateX = r * Math.cos(startAngle) + arc.x
-    const startCoordinateY = r * Math.sin(startAngle) + arc.y
-    const endCoordinateX = r * Math.cos(endAngle) + arc.x
-    const endCoordinateY = r * Math.sin(endAngle) + arc.y
-    return (
-      coordinate.x <= Math.max(startCoordinateX, endCoordinateX) + DEVIATION &&
-      coordinate.x >= Math.min(startCoordinateX, endCoordinateX) - DEVIATION &&
-      coordinate.y <= Math.max(startCoordinateY, endCoordinateY) + DEVIATION &&
-      coordinate.y >= Math.min(startCoordinateY, endCoordinateY) - DEVIATION
-    )
+export function checkCoordinateOnArc (coordinate: Coordinate, attrs: ArcAttrs | ArcAttrs[]): boolean {
+  let arcs: ArcAttrs[] = []
+  arcs = arcs.concat(attrs)
+  for (let i = 0; i < arcs.length; i++) {
+    const arc = arcs[i]
+    if (Math.abs(getDistance(coordinate, arc) - arc.r) < DEVIATION) {
+      const { r, startAngle, endAngle } = arc
+      const startCoordinateX = r * Math.cos(startAngle) + arc.x
+      const startCoordinateY = r * Math.sin(startAngle) + arc.y
+      const endCoordinateX = r * Math.cos(endAngle) + arc.x
+      const endCoordinateY = r * Math.sin(endAngle) + arc.y
+      if (
+        coordinate.x <= Math.max(startCoordinateX, endCoordinateX) + DEVIATION &&
+        coordinate.x >= Math.min(startCoordinateX, endCoordinateX) - DEVIATION &&
+        coordinate.y <= Math.max(startCoordinateY, endCoordinateY) + DEVIATION &&
+        coordinate.y >= Math.min(startCoordinateY, endCoordinateY) - DEVIATION
+      ) {
+        return true
+      }
+    }
   }
+
   return false
 }
 
-export function drawArc (ctx: CanvasRenderingContext2D, attrs: ArcAttrs, styles: Partial<LineStyle>): void {
-  const { x, y, r, startAngle, endAngle } = attrs
+export function drawArc (ctx: CanvasRenderingContext2D, attrs: ArcAttrs | ArcAttrs[], styles: Partial<LineStyle>): void {
+  let arcs: ArcAttrs[] = []
+  arcs = arcs.concat(attrs)
   const { style = LineType.Solid, size = 1, color = 'currentColor', dashedValue = [2, 2] } = styles
   ctx.lineWidth = size
   ctx.strokeStyle = color
@@ -47,10 +56,12 @@ export function drawArc (ctx: CanvasRenderingContext2D, attrs: ArcAttrs, styles:
   } else {
     ctx.setLineDash([])
   }
-  ctx.beginPath()
-  ctx.arc(x, y, r, startAngle, endAngle)
-  ctx.stroke()
-  ctx.closePath()
+  arcs.forEach(({ x, y, r, startAngle, endAngle }) => {
+    ctx.beginPath()
+    ctx.arc(x, y, r, startAngle, endAngle)
+    ctx.stroke()
+    ctx.closePath()
+  })
 }
 
 export interface ArcAttrs extends CircleAttrs {
@@ -58,10 +69,10 @@ export interface ArcAttrs extends CircleAttrs {
   endAngle: number
 }
 
-const arc: FigureTemplate<ArcAttrs, Partial<LineStyle>> = {
+const arc: FigureTemplate<ArcAttrs | ArcAttrs[], Partial<LineStyle>> = {
   name: 'arc',
   checkEventOn: checkCoordinateOnArc,
-  draw: (ctx: CanvasRenderingContext2D, attrs: ArcAttrs, styles: Partial<LineStyle>) => {
+  draw: (ctx: CanvasRenderingContext2D, attrs: ArcAttrs | ArcAttrs[], styles: Partial<LineStyle>) => {
     drawArc(ctx, attrs, styles)
   }
 }

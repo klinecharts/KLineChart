@@ -18,7 +18,6 @@ import type KLineData from '../common/KLineData'
 import type BarSpace from '../common/BarSpace'
 import type VisibleRange from '../common/VisibleRange'
 import { getDefaultVisibleRange } from '../common/VisibleRange'
-import type LoadMoreCallback from '../common/LoadMoreCallback'
 import { ActionType } from '../common/Action'
 
 import { logWarn } from '../common/utils/logger'
@@ -26,6 +25,7 @@ import { binarySearchNearest } from '../common/utils/number'
 import { isNumber, isString } from '../common/utils/typeChecks'
 
 import type ChartStore from './ChartStore'
+import { LoadDataType } from '../common/LoadDataCallback'
 
 interface LeftRightSide {
   left: number
@@ -42,9 +42,9 @@ const enum ScrollLimitRole {
   Distance
 }
 
-const DEFAULT_BAR_SPACE = 6
+const DEFAULT_BAR_SPACE = 8
 
-const DEFAULT_OFFSET_RIGHT_DISTANCE = 50
+const DEFAULT_OFFSET_RIGHT_DISTANCE = 80
 
 export default class TimeScaleStore {
   /**
@@ -66,21 +66,6 @@ export default class TimeScaleStore {
    * Scroll enabled flag
    */
   private _scrollEnabled: boolean = true
-
-  /**
-   * Is loading data flag
-   */
-  private _loading: boolean = true
-
-  /**
-   * Load more data callback
-   */
-  private _loadMoreCallback: Nullable<LoadMoreCallback> = null
-
-  /**
-   * Whether there are more flag
-   */
-  private _more: boolean = true
 
   /**
    * Total space of drawing area
@@ -139,10 +124,20 @@ export default class TimeScaleStore {
   }
 
   private _calcGapBarSpace (): number {
-    const rateSpace = Math.floor(this._barSpace * 0.82)
-    const floorSpace = Math.floor(this._barSpace)
-    const optimalSpace = Math.min(rateSpace, floorSpace - 1)
-    return Math.max(1, optimalSpace)
+    let gapBarSpace: number
+    if (this._barSpace > 3) {
+      gapBarSpace = Math.floor(this._barSpace * 0.88)
+    } else {
+      gapBarSpace = Math.floor(this._barSpace)
+      if (gapBarSpace === this._barSpace) {
+        gapBarSpace--
+      }
+    }
+    if (gapBarSpace % 2 === 0) {
+      gapBarSpace--
+    }
+    gapBarSpace = Math.max(1, gapBarSpace)
+    return gapBarSpace
   }
 
   /**
@@ -178,6 +173,7 @@ export default class TimeScaleStore {
     }
 
     let to = Math.round(this._lastBarRightSideDiffBarCount + totalBarCount + 0.5)
+    const realTo = to
     if (to > totalBarCount) {
       to = totalBarCount
     }
@@ -186,25 +182,24 @@ export default class TimeScaleStore {
       from = 0
     }
     const realFrom = this._lastBarRightSideDiffBarCount > 0 ? Math.round(totalBarCount + this._lastBarRightSideDiffBarCount - visibleBarCount) - 1 : from
-    this._visibleRange = { from, to, realFrom, realTo: to }
+    this._visibleRange = { from, to, realFrom, realTo }
     this._chartStore.getActionStore().execute(ActionType.OnVisibleRangeChange, this._visibleRange)
     this._chartStore.adjustVisibleDataList()
     // More processing and loading, more loading if there are callback methods and no data is being loaded
-    if (from === 0 && this._more && !this._loading && this._loadMoreCallback !== null) {
-      this._loading = true
+    if (from === 0) {
       const firstData = dataList[0]
-      this._loadMoreCallback(firstData?.timestamp ?? null)
+      this._chartStore.executeLoadMoreCallback(firstData?.timestamp ?? null)
+      this._chartStore.executeLoadDataCallback({
+        type: LoadDataType.Forward,
+        data: firstData ?? null
+      })
     }
-  }
-
-  setMore (more: boolean): this {
-    this._more = more
-    return this
-  }
-
-  setLoading (loading: boolean): this {
-    this._loading = loading
-    return this
+    if (to === totalBarCount) {
+      this._chartStore.executeLoadDataCallback({
+        type: LoadDataType.Backward,
+        data: dataList[totalBarCount - 1] ?? null
+      })
+    }
   }
 
   getDateTimeFormat (): Intl.DateTimeFormat {
@@ -249,7 +244,7 @@ export default class TimeScaleStore {
       bar: this._barSpace,
       halfBar: this._barSpace / 2,
       gapBar: this._gapBarSpace,
-      halfGapBar: this._gapBarSpace / 2
+      halfGapBar: Math.floor(this._gapBarSpace / 2)
     }
   }
 
@@ -377,8 +372,8 @@ export default class TimeScaleStore {
   dataIndexToCoordinate (dataIndex: number): number {
     const dataCount = this._chartStore.getDataList().length
     const deltaFromRight = dataCount + this._lastBarRightSideDiffBarCount - dataIndex
-    return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
-    // return this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace
+    // return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
+    return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace)
   }
 
   coordinateToDataIndex (x: number): number {
@@ -421,14 +416,7 @@ export default class TimeScaleStore {
     return this._scrollEnabled
   }
 
-  setLoadMoreCallback (callback: LoadMoreCallback): this {
-    this._loadMoreCallback = callback
-    return this
-  }
-
   clear (): void {
-    this._more = true
-    this._loading = true
     this._visibleRange = getDefaultVisibleRange()
   }
 }
