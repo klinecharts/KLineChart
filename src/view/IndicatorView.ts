@@ -105,36 +105,36 @@ export default class IndicatorView extends CandleBarView {
             const { dataIndex, x } = data
             const prevX = xAxis.convertToPixel(dataIndex - 1)
             const nextX = xAxis.convertToPixel(dataIndex + 1)
-            const prevIndicatorData = result[dataIndex - 1] ?? {}
-            const currentIndicatorData = result[dataIndex] ?? {}
-            const nextIndicatorData = result[dataIndex + 1] ?? {}
+            const prevData = result[dataIndex - 1] ?? null
+            const currentData = result[dataIndex] ?? null
+            const nextData = result[dataIndex + 1] ?? null
             const prevCoordinate = { x: prevX }
             const currentCoordinate = { x }
             const nextCoordinate = { x: nextX }
             indicator.figures.forEach(({ key }) => {
-              const prevValue = prevIndicatorData[key]
+              const prevValue = prevData?.[key]
               if (isNumber(prevValue)) {
                 prevCoordinate[key] = yAxis.convertToPixel(prevValue)
               }
-              const currentValue = currentIndicatorData[key]
+              const currentValue = currentData?.[key]
               if (isNumber(currentValue)) {
                 currentCoordinate[key] = yAxis.convertToPixel(currentValue)
               }
-              const nextValue = nextIndicatorData[key]
+              const nextValue = nextData?.[key]
               if (isNumber(nextValue)) {
                 nextCoordinate[key] = yAxis.convertToPixel(nextValue)
               }
             })
             eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle) => {
-              if (isValid(currentIndicatorData[figure.key])) {
+              if (isValid(currentData?.[figure.key])) {
                 const valueY = currentCoordinate[figure.key]
                 let attrs = figure.attrs?.({
+                  data: { prev: prevData, current: currentData, next: nextData },
                   coordinate: { prev: prevCoordinate, current: currentCoordinate, next: nextCoordinate },
                   bounding,
                   barSpace,
                   xAxis,
-                  yAxis,
-                  currentData: currentIndicatorData
+                  yAxis
                 })
                 if (!isValid<IndicatorFigureAttrs>(attrs)) {
                   switch (figure.type) {
@@ -147,7 +147,7 @@ export default class IndicatorView extends CandleBarView {
                       const baseValue = figure.baseValue ?? yAxis.getExtremum().min
                       const baseValueY = yAxis.convertToPixel(baseValue)
                       let height = Math.abs(baseValueY - (valueY as number))
-                      if (baseValue !== currentIndicatorData[figure.key]) {
+                      if (baseValue !== currentData?.[figure.key]) {
                         height = Math.max(1, height)
                       }
                       let y: number
@@ -159,7 +159,7 @@ export default class IndicatorView extends CandleBarView {
                       attrs = {
                         x: x - halfGapBar,
                         y,
-                        width: gapBar,
+                        width: Math.max(1, halfGapBar * 2),
                         height
                       }
                       break
