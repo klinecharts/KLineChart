@@ -124,13 +124,19 @@ export default class TimeScaleStore {
   }
 
   private _calcGapBarSpace (): number {
-    const rateSpace = Math.floor(this._barSpace * 0.86)
-    const floorSpace = Math.floor(this._barSpace)
-    const optimalSpace = Math.min(rateSpace, floorSpace - 1)
-    let gapBarSpace = Math.max(1, optimalSpace)
-    if (gapBarSpace > 2 && gapBarSpace % 2 === 1) {
+    let gapBarSpace: number
+    if (this._barSpace > 3) {
+      gapBarSpace = Math.floor(this._barSpace * 0.88)
+    } else {
+      gapBarSpace = Math.floor(this._barSpace)
+      if (gapBarSpace === this._barSpace) {
+        gapBarSpace--
+      }
+    }
+    if (gapBarSpace % 2 === 0) {
       gapBarSpace--
     }
+    gapBarSpace = Math.max(1, gapBarSpace)
     return gapBarSpace
   }
 
@@ -238,7 +244,7 @@ export default class TimeScaleStore {
       bar: this._barSpace,
       halfBar: this._barSpace / 2,
       gapBar: this._gapBarSpace,
-      halfGapBar: this._gapBarSpace / 2
+      halfGapBar: Math.floor(this._gapBarSpace / 2)
     }
   }
 
@@ -367,7 +373,7 @@ export default class TimeScaleStore {
     const dataCount = this._chartStore.getDataList().length
     const deltaFromRight = dataCount + this._lastBarRightSideDiffBarCount - dataIndex
     // return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
-    return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace + 0.5)
+    return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace)
   }
 
   coordinateToDataIndex (x: number): number {

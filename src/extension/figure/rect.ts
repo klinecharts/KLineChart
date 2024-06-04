@@ -62,10 +62,8 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
   } = styles
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const draw = ctx.roundRect ?? ctx.rect
-  if (
-    (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) &&
-    (!isString(color) || !isTransparent(color))
-  ) {
+  const solid = (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) && (!isString(color) || !isTransparent(color))
+  if (solid) {
     ctx.fillStyle = color
     rects.forEach(({ x, y, width: w, height: h }) => {
       ctx.beginPath()
@@ -76,6 +74,7 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
   }
   if ((style === PolygonType.Stroke || styles.style === PolygonType.StrokeFill) && borderSize > 0 && !isTransparent(borderColor)) {
     ctx.strokeStyle = borderColor
+    ctx.fillStyle = borderColor
     ctx.lineWidth = borderSize
     if (borderStyle === LineType.Dashed) {
       ctx.setLineDash(borderDashedValue)
@@ -85,10 +84,16 @@ export function drawRect (ctx: CanvasRenderingContext2D, attrs: RectAttrs | Rect
     const correction = borderSize % 2 === 1 ? 0.5 : 0
     const doubleCorrection = Math.round(correction * 2)
     rects.forEach(({ x, y, width: w, height: h }) => {
-      ctx.beginPath()
-      draw.call(ctx, x + correction, y + correction, w - doubleCorrection, h - doubleCorrection, r)
-      ctx.closePath()
-      ctx.stroke()
+      if (w > borderSize * 2 && h > borderSize * 2) {
+        ctx.beginPath()
+        draw.call(ctx, x + correction, y + correction, w - doubleCorrection, h - doubleCorrection, r)
+        ctx.closePath()
+        ctx.stroke()
+      } else {
+        if (!solid) {
+          ctx.fillRect(x, y, w, h)
+        }
+      }
     })
   }
 }
