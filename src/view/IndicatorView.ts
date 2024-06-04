@@ -102,7 +102,7 @@ export default class IndicatorView extends CandleBarView {
           const lines: Array<Array<{ coordinates: Coordinate[], styles: SmoothLineStyle }>> = []
 
           this.eachChildren((data: VisibleData, barSpace: BarSpace) => {
-            const { halfGapBar, gapBar } = barSpace
+            const { halfGapBar } = barSpace
             const { dataIndex, x } = data
             const prevX = xAxis.convertToPixel(dataIndex - 1)
             const nextX = xAxis.convertToPixel(dataIndex + 1)
@@ -126,7 +126,7 @@ export default class IndicatorView extends CandleBarView {
                 nextCoordinate[key] = yAxis.convertToPixel(nextValue)
               }
             })
-            eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle) => {
+            eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, figureIndex: number) => {
               if (isValid(currentData?.[figure.key])) {
                 const valueY = currentCoordinate[figure.key]
                 let attrs = figure.attrs?.({
@@ -191,7 +191,6 @@ export default class IndicatorView extends CandleBarView {
                     styles: figureStyles
                   })?.draw(ctx)
                 }
-                // merge line render
               }
             })
           })
