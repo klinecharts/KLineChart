@@ -26,6 +26,7 @@ import type LoadMoreCallback from './common/LoadMoreCallback'
 import type LoadDataCallback from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
+import { type CustomApi, LayoutChildType, type Options } from './Options'
 
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -36,6 +37,7 @@ import { binarySearchNearest } from './common/utils/number'
 import { LoadDataType } from './common/LoadDataCallback'
 
 import ChartStore from './store/ChartStore'
+import { SCALE_MULTIPLIER } from './store/TimeScaleStore'
 
 import CandlePane from './pane/CandlePane'
 import IndicatorPane from './pane/IndicatorPane'
@@ -54,8 +56,6 @@ import { getIndicatorClass } from './extension/indicator/index'
 import { getStyles as getExtensionStyles } from './extension/styles/index'
 
 import Event from './Event'
-
-import { type CustomApi, LayoutChildType, type Options } from './Options'
 
 export enum DomPosition {
   Root = 'root',
@@ -905,17 +905,19 @@ export default class ChartImp implements Chart {
     const timeScaleStore = this._chartStore.getTimeScaleStore()
     if (duration > 0) {
       const { bar: barSpace } = timeScaleStore.getBarSpace()
-      const scaleDataSpace = barSpace * scale
-      const difSpace = scaleDataSpace - barSpace
+      const scaleBarSpace = barSpace * scale
+      const difSpace = scaleBarSpace - barSpace
       const startTime = new Date().getTime()
-      let preScale = 0
+      let prevProgressBarSpace = 0
+
       const animation: (() => void) = () => {
         const progress = (new Date().getTime() - startTime) / duration
+        const progressBarSpace = difSpace * progress
         const finished = progress >= 1
         const progressDataSpace = finished ? difSpace : difSpace * progress
-        const scale = progressDataSpace / barSpace
-        timeScaleStore.zoom(scale - preScale, coordinate)
-        preScale = scale
+        const scale = (progressDataSpace - prevProgressBarSpace) / timeScaleStore.getBarSpace().bar * SCALE_MULTIPLIER
+        timeScaleStore.zoom(scale, coordinate)
+        prevProgressBarSpace = progressBarSpace
         if (!finished) {
           requestAnimationFrame(animation)
         }
