@@ -140,7 +140,7 @@ export default class IndicatorView extends CandleBarView {
                 if (!isValid<IndicatorFigureAttrs>(attrs)) {
                   switch (figure.type) {
                     case 'circle': {
-                      attrs = { x, y: valueY, r: halfGapBar }
+                      attrs = { x, y: valueY, r: Math.max(1, halfGapBar) }
                       break
                     }
                     case 'rect':
