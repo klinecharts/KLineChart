@@ -49,7 +49,10 @@ export interface IndicatorFigureCallbackBrother<PCN> {
 
 export type IndicatorFigureAttrsCallbackCoordinate<D> = IndicatorFigureCallbackBrother<Record<keyof D, number> & { x: number }>
 
+export type IndicatorFigureAttrsCallbackData<D> = IndicatorFigureCallbackBrother<D>
+
 export interface IndicatorFigureAttrsCallbackParams<D> {
+  data: IndicatorFigureAttrsCallbackData<Nullable<D>>
   coordinate: IndicatorFigureAttrsCallbackCoordinate<D>
   bounding: Bounding
   barSpace: BarSpace
