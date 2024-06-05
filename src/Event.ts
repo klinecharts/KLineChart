@@ -18,6 +18,7 @@ import type Coordinate from './common/Coordinate'
 import { UpdateLevel } from './common/Updater'
 import type Crosshair from './common/Crosshair'
 import { requestAnimationFrame, cancelAnimationFrame } from './common/utils/compatible'
+import { isNumber } from './common/utils/typeChecks'
 
 import { type AxisRange } from './component/Axis'
 import type YAxis from './component/YAxis'
@@ -274,7 +275,7 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
             const xAxis = (pane as DrawPane<XAxis>).getAxisComponent()
-            if (xAxis?.getScrollZoomEnabled() ?? true) {
+            if ((xAxis?.getScrollZoomEnabled() ?? true) && isNumber( event.pageX)) {
               const scale = this._xAxisStartScaleDistance / event.pageX
               const zoomScale = (scale - this._xAxisScale) * 10
               this._xAxisScale = scale
