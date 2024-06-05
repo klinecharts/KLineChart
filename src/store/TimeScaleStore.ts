@@ -46,6 +46,10 @@ const DEFAULT_BAR_SPACE = 8
 
 const DEFAULT_OFFSET_RIGHT_DISTANCE = 80
 
+const GAP_BAR_SPACE_RATIO = 0.88
+
+export const SCALE_MULTIPLIER = 10
+
 export default class TimeScaleStore {
   /**
    * Root store
@@ -124,10 +128,20 @@ export default class TimeScaleStore {
   }
 
   private _calcGapBarSpace (): number {
-    const rateSpace = Math.floor(this._barSpace * 0.82)
-    const floorSpace = Math.floor(this._barSpace)
-    const optimalSpace = Math.min(rateSpace, floorSpace - 1)
-    return Math.max(1, optimalSpace)
+    let gapBarSpace: number
+    if (this._barSpace > 3) {
+      gapBarSpace = Math.floor(this._barSpace * GAP_BAR_SPACE_RATIO)
+    } else {
+      gapBarSpace = Math.floor(this._barSpace)
+      if (gapBarSpace === this._barSpace) {
+        gapBarSpace--
+      }
+    }
+    if (gapBarSpace % 2 === 0) {
+      gapBarSpace--
+    }
+    gapBarSpace = Math.max(1, gapBarSpace)
+    return gapBarSpace
   }
 
   /**
@@ -234,7 +248,7 @@ export default class TimeScaleStore {
       bar: this._barSpace,
       halfBar: this._barSpace / 2,
       gapBar: this._gapBarSpace,
-      halfGapBar: this._gapBarSpace / 2
+      halfGapBar: Math.floor(this._gapBarSpace / 2)
     }
   }
 
@@ -328,11 +342,17 @@ export default class TimeScaleStore {
       return
     }
     const distanceBarCount = distance / this._barSpace
-    this._chartStore.getActionStore().execute(ActionType.OnScroll)
+    const prevLastBarRightSideDistance = this._lastBarRightSideDiffBarCount * this._barSpace
     this._lastBarRightSideDiffBarCount = this._startLastBarRightSideDiffBarCount - distanceBarCount
     this.adjustVisibleRange()
     this._chartStore.getTooltipStore().recalculateCrosshair(true)
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
+    const realDistance = Math.round(
+      prevLastBarRightSideDistance - this._lastBarRightSideDiffBarCount * this._barSpace
+    )
+    if (realDistance !== 0) {
+      this._chartStore.getActionStore().execute(ActionType.OnScroll, { distance: realDistance })
+    }
   }
 
   getDataByDataIndex (dataIndex: number): Nullable<KLineData> {
@@ -362,8 +382,8 @@ export default class TimeScaleStore {
   dataIndexToCoordinate (dataIndex: number): number {
     const dataCount = this._chartStore.getDataList().length
     const deltaFromRight = dataCount + this._lastBarRightSideDiffBarCount - dataIndex
-    return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
-    // return this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace
+    // return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
+    return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace)
   }
 
   coordinateToDataIndex (x: number): number {
@@ -379,13 +399,17 @@ export default class TimeScaleStore {
       const crosshair = this._chartStore.getTooltipStore().getCrosshair()
       zoomCoordinate = { x: crosshair?.x ?? this._totalBarSpace / 2 }
     }
-    this._chartStore.getActionStore().execute(ActionType.OnZoom)
     const x = zoomCoordinate!.x!
     const floatIndex = this.coordinateToFloatIndex(x)
-    const barSpace = this._barSpace + scale * (this._barSpace / 10)
+    const prevBarSpace = this._barSpace
+    const barSpace = this._barSpace + scale * (this._barSpace / SCALE_MULTIPLIER)
     this.setBarSpace(barSpace, () => {
       this._lastBarRightSideDiffBarCount += (floatIndex - this.coordinateToFloatIndex(x))
     })
+    const realScale = this._barSpace / prevBarSpace
+    if (realScale !== 1) {
+      this._chartStore.getActionStore().execute(ActionType.OnZoom, { scale: realScale })
+    }
   }
 
   setZoomEnabled (enabled: boolean): this {

@@ -16,7 +16,6 @@ import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
-import type Precision from '../common/Precision'
 import { type OverlayStyle } from '../common/Styles'
 import { type CustomApi } from '../Options'
 import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
@@ -25,7 +24,7 @@ import { isNumber } from '../common/utils/typeChecks'
 import type Axis from '../component/Axis'
 import type XAxis from '../component/XAxis'
 import type YAxis from '../component/YAxis'
-import { type OverlayFigure } from '../component/Overlay'
+import { type OverlayPrecision, type OverlayFigure } from '../component/Overlay'
 import type Overlay from '../component/Overlay'
 
 import { type EventOverlayInfo } from '../store/OverlayStore'
@@ -42,7 +41,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     overlay: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,
-    precision: Precision,
+    precision: OverlayPrecision,
     dateTimeFormat: Intl.DateTimeFormat,
     customApi: CustomApi,
     thousandsSeparator: string,
@@ -65,7 +64,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     overlay: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,
-    precision: Precision,
+    precision: OverlayPrecision,
     _dateTimeFormat: Intl.DateTimeFormat,
     _customApi: CustomApi,
     thousandsSeparator: string,
@@ -113,7 +112,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     coordinates: Coordinate[],
     bounding: Bounding,
     barSpace: BarSpace,
-    precision: Precision,
+    precision: OverlayPrecision,
     thousandsSeparator: string,
     decimalFoldThreshold: number,
     dateTimeFormat: Intl.DateTimeFormat,

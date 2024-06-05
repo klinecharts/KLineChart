@@ -6,10 +6,10 @@ editLink: false
 # Indicator
 
 <script setup>
-import Chart from '../../components/SampleChart.vue'
-import data from '../../data/sample/indicator/index.json'
+import Chart from '../../components/sample/indicator/index.vue'
 </script>
-<Chart :js="data['index.js']" :html="data['index.html']" :css="data['index.css']" title="Indicator"/>
+<Chart/>
 
-<!--@include: @/data/sample/indicator/index.md-->
+<!--@include: @/components/sample/indicator/index.md-->
+
 

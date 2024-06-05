@@ -33,7 +33,7 @@ export default class YAxisView extends AxisView<YAxis> {
     const size = styles.axisLine.size
     let x: number
     if (yAxis.isFromZero()) {
-      x = size / 2
+      x = 0
     } else {
       x = bounding.width - size
     }

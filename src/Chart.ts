@@ -26,6 +26,8 @@ import type LoadMoreCallback from './common/LoadMoreCallback'
 import type LoadDataCallback from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
+import { type CustomApi, LayoutChildType, type Options } from './Options'
+import Animation from './common/Animation'
 
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -36,6 +38,7 @@ import { binarySearchNearest } from './common/utils/number'
 import { LoadDataType } from './common/LoadDataCallback'
 
 import ChartStore from './store/ChartStore'
+import { SCALE_MULTIPLIER } from './store/TimeScaleStore'
 
 import CandlePane from './pane/CandlePane'
 import IndicatorPane from './pane/IndicatorPane'
@@ -54,8 +57,6 @@ import { getIndicatorClass } from './extension/indicator/index'
 import { getStyles as getExtensionStyles } from './extension/styles/index'
 
 import Event from './Event'
-
-import { type CustomApi, LayoutChildType, type Options } from './Options'
 
 export enum DomPosition {
   Root = 'root',
@@ -860,21 +861,15 @@ export default class ChartImp implements Chart {
   scrollByDistance (distance: number, animationDuration?: number): void {
     const duration = isNumber(animationDuration) && animationDuration > 0 ? animationDuration : 0
     const timeScaleStore = this._chartStore.getTimeScaleStore()
+    timeScaleStore.startScroll()
     if (duration > 0) {
-      timeScaleStore.startScroll()
-      const startTime = new Date().getTime()
-      const animation: (() => void) = () => {
-        const progress = (new Date().getTime() - startTime) / duration
-        const finished = progress >= 1
-        const dis = finished ? distance : distance * progress
-        timeScaleStore.scroll(dis)
-        if (!finished) {
-          requestAnimationFrame(animation)
-        }
-      }
-      animation()
+      const animation = new Animation({ duration })
+      animation.doFrame(frameTime => {
+        const progressDistance = distance * (frameTime / duration)
+        timeScaleStore.scroll(progressDistance)
+      })
+      animation.start()
     } else {
-      timeScaleStore.startScroll()
       timeScaleStore.scroll(distance)
     }
   }
@@ -903,23 +898,21 @@ export default class ChartImp implements Chart {
   zoomAtCoordinate (scale: number, coordinate?: Coordinate, animationDuration?: number): void {
     const duration = isNumber(animationDuration) && animationDuration > 0 ? animationDuration : 0
     const timeScaleStore = this._chartStore.getTimeScaleStore()
+    const { bar: barSpace } = timeScaleStore.getBarSpace()
+    const scaleBarSpace = barSpace * scale
+    const difSpace = scaleBarSpace - barSpace
     if (duration > 0) {
-      const { bar: barSpace } = timeScaleStore.getBarSpace()
-      const scaleDataSpace = barSpace * scale
-      const difSpace = scaleDataSpace - barSpace
-      const startTime = new Date().getTime()
-      const animation: (() => void) = () => {
-        const progress = (new Date().getTime() - startTime) / duration
-        const finished = progress >= 1
-        const progressDataSpace = finished ? difSpace : difSpace * progress
-        timeScaleStore.zoom(progressDataSpace / barSpace, coordinate)
-        if (!finished) {
-          requestAnimationFrame(animation)
-        }
-      }
-      animation()
+      let prevProgressBarSpace = 0
+      const animation = new Animation({ duration })
+      animation.doFrame(frameTime => {
+        const progressBarSpace = difSpace * (frameTime / duration)
+        const scale = (progressBarSpace - prevProgressBarSpace) / timeScaleStore.getBarSpace().bar * SCALE_MULTIPLIER
+        timeScaleStore.zoom(scale, coordinate)
+        prevProgressBarSpace = progressBarSpace
+      })
+      animation.start()
     } else {
-      timeScaleStore.zoom(scale, coordinate)
+      timeScaleStore.zoom(difSpace / barSpace * SCALE_MULTIPLIER, coordinate)
     }
   }
 

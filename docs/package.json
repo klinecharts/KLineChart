@@ -4,9 +4,8 @@
   "type": "module",
   "private": false,
   "scripts": {
-    "pre-work": "node ./data/sample/createData.js",
-    "dev": "npm run pre-work && vitepress dev",
-    "build": "npm run pre-work && vitepress build",
+    "dev": "vitepress dev",
+    "build": "vitepress build",
     "preview": "vitepress preview"
   }
 }

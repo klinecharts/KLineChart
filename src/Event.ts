@@ -274,11 +274,13 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
             const xAxis = (pane as DrawPane<XAxis>).getAxisComponent()
-            if (xAxis?.getScrollZoomEnabled() ?? true) {
+            if ((xAxis?.getScrollZoomEnabled() ?? true)) {
               const scale = this._xAxisStartScaleDistance / event.pageX
-              const zoomScale = (scale - this._xAxisScale) * 10
-              this._xAxisScale = scale
-              this._chart.getChartStore().getTimeScaleStore().zoom(zoomScale, this._xAxisStartScaleCoordinate ?? undefined)
+              if (Number.isFinite(scale)) {
+                const zoomScale = (scale - this._xAxisScale) * 10
+                this._xAxisScale = scale
+                this._chart.getChartStore().getTimeScaleStore().zoom(zoomScale, this._xAxisStartScaleCoordinate ?? undefined)
+              }
             }
           } else {
             this._chart.updatePane(UpdateLevel.Overlay)

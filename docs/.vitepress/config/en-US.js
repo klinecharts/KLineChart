@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 import pkg from '../../../package.json'
 
 export default defineConfig({
-  label: 'English',
+  label: '🇬🇧 English',
   lang: 'en-US',
   description: '💹📈 Highly customizable professional lightweight financial chart.',
   themeConfig: {
@@ -11,7 +11,7 @@ export default defineConfig({
       { text: 'Docs', link: '/en-US/guide/introduction', activeMatch: 'guide' },
       { text: 'Sample', link: '/en-US/sample/basic', activeMatch: 'sample' },
       { text: 'Preview', link: 'https://preview.klinecharts.com/#en-US' },
-      { text: 'VIP', link: '/en-US/vip' },
+      { text: 'Customize', link: '/en-US/customize' },
       { text: 'Sponsor', link: '/en-US/sponsor' },
       {
         text: 'More',

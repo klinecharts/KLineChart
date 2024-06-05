@@ -11,6 +11,11 @@
   --vp-c-indigo-1: #1677FF;
   --vp-c-indigo-2: #3086ff;
   --vp-c-indigo-3: #4995ff;
+
+  --vp-c-text-1: rgb(40, 42, 43);
+  --vp-c-text-2: rgba(40, 42, 43, .72);
+  --vp-c-text-3: rgba(40, 42, 43, .52);
+
   --vp-c-indigo-soft: rgb(22, 119, 255, 0.14);
 
   --custom-red: #F92855;
@@ -48,7 +53,13 @@
 }
 
 .dark {
+  --vp-c-text-1: rgb(240, 242, 243);
+  --vp-c-text-2: rgba(240, 242, 243, .72);
+  --vp-c-text-3: rgba(240, 242, 243, .52);;
   --vp-code-color: #c9def1;
+  --vp-c-bg: #121212;
+  --vp-c-divider: #232525;
+  --vp-c-gutter: var(--vp-c-divider);
 }
 
 body {
@@ -65,6 +76,20 @@ body {
   :root {
     --vp-home-hero-image-filter: blur(80px);
   }
+}
+
+.vp-doc p a img {
+  display: inline;
+  vertical-align: middle;
+}
+
+.vp-code-group .tabs label {
+  display: flex;
+  align-items: center;
+}
+
+.vp-code-group .tabs label svg {
+  margin-right: 8px;
 }
 
 .home-section {

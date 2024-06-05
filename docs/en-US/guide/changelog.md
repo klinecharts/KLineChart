@@ -1,5 +1,26 @@
 # 📠 Change Log
 
+## 9.8.9
+`2024-05-28`
++ 🐞 Fix style configuration `yAxis.type: 'percentage'` error.
++ 🐞 Fix declaration issue in typescript.
+
+## 9.8.8
+`2024-05-14`
++ 🐞 Fix the issue that the style configuration `candle.tooltip.custom` cannot be overridden when it is an array.
++ 🐞 Fix the issue of decimal folding.
++ 💄 Optimize the parameter `precision` in the overlay callback method.
+
+## 9.8.7
+`2024-05-10`
++ 🐞 Fix the issue of unsynchronized price and volume precision in indicator precision.
+
+## 9.8.6
+`2024-05-07`
++ 🐞 Fix an issue that chart API `registerIndicator` and `registerOverlay` parameters `extendData` cannot take effect.
++ 🐞 Fix an issue of incorrect decimal folding when specifying `.` as the thousandth character.
++ 🐞 Fix an issue where overlays may not be moved after being created.
+
 ## 9.8.5
 `2024-04-14`
 + 💄 Optimize the default right offset distance of the chart.

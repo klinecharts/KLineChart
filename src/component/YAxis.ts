@@ -34,6 +34,7 @@ interface FiguresResult {
 
 export interface YAxis extends Axis {
   isFromZero: () => boolean
+  isInCandle: () => boolean
 }
 
 export type YAxisConstructor = new (parent: DrawPane<AxisImp>) => YAxisImp
@@ -125,7 +126,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let dif: number
     switch (type) {
       case YAxisType.Percentage: {
-        const fromData = visibleDataList[0]?.data
+        const fromData = chartStore.getVisibleFirstData()
         if (isValid(fromData) && isNumber(fromData.close)) {
           min = (min - fromData.close) / fromData.close * 100
           max = (max - fromData.close) / fromData.close * 100
@@ -392,9 +393,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const value = rate * range + from
     switch (this.getType()) {
       case YAxisType.Percentage: {
-        const chartStore = this.getParent().getChart().getChartStore()
-        const visibleDataList = chartStore.getVisibleDataList()
-        const fromData = visibleDataList[0]?.data
+        const fromData = this.getParent().getChart().getChartStore().getVisibleFirstData()
         if (isValid(fromData) && isNumber(fromData.close)) {
           return fromData.close * value / 100 + fromData.close
         }
@@ -421,9 +420,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let v = value
     switch (this.getType()) {
       case YAxisType.Percentage: {
-        const chartStore = this.getParent().getChart().getChartStore()
-        const visibleDataList = chartStore.getVisibleDataList()
-        const fromData = visibleDataList[0]?.data
+        const fromData = this.getParent().getChart().getChartStore().getVisibleFirstData()
         if (isValid(fromData) && isNumber(fromData.close)) {
           v = (value - fromData.close) / fromData.close * 100
         }

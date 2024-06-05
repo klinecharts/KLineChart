@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { transformerTwoslash } from '@shikijs/vitepress-twoslash'
 
 import zhCN, { search as zhCNSearch } from './zh-CN'
 import enUS, { search as enUSSearch } from './en-US'
@@ -20,9 +21,12 @@ export default defineConfig({
   lastUpdated: true,
   markdown: {
     theme: {
-      dark: 'material-theme-palenight',
-      light: 'github-light'
-    }  
+      light: 'vitesse-light',
+      dark: 'vitesse-dark',
+    },
+    codeTransformers: [
+      transformerTwoslash(),
+    ],
   },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/images/logo.svg' }],

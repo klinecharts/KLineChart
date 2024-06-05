@@ -189,7 +189,7 @@ Customize an overlay, then add it globally through `klinecharts.registerOverlay`
   onPressedMoving?: (event: OverlayEvent) => boolean
 
   // Hold down and drag to end the callback event, which can be defaulted
-  onPressedMoveEnd: (event: OverlayEvent) => boolean
+  onPressedMoveEnd?: (event: OverlayEvent) => boolean
 
   // Mouse move event, can be default
   onMouseEnter?: (event: OverlayEvent) => boolean

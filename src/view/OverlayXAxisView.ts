@@ -24,7 +24,7 @@ import { type CustomApi, FormatDateType } from '../Options'
 
 import type XAxis from '../component/XAxis'
 import type YAxis from '../component/YAxis'
-import { type OverlayFigure } from '../component/Overlay'
+import { type OverlayPrecision, type OverlayFigure } from '../component/Overlay'
 import type Overlay from '../component/Overlay'
 
 import { type EventOverlayInfo, type ProgressOverlayInfo } from '../store/OverlayStore'
@@ -87,7 +87,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     coordinates: Coordinate[],
     bounding: Bounding,
     barSpace: BarSpace,
-    precision: Precision,
+    precision: OverlayPrecision,
     thousandsSeparator: string,
     decimalFoldThreshold: number,
     dateTimeFormat: Intl.DateTimeFormat,
