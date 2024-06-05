@@ -25,7 +25,7 @@ export default () => {
     dispose('chart')
   })
 
-  return <div id="chart" style={{ width: 600, height: 600 }}/>
+  return <div id="chart" style={{ width: '600px', height: '600px' }}/>
 }
 
 ```
