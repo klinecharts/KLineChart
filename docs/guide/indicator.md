@@ -53,6 +53,7 @@
     baseValue?: number
     // 是一个方法，用于生成自定义图形的属性，
     attrs?: ({
+      data: IndicatorFigureAttrsCallbackData
       coordinate: IndicatorFigureAttrsCallbackCoordinate
       bounding: Bounding
       barSpace: BarSpace

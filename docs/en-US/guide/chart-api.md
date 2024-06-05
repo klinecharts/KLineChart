@@ -146,17 +146,18 @@ Get graph class.
          title?: string
          type?: string
          baseValue?: number
+         attrs?: ({
+            data: object
+            coordinate: object
+            bounding: object
+            barSpace: object
+            xAxis: object
+            yAxis: object
+         }) => object
          styles?: (
             data: object,
             indicator: object,
             defaultStyles: object
-         ) => object
-         attrs: (
-            coordinate: object
-            bounding: Bounding
-            barSpace: BarSpace
-            xAxis: XAxis
-            yAxis: YAxis
          ) => object
       }>
       minValue?: number

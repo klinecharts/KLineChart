@@ -301,14 +301,22 @@
       title?: string
       type?: string
       baseValue?: number
+      attrs?: ({
+        data: object
+        coordinate: object
+        bounding: object
+        barSpace: object
+        xAxis: object
+        yAxis: object
+      }) => object
       styles?: (
         data: object,
         indicator: object,
         defaultStyles: object
-      ) => {
+      ) => ({
         style?: 'solid' | 'dashed' | 'stroke' | 'fill' | 'stroke_fill'
         color?: string
-      }
+      })
     }>
     minValue?: number
     maxValue?: number
@@ -416,6 +424,14 @@ chart.createIndicator('MA', false, {
       title?: string
       type?: string
       baseValue?: number
+      attrs?: ({
+        data: object
+        coordinate: object
+        bounding: object
+        barSpace: object
+        xAxis: object
+        yAxis: object
+      }) => object
       styles?: (
         data: object,
         indicator: object,

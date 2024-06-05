@@ -53,6 +53,7 @@ To create a custom technical indicator, you only need to generate a technical in
     baseValue?: number
     // is a method
     attrs?: ({
+      data: IndicatorFigureAttrsCallbackData
       coordinate: IndicatorFigureAttrsCallbackCoordinate
       bounding: Bounding
       barSpace: BarSpace

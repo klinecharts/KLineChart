@@ -1,5 +1,13 @@
 # 📠 更新日志
 
+## 9.8.10
+`2024-06-06`
++ 🐞 修复基础图形 `rect`, `line` 绘制模糊问题。
++ 🐞 修复实例方法 `zoomAtCoordinate`、`zoomAtDataIndex` 和 `zoomAtTimestamp`，缩放不准确问题。
++ 🐞 修复x轴缩放可能出错问题。
++ 💄 优化实例方法 `subscribeAction`，当 `type` 是 'onScroll' 和 'onZoom' 时，回调方法新增参数。
++ 💄 优化指标属性 `figures` 中的子项 `attrs`，新增回调参数 `data`。
+
 ## 9.8.9
 `2024-05-28`
 + 🐞 修复样式配置 `yAxis.type: 'percentage'` 错误。

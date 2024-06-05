@@ -1,5 +1,13 @@
 # 📠 Change Log
 
+## 9.8.10
+`2024-06-06`
++ 🐞 Fix the issue of blurry drawing of basic graphics `rect`, `line`.
++ 🐞 Fix the inaccurate zooming issue of instance methods `zoomAtCoordinate`, `zoomAtDataIndex` and `zoomAtTimestamp`.
++ 🐞 Fix the issue of possible error in x-axis zooming.
++ 💄 Optimize the instance method `subscribeAction`. When `type` is 'onScroll' and 'onZoom', the callback method adds a new parameter.
++ 💄 Optimize the sub-item `attrs` in the indicator attribute `figures`. Add callback parameter `data`.
+
 ## 9.8.9
 `2024-05-28`
 + 🐞 Fix style configuration `yAxis.type: 'percentage'` error.
