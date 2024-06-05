@@ -27,6 +27,7 @@ import type LoadDataCallback from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
 import { type CustomApi, LayoutChildType, type Options } from './Options'
+import Animation from './common/Animation'
 
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
@@ -860,21 +861,15 @@ export default class ChartImp implements Chart {
   scrollByDistance (distance: number, animationDuration?: number): void {
     const duration = isNumber(animationDuration) && animationDuration > 0 ? animationDuration : 0
     const timeScaleStore = this._chartStore.getTimeScaleStore()
+    timeScaleStore.startScroll()
     if (duration > 0) {
-      timeScaleStore.startScroll()
-      const startTime = new Date().getTime()
-      const animation: (() => void) = () => {
-        const progress = (new Date().getTime() - startTime) / duration
-        const finished = progress >= 1
-        const dis = finished ? distance : distance * progress
-        timeScaleStore.scroll(dis)
-        if (!finished) {
-          requestAnimationFrame(animation)
-        }
-      }
-      animation()
+      const animation = new Animation({ duration })
+      animation.doFrame(frameTime => {
+        const progressDistance = distance * (frameTime / duration)
+        timeScaleStore.scroll(progressDistance)
+      })
+      animation.start()
     } else {
-      timeScaleStore.startScroll()
       timeScaleStore.scroll(distance)
     }
   }
@@ -903,28 +898,21 @@ export default class ChartImp implements Chart {
   zoomAtCoordinate (scale: number, coordinate?: Coordinate, animationDuration?: number): void {
     const duration = isNumber(animationDuration) && animationDuration > 0 ? animationDuration : 0
     const timeScaleStore = this._chartStore.getTimeScaleStore()
+    const { bar: barSpace } = timeScaleStore.getBarSpace()
+    const scaleBarSpace = barSpace * scale
+    const difSpace = scaleBarSpace - barSpace
     if (duration > 0) {
-      const { bar: barSpace } = timeScaleStore.getBarSpace()
-      const scaleBarSpace = barSpace * scale
-      const difSpace = scaleBarSpace - barSpace
-      const startTime = new Date().getTime()
       let prevProgressBarSpace = 0
-
-      const animation: (() => void) = () => {
-        const progress = (new Date().getTime() - startTime) / duration
-        const progressBarSpace = difSpace * progress
-        const finished = progress >= 1
-        const progressDataSpace = finished ? difSpace : difSpace * progress
-        const scale = (progressDataSpace - prevProgressBarSpace) / timeScaleStore.getBarSpace().bar * SCALE_MULTIPLIER
+      const animation = new Animation({ duration })
+      animation.doFrame(frameTime => {
+        const progressBarSpace = difSpace * (frameTime / duration)
+        const scale = (progressBarSpace - prevProgressBarSpace) / timeScaleStore.getBarSpace().bar * SCALE_MULTIPLIER
         timeScaleStore.zoom(scale, coordinate)
         prevProgressBarSpace = progressBarSpace
-        if (!finished) {
-          requestAnimationFrame(animation)
-        }
-      }
-      animation()
+      })
+      animation.start()
     } else {
-      timeScaleStore.zoom(scale, coordinate)
+      timeScaleStore.zoom(difSpace / barSpace * SCALE_MULTIPLIER, coordinate)
     }
   }
 

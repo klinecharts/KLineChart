@@ -348,7 +348,7 @@ export default class TimeScaleStore {
     this._chartStore.getTooltipStore().recalculateCrosshair(true)
     this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
     const realDistance = Math.round(
-      this._lastBarRightSideDiffBarCount * this._barSpace - prevLastBarRightSideDistance
+      prevLastBarRightSideDistance - this._lastBarRightSideDiffBarCount * this._barSpace
     )
     if (realDistance !== 0) {
       this._chartStore.getActionStore().execute(ActionType.OnScroll, { distance: realDistance })
