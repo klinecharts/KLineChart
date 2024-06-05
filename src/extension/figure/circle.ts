@@ -46,10 +46,9 @@ export function drawCircle (ctx: CanvasRenderingContext2D, attrs: CircleAttrs | 
     borderStyle = LineType.Solid,
     borderDashedValue = [2, 2]
   } = styles
-  if (
-    (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) &&
-    (!isString(color) || !isTransparent(color))
-  ) {
+
+  const solid = (style === PolygonType.Fill || styles.style === PolygonType.StrokeFill) && (!isString(color) || !isTransparent(color))
+  if (solid) {
     ctx.fillStyle = color
     circles.forEach(({ x, y, r }) => {
       ctx.beginPath()
@@ -67,10 +66,12 @@ export function drawCircle (ctx: CanvasRenderingContext2D, attrs: CircleAttrs | 
       ctx.setLineDash([])
     }
     circles.forEach(({ x, y, r }) => {
-      ctx.beginPath()
-      ctx.arc(x, y, r, 0, Math.PI * 2)
-      ctx.closePath()
-      ctx.stroke()
+      if (!solid || r > borderSize) {
+        ctx.beginPath()
+        ctx.arc(x, y, r, 0, Math.PI * 2)
+        ctx.closePath()
+        ctx.stroke()
+      }
     })
   }
 }
