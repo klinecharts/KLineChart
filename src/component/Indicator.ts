@@ -218,11 +218,6 @@ export interface Indicator<D = any> {
    * Calculation result
    */
   result: D[]
-
-  /**
-   * Others
-   */
-  [key: string]: any
 }
 
 export type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name' | 'calc'>

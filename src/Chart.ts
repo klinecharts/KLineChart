@@ -712,7 +712,7 @@ export default class ChartImp implements Chart {
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>, callback?: () => void): Nullable<string> {
     const indicator = isString(value) ? { name: value } : value
-    if (getIndicatorClass(indicator.name as string) === null) {
+    if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
     }
@@ -820,7 +820,7 @@ export default class ChartImp implements Chart {
   }
 
   getOverlayById (id: string): Nullable<Overlay> {
-    return this._chartStore.getOverlayStore().getInstanceById(id)
+    return this._chartStore.getOverlayStore().getInstanceById(id)?.getOverlay() ?? null
   }
 
   overrideOverlay (override: Partial<OverlayCreate>): void {

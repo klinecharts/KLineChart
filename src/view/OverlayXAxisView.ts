@@ -24,8 +24,8 @@ import { type CustomApi, FormatDateType } from '../Options'
 
 import type XAxis from '../component/XAxis'
 import type YAxis from '../component/YAxis'
-import { type OverlayPrecision, type OverlayFigure } from '../component/Overlay'
-import type Overlay from '../component/Overlay'
+import { type OverlayPrecision, type OverlayFigure, type Overlay } from '../component/Overlay'
+import type OverlayImp from '../component/Overlay'
 
 import { type EventOverlayInfo, type ProgressOverlayInfo } from '../store/OverlayStore'
 import type OverlayStore from '../store/OverlayStore'
@@ -41,11 +41,11 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     return false
   }
 
-  override getCompleteOverlays (overlayStore: OverlayStore): Overlay[] {
+  override getCompleteOverlays (overlayStore: OverlayStore): OverlayImp[] {
     return overlayStore.getInstances()
   }
 
-  override getProgressOverlay (info: ProgressOverlayInfo): Overlay {
+  override getProgressOverlay (info: ProgressOverlayInfo): OverlayImp {
     return info.instance
   }
 
@@ -63,7 +63,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     clickInstanceInfo: EventOverlayInfo
   ): OverlayFigure[] {
     const figures: OverlayFigure[] = []
-    if (overlay.needDefaultXAxisFigure && overlay.id === clickInstanceInfo.instance?.id) {
+    if (overlay.needDefaultXAxisFigure && overlay.id === clickInstanceInfo.instance?.getOverlay().id) {
       let leftX = Number.MAX_SAFE_INTEGER
       let rightX = Number.MIN_SAFE_INTEGER
       coordinates.forEach((coordinate, index) => {
@@ -83,7 +83,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
   }
 
   override getFigures (
-    overlay: Overlay,
+    o: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,
     barSpace: BarSpace,
@@ -95,6 +95,6 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createXAxisFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+    return o.createXAxisFigures?.({ overlay: o, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
   }
 }

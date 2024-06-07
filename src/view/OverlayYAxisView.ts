@@ -24,8 +24,8 @@ import { isNumber } from '../common/utils/typeChecks'
 import type Axis from '../component/Axis'
 import type XAxis from '../component/XAxis'
 import type YAxis from '../component/YAxis'
-import { type OverlayPrecision, type OverlayFigure } from '../component/Overlay'
-import type Overlay from '../component/Overlay'
+import { type OverlayPrecision, type OverlayFigure, type Overlay } from '../component/Overlay'
+import type OverlayImp from '../component/Overlay'
 
 import { type EventOverlayInfo } from '../store/OverlayStore'
 
@@ -38,7 +38,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
 
   override drawDefaultFigures (
     ctx: CanvasRenderingContext2D,
-    overlay: Overlay,
+    overlay: OverlayImp,
     coordinates: Coordinate[],
     bounding: Bounding,
     precision: OverlayPrecision,
@@ -55,7 +55,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     this.drawFigures(
       ctx,
       overlay,
-      this.getDefaultFigures(overlay, coordinates, bounding, precision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold, xAxis, yAxis, clickInstanceInfo),
+      this.getDefaultFigures(overlay.getOverlay(), coordinates, bounding, precision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold, xAxis, yAxis, clickInstanceInfo),
       defaultStyles
     )
   }
@@ -76,7 +76,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     const figures: OverlayFigure[] = []
     if (
       overlay.needDefaultYAxisFigure &&
-      overlay.id === clickInstanceInfo.instance?.id &&
+      overlay.id === clickInstanceInfo.instance?.getOverlay().id &&
       clickInstanceInfo.paneId === this.getWidget().getPane().getId()
     ) {
       let topY = Number.MAX_SAFE_INTEGER

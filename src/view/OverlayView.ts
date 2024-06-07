@@ -26,8 +26,8 @@ import { type CustomApi } from '../Options'
 import type Axis from '../component/Axis'
 import type XAxis from '../component/XAxis'
 import type YAxis from '../component/YAxis'
-import { type OverlayPrecision, type OverlayFigure, type OverlayFigureIgnoreEventType } from '../component/Overlay'
-import type Overlay from '../component/Overlay'
+import { type OverlayPrecision, type OverlayFigure, type OverlayFigureIgnoreEventType, type Overlay } from '../component/Overlay'
+import type OverlayImp from '../component/Overlay'
 import { OVERLAY_FIGURE_KEY_PREFIX, OverlayMode, getAllOverlayFigureIgnoreEventTypes } from '../component/Overlay'
 
 import { type ProgressOverlayInfo, type EventOverlayInfo } from '../store/OverlayStore'
@@ -61,11 +61,12 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           overlayStore.updateProgressInstanceInfo(paneId)
           progressInstancePaneId = paneId
         }
-        const index = overlay.points.length - 1
+        const o = overlay.getOverlay()
+        const index = o.points.length - 1
         const key = `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`
         if (overlay.isDrawing() && progressInstancePaneId === paneId) {
-          overlay.eventMoveForDrawing(this._coordinateToPoint(progressInstanceInfo.instance, event))
-          overlay.onDrawing?.({ overlay, figureKey: key, figureIndex: index, ...event })
+          overlay.eventMoveForDrawing(this._coordinateToPoint(progressInstanceInfo.instance.getOverlay(), event))
+          o.onDrawing?.({ overlay: o, figureKey: key, figureIndex: index, ...event })
         }
         return this._figureMouseMoveEvent(
           overlay,
@@ -88,15 +89,16 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           overlayStore.updateProgressInstanceInfo(paneId, true)
           progressInstancePaneId = paneId
         }
-        const index = overlay.points.length - 1
+        const o = overlay.getOverlay()
+        const index = o.points.length - 1
         const key = `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`
         if (overlay.isDrawing() && progressInstancePaneId === paneId) {
-          overlay.eventMoveForDrawing(this._coordinateToPoint(overlay, event))
-          overlay.onDrawing?.({ overlay, figureKey: key, figureIndex: index, ...event })
+          overlay.eventMoveForDrawing(this._coordinateToPoint(o, event))
+          o.onDrawing?.({ overlay: o, figureKey: key, figureIndex: index, ...event })
           overlay.nextStep()
           if (!overlay.isDrawing()) {
             overlayStore.progressInstanceComplete()
-            overlay.onDrawEnd?.({ overlay, figureKey: key, figureIndex: index, ...event })
+            o.onDrawEnd?.({ overlay: o, figureKey: key, figureIndex: index, ...event })
           }
         }
         return this._figureMouseClickEvent(
@@ -116,16 +118,17 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (progressInstanceInfo !== null) {
         const overlay = progressInstanceInfo.instance
         const progressInstancePaneId = progressInstanceInfo.paneId
+        const o = overlay.getOverlay()
         if (overlay.isDrawing() && progressInstancePaneId === paneId) {
           overlay.forceComplete()
           if (!overlay.isDrawing()) {
             overlayStore.progressInstanceComplete()
-            const index = overlay.points.length - 1
+            const index = o.points.length - 1
             const key = `${OVERLAY_FIGURE_KEY_PREFIX}point_${index}`
-            overlay.onDrawEnd?.({ overlay, figureKey: key, figureIndex: index, ...event })
+            o.onDrawEnd?.({ overlay: o, figureKey: key, figureIndex: index, ...event })
           }
         }
-        const index = overlay.points.length - 1
+        const index = o.points.length - 1
         return this._figureMouseClickEvent(
           overlay,
           EventOverlayInfoFigureType.Point,
@@ -140,7 +143,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       if (progressInstanceInfo !== null) {
         const overlay = progressInstanceInfo.instance
         if (overlay.isDrawing()) {
-          const index = overlay.points.length - 1
+          const index = overlay.getOverlay().points.length - 1
           return this._figureMouseRightClickEvent(
             overlay,
             EventOverlayInfoFigureType.Point,
@@ -154,7 +157,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }).registerEvent('mouseUpEvent', (event: MouseTouchEvent) => {
       const { instance, figureIndex, figureKey } = overlayStore.getPressedInstanceInfo()
       if (instance !== null) {
-        instance.onPressedMoveEnd?.({ overlay: instance, figureKey, figureIndex, ...event })
+        const o = instance.getOverlay()
+        o.onPressedMoveEnd?.({ overlay: o, figureKey, figureIndex, ...event })
       }
       overlayStore.setPressedInstanceInfo({
         paneId, instance: null, figureType: EventOverlayInfoFigureType.None, figureKey: '', figureIndex: -1, attrsIndex: -1
@@ -163,9 +167,10 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }).registerEvent('pressedMouseMoveEvent', (event: MouseTouchEvent) => {
       const { instance, figureType, figureIndex, figureKey } = overlayStore.getPressedInstanceInfo()
       if (instance !== null) {
-        if (!instance.lock) {
-          if (!(instance.onPressedMoving?.({ overlay: instance, figureIndex, figureKey, ...event }) ?? false)) {
-            const point = this._coordinateToPoint(instance, event)
+        const o = instance.getOverlay()
+        if (!o.lock) {
+          if (!(o.onPressedMoving?.({ overlay: o, figureIndex, figureKey, ...event }) ?? false)) {
+            const point = this._coordinateToPoint(o, event)
             if (figureType === EventOverlayInfoFigureType.Point) {
               instance.eventPressedPointMove(point, figureIndex)
             } else {
@@ -180,7 +185,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   }
 
   private _createFigureEvents (
-    overlay: Overlay,
+    overlay: OverlayImp,
     figureType: EventOverlayInfoFigureType,
     figureKey: string,
     figureIndex: number,
@@ -233,7 +238,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     return eventHandler
   }
 
-  private _figureMouseMoveEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
+  private _figureMouseMoveEvent (overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       const overlayStore = pane.getChart().getChartStore().getOverlayStore()
@@ -244,19 +249,20 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  private _figureMouseDownEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
+  private _figureMouseDownEvent (overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
       const overlayStore = pane.getChart().getChartStore().getOverlayStore()
-      overlay.startPressedMove(this._coordinateToPoint(overlay, event))
-      overlay.onPressedMoveStart?.({ overlay, figureIndex, figureKey, ...event })
+      const o = overlay.getOverlay()
+      overlay.startPressedMove(this._coordinateToPoint(o, event))
+      o.onPressedMoveStart?.({ overlay: o, figureIndex, figureKey, ...event })
       overlayStore.setPressedInstanceInfo({ paneId, instance: overlay, figureType, figureKey, figureIndex, attrsIndex })
       return true
     }
   }
 
-  private _figureMouseClickEvent (overlay: Overlay, figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
+  private _figureMouseClickEvent (overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
       const pane = this.getWidget().getPane()
       const paneId = pane.getId()
@@ -266,25 +272,27 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     }
   }
 
-  private _figureMouseDoubleClickEvent (overlay: Overlay, _figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, _attrsIndex: number): MouseTouchEventCallback {
+  private _figureMouseDoubleClickEvent (overlay: OverlayImp, _figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, _attrsIndex: number): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
-      overlay.onDoubleClick?.({ ...event, figureIndex, figureKey, overlay })
+      const o = overlay.getOverlay()
+      o.onDoubleClick?.({ ...event, figureIndex, figureKey, overlay: o })
       return true
     }
   }
 
-  private _figureMouseRightClickEvent (overlay: Overlay, _figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, _attrsIndex: number): MouseTouchEventCallback {
+  private _figureMouseRightClickEvent (overlay: OverlayImp, _figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, _attrsIndex: number): MouseTouchEventCallback {
     return (event: MouseTouchEvent) => {
-      if (!(overlay.onRightClick?.({ overlay, figureIndex, figureKey, ...event }) ?? false)) {
+      const o = overlay.getOverlay()
+      if (!(o.onRightClick?.({ overlay: o, figureIndex, figureKey, ...event }) ?? false)) {
         const pane = this.getWidget().getPane()
         const overlayStore = pane.getChart().getChartStore().getOverlayStore()
-        overlayStore.removeInstance(overlay)
+        overlayStore.removeInstance(o)
       }
       return true
     }
   }
 
-  private _coordinateToPoint (overlay: Overlay, coordinate: Coordinate): Partial<Point> {
+  private _coordinateToPoint (o: Overlay, coordinate: Coordinate): Partial<Point> {
     const point: Partial<Point> = {}
     const pane = this.getWidget().getPane()
     const chart = pane.getChart()
@@ -300,12 +308,12 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (this.coordinateToPointValueFlag()) {
       const yAxis = pane.getAxisComponent()
       let value = yAxis.convertFromPixel(coordinate.y)
-      if (overlay.mode !== OverlayMode.Normal && paneId === PaneIdConstants.CANDLE && isNumber(point.dataIndex)) {
+      if (o.mode !== OverlayMode.Normal && paneId === PaneIdConstants.CANDLE && isNumber(point.dataIndex)) {
         const kLineData = timeScaleStore.getDataByDataIndex(point.dataIndex)
         if (kLineData !== null) {
-          const modeSensitivity = overlay.modeSensitivity
+          const modeSensitivity = o.modeSensitivity
           if (value > kLineData.high) {
-            if (overlay.mode === OverlayMode.WeakMagnet) {
+            if (o.mode === OverlayMode.WeakMagnet) {
               const highY = yAxis.convertToPixel(kLineData.high)
               const buffValue = yAxis.convertFromPixel(highY - modeSensitivity)
               if (value < buffValue) {
@@ -315,7 +323,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
               value = kLineData.high
             }
           } else if (value < kLineData.low) {
-            if (overlay.mode === OverlayMode.WeakMagnet) {
+            if (o.mode === OverlayMode.WeakMagnet) {
               const lowY = yAxis.convertToPixel(kLineData.low)
               const buffValue = yAxis.convertFromPixel(lowY - modeSensitivity)
               if (value > buffValue) {
@@ -410,7 +418,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
       excludePriceVolumeMin: Number.MAX_SAFE_INTEGER
     })
     overlays.forEach(overlay => {
-      if (overlay.visible) {
+      if (overlay.getOverlay().visible) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace, overlayPrecision,
           dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
@@ -423,7 +431,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (progressInstanceInfo !== null) {
       const overlay = this.getProgressOverlay(progressInstanceInfo, paneId)
       // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-      if (overlay !== null && overlay.visible) {
+      if (isValid(overlay) && overlay.getOverlay().visible) {
         this._drawOverlay(
           ctx, overlay, bounding, barSpace,
           overlayPrecision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold,
@@ -436,7 +444,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
 
   private _drawOverlay (
     ctx: CanvasRenderingContext2D,
-    overlay: Overlay,
+    overlay: OverlayImp,
     bounding: Bounding,
     barSpace: BarSpace,
     precision: OverlayPrecision,
@@ -451,7 +459,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     clickInstanceInfo: EventOverlayInfo,
     timeScaleStore: TimeScaleStore
   ): void {
-    const { points } = overlay
+    const o = overlay.getOverlay()
+    const { points } = o
     const coordinates = points.map(point => {
       let dataIndex = point.dataIndex
       if (isNumber(point.timestamp)) {
@@ -469,7 +478,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     if (coordinates.length > 0) {
       const figures = new Array<OverlayFigure>().concat(
         this.getFigures(
-          overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis
+          o, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis
         )
       )
       this.drawFigures(
@@ -497,14 +506,15 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     )
   }
 
-  protected drawFigures (ctx: CanvasRenderingContext2D, overlay: Overlay, figures: OverlayFigure[], defaultStyles: OverlayStyle): void {
+  protected drawFigures (ctx: CanvasRenderingContext2D, overlay: OverlayImp, figures: OverlayFigure[], defaultStyles: OverlayStyle): void {
+    const o = overlay.getOverlay()
     figures.forEach((figure, figureIndex) => {
       const { type, styles, attrs, ignoreEvent } = figure
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats, attrsIndex) => {
         const events = this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figure.key ?? '', figureIndex, attrsIndex, ignoreEvent)
-        const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
+        const ss = { ...defaultStyles[type], ...o.styles?.[type], ...styles }
         this.createFigure({
           name: type, attrs: ats, styles: ss
         }, events)?.draw(ctx)
@@ -512,11 +522,11 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     })
   }
 
-  protected getCompleteOverlays (overlayStore: OverlayStore, paneId: string): Overlay[] {
+  protected getCompleteOverlays (overlayStore: OverlayStore, paneId: string): OverlayImp[] {
     return overlayStore.getInstances(paneId)
   }
 
-  protected getProgressOverlay (info: ProgressOverlayInfo, paneId: string): Nullable<Overlay> {
+  protected getProgressOverlay (info: ProgressOverlayInfo, paneId: string): Nullable<OverlayImp> {
     if (info.paneId === paneId) {
       return info.instance
     }
@@ -524,7 +534,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   }
 
   protected getFigures (
-    overlay: Overlay,
+    o: Overlay,
     coordinates: Coordinate[],
     bounding: Bounding,
     barSpace: BarSpace,
@@ -536,12 +546,12 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     xAxis: Nullable<XAxis>,
     yAxis: Nullable<YAxis>
   ): OverlayFigure | OverlayFigure[] {
-    return overlay.createPointFigures?.({ overlay, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
+    return o.createPointFigures?.({ overlay: o, coordinates, bounding, barSpace, precision, thousandsSeparator, decimalFoldThreshold, dateTimeFormat, defaultStyles, xAxis, yAxis }) ?? []
   }
 
   protected drawDefaultFigures (
     ctx: CanvasRenderingContext2D,
-    overlay: Overlay,
+    overlay: OverlayImp,
     coordinates: Coordinate[],
     _bounding: Bounding,
     _precision: OverlayPrecision,
@@ -555,12 +565,13 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     hoverInstanceInfo: EventOverlayInfo,
     clickInstanceInfo: EventOverlayInfo
   ): void {
-    if (overlay.needDefaultPointFigure) {
+    const o = overlay.getOverlay()
+    if (o.needDefaultPointFigure) {
       if (
-        (hoverInstanceInfo.instance?.id === overlay.id && hoverInstanceInfo.figureType !== EventOverlayInfoFigureType.None) ||
-        (clickInstanceInfo.instance?.id === overlay.id && clickInstanceInfo.figureType !== EventOverlayInfoFigureType.None)
+        (hoverInstanceInfo.instance?.getOverlay().id === o.id && hoverInstanceInfo.figureType !== EventOverlayInfoFigureType.None) ||
+        (clickInstanceInfo.instance?.getOverlay().id === o.id && clickInstanceInfo.figureType !== EventOverlayInfoFigureType.None)
       ) {
-        const styles = overlay.styles
+        const styles = o.styles
         const pointStyles = { ...defaultStyles.point, ...styles?.point }
         coordinates.forEach(({ x, y }, index) => {
           let radius = pointStyles.radius
@@ -568,7 +579,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
           let borderColor = pointStyles.borderColor
           let borderSize = pointStyles.borderSize
           if (
-            hoverInstanceInfo.instance?.id === overlay.id &&
+            hoverInstanceInfo.instance?.getOverlay().id === o.id &&
             hoverInstanceInfo.figureType === EventOverlayInfoFigureType.Point &&
             hoverInstanceInfo.figureIndex === index
           ) {

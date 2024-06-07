@@ -52,7 +52,7 @@ export default class IndicatorStore {
     if (!isValid(paneInstances)) {
       paneInstances = []
     }
-    const IndicatorClazz = getIndicatorClass(name as string)!
+    const IndicatorClazz = getIndicatorClass(name)!
     const instance = new IndicatorClazz()
 
     this.synchronizeSeriesPrecision(instance)
