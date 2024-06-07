@@ -76,7 +76,8 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
       if (yAxis.isInCandle()) {
         precision = chartStore.getPrecision().price
       } else {
-        indicators.forEach(indicator => {
+        indicators.forEach(proxy => {
+          const indicator = proxy.getIndicator()
           precision = Math.max(indicator.precision, precision)
           if (!shouldFormatBigNumber) {
             shouldFormatBigNumber = indicator.shouldFormatBigNumber

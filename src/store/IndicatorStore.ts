@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import { isValid, isString, isArray, isNumber, isBoolean, isFunction } from '../common/utils/typeChecks'
+import { isValid, isString } from '../common/utils/typeChecks'
 
 import type ChartStore from './ChartStore'
 
@@ -30,80 +30,12 @@ export default class IndicatorStore {
     this._chartStore = chartStore
   }
 
-  private _overrideInstance (instance: IndicatorImp, indicator: Partial<Indicator>): [boolean, boolean, boolean] {
-    const {
-      shortName, series, calcParams, precision, figures, minValue, maxValue,
-      shouldOhlc, shouldFormatBigNumber, visible, zLevel, styles, extendData,
-      regenerateFigures, createTooltipDataSource, draw, calc
-    } = indicator
-    let updateFlag = false
-    if (isString(shortName) && instance.setShortName(shortName)) {
-      updateFlag = true
-    }
-    if (isValid(series) && instance.setSeries(series)) {
-      updateFlag = true
-    }
-    let calcFlag = false
-    if (isArray(calcParams) && instance.setCalcParams(calcParams)) {
-      updateFlag = true
-      calcFlag = true
-    }
-    if (isArray(figures) && instance.setFigures(figures)) {
-      updateFlag = true
-      calcFlag = true
-    }
-    if (minValue !== undefined && instance.setMinValue(minValue)) {
-      updateFlag = true
-    }
-    if (maxValue !== undefined && instance.setMinValue(maxValue)) {
-      updateFlag = true
-    }
-    if (isNumber(precision) && instance.setPrecision(precision)) {
-      updateFlag = true
-    }
-    if (isBoolean(shouldOhlc) && instance.setShouldOhlc(shouldOhlc)) {
-      updateFlag = true
-    }
-    if (isBoolean(shouldFormatBigNumber) && instance.setShouldFormatBigNumber(shouldFormatBigNumber)) {
-      updateFlag = true
-    }
-    if (isBoolean(visible) && instance.setVisible(visible)) {
-      updateFlag = true
-    }
-    let sortFlag = false
-    if (isNumber(zLevel) && instance.setZLevel(zLevel)) {
-      updateFlag = true
-      sortFlag = true
-    }
-    if (isValid(styles) && instance.setStyles(styles)) {
-      updateFlag = true
-    }
-    if (extendData !== undefined && instance.setExtendData(extendData)) {
-      updateFlag = true
-      calcFlag = true
-    }
-    if (regenerateFigures !== undefined && instance.setRegenerateFigures(regenerateFigures)) {
-      updateFlag = true
-    }
-    if (createTooltipDataSource !== undefined && instance.setCreateTooltipDataSource(createTooltipDataSource)) {
-      updateFlag = true
-    }
-    if (draw !== undefined && instance.setDraw(draw)) {
-      updateFlag = true
-    }
-    if (isFunction(calc)) {
-      instance.calc = calc
-      calcFlag = true
-    }
-    return [updateFlag, calcFlag, sortFlag]
-  }
-
   private _sort (paneId?: string): void {
     if (isString(paneId)) {
-      this._instances.get(paneId)?.sort((i1, i2) => i1.zLevel - i2.zLevel)
+      this._instances.get(paneId)?.sort((i1, i2) => i1.getIndicator().zLevel - i2.getIndicator().zLevel)
     } else {
       this._instances.forEach(paneInstances => {
-        paneInstances.sort((i1, i2) => i1.zLevel - i2.zLevel)
+        paneInstances.sort((i1, i2) => i1.getIndicator().zLevel - i2.getIndicator().zLevel)
       })
     }
   }
@@ -112,7 +44,7 @@ export default class IndicatorStore {
     const { name } = indicator
     let paneInstances = this._instances.get(paneId)
     if (isValid(paneInstances)) {
-      const instance = paneInstances.find(ins => ins.name === name)
+      const instance = paneInstances.find(ins => ins.getIndicator().name === name)
       if (isValid(instance)) {
         return await Promise.reject(new Error('Duplicate indicators.'))
       }
@@ -120,18 +52,18 @@ export default class IndicatorStore {
     if (!isValid(paneInstances)) {
       paneInstances = []
     }
-    const IndicatorClazz = getIndicatorClass(name)!
+    const IndicatorClazz = getIndicatorClass(name as string)!
     const instance = new IndicatorClazz()
 
     this.synchronizeSeriesPrecision(instance)
-    this._overrideInstance(instance, indicator)
+    instance.override(indicator)
     if (!isStack) {
       paneInstances = []
     }
     paneInstances.push(instance)
     this._instances.set(paneId, paneInstances)
     this._sort(paneId)
-    return await instance.calcIndicator(this._chartStore.getDataList())
+    return await instance.calc(this._chartStore.getDataList())
   }
 
   getInstances (paneId: string): IndicatorImp[] {
@@ -143,7 +75,7 @@ export default class IndicatorStore {
     const paneInstances = this._instances.get(paneId)
     if (isValid(paneInstances)) {
       if (isString(name)) {
-        const index = paneInstances.findIndex(ins => ins.name === name)
+        const index = paneInstances.findIndex(ins => ins.getIndicator().name === name)
         if (index > -1) {
           paneInstances.splice(index, 1)
           removed = true
@@ -169,23 +101,23 @@ export default class IndicatorStore {
       if (isString(paneId)) {
         const paneInstances = this._instances.get(paneId)
         if (isValid(paneInstances)) {
-          const instance = paneInstances.find(ins => ins.name === name)
+          const instance = paneInstances.find(ins => ins.getIndicator().name === name)
           if (isValid(instance)) {
-            tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
+            tasks.push(instance.calc(this._chartStore.getDataList()))
           }
         }
       } else {
         this._instances.forEach(paneInstances => {
-          const instance = paneInstances.find(ins => ins.name === name)
+          const instance = paneInstances.find(ins => ins.getIndicator().name === name)
           if (isValid(instance)) {
-            tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
+            tasks.push(instance.calc(this._chartStore.getDataList()))
           }
         })
       }
     } else {
       this._instances.forEach(paneInstances => {
         paneInstances.forEach(instance => {
-          tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
+          tasks.push(instance.calc(this._chartStore.getDataList()))
         })
       })
     }
@@ -197,7 +129,7 @@ export default class IndicatorStore {
     const createMapping: ((instances: IndicatorImp[]) => Map<string, Indicator>) = (instances: IndicatorImp[]) => {
       const mapping = new Map<string, Indicator>()
       instances.forEach(ins => {
-        mapping.set(ins.name, ins)
+        mapping.set(ins.getIndicator().name, ins.getIndicator())
       })
       return mapping
     }
@@ -205,7 +137,7 @@ export default class IndicatorStore {
     if (isString(paneId)) {
       const paneInstances = this._instances.get(paneId) ?? []
       if (isString(name)) {
-        return paneInstances?.find(ins => ins.name === name) ?? null
+        return paneInstances?.find(ins => ins.getIndicator().name === name)?.getIndicator() ?? null
       }
       return createMapping(paneInstances)
     }
@@ -219,13 +151,13 @@ export default class IndicatorStore {
   synchronizeSeriesPrecision (indicator?: IndicatorImp): void {
     const { price: pricePrecision, volume: volumePrecision } = this._chartStore.getPrecision()
     const synchronize: ((instance: IndicatorImp) => void) = instance => {
-      switch (instance.series) {
+      switch (instance.getIndicator().series) {
         case IndicatorSeries.Price: {
-          instance.setPrecision(pricePrecision, true)
+          instance.setSeriesPrecision(pricePrecision)
           break
         }
         case IndicatorSeries.Volume: {
-          instance.setPrecision(volumePrecision, true)
+          instance.setSeriesPrecision(volumePrecision)
           break
         }
         default: { break }
@@ -258,16 +190,17 @@ export default class IndicatorStore {
     const tasks: Array<Promise<boolean>> = []
     let sortFlag = false
     instances.forEach(paneInstances => {
-      const instance = paneInstances.find(ins => ins.name === name)
+      const instance = paneInstances.find(ins => ins.getIndicator().name === name)
       if (isValid(instance)) {
-        const overrideResult = this._overrideInstance(instance, indicator)
-        if (overrideResult[2]) {
+        instance.override(indicator)
+        const { calc, draw, sort } = instance.shouldUpdate()
+        if (sort) {
           sortFlag = true
         }
-        if (overrideResult[1]) {
-          tasks.push(instance.calcIndicator(this._chartStore.getDataList()))
+        if (calc) {
+          tasks.push(instance.calc(this._chartStore.getDataList()))
         } else {
-          if (overrideResult[0]) {
+          if (draw) {
             onlyUpdateFlag = true
           }
         }

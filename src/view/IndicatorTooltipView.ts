@@ -90,7 +90,8 @@ export default class IndicatorTooltipView extends View<YAxis> {
     const tooltipStyles = styles.tooltip
     if (this.isDrawTooltip(crosshair, tooltipStyles)) {
       const tooltipTextStyles = tooltipStyles.text
-      indicators.forEach(indicator => {
+      indicators.forEach(proxy => {
+        const indicator = proxy.getIndicator()
         let prevRowHeight = 0
         const coordinate = { x: left, y: top }
         const { name, calcParamsText, values: legends, icons } = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, styles)

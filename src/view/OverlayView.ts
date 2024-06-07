@@ -393,7 +393,8 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const clickInstanceInfo = overlayStore.getClickInstanceInfo()
     const overlays = this.getCompleteOverlays(overlayStore, paneId)
     const paneIndicators = chartStore.getIndicatorStore().getInstances(paneId)
-    const overlayPrecision = paneIndicators.reduce((prev, indicator) => {
+    const overlayPrecision = paneIndicators.reduce((prev, proxy) => {
+      const indicator = proxy.getIndicator()
       const precision = indicator.precision
       prev[indicator.name] = precision
       prev.max = Math.max(prev.max, precision)

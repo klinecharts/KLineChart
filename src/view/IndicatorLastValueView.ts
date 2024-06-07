@@ -38,7 +38,8 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
       const thousandsSeparator = chartStore.getThousandsSeparator()
       const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
-      indicators.forEach(indicator => {
+      indicators.forEach(proxy => {
+        const indicator = proxy.getIndicator()
         const result = indicator.result
         const indicatorData = result[dataIndex]
         if (isValid(indicatorData) && indicator.visible) {

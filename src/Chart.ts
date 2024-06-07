@@ -495,7 +495,8 @@ export default class ChartImp implements Chart {
         const id = pane.getId()
         const paneIndicatorData = {}
         const indicators = this._chartStore.getIndicatorStore().getInstances(id)
-        indicators.forEach(indicator => {
+        indicators.forEach(proxy => {
+          const indicator = proxy.getIndicator()
           const result = indicator.result
           paneIndicatorData[indicator.name] = result[crosshair.dataIndex ?? result.length - 1]
         })
@@ -711,7 +712,7 @@ export default class ChartImp implements Chart {
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>, callback?: () => void): Nullable<string> {
     const indicator = isString(value) ? { name: value } : value
-    if (getIndicatorClass(indicator.name) === null) {
+    if (getIndicatorClass(indicator.name as string) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
       return null
     }
