@@ -76,6 +76,11 @@ export default class CandleBarView extends ChildrenView {
             colors[1] = styles.noChangeBorderColor
             colors[2] = styles.noChangeWickColor
           }
+          if (kLineData.timestamp > chartStore.getLatestTime()) {
+            colors[0] = '#00000000'
+            colors[1] = '#00000000'
+            colors[2] = '#00000000'
+          }
           const openY = yAxis.convertToPixel(open)
           const closeY = yAxis.convertToPixel(close)
           const priceY = [

@@ -77,6 +77,10 @@ export default class ChartStore {
   private _dataList: KLineData[] = []
 
   /**
+   * Chart Limit Time
+   */
+  private _latestTime = -1
+  /**
    * Load more data callback
    * Since v9.8.0 deprecated, since v10 removed
    * @deprecated
@@ -191,6 +195,10 @@ export default class ChartStore {
     return this
   }
 
+  setLatestTime (latestTime: number): void {
+    this._latestTime = latestTime
+  }
+
   getStyles (): Styles {
     return this._styles
   }
@@ -232,6 +240,10 @@ export default class ChartStore {
 
   getVisibleDataList (): VisibleData[] {
     return this._visibleDataList
+  }
+
+  getLatestTime (): number {
+    return this._latestTime
   }
 
   async addData (data: KLineData | KLineData[], type?: LoadDataType, more?: boolean): Promise<void> {
