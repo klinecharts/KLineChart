@@ -89,6 +89,7 @@ export interface Chart {
   setLeftMinVisibleBarCount: (barCount: number) => void
   setRightMinVisibleBarCount: (barCount: number) => void
   setBarSpace: (space: number) => void
+  setLastTimestamp: (timestamp: number) => void
   getBarSpace: () => number
   getVisibleRange: () => VisibleRange
   clearData: () => void
@@ -656,6 +657,10 @@ export default class ChartImp implements Chart {
 
   setBarSpace (space: number): void {
     this._chartStore.getTimeScaleStore().setBarSpace(space)
+  }
+
+  setLastTimestamp (timestamp: number): void {
+    this._chartStore.setLatestTime(timestamp)
   }
 
   getBarSpace (): number {
