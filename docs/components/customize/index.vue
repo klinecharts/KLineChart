@@ -24,7 +24,7 @@
             </p>
         </div>
         
-        <FeatureList :features="lang === 'zh-CN' ? ['免费版所有服务', '更多的示例代码', '首页赞助商广告位', '专属答疑微信群'] : ['All services in the free version', 'More sample codes', 'Homepage sponsor advertising space', 'Exclusive Q&A WeChat group']"/>
+        <FeatureList :features="lang === 'zh-CN' ? ['免费版所有服务', '更多的示例代码', '首页赞助商广告位', '一对一答疑'] : ['All services in the free version', 'More sample codes', 'Homepage sponsor advertising space', 'One-on-one Q&A']"/>
         <p class="customize-content-item-tip">
           {{ lang === 'zh-CN' ? '在赞助页对项目进行捐赠，完成之后联系开发者加入专属答疑群。' : 'Sponsor to the project on the sponsorship page, and after completion, contact the developer to join the exclusive Q&A group.' }}
         </p>

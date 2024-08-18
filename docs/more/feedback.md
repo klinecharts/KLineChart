@@ -14,5 +14,5 @@ https://discord.gg/7YjHYgvvvZ
 扫一扫，添加开发者，备注『 KLineChart 』，加入群聊。
 <img style="width:180px;margin-top:10px" src="/images/wechat.jpeg"/>
 
-## QQ讨论群
-<img style="width:180px;margin-top:10px" src="/images/qq_group_qr_code.png"/>
+<!-- ## QQ讨论群
+<img style="width:180px;margin-top:10px" src="/images/qq_group_qr_code.png"/> -->

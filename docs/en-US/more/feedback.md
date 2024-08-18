@@ -14,5 +14,5 @@ https://discord.gg/7YjHYgvvvZ
 Scan to add developers, note KLineChart, and join the group chat.
 <img style="width:180px;margin-top:10px" src="/images/wechat.jpeg"/>
 
-## QQ discussion group
-<img style="width:180px;margin-top:10px" src="/images/qq_group_qr_code.png"/>
+<!-- ## QQ discussion group
+<img style="width:180px;margin-top:10px" src="/images/qq_group_qr_code.png"/> -->
