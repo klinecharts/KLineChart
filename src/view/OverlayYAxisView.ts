@@ -55,7 +55,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     this.drawFigures(
       ctx,
       overlay,
-      this.getDefaultFigures(overlay.getOverlay(), coordinates, bounding, precision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold, xAxis, yAxis, clickInstanceInfo),
+      this.getDefaultFigures(overlay, coordinates, bounding, precision, dateTimeFormat, customApi, thousandsSeparator, decimalFoldThreshold, xAxis, yAxis, clickInstanceInfo),
       defaultStyles
     )
   }
@@ -76,7 +76,7 @@ export default class OverlayYAxisView<C extends Axis = YAxis> extends OverlayVie
     const figures: OverlayFigure[] = []
     if (
       overlay.needDefaultYAxisFigure &&
-      overlay.id === clickInstanceInfo.instance?.getOverlay().id &&
+      overlay.id === clickInstanceInfo.instance?.id &&
       clickInstanceInfo.paneId === this.getWidget().getPane().getId()
     ) {
       let topY = Number.MAX_SAFE_INTEGER

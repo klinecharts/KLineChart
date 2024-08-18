@@ -99,14 +99,14 @@ export default class OverlayStore {
 
   getInstanceById (id: string): Nullable<OverlayImp> {
     for (const entry of this._instances) {
-      const paneShapes = entry[1]
-      const overlay = paneShapes.find(s => s.getOverlay().id === id)
+      const paneOverlays = entry[1]
+      const overlay = paneOverlays.find(o => o.id === id)
       if (isValid(overlay)) {
         return overlay
       }
     }
     if (this._progressInstanceInfo !== null) {
-      if (this._progressInstanceInfo.instance.getOverlay().id === id) {
+      if (this._progressInstanceInfo.instance.id === id) {
         return this._progressInstanceInfo.instance
       }
     }
@@ -115,10 +115,10 @@ export default class OverlayStore {
 
   private _sort (paneId?: string): void {
     if (isString(paneId)) {
-      this._instances.get(paneId)?.sort((o1, o2) => o1.getOverlay().zLevel - o2.getOverlay().zLevel)
+      this._instances.get(paneId)?.sort((o1, o2) => o1.zLevel - o2.zLevel)
     } else {
       this._instances.forEach(paneInstances => {
-        paneInstances.sort((o1, o2) => o1.getOverlay().zLevel - o2.getOverlay().zLevel)
+        paneInstances.sort((o1, o2) => o1.zLevel - o2.zLevel)
       })
     }
   }
@@ -145,8 +145,7 @@ export default class OverlayStore {
             this._instances.get(paneId)?.push(instance)
           }
           if (instance.isStart()) {
-            const o = instance.getOverlay()
-            o.onDrawStart?.(({ overlay: o }))
+            instance.onDrawStart?.(({ overlay: instance }))
           }
           return id
         }
@@ -228,10 +227,9 @@ export default class OverlayStore {
       const groupIdValid = isString(groupId)
       this._instances.forEach(paneInstances => {
         paneInstances.forEach(instance => {
-          const o = instance.getOverlay()
           if (
-            (nameValid && o.name === name) ||
-            (groupIdValid && o.groupId === groupId) ||
+            (nameValid && instance.name === name) ||
+            (groupIdValid && instance.groupId === groupId) ||
             (!nameValid && !groupIdValid)
           ) {
             setFlag(instance)
@@ -240,10 +238,9 @@ export default class OverlayStore {
       })
       if (this._progressInstanceInfo !== null) {
         const progressInstance = this._progressInstanceInfo.instance
-        const o = progressInstance.getOverlay()
         if (
-          (nameValid && o.name === name) ||
-          (groupIdValid && o.groupId === groupId) ||
+          (nameValid && progressInstance.name === name) ||
+          (groupIdValid && progressInstance.groupId === groupId) ||
           (!nameValid && !groupIdValid)
         ) {
           setFlag(progressInstance)
@@ -260,19 +257,18 @@ export default class OverlayStore {
 
   removeInstance (overlayRemove?: OverlayRemove): void {
     const match: ((remove: OverlayRemove, overlay: OverlayImp) => boolean) = (remove: OverlayRemove, overlay: OverlayImp) => {
-      const o = overlay.getOverlay()
       if (isString(remove.id)) {
-        if (o.id !== remove.id) {
+        if (overlay.id !== remove.id) {
           return false
         }
       } else {
         if (isString(remove.groupId)) {
-          if (o.groupId !== remove.groupId) {
+          if (overlay.groupId !== remove.groupId) {
             return false
           }
         } else {
           if (isString(remove.name)) {
-            if (o.name !== remove.name) {
+            if (overlay.name !== remove.name) {
               return false
             }
           }
@@ -290,8 +286,7 @@ export default class OverlayStore {
         (overlayRemoveValid && match(overlayRemove, instance))
       ) {
         updatePaneIds.push(this._progressInstanceInfo.paneId)
-        const o = instance.getOverlay()
-        o.onRemoved?.({ overlay: o })
+        instance.onRemoved?.({ overlay: instance })
         this._progressInstanceInfo = null
       }
     }
@@ -304,8 +299,7 @@ export default class OverlayStore {
             if (!updatePaneIds.includes(entry[0])) {
               updatePaneIds.push(entry[0])
             }
-            const o = instance.getOverlay()
-            o.onRemoved?.({ overlay: o })
+            instance.onRemoved?.({ overlay: instance })
             return false
           }
           return true
@@ -319,8 +313,7 @@ export default class OverlayStore {
       this._instances.forEach((paneInstances, paneId) => {
         updatePaneIds.push(paneId)
         paneInstances.forEach(instance => {
-          const o = instance.getOverlay()
-          o.onRemoved?.({ overlay: o })
+          instance.onRemoved?.({ overlay: instance })
         })
       })
       this._instances.clear()
@@ -347,8 +340,7 @@ export default class OverlayStore {
       const dataList = this._chartStore.getDataList()
       this._instances.forEach(overlays => {
         overlays.forEach(overlay => {
-          const o = overlay.getOverlay()
-          const points = o.points
+          const points = overlay.points
           points.forEach(point => {
             if (!isValid(point.timestamp) && isValid(point.dataIndex)) {
               if (type === LoadDataType.Forward) {
@@ -365,29 +357,28 @@ export default class OverlayStore {
 
   setHoverInstanceInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
     const { instance, figureType, figureKey, figureIndex } = this._hoverInstanceInfo
-    const overlay = instance?.getOverlay()
-    const infoOverlay = info.instance?.getOverlay()
+    const infoInstance = info.instance
     if (
-      overlay?.id !== infoOverlay?.id ||
+      instance?.id !== infoInstance?.id ||
       figureType !== info.figureType ||
       figureIndex !== info.figureIndex
     ) {
       this._hoverInstanceInfo = info
-      if (overlay?.id !== infoOverlay?.id) {
+      if (instance?.id !== infoInstance?.id) {
         let ignoreUpdateFlag = false
         let sortFlag = false
         if (instance !== null) {
           sortFlag = true
-          if (isFunction(overlay?.onMouseLeave)) {
-            overlay?.onMouseLeave({ overlay, figureKey, figureIndex, ...event })
+          if (isFunction(instance?.onMouseLeave)) {
+            instance?.onMouseLeave({ overlay: instance, figureKey, figureIndex, ...event })
             ignoreUpdateFlag = true
           }
         }
 
-        if (infoOverlay !== null) {
+        if (infoInstance !== null) {
           sortFlag = true
-          if (isFunction(infoOverlay?.onMouseEnter)) {
-            infoOverlay?.onMouseEnter({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+          if (isFunction(infoInstance?.onMouseEnter)) {
+            infoInstance?.onMouseEnter({ overlay: infoInstance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
             ignoreUpdateFlag = true
           }
         }
@@ -407,16 +398,15 @@ export default class OverlayStore {
 
   setClickInstanceInfo (info: EventOverlayInfo, event: MouseTouchEvent): void {
     const { paneId, instance, figureType, figureKey, figureIndex } = this._clickInstanceInfo
-    const overlay = instance?.getOverlay()
-    const infoOverlay = info.instance?.getOverlay()
+    const infoInstance = info.instance
     if (!(info.instance?.isDrawing() ?? false)) {
-      infoOverlay?.onClick?.({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+      infoInstance?.onClick?.({ overlay: infoInstance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
     }
-    if (overlay?.id !== infoOverlay?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
+    if (instance?.id !== infoInstance?.id || figureType !== info.figureType || figureIndex !== info.figureIndex) {
       this._clickInstanceInfo = info
-      if (overlay?.id !== infoOverlay?.id) {
-        overlay?.onDeselected?.({ overlay, figureKey, figureIndex, ...event })
-        infoOverlay?.onSelected?.({ overlay: infoOverlay, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
+      if (instance?.id !== infoInstance?.id) {
+        instance?.onDeselected?.({ overlay: instance, figureKey, figureIndex, ...event })
+        infoInstance?.onSelected?.({ overlay: infoInstance, figureKey: info.figureKey, figureIndex: info.figureIndex, ...event })
         const chart = this._chartStore.getChart()
         chart.updatePane(UpdateLevel.Overlay, info.paneId)
         if (paneId !== info.paneId) {

@@ -269,8 +269,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const indicatorLegendsArray: TooltipLegend[][] = []
       if (isDrawIndicatorTooltip) {
         ctx.font = createFont(indicatorTextSize, indicatorTextWeight, indicatorTextFamily)
-        indicators.forEach(proxy => {
-          const indicator = proxy.getIndicator()
+        indicators.forEach(indicator => {
           const tooltipDataValues = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, indicatorStyles).values ?? []
           indicatorLegendsArray.push(tooltipDataValues)
           tooltipDataValues.forEach(data => {

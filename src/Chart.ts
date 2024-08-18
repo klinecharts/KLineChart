@@ -495,8 +495,7 @@ export default class ChartImp implements Chart {
         const id = pane.getId()
         const paneIndicatorData = {}
         const indicators = this._chartStore.getIndicatorStore().getInstances(id)
-        indicators.forEach(proxy => {
-          const indicator = proxy.getIndicator()
+        indicators.forEach(indicator => {
           const result = indicator.result
           paneIndicatorData[indicator.name] = result[crosshair.dataIndex ?? result.length - 1]
         })
@@ -820,7 +819,7 @@ export default class ChartImp implements Chart {
   }
 
   getOverlayById (id: string): Nullable<Overlay> {
-    return this._chartStore.getOverlayStore().getInstanceById(id)?.getOverlay() ?? null
+    return this._chartStore.getOverlayStore().getInstanceById(id) ?? null
   }
 
   overrideOverlay (override: Partial<OverlayCreate>): void {

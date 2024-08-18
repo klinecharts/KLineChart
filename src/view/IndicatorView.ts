@@ -23,17 +23,17 @@ import type Coordinate from '../common/Coordinate'
 import type ChartStore from '../store/ChartStore'
 
 import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle } from '../component/Indicator'
+import { type YAxis } from '../component/YAxis'
 
 import CandleBarView, { type CandleBarOptions } from './CandleBarView'
 
 export default class IndicatorView extends CandleBarView {
   override getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
     const pane = this.getWidget().getPane()
-    const yAxis = pane.getAxisComponent()
+    const yAxis = pane.getAxisComponent() as YAxis
     if (!yAxis.isInCandle()) {
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-      for (const proxy of indicators) {
-        const indicator = proxy.getIndicator()
+      for (const indicator of indicators) {
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
           const defaultStyles = chartStore.getStyles().indicator
@@ -75,8 +75,7 @@ export default class IndicatorView extends CandleBarView {
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     const defaultStyles = chartStore.getStyles().indicator
     ctx.save()
-    indicators.forEach(proxy => {
-      const indicator = proxy.getIndicator()
+    indicators.forEach(indicator => {
       if (indicator.visible) {
         if (indicator.zLevel < 0) {
           ctx.globalCompositeOperation = 'destination-over'

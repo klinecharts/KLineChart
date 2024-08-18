@@ -22,7 +22,7 @@ import type BarSpace from '../common/BarSpace'
 import type Precision from '../common/Precision'
 import { type OverlayStyle } from '../common/Styles'
 import { type MouseTouchEvent } from '../common/SyntheticEvent'
-import { clone, isArray, isFunction, isNumber, isString, merge } from '../common/utils/typeChecks'
+import { clone, isArray, isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 
 import type TimeScaleStore from '../store/TimeScaleStore'
 
@@ -286,7 +286,7 @@ export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' 
 export type OverlayCreate = ExcludePickPartial<Omit<Overlay, 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
 export type OverlayRemove = Partial<Pick<Overlay, 'id' | 'groupId' | 'name'>>
 export type OverlayInnerConstructor = new () => OverlayImp
-export type OverlayConstructor = new () => ({ getOverlay: () => Overlay })
+export type OverlayConstructor = new () => Overlay
 
 const OVERLAY_DRAW_STEP_START = 1
 const OVERLAY_DRAW_STEP_FINISHED = -1
@@ -295,47 +295,82 @@ export const OVERLAY_ID_PREFIX = 'overlay_'
 
 export const OVERLAY_FIGURE_KEY_PREFIX = 'overlay_figure_'
 
-export default class OverlayImp {
-  private _prevOverlay: Overlay
+// id: '',
+//     groupId: '',
+//     paneId: '',
+//     name: '',
+//     totalStep: 1,
+//     currentStep: OVERLAY_DRAW_STEP_START,
+//     needDefaultPointFigure: false,
+//     needDefaultXAxisFigure: false,
+//     needDefaultYAxisFigure: false,
+//     lock: false,
+//     visible: true,
+//     zLevel: 0,
+//     mode: OverlayMode.Normal,
+//     modeSensitivity: 8,
+//     points: [],
+//     extendData: null,
+//     styles: {},
+//     createPointFigures: null,
+//     createXAxisFigures: null,
+//     createYAxisFigures: null,
+//     performEventPressedMove: null,
+//     performEventMoveForDrawing: null,
+//     onDrawStart: null,
+//     onDrawing: null,
+//     onDrawEnd: null,
+//     onClick: null,
+//     onDoubleClick: null,
+//     onRightClick: null,
+//     onPressedMoveStart: null,
+//     onPressedMoving: null,
+//     onPressedMoveEnd: null,
+//     onMouseEnter: null,
+//     onMouseLeave: null,
+//     onRemoved: null,
+//     onSelected: null,
+//     onDeselected: null
 
-  private readonly _overlay: Overlay = {
-    id: '',
-    groupId: '',
-    paneId: '',
-    name: '',
-    totalStep: 1,
-    currentStep: OVERLAY_DRAW_STEP_START,
-    needDefaultPointFigure: false,
-    needDefaultXAxisFigure: false,
-    needDefaultYAxisFigure: false,
-    lock: false,
-    visible: true,
-    zLevel: 0,
-    mode: OverlayMode.Normal,
-    modeSensitivity: 8,
-    points: [],
-    extendData: null,
-    styles: {},
-    createPointFigures: null,
-    createXAxisFigures: null,
-    createYAxisFigures: null,
-    performEventPressedMove: null,
-    performEventMoveForDrawing: null,
-    onDrawStart: null,
-    onDrawing: null,
-    onDrawEnd: null,
-    onClick: null,
-    onDoubleClick: null,
-    onRightClick: null,
-    onPressedMoveStart: null,
-    onPressedMoving: null,
-    onPressedMoveEnd: null,
-    onMouseEnter: null,
-    onMouseLeave: null,
-    onRemoved: null,
-    onSelected: null,
-    onDeselected: null
-  }
+export default class OverlayImp implements Overlay {
+  id: string
+  groupId: string
+  paneId: string
+  name: string
+  totalStep: number
+  currentStep: number
+  lock: boolean
+  visible: boolean
+  zLevel: number
+  needDefaultPointFigure: boolean
+  needDefaultXAxisFigure: boolean
+  needDefaultYAxisFigure: boolean
+  mode: OverlayMode
+  modeSensitivity: number
+  points: Array<Partial<Point>>
+  extendData: any
+  styles: Nullable<DeepPartial<OverlayStyle>>
+  createPointFigures: Nullable<OverlayCreateFiguresCallback>
+  createXAxisFigures: Nullable<OverlayCreateFiguresCallback>
+  createYAxisFigures: Nullable<OverlayCreateFiguresCallback>
+  performEventPressedMove: Nullable<(params: OverlayPerformEventParams) => void>
+  performEventMoveForDrawing: Nullable<(params: OverlayPerformEventParams) => void>
+  onDrawStart: Nullable<OverlayEventCallback>
+  onDrawing: Nullable<OverlayEventCallback>
+  onDrawEnd: Nullable<OverlayEventCallback>
+  onClick: Nullable<OverlayEventCallback>
+  onDoubleClick: Nullable<OverlayEventCallback>
+  onRightClick: Nullable<OverlayEventCallback>
+  onPressedMoveStart: Nullable<OverlayEventCallback>
+  onPressedMoving: Nullable<OverlayEventCallback>
+  onPressedMoveEnd: Nullable<OverlayEventCallback>
+  onMouseEnter: Nullable<OverlayEventCallback>
+  onMouseLeave: Nullable<OverlayEventCallback>
+  onRemoved: Nullable<OverlayEventCallback>
+  onSelected: Nullable<OverlayEventCallback>
+  onDeselected: Nullable<OverlayEventCallback>
+
+  private _prevOverlay: Overlay
 
   private _prevPressedPoint: Nullable<Partial<Point>> = null
   private _prevPressedPoints: Array<Partial<Point>> = []
@@ -344,84 +379,194 @@ export default class OverlayImp {
     this.override(overlay)
   }
 
-  getOverlay (): Overlay {
-    return this._overlay
-  }
-
-  override (overlay: Partial<OverlayCreate>): void {
-    this._prevOverlay = clone(this._overlay)
-    const id = this._overlay.id
-    merge(this._overlay, overlay)
-    if (isString(id)) {
-      this._overlay.id = id
+  override (overlay: Partial<Overlay>): void {
+    this._prevOverlay = {
+      id: this.id,
+      groupId: this.groupId,
+      paneId: this.paneId,
+      name: this.name,
+      totalStep: this.totalStep,
+      currentStep: this.currentStep,
+      lock: this.lock,
+      visible: this.visible,
+      zLevel: this.zLevel,
+      needDefaultPointFigure: this.needDefaultPointFigure,
+      needDefaultXAxisFigure: this.needDefaultXAxisFigure,
+      needDefaultYAxisFigure: this.needDefaultYAxisFigure,
+      mode: this.mode,
+      modeSensitivity: this.modeSensitivity,
+      points: this.points,
+      extendData: this.extendData,
+      styles: this.styles,
+      createPointFigures: this.createPointFigures,
+      createXAxisFigures: this.createXAxisFigures,
+      createYAxisFigures: this.createYAxisFigures,
+      performEventPressedMove: this.performEventPressedMove,
+      performEventMoveForDrawing: this.performEventMoveForDrawing,
+      onDrawStart: this.onDrawStart,
+      onDrawing: this.onDrawing,
+      onDrawEnd: this.onDrawEnd,
+      onClick: this.onClick,
+      onDoubleClick: this.onDoubleClick,
+      onRightClick: this.onRightClick,
+      onPressedMoveStart: this.onPressedMoveStart,
+      onPressedMoving: this.onPressedMoving,
+      onPressedMoveEnd: this.onPressedMoveEnd,
+      onMouseEnter: this.onMouseEnter,
+      onMouseLeave: this.onMouseLeave,
+      onRemoved: this.onRemoved,
+      onSelected: this.onSelected,
+      onDeselected: this.onDeselected
     }
-    if (isArray(overlay.points) && overlay.points.length > 0) {
+
+    const {
+      id,
+      groupId,
+      paneId,
+      name,
+      totalStep,
+      lock,
+      visible,
+      zLevel,
+      needDefaultPointFigure,
+      needDefaultXAxisFigure,
+      needDefaultYAxisFigure,
+      mode,
+      modeSensitivity,
+      points,
+      extendData,
+      styles,
+      createPointFigures,
+      createXAxisFigures,
+      createYAxisFigures,
+      performEventPressedMove,
+      performEventMoveForDrawing,
+      onDrawStart,
+      onDrawing,
+      onDrawEnd,
+      onClick,
+      onDoubleClick,
+      onRightClick,
+      onPressedMoveStart,
+      onPressedMoving,
+      onPressedMoveEnd,
+      onMouseEnter,
+      onMouseLeave,
+      onRemoved,
+      onSelected,
+      onDeselected
+    } = overlay
+
+    if (!isString(this.id) && isString(id)) {
+      this.id = id
+    }
+    this.groupId = groupId ?? this.groupId
+    this.paneId = paneId ?? this.paneId
+    this.name = name ?? this.name
+    this.totalStep = totalStep ?? this.totalStep
+    this.lock = lock ?? this.lock
+    this.visible = visible ?? this.visible
+    this.zLevel = zLevel ?? this.zLevel
+    this.needDefaultPointFigure = needDefaultPointFigure ?? this.needDefaultPointFigure
+    this.needDefaultXAxisFigure = needDefaultXAxisFigure ?? this.needDefaultXAxisFigure
+    this.needDefaultYAxisFigure = needDefaultYAxisFigure ?? this.needDefaultYAxisFigure
+    this.mode = mode ?? this.mode
+    this.modeSensitivity = modeSensitivity ?? this.modeSensitivity
+
+    this.extendData = extendData ?? this.extendData
+
+    if (isValid(styles)) {
+      this.styles ??= {}
+      merge(this.styles, styles)
+    }
+    this.createPointFigures = createPointFigures ?? this.createPointFigures
+    this.createXAxisFigures = createXAxisFigures ?? this.createXAxisFigures
+    this.createYAxisFigures = createYAxisFigures ?? this.createYAxisFigures
+    this.performEventPressedMove = performEventPressedMove ?? this.performEventPressedMove
+    this.performEventMoveForDrawing = performEventMoveForDrawing ?? this.performEventMoveForDrawing
+    this.onDrawStart = onDrawStart ?? this.onDrawStart
+    this.onDrawing = onDrawing ?? this.onDrawing
+    this.onDrawEnd = onDrawEnd ?? this.onDrawEnd
+    this.onClick = onClick ?? this.onClick
+    this.onDoubleClick = onDoubleClick ?? this.onDoubleClick
+    this.onRightClick = onRightClick ?? this.onRightClick
+    this.onPressedMoveStart = onPressedMoveStart ?? this.onPressedMoveStart
+    this.onPressedMoving = onPressedMoving ?? this.onPressedMoving
+    this.onPressedMoveEnd = onPressedMoveEnd ?? this.onPressedMoveEnd
+    this.onMouseEnter = onMouseEnter ?? this.onMouseEnter
+    this.onMouseLeave = onMouseLeave ?? this.onMouseLeave
+    this.onRemoved = onRemoved ?? this.onRemoved
+    this.onSelected = onSelected ?? this.onSelected
+    this.onDeselected = onDeselected ?? this.onDeselected
+
+    if (isArray(points) && points.length > 0) {
       let repeatTotalStep: number
-      this._overlay.points = [...overlay.points]
-      if (overlay.points.length >= this._overlay.totalStep - 1) {
-        this._overlay.currentStep = OVERLAY_DRAW_STEP_FINISHED
-        repeatTotalStep = this._overlay.totalStep - 1
+      this.points = [...points]
+      if (points.length >= this.totalStep - 1) {
+        this.currentStep = OVERLAY_DRAW_STEP_FINISHED
+        repeatTotalStep = this.totalStep - 1
       } else {
-        this._overlay.currentStep = overlay.points.length + 1
-        repeatTotalStep = overlay.points.length
+        this.currentStep = points.length + 1
+        repeatTotalStep = points.length
       }
       // Prevent wrong drawing due to wrong points
-      if (isFunction(this._overlay.performEventMoveForDrawing)) {
+      if (isFunction(this.performEventMoveForDrawing)) {
         for (let i = 0; i < repeatTotalStep; i++) {
-          this._overlay.performEventMoveForDrawing({
+          this.performEventMoveForDrawing({
             currentStep: i + 2,
-            mode: this._overlay.mode,
-            points: this._overlay.points,
+            mode: this.mode,
+            points: this.points,
             performPointIndex: i,
-            performPoint: this._overlay.points[i]
+            performPoint: this.points[i]
           })
         }
       }
-      if (this._overlay.currentStep === OVERLAY_DRAW_STEP_FINISHED && isFunction(this._overlay.performEventPressedMove)) {
-        this._overlay.performEventPressedMove({
-          currentStep: this._overlay.currentStep,
-          mode: this._overlay.mode,
-          points: this._overlay.points,
-          performPointIndex: this._overlay.points.length - 1,
-          performPoint: this._overlay.points[this._overlay.points.length - 1]
-        })
-      }
+
+      // if (this._overlay.currentStep === OVERLAY_DRAW_STEP_FINISHED && isFunction(this._overlay.performEventPressedMove)) {
+      //   this._overlay.performEventPressedMove({
+      //     currentStep: this._overlay.currentStep,
+      //     mode: this._overlay.mode,
+      //     points: this._overlay.points,
+      //     performPointIndex: this._overlay.points.length - 1,
+      //     performPoint: this._overlay.points[this._overlay.points.length - 1]
+      //   })
+      // }
     }
   }
 
   shouldUpdate (): { draw: boolean, sort: boolean } {
-    const sort = this._prevOverlay.zLevel !== this._overlay.zLevel
+    const sort = this._prevOverlay.zLevel !== this.zLevel
     const draw = sort ||
-      JSON.stringify(this._prevOverlay) !== JSON.stringify(this._overlay.points) ||
-      this._prevOverlay.visible !== this._overlay.visible ||
-      this._prevOverlay.extendData !== this._overlay.extendData ||
-      this._prevOverlay.styles !== this._overlay.styles
+      JSON.stringify(this._prevOverlay) !== JSON.stringify(this.points) ||
+      this._prevOverlay.visible !== this.visible ||
+      this._prevOverlay.extendData !== this.extendData ||
+      this._prevOverlay.styles !== this.styles
 
     return { sort, draw }
   }
 
   nextStep (): void {
-    if (this._overlay.currentStep === this._overlay.totalStep - 1) {
-      this._overlay.currentStep = OVERLAY_DRAW_STEP_FINISHED
+    if (this.currentStep === this.totalStep - 1) {
+      this.currentStep = OVERLAY_DRAW_STEP_FINISHED
     } else {
-      this._overlay.currentStep++
+      this.currentStep++
     }
   }
 
   forceComplete (): void {
-    this._overlay.currentStep = OVERLAY_DRAW_STEP_FINISHED
+    this.currentStep = OVERLAY_DRAW_STEP_FINISHED
   }
 
   isDrawing (): boolean {
-    return this._overlay.currentStep !== OVERLAY_DRAW_STEP_FINISHED
+    return this.currentStep !== OVERLAY_DRAW_STEP_FINISHED
   }
 
   isStart (): boolean {
-    return this._overlay.currentStep === OVERLAY_DRAW_STEP_START
+    return this.currentStep === OVERLAY_DRAW_STEP_START
   }
 
   eventMoveForDrawing (point: Partial<Point>): void {
-    const pointIndex = this._overlay.currentStep - 1
+    const pointIndex = this.currentStep - 1
     const newPoint: Partial<Point> = {}
     if (isNumber(point.timestamp)) {
       newPoint.timestamp = point.timestamp
@@ -432,11 +577,11 @@ export default class OverlayImp {
     if (isNumber(point.value)) {
       newPoint.value = point.value
     }
-    this._overlay.points[pointIndex] = newPoint
-    this._overlay.performEventMoveForDrawing?.({
-      currentStep: this._overlay.currentStep,
-      mode: this._overlay.mode,
-      points: this._overlay.points,
+    this.points[pointIndex] = newPoint
+    this.performEventMoveForDrawing?.({
+      currentStep: this.currentStep,
+      mode: this.mode,
+      points: this.points,
       performPointIndex: pointIndex,
       performPoint: newPoint
     })
@@ -444,24 +589,24 @@ export default class OverlayImp {
 
   eventPressedPointMove (point: Partial<Point>, pointIndex: number): void {
     if (isNumber(point.dataIndex)) {
-      this._overlay.points[pointIndex].dataIndex = point.dataIndex
-      this._overlay.points[pointIndex].timestamp = point.timestamp
+      this.points[pointIndex].dataIndex = point.dataIndex
+      this.points[pointIndex].timestamp = point.timestamp
     }
     if (isNumber(point.value)) {
-      this._overlay.points[pointIndex].value = point.value
+      this.points[pointIndex].value = point.value
     }
-    this._overlay.performEventPressedMove?.({
-      currentStep: this._overlay.currentStep,
-      points: this._overlay.points,
-      mode: this._overlay.mode,
+    this.performEventPressedMove?.({
+      currentStep: this.currentStep,
+      points: this.points,
+      mode: this.mode,
       performPointIndex: pointIndex,
-      performPoint: this._overlay.points[pointIndex]
+      performPoint: this.points[pointIndex]
     })
   }
 
   startPressedMove (point: Partial<Point>): void {
     this._prevPressedPoint = { ...point }
-    this._prevPressedPoints = clone(this._overlay.points)
+    this._prevPressedPoints = clone(this.points)
   }
 
   eventPressedOtherMove (point: Partial<Point>, timeScaleStore: TimeScaleStore): void {
@@ -474,7 +619,7 @@ export default class OverlayImp {
       if (isNumber(point.value) && isNumber(this._prevPressedPoint.value)) {
         difValue = point.value - this._prevPressedPoint.value
       }
-      this._overlay.points = this._prevPressedPoints.map(p => {
+      this.points = this._prevPressedPoints.map(p => {
         if (isNumber(p.timestamp)) {
           p.dataIndex = timeScaleStore.timestampToDataIndex(p.timestamp)
         }

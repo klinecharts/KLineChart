@@ -63,7 +63,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
     clickInstanceInfo: EventOverlayInfo
   ): OverlayFigure[] {
     const figures: OverlayFigure[] = []
-    if (overlay.needDefaultXAxisFigure && overlay.id === clickInstanceInfo.instance?.getOverlay().id) {
+    if (overlay.needDefaultXAxisFigure && overlay.id === clickInstanceInfo.instance?.id) {
       let leftX = Number.MAX_SAFE_INTEGER
       let rightX = Number.MIN_SAFE_INTEGER
       coordinates.forEach((coordinate, index) => {

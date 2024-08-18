@@ -20,7 +20,7 @@ import type VisibleRange from '../common/VisibleRange'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
 import { type IndicatorStyle, type IndicatorPolygonStyle, type SmoothLineStyle, type RectStyle, type TextStyle, type TooltipIconStyle, type LineStyle, type LineType, type PolygonType, type TooltipLegend } from '../common/Styles'
-import { isNumber, isValid, merge, clone, isArray, isBoolean } from '../common/utils/typeChecks'
+import { isNumber, isValid, merge, isBoolean, isString } from '../common/utils/typeChecks'
 
 import { type XAxis } from './XAxis'
 import { type YAxis } from './YAxis'
@@ -79,8 +79,6 @@ export interface IndicatorFigure<D = any> {
   styles?: IndicatorFigureStylesCallback<D>
 }
 
-export type IndicatorShouldUpdateReturn = boolean | { calc: boolean, draw: boolean }
-
 export type IndicatorRegenerateFiguresCallback<D = any> = (calcParams: any[]) => Array<IndicatorFigure<D>>
 
 export interface IndicatorTooltipData {
@@ -117,6 +115,7 @@ export interface IndicatorDrawParams<D = any> {
 
 export type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParams<D>) => boolean
 export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[]
+export type IndicatorShouldUpdateCallback<D> = (prev: Indicator<D>, current: Indicator<D>) => (boolean | { calc: boolean, draw: boolean })
 
 export interface Indicator<D = any> {
   /**
@@ -192,7 +191,7 @@ export interface Indicator<D = any> {
   /**
    *  Should update, should calc or draw
    */
-  shouldUpdate: (prev: Indicator<D>, current: Indicator<D>) => IndicatorShouldUpdateReturn
+  shouldUpdate: Nullable<IndicatorShouldUpdateCallback<D>>
 
   /**
    * Indicator calculation
@@ -291,92 +290,149 @@ export function eachFigures<D> (
   })
 }
 
-export default class IndicatorImp<D = any> {
-  private _prevIndicator: Indicator<D>
-  private readonly _indicator: Indicator<D> = {
-    name: '',
-    shortName: '',
-    precision: 4,
-    calcParams: [],
-    shouldOhlc: false,
-    shouldFormatBigNumber: false,
-    visible: true,
-    zLevel: 0,
-    extendData: null,
-    series: IndicatorSeries.Normal,
-    figures: [],
-    minValue: null,
-    maxValue: null,
-    styles: {},
-    regenerateFigures: null,
-    createTooltipDataSource: null,
-    shouldUpdate: (prev, current) => {
-      const calc = JSON.stringify(prev.calcParams) !== JSON.stringify(current.calcParams) ||
-        prev.figures !== current.figures ||
-        prev.calc !== current.calc
-      const draw = calc ||
-        prev.shortName !== current.shortName ||
-        prev.series !== current.series ||
-        prev.minValue !== current.minValue ||
-        prev.maxValue !== current.maxValue ||
-        prev.precision !== current.precision ||
-        prev.shouldOhlc !== current.shouldOhlc ||
-        prev.shouldFormatBigNumber !== current.shouldFormatBigNumber ||
-        prev.visible !== current.visible ||
-        prev.zLevel !== current.zLevel ||
-        prev.extendData !== current.extendData ||
-        prev.regenerateFigures !== current.regenerateFigures ||
-        prev.createTooltipDataSource !== current.createTooltipDataSource ||
-        prev.draw !== current.draw
+export default class IndicatorImp<D = any> implements Indicator {
+  name: string
+  shortName: string
+  precision = 4
+  calcParams: any[] = []
+  shouldOhlc = false
+  shouldFormatBigNumber = false
+  visible = true
+  zLevel = 0
+  extendData = null
+  series = IndicatorSeries.Normal
+  figures: Array<IndicatorFigure<D>> = []
+  minValue: Nullable<number> = null
+  maxValue: Nullable<number> = null
+  styles: Nullable<Partial<IndicatorStyle>> = null
+  shouldUpdate: IndicatorShouldUpdateCallback<D> = (prev, current) => {
+    const calc = JSON.stringify(prev.calcParams) !== JSON.stringify(current.calcParams) ||
+      prev.figures !== current.figures ||
+      prev.calc !== current.calc
+    const draw = calc ||
+      prev.shortName !== current.shortName ||
+      prev.series !== current.series ||
+      prev.minValue !== current.minValue ||
+      prev.maxValue !== current.maxValue ||
+      prev.precision !== current.precision ||
+      prev.shouldOhlc !== current.shouldOhlc ||
+      prev.shouldFormatBigNumber !== current.shouldFormatBigNumber ||
+      prev.visible !== current.visible ||
+      prev.zLevel !== current.zLevel ||
+      prev.extendData !== current.extendData ||
+      prev.regenerateFigures !== current.regenerateFigures ||
+      prev.createTooltipDataSource !== current.createTooltipDataSource ||
+      prev.draw !== current.draw
 
-      return { calc, draw }
-    },
-    calc: () => [],
-    draw: null,
-    result: []
+    return { calc, draw }
   }
 
+  calc: IndicatorCalcCallback<D> = () => []
+  regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>> = null
+  createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
+  draw: Nullable<IndicatorDrawCallback<D>> = null
+  result: D[] = []
+
+  private _prevIndicator: Indicator<D>
   private _lockSeriesPrecision: boolean = false
 
   constructor (indicator: IndicatorTemplate<D>) {
     this.override(indicator)
-    this._indicator.shortName ??= this._indicator.name
-    if (isArray(indicator.figures)) {
-      this._indicator.figures = indicator.figures
+  }
+
+  override (indicator: Partial<Indicator<D>>): void {
+    this._prevIndicator = {
+      name: this.name,
+      shortName: this.shortName,
+      precision: this.precision,
+      calcParams: this.calcParams,
+      shouldOhlc: this.shouldOhlc,
+      shouldFormatBigNumber: this.shouldFormatBigNumber,
+      visible: this.visible,
+      zLevel: this.zLevel,
+      extendData: this.extendData,
+      series: this.series,
+      figures: this.figures,
+      minValue: this.minValue,
+      maxValue: this.maxValue,
+      styles: this.styles,
+      shouldUpdate: this.shouldUpdate,
+      calc: this.calc,
+      regenerateFigures: this.regenerateFigures,
+      createTooltipDataSource: this.createTooltipDataSource,
+      draw: this.draw,
+      result: this.result
     }
-  }
-
-  getIndicator (): Indicator<D> {
-    return this._indicator
-  }
-
-  override (indicator: IndicatorCreate<D>): void {
-    this._prevIndicator = clone(this._indicator)
-    merge(this._indicator, indicator)
-    if (isNumber(indicator.precision)) {
+    const {
+      name,
+      shortName,
+      precision,
+      calcParams,
+      shouldOhlc,
+      shouldFormatBigNumber,
+      visible,
+      zLevel,
+      extendData,
+      series,
+      figures,
+      minValue,
+      maxValue,
+      styles,
+      shouldUpdate,
+      calc,
+      regenerateFigures,
+      createTooltipDataSource,
+      draw
+    } = indicator
+    if (!isString(this.name)) {
+      this.name = name ?? ''
+    }
+    this.shortName = shortName ?? this.shortName
+    if (isNumber(precision)) {
+      this.precision = precision
       this._lockSeriesPrecision = true
     }
+    this.calcParams = calcParams ?? this.calcParams
+    this.shouldOhlc = shouldOhlc ?? this.shouldOhlc
+    this.shouldFormatBigNumber = shouldFormatBigNumber ?? this.shouldFormatBigNumber
+    this.visible = visible ?? this.visible
+    this.zLevel = zLevel ?? this.zLevel
+    this.extendData = extendData ?? this.extendData
+    this.series = series ?? this.series
+    this.figures = figures ?? this.figures
+    this.minValue = minValue ?? this.minValue
+    this.maxValue = maxValue ?? this.maxValue
+    if (isValid(styles)) {
+      this.styles ??= {}
+      merge(this.styles, styles)
+    }
+
+    this.shouldUpdate = shouldUpdate ?? this.shouldUpdate
+    this.calc = calc ?? this.calc
+    this.regenerateFigures = regenerateFigures ?? this.regenerateFigures
+    this.createTooltipDataSource = createTooltipDataSource ?? this.createTooltipDataSource
+    this.draw = draw ?? this.draw
   }
 
   setSeriesPrecision (precision: number): void {
     if (!this._lockSeriesPrecision) {
-      this._indicator.precision = precision
+      this.precision = precision
     }
   }
 
-  shouldUpdate (): ({ calc: boolean, draw: boolean, sort: boolean }) {
-    const sort = this._prevIndicator.zLevel !== this._indicator.zLevel
-    const result = this._indicator.shouldUpdate(this._prevIndicator, this._indicator)
+  shouldUpdateImp (): ({ calc: boolean, draw: boolean, sort: boolean }) {
+    const sort = this._prevIndicator.zLevel !== this.zLevel
+    const result = this.shouldUpdate(this._prevIndicator, this)
     if (isBoolean(result)) {
       return { calc: result, draw: result, sort }
     }
     return { ...result, sort }
   }
 
-  async calc (dataList: KLineData[]): Promise<boolean> {
+  async calcImp (dataList: KLineData[]): Promise<boolean> {
     try {
-      const result = await this._indicator.calc(dataList, this._indicator)
-      this._indicator.result = result
+      const result = await this.calc(dataList, this)
+      this.result = result
       return true
     } catch (e) {
       return false
