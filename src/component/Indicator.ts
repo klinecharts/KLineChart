@@ -20,7 +20,7 @@ import type VisibleRange from '../common/VisibleRange'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
 import { type IndicatorStyle, type IndicatorPolygonStyle, type SmoothLineStyle, type RectStyle, type TextStyle, type TooltipIconStyle, type LineStyle, type LineType, type PolygonType, type TooltipLegend } from '../common/Styles'
-import { isNumber, isValid, merge, isBoolean, isString } from '../common/utils/typeChecks'
+import { isNumber, isValid, merge, isBoolean, isString, clone } from '../common/utils/typeChecks'
 
 import { type XAxis } from './XAxis'
 import { type YAxis } from './YAxis'
@@ -79,7 +79,7 @@ export interface IndicatorFigure<D = any> {
   styles?: IndicatorFigureStylesCallback<D>
 }
 
-export type IndicatorRegenerateFiguresCallback<D = any> = (calcParams: any[]) => Array<IndicatorFigure<D>>
+export type IndicatorRegenerateFiguresCallback<D> = (calcParams: any[]) => Array<IndicatorFigure<D>>
 
 export interface IndicatorTooltipData {
   name: string
@@ -88,7 +88,7 @@ export interface IndicatorTooltipData {
   values: TooltipLegend[]
 }
 
-export interface IndicatorCreateTooltipDataSourceParams<D = any> {
+export interface IndicatorCreateTooltipDataSourceParams<D> {
   kLineDataList: KLineData[]
   indicator: Indicator<D>
   visibleRange: VisibleRange
@@ -99,9 +99,9 @@ export interface IndicatorCreateTooltipDataSourceParams<D = any> {
   yAxis: YAxis
 }
 
-export type IndicatorCreateTooltipDataSourceCallback<D = any> = (params: IndicatorCreateTooltipDataSourceParams<D>) => IndicatorTooltipData
+export type IndicatorCreateTooltipDataSourceCallback<D> = (params: IndicatorCreateTooltipDataSourceParams<D>) => IndicatorTooltipData
 
-export interface IndicatorDrawParams<D = any> {
+export interface IndicatorDrawParams<D> {
   ctx: CanvasRenderingContext2D
   kLineDataList: KLineData[]
   indicator: Indicator<D>
@@ -113,7 +113,7 @@ export interface IndicatorDrawParams<D = any> {
   yAxis: YAxis
 }
 
-export type IndicatorDrawCallback<D = any> = (params: IndicatorDrawParams<D>) => boolean
+export type IndicatorDrawCallback<D> = (params: IndicatorDrawParams<D>) => boolean
 export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[]
 export type IndicatorShouldUpdateCallback<D> = (prev: Indicator<D>, current: Indicator<D>) => (boolean | { calc: boolean, draw: boolean })
 
@@ -206,7 +206,7 @@ export interface Indicator<D = any> {
   /**
    * Create custom tooltip text
    */
-  createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback>
+  createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>>
 
   /**
    * Custom draw
@@ -225,14 +225,14 @@ export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 're
 
 export type IndicatorConstructor<D = any> = new () => IndicatorImp<D>
 
-export type EachFigureCallback = (figure: IndicatorFigure, figureStyles: IndicatorFigureStyle, index: number) => void
+export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: IndicatorFigureStyle, index: number) => void
 
-export function eachFigures<D> (
+export function eachFigures<D = any> (
   kLineDataList: KLineData[],
   indicator: Indicator<D>,
   dataIndex: number,
   defaultStyles: IndicatorStyle,
-  eachFigureCallback: EachFigureCallback
+  eachFigureCallback: EachFigureCallback<D>
 ): void {
   const result = indicator.result
   const figures = indicator.figures
@@ -290,7 +290,7 @@ export function eachFigures<D> (
   })
 }
 
-export default class IndicatorImp<D = any> implements Indicator {
+export default class IndicatorImp<D = any> implements Indicator<D> {
   name: string
   shortName: string
   precision = 4
@@ -299,7 +299,7 @@ export default class IndicatorImp<D = any> implements Indicator {
   shouldFormatBigNumber = false
   visible = true
   zLevel = 0
-  extendData = null
+  extendData: any
   series = IndicatorSeries.Normal
   figures: Array<IndicatorFigure<D>> = []
   minValue: Nullable<number> = null
@@ -341,77 +341,29 @@ export default class IndicatorImp<D = any> implements Indicator {
   }
 
   override (indicator: Partial<Indicator<D>>): void {
-    this._prevIndicator = {
-      name: this.name,
-      shortName: this.shortName,
-      precision: this.precision,
-      calcParams: this.calcParams,
-      shouldOhlc: this.shouldOhlc,
-      shouldFormatBigNumber: this.shouldFormatBigNumber,
-      visible: this.visible,
-      zLevel: this.zLevel,
-      extendData: this.extendData,
-      series: this.series,
-      figures: this.figures,
-      minValue: this.minValue,
-      maxValue: this.maxValue,
-      styles: this.styles,
-      shouldUpdate: this.shouldUpdate,
-      calc: this.calc,
-      regenerateFigures: this.regenerateFigures,
-      createTooltipDataSource: this.createTooltipDataSource,
-      draw: this.draw,
-      result: this.result
-    }
+    const { result, ...currentOthers } = this
+    this._prevIndicator = { ...clone(currentOthers), result }
     const {
       name,
       shortName,
       precision,
-      calcParams,
-      shouldOhlc,
-      shouldFormatBigNumber,
-      visible,
-      zLevel,
-      extendData,
-      series,
-      figures,
-      minValue,
-      maxValue,
       styles,
-      shouldUpdate,
-      calc,
-      regenerateFigures,
-      createTooltipDataSource,
-      draw
+      ...others
     } = indicator
     if (!isString(this.name)) {
       this.name = name ?? ''
     }
-    this.shortName = shortName ?? this.shortName
+    this.shortName = shortName ?? this.shortName ?? this.name
     if (isNumber(precision)) {
       this.precision = precision
       this._lockSeriesPrecision = true
     }
-    this.calcParams = calcParams ?? this.calcParams
-    this.shouldOhlc = shouldOhlc ?? this.shouldOhlc
-    this.shouldFormatBigNumber = shouldFormatBigNumber ?? this.shouldFormatBigNumber
-    this.visible = visible ?? this.visible
-    this.zLevel = zLevel ?? this.zLevel
-    this.extendData = extendData ?? this.extendData
-    this.series = series ?? this.series
-    this.figures = figures ?? this.figures
-    this.minValue = minValue ?? this.minValue
-    this.maxValue = maxValue ?? this.maxValue
+
     if (isValid(styles)) {
       this.styles ??= {}
       merge(this.styles, styles)
     }
-
-    this.shouldUpdate = shouldUpdate ?? this.shouldUpdate
-    this.calc = calc ?? this.calc
-    this.regenerateFigures = regenerateFigures ?? this.regenerateFigures
-    this.createTooltipDataSource = createTooltipDataSource ?? this.createTooltipDataSource
-    this.draw = draw ?? this.draw
+    merge(this, others)
   }
 
   setSeriesPrecision (precision: number): void {
@@ -439,7 +391,7 @@ export default class IndicatorImp<D = any> implements Indicator {
     }
   }
 
-  static extend<D> (template: IndicatorTemplate<D>): IndicatorConstructor<D> {
+  static extend<D = any> (template: IndicatorTemplate<D>): IndicatorConstructor<D> {
     class Custom extends IndicatorImp<D> {
       constructor () {
         super(template)
