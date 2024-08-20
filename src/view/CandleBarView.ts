@@ -85,29 +85,30 @@ export default class CandleBarView extends ChildrenView {
           ]
           priceY.sort((a, b) => a - b)
 
+          const correction = barSpace.gapBar % 2 === 0 ? 1 : 0
           let rects: Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> = []
           switch (type) {
             case CandleType.CandleSolid: {
-              rects = this._createSolidBar(x, priceY, barSpace, colors)
+              rects = this._createSolidBar(x, priceY, barSpace, colors, correction)
               break
             }
             case CandleType.CandleStroke: {
-              rects = this._createStrokeBar(x, priceY, barSpace, colors)
+              rects = this._createStrokeBar(x, priceY, barSpace, colors, correction)
               break
             }
             case CandleType.CandleUpStroke: {
               if (close > open) {
-                rects = this._createStrokeBar(x, priceY, barSpace, colors)
+                rects = this._createStrokeBar(x, priceY, barSpace, colors, correction)
               } else {
-                rects = this._createSolidBar(x, priceY, barSpace, colors)
+                rects = this._createSolidBar(x, priceY, barSpace, colors, correction)
               }
               break
             }
             case CandleType.CandleDownStroke: {
               if (open > close) {
-                rects = this._createStrokeBar(x, priceY, barSpace, colors)
+                rects = this._createStrokeBar(x, priceY, barSpace, colors, correction)
               } else {
-                rects = this._createSolidBar(x, priceY, barSpace, colors)
+                rects = this._createSolidBar(x, priceY, barSpace, colors, correction)
               }
               break
             }
@@ -163,7 +164,7 @@ export default class CandleBarView extends ChildrenView {
     }
   }
 
-  private _createSolidBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {
+  private _createSolidBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[], correction: number): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {
     return [
       {
         name: 'rect',
@@ -180,7 +181,7 @@ export default class CandleBarView extends ChildrenView {
         attrs: {
           x: x - barSpace.halfGapBar,
           y: priceY[1],
-          width: barSpace.gapBar,
+          width: barSpace.gapBar + correction,
           height: Math.max(1, priceY[2] - priceY[1])
         },
         styles: {
@@ -192,7 +193,7 @@ export default class CandleBarView extends ChildrenView {
     ]
   }
 
-  private _createStrokeBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[]): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {
+  private _createStrokeBar (x: number, priceY: number[], barSpace: BarSpace, colors: string[], correction: number): Array<FigureCreate<RectAttrs | RectAttrs[], Partial<RectStyle>>> {
     return [
       {
         name: 'rect',
@@ -217,7 +218,7 @@ export default class CandleBarView extends ChildrenView {
         attrs: {
           x: x - barSpace.halfGapBar,
           y: priceY[1],
-          width: barSpace.gapBar,
+          width: barSpace.gapBar + correction,
           height: Math.max(1, priceY[2] - priceY[1])
         },
         styles: {

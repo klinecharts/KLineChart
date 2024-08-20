@@ -42,11 +42,11 @@ const enum ScrollLimitRole {
   Distance
 }
 
-const DEFAULT_BAR_SPACE = 8
+const DEFAULT_BAR_SPACE = 10
 
 const DEFAULT_OFFSET_RIGHT_DISTANCE = 80
 
-const GAP_BAR_SPACE_RATIO = 0.88
+const BAR_GAP_RATIO = 0.2
 
 export const SCALE_MULTIPLIER = 10
 
@@ -123,25 +123,18 @@ export default class TimeScaleStore {
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
-    this._gapBarSpace = this._calcGapBarSpace()
+    this._calcOptimalBarSpace()
     this._lastBarRightSideDiffBarCount = this._offsetRightDistance / this._barSpace
   }
 
-  private _calcGapBarSpace (): number {
-    let gapBarSpace: number
-    if (this._barSpace > 3) {
-      gapBarSpace = Math.floor(this._barSpace * GAP_BAR_SPACE_RATIO)
-    } else {
-      gapBarSpace = Math.floor(this._barSpace)
-      if (gapBarSpace === this._barSpace) {
-        gapBarSpace--
-      }
+  private _calcOptimalBarSpace (): void {
+    const specialBarSpace = 4
+    const ratio = 1 - BAR_GAP_RATIO * Math.atan(Math.max(specialBarSpace, this._barSpace) - specialBarSpace) / (Math.PI * 0.5)
+    let gapBarSpace = Math.min(Math.floor(this._barSpace * ratio), Math.floor(this._barSpace))
+    if (gapBarSpace % 2 === 0 && gapBarSpace + 2 >= this._barSpace) {
+      --gapBarSpace
     }
-    if (gapBarSpace % 2 === 0) {
-      gapBarSpace--
-    }
-    gapBarSpace = Math.max(1, gapBarSpace)
-    return gapBarSpace
+    this._gapBarSpace = Math.max(1, gapBarSpace)
   }
 
   /**
@@ -257,7 +250,7 @@ export default class TimeScaleStore {
       return
     }
     this._barSpace = barSpace
-    this._gapBarSpace = this._calcGapBarSpace()
+    this._calcOptimalBarSpace()
     adjustBeforeFunc?.()
     this.adjustVisibleRange()
     this._chartStore.getTooltipStore().recalculateCrosshair(true)
@@ -383,7 +376,7 @@ export default class TimeScaleStore {
     const dataCount = this._chartStore.getDataList().length
     const deltaFromRight = dataCount + this._lastBarRightSideDiffBarCount - dataIndex
     // return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace) - 0.5
-    return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace)
+    return Math.floor(this._totalBarSpace - (deltaFromRight - 0.5) * this._barSpace + 0.5)
   }
 
   coordinateToDataIndex (x: number): number {
