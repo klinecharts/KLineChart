@@ -677,7 +677,8 @@ export default class ChartImp implements Chart {
     if (isValid(callback)) {
       logWarn('applyNewData', '', 'param `callback` has been deprecated since version 9.8.0, use `subscribeAction(\'onDataReady\')` instead.')
     }
-    this._chartStore.addData(data, LoadDataType.Init, more).then(() => {}).catch(() => {}).finally(() => { callback?.() })
+    this._chartStore.addData(data, LoadDataType.Init, more)
+    callback?.()
   }
 
   /**
@@ -686,14 +687,16 @@ export default class ChartImp implements Chart {
    */
   applyMoreData (data: KLineData[], more?: boolean, callback?: () => void): void {
     logWarn('', '', 'Api `applyMoreData` has been deprecated since version 9.8.0.')
-    this._chartStore.addData(data, LoadDataType.Forward, more ?? true).then(() => {}).catch(() => {}).finally(() => { callback?.() })
+    this._chartStore.addData(data, LoadDataType.Forward, more ?? true)
+    callback?.()
   }
 
   updateData (data: KLineData, callback?: () => void): void {
     if (isValid(callback)) {
       logWarn('updateData', '', 'param `callback` has been deprecated since version 9.8.0, use `subscribeAction(\'onDataReady\')` instead.')
     }
-    this._chartStore.addData(data).then(() => {}).catch(() => {}).finally(() => { callback?.() })
+    this._chartStore.addData(data)
+    callback?.()
   }
 
   /**
@@ -719,31 +722,30 @@ export default class ChartImp implements Chart {
     let paneId = paneOptions?.id
     const currentPane = this.getDrawPaneById(paneId ?? '')
     if (currentPane !== null) {
-      this._chartStore.getIndicatorStore().addInstance(indicator, paneId ?? '', isStack ?? false).then(_ => {
+      const result = this._chartStore.getIndicatorStore().addInstance(indicator, paneId ?? '', isStack ?? false)
+      if (result) {
         this._setPaneOptions(paneOptions ?? {}, currentPane.getAxisComponent().buildTicks(true) ?? false)
-      }).catch(_ => {})
+      }
     } else {
       paneId ??= createId(PaneIdConstants.INDICATOR)
       const pane = this._createPane(IndicatorPane, paneId, paneOptions ?? {})
       const height = paneOptions?.height ?? PANE_DEFAULT_HEIGHT
       pane.setBounding({ height })
-      void this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false).finally(() => {
+      const result = this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false)
+      if (result) {
         this.adjustPaneViewport(true, true, true, true, true)
         callback?.()
-      })
+      }
     }
     return paneId ?? null
   }
 
   overrideIndicator (override: IndicatorCreate, paneId?: Nullable<string>, callback?: () => void): void {
-    this._chartStore.getIndicatorStore().override(override, paneId ?? null).then(
-      ([onlyUpdateFlag, resizeFlag]) => {
-        if (onlyUpdateFlag || resizeFlag) {
-          this.adjustPaneViewport(false, resizeFlag, true, resizeFlag)
-          callback?.()
-        }
-      }
-    ).catch(() => {})
+    const result = this._chartStore.getIndicatorStore().override(override, paneId ?? null)
+    if (result) {
+      this.adjustPaneViewport(false, false, true)
+      callback?.()
+    }
   }
 
   getIndicatorByPaneId (paneId?: string, name?: string): Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {

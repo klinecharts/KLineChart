@@ -21,10 +21,13 @@ import { type IndicatorCreate, type Indicator } from '../component/Indicator'
 import type IndicatorImp from '../component/Indicator'
 import { IndicatorSeries } from '../component/Indicator'
 import { getIndicatorClass } from '../extension/indicator/index'
+import TaskScheduler, { generateTaskId } from '../common/TaskScheduler'
 
 export default class IndicatorStore {
   private readonly _chartStore: ChartStore
   private readonly _instances = new Map<string, IndicatorImp[]>()
+
+  private readonly _scheduler = new TaskScheduler()
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
@@ -40,13 +43,26 @@ export default class IndicatorStore {
     }
   }
 
-  async addInstance (indicator: IndicatorCreate, paneId: string, isStack: boolean): Promise<boolean> {
+  private _addTask (paneId: string, indicator: IndicatorImp): void {
+    this._scheduler.addTask({
+      id: generateTaskId(paneId, indicator.name),
+      handler: () => {
+        indicator.calcImp(this._chartStore.getDataList()).then(result => {
+          if (result) {
+            this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
+          }
+        }).catch(() => {})
+      }
+    })
+  }
+
+  addInstance (indicator: IndicatorCreate, paneId: string, isStack: boolean): boolean {
     const { name } = indicator
     let paneInstances = this._instances.get(paneId)
     if (isValid(paneInstances)) {
       const instance = paneInstances.find(ins => ins.name === name)
       if (isValid(instance)) {
-        return await Promise.reject(new Error('Duplicate indicators.'))
+        return false
       }
     }
     if (!isValid(paneInstances)) {
@@ -58,12 +74,14 @@ export default class IndicatorStore {
     this.synchronizeSeriesPrecision(instance)
     instance.override(indicator)
     if (!isStack) {
+      this.removeInstance(paneId)
       paneInstances = []
     }
     paneInstances.push(instance)
     this._instances.set(paneId, paneInstances)
     this._sort(paneId)
-    return await instance.calcImp(this._chartStore.getDataList())
+    this._addTask(paneId, instance)
+    return true
   }
 
   getInstances (paneId: string): IndicatorImp[] {
@@ -77,10 +95,14 @@ export default class IndicatorStore {
       if (isString(name)) {
         const index = paneInstances.findIndex(ins => ins.name === name)
         if (index > -1) {
+          this._scheduler.removeTask(generateTaskId(paneId, name))
           paneInstances.splice(index, 1)
           removed = true
         }
       } else {
+        paneInstances.forEach(instance => {
+          this._scheduler.removeTask(generateTaskId(paneId, instance.name))
+        })
         this._instances.set(paneId, [])
         removed = true
       }
@@ -95,34 +117,31 @@ export default class IndicatorStore {
     return this._instances.has(paneId)
   }
 
-  async calcInstance (name?: string, paneId?: string): Promise<boolean> {
-    const tasks: Array<Promise<boolean>> = []
+  calcInstance (name?: string, paneId?: string): void {
     if (isString(name)) {
       if (isString(paneId)) {
         const paneInstances = this._instances.get(paneId)
         if (isValid(paneInstances)) {
           const instance = paneInstances.find(ins => ins.name === name)
           if (isValid(instance)) {
-            tasks.push(instance.calcImp(this._chartStore.getDataList()))
+            this._addTask(paneId, instance)
           }
         }
       } else {
-        this._instances.forEach(paneInstances => {
+        this._instances.forEach((paneInstances, paneId) => {
           const instance = paneInstances.find(ins => ins.name === name)
           if (isValid(instance)) {
-            tasks.push(instance.calcImp(this._chartStore.getDataList()))
+            this._addTask(paneId, instance)
           }
         })
       }
     } else {
-      this._instances.forEach(paneInstances => {
+      this._instances.forEach((paneInstances, paneId) => {
         paneInstances.forEach(instance => {
-          tasks.push(instance.calcImp(this._chartStore.getDataList()))
+          this._addTask(paneId, instance)
         })
       })
     }
-    const result = await Promise.all(tasks)
-    return result.includes(true)
   }
 
   getInstanceByPaneId (paneId?: string, name?: string): Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
@@ -175,7 +194,7 @@ export default class IndicatorStore {
     }
   }
 
-  async override (indicator: IndicatorCreate, paneId: Nullable<string>): Promise<[boolean, boolean]> {
+  override (indicator: IndicatorCreate, paneId: Nullable<string>): boolean {
     const { name } = indicator
     let instances = new Map<string, IndicatorImp[]>()
     if (paneId !== null) {
@@ -186,10 +205,9 @@ export default class IndicatorStore {
     } else {
       instances = this._instances
     }
-    let onlyUpdateFlag = false
-    const tasks: Array<Promise<boolean>> = []
+    let updateFlag = false
     let sortFlag = false
-    instances.forEach(paneInstances => {
+    instances.forEach((paneInstances, paneId) => {
       const instance = paneInstances.find(ins => ins.name === name)
       if (isValid(instance)) {
         instance.override(indicator)
@@ -198,10 +216,10 @@ export default class IndicatorStore {
           sortFlag = true
         }
         if (calc) {
-          tasks.push(instance.calcImp(this._chartStore.getDataList()))
+          this._addTask(paneId, instance)
         } else {
           if (draw) {
-            onlyUpdateFlag = true
+            updateFlag = true
           }
         }
       }
@@ -209,7 +227,6 @@ export default class IndicatorStore {
     if (sortFlag) {
       this._sort()
     }
-    const result = await Promise.all(tasks)
-    return [onlyUpdateFlag, result.includes(true)]
+    return updateFlag
   }
 }

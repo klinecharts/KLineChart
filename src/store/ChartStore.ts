@@ -234,7 +234,7 @@ export default class ChartStore {
     return this._visibleDataList
   }
 
-  async addData (data: KLineData | KLineData[], type?: LoadDataType, more?: boolean): Promise<void> {
+  addData (data: KLineData | KLineData[], type?: LoadDataType, more?: boolean): void {
     let success = false
     let adjustFlag = false
     let dataLengthChange = 0
@@ -284,16 +284,13 @@ export default class ChartStore {
       }
     }
     if (success) {
-      try {
-        this._overlayStore.updatePointPosition(dataLengthChange, type)
-        if (adjustFlag) {
-          this._timeScaleStore.adjustVisibleRange()
-          this._tooltipStore.recalculateCrosshair(true)
-          await this._indicatorStore.calcInstance()
-          this._chart.adjustPaneViewport(false, true, true, true)
-        }
-        this._actionStore.execute(ActionType.OnDataReady)
-      } catch {}
+      this._overlayStore.updatePointPosition(dataLengthChange, type)
+      if (adjustFlag) {
+        this._timeScaleStore.adjustVisibleRange()
+        this._tooltipStore.recalculateCrosshair(true)
+        this._indicatorStore.calcInstance()
+      }
+      this._actionStore.execute(ActionType.OnDataReady)
     }
   }
 
@@ -322,7 +319,7 @@ export default class ChartStore {
       )
     ) {
       const cb: ((data: KLineData[], more?: boolean) => void) = (data: KLineData[], more?: boolean) => {
-        this.addData(data, params.type, more).then(() => {}).catch(() => {})
+        this.addData(data, params.type, more)
       }
       this._loading = true
       this._loadDataCallback({ ...params, callback: cb })

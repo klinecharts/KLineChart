@@ -14,10 +14,13 @@
  */
 
 import { requestIdleCallback, cancelIdleCallback, DEFAULT_REQUEST_ID } from './utils/compatible'
-
 interface Task {
   id: string
   handler: () => void
+}
+
+export function generateTaskId (...params: string[]): string {
+  return params.join('_')
 }
 
 export default class TaskScheduler {
