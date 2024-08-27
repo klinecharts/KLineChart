@@ -13,7 +13,7 @@
  */
 
 import type Coordinate from '../common/Coordinate'
-import type VisibleData from '../common/VisibleData'
+import { type VisibleData } from '../common/Data'
 import { type GradientColor } from '../common/Styles'
 import Animation from '../common/Animation'
 import { isNumber, isArray, isValid } from '../common/utils/typeChecks'

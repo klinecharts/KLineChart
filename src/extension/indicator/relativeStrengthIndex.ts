@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import type KLineData from '../../common/KLineData'
+import { type KLineData } from '../../common/Data'
 import { type Indicator, type IndicatorTemplate } from '../../component/Indicator'
 
 interface Rsi {

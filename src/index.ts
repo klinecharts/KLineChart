@@ -35,7 +35,7 @@ import { logError, logTag, logWarn } from './common/utils/logger'
 import {
   clone, merge, isString, isNumber, isValid, isObject, isArray, isFunction, isBoolean
 } from './common/utils/typeChecks'
-import { formatValue, formatPrecision, formatBigNumber, formatDate, formatThousands, formatFoldDecimal } from './common/utils/format'
+import { formatValue, formatPrecision, formatBigNumber, formatDateToString, formatThousands, formatFoldDecimal } from './common/utils/format'
 import { calcTextWidth } from './common/utils/canvas'
 import { ActionType } from './common/Action'
 import { IndicatorSeries } from './component/Indicator'
@@ -141,7 +141,7 @@ const utils = {
   formatValue,
   formatPrecision,
   formatBigNumber,
-  formatDate,
+  formatDate: formatDateToString,
   formatThousands,
   formatFoldDecimal,
   calcTextWidth,

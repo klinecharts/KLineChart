@@ -14,7 +14,7 @@
 
 import type Nullable from '../common/Nullable'
 import type ExcludePickPartial from '../common/ExcludePickPartial'
-import type KLineData from '../common/KLineData'
+import { type KLineData } from '../common/Data'
 import type Bounding from '../common/Bounding'
 import type VisibleRange from '../common/VisibleRange'
 import type BarSpace from '../common/BarSpace'

@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type VisibleData from '../common/VisibleData'
+import { type VisibleData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
 import { CandleType, type SmoothLineStyle } from '../common/Styles'
 import { formatValue } from '../common/utils/format'

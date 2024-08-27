@@ -13,9 +13,8 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type KLineData from '../common/KLineData'
+import { type KLineData, type VisibleData } from '../common/Data'
 import type Precision from '../common/Precision'
-import type VisibleData from '../common/VisibleData'
 import type DeepPartial from '../common/DeepPartial'
 import { getDefaultStyles, type Styles, type TooltipLegend } from '../common/Styles'
 import { isArray, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
@@ -132,6 +131,8 @@ export default class ChartStore {
    * Visible data array
    */
   private _visibleDataList: VisibleData[] = []
+
+  // private _dataMap = new Map<number, TimeClassifyData[]>()
 
   constructor (chart: Chart, options?: Options) {
     this._chart = chart

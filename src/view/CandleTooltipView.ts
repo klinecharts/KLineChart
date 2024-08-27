@@ -14,7 +14,7 @@
 
 import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
-import type KLineData from '../common/KLineData'
+import { type KLineData } from '../common/Data'
 import type Precision from '../common/Precision'
 import type Crosshair from '../common/Crosshair'
 import {

@@ -13,7 +13,7 @@
  */
 
 import type Coordinate from '../common/Coordinate'
-import type VisibleData from '../common/VisibleData'
+import { type VisibleData } from '../common/Data'
 import { type CandleHighLowPriceMarkStyle } from '../common/Styles'
 
 import ChildrenView from './ChildrenView'

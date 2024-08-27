@@ -14,7 +14,7 @@
 
 import type DeepPartial from './common/DeepPartial'
 import { type Styles } from './common/Styles'
-import { formatDate, formatBigNumber } from './common/utils/format'
+import { formatDateToString, formatBigNumber } from './common/utils/format'
 
 import { type IndicatorCreate } from './component/Indicator'
 import { type PaneOptions } from './pane/types'
@@ -36,7 +36,7 @@ export interface CustomApi {
 
 export function getDefaultCustomApi (): CustomApi {
   return {
-    formatDate,
+    formatDate: formatDateToString,
     formatBigNumber
   }
 }

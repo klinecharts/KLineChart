@@ -14,7 +14,7 @@
 
 import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
-import type KLineData from '../common/KLineData'
+import { type KLineData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
 import type VisibleRange from '../common/VisibleRange'
 import { getDefaultVisibleRange } from '../common/VisibleRange'
@@ -26,6 +26,13 @@ import { isNumber, isString } from '../common/utils/typeChecks'
 
 import type ChartStore from './ChartStore'
 import { LoadDataType } from '../common/LoadDataCallback'
+
+export interface TimeCategoryDataMapValue {
+  category: number
+  dataIndex: number
+  timestamp: number
+  data: KLineData
+}
 
 interface LeftRightSide {
   left: number

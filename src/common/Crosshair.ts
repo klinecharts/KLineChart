@@ -13,7 +13,7 @@
  */
 
 import type Coordinate from './Coordinate'
-import type KLineData from './KLineData'
+import { type KLineData } from './Data'
 
 export default interface Crosshair extends Partial<Coordinate> {
   paneId?: string

@@ -13,7 +13,7 @@
  */
 
 import type Nullable from './Nullable'
-import type KLineData from './KLineData'
+import { type KLineData } from './Data'
 
 export interface Margin {
   marginLeft: number

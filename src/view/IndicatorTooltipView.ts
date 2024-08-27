@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type KLineData from '../common/KLineData'
+import { type KLineData } from '../common/Data'
 import type Crosshair from '../common/Crosshair'
 import { type IndicatorStyle, type TooltipStyle, type TooltipIconStyle, type TooltipTextStyle, type TooltipLegend, TooltipShowRule, type TooltipLegendChild, TooltipIconPosition } from '../common/Styles'
 import { ActionType } from '../common/Action'

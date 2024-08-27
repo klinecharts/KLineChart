@@ -15,7 +15,7 @@
 import type Nullable from './common/Nullable'
 import type DeepPartial from './common/DeepPartial'
 import type Bounding from './common/Bounding'
-import type KLineData from './common/KLineData'
+import { type KLineData } from './common/Data'
 import type Coordinate from './common/Coordinate'
 import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'

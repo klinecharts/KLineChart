@@ -13,10 +13,28 @@
  */
 
 import type Nullable from './Nullable'
-import type KLineData from './KLineData'
+import { type DateTime } from './utils/format'
 
-export default interface VisibleData {
+export interface KLineData {
+  timestamp: number
+  open: number
+  high: number
+  low: number
+  close: number
+  volume?: number
+  turnover?: number
+  [key: string]: any
+}
+
+export interface VisibleData {
   dataIndex: number
   x: number
   data: Nullable<KLineData>
+}
+
+export interface TimeWeightData {
+  weight: number
+  dataIndex: number
+  dateTime: DateTime
+  data: KLineData
 }

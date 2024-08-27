@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type VisibleData from '../common/VisibleData'
+import { type VisibleData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
 import { type EventHandler } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'

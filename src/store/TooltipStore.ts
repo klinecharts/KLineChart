@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import type KLineData from '../common/KLineData'
+import { type KLineData } from '../common/Data'
 import type Crosshair from '../common/Crosshair'
 import { UpdateLevel } from '../common/Updater'
 import { isNumber } from '../common/utils/typeChecks'

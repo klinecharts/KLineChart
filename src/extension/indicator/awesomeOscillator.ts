@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import type KLineData from '../../common/KLineData'
+import { type KLineData } from '../../common/Data'
 import { type IndicatorStyle, PolygonType } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 

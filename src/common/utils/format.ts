@@ -14,6 +14,15 @@
 
 import { isNumber, isValid } from './typeChecks'
 
+export interface DateTime {
+  year: string
+  month: string
+  day: string
+  hour: string
+  minute: string
+  second: string
+}
+
 const reEscapeChar = /\\(\\)?/g
 const rePropName = RegExp(
   '[^.[\\]]+' + '|' +
@@ -48,7 +57,7 @@ export function formatValue (data: unknown, key: string, defaultValue?: unknown)
   return defaultValue ?? '--'
 }
 
-export function formatDate (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string {
+export function formatDateToDateTime (dateTimeFormat: Intl.DateTimeFormat, timestamp: number): DateTime {
   const date: Record<string, string> = {}
   dateTimeFormat.formatToParts(new Date(timestamp)).forEach(({ type, value }) => {
     switch (type) {
@@ -78,6 +87,11 @@ export function formatDate (dateTimeFormat: Intl.DateTimeFormat, timestamp: numb
       }
     }
   })
+  return date as unknown as DateTime
+}
+
+export function formatDateToString (dateTimeFormat: Intl.DateTimeFormat, timestamp: number, format: string): string {
+  const date = formatDateToDateTime(dateTimeFormat, timestamp)
   return format.replace(/YYYY|MM|DD|HH|mm|ss/g, key => date[key])
 }
 
