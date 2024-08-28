@@ -15,7 +15,6 @@ import type VisibleRange from '../common/VisibleRange'
 
 import type DrawPane from '../pane/DrawPane'
 
-import { getPrecision, nice, round } from '../common/utils/number'
 import type Bounding from '../common/Bounding'
 
 export interface AxisTick {
@@ -68,7 +67,7 @@ export default abstract class AxisImp implements Pick<AxisTemplate, 'createTicks
     }
     if (this._prevRange.from !== this._range.from || this._prevRange.to !== this._range.to || force) {
       this._prevRange = this._range
-      const defaultTicks = this.optimalTicks(this._calcTicks())
+      const defaultTicks = this.calcTicks()
       this._ticks = this.createTicks({
         range: this._range,
         bounding: this.getSelfBounding(),
@@ -100,38 +99,9 @@ export default abstract class AxisImp implements Pick<AxisTemplate, 'createTicks
 
   getAutoCalcTickFlag (): boolean { return this._autoCalcTickFlag }
 
-  private _calcTicks (): AxisTick[] {
-    const { realFrom, realTo, realRange } = this._range
-    const ticks: AxisTick[] = []
-
-    if (realRange >= 0) {
-      const [interval, precision] = this._calcTickInterval(realRange)
-      const first = round(Math.ceil(realFrom / interval) * interval, precision)
-      const last = round(Math.floor(realTo / interval) * interval, precision)
-      let n = 0
-      let f = first
-
-      if (interval !== 0) {
-        while (f <= last) {
-          const v = f.toFixed(precision)
-          ticks[n] = { text: v, coord: 0, value: v }
-          ++n
-          f += interval
-        }
-      }
-    }
-    return ticks
-  }
-
-  private _calcTickInterval (range: number): number[] {
-    const interval = nice(range / 8.0)
-    const precision = getPrecision(interval)
-    return [interval, precision]
-  }
-
   protected abstract calcRange (): AxisRange
 
-  protected abstract optimalTicks (ticks: AxisTick[]): AxisTick[]
+  protected abstract calcTicks (): AxisTick[]
 
   abstract createTicks (params: AxisCreateTicksParams): AxisTick[]
 

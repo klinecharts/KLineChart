@@ -15,12 +15,12 @@
 import { isNumber, isValid } from './typeChecks'
 
 export interface DateTime {
-  year: string
-  month: string
-  day: string
-  hour: string
-  minute: string
-  second: string
+  YYYY: string
+  MM: string
+  DD: string
+  HH: string
+  mm: string
+  ss: string
 }
 
 const reEscapeChar = /\\(\\)?/g

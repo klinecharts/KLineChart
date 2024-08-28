@@ -15,7 +15,7 @@
 import { YAxisType, YAxisPosition, CandleType } from '../common/Styles'
 import type Bounding from '../common/Bounding'
 import { isNumber, isValid } from '../common/utils/typeChecks'
-import { index10, log10 } from '../common/utils/number'
+import { index10, log10, getPrecision, nice, round } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 
@@ -247,7 +247,32 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     )
   }
 
-  protected optimalTicks (ticks: AxisTick[]): AxisTick[] {
+  calcTicks (): AxisTick[] {
+    const { realFrom, realTo, realRange } = this.getRange()
+    const ticks: AxisTick[] = []
+
+    if (realRange >= 0) {
+      const interval = nice(realRange / 8.0)
+      const precision = getPrecision(interval)
+
+      const first = round(Math.ceil(realFrom / interval) * interval, precision)
+      const last = round(Math.floor(realTo / interval) * interval, precision)
+      let n = 0
+      let f = first
+
+      if (interval !== 0) {
+        while (f <= last) {
+          const v = f.toFixed(precision)
+          ticks[n] = { text: v, coord: 0, value: v }
+          ++n
+          f += interval
+        }
+      }
+    }
+    return this._optimalTicks(ticks)
+  }
+
+  private _optimalTicks (ticks: AxisTick[]): AxisTick[] {
     const pane = this.getParent()
     const height = pane.getYAxisWidget()?.getBounding().height ?? 0
     const chartStore = pane.getChart().getChartStore()

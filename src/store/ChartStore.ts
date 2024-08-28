@@ -16,9 +16,9 @@ import type Nullable from '../common/Nullable'
 import { type KLineData, type VisibleData } from '../common/Data'
 import type Precision from '../common/Precision'
 import type DeepPartial from '../common/DeepPartial'
+import { formatValue } from '../common/utils/format'
 import { getDefaultStyles, type Styles, type TooltipLegend } from '../common/Styles'
 import { isArray, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
-import { formatValue } from '../common/utils/format'
 import type LoadDataCallback from '../common/LoadDataCallback'
 import { type LoadDataParams, LoadDataType } from '../common/LoadDataCallback'
 import type LoadMoreCallback from '../common/LoadMoreCallback'
@@ -35,7 +35,6 @@ import ActionStore from './ActionStore'
 import { getStyles } from '../extension/styles/index'
 
 import type Chart from '../Chart'
-
 export default class ChartStore {
   /**
    * Internal chart
@@ -131,8 +130,6 @@ export default class ChartStore {
    * Visible data array
    */
   private _visibleDataList: VisibleData[] = []
-
-  // private _dataMap = new Map<number, TimeClassifyData[]>()
 
   constructor (chart: Chart, options?: Options) {
     this._chart = chart
@@ -246,11 +243,13 @@ export default class ChartStore {
           this.clear()
           this._dataList = data
           this._forwardMore = more ?? true
+          this._timeScaleStore.classifyTimeTicks(this._dataList)
           this._timeScaleStore.resetOffsetRightDistance()
           adjustFlag = true
           break
         }
         case LoadDataType.Backward: {
+          this._timeScaleStore.classifyTimeTicks(data, true)
           this._dataList = this._dataList.concat(data)
           this._backwardMore = more ?? false
           adjustFlag = dataLengthChange > 0
@@ -258,6 +257,7 @@ export default class ChartStore {
         }
         case LoadDataType.Forward: {
           this._dataList = data.concat(this._dataList)
+          this._timeScaleStore.classifyTimeTicks(this._dataList)
           this._forwardMore = more ?? false
           adjustFlag = dataLengthChange > 0
         }
@@ -270,6 +270,7 @@ export default class ChartStore {
       const timestamp = data.timestamp
       const lastDataTimestamp = formatValue(this._dataList[dataCount - 1], 'timestamp', 0) as number
       if (timestamp > lastDataTimestamp) {
+        this._timeScaleStore.classifyTimeTicks([data], true)
         this._dataList.push(data)
         let lastBarRightSideDiffBarCount = this._timeScaleStore.getLastBarRightSideDiffBarCount()
         if (lastBarRightSideDiffBarCount < 0) {
@@ -290,6 +291,7 @@ export default class ChartStore {
         this._timeScaleStore.adjustVisibleRange()
         this._tooltipStore.recalculateCrosshair(true)
         this._indicatorStore.calcInstance()
+        this._chart.adjustPaneViewport(false, true, true, true)
       }
       this._actionStore.execute(ActionType.OnDataReady)
     }

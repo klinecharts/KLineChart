@@ -14,14 +14,11 @@
 
 import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
-import { calcTextWidth } from '../common/utils/canvas'
-import { isValid } from '../common/utils/typeChecks'
-
-import { type FormatDate, FormatDateType } from '../Options'
 
 import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
+import { TimeWeightConstants } from '../store/TimeScaleStore'
 
 export type XAxis = Axis
 
@@ -39,77 +36,39 @@ export default abstract class XAxisImp extends AxisImp {
     }
   }
 
-  protected optimalTicks (ticks: AxisTick[]): AxisTick[] {
-    const chart = this.getParent().getChart()
-    const chartStore = chart.getChartStore()
-    const formatDate = chartStore.getCustomApi().formatDate
-    const optimalTicks: AxisTick[] = []
-    const tickLength = ticks.length
-    const dataList = chartStore.getDataList()
-    if (tickLength > 0) {
-      const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
-      const tickTextStyles = chart.getStyles().xAxis.tickText
-      const defaultLabelWidth = calcTextWidth('00-00 00:00', tickTextStyles.size, tickTextStyles.weight, tickTextStyles.family)
-      const pos = parseInt(ticks[0].value as string, 10)
-      const x = this.convertToPixel(pos)
-      let tickCountDif = 1
-      if (tickLength > 1) {
-        const nextPos = parseInt(ticks[1].value as string, 10)
-        const nextX = this.convertToPixel(nextPos)
-        const xDif = Math.abs(nextX - x)
-        if (xDif < defaultLabelWidth) {
-          tickCountDif = Math.ceil(defaultLabelWidth / xDif)
+  protected override calcTicks (): AxisTick[] {
+    const timeTickList = this.getParent().getChart().getChartStore().getTimeScaleStore().getVisibleTimeTickList()
+    return timeTickList.map(({ dataIndex, dateTime, weight, timestamp }) => {
+      let text = ''
+      switch (weight) {
+        case TimeWeightConstants.Year: {
+          text = dateTime.YYYY
+          break
+        }
+        case TimeWeightConstants.Month: {
+          text = `${dateTime.YYYY}-${dateTime.MM}`
+          break
+        }
+        case TimeWeightConstants.Day: {
+          text = `${dateTime.MM}-${dateTime.DD}`
+          break
+        }
+        case TimeWeightConstants.Hour:
+        case TimeWeightConstants.Minute: {
+          text = `${dateTime.HH}-${dateTime.mm}`
+          break
+        }
+        default: {
+          text = `${dateTime.HH}-${dateTime.mm}-${dateTime.ss}`
+          break
         }
       }
-      for (let i = 0; i < tickLength; i += tickCountDif) {
-        const pos = parseInt(ticks[i].value as string, 10)
-        const kLineData = dataList[pos]
-        const timestamp = kLineData.timestamp
-        let text = formatDate(dateTimeFormat, timestamp, 'HH:mm', FormatDateType.XAxis)
-        if (i !== 0) {
-          const prevPos = parseInt(ticks[i - tickCountDif].value as string, 10)
-          const prevKLineData = dataList[prevPos]
-          const prevTimestamp = prevKLineData.timestamp
-          text = this._optimalTickLabel(formatDate, dateTimeFormat, timestamp, prevTimestamp) ?? text
-        }
-        const x = this.convertToPixel(pos)
-        optimalTicks.push({ text, coord: x, value: timestamp })
+      return {
+        coord: this.convertToPixel(dataIndex),
+        text,
+        value: timestamp
       }
-      const optimalTickLength = optimalTicks.length
-      if (optimalTickLength === 1) {
-        optimalTicks[0].text = formatDate(dateTimeFormat, optimalTicks[0].value as number, 'YYYY-MM-DD HH:mm', FormatDateType.XAxis)
-      } else {
-        const firstTimestamp = optimalTicks[0].value as number
-        const secondTimestamp = optimalTicks[1].value as number
-        if (isValid(optimalTicks[2])) {
-          const thirdText = optimalTicks[2].text
-          if (/^[0-9]{2}-[0-9]{2}$/.test(thirdText)) {
-            optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'MM-DD', FormatDateType.XAxis)
-          } else if (/^[0-9]{4}-[0-9]{2}$/.test(thirdText)) {
-            optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'YYYY-MM', FormatDateType.XAxis)
-          } else if (/^[0-9]{4}$/.test(thirdText)) {
-            optimalTicks[0].text = formatDate(dateTimeFormat, firstTimestamp, 'YYYY', FormatDateType.XAxis)
-          }
-        } else {
-          optimalTicks[0].text = this._optimalTickLabel(formatDate, dateTimeFormat, firstTimestamp, secondTimestamp) ?? optimalTicks[0].text
-        }
-      }
-    }
-    return optimalTicks
-  }
-
-  private _optimalTickLabel (formatDate: FormatDate, dateTimeFormat: Intl.DateTimeFormat, timestamp: number, comparedTimestamp: number): Nullable<string> {
-    const year = formatDate(dateTimeFormat, timestamp, 'YYYY', FormatDateType.XAxis)
-    const month = formatDate(dateTimeFormat, timestamp, 'YYYY-MM', FormatDateType.XAxis)
-    const day = formatDate(dateTimeFormat, timestamp, 'MM-DD', FormatDateType.XAxis)
-    if (year !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY', FormatDateType.XAxis)) {
-      return year
-    } else if (month !== formatDate(dateTimeFormat, comparedTimestamp, 'YYYY-MM', FormatDateType.XAxis)) {
-      return month
-    } else if (day !== formatDate(dateTimeFormat, comparedTimestamp, 'MM-DD', FormatDateType.XAxis)) {
-      return day
-    }
-    return null
+    })
   }
 
   override getAutoSize (): number {

@@ -13,7 +13,6 @@
  */
 
 import type Nullable from './Nullable'
-import { type DateTime } from './utils/format'
 
 export interface KLineData {
   timestamp: number
@@ -30,11 +29,4 @@ export interface VisibleData {
   dataIndex: number
   x: number
   data: Nullable<KLineData>
-}
-
-export interface TimeWeightData {
-  weight: number
-  dataIndex: number
-  dateTime: DateTime
-  data: KLineData
 }

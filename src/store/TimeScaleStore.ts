@@ -19,19 +19,29 @@ import type BarSpace from '../common/BarSpace'
 import type VisibleRange from '../common/VisibleRange'
 import { getDefaultVisibleRange } from '../common/VisibleRange'
 import { ActionType } from '../common/Action'
-
+import { type DateTime, formatDateToDateTime } from '../common/utils/format'
+import { isValid, isNumber, isString } from '../common/utils/typeChecks'
 import { logWarn } from '../common/utils/logger'
 import { binarySearchNearest } from '../common/utils/number'
-import { isNumber, isString } from '../common/utils/typeChecks'
+import { LoadDataType } from '../common/LoadDataCallback'
+import { calcTextWidth } from '../common/utils/canvas'
 
 import type ChartStore from './ChartStore'
-import { LoadDataType } from '../common/LoadDataCallback'
 
-export interface TimeCategoryDataMapValue {
-  category: number
+export interface TimeTick {
+  weight: number
   dataIndex: number
+  dateTime: DateTime
   timestamp: number
-  data: KLineData
+}
+
+export const TimeWeightConstants = {
+  Year: 365 * 24 * 3600,
+  Month: 30 * 24 * 3600,
+  Day: 24 * 3600,
+  Hour: 3600,
+  Minute: 60,
+  Second: 1
 }
 
 interface LeftRightSide {
@@ -126,7 +136,13 @@ export default class TimeScaleStore {
   /**
    * Start and end points of visible area data index
    */
-  private _visibleRange: VisibleRange = getDefaultVisibleRange()
+  private _visibleRange = getDefaultVisibleRange()
+
+  private _cacheVisibleRange = getDefaultVisibleRange()
+
+  private readonly _timeTicks = new Map<number, TimeTick[]>()
+
+  private _visibleTimeTickList: TimeTick[] = []
 
   constructor (chartStore: ChartStore) {
     this._chartStore = chartStore
@@ -142,6 +158,100 @@ export default class TimeScaleStore {
       --gapBarSpace
     }
     this._gapBarSpace = Math.max(1, gapBarSpace)
+  }
+
+  classifyTimeTicks (newDataList: KLineData[], update?: boolean): void {
+    let baseDataIndex = 0
+    let prevKLineData: Nullable<KLineData> = null
+    if (update ?? false) {
+      const dataList = this._chartStore.getDataList()
+      baseDataIndex = dataList.length
+      prevKLineData = dataList[baseDataIndex - 1]
+    } else {
+      this._timeTicks.clear()
+    }
+
+    for (let i = 0; i < newDataList.length; i++) {
+      const kLineData = newDataList[i]
+      let weight = TimeWeightConstants.Second
+      const dateTime = formatDateToDateTime(this._dateTimeFormat, kLineData.timestamp)
+      if (isValid(prevKLineData)) {
+        const prevDateTime = formatDateToDateTime(this._dateTimeFormat, prevKLineData.timestamp)
+        if (dateTime.YYYY !== prevDateTime.YYYY) {
+          weight = TimeWeightConstants.Year
+        } else if (dateTime.MM !== prevDateTime.MM) {
+          weight = TimeWeightConstants.Month
+        } else if (dateTime.DD !== prevDateTime.DD) {
+          weight = TimeWeightConstants.Day
+        } else if (dateTime.HH !== prevDateTime.HH) {
+          weight = TimeWeightConstants.Hour
+        } else if (dateTime.mm !== prevDateTime.mm) {
+          weight = TimeWeightConstants.Minute
+        } else {
+          weight = TimeWeightConstants.Second
+        }
+      }
+      const tickList = this._timeTicks.get(weight) ?? []
+      tickList.push({ dataIndex: i, weight, dateTime, timestamp: kLineData.timestamp })
+      this._timeTicks.set(weight, tickList)
+      prevKLineData = kLineData
+    }
+  }
+
+  adjustVisibleTimeTickList (): void {
+    const tickTextStyles = this._chartStore.getStyles().xAxis.tickText
+    const width = calcTextWidth('0000-00-00 00:00', tickTextStyles.size, tickTextStyles.weight, tickTextStyles.family)
+    const barCount = Math.ceil(width / this._barSpace)
+    let tickList: TimeTick[] = []
+    Array.from(this._timeTicks.keys()).sort((w1, w2) => w2 - w1).forEach(key => {
+      const prevTickList = tickList
+      tickList = []
+
+      const prevTickListLength = prevTickList.length
+      let prevTickListPointer = 0
+      const currentTicks = this._timeTicks.get(key)!
+      const currentTicksLength = currentTicks.length
+
+      let rightIndex = Infinity
+      let leftIndex = -Infinity
+      for (let i = 0; i < currentTicksLength; i++) {
+        const tick = currentTicks[i]
+        const currentIndex = tick.dataIndex
+
+        while (prevTickListPointer < prevTickListLength) {
+          const lastMark = prevTickList[prevTickListPointer]
+          const lastIndex = lastMark.dataIndex
+          if (lastIndex < currentIndex) {
+            prevTickListPointer++
+            tickList.push(lastMark)
+            leftIndex = lastIndex
+            rightIndex = Infinity
+          } else {
+            rightIndex = lastIndex
+            break
+          }
+        }
+
+        if (rightIndex - currentIndex >= barCount && currentIndex - leftIndex >= barCount) {
+          tickList.push(tick)
+          leftIndex = currentIndex
+        }
+      }
+
+      for (; prevTickListPointer < prevTickListLength; prevTickListPointer++) {
+        tickList.push(prevTickList[prevTickListPointer])
+      }
+    })
+    this._visibleTimeTickList = []
+    for (const tick of tickList) {
+      if (tick.dataIndex >= this._visibleRange.from && tick.dataIndex <= this._visibleRange.to) {
+        this._visibleTimeTickList.push(tick)
+      }
+    }
+  }
+
+  getVisibleTimeTickList (): TimeTick[] {
+    return this._visibleTimeTickList
   }
 
   /**
@@ -189,6 +299,13 @@ export default class TimeScaleStore {
     this._visibleRange = { from, to, realFrom, realTo }
     this._chartStore.getActionStore().execute(ActionType.OnVisibleRangeChange, this._visibleRange)
     this._chartStore.adjustVisibleDataList()
+    if (
+      this._cacheVisibleRange.from !== this._visibleRange.from &&
+      this._cacheVisibleRange.to !== this._visibleRange.to
+    ) {
+      this._cacheVisibleRange = { ...this._visibleRange }
+      this.adjustVisibleTimeTickList()
+    }
     // More processing and loading, more loading if there are callback methods and no data is being loaded
     if (from === 0) {
       const firstData = dataList[0]
@@ -235,6 +352,8 @@ export default class TimeScaleStore {
   setTimezone (timezone: string): void {
     const dateTimeFormat: Nullable<Intl.DateTimeFormat> = this._buildDateTimeFormat(timezone)
     if (dateTimeFormat !== null) {
+      this.classifyTimeTicks(this._chartStore.getDataList())
+      this.adjustVisibleTimeTickList()
       this._dateTimeFormat = dateTimeFormat
     }
   }
@@ -432,5 +551,7 @@ export default class TimeScaleStore {
 
   clear (): void {
     this._visibleRange = getDefaultVisibleRange()
+    this._cacheVisibleRange = getDefaultVisibleRange()
+    this._timeTicks.clear()
   }
 }
