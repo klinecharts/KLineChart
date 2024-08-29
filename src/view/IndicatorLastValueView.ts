@@ -19,7 +19,7 @@ import { eachFigures, type IndicatorFigure, type IndicatorFigureStyle } from '..
 
 import View from './View'
 
-import type YAxis from '../component/YAxis'
+import { type YAxis } from '../component/YAxis'
 
 export default class IndicatorLastValueView extends View<YAxis> {
   override drawImp (ctx: CanvasRenderingContext2D): void {

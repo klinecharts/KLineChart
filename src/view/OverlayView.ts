@@ -23,9 +23,9 @@ import { isBoolean, isNumber, isValid } from '../common/utils/typeChecks'
 
 import { type CustomApi } from '../Options'
 
-import type Axis from '../component/Axis'
-import type XAxis from '../component/XAxis'
-import type YAxis from '../component/YAxis'
+import { type Axis } from '../component/Axis'
+import { type XAxis } from '../component/XAxis'
+import { type YAxis } from '../component/YAxis'
 import { type OverlayPrecision, type OverlayFigure, type OverlayFigureIgnoreEventType, type Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
 import { OVERLAY_FIGURE_KEY_PREFIX, OverlayMode, getAllOverlayFigureIgnoreEventTypes } from '../component/Overlay'

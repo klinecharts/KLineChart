@@ -48,7 +48,8 @@ import SeparatorPane from './pane/SeparatorPane'
 
 import { type PaneOptions, PanePosition, PANE_DEFAULT_HEIGHT, PaneIdConstants } from './pane/types'
 
-import type Axis from './component/Axis'
+import type AxisImp from './component/Axis'
+import { type Axis } from './component/Axis'
 
 import { type Indicator, type IndicatorCreate } from './component/Indicator'
 import { type Overlay, type OverlayCreate, type OverlayRemove } from './component/Overlay'
@@ -458,7 +459,7 @@ export default class ChartImp implements Chart {
     const forceAdjustYAxis = shouldForceAdjustYAxis ?? false
     if (adjustYAxis || forceAdjustYAxis) {
       this._drawPanes.forEach(pane => {
-        const adjust = pane.getAxisComponent().buildTicks(forceAdjustYAxis)
+        const adjust = (pane.getAxisComponent() as AxisImp).buildTicks(forceAdjustYAxis)
         if (!forceMeasureWidth) {
           forceMeasureWidth = adjust
         }
@@ -468,7 +469,7 @@ export default class ChartImp implements Chart {
       this._measurePaneWidth()
     }
     if (shouldUpdate ?? false) {
-      this._xAxisPane.getAxisComponent().buildTicks(true)
+      (this._xAxisPane.getAxisComponent() as unknown as AxisImp).buildTicks(true)
       this.updatePane(UpdateLevel.All)
     }
   }
@@ -572,7 +573,7 @@ export default class ChartImp implements Chart {
       realStyles = styles
     }
     if (isValid(realStyles?.yAxis?.type)) {
-      this._candlePane?.getAxisComponent().setAutoCalcTickFlag(true)
+      (this._candlePane?.getAxisComponent() as unknown as AxisImp).setAutoCalcTickFlag(true)
     }
     this.adjustPaneViewport(true, true, true, true, true)
   }
@@ -605,7 +606,8 @@ export default class ChartImp implements Chart {
 
   setTimezone (timezone: string): void {
     this._chartStore.setOptions({ timezone })
-    this._xAxisPane.getAxisComponent().buildTicks(true)
+    const axis = (this._xAxisPane.getAxisComponent() as unknown as AxisImp)
+    axis.buildTicks(true)
     this._xAxisPane.update(UpdateLevel.Drawer)
   }
 
@@ -724,7 +726,7 @@ export default class ChartImp implements Chart {
     if (currentPane !== null) {
       const result = this._chartStore.getIndicatorStore().addInstance(indicator, paneId ?? '', isStack ?? false)
       if (result) {
-        this._setPaneOptions(paneOptions ?? {}, currentPane.getAxisComponent().buildTicks(true) ?? false)
+        this._setPaneOptions(paneOptions ?? {}, (currentPane.getAxisComponent() as AxisImp).buildTicks(true) ?? false)
       }
     } else {
       paneId ??= createId(PaneIdConstants.INDICATOR)

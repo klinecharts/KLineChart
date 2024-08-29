@@ -19,8 +19,8 @@ import { isString } from '../common/utils/typeChecks'
 import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 
-import type Axis from '../component/Axis'
-import type YAxis from '../component/YAxis'
+import { type Axis } from '../component/Axis'
+import { type YAxis } from '../component/YAxis'
 
 import { type TextAttrs } from '../extension/figure/text'
 

@@ -26,7 +26,7 @@ import { CandleType } from '../common/Styles'
 
 import type AxisPane from '../pane/DrawPane'
 
-import type YAxis from '../component/YAxis'
+import { type YAxis } from '../component/YAxis'
 
 export default class CandleWidget extends IndicatorWidget {
   private readonly _candleBarView = new CandleBarView(this)

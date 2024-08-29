@@ -19,7 +19,7 @@ import type Bounding from '../common/Bounding'
 
 import { isString, isValid, merge } from '../common/utils/typeChecks'
 
-import type Axis from '../component/Axis'
+import { type Axis } from '../component/Axis'
 
 import type DrawWidget from '../widget/DrawWidget'
 import type YAxisWidget from '../widget/YAxisWidget'

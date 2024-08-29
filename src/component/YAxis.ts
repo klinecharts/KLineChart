@@ -35,10 +35,11 @@ interface FiguresResult {
 export interface YAxis extends Axis {
   isFromZero: () => boolean
   isInCandle: () => boolean
+  getType: () => YAxisType
   convertToNicePixel: (value: number) => number
 }
 
-export type YAxisConstructor = new (parent: DrawPane<AxisImp>) => YAxisImp
+export type YAxisConstructor = new (parent: DrawPane<Axis>) => YAxis
 
 export default abstract class YAxisImp extends AxisImp implements YAxis {
   protected override createDefaultRange (): AxisRange {

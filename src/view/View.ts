@@ -18,7 +18,7 @@ import Eventful from '../common/Eventful'
 import { isValid } from '../common/utils/typeChecks'
 
 import type Figure from '../component/Figure'
-import type Axis from '../component/Axis'
+import { type Axis } from '../component/Axis'
 import { type FigureCreate } from '../component/Figure'
 
 import { getInnerFigureClass } from '../extension/figure/index'

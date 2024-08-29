@@ -23,14 +23,13 @@ import type Coordinate from '../common/Coordinate'
 import type ChartStore from '../store/ChartStore'
 
 import { eachFigures, type IndicatorFigure, type IndicatorFigureAttrs, type IndicatorFigureStyle } from '../component/Indicator'
-import { type YAxis } from '../component/YAxis'
 
 import CandleBarView, { type CandleBarOptions } from './CandleBarView'
 
 export default class IndicatorView extends CandleBarView {
   override getCandleBarOptions (chartStore: ChartStore): Nullable<CandleBarOptions> {
     const pane = this.getWidget().getPane()
-    const yAxis = pane.getAxisComponent() as YAxis
+    const yAxis = pane.getAxisComponent()
     if (!yAxis.isInCandle()) {
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
       for (const indicator of indicators) {

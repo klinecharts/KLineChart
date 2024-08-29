@@ -18,8 +18,7 @@ import { type AxisStyle, type Styles } from '../common/Styles'
 import { type LineAttrs } from '../extension/figure/line'
 import { type TextAttrs } from '../extension/figure/text'
 
-import { type AxisTick } from '../component/Axis'
-import type Axis from '../component/Axis'
+import { type AxisTick, type Axis } from '../component/Axis'
 
 import View from './View'
 

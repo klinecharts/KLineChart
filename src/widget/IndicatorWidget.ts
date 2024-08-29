@@ -17,7 +17,7 @@ import type DrawPane from '../pane/DrawPane'
 import { WidgetNameConstants } from './types'
 import DrawWidget from './DrawWidget'
 
-import type YAxis from '../component/YAxis'
+import { type YAxis } from '../component/YAxis'
 
 import GridView from '../view/GridView'
 import IndicatorView from '../view/IndicatorView'

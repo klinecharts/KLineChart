@@ -24,7 +24,7 @@ import type Coordinate from '../common/Coordinate'
 
 import { type CustomApi } from '../Options'
 
-import type YAxis from '../component/YAxis'
+import { type YAxis } from '../component/YAxis'
 
 import { type Indicator, type IndicatorFigure, type IndicatorFigureStyle, type IndicatorTooltipData } from '../component/Indicator'
 import type IndicatorImp from '../component/Indicator'

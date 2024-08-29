@@ -19,8 +19,8 @@ import { isValid } from '../common/utils/typeChecks'
 
 import { FormatDateType } from '../Options'
 
-import type Axis from '../component/Axis'
-import type XAxis from '../component/XAxis'
+import { type Axis } from '../component/Axis'
+import { type XAxis } from '../component/XAxis'
 
 import type ChartStore from '../store/ChartStore'
 

@@ -19,7 +19,7 @@ import { type LineAttrs } from '../extension/figure/line'
 import { type TextAttrs } from '../extension/figure/text'
 
 import { type AxisTick } from '../component/Axis'
-import type YAxis from '../component/YAxis'
+import { type YAxis } from '../component/YAxis'
 
 import AxisView from './AxisView'
 

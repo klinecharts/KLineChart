@@ -25,7 +25,7 @@ export interface XAxis extends Axis {
   convertTimestampToPixel: (timestamp: number) => number
 }
 
-export type XAxisConstructor = new (parent: DrawPane<AxisImp>) => XAxisImp
+export type XAxisConstructor = new (parent: DrawPane<Axis>) => XAxis
 
 export default abstract class XAxisImp extends AxisImp implements XAxis {
   protected override createDefaultRange (): AxisRange {

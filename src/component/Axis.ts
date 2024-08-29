@@ -31,6 +31,8 @@ export interface AxisRange extends VisibleRange {
 
 export interface Axis {
   getTicks: () => AxisTick[]
+  getRange: () => AxisRange
+  getAutoSize: () => number
   convertToPixel: (value: number) => number
   convertFromPixel: (px: number) => number
 }
@@ -56,7 +58,7 @@ export interface AxisTemplate {
 }
 
 export default abstract class AxisImp implements AxisTemplate, Axis {
-  private readonly _parent: DrawPane<AxisImp>
+  private readonly _parent: DrawPane<Axis>
 
   private _range: AxisRange = { from: 0, to: 0, range: 0, realFrom: 0, realTo: 0, realRange: 0 }
   private _prevRange: AxisRange = { from: 0, to: 0, range: 0, realFrom: 0, realTo: 0, realRange: 0 }
@@ -64,13 +66,13 @@ export default abstract class AxisImp implements AxisTemplate, Axis {
 
   private _autoCalcTickFlag = true
 
-  constructor (parent: DrawPane<AxisImp>) {
+  constructor (parent: DrawPane<Axis>) {
     this._parent = parent
   }
 
   name: string
 
-  getParent (): DrawPane<AxisImp> { return this._parent }
+  getParent (): DrawPane<Axis> { return this._parent }
 
   buildTicks (force: boolean): boolean {
     if (this._autoCalcTickFlag) {
