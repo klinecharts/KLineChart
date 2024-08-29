@@ -19,7 +19,7 @@ import { index10, log10, getPrecision, nice, round } from '../common/utils/numbe
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 
-import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams } from './Axis'
+import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams, type AxisCreateRangeParams } from './Axis'
 
 import { type IndicatorFigure } from './Indicator'
 
@@ -35,12 +35,13 @@ interface FiguresResult {
 export interface YAxis extends Axis {
   isFromZero: () => boolean
   isInCandle: () => boolean
+  convertToNicePixel: (value: number) => number
 }
 
 export type YAxisConstructor = new (parent: DrawPane<AxisImp>) => YAxisImp
 
 export default abstract class YAxisImp extends AxisImp implements YAxis {
-  protected calcRange (): AxisRange {
+  protected override createDefaultRange (): AxisRange {
     const parent = this.getParent()
     const chart = parent.getChart()
     const chartStore = chart.getChartStore()
@@ -247,7 +248,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     )
   }
 
-  calcTicks (): AxisTick[] {
+  protected override createDefaultTicks (): AxisTick[] {
     const { realFrom, realTo, realRange } = this.getRange()
     const ticks: AxisTick[] = []
 
@@ -407,7 +408,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     return Math.max(yAxisWidth, crosshairVerticalTextWidth)
   }
 
-  getSelfBounding (): Bounding {
+  protected override getBounding (): Bounding {
     return this.getParent().getYAxisWidget()!.getBounding()
   }
 
@@ -470,8 +471,12 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
 
   static extend (template: AxisTemplate): YAxisConstructor {
     class Custom extends YAxisImp {
+      createRange (params: AxisCreateRangeParams): AxisRange {
+        return template.createRange?.(params) ?? params.defaultRange
+      }
+
       createTicks (params: AxisCreateTicksParams): AxisTick[] {
-        return template.createTicks(params)
+        return template.createTicks?.(params) ?? params.defaultTicks
       }
     }
     return Custom

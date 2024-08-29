@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import type VisibleRange from '../common/VisibleRange'
 
 import type DrawPane from '../pane/DrawPane'
@@ -29,6 +30,7 @@ export interface AxisRange extends VisibleRange {
 }
 
 export interface Axis {
+  getTicks: () => AxisTick[]
   convertToPixel: (value: number) => number
   convertFromPixel: (px: number) => number
 }
@@ -39,14 +41,21 @@ export interface AxisCreateTicksParams {
   defaultTicks: AxisTick[]
 }
 
+export interface AxisCreateRangeParams {
+  defaultRange: AxisRange
+}
+
+export type AxisCreateRangeCallback = (params: AxisCreateRangeParams) => AxisRange
+
 export type AxisCreateTicksCallback = (params: AxisCreateTicksParams) => AxisTick[]
 
 export interface AxisTemplate {
   name: string
-  createTicks: AxisCreateTicksCallback
+  createRange?: AxisCreateRangeCallback
+  createTicks?: AxisCreateTicksCallback
 }
 
-export default abstract class AxisImp implements Pick<AxisTemplate, 'createTicks'>, Axis {
+export default abstract class AxisImp implements AxisTemplate, Axis {
   private readonly _parent: DrawPane<AxisImp>
 
   private _range: AxisRange = { from: 0, to: 0, range: 0, realFrom: 0, realTo: 0, realRange: 0 }
@@ -59,20 +68,23 @@ export default abstract class AxisImp implements Pick<AxisTemplate, 'createTicks
     this._parent = parent
   }
 
+  name: string
+
   getParent (): DrawPane<AxisImp> { return this._parent }
 
   buildTicks (force: boolean): boolean {
     if (this._autoCalcTickFlag) {
-      this._range = this.calcRange()
+      const defaultRange = this.createDefaultRange()
+      this._range = this.createRange?.({ defaultRange }) ?? defaultRange
     }
     if (this._prevRange.from !== this._range.from || this._prevRange.to !== this._range.to || force) {
       this._prevRange = this._range
-      const defaultTicks = this.calcTicks()
-      this._ticks = this.createTicks({
+      const defaultTicks = this.createDefaultTicks()
+      this._ticks = this.createTicks?.({
         range: this._range,
-        bounding: this.getSelfBounding(),
+        bounding: this.getBounding(),
         defaultTicks
-      })
+      }) ?? defaultTicks
       return true
     }
     return false
@@ -99,15 +111,17 @@ export default abstract class AxisImp implements Pick<AxisTemplate, 'createTicks
 
   getAutoCalcTickFlag (): boolean { return this._autoCalcTickFlag }
 
-  protected abstract calcRange (): AxisRange
+  protected abstract createDefaultRange (): AxisRange
 
-  protected abstract calcTicks (): AxisTick[]
+  protected abstract createDefaultTicks (): AxisTick[]
+
+  protected abstract getBounding (): Bounding
+
+  abstract createRange (params: AxisCreateRangeParams): AxisRange
 
   abstract createTicks (params: AxisCreateTicksParams): AxisTick[]
 
   abstract getAutoSize (): number
-
-  abstract getSelfBounding (): Bounding
 
   abstract convertToPixel (value: number): number
   abstract convertFromPixel (px: number): number

@@ -15,17 +15,20 @@
 import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
 
-import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams } from './Axis'
+import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams, type AxisCreateRangeParams } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
 import { TimeWeightConstants } from '../store/TimeScaleStore'
 
-export type XAxis = Axis
+export interface XAxis extends Axis {
+  convertTimestampFromPixel: (pixel: number) => Nullable<number>
+  convertTimestampToPixel: (timestamp: number) => number
+}
 
 export type XAxisConstructor = new (parent: DrawPane<AxisImp>) => XAxisImp
 
-export default abstract class XAxisImp extends AxisImp {
-  protected calcRange (): AxisRange {
+export default abstract class XAxisImp extends AxisImp implements XAxis {
+  protected override createDefaultRange (): AxisRange {
     const chartStore = this.getParent().getChart().getChartStore()
     const { from, to } = chartStore.getTimeScaleStore().getVisibleRange()
     const af = from
@@ -36,7 +39,7 @@ export default abstract class XAxisImp extends AxisImp {
     }
   }
 
-  protected override calcTicks (): AxisTick[] {
+  protected override createDefaultTicks (): AxisTick[] {
     const timeTickList = this.getParent().getChart().getChartStore().getTimeScaleStore().getVisibleTimeTickList()
     return timeTickList.map(({ dataIndex, dateTime, weight, timestamp }) => {
       let text = ''
@@ -107,7 +110,7 @@ export default abstract class XAxisImp extends AxisImp {
     return Math.max(xAxisHeight, crosshairVerticalTextHeight)
   }
 
-  getSelfBounding (): Bounding {
+  protected override getBounding (): Bounding {
     return this.getParent().getMainWidget().getBounding()
   }
 
@@ -133,8 +136,12 @@ export default abstract class XAxisImp extends AxisImp {
 
   static extend (template: AxisTemplate): XAxisConstructor {
     class Custom extends XAxisImp {
+      createRange (params: AxisCreateRangeParams): AxisRange {
+        return template.createRange?.(params) ?? params.defaultRange
+      }
+
       createTicks (params: AxisCreateTicksParams): AxisTick[] {
-        return template.createTicks(params)
+        return template.createTicks?.(params) ?? params.defaultTicks
       }
     }
     return Custom
