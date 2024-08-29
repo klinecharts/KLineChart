@@ -252,7 +252,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const ticks: AxisTick[] = []
 
     if (realRange >= 0) {
-      const interval = nice(realRange / 8.0)
+      const interval = nice(realRange / 10)
       const precision = getPrecision(interval)
 
       const first = round(Math.ceil(realFrom / interval) * interval, precision)

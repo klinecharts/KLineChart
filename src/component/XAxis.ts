@@ -42,15 +42,15 @@ export default abstract class XAxisImp extends AxisImp {
       let text = ''
       switch (weight) {
         case TimeWeightConstants.Year: {
-          text = dateTime.YYYY
+          text = dateTime.YYYY + '年'
           break
         }
         case TimeWeightConstants.Month: {
-          text = `${dateTime.YYYY}-${dateTime.MM}`
+          text = `${dateTime.YYYY}年${dateTime.MM}月`
           break
         }
         case TimeWeightConstants.Day: {
-          text = `${dateTime.MM}-${dateTime.DD}`
+          text = `${dateTime.MM}月${dateTime.DD}日`
           break
         }
         case TimeWeightConstants.Hour:

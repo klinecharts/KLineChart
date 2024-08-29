@@ -160,10 +160,10 @@ export default class TimeScaleStore {
     this._gapBarSpace = Math.max(1, gapBarSpace)
   }
 
-  classifyTimeTicks (newDataList: KLineData[], update?: boolean): void {
+  classifyTimeTicks (newDataList: KLineData[], isUpdate?: boolean): void {
     let baseDataIndex = 0
     let prevKLineData: Nullable<KLineData> = null
-    if (update ?? false) {
+    if (isUpdate ?? false) {
       const dataList = this._chartStore.getDataList()
       baseDataIndex = dataList.length
       prevKLineData = dataList[baseDataIndex - 1]
@@ -300,7 +300,7 @@ export default class TimeScaleStore {
     this._chartStore.getActionStore().execute(ActionType.OnVisibleRangeChange, this._visibleRange)
     this._chartStore.adjustVisibleDataList()
     if (
-      this._cacheVisibleRange.from !== this._visibleRange.from &&
+      this._cacheVisibleRange.from !== this._visibleRange.from ||
       this._cacheVisibleRange.to !== this._visibleRange.to
     ) {
       this._cacheVisibleRange = { ...this._visibleRange }
