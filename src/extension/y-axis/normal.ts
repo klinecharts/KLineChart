@@ -14,9 +14,8 @@
 
 import { type AxisTemplate } from '../../component/Axis'
 
-const defaultYAxis: AxisTemplate = {
-  name: 'default',
-  createTicks: ({ defaultTicks }) => defaultTicks
+const normal: AxisTemplate = {
+  name: 'normal'
 }
 
-export default defaultYAxis
+export default normal

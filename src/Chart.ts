@@ -19,7 +19,7 @@ import { type KLineData } from './common/Data'
 import type Coordinate from './common/Coordinate'
 import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
-import { type Styles, YAxisPosition } from './common/Styles'
+import { type Styles, YAxisPosition, YAxisType } from './common/Styles'
 import type Crosshair from './common/Crosshair'
 import { ActionType, type ActionCallback } from './common/Action'
 import type LoadMoreCallback from './common/LoadMoreCallback'
@@ -154,6 +154,9 @@ export default class ChartImp implements Chart {
     this._chartStore = new ChartStore(this, options)
     this._initPanes(options)
     this.adjustPaneViewport(true, true, true)
+    if (isValid(options?.styles)) {
+      this.setStyles(options?.styles)
+    }
   }
 
   private _initContainer (container: HTMLElement): void {
@@ -574,6 +577,13 @@ export default class ChartImp implements Chart {
     }
     if (isValid(realStyles?.yAxis?.type)) {
       (this._candlePane?.getAxisComponent() as unknown as AxisImp).setAutoCalcTickFlag(true)
+      const type = realStyles?.yAxis?.type
+      this.setPaneOptions({
+        id: 'candle_pane',
+        axisOptions: {
+          name: type === YAxisType.Log ? 'logarithm' : type
+        }
+      })
     }
     this.adjustPaneViewport(true, true, true, true, true)
   }

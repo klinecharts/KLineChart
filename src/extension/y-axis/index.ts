@@ -15,10 +15,14 @@
 import { type AxisTemplate } from '../../component/Axis'
 import YAxisImp, { type YAxisConstructor } from '../../component/YAxis'
 
-import defaultYAxis from './default'
+import normal from './normal'
+import percentage from './percentage'
+import logarithm from './logarithm'
 
 const yAxises: Record<string, YAxisConstructor> = {
-  default: YAxisImp.extend(defaultYAxis)
+  normal: YAxisImp.extend(normal),
+  percentage: YAxisImp.extend(percentage),
+  logarithm: YAxisImp.extend(logarithm)
 }
 
 function registerYAxis (axis: AxisTemplate): void {

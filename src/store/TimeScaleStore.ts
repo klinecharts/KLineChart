@@ -200,7 +200,10 @@ export default class TimeScaleStore {
 
   adjustVisibleTimeTickList (): void {
     const tickTextStyles = this._chartStore.getStyles().xAxis.tickText
-    const width = calcTextWidth('0000-00-00 00:00', tickTextStyles.size, tickTextStyles.weight, tickTextStyles.family)
+    const width = Math.max(
+      Math.ceil(this._totalBarSpace / 10),
+      calcTextWidth('0000-00-00 00:00', tickTextStyles.size, tickTextStyles.weight, tickTextStyles.family)
+    )
     const barCount = Math.ceil(width / this._barSpace)
     let tickList: TimeTick[] = []
     Array.from(this._timeTicks.keys()).sort((w1, w2) => w2 - w1).forEach(key => {

@@ -15,8 +15,7 @@
 import { type AxisTemplate } from '../../component/Axis'
 
 const defaultXAxis: AxisTemplate = {
-  name: 'default',
-  createTicks: ({ defaultTicks }) => defaultTicks
+  name: 'default'
 }
 
 export default defaultXAxis

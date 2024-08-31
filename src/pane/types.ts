@@ -12,15 +12,14 @@
  * limitations under the License.
  */
 
+import { type AxisCreate } from '../component/Axis'
+
 export interface PaneGap {
   top?: number
   bottom?: number
 }
 
-export interface PaneAxisOptions {
-  name?: string
-  scrollZoomEnabled?: boolean
-}
+export type PaneAxisOptions = Partial<AxisCreate>
 
 export const enum PanePosition {
   Top = 'top',

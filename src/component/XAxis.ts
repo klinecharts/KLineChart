@@ -14,13 +14,17 @@
 
 import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
+import { isFunction, isString } from '../common/utils/typeChecks'
 
-import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams, type AxisCreateRangeParams } from './Axis'
+import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
 import { TimeWeightConstants } from '../store/TimeScaleStore'
+import { FormatDateType } from '../Options'
 
-export interface XAxis extends Axis {
+export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks'>
+
+export interface XAxis extends Axis, AxisTemplate {
   convertTimestampFromPixel: (pixel: number) => Nullable<number>
   convertTimestampToPixel: (timestamp: number) => number
 }
@@ -28,41 +32,73 @@ export interface XAxis extends Axis {
 export type XAxisConstructor = new (parent: DrawPane<Axis>) => XAxis
 
 export default abstract class XAxisImp extends AxisImp implements XAxis {
-  protected override createDefaultRange (): AxisRange {
-    const chartStore = this.getParent().getChart().getChartStore()
-    const { from, to } = chartStore.getTimeScaleStore().getVisibleRange()
-    const af = from
-    const at = to - 1
-    const range = to - from
-    return {
-      from: af, to: at, range, realFrom: af, realTo: at, realRange: range
-    }
+  constructor (parent: DrawPane<Axis>, xAxis: XAxisTemplate) {
+    super(parent)
+    this.override(xAxis)
   }
 
-  protected override createDefaultTicks (): AxisTick[] {
-    const timeTickList = this.getParent().getChart().getChartStore().getTimeScaleStore().getVisibleTimeTickList()
-    return timeTickList.map(({ dataIndex, dateTime, weight, timestamp }) => {
+  override (xAxis: XAxisTemplate): void {
+    const {
+      name,
+      scrollZoomEnabled,
+      createTicks
+    } = xAxis
+    if (!isString(name)) {
+      this.name = name
+    }
+    this.scrollZoomEnabled = scrollZoomEnabled ?? this.scrollZoomEnabled
+    this.createTicks = createTicks ?? this.createTicks
+  }
+
+  protected override createRangeImp (): AxisRange {
+    const chartStore = this.getParent().getChart().getChartStore()
+    const visibleDataRange = chartStore.getTimeScaleStore().getVisibleRange()
+    const { from, to } = visibleDataRange
+    const af = from
+    const at = to - 1
+    const diff = to - from
+    const range = {
+      from: af,
+      to: at,
+      range: diff,
+      realFrom: af,
+      realTo: at,
+      realRange: diff,
+      displayFrom: af,
+      displayTo: at,
+      displayRange: diff
+    }
+    return range
+  }
+
+  protected override createTicksImp (): AxisTick[] {
+    const chartStore = this.getParent().getChart().getChartStore()
+    const timeScaleStore = chartStore.getTimeScaleStore()
+    const formatDate = chartStore.getCustomApi().formatDate
+    const timeTickList = timeScaleStore.getVisibleTimeTickList()
+    const dateTimeFormat = timeScaleStore.getDateTimeFormat()
+    const ticks = timeTickList.map(({ dataIndex, weight, timestamp }) => {
       let text = ''
       switch (weight) {
         case TimeWeightConstants.Year: {
-          text = dateTime.YYYY + '年'
+          text = formatDate(dateTimeFormat, timestamp, 'YYYY', FormatDateType.XAxis)
           break
         }
         case TimeWeightConstants.Month: {
-          text = `${dateTime.YYYY}年${dateTime.MM}月`
+          text = formatDate(dateTimeFormat, timestamp, 'YYYY-MM', FormatDateType.XAxis)
           break
         }
         case TimeWeightConstants.Day: {
-          text = `${dateTime.MM}月${dateTime.DD}日`
+          text = formatDate(dateTimeFormat, timestamp, 'MM-DD', FormatDateType.XAxis)
           break
         }
         case TimeWeightConstants.Hour:
         case TimeWeightConstants.Minute: {
-          text = `${dateTime.HH}-${dateTime.mm}`
+          text = formatDate(dateTimeFormat, timestamp, 'HH:mm', FormatDateType.XAxis)
           break
         }
         default: {
-          text = `${dateTime.HH}-${dateTime.mm}-${dateTime.ss}`
+          text = formatDate(dateTimeFormat, timestamp, 'HH:mm:ss', FormatDateType.XAxis)
           break
         }
       }
@@ -72,6 +108,14 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
         value: timestamp
       }
     })
+    if (isFunction(this.createTicks)) {
+      return this.createTicks({
+        range: this.getRange(),
+        bounding: this.getBounding(),
+        defaultTicks: ticks
+      })
+    }
+    return ticks
   }
 
   override getAutoSize (): number {
@@ -134,14 +178,10 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
     return this.getParent().getChart().getChartStore().getTimeScaleStore().dataIndexToCoordinate(value)
   }
 
-  static extend (template: AxisTemplate): XAxisConstructor {
+  static extend (template: XAxisTemplate): XAxisConstructor {
     class Custom extends XAxisImp {
-      createRange (params: AxisCreateRangeParams): AxisRange {
-        return template.createRange?.(params) ?? params.defaultRange
-      }
-
-      createTicks (params: AxisCreateTicksParams): AxisTick[] {
-        return template.createTicks?.(params) ?? params.defaultTicks
+      constructor (parent: DrawPane<Axis>) {
+        super(parent, template)
       }
     }
     return Custom

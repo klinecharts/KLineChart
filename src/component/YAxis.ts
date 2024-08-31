@@ -12,43 +12,92 @@
  * limitations under the License.
  */
 
-import { YAxisType, YAxisPosition, CandleType } from '../common/Styles'
+import { YAxisPosition, CandleType } from '../common/Styles'
 import type Bounding from '../common/Bounding'
-import { isNumber, isValid } from '../common/utils/typeChecks'
-import { index10, log10, getPrecision, nice, round } from '../common/utils/number'
+import { isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
+import { index10, getPrecision, nice, round } from '../common/utils/number'
 import { calcTextWidth } from '../common/utils/canvas'
 import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 
-import AxisImp, { type AxisTemplate, type Axis, type AxisRange, type AxisTick, type AxisCreateTicksParams, type AxisCreateRangeParams } from './Axis'
-
-import { type IndicatorFigure } from './Indicator'
+import AxisImp, {
+  type AxisTemplate, type Axis, type AxisRange,
+  type AxisTick, type AxisValueToValueCallback,
+  type AxisMinSpanCallback, type AxisCreateRangeCallback
+} from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
 
 import { PaneIdConstants } from '../pane/types'
 
-interface FiguresResult {
-  figures: IndicatorFigure[]
-  result: any[]
-}
+export type YAxisTemplate = AxisTemplate
 
-export interface YAxis extends Axis {
+const TICK_COUNT = 10
+
+export interface YAxis extends Axis, YAxisTemplate {
   isFromZero: () => boolean
   isInCandle: () => boolean
-  getType: () => YAxisType
   convertToNicePixel: (value: number) => number
 }
 
 export type YAxisConstructor = new (parent: DrawPane<Axis>) => YAxis
 
 export default abstract class YAxisImp extends AxisImp implements YAxis {
-  protected override createDefaultRange (): AxisRange {
+  reverse = false
+  gap = {
+    top: 0.2,
+    bottom: 0.1
+  }
+
+  createRange: AxisCreateRangeCallback = params => params.defaultRange
+  minSpan: AxisMinSpanCallback = precision => index10(-precision)
+  valueToRealValue: AxisValueToValueCallback = value => value
+  realValueToDisplayValue: AxisValueToValueCallback = value => value
+  displayValueToRealValue: AxisValueToValueCallback = value => value
+  realValueToValue: AxisValueToValueCallback = value => value
+  displayValueToText: ((value: number, precision: number) => string) = (value, precision) => formatPrecision(value, precision)
+
+  constructor (parent: DrawPane<Axis>, yAxis: YAxisTemplate) {
+    super(parent)
+    this.override(yAxis)
+  }
+
+  override (yAxis: YAxisTemplate): void {
+    const {
+      name,
+      reverse,
+      scrollZoomEnabled,
+      gap,
+      minSpan,
+      displayValueToText,
+      valueToRealValue,
+      realValueToDisplayValue,
+      displayValueToRealValue,
+      realValueToValue,
+      createRange,
+      createTicks
+    } = yAxis
+    if (!isString(name)) {
+      this.name = name
+    }
+    this.scrollZoomEnabled = scrollZoomEnabled ?? this.scrollZoomEnabled
+    this.reverse = reverse ?? this.reverse
+    merge(this.gap, gap)
+    this.displayValueToText = displayValueToText ?? this.displayValueToText
+    this.minSpan = minSpan ?? this.minSpan
+    this.valueToRealValue = valueToRealValue ?? this.valueToRealValue
+    this.realValueToDisplayValue = realValueToDisplayValue ?? this.realValueToDisplayValue
+    this.displayValueToRealValue = displayValueToRealValue ?? this.displayValueToRealValue
+    this.realValueToValue = realValueToValue ?? this.realValueToValue
+    this.createRange = createRange ?? this.createRange
+    this.createTicks = createTicks ?? this.createTicks
+  }
+
+  protected override createRangeImp (): AxisRange {
     const parent = this.getParent()
     const chart = parent.getChart()
     const chartStore = chart.getChartStore()
     let min = Number.MAX_SAFE_INTEGER
     let max = Number.MIN_SAFE_INTEGER
-    const figuresResultList: FiguresResult[] = []
     let shouldOhlc = false
     let specifyMin = Number.MAX_SAFE_INTEGER
     let specifyMax = Number.MIN_SAFE_INTEGER
@@ -65,10 +114,6 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       if (isNumber(indicator.maxValue)) {
         specifyMax = Math.max(specifyMax, indicator.maxValue)
       }
-      figuresResultList.push({
-        figures: indicator.figures ?? [],
-        result: indicator.result ?? []
-      })
     })
 
     let precision = 4
@@ -104,10 +149,10 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
           }
         }
       }
-      figuresResultList.forEach(({ figures, result }) => {
-        const indicatorData = result[dataIndex] ?? {}
+      indicators.forEach(({ result, figures }) => {
+        const data = result[dataIndex] ?? {}
         figures.forEach(figure => {
-          const value = indicatorData[figure.key]
+          const value = data[figure.key]
           if (isNumber(value)) {
             min = Math.min(min, value)
             max = Math.max(max, value)
@@ -123,83 +168,68 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       min = 0
       max = 10
     }
-
-    const type = this.getType()
-    let dif: number
-    switch (type) {
-      case YAxisType.Percentage: {
-        const fromData = chartStore.getVisibleFirstData()
-        if (isValid(fromData) && isNumber(fromData.close)) {
-          min = (min - fromData.close) / fromData.close * 100
-          max = (max - fromData.close) / fromData.close * 100
-        }
-        dif = Math.pow(10, -2)
-        break
-      }
-      case YAxisType.Log: {
-        min = log10(min)
-        max = log10(max)
-        dif = 0.05 * index10(-precision)
-        break
-      }
-      default: {
-        dif = index10(-precision)
-      }
+    const defaultDiff = max - min
+    const defaultRange = {
+      from: min,
+      to: max,
+      range: defaultDiff,
+      realFrom: min,
+      realTo: max,
+      realRange: defaultDiff,
+      displayFrom: min,
+      displayTo: max,
+      displayRange: defaultDiff
     }
+
+    const range = this.createRange?.({
+      kLineDataList: chartStore.getDataList(),
+      visibleDataRange: chartStore.getTimeScaleStore().getVisibleRange(),
+      indicators,
+      defaultRange
+    })
+    let realFrom = range.realFrom
+    let realTo = range.realTo
+    let realRange = range.realRange
+    const minSpan = this.minSpan(precision)
     if (
-      min === max ||
-      Math.abs(min - max) < dif
+      realFrom === realTo || realRange < minSpan
     ) {
-      const minCheck = specifyMin === min
-      const maxCheck = specifyMax === max
-      min = minCheck ? min : (maxCheck ? min - 8 * dif : min - 4 * dif)
-      max = maxCheck ? max : (minCheck ? max + 8 * dif : max + 4 * dif)
+      const minCheck = specifyMin === realFrom
+      const maxCheck = specifyMax === realTo
+      const halfTickCount = TICK_COUNT / 2
+      realFrom = minCheck ? realFrom : (maxCheck ? realFrom - TICK_COUNT * minSpan : realFrom - halfTickCount * minSpan)
+      realTo = maxCheck ? realTo : (minCheck ? realTo + TICK_COUNT * minSpan : realTo + halfTickCount * minSpan)
     }
 
-    const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
-    const { gap: paneGap } = parent.getOptions()
-    let topRate = paneGap?.top ?? 0.2
+    const height = this.getBounding().height
+    const { top, bottom } = this.gap
+    let topRate = top
     if (topRate >= 1) {
       topRate = topRate / height
     }
-    let bottomRate = paneGap?.bottom ?? 0.1
+    let bottomRate = bottom
     if (bottomRate >= 1) {
       bottomRate = bottomRate / height
     }
-    let range = Math.abs(max - min)
-    // gap
-    min = min - range * bottomRate
-    max = max + range * topRate
-    range = Math.abs(max - min)
-    let realMin: number
-    let realMax: number
-    let realRange: number
-    if (type === YAxisType.Log) {
-      realMin = index10(min)
-      realMax = index10(max)
-      realRange = Math.abs(realMax - realMin)
-    } else {
-      realMin = min
-      realMax = max
-      realRange = range
-    }
+    realRange = realTo - realFrom
+    realFrom = realFrom - realRange * bottomRate
+    realTo = realTo + realRange * topRate
 
+    const from = this.realValueToValue(realFrom, { range })
+    const to = this.realValueToValue(realTo, { range })
+    const displayFrom = this.realValueToDisplayValue(realFrom, { range })
+    const displayTo = this.realValueToDisplayValue(realTo, { range })
     return {
-      from: min, to: max, range, realFrom: realMin, realTo: realMax, realRange
+      from,
+      to,
+      range: to - from,
+      realFrom,
+      realTo,
+      realRange: realTo - realFrom,
+      displayFrom,
+      displayTo,
+      displayRange: displayTo - displayFrom
     }
-  }
-
-  /**
-   * 内部值转换成坐标
-   * @param value
-   * @return {number}
-   * @private
-   */
-  _innerConvertToPixel (value: number): number {
-    const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
-    const { from, range } = this.getRange()
-    const rate = (value - from) / range
-    return this.isReverse() ? Math.round(rate * height) : Math.round((1 - rate) * height)
   }
 
   /**
@@ -208,17 +238,6 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
    */
   isInCandle (): boolean {
     return this.getParent().getId() === PaneIdConstants.CANDLE
-  }
-
-  /**
-   * y轴类型
-   * @return {YAxisType}
-   */
-  getType (): YAxisType {
-    if (this.isInCandle()) {
-      return this.getParent().getChart().getStyles().yAxis.type
-    }
-    return YAxisType.Normal
   }
 
   getPosition (): string {
@@ -249,16 +268,17 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     )
   }
 
-  protected override createDefaultTicks (): AxisTick[] {
-    const { realFrom, realTo, realRange } = this.getRange()
+  protected override createTicksImp (): AxisTick[] {
+    const range = this.getRange()
+    const { displayFrom, displayTo, displayRange } = range
     const ticks: AxisTick[] = []
 
-    if (realRange >= 0) {
-      const interval = nice(realRange / 10)
+    if (displayRange >= 0) {
+      const interval = nice(displayRange / TICK_COUNT)
       const precision = getPrecision(interval)
 
-      const first = round(Math.ceil(realFrom / interval) * interval, precision)
-      const last = round(Math.floor(realTo / interval) * interval, precision)
+      const first = round(Math.ceil(displayFrom / interval) * interval, precision)
+      const last = round(Math.floor(displayTo / interval) * interval, precision)
       let n = 0
       let f = first
 
@@ -271,16 +291,12 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         }
       }
     }
-    return this._optimalTicks(ticks)
-  }
 
-  private _optimalTicks (ticks: AxisTick[]): AxisTick[] {
     const pane = this.getParent()
     const height = pane.getYAxisWidget()?.getBounding().height ?? 0
     const chartStore = pane.getChart().getChartStore()
     const customApi = chartStore.getCustomApi()
     const optimalTicks: AxisTick[] = []
-    const type = this.getType()
     const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
@@ -299,25 +315,15 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const textHeight = chartStore.getStyles().xAxis.tickText.size
     let validY: number
     ticks.forEach(({ value }) => {
-      let v: string
-      let y = this._innerConvertToPixel(+value)
-      switch (type) {
-        case YAxisType.Percentage: {
-          v = `${formatPrecision(value, 2)}%`
-          break
-        }
-        case YAxisType.Log: {
-          y = this._innerConvertToPixel(log10(+value))
-          v = formatPrecision(value, precision)
-          break
-        }
-        default: {
-          v = formatPrecision(value, precision)
-          if (shouldFormatBigNumber) {
-            v = customApi.formatBigNumber(value)
-          }
-          break
-        }
+      let v = this.displayValueToText(+value, precision)
+      const y = this.convertToPixel(
+        this.realValueToValue(
+          this.displayValueToRealValue(+value, { range }),
+          { range }
+        )
+      )
+      if (shouldFormatBigNumber) {
+        v = customApi.formatBigNumber(value)
       }
       v = formatFoldDecimal(formatThousands(v, thousandsSeparator), decimalFoldThreshold)
       const validYNumber = isNumber(validY)
@@ -376,18 +382,16 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         }
       })
       let precision = 2
-      if (this.getType() !== YAxisType.Percentage) {
-        if (this.isInCandle()) {
-          const { price: pricePrecision } = chartStore.getPrecision()
-          const lastValueMarkStyles = styles.indicator.lastValueMark
-          if (lastValueMarkStyles.show && lastValueMarkStyles.text.show) {
-            precision = Math.max(techPrecision, pricePrecision)
-          } else {
-            precision = pricePrecision
-          }
+      if (this.isInCandle()) {
+        const { price: pricePrecision } = chartStore.getPrecision()
+        const lastValueMarkStyles = styles.indicator.lastValueMark
+        if (lastValueMarkStyles.show && lastValueMarkStyles.text.show) {
+          precision = Math.max(techPrecision, pricePrecision)
         } else {
-          precision = techPrecision
+          precision = pricePrecision
         }
+      } else {
+        precision = techPrecision
       }
       let valueText = formatPrecision(this.getRange().to, precision)
       if (shouldFormatBigNumber) {
@@ -414,54 +418,21 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   }
 
   convertFromPixel (pixel: number): number {
-    const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
-    const { from, range } = this.getRange()
+    const height = this.getBounding().height
+    const range = this.getRange()
+    const { realFrom, realRange } = range
     const rate = this.isReverse() ? pixel / height : 1 - pixel / height
-    const value = rate * range + from
-    switch (this.getType()) {
-      case YAxisType.Percentage: {
-        const fromData = this.getParent().getChart().getChartStore().getVisibleFirstData()
-        if (isValid(fromData) && isNumber(fromData.close)) {
-          return fromData.close * value / 100 + fromData.close
-        }
-        return 0
-      }
-      case YAxisType.Log: {
-        return index10(value)
-      }
-      default: {
-        return value
-      }
-    }
-  }
-
-  convertToRealValue (value: number): number {
-    let v = value
-    if (this.getType() === YAxisType.Log) {
-      v = index10(value)
-    }
-    return v
+    const realValue = rate * realRange + realFrom
+    return this.realValueToValue(realValue, { range })
   }
 
   convertToPixel (value: number): number {
-    let v = value
-    switch (this.getType()) {
-      case YAxisType.Percentage: {
-        const fromData = this.getParent().getChart().getChartStore().getVisibleFirstData()
-        if (isValid(fromData) && isNumber(fromData.close)) {
-          v = (value - fromData.close) / fromData.close * 100
-        }
-        break
-      }
-      case YAxisType.Log: {
-        v = log10(value)
-        break
-      }
-      default: {
-        v = value
-      }
-    }
-    return this._innerConvertToPixel(v)
+    const range = this.getRange()
+    const realValue = this.valueToRealValue(value, { range })
+    const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
+    const { realFrom, realRange } = range
+    const rate = (realValue - realFrom) / realRange
+    return this.isReverse() ? Math.round(rate * height) : Math.round((1 - rate) * height)
   }
 
   convertToNicePixel (value: number): number {
@@ -470,14 +441,10 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     return Math.round(Math.max(height * 0.05, Math.min(pixel, height * 0.98)))
   }
 
-  static extend (template: AxisTemplate): YAxisConstructor {
+  static extend (template: YAxisTemplate): YAxisConstructor {
     class Custom extends YAxisImp {
-      createRange (params: AxisCreateRangeParams): AxisRange {
-        return template.createRange?.(params) ?? params.defaultRange
-      }
-
-      createTicks (params: AxisCreateTicksParams): AxisTick[] {
-        return template.createTicks?.(params) ?? params.defaultTicks
+      constructor (parent: DrawPane<Axis>) {
+        super(parent, template)
       }
     }
     return Custom

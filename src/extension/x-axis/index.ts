@@ -15,10 +15,10 @@
 import { type AxisTemplate } from '../../component/Axis'
 import XAxisImp, { type XAxisConstructor } from '../../component/XAxis'
 
-import defaultXAxis from './default'
+import normal from './normal'
 
 const xAxises: Record<string, XAxisConstructor> = {
-  default: XAxisImp.extend(defaultXAxis)
+  normal: XAxisImp.extend(normal)
 }
 
 function registerXAxis (axis: AxisTemplate): void {

@@ -12,8 +12,7 @@
  * limitations under the License.
  */
 
-import { YAxisType } from '../common/Styles'
-import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isValid } from '../common/utils/typeChecks'
 
 import View from './View'
@@ -45,14 +44,14 @@ export default class CandleLastPriceLabelView extends View {
         } else {
           backgroundColor = lastPriceMarkStyles.noChangeColor
         }
-        let text: string
-        if (yAxis.getType() === YAxisType.Percentage) {
-          const fromData = chartStore.getVisibleFirstData()
-          const fromClose = fromData!.close
-          text = `${((close - fromClose) / fromClose * 100).toFixed(2)}%`
-        } else {
-          text = formatPrecision(close, precision.price)
-        }
+        const yAxisRange = yAxis.getRange()
+        let text = yAxis.displayValueToText(
+          yAxis.realValueToDisplayValue(
+            yAxis.valueToRealValue(close, { range: yAxisRange }),
+            { range: yAxisRange }
+          ),
+          precision.price
+        )
         text = formatFoldDecimal(formatThousands(text, chartStore.getThousandsSeparator()), chartStore.getDecimalFoldThreshold())
         let x: number
         let textAlgin: CanvasTextAlign

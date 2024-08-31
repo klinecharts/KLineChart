@@ -14,13 +14,13 @@
 
 import type Bounding from '../common/Bounding'
 import type Crosshair from '../common/Crosshair'
-import { type CrosshairStyle, type CrosshairDirectionStyle, YAxisType, type StateTextStyle } from '../common/Styles'
+import { type CrosshairStyle, type CrosshairDirectionStyle, type StateTextStyle } from '../common/Styles'
 import { isString } from '../common/utils/typeChecks'
-import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 
 import { type Axis } from '../component/Axis'
-import { type YAxis } from '../component/YAxis'
+import type YAxis from '../component/YAxis'
 
 import { type TextAttrs } from '../extension/figure/text'
 
@@ -65,28 +65,30 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
   protected getText (crosshair: Crosshair, chartStore: ChartStore, axis: Axis): string {
     const yAxis = axis as unknown as YAxis
     const value = axis.convertFromPixel(crosshair.y!)
-    let text: string
-    if (yAxis.getType() === YAxisType.Percentage) {
-      const fromData = chartStore.getVisibleFirstData()
-      text = `${((value - fromData!.close) / fromData!.close * 100).toFixed(2)}%`
+    let precision = 0
+    let shouldFormatBigNumber = false
+    if (yAxis.isInCandle()) {
+      precision = chartStore.getPrecision().price
     } else {
       const indicators = chartStore.getIndicatorStore().getInstances(crosshair.paneId!)
-      let precision = 0
-      let shouldFormatBigNumber = false
-      if (yAxis.isInCandle()) {
-        precision = chartStore.getPrecision().price
-      } else {
-        indicators.forEach(indicator => {
-          precision = Math.max(indicator.precision, precision)
-          if (!shouldFormatBigNumber) {
-            shouldFormatBigNumber = indicator.shouldFormatBigNumber
-          }
-        })
-      }
-      text = formatPrecision(value, precision)
-      if (shouldFormatBigNumber) {
-        text = chartStore.getCustomApi().formatBigNumber(text)
-      }
+      indicators.forEach(indicator => {
+        precision = Math.max(indicator.precision, precision)
+        if (!shouldFormatBigNumber) {
+          shouldFormatBigNumber = indicator.shouldFormatBigNumber
+        }
+      })
+    }
+    const yAxisRange = yAxis.getRange()
+    let text = yAxis.displayValueToText(
+      yAxis.realValueToDisplayValue(
+        yAxis.valueToRealValue(value, { range: yAxisRange }),
+        { range: yAxisRange }
+      ),
+      precision
+    )
+
+    if (shouldFormatBigNumber) {
+      text = chartStore.getCustomApi().formatBigNumber(text)
     }
     return formatFoldDecimal(formatThousands(text, chartStore.getThousandsSeparator()), chartStore.getDecimalFoldThreshold())
   }

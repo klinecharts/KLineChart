@@ -39,7 +39,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
 
   private _axis: C
 
-  private readonly _options: PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 }, axisOptions: { name: 'default', scrollZoomEnabled: true } }
+  private readonly _options: PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 }, axisOptions: { name: 'normal', scrollZoomEnabled: true } }
 
   constructor (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string, options: Omit<PaneOptions, 'id' | 'height'>) {
     super(rootContainer, afterElement, chart, id)
@@ -55,9 +55,14 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
       (this._options.axisOptions.name !== name && isString(name)) ||
       !isValid(this._axis)
     ) {
-      this._axis = this.createAxisComponent(name ?? 'default')
+      this._axis = this.createAxisComponent(name ?? 'normal')
     }
     merge(this._options, options)
+    this._axis.override({
+      name: name ?? 'normal',
+      gap: this._options.gap,
+      ...this._options.axisOptions
+    })
     let container: HTMLElement
     let cursor: string
     if (this.getId() === PaneIdConstants.X_AXIS) {

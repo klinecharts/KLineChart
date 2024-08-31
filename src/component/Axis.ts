@@ -17,6 +17,8 @@ import type VisibleRange from '../common/VisibleRange'
 import type DrawPane from '../pane/DrawPane'
 
 import type Bounding from '../common/Bounding'
+import { type KLineData } from '../common/Data'
+import { type Indicator } from './Indicator'
 
 export interface AxisTick {
   coord: number
@@ -27,15 +29,30 @@ export interface AxisTick {
 export interface AxisRange extends VisibleRange {
   readonly range: number
   readonly realRange: number
+  readonly displayFrom: number
+  readonly displayTo: number
+  readonly displayRange: number
 }
 
-export interface Axis {
-  getTicks: () => AxisTick[]
-  getRange: () => AxisRange
-  getAutoSize: () => number
-  convertToPixel: (value: number) => number
-  convertFromPixel: (px: number) => number
+export interface AxisGap {
+  top?: number
+  bottom?: number
 }
+
+export interface AxisValueToValueParams {
+  range: AxisRange
+}
+
+export type AxisValueToValueCallback = (value: number, params: AxisValueToValueParams) => number
+
+export interface AxisCreateRangeParams {
+  kLineDataList: KLineData[]
+  indicators: Indicator[]
+  visibleDataRange: VisibleRange
+  defaultRange: AxisRange
+}
+
+export type AxisCreateRangeCallback = (params: AxisCreateRangeParams) => AxisRange
 
 export interface AxisCreateTicksParams {
   range: AxisRange
@@ -43,25 +60,59 @@ export interface AxisCreateTicksParams {
   defaultTicks: AxisTick[]
 }
 
-export interface AxisCreateRangeParams {
-  defaultRange: AxisRange
-}
-
-export type AxisCreateRangeCallback = (params: AxisCreateRangeParams) => AxisRange
-
 export type AxisCreateTicksCallback = (params: AxisCreateTicksParams) => AxisTick[]
+
+export type AxisMinSpanCallback = (precision: number) => number
+
+export interface Axis {
+  override: (axis: AxisTemplate) => void
+  getTicks: () => AxisTick[]
+  getRange: () => AxisRange
+  getAutoSize: () => number
+  convertToPixel: (value: number) => number
+  convertFromPixel: (px: number) => number
+}
 
 export interface AxisTemplate {
   name: string
+  reverse?: boolean
+  scrollZoomEnabled?: boolean
+  gap?: AxisGap
+  valueToRealValue?: AxisValueToValueCallback
+  realValueToDisplayValue?: AxisValueToValueCallback
+  displayValueToRealValue?: AxisValueToValueCallback
+  realValueToValue?: AxisValueToValueCallback
+  displayValueToText?: (value: number, precision: number) => string
+  minSpan?: AxisMinSpanCallback
   createRange?: AxisCreateRangeCallback
   createTicks?: AxisCreateTicksCallback
 }
 
-export default abstract class AxisImp implements AxisTemplate, Axis {
+export type AxisCreate = Omit<AxisTemplate, 'valueToRealValue' | 'realValueToDisplayValue' | 'displayValueToRealValue' | 'realValueToValue' | 'minSpan'>
+
+function getDefaultAxisRange (): AxisRange {
+  return {
+    from: 0,
+    to: 0,
+    range: 0,
+    realFrom: 0,
+    realTo: 0,
+    realRange: 0,
+    displayFrom: 0,
+    displayTo: 0,
+    displayRange: 0
+  }
+}
+
+export default abstract class AxisImp implements Axis {
+  name: string
+  scrollZoomEnabled = true
+  createTicks: AxisCreateTicksCallback
+
   private readonly _parent: DrawPane<Axis>
 
-  private _range: AxisRange = { from: 0, to: 0, range: 0, realFrom: 0, realTo: 0, realRange: 0 }
-  private _prevRange: AxisRange = { from: 0, to: 0, range: 0, realFrom: 0, realTo: 0, realRange: 0 }
+  private _range = getDefaultAxisRange()
+  private _prevRange = getDefaultAxisRange()
   private _ticks: AxisTick[] = []
 
   private _autoCalcTickFlag = true
@@ -70,23 +121,15 @@ export default abstract class AxisImp implements AxisTemplate, Axis {
     this._parent = parent
   }
 
-  name: string
-
   getParent (): DrawPane<Axis> { return this._parent }
 
   buildTicks (force: boolean): boolean {
     if (this._autoCalcTickFlag) {
-      const defaultRange = this.createDefaultRange()
-      this._range = this.createRange?.({ defaultRange }) ?? defaultRange
+      this._range = this.createRangeImp()
     }
     if (this._prevRange.from !== this._range.from || this._prevRange.to !== this._range.to || force) {
       this._prevRange = this._range
-      const defaultTicks = this.createDefaultTicks()
-      this._ticks = this.createTicks?.({
-        range: this._range,
-        bounding: this.getBounding(),
-        defaultTicks
-      }) ?? defaultTicks
+      this._ticks = this.createTicksImp()
       return true
     }
     return false
@@ -113,15 +156,13 @@ export default abstract class AxisImp implements AxisTemplate, Axis {
 
   getAutoCalcTickFlag (): boolean { return this._autoCalcTickFlag }
 
-  protected abstract createDefaultRange (): AxisRange
+  protected abstract createRangeImp (): AxisRange
 
-  protected abstract createDefaultTicks (): AxisTick[]
+  protected abstract createTicksImp (): AxisTick[]
 
   protected abstract getBounding (): Bounding
 
-  abstract createRange (params: AxisCreateRangeParams): AxisRange
-
-  abstract createTicks (params: AxisCreateTicksParams): AxisTick[]
+  abstract override (axis: AxisTemplate): void
 
   abstract getAutoSize (): number
 

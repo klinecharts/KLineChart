@@ -253,15 +253,20 @@ export default class Event implements EventHandler {
               const difRange = range * scale
               const newFrom = from + difRange
               const newTo = to + difRange
-              const newRealFrom = yAxis.convertToRealValue(newFrom)
-              const newRealTo = yAxis.convertToRealValue(newTo)
+              const newRealFrom = yAxis.valueToRealValue(newFrom, { range: this._prevYAxisRange })
+              const newRealTo = yAxis.valueToRealValue(newTo, { range: this._prevYAxisRange })
+              const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: this._prevYAxisRange })
+              const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: this._prevYAxisRange })
               yAxis.setRange({
                 from: newFrom,
                 to: newTo,
                 range: newTo - newFrom,
                 realFrom: newRealFrom,
                 realTo: newRealTo,
-                realRange: newRealTo - newRealFrom
+                realRange: newRealTo - newRealFrom,
+                displayFrom: newDisplayFrom,
+                displayTo: newDisplayTo,
+                displayRange: newDisplayTo - newDisplayFrom
               })
             }
             const distance = event.x - this._startScrollCoordinate.x
@@ -298,15 +303,20 @@ export default class Event implements EventHandler {
               const difRange = (newRange - range) / 2
               const newFrom = from - difRange
               const newTo = to + difRange
-              const newRealFrom = yAxis.convertToRealValue(newFrom)
-              const newRealTo = yAxis.convertToRealValue(newTo)
+              const newRealFrom = yAxis.valueToRealValue(newFrom, { range: this._prevYAxisRange })
+              const newRealTo = yAxis.valueToRealValue(newTo, { range: this._prevYAxisRange })
+              const newDisplayFrom = yAxis.realValueToDisplayValue(newRealFrom, { range: this._prevYAxisRange })
+              const newDisplayTo = yAxis.realValueToDisplayValue(newRealTo, { range: this._prevYAxisRange })
               yAxis.setRange({
                 from: newFrom,
                 to: newTo,
                 range: newRange,
                 realFrom: newRealFrom,
                 realTo: newRealTo,
-                realRange: newRealTo - newRealFrom
+                realRange: newRealTo - newRealFrom,
+                displayFrom: newDisplayFrom,
+                displayTo: newDisplayTo,
+                displayRange: newDisplayTo - newDisplayFrom
               })
               this._chart.adjustPaneViewport(false, true, true, true)
             }
