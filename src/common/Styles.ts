@@ -318,26 +318,6 @@ export interface AxisStyle {
   tickText: AxisTickTextStyle
 }
 
-export type XAxisStyle = AxisStyle
-
-export enum YAxisPosition {
-  Left = 'left',
-  Right = 'right'
-}
-
-export enum YAxisType {
-  Normal = 'normal',
-  Percentage = 'percentage',
-  Log = 'log'
-}
-
-export interface YAxisStyle extends AxisStyle {
-  type: YAxisType
-  position: YAxisPosition
-  inside: boolean
-  reverse: boolean
-}
-
 export interface CrosshairDirectionStyle {
   show: boolean
   line: StateLineStyle
@@ -388,8 +368,8 @@ export interface Styles {
   grid: GridStyle
   candle: CandleStyle
   indicator: IndicatorStyle
-  xAxis: XAxisStyle
-  yAxis: YAxisStyle
+  xAxis: AxisStyle
+  yAxis: AxisStyle
   separator: SeparatorStyle
   crosshair: CrosshairStyle
   overlay: OverlayStyle
@@ -636,7 +616,7 @@ function getDefaultIndicatorStyle (): IndicatorStyle {
   }
 }
 
-function getDefaultXAxisStyle (): XAxisStyle {
+function getDefaultAxisStyle (): AxisStyle {
   return {
     show: true,
     size: 'auto',
@@ -661,15 +641,6 @@ function getDefaultXAxisStyle (): XAxisStyle {
       color: axisLineColor
     }
   }
-}
-
-function getDefaultYAxisStyle (): YAxisStyle {
-  const style = getDefaultXAxisStyle() as YAxisStyle
-  style.type = YAxisType.Normal
-  style.position = YAxisPosition.Right
-  style.inside = false
-  style.reverse = false
-  return style
 }
 
 function getDefaultCrosshairStyle (): CrosshairStyle {
@@ -801,8 +772,8 @@ export function getDefaultStyles (): Styles {
     grid: getDefaultGridStyle(),
     candle: getDefaultCandleStyle(),
     indicator: getDefaultIndicatorStyle(),
-    xAxis: getDefaultXAxisStyle(),
-    yAxis: getDefaultYAxisStyle(),
+    xAxis: getDefaultAxisStyle(),
+    yAxis: getDefaultAxisStyle(),
     separator: getDefaultSeparatorStyle(),
     crosshair: getDefaultCrosshairStyle(),
     overlay: getDefaultOverlayStyle()

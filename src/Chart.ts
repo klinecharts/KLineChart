@@ -19,7 +19,7 @@ import { type KLineData } from './common/Data'
 import type Coordinate from './common/Coordinate'
 import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
-import { type Styles, YAxisPosition, YAxisType } from './common/Styles'
+import { type Styles } from './common/Styles'
 import type Crosshair from './common/Crosshair'
 import { ActionType, type ActionCallback } from './common/Action'
 import type LoadMoreCallback from './common/LoadMoreCallback'
@@ -49,15 +49,15 @@ import SeparatorPane from './pane/SeparatorPane'
 import { type PaneOptions, PanePosition, PANE_DEFAULT_HEIGHT, PaneIdConstants } from './pane/types'
 
 import type AxisImp from './component/Axis'
-import { type Axis } from './component/Axis'
+import { AxisPosition, type Axis } from './component/Axis'
 
 import { type Indicator, type IndicatorCreate } from './component/Indicator'
 import { type Overlay, type OverlayCreate, type OverlayRemove } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
-import { getStyles as getExtensionStyles } from './extension/styles/index'
 
 import Event from './Event'
+import { type YAxis } from './component/YAxis'
 
 export enum DomPosition {
   Root = 'root',
@@ -154,9 +154,6 @@ export default class ChartImp implements Chart {
     this._chartStore = new ChartStore(this, options)
     this._initPanes(options)
     this.adjustPaneViewport(true, true, true)
-    if (isValid(options?.styles)) {
-      this.setStyles(options?.styles)
-    }
   }
 
   private _initContainer (container: HTMLElement): void {
@@ -350,55 +347,60 @@ export default class ChartImp implements Chart {
   private _measurePaneWidth (): void {
     const totalWidth = Math.floor(this._container.clientWidth)
     const styles = this._chartStore.getStyles()
-    const yAxisStyles = styles.yAxis
-    const isYAxisLeft = yAxisStyles.position === YAxisPosition.Left
-    const isOutside = !yAxisStyles.inside
-    let mainWidth = 0
-    let yAxisWidth = 0
-    let yAxisLeft = 0
-    let mainLeft = 0
+
+    let leftYAxisWidth = 0
+    let leftYAxisOutside = true
+    let rightYAxisWidth = 0
+    let rightYAxisOutside = true
+
     this._drawPanes.forEach(pane => {
       if (pane.getId() !== PaneIdConstants.X_AXIS) {
-        yAxisWidth = Math.max(yAxisWidth, pane.getAxisComponent().getAutoSize())
+        const yAxis = pane.getAxisComponent() as YAxis
+        const inside = yAxis.inside ?? false
+        const yAxisWidth = yAxis.getAutoSize()
+        if (yAxis.position === AxisPosition.Left) {
+          leftYAxisWidth = Math.max(leftYAxisWidth, yAxisWidth)
+          if (inside) {
+            leftYAxisOutside = false
+          }
+        } else {
+          rightYAxisWidth = Math.max(rightYAxisWidth, yAxisWidth)
+          if (inside) {
+            rightYAxisOutside = false
+          }
+        }
       }
     })
-    if (yAxisWidth > totalWidth) {
-      yAxisWidth = totalWidth
+
+    let mainWidth = totalWidth
+    let mainLeft = 0
+    let mainRight = 0
+    if (leftYAxisOutside) {
+      mainWidth -= leftYAxisWidth
+      mainLeft = leftYAxisWidth
     }
-    if (isOutside) {
-      mainWidth = totalWidth - yAxisWidth
-      if (isYAxisLeft) {
-        yAxisLeft = 0
-        mainLeft = yAxisWidth
-      } else {
-        yAxisLeft = totalWidth - yAxisWidth
-        mainLeft = 0
-      }
-    } else {
-      mainWidth = totalWidth
-      mainLeft = 0
-      if (isYAxisLeft) {
-        yAxisLeft = 0
-      } else {
-        yAxisLeft = totalWidth - yAxisWidth
-      }
+
+    if (rightYAxisOutside) {
+      mainWidth -= rightYAxisWidth
+      mainRight = rightYAxisWidth
     }
 
     this._chartStore.getTimeScaleStore().setTotalBarSpace(mainWidth)
 
     const paneBounding = { width: totalWidth }
-    const mainBounding = { width: mainWidth, left: mainLeft }
-    const yAxisBounding = { width: yAxisWidth, left: yAxisLeft }
+    const mainBounding = { width: mainWidth, left: mainLeft, right: mainRight }
+    const leftYAxisBounding = { width: leftYAxisWidth }
+    const rightYAxisBounding = { width: rightYAxisWidth }
     const separatorFill = styles.separator.fill
     let separatorBounding: Partial<Bounding>
-    if (isOutside && !separatorFill) {
+    if (!separatorFill) {
       separatorBounding = mainBounding
     } else {
       separatorBounding = paneBounding
     }
     this._drawPanes.forEach((pane) => {
       this._separatorPanes.get(pane)?.setBounding(separatorBounding)
-      pane.setBounding(paneBounding, mainBounding, yAxisBounding)
+      pane.setBounding(paneBounding, mainBounding, leftYAxisBounding, rightYAxisBounding)
     })
   }
 
@@ -415,7 +417,7 @@ export default class ChartImp implements Chart {
           shouldAdjust = true
           shouldMeasureHeight = true
         }
-        if (isString(options.axisOptions?.name) || isValid(options.gap)) {
+        if (isString(options.axis)) {
           shouldAdjust = true
         }
         pane.setOptions(options)
@@ -569,22 +571,6 @@ export default class ChartImp implements Chart {
 
   setStyles (styles: string | DeepPartial<Styles>): void {
     this._chartStore.setOptions({ styles })
-    let realStyles: Nullable<DeepPartial<Styles>>
-    if (isString(styles)) {
-      realStyles = getExtensionStyles(styles)
-    } else {
-      realStyles = styles
-    }
-    if (isValid(realStyles?.yAxis?.type)) {
-      (this._candlePane?.getAxisComponent() as unknown as AxisImp).setAutoCalcTickFlag(true)
-      const type = realStyles?.yAxis?.type
-      this.setPaneOptions({
-        id: 'candle_pane',
-        axisOptions: {
-          name: type === YAxisType.Log ? 'logarithm' : type
-        }
-      })
-    }
     this.adjustPaneViewport(true, true, true, true, true)
   }
 

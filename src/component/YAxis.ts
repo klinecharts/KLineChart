@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { YAxisPosition, CandleType } from '../common/Styles'
+import { CandleType } from '../common/Styles'
 import type Bounding from '../common/Bounding'
 import { isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 import { index10, getPrecision, nice, round } from '../common/utils/number'
@@ -22,7 +22,8 @@ import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/u
 import AxisImp, {
   type AxisTemplate, type Axis, type AxisRange,
   type AxisTick, type AxisValueToValueCallback,
-  type AxisMinSpanCallback, type AxisCreateRangeCallback
+  type AxisMinSpanCallback, type AxisCreateRangeCallback,
+  AxisPosition
 } from './Axis'
 
 import type DrawPane from '../pane/DrawPane'
@@ -43,6 +44,8 @@ export type YAxisConstructor = new (parent: DrawPane<Axis>) => YAxis
 
 export default abstract class YAxisImp extends AxisImp implements YAxis {
   reverse = false
+  inside = false
+  position = AxisPosition.Right
   gap = {
     top: 0.2,
     bottom: 0.1
@@ -64,7 +67,9 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   override (yAxis: YAxisTemplate): void {
     const {
       name,
+      position,
       reverse,
+      inside,
       scrollZoomEnabled,
       gap,
       minSpan,
@@ -79,8 +84,10 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     if (!isString(name)) {
       this.name = name
     }
-    this.scrollZoomEnabled = scrollZoomEnabled ?? this.scrollZoomEnabled
+    this.position = position ?? this.position
     this.reverse = reverse ?? this.reverse
+    this.inside = inside ?? this.inside
+    this.scrollZoomEnabled = scrollZoomEnabled ?? this.scrollZoomEnabled
     merge(this.gap, gap)
     this.displayValueToText = displayValueToText ?? this.displayValueToText
     this.minSpan = minSpan ?? this.minSpan
@@ -240,31 +247,14 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     return this.getParent().getId() === PaneIdConstants.CANDLE
   }
 
-  getPosition (): string {
-    return this.getParent().getChart().getStyles().yAxis.position
-  }
-
-  /**
-   * 是否反转
-   * @return {boolean}
-   */
-  isReverse (): boolean {
-    if (this.isInCandle()) {
-      return this.getParent().getChart().getStyles().yAxis.reverse
-    }
-    return false
-  }
-
   /**
    * 是否从y轴0开始
    * @return {boolean}
    */
   isFromZero (): boolean {
-    const yAxisStyles = this.getParent().getChart().getStyles().yAxis
-    const inside = yAxisStyles.inside
     return (
-      (yAxisStyles.position === YAxisPosition.Left && inside) ||
-      (yAxisStyles.position === YAxisPosition.Right && !inside)
+      (this.position === AxisPosition.Left && this.inside) ||
+      (this.position === AxisPosition.Right && !this.inside)
     )
   }
 
@@ -373,10 +363,10 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       crosshairStyles.horizontal.text.show
     ) {
       const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
-      let techPrecision = 0
+      let indicatorPrecision = 0
       let shouldFormatBigNumber = false
       indicators.forEach(indicator => {
-        techPrecision = Math.max(indicator.precision, techPrecision)
+        indicatorPrecision = Math.max(indicator.precision, indicatorPrecision)
         if (!shouldFormatBigNumber) {
           shouldFormatBigNumber = indicator.shouldFormatBigNumber
         }
@@ -386,14 +376,14 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
         const { price: pricePrecision } = chartStore.getPrecision()
         const lastValueMarkStyles = styles.indicator.lastValueMark
         if (lastValueMarkStyles.show && lastValueMarkStyles.text.show) {
-          precision = Math.max(techPrecision, pricePrecision)
+          precision = Math.max(indicatorPrecision, pricePrecision)
         } else {
           precision = pricePrecision
         }
       } else {
-        precision = techPrecision
+        precision = indicatorPrecision
       }
-      let valueText = formatPrecision(this.getRange().to, precision)
+      let valueText = formatPrecision(this.getRange().displayTo, precision)
       if (shouldFormatBigNumber) {
         valueText = customApi.formatBigNumber(valueText)
       }
@@ -421,7 +411,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const height = this.getBounding().height
     const range = this.getRange()
     const { realFrom, realRange } = range
-    const rate = this.isReverse() ? pixel / height : 1 - pixel / height
+    const rate = this.reverse ? pixel / height : 1 - pixel / height
     const realValue = rate * realRange + realFrom
     return this.realValueToValue(realValue, { range })
   }
@@ -432,7 +422,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const height = this.getParent().getYAxisWidget()?.getBounding().height ?? 0
     const { realFrom, realRange } = range
     const rate = (realValue - realFrom) / realRange
-    return this.isReverse() ? Math.round(rate * height) : Math.round((1 - rate) * height)
+    return this.reverse ? Math.round(rate * height) : Math.round((1 - rate) * height)
   }
 
   convertToNicePixel (value: number): number {

@@ -19,7 +19,7 @@ import type Bounding from '../common/Bounding'
 
 import { isString, isValid, merge } from '../common/utils/typeChecks'
 
-import { type Axis } from '../component/Axis'
+import { AxisPosition, type Axis } from '../component/Axis'
 
 import type DrawWidget from '../widget/DrawWidget'
 import type YAxisWidget from '../widget/YAxisWidget'
@@ -32,6 +32,7 @@ import type Chart from '../Chart'
 import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
 import type PickPartial from '../common/PickPartial'
+import YAxisImp, { type YAxis } from '../component/YAxis'
 
 export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   private readonly _mainWidget: DrawWidget<DrawPane<C>>
@@ -39,7 +40,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
 
   private _axis: C
 
-  private readonly _options: PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, gap: { top: 0.2, bottom: 0.1 }, axisOptions: { name: 'normal', scrollZoomEnabled: true } }
+  private readonly _options: PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, axis: { name: 'normal', scrollZoomEnabled: true } }
 
   constructor (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string, options: Omit<PaneOptions, 'id' | 'height'>) {
     super(rootContainer, afterElement, chart, id)
@@ -50,18 +51,20 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   }
 
   setOptions (options: Omit<PaneOptions, 'id' | 'height'>): this {
-    const name = options.axisOptions?.name
+    const name = options.axis?.name
     if (
-      (this._options.axisOptions.name !== name && isString(name)) ||
+      (this._options.axis.name !== name && isString(name)) ||
       !isValid(this._axis)
     ) {
       this._axis = this.createAxisComponent(name ?? 'normal')
+      if (this._axis instanceof YAxisImp) {
+        this._axis.setAutoCalcTickFlag(true)
+      }
     }
     merge(this._options, options)
     this._axis.override({
       name: name ?? 'normal',
-      gap: this._options.gap,
-      ...this._options.axisOptions
+      ...this._options.axis
     })
     let container: HTMLElement
     let cursor: string
@@ -72,7 +75,7 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
       container = this.getYAxisWidget()!.getContainer()
       cursor = 'ns-resize'
     }
-    if (options.axisOptions?.scrollZoomEnabled ?? true) {
+    if (options.axis?.scrollZoomEnabled ?? true) {
       container.style.cursor = cursor
     } else {
       container.style.cursor = 'default'
@@ -86,7 +89,12 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
     return this._axis
   }
 
-  override setBounding (rootBounding: Partial<Bounding>, mainBounding?: Partial<Bounding>, yAxisBounding?: Partial<Bounding>): this {
+  override setBounding (
+    rootBounding: Partial<Bounding>,
+    mainBounding?: Partial<Bounding>,
+    leftYAxisBounding?: Partial<Bounding>,
+    rightYAxisBounding?: Partial<Bounding>
+  ): this {
     merge(this.getBounding(), rootBounding)
     const contentBounding: Partial<Bounding> = {}
     if (isValid(rootBounding.height)) {
@@ -96,12 +104,30 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
       contentBounding.top = rootBounding.top
     }
     this._mainWidget.setBounding(contentBounding)
-    this._yAxisWidget?.setBounding(contentBounding)
-    if (isValid(mainBounding)) {
+    const mainBoundingValid = isValid(mainBounding)
+    if (mainBoundingValid) {
       this._mainWidget.setBounding(mainBounding)
     }
-    if (isValid(yAxisBounding)) {
-      this._yAxisWidget?.setBounding(yAxisBounding)
+    if (isValid(this._yAxisWidget)) {
+      this._yAxisWidget.setBounding(contentBounding)
+      const yAxis = this._axis as unknown as YAxis
+      if (yAxis.position === AxisPosition.Left) {
+        if (isValid(leftYAxisBounding)) {
+          this._yAxisWidget.setBounding({ ...leftYAxisBounding, left: 0 })
+        }
+      } else {
+        if (isValid(rightYAxisBounding)) {
+          this._yAxisWidget.setBounding(rightYAxisBounding)
+          if (mainBoundingValid) {
+            this._yAxisWidget.setBounding({
+              left: (mainBounding.left ?? 0) +
+                (mainBounding.width ?? 0) +
+                (mainBounding.right ?? 0) -
+                (rightYAxisBounding.width ?? 0)
+            })
+          }
+        }
+      }
     }
     return this
   }

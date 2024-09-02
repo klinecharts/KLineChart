@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+import { isValid } from '../common/utils/typeChecks'
 import type YAxis from '../component/YAxis'
 
 import View from './View'
@@ -29,7 +30,7 @@ export default class CandleLastPriceView extends View {
       const yAxis = pane.getAxisComponent() as YAxis
       const dataList = chartStore.getDataList()
       const data = dataList[dataList.length - 1]
-      if (data != null) {
+      if (isValid(data)) {
         const { close, open } = data
         const priceY = yAxis.convertToNicePixel(close)
         let color: string

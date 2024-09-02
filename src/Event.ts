@@ -241,10 +241,10 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed && this._startScrollCoordinate !== null) {
             const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
-            if (this._prevYAxisRange !== null && !yAxis.getAutoCalcTickFlag() && yAxis.getScrollZoomEnabled()) {
+            if (this._prevYAxisRange !== null && !yAxis.getAutoCalcTickFlag() && yAxis.scrollZoomEnabled) {
               const { from, to, range } = this._prevYAxisRange
               let distance: number
-              if (yAxis?.isReverse() ?? false) {
+              if (yAxis.reverse) {
                 distance = this._startScrollCoordinate.y - event.y
               } else {
                 distance = event.y - this._startScrollCoordinate.y
@@ -279,7 +279,7 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
             const xAxis = (pane as DrawPane<XAxis>).getAxisComponent()
-            if ((xAxis?.getScrollZoomEnabled() ?? true)) {
+            if ((xAxis?.scrollZoomEnabled ?? true)) {
               const scale = this._xAxisStartScaleDistance / event.pageX
               if (Number.isFinite(scale)) {
                 const zoomScale = (scale - this._xAxisScale) * 10
@@ -296,7 +296,7 @@ export default class Event implements EventHandler {
           const consumed = widget.dispatchEvent('pressedMouseMoveEvent', event)
           if (!consumed) {
             const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
-            if (this._prevYAxisRange !== null && yAxis.getScrollZoomEnabled()) {
+            if (this._prevYAxisRange !== null && yAxis.scrollZoomEnabled) {
               const { from, to, range } = this._prevYAxisRange
               const scale = event.pageY / this._yAxisStartScaleDistance
               const newRange = range * scale

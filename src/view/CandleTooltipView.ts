@@ -19,7 +19,7 @@ import type Precision from '../common/Precision'
 import type Crosshair from '../common/Crosshair'
 import {
   type Styles, type CandleStyle, type TooltipLegend, type TooltipLegendChild, TooltipShowType, CandleTooltipRectPosition,
-  type CandleTooltipCustomCallbackData, YAxisPosition, PolygonType
+  type CandleTooltipCustomCallbackData, PolygonType
 } from '../common/Styles'
 import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
@@ -36,6 +36,8 @@ import IndicatorTooltipView from './IndicatorTooltipView'
 import { type TooltipIcon } from '../store/TooltipStore'
 
 import { i18n } from '../extension/i18n/index'
+import type YAxisImp from '../component/YAxis'
+import { AxisPosition } from '../component/Axis'
 
 export default class CandleTooltipView extends IndicatorTooltipView {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -298,14 +300,15 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             rectX = realX + rectOffsetLeft
           }
         } else {
+          const yAxis = this.getWidget().getPane().getAxisComponent() as YAxisImp
           if (isLeft) {
             rectX = rectOffsetLeft + offsetLeft
-            if (styles.yAxis.inside && styles.yAxis.position === YAxisPosition.Left) {
+            if (yAxis.inside && yAxis.position === AxisPosition.Left) {
               rectX += yAxisBounding.width
             }
           } else {
             rectX = bounding.width - rectOffsetRight - rectWidth - offsetRight
-            if (styles.yAxis.inside && styles.yAxis.position === YAxisPosition.Right) {
+            if (yAxis.inside && yAxis.position === AxisPosition.Right) {
               rectX -= yAxisBounding.width
             }
           }

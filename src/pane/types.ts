@@ -19,8 +19,6 @@ export interface PaneGap {
   bottom?: number
 }
 
-export type PaneAxisOptions = Partial<AxisCreate>
-
 export const enum PanePosition {
   Top = 'top',
   Bottom = 'bottom'
@@ -32,8 +30,7 @@ export interface PaneOptions {
   minHeight?: number
   dragEnabled?: boolean
   position?: PanePosition
-  gap?: PaneGap
-  axisOptions?: PaneAxisOptions
+  axis?: Partial<AxisCreate>
 }
 
 export const PANE_MIN_HEIGHT = 30

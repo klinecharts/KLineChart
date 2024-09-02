@@ -39,6 +39,11 @@ export interface AxisGap {
   bottom?: number
 }
 
+export enum AxisPosition {
+  Left = 'left',
+  Right = 'right'
+}
+
 export interface AxisValueToValueParams {
   range: AxisRange
 }
@@ -76,6 +81,8 @@ export interface Axis {
 export interface AxisTemplate {
   name: string
   reverse?: boolean
+  inside?: boolean
+  position?: AxisPosition
   scrollZoomEnabled?: boolean
   gap?: AxisGap
   valueToRealValue?: AxisValueToValueCallback
@@ -88,7 +95,7 @@ export interface AxisTemplate {
   createTicks?: AxisCreateTicksCallback
 }
 
-export type AxisCreate = Omit<AxisTemplate, 'valueToRealValue' | 'realValueToDisplayValue' | 'displayValueToRealValue' | 'realValueToValue' | 'minSpan'>
+export type AxisCreate = Omit<AxisTemplate, 'displayValueToText' | 'valueToRealValue' | 'realValueToDisplayValue' | 'displayValueToRealValue' | 'realValueToValue' | 'minSpan'>
 
 function getDefaultAxisRange (): AxisRange {
   return {
@@ -137,10 +144,6 @@ export default abstract class AxisImp implements Axis {
 
   getTicks (): AxisTick[] {
     return this._ticks
-  }
-
-  getScrollZoomEnabled (): boolean {
-    return this.getParent().getOptions().axisOptions.scrollZoomEnabled ?? true
   }
 
   setRange (range: AxisRange): void {
