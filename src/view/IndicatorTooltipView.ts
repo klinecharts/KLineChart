@@ -18,7 +18,7 @@ import type Crosshair from '../common/Crosshair'
 import { type IndicatorStyle, type TooltipStyle, type TooltipIconStyle, type TooltipTextStyle, type TooltipLegend, TooltipShowRule, type TooltipLegendChild, TooltipIconPosition } from '../common/Styles'
 import { ActionType } from '../common/Action'
 import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
-import { isValid, isObject, isString, isNumber } from '../common/utils/typeChecks'
+import { isValid, isObject, isString, isNumber, isFunction } from '../common/utils/typeChecks'
 import { createFont } from '../common/utils/canvas'
 import type Coordinate from '../common/Coordinate'
 
@@ -283,7 +283,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
 
     const legends: TooltipLegend[] = []
     if (indicator.visible) {
-      const indicatorData = result[dataIndex] ?? {}
+      const indicatorData = result[dataIndex] ?? result[dataIndex - 1] ?? {}
       eachFigures(dataList, indicator, dataIndex, styles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
         if (isString(figure.title)) {
           const color = figureStyles.color
@@ -300,7 +300,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       tooltipData.legends = legends
     }
 
-    if (indicator.createTooltipDataSource !== null) {
+    if (isFunction(indicator.createTooltipDataSource)) {
       const widget = this.getWidget()
       const pane = widget.getPane()
       const chartStore = pane.getChart().getChartStore()
