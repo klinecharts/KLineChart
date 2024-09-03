@@ -17,7 +17,7 @@ import type Nullable from '../common/Nullable'
 import { type UpdateLevel } from '../common/Updater'
 import type Bounding from '../common/Bounding'
 
-import { isString, isValid, merge } from '../common/utils/typeChecks'
+import { isValid, merge } from '../common/utils/typeChecks'
 
 import { AxisPosition, type Axis } from '../component/Axis'
 
@@ -51,19 +51,27 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
   }
 
   setOptions (options: Omit<PaneOptions, 'id' | 'height'>): this {
-    const name = options.axis?.name
-    if (
-      (this._options.axis.name !== name && isString(name)) ||
-      !isValid(this._axis)
-    ) {
-      this._axis = this.createAxisComponent(name ?? 'normal')
-      if (this._axis instanceof YAxisImp) {
-        this._axis.setAutoCalcTickFlag(true)
+    const paneId = this.getId()
+    let name = options.axis?.name ?? 'normal'
+    if (paneId === PaneIdConstants.CANDLE) {
+      if (
+        !isValid(this._axis) ||
+        (this._options.axis.name !== name)
+      ) {
+        this._axis = this.createAxisComponent(name)
       }
+    } else {
+      name = 'normal'
+      if (!isValid(this._axis)) {
+        this._axis = this.createAxisComponent(name)
+      }
+    }
+    if (this._axis instanceof YAxisImp) {
+      this._axis.setAutoCalcTickFlag(true)
     }
     merge(this._options, options)
     this._axis.override({
-      name: name ?? 'normal',
+      name,
       ...this._options.axis
     })
     let container: HTMLElement

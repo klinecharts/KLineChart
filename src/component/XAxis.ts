@@ -24,7 +24,7 @@ import { FormatDateType } from '../Options'
 
 export type XAxisTemplate = Pick<AxisTemplate, 'name' | 'scrollZoomEnabled' | 'createTicks'>
 
-export interface XAxis extends Axis, AxisTemplate {
+export interface XAxis extends Axis, Required<XAxisTemplate> {
   convertTimestampFromPixel: (pixel: number) => Nullable<number>
   convertTimestampToPixel: (timestamp: number) => number
 }

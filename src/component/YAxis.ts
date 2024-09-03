@@ -34,7 +34,7 @@ export type YAxisTemplate = AxisTemplate
 
 const TICK_COUNT = 8
 
-export interface YAxis extends Axis, YAxisTemplate {
+export interface YAxis extends Axis, Required<YAxisTemplate> {
   isFromZero: () => boolean
   isInCandle: () => boolean
   convertToNicePixel: (value: number) => number
@@ -103,13 +103,14 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const parent = this.getParent()
     const chart = parent.getChart()
     const chartStore = chart.getChartStore()
+    const paneId = parent.getId()
     let min = Number.MAX_SAFE_INTEGER
     let max = Number.MIN_SAFE_INTEGER
     let shouldOhlc = false
     let specifyMin = Number.MAX_SAFE_INTEGER
     let specifyMax = Number.MIN_SAFE_INTEGER
     let indicatorPrecision = Number.MAX_SAFE_INTEGER
-    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(parent.getId())
+    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(paneId)
     indicators.forEach(indicator => {
       if (!shouldOhlc) {
         shouldOhlc = indicator.shouldOhlc ?? false
@@ -189,6 +190,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     }
 
     const range = this.createRange?.({
+      paneId,
       kLineDataList: chartStore.getDataList(),
       visibleDataRange: chartStore.getTimeScaleStore().getVisibleRange(),
       indicators,

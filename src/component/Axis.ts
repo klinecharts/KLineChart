@@ -51,6 +51,7 @@ export interface AxisValueToValueParams {
 export type AxisValueToValueCallback = (value: number, params: AxisValueToValueParams) => number
 
 export interface AxisCreateRangeParams {
+  paneId: string
   kLineDataList: KLineData[]
   indicators: Indicator[]
   visibleDataRange: VisibleRange

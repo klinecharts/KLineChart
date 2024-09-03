@@ -362,6 +362,7 @@ export default class IndicatorImp<D = any> implements Indicator<D> {
 
   constructor (indicator: IndicatorTemplate<D>) {
     this.override(indicator)
+    this._lockSeriesPrecision = false
   }
 
   override (indicator: Partial<Indicator<D>>): void {

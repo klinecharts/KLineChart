@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { formatPrecision, formatThousands, formatFoldDecimal } from '../common/utils/format'
+import { formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { isNumber, isValid } from '../common/utils/typeChecks'
 
 import { eachFigures, type IndicatorFigure, type IndicatorFigureStyle } from '../component/Indicator'
@@ -33,6 +33,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
     const lastValueMarkTextStyles = lastValueMarkStyles.text
     if (lastValueMarkStyles.show) {
       const yAxis = pane.getAxisComponent()
+      const yAxisRange = yAxis.getRange()
       const dataList = chartStore.getDataList()
       const dataIndex = dataList.length - 1
       const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
@@ -47,7 +48,14 @@ export default class IndicatorLastValueView extends View<YAxis> {
             const value = indicatorData[figure.key]
             if (isNumber(value)) {
               const y = yAxis.convertToNicePixel(value)
-              let text = formatPrecision(value, precision)
+              // let text = formatPrecision(value, precision)
+              let text = yAxis.displayValueToText(
+                yAxis.realValueToDisplayValue(
+                  yAxis.valueToRealValue(value, { range: yAxisRange }),
+                  { range: yAxisRange }
+                ),
+                precision
+              )
               if (indicator.shouldFormatBigNumber) {
                 text = customApi.formatBigNumber(text)
               }

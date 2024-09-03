@@ -30,14 +30,13 @@ import { type CustomApi, FormatDateType } from '../Options'
 import { PaneIdConstants } from '../pane/types'
 
 import type Indicator from '../component/Indicator'
+import { AxisPosition } from '../component/Axis'
 
 import IndicatorTooltipView from './IndicatorTooltipView'
 
 import { type TooltipIcon } from '../store/TooltipStore'
 
 import { i18n } from '../extension/i18n/index'
-import type YAxisImp from '../component/YAxis'
-import { AxisPosition } from '../component/Axis'
 
 export default class CandleTooltipView extends IndicatorTooltipView {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -300,7 +299,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
             rectX = realX + rectOffsetLeft
           }
         } else {
-          const yAxis = this.getWidget().getPane().getAxisComponent() as YAxisImp
+          const yAxis = this.getWidget().getPane().getAxisComponent()
           if (isLeft) {
             rectX = rectOffsetLeft + offsetLeft
             if (yAxis.inside && yAxis.position === AxisPosition.Left) {
