@@ -41,7 +41,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
       indicators.forEach(indicator => {
         const result = indicator.result
-        const indicatorData = result[dataIndex]
+        const indicatorData = result[dataIndex] ?? result[dataIndex - 1]
         if (isValid(indicatorData) && indicator.visible) {
           const precision = indicator.precision
           eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
