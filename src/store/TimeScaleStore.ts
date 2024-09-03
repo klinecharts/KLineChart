@@ -192,7 +192,7 @@ export default class TimeScaleStore {
         }
       }
       const tickList = this._timeTicks.get(weight) ?? []
-      tickList.push({ dataIndex: i, weight, dateTime, timestamp: kLineData.timestamp })
+      tickList.push({ dataIndex: i + baseDataIndex, weight, dateTime, timestamp: kLineData.timestamp })
       this._timeTicks.set(weight, tickList)
       prevKLineData = kLineData
     }
