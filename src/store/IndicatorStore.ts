@@ -16,11 +16,12 @@ import { isValid, isString } from '../common/utils/typeChecks'
 
 import type ChartStore from './ChartStore'
 
-import { type IndicatorCreate, type IndicatorFilter } from '../component/Indicator'
+import { IndicatorDataStatus, type IndicatorCreate, type IndicatorFilter } from '../component/Indicator'
 import type IndicatorImp from '../component/Indicator'
 import { IndicatorSeries } from '../component/Indicator'
 import { getIndicatorClass } from '../extension/indicator/index'
 import TaskScheduler, { generateTaskId } from '../common/TaskScheduler'
+import { LoadDataType } from '../common/LoadDataCallback'
 
 export default class IndicatorStore {
   private readonly _chartStore: ChartStore
@@ -42,15 +43,31 @@ export default class IndicatorStore {
     }
   }
 
-  private _addTask (paneId: string, indicator: IndicatorImp): void {
+  private _addTask (paneId: string, indicator: IndicatorImp, loadDataType: LoadDataType): void {
     this._scheduler.addTask({
       id: generateTaskId(paneId, indicator.name),
       handler: () => {
+        indicator.onDataStatusChange?.({
+          status: IndicatorDataStatus.Loading,
+          type: loadDataType,
+          indicator
+        })
         indicator.calcImp(this._chartStore.getDataList()).then(result => {
           if (result) {
             this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
+            indicator.onDataStatusChange?.({
+              status: IndicatorDataStatus.Ready,
+              type: loadDataType,
+              indicator
+            })
           }
-        }).catch(() => {})
+        }).catch(() => {
+          indicator.onDataStatusChange?.({
+            status: IndicatorDataStatus.Error,
+            type: loadDataType,
+            indicator
+          })
+        })
       }
     })
   }
@@ -79,7 +96,7 @@ export default class IndicatorStore {
     paneInstances.push(instance)
     this._instances.set(paneId, paneInstances)
     this._sort(paneId)
-    this._addTask(paneId, instance)
+    this._addTask(paneId, instance, LoadDataType.Init)
     return true
   }
 
@@ -137,11 +154,11 @@ export default class IndicatorStore {
     return this._instances.has(paneId)
   }
 
-  calcInstance (filter: IndicatorFilter): void {
+  calcInstance (loadDataType: LoadDataType, filter: IndicatorFilter): void {
     const filterMap = this.getInstanceByFilter(filter)
     filterMap.forEach((indicators, paneId) => {
       indicators.forEach(indicator => {
-        this._addTask(paneId, indicator)
+        this._addTask(paneId, indicator, loadDataType)
       })
     })
   }
@@ -195,7 +212,7 @@ export default class IndicatorStore {
           sortFlag = true
         }
         if (calc) {
-          this._addTask(paneId, instance)
+          this._addTask(paneId, instance, LoadDataType.Update)
         } else {
           if (draw) {
             updateFlag = true

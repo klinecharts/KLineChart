@@ -15,20 +15,17 @@
 import type Nullable from './Nullable'
 import { type KLineData } from './Data'
 
-enum LoadDataType {
+export enum LoadDataType {
   Init = 'init',
   Forward = 'forward',
-  Backward = 'backward'
+  Backward = 'backward',
+  Update = 'update'
 }
 
-interface LoadDataParams {
+export interface LoadDataParams {
   type: LoadDataType
   data: Nullable<KLineData>
   callback: (dataList: KLineData[], more?: boolean) => void
 }
 
-export { LoadDataType, type LoadDataParams }
-
-type LoadDataCallback = (params: LoadDataParams) => void
-
-export default LoadDataCallback
+export type LoadDataCallback = (params: LoadDataParams) => void

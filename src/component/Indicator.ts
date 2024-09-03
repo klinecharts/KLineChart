@@ -30,6 +30,7 @@ import { formatValue } from '../common/utils/format'
 import { type ArcAttrs } from '../extension/figure/arc'
 import { type RectAttrs } from '../extension/figure/rect'
 import { type TextAttrs } from '../extension/figure/text'
+import { type LoadDataType } from '../common/LoadDataCallback'
 
 export enum IndicatorSeries {
   Normal = 'normal',
@@ -116,6 +117,19 @@ export interface IndicatorDrawParams<D> {
 export type IndicatorDrawCallback<D> = (params: IndicatorDrawParams<D>) => boolean
 export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[]
 export type IndicatorShouldUpdateCallback<D> = (prev: Indicator<D>, current: Indicator<D>) => (boolean | { calc: boolean, draw: boolean })
+
+export enum IndicatorDataStatus {
+  Loading = 'loading',
+  Error = 'error',
+  Ready = 'ready'
+}
+
+export interface IndicatorOnDataStatusChangeParams<D> {
+  status: IndicatorDataStatus
+  type: LoadDataType
+  indicator: Indicator<D>
+}
+export type IndicatorOnDataStatusChangeCallback<D> = (params: IndicatorOnDataStatusChangeParams<D>) => void
 
 export interface Indicator<D = any> {
   /**
@@ -212,6 +226,11 @@ export interface Indicator<D = any> {
    * Custom draw
    */
   draw: Nullable<IndicatorDrawCallback<D>>
+
+  /**
+   * Data status change
+   */
+  onDataStatusChange: Nullable<IndicatorOnDataStatusChangeCallback<D>>
 
   /**
    * Calculation result
@@ -333,6 +352,9 @@ export default class IndicatorImp<D = any> implements Indicator<D> {
   regenerateFigures: Nullable<IndicatorRegenerateFiguresCallback<D>> = null
   createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
   draw: Nullable<IndicatorDrawCallback<D>> = null
+
+  onDataStatusChange: Nullable<IndicatorOnDataStatusChangeCallback<D>> = null
+
   result: D[] = []
 
   private _prevIndicator: Indicator<D>

@@ -32,12 +32,6 @@ export default class ActionStore {
     this._actions.get(type)?.subscribe(callback)
   }
 
-  /**
-   * 取消事件订阅
-   * @param type
-   * @param callback
-   * @return {boolean}
-   */
   unsubscribe (type: ActionType, callback?: ActionCallback): void {
     const action = this._actions.get(type)
     if (isValid(action)) {

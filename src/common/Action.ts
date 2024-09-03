@@ -17,7 +17,6 @@ import { isFunction } from './utils/typeChecks'
 export type ActionCallback = (data?: any) => void
 
 export enum ActionType {
-  OnDataReady = 'onDataReady',
   OnZoom = 'onZoom',
   OnScroll = 'onScroll',
   OnVisibleRangeChange = 'onVisibleRangeChange',

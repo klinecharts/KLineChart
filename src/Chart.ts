@@ -22,7 +22,7 @@ import { UpdateLevel } from './common/Updater'
 import { type Styles } from './common/Styles'
 import type Crosshair from './common/Crosshair'
 import { ActionType, type ActionCallback } from './common/Action'
-import type LoadDataCallback from './common/LoadDataCallback'
+import { type LoadDataCallback } from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
 import { type CustomApi, LayoutChildType, type Options } from './Options'
@@ -669,7 +669,7 @@ export default class ChartImp implements Chart {
   }
 
   updateData (data: KLineData): void {
-    this._chartStore.addData(data)
+    this._chartStore.addData(data, LoadDataType.Update)
   }
 
   setLoadDataCallback (cb: LoadDataCallback): void {

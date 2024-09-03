@@ -19,9 +19,7 @@ import type DeepPartial from '../common/DeepPartial'
 import { formatValue } from '../common/utils/format'
 import { getDefaultStyles, type Styles, type TooltipLegend } from '../common/Styles'
 import { isArray, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
-import type LoadDataCallback from '../common/LoadDataCallback'
-import { type LoadDataParams, LoadDataType } from '../common/LoadDataCallback'
-import { ActionType } from '../common/Action'
+import { type LoadDataCallback, type LoadDataParams, LoadDataType } from '../common/LoadDataCallback'
 
 import { getDefaultCustomApi, type CustomApi, defaultLocale, type Options } from '../Options'
 
@@ -224,7 +222,7 @@ export default class ChartStore {
     return this._visibleDataList
   }
 
-  addData (data: KLineData | KLineData[], type?: LoadDataType, more?: boolean): void {
+  addData (data: KLineData | KLineData[], type: LoadDataType, more?: boolean): void {
     let success = false
     let adjustFlag = false
     let dataLengthChange = 0
@@ -282,10 +280,9 @@ export default class ChartStore {
       if (adjustFlag) {
         this._timeScaleStore.adjustVisibleRange()
         this._tooltipStore.recalculateCrosshair(true)
-        this._indicatorStore.calcInstance({})
+        this._indicatorStore.calcInstance(type, {})
         this._chart.adjustPaneViewport(false, true, true, true)
       }
-      this._actionStore.execute(ActionType.OnDataReady)
     }
   }
 
