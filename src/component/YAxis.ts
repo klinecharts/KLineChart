@@ -67,36 +67,14 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
   override (yAxis: YAxisTemplate): void {
     const {
       name,
-      position,
-      reverse,
-      inside,
-      scrollZoomEnabled,
       gap,
-      minSpan,
-      displayValueToText,
-      valueToRealValue,
-      realValueToDisplayValue,
-      displayValueToRealValue,
-      realValueToValue,
-      createRange,
-      createTicks
+      ...others
     } = yAxis
-    if (!isString(name)) {
+    if (!isString(this.name)) {
       this.name = name
     }
-    this.position = position ?? this.position
-    this.reverse = reverse ?? this.reverse
-    this.inside = inside ?? this.inside
-    this.scrollZoomEnabled = scrollZoomEnabled ?? this.scrollZoomEnabled
     merge(this.gap, gap)
-    this.displayValueToText = displayValueToText ?? this.displayValueToText
-    this.minSpan = minSpan ?? this.minSpan
-    this.valueToRealValue = valueToRealValue ?? this.valueToRealValue
-    this.realValueToDisplayValue = realValueToDisplayValue ?? this.realValueToDisplayValue
-    this.displayValueToRealValue = displayValueToRealValue ?? this.displayValueToRealValue
-    this.realValueToValue = realValueToValue ?? this.realValueToValue
-    this.createRange = createRange ?? this.createRange
-    this.createTicks = createTicks ?? this.createTicks
+    merge(this, others)
   }
 
   protected override createRangeImp (): AxisRange {

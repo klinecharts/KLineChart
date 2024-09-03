@@ -43,7 +43,7 @@ export default abstract class XAxisImp extends AxisImp implements XAxis {
       scrollZoomEnabled,
       createTicks
     } = xAxis
-    if (!isString(name)) {
+    if (!isString(this.name)) {
       this.name = name
     }
     this.scrollZoomEnabled = scrollZoomEnabled ?? this.scrollZoomEnabled
