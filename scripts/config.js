@@ -1,3 +1,5 @@
+import child_process from 'child_process'
+
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import eslint from '@rollup/plugin-eslint'
 import replace from '@rollup/plugin-replace'
@@ -10,6 +12,7 @@ import progress from 'rollup-plugin-progress'
 import { resolvePath, getVersion } from './utils.js' 
 
 const version = getVersion()
+const commitId = child_process.execSync('git rev-parse --short HEAD').toString().trim()
 
 const env = process.env.NODE_ENV
 
@@ -33,7 +36,7 @@ function createInputConfig ({ input, replaceValues }) {
       replace({
         preventAssignment: true,
         values: {
-          '__VERSION__': version,
+          '__VERSION__': `v${version}(${commitId})`,
           ...replaceValues
         }
       }),

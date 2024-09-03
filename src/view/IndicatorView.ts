@@ -31,7 +31,7 @@ export default class IndicatorView extends CandleBarView {
     const pane = this.getWidget().getPane()
     const yAxis = pane.getAxisComponent()
     if (!yAxis.isInCandle()) {
-      const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
       for (const indicator of indicators) {
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
@@ -71,7 +71,7 @@ export default class IndicatorView extends CandleBarView {
     const dataList = chartStore.getDataList()
     const timeScaleStore = chartStore.getTimeScaleStore()
     const visibleRange = timeScaleStore.getVisibleRange()
-    const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
     const defaultStyles = chartStore.getStyles().indicator
     ctx.save()
     indicators.forEach(indicator => {

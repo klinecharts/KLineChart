@@ -52,7 +52,6 @@ import {
 } from './extension/figure/line'
 import { checkCoordinateOnPolygon, drawPolygon } from './extension/figure/polygon'
 import { checkCoordinateOnRect, drawRect } from './extension/figure/rect'
-import { drawRectText } from './extension/figure/rectText'
 import { checkCoordinateOnText, drawText } from './extension/figure/text'
 
 import { registerFigure, getSupportedFigures, getFigureClass } from './extension/figure/index'
@@ -159,8 +158,7 @@ const utils = {
   drawLine,
   drawPolygon,
   drawRect,
-  drawText,
-  drawRectText
+  drawText
 }
 
 export {

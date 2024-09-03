@@ -12,12 +12,11 @@
  * limitations under the License.
  */
 
-import type Nullable from '../common/Nullable'
 import { isValid, isString } from '../common/utils/typeChecks'
 
 import type ChartStore from './ChartStore'
 
-import { type IndicatorCreate, type Indicator } from '../component/Indicator'
+import { type IndicatorCreate, type IndicatorFilter } from '../component/Indicator'
 import type IndicatorImp from '../component/Indicator'
 import { IndicatorSeries } from '../component/Indicator'
 import { getIndicatorClass } from '../extension/indicator/index'
@@ -74,7 +73,7 @@ export default class IndicatorStore {
     this.synchronizeSeriesPrecision(instance)
     instance.override(indicator)
     if (!isStack) {
-      this.removeInstance(paneId)
+      this.removeInstance({ paneId })
       paneInstances = []
     }
     paneInstances.push(instance)
@@ -84,32 +83,53 @@ export default class IndicatorStore {
     return true
   }
 
-  getInstances (paneId: string): IndicatorImp[] {
+  getInstanceByPaneId (paneId: string): IndicatorImp[] {
     return this._instances.get(paneId) ?? []
   }
 
-  removeInstance (paneId: string, name?: string): boolean {
+  getInstanceByFilter (filter: IndicatorFilter): Map<string, IndicatorImp[]> {
+    const find: ((indicators: IndicatorImp[], name?: string) => IndicatorImp[]) = (indicators, name) => {
+      return indicators.filter(indicator => {
+        return !isValid(name) || indicator.name === name
+      })
+    }
+    const { paneId, name } = filter
+    const map = new Map<string, IndicatorImp[]>()
+    if (isValid(paneId)) {
+      const indicators = this.getInstanceByPaneId(paneId)
+      map.set(paneId, find(indicators, name))
+    } else {
+      if (isValid(name)) {
+        const map = new Map<string, IndicatorImp[]>()
+        this._instances.forEach((indicators, paneId) => {
+          map.set(paneId, find(indicators, name))
+        })
+      } else {
+        this._instances.forEach((indicators, paneId) => {
+          map.set(paneId, find(indicators))
+        })
+      }
+    }
+    return map
+  }
+
+  removeInstance (filter: IndicatorFilter): boolean {
     let removed = false
-    const paneInstances = this._instances.get(paneId)
-    if (isValid(paneInstances)) {
-      if (isString(name)) {
-        const index = paneInstances.findIndex(ins => ins.name === name)
+    const filterMap = this.getInstanceByFilter(filter)
+    filterMap.forEach((indicators, paneId) => {
+      const paneInstances = this.getInstanceByPaneId(paneId)
+      indicators.forEach(indicator => {
+        const index = paneInstances.findIndex(ins => ins.name === indicator.name)
         if (index > -1) {
-          this._scheduler.removeTask(generateTaskId(paneId, name))
+          this._scheduler.removeTask(generateTaskId(paneId, indicator.name))
           paneInstances.splice(index, 1)
           removed = true
         }
-      } else {
-        paneInstances.forEach(instance => {
-          this._scheduler.removeTask(generateTaskId(paneId, instance.name))
-        })
-        this._instances.set(paneId, [])
-        removed = true
-      }
-      if (this._instances.get(paneId)?.length === 0) {
+      })
+      if (paneInstances.length === 0) {
         this._instances.delete(paneId)
       }
-    }
+    })
     return removed
   }
 
@@ -117,54 +137,13 @@ export default class IndicatorStore {
     return this._instances.has(paneId)
   }
 
-  calcInstance (name?: string, paneId?: string): void {
-    if (isString(name)) {
-      if (isString(paneId)) {
-        const paneInstances = this._instances.get(paneId)
-        if (isValid(paneInstances)) {
-          const instance = paneInstances.find(ins => ins.name === name)
-          if (isValid(instance)) {
-            this._addTask(paneId, instance)
-          }
-        }
-      } else {
-        this._instances.forEach((paneInstances, paneId) => {
-          const instance = paneInstances.find(ins => ins.name === name)
-          if (isValid(instance)) {
-            this._addTask(paneId, instance)
-          }
-        })
-      }
-    } else {
-      this._instances.forEach((paneInstances, paneId) => {
-        paneInstances.forEach(instance => {
-          this._addTask(paneId, instance)
-        })
+  calcInstance (filter: IndicatorFilter): void {
+    const filterMap = this.getInstanceByFilter(filter)
+    filterMap.forEach((indicators, paneId) => {
+      indicators.forEach(indicator => {
+        this._addTask(paneId, indicator)
       })
-    }
-  }
-
-  getInstanceByPaneId (paneId?: string, name?: string): Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
-    const createMapping: ((instances: IndicatorImp[]) => Map<string, Indicator>) = (instances: IndicatorImp[]) => {
-      const mapping = new Map<string, Indicator>()
-      instances.forEach(ins => {
-        mapping.set(ins.name, ins)
-      })
-      return mapping
-    }
-
-    if (isString(paneId)) {
-      const paneInstances = this._instances.get(paneId) ?? []
-      if (isString(name)) {
-        return paneInstances?.find(ins => ins.name === name) ?? null
-      }
-      return createMapping(paneInstances)
-    }
-    const mapping = new Map<string, Map<string, Indicator>>()
-    this._instances.forEach((instances, paneId) => {
-      mapping.set(paneId, createMapping(instances))
     })
-    return mapping
   }
 
   synchronizeSeriesPrecision (indicator?: IndicatorImp): void {
@@ -194,10 +173,10 @@ export default class IndicatorStore {
     }
   }
 
-  override (indicator: IndicatorCreate, paneId: Nullable<string>): boolean {
-    const { name } = indicator
+  override (indicator: IndicatorCreate): boolean {
+    const { name, paneId } = indicator
     let instances = new Map<string, IndicatorImp[]>()
-    if (paneId !== null) {
+    if (isValid(paneId)) {
       const paneInstances = this._instances.get(paneId)
       if (isValid(paneInstances)) {
         instances.set(paneId, paneInstances)

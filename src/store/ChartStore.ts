@@ -21,7 +21,6 @@ import { getDefaultStyles, type Styles, type TooltipLegend } from '../common/Sty
 import { isArray, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 import type LoadDataCallback from '../common/LoadDataCallback'
 import { type LoadDataParams, LoadDataType } from '../common/LoadDataCallback'
-import type LoadMoreCallback from '../common/LoadMoreCallback'
 import { ActionType } from '../common/Action'
 
 import { getDefaultCustomApi, type CustomApi, defaultLocale, type Options } from '../Options'
@@ -73,13 +72,6 @@ export default class ChartStore {
    * Data source
    */
   private _dataList: KLineData[] = []
-
-  /**
-   * Load more data callback
-   * Since v9.8.0 deprecated, since v10 removed
-   * @deprecated
-   */
-  private _loadMoreCallback: Nullable<LoadMoreCallback> = null
 
   /**
    * Load data callback
@@ -290,21 +282,10 @@ export default class ChartStore {
       if (adjustFlag) {
         this._timeScaleStore.adjustVisibleRange()
         this._tooltipStore.recalculateCrosshair(true)
-        this._indicatorStore.calcInstance()
+        this._indicatorStore.calcInstance({})
         this._chart.adjustPaneViewport(false, true, true, true)
       }
       this._actionStore.execute(ActionType.OnDataReady)
-    }
-  }
-
-  setLoadMoreCallback (callback: LoadMoreCallback): void {
-    this._loadMoreCallback = callback
-  }
-
-  executeLoadMoreCallback (timestamp: Nullable<number>): void {
-    if (this._forwardMore && !this._loading && isValid(this._loadMoreCallback)) {
-      this._loading = true
-      this._loadMoreCallback(timestamp)
     }
   }
 

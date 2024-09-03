@@ -312,7 +312,6 @@ export default class TimeScaleStore {
     // More processing and loading, more loading if there are callback methods and no data is being loaded
     if (from === 0) {
       const firstData = dataList[0]
-      this._chartStore.executeLoadMoreCallback(firstData?.timestamp ?? null)
       this._chartStore.executeLoadDataCallback({
         type: LoadDataType.Forward,
         data: firstData ?? null

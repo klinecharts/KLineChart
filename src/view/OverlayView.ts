@@ -392,7 +392,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     const hoverInstanceInfo = overlayStore.getHoverInstanceInfo()
     const clickInstanceInfo = overlayStore.getClickInstanceInfo()
     const overlays = this.getCompleteOverlays(overlayStore, paneId)
-    const paneIndicators = chartStore.getIndicatorStore().getInstances(paneId)
+    const paneIndicators = chartStore.getIndicatorStore().getInstanceByPaneId(paneId)
     const overlayPrecision = paneIndicators.reduce((prev, indicator) => {
       const precision = indicator.precision
       prev[indicator.name] = precision
@@ -512,7 +512,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   }
 
   protected getCompleteOverlays (overlayStore: OverlayStore, paneId: string): OverlayImp[] {
-    return overlayStore.getInstances(paneId)
+    return overlayStore.getInstanceByPaneId(paneId)
   }
 
   protected getProgressOverlay (info: ProgressOverlayInfo, paneId: string): Nullable<OverlayImp> {

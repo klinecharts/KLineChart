@@ -22,7 +22,6 @@ import { UpdateLevel } from './common/Updater'
 import { type Styles } from './common/Styles'
 import type Crosshair from './common/Crosshair'
 import { ActionType, type ActionCallback } from './common/Action'
-import type LoadMoreCallback from './common/LoadMoreCallback'
 import type LoadDataCallback from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
@@ -51,8 +50,8 @@ import { type PaneOptions, PanePosition, PANE_DEFAULT_HEIGHT, PaneIdConstants } 
 import type AxisImp from './component/Axis'
 import { AxisPosition, type Axis } from './component/Axis'
 
-import { type Indicator, type IndicatorCreate } from './component/Indicator'
-import { type Overlay, type OverlayCreate, type OverlayRemove } from './component/Overlay'
+import { type IndicatorFilter, type Indicator, type IndicatorCreate } from './component/Indicator'
+import { type OverlayFilter, type Overlay, type OverlayCreate } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
 
@@ -94,27 +93,17 @@ export interface Chart {
   getVisibleRange: () => VisibleRange
   clearData: () => void
   getDataList: () => KLineData[]
-  applyNewData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
-  /**
-   * @deprecated
-   * Since v9.8.0 deprecated, since v10 removed
-   */
-  applyMoreData: (dataList: KLineData[], more?: boolean, callback?: () => void) => void
-  updateData: (data: KLineData, callback?: () => void) => void
-  /**
-   * @deprecated
-   * Since v9.8.0 deprecated, since v10 removed
-   */
-  loadMore: (cb: LoadMoreCallback) => void
+  applyNewData: (dataList: KLineData[], more?: boolean) => void
+  updateData: (data: KLineData) => void
   setLoadDataCallback: (cb: LoadDataCallback) => void
-  createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions, callback?: () => void) => Nullable<string>
-  overrideIndicator: (override: IndicatorCreate, paneId?: string, callback?: () => void) => void
-  getIndicatorByPaneId: (paneId?: string, name?: string) => Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>>
-  removeIndicator: (paneId: string, name?: string) => void
-  createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>, paneId?: string) => Nullable<string> | Array<Nullable<string>>
-  getOverlayById: (id: string) => Nullable<Overlay>
+  createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
+  overrideIndicator: (override: IndicatorCreate) => void
+  getIndicators: (filter?: IndicatorFilter) => Map<string, Indicator[]>
+  removeIndicator: (filter?: IndicatorFilter) => void
+  createOverlay: (value: string | OverlayCreate | Array<string | OverlayCreate>) => Nullable<string> | Array<Nullable<string>>
+  getOverlays: (filter?: OverlayFilter) => Map<string, Overlay[]>
   overrideOverlay: (override: Partial<OverlayCreate>) => void
-  removeOverlay: (remove?: string | OverlayRemove) => void
+  removeOverlay: (filter?: OverlayFilter) => void
   setPaneOptions: (options: PaneOptions) => void
   setZoomEnabled: (enabled: boolean) => void
   isZoomEnabled: () => boolean
@@ -405,11 +394,12 @@ export default class ChartImp implements Chart {
   }
 
   private _setPaneOptions (options: PaneOptions, forceShouldAdjust: boolean): void {
-    if (isString(options.id)) {
-      const pane = this.getDrawPaneById(options.id)
-      let shouldMeasureHeight = false
-      if (pane !== null) {
-        let shouldAdjust = forceShouldAdjust
+    let shouldMeasureHeight = false
+    let shouldAdjust = forceShouldAdjust
+    for (const pane of this._drawPanes) {
+      const paneIdValid = isValid(options.id)
+      const isSpecify = paneIdValid && pane.getId() === options.id
+      if (isSpecify || !paneIdValid) {
         if (options.id !== PaneIdConstants.CANDLE && isNumber(options.height) && options.height > 0) {
           const minHeight = Math.max(options.minHeight ?? pane.getOptions().minHeight, 0)
           const height = Math.max(minHeight, options.height)
@@ -417,14 +407,17 @@ export default class ChartImp implements Chart {
           shouldAdjust = true
           shouldMeasureHeight = true
         }
-        if (isString(options.axis)) {
+        if (isValid(options.axis)) {
           shouldAdjust = true
         }
         pane.setOptions(options)
-        if (shouldAdjust) {
-          this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
+        if (isSpecify) {
+          break
         }
       }
+    }
+    if (shouldAdjust) {
+      this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
     }
   }
 
@@ -500,7 +493,7 @@ export default class ChartImp implements Chart {
       this._drawPanes.forEach(pane => {
         const id = pane.getId()
         const paneIndicatorData = {}
-        const indicators = this._chartStore.getIndicatorStore().getInstances(id)
+        const indicators = this._chartStore.getIndicatorStore().getInstanceByPaneId(id)
         indicators.forEach(indicator => {
           const result = indicator.result
           paneIndicatorData[indicator.name] = result[crosshair.dataIndex ?? result.length - 1]
@@ -671,46 +664,19 @@ export default class ChartImp implements Chart {
     return this._chartStore.getDataList()
   }
 
-  applyNewData (data: KLineData[], more?: boolean, callback?: () => void): void {
-    if (isValid(callback)) {
-      logWarn('applyNewData', '', 'param `callback` has been deprecated since version 9.8.0, use `subscribeAction(\'onDataReady\')` instead.')
-    }
+  applyNewData (data: KLineData[], more?: boolean): void {
     this._chartStore.addData(data, LoadDataType.Init, more)
-    callback?.()
   }
 
-  /**
-   * @deprecated
-   * Since v9.8.0 deprecated, since v10 removed
-   */
-  applyMoreData (data: KLineData[], more?: boolean, callback?: () => void): void {
-    logWarn('', '', 'Api `applyMoreData` has been deprecated since version 9.8.0.')
-    this._chartStore.addData(data, LoadDataType.Forward, more ?? true)
-    callback?.()
-  }
-
-  updateData (data: KLineData, callback?: () => void): void {
-    if (isValid(callback)) {
-      logWarn('updateData', '', 'param `callback` has been deprecated since version 9.8.0, use `subscribeAction(\'onDataReady\')` instead.')
-    }
+  updateData (data: KLineData): void {
     this._chartStore.addData(data)
-    callback?.()
-  }
-
-  /**
-   * @deprecated
-   * Since v9.8.0 deprecated, since v10 removed
-   */
-  loadMore (cb: LoadMoreCallback): void {
-    logWarn('', '', 'Api `loadMore` has been deprecated since version 9.8.0, use `setLoadDataCallback` instead.')
-    this._chartStore.setLoadMoreCallback(cb)
   }
 
   setLoadDataCallback (cb: LoadDataCallback): void {
     this._chartStore.setLoadDataCallback(cb)
   }
 
-  createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>, callback?: () => void): Nullable<string> {
+  createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>): Nullable<string> {
     const indicator = isString(value) ? { name: value } : value
     if (getIndicatorClass(indicator.name) === null) {
       logWarn('createIndicator', 'value', 'indicator not supported, you may need to use registerIndicator to add one!!!')
@@ -732,40 +698,46 @@ export default class ChartImp implements Chart {
       const result = this._chartStore.getIndicatorStore().addInstance(indicator, paneId, isStack ?? false)
       if (result) {
         this.adjustPaneViewport(true, true, true, true, true)
-        callback?.()
       }
     }
     return paneId ?? null
   }
 
-  overrideIndicator (override: IndicatorCreate, paneId?: Nullable<string>, callback?: () => void): void {
-    const result = this._chartStore.getIndicatorStore().override(override, paneId ?? null)
+  overrideIndicator (override: IndicatorCreate): void {
+    const result = this._chartStore.getIndicatorStore().override(override)
     if (result) {
       this.adjustPaneViewport(false, false, true)
-      callback?.()
     }
   }
 
-  getIndicatorByPaneId (paneId?: string, name?: string): Nullable<Indicator> | Nullable<Map<string, Indicator>> | Map<string, Map<string, Indicator>> {
-    return this._chartStore.getIndicatorStore().getInstanceByPaneId(paneId, name)
+  getIndicators (filter?: IndicatorFilter): Map<string, Indicator[]> {
+    return this._chartStore.getIndicatorStore().getInstanceByFilter(filter ?? {})
   }
 
-  removeIndicator (paneId: string, name?: string): void {
+  removeIndicator (filter?: IndicatorFilter): void {
     const indicatorStore = this._chartStore.getIndicatorStore()
-    const removed = indicatorStore.removeInstance(paneId, name)
+    const removed = indicatorStore.removeInstance(filter ?? {})
     if (removed) {
       let shouldMeasureHeight = false
-      if (paneId !== PaneIdConstants.CANDLE) {
+      const paneIds: string[] = []
+      this._drawPanes.forEach(pane => {
+        const paneId = pane.getId()
+        if (paneId !== PaneIdConstants.CANDLE && paneId !== PaneIdConstants.X_AXIS) {
+          paneIds.push(paneId)
+        }
+      })
+
+      paneIds.forEach(paneId => {
         if (!indicatorStore.hasInstances(paneId)) {
-          const pane = this.getDrawPaneById(paneId)
-          const index = this._drawPanes.findIndex(p => p.getId() === paneId)
-          if (pane !== null) {
+          const index = this._drawPanes.findIndex(pane => pane.getId() === paneId)
+          const pane = this._drawPanes[index]
+          if (isValid(pane)) {
             shouldMeasureHeight = true
             const separatorPane = this._separatorPanes.get(pane)
             if (isValid(separatorPane)) {
               const topPane = separatorPane?.getTopPane()
               for (const item of this._separatorPanes) {
-                if (item[1].getTopPane().getId() === pane.getId()) {
+                if (item[1].getTopPane().getId() === paneId) {
                   item[1].setTopPane(topPane)
                   break
                 }
@@ -786,56 +758,57 @@ export default class ChartImp implements Chart {
             this._separatorPanes.delete(firstPane)
           }
         }
-      }
+      })
       this.adjustPaneViewport(shouldMeasureHeight, true, true, true, true)
     }
   }
 
-  createOverlay (value: string | OverlayCreate | Array<string | OverlayCreate>, paneId?: string): Nullable<string> | Array<Nullable<string>> {
-    let overlays: OverlayCreate[] = []
+  createOverlay (value: string | OverlayCreate | Array<string | OverlayCreate>): Nullable<string> | Array<Nullable<string>> {
+    const overlays: OverlayCreate[] = []
+    const appointPaneFlags: boolean[] = []
+
+    const build: ((overlay: OverlayCreate) => void) = overlay => {
+      if (!isValid(overlay.paneId) || this.getDrawPaneById(overlay.paneId) === null) {
+        overlay.paneId = PaneIdConstants.CANDLE
+        appointPaneFlags.push(false)
+      } else {
+        appointPaneFlags.push(true)
+      }
+      overlays.push(overlay)
+    }
+
     if (isString(value)) {
-      overlays = [{ name: value }]
+      build({ name: value })
     } else if (isArray<Array<string | OverlayCreate>>(value)) {
-      overlays = (value as Array<string | OverlayCreate>).map((v: string | OverlayCreate) => {
+      (value as Array<string | OverlayCreate>).forEach(v => {
+        let overlay: OverlayCreate
         if (isString(v)) {
-          return { name: v }
+          overlay = { name: v }
+        } else {
+          overlay = v
         }
-        return v
+        build(overlay)
       })
     } else {
-      const overlay = value as OverlayCreate
-      overlays = [overlay]
+      build(value as OverlayCreate)
     }
-    let appointPaneFlag = true
-    if (!isValid(paneId) || this.getDrawPaneById(paneId) === null) {
-      paneId = PaneIdConstants.CANDLE
-      appointPaneFlag = false
-    }
-    const ids = this._chartStore.getOverlayStore().addInstances(overlays, paneId, appointPaneFlag)
+    const ids = this._chartStore.getOverlayStore().addInstances(overlays, appointPaneFlags)
     if (isArray(value)) {
       return ids
     }
     return ids[0]
   }
 
-  getOverlayById (id: string): Nullable<Overlay> {
-    return this._chartStore.getOverlayStore().getInstanceById(id) ?? null
+  getOverlays (filter?: OverlayFilter): Map<string, Overlay[]> {
+    return this._chartStore.getOverlayStore().getInstanceByFilter(filter ?? {})
   }
 
   overrideOverlay (override: Partial<OverlayCreate>): void {
     this._chartStore.getOverlayStore().override(override)
   }
 
-  removeOverlay (remove?: string | OverlayRemove): void {
-    let overlayRemove: OverlayRemove
-    if (isValid(remove)) {
-      if (isString(remove)) {
-        overlayRemove = { id: remove }
-      } else {
-        overlayRemove = remove
-      }
-    }
-    this._chartStore.getOverlayStore().removeInstance(overlayRemove!)
+  removeOverlay (filter?: OverlayFilter): void {
+    this._chartStore.getOverlayStore().removeInstance(filter ?? {})
   }
 
   setPaneOptions (options: PaneOptions): void {

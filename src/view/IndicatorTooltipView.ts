@@ -58,7 +58,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       const customApi = chartStore.getCustomApi()
       const thousandsSeparator = chartStore.getThousandsSeparator()
       const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
-      const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
       const activeIcon = chartStore.getTooltipStore().getActiveIcon()
       const defaultStyles = chartStore.getStyles().indicator
       const { offsetLeft, offsetTop, offsetRight } = defaultStyles.tooltip
@@ -93,7 +93,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       indicators.forEach(indicator => {
         let prevRowHeight = 0
         const coordinate = { x: left, y: top }
-        const { name, calcParamsText, values: legends, icons } = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, styles)
+        const { name, calcParamsText, legends, icons } = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, styles)
         const nameValid = name.length > 0
         const legendValid = legends.length > 0
         if (nameValid || legendValid) {
@@ -276,7 +276,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
       calcParamsText = `(${calcParams.join(',')})`
     }
 
-    const tooltipData: IndicatorTooltipData = { name, calcParamsText, values: [], icons: tooltipStyles.icons }
+    const tooltipData: IndicatorTooltipData = { name, calcParamsText, legends: [], icons: tooltipStyles.icons }
 
     const dataIndex = crosshair.dataIndex!
     const result = indicator.result ?? []
@@ -297,14 +297,14 @@ export default class IndicatorTooltipView extends View<YAxis> {
           legends.push({ title: { text: figure.title, color }, value: { text: formatFoldDecimal(formatThousands((value ?? tooltipStyles.defaultValue) as string, thousandsSeparator), decimalFoldThreshold), color } })
         }
       })
-      tooltipData.values = legends
+      tooltipData.legends = legends
     }
 
     if (indicator.createTooltipDataSource !== null) {
       const widget = this.getWidget()
       const pane = widget.getPane()
       const chartStore = pane.getChart().getChartStore()
-      const { name: customName, calcParamsText: customCalcParamsText, values: customLegends, icons: customIcons } = indicator.createTooltipDataSource({
+      const { name: customName, calcParamsText: customCalcParamsText, legends: customLegends, icons: customIcons } = indicator.createTooltipDataSource({
         kLineDataList: dataList,
         indicator,
         visibleRange: chartStore.getTimeScaleStore().getVisibleRange(),
@@ -342,7 +342,7 @@ export default class IndicatorTooltipView extends View<YAxis> {
           value.text = formatFoldDecimal(formatThousands(value.text, thousandsSeparator), decimalFoldThreshold)
           optimizedLegends.push({ title, value })
         })
-        tooltipData.values = optimizedLegends
+        tooltipData.legends = optimizedLegends
       }
     }
     return tooltipData

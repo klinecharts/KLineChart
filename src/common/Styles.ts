@@ -92,21 +92,9 @@ export interface TextStyle extends Padding {
   backgroundColor: string | CanvasGradient
 }
 
-/**
- * @deprecated
- * Starting from v10, it will be deleted
- */
-export type RectTextStyle = TextStyle
-
 export interface StateTextStyle extends TextStyle {
   show: boolean
 }
-
-/**
- * @deprecated
- * Starting from v10, it will be deleted
- */
-export type StateRectTextStyle = StateTextStyle
 
 export type LastValueMarkTextStyle = Omit<StateTextStyle, 'backgroundColor'>
 
@@ -145,22 +133,10 @@ export interface TooltipLegendChild {
   color: string
 }
 
-/**
- * @deprecated
- * Starting from v10, it will be deleted
- */
-export type TooltipDataChild = TooltipLegendChild
-
 export interface TooltipLegend {
   title: string | TooltipLegendChild
   value: string | TooltipLegendChild
 }
-
-/**
- * @deprecated
- * Starting from v10, it will be deleted
- */
-export type TooltipData = TooltipLegend
 
 export enum TooltipIconPosition {
   Left = 'left',
@@ -349,11 +325,6 @@ export interface OverlayStyle {
   circle: PolygonStyle
   arc: LineStyle
   text: TextStyle
-  /**
-   * @deprecated
-   * Starting from v10, it will be deleted
-   */
-  rectText: TextStyle
   [key: string]: any
 }
 
@@ -753,8 +724,7 @@ function getDefaultOverlayStyle (): OverlayStyle {
       size: 1,
       dashedValue: [2, 2]
     },
-    text: text(),
-    rectText: text()
+    text: text()
   }
 }
 

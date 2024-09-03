@@ -32,7 +32,7 @@ import { PaneIdConstants } from '../pane/types'
 
 export type YAxisTemplate = AxisTemplate
 
-const TICK_COUNT = 10
+const TICK_COUNT = 8
 
 export interface YAxis extends Axis, YAxisTemplate {
   isFromZero: () => boolean
@@ -109,7 +109,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     let specifyMin = Number.MAX_SAFE_INTEGER
     let specifyMax = Number.MIN_SAFE_INTEGER
     let indicatorPrecision = Number.MAX_SAFE_INTEGER
-    const indicators = chartStore.getIndicatorStore().getInstances(parent.getId())
+    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(parent.getId())
     indicators.forEach(indicator => {
       if (!shouldOhlc) {
         shouldOhlc = indicator.shouldOhlc ?? false
@@ -287,7 +287,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
     const chartStore = pane.getChart().getChartStore()
     const customApi = chartStore.getCustomApi()
     const optimalTicks: AxisTick[] = []
-    const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+    const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
     const thousandsSeparator = chartStore.getThousandsSeparator()
     const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
     let precision = 0
@@ -362,7 +362,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       crosshairStyles.horizontal.show &&
       crosshairStyles.horizontal.text.show
     ) {
-      const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
       let indicatorPrecision = 0
       let shouldFormatBigNumber = false
       indicators.forEach(indicator => {

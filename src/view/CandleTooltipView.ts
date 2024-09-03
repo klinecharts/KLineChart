@@ -56,7 +56,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       const thousandsSeparator = chartStore.getThousandsSeparator()
       const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
       const activeIcon = chartStore.getTooltipStore().getActiveIcon()
-      const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
       const dateTimeFormat = chartStore.getTimeScaleStore().getDateTimeFormat()
       const styles = chartStore.getStyles()
       const candleStyles = styles.candle
@@ -272,9 +272,9 @@ export default class CandleTooltipView extends IndicatorTooltipView {
       if (isDrawIndicatorTooltip) {
         ctx.font = createFont(indicatorTextSize, indicatorTextWeight, indicatorTextFamily)
         indicators.forEach(indicator => {
-          const tooltipDataValues = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, indicatorStyles).values ?? []
-          indicatorLegendsArray.push(tooltipDataValues)
-          tooltipDataValues.forEach(data => {
+          const tooltipDataLegends = this.getIndicatorTooltipData(dataList, crosshair, indicator, customApi, thousandsSeparator, decimalFoldThreshold, indicatorStyles).legends ?? []
+          indicatorLegendsArray.push(tooltipDataLegends)
+          tooltipDataLegends.forEach(data => {
             const title = data.title as TooltipLegendChild
             const value = data.value as TooltipLegendChild
             const text = `${title.text}${value.text}`

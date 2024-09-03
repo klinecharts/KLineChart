@@ -284,7 +284,7 @@ export interface Overlay {
 export type OverlayTemplate = ExcludePickPartial<Omit<Overlay, 'id' | 'groupId' | 'paneId' | 'points' | 'currentStep'>, 'name'>
 
 export type OverlayCreate = ExcludePickPartial<Omit<Overlay, 'currentStep' | 'totalStep' | 'createPointFigures' | 'createXAxisFigures' | 'createYAxisFigures' | 'performEventPressedMove' | 'performEventMoveForDrawing'>, 'name'>
-export type OverlayRemove = Partial<Pick<Overlay, 'id' | 'groupId' | 'name'>>
+export type OverlayFilter = Partial<Pick<Overlay, 'id' | 'groupId' | 'name' | 'paneId'>>
 export type OverlayInnerConstructor = new () => OverlayImp
 export type OverlayConstructor = new () => Overlay
 

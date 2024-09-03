@@ -42,7 +42,7 @@ export default class OverlayXAxisView extends OverlayYAxisView<XAxis> {
   }
 
   override getCompleteOverlays (overlayStore: OverlayStore): OverlayImp[] {
-    return overlayStore.getInstances()
+    return overlayStore.getInstanceByPaneId()
   }
 
   override getProgressOverlay (info: ProgressOverlayInfo): OverlayImp {

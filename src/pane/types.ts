@@ -14,11 +14,6 @@
 
 import { type AxisCreate } from '../component/Axis'
 
-export interface PaneGap {
-  top?: number
-  bottom?: number
-}
-
 export const enum PanePosition {
   Top = 'top',
   Bottom = 'bottom'

@@ -85,7 +85,7 @@ export interface IndicatorTooltipData {
   name: string
   calcParamsText: string
   icons: TooltipIconStyle[]
-  values: TooltipLegend[]
+  legends: TooltipLegend[]
 }
 
 export interface IndicatorCreateTooltipDataSourceParams<D> {
@@ -221,7 +221,9 @@ export interface Indicator<D = any> {
 
 export type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name' | 'calc'>
 
-export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name'>
+export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name'> & { paneId?: string }
+
+export type IndicatorFilter = Partial<Pick<Indicator, 'name'>> & { paneId?: string }
 
 export type IndicatorConstructor<D = any> = new () => IndicatorImp<D>
 

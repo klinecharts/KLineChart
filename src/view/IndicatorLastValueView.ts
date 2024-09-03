@@ -35,7 +35,7 @@ export default class IndicatorLastValueView extends View<YAxis> {
       const yAxis = pane.getAxisComponent()
       const dataList = chartStore.getDataList()
       const dataIndex = dataList.length - 1
-      const indicators = chartStore.getIndicatorStore().getInstances(pane.getId())
+      const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
       const thousandsSeparator = chartStore.getThousandsSeparator()
       const decimalFoldThreshold = chartStore.getDecimalFoldThreshold()
       indicators.forEach(indicator => {

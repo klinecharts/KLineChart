@@ -20,7 +20,7 @@ import { createId } from '../common/utils/id'
 import { LoadDataType } from '../common/LoadDataCallback'
 
 import type OverlayImp from '../component/Overlay'
-import { type OverlayCreate, type OverlayRemove, OVERLAY_ID_PREFIX } from '../component/Overlay'
+import { type OverlayCreate, OVERLAY_ID_PREFIX, type OverlayFilter } from '../component/Overlay'
 
 import { getOverlayInnerClass } from '../extension/overlay/index'
 
@@ -50,7 +50,7 @@ export interface EventOverlayInfo {
 export default class OverlayStore {
   private readonly _chartStore: ChartStore
 
-  private _instances = new Map<string, OverlayImp[]>()
+  private readonly _instances = new Map<string, OverlayImp[]>()
 
   /**
    * Overlay information in painting
@@ -97,20 +97,48 @@ export default class OverlayStore {
     this._chartStore = chartStore
   }
 
-  getInstanceById (id: string): Nullable<OverlayImp> {
-    for (const entry of this._instances) {
-      const paneOverlays = entry[1]
-      const overlay = paneOverlays.find(o => o.id === id)
-      if (isValid(overlay)) {
-        return overlay
-      }
+  getInstanceByFilter (filter: OverlayFilter): Map<string, OverlayImp[]> {
+    const { id, groupId, paneId, name } = filter
+    const find: ((overlays: OverlayImp[]) => OverlayImp[]) = (overlays) => {
+      return overlays.filter(overlay => {
+        if (isValid(id)) {
+          return overlay.id === id
+        } else {
+          if (isValid(groupId)) {
+            return overlay.groupId === groupId && (!isValid(name) || overlay.name === name)
+          }
+        }
+        return !isValid(name) || overlay.name === name
+      })
     }
-    if (this._progressInstanceInfo !== null) {
-      if (this._progressInstanceInfo.instance.id === id) {
-        return this._progressInstanceInfo.instance
-      }
+
+    const map = new Map<string, OverlayImp[]>()
+    if (isValid(paneId)) {
+      const overlays = this.getInstanceByPaneId(paneId)
+      map.set(paneId, find(overlays))
+    } else {
+      this._instances.forEach((overlays, paneId) => {
+        map.set(paneId, find(overlays))
+      })
     }
-    return null
+    const progressOverlay = this._progressInstanceInfo?.instance
+    if (isValid(progressOverlay)) {
+      const paneOverlays = map.get(progressOverlay.paneId) ?? []
+      paneOverlays.push(progressOverlay)
+      map.set(progressOverlay.paneId, paneOverlays)
+    }
+    return map
+  }
+
+  getInstanceByPaneId (paneId?: string): OverlayImp[] {
+    if (!isString(paneId)) {
+      let overlays: OverlayImp[] = []
+      this._instances.forEach(paneOverlays => {
+        overlays = overlays.concat(paneOverlays)
+      })
+      return overlays
+    }
+    return this._instances.get(paneId) ?? []
   }
 
   private _sort (paneId?: string): void {
@@ -123,39 +151,55 @@ export default class OverlayStore {
     }
   }
 
-  addInstances (overlays: OverlayCreate[], paneId: string, appointPaneFlag: boolean): Array<Nullable<string>> {
-    const ids = overlays.map(overlay => {
-      const id = overlay.id ?? createId(OVERLAY_ID_PREFIX)
-      if (this.getInstanceById(id) === null) {
-        const OverlayClazz = getOverlayInnerClass(overlay.name)
-        if (OverlayClazz !== null) {
-          const instance = new OverlayClazz()
-          instance.override({ paneId })
-          const groupId = overlay.groupId ?? id
-          overlay.id = id
-          overlay.paneId = paneId
-          overlay.groupId = groupId
-          instance.override(overlay)
-          if (instance.isDrawing()) {
-            this._progressInstanceInfo = { paneId, instance, appointPaneFlag }
-          } else {
-            if (!this._instances.has(paneId)) {
-              this._instances.set(paneId, [])
-            }
-            this._instances.get(paneId)?.push(instance)
+  addInstances (overlays: OverlayCreate[], appointPaneFlags: boolean[]): Array<Nullable<string>> {
+    const updatePaneIds: string[] = []
+    const ids = overlays.map((overlay, index) => {
+      if (isValid(overlay.id)) {
+        let findOverlay: Nullable<OverlayImp> = null
+        for (const [, overlays] of this._instances) {
+          const overlay = overlays.find(o => o.id === overlay.id)
+          if (isValid(overlay)) {
+            findOverlay = overlay
+            break
           }
-          if (instance.isStart()) {
-            instance.onDrawStart?.(({ overlay: instance }))
-          }
-          return id
         }
+        if (isValid(findOverlay)) {
+          return overlay.id
+        }
+      }
+      const OverlayClazz = getOverlayInnerClass(overlay.name)
+      if (isValid(OverlayClazz)) {
+        const id = overlay.id ?? createId(OVERLAY_ID_PREFIX)
+        const instance = new OverlayClazz()
+        const groupId = overlay.groupId ?? id
+        overlay.id = id
+        overlay.groupId = groupId
+        instance.override(overlay)
+        const paneId = instance.paneId
+        if (!updatePaneIds.includes(paneId)) {
+          updatePaneIds.push(paneId)
+        }
+        if (instance.isDrawing()) {
+          this._progressInstanceInfo = { paneId, instance, appointPaneFlag: appointPaneFlags[index] }
+        } else {
+          if (!this._instances.has(paneId)) {
+            this._instances.set(paneId, [])
+          }
+          this._instances.get(paneId)?.push(instance)
+        }
+        if (instance.isStart()) {
+          instance.onDrawStart?.(({ overlay: instance }))
+        }
+        return id
       }
       return null
     })
-    if (ids.some(id => id !== null)) {
+    if (updatePaneIds.length > 0) {
       this._sort()
       const chart = this._chartStore.getChart()
-      chart.updatePane(UpdateLevel.Overlay, paneId)
+      updatePaneIds.forEach(paneId => {
+        chart.updatePane(UpdateLevel.Overlay, paneId)
+      })
       chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.X_AXIS)
     }
     return ids
@@ -189,135 +233,61 @@ export default class OverlayStore {
     }
   }
 
-  getInstances (paneId?: string): OverlayImp[] {
-    if (!isString(paneId)) {
-      let instances: OverlayImp[] = []
-      this._instances.forEach(paneInstances => {
-        instances = instances.concat(paneInstances)
-      })
-      return instances
-    }
-    return this._instances.get(paneId) ?? []
-  }
-
   override (overlay: Partial<OverlayCreate>): void {
-    const { id, groupId, name } = overlay
-    let updateFlag = false
     let sortFlag = false
 
-    const setFlag: (instance: OverlayImp) => void = (instance: OverlayImp) => {
-      instance.override(overlay)
-      const { sort, draw } = instance.shouldUpdate()
-
-      if (draw) {
-        updateFlag = true
-      }
-      if (sort) {
-        sortFlag = true
-      }
-    }
-
-    if (isString(id)) {
-      const instance = this.getInstanceById(id)
-      if (instance !== null) {
-        setFlag(instance)
-      }
-    } else {
-      const nameValid = isString(name)
-      const groupIdValid = isString(groupId)
-      this._instances.forEach(paneInstances => {
-        paneInstances.forEach(instance => {
-          if (
-            (nameValid && instance.name === name) ||
-            (groupIdValid && instance.groupId === groupId) ||
-            (!nameValid && !groupIdValid)
-          ) {
-            setFlag(instance)
-          }
-        })
-      })
-      if (this._progressInstanceInfo !== null) {
-        const progressInstance = this._progressInstanceInfo.instance
-        if (
-          (nameValid && progressInstance.name === name) ||
-          (groupIdValid && progressInstance.groupId === groupId) ||
-          (!nameValid && !groupIdValid)
-        ) {
-          setFlag(progressInstance)
+    const updatePaneIds: string[] = []
+    const filterMap = this.getInstanceByFilter(overlay)
+    filterMap.forEach((instances, paneId) => {
+      instances.forEach(instance => {
+        instance.override(overlay)
+        const { sort, draw } = instance.shouldUpdate()
+        if (sort) {
+          sortFlag = true
         }
-      }
-    }
+        if (sort || draw) {
+          if (!updatePaneIds.includes(paneId)) {
+            updatePaneIds.push(paneId)
+          }
+        }
+      })
+    })
+
     if (sortFlag) {
       this._sort()
     }
-    if (updateFlag) {
-      this._chartStore.getChart().updatePane(UpdateLevel.Overlay)
+    if (updatePaneIds.length > 0) {
+      const chart = this._chartStore.getChart()
+      updatePaneIds.forEach(paneId => {
+        chart.updatePane(UpdateLevel.Overlay, paneId)
+      })
+      chart.updatePane(UpdateLevel.Overlay, PaneIdConstants.X_AXIS)
     }
   }
 
-  removeInstance (overlayRemove?: OverlayRemove): void {
-    const match: ((remove: OverlayRemove, overlay: OverlayImp) => boolean) = (remove: OverlayRemove, overlay: OverlayImp) => {
-      if (isString(remove.id)) {
-        if (overlay.id !== remove.id) {
-          return false
-        }
-      } else {
-        if (isString(remove.groupId)) {
-          if (overlay.groupId !== remove.groupId) {
-            return false
-          }
-        } else {
-          if (isString(remove.name)) {
-            if (overlay.name !== remove.name) {
-              return false
-            }
-          }
-        }
-      }
-      return true
-    }
-
+  removeInstance (filter: OverlayFilter): void {
     const updatePaneIds: string[] = []
-    const overlayRemoveValid = isValid(overlayRemove)
-    if (this._progressInstanceInfo !== null) {
-      const { instance } = this._progressInstanceInfo
-      if (
-        !overlayRemoveValid ||
-        (overlayRemoveValid && match(overlayRemove, instance))
-      ) {
-        updatePaneIds.push(this._progressInstanceInfo.paneId)
-        instance.onRemoved?.({ overlay: instance })
-        this._progressInstanceInfo = null
-      }
-    }
-    if (overlayRemoveValid) {
-      const instances = new Map<string, OverlayImp[]>()
-      for (const entry of this._instances) {
-        const paneInstances = entry[1]
-        const newPaneInstances = paneInstances.filter(instance => {
-          if (match(overlayRemove, instance)) {
-            if (!updatePaneIds.includes(entry[0])) {
-              updatePaneIds.push(entry[0])
-            }
-            instance.onRemoved?.({ overlay: instance })
-            return false
-          }
-          return true
-        })
-        if (newPaneInstances.length > 0) {
-          instances.set(entry[0], newPaneInstances)
+    const filterMap = this.getInstanceByFilter(filter)
+    filterMap.forEach((overlays, paneId) => {
+      const paneOverlays = this.getInstanceByPaneId(paneId)
+      overlays.forEach(overlay => {
+        overlay.onRemoved?.({ overlay })
+        if (!updatePaneIds.includes(paneId)) {
+          updatePaneIds.push(paneId)
         }
-      }
-      this._instances = instances
-    } else {
-      this._instances.forEach((paneInstances, paneId) => {
-        updatePaneIds.push(paneId)
-        paneInstances.forEach(instance => {
-          instance.onRemoved?.({ overlay: instance })
-        })
+        if (overlay.isDrawing()) {
+          this._progressInstanceInfo = null
+        } else {
+          const index = paneOverlays.findIndex(o => o.id === overlay.id)
+          if (index > -1) {
+            paneOverlays.splice(index, 1)
+          }
+        }
+        if (paneOverlays.length === 0) {
+          this._instances.delete(paneId)
+        }
       })
-      this._instances.clear()
-    }
+    })
     if (updatePaneIds.length > 0) {
       const chart = this._chartStore.getChart()
       updatePaneIds.forEach(paneId => {
