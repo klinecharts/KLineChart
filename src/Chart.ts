@@ -396,7 +396,8 @@ export default class ChartImp implements Chart {
   private _setPaneOptions (options: PaneOptions, forceShouldAdjust: boolean): void {
     let shouldMeasureHeight = false
     let shouldAdjust = forceShouldAdjust
-    for (const pane of this._drawPanes) {
+    for (let i = 0; i < this._drawPanes.length; i++) {
+      const pane = this._drawPanes[i]
       const paneIdValid = isValid(options.id)
       const isSpecify = paneIdValid && pane.getId() === options.id
       if (isSpecify || !paneIdValid) {
@@ -438,9 +439,9 @@ export default class ChartImp implements Chart {
 
   getXAxisPane (): XAxisPane { return this._xAxisPane }
 
-  getAllDrawPanes (): DrawPane[] { return this._drawPanes }
+  getDrawPanes (): DrawPane[] { return this._drawPanes }
 
-  getAllSeparatorPanes (): Map<DrawPane, SeparatorPane> { return this._separatorPanes }
+  getSeparatorPanes (): Map<DrawPane, SeparatorPane> { return this._separatorPanes }
 
   adjustPaneViewport (
     shouldMeasureHeight: boolean,
@@ -477,11 +478,9 @@ export default class ChartImp implements Chart {
       const pane = this.getDrawPaneById(paneId)
       pane?.update(level)
     } else {
-      this._separatorPanes.forEach(pane => {
-        pane.update(level)
-      })
       this._drawPanes.forEach(pane => {
         pane.update(level)
+        this._separatorPanes.get(pane)?.update(level)
       })
     }
   }
@@ -1022,11 +1021,9 @@ export default class ChartImp implements Chart {
     this._chartEvent.destroy()
     this._drawPanes.forEach(pane => {
       pane.destroy()
+      this._separatorPanes.get(pane)?.destroy()
     })
     this._drawPanes = []
-    this._separatorPanes.forEach(pane => {
-      pane.destroy()
-    })
     this._separatorPanes.clear()
     this._container.removeChild(this._chartContainer)
   }

@@ -71,7 +71,7 @@ export function isObject (value: any): value is object {
 }
 
 export function isNumber (value: any): value is number {
-  return typeof value === 'number' && !isNaN(value)
+  return typeof value === 'number' && !Number.isNaN(value)
 }
 
 export function isValid<T> (value: T | null | undefined): value is T {

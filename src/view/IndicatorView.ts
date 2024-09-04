@@ -32,7 +32,8 @@ export default class IndicatorView extends CandleBarView {
     const yAxis = pane.getAxisComponent()
     if (!yAxis.isInCandle()) {
       const indicators = chartStore.getIndicatorStore().getInstanceByPaneId(pane.getId())
-      for (const indicator of indicators) {
+      for (let i = 0; i < indicators.length; i++) {
+        const indicator = indicators[i]
         if (indicator.shouldOhlc && indicator.visible) {
           const indicatorStyles = indicator.styles
           const defaultStyles = chartStore.getStyles().indicator

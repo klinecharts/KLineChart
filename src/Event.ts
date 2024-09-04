@@ -606,7 +606,7 @@ export default class Event implements EventHandler {
 
   private _findWidgetByEvent (event: MouseTouchEvent): EventTriggerWidgetInfo {
     const { x, y } = event
-    const separatorPanes = this._chart.getAllSeparatorPanes()
+    const separatorPanes = this._chart.getSeparatorPanes()
     const separatorSize = this._chart.getChartStore().getStyles().separator.size
     for (const [, pane] of separatorPanes) {
       const bounding = pane.getBounding()
@@ -619,10 +619,11 @@ export default class Event implements EventHandler {
       }
     }
 
-    const drawPanes = this._chart.getAllDrawPanes()
+    const drawPanes = this._chart.getDrawPanes()
 
     let pane: Nullable<DrawPane> = null
-    for (const p of drawPanes) {
+    for (let i = 0; i < drawPanes.length; i++) {
+      const p = drawPanes[i]
       const bounding = p.getBounding()
       if (
         x >= bounding.left && x <= bounding.left + bounding.width &&

@@ -29,8 +29,11 @@ export default abstract class ChildrenView extends View<YAxis> {
     const chartStore = pane.getChart().getChartStore()
     const visibleDataList = chartStore.getVisibleDataList()
     const barSpace = chartStore.getTimeScaleStore().getBarSpace()
-    visibleDataList.forEach((data: VisibleData, index: number) => {
-      childCallback(data, barSpace, index)
-    })
+    const dataLength = visibleDataList.length
+    let index = 0
+    while (index < dataLength) {
+      childCallback(visibleDataList[index], barSpace, index)
+      ++index
+    }
   }
 }

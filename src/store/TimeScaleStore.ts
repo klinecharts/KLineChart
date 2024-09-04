@@ -246,7 +246,8 @@ export default class TimeScaleStore {
       }
     })
     this._visibleTimeTickList = []
-    for (const tick of tickList) {
+    for (let i = 0; i < tickList.length; i++) {
+      const tick = tickList[i]
       if (tick.dataIndex >= this._visibleRange.from && tick.dataIndex <= this._visibleRange.to) {
         this._visibleTimeTickList.push(tick)
       }
