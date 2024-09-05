@@ -373,6 +373,8 @@ export default class IndicatorImp<D = any> implements Indicator<D> {
       shortName,
       precision,
       styles,
+      figures,
+      calcParams,
       ...others
     } = indicator
     if (!isString(this.name)) {
@@ -388,6 +390,8 @@ export default class IndicatorImp<D = any> implements Indicator<D> {
       this.styles ??= {}
       merge(this.styles, styles)
     }
+    this.figures = figures ?? this.figures
+    this.calcParams = calcParams ?? this.calcParams
     merge(this, others)
   }
 
