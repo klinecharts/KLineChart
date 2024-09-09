@@ -20,7 +20,7 @@ import type VisibleRange from '../common/VisibleRange'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
 import { type IndicatorStyle, type IndicatorPolygonStyle, type SmoothLineStyle, type RectStyle, type TextStyle, type TooltipIconStyle, type LineStyle, type LineType, type PolygonType, type TooltipLegend } from '../common/Styles'
-import { isNumber, isValid, merge, isBoolean, isString, clone } from '../common/utils/typeChecks'
+import { isNumber, isValid, merge, isBoolean, isString, clone, isFunction } from '../common/utils/typeChecks'
 
 import { type XAxis } from './XAxis'
 import { type YAxis } from './YAxis'
@@ -390,9 +390,14 @@ export default class IndicatorImp<D = any> implements Indicator<D> {
       this.styles ??= {}
       merge(this.styles, styles)
     }
-    this.figures = figures ?? this.figures
-    this.calcParams = calcParams ?? this.calcParams
     merge(this, others)
+    if (isValid(calcParams)) {
+      this.calcParams = calcParams
+      if (isFunction(this.regenerateFigures)) {
+        this.figures = this.regenerateFigures(this.calcParams)
+      }
+    }
+    this.figures = figures ?? this.figures
   }
 
   setSeriesPrecision (precision: number): void {

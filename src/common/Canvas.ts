@@ -61,7 +61,7 @@ export default class Canvas {
   constructor (style: Partial<CSSStyleDeclaration>, listener: DrawListener) {
     this._listener = listener
     this._element = createDom('canvas', style)
-    this._ctx = this._element.getContext('2d', { willReadFrequently: true })!
+    this._ctx = this._element.getContext('2d')!
     isSupportedDevicePixelContentBox().then(result => {
       this._supportedDevicePixelContentBox = result
       if (result) {
@@ -88,14 +88,14 @@ export default class Canvas {
     this._executeListener(() => {
       const width = this._element.clientWidth
       const height = this._element.clientHeight
-      const horizontalPixelRatio = this._nextPixelWidth / width
-      const verticalPixelRatio = this._nextPixelHeight / height
       this._width = width
       this._height = height
       this._pixelWidth = this._nextPixelWidth
       this._pixelHeight = this._nextPixelHeight
       this._element.width = this._nextPixelWidth
       this._element.height = this._nextPixelHeight
+      const horizontalPixelRatio = this._nextPixelWidth / width
+      const verticalPixelRatio = this._nextPixelHeight / height
       this._ctx.scale(horizontalPixelRatio, verticalPixelRatio)
     })
   }

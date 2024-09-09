@@ -15,6 +15,7 @@
 import type Nullable from './common/Nullable'
 import type DeepPartial from './common/DeepPartial'
 import type Bounding from './common/Bounding'
+import { createDefaultBounding } from './common/Bounding'
 import { type KLineData } from './common/Data'
 import type Coordinate from './common/Coordinate'
 import type Point from './common/Point'
@@ -130,6 +131,7 @@ export default class ChartImp implements Chart {
 
   private _container: HTMLElement
   private _chartContainer: HTMLElement
+  private readonly _chartBounding = createDefaultBounding()
   private readonly _chartEvent: Event
   private readonly _chartStore: ChartStore
   private _drawPanes: DrawPane[] = []
@@ -164,6 +166,12 @@ export default class ChartImp implements Chart {
     })
     this._chartContainer.tabIndex = 1
     container.appendChild(this._chartContainer)
+    this._cacheChartBounding()
+  }
+
+  _cacheChartBounding (): void {
+    this._chartBounding.width = Math.floor(this._container.clientWidth)
+    this._chartBounding.height = Math.floor(this._container.clientHeight)
   }
 
   private _initPanes (options?: Options): void {
@@ -292,7 +300,7 @@ export default class ChartImp implements Chart {
   }
 
   private _measurePaneHeight (): void {
-    const totalHeight = Math.floor(this._container.clientHeight)
+    const totalHeight = this._chartBounding.height
     const separatorSize = this._chartStore.getStyles().separator.size
     const xAxisHeight = this._xAxisPane.getAxisComponent().getAutoSize()
     let paneExcludeXAxisHeight = totalHeight - xAxisHeight - this._separatorPanes.size * separatorSize
@@ -334,7 +342,7 @@ export default class ChartImp implements Chart {
   }
 
   private _measurePaneWidth (): void {
-    const totalWidth = Math.floor(this._container.clientWidth)
+    const totalWidth = this._chartBounding.width
     const styles = this._chartStore.getStyles()
 
     let leftYAxisWidth = 0
@@ -549,14 +557,7 @@ export default class ChartImp implements Chart {
         }
       }
     } else {
-      return {
-        width: Math.floor(this._chartContainer.clientWidth),
-        height: Math.floor(this._chartContainer.clientHeight),
-        left: 0,
-        top: 0,
-        right: 0,
-        bottom: 0
-      }
+      return this._chartBounding
     }
     return null
   }
@@ -978,8 +979,7 @@ export default class ChartImp implements Chart {
   }
 
   getConvertPictureUrl (includeOverlay?: boolean, type?: string, backgroundColor?: string): string {
-    const width = this._chartContainer.clientWidth
-    const height = this._chartContainer.clientHeight
+    const { width, height } = this._chartBounding
     const canvas = createDom('canvas', {
       width: `${width}px`,
       height: `${height}px`,
@@ -1014,6 +1014,7 @@ export default class ChartImp implements Chart {
   }
 
   resize (): void {
+    this._cacheChartBounding()
     this.adjustPaneViewport(true, true, true, true, true)
   }
 

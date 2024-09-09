@@ -163,7 +163,7 @@ export default class ChartStore {
         merge(this._styles, ss)
         // `candle.tooltip.custom` should override
         if (isArray(ss?.candle?.tooltip?.custom)) {
-          this._styles.candle.tooltip.custom = ss?.candle?.tooltip?.custom as unknown as TooltipLegend[]
+          this._styles.candle.tooltip.custom = ss.candle.tooltip.custom as unknown as TooltipLegend[]
         }
       }
       if (isValid(customApi)) {
