@@ -3,8 +3,8 @@
 /.vscode
 /website
 /dist
-/types
 /docs/.vitepress/cache
 
 /package-lock.json
 /pnpm-lock.yaml
+.npmrc
