@@ -13,7 +13,7 @@
  */
 
 import type Nullable from './Nullable'
-import { type KLineData } from './Data'
+import type { KLineData } from './Data'
 
 export enum LoadDataType {
   Init = 'init',

@@ -82,13 +82,17 @@ export interface EventOptions {
 // so we do not need to have it as variables
 const enum Delay {
   ResetClick = 500,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   LongTap = 500,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   PreventFiresTouchEvents = 500,
 }
 
 const enum ManhattanDistance {
   CancelClick = 5,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   CancelTap = 5,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   DoubleClick = 5,
   DoubleTap = 30,
 }
@@ -116,24 +120,24 @@ export default class SyntheticEvent {
 
   private readonly _options: EventOptions
 
-  private _clickCount: number = 0
+  private _clickCount = 0
   private _clickTimeoutId: Nullable<TimerId> = null
   private _clickCoordinate: Coordinate = { x: Number.NEGATIVE_INFINITY, y: Number.POSITIVE_INFINITY }
 
-  private _tapCount: number = 0
+  private _tapCount = 0
   private _tapTimeoutId: Nullable<TimerId> = null
   private _tapCoordinate: Coordinate = { x: Number.NEGATIVE_INFINITY, y: Number.POSITIVE_INFINITY }
 
   private _longTapTimeoutId: Nullable<TimerId> = null
-  private _longTapActive: boolean = false
+  private _longTapActive = false
 
   private _mouseMoveStartCoordinate: Nullable<Coordinate> = null
 
   private _touchMoveStartCoordinate: Nullable<Coordinate> = null
-  private _touchMoveExceededManhattanDistance: boolean = false
+  private _touchMoveExceededManhattanDistance = false
 
-  private _cancelClick: boolean = false
-  private _cancelTap: boolean = false
+  private _cancelClick = false
+  private _cancelTap = false
 
   private _unsubscribeOutsideMouseEvents: Nullable<() => void> = null
   private _unsubscribeOutsideTouchEvents: Nullable<() => void> = null
@@ -149,13 +153,13 @@ export default class SyntheticEvent {
   private _unsubscribeRootTouchEvents: Nullable<() => void> = null
 
   private _startPinchMiddleCoordinate: Nullable<Coordinate> = null
-  private _startPinchDistance: number = 0
-  private _pinchPrevented: boolean = false
-  private _preventTouchDragProcess: boolean = false
+  private _startPinchDistance = 0
+  private _pinchPrevented = false
+  private _preventTouchDragProcess = false
 
-  private _mousePressed: boolean = false
+  private _mousePressed = false
 
-  private _lastTouchEventTimeStamp: number = 0
+  private _lastTouchEventTimeStamp = 0
 
   // for touchstart/touchmove/touchend events we handle only first touch
   // i.e. we don't support several active touches at the same time (except pinch event)
@@ -163,7 +167,7 @@ export default class SyntheticEvent {
 
   // accept all mouse leave events if it's not an iOS device
   // see _mouseEnterHandler, _mouseMoveHandler, _mouseLeaveHandler
-  private _acceptMouseLeave: boolean = !isIOS()
+  private _acceptMouseLeave = !isIOS()
 
   constructor (
     target: HTMLElement,
@@ -731,6 +735,7 @@ export default class SyntheticEvent {
     // it treats a touchstart and the following touchmove events as cancelable=false,
     // so we can't prevent them (as soon we subscribe on touchmove inside touchstart's handler).
     // And we'll get scroll of the page along with chart's one instead of only chart's scroll.
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     this._target.addEventListener('touchmove', () => {}, { passive: false })
   }
 

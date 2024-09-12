@@ -17,8 +17,8 @@ import type VisibleRange from '../common/VisibleRange'
 import type DrawPane from '../pane/DrawPane'
 
 import type Bounding from '../common/Bounding'
-import { type KLineData } from '../common/Data'
-import { type Indicator } from './Indicator'
+import type { KLineData } from '../common/Data'
+import type { Indicator } from './Indicator'
 
 export interface AxisTick {
   coord: number

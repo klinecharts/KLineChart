@@ -17,7 +17,7 @@ import DrawWidget from './DrawWidget'
 
 import type DrawPane from '../pane/DrawPane'
 
-import { type XAxis } from '../component/XAxis'
+import type { XAxis } from '../component/XAxis'
 
 import XAxisView from '../view/XAxisView'
 import OverlayXAxisView from '../view/OverlayXAxisView'

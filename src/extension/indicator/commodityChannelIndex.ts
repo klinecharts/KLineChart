@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
-import { type Indicator, type IndicatorTemplate } from '../../component/Indicator'
+import type { KLineData } from '../../common/Data'
+import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
 
 interface Cci {
   cci?: number
@@ -35,7 +35,7 @@ const commodityChannelIndex: IndicatorTemplate<Cci> = {
     { key: 'cci', title: 'CCI: ', type: 'line' }
   ],
   calc: (dataList: KLineData[], indicator: Indicator<Cci>) => {
-    const params = indicator.calcParams
+    const params = indicator.calcParams as number[]
     const p = params[0] - 1
     let tpSum = 0
     const tpList: number[] = []

@@ -13,7 +13,7 @@
  */
 
 import type Coordinate from '../common/Coordinate'
-import { type CrosshairDirectionStyle } from '../common/Styles'
+import type { CrosshairDirectionStyle } from '../common/Styles'
 import { isString } from '../common/utils/typeChecks'
 
 import View from './View'

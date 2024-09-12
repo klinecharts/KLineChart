@@ -1,12 +1,12 @@
 import child_process from 'child_process'
 
 import { nodeResolve } from '@rollup/plugin-node-resolve'
-import eslint from '@rollup/plugin-eslint'
 import replace from '@rollup/plugin-replace'
 import typescript from '@rollup/plugin-typescript'
 import terser from '@rollup/plugin-terser'
 import fileSize from 'rollup-plugin-filesize'
 import progress from 'rollup-plugin-progress'
+import eslint from './eslint.js'
 
 import { resolvePath, getVersion } from './utils.js' 
 

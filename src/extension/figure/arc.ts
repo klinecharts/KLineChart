@@ -18,7 +18,7 @@ import { type LineStyle, LineType } from '../../common/Styles'
 
 import { type FigureTemplate, DEVIATION } from '../../component/Figure'
 
-import { type CircleAttrs } from './circle'
+import type { CircleAttrs } from './circle'
 
 export function checkCoordinateOnArc (coordinate: Coordinate, attrs: ArcAttrs | ArcAttrs[]): boolean {
   let arcs: ArcAttrs[] = []

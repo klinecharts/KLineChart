@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
-import { type Indicator, type IndicatorTemplate } from '../../component/Indicator'
+import type { KLineData } from '../../common/Data'
+import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
 
 interface Trix {
   trix?: number
@@ -44,9 +44,9 @@ const tripleExponentiallySmoothedAverage: IndicatorTemplate<Trix> = {
   calc: (dataList: KLineData[], indicator: Indicator<Trix>) => {
     const params = indicator.calcParams as number[]
     let closeSum = 0
-    let ema1: number
-    let ema2: number
-    let oldTr: number
+    let ema1 = 0
+    let ema2 = 0
+    let oldTr = 0
     let ema1Sum = 0
     let ema2Sum = 0
     let trixSum = 0
@@ -70,7 +70,7 @@ const tripleExponentiallySmoothedAverage: IndicatorTemplate<Trix> = {
           }
           ema2Sum += ema2
           if (i >= params[0] * 3 - 3) {
-            let tr: number
+            let tr = 0
             let trixValue = 0
             if (i > params[0] * 3 - 3) {
               tr = (2 * ema2 + (params[0] - 1) * oldTr) / (params[0] + 1)

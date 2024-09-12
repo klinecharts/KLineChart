@@ -19,7 +19,7 @@ import { UpdateLevel } from './common/Updater'
 import type Crosshair from './common/Crosshair'
 import { requestAnimationFrame, cancelAnimationFrame } from './common/utils/compatible'
 
-import { type AxisRange } from './component/Axis'
+import type { AxisRange } from './component/Axis'
 import type YAxis from './component/YAxis'
 import type XAxis from './component/XAxis'
 
@@ -243,7 +243,7 @@ export default class Event implements EventHandler {
             const yAxis = (pane as DrawPane<YAxis>).getAxisComponent()
             if (this._prevYAxisRange !== null && !yAxis.getAutoCalcTickFlag() && yAxis.scrollZoomEnabled) {
               const { from, to, range } = this._prevYAxisRange
-              let distance: number
+              let distance = 0
               if (yAxis.reverse) {
                 distance = this._startScrollCoordinate.y - event.y
               } else {
@@ -332,7 +332,7 @@ export default class Event implements EventHandler {
 
   mouseUpEvent (e: MouseTouchEvent): boolean {
     const { widget } = this._findWidgetByEvent(e)
-    let consumed: boolean = false
+    let consumed = false
     if (widget !== null) {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()
@@ -370,7 +370,7 @@ export default class Event implements EventHandler {
 
   mouseRightClickEvent (e: MouseTouchEvent): boolean {
     const { widget } = this._findWidgetByEvent(e)
-    let consumed: boolean = false
+    let consumed = false
     if (widget !== null) {
       const event = this._makeWidgetEvent(e, widget)
       const name = widget.getName()

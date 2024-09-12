@@ -15,10 +15,10 @@
 import { formatThousands, formatFoldDecimal } from '../../common/utils/format'
 import { isNumber } from '../../common/utils/typeChecks'
 
-import { type OverlayTemplate } from '../../component/Overlay'
+import type { OverlayTemplate } from '../../component/Overlay'
 
-import { type LineAttrs } from '../figure/line'
-import { type TextAttrs } from '../figure/text'
+import type { LineAttrs } from '../figure/line'
+import type { TextAttrs } from '../figure/text'
 
 const fibonacciLine: OverlayTemplate = {
   name: 'fibonacciLine',

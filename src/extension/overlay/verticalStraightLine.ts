@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type OverlayTemplate } from '../../component/Overlay'
+import type { OverlayTemplate } from '../../component/Overlay'
 
 const verticalStraightLine: OverlayTemplate = {
   name: 'verticalStraightLine',

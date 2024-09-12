@@ -20,14 +20,14 @@ import type Coordinate from '../common/Coordinate'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
 import type Precision from '../common/Precision'
-import { type OverlayStyle } from '../common/Styles'
-import { type MouseTouchEvent } from '../common/SyntheticEvent'
+import type { OverlayStyle } from '../common/Styles'
+import type { MouseTouchEvent } from '../common/SyntheticEvent'
 import { clone, isArray, isFunction, isNumber, isString, isValid, merge } from '../common/utils/typeChecks'
 
 import type TimeScaleStore from '../store/TimeScaleStore'
 
-import { type XAxis } from './XAxis'
-import { type YAxis } from './YAxis'
+import type { XAxis } from './XAxis'
+import type { YAxis } from './YAxis'
 
 export enum OverlayMode {
   Normal = 'normal',
@@ -62,8 +62,8 @@ export function getAllOverlayFigureIgnoreEventTypes (): OverlayFigureIgnoreEvent
 export interface OverlayFigure {
   key?: string
   type: string
-  attrs: any
-  styles?: any
+  attrs: unknown
+  styles?: unknown
   ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
 }
 
@@ -178,7 +178,7 @@ export interface Overlay {
   /**
    * Extended Data
    */
-  extendData: any
+  extendData: unknown
 
   /**
    * The style information and format are consistent with the overlay in the unified configuration
@@ -297,7 +297,7 @@ export const OVERLAY_FIGURE_KEY_PREFIX = 'overlay_figure_'
 
 export default class OverlayImp implements Overlay {
   id: string
-  groupId: string = ''
+  groupId = ''
   paneId: string
   name: string
   totalStep = 1
@@ -311,7 +311,7 @@ export default class OverlayImp implements Overlay {
   mode = OverlayMode.Normal
   modeSensitivity = 8
   points: Array<Partial<Point>> = []
-  extendData: any = null
+  extendData: unknown = null
   styles: Nullable<DeepPartial<OverlayStyle>> = null
   createPointFigures: Nullable<OverlayCreateFiguresCallback> = null
   createXAxisFigures: Nullable<OverlayCreateFiguresCallback> = null
@@ -370,7 +370,7 @@ export default class OverlayImp implements Overlay {
     }
 
     if (isArray(points) && points.length > 0) {
-      let repeatTotalStep: number
+      let repeatTotalStep = 0
       this.points = [...points]
       if (points.length >= this.totalStep - 1) {
         this.currentStep = OVERLAY_DRAW_STEP_FINISHED
@@ -481,11 +481,11 @@ export default class OverlayImp implements Overlay {
 
   eventPressedOtherMove (point: Partial<Point>, timeScaleStore: TimeScaleStore): void {
     if (this._prevPressedPoint !== null) {
-      let difDataIndex: number
+      let difDataIndex: Nullable<number> = null
       if (isNumber(point.dataIndex) && isNumber(this._prevPressedPoint.dataIndex)) {
         difDataIndex = point.dataIndex - this._prevPressedPoint.dataIndex
       }
-      let difValue: number
+      let difValue: Nullable<number> = null
       if (isNumber(point.value) && isNumber(this._prevPressedPoint.value)) {
         difValue = point.value - this._prevPressedPoint.value
       }

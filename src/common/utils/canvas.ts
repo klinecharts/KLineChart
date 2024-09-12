@@ -12,9 +12,10 @@
  * limitations under the License.
  */
 
+import type Nullable from '../Nullable'
 import { isValid } from './typeChecks'
 
-let measureCtx: CanvasRenderingContext2D
+let measureCtx: Nullable<CanvasRenderingContext2D> = null
 
 /**
  * Get pixel ratio

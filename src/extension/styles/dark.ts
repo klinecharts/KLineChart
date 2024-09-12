@@ -13,7 +13,7 @@
  */
 
 import type DeepPartial from '../../common/DeepPartial'
-import { type Styles } from '../../common/Styles'
+import type { Styles } from '../../common/Styles'
 
 const dark: DeepPartial<Styles> = {
   grid: {

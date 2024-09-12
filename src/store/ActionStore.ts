@@ -21,7 +21,7 @@ export default class ActionStore {
    */
   private readonly _actions = new Map<ActionType, Action>()
 
-  execute (type: ActionType, data?: any): void {
+  execute (type: ActionType, data?: unknown): void {
     this._actions.get(type)?.execute(data)
   }
 

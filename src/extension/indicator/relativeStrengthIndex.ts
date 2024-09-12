@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
-import { type Indicator, type IndicatorTemplate } from '../../component/Indicator'
+import type { KLineData } from '../../common/Data'
+import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
 
 interface Rsi {
   rsi1?: number
@@ -34,14 +34,15 @@ const relativeStrengthIndex: IndicatorTemplate<Rsi> = {
     { key: 'rsi2', title: 'RSI2: ', type: 'line' },
     { key: 'rsi3', title: 'RSI3: ', type: 'line' }
   ],
-  regenerateFigures: (params: any[]) => {
-    return params.map((_: any, index: number) => {
+  regenerateFigures: (params: unknown[]) => {
+    return params.map((_: unknown, index: number) => {
       const num = index + 1
       return { key: `rsi${num}`, title: `RSI${num}: `, type: 'line' }
     })
   },
   calc: (dataList: KLineData[], indicator: Indicator<Rsi>) => {
-    const { calcParams: params, figures } = indicator
+    const { calcParams, figures } = indicator
+    const params = calcParams as number[]
     const sumCloseAs: number[] = []
     const sumCloseBs: number[] = []
     return dataList.map((kLineData, i) => {

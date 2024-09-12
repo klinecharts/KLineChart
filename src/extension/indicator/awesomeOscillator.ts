@@ -12,11 +12,11 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
+import type { KLineData } from '../../common/Data'
 import { type IndicatorStyle, PolygonType } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
-import { type Indicator, type IndicatorTemplate, type IndicatorFigureStylesCallbackData } from '../../component/Indicator'
+import type { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../component/Indicator'
 
 interface Ao {
   ao?: number
@@ -35,7 +35,7 @@ const awesomeOscillator: IndicatorTemplate<Ao> = {
       const { prev, current } = data
       const prevAo = prev.indicatorData?.ao ?? Number.MIN_SAFE_INTEGER
       const currentAo = current.indicatorData?.ao ?? Number.MIN_SAFE_INTEGER
-      let color: string
+      let color = ''
       if (currentAo > prevAo) {
         color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles.bars)[0].upColor) as string
       } else {
@@ -46,8 +46,8 @@ const awesomeOscillator: IndicatorTemplate<Ao> = {
     }
   }],
   calc: (dataList: KLineData[], indicator: Indicator<Ao>) => {
-    const params = indicator.calcParams
-    const maxPeriod = Math.max(params[0] as number, params[1] as number)
+    const params = indicator.calcParams as number[]
+    const maxPeriod = Math.max(params[0], params[1])
     let shortSum = 0
     let longSum = 0
     let short = 0

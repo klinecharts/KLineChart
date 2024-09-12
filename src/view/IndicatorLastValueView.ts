@@ -19,7 +19,7 @@ import { eachFigures, type IndicatorFigure, type IndicatorFigureStyle } from '..
 
 import View from './View'
 
-import { type YAxis } from '../component/YAxis'
+import type { YAxis } from '../component/YAxis'
 
 export default class IndicatorLastValueView extends View<YAxis> {
   override drawImp (ctx: CanvasRenderingContext2D): void {
@@ -45,10 +45,11 @@ export default class IndicatorLastValueView extends View<YAxis> {
         if (isValid(indicatorData) && indicator.visible) {
           const precision = indicator.precision
           eachFigures(dataList, indicator, dataIndex, defaultStyles, (figure: IndicatorFigure, figureStyles: Required<IndicatorFigureStyle>) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             const value = indicatorData[figure.key]
             if (isNumber(value)) {
               const y = yAxis.convertToNicePixel(value)
-              // let text = formatPrecision(value, precision)
               let text = yAxis.displayValueToText(
                 yAxis.realValueToDisplayValue(
                   yAxis.valueToRealValue(value, { range: yAxisRange }),
@@ -60,8 +61,8 @@ export default class IndicatorLastValueView extends View<YAxis> {
                 text = customApi.formatBigNumber(text)
               }
               text = formatFoldDecimal(formatThousands(text, thousandsSeparator), decimalFoldThreshold)
-              let x: number
-              let textAlign: CanvasTextAlign
+              let x = 0
+              let textAlign: CanvasTextAlign = 'left'
               if (yAxis.isFromZero()) {
                 x = 0
                 textAlign = 'left'

@@ -18,7 +18,7 @@ import type DrawWidget from '../widget/DrawWidget'
 import IndicatorWidget from '../widget/IndicatorWidget'
 import YAxisWidget from '../widget/YAxisWidget'
 
-import { type YAxis } from '../component/YAxis'
+import type { YAxis } from '../component/YAxis'
 
 import { getYAxisClass } from '../extension/y-axis'
 

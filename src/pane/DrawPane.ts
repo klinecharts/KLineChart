@@ -14,7 +14,7 @@
 
 import type DeepRequired from '../common/DeepRequired'
 import type Nullable from '../common/Nullable'
-import { type UpdateLevel } from '../common/Updater'
+import type { UpdateLevel } from '../common/Updater'
 import type Bounding from '../common/Bounding'
 
 import { isValid, merge } from '../common/utils/typeChecks'
@@ -74,8 +74,8 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
       name,
       ...this._options.axis
     })
-    let container: HTMLElement
-    let cursor: string
+    let container: Nullable<HTMLElement> = null
+    let cursor = 'default'
     if (this.getId() === PaneIdConstants.X_AXIS) {
       container = this.getMainWidget().getContainer()
       cursor = 'ew-resize'

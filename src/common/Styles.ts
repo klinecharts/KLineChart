@@ -13,7 +13,7 @@
  */
 
 import type Nullable from './Nullable'
-import { type KLineData } from './Data'
+import type { KLineData } from './Data'
 
 export interface Margin {
   marginLeft: number
@@ -272,7 +272,7 @@ export interface IndicatorStyle {
   circles: IndicatorPolygonStyle[]
   lastValueMark: IndicatorLastValueMarkStyle
   tooltip: IndicatorTooltipStyle
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export type AxisLineStyle = Omit<StateLineStyle, 'style' | 'dashedValue'>
@@ -325,7 +325,7 @@ export interface OverlayStyle {
   circle: PolygonStyle
   arc: LineStyle
   text: TextStyle
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface SeparatorStyle {

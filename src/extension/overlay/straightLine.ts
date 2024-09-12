@@ -14,7 +14,7 @@
 
 import { getLinearYFromCoordinates } from '../figure/line'
 
-import { type OverlayTemplate } from '../../component/Overlay'
+import type { OverlayTemplate } from '../../component/Overlay'
 
 const straightLine: OverlayTemplate = {
   name: 'straightLine',

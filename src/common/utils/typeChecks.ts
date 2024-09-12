@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function merge (target: any, source: any): void {
   if ((!isObject(target) && !isObject(source))) {
     return
@@ -39,7 +40,8 @@ export function clone<T> (target: T): T {
     return target
   }
 
-  let copy
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let copy: any = null
   if (isArray(target)) {
     copy = []
   } else {
@@ -58,19 +60,19 @@ export function clone<T> (target: T): T {
   return copy
 }
 
-export function isArray<T = any> (value: any): value is T[] {
+export function isArray<T = unknown> (value: unknown): value is T[] {
   return Object.prototype.toString.call(value) === '[object Array]'
 }
 
-export function isFunction<T = (...args: any) => any> (value: any): value is T {
+export function isFunction<T = (...args: unknown[]) => unknown> (value: unknown): value is T {
   return typeof value === 'function'
 }
 
-export function isObject (value: any): value is object {
+export function isObject (value: unknown): value is object {
   return (typeof value === 'object') && isValid(value)
 }
 
-export function isNumber (value: any): value is number {
+export function isNumber (value: unknown): value is number {
   return typeof value === 'number' && !Number.isNaN(value)
 }
 
@@ -78,10 +80,10 @@ export function isValid<T> (value: T | null | undefined): value is T {
   return value !== null && value !== undefined
 }
 
-export function isBoolean (value: any): value is boolean {
+export function isBoolean (value: unknown): value is boolean {
   return typeof value === 'boolean'
 }
 
-export function isString (value: any): value is string {
+export function isString (value: unknown): value is string {
   return typeof value === 'string'
 }

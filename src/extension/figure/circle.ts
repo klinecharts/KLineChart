@@ -17,7 +17,7 @@ import { type PolygonStyle, PolygonType, LineType } from '../../common/Styles'
 import { isString } from '../../common/utils/typeChecks'
 import { isTransparent } from '../../common/utils/color'
 
-import { type FigureTemplate } from '../../component/Figure'
+import type { FigureTemplate } from '../../component/Figure'
 
 export function checkCoordinateOnCircle (coordinate: Coordinate, attrs: CircleAttrs | CircleAttrs[]): boolean {
   let circles: CircleAttrs[] = []

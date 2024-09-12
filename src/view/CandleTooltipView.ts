@@ -14,7 +14,7 @@
 
 import type Nullable from '../common/Nullable'
 import type Bounding from '../common/Bounding'
-import { type KLineData } from '../common/Data'
+import type { KLineData } from '../common/Data'
 import type Precision from '../common/Precision'
 import type Crosshair from '../common/Crosshair'
 import {
@@ -34,7 +34,7 @@ import { AxisPosition } from '../component/Axis'
 
 import IndicatorTooltipView from './IndicatorTooltipView'
 
-import { type TooltipIcon } from '../store/TooltipStore'
+import type { TooltipIcon } from '../store/TooltipStore'
 
 import { i18n } from '../extension/i18n/index'
 
@@ -290,7 +290,7 @@ export default class CandleTooltipView extends IndicatorTooltipView {
         const centerX = bounding.width / 2
         const isPointer = rectPosition === CandleTooltipRectPosition.Pointer && crosshair.paneId === PaneIdConstants.CANDLE
         const isLeft = (crosshair.realX ?? 0) > centerX
-        let rectX: number = 0
+        let rectX = 0
         if (isPointer) {
           const realX = crosshair.realX!
           if (isLeft) {

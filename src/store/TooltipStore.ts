@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import { type KLineData } from '../common/Data'
+import type { KLineData } from '../common/Data'
 import type Crosshair from '../common/Crosshair'
 import { UpdateLevel } from '../common/Updater'
 import { isNumber } from '../common/utils/typeChecks'
@@ -43,8 +43,8 @@ export default class TooltipStore {
   setCrosshair (crosshair?: Crosshair, notInvalidate?: boolean): void {
     const dataList = this._chartStore.getDataList()
     const cr = crosshair ?? {}
-    let realDataIndex: number
-    let dataIndex: number
+    let realDataIndex = 0
+    let dataIndex = 0
     if (isNumber(cr.x)) {
       realDataIndex = this._chartStore.getTimeScaleStore().coordinateToDataIndex(cr.x)
       if (realDataIndex < 0) {

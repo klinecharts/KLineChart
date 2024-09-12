@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
+import type { KLineData } from '../../common/Data'
 import { type Indicator, type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Ma {
@@ -38,7 +38,7 @@ const movingAverage: IndicatorTemplate<Ma> = {
     { key: 'ma30', title: 'MA30: ', type: 'line' },
     { key: 'ma60', title: 'MA60: ', type: 'line' }
   ],
-  regenerateFigures: (params: any[]) => {
+  regenerateFigures: (params: unknown[]) => {
     return params.map((p: number, i: number) => {
       return { key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }
     })

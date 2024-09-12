@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type AxisTemplate } from '../../component/Axis'
+import type { AxisTemplate } from '../../component/Axis'
 import YAxisImp, { type YAxisConstructor } from '../../component/YAxis'
 
 import normal from './normal'

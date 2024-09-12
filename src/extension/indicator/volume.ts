@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
-import { type IndicatorStyle } from '../../common/Styles'
+import type { KLineData } from '../../common/Data'
+import type { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 import { isValid } from '../../common/utils/typeChecks'
 
@@ -61,7 +61,7 @@ const volume: IndicatorTemplate<Vol> = {
     { key: 'ma3', title: 'MA20: ', type: 'line' },
     getVolumeFigure()
   ],
-  regenerateFigures: (params: any[]) => {
+  regenerateFigures: (params: unknown[]) => {
     const figures: Array<IndicatorFigure<Vol>> = params.map((p: number, i: number) => {
       return { key: `ma${i + 1}`, title: `MA${p}: `, type: 'line' }
     })
@@ -69,7 +69,8 @@ const volume: IndicatorTemplate<Vol> = {
     return figures
   },
   calc: (dataList: KLineData[], indicator: Indicator<Vol>) => {
-    const { calcParams: params, figures } = indicator
+    const { calcParams, figures } = indicator
+    const params = calcParams as number[]
     const volSums: number[] = []
     return dataList.map((kLineData: KLineData, i: number) => {
       const volume = kLineData.volume ?? 0

@@ -17,7 +17,7 @@ import type DrawPane from '../pane/DrawPane'
 import { WidgetNameConstants } from './types'
 import DrawWidget from './DrawWidget'
 
-import { type YAxis } from '../component/YAxis'
+import type { YAxis } from '../component/YAxis'
 
 import GridView from '../view/GridView'
 import IndicatorView from '../view/IndicatorView'
@@ -57,6 +57,7 @@ export default class IndicatorWidget extends DrawWidget<DrawPane<YAxis>> {
     return new IndicatorTooltipView(this)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   protected updateMainContent (_ctx: CanvasRenderingContext2D): void {}
 
   override updateOverlay (ctx: CanvasRenderingContext2D): void {

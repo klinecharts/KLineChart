@@ -15,7 +15,7 @@
 import type Coordinate from '../../common/Coordinate'
 import type Bounding from '../../common/Bounding'
 
-import { type OverlayTemplate } from '../../component/Overlay'
+import type { OverlayTemplate } from '../../component/Overlay'
 
 import { type LineAttrs, getLinearSlopeIntercept } from '../figure/line'
 

@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import { type VisibleData } from '../common/Data'
+import type { VisibleData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
 import { CandleType, type SmoothLineStyle } from '../common/Styles'
 import { formatValue } from '../common/utils/format'
@@ -152,7 +152,7 @@ export default class IndicatorView extends CandleBarView {
                       if (baseValue !== currentData?.[figure.key]) {
                         height = Math.max(1, height)
                       }
-                      let y: number
+                      let y = 0
                       if (valueY > baseValueY) {
                         y = baseValueY
                       } else {

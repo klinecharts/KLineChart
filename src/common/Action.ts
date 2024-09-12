@@ -14,7 +14,7 @@
 
 import { isFunction } from './utils/typeChecks'
 
-export type ActionCallback = (data?: any) => void
+export type ActionCallback = (data?: unknown) => void
 
 export enum ActionType {
   OnZoom = 'onZoom',
@@ -47,7 +47,7 @@ export default class Delegate {
     }
   }
 
-  execute (data?: any): void {
+  execute (data?: unknown): void {
     this._callbacks.forEach(callback => {
       callback(data)
     })

@@ -33,7 +33,7 @@ export default class CandleLastPriceView extends View {
       if (isValid(data)) {
         const { close, open } = data
         const priceY = yAxis.convertToNicePixel(close)
-        let color: string
+        let color = ''
         if (close > open) {
           color = lastPriceMarkStyles.upColor
         } else if (close < open) {

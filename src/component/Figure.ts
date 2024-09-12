@@ -15,11 +15,11 @@
 import type Coordinate from '../common/Coordinate'
 
 import Eventful from '../common/Eventful'
-import { type MouseTouchEvent } from '../common/SyntheticEvent'
+import type { MouseTouchEvent } from '../common/SyntheticEvent'
 
 export const DEVIATION = 2
 
-export interface Figure<A = any, S = any> {
+export interface Figure<A = unknown, S = unknown> {
   name: string
   attrs: A
   styles: S
@@ -27,19 +27,19 @@ export interface Figure<A = any, S = any> {
   checkEventOn: (coordinate: Coordinate, attrs: A, styles: S) => boolean
 }
 
-export type FigureTemplate<A = any, S = any> = Pick<Figure<A, S>, 'name' | 'draw' | 'checkEventOn'>
+export type FigureTemplate<A = unknown, S = unknown> = Pick<Figure<A, S>, 'name' | 'draw' | 'checkEventOn'>
 
-export type FigureCreate<A = any, S = any> = Pick<Figure<A, S>, 'name' | 'attrs' | 'styles'>
+export type FigureCreate<A = unknown, S = unknown> = Pick<Figure<A, S>, 'name' | 'attrs' | 'styles'>
 
-export type FigureInnerConstructor<A = any, S = any> = new (figure: FigureCreate<A, S>) => FigureImp<A, S>
+export type FigureInnerConstructor<A = unknown, S = unknown> = new (figure: FigureCreate<A, S>) => FigureImp<A, S>
 
-export type FigureConstructor<A = any, S = any> = new (figure: FigureCreate<A, S>) => ({ draw: (ctx: CanvasRenderingContext2D) => void })
+export type FigureConstructor<A = unknown, S = unknown> = new (figure: FigureCreate<A, S>) => ({ draw: (ctx: CanvasRenderingContext2D) => void })
 
-export default abstract class FigureImp<A = any, S = any> extends Eventful implements Omit<Figure<A, S>, 'name' | 'draw' | 'checkEventOn'> {
+export default abstract class FigureImp<A = unknown, S = unknown> extends Eventful implements Omit<Figure<A, S>, 'name' | 'draw' | 'checkEventOn'> {
   attrs: A
   styles: S
 
-  constructor (figure: FigureCreate) {
+  constructor (figure: FigureCreate<A, S>) {
     super()
     this.attrs = figure.attrs
     this.styles = figure.styles

@@ -13,8 +13,8 @@
  */
 
 import type Coordinate from '../common/Coordinate'
-import { type VisibleData } from '../common/Data'
-import { type CandleHighLowPriceMarkStyle } from '../common/Styles'
+import type { VisibleData } from '../common/Data'
+import type { CandleHighLowPriceMarkStyle } from '../common/Styles'
 
 import ChildrenView from './ChildrenView'
 
@@ -95,9 +95,9 @@ export default class CandleHighLowPriceView extends ChildrenView {
       styles: { color: styles.color }
     })?.draw(ctx)
 
-    let lineEndX: number
-    let textStartX: number
-    let textAlign: string
+    let lineEndX = 0
+    let textStartX = 0
+    let textAlign = 'left'
     const { width } = this.getWidget().getBounding()
     if (startX > width / 2) {
       lineEndX = startX - 5

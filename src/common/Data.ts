@@ -22,7 +22,7 @@ export interface KLineData {
   close: number
   volume?: number
   turnover?: number
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface VisibleData {

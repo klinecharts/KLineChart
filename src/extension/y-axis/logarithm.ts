@@ -13,7 +13,7 @@
  */
 
 import { log10, index10 } from '../../common/utils/number'
-import { type AxisTemplate } from '../../component/Axis'
+import type { AxisTemplate } from '../../component/Axis'
 
 const logarithm: AxisTemplate = {
   name: 'logarithm',

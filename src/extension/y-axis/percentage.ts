@@ -14,7 +14,7 @@
 
 import { formatPrecision } from '../../common/utils/format'
 import { isValid } from '../../common/utils/typeChecks'
-import { type AxisTemplate } from '../../component/Axis'
+import type { AxisTemplate } from '../../component/Axis'
 
 const percentage: AxisTemplate = {
   name: 'percentage',

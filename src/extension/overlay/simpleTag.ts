@@ -14,7 +14,7 @@
 
 import { formatPrecision } from '../../common/utils/format'
 
-import { type OverlayTemplate } from '../../component/Overlay'
+import type { OverlayTemplate } from '../../component/Overlay'
 
 import { isFunction, isNumber, isValid } from '../../common/utils/typeChecks'
 
@@ -40,8 +40,8 @@ const simpleTag: OverlayTemplate = {
   },
   createYAxisFigures: ({ overlay, coordinates, bounding, yAxis, precision }) => {
     const isFromZero = yAxis?.isFromZero() ?? false
-    let textAlign: CanvasTextAlign
-    let x: number
+    let textAlign: CanvasTextAlign = 'left'
+    let x = 0
     if (isFromZero) {
       textAlign = 'left'
       x = 0
@@ -49,12 +49,12 @@ const simpleTag: OverlayTemplate = {
       textAlign = 'right'
       x = bounding.width
     }
-    let text
+    let text = ''
     if (isValid(overlay.extendData)) {
       if (!isFunction(overlay.extendData)) {
-        text = overlay.extendData ?? ''
+        text = (overlay.extendData ?? '') as string
       } else {
-        text = overlay.extendData(overlay)
+        text = overlay.extendData(overlay) as string
       }
     }
     if (!isValid(text) && isNumber(overlay.points[0].value)) {

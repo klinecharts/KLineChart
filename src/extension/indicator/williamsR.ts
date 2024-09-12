@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
-import { type Indicator, type IndicatorTemplate } from '../../component/Indicator'
+import type { KLineData } from '../../common/Data'
+import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
 
 import { getMaxMin } from '../../common/utils/number'
 
@@ -36,13 +36,14 @@ const williamsR: IndicatorTemplate<Wr> = {
     { key: 'wr2', title: 'WR2: ', type: 'line' },
     { key: 'wr3', title: 'WR3: ', type: 'line' }
   ],
-  regenerateFigures: (params: any[]) => {
+  regenerateFigures: (params: unknown[]) => {
     return params.map((_, i: number) => {
       return { key: `wr${i + 1}`, title: `WR${i + 1}: `, type: 'line' }
     })
   },
   calc: (dataList: KLineData[], indicator: Indicator<Wr>) => {
-    const { calcParams: params, figures } = indicator
+    const { calcParams, figures } = indicator
+    const params = calcParams as number[]
     return dataList.map((kLineData, i) => {
       const wr: Wr = {}
       const close = kLineData.close

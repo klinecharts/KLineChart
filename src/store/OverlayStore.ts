@@ -14,7 +14,7 @@
 
 import type Nullable from '../common/Nullable'
 import { UpdateLevel } from '../common/Updater'
-import { type MouseTouchEvent } from '../common/SyntheticEvent'
+import type { MouseTouchEvent } from '../common/SyntheticEvent'
 import { isFunction, isValid, isString, isBoolean } from '../common/utils/typeChecks'
 import { createId } from '../common/utils/id'
 import { LoadDataType } from '../common/LoadDataCallback'

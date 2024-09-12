@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type AxisCreate } from '../component/Axis'
+import type { AxisCreate } from '../component/Axis'
 
 export const enum PanePosition {
   Top = 'top',

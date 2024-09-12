@@ -14,7 +14,7 @@
 
 import type Nullable from '../common/Nullable'
 import type Coordinate from '../common/Coordinate'
-import { type KLineData } from '../common/Data'
+import type { KLineData } from '../common/Data'
 import type BarSpace from '../common/BarSpace'
 import type VisibleRange from '../common/VisibleRange'
 import { getDefaultVisibleRange } from '../common/VisibleRange'
@@ -81,17 +81,17 @@ export default class TimeScaleStore {
   /**
    * Scale enabled flag
    */
-  private _zoomEnabled: boolean = true
+  private _zoomEnabled = true
 
   /**
    * Scroll enabled flag
    */
-  private _scrollEnabled: boolean = true
+  private _scrollEnabled = true
 
   /**
    * Total space of drawing area
    */
-  private _totalBarSpace: number = 0
+  private _totalBarSpace = 0
 
   /**
    * Space occupied by a single piece of data
@@ -266,8 +266,8 @@ export default class TimeScaleStore {
     const totalBarCount = dataList.length
     const visibleBarCount = this._totalBarSpace / this._barSpace
 
-    let leftMinVisibleBarCount: number
-    let rightMinVisibleBarCount: number
+    let leftMinVisibleBarCount = 0
+    let rightMinVisibleBarCount = 0
 
     if (this._scrollLimitRole === ScrollLimitRole.Distance) {
       leftMinVisibleBarCount = (this._totalBarSpace - this._maxOffsetDistance.right) / this._barSpace
@@ -521,7 +521,7 @@ export default class TimeScaleStore {
       const crosshair = this._chartStore.getTooltipStore().getCrosshair()
       zoomCoordinate = { x: crosshair?.x ?? this._totalBarSpace / 2 }
     }
-    const x = zoomCoordinate!.x!
+    const x = zoomCoordinate.x!
     const floatIndex = this.coordinateToFloatIndex(x)
     const prevBarSpace = this._barSpace
     const barSpace = this._barSpace + scale * (this._barSpace / SCALE_MULTIPLIER)

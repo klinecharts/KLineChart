@@ -13,13 +13,13 @@
  */
 
 import type Bounding from '../common/Bounding'
-import { type AxisStyle, type Styles } from '../common/Styles'
+import type { AxisStyle, Styles } from '../common/Styles'
 
-import { type LineAttrs } from '../extension/figure/line'
-import { type TextAttrs } from '../extension/figure/text'
+import type { LineAttrs } from '../extension/figure/line'
+import type { TextAttrs } from '../extension/figure/text'
 
-import { type AxisTick } from '../component/Axis'
-import { type XAxis } from '../component/XAxis'
+import type { AxisTick } from '../component/Axis'
+import type { XAxis } from '../component/XAxis'
 
 import AxisView from './AxisView'
 

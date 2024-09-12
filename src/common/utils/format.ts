@@ -36,12 +36,12 @@ const rePropName = RegExp(
 export function formatValue (data: unknown, key: string, defaultValue?: unknown): unknown {
   if (isValid(data)) {
     const path: string[] = []
-    key.replace(rePropName, (subString: string, ...args: any[]) => {
+    key.replace(rePropName, (subString: string, ...args: unknown[]) => {
       let k = subString
       if (isValid(args[1])) {
-        k = args[2].replace(reEscapeChar, '$1')
+        k = (args[2] as string).replace(reEscapeChar, '$1')
       } else if (isValid(args[0])) {
-        k = args[0].trim()
+        k = (args[0] as string).trim()
       }
       path.push(k)
       return ''

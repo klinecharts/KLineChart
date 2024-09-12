@@ -23,5 +23,6 @@ export function isIOS (): boolean {
   if (typeof window === 'undefined') {
     return false
   }
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   return /iPhone|iPad|iPod/.test(window.navigator.platform)
 }

@@ -34,15 +34,15 @@ function getSupportedFigures (): string[] {
   return Object.keys(figures)
 }
 
-function registerFigure<A = any, S = any> (figure: FigureTemplate<A, S>): void {
+function registerFigure<A = unknown, S = unknown> (figure: FigureTemplate<A, S>): void {
   figures[figure.name] = FigureImp.extend(figure)
 }
 
-function getInnerFigureClass<A = any, S = any> (name: string): Nullable<FigureInnerConstructor<A, S>> {
+function getInnerFigureClass (name: string): Nullable<FigureInnerConstructor> {
   return figures[name] ?? null
 }
 
-function getFigureClass<A = any, S = any> (name: string): Nullable<FigureConstructor<A, S>> {
+function getFigureClass<A = unknown, S = unknown> (name: string): Nullable<FigureConstructor<A, S>> {
   return figures[name] ?? null
 }
 

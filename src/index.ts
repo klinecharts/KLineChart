@@ -81,7 +81,7 @@ function version (): string {
  */
 function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
   logTag()
-  let dom: Nullable<HTMLElement>
+  let dom: Nullable<HTMLElement> = null
   if (isString(ds)) {
     dom = document.getElementById(ds)
   } else {
@@ -109,11 +109,11 @@ function init (ds: HTMLElement | string, options?: Options): Nullable<Chart> {
  * @param dcs
  */
 function dispose (dcs: HTMLElement | Chart | string): void {
-  let id: Nullable<string>
+  let id: Nullable<string> = null
   if (dcs instanceof ChartImp) {
     id = dcs.id
   } else {
-    let dom: Nullable<HTMLElement>
+    let dom: Nullable<HTMLElement> = null
     if (isString(dcs)) {
       dom = document.getElementById(dcs)
     } else {

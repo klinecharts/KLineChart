@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type OverlayTemplate } from '../../component/Overlay'
+import type { OverlayTemplate } from '../../component/Overlay'
 import { isFunction, isValid } from '../../common/utils/typeChecks'
 import { LineType } from '../../common/Styles'
 
@@ -23,12 +23,12 @@ const simpleAnnotation: OverlayTemplate = {
     line: { style: LineType.Dashed }
   },
   createPointFigures: ({ overlay, coordinates }) => {
-    let text
+    let text = ''
     if (isValid(overlay.extendData)) {
       if (!isFunction(overlay.extendData)) {
-        text = overlay.extendData ?? ''
+        text = (overlay.extendData ?? '') as string
       } else {
-        text = overlay.extendData(overlay)
+        text = (overlay.extendData(overlay)) as string
       }
     }
     const startX = coordinates[0].x

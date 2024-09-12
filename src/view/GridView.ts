@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type LineAttrs } from '../extension/figure/line'
+import type { LineAttrs } from '../extension/figure/line'
 
 import View from './View'
 

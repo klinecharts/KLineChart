@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
-import { type IndicatorStyle } from '../../common/Styles'
+import type { KLineData } from '../../common/Data'
+import type { IndicatorStyle } from '../../common/Styles'
 import { formatValue } from '../../common/utils/format'
 
 import { type Indicator, type IndicatorTemplate, IndicatorSeries, type IndicatorFigureStylesCallbackData } from '../../component/Indicator'
@@ -47,7 +47,7 @@ const stopAndReverse: IndicatorTemplate<Sar> = {
     }
   ],
   calc: (dataList: KLineData[], indicator: Indicator<Sar>) => {
-    const params = indicator.calcParams
+    const params = indicator.calcParams as number[]
     const startAf = params[0] / 100
     const step = params[1] / 100
     const maxAf = params[2] / 100

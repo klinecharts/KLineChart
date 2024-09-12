@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
+import type { KLineData } from '../../common/Data'
 import { type Indicator, type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Ema {
@@ -36,7 +36,7 @@ const exponentialMovingAverage: IndicatorTemplate<Ema> = {
     { key: 'ema2', title: 'EMA12: ', type: 'line' },
     { key: 'ema3', title: 'EMA20: ', type: 'line' }
   ],
-  regenerateFigures: (params: any[]) => {
+  regenerateFigures: (params: unknown[]) => {
     return params.map((p: number, i: number) => {
       return { key: `ema${i + 1}`, title: `EMA${p}: `, type: 'line' }
     })

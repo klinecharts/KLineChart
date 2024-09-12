@@ -14,10 +14,11 @@
 
 import type Bounding from '../common/Bounding'
 import { UpdateLevel } from '../common/Updater'
-import { type MouseTouchEvent } from '../common/SyntheticEvent'
+import type { MouseTouchEvent } from '../common/SyntheticEvent'
 import { ActionType } from '../common/Action'
 import { createDom } from '../common/utils/dom'
 import { throttle } from '../common/utils/performance'
+import type Nullable from '../common/Nullable'
 
 import Widget from './Widget'
 import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './types'
@@ -88,10 +89,10 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
       topPane !== null &&
       bottomPane?.getOptions().dragEnabled
     ) {
-      let reducedPane: AxisPane
-      let increasedPane: AxisPane
-      let startDragReducedPaneHeight: number
-      let startDragIncreasedPaneHeight: number
+      let reducedPane: Nullable<AxisPane> = null
+      let increasedPane: Nullable<AxisPane> = null
+      let startDragReducedPaneHeight = 0
+      let startDragIncreasedPaneHeight = 0
       if (isUpDrag) {
         reducedPane = topPane
         increasedPane = bottomPane

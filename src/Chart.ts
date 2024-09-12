@@ -16,14 +16,14 @@ import type Nullable from './common/Nullable'
 import type DeepPartial from './common/DeepPartial'
 import type Bounding from './common/Bounding'
 import { createDefaultBounding } from './common/Bounding'
-import { type KLineData } from './common/Data'
+import type { KLineData } from './common/Data'
 import type Coordinate from './common/Coordinate'
 import type Point from './common/Point'
 import { UpdateLevel } from './common/Updater'
-import { type Styles } from './common/Styles'
+import type { Styles } from './common/Styles'
 import type Crosshair from './common/Crosshair'
 import { ActionType, type ActionCallback } from './common/Action'
-import { type LoadDataCallback } from './common/LoadDataCallback'
+import type { LoadDataCallback } from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
 import { type CustomApi, LayoutChildType, type Options } from './Options'
@@ -51,13 +51,13 @@ import { type PaneOptions, PanePosition, PANE_DEFAULT_HEIGHT, PaneIdConstants } 
 import type AxisImp from './component/Axis'
 import { AxisPosition, type Axis } from './component/Axis'
 
-import { type IndicatorFilter, type Indicator, type IndicatorCreate } from './component/Indicator'
-import { type OverlayFilter, type Overlay, type OverlayCreate } from './component/Overlay'
+import type { IndicatorFilter, Indicator, IndicatorCreate } from './component/Indicator'
+import type { OverlayFilter, Overlay, OverlayCreate } from './component/Overlay'
 
 import { getIndicatorClass } from './extension/indicator/index'
 
 import Event from './Event'
-import { type YAxis } from './component/YAxis'
+import type { YAxis } from './component/YAxis'
 
 export enum DomPosition {
   Root = 'root',
@@ -119,7 +119,7 @@ export interface Chart {
   zoomAtTimestamp: (scale: number, timestamp: number, animationDuration?: number) => void
   convertToPixel: (points: Partial<Point> | Array<Partial<Point>>, finder: ConvertFinder) => Partial<Coordinate> | Array<Partial<Coordinate>>
   convertFromPixel: (coordinates: Array<Partial<Coordinate>>, finder: ConvertFinder) => Partial<Point> | Array<Partial<Point>>
-  executeAction: (type: ActionType, data: any) => void
+  executeAction: (type: ActionType, data: Crosshair) => void
   subscribeAction: (type: ActionType, callback: ActionCallback) => void
   unsubscribeAction: (type: ActionType, callback?: ActionCallback) => void
   getConvertPictureUrl: (includeOverlay?: boolean, type?: string, backgroundColor?: string) => string
@@ -205,7 +205,7 @@ export default class ChartImp implements Chart {
         case LayoutChildType.Indicator: {
           const content = child.content ?? []
           if (content.length > 0) {
-            let paneId: Nullable<string>
+            let paneId: Nullable<string> = null
             content.forEach(v => {
               if (isValid(paneId)) {
                 this.createIndicator(v, true, { id: paneId })
@@ -261,7 +261,7 @@ export default class ChartImp implements Chart {
     if (!isValid(pane)) {
       pane = new DrawPaneClass(this._chartContainer, null, this, id, options ?? {})
     }
-    let newIndex: number
+    let newIndex = 0
     if (isNumber(index)) {
       this._drawPanes.splice(index, 0, pane)
       newIndex = index
@@ -389,7 +389,7 @@ export default class ChartImp implements Chart {
     const leftYAxisBounding = { width: leftYAxisWidth }
     const rightYAxisBounding = { width: rightYAxisWidth }
     const separatorFill = styles.separator.fill
-    let separatorBounding: Partial<Bounding>
+    let separatorBounding: Partial<Bounding> = {}
     if (!separatorFill) {
       separatorBounding = mainBounding
     } else {
@@ -781,7 +781,7 @@ export default class ChartImp implements Chart {
       build({ name: value })
     } else if (isArray<Array<string | OverlayCreate>>(value)) {
       (value as Array<string | OverlayCreate>).forEach(v => {
-        let overlay: OverlayCreate
+        let overlay: Nullable<OverlayCreate> = null
         if (isString(v)) {
           overlay = { name: v }
         } else {
@@ -959,7 +959,7 @@ export default class ChartImp implements Chart {
     return isArray(coordinates) ? points : (points[0] ?? {})
   }
 
-  executeAction (type: ActionType, data: any): void {
+  executeAction (type: ActionType, data: Crosshair): void {
     switch (type) {
       case ActionType.OnCrosshairChange: {
         const crosshair: Crosshair = { ...data }

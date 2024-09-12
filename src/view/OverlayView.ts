@@ -17,20 +17,20 @@ import type Coordinate from '../common/Coordinate'
 import type Point from '../common/Point'
 import type Bounding from '../common/Bounding'
 import type BarSpace from '../common/BarSpace'
-import { type OverlayStyle } from '../common/Styles'
-import { type EventHandler, type EventName, type MouseTouchEvent, type MouseTouchEventCallback } from '../common/SyntheticEvent'
+import type { OverlayStyle } from '../common/Styles'
+import type { EventHandler, EventName, MouseTouchEvent, MouseTouchEventCallback } from '../common/SyntheticEvent'
 import { isBoolean, isNumber, isValid } from '../common/utils/typeChecks'
 
-import { type CustomApi } from '../Options'
+import type { CustomApi } from '../Options'
 
-import { type Axis } from '../component/Axis'
-import { type XAxis } from '../component/XAxis'
-import { type YAxis } from '../component/YAxis'
-import { type OverlayPrecision, type OverlayFigure, type OverlayFigureIgnoreEventType, type Overlay } from '../component/Overlay'
+import type { Axis } from '../component/Axis'
+import type { XAxis } from '../component/XAxis'
+import type { YAxis } from '../component/YAxis'
+import type { OverlayPrecision, OverlayFigure, OverlayFigureIgnoreEventType, Overlay } from '../component/Overlay'
 import type OverlayImp from '../component/Overlay'
 import { OVERLAY_FIGURE_KEY_PREFIX, OverlayMode, getAllOverlayFigureIgnoreEventTypes } from '../component/Overlay'
 
-import { type ProgressOverlayInfo, type EventOverlayInfo } from '../store/OverlayStore'
+import type { ProgressOverlayInfo, EventOverlayInfo } from '../store/OverlayStore'
 import type OverlayStore from '../store/OverlayStore'
 import { EventOverlayInfoFigureType } from '../store/OverlayStore'
 import type TimeScaleStore from '../store/TimeScaleStore'
@@ -187,7 +187,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
     attrsIndex: number,
     ignoreEvent?: boolean | OverlayFigureIgnoreEventType[]
   ): EventHandler | undefined {
-    let eventHandler
+    let eventHandler: Nullable<EventHandler> = null
     if (!overlay.isDrawing()) {
       let eventTypes: OverlayFigureIgnoreEventType[] = []
       if (isValid(ignoreEvent)) {
@@ -230,7 +230,7 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
         eventHandler.mouseRightClickEvent = this._figureMouseRightClickEvent(overlay, figureType, figureKey, figureIndex, attrsIndex)
       }
     }
-    return eventHandler
+    return eventHandler ?? undefined
   }
 
   private _figureMouseMoveEvent (overlay: OverlayImp, figureType: EventOverlayInfoFigureType, figureKey: string, figureIndex: number, attrsIndex: number): MouseTouchEventCallback {
@@ -499,10 +499,13 @@ export default class OverlayView<C extends Axis = YAxis> extends View<C> {
   protected drawFigures (ctx: CanvasRenderingContext2D, overlay: OverlayImp, figures: OverlayFigure[], defaultStyles: OverlayStyle): void {
     figures.forEach((figure, figureIndex) => {
       const { type, styles, attrs, ignoreEvent } = figure
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       const attrsArray = [].concat(attrs)
       attrsArray.forEach((ats, attrsIndex) => {
         const events = this._createFigureEvents(overlay, EventOverlayInfoFigureType.Other, figure.key ?? '', figureIndex, attrsIndex, ignoreEvent)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         const ss = { ...defaultStyles[type], ...overlay.styles?.[type], ...styles }
         this.createFigure({
           name: type, attrs: ats, styles: ss

@@ -283,7 +283,7 @@ export default abstract class YAxisImp extends AxisImp implements YAxis {
       })
     }
     const textHeight = chartStore.getStyles().xAxis.tickText.size
-    let validY: number
+    let validY = NaN
     ticks.forEach(({ value }) => {
       let v = this.displayValueToText(+value, precision)
       const y = this.convertToPixel(

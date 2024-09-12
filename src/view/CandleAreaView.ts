@@ -13,8 +13,8 @@
  */
 
 import type Coordinate from '../common/Coordinate'
-import { type VisibleData } from '../common/Data'
-import { type GradientColor } from '../common/Styles'
+import type { VisibleData } from '../common/Data'
+import type { GradientColor } from '../common/Styles'
 import Animation from '../common/Animation'
 import { isNumber, isArray, isValid } from '../common/utils/typeChecks'
 import { UpdateLevel } from '../common/Updater'
@@ -88,7 +88,7 @@ export default class CandleAreaView extends ChildrenView {
 
       // render area
       const backgroundColor = styles.backgroundColor
-      let color: string | CanvasGradient
+      let color: string | CanvasGradient = ''
       if (isArray<GradientColor>(backgroundColor)) {
         const gradient = ctx.createLinearGradient(0, bounding.height, 0, minY)
         try {

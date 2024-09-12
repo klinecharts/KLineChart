@@ -14,23 +14,23 @@
 
 import type Nullable from '../common/Nullable'
 import type ExcludePickPartial from '../common/ExcludePickPartial'
-import { type KLineData } from '../common/Data'
+import type { KLineData } from '../common/Data'
 import type Bounding from '../common/Bounding'
 import type VisibleRange from '../common/VisibleRange'
 import type BarSpace from '../common/BarSpace'
 import type Crosshair from '../common/Crosshair'
-import { type IndicatorStyle, type IndicatorPolygonStyle, type SmoothLineStyle, type RectStyle, type TextStyle, type TooltipIconStyle, type LineStyle, type LineType, type PolygonType, type TooltipLegend } from '../common/Styles'
+import type { IndicatorStyle, IndicatorPolygonStyle, SmoothLineStyle, RectStyle, TextStyle, TooltipIconStyle, LineStyle, LineType, TooltipLegend } from '../common/Styles'
 import { isNumber, isValid, merge, isBoolean, isString, clone, isFunction } from '../common/utils/typeChecks'
 
-import { type XAxis } from './XAxis'
-import { type YAxis } from './YAxis'
+import type { XAxis } from './XAxis'
+import type { YAxis } from './YAxis'
 
 import { formatValue } from '../common/utils/format'
 
-import { type ArcAttrs } from '../extension/figure/arc'
-import { type RectAttrs } from '../extension/figure/rect'
-import { type TextAttrs } from '../extension/figure/text'
-import { type LoadDataType } from '../common/LoadDataCallback'
+import type { ArcAttrs } from '../extension/figure/arc'
+import type { RectAttrs } from '../extension/figure/rect'
+import type { TextAttrs } from '../extension/figure/text'
+import type { LoadDataType } from '../common/LoadDataCallback'
 
 export enum IndicatorSeries {
   Normal = 'normal',
@@ -38,9 +38,9 @@ export enum IndicatorSeries {
   Volume = 'volume'
 }
 
-export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<TextStyle> & Partial<{ style: LineType[keyof LineType] | PolygonType[keyof PolygonType] }> & Record<string, any>
+export type IndicatorFigureStyle = Partial<Omit<SmoothLineStyle, 'style'>> & Partial<Omit<RectStyle, 'style'>> & Partial<TextStyle> & Partial<{ style: LineType[keyof LineType]   }> & Record<string, unknown>
 
-export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineStyle> & Partial<RectAttrs> & Partial<TextAttrs> & Record<string, any>
+export type IndicatorFigureAttrs = Partial<ArcAttrs> & Partial<LineStyle> & Partial<RectAttrs> & Partial<TextAttrs> & Record<string, unknown>
 
 export interface IndicatorFigureCallbackBrother<PCN> {
   prev: PCN
@@ -71,7 +71,7 @@ export type IndicatorFigureStylesCallbackData<D> = IndicatorFigureCallbackBrothe
 export type IndicatorFigureAttrsCallback<D> = (params: IndicatorFigureAttrsCallbackParams<D>) => IndicatorFigureAttrs
 export type IndicatorFigureStylesCallback<D> = (data: IndicatorFigureStylesCallbackData<D>, indicator: Indicator<D>, defaultStyles: IndicatorStyle) => IndicatorFigureStyle
 
-export interface IndicatorFigure<D = any> {
+export interface IndicatorFigure<D = unknown> {
   key: string
   title?: string
   type?: string
@@ -80,7 +80,7 @@ export interface IndicatorFigure<D = any> {
   styles?: IndicatorFigureStylesCallback<D>
 }
 
-export type IndicatorRegenerateFiguresCallback<D> = (calcParams: any[]) => Array<IndicatorFigure<D>>
+export type IndicatorRegenerateFiguresCallback<D> = (calcParams: unknown[]) => Array<IndicatorFigure<D>>
 
 export interface IndicatorTooltipData {
   name: string
@@ -131,7 +131,7 @@ export interface IndicatorOnDataStatusChangeParams<D> {
 }
 export type IndicatorOnDataStatusChangeCallback<D> = (params: IndicatorOnDataStatusChangeParams<D>) => void
 
-export interface Indicator<D = any> {
+export interface Indicator<D = unknown> {
   /**
    * Indicator name
    */
@@ -150,7 +150,7 @@ export interface Indicator<D = any> {
   /**
    * Calculation parameters
    */
-  calcParams: any[]
+  calcParams: unknown[]
 
   /**
    * Whether ohlc column is required
@@ -175,7 +175,7 @@ export interface Indicator<D = any> {
   /**
    * Extend data
    */
-  extendData: any
+  extendData: unknown
 
   /**
    * Indicator series
@@ -238,17 +238,18 @@ export interface Indicator<D = any> {
   result: D[]
 }
 
-export type IndicatorTemplate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name' | 'calc'>
+export type IndicatorTemplate<D = unknown> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name' | 'calc'>
 
-export type IndicatorCreate<D = any> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name'> & { paneId?: string }
+export type IndicatorCreate<D = unknown> = ExcludePickPartial<Omit<Indicator<D>, 'result'>, 'name'> & { paneId?: string }
 
 export type IndicatorFilter = Partial<Pick<Indicator, 'name'>> & { paneId?: string }
 
-export type IndicatorConstructor<D = any> = new () => IndicatorImp<D>
+export type IndicatorConstructor<D = unknown> = new () => IndicatorImp<D>
 
 export type EachFigureCallback<D> = (figure: IndicatorFigure<D>, figureStyles: IndicatorFigureStyle, index: number) => void
 
-export function eachFigures<D = any> (
+// eslint-disable-next-line @typescript-eslint/max-params
+export function eachFigures<D = unknown> (
   kLineDataList: KLineData[],
   indicator: Indicator<D>,
   dataIndex: number,
@@ -272,6 +273,7 @@ export function eachFigures<D = any> (
   let barCount = 0
   let lineCount = 0
 
+  // eslint-disable-next-line @typescript-eslint/init-declarations
   let defaultFigureStyles
   let figureIndex = 0
   figures.forEach(figure => {
@@ -311,16 +313,16 @@ export function eachFigures<D = any> (
   })
 }
 
-export default class IndicatorImp<D = any> implements Indicator<D> {
+export default class IndicatorImp<D = unknown> implements Indicator<D> {
   name: string
   shortName: string
   precision = 4
-  calcParams: any[] = []
+  calcParams: unknown[] = []
   shouldOhlc = false
   shouldFormatBigNumber = false
   visible = true
   zLevel = 0
-  extendData: any
+  extendData: unknown
   series = IndicatorSeries.Normal
   figures: Array<IndicatorFigure<D>> = []
   minValue: Nullable<number> = null
@@ -358,7 +360,7 @@ export default class IndicatorImp<D = any> implements Indicator<D> {
   result: D[] = []
 
   private _prevIndicator: Indicator<D>
-  private _lockSeriesPrecision: boolean = false
+  private _lockSeriesPrecision = false
 
   constructor (indicator: IndicatorTemplate<D>) {
     this.override(indicator)
@@ -425,7 +427,7 @@ export default class IndicatorImp<D = any> implements Indicator<D> {
     }
   }
 
-  static extend<D = any> (template: IndicatorTemplate<D>): IndicatorConstructor<D> {
+  static extend<D = unknown> (template: IndicatorTemplate<D>): IndicatorConstructor<D> {
     class Custom extends IndicatorImp<D> {
       constructor () {
         super(template)

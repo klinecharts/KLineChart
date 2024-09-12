@@ -36,7 +36,7 @@ export default class CandleLastPriceLabelView extends View {
       if (isValid(data)) {
         const { close, open } = data
         const priceY = yAxis.convertToNicePixel(close)
-        let backgroundColor: string
+        let backgroundColor = ''
         if (close > open) {
           backgroundColor = lastPriceMarkStyles.upColor
         } else if (close < open) {
@@ -53,8 +53,8 @@ export default class CandleLastPriceLabelView extends View {
           precision.price
         )
         text = formatFoldDecimal(formatThousands(text, chartStore.getThousandsSeparator()), chartStore.getDecimalFoldThreshold())
-        let x: number
-        let textAlgin: CanvasTextAlign
+        let x = 0
+        let textAlgin: CanvasTextAlign = 'left'
         if (yAxis.isFromZero()) {
           x = 0
           textAlgin = 'left'

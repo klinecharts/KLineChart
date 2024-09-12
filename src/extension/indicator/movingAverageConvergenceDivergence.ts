@@ -12,12 +12,12 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
+import type { KLineData } from '../../common/Data'
 import { type IndicatorStyle, PolygonType } from '../../common/Styles'
 
 import { formatValue } from '../../common/utils/format'
 
-import { type Indicator, type IndicatorTemplate, type IndicatorFigureStylesCallbackData } from '../../component/Indicator'
+import type { Indicator, IndicatorTemplate, IndicatorFigureStylesCallbackData } from '../../component/Indicator'
 
 interface Macd {
   dif?: number
@@ -49,7 +49,7 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd> = {
         const { prev, current } = data
         const prevMacd = prev.indicatorData?.macd ?? Number.MIN_SAFE_INTEGER
         const currentMacd = current.indicatorData?.macd ?? Number.MIN_SAFE_INTEGER
-        let color: string
+        let color = ''
         if (currentMacd > 0) {
           color = formatValue(indicator.styles, 'bars[0].upColor', (defaultStyles.bars)[0].upColor) as string
         } else if (currentMacd < 0) {
@@ -65,8 +65,8 @@ const movingAverageConvergenceDivergence: IndicatorTemplate<Macd> = {
   calc: (dataList: KLineData[], indicator: Indicator<Macd>) => {
     const params = indicator.calcParams as number[]
     let closeSum = 0
-    let emaShort: number
-    let emaLong: number
+    let emaShort = 0
+    let emaLong = 0
     let dif = 0
     let difSum = 0
     let dea = 0

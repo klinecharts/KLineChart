@@ -12,8 +12,8 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
-import { type Indicator, type IndicatorTemplate } from '../../component/Indicator'
+import type { KLineData } from '../../common/Data'
+import type { Indicator, IndicatorTemplate } from '../../component/Indicator'
 
 interface Brar {
   br?: number
@@ -38,7 +38,7 @@ const brar: IndicatorTemplate<Brar> = {
     { key: 'ar', title: 'AR: ', type: 'line' }
   ],
   calc: (dataList: KLineData[], indicator: Indicator<Brar>) => {
-    const params = indicator.calcParams
+    const params = indicator.calcParams as number[]
     let hcy = 0
     let cyl = 0
     let ho = 0

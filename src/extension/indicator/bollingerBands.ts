@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-import { type KLineData } from '../../common/Data'
+import type { KLineData } from '../../common/Data'
 import { type Indicator, type IndicatorTemplate, IndicatorSeries } from '../../component/Indicator'
 
 interface Boll {
@@ -54,7 +54,7 @@ const bollingerBands: IndicatorTemplate<Boll> = {
     { key: 'dn', title: 'DN: ', type: 'line' }
   ],
   calc: (dataList: KLineData[], indicator: Indicator<Boll>) => {
-    const params = indicator.calcParams
+    const params = indicator.calcParams as number[]
     const p = params[0] - 1
     let closeSum = 0
     return dataList.map((kLineData: KLineData, i: number) => {

@@ -79,6 +79,7 @@ export default class Canvas {
         this._resizeObserver.observe(this._element, { box: 'device-pixel-content-box' })
       } else {
         this._mediaQueryList = window.matchMedia(`(resolution: ${getPixelRatio(this._element)}dppx)`)
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
         this._mediaQueryList.addListener(this._mediaQueryListener)
       }
     }).catch(_ => false)
@@ -136,6 +137,7 @@ export default class Canvas {
 
   destroy (): void {
     this._resizeObserver?.unobserve(this._element)
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     this._mediaQueryList?.removeListener(this._mediaQueryListener)
   }
 }

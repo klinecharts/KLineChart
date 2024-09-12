@@ -13,7 +13,7 @@
  */
 
 import type Nullable from '../common/Nullable'
-import { type KLineData, type VisibleData } from '../common/Data'
+import type { KLineData, VisibleData } from '../common/Data'
 import type Precision from '../common/Precision'
 import type DeepPartial from '../common/DeepPartial'
 import { formatValue } from '../common/utils/format'

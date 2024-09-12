@@ -13,11 +13,11 @@
  */
 
 import type Coordinate from '../../common/Coordinate'
-import { type TextStyle } from '../../common/Styles'
+import type { TextStyle } from '../../common/Styles'
 
 import { createFont, calcTextWidth } from '../../common/utils/canvas'
 
-import { type FigureTemplate } from '../../component/Figure'
+import type { FigureTemplate } from '../../component/Figure'
 
 import { type RectAttrs, drawRect } from './rect'
 
@@ -26,7 +26,7 @@ export function getTextRect (attrs: TextAttrs, styles: Partial<TextStyle>): Rect
   const { x, y, text, align = 'left', baseline = 'top', width: w, height: h } = attrs
   const width = w ?? (paddingLeft + calcTextWidth(text, size, weight, family) + paddingRight)
   const height = h ?? (paddingTop + size + paddingBottom)
-  let startX: number
+  let startX = 0
   switch (align) {
     case 'left':
     case 'start': {
@@ -43,7 +43,7 @@ export function getTextRect (attrs: TextAttrs, styles: Partial<TextStyle>): Rect
       break
     }
   }
-  let startY: number
+  let startY = 0
   switch (baseline) {
     case 'top':
     case 'hanging': {

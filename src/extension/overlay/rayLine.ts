@@ -15,13 +15,13 @@
 import type Coordinate from '../../common/Coordinate'
 import type Bounding from '../../common/Bounding'
 
-import { type OverlayTemplate } from '../../component/Overlay'
+import type { OverlayTemplate } from '../../component/Overlay'
 
 import { getLinearYFromCoordinates, type LineAttrs } from '../figure/line'
 
 export function getRayLine (coordinates: Coordinate[], bounding: Bounding): LineAttrs | LineAttrs[] {
   if (coordinates.length > 1) {
-    let coordinate: Coordinate
+    let coordinate = { x: 0, y: 0 }
     if (coordinates[0].x === coordinates[1].x && coordinates[0].y !== coordinates[1].y) {
       if (coordinates[0].y < coordinates[1].y) {
         coordinate = {

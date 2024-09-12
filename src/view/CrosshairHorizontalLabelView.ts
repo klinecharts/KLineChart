@@ -14,15 +14,15 @@
 
 import type Bounding from '../common/Bounding'
 import type Crosshair from '../common/Crosshair'
-import { type CrosshairStyle, type CrosshairDirectionStyle, type StateTextStyle } from '../common/Styles'
+import type { CrosshairStyle, CrosshairDirectionStyle, StateTextStyle } from '../common/Styles'
 import { isString } from '../common/utils/typeChecks'
 import { formatThousands, formatFoldDecimal } from '../common/utils/format'
 import { createFont } from '../common/utils/canvas'
 
-import { type Axis } from '../component/Axis'
+import type { Axis } from '../component/Axis'
 import type YAxis from '../component/YAxis'
 
-import { type TextAttrs } from '../extension/figure/text'
+import type { TextAttrs } from '../extension/figure/text'
 
 import type ChartStore from '../store/ChartStore'
 
@@ -95,8 +95,8 @@ export default class CrosshairHorizontalLabelView<C extends Axis = YAxis> extend
 
   protected getTextAttrs (text: string, _textWidth: number, crosshair: Crosshair, bounding: Bounding, axis: Axis, _styles: StateTextStyle): TextAttrs {
     const yAxis = axis as unknown as YAxis
-    let x: number
-    let textAlign: CanvasTextAlign
+    let x = 0
+    let textAlign: CanvasTextAlign = 'left'
     if (yAxis.isFromZero()) {
       x = 0
       textAlign = 'left'

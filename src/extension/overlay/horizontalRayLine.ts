@@ -13,7 +13,7 @@
  */
 
 import { isValid } from '../../common/utils/typeChecks'
-import { type OverlayTemplate } from '../../component/Overlay'
+import type { OverlayTemplate } from '../../component/Overlay'
 
 const horizontalRayLine: OverlayTemplate = {
   name: 'horizontalRayLine',

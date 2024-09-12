@@ -12,9 +12,9 @@
  * limitations under the License.
  */
 
-import { type OverlayTemplate } from '../../component/Overlay'
+import type { OverlayTemplate } from '../../component/Overlay'
 
-import { type LineAttrs } from '../figure/line'
+import type { LineAttrs } from '../figure/line'
 
 const horizontalSegment: OverlayTemplate = {
   name: 'horizontalSegment',
