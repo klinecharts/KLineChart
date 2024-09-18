@@ -24,11 +24,11 @@ import { createDom } from '../common/utils/dom'
 import { getPixelRatio } from '../common/utils/canvas'
 
 export default abstract class DrawWidget<P extends DrawPane = DrawPane> extends Widget<P> {
-  private _mainCanvas: Canvas
-  private _overlayCanvas: Canvas
+  private readonly _mainCanvas: Canvas
+  private readonly _overlayCanvas: Canvas
 
-  override init (rootContainer: HTMLElement): void {
-    super.init(rootContainer)
+  constructor(rootContainer: HTMLElement, pane: P) {
+    super(rootContainer, pane)
     this._mainCanvas = new Canvas({
       position: 'absolute',
       top: '0',
