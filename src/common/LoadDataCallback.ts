@@ -28,4 +28,9 @@ export interface LoadDataParams {
   callback: (dataList: KLineData[], more?: boolean) => void
 }
 
+export interface LoadDataMore {
+  [LoadDataType.Backward]: boolean
+  [LoadDataType.Forward]: boolean
+}
+
 export type LoadDataCallback = (params: LoadDataParams) => void

@@ -313,13 +313,13 @@ export default class TimeScaleStore {
     // More processing and loading, more loading if there are callback methods and no data is being loaded
     if (from === 0) {
       const firstData = dataList[0]
-      this._chartStore.executeLoadDataCallback({
+      this._chartStore.executeLoadMoreDataCallback({
         type: LoadDataType.Forward,
         data: firstData ?? null
       })
     }
     if (to === totalBarCount) {
-      this._chartStore.executeLoadDataCallback({
+      this._chartStore.executeLoadMoreDataCallback({
         type: LoadDataType.Backward,
         data: dataList[totalBarCount - 1] ?? null
       })

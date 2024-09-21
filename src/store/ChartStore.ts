@@ -72,9 +72,9 @@ export default class ChartStore {
   private _dataList: KLineData[] = []
 
   /**
-   * Load data callback
+   * Load more data callback
    */
-  private _loadDataCallback: Nullable<LoadDataCallback> = null
+  private _loadMoreDataCallback: Nullable<LoadDataCallback> = null
 
   /**
    * Is loading data flag
@@ -82,14 +82,9 @@ export default class ChartStore {
   private _loading = true
 
   /**
-   * Whether there are forward more flag
+  * Whether there are forward and backward more flag
    */
-  private _forwardMore = true
-
-  /**
-   * Whether there are forward more flag
-   */
-  private _backwardMore = true
+  private readonly _loadDataMore = { forward: false, backward: false }
 
   /**
    * Time scale store
@@ -222,7 +217,11 @@ export default class ChartStore {
     return this._visibleDataList
   }
 
-  addData (data: KLineData | KLineData[], type: LoadDataType, more?: boolean): void {
+  addData (
+    data: KLineData | KLineData[],
+    type: LoadDataType,
+    more?: { forward: boolean, backward: boolean }
+  ): void {
     let success = false
     let adjustFlag = false
     let dataLengthChange = 0
@@ -232,7 +231,8 @@ export default class ChartStore {
         case LoadDataType.Init: {
           this.clear()
           this._dataList = data
-          this._forwardMore = more ?? true
+          this._loadDataMore.backward = more?.forward ?? false
+          this._loadDataMore.forward = more?.forward ?? false
           this._timeScaleStore.classifyTimeTicks(this._dataList)
           this._timeScaleStore.resetOffsetRightDistance()
           adjustFlag = true
@@ -241,14 +241,14 @@ export default class ChartStore {
         case LoadDataType.Backward: {
           this._timeScaleStore.classifyTimeTicks(data, true)
           this._dataList = this._dataList.concat(data)
-          this._backwardMore = more ?? false
+          this._loadDataMore.backward = more?.backward ?? false
           adjustFlag = dataLengthChange > 0
           break
         }
         case LoadDataType.Forward: {
           this._dataList = data.concat(this._dataList)
           this._timeScaleStore.classifyTimeTicks(this._dataList)
-          this._forwardMore = more ?? false
+          this._loadDataMore.forward = more?.forward ?? false
           adjustFlag = dataLengthChange > 0
         }
       }
@@ -286,30 +286,30 @@ export default class ChartStore {
     }
   }
 
-  setLoadDataCallback (callback: LoadDataCallback): void {
-    this._loadDataCallback = callback
+  setLoadMoreDataCallback (callback: LoadDataCallback): void {
+    this._loadMoreDataCallback = callback
   }
 
-  executeLoadDataCallback (params: Omit<LoadDataParams, 'callback'>): void {
+  executeLoadMoreDataCallback (params: Omit<LoadDataParams, 'callback'>): void {
     if (
       !this._loading &&
-      isValid(this._loadDataCallback) &&
+      isValid(this._loadMoreDataCallback) &&
       (
-        (this._forwardMore && params.type === LoadDataType.Forward) ||
-        (this._backwardMore && params.type === LoadDataType.Backward)
+        (this._loadDataMore.forward && params.type === LoadDataType.Forward) ||
+        (this._loadDataMore.backward && params.type === LoadDataType.Backward)
       )
     ) {
       const cb: ((data: KLineData[], more?: boolean) => void) = (data: KLineData[], more?: boolean) => {
-        this.addData(data, params.type, more)
+        this.addData(data, params.type, { forward: more ?? false, backward: more ?? false })
       }
       this._loading = true
-      this._loadDataCallback({ ...params, callback: cb })
+      this._loadMoreDataCallback({ ...params, callback: cb })
     }
   }
 
   clear (): void {
-    this._forwardMore = true
-    this._backwardMore = true
+    this._loadDataMore.backward = false
+    this._loadDataMore.forward = false
     this._loading = true
     this._dataList = []
     this._visibleDataList = []

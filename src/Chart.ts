@@ -23,7 +23,7 @@ import { UpdateLevel } from './common/Updater'
 import type { Styles } from './common/Styles'
 import type Crosshair from './common/Crosshair'
 import { ActionType, type ActionCallback } from './common/Action'
-import type { LoadDataCallback } from './common/LoadDataCallback'
+import type { LoadDataCallback, LoadDataMore } from './common/LoadDataCallback'
 import type Precision from './common/Precision'
 import type VisibleRange from './common/VisibleRange'
 import { type CustomApi, LayoutChildType, type Options } from './Options'
@@ -32,7 +32,7 @@ import Animation from './common/Animation'
 import { createId } from './common/utils/id'
 import { createDom } from './common/utils/dom'
 import { getPixelRatio } from './common/utils/canvas'
-import { isString, isArray, isValid, merge, isNumber } from './common/utils/typeChecks'
+import { isString, isArray, isValid, merge, isNumber, isBoolean } from './common/utils/typeChecks'
 import { logWarn } from './common/utils/logger'
 import { binarySearchNearest } from './common/utils/number'
 import { LoadDataType } from './common/LoadDataCallback'
@@ -94,9 +94,9 @@ export interface Chart {
   getVisibleRange: () => VisibleRange
   clearData: () => void
   getDataList: () => KLineData[]
-  applyNewData: (dataList: KLineData[], more?: boolean) => void
+  applyNewData: (dataList: KLineData[], more?: boolean | Partial<LoadDataMore>) => void
   updateData: (data: KLineData) => void
-  setLoadDataCallback: (cb: LoadDataCallback) => void
+  setLoadMoreDataCallback: (cb: LoadDataCallback) => void
   createIndicator: (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: PaneOptions) => Nullable<string>
   overrideIndicator: (override: IndicatorCreate) => void
   getIndicators: (filter?: IndicatorFilter) => Map<string, Indicator[]>
@@ -664,16 +664,24 @@ export default class ChartImp implements Chart {
     return this._chartStore.getDataList()
   }
 
-  applyNewData (data: KLineData[], more?: boolean): void {
-    this._chartStore.addData(data, LoadDataType.Init, more)
+  applyNewData (data: KLineData[], more?: boolean | Partial<LoadDataMore>): void {
+    let loadDataMore = { forward: false, backward: false }
+    if (isBoolean(more)) {
+      loadDataMore.forward = more
+      loadDataMore.backward = more
+    } else {
+      loadDataMore = { ...loadDataMore, ...more }
+    }
+    
+    this._chartStore.addData(data, LoadDataType.Init, loadDataMore)
   }
 
   updateData (data: KLineData): void {
     this._chartStore.addData(data, LoadDataType.Update)
   }
 
-  setLoadDataCallback (cb: LoadDataCallback): void {
-    this._chartStore.setLoadDataCallback(cb)
+  setLoadMoreDataCallback (cb: LoadDataCallback): void {
+    this._chartStore.setLoadMoreDataCallback(cb)
   }
 
   createIndicator (value: string | IndicatorCreate, isStack?: boolean, paneOptions?: Nullable<PaneOptions>): Nullable<string> {
