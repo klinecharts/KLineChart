@@ -7,8 +7,8 @@
 ## Telegram
 https://t.me/+098syuQtzI0yNzll
 
-## Discord
-https://discord.gg/7YjHYgvvvZ
+<!-- ## Discord
+https://discord.gg/7YjHYgvvvZ -->
 
 ## 微信讨论群
 扫一扫，添加开发者，备注『 KLineChart 』，加入群聊。

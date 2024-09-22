@@ -7,8 +7,8 @@
 ## Telegram
 https://t.me/+098syuQtzI0yNzll
 
-## Discord
-https://discord.gg/7YjHYgvvvZ
+<!-- ## Discord
+https://discord.gg/7YjHYgvvvZ -->
 
 ## Wechat discussion group
 Scan to add developers, note KLineChart, and join the group chat.
