@@ -1,5 +1,5 @@
 import { init, registerLocale } from 'klinecharts'
-import './index.less'
+import './index.css'
 
 function genData (timestamp = new Date().getTime(), length = 800) {
   let basePrice = 5000
