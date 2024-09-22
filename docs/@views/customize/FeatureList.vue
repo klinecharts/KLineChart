@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, defineProps } from 'vue'
+import { defineProps } from 'vue'
 
 const props = defineProps(['features'])
 

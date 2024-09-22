@@ -3,7 +3,7 @@
 
   import { useData } from 'vitepress'
 
-  import sponsors from './sponsors.json'
+  import sponsors from './index.json'
 
   sponsors.sort((s1, s2) => s2.amount - s1.amount)
 
@@ -72,6 +72,29 @@
 </template>
 
 <style scoped>
+  .home-section {
+    border-top: 1px solid var(--vp-c-gutter);
+    padding: 60px 24px;
+    text-align: center;
+  }
+
+  .home-section .home-section-content {
+    margin: 0 auto;
+    max-width: 1152px;
+  }
+
+  @media (min-width: 640px) {
+    .home-section {
+      padding: 60px 48px
+    }
+  }
+
+  @media (min-width: 960px) {
+    .home-section{
+      padding: 60px 64px
+    }
+  }
+
   .sponsor-section {
     margin-top: 100px;
   }

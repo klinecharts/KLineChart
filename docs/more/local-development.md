@@ -6,8 +6,8 @@
 ## 须知
 ### 文件目录说明
 <script setup>
-import ProjectDirExplain from '../components/ProjectDirExplain.vue'
-import ProjectModuleExplain from '../components/ProjectModuleExplain.vue'
+import ProjectDirExplain from '../@views/local-development/ProjectDirExplain.vue'
+import ProjectModuleExplain from '../@views/local-development/ProjectModuleExplain.vue'
 </script>
 <ProjectDirExplain/>
 

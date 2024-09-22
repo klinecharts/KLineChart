@@ -6,8 +6,8 @@ If you see this, you may be interested in improving the KLineChart core. Thank y
 ## Notice
 ### File directory description
 <script setup>
-import ProjectDirExplain from '../../components/ProjectDirExplain.vue'
-import ProjectModuleExplain from '../../components/ProjectModuleExplain.vue'
+import ProjectDirExplain from '../../@views/local-development/ProjectDirExplain.vue'
+import ProjectModuleExplain from '../../@views/local-development/ProjectModuleExplain.vue'
 </script>
 <ProjectDirExplain/>
 

@@ -6,8 +6,8 @@ editLink: false
 # Axis
 
 <script setup>
-import Chart from '../../components/sample/axis/index.vue'
+import Chart from '../../@views/sample/axis/index.vue'
 </script>
 <Chart/>
 
-<!--@include: @/components/sample/axis/index.md-->
+<!--@include: @/@views/sample/axis/index.md-->

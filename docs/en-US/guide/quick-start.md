@@ -5,9 +5,9 @@ KLineChart supports multiple download methods. You can download it through [npm]
 
 <strong>It is recommended to use package management tools for development. it not only makes development easier, but also allow you to take advantage of the rich ecosystem of Javascript packages and tooling.</strong>
 
-<!-- @include: @/components/quick-start/download.md -->
+<!-- @include: @/@views/quick-start/download.md -->
 
 ## Create the first chart
-<!-- @include: @/components/quick-start/create-chart/index.md -->
+<!-- @include: @/@views/quick-start/create-chart/index.md -->
 
 This completes your first chart creation.

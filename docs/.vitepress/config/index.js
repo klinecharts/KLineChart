@@ -17,7 +17,7 @@ export default defineConfig({
   metaChunk: true,
   title: 'KLineChart',
   outDir: '../website',
-  srcExclude: ['components', 'data'],
+  srcExclude: ['@components', 'data', '@views'],
   lastUpdated: true,
   markdown: {
     theme: {

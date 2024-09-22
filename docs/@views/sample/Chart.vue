@@ -11,8 +11,8 @@ import ResizeObserver from 'resize-observer-polyfill'
 
 const { isDark, lang } = useData()
 
-import Tooltip from '../Tooltip.vue'
-import Loading from '../Loading.vue'
+import Tooltip from '../../@components/Tooltip.vue'
+import Loading from '../../@components/Loading.vue'
 
 const href = ref()
 
@@ -208,6 +208,29 @@ function getCodeSandboxParameters () {
   </div>
 </template>
 
+<style>
+  .sample-chart + .vp-code-group {
+    margin-top: 0;
+  }
+
+  .sample-chart + .vp-code-group .tabs {
+    background-color: transparent;
+    border: solid 1px var(--vp-c-divider);
+    border-bottom: none;
+    border-top-style: dashed;
+    border-radius: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .sample-chart + .vp-code-group div[class*='language-'] {
+    background-color: transparent;
+    border: solid 1px var(--vp-c-divider);
+    border-top: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
+</style>
+
 <style scoped>
   .chart {
     margin-top: 16px;
@@ -216,7 +239,6 @@ function getCodeSandboxParameters () {
     border: solid 1px var(--vp-c-divider);
     border-bottom: none;
   }
-  
   .chart-container {
     padding-bottom: 10px;
     min-height: 400px;

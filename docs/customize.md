@@ -3,7 +3,7 @@ layout: page
 ---
 
 <script setup>
-import Customize from './components/customize/index.vue'
+import Customize from './@views/customize/index.vue'
 </script>
 
 <Customize/>

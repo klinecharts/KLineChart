@@ -6,8 +6,8 @@ editLink: false
 # 时区
 
 <script setup>
-import Chart from '../components/sample/timezone/index.vue'
+import Chart from '../@views/sample/timezone/index.vue'
 </script>
 <Chart/>
 
-<!--@include: @/components/sample/timezone/index.md-->
+<!--@include: @/@views/sample/timezone/index.md-->

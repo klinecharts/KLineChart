@@ -2,9 +2,9 @@
 import Theme from 'vitepress/theme'
 import TwoslashFloatingVue from '@shikijs/vitepress-twoslash/client'
 
-import Layout from './Layout.vue'
+import Layout from '../../@views/Layout.vue'
 
-import Badge from '../components/Badge.vue'
+import Badge from '../../@components/Badge.vue'
 
 import '@shikijs/vitepress-twoslash/style.css'
 

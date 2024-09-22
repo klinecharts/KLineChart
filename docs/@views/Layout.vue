@@ -3,9 +3,9 @@ import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import { nextTick, provide } from 'vue'
 
-import Banner from '../components/Banner.vue'
-import HomeSponsor from '../components/HomeSponsor.vue'
-import NotFound from '../components/NotFound.vue'
+import Banner from './Banner.vue'
+import HomeSponsor from './home/sponsor/index.vue'
+import NotFound from './NotFound.vue'
 
 const { isDark } = useData()
 
@@ -81,4 +81,4 @@ provide('toggle-appearance', async ({ clientX: x, clientY: y }) => {
 .VPSwitchAppearance .check {
   transform: none !important;
 }
-</style>../components/Banner.vue
+</style>
