@@ -26,7 +26,7 @@ function registerXAxis (axis: AxisTemplate): void {
 }
 
 function getXAxisClass (name: string): XAxisConstructor {
-  return xAxises[name] ?? xAxises.default
+  return xAxises[name] ?? xAxises.normal
 }
 
 export {

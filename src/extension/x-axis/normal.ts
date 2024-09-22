@@ -14,8 +14,8 @@
 
 import type { AxisTemplate } from '../../component/Axis'
 
-const defaultXAxis: AxisTemplate = {
-  name: 'default'
+const normal: AxisTemplate = {
+  name: 'normal'
 }
 
-export default defaultXAxis
+export default normal

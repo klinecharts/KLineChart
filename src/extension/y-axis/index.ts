@@ -30,7 +30,7 @@ function registerYAxis (axis: AxisTemplate): void {
 }
 
 function getYAxisClass (name: string): YAxisConstructor {
-  return yAxises[name] ?? yAxises.default
+  return yAxises[name] ?? yAxises.normal
 }
 
 export {
