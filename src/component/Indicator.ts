@@ -118,18 +118,18 @@ export type IndicatorDrawCallback<D> = (params: IndicatorDrawParams<D>) => boole
 export type IndicatorCalcCallback<D> = (dataList: KLineData[], indicator: Indicator<D>) => Promise<D[]> | D[]
 export type IndicatorShouldUpdateCallback<D> = (prev: Indicator<D>, current: Indicator<D>) => (boolean | { calc: boolean, draw: boolean })
 
-export enum IndicatorDataStatus {
+export enum IndicatorDataState {
   Loading = 'loading',
   Error = 'error',
   Ready = 'ready'
 }
 
-export interface IndicatorOnDataStatusChangeParams<D> {
-  status: IndicatorDataStatus
+export interface IndicatorOnDataStateChangeParams<D> {
+  state: IndicatorDataState
   type: LoadDataType
   indicator: Indicator<D>
 }
-export type IndicatorOnDataStatusChangeCallback<D> = (params: IndicatorOnDataStatusChangeParams<D>) => void
+export type IndicatorOnDataStateChangeCallback<D> = (params: IndicatorOnDataStateChangeParams<D>) => void
 
 export interface Indicator<D = unknown> {
   /**
@@ -228,9 +228,9 @@ export interface Indicator<D = unknown> {
   draw: Nullable<IndicatorDrawCallback<D>>
 
   /**
-   * Data status change
+   * Data state change
    */
-  onDataStatusChange: Nullable<IndicatorOnDataStatusChangeCallback<D>>
+  onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>>
 
   /**
    * Calculation result
@@ -355,7 +355,7 @@ export default class IndicatorImp<D = unknown> implements Indicator<D> {
   createTooltipDataSource: Nullable<IndicatorCreateTooltipDataSourceCallback<D>> = null
   draw: Nullable<IndicatorDrawCallback<D>> = null
 
-  onDataStatusChange: Nullable<IndicatorOnDataStatusChangeCallback<D>> = null
+  onDataStateChange: Nullable<IndicatorOnDataStateChangeCallback<D>> = null
 
   result: D[] = []
 

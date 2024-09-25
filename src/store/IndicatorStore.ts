@@ -16,7 +16,7 @@ import { isValid, isString } from '../common/utils/typeChecks'
 
 import type ChartStore from './ChartStore'
 
-import { IndicatorDataStatus, type IndicatorCreate, type IndicatorFilter } from '../component/Indicator'
+import { IndicatorDataState, type IndicatorCreate, type IndicatorFilter } from '../component/Indicator'
 import type IndicatorImp from '../component/Indicator'
 import { IndicatorSeries } from '../component/Indicator'
 import { getIndicatorClass } from '../extension/indicator/index'
@@ -47,23 +47,23 @@ export default class IndicatorStore {
     this._scheduler.addTask({
       id: generateTaskId(paneId, indicator.name),
       handler: () => {
-        indicator.onDataStatusChange?.({
-          status: IndicatorDataStatus.Loading,
+        indicator.onDataStateChange?.({
+          state: IndicatorDataState.Loading,
           type: loadDataType,
           indicator
         })
         indicator.calcImp(this._chartStore.getDataList()).then(result => {
           if (result) {
             this._chartStore.getChart().adjustPaneViewport(false, true, true, true)
-            indicator.onDataStatusChange?.({
-              status: IndicatorDataStatus.Ready,
+            indicator.onDataStateChange?.({
+              state: IndicatorDataState.Ready,
               type: loadDataType,
               indicator
             })
           }
         }).catch(() => {
-          indicator.onDataStatusChange?.({
-            status: IndicatorDataStatus.Error,
+          indicator.onDataStateChange?.({
+            state: IndicatorDataState.Error,
             type: loadDataType,
             indicator
           })
