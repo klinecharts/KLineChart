@@ -58,10 +58,10 @@ export default abstract class View<C extends Axis = Axis> extends Eventful {
     return null
   }
 
-  draw (ctx: CanvasRenderingContext2D): void {
+  draw (ctx: CanvasRenderingContext2D, ...extend: unknown[]): void {
     this.clear()
-    this.drawImp(ctx)
+    this.drawImp(ctx, extend)
   }
 
-  protected abstract drawImp (ctx: CanvasRenderingContext2D): void
+  protected abstract drawImp (ctx: CanvasRenderingContext2D, ...extend: unknown[]): void
 }

@@ -19,12 +19,19 @@ export const enum PanePosition {
   Bottom = 'bottom'
 }
 
+export const enum PaneState {
+  Normal = 'normal',
+  Maximize = 'maximize',
+  Minimize = 'minimize'
+}
+
 export interface PaneOptions {
   id?: string
   height?: number
   minHeight?: number
   dragEnabled?: boolean
   position?: PanePosition
+  state?: PaneState,
   axis?: Partial<AxisCreate>
 }
 

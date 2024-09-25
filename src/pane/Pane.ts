@@ -16,17 +16,22 @@ import type Updater from '../common/Updater'
 import { UpdateLevel } from '../common/Updater'
 import type Bounding from '../common/Bounding'
 import { createDefaultBounding } from '../common/Bounding'
+import { createDom } from '../common/utils/dom'
+import { merge } from '../common/utils/typeChecks'
 
 import type Chart from '../Chart'
 
-import { createDom } from '../common/utils/dom'
 export default abstract class Pane implements Updater {
   private _rootContainer: HTMLElement
   private _container: HTMLElement
   private readonly _id: string
   private readonly _chart: Chart
 
-  private readonly _bounding: Bounding = createDefaultBounding()
+  private readonly _bounding = createDefaultBounding()
+
+  private readonly _originalBounding = createDefaultBounding()
+
+  private _visible = true
 
   constructor (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string) {
     this._chart = chart
@@ -55,6 +60,13 @@ export default abstract class Pane implements Updater {
     return this._container
   }
 
+  setVisible (visible: boolean): void {
+    if (this._visible !== visible) {
+      this._container.style.display = visible ? 'block' : 'none'
+      this._visible = visible
+    }
+  }
+
   getId (): string {
     return this._id
   }
@@ -65,6 +77,14 @@ export default abstract class Pane implements Updater {
 
   getBounding (): Bounding {
     return this._bounding
+  }
+
+  setOriginalBounding (bounding: Partial<Bounding>): void {
+    merge(this._originalBounding, bounding)
+  }
+
+  getOriginalBounding (): Bounding {
+    return this._originalBounding
   }
 
   update (level?: UpdateLevel): void {

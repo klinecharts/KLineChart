@@ -25,7 +25,7 @@ import type DrawWidget from '../widget/DrawWidget'
 import type YAxisWidget from '../widget/YAxisWidget'
 
 import Pane from './Pane'
-import { type PaneOptions, PANE_MIN_HEIGHT, PaneIdConstants } from './types'
+import { type PaneOptions, PANE_MIN_HEIGHT, PaneIdConstants, PaneState } from './types'
 
 import type Chart from '../Chart'
 
@@ -40,7 +40,12 @@ export default abstract class DrawPane<C extends Axis = Axis> extends Pane {
 
   private _axis: C
 
-  private readonly _options: PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> = { minHeight: PANE_MIN_HEIGHT, dragEnabled: true, axis: { name: 'normal', scrollZoomEnabled: true } }
+  private readonly _options: PickPartial<DeepRequired<Omit<PaneOptions, 'id' | 'height'>>, 'position'> = {
+    minHeight: PANE_MIN_HEIGHT,
+    dragEnabled: true,
+    state: PaneState.Normal,
+    axis: { name: 'normal', scrollZoomEnabled: true }
+  }
 
   constructor (rootContainer: HTMLElement, afterElement: Nullable<HTMLElement>, chart: Chart, id: string, options: Omit<PaneOptions, 'id' | 'height'>) {
     super(rootContainer, afterElement, chart, id)

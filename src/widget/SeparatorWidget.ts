@@ -24,8 +24,9 @@ import Widget from './Widget'
 import { WidgetNameConstants, REAL_SEPARATOR_HEIGHT } from './types'
 
 import type SeparatorPane from '../pane/SeparatorPane'
-
-import type AxisPane from '../pane/DrawPane'
+import type DrawPane from '../pane/DrawPane'
+import { PaneState } from '../pane/types'
+import { isValid } from '../common/utils/typeChecks'
 
 export default class SeparatorWidget extends Widget<SeparatorPane> {
   private _dragFlag = false
@@ -33,6 +34,9 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
 
   private _topPaneHeight = 0
   private _bottomPaneHeight = 0
+
+  private _topPane: Nullable<DrawPane> = null
+  private _bottomPane: Nullable<DrawPane> = null
 
   constructor (rootContainer: HTMLElement, pane: SeparatorPane) {
     super(rootContainer, pane)
@@ -66,13 +70,41 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
     this._dragFlag = true
     this._dragStartY = event.pageY
     const pane = this.getPane()
-    this._topPaneHeight = pane.getTopPane().getBounding().height
-    this._bottomPaneHeight = pane.getBottomPane().getBounding().height
+    const chart = pane.getChart()
+    this._topPane = pane.getTopPane()
+    this._bottomPane = pane.getBottomPane()
+    const drawPanes = chart.getDrawPanes()
+    if (this._topPane.getOptions().state === PaneState.Minimize) {
+      const index = drawPanes.findIndex(pane => pane.getId() === this._topPane?.getId())
+      for (let i = index - 1; i > -1; i--) {
+        const pane = drawPanes[i]
+        if (pane.getOptions().state !== PaneState.Minimize) {
+          this._topPane = pane
+          break
+        }
+      }
+    }
+    if (this._bottomPane.getOptions().state === PaneState.Minimize) {
+      const index = drawPanes.findIndex(pane => pane.getId() === this._bottomPane?.getId())
+      for (let i = index + 1; i < drawPanes.length; i++) {
+        const pane = drawPanes[i]
+        if (pane.getOptions().state !== PaneState.Minimize) {
+          this._bottomPane = pane
+          break
+        }
+      }
+    }
+    this._topPaneHeight = this._topPane.getBounding().height
+    this._bottomPaneHeight = this._bottomPane.getBounding().height
     return true
   }
 
   private _mouseUpEvent (): boolean {
     this._dragFlag = false
+    this._topPane = null
+    this._bottomPane = null
+    this._topPaneHeight = 0
+    this._bottomPaneHeight = 0
     return this._mouseLeaveEvent()
   }
 
@@ -81,40 +113,44 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
 
   private _pressedTouchMouseMoveEvent (event: MouseTouchEvent): boolean {
     const dragDistance = event.pageY - this._dragStartY
-    const currentPane = this.getPane()
-    const topPane = currentPane.getTopPane()
-    const bottomPane = currentPane.getBottomPane()
+    
     const isUpDrag = dragDistance < 0
-    if (
-      topPane !== null &&
-      bottomPane?.getOptions().dragEnabled
-    ) {
-      let reducedPane: Nullable<AxisPane> = null
-      let increasedPane: Nullable<AxisPane> = null
-      let startDragReducedPaneHeight = 0
-      let startDragIncreasedPaneHeight = 0
-      if (isUpDrag) {
-        reducedPane = topPane
-        increasedPane = bottomPane
-        startDragReducedPaneHeight = this._topPaneHeight
-        startDragIncreasedPaneHeight = this._bottomPaneHeight
-      } else {
-        reducedPane = bottomPane
-        increasedPane = topPane
-        startDragReducedPaneHeight = this._bottomPaneHeight
-        startDragIncreasedPaneHeight = this._topPaneHeight
-      }
-      const reducedPaneMinHeight = reducedPane.getOptions().minHeight
-      if (startDragReducedPaneHeight > reducedPaneMinHeight) {
-        const reducedPaneHeight = Math.max(startDragReducedPaneHeight - Math.abs(dragDistance), reducedPaneMinHeight)
-        const diffHeight = startDragReducedPaneHeight - reducedPaneHeight
-        reducedPane.setBounding({ height: reducedPaneHeight })
-        increasedPane.setBounding({ height: startDragIncreasedPaneHeight + diffHeight })
-        const chart = currentPane.getChart()
-        chart.getChartStore().getActionStore().execute(ActionType.OnPaneDrag, { paneId: currentPane.getId() })
-        chart.adjustPaneViewport(true, true, true, true, true)
+    if (isValid(this._topPane) && isValid(this._bottomPane)) {
+      const bottomPaneOptions = this._bottomPane.getOptions()
+      if (
+        this._topPane.getOptions().state !== PaneState.Minimize &&
+        bottomPaneOptions.state !== PaneState.Minimize &&
+        bottomPaneOptions.dragEnabled
+      ) {
+        let reducedPane: Nullable<DrawPane> = null
+        let increasedPane: Nullable<DrawPane> = null
+        let startDragReducedPaneHeight = 0
+        let startDragIncreasedPaneHeight = 0
+        if (isUpDrag) {
+          reducedPane = this._topPane
+          increasedPane = this._bottomPane
+          startDragReducedPaneHeight = this._topPaneHeight
+          startDragIncreasedPaneHeight = this._bottomPaneHeight
+        } else {
+          reducedPane = this._bottomPane
+          increasedPane = this._topPane
+          startDragReducedPaneHeight = this._bottomPaneHeight
+          startDragIncreasedPaneHeight = this._topPaneHeight
+        }
+        const reducedPaneMinHeight = reducedPane.getOptions().minHeight
+        if (startDragReducedPaneHeight > reducedPaneMinHeight) {
+          const reducedPaneHeight = Math.max(startDragReducedPaneHeight - Math.abs(dragDistance), reducedPaneMinHeight)
+          const diffHeight = startDragReducedPaneHeight - reducedPaneHeight
+          reducedPane.setOriginalBounding({ height: reducedPaneHeight })
+          increasedPane.setOriginalBounding({ height: startDragIncreasedPaneHeight + diffHeight })
+          const currentPane = this.getPane()
+          const chart = currentPane.getChart()
+          chart.getChartStore().getActionStore().execute(ActionType.OnPaneDrag, { paneId: currentPane.getId() })
+          chart.adjustPaneViewport(true, true, true, true, true)
+        }
       }
     }
+    
     return true
   }
 
@@ -132,7 +168,7 @@ export default class SeparatorWidget extends Widget<SeparatorPane> {
 
   private _mouseLeaveEvent (): boolean {
     if (!this._dragFlag) {
-      this.getContainer().style.background = ''
+      this.getContainer().style.background = 'transparent'
       return true
     }
     return false
