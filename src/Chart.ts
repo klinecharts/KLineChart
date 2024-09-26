@@ -325,17 +325,14 @@ export default class ChartImp implements Chart {
         pane.setVisible(true)
         this._separatorPanes.get(pane)?.setVisible(true)
         const paneId = pane.getId()
-        if (paneId !== PaneIdConstants.CANDLE && paneId !== PaneIdConstants.X_AXIS) {
-          if (isValid(this._separatorPanes.get(pane))) {
-            remainingHeight -= separatorSize
-          }
+        if (isValid(this._separatorPanes.get(pane))) {
+          remainingHeight -= separatorSize
+        }
+        if (paneId !== PaneIdConstants.X_AXIS && paneId !== PaneIdConstants.CANDLE) {
           let paneHeight = PANE_MIN_HEIGHT
-          if (pane.getOptions().state !== PaneState.Minimize) {
-            paneHeight = pane.getOriginalBounding().height
-            const paneMinHeight = pane.getOptions().minHeight
-            if (paneHeight < paneMinHeight) {
-              paneHeight = paneMinHeight
-            }
+          const paneOptions = pane.getOptions()
+          if (paneOptions.state !== PaneState.Minimize) {
+            paneHeight = Math.max(pane.getOriginalBounding().height, paneOptions.minHeight)
           }
           if (paneHeight > remainingHeight) {
             paneHeight = Math.max(remainingHeight, 0)
@@ -346,12 +343,32 @@ export default class ChartImp implements Chart {
           pane.setBounding({ height: paneHeight })
         }
       })
-      if (isValid(this._candlePane) && isValid(this._separatorPanes.get(this._candlePane))) {
-        remainingHeight -= separatorSize
-      }
 
       let candlePaneHeight = PANE_MIN_HEIGHT
-      if (this._candlePane?.getOptions().state !== PaneState.Minimize) {
+      if (this._candlePane?.getOptions().state === PaneState.Minimize) {
+        remainingHeight -= candlePaneHeight
+        const candlePaneIndex = this._drawPanes.findIndex(pane => this._candlePane?.getId() === pane.getId())
+        // Find the pane that is nearest to the main pane and is not minimized
+        // Add the extra height to this pane
+        let nearPane: Nullable<DrawPane> = null
+        for (let i = candlePaneIndex + 1; i < this._drawPanes.length; i++) {
+          const pane = this._drawPanes[i]
+          if (pane.getOptions().state !== PaneState.Minimize) {
+            nearPane = pane
+            break
+          }
+        }
+        if (!isValid(nearPane)) {
+          for (let i = candlePaneIndex - 1; i > -1; i--) {
+            const pane = this._drawPanes[i]
+            if (pane.getOptions().state !== PaneState.Minimize) {
+              nearPane = pane
+              break
+            }
+          }
+        }
+        nearPane?.setBounding({ height: nearPane.getBounding().height + remainingHeight })
+      } else {
         candlePaneHeight = Math.max(remainingHeight, 0)
         this._candlePane?.setOriginalBounding({ height: candlePaneHeight })
       }
